@@ -79,6 +79,7 @@ public class Feedback {
         FBlocks.register(modBus);
         FItems.register(modBus);
         FVehicles.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FLogistics.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FWeapons.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FSounds.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FEffects.register(modBus);
@@ -216,6 +217,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.BeltRunPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.BeltRunPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.BeltRunPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.HudReadoutPayload::handle)

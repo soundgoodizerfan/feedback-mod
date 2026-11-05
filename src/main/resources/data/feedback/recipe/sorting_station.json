@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:tube_station"
+    },
+    {
+      "item": "feedback:electromagnet"
+    },
+    {
+      "item": "feedback:lamp"
+    },
+    {
+      "item": "feedback:sort_gauge"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:sorting_station"
+  }
+}

@@ -47,7 +47,7 @@ Copper figures, per gauge:
 
 Other metals scale these by their own ampacity and drop: a metal that carries half as much as copper has half the rating at every gauge.
 
-Up to its rating a cable stays at room temperature forever and never wears out, no matter how long it runs. A standard copper cable's 4 A is four [Electromagnets](Electromagnet.md), or two [Heating Coils](Heating_Coil.md), but only a fraction of what a coarse [Electric Machine](Electric_Machine.md) can deliver; heavy cable and bus bar are for that.
+Up to its rating a cable stays at room temperature forever and never wears out, no matter how long it runs. A standard copper cable's 4 A is four [Electromagnets](Electromagnet.md), or two [Heating Coils](Heating_Coil.md), but only a fraction of what a coarse [Dynamotor](Dynamotor.md) can deliver; heavy cable and bus bar are for that.
 
 Every block of cable also costs the line voltage, so long runs deliver less to the far end. See [Electricity](Electricity.md#how-a-line-behaves).
 

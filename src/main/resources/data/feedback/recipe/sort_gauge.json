@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "P": {
+      "item": "feedback:copper_plate"
+    }
+  },
+  "pattern": [
+    "W",
+    "P",
+    "P"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:sort_gauge"
+  }
+}

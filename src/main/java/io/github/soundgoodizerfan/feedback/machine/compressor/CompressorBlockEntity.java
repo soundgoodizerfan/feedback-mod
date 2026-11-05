@@ -144,6 +144,11 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
             if (fits > 0)
                 pipe.compressedFill(FluidHeat.stamp(source.drain(offered.copyWithAmount(fits),
                         IFluidHandler.FluidAction.EXECUTE), FluidHeat.of(hot).value()), IFluidHandler.FluidAction.EXECUTE);
+        } else if (level.getBlockEntity(front) instanceof io.github.soundgoodizerfan.feedback.machine.tube.TubeBlockEntity tube) {
+            fits = tube.compressedFill(hot, IFluidHandler.FluidAction.SIMULATE);
+            if (fits > 0)
+                tube.compressedFill(FluidHeat.stamp(source.drain(offered.copyWithAmount(fits),
+                        IFluidHandler.FluidAction.EXECUTE), FluidHeat.of(hot).value()), IFluidHandler.FluidAction.EXECUTE);
         } else if (level.getBlockEntity(front) instanceof io.github.soundgoodizerfan.feedback.machine.gastank.GasTankBlockEntity tank) {
             fits = tank.compressedFill(hot, IFluidHandler.FluidAction.SIMULATE);
             if (fits > 0)

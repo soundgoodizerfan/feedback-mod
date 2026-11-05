@@ -26,7 +26,7 @@ departs from all three of these deliberately.
 | **PneumaticCraft: Repressurized** | GPL-3.0 | **Yes** | Same licence as this project, code and assets both — the most direct route read all session. Assets still never used, per this project's own universal-no rule, not because the licence would forbid it |
 | **RetroSFM** | MIT | **Yes** | Permissive, same as Create. Preserve the notice, state the origin |
 | **Super Factory Manager** | MPL-2.0 | **Yes** | No per-file "Incompatible With Secondary Licenses" notice found, so combinable under GPL-3.0 per MPL §3.3/§10.4's default. Read, nothing taken — see below |
-| **Silent Gear** | MIT | **Yes** | Permissive. Preserve the notice, state the origin. Read for modular items; design taken. **Textures copied as placeholders (2026-10-21, user ruling)** -- the repo's MIT licence covers them; see *Silent Gear textures* below |
+| **Silent Gear** | MIT | **Yes** | Permissive. Preserve the notice, state the origin. Read for modular items; design taken. **Textures copied as placeholders (2026-10-21, user ruling)** -- the repo's MIT licence covers them; see *Textures* below |
 | **Tinkers' Construct** | MIT | **Yes** | Permissive. Only a 1.20.1 source exists, so any port is to 1.21 data components. Read for modular items; design taken, nothing copied |
 | **Backported Spears** (Unknowneth) | CC0 1.0 (the repository's `LICENSE`; CurseForge says Public Domain, Modrinth says MIT: all permissive and GPL-compatible, CC0 is the file in the source) | **Yes** | No obligation; attribution kindly. Cloned to `../Backported-Spears-reference` on its `1.21.1` branch (NeoForge 21.1.215, **yarn mappings and Mixins**, so nothing pastes into this Mojang/Parchment project as is). Read for the spear's charge behaviour (spec 5.4); **design only, no code taken** (the spear's charge is written fresh with Mojang names); record each site here if code is adapted later |
 | **Spartan Weaponry** (ObliviousSpartan) | Apache-2.0 (code; read at its `1.20.1` branch, no 1.21.1 one exists) | **Yes** | Permissive and GPL-3.0-compatible one way. Preserve the notice, state the origin. Read for thrown modular weapons; design taken, nothing copied. Assets never |
@@ -677,243 +677,98 @@ Read by a `prior-art-reader` agent at `../firmalife-reference` (MIT, branch `1.2
 
 *Rejected:* the wall block tag (walls here are by shape, their leak by material conductivity); the boolean room that sets fixed decay multipliers (the room is a temperature the food settles at); cold chosen by biome (here a pump on a wire, hotter radiator and all); a hard "invalid cellar" fail (a gap raises the leak); a manual right-click to scan.
 
-## Placeholder texture repositories
+## Textures
 
-The three reference mods above are closed to us for *assets*. These are a different case:
-standalone texture repositories whose authors published them for reuse, cloned outside the
-repo at `../Texture-reference` (reference material, never a dependency). Textures are copied
-in **only when a model references them**, one row per file below.
+**Unless listed as an exception below, every texture under `assets/feedback/textures/` is taken or adapted from [malcolmriley/unused-textures](https://github.com/malcolmriley/unused-textures) by Malcolm Riley, licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).** Some files are unmodified copies (`.mcmeta` included); others are adapted: greyscaled, tinted, cropped or recoloured (the greyscale `item/form/*`, `item/modular/grey/*` and `block/molten_metal` sprites are luminance-only copies that `client/FormTint` tints per material at runtime). Changes were made to the adapted files; no endorsement by Malcolm Riley is implied. The CC BY 4.0 licence covers those files only; it does not relicense Feedback's own art, which stays All Rights Reserved.
+
+The `credits` line in `neoforge.mods.toml` repeats this credit. Only the exceptions are listed below, and a file in an exception list is not covered by the statement above.
+
+**These stay placeholder.** They exist so the roster reads as distinct objects in game; they are not the mod's art direction, and each is expected to be replaced. Removing a row here when its file is replaced is part of that change.
+
+### Other texture repositories
+
+Reference clones live outside the repo at `../Texture-reference` (reference material, never a dependency).
 
 | Repository | Licence | Status |
 | --- | --- | --- |
-| [malcolmriley/unused-textures](https://github.com/malcolmriley/unused-textures) | **CC BY 4.0** | **In use** — every texture below. Copied unmodified, `.mcmeta` included. Credit: Malcolm Riley |
+| [malcolmriley/unused-textures](https://github.com/malcolmriley/unused-textures) | **CC BY 4.0** | **In use**, the blanket statement above. Credit: Malcolm Riley |
 | [Auseawesome/Minecraft-Textures](https://github.com/Auseawesome/Minecraft-Textures) | CC0 | Cloned, nothing used yet. No conditions |
-| [cleannrooster/forg-cleannrooster-assets](https://github.com/cleannrooster/forg-cleannrooster-assets) | MIT | Cloned, nothing used yet. Notice must be preserved if used; covers only that repo's own assets |
-| [SilentChaos512/Silent-Gear](https://github.com/SilentChaos512/Silent-Gear) (`1.21.1` branch, `../SilentGear-reference`) | **MIT** (Copyright (c) 2018 SilentChaos512) | **In use** -- modular tool layers, listed below. Copied unmodified. Notice preserved here |
+| [cleannrooster/forg-cleannrooster-assets](https://github.com/cleannrooster/forg-cleannrooster-assets) | MIT | **In use**, the skill-tree icons (below). Notice must be preserved; covers only that repo's own assets |
+| [SilentChaos512/Silent-Gear](https://github.com/SilentChaos512/Silent-Gear) (`1.21.1` branch) | **MIT** (Copyright (c) 2018 SilentChaos512) | **In use**, modular tool layers (below). Copied unmodified. Notice preserved here |
 | [Foreck1/foreck-textures](https://github.com/Foreck1/foreck-textures) | CC BY 4.0 | Cloned, nothing used yet. Credit: Foreck |
 | [Futureazoo/TextureRepository](https://github.com/Futureazoo/TextureRepository) | **CC BY-NC-SA 4.0** | **Rejected, not cloned into the reference dir.** NonCommercial blocks any monetised use; ShareAlike would force every adapted texture under CC BY-NC-SA, which cannot coexist with this project's All Rights Reserved assets. "Free to use" in its README is not the same as usable here |
 
-**Why these are acceptable when the mods' assets are not:** each was published by its author
-under a licence that grants reuse, and none of the permissive ones (CC0, MIT, CC BY) restrict
-the project's own asset licensing — attribution is the only debt. CC BY's attribution is met
-by this table and the `credits` line in `neoforge.mods.toml`. The licences apply to *those
-files only*; they do not relicense Feedback's own art, which stays All Rights Reserved.
+**Why these are acceptable when the mods' assets are not:** each was published by its author under a licence that grants reuse, and none of the permissive ones (CC0, MIT, CC BY) restrict the project's own asset licensing; attribution is the only debt.
 
-**These stay placeholder.** They exist so the roster reads as distinct objects in game; they
-are not the mod's art direction, and each is expected to be replaced. Removing a row here
-when its file is replaced is part of that change.
+### Exception: Silent Gear (MIT)
 
-Texture to source (all under `malcolmriley/unused-textures`, CC BY 4.0, Malcolm Riley):
+Unmodified copies of `src/main/resources/assets/silentgear/textures/item/<type>/<file>.png` in `SilentChaos512/Silent-Gear`, MIT, Copyright (c) 2018 SilentChaos512. Greyscale layers, tinted per part by `client/ModularClient`. Files under `textures/item/modular/`.
 
-| Feedback file | Source path |
+MIT notice (Silent Gear): (The MIT License) Copyright (c) 2018 SilentChaos512. Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: the above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+| Feedback file (`modular/`) | Source (`<type>/<file>`) |
 | --- | --- |
-| `textures/block/block_metal_fiery.png` | `blocks/block_metal_fiery.png` |
-| `textures/block/block_metal_hepatizon.png` | `blocks/block_metal_hepatizon.png` |
-| `textures/block/brick_refractory.png` | `blocks/brick_refractory.png` |
-| `textures/block/device_smelter_top.png` | `blocks/device_smelter_top.png` |
-| `textures/block/device_smelter_bottom.png` | `blocks/device_smelter_bottom.png` |
-| `textures/block/device_smelter_front_lit.png` (+ `.mcmeta`) | `blocks/device_smelter_front_lit.png` |
-| `textures/item/arc_electrode.png` | `items/part_metal_steel_rod.png` |
-| `textures/block/brooding_brick.png` | `blocks/brooding_brick.png` |
-| `textures/block/bundle_logs_top.png` | `blocks/bundle_logs_top.png` |
-| `textures/block/cloth_dry.png` | `blocks/cloth_dry.png` |
-| `textures/block/concrete_slabs.png` | `blocks/concrete_slabs.png` |
-| `textures/block/copper_coil_side.png` | `blocks/copper_coil_side.png` |
-| `textures/block/device_brooding_forge_side_off.png` | `blocks/device_brooding_forge_side_off.png` |
-| `textures/block/device_brooding_forge_side_on.png` | `blocks/device_brooding_forge_side_on.png` |
-| `textures/block/device_brooding_forge_up_off.png` | `blocks/device_brooding_forge_up_off.png` |
-| `textures/block/device_brooding_forge_up_on.png` | `blocks/device_brooding_forge_up_on.png` |
-| `textures/block/device_gearbox_clutch_off.png` | `blocks/device_gearbox_clutch_off.png` |
-| `textures/block/device_gearbox_clutch_on.png` | `blocks/device_gearbox_clutch_on.png` |
-| `textures/block/device_gearbox_sides.png` | `blocks/device_gearbox_sides.png` |
-| `textures/block/device_kiln.png` | `blocks/device_kiln.png` |
-| `textures/block/device_kiln_2.png` | `blocks/device_kiln_2.png` |
-| `textures/block/device_kiln_active_2.png` | `blocks/device_kiln_active_2.png` |
-| `textures/block/device_kiln_front_active.png` | `blocks/device_kiln_front_active.png` |
-| `textures/block/device_kiln_top.png` | `blocks/device_kiln_top.png` |
-| `textures/block/device_kiln_top_2.png` | `blocks/device_kiln_top_2.png` |
-| `textures/block/industrial_metal_duct_flat_1.png` | `blocks/industrial_metal_duct_flat_1.png` |
-| `textures/block/industrial_metal_duct_intake.png` | `blocks/industrial_metal_duct_intake.png` |
-| `textures/block/industrial_metal_duct_vent.png` | `blocks/industrial_metal_duct_vent.png` |
-| `textures/block/log_cronetree_inner.png` | `blocks/log_cronetree_inner.png` |
-| `textures/block/log_fig_inner.png` | `blocks/log_fig_inner.png` |
-| `textures/block/log_mulberry_inner.png` | `blocks/log_mulberry_inner.png` |
-| `textures/block/metal_pipes_copper.png` | `blocks/metal_pipes_copper.png` |
-| `textures/block/metal_steel_block.png` | `blocks/metal_steel_block.png` |
-| `textures/block/plank_plywood.png` | `blocks/plank_plywood.png` |
-| `textures/block/space-plating-vent.png` | `blocks/space-plating-vent.png` |
-| `textures/block/stone_tiles_small.png` | `blocks/stone_tiles_small.png` |
-| `textures/block/sturdy_bricks.png` | `blocks/sturdy_bricks.png` |
-| `textures/block/terracotta_tile_large.png` | `blocks/terracotta_tile_large.png` |
-| `textures/item/armor_helmet_steel.png` | `items/armor_helmet_steel.png` |
-| `textures/item/gem_lens.png` | `items/gem_lens.png` |
-| `textures/item/ingot_brass.png` | `items/ingot_brass.png` |
-| `textures/item/ingot_bronze.png` | `items/ingot_bronze.png` |
-| `textures/item/ingot_lead.png` | `items/ingot_lead.png` |
-| `textures/item/ingot_steel.png` | `items/ingot_steel.png` |
-| `textures/item/ingot_wroughtiron.png` | `items/ingot_wroughtiron.png` |
-| `textures/item/ingot_zinc.png` | `items/ingot_zinc.png` |
-| `textures/item/material_dust_clay.png` | `items/material_dust_clay.png` |
-| `textures/item/material_dust_metal_steel.png` | `items/material_dust_metal_steel.png` |
-| `textures/item/material_dust_quartz.png` | `items/material_dust_quartz.png` |
-| `textures/item/material_graphite.png` | `items/material_graphite.png` |
-| `textures/item/material_pile_scrap_metal.png` | `items/material_pile_scrap_metal.png` |
-| `textures/item/material_pile_scrap_parts.png` | `items/material_pile_scrap_parts.png` |
-| `textures/item/metal_steel_ingot.png` | `items/metal_steel_ingot.png` |
-| `textures/item/metal_steel_plate.png` | `items/metal_steel_plate.png` |
-| `textures/item/part_brick_adobe_fired.png` | `items/part_brick_adobe_fired.png` |
-| `textures/item/part_brick_refractory.png` | `items/part_brick_refractory.png` |
-| `textures/item/part_brick_sturdy.png` | `items/part_brick_sturdy.png` |
-| `textures/item/part_chainlinks.png` | `items/part_chainlinks.png` |
-| `textures/item/part_electronic_datacard_0.png` | `items/part_electronic_datacard_0.png` |
-| `textures/item/part_electronic_electrode.png` | `items/part_electronic_electrode.png` |
-| `textures/item/part_electronic_insulated_wire.png` | `items/part_electronic_insulated_wire.png` |
-| `textures/item/part_electronic_thermionicvalve_1.png` | `items/part_electronic_thermionicvalve_1.png` |
-| `textures/item/part_leather_strap.png` | `items/part_leather_strap.png` |
-| `textures/block/industrial_metal_duct_1.png` | `blocks/industrial_metal_duct_1.png` |
-| `textures/block/industrial_metal_duct_2.png` | `blocks/industrial_metal_duct_2.png` |
-| `textures/block/industrial_metal_duct_sides_1.png` | `blocks/industrial_metal_duct_sides_1.png` |
-| `textures/block/industrial_metal_duct_sides_2.png` | `blocks/industrial_metal_duct_sides_2.png` |
-| `textures/block/industrial_metal_duct_flat_2.png` | `blocks/industrial_metal_duct_flat_2.png` |
-| `textures/block/metal_alloy_block.png` | `blocks/metal_alloy_block.png` |
-| `textures/block/device_workbench_top.png` | `blocks/device_workbench_top.png` |
-| `textures/block/metal_tank_copper_sides.png` | `blocks/metal_tank_copper_sides.png` |
-| `textures/block/device_terminal_front_on.png` | `blocks/device_terminal_front_on.png` |
-| `textures/block/device_smelter_side.png` | `blocks/device_smelter_side.png` |
-| `textures/block/device_terminal_side.png` | `blocks/device_terminal_side.png` |
-| `textures/block/device_terminal_side_2.png` | `blocks/device_terminal_side_2.png` |
-| `textures/block/device_barrel_sides.png` | `blocks/device_barrel_sides.png` |
-| `textures/block/space-plating-square.png` | `blocks/space-plating-square.png` |
-| `textures/block/block_metal_black_bronze_block_1.png` | `blocks/block_metal_black_bronze_block_1.png` |
-| `textures/block/space-plating-plain.png` | `blocks/space-plating-plain.png` |
-| `textures/block/device_miningcharge_top.png` | `blocks/device_miningcharge_top.png` |
-| `textures/block/device_miningcharge_bottom.png` | `blocks/device_miningcharge_bottom.png` |
-| `textures/block/device_miningcharge_sides.png` | `blocks/device_miningcharge_sides.png` |
-| `textures/block/ore_stone_big_galena.png` | `blocks/ore_stone_big_galena.png` |
-| `textures/block/ore_stone_brimstone.png` | `blocks/ore_stone_brimstone.png` |
-| `textures/block/ore_stone_big_cylindrite.png` | `blocks/ore_stone_big_cylindrite.png` |
-| `textures/block/ore_stone_zinc.png` | `blocks/ore_stone_zinc.png` |
-| `textures/block/ore_stone_lead_2.png` | `blocks/ore_stone_lead_2.png` |
-| `textures/item/dust_charcoal_mixture.png` | `items/dust_charcoal_mixture.png` |
-| `textures/item/material_crystal_pyrite.png` | `items/material_crystal_pyrite.png` |
-| `textures/item/material_rock_kaolin.png` | `items/material_rock_kaolin.png` |
-| `textures/item/material_rock_ore_galena.png` | `items/material_rock_ore_galena.png` |
-| `textures/item/paper_note_clean.png` | `items/paper_note_clean.png` |
-| `textures/item/paper_note_major.png` | `items/paper_note_major.png` |
-| `textures/item/paper_note_minor.png` | `items/paper_note_minor.png` |
-| `textures/item/part_bronze_mechanisms.png` | `items/part_bronze_mechanisms.png` |
-| `textures/item/part_cannister.png` | `items/part_cannister.png` |
-| `textures/item/part_electronic_circuit_discrete.png` | `items/part_electronic_circuit_discrete.png` |
-| `textures/item/part_electronic_coil_copper_2.png` | `items/part_electronic_coil_copper_2.png` |
-| `textures/item/part_electronic_laser_diode.png` | `items/part_electronic_laser_diode.png` |
-| `textures/item/part_electronic_magnet_2.png` | `items/part_electronic_magnet_2.png` |
-| `textures/item/part_electronic_misc_0.png` | `items/part_electronic_misc_0.png` |
-| `textures/item/part_electronic_misc_1.png` | `items/part_electronic_misc_1.png` |
-| `textures/item/part_electronic_misc_10.png` | `items/part_electronic_misc_10.png` |
-| `textures/item/part_electronic_misc_11.png` | `items/part_electronic_misc_11.png` |
-| `textures/item/part_electronic_misc_12.png` | `items/part_electronic_misc_12.png` |
-| `textures/item/part_electronic_misc_2.png` | `items/part_electronic_misc_2.png` |
-| `textures/item/part_electronic_misc_3.png` | `items/part_electronic_misc_3.png` |
-| `textures/item/part_electronic_misc_4.png` | `items/part_electronic_misc_4.png` |
-| `textures/item/part_electronic_misc_5.png` | `items/part_electronic_misc_5.png` |
-| `textures/item/part_electronic_resistor_3.png` | `items/part_electronic_resistor_3.png` |
-| `textures/item/part_electronic_thermionicvalve_4.png` | `items/part_electronic_thermionicvalve_4.png` |
-| `textures/item/part_electronic_thermionicvalve_8.png` | `items/part_electronic_thermionicvalve_8.png` |
-| `textures/item/part_leather_patch_4.png` | `items/part_leather_patch_4.png` |
-| `textures/item/part_leather_strap_2.png` | `items/part_leather_strap_2.png` |
-| `textures/item/part_metal_alloy_flange.png` | `items/part_metal_alloy_flange.png` |
-| `textures/item/part_metal_alloy_frame.png` | `items/part_metal_alloy_frame.png` |
-| `textures/item/part_metal_alloy_nugget.png` | `items/part_metal_alloy_nugget.png` |
-| `textures/item/part_metal_alloy_sheet_2.png` | `items/part_metal_alloy_sheet_2.png` |
-| `textures/item/part_metal_alloy_tube.png` | `items/part_metal_alloy_tube.png` |
-| `textures/item/part_metal_bolts.png` | `items/part_metal_bolts.png` |
-| `textures/item/part_metal_box_large.png` | `items/part_metal_box_large.png` |
-| `textures/item/part_metal_box_small.png` | `items/part_metal_box_small.png` |
-| `textures/item/part_metal_composite_tube.png` | `items/part_metal_composite_tube.png` |
-| `textures/item/part_metal_gasket.png` | `items/part_metal_gasket.png` |
-| `textures/item/part_metal_lead_ingot.png` | `items/part_metal_lead_ingot.png` |
-| `textures/item/part_metal_lead_ingot_2.png` | `items/part_metal_lead_ingot_2.png` |
-| `textures/item/part_metal_plate_heavy_cladding.png` | `items/part_metal_plate_heavy_cladding.png` |
-| `textures/item/part_metal_spring.png` | `items/part_metal_spring.png` |
-| `textures/item/part_mould.png` | `items/part_mould.png` |
-| `textures/item/part_mould_sword.png` | `items/part_mould_sword.png` |
-| `textures/item/part_paper_rune_bloody.png` | `items/part_paper_rune_bloody.png` |
-| `textures/item/part_plate_small_laminate_green.png` | `items/part_plate_small_laminate_green.png` |
-| `textures/item/part_plate_small_leatherbound.png` | `items/part_plate_small_leatherbound.png` |
-| `textures/item/part_plate_thick_steel.png` | `items/part_plate_thick_steel.png` |
-| `textures/item/part_rail.png` | `items/part_rail.png` |
-| `textures/item/part_rope.png` | `items/part_rope.png` |
-| `textures/item/part_rubber_gasket.png` | `items/part_rubber_gasket.png` |
-| `textures/item/part_tube_composite.png` | `items/part_tube_composite.png` |
-| `textures/item/part_tube_galvanized.png` | `items/part_tube_galvanized.png` |
-| `textures/item/part_tube_iron.png` | `items/part_tube_iron.png` |
-| `textures/item/part_tube_plastic.png` | `items/part_tube_plastic.png` |
-| `textures/item/tool_chisel_iron.png` | `items/tool_chisel_iron.png` |
-| `textures/item/tool_fancy_iron_chisel.png` | `items/tool_fancy_iron_chisel.png` |
-| `textures/item/tool_soldering_steel.png` | `items/tool_soldering_steel.png` |
-| `textures/item/tool_spanner_bronze.png` | `items/tool_spanner_bronze.png` |
-| `textures/item/tool_spanner_lead.png` | `items/tool_spanner_lead.png` |
-| `textures/item/part_metal_alloy_rod.png` | `items/part_metal_alloy_rod.png` |
-| `textures/item/part_metal_steel_ingot.png` | `items/part_metal_steel_ingot.png` |
-| `textures/item/part_metal_steel_rod.png` | `items/part_metal_steel_rod.png` |
-| `textures/item/part_mould_ingot.png` | `items/part_mould_ingot.png` |
-| `textures/item/part_plate_copper.png` | `items/part_plate_copper.png` |
-| `textures/item/part_plate_rivets.png` | `items/part_plate_rivets.png` |
-| `textures/item/part_plate_small_copper.png` | `items/part_plate_small_copper.png` |
-| `textures/item/part_plate_steel.png` | `items/part_plate_steel.png` |
-| `textures/item/part_punchcard_blank.png` | `items/part_punchcard_blank.png` |
-| `textures/item/part_tube_copper.png` | `items/part_tube_copper.png` |
-| `textures/item/part_wire_copper.png` | `items/part_wire_copper.png` |
-| `textures/item/part_wire_iron.png` | `items/part_wire_iron.png` |
-| `textures/item/tool_chisel_steel.png` | `items/tool_chisel_steel.png` |
-| `textures/item/tool_hammer_stone.png` | `items/tool_hammer_stone.png` |
-| `textures/item/tool_pouch_brown.png` | `items/tool_pouch_brown.png` |
-| `textures/item/instrument_bag.png` | `items/tool_pouch_gray.png` |
-| `textures/item/tool_soldering_iron.png` | `items/tool_soldering_iron.png` |
-| `textures/item/tool_spanner_iron.png` | `items/tool_spanner_iron.png` |
+| `axe_0` | `axe/main_generic_hc` |
+| `axe_1` | `axe/rod_generic_hc` |
+| `hoe_0` | `hoe/main_generic_hc` |
+| `hoe_1` | `pickaxe/rod_generic_hc` |
+| `maul_0` | `hammer/main_generic_hc` |
+| `maul_1` | `hammer/rod_generic_hc` |
+| `maul_mace_0` | `mace/main_generic_hc` |
+| `maul_mace_1` | `mace/rod_generic_hc` |
+| `pickaxe_0` | `pickaxe/main_generic_hc` |
+| `pickaxe_1` | `pickaxe/rod_generic_hc` |
+| `pickaxe_miner_0` | `mattock/main_generic_hc` |
+| `pickaxe_miner_1` | `mattock/rod_generic_hc` |
+| `pickaxe_prospector_0` | `prospector_hammer/main_generic_hc` |
+| `pickaxe_prospector_1` | `prospector_hammer/rod_generic_hc` |
+| `shears_0` | `shears/main_generic_hc` |
+| `shears_1` | `shears/rod_generic_hc` |
+| `shovel_0` | `shovel/main_generic_hc` |
+| `shovel_1` | `shovel/rod_generic_hc` |
+| `sickle_0` | `sickle/main_generic_hc` |
+| `sickle_1` | `sickle/rod_generic_hc` |
+| `spear_0` | `spear/main_generic_hc` |
+| `spear_1` | `spear/rod_generic_hc` |
+| `spear_trident_0` | `trident/main_generic_hc` |
+| `spear_trident_1` | `trident/rod_generic_hc` |
+| `sword_0` | `sword/main_generic_hc` |
+| `sword_1` | `sword/rod_generic_hc` |
+| `sword_2` | `sword/guard_generic_hc` |
+| `sword_3` | `sword/binding_generic` |
+| `sword_dagger_0` | `dagger/main_generic_hc` |
+| `sword_dagger_1` | `knife/rod_generic_hc` |
+| `sword_katana_0` | `katana/main_generic_hc` |
+| `sword_katana_1` | `katana/rod_generic_hc` |
+| `sword_machete_0` | `machete/main_generic_hc` |
+| `sword_machete_1` | `machete/rod_generic_hc` |
 
-Greyscale form sprites (2026-10-20): each is a recoloured copy (luminance only, brightest 5% stretched to near white, alpha kept) of a file above, tinted per material at runtime by `client/FormTint`. Modified, so CC BY 4.0's "indicate changes" applies.
+### Exception: cleannrooster/forg-cleannrooster-assets (MIT)
 
-| `textures/item/form/*.png` | derived from |
-| --- | --- |
-| `ingot`, `ground_ingot` | `items/ingot_steel.png` |
-| `nugget`, `bullet`, `case` | `items/annealed_copper_nugget.png` |
-| `plate`, `grip` | `items/annealed_copper_plate.png` |
-| `rod`, `turned_rod` | `items/annealed_copper_rod.png` (file since deleted, source `unused-textures`) |
-| `wire`, `fine_wire` | `items/part_wire_iron.png` |
-| `foil` | `items/part_plate_small_copper.png` |
-| `scrap` | `items/material_pile_scrap_metal.png` |
-| `swarf` | `items/material_dust_metal_steel.png` |
-| `drilled_plate` | `items/part_plate_rivets.png` |
-| `textures/block/form/block.png` | `blocks/annealed_copper_block.png` (file since deleted, source `unused-textures`) |
-| `textures/block/metal_tank_sides.png`, `metal_tank_ends.png` | `blocks/metal_tank_copper_sides.png`, `blocks/metal_tank_copper_ends.png` (same recolour; tinted copper in `client/FormTint`) |
+The 135 skill-tree node icons `textures/gui/skill/*.png` are unmodified copies from that repository's `spell/` folders; the per-file tables and the animation clip are in the two cleannrooster sections further down. Credit: cleannrooster.
 
-Molten-metal sprite (2026-10-20): `textures/block/molten_metal.png` (+ `.mcmeta`) is `fluids/fluid_molten.png` from `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley), greyscaled (luminance only, brightest 3% stretched to white) and tinted per metal in `FClientSetup.registerFluidRendering`. Modified, so CC BY 4.0's "indicate changes" applies. Replaces vanilla's lava sprites as the molten stand-in.
+### Exception: Minecraft's own textures (Mojang)
 
-### Silent Gear textures
+Copied or derived from Minecraft 1.21.1's textures (Mojang AB assets, reused by the author's ruling):
 
-All under `src/main/resources/assets/silentgear/textures/item/` in `SilentChaos512/Silent-Gear`, MIT,
-Copyright (c) 2018 SilentChaos512. Grayscale layers, tinted per part by `client/ModularClient`.
-Placeholder, to be replaced like the rest.
+- `block/ore/{coal,copper,deepslate_coal,deepslate_copper,deepslate_diamond,deepslate_emerald,deepslate_gold,deepslate_iron,deepslate_lapis,deepslate_redstone,diamond,emerald,gold,iron,lapis,nether_gold,nether_quartz,redstone}.png`: vanilla ore textures with the stone background removed (the ore pixels are unchanged), used as overlays.
+- `block/creeper_pen_creeper.png`: the vanilla creeper texture.
+- `block/lead_chest.png`: the vanilla chest texture, recoloured.
+- `item/copper_bucket.png`: the vanilla bucket, recoloured.
+- `item/form/lump.png`, `item/form/raw.png`: the vanilla raw iron sprite, recoloured (greyscale form sprites tinted at runtime).
 
-| Feedback file (`textures/item/modular/`) | Source (`<type>/<file>`) |
-| --- | --- |
-| `sword_0`, `sword_1`, `sword_2`, `sword_3` | `sword/main_generic_hc`, `sword/rod_generic_hc`, `sword/guard_generic_hc`, `sword/binding_generic` |
-| `pickaxe_0`, `pickaxe_1` | `pickaxe/main_generic_hc`, `pickaxe/rod_generic_hc` |
-| `axe_0`, `axe_1` | `axe/main_generic_hc`, `axe/rod_generic_hc` |
-| `shovel_0`, `shovel_1` | `shovel/main_generic_hc`, `shovel/rod_generic_hc` |
-| `hoe_0`, `hoe_1` | `hoe/main_generic_hc`, `hoe/rod_generic_hc` |
-| `sickle_0`, `sickle_1` | `sickle/main_generic_hc`, `sickle/rod_generic_hc` |
-| `spear_0`, `spear_1` | `spear/main_generic_hc`, `spear/rod_generic_hc` |
-| `maul_0`, `maul_1` | `hammer/main_generic_hc`, `hammer/rod_generic_hc` |
-| `maul_mace_0`, `maul_mace_1` | `mace/main_generic_hc`, `mace/rod_generic_hc` |
-| `spear_trident_0`, `spear_trident_1` | `trident/main_generic_hc`, `trident/rod_generic_hc` (trident and pitchfork) |
-| `sword_dagger_0`, `sword_dagger_1` | `dagger/main_generic_hc`, `dagger/rod_generic_hc` |
-| `sword_katana_0`, `sword_katana_1` | `katana/main_generic_hc`, `katana/rod_generic_hc` |
-| `sword_machete_0`, `sword_machete_1` | `machete/main_generic_hc`, `machete/rod_generic_hc` |
-| `pickaxe_prospector_0`, `pickaxe_prospector_1` | `prospector_hammer/main_generic_hc`, `prospector_hammer/rod_generic_hc` |
-| `pickaxe_miner_0`, `pickaxe_miner_1` | `mattock/main_generic_hc`, `mattock/rod_generic_hc` |
-| `shears_0`, `shears_1` | `shears/main_generic_hc`, `shears/rod_generic_hc` |
+### Exception: Feedback's own art (All Rights Reserved)
+
+Not from any source above. Rights: the project's, All Rights Reserved.
+
+- Crops: `block/<crop>_crop_stage{0,1,2,3}.png` for `<crop>` in `cabbage`, `chile_pepper`, `corn`, `garlic`, `ginger`, `onion`, `pepper`, `rice`, `soybean`, `tomato`, `turnip`.
+- Crop items: `item/<crop>.png` and `item/<crop>_seed.png` for `cabbage`, `chile_pepper`, `corn`, `garlic`, `ginger`, `onion`, `pepper`, `rice`, `soybean`, `tomato`, `turnip`.
+- Cooked foods: `item/french_fries.png`, `item/fried_egg.png`, `item/mashed_potatoes.png`, `item/potato_chips.png`.
+- Ore overlays: `block/ore/overlay_{chunk,cluster,lump,speck}.png`, `block/ore_overlay_{0,1,2,3}.png`.
+- Modular layers not from Silent Gear: `item/modular/{boots_0,bow_0,bow_1,charge_2,chestplate_0,cleaver_0,cleaver_1,crossbow_0,crossbow_1,crossbow_2,crossbow_3,hand_hammer_0,hand_hammer_1,hand_knife_0,hand_knife_1,helmet_0,leggings_0,sawblade_0,shield_0,shield_1,shield_2,spatula_0,spatula_1,spoon_0,spoon_1,twin_0,twin_1,twin_2}.png`.
+- Status effect icons: `mob_effect/{featherstep,heat_ward,quench,second_wind}.png`.
+- Armour layers: `models/armor/modular_layer_1.png`, `models/armor/modular_layer_2.png`.
+- `entity/feedbacker_skin.png` is a supplied Minecraft skin; see Skins below.
 
 ## Sounds
 

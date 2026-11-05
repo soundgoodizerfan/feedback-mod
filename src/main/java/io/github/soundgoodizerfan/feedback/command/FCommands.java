@@ -30,7 +30,11 @@ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularHeads;
+import io.github.soundgoodizerfan.feedback.modular.ModularPartItem;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.Station;
+import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import net.minecraft.core.registries.BuiltInRegistries;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -84,6 +88,12 @@ public final class FCommands {
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("build").executes(FCommands::build)
                         .then(Commands.literal("parts").executes(FCommands::parts)))
+                .then(Commands.literal("part")
+                        .then(Commands.argument("part", StringArgumentType.word())
+                                .suggests((c, b) -> SharedSuggestionProvider.suggest(partNames(), b))
+                                .then(Commands.argument("material", ResourceLocationArgument.id())
+                                        .suggests((c, b) -> SharedSuggestionProvider.suggestResource(MaterialTable.get().materials().keySet(), b))
+                                        .executes(FCommands::part))))
                 .then(Commands.literal("potion").then(Commands.literal("reveal").executes(c -> revealMap(c, List.of(c.getSource().getPlayerOrException())))
                         .then(Commands.argument("players", net.minecraft.commands.arguments.EntityArgument.players())
                                 .executes(c -> revealMap(c, net.minecraft.commands.arguments.EntityArgument.getPlayers(c, "players"))))))
@@ -110,6 +120,46 @@ public final class FCommands {
                                         Arrays.stream(MagazineSize.values()).map(MagazineSize::getSerializedName), b))
                                 .then(Commands.argument("bore", IntegerArgumentType.integer(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM))
                                         .executes(FCommands::magazine)))));
+    }
+
+    /** Standard-shape part names: the part item's path (spear_head), and its short form (spear) where it ends in _head. */
+    private static List<String> partNames() {
+        List<String> out = new ArrayList<>();
+        for (var o : ToolTableShaping.options(ModularTypes.known())) {
+            if (!o.variant().name().isEmpty() || !(BuiltInRegistries.ITEM.get(o.shaping().item()) instanceof ModularPartItem))
+                continue;
+            String path = o.shaping().item().getPath();
+            out.add(path);
+            if (path.endsWith("_head"))
+                out.add(path.substring(0, path.length() - 5));
+        }
+        return out;
+    }
+
+    /** Testing: a standard-shape part of any material that can make it, as the Tool Table would hand it over. */
+    private static int part(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer player = c.getSource().getPlayerOrException();
+        String name = StringArgumentType.getString(c, "part");
+        ResourceLocation id = ResourceLocationArgument.getId(c, "material");
+        Material m = MaterialTable.get().materials().get(id);
+        var level = c.getSource().getLevel();
+        for (var o : ToolTableShaping.options(ModularTypes.on(level))) {
+            String path = o.shaping().item().getPath();
+            if (!o.variant().name().isEmpty() || !(path.equals(name) || path.equals(name + "_head")))
+                continue;
+            for (String form : o.shaping().stock()) {
+                if (m == null || form.contains("*") || m.item(id, form).isEmpty()
+                        || !ToolTableShaping.takes(Station.TOOL, o, new Material.Located(id, m, form)))
+                    continue;
+                var stock = new ToolTableShaping.Stock(new Material.Located(id, m, form), o.cells(), 0f, 0);
+                ItemStack part = ToolTableShaping.part(o, stock, 0, level).orElseThrow(NO_MATERIAL::create);
+                GunAmmo.give(player, part);
+                c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.part", part.getHoverName()), false);
+                return 1;
+            }
+            throw NO_MATERIAL.create();
+        }
+        throw new SimpleCommandExceptionType(Component.translatable("commands.feedback.no_part")).create();
     }
 
     /** Testing: the brewing map fully known to each player (fog lifted, every node made and vortex used). */

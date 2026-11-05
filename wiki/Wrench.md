@@ -13,7 +13,7 @@ Hammered hot in a crafting grid: put a [Hand Hammer](Hand_Hammer.md) (or another
 
 The face you click is the axle the block turns on. So clicking the top of a block spins it like a turntable; clicking a side tips it over.
 
-- A block that faces somewhere (an [Engine](Engine.md), an [Electric Machine](Electric_Machine.md)) turns its facing. If the block can't face the way a quarter turn would point it -- one that only ever faces sideways, turned onto its back -- the wrench skips ahead to the next way it can face.
+- A block that faces somewhere (an [Engine](Engine.md), an [Dynamotor](Dynamotor.md)) turns its facing. If the block can't face the way a quarter turn would point it -- one that only ever faces sideways, turned onto its back -- the wrench skips ahead to the next way it can face.
 - A block that lies along an axis (a [Shaft](Shaft.md), a log) swings to a new axis.
 - A block facing straight along the axle doesn't change: turning it about itself does nothing.
 - A block with no direction at all is left alone.

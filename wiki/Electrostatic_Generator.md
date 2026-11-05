@@ -26,4 +26,4 @@ If both are on the same line, the generator takes over while it's turning, and J
 ## Tips
 
 - Hold an [Electroscope](Instruments.md#electroscope) to the generator while someone turns it, and you'll see it go live and dead again.
-- It's hand-turned only. For electricity from a shaft, use an [Electric Machine](Electric_Machine.md).
+- It's hand-turned only. For electricity from a shaft, use an [Dynamotor](Dynamotor.md).

@@ -61,7 +61,7 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "separation", Card.class);
 
-    private static final int WIDTH = 168, HEIGHT = 70, ROW = 11;
+    private static final int WIDTH = 168, HEIGHT = 82, ROW = 11;
 
     private final IDrawable icon;
 
@@ -134,5 +134,13 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
             y += ROW;
         }
         row(graphics, font, y, "feedback.jei.separation.density", Readout.number(m.density().muPerMb()) + " Mu/mB");
+        y += ROW;
+        io.github.soundgoodizerfan.feedback.logistics.sort.Reading r = io.github.soundgoodizerfan.feedback.logistics.sort.SortReader.of(m);
+        StringBuilder bands = new StringBuilder();
+        for (io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty p : new io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty[]{
+                io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.REFLECTIVITY, io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.DENSITY,
+                io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.HARDNESS, io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.KIND})
+            bands.append(bands.length() == 0 ? "" : ", ").append(Component.translatable("feedback.sort.band." + io.github.soundgoodizerfan.feedback.logistics.sort.SortReader.bandOf(r, p).key()).getString());
+        row(graphics, font, y, "feedback.jei.separation.sorts_as", bands.toString());
     }
 }

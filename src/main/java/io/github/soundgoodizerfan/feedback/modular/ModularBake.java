@@ -184,6 +184,7 @@ public final class ModularBake {
                 default -> true;
             };
             case VESSEL -> !wear || material.xpStore().isPresent();
+            case BELT -> !wear || (material.mechanical().friction().isPresent() && material.thermal().serviceTemperature().isPresent());
             case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
             default -> true;
         };
@@ -213,11 +214,29 @@ public final class ModularBake {
         return Optional.of(new CellSpec(cells, sc.ampTicksPerIngot() * perCell, sc, cm.electrical().insulation().get()));
     }
 
-    /** The role letters of the electric machine's four parts. */
+    /**
+     * The band a belt design makes: the band material's {@code mechanical.friction} times its construction's {@code grip} (a
+     * textured face grips more, a link band less), plus a cleat's; and the hottest cargo it carries unharmed, the material's service
+     * temperature times the construction's {@code heat}. Empty if the material states no friction or service temperature.
+     */
+    public static Optional<io.github.soundgoodizerfan.feedback.logistics.belt.BeltSpec> belt(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
+        Part band = design.part(type.wearRole());
+        Material m = band == null ? null : materials.get(band.material());
+        if (m == null || m.mechanical().friction().isEmpty() || m.thermal().serviceTemperature().isEmpty())
+            return Optional.empty();
+        var variant = type.roles().get(band.role()).variant(band);
+        float grip = variant.map(v -> v.params().getOrDefault("grip", 1f)).orElse(1f);
+        float heat = variant.map(v -> v.params().getOrDefault("heat", 1f)).orElse(1f);
+        boolean cleat = design.parts().stream().anyMatch(p -> !p.role().equals(type.wearRole()));
+        float friction = m.mechanical().friction().get() * grip + (cleat ? io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning.CLEAT_GRIP : 0f);
+        return Optional.of(new io.github.soundgoodizerfan.feedback.logistics.belt.BeltSpec(band.material(), friction, m.thermal().serviceTemperature().get().value() * heat, cleat));
+    }
+
+    /** The role letters of the dynamotor's four parts. */
     public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H", MACHINE_BEARING = "B";
 
     /**
-     * What an electric machine design is, read by the placed block.
+     * What a dynamotor design is, read by the placed block.
      *
      * @param frameSu    the frame's torque ceiling, Su.
      * @param voltsPerRpm the winding's, which is also the Su each amp costs the shaft.
@@ -484,6 +503,14 @@ public final class ModularBake {
             }
             case MACHINE -> {
                 if (machine(design, type, materials).isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+            }
+            case BELT -> {
+                if (belt(design, type, materials).isEmpty())
                     return Optional.empty();
                 float total = 0;
                 for (Part p : design.parts())

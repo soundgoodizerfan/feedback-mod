@@ -54,7 +54,7 @@ This is the important part. The **noblest** metal in the water plates first, at 
 So with brass in the water, copper plates at 0.1 V and zinc needs 0.1 + 1.1 = **1.2 V**:
 
 - A zinc–copper **Galvanic Cell (1.1 V)** plates pure copper and leaves the zinc in the water. Slow, but clean.
-- A coarse **Electric Machine at 1.5 V** plates both. Fast, but the copper comes out mixed.
+- A coarse **Dynamotor at 1.5 V** plates both. Fast, but the copper comes out mixed.
 
 Below a metal's figure, no amount of current plates it. That's a real limit, not a slow one.
 
@@ -93,7 +93,7 @@ How it comes out depends on how much metal went onto it (one Qu is the metal in 
 
 At 1 A, a piece is in the good window from about **12 s to 48 s**. At 2 A, half that.
 
-**Burning** depends on the size of the piece. An ingot-sized piece takes up to **2.5 A** before its coat burns; a nugget takes about a quarter of that, a block about four times. So a Galvanic Cell or a fine Electric Machine plates an ingot cleanly, while a coarse machine can deliver enough current to burn an ingot, and suits a whole block.
+**Burning** depends on the size of the piece. An ingot-sized piece takes up to **2.5 A** before its coat burns; a nugget takes about a quarter of that, a block about four times. So a Galvanic Cell or a fine Dynamotor plates an ingot cleanly, while a coarse machine can deliver enough current to burn an ingot, and suits a whole block.
 
 A plated piece hung again keeps its coat and grows it further. Plated iron is still iron to everything else in the game. A piece can also take a zinc or tin coat by [hot dipping](Casting.md#hot-dipping) in a vessel of molten metal, with no current at all.
 
@@ -103,4 +103,4 @@ A [Mass Probe](Instruments.md#mass-probe) hung on a side reads how much the cell
 
 The glass-and-plate lining resists acid and lye, so running them as an electrolyte costs the cell nothing.
 
-It's rated for low voltage (1.5 V). More than that heats it and wears it, faster the further over, down to half condition. A fine [Electric Machine](Electric_Machine.md) at full speed (6 V) is four times its rating. It never breaks and never refuses to run.
+It's rated for low voltage (1.5 V). More than that heats it and wears it, faster the further over, down to half condition. A fine [Dynamotor](Dynamotor.md) at full speed (6 V) is four times its rating. It never breaks and never refuses to run.

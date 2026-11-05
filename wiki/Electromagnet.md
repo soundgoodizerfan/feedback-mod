@@ -38,7 +38,7 @@ A magnet doesn't pass power through to whatever is on its other side. Give each 
 
 ## Wear
 
-Running a magnet normally never wears it out, however long it runs. The only thing that hurts a magnet is feeding it **more voltage than it's built for** (1.5 V). That heats it up and permanently weakens it, faster the further over, down to half strength. It never breaks completely. A fine-wound [Electric Machine](Electric_Machine.md) at a steam engine's speed makes 6 V, four times the magnet's rating, so keep magnets on LV.
+Running a magnet normally never wears it out, however long it runs. The only thing that hurts a magnet is feeding it **more voltage than it's built for** (1.5 V). That heats it up and permanently weakens it, faster the further over, down to half strength. It never breaks completely. A fine-wound [Dynamotor](Dynamotor.md) at a steam engine's speed makes 6 V, four times the magnet's rating, so keep magnets on LV.
 
 You can check a magnet's condition with [Calipers](Instruments.md#calipers), but only while it's switched off. You can't measure a magnet while it's pulling.
 

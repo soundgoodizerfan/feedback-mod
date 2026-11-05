@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/sorting_station"
+    },
+    "facing=south": {
+      "model": "feedback:block/sorting_station"
+    },
+    "facing=east": {
+      "model": "feedback:block/sorting_station"
+    },
+    "facing=west": {
+      "model": "feedback:block/sorting_station"
+    },
+    "facing=up": {
+      "model": "feedback:block/sorting_station"
+    },
+    "facing=down": {
+      "model": "feedback:block/sorting_station"
+    }
+  }
+}

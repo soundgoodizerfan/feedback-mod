@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:tube_junction"
+    },
+    {
+      "item": "feedback:copper_wire"
+    },
+    {
+      "item": "feedback:copper_wire"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:programmed_junction"
+  }
+}

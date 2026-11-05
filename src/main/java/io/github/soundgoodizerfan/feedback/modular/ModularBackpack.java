@@ -139,7 +139,7 @@ public class ModularBackpack extends ModularItem {
      * STAND-IN: {@code Mu} of one {@code item}: a mass-class tag first, else its material's density times its form's volume
      * (an iron ingot is a bit over a Mu), else a flat default. Replace when items carry a mass.
      */
-    private static float massOf(Item item) {
+    public static float massOf(Item item) {
         if (massGeneration != MaterialTable.generation()) {
             MASSES.clear();
             massGeneration = MaterialTable.generation();

@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/tube_station"
+    },
+    "facing=south": {
+      "model": "feedback:block/tube_station"
+    },
+    "facing=east": {
+      "model": "feedback:block/tube_station"
+    },
+    "facing=west": {
+      "model": "feedback:block/tube_station"
+    },
+    "facing=up": {
+      "model": "feedback:block/tube_station"
+    },
+    "facing=down": {
+      "model": "feedback:block/tube_station"
+    }
+  }
+}

@@ -131,7 +131,7 @@ public final class ModularStacks {
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
                 && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL
-                && type.family() != ModularType.Family.MACHINE) {
+                && type.family() != ModularType.Family.MACHINE && type.family() != ModularType.Family.BELT) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
@@ -143,14 +143,22 @@ public final class ModularStacks {
             ModularBake.cell(design, type, materials).ifPresent(c -> batteryState(stack, c));
         if (type.family() == ModularType.Family.MACHINE)
             ModularBake.machine(design, type, materials).ifPresent(m -> machineState(stack, m));
+        if (type.family() == ModularType.Family.BELT)
+            ModularBake.belt(design, type, materials).ifPresent(b -> {
+                net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.BELT.get(), new net.minecraft.nbt.CompoundTag()).copy();
+                b.write(tag);
+                if (!tag.contains("Condition"))
+                    tag.putFloat("Condition", 1f);
+                stack.set(FDataComponents.BELT.get(), tag);
+            });
         if (type.family() == ModularType.Family.DISH)
             DishBake.of(design, type, materials).ifPresent(d -> eatable(stack, d));
         return true;
     }
 
-    /** Writes an electric machine's figures onto its stack, keeping the condition and temperature a rebake finds already there. */
+    /** Writes a dynamotor's figures onto its stack, keeping the condition and temperature a rebake finds already there. */
     private static void machineState(ItemStack stack, ModularBake.MachineSpec m) {
-        net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.ELECTRIC_MACHINE.get(), new net.minecraft.nbt.CompoundTag()).copy();
+        net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.DYNAMOTOR.get(), new net.minecraft.nbt.CompoundTag()).copy();
         tag.putFloat("FrameSu", m.frameSu());
         tag.putFloat("VoltsPerRpm", m.voltsPerRpm());
         tag.putFloat("RatedAmps", m.ratedAmps());
@@ -163,7 +171,7 @@ public final class ModularStacks {
         tag.putBoolean("Jacketed", m.jacketed());
         if (!tag.contains("Condition"))
             tag.putFloat("Condition", 1f);
-        stack.set(FDataComponents.ELECTRIC_MACHINE.get(), tag);
+        stack.set(FDataComponents.DYNAMOTOR.get(), tag);
     }
 
     /** Writes a battery's cell figures onto its stack, keeping the charge, water, acid and condition a rebake finds already there. */

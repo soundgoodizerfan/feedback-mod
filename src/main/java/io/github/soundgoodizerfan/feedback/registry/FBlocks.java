@@ -30,7 +30,7 @@ import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlock;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlock;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamotorBlock;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlock;
 import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlock;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlock;
@@ -723,9 +723,9 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.METAL)));
 
-    /** Mechanical to Eu and back: a modular motor or dynamo on a shaft. See {@code ElectricMachineBlockEntity}. */
-    public static final DeferredBlock<ElectricMachineBlock> ELECTRIC_MACHINE = BLOCKS.register("electric_machine",
-            () -> new ElectricMachineBlock(BlockBehaviour.Properties.of()
+    /** Mechanical to Eu and back: a modular motor or dynamo on a shaft. See {@code DynamotorBlockEntity}. */
+    public static final DeferredBlock<DynamotorBlock> DYNAMOTOR = BLOCKS.register("dynamotor",
+            () -> new DynamotorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.METAL)));
@@ -1179,6 +1179,38 @@ public class FBlocks {
                 .strength(-1f, 3600000f)
                 .sound(SoundType.METAL), entity));
     }
+
+    // --- pneumatic tubes, pods, ender ports (item logistics spec 4, 6) -------------------------------
+
+    private static BlockBehaviour.Properties tubeProps() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f).sound(SoundType.METAL).noOcclusion();
+    }
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock> TUBE = BLOCKS.register("tube",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock(tubeProps(), io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock.Kind.STANDARD));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock> LINED_TUBE = BLOCKS.register("lined_tube",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock(tubeProps(), io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock.Kind.LINED));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock> WIDE_TUBE = BLOCKS.register("wide_tube",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock(tubeProps(), io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock.Kind.WIDE));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock> EVACUATED_TUBE = BLOCKS.register("evacuated_tube",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock(tubeProps(), io.github.soundgoodizerfan.feedback.machine.tube.TubeBlock.Kind.EVACUATED));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.JunctionBlock> TUBE_JUNCTION = BLOCKS.register("tube_junction",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.JunctionBlock(tubeProps(), false));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.JunctionBlock> PROGRAMMED_JUNCTION = BLOCKS.register("programmed_junction",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.JunctionBlock(tubeProps(), true));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.TubeStationBlock> TUBE_STATION = BLOCKS.register("tube_station",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.TubeStationBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL), false));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.TubeStationBlock> SORTING_STATION = BLOCKS.register("sorting_station",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.TubeStationBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5f).sound(SoundType.METAL), true));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.VacuumPumpBlock> VACUUM_PUMP = BLOCKS.register("vacuum_pump",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.VacuumPumpBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(4.0f).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.LinearMotorBlock> LINEAR_MOTOR = BLOCKS.register("linear_motor",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.LinearMotorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.AirSourceBlock> CREATIVE_AIR = BLOCKS.register("creative_air",
+            () -> new io.github.soundgoodizerfan.feedback.machine.tube.AirSourceBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WATER).strength(-1f, 3600000f).sound(SoundType.METAL),
+                    io.github.soundgoodizerfan.feedback.machine.tube.AirSourceBlockEntity::new));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.ender.EnderPortBlock> ENDER_PORT = BLOCKS.register("ender_port",
+            () -> new io.github.soundgoodizerfan.feedback.machine.ender.EnderPortBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(4.0f).sound(SoundType.METAL)));
 
     private FBlocks() {
     }

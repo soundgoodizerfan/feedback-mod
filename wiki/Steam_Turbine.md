@@ -35,4 +35,4 @@ An [Overspeed Trip](Overspeed_Trip.md) opens above 48 RPM, so one on a turbine's
 
 ## Driving a generator
 
-A large [Electric Machine](Electric_Machine.md) on a dense winding turns 240 RPM into 360 V, enough for an [Arc Furnace](Arc_Furnace.md#power).
+A large [Dynamotor](Dynamotor.md) on a dense winding turns 240 RPM into 360 V, enough for an [Arc Furnace](Arc_Furnace.md#power).

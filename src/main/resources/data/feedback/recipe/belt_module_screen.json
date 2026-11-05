@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:iron_bars"
+    },
+    {
+      "item": "minecraft:iron_bars"
+    },
+    {
+      "item": "feedback:wrought_iron_plate"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:belt_module_screen"
+  }
+}

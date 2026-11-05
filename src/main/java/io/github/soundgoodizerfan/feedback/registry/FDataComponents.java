@@ -99,9 +99,9 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.core.xp.XpStore.STREAM_CODEC)
                     .build());
 
-    /** An electric machine's figures (frame, winding, core and housing baked) and state (condition, temperature, jacket water), carried by the item and the block alike. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> ELECTRIC_MACHINE =
-            COMPONENTS.register("electric_machine", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
+    /** a dynamotor's figures (frame, winding, core and housing baked) and state (condition, temperature, jacket water), carried by the item and the block alike. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> DYNAMOTOR =
+            COMPONENTS.register("dynamotor", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
                     .persistent(net.minecraft.nbt.CompoundTag.CODEC)
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
@@ -109,6 +109,13 @@ public class FDataComponents {
     /** A battery's physical state (charge, water, acid, condition, cell figures), carried by the item and the block alike. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> BATTERY =
             COMPONENTS.register("battery", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
+                    .persistent(net.minecraft.nbt.CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
+    /** A conveyor belt's band (material, grip, heat limit, cleat) and condition, carried by the item and the block alike. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> BELT =
+            COMPONENTS.register("belt", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
                     .persistent(net.minecraft.nbt.CompoundTag.CODEC)
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());

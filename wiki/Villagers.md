@@ -34,14 +34,14 @@ Higher-level villagers order more kinds of piece and pay more.
 
 ### Reading an order
 
-Each stated term reads "Noun: word", for example "Edge hardness: at least hard". Next to it a four-cell bar shows where in the usual range the target sits; a hard requirement fills every cell it allows. Hover a term to see what the figure means. One term is a hard requirement, shown as "at least" or "no more than" a word. Some wants are never said; the complaint after a delivery is how you find them out.
+Each stated term reads "Noun: word", for example "Edge hardness: at least hard". Next to it a four-cell bar shows where in the usual range the target sits; a hard requirement fills every cell it allows. Hover a term to see what the figure means. A term line wider than its box slides back and forth so the whole text can be read. One term is a hard requirement, shown as "at least" or "no more than" a word. Some wants are never said; the complaint after a delivery is how you find them out.
 
 ### Hints
 
 The **Hint** button on the Orders tab explains the selected order. Hints are free and stay until you press **Back** or pick another order.
 
 - For a tool or armor order, each stated term gets a line naming which part of the item to build from which materials, up to four materials, or saying that no single material gets there and you should combine or reshape parts. Each hint swaps one part of the plain design; the whole item is what is judged.
-- For a dish order, each stated term gets a line saying how to move it: more animal parts, delivering it hot, salted food, smoking, a sealed container and so on. A closing line points to the [Tasting Spoon](Tasting_Spoon.md).
+- For a dish order, each stated term gets a line saying how to move it: more animal parts, delivering it hot, salted food, smoking, a sealed container and so on. Under it, a line reading "Try building with ..." names up to four foods to build the dish from: foods of the matching kind or cuisine for meat, seafood, plant, starch and cuisine terms, and the foods highest (or lowest, when the term wants low) in the figure for fat, fibre and moisture terms. A closing line points to the [Tasting Spoon](Tasting_Spoon.md).
 
 ### Delivering
 

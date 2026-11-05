@@ -843,7 +843,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     public java.util.Optional<Item> item(ResourceLocation id, String form) {
         if (forms.containsKey(form))
             return BuiltInRegistries.ITEM.getOptional(forms.get(form));
-        if (exclude.contains(form))
+        // A part form's item is shared by every material, so the registry alone says yes for air's cylinder: ask the form type too.
+        if (exclude.contains(form) || !generated(FormItems.types()).contains(form))
             return java.util.Optional.empty();
         return BuiltInRegistries.ITEM.getOptional(FormItems.itemId(id, form));
     }

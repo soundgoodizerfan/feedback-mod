@@ -153,7 +153,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         VESSEL,
         /** A rechargeable cell stack ({@code battery}): plates whose material states {@code electrical.secondary_cell}, in a case whose material insulates. Its bake is the {@link ModularBake#cell} spec the placed block runs on. */
         CELL,
-        /** A placed electric machine ({@code electric_machine}, the motor and dynamo): frame, winding, core and housing, whose bake is the {@link ModularBake#machine} spec the placed block runs on. */
+        /** A placed dynamotor ({@code dynamotor}, the motor and dynamo): frame, winding, core and housing, whose bake is the {@link ModularBake#machine} spec the placed block runs on. */
+        /** A conveyor belt cell ({@code conveyor_belt}): a band of flexible stock, optionally cleated; its bake is the {@link ModularBake#belt} spec the placed block runs on. */
+        BELT,
         MACHINE;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);

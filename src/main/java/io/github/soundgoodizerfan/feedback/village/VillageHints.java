@@ -59,8 +59,16 @@ public final class VillageHints {
         if (type == null)
             return out;
         if (type.family() == ModularType.Family.DISH) {
-            for (Order.Term t : order.terms())
+            for (Order.Term t : order.terms()) {
                 out.add(Component.translatable("village.feedback.hint.line", noun(t.fig()), Component.translatable("village.feedback.hint.fig." + name(t.fig()))));
+                List<Component> foods = foodsFor(t);
+                if (!foods.isEmpty()) {
+                    Component list = Component.empty();
+                    for (int i = 0; i < foods.size(); i++)
+                        list = Component.empty().append(list).append(i == 0 ? Component.empty() : Component.literal(", ")).append(foods.get(i));
+                    out.add(Component.translatable("village.feedback.hint.eg", list));
+                }
+            }
             out.add(Component.translatable("village.feedback.hint.dish"));
             return out;
         }
@@ -102,6 +110,41 @@ public final class VillageHints {
         }
         out.add(Component.translatable("village.feedback.hint.note"));
         return out;
+    }
+
+    /** Foods worth building the dish from for a term that wants a high figure (or a low fat, fibre or moisture): by kind, trait or the food's own figure. Empty when no food says it. */
+    private static List<Component> foodsFor(Order.Term t) {
+        boolean high = t.must() ? t.above() : t.frac() >= 0.5f;
+        Fig f = t.fig();
+        java.util.function.Predicate<Material> pick = switch (f) {
+            case SHARE_MEAT -> m -> m.kind().orElse(null) == Material.Kind.ANIMAL;
+            case SHARE_SEAFOOD -> m -> m.kind().orElse(null) == Material.Kind.SEAFOOD;
+            case SHARE_PLANT -> m -> m.kind().orElse(null) == Material.Kind.VEGETABLE || m.kind().orElse(null) == Material.Kind.FRUIT || m.kind().orElse(null) == Material.Kind.FUNGUS;
+            case SHARE_STARCH -> m -> m.kind().orElse(null) == Material.Kind.GRAIN || m.kind().orElse(null) == Material.Kind.DOUGH;
+            case CUISINE_ITALIAN -> m -> m.traits().contains(Material.Trait.ITALIAN);
+            case CUISINE_EAST_ASIAN -> m -> m.traits().contains(Material.Trait.EAST_ASIAN);
+            case CUISINE_MEXICAN -> m -> m.traits().contains(Material.Trait.MEXICAN);
+            case CUISINE_EASTERN_EUROPEAN -> m -> m.traits().contains(Material.Trait.EASTERN_EUROPEAN);
+            case FAT, FIBRE, DISH_MOISTURE -> m -> true;
+            default -> null;
+        };
+        if (pick == null)
+            return List.of();
+        boolean share = f.name().startsWith("SHARE_") || f.name().startsWith("CUISINE_");
+        if (share && !high)
+            return List.of();
+        java.util.function.ToDoubleFunction<Material> key = m -> switch (f) {
+            case FAT -> m.food().get().fat();
+            case FIBRE -> m.food().get().fibre();
+            case DISH_MOISTURE -> m.food().get().moisture();
+            default -> 0d;
+        };
+        return MaterialTable.get().materials().entrySet().stream()
+                .filter(e -> e.getValue().food().isPresent() && e.getValue().kind().orElse(null) != Material.Kind.DISH && pick.test(e.getValue()))
+                .sorted(Comparator.<Map.Entry<ResourceLocation, Material>>comparingDouble(e -> high ? -key.applyAsDouble(e.getValue()) : key.applyAsDouble(e.getValue()))
+                        .thenComparing(e -> e.getKey().toString()))
+                .limit(MAX_NAMED)
+                .map(e -> (Component) Component.translatable("material." + e.getKey().getNamespace() + "." + e.getKey().getPath())).toList();
     }
 
     /** Whether {@code v} would satisfy the term at full score: a must's side of its target, a band's inner half. */

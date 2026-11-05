@@ -64,6 +64,8 @@ import net.minecraft.world.item.ItemStack;
 public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCategory.Card> {
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "tool_table_tool", Card.class);
+    /** The gun's own tab: same card, its own type so JEI lists it apart from the tools. */
+    static final RecipeType<Card> GUN_TYPE = RecipeType.create("feedback", "gun_table_gun", Card.class);
 
     /** One form of one type. */
     public record Card(ResourceLocation type, int form) {
@@ -79,19 +81,27 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
+    private final RecipeType<Card> recipeType;
+    private final String titleKey;
 
     public ToolTableToolCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(net.minecraft.world.item.Items.CRAFTING_TABLE));
+        this(guiHelper, TYPE, "feedback.jei.tool_table_tool", new ItemStack(net.minecraft.world.item.Items.CRAFTING_TABLE));
+    }
+
+    public ToolTableToolCategory(IGuiHelper guiHelper, RecipeType<Card> recipeType, String titleKey, ItemStack icon) {
+        this.icon = guiHelper.createDrawableItemStack(icon);
+        this.recipeType = recipeType;
+        this.titleKey = titleKey;
     }
 
     @Override
     public RecipeType<Card> getRecipeType() {
-        return TYPE;
+        return recipeType;
     }
 
     @Override
     public Component getTitle() {
-        return Component.translatable("feedback.jei.tool_table_tool");
+        return Component.translatable(titleKey);
     }
 
     @Override
@@ -109,9 +119,9 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
         return HEIGHT;
     }
 
-    /** The roles of a form with every optional part offered, in the type's order, and how many of each: {@link ToolDesigns}' own answer. */
+    /** The roles the form itself has, in the type's order, and how many of each: {@link ToolDesigns}' own answer. Optional parts are a line of text, not slots. */
     private static Map<String, Integer> roles(ModularType type, int form) {
-        return ToolDesigns.counts(type, form, new java.util.LinkedHashSet<>(type.optionals()), java.util.Map.of());
+        return ToolDesigns.counts(type, form, java.util.Set.of(), java.util.Map.of());
     }
 
     @Override
@@ -166,8 +176,7 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
         for (Map.Entry<String, Integer> r : roles.entrySet()) {
             ModularType.Role role = type.roles().get(r.getKey());
             String line = Component.translatable("modular.feedback.role." + role.name()).getString()
-                    + (r.getValue() > 1 && !ToolDesigns.shaped(role) ? " x" + r.getValue() : "")
-                    + (type.optionals().contains(r.getKey()) ? " (" + Component.translatable("feedback.jei.tool_table_tool.optional").getString() + ")" : "");
+                    + (r.getValue() > 1 && !ToolDesigns.shaped(role) ? " x" + r.getValue() : "");
             if (roles.size() > ROWS)
                 line = font.plainSubstrByWidth(line, 56);
             graphics.drawString(font, line, 24 + column(roles, i), 19 + 20 * (i % ROWS), VALUE_COLOUR, false);
@@ -178,6 +187,11 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
         y = note(graphics, font, y, dish ? "feedback.jei.tool_table_tool.dish" : "feedback.jei.tool_table_tool.slots");
         if (dish)
             return;
+        String extras = type.optionals().stream().filter(r -> !roles.containsKey(r))
+                .map(r -> Component.translatable("modular.feedback.role." + type.roles().get(r).name()).getString())
+                .collect(java.util.stream.Collectors.joining(", "));
+        if (!extras.isEmpty())
+            y = note(graphics, font, y, Component.translatable("feedback.jei.tool_table_tool.optional", extras));
         if (roles.keySet().stream().anyMatch(r -> type.roles().get(r).set()))
             y = note(graphics, font, y, "feedback.jei.modular.studs");
         else if (type.family() != ModularType.Family.ARMOUR && type.roles().values().stream().anyMatch(ModularType.Role::set))
@@ -190,7 +204,10 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
     }
 
     private static int note(GuiGraphics graphics, Font font, int y, String key) {
-        Component text = Component.translatable(key);
+        return note(graphics, font, y, Component.translatable(key));
+    }
+
+    private static int note(GuiGraphics graphics, Font font, int y, Component text) {
         graphics.drawWordWrap(font, text, 1, y, WIDTH - 2, LABEL_COLOUR);
         return y + 10 * font.split(text, WIDTH - 2).size() + 2;
     }

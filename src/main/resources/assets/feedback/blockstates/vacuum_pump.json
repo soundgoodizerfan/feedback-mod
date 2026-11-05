@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/vacuum_pump"
+    },
+    "facing=south": {
+      "model": "feedback:block/vacuum_pump"
+    },
+    "facing=east": {
+      "model": "feedback:block/vacuum_pump"
+    },
+    "facing=west": {
+      "model": "feedback:block/vacuum_pump"
+    },
+    "facing=up": {
+      "model": "feedback:block/vacuum_pump"
+    },
+    "facing=down": {
+      "model": "feedback:block/vacuum_pump"
+    }
+  }
+}

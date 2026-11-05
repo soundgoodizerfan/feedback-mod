@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:pump"
+    },
+    {
+      "item": "feedback:tube"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:vacuum_pump"
+  }
+}

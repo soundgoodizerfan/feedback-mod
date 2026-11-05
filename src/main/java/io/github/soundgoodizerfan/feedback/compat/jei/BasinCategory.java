@@ -23,7 +23,6 @@ import java.util.Locale;
 
 import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.geology.Basin;
-import io.github.soundgoodizerfan.feedback.registry.FFluids;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -87,7 +86,7 @@ public class BasinCategory implements IRecipeCategory<Basin> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Basin basin, IFocusGroup focuses) {
         builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 14).setOutputSlotBackground()
-                .addFluidStack(FFluids.CRUDE_OIL.get(), 1000).setFluidRenderer(1000, false, 16, 16);
+                .addFluidStack(BuiltInRegistries.FLUID.get(basin.fluid()), 1000).setFluidRenderer(1000, false, 16, 16);
         basin.indicator().ifPresent(id -> builder.addOutputSlot(WIDTH - 19, 14).setOutputSlotBackground()
                 .addItemStack(new ItemStack(BuiltInRegistries.ITEM.get(id))));
     }

@@ -93,7 +93,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.CABLE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.ELECTROMAGNET.get(), DataNodeRenderer::new);
-        event.registerBlockEntityRenderer(FBlockEntities.ELECTRIC_MACHINE.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.DYNAMOTOR.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.COIL.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.BREAKER.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.FUSE.get(), DataNodeRenderer::new);
@@ -101,6 +101,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.ELECTROLYTIC_CELL.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.GALVANIC_CELL.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.ELECTROSTATIC_GENERATOR.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FLogistics.BELT_ENTITY.get(), BeltModuleRenderer::new);
     }
 
     /**

@@ -95,7 +95,7 @@ public class FCapabilities {
                 (vessel, side) -> new io.github.soundgoodizerfan.feedback.machine.vessel.VesselFluidHandler(vessel));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.BATTERY.get(),
                 (battery, side) -> battery.fluids);
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ELECTRIC_MACHINE.get(),
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.DYNAMOTOR.get(),
                 (machine, side) -> machine.isJacketed() ? machine.fluids : null);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.REBOILER.get(),
                 (reboiler, side) -> reboiler.getHandler());
@@ -115,6 +115,11 @@ public class FCapabilities {
                 (burner, side) -> burner.getFuel());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FVehicles.THRUSTER_ENTITY.get(),
                 (thruster, side) -> thruster.getFuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.TUBE.get(), (tube, side) -> tube.getHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.TUBE_JUNCTION.get(), (tube, side) -> tube.getHandler());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.TUBE_STATION.get(), (station, side) -> station.getHandler());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.ENDER_PORT.get(), (port, side) -> port.getItemHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ENDER_PORT.get(), (port, side) -> port.getFluidHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.PIPE.get(),
                 (pipe, side) -> pipe.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CREATIVE_FLUID.get(),

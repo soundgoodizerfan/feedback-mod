@@ -11,7 +11,7 @@ A rotation source that burns fuel gas continuously. Put it on a [shaft](Shaft.md
 
 ## Starting it
 
-A gas turbine **cannot light itself**. It lights only while something else on the same network is already turning it at **20 RPM or more**: an [Electric Machine](Electric_Machine.md) run as a motor, or a [Hand Crank](Hand_Crank.md). Once it has spooled up to about **20%**, it holds itself and the starter can stop.
+A gas turbine **cannot light itself**. It lights only while something else on the same network is already turning it at **20 RPM or more**: an [Dynamotor](Dynamotor.md) run as a motor, or a [Hand Crank](Hand_Crank.md). Once it has spooled up to about **20%**, it holds itself and the starter can stop.
 
 It spools up slowly after that, and when the fuel runs out it **coasts down very slowly**. Its output follows the spool, not the fuel gauge.
 
@@ -29,5 +29,5 @@ If the spool is under the self-sustaining level, and nothing else is turning the
 ## Notes
 
 - Fuel is burned at 2 mB a tick at full spool for a standard fuel.
-- A large [Electric Machine](Electric_Machine.md) on a dense winding turns the 240 RPM shaft into 360 V (EHV); on a heavy-dense winding, 1,440 V (Trunk). Either powers an [Arc Furnace](Arc_Furnace.md#power).
+- A large [Dynamotor](Dynamotor.md) on a dense winding turns the 240 RPM shaft into 360 V (EHV); on a heavy-dense winding, 1,440 V (Trunk). Either powers an [Arc Furnace](Arc_Furnace.md#power).
 - A [Flare Stack](Flare_Stack.md) is the safe place to send gas the turbine does not need.

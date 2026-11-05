@@ -1,0 +1,71 @@
+{
+  "family": "belt",
+  "slot": "mainhand",
+  "wear_litres": 0.25,
+  "wear_role": "B",
+  "primary": "B",
+  "roles": {
+    "B": {
+      "name": "band",
+      "forms": [
+        "belt_band"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:belt_band",
+        "shape": [
+          "PPP"
+        ],
+        "stock": [
+          "leather",
+          "plate"
+        ],
+        "variants": [
+          {
+            "name": "textured",
+            "shape": [
+              "PPP",
+              "PPP"
+            ],
+            "params": {
+              "grip": 1.25
+            }
+          },
+          {
+            "name": "link",
+            "shape": [
+              "PPPP"
+            ],
+            "params": {
+              "grip": 0.85,
+              "heat": 1.6
+            }
+          }
+        ]
+      }
+    },
+    "C": {
+      "name": "cleat",
+      "forms": [
+        "rod",
+        "stick"
+      ],
+      "litres": 0.05,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "B"
+    ],
+    [
+      "B",
+      "C"
+    ]
+  ],
+  "defaults": {
+    "B": "feedback:leather",
+    "C": "feedback:iron"
+  }
+}

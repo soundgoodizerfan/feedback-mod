@@ -195,7 +195,7 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
             g.drawString(font, fit(new ItemStack(BuiltInRegistries.ITEM.get(o.type())).getHoverName(), DETAIL_W - 12), x + DETAIL_X + 6, ty, skin.accent(), false);
             for (TermView t : o.terms()) {
                 ty += 11;
-                g.drawString(font, fit(term(t), DETAIL_W - 12 - BAR_W - 4), x + DETAIL_X + 6, ty, skin.ink(), false);
+                marquee(g, term(t), x + DETAIL_X + 6, ty, DETAIL_W - 12 - BAR_W - 4, skin.ink());
                 bar(g, t, x + DETAIL_X + DETAIL_W - 6 - BAR_W, ty);
             }
             if (hintOpen && !v.hint().isEmpty()) {
@@ -359,6 +359,21 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
                     Component.translatable("village.feedback.noun." + f.name().toLowerCase(Locale.ROOT))));
         }
         return v.paid() > 0 ? Component.empty().append(said).append(" ").append(Component.translatable("gui.feedback.villager.paid", v.paid())) : said;
+    }
+
+    /** Draws text clipped to {@code width}; text wider than that slides back and forth, pausing at each end. */
+    private void marquee(GuiGraphics g, Component text, int x, int y, int width, int color) {
+        int over = font.width(text) - width;
+        int off = 0;
+        if (over > 0) {
+            long period = over * 25L + 1500L; // 40 px/s plus a pause at each end
+            long t = net.minecraft.Util.getMillis() % (2 * period);
+            long ping = t < period ? t : 2 * period - t;
+            off = (int) Math.max(0, Math.min(over, (ping - 750L) / 25L));
+        }
+        g.enableScissor(x, y - 1, x + width, y + 10);
+        g.drawString(font, text, x - off, y, color, false);
+        g.disableScissor();
     }
 
     private Component fit(Component text, int width) {

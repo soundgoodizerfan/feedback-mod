@@ -91,7 +91,10 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
             MaterialTable.get().materials().forEach((id, material) -> {
                 var melt = material.thermal().meltingPoint();
                 var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID
-                        .getOptional(id.withPath("molten_" + id.getPath()));
+                        .getOptional(id.withPath("molten_" + id.getPath()))
+                        // polymers: soul_resin -> soul_resin_melt
+                        .or(() -> net.minecraft.core.registries.BuiltInRegistries.FLUID
+                                .getOptional(id.withPath(id.getPath() + "_melt")));
                 if (melt.isEmpty() || fluid.isEmpty())
                     return;
                 var items = material.items(id);

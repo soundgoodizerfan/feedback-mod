@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "W": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "WWW",
+    "WSW"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:belt_head"
+  }
+}

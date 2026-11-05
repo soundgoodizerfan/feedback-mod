@@ -88,7 +88,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "hammer_head", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing")
+            "hammer_head", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -299,9 +299,13 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.BatteryItem> BATTERY = ITEMS.register("battery",
             () -> new io.github.soundgoodizerfan.feedback.modular.BatteryItem(FBlocks.BATTERY.get(), new Item.Properties().stacksTo(1)));
 
-    /** The motor and dynamo (roadmap E5): a Tool Table build that places as the {@code electric_machine} block. */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ElectricMachineItem> ELECTRIC_MACHINE = ITEMS.register("electric_machine",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ElectricMachineItem(FBlocks.ELECTRIC_MACHINE.get(), new Item.Properties().stacksTo(1)));
+    /** The motor and dynamo (roadmap E5): a Tool Table build that places as the {@code dynamotor} block. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DynamotorItem> DYNAMOTOR = ITEMS.register("dynamotor",
+            () -> new io.github.soundgoodizerfan.feedback.modular.DynamotorItem(FBlocks.DYNAMOTOR.get(), new Item.Properties().stacksTo(1)));
+
+    /** The conveyor belt: a Tool Table build that places as the {@code conveyor_belt} block. See {@code logistics/belt}. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.BeltItem> CONVEYOR_BELT = ITEMS.register("conveyor_belt",
+            () -> new io.github.soundgoodizerfan.feedback.modular.BeltItem(FLogistics.BELT.get(), new Item.Properties().stacksTo(16)));
 
     private FModular() {
     }

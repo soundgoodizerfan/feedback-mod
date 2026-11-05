@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": {
+      "item": "feedback:copper_tubing"
+    },
+    "W": {
+      "item": "feedback:wide_tube"
+    }
+  },
+  "pattern": [
+    " T ",
+    "TWT",
+    " T "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:tube_junction"
+  }
+}

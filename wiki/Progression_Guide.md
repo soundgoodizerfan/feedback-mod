@@ -44,7 +44,7 @@ Read: [Metalworking](Metalworking.md), [Gun Parts](Gun_Parts.md), [Engine](Engin
 
 ## 6. Electricity
 
-Make a small charge with a [Galvanic Cell](Galvanic_Cell.md) or an [Electrostatic Generator](Electrostatic_Generator.md), and make steady power with an [Electric Machine](Electric_Machine.md) on a turning shaft. [Copper Cable](Copper_Cable.md) carries it anywhere, and an Electric Machine run as a motor turns it back into rotation at the machine. A [Battery](Battery.md) stores it. The [Heating Coil](Heating_Coil.md), [Electromagnet](Electromagnet.md) and [Electrolytic Cell](Electrolytic_Cell.md) are the first electric tools. Wrong volts and amps cost you cable, machines and health.
+Make a small charge with a [Galvanic Cell](Galvanic_Cell.md) or an [Electrostatic Generator](Electrostatic_Generator.md), and make steady power with an [Dynamotor](Dynamotor.md) on a turning shaft. [Copper Cable](Copper_Cable.md) carries it anywhere, and a Dynamotor run as a motor turns it back into rotation at the machine. A [Battery](Battery.md) stores it. The [Heating Coil](Heating_Coil.md), [Electromagnet](Electromagnet.md) and [Electrolytic Cell](Electrolytic_Cell.md) are the first electric tools. Wrong volts and amps cost you cable, machines and health.
 
 Read: [Electricity](Electricity.md), [Breaker](Breaker.md), [Fuse](Fuse.md), [Hazards](Hazards.md).
 

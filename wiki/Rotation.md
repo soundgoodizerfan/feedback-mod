@@ -4,7 +4,7 @@ Most machines in Feedback run on **rotation**: spinning shafts carrying power fr
 
 ## The basics
 
-- A **source** makes rotation: [Water Wheel](Water_Wheel.md), [Steam Engine](Steam_Engine.md), [Engine](Engine.md), [Hand Crank](Hand_Crank.md), [Electric Machine](Electric_Machine.md) (as a motor).
+- A **source** makes rotation: [Water Wheel](Water_Wheel.md), [Steam Engine](Steam_Engine.md), [Engine](Engine.md), [Hand Crank](Hand_Crank.md), [Dynamotor](Dynamotor.md) (as a motor).
 - **Shafts**, [cogs](Cogs.md), [gearboxes](Cogs.md#gearbox) and [pulleys](Pulleys.md) carry it.
 - **Machines** use it: [hammers](Mechanical_Hammer.md) (through a [Crank Linkage](Crank_Linkage.md)), [presses](Mechanical_Press.md), [mills](Rolling_Mill.md), [lathes](Lathe.md) and so on.
 

@@ -21,13 +21,13 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
 import io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu;
@@ -37,6 +37,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularBake;
 import io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
@@ -46,108 +47,155 @@ import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
 import io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The Blueprint Table: draw a tool on paper and read what it bakes to. Everything it offers comes
- * from {@link ToolDesigns}, the same model the Tool Table makes things from, so a drawing is exactly
- * what the Tool Table would accept and the figures are the ones of the item it would make (spec 6,
- * 4.2: the blueprint predicts, instruments measure). Heat and flaws are not drawn: a flaw is what
- * forging adds.
+ * The Blueprint Table: a drafting board. The design is drawn as an exploded assembly of its own parts in a
+ * roomy pan-and-zoom panel, and everything it offers comes from {@link ToolDesigns}, the same model the Tool
+ * Table makes things from, so a drawing is exactly what the Tool Table would accept and the figures are the
+ * ones of the item it would make (spec 6, 4.2: the blueprint predicts, instruments measure). Heat and flaws are
+ * not drawn: a flaw is what forging adds. The printed paper, the menu and the payload are unchanged.
  *
  * <h2>The sheet</h2>
- * Top: the type (sword, axe, gun...). There is no form to pick: which parts the build has is just which
- * options are on -- the optional parts and the parts some forms of the type have and others do not (a gun's
- * slide or bolt, cylinder or tube), found by {@link #now}. Then a list with a bar per part drawn; the selected bar's material, shape (and
- * edge) are set in the detail panel under the list, so the list itself stays short and readable. The last
- * bar is <em>+ add part</em>: it adds an optional part as a bar with its own arrows, to swap it for any other
- * optional part. Stats sit under the panel.
+ * <ul>
+ * <li><b>Drawer</b> (top): the types as icons, scrolled by the wheel; the search button opens the long list.</li>
+ * <li><b>Canvas</b>: each part a node placed where the type's {@code patterns} picture puts its letter (the
+ * pattern is a small drawing of the item); parts no pattern lays (the optional ones) sit in a tray beside or
+ * under it, the ones that can be added as dashed slots. A link joins letters that touch in the pattern, drawn
+ * by the design's {@code JOINT} figure (thick and cool with margin, amber near the limit, thin dashed red past
+ * it). A drawing that cannot be made shows the failing link in red with the reason beside it. Drag to pan,
+ * wheel to zoom about the pointer, click a part to select it, click a dashed slot to add one, the corner mark
+ * to take one off. Qualities are chips along the bottom edge.</li>
+ * <li><b>Part panel</b> (bottom left): the selected part's material swatches and shape thumbnails. A material
+ * item carried on the cursor paints any part it is clicked on; the sample slot sets the selected part once.</li>
+ * <li><b>Figures</b> (bottom right): one bar per figure with a tick for the first drawing; the arrow says it
+ * has moved. Shift prints the figure. Hovering a bar lights the parts that changed it ({@link #traceFor}).
+ * Hovering a swatch, a shape or a part with a material in hand shows the would-be figures as a ghost mark.
+ * Pinned drafts (up to three, this session) add their own coloured tick to every bar.</li>
+ * </ul>
+ * Layout, icons and predictions are worked out when an edit is made ({@link #refresh}), never per frame.
  */
 public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
-    private static final int ROW_Y = 22, ROW_H = 18, LIST_X = 8, NAME_X = 14;
-    /** Bars on the page at once; a longer list scrolls with the wheel. */
-    private static final int VISIBLE = 5;
-    private static final int DET_Y = ROW_Y + VISIBLE * ROW_H + 4, DET_H = 56, DET_ROW = 17;
-    private static final int CTL_X = 84, CTL_W = 190;
-    /** The search button beside a stepper. */
-    private static final int SEARCH_W = 16;
-    private static final int STATS_Y = DET_Y + DET_H + 6;
-    private static final int BAD = 0xFFAA0000;
-    /** The list item that adds a part. */
-    private static final String ADD = "+";
+    // geometry, relative to the panel
+    private static final int CAN_X = 8, CAN_Y = 24, CAN_W = 344, CAN_H = 116;
+    private static final int PAN_Y = 144, PAN_H = 128;
+    private static final int CALL_X = 8, CALL_W = 204;
+    private static final int RES_X = 216, RES_W = 136;
+    private static final int DRAWER_X = 8, DRAWER_SLOTS = 12, DRAWER_PITCH = 18;
+    /** A node's size and the distance between nodes, in drawing units. */
+    private static final float NODE = 26, PITCH = 40;
+    private static final int ROW_H = 10, LABEL_W = 50, BAR_W = 62;
+    private static final int SWATCH = 12, SWATCH_PITCH = 13, THUMB = 22, THUMB_PITCH = 24;
+    private static final float MIN_ZOOM = 0.4f, MAX_ZOOM = 2.2f;
+    private static final int MAX_PINS = 3;
+    /** The series colours of the pinned drafts: data marks on the bars, not text. */
+    private static final int[] PIN_COLOURS = {0xFFF2C14E, 0xFF7FE0B0, 0xFFE08FE8};
 
-    /** A box that explains itself when hovered, in screen coordinates. */
-    private record Tip(int x, int y, int w, int h, Supplier<List<Component>> lines, int width) {
+    /** A part (or a slot for one) on the canvas, at a place in drawing units. */
+    private record Node(String key, String role, boolean ghost, float x, float y, ItemStack icon) {
+    }
+
+    /** Where a drawing fails: the roles at fault (none for the whole drawing) and why. */
+    private record Fault(List<String> roles, Component reason) {
+    }
+
+    /** Everything about an edit that can be put back: a pinned draft. */
+    private record Draft(int type, int form, Set<String> extras, Map<String, Integer> sizes, Map<String, Integer> shape,
+                         Map<String, ResourceLocation> material, Edge edge, String selected) {
+    }
+
+    private record Pin(Draft draft, ModularFigures figures) {
     }
 
     private final List<ResourceLocation> types = ToolDesigns.drawable(ModularTypes.known());
+    private final List<ItemStack> typeIcons = new ArrayList<>();
     private int type;
     private int form;
     private final Set<String> extras = new LinkedHashSet<>();
     /** The size of each ranged part (a charge's filler), beside the pattern: a part with a count is one part. */
     private final Map<String, Integer> sizes = new HashMap<>();
-    /** The first list item on the page. */
-    private int rowScroll;
-    /** The window that opens over the sheet to pick an optional part to add. */
-    private final SkinPopup<String> addPopup = new SkinPopup<>(skin, Component.translatable("gui.feedback.blueprint_table.add_part_title"));
-    /** The searchable windows that pick a type or a material by name instead of stepping to it. */
+    /** The window that opens over the sheet to pick a type by name. */
     private final SkinPopup<Integer> typePopup = new SkinPopup<>(skin, Component.translatable("gui.feedback.blueprint_table.pick_type"));
-    private final SkinPopup<Integer> materialPopup = new SkinPopup<>(skin, Component.translatable("gui.feedback.blueprint_table.pick_material"));
-    /** The part whose detail is shown; null picks the first. */
+    /** The part whose swatches and shapes are shown; null picks the first. */
     private String selected;
     private Edge edge = Edge.STANDARD;
-    /** Per role letter, which of its shapes and which of its materials is drawn. */
+    /** Per role letter, which of its shapes is drawn and which material (by id; absent is the type's default). */
     private final Map<String, Integer> shape = new HashMap<>();
-    private final Map<String, Integer> material = new HashMap<>();
-    /** What the sample slot held when last read, so a sample sets its material once and the stepper can then change it. */
+    private final Map<String, ResourceLocation> matId = new HashMap<>();
+    /** What the sample slot held when last read, so a sample sets its material once. */
     private ItemStack seen = ItemStack.EMPTY;
     /** The paper last seen, so only a blueprint newly put in is opened. */
     private ItemStack lastPaper = ItemStack.EMPTY;
-    private ModularDesign baked;
+
+    // --- worked out by refresh() -----------------------------------------------------------------
+    private Optional<ModularDesign> baked = Optional.empty();
     private Optional<ModularFigures> figures = Optional.empty();
-    /** Where each figure's line was last drawn, as x, y, width, in the panel's own coordinates. */
-    private final List<int[]> figureBoxes = new ArrayList<>();
+    private List<Fig> shown = List.of();
+    private List<ModularModifiers.Modifier> modifiers = List.of();
+    private List<String> chipText = List.of();
+    private List<Component> uses = List.of();
+    private List<Fault> faults = List.of();
+    private final Map<String, ItemStack> icons = new HashMap<>();
+    private List<Node> nodes = List.of();
+    private final Map<String, Integer> nodeOf = new HashMap<>();
+    /** Pairs of node indices that touch in the pattern. */
+    private List<int[]> links = List.of();
+    private float boundsX0, boundsY0, boundsX1, boundsY1;
+    private boolean refit = true;
     /** The first drawing of this type or blueprint, which later swaps are compared with. */
     private Optional<ModularFigures> reference = Optional.empty();
+    private Optional<ModularDesign> referenceDesign = Optional.empty();
     private boolean fresh = true;
-    private List<Component> changes = List.of();
-    /** What the drawn item is for, beyond the shared figures (a battery's cells, volts and case). */
-    private List<Component> uses = List.of();
-    /** Where the changes line and the modifiers line were last drawn, as x, y, width. */
-    private int[] changeBox, modifierBox;
-    private List<ModularModifiers.Modifier> modifiers = List.of();
-    private final List<Tip> tips = new ArrayList<>();
-    /** False until the first edit after a type is picked: the form stage. */
-    private boolean touched;
-    private int lastStage;
-    /** Width of the type stepper; the search button, then the stage strip, follow it. */
-    private static final int TYPE_W = 130;
+    /** Per figure, what a full bar is: set from the first drawing and grown when a figure outruns it. */
+    private final float[] tops = new float[Fig.values().length];
+    private final Map<String, List<Material.Located>> materialLists = new HashMap<>();
+    private Map<ResourceLocation, Material> listedFor;
+
+    // --- view state ------------------------------------------------------------------------------
+    private double camX, camY;
+    private float zoom = 1;
+    private boolean panning;
+    private int drawerScroll, swatchScroll, figScroll;
+    private final Map<String, Long> flashes = new HashMap<>();
+    private long stampAt;
+    private final List<Pin> pins = new ArrayList<>();
+
+    // --- hover, set every frame in renderBg ------------------------------------------------------
+    private int hoverNode = -1, hoverSwatch = -1, hoverShape = -1, hoverFig = -1, hoverChip = -1, hoverDrawer = -1, hoverFault = -1;
+    private boolean hoverCorner;
+    /** The would-be drawing under a swatch, a shape or a carried material, as its parts and its figures. */
+    private String ghostRole;
+    private ResourceLocation ghostMat;
+    private int ghostShape = -1;
+    private Optional<ModularFigures> ghost = Optional.empty();
+    private final Map<String, Optional<ModularFigures>> ghosts = new HashMap<>();
+    /** The parts that changed from the first drawing, and what each does to a figure: filled on first hover of a bar. */
+    private Map<String, ModularFigures> ablation;
+    private Fig traceFor;
+    private final Map<String, Float> trace = new HashMap<>();
+    private final Map<Fig, String> labels = new java.util.EnumMap<>(Fig.class);
 
     public BlueprintTableScreen(BlueprintTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.BLUEPRINT);
-        imageWidth = 300;
+        imageWidth = BlueprintTableMenu.W;
         imageHeight = BlueprintTableMenu.H;
         inventoryLabelY = 10_000; // only the hotbar is shown
-        titleLabelY = 10_000; // the type's name is the title
+        titleLabelY = 10_000; // the type's name is drawn on the canvas
+        for (ResourceLocation id : types)
+            typeIcons.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));
         selectType(0);
-        touched = false;
-    }
-
-    /** Form until the first edit, result once the drawing prices out, draw while paper waits in the slot (stock is the unfitting in-between). */
-    private int stage() {
-        if (!touched)
-            return 0;
-        if (figures.isEmpty())
-            return 1;
-        return menu.getSlot(0).hasItem() ? 3 : 2;
+        refresh();
     }
 
     private ModularType current() {
@@ -172,21 +220,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return List.of();
         Map<String, Integer> counts = counts();
         return t.order().stream().filter(counts::containsKey).toList();
-    }
-
-    /** The list: every part drawn, then the add bar while there are optional parts left. */
-    private List<String> items() {
-        List<String> out = new ArrayList<>(rows());
-        if (!offered().isEmpty())
-            out.add(ADD);
-        return out;
-    }
-
-    /** The items on the page. */
-    private List<String> visibleItems() {
-        List<String> all = items();
-        rowScroll = Math.max(0, Math.min(rowScroll, all.size() - VISIBLE));
-        return all.subList(rowScroll, Math.min(all.size(), rowScroll + VISIBLE));
     }
 
     /** The selected part: the one picked if it is still drawn, else the first. */
@@ -364,26 +397,22 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return counts().containsKey(role);
     }
 
+
     private void selectType(int index) {
         type = types.isEmpty() ? 0 : Math.floorMod(index, types.size());
         fresh = true;
-        rowScroll = 0;
+        refit = true;
         selected = null;
         form = 0;
+        swatchScroll = 0;
+        figScroll = 0;
         extras.clear();
         sizes.clear();
         shape.clear();
-        material.clear();
-        ModularType t = current();
-        if (t == null)
-            return;
-        t.roles().forEach((letter, role) -> {
-            List<Material.Located> c = materials(letter);
-            ResourceLocation fallback = t.defaults().get(letter);
-            for (int i = 0; i < c.size(); i++)
-                if (c.get(i).id().equals(fallback))
-                    material.put(letter, i);
-        });
+        matId.clear();
+        materialLists.clear();
+        flashes.clear();
+        drawerScroll = Mth.clamp(type - DRAWER_SLOTS / 2, 0, Math.max(0, types.size() - DRAWER_SLOTS));
     }
 
     /** Open a blueprint: its type, form and extras, and each part's shape and material where it is a choice. */
@@ -404,10 +433,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 if (options.get(i).variant().name().equals(p.variant())
                         && (p.kind().isEmpty() || options.get(i).shaping().item().getPath().equals(p.kind())))
                     shape.put(p.role(), i);
-            List<Material.Located> c = materials(p.role());
-            for (int i = 0; i < c.size(); i++)
-                if (c.get(i).id().equals(p.material()))
-                    material.put(p.role(), i);
+            matId.put(p.role(), p.material());
         });
     }
 
@@ -416,19 +442,51 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return t == null ? List.of() : ToolDesigns.shapes(t.roles().get(role), ModularTypes.known());
     }
 
-    private ToolTableShaping.Option shapeOf(String role) {
+    private int shapeIndex(String role) {
+        int n = shapes(role).size();
+        return n == 0 ? 0 : Math.floorMod(shape.getOrDefault(role, 0), n);
+    }
+
+    private ToolTableShaping.Option shapeAt(String role, int index) {
         List<ToolTableShaping.Option> s = shapes(role);
-        return s.isEmpty() ? null : s.get(Math.floorMod(shape.getOrDefault(role, 0), s.size()));
+        return s.isEmpty() ? null : s.get(Math.floorMod(index, s.size()));
+    }
+
+    private ToolTableShaping.Option shapeOf(String role) {
+        return shapeAt(role, shape.getOrDefault(role, 0));
+    }
+
+    /** The materials a role can be drawn in with shape {@code shapeIdx}, grouped by kind: worked out once per type and shape. */
+    private List<Material.Located> materials(String role, int shapeIdx) {
+        ModularType t = current();
+        if (t == null)
+            return List.of();
+        Map<ResourceLocation, Material> all = ClientMaterials.get();
+        if (all != listedFor) {
+            materialLists.clear();
+            listedFor = all;
+        }
+        return materialLists.computeIfAbsent(role + "|" + shapeIdx, k -> {
+            List<Material.Located> out = new ArrayList<>(ToolDesigns.materials(t, role, shapeAt(role, shapeIdx), all));
+            out.sort(java.util.Comparator.<Material.Located>comparingInt(l -> l.material().kind().map(Enum::ordinal).orElse(99))
+                    .thenComparing(l -> l.id().toString()));
+            return List.copyOf(out);
+        });
     }
 
     private List<Material.Located> materials(String role) {
-        ModularType t = current();
-        return t == null ? List.of() : ToolDesigns.materials(t, role, shapeOf(role), ClientMaterials.get());
+        return materials(role, shapeIndex(role));
+    }
+
+    /** The material drawn for {@code role} with shape {@code shapeIdx}: the one chosen if it still fits, else the type's default, else the first. */
+    private Optional<Material.Located> choice(String role, int shapeIdx) {
+        List<Material.Located> c = materials(role, shapeIdx);
+        ResourceLocation wanted = matId.getOrDefault(role, current().defaults().get(role));
+        return c.stream().filter(l -> l.id().equals(wanted)).findFirst().or(() -> c.stream().findFirst());
     }
 
     private Optional<Material.Located> choice(String role) {
-        List<Material.Located> c = materials(role);
-        return c.isEmpty() ? Optional.empty() : Optional.of(c.get(Math.floorMod(material.getOrDefault(role, 0), c.size())));
+        return choice(role, shapeIndex(role));
     }
 
     private Component typeName(int i) {
@@ -441,12 +499,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     private String materialName(String role) {
-        return choice(role).<Component>map(l -> Component.translatable("material." + l.id().getNamespace() + "." + l.id().getPath()))
-                .orElse(Component.translatable("gui.feedback.blueprint_table.nothing_fits")).getString();
+        return choice(role).map(l -> materialLabel(l)).orElse(Component.translatable("gui.feedback.blueprint_table.nothing_fits")).getString();
     }
 
-    /** What is drawn, as a design; empty while a role has no material that fits it. */
-    private Optional<ModularDesign> design() {
+    /** What is drawn, as a design, with {@code ovRole} taken in the given material and shape instead; empty while a role has no material that fits it. */
+    private Optional<ModularDesign> design(String ovRole, ResourceLocation ovMat, int ovShape) {
         ModularType t = current();
         if (t == null)
             return Optional.empty();
@@ -455,220 +512,549 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         for (String role : t.order()) {
             if (!counts.containsKey(role))
                 continue;
-            Optional<Material.Located> c = choice(role);
+            boolean ov = role.equals(ovRole);
+            int si = ov ? ovShape : shapeIndex(role);
+            Optional<Material.Located> c;
+            if (ov && ovMat != null)
+                c = materials(role, si).stream().filter(l -> l.id().equals(ovMat)).findFirst();
+            else
+                c = choice(role, si);
             if (c.isEmpty())
                 return Optional.empty();
-            parts.add(ToolDesigns.part(role, c.get(), shapeOf(role), counts.get(role)));
+            parts.add(ToolDesigns.part(role, c.get(), shapeAt(role, si), counts.get(role)));
         }
         return Optional.of(new ModularDesign(types.get(type), parts, edged() ? edge : Edge.STANDARD));
     }
 
-    // --- widgets ----------------------------------------------------------------------------------
+    // --- worked out on an edit, never per frame -----------------------------------------------------
 
-    private void tip(int x, int y, int w, int h, int width, Supplier<List<Component>> lines) {
-        tips.add(new Tip(x, y, w, h, lines, width));
+    /** Lay the drawing out, bake it, and work out everything the frame draws from it. */
+    private void refresh() {
+        ModularType t = current();
+        ghosts.clear();
+        ghostRole = null;
+        ghost = Optional.empty();
+        ablation = null;
+        traceFor = null;
+        trace.clear();
+        icons.clear();
+        layout();
+        Optional<ModularDesign> design = design(null, null, 0);
+        baked = design;
+        figures = design.flatMap(d -> ToolDesigns.predict(d, ModularTypes.known(), ClientMaterials.get()));
+        uses = design.map(d -> usesOf(d)).orElse(List.of());
+        modifiers = design.isPresent() && figures.isPresent() ? ModularModifiers.of(design.get(), t, figures.get()) : List.of();
+        chipText = modifiers.stream().map(m -> m.name().getString()).toList();
+        shown = figures.map(ModularBlueprintItem::present).orElse(List.of());
+        if (design.isPresent())
+            for (ModularDesign.Part p : design.get().parts()) {
+                List<ItemStack> made = ToolDesigns.items(p, t.roles().get(p.role()), ClientMaterials.get(), p.count());
+                if (!made.isEmpty())
+                    icons.put(p.role(), made.get(0));
+            }
+        if (fresh && figures.isPresent()) {
+            reference = figures;
+            referenceDesign = design;
+            fresh = false;
+            for (Fig f : Fig.values())
+                tops[f.ordinal()] = Math.max(figures.get().get(f), 0f) * 2.5f;
+        }
+        if (figures.isPresent())
+            for (Fig f : Fig.values())
+                tops[f.ordinal()] = Math.max(tops[f.ordinal()], figures.get().get(f) * 1.25f);
+        faults = faultsOf(design);
+        if (refit) {
+            fitCamera();
+            refit = false;
+        }
     }
 
-    /** The material and shape in words, for the right of a part's bar. */
-    private String summary(String role) {
-        ToolTableShaping.Option o = shapeOf(role);
-        return materialName(role) + (o != null && shapes(role).size() > 1 && !o.variant().name().isEmpty() ? ", " + o.label().getString() : "");
+    private List<Fault> faultsOf(Optional<ModularDesign> design) {
+        ModularType t = current();
+        List<Fault> out = new ArrayList<>();
+        if (t == null)
+            return out;
+        if (design.isEmpty()) {
+            for (String role : rows())
+                if (choice(role).isEmpty())
+                    out.add(new Fault(List.of(role), Component.translatable("gui.feedback.blueprint_table.nothing_fits")));
+            return out;
+        }
+        if (figures.isPresent())
+            return out;
+        if (t.family() == ModularType.Family.GUN) {
+            Optional<GunSpec.Fault> f = GunSpec.fault(design.get(), t, ClientMaterials.get());
+            if (f.isPresent()) {
+                out.add(new Fault(f.get().roles(), Component.translatable("message.feedback.blueprint_table.fault." + f.get().reason())));
+                return out;
+            }
+        }
+        out.add(new Fault(List.of(), Component.translatable(t.family() == ModularType.Family.GUN
+                ? "message.feedback.blueprint_table.cannot_print_gun" : "message.feedback.blueprint_table.cannot_print")));
+        return out;
+    }
+
+    /**
+     * Place the parts. The type's pattern is a small picture of the item, so a letter sits at the centre of its cells;
+     * a drawn part no pattern lays and the slots for parts that could be added go to a tray: under a wide picture,
+     * beside a tall one.
+     */
+    private void layout() {
+        ModularType t = current();
+        nodeOf.clear();
+        if (t == null) {
+            nodes = List.of();
+            links = List.of();
+            return;
+        }
+        List<List<String>> patterns = t.patterns();
+        List<String> pat = patterns.get(Math.floorMod(form, patterns.size()));
+        int cols = 1;
+        for (String row : pat)
+            cols = Math.max(cols, row.length());
+        int prow = pat.size();
+        Map<String, float[]> at = new LinkedHashMap<>();
+        for (int r = 0; r < pat.size(); r++)
+            for (int c = 0; c < pat.get(r).length(); c++) {
+                char ch = pat.get(r).charAt(c);
+                if (ch == ' ')
+                    continue;
+                float[] a = at.computeIfAbsent(String.valueOf(ch), k -> new float[3]);
+                a[0] += c;
+                a[1] += r;
+                a[2]++;
+            }
+        List<Node> out = new ArrayList<>();
+        List<String> tray = new ArrayList<>();
+        for (String role : rows()) {
+            float[] a = at.get(role);
+            if (a == null) {
+                tray.add(role);
+                continue;
+            }
+            nodeOf.put(role, out.size());
+            out.add(new Node(role, role, false, a[0] / a[2] * PITCH, a[1] / a[2] * PITCH, ItemStack.EMPTY));
+        }
+        boolean wide = cols >= prow;
+        int trayCols = wide ? Math.max(4, cols) : Math.max(3, prow);
+        int placed = 0;
+        for (int pass = 0; pass < 2; pass++) {
+            List<String> keys = pass == 0 ? tray : offered();
+            for (String k : keys) {
+                float x, y;
+                if (wide) {
+                    x = placed % trayCols * PITCH;
+                    y = (prow - 1) * PITCH + 30 + placed / trayCols * PITCH;
+                } else {
+                    x = (cols - 1) * PITCH + 30 + placed / trayCols * PITCH;
+                    y = placed % trayCols * PITCH;
+                }
+                placed++;
+                String role = roleOf(k);
+                ModularType.Role r = t.roles().get(role);
+                ItemStack icon = pass == 1 && r.part().isPresent() ? new ItemStack(BuiltInRegistries.ITEM.get(r.part().get().item())) : ItemStack.EMPTY;
+                if (pass == 0)
+                    nodeOf.put(role, out.size());
+                out.add(new Node(k, role, pass == 1, x, y, icon));
+            }
+        }
+        nodes = List.copyOf(out);
+        List<int[]> ls = new ArrayList<>();
+        for (int r = 0; r < pat.size(); r++)
+            for (int c = 0; c < pat.get(r).length(); c++) {
+                char ch = pat.get(r).charAt(c);
+                if (ch == ' ')
+                    continue;
+                if (c + 1 < pat.get(r).length())
+                    link(ls, ch, pat.get(r).charAt(c + 1));
+                if (r + 1 < pat.size() && c < pat.get(r + 1).length())
+                    link(ls, ch, pat.get(r + 1).charAt(c));
+            }
+        links = List.copyOf(ls);
+        boundsX0 = boundsY0 = Float.MAX_VALUE;
+        boundsX1 = boundsY1 = -Float.MAX_VALUE;
+        for (Node n : nodes) {
+            boundsX0 = Math.min(boundsX0, n.x - NODE / 2);
+            boundsY0 = Math.min(boundsY0, n.y - NODE / 2);
+            boundsX1 = Math.max(boundsX1, n.x + NODE / 2);
+            boundsY1 = Math.max(boundsY1, n.y + NODE / 2 + 10);
+        }
+        if (nodes.isEmpty())
+            boundsX0 = boundsY0 = boundsX1 = boundsY1 = 0;
+    }
+
+    private void link(List<int[]> out, char a, char b) {
+        Integer ia = nodeOf.get(String.valueOf(a)), ib = nodeOf.get(String.valueOf(b));
+        if (a == b || ia == null || ib == null)
+            return;
+        for (int[] l : out)
+            if ((l[0] == ia && l[1] == ib) || (l[0] == ib && l[1] == ia))
+                return;
+        out.add(new int[]{ia, ib});
+    }
+
+    /** Frame the drawn parts (not the empty slots) in the canvas. */
+    private void fitCamera() {
+        float x0 = Float.MAX_VALUE, y0 = Float.MAX_VALUE, x1 = -Float.MAX_VALUE, y1 = -Float.MAX_VALUE;
+        for (Node n : nodes) {
+            if (n.ghost)
+                continue;
+            x0 = Math.min(x0, n.x - NODE / 2);
+            y0 = Math.min(y0, n.y - NODE / 2);
+            x1 = Math.max(x1, n.x + NODE / 2);
+            y1 = Math.max(y1, n.y + NODE / 2 + 10);
+        }
+        if (x0 > x1) {
+            camX = camY = 0;
+            zoom = 1;
+            return;
+        }
+        zoom = Mth.clamp(Math.min((CAN_W - 24) / (x1 - x0), (CAN_H - 34) / (y1 - y0)), MIN_ZOOM, 1.6f);
+        camX = (x0 + x1) / 2;
+        camY = (y0 + y1) / 2 + 6 / zoom;
+    }
+
+    private void clampCamera() {
+        camX = Mth.clamp(camX, boundsX0 - 40, boundsX1 + 40);
+        camY = Mth.clamp(camY, boundsY0 - 40, boundsY1 + 40);
+    }
+
+    // --- view maths -------------------------------------------------------------------------------
+
+    private float centreX() {
+        return leftPos + CAN_X + CAN_W / 2f;
+    }
+
+    private float centreY() {
+        return topPos + CAN_Y + CAN_H / 2f;
+    }
+
+    private int screenX(float wx) {
+        return Math.round(centreX() + (float) (wx - camX) * zoom);
+    }
+
+    private int screenY(float wy) {
+        return Math.round(centreY() + (float) (wy - camY) * zoom);
+    }
+
+    private boolean overCanvas(double mx, double my) {
+        return mx >= leftPos + CAN_X && mx < leftPos + CAN_X + CAN_W && my >= topPos + CAN_Y && my < topPos + CAN_Y + CAN_H;
+    }
+
+    private static boolean in(double mx, double my, int x, int y, int w, int h) {
+        return mx >= x && mx < x + w && my >= y && my < y + h;
+    }
+
+    private int nodeAt(double mx, double my) {
+        if (!overCanvas(mx, my))
+            return -1;
+        float half = NODE * zoom / 2 + 1;
+        for (int i = nodes.size() - 1; i >= 0; i--) {
+            Node n = nodes.get(i);
+            if (Math.abs(mx - screenX(n.x)) <= half && Math.abs(my - screenY(n.y)) <= half)
+                return i;
+        }
+        return -1;
+    }
+
+    // --- widgets ----------------------------------------------------------------------------------
+
+    /** How many control rows the part panel has for the selected part: a stepper or the remove button, then the edge. */
+    private int controlRows(String role) {
+        if (role == null)
+            return 0;
+        ModularType t = current();
+        String key = keyOf(role);
+        int rows = t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0;
+        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0);
+    }
+
+    private int swatchTop(String role) {
+        return topPos + PAN_Y + 15 + 15 * controlRows(role);
+    }
+
+    private int shapesHeight(String role) {
+        int n = role == null ? 0 : shapes(role).size();
+        return n < 2 ? 0 : THUMB + 4 + (n > (CALL_W - 8) / THUMB_PITCH ? THUMB_PITCH : 0);
+    }
+
+    private int shapesTop(String role) {
+        return topPos + PAN_Y + PAN_H - 3 - shapesHeight(role);
+    }
+
+    private int swatchCols() {
+        return (CALL_W - 8) / SWATCH_PITCH;
+    }
+
+    private int swatchRows(String role) {
+        return Math.max(1, (shapesTop(role) - swatchTop(role) - 2) / SWATCH_PITCH);
     }
 
     @Override
     protected void init() {
         super.init();
-        tips.clear();
-        addRenderableWidget(GuiStyle.stepper(skin, leftPos + 8, topPos + 4, TYPE_W, 12, "<", ">",
-                () -> types.isEmpty() ? "" : typeName(type).getString(),
-                dir -> change(() -> selectType(type + dir)), false, null));
+        ModularType t = current();
+        int top = topPos + 4;
         addRenderableWidget(GuiStyle.button(skin, Component.literal("..."), b -> typePopup.open(
                 IntStream.range(0, types.size()).mapToObj(i -> new SkinPopup.Entry<>(i, typeName(i), List.<Component>of())).toList(),
-                i -> change(() -> selectType(i))), leftPos + 8 + TYPE_W + 2, topPos + 4, SEARCH_W, 12));
-        // Stage strip, display only like the Tool Table's.
-        addRenderableOnly(GuiStyle.tabs(skin, leftPos + 8 + TYPE_W + 2 + SEARCH_W + 4, topPos + 4, imageWidth - 16 - TYPE_W - 2 - SEARCH_W - 4, 12,
-                List.of("form", "stock", "result", "draw").stream().<Component>map(k -> Component.translatable("gui.feedback.blueprint_table.stage." + k)).toList(),
-                this::stage, i -> { }));
-        tip(leftPos + 8 + TYPE_W + 2, topPos + 4, SEARCH_W, 12, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.search")));
-        ModularType t = current();
-        if (t == null)
-            return;
-        List<String> items = visibleItems();
-        for (int i = 0; i < items.size(); i++) {
-            String role = items.get(i);
-            int y = topPos + ROW_Y + i * ROW_H;
-            if (role.equals(ADD))
-                continue;
-            String key = keyOf(role);
-            boolean rem = key != null && removable(key);
-            List<String> sw = key == null ? List.of() : swaps(key);
-            int x = leftPos + LIST_X + 3;
-            if (rem) {
-                addRenderableWidget(GuiStyle.button(skin, Component.literal("x"), b -> change(() -> {
-                    Set<String> rest = now();
-                    rest.remove(key);
-                    set(rest);
-                }), x, y + 2, 12, 14));
-                tip(x, y + 2, 12, 14, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.remove")));
-                x += 15;
-            }
-            if (t.ranged(role)) {
-                List<Integer> range = t.ranges().get(role);
-                int lo = Math.max(1, range.get(0)), hi = range.get(1);
-                addRenderableWidget(GuiStyle.stepper(skin, x, y + 2, 130, 14, "<", ">",
-                        () -> roleName(role).getString() + " x" + counts().get(role),
-                        dir -> change(() -> sizes.put(role, lo + Math.floorMod(counts().get(role) - lo + dir, hi - lo + 1))), false, null));
-                tip(x, y + 2, 130, 14, 190, () -> roleTip(role));
-            } else if (sw.size() > 1) {
-                addRenderableWidget(GuiStyle.stepper(skin, x, y + 2, 110, 14, "<", ">", () -> keyLabel(key),
-                        dir -> change(() -> swap(key, sw.get(Math.floorMod(sw.indexOf(key) + dir, sw.size())))), false, null));
-                tip(x, y + 2, 110, 14, 190, () -> roleTip(role));
-            } else
-                tip(x, y, 100, ROW_H, 190, () -> roleTip(role));
+                i -> change(() -> selectType(i))), leftPos + DRAWER_X + DRAWER_SLOTS * DRAWER_PITCH + 4, top, 16, 16));
+        for (int i = 0; i < pins.size(); i++) {
+            int pin = i;
+            addRenderableWidget(GuiStyle.button(skin, Component.literal(String.valueOf(i + 1)), b -> {
+                if (shiftDown())
+                    pins.remove(pin);
+                else
+                    restore(pins.get(pin).draft());
+                rebuildWidgets();
+            }, leftPos + 278 + i * 16, top, 14, 16));
         }
-        String role = sel();
-        if (role != null) {
-            menu.shown(List.of(true));
-            int y = topPos + DET_Y + 4;
-            List<Material.Located> mats = materials(role);
-            addRenderableWidget(GuiStyle.stepper(skin, leftPos + CTL_X, y + 1, CTL_W - SEARCH_W - 2, 14, "<", ">", () -> materialName(role),
-                    dir -> change(() -> {
-                        if (!mats.isEmpty())
-                            material.put(role, Math.floorMod(material.getOrDefault(role, 0) + dir, mats.size()));
-                    }), false, null));
-            addRenderableWidget(GuiStyle.button(skin, Component.literal("..."), b -> materialPopup.open(
-                    IntStream.range(0, mats.size()).mapToObj(i -> new SkinPopup.Entry<>(i, materialLabel(mats.get(i)), List.<Component>of())).toList(),
-                    i -> change(() -> material.put(role, i))), leftPos + CTL_X + CTL_W - SEARCH_W, y + 1, SEARCH_W, 14));
-            tip(leftPos + CTL_X + CTL_W - SEARCH_W, y + 1, SEARCH_W, 14, 150, () -> List.of(Component.translatable("gui.feedback.blueprint_table.search")));
-            tip(leftPos + BlueprintTableMenu.SAMPLE_X - 1, topPos + BlueprintTableMenu.SAMPLE_Y - 1, 18, 18, 170, () -> menu.sample(0).isEmpty()
-                    ? List.of(Component.translatable("gui.feedback.blueprint_table.sample")) : List.of());
-            y += DET_ROW;
-            List<ToolTableShaping.Option> shapes = shapes(role);
-            if (shapes.size() > 1) {
-                addRenderableWidget(GuiStyle.stepper(skin, leftPos + CTL_X, y + 1, CTL_W, 14, "<", ">",
-                        () -> shapeOf(role) == null ? "" : shapeOf(role).label().getString(),
-                        dir -> change(() -> shape.put(role, Math.floorMod(shape.getOrDefault(role, 0) + dir, shapes.size()))), false, null));
-                tip(leftPos + CTL_X, y + 1, CTL_W, 14, 200, () -> {
-                    List<Component> out = new ArrayList<>();
-                    out.add(shapeOf(role).label());
-                    ModularModifiers.forPart(shapeOf(role)).forEach(m -> out.add(m.line()));
-                    return out;
-                });
-                y += DET_ROW;
+        addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.blueprint_table.pin"), b -> {
+            if (figures.isEmpty()) {
+                skin.cue(GuiSkin.Cue.REJECT);
+                return;
             }
-            if (edged() && role.equals(t.wearRole()))
-                addRenderableWidget(GuiStyle.stepper(skin, leftPos + CTL_X, y + 1, CTL_W, 14, "<", ">",
-                        () -> Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()).getString(),
-                        dir -> change(() -> edge = edge.step(dir)), false, null));
-        } else
-            menu.shown(List.of());
-        printButton();
-    }
-
-    private void printButton() {
+            if (pins.size() >= MAX_PINS)
+                pins.remove(0);
+            pins.add(new Pin(capture(), figures.get()));
+            skin.cue(GuiSkin.Cue.SEAT, null, 1.1f);
+            rebuildWidgets();
+        }, leftPos + 326, top, 26, 16));
         addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.blueprint_table.print"),
                 b -> {
-                    if (design().isPresent() && figures.isPresent() && menu.getSlot(0).hasItem()) {
+                    if (baked.isPresent() && figures.isPresent() && menu.getSlot(0).hasItem()) {
                         skin.cue(GuiSkin.Cue.FINISH); // the stamp
-                        PacketDistributor.sendToServer(new ModularBlueprintPayload(design().get()));
+                        stampAt = System.currentTimeMillis();
+                        PacketDistributor.sendToServer(new ModularBlueprintPayload(baked.get()));
                     } else
                         skin.cue(GuiSkin.Cue.REJECT);
                 },
-                leftPos + BlueprintTableMenu.PAPER_X + 20, topPos + BlueprintTableMenu.PAPER_Y, 42, 16));
-        tip(leftPos + BlueprintTableMenu.PAPER_X, topPos + BlueprintTableMenu.PAPER_Y, 16, 16, 190, () -> menu.getSlot(0).hasItem()
-                ? List.of() : List.of(Component.translatable("gui.feedback.blueprint_table.paper")));
+                leftPos + BlueprintTableMenu.PAPER_X + 20, topPos + BlueprintTableMenu.PAPER_Y, 38, 16));
+        String role = t == null ? null : sel();
+        menu.shown(role == null ? List.of() : List.of(true));
+        if (role == null)
+            return;
+        int y = topPos + PAN_Y + 15;
+        String key = keyOf(role);
+        int x = leftPos + CALL_X + 4;
+        boolean rem = key != null && removable(key);
+        int sw = CALL_W - 8 - (rem ? 18 : 0);
+        if (t.ranged(role)) {
+            List<Integer> range = t.ranges().get(role);
+            int lo = Math.max(1, range.get(0)), hi = range.get(1);
+            addRenderableWidget(GuiStyle.stepper(skin, x, y, sw, 14, "<", ">",
+                    () -> roleName(role).getString() + " x" + counts().getOrDefault(role, lo),
+                    dir -> change(() -> sizes.put(role, lo + Math.floorMod(counts().get(role) - lo + dir, hi - lo + 1))), false, null));
+        } else if (key != null && swaps(key).size() > 1) {
+            List<String> alt = swaps(key);
+            addRenderableWidget(GuiStyle.stepper(skin, x, y, sw, 14, "<", ">", () -> keyLabel(key),
+                    dir -> change(() -> swap(key, alt.get(Math.floorMod(alt.indexOf(key) + dir, alt.size())))), false, null));
+        }
+        if (rem)
+            addRenderableWidget(GuiStyle.button(skin, Component.literal("x"), b -> change(() -> {
+                Set<String> rest = now();
+                rest.remove(key);
+                set(rest);
+            }), x + CALL_W - 8 - 14, y, 14, 14));
+        if (rem || t.ranged(role) || (key != null && swaps(key).size() > 1))
+            y += 15;
+        if (edged() && role.equals(t.wearRole()))
+            addRenderableWidget(GuiStyle.stepper(skin, x, y, CALL_W - 8, 14, "<", ">",
+                    () -> Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()).getString(),
+                    dir -> change(() -> edge = edge.step(dir)), false, null));
     }
 
-    /** Make an edit and rebuild the sheet; if it changed which part is selected or on the page, the sample meant another part, so it goes back to the player. */
+    private static boolean shiftDown() {
+        return net.minecraft.client.gui.screens.Screen.hasShiftDown();
+    }
+
+    // --- drafts -----------------------------------------------------------------------------------
+
+    private Draft capture() {
+        return new Draft(type, form, Set.copyOf(extras), Map.copyOf(sizes), Map.copyOf(shape), Map.copyOf(matId), edge, selected);
+    }
+
+    private void restore(Draft d) {
+        change(() -> {
+            selectType(d.type());
+            form = d.form();
+            extras.addAll(d.extras());
+            sizes.putAll(d.sizes());
+            shape.putAll(d.shape());
+            matId.putAll(d.material());
+            edge = d.edge();
+            selected = d.selected();
+            refit = true;
+        });
+    }
+
+    /** Make an edit and rebuild the sheet; if it changed which part is selected, the sample meant another part, so it goes back to the player. */
     private void change(Runnable edit) {
-        List<String> before = new ArrayList<>(visibleItems());
-        before.add(String.valueOf(sel()));
+        String before = String.valueOf(sel());
         int type0 = type;
         edit.run();
-        touched = type == type0;
-        List<String> after = new ArrayList<>(visibleItems());
-        after.add(String.valueOf(sel()));
-        if (!before.equals(after) && net.minecraft.client.Minecraft.getInstance().gameMode != null)
-            net.minecraft.client.Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, BlueprintTableMenu.BTN_CLEAR);
+        if (type != type0 || !before.equals(String.valueOf(sel()))) {
+            swatchScroll = 0;
+            if (net.minecraft.client.Minecraft.getInstance().gameMode != null)
+                net.minecraft.client.Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, BlueprintTableMenu.BTN_CLEAR);
+        }
+        refresh();
         rebuildWidgets();
     }
 
-    private boolean overList(double mouseX, double mouseY) {
-        return mouseX >= leftPos + LIST_X && mouseX < leftPos + imageWidth - 12 && mouseY >= topPos + ROW_Y && mouseY < topPos + ROW_Y + VISIBLE * ROW_H;
+    /** Put {@code located} into {@code role} with the sound and flash of material meeting part. */
+    private void paint(String role, Material.Located located) {
+        if (located.id().equals(choice(role).map(Material.Located::id).orElse(null)))
+            return;
+        change(() -> {
+            matId.put(role, located.id());
+            selected = role;
+        });
+        skin.cue(GuiSkin.Cue.SEAT, located.material().kind().orElse(null), 1f);
+        flashes.put(role, System.currentTimeMillis());
     }
 
-    /** A bar clicked selects its part; the add bar adds one. */
+    // --- input ------------------------------------------------------------------------------------
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
-        int s = stage();
-        if (s != lastStage) {
-            skin.cue(GuiSkin.Cue.STAGE);
-            lastStage = s;
-        }
         super.render(g, mouseX, mouseY, partialTick);
-        addPopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
         typePopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
-        materialPopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
+        if (stampAt > 0)
+            GuiStyle.stamp(g, Component.translatable("message.feedback.blueprint_table.printed"), centreX(), centreY(),
+                    System.currentTimeMillis() - stampAt, skin.accent() & 0xFFFFFF);
     }
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
-        return addPopup.keyPressed(key, scan, modifiers) || typePopup.keyPressed(key, scan, modifiers)
-                || materialPopup.keyPressed(key, scan, modifiers) || super.keyPressed(key, scan, modifiers);
+        return typePopup.keyPressed(key, scan, modifiers) || super.keyPressed(key, scan, modifiers);
     }
 
     @Override
     public boolean charTyped(char c, int modifiers) {
-        return addPopup.charTyped(c, modifiers) || typePopup.charTyped(c, modifiers)
-                || materialPopup.charTyped(c, modifiers) || super.charTyped(c, modifiers);
+        return typePopup.charTyped(c, modifiers) || super.charTyped(c, modifiers);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (addPopup.mouseClicked(mouseX, mouseY, button) || typePopup.mouseClicked(mouseX, mouseY, button)
-                || materialPopup.mouseClicked(mouseX, mouseY, button))
+    public boolean mouseClicked(double mx, double my, int button) {
+        if (typePopup.mouseClicked(mx, my, button))
             return true;
-        // The container screen answers every click it is given, so the bars are tried first, but never under a widget.
-        boolean onWidget = children().stream().anyMatch(c -> c.isMouseOver(mouseX, mouseY));
-        if (settled() && button == 0 && !onWidget && overList(mouseX, mouseY)) {
-            List<String> items = visibleItems();
-            int i = (int) (mouseY - topPos - ROW_Y) / ROW_H;
-            if (i < items.size()) {
+        boolean onWidget = children().stream().anyMatch(c -> c.isMouseOver(mx, my));
+        if (settled() && !onWidget && current() != null) {
+            if (button == 0 && hoverDrawer >= 0 && hoverDrawer < types.size()) {
                 GuiSkin.play(skin.click(), 1f);
-                String role = items.get(i);
-                if (role.equals(ADD)) {
-                    addPopup.open(offered().stream().map(k -> new SkinPopup.Entry<>(k, Component.literal(keyLabel(k)), roleTip(roleOf(k)))).toList(),
-                            k -> change(() -> {
-                                Set<String> on = now();
-                                on.add(k);
-                                set(on);
-                                selected = roleOf(k);
-                            }));
-                } else
-                    change(() -> selected = role);
+                int pick = hoverDrawer;
+                if (pick != type)
+                    change(() -> selectType(pick));
+                return true;
+            }
+            String role = sel();
+            if (button == 0 && hoverSwatch >= 0 && role != null) {
+                List<Material.Located> mats = materials(role);
+                if (hoverSwatch < mats.size()) {
+                    paint(role, mats.get(hoverSwatch));
+                    return true;
+                }
+            }
+            if (button == 0 && hoverShape >= 0 && role != null) {
+                int pick = hoverShape;
+                GuiSkin.play(skin.click(), 1f);
+                change(() -> shape.put(role, pick));
+                return true;
+            }
+            if (overCanvas(mx, my)) {
+                int n = nodeAt(mx, my);
+                if (n >= 0 && button == 0) {
+                    Node node = nodes.get(n);
+                    ItemStack carried = menu.getCarried();
+                    if (node.ghost) {
+                        GuiSkin.play(skin.click(), 1f);
+                        change(() -> {
+                            Set<String> on = now();
+                            on.add(node.key);
+                            set(on);
+                            selected = node.role;
+                        });
+                    } else if (!carried.isEmpty()) {
+                        Optional<Material.Located> named = Material.find(ClientMaterials.get(), carried);
+                        Optional<Material.Located> fit = named.flatMap(m -> materials(node.role).stream().filter(l -> l.id().equals(m.id())).findFirst());
+                        if (fit.isPresent())
+                            paint(node.role, fit.get());
+                        else
+                            skin.cue(GuiSkin.Cue.REJECT);
+                    } else if (hoverCorner && keyOf(node.role) != null && removable(keyOf(node.role))) {
+                        String key = keyOf(node.role);
+                        GuiSkin.play(skin.click(), 1f);
+                        change(() -> {
+                            Set<String> rest = now();
+                            rest.remove(key);
+                            set(rest);
+                        });
+                    } else {
+                        GuiSkin.play(skin.click(), 1f);
+                        change(() -> selected = node.role);
+                    }
+                    return true;
+                }
+                panning = true;
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(mx, my, button);
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (addPopup.mouseScrolled(scrollY) || typePopup.mouseScrolled(scrollY) || materialPopup.mouseScrolled(scrollY))
-            return true;
-        int total = items().size();
-        if (total > VISIBLE && overList(mouseX, mouseY)) {
-            int target = Math.max(0, Math.min(total - VISIBLE, rowScroll - (int) Math.signum(scrollY)));
-            if (target != rowScroll)
-                change(() -> rowScroll = target);
+    public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+        if (panning && settled()) {
+            camX -= dx / zoom;
+            camY -= dy / zoom;
+            clampCamera();
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseDragged(mx, my, button, dx, dy);
+    }
+
+    @Override
+    public boolean mouseReleased(double mx, double my, int button) {
+        panning = false;
+        return super.mouseReleased(mx, my, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+        if (typePopup.mouseScrolled(scrollY))
+            return true;
+        if (!settled() || current() == null)
+            return super.mouseScrolled(mx, my, scrollX, scrollY);
+        int dir = (int) -Math.signum(scrollY);
+        if (in(mx, my, leftPos + DRAWER_X, topPos + 3, DRAWER_SLOTS * DRAWER_PITCH, 18)) {
+            drawerScroll = Mth.clamp(drawerScroll + dir, 0, Math.max(0, types.size() - DRAWER_SLOTS));
+            return true;
+        }
+        if (overCanvas(mx, my)) {
+            float old = zoom;
+            double wx = camX + (mx - centreX()) / old, wy = camY + (my - centreY()) / old;
+            zoom = (float) Mth.clamp(old * Math.pow(1.15, scrollY), MIN_ZOOM, MAX_ZOOM);
+            camX = wx - (mx - centreX()) / zoom;
+            camY = wy - (my - centreY()) / zoom;
+            clampCamera();
+            return true;
+        }
+        String role = sel();
+        if (role != null && in(mx, my, leftPos + CALL_X, swatchTop(role), CALL_W, swatchRows(role) * SWATCH_PITCH)) {
+            int rows = (materials(role).size() + swatchCols() - 1) / swatchCols();
+            swatchScroll = Mth.clamp(swatchScroll + dir, 0, Math.max(0, rows - swatchRows(role)));
+            return true;
+        }
+        if (in(mx, my, leftPos + RES_X, topPos + PAN_Y, RES_W, PAN_H)) {
+            figScroll = Mth.clamp(figScroll + dir, 0, Math.max(0, shown.size() - figRows()));
+            return true;
+        }
+        return super.mouseScrolled(mx, my, scrollX, scrollY);
     }
 
     // --- samples ----------------------------------------------------------------------------------
 
-    /** A sample put in the slot sets the selected part's material, once: the stepper can change it after. */
+    /** A sample put in the slot sets the selected part's material, once: the swatches can change it after. */
     private void readSamples() {
         ItemStack sample = menu.sample(0);
         if (ItemStack.isSameItemSameComponents(sample, seen))
@@ -682,16 +1068,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             skin.cue(GuiSkin.Cue.REJECT);
             return;
         }
-        List<Material.Located> c = materials(role);
-        for (int k = 0; k < c.size(); k++)
-            if (c.get(k).id().equals(named.get().id())) {
-                skin.cue(GuiSkin.Cue.SEAT, null, 1f); // pencil
-                if (k != material.getOrDefault(role, 0)) {
-                    material.put(role, k);
-                    rebuildWidgets();
-                }
-                break;
-            }
+        materials(role).stream().filter(l -> l.id().equals(named.get().id())).findFirst().ifPresent(l -> paint(role, l));
     }
 
     /** A blueprint put in the slot opens on the sheet. */
@@ -710,42 +1087,455 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     // --- drawing ----------------------------------------------------------------------------------
 
+    private static int alpha(int colour, int a) {
+        return a << 24 | colour & 0xFFFFFF;
+    }
+
+    private int figRows() {
+        return Math.max(1, (PAN_H - 10 - Math.min(uses.size(), 4) * 9) / ROW_H);
+    }
+
+    /** Which things the pointer is over; set once per frame, read by the drawing and the tooltips. */
+    private void updateHover(int mx, int my) {
+        hoverNode = hoverSwatch = hoverShape = hoverFig = hoverChip = hoverDrawer = hoverFault = -1;
+        hoverCorner = false;
+        if (current() == null || !settled())
+            return;
+        if (in(mx, my, leftPos + DRAWER_X, topPos + 3, DRAWER_SLOTS * DRAWER_PITCH, 18)) {
+            int i = drawerScroll + (mx - leftPos - DRAWER_X) / DRAWER_PITCH;
+            hoverDrawer = i < types.size() ? i : -1;
+        }
+        if (overCanvas(mx, my)) {
+            hoverNode = nodeAt(mx, my);
+            if (hoverNode >= 0 && !nodes.get(hoverNode).ghost) {
+                Node n = nodes.get(hoverNode);
+                int half = Math.round(NODE * zoom / 2);
+                hoverCorner = mx >= screenX(n.x) + half - 7 && my <= screenY(n.y) - half + 7;
+            }
+            if (hoverNode < 0) {
+                int cy = topPos + CAN_Y + CAN_H - 13, x = leftPos + CAN_X + 4;
+                for (int i = 0; i < chipText.size(); i++) {
+                    int w = font.width(chipText.get(i)) + 6;
+                    if (in(mx, my, x, cy, w, 11))
+                        hoverChip = i;
+                    x += w + 3;
+                }
+                for (int i = 0; i < faults.size() && hoverChip < 0; i++)
+                    if (faultAnchor(faults.get(i)) != null) {
+                        int[] a = faultAnchor(faults.get(i));
+                        if (Math.abs(mx - a[0]) < 14 && Math.abs(my - a[1]) < 10)
+                            hoverFault = i;
+                    }
+            }
+        }
+        String role = sel();
+        if (role != null) {
+            List<Material.Located> mats = materials(role);
+            int sx = leftPos + CALL_X + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
+            if (in(mx, my, sx, sy, cols * SWATCH_PITCH, rows * SWATCH_PITCH)) {
+                int i = (swatchScroll + (my - sy) / SWATCH_PITCH) * cols + (mx - sx) / SWATCH_PITCH;
+                hoverSwatch = i < mats.size() ? i : -1;
+            }
+            int n = shapes(role).size();
+            if (n > 1) {
+                int ty = shapesTop(role), per = (CALL_W - 8) / THUMB_PITCH;
+                if (in(mx, my, sx, ty, per * THUMB_PITCH, shapesHeight(role))) {
+                    int i = (my - ty) / THUMB_PITCH * per + (mx - sx) / THUMB_PITCH;
+                    hoverShape = i < n ? i : -1;
+                }
+            }
+        }
+        if (in(mx, my, leftPos + RES_X + 2, topPos + PAN_Y + 5, RES_W - 4, figRows() * ROW_H)) {
+            int i = figScroll + (my - topPos - PAN_Y - 5) / ROW_H;
+            hoverFig = i < shown.size() ? i : -1;
+        }
+        updateGhost();
+    }
+
+    /** What the pointer would do if it clicked: a swatch, a shape, or a carried material over a part. */
+    private void updateGhost() {
+        String role = sel();
+        String gr = null;
+        ResourceLocation gm = null;
+        int gs = -1;
+        if (hoverSwatch >= 0 && role != null && hoverSwatch < materials(role).size()) {
+            gr = role;
+            gm = materials(role).get(hoverSwatch).id();
+            gs = shapeIndex(role);
+        } else if (hoverShape >= 0 && role != null) {
+            gr = role;
+            gm = choice(role).map(Material.Located::id).orElse(null);
+            gs = hoverShape;
+        } else if (hoverNode >= 0 && !nodes.get(hoverNode).ghost && !menu.getCarried().isEmpty()) {
+            Optional<Material.Located> named = Material.find(ClientMaterials.get(), menu.getCarried());
+            if (named.isPresent()) {
+                gr = nodes.get(hoverNode).role;
+                gm = named.get().id();
+                gs = shapeIndex(gr);
+            }
+        }
+        if (Objects.equals(gr, ghostRole) && Objects.equals(gm, ghostMat) && gs == ghostShape)
+            return;
+        ghostRole = gr;
+        ghostMat = gm;
+        ghostShape = gs;
+        if (gr == null || gm == null) {
+            ghost = Optional.empty();
+            return;
+        }
+        String r = gr;
+        ResourceLocation m = gm;
+        int s = gs;
+        ghost = ghosts.computeIfAbsent(gr + "|" + gm + "|" + gs, k -> design(r, m, s)
+                .flatMap(d -> ToolDesigns.predict(d, ModularTypes.known(), ClientMaterials.get())));
+    }
+
     @Override
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
         skin.slot(g, leftPos + BlueprintTableMenu.PAPER_X, topPos + BlueprintTableMenu.PAPER_Y);
         for (int i = 0; i < 9; i++)
             skin.slot(g, leftPos + BlueprintTableMenu.HOTBAR_X + i * 18, topPos + BlueprintTableMenu.HOTBAR_Y);
-        skin.inset(g, leftPos + LIST_X - 2, topPos + ROW_Y - 2, imageWidth - 12, VISIBLE * ROW_H + 4);
-        List<String> items = visibleItems();
-        String sel = sel();
-        for (int i = 0; i < items.size(); i++) {
-            String role = items.get(i);
-            int y = topPos + ROW_Y + i * ROW_H;
-            int w = imageWidth - 20;
-            skin.plaque(g, leftPos + LIST_X, y + 1, w, ROW_H - 2);
-            boolean hovered = overList(mouseX, mouseY) && (mouseY - topPos - ROW_Y) / ROW_H == i;
-            skin.row(g, leftPos + LIST_X, y + 1, w, ROW_H - 2, role.equals(sel), hovered);
-            if (!role.equals(ADD)) {
-                // The part's material colour, as a stripe on its bar.
-                int rgb = choice(role).map(l -> MaterialColors.of(l.id())).orElse(0x808080);
-                g.fill(leftPos + LIST_X + 1, y + 2, leftPos + LIST_X + 3, y + ROW_H - 2, 0xFF000000 | rgb);
-            }
-        }
-        skin.inset(g, leftPos + LIST_X - 2, topPos + DET_Y, imageWidth - 12, DET_H);
-        if (sel != null)
+        ModularType t = current();
+        if (t == null)
+            return;
+        String role = sel();
+        if (role != null)
             skin.slot(g, leftPos + BlueprintTableMenu.SAMPLE_X, topPos + BlueprintTableMenu.SAMPLE_Y);
-        if (!ClientSettings.reduceMotion()) { // grid shimmer: faint ruled lines that breathe out of step
-            float t = GuiStyle.time();
-            for (int x = LIST_X; x < imageWidth - 12; x += 12) {
-                int a = (int) (10 + 10 * Math.sin(t * 0.08f + x * 0.35f));
-                g.fill(leftPos + x, topPos + ROW_Y - 1, leftPos + x + 1, topPos + ROW_Y + VISIBLE * ROW_H + 1, a << 24 | 0xFFFFFF);
-            }
-        }
-        scrollbar(g, leftPos + imageWidth - 7, topPos + ROW_Y, VISIBLE * ROW_H, items().size(), VISIBLE, rowScroll);
+        updateHover(mouseX, mouseY);
+        drawDrawer(g);
+        drawCanvas(g, mouseX, mouseY);
+        drawParts(g, role);
+        drawFigures(g);
     }
 
-    /** {@code text} cut with an ellipsis to {@code w}. */
+    private void drawDrawer(GuiGraphics g) {
+        int x = leftPos + DRAWER_X, y = topPos + 3;
+        skin.inset(g, x - 1, y - 1, DRAWER_SLOTS * DRAWER_PITCH + 2, 20);
+        for (int i = 0; i < DRAWER_SLOTS && drawerScroll + i < types.size(); i++) {
+            int idx = drawerScroll + i;
+            skin.row(g, x + i * DRAWER_PITCH, y, DRAWER_PITCH, 18, idx == type, idx == hoverDrawer);
+            g.renderItem(typeIcons.get(idx), x + i * DRAWER_PITCH + 1, y + 1);
+        }
+        scrollbar(g, x + DRAWER_SLOTS * DRAWER_PITCH - 2, y, 18, types.size(), DRAWER_SLOTS, drawerScroll);
+    }
+
+    private void drawCanvas(GuiGraphics g, int mx, int my) {
+        int x0 = leftPos + CAN_X, y0 = topPos + CAN_Y;
+        skin.inset(g, x0, y0, CAN_W, CAN_H);
+        g.enableScissor(x0 + 1, y0 + 1, x0 + CAN_W - 1, y0 + CAN_H - 1);
+        // faint ruled grid that moves with the drawing
+        float step = 40 * zoom;
+        int grid = alpha(skin.ink(), 0x12);
+        for (float gx = centreX() + (float) ((Math.floor(camX / 40) * 40 - camX) * zoom) - step * 20; gx < x0 + CAN_W; gx += step)
+            if (gx > x0)
+                g.fill((int) gx, y0 + 1, (int) gx + 1, y0 + CAN_H - 1, grid);
+        for (float gy = centreY() + (float) ((Math.floor(camY / 40) * 40 - camY) * zoom) - step * 20; gy < y0 + CAN_H; gy += step)
+            if (gy > y0)
+                g.fill(x0 + 1, (int) gy, x0 + CAN_W - 1, (int) gy + 1, grid);
+        float time = GuiStyle.time();
+        boolean still = ClientSettings.reduceMotion();
+        float joint = figures.map(f -> f.get(Fig.JOINT)).orElse(0f);
+        int half = Math.round(NODE * zoom / 2);
+        // links, under the nodes
+        for (int[] l : links) {
+            Node a = nodes.get(l[0]), b = nodes.get(l[1]);
+            boolean bad = faults.stream().anyMatch(f -> f.roles().size() == 2 && f.roles().contains(a.role) && f.roles().contains(b.role));
+            if (bad)
+                continue; // drawn with the faults
+            int th = joint == 0 ? 3 : joint < 0.7f ? 3 : joint <= 1f ? 2 : 1;
+            int colour = joint > 1f ? skin.warn() : joint > 0.7f ? skin.accent() : alpha(skin.ink(), 0xC0);
+            segment(g, a, b, half + 2, Math.max(1, Math.round(th * Math.max(1f, zoom))), colour, joint > 1f, time, still);
+        }
+        // a pair that does not work together: a red dashed link whether or not the pattern joins them
+        for (Fault f : faults)
+            if (f.roles().size() == 2 && nodeOf.containsKey(f.roles().get(0)) && nodeOf.containsKey(f.roles().get(1)))
+                segment(g, nodes.get(nodeOf.get(f.roles().get(0))), nodes.get(nodeOf.get(f.roles().get(1))), half + 2,
+                        Math.max(2, Math.round(2 * zoom)), skin.warn(), true, time, still);
+        for (int i = 0; i < nodes.size(); i++)
+            drawNode(g, i, half, time, still);
+        for (Fault f : faults) {
+            int[] a = faultAnchor(f);
+            if (a == null)
+                continue;
+            String text = f.reason().getString();
+            int w = Math.min(font.width(text), 150) + 6;
+            skin.plaque(g, a[0] - w / 2, a[1] + 4, w, 11);
+            g.fill(a[0] - 3, a[1] - 1, a[0] + 4, a[1] + 1, skin.warn());
+            g.fill(a[0] - 1, a[1] - 3, a[0] + 2, a[1] + 4, skin.warn());
+            fit(g, text, a[0] - w / 2 + 3, a[1] + 6, w - 6, skin.warn());
+        }
+        // the type's name as the drawing's title block, and the qualities as stamped chips
+        g.drawString(font, typeName(type), x0 + 5, y0 + 4, skin.ink(), false);
+        int cx = x0 + 4, cy = y0 + CAN_H - 13;
+        for (int i = 0; i < chipText.size(); i++) {
+            int w = font.width(chipText.get(i)) + 6;
+            if (cx + w > x0 + CAN_W - 4)
+                break;
+            skin.plaque(g, cx, cy, w, 11);
+            if (i == hoverChip)
+                skin.row(g, cx, cy, w, 11, false, true);
+            g.drawString(font, chipText.get(i), cx + 3, cy + 2, skin.ink(), false);
+            cx += w + 3;
+        }
+        g.disableScissor();
+    }
+
+    /** Where a fault's mark and reason go on screen, or null if it has no part on the canvas. */
+    private int[] faultAnchor(Fault f) {
+        if (f.roles().isEmpty())
+            return null;
+        Integer a = nodeOf.get(f.roles().get(0)), b = f.roles().size() > 1 ? nodeOf.get(f.roles().get(1)) : a;
+        if (a == null || b == null)
+            return null;
+        float wx = (nodes.get(a).x + nodes.get(b).x) / 2, wy = (nodes.get(a).y + nodes.get(b).y) / 2;
+        return new int[]{screenX(wx), screenY(wy) + (f.roles().size() > 1 ? 0 : Math.round(NODE * zoom / 2) + 10)};
+    }
+
+    /** A link between the edges of two nodes, solid or dashed. */
+    private void segment(GuiGraphics g, Node a, Node b, int trim, int th, int colour, boolean dashed, float time, boolean still) {
+        float ax = screenX(a.x), ay = screenY(a.y), bx = screenX(b.x), by = screenY(b.y);
+        float dx = bx - ax, dy = by - ay, len = Mth.sqrt(dx * dx + dy * dy);
+        if (len <= trim * 2)
+            return;
+        float ux = dx / len, uy = dy / len;
+        int x0 = Math.round(ax + ux * trim), y0 = Math.round(ay + uy * trim), x1 = Math.round(bx - ux * trim), y1 = Math.round(by - uy * trim);
+        int h = th / 2;
+        if (!dashed) {
+            if (x0 == x1)
+                g.fill(x0 - h, Math.min(y0, y1), x0 - h + th, Math.max(y0, y1) + 1, colour);
+            else if (y0 == y1)
+                g.fill(Math.min(x0, x1), y0 - h, Math.max(x0, x1) + 1, y0 - h + th, colour);
+            else
+                for (int o = 0; o < th; o++)
+                    GuiStyle.line(g, x0, y0 + o - h, x1, y1 + o - h, colour);
+            return;
+        }
+        int steps = Math.max(1, (int) ((len - trim * 2) / 6));
+        int phase = still ? 0 : (int) (time * 0.3f) % 2;
+        for (int i = phase; i < steps; i += 2) {
+            int sx = x0 + (x1 - x0) * i / steps, sy = y0 + (y1 - y0) * i / steps;
+            int ex = x0 + (x1 - x0) * (i + 1) / steps, ey = y0 + (y1 - y0) * (i + 1) / steps;
+            for (int o = 0; o < th; o++)
+                GuiStyle.line(g, sx, sy + o - h, ex, ey + o - h, colour);
+        }
+    }
+
+    private void drawNode(GuiGraphics g, int i, int half, float time, boolean still) {
+        Node n = nodes.get(i);
+        int sx = screenX(n.x), sy = screenY(n.y) + (still ? 0 : Math.round(Mth.sin(time * 0.07f + i * 1.7f) * 1.2f * zoom));
+        if (sx < leftPos + CAN_X - half - 20 || sx > leftPos + CAN_X + CAN_W + half + 20 || sy < topPos + CAN_Y - half - 20 || sy > topPos + CAN_Y + CAN_H + half + 20)
+            return;
+        boolean hot = i == hoverNode, picked = !n.ghost && n.role.equals(sel());
+        if (n.ghost) {
+            int colour = hot ? skin.ink() : skin.dim();
+            for (int from = 0; from < 8 * half; from += 8)
+                GuiStyle.perimeter(g, sx - half, sy - half, sx + half, sy + half, from, 4, colour);
+            if (!n.icon.isEmpty()) {
+                pose(g, n.icon, sx, sy, half);
+                g.fill(sx - half + 1, sy - half + 1, sx + half, sy + half, alpha(skin.dim(), hot ? 0x50 : 0x90));
+            }
+            g.drawCenteredString(font, "+", sx, sy - 4, colour);
+            if (hot || zoom >= 1.2f)
+                g.drawCenteredString(font, roleName(n.role), sx, sy + half + 2, hot ? skin.ink() : skin.dim());
+            return;
+        }
+        skin.plaque(g, sx - half, sy - half, 2 * half, 2 * half);
+        Optional<Material.Located> c = choice(n.role);
+        int rgb = c.map(l -> MaterialColors.of(l.id())).orElse(0x808080);
+        ItemStack icon = icons.getOrDefault(n.role, ItemStack.EMPTY);
+        if (icon.isEmpty())
+            g.fill(sx - half + 3, sy - half + 3, sx + half - 3, sy + half - 5, 0xFF000000 | rgb);
+        else
+            pose(g, icon, sx, sy - 1, half);
+        g.fill(sx - half + 2, sy + half - 3, sx + half - 2, sy + half - 1, 0xFF000000 | rgb);
+        boolean bad = faults.stream().anyMatch(f -> f.roles().contains(n.role));
+        if (bad)
+            g.renderOutline(sx - half - 1, sy - half - 1, 2 * half + 2, 2 * half + 2, skin.warn());
+        else if (picked)
+            g.renderOutline(sx - half - 2, sy - half - 2, 2 * half + 4, 2 * half + 4, skin.accent());
+        else if (hot)
+            g.renderOutline(sx - half - 1, sy - half - 1, 2 * half + 2, 2 * half + 2, skin.ink());
+        Float w = trace.get(n.role);
+        if (w != null && w > 0.05f)
+            g.renderOutline(sx - half - 3, sy - half - 3, 2 * half + 6, 2 * half + 6, alpha(skin.accent(), (int) (0x40 + 0xBF * w)));
+        Long flash = flashes.get(n.role);
+        if (flash != null && !still) {
+            long age = System.currentTimeMillis() - flash;
+            if (age < 400)
+                GuiStyle.ring(g, sx, sy, half + (int) (age / 20), 1, alpha(0xFF000000 | rgb, (int) (0xC0 * (1 - age / 400f))));
+        }
+        if ((hot || picked) && keyOf(n.role) != null && removable(keyOf(n.role)))
+            g.drawString(font, "x", sx + half - 6, sy - half + 1, hot && hoverCorner ? skin.warn() : skin.dim(), false);
+        if (zoom >= 0.7f || hot || picked)
+            g.drawCenteredString(font, roleName(n.role), sx, sy + half + 2, picked ? skin.accent() : skin.dim());
+    }
+
+    /** {@code stack} filling a node of half-size {@code half} at (cx, cy). */
+    private static void pose(GuiGraphics g, ItemStack stack, int cx, int cy, int half) {
+        float s = Math.max(0.4f, (2 * half - 8) / 16f);
+        g.pose().pushPose();
+        g.pose().translate(cx, cy, 0);
+        g.pose().scale(s, s, 1);
+        g.renderItem(stack, -8, -8);
+        g.pose().popPose();
+    }
+
+    private void drawParts(GuiGraphics g, String role) {
+        int x = leftPos + CALL_X, y = topPos + PAN_Y;
+        skin.inset(g, x, y, CALL_W, PAN_H);
+        if (role == null)
+            return;
+        ModularType t = current();
+        List<Material.Located> mats = materials(role);
+        Optional<Material.Located> now = choice(role);
+        g.drawString(font, roleName(role), x + 5, y + 4, skin.ink(), false);
+        String name = materialName(role);
+        int nw = Math.min(font.width(name), 110);
+        fit(g, name, x + CALL_W - 5 - nw, y + 4, 110, skin.dim());
+        int sx = x + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
+        int total = (mats.size() + cols - 1) / cols;
+        swatchScroll = Mth.clamp(swatchScroll, 0, Math.max(0, total - rows));
+        for (int r = 0; r < rows; r++)
+            for (int c = 0; c < cols; c++) {
+                int i = (swatchScroll + r) * cols + c;
+                if (i >= mats.size())
+                    break;
+                int px = sx + c * SWATCH_PITCH, py = sy + r * SWATCH_PITCH;
+                Material.Located l = mats.get(i);
+                g.fill(px, py, px + SWATCH, py + SWATCH, 0xFF000000 | MaterialColors.of(l.id()));
+                boolean on = now.isPresent() && now.get().id().equals(l.id());
+                g.renderOutline(px - (on ? 1 : 0), py - (on ? 1 : 0), SWATCH + (on ? 2 : 0), SWATCH + (on ? 2 : 0),
+                        on ? skin.accent() : i == hoverSwatch ? skin.ink() : alpha(skin.ink(), 0x40));
+            }
+        scrollbar(g, x + CALL_W - 4, sy, rows * SWATCH_PITCH, total, rows, swatchScroll);
+        List<ToolTableShaping.Option> options = shapes(role);
+        if (options.size() > 1) {
+            int per = (CALL_W - 8) / THUMB_PITCH, ty = shapesTop(role), cur = shapeIndex(role);
+            int rgb = now.map(l -> MaterialColors.of(l.id())).orElse(0x808080);
+            for (int i = 0; i < options.size() && i < per * 2; i++) {
+                int px = sx + i % per * THUMB_PITCH, py = ty + i / per * THUMB_PITCH;
+                skin.plaque(g, px, py, THUMB, THUMB);
+                skin.row(g, px, py, THUMB, THUMB, i == cur, i == hoverShape);
+                ToolTableShaping.Option o = options.get(i);
+                List<String> grid = o.variant().shape().isEmpty() ? o.shaping().shape() : o.variant().shape();
+                int gw = 1, gh = grid.size();
+                for (String row : grid)
+                    gw = Math.max(gw, row.length());
+                int cell = Math.max(1, Math.min(3, (THUMB - 4) / Math.max(gw, gh)));
+                int ox = px + (THUMB - gw * cell) / 2, oy = py + (THUMB - gh * cell) / 2;
+                for (int r = 0; r < gh; r++)
+                    for (int c = 0; c < grid.get(r).length(); c++)
+                        if (grid.get(r).charAt(c) != ' ')
+                            g.fill(ox + c * cell, oy + r * cell, ox + (c + 1) * cell, oy + (r + 1) * cell, 0xFF000000 | rgb);
+                if (o.forged())
+                    g.fill(px + THUMB - 5, py + 2, px + THUMB - 2, py + 5, skin.accent());
+            }
+        }
+    }
+
+    private String label(Fig f) {
+        return labels.computeIfAbsent(f, k -> Component.translatable("modular.feedback.fig." + k.name().toLowerCase(java.util.Locale.ROOT))
+                .getString().split(",", 2)[0]);
+    }
+
+    private float fill(Fig f, float v) {
+        float top = f == Fig.JOINT ? 2f : tops[f.ordinal()];
+        return top <= 0 ? 0 : Mth.clamp(v / top, 0f, 1f);
+    }
+
+    private void drawFigures(GuiGraphics g) {
+        int x = leftPos + RES_X, y = topPos + PAN_Y;
+        skin.inset(g, x, y, RES_W, PAN_H);
+        if (figures.isEmpty()) {
+            int ty = y + 5;
+            for (Fault f : faults)
+                for (net.minecraft.util.FormattedCharSequence line : font.split(f.reason(), RES_W - 10)) {
+                    g.drawString(font, line, x + 5, ty, skin.warn(), false);
+                    ty += 10;
+                }
+            return;
+        }
+        ModularFigures cur = figures.get();
+        int rows = figRows();
+        figScroll = Mth.clamp(figScroll, 0, Math.max(0, shown.size() - rows));
+        boolean shift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+        int bx = x + 4 + LABEL_W + 4;
+        for (int r = 0; r < rows && figScroll + r < shown.size(); r++) {
+            Fig f = shown.get(figScroll + r);
+            int ry = y + 5 + r * ROW_H;
+            skin.row(g, x + 2, ry - 1, RES_W - 7, ROW_H, false, figScroll + r == hoverFig);
+            fit(g, label(f), x + 5, ry + 1, LABEL_W, skin.dim());
+            float v = cur.get(f);
+            if (shift) {
+                g.drawString(font, PartPresenter.num(v), bx, ry + 1, skin.ink(), false);
+                continue;
+            }
+            skin.bar(g, bx, ry + 2, BAR_W, 5, fill(f, v), f == Fig.JOINT ? 0.5f : -1f);
+            if (reference.isPresent())
+                g.fill(bx + Math.round(fill(f, reference.get().get(f)) * BAR_W), ry, bx + Math.round(fill(f, reference.get().get(f)) * BAR_W) + 1, ry + 9,
+                        skin.ink());
+            for (int p = 0; p < pins.size(); p++)
+                if (pins.get(p).draft().type() == type) {
+                    int px = bx + Math.round(fill(f, pins.get(p).figures().get(f)) * BAR_W);
+                    g.fill(px, ry + 1, px + 2, ry + 8, PIN_COLOURS[p % PIN_COLOURS.length]);
+                }
+            if (ghost.isPresent()) {
+                int gx = bx + Math.round(fill(f, ghost.get().get(f)) * BAR_W), cx = bx + Math.round(fill(f, v) * BAR_W);
+                if (gx != cx)
+                    g.fill(Math.min(gx, cx), ry + 3, Math.max(gx, cx), ry + 6, alpha(skin.accent(), 0x90));
+                g.fill(gx - 1, ry, gx + 1, ry + 9, skin.accent());
+            }
+            if (traceFor == f)
+                g.renderOutline(bx - 1, ry + 1, BAR_W + 2, 7, alpha(skin.accent(), 0xA0));
+            if (reference.isPresent()) {
+                float was = reference.get().get(f);
+                float share = was == 0 ? (v == 0 ? 0 : 1) : (v - was) / Math.abs(was);
+                if (Math.abs(share) > 0.01f)
+                    g.drawString(font, share > 0 ? "▲" : "▼", x + RES_W - 13, ry + 1, skin.accent(), false);
+            }
+        }
+        scrollbar(g, x + RES_W - 4, y + 5, rows * ROW_H, shown.size(), rows, figScroll);
+        int uy = y + PAN_H - 4 - Math.min(uses.size(), 4) * 9;
+        for (int i = 0; i < uses.size() && i < 4; i++)
+            g.drawString(font, uses.get(i), x + 5, uy + i * 9, skin.ink(), false);
+        // the parts that changed a hovered figure, found once per figure
+        Fig hf = hoverFig >= 0 ? shown.get(hoverFig) : null;
+        if (hf != traceFor) {
+            traceFor = hf;
+            traceParts(hf);
+        }
+    }
+
+    /** Which parts, changed from the first drawing, moved {@code fig}: each put back alone and the figure compared (cached per drawing). */
+    private void traceParts(Fig fig) {
+        trace.clear();
+        if (fig == null || figures.isEmpty() || baked.isEmpty() || referenceDesign.isEmpty())
+            return;
+        if (ablation == null) {
+            ablation = new HashMap<>();
+            int tried = 0;
+            for (ModularDesign.Part p : baked.get().parts()) {
+                ModularDesign.Part was = referenceDesign.get().part(p.role());
+                if (was == null || was.equals(p) || ++tried > 6)
+                    continue;
+                ToolDesigns.predict(baked.get().withPart(was), ModularTypes.known(), ClientMaterials.get()).ifPresent(f -> ablation.put(p.role(), f));
+            }
+        }
+        float max = 0;
+        for (Map.Entry<String, ModularFigures> e : ablation.entrySet()) {
+            float d = Math.abs(figures.get().get(fig) - e.getValue().get(fig));
+            trace.put(e.getKey(), d);
+            max = Math.max(max, d);
+        }
+        if (max <= 0) {
+            trace.clear();
+            return;
+        }
+        float m = max;
+        trace.replaceAll((k, d) -> d / m);
+    }
+
     /** What the drawn item is for beyond the shared figures: a battery's cells and case, a vessel's experience ceiling. */
     private List<Component> usesOf(ModularDesign d) {
         ModularType t = current();
@@ -780,126 +1570,73 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 Component.translatable("gui.feedback.blueprint_table.cell.case", Component.translatable(c.caseBand().key())));
     }
 
+
     private void fit(GuiGraphics g, String s, int x, int y, int w, int colour) {
         g.drawString(font, font.width(s) <= w ? s : font.plainSubstrByWidth(s, w - font.width("...")) + "...", x, y, colour, false);
     }
 
-    @Override
-    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
-        ModularType t = current();
-        if (t == null)
-            return;
-        List<String> items = visibleItems();
-        int right = imageWidth - 16;
-        for (int i = 0; i < items.size(); i++) {
-            String role = items.get(i);
-            int y = ROW_Y + i * ROW_H + 5;
-            if (role.equals(ADD)) {
-                Component add = Component.translatable("gui.feedback.blueprint_table.add_part");
-                g.drawString(font, add, (imageWidth - font.width(add)) / 2, y, skin.dim(), false);
-                continue;
-            }
-            String sum = summary(role);
-            int sw = Math.min(font.width(sum), 140);
-            fit(g, sum, right - sw, y, 140, skin.dim());
-            String key = keyOf(role);
-            if (t.ranged(role) || (key != null && swaps(key).size() > 1))
-                continue; // its name is its stepper
-            int x = NAME_X + (key != null && removable(key) ? 15 : 0);
-            fit(g, key != null ? keyLabel(key) : roleName(role).getString(), x, y, right - sw - x - 6, skin.ink());
-        }
-        String role = sel();
-        if (role != null) {
-            int y = DET_Y + 4;
-            g.drawString(font, Component.translatable("gui.feedback.blueprint_table.material"), NAME_X, y + 5, skin.dim(), false);
-            y += DET_ROW;
-            if (shapes(role).size() > 1) {
-                g.drawString(font, Component.translatable("gui.feedback.blueprint_table.shape"), NAME_X, y + 5, skin.dim(), false);
-                y += DET_ROW;
-            }
-            if (edged() && role.equals(t.wearRole()))
-                g.drawString(font, Component.translatable("gui.feedback.blueprint_table.edge"), NAME_X, y + 5, skin.dim(), false);
-        }
-        figureBoxes.clear();
-        Optional<ModularDesign> design = design();
-        if (!design.equals(Optional.ofNullable(baked))) {
-            baked = design.orElse(null);
-            figures = design.flatMap(d -> ToolDesigns.predict(d, ModularTypes.known(), ClientMaterials.get()));
-            uses = design.map(d -> usesOf(d)).orElse(List.of());
-            modifiers = design.isPresent() && figures.isPresent() ? ModularModifiers.of(design.get(), current(), figures.get()) : List.of();
-            if (fresh && figures.isPresent()) {
-                reference = figures;
-                fresh = false;
-            }
-            changes = figures.isPresent() && reference.isPresent() ? FigureCompare.lines(reference.get(), figures.get()) : List.of();
-        }
-        changeBox = null;
-        modifierBox = null;
-        int top = STATS_Y;
-        g.drawString(font, Component.translatable("gui.feedback.blueprint_table.as_drawn"), 8, top, skin.dim(), false);
-        if (figures.isEmpty()) {
-            g.drawString(font, Component.translatable(current() != null && current().family() == ModularType.Family.GUN ? "message.feedback.blueprint_table.cannot_print_gun" : "message.feedback.blueprint_table.cannot_print"), 8, top + 11, BAD, false);
-            return;
-        }
-        int y = top + 11;
-        var line = ModularModifiers.line(modifiers);
-        if (line != null) {
-            g.drawString(font, line, 8, y, skin.ink(), false);
-            modifierBox = new int[]{8, y, font.width(line)};
-            y += 11;
-        }
-        List<Component> lines = new ArrayList<>(ModularBlueprintItem.figures(figures.get(), true));
-        lines.addAll(uses);
-        int half = (lines.size() + 1) / 2;
-        for (int i = 0; i < lines.size(); i++) {
-            int x = i < half ? 8 : imageWidth / 2 + 4, ly = y + (i % half) * 9;
-            g.drawString(font, lines.get(i), x, ly, skin.ink(), false);
-            figureBoxes.add(new int[]{x, ly, font.width(lines.get(i))});
-        }
-        if (!changes.isEmpty()) {
-            Component hint = Component.translatable("gui.feedback.blueprint_table.changed");
-            changeBox = new int[]{8, y + 2 + half * 9, font.width(hint)};
-            g.drawString(font, hint, changeBox[0], changeBox[1], skin.dim(), false);
-        }
-    }
-
-    /** Hovering a control or a part says what it is, a modifier what it means, a figure's line what it is for the item. */
+    /** Hovering says what a thing is: a part, a swatch, a figure, a chip, a fault, a type. */
     @Override
     protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
-        if (addPopup.active())
+        if (typePopup.active())
             return;
         super.renderTooltip(g, mouseX, mouseY);
         if (hoveredSlot != null && hoveredSlot.hasItem())
             return;
-        for (Tip t : tips) {
-            if (mouseX >= t.x && mouseX < t.x + t.w && mouseY >= t.y && mouseY < t.y + t.h) {
-                List<Component> lines = t.lines.get();
-                if (!lines.isEmpty())
-                    g.renderTooltip(font, lines.stream().flatMap(c -> font.split(c, t.width).stream()).toList(), mouseX, mouseY);
-                return;
+        List<Component> lines = hoverLines(mouseX, mouseY);
+        if (lines != null && !lines.isEmpty())
+            g.renderTooltip(font, lines.stream().flatMap(c -> font.split(c, 190).stream()).toList(), mouseX, mouseY);
+    }
+
+    private List<Component> hoverLines(int mx, int my) {
+        ModularType t = current();
+        if (t == null)
+            return null;
+        if (hoverDrawer >= 0)
+            return List.of(typeName(hoverDrawer));
+        if (in(mx, my, leftPos + DRAWER_X + DRAWER_SLOTS * DRAWER_PITCH + 4, topPos + 4, 16, 16))
+            return List.of(Component.translatable("gui.feedback.blueprint_table.search"));
+        if (in(mx, my, leftPos + 326, topPos + 4, 26, 16))
+            return List.of(Component.translatable("gui.feedback.blueprint_table.pin.tip"));
+        if (in(mx, my, leftPos + 278, topPos + 4, pins.size() * 16, 16))
+            return List.of(Component.translatable("gui.feedback.blueprint_table.unpin"));
+        if (in(mx, my, leftPos + BlueprintTableMenu.SAMPLE_X - 1, topPos + BlueprintTableMenu.SAMPLE_Y - 1, 18, 18) && sel() != null && menu.sample(0).isEmpty())
+            return List.of(Component.translatable("gui.feedback.blueprint_table.sample"));
+        if (in(mx, my, leftPos + BlueprintTableMenu.PAPER_X - 1, topPos + BlueprintTableMenu.PAPER_Y - 1, 18, 18) && !menu.getSlot(0).hasItem())
+            return List.of(Component.translatable("gui.feedback.blueprint_table.paper"));
+        if (hoverFault >= 0)
+            return List.of(faults.get(hoverFault).reason());
+        if (hoverChip >= 0)
+            return List.of(modifiers.get(hoverChip).line());
+        if (hoverNode >= 0) {
+            Node n = nodes.get(hoverNode);
+            if (n.ghost) {
+                List<Component> out = new ArrayList<>(roleTip(n.role));
+                out.set(0, Component.translatable("gui.feedback.blueprint_table.add_tip", roleName(n.role)));
+                return out;
             }
+            if (hoverCorner && keyOf(n.role) != null && removable(keyOf(n.role)))
+                return List.of(Component.translatable("gui.feedback.blueprint_table.remove"));
+            List<Component> out = new ArrayList<>(roleTip(n.role));
+            out.add(Component.literal(materialName(n.role)));
+            for (Fault f : faults)
+                if (f.roles().contains(n.role))
+                    out.add(f.reason());
+            return out;
         }
-        int mx = mouseX - leftPos, my = mouseY - topPos;
-        if (modifierBox != null && mx >= modifierBox[0] && mx < modifierBox[0] + modifierBox[2] && my >= modifierBox[1] && my < modifierBox[1] + 9) {
-            g.renderTooltip(font, modifiers.stream().flatMap(m -> font.split(m.line(), 200).stream()).toList(), mouseX, mouseY);
-            return;
+        if (hoverSwatch >= 0 && sel() != null)
+            return List.of(materialLabel(materials(sel()).get(hoverSwatch)));
+        if (hoverShape >= 0 && sel() != null)
+            return PartPresenter.describe(shapes(sel()).get(hoverShape));
+        if (hoverFig >= 0) {
+            Fig f = shown.get(hoverFig);
+            List<Component> out = new ArrayList<>(ModularBlueprintItem.explain(f));
+            if (net.minecraft.client.gui.screens.Screen.hasShiftDown() && reference.isPresent() && figures.isPresent())
+                out.add(FigureCompare.line(f, reference.get().get(f), figures.get().get(f)));
+            else
+                out.add(Component.translatable("gui.feedback.blueprint_table.rows.hint").withStyle(net.minecraft.ChatFormatting.DARK_GRAY));
+            return out;
         }
-        if (figures.isEmpty())
-            return;
-        List<ModularFigures.Fig> present = ModularBlueprintItem.present(figures.get());
-        if (changeBox != null && mx >= changeBox[0] && mx < changeBox[0] + changeBox[2] && my >= changeBox[1] && my < changeBox[1] + 9) {
-            g.renderTooltip(font, changes, java.util.Optional.empty(), mouseX, mouseY);
-            return;
-        }
-        for (int i = 0; i < figureBoxes.size() && i < present.size(); i++) {
-            int[] b = figureBoxes.get(i);
-            if (mx >= b[0] && mx < b[0] + b[2] && my >= b[1] && my < b[1] + 9) {
-                List<net.minecraft.util.FormattedCharSequence> tip = new ArrayList<>();
-                for (Component c : ModularBlueprintItem.explain(present.get(i)))
-                    tip.addAll(font.split(c, 180));
-                g.renderTooltip(font, tip, mouseX, mouseY);
-                return;
-            }
-        }
+        return null;
     }
 }

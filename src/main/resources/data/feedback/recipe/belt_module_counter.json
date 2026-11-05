@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:copper_wire"
+    },
+    {
+      "item": "feedback:copper_wire"
+    },
+    {
+      "item": "feedback:wrought_iron_plate"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:belt_module_counter"
+  }
+}

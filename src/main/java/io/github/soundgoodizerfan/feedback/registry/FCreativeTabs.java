@@ -49,6 +49,7 @@ public class FCreativeTabs {
                         output.accept(FWeapons.GUN_TABLE_ITEM.get());
                         output.accept(FWeapons.DEMOLITION_CHARGE_ITEM.get());
                         FModular.items().forEach(output::accept);
+                        FLogistics.fill(output);
                         output.accept(FItems.BULLET_MOLD.get());
                         output.accept(FItems.TUBE_MOLD.get());
                         output.accept(FItems.GLASS_BLOCK_MOLD.get());
@@ -300,6 +301,22 @@ public class FCreativeTabs {
                         output.accept(FItems.VACUUM_DRYER.get());
                         output.accept(FItems.COMPRESSOR.get());
                         output.accept(FItems.GAS_TANK.get());
+                        output.accept(FItems.TUBE.get());
+                        output.accept(FItems.LINED_TUBE.get());
+                        output.accept(FItems.WIDE_TUBE.get());
+                        output.accept(FItems.EVACUATED_TUBE.get());
+                        output.accept(FItems.TUBE_JUNCTION.get());
+                        output.accept(FItems.PROGRAMMED_JUNCTION.get());
+                        output.accept(FItems.TUBE_STATION.get());
+                        output.accept(FItems.SORTING_STATION.get());
+                        output.accept(FItems.SORT_GAUGE.get());
+                        output.accept(FItems.VACUUM_PUMP.get());
+                        output.accept(FItems.LINEAR_MOTOR.get());
+                        output.accept(FItems.CARRIER.get());
+                        output.accept(FItems.MAGNETIC_CARRIER.get());
+                        output.accept(FItems.POD.get());
+                        output.accept(FItems.ENDER_PORT.get());
+                        output.accept(FItems.ENDER_ANCHOR.get());
                         output.accept(FItems.GAS_TURBINE.get());
                         output.accept(FItems.FLARE.get());
                         output.accept(FItems.REACTOR.get());
@@ -461,6 +478,7 @@ public class FCreativeTabs {
             event.accept(FItems.DEBUG_HELMET.get());
             event.accept(FItems.CREATIVE_CONTROLLER.get());
             event.accept(FItems.CREATIVE_FLUID.get());
+            event.accept(FItems.CREATIVE_AIR.get());
             event.accept(FItems.CREATIVE_HEAT.get());
             event.accept(FItems.HEAT_PROBE.get());
             event.accept(FItems.CREATIVE_ROTATION.get());

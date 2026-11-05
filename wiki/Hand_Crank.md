@@ -19,4 +19,4 @@ P is a [Copper Plate](Mechanical_Hammer.md) and S is a [Shaft](Shaft.md).
 
 **12 Su** at **32 RPM**. A hand crank is **too weak to drive a [Mechanical Hammer](Mechanical_Hammer.md)** (80 Su), or any of the other workshop machines (30 Su and up). Hook one up and the network just strains and won't turn. Gearing doesn't help: it changes how hard each turn pushes, not how much load the crank can carry.
 
-It's useful for small loads, like a [Controller](Controller.md) (2 Su) or a [Pump](Pump.md) (8 Su), and for learning how shafts behave. It's also the fastest source early on, so it's the way to spin an [Electric Machine](Electric_Machine.md) up to a high voltage. For real work you want a [Water Wheel](Water_Wheel.md).
+It's useful for small loads, like a [Controller](Controller.md) (2 Su) or a [Pump](Pump.md) (8 Su), and for learning how shafts behave. It's also the fastest source early on, so it's the way to spin an [Dynamotor](Dynamotor.md) up to a high voltage. For real work you want a [Water Wheel](Water_Wheel.md).

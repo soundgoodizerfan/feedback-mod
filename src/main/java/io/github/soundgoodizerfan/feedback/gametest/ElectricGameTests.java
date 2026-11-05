@@ -38,8 +38,8 @@ import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlock;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamotorBlock;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamotorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
@@ -693,7 +693,7 @@ public class ElectricGameTests {
     // --- the dynamo (mechanics 6.8) -----------------------------------------------------------
 
     /**
-     * A crank turning a shaft into an electric machine run as a generator (the default figures: small frame, coarse winding),
+     * A crank turning a shaft into a dynamotor run as a generator (the default figures: small frame, coarse winding),
      * and a magnet on it: it holds the shaft's RPM times its winding's volts-per-RPM, the magnet is delivered current, and the
      * same figure times that current is charged to the shaft.
      */
@@ -701,10 +701,10 @@ public class ElectricGameTests {
     public static void dynamoVoltsFollowTheShaftAndDrawLoadsIt(GameTestHelper helper) {
         BlockPos at = new BlockPos(0, 2, 0);
         HandCrankBlockEntity crank = RotationGameTests.crankRun(helper, at, 2);
-        helper.setBlock(at.east(3), FBlocks.ELECTRIC_MACHINE.get().defaultBlockState()
-                .setValue(ElectricMachineBlock.FACING, Direction.WEST));
+        helper.setBlock(at.east(3), FBlocks.DYNAMOTOR.get().defaultBlockState()
+                .setValue(DynamotorBlock.FACING, Direction.WEST));
         ElectromagnetBlockEntity magnet = placeMagnet(helper, at.east(4));
-        ElectricMachineBlockEntity dynamo = (ElectricMachineBlockEntity) helper.getBlockEntity(at.east(3));
+        DynamotorBlockEntity dynamo = (DynamotorBlockEntity) helper.getBlockEntity(at.east(3));
 
         RotationGameTests.each(helper, crank::turn);
         helper.runAtTickTime(110, () -> {
@@ -730,15 +730,15 @@ public class ElectricGameTests {
     public static void motorTurnsAShaftFromTheLine(GameTestHelper helper) {
         BlockPos crankAt = new BlockPos(0, 2, 1);
         HandCrankBlockEntity crank = RotationGameTests.crankRun(helper, crankAt, 2);
-        helper.setBlock(crankAt.east(3), FBlocks.ELECTRIC_MACHINE.get().defaultBlockState()
-                .setValue(ElectricMachineBlock.FACING, Direction.WEST));
+        helper.setBlock(crankAt.east(3), FBlocks.DYNAMOTOR.get().defaultBlockState()
+                .setValue(DynamotorBlock.FACING, Direction.WEST));
         // Up, not along: a long row reaches the neighbouring test's rig.
         BlockPos motorAt = crankAt.east(3).above(2);
         placeCable(helper, crankAt.east(3).above());
-        helper.setBlock(motorAt, FBlocks.ELECTRIC_MACHINE.get().defaultBlockState()
-                .setValue(ElectricMachineBlock.FACING, Direction.EAST).setValue(ElectricMachineBlock.MODE, ElectricMachineBlock.Mode.MOTOR));
+        helper.setBlock(motorAt, FBlocks.DYNAMOTOR.get().defaultBlockState()
+                .setValue(DynamotorBlock.FACING, Direction.EAST).setValue(DynamotorBlock.MODE, DynamotorBlock.Mode.MOTOR));
         helper.setBlock(motorAt.east(), RotationGameTests.alongX(FBlocks.SHAFT.get()));
-        ElectricMachineBlockEntity motor = (ElectricMachineBlockEntity) helper.getBlockEntity(motorAt);
+        DynamotorBlockEntity motor = (DynamotorBlockEntity) helper.getBlockEntity(motorAt);
 
         RotationGameTests.each(helper, crank::turn);
         helper.runAtTickTime(140, () -> {

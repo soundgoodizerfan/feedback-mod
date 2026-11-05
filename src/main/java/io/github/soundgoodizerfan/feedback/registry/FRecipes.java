@@ -167,6 +167,11 @@ public class FRecipes {
             MATERIAL_INGREDIENT = INGREDIENT_TYPES.register("material",
                     () -> io.github.soundgoodizerfan.feedback.process.MaterialIngredient.TYPE);
 
+    /** One pearl and two metal plates -> a bonded pair of ender ports. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.ender.EnderPairRecipe>>
+            ENDER_PAIR = SERIALIZERS.register("ender_pair",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.ender.EnderPairRecipe::new));
+
     private FRecipes() {
     }
 

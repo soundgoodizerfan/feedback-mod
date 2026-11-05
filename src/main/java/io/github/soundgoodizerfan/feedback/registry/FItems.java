@@ -689,6 +689,29 @@ public class FItems {
     private FItems() {
     }
 
+    // --- pneumatic tubes, pods, ender ports ---------------------------------------------------------
+    public static final DeferredItem<BlockItem> TUBE = ITEMS.registerSimpleBlockItem(FBlocks.TUBE);
+    public static final DeferredItem<BlockItem> LINED_TUBE = ITEMS.registerSimpleBlockItem(FBlocks.LINED_TUBE);
+    public static final DeferredItem<BlockItem> WIDE_TUBE = ITEMS.registerSimpleBlockItem(FBlocks.WIDE_TUBE);
+    public static final DeferredItem<BlockItem> EVACUATED_TUBE = ITEMS.registerSimpleBlockItem(FBlocks.EVACUATED_TUBE);
+    public static final DeferredItem<BlockItem> TUBE_JUNCTION = ITEMS.registerSimpleBlockItem(FBlocks.TUBE_JUNCTION);
+    public static final DeferredItem<BlockItem> PROGRAMMED_JUNCTION = ITEMS.registerSimpleBlockItem(FBlocks.PROGRAMMED_JUNCTION);
+    public static final DeferredItem<BlockItem> TUBE_STATION = ITEMS.registerSimpleBlockItem(FBlocks.TUBE_STATION);
+    public static final DeferredItem<BlockItem> SORTING_STATION = ITEMS.registerSimpleBlockItem(FBlocks.SORTING_STATION);
+    /** Steps a tube station through its sort bands. */
+    public static final DeferredItem<Item> SORT_GAUGE = ITEMS.register("sort_gauge", () -> new Item(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<BlockItem> VACUUM_PUMP = ITEMS.registerSimpleBlockItem(FBlocks.VACUUM_PUMP);
+    public static final DeferredItem<BlockItem> LINEAR_MOTOR = ITEMS.registerSimpleBlockItem(FBlocks.LINEAR_MOTOR);
+    public static final DeferredItem<BlockItem> CREATIVE_AIR = ITEMS.registerSimpleBlockItem(FBlocks.CREATIVE_AIR);
+    public static final DeferredItem<BlockItem> ENDER_PORT = ITEMS.registerSimpleBlockItem(FBlocks.ENDER_PORT);
+    public static final DeferredItem<Item> ENDER_ANCHOR = ITEMS.register("ender_anchor", () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> CARRIER = ITEMS.register("carrier", () -> new io.github.soundgoodizerfan.feedback.machine.tube.CarrierItem(
+            new Item.Properties().stacksTo(16), io.github.soundgoodizerfan.feedback.machine.tube.CarrierItem.Kind.CAPSULE));
+    public static final DeferredItem<Item> MAGNETIC_CARRIER = ITEMS.register("magnetic_carrier", () -> new io.github.soundgoodizerfan.feedback.machine.tube.CarrierItem(
+            new Item.Properties().stacksTo(16), io.github.soundgoodizerfan.feedback.machine.tube.CarrierItem.Kind.MAGNETIC));
+    public static final DeferredItem<Item> POD = ITEMS.register("pod", () -> new io.github.soundgoodizerfan.feedback.machine.tube.CarrierItem(
+            new Item.Properties().stacksTo(1), io.github.soundgoodizerfan.feedback.machine.tube.CarrierItem.Kind.POD));
+
     public static void register(IEventBus modBus) {
         FormItems.registerAll(FBlocks.BLOCKS, ITEMS);
         ITEMS.register(modBus);

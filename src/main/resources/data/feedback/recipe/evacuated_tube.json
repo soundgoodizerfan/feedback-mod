@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "feedback:steel_plate"
+    },
+    "W": {
+      "item": "feedback:wide_tube"
+    }
+  },
+  "pattern": [
+    "S",
+    "W",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:evacuated_tube"
+  }
+}

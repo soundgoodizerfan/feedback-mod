@@ -30,7 +30,7 @@ import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamotorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlockEntity;
@@ -299,9 +299,9 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity::new, FBlocks.RECTIFIER.get())
                     .build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricMachineBlockEntity>> ELECTRIC_MACHINE =
-            BLOCK_ENTITIES.register("electric_machine", () -> BlockEntityType.Builder
-                    .of(ElectricMachineBlockEntity::new, FBlocks.ELECTRIC_MACHINE.get())
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DynamotorBlockEntity>> DYNAMOTOR =
+            BLOCK_ENTITIES.register("dynamotor", () -> BlockEntityType.Builder
+                    .of(DynamotorBlockEntity::new, FBlocks.DYNAMOTOR.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CoilBlockEntity>> COIL =
@@ -548,6 +548,28 @@ public class FBlockEntities {
 
     private FBlockEntities() {
     }
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.tube.TubeBlockEntity>> TUBE =
+            BLOCK_ENTITIES.register("tube", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.tube.TubeBlockEntity::new, FBlocks.TUBE.get(), FBlocks.LINED_TUBE.get(), FBlocks.WIDE_TUBE.get(), FBlocks.EVACUATED_TUBE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.tube.JunctionBlockEntity>> TUBE_JUNCTION =
+            BLOCK_ENTITIES.register("tube_junction", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.tube.JunctionBlockEntity::new, FBlocks.TUBE_JUNCTION.get(), FBlocks.PROGRAMMED_JUNCTION.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.tube.TubeStationBlockEntity>> TUBE_STATION =
+            BLOCK_ENTITIES.register("tube_station", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.tube.TubeStationBlockEntity::new, FBlocks.TUBE_STATION.get(), FBlocks.SORTING_STATION.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.tube.VacuumPumpBlockEntity>> VACUUM_PUMP =
+            BLOCK_ENTITIES.register("vacuum_pump", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.tube.VacuumPumpBlockEntity::new, FBlocks.VACUUM_PUMP.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.tube.LinearMotorBlockEntity>> LINEAR_MOTOR =
+            BLOCK_ENTITIES.register("linear_motor", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.tube.LinearMotorBlockEntity::new, FBlocks.LINEAR_MOTOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.tube.AirSourceBlockEntity>> CREATIVE_AIR =
+            BLOCK_ENTITIES.register("creative_air", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.tube.AirSourceBlockEntity::new, FBlocks.CREATIVE_AIR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.ender.EnderPortBlockEntity>> ENDER_PORT =
+            BLOCK_ENTITIES.register("ender_port", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.ender.EnderPortBlockEntity::new, FBlocks.ENDER_PORT.get()).build(null));
 
     public static void register(IEventBus modBus) {
         BLOCK_ENTITIES.register(modBus);
