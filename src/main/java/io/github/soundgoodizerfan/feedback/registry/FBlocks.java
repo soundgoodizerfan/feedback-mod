@@ -445,6 +445,26 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.METAL)));
 
+    /** An EHV sink that cuts what is fed to it, with a swappable head and a recipe data stick. See {@code PowerCutterBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlock> POWER_CUTTER = BLOCKS.register("power_cutter",
+            () -> new io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)));
+
+    /** Eu to Thermal around a crucible: heats the metal in it. See {@code InductionCoilBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlock> INDUCTION_COIL = BLOCKS.register("induction_coil",
+            () -> new io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE).strength(3.0f).sound(SoundType.METAL)));
+    /** A hob that heats magnetic cookware. See {@code InductionStoveBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.induction.InductionStoveBlock> INDUCTION_STOVE = BLOCKS.register("induction_stove",
+            () -> new io.github.soundgoodizerfan.feedback.machine.induction.InductionStoveBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
+    /** A coil that brings a held metal piece to its forging window. See {@code PreheatCoilBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.induction.PreheatCoilBlock> PREHEAT_COIL = BLOCKS.register("preheat_coil",
+            () -> new io.github.soundgoodizerfan.feedback.machine.induction.PreheatCoilBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE).strength(3.0f).sound(SoundType.METAL)));
+
     /** No block entity and no behaviour. A vessel counts these; insulation itself does nothing. */
     public static final DeferredBlock<InsulationBlock> INSULATION = BLOCKS.register("insulation",
             () -> new InsulationBlock(BlockBehaviour.Properties.of()

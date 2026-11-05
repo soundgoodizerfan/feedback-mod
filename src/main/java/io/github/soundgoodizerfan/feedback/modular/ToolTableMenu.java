@@ -707,6 +707,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (cutting()) {
             ItemStack in = centreStack().copy();
             Optional<WoodCuts.Cut> saw = sawing(level) ? woodCut(level) : Optional.empty();
+            // A recipe data stick in the off hand records this cut (the stonecutter alone for now; the other benches call the same with their station id).
+            if (station == Station.STONECUTTING) {
+                List<ItemStack> made = cuts(level);
+                ItemStack result = saw.map(c -> c.result()).orElse(cutPicked() >= 0 && cutPicked() < made.size() ? made.get(cutPicked()) : ItemStack.EMPTY);
+                io.github.soundgoodizerfan.feedback.item.DataStickItem.record(player, level, station.getSerializedName(), in, result);
+            }
             // The stonecutter's saw is worn by the stock, so it is read before the stock goes.
             if (station == Station.STONECUTTING && saw.isEmpty())
                 wearHammer();

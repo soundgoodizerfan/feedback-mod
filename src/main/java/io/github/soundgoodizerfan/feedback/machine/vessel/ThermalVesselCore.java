@@ -230,6 +230,14 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         }
     }
 
+    /** Every molten fluid held: the ledger's metals, else what the tank shows. */
+    public java.util.Set<net.minecraft.world.level.material.Fluid> moltenFluids() {
+        if (alloy.amount() > 0)
+            return alloy.content().keySet();
+        FluidStack shown = tank.getFluid();
+        return shown.isEmpty() ? java.util.Set.of() : java.util.Set.of(shown.getFluid());
+    }
+
     /** Whether the tank's contents are the ledger's. */
     protected boolean ledgerHeld() {
         return alloy.amount() > 0;

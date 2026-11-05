@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "feedback:block/power_cutter" }
+  }
+}

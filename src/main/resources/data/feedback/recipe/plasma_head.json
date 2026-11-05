@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "T": { "item": "feedback:tungsten_plate" }, "C": { "item": "feedback:ceramic" } },
+  "pattern": [ " T ", "TCT" ],
+  "result": {
+    "count": 1,
+    "id": "feedback:plasma_head",
+    "components": { "feedback:made_of": { "material": "feedback:tungsten", "stock": "plate", "cells": 1 } }
+  }
+}

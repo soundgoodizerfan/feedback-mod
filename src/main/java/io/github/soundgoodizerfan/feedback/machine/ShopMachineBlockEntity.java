@@ -51,10 +51,12 @@ import net.minecraft.world.level.block.state.BlockState;
  * absorbed by the body ({@link #wear}). Condition scales the force the machine delivers, as a
  * worn hammer head delivers less of every blow.
  */
-public abstract class ShopMachineBlockEntity extends RotationNode implements Wearing, WorkpieceHolder {
+public abstract class ShopMachineBlockEntity extends RotationNode implements Weldable, WorkpieceHolder {
 
     protected ItemStack workpiece = ItemStack.EMPTY;
     protected float condition = 1f;
+    /** What a weld can restore it to; each weld lowers it. */
+    private float maxCondition = 1f;
     /** Strokes owed but not yet delivered. */
     private float progress;
     /** The fraction of a Fu of removal not yet credited -- see {@link Removing#apply}. */
@@ -90,6 +92,18 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wea
     @Override
     public float getCondition() {
         return condition;
+    }
+
+    @Override
+    public float maxCondition() {
+        return maxCondition;
+    }
+
+    @Override
+    public void weld(float newCondition, float newMax) {
+        condition = newCondition;
+        maxCondition = newMax;
+        sync();
     }
 
     @Override
@@ -144,6 +158,7 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wea
     protected void applyImplicitComponents(BlockEntity.DataComponentInput input) {
         super.applyImplicitComponents(input);
         condition = input.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
+        maxCondition = input.getOrDefault(FDataComponents.MAX_CONDITION.get(), 1f);
     }
 
     @Override
@@ -151,12 +166,15 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wea
         super.collectImplicitComponents(builder);
         if (condition < 1f)
             builder.set(FDataComponents.TOOL_CONDITION.get(), condition);
+        if (maxCondition < 1f)
+            builder.set(FDataComponents.MAX_CONDITION.get(), maxCondition);
     }
 
     @Override
     public void removeComponentsFromTag(CompoundTag tag) {
         super.removeComponentsFromTag(tag);
         tag.remove("Condition");
+        tag.remove("MaxCondition");
     }
 
     @Override
@@ -164,6 +182,7 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wea
         super.saveAdditional(tag, registries);
         tag.put("Workpiece", workpiece.saveOptional(registries));
         tag.putFloat("Condition", condition);
+        tag.putFloat("MaxCondition", maxCondition);
         tag.putFloat("StrokeProgress", progress);
         tag.putFloat("CarriedFu", carriedFu);
     }
@@ -173,6 +192,7 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wea
         super.loadAdditional(tag, registries);
         workpiece = ItemStack.parseOptional(registries, tag.getCompound("Workpiece"));
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        maxCondition = tag.contains("MaxCondition") ? tag.getFloat("MaxCondition") : 1f;
         progress = tag.getFloat("StrokeProgress");
         carriedFu = tag.getFloat("CarriedFu");
     }

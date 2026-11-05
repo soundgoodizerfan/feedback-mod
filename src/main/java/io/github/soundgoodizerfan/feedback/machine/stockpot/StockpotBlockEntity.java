@@ -294,6 +294,11 @@ public class StockpotBlockEntity extends BlockEntity {
         setChanged();
     }
 
+    /** The material the pot is made of: every stockpot is one cast pot, so this is a fixed figure, read by the induction stove. */
+    public net.minecraft.resources.ResourceLocation vesselMaterial() {
+        return FTuning.POT_MATERIAL;
+    }
+
     public void tickServer() {
         if (level == null)
             return;

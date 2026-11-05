@@ -13,7 +13,7 @@ P is any plate of a metal that conducts heat (three of the same metal) and T is 
 
 ## Using it
 
-- **Place it** on a lit fire: a Firebox or lava.
+- **Place it** on a lit fire (a Firebox or lava) or on an [Induction Stove](Induction.md#induction-stove). The stove heats the pan only when its plate metal is magnetic; copper and aluminum pans get nothing.
 - **Lay food in:** right-click with a food. It goes in the quarter your crosshair is on. The pan holds up to four pieces, one per quarter. A cold pan accepts food.
 - **Flip a piece:** right-click the piece with a [Spatula](Spatula.md).
 - **Lift the pan off the fire:** hold right-click on the pan with [Tongs](Hazards.md#lifting-a-skillet). Release to set it down.

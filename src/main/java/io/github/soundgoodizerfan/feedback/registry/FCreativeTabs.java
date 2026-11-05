@@ -191,6 +191,24 @@ public class FCreativeTabs {
                             if (material.electrodeLimit().isPresent())
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem.of(id));
                         });
+                        output.accept(FItems.POWER_CUTTER.get());
+                        output.accept(FItems.DATA_STICK.get());
+                        // One cutter head of each kind per material hard enough to be one.
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            boolean hard = material.kind().filter(k -> k == io.github.soundgoodizerfan.feedback.process.Material.Kind.METAL
+                                    || k == io.github.soundgoodizerfan.feedback.process.Material.Kind.CERAMIC
+                                    || k == io.github.soundgoodizerfan.feedback.process.Material.Kind.CRYSTAL).isPresent();
+                            if (!hard)
+                                return;
+                            net.minecraft.world.item.ItemStack saw = new net.minecraft.world.item.ItemStack(FItems.SAW_HEAD.get());
+                            saw.set(FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(id, "ingot", 1));
+                            output.accept(saw);
+                            if (material.ampacity().isPresent()) {
+                                net.minecraft.world.item.ItemStack plasma = new net.minecraft.world.item.ItemStack(FItems.PLASMA_HEAD.get());
+                                plasma.set(FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(id, "ingot", 1));
+                                output.accept(plasma);
+                            }
+                        });
                         output.accept(FItems.INSULATION.get());
                         output.accept(FItems.CRYSTAL_HOLDER.get());
                         output.accept(FItems.CULTURE_DISH.get());
@@ -226,6 +244,9 @@ public class FCreativeTabs {
                         output.accept(FItems.ELECTROMAGNET.get());
                         output.accept(FItems.COPPER_COIL.get());
                         output.accept(FItems.IRON_COIL.get());
+                        output.accept(FItems.INDUCTION_COIL.get());
+                        output.accept(FItems.INDUCTION_STOVE.get());
+                        output.accept(FItems.PREHEAT_COIL.get());
                         output.accept(FItems.BREAKER.get());
                         output.accept(FItems.FUSE.get());
                         output.accept(FItems.COHERER.get());
@@ -234,6 +255,7 @@ public class FCreativeTabs {
                         output.accept(FItems.OSCILLOSCOPE.get());
                         output.accept(FItems.TRACE_BOARD.get());
                         output.accept(FItems.SOLDERING_IRON.get());
+                        output.accept(FItems.ARC_WELDER.get());
                         output.accept(FItems.WHISKER.get());
                         output.accept(FItems.RELAY.get());
                         output.accept(FItems.GALENA.get());

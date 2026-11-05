@@ -31,7 +31,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
-import io.github.soundgoodizerfan.feedback.machine.Wearing;
+import io.github.soundgoodizerfan.feedback.machine.Weldable;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -80,7 +80,7 @@ import org.jetbrains.annotations.NotNull;
  * with exposed plates (low water). Misuse only: overcharge vents water and releases hydrogen, overdraw heats the case and
  * costs condition, heat over {@link FTuning#BATTERY_HOT_TU} costs condition, volts over the case's band cost condition.
  */
-public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wearing {
+public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Weldable {
 
     public static final TagKey<Fluid> ACID = TagKey.create(net.minecraft.core.registries.Registries.FLUID,
             ResourceLocation.fromNamespaceAndPath(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID, "battery_acid"));
@@ -92,6 +92,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wea
 
     private float charge;
     private float condition = 1f;
+    private float maxCondition = 1f;
     private float water;
     private float acid;
     private float gas;
@@ -400,6 +401,18 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wea
     }
 
     @Override
+    public float maxCondition() {
+        return maxCondition;
+    }
+
+    @Override
+    public void weld(float newCondition, float newMax) {
+        condition = newCondition;
+        maxCondition = newMax;
+        setChanged();
+    }
+
+    @Override
     public boolean isRunning() {
         return supplying && getAmps() > 0f;
     }
@@ -441,6 +454,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wea
         tag.putString("CaseBand", caseBand.getSerializedName());
         tag.putFloat("Charge", charge);
         tag.putFloat("Condition", condition);
+        tag.putFloat("MaxCondition", maxCondition);
         tag.putFloat("Water", water);
         tag.putFloat("Acid", acid);
         tag.putFloat("Gas", gas);
@@ -460,6 +474,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wea
         caseBand = VoltageBand.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(tag.getString("CaseBand"))).result().orElse(VoltageBand.LV);
         charge = tag.getFloat("Charge");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        maxCondition = tag.contains("MaxCondition") ? tag.getFloat("MaxCondition") : 1f;
         water = tag.getFloat("Water");
         acid = tag.getFloat("Acid");
         gas = tag.getFloat("Gas");

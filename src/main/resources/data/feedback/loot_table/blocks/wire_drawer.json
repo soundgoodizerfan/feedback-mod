@@ -12,7 +12,8 @@
               "function": "minecraft:copy_components",
               "source": "block_entity",
               "include": [
-                "feedback:tool_condition"
+                "feedback:tool_condition",
+                "feedback:max_condition"
               ]
             }
           ]

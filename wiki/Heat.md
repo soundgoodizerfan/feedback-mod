@@ -37,7 +37,7 @@ So:
 
 ## Heat sources have a facing
 
-Every heat source radiates toward one face. [Firebox](Firebox.md), [Fluid Burner](Fluid_Burner.md), [Campfire](Campfire.md) and [Hearth](Hearth.md) fires always radiate up. A [Heating Coil](Heating_Coil.md), an [Arc Head](Arc_Furnace.md#the-arc-head) and the creative heat source can be turned: a coil or creative source radiates away from the face you clicked when placing it, and an Arc Head radiates into that face.
+Every heat source radiates toward one face. [Firebox](Firebox.md), [Fluid Burner](Fluid_Burner.md), [Campfire](Campfire.md) and [Hearth](Hearth.md) fires always radiate up. A [Heating Coil](Heating_Coil.md), an [Induction Coil](Induction.md#induction-coil), an [Arc Head](Arc_Furnace.md#the-arc-head) and the creative heat source can be turned: a coil or creative source radiates away from the face you clicked when placing it, and an Arc Head radiates into that face.
 
 A heat-accepting block touching the facing face gets the source's full heat. A block touching one of the four sides next to it climbs only 40% of the way from room temperature to the source's temperature (an Arc Head heats all four sides fully). The block behind gets none. Lava heats the block above it.
 
@@ -113,6 +113,7 @@ What isn't caught up is **progress**. A batch in the crucible doesn't finish whi
 | [Firebox](Firebox.md) | Burns fuel under a crucible or boiler |
 | [Fluid Burner](Fluid_Burner.md) | Burns liquid or gas fuel under a vessel |
 | [Heating Coil](Heating_Coil.md) | Electric heat next to a vessel |
+| [Induction](Induction.md) | Electric heat by field: a coil for a metal melt, a stove for magnetic cookware, a coil for a forging workpiece |
 | [Arc Furnace](Arc_Furnace.md) | An electric arc over a large melt, hot enough for tungsten |
 | [Crucible](Crucible.md) | The open, measurable vessel for steel, melting and alloys |
 | [Furnaces](Furnaces.md) | Furnace, Smoker, Crude Blast Furnace, Improved Furnace, Kiln, Annealing Furnace |

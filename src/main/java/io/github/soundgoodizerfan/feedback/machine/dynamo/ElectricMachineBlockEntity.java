@@ -33,7 +33,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
-import io.github.soundgoodizerfan.feedback.machine.Wearing;
+import io.github.soundgoodizerfan.feedback.machine.Weldable;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -94,7 +94,7 @@ import org.jetbrains.annotations.Nullable;
  * choice {@code RotationNetwork.recalculate} makes for every machine's working draw. It does not spin on screen yet:
  * placeholder art.
  */
-public class ElectricMachineBlockEntity extends ElectricNode implements ThermalBody, Wearing {
+public class ElectricMachineBlockEntity extends ElectricNode implements ThermalBody, Weldable {
 
     // Figures baked at the Tool Table; the defaults are the smallest, coarsest machine, for a block placed with none.
     private float frameSu = FTuning.FRAME_SU_SMALL;
@@ -110,6 +110,7 @@ public class ElectricMachineBlockEntity extends ElectricNode implements ThermalB
 
     // State.
     private float condition = 1f;
+    private float maxCondition = 1f;
     private float temperature = FTuning.AMBIENT_TU.value();
     private int water;
     private int coolTicks;
@@ -269,6 +270,18 @@ public class ElectricMachineBlockEntity extends ElectricNode implements ThermalB
         return condition;
     }
 
+    @Override
+    public float maxCondition() {
+        return maxCondition;
+    }
+
+    @Override
+    public void weld(float newCondition, float newMax) {
+        condition = newCondition;
+        maxCondition = newMax;
+        setChanged();
+    }
+
     /** A machine on a shaft is working and cannot be measured, like any machine (philosophy 8). */
     @Override
     public boolean isRunning() {
@@ -361,6 +374,7 @@ public class ElectricMachineBlockEntity extends ElectricNode implements ThermalB
         tag.putFloat("CoreLoss", coreLoss);
         tag.putBoolean("Jacketed", jacketed);
         tag.putFloat("Condition", condition);
+        tag.putFloat("MaxCondition", maxCondition);
         tag.putFloat("Temperature", temperature);
         tag.putInt("Water", water);
         tag.putInt("CoolTicks", coolTicks);
@@ -380,6 +394,7 @@ public class ElectricMachineBlockEntity extends ElectricNode implements ThermalB
         coreLoss = tag.contains("CoreLoss") ? tag.getFloat("CoreLoss") : coreLoss;
         jacketed = tag.getBoolean("Jacketed");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        maxCondition = tag.contains("MaxCondition") ? tag.getFloat("MaxCondition") : 1f;
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         water = Math.max(0, tag.getInt("Water"));
         coolTicks = tag.getInt("CoolTicks");

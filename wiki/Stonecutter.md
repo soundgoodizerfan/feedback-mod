@@ -29,6 +29,8 @@ A second folder tab, **Cut**, shows the cuts for what is in the center, one inpu
 
 Put a plank or a log in the center and the Cut tab lists the same wood cuts as the [Woodworking Table](Woodworking_Table.md#what-it-does)'s Saw tab: stairs, slabs, doors, trapdoors, fences, signs, boats, chests, bowls, sticks, a log sawn into planks, a log stripped. A log counts as four planks. The sawblade does the work and each cut wears it.
 
+Make a cut with a [Recipe Data Stick](Data_Stick.md) in your off hand and the stick records it, for a [Power Cutter](Power_Cutter.md) to repeat.
+
 The benches each take their own tool: an axe for wood, a hammer for metal, a saw or an axe at the stonecutter.
 
 Metal parts are made at the [Smithing Table](Smithing_Table.md). The screen is cobblestone. The block is low, as in vanilla: a little over half a block high.

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "W": { "item": "feedback:copper_fine_wire" }, "C": { "item": "feedback:ceramic" }, "S": { "item": "feedback:steel_plate" } },
+  "pattern": [ "W", "C", "S" ],
+  "result": { "count": 1, "id": "feedback:data_stick" }
+}

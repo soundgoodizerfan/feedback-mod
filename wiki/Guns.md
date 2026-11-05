@@ -204,7 +204,7 @@ A gun cools down wherever it is: in your hand, in your hotbar, in a chest. A [Ba
 
 ## Wear
 
-The bore wears a little with every shot, faster when the barrel is hot. The tooltip shows it as **Bore wear**. A worn gun hits less hard and spreads wider, down to a floor: at its worst it delivers **30% less** energy, but it never stops working from wear alone. There's no way to repair wear yet.
+The bore wears a little with every shot, faster when the barrel is hot. The tooltip shows it as **Bore wear**. A worn gun hits less hard and spreads wider, down to a floor: at its worst it delivers **30% less** energy, but it never stops working from wear alone. An [Arc Welder](Arc_Welder.md) repairs a worn gun, at the cost of a lower best condition each time.
 
 ## Overpressure
 

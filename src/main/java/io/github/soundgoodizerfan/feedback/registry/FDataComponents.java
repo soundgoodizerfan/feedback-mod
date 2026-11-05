@@ -162,9 +162,23 @@ public class FDataComponents {
      */
     // Also carried by a mined machine block (hammer, pulley, shop machines), so its wear survives
     // being picked up -- the same figure, on the item that is the machine.
+    /** The one operation a recipe data stick holds -- see {@code item/RecordedCut}. Absent means blank. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.RecordedCut>> RECORDED_CUT =
+            COMPONENTS.register("recorded_cut", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.RecordedCut>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.RecordedCut.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.RecordedCut.STREAM_CODEC)
+                    .build());
+
     /** How much of a galvanic cell's anode is left, 0 to 1: a mined cell keeps what it has eaten. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> ANODE_REMAINING =
             COMPONENTS.register("anode_remaining", () -> DataComponentType.<Float>builder()
+                    .persistent(Codec.FLOAT)
+                    .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
+    /** The most condition a welded part can be mended to, 1 as built; each arc weld lowers it ({@code FTuning#WELDER_MAX_STEP}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MAX_CONDITION =
+            COMPONENTS.register("max_condition", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)
                     .networkSynchronized(ByteBufCodecs.FLOAT)
                     .build());

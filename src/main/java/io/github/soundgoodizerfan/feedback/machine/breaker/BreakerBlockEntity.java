@@ -23,7 +23,7 @@ import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
-import io.github.soundgoodizerfan.feedback.machine.Wearing;
+import io.github.soundgoodizerfan.feedback.machine.Weldable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -49,10 +49,11 @@ import net.minecraft.world.level.block.state.BlockState;
  * like one. A hand or a controller closes it again; closing it back onto the fault trips it again,
  * and wears it again.
  */
-public class BreakerBlockEntity extends ElectricNode implements Switchable, Wearing {
+public class BreakerBlockEntity extends ElectricNode implements Switchable, Weldable {
 
     private boolean closed = true;
     private float condition = 1f;
+    private float maxCondition = 1f;
 
     public BreakerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BREAKER.get(), pos, state);
@@ -104,6 +105,18 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Wear
     }
 
     @Override
+    public float maxCondition() {
+        return maxCondition;
+    }
+
+    @Override
+    public void weld(float newCondition, float newMax) {
+        condition = newCondition;
+        maxCondition = newMax;
+        setChanged();
+    }
+
+    @Override
     public boolean isRunning() {
         return closed && getAmps() > 0f;
     }
@@ -113,6 +126,7 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Wear
         super.saveAdditional(tag, registries);
         tag.putBoolean("Closed", closed);
         tag.putFloat("Condition", condition);
+        tag.putFloat("MaxCondition", maxCondition);
     }
 
     @Override
@@ -120,5 +134,6 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Wear
         super.loadAdditional(tag, registries);
         closed = !tag.contains("Closed") || tag.getBoolean("Closed");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        maxCondition = tag.contains("MaxCondition") ? tag.getFloat("MaxCondition") : 1f;
     }
 }

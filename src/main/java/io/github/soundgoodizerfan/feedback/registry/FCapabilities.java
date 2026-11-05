@@ -56,6 +56,8 @@ public class FCapabilities {
                 FItems.COPPER_BUCKET.get());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.LEAD_CHEST.get(),
                 (chest, side) -> new net.neoforged.neoforge.items.wrapper.InvWrapper(chest));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.POWER_CUTTER.get(),
+                (cutter, side) -> new io.github.soundgoodizerfan.feedback.machine.cutter.CutterItemHandler(cutter));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.MECHANICAL_HAMMER.get(),
                 (hammer, side) -> new WorkpieceItemHandler(hammer));
         // The machine shop, for the same reason: a hopper is a second machine racing the first.

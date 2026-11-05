@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "S": { "item": "feedback:steel_plate" },
+    "W": { "item": "feedback:copper_fine_wire" },
+    "C": { "item": "feedback:ceramic" }
+  },
+  "pattern": [ "SSS", "WCW", "S S" ],
+  "result": { "count": 1, "id": "feedback:power_cutter" }
+}

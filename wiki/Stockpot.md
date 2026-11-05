@@ -1,6 +1,6 @@
 # Stockpot
 
-A pot that cooks a batch. Set it on a lit [Firebox](Firebox.md), then:
+A pot that cooks a batch. Set it on a lit [Firebox](Firebox.md) or an [Induction Stove](Induction.md#induction-stove), then:
 
 - **Water bucket:** pour a bucket in (up to two). You get the empty bucket back.
 - **A food:** add one (up to six). Raw or cooked, any food a [Skillet](Skillet.md) or [Furnace](Furnaces.md) would cook.

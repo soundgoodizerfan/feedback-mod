@@ -79,6 +79,14 @@ public interface HeatSource {
         return 0f;
     }
 
+    /**
+     * Whether this source heats what stands at {@code target}. True by default; an induction source says no unless the receiver is
+     * the kind of thing a field can heat (a metal charge, magnetic cookware). {@link #at} and {@link #spanAt} skip a source that says no.
+     */
+    default boolean heats(Level level, BlockPos target) {
+        return true;
+    }
+
     /** The facing a rotatable source block holds, up when its block has none. */
     static Direction facingOf(BlockState state) {
         return state.hasProperty(BlockStateProperties.FACING) ? state.getValue(BlockStateProperties.FACING) : Direction.UP;
@@ -103,7 +111,7 @@ public interface HeatSource {
             if (!(be instanceof HeatSource source))
                 continue;
             float share = source.shareToward(dir.getOpposite());
-            if (share <= 0f)
+            if (share <= 0f || !source.heats(level, pos))
                 continue;
             FireSpan span = source.catchUp(gap).clampedTo(gap);
             if (span.litTicks() <= 0L)
@@ -136,7 +144,7 @@ public interface HeatSource {
             if (!(be instanceof HeatSource source))
                 continue;
             float share = source.shareToward(dir.getOpposite());
-            if (share <= 0f)
+            if (share <= 0f || !source.heats(level, pos))
                 continue;
             float fire = source.getFireTu().value();
             if (fire <= ambient.value())

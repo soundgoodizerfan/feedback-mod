@@ -268,6 +268,17 @@ public class FItems {
     /** A rod of a conducting material that carries the arc; consumed by nature. See {@code ElectrodeItem}. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem> ARC_ELECTRODE = ITEMS.register("arc_electrode",
             () -> new io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
+    public static final DeferredItem<BlockItem> POWER_CUTTER = ITEMS.registerSimpleBlockItem(FBlocks.POWER_CUTTER);
+    /** The cutting element of a Power Cutter, of a material stamped on it. See {@code CutterHeadItem}. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem> SAW_HEAD = ITEMS.register("saw_head",
+            () -> new io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem(io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.Type.SAW,
+                    new net.minecraft.world.item.Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem> PLASMA_HEAD = ITEMS.register("plasma_head",
+            () -> new io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem(io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.Type.PLASMA,
+                    new net.minecraft.world.item.Item.Properties().stacksTo(1)));
+    /** Records one hand-bench cut and plays it back in a powered machine. See {@code DataStickItem}. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.DataStickItem> DATA_STICK = ITEMS.register("data_stick",
+            () -> new io.github.soundgoodizerfan.feedback.item.DataStickItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
     public static final DeferredItem<BlockItem> INSULATION = ITEMS.registerSimpleBlockItem(FBlocks.INSULATION);
     public static final DeferredItem<BlockItem> GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GRAPHITE_ORE);
     public static final DeferredItem<BlockItem> DEEPSLATE_GRAPHITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.DEEPSLATE_GRAPHITE_ORE);
@@ -303,6 +314,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> COPPER_COIL = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_COIL);
     public static final DeferredItem<BlockItem> IRON_COIL = ITEMS.registerSimpleBlockItem(FBlocks.IRON_COIL);
+    public static final DeferredItem<BlockItem> INDUCTION_COIL = ITEMS.registerSimpleBlockItem(FBlocks.INDUCTION_COIL);
+    public static final DeferredItem<BlockItem> INDUCTION_STOVE = ITEMS.registerSimpleBlockItem(FBlocks.INDUCTION_STOVE);
+    public static final DeferredItem<BlockItem> PREHEAT_COIL = ITEMS.registerSimpleBlockItem(FBlocks.PREHEAT_COIL);
     public static final DeferredItem<BlockItem> BREAKER = ITEMS.registerSimpleBlockItem(FBlocks.BREAKER);
     public static final DeferredItem<BlockItem> FUSE = ITEMS.registerSimpleBlockItem(FBlocks.FUSE);
     public static final DeferredItem<BlockItem> COHERER = ITEMS.registerSimpleBlockItem(FBlocks.COHERER);
@@ -607,6 +621,10 @@ public class FItems {
     public static final DeferredItem<Item> ESCAPEMENT =
             ITEMS.register("escapement", () -> new io.github.soundgoodizerfan.feedback.item.ControllerUpgradeItem(
                     new Item.Properties().stacksTo(16), io.github.soundgoodizerfan.feedback.fitting.upgrade.EscapementFitting::new));
+
+    /** The hand arc welder: mends a worn part from a battery in the pack. See {@code item.ArcWelderItem}. */
+    public static final DeferredItem<Item> ARC_WELDER =
+            ITEMS.register("arc_welder", () -> new io.github.soundgoodizerfan.feedback.item.ArcWelderItem(new Item.Properties().stacksTo(1)));
 
     /** Pries a fitting off its holder. See {@code item.CrowbarItem}. */
     public static final DeferredItem<Item> CROWBAR =

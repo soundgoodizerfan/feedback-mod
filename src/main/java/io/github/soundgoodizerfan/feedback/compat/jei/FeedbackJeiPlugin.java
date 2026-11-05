@@ -231,7 +231,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
         registration.addIngredientInfo(FItems.ARC_HEARTH.get(), Component.translatable("feedback.jei.info.arc_hearth"));
+        registration.addIngredientInfo(FItems.INDUCTION_COIL.get(), Component.translatable("feedback.jei.info.induction_coil"));
+        registration.addIngredientInfo(FItems.INDUCTION_STOVE.get(), Component.translatable("feedback.jei.info.induction_stove"));
+        registration.addIngredientInfo(FItems.PREHEAT_COIL.get(), Component.translatable("feedback.jei.info.preheat_coil"));
         registration.addIngredientInfo(FItems.ARC_HEAD.get(), Component.translatable("feedback.jei.info.arc_head"));
+        registration.addIngredientInfo(FItems.POWER_CUTTER.get(), Component.translatable("feedback.jei.info.power_cutter"));
+        registration.addIngredientInfo(FItems.SAW_HEAD.get(), Component.translatable("feedback.jei.info.saw_head"));
+        registration.addIngredientInfo(FItems.PLASMA_HEAD.get(), Component.translatable("feedback.jei.info.plasma_head"));
+        registration.addIngredientInfo(FItems.DATA_STICK.get(), Component.translatable("feedback.jei.info.data_stick"));
         registration.addIngredientInfo(FItems.LARGE_BOILER.get(), Component.translatable("feedback.jei.info.large_boiler"));
         registration.addIngredientInfo(FItems.ARC_ELECTRODE.get(), Component.translatable("feedback.jei.info.arc_electrode"));
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
@@ -257,6 +264,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.PHOSPHOR_SCREEN.get(), "phosphor_screen");
         info(registration, FItems.REFLOW_OVEN.get(), "reflow_oven");
         info(registration, FItems.SOLDERING_IRON.get(), "soldering_iron");
+        info(registration, FItems.ARC_WELDER.get(), "arc_welder");
         info(registration, FItems.DIAMOND_GRINDING_WHEEL.get(), "diamond_grinding_wheel");
         info(registration, FItems.MASS_PROBE.get(), "mass_probe");
         info(registration, FItems.TRACE_BOARD.get(), "trace_board");

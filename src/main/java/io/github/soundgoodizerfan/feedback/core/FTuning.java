@@ -3347,4 +3347,53 @@ public final class FTuning {
     public static final float ARC_FLASH_CHANCE = 0.02f;
     /** The arc head's heat reaches every side of its facing neighbour; a plasma is concentrated. */
     public static final float ARC_HEAD_SIDE_SHARE = 1f;
+
+    /** Placeholder. Current the Power Cutter asks for while it has a head and a piece to cut: about 1 kW at EHV (384 V), 2.6 A. */
+    public static final float CUTTER_AMPS = 2.6f;
+    /** Placeholder. Cuts per second at full power with a sound head (spec: about two). */
+    public static final float CUTTER_CUTS_PER_SECOND = 2f;
+    /** The ticks of full-power running one cut takes: 10 at two cuts a second. */
+    public static final float CUTTER_TICKS_PER_CUT = 20f / CUTTER_CUTS_PER_SECOND;
+    /** Placeholder. The Power Cutter's input buffer, in items (one stack). */
+    public static final int CUTTER_INPUT_LIMIT = 64;
+    /** Placeholder. Condition one unit of misuse costs a cutter head (a blocked output, over-voltage or stock too hard for it, the last scaled by how much harder). */
+    public static final float CUTTER_WEAR_PER_MISUSE = 0.002f;
+    /** Placeholder. Units of misuse per cut for each unit of fraction the supply is over the cutter's EHV rating (0.1 over costs 5 units). */
+    public static final float CUTTER_OVERVOLT_WEAR_UNITS = 50f;
+    /** Placeholder. A worn cutter head bottoms out here: it cuts at a quarter of its rate and never stops. */
+    public static final float CUTTER_CONDITION_FLOOR = 0.25f;
+    /** Placeholder. Hardness assumed for a cutter head that carries no material. */
+    public static final float CUTTER_DEFAULT_HEAD_HARDNESS = 30f;
+
+    /** Placeholder. The hottest an induction coil or the forging preheat coil drives its charge: about 1,800 Tu, below the arc. */
+    public static final Tu INDUCTION_CEILING_TU = new Tu(1800f);
+    /** Placeholder. The induction stove's ceiling: cookware scale, enough to sear a pan, far under a furnace's. */
+    public static final Tu INDUCTION_STOVE_CEILING_TU = new Tu(600f);
+    /** Placeholder. Current the induction furnace coil, the stove and the preheat coil ask for at MV (6 V): 48 W, 24 W and 48 W. */
+    public static final float INDUCTION_COIL_AMPS = 8f, INDUCTION_STOVE_AMPS = 4f, PREHEAT_AMPS = 8f;
+    /** Placeholder. Thermal mass of the field a furnace coil or a stove drives: how slowly its heat follows the power. */
+    public static final ThermalMass INDUCTION_COIL_MASS = new ThermalMass(40f), INDUCTION_STOVE_MASS = new ThermalMass(20f);
+    /** Placeholder. Ticks between a furnace coil looking again at what its crucible holds (the metal search walks the material table). */
+    public static final int INDUCTION_CHARGE_CHECK_TICKS = 10;
+    /** Placeholder. What the preheat coil adds to a held piece a tick at full power, in Tu per tick (the item cools at 1.5 Tu/t). */
+    public static final TuRate PREHEAT_TU_PER_TICK = new TuRate(12f);
+    /** Placeholder. How far above the bottom of a metal's working window the preheat coil heats it, in Tu. */
+    public static final float PREHEAT_WINDOW_MARGIN_TU = 100f;
+    /** Placeholder. The stockpot is a pot of cast iron cookware; there is no pot variant to read a material from. */
+    public static final net.minecraft.resources.ResourceLocation POT_MATERIAL = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "cast_iron");
+
+    /** Placeholder. Charge one weld of the hand arc welder draws from a battery, in amp-ticks (about 50 A for the 40 ticks of the hold). */
+    public static final float WELDER_CHARGE_PER_WELD = 2000f;
+    /** Placeholder. Ticks the player holds the welder on a modular item in the other hand for one weld. */
+    public static final int WELDER_USE_TICKS = 40;
+    /** Placeholder. How far each weld lowers a part's maximum condition: a repaired part is never as good as new. */
+    public static final float WELDER_MAX_STEP = 0.1f;
+    /** Placeholder. The lowest maximum condition repeated welding can leave a part at. */
+    public static final float WELDER_MAX_FLOOR = 0.5f;
+    /** Placeholder. Condition the welder's own electrode loses per weld (it keeps working at {@link #WELDER_ELECTRODE_FLOOR}). */
+    public static final float WELDER_ELECTRODE_WEAR = 0.01f;
+    /** Placeholder. The worst a welder's electrode gets: it welds on, only worn. */
+    public static final float WELDER_ELECTRODE_FLOOR = 0.25f;
+    /** Placeholder. Filler metal for a part whose material cannot be told (a machine with no housing material): plain iron. */
+    public static final net.minecraft.resources.ResourceLocation WELDER_DEFAULT_FILLER = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "iron");
 }

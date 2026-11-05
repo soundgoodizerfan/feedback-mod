@@ -23,7 +23,8 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
 import io.github.soundgoodizerfan.feedback.machine.Headed;
-import io.github.soundgoodizerfan.feedback.machine.Wearing;
+import io.github.soundgoodizerfan.feedback.machine.Weldable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.machine.WorkpieceHolder;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Reciprocating;
@@ -68,7 +69,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * setting picks a share of the head's ceiling and gearing multiplies that, up to the ceiling. The head is also
  * what wears. With none seated the hammer does nothing, and wears nothing.
  */
-public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair<St>, Wearing, WorkpieceHolder, Headed {
+public class MechanicalHammerBlockEntity extends BlockEntity implements Reciprocating, StrengthPair<St>, Weldable, WorkpieceHolder, Headed {
 
     private ItemStack workpiece = ItemStack.EMPTY;
 
@@ -134,6 +135,26 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
     @Override
     public float getCondition() {
         return head.condition();
+    }
+
+    @Override
+    public float maxCondition() {
+        return head.get().getOrDefault(FDataComponents.MAX_CONDITION.get(), 1f);
+    }
+
+    /** The head carries the condition, so a weld mends the head. */
+    @Override
+    public void weld(float newCondition, float newMax) {
+        if (head.isEmpty())
+            return;
+        head.get().set(FDataComponents.TOOL_CONDITION.get(), newCondition);
+        head.get().set(FDataComponents.MAX_CONDITION.get(), newMax);
+        sync();
+    }
+
+    @Override
+    public net.minecraft.resources.ResourceLocation fillerMaterial() {
+        return level == null ? null : io.github.soundgoodizerfan.feedback.item.ArcWelderItem.wearMaterial(level, head.get());
     }
 
     @Override

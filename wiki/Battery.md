@@ -54,3 +54,5 @@ See [Hazards](Hazards.md) for the general rules.
 - **Heat.** A case over 50 Tu costs condition. See [Heat](Heat.md).
 - **Overvoltage.** A line above the case's insulation band costs condition.
 - **Cold.** Capacity falls as the body cools below 20 Tu, to half at 0 Tu, as in an [Ice Box](Ice_Box.md).
+
+An [Arc Welder](Arc_Welder.md) draws its charge from a Battery in your inventory.

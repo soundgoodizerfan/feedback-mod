@@ -220,6 +220,24 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlockEntity::new, FBlocks.ARC_HEAD.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlockEntity>> POWER_CUTTER =
+            BLOCK_ENTITIES.register("power_cutter", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlockEntity::new, FBlocks.POWER_CUTTER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlockEntity>> INDUCTION_COIL =
+            BLOCK_ENTITIES.register("induction_coil", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlockEntity::new, FBlocks.INDUCTION_COIL.get())
+                    .build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.induction.InductionStoveBlockEntity>> INDUCTION_STOVE =
+            BLOCK_ENTITIES.register("induction_stove", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.induction.InductionStoveBlockEntity::new, FBlocks.INDUCTION_STOVE.get())
+                    .build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.induction.PreheatCoilBlockEntity>> PREHEAT_COIL =
+            BLOCK_ENTITIES.register("preheat_coil", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.induction.PreheatCoilBlockEntity::new, FBlocks.PREHEAT_COIL.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ValveBlockEntity>> VALVE =
             BLOCK_ENTITIES.register("valve", () -> BlockEntityType.Builder
                     .of(ValveBlockEntity::new, FBlocks.VALVE.get())

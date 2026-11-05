@@ -32,7 +32,7 @@ The element runs a little hotter than what it's heating, and heats its vessel th
 
 - **It stops almost instantly.** The element is light, so cut the power and it has almost nothing left to give. A fire's character is its fuel; a coil's is its supply.
 - **It's steady and controllable.** No fuel to vary, no air to manage.
-- **It isn't hot enough to smelt.** It's for low, precise jobs: tempering, preheating, raising steam. For metalworking heat use an [Arc Furnace](Arc_Furnace.md).
+- **It isn't hot enough to smelt.** It's for low, precise jobs: tempering, preheating, raising steam. To smelt, use an [Induction Coil](Induction.md#induction-coil) or an [Arc Furnace](Arc_Furnace.md).
 
 ## The element's limit
 
