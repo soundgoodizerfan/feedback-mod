@@ -834,7 +834,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         int top = STATS_Y;
         g.drawString(font, Component.translatable("gui.feedback.blueprint_table.as_drawn"), 8, top, skin.dim(), false);
         if (figures.isEmpty()) {
-            g.drawString(font, Component.translatable("message.feedback.blueprint_table.cannot_print"), 8, top + 11, BAD, false);
+            g.drawString(font, Component.translatable(current() != null && current().family() == ModularType.Family.GUN ? "message.feedback.blueprint_table.cannot_print_gun" : "message.feedback.blueprint_table.cannot_print"), 8, top + 11, BAD, false);
             return;
         }
         int y = top + 11;
