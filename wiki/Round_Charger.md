@@ -31,9 +31,9 @@ A round is rated against **6 V**, which drives the coil exactly as hard as a sta
 | Charged to | Source | Winding pressure, against nominal |
 | --- | --- | --- |
 | 1.1 V | [Galvanic Cell](Galvanic_Cell.md) | about 3% |
-| 1.5 V | coarse [Dynamo](Dynamo.md) at engine speed | 6% |
-| 6 V | fine Dynamo at engine speed | 100% |
-| 12 V | fine Dynamo on a [Hand Crank](Hand_Crank.md) | 400% |
+| 1.5 V | coarse [Electric Machine](Electric_Machine.md) at engine speed | 6% |
+| 6 V | fine Electric Machine at engine speed | 100% |
+| 12 V | fine Electric Machine on a [Hand Crank](Hand_Crank.md) | 400% |
 
 Overcharging isn't stopped. A round charged past nominal presses the gun's winding harder than it's rated for, and that damages the gun exactly as [overpressure](Guns.md#overpressure) does. Check the *Winding* line on the gun's tooltip.
 

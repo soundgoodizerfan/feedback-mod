@@ -1,6 +1,6 @@
 # Chemicals
 
-The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, bleach, nitrogen, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
+The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, fluorine compounds, bleach, nitrogen, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
 
 ## Hydrogen
 
@@ -50,6 +50,10 @@ The inert part of air. A Reactor separates it from air over a catalyst bed. It i
 ## Ammonia
 
 A toxic gas made in a Reactor from nitrogen and hydrogen over an iron bed. With sulfuric acid it makes [Fertilizer](Fertilizer.md).
+
+## Fluorine and PTFE
+
+**Hydrofluoric Acid** comes from Cryolite Ore and sulfuric acid in a Reactor. Hydrofluoric acid, chlorine and ethylene, hot and under pressure over a cracking catalyst bed, give **Tetrafluoroethylene** gas and hydrochloric acid. Tetrafluoroethylene held at 330 to 450 Tu under pressure over a catalyst bed polymerizes into **Molten PTFE**, which [casts](Casting.md) like any molten metal. Rates and windows are in the [Reactor](Reactor.md#the-reactions) table; the finished polymer is on [Materials](Materials.md#polymers).
 
 ## Cryolite bath
 

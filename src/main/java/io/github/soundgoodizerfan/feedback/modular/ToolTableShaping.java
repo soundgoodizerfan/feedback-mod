@@ -126,6 +126,10 @@ public final class ToolTableShaping {
         ModularType type = ModularTypes.known().get(option.type());
         if (type != null && type.family() == ModularType.Family.CELL)
             return what.material().electrical().secondaryCell().isPresent();
+        if (type != null && type.family() == ModularType.Family.MACHINE)
+            return type.roles().entrySet().stream()
+                    .filter(r -> r.getValue().part().filter(s -> s.item().equals(option.shaping().item())).isPresent())
+                    .allMatch(r -> ModularBake.suits(type, r.getKey(), what.material()));
         return type == null || type.family() != ModularType.Family.VESSEL || what.material().xpStore().isPresent();
     }
 

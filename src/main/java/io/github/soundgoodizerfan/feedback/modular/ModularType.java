@@ -150,7 +150,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** A vessel that holds experience ({@code xp_container}): its bake is the ceiling its material's {@code xp_store} gives per cell of stock, written as an {@code XpStore} on the stack. A material that states no {@code xp_store} bakes nothing. No wear and no tool figures. */
         VESSEL,
         /** A rechargeable cell stack ({@code battery}): plates whose material states {@code electrical.secondary_cell}, in a case whose material insulates. Its bake is the {@link ModularBake#cell} spec the placed block runs on. */
-        CELL;
+        CELL,
+        /** A placed electric machine ({@code electric_machine}, the motor and dynamo): frame, winding, core and housing, whose bake is the {@link ModularBake#machine} spec the placed block runs on. */
+        MACHINE;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 

@@ -28,6 +28,8 @@ import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.combat.gear.GearTuning;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -161,12 +163,17 @@ public final class ModularBake {
 
     /**
      * Whether {@code material} can fill {@code roleKey} of a {@code type} and still bake: a battery's plates must state a
-     * {@code secondary_cell} and its case must insulate, a vessel's body must hold experience, a charge's filler must be a chemical propellant. Other families take any material their role accepts.
+     * {@code secondary_cell} and its case must insulate, a machine's winding must conduct and its housing state a conductivity, a vessel's body must hold experience, a charge's filler must be a chemical propellant. Other families take any material their role accepts.
      */
     public static boolean suits(ModularType type, String roleKey, Material material) {
         boolean wear = roleKey.equals(type.wearRole());
         return switch (type.family()) {
             case CELL -> wear ? material.electrical().secondaryCell().isPresent() : material.electrical().insulation().isPresent();
+            case MACHINE -> switch (roleKey) {
+                case MACHINE_WINDING -> material.ampacity().isPresent();
+                case MACHINE_HOUSING -> material.thermal().conductivity().isPresent();
+                default -> true;
+            };
             case VESSEL -> !wear || material.xpStore().isPresent();
             case CHARGE -> wear || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
             default -> true;
@@ -194,6 +201,82 @@ public final class ModularBake {
         int cells = Math.max(1, stock / FTuning.BATTERY_INGOTS_PER_CELL);
         Material.SecondaryCell sc = pm.electrical().secondaryCell().get();
         return Optional.of(new CellSpec(cells, sc.ampTicksPerIngot() * FTuning.BATTERY_INGOTS_PER_CELL, sc, cm.electrical().insulation().get()));
+    }
+
+    /** The role letters of the electric machine's four parts. */
+    public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H";
+
+    /**
+     * What an electric machine design is, read by the placed block.
+     *
+     * @param frameSu    the frame's torque ceiling, Su.
+     * @param voltsPerRpm the winding's, which is also the Su each amp costs the shaft.
+     * @param ratedAmps  the current it carries: the frame's ceiling over the winding's figure, or the winding conductor's, whichever is less.
+     * @param band       the band it is built for: its volts per RPM at {@link FTuning#MACHINE_REFERENCE_RPM}.
+     * @param mass       thermal mass of the frame, Work per Tu.
+     * @param leak       the housing's shed to air, Work per tick per Tu (a finned one).
+     * @param serviceTu  the hottest the housing runs before the machine wears.
+     * @param windingDrop volts lost per amp over the whole winding (the conductor's drop times its length).
+     * @param coreLoss   the share of throughput the core loses as heat.
+     * @param jacketed   whether the housing is a water jacket.
+     */
+    public record MachineSpec(float frameSu, float voltsPerRpm, float ratedAmps, VoltageBand band, float mass, float leak,
+                              float serviceTu, float windingDrop, float coreLoss, boolean jacketed) {
+    }
+
+    /** The cells of stock a part of {@code role} was shaped from: its variant's, else the standard shape's. */
+    private static int stockCells(ModularType.Role role, Part part) {
+        return role.variant(part).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+    }
+
+    /** The name of the shape {@code part} was made in, the standard shape's base name when it has no variant. */
+    private static String shapeName(ModularType.Role role, Part part) {
+        return role.variant(part).map(ModularType.Variant::name).orElse("");
+    }
+
+    /**
+     * The machine a design makes. The frame sets the torque ceiling, the thermal mass and the wall area; the winding sets volts
+     * per RPM (its shape) and the current its conductor carries (the {@code ampacity} times its cells of wire); the core's
+     * {@code electrical.core_loss} and the winding's {@code drop} are heat; the housing's {@code thermal.conductivity} over the
+     * frame's area is the shed to air, and a jacketed housing carries water. Empty if the winding does not conduct or the housing
+     * states no conductivity.
+     */
+    public static Optional<MachineSpec> machine(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
+        Part frame = design.part(MACHINE_FRAME), winding = design.part(MACHINE_WINDING), core = design.part(MACHINE_CORE), housing = design.part(MACHINE_HOUSING);
+        if (frame == null || winding == null || core == null || housing == null)
+            return Optional.empty();
+        Material wm = materials.get(winding.material()), cm = materials.get(core.material()), hm = materials.get(housing.material());
+        if (wm == null || cm == null || hm == null || wm.ampacity().isEmpty() || hm.thermal().conductivity().isEmpty())
+            return Optional.empty();
+        String size = shapeName(type.roles().get(MACHINE_FRAME), frame);
+        float su = switch (size) {
+            case "medium" -> FTuning.FRAME_SU_MEDIUM;
+            case "large" -> FTuning.FRAME_SU_LARGE;
+            default -> FTuning.FRAME_SU_SMALL;
+        };
+        float mass = switch (size) {
+            case "medium" -> FTuning.FRAME_MASS_MEDIUM.workPerTu();
+            case "large" -> FTuning.FRAME_MASS_LARGE.workPerTu();
+            default -> FTuning.FRAME_MASS_SMALL.workPerTu();
+        };
+        float area = switch (size) {
+            case "medium" -> FTuning.FRAME_AREA_MEDIUM;
+            case "large" -> FTuning.FRAME_AREA_LARGE;
+            default -> FTuning.FRAME_AREA_SMALL;
+        };
+        float vpr = switch (shapeName(type.roles().get(MACHINE_WINDING), winding)) {
+            case "fine" -> FTuning.WINDING_VOLTS_PER_RPM_FINE;
+            case "dense" -> FTuning.WINDING_VOLTS_PER_RPM_DENSE;
+            case "heavy_dense" -> FTuning.WINDING_VOLTS_PER_RPM_HEAVY_DENSE;
+            default -> FTuning.WINDING_VOLTS_PER_RPM_COARSE;
+        };
+        int wireCells = stockCells(type.roles().get(MACHINE_WINDING), winding);
+        float amps = Math.min(su / vpr, wm.ampacity().get() * wireCells * FTuning.WINDING_AMPS_PER_AMPACITY);
+        float drop = wm.electrical().drop().orElse(0f) * wireCells * FTuning.WINDING_BLOCKS_PER_CELL;
+        float leak = hm.thermal().conductivity().get().workPerTickPerTu() * area * FTuning.MACHINE_SHED_PER_CONDUCTIVITY;
+        float service = hm.thermal().serviceTemperature().map(Tu::value).orElse(FTuning.MACHINE_SERVICE_TU);
+        return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOf(vpr * FTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
+                cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT), shapeName(type.roles().get(MACHINE_HOUSING), housing).equals("jacketed")));
     }
 
     public static int enchantability(Material m) {
@@ -365,6 +448,14 @@ public final class ModularBake {
             }
             case CELL -> {
                 if (cell(design, type, materials).isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+            }
+            case MACHINE -> {
+                if (machine(design, type, materials).isEmpty())
                     return Optional.empty();
                 float total = 0;
                 for (Part p : design.parts())

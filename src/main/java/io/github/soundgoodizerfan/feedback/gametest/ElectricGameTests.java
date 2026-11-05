@@ -38,9 +38,8 @@ import io.github.soundgoodizerfan.feedback.item.GalvanometerItem;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.MotorBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlock;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.electromagnet.ElectromagnetBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
@@ -694,71 +693,59 @@ public class ElectricGameTests {
     // --- the dynamo (mechanics 6.8) -----------------------------------------------------------
 
     /**
-     * A crank turning two shafts into a dynamo, and a magnet on the dynamo: the dynamo holds the
-     * shaft's RPM times its winding's volts-per-RPM, the magnet is delivered current, and the
-     * same figure times that current is charged to the shaft. Coarse on the north rig, fine on
-     * the south: same shaft speed, a quarter the voltage.
+     * A crank turning a shaft into an electric machine run as a generator (the default figures: small frame, coarse winding),
+     * and a magnet on it: it holds the shaft's RPM times its winding's volts-per-RPM, the magnet is delivered current, and the
+     * same figure times that current is charged to the shaft.
      */
     @GameTest(template = "empty", timeoutTicks = 140)
     public static void dynamoVoltsFollowTheShaftAndDrawLoadsIt(GameTestHelper helper) {
-        BlockPos coarseAt = new BlockPos(0, 2, 0), fineAt = new BlockPos(0, 2, 2);
-        HandCrankBlockEntity coarseCrank = RotationGameTests.crankRun(helper, coarseAt, 2);
-        HandCrankBlockEntity fineCrank = RotationGameTests.crankRun(helper, fineAt, 2);
-        helper.setBlock(coarseAt.east(3), FBlocks.DYNAMO.get().defaultBlockState()
-                .setValue(DynamoBlock.FACING, Direction.WEST));
-        helper.setBlock(fineAt.east(3), FBlocks.DYNAMO.get().defaultBlockState()
-                .setValue(DynamoBlock.FACING, Direction.WEST).setValue(DynamoBlock.WINDING, DynamoBlock.Winding.FINE));
-        ElectromagnetBlockEntity coarseMagnet = placeMagnet(helper, coarseAt.east(4));
-        ElectromagnetBlockEntity fineMagnet = placeMagnet(helper, fineAt.east(4));
-        DynamoBlockEntity coarse = (DynamoBlockEntity) helper.getBlockEntity(coarseAt.east(3));
-        DynamoBlockEntity fine = (DynamoBlockEntity) helper.getBlockEntity(fineAt.east(3));
+        BlockPos at = new BlockPos(0, 2, 0);
+        HandCrankBlockEntity crank = RotationGameTests.crankRun(helper, at, 2);
+        helper.setBlock(at.east(3), FBlocks.ELECTRIC_MACHINE.get().defaultBlockState()
+                .setValue(ElectricMachineBlock.FACING, Direction.WEST));
+        ElectromagnetBlockEntity magnet = placeMagnet(helper, at.east(4));
+        ElectricMachineBlockEntity dynamo = (ElectricMachineBlockEntity) helper.getBlockEntity(at.east(3));
 
-        RotationGameTests.each(helper, () -> {
-            coarseCrank.turn();
-            fineCrank.turn();
-        });
+        RotationGameTests.each(helper, crank::turn);
         helper.runAtTickTime(110, () -> {
             float rpm = FTuning.HAND_CRANK_RPM.value();
-            helper.assertTrue(Math.abs(coarse.getShaftRpm() - rpm) < 1e-3, "the coarse dynamo is turned at the crank's speed, got " + coarse.getShaftRpm());
-            helper.assertTrue(Math.abs(coarse.getVolts() - rpm * FTuning.DYNAMO_COARSE_VOLTS_PER_RPM) < EPS,
-                    "coarse: expected " + rpm * FTuning.DYNAMO_COARSE_VOLTS_PER_RPM + " V, held " + coarse.getVolts());
-            helper.assertTrue(Math.abs(fine.getVolts() - rpm * FTuning.DYNAMO_FINE_VOLTS_PER_RPM) < EPS,
-                    "fine: expected " + rpm * FTuning.DYNAMO_FINE_VOLTS_PER_RPM + " V, held " + fine.getVolts());
-            helper.assertTrue(Math.abs(coarseMagnet.getAmps() - FTuning.ELECTROMAGNET_AMPS) < EPS
-                    && Math.abs(fineMagnet.getAmps() - FTuning.ELECTROMAGNET_AMPS) < EPS, "both magnets are delivered what they want");
-            helper.assertTrue(Math.abs(fine.getShaftLoad().value() - FTuning.ELECTROMAGNET_AMPS * FTuning.DYNAMO_FINE_VOLTS_PER_RPM) < EPS,
-                    "the fine dynamo charges its shaft volts-per-RPM x amps, got " + fine.getShaftLoad().value());
-            for (BlockPos p : BlockPos.betweenClosed(0, 2, 0, 4, 2, 2))
+            helper.assertTrue(Math.abs(dynamo.getShaftRpm() - rpm) < 1e-3, "the dynamo is turned at the crank's speed, got " + dynamo.getShaftRpm());
+            helper.assertTrue(Math.abs(dynamo.getVolts() - rpm * dynamo.getVoltsPerRpm()) < EPS,
+                    "expected " + rpm * dynamo.getVoltsPerRpm() + " V, held " + dynamo.getVolts());
+            helper.assertTrue(Math.abs(magnet.getAmps() - FTuning.ELECTROMAGNET_AMPS) < EPS, "the magnet is delivered what it wants");
+            helper.assertTrue(Math.abs(dynamo.getShaftLoad().value() - FTuning.ELECTROMAGNET_AMPS * dynamo.getVoltsPerRpm()) < EPS,
+                    "the dynamo charges its shaft volts-per-RPM x amps, got " + dynamo.getShaftLoad().value());
+            for (BlockPos p : BlockPos.betweenClosed(0, 2, 0, 4, 2, 0))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             RotationGameTests.done(helper);
         });
     }
 
     /**
-     * A crank turns a fine dynamo, a cable carries its current to a fine motor, and the motor turns
-     * a shaft of its own: the shaft spins, never past the motor's no-load speed (the voltage it
-     * sees over the winding figure), and the motor's torque is that same figure times its current.
+     * A crank turns a generator, a cable carries its current to a machine run as a motor, and the motor turns a shaft of its
+     * own: the shaft spins, never past the motor's no-load speed (the voltage it sees over the winding figure), and the
+     * motor's torque is that same figure times its current.
      */
     @GameTest(template = "empty", timeoutTicks = 160)
     public static void motorTurnsAShaftFromTheLine(GameTestHelper helper) {
         BlockPos crankAt = new BlockPos(0, 2, 1);
         HandCrankBlockEntity crank = RotationGameTests.crankRun(helper, crankAt, 2);
-        helper.setBlock(crankAt.east(3), FBlocks.DYNAMO.get().defaultBlockState()
-                .setValue(DynamoBlock.FACING, Direction.WEST).setValue(DynamoBlock.WINDING, DynamoBlock.Winding.FINE));
+        helper.setBlock(crankAt.east(3), FBlocks.ELECTRIC_MACHINE.get().defaultBlockState()
+                .setValue(ElectricMachineBlock.FACING, Direction.WEST));
         // Up, not along: a long row reaches the neighbouring test's rig.
         BlockPos motorAt = crankAt.east(3).above(2);
         placeCable(helper, crankAt.east(3).above());
-        helper.setBlock(motorAt, FBlocks.MOTOR.get().defaultBlockState()
-                .setValue(DynamoBlock.FACING, Direction.EAST).setValue(DynamoBlock.WINDING, DynamoBlock.Winding.FINE));
+        helper.setBlock(motorAt, FBlocks.ELECTRIC_MACHINE.get().defaultBlockState()
+                .setValue(ElectricMachineBlock.FACING, Direction.EAST).setValue(ElectricMachineBlock.MODE, ElectricMachineBlock.Mode.MOTOR));
         helper.setBlock(motorAt.east(), RotationGameTests.alongX(FBlocks.SHAFT.get()));
-        MotorBlockEntity motor = (MotorBlockEntity) helper.getBlockEntity(motorAt);
+        ElectricMachineBlockEntity motor = (ElectricMachineBlockEntity) helper.getBlockEntity(motorAt);
 
         RotationGameTests.each(helper, crank::turn);
         helper.runAtTickTime(140, () -> {
             float rpm = motor.getShaftRpm();
             helper.assertTrue(rpm > 0, "the motor turns its shaft");
             helper.assertTrue(rpm <= motor.noLoadRpm() + EPS, "never past no-load speed " + motor.noLoadRpm() + ", got " + rpm);
-            helper.assertTrue(Math.abs(motor.getShaftTorque().value() - motor.getAmps() * FTuning.DYNAMO_FINE_VOLTS_PER_RPM * motor.getCondition()) < EPS,
+            helper.assertTrue(Math.abs(motor.getShaftTorque().value() - motor.getAmps() * motor.getVoltsPerRpm() * motor.getCondition()) < EPS,
                     "torque is volts-per-RPM x amps x condition, got " + motor.getShaftTorque().value() + " at " + motor.getAmps() + " A, condition " + motor.getCondition());
             for (BlockPos p : BlockPos.betweenClosed(0, 2, 1, 4, 4, 1))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());

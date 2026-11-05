@@ -155,7 +155,7 @@ Plastics and rubbers. They are light, soft, poor conductors and cheap to shape, 
 | --- | --- | --- | --- | --- | --- | --- |
 | Polyethylene | 2 | 0.95 | 130 Tu | 80 Tu | 0.3 | HV |
 | Polypropylene | 2 | 0.9 | 165 Tu | 100 Tu | 0.3 | MV |
-| PTFE | 1.5 | 2.2 | 327 Tu | 260 Tu | 0.05 | EHV |
+| PTFE | 1.5 | 2.2 | 327 Tu | 260 Tu | 0.05 | Trunk |
 | Synthetic Rubber | 1 | 1.1 | 180 Tu | 90 Tu | 1.2 | HV |
 | PVC | 3 | 1.4 | 160 Tu | 60 Tu | 0.4 | MV |
 | Soul Resin | 2 | 1.1 | 200 Tu | 160 Tu | 0.4 | MV |
@@ -183,7 +183,7 @@ Drilling gives a [Pipe](Pipe.md) of that polymer; a metal ingot drills into one 
 
 ### Polymer insulation
 
-Every polymer has an **insulation band**, shown in the table: how high a voltage it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that sees more voltage than its band loses its coat. The bands run LV, MV, HV, UHV, EHV: polyethylene and rubber hold HV, which quartz glass and quartz beat, and PTFE holds EHV like quartz.
+Every polymer has an **insulation band**, shown in the table: how high a voltage it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that sees more voltage than its band loses its coat. The bands run LV, MV, HV, UHV, EHV, Trunk: polyethylene and rubber hold HV, which quartz glass and quartz beat, and PTFE holds Trunk, above any other insulator. PTFE is made from cryolite and chlorine in the [Reactor](Reactor.md#the-reactions) ([Chemicals](Chemicals.md#fluorine-and-ptfe)) and cast as a molten polymer.
 
 ### Polymer tires and grips
 

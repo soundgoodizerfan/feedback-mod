@@ -128,7 +128,8 @@ public final class ModularStacks {
         // A gun's wear is its bore's (GunCondition), not a bar of uses; a head's is TOOL_CONDITION, worn by the machine.
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
-                && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL) {
+                && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL
+                && type.family() != ModularType.Family.MACHINE) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
@@ -138,9 +139,29 @@ public final class ModularStacks {
                     .ifPresent(s -> stack.set(FDataComponents.XP_STORE.get(), s));
         if (type.family() == ModularType.Family.CELL)
             ModularBake.cell(design, type, materials).ifPresent(c -> batteryState(stack, c));
+        if (type.family() == ModularType.Family.MACHINE)
+            ModularBake.machine(design, type, materials).ifPresent(m -> machineState(stack, m));
         if (type.family() == ModularType.Family.DISH)
             DishBake.of(design, type, materials).ifPresent(d -> eatable(stack, d));
         return true;
+    }
+
+    /** Writes an electric machine's figures onto its stack, keeping the condition and temperature a rebake finds already there. */
+    private static void machineState(ItemStack stack, ModularBake.MachineSpec m) {
+        net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.ELECTRIC_MACHINE.get(), new net.minecraft.nbt.CompoundTag()).copy();
+        tag.putFloat("FrameSu", m.frameSu());
+        tag.putFloat("VoltsPerRpm", m.voltsPerRpm());
+        tag.putFloat("RatedAmps", m.ratedAmps());
+        tag.putString("Band", m.band().getSerializedName());
+        tag.putFloat("Mass", m.mass());
+        tag.putFloat("Leak", m.leak());
+        tag.putFloat("ServiceTu", m.serviceTu());
+        tag.putFloat("WindingDrop", m.windingDrop());
+        tag.putFloat("CoreLoss", m.coreLoss());
+        tag.putBoolean("Jacketed", m.jacketed());
+        if (!tag.contains("Condition"))
+            tag.putFloat("Condition", 1f);
+        stack.set(FDataComponents.ELECTRIC_MACHINE.get(), tag);
     }
 
     /** Writes a battery's cell figures onto its stack, keeping the charge, water, acid and condition a rebake finds already there. */

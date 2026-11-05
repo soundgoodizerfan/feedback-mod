@@ -26,7 +26,7 @@ If the shaft is still spinning too fast when you reset it, it trips again immedi
 
 ## When it trips
 
-It trips at **48 RPM**. A shaft turning at the speed of its own source (a [Hand Crank](Hand_Crank.md) at 32, a [Steam Engine](Steam_Engine.md) at 16, a [Water Wheel](Water_Wheel.md) at up to 16) will **never** trip it. It only lets go when you've **geared up** past that with [cogs](Cogs.md) or [pulleys](Pulleys.md). The trip speed is fixed; you can't adjust it.
+It trips at **48 RPM**. A shaft turning at the speed of its own source (a [Hand Crank](Hand_Crank.md) at 32, a [Steam Engine](Steam_Engine.md) at 16, a [Water Wheel](Water_Wheel.md) at up to 16) will **never** trip it. A [Steam Turbine](Steam_Turbine.md) at 240 RPM trips it at once. It only lets go when you've **geared up** past that with [cogs](Cogs.md) or [pulleys](Pulleys.md). The trip speed is fixed; you can't adjust it.
 
 ## Notes
 

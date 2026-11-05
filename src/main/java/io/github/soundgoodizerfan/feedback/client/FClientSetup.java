@@ -68,6 +68,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.CLUTCH.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.OVERSPEED_TRIP.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.STEAM_ENGINE.get(), RotatingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.STEAM_TURBINE.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.PUMP.get(), RotatingRenderer::new);
 
         event.registerBlockEntityRenderer(FBlockEntities.PULLEY.get(), PulleyRenderer::new);
@@ -88,8 +89,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.CABLE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.ELECTROMAGNET.get(), DataNodeRenderer::new);
-        event.registerBlockEntityRenderer(FBlockEntities.DYNAMO.get(), DataNodeRenderer::new);
-        event.registerBlockEntityRenderer(FBlockEntities.MOTOR.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.ELECTRIC_MACHINE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.COIL.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.BREAKER.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.FUSE.get(), DataNodeRenderer::new);
@@ -112,6 +112,7 @@ public class FClientSetup {
         rotatingVisual(FBlockEntities.CLUTCH.get());
         rotatingVisual(FBlockEntities.OVERSPEED_TRIP.get());
         rotatingVisual(FBlockEntities.STEAM_ENGINE.get());
+        rotatingVisual(FBlockEntities.STEAM_TURBINE.get());
         rotatingVisual(FBlockEntities.PUMP.get());
         rotatingVisual(FBlockEntities.PULLEY.get());
     }

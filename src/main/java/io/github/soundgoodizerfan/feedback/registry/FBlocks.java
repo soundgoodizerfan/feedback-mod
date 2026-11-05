@@ -30,8 +30,7 @@ import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlock;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlock;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.MotorBlock;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlock;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlock;
 import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlock;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlock;
@@ -66,6 +65,7 @@ import io.github.soundgoodizerfan.feedback.machine.shaft.FlywheelBlock;
 import io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlock;
 import io.github.soundgoodizerfan.feedback.machine.pump.PumpBlock;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlock;
+import io.github.soundgoodizerfan.feedback.machine.steamturbine.SteamTurbineBlock;
 import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlock;
 import io.github.soundgoodizerfan.feedback.machine.wiredrawer.WireDrawerBlock;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
@@ -364,6 +364,12 @@ public class FBlocks {
 
     /** Thermal -> Steam. See {@link FTuning}'s {@code --- the boiler ---} section for why this
      * is a separate block from {@link #STEAM_ENGINE} rather than one fused machine. */
+    /** Ten boilers in one block: the steam a turbine wants. See {@code BoilerBlock}. */
+    public static final DeferredBlock<BoilerBlock> LARGE_BOILER = BLOCKS.register("large_boiler",
+            () -> new BoilerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(5.0f)
+                    .sound(SoundType.METAL), FTuning.BOILER_LARGE_SCALE));
     public static final DeferredBlock<BoilerBlock> BOILER = BLOCKS.register("boiler",
             () -> new BoilerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -389,6 +395,14 @@ public class FBlocks {
     /** Steam -> rotation. */
     public static final DeferredBlock<SteamEngineBlock> STEAM_ENGINE = BLOCKS.register("steam_engine",
             () -> new SteamEngineBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+
+    /** Steam -> rotation at factory scale. */
+    public static final DeferredBlock<SteamTurbineBlock> STEAM_TURBINE = BLOCKS.register("steam_turbine",
+            () -> new SteamTurbineBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
                     .sound(SoundType.METAL)
@@ -665,16 +679,9 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.METAL)));
 
-    /** Mechanical to Eu: a coil on a shaft. See {@code DynamoBlockEntity}. */
-    public static final DeferredBlock<DynamoBlock> DYNAMO = BLOCKS.register("dynamo",
-            () -> new DynamoBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_ORANGE)
-                    .strength(2.0f)
-                    .sound(SoundType.METAL)));
-
-    /** Eu to Mechanical: the dynamo run backwards. See {@code MotorBlockEntity}. */
-    public static final DeferredBlock<MotorBlock> MOTOR = BLOCKS.register("motor",
-            () -> new MotorBlock(BlockBehaviour.Properties.of()
+    /** Mechanical to Eu and back: a modular motor or dynamo on a shaft. See {@code ElectricMachineBlockEntity}. */
+    public static final DeferredBlock<ElectricMachineBlock> ELECTRIC_MACHINE = BLOCKS.register("electric_machine",
+            () -> new ElectricMachineBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.METAL)));

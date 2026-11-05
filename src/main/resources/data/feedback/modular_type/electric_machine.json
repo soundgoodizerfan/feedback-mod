@@ -1,0 +1,75 @@
+{
+  "family": "machine",
+  "slot": "mainhand",
+  "wear_litres": 0.125,
+  "wear_role": "F",
+  "primary": "F",
+  "roles": {
+    "F": {
+      "name": "frame",
+      "forms": ["machine_frame"],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:machine_frame",
+        "shape": ["FF"],
+        "stock": ["plate"],
+        "base": "small",
+        "variants": [
+          { "name": "small" },
+          { "name": "medium", "shape": ["FF", "FF"] },
+          { "name": "large", "shape": ["FFF", "FFF", "FF"] }
+        ]
+      }
+    },
+    "W": {
+      "name": "machine_winding",
+      "forms": ["machine_winding"],
+      "litres": 0.125,
+      "layer": 1,
+      "part": {
+        "item": "feedback:machine_winding",
+        "shape": ["W"],
+        "stock": ["wire"],
+        "base": "coarse",
+        "variants": [
+          { "name": "coarse" },
+          { "name": "fine", "shape": ["WW"] },
+          { "name": "dense", "shape": ["WW", "WW"] },
+          { "name": "heavy_dense", "shape": ["WWW", "WWW", "WW"] }
+        ]
+      }
+    },
+    "C": {
+      "name": "core",
+      "forms": ["ingot"],
+      "litres": 0.125,
+      "layer": 2
+    },
+    "H": {
+      "name": "housing",
+      "forms": ["machine_housing"],
+      "litres": 0.125,
+      "layer": 3,
+      "part": {
+        "item": "feedback:machine_housing",
+        "shape": ["HH", "H"],
+        "stock": ["plate"],
+        "base": "finned",
+        "variants": [
+          { "name": "finned" },
+          { "name": "jacketed", "shape": ["HH", "HH"] }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    ["FW", "CH"]
+  ],
+  "defaults": {
+    "F": "feedback:wrought_iron",
+    "W": "feedback:copper",
+    "C": "feedback:wrought_iron",
+    "H": "feedback:wrought_iron"
+  }
+}

@@ -224,8 +224,6 @@ public class FCreativeTabs {
                         output.accept(FItems.GALVANIC_CELL_PACK.get());
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
                         output.accept(FItems.ELECTROMAGNET.get());
-                        output.accept(FItems.DYNAMO.get());
-                        output.accept(FItems.MOTOR.get());
                         output.accept(FItems.COPPER_COIL.get());
                         output.accept(FItems.IRON_COIL.get());
                         output.accept(FItems.BREAKER.get());
@@ -248,7 +246,9 @@ public class FCreativeTabs {
                         output.accept(FItems.CHARGER.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
+                        output.accept(FItems.LARGE_BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());
+                        output.accept(FItems.STEAM_TURBINE.get());
                         output.accept(FItems.CONDENSER.get());
                         output.accept(FItems.PUMP.get());
                         output.accept(FItems.BURNER.get());

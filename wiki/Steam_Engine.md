@@ -1,6 +1,6 @@
 # Steam Engine
 
-Turns steam into [rotation](Rotation.md).
+Turns steam into [rotation](Rotation.md). A [Steam Turbine](Steam_Turbine.md) is the same machine at factory scale.
 
 ## Crafting
 
@@ -33,4 +33,4 @@ Put a [Valve](Valve.md) between the boiler and the engine to shut the steam off.
 
 **Shutting the steam off traps it in the boiler.** On a hot fire a shut boiler builds pressure and can burst. Turn the fire down (or let it run out) when you shut an engine off for long. See [Boiler](Boiler.md#pressure).
 
-At 16 RPM a steam engine never trips an [Overspeed Trip](Overspeed_Trip.md) (48 RPM) unless you gear it up threefold. It's also the speed the [Dynamo](Dynamo.md)'s windings are set against: 1.5 V coarse, 6 V fine.
+At 16 RPM a steam engine never trips an [Overspeed Trip](Overspeed_Trip.md) (48 RPM) unless you gear it up threefold. It's also the speed the [Electric Machine](Electric_Machine.md)'s windings are set against: 1.5 V coarse, 6 V fine.

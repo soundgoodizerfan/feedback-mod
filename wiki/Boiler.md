@@ -1,6 +1,6 @@
 # Boiler
 
-Turns heat into **steam**. Sits over a fire like a [Crucible](Crucible.md) does. Its steam drives a [Steam Engine](Steam_Engine.md).
+Turns heat into **steam**. Sits over a fire like a [Crucible](Crucible.md) does. Its steam drives a [Steam Engine](Steam_Engine.md) or, from a Large Boiler, a [Steam Turbine](Steam_Turbine.md).
 
 **A boiler with nowhere to send its steam builds pressure, and can explode.** Read [Pressure](#pressure) before you put a valve on one.
 
@@ -54,6 +54,18 @@ A burst is an explosion that wrecks blocks around it and scalds everyone within 
 Weeping lets a little pressure off, and a boiler only slightly over the line may settle there, hissing. One on a real fire won't. **The warning is the hiss and the cloud.** Open the line or put the fire out.
 
 A boiler that's merely full and idle sits at 4 Pu and weeps a little. That's harmless; it's the fire under a shut boiler that kills it.
+
+## Large Boiler
+
+A **Large Boiler** is ten Boilers in one block: ten times the mass, tanks of 40000 mB of water and 40000 mB of steam, and **100 mB of steam a tick** at full output, enough for a [Steam Turbine](Steam_Turbine.md). It stands on ten times the fire, so it wants a hotter, bigger fire than one Boiler. It builds pressure and bursts like a Boiler if its line is shut under a real fire.
+
+```
+B B B
+B P B
+B B B
+```
+
+B is a Boiler and P is a [Steel Plate](Mechanical_Hammer.md).
 
 ## Notes
 

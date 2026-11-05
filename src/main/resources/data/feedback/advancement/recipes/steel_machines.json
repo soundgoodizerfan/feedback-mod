@@ -21,6 +21,7 @@
     "recipes": [
       "feedback:boiler",
       "feedback:steam_engine",
+      "feedback:steam_turbine",
       "feedback:annealing_furnace",
       "feedback:pressure_vessel",
       "feedback:improved_furnace",

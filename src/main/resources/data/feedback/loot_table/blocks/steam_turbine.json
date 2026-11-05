@@ -3,7 +3,7 @@
   "pools": [
     {
       "rolls": 1,
-      "entries": [ { "type": "minecraft:item", "name": "feedback:motor" } ],
+      "entries": [ { "type": "minecraft:item", "name": "feedback:steam_turbine" } ],
       "conditions": [ { "condition": "minecraft:survives_explosion" } ]
     }
   ]

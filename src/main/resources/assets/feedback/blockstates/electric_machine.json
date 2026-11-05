@@ -1,0 +1,56 @@
+{
+  "variants": {
+    "facing=up,mode=generator": {
+      "model": "feedback:block/electric_machine"
+    },
+    "facing=up,mode=motor": {
+      "model": "feedback:block/electric_machine"
+    },
+    "facing=down,mode=generator": {
+      "model": "feedback:block/electric_machine",
+      "x": 180
+    },
+    "facing=down,mode=motor": {
+      "model": "feedback:block/electric_machine",
+      "x": 180
+    },
+    "facing=north,mode=generator": {
+      "model": "feedback:block/electric_machine",
+      "x": 90
+    },
+    "facing=north,mode=motor": {
+      "model": "feedback:block/electric_machine",
+      "x": 90
+    },
+    "facing=south,mode=generator": {
+      "model": "feedback:block/electric_machine",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,mode=motor": {
+      "model": "feedback:block/electric_machine",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,mode=generator": {
+      "model": "feedback:block/electric_machine",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,mode=motor": {
+      "model": "feedback:block/electric_machine",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east,mode=generator": {
+      "model": "feedback:block/electric_machine",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,mode=motor": {
+      "model": "feedback:block/electric_machine",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

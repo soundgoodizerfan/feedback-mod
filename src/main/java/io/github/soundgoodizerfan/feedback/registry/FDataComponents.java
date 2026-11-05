@@ -99,6 +99,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.core.xp.XpStore.STREAM_CODEC)
                     .build());
 
+    /** An electric machine's figures (frame, winding, core and housing baked) and state (condition, temperature, jacket water), carried by the item and the block alike. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> ELECTRIC_MACHINE =
+            COMPONENTS.register("electric_machine", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
+                    .persistent(net.minecraft.nbt.CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
     /** A battery's physical state (charge, water, acid, condition, cell figures), carried by the item and the block alike. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> BATTERY =
             COMPONENTS.register("battery", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()

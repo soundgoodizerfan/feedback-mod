@@ -30,8 +30,7 @@ import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.DynamoBlockEntity;
-import io.github.soundgoodizerfan.feedback.machine.dynamo.MotorBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.dynamo.ElectricMachineBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.coil.CoilBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.breaker.BreakerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.breaker.FuseBlockEntity;
@@ -63,6 +62,7 @@ import io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.pump.PumpBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.steamturbine.SteamTurbineBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.valve.ValveBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.wiredrawer.WireDrawerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlock;
@@ -271,14 +271,9 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlockEntity::new, FBlocks.CHARGER.get())
                     .build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DynamoBlockEntity>> DYNAMO =
-            BLOCK_ENTITIES.register("dynamo", () -> BlockEntityType.Builder
-                    .of(DynamoBlockEntity::new, FBlocks.DYNAMO.get())
-                    .build(null));
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MotorBlockEntity>> MOTOR =
-            BLOCK_ENTITIES.register("motor", () -> BlockEntityType.Builder
-                    .of(MotorBlockEntity::new, FBlocks.MOTOR.get())
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricMachineBlockEntity>> ELECTRIC_MACHINE =
+            BLOCK_ENTITIES.register("electric_machine", () -> BlockEntityType.Builder
+                    .of(ElectricMachineBlockEntity::new, FBlocks.ELECTRIC_MACHINE.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CoilBlockEntity>> COIL =
@@ -354,7 +349,7 @@ public class FBlockEntities {
      * is not the same block as {@link #STEAM_ENGINE}. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoilerBlockEntity>> BOILER =
             BLOCK_ENTITIES.register("boiler", () -> BlockEntityType.Builder
-                    .of(BoilerBlockEntity::new, FBlocks.BOILER.get())
+                    .of(BoilerBlockEntity::new, FBlocks.BOILER.get(), FBlocks.LARGE_BOILER.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CondenserBlockEntity>> CONDENSER =
@@ -371,6 +366,12 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamEngineBlockEntity>> STEAM_ENGINE =
             BLOCK_ENTITIES.register("steam_engine", () -> BlockEntityType.Builder
                     .of(SteamEngineBlockEntity::new, FBlocks.STEAM_ENGINE.get())
+                    .build(null));
+
+    /** Steam -> rotation at factory scale. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamTurbineBlockEntity>> STEAM_TURBINE =
+            BLOCK_ENTITIES.register("steam_turbine", () -> BlockEntityType.Builder
+                    .of(SteamTurbineBlockEntity::new, FBlocks.STEAM_TURBINE.get())
                     .build(null));
 
     /**

@@ -78,11 +78,19 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
 
-    private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB,
+    private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB * scaleOf(getBlockState()),
             stack -> stack.is(FTags.STEAM), this::setChanged);
 
     public BoilerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BOILER.get(), pos, state);
+    }
+
+    private static int scaleOf(BlockState state) {
+        return state.getBlock() instanceof BoilerBlock boiler ? boiler.scale() : 1;
+    }
+
+    private int scale() {
+        return scaleOf(getBlockState());
     }
 
     /** A boiler holds no workpieces: it is a closed vessel whose contents are the water and the steam. */
@@ -108,12 +116,12 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.BOILER_MASS;
+        return new ThermalMass(FTuning.BOILER_MASS.workPerTu() * scale());
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.BOILER_LEAK;
+        return new Conductance(FTuning.BOILER_LEAK.workPerTickPerTu() * (float) Math.cbrt((double) scale() * scale()));
     }
 
     public TuRate getHeatingRate() {
@@ -131,7 +139,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         long away = offline.take(level);
         if (away > 0L)
             Catchup.settle(this, HeatSource.spanAt(level, worldPosition, away), ambient, away);
-        Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
+        Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value(), scale());
         measureDelta();
 
         setChanged();
@@ -152,7 +160,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     @Override
     protected int tankCapacity() {
-        return FTuning.BOILER_WATER_TANK_MB;
+        return FTuning.BOILER_WATER_TANK_MB * scaleOf(getBlockState());
     }
 
     @Override
@@ -163,13 +171,13 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     /** Only the heat above the boiling point can boil anything, and a boiler turns a fixed quantity a tick, not a share of its tank. */
     @Override
     protected int boilAmount(PhaseChange cut, float wanted) {
-        int affordable = (int) ((temperature - cut.boil().value()) * FTuning.BOILER_MASS.workPerTu() / cut.latent());
-        return Math.min(FTuning.BOILER_STEAM_PER_TICK_MB, affordable);
+        int affordable = (int) ((temperature - cut.boil().value()) * FTuning.BOILER_MASS.workPerTu() * scale() / cut.latent());
+        return Math.min(FTuning.BOILER_STEAM_PER_TICK_MB * scale(), affordable);
     }
 
     @Override
     protected float boilCost(PhaseChange cut, int mB) {
-        return mB * cut.latent() / FTuning.BOILER_MASS.workPerTu();
+        return mB * cut.latent() / (FTuning.BOILER_MASS.workPerTu() * scale());
     }
 
     @Override
@@ -201,8 +209,8 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
      */
     @Override
     public Pu getPressure() {
-        float held = steamTank.getFluidAmount() / FTuning.BOILER_STEAM_MB_PER_PU;
-        boolean trapped = steamTank.getSpace() <= FTuning.BOILER_STEAM_PER_TICK_MB;
+        float held = steamTank.getFluidAmount() / (FTuning.BOILER_STEAM_MB_PER_PU * scale());
+        boolean trapped = steamTank.getSpace() <= FTuning.BOILER_STEAM_PER_TICK_MB * scale();
         float over = trapped ? Math.max(0f, temperature - workingTu()) : 0f;
         return new Pu(held + over * FTuning.BOILER_PU_PER_TU_OVER);
     }

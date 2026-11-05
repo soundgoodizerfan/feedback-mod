@@ -23,8 +23,8 @@ The power it turns into heat is **volts × amps**. So the coil is as hot as its 
 
 | Supply | Small crucible settles near |
 | --- | --- |
-| [Dynamo](Dynamo.md), fine winding, at a [Steam Engine](Steam_Engine.md)'s speed (6 V, 2 A) | 290 Tu |
-| The same dynamo on a [Hand Crank](Hand_Crank.md) (12 V) | 560 Tu |
+| [Electric Machine](Electric_Machine.md), fine winding, as a generator at a [Steam Engine](Steam_Engine.md)'s speed (6 V, 2 A) | 290 Tu |
+| The same machine on a [Hand Crank](Hand_Crank.md) (12 V) | 560 Tu |
 
 The element runs a little hotter than what it's heating, and heats its vessel the same way a fire does: fast while there's a big difference, slower as they get close.
 

@@ -753,12 +753,20 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return List.of();
         return switch (t.family()) {
             case CELL -> ModularBake.cell(d, t, ClientMaterials.get()).map(BlueprintTableScreen::cellLines).orElse(List.of());
+            case MACHINE -> ModularBake.machine(d, t, ClientMaterials.get()).map(BlueprintTableScreen::machineLines).orElse(List.of());
             case VESSEL -> ModularBake.xpStore(d, t, ClientMaterials.get(), null).<List<Component>>map(x -> List.of(
                     Component.translatable("gui.feedback.blueprint_table.vessel.points", x.maxPoints()),
                     Component.translatable("gui.feedback.blueprint_table.vessel.level", String.format(java.util.Locale.ROOT, "%.0f", x.maxPoints() / x.perLevel()))))
                     .orElse(List.of());
             default -> List.of();
         };
+    }
+
+    private static List<Component> machineLines(ModularBake.MachineSpec m) {
+        return List.of(Component.translatable("gui.feedback.blueprint_table.machine.frame", Math.round(m.frameSu())),
+                Component.translatable("gui.feedback.blueprint_table.machine.volts", String.format(java.util.Locale.ROOT, "%.3g", m.voltsPerRpm())),
+                Component.translatable("gui.feedback.blueprint_table.machine.amps", Math.round(m.ratedAmps())),
+                Component.translatable("gui.feedback.blueprint_table.machine.band", Component.translatable(m.band().key())));
     }
 
     private static List<Component> cellLines(ModularBake.CellSpec c) {

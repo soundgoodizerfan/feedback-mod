@@ -68,7 +68,7 @@ public final class FormTint {
 
     private static List<Block> machineBlocks() {
         return List.of(FBlocks.LEYDEN_JAR.get(), FBlocks.CHARGER.get(), FBlocks.ELECTROSTATIC_GENERATOR.get(),
-                FBlocks.CONDENSER.get(), FBlocks.PRESSURE_VESSEL.get(), FBlocks.VALVE.get(), FBlocks.STEAM_ENGINE.get(),
+                FBlocks.CONDENSER.get(), FBlocks.PRESSURE_VESSEL.get(), FBlocks.VALVE.get(), FBlocks.STEAM_ENGINE.get(), FBlocks.STEAM_TURBINE.get(),
                 FBlocks.GALVANIC_CELL.get(), FBlocks.GALVANIC_CELL_PACK.get(), FBlocks.BIMETALLIC_STRIP.get(), FBlocks.CLUTCH.get(),
                 FBlocks.OVERSPEED_TRIP.get(), FVehicles.LIFT.get());
     }

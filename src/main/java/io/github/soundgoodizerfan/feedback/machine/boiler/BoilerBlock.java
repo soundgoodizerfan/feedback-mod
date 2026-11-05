@@ -44,8 +44,20 @@ import net.neoforged.neoforge.fluids.FluidUtil;
  */
 public class BoilerBlock extends Block implements EntityBlock {
 
+    private final int scale;
+
     public BoilerBlock(Properties properties) {
+        this(properties, 1);
+    }
+
+    /** A boiler {@code scale} times the plain one: mass, steam a tick, tanks and the fire it stands on all scale together. */
+    public BoilerBlock(Properties properties, int scale) {
         super(properties);
+        this.scale = scale;
+    }
+
+    public int scale() {
+        return scale;
     }
 
     @Override

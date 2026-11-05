@@ -53,6 +53,9 @@ Some reactions give off heat, which warms the reactor.
 | **Roast pyrite** | any pyrite item | 4 iron nuggets and 200 mB [sulfur dioxide](Chemicals.md#sulfur-dioxide) | 500 to 900 Tu, best 700 |
 | **Sulfuric acid** | 100 mB sulfur dioxide, 50 mB oxygen, 100 mB water, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 100 mB [sulfuric acid](Chemicals.md#acids), and some heat | 400 to 550 Tu, best 450 |
 | **Hydrochloric acid** | 100 mB hydrogen, 100 mB chlorine | 100 mB [hydrochloric acid](Chemicals.md#acids), and some heat | 20 to 200 Tu, best 60 |
+| **Hydrofluoric acid** | one Cryolite Ore, 100 mB [sulfuric acid](Chemicals.md#acids) | 200 mB [hydrofluoric acid](Chemicals.md#fluorine-and-ptfe), and some heat | 100 to 250 Tu, best 150 |
+| **Tetrafluoroethylene** | 200 mB hydrofluoric acid, 100 mB chlorine, 100 mB ethylene, a cracking catalyst bed, **1 Pu** at least (best from 2 Pu) | 100 mB [tetrafluoroethylene](Chemicals.md#fluorine-and-ptfe) and 100 mB hydrochloric acid, and some heat | 600 to 850 Tu, best 700 |
+| **PTFE polymerization** | 100 mB tetrafluoroethylene, a cracking catalyst bed, **2 Pu** at least (best from 4 Pu) | 10 mB molten PTFE, and some heat | 330 to 450 Tu, best 380 |
 | **Hypochlorite** | 100 mB chlorine, 100 mB lye | 100 mB [Hypochlorite Bleach](Chemicals.md#hypochlorite-bleach) | 20 to 60 Tu, best 40 |
 | **Nitrogen separation** | 100 mB air, a catalyst bed | 78 mB [nitrogen](Chemicals.md#nitrogen) | 20 to 100 Tu, best 40 |
 | **Ammonia** | 100 mB nitrogen, 300 mB hydrogen, an iron bed | 200 mB [ammonia](Chemicals.md#ammonia), and some heat | 400 to 500 Tu, best 450 |

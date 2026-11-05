@@ -82,6 +82,8 @@ public class FCapabilities {
                 (boiler, side) -> new BoilerFluidHandler(boiler));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.STEAM_ENGINE.get(),
                 (engine, side) -> engine.getInput());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.STEAM_TURBINE.get(),
+                (turbine, side) -> turbine.getInput());
         // Read-only, so Jade and any other reader can see a melt; filling and draining stay the mold's.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CRUCIBLE.get(),
                 (vessel, side) -> new io.github.soundgoodizerfan.feedback.process.MoltenReadout((io.github.soundgoodizerfan.feedback.process.MoltenVessel) vessel));
@@ -90,6 +92,8 @@ public class FCapabilities {
                 (vessel, side) -> new io.github.soundgoodizerfan.feedback.machine.vessel.VesselFluidHandler(vessel));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.BATTERY.get(),
                 (battery, side) -> battery.fluids);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ELECTRIC_MACHINE.get(),
+                (machine, side) -> machine.isJacketed() ? machine.fluids : null);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.REBOILER.get(),
                 (reboiler, side) -> reboiler.getHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.TRAY.get(),

@@ -4,7 +4,7 @@ The wire that connects [electrical](Electricity.md) blocks together.
 
 ## Crafting
 
-Three [Copper Wire](Wire_Drawer.md) in a row makes three **bare** cables. Put a row of an insulating material under them (all three the same band) and the cables come out **insulated** to that material's band. Leather, wool and paper insulate to LV; terracotta and brick to MV; glass to HV; quartz glass to UHV; quartz to EHV. [Polymers](Materials.md#polymer-insulation) do too: bitumen to LV, polypropylene, PVC and soul resin to MV, polyethylene and synthetic rubber to HV, PTFE to EHV. Their *Insulation* form works as the coat, and so does any other item of the material.
+Three [Copper Wire](Wire_Drawer.md) in a row makes three **bare** cables. Put a row of an insulating material under them (all three the same band) and the cables come out **insulated** to that material's band. Leather, wool and paper insulate to LV; terracotta and brick to MV; glass to HV; quartz glass to UHV; quartz to EHV. [Polymers](Materials.md#polymer-insulation) do too: bitumen to LV, polypropylene, PVC and soul resin to MV, polyethylene and synthetic rubber to HV, PTFE to Trunk. Their *Insulation* form works as the coat, and so does any other item of the material.
 
 ```
 W W W
@@ -28,7 +28,7 @@ Bare cable (never insulated, or burnt) shocks, and it also **arcs across one blo
 | Rating | **4 A** |
 | Voltage lost | **0.05 V per amp, per block** |
 
-Up to 4 A the cable stays at room temperature forever and never wears out, no matter how long it runs. That's four [Electromagnets](Electromagnet.md), or two [Heating Coils](Heating_Coil.md), but only half of a coarse [Dynamo](Dynamo.md)'s 8 A.
+Up to 4 A the cable stays at room temperature forever and never wears out, no matter how long it runs. That's four [Electromagnets](Electromagnet.md), or two [Heating Coils](Heating_Coil.md), but only a fraction of what a coarse [Electric Machine](Electric_Machine.md) can deliver.
 
 Every block of cable also costs the line voltage, so long runs deliver less to the far end. See [Electricity](Electricity.md#how-a-line-behaves).
 

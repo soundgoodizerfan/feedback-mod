@@ -22,7 +22,7 @@ Voltage comes in six named bands:
 | **EHV** | 384 V |
 | **Trunk** | 1,536 V and beyond |
 
-A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV 24 V is HV and 96 V is UHV. The [Arc Furnace](Arc_Furnace.md) runs on EHV. No material insulates Trunk.
+A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV 24 V is HV and 96 V is UHV. The [Arc Furnace](Arc_Furnace.md) runs on EHV. Only PTFE insulates Trunk.
 
 Bands don't lock anything. A machine is *rated* for a band; feed it more and it wears and warms, feed it less and it runs slow.
 
@@ -33,7 +33,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | **Sources** | |
 | [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1.1 V, 1 A. |
 | [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 1.5 V, 1 A. |
-| [Dynamo](Dynamo.md) | Shaft in, electricity out. Volts set by shaft speed and winding; the dense winding reaches EHV on a Gas Turbine. |
+| [Electric Machine](Electric_Machine.md) | Shaft in, electricity out, as a generator. Volts set by shaft speed and winding; the dense winding reaches EHV and the heavy-dense winding Trunk on a turbine. |
 | [Battery](Battery.md) | Lead-acid cells that charge from a higher line and supply when it drops. |
 | [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
 | **Carrying and stopping** | |
@@ -46,7 +46,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Oscilloscope](Instruments.md#oscilloscope) | Shows a cable's current on a [Phosphor Screen](Phosphor_Screen.md). |
 | **Machines** | |
 | [Electromagnet](Electromagnet.md) | Pulls dropped iron and steel items toward itself. |
-| [Motor](Motor.md) | Electricity in, shaft out. |
+| [Electric Machine](Electric_Machine.md) | Electricity in, shaft out, as a motor. |
 | [Heating Coil](Heating_Coil.md) | Electricity in, heat out, under a vessel. |
 | [Electrolytic Cell](Electrolytic_Cell.md) | Refines and plates metal. |
 | [Round Charger](Round_Charger.md) | Charges jar rounds for a [coilgun](Coilgun.md). |
@@ -80,10 +80,10 @@ Everything that touches is connected. Put a source, some cable and a magnet next
 
 ## Changing voltage
 
-There's no transformer: Feedback's electricity is DC, and transformers need AC. Instead, the way to change voltage is a **motor-generator set**: a [Motor](Motor.md) turning a shaft that turns a [Dynamo](Dynamo.md) on the **other** winding.
+There's no transformer: Feedback's electricity is DC, and transformers need AC. Instead, the way to change voltage is a **motor-generator set**: an [Electric Machine](Electric_Machine.md) run as a motor, turning a shaft that turns another run as a generator with the **other** winding.
 
-- **Fine motor → coarse dynamo:** fewer volts, more amps. Send power a long way at MV, then step it down next to an LV machine.
-- **Coarse motor → fine dynamo:** more volts, fewer amps.
+- **Fine motor → coarse generator:** fewer volts, more amps. Send power a long way at MV, then step it down next to an LV machine.
+- **Coarse motor → fine generator:** more volts, fewer amps.
 
 The only loss is the friction of the shaft between them.
 

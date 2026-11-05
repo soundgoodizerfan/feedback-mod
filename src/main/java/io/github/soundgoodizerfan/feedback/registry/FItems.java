@@ -301,8 +301,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> GALVANIC_CELL =ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL);
     public static final DeferredItem<BlockItem> GALVANIC_CELL_PACK = ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL_PACK);
     public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
-    public static final DeferredItem<BlockItem> DYNAMO = ITEMS.registerSimpleBlockItem(FBlocks.DYNAMO);
-    public static final DeferredItem<BlockItem> MOTOR = ITEMS.registerSimpleBlockItem(FBlocks.MOTOR);
     public static final DeferredItem<BlockItem> COPPER_COIL = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_COIL);
     public static final DeferredItem<BlockItem> IRON_COIL = ITEMS.registerSimpleBlockItem(FBlocks.IRON_COIL);
     public static final DeferredItem<BlockItem> BREAKER = ITEMS.registerSimpleBlockItem(FBlocks.BREAKER);
@@ -338,7 +336,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> BIMETALLIC_STRIP = ITEMS.registerSimpleBlockItem(FBlocks.BIMETALLIC_STRIP);
 
     public static final DeferredItem<BlockItem> BOILER = ITEMS.registerSimpleBlockItem(FBlocks.BOILER);
+    public static final DeferredItem<BlockItem> LARGE_BOILER = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_BOILER);
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_ENGINE);
+    public static final DeferredItem<BlockItem> STEAM_TURBINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_TURBINE);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(FBlocks.CONDENSER);
     public static final DeferredItem<BlockItem> CRYSTAL_HOLDER = ITEMS.registerSimpleBlockItem(FBlocks.CRYSTAL_HOLDER);
     public static final DeferredItem<BlockItem> ELECTROLYSER = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYSER);

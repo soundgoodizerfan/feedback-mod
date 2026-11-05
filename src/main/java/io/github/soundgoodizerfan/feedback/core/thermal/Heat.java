@@ -62,6 +62,11 @@ public final class Heat {
      *         how fast it was heated as well as how hot it got.
      */
     public static TuRate tick(ThermalBody body, Tu fireTu, Tu ambient, boolean conducted) {
+        return tick(body, fireTu, ambient, conducted, 1f);
+    }
+
+    /** {@link #tick} where the fire touches {@code contact} times the usual area: a larger vessel stands on more fire. */
+    public static TuRate tick(ThermalBody body, Tu fireTu, Tu ambient, boolean conducted, float contact) {
         // Leak, mass and conductance are unwrapped inline, deliberately -- see core/unit's package
         // javadoc: holding a bare `leak` and a bare `mass` side by side is exactly the swap the
         // types exist to prevent. The temperature is the one local: it is read three times, has
@@ -69,7 +74,7 @@ public final class Heat {
         float temperature = body.getTemperature().value();
 
         float fromFire = conducted
-                ? FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * (fireTu.value() - temperature)
+                ? contact * FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * (fireTu.value() - temperature)
                 : 0;
         float toRoom = body.getLeak().workPerTickPerTu()
                 * (temperature - ambient.value());

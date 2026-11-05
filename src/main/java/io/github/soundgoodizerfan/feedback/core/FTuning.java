@@ -852,6 +852,8 @@ public final class FTuning {
      * the 1:1 ratio does not yet try to make these mean anything. */
     public static final int BOILER_WATER_TANK_MB = 4000;
     public static final int BOILER_STEAM_TANK_MB = 4000;
+    /** Invented. The Large Boiler is ten Boilers in one: ten times the mass, steam a tick and tanks, standing on ten times the fire. */
+    public static final int BOILER_LARGE_SCALE = 10;
 
     // --- the steam engine (steam -> rotation) ------------------------------------------------
 
@@ -897,6 +899,27 @@ public final class FTuning {
      * are meant to be read against the Su figures they pair with.
      */
     public static final Inertia STEAM_ENGINE_INERTIA = new Inertia(150f);
+
+    // --- the steam turbine ---------------------------------------------------------------
+
+    /** Invented, placeholder. Coolest steam the turbine runs on, Tu: a bladed rotor needs hotter, drier steam than a piston. */
+    public static final float STEAM_TURBINE_MIN_TU = 150f;
+    /** Invented, placeholder. How much cooler the exhaust leaves than the intake, Tu: a turbine takes more of the steam's heat than a piston does. */
+    public static final float STEAM_TURBINE_EXHAUST_DROP_TU = 80f;
+    /** Placeholder. Output bands scaling with steam heat, the engine's logic ({@link #STEAM_ENGINE_BANDS}). */
+    public static final int STEAM_TURBINE_BANDS = 4;
+    /** Placeholder. Steam heat per band step above {@link #STEAM_TURBINE_MIN_TU}, Tu. */
+    public static final float STEAM_TURBINE_BAND_TU = 60f;
+    /** Invented. Steam drawn per tick while working, mB: ten times the engine, so about ten boilers' worth of {@link #BOILER_STEAM_PER_TICK_MB}. */
+    public static final int STEAM_TURBINE_MB_PER_TICK = 100;
+    /** Invented. Input and exhaust tank size, mB: ten ticks of a stutter, the engine's ratio. */
+    public static final int STEAM_TURBINE_TANK_MB = 1000;
+    /** Invented. Full supply capacity, Su: the large frame's rating, so at {@link #STEAM_TURBINE_RPM} it makes 64 x 240 = 15.4 kW (about 16 kW). */
+    public static final Su STEAM_TURBINE_CAPACITY_SU = new Su(64f);
+    /** Invented. Flat output speed once working, RPM: fifteen times the engine's. */
+    public static final Rpm STEAM_TURBINE_RPM = new Rpm(240f);
+    /** Invented. A heavy bladed rotor, twice the engine's flywheel. */
+    public static final Inertia STEAM_TURBINE_INERTIA = new Inertia(300f);
 
     /**
      * Invented, placeholder. The speed a centrifugal overspeed trip lets go at: above the Hand
@@ -2449,22 +2472,64 @@ public final class FTuning {
     /** Placeholder, and [OPEN] (6.2): the fraction of its voltage a source holds at {@link #SOURCE_OVERDRAW_LIMIT}. */
     public static final float SOURCE_SAG_FLOOR = 0.25f;
 
+    // --- the electric machine (the modular motor and dynamo, roadmap E5) ---------------------------------
+
     /**
-     * Placeholder. The dynamo's two windings (mechanics 6.8): volts per RPM of the input shaft,
-     * which is also the Su each amp drawn costs that shaft, and the amps it holds its voltage up
-     * to. Chosen so the two carry the same power at any speed (0.75 x RPM either way) and neither
-     * dominates, and so the band anchors fall out of the machine rather than being set: a steam
-     * engine's {@link #STEAM_ENGINE_RPM} makes {@link #ELECTRIC_LV_VOLTS} on the coarse winding and
-     * {@link #ELECTRIC_MV_VOLTS} on the fine one. A faster shaft makes more -- gear it up.
+     * Placeholder. Torque ceiling of the three frames, in Su: what the shaft can carry through the machine at full
+     * load. The large frame at {@link #MACHINE_REFERENCE_RPM} is about 15 kW (1 Su x 1 RPM is 1 W).
      */
-    public static final float DYNAMO_COARSE_VOLTS_PER_RPM = ELECTRIC_LV_VOLTS / 16f;
-    public static final float DYNAMO_COARSE_AMPS = 8f;
-    public static final float DYNAMO_FINE_VOLTS_PER_RPM = ELECTRIC_MV_VOLTS / 16f;
-    public static final float DYNAMO_FINE_AMPS = 2f;
-    /** Placeholder. The dense winding: 1.5 V per RPM, so 360 V (EHV) at a gas turbine's 240 RPM. */
-    public static final float DYNAMO_DENSE_VOLTS_PER_RPM = ELECTRIC_EHV_VOLTS / 256f;
-    /** Placeholder. Rated current of the dense winding: 42 A, which costs the shaft 63 Su at full load (a turbine's worth), and about 15 kW at EHV. */
-    public static final float DYNAMO_DENSE_AMPS = 42f;
+    public static final float FRAME_SU_SMALL = 2f, FRAME_SU_MEDIUM = 16f, FRAME_SU_LARGE = 64f;
+    /** Placeholder. Thermal mass of the three frames, Work per Tu (a motor was 12). */
+    public static final ThermalMass FRAME_MASS_SMALL = new ThermalMass(6f), FRAME_MASS_MEDIUM = new ThermalMass(20f),
+            FRAME_MASS_LARGE = new ThermalMass(60f);
+    /**
+     * Placeholder. Wall area of the three frames, in blocks of housing: how much of a housing's conductivity each can shed
+     * through. A frame's heat grows with its throughput, so its area grows with it.
+     */
+    public static final float FRAME_AREA_SMALL = 1f, FRAME_AREA_MEDIUM = 5f, FRAME_AREA_LARGE = 12f;
+    /**
+     * Placeholder. Conductance of the housing to air, Work/tick per Tu, per block of wall area per unit of the housing
+     * material's {@code thermal.conductivity} (iron 0.02): a finned large iron frame sheds 10 Work a tick per Tu.
+     */
+    public static final float MACHINE_SHED_PER_CONDUCTIVITY = 42f;
+
+    /**
+     * Placeholder. The four windings' volts per RPM, which is also the Su each amp costs the shaft (the dynamo's old rule,
+     * mechanics 6.8), four times each: coarse and fine are what the old fixed windings were (a steam engine's
+     * {@link #STEAM_ENGINE_RPM} makes {@link #ELECTRIC_LV_VOLTS} on coarse and {@link #ELECTRIC_MV_VOLTS} on fine); dense is
+     * 360 V (EHV) at a gas turbine's 240 RPM, heavy-dense 1,440 V (Trunk).
+     */
+    public static final float WINDING_VOLTS_PER_RPM_COARSE = ELECTRIC_LV_VOLTS / 16f,
+            WINDING_VOLTS_PER_RPM_FINE = ELECTRIC_MV_VOLTS / 16f, WINDING_VOLTS_PER_RPM_DENSE = 1.5f,
+            WINDING_VOLTS_PER_RPM_HEAVY_DENSE = 6f;
+    /**
+     * Placeholder. Amps a winding carries per unit of its conductor's {@code ampacity} (copper 1) per cell of wire in the
+     * winding part: a dense winding is four cells, so copper reaches 44 A, past what a large frame lets through at
+     * 1.5 V per RPM (64 / 1.5 = 42.7 A).
+     */
+    public static final float WINDING_AMPS_PER_AMPACITY = 11f;
+    /** Placeholder. Length of conductor, in blocks of cable (the unit of a material's {@code electrical.drop}), per cell of wire in a winding: its loss is amps squared x drop x this. */
+    public static final float WINDING_BLOCKS_PER_CELL = 0.5f;
+    /** Placeholder. The speed a machine's rated band is judged at: volts per RPM x this is the voltage it is built for. */
+    public static final float MACHINE_REFERENCE_RPM = 240f;
+    /** Placeholder. Share of throughput a core of a material with no {@code electrical.core_loss} loses as heat. */
+    public static final float CORE_LOSS_DEFAULT = 0.15f;
+    /** Placeholder. Service temperature of a housing whose material states none, Tu. */
+    public static final float MACHINE_SERVICE_TU = 300f;
+    /**
+     * Placeholder. Misuse (an over-rated draw, or volts past the rated band), the electromagnet's rule: Work per tick put
+     * into the body as a share of the throughput per unit over, condition lost per unit over per tick, and the floor
+     * condition falls to. Heat past the housing's service temperature costs condition per Tu over per tick.
+     */
+    public static final float MACHINE_HEAT_PER_EXCESS = 0.05f, MACHINE_WEAR_PER_EXCESS = 0.0005f,
+            MACHINE_CONDITION_FLOOR = 0.5f, MACHINE_HEAT_WEAR_PER_TU = 0.00002f;
+    /**
+     * Placeholder. The water jacket: tank size, the multiple of the housing's shed rate it gives while it holds water and
+     * the body is above ambient, and the ticks one millibucket of that water lasts.
+     */
+    public static final int JACKET_TANK_MB = 2000;
+    public static final float JACKET_SHED_MULTIPLE = 2f;
+    public static final int JACKET_TICKS_PER_MB = 20;
 
     /**
      * Placeholder. The Leyden jar (mechanics 6.6). Capacitance in amp-ticks per volt: one
@@ -2891,11 +2956,6 @@ public final class FTuning {
             TRANSMISSION_POP_BELOW = 0.6f, TRANSMISSION_POP_RATE = 0.01f;
     /** Placeholder. The clutch pedal level (0 to 1) at which the transmission's link parts. */
     public static final float TRANSMISSION_CLUTCH_PRESSED = 0.5f;
-
-    /** A motor's winding past its voltage band (user ruling, 2026-10-23): the electromagnet's rule, placeholders. */
-    public static final float MOTOR_CONDITION_FLOOR = 0.5f, MOTOR_WEAR_PER_EXCESS = 0.0005f, MOTOR_HEAT_PER_EXCESS = 1f;
-    public static final ThermalMass MOTOR_MASS = new ThermalMass(12f);
-    public static final Conductance MOTOR_LEAK = new Conductance(0.04f);
 
     /**
      * Placeholder (basic electronics phase 2, mechanics 6.18). Sparks: a break of at least this

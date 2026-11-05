@@ -36,7 +36,8 @@
     "reflectivity": 0.55
   },
   "electrical": {
-    "drop": 0.5
+    "drop": 0.5,
+    "core_loss": 0.04
   },
   "ampacity": 0.1,
   "corrosion_resistance": 0.3,

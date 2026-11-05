@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": { "item": "feedback:steel_plate" },
+    "B": { "item": "feedback:bearing" },
+    "S": { "item": "feedback:shaft" }
+  },
+  "pattern": [
+    "PPP",
+    "BSB"
+  ],
+  "result": { "count": 1, "id": "feedback:steam_turbine" }
+}

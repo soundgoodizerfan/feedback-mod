@@ -58,16 +58,32 @@ import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
  */
 public class SteamEngineBlockEntity extends RotationNode implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks {
 
-    private final HeatedTank tank = new HeatedTank(FTuning.STEAM_ENGINE_TANK_MB,
-            stack -> stack.is(FTags.STEAM), this::setChanged);
-    private final HeatedTank exhaust = new HeatedTank(FTuning.STEAM_ENGINE_TANK_MB,
-            stack -> stack.is(FTags.STEAM), this::setChanged);
+    private final HeatedTank tank;
+    private final HeatedTank exhaust;
     /** 0 when not working, else 1 to {@link FTuning#STEAM_ENGINE_BANDS}: how hot the steam it runs on is. */
     private int band;
 
     public SteamEngineBlockEntity(BlockPos pos, BlockState state) {
-        super(FBlockEntities.STEAM_ENGINE.get(), pos, state);
+        this(FBlockEntities.STEAM_ENGINE.get(), pos, state, FTuning.STEAM_ENGINE_TANK_MB);
     }
+
+    /** The Steam Turbine's way in: same machine, its own type and tank, figures through the hooks below. */
+    protected SteamEngineBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos,
+            BlockState state, int tankMb) {
+        super(type, pos, state);
+        tank = new HeatedTank(tankMb, stack -> stack.is(FTags.STEAM), this::setChanged);
+        exhaust = new HeatedTank(tankMb, stack -> stack.is(FTags.STEAM), this::setChanged);
+    }
+
+    // --- the figures a steam rotation source is built from; the Steam Turbine overrides them ------
+
+    protected float minTu() { return FTuning.STEAM_ENGINE_MIN_TU; }
+    protected float bandTu() { return FTuning.STEAM_ENGINE_BAND_TU; }
+    protected int bands() { return FTuning.STEAM_ENGINE_BANDS; }
+    protected int mbPerTick() { return FTuning.STEAM_ENGINE_MB_PER_TICK; }
+    protected float exhaustDropTu() { return FTuning.STEAM_ENGINE_EXHAUST_DROP_TU; }
+    protected Rpm workingRpm() { return FTuning.STEAM_ENGINE_RPM; }
+    protected Su fullCapacity() { return FTuning.STEAM_ENGINE_CAPACITY_SU; }
 
     @Override
     public java.util.List<HeatedTank> heatedTanks() {
@@ -130,18 +146,20 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
 
     @Override
     public Rpm getGeneratedRpm() {
-        return band > 0 ? FTuning.STEAM_ENGINE_RPM : ZERO_RPM;
+        return band > 0 ? workingRpm() : ZERO_RPM;
     }
 
     @Override
     public Su getCapacitySu() {
-        return band > 0 ? new Su(FTuning.STEAM_ENGINE_CAPACITY_SU.value() * band / FTuning.STEAM_ENGINE_BANDS) : NO_SU;
+        return band > 0 ? new Su(fullCapacity().value() * band / bands()) : NO_SU;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.STEAM_ENGINE_INERTIA;
+        return inertia();
     }
+
+    protected Inertia inertia() { return FTuning.STEAM_ENGINE_INERTIA; }
 
     // --- the tick ---------------------------------------------------------------------------
 
@@ -158,8 +176,8 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
         if (nowBand > 0) {
             // The steam gives up a fixed drop of its temperature as work and leaves as cooler steam.
             // Whatever does not fit vents: lost water, not a stalled engine.
-            FluidStack used = tank.drain(FTuning.STEAM_ENGINE_MB_PER_TICK, IFluidHandler.FluidAction.EXECUTE);
-            float out = Math.max(ambient.value(), FluidHeat.of(used).value() - FTuning.STEAM_ENGINE_EXHAUST_DROP_TU);
+            FluidStack used = tank.drain(mbPerTick(), IFluidHandler.FluidAction.EXECUTE);
+            float out = Math.max(ambient.value(), FluidHeat.of(used).value() - exhaustDropTu());
             exhaust.fill(FluidHeat.stamp(used, out), IFluidHandler.FluidAction.EXECUTE);
         }
 
@@ -176,14 +194,14 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
      * engine is visibly slow (user ruling, 2026-10-23), never a dial.
      */
     private int band() {
-        int b = 1 + (int) ((tank.temperature().value() - FTuning.STEAM_ENGINE_MIN_TU) / FTuning.STEAM_ENGINE_BAND_TU);
-        return Math.min(FTuning.STEAM_ENGINE_BANDS, Math.max(1, b));
+        int b = 1 + (int) ((tank.temperature().value() - minTu()) / bandTu());
+        return Math.min(bands(), Math.max(1, b));
     }
 
     /** Enough steam, and hot enough: below {@link FTuning#STEAM_ENGINE_MIN_TU} it has no work left in it. */
     private boolean hasSteam() {
-        return tank.getFluidAmount() >= FTuning.STEAM_ENGINE_MB_PER_TICK
-                && tank.temperature().value() >= FTuning.STEAM_ENGINE_MIN_TU;
+        return tank.getFluidAmount() >= mbPerTick()
+                && tank.temperature().value() >= minTu();
     }
 
     /**
@@ -204,7 +222,7 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
                 continue;
             // Whatever the neighbour offers, if it is steam by tag -- any mod's steam will do.
             FluidStack drained = neighbour.drain(needed, IFluidHandler.FluidAction.SIMULATE);
-            if (drained.isEmpty() || !drained.is(FTags.STEAM) || FluidHeat.of(drained).value() < FTuning.STEAM_ENGINE_MIN_TU
+            if (drained.isEmpty() || !drained.is(FTags.STEAM) || FluidHeat.of(drained).value() < minTu()
                     || tank.fill(drained, IFluidHandler.FluidAction.SIMULATE) <= 0)
                 continue;
             drained.setAmount(tank.fill(drained, IFluidHandler.FluidAction.SIMULATE));

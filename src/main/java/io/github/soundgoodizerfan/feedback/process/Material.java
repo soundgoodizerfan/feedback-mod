@@ -540,13 +540,15 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param rectifying         how good a spot a cat's whisker can find on it, 0-1 (6.18). Absent, it has none.
      * @param secondaryCell      the plate figures of a rechargeable cell made with this metal as its plates (the lead-acid
      *                           battery's lead). Absent, it is no battery plate.
+     * @param coreLoss           the share, 0 to 1, of the power through a machine's core of it that is lost as heat in
+     *                           the core (hysteresis and eddy currents). Absent, {@code FTuning.CORE_LOSS_DEFAULT}.
      */
     public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential, Optional<Float> conductivity,
                              Optional<VoltageBand> insulation,
                              Optional<Float> piezoCoupling, Optional<Float> rectifying,
-                             Optional<SecondaryCell> secondaryCell) {
+                             Optional<SecondaryCell> secondaryCell, Optional<Float> coreLoss) {
         static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Electrical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("drop").forGetter(Electrical::drop),
@@ -555,7 +557,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 VoltageBand.CODEC.optionalFieldOf("insulation").forGetter(Electrical::insulation),
                 Codec.FLOAT.optionalFieldOf("piezo_coupling").forGetter(Electrical::piezoCoupling),
                 Codec.FLOAT.optionalFieldOf("rectifying").forGetter(Electrical::rectifying),
-                SecondaryCell.CODEC.optionalFieldOf("secondary_cell").forGetter(Electrical::secondaryCell)
+                SecondaryCell.CODEC.optionalFieldOf("secondary_cell").forGetter(Electrical::secondaryCell),
+                Codec.FLOAT.optionalFieldOf("core_loss").forGetter(Electrical::coreLoss)
         ).apply(instance, Electrical::new));
     }
 
