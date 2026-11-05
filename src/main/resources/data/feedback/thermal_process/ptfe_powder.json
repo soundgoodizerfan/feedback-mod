@@ -1,0 +1,29 @@
+{
+  "inputs": [],
+  "min_temperature": 40,
+  "optimal_temperature": 70,
+  "max_temperature": 110,
+  "required_tpu": 200,
+  "max_rate": 6,
+  "result": {
+    "id": "feedback:ptfe_powder",
+    "count": 4
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:tetrafluoroethylene",
+        "mb": 100
+      },
+      {
+        "fluid": "minecraft:water",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [],
+    "min_pu": 2,
+    "optimal_pu": 4,
+    "activity_floor": 0.2,
+    "heat": 10
+  }
+}

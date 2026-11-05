@@ -1,0 +1,9 @@
+{
+  "kind": "fluid",
+  "hardness": 0.1,
+  "density": 1.48,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 1.5e-05
+  }
+}

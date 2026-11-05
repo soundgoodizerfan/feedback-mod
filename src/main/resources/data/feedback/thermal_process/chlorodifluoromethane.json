@@ -1,0 +1,32 @@
+{
+  "inputs": [],
+  "min_temperature": 60,
+  "optimal_temperature": 100,
+  "max_temperature": 180,
+  "required_tpu": 120,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:chloroform",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:hydrofluoric_acid",
+        "mb": 200
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:chlorodifluoromethane",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:hydrochloric_acid",
+        "mb": 200
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "heat": 6
+  }
+}

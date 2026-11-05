@@ -415,6 +415,7 @@ public class FItems {
     public static final DeferredItem<Item> CRACKED_CERAMIC = ITEMS.registerSimpleItem("cracked_ceramic");
     public static final DeferredItem<Item> POROUS_SINTER = ITEMS.registerSimpleItem("porous_sinter");
     public static final DeferredItem<Item> CERMET_POWDER = ITEMS.registerSimpleItem("cermet_powder");
+    public static final DeferredItem<Item> PTFE_POWDER = ITEMS.registerSimpleItem("ptfe_powder");
     public static final DeferredItem<Item> CERMET_GREEN_COMPACT = ITEMS.registerSimpleItem("cermet_green_compact");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_POWDER = ITEMS.registerSimpleItem("tungsten_carbide_powder");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_GREEN_COMPACT = ITEMS.registerSimpleItem("tungsten_carbide_green_compact");

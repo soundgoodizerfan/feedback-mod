@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:ptfe_powder"
+    }
+  ],
+  "min_temperature": 360,
+  "optimal_temperature": 380,
+  "max_temperature": 410,
+  "required_tpu": 300,
+  "result": {
+    "id": "feedback:polytetrafluoroethylene_insulation"
+  },
+  "spoil_temperature": 450,
+  "spoiled": {
+    "id": "feedback:charred_remains"
+  }
+}

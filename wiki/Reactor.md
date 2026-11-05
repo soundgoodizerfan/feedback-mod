@@ -54,8 +54,11 @@ Some reactions give off heat, which warms the reactor.
 | **Sulfuric acid** | 100 mB sulfur dioxide, 50 mB oxygen, 100 mB water, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 100 mB [sulfuric acid](Chemicals.md#acids), and some heat | 400 to 550 Tu, best 450 |
 | **Hydrochloric acid** | 100 mB hydrogen, 100 mB chlorine | 100 mB [hydrochloric acid](Chemicals.md#acids), and some heat | 20 to 200 Tu, best 60 |
 | **Hydrofluoric acid** | one Cryolite Ore, 100 mB [sulfuric acid](Chemicals.md#acids) | 200 mB [hydrofluoric acid](Chemicals.md#fluorine-and-ptfe), and some heat | 100 to 250 Tu, best 150 |
-| **Tetrafluoroethylene** | 200 mB hydrofluoric acid, 100 mB chlorine, 100 mB ethylene, a cracking catalyst bed, **1 Pu** at least (best from 2 Pu) | 100 mB [tetrafluoroethylene](Chemicals.md#fluorine-and-ptfe) and 100 mB hydrochloric acid, and some heat | 600 to 850 Tu, best 700 |
-| **PTFE polymerization** | 100 mB tetrafluoroethylene, a cracking catalyst bed, **2 Pu** at least (best from 4 Pu) | 10 mB molten PTFE, and some heat | 330 to 450 Tu, best 380 |
+| **Methane** | one Coal, 200 mB hydrogen, a cracking catalyst bed, **1 Pu** at least (best from 2 Pu) | 100 mB [methane](Chemicals.md#fluorine-and-ptfe), and some heat | 500 to 750 Tu, best 600 |
+| **Chloroform** | 100 mB methane, 300 mB chlorine | 100 mB [chloroform](Chemicals.md#fluorine-and-ptfe) and 300 mB hydrochloric acid, and some heat | 250 to 420 Tu, best 320 |
+| **Chlorodifluoromethane** | 100 mB chloroform, 200 mB hydrofluoric acid, **1 Pu** at least (best from 2 Pu) | 100 mB [chlorodifluoromethane](Chemicals.md#fluorine-and-ptfe) and 200 mB hydrochloric acid, and some heat | 60 to 180 Tu, best 100 |
+| **Tetrafluoroethylene** | 200 mB chlorodifluoromethane | 100 mB [tetrafluoroethylene](Chemicals.md#fluorine-and-ptfe) and 100 mB hydrochloric acid, and some heat | 600 to 850 Tu, best 700 |
+| **PTFE powder** | 100 mB tetrafluoroethylene, 100 mB water, **2 Pu** at least (best from 4 Pu) | 4 **PTFE Powder**, and some heat | 40 to 110 Tu, best 70 |
 | **Hypochlorite** | 100 mB chlorine, 100 mB lye | 100 mB [Hypochlorite Bleach](Chemicals.md#hypochlorite-bleach) | 20 to 60 Tu, best 40 |
 | **Nitrogen separation** | 100 mB air, a catalyst bed | 78 mB [nitrogen](Chemicals.md#nitrogen) | 20 to 100 Tu, best 40 |
 | **Ammonia** | 100 mB nitrogen, 300 mB hydrogen, an iron bed | 200 mB [ammonia](Chemicals.md#ammonia), and some heat | 400 to 500 Tu, best 450 |

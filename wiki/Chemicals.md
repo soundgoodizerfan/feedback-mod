@@ -53,7 +53,16 @@ A toxic gas made in a Reactor from nitrogen and hydrogen over an iron bed. With 
 
 ## Fluorine and PTFE
 
-**Hydrofluoric Acid** comes from Cryolite Ore and sulfuric acid in a Reactor. Hydrofluoric acid, chlorine and ethylene, hot and under pressure over a cracking catalyst bed, give **Tetrafluoroethylene** gas and hydrochloric acid. Tetrafluoroethylene held at 330 to 450 Tu under pressure over a catalyst bed polymerizes into **Molten PTFE**, which [casts](Casting.md) like any molten metal. Rates and windows are in the [Reactor](Reactor.md#the-reactions) table; the finished polymer is on [Materials](Materials.md#polymers).
+**Hydrofluoric Acid** comes from Cryolite Ore and sulfuric acid in a Reactor. From there PTFE is a chain of [Reactor](Reactor.md#the-reactions) steps:
+
+1. **Methane** from coal and hydrogen over a catalyst bed.
+2. **Chloroform** from methane and chlorine, with hydrochloric acid as a byproduct.
+3. **Chlorodifluoromethane** from chloroform and hydrofluoric acid, with more hydrochloric acid.
+4. **Tetrafluoroethylene** gas by heating chlorodifluoromethane.
+5. **PTFE Powder** from tetrafluoroethylene and water, under pressure.
+6. **PTFE Insulation** by sintering the powder in any vessel that holds the heat.
+
+PTFE does not flow when heated, so it is never cast from a melt; it is a powder sintered like cermet. Windows and amounts are in the [Reactor](Reactor.md#the-reactions) table; the finished polymer is on [Materials](Materials.md#polymers).
 
 ## Cryolite bath
 

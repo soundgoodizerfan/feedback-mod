@@ -1,0 +1,31 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:coal"
+    }
+  ],
+  "min_temperature": 500,
+  "optimal_temperature": 600,
+  "max_temperature": 750,
+  "required_tpu": 200,
+  "max_rate": 8,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 200
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:methane",
+        "mb": 100
+      }
+    ],
+    "min_pu": 1,
+    "optimal_pu": 2,
+    "catalyst": "feedback:cracking_catalysts",
+    "activity_floor": 0.2,
+    "heat": 6
+  }
+}

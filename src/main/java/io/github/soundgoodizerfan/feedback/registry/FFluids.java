@@ -228,6 +228,18 @@ public final class FFluids {
             FLUIDS.register("lye", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LYE, FFluids.LYE, FFluids.LYE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> LYE_FLOWING =
             FLUIDS.register("lye_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.LYE, FFluids.LYE, FFluids.LYE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> METHANE =
+            FLUIDS.register("methane", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.METHANE, FFluids.METHANE, FFluids.METHANE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> METHANE_FLOWING =
+            FLUIDS.register("methane_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.METHANE, FFluids.METHANE, FFluids.METHANE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CHLOROFORM =
+            FLUIDS.register("chloroform", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.CHLOROFORM, FFluids.CHLOROFORM, FFluids.CHLOROFORM_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CHLOROFORM_FLOWING =
+            FLUIDS.register("chloroform_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CHLOROFORM, FFluids.CHLOROFORM, FFluids.CHLOROFORM_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CHLORODIFLUOROMETHANE =
+            FLUIDS.register("chlorodifluoromethane", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.CHLORODIFLUOROMETHANE, FFluids.CHLORODIFLUOROMETHANE, FFluids.CHLORODIFLUOROMETHANE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> CHLORODIFLUOROMETHANE_FLOWING =
+            FLUIDS.register("chlorodifluoromethane_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CHLORODIFLUOROMETHANE, FFluids.CHLORODIFLUOROMETHANE, FFluids.CHLORODIFLUOROMETHANE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> HYDROFLUORIC_ACID =
             FLUIDS.register("hydrofluoric_acid", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HYDROFLUORIC_ACID, FFluids.HYDROFLUORIC_ACID, FFluids.HYDROFLUORIC_ACID_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> HYDROFLUORIC_ACID_FLOWING =

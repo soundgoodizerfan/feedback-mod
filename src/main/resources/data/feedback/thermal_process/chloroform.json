@@ -1,0 +1,30 @@
+{
+  "inputs": [],
+  "min_temperature": 250,
+  "optimal_temperature": 320,
+  "max_temperature": 420,
+  "required_tpu": 150,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:methane",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:chlorine",
+        "mb": 300
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:chloroform",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:hydrochloric_acid",
+        "mb": 300
+      }
+    ],
+    "heat": 10
+  }
+}
