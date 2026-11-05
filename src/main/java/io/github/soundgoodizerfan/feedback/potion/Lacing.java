@@ -96,7 +96,11 @@ public record Lacing(ResourceLocation effect, int amplifier, int duration, List<
 
     /** Whether an eater notices it: loud enough, and far enough from the food's own taste. */
     public boolean detectable(Meal meal, net.minecraft.world.entity.player.Player eater) {
-        float keen = FinePalate.keenness(eater);
+        return detectable(meal, FinePalate.keenness(eater));
+    }
+
+    /** As {@link #detectable(Meal, net.minecraft.world.entity.player.Player)} for a given keenness (lower is sharper). */
+    public boolean detectable(Meal meal, float keen) {
         return strength >= PotionTuning.TASTE_MIN_STRENGTH * keen && distanceFrom(foodTaste(meal)) > PotionTuning.TASTE_NOTICE_DISTANCE * keen;
     }
 

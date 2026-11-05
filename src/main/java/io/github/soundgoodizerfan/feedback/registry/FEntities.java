@@ -50,6 +50,12 @@ public final class FEntities {
                     io.github.soundgoodizerfan.feedback.potion.ThrownPotionBottle::new, MobCategory.MISC).sized(0.25f, 0.25f)
                     .clientTrackingRange(4).updateInterval(10).build("potion_bottle"));
 
+    /** A thrown demolition charge; see {@code weapon/GrenadeEntity}. */
+    public static final DeferredHolder<EntityType<?>, EntityType<io.github.soundgoodizerfan.feedback.weapon.GrenadeEntity>> GRENADE =
+            ENTITIES.register("grenade", () -> EntityType.Builder.<io.github.soundgoodizerfan.feedback.weapon.GrenadeEntity>of(
+                    io.github.soundgoodizerfan.feedback.weapon.GrenadeEntity::new, MobCategory.MISC).sized(0.25f, 0.25f)
+                    .clientTrackingRange(4).updateInterval(10).build("grenade"));
+
     private FEntities() {
     }
 

@@ -4,7 +4,8 @@
   "density": 0.0014,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 2.6e-05
+    "conductivity": 2.6e-05,
+    "boiling_point": -183
   },
   "combustion": {
     "oxygen_balance": 5,

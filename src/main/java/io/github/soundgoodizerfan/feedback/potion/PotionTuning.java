@@ -195,6 +195,18 @@ public final class PotionTuning {
     public static final float STONESKIN_DAMAGE = 0.4f, STONESKIN_DAMAGE_PER_LEVEL = 0.1f, STONESKIN_DAMAGE_FLOOR = 0.3f,
             STONESKIN_WITH_RESISTANCE = 0.6f, STONESKIN_KNOCKBACK = 0.5f, STONESKIN_SLOW = 0.2f;
 
+    /**
+     * Thrown shares (potions, thrown), [OPEN] until played. Second wind: fraction of the stamina bar refilled per level, no payback.
+     * Springheel: upward launch speed per level (blocks per tick) and the fall fraction that gets through on the landing. Assay: taste
+     * keenness of a thrown assay over dropped food (Fine palate eases by PALATE_EASE; lower is sharper). Green thumb: the landing pulse's
+     * strength per level and reach, then SPRINKLE_PASSES more passes (one every GREEN_THUMB_EVERY ticks) at SPRINKLE_STRENGTH per level.
+     * Quench: fraction of its heat gap above ambient a block entity keeps, per level, and ticks of cooling a hot dropped item gets per level.
+     * Static ground: height of the held zone above and below its centre, blocks.
+     */
+    public static final float SECOND_WIND_REFILL = 0.3f, SPRINGHEEL_LAUNCH = 0.7f, SPRINGHEEL_SOFT_PASS = 0.25f, ASSAY_KEEN = 0.4f,
+            GREEN_THUMB_PULSE = 6f, GREEN_THUMB_SPRINKLE_STRENGTH = 1.5f, QUENCH_DOUSE_KEEP = 0.35f, STATIC_GROUND_ZONE_HEIGHT = 2f;
+    public static final int GREEN_THUMB_SPRINKLE_PASSES = 5, QUENCH_DOUSE_TICKS = 400;
+
     /** How far a thrown bottle reaches, blocks: the radius of a bottle's liquid, spread. */
     public static float throwReach() {
         return THROW_SPREAD * (float) Math.cbrt(BOTTLE_MB / 1000f);

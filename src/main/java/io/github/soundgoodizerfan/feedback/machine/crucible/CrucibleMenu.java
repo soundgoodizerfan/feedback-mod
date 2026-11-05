@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.machine.crucible;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -141,6 +142,9 @@ public class CrucibleMenu extends AbstractContainerMenu {
         ItemStack held = slot.getItem();
         ItemStack moved = held.copy();
         int own = size;
+        // Shift-click moves the crucible's own stack without going through takeFrom, so stamp the vessel's heat here.
+        if (index < own && container instanceof View view && view.crucible().getLevel() != null)
+            ItemHeat.set(held, view.crucible().getTemperature(), view.crucible().getLevel());
         if (index < own ? !moveItemStackTo(held, own, slots.size(), true) : !moveItemStackTo(held, 0, own, false))
             return ItemStack.EMPTY;
         if (held.isEmpty())

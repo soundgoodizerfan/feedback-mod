@@ -30,9 +30,16 @@ import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
@@ -41,6 +48,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+
+import io.github.soundgoodizerfan.feedback.process.CookwareSwing;
+import io.github.soundgoodizerfan.feedback.process.MadeOf;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -78,6 +90,18 @@ public class StockpotBlockEntity extends BlockEntity {
     private final java.util.Map<String, Float> ingredientMass = new java.util.HashMap<>();
     // A potion poured in (spec 7): the dose each serving carries; null when none.
     private io.github.soundgoodizerfan.feedback.potion.Lacing lacing;
+    // What the pot is made of (rides on the item as MadeOf); null counts as wrought iron.
+    private @Nullable ResourceLocation material;
+    private float relax;
+    private int syncKey;
+    private long syncTick;
+    private long lastSleepTick;
+
+    // What the client draws, quantised: filled from the update tag, and from the real state on the server.
+    private float shownWater, shownCook, shownCharred, shownScum, shownMixed, shownTemp;
+    private int shownItems;
+    private boolean shownStir;
+    private @Nullable ResourceLocation shownMaterial;
 
     public StockpotBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.STOCKPOT.get(), pos, state);
@@ -115,20 +139,33 @@ public class StockpotBlockEntity extends BlockEntity {
         return water;
     }
 
-    /** The player is stirring at this pace (0 to 1); it holds for half a second, then lapses. */
-    public void stir(float pace) {
-        stir = Mth.clamp(pace, 0f, 1f);
+    /** A spoon is stirring at this strength (1 is the reference spoon; a bigger bowl is more); it holds for half a second, then lapses. */
+    public void stir(float strength) {
+        stir = Mth.clamp(strength, 0f, 2f);
         stirTick = level == null ? 0L : level.getGameTime();
     }
 
-    /** Lift scum off the surface; a skim a moment after the last does nothing. */
-    public void skim() {
+    /** Lift scum off the surface, {@code scale} times the reference amount; a skim a moment after the last does nothing. Returns whether any scum came off. */
+    public boolean skim(float scale) {
         long now = level == null ? 0L : level.getGameTime();
         if (now - skimTick < 5L || scum <= 0f)
-            return;
+            return false;
         skimTick = now;
-        scum = Math.max(0f, scum - FTuning.POT_SKIM_AMOUNT);
+        scum = Math.max(0f, scum - FTuning.POT_SKIM_AMOUNT * scale);
+        level.playSound(null, worldPosition, SoundEvents.SLIME_BLOCK_STEP, SoundSource.BLOCKS, 0.6f, 1.2f);
         changed();
+        return true;
+    }
+
+    public boolean stirring() {
+        return level != null && level.getGameTime() - stirTick <= 10L && stir > 0f;
+    }
+
+    /** The pot's swing per tick: the reference rate scaled by how well its material conducts against how dense it is. */
+    public float relax() {
+        if (relax == 0f)
+            relax = CookwareSwing.relax(material, FTuning.POT_RELAX_PER_TICK);
+        return relax;
     }
 
     public int items() {
@@ -290,13 +327,15 @@ public class StockpotBlockEntity extends BlockEntity {
         changed();
     }
 
+    /** An act changed the contents: save and tell the client now. */
     private void changed() {
         setChanged();
+        sync(true);
     }
 
-    /** The material the pot is made of: every stockpot is one cast pot, so this is a fixed figure, read by the induction stove. */
-    public net.minecraft.resources.ResourceLocation vesselMaterial() {
-        return FTuning.POT_MATERIAL;
+    /** The material the pot is made of, wrought iron if it was made of none; read by the induction stove. */
+    public ResourceLocation vesselMaterial() {
+        return material == null ? FTuning.POT_MATERIAL : material;
     }
 
     public void tickServer() {
@@ -305,9 +344,19 @@ public class StockpotBlockEntity extends BlockEntity {
         float fire = HeatSource.at(level, worldPosition).value();
         float target = water > 0f ? Math.min(fire, FTuning.POT_BOIL_TU.value()) : fire;
         target = Math.max(target, AmbientTable.at(level).value());
-        temperature += (target - temperature) * FTuning.POT_RELAX_PER_TICK * FTuning.POT_EMPTY_MASS_MB / (FTuning.POT_EMPTY_MASS_MB + volume());
-        if (volume() <= 0f)
+        if (volume() <= 0f) {
+            // An empty pot sleeps: a slow check settles its heat over the ticks it skipped.
+            long now = level.getGameTime();
+            if ((now + worldPosition.asLong()) % 20L != 0L)
+                return;
+            long gap = Math.max(1L, now - lastSleepTick);
+            lastSleepTick = now;
+            temperature = target + (temperature - target) * (float) Math.pow(1f - relax(), gap);
+            sync(false);
             return;
+        }
+        lastSleepTick = level.getGameTime();
+        temperature += (target - temperature) * relax() * FTuning.POT_EMPTY_MASS_MB / (FTuning.POT_EMPTY_MASS_MB + volume());
         // Stirring keeps the bottom from scorching and mixes the pot; it lapses half a second after the last input.
         float stirNow = level.getGameTime() - stirTick <= 10L ? stir : 0f;
         mixed = Mth.clamp(mixed + stirNow * FTuning.POT_MIX_PER_TICK - FTuning.POT_MIX_DECAY_PER_TICK, 0f, 1f);
@@ -340,6 +389,14 @@ public class StockpotBlockEntity extends BlockEntity {
         }
         if (temperature > FTuning.FOOD_CHAR_TU.value())
             charred = Mth.clamp(charred + (temperature - FTuning.FOOD_CHAR_TU.value()) * FTuning.FOOD_CHAR_PER_TU_TICK, 0f, 1f);
+        if (level.getGameTime() % 10 == 0) {
+            if (stirNow > 0f)
+                level.playSound(null, worldPosition, SoundEvents.PLAYER_SWIM, SoundSource.BLOCKS, 0.3f, 0.7f + 0.2f * stirNow);
+            setChanged();
+            sync(false);
+        }
+        if (level.getGameTime() % 20 == 0 && water > 0f && temperature >= FTuning.POT_BOIL_TU.value() - 5f)
+            level.playSound(null, worldPosition, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, SoundSource.BLOCKS, 0.25f, 0.8f);
         if (level instanceof ServerLevel server && level.getGameTime() % 10 == 0) {
             double x = worldPosition.getX() + 0.5, y = worldPosition.getY() + 1.0, z = worldPosition.getZ() + 0.5;
             if (charred > 0.02f)
@@ -347,12 +404,122 @@ public class StockpotBlockEntity extends BlockEntity {
             else if (temperature >= FTuning.POT_BOIL_TU.value() - 5f && water > 0f)
                 server.sendParticles(ParticleTypes.CLOUD, x, y, z, 1, 0.15, 0.05, 0.15, 0.01);
         }
-        changed();
+    }
+
+    // --- sync: quantised, only when it changes, at most every 10 ticks unless an act forces it ---
+
+    private void refreshShown() {
+        shownWater = Math.round(Mth.clamp(water / FTuning.POT_MAX_WATER_MB, 0f, 1f) * 20f) / 20f;
+        shownItems = items();
+        shownCook = Math.round(cook * 20f) / 20f;
+        shownCharred = Math.round(charred * 20f) / 20f;
+        shownScum = Math.round(scum * 20f) / 20f;
+        shownMixed = Math.round(mixed * 10f) / 10f;
+        shownTemp = Math.round(temperature / 5f) * 5f;
+        shownStir = stirring();
+        shownMaterial = material;
+    }
+
+    private void sync(boolean force) {
+        if (level == null || level.isClientSide)
+            return;
+        refreshShown();
+        int key = Float.floatToIntBits(shownWater) * 31 + shownItems;
+        key = key * 31 + Float.floatToIntBits(shownCook);
+        key = key * 31 + Float.floatToIntBits(shownCharred);
+        key = key * 31 + Float.floatToIntBits(shownScum);
+        key = key * 31 + Float.floatToIntBits(shownMixed);
+        key = key * 31 + Float.floatToIntBits(shownTemp) + (shownStir ? 1 : 0);
+        long now = level.getGameTime();
+        if (key != syncKey && (force || now - syncTick >= 10L)) {
+            syncKey = key;
+            syncTick = now;
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
+    }
+
+    public float shownWater() {
+        return shownWater;
+    }
+
+    public int shownItems() {
+        return shownItems;
+    }
+
+    public float shownCook() {
+        return shownCook;
+    }
+
+    public float shownCharred() {
+        return shownCharred;
+    }
+
+    public float shownScum() {
+        return shownScum;
+    }
+
+    public float shownMixed() {
+        return shownMixed;
+    }
+
+    public float shownTemp() {
+        return shownTemp;
+    }
+
+    public boolean shownStir() {
+        return shownStir;
+    }
+
+    public @Nullable ResourceLocation shownMaterial() {
+        return shownMaterial;
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag tag = new CompoundTag();
+        refreshShown();
+        CompoundTag show = new CompoundTag();
+        show.putFloat("Water", shownWater);
+        show.putInt("Items", shownItems);
+        show.putFloat("Cook", shownCook);
+        show.putFloat("Char", shownCharred);
+        show.putFloat("Scum", shownScum);
+        show.putFloat("Mixed", shownMixed);
+        show.putFloat("Temp", shownTemp);
+        show.putBoolean("Stir", shownStir);
+        if (shownMaterial != null)
+            show.putString("Mat", shownMaterial.toString());
+        tag.put("Show", show);
+        return tag;
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        MadeOf made = input.get(FDataComponents.MADE_OF.get());
+        if (made != null)
+            material = made.material();
+        relax = 0f;
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        if (material != null)
+            components.set(FDataComponents.MADE_OF.get(), new MadeOf(material, "plate", 5));
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        if (material != null)
+            tag.putString("Material", material.toString());
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Water", water);
         tag.putFloat("Solid", solid);
@@ -386,6 +553,21 @@ public class StockpotBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        if (tag.contains("Show", net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+            CompoundTag show = tag.getCompound("Show");
+            shownWater = show.getFloat("Water");
+            shownItems = show.getInt("Items");
+            shownCook = show.getFloat("Cook");
+            shownCharred = show.getFloat("Char");
+            shownScum = show.getFloat("Scum");
+            shownMixed = show.getFloat("Mixed");
+            shownTemp = show.getFloat("Temp");
+            shownStir = show.getBoolean("Stir");
+            shownMaterial = show.contains("Mat") ? ResourceLocation.parse(show.getString("Mat")) : null;
+            return;
+        }
+        material = tag.contains("Material") ? ResourceLocation.parse(tag.getString("Material")) : null;
+        relax = 0f;
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         water = tag.getFloat("Water");
         solid = tag.getFloat("Solid");

@@ -116,6 +116,9 @@ public class CastingBasinBlockEntity extends BaseContainerBlockEntity {
         }
         if (level.getBlockEntity(worldPosition.above()) instanceof MoltenVessel source)
             pourFrom(source);
+        // A pool of molten metal glows as hot metal does; one that has set, or none, is dark.
+        io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.apply(level, worldPosition,
+                pool.isEmpty() ? 0 : io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.light(poolTu));
     }
 
     private void pourFrom(MoltenVessel source) {

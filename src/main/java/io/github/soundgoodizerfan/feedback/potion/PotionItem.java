@@ -62,12 +62,11 @@ public class PotionItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.isShiftKeyDown())
             return net.minecraft.world.item.ItemUtils.startUsingInstantly(level, player, hand);
-        // Sneaking throws (spec 5); the node's throw flag is checked on the server, which owns the map.
+        // Sneaking throws (spec 5): every potion throws, and the thrown share is its own (PotionEffects.splash).
         if (level.isClientSide)
             return InteractionResultHolder.success(stack);
         PotionState state = stack.get(FDataComponents.POTION_STATE.get());
-        PotionFeature node = state == null || state.dud() ? null : PotionMap.get().byEffect(state.effect().get());
-        if (node == null || !node.effect().get().throwable())
+        if (state == null || state.dud())
             return InteractionResultHolder.pass(stack);
         ThrownPotionBottle bottle = new ThrownPotionBottle(level, player);
         bottle.setItem(stack.copyWithCount(1));

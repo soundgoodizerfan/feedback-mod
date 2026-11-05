@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:disk",
+  "config": {
+    "state_provider": {
+      "fallback": { "type": "minecraft:simple_state_provider", "state": { "Name": "feedback:salt_deposit" } },
+      "rules": []
+    },
+    "target": {
+      "type": "minecraft:matching_blocks",
+      "blocks": "minecraft:sand"
+    },
+    "radius": { "type": "minecraft:uniform", "min_inclusive": 2, "max_inclusive": 3 },
+    "half_height": 1
+  }
+}

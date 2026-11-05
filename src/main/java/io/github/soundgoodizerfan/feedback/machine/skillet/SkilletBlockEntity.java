@@ -26,8 +26,6 @@ import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.FoodState;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
-import io.github.soundgoodizerfan.feedback.process.Material;
-import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -105,16 +103,8 @@ public class SkilletBlockEntity extends BlockEntity {
 
     /** The pan's swing per tick: the reference rate scaled up by how well its material conducts and down by how dense it is. */
     public float relax() {
-        if (relax == 0f) {
-            float rate = FTuning.SKILLET_PAN_RELAX;
-            Material m = material == null ? null : MaterialTable.get().materials().get(material);
-            if (m != null) {
-                float conduct = m.thermal().conductivity().map(c -> c.workPerTickPerTu() / FTuning.SKILLET_REF_CONDUCTIVITY).orElse(1f);
-                float density = m.density().muPerMb() > 0f ? m.density().muPerMb() / FTuning.SKILLET_REF_DENSITY : 1f;
-                rate *= conduct / density;
-            }
-            relax = Mth.clamp(rate, FTuning.SKILLET_PAN_RELAX_MIN, FTuning.SKILLET_PAN_RELAX_MAX);
-        }
+        if (relax == 0f)
+            relax = io.github.soundgoodizerfan.feedback.process.CookwareSwing.relax(material, FTuning.SKILLET_PAN_RELAX);
         return relax;
     }
 
@@ -218,6 +208,11 @@ public class SkilletBlockEntity extends BlockEntity {
 
     /** Turn the piece in {@code slot}: the face that was up goes down onto the pan. */
     public boolean flip(int slot) {
+        return flip(slot, 0f);
+    }
+
+    /** As {@link #flip(int)}, a slotted blade draining {@code drain} of the piece's moisture as it turns. */
+    public boolean flip(int slot, float drain) {
         if (level == null || pieces[slot].isEmpty())
             return false;
         var entry = Cooking.find(level, pieces[slot]);
@@ -225,7 +220,7 @@ public class SkilletBlockEntity extends BlockEntity {
             return false;
         FoodState s = Cooking.state(pieces[slot], entry.get());
         float down = s.charred();
-        pieces[slot].set(FDataComponents.FOOD_STATE.get(), new FoodState(s.cook(), s.moisture(), s.pathogen(), s.toxin(), otherChar[slot],
+        pieces[slot].set(FDataComponents.FOOD_STATE.get(), new FoodState(s.cook(), s.moisture() * (1f - drain), s.pathogen(), s.toxin(), otherChar[slot],
                 s.rot(), s.stamp(), s.envTu(), s.smoke(), s.salt()));
         otherChar[slot] = down;
         flipSeq[slot]++;

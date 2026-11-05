@@ -1,5 +1,7 @@
 {
   "variants": {
-    "": { "model": "feedback:block/stockpot" }
+    "": {
+      "model": "feedback:block/stockpot_body"
+    }
   }
 }

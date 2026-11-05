@@ -48,21 +48,65 @@ public final class GunSteam {
         gun.set(FWeapons.GUN_STEAM.get(), Math.max(0f, mb));
     }
 
+    /** The named figure of a fitted trait ({@code gun_valve}, {@code gun_lagging}), or {@code fallback} with none fitted. */
+    private static float fitted(ItemStack gun, String trait, String name, float fallback) {
+        for (var a : io.github.soundgoodizerfan.feedback.modular.ModularTraits.allOf(gun))
+            if (a.id().equals(trait))
+                return a.params().get(name, fallback);
+        return fallback;
+    }
+
+    /** mB a shot lets out: the standard figure times the chest valve's {@code steam_mult}. */
+    public static int perShot(ItemStack gun) {
+        return Math.max(1, Math.round(FTuning.GUN_STEAM_MB_PER_SHOT * fitted(gun, "gun_valve", "steam_mult", 1f)));
+    }
+
     /** Whether the chest holds enough for one more shot. */
     public static boolean canFire(ItemStack gun) {
-        return stored(gun) >= FTuning.GUN_STEAM_MB_PER_SHOT;
+        return stored(gun) >= perShot(gun);
     }
 
     /** A shot lets its steam out. */
     public static void spend(ItemStack gun) {
-        set(gun, stored(gun) - FTuning.GUN_STEAM_MB_PER_SHOT);
+        set(gun, stored(gun) - perShot(gun));
     }
 
     /** Carried steam condenses: the gun's own chest is not a boiler, and nothing keeps it hot. */
     public static void condense(ItemStack gun) {
         float mb = stored(gun);
         if (mb > 0)
-            set(gun, mb - FTuning.GUN_STEAM_LEAK_MB_PER_TICK);
+            set(gun, mb - FTuning.GUN_STEAM_LEAK_MB_PER_TICK * fitted(gun, "gun_lagging", "leak_mult", 1f));
+    }
+
+    /**
+     * Fill the chest from a steam source at {@code pressure}. Steam cannot be pushed in past the source's own
+     * pressure, so the chest fills only to {@code pressure / GUN_STEAM_FULL_PU} of its capacity. A chest filled past
+     * what its metal is rated for lets go: the gun is damaged and the one holding it hurt, as for an overpressure shot,
+     * and the steam is lost. shortcut: only the Boiler asks; any other steam block fills through the plain capability,
+     * uncapped, until sources share a pressure interface.
+     */
+    public static int fillFrom(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.player.Player player,
+                              ItemStack gun, IFluidHandler source, io.github.soundgoodizerfan.feedback.core.unit.Pu pressure) {
+        var spec = GunSpec.of(gun);
+        float capacity = spec.map(GunSpec::steamCapacityMb).orElse(0f);
+        if (capacity <= 0)
+            return 0;
+        float reach = capacity * Math.min(1f, pressure.value() / FTuning.GUN_STEAM_FULL_PU);
+        int want = (int) Math.max(0, reach - stored(gun));
+        FluidStack offered = source.drain(new FluidStack(FFluids.STEAM.get(), want), IFluidHandler.FluidAction.SIMULATE);
+        if (offered.isEmpty() || !offered.is(FTags.STEAM))
+            return 0;
+        int moved = source.drain(offered.getAmount(), IFluidHandler.FluidAction.EXECUTE).getAmount();
+        set(gun, stored(gun) + moved);
+        float rating = spec.get().steamRating(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
+        float held = FTuning.GUN_STEAM_FULL_PU * stored(gun) / capacity;
+        if (rating > 0 && held > rating) {
+            float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
+            GunHazard.apply(level, player, gun, GunHazard.assess(held, rating, Float.MAX_VALUE, noise));
+            io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst.scald(level, player.blockPosition(), 1.5f, FTuning.STEAM_SCALD_DAMAGE);
+            set(gun, 0f);
+        }
+        return moved;
     }
 
     /** The chest as a one-tank fluid handler, or null when the stack is not a steam gun. */

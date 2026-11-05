@@ -19,35 +19,31 @@
  */
 package io.github.soundgoodizerfan.feedback.net;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
+import java.util.List;
 
-import net.minecraft.core.BlockPos;
+import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.process.ClientTable;
+import io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** The server tells the client how the pot is: scum on top, how mixed it is, how scorched, and whether to open the stirring screen. */
-public record PotStatePayload(BlockPos pos, boolean open, float scum, float mixed, float scorch, float water) implements CustomPacketPayload {
+/** Ships the gun blueprint pool so a recipe browser can list where blueprints turn up. */
+public record GunBlueprintPoolSyncPayload(List<GunBlueprintPool.Listing> entries) implements CustomPacketPayload {
 
-    public static final Type<PotStatePayload> TYPE = new Type<>(Feedback.id("pot_state"));
+    public static final Type<GunBlueprintPoolSyncPayload> TYPE = new Type<>(Feedback.id("gun_blueprint_pool_sync"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, PotStatePayload> STREAM_CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, PotStatePayload::pos,
-            ByteBufCodecs.BOOL, PotStatePayload::open,
-            ByteBufCodecs.FLOAT, PotStatePayload::scum,
-            ByteBufCodecs.FLOAT, PotStatePayload::mixed,
-            ByteBufCodecs.FLOAT, PotStatePayload::scorch,
-            ByteBufCodecs.FLOAT, PotStatePayload::water,
-            PotStatePayload::new);
+    public static final StreamCodec<RegistryFriendlyByteBuf, GunBlueprintPoolSyncPayload> STREAM_CODEC =
+            GunBlueprintPool.Listing.STREAM_CODEC.apply(ByteBufCodecs.list()).map(GunBlueprintPoolSyncPayload::new, GunBlueprintPoolSyncPayload::entries);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
         return TYPE;
     }
 
-    public static void handle(PotStatePayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.PotScreen.state(payload));
+    public static void handle(GunBlueprintPoolSyncPayload payload, IPayloadContext context) {
+        context.enqueueWork(() -> ClientTable.GUN_BLUEPRINTS.set(payload.entries()));
     }
 }

@@ -38,7 +38,7 @@ public class FoodServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final FoodServerData INSTANCE = new FoodServerData();
 
-    static final String VESSEL = "CanningTu", JARS = "CanningJars", SEALING = "CanningSealing", BOX = "IceBoxTu", HOLD = "IceBoxHold", PUMP = "FridgeRunning", ROOM = "FridgeRoom", PAN = "PanTu", PIECES = "PanPieces";
+    static final String VESSEL = "CanningTu", JARS = "CanningJars", SEALING = "CanningSealing", BOX = "IceBoxTu", HOLD = "IceBoxHold", PUMP = "FridgeRunning", ROOM = "FridgeRoom", PAN = "PanTu", PIECES = "PanPieces", POT = "PotTu", POT_FIG = "PotFigures";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -77,6 +77,14 @@ public class FoodServerData implements IServerDataProvider<BlockAccessor> {
             for (float f : arr)
                 list.add(net.minecraft.nbt.FloatTag.valueOf(f));
             data.put(PIECES, list);
+        }
+        if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlockEntity pot) {
+            data.putFloat(POT, pot.temperature());
+            // Truth tier only: cook, scum, mixed, water, solids.
+            var fig = new net.minecraft.nbt.ListTag();
+            for (float f : new float[] {pot.cook(), pot.scum(), pot.mixed(), pot.water(), pot.volume() - pot.water()})
+                fig.add(net.minecraft.nbt.FloatTag.valueOf(f));
+            data.put(POT_FIG, fig);
         }
         if (accessor.getBlockEntity() instanceof RefrigerationUnitBlockEntity unit) {
             data.putBoolean(PUMP, unit.running());

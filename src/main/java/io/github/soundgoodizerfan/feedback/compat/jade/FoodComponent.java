@@ -85,6 +85,13 @@ public class FoodComponent implements IBlockComponentProvider {
                             .withStyle(ChatFormatting.GRAY));
             }
         }
+        if (data.contains(FoodServerData.POT)) {
+            tooltip.add(Readout.temperatureReading(new Tu(data.getFloat(FoodServerData.POT))));
+            var fig = data.getList(FoodServerData.POT_FIG, net.minecraft.nbt.Tag.TAG_FLOAT);
+            if (fig.size() >= 5 && Instruments.exact(accessor.getPlayer(), Quantity.FIGURE))
+                tooltip.add(Component.translatable("feedback.jade.stockpot.figures", Math.round(fig.getFloat(0) * 100f), Math.round(fig.getFloat(1) * 100f),
+                        Math.round(fig.getFloat(2) * 100f), Math.round(fig.getFloat(3)), Math.round(fig.getFloat(4))).withStyle(ChatFormatting.GRAY));
+        }
         if (data.contains(FoodServerData.ROOM)) {
             var room = data.getList(FoodServerData.ROOM, net.minecraft.nbt.Tag.TAG_FLOAT);
             if (room.size() >= 5) {

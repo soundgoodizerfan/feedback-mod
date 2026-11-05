@@ -108,7 +108,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** The slot the work sits in, at the middle of the fan's canvas (item position). */
     public static final int CENTRE_X = 152, CENTRE_Y = 86;
     public static final int HAMMER_X = 326, HAMMER_Y = 20, STOCK_X = 326, STOCK_Y = 50, STOCK1_Y = 70, PLAN_X = 326, PLAN_Y = 96, ROUND_X = 326, ROUND_Y = 126,
-            OUT_X = 326, OUT_Y = 152, TRIM_X = 100;
+            OUT_X = 326, OUT_Y = 152, TRIM_X = 108, TRIM_GAP = 44;
 
     private final Container table;
     private final SimpleContainer output = new SimpleContainer(1);
@@ -191,8 +191,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (station.smiths()) {
             // The vanilla smithing table, on the Trim tab: template, base and addition in a row (the same containers the centre and stock slot use).
             addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TRIM_X, CENTRE_Y, this::trim, 64, s -> true));
-            addSlot(new TableSlot(ToolTableBlockEntity.STOCK, TRIM_X + 26, CENTRE_Y, this::trim, 64, s -> true));
-            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + 1, TRIM_X + 52, CENTRE_Y, this::trim, 64, s -> true));
+            addSlot(new TableSlot(ToolTableBlockEntity.STOCK, TRIM_X + TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
+            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + 1, TRIM_X + 2 * TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
         }
         for (int row = 0; row < 3; row++)
             for (int column = 0; column < 9; column++)
@@ -1228,7 +1228,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             Cooking.Entry entry = Cooking.find(level, work()).get();
             if (!PrepWork.valid(marks) || (long) marks.size() * FTuning.CUT_TICKS_PER_MARK > elapsed)
                 return false;
-            int[] landed = marks.stream().mapToInt(m -> PrepWork.land(m, entry.food())).toArray();
+            int[] landed = marks.stream().mapToInt(m -> PrepWork.land(m, entry.food(), PrepWork.Edge.of(hammer()))).toArray();
             FoodCut cut = PrepWork.cut(landed, landed.length);
             if (cut.level() == 0)
                 done.remove(FDataComponents.FOOD_CUT.get());

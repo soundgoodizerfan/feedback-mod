@@ -51,6 +51,35 @@ public final class GreenThumb {
 
     private GreenThumb() {}
 
+    private record Sprinkle(net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level> dim, BlockPos at, float strength, int[] left) {}
+
+    /** Thrown sprinkles awaiting their passes; empty almost always. Not saved: a restart ends them. */
+    private static final java.util.List<Sprinkle> SPRINKLES = new java.util.ArrayList<>();
+
+    /**
+     * A thrown flask: one big pulse where it lands, then {@link PotionTuning#GREEN_THUMB_SPRINKLE_PASSES} lighter passes, one every
+     * {@link PotionTuning#GREEN_THUMB_EVERY} ticks. No food is spent: the flask pays.
+     */
+    public static void pour(ServerLevel level, BlockPos at, int amplifier) {
+        grow(level, at, PotionTuning.GREEN_THUMB_MAX_RADIUS, (amplifier + 1) * PotionTuning.GREEN_THUMB_PULSE);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.HAPPY_VILLAGER, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 20, 2.5, 0.8, 2.5, 0);
+        SPRINKLES.add(new Sprinkle(level.dimension(), at, (amplifier + 1) * PotionTuning.GREEN_THUMB_SPRINKLE_STRENGTH,
+                new int[] {PotionTuning.GREEN_THUMB_SPRINKLE_PASSES}));
+    }
+
+    @SubscribeEvent
+    public static void onServerTick(net.neoforged.neoforge.event.tick.ServerTickEvent.Post event) {
+        if (SPRINKLES.isEmpty() || event.getServer().getTickCount() % PotionTuning.GREEN_THUMB_EVERY != 0)
+            return;
+        SPRINKLES.removeIf(s -> {
+            ServerLevel level = event.getServer().getLevel(s.dim());
+            if (level == null)
+                return true;
+            grow(level, s.at(), PotionTuning.GREEN_THUMB_RADIUS, s.strength());
+            return --s.left()[0] <= 0;
+        });
+    }
+
     @SubscribeEvent
     public static void onTick(PlayerTickEvent.Post event) {
         Player p = event.getEntity();

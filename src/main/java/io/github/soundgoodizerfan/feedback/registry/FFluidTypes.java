@@ -123,7 +123,13 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> CHLORINE = petroType("chlorine", 3, 13, 300);
     public static final DeferredHolder<FluidType, FluidType> SULFUR_DIOXIDE = petroType("sulfur_dioxide", 3, 13, 300);
     public static final DeferredHolder<FluidType, FluidType> AMMONIA = petroType("ammonia", -1, 10, 300);
+    /** A heavy, volatile, toxic gas (osmium tetroxide boils at 130 Tu): sinks, so it is positive like chlorine. */
+    public static final DeferredHolder<FluidType, FluidType> OSMIUM_TETROXIDE = petroType("osmium_tetroxide", 4, 20, 300);
     public static final DeferredHolder<FluidType, FluidType> NITROGEN = petroType("nitrogen", -1, 20, 300);
+    /** The air gases of the cryogenic route: argon (a gas) and the two cold liquids, liquid air and oxygen-rich liquid. */
+    public static final DeferredHolder<FluidType, FluidType> ARGON = petroType("argon", -1, 20, 300);
+    public static final DeferredHolder<FluidType, FluidType> LIQUID_AIR = petroType("liquid_air", 870, 200, 80);
+    public static final DeferredHolder<FluidType, FluidType> LIQUID_OXYGEN = petroType("liquid_oxygen", 1140, 200, 90);
     public static final DeferredHolder<FluidType, FluidType> CRYOLITE_BATH = petroType("cryolite_bath", 2100, 6000, 1500);
 
     private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {

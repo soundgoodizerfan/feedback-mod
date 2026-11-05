@@ -70,6 +70,8 @@ public class ModularArmor extends net.minecraft.world.item.ArmorItem implements 
 
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
+        if (entity != null && !entity.level().isClientSide)
+            ModularStacks.struck(stack, amount * ModularTuning.COAT_ARMOUR_STRAIN);
         return ModularStacks.cap(stack, amount + (entity == null ? 0 : ModularStacks.rust(stack, entity)));
     }
 

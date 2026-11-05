@@ -932,6 +932,13 @@ public final class FTuning {
      */
     public static final Rpm OVERSPEED_TRIP_RPM = new Rpm(48f);
 
+    /**
+     * Invented, placeholder. The three springs an overspeed trip can be fitted with, light to
+     * heavy; index 0 is {@link #OVERSPEED_TRIP_RPM}, the spring it is built with. The light one
+     * suits hand and engine trains geared up, the heavy one lets a 240 RPM turbine run.
+     */
+    public static final float[] OVERSPEED_TRIP_SPRINGS_RPM = {48f, 120f, 300f};
+
     // --- vanilla vessels (§15) --------------------------------------------------------------
 
     /**
@@ -994,13 +1001,13 @@ public final class FTuning {
     /** Invented. The skillet pan follows the fire (or the room, when lifted) by this share of the gap per tick, for a pan of the reference material (wrought iron): about a second and a half to close most of it. */
     public static final float SKILLET_PAN_RELAX = 1f / 30f;
 
-    /** Invented. The slowest and fastest a pan of any material swings, per tick. */
-    public static final float SKILLET_PAN_RELAX_MIN = 1f / 200f;
-    public static final float SKILLET_PAN_RELAX_MAX = 1f / 8f;
+    /** Invented. The slowest and fastest a pan or pot of any material swings, per tick. */
+    public static final float COOKWARE_RELAX_MIN = 1f / 200f;
+    public static final float COOKWARE_RELAX_MAX = 1f / 8f;
 
-    /** The pan material the swing is scaled against: its heat conductivity and density are 1. */
-    public static final float SKILLET_REF_CONDUCTIVITY = 0.016f;
-    public static final float SKILLET_REF_DENSITY = 7.8f;
+    /** The cookware material the swing is scaled against: its heat conductivity and density are 1. */
+    public static final float COOKWARE_REF_CONDUCTIVITY = 0.016f;
+    public static final float COOKWARE_REF_DENSITY = 7.8f;
 
     /** Invented. How far from the pan a lift holds, in blocks. */
     public static final double SKILLET_LIFT_REACH = 4.5;
@@ -1040,6 +1047,18 @@ public final class FTuning {
     /** Invented. A fully mixed pot cooks this much faster (heat carried through the body); an unmixed one lets the solids settle, so the first ladle of a pot of n carries this fraction less of the food than its share, and the later ones more. */
     public static final float POT_STIR_COOK_BONUS = 0.5f;
     public static final float POT_SETTLE = 0.3f;
+
+    /** Invented. A use released inside this many ticks is a tap (a skim); held longer it is a stir. */
+    public static final int SPOON_TAP_TICKS = 6;
+
+    /** Invented. The volume of the reference spoon (bowl and handle), mB: the spoon whose stir and skim figures are as written. A bigger bowl does proportionally more. */
+    public static final float SPOON_REF_BOWL_MB = 155f;
+
+    /** Invented. Ticks of stirring per point of spoon wear. */
+    public static final int POT_STIR_WEAR_TICKS = 100;
+
+    /** Invented. Share of a pot's excess heat that reaches the hand through a spoon handle, as {@link #TONGS_EXPOSURE} is for tongs. */
+    public static final float SPOON_EXPOSURE = 0.5f;
 
     /** Invented. Share of solids in the mixture under which a pot is a broth, not a stew. */
     public static final float POT_BROTH_SOLIDS = 0.2f;
@@ -1090,6 +1109,15 @@ public final class FTuning {
     public static final Tu REFRIGERATION_HOT_TU = new Tu(130f);
     public static final ThermalMass REFRIGERATION_MASS = new ThermalMass(400f);
     public static final Conductance REFRIGERATION_LEAK = new Conductance(0.1f);
+
+    /**
+     * Invented. The Cryocooler's cold head: the current it asks for, amps, and the three cold-head stages as the temperature the head
+     * holds against what it touches. A vessel on the head settles at 0.96 of the way from ambient to the stage (the fire conductance
+     * over the vessel leak): about -194, -190 and -185 Tu, which sit just either side of the boiling points of nitrogen (-196),
+     * argon (-186) and oxygen (-183) so each stage is a different cut of cold air.
+     */
+    public static final float CRYOCOOLER_AMPS = 6f;
+    public static final Tu CRYOCOOLER_DEEP_TU = new Tu(-203f), CRYOCOOLER_MID_TU = new Tu(-199f), CRYOCOOLER_SHALLOW_TU = new Tu(-193.5f);
 
     /**
      * Invented. The cold room (roadmap SV4): the unit fills a room out to this many blocks each way,
@@ -1799,6 +1827,9 @@ public final class FTuning {
             MAX_VISIBLE_TU);
 
 
+    /** Block light level a glowing body gives in each free-sense band, coldest first (placeholders, tune by play): none below faint red, brilliant white full. */
+    public static final int[] INCANDESCENCE_LIGHT = {0, 0, 2, 4, 6, 8, 10, 12, 14, 15};
+
     // --- control --------------------------------------------------------------------------
 
     /**
@@ -2104,6 +2135,11 @@ public final class FTuning {
             DEMO_CONFINE_PER_ST = 0.03f, DEMO_CONFINE_MAX = 1f, DEMO_FIRE_BELOW_BURNED = 0.9f;
     /** An explosive round carries one item's worth of filler per 9 mm bore volume, scaled by this; it arms after this many ticks of flight (point blank is a dud). */
     public static final float DEMO_ROUND_SCALE = 0.6f;
+    /** Thrown charge (placeholders): launch speed, fragment damage per point of casing hardness, its cap, and reach per unit of blast power. */
+    public static final float GRENADE_THROW_SPEED = 1.0f, GRENADE_FRAG_DAMAGE_PER_HARDNESS = 0.8f, GRENADE_FRAG_DAMAGE_MAX = 14f,
+            GRENADE_FRAG_REACH_PER_POWER = 3f,
+            GRENADE_PAYLOAD_FRAG = 0.12f, GRENADE_FLASH_REACH = 6f;
+    public static final int GRENADE_FLASH_TICKS = 100;
     public static final int DEMO_ROUND_ARM_TICKS = 2;
     /** Redstone blocks the winding of each coil length takes. */
     public static final int GUN_COIL_BLOCKS_SHORT = 1, GUN_COIL_BLOCKS_MEDIUM = 2, GUN_COIL_BLOCKS_LONG = 3;
@@ -2433,6 +2469,18 @@ public final class FTuning {
      */
     public static final float PLATING_POROUS_BELOW_QU = 0.45f;
     public static final float PLATING_SPALLS_ABOVE_QU = 1.8f;
+
+    /**
+     * Placeholder. Hot-dip overrun: a coat total past {@link #PLATING_SPALLS_ABOVE_QU} is dwell the part should not have had.
+     * Each this many Qu of overrun leaves the wear part one more forging flaw (a brittle intermetallic layer); past
+     * {@link #HOT_DIP_DISSOLVE_ABOVE_QU} of overrun every further dip also eats {@link #HOT_DIP_DISSOLVE_WORK} of the part's
+     * thickness (the {@code work} dimension, so it thins and lightens as an over-hammered part does) until it reaches
+     * {@link #HOT_DIP_SCRAP_WORK} and is scrap.
+     */
+    public static final float HOT_DIP_FLAW_PER_QU = 0.5f;
+    public static final float HOT_DIP_DISSOLVE_ABOVE_QU = 1.5f;
+    public static final float HOT_DIP_DISSOLVE_WORK = 0.4f;
+    public static final float HOT_DIP_SCRAP_WORK = 3f;
 
     /**
      * Placeholder. The mass probe (mechanics 6.17): per cut of crystal plate, the most coat it reads
@@ -3073,6 +3121,18 @@ public final class FTuning {
     public static final int FUME_POISON_TICKS_PER_LEVEL = 100;
     public static final int FUME_INTERVAL_TICKS = 40;
 
+    /**
+     * Placeholder. Fume cloud (a volatile toxic gas such as osmium tetroxide): ticks a cloud lasts per level of the toxic perk, ticks between doses,
+     * exposure gained per dose per level, exposure lost per second outside, the exposure at which nausea, blindness and damage begin, and the damage
+     * per dose (never taken below {@link #FUME_CLOUD_DAMAGE_FLOOR_HEALTH}, so the cloud hurts and never kills).
+     */
+    public static final int FUME_CLOUD_TICKS_PER_LEVEL = 200;
+    public static final int FUME_CLOUD_INTERVAL_TICKS = 20;
+    public static final float FUME_CLOUD_DOSE_PER_LEVEL = 0.5f;
+    public static final float FUME_CLOUD_DECAY_PER_SECOND = 2f;
+    public static final float FUME_CLOUD_NAUSEA = 4f, FUME_CLOUD_BLIND = 8f, FUME_CLOUD_HURT = 12f;
+    public static final float FUME_CLOUD_DAMAGE = 1f, FUME_CLOUD_DAMAGE_FLOOR_HEALTH = 2f;
+
     /** Placeholder. Component tester: finest step it tells apart on a 0-1 figure (response, condition). */
     public static final float TESTER_RESOLUTION = 0.05f;
 
@@ -3428,7 +3488,7 @@ public final class FTuning {
     /** Placeholder. How far above the bottom of a metal's working window the preheat coil heats it, in Tu. */
     public static final float PREHEAT_WINDOW_MARGIN_TU = 100f;
     /** Placeholder. The stockpot is a pot of cast iron cookware; there is no pot variant to read a material from. */
-    public static final net.minecraft.resources.ResourceLocation POT_MATERIAL = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "cast_iron");
+    public static final net.minecraft.resources.ResourceLocation POT_MATERIAL = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "wrought_iron");
 
     /** Placeholder. Charge one weld of the hand arc welder draws from a battery, in amp-ticks (about 50 A for the 40 ticks of the hold). */
     public static final float WELDER_CHARGE_PER_WELD = 2000f;

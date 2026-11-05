@@ -33,7 +33,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /** A press on the villager screen: deliver an order ({@link #DELIVER}) or buy a good ({@link #BUY}), by index plus a key naming what was meant (the order's type hash, the good's table index), so a list that shifted meanwhile is refused. */
 public record VillagerActionPayload(int containerId, int action, int index, int key) implements CustomPacketPayload {
 
-    public static final int DELIVER = 0, BUY = 1, SELL = 2;
+    public static final int DELIVER = 0, BUY = 1, SELL = 2, HINT = 3;
 
     public static final Type<VillagerActionPayload> TYPE = new Type<>(Feedback.id("villager_action"));
 
@@ -58,6 +58,8 @@ public record VillagerActionPayload(int containerId, int action, int index, int 
                 VillageEconomy.deliver(player, menu, payload.index(), payload.key());
             else if (payload.action() == SELL)
                 VillageEconomy.sell(player, menu, payload.index(), payload.key());
+            else if (payload.action() == HINT)
+                VillageEconomy.hint(player, menu, payload.index(), payload.key());
             else if (payload.action() == BUY)
                 VillageEconomy.buy(player, menu, payload.index(), payload.key());
         });

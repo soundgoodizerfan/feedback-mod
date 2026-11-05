@@ -58,4 +58,27 @@ public class ModularCharge extends ModularItem {
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
+
+    /**
+     * Thrown from the air. Its fuse part decides what happens: an impact fuse goes off on the first thing it hits, a
+     * delay fuse bounces and goes off when its burn time has run.
+     */
+    @Override
+    public net.minecraft.world.InteractionResultHolder<net.minecraft.world.item.ItemStack> use(net.minecraft.world.level.Level level,
+            net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+        net.minecraft.world.item.ItemStack held = player.getItemInHand(hand);
+        if (!level.isClientSide) {
+            var packed = Blast.packed(held);
+            GrenadeEntity grenade = new GrenadeEntity(level, player, packed.map(Blast.Packed::impact).orElse(false),
+                    packed.map(Blast.Packed::fuseTicks).orElse(io.github.soundgoodizerfan.feedback.core.FTuning.DEMO_FUSE_TICKS));
+            grenade.setItem(held.copyWithCount(1));
+            grenade.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, io.github.soundgoodizerfan.feedback.core.FTuning.GRENADE_THROW_SPEED, 1f);
+            level.addFreshEntity(grenade);
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), net.minecraft.sounds.SoundEvents.FLINTANDSTEEL_USE,
+                    SoundSource.PLAYERS, 1f, 1f);
+            if (!player.getAbilities().instabuild)
+                held.shrink(1);
+        }
+        return net.minecraft.world.InteractionResultHolder.sidedSuccess(held, level.isClientSide);
+    }
 }

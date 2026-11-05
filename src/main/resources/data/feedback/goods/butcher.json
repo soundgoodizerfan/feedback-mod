@@ -18,6 +18,14 @@
       "item": "minecraft:coal",
       "price": 1,
       "count": 8
+    },
+    {
+      "level": 2,
+      "item": "feedback:modular_blueprint",
+      "price": 6,
+      "stock": 1,
+      "standing": 10,
+      "blueprint": "feedback:skewer"
     }
   ]
 }

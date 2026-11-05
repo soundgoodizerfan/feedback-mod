@@ -1,18 +1,4 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
-  "key": {
-    "P": {
-      "item": "feedback:wrought_iron_plate"
-    }
-  },
-  "pattern": [
-    "P P",
-    "P P",
-    "PPP"
-  ],
-  "result": {
-    "count": 1,
-    "id": "feedback:stockpot"
-  }
+  "type": "feedback:stockpot",
+  "category": "equipment"
 }

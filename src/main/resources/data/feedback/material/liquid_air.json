@@ -1,0 +1,9 @@
+{
+  "kind": "fluid",
+  "hardness": 0.1,
+  "density": 0.87,
+  "thermal": {
+    "cooling_rate": 1,
+    "boiling_point": -194
+  }
+}

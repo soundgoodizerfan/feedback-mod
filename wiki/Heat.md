@@ -68,6 +68,10 @@ Heat is part of what a stack is, so two ingots taken from a crucible a moment ap
 
 A drinker under the **Quench** potion (see [Brewing Stand](Brewing_Stand.md)) cools hot blocks within five blocks and hot pieces in their pack four times as fast; the heat goes to the room as an ordinary leak does, and a fire under a vessel still heats it.
 
+## Glowing
+
+A hot enough crucible, furnace or casting basin that holds metal gives off real light, and its block glows red, orange, yellow or white to match (the colour eases from one band to the next). A hot ingot, plate or other metal item is tinted the same way wherever you see it: in the inventory, in hand and dropped. A cooled item goes back to its own colour. Light starts in the faint red band (from 480 Tu) and grows with each band: light level 2 for faint red, 4 for dark red, 6 for bright red, 8 for orange, 10 for yellow, 12 for pale yellow, 14 for white and 15 for brilliant white. The light is real: from yellow up it melts ice and snow nearby, and mobs do not spawn in it. A crucible with insulation round it stays dark, and a basin glows only while its pool is molten. Any metal glows; a material of another kind glows only if it is marked as incandescent.
+
 ## Room temperature
 
 Everything cools toward the room's temperature: **20 Tu** in the Overworld, **40 Tu** in the Nether.

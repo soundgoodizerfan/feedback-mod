@@ -68,7 +68,7 @@ A bottle of potion carries the effect, its level and length from where the brew 
 
 ### Throwing
 
-Sneaking and using a bottle throws it. It breaks where it lands and its potion reaches every creature within about two and a half blocks (the spread of a 250 mB bottle), the nearer the longer: the level stays, the length falls off with distance, and the potency left in the bottle applies as when drunk. A dud draught cannot be thrown. See [Thrown and imbued potions](Thrown_and_Imbued_Potions.md).
+Sneaking and using a bottle throws it. It breaks where it lands and its potion reaches every living body within about two and a half blocks (the spread of a 250 mB bottle), you and mobs included, the nearer the longer: the level stays, the length falls off with distance, and the potency left in the bottle applies as when drunk. Many potions do something different thrown than drunk. A dud draught cannot be thrown. See [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md#thrown-effects-that-differ-from-drinking).
 
 ### Lacing food
 

@@ -63,6 +63,12 @@ public class CrucibleBlock extends Block implements EntityBlock {
         this.thermalMass = thermalMass;
         this.slots = slots;
         this.tankMb = tankMb;
+        registerDefaultState(stateDefinition.any().setValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW, 0));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<Block, net.minecraft.world.level.block.state.BlockState> builder) {
+        builder.add(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW);
     }
 
     public int slots() {

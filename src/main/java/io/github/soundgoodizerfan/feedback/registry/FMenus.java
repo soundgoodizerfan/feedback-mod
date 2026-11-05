@@ -40,7 +40,7 @@ public class FMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<ThermalVesselMenu>> THERMAL_VESSEL =
             MENUS.register("thermal_vessel",
-                    () -> new MenuType<>(ThermalVesselMenu::new, FeatureFlags.VANILLA_SET));
+                    () -> IMenuTypeExtension.create((id, inv, buf) -> new ThermalVesselMenu(id, inv, buf.readVarInt())));
 
     public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> ARC_HEARTH =
             MENUS.register("arc_hearth", () -> new MenuType<>(CrucibleMenu::arcHearth, FeatureFlags.VANILLA_SET));

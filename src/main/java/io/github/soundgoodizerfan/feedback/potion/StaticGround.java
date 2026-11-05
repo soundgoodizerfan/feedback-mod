@@ -45,6 +45,36 @@ public final class StaticGround {
 
     private StaticGround() {}
 
+    private record Zone(net.minecraft.world.phys.Vec3 centre, float radius, long until) {}
+
+    /** Held ground per dimension, expired entries dropped on the next write or lookup; nothing ticks, nothing survives a restart. */
+    private static final java.util.Map<net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>, java.util.List<Zone>> ZONES = new java.util.HashMap<>();
+    private static final int MAX_ZONES = 32;
+
+    /** A thrown flask grounds the floor round {@code centre} for {@code ticks}: shock reaches a body standing there at the ward's fraction. */
+    public static void ground(ServerLevel level, net.minecraft.world.phys.Vec3 centre, float radius, int ticks) {
+        var zones = ZONES.computeIfAbsent(level.dimension(), k -> new java.util.ArrayList<>());
+        zones.removeIf(z -> z.until() <= level.getGameTime());
+        if (zones.size() >= MAX_ZONES)
+            zones.remove(0);
+        zones.add(new Zone(centre, radius, level.getGameTime() + ticks));
+    }
+
+    /** Whether {@code who} stands on held ground. */
+    public static boolean grounded(net.minecraft.world.entity.LivingEntity who) {
+        var zones = ZONES.get(who.level().dimension());
+        if (zones == null || zones.isEmpty())
+            return false;
+        long now = who.level().getGameTime();
+        zones.removeIf(z -> z.until() <= now);
+        for (Zone z : zones) {
+            double dx = who.getX() - z.centre().x, dz = who.getZ() - z.centre().z;
+            if (dx * dx + dz * dz <= z.radius() * z.radius() && Math.abs(who.getY() - z.centre().y) <= PotionTuning.STATIC_GROUND_ZONE_HEIGHT)
+                return true;
+        }
+        return false;
+    }
+
     @SubscribeEvent
     public static void onTick(PlayerTickEvent.Post event) {
         Player p = event.getEntity();

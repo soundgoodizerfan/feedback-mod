@@ -58,7 +58,8 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
 
     private int tab = -1;
     private int order, good, want, orderScroll, goodScroll, wantScroll;
-    private Button deliver, buy, sell;
+    private Button deliver, buy, sell, hintBtn;
+    private boolean hintOpen;
     private VillagerView seen = VillagerView.EMPTY;
     private long stampedAt = -1;
 
@@ -95,6 +96,15 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
                 b -> PacketDistributor.sendToServer(new VillagerActionPayload(menu.containerId, VillagerActionPayload.DELIVER, order,
                         order < menu.view().orders().size() ? menu.view().orders().get(order).type().hashCode() : 0)),
                 leftPos + DETAIL_X + 56, topPos + VillagerMenu.SLOT_Y - 1, 72, 18, null));
+        hintBtn = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.villager.hint"), b -> {
+            if (hintOpen) {
+                hintOpen = false;
+            } else if (order < menu.view().orders().size()) {
+                hintOpen = true;
+                PacketDistributor.sendToServer(new VillagerActionPayload(menu.containerId, VillagerActionPayload.HINT, order,
+                        menu.view().orders().get(order).type().hashCode()));
+            }
+        }, leftPos + DETAIL_X + DETAIL_W - 46, topPos + TOP + 70 - 18, 42, 14, null));
         sell = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.villager.sell_button"),
                 b -> PacketDistributor.sendToServer(new VillagerActionPayload(menu.containerId, VillagerActionPayload.SELL, want,
                         want < menu.view().wants().size() ? menu.view().wants().get(want).id() : -1)),
@@ -118,6 +128,8 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
                     skin.cue(GuiSkin.Cue.FINISH, null, g >= CommissionJudge.Grade.GOOD.ordinal() ? 1.15f : g <= CommissionJudge.Grade.POOR.ordinal() ? 0.88f : 1f);
             }
             seen = v;
+            if (v.hint().isEmpty())
+                hintOpen = false;
             order = Mth.clamp(order, 0, Math.max(0, v.orders().size() - 1));
             good = Mth.clamp(good, 0, Math.max(0, v.goods().size() - 1));
             want = Mth.clamp(want, 0, Math.max(0, v.wants().size() - 1));
@@ -126,6 +138,10 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
         VillagerView view = menu.view();
         boolean orders = tabKind() == ORDERS;
         deliver.visible = orders;
+        hintBtn.visible = orders && order < view.orders().size();
+        hintBtn.setMessage(Component.translatable(hintOpen ? "gui.feedback.villager.hint_back" : "gui.feedback.villager.hint"));
+        if (!orders)
+            hintOpen = false;
         deliver.active = orders && order < view.orders().size() && (view.doneMask() & (1 << order)) == 0 && !menu.delivered().isEmpty();
         sell.visible = tabKind() == SELL;
         sell.active = sell.visible && want < view.wants().size() && !menu.delivered().isEmpty();
@@ -179,7 +195,20 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
             g.drawString(font, fit(new ItemStack(BuiltInRegistries.ITEM.get(o.type())).getHoverName(), DETAIL_W - 12), x + DETAIL_X + 6, ty, skin.accent(), false);
             for (TermView t : o.terms()) {
                 ty += 11;
-                g.drawString(font, fit(term(t), DETAIL_W - 12), x + DETAIL_X + 6, ty, skin.ink(), false);
+                g.drawString(font, fit(term(t), DETAIL_W - 12 - BAR_W - 4), x + DETAIL_X + 6, ty, skin.ink(), false);
+                bar(g, t, x + DETAIL_X + DETAIL_W - 6 - BAR_W, ty);
+            }
+            if (hintOpen && !v.hint().isEmpty()) {
+                int hw = DETAIL_X + DETAIL_W - PAD, hh = ROW * ROWS + 2;
+                skin.inset(g, x + PAD, y + TOP, hw, hh);
+                int hy = y + TOP + 5;
+                for (Component line : v.hint())
+                    for (var part : font.split(line, hw - 12)) {
+                        if (hy + 9 > y + TOP + hh - 18)
+                            break;
+                        g.drawString(font, part, x + PAD + 6, hy, skin.ink(), false);
+                        hy += 10;
+                    }
             }
         }
         skin.slot(g, x + VillagerMenu.SLOT_X, y + VillagerMenu.SLOT_Y);
@@ -269,6 +298,18 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
     protected void renderTooltip(GuiGraphics g, int mx, int my) {
         super.renderTooltip(g, mx, my);
         VillagerView v = menu.view();
+        if (tabKind() == ORDERS && !hintOpen && order < v.orders().size()) {
+            var terms = v.orders().get(order).terms();
+            for (int i = 0; i < terms.size(); i++)
+                if (over(mx, my, leftPos + DETAIL_X + 4, topPos + TOP + 5 + 11 * (i + 1) - 1, DETAIL_W - 8, 11)) {
+                    TermView t = terms.get(i);
+                    String name = t.fig().name().toLowerCase(Locale.ROOT);
+                    g.renderComponentTooltip(font, List.of(Component.translatable("modular.feedback.fig." + name),
+                            Component.translatable("modular.feedback.fig." + name + ".tip").withStyle(net.minecraft.ChatFormatting.GRAY),
+                            Component.translatable("village.feedback.bar_tip").withStyle(net.minecraft.ChatFormatting.DARK_GRAY)), mx, my);
+                    break;
+                }
+        }
         if (tabKind() == GOODS)
             for (int i = 0; i < ROWS && goodScroll + i < v.goods().size(); i++)
                 if (over(mx, my, leftPos + PAD, topPos + TOP + 1 + i * ROW, SHOP_W, ROW))
@@ -280,7 +321,18 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
     private static Component term(TermView t) {
         String fig = t.fig().name().toLowerCase(Locale.ROOT);
         Component word = Component.translatable("village.feedback.term." + fig + "." + t.band());
-        return t.must() ? Component.translatable("village.feedback.must." + (t.above() ? "above" : "below"), word) : word;
+        return Component.translatable("village.feedback.line", Component.translatable("village.feedback.noun." + fig),
+                t.must() ? Component.translatable("village.feedback.must." + (t.above() ? "above" : "below"), word) : word);
+    }
+
+    private static final int BAR_W = 28;
+
+    /** Where the term sits in the usual range, as four cells: a band fills its one cell, a must fills the cells it allows. */
+    private void bar(GuiGraphics g, TermView t, int bx, int by) {
+        for (int c = 0; c < 4; c++) {
+            boolean on = t.must() ? (t.above() ? c >= t.band() : c <= t.band()) : c == t.band();
+            g.fill(bx + c * 7, by + 2, bx + c * 7 + 6, by + 7, on ? skin.accent() : skin.dim());
+        }
     }
 
     private Component speech(VillagerView v) {
@@ -333,6 +385,7 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
                 }
                 if (tabKind() == ORDERS && orderScroll + i < v.orders().size() && over((int) mx, (int) my, leftPos + PAD, ry, LIST_W, ROW)) {
                     order = orderScroll + i;
+                    hintOpen = false;
                     skin.cue(GuiSkin.Cue.SEAT);
                     return true;
                 }

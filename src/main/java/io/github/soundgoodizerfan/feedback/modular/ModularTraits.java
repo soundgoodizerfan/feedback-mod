@@ -124,6 +124,12 @@ public final class ModularTraits {
         register("blowback", new io.github.soundgoodizerfan.feedback.modular.trait.GunBlowback());
         register("bolt_lockup", new io.github.soundgoodizerfan.feedback.modular.trait.GunBoltLockup());
         register("gas_operated", new io.github.soundgoodizerfan.feedback.modular.trait.GunGasOperated());
+        register("gun_obturator", new io.github.soundgoodizerfan.feedback.modular.trait.GunObturator());
+        register("gun_buffer", new io.github.soundgoodizerfan.feedback.modular.trait.GunBuffer());
+        register("gun_reticle", new io.github.soundgoodizerfan.feedback.modular.trait.GunReticle());
+        register("gun_sear", new io.github.soundgoodizerfan.feedback.modular.trait.GunSear());
+        register("gun_valve", new io.github.soundgoodizerfan.feedback.modular.trait.GunValve());
+        register("gun_lagging", new io.github.soundgoodizerfan.feedback.modular.trait.GunLagging());
         register("gun_braced", new io.github.soundgoodizerfan.feedback.modular.trait.GunBraced());
         register("open_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.GunOpenBolt());
         register("fan", new io.github.soundgoodizerfan.feedback.modular.trait.GunFan());
@@ -343,6 +349,7 @@ public final class ModularTraits {
         if (event.getSource().getEntity() instanceof LivingEntity attacker && !attacker.level().isClientSide
                 && event.getSource().getDirectEntity() == attacker) {
             ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
+            ModularStacks.struck(weapon, event.getAmount());
             of(weapon).ifPresent(a -> a.trait().onAttack(event, attacker, weapon, a.params()));
         }
     }

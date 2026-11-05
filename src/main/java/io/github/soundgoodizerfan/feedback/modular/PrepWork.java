@@ -69,9 +69,28 @@ public final class PrepWork {
      * hard to cut evenly, soft food is exact) and fat lets the blade slide on along the stroke.
      */
     public static int land(int clicked, Material.Food food) {
+        return land(clicked, food, Edge.PLAIN);
+    }
+
+    /** The knife blade's shape, as the cut feels it: {@code grain} scales the pull toward the grain, {@code slide} the slide on fat. */
+    public record Edge(float grain, float slide) {
+        public static final Edge PLAIN = new Edge(1f, 1f);
+
+        /** The edge of the knife in hand: its blade's variant, else plain. */
+        public static Edge of(net.minecraft.world.item.ItemStack knife) {
+            var design = ModularStacks.design(knife);
+            var type = design == null ? null : ModularTypes.known().get(design.type());
+            var blade = type == null ? null : design.part(type.primary());
+            return blade == null ? PLAIN : type.roles().get(type.primary()).variant(blade)
+                    .map(v -> new Edge(v.params().getOrDefault("grain", 1f), v.params().getOrDefault("slide", 1f))).orElse(PLAIN);
+        }
+    }
+
+    /** As {@link #land(int, Material.Food)} with the blade's {@link Edge}: a keen narrow blade skids less on fat, a long slicer follows the grain less. */
+    public static int land(int clicked, Material.Food food, Edge edge) {
         int grain = Math.round((float) clicked / FTuning.CUT_GRAIN) * FTuning.CUT_GRAIN;
-        float pull = Mth.clamp(food.fibre() * FTuning.CUT_GRAIN_PULL, 0f, 0.9f);
-        float at = clicked + (grain - clicked) * pull + food.fat() * FTuning.CUT_FAT_SLIDE;
+        float pull = Mth.clamp(food.fibre() * FTuning.CUT_GRAIN_PULL * edge.grain(), 0f, 0.9f);
+        float at = clicked + (grain - clicked) * pull + food.fat() * FTuning.CUT_FAT_SLIDE * edge.slide();
         return Mth.clamp(Math.round(at), 0, LINE);
     }
 

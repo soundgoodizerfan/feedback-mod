@@ -807,6 +807,215 @@
           }
         ]
       }
+    },
+    "c": {
+      "name": "obturator",
+      "forms": [
+        "obturator"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:obturator",
+        "shape": [
+          "c"
+        ],
+        "stock": [
+          "leather",
+          "raw"
+        ],
+        "variants": [
+          {
+            "name": "flat_ring",
+            "trait": "gun_obturator",
+            "params": {
+              "soft_limit": 1.0,
+              "kick_cut": 0.25,
+              "spread_cut": 0.15,
+              "burnt_kick": 1.1,
+              "burnt_spread": 1.2
+            }
+          },
+          {
+            "name": "cup_seal",
+            "shape": [
+              "cc"
+            ],
+            "trait": "gun_obturator",
+            "params": {
+              "soft_limit": 1.0,
+              "kick_cut": 0.4,
+              "spread_cut": 0.05,
+              "burnt_kick": 1.2,
+              "burnt_spread": 1.1
+            }
+          },
+          {
+            "name": "double_ring",
+            "shape": [
+              "cc",
+              "c "
+            ],
+            "trait": "gun_obturator",
+            "params": {
+              "soft_limit": 1.0,
+              "kick_cut": 0.15,
+              "spread_cut": 0.25,
+              "burnt_kick": 1.05,
+              "burnt_spread": 1.3
+            }
+          }
+        ],
+        "base": "flat_ring"
+      }
+    },
+    "d": {
+      "name": "hydraulic_buffer",
+      "forms": [
+        "hydraulic_buffer"
+      ],
+      "traits": [
+        "sticky"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:hydraulic_buffer",
+        "shape": [
+          "d"
+        ],
+        "stock": [
+          "raw"
+        ],
+        "variants": []
+      }
+    },
+    "e": {
+      "name": "lit_reticle",
+      "forms": [
+        "lit_reticle"
+      ],
+      "traits": [
+        "luminous"
+      ],
+      "litres": 0.05,
+      "layer": 6,
+      "part": {
+        "item": "feedback:lit_reticle",
+        "shape": [
+          "e"
+        ],
+        "stock": [
+          "block"
+        ],
+        "variants": [
+          {
+            "name": "dot_reticle",
+            "trait": "gun_reticle",
+            "params": {
+              "dark_at": 7.0,
+              "spread_cut": 0.2
+            }
+          },
+          {
+            "name": "ring_reticle",
+            "shape": [
+              "ee"
+            ],
+            "trait": "gun_reticle",
+            "params": {
+              "dark_at": 11.0,
+              "spread_cut": 0.12
+            }
+          },
+          {
+            "name": "cross_reticle",
+            "shape": [
+              "ee",
+              "e "
+            ],
+            "trait": "gun_reticle",
+            "params": {
+              "dark_at": 4.0,
+              "spread_cut": 0.3
+            }
+          }
+        ],
+        "base": "dot_reticle"
+      }
+    },
+    "f": {
+      "name": "magnetic_sear",
+      "forms": [
+        "magnetic_sear"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:magnetic_sear",
+        "shape": [
+          "f"
+        ],
+        "stock": [
+          "nugget"
+        ],
+        "variants": []
+      }
+    },
+    "g": {
+      "name": "steam_valve",
+      "forms": [
+        "steam_valve"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:steam_valve",
+        "shape": [
+          "g"
+        ],
+        "stock": [
+          "nugget"
+        ],
+        "base": "metered_valve",
+        "variants": [
+          {
+            "name": "metered_valve",
+            "trait": "gun_valve",
+            "params": {
+              "steam_mult": 0.6,
+              "cycle_mult": 1.25
+            }
+          },
+          {
+            "name": "dump_valve",
+            "trait": "gun_valve",
+            "params": {
+              "steam_mult": 1.5,
+              "cycle_mult": 0.8
+            }
+          }
+        ]
+      }
+    },
+    "h": {
+      "name": "steam_lagging",
+      "forms": [
+        "steam_lagging"
+      ],
+      "litres": 0.05,
+      "layer": 9,
+      "part": {
+        "item": "feedback:steam_lagging",
+        "shape": [
+          "h"
+        ],
+        "stock": [
+          "plate",
+          "leather"
+        ],
+        "variants": []
+      }
     }
   },
   "patterns": [

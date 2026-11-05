@@ -10,7 +10,6 @@
     "effect": "feedback:green_thumb",
     "base_duration": 3600,
     "max_amplifier": 1,
-    "throw": false,
     "imbue": false,
     "family": "vitamin"
   }

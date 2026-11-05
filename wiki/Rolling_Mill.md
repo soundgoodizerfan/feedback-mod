@@ -45,7 +45,7 @@ The base comes out as a **clad plate**, with a coat of the skin's metal **1 Qu**
 
 A skin rolled at nine tenths of its melting point or hotter comes out **burnt dark**: rough, and it holds poorly. Keep the skin well below that.
 
-A clad plate used as the wearing part at the [Tool Table](Tools_and_Weapons.md) gives the finished tool the coat, and the coat's metal adds its corrosion resistance (see [Plating](Tools_and_Weapons.md#plating)). Shaping a clad plate into [armor](Armor.md) does the same.
+A clad plate used as the wearing part at the bench gives the finished tool the coat, and the coat's metal adds its corrosion resistance (see [Plating](Tools_and_Weapons.md#plating)). Shaping a clad plate into [armor](Armor.md) does the same.
 
 If the workpiece is an ingot and not a plate, the mill rolls it as usual and the skin stays laid.
 

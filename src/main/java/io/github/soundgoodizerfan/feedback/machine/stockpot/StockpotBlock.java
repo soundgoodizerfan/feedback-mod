@@ -53,39 +53,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A pot on a fire that cooks a batch ({@link StockpotBlockEntity}). Water bucket: fill it. A food:
- * add one. A bowl: ladle a serving. A stick: stir and skim (the stirring screen). Empty hand: read it, or take the salt a boiled-dry sea pot left; sneaking, tip it out.
+ * add one. A bowl: ladle a serving. A spoon held aimed at it stirs, a tap skims ({@code ModularSpoon}). Empty hand: read it, or take the salt a boiled-dry sea pot left; sneaking, tip it out (a hot pot burns the hand).
  */
 public class StockpotBlock extends BaseEntityBlock {
 
     public static final MapCodec<StockpotBlock> CODEC = simpleCodec(StockpotBlock::new);
     private static final VoxelShape SHAPE = Block.box(1, 0, 1, 15, 10, 15);
-
-    /** Who has the stirring screen open: the pot, the last accepted packet, and the last tick one was accepted. */
-    private record Session(BlockPos pos, long lastSeen, long lastAccepted) {
-    }
-
-    private static final java.util.Map<java.util.UUID, Session> SESSIONS = new java.util.concurrent.ConcurrentHashMap<>();
-    private static final long SESSION_IDLE_TICKS = 300;
-    private static final long MIN_PACKET_GAP_TICKS = 3;
-
-    /** Whether this player may stir this pot now: a live session, the rod in hand, not faster than one packet per few ticks. Refreshes the session. */
-    public static boolean acceptInput(net.minecraft.server.level.ServerPlayer player, BlockPos pos) {
-        Session s = SESSIONS.get(player.getUUID());
-        long now = player.level().getGameTime();
-        if (s == null || !s.pos().equals(pos) || now - s.lastSeen() > SESSION_IDLE_TICKS
-                || !player.getMainHandItem().is(net.neoforged.neoforge.common.Tags.Items.RODS_WOODEN)) {
-            SESSIONS.remove(player.getUUID());
-            return false;
-        }
-        if (now - s.lastAccepted() < MIN_PACKET_GAP_TICKS)
-            return false;
-        SESSIONS.put(player.getUUID(), new Session(pos, now, now));
-        return true;
-    }
-
-    public static void endSession(java.util.UUID player) {
-        SESSIONS.remove(player);
-    }
 
     public StockpotBlock(Properties properties) {
         super(properties);
@@ -98,7 +71,7 @@ public class StockpotBlock extends BaseEntityBlock {
 
     @Override
     protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -126,9 +99,11 @@ public class StockpotBlock extends BaseEntityBlock {
         boolean water = held.getItem() instanceof BucketItem bucket && bucket.content.is(FluidTags.WATER);
         var food = Cooking.find(level, held);
         boolean bowl = held.is(io.github.soundgoodizerfan.feedback.registry.FTags.LADLE_CONTAINERS);
-        boolean spoon = held.is(net.neoforged.neoforge.common.Tags.Items.RODS_WOODEN);
         var potion = !(held.getItem() instanceof io.github.soundgoodizerfan.feedback.potion.PotionItem) ? null : held.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.POTION_STATE.get());
-        if (!water && food.isEmpty() && !bowl && !spoon && potion == null)
+        // A spoon stirs by a held use and skims by a tap (ModularSpoon); the block only steps aside.
+        if (held.is(io.github.soundgoodizerfan.feedback.registry.FTags.SPOON))
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        if (!water && food.isEmpty() && !bowl && potion == null)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
@@ -138,10 +113,6 @@ public class StockpotBlock extends BaseEntityBlock {
                     player.setItemInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
             } else
                 player.displayClientMessage(Component.translatable("feedback.stockpot.lace_refused"), true);
-        } else if (spoon) {
-            SESSIONS.put(player.getUUID(), new Session(pos, level.getGameTime(), level.getGameTime()));
-            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer((net.minecraft.server.level.ServerPlayer) player,
-                    new io.github.soundgoodizerfan.feedback.net.PotStatePayload(pos, true, pot.scum(), pot.mixed(), pot.charred(), pot.water()));
         } else if (water) {
             if (pot.addWater(1000f) && !player.getAbilities().instabuild)
                 player.setItemInHand(hand, new ItemStack(Items.BUCKET));
@@ -171,6 +142,9 @@ public class StockpotBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         if (level.getBlockEntity(pos) instanceof StockpotBlockEntity pot) {
             if (player.isShiftKeyDown()) {
+                // Tipping a hot pot out with a bare hand burns it; the pot tips anyway.
+                if (player.getMainHandItem().isEmpty())
+                    io.github.soundgoodizerfan.feedback.core.hazard.HotContact.burn(player, new io.github.soundgoodizerfan.feedback.core.unit.Tu(pot.temperature()));
                 pot.empty();
                 return InteractionResult.CONSUME;
             }

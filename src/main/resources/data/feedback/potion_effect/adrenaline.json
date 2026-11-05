@@ -10,7 +10,6 @@
     "effect": "feedback:adrenaline",
     "base_duration": 600,
     "max_amplifier": 0,
-    "throw": false,
     "imbue": false,
     "family": "stimulant"
   }

@@ -128,6 +128,27 @@ public interface HeatSource {
     }
 
     /**
+     * How cold the cold reaching {@code pos} is: the coldest of the sources round it that hold a temperature below ambient, each
+     * at the share its own facing gives this side. Ambient when none does. {@link #at} ignores those sources; a vessel that can be
+     * chilled (the reactor) reads this when no fire reaches it.
+     */
+    static Tu coldAt(Level level, BlockPos pos) {
+        Tu ambient = AmbientTable.at(level);
+        float best = ambient.value();
+        for (Direction dir : Direction.values()) {
+            BlockEntity be = level.getBlockEntity(pos.relative(dir));
+            if (!(be instanceof HeatSource source))
+                continue;
+            float share = source.shareToward(dir.getOpposite());
+            float fire = source.getFireTu().value();
+            if (share <= 0f || fire >= ambient.value() || !source.heats(level, pos))
+                continue;
+            best = Math.min(best, ambient.value() + share * (fire - ambient.value()));
+        }
+        return new Tu(best);
+    }
+
+    /**
      * How hot the heat reaching {@code pos} is: the hottest of the sources round it, each at the
      * share its own facing gives this side.
      *

@@ -34,6 +34,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.process.Electrolysis;
+import io.github.soundgoodizerfan.feedback.process.ProcessRun;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -118,15 +119,11 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
     private int roomFor(Electrolysis row) {
         int room = Integer.MAX_VALUE;
         for (Electrolysis.Product p : row.products()) {
-            FluidTank t = tank(p.electrode());
-            FluidStack made = stackOf(p.fluid(), 1);
-            room = Math.min(room, t.isEmpty() || FluidStack.isSameFluid(t.getFluid(), made) ? t.getSpace() / p.mb() : 0);
+            room = Math.min(room, ProcessRun.room(tank(p.electrode()), stackOf(p.fluid(), 1)) / p.mb());
         }
         if (row.residue().isPresent()) {
             var r = row.residue().get();
-            FluidStack made = stackOf(r.fluid(), 1);
-            room = Math.min(room, liquor.isEmpty() || FluidStack.isSameFluid(liquor.getFluid(), made)
-                    ? liquor.getSpace() / r.mb() : 0);
+            room = Math.min(room, ProcessRun.room(liquor, stackOf(r.fluid(), 1)) / r.mb());
         }
         return room;
     }
@@ -207,10 +204,9 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         if (!row.solvent())
             feed.drain(units, IFluidHandler.FluidAction.EXECUTE);
         for (Electrolysis.Product p : row.products())
-            tank(p.electrode()).fill(stackOf(p.fluid(), units * p.mb()), IFluidHandler.FluidAction.EXECUTE);
+            ProcessRun.deposit(java.util.List.of(tank(p.electrode())), stackOf(p.fluid(), units * p.mb()));
         if (row.residue().isPresent())
-            liquor.fill(stackOf(row.residue().get().fluid(), units * row.residue().get().mb()),
-                    IFluidHandler.FluidAction.EXECUTE);
+            ProcessRun.deposit(java.util.List.of(liquor), stackOf(row.residue().get().fluid(), units * row.residue().get().mb()));
         setChanged();
     }
 

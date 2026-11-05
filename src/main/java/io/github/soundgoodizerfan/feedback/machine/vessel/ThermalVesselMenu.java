@@ -66,16 +66,21 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
     private final Container container;
     private final ContainerData data;
 
-    public ThermalVesselMenu(int id, Inventory playerInventory) {
-        this(id, playerInventory, new SimpleContainer(ThermalVesselBlockEntity.SLOTS + 1), new SimpleContainerData(3));
+    private final VesselKind kind;
+
+    /** Client side: the open packet carries the kind's ordinal. */
+    public ThermalVesselMenu(int id, Inventory playerInventory, int kindOrdinal) {
+        this(id, playerInventory, new SimpleContainer(ThermalVesselBlockEntity.SLOTS + 1), new SimpleContainerData(3),
+                VesselKind.values()[kindOrdinal]);
     }
 
     public ThermalVesselMenu(int id, Inventory playerInventory, ThermalVesselBlockEntity vessel) {
-        this(id, playerInventory, vessel, vessel.getContainerData());
+        this(id, playerInventory, vessel, vessel.getContainerData(), vessel.getKind());
     }
 
-    private ThermalVesselMenu(int id, Inventory playerInventory, Container container, ContainerData data) {
+    private ThermalVesselMenu(int id, Inventory playerInventory, Container container, ContainerData data, VesselKind kind) {
         super(FMenus.THERMAL_VESSEL.get(), id);
+        this.kind = kind;
         checkContainerSize(container, ThermalVesselBlockEntity.SLOTS + 1);
         checkContainerDataCount(data, 3);
         this.container = container;
@@ -96,6 +101,10 @@ public class ThermalVesselMenu extends AbstractContainerMenu {
             addSlot(new Slot(playerInventory, column, 8 + column * 18, INV_Y + 58));
 
         addDataSlots(data);
+    }
+
+    public VesselKind getKind() {
+        return kind;
     }
 
     public boolean isLit() {

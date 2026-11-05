@@ -127,7 +127,6 @@ public class Feedback {
     private static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         DataLinkManager.get().clear(event.getEntity());
         BeltLinkManager.get().clear(event.getEntity());
-        io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlock.endSession(event.getEntity().getUUID());
     }
 
     /**
@@ -182,6 +181,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.BuysSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.BuysSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.BuysSyncPayload::handle)
@@ -301,12 +303,6 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SolderFinishPayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.net.PotInputPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.PotInputPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.PotInputPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.PotStatePayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.PotStatePayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.PotStatePayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.StandInputPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.StandInputPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.StandInputPayload::handle)
@@ -373,6 +369,7 @@ public class Feedback {
                 io.github.soundgoodizerfan.feedback.modular.ModularTypes.get().types()));
         send(event, new io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload(io.github.soundgoodizerfan.feedback.process.MixtureTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get().listings()));
         send(event, new io.github.soundgoodizerfan.feedback.net.BuysSyncPayload(io.github.soundgoodizerfan.feedback.village.BuysTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload(
                 io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get().entries(),

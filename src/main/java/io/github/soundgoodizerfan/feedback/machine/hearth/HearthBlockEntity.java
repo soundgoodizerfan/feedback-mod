@@ -138,9 +138,12 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
             return;
         for (Direction side : Direction.Plane.HORIZONTAL)
             if (level.getBlockEntity(worldPosition.relative(side)) instanceof ToolTableBlockEntity table
-                    && table.getBlockState().getBlock() instanceof StationBlock b && b.station == Station.ANVIL)
+                    && table.getBlockState().getBlock() instanceof StationBlock b && b.station == Station.ANVIL) {
+                // The centre slot (TOOL) is the stock the anvil forges; the side stock cells are the rest.
+                reheat(table.getItem(ToolTableBlockEntity.TOOL), materials);
                 for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
                     reheat(table.getItem(ToolTableBlockEntity.STOCK + i), materials);
+            }
     }
 
     private void reheat(ItemStack stock, Map<ResourceLocation, Material> materials) {

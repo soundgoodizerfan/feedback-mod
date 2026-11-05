@@ -10,7 +10,6 @@
     "effect": "feedback:second_wind",
     "base_duration": 600,
     "max_amplifier": 1,
-    "throw": false,
     "imbue": false,
     "family": "stimulant"
   }

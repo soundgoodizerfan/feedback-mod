@@ -163,6 +163,9 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             FluidStack fluid = recipe.resultFluid();
             builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 69).setOutputSlotBackground()
                     .addFluidStack(fluid.getFluid(), fluid.getAmount()).setFluidRenderer(Math.max(1, fluid.getAmount()), false, 16, 16);
+        } else if (recipe.fire().isPresent() && !inputs.isEmpty()) {
+            // The part comes out carrying the coat; the slot shows the parts that can.
+            builder.addOutputSlot(1, 69).setOutputSlotBackground().addIngredients(inputs.get(0));
         } else {
             builder.addOutputSlot(1, 69).setOutputSlotBackground().addItemStack(recipe.result());
         }
@@ -206,7 +209,9 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             row(graphics, font, 54, "feedback.jei.quench.into", Component.translatable("feedback.jei.quench.water").getString(), VALUE_COLOUR);
             return;
         }
-        String title = recipe.hasFluidResult()
+        String fired = recipe.fire().map(c -> Component.translatable("feedback.jei.fire.title",
+                Component.translatable("material." + c.metal().getNamespace() + "." + c.metal().getPath())).getString()).orElse(null);
+        String title = fired != null ? fired : recipe.hasFluidResult()
                 ? recipe.resultFluid().getHoverName().getString()
                 : recipe.result().getHoverName().getString();
         graphics.drawString(font, title.toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
@@ -215,7 +220,9 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
         int y = 18;
         row(graphics, font, y, "feedback.jei.inputs", inputNames(recipe), VALUE_COLOUR);
         y += 12;
-        row(graphics, font, y, "feedback.jei.output", recipe.hasFluidResult()
+        row(graphics, font, y, "feedback.jei.output", recipe.fire().isPresent()
+                ? Component.translatable("feedback.jei.fire.output", Readout.number(recipe.fire().get().thickness())).getString()
+                : recipe.hasFluidResult()
                 ? recipe.resultFluid().getAmount() + " mB " + recipe.resultFluid().getHoverName().getString()
                 : recipe.result().getCount() + " x " + recipe.result().getHoverName().getString(), VALUE_COLOUR);
         y += 12;

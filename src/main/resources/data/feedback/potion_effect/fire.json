@@ -10,7 +10,6 @@
     "effect": "feedback:ignite",
     "base_duration": 200,
     "max_amplifier": 1,
-    "throw": true,
     "imbue": true,
     "family": "sugar"
   }

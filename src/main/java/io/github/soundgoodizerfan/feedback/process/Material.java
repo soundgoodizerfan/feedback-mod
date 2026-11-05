@@ -230,7 +230,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
 
     /** A yes/no a person could tell by handling it. Never a stand-in for identity (§11). */
     public enum Trait implements StringRepresentable {
-        ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS, FIBROUS, POROUS, STICKY,
+        ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS,
+        /** Gives off light when hot enough to glow (every metal does; other materials opt in). */
+        INCANDESCENT, FIBROUS, POROUS, STICKY,
         /** An acid or a base: eats a vessel whose corrosion resistance is below {@code FTuning.CORROSIVE_BITE} (core/hazard/Corrosion). */
         CORROSIVE,
         /** A joining alloy: its melting point is a joint's liquidus (basic electronics phase 3). */

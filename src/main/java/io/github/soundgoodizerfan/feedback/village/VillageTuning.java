@@ -50,6 +50,8 @@ public final class VillageTuning {
     public static final float TOLERANCE_NOVICE = 0.36f, TOLERANCE_STEP = 0.06f, TOLERANCE_FLOOR = 0.14f;
     /** How far under a must the figure may fall, as a share of the range, before that term scores nothing. */
     public static final float MUST_SLACK = 0.3f;
+    /** A biome's lean counts for this much against a stated term's one (stated carries the most, lean next, quirk least). */
+    public static final float LEAN_WEIGHT = 0.75f;
     /** A hidden quirk counts for this much against a stated term's one. */
     public static final float QUIRK_WEIGHT = 0.5f;
     /** Least miss (weight times shortfall) the villager bothers to name. */

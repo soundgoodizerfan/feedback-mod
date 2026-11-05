@@ -1,0 +1,127 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.machine.cryocooler;
+
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.BlockState;
+
+/**
+ * A cryocooler cold head: an electrical sink that, while it is fed, holds the face it points at at a temperature far under
+ * ambient. It is a {@link HeatSource} whose temperature is below ambient: {@link HeatSource#at} ignores it, {@link HeatSource#coldAt}
+ * (read by the reactor) chills the vessel against it toward that temperature. The stage is a three-way choice, each a colder or
+ * warmer head; a vessel settles a little short of the stage, so a stage is a rough cut of cold, not a thermostat. It reads no
+ * vessel and no fluid, and a head that is not fed holds nothing.
+ * shortcut: the head's own temperature jumps to the stage with no inertia and its hot side is not modelled (the Refrigeration Unit
+ * does warm its radiator); give it a thermal mass if a cold start should be felt.
+ */
+public class CryocoolerBlockEntity extends ElectricNode implements HeatSource {
+
+    /** The cold head's stages, deepest first. They name a temperature, never a product. */
+    public enum Stage {
+        DEEP(FTuning.CRYOCOOLER_DEEP_TU), MID(FTuning.CRYOCOOLER_MID_TU), SHALLOW(FTuning.CRYOCOOLER_SHALLOW_TU);
+
+        private final Tu tu;
+
+        Stage(Tu tu) {
+            this.tu = tu;
+        }
+
+        public Tu tu() {
+            return tu;
+        }
+    }
+
+    private Stage stage = Stage.DEEP;
+    private boolean running;
+
+    public CryocoolerBlockEntity(BlockPos pos, BlockState state) {
+        super(FBlockEntities.CRYOCOOLER.get(), pos, state);
+    }
+
+    public Stage stage() {
+        return stage;
+    }
+
+    public void cycleStage() {
+        stage = Stage.values()[(stage.ordinal() + 1) % Stage.values().length];
+        setChanged();
+    }
+
+    @Override
+    public Role role() {
+        return Role.SINK;
+    }
+
+    @Override
+    public float wantedAmps() {
+        return FTuning.CRYOCOOLER_AMPS;
+    }
+
+    @Override
+    public VoltageBand ratedBand() {
+        return VoltageBand.MV;
+    }
+
+    @Override
+    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
+        super.onResolved(volts, amps, wanted, blocked);
+        running = ElectricRules.rate(volts, amps, wanted, ratedBand()) > 0f;
+    }
+
+    @Override
+    public Direction heatFacing() {
+        return HeatSource.facingOf(getBlockState());
+    }
+
+    /** The head cools the face it points at and nothing beside it. */
+    @Override
+    public float sideShare() {
+        return 0f;
+    }
+
+    @Override
+    public Tu getFireTu() {
+        return running ? stage.tu() : level == null ? FTuning.AMBIENT_TU : AmbientTable.at(level);
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("Stage", stage.ordinal());
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        stage = Stage.values()[Math.floorMod(tag.getInt("Stage"), Stage.values().length)];
+    }
+}

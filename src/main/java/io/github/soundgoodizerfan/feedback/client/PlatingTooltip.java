@@ -69,6 +69,22 @@ public class PlatingTooltip {
         Component thickness = thickness(plating);
         if (thickness != null)
             event.getToolTip().add(thickness);
+        Component intact = intact(plating);
+        if (intact != null)
+            event.getToolTip().add(intact);
+    }
+
+    /**
+     * How much of a chipped coat is left. The chips are plain to see, so the words are free; the share itself
+     * is a figure no instrument reads yet, so only the truth tier prints it. Null for a whole coat. Shared with {@link ItemInfoHud}.
+     */
+    static Component intact(Plating plating) {
+        if (plating == null || plating.intact() >= 1f)
+            return null;
+        return Readout.exact(Quantity.FIGURE)
+                ? Readout.reading(Quantity.FIGURE, "feedback.readout.plating.intact", Readout.figure(Quantity.FIGURE, plating.intact() * 100f))
+                : Readout.gloss(Component.translatable("plating.feedback.chipped").withStyle(ChatFormatting.GRAY),
+                "feedback.gloss.plating.chipped");
     }
 
     /** What a held mass probe shows for its own coat, or null for any other stack. Shared with {@link ItemInfoHud}. */

@@ -1,0 +1,17 @@
+{
+  "parts": {
+    "feedback:osmium": {
+      "min": 0.85,
+      "max": 0.98
+    },
+    "feedback:nickel": {
+      "min": 0.02,
+      "max": 0.15
+    }
+  },
+  "stray": 0.02,
+  "max_temperature": 600,
+  "result": {
+    "id": "feedback:osmium_powder"
+  }
+}

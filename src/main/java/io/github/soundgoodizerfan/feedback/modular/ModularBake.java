@@ -132,10 +132,19 @@ public final class ModularBake {
      * burnt or mixed holds half as well. The same {@code Plating} the electrolytic cell grows, read
      * as properties of the metal that grew it -- no coating table of its own.
      */
-    static float coatHold(Plating coat) {
-        float closed = Math.min(1f, coat.thickness() / FTuning.PLATING_POROUS_BELOW_QU);
+    public static float coatHold(Plating coat) {
+        float closed = Math.min(1f, coat.thickness() / FTuning.PLATING_POROUS_BELOW_QU) * coat.intact();
         return closed * (coat.quality() == Plating.Quality.BURNT || coat.quality() == Plating.Quality.MIXED
                 ? ModularTuning.COAT_FAULTY_HOLD : 1f);
+    }
+
+    /**
+     * Strain a coat of {@code m} takes before a hit chips it: the same {@link #fracture} test a whole part
+     * is held to, so a brittle coat (glass) chips from the coat material's own toughness and a tough one
+     * (zinc) never does.
+     */
+    public static float coatChipStrain(Material m) {
+        return fracture(m) >= 1f ? Float.MAX_VALUE : toughness(m) * ModularTuning.CHIP_SLACK;
     }
 
     public static float bite(float competence, Edge edge) {
@@ -175,7 +184,7 @@ public final class ModularBake {
                 default -> true;
             };
             case VESSEL -> !wear || material.xpStore().isPresent();
-            case CHARGE -> wear || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
+            case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
             default -> true;
         };
     }
@@ -205,7 +214,7 @@ public final class ModularBake {
     }
 
     /** The role letters of the electric machine's four parts. */
-    public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H";
+    public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H", MACHINE_BEARING = "B";
 
     /**
      * What an electric machine design is, read by the placed block.
@@ -271,13 +280,19 @@ public final class ModularBake {
             case "heavy_dense" -> FTuning.WINDING_VOLTS_PER_RPM_HEAVY_DENSE;
             default -> FTuning.WINDING_VOLTS_PER_RPM_COARSE;
         };
+        // An optional bearing sets how much torque the rotor carries and how much friction heat it makes (a sleeve is cheap and warm,
+        // a ball bearing runs cool, a roller bearing carries the most).
+        Part bearing = design.part(MACHINE_BEARING);
+        var bv = bearing == null ? Optional.<ModularType.Variant>empty() : type.roles().get(MACHINE_BEARING).variant(bearing);
+        su *= bv.map(v -> v.params().getOrDefault("su_mult", 1f)).orElse(1f);
+        float friction = bv.map(v -> v.params().getOrDefault("friction", 0f)).orElse(0f);
         int wireCells = stockCells(type.roles().get(MACHINE_WINDING), winding);
         float amps = Math.min(su / vpr, wm.ampacity().get() * wireCells * FTuning.WINDING_AMPS_PER_AMPACITY);
         float drop = wm.electrical().drop().orElse(0f) * wireCells * FTuning.WINDING_BLOCKS_PER_CELL;
         float leak = hm.thermal().conductivity().get().workPerTickPerTu() * area * FTuning.MACHINE_SHED_PER_CONDUCTIVITY;
         float service = hm.thermal().serviceTemperature().map(Tu::value).orElse(FTuning.MACHINE_SERVICE_TU);
         return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOf(vpr * FTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
-                cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT), shapeName(type.roles().get(MACHINE_HOUSING), housing).equals("jacketed")));
+                cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, shapeName(type.roles().get(MACHINE_HOUSING), housing).equals("jacketed")));
     }
 
     public static int enchantability(Material m) {
@@ -413,7 +428,8 @@ public final class ModularBake {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 f.put(Fig.MASS, total);
                 // A heavier, harder, tougher head lands a harder blow; a worn one has lost some of it.
-                f.put(Fig.STRIKE_ST, FTuning.HAND_ST_PER_MU_COMPETENCE * total * zone.wear() * worn * type.strike());
+                f.put(Fig.STRIKE_ST, FTuning.HAND_ST_PER_MU_COMPETENCE * total * zone.wear() * worn * type.strike()
+                        * type.roles().get(type.primary()).strike(design.part(type.primary())));
             }
             case GLOVE -> {
                 float total = 0;
@@ -496,16 +512,17 @@ public final class ModularBake {
      */
     private static Optional<ModularFigures> charge(ModularDesign design, ModularType type, Map<String, Material> by,
                                                    Map<ResourceLocation, Material> materials, int step) {
+        Optional<io.github.soundgoodizerfan.feedback.weapon.Blast.Packed> read = io.github.soundgoodizerfan.feedback.weapon.Blast.read(design, type, materials);
         List<io.github.soundgoodizerfan.feedback.weapon.Cartridge.Charge> filler = new java.util.ArrayList<>();
         for (Part p : design.parts())
-            if (!p.role().equals(type.wearRole()))
+            if (io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, p.role()))
                 filler.add(new io.github.soundgoodizerfan.feedback.weapon.Cartridge.Charge(p.material(), p.count()));
         Optional<io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend> blend =
                 io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend.of(materials, filler).filter(b -> !b.coil());
-        if (blend.isEmpty() || blend.get().total() > FTuning.DEMO_FILLER_MAX)
+        if (read.isEmpty() || blend.isEmpty() || blend.get().total() > FTuning.DEMO_FILLER_MAX)
             return Optional.empty();
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
-        f.put(Fig.BLAST, io.github.soundgoodizerfan.feedback.weapon.Blast.power(blend.get(), by.get(type.wearRole())));
+        f.put(Fig.BLAST, read.get().power());
         f.put(Fig.BURNED, blend.get().burned());
         f.put(Fig.PACKED, (float) blend.get().total());
         float mass = 0;

@@ -51,6 +51,12 @@ public class CastingBasinBlock extends BaseEntityBlock {
 
     public CastingBasinBlock(Properties properties) {
         super(properties);
+        registerDefaultState(stateDefinition.any().setValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW, 0));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(net.minecraft.world.level.block.state.StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
+        builder.add(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW);
     }
 
     @Override

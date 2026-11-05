@@ -32,8 +32,9 @@ import net.minecraft.resources.ResourceLocation;
  * @param pay    emeralds for a Good delivery, before saturation
  * @param terms  what the villager says
  * @param quirks what the villager does not say; only the complaint on a miss ever shows one
+ * @param leans  what the villager's home biome leans toward: knowable from where they live, never printed
  */
-public record Order(ResourceLocation type, int pay, List<Term> terms, List<Term> quirks) {
+public record Order(ResourceLocation type, int pay, List<Term> terms, List<Term> quirks, List<Term> leans) {
 
     /**
      * One term on one figure. A must is a test (the figure at least, or at most, the target); a

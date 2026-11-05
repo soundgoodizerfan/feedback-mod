@@ -38,6 +38,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.geology.CrudeGrade;
+import io.github.soundgoodizerfan.feedback.process.ProcessRun;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -74,7 +75,8 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
     private static final int INPUT_TANKS = 3;
 
     private final HeatedTank[] inputs = new HeatedTank[INPUT_TANKS];
-    private final HeatedTank output = new HeatedTank(FTuning.REACTOR_TANK_MB, this::setChanged);
+    /** Two product tanks: a row may give two fluids (a gas and a liquid left behind), each in the tank that already holds it or the first empty one. */
+    private final HeatedTank[] outputs = new HeatedTank[2];
     private ItemStack bed = ItemStack.EMPTY;
     /** The hopper: three slots a row's item inputs are matched against and taken from, one each per batch. */
     private final java.util.List<ItemStack> hopper = new java.util.ArrayList<>(
@@ -86,12 +88,12 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
     private final IFluidHandler handler = new IFluidHandler() {
         @Override
         public int getTanks() {
-            return INPUT_TANKS + 1;
+            return INPUT_TANKS + outputs.length;
         }
 
         @Override
         public FluidStack getFluidInTank(int tank) {
-            return tank < INPUT_TANKS ? inputs[tank].getFluid() : output.getFluid();
+            return tank < INPUT_TANKS ? inputs[tank].getFluid() : outputs[tank - INPUT_TANKS].getFluid();
         }
 
         @Override
@@ -117,12 +119,14 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
 
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
-            return output.drain(resource, action);
+            FluidStack got = outputs[0].drain(resource, action);
+            return got.isEmpty() ? outputs[1].drain(resource, action) : got;
         }
 
         @Override
         public FluidStack drain(int maxDrain, FluidAction action) {
-            return output.drain(maxDrain, action);
+            FluidStack got = outputs[0].drain(maxDrain, action);
+            return got.isEmpty() ? outputs[1].drain(maxDrain, action) : got;
         }
     };
 
@@ -130,6 +134,8 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         super(FBlockEntities.REACTOR.get(), pos, state);
         for (int i = 0; i < INPUT_TANKS; i++)
             inputs[i] = new HeatedTank(FTuning.REACTOR_TANK_MB, this::setChanged);
+        for (int i = 0; i < outputs.length; i++)
+            outputs[i] = new HeatedTank(FTuning.REACTOR_TANK_MB, this::setChanged);
     }
 
     public IFluidHandler getHandler() {
@@ -138,7 +144,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
 
     @Override
     public List<HeatedTank> heatedTanks() {
-        return List.of(inputs[0], inputs[1], inputs[2], output);
+        return List.of(inputs[0], inputs[1], inputs[2], outputs[0], outputs[1]);
     }
 
     // --- the bed ---------------------------------------------------------------------------
@@ -307,7 +313,10 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
             return;
         Tu fireTu = HeatSource.at(level, worldPosition);
         Tu ambient = AmbientTable.at(level);
-        Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
+        // No fire reaches it: a cold head against it chills it instead (cryogenic rows).
+        if (fireTu.value() <= ambient.value())
+            fireTu = HeatSource.coldAt(level, worldPosition);
+        Heat.tick(this, fireTu, ambient, fireTu.value() != ambient.value());
         measureDelta();
         pull();
         for (HeatedTank tank : heatedTanks())
@@ -349,20 +358,12 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         return false;
     }
 
-    private int held(ThermalProcess.Amount a) {
-        int total = 0;
-        for (HeatedTank tank : inputs)
-            if (!tank.isEmpty() && BuiltInRegistries.FLUID.getKey(tank.getFluid().getFluid()).equals(a.fluid()))
-                total += tank.getFluidAmount();
-        return total;
-    }
-
     private boolean fits(ThermalProcess p) {
         ThermalProcess.Reaction r = p.reaction().get();
         if (!p.inputs().isEmpty() && ThermalProcessTable.match(p.inputs(), hopper) == null)
             return false;
         for (ThermalProcess.Amount a : r.fluidInputs())
-            if (held(a) < a.mb())
+            if (ProcessRun.held(List.of(inputs), a.fluid()) < a.mb())
                 return false;
         return r.catalyst().isEmpty() || (hasBed() && bed.is(r.catalyst().get()));
     }
@@ -396,24 +397,17 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         if (r.catalyst().isPresent())
             rate *= (activity() <= r.activityFloor() ? 0f : (activity() - r.activityFloor()) / (1f - r.activityFloor()))
                     * (catalyst() == null ? 1f : catalyst().activity());
-        if (Math.abs(lastDelta) > row.maxRateTuPerTick().tuPerTick())
-            rate = 0f;
-        progress = rate > 0f ? progress + rate : Math.max(0f, progress - FTuning.TPU_DECAY_PER_TICK);
+        progress = ProcessRun.hold(progress, ProcessRun.limited(row, rate, lastDelta));
         if (progress < row.requiredTpu())
             return;
 
         // The batch happens, in window or out: inputs are consumed either way.
-        float sulfur = 0f;
-        for (ThermalProcess.Amount a : r.fluidInputs()) {
-            int left = a.mb();
-            for (HeatedTank tank : inputs) {
-                if (left <= 0 || tank.isEmpty() || !BuiltInRegistries.FLUID.getKey(tank.getFluid().getFluid()).equals(a.fluid()))
-                    continue;
-                if (tank.getFluid().has(FDataComponents.CRUDE_GRADE.get()))
-                    sulfur += CrudeGrade.of(tank.getFluid()).sulfur() * Math.min(left, tank.getFluidAmount());
-                left -= tank.drain(left, IFluidHandler.FluidAction.EXECUTE).getAmount();
-            }
-        }
+        float[] sulfur = {0f};
+        for (ThermalProcess.Amount a : r.fluidInputs())
+            ProcessRun.draw(List.of(inputs), a.fluid(), a.mb(), (fluid, taking) -> {
+                if (fluid.has(FDataComponents.CRUDE_GRADE.get()))
+                    sulfur[0] += CrudeGrade.of(fluid).sulfur() * taking;
+            });
         if (!row.inputs().isEmpty()) {
             int[] used = ThermalProcessTable.match(row.inputs(), hopper);
             if (used != null)
@@ -423,10 +417,9 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         if (!over && !row.result().isEmpty())
             net.minecraft.world.level.block.Block.popResource(level, worldPosition.above(), row.result().copy());
         for (ThermalProcess.Amount a : over ? r.overTu() : r.fluidOutputs())
-            output.fill(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()), temperature),
-                    IFluidHandler.FluidAction.EXECUTE);
+            emit(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()), temperature));
         if (r.catalyst().isPresent()) {
-            addLoss(FDataComponents.BED_POISON.get(), sulfur * FTuning.REACTOR_SULFUR_FOUL_PER_MB
+            addLoss(FDataComponents.BED_POISON.get(), sulfur[0] * FTuning.REACTOR_SULFUR_FOUL_PER_MB
                     / (catalyst() == null ? 1f : Math.max(0.01f, catalyst().sulfurTolerance())));
             addLoss(FDataComponents.BED_COKE.get(), over ? FTuning.REACTOR_COKE_FOUL_PER_BATCH : 0f);
         }
@@ -434,18 +427,27 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         progress = 0f;
     }
 
+    /** A product goes to the output tank already holding that fluid, else the first empty one; with neither, or what a full tank cannot take, it is lost (a toxic gas then lets a {@link io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud} go). */
+    private void emit(FluidStack product) {
+        int left = ProcessRun.deposit(List.of(outputs), product);
+        if (left > 0)
+            io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud.vent(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), product.copyWithAmount(left));
+    }
+
     private void pushOutput() {
-        if (output.isEmpty())
-            return;
-        for (Direction d : Direction.values()) {
-            IFluidHandler target = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(d),
-                    d.getOpposite());
-            if (target == null)
+        for (HeatedTank output : outputs) {
+            if (output.isEmpty())
                 continue;
-            int fits = target.fill(output.drain(FTuning.REACTOR_PUSH_MB, IFluidHandler.FluidAction.SIMULATE),
-                    IFluidHandler.FluidAction.SIMULATE);
-            if (fits > 0)
-                target.fill(output.drain(fits, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+            for (Direction d : Direction.values()) {
+                IFluidHandler target = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(d),
+                        d.getOpposite());
+                if (target == null || target == handler)
+                    continue;
+                int fits = target.fill(output.drain(FTuning.REACTOR_PUSH_MB, IFluidHandler.FluidAction.SIMULATE),
+                        IFluidHandler.FluidAction.SIMULATE);
+                if (fits > 0)
+                    target.fill(output.drain(fits, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
+            }
         }
     }
 
@@ -458,7 +460,8 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         tag.putFloat("Progress", progress);
         for (int i = 0; i < INPUT_TANKS; i++)
             tag.put("In" + i, inputs[i].writeToNBT(registries, new CompoundTag()));
-        tag.put("Out", output.writeToNBT(registries, new CompoundTag()));
+        for (int i = 0; i < outputs.length; i++)
+            tag.put("Out" + i, outputs[i].writeToNBT(registries, new CompoundTag()));
         if (hasBed())
             tag.put("Bed", bed.save(registries));
         for (int i = 0; i < hopper.size(); i++)
@@ -474,8 +477,9 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         for (int i = 0; i < INPUT_TANKS; i++)
             if (tag.contains("In" + i))
                 inputs[i].readFromNBT(registries, tag.getCompound("In" + i));
-        if (tag.contains("Out"))
-            output.readFromNBT(registries, tag.getCompound("Out"));
+        for (int i = 0; i < outputs.length; i++)
+            if (tag.contains("Out" + i))
+                outputs[i].readFromNBT(registries, tag.getCompound("Out" + i));
         for (int i = 0; i < hopper.size(); i++)
             hopper.set(i, tag.contains("Hopper" + i) ? ItemStack.parseOptional(registries, tag.getCompound("Hopper" + i)) : ItemStack.EMPTY);
         bed = tag.contains("Bed") ? ItemStack.parseOptional(registries, tag.getCompound("Bed")) : ItemStack.EMPTY;

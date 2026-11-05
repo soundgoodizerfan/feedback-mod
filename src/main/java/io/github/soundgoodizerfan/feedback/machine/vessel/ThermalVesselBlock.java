@@ -68,7 +68,8 @@ public class ThermalVesselBlock extends Block implements EntityBlock {
     public ThermalVesselBlock(Properties properties, VesselKind kind) {
         super(properties);
         this.kind = kind;
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(LIT, false)
+                .setValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW, 0));
     }
 
     public VesselKind getKind() {
@@ -77,7 +78,7 @@ public class ThermalVesselBlock extends Block implements EntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, LIT);
+        builder.add(FACING, LIT, io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW);
     }
 
     @Override
@@ -106,7 +107,7 @@ public class ThermalVesselBlock extends Block implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof ThermalVesselBlockEntity vessel))
             return InteractionResult.PASS;
         if (!level.isClientSide)
-            player.openMenu(vessel);
+            player.openMenu(vessel, buf -> buf.writeVarInt(vessel.getKind().ordinal()));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

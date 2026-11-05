@@ -1,0 +1,31 @@
+{
+  "inputs": [],
+  "min_temperature": -188,
+  "optimal_temperature": -185,
+  "max_temperature": -182.5,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:liquid_oxygen",
+        "mb": 7
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:argon",
+        "mb": 2
+      },
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 33
+      }
+    ],
+    "over_tu": [
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 35
+      }
+    ]
+  }
+}

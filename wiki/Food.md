@@ -56,7 +56,7 @@ Food last held at or under 0 Tu is **Frozen solid** (the tooltip says so). It do
 ## Smoke and salt
 
 - **Smoke.** Food cooked in a [Smoker](Furnaces.md) picks up a smoke coat (the tooltip says *Smoked*). It slows spoilage, but it wears off over a few minutes of game time, so it buys time and does not replace drying. Other furnaces vent their smoke and leave none.
-- **Salt.** Boil a [Stockpot](Stockpot.md) of water dry on a fire hot enough to do it, standing in an ocean or beach biome, and it leaves salt: about two per bucket. Take it with an empty hand on the dry pot. Anywhere else a pot boiled dry leaves only a scorched bottom; there is no salt ore, the sea is the brine.
+- **Salt.** Boil a [Stockpot](Stockpot.md) of water dry on a fire hot enough to do it, standing in an ocean or beach biome, and it leaves salt: about two per bucket. Take it with an empty hand on the dry pot. Anywhere else a pot boiled dry leaves only a scorched bottom. Salt also comes from [Salt Deposits](Ore_Deposits.md#salt-deposits) on the ocean floor.
 - **Salting.** Put one food and one salt in the crafting grid, in any arrangement. The food comes back *Salted*: some of its water is drawn out, it spoils much more slowly, and it takes more of a bad thing to hurt you (live organisms and toxin both). Salt does not wear off. Salt is also a seasoning: poured on a finished dish at the Prep Table it makes the dish safer to eat. A salted food in a stockpot salts the whole pot.
 
 ## Food perks

@@ -88,7 +88,8 @@ public class FCapabilities {
                 (turbine, side) -> turbine.getInput());
         // Read-only, so Jade and any other reader can see a melt; filling and draining stay the mold's.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.CRUCIBLE.get(),
-                (vessel, side) -> new io.github.soundgoodizerfan.feedback.process.MoltenReadout((io.github.soundgoodizerfan.feedback.process.MoltenVessel) vessel));
+                (vessel, side) -> vessel.isArcHearth() ? new io.github.soundgoodizerfan.feedback.machine.crucible.HearthFluidFace(vessel)
+                        : new io.github.soundgoodizerfan.feedback.process.MoltenReadout((io.github.soundgoodizerfan.feedback.process.MoltenVessel) vessel));
         // The vessel's own face: crude in, the vapour above it out (spec 3.4); a melt is still readable through it.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.THERMAL_VESSEL.get(),
                 (vessel, side) -> new io.github.soundgoodizerfan.feedback.machine.vessel.VesselFluidHandler(vessel));

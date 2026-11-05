@@ -116,6 +116,17 @@ Optional parts change what a gun does. They are tip-like parts, machined like an
 
 A suppressor, a brake and an eddy sleeve all go on the muzzle, so a gun has one of them.
 
+### Fittings made of the stuff itself
+
+These four are shaped at the Gun Table from raw stock, and the material decides what they do. All four act on the shot as you aim it, so the HUD and the spec sheet show the effect.
+
+| Fitting | Made of | Effect |
+| --- | --- | --- |
+| **Obturator** | Leather, or any raw stock such as phantom membrane | A ring that seals a loose chamber (a Flat Ring, a Cup Seal that cuts the most kick, or a Double Ring that tightens the group most). The softer the stuff, the more it cuts: up to **25%** less kick and **15%** tighter group. Once the barrel is hotter than the stuff's oxidation temperature it has burned away and leaks: **10%** more kick and **20%** wider group, until the barrel cools. |
+| **Hydraulic Buffer** | Something sticky: honey, slime | A sealed chamber of fluid the recoil pushes through. Honey takes kick to **50%** and slows the cycle by **30%**; thinner fluids do less. The fluid thins as the barrel heats and is no use at the round's ignition temperature. |
+| **Lit Reticle** | Something luminous: glowstone | Glowing mineral in the sight, needing no power. A **Dot** shows at light level 7 or less and tightens the group by up to **20%**; a **Ring** shows in dim light (11 or less) and tightens it less; a **Cross** shows only in deep dark (4 or less) and tightens it most. In daylight it does nothing. |
+| **Magnetic Sear** | A magnetic metal: iron, steel, nickel | A magnet holds the sear: up to **15%** tighter group and a **10%** quicker cycle. The pull fades as the barrel warms and is gone at the metal's Curie temperature. A non-magnetic metal does nothing. |
+
 ### Changing a fitting
 
 Add a fitting to a finished gun in the **Rework** tab. A gun takes one fitting to a slot, so to swap a suppressor for a brake, take the gun apart or swap the part in place with another of its own kind.

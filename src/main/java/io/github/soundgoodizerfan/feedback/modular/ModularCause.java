@@ -77,6 +77,9 @@ public final class ModularCause {
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
                 case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();
                 case LITRES -> p.role().equals(type.primary());
+                // a dish's profile is read live off the whole dish, no one part is down to it
+                case DISH_COOK, DISH_MOISTURE, DISH_SALT, DISH_SMOKE, DISH_FRESH, DISH_WARMTH, SHARE_MEAT, SHARE_SEAFOOD, SHARE_PLANT, SHARE_STARCH,
+                        CUISINE_ITALIAN, CUISINE_EAST_ASIAN, CUISINE_MEXICAN, CUISINE_EASTERN_EUROPEAN -> false;
                 case JOINT, DRAW, VELOCITY -> bow
                         ? role.name().equals("string") || role.name().equals("limbs") || role.name().equals("prod")
                         : role.name().equals("binding") || p.equals(weakest(design, type, materials));

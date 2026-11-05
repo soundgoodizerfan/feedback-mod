@@ -226,6 +226,10 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlockEntity::new, FBlocks.POWER_CUTTER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.cryocooler.CryocoolerBlockEntity>> CRYOCOOLER =
+            BLOCK_ENTITIES.register("cryocooler", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.cryocooler.CryocoolerBlockEntity::new, FBlocks.CRYOCOOLER.get())
+                    .build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlockEntity>> INDUCTION_COIL =
             BLOCK_ENTITIES.register("induction_coil", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlockEntity::new, FBlocks.INDUCTION_COIL.get())

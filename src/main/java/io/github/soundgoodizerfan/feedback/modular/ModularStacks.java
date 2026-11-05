@@ -31,6 +31,8 @@ import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.item.Meal;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
+import io.github.soundgoodizerfan.feedback.process.Dip;
+import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.process.DishFigures;
 import io.github.soundgoodizerfan.feedback.process.FoodState;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -406,6 +408,74 @@ public final class ModularStacks {
         return f == null || m == null || m.density().muPerMb() <= 0f ? 0f : f.get(Fig.MASS) / m.density().muPerMb();
     }
 
+    /**
+     * {@code part} with {@code coat} fired onto it (enamel in a kiln): a whole coat of the row's metal, replacing any
+     * coat of another metal and restoring a chipped one of the same. A stack that cannot be plated comes back as it
+     * went in -- the frit is spent either way.
+     */
+    public static ItemStack fired(ItemStack part, Dip.Coat coat) {
+        if (!platable(part))
+            return part;
+        ItemStack out = part.copy();
+        out.set(FDataComponents.PLATING.get(), new Plating(coat.metal(), coat.thickness(), Plating.Quality.SOUND));
+        rebake(out);
+        return out;
+    }
+
+    /**
+     * A blow of {@code strain} on the piece: a coat of a brittle material (its toughness under {@link ModularBake#fracture})
+     * past the strain it takes loses a share of what is left by how far past. Impact only, never time.
+     */
+    public static void struck(ItemStack stack, float strain) {
+        Plating coat = stack.get(FDataComponents.PLATING.get());
+        Material m = coat == null || coat.intact() <= 0f ? null : MaterialTable.get().materials().get(coat.metal());
+        if (m == null)
+            return;
+        float limit = ModularBake.coatChipStrain(m);
+        if (strain <= limit)
+            return;
+        stack.set(FDataComponents.PLATING.get(), coat.withIntact(coat.intact() - ModularTuning.COAT_CHIP_SHARE * strain / limit));
+        rebake(stack);
+    }
+
+    /** The share of the heat from a source at {@code sourceTu} the piece's coat keeps out: none if the coat would melt in it. */
+    public static float coatShield(ItemStack stack, float sourceTu) {
+        Plating coat = stack.get(FDataComponents.PLATING.get());
+        Material m = coat == null ? null : MaterialTable.get().materials().get(coat.metal());
+        if (m == null || m.thermal().meltingPoint().map(t -> t.value() <= sourceTu).orElse(true))
+            return 0f;
+        return ModularTuning.COAT_HEAT_SHIELD * ModularBake.coatHold(coat);
+    }
+
+    /**
+     * A hot dip that overran: {@code over} Qu of coat past what holds. Each {@link FTuning#HOT_DIP_FLAW_PER_QU} of it is a
+     * flaw on the wearing part (the intermetallic layer grows brittle: a share of toughness and, by it, durability, as
+     * forging flaws cost); past {@link FTuning#HOT_DIP_DISSOLVE_ABOVE_QU} the bath also eats the part, thinning it by
+     * {@link FTuning#HOT_DIP_DISSOLVE_WORK} a dip until it is scrap. Returns what is left to hand back, rebaked.
+     */
+    public static ItemStack overrun(ItemStack piece, float over) {
+        ModularDesign d = design(piece);
+        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        Part wear = type == null ? null : d.part(type.wearRole());
+        if (wear == null || over <= 0f)
+            return piece;
+        int flaw = Math.max(wear.flaw(), Math.min(ForgeRhythm.MAX_FLAW, (int) Math.ceil(over / FTuning.HOT_DIP_FLAW_PER_QU)));
+        float work = wear.dim(ForgeRhythm.WORK, 1f);
+        if (over > FTuning.HOT_DIP_DISSOLVE_ABOVE_QU)
+            work += FTuning.HOT_DIP_DISSOLVE_WORK;
+        if (work >= FTuning.HOT_DIP_SCRAP_WORK) {
+            Material m = MaterialTable.get().materials().get(wear.material());
+            return new ItemStack(io.github.soundgoodizerfan.feedback.process.Failure.item(
+                    m == null ? Material.Kind.METAL : m.kind().orElse(Material.Kind.METAL)));
+        }
+        Map<String, Float> dims = new java.util.HashMap<>(wear.dims());
+        dims.put(ForgeRhythm.WORK, work);
+        piece.set(FModular.DESIGN.get(), d.withPart(new Part(wear.role(), wear.material(), wear.form(), wear.count(),
+                wear.kind(), wear.variant(), flaw, dims)));
+        rebake(piece);
+        return piece;
+    }
+
     /** Never lets a hit spend the last point: broken, not destroyed. */
     public static int cap(ItemStack stack, int amount) {
         return Math.max(0, Math.min(WardKinds.soak(stack, amount), stack.getMaxDamage() - 1 - stack.getDamageValue()));
@@ -454,6 +524,7 @@ public final class ModularStacks {
     public static void mined(ItemStack stack, Level level, BlockState state, net.minecraft.core.BlockPos pos, LivingEntity miner) {
         if (level.isClientSide || state.getDestroySpeed(level, pos) == 0f)
             return;
+        struck(stack, state.getDestroySpeed(level, pos) * ModularTuning.CHIP_STRAIN_PER_HARDNESS);
         int extra = misuse(stack, level, state, pos) + rust(stack, miner);
         if (extra > 0)
             stack.hurtAndBreak(extra, miner, net.minecraft.world.entity.EquipmentSlot.MAINHAND);

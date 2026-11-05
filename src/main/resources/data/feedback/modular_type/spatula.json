@@ -23,6 +23,31 @@
           "plate",
           "*_planks",
           "bone"
+        ],
+        "base": "turner",
+        "variants": [
+          {
+            "name": "turner"
+          },
+          {
+            "name": "wide_turner",
+            "shape": [
+              "BB"
+            ],
+            "params": {
+              "flips": 2.0
+            }
+          },
+          {
+            "name": "slotted_turner",
+            "shape": [
+              "B",
+              "B"
+            ],
+            "params": {
+              "drain": 0.1
+            }
+          }
         ]
       }
     },

@@ -118,7 +118,7 @@ public class SkilletRenderer implements BlockEntityRenderer<SkilletBlockEntity> 
     }
 
     /** An open-bottomed box of one colour, each side shaded by which way it faces. */
-    private static void box(VertexConsumer c, Matrix4f m, TextureAtlasSprite s, float x0, float y0, float z0, float x1, float y1, float z1, int rgb, int light) {
+    static void box(VertexConsumer c, Matrix4f m, TextureAtlasSprite s, float x0, float y0, float z0, float x1, float y1, float z1, int rgb, int light) {
         quad(c, m, s, x0, z0, x1, z1, y1, rgb, 1f, light);
         side(c, m, s, x1, y0, z1, x1, y0, z0, x1, y1, z0, x1, y1, z1, 1f, 0f, 0f, shade(rgb, 0.65f), light, y1 - y0);
         side(c, m, s, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0, -1f, 0f, 0f, shade(rgb, 0.65f), light, y1 - y0);
@@ -145,12 +145,12 @@ public class SkilletRenderer implements BlockEntityRenderer<SkilletBlockEntity> 
         c.addVertex(m, x, y, z).setColor(r, g, b, a).setUv(u, v).setLight(light).setNormal(nx, ny, nz);
     }
 
-    private static int shade(int rgb, float k) {
+    static int shade(int rgb, float k) {
         return (int) ((rgb >> 16 & 255) * k) << 16 | (int) ((rgb >> 8 & 255) * k) << 8 | (int) ((rgb & 255) * k);
     }
 
     /** A flat top face; the texture is mapped by position over the block, so a strip shows the slice that is there. */
-    private static void quad(VertexConsumer c, Matrix4f m, TextureAtlasSprite s, float x0, float z0, float x1, float z1, float y, int rgb, float alpha, int light) {
+    static void quad(VertexConsumer c, Matrix4f m, TextureAtlasSprite s, float x0, float z0, float x1, float z1, float y, int rgb, float alpha, int light) {
         int r = rgb >> 16 & 255, g = rgb >> 8 & 255, b = rgb & 255, a = (int) (Mth.clamp(alpha, 0f, 1f) * 255f);
         float u0 = Mth.lerp(Mth.clamp(x0, 0f, 1f), s.getU0(), s.getU1()), u1 = Mth.lerp(Mth.clamp(x1, 0f, 1f), s.getU0(), s.getU1());
         float v0 = Mth.lerp(Mth.clamp(z0, 0f, 1f), s.getV0(), s.getV1()), v1 = Mth.lerp(Mth.clamp(z1, 0f, 1f), s.getV0(), s.getV1());
@@ -160,7 +160,7 @@ public class SkilletRenderer implements BlockEntityRenderer<SkilletBlockEntity> 
         c.addVertex(m, x1, y, z0).setColor(r, g, b, a).setUv(u1, v0).setLight(light).setNormal(0f, 1f, 0f);
     }
 
-    private static int lerp(int a, int b, float t) {
+    static int lerp(int a, int b, float t) {
         t = Mth.clamp(t, 0f, 1f);
         int r = (int) (Mth.lerp(t, a >> 16 & 255, b >> 16 & 255));
         int g = (int) (Mth.lerp(t, a >> 8 & 255, b >> 8 & 255));

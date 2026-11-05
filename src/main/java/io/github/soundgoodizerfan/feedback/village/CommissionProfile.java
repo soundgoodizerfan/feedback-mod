@@ -65,13 +65,19 @@ public record CommissionProfile(ResourceLocation profession, List<Entry> orders)
      * @param level the villager trade level from which the type is ordered
      * @param pay   emeralds for a Good delivery
      */
-    public record Entry(ResourceLocation type, int level, int pay, List<Axis> axes) {
+    public record Entry(ResourceLocation type, int level, int pay, List<Axis> axes, java.util.Map<String, List<Axis>> leans) {
+
+        /** What a villager of this type (a biome's villagers: {@code taiga}, {@code desert}) leans toward on a dish: each axis' span is how far it is flexible, its middle what it likes. */
+        public List<Axis> leanFor(String villagerType) {
+            return leans.getOrDefault(villagerType, List.of());
+        }
 
         public static final Codec<Entry> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("type").forGetter(Entry::type),
                 Codec.INT.optionalFieldOf("level", 1).forGetter(Entry::level),
                 Codec.INT.fieldOf("pay").forGetter(Entry::pay),
-                Axis.CODEC.listOf().fieldOf("axes").forGetter(Entry::axes)).apply(i, Entry::new));
+                Axis.CODEC.listOf().fieldOf("axes").forGetter(Entry::axes),
+                Codec.unboundedMap(Codec.STRING, Axis.CODEC.listOf()).optionalFieldOf("leans", java.util.Map.of()).forGetter(Entry::leans)).apply(i, Entry::new));
     }
 
     public static final Codec<CommissionProfile> CODEC = RecordCodecBuilder.create(i -> i.group(

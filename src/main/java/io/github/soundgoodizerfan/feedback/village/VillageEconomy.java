@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.modular.DishProfile;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
@@ -78,6 +79,11 @@ public final class VillageEconomy {
         return m instanceof Villager v ? BuiltInRegistries.VILLAGER_PROFESSION.getKey(v.getVillagerData().getProfession()) : WANDERER;
     }
 
+    /** The villager's kind by home biome (taiga, desert, plains ...): what a dish order's lean is keyed on. */
+    public static String villagerType(AbstractVillager m) {
+        return m instanceof Villager v ? BuiltInRegistries.VILLAGER_TYPE.getKey(v.getVillagerData().getType()).getPath() : "";
+    }
+
     public static int level(AbstractVillager m) {
         return m instanceof Villager v ? v.getVillagerData().getLevel() : 1;
     }
@@ -113,7 +119,7 @@ public final class VillageEconomy {
         boolean wanderer = !(m instanceof Villager);
         List<OrderView> orders = new ArrayList<>();
         if (!wanderer) {
-            for (Order o : OrderGen.orders(m.getUUID(), profession(m), level, day)) {
+            for (Order o : OrderGen.orders(m.getUUID(), profession(m), villagerType(m), level, day)) {
                 List<TermView> terms = new ArrayList<>();
                 for (Order.Term t : o.terms())
                     terms.add(new TermView(t.fig(), t.band(), t.must(), t.above()));
@@ -136,7 +142,7 @@ public final class VillageEconomy {
             xpMax = VillagerData.getMaxXpPerLevel(level) - VillagerData.getMinXpPerLevel(level);
         }
         return new VillagerView(wanderer, level, xp, xpMax, rep, List.copyOf(orders), ledger.doneMask(), List.copyOf(goods), List.copyOf(wants),
-                VillagerView.NONE, -1, false, 0);
+                VillagerView.NONE, -1, false, 0, List.of());
     }
 
     /** A blueprint of the named design: a gun pool entry, else the starter design of a modular type; empty if neither exists. */
@@ -195,6 +201,21 @@ public final class VillageEconomy {
         return EnchantedBookItem.createForEnchantment(new EnchantmentInstance(e, 1 + rnd.nextInt(e.value().getMaxLevel())));
     }
 
+    // --- a hint ---
+
+    /** The hint button: worded hints for the order at {@code index}, sent back with the view. Free; nothing is stored. */
+    public static void hint(ServerPlayer p, VillagerMenu menu, int index, int key) {
+        AbstractVillager m = menu.merchant();
+        if (!(m instanceof Villager v) || !menu.stillValid(p))
+            return;
+        List<Order> orders = OrderGen.orders(v.getUUID(), profession(v), villagerType(v), level(v), today(v));
+        if (index < 0 || index >= orders.size() || orders.get(index).type().hashCode() != key) {
+            send(p, menu, view(p, v));
+            return;
+        }
+        send(p, menu, view(p, v).withHint(VillageHints.of(orders.get(index))));
+    }
+
     // --- a delivery ---
 
     public static void deliver(ServerPlayer p, VillagerMenu menu, int index, int key) {
@@ -203,7 +224,7 @@ public final class VillageEconomy {
             return;
         long day = today(v);
         Ledger ledger = v.getData(FVillage.LEDGER).on(day);
-        List<Order> orders = OrderGen.orders(v.getUUID(), profession(v), level(v), day);
+        List<Order> orders = OrderGen.orders(v.getUUID(), profession(v), villagerType(v), level(v), day);
         if (index < 0 || index >= orders.size() || ledger.done(index))
             return;
         Order order = orders.get(index);
@@ -213,7 +234,7 @@ public final class VillageEconomy {
         }
         ItemStack item = menu.delivered();
         ModularDesign design = ModularStacks.design(item);
-        ModularFigures figures = ModularStacks.figures(item);
+        ModularFigures figures = DishProfile.read(item, v.level());
         if (design == null || figures == null || !design.type().equals(order.type())) {
             send(p, menu, view(p, v).withResult(VillagerView.WRONG, -1, false, 0));
             return;
@@ -225,7 +246,7 @@ public final class VillageEconomy {
             send(p, menu, view(p, v).withResult(r.grade().ordinal(), r.worst() == null ? -1 : r.worst().ordinal(), r.worstHigh(), 0));
             return;
         }
-        String bin = binKey(order.type(), design);
+        String bin = DishProfile.is(item) ? order.type() + "|" + DishProfile.bin(figures) : binKey(order.type(), design);
         int paid = Math.round(order.pay() * r.grade().payFactor() * ledger.payKept(bin, day));
         menu.consume();
         if (paid > 0)

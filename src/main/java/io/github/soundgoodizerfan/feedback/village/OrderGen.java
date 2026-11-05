@@ -47,7 +47,7 @@ public final class OrderGen {
         return Math.max(VillageTuning.TOLERANCE_FLOOR, VillageTuning.TOLERANCE_NOVICE - VillageTuning.TOLERANCE_STEP * (level - 1));
     }
 
-    public static List<Order> orders(UUID villager, ResourceLocation profession, int level, long day) {
+    public static List<Order> orders(UUID villager, ResourceLocation profession, String villagerType, int level, long day) {
         List<CommissionProfile.Entry> pool = CommissionTable.get().forProfession(profession).stream()
                 .filter(e -> e.level() <= level && !e.axes().isEmpty()).toList();
         List<Order> out = new ArrayList<>();
@@ -55,12 +55,12 @@ public final class OrderGen {
             return out;
         for (int i = 0; i < count(level); i++) {
             RandomSource rnd = RandomSource.create(mix(villager.getMostSignificantBits(), villager.getLeastSignificantBits(), day, i));
-            out.add(build(villager, pool.get(rnd.nextInt(pool.size())), level, rnd));
+            out.add(build(villager, pool.get(rnd.nextInt(pool.size())), villagerType, level, rnd));
         }
         return out;
     }
 
-    private static Order build(UUID villager, CommissionProfile.Entry e, int level, RandomSource rnd) {
+    private static Order build(UUID villager, CommissionProfile.Entry e, String villagerType, int level, RandomSource rnd) {
         List<Axis> axes = new ArrayList<>(e.axes());
         for (int i = axes.size() - 1; i > 0; i--)
             java.util.Collections.swap(axes, i, rnd.nextInt(i + 1));
@@ -89,7 +89,12 @@ public final class OrderGen {
             quirks.add(new Order.Term(a.fig(), a.lo(), a.hi(), a.lo() + frac * a.range(), tol, false, false));
             break;
         }
-        return new Order(e.type(), e.pay(), List.copyOf(terms), List.copyOf(quirks));
+        // The biome's lean on axes the stated terms leave alone: what the villager's kind of place likes.
+        List<Order.Term> leans = new ArrayList<>();
+        for (Axis a : e.leanFor(villagerType))
+            if (terms.stream().noneMatch(t -> t.fig() == a.fig()))
+                leans.add(new Order.Term(a.fig(), a.lo(), a.hi(), (a.lo() + a.hi()) * 0.5f, tol, false, false));
+        return new Order(e.type(), e.pay(), List.copyOf(terms), List.copyOf(quirks), List.copyOf(leans));
     }
 
     private static long mix(long... parts) {

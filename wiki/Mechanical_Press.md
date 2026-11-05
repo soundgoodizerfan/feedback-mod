@@ -30,7 +30,7 @@ It sits **directly on a shaft line**; connect it from any side. It presses once 
 
 ## Pressing powder
 
-Cermet Powder and Tungsten Carbide Powder from the [Mixer](Mixer.md#mixing-powders-for-pressing) go in as the workpiece, and the press packs each one into a green compact ready for the [Kiln](Furnaces.md#sintering). Carbide is hard, so it needs a head strong enough for it.
+Cermet Powder, Tungsten Carbide Powder and Osmium Powder from the [Mixer](Mixer.md#mixing-powders-for-pressing) go in as the workpiece, and the press packs each one into a green compact ready for sintering: the [Kiln](Furnaces.md#sintering) takes cermet and carbide, the [Arc Hearth](Arc_Furnace.md#sintering-under-gas) takes osmium. Carbide is hard, so it needs a head strong enough for it.
 
 ## Press or hammer?
 

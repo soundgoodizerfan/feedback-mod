@@ -168,6 +168,12 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     public record Chest(ResourceLocation material, float capacityMb) {
     }
 
+    /** Pressure (Pu) the chest is rated for, from its metal's yield: what a steam fill is read against. 0 for a gun with none. */
+    public float steamRating(java.util.Map<ResourceLocation, Material> materials) {
+        return parts.chest().map(c -> materials.get(c.material())).filter(m -> m != null && buildable(m))
+                .map(m -> m.mechanical().yieldStrength().get().value() * FTuning.GUN_STEAM_RATING_PER_ST).orElse(0f);
+    }
+
     /** mB of steam a full chest holds, or 0 for a gun with none. */
     public float steamCapacityMb() {
         return parts.chest().map(Chest::capacityMb).orElse(0f);

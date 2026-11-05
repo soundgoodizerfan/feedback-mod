@@ -218,6 +218,14 @@ None of this is random. If the tooltip and the HUD aren't red, a round can't hur
 
 To make a gun that holds more pressure: use a stronger metal, a thicker chamber wall, or a smaller bore.
 
+## Steam launchers
+
+A gun built with a **steam chest** (a plate part, small or large) fires from steam instead of powder. The round is a plain slug. Right-click a [Boiler](Boiler.md) with the gun to fill the chest. The chest fills only as far as the boiler's pressure allows: a boiler at 1.5 Pu fills it halfway, a boiler near 3 Pu fills it full. Each shot lets out 100 mB, a gun with less than that only hisses, and steam in a carried gun slowly condenses away.
+
+Two fittings change how a steam launcher behaves. A **Steam Valve** is metered (about 60% of the steam per shot, a slower cycle) or a dump valve (about 150%, a faster cycle). **Lagging** round the chest makes carried steam condense away at a quarter of the rate.
+
+The HUD shows the steam in the chest in place of spare rounds. The chest has a pressure rating from its metal's strength. Fill it past that rating and it lets go: the gun is damaged, steam scalds whoever is holding it, and the chest empties. A shot taken at a pressure above the rating hurts the same way as an overpressure round.
+
 ## Test commands
 
 Operators can use `/feedback build` (the item built exactly to the held blueprint, a gun or any tool), `/feedback build parts`, `/feedback barrel`, `/feedback round` and `/feedback magazine`. They hand out items carrying data no recipe browser can show, for testing. They aren't a survival route.

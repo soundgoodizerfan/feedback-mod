@@ -1,6 +1,6 @@
 # Villagers
 
-Villagers and wandering traders deal at a **counter** instead of vanilla's trade screen. A villager posts daily **commissions** for finished tools, weapons and armor, sells a short list of goods for emeralds and buys goods from you. How you are known in the village sets the prices.
+Villagers and wandering traders deal at a **counter** instead of vanilla's trade screen. A villager posts daily **commissions** for finished tools, weapons, armor and dishes, sells a short list of goods for emeralds and buys goods from you. How you are known in the village sets the prices.
 
 ## What vanilla does
 
@@ -24,15 +24,24 @@ Each day a villager holds **2 plus its trade level** commissions. The orders are
 | Weaponsmith | sword, spear, cleaver, maul |
 | Armorer | helmet, boots, leggings, chestplate, shield |
 | Fletcher | bow, crossbow |
-| Farmer | hoe, sickle |
-| Butcher | cleaver |
+| Farmer | hoe, sickle; plate, soup, skewer, wrap, pie |
+| Butcher | cleaver; plate, soup, skewer, wrap |
+| Fisherman | plate, soup, skewer, wrap |
+| Shepherd | plate, soup, skewer, wrap |
 | Mason | pickaxe, shovel |
 
 Higher-level villagers order more kinds of piece and pay more.
 
 ### Reading an order
 
-Wants are in words, such as "hard", "quick" or "lasting". One want is a hard requirement, shown as "At least" or "No more than" a word. Some wants are never said; the complaint after a delivery is how you find them out.
+Each stated term reads "Noun: word", for example "Edge hardness: at least hard". Next to it a four-cell bar shows where in the usual range the target sits; a hard requirement fills every cell it allows. Hover a term to see what the figure means. One term is a hard requirement, shown as "at least" or "no more than" a word. Some wants are never said; the complaint after a delivery is how you find them out.
+
+### Hints
+
+The **Hint** button on the Orders tab explains the selected order. Hints are free and stay until you press **Back** or pick another order.
+
+- For a tool or armor order, each stated term gets a line naming which part of the item to build from which materials, up to four materials, or saying that no single material gets there and you should combine or reshape parts. Each hint swaps one part of the plain design; the whole item is what is judged.
+- For a dish order, each stated term gets a line saying how to move it: more animal parts, delivering it hot, salted food, smoking, a sealed container and so on. A closing line points to the [Tasting Spoon](Tasting_Spoon.md).
 
 ### Delivering
 
@@ -46,7 +55,15 @@ A Rejected piece is handed back and the order stays open, but the villager think
 
 ### Repeat deliveries
 
-Delivering the same type of piece in the same kind of material again and again pays less for about three days. Varying the type or the material keeps the pay up.
+Delivering the same type of piece in the same kind of material again and again pays less for about three days. Varying the type or the material keeps the pay up. Dishes follow the same rule: a similar dish (same main kind of food, same cuisine, same doneness) pays less for a few days.
+
+### Dish orders
+
+Farmers, butchers, fishermen and shepherds also order dishes made at the [Prep Table](Prep_Table.md). Plate, soup and skewer orders appear from low trade levels, wrap at level 3 and pie at level 4 (farmers only for pie).
+
+A dish order states terms on some of: heartiness, richness, chew, moisture, doneness, char, saltiness, smokiness, freshness, warmth, and the share of meat, fish, greens and grain. Put the dish in the delivery slot and press **Deliver**. The dish is judged as it arrives, so rot, cooling and drying count. It is graded **Rejected** to **Exceptional**, paid in emeralds, and the villager names the single worst quality in an adjective, such as "burnt".
+
+Each villager also has tastes of its own. The biome type it comes from (taiga, desert, plains, savanna, snow, swamp, jungle) leans it toward certain cuisines and foods. These tastes count for less than the stated terms and are never said; the complaint is how you find them out. The [Tasting Spoon](Tasting_Spoon.md) reads a dish before you deliver it.
 
 ## Standing
 
@@ -108,8 +125,10 @@ Some professions sell a **blueprint**, one per day each, at a high price. A line
 | Toolsmith | hand hammer | 6 | 2 | 10 |
 | Farmer | sickle | 6 | 2 | 10 |
 | Armorer | chestplate | 12 | 3 | 10 |
+| Farmer | wrap recipe card | 8 | 3 | 10 |
+| Butcher | skewer recipe card | 6 | 2 | 10 |
 
-Blueprints for tools and armor carry the type's default design. Gun blueprints carry that gun's design.
+Blueprints for tools and armor carry the type's default design. Gun blueprints carry that gun's design. A recipe card carries a dish layout: open it to read the layout and the predicted figures.
 
  The wandering trader sells a small fixed list with a daily stock and no standing.
 

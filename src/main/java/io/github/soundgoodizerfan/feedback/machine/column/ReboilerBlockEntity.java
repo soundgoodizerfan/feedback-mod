@@ -273,10 +273,9 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
                 overhead(server, trays, cut, left, temperature);
             // The lights drawn off are no longer in the feed.
             if (!feed.isEmpty() && before > boiled) {
-                float remaining = Math.max(0f, (lights * before - boiled) / (before - boiled));
-                feed.getFluid().set(FDataComponents.CRUDE_GRADE.get(),
-                        new CrudeGrade(grade.density(), grade.sulfur(), remaining));
-                lights = remaining;
+                CrudeGrade drawn = grade.withLightsDrawn(lights, before, boiled);
+                feed.getFluid().set(FDataComponents.CRUDE_GRADE.get(), drawn);
+                lights = drawn.lightFraction();
             }
         }
     }

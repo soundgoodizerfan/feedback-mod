@@ -65,7 +65,7 @@ Not everything is metal. A few others matter for parts and protection:
 | Wool, Paper | | 0.5 | | wrapping a grip |
 | Honey | | 1.5 | | wrapping a grip: the grippiest there is |
 | Diamond | 100 | | | armor: nothing pierces it |
-| Heavy Core | 9 | | | found, not made: see [Heavy Core](Heavy_Core.md) |
+| Heavy Core | 9 | | | dense as osmium, sintered from osmium powder: see [Heavy Core](Heavy_Core.md) |
 | Silicon, glasses, graphite, polymers | | | | sections below |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armor](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.

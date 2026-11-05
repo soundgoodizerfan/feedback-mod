@@ -101,6 +101,12 @@ public final class ModularTuning {
     public static final float COAT_SURFACE_SHARE = 0.1f;
     /** What a coat grown burnt or mixed still does of what a sound one does. */
     public static final float COAT_FAULTY_HOLD = 0.5f;
+    /** Share of a brittle coat one hit chips off per multiple of the strain its material takes; the strain of a blow is its damage. */
+    public static final float COAT_CHIP_SHARE = 0.04f;
+    /** Strain an armour point of damage puts on a coat (a plate's damage is a quarter of the blow). */
+    public static final float COAT_ARMOUR_STRAIN = 4f;
+    /** Most a whole coat that does not melt cuts the heat a shield face takes in. */
+    public static final float COAT_HEAT_SHIELD = 0.5f;
     /** Chance, per block mined, that a tool used wet gives up a point to rust, times the share of water it does not resist. */
     public static final float CORRODE_CHANCE = 0.05f;
     /** A piece made whole of a material tougher than this share of its hardness is not brittle. */

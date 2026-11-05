@@ -27,8 +27,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 /**
  * The Prep Table's menu: {@link ToolTableMenu} for dishes. Parts shapes the containers (bowl, plate, skewer) with the
- * knife; Assemble builds the dish type the picker names; the third tab is Prepare, the Cut minigame's place (not
- * built). A knife takes the hammer's slot and loses a point per container or dish; there is no rework (a dish is
+ * knife; Assemble builds the dish type the picker names; the third tab is Prepare, the Cut minigame's place. A knife takes the hammer's slot and loses a point per container or dish; there is no rework (a dish is
  * eaten, not taken apart) and no plan slot. Each assembly slot holds one food, since a role's count here is one.
  */
 public class PrepTableMenu extends ToolTableMenu {

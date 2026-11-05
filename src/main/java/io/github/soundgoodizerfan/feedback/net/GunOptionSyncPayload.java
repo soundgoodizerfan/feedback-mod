@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /** Ships the gun option table to the client -- {@link MaterialSyncPayload}'s reasoning: the bake runs there too. */
@@ -49,6 +50,9 @@ public record GunOptionSyncPayload(Map<ResourceLocation, GunOption> options) imp
     }
 
     public static void handle(GunOptionSyncPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> GunOptions.setClient(payload.options()));
+        context.enqueueWork(() -> {
+            GunOptions.setClient(payload.options());
+            io.github.soundgoodizerfan.feedback.process.ClientTable.GUN_OPTIONS.set(List.copyOf(payload.options().values()));
+        });
     }
 }

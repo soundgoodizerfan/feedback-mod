@@ -177,6 +177,50 @@
           }
         ]
       }
+    },
+    "P": {
+      "name": "pommel",
+      "forms": [
+        "tool_pommel"
+      ],
+      "litres": 0.03,
+      "at": -0.08,
+      "layer": 3,
+      "part": {
+        "item": "feedback:tool_pommel",
+        "shape": [
+          "P"
+        ],
+        "stock": [
+          "nugget",
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ],
+        "base": "knob",
+        "variants": [
+          {
+            "name": "knob"
+          },
+          {
+            "name": "ball",
+            "shape": [
+              "PP"
+            ],
+            "centre": -0.03
+          },
+          {
+            "name": "counterweight",
+            "shape": [
+              "PP",
+              "P "
+            ],
+            "centre": -0.07
+          }
+        ]
+      }
     }
   },
   "patterns": [

@@ -1,0 +1,600 @@
+{
+  "profession": "minecraft:shepherd",
+  "orders": [
+    {
+      "type": "feedback:plate",
+      "level": 1,
+      "pay": 2,
+      "axes": [
+        {
+          "fig": "hunger",
+          "lo": 2,
+          "hi": 16
+        },
+        {
+          "fig": "share_meat",
+          "lo": 0,
+          "hi": 1
+        },
+        {
+          "fig": "fat",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_warmth",
+          "lo": 20,
+          "hi": 70
+        },
+        {
+          "fig": "fibre",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_salt",
+          "lo": 0,
+          "hi": 0.3
+        }
+      ],
+      "leans": {
+        "taiga": [
+          {
+            "fig": "cuisine_eastern_european",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_starch",
+            "lo": 0.25,
+            "hi": 0.8
+          }
+        ],
+        "desert": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_salt",
+            "lo": 0.05,
+            "hi": 0.25
+          }
+        ],
+        "plains": [
+          {
+            "fig": "cuisine_italian",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "savanna": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "cuisine_mexican",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "snow": [
+          {
+            "fig": "share_seafood",
+            "lo": 0.2,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_smoke",
+            "lo": 0.1,
+            "hi": 0.5
+          }
+        ],
+        "swamp": [
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          },
+          {
+            "fig": "dish_moisture",
+            "lo": 0.5,
+            "hi": 0.95
+          }
+        ],
+        "jungle": [
+          {
+            "fig": "cuisine_east_asian",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          }
+        ]
+      }
+    },
+    {
+      "type": "feedback:soup",
+      "level": 1,
+      "pay": 2,
+      "axes": [
+        {
+          "fig": "hunger",
+          "lo": 2,
+          "hi": 16
+        },
+        {
+          "fig": "share_meat",
+          "lo": 0,
+          "hi": 1
+        },
+        {
+          "fig": "fat",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_warmth",
+          "lo": 20,
+          "hi": 70
+        },
+        {
+          "fig": "fibre",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_salt",
+          "lo": 0,
+          "hi": 0.3
+        }
+      ],
+      "leans": {
+        "taiga": [
+          {
+            "fig": "cuisine_eastern_european",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_starch",
+            "lo": 0.25,
+            "hi": 0.8
+          }
+        ],
+        "desert": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_salt",
+            "lo": 0.05,
+            "hi": 0.25
+          }
+        ],
+        "plains": [
+          {
+            "fig": "cuisine_italian",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "savanna": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "cuisine_mexican",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "snow": [
+          {
+            "fig": "share_seafood",
+            "lo": 0.2,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_smoke",
+            "lo": 0.1,
+            "hi": 0.5
+          }
+        ],
+        "swamp": [
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          },
+          {
+            "fig": "dish_moisture",
+            "lo": 0.5,
+            "hi": 0.95
+          }
+        ],
+        "jungle": [
+          {
+            "fig": "cuisine_east_asian",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          }
+        ]
+      }
+    },
+    {
+      "type": "feedback:skewer",
+      "level": 2,
+      "pay": 3,
+      "axes": [
+        {
+          "fig": "hunger",
+          "lo": 2,
+          "hi": 16
+        },
+        {
+          "fig": "share_meat",
+          "lo": 0,
+          "hi": 1
+        },
+        {
+          "fig": "fat",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_warmth",
+          "lo": 20,
+          "hi": 70
+        },
+        {
+          "fig": "fibre",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_salt",
+          "lo": 0,
+          "hi": 0.3
+        }
+      ],
+      "leans": {
+        "taiga": [
+          {
+            "fig": "cuisine_eastern_european",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_starch",
+            "lo": 0.25,
+            "hi": 0.8
+          }
+        ],
+        "desert": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_salt",
+            "lo": 0.05,
+            "hi": 0.25
+          }
+        ],
+        "plains": [
+          {
+            "fig": "cuisine_italian",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "savanna": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "cuisine_mexican",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "snow": [
+          {
+            "fig": "share_seafood",
+            "lo": 0.2,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_smoke",
+            "lo": 0.1,
+            "hi": 0.5
+          }
+        ],
+        "swamp": [
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          },
+          {
+            "fig": "dish_moisture",
+            "lo": 0.5,
+            "hi": 0.95
+          }
+        ],
+        "jungle": [
+          {
+            "fig": "cuisine_east_asian",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          }
+        ]
+      }
+    },
+    {
+      "type": "feedback:wrap",
+      "level": 3,
+      "pay": 4,
+      "axes": [
+        {
+          "fig": "hunger",
+          "lo": 2,
+          "hi": 16
+        },
+        {
+          "fig": "share_meat",
+          "lo": 0,
+          "hi": 1
+        },
+        {
+          "fig": "fat",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_warmth",
+          "lo": 20,
+          "hi": 70
+        },
+        {
+          "fig": "fibre",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_salt",
+          "lo": 0,
+          "hi": 0.3
+        }
+      ],
+      "leans": {
+        "taiga": [
+          {
+            "fig": "cuisine_eastern_european",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_starch",
+            "lo": 0.25,
+            "hi": 0.8
+          }
+        ],
+        "desert": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_salt",
+            "lo": 0.05,
+            "hi": 0.25
+          }
+        ],
+        "plains": [
+          {
+            "fig": "cuisine_italian",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "savanna": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "cuisine_mexican",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "snow": [
+          {
+            "fig": "share_seafood",
+            "lo": 0.2,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_smoke",
+            "lo": 0.1,
+            "hi": 0.5
+          }
+        ],
+        "swamp": [
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          },
+          {
+            "fig": "dish_moisture",
+            "lo": 0.5,
+            "hi": 0.95
+          }
+        ],
+        "jungle": [
+          {
+            "fig": "cuisine_east_asian",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          }
+        ]
+      }
+    },
+    {
+      "type": "feedback:pie",
+      "level": 4,
+      "pay": 8,
+      "axes": [
+        {
+          "fig": "hunger",
+          "lo": 2,
+          "hi": 16
+        },
+        {
+          "fig": "share_meat",
+          "lo": 0,
+          "hi": 1
+        },
+        {
+          "fig": "fat",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_warmth",
+          "lo": 20,
+          "hi": 70
+        },
+        {
+          "fig": "fibre",
+          "lo": 0,
+          "hi": 0.5
+        },
+        {
+          "fig": "dish_salt",
+          "lo": 0,
+          "hi": 0.3
+        },
+        {
+          "fig": "dish_cook",
+          "lo": 0,
+          "hi": 1
+        }
+      ],
+      "leans": {
+        "taiga": [
+          {
+            "fig": "cuisine_eastern_european",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_starch",
+            "lo": 0.25,
+            "hi": 0.8
+          }
+        ],
+        "desert": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_salt",
+            "lo": 0.05,
+            "hi": 0.25
+          }
+        ],
+        "plains": [
+          {
+            "fig": "cuisine_italian",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "savanna": [
+          {
+            "fig": "share_meat",
+            "lo": 0.3,
+            "hi": 0.8
+          },
+          {
+            "fig": "cuisine_mexican",
+            "lo": 0.2,
+            "hi": 1
+          }
+        ],
+        "snow": [
+          {
+            "fig": "share_seafood",
+            "lo": 0.2,
+            "hi": 0.8
+          },
+          {
+            "fig": "dish_smoke",
+            "lo": 0.1,
+            "hi": 0.5
+          }
+        ],
+        "swamp": [
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          },
+          {
+            "fig": "dish_moisture",
+            "lo": 0.5,
+            "hi": 0.95
+          }
+        ],
+        "jungle": [
+          {
+            "fig": "cuisine_east_asian",
+            "lo": 0.2,
+            "hi": 1
+          },
+          {
+            "fig": "share_plant",
+            "lo": 0.4,
+            "hi": 1
+          }
+        ]
+      }
+    }
+  ]
+}

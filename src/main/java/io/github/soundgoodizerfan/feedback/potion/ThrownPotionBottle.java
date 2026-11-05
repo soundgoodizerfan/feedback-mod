@@ -75,18 +75,17 @@ public class ThrownPotionBottle extends ThrowableItemProjectile {
             boolean blast = PotionEffects.IGNITE.equals(id);
             if (PotionEffects.EXPLOSION.equals(id))
                 PotionEffects.explode(server, getOwner() != null ? getOwner() : this, position(), amplifier);
-            else for (LivingEntity body : server.getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(reach))) {
+            else if (blast) for (LivingEntity body : server.getEntitiesOfClass(LivingEntity.class, new AABB(position(), position()).inflate(reach))) {
                 float near = 1f - (float) Math.sqrt(body.distanceToSqr(position())) / reach;
                 if (near <= 0f)
                     continue;
-                if (blast) {
-                    body.hurt(Hazards.source(server, Hazards.HOT_CONTACT), PotionTuning.BLAST_DAMAGE * (1 + amplifier) * near);
-                    body.igniteForSeconds(PotionTuning.BLAST_BURN_SECONDS * near);
-                } else
-                    PotionEffects.apply(id, body, amplifier, Math.max(20, Math.round(state.duration() * PotionTuning.THROW_DURATION * near)));
+                body.hurt(Hazards.source(server, Hazards.HOT_CONTACT), PotionTuning.BLAST_DAMAGE * (1 + amplifier) * near);
+                body.igniteForSeconds(PotionTuning.BLAST_BURN_SECONDS * near);
             }
             if (blast)
                 PotionEffects.burst(server, blockPosition());
+            else if (!PotionEffects.EXPLOSION.equals(id))
+                PotionEffects.splash(server, getOwner(), position(), reach, id, amplifier, state.duration());
         }
         server.sendParticles(ParticleTypes.SPLASH, getX(), getY(), getZ(), 12, 0.3, 0.2, 0.3, 0.1);
         server.playSound(null, blockPosition(), SoundEvents.GLASS_BREAK, SoundSource.NEUTRAL, 0.8f, 1f);

@@ -43,7 +43,9 @@ import io.github.soundgoodizerfan.feedback.process.AlloyMix;
 import io.github.soundgoodizerfan.feedback.process.Failure;
 import io.github.soundgoodizerfan.feedback.process.MoltenVessel;
 import io.github.soundgoodizerfan.feedback.process.PhaseChange;
+import io.github.soundgoodizerfan.feedback.process.ProcessRun;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
+import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.process.Mixture;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
@@ -112,6 +114,25 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
 
     /** The stacks the thermal process works on, in order; results are placed back into them. */
     protected abstract List<ItemStack> processSlots();
+
+    /** Whether the vessel hides its glow (insulation round it); a vessel with a wall of its own overrides this. */
+    protected boolean darkened() {
+        return false;
+    }
+
+    /**
+     * A hot vessel holding metal glows (spec incandescence): the band of its temperature sets a real block light level, moved only
+     * when the band changes. Call at the end of a tick, after any state change of its own.
+     */
+    protected void glow() {
+        if (level == null)
+            return;
+        boolean holdsMetal = alloy.amount() > 0 || processSlots().stream().anyMatch(stack -> !stack.isEmpty()
+                && io.github.soundgoodizerfan.feedback.process.Material.find(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stack)
+                .filter(l -> io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.glows(l.material())).isPresent());
+        io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.apply(level, worldPosition,
+                holdsMetal && !darkened() ? io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.light(temperature) : 0);
+    }
 
     /** Whether the process is held in a sealed chamber with no air blowing in (charcoal, sintering). */
     protected boolean airlessRun() {
@@ -331,15 +352,10 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         }
 
         // Outside the band, or changing too fast to trust in either direction, TPu decays rather than resetting outright.
-        float suitability = process.suitability(tu);
-        if (Math.abs(lastDelta) > process.maxRateTuPerTick().tuPerTick())
-            suitability = 0f;
-        if (suitability <= 0f) {
-            setTpu(slot, Math.max(0f, tpuOf(slot) - FTuning.TPU_DECAY_PER_TICK));
+        float suitability = ProcessRun.limited(process, process.suitability(tu), lastDelta);
+        setTpu(slot, ProcessRun.hold(tpuOf(slot), suitability));
+        if (suitability <= 0f)
             return;
-        }
-
-        setTpu(slot, tpuOf(slot) + suitability);
         if (tpuOf(slot) < process.requiredTpu())
             return;
 
@@ -359,17 +375,30 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         cleanEmpties(contents);
 
         // A row that wants a gas spends it when it is there; without it the batch comes out as the row's ruin.
-        boolean gassed = process.atmosphere().map(a -> {
+        // A sibling row (same result and hold, another gas: sintering in nitrogen or in argon) is the same batch under another atmosphere.
+        boolean gassed = process.atmosphere().map(own -> {
             FluidStack held = tank.getFluid();
-            boolean there = !held.isEmpty() && BuiltInRegistries.FLUID.getKey(held.getFluid()).equals(a.fluid())
-                    && held.getAmount() >= a.mb();
-            if (there)
-                tank.drain(a.mb(), IFluidHandler.FluidAction.EXECUTE);
-            return there;
+            var candidates = new ArrayList<ThermalProcess.Amount>();
+            candidates.add(own);
+            ThermalProcessTable.get().entries().stream()
+                    .filter(p -> p != process && p.atmosphere().isPresent() && ItemStack.isSameItem(p.result(), process.result())
+                            && p.requiredTpu() == process.requiredTpu())
+                    .forEach(p -> candidates.add(p.atmosphere().get()));
+            for (ThermalProcess.Amount a : candidates)
+                if (!held.isEmpty() && BuiltInRegistries.FLUID.getKey(held.getFluid()).equals(a.fluid()) && held.getAmount() >= a.mb()) {
+                    tank.drain(a.mb(), IFluidHandler.FluidAction.EXECUTE);
+                    return true;
+                }
+            return false;
         }).orElse(true);
 
-        if (!gassed)
+        if (!gassed) {
             placeHot(Failure.ruined(process, first));
+            // A toxic material heated without its gas gives off its fume (osmium powder oxidising to the tetroxide in air).
+            Material.find(MaterialTable.get().materials(), first.getItem()).ifPresent(l ->
+                    io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud.release(level,
+                            net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), io.github.soundgoodizerfan.feedback.core.hazard.Fumes.level(l.material())));
+        }
         else if (process.hasFluidResult()) {
             // Whatever will not fit is lost: a full vessel melting more metal spills it. A full vessel stuck on a bad ratio
             // spills its own mix in proportion to make room, so the metal that corrects the ratio always gets in.
@@ -379,7 +408,9 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
                 alloy.remove(Math.min(overflow, alloy.amount()));
             alloy.add(result.getFluid(), Math.min(result.getAmount(), tank.getCapacity() - alloy.amount()));
             refreshTank();
-        } else
+        } else if (process.fire().isPresent())
+            placeHot(io.github.soundgoodizerfan.feedback.modular.ModularStacks.fired(first, process.fire().get()));
+        else
             placeHot(process.result().copy());
 
         setTpu(slot, 0f);
@@ -495,8 +526,7 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
             temperature -= boilCost(cut, amount);
             // The lights drawn off are no longer in the feed.
             if (cut.lightShare().isPresent() && !tank.isEmpty() && before > amount)
-                tank.getFluid().set(FDataComponents.CRUDE_GRADE.get(), new CrudeGrade(grade.density(), grade.sulfur(),
-                        Math.max(0f, (light * before - amount) / (before - amount))));
+                tank.getFluid().set(FDataComponents.CRUDE_GRADE.get(), grade.withLightsDrawn(light, before, amount));
             vent(cut, amount, at);
             return;
         }

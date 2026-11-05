@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "tag": "feedback:platable_parts"
+    },
+    {
+      "item": "feedback:glass_ingot"
+    }
+  ],
+  "min_temperature": 1100,
+  "optimal_temperature": 1250,
+  "max_temperature": 1320,
+  "required_tpu": 400,
+  "fire": {
+    "metal": "feedback:glass",
+    "thickness": 0.5
+  }
+}

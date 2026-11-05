@@ -77,6 +77,9 @@ public class PrepCutScreen extends Screen {
     private final Specks specks = new Specks(48);
     private List<net.minecraft.util.FormattedCharSequence> hint = List.of();
 
+    /** The knife blade's shape, which the server reads the same way. */
+    private PrepWork.Edge edge = PrepWork.Edge.PLAIN;
+
     private PrepCutScreen(Screen parent, int containerId, ItemStack food, Material.Food figures, int rgb) {
         super(Component.translatable("gui.feedback.prep_cut.title"));
         this.parent = parent;
@@ -94,8 +97,10 @@ public class PrepCutScreen extends Screen {
         if (what.isEmpty() || what.get().material().food().isEmpty())
             return;
         PacketDistributor.sendToServer(new PrepareBeginPayload(menu.containerId, 0));
-        Minecraft.getInstance().setScreen(new PrepCutScreen(parent, menu.containerId, food, what.get().material().food().get(),
-                MaterialColors.of(what.get().id())));
+        PrepCutScreen screen = new PrepCutScreen(parent, menu.containerId, food, what.get().material().food().get(),
+                MaterialColors.of(what.get().id()));
+        screen.edge = PrepWork.Edge.of(menu.hammer());
+        Minecraft.getInstance().setScreen(screen);
     }
 
     @Override
@@ -138,7 +143,7 @@ public class PrepCutScreen extends Screen {
             return true;
         if (button == 0 && count < FTuning.CUT_MAX_MARKS) {
             aimed[count] = aim(x);
-            landed[count] = PrepWork.land(aimed[count], figures);
+            landed[count] = PrepWork.land(aimed[count], figures, edge);
             count++;
             stroke = STROKE;
             resort();
@@ -378,7 +383,7 @@ public class PrepCutScreen extends Screen {
     private void knife(GuiGraphics g) {
         int x = Mth.clamp(mouseX, barX, barX + BAR_W);
         if (count < FTuning.CUT_MAX_MARKS)
-            g.fill(at(PrepWork.land(aim(x), figures)), barY - 1, at(PrepWork.land(aim(x), figures)) + 1, barY + BAR_H + 1, SKIN.dim());
+            g.fill(at(PrepWork.land(aim(x), figures, edge)), barY - 1, at(PrepWork.land(aim(x), figures, edge)) + 1, barY + BAR_H + 1, SKIN.dim());
         float p = stroke > 0 ? Mth.sin(Mth.PI * (1f - (stroke - partial) / STROKE)) : 0f;
         int tip = barY - 26 + Math.round(p * 28f);
         g.fill(x - 1, tip - 22, x + 2, tip, SKIN.ink());

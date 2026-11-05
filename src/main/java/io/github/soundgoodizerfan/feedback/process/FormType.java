@@ -39,10 +39,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  *              something, whatever its kind, and for no other ({@code kinds} is then ignored).
  * @param ored  with {@code bearing}: also generated for a material that lists an {@code ore} form of its own
  *              (iron's hand-registered ore), so every ore, bearing or not, has its loose rock.
+ * @param pressed whether the form is a pressed and sintered slug: generated for a material that lists a {@code green_compact} form
+ *              and has no ingot (it cannot be cast, so powder metallurgy is its only road), whatever its kind ({@code kinds} is then ignored).
  * @param part  whether the form is a shaped part ({@link io.github.soundgoodizerfan.feedback.modular.ModularPartItem}):
  *              one shared item, the material on the stack ({@link MadeOf}), instead of an item per material.
  */
-public record FormType(List<Material.Kind> kinds, boolean block, boolean part, int mb, boolean bearing, boolean ored) {
+public record FormType(List<Material.Kind> kinds, boolean block, boolean part, int mb, boolean bearing, boolean ored, boolean pressed) {
 
     /** Volume of an item whose form names none: one ingot of stock, a cell of a shaped part. */
     public static final int DEFAULT_MB = 144;
@@ -53,7 +55,8 @@ public record FormType(List<Material.Kind> kinds, boolean block, boolean part, i
             Codec.BOOL.optionalFieldOf("part", false).forGetter(FormType::part),
             Codec.INT.optionalFieldOf("mb", DEFAULT_MB).forGetter(FormType::mb),
             Codec.BOOL.optionalFieldOf("bearing", false).forGetter(FormType::bearing),
-            Codec.BOOL.optionalFieldOf("ored", false).forGetter(FormType::ored)
+            Codec.BOOL.optionalFieldOf("ored", false).forGetter(FormType::ored),
+            Codec.BOOL.optionalFieldOf("pressed", false).forGetter(FormType::pressed)
     ).apply(instance, FormType::new));
 
     /** Forms drawn as grey overlay on stone and tinted by the material: an ore, and the loose rock that shows it. */
@@ -62,6 +65,8 @@ public record FormType(List<Material.Kind> kinds, boolean block, boolean part, i
     }
 
     public boolean appliesTo(Material material) {
+        if (pressed)
+            return material.forms().containsKey("green_compact") && material.exclude().contains("ingot");
         if (bearing)
             return !material.bears().isEmpty() || ored && material.forms().containsKey("ore");
         return material.kind().map(kinds::contains).orElse(false);

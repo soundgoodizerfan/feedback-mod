@@ -64,6 +64,15 @@ public final class GunBlueprintPool extends SimpleJsonResourceReloadListener {
     public record Entry(ResourceLocation id, ModularDesign design, Optional<Cartridge> round) {
     }
 
+    /** What a recipe browser needs of an entry: the design and whether a skeleton may carry it. */
+    public record Listing(ModularDesign design, boolean early) {
+        public static final net.minecraft.network.codec.StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, Listing> STREAM_CODEC =
+                net.minecraft.network.codec.StreamCodec.composite(
+                        ModularDesign.STREAM_CODEC, Listing::design,
+                        net.minecraft.network.codec.ByteBufCodecs.BOOL, Listing::early,
+                        Listing::new);
+    }
+
     private List<Entry> entries = List.of();
 
     private GunBlueprintPool() {
@@ -110,6 +119,10 @@ public final class GunBlueprintPool extends SimpleJsonResourceReloadListener {
         return spec.bake(materials, round)
                 .filter(f -> f.peakPressure().value() <= ceiling * 1.001f)
                 .map(f -> round);
+    }
+
+    public List<Listing> listings() {
+        return entries.stream().map(e -> new Listing(e.design(), e.round().isPresent())).toList();
     }
 
     /** The design of the pool entry called {@code id}, if there is one. */

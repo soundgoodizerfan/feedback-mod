@@ -47,6 +47,10 @@ Run an [EHV](Electricity.md#volts-and-amps) line to it. With three electrodes it
 
 The arc is capped by the **weakest electrode**: about 97% of the temperature at which its material sublimes (graphite, 3600 Tu) or boils (any conducting metal), and never above **3500 Tu**. A crucible or hearth under the arc climbs toward that, as it does under any fire ([Heat](Heat.md)).
 
+## Sintering under gas
+
+The hearth has a fluid face that takes **nitrogen** or **argon** and holds it under the arc head. A sintering batch (the [Heavy Core](Heavy_Core.md#making-it): three osmium green compacts) spends that gas, 300 mB of nitrogen or 150 mB of argon, and without it the batch is lost.
+
 ## Power
 
 The arc needs EHV. A large [Electric Machine](Electric_Machine.md) on a dense or heavy-dense winding, as a generator on a [Gas Turbine](Gas_Turbine.md) or a [Steam Turbine](Steam_Turbine.md), supplies it in survival:

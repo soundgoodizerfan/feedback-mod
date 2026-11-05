@@ -124,6 +124,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CALIPERS.get());
                         output.accept(FItems.INSTRUMENT_BAG.get());
                         output.accept(FItems.WRENCH.get());
+                        output.accept(FItems.TASTING_SPOON.get());
                         output.accept(FItems.GRAPPLE.get());
                         net.minecraft.world.item.ItemStack feedbacker = new net.minecraft.world.item.ItemStack(FItems.FEEDBACKER.get());
                         feedbacker.set(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
@@ -139,10 +140,14 @@ public class FCreativeTabs {
                             if (material.forms().containsKey("plate") && material.thermal().conductivity().isPresent())
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.skillet.SkilletItem.of(id));
                         });
-                        output.accept(FItems.STOCKPOT.get());
+                        io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {
+                            if (material.forms().containsKey("plate") && material.thermal().conductivity().isPresent())
+                                output.accept(io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotItem.of(id));
+                        });
                         output.accept(FItems.BREWING_STAND.get());
                         output.accept(FItems.ICE_BOX.get());
                         output.accept(FItems.REFRIGERATION_UNIT.get());
+                        output.accept(FItems.CRYOCOOLER.get());
                         output.accept(FItems.DRYING_RACK.get());
                         output.accept(FItems.SALT.get());
                         output.accept(FItems.ALUMINA.get());
@@ -322,6 +327,10 @@ public class FCreativeTabs {
                         output.accept(FItems.CERMET_GREEN_COMPACT.get());
                         output.accept(FItems.TUNGSTEN_CARBIDE_POWDER.get());
                         output.accept(FItems.TUNGSTEN_CARBIDE_GREEN_COMPACT.get());
+                        output.accept(FItems.OSMIUM_SPONGE.get());
+                        output.accept(FItems.OSMIUM_POWDER.get());
+                        output.accept(FItems.OSMIUM_GREEN_COMPACT.get());
+                        output.accept(FItems.HEAVY_CORE.get());
                         output.accept(FItems.HARDENED_STEEL.get());
                         FormItems.all().forEach(generated -> output.accept(generated.item().get()));
                         output.accept(FItems.TEMPERED_STEEL.get());
@@ -372,6 +381,7 @@ public class FCreativeTabs {
                         output.accept(FItems.GALENA_ORE.get());
                         output.accept(FItems.PYRITE_ORE.get());
                         output.accept(FItems.KAOLINITE_DEPOSIT.get());
+                        output.accept(FItems.SALT_DEPOSIT.get());
                         output.accept(FItems.COPPER_FLOWER.get());
                         output.accept(FItems.ZINC_VIOLET.get());
                         output.accept(FItems.RUSTY_SOIL.get());

@@ -22,8 +22,7 @@ W is Copper Fine Wire, S is a Steel Plate and C is Ceramic.
 
 ## Induction Stove
 
-A hob for cookware. A [Skillet](Skillet.md) or [Stockpot](Stockpot.md) set on top heats when its material is magnetic: iron, cast iron and steel yes; copper and aluminum pans get nothing. The stockpot is cast iron, so it always heats.
-
+A hob for cookware. A [Skillet](Skillet.md) or [Stockpot](Stockpot.md) set on top heats when its material is magnetic: iron, cast iron and steel yes; copper and aluminum pans get nothing.
 ```
 C W C
 S S S

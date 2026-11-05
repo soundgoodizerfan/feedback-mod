@@ -344,7 +344,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     /** The wheel's order for the types a bench makes shapes of: weapons, then tools, then armour head to foot, then the rest. */
     private static final List<String> WHEEL = List.of("sword", "cleaver", "maul", "spear", "twin", "axe", "pickaxe", "shovel", "hoe", "sickle",
-            "shears", "hand_hammer", "hand_knife", "sawblade", "bow", "crossbow", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
+            "shears", "hand_hammer", "hand_knife", "spoon", "sawblade", "bow", "crossbow", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
 
     private static int wheelRank(String type) {
         int i = WHEEL.indexOf(type);
@@ -639,10 +639,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         skin.inset(g, x, y, VW, VH);
         g.enableScissor(x + 1, y + 1, x + VW - 1, y + VH - 1);
         float heat = menu.heat(level());
-        if (menu.trim())
-            idle(g, x + 1, y + 1, VW - 2, VH - 2);
-        else if (skin == GuiSkin.FORGE)
-            BenchFire.draw(g, x + 1, y + 1, VW - 2, VH - 2, Mth.clamp(heat / 1100f, 0f, 1f));
+        if (skin == GuiSkin.FORGE || skin == GuiSkin.ANVIL)
+            BenchFire.draw(g, x + 1, y + 1, VW - 2, VH - 2, menu.trim() ? 0f : Mth.clamp(heat / 1100f, 0f, 1f));
         else
             idle(g, x + 1, y + 1, VW - 2, VH - 2);
         g.disableScissor();
@@ -660,6 +658,15 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         BenchFan.Node hover = fan.at(mouseX, mouseY, cx, cy);
         fan.draw(g, skin, font, x, y, VW, VH, cx, cy, sx, sy, mouseX, mouseY, shake, busy() ? 0.2f : 1f);
 
+        if (menu.trim()) {
+            // The three inputs share one plaque, joined by plus signs; the result stays on the right.
+            int px = leftPos + ToolTableMenu.TRIM_X - 12, py = topPos + ToolTableMenu.CENTRE_Y - 12;
+            skin.plaque(g, px, py, 2 * ToolTableMenu.TRIM_GAP + 16 + 24, 40);
+            for (int k = 0; k < 2; k++) {
+                int mx = leftPos + ToolTableMenu.TRIM_X + k * ToolTableMenu.TRIM_GAP + 8 + ToolTableMenu.TRIM_GAP / 2;
+                g.drawString(font, "+", mx - font.width("+") / 2, topPos + ToolTableMenu.CENTRE_Y + 4, skin.dim(), false);
+            }
+        }
         for (int i = 0; i < menu.inv(); i++) {
             Slot s = menu.getSlot(i);
             if (!s.isActive())
@@ -779,8 +786,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         if (menu.trim()) {
             // Vanilla smithing, plainly: template, base and addition in a row, labelled; the result is the slot on the right.
             caption(g, Component.translatable("gui.feedback.bench.template"), ToolTableMenu.TRIM_X, ToolTableMenu.CENTRE_Y, true);
-            caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), ToolTableMenu.TRIM_X + 26, ToolTableMenu.CENTRE_Y, true);
-            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), ToolTableMenu.TRIM_X + 52, ToolTableMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), ToolTableMenu.TRIM_X + ToolTableMenu.TRIM_GAP, ToolTableMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), ToolTableMenu.TRIM_X + 2 * ToolTableMenu.TRIM_GAP, ToolTableMenu.CENTRE_Y, true);
         }
         if (menu.gunTable())
             caption(g, Component.translatable("gui.feedback.gun_table.round"), ToolTableMenu.ROUND_X, ToolTableMenu.ROUND_Y, true);

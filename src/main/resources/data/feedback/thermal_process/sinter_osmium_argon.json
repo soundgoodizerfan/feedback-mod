@@ -1,0 +1,28 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:osmium_green_compact"
+    },
+    {
+      "item": "feedback:osmium_green_compact"
+    },
+    {
+      "item": "feedback:osmium_green_compact"
+    }
+  ],
+  "min_temperature": 1800,
+  "optimal_temperature": 1950,
+  "max_temperature": 2150,
+  "required_tpu": 1200,
+  "result": {
+    "id": "feedback:heavy_core"
+  },
+  "spoil_temperature": 2300,
+  "spoiled": {
+    "id": "feedback:porous_sinter"
+  },
+  "atmosphere": {
+    "fluid": "feedback:argon",
+    "mb": 150
+  }
+}

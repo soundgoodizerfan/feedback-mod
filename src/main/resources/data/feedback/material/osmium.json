@@ -1,0 +1,72 @@
+{
+  "color": "#5d6f8a",
+  "kind": "metal",
+  "perks": {
+    "toxic": 2
+  },
+  "hardness": 9,
+  "density": 22.59,
+  "thermal": {
+    "melting_point": 3033,
+    "boiling_point": 5012,
+    "cooling_rate": 1,
+    "conductivity": 0.02,
+    "service_temperature": 3000
+  },
+  "mechanical": {
+    "toughness": 20,
+    "yield_strength": 60,
+    "friction": 0.6,
+    "abrasiveness": 0.4
+  },
+  "separation": {
+    "magnetic": false,
+    "reflectivity": 0.5
+  },
+  "corrosion_resistance": 0.8,
+  "enchantability": 3,
+  "forms": {
+    "sponge": "feedback:osmium_sponge",
+    "powder": "feedback:osmium_powder",
+    "green_compact": "feedback:osmium_green_compact",
+    "slug": "feedback:heavy_core"
+  },
+  "exclude": [
+    "barrel_shroud",
+    "bayonet",
+    "bipod",
+    "block",
+    "bolt",
+    "bullet",
+    "case",
+    "coin",
+    "cylinder",
+    "drilled_plate",
+    "eddy_sleeve",
+    "fine_wire",
+    "foil",
+    "grip",
+    "ground_ingot",
+    "gun_barrel",
+    "ingot",
+    "magazine_tube",
+    "muzzle_brake",
+    "nugget",
+    "pipe",
+    "plate",
+    "receiver",
+    "relief_vent",
+    "resonance_weight",
+    "rod",
+    "scrap",
+    "sculk_jacket",
+    "selector_switch",
+    "slide",
+    "suppressor",
+    "swarf",
+    "thermal_sleeve",
+    "trigger_group",
+    "turned_rod",
+    "wire"
+  ]
+}

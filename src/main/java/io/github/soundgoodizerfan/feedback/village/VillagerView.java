@@ -42,9 +42,11 @@ import net.minecraft.world.item.ItemStack;
  * @param fig       the figure the villager complained of, as an ordinal, or -1
  * @param high      whether that figure was too high
  * @param paid      emeralds the last delivery paid
+ * @param hint      the hint the player asked for on the selected order, worded; empty when none
  */
 public record VillagerView(boolean wanderer, int level, int xp, int xpMax, int standing, List<OrderView> orders, int doneMask,
-                           List<GoodView> goods, List<WantView> wants, int grade, int fig, boolean high, int paid) {
+                           List<GoodView> goods, List<WantView> wants, int grade, int fig, boolean high, int paid,
+                           List<net.minecraft.network.chat.Component> hint) {
 
     public static final int NONE = -1, WRONG = -2, SOLD = -3, POOR_PURSE = -4, NOT_WANTED = -5, FULL = -6, SALE = -7;
 
@@ -65,7 +67,11 @@ public record VillagerView(boolean wanderer, int level, int xp, int xpMax, int s
     }
 
     public VillagerView withResult(int grade, int fig, boolean high, int paid) {
-        return new VillagerView(wanderer, level, xp, xpMax, standing, orders, doneMask, goods, wants, grade, fig, high, paid);
+        return new VillagerView(wanderer, level, xp, xpMax, standing, orders, doneMask, goods, wants, grade, fig, high, paid, List.of());
+    }
+
+    public VillagerView withHint(List<net.minecraft.network.chat.Component> lines) {
+        return new VillagerView(wanderer, level, xp, xpMax, standing, orders, doneMask, goods, wants, grade, fig, high, paid, lines);
     }
 
     public static final StreamCodec<RegistryFriendlyByteBuf, VillagerView> STREAM_CODEC = StreamCodec.of(VillagerView::write, VillagerView::read);
@@ -109,6 +115,9 @@ public record VillagerView(boolean wanderer, int level, int xp, int xpMax, int s
         b.writeVarInt(v.fig + 1);
         b.writeBoolean(v.high);
         b.writeVarInt(v.paid);
+        b.writeVarInt(v.hint.size());
+        for (net.minecraft.network.chat.Component c : v.hint)
+            net.minecraft.network.chat.ComponentSerialization.STREAM_CODEC.encode(b, c);
     }
 
     private static VillagerView read(RegistryFriendlyByteBuf b) {
@@ -134,10 +143,17 @@ public record VillagerView(boolean wanderer, int level, int xp, int xpMax, int s
         List<WantView> wants = new ArrayList<>();
         for (int i = 0; i < w; i++)
             wants.add(new WantView(ItemStack.STREAM_CODEC.decode(b), b.readBoolean(), b.readVarInt(), b.readVarInt(), b.readVarInt()));
+        int grade = b.readVarInt() - 8, fig = b.readVarInt() - 1;
+        boolean high = b.readBoolean();
+        int paid = b.readVarInt();
+        int h = b.readVarInt();
+        List<net.minecraft.network.chat.Component> hint = new ArrayList<>();
+        for (int i = 0; i < h; i++)
+            hint.add(net.minecraft.network.chat.ComponentSerialization.STREAM_CODEC.decode(b));
         return new VillagerView(wanderer, level, xp, xpMax, standing, List.copyOf(orders), done, List.copyOf(goods), List.copyOf(wants),
-                b.readVarInt() - 8, b.readVarInt() - 1, b.readBoolean(), b.readVarInt());
+                grade, fig, high, paid, List.copyOf(hint));
     }
 
     /** What the screen shows before the server's first answer. */
-    public static final VillagerView EMPTY = new VillagerView(false, 1, 0, 0, 0, List.of(), 0, List.of(), List.of(), NONE, -1, false, 0);
+    public static final VillagerView EMPTY = new VillagerView(false, 1, 0, 0, 0, List.of(), 0, List.of(), List.of(), NONE, -1, false, 0, List.of());
 }

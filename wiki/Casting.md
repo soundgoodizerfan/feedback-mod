@@ -121,9 +121,13 @@ The coat is judged by the same thresholds as an [electrolytic coat](Electrolytic
 
 Dipping a piece in a different metal replaces its coat. Dipping it in the same metal adds to the coat it already has. A piece dipped in a bath hotter than its metal can stand picks up flaws, more the further past it goes.
 
+**Overrun.** Dipping on past a coat of 1.8 Qu leaves the piece with forging flaws, one more for each further half Qu, up to 3. Dip well beyond that and every further dip thins the piece itself, the way over-hammering does, until it is scrap.
+
 ### Enamel
 
-Molten Glass at 1400 Tu or more dips a piece the same way, with 36 mB drawn per dip, and lays a **glass coat**, which is proof against corrosion. Each dip lays 0.25 Qu, so one dip is patchy and two make a sound coat.
+Enamel is fired, not dipped. Put a piece that can take a coat and a **Glass Ingot** (the frit) in a [Kiln](Furnaces.md) and hold it between **1100 and 1320 Tu**, best at 1250, for the firing time shown in JEI. The piece comes out with a **glass coat** of 0.5 Qu, which is proof against corrosion. The coat's thickness also scales how much corrosion resistance and armor skin the piece gets, and on a shield a thick coat halves the heat that reaches the hand, up to a point.
+
+Glass is brittle. A hard hit chips a share of the coat off, and the tooltip reads **Coat chipped**. Fire the piece in the Kiln again with another Glass Ingot and the coat is made whole. Zinc and tin coats never chip.
 
 ## Washing clay
 

@@ -102,6 +102,15 @@ public class SkilletBlock extends BaseEntityBlock {
         return SkilletBlockEntity.slotAt(hit.getLocation().x - pos.getX(), hit.getLocation().z - pos.getZ());
     }
 
+    /** The named figure of the spatula blade's shape, else {@code fallback}. */
+    private static float bladeParam(ItemStack spatula, String name, float fallback) {
+        var design = ModularStacks.design(spatula);
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().get(design.type());
+        var blade = type == null ? null : design.part(type.primary());
+        return blade == null ? fallback : type.roles().get(type.primary()).variant(blade)
+                .map(v -> v.params().getOrDefault(name, fallback)).orElse(fallback);
+    }
+
     @Override
     protected ItemInteractionResult useItemOn(ItemStack held, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
@@ -113,8 +122,16 @@ public class SkilletBlock extends BaseEntityBlock {
         if (held.is(FTags.SPATULA)) {
             if (level.isClientSide)
                 return ItemInteractionResult.SUCCESS;
-            if (!ModularStacks.broken(held) && pan.flip(slot(pos, hit)))
-                held.hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+            if (!ModularStacks.broken(held)) {
+                // The blade's shape is the choice: a wide one turns two pieces at once, a slotted one drains each as it turns.
+                int at = slot(pos, hit);
+                float drain = bladeParam(held, "drain", 0f);
+                boolean turned = pan.flip(at, drain);
+                if (bladeParam(held, "flips", 1f) > 1f)
+                    turned |= pan.flip(at ^ 1, drain);
+                if (turned)
+                    held.hurtAndBreak(1, player, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
+            }
             return ItemInteractionResult.CONSUME;
         }
         boolean plate = held.is(FTags.LADLE_CONTAINERS);

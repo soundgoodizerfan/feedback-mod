@@ -74,6 +74,14 @@
       "stock": 1,
       "standing": 10,
       "blueprint": "feedback:sickle"
+    },
+    {
+      "level": 3,
+      "item": "feedback:modular_blueprint",
+      "price": 8,
+      "stock": 1,
+      "standing": 10,
+      "blueprint": "feedback:wrap"
     }
   ]
 }

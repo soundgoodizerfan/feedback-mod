@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": {"item": "feedback:copper_plate"},
+    "S": {"item": "minecraft:stick"}
+  },
+  "pattern": [
+    "P",
+    "S"
+  ],
+  "result": {"count": 1, "id": "feedback:tasting_spoon"}
+}

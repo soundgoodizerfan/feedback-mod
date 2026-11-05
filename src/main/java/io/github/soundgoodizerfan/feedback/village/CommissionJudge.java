@@ -58,9 +58,9 @@ public final class CommissionJudge {
         float sum = 0, weights = 0, worstMiss = 0;
         boolean mustFailed = false, worstHigh = false;
         Fig worst = null;
-        for (int pass = 0; pass < 2; pass++) {
-            float w = pass == 0 ? 1f : VillageTuning.QUIRK_WEIGHT;
-            for (Order.Term t : pass == 0 ? order.terms() : order.quirks()) {
+        for (int pass = 0; pass < 3; pass++) {
+            float w = pass == 0 ? 1f : pass == 1 ? VillageTuning.LEAN_WEIGHT : VillageTuning.QUIRK_WEIGHT;
+            for (Order.Term t : pass == 0 ? order.terms() : pass == 1 ? order.leans() : order.quirks()) {
                 float v = figures.get(t.fig());
                 float score;
                 boolean high = v > t.target();

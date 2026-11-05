@@ -154,7 +154,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
                 + dampers * FTuning.DAMPER_LEAK_BONUS.workPerTickPerTu());
     }
 
-    private boolean isArcHearth() {
+    public boolean isArcHearth() {
         return contents.size() == FTuning.ARC_CHARGE_SLOTS;
     }
 
@@ -296,7 +296,13 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
         boilOff();
         runProcess();
+        glow();
         setChanged();
+    }
+
+    @Override
+    protected boolean darkened() {
+        return insulation > 0;
     }
 
     private int countInsulation() {

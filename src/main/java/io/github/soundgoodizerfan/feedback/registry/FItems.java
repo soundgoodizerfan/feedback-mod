@@ -178,8 +178,10 @@ public class FItems {
     public static final DeferredItem<BlockItem> FIREBOX = ITEMS.registerSimpleBlockItem(FBlocks.FIREBOX);
     public static final DeferredItem<BlockItem> ICE_BOX = ITEMS.registerSimpleBlockItem(FBlocks.ICE_BOX);
     public static final DeferredItem<BlockItem> REFRIGERATION_UNIT = ITEMS.registerSimpleBlockItem(FBlocks.REFRIGERATION_UNIT);
+    public static final DeferredItem<BlockItem> CRYOCOOLER = ITEMS.registerSimpleBlockItem(FBlocks.CRYOCOOLER);
     public static final DeferredItem<BlockItem> DRYING_RACK = ITEMS.registerSimpleBlockItem(FBlocks.DRYING_RACK);
-    public static final DeferredItem<BlockItem> STOCKPOT = ITEMS.registerSimpleBlockItem(FBlocks.STOCKPOT);
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotItem> STOCKPOT = ITEMS.register("stockpot",
+            () -> new io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotItem(FBlocks.STOCKPOT.get(), new Item.Properties()));
     /** The brewing stand (replaces vanilla's, VanillaVesselSwap): a pot of water, a map to steer a marker over, bottles out. */
     public static final DeferredItem<BlockItem> BREWING_STAND = ITEMS.registerSimpleBlockItem(FBlocks.BREWING_STAND);
     /** A bottle of potion, or a dud draught; replaces vanilla's potion items. Its state is the {@code potion_state} component. */
@@ -197,6 +199,9 @@ public class FItems {
     /** One bucket for any fluid: copper, 1000 mB, contents in a component. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.CopperBucketItem> COPPER_BUCKET = ITEMS.register("copper_bucket",
             () -> new io.github.soundgoodizerfan.feedback.item.CopperBucketItem(new net.minecraft.world.item.Item.Properties()));
+    /** Reads a dish held in the other hand (the profile a villager judges). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.TastingSpoonItem> TASTING_SPOON = ITEMS.register("tasting_spoon",
+            () -> new io.github.soundgoodizerfan.feedback.item.TastingSpoonItem(new Item.Properties()));
     public static final DeferredItem<net.minecraft.world.item.Item> SALT = ITEMS.registerSimpleItem("salt");
     public static final DeferredItem<net.minecraft.world.item.Item> ALUMINA = ITEMS.registerSimpleItem("alumina");
     public static final DeferredItem<net.minecraft.world.item.Item> SILICATE_SLAG = ITEMS.registerSimpleItem("silicate_slag");
@@ -436,6 +441,11 @@ public class FItems {
     public static final DeferredItem<Item> CERMET_GREEN_COMPACT = ITEMS.registerSimpleItem("cermet_green_compact");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_POWDER = ITEMS.registerSimpleItem("tungsten_carbide_powder");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_GREEN_COMPACT = ITEMS.registerSimpleItem("tungsten_carbide_green_compact");
+    /** Osmium from the tetroxide's reduction, its pressable powder, the pressed compact and the sintered slug that is the Heavy Core (material {@code heavy_core}, form {@code slug}). */
+    public static final DeferredItem<Item> OSMIUM_SPONGE = ITEMS.registerSimpleItem("osmium_sponge");
+    public static final DeferredItem<Item> OSMIUM_POWDER = ITEMS.registerSimpleItem("osmium_powder");
+    public static final DeferredItem<Item> OSMIUM_GREEN_COMPACT = ITEMS.registerSimpleItem("osmium_green_compact");
+    public static final DeferredItem<Item> HEAVY_CORE = ITEMS.registerSimpleItem("heavy_core");
     public static final DeferredItem<Item> BURNT_IRON = ITEMS.registerSimpleItem("burnt_iron");
     public static final DeferredItem<Item> HARDENED_STEEL = ITEMS.registerSimpleItem("hardened_steel");
     /** Tempering's result -- brittle no longer. See {@code data/feedback/thermal_process/tempered_steel.json}. */
@@ -498,6 +508,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> GALENA_ORE = ITEMS.registerSimpleBlockItem(FBlocks.GALENA_ORE);
     public static final DeferredItem<BlockItem> PYRITE_ORE = ITEMS.registerSimpleBlockItem(FBlocks.PYRITE_ORE);
     public static final DeferredItem<BlockItem> KAOLINITE_DEPOSIT = ITEMS.registerSimpleBlockItem(FBlocks.KAOLINITE_DEPOSIT);
+    public static final DeferredItem<BlockItem> SALT_DEPOSIT = ITEMS.registerSimpleBlockItem(FBlocks.SALT_DEPOSIT);
     public static final DeferredItem<BlockItem> COPPER_FLOWER = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_FLOWER);
     public static final DeferredItem<BlockItem> ZINC_VIOLET = ITEMS.registerSimpleBlockItem(FBlocks.ZINC_VIOLET);
     public static final DeferredItem<BlockItem> RUSTY_SOIL = ITEMS.registerSimpleBlockItem(FBlocks.RUSTY_SOIL);

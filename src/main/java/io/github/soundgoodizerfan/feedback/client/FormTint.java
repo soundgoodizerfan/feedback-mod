@@ -149,7 +149,12 @@ public final class FormTint {
         for (Block b : machineBlocks())
             colors.put(b.asItem(), MACHINE_METAL);
         oreBlocks().forEach((b, id) -> colors.put(b.asItem(), id));
-        colors.forEach((item, id) -> event.register((stack, layer) -> layer == 0 ? 0xFF000000 | MaterialColors.of(id) : 0xFFFFFFFF, item));
+        colors.forEach((item, id) -> {
+            var material = FormItems.materials().get(id);
+            boolean glows = material != null && io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.glows(material);
+            event.register((stack, layer) -> layer != 0 ? 0xFFFFFFFF
+                    : 0xFF000000 | (glows ? GlowColours.heated(MaterialColors.of(id), stack) : MaterialColors.of(id)), item);
+        });
         // A cable's metal rides on the stack, so its tint cannot be fixed per item.
         event.register((stack, layer) -> {
             MadeOf made = stack.get(FDataComponents.MADE_OF.get());

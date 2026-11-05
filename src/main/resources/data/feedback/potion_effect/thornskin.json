@@ -10,7 +10,6 @@
     "effect": "feedback:thornskin",
     "base_duration": 2400,
     "max_amplifier": 1,
-    "throw": false,
     "imbue": false,
     "family": "resin"
   }

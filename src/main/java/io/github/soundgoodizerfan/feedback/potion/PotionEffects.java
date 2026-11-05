@@ -24,6 +24,10 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.hazard.Hazards;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 
+import io.github.soundgoodizerfan.feedback.combat.cast.Stamina;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FEffects;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -54,6 +58,68 @@ public final class PotionEffects {
             target.igniteForSeconds(ticks / 20f);
         else
             BuiltInRegistries.MOB_EFFECT.getHolder(id).ifPresent(e -> target.addEffect(new MobEffectInstance(e, ticks, amplifier)));
+    }
+
+    /**
+     * The thrown share of an effect, from a flask that landed at {@code at}: the place-and-strength form of the drunk one. Most effects
+     * apply to every body within {@code reach}, nearer = longer, the thrower included; the rest act on the place (see each branch).
+     * {@code duration} is the bottle's own length. Mobs have no stamina, no gun and no palate, so effects that only a player can use skip them.
+     */
+    public static void splash(ServerLevel level, net.minecraft.world.entity.Entity owner, net.minecraft.world.phys.Vec3 at, float reach,
+            ResourceLocation id, int amplifier, int duration) {
+        int base = Math.max(20, Math.round(duration * PotionTuning.THROW_DURATION));
+        if (is(id, FEffects.GREEN_THUMB))
+            GreenThumb.pour(level, BlockPos.containing(at), amplifier);
+        else if (is(id, FEffects.STATIC_GROUND))
+            StaticGround.ground(level, at, reach, base);
+        else if (is(id, FEffects.QUENCH))
+            Quench.douse(level, at, amplifier);
+        else if (is(id, FEffects.FINE_PALATE) || is(id, FEffects.ASSAY))
+            reveal(level, owner, at, reach, is(id, FEffects.ASSAY));
+        for (LivingEntity body : level.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(at, at).inflate(reach))) {
+            float near = 1f - (float) Math.sqrt(body.distanceToSqr(at)) / reach;
+            if (near <= 0f)
+                continue;
+            int ticks = Math.max(20, Math.round(base * near));
+            boolean player = body instanceof net.minecraft.world.entity.player.Player;
+            if (is(id, FEffects.GREEN_THUMB) || is(id, FEffects.STATIC_GROUND))
+                continue; // place effects, no status on the body
+            else if (is(id, FEffects.QUENCH))
+                body.clearFire();
+            else if (is(id, FEffects.ANTIVENOM)) {
+                body.removeEffect(net.minecraft.world.effect.MobEffects.POISON);
+                apply(id, body, amplifier, ticks);
+            } else if (is(id, FEffects.SECOND_WIND)) {
+                // Only a player has stamina: an instant refill, no wind to repay.
+                if (body instanceof net.minecraft.server.level.ServerPlayer sp)
+                    Stamina.gain(sp, Stamina.MAX * PotionTuning.SECOND_WIND_REFILL * (amplifier + 1) * near);
+            } else if (is(id, FEffects.SLIPSTREAM) && !player)
+                body.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
+                        PotionTuning.SLIPSTREAM_STUMBLE * (amplifier + 1), 0));
+            else if (is(id, FEffects.SPRINGHEEL))
+                Springheel.launch(body, amplifier);
+            else if (player || !(is(id, FEffects.STEADY_HAND) || is(id, FEffects.FINE_PALATE) || is(id, FEffects.ASSAY)))
+                apply(id, body, amplifier, ticks);
+        }
+    }
+
+    private static boolean is(ResourceLocation id, net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.effect.MobEffect, net.minecraft.world.effect.MobEffect> e) {
+        return e.getId().equals(id);
+    }
+
+    /** Dropped laced food within reach shows itself to the thrower: a palate eases the taste thresholds, an assay sharpens them further and names the potion. */
+    private static void reveal(ServerLevel level, net.minecraft.world.entity.Entity owner, net.minecraft.world.phys.Vec3 at, float reach, boolean assay) {
+        if (!(owner instanceof net.minecraft.world.entity.player.Player thrower))
+            return;
+        float keen = assay ? PotionTuning.ASSAY_KEEN : 1f - PotionTuning.PALATE_EASE;
+        for (var item : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(at, at).inflate(reach))) {
+            var stack = item.getItem();
+            var lacing = stack.get(FDataComponents.LACING.get());
+            var meal = stack.get(FDataComponents.MEAL.get());
+            if (lacing != null && meal != null && lacing.detectable(meal, keen))
+                thrower.displayClientMessage(assay ? Component.translatable("message.feedback.assay_laced", stack.getHoverName(), name(lacing.effect()))
+                        : Component.translatable("message.feedback.palate_laced", stack.getHoverName()), true);
+        }
     }
 
     /**

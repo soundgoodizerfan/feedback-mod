@@ -107,6 +107,11 @@ public class FRecipes {
             SKILLET = SERIALIZERS.register("skillet",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.skillet.SkilletRecipe::new));
 
+    /** Five plates of one material in a U -> a stockpot in that material. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotRecipe>>
+            STOCKPOT = SERIALIZERS.register("stockpot",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotRecipe::new));
+
     /** Three wires of one conductor and three paper -> cable in that conductor. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeTipRecipe>>
             ARC_ELECTRODE_TIP = SERIALIZERS.register("arc_electrode_tip",

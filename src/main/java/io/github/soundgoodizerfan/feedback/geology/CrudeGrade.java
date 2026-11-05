@@ -67,6 +67,11 @@ public record CrudeGrade(float density, float sulfur, float lightFraction) {
         return out;
     }
 
+    /** This grade after {@code amount} of {@code before} mB left as vapour, {@code lights} being the light fraction going in: the lights drawn off are no longer in the feed. */
+    public CrudeGrade withLightsDrawn(float lights, int before, int amount) {
+        return new CrudeGrade(density, sulfur, Math.max(0f, (lights * before - amount) / (before - amount)));
+    }
+
     /**
      * The one merge rule, sibling of {@code FluidHeat.merge}: density by volume, the two mass fractions
      * by mass (volume times density), because a fraction of mass is what a tank of mixed crude holds.

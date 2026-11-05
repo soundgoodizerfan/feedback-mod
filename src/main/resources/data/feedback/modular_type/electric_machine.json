@@ -7,64 +7,180 @@
   "roles": {
     "F": {
       "name": "frame",
-      "forms": ["machine_frame"],
+      "forms": [
+        "machine_frame"
+      ],
       "litres": 0.125,
       "layer": 0,
       "part": {
         "item": "feedback:machine_frame",
-        "shape": ["FF"],
-        "stock": ["plate"],
+        "shape": [
+          "FF"
+        ],
+        "stock": [
+          "plate"
+        ],
         "base": "small",
         "variants": [
-          { "name": "small" },
-          { "name": "medium", "shape": ["FF", "FF"] },
-          { "name": "large", "shape": ["FFF", "FFF", "FF"] }
+          {
+            "name": "small"
+          },
+          {
+            "name": "medium",
+            "shape": [
+              "FF",
+              "FF"
+            ]
+          },
+          {
+            "name": "large",
+            "shape": [
+              "FFF",
+              "FFF",
+              "FF"
+            ]
+          }
         ]
       }
     },
     "W": {
       "name": "machine_winding",
-      "forms": ["machine_winding"],
+      "forms": [
+        "machine_winding"
+      ],
       "litres": 0.125,
       "layer": 1,
       "part": {
         "item": "feedback:machine_winding",
-        "shape": ["W"],
-        "stock": ["wire"],
+        "shape": [
+          "W"
+        ],
+        "stock": [
+          "wire"
+        ],
         "base": "coarse",
         "variants": [
-          { "name": "coarse" },
-          { "name": "fine", "shape": ["WW"] },
-          { "name": "dense", "shape": ["WW", "WW"] },
-          { "name": "heavy_dense", "shape": ["WWW", "WWW", "WW"] }
+          {
+            "name": "coarse"
+          },
+          {
+            "name": "fine",
+            "shape": [
+              "WW"
+            ]
+          },
+          {
+            "name": "dense",
+            "shape": [
+              "WW",
+              "WW"
+            ]
+          },
+          {
+            "name": "heavy_dense",
+            "shape": [
+              "WWW",
+              "WWW",
+              "WW"
+            ]
+          }
         ]
       }
     },
     "C": {
       "name": "core",
-      "forms": ["ingot"],
+      "forms": [
+        "ingot"
+      ],
       "litres": 0.125,
       "layer": 2
     },
     "H": {
       "name": "housing",
-      "forms": ["machine_housing"],
+      "forms": [
+        "machine_housing"
+      ],
       "litres": 0.125,
       "layer": 3,
       "part": {
         "item": "feedback:machine_housing",
-        "shape": ["HH", "H"],
-        "stock": ["plate"],
+        "shape": [
+          "HH",
+          "H"
+        ],
+        "stock": [
+          "plate"
+        ],
         "base": "finned",
         "variants": [
-          { "name": "finned" },
-          { "name": "jacketed", "shape": ["HH", "HH"] }
+          {
+            "name": "finned"
+          },
+          {
+            "name": "jacketed",
+            "shape": [
+              "HH",
+              "HH"
+            ]
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "bearing",
+      "forms": [
+        "machine_bearing"
+      ],
+      "litres": 0.02,
+      "layer": 4,
+      "part": {
+        "item": "feedback:machine_bearing",
+        "shape": [
+          "B"
+        ],
+        "stock": [
+          "nugget",
+          "ingot"
+        ],
+        "base": "sleeve_bearing",
+        "variants": [
+          {
+            "name": "sleeve_bearing",
+            "params": {
+              "su_mult": 1.0,
+              "friction": 0.04
+            }
+          },
+          {
+            "name": "ball_bearing",
+            "shape": [
+              "BB"
+            ],
+            "params": {
+              "su_mult": 1.2,
+              "friction": 0.01
+            }
+          },
+          {
+            "name": "roller_bearing",
+            "shape": [
+              "BB",
+              "B "
+            ],
+            "params": {
+              "su_mult": 1.45,
+              "friction": 0.02
+            }
+          }
         ]
       }
     }
   },
   "patterns": [
-    ["FW", "CH"]
+    [
+      "FW",
+      "CH"
+    ]
   ],
   "defaults": {
     "F": "feedback:wrought_iron",

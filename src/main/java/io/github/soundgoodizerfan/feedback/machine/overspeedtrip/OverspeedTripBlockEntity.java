@@ -24,17 +24,19 @@ import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A centrifugal overspeed trip: a {@link ClutchBlockEntity} whose flyweights throw it open when
- * its own shaft turns faster than {@link FTuning#OVERSPEED_TRIP_RPM}.
+ * its own shaft turns faster than its fitted spring ({@link FTuning#OVERSPEED_TRIP_SPRINGS_RPM}).
  *
  * <h2>A safety cutoff, not regulation</h2>
  * It does not hold a speed and does not slow anything -- it is the bimetallic strip's bang-bang
  * shape one energy type up (philosophy 13; {@code TODO.md} 5a). Steady-state speed control stays
  * the player's loop. The only thing it adds to a clutch is the sensor and the trigger in one
- * part, with no logic anywhere, and the speed is the part's own, not a setting.
+ * part, with no logic anywhere, and the speed is the fitted spring's: three springs, swapped by hand (sneak and right-click), never a dial.
  *
  * <h2>It latches, and that is the same mechanism as the clutch</h2>
  * Once thrown it stays open until somebody closes it -- a hand, or a controller's Switch
@@ -49,8 +51,34 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class OverspeedTripBlockEntity extends ClutchBlockEntity {
 
+    /** Index into {@link FTuning#OVERSPEED_TRIP_SPRINGS_RPM}: which spring is fitted. */
+    private int spring;
+
     public OverspeedTripBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.OVERSPEED_TRIP.get(), pos, state);
+    }
+
+    public float tripRpm() {
+        return FTuning.OVERSPEED_TRIP_SPRINGS_RPM[spring];
+    }
+
+    /** Swap to the next spring, light to heavy and round again; returns the new trip speed. */
+    public float cycleSpring() {
+        spring = (spring + 1) % FTuning.OVERSPEED_TRIP_SPRINGS_RPM.length;
+        setChanged();
+        return tripRpm();
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        tag.putInt("Spring", spring);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        spring = Math.max(0, Math.min(tag.getInt("Spring"), FTuning.OVERSPEED_TRIP_SPRINGS_RPM.length - 1));
     }
 
     /**
@@ -63,7 +91,7 @@ public class OverspeedTripBlockEntity extends ClutchBlockEntity {
      */
     public void tickServer() {
         if (level != null && isEngaged()
-                && Math.abs(getRpm().value()) > FTuning.OVERSPEED_TRIP_RPM.value())
+                && Math.abs(getRpm().value()) > tripRpm())
             setEngaged(false);
     }
 }

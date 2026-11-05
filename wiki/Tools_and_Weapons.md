@@ -58,7 +58,7 @@ Put one part in the center of a bench (the [Smithing Table](Smithing_Table.md), 
 
 You can add:
 
-- Every headed tool needs a **binding** (leather, string or wire) where head meets handle, and a sword needs a **guard** instead; nothing assembles without one. A sword may add a **pommel**, a counterweight.
+- Every headed tool needs a **binding** (leather, string or wire) where head meets handle, and a sword needs a **guard** instead; nothing assembles without one. A sword, a pickaxe or a twin tool may add a **pommel**, a weight behind the hand: the knob is light, the ball heavier and the counterweight heaviest. A heavier pommel behind the hand brings the head round faster.
 - A **tip** part, below.
 - Armor and shields can take a **grip** or **lining**.
 

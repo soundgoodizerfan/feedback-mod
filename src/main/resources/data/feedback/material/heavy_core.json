@@ -2,7 +2,7 @@
   "color": "#3c4a55",
   "kind": "metal",
   "hardness": 9,
-  "density": 23.6,
+  "density": 22.6,
   "thermal": {
     "melting_point": 4000,
     "cooling_rate": 1,
@@ -23,6 +23,7 @@
   "enchantability": 3,
   "forms": {
     "heavy_core": "minecraft:heavy_core",
+    "slug": "feedback:heavy_core",
     "mace": "minecraft:mace"
   },
   "exclude": [

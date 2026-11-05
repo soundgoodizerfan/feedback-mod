@@ -6,7 +6,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "feedback:stockpot"
+          "name": "feedback:stockpot",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "feedback:made_of"
+              ]
+            }
+          ]
         }
       ],
       "conditions": [

@@ -62,6 +62,9 @@ public final class Ward {
         for (Entry e : ENTRIES)
             if (e.guards() == guards && who.hasEffect(e.effect().get()))
                 pass *= e.pass();
+        // Held ground (a thrown static ground flask) cuts shock for any body standing on it, once, however many wards it also has.
+        if (guards == Hazard.SHOCK && !who.hasEffect(FEffects.STATIC_GROUND) && StaticGround.grounded(who))
+            pass *= PotionTuning.STATIC_GROUND_PASS;
         return pass;
     }
 

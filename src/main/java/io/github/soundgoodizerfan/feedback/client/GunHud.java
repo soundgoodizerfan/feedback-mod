@@ -106,7 +106,10 @@ public final class GunHud {
                     spare += s.getCount();
             }
         }
-        Component reserve = Component.translatable("hud.feedback.gun.reserve", spare);
+        Component reserve = design.launcher() == GunSpec.Launcher.STEAM
+                ? Component.translatable("hud.feedback.gun.steam", Math.round(io.github.soundgoodizerfan.feedback.weapon.GunSteam.stored(gun)),
+                        Math.round(design.steamCapacityMb()))
+                : Component.translatable("hud.feedback.gun.reserve", spare);
         FireMode mode = GunItem.mode(gun);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + mode.getSerializedName());
         // A hand can tell warm from hot; the figure is a thermometer's to give (philosophy 8).

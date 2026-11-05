@@ -39,7 +39,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Machine Head](Machine_Head.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
-**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Casting Basin](Casting_Basin.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
+**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Casting Basin](Casting_Basin.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Cryocooler](Cryocooler.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
 
 **Petrochemistry:** [Oil](Oil.md) · [Fuels](Fuels.md) · [Pipe](Pipe.md) · [Gas Tank](Gas_Tank.md) · [Gas Compressor](Gas_Compressor.md) · [Electrolyser](Electrolyser.md) · [Chemicals](Chemicals.md) · [Fertilizer](Fertilizer.md) · [Fractionating Column](Fractionating_Column.md) · [Thruster](Thruster.md)
 
@@ -53,9 +53,9 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
-**Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md)
+**Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md) · [Demolition Charge](Demolition_Charge.md)
 
-**Tools and armor:** [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
+**Tools and armor:** [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 

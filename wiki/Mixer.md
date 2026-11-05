@@ -54,6 +54,8 @@ Cermet and tungsten carbide start as powders in the drum. Pour in the parts with
 - **Cermet powder**: about 6 parts [titanium carbide](Materials.md#the-metals), 2 iron, 1 nickel and 1 cobalt. Draw gives one Cermet Powder for each part of the load.
 - **Tungsten carbide powder**: about 9 parts tungsten carbide to 1 cobalt. Draw gives one Tungsten Carbide Powder for each part.
 
+- **Osmium powder**: 7 parts [osmium](Heavy_Core.md#making-it) sponge to 1 nickel. Draw gives one Osmium Powder for each part.
+
 The ratio must be close. Without the cobalt, or with the wrong ratio, Draw gives a plain Mixture that nothing presses. Pack the powder with the [Mechanical Press](Mechanical_Press.md#pressing-powder), then [sinter](Furnaces.md#sintering) the compact.
 
 ## Turning

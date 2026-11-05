@@ -129,6 +129,7 @@ public final class ItemInfoHud {
         list.add(WorkpieceTooltip.barrel(stack));
         Plating plating = stack.get(FDataComponents.PLATING.get());
         list.add(PlatingTooltip.thickness(plating));
+        list.add(PlatingTooltip.intact(plating));
         list.add(PlatingTooltip.deposit(stack, plating));
         Cartridge round = stack.get(FWeapons.CARTRIDGE.get());
         if (round != null && round.charged() && Readout.instrumented(Quantity.VOLTAGE))

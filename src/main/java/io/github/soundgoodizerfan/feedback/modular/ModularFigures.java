@@ -147,7 +147,33 @@ public record ModularFigures(List<Float> values, int step) {
         /** Damage added to a barehanded swing, before wear. */
         FIST,
         /** Share of attack speed a metacarpal plate's weight takes off the wearer's swing, 0 to 1. */
-        SWING_DRAG
+        SWING_DRAG,
+        // --- a dish's profile as it is judged (DishProfile): live state, then composition. Baked to zero; read off the stack when a dish is judged or tasted. ---
+        /** 0 to 1: how cooked through the dish is now. */
+        DISH_COOK,
+        /** The dish's water now. */
+        DISH_MOISTURE,
+        /** 0 to 1: salt in the blend. */
+        DISH_SALT,
+        /** 0 to 1: smoke coat. */
+        DISH_SMOKE,
+        /** 0 to 1: how fresh it is now (one minus rot). */
+        DISH_FRESH,
+        /** {@code Tu}: how warm the dish is now. */
+        DISH_WARMTH,
+        /** Volume share of animal parts (meat). */
+        SHARE_MEAT,
+        /** Volume share of seafood parts. */
+        SHARE_SEAFOOD,
+        /** Volume share of vegetable, fruit and fungus parts. */
+        SHARE_PLANT,
+        /** Volume share of grain and dough parts. */
+        SHARE_STARCH,
+        /** Share of the parts that vote for each cuisine ({@link io.github.soundgoodizerfan.feedback.process.Material.Trait}). */
+        CUISINE_ITALIAN,
+        CUISINE_EAST_ASIAN,
+        CUISINE_MEXICAN,
+        CUISINE_EASTERN_EUROPEAN
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

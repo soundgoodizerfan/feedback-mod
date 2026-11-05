@@ -65,8 +65,16 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
     private static final int FLAME_X = 8;
     private static final int FLAME_Y = ThermalVesselMenu.GRID_Y;
 
+    private static GuiSkin skinOf(ThermalVesselMenu menu) {
+        return switch (menu.getKind()) {
+            case SMOKER -> GuiSkin.SMOKE;
+            case BLAST_FURNACE -> GuiSkin.SLAG;
+            default -> GuiSkin.STONE;
+        };
+    }
+
     public ThermalVesselScreen(ThermalVesselMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title, GuiSkin.STONE);
+        super(menu, playerInventory, title, skinOf(menu));
         titleLabelX = 12;
         titleLabelY = 6;
         imageWidth = 176;

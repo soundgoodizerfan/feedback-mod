@@ -17,6 +17,7 @@ Dig, as before. Each ore sits where it always did.
 - **Diamond** deep, in small flecks, bigger pockets, rare large masses, and buried ones that never show in a cave wall.
 - **Emerald** scattered thin through mountain rock, in the mountain and windswept biomes only.
 - **Chromite** deep in the lower rock, **pentlandite** (nickel) through the middle depths, **cobaltite** deep, **pyrolusite** (manganese) in the upper rock, **bauxite** (aluminum) high up and near the surface, **wolframite** (tungsten) very deep, **monazite** (thorium) in the lower rock. Monazite is [radioactive](Radiation.md).
+- **Osmiridium** in river biomes between y 36 and 64 as placer veins, and in an underground sulfide band between y -32 and 40, with loose rock above. It is the source of [heavy core](Heavy_Core.md#making-it).
 - **Cryolite**, rare, in the overworld between y -20 and 60. It melts into the bath for [aluminum](Making_Aluminum.md).
 - **Saltpetre** in cave deposits from Y -16 to 64, with a loose rock on the surface.
 - **Sulfur** in the Nether, in the netherrack, with a loose rock above.
@@ -41,6 +42,7 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 | Silver lode | argentite loose rock, or tarnished soil |
 | Uranium lode | uraninite loose rock, or bleached soil |
 | Chromite, pentlandite, cobaltite, pyrolusite, bauxite, wolframite, ilmenite, cryolite | loose rock of that ore |
+| Osmiridium (placer, sulfide) | osmiridium loose rock |
 | Monazite | monazite loose rock, or black sand |
 | Coal (upper seam) | coal loose rock, or sooty soil |
 | Coal (lower seam) | coal loose rock |
@@ -55,6 +57,10 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 - **Galena** and **Pyrite** are crystal veins in stone, in the middle and lower depths. Both rectify, which is why a cat's whisker detector wants one. Galena also melts down to lead. Galena veins hold a thin scatter of argentite, the silver ore.
 - **Kaolinite** is a soft white clay, in lumps near the surface in the hills. It digs by hand, and fires into firebrick.
 - **Magnetite** is a magnetic iron mineral in veins through the low and middle depths, ringed with hematite, with loose rock on the ground above. Four magnetite lumps round a stick (in a diamond) make a compass.
+
+## Salt deposits
+
+**Salt Deposits** are blocks lying in disks 2 to 3 blocks in radius in the sand of shallow ocean floors, under water, in ocean biomes only. Dig one by hand or with a shovel for 4 Salt; Silk Touch gives the block itself. Salt is also left by boiling sea water dry in a [Stockpot](Stockpot.md).
 
 ## Mining them
 

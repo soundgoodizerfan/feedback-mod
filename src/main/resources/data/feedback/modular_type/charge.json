@@ -7,10 +7,43 @@
     "C": {
       "name": "casing",
       "forms": [
-        "plate"
+        "charge_casing"
       ],
       "litres": 0.1,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:charge_casing",
+        "shape": [
+          "C"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "plain_casing",
+        "variants": [
+          {
+            "name": "tight_casing",
+            "params": {
+              "confine": 1.4,
+              "frag": 0.3
+            }
+          },
+          {
+            "name": "plain_casing",
+            "params": {
+              "confine": 1.0,
+              "frag": 1.0
+            }
+          },
+          {
+            "name": "scored_casing",
+            "params": {
+              "confine": 0.7,
+              "frag": 1.8
+            }
+          }
+        ]
+      }
     },
     "F": {
       "name": "filler",
@@ -30,11 +63,127 @@
       "litres": 0.01,
       "layer": 2,
       "alt": "F"
+    },
+    "W": {
+      "name": "fuse",
+      "forms": [
+        "charge_fuse"
+      ],
+      "litres": 0.01,
+      "layer": 3,
+      "part": {
+        "item": "feedback:charge_fuse",
+        "shape": [
+          "W"
+        ],
+        "stock": [
+          "raw",
+          "leather",
+          "nugget"
+        ],
+        "base": "delay_fuse",
+        "variants": [
+          {
+            "name": "short_fuse",
+            "params": {
+              "ticks": 30.0,
+              "impact": 0.0
+            }
+          },
+          {
+            "name": "delay_fuse",
+            "params": {
+              "ticks": 60.0,
+              "impact": 0.0
+            }
+          },
+          {
+            "name": "long_fuse",
+            "params": {
+              "ticks": 120.0,
+              "impact": 0.0
+            }
+          },
+          {
+            "name": "impact_fuse",
+            "params": {
+              "ticks": 0.0,
+              "impact": 1.0
+            }
+          }
+        ]
+      }
+    },
+    "R": {
+      "name": "primer",
+      "forms": [
+        "charge_primer"
+      ],
+      "litres": 0.01,
+      "layer": 4,
+      "part": {
+        "item": "feedback:charge_primer",
+        "shape": [
+          "R"
+        ],
+        "stock": [
+          "nugget",
+          "raw"
+        ],
+        "base": "booster_primer",
+        "variants": [
+          {
+            "name": "booster_primer",
+            "params": {
+              "burn_add": 0.25,
+              "fire": 0.0
+            }
+          },
+          {
+            "name": "flash_primer",
+            "params": {
+              "burn_add": 0.0,
+              "fire": 1.0
+            }
+          }
+        ]
+      }
+    },
+    "P": {
+      "name": "payload",
+      "forms": [
+        "nugget",
+        "flint",
+        "dust"
+      ],
+      "litres": 0.01,
+      "layer": 5
     }
   },
   "patterns": [
     [
       "CFG"
+    ],
+    [
+      "CFGW"
+    ],
+    [
+      "CFGR"
+    ],
+    [
+      "CFGP"
+    ],
+    [
+      "CFGWR"
+    ],
+    [
+      "CFGWP"
+    ],
+    [
+      "CFGRP"
+    ],
+    [
+      "CFGWRP"
     ]
   ],
   "ranges": {
@@ -45,6 +194,10 @@
     "G": [
       0,
       8
+    ],
+    "P": [
+      1,
+      4
     ]
   }
 }

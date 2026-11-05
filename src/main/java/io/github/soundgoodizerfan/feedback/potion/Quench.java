@@ -63,17 +63,7 @@ public final class Quench {
         if (p.tickCount % PotionTuning.QUENCH_EVERY != 0)
             return;
         float ambient = AmbientTable.at(level).value();
-        float r = PotionTuning.QUENCH_RADIUS;
-        double r2 = r * r;
-        for (int cx = (int) Math.floor((p.getX() - r) / 16); cx <= (int) Math.floor((p.getX() + r) / 16); cx++)
-            for (int cz = (int) Math.floor((p.getZ() - r) / 16); cz <= (int) Math.floor((p.getZ() + r) / 16); cz++) {
-                LevelChunk chunk = level.getChunkSource().getChunkNow(cx, cz);
-                if (chunk == null)
-                    continue;
-                for (BlockEntity be : chunk.getBlockEntities().values())
-                    if (be instanceof ThermalBody body && be.getBlockPos().distToCenterSqr(p.position()) <= r2)
-                        cool(body, ambient);
-            }
+        forBodies(level, p.position(), PotionTuning.QUENCH_RADIUS, body -> cool(body, ambient));
         var inv = p.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack s = inv.getItem(i);
@@ -82,6 +72,48 @@ public final class Quench {
             TuRate rate = s.getItem() instanceof ItemHeat.Cooling c ? c.coolingRate(s) : FTuning.ITEM_COOLING_TU_PER_TICK;
             ItemHeat.set(s, Heat.cooled(ItemHeat.get(s, level), PotionTuning.QUENCH_EVERY * (PotionTuning.QUENCH_COOL_MULT - 1f), rate, AmbientTable.at(level)), level);
         }
+    }
+
+    /** Every loaded thermal block entity within {@code r} blocks of {@code at}. */
+    private static void forBodies(ServerLevel level, net.minecraft.world.phys.Vec3 at, float r, java.util.function.Consumer<ThermalBody> each) {
+        double r2 = r * r;
+        for (int cx = (int) Math.floor((at.x - r) / 16); cx <= (int) Math.floor((at.x + r) / 16); cx++)
+            for (int cz = (int) Math.floor((at.z - r) / 16); cz <= (int) Math.floor((at.z + r) / 16); cz++) {
+                LevelChunk chunk = level.getChunkSource().getChunkNow(cx, cz);
+                if (chunk == null)
+                    continue;
+                for (BlockEntity be : chunk.getBlockEntities().values())
+                    if (be instanceof ThermalBody body && be.getBlockPos().distToCenterSqr(at) <= r2)
+                        each.accept(body);
+            }
+    }
+
+    /**
+     * A thrown flask: where it lands, thermal block entities within {@link PotionTuning#QUENCH_RADIUS} fall toward ambient (each level keeps
+     * {@link PotionTuning#QUENCH_DOUSE_KEEP} of the gap again), hot dropped items cool for {@link PotionTuning#QUENCH_DOUSE_TICKS} ticks per
+     * level, and fire blocks in reach go out. Bodies are put out by the caller.
+     */
+    public static void douse(ServerLevel level, net.minecraft.world.phys.Vec3 at, int amplifier) {
+        float ambient = AmbientTable.at(level).value();
+        float keep = (float) Math.pow(PotionTuning.QUENCH_DOUSE_KEEP, amplifier + 1);
+        forBodies(level, at, PotionTuning.QUENCH_RADIUS, body -> {
+            float gap = body.getTemperature().value() - ambient;
+            if (gap > 1f)
+                body.setTemperature(new Tu(ambient + gap * keep));
+        });
+        int r = (int) PotionTuning.QUENCH_RADIUS;
+        for (var item : level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(at, at).inflate(r))) {
+            ItemStack s = item.getItem();
+            if (s.isEmpty() || !ItemHeat.isHot(s, level))
+                continue;
+            TuRate rate = s.getItem() instanceof ItemHeat.Cooling c ? c.coolingRate(s) : FTuning.ITEM_COOLING_TU_PER_TICK;
+            ItemHeat.set(s, Heat.cooled(ItemHeat.get(s, level), PotionTuning.QUENCH_DOUSE_TICKS * (amplifier + 1), rate, AmbientTable.at(level)), level);
+        }
+        net.minecraft.core.BlockPos c = net.minecraft.core.BlockPos.containing(at);
+        for (net.minecraft.core.BlockPos p : net.minecraft.core.BlockPos.betweenClosed(c.offset(-r, -r, -r), c.offset(r, r, r)))
+            if (level.getBlockState(p).getBlock() instanceof net.minecraft.world.level.block.BaseFireBlock)
+                level.removeBlock(p, false);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, at.x, at.y + 0.3, at.z, 24, 1.5, 0.5, 1.5, 0.02);
     }
 
     /** The extra leak over one pass: the gap to ambient shrinks by (mult-1) x leak / mass per tick, never more than half in a pass. */

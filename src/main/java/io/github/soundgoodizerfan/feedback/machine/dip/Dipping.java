@@ -181,7 +181,8 @@ public class Dipping {
                 : total < FTuning.PLATING_POROUS_BELOW_QU ? Plating.Quality.POROUS : Plating.Quality.SOUND;
         piece.set(FDataComponents.PLATING.get(), new Plating(coat.metal(), total, q));
         io.github.soundgoodizerfan.feedback.modular.ModularStacks.rebake(piece);
-        return piece;
+        // A dwell past what holds also eats the part: flaws first, then its mass, until it is scrap.
+        return io.github.soundgoodizerfan.feedback.modular.ModularStacks.overrun(piece, total - FTuning.PLATING_SPALLS_ABOVE_QU);
     }
 
     private static void dipInVessel(MoltenVessel vessel, ItemStack held,

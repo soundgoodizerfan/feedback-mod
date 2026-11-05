@@ -322,6 +322,11 @@ public class FBlocks {
                             .strength(2.5f)
                             .sound(SoundType.METAL)));
 
+    /** A cold head that chills the face it points at, far under ambient. See {@code CryocoolerBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.cryocooler.CryocoolerBlock> CRYOCOOLER = BLOCKS.register("cryocooler",
+            () -> new io.github.soundgoodizerfan.feedback.machine.cryocooler.CryocoolerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
+
     /** A rack that dries food (food spec 8). */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.rack.DryingRackBlock> DRYING_RACK = BLOCKS.register("drying_rack",
             () -> new io.github.soundgoodizerfan.feedback.machine.rack.DryingRackBlock(BlockBehaviour.Properties.of()
@@ -422,14 +427,16 @@ public class FBlocks {
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
-                    .noOcclusion(), FTuning.CRUCIBLE_SMALL_MASS));
+                    .noOcclusion()
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.CRUCIBLE_SMALL_MASS));
 
     public static final DeferredBlock<CrucibleBlock> LARGE_CRUCIBLE = BLOCKS.register("large_crucible",
             () -> new CrucibleBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
-                    .noOcclusion(), FTuning.CRUCIBLE_LARGE_MASS));
+                    .noOcclusion()
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.CRUCIBLE_LARGE_MASS));
 
     /** The arc furnace's hearth: a crucible with four times the mass, six charge slots and a 36-ingot tank. The arc head set on it is the fire. */
     public static final DeferredBlock<CrucibleBlock> ARC_HEARTH = BLOCKS.register("arc_hearth",
@@ -437,7 +444,8 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_RED)
                     .strength(4.0f)
                     .sound(SoundType.STONE)
-                    .noOcclusion(), FTuning.ARC_HEARTH_MASS, FTuning.ARC_CHARGE_SLOTS, FTuning.ARC_TANK_MB));
+                    .noOcclusion()
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.ARC_HEARTH_MASS, FTuning.ARC_CHARGE_SLOTS, FTuning.ARC_TANK_MB));
 
     /** Electrodes lowered into the vessel it faces; an EHV sink and a fire. See {@code ArcHeadBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlock> ARC_HEAD = BLOCKS.register("arc_head",
@@ -588,6 +596,13 @@ public class FBlocks {
                     .mapColor(MapColor.TERRACOTTA_WHITE)
                     .strength(1.0f)
                     .sound(SoundType.GRAVEL)));
+
+    // Salt crust left on shallow ocean floors where sea water evaporated over sand; disk feature, ocean biomes only.
+    public static final DeferredBlock<Block> SALT_DEPOSIT = BLOCKS.register("salt_deposit",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ)
+                    .strength(0.5f)
+                    .sound(SoundType.SAND)));
 
     // Surface signs of a vein beneath (mechanics 9.5): plants that tolerate the metal, and ground its salts stain.
     // Placed by OreVeinFeature; a flower is a small flower, a stain sits in the feedback:ore_stains tag.
@@ -867,7 +882,7 @@ public class FBlocks {
                     .strength(3.5f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
-                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
                     VesselKind.FURNACE));
 
     public static final DeferredBlock<ThermalVesselBlock> SMOKER = BLOCKS.register("smoker",
@@ -876,7 +891,7 @@ public class FBlocks {
                     .strength(3.5f)
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
-                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
                     VesselKind.SMOKER));
 
     public static final DeferredBlock<ThermalVesselBlock> BLAST_FURNACE = BLOCKS.register("blast_furnace",
@@ -885,7 +900,7 @@ public class FBlocks {
                     .strength(3.5f)
                     .sound(SoundType.METAL)
                     .requiresCorrectToolForDrops()
-                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
                     VesselKind.BLAST_FURNACE));
 
     /** The steel-tier upgrade to the plain Furnace's mediocrity -- steadier, lower-loss, and the
@@ -896,7 +911,7 @@ public class FBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
                     .sound(SoundType.METAL)
-                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
                     VesselKind.IMPROVED_FURNACE));
 
     /** Cheap, brick-built, and hard-gated well under steel's floor -- see {@code
@@ -906,7 +921,7 @@ public class FBlocks {
                     .mapColor(MapColor.TERRACOTTA_WHITE)
                     .strength(3.5f)
                     .sound(SoundType.STONE)
-                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
                     VesselKind.KILN));
 
     /** A high-mass appliance route to a controlled slow cool -- see {@code
@@ -916,7 +931,7 @@ public class FBlocks {
                     .mapColor(MapColor.METAL)
                     .strength(3.5f)
                     .sound(SoundType.METAL)
-                    .lightLevel(state -> state.getValue(ThermalVesselBlock.LIT) ? 13 : 0),
+                    .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
                     VesselKind.ANNEALING_FURNACE));
 
     public static final DeferredBlock<HeatExchangerBlock> HEAT_EXCHANGER = BLOCKS.register("heat_exchanger",
@@ -1055,7 +1070,8 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(2.0f)
                     .sound(SoundType.STONE)
-                    .noOcclusion()));
+                    .noOcclusion()
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))));
 
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.column.ReboilerBlock> REBOILER = BLOCKS.register("reboiler",
             () -> new io.github.soundgoodizerfan.feedback.machine.column.ReboilerBlock(BlockBehaviour.Properties.of()

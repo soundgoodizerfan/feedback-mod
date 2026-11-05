@@ -25,6 +25,29 @@
           "*_planks",
           "block",
           "cobble"
+        ],
+        "base": "engineer",
+        "variants": [
+          {
+            "name": "engineer"
+          },
+          {
+            "name": "sledge",
+            "shape": [
+              "HHH",
+              "HHH"
+            ],
+            "centre": 0.02
+          },
+          {
+            "name": "peen",
+            "shape": [
+              "HH",
+              "H "
+            ],
+            "strike": 1.2,
+            "centre": -0.01
+          }
         ]
       }
     },

@@ -1,0 +1,24 @@
+{
+  "inputs": [],
+  "min_temperature": 280,
+  "optimal_temperature": 330,
+  "max_temperature": 420,
+  "required_tpu": 300,
+  "result": {
+    "id": "feedback:osmium_sponge"
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:osmium_tetroxide",
+        "mb": 100
+      },
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 400
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 6
+  }
+}

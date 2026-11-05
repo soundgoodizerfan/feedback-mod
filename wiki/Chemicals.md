@@ -1,6 +1,6 @@
 # Chemicals
 
-The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, fluorine compounds, bleach, nitrogen, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
+The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, fluorine compounds, bleach, nitrogen, argon, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
 
 ## Hydrogen
 
@@ -43,9 +43,24 @@ A heavy toxic gas. Roasting pyrite in a Reactor gives it, with iron nuggets.
 
 Made in a Reactor from chlorine and lye. Dip a block of dyed wool in a vessel holding it, the way a ceramic is [glazed](Casting.md#glazing), and it comes out white wool; each block takes 250 mB.
 
+## Air separation
+
+Air is split into its parts in two ways.
+
+- **Catalyst bed.** A Reactor separates nitrogen from air over a catalyst bed, warm and cheap.
+- **Cold.** A [Reactor](Reactor.md#the-reactions) chilled by a [Cryocooler](Cryocooler.md) liquefies compressed air into **Liquid Air**, boils nitrogen off it into a gas and leaves an **Oxygen-Rich Liquid**, then boils that liquid into **Argon** and oxygen. The cold route is the only source of argon.
+
 ## Nitrogen
 
-The inert part of air. A Reactor separates it from air over a catalyst bed. It is the feed for ammonia.
+The inert part of air. It is the feed for ammonia, and the protective atmosphere for sintering ([Kiln](Furnaces.md#sintering), [Arc Hearth](Arc_Furnace.md#sintering-under-gas)).
+
+## Argon
+
+An inert gas from the last cold cut of air. It does the work of nitrogen as a sintering atmosphere, and takes much less of it: 150 mB in the [Arc Hearth](Arc_Furnace.md#sintering-under-gas) against 300 mB of nitrogen.
+
+## Osmium tetroxide
+
+A volatile, toxic gas made by leaching osmiridium with sulfuric acid and oxygen in a [Reactor](Reactor.md#the-reactions). It is the way osmium leaves the ore; hydrogen reduces it to osmium sponge. Loose in a room it forms a [fume cloud](Hazards.md#fume-clouds).
 
 ## Ammonia
 

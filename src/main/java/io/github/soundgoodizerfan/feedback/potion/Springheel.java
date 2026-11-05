@@ -40,12 +40,24 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class Springheel {
 
-    private static final String BOUNCE = "feedback_springheel_bounce";
+    private static final String BOUNCE = "feedback_springheel_bounce", SOFT = "feedback_springheel_soft";
 
     private Springheel() {}
 
+    /** A thrown flask: the body is launched up once and its next landing is softened (any creature, no effect applied). */
+    public static void launch(net.minecraft.world.entity.LivingEntity body, int amplifier) {
+        body.setDeltaMovement(body.getDeltaMovement().x, PotionTuning.SPRINGHEEL_LAUNCH * (amplifier + 1), body.getDeltaMovement().z);
+        body.setOnGround(false);
+        body.hurtMarked = true;
+        body.getPersistentData().putBoolean(SOFT, true);
+    }
+
     @SubscribeEvent
     public static void onFall(LivingFallEvent event) {
+        if (event.getEntity().getPersistentData().contains(SOFT)) { // launched by a thrown flask: the landing is softened, on any body
+            event.getEntity().getPersistentData().remove(SOFT);
+            event.setDamageMultiplier(event.getDamageMultiplier() * PotionTuning.SPRINGHEEL_SOFT_PASS);
+        }
         if (!(event.getEntity() instanceof Player p) || !p.hasEffect(FEffects.SPRINGHEEL))
             return;
         event.setDamageMultiplier(event.getDamageMultiplier() * PotionTuning.SPRINGHEEL_PASS);

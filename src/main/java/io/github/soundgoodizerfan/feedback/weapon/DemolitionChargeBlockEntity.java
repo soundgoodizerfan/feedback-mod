@@ -68,6 +68,10 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
     private ResourceLocation casing;
     /** Ticks of fuse left, or -1 while unlit. */
     private int fuse = -1;
+    /** Ticks the fuse burns once lit; a charge's fuse part sets it. An impact fuse has no burn of its own and uses the standard one when lit by hand. */
+    private int fuseLength = FTuning.DEMO_FUSE_TICKS;
+    /** What the charge item this was made from reads as (casing shape, primer, payload), or null for a charge packed by hand. */
+    private Blast.Packed made;
     /** Power change from whoever lit it (Salvage: a tamped charge blasts narrower). */
     private float tamp;
     private java.util.UUID lighter;
@@ -96,6 +100,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         if (m.propellant().isPresent() && ReloadingPressBlockEntity.fits(ReloadingPressBlockEntity.CHARGE, stack, materials)) {
             if (fuse >= 0)
                 return Component.translatable("message.feedback.demolition.lit");
+            made = null;
             int room = FTuning.DEMO_FILLER_MAX - packed();
             int taken = Math.min(room, stack.getCount());
             if (taken <= 0)
@@ -135,10 +140,12 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             return;
         filler.clear();
         casing = null;
+        this.made = Blast.packed(made).orElse(null);
+        fuseLength = this.made == null || this.made.impact() ? FTuning.DEMO_FUSE_TICKS : this.made.fuseTicks();
         for (var part : design.parts()) {
             if (part.role().equals(type.wearRole()))
                 casing = part.material();
-            else
+            else if (Blast.isFiller(type, part.role()))
                 filler.add(new Cartridge.Charge(part.material(), part.count()));
         }
         setChanged();
@@ -181,7 +188,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
     public boolean light(@org.jetbrains.annotations.Nullable Player player) {
         if (level == null || level.isClientSide || fuse >= 0 || packed() == 0)
             return false;
-        fuse = FTuning.DEMO_FUSE_TICKS;
+        fuse = fuseLength;
         if (player != null) {
             tamp = io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(player, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.CHARGE_TAMP);
             lighter = player.getUUID();
@@ -219,12 +226,13 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         BlockPos at = worldPosition;
         Optional<Cartridge.Blend> blend = Cartridge.Blend.of(materials, filler).filter(b -> !b.coil());
         Material cased = casing == null ? null : materials.get(casing);
-        float power = blend.map(b -> Blast.power(b, cased)).orElse(0f);
+        float power = made != null ? made.power() : blend.map(b -> Blast.power(b, cased)).orElse(0f);
         // A tamped charge blasts narrower but still goes off if it would have.
         if (power >= FTuning.DEMO_POWER_MIN && tamp != 0f)
             power = Math.max(FTuning.DEMO_POWER_MIN, power * Math.max(0f, 1f + tamp));
         // What did not burn goes up as fire: a fuel-rich charge is a firebomb, a weak one.
-        boolean fire = blend.map(Blast::fire).orElse(false);
+        boolean fire = made != null ? made.fire() : blend.map(Blast::fire).orElse(false);
+        Blast.Packed shrapnel = made;
         server.removeBlockEntity(at);
         server.removeBlock(at, false);
         if (power < FTuning.DEMO_POWER_MIN) {
@@ -233,6 +241,9 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             return;
         }
         server.explode(null, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, power, fire, Level.ExplosionInteraction.BLOCK);
+        if (shrapnel != null)
+            Blast.scatter(server, null, lighter == null ? null : server.getServer().getPlayerList().getPlayer(lighter),
+                    net.minecraft.world.phys.Vec3.atCenterOf(at), power, shrapnel);
         if (lighter != null && server.getServer().getPlayerList().getPlayer(lighter) instanceof net.minecraft.server.level.ServerPlayer p)
             io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.salvaged(p, "charge/" + at.asLong());
     }
@@ -251,6 +262,13 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         if (casing != null)
             tag.putString("Casing", casing.toString());
         tag.putInt("Fuse", fuse);
+        tag.putInt("FuseLength", fuseLength);
+        if (made != null) {
+            tag.putFloat("MadePower", made.power());
+            tag.putBoolean("MadeFire", made.fire());
+            tag.putFloat("MadeFrag", made.fragDamage());
+            tag.putBoolean("MadeFlash", made.flash());
+        }
         tag.putFloat("Tamp", tamp);
         if (lighter != null)
             tag.putUUID("Lighter", lighter);
@@ -266,6 +284,9 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         }
         casing = tag.contains("Casing") ? ResourceLocation.parse(tag.getString("Casing")) : null;
         fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : -1;
+        fuseLength = tag.contains("FuseLength") ? tag.getInt("FuseLength") : FTuning.DEMO_FUSE_TICKS;
+        made = tag.contains("MadePower") ? new Blast.Packed(tag.getFloat("MadePower"), tag.getBoolean("MadeFire"), null, fuseLength, false,
+                tag.getFloat("MadeFrag"), tag.getBoolean("MadeFlash")) : null;
         tamp = tag.getFloat("Tamp");
         lighter = tag.hasUUID("Lighter") ? tag.getUUID("Lighter") : null;
     }

@@ -84,6 +84,8 @@ final class DipCategory {
             graphics.drawString(font, recipe.fluid().amount() + " mB", 76, 18, VALUE_COLOUR, false);
             graphics.drawString(font, Component.translatable("feedback.jei.dip.vessel"), 24, 36, LABEL_COLOUR, false);
             graphics.drawString(font, band(recipe), 76, 36, VALUE_COLOUR, false);
+            graphics.drawString(font, Component.translatable("feedback.jei.dip.overrun",
+                    Readout.number(io.github.soundgoodizerfan.feedback.core.FTuning.PLATING_SPALLS_ABOVE_QU)), 1, 54, 0xFF8A2B12, false);
             return;
         }
         graphics.drawString(font, (recipe.hasFluidResult() ? recipe.resultFluid().getHoverName() : recipe.result().getHoverName()).getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);

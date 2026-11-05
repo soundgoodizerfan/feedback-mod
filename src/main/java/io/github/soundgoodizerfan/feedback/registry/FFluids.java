@@ -268,6 +268,10 @@ public final class FFluids {
             FLUIDS.register("sulfur_dioxide", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> SULFUR_DIOXIDE_FLOWING =
             FLUIDS.register("sulfur_dioxide_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE, FFluids.SULFUR_DIOXIDE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> OSMIUM_TETROXIDE =
+            FLUIDS.register("osmium_tetroxide", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.OSMIUM_TETROXIDE, FFluids.OSMIUM_TETROXIDE, FFluids.OSMIUM_TETROXIDE_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> OSMIUM_TETROXIDE_FLOWING =
+            FLUIDS.register("osmium_tetroxide_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.OSMIUM_TETROXIDE, FFluids.OSMIUM_TETROXIDE, FFluids.OSMIUM_TETROXIDE_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> AMMONIA =
             FLUIDS.register("ammonia", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.AMMONIA, FFluids.AMMONIA, FFluids.AMMONIA_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> AMMONIA_FLOWING =
@@ -276,6 +280,18 @@ public final class FFluids {
             FLUIDS.register("nitrogen", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.NITROGEN, FFluids.NITROGEN, FFluids.NITROGEN_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> NITROGEN_FLOWING =
             FLUIDS.register("nitrogen_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.NITROGEN, FFluids.NITROGEN, FFluids.NITROGEN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ARGON =
+            FLUIDS.register("argon", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ARGON, FFluids.ARGON, FFluids.ARGON_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> ARGON_FLOWING =
+            FLUIDS.register("argon_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ARGON, FFluids.ARGON, FFluids.ARGON_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> LIQUID_AIR =
+            FLUIDS.register("liquid_air", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LIQUID_AIR, FFluids.LIQUID_AIR, FFluids.LIQUID_AIR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> LIQUID_AIR_FLOWING =
+            FLUIDS.register("liquid_air_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.LIQUID_AIR, FFluids.LIQUID_AIR, FFluids.LIQUID_AIR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> LIQUID_OXYGEN =
+            FLUIDS.register("liquid_oxygen", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LIQUID_OXYGEN, FFluids.LIQUID_OXYGEN, FFluids.LIQUID_OXYGEN_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> LIQUID_OXYGEN_FLOWING =
+            FLUIDS.register("liquid_oxygen_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.LIQUID_OXYGEN, FFluids.LIQUID_OXYGEN, FFluids.LIQUID_OXYGEN_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> CRYOLITE_BATH =
             FLUIDS.register("cryolite_bath", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.CRYOLITE_BATH, FFluids.CRYOLITE_BATH, FFluids.CRYOLITE_BATH_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> CRYOLITE_BATH_FLOWING =

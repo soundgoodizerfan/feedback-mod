@@ -140,6 +140,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.machine.skillet.SkilletRecipe.class, new SkilletCraftingExtension());
         registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotRecipe.class, new StockpotCraftingExtension());
+        registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.class, new BootstrapGloveExtension());
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.HotToolRecipe.class, new HotToolCraftingExtension());
@@ -204,6 +206,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new MixtureCategory(registration.getJeiHelpers().getGuiHelper()),
                 new GoodsCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BuysCategory(registration.getJeiHelpers().getGuiHelper()),
+                new GunOptionCategory(registration.getJeiHelpers().getGuiHelper()),
+                new GunBlueprintPoolCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CircuitChainCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -231,6 +235,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
         registration.addIngredientInfo(FItems.ARC_HEARTH.get(), Component.translatable("feedback.jei.info.arc_hearth"));
+        registration.addIngredientInfo(FItems.HEAVY_CORE.get(), Component.translatable("feedback.jei.info.heavy_core"));
         registration.addIngredientInfo(FItems.INDUCTION_COIL.get(), Component.translatable("feedback.jei.info.induction_coil"));
         registration.addIngredientInfo(FItems.INDUCTION_STOVE.get(), Component.translatable("feedback.jei.info.induction_stove"));
         registration.addIngredientInfo(FItems.PREHEAT_COIL.get(), Component.translatable("feedback.jei.info.preheat_coil"));
@@ -245,8 +250,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
         registration.addIngredientInfo(FItems.SKILLET.get(), Component.translatable("feedback.jei.info.skillet"));
         registration.addIngredientInfo(FItems.REFRIGERATION_UNIT.get(), Component.translatable("feedback.jei.info.refrigeration_unit"));
+        registration.addIngredientInfo(FItems.CRYOCOOLER.get(), Component.translatable("feedback.jei.info.cryocooler"));
         registration.addIngredientInfo(net.minecraft.world.item.Items.EMERALD, Component.translatable("feedback.jei.info.commissions"));
         registration.addIngredientInfo(FModular.SPATULA.get(), Component.translatable("feedback.jei.info.spatula"));
+        registration.addIngredientInfo(FItems.TASTING_SPOON.get(), Component.translatable("feedback.jei.info.tasting_spoon"));
+        registration.addIngredientInfo(FModular.SPOON.get(), Component.translatable("feedback.jei.info.spoon"));
         registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
         registration.addIngredientInfo(FItems.WRENCH.get(), Component.translatable("feedback.jei.info.hot_tool"));
         registration.addIngredientInfo(FItems.CROWBAR.get(), Component.translatable("feedback.jei.info.hot_tool"));
@@ -283,6 +291,10 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), "mixer");
         // Stations, blueprints and the magazine (loaded by a code recipe with no fixed grid).
         info(registration, FModular.PREP_TABLE_ITEM.get(), "prep_table");
+        info(registration, FModular.SMITHING_TABLE_ITEM.get(), "smithing_table");
+        info(registration, FModular.ANVIL_ITEM.get(), "anvil");
+        info(registration, FModular.WOODWORKING_TABLE_ITEM.get(), "woodworking_table");
+        info(registration, FModular.STONECUTTER_ITEM.get(), "stonecutter");
         info(registration, FModular.BLUEPRINT_TABLE_ITEM.get(), "blueprint_table");
         info(registration, FModular.ENCHANTING_TABLE_ITEM.get(), "enchanting_table");
         info(registration, FModular.BLUEPRINT.get(), "modular_blueprint");
@@ -356,6 +368,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
      */
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addRecipeCatalysts(GunOptionCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
         registration.addRecipeCatalysts(DeformationCategory.TYPE,
                 FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAND_HAMMER.get());
@@ -438,6 +451,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         });
         ClientTable.MIXTURES.onChanged(() -> show(MixtureCategory.TYPE, ClientTable.MIXTURES.get()));
         ClientTable.GOODS.onChanged(() -> show(GoodsCategory.TYPE, ClientTable.GOODS.get()));
+        ClientTable.GUN_OPTIONS.onChanged(() -> show(GunOptionCategory.TYPE, ClientTable.GUN_OPTIONS.get()));
+        ClientTable.GUN_BLUEPRINTS.onChanged(() -> show(GunBlueprintPoolCategory.TYPE, ClientTable.GUN_BLUEPRINTS.get()));
         ClientTable.BUYS.onChanged(() -> show(BuysCategory.TYPE, ClientTable.BUYS.get()));
         ClientTable.ORE_VEINS.onChanged(() -> show(OreVeinCategory.TYPE, ClientTable.ORE_VEINS.get()));
         ClientTable.BASINS.onChanged(() -> show(BasinCategory.TYPE, ClientTable.BASINS.get()));

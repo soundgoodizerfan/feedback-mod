@@ -60,6 +60,8 @@ public class FClientSetup {
                 GrappleHookRenderer::new);
         event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.POTION_BOTTLE.get(),
                 net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
+        event.registerEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FEntities.GRENADE.get(),
+                net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
 
         event.registerBlockEntityRenderer(FBlockEntities.SHAFT.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.COG.get(), RotatingRenderer::new);
@@ -83,8 +85,10 @@ public class FClientSetup {
         // Every data node and fitting holder without a renderer of its own; the rest call
         // DataNodeRenderer.drawNodes from theirs.
         event.registerBlockEntityRenderer(FBlockEntities.SKILLET.get(), SkilletRenderer::new);
-        event.registerBlockEntityRenderer(FBlockEntities.CRUCIBLE.get(), DataNodeRenderer::new);
-        event.registerBlockEntityRenderer(FBlockEntities.THERMAL_VESSEL.get(), DataNodeRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.STOCKPOT.get(), StockpotRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.CRUCIBLE.get(), GlowRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.THERMAL_VESSEL.get(), GlowRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.CASTING_BASIN.get(), GlowRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.DAMPER.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.VALVE.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.CABLE.get(), DataNodeRenderer::new);
@@ -231,6 +235,9 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0x66E8E8D0), FFluidTypes.SULFUR_DIOXIDE.get());
         event.registerFluidType(waterTinted(0x44E8F0FF), FFluidTypes.AMMONIA.get());
         event.registerFluidType(waterTinted(0x33CCDDEE), FFluidTypes.NITROGEN.get());
+        event.registerFluidType(waterTinted(0x33DDCCEE), FFluidTypes.ARGON.get());
+        event.registerFluidType(waterTinted(0xCCCFE6F2), FFluidTypes.LIQUID_AIR.get());
+        event.registerFluidType(waterTinted(0xCCBFD8F0), FFluidTypes.LIQUID_OXYGEN.get());
         event.registerFluidType(moltenFluid(0xFFFFD8A0), FFluidTypes.CRYOLITE_BATH.get());
         io.github.soundgoodizerfan.feedback.registry.DyeFluids.types().forEach((color, type) ->
                 event.registerFluidType(waterTinted(0xFF000000 | color.getTextureDiffuseColor()), type.get()));

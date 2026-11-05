@@ -157,7 +157,10 @@ public final class ShieldHeat {
         float mass = thermalMass(ModularStacks.figures(shield));
         float now = ItemHeat.get(shield, level).value();
         float t = now + event.getBlockedDamage() * FTuning.SHIELD_WORK_PER_DAMAGE * FTuning.SHIELD_HEAT_FRACTION / mass;
-        t = approach(t, ShieldSources.get().tu(event.getDamageSource()), mass, FTuning.SHIELD_FIRE_TICKS);
+        float source = ShieldSources.get().tu(event.getDamageSource());
+        t = approach(t, source, mass, FTuning.SHIELD_FIRE_TICKS);
+        // A whole coat that would not melt in the source keeps part of the heat out of the face.
+        t = now + (t - now) * (1f - ModularStacks.coatShield(shield, source));
         if (stands(level, shield).map(s -> now > s).orElse(false))
             event.setShieldDamage(event.shieldDamage() * FTuning.SHIELD_HOT_WEAR_MULT);
         stamp(shield, t, level);
@@ -178,7 +181,8 @@ public final class ShieldHeat {
         if (source <= 0f)
             return;
         Level level = entity.level();
-        stamp(shield, approach(ItemHeat.get(shield, level).value(), source, thermalMass(ModularStacks.figures(shield)),
-                FTuning.SHIELD_FIRE_TICKS), level);
+        float now = ItemHeat.get(shield, level).value();
+        float t = approach(now, source, thermalMass(ModularStacks.figures(shield)), FTuning.SHIELD_FIRE_TICKS);
+        stamp(shield, now + (t - now) * (1f - ModularStacks.coatShield(shield, source)), level);
     }
 }

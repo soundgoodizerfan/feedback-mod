@@ -10,8 +10,6 @@
     "effect": "feedback:radiation_ward",
     "base_duration": 1800,
     "max_amplifier": 0,
-    "drink": true,
-    "throw": false,
     "family": "sedative"
   }
 }

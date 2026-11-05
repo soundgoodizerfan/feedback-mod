@@ -23,6 +23,33 @@
           "plate",
           "*_planks",
           "bone"
+        ],
+        "base": "chef",
+        "variants": [
+          {
+            "name": "chef"
+          },
+          {
+            "name": "boning",
+            "shape": [
+              "B",
+              "B"
+            ],
+            "params": {
+              "grain": 1.3,
+              "slide": 0.2
+            }
+          },
+          {
+            "name": "slicer",
+            "shape": [
+              "BB"
+            ],
+            "params": {
+              "grain": 0.4,
+              "slide": 1.6
+            }
+          }
         ]
       }
     },

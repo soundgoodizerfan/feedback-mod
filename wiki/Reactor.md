@@ -20,7 +20,7 @@ P is a [Steel Plate](Mechanical_Hammer.md).
 2. **Feed it fluid.** A bucket or a [Pipe](Pipe.md) fills it. It has **three input tanks** of 2000 mB, and it reaches for any fluid that some reaction lists as an input from a tank or pipe touching any side, whenever it has room. It does not take fluids no reaction wants.
 3. **Feed it solids.** Right-click with an item and it goes into the **hopper**, three slots; a reaction that wants items takes one of each per batch.
 4. **Pack a bed** if the reaction needs a catalyst: right-click with the catalyst (see [Catalysts](#catalysts)). It takes one item, and only if a reaction names it.
-5. **Take the product.** The **output tank** (2000 mB) pushes itself out of any side into whatever accepts it: a pipe, a column, a tank. A solid product pops out on top.
+5. **Take the product.** The **two output tanks** (2000 mB each) push themselves out of any side into whatever accepts them; a reaction with two fluid products fills one tank with each: a pipe, a column, a tank. A solid product pops out on top.
 
 **Right-click with an empty hand** to read it: its temperature, its pressure and the bed's activity. **Sneak-right-click with an empty hand** to take back everything in the hopper and the bed.
 
@@ -61,11 +61,16 @@ Some reactions give off heat, which warms the reactor.
 | **PTFE powder** | 100 mB tetrafluoroethylene, 100 mB water, **2 Pu** at least (best from 4 Pu) | 4 **PTFE Powder**, and some heat | 40 to 110 Tu, best 70 |
 | **Hypochlorite** | 100 mB chlorine, 100 mB lye | 100 mB [Hypochlorite Bleach](Chemicals.md#hypochlorite-bleach) | 20 to 60 Tu, best 40 |
 | **Nitrogen separation** | 100 mB air, a catalyst bed | 78 mB [nitrogen](Chemicals.md#nitrogen) | 20 to 100 Tu, best 40 |
+| **Liquefy air** | 160 mB air, **2 Pu** at least (best from 4 Pu), a [Cryocooler](Cryocooler.md) on its deep stage | 32 mB liquid air | -200 to -188 Tu, best -194 |
+| **Rectify air** | 32 mB liquid air, a Cryocooler on its middle stage | 125 mB nitrogen and 7 mB oxygen-rich liquid; too warm, the liquid boils back to air | -196 to -186 Tu, best -190.5 |
+| **Argon cut** | 7 mB oxygen-rich liquid, a Cryocooler on its shallow stage | 2 mB [argon](Chemicals.md#argon) and 33 mB oxygen; too warm, only oxygen | -188 to -182.5 Tu, best -185 |
+| **Leach osmiridium** | one Raw Osmiridium, 200 mB sulfuric acid, 100 mB oxygen | 100 mB [osmium tetroxide](Chemicals.md#osmium-tetroxide), and some heat | 60 to 125 Tu, best 90 |
+| **Reduce osmium tetroxide** | 100 mB osmium tetroxide, 400 mB hydrogen | one **Osmium Sponge**, and some heat | 280 to 420 Tu, best 330 |
 | **Ammonia** | 100 mB nitrogen, 300 mB hydrogen, an iron bed | 200 mB [ammonia](Chemicals.md#ammonia), and some heat | 400 to 500 Tu, best 450 |
 | **Fertilizer** | 200 mB ammonia, 100 mB sulfuric acid | 2 [Fertilizer](Fertilizer.md) | 20 to 100 Tu, best 50 |
 | **Molten cryolite** | one Cryolite Ore | 144 mB [cryolite bath](Chemicals.md#cryolite-bath) | melts at 1010 Tu |
 
-JEI shows every row, including the ones a pack adds. Polymerization and soul polymerization make the melts that become [Polymers](Materials.md#polymers); soul oil and wisp gas are fuels ([Soul Oil](Oil.md#soul-oil), [Fuels](Fuels.md)); the retort needs no bed.
+The cold rows need no catalyst bed. Their temperatures are set by the Cryocooler against the reactor, not by a fire. A toxic gas the output tanks have no room for escapes as a [fume cloud](Hazards.md#fume-clouds). JEI shows every row, including the ones a pack adds. Polymerization and soul polymerization make the melts that become [Polymers](Materials.md#polymers); soul oil and wisp gas are fuels ([Soul Oil](Oil.md#soul-oil), [Fuels](Fuels.md)); the retort needs no bed.
 
 ## Catalysts
 

@@ -33,6 +33,9 @@ public final class ClientTable<T> {
     public static final ClientTable<io.github.soundgoodizerfan.feedback.worldgen.OreVein> ORE_VEINS = new ClientTable<>();
     public static final ClientTable<io.github.soundgoodizerfan.feedback.geology.Basin> BASINS = new ClientTable<>();
 
+    public static final ClientTable<io.github.soundgoodizerfan.feedback.weapon.GunOption> GUN_OPTIONS = new ClientTable<>();
+    public static final ClientTable<io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Listing> GUN_BLUEPRINTS = new ClientTable<>();
+
     private List<T> entries = List.of();
     private Runnable listener = () -> {
     };
