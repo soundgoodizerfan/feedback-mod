@@ -272,8 +272,13 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
 
     /** The quench an item at its current heat takes in water, if any: it must be at or above the row's {@code min_temperature}. */
     public Optional<ThermalProcess> findQuench(ItemStack stack) {
+        return findQuench(stack, null);
+    }
+
+    /** The quench {@code stack} takes in {@code medium} (a fluid id; null is water). */
+    public Optional<ThermalProcess> findQuench(ItemStack stack, net.minecraft.resources.ResourceLocation medium) {
         for (ThermalProcess row : quenchRows)
-            if (row.inputs().stream().anyMatch(i -> i.test(stack)))
+            if (java.util.Objects.equals(row.medium().orElse(null), medium) && row.inputs().stream().anyMatch(i -> i.test(stack)))
                 return Optional.of(row);
         return Optional.empty();
     }

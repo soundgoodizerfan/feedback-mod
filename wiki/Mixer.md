@@ -56,7 +56,9 @@ Cermet and tungsten carbide start as powders in the drum. Pour in the parts with
 
 - **Osmium powder**: 7 parts [osmium](Heavy_Core.md#making-it) sponge to 1 nickel. Draw gives one Osmium Powder for each part.
 
-The ratio must be close. Without the cobalt, or with the wrong ratio, Draw gives a plain Mixture that nothing presses. Pack the powder with the [Mechanical Press](Mechanical_Press.md#pressing-powder), then [sinter](Furnaces.md#sintering) the compact.
+The ratio must be close. Without the cobalt, or with the wrong ratio, Draw gives a plain Mixture that nothing presses. - **Netherite powder**: 55 to 65% cermet, 20 to 30% tungsten and 10 to 20% cobalt, drawn at 600 Tu or under. It is the start of [synthesized netherite](Netherite.md#synthesis).
+
+Pack the powder with the [Mechanical Press](Mechanical_Press.md#pressing-powder), then [sinter](Furnaces.md#sintering) the compact.
 
 ## Turning
 

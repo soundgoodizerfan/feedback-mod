@@ -12,8 +12,10 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Materials](Materials.md): every metal, mineral, polymer, glass and solder, and the forms they take
 - [Units](Units.md): what Tu, Su, mB, Qu, Fu and the other figures measure
 - [Ore Deposits](Ore_Deposits.md): where ores and crystals grow
+- [Netherite](Netherite.md): scrap, melting, soul quenching and synthesis
 - [Crops](Crops.md) and [Food](Food.md)
 - [Radiation](Radiation.md)
+- [Fission Reactor](Fission_Reactor.md): uranium fuel, control rods and decay heat
 - [Optics](Optics.md)
 - [Rotation](Rotation.md): shafts, power and gearing
 - [Heat](Heat.md): fires, vessels, processes
@@ -39,9 +41,9 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Machine Head](Machine_Head.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
-**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Casting Basin](Casting_Basin.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Cryocooler](Cryocooler.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
+**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Casting Basin](Casting_Basin.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Cryocooler](Cryocooler.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Fission Reactor](Fission_Reactor.md) · [Control Rod Assembly](Control_Rod.md) · [Nuclear Fuel](Nuclear_Fuel.md) · [Scram Trip](Scram_Trip.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
 
-**Petrochemistry:** [Oil](Oil.md) · [Fuels](Fuels.md) · [Pipe](Pipe.md) · [Gas Tank](Gas_Tank.md) · [Gas Compressor](Gas_Compressor.md) · [Electrolyser](Electrolyser.md) · [Chemicals](Chemicals.md) · [Fertilizer](Fertilizer.md) · [Fractionating Column](Fractionating_Column.md) · [Thruster](Thruster.md)
+**Petrochemistry:** [Magma Drill](Magma_Drill.md) · [Oil](Oil.md) · [Fuels](Fuels.md) · [Pipe](Pipe.md) · [Gas Tank](Gas_Tank.md) · [Gas Compressor](Gas_Compressor.md) · [Electrolyser](Electrolyser.md) · [Chemicals](Chemicals.md) · [Fertilizer](Fertilizer.md) · [Fractionating Column](Fractionating_Column.md) · [Thruster](Thruster.md)
 
 **Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Battery](Battery.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Electric Machine](Electric_Machine.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Fuse](Fuse.md) · [Glowstone Lamp](Lamp.md) · [Rectifier](Rectifier.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Phosphor Screen](Phosphor_Screen.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Jar Baton](Jar_Baton.md) · [Electrified Fence](Electrified_Fence.md) · [Power Cutter](Power_Cutter.md)
 
@@ -59,7 +61,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 
-**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Redstone Lamp](Redstone_Lamp.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md)
+**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Ancient Debris](Ancient_Debris.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Redstone Lamp](Redstone_Lamp.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
 

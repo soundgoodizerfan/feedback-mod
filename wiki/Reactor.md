@@ -1,6 +1,6 @@
 # Reactor
 
-A steel pressure vessel that holds a mixture hot, under pressure, over a catalyst, and lets whatever reaction fits happen. It knows no recipes: it looks at what is inside and runs the reaction (a JEI *reaction* page) that matches. Heavy oil from a [Fractionating Column](Fractionating_Column.md) cracks into diesel and naphtha here; ethylene polymerizes into plastic; soul sand cooks into [soul oil](Oil.md#soul-oil).
+A steel pressure vessel that holds a mixture hot, under pressure, over a catalyst, and lets whatever reaction fits happen. It knows no recipes: it looks at what is inside and runs the reaction (a JEI *reaction* page) that matches. (The nuclear machine is the [Fission Reactor](Fission_Reactor.md).) Heavy oil from a [Fractionating Column](Fractionating_Column.md) cracks into diesel and naphtha here; ethylene polymerizes into plastic; soul sand cooks into [soul oil](Oil.md#soul-oil).
 
 **A reactor holds its gas under pressure, and it can burst.** Read [Pressure](#pressure) before you pipe gas into one.
 
@@ -47,6 +47,7 @@ Some reactions give off heat, which warms the reactor.
 | **Polymerization** | 100 mB ethylene, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 10 mB polyethylene melt, and some heat | 120 to 220 Tu, best 160 |
 | **Soul polymerization** | 100 mB soul oil, a catalyst bed, **1 Pu** at least (best from 2 Pu) | 20 mB soul resin melt | 180 to 300 Tu, best 220 |
 | **Soul retort** | one Soul Sand or Soul Soil in the hopper | 60 mB soul oil, 20 mB wisp gas and a **Husk Sand** | 300 to 600 Tu, best 420 |
+| **Magma settling** | 1000 mB [Magma Melt](Magma_Drill.md#settling-the-melt) | 500 mB molten iron, 60 mB molten nickel, 20 mB molten cobalt and 300 mB molten slag | 1550 Tu or more, best 1700 |
 | **Dissolve salt** | one Salt, 250 mB water | 250 mB [brine](Chemicals.md#brine) | 20 to 100 Tu, best 60 |
 | **Bayer (bauxite)** | any bauxite item, 250 mB [lye](Chemicals.md#lye) | 2 [alumina](Making_Aluminum.md), the lye returned | 150 to 250 Tu, best 200 |
 | **Bayer (lapis)** | one Lapis Lazuli, 250 mB lye | 1 alumina, the lye returned; the lapis' stored experience is lost | 150 to 250 Tu, best 200 |
@@ -63,6 +64,7 @@ Some reactions give off heat, which warms the reactor.
 | **Nitrogen separation** | 100 mB air, a catalyst bed | 78 mB [nitrogen](Chemicals.md#nitrogen) | 20 to 100 Tu, best 40 |
 | **Liquefy air** | 160 mB air, **2 Pu** at least (best from 4 Pu), a [Cryocooler](Cryocooler.md) on its deep stage | 32 mB liquid air | -200 to -188 Tu, best -194 |
 | **Rectify air** | 32 mB liquid air, a Cryocooler on its middle stage | 125 mB nitrogen and 7 mB oxygen-rich liquid; too warm, the liquid boils back to air | -196 to -186 Tu, best -190.5 |
+| **Liquefy wisp gas** | 160 mB wisp gas, **2 Pu** at least (best from 4 Pu), a [Cryocooler](Cryocooler.md) | 32 mB [liquid wisp gas](Oil.md#soul-oil) | -120 to -100 Tu, best -110 |
 | **Argon cut** | 7 mB oxygen-rich liquid, a Cryocooler on its shallow stage | 2 mB [argon](Chemicals.md#argon) and 33 mB oxygen; too warm, only oxygen | -188 to -182.5 Tu, best -185 |
 | **Leach osmiridium** | one Raw Osmiridium, 200 mB sulfuric acid, 100 mB oxygen | 100 mB [osmium tetroxide](Chemicals.md#osmium-tetroxide), and some heat | 60 to 125 Tu, best 90 |
 | **Reduce osmium tetroxide** | 100 mB osmium tetroxide, 400 mB hydrogen | one **Osmium Sponge**, and some heat | 280 to 420 Tu, best 330 |

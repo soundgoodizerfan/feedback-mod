@@ -128,6 +128,7 @@ What isn't caught up is **progress**. A batch in the crucible doesn't finish whi
 | [Heat Exchanger](Heat_Exchanger.md) | Moves heat between two blocks |
 | [Boiler](Boiler.md) / [Steam Engine](Steam_Engine.md) / [Condenser](Condenser.md) | Heat into rotation, and the water back |
 | [Reactor](Reactor.md) | A heated, pressurized vessel for oil and plastic chemistry |
+| [Fission Reactor](Fission_Reactor.md) | Uranium fuel in a shielded lattice; makes heat for a boiler |
 | [Gas Turbine](Gas_Turbine.md) / [Flare Stack](Flare_Stack.md) | Burn fuel gas for rotation / burn it off |
 | [Pressure Vessel](Pressure_Vessel.md) | Stores compressed air, and explodes |
 

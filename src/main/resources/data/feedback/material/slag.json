@@ -1,0 +1,18 @@
+{
+  "color": "#6e6a66",
+  "kind": "mineral",
+  "hardness": 3,
+  "density": 2.6,
+  "thermal": {
+    "melting_point": 1300,
+    "cooling_rate": 1,
+    "conductivity": 0.001
+  },
+  "mechanical": {
+    "friction": 0.6,
+    "abrasiveness": 0.5
+  },
+  "forms": {
+    "ingot": "feedback:silicate_slag"
+  }
+}

@@ -20,6 +20,8 @@ Dig, as before. Each ore sits where it always did.
 - **Osmiridium** in river biomes between y 36 and 64 as placer veins, and in an underground sulfide band between y -32 and 40, with loose rock above. It is the source of [heavy core](Heavy_Core.md#making-it).
 - **Cryolite**, rare, in the overworld between y -20 and 60. It melts into the bath for [aluminum](Making_Aluminum.md).
 - **Saltpetre** in cave deposits from Y -16 to 64, with a loose rock on the surface.
+- **Nether ores**: **pentlandite**, **wolframite**, **chromite**, **cobaltite**, **uraninite** and **monazite** grow in the netherrack as common veins all through the Nether, with the same signs as their Overworld kin. Uraninite and monazite are [radioactive](Radiation.md).
+- **Bastion Rubble** in small, rare patches in the Nether between y 30 and 110. Each block breaks into 1 to 3 Worn Netherite Bits, the scrap of [Netherite](Netherite.md#getting-the-scrap).
 - **Sulfur** in the Nether, in the netherrack, with a loose rock above.
 - **Ilmenite** (titanium) in the netherrack.
 - **Nether gold and nether quartz** in the netherrack, all through the Nether. Gold still angers piglins when you mine it.
@@ -72,6 +74,6 @@ JEI's **Ore Vein** page lists every vein: its dimension, depth, size, richness a
 
 ## What did not change
 
-Vanilla's two huge veins, the ones that hold raw iron and raw copper blocks, still form in the ground and still hold vanilla's ore blocks. Ancient debris is still vanilla's, and so are the other Nether deposits (gravel, magma, soul sand, blackstone).
+Vanilla's two huge veins, the ones that hold raw iron and raw copper blocks, still form in the ground and still hold vanilla's ore blocks. Ancient debris is still vanilla's ([Ancient Debris](Ancient_Debris.md)), and so are the other Nether deposits (gravel, magma, soul sand, blackstone).
 
 See also [Graphite](Materials.md#graphite), [Materials](Materials.md) and [Heat](Heat.md).

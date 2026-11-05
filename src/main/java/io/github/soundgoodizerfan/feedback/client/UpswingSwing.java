@@ -128,6 +128,15 @@ public final class UpswingSwing {
         return Math.min(1f, (float) (since / cooldown));
     }
 
+    /** How charged the bare main hand is, 0 to 1; 1 unless barehanded (armed, vanilla's own indicator shows it). */
+    static float mainCharge(Player player, float partial) {
+        if (!OffhandStrikeClient.barehanded())
+            return 1f;
+        double cooldown = OffhandStrike.cooldownTicks(player, ItemStack.EMPTY);
+        float since = Minecraft.getInstance().level.getGameTime() - lastMain + partial;
+        return Math.min(1f, (float) (since / cooldown));
+    }
+
     private UpswingSwing() {
     }
 

@@ -169,7 +169,9 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
             basin = BasinState.at(server, worldPosition);
             basinKnown = true;
         }
-        int target = basin == null ? Integer.MAX_VALUE : Math.max(1, worldPosition.getY() - basin.centre().getY());
+        // No basin in the Nether means the magma below: bore down to its level.
+        int target = basin != null ? Math.max(1, worldPosition.getY() - basin.centre().getY())
+                : server.dimension() == Level.NETHER ? Math.max(1, worldPosition.getY() - FTuning.MAGMA_LEVEL_Y) : Integer.MAX_VALUE;
         if (bored >= target) {
             complete(server, casings);
             return;
@@ -249,11 +251,20 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
             Block.popResource(level, casing.pos(), new ItemStack(FItems.DERRICK_CASING.get()));
             level.removeBlock(casing.pos(), false);
         }
+        BlockPos pos = worldPosition;
+        if (basin == null) {
+            // Magma: the bit stays in the hole, in the head, where heat wears it.
+            ItemStack bitKept = takeBit();
+            level.setBlock(pos, FBlocks.MAGMA_HEAD.get().defaultBlockState(), 3);
+            if (level.getBlockEntity(pos) instanceof MagmaHeadBlockEntity head)
+                head.setBit(bitKept);
+            level.playSound(null, pos, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 1f, 0.3f);
+            return;
+        }
         ItemStack worn = takeBit();
         if (!worn.isEmpty())
             Block.popResource(level, worldPosition, worn);
         int depth = bored;
-        BlockPos pos = worldPosition;
         level.setBlock(pos, FBlocks.WELLHEAD.get().defaultBlockState(), 3);
         if (level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.machine.derrick.WellheadBlockEntity well)
             well.setDepth(depth);

@@ -1,0 +1,17 @@
+{
+  "kind": "nether_soul",
+  "fluid": "feedback:soul_oil",
+  "radius": 32,
+  "thickness": 6,
+  "min_y": 36,
+  "max_y": 90,
+  "weight": 3,
+  "dimension_filter": ["minecraft:the_nether"],
+  "biomes": "feedback:soul_oil_bearing",
+  "volume_mb": 3000000,
+  "drive_pu": 40,
+  "pressure_exponent": 0.8,
+  "crude": { "density": 0.95, "sulfur": 0.0, "light_fraction": 0.0 },
+  "grade_spread": 0.0,
+  "indicator": "feedback:soul_seep"
+}

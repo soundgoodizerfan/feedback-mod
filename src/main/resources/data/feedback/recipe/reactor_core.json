@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "feedback:lead_plate"
+    },
+    "S": {
+      "item": "feedback:stainless_steel_plate"
+    },
+    "T": {
+      "item": "feedback:thermometer"
+    }
+  },
+  "pattern": [
+    "LSL",
+    "STS",
+    "LSL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:reactor_core"
+  }
+}

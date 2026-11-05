@@ -156,15 +156,26 @@ public class BasinFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private static boolean seep(WorldGenLevel level, BlockState state, Site site, int x, int z) {
-        if (site.basin().biomes().isPresent()
-                && !level.getBiome(new BlockPos(x, level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z), z))
-                        .is(site.basin().biomes().get()))
-            return false;
         int top = level.getHeight(Heightmap.Types.OCEAN_FLOOR_WG, x, z) - 1;
+        // A ceilinged dimension's heightmap reads the roof: walk down from under it to the first floor with air above.
+        if (level.dimensionType().hasCeiling()) {
+            top = -1;
+            for (int y = 100; y > 33; y--)
+                if (level.getBlockState(new BlockPos(x, y + 1, z)).isAir() && !level.getBlockState(new BlockPos(x, y, z)).isAir()) {
+                    top = y;
+                    break;
+                }
+            if (top < 0)
+                return false;
+        }
+        if (site.basin().biomes().isPresent()
+                && !level.getBiome(new BlockPos(x, top, z)).is(site.basin().biomes().get()))
+            return false;
         BlockPos ground = new BlockPos(x, top, z), at = ground.above();
         BlockState below = level.getBlockState(ground), here = level.getBlockState(at);
         return level.ensureCanWrite(at) && here.isAir()
-                && (below.is(BlockTags.DIRT) || below.is(BlockTags.BASE_STONE_OVERWORLD) || below.is(BlockTags.SAND))
+                && (below.is(BlockTags.DIRT) || below.is(BlockTags.BASE_STONE_OVERWORLD) || below.is(BlockTags.SAND)
+                || below.is(BlockTags.SOUL_SPEED_BLOCKS) || below.is(BlockTags.INFINIBURN_NETHER))
                 && level.setBlock(at, state, 2);
     }
 }

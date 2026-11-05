@@ -1048,9 +1048,46 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.METAL)
                     .noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlock> REACTOR_CORE = BLOCKS.register("reactor_core",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(5.0f, 8.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.FuelChannelBlock> FUEL_CHANNEL = BLOCKS.register("fuel_channel",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.FuelChannelBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.ControlAssemblyBlock> CONTROL_ASSEMBLY = BLOCKS.register("control_assembly",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.ControlAssemblyBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> SCRAM_TRIP = BLOCKS.register("scram_trip",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(3.0f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<Block> GRAPHITE_MODERATOR = BLOCKS.register("graphite_moderator",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(2.0f, 6.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.CoreSlagBlock> CORE_SLAG = BLOCKS.register("core_slag",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.CoreSlagBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).strength(2.0f, 3.0f).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.derrick.MagmaHeadBlock> MAGMA_HEAD = BLOCKS.register("magma_head",
+            () -> new io.github.soundgoodizerfan.feedback.machine.derrick.MagmaHeadBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()));
+    /** Discarded netherite pieces piled where piglins left them; broken for worn bits. */
+    public static final DeferredBlock<Block> BASTION_RUBBLE = BLOCKS.register("bastion_rubble",
+            () -> new Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK)
+                    .strength(2.0f, 6.0f)
+                    .sound(SoundType.NETHER_BRICKS)
+                    .requiresCorrectToolForDrops()));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.geology.SeepBlock> SEEP = BLOCKS.register("seep",
             () -> new io.github.soundgoodizerfan.feedback.geology.SeepBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
+                    .strength(0.2f)
+                    .sound(SoundType.MUD)
+                    .noCollission()
+                    .noOcclusion()
+                    .randomTicks()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.geology.SoulSeepBlock> SOUL_SEEP = BLOCKS.register("soul_seep",
+            () -> new io.github.soundgoodizerfan.feedback.geology.SoulSeepBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BROWN)
                     .strength(0.2f)
                     .sound(SoundType.MUD)
                     .noCollission()

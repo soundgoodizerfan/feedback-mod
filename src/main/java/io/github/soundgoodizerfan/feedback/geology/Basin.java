@@ -50,10 +50,11 @@ import net.minecraft.world.level.biome.Biome;
  * @param crude         the grade at the heart of the basin.
  * @param gradeSpread   per-basin wobble around {@code crude}, a fraction, rolled once from the seed.
  * @param indicator     the surface block placed above it (a seep).
+ * @param fluid         the fluid a wellhead draws from it (feedback:crude_oil unless the row names another, such as feedback:soul_oil).
  */
 public record Basin(String kind, int radius, int thickness, int minY, int maxY, int weight,
                     List<ResourceLocation> dimensions, Optional<TagKey<Biome>> biomes, int volumeMb, float drivePu,
-                    float exponent, CrudeGrade crude, float gradeSpread, Optional<ResourceLocation> indicator) {
+                    float exponent, CrudeGrade crude, float gradeSpread, Optional<ResourceLocation> indicator, ResourceLocation fluid) {
 
     public static final Codec<Basin> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.STRING.optionalFieldOf("kind", "sedimentary").forGetter(Basin::kind),
@@ -70,6 +71,7 @@ public record Basin(String kind, int radius, int thickness, int minY, int maxY, 
             Codec.FLOAT.optionalFieldOf("pressure_exponent", 1f).forGetter(Basin::exponent),
             CrudeGrade.CODEC.fieldOf("crude").forGetter(Basin::crude),
             Codec.floatRange(0f, 1f).optionalFieldOf("grade_spread", 0f).forGetter(Basin::gradeSpread),
-            ResourceLocation.CODEC.optionalFieldOf("indicator").forGetter(Basin::indicator)
+            ResourceLocation.CODEC.optionalFieldOf("indicator").forGetter(Basin::indicator),
+            ResourceLocation.CODEC.optionalFieldOf("fluid", ResourceLocation.fromNamespaceAndPath("feedback", "crude_oil")).forGetter(Basin::fluid)
     ).apply(i, Basin::new));
 }

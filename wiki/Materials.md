@@ -40,7 +40,8 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 | Cermet | 38 | 6 | 35 | 2900 Tu | **Magnetic.** Titanium carbide grains in an iron, nickel and cobalt binder, sintered from powder ([Furnaces](Furnaces.md#sintering)). |
 | Redstone-Chromium | 5 | 4.5 | 6 | 1300 Tu | Redstone with a little chromium. A drawn alloy of redstone. |
 | Uranium | 6 | 19.1 | 7 | 1132 Tu | **Radioactive.** The densest metal. See [Uranium](#uranium). |
-| Netherite | 40 | 13.5 | 50 | 2600 Tu | **Magnetic.** Harder than every cutting tool. |
+| [Netherite](Netherite.md) | 40 | 13.5 | 50 | 2600 Tu | **Magnetic.** Harder than every cutting tool. |
+| Cast Netherite | 26 | 13.5 | 50 | 2600 Tu | **Magnetic.** The ingot before soul quenching ([Netherite](Netherite.md#soul-quenching)). |
 
 What the columns mean in play:
 
@@ -106,6 +107,8 @@ Uraninite melts into uranium (1132 Tu) like any ore, and molten uranium casts in
 - **Radiant**: a weapon with a uranium part withers what it hits and makes it glow for a few seconds. Whoever carries the weapon carries the part, and takes the dose.
 - It is **luminous**.
 
+- It is the fuel of the [Fission Reactor](Fission_Reactor.md): clad in stainless steel it becomes a [Fuel Rod](Nuclear_Fuel.md#fuel-rod).
+
 See [Radiation](Radiation.md) before carrying any of it.
 
 ## Thorium
@@ -117,6 +120,18 @@ Monazite grows in deep veins (Y -48 to 16), with black sand over some of them. T
 Monazite melts into thorium (1750 Tu) like any ore, and molten thorium casts into ingots. It makes every metal form.
 
 Thorium stands heat. Melted into tungsten in a [crucible](Crucible.md) (about 1 part thorium to 9 of tungsten) it makes **thorium-tungsten**, which stands 2800 Tu in service. Carry it with care: see [Radiation](Radiation.md).
+
+With a little uranium, thorium makes the [Thorium Fuel Rod](Nuclear_Fuel.md#thorium-fuel-rod), which breeds fissile fuel while it burns.
+
+## Neutrons
+
+In a [Fission Reactor](Fission_Reactor.md) a material meets neutrons one of three ways, read from the material and never from the item's name:
+
+- **Fuel.** Uranium and thorium rods make the chain ([Nuclear Fuel](Nuclear_Fuel.md)).
+- **Moderator.** [Graphite](#graphite) slows neutrons, so fuel beside a [Graphite Moderator](Fission_Reactor.md#graphite-moderator) runs hotter.
+- **Absorber.** Cobalt (strongest), tungsten and lead soak neutrons up when loaded into a [Control Rod Assembly](Control_Rod.md).
+
+The walls of the reactor shell must be dense: density 7 or more in the table above.
 
 ## Silicon
 

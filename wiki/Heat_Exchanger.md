@@ -16,7 +16,7 @@ C is a Copper Ingot and B is a Brick.
 
 It connects along one axis: the two faces at either end of the direction you placed it. Put a hot thing on one end and a cooler thing on the other. Heat flows from the hotter to the cooler, faster the bigger the difference, until they're about level.
 
-It works with anything that has a temperature: [crucibles](Crucible.md), [furnaces](Furnaces.md), a [Boiler](Boiler.md), even overloaded [cable](Copper_Cable.md).
+It works with anything that has a temperature: [crucibles](Crucible.md), [furnaces](Furnaces.md), a [Boiler](Boiler.md), even overloaded [cable](Copper_Cable.md). It is how a [Fission Reactor](Fission_Reactor.md) core hands its heat to a boiler.
 
 There's no power, no switch and no direction to set. Heat always runs downhill. The only decision is **where you put it**.
 

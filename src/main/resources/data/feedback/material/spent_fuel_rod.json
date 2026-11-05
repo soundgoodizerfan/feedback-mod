@@ -1,0 +1,25 @@
+{
+  "color": "#5a5a52",
+  "kind": "metal",
+  "hardness": 20,
+  "density": 10,
+  "thermal": {
+    "melting_point": 1132
+  },
+  "radioactivity": 6.0,
+  "forms": {
+    "ingot": "feedback:spent_fuel_rod"
+  },
+  "exclude": [
+    "plate",
+    "foil",
+    "rod",
+    "wire",
+    "fine_wire",
+    "scrap",
+    "drilled_plate",
+    "turned_rod",
+    "nugget",
+    "block"
+  ]
+}

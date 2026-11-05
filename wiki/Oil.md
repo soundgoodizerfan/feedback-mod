@@ -1,6 +1,6 @@
 # Oil
 
-Black, flammable and underground. Crude oil is found in **oil basins** and refined in a [Fractionating Column](Fractionating_Column.md) into naphtha, kerosene and diesel. The Nether's counterpart is **soul oil**, cooked from soul sand in a [Reactor](Reactor.md).
+Black, flammable and underground. Crude oil is found in **oil basins** and refined in a [Fractionating Column](Fractionating_Column.md) into naphtha, kerosene and diesel. The Nether's counterpart is **soul oil**, found in basins under soul sand valleys or cooked from soul sand in a [Reactor](Reactor.md).
 
 ## Crude oil
 
@@ -49,6 +49,16 @@ All of these burn.
 
 ## Soul oil
 
+### Soul oil basins
+
+Under soul sand valleys, in the Nether between **y 36 and 90**, lie **soul oil basins**: circles of soul-soaked rock about 32 blocks across the radius.
+
+- **Soul Seeps** mark them on the surface. A **Copper Bucket** used on one scoops **250 mB** of soul oil; the seep refills after a minute, as a tar seep does.
+- A [Survey Meter](Instruments.md#survey-meter) lists **Soul oil basin** with a rough size and a bearing, as for crude.
+- A derrick bored over one becomes a wellhead with the same choke settings as for crude ([Getting oil out of the ground](#getting-oil-out-of-the-ground)). Soul oil has no grade.
+
+### From soul sand
+
 Soul sand and soul soil, both found in the Nether's soul sand valleys, are cooked in a [Reactor](Reactor.md) and give up three things: **soul oil**, a liquid fuel that carries oxygen of its own; **wisp gas**, a light gas that burns; and **husk sand**, what is left of the sand.
 
 ### Making it
@@ -78,4 +88,6 @@ Soul oil:
 Wisp gas:
 
 - Its ignition point is very high, so an [Engine](Engine.md#compression-fuel-and-knock) misfires on it at medium compression and below. A burner or turbine lights it without trouble.
+- A [Reactor](Reactor.md#the-reactions) with a [Cryocooler](Cryocooler.md) liquefies it, at -120 to -100 Tu, into **Liquid Wisp Gas**: 160 mB of gas makes 32 mB.
+- A ghast killed by a player drops a **Ghast Bladder**, and 1 or 2 more with a [Hand Knife](Prep_Table.md) in the main hand.
 - It is a gas: it can be held in a [Gas Tank](Gas_Tank.md) and pressurized, and it follows the pressure rules of any gas.

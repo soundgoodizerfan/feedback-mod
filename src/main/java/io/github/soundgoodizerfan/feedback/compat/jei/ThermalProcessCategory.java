@@ -206,7 +206,7 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             row(graphics, font, 18, "feedback.jei.inputs", inputNames(recipe), VALUE_COLOUR);
             row(graphics, font, 30, "feedback.jei.output", recipe.result().getCount() + " x " + recipe.result().getHoverName().getString(), VALUE_COLOUR);
             row(graphics, font, 42, "feedback.jei.quench.from", Readout.number(recipe.minTemperature().value()) + "+ Tu", VALUE_COLOUR);
-            row(graphics, font, 54, "feedback.jei.quench.into", Component.translatable("feedback.jei.quench.water").getString(), VALUE_COLOUR);
+            row(graphics, font, 54, "feedback.jei.quench.into", recipe.medium().map(m -> net.minecraft.core.registries.BuiltInRegistries.FLUID.get(m).getFluidType().getDescription().getString()).orElseGet(() -> Component.translatable("feedback.jei.quench.water").getString()), VALUE_COLOUR);
             return;
         }
         String fired = recipe.fire().map(c -> Component.translatable("feedback.jei.fire.title",

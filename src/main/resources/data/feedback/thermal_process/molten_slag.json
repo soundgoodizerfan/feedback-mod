@@ -1,0 +1,9 @@
+{
+  "inputs": [
+    [ { "item": "feedback:silicate_slag" } ]
+  ],
+  "min_temperature": 1300,
+  "optimal_temperature": 1300,
+  "required_tpu": 0,
+  "result_fluid": { "id": "feedback:molten_slag", "amount": 144 }
+}

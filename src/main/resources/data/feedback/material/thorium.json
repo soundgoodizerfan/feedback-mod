@@ -1,6 +1,7 @@
 {
   "color": "#7d8087",
   "kind": "metal",
+  "neutron": {"fertile": 0.8},
   "hardness": 2.5,
   "density": 11.7,
   "thermal": {

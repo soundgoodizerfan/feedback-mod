@@ -65,6 +65,8 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_LEAD = moltenType("molten_lead");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_SILVER = moltenType("molten_silver");
     public static final DeferredHolder<FluidType, FluidType> MOLTEN_URANIUM = moltenType("molten_uranium");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_CAST_NETHERITE = moltenType("molten_cast_netherite");
+    public static final DeferredHolder<FluidType, FluidType> MOLTEN_SLAG = moltenType("molten_slag");
 
     /** Nether quartz's own melt -- see {@code FItems#QUARTZ_GLASS_INGOT}. No graphite fluid
      * type: graphitization never passes through a liquid phase, see {@code FItems#GRAPHITE}. */
@@ -130,6 +132,9 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> ARGON = petroType("argon", -1, 20, 300);
     public static final DeferredHolder<FluidType, FluidType> LIQUID_AIR = petroType("liquid_air", 870, 200, 80);
     public static final DeferredHolder<FluidType, FluidType> LIQUID_OXYGEN = petroType("liquid_oxygen", 1140, 200, 90);
+    /** The Nether arc: mixed magma melt (denser than any metal slag, hot) and wisp gas liquefied. */
+    public static final DeferredHolder<FluidType, FluidType> MAGMA_MELT = petroType("magma_melt", 2800, 8000, 1900);
+    public static final DeferredHolder<FluidType, FluidType> LIQUID_WISP_GAS = petroType("liquid_wisp_gas", 600, 200, 90);
     public static final DeferredHolder<FluidType, FluidType> CRYOLITE_BATH = petroType("cryolite_bath", 2100, 6000, 1500);
 
     private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {

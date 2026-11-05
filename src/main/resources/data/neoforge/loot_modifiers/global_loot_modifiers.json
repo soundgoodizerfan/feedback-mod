@@ -5,6 +5,9 @@
     "feedback:feedbacker_relic",
     "feedback:gun_blueprint",
     "feedback:crop_seeds",
-    "feedback:warden_organs"
+    "feedback:warden_organs",
+    "feedback:ghast_organs",
+    "feedback:piglin_trash",
+    "feedback:piglin_brute_trash"
   ]
 }

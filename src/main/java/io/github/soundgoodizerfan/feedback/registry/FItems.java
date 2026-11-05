@@ -381,7 +381,26 @@ public class FItems {
     public static final DeferredItem<BlockItem> DERRICK_BASE = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_BASE);
     public static final DeferredItem<BlockItem> DERRICK_CASING = ITEMS.registerSimpleBlockItem(FBlocks.DERRICK_CASING);
     public static final DeferredItem<BlockItem> WELLHEAD = ITEMS.registerSimpleBlockItem(FBlocks.WELLHEAD);
+    public static final DeferredItem<BlockItem> BASTION_RUBBLE = ITEMS.registerSimpleBlockItem(FBlocks.BASTION_RUBBLE);
+    public static final DeferredItem<Item> GHAST_BLADDER = ITEMS.registerSimpleItem("ghast_bladder");
+    /** Netherite as it comes from the mould: soft until it is soul-tempered. */
+    public static final DeferredItem<Item> CAST_NETHERITE_INGOT = ITEMS.registerSimpleItem("cast_netherite_ingot");
+    /** Netherite synthesis: the blended powder of cermet, tungsten and cobalt, and the pressed compact that is sintered. */
+    public static final DeferredItem<Item> NETHERITE_POWDER = ITEMS.registerSimpleItem("netherite_powder");
+    public static final DeferredItem<Item> NETHERITE_GREEN_COMPACT = ITEMS.registerSimpleItem("netherite_green_compact");
+    public static final DeferredItem<Item> WORN_NETHERITE_BITS = ITEMS.registerSimpleItem("worn_netherite_bits");
+    public static final DeferredItem<BlockItem> REACTOR_CORE = ITEMS.registerSimpleBlockItem(FBlocks.REACTOR_CORE);
+    public static final DeferredItem<BlockItem> FUEL_CHANNEL = ITEMS.registerSimpleBlockItem(FBlocks.FUEL_CHANNEL);
+    public static final DeferredItem<BlockItem> CONTROL_ASSEMBLY = ITEMS.registerSimpleBlockItem(FBlocks.CONTROL_ASSEMBLY);
+    public static final DeferredItem<BlockItem> SCRAM_TRIP = ITEMS.registerSimpleBlockItem(FBlocks.SCRAM_TRIP);
+    public static final DeferredItem<BlockItem> GRAPHITE_MODERATOR = ITEMS.registerSimpleBlockItem(FBlocks.GRAPHITE_MODERATOR);
+    public static final DeferredItem<BlockItem> CORE_SLAG = ITEMS.registerSimpleBlockItem(FBlocks.CORE_SLAG);
+    public static final DeferredItem<Item> FUEL_ROD = ITEMS.registerSimpleItem("fuel_rod");
+    public static final DeferredItem<Item> THORIUM_FUEL_ROD = ITEMS.registerSimpleItem("thorium_fuel_rod");
+    public static final DeferredItem<Item> SPENT_FUEL_ROD = ITEMS.registerSimpleItem("spent_fuel_rod");
+    public static final DeferredItem<BlockItem> MAGMA_HEAD = ITEMS.registerSimpleBlockItem(FBlocks.MAGMA_HEAD);
     public static final DeferredItem<BlockItem> SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SEEP);
+    public static final DeferredItem<BlockItem> SOUL_SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_SEEP);
     public static final DeferredItem<BlockItem> CASTING_BASIN = ITEMS.registerSimpleBlockItem(FBlocks.CASTING_BASIN);
     /** Its material (and so its hardness) is stamped on it, as on any tool head. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickBitItem> DERRICK_BIT = ITEMS.register("derrick_bit",

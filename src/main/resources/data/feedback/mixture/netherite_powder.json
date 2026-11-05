@@ -1,0 +1,21 @@
+{
+  "parts": {
+    "feedback:cermet": {
+      "min": 0.55,
+      "max": 0.65
+    },
+    "feedback:tungsten": {
+      "min": 0.2,
+      "max": 0.3
+    },
+    "feedback:cobalt": {
+      "min": 0.1,
+      "max": 0.2
+    }
+  },
+  "stray": 0.06,
+  "max_temperature": 600,
+  "result": {
+    "id": "feedback:netherite_powder"
+  }
+}

@@ -72,7 +72,7 @@ public class BasinState extends SavedData {
         return state.entries.computeIfAbsent(site.id(), id -> {
             state.setDirty();
             var b = site.basin();
-            return state.new Entry(id, site.centre(), site.radius(), b.volumeMb(), b.volumeMb(), b.drivePu(), b.exponent(), site.grade());
+            return state.new Entry(id, site.centre(), site.radius(), b.volumeMb(), b.volumeMb(), b.drivePu(), b.exponent(), site.grade(), b.fluid().toString());
         });
     }
 
@@ -83,9 +83,11 @@ public class BasinState extends SavedData {
         private int remainingMb;
         private final float drivePu, exponent;
         private final CrudeGrade grade;
+        private final String fluid;
 
         private Entry(String id, BlockPos centre, int radius, int volumeMb, int remainingMb, float drivePu, float exponent,
-                      CrudeGrade grade) {
+                      CrudeGrade grade, String fluid) {
+            this.fluid = fluid;
             this.id = id;
             this.centre = centre;
             this.radius = radius;
@@ -125,6 +127,11 @@ public class BasinState extends SavedData {
             return grade;
         }
 
+        /** The fluid id a wellhead draws from this basin. */
+        public net.minecraft.resources.ResourceLocation fluid() {
+            return net.minecraft.resources.ResourceLocation.parse(fluid);
+        }
+
         /** Takes up to {@code mb} out of the basin and returns what came: less if the basin is nearly dry. */
         public int draw(int mb) {
             int taken = Math.max(0, Math.min(mb, remainingMb));
@@ -143,7 +150,8 @@ public class BasinState extends SavedData {
             String id = e.getString("id");
             state.entries.put(id, state.new Entry(id, new BlockPos(e.getInt("x"), e.getInt("y"), e.getInt("z")),
                     e.getInt("r"), e.getInt("v0"), e.getInt("v"), e.getFloat("p0"), e.getFloat("k"),
-                    new CrudeGrade(e.getFloat("density"), e.getFloat("sulfur"), e.getFloat("light"))));
+                    new CrudeGrade(e.getFloat("density"), e.getFloat("sulfur"), e.getFloat("light")),
+                    e.contains("fluid") ? e.getString("fluid") : "feedback:crude_oil"));
         }
         return state;
     }
@@ -165,6 +173,7 @@ public class BasinState extends SavedData {
             e.putFloat("density", b.grade.density());
             e.putFloat("sulfur", b.grade.sulfur());
             e.putFloat("light", b.grade.lightFraction());
+            e.putString("fluid", b.fluid);
             list.add(e);
         }
         tag.put("basins", list);

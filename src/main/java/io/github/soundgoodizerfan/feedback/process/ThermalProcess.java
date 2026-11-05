@@ -142,7 +142,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * @param phase               a liquid boiling to its gas, or the gas condensing back ({@link PhaseChange}): the row's
  *                            {@code min_temperature} is the boiling point. Such a row is read by {@link ThermalProcessTable#boiling}
  *                            and {@code condensing}, never matched against items, and is not in {@code entries()}.
- * @param quench              a quench: {@code inputs} are what is quenched, {@code min_temperature} how hot it must still be when it enters water, {@code result}
+ * @param quench              a quench (optional {@code medium}, a fluid id, soul_oil for a tank quench; water when absent): {@code inputs} are what is quenched, {@code min_temperature} how hot it must still be when it enters water, {@code result}
  *                            what it becomes. Read by {@code Quenching} on a thrown item in water, never held by a vessel; not in {@code entries()}.
  * @param dip                 an item meeting a bath ({@link Dip}): bleach, dye, stain, wash, enamel, a hot dip, an imbue. Read by {@code Dipping} on a held
  *                            item against a vessel's tank, never held by a vessel; not in {@code entries()}.
@@ -173,8 +173,8 @@ public record ThermalProcess(List<Ingredient> inputs,
      * codec stays inside the sixteen fields a record codec takes; each is still a top-level key of the row's JSON.
      */
     public record Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip, Optional<Electrolysis> electrolysis,
-                          Optional<Casting> freeze, Optional<Dip.Coat> fire) {
-        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                          Optional<Casting> freeze, Optional<Dip.Coat> fire, Optional<net.minecraft.resources.ResourceLocation> medium) {
+        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
         public static final com.mojang.serialization.MapCodec<Special> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                 PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(Special::phase),
@@ -182,7 +182,8 @@ public record ThermalProcess(List<Ingredient> inputs,
                 Dip.CODEC.optionalFieldOf("dip").forGetter(Special::dip),
                 Electrolysis.CODEC.optionalFieldOf("electrolysis").forGetter(Special::electrolysis),
                 Casting.CODEC.optionalFieldOf("freeze").forGetter(Special::freeze),
-                Dip.Coat.CODEC.optionalFieldOf("fire").forGetter(Special::fire)
+                Dip.Coat.CODEC.optionalFieldOf("fire").forGetter(Special::fire),
+                net.minecraft.resources.ResourceLocation.CODEC.optionalFieldOf("medium").forGetter(Special::medium)
         ).apply(i, Special::new));
     }
 
@@ -192,6 +193,11 @@ public record ThermalProcess(List<Ingredient> inputs,
 
     public boolean quench() {
         return special.quench();
+    }
+
+    /** The fluid a quench row is done in (a fluid id); absent means water. */
+    public Optional<net.minecraft.resources.ResourceLocation> medium() {
+        return special.medium();
     }
 
     public Optional<Dip> dip() {
@@ -216,7 +222,7 @@ public record ThermalProcess(List<Ingredient> inputs,
         Tu at = casting.solidifyTemperature();
         return new ThermalProcess(List.of(), at, at, new Tu(Float.MAX_VALUE), NO_HOLD, new TuRate(Float.MAX_VALUE), casting.result(),
                 new Tu(Float.MAX_VALUE), ItemStack.EMPTY, FluidStack.EMPTY, false, Optional.empty(), false, Optional.empty(),
-                new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.of(casting), Optional.empty()));
+                new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.of(casting), Optional.empty(), Optional.empty()));
     }
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */

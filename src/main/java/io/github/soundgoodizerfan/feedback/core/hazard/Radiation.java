@@ -169,7 +169,10 @@ public final class Radiation {
                     pos.set(centre.getX() + dx, centre.getY() + dy, centre.getZ() + dz);
                     var state = level.getBlockState(pos);
                     float here = table.getOrDefault(state.getBlock().asItem(), 0f);
-                    if (state.hasBlockEntity() && level.getBlockEntity(pos) instanceof net.minecraft.world.Container box) {
+                    var be = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
+                    if (be instanceof RadiationEmitter emitter)
+                        here += emitter.radiationRu();
+                    if (be instanceof net.minecraft.world.Container box) {
                         float held = 0f;
                         for (int slot = 0; slot < box.getContainerSize(); slot++)
                             held += activity(box.getItem(slot), materials);

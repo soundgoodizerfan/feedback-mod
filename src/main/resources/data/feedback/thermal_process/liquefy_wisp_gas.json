@@ -1,0 +1,17 @@
+{
+  "inputs": [],
+  "min_temperature": -120,
+  "optimal_temperature": -110,
+  "max_temperature": -100,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      { "fluid": "feedback:wisp_gas", "mb": 160 }
+    ],
+    "fluid_outputs": [
+      { "fluid": "feedback:liquid_wisp_gas", "mb": 32 }
+    ],
+    "min_pu": 2,
+    "optimal_pu": 4
+  }
+}

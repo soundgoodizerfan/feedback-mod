@@ -1,6 +1,7 @@
 {
   "color": "#6a6f8a",
   "kind": "metal",
+  "neutron": {"absorption": 0.15},
   "hardness": 0.3,
   "density": 11.34,
   "thermal": {

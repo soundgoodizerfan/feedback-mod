@@ -1,0 +1,17 @@
+{
+  "inputs": [],
+  "min_temperature": 1550,
+  "optimal_temperature": 1700,
+  "required_tpu": 0,
+  "reaction": {
+    "fluid_inputs": [
+      { "fluid": "feedback:magma_melt", "mb": 1000 }
+    ],
+    "fluid_outputs": [
+      { "fluid": "feedback:molten_iron", "mb": 500 },
+      { "fluid": "feedback:molten_nickel", "mb": 60 },
+      { "fluid": "feedback:molten_cobalt", "mb": 20 },
+      { "fluid": "feedback:molten_slag", "mb": 300 }
+    ]
+  }
+}

@@ -18,5 +18,8 @@
   },
   "separation": {
     "reflectivity": 0.7
+  },
+  "bears": {
+    "feedback:aluminium": 0.1
   }
 }

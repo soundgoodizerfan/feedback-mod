@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "feedback:steel_plate"
+    },
+    "L": {
+      "item": "feedback:lead_plate"
+    },
+    "R": {
+      "item": "feedback:steel_rod"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "LRL",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:control_assembly"
+  }
+}

@@ -3219,6 +3219,8 @@ public final class FTuning {
 
     /** Invented. The casting basin: a block's worth of pool, the share of the gap to ambient it cools each tick, and mB it takes from a vessel each tick. */
     public static final int BASIN_POOL_MB = 1296, BASIN_POUR_MB_PER_TICK = 18;
+    /** mB of the quench oil a dunk in a tank costs (invented). */
+    public static final int QUENCH_TANK_MB = 50;
     public static final float BASIN_COOL_PER_TICK = 0.002f;
 
     /** Invented. The derrick: the bit's load, depth one casing reaches (blocks), turns a tick per RPM, drive force, the RPM it is rated for, and force absorbed per RPM beyond it. */
@@ -3231,6 +3233,10 @@ public final class FTuning {
     public static final float DERRICK_FU_PER_BLOCK = 400f, DERRICK_ROCK_HARDNESS_PER_DESTROY_TIME = 6f;
     public static final float DERRICK_BIT_WEAR_PER_ST = 0.0002f, DERRICK_BIT_CONDITION_FLOOR = 0.05f,
             DERRICK_BIT_DEFAULT_HARDNESS = 30f;
+    /** The magma head (Nether industry): the Y a drill must reach to meet magma, the fire (Tu) it needs to flow at all and to flow freely, mB of melt per RPM at full heat, a bit's service temperature when its material states none, and bit condition lost per Tu over it per tick (all invented). */
+    public static final int MAGMA_LEVEL_Y = 28;
+    public static final float MAGMA_MIN_TU = 1600f, MAGMA_FULL_TU = 2200f, MAGMA_MB_PER_RPM = 0.4f,
+            MAGMA_BIT_SERVICE_DEFAULT_TU = 1500f, MAGMA_BIT_WEAR_PER_TU = 0.000002f;
 
     /** Invented. The wellhead's choke: share of flow it passes, and the surface pressure it is rated for (danger line, then certain failure). */
     public static final float WELLHEAD_SMALL_FLOW = 0.2f, WELLHEAD_HALF_FLOW = 0.5f, WELLHEAD_OPEN_FLOW = 1f;
@@ -3504,4 +3510,43 @@ public final class FTuning {
     public static final float WELDER_ELECTRODE_FLOOR = 0.25f;
     /** Placeholder. Filler metal for a part whose material cannot be told (a machine with no housing material): plain iron. */
     public static final net.minecraft.resources.ResourceLocation WELDER_DEFAULT_FILLER = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "iron");
+
+    // --- reactor core (fission spec; all invented placeholders) ---------------------------------------------------
+    /** Thermal mass of the core, Work per Tu. */
+    public static final ThermalMass FISSION_CORE_MASS = new ThermalMass(2000f);
+    /** The shell reaches this many blocks from the core sideways, and twice this down; the lattice is one cell inside it. */
+    public static final int REACTOR_SHELL_RADIUS = 3;
+    /** The least density (mu per mB) a block's material needs to count as a wall cell: steel and lead do, stone does not. */
+    public static final float REACTOR_WALL_MIN_DENSITY = 7f;
+    /** Work per tick one fuel cell makes at power 1. */
+    public static final float REACTOR_CELL_WORK = 3f;
+    /** Multiplication a live neighbouring fuel cell and a moderator's {@code moderation} each add to a cell. */
+    public static final float REACTOR_FUEL_NEIGHBOUR_GAIN = 0.12f, REACTOR_MODERATOR_GAIN = 0.35f;
+    /** What a control bundle takes off: per adjacent fuel cell, and across the whole lattice per cell, at full insertion and strength. */
+    public static final float REACTOR_ABSORB_ADJACENT_GAIN = 0.6f, REACTOR_ABSORB_GLOBAL_GAIN = 0.04f;
+    /** Mean multiplication at which the chain just holds (power 0) and at which it runs at full; power may overshoot to the ceiling. */
+    public static final float REACTOR_K_CRITICAL = 1.0f, REACTOR_K_FULL = 1.8f, REACTOR_POWER_CEILING = 1.5f;
+    /** A hotter core is less reactive: per Tu over the onset. */
+    public static final float REACTOR_TEMPERATURE_FEEDBACK = 0.0002f, REACTOR_FEEDBACK_ONSET_TU = 400f;
+    /** The spring that pulls real power toward the target and the damping that keeps it from ringing: seconds to settle, with overshoot. */
+    public static final float REACTOR_SPRING = 0.0004f, REACTOR_DAMP = 0.97f;
+    /** Decay heat: a share of the running work, falling with this time constant (ticks). */
+    public static final float REACTOR_DECAY_SHARE = 0.06f, REACTOR_DECAY_TAU_TICKS = 36000f;
+    /** Burnup per tick at power 1 (about two hours), the rod condition floor, and what breeding adds per unit fertile and burn. */
+    public static final float REACTOR_BURN_PER_TICK = 0.0000069f, REACTOR_FUEL_CONDITION_FLOOR = 0.05f, REACTOR_BREED_GAIN = 0.6f;
+    /** Fuel damage: condition lost per tick per Tu over {@code REACTOR_FUEL_DAMAGE_TU}, and per unit of power over {@code REACTOR_OVERPOWER}. */
+    public static final float REACTOR_FUEL_DAMAGE_TU = 1100f, REACTOR_FUEL_DAMAGE_PER_TU = 0.00001f, REACTOR_OVERPOWER = 1.15f, REACTOR_OVERPOWER_DAMAGE = 0.002f;
+    /** A trip block in the shell drops the rods over this temperature and lets them reset this far under it. */
+    public static final float REACTOR_TRIP_TU = 850f, REACTOR_TRIP_RESET_TU = 200f;
+    /** Vessel pressure: none under the onset, this much per Tu over it; danger, critical and the warning share as for any pressure holder. */
+    public static final float REACTOR_PRESSURE_ONSET_TU = 900f, REACTOR_PU_PER_TU = 0.01f, REACTOR_WARN_FRACTION = 0.7f;
+    public static final Pu REACTOR_DANGER_PU = new Pu(5f), REACTOR_CRITICAL_PU = new Pu(7f);
+    /** Steam blast power of a burst, and the slag it scatters: how many blocks, how far, and each one's dose (Ru) and decay time (ticks). */
+    public static final float REACTOR_BURST_POWER = 6f, REACTOR_SLAG_RU = 150f;
+    public static final int REACTOR_SLAG_BLOCKS = 18, REACTOR_SLAG_REACH = 4;
+    public static final int REACTOR_SLAG_DECAY_TICKS = 480000;
+    /** The dose a core at full power gives at point blank (Ru). */
+    public static final float REACTOR_RUNNING_RU = 400f;
+    /** A control rod moves one position this often (ticks), and a full absorber bundle is this many items. */
+    public static final int REACTOR_ROD_STEP_TICKS = 20, REACTOR_ABSORBER_FULL_BUNDLE = 8;
 }

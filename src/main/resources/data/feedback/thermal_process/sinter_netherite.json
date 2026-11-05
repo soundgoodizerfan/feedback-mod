@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:netherite_green_compact"
+    }
+  ],
+  "min_temperature": 1500,
+  "optimal_temperature": 1600,
+  "max_temperature": 1700,
+  "required_tpu": 600,
+  "result": {
+    "id": "feedback:cast_netherite_ingot"
+  },
+  "spoil_temperature": 1750,
+  "spoiled": {
+    "id": "feedback:porous_sinter"
+  },
+  "atmosphere": {
+    "fluid": "feedback:nitrogen",
+    "mb": 50
+  }
+}

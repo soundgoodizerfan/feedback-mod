@@ -6,6 +6,8 @@ A vanilla block. Feedback keeps the block and changes what it is for. The [Anvil
 
 It upgrades diamond gear to netherite and applies armor trims, using smithing templates.
 
+Feedback's Smithing Table keeps the trim half. Gear is not upgraded to netherite; netherite comes from [melting and soul quenching](Netherite.md).
+
 ## Crafting
 
 ```
@@ -26,7 +28,7 @@ Every bench has the same screen: a bench top with a center slot and a column of 
 - A **part** in the center: the fan shows what is already fitted to it (click to take it off), then what you are carrying that attaches, then every part that could attach and would be shaped from the stock slot. Click a node to fit it. Fitting the last part makes the tool, which becomes the center.
 - A **tool** in the center: the fan shows its parts. Click one to see what you carry that fits that place (swap it, add to an empty place, or mend a worn part with the same stuff) or to take it off; what is left is the part it was built from, with the rest fitted to it. A piece of armor is its plate: shaped here it is the finished piece, and its lining and studs are fitted and taken off as parts of it.
 
-Two folder tabs stand above the panel. **Forge** is the bench described above. **Trim** is exactly the vanilla smithing table: **Template**, **Base** and **Addition** slots in a row and the result on the right, so armor trims work. Netherite upgrades are off. No hand tool is needed there.
+Two folder tabs stand above the panel. **Forge** is the bench described above. **Trim** is exactly the vanilla smithing table: **Template**, **Base** and **Addition** slots in a row and the result on the right, so armor trims work. No hand tool is needed there.
 
 The bench top behind the fan is lit by a fire that follows the stock's heat: low embers for cold stock, taller and whiter as it heats.
 

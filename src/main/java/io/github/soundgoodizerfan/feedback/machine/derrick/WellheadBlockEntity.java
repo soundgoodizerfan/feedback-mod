@@ -199,8 +199,11 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
 
     /** Offers up to {@code amount} mB to the neighbours; draws from the basin only what they take. */
     private int push(ServerLevel server, int amount) {
-        CrudeGrade grade = coned(basin.grade());
-        FluidStack offer = CrudeGrade.stamp(new FluidStack(FFluids.CRUDE_OIL.get(), amount), grade);
+        var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(basin.fluid());
+        // Only crude carries a grade; another fluid (soul oil) is the same everywhere.
+        FluidStack offer = fluid == FFluids.CRUDE_OIL.get()
+                ? CrudeGrade.stamp(new FluidStack(fluid, amount), coned(basin.grade()))
+                : new FluidStack(fluid, amount);
         int moved = 0;
         for (Direction d : Direction.values()) {
             if (moved >= amount)

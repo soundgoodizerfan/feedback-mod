@@ -1,0 +1,16 @@
+{
+  "inputs": [
+    [
+      {
+        "item": "minecraft:ancient_debris"
+      }
+    ]
+  ],
+  "min_temperature": 2600,
+  "optimal_temperature": 2650,
+  "required_tpu": 0,
+  "result_fluid": {
+    "id": "feedback:molten_cast_netherite",
+    "amount": 36
+  }
+}

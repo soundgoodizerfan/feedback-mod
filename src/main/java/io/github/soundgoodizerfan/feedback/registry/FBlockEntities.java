@@ -491,6 +491,21 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickCasingBlockEntity>> DERRICK_CASING =
             BLOCK_ENTITIES.register("derrick_casing", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.derrick.DerrickCasingBlockEntity::new, FBlocks.DERRICK_CASING.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity>> REACTOR_CORE =
+            BLOCK_ENTITIES.register("reactor_core", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity::new, FBlocks.REACTOR_CORE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.FuelChannelBlockEntity>> FUEL_CHANNEL =
+            BLOCK_ENTITIES.register("fuel_channel", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.FuelChannelBlockEntity::new, FBlocks.FUEL_CHANNEL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.ControlAssemblyBlockEntity>> CONTROL_ASSEMBLY =
+            BLOCK_ENTITIES.register("control_assembly", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.ControlAssemblyBlockEntity::new, FBlocks.CONTROL_ASSEMBLY.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.CoreSlagBlockEntity>> CORE_SLAG =
+            BLOCK_ENTITIES.register("core_slag", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.CoreSlagBlockEntity::new, FBlocks.CORE_SLAG.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.derrick.MagmaHeadBlockEntity>> MAGMA_HEAD =
+            BLOCK_ENTITIES.register("magma_head", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.derrick.MagmaHeadBlockEntity::new, FBlocks.MAGMA_HEAD.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.derrick.WellheadBlockEntity>> WELLHEAD =
             BLOCK_ENTITIES.register("wellhead", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.derrick.WellheadBlockEntity::new, FBlocks.WELLHEAD.get()).build(null));

@@ -103,6 +103,7 @@ import net.minecraft.world.item.Item;
  *                       hardness, magnetism and colour, but by default it smelts into its metal at that
  *                       metal's melting point (see {@code ThermalProcessTable}) and gets ore, deepslate ore
  *                       and lump forms generated. Only the largest share smelts so far.
+ * @param neutron        how it meets neutrons in a reactor core (absent: inert).
  * @param radioactivity  the dose rate one ingot's volume of it gives at point blank, in Ru (absent: none).
  *                       Read by {@code Radiation} for every item, block and modular part made of it.
  * @param combustion     see {@link Combustion}: what burning it does, in a fire and in a chamber.
@@ -142,7 +143,22 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst,
                        Optional<Potion> potion, Optional<XpCapacity> xpStore,
-                       Optional<Integer> luminance, boolean phosphor) {
+                       Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron) {
+
+    /**
+     * How a material meets neutrons in a reactor core (fission spec 2.5): {@code fissile} is what a rod of it gives per neutron
+     * (1 for natural uranium fuel), {@code fertile} what it breeds toward fissile while it sits in a running core, {@code moderation}
+     * how much it slows neutrons so neighbouring fuel runs hotter, {@code absorption} how much it soaks them up. Read by the core
+     * from the item's material, never from an id; a pack adds a fuel, moderator or absorber by writing this block.
+     */
+    public record Neutron(float fissile, float fertile, float moderation, float absorption) {
+        public static final Codec<Neutron> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.FLOAT.optionalFieldOf("fissile", 0f).forGetter(Neutron::fissile),
+                Codec.FLOAT.optionalFieldOf("fertile", 0f).forGetter(Neutron::fertile),
+                Codec.FLOAT.optionalFieldOf("moderation", 0f).forGetter(Neutron::moderation),
+                Codec.FLOAT.optionalFieldOf("absorption", 0f).forGetter(Neutron::absorption)
+        ).apply(i, Neutron::new));
+    }
 
     /**
      * How a material holds and carries experience (progression roadmap L2, 6.8). {@code topLevel} is the level a
@@ -625,12 +641,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor(), m.neutron()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor())));
+            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -645,7 +661,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                         Optional<Coil> coil, Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                         Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion, Optional<XpCapacity> xpStore,
-                        Optional<Integer> luminance, boolean phosphor) {
+                        Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -661,7 +677,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Potion.CODEC.optionalFieldOf("potion").forGetter(Tail::potion),
                 XpCapacity.CODEC.optionalFieldOf("xp_store").forGetter(Tail::xpStore),
                 Codec.intRange(0, 15).optionalFieldOf("luminance").forGetter(Tail::luminance),
-                Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Tail::phosphor)
+                Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Tail::phosphor),
+                Neutron.CODEC.optionalFieldOf("neutron").forGetter(Tail::neutron)
         ).apply(instance, Tail::new));
     }
 

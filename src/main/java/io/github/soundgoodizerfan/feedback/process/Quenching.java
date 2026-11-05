@@ -100,6 +100,43 @@ public class Quenching {
             hiss(level, item, tu);
     }
 
+    /**
+     * Quenching in a fluid that has no world block (soul oil): hot stock in hand on any tank holding it.
+     * The tank loses {@link FTuning#QUENCH_TANK_MB} of the oil to the dunk. Water stays a thrown item.
+     */
+    @SubscribeEvent
+    public static void onTankQuench(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock event) {
+        Level level = event.getLevel();
+        ItemStack stack = event.getItemStack();
+        if (level.isClientSide || !stack.has(FDataComponents.TEMPERATURE.get()))
+            return;
+        var tank = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, event.getPos(), event.getFace());
+        if (tank == null || tank.getTanks() == 0)
+            return;
+        var held = tank.getFluidInTank(0);
+        for (int i = 1; held.isEmpty() && i < tank.getTanks(); i++)
+            held = tank.getFluidInTank(i);
+        if (held.getAmount() < FTuning.QUENCH_TANK_MB)
+            return;
+        var medium = net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(held.getFluid());
+        Optional<ThermalProcess> row = ThermalProcessTable.get().findQuench(stack, medium);
+        if (row.isEmpty())
+            return;
+        event.setCanceled(true);
+        event.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
+        float tu = ItemHeat.get(stack, level).value();
+        ItemStack out = tu >= row.get().minTemperature().value() ? row.get().result().copyWithCount(stack.getCount()) : stack.copy();
+        if (out == stack || ItemStack.isSameItemSameComponents(out, stack))
+            ItemHeat.clear(out);
+        var drain = new net.neoforged.neoforge.fluids.FluidStack(held.getFluid(), FTuning.QUENCH_TANK_MB);
+        tank.drain(drain, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        event.getEntity().setItemInHand(event.getHand(), out);
+        if (tu > AmbientTable.at(level).value() && level instanceof ServerLevel server)
+            server.sendParticles(ParticleTypes.LARGE_SMOKE, event.getPos().getX() + 0.5, event.getPos().getY() + 1.0, event.getPos().getZ() + 0.5,
+                    (int) Math.min(24, tu / 60f), 0.2, 0.1, 0.2, 0.01);
+        level.playSound(null, event.getPos(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.6f, 1.2f);
+    }
+
     private static void hiss(Level level, ItemEntity item, float tu) {
         level.playSound(null, item.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.6f, 2.0f);
         if (level instanceof ServerLevel server)

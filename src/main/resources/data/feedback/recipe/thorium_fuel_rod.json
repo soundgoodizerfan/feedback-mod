@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "T": {
+      "item": "feedback:thorium_ingot"
+    },
+    "U": {
+      "item": "feedback:uranium_ingot"
+    },
+    "S": {
+      "item": "feedback:stainless_steel_plate"
+    }
+  },
+  "pattern": [
+    "STS",
+    "SUS",
+    "STS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:thorium_fuel_rod"
+  }
+}

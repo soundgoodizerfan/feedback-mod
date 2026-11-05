@@ -1,6 +1,7 @@
 {
   "color": "#3a3a40",
   "kind": "mineral",
+  "neutron": {"moderation": 1.0},
   "exclude": ["ingot"],
   "traits": [
     "fireproof"
@@ -23,6 +24,7 @@
   },
   "forms": {
     "lump": "feedback:graphite",
+    "moderator_block": "feedback:graphite_moderator",
     "ore": "feedback:graphite_ore",
     "deepslate_ore": "feedback:deepslate_graphite_ore"
   }

@@ -4,6 +4,8 @@ Turns heat into **steam**. Sits over a fire like a [Crucible](Crucible.md) does.
 
 **A boiler with nowhere to send its steam builds pressure, and can explode.** Read [Pressure](#pressure) before you put a valve on one.
 
+A boiler can take its heat from a [Fission Reactor](Fission_Reactor.md) through a [Heat Exchanger](Heat_Exchanger.md).
+
 ## Crafting
 
 ```

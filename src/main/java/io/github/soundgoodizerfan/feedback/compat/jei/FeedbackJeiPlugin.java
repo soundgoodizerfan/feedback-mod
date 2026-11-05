@@ -240,6 +240,15 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.INDUCTION_STOVE.get(), Component.translatable("feedback.jei.info.induction_stove"));
         registration.addIngredientInfo(FItems.PREHEAT_COIL.get(), Component.translatable("feedback.jei.info.preheat_coil"));
         registration.addIngredientInfo(FItems.ARC_HEAD.get(), Component.translatable("feedback.jei.info.arc_head"));
+        registration.addIngredientInfo(FItems.REACTOR_CORE.get(), Component.translatable("feedback.jei.info.reactor_core"));
+        registration.addIngredientInfo(FItems.FUEL_CHANNEL.get(), Component.translatable("feedback.jei.info.fuel_channel"));
+        registration.addIngredientInfo(FItems.CONTROL_ASSEMBLY.get(), Component.translatable("feedback.jei.info.control_assembly"));
+        registration.addIngredientInfo(FItems.SCRAM_TRIP.get(), Component.translatable("feedback.jei.info.scram_trip"));
+        registration.addIngredientInfo(FItems.GRAPHITE_MODERATOR.get(), Component.translatable("feedback.jei.info.graphite_moderator"));
+        registration.addIngredientInfo(FItems.FUEL_ROD.get(), Component.translatable("feedback.jei.info.fuel_rod"));
+        registration.addIngredientInfo(FItems.THORIUM_FUEL_ROD.get(), Component.translatable("feedback.jei.info.thorium_fuel_rod"));
+        registration.addIngredientInfo(FItems.SPENT_FUEL_ROD.get(), Component.translatable("feedback.jei.info.spent_fuel_rod"));
+        registration.addIngredientInfo(FItems.CORE_SLAG.get(), Component.translatable("feedback.jei.info.core_slag"));
         registration.addIngredientInfo(FItems.POWER_CUTTER.get(), Component.translatable("feedback.jei.info.power_cutter"));
         registration.addIngredientInfo(FItems.SAW_HEAD.get(), Component.translatable("feedback.jei.info.saw_head"));
         registration.addIngredientInfo(FItems.PLASMA_HEAD.get(), Component.translatable("feedback.jei.info.plasma_head"));

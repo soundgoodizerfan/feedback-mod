@@ -65,6 +65,11 @@ public class SeepBlock extends Block implements io.github.soundgoodizerfan.feedb
         registerDefaultState(stateDefinition.any().setValue(SCOOPED, false));
     }
 
+    /** What a bucket takes from this seep (weathered crude; a soul seep gives soul oil). */
+    protected FluidStack scoop() {
+        return CrudeGrade.stamp(new FluidStack(FFluids.CRUDE_OIL.get(), SCOOP_MB), CrudeGrade.WEATHERED);
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(SCOOPED);
@@ -133,7 +138,7 @@ public class SeepBlock extends Block implements io.github.soundgoodizerfan.feedb
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!level.isClientSide) {
-            FluidStack crude = CrudeGrade.stamp(new FluidStack(FFluids.CRUDE_OIL.get(), SCOOP_MB), CrudeGrade.WEATHERED);
+            FluidStack crude = scoop();
             stack.set(FDataComponents.BUCKET_CONTENT.get(), SimpleFluidContent.copyOf(crude));
             level.setBlock(pos, state.setValue(SCOOPED, true), 3);
             level.scheduleTick(pos, this, REFILL_TICKS);
@@ -144,7 +149,7 @@ public class SeepBlock extends Block implements io.github.soundgoodizerfan.feedb
     /** A seep is open ground: weathered crude gives off a little vapour, and lit it burns dry until it refills. */
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        FluidStack crude = CrudeGrade.stamp(new FluidStack(FFluids.CRUDE_OIL.get(), SCOOP_MB), CrudeGrade.WEATHERED);
+        FluidStack crude = scoop();
         io.github.soundgoodizerfan.feedback.core.hazard.Vapour.source(level, pos,
                 io.github.soundgoodizerfan.feedback.core.hazard.Vapour.potency(crude), REFILL_TICKS * 4,
                 io.github.soundgoodizerfan.feedback.core.hazard.Vapour.burnTicks(crude) / 4, true);

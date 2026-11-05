@@ -106,15 +106,18 @@ public class SurveyMeterItem extends Item implements Instrument {
         // circle lies, to the same resolution and wobble, with a bearing to its centre.
         if (level instanceof net.minecraft.server.level.ServerLevel server) {
             long[] best = null;
+            String bestKey = "feedback.survey.oil";
             for (var site : io.github.soundgoodizerfan.feedback.geology.BasinFeature.sitesNear(server.getSeed(),
                     level.dimension().location(), centre.getX(), centre.getZ())) {
                 int dx = site.centre().getX() - centre.getX(), dz = site.centre().getZ() - centre.getZ();
                 long n = Math.round((site.radius() + r - Math.hypot(dx, dz)) * FTuning.SURVEY_OIL_PER_BLOCK);
-                if (n > 0 && (best == null || n > best[0]))
+                if (n > 0 && (best == null || n > best[0])) {
                     best = new long[]{n, dx * n, (site.centre().getY() - centre.getY()) * n, dz * n};
+                    bestKey = site.basin().fluid().getPath().equals("soul_oil") ? "feedback.survey.soul_oil" : "feedback.survey.oil";
+                }
             }
             if (best != null)
-                found.put("feedback.survey.oil", best);
+                found.put(bestKey, best);
         }
         var lines = found.entrySet().stream()
                 .map(e -> Map.entry(e.getKey(), e.getValue()))

@@ -50,6 +50,14 @@ public class DerrickBitItem extends Item {
         return m == null ? FTuning.DERRICK_BIT_DEFAULT_HARDNESS : m.hardness().value();
     }
 
+    /** The hottest the bit may run before it wears: its material's service temperature, or a default. */
+    public static float serviceTemperature(ItemStack bit) {
+        MadeOf made = bit.get(FDataComponents.MADE_OF.get());
+        Material m = made == null ? null : MaterialTable.get().materials().get(made.material());
+        return m == null ? FTuning.MAGMA_BIT_SERVICE_DEFAULT_TU
+                : m.thermal().serviceTemperature().map(t -> t.value()).orElse(FTuning.MAGMA_BIT_SERVICE_DEFAULT_TU);
+    }
+
     public static float condition(ItemStack bit) {
         return bit.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
     }

@@ -1,0 +1,59 @@
+{
+  "color": "#4a3f48",
+  "kind": "metal",
+  "traits": [
+    "alloy",
+    "fireproof"
+  ],
+  "hardness": 26,
+  "density": 13.5,
+  "thermal": {
+    "melting_point": 2600,
+    "cooling_rate": 1,
+    "conductivity": 0.03,
+    "anneal_temperature": 1200,
+    "service_temperature": 1500
+  },
+  "mechanical": {
+    "toughness": 100,
+    "ductility": 4,
+    "work_hardening": 1.5,
+    "yield_strength": 50,
+    "friction": 0.6,
+    "abrasiveness": 0.7
+  },
+  "molten": {
+    "viscosity": 8,
+    "density": 12.5
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 1500,
+    "reflectivity": 0.2
+  },
+  "ampacity": 0.3,
+  "corrosion_resistance": 1,
+  "forms": {
+    "ingot": "feedback:cast_netherite_ingot"
+  },
+  "enchantability": 15,
+  "attuning": {
+    "temperature": 1200,
+    "lock": 950,
+    "coercive": 0.6,
+    "loop_width": 0.15,
+    "lag": 14
+  },
+  "exclude": [
+    "plate",
+    "foil",
+    "rod",
+    "wire",
+    "fine_wire",
+    "scrap",
+    "drilled_plate",
+    "turned_rod",
+    "nugget",
+    "block"
+  ]
+}

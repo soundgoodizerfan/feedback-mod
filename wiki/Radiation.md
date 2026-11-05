@@ -1,10 +1,10 @@
 # Radiation
 
-Some materials give off radiation, measured in **Ru** (dose rate). Uranium is the first.
+Some materials give off radiation, measured in **Ru** (dose rate). Uranium and thorium are the first; a running [fission reactor](Fission_Reactor.md) is the strongest source.
 
 ## What you take
 
-Everything radioactive you carry counts in full: ingots, ore, parts, a weapon with a uranium part in it. A radioactive block or a dropped item within five blocks counts for less the farther it is (at one block, half). Add it all up and that is the rate you stand in.
+Everything radioactive you carry counts in full: ingots, ore, parts, a weapon with a uranium part in it. A radioactive block, a reactor part or a dropped item within five blocks counts for less the farther it is (at one block, half). Add it all up and that is the rate you stand in.
 
 Your body clears a little each second. A rate under **0.2 Ru** does nothing however long you stand in it; over it the dose builds. Armor shields by how **dense** it is, read from the material: lead does best, iron nearly as well. Wear less and you take more; wear uranium and you are the source.
 
@@ -16,6 +16,14 @@ A [Radiation ward](Brewing_Stand.md) potion lets a little over half of each inte
 
 Creative players take nothing.
 
-## What does not shield
+## The reactor
 
-A chest or a lead box does not shield what is inside it, and a wall does not shield you from a block on the other side of it: only distance and armor do. Carry sources in your hands and keep them out of your pockets.
+A running [Fission Reactor](Fission_Reactor.md) core gives off radiation in proportion to its power. Every fuel rod in a channel gives off its own, and a [Spent Fuel Rod](Nuclear_Fuel.md#spent-fuel-rod) about ten times a fresh rod's. A burst core leaves **Core Slag**, which is radioactive and stays so for hours of play, falling slowly.
+
+The dense shell of the reactor is what holds it in: blocks between a source and you cut the dose by their material's density, so lead and steel walls matter ([What shields](#what-shields)). Stand far off, or behind the shell.
+
+## What shields
+
+Distance, armor and dense blocks standing between you and the source cut the dose. Each block in the way counts by its material's density, so a thick wall of lead or steel does far more than a light block, and air does nothing.
+
+A chest does not shield what is inside it; a lead-lined chest does. Carry sources in your hands and keep them out of your pockets.

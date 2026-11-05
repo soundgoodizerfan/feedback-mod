@@ -181,6 +181,29 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> DIESEL_VAPOUR_FLOWING =
             FLUIDS.register("diesel_vapour_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR, FFluids.DIESEL_VAPOUR_FLOWING)));
 
+    /** The Nether arc: netherite, nickel, cobalt and slag melts, the mixed magma melt a magma head brings up, and wisp gas liquefied. */
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_CAST_NETHERITE =
+            FLUIDS.register("molten_cast_netherite", () -> new BaseFlowingFluid.Source(moltenCastNetherite()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_CAST_NETHERITE_FLOWING =
+            FLUIDS.register("molten_cast_netherite_flowing", () -> new BaseFlowingFluid.Flowing(moltenCastNetherite()));
+
+
+
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SLAG =
+            FLUIDS.register("molten_slag", () -> new BaseFlowingFluid.Source(moltenSlag()));
+    public static final DeferredHolder<Fluid, Fluid> MOLTEN_SLAG_FLOWING =
+            FLUIDS.register("molten_slag_flowing", () -> new BaseFlowingFluid.Flowing(moltenSlag()));
+
+    public static final DeferredHolder<Fluid, Fluid> MAGMA_MELT =
+            FLUIDS.register("magma_melt", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.MAGMA_MELT, FFluids.MAGMA_MELT, FFluids.MAGMA_MELT_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> MAGMA_MELT_FLOWING =
+            FLUIDS.register("magma_melt_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.MAGMA_MELT, FFluids.MAGMA_MELT, FFluids.MAGMA_MELT_FLOWING)));
+
+    public static final DeferredHolder<Fluid, Fluid> LIQUID_WISP_GAS =
+            FLUIDS.register("liquid_wisp_gas", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LIQUID_WISP_GAS, FFluids.LIQUID_WISP_GAS, FFluids.LIQUID_WISP_GAS_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> LIQUID_WISP_GAS_FLOWING =
+            FLUIDS.register("liquid_wisp_gas_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.LIQUID_WISP_GAS, FFluids.LIQUID_WISP_GAS, FFluids.LIQUID_WISP_GAS_FLOWING)));
+
     /** Phase 3: the polymer melts, the Nether's soul oil and wisp gas, and ethylene to make plastic from. */
     public static final DeferredHolder<Fluid, Fluid> SOUL_OIL =
             FLUIDS.register("soul_oil", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.SOUL_OIL, FFluids.SOUL_OIL, FFluids.SOUL_OIL_FLOWING)));
@@ -331,6 +354,16 @@ public final class FFluids {
 
     private static BaseFlowingFluid.Properties moltenSilver() {
         return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_SILVER, MOLTEN_SILVER, MOLTEN_SILVER_FLOWING);
+    }
+
+    private static BaseFlowingFluid.Properties moltenCastNetherite() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_CAST_NETHERITE, MOLTEN_CAST_NETHERITE, MOLTEN_CAST_NETHERITE_FLOWING);
+    }
+
+
+
+    private static BaseFlowingFluid.Properties moltenSlag() {
+        return new BaseFlowingFluid.Properties(FFluidTypes.MOLTEN_SLAG, MOLTEN_SLAG, MOLTEN_SLAG_FLOWING);
     }
 
     private static BaseFlowingFluid.Properties moltenUranium() {

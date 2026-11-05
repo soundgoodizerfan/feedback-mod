@@ -1,0 +1,15 @@
+{
+  "quench": true,
+  "medium": "feedback:soul_oil",
+  "inputs": [
+    {
+      "item": "feedback:cast_netherite_ingot"
+    }
+  ],
+  "min_temperature": 1200,
+  "optimal_temperature": 1200,
+  "required_tpu": -1,
+  "result": {
+    "id": "minecraft:netherite_ingot"
+  }
+}
