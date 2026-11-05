@@ -758,6 +758,10 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                     Component.translatable("gui.feedback.blueprint_table.vessel.points", x.maxPoints()),
                     Component.translatable("gui.feedback.blueprint_table.vessel.level", String.format(java.util.Locale.ROOT, "%.0f", x.maxPoints() / x.perLevel()))))
                     .orElse(List.of());
+            case BACKPACK -> ModularBake.bake(d, t, ClientMaterials.get(), 0).<List<Component>>map(f -> List.of(
+                    Component.translatable("gui.feedback.blueprint_table.pack.slots", Math.round(f.get(ModularFigures.Fig.SLOTS))),
+                    Component.translatable("gui.feedback.blueprint_table.pack.carry", String.format(java.util.Locale.ROOT, "%.1f", f.get(ModularFigures.Fig.CARRY)))))
+                    .orElse(List.of());
             default -> List.of();
         };
     }

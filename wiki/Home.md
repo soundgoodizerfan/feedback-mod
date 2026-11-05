@@ -57,7 +57,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md) · [Demolition Charge](Demolition_Charge.md)
 
-**Tools and armor:** [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
+**Tools and armor:** [Backpack](Backpack.md) · [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 
@@ -70,4 +70,5 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - **Instruments work from your inventory.** Carry an [instrument](Instruments.md) such as calipers, a balance scale or a thermometer and Jade and tooltips show exact figures instead of words.
 - **What you need is always shown exactly; what you have costs an instrument.** JEI and tooltips give requirements as hard numbers. The state of your machine is words until you measure it.
 - **Machines only wear when misused.** A correctly built line never wears out. If something is worn, you did something specific to it. The exceptions are things that are consumed by nature: the [Hand Hammer](Hand_Hammer.md), the [Grinding Wheel](Grinding_Wheel.md)'s grit and a [Fuse](Fuse.md) wire. And two things can be destroyed outright, only by a mistake left unfixed: overloaded [cable](Copper_Cable.md#overloading) and an over-pressured [boiler](Boiler.md#pressure).
+- **Rockets do not boost an elytra.** A firework rocket used while gliding does nothing and stays in your hand. Crossbows and dispensers fire rockets as vanilla does.
 - **Nothing is locked.** There are no tiers. If you can reach the temperature, strength or hardness, you can do it, even if it's unreliable at first.

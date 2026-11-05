@@ -154,6 +154,7 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
     public void tickServer() {
         if (!(level instanceof ServerLevel server))
             return;
+        HeatSource.radiate(this);
         Tu ambient = AmbientTable.at(server);
         float target = ambient.value() + (electrodeCeiling() - ambient.value()) * power;
         if (fitted() == 0)

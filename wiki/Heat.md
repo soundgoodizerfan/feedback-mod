@@ -41,6 +41,10 @@ Every heat source radiates toward one face. [Firebox](Firebox.md), [Fluid Burner
 
 A heat-accepting block touching the facing face gets the source's full heat. A block touching one of the four sides next to it climbs only 40% of the way from room temperature to the source's temperature (an Arc Head heats all four sides fully). The block behind gets none. Lava heats the block above it.
 
+### Heat pushed into what it points at
+
+A [Firebox](Firebox.md), [Fluid Burner](Fluid_Burner.md), [Heating Coil](Heating_Coil.md) and [Arc Head](Arc_Furnace.md#the-arc-head) also push their heat into the space they point at. Items inside any inventory block there (a chest, say) warm toward that spot's heat, and so do items lying on the ground. The heat also reaches the four blocks beside the one pointed at. A living thing standing in reached space is burned about once a second, harder the hotter the spot. Vessels take their heat the usual way and are left out, and a block tagged `feedback:no_heat_push` opts out.
+
 ## Heavy vs. light vessels
 
 How fast something heats up and cools down depends on how heavy it is:
@@ -70,7 +74,7 @@ A drinker under the **Quench** potion (see [Brewing Stand](Brewing_Stand.md)) co
 
 ## Glowing
 
-A hot enough crucible, furnace or casting basin that holds metal gives off real light, and its block glows red, orange, yellow or white to match (the colour eases from one band to the next). A hot ingot, plate or other metal item is tinted the same way wherever you see it: in the inventory, in hand and dropped. A cooled item goes back to its own colour. Light starts in the faint red band (from 480 Tu) and grows with each band: light level 2 for faint red, 4 for dark red, 6 for bright red, 8 for orange, 10 for yellow, 12 for pale yellow, 14 for white and 15 for brilliant white. The light is real: from yellow up it melts ice and snow nearby, and mobs do not spawn in it. A crucible with insulation round it stays dark, and a basin glows only while its pool is molten. Any metal glows; a material of another kind glows only if it is marked as incandescent.
+A hot enough crucible, furnace or casting basin that holds metal gives off real light, and its block glows red, orange, yellow or white to match (the colour eases from one band to the next). A hot ingot, plate or other metal item is tinted the same way wherever you see it: in the inventory, in hand and dropped. A cooled item goes back to its own color. A block's glow follows its model and its own heat. The fire at a Forge or Anvil bench takes its color from the heat band (blue past about 1450 Tu), burns chunkier, and its glow spreads past the box. Light starts in the faint red band (from 480 Tu) and grows with each band: light level 2 for faint red, 4 for dark red, 6 for bright red, 8 for orange, 10 for yellow, 12 for pale yellow, 14 for white and 15 for brilliant white. The light is real: from yellow up it melts ice and snow nearby, and mobs do not spawn in it. A crucible with insulation round it stays dark, and a basin glows only while its pool is molten. Any metal glows; a material of another kind glows only if it is marked as incandescent.
 
 ## Room temperature
 
@@ -85,6 +89,8 @@ Melting, smelting, steel, ceramics, tempering, boiling and condensing, quenching
 - **Hold**: how long it takes if you keep it exactly at the optimum. Further from the optimum, it takes longer.
 - **Max rate**: if listed, how fast the temperature may be changing while it works.
 - **Spoils**: above this temperature the batch is **ruined instantly** (for example, iron burns to *Burnt Iron*).
+
+All thermal process cards share this layout. JEI shows no Work figures (Fu or *Needs*) and hides vanilla ores; each material's items list the mixing recipes they take part in.
 
 JEI's **Separation** tab lists per material what a magnet does to it, its reflectivity and its density; the **Fuel** tab lists its flame temperature, burn time and spread.
 

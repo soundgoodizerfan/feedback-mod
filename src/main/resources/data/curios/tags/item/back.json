@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "feedback:back_piece"
+    "feedback:back_piece",
+    "feedback:backpack"
   ]
 }

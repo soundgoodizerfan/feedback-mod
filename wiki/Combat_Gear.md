@@ -26,7 +26,7 @@ A belt of plate links and straps. It **lengthens your roll** (up to +20%), **sho
 
 ## Back piece
 
-Plates on the back. It adds **carried mass** (up to 40 Mu, more for denser plate). A heavier body staggers for a shorter time, so a back piece **shortens your stagger**.
+Plates on the back. It shares the back slot with the [Backpack](Backpack.md). It adds **carried mass** (up to 40 Mu, more for denser plate). A heavier body staggers for a shorter time, so a back piece **shortens your stagger**.
 ## Seeing it
 
 Worn gear is drawn on the body (simple shapes tinted by the shell material): the bracer on the left forearm, the sash at the waist, the back piece on the back, and the glove (tinted by its metacarpal plate, if it has one) on the hands.

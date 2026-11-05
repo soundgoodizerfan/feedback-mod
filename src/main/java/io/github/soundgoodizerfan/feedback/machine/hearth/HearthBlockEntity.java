@@ -42,6 +42,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -130,6 +131,18 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
 
         if (temperature > FTuning.WARM_TU.value())
             reheatBeside();
+    }
+
+    /**
+     * The heat a hot Hearth beside the Anvil at {@code table} holds its stock at: the pan's heat less the gap the item cooling keeps
+     * (cooling / {@link FTuning#HEARTH_STOCK_GRIP}), or 0 for none. The forge's heat clock reads this so a part on a kept-hot anvil does not run out of window.
+     */
+    public static float holdBeside(Level level, BlockPos table) {
+        float best = 0f;
+        for (Direction side : Direction.Plane.HORIZONTAL)
+            if (level.getBlockEntity(table.relative(side)) instanceof HearthBlockEntity hearth && hearth.temperature > FTuning.WARM_TU.value())
+                best = Math.max(best, hearth.temperature - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() / FTuning.HEARTH_STOCK_GRIP);
+        return best;
     }
 
     private void reheatBeside() {

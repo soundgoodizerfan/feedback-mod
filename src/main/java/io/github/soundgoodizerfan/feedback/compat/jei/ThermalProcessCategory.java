@@ -81,7 +81,7 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
             RecipeType.create("feedback", "thermal_process", ThermalProcess.class);
 
     private static final int WIDTH = 168;
-    private static final int HEIGHT = ReactionCategory.HEIGHT;
+    private static final int HEIGHT = ThermalCard.HEIGHT;
 
     private static final int LABEL_X = 24;
     private static final int VALUE_X = 76;
@@ -127,161 +127,11 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, ThermalProcess recipe, IFocusGroup focuses) {
-        if (recipe.isReaction()) {
-            ReactionCategory.layout(builder, recipe);
-            return;
-        }
-        if (recipe.dip().isPresent()) {
-            DipCategory.layout(builder, recipe.dip().get());
-            return;
-        }
-        if (recipe.electrolysis().isPresent()) {
-            ElectrolysisCategory.layout(builder, recipe.electrolysis().get());
-            return;
-        }
-        if (recipe.freeze().isPresent()) {
-            CastingCategory.layout(builder, recipe.freeze().get());
-            return;
-        }
-        if (recipe.phase().isPresent()) {
-            var phase = recipe.phase().get();
-            var liquids = phase.liquid().getStacks();
-            if (liquids.length > 0)
-                builder.addSlot(RecipeIngredientRole.INPUT, 1, 13).setStandardSlotBackground()
-                        .addFluidStack(liquids[0].getFluid(), 1000).setFluidRenderer(1000, false, 16, 16);
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 69).setOutputSlotBackground()
-                    .addFluidStack(net.minecraft.core.registries.BuiltInRegistries.FLUID.get(phase.gasFluid()), 1000).setFluidRenderer(1000, false, 16, 16);
-            return;
-        }
-        List<Ingredient> inputs = recipe.inputs();
-        for (int i = 0; i < inputs.size() && i < 3; i++)
-            builder.addInputSlot(1, 13 + i * 18).setStandardSlotBackground().addIngredients(inputs.get(i));
-
-        // A melt's output is a fluid, not an item -- see ThermalProcess#resultFluid. Same slot,
-        // whichever ingredient type actually applies; never both.
-        if (recipe.hasFluidResult()) {
-            FluidStack fluid = recipe.resultFluid();
-            builder.addSlot(RecipeIngredientRole.OUTPUT, 1, 69).setOutputSlotBackground()
-                    .addFluidStack(fluid.getFluid(), fluid.getAmount()).setFluidRenderer(Math.max(1, fluid.getAmount()), false, 16, 16);
-        } else if (recipe.fire().isPresent() && !inputs.isEmpty()) {
-            // The part comes out carrying the coat; the slot shows the parts that can.
-            builder.addOutputSlot(1, 69).setOutputSlotBackground().addIngredients(inputs.get(0));
-        } else {
-            builder.addOutputSlot(1, 69).setOutputSlotBackground().addItemStack(recipe.result());
-        }
+        ThermalCard.layout(builder, recipe);
     }
 
     @Override
     public void draw(ThermalProcess recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        Font font = Minecraft.getInstance().font;
-        if (recipe.isReaction()) {
-            ReactionCategory.drawCard(recipe, graphics);
-            return;
-        }
-        if (recipe.dip().isPresent()) {
-            DipCategory.drawCard(recipe.dip().get(), graphics);
-            return;
-        }
-        if (recipe.electrolysis().isPresent()) {
-            ElectrolysisCategory.drawCard(recipe.electrolysis().get(), graphics);
-            return;
-        }
-        if (recipe.freeze().isPresent()) {
-            CastingCategory.drawCard(recipe.freeze().get(), graphics);
-            return;
-        }
-        if (recipe.phase().isPresent()) {
-            var phase = recipe.phase().get();
-            var liquids = phase.liquid().getStacks();
-            graphics.drawString(font, net.minecraft.core.registries.BuiltInRegistries.FLUID.get(phase.gasFluid()).getFluidType().getDescription().getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
-            graphics.fill(1, 11, WIDTH - 1, 12, RULE_COLOUR);
-            row(graphics, font, 18, "feedback.jei.inputs", liquids.length > 0 ? liquids[0].getHoverName().getString() : "-", VALUE_COLOUR);
-            row(graphics, font, 30, "feedback.jei.phase_change.boil", Readout.number(recipe.minTemperature().value()) + " Tu", VALUE_COLOUR);
-            row(graphics, font, 42, "feedback.jei.phase_change.latent", Readout.number(phase.latent()) + " Work/mB", VALUE_COLOUR);
-            return;
-        }
-        if (recipe.quench()) {
-            graphics.drawString(font, recipe.result().getHoverName().getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
-            graphics.fill(1, 11, WIDTH - 1, 12, RULE_COLOUR);
-            row(graphics, font, 18, "feedback.jei.inputs", inputNames(recipe), VALUE_COLOUR);
-            row(graphics, font, 30, "feedback.jei.output", recipe.result().getCount() + " x " + recipe.result().getHoverName().getString(), VALUE_COLOUR);
-            row(graphics, font, 42, "feedback.jei.quench.from", Readout.number(recipe.minTemperature().value()) + "+ Tu", VALUE_COLOUR);
-            row(graphics, font, 54, "feedback.jei.quench.into", recipe.medium().map(m -> net.minecraft.core.registries.BuiltInRegistries.FLUID.get(m).getFluidType().getDescription().getString()).orElseGet(() -> Component.translatable("feedback.jei.quench.water").getString()), VALUE_COLOUR);
-            return;
-        }
-        String fired = recipe.fire().map(c -> Component.translatable("feedback.jei.fire.title",
-                Component.translatable("material." + c.metal().getNamespace() + "." + c.metal().getPath())).getString()).orElse(null);
-        String title = fired != null ? fired : recipe.hasFluidResult()
-                ? recipe.resultFluid().getHoverName().getString()
-                : recipe.result().getHoverName().getString();
-        graphics.drawString(font, title.toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
-        graphics.fill(1, 11, WIDTH - 1, 12, RULE_COLOUR);
-
-        int y = 18;
-        row(graphics, font, y, "feedback.jei.inputs", inputNames(recipe), VALUE_COLOUR);
-        y += 12;
-        row(graphics, font, y, "feedback.jei.output", recipe.fire().isPresent()
-                ? Component.translatable("feedback.jei.fire.output", Readout.number(recipe.fire().get().thickness())).getString()
-                : recipe.hasFluidResult()
-                ? recipe.resultFluid().getAmount() + " mB " + recipe.resultFluid().getHoverName().getString()
-                : recipe.result().getCount() + " x " + recipe.result().getHoverName().getString(), VALUE_COLOUR);
-        y += 12;
-        String band = recipe.maxTemperature().value() < Float.MAX_VALUE
-                ? Readout.number(recipe.minTemperature().value()) + "-" + Readout.number(recipe.maxTemperature().value()) + " Tu"
-                : Readout.number(recipe.minTemperature().value()) + "+ Tu";
-        row(graphics, font, y, "feedback.jei.temperature", band, VALUE_COLOUR);
-        y += 12;
-        // A requirement, not a reading -- philosophy 8's "what a process requires is free" -- so
-        // the optimum is printed plainly rather than treated as TPu made player-facing.
-        // TPu itself is never shown; this is a Tu figure, same
-        // as the band above it.
-        row(graphics, font, y, "feedback.jei.optimal", Readout.number(recipe.optimalTemperature().value()) + " Tu", VALUE_COLOUR);
-        y += 12;
-        // Both, always: the philosophy's own convention for showing time, because ticks are what
-        // the simulation counts and seconds are what the player waits. This is time to complete
-        // held exactly at the optimum -- see ThermalProcess#requiredTpu -- not a flat countdown;
-        // real time depends on how close the player actually holds it. Left off entirely for a
-        // pooled recipe -- see ThermalProcess.NO_HOLD -- rather than print a figure that was
-        // never true of it.
-        if (recipe.hasHold()) {
-            int atOptimum = Math.round(recipe.requiredTpu());
-            row(graphics, font, y, "feedback.jei.hold",
-                    atOptimum + " t (" + Readout.number(atOptimum / 20f) + " s) at optimum", VALUE_COLOUR);
-            y += 12;
-        }
-        if (recipe.maxRateTuPerTick().tuPerTick() < Float.MAX_VALUE) {
-            row(graphics, font, y, "feedback.jei.max_rate",
-                    Readout.number(recipe.maxRateTuPerTick().tuPerTick()) + " Tu/t", VALUE_COLOUR);
-            y += 12;
-        }
-        if (recipe.spoilTemperature().value() < Float.MAX_VALUE)
-            row(graphics, font, y, "feedback.jei.spoils", "> " + Readout.number(recipe.spoilTemperature().value()) + " Tu",
-                    SPOIL_COLOUR);
-        if (recipe.airless())
-            row(graphics, font, y + 12, "feedback.jei.airless", "Sealed: no air", VALUE_COLOUR);
-        if (recipe.atmosphere().isPresent()) {
-            var a = recipe.atmosphere().get();
-            row(graphics, font, y + (recipe.airless() ? 24 : 12), "feedback.jei.atmosphere",
-                    new net.neoforged.neoforge.fluids.FluidStack(net.minecraft.core.registries.BuiltInRegistries.FLUID.get(a.fluid()), a.mb())
-                            .getHoverName().getString() + " " + a.mb() + " mB", VALUE_COLOUR);
-        }
-    }
-
-    private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value, int colour) {
-        graphics.drawString(font, Component.translatable(labelKey), LABEL_X, y, LABEL_COLOUR, false);
-        graphics.drawString(font, value, VALUE_X, y, colour, false);
-    }
-
-    private static String inputNames(ThermalProcess recipe) {
-        StringBuilder names = new StringBuilder();
-        for (Ingredient input : recipe.inputs()) {
-            ItemStack[] accepted = input.getItems();
-            if (accepted.length == 0)
-                continue;
-            if (names.length() > 0)
-                names.append(", ");
-            names.append(accepted[0].getHoverName().getString());
-        }
-        return names.length() == 0 ? "-" : names.toString();
+        ThermalCard.draw(recipe, graphics);
     }
 }

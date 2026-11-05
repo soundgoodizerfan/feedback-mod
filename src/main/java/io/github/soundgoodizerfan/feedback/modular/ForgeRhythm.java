@@ -145,19 +145,28 @@ public final class ForgeRhythm {
      * @return {@code {from, to}}.
      */
     public static int[] live(Material material, float temperature) {
+        return live(material, temperature, 0f);
+    }
+
+    /** As {@link #live(Material, float)}, with a heat source (a Hearth) holding the part at {@code hold} Tu: it never cools under that. */
+    public static int[] live(Material material, float temperature, float hold) {
         float min = material.minTemperature().value();
         if (min <= 0)
             return new int[] {0, Integer.MAX_VALUE};
         float rate = FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick();
         float max = material.maxTemperature().value();
         int from = temperature > max ? (int) Math.ceil((temperature - max) / rate) : 0;
-        int to = temperature <= min ? -1 : (int) Math.floor((temperature - min) / rate);
+        int to = temperature <= min ? -1 : hold >= min ? Integer.MAX_VALUE : (int) Math.floor((temperature - min) / rate);
         return new int[] {from, to};
     }
 
     /** Whether the part is workable now, at all: in the window at the start. */
     public static boolean workable(Material material, float temperature) {
-        int[] live = live(material, temperature);
+        return workable(material, temperature, 0f);
+    }
+
+    public static boolean workable(Material material, float temperature, float hold) {
+        int[] live = live(material, temperature, hold);
         return live[0] <= 0 && live[1] >= 0;
     }
 

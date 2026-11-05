@@ -10,6 +10,6 @@
       "toxin": 0.08
     }
   },
-  "exclude": ["block", "log"],
+  "exclude": ["block", "rod"],
   "hardness": 0.1
 }

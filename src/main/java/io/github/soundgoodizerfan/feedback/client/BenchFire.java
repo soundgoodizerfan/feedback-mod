@@ -23,6 +23,8 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.Incandescence;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,26 +33,38 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /**
- * The bench's background fire, driven by the heat of the stock. A small image (192 x 96) is rewritten each frame from a
- * scrolling, domain-warped fractal noise shaped by a flame profile that rises from the bottom edge, mapped through a
- * black-body ramp (deep red, orange, yellow, white-hot), and drawn stretched with linear filtering so it reads as one soft
- * flame rather than blocks. Stateless: the picture is a pure function of time, position and heat, so nothing is stored but
- * the one texture. No stock or cold stock draws nothing; heat makes the fire taller, brighter and whiter.
+ * The bench's background fire, driven by the temperature of the stock. A tiny image (56 x 28) is rewritten each frame from
+ * scrolling value noise cut into three hard tones (outer, body, core) and drawn stretched with nearest filtering, so the flame
+ * reads as chunky pixel art. Its colour follows the stock's heat band: dull ember red, then the glow ramp
+ * ({@link GlowColours}) through orange and yellow to white, then soul-fire blue at the top of the visible scale. A halo of the
+ * same colour is drawn just outside the box ({@link #halo}). Stateless: a pure function of time, position and temperature.
+ * No stock or cold stock draws nothing.
  */
 final class BenchFire {
 
-    private static final int TW = 192, TH = 96;
+    private static final int TW = 56, TH = 28;
     private static final ResourceLocation TEXTURE = Feedback.id("bench_fire");
     private static DynamicTexture texture;
 
     private BenchFire() { }
 
-    /** A fire colour for heat 0..1: dull red, orange, yellow, then white-hot. */
-    static int colour(float heat) {
-        int r = 0x70 + (int) (0x8F * Mth.clamp(heat * 2f, 0f, 1f));
-        int gr = (int) (0xB0 * Mth.clamp(heat * 1.5f - 0.15f, 0f, 1f));
-        int b = (int) (0xC0 * Mth.clamp(heat * 2.4f - 1.3f, 0f, 1f));
+    /** The flame's base colour at {@code tu}, 0xRRGGBB: ember red below the faint-red band, the glow ramp above it, soul-fire blue past white. */
+    static int colour(float tu) {
+        float[] c = GlowColours.rgb(GlowColours.along(Incandescence.light(tu)));
+        float blue = Mth.clamp((tu - 1450f) / (FTuning.MAX_VISIBLE_TU.value() - 1450f), 0f, 1f);
+        int r = Math.round(Mth.lerp(blue, c[0], 0.2f) * 255f);
+        int gr = Math.round(Mth.lerp(blue, c[1], 0.7f) * 255f);
+        int b = Math.round(Mth.lerp(blue, c[2], 1f) * 255f);
         return r << 16 | gr << 8 | b;
+    }
+
+    /** {@code rgb} scaled toward black by {@code dark} or toward white by {@code light}, as ABGR with alpha 255. */
+    private static int tone(int rgb, float dark, float light) {
+        int r = rgb >> 16 & 0xFF, g = rgb >> 8 & 0xFF, b = rgb & 0xFF;
+        r = Math.round(Mth.lerp(light, r * dark, 255f));
+        g = Math.round(Mth.lerp(light, g * dark, 255f));
+        b = Math.round(Mth.lerp(light, b * dark, 255f));
+        return 0xFF000000 | b << 16 | g << 8 | r;
     }
 
     private static float hash(int x, int y) {
@@ -69,65 +83,64 @@ final class BenchFire {
         return Mth.lerp(fy, top, bottom);
     }
 
-    private static float fbm(float x, float y) {
-        return noise(x, y) * 0.55f + noise(x * 2.1f + 7.3f, y * 2.1f) * 0.3f + noise(x * 4.3f + 3.1f, y * 4.3f) * 0.15f;
-    }
-
-    /** The ramp: v 0..1 of fire intensity to ABGR, transparent where there is no flame. */
-    private static int ramp(float v) {
-        if (v <= 0.04f)
-            return 0;
-        float a = Mth.clamp((v - 0.04f) / 0.26f, 0f, 1f);
-        a = a * a * (3 - 2 * a);
-        float r = Mth.clamp(v * 3.2f, 0f, 1f);
-        float g = Mth.clamp(v * 2.6f - 0.7f, 0f, 1f);
-        float b = Mth.clamp(v * 3.6f - 2.3f, 0f, 1f);
-        return (int) (a * 235) << 24 | (int) (b * 255) << 16 | (int) (g * 255) << 8 | (int) (r * 255);
-    }
-
-    private static void paint(float t, float h0) {
+    private static void paint(float t, float h0, int rgb) {
         NativeImage img = texture.getPixels();
-        float reach = 0.1f + 0.8f * h0; // fraction of the height the flame can climb
-        float fierce = 0.12f + 0.95f * h0; // overall intensity: a warm bar is a dull red glow, white only near working heat
+        int outer = tone(rgb, 0.55f, 0f), body = tone(rgb, 1f, 0f), core = tone(rgb, 1f, 0.55f);
+        float reach = 0.15f + 0.75f * h0; // fraction of the height the flame can climb
+        float fierce = 0.35f + 0.8f * h0;
         for (int j = 0; j < TH; j++) {
             float ny = 1f - (j + 0.5f) / TH; // 0 at the bottom edge, 1 at the top
-            float rise = ny - t * 0.045f;
             float profile = Mth.clamp(1f - ny / reach, 0f, 1f);
             for (int i = 0; i < TW; i++) {
                 float nx = (i + 0.5f) / TW;
-                float warp = 0.12f * Mth.sin(ny * 7f - t * 0.16f + nx * 5f);
-                float n = fbm((nx + warp) * 6f, rise * 4.2f);
-                // Tongues: strongest mid-bench, thinning toward the sides, breaking up as they climb.
-                float side = 1f - Math.abs(nx - 0.5f) * 1.1f;
-                float v = (profile * (0.45f + 1.15f * n) * side - 0.1f * ny) * fierce;
-                // The bed: always a few hot pixels along the bottom.
-                v = Math.max(v, (1f - ny * 9f) * (0.3f + 0.2f * n) * fierce);
-                img.setPixelRGBA(i, j, ramp(v));
+                float n = noise(nx * 9f, (ny - t * 0.03f) * 5f);
+                float side = 1f - Math.abs(nx - 0.5f) * 0.9f;
+                float v = profile * (0.4f + 0.9f * n) * side * fierce;
+                v = Math.max(v, (1f - ny * 7f) * 0.55f * fierce); // the bed along the bottom
+                img.setPixelRGBA(i, j, v > 0.62f ? core : v > 0.4f ? body : v > 0.2f ? outer : 0);
             }
         }
         texture.upload();
     }
 
     /**
-     * Draw the fire in the rectangle (x, y, w, h), burning up from its bottom edge. {@code heat} is 0..1 of the stock's working range; a cold
-     * bench draws nothing.
+     * The glow the fire casts just outside the box (x, y, w, h): four strips fading outward, in the flame's colour. Draw it before
+     * the box's own fill and outside any scissor, so it bleeds past the edge.
      */
-    static void draw(GuiGraphics g, int x, int y, int w, int h, float heat) {
+    static void halo(GuiGraphics g, int x, int y, int w, int h, float tu) {
+        float h0 = Mth.clamp(tu / 1100f, 0f, 1f);
+        if (h0 < 0.03f)
+            return;
+        int rgb = colour(tu), d = 6;
+        for (int k = 1; k <= d; k++) { // rings one pixel thick, fading outward
+            float f = 1f - k / (d + 1f);
+            int c = (int) (0x60 * h0 * f * f) << 24 | rgb;
+            g.fill(x - k, y - k, x + w + k, y - k + 1, c);
+            g.fill(x - k, y + h + k - 1, x + w + k, y + h + k, c);
+            g.fill(x - k, y - k + 1, x - k + 1, y + h + k - 1, c);
+            g.fill(x + w + k - 1, y - k + 1, x + w + k, y + h + k - 1, c);
+        }
+    }
+
+    /**
+     * Draw the fire in the rectangle (x, y, w, h), burning up from its bottom edge. {@code tu} is the stock's temperature; a cold bench draws nothing.
+     */
+    static void draw(GuiGraphics g, int x, int y, int w, int h, float tu) {
         boolean still = ClientSettings.reduceMotion();
         float t = still ? 0f : GuiStyle.time();
-        float h0 = Mth.clamp(heat, 0f, 1f);
+        float h0 = Mth.clamp(tu / 1100f, 0f, 1f);
+        int rgb = colour(tu);
         if (texture == null) {
             texture = new DynamicTexture(new NativeImage(NativeImage.Format.RGBA, TW, TH, true));
-            texture.setFilter(true, false);
+            texture.setFilter(false, false);
             Minecraft.getInstance().getTextureManager().register(TEXTURE, texture);
-            texture.setFilter(true, false);
         }
         if (h0 < 0.03f) // cold stock, or none: no fire
             return;
         // The glow cast on the whole bench.
         int glow = (int) (0x50 * h0);
-        g.fillGradient(x, y + h / 3, x + w, y + h, 0, glow << 24 | colour(h0));
-        paint(t, h0);
+        g.fillGradient(x, y + h / 3, x + w, y + h, 0, glow << 24 | rgb);
+        paint(t, h0, rgb);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         g.blit(TEXTURE, x, y, w, h, 0f, 0f, TW, TH, TW, TH);
@@ -143,7 +156,7 @@ final class BenchFire {
                 int px = x + (s >>> 8 & 0xFF) * w / 256 + Math.round(Mth.sin(f * 6.28f + i) * 4);
                 int py = y + h - Math.round(f * h * (0.4f + 0.5f * h0));
                 if (a > 8)
-                    g.fill(px, py, px + 1 + (i & 1), py + 1 + (i & 1), a << 24 | 0xFFC060);
+                    g.fill(px, py, px + 1 + (i & 1), py + 1 + (i & 1), a << 24 | (rgb | 0x808080));
             }
         }
     }

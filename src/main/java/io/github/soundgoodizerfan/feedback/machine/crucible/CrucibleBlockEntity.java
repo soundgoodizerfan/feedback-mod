@@ -155,7 +155,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     }
 
     public boolean isArcHearth() {
-        return contents.size() == FTuning.ARC_CHARGE_SLOTS;
+        return getBlockState().is(io.github.soundgoodizerfan.feedback.registry.FBlocks.ARC_HEARTH.get());
     }
 
     /** The wall's condition: a worn hearth leaks more heat. Always 1 for a plain crucible. */
@@ -265,7 +265,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     @Override
     public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int id, net.minecraft.world.entity.player.Inventory inventory,
                                                                           net.minecraft.world.entity.player.Player player) {
-        return new CrucibleMenu(contents.size() == FTuning.CRUCIBLE_SLOTS ? FMenus.CRUCIBLE.get() : FMenus.ARC_HEARTH.get(), id, inventory, this);
+        return new CrucibleMenu(isArcHearth() ? FMenus.ARC_HEARTH.get() : contents.size() == FTuning.CRUCIBLE_SLOTS ? FMenus.CRUCIBLE.get() : FMenus.LARGE_CRUCIBLE.get(), id, inventory, this);
     }
 
     // --- the tick ---------------------------------------------------------------------------

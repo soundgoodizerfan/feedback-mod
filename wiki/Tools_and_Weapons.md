@@ -25,7 +25,7 @@ A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shap
 | **Sickle head** | `XX_ / __X` |
 | **Trident tines** | `_X_ / X_X` |
 | **Tip** | one cell: a gem, shard or nugget |
-| **Binding** | one cell: leather, string or wire |
+| **Binding** | one cell: leather, string or wire. Polymer strings (Polypropylene, Polyethylene, PVC, PTFE, Synthetic Rubber, Bitumen and Soul Resin String) bind too |
 | **Sword guard**, **sword pommel**, **shield rim** | one cell each |
 | **Crossbow prod** | two cells: sticks, rods or bone |
 

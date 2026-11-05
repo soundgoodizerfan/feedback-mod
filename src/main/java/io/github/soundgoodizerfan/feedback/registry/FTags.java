@@ -45,6 +45,8 @@ public final class FTags {
     public static final TagKey<Item> SPATULA = TagKey.create(Registries.ITEM, Feedback.id("spatula"));
     /** Held tools that stir (held) and skim (tap) a stockpot. */
     public static final TagKey<Item> SPOON = TagKey.create(Registries.ITEM, Feedback.id("spoon"));
+    /** Blocks whose item inventory a heat source never warms (they take heat through {@code HeatSource.at} themselves). */
+    public static final TagKey<Block> NO_HEAT_PUSH = TagKey.create(Registries.BLOCK, Feedback.id("no_heat_push"));
     /** Blocks that insulate a vessel they touch. */
     public static final TagKey<Block> INSULATION = TagKey.create(Registries.BLOCK, Feedback.id("insulation"));
     /** Blocks an edge can be ground at: shift-use with an edged modular tool in hand. */

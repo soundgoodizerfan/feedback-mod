@@ -636,11 +636,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         partial = partialTick;
         skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
         int x = leftPos + VX, y = topPos + VY;
+        float heat = menu.heat(level());
+        boolean fired = skin == GuiSkin.FORGE || skin == GuiSkin.ANVIL;
+        if (fired && !menu.trim())
+            BenchFire.halo(g, x, y, VW, VH, heat);
         skin.inset(g, x, y, VW, VH);
         g.enableScissor(x + 1, y + 1, x + VW - 1, y + VH - 1);
-        float heat = menu.heat(level());
         if (skin == GuiSkin.FORGE || skin == GuiSkin.ANVIL)
-            BenchFire.draw(g, x + 1, y + 1, VW - 2, VH - 2, menu.trim() ? 0f : Mth.clamp(heat / 1100f, 0f, 1f));
+            BenchFire.draw(g, x + 1, y + 1, VW - 2, VH - 2, menu.trim() ? 0f : heat);
         else
             idle(g, x + 1, y + 1, VW - 2, VH - 2);
         g.disableScissor();
@@ -649,7 +652,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         // The pad the stock lies on: warm with its heat, and a ring that spreads when something is set down.
         if (heat > 60f && !menu.trim())
             for (int k = 3; k >= 1; k--)
-                GuiStyle.disc(g, sx + shake, sy, 10 + k * 4, (int) (0x22 * Mth.clamp(heat / 900f, 0.15f, 1f)) << 24 | BenchFire.colour(Mth.clamp(heat / 1100f, 0f, 1f)));
+                GuiStyle.disc(g, sx + shake, sy, 10 + k * 4, (int) (0x22 * Mth.clamp(heat / 900f, 0.15f, 1f)) << 24 | BenchFire.colour(heat));
         if (!menu.trim())
             GuiStyle.ring(g, sx + shake, sy, 15, 1, 0x50000000 | skin.dim() & 0xFFFFFF);
         float seatAge = GuiStyle.time() - seatAt;

@@ -35,17 +35,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A coil that heats one metal workpiece laid in it, quickly and cleanly, to the bottom of its forging window plus
- * {@link FTuning#PREHEAT_WINDOW_MARGIN_TU} (never above its working ceiling or {@link FTuning#INDUCTION_CEILING_TU}). It heats the held
- * stack's {@link ItemHeat} stamp while powered and does nothing else: unpowered, the piece cools in the slot at the item's own rate.
- * Only a metal couples to the field. A cold-workable metal (no minimum temperature) has nothing to preheat to.
+ * A coil that heats one metal workpiece laid in it, quickly and cleanly, to a target the player sets on the block
+ * ({@link FTuning#PREHEAT_TARGETS_TU}, a few steps up to {@link FTuning#INDUCTION_CEILING_TU}, the first of them off). It knows nothing of
+ * the piece's forging window: matching the target to the work is the player's. It heats the held stack's {@link ItemHeat} stamp while
+ * powered and does nothing else: unpowered, the piece cools in the slot at the item's own rate. Only a metal couples to the field.
  */
 public class PreheatCoilBlockEntity extends ElectricNode {
 
     private ItemStack held = ItemStack.EMPTY;
-    /** The Tu the held piece is heated to, or 0 when it is not a metal with a forging window. Looked up when laid in. */
-    private float goal;
-    private boolean goalKnown;
+    /** Whether the held piece is a metal, which is what a field couples to. Looked up when laid in. */
+    private boolean coupled;
+    private boolean coupledKnown;
+    private int target = FTuning.PREHEAT_DEFAULT_TARGET;
     private float power;
 
     public PreheatCoilBlockEntity(BlockPos pos, BlockState state) {
@@ -56,43 +57,44 @@ public class PreheatCoilBlockEntity extends ElectricNode {
         return held;
     }
 
+    /** The temperature the coil heats a piece to, in Tu; 0 when it is switched off. */
+    public float targetTu() {
+        return FTuning.PREHEAT_TARGETS_TU[target];
+    }
+
+    public void cycleTarget() {
+        target = (target + 1) % FTuning.PREHEAT_TARGETS_TU.length;
+        setChanged();
+    }
+
     public void lay(ItemStack stack) {
         if (level != null)
             ItemHeat.settle(stack, level);
         held = stack;
-        goalKnown = false;
+        coupledKnown = false;
         setChanged();
     }
 
     public ItemStack take() {
         ItemStack out = held;
         held = ItemStack.EMPTY;
-        goalKnown = false;
+        coupledKnown = false;
         setChanged();
         return out;
     }
 
-    private void findGoal() {
-        goalKnown = true;
-        goal = 0f;
-        if (held.isEmpty())
-            return;
-        Material.find(MaterialTable.get().materials(), held)
-                .filter(found -> found.material().kind().filter(k -> k == Material.Kind.METAL).isPresent())
-                .ifPresent(found -> {
-                    Material m = found.material();
-                    if (m.minTemperature().value() > 0f)
-                        goal = Math.min(Math.min(m.minTemperature().value() + FTuning.PREHEAT_WINDOW_MARGIN_TU, m.maxTemperature().value()),
-                                FTuning.INDUCTION_CEILING_TU.value());
-                });
+    private void findCoupling() {
+        coupledKnown = true;
+        coupled = !held.isEmpty() && Material.find(MaterialTable.get().materials(), held)
+                .filter(found -> found.material().kind().filter(k -> k == Material.Kind.METAL).isPresent()).isPresent();
     }
 
     private boolean wantsHeat() {
-        if (level == null)
+        if (level == null || targetTu() <= 0f)
             return false;
-        if (!goalKnown)
-            findGoal();
-        return goal > 0f && ItemHeat.get(held, level).value() < goal;
+        if (!coupledKnown)
+            findCoupling();
+        return coupled && ItemHeat.get(held, level).value() < targetTu();
     }
 
     @Override
@@ -120,7 +122,7 @@ public class PreheatCoilBlockEntity extends ElectricNode {
         if (level == null || power <= 0f || !wantsHeat())
             return;
         float now = ItemHeat.get(held, level).value();
-        ItemHeat.set(held, new Tu(Math.min(goal, now + FTuning.PREHEAT_TU_PER_TICK.tuPerTick() * power)), level);
+        ItemHeat.set(held, new Tu(Math.min(targetTu(), now + FTuning.PREHEAT_TU_PER_TICK.tuPerTick() * power)), level);
         setChanged();
     }
 
@@ -129,12 +131,14 @@ public class PreheatCoilBlockEntity extends ElectricNode {
         super.saveAdditional(tag, registries);
         if (!held.isEmpty())
             tag.put("Held", held.save(registries));
+        tag.putInt("Target", target);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         held = tag.contains("Held") ? ItemStack.parseOptional(registries, tag.getCompound("Held")) : ItemStack.EMPTY;
-        goalKnown = false;
+        target = tag.contains("Target") ? Math.floorMod(tag.getInt("Target"), FTuning.PREHEAT_TARGETS_TU.length) : FTuning.PREHEAT_DEFAULT_TARGET;
+        coupledKnown = false;
     }
 }

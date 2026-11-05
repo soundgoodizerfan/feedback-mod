@@ -61,7 +61,7 @@ import net.minecraft.world.entity.EquipmentSlot;
  * @param primary     the role a vanilla item's own material fills when it is converted.
  * @param roles       by the letter patterns use.
  * @param patterns    rows of letters, a space for nothing; mirrored freely.
- * @param defaults    the material each other role takes in a converted vanilla item.
+ * @param defaults    the material each other role takes in a converted vanilla item; a key {@code <vanilla form>:<role>} (e.g. {@code mace:S}) applies only when that vanilla form is converted.
  * @param vanilla     material form names that are this type in vanilla ({@code pickaxe},
  *                    {@code chainmail_helmet}) to the form the part is recorded as.
  * @param armourMax   armour points the piece gives when its plate is as good as plate gets.
@@ -147,6 +147,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         HAND,
         /** A glove worn in the hands slot: its body decides what it keeps off the hand; an optional metacarpal plate adds barehanded damage, armour and a barehanded parry, and costs swing speed. */
         GLOVE,
+        /** A pack worn on the back: the shell sets the slots, the strap sets the carry rating, the contents live on the stack. */
+        BACKPACK,
         /** A vessel that holds experience ({@code xp_container}): its bake is the ceiling its material's {@code xp_store} gives per cell of stock, written as an {@code XpStore} on the stack. A material that states no {@code xp_store} bakes nothing. No wear and no tool figures. */
         VESSEL,
         /** A rechargeable cell stack ({@code battery}): plates whose material states {@code electrical.secondary_cell}, in a case whose material insulates. Its bake is the {@link ModularBake#cell} spec the placed block runs on. */

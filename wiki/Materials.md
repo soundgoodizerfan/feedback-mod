@@ -75,7 +75,7 @@ Every material also decides how well it **takes an enchantment** when it's the m
 
 ## Nickel-iron
 
-A magnetic alloy of about half nickel and half iron, melting at 1480 Tu. Melt equal parts nickel and iron together in a [crucible](Crucible.md) and cast ingots like any alloy ([Casting and Alloys](Casting.md)). Its plates make the cells of a [nickel-iron battery](Battery.md): about 1.3 V a cell, filled with lye, with no gassing, good in the cold and a lower return than lead.
+A magnetic alloy of about half nickel and half iron, melting at 1480 Tu. Melt equal parts nickel and iron together in a [crucible](Crucible.md) and cast ingots like any alloy (a [Mixer](Mixer.md#alloying-with-heat) gives the molten alloy too) ([Casting and Alloys](Casting.md)). Its plates make the cells of a [nickel-iron battery](Battery.md): about 1.3 V a cell, filled with lye, with no gassing, good in the cold and a lower return than lead.
 
 ## Graphite
 
@@ -196,6 +196,7 @@ Pour a melt into an **Ingot Mold** from a [crucible or ladle](Casting.md) and it
 | Ingot | casting a melt |
 | Block | nine ingots, crafted (and back) |
 | Insulation | drawing an ingot at the [Wire Drawer](Wire_Drawer.md) |
+| String | a tool binding or bowstring of that polymer ([Tools and Weapons](Tools_and_Weapons.md)) |
 | Pipe | drilling an ingot at the [Drill Press](Drill_Press.md) |
 
 Drilling gives a [Pipe](Pipe.md) of that polymer; a metal ingot drills into one the same way.

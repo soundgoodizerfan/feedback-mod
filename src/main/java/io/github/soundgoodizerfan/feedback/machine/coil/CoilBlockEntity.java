@@ -107,6 +107,7 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
     public void tickServer() {
         if (level == null)
             return;
+        HeatSource.radiate(this);
         Tu ambient = AmbientTable.at(level);
         // What the body above takes in its own Heat.tick, under the same condition it applies.
         if (temperature > ambient.value()

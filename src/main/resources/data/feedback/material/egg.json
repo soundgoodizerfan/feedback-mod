@@ -4,7 +4,7 @@
     "protein",
     "enriching"
   ],
-  "exclude": ["block", "log"],
+  "exclude": ["block", "rod"],
   "hardness": 0.1,
   "forms": {
     "raw": "minecraft:egg",

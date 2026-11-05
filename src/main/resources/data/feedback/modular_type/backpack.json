@@ -1,0 +1,70 @@
+{
+  "family": "backpack",
+  "wear_litres": 2.0,
+  "wear_role": "T",
+  "primary": "S",
+  "roles": {
+    "S": {
+      "name": "shell",
+      "forms": [
+        "backpack_shell"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:backpack_shell",
+        "shape": [
+          "PPP"
+        ],
+        "stock": [
+          "leather",
+          "*_carpet",
+          "plate"
+        ],
+        "variants": [
+          {
+            "name": "pouch",
+            "shape": [
+              "P"
+            ],
+            "params": {
+              "slots": 9
+            }
+          },
+          {
+            "name": "pack",
+            "shape": [
+              "PPP",
+              "PPP",
+              "PPP"
+            ],
+            "params": {
+              "slots": 27
+            }
+          }
+        ]
+      }
+    },
+    "T": {
+      "name": "strap",
+      "forms": [
+        "leather",
+        "string",
+        "wire"
+      ],
+      "litres": 0.02,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "S",
+      "T"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:leather",
+    "T": "feedback:leather"
+  },
+  "vanilla": {}
+}

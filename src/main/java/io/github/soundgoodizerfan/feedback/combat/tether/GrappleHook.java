@@ -50,10 +50,13 @@ import net.minecraft.world.phys.Vec3;
  *
  * <ul>
  * <li><b>Swing or drag, by mass.</b> A block is infinitely heavy, and a creature is compared with the
- * thrower by {@link BodyMass}. A lighter creature is reeled to the thrower. Otherwise the thrower
- * swings: the line is a fixed length (the distance at the bite, at most {@link ModularTuning#GRAPPLE_ROPE}),
+ * thrower by {@link BodyMass}. With a barb, a lighter creature is reeled to the thrower. Otherwise the thrower
+ * swings: the line is a fixed length (the distance at the bite, at most {@link #maxRope}),
  * nothing pulls, and when the thrower is taut the outward share of their velocity is cancelled and the
  * stretch drawn back, so gravity and what they carried make a pendulum.
+ * <li><b>Fittings</b> ({@link #ROPE}, {@link #WINCH}, {@link #BARB}) come from the grapple that threw it. Without a barb a
+ * creature is only an anchor to swing from; the thrower's own client winches the swing in while the use key is held
+ * ({@code client/GrappleSwing}) and keeps the momentum, boosted, on letting go.
  * <li><b>The line has a rating.</b> Its material's yield strength (string is wool's) times
  * {@link ModularTuning#GRAPPLE_RATING_PER_ST} is the load it takes. The load is the pulled body's
  * mass, tripled on a tick the reel stalls (caught on a corner, held by the ground). Over the rating
@@ -67,6 +70,14 @@ import net.minecraft.world.phys.Vec3;
  */
 public class GrappleHook extends Projectile {
 
+    /** Fittings (bit set, from the grapple's component): an extra coil of line. */
+    public static final int ROPE = 1;
+    /** A winch: the reel runs faster. */
+    public static final int WINCH = 2;
+    /** A barbed head: a lighter creature the hook bites is reeled in, not swung from. */
+    public static final int BARB = 4;
+
+    private static final EntityDataAccessor<Integer> DATA_FITTINGS = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_ANCHORED = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.BOOLEAN);
 
     /** The material the line is made of; the grapple's recipe takes string. */
@@ -100,6 +111,7 @@ public class GrappleHook extends Projectile {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_ANCHORED, false);
+        builder.define(DATA_FITTINGS, 0);
         builder.define(DATA_SWING_ROPE, 0f);
     }
 
@@ -118,6 +130,24 @@ public class GrappleHook extends Projectile {
         double along = velocity.dot(r); // toward the anchor when positive
         Vec3 v = along < 0 ? velocity.subtract(r.scale(along)) : velocity;
         return v.add(r.scale(Math.min(stretch, ModularTuning.GRAPPLE_SWING_DRAW)));
+    }
+
+    public void setFittings(int fittings) {
+        entityData.set(DATA_FITTINGS, fittings);
+    }
+
+    public boolean has(int fitting) {
+        return (entityData.get(DATA_FITTINGS) & fitting) != 0;
+    }
+
+    /** The longest line this hook carries, blocks. */
+    public float maxRope() {
+        return has(ROPE) ? ModularTuning.GRAPPLE_ROPE_LONG : ModularTuning.GRAPPLE_ROPE;
+    }
+
+    /** Blocks per tick the reel draws in. */
+    public float reelSpeed() {
+        return ModularTuning.GRAPPLE_REEL * (has(WINCH) ? ModularTuning.GRAPPLE_WINCH_MULT : 1f);
     }
 
     public boolean anchored() {
@@ -149,7 +179,7 @@ public class GrappleHook extends Projectile {
         }
         Entity owner = getOwner();
         if (!level().isClientSide) {
-            if (owner == null || !owner.isAlive() || owner.distanceTo(this) > ModularTuning.GRAPPLE_ROPE) {
+            if (owner == null || !owner.isAlive() || owner.distanceTo(this) > maxRope()) {
                 discard();
                 return;
             }
@@ -186,7 +216,7 @@ public class GrappleHook extends Projectile {
             discard();
             return;
         }
-        boolean dragTarget = target != null && BodyMass.of(target) < BodyMass.of(owner);
+        boolean dragTarget = target != null && has(BARB) && BodyMass.of(target) < BodyMass.of(owner);
         LivingEntity held = dragTarget ? target : owner;
         Tether.Anchor anchor = dragTarget ? new Tether.Anchor.OnEntity(owner.getId())
                 : target != null ? new Tether.Anchor.OnEntity(target.getId()) : new Tether.Anchor.OnBlock(block);
@@ -195,8 +225,8 @@ public class GrappleHook extends Projectile {
         heldId = held.getId();
         rating = lineRating();
         lastDistance = (float) held.position().distanceTo(anchorPoint());
-        rope = Math.min(ModularTuning.GRAPPLE_ROPE, Math.max(lastDistance, (float) ModularTuning.GRAPPLE_STOP_DISTANCE));
-        Tethers.add(held, new Tether(getUUID(), anchor, ModularTuning.GRAPPLE_ROPE, dragTarget ? ModularTuning.GRAPPLE_REEL : 0f, 1f,
+        rope = Math.min(maxRope(), Math.max(lastDistance, (float) ModularTuning.GRAPPLE_STOP_DISTANCE));
+        Tethers.add(held, new Tether(getUUID(), anchor, maxRope(), dragTarget ? reelSpeed() : 0f, 1f,
                 new Tether.Release(ModularTuning.GRAPPLE_STOP_DISTANCE, ModularTuning.GRAPPLE_MAX_TICKS)));
         setDeltaMovement(Vec3.ZERO);
         setPos(at);
@@ -238,7 +268,7 @@ public class GrappleHook extends Projectile {
             discard();
             return;
         }
-        boolean stalled = !swing && reelTicks > 2 && lastDistance - distance < ModularTuning.GRAPPLE_REEL * ModularTuning.GRAPPLE_STALL_FRACTION;
+        boolean stalled = !swing && reelTicks > 2 && lastDistance - distance < reelSpeed() * ModularTuning.GRAPPLE_STALL_FRACTION;
         lastDistance = distance;
         float load = BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f);
         if (load > rating) {
@@ -255,7 +285,7 @@ public class GrappleHook extends Projectile {
             swing(living, offset, distance);
             return;
         }
-        float speed = ModularTuning.GRAPPLE_REEL;
+        float speed = reelSpeed();
         speed *= 1f - (float) living.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
         // A crouched player with footing holds back a share of the pull (armour mass adds to it).
         if (living instanceof Player held2) {
@@ -296,7 +326,7 @@ public class GrappleHook extends Projectile {
 
     /** The hook {@code owner} has out, or null. */
     public static GrappleHook of(Level level, LivingEntity owner) {
-        for (GrappleHook h : level.getEntitiesOfClass(GrappleHook.class, owner.getBoundingBox().inflate(ModularTuning.GRAPPLE_ROPE + 8)))
+        for (GrappleHook h : level.getEntitiesOfClass(GrappleHook.class, owner.getBoundingBox().inflate(ModularTuning.GRAPPLE_ROPE_LONG + 8)))
             if (h.getOwner() == owner)
                 return h;
         return null;

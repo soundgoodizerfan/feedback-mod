@@ -174,7 +174,7 @@ public final class ModularRework {
     }
 
     /**
-     * The parts of a finished dish as items (dish spec 3), or empty if it is a soup (a mixture does not come apart). Each food
+     * The parts of a finished dish as items (dish spec 3), or empty if it is a soup (a mixture does not come apart) or a baked type (a loaf is one piece, never dough again). Each food
      * comes back in its material's form carrying the state it was baked from, aged by the dish's clock so spoilage goes on, and
      * its cut; a shaped container comes back whole as its part; the finish and any salt are lost (they are on the dish). The
      * caller settles the dish's clock first.
@@ -185,7 +185,7 @@ public final class ModularRework {
         ModularType type = design == null ? null : types.get(design.type());
         FoodState now = dish.get(FDataComponents.FOOD_STATE.get());
         DishFigures baked = dish.get(FDataComponents.DISH_FIGURES.get());
-        if (type == null || now == null || baked == null)
+        if (type == null || now == null || baked == null || type.bakes())
             return Optional.empty();
         for (Part part : design.parts()) {
             Material m = materials.get(part.material());

@@ -31,9 +31,9 @@ Put a bowl and foods together into a dish at the [Prep Table](Prep_Table.md).  N
 Knead [dough](Dough.md) by hand at the Prep Table and bake it into a better or worse loaf; bake flatbread to wrap a dish in.
 
 
-## Meat blocks and cylinders
+## Meat blocks and rods
 
-Every animal and seafood material (beef, pork, mutton, chicken, rabbit, cod, salmon, tropical fish, pufferfish, rotten flesh) has a **Block** (*Block of Beef*, nine raw items' worth, placeable, soft, mined fastest with a hoe) and a **Cylinder** (*Beef Cylinder*, four raw items' worth). Both can be eaten: hunger and saturation are the raw item's, times the number of raw items they hold. Eggs, spider eyes and phantom membrane have none. In a vessel the blocks and cylinders cook, dry, char and rot as the plain meat does.
+Every animal and seafood material (beef, pork, mutton, chicken, rabbit, cod, salmon, tropical fish, pufferfish, rotten flesh) has a **Block** (*Block of Beef*, nine raw items' worth, placeable, soft, mined fastest with a hoe) and a **Rod** (*Beef Rod*, one raw item's worth). Both can be eaten: hunger and saturation are the raw item's, times the number of raw items they hold. Eggs, spider eyes and phantom membrane have none. In a vessel the blocks and rods cook, dry, char and rot as the plain meat does. A meat rod also works as a tool handle.
 
 ## Reading what you made
 

@@ -148,7 +148,9 @@
   "defaults": {
     "H": "feedback:wrought_iron",
     "S": "feedback:wood",
-    "B": "feedback:leather"
+    "B": "feedback:leather",
+    "mace:S": "feedback:breeze_rod",
+    "mace:B": "feedback:polypropylene"
   },
   "vanilla": {
     "mace": "heavy_core"

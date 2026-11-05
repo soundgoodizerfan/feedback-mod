@@ -173,7 +173,12 @@ public record ModularFigures(List<Float> values, int step) {
         CUISINE_ITALIAN,
         CUISINE_EAST_ASIAN,
         CUISINE_MEXICAN,
-        CUISINE_EASTERN_EUROPEAN
+        CUISINE_EASTERN_EUROPEAN,
+        // --- a backpack's (family BACKPACK) ---
+        /** {@code Mu}: the load the strap carries before the wearer is slowed; the strap's strength times the wear left. */
+        CARRY,
+        /** Item slots of the bag, fixed by the shell's shape. */
+        SLOTS
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

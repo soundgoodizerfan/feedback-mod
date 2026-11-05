@@ -192,6 +192,18 @@ public final class ModularTuning {
     public static final float SLOW_PER_KG = 0.003f;
     public static final float SLOW_MAX = 0.1f;
 
+    // --- backpack ---
+    /** {@code Mu} of carry rating per unit of the strap material's strength. Invented. */
+    public static final float PACK_CARRY_PER_STRENGTH = 8f;
+    /** Slots of a shell shaped in no named variant (the satchel). */
+    public static final float PACK_DEFAULT_SLOTS = 18f;
+    /** Share of base speed an overloaded wearer loses: a switch, not a dial. */
+    public static final float PACK_OVERLOAD_SLOW = 0.3f;
+    /** Wear points the strap takes each second spent over its rating. [OPEN] the rate. */
+    public static final int PACK_OVERLOAD_WEAR = 1;
+    /** {@code Mu} of a stack item in the tag {@code feedback:pack_mass/light}, and in {@code heavy}, and of any other item no material explains. */
+    public static final float PACK_MASS_LIGHT = 0.05f, PACK_MASS_HEAVY = 3f, PACK_MASS_DEFAULT = 0.5f;
+
     // --- instruments --------------------------------------------------------------------------
 
     /** A balance scale reads to this many Mu. */
@@ -312,10 +324,20 @@ public final class ModularTuning {
     public static final float GRAPPLE_SPEED = 2.2f;
     /** Hook fall per tick: a line is thrown, not fired, so a long cast arcs. */
     public static final double GRAPPLE_GRAVITY = 0.03;
-    /** The line's length in blocks: how far a hook can fly and the tether's rope length. */
-    public static final float GRAPPLE_ROPE = 24f;
-    /** Blocks per tick the reel draws the lighter body in (a harpoon's reel is its own figure). */
-    public static final float GRAPPLE_REEL = 0.55f;
+    /** The bare grapple's line in blocks: how far a hook can fly and the tether's rope length. */
+    public static final float GRAPPLE_ROPE = 16f;
+    /** The line with the extra coil fitted. */
+    public static final float GRAPPLE_ROPE_LONG = 28f;
+    /** Blocks per tick the bare reel draws a body in (a harpoon's reel is its own figure). */
+    public static final float GRAPPLE_REEL = 0.3f;
+    /** Reel speed multiple with the winch fitted. */
+    public static final float GRAPPLE_WINCH_MULT = 2f;
+    /** Share of speed kept and added on letting go of a line while moving at least {@link #GRAPPLE_RELEASE_MIN} (the swing's momentum thrown on). */
+    public static final double GRAPPLE_RELEASE_BOOST = 1.2;
+    /** Blocks per tick under which a release carries no boost. */
+    public static final double GRAPPLE_RELEASE_MIN = 0.35;
+    /** Most speed a release boost can reach, blocks per tick. */
+    public static final double GRAPPLE_RELEASE_MAX = 1.9;
     /** Most blocks a tick of stretch is drawn back along a swinging line (a stand-in; past it the line stretches). */
     public static final double GRAPPLE_SWING_DRAW = 1.5;
     /** The reel lets go this close to the anchor. */

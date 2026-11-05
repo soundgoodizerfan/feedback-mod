@@ -143,6 +143,7 @@ public class FClientSetup {
         event.register(GunClient.STANCE);
         event.register(OffhandStrikeClient.KEY);
         event.register(OffhandStrikeClient.BARE_TOGGLE);
+        event.register(PackKey.KEY);
         event.register(CombatKeys.PARRY);
         event.register(CombatKeys.ROLL);
         for (var k : CombatKeys.CAST)
@@ -156,6 +157,7 @@ public class FClientSetup {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(FMenus.THERMAL_VESSEL.get(), ThermalVesselScreen::new);
         event.register(FMenus.CRUCIBLE.get(), CrucibleScreen::new);
+        event.register(FMenus.LARGE_CRUCIBLE.get(), CrucibleScreen::new);
         event.register(FMenus.ARC_HEARTH.get(), CrucibleScreen::new);
         event.register(FMenus.MIXER.get(), MixerScreen::new);
         event.register(FMenus.BREWING_STAND.get(), StandScreen::new);

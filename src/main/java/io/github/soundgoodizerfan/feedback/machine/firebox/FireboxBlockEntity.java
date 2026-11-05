@@ -219,6 +219,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     public void tickServer() {
         if (level == null)
             return;
+        HeatSource.radiate(this);
         refresh();
 
         draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK.value());

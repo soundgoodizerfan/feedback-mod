@@ -121,17 +121,14 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
     }
 
     /**
-     * A hot vessel holding metal glows (spec incandescence): the band of its temperature sets a real block light level, moved only
+     * A vessel hot enough glows, empty or full, (spec incandescence): the band of its temperature sets a real block light level, moved only
      * when the band changes. Call at the end of a tick, after any state change of its own.
      */
     protected void glow() {
         if (level == null)
             return;
-        boolean holdsMetal = alloy.amount() > 0 || processSlots().stream().anyMatch(stack -> !stack.isEmpty()
-                && io.github.soundgoodizerfan.feedback.process.Material.find(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stack)
-                .filter(l -> io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.glows(l.material())).isPresent());
         io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.apply(level, worldPosition,
-                holdsMetal && !darkened() ? io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.light(temperature) : 0);
+                !darkened() ? io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.light(temperature) : 0);
     }
 
     /** Whether the process is held in a sealed chamber with no air blowing in (charcoal, sintering). */
@@ -310,6 +307,19 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         if (food.isPresent()) {
             contents.set(slot, io.github.soundgoodizerfan.feedback.process.Cooking.tick(input, food.get(), new Tu(temperature), smoke(), level));
             slotTpu[slot] = 0f;
+            return;
+        }
+        // A plain dip (wash dirt to clay) works on a stack sitting in the vessel the same as one held to it; a coat or imbue needs a hand.
+        var dip = ThermalProcessTable.get().findDip(tank.getFluid(), input, new Tu(temperature));
+        if (dip.isPresent() && dip.get().coat().isEmpty() && (!dip.get().hasFluidResult() || takesMelt())) {
+            FluidStack drawn = tank.drain(dip.get().fluid().amount(), IFluidHandler.FluidAction.EXECUTE);
+            onDrained(drawn);
+            input.shrink(1);
+            if (dip.get().hasFluidResult())
+                addMolten(dip.get().resultFluid().copy());
+            else
+                placeHot(dip.get().result().copy());
+            cleanEmpties(contents);
             return;
         }
         var row = ThermalProcessTable.get().findSingle(level, input, new Tu(temperature), airlessRun());

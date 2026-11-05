@@ -310,6 +310,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.item.Tongs.STREAM_CODEC)
                     .build());
 
+    /** Fittings on a grapple, a bit set (see {@code GrappleHook.ROPE}, {@code WINCH}, {@code BARB}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> GRAPPLE_FITTINGS =
+            COMPONENTS.register("grapple_fittings", () -> DataComponentType.<Integer>builder()
+                    .persistent(Codec.INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+                    .build());
+
     /** What a piece of combat gear is made of and what that made of it -- see {@code combat/gear/GearStats}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.combat.gear.GearStats>> GEAR =
             COMPONENTS.register("gear", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.combat.gear.GearStats>builder()

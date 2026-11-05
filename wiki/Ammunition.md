@@ -40,6 +40,15 @@ S D S
 
 **Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armor and breaks less on hard faces: see [What bullets do](Guns.md#hardness-glass-glancing-armor). A coilgun *needs* a magnetic slug.
 
+### Rubber rounds
+
+A bullet of a [polymer](Materials.md#polymers), such as synthetic rubber, seats in the press as a projectile like a metal one. A round with a polymer projectile is a **rubber round**. Hardness and density come from the polymer, as for any bullet metal.
+
+Two advancements belong to rubber rounds:
+
+- *Restoring Order*: hit another player with a rubber round.
+- *Rage Against the Machine*: kill a player who has hit you with a rubber round. The record of who hit whom lasts until the server stops.
+
 ## Charges
 
 The charge is loose powder. The press takes **everything** in its charge slots, so the size of the stack you put in is how much powder goes into the round. A case holds **at most 8** items of charge. **Four** of anything is the "standard" charge the spec sheets are read against.

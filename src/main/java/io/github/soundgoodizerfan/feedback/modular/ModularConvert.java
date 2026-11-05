@@ -150,8 +150,8 @@ public final class ModularConvert {
             String role = c.getKey();
             ModularType.Role r = type.roles().get(role);
             ResourceLocation material = r.set() ? located.id()
-                    : role.equals(type.primary()) ? (set ? ModularTuning.CRYSTAL_BODY : located.id()) : type.defaults().get(role);
-            // A variant named for the vanilla form (a trident, a mace) is the shape that form was; else the standard.
+                    : role.equals(type.primary()) ? (set ? ModularTuning.CRYSTAL_BODY : located.id()) : type.defaults().getOrDefault(located.form() + ":" + role, type.defaults().get(role));
+            // A default keyed "<vanilla form>:<role>" (a mace's breeze-rod handle) beats the role's own. A variant named for the vanilla form (a trident, a mace) is the shape that form was; else the standard.
             ToolTableShaping.Option shape = ToolDesigns.shapes(r, types).stream()
                     .filter(o -> o.variant().name().equals(located.form())).findFirst().orElse(ToolDesigns.standard(r, types));
             Material m = material == null ? null : materials.get(material);

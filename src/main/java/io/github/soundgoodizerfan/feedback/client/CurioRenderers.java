@@ -97,6 +97,7 @@ public final class CurioRenderers {
             reg(FItems.SASH.get(), () -> new Worn(Limb.BODY, () -> box(-4.4f, 9f, -2.4f, 8.8f, 2f, 4.8f)));
             reg(FItems.BACK_PIECE.get(), () -> new Worn(Limb.BODY, () -> box(-3f, 1f, 2f, 6f, 7f, 2f)));
             reg(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Gloves::new);
+            reg(io.github.soundgoodizerfan.feedback.registry.FModular.BACKPACK.get(), Packs::new);
         });
     }
 
@@ -233,6 +234,30 @@ public final class CurioRenderers {
             for (var skin : event.getSkins())
                 if (event.getSkin(skin) instanceof PlayerRenderer r)
                     r.addLayer(new FirstPersonSkinLayer(r, event.getContext().getItemInHandRenderer()));
+        }
+    }
+
+    /** The pack on the back, a box sized by its slots and tinted by the shell. */
+    private static final class Packs implements ICurioRenderer {
+        private ModelPart pouch, satchel, pack;
+
+        @Override
+        public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slot, PoseStack pose,
+                RenderLayerParent<T, M> parent, MultiBufferSource buffer, int light, float limbSwing, float limbSwingAmount,
+                float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
+            if (!(parent.getModel() instanceof HumanoidModel<?> m))
+                return;
+            if (pouch == null) {
+                pouch = box(-2f, 6f, 2f, 4f, 4f, 2f);
+                satchel = box(-3f, 3f, 2f, 6f, 7f, 3f);
+                pack = box(-4f, 0f, 2f, 8f, 10f, 4f);
+            }
+            var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(stack);
+            var shell = design == null ? null : design.part(io.github.soundgoodizerfan.feedback.modular.ModularBackpack.SHELL);
+            var figures = io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(stack);
+            float slots = figures == null ? 18f : figures.get(io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig.SLOTS);
+            draw(slots <= 9 ? pouch : slots >= 27 ? pack : satchel, m.body, pose, buffer, light,
+                    shell == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.MaterialColors.of(shell.material()));
         }
     }
 

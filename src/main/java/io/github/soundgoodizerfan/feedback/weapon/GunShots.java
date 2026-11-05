@@ -95,6 +95,8 @@ public final class GunShots {
         /** Momentum of the round and gas at the muzzle, kg m/s: what Muzzle Stagger reads. */
         final float impulse;
         int bounces;
+        /** A polymer projectile: a rubber round (see {@link RubberRounds}). */
+        boolean rubber;
         /** The gun it came from, so its traits hear where the round lands. */
         ItemStack gun = ItemStack.EMPTY;
 
@@ -304,7 +306,7 @@ public final class GunShots {
         fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch,
                 round.tracer(materials), round.incendiary(materials), round.pellets(),
                 projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value(), gun,
-                round.blast(materials));
+                round.blast(materials), RubberRounds.isRubber(projectile));
         GunFu.shotFired(level, shooter, gun, figures, heat);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server)
             ModularTraits.gunFired(server, gun, figures);
@@ -555,12 +557,19 @@ public final class GunShots {
     /** As above, from {@code gun}: its traits hear where each round lands. */
     public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun) {
-        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, hardness, gun, 0f);
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, hardness, gun, 0f, false);
     }
 
     /** As above, with an explosion of {@code blast} power where each pellet stops. */
     public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun, float blast) {
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, hardness, gun, blast, false);
+    }
+
+    /** As above, and {@code rubber} marks each pellet a rubber round. */
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
+                            boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun, float blast,
+                            boolean rubber) {
         GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         // Dead Eye: the shot is exact, and its round is harder than it was (it goes through more armour).
@@ -576,6 +585,7 @@ public final class GunShots {
             shot.tracer = tracer;
             shot.incendiary = incendiary;
             shot.blast = blast;
+            shot.rubber = rubber;
             shot.hardness = exact ? hardness * 2f : hardness;
             shot.gun = gun.copyWithCount(1);
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
@@ -833,6 +843,8 @@ public final class GunShots {
             } finally {
                 inBullet = false;
             }
+            if (s.rubber && target instanceof LivingEntity struck)
+                RubberRounds.landed(s.shooter, struck);
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
             GunFu.bulletHit(level, s.shooter, target, s.impulse);

@@ -16,6 +16,7 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | Tin, Zinc or Lead Ingot | Molten Tin / Zinc / Lead |
 | Sand or Red Sand | Molten Glass |
 | Nether Quartz | Molten Quartz Glass (casts into a Quartz Glass ingot) |
+| Scrap or Swarf of any metal with a molten form | 36 mB of that metal |
 
 JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, glass 1400, iron 1538, wrought iron 1600, quartz glass 1650. One item makes one ingot's worth, **144 mB**. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
 

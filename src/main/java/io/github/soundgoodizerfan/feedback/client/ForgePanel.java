@@ -146,7 +146,7 @@ final class ForgePanel implements WorkPanel {
         if (phase != Phase.NONE || !host.menu().hasHammer())
             return false;
         var stock = ToolTableShaping.check(host.menu().station(), option, host.menu().stock(), ClientMaterials.on(level), level);
-        if (stock.isEmpty() || !ForgeRhythm.workable(stock.get().what().material(), stock.get().coldest())
+        if (stock.isEmpty() || !ForgeRhythm.workable(stock.get().what().material(), stock.get().coldest(), host.menu().hold())
                 || !ForgeRhythm.movable(option.variant().rhythm(), host.menu().strikes(), stock.get().what().material()))
             return false;
         if (host.menu().machine()) {
@@ -158,7 +158,7 @@ final class ForgePanel implements WorkPanel {
         chosenIndex = index;
         material = stock.get().what().material();
         step = ForgeRhythm.step(material);
-        live = ForgeRhythm.live(material, stock.get().coldest());
+        live = ForgeRhythm.live(material, stock.get().coldest(), host.menu().hold());
         ticks = 0;
         hits.clear();
         streak = 0;

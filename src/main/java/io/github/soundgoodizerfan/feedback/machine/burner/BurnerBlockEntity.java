@@ -77,6 +77,7 @@ public class BurnerBlockEntity extends BlockEntity implements HeatSource {
     public void tickServer() {
         if (level == null)
             return;
+        HeatSource.radiate(this);
         pull();
         Material.Combustion c = combustion();
         float before = flameTu;

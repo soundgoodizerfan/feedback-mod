@@ -43,7 +43,7 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
 
     static final RecipeType<Mixture> TYPE = RecipeType.create("feedback", "mixture", Mixture.class);
 
-    private static final int WIDTH = 168, HEIGHT = 60;
+    private static final int WIDTH = 168, HEIGHT = 84;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -79,6 +79,17 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Mixture recipe, IFocusGroup focuses) {
+        // Parts are material amounts, not items: each part's slot cycles every item of that material, so a lookup on any of them lists the mix under Uses.
+        var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.get();
+        int x = 1;
+        for (var id : recipe.parts().keySet()) {
+            var material = materials.get(id);
+            if (material == null || material.items(id).isEmpty())
+                continue;
+            builder.addInputSlot(x, 62).setStandardSlotBackground()
+                    .addItemStacks(material.items(id).values().stream().map(ItemStack::new).toList());
+            x += 18;
+        }
         if (recipe.hasFluidResult())
             builder.addOutputSlot(143, 22).setOutputSlotBackground()
                     .addFluidStack(recipe.resultFluid().getFluid(), recipe.resultFluid().getAmount()).setFluidRenderer(Math.max(1, recipe.resultFluid().getAmount()), false, 16, 16);

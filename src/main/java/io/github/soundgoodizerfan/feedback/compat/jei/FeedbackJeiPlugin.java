@@ -144,6 +144,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.class, new BootstrapGloveExtension());
         registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe.class, new GrappleUpgradeCraftingExtension());
+        registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.HotToolRecipe.class, new HotToolCraftingExtension());
         ElectronicsCrafting.register(registration);
         CodeRecipeExamples.register(registration);
@@ -234,6 +236,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
             if (made != null && made.food().isPresent())
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
+        registration.addIngredientInfo(FItems.GRAPPLE.get(), Component.translatable("feedback.jei.info.grapple"));
         registration.addIngredientInfo(FItems.ARC_HEARTH.get(), Component.translatable("feedback.jei.info.arc_hearth"));
         registration.addIngredientInfo(net.minecraft.world.item.Items.HEAVY_CORE, Component.translatable("feedback.jei.info.heavy_core"));
         registration.addIngredientInfo(FItems.INDUCTION_COIL.get(), Component.translatable("feedback.jei.info.induction_coil"));
@@ -267,6 +270,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
         registration.addIngredientInfo(FItems.WRENCH.get(), Component.translatable("feedback.jei.info.hot_tool"));
         registration.addIngredientInfo(FItems.CROWBAR.get(), Component.translatable("feedback.jei.info.hot_tool"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BACKPACK.get(), Component.translatable("feedback.jei.info.backpack"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
         info(registration, FItems.COHERER.get(), "coherer");
@@ -435,6 +439,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
         net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(net.minecraft.tags.TagKey.create(
                 net.minecraft.core.registries.Registries.ITEM, Feedback.id("hidden_from_jei")))
                 .forEach(item -> hidden.add(new net.minecraft.world.item.ItemStack(item.value())));
+        // Vanilla ores are replaced by the mod's own deposits; the shared c:ores tag, minecraft namespace only, so other mods' ores stay.
+        net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(net.minecraft.tags.TagKey.create(
+                net.minecraft.core.registries.Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "ores")))
+                .forEach(item -> {
+                    if (item.value().builtInRegistryHolder().key().location().getNamespace().equals("minecraft"))
+                        hidden.add(new net.minecraft.world.item.ItemStack(item.value()));
+                });
         jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(
                 mezz.jei.api.constants.VanillaTypes.ITEM_STACK, hidden);
         ClientDeformations.onChanged(FeedbackJeiPlugin::publish);

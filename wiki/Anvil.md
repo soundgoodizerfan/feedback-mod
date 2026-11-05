@@ -20,7 +20,7 @@ W is a Wrought Iron Plate and S is a [Smithing Table](Smithing_Table.md). The to
 
 The Anvil does everything the Smithing Table does: the same metal stock, the **Forge** and **Trim** tabs, and a [Hand Hammer](Hand_Hammer.md) in the hammer slot. See the [Smithing Table](Smithing_Table.md) for the screen. On top of that it makes the **forged** variants of a part, played as a rhythm. Vanilla's repair, rename and combine do not exist here; every damage stage of a placed or generated vanilla anvil is this block.
 
-The Anvil has vanilla's shape and turns to face the way you place it. A [Hearth](Hearth.md) set beside the Anvil keeps its stock hot while you play. The Smithing Table is not reheated.
+The Anvil has vanilla's shape and turns to face the way you place it. A [Hearth](Hearth.md) set beside the Anvil keeps its stock in its forging window while you play, and the rhythm allows for it. The Smithing Table is not reheated.
 
 ## Forging
 

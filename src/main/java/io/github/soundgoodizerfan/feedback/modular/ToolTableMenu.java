@@ -122,6 +122,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private final MenuTabs tabs;
     /** Whether the plan slot is in use now: the dish table's seasoning, a blueprint the centre's type needs, or one already in it. */
     private final DataSlot planShown = DataSlot.standalone();
+    /** The heat a Hearth beside the table holds the stock at, in Tu (0 for none): synced so the screen's heat clock agrees with the server's. */
+    private final DataSlot holdTu = DataSlot.standalone();
     /** Which table this is: the Tool Table's menu with a type filter, and at the Gun Table a slot for a round ({@link #gunTable}), at the Prep Table a knife for the hammer. */
     private final ToolTableAssembly.Kind kind;
     private final Station station;
@@ -204,6 +206,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         addDataSlot(dishType);
         addDataSlot(tabs.slot());
         addDataSlot(planShown);
+        addDataSlot(holdTu);
         if (!player.level().isClientSide)
             output.setItem(0, preview(player.level()));
     }
@@ -1130,7 +1133,9 @@ public class ToolTableMenu extends AbstractContainerMenu {
             Cooking.settle(tool, level, io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value());
             Optional<List<ItemStack>> out = ModularRework.dismantleDish(tool, ClientMaterials.on(level), types(level));
             if (out.isEmpty()) {
-                io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("prep.feedback.apart.soup"), 60);
+                ModularDesign whole = ModularStacks.design(tool);
+                boolean baked = whole != null && types(level).get(whole.type()) != null && types(level).get(whole.type()).bakes();
+                io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable(baked ? "prep.feedback.apart.baked" : "prep.feedback.apart.soup"), 60);
                 return;
             }
             parts = out.get();
@@ -1317,7 +1322,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (stock.isEmpty())
             return;
         Material material = stock.get().what().material();
-        if (!ForgeRhythm.workable(material, stock.get().coldest())) {
+        if (!ForgeRhythm.workable(material, stock.get().coldest(), hold())) {
             io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unworkable"), 60);
             return;
         }
@@ -1348,7 +1353,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         int step = ForgeRhythm.step(material);
         if (level.getGameTime() - session.started() < ForgeRhythm.end(option.variant().rhythm(), step) - 10)
             return;
-        int[] live = ForgeRhythm.live(material, session.temperature());
+        int[] live = ForgeRhythm.live(material, session.temperature(), hold());
         net.minecraft.util.RandomSource noise = ForgeRhythm.noiseFor(hits);
         ForgeRhythm.Result result = ForgeRhythm.judge(option.variant().rhythm(), step, hits, live, noise);
         ForgeRhythm.Work work = ForgeRhythm.work(option.variant().rhythm(), strikes(), material, hits, live, noise,
@@ -1379,7 +1384,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Material material = stock.get().what().material();
         String rhythm = option.variant().rhythm();
         ForgeRhythm.Strikes strikes = strikes();
-        if (!ForgeRhythm.workable(material, stock.get().coldest())) {
+        if (!ForgeRhythm.workable(material, stock.get().coldest(), hold())) {
             io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unworkable"), 60);
             return;
         }
@@ -1392,7 +1397,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         for (int i = 0; i < rhythm.length(); i++)
             if (ForgeRhythm.note(rhythm.charAt(i)))
                 hits.add(new ForgeRhythm.Hit(ForgeRhythm.noteTick(i, step), rhythm.charAt(i) == 'h'));
-        int[] live = ForgeRhythm.live(material, stock.get().coldest());
+        int[] live = ForgeRhythm.live(material, stock.get().coldest(), hold());
         net.minecraft.util.RandomSource noise = net.minecraft.util.RandomSource.create(level.getGameTime() ^ hits.hashCode());
         ForgeRhythm.Result result = ForgeRhythm.judge(rhythm, step, hits, live, noise);
         ForgeRhythm.Work work = ForgeRhythm.work(rhythm, strikes, material, hits, live, noise);
@@ -1463,6 +1468,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     @Override
     public void broadcastChanges() {
         if (!player.level().isClientSide) {
+            holdTu.set(station != Station.ANVIL ? 0 : Math.round(io.github.soundgoodizerfan.feedback.machine.hearth.HearthBlockEntity.holdBeside(player.level(), pos)));
             int now = ItemStack.hashStackList(range(0, table.getContainerSize()));
             if (now != seen) {
                 seen = now;
@@ -1544,6 +1550,11 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (index == OUT)
             player.drop(held, false);
         return moved;
+    }
+
+    /** The heat a Hearth beside this table holds the stock at: read from the world on the server, from the synced slot on the client. */
+    public float hold() {
+        return holdTu.get();
     }
 
     /** The coldest piece of stock in the cells, as this side sees it: what the screen glows by. */

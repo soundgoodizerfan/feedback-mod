@@ -39,7 +39,7 @@ Put the drum over a fire or any other heat source below it, as with a [Crucible]
 
 Some alloys form here from molten metal and a solid item, one part each (144 mB of metal to one item). The drum's temperature must sit in the window, and the metal must be molten. The alloy comes out at the fluid port for a pipe.
 
-The drum also alloys molten metals on their own, as a [Crucible](Crucible.md) does. Pipe the metals in as fluid parts at the alloy's proportions (144 mB of each counts as one part) and Draw. JEI's *Mixing* card lists each alloy's shares.
+The drum also alloys molten metals on their own, as a [Crucible](Crucible.md) does. Pipe the metals in as fluid parts at the alloy's proportions (144 mB of each counts as one part) and Draw. JEI's *Mixing* card lists each alloy's shares. Nickel and iron mixed this way draw as Molten Nickel-Iron, which casts like any melt.
 
 | Metal | Item | Drum temperature | Makes |
 | --- | --- | --- | --- |

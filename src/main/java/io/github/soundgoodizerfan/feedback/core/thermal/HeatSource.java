@@ -29,6 +29,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 
 /**
  * A fire. Something that holds a flame temperature, which is the ceiling on anything it heats.
@@ -102,15 +110,122 @@ public interface HeatSource {
         return sideShare();
     }
 
+
+    // --- who reaches a block --------------------------------------------------------------------
+
+    /** The six face neighbours, then the twelve edge neighbours (two steps along two axes): where a source that reaches a block can stand. */
+    int REACH = 18;
+
+    Direction[] DIRS = Direction.values();
+
+    /**
+     * The source that could reach {@code pos} from candidate {@code i} (0-5: the block on that face; 6-17: a block touching an edge),
+     * or null. A face neighbour always reaches; an edge neighbour reaches only when it points at a block next to {@code pos}, which is
+     * to say it faces one of the two faces it touches {@code pos} across (the block where it points, and the four round that, are lit).
+     */
+    private static HeatSource reaching(Level level, BlockPos pos, int i) {
+        if (i < 6)
+            return level.getBlockEntity(pos.relative(DIRS[i])) instanceof HeatSource source ? source : null;
+        int n = i - 6, pair = n / 4, signs = n % 4;
+        // pair 0: x,y   pair 1: x,z   pair 2: y,z; signs pick the direction on each axis
+        Direction.Axis first = pair < 2 ? Direction.Axis.X : Direction.Axis.Y, second = pair == 0 ? Direction.Axis.Y : Direction.Axis.Z;
+        Direction da = Direction.fromAxisAndDirection(first, (signs & 1) == 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
+        Direction db = Direction.fromAxisAndDirection(second, (signs & 2) == 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
+        if (!(level.getBlockEntity(pos.relative(da).relative(db)) instanceof HeatSource source))
+            return null;
+        Direction face = source.heatFacing();
+        return face == da.getOpposite() || face == db.getOpposite() ? source : null;
+    }
+
+    /** The share {@code source}, found as candidate {@code i} of {@link #reaching}, gives: the face neighbours by facing, an edge neighbour its side share. */
+    private static float shareAt(HeatSource source, int i) {
+        return i < 6 ? source.shareToward(DIRS[i].getOpposite()) : source.sideShare();
+    }
+
+
+    // --- what a source pushes -------------------------------------------------------------------
+
+    /**
+     * Called from a source's own server tick: pushes its heat into the space it reaches, the same blocks {@link #at} reads from the
+     * other end (the block it points at, the four round that, the four beside the source, and the back if it has a share). Every
+     * {@link FTuning#HEAT_PUSH_INTERVAL} ticks, and only when hot:
+     * <ul>
+     *   <li>a block with an item handler warms the stacks inside toward that spot's heat ({@link FTuning#HEAT_PUSH_ITEM_GRIP} of the
+     *       gap a tick), unless it is a {@link ThermalBody} (a vessel heats its own contents through {@link #at}) or in the
+     *       {@link FTags#NO_HEAT_PUSH} block tag, which is how a block opts out (anything else that reads {@link #at} itself);</li>
+     *   <li>a dropped item there warms the same way;</li>
+     *   <li>once a second, a living thing standing there is burned as a piece at that heat would burn it ({@link HotContact#burn}),
+     *       so the band, and with it the damage, follows how hot the spot is.</li>
+     * </ul>
+     */
+    static <T extends BlockEntity & HeatSource> void radiate(T self) {
+        Level level = self.getLevel();
+        if (level == null || level.isClientSide)
+            return;
+        long beat = Math.floorMod(level.getGameTime() + self.getBlockPos().asLong(), (long) FTuning.HEAT_PUSH_INTERVAL);
+        if (beat != 0L)
+            return;
+        float fire = self.getFireTu().value();
+        if (fire <= FTuning.WARM_TU.value())
+            return;
+        boolean scorch = (level.getGameTime() / FTuning.HEAT_PUSH_INTERVAL) % FTuning.HEAT_SCORCH_EVERY == 0;
+        float ambient = AmbientTable.at(level).value();
+        Direction face = self.heatFacing();
+        BlockPos at = self.getBlockPos(), front = at.relative(face);
+        reach(level, self, front, 1f, ambient, fire, scorch);
+        float side = self.sideShare();
+        if (side > 0f)
+            for (Direction d : DIRS)
+                if (d.getAxis() != face.getAxis()) {
+                    reach(level, self, front.relative(d), side, ambient, fire, scorch);
+                    reach(level, self, at.relative(d), side, ambient, fire, scorch);
+                }
+        if (self.backShare() > 0f)
+            reach(level, self, at.relative(face.getOpposite()), self.backShare(), ambient, fire, scorch);
+    }
+
+    private static void reach(Level level, HeatSource source, BlockPos target, float share, float ambient, float fire, boolean scorch) {
+        float tu = ambient + share * (fire - ambient);
+        if (tu <= FTuning.WARM_TU.value() || !source.heats(level, target))
+            return;
+        BlockEntity be = level.getBlockEntity(target);
+        if (be != null && !(be instanceof ThermalBody) && !be.getBlockState().is(FTags.NO_HEAT_PUSH)) {
+            IItemHandler items = level.getCapability(Capabilities.ItemHandler.BLOCK, target, null);
+            if (items != null) {
+                boolean changed = false;
+                for (int slot = 0; slot < items.getSlots(); slot++)
+                    changed |= warm(items.getStackInSlot(slot), tu, level);
+                if (changed)
+                    be.setChanged();
+            }
+        }
+        AABB space = new AABB(target);
+        for (ItemEntity dropped : level.getEntitiesOfClass(ItemEntity.class, space))
+            warm(dropped.getItem(), tu, level);
+        if (scorch && tu >= FTuning.CONTACT_PAIN_TU.value())
+            for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class, space))
+                HotContact.burn(victim, new Tu(tu));
+    }
+
+    private static boolean warm(ItemStack stack, float tu, Level level) {
+        if (stack.isEmpty())
+            return false;
+        float now = ItemHeat.get(stack, level).value();
+        if (tu <= now)
+            return false;
+        ItemHeat.set(stack, new Tu(now + FTuning.HEAT_PUSH_ITEM_GAIN * (tu - now)), level);
+        return true;
+    }
+
     /** {@link #at} across a gap: the fire the sources round {@code pos} gave over {@code gap} ticks. */
     static FireSpan spanAt(Level level, BlockPos pos, long gap) {
         FireSpan best = FireSpan.NONE;
         Tu ambient = null;
-        for (Direction dir : Direction.values()) {
-            BlockEntity be = level.getBlockEntity(pos.relative(dir));
-            if (!(be instanceof HeatSource source))
+        for (int i = 0; i < REACH; i++) {
+            HeatSource source = reaching(level, pos, i);
+            if (source == null)
                 continue;
-            float share = source.shareToward(dir.getOpposite());
+            float share = shareAt(source, i);
             if (share <= 0f || !source.heats(level, pos))
                 continue;
             FireSpan span = source.catchUp(gap).clampedTo(gap);
@@ -135,11 +250,11 @@ public interface HeatSource {
     static Tu coldAt(Level level, BlockPos pos) {
         Tu ambient = AmbientTable.at(level);
         float best = ambient.value();
-        for (Direction dir : Direction.values()) {
-            BlockEntity be = level.getBlockEntity(pos.relative(dir));
-            if (!(be instanceof HeatSource source))
+        for (int i = 0; i < REACH; i++) {
+            HeatSource source = reaching(level, pos, i);
+            if (source == null)
                 continue;
-            float share = source.shareToward(dir.getOpposite());
+            float share = shareAt(source, i);
             float fire = source.getFireTu().value();
             if (share <= 0f || fire >= ambient.value() || !source.heats(level, pos))
                 continue;
@@ -160,11 +275,11 @@ public interface HeatSource {
     static Tu at(Level level, BlockPos pos) {
         Tu ambient = AmbientTable.at(level);
         float best = ambient.value();
-        for (Direction dir : Direction.values()) {
-            BlockEntity be = level.getBlockEntity(pos.relative(dir));
-            if (!(be instanceof HeatSource source))
+        for (int i = 0; i < REACH; i++) {
+            HeatSource source = reaching(level, pos, i);
+            if (source == null)
                 continue;
-            float share = source.shareToward(dir.getOpposite());
+            float share = shareAt(source, i);
             if (share <= 0f || !source.heats(level, pos))
                 continue;
             float fire = source.getFireTu().value();

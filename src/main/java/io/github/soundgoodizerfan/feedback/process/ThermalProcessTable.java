@@ -180,7 +180,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     }
 
     /**
-     * A metal with a {@code molten_<id>} fluid melts from its ingot at its own melting point into
+     * A metal with a {@code molten_<id>} fluid melts from its ingot, scrap and swarf at its own melting point into
      * one ingot's worth, unless an authored process already takes that ingot. This is what lets a
      * metal be added without a melt file.
      */
@@ -188,17 +188,22 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         List<ThermalProcess> out = new ArrayList<>();
         MaterialTable.get().materials().forEach((id, material) -> {
             var melt = material.thermal().meltingPoint();
-            var ingot = material.items(id).get("ingot");
             var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID
                     .getOptional(id.withPath("molten_" + id.getPath()));
-            if (melt.isEmpty() || ingot == null || fluid.isEmpty()
-                    || authored.stream().anyMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(ingot))))
+            if (melt.isEmpty() || fluid.isEmpty())
                 return;
-            out.add(new ThermalProcess(List.of(Ingredient.of(ingot)),
-                    melt.get(), melt.get(), new Tu(Float.MAX_VALUE), 0f, new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
-                    new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
-                    new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), FormType.DEFAULT_MB),
-                    false));
+            // Scrap and swarf are the metal again, in the volume their form type names.
+            for (String form : List.of("ingot", "scrap", "swarf")) {
+                var item = material.items(id).get(form);
+                if (item == null
+                        || authored.stream().anyMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(item))))
+                    continue;
+                out.add(new ThermalProcess(List.of(Ingredient.of(item)),
+                        melt.get(), melt.get(), new Tu(Float.MAX_VALUE), 0f, new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
+                        new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
+                        new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)),
+                        false));
+            }
         });
         return out;
     }

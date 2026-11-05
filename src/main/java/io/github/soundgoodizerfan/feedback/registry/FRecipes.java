@@ -82,6 +82,11 @@ public class FRecipes {
             INSTRUMENT_FIT = SERIALIZERS.register("instrument_fit",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.InstrumentFitRecipe::new));
 
+    /** A grapple and a fitting (extra coil, winch, barbed head) -> that grapple carrying it. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe>>
+            GRAPPLE_UPGRADE = SERIALIZERS.register("grapple_upgrade",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe::new));
+
     /** Two rods of a metal and a grip -> tongs made of exactly those (hot-contact protection). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.TongsRecipe>>
             TONGS = SERIALIZERS.register("tongs",

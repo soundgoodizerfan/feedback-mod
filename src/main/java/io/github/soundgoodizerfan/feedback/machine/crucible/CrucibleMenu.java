@@ -57,6 +57,12 @@ public class CrucibleMenu extends AbstractContainerMenu {
                 FTuning.VESSEL_TANK_CAPACITY_MB);
     }
 
+    /** The large crucible's menu: the same screen with {@link FTuning#CRUCIBLE_LARGE_SLOTS} slots. */
+    public static CrucibleMenu largeCrucible(int id, Inventory inventory) {
+        return new CrucibleMenu(FMenus.LARGE_CRUCIBLE.get(), id, inventory, new SimpleContainer(FTuning.CRUCIBLE_LARGE_SLOTS),
+                new SimpleContainerData(3), FTuning.VESSEL_TANK_CAPACITY_MB);
+    }
+
     /** The arc hearth's menu: the same screen with more slots and a deeper tank. */
     public static CrucibleMenu arcHearth(int id, Inventory inventory) {
         return new CrucibleMenu(FMenus.ARC_HEARTH.get(), id, inventory, new SimpleContainer(FTuning.ARC_CHARGE_SLOTS),

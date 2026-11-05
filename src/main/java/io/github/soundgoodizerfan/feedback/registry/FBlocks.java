@@ -436,7 +436,8 @@ public class FBlocks {
                     .strength(3.5f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
-                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.CRUCIBLE_LARGE_MASS));
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.CRUCIBLE_LARGE_MASS,
+                    FTuning.CRUCIBLE_LARGE_SLOTS, FTuning.VESSEL_TANK_CAPACITY_MB));
 
     /** The arc furnace's hearth: a crucible with four times the mass, six charge slots and a 36-ingot tank. The arc head set on it is the fire. */
     public static final DeferredBlock<CrucibleBlock> ARC_HEARTH = BLOCKS.register("arc_hearth",

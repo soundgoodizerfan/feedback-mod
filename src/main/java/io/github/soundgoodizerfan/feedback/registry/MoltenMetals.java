@@ -49,7 +49,7 @@ public final class MoltenMetals {
     public static final List<String> IDS = List.of(
             "chromium", "nickel", "cobalt", "manganese", "aluminium", "titanium", "tungsten", "thorium",
             "silicon", "silicon_crude", "silica_glass", "optical_glass", "steel", "stainless_steel", "manganese_steel",
-            "tungsten_carbide", "titanium_carbide", "thorium_tungsten", "cermet", "redstone_chromium");
+            "tungsten_carbide", "titanium_carbide", "thorium_tungsten", "cermet", "redstone_chromium", "nickel_iron");
 
     private static final DeferredRegister<FluidType> TYPES =
             DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, Feedback.MOD_ID);

@@ -454,6 +454,17 @@ public final class ModularBake {
                     f.put(Fig.SWING_DRAG, Math.min(GearTuning.GLOVE_DRAG_MAX, plateMass * GearTuning.GLOVE_DRAG_PER_MU));
                 }
             }
+            case BACKPACK -> {
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+                Part shell = design.part(ModularBackpack.SHELL);
+                Material strap = by.get(ModularBackpack.STRAP);
+                f.put(Fig.SLOTS, shell == null ? ModularTuning.PACK_DEFAULT_SLOTS : type.roles().get(ModularBackpack.SHELL).variant(shell)
+                        .map(v -> v.params().get("slots")).orElse(ModularTuning.PACK_DEFAULT_SLOTS));
+                f.put(Fig.CARRY, strap == null ? 0f : strength(strap) * ModularTuning.PACK_CARRY_PER_STRENGTH * worn);
+            }
             case HEAD -> {
                 float total = 0;
                 for (Part p : design.parts())

@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.machine.induction;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -39,7 +40,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import org.jetbrains.annotations.Nullable;
 
-/** The forging preheat coil: right click with a piece to lay it in the field, empty-handed to take it back. */
+/** The forging preheat coil: right click with a piece to lay it in the field, empty-handed to take it back. An empty hand on an empty coil, or sneaking, steps its target temperature. */
 public class PreheatCoilBlock extends Block implements EntityBlock {
 
     public PreheatCoilBlock(Properties properties) {
@@ -59,8 +60,17 @@ public class PreheatCoilBlock extends Block implements EntityBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof PreheatCoilBlockEntity coil) || coil.held().isEmpty())
+        if (!(level.getBlockEntity(pos) instanceof PreheatCoilBlockEntity coil))
             return InteractionResult.PASS;
+        // An empty hand on an empty coil, or a sneaking one, steps the target; otherwise it takes the piece back.
+        if (coil.held().isEmpty() || player.isShiftKeyDown()) {
+            if (!level.isClientSide) {
+                coil.cycleTarget();
+                player.displayClientMessage(coil.targetTu() <= 0f ? Component.translatable("message.feedback.preheat_off")
+                        : Component.translatable("message.feedback.preheat_target", Math.round(coil.targetTu())), true);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (!level.isClientSide) {
             ItemStack taken = coil.take();
             if (!player.getInventory().add(taken))

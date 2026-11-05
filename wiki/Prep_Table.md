@@ -34,11 +34,11 @@ Cooked and raw foods both go in; a food goes in as it is, with whatever you have
 
 The table names the dish ("Making: ...") for the type you picked; a container of another type makes nothing. A wrap's container is a food, not a shaped part: put a baked **Flatbread** in a slot (it counts as food for the dish, so a raw flatbread dough feeds almost nothing). A plate is the big meal you cannot eat in a hurry; a skewer is a bite you can eat mid-fight. Every dish needs a main food. It is named from what is in it: *Beef and Potato Bowl with Honey*, *Beef and Carrot Plate*, *Beef Skewer*.
 
-**Hot dog.** Put a starchy food such as Bread in the center as the container and fit a meat **Cylinder** (the [Cylinder](Food.md#meat-blocks-and-cylinders) form of beef, pork, mutton, chicken, rabbit or a fish) as its main. It is named for the meat: *Beef Hot Dog*, *Pork Hot Dog*. Making one earns the advancement *Dog Days*.
+**Hot dog.** Put a starchy food such as Bread in the center as the container and fit a meat **Rod** (the [Rod](Food.md#meat-blocks-and-rods) form of beef, pork, mutton, chicken, rabbit or a fish) as its main. It is named for the meat: *Beef Hot Dog*, *Pork Hot Dog*. Making one earns the advancement *Dog Days*.
 
 **Pies.** A pie is formed, then cooked, then eaten. Put **Pastry Dough** (a dough and an egg, two from the bench) in as the container, a vegetable or fruit filling, optionally a meat and a second pastry as a lid, and form it at the Prep Table. It comes out raw: it feeds little and carries whatever was live in the filling. Set the whole pie in a heated vessel (a hearth, an oven) and it bakes through, killing the load and filling out the meal. Left on, it dries and then chars like any food. Sugar in the Prepare tab sweetens it. Named from its filling: *Pumpkin Pie*.
 
-**Bread.** Bread is formed raw and baked whole, like a pie. Put a **dough** in as the container (kneaded first for a better loaf), up to two enrichments (egg, sugar, honey), and form it. To choose a shape, lay one dough in the Parts tab as a Loaf, Flat or Roll first. Bake the raw bread in a heated vessel. Named from the shape and the enrichments: *Lean Bread*, *Enriched Flatbread*, *Bread Roll*.
+**Bread.** Bread is formed raw and baked whole, like a pie. Put a **dough** in as the container (kneaded first for a better loaf), up to two enrichments (egg, sugar, honey), and form it. To choose a shape, lay one dough in the Parts tab as a Loaf, Flat or Roll first. Bake the raw bread in a heated vessel. Named from the shape and the enrichments: *Lean Bread*, *Enriched Flatbread*, *Bread Roll*. A baked loaf is one piece: it cannot be taken apart.
 
 ## What the dish is
 

@@ -44,6 +44,8 @@ public class FMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> ARC_HEARTH =
             MENUS.register("arc_hearth", () -> new MenuType<>(CrucibleMenu::arcHearth, FeatureFlags.VANILLA_SET));
+    public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> LARGE_CRUCIBLE =
+            MENUS.register("large_crucible", () -> new MenuType<>(CrucibleMenu::largeCrucible, FeatureFlags.VANILLA_SET));
     public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> CRUCIBLE =
             MENUS.register("crucible", () -> new MenuType<>(CrucibleMenu::new, FeatureFlags.VANILLA_SET));
 

@@ -649,6 +649,8 @@ public final class FTuning {
 
     /** Invented. How many items a crucible holds. Two, because carburizing needs iron and carbon. */
     public static final int CRUCIBLE_SLOTS = 2;
+    /** Invented. How many items a large crucible holds: rows of three, room for a charge, its flux and a mould's worth of products. */
+    public static final int CRUCIBLE_LARGE_SLOTS = 6;
 
     /**
      * Invented. Capacity of the internal tank every crucible and thermal vessel gets once a
@@ -3427,6 +3429,13 @@ public final class FTuning {
     /** Invented. Share of a source's heat (above ambient) that reaches a block on a side next to its facing; behind it is none. */
     public static final float HEAT_SIDE_SHARE = 0.4f;
 
+    /** Invented. Ticks between pushes of a source's heat into the items and entities in the space it reaches. */
+    public static final int HEAT_PUSH_INTERVAL = 5;
+    /** Invented. Pushes between burns of a living thing standing in that space (5 x 4 = a second). */
+    public static final int HEAT_SCORCH_EVERY = 4;
+    /** Invented. Share of the gap an item in a pushed-to inventory closes per push: {@link #HEARTH_STOCK_GRIP} compounded over the interval. */
+    public static final float HEAT_PUSH_ITEM_GAIN = 1f - (float) Math.pow(1f - HEARTH_STOCK_GRIP, HEAT_PUSH_INTERVAL);
+
     /** Invented. What a hot metal bath cools by per mB that boils off it, in Tu. */
     public static final float METAL_BOIL_COOLING_TU_PER_MB = 0.05f;
 
@@ -3491,8 +3500,10 @@ public final class FTuning {
     public static final int INDUCTION_CHARGE_CHECK_TICKS = 10;
     /** Placeholder. What the preheat coil adds to a held piece a tick at full power, in Tu per tick (the item cools at 1.5 Tu/t). */
     public static final TuRate PREHEAT_TU_PER_TICK = new TuRate(12f);
-    /** Placeholder. How far above the bottom of a metal's working window the preheat coil heats it, in Tu. */
-    public static final float PREHEAT_WINDOW_MARGIN_TU = 100f;
+    /** Placeholder. The target temperatures a preheat coil steps through, in Tu: off, then up to {@link #INDUCTION_CEILING_TU}. */
+    public static final float[] PREHEAT_TARGETS_TU = {0f, 600f, 800f, 1000f, 1200f, 1400f, 1600f, 1800f};
+    /** Invented. The step a new preheat coil is set to (an index into {@link #PREHEAT_TARGETS_TU}). */
+    public static final int PREHEAT_DEFAULT_TARGET = 3;
     /** Placeholder. The stockpot is a pot of cast iron cookware; there is no pot variant to read a material from. */
     public static final net.minecraft.resources.ResourceLocation POT_MATERIAL = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "wrought_iron");
 
