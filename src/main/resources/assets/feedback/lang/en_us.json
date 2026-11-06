@@ -4729,6 +4729,9 @@
   "village.feedback.term.hardness.1": "soft",
   "village.feedback.term.hardness.2": "hard",
   "village.feedback.term.hardness.3": "very hard",
+  "village.feedback.ask": "%s: %s",
+  "village.feedback.ask.class": "any %s",
+  "village.feedback.complaint.part": "The %s is not what I asked for.",
   "village.feedback.noun.hardness": "hardness",
   "village.feedback.term.dig_speed.0": "very slow",
   "village.feedback.term.dig_speed.1": "slow",
@@ -5352,5 +5355,16 @@
   "block.feedback.analog_adapter": "Analog Adapter",
   "feedback.analog.opening": "Opening",
   "feedback.jei.info.redstone_emitter": "Turns a data signal into redstone. A controller, timer or sensor program switches it like any actuator; engaged, it puts a full-strength redstone signal out of every face, so a vanilla piston, lamp or door can follow a Feedback sensor.",
-  "feedback.jei.info.analog_adapter": "A small fitting set on one face of a machine that has a variable setting, such as a valve's opening. Redstone power at the adapter sets that setting from 0 to 100 per cent in steps of one fifteenth: power 15 is fully open, power 0 is shut. Any machine with a switch also starts and stops from redstone directly, with no adapter."
+  "feedback.jei.info.analog_adapter": "A small fitting set on one face of a machine that has a variable setting, such as a valve's opening. Redstone power at the adapter sets that setting from 0 to 100 per cent in steps of one fifteenth: power 15 is fully open, power 0 is shut. Any machine with a switch also starts and stops from redstone directly, with no adapter.",
+  "block.feedback.ripeness_probe": "Ripeness Probe",
+  "feedback.jei.info.ripeness_probe": "Reads how grown the crop in front of it is, in quarters, from the crop's own age. A row of them sees a field. It reads any block that has an age, so a modded crop works too.",
+  "block.feedback.photocell": "Photocell",
+  "feedback.jei.info.photocell": "Reads the light at the block in front of it, in fifths: the brighter of daylight and block light. It reads its own lamp as well, so a lamp it switches can switch it back.",
+  "block.feedback.presence_plate": "Presence Plate",
+  "feedback.jei.info.presence_plate": "Reads whether a creature or a dropped item stands in the block in front of it: full when one does, nothing when not.",
+  "block.feedback.fill_gauge": "Fill Gauge",
+  "feedback.jei.info.fill_gauge": "Reads how full the inventory or tank in front of it is, in eighths.",
+  "block.feedback.tell_tale": "Tell-Tale",
+  "feedback.jei.info.tell_tale": "Reads high for half a second after the block in front of it changes state, such as a crop growing a stage or a door opening. It reports the change a tick late.",
+  "feedback.sensor.reads": "Reads %s%%"
 }

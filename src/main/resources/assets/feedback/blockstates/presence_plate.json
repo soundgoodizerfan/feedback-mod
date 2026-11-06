@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/presence_plate"
+    },
+    "facing=east": {
+      "model": "feedback:block/presence_plate",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "feedback:block/presence_plate",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "feedback:block/presence_plate",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "feedback:block/presence_plate",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "feedback:block/presence_plate",
+      "x": 90
+    }
+  }
+}

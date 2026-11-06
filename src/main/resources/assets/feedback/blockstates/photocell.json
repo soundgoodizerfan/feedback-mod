@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/photocell"
+    },
+    "facing=east": {
+      "model": "feedback:block/photocell",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "feedback:block/photocell",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "feedback:block/photocell",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "feedback:block/photocell",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "feedback:block/photocell",
+      "x": 90
+    }
+  }
+}

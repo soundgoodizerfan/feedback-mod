@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "feedback:block/device_gearbox_clutch_on",
+    "side": "feedback:block/device_gearbox_sides",
+    "top": "feedback:block/device_gearbox_sides"
+  }
+}

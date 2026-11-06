@@ -80,6 +80,7 @@ public class Feedback {
         FItems.register(modBus);
         FVehicles.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FLogistics.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FAutomation.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FWeapons.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FSounds.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FEffects.register(modBus);

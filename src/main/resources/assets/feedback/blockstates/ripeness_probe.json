@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/ripeness_probe"
+    },
+    "facing=east": {
+      "model": "feedback:block/ripeness_probe",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "feedback:block/ripeness_probe",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "feedback:block/ripeness_probe",
+      "y": 270
+    },
+    "facing=up": {
+      "model": "feedback:block/ripeness_probe",
+      "x": 270
+    },
+    "facing=down": {
+      "model": "feedback:block/ripeness_probe",
+      "x": 90
+    }
+  }
+}
