@@ -1079,3 +1079,5 @@ From `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley). The three form s
 | `textures/item/rare_earth_residue.png` | `items/material_dust_demersal.png` (unmodified) |
 
 Greyscale item sprites (2026-11-06), luminance-only copies that `client/ModularClient` and `client/FormTint` tint per material. `item/modular/grey/charge_dynamite.png` is `items/tool_dynamite.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley). `item/modular/grey/vanilla_{iron_ingot,copper_ingot,gold_ingot,netherite_ingot,netherite_scrap,gunpowder,glass_bottle,stick,bowl}.png` are the Minecraft 1.21.1 item textures of those names, reduced to luminance and stretched to full brightness (Mojang's assets, shipped modified inside a mod for the game).
+
+`item/form/paper_case.png` (2026-11-06) is a copy of `item/form/case.png` (a luminance-only sprite from malcolmriley/unused-textures, CC BY 4.0, Malcolm Riley), kept as a stand-in for the paper cartridge case until it gets a sprite of its own; it is tinted per material at runtime.
