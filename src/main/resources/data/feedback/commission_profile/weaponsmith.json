@@ -4,112 +4,27 @@
     {
       "type": "feedback:sword",
       "level": 1,
-      "pay": 2,
-      "axes": [
-        {
-          "fig": "damage",
-          "lo": 3,
-          "hi": 12
-        },
-        {
-          "fig": "hardness",
-          "lo": 1,
-          "hi": 9
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 2000
-        }
-      ]
+      "pay": 2
     },
     {
       "type": "feedback:spear",
       "level": 1,
-      "pay": 2,
-      "axes": [
-        {
-          "fig": "damage",
-          "lo": 3,
-          "hi": 12
-        },
-        {
-          "fig": "hardness",
-          "lo": 1,
-          "hi": 9
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 2000
-        }
-      ]
+      "pay": 2
     },
     {
       "type": "feedback:cleaver",
       "level": 2,
-      "pay": 4,
-      "axes": [
-        {
-          "fig": "damage",
-          "lo": 3,
-          "hi": 12
-        },
-        {
-          "fig": "hardness",
-          "lo": 1,
-          "hi": 9
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 2000
-        }
-      ]
+      "pay": 4
     },
     {
       "type": "feedback:maul",
       "level": 3,
-      "pay": 7,
-      "axes": [
-        {
-          "fig": "damage",
-          "lo": 3,
-          "hi": 12
-        },
-        {
-          "fig": "hardness",
-          "lo": 1,
-          "hi": 9
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 2000
-        }
-      ]
+      "pay": 7
     },
     {
       "type": "feedback:sword",
       "level": 5,
-      "pay": 14,
-      "axes": [
-        {
-          "fig": "damage",
-          "lo": 3,
-          "hi": 12
-        },
-        {
-          "fig": "hardness",
-          "lo": 1,
-          "hi": 9
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 2000
-        }
-      ]
+      "pay": 14
     }
   ]
 }

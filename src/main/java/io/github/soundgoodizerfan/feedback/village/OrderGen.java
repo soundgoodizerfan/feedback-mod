@@ -20,9 +20,15 @@
 package io.github.soundgoodizerfan.feedback.village;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.village.CommissionProfile.Axis;
 
 import net.minecraft.resources.ResourceLocation;
@@ -49,7 +55,7 @@ public final class OrderGen {
 
     public static List<Order> orders(UUID villager, ResourceLocation profession, String villagerType, int level, long day) {
         List<CommissionProfile.Entry> pool = CommissionTable.get().forProfession(profession).stream()
-                .filter(e -> e.level() <= level && !e.axes().isEmpty()).toList();
+                .filter(e -> e.level() <= level && ModularTypes.known().containsKey(e.type()) && (!e.axes().isEmpty() || !dish(e.type()))).toList();
         List<Order> out = new ArrayList<>();
         if (pool.isEmpty())
             return out;
@@ -60,7 +66,47 @@ public final class OrderGen {
         return out;
     }
 
+    private static boolean dish(ResourceLocation type) {
+        ModularType t = ModularTypes.known().get(type);
+        return t != null && t.family() == ModularType.Family.DISH;
+    }
+
+    /**
+     * A tool order names parts, not figures: one part at a novice, more with level, each a material (or, now and then, a class of
+     * material). The primary part is always asked first. What is asked is always something the part can be made of, and soft
+     * materials come before hard ones as the villager rises.
+     */
+    private static Order tool(CommissionProfile.Entry e, int level, RandomSource rnd) {
+        ModularType type = ModularTypes.known().get(e.type());
+        List<String> roles = new ArrayList<>(type.roles().keySet());
+        roles.removeIf(r -> choices(type, r, level).isEmpty());
+        boolean primary = roles.remove(type.primary());
+        java.util.Collections.shuffle(roles, new java.util.Random(rnd.nextLong()));
+        if (primary)
+            roles.add(0, type.primary());
+        List<Order.Ask> asks = new ArrayList<>();
+        for (String role : roles.subList(0, Math.min(roles.size(), 1 + level / 2))) {
+            List<Material.Located> choices = choices(type, role, level);
+            Material.Located pick = choices.get(rnd.nextInt(choices.size()));
+            boolean asClass = rnd.nextFloat() < VillageTuning.CLASS_ASK_SHARE && pick.material().kind().isPresent();
+            asks.add(new Order.Ask(role, asClass ? null : pick.id(), asClass ? pick.material().kind().get() : null));
+        }
+        return new Order(e.type(), e.pay(), List.of(), List.of(), List.of(), List.copyOf(asks));
+    }
+
+    /** What a villager of this level may ask of a part: the materials it can be made of, no harder than the level's cap, in id order. */
+    private static List<Material.Located> choices(ModularType type, String role, int level) {
+        float cap = VillageTuning.ASK_HARDNESS_CAP[Math.min(level, VillageTuning.ASK_HARDNESS_CAP.length) - 1];
+        List<Material.Located> out = new ArrayList<>(ToolDesigns.materials(type, role, ToolDesigns.standard(type.roles().get(role), ModularTypes.known()),
+                MaterialTable.get().materials()));
+        out.removeIf(l -> l.material().hardness().value() > cap);
+        out.sort(Comparator.comparing(l -> l.id().toString()));
+        return out;
+    }
+
     private static Order build(UUID villager, CommissionProfile.Entry e, String villagerType, int level, RandomSource rnd) {
+        if (!dish(e.type()))
+            return tool(e, level, rnd);
         List<Axis> axes = new ArrayList<>(e.axes());
         for (int i = axes.size() - 1; i > 0; i--)
             java.util.Collections.swap(axes, i, rnd.nextInt(i + 1));
@@ -94,7 +140,7 @@ public final class OrderGen {
         for (Axis a : e.leanFor(villagerType))
             if (terms.stream().noneMatch(t -> t.fig() == a.fig()))
                 leans.add(new Order.Term(a.fig(), a.lo(), a.hi(), (a.lo() + a.hi()) * 0.5f, tol, false, false));
-        return new Order(e.type(), e.pay(), List.copyOf(terms), List.copyOf(quirks), List.copyOf(leans));
+        return new Order(e.type(), e.pay(), List.copyOf(terms), List.copyOf(quirks), List.copyOf(leans), List.of());
     }
 
     private static long mix(long... parts) {

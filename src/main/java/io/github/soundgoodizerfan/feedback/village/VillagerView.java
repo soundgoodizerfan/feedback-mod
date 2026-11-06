@@ -39,7 +39,8 @@ import net.minecraft.world.item.ItemStack;
  * @param standing  vanilla reputation with the player
  * @param doneMask  bit {@code i} set when order {@code i} is delivered today
  * @param grade     the last delivery's {@link CommissionJudge.Grade} ordinal, or {@link #NONE} or {@link #WRONG}
- * @param fig       the figure the villager complained of, as an ordinal, or -1
+ * @param fig       the figure the villager complained of, as an ordinal, or -1; {@code Fig.values().length + i} when it is ask {@code i} of the order
+ *                  the delivery was for
  * @param high      whether that figure was too high
  * @param paid      emeralds the last delivery paid
  * @param hint      the hint the player asked for on the selected order, worded; empty when none
@@ -54,8 +55,8 @@ public record VillagerView(boolean wanderer, int level, int xp, int xpMax, int s
     public record TermView(Fig fig, int band, boolean must, boolean above) {
     }
 
-    /** @param pay emeralds a Good delivery pays before saturation, which depends on the material it is made of */
-    public record OrderView(ResourceLocation type, int pay, List<TermView> terms) {
+    /** @param pay emeralds a Good delivery pays before saturation, which depends on the material it is made of; @param asks the parts a tool order names */
+    public record OrderView(ResourceLocation type, int pay, List<TermView> terms, List<Order.Ask> asks) {
     }
 
     /** @param id index in the goods table, which the server checks a purchase against; @param locked the villager wants more standing before selling it; @param left how many are still for sale today */
@@ -92,6 +93,15 @@ public record VillagerView(boolean wanderer, int level, int xp, int xpMax, int s
                 b.writeVarInt(t.band());
                 b.writeBoolean(t.must());
                 b.writeBoolean(t.above());
+            }
+            b.writeVarInt(o.asks().size());
+            for (Order.Ask a : o.asks()) {
+                b.writeUtf(a.role());
+                b.writeBoolean(a.material() != null);
+                if (a.material() != null)
+                    b.writeResourceLocation(a.material());
+                else
+                    b.writeVarInt(a.kind().ordinal());
             }
         }
         b.writeVarInt(v.doneMask);
@@ -132,7 +142,14 @@ public record VillagerView(boolean wanderer, int level, int xp, int xpMax, int s
             List<TermView> terms = new ArrayList<>();
             for (int j = 0; j < k; j++)
                 terms.add(new TermView(Fig.values()[b.readVarInt()], b.readVarInt(), b.readBoolean(), b.readBoolean()));
-            orders.add(new OrderView(type, pay, List.copyOf(terms)));
+            int na = b.readVarInt();
+            List<Order.Ask> asks = new ArrayList<>();
+            for (int j = 0; j < na; j++) {
+                String role = b.readUtf();
+                asks.add(b.readBoolean() ? new Order.Ask(role, b.readResourceLocation(), null)
+                        : new Order.Ask(role, null, io.github.soundgoodizerfan.feedback.process.Material.Kind.values()[b.readVarInt()]));
+            }
+            orders.add(new OrderView(type, pay, List.copyOf(terms), List.copyOf(asks)));
         }
         int done = b.readVarInt();
         int m = b.readVarInt();

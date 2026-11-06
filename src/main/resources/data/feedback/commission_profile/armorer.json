@@ -4,154 +4,32 @@
     {
       "type": "feedback:helmet",
       "level": 1,
-      "pay": 2,
-      "axes": [
-        {
-          "fig": "armour",
-          "lo": 1,
-          "hi": 8
-        },
-        {
-          "fig": "armour_toughness",
-          "lo": 0,
-          "hi": 4
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 1500
-        },
-        {
-          "fig": "slow",
-          "lo": 0,
-          "hi": 0.15
-        }
-      ]
+      "pay": 2
     },
     {
       "type": "feedback:boots",
       "level": 1,
-      "pay": 2,
-      "axes": [
-        {
-          "fig": "armour",
-          "lo": 1,
-          "hi": 8
-        },
-        {
-          "fig": "armour_toughness",
-          "lo": 0,
-          "hi": 4
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 1500
-        },
-        {
-          "fig": "slow",
-          "lo": 0,
-          "hi": 0.15
-        }
-      ]
+      "pay": 2
     },
     {
       "type": "feedback:leggings",
       "level": 2,
-      "pay": 4,
-      "axes": [
-        {
-          "fig": "armour",
-          "lo": 1,
-          "hi": 8
-        },
-        {
-          "fig": "armour_toughness",
-          "lo": 0,
-          "hi": 4
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 1500
-        },
-        {
-          "fig": "slow",
-          "lo": 0,
-          "hi": 0.15
-        }
-      ]
+      "pay": 4
     },
     {
       "type": "feedback:chestplate",
       "level": 3,
-      "pay": 7,
-      "axes": [
-        {
-          "fig": "armour",
-          "lo": 1,
-          "hi": 8
-        },
-        {
-          "fig": "armour_toughness",
-          "lo": 0,
-          "hi": 4
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 1500
-        },
-        {
-          "fig": "slow",
-          "lo": 0,
-          "hi": 0.15
-        }
-      ]
+      "pay": 7
     },
     {
       "type": "feedback:shield",
       "level": 3,
-      "pay": 6,
-      "axes": [
-        {
-          "fig": "capacity",
-          "lo": 4,
-          "hi": 20
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 1500
-        }
-      ]
+      "pay": 6
     },
     {
       "type": "feedback:chestplate",
       "level": 5,
-      "pay": 16,
-      "axes": [
-        {
-          "fig": "armour",
-          "lo": 1,
-          "hi": 8
-        },
-        {
-          "fig": "armour_toughness",
-          "lo": 0,
-          "hi": 4
-        },
-        {
-          "fig": "durability",
-          "lo": 100,
-          "hi": 1500
-        },
-        {
-          "fig": "slow",
-          "lo": 0,
-          "hi": 0.15
-        }
-      ]
+      "pay": 16
     }
   ]
 }

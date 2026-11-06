@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.net.VillagerActionPayload;
+import io.github.soundgoodizerfan.feedback.village.Order;
 import io.github.soundgoodizerfan.feedback.village.CommissionJudge;
 import io.github.soundgoodizerfan.feedback.village.VillageTuning;
 import io.github.soundgoodizerfan.feedback.village.VillagerMenu;
@@ -138,7 +140,7 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
         VillagerView view = menu.view();
         boolean orders = tabKind() == ORDERS;
         deliver.visible = orders;
-        hintBtn.visible = orders && order < view.orders().size();
+        hintBtn.visible = orders && order < view.orders().size() && !view.orders().get(order).terms().isEmpty();
         hintBtn.setMessage(Component.translatable(hintOpen ? "gui.feedback.villager.hint_back" : "gui.feedback.villager.hint"));
         if (!orders)
             hintOpen = false;
@@ -197,6 +199,10 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
                 ty += 11;
                 marquee(g, term(t), x + DETAIL_X + 6, ty, DETAIL_W - 12 - BAR_W - 4, skin.ink());
                 bar(g, t, x + DETAIL_X + DETAIL_W - 6 - BAR_W, ty);
+            }
+            for (Order.Ask a : o.asks()) {
+                ty += 11;
+                marquee(g, ask(o, a), x + DETAIL_X + 6, ty, DETAIL_W - 12, skin.ink());
             }
             if (hintOpen && !v.hint().isEmpty()) {
                 int hw = DETAIL_X + DETAIL_W - PAD, hh = ROW * ROWS + 2;
@@ -325,6 +331,16 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
                 t.must() ? Component.translatable("village.feedback.must." + (t.above() ? "above" : "below"), word) : word);
     }
 
+    /** "blade: bronze" or "blade: any metal": the part by the type's own name for it, then the material or its class. */
+    private static Component ask(OrderView o, Order.Ask a) {
+        var type = ModularTypes.known().get(o.type());
+        var role = type == null ? null : type.roles().get(a.role());
+        Component what = a.material() != null
+                ? Component.translatable("material." + a.material().getNamespace() + "." + a.material().getPath())
+                : Component.translatable("village.feedback.ask.class", Component.translatable("feedback.jei.kind." + a.kind().name().toLowerCase(Locale.ROOT)).getString().toLowerCase(Locale.ROOT));
+        return Component.translatable("village.feedback.ask", role == null ? a.role() : role.name(), what);
+    }
+
     private static final int BAR_W = 28;
 
     /** Where the term sits in the usual range, as four cells: a band fills its one cell, a must fills the cells it allows. */
@@ -352,7 +368,16 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
         if (grade < 0)
             return Component.translatable("village.feedback.speech.greet");
         Component said = Component.translatable("village.feedback.speech." + CommissionJudge.Grade.values()[grade].name().toLowerCase(Locale.ROOT));
-        if (v.fig() >= 0) {
+        if (v.fig() >= Fig.values().length) {
+            var o = order < v.orders().size() ? v.orders().get(order) : null;
+            int i = v.fig() - Fig.values().length;
+            if (o != null && i < o.asks().size()) {
+                var type = ModularTypes.known().get(o.type());
+                var role = type == null ? null : type.roles().get(o.asks().get(i).role());
+                said = Component.empty().append(said).append(" ").append(Component.translatable("village.feedback.complaint.part",
+                        role == null ? o.asks().get(i).role() : role.name()));
+            }
+        } else if (v.fig() >= 0) {
             Fig f = Fig.values()[v.fig()];
             said = Component.empty().append(said).append(" ").append(Component.translatable(
                     "village.feedback.complaint." + (v.high() ? "high" : "low"),

@@ -19,8 +19,14 @@
  */
 package io.github.soundgoodizerfan.feedback.village;
 
+import java.util.Map;
+
+import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.process.Material;
+
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Grades a delivered item against an {@link Order}, on the item's true figures. A pure function:
@@ -50,14 +56,51 @@ public final class CommissionJudge {
     /**
      * @param worst     the figure of the biggest miss, or null if there was none worth naming
      * @param worstHigh whether that figure came out above what the villager wanted
+     * @param worstAsk  index of the part ask of the biggest miss, or -1; when set, {@code worst} is null
      */
-    public record Result(float closeness, Grade grade, boolean mustFailed, Fig worst, boolean worstHigh) {
+    public record Result(float closeness, Grade grade, boolean mustFailed, Fig worst, boolean worstHigh, int worstAsk) {
     }
 
-    public static Result judge(Order order, ModularFigures figures) {
+    /**
+     * How well {@code got} answers what the order asked of one part: 1 for the named material or a material of the named class;
+     * for a missed material, its likeness (same kind, near hardness and density) capped at {@link VillageTuning#SUBSTITUTE_CAP};
+     * 0 for a missed class or an absent part.
+     */
+    static float score(Order.Ask ask, Material got, ResourceLocation gotId, Material wanted) {
+        if (got == null)
+            return 0f;
+        if (ask.kind() != null)
+            return got.kind().filter(ask.kind()::equals).isPresent() ? 1f : 0f;
+        if (ask.material().equals(gotId))
+            return 1f;
+        if (wanted == null)
+            return 0f;
+        float kind = got.kind().isPresent() && got.kind().equals(wanted.kind()) ? 0.5f : 0f;
+        float apart = (logGap(got.hardness().value(), wanted.hardness().value()) + logGap(got.density().muPerMb(), wanted.density().muPerMb())) / 2f;
+        return VillageTuning.SUBSTITUTE_CAP * (kind + 0.5f * Math.max(0f, 1f - apart / (float) Math.log(4)));
+    }
+
+    private static float logGap(float a, float b) {
+        return a <= 0f || b <= 0f ? (a == b ? 0f : (float) Math.log(4)) : (float) Math.abs(Math.log(a / b));
+    }
+
+    public static Result judge(Order order, ModularFigures figures, ModularDesign design, Map<ResourceLocation, Material> materials) {
         float sum = 0, weights = 0, worstMiss = 0;
         boolean mustFailed = false, worstHigh = false;
         Fig worst = null;
+        int worstAsk = -1;
+        for (int i = 0; i < order.asks().size(); i++) {
+            Order.Ask a = order.asks().get(i);
+            ModularDesign.Part part = design == null ? null : design.part(a.role());
+            float score = score(a, part == null ? null : materials.get(part.material()), part == null ? null : part.material(),
+                    a.material() == null ? null : materials.get(a.material()));
+            sum += score;
+            weights += 1f;
+            if (1f - score > worstMiss) {
+                worstMiss = 1f - score;
+                worstAsk = i;
+            }
+        }
         for (int pass = 0; pass < 3; pass++) {
             float w = pass == 0 ? 1f : pass == 1 ? VillageTuning.LEAN_WEIGHT : VillageTuning.QUIRK_WEIGHT;
             for (Order.Term t : pass == 0 ? order.terms() : pass == 1 ? order.leans() : order.quirks()) {
@@ -79,6 +122,7 @@ public final class CommissionJudge {
                 float miss = w * (1f - score);
                 if (miss > worstMiss) {
                     worstMiss = miss;
+                    worstAsk = -1;
                     worst = t.fig();
                     worstHigh = high;
                 }
@@ -92,6 +136,7 @@ public final class CommissionJudge {
         if (mustFailed)
             g = Math.max(0, g - 1);
         return new Result(closeness, Grade.values()[g], mustFailed,
-                worstMiss >= VillageTuning.COMPLAINT_FLOOR ? worst : null, worstHigh);
+                worstMiss >= VillageTuning.COMPLAINT_FLOOR ? worst : null, worstHigh,
+                worstMiss >= VillageTuning.COMPLAINT_FLOOR ? worstAsk : -1);
     }
 }

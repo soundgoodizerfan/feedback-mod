@@ -1581,7 +1581,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             }
             g.drawCenteredString(font, "+", sx, sy - 4, colour);
             if (hot || zoom >= 1.2f)
-                g.drawCenteredString(font, roleName(n.role), sx, sy + half + 2, hot ? skin.ink() : skin.dim());
+                nodeLabel(g, roleName(n.role), sx, sy + half + 2, hot ? skin.ink() : skin.dim());
             return;
         }
         skin.plaque(g, sx - half, sy - half, 2 * half, 2 * half);
@@ -1612,7 +1612,18 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         if ((hot || picked) && keyOf(n.role) != null && removable(keyOf(n.role)))
             g.drawString(font, "x", sx + half - 6, sy - half + 1, hot && hoverCorner ? skin.warn() : skin.dim(), false);
         if (zoom >= 0.7f || hot || picked)
-            g.drawCenteredString(font, roleName(n.role), sx, sy + half + 2, picked ? skin.accent() : skin.dim());
+            nodeLabel(g, roleName(n.role), sx, sy + half + 2, picked ? skin.accent() : skin.dim());
+    }
+
+    /** Role name under a node, shrunk to fit the node pitch so neighbours' labels never overlap. */
+    private void nodeLabel(GuiGraphics g, Component text, int cx, int y, int colour) {
+        float room = PITCH * zoom - 4;
+        float k = Math.min(1f, room / Math.max(1, font.width(text)));
+        g.pose().pushPose();
+        g.pose().translate(cx, y, 0);
+        g.pose().scale(k, k, 1f);
+        g.drawString(font, text, -font.width(text) / 2, 0, colour, false);
+        g.pose().popPose();
     }
 
     /** A folded group: one plate with its name and parts, a chip of each part's material along the foot, red if any of them fails. */

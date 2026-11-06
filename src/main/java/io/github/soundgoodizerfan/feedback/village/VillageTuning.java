@@ -54,6 +54,12 @@ public final class VillageTuning {
     public static final float LEAN_WEIGHT = 0.75f;
     /** A hidden quirk counts for this much against a stated term's one. */
     public static final float QUIRK_WEIGHT = 0.5f;
+    /** A named material's stand-in scores at most this (same kind and near stats); only the named material scores 1. */
+    public static final float SUBSTITUTE_CAP = 0.8f;
+    /** Hardest material a villager may ask for, by trade level 1 to 5 (hardness is the stand-in for how far along the materials are: copper and bronze, then iron, steel, then gems and netherite). */
+    public static final float[] ASK_HARDNESS_CAP = {5f, 12f, 20f, 40f, Float.MAX_VALUE};
+    /** Share of tool-order asks that name a material class (its kind) instead of one material. */
+    public static final float CLASS_ASK_SHARE = 0.35f;
     /** Least miss (weight times shortfall) the villager bothers to name. */
     public static final float COMPLAINT_FLOOR = 0.05f;
 

@@ -123,7 +123,7 @@ public final class VillageEconomy {
                 List<TermView> terms = new ArrayList<>();
                 for (Order.Term t : o.terms())
                     terms.add(new TermView(t.fig(), t.band(), t.must(), t.above()));
-                orders.add(new OrderView(o.type(), o.pay(), List.copyOf(terms)));
+                orders.add(new OrderView(o.type(), o.pay(), List.copyOf(terms), o.asks()));
             }
         }
         List<GoodView> goods = new ArrayList<>();
@@ -239,11 +239,11 @@ public final class VillageEconomy {
             send(p, menu, view(p, v).withResult(VillagerView.WRONG, -1, false, 0));
             return;
         }
-        CommissionJudge.Result r = CommissionJudge.judge(order, figures);
+        CommissionJudge.Result r = CommissionJudge.judge(order, figures, design, MaterialTable.get().materials());
         if (r.grade() == CommissionJudge.Grade.REJECTED) {
             v.getGossips().add(p.getUUID(), GossipType.MINOR_NEGATIVE, VillageTuning.GOSSIP_REJECTED);
             v.playSound(SoundEvents.VILLAGER_NO, 1f, v.getVoicePitch());
-            send(p, menu, view(p, v).withResult(r.grade().ordinal(), r.worst() == null ? -1 : r.worst().ordinal(), r.worstHigh(), 0));
+            send(p, menu, view(p, v).withResult(r.grade().ordinal(), complaint(r), r.worstHigh(), 0));
             return;
         }
         String bin = DishProfile.is(item) ? order.type() + "|" + DishProfile.bin(figures) : binKey(order.type(), design);
@@ -258,7 +258,12 @@ public final class VillageEconomy {
             v.getGossips().add(p.getUUID(), GossipType.MAJOR_POSITIVE, VillageTuning.GOSSIP_GOOD);
         addXp(v, r.grade().xp());
         v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
-        send(p, menu, view(p, v).withResult(r.grade().ordinal(), r.worst() == null ? -1 : r.worst().ordinal(), r.worstHigh(), paid));
+        send(p, menu, view(p, v).withResult(r.grade().ordinal(), complaint(r), r.worstHigh(), paid));
+    }
+
+    /** The view's {@code fig}: a figure's ordinal, or past the last figure the index of the part ask that missed most, or -1. */
+    private static int complaint(CommissionJudge.Result r) {
+        return r.worstAsk() >= 0 ? ModularFigures.Fig.values().length + r.worstAsk() : r.worst() == null ? -1 : r.worst().ordinal();
     }
 
     /** The saturation bin of a delivery: the type and the kind of its primary part's material. */

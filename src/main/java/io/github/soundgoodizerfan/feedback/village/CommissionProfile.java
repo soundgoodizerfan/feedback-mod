@@ -76,7 +76,7 @@ public record CommissionProfile(ResourceLocation profession, List<Entry> orders)
                 ResourceLocation.CODEC.fieldOf("type").forGetter(Entry::type),
                 Codec.INT.optionalFieldOf("level", 1).forGetter(Entry::level),
                 Codec.INT.fieldOf("pay").forGetter(Entry::pay),
-                Axis.CODEC.listOf().fieldOf("axes").forGetter(Entry::axes),
+                Axis.CODEC.listOf().optionalFieldOf("axes", List.of()).forGetter(Entry::axes),
                 Codec.unboundedMap(Codec.STRING, Axis.CODEC.listOf()).optionalFieldOf("leans", java.util.Map.of()).forGetter(Entry::leans)).apply(i, Entry::new));
     }
 

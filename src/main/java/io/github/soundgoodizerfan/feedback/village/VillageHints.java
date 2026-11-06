@@ -24,33 +24,24 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.DishProfile;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-/**
- * The hint button: for each term the villager states, which material in which part of the type's plain design meets it. Worked out by
- * baking the starter design once per (part, material) and testing every term against the result, so it is the real bake and nothing
- * about the order is kept. It only says what one swap can do; a term no single swap reaches says so. A dish order gets how each axis moves,
- * since a dish is composed from food and not from one part.
- */
+/** The hint button, for a dish order only: how each stated axis moves and which foods push it. A tool order names its parts outright. */
 public final class VillageHints {
 
     private VillageHints() {
     }
 
-    /** Most materials named per term. */
+    /** Most foods named per term. */
     private static final int MAX_NAMED = 4;
 
     public static List<Component> of(Order order) {
@@ -72,44 +63,7 @@ public final class VillageHints {
             out.add(Component.translatable("village.feedback.hint.dish"));
             return out;
         }
-        Map<ResourceLocation, ModularType> types = ModularTypes.known();
-        Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
-        Optional<ModularDesign> starter = ToolDesigns.starter(order.type(), types, materials);
-        if (starter.isEmpty())
-            return out;
-        // Every swap of one part to one material, baked once: role, material, figures.
-        record Swap(String role, ResourceLocation material, ModularFigures figures) {
-        }
-        List<Swap> swaps = new ArrayList<>();
-        for (Map.Entry<String, ModularType.Role> r : type.roles().entrySet()) {
-            ModularDesign.Part current = starter.get().part(r.getKey());
-            if (current == null)
-                continue;
-            var shape = ToolDesigns.standard(r.getValue(), types);
-            for (Material.Located l : ToolDesigns.materials(type, r.getKey(), shape, materials)) {
-                ModularDesign swapped = starter.get().withPart(ToolDesigns.part(r.getKey(), l, shape, current.count()));
-                ToolDesigns.predict(swapped, types, materials).ifPresent(f -> swaps.add(new Swap(r.getKey(), l.id(), f)));
-            }
-        }
-        for (Order.Term t : order.terms()) {
-            List<Swap> fits = swaps.stream().filter(s -> meets(t, s.figures().get(t.fig()))).toList();
-            if (fits.isEmpty()) {
-                out.add(Component.translatable("village.feedback.hint.none", noun(t.fig())));
-                continue;
-            }
-            // The part whose swap meets it most often is the part the figure comes from.
-            String role = fits.stream().collect(java.util.stream.Collectors.groupingBy(Swap::role, java.util.stream.Collectors.counting()))
-                    .entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
-            List<Component> names = fits.stream().filter(s -> s.role().equals(role))
-                    .sorted(Comparator.comparingDouble(s -> Math.abs(s.figures().get(t.fig()) - t.target())))
-                    .limit(MAX_NAMED).map(s -> (Component) Component.translatable("material." + s.material().getNamespace() + "." + s.material().getPath())).toList();
-            Component list = Component.empty();
-            for (int i = 0; i < names.size(); i++)
-                list = Component.empty().append(list).append(i == 0 ? Component.empty() : Component.literal(", ")).append(names.get(i));
-            out.add(Component.translatable("village.feedback.hint.try", noun(t.fig()), type.roles().get(role).name(), list));
-        }
-        out.add(Component.translatable("village.feedback.hint.note"));
-        return out;
+        return out; // a tool order names its parts outright; nothing to hint
     }
 
     /** Foods worth building the dish from for a term that wants a high figure (or a low fat, fibre or moisture): by kind, trait or the food's own figure. Empty when no food says it. */
@@ -145,13 +99,6 @@ public final class VillageHints {
                         .thenComparing(e -> e.getKey().toString()))
                 .limit(MAX_NAMED)
                 .map(e -> (Component) Component.translatable("material." + e.getKey().getNamespace() + "." + e.getKey().getPath())).toList();
-    }
-
-    /** Whether {@code v} would satisfy the term at full score: a must's side of its target, a band's inner half. */
-    private static boolean meets(Order.Term t, float v) {
-        if (t.must())
-            return t.above() ? v >= t.target() : v <= t.target();
-        return Math.abs(v - t.target()) / t.range() <= t.tol() * 0.5f;
     }
 
     private static String name(Fig fig) {

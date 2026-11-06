@@ -33,8 +33,19 @@ import net.minecraft.resources.ResourceLocation;
  * @param terms  what the villager says
  * @param quirks what the villager does not say; only the complaint on a miss ever shows one
  * @param leans  what the villager's home biome leans toward: knowable from where they live, never printed
+ * @param asks   a tool order's stated parts, each a material or a class of material; empty for a dish, which is stated on figures
  */
-public record Order(ResourceLocation type, int pay, List<Term> terms, List<Term> quirks, List<Term> leans) {
+public record Order(ResourceLocation type, int pay, List<Term> terms, List<Term> quirks, List<Term> leans, List<Ask> asks) {
+
+    /**
+     * A tool order's request for one part: a material, or a class of material (its kind).
+     *
+     * @param role     the part's role key in the type
+     * @param material the material wanted, or null when a class is asked
+     * @param kind     the class wanted, or null when one material is asked
+     */
+    public record Ask(String role, ResourceLocation material, io.github.soundgoodizerfan.feedback.process.Material.Kind kind) {
+    }
 
     /**
      * One term on one figure. A must is a test (the figure at least, or at most, the target); a
