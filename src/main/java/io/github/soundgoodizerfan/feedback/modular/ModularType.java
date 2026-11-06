@@ -177,6 +177,10 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** A placed dynamotor ({@code dynamotor}, the motor and dynamo): frame, winding, core and housing, whose bake is the {@link ModularBake#machine} spec the placed block runs on. */
         /** A conveyor belt cell ({@code conveyor_belt}): a band of flexible stock, optionally cleated; its bake is the {@link ModularBake#belt} spec the placed block runs on. */
         BELT,
+        /** A piston engine ({@code engine}): block layout, pistons, crank and head, whose bake is the {@link ModularBake#engine} design the placed block runs on. */
+        ENGINE,
+        /** A gearbox ({@code transmission}): gears, synchronisers and case, whose bake is the {@link ModularBake#gearbox} design the placed block runs on. */
+        GEARBOX,
         MACHINE;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
@@ -416,14 +420,24 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param max  the most.
      * @param unit lang key tail for the unit ({@code modular.feedback.unit.<unit>}), e.g. {@code mm}.
      * @param def  its value on a part no machine has touched.
+     * @param step the grain the Blueprint Table moves it in; 0 for a fifth-of-the-range default.
+     * @param when for a figure that exists only on some shapes: the shape param ({@code gears}) that must reach {@code atLeast}.
      */
-    public record Dim(float min, float max, String unit, float def) {
+    public record Dim(float min, float max, String unit, float def, float step, String when, float atLeast) {
         static final Codec<Dim> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.fieldOf("min").forGetter(Dim::min),
                 Codec.FLOAT.fieldOf("max").forGetter(Dim::max),
                 Codec.STRING.optionalFieldOf("unit", "").forGetter(Dim::unit),
-                Codec.FLOAT.fieldOf("default").forGetter(Dim::def)
+                Codec.FLOAT.fieldOf("default").forGetter(Dim::def),
+                Codec.FLOAT.optionalFieldOf("step", 0f).forGetter(Dim::step),
+                Codec.STRING.optionalFieldOf("when", "").forGetter(Dim::when),
+                Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Dim::atLeast)
         ).apply(instance, Dim::new));
+
+        /** The grain a stepper moves it in. */
+        public float grain() {
+            return step > 0 ? step : (max - min) / 20f;
+        }
 
         public float clamp(float v) {
             return Math.min(max, Math.max(min, v));

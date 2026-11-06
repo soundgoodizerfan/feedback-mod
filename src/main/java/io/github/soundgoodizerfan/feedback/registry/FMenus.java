@@ -75,10 +75,6 @@ public class FMenus {
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu::new));
 
 
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandMenu>> ENGINE_STAND =
-            MENUS.register("engine_stand",
-                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandMenu::new));
-
     /** Extended: the stand's position rides in the open packet; what it holds is synced as slots. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.potion.BrewingStandMenu>> BREWING_STAND =
             MENUS.register("brewing_stand",

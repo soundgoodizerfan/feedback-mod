@@ -124,7 +124,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     /** Everything about an edit that can be put back: a pinned draft. */
     private record Draft(int type, int form, Set<String> extras, Map<String, Integer> sizes, Map<String, Integer> shape,
-                         Map<String, ResourceLocation> material, Edge edge, String selected) {
+                         Map<String, ResourceLocation> material, Edge edge, String selected, Map<String, Float> dims) {
     }
 
     private record Pin(Draft draft, ModularFigures figures, ModularDesign design) {
@@ -145,6 +145,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     /** Per role letter, which of its shapes is drawn and which material (by id; absent is the type's default). */
     private final Map<String, Integer> shape = new HashMap<>();
     private final Map<String, ResourceLocation> matId = new HashMap<>();
+    /** The scalar the drawing sets on a part, keyed {@code role:name} (an engine's bore, a gear's ratio); absent is the role's default. */
+    private final Map<String, Float> dimVals = new HashMap<>();
     /** What the sample slot held when last read, so a sample sets its material once. */
     private ItemStack seen = ItemStack.EMPTY;
     /** The paper last seen, so only a blueprint newly put in is opened. */
@@ -449,6 +451,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         sizes.clear();
         shape.clear();
         matId.clear();
+        dimVals.clear();
         clearLists();
         flashes.clear();
         drawerScroll = Mth.clamp(type - DRAWER_SLOTS / 2, 0, Math.max(0, types.size() - DRAWER_SLOTS));
@@ -473,6 +476,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                         && (p.kind().isEmpty() || options.get(i).shaping().item().getPath().equals(p.kind())))
                     shape.put(p.role(), i);
             matId.put(p.role(), p.material());
+            p.dims().forEach((k, v) -> dimVals.put(p.role() + ":" + k, v));
         });
     }
 
@@ -602,9 +606,34 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 c = choice(role, si);
             if (c.isEmpty())
                 return Optional.empty();
-            parts.add(ToolDesigns.part(role, c.get(), shapeAt(role, si), counts.get(role)));
+            ModularDesign.Part made = ToolDesigns.part(role, c.get(), shapeAt(role, si), counts.get(role));
+            Map<String, Float> dims = new HashMap<>();
+            for (String name : t.roles().get(role).dims().keySet())
+                dims.put(name, dimValue(role, name, made));
+            parts.add(dims.isEmpty() ? made : new ModularDesign.Part(made.role(), made.material(), made.form(), made.count(), made.kind(), made.variant(), made.flaw(), dims));
         }
         return Optional.of(new ModularDesign(types.get(type), parts, edged() ? edge : Edge.STANDARD));
+    }
+
+    /** The scalars of {@code role} the sheet shows now: those whose {@code when} the shape in use meets, in name order. */
+    private List<Map.Entry<String, ModularType.Dim>> dimsOf(String role) {
+        ModularType t = current();
+        if (t == null || role == null || t.roles().get(role) == null)
+            return List.of();
+        ModularType.Role r = t.roles().get(role);
+        ToolTableShaping.Option o = shapeOf(role);
+        return r.dims().entrySet().stream().sorted(Map.Entry.comparingByKey())
+                .filter(e -> e.getValue().when().isEmpty()
+                        || (o != null && o.variant().params().getOrDefault(e.getValue().when(), 0f) >= e.getValue().atLeast()))
+                .toList();
+    }
+
+    /** What the drawing has {@code name} of {@code role} at: the sheet's own setting, else the shape's nominal, else the role's default. */
+    private float dimValue(String role, String name, ModularDesign.Part made) {
+        ModularType.Role r = current().roles().get(role);
+        Float set = dimVals.get(role + ":" + name);
+        return r.dim(set == null ? made : new ModularDesign.Part(made.role(), made.material(), made.form(), made.count(), made.kind(),
+                made.variant(), made.flaw(), Map.of(name, set)), name);
     }
 
     // --- worked out on an edit, never per frame -----------------------------------------------------
@@ -1080,7 +1109,16 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         ModularType t = current();
         String key = keyOf(role);
         int rows = t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0;
-        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0);
+        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0) + dimsOf(role).size();
+    }
+
+    /** A scalar's row: its name and figure, in its unit. */
+    private String dimLabel(String role, String name, ModularType.Dim dim) {
+        Optional<Material.Located> c = choice(role);
+        float v = c.isEmpty() ? dim.def() : dimValue(role, name, ToolDesigns.part(role, c.get(), shapeOf(role), 1));
+        String unit = dim.unit().isEmpty() ? "" : " " + (I18n.exists("modular.feedback.unit." + dim.unit())
+                ? I18n.get("modular.feedback.unit." + dim.unit()) : dim.unit());
+        return I18n.get("modular.feedback.dim." + name) + ": " + (dim.grain() < 1f ? String.format(java.util.Locale.ROOT, "%.2f", v) : String.valueOf(Math.round(v))) + unit;
     }
 
     private static final int SEARCH_H = 14;
@@ -1177,10 +1215,23 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             }), x + CALL_W - 8 - 14, y, 14, 14));
         if (rem || t.ranged(role) || (key != null && swaps(key).size() > 1))
             y += 15;
-        if (edged() && role.equals(t.wearRole()))
+        if (edged() && role.equals(t.wearRole())) {
             addRenderableWidget(GuiStyle.stepper(skin, x, y, CALL_W - 8, 14, "<", ">",
                     () -> Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()).getString(),
                     dir -> change(() -> edge = edge.step(dir)), false, null));
+            y += 15;
+        }
+        for (Map.Entry<String, ModularType.Dim> d : dimsOf(role)) {
+            String name = d.getKey();
+            ModularType.Dim dim = d.getValue();
+            addRenderableWidget(GuiStyle.stepper(skin, x, y, CALL_W - 8, 14, "<", ">", () -> dimLabel(role, name, dim),
+                    dir -> change(() -> {
+                        float now = dimValue(role, name, ToolDesigns.part(role, choice(role).orElseThrow(), shapeOf(role), 1));
+                        float next = Math.round((now + dir * dim.grain()) / dim.grain()) * dim.grain();
+                        dimVals.put(role + ":" + name, dim.clamp(next));
+                    }), false, null));
+            y += 15;
+        }
         searchBox = new net.minecraft.client.gui.components.EditBox(font, x + 2, swatchTop(role) - SEARCH_H + 3, CALL_W - 8 - 4, 9,
                 Component.translatable("gui.feedback.popup.search"));
         searchBox.setBordered(false);
@@ -1202,7 +1253,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     // --- drafts -----------------------------------------------------------------------------------
 
     private Draft capture() {
-        return new Draft(type, form, Set.copyOf(extras), Map.copyOf(sizes), Map.copyOf(shape), Map.copyOf(matId), edge, selected);
+        return new Draft(type, form, Set.copyOf(extras), Map.copyOf(sizes), Map.copyOf(shape), Map.copyOf(matId), edge, selected, Map.copyOf(dimVals));
     }
 
     private void restore(Draft d) {
@@ -1213,6 +1264,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             sizes.putAll(d.sizes());
             shape.putAll(d.shape());
             matId.putAll(d.material());
+            dimVals.putAll(d.dims());
             edge = d.edge();
             selected = d.selected();
             refit = true;

@@ -12,9 +12,8 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Chassis Frame** | The block a welded frame is built around. |
 | **Welder** | Places points, joins them with tubes, lays plates between them, and welds points to blocks. |
 | **Pivot Setter** | Turns a point into a hinge, a ball joint or a locked joint. |
-| **[Engine](Engine.md)** | Power. Designed on the Engine Stand. |
-| **[Car Design Stand](Car_Design_Stand.md)** | Where engines and transmissions are designed. |
-| **[Transmission](Transmission.md)** | Gears and a clutch. Designed on the Car Design Stand. |
+| **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the Tool Table. |
+| **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the Tool Table. |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
 | **[Flight Sensor](Instruments.md#flight-sensor)** | Reads altitude, airspeed, pitch or roll for a program. |
 | **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |

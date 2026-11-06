@@ -266,9 +266,6 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload::handle)

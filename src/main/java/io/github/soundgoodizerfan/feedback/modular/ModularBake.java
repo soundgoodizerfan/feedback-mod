@@ -192,6 +192,8 @@ public final class ModularBake {
             };
             case VESSEL -> !wear || material.xpStore().isPresent();
             case BELT -> !wear || (material.mechanical().friction().isPresent() && material.thermal().serviceTemperature().isPresent());
+            case ENGINE -> engineMetal(material) && (!(roleKey.equals(ENGINE_PISTONS) || roleKey.equals(ENGINE_CRANK)) || material.mechanical().yieldStrength().isPresent());
+            case GEARBOX -> engineMetal(material);
             case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
             default -> true;
         };
@@ -237,6 +239,99 @@ public final class ModularBake {
         boolean cleat = design.parts().stream().anyMatch(p -> !p.role().equals(type.wearRole()));
         float friction = m.mechanical().friction().get() * grip + (cleat ? io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning.CLEAT_GRIP : 0f);
         return Optional.of(new io.github.soundgoodizerfan.feedback.logistics.belt.BeltSpec(band.material(), friction, m.thermal().serviceTemperature().get().value() * heat, cleat));
+    }
+
+    /** The role letters of the engine's four parts and the gearbox's three. */
+    public static final String ENGINE_BLOCK = "K", ENGINE_PISTONS = "P", ENGINE_CRANK = "C", ENGINE_HEAD = "H";
+    public static final String GEAR_SET = "G", GEAR_SYNCHRO = "S", GEAR_CASE = "H";
+
+    /** A weighed metal: what an engine or gearbox part is cast from. */
+    private static boolean engineMetal(Material m) {
+        return m.kind().orElse(null) == Material.Kind.METAL && m.density().muPerMb() > 0;
+    }
+
+    /** A shape param of {@code part}'s variant, else {@code fallback}. */
+    private static float param(ModularType type, Part part, String name, float fallback) {
+        return type.roles().get(part.role()).variant(part).map(v -> v.params().getOrDefault(name, fallback)).orElse(fallback);
+    }
+
+    /**
+     * How heavy the parts of {@code roles} are against the same cells of {@code ref}: each part's cells of stock times its
+     * metal's density, over the cells times the reference density. A block cast of a light alloy round steel pistons weighs less.
+     */
+    private static float massBlend(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials, Material ref, String... roles) {
+        float have = 0, cells = 0;
+        for (String r : roles) {
+            Part p = design.part(r);
+            Material m = p == null ? null : materials.get(p.material());
+            if (m == null)
+                continue;
+            int c = stockCells(type.roles().get(r), p);
+            have += c * m.density().muPerMb();
+            cells += c;
+        }
+        return cells == 0 || ref.density().muPerMb() <= 0 ? 1f : have / (cells * ref.density().muPerMb());
+    }
+
+    /**
+     * The engine a design makes. The pistons' variant is the cylinder count and their {@code bore} dim the bore; the crank's
+     * {@code stroke} dim the stroke; the head's {@code compression} param (0 low, 1 medium, 2 high) the compression, with its
+     * own {@code torque}; the block's layout a {@code torque}, {@code rev} and {@code mass}; the crank's build a {@code rev}. The
+     * pistons' metal is the engine's (it sets the rev limit); a crank of a weaker metal than the pistons caps the revs by the
+     * square root of its specific strength against theirs, and the other parts' metals weigh the engine. Empty if a part is
+     * missing or is not a weighed metal (the pistons and crank need a yield strength too).
+     */
+    public static Optional<io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign> engine(ModularDesign design, ModularType type,
+                                                                                                     Map<ResourceLocation, Material> materials) {
+        Part block = design.part(ENGINE_BLOCK), pistons = design.part(ENGINE_PISTONS), crank = design.part(ENGINE_CRANK), head = design.part(ENGINE_HEAD);
+        if (block == null || pistons == null || crank == null || head == null)
+            return Optional.empty();
+        Material pm = materials.get(pistons.material()), cm = materials.get(crank.material());
+        for (Part p : design.parts()) {
+            Material m = materials.get(p.material());
+            if (m == null || !suits(type, p.role(), m))
+                return Optional.empty();
+        }
+        int cylinders = Math.round(param(type, pistons, "cylinders", 4f));
+        int bore = Math.round(type.roles().get(ENGINE_PISTONS).dim(pistons, "bore"));
+        int stroke = Math.round(type.roles().get(ENGINE_CRANK).dim(crank, "stroke"));
+        var compression = io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign.Compression.values()[
+                Math.max(0, Math.min(2, Math.round(param(type, head, "compression", 1f))))];
+        float torque = param(type, block, "torque", 1f) * param(type, head, "torque", 1f);
+        float rev = param(type, block, "rev", 1f) * param(type, crank, "rev", 1f);
+        float pSpec = (float) Math.sqrt(pm.mechanical().yieldStrength().get().value() / pm.density().muPerMb());
+        float cSpec = (float) Math.sqrt(cm.mechanical().yieldStrength().get().value() / cm.density().muPerMb());
+        rev *= Math.min(1f, cSpec / pSpec);
+        float mass = param(type, block, "mass", 1f) * massBlend(design, type, materials, pm, ENGINE_BLOCK, ENGINE_CRANK, ENGINE_HEAD);
+        return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign(cylinders, bore, stroke, pistons.material(),
+                compression, torque, rev, mass));
+    }
+
+    /**
+     * The gearbox a design makes. The gear set's variant is the gear count and its dims {@code g1} to {@code g6} the ratios (in
+     * steps of 0.05, the grain of a transmission); the gear set's metal is the box's, which sets how fast a shift at speed wears it;
+     * the synchronisers and the case each multiply the wear ({@code wear}) and the weight ({@code mass}), the other parts' metals
+     * weighing it too. Empty if a part is missing or is not a weighed metal.
+     */
+    public static Optional<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign> gearbox(ModularDesign design, ModularType type,
+                                                                                                             Map<ResourceLocation, Material> materials) {
+        Part gears = design.part(GEAR_SET), synchro = design.part(GEAR_SYNCHRO), box = design.part(GEAR_CASE);
+        if (gears == null || synchro == null || box == null)
+            return Optional.empty();
+        for (Part p : design.parts()) {
+            Material m = materials.get(p.material());
+            if (m == null || !suits(type, p.role(), m))
+                return Optional.empty();
+        }
+        ModularType.Role role = type.roles().get(GEAR_SET);
+        int count = Math.round(param(type, gears, "gears", 4f));
+        java.util.List<Integer> steps = new java.util.ArrayList<>();
+        for (int g = 1; g <= count; g++)
+            steps.add(Math.round(role.dim(gears, "g" + g) * io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.PER_UNIT));
+        float wear = param(type, synchro, "wear", 1f) * param(type, box, "wear", 1f);
+        float mass = param(type, synchro, "mass", 1f) * param(type, box, "mass", 1f)
+                * massBlend(design, type, materials, materials.get(gears.material()), GEAR_SET, GEAR_SYNCHRO, GEAR_CASE);
+        return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign(steps, gears.material(), wear, mass));
     }
 
     /** The role letters of the dynamotor's four parts. */
@@ -543,6 +638,14 @@ public final class ModularBake {
             }
             case MACHINE -> {
                 if (machine(design, type, materials).isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+            }
+            case ENGINE, GEARBOX -> {
+                if (type.family() == ModularType.Family.ENGINE ? engine(design, type, materials).isEmpty() : gearbox(design, type, materials).isEmpty())
                     return Optional.empty();
                 float total = 0;
                 for (Part p : design.parts())

@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.List;
 
-/** The design lines a Transmission Blueprint and a Transmission both show, read off the material system. */
+/** The design lines a Transmission shows, read off the material system. */
 public final class TransmissionItems {
 
     private TransmissionItems() {
@@ -46,26 +46,20 @@ public final class TransmissionItems {
         design.describe(materials.get(design.material())).forEach(line -> tooltip.add(line.copy().withStyle(ChatFormatting.GRAY)));
     }
 
-    /** A transmission on paper, printed by the Car Design Stand; crafted with its ingots into a Transmission, and kept. */
-    public static class Blueprint extends Item {
-        public Blueprint(Properties properties) {
-            super(properties);
-        }
-
-        @Override
-        public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-            tooltip(stack, context, tooltip);
-        }
-    }
-
-    /** A Transmission block in hand, carrying its design. */
-    public static class Carried extends BlockItem {
+    /** A Transmission block in hand: a modular build (the {@code transmission} type) carrying the design it bakes. */
+    public static class Carried extends BlockItem implements io.github.soundgoodizerfan.feedback.modular.Modular {
         public Carried(Block block, Properties properties) {
             super(block, properties);
         }
 
         @Override
+        public Component getName(ItemStack stack) {
+            return io.github.soundgoodizerfan.feedback.modular.ModularStacks.name(stack, super.getName(stack));
+        }
+
+        @Override
         public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+            io.github.soundgoodizerfan.feedback.modular.ModularTooltip.add(stack, tooltip);
             tooltip(stack, context, tooltip);
         }
     }

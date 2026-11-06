@@ -1,0 +1,230 @@
+{
+  "family": "gearbox",
+  "slot": "mainhand",
+  "wear_litres": 0.25,
+  "wear_role": "G",
+  "primary": "G",
+  "blueprint": true,
+  "roles": {
+    "G": {
+      "name": "gear_set",
+      "forms": [
+        "gear_set"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "dims": {
+        "g1": {
+          "min": 0.5,
+          "max": 5,
+          "unit": "",
+          "default": 3.5,
+          "step": 0.05,
+          "when": "gears",
+          "at_least": 1
+        },
+        "g2": {
+          "min": 0.5,
+          "max": 5,
+          "unit": "",
+          "default": 2.0,
+          "step": 0.05,
+          "when": "gears",
+          "at_least": 2
+        },
+        "g3": {
+          "min": 0.5,
+          "max": 5,
+          "unit": "",
+          "default": 1.25,
+          "step": 0.05,
+          "when": "gears",
+          "at_least": 3
+        },
+        "g4": {
+          "min": 0.5,
+          "max": 5,
+          "unit": "",
+          "default": 0.8,
+          "step": 0.05,
+          "when": "gears",
+          "at_least": 4
+        },
+        "g5": {
+          "min": 0.5,
+          "max": 5,
+          "unit": "",
+          "default": 0.65,
+          "step": 0.05,
+          "when": "gears",
+          "at_least": 5
+        },
+        "g6": {
+          "min": 0.5,
+          "max": 5,
+          "unit": "",
+          "default": 0.55,
+          "step": 0.05,
+          "when": "gears",
+          "at_least": 6
+        }
+      },
+      "part": {
+        "item": "feedback:gear_set",
+        "shape": [
+          "GG",
+          "GG"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "four_speed",
+        "variants": [
+          {
+            "name": "two_speed",
+            "shape": [
+              "GG"
+            ],
+            "params": {
+              "gears": 2
+            }
+          },
+          {
+            "name": "three_speed",
+            "shape": [
+              "GG",
+              "G"
+            ],
+            "params": {
+              "gears": 3
+            }
+          },
+          {
+            "name": "four_speed",
+            "params": {
+              "gears": 4
+            }
+          },
+          {
+            "name": "five_speed",
+            "shape": [
+              "GGG",
+              "GG"
+            ],
+            "params": {
+              "gears": 5
+            }
+          },
+          {
+            "name": "six_speed",
+            "shape": [
+              "GGG",
+              "GGG"
+            ],
+            "params": {
+              "gears": 6
+            }
+          }
+        ]
+      }
+    },
+    "S": {
+      "name": "synchro",
+      "forms": [
+        "synchro_ring"
+      ],
+      "litres": 0.125,
+      "layer": 1,
+      "part": {
+        "item": "feedback:synchro_ring",
+        "shape": [
+          "S"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "dog_clutch",
+        "variants": [
+          {
+            "name": "dog_clutch",
+            "params": {
+              "wear": 1.0,
+              "mass": 1.0
+            }
+          },
+          {
+            "name": "synchromesh",
+            "shape": [
+              "SS"
+            ],
+            "params": {
+              "wear": 0.6,
+              "mass": 1.1
+            }
+          }
+        ]
+      }
+    },
+    "H": {
+      "name": "gearbox_case",
+      "forms": [
+        "gearbox_case"
+      ],
+      "litres": 0.125,
+      "layer": 2,
+      "part": {
+        "item": "feedback:gearbox_case",
+        "shape": [
+          "HH",
+          "H"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "dry_case",
+        "variants": [
+          {
+            "name": "dry_case",
+            "params": {
+              "wear": 1.0,
+              "mass": 0.9
+            }
+          },
+          {
+            "name": "splash_case",
+            "shape": [
+              "HH",
+              "HH"
+            ],
+            "params": {
+              "wear": 0.75,
+              "mass": 1.0
+            }
+          },
+          {
+            "name": "pressure_case",
+            "shape": [
+              "HHH",
+              "HH"
+            ],
+            "params": {
+              "wear": 0.5,
+              "mass": 1.2
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "GS",
+      "H"
+    ]
+  ],
+  "defaults": {
+    "G": "feedback:steel",
+    "S": "feedback:steel",
+    "H": "feedback:steel"
+  }
+}

@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "feedback:block/device_gearbox_sides"
-  }
-}

@@ -141,9 +141,9 @@ public final class ToolTableAssembly {
                 assign(type, e.getKey(), a.counts(), slots, used, what, 0, new String[used.size()], new boolean[used.size()], best);
             if (best.design == null)
                 continue;
-            ModularDesign design = best.design;
-            if (type.blueprint() && !drawnTo(drawn, design))
+            if (type.blueprint() && !drawnTo(drawn, best.design))
                 continue;
+            ModularDesign design = type.blueprint() ? withDrawnDims(drawn, best.design, type) : best.design;
             // A coat rolled onto the wearing plate (roll cladding) rides onto the tool, where ModularBake reads it.
             io.github.soundgoodizerfan.feedback.process.Plating coat = null;
             for (int i = 0; i < used.size(); i++)
@@ -179,6 +179,27 @@ public final class ToolTableAssembly {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * {@code made} with the as-built measures the drawing chose, for the roles that declare any (an engine's bore and stroke):
+     * a measure the blueprint sets is the part's own, which no machine has cut.
+     */
+    private static ModularDesign withDrawnDims(ModularDesign drawn, ModularDesign made, ModularType type) {
+        ModularDesign out = made;
+        for (Part want : drawn.parts()) {
+            ModularType.Role role = type.roles().get(want.role());
+            Part got = made.part(want.role());
+            if (role == null || role.dims().isEmpty() || got == null || want.dims().isEmpty())
+                continue;
+            var dims = new java.util.HashMap<>(got.dims());
+            want.dims().forEach((k, v) -> {
+                if (role.dims().containsKey(k))
+                    dims.put(k, v);
+            });
+            out = out.withPart(new Part(got.role(), got.material(), got.form(), got.count(), got.kind(), got.variant(), got.flaw(), dims));
+        }
+        return out;
     }
 
     /** The lowest-sorting assignment found so far. */

@@ -131,7 +131,8 @@ public final class ModularStacks {
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
                 && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL
-                && type.family() != ModularType.Family.MACHINE && type.family() != ModularType.Family.BELT) {
+                && type.family() != ModularType.Family.MACHINE && type.family() != ModularType.Family.BELT
+                && type.family() != ModularType.Family.ENGINE && type.family() != ModularType.Family.GEARBOX) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
@@ -143,6 +144,10 @@ public final class ModularStacks {
             ModularBake.cell(design, type, materials).ifPresent(c -> batteryState(stack, c));
         if (type.family() == ModularType.Family.MACHINE)
             ModularBake.machine(design, type, materials).ifPresent(m -> machineState(stack, m));
+        if (type.family() == ModularType.Family.ENGINE)
+            ModularBake.engine(design, type, materials).ifPresent(e -> stack.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get(), e));
+        if (type.family() == ModularType.Family.GEARBOX)
+            ModularBake.gearbox(design, type, materials).ifPresent(t -> stack.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_DESIGN.get(), t));
         if (type.family() == ModularType.Family.BELT)
             ModularBake.belt(design, type, materials).ifPresent(b -> {
                 net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.BELT.get(), new net.minecraft.nbt.CompoundTag()).copy();

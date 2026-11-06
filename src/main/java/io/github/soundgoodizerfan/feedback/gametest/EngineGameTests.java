@@ -66,49 +66,6 @@ public class EngineGameTests {
     }
 
     /**
-     * The stand prints a design onto paper, and the recipe builds it only from that design's
-     * material's ingots, the right number of them -- the ingot item asked of the material system.
-     */
-    @GameTest(template = "empty")
-    public static void standPrintsAndTheRecipeBuildsFromTheMaterial(GameTestHelper helper) {
-        net.minecraft.core.BlockPos at = new net.minecraft.core.BlockPos(0, 2, 0);
-        helper.setBlock(at, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_STAND.get());
-        var stand = (io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlockEntity) helper.getBlockEntity(at);
-        var player = helper.makeMockPlayer(net.minecraft.world.level.GameType.CREATIVE);
-        EngineDesign design = new EngineDesign(2, 70, 60, Feedback.id("steel"));
-        stand.setItem(0, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.PAPER));
-        stand.commit(design, true, player);
-        var blueprint = stand.getItem(0);
-
-        // The sample slot: any form of a buildable metal sets the material; anything else is refused.
-        int sample = io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlockEntity.SAMPLE;
-        helper.assertTrue(stand.canPlaceItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.IRON_INGOT)),
-                "an iron ingot is a sample");
-        helper.assertFalse(stand.canPlaceItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.OAK_PLANKS)),
-                "wood is not a metal");
-        helper.assertFalse(stand.canPlaceItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.PAPER)),
-                "paper is not a sample");
-        stand.setItem(sample, new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GOLD_NUGGET));
-        helper.assertTrue(stand.design().material().equals(net.minecraft.resources.ResourceLocation.parse("feedback:gold")),
-                "a gold nugget makes it a gold engine, got " + stand.design().material());
-        helper.assertTrue(stand.getItem(sample).getCount() == 1, "the sample is not used up");
-        helper.assertTrue(design.equals(blueprint.get(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get())),
-                "the paper becomes a blueprint of the design");
-
-        var recipe = new io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe(
-                net.minecraft.world.item.crafting.CraftingBookCategory.MISC);
-        var steel = new net.minecraft.world.item.ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.STEEL_INGOT.get());
-        var copper = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.COPPER_INGOT);
-        helper.assertTrue(recipe.matches(grid(blueprint, steel, steel), helper.getLevel()), "blueprint + 2 steel ingots builds a 2-cylinder");
-        helper.assertFalse(recipe.matches(grid(blueprint, steel), helper.getLevel()), "one ingot short does not");
-        helper.assertFalse(recipe.matches(grid(blueprint, copper, copper), helper.getLevel()), "the wrong material does not");
-        var engine = recipe.assemble(grid(blueprint, steel, steel), helper.getLevel().registryAccess());
-        helper.assertTrue(design.equals(engine.get(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get())),
-                "the engine carries the design");
-        helper.succeed();
-    }
-
-    /**
      * An engine on a lifted vehicle puts its design's mass on it, converted to Sable's unit
      * (1 kpg = 1000 Mu), block and box together. Alone on the lift on purpose: a vehicle that is
      * only an engine must not weigh zero when lifted, or Sable discards it.

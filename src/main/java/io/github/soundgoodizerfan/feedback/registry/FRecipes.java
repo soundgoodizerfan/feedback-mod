@@ -48,16 +48,6 @@ public class FRecipes {
             HAND_DEFORMATION = SERIALIZERS.register("hand_deformation",
                     () -> new SimpleCraftingRecipeSerializer<>(HandDeformationRecipe::new));
 
-    /** Blueprint + its material's ingots -> Engine (vehicles spec section 6). */
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe>>
-            ENGINE = SERIALIZERS.register("engine",
-                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe::new));
-
-    /** Transmission Blueprint + its material's ingots -> Transmission (vehicles spec section 6). */
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionRecipe>>
-            TRANSMISSION = SERIALIZERS.register("transmission",
-                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionRecipe::new));
-
     /** A magazine and loose rounds -> that magazine, fuller (guns spec section 5). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe>>
             MAGAZINE_LOAD = SERIALIZERS.register("magazine_load",

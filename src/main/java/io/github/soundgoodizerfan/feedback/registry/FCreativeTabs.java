@@ -85,7 +85,6 @@ public class FCreativeTabs {
                         output.accept(coilMag);
                         output.accept(FVehicles.LIFT_ITEM.get());
                         output.accept(FVehicles.FRAME_ITEM.get());
-                        output.accept(FVehicles.ENGINE_STAND_ITEM.get());
                         output.accept(FVehicles.THRUSTER_ITEM.get());
                         output.accept(FVehicles.FLIGHT_SENSOR_ITEM.get());
                         output.accept(FVehicles.WELDER.get());

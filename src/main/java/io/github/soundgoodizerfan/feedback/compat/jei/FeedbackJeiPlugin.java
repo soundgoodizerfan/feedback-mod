@@ -321,11 +321,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.BLUEPRINT_TABLE_ITEM.get(), "blueprint_table");
         info(registration, FModular.ENCHANTING_TABLE_ITEM.get(), "enchanting_table");
         info(registration, FModular.BLUEPRINT.get(), "modular_blueprint");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ITEM.get(), "engine");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_ITEM.get(), "transmission");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get(), "gun_table");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(), "reloading_press");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE_ITEM.get(), "magazine");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_BLUEPRINT.get(), "engine_blueprint");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_BLUEPRINT.get(), "transmission_blueprint");
         // Machines and instruments with no catalyst category; each page says what the thing is and how to use it.
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.FIREBOX.get().asItem(), "firebox");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STOCKPOT.get().asItem(), "stockpot");
@@ -333,7 +333,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HEARTH.get().asItem(), "hearth");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ICE_BOX.get().asItem(), "ice_box");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.WELDER.get(), "welder");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_STAND.get().asItem(), "engine_stand");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.CONTROLLER.get().asItem(), "controller");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PROGRAMMER.get().asItem(), "programmer");
         info(registration, FItems.THERMOMETER.get(), "thermometer");

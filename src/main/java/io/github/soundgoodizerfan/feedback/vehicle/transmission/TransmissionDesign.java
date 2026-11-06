@@ -36,13 +36,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A transmission as designed on the Car Design Stand ({@code docs/specs/feedback_vehicles_spec.md} section
+ * A transmission as baked from its modular design ({@code docs/specs/feedback_vehicles_spec.md} section
  * 6): how many gears, and each one's ratio, in steps of 0.05 ({@link #PER_UNIT} per 1.0, stored as a
  * whole number so two designs compare equal). A ratio is input turns per output turn: 3.5 is a low
  * gear, 0.8 an overdrive. There is also neutral (nothing coupled) and a reverse the size of first.
  * Materials set how fast it wears when shifted at speed ({@link FTuning#TRANSMISSION_WEAR_PER_RPM}).
  */
-public record TransmissionDesign(List<Integer> steps, ResourceLocation material) {
+public record TransmissionDesign(List<Integer> steps, ResourceLocation material, float wearMult, float massMult) {
 
     public static final int MIN_GEARS = 2, MAX_GEARS = 6;
     /** Ratio steps per 1.0, and the range, as steps (0.5 to 5.0). */
@@ -50,12 +50,16 @@ public record TransmissionDesign(List<Integer> steps, ResourceLocation material)
 
     public static final Codec<TransmissionDesign> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.INT.listOf().fieldOf("steps").forGetter(TransmissionDesign::steps),
-            ResourceLocation.CODEC.fieldOf("material").forGetter(TransmissionDesign::material)
+            ResourceLocation.CODEC.fieldOf("material").forGetter(TransmissionDesign::material),
+            Codec.FLOAT.optionalFieldOf("wear_mult", 1f).forGetter(TransmissionDesign::wearMult),
+            Codec.FLOAT.optionalFieldOf("mass_mult", 1f).forGetter(TransmissionDesign::massMult)
     ).apply(i, TransmissionDesign::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TransmissionDesign> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list()), TransmissionDesign::steps,
             ResourceLocation.STREAM_CODEC, TransmissionDesign::material,
+            ByteBufCodecs.FLOAT, TransmissionDesign::wearMult,
+            ByteBufCodecs.FLOAT, TransmissionDesign::massMult,
             TransmissionDesign::new);
 
     /** Pulled back into range, and padded or trimmed to a legal gear count, so a design is always buildable. */
@@ -93,40 +97,14 @@ public record TransmissionDesign(List<Integer> steps, ResourceLocation material)
         return 1f / ratio(position);
     }
 
-    public TransmissionDesign withGears(int gears) {
-        List<Integer> next = new ArrayList<>(steps);
-        while (next.size() < gears)
-            next.add(next.get(next.size() - 1));
-        return new TransmissionDesign(next.subList(0, Mth.clamp(gears, MIN_GEARS, MAX_GEARS)), material);
-    }
-
-    public TransmissionDesign withStep(int gear, int step) {
-        List<Integer> next = new ArrayList<>(steps);
-        next.set(gear, step);
-        return new TransmissionDesign(next, material);
-    }
-
-    public TransmissionDesign withMaterial(ResourceLocation m) {
-        return new TransmissionDesign(steps, m);
-    }
-
-    /** Ingots of its material it takes to build. */
-    public int ingots() {
-        return gears() * FTuning.TRANSMISSION_INGOTS_PER_GEAR;
-    }
-
     /** The block's weight: gears' metal times the material's density. */
     public Mu mass(Material m) {
-        return new Mu(FTuning.TRANSMISSION_METAL_PER_GEAR_MB * gears() * m.density().muPerMb());
+        return new Mu(FTuning.TRANSMISSION_METAL_PER_GEAR_MB * gears() * m.density().muPerMb() * massMult);
     }
 
     /** How much a shift at speed costs this material: softer wears faster, by the hardness the deformation table already holds. */
     public float wearPerRpm(Material m) {
-        return FTuning.TRANSMISSION_WEAR_PER_RPM / Math.max(1f, m.hardness().value());
-    }
-
-    public static TransmissionDesign starter(ResourceLocation material) {
-        return new TransmissionDesign(List.of(70, 40, 25, 16), material);
+        return FTuning.TRANSMISSION_WEAR_PER_RPM / Math.max(1f, m.hardness().value()) * wearMult;
     }
 
     /** The spec sheet a screen and a tooltip show: free and exact, philosophy 8. */

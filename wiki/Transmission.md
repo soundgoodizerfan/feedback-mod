@@ -1,10 +1,18 @@
 # Transmission
 
-A gearbox you design yourself on the [Car Design Stand](Car_Design_Stand.md) (its second tab). It couples the shaft behind it to the shaft in front at the ratio of the gear it is in.
+A gearbox built from parts. It couples the shaft behind it to the shaft in front at the ratio of the gear it is in.
 
 ## Designing one
 
-Open the stand, switch to the **Transmission** tab, and set the number of gears (2 to 6) and each gear's ratio in steps of 0.05, from 0.5 to 5.0. A ratio is input turns per output turn: 3.5 is a low gear, 0.8 an overdrive. Drop a sample of the metal in the sample slot, put paper in, and **Print**. Craft the Transmission Blueprint with that metal's ingots (2 per gear) to get the block. The blueprint is kept.
+Draw the gearbox at the [Blueprint Table](Blueprint_Table.md) (pick *Transmission* in the type row) and print it on paper. The gear set's shape is how many forward gears it has (2 to 6), and its panel has a stepper for each gear's ratio, in steps of 0.05, from 0.5 to 5.0. A ratio is input turns per output turn: 3.5 is a low gear, 0.8 an overdrive.
+
+| Part | Choices | What it sets |
+| --- | --- | --- |
+| **Gear Set** | two to six speeds | The gears. Their metal sets how fast a shift at speed grinds them: softer metals wear faster. |
+| **Synchro Ring** | dog clutch, synchromesh | A dog clutch is plain. A synchromesh matches speeds before the gear meshes, so a shift at speed wears the box about two fifths less, for a tenth more weight. |
+| **Gearbox Case** | dry, splash, pressure oiled | The oiling. Dry is the lightest and wears most; splash wears a quarter less; pressure oiling wears half as much, in the heaviest case. |
+
+At the Tool Table, put the **Transmission Blueprint** in the plan slot and the three parts in the slots to get the block. The blueprint is kept.
 
 ## Using it
 
@@ -16,4 +24,4 @@ A transmission also has a **clutch** input, channel 1 (the shifter is channel 0)
 
 ## Wear
 
-Shifting while the input shaft is turning fast grinds the teeth, in proportion to the speed and softer metals worse. A badly worn transmission jumps out of gear under load, more often the more worn it is. Stopping, going through neutral or pressing the clutch costs nothing, and running it never wears it.
+Shifting while the input shaft is turning fast grinds the teeth, in proportion to the speed, softer metals worse, and less with a synchromesh or a better-oiled case. A badly worn transmission jumps out of gear under load, more often the more worn it is. Stopping, going through neutral or pressing the clutch costs nothing, and running it never wears it.

@@ -1,26 +1,21 @@
 # Engine
 
-A piston engine that you design yourself on the **Engine Stand** (also called the **Car Design Stand**). Once built, it's a rotation source. Put it on a shaft and it drives your [mechanical network](Rotation.md), just like a [Steam Engine](Steam_Engine.md). It's also meant to be the heart of a [vehicle](Vehicles.md).
+A piston engine built from parts. Once built, it's a rotation source. Put it on a shaft and it drives your [mechanical network](Rotation.md), just like a [Steam Engine](Steam_Engine.md). It's also meant to be the heart of a [vehicle](Vehicles.md). An engine burns liquid or gas fuel from its own tank.
 
-> The Engine Stand (the Car Design Stand) is two copper plates over two crafting tables. An engine burns liquid or gas fuel from its own tank.
+## Designing one
 
-## Designing one: the Engine Stand
+Draw the engine at the [Blueprint Table](Blueprint_Table.md) (pick *Engine* in the type row) and print it on paper. Each part has its own panel; the pistons and the crank also have a **Bore** and a **Stroke** stepper, 40 to 120 mm in steps of 5.
 
-Open the stand and use the **< >** buttons to set:
-
-| Setting | Range | Effect |
+| Part | Choices | What it sets |
 | --- | --- | --- |
-| **Cylinders** | 1–8 | More cylinders mean more torque and more weight, and cost more. |
-| **Bore** | 40–120 mm | Wider cylinders mean more torque. |
-| **Stroke** | 40–120 mm | Longer strokes add torque, but the engine **revs lower**. Short-stroke engines rev high. |
-| **Compression** | low, medium, high | Which fuels it can burn. See [Compression, fuel and knock](#compression-fuel-and-knock). |
-| **Material** | from the sample slot | See below. |
-
-Put any piece of a metal in the **sample slot** to choose the material (it isn't used up). Then put **Paper** in the paper slot and press **Print** to get an **Engine Blueprint**. To edit an old design, put its blueprint back in the paper slot, change it, and print again.
+| **Engine Block** | inline, vee, boxer | Inline is the plain layout. A vee is a short, light block (15% lighter) that revs 7% lower. A boxer cancels its own shake and revs 8% higher, but weighs 10% more and makes 3% less torque. |
+| **Pistons** | 1, 2, 4, 6 or 8 cylinders | The number of cylinders (more mean more torque and more weight, and more metal). Their **bore** is the cylinder width: wider means more torque. Their metal sets the redline. |
+| **Crankshaft** | cast, forged | The **stroke**: longer adds torque but the engine **revs lower**; short-stroke engines rev high. A forged crank revs 20% higher than a cast one, for more metal. |
+| **Cylinder Head** | low, medium, high compression | Which fuels it can burn. See [Compression, fuel and knock](#compression-fuel-and-knock). A high head also makes 8% more torque, a low one 5% less. |
 
 ### The spec sheet
 
-The screen, the blueprint and the finished engine all show:
+The blueprint and the finished engine show:
 
 - **Displacement**, in liters.
 - **Peak torque**, in Su (100 Su per liter: a 1.6 L engine makes about 160), and the RPM where it peaks (60% of redline).
@@ -29,11 +24,11 @@ The screen, the blueprint and the finished engine all show:
 
 ### Choosing a metal
 
-The metal decides how fast the engine can rev. **Light, strong metals rev highest.** Heavy or soft ones rev lower and weigh more. Hardened steel revs highest of all, with netherite close behind (but much heavier). Steel is a good all-rounder. Copper, gold and lead make lazy, low-revving engines. The metal has to be strong enough to build with and come as ingots, or the stand won't take it.
+The pistons' metal decides how fast the engine can rev. **Light, strong metals rev highest.** Heavy or soft ones rev lower and weigh more. Hardened steel revs highest of all, with netherite close behind (but much heavier). Steel is a good all-rounder. Copper, gold and lead make lazy, low-revving engines. A crank of a weaker metal than the pistons holds the revs down to what it can take. The block, crank and head change the engine's weight by their metal's density: a block of a light metal round steel pistons makes a lighter engine. Every part has to be a metal strong enough to build with.
 
 ## Building it
 
-Put the blueprint in a crafting table with **one ingot of the chosen metal per cylinder**, in any arrangement. You get the Engine and you keep the blueprint.
+At the Tool Table, put the **Engine Blueprint** in the plan slot and the four parts (a block, a piston set, a crankshaft and a cylinder head, each made from ingots or plate of the metal you chose) in the slots. The Engine comes out, with the bore and stroke you drew, and the blueprint is kept.
 
 ## Fuel
 
@@ -45,7 +40,7 @@ An engine runs on fuel in its own tank, 2000 mB. Fill it with a bucket or a [Pip
 
 ### Compression, fuel and knock
 
-Compression is a **part of the design**, chosen on the Engine Stand with the stepper under the figure (*Compression: low / medium / high*) and printed on the blueprint. It decides which fuels the engine can burn, judged by the blend's **ignition point** ([Fuels](Fuels.md)):
+Compression is a **part of the design**, set by the cylinder head you build with. It decides which fuels the engine can burn, judged by the blend's **ignition point** ([Fuels](Fuels.md)):
 
 | Compression | Misfires on a fuel igniting above | Knocks on a fuel igniting below |
 | --- | --- | --- |

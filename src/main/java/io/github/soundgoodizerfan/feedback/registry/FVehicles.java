@@ -25,11 +25,8 @@ import io.github.soundgoodizerfan.feedback.vehicle.LiftBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.LiftItem;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlueprintItem;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineItem;
-import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlock;
-import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineStandBlockEntity;
 import net.minecraft.nbt.CompoundTag;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlockEntity;
@@ -168,17 +165,14 @@ public class FVehicles {
     public static final DeferredItem<PivotItem> PIVOT_SETTER = ITEMS.register("pivot_setter",
             () -> new PivotItem(new Item.Properties().stacksTo(1)));
 
-    // --- Engines (spec section 6, Engine Stand v1) ----------------------------------------------
+    // --- Engines (spec section 6, a modular build at the Tool Table) ----------------------------------------------
 
-    /** An engine design, on a Blueprint or an Engine. */
+    /** What an engine's parts bake to, on an Engine. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<EngineDesign>> ENGINE_DESIGN =
             COMPONENTS.register("engine_design", () -> DataComponentType.<EngineDesign>builder()
                     .persistent(EngineDesign.CODEC)
                     .networkSynchronized(EngineDesign.STREAM_CODEC)
                     .build());
-
-    public static final DeferredItem<EngineBlueprintItem> ENGINE_BLUEPRINT = ITEMS.register("engine_blueprint",
-            () -> new EngineBlueprintItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredBlock<EngineBlock> ENGINE = BLOCKS.register("engine",
             () -> new EngineBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
@@ -203,26 +197,13 @@ public class FVehicles {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlockEntity>> FLIGHT_SENSOR_ENTITY =
             BLOCK_ENTITIES.register("flight_sensor", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlockEntity::new, FLIGHT_SENSOR.get()).build(null));
 
-    public static final DeferredBlock<EngineStandBlock> ENGINE_STAND = BLOCKS.register("engine_stand",
-            () -> new EngineStandBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
-
-    public static final DeferredItem<BlockItem> ENGINE_STAND_ITEM = ITEMS.registerSimpleBlockItem(ENGINE_STAND);
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EngineStandBlockEntity>> ENGINE_STAND_ENTITY =
-            BLOCK_ENTITIES.register("engine_stand",
-                    () -> BlockEntityType.Builder.of(EngineStandBlockEntity::new, ENGINE_STAND.get()).build(null));
-
-    // --- Transmissions (spec section 6, designed on the Car Design Stand) -----------------------
+    // --- Transmissions (spec section 6, a modular build at the Tool Table) -----------------------
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign>> TRANSMISSION_DESIGN =
             COMPONENTS.register("transmission_design", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign>builder()
                     .persistent(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.CODEC)
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.STREAM_CODEC)
                     .build());
-
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionItems.Blueprint> TRANSMISSION_BLUEPRINT =
-            ITEMS.register("transmission_blueprint",
-                    () -> new io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionItems.Blueprint(new Item.Properties().stacksTo(1)));
 
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlock> TRANSMISSION =
             BLOCKS.register("transmission", () -> new io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionBlock(

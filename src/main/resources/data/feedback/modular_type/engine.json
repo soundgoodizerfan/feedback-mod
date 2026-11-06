@@ -1,0 +1,241 @@
+{
+  "family": "engine",
+  "slot": "mainhand",
+  "wear_litres": 0.25,
+  "wear_role": "P",
+  "primary": "K",
+  "blueprint": true,
+  "roles": {
+    "K": {
+      "name": "engine_block",
+      "forms": [
+        "engine_block"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:engine_block",
+        "shape": [
+          "KKKK"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "inline_block",
+        "variants": [
+          {
+            "name": "inline_block",
+            "params": {
+              "torque": 1.0,
+              "rev": 1.0,
+              "mass": 1.0
+            }
+          },
+          {
+            "name": "vee_block",
+            "shape": [
+              "KK",
+              "K"
+            ],
+            "params": {
+              "torque": 1.0,
+              "rev": 0.93,
+              "mass": 0.85
+            }
+          },
+          {
+            "name": "boxer_block",
+            "shape": [
+              "KKK",
+              "KK"
+            ],
+            "params": {
+              "torque": 0.97,
+              "rev": 1.08,
+              "mass": 1.1
+            }
+          }
+        ]
+      }
+    },
+    "P": {
+      "name": "pistons",
+      "forms": [
+        "piston_set"
+      ],
+      "litres": 0.125,
+      "layer": 1,
+      "dims": {
+        "bore": {
+          "min": 40,
+          "max": 120,
+          "unit": "mm",
+          "default": 80,
+          "step": 5
+        }
+      },
+      "part": {
+        "item": "feedback:piston_set",
+        "shape": [
+          "PP",
+          "PP"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "four_cylinder",
+        "variants": [
+          {
+            "name": "one_cylinder",
+            "shape": [
+              "P"
+            ],
+            "params": {
+              "cylinders": 1
+            }
+          },
+          {
+            "name": "two_cylinder",
+            "shape": [
+              "PP"
+            ],
+            "params": {
+              "cylinders": 2
+            }
+          },
+          {
+            "name": "four_cylinder",
+            "params": {
+              "cylinders": 4
+            }
+          },
+          {
+            "name": "six_cylinder",
+            "shape": [
+              "PPP",
+              "PPP"
+            ],
+            "params": {
+              "cylinders": 6
+            }
+          },
+          {
+            "name": "eight_cylinder",
+            "shape": [
+              "PPPP",
+              "PPPP"
+            ],
+            "params": {
+              "cylinders": 8
+            }
+          }
+        ]
+      }
+    },
+    "C": {
+      "name": "crankshaft",
+      "forms": [
+        "crankshaft"
+      ],
+      "litres": 0.125,
+      "layer": 2,
+      "dims": {
+        "stroke": {
+          "min": 40,
+          "max": 120,
+          "unit": "mm",
+          "default": 80,
+          "step": 5
+        }
+      },
+      "part": {
+        "item": "feedback:crankshaft",
+        "shape": [
+          "CC"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "cast_crank",
+        "variants": [
+          {
+            "name": "cast_crank",
+            "params": {
+              "rev": 0.9
+            }
+          },
+          {
+            "name": "forged_crank",
+            "shape": [
+              "CC",
+              "C"
+            ],
+            "params": {
+              "rev": 1.08
+            }
+          }
+        ]
+      }
+    },
+    "H": {
+      "name": "cylinder_head",
+      "forms": [
+        "cylinder_head"
+      ],
+      "litres": 0.125,
+      "layer": 3,
+      "part": {
+        "item": "feedback:cylinder_head",
+        "shape": [
+          "HH"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "medium_compression",
+        "variants": [
+          {
+            "name": "low_compression",
+            "shape": [
+              "H"
+            ],
+            "params": {
+              "compression": 0,
+              "torque": 0.95
+            }
+          },
+          {
+            "name": "medium_compression",
+            "params": {
+              "compression": 1,
+              "torque": 1.0
+            }
+          },
+          {
+            "name": "high_compression",
+            "shape": [
+              "HH",
+              "H"
+            ],
+            "params": {
+              "compression": 2,
+              "torque": 1.08
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "KP",
+      "CH"
+    ]
+  ],
+  "defaults": {
+    "K": "feedback:steel",
+    "P": "feedback:steel",
+    "C": "feedback:steel",
+    "H": "feedback:steel"
+  }
+}

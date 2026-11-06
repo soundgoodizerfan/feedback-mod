@@ -45,8 +45,6 @@ final class CodeRecipeExamples {
         crafting.addExtension(io.github.soundgoodizerfan.feedback.machine.xp.XpWireRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.TorchRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.weapon.MagazineLoadRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
-        crafting.addExtension(io.github.soundgoodizerfan.feedback.vehicle.engine.EngineRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
-        crafting.addExtension(io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.FoodSaltingRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.FoodMergeRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.JarFillRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));

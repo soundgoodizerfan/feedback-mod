@@ -33,9 +33,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 /**
- * An engine as designed on the Engine Stand ({@code docs/specs/feedback_vehicles_spec.md} section 6, v1):
- * four settings, and every figure the engine has derived from them and its material -- nothing
- * stored that could disagree with the settings.
+ * An engine as baked from its modular design ({@code ModularBake#engine}; {@code docs/specs/feedback_vehicles_spec.md} section 6):
+ * the settings its parts make, and every figure the engine has derived from them and its material -- nothing
+ * stored that could disagree with the settings. The three multipliers are what the block layout, crank and head
+ * and the mix of metals in the other parts do to the plain figures; 1 for a plain engine.
  *
  * <p>What the material contributes is read off the material system ({@link Material}), never a
  * table here: yield strength over density sets how fast the pistons may move, density how heavy the metal is. A
@@ -46,8 +47,13 @@ import net.minecraft.util.Mth;
  *
  * @param boreMm   cylinder width, in mm; a design parameter, not a quantity any system trades in.
  * @param strokeMm how far a piston travels, in mm.
+ * @param material the pistons' metal, which sets how fast they may move.
+ * @param torqueMult torque per litre against a plain engine (the layout, the head).
+ * @param revMult    redline against a plain engine (the layout, the crank's build and metal).
+ * @param massMult   weight against a plain engine (the layout, the metal of the block, crank and head).
  */
-public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material, Compression compression) {
+public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material, Compression compression,
+                           float torqueMult, float revMult, float massMult) {
 
     /**
      * The compression ratio, a part choice (cylinder head and piston crown; petrochemistry spec 9.1).
@@ -81,41 +87,48 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
         }
     }
 
-    /** A design with the middle compression: what every design before the part existed was. */
+    /** A plain engine: the middle compression and no multipliers. */
     public EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material) {
-        this(cylinders, boreMm, strokeMm, material, Compression.MEDIUM);
+        this(cylinders, boreMm, strokeMm, material, Compression.MEDIUM, 1f, 1f, 1f);
     }
 
 
     public static final int MIN_CYLINDERS = 1, MAX_CYLINDERS = 8;
-    /** Bore and stroke range and step, in mm. The step size is [OPEN] (spec section 6); 5 mm for now. */
-    public static final int MIN_MM = 40, MAX_MM = 120, STEP_MM = 5;
+    /** Bore and stroke range, in mm (the {@code bore} and {@code stroke} dims of {@code engine.json} declare the same). */
+    public static final int MIN_MM = 40, MAX_MM = 120;
 
     public static final Codec<EngineDesign> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.intRange(MIN_CYLINDERS, MAX_CYLINDERS).fieldOf("cylinders").forGetter(EngineDesign::cylinders),
             Codec.intRange(MIN_MM, MAX_MM).fieldOf("bore").forGetter(EngineDesign::boreMm),
             Codec.intRange(MIN_MM, MAX_MM).fieldOf("stroke").forGetter(EngineDesign::strokeMm),
             ResourceLocation.CODEC.fieldOf("material").forGetter(EngineDesign::material),
-            Compression.CODEC.optionalFieldOf("compression", Compression.MEDIUM).forGetter(EngineDesign::compression)
+            Compression.CODEC.optionalFieldOf("compression", Compression.MEDIUM).forGetter(EngineDesign::compression),
+            Codec.FLOAT.optionalFieldOf("torque_mult", 1f).forGetter(EngineDesign::torqueMult),
+            Codec.FLOAT.optionalFieldOf("rev_mult", 1f).forGetter(EngineDesign::revMult),
+            Codec.FLOAT.optionalFieldOf("mass_mult", 1f).forGetter(EngineDesign::massMult)
     ).apply(i, EngineDesign::new));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, EngineDesign> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT, EngineDesign::cylinders,
-            ByteBufCodecs.VAR_INT, EngineDesign::boreMm,
-            ByteBufCodecs.VAR_INT, EngineDesign::strokeMm,
-            ResourceLocation.STREAM_CODEC, EngineDesign::material,
-            Compression.STREAM_CODEC, EngineDesign::compression,
-            EngineDesign::new);
+    /** Eight fields, two more than {@code StreamCodec.composite} takes. */
+    public static final StreamCodec<RegistryFriendlyByteBuf, EngineDesign> STREAM_CODEC = StreamCodec.of(
+            (buf, e) -> {
+                ByteBufCodecs.VAR_INT.encode(buf, e.cylinders());
+                ByteBufCodecs.VAR_INT.encode(buf, e.boreMm());
+                ByteBufCodecs.VAR_INT.encode(buf, e.strokeMm());
+                ResourceLocation.STREAM_CODEC.encode(buf, e.material());
+                Compression.STREAM_CODEC.encode(buf, e.compression());
+                buf.writeFloat(e.torqueMult());
+                buf.writeFloat(e.revMult());
+                buf.writeFloat(e.massMult());
+            },
+            buf -> new EngineDesign(ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
+                    ResourceLocation.STREAM_CODEC.decode(buf), Compression.STREAM_CODEC.decode(buf),
+                    buf.readFloat(), buf.readFloat(), buf.readFloat()));
 
-    /** The settings pulled back into range and onto the step, so a design is always buildable. */
+    /** The settings pulled back into range, so a design is always buildable. */
     public EngineDesign {
         cylinders = Mth.clamp(cylinders, MIN_CYLINDERS, MAX_CYLINDERS);
-        boreMm = snap(boreMm);
-        strokeMm = snap(strokeMm);
-    }
-
-    private static int snap(int mm) {
-        return Mth.clamp(Math.round(mm / (float) STEP_MM) * STEP_MM, MIN_MM, MAX_MM);
+        boreMm = Mth.clamp(boreMm, MIN_MM, MAX_MM);
+        strokeMm = Mth.clamp(strokeMm, MIN_MM, MAX_MM);
     }
 
     /** Swept volume of every cylinder, in mB -- litres, since 1 mB is 1 L. */
@@ -125,7 +138,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
     }
 
     public Su peakTorque() {
-        return new Su(FTuning.ENGINE_SU_PER_MB * displacementMb());
+        return new Su(FTuning.ENGINE_SU_PER_MB * displacementMb() * torqueMult);
     }
 
     /**
@@ -144,7 +157,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
             return new Rpm(0f);
         float pistonSpeed = FTuning.ENGINE_PISTON_SPEED_PER_SQRT_SPECIFIC_YIELD
                 * (float) Math.sqrt(yield.get().value() / m.density().muPerMb());
-        return new Rpm(pistonSpeed / (2 * strokeMm / 1000f) * 60);
+        return new Rpm(pistonSpeed / (2 * strokeMm / 1000f) * 60 * revMult);
     }
 
     public Rpm peakRpm(Material m) {
@@ -162,7 +175,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
 
     /** The engine's own weight: its metal times the material's density. Zero for a material nobody has weighed. */
     public Mu mass(Material m) {
-        return new Mu(FTuning.ENGINE_METAL_PER_MB * displacementMb() * m.density().muPerMb());
+        return new Mu(FTuning.ENGINE_METAL_PER_MB * displacementMb() * m.density().muPerMb() * massMult);
     }
 
     /**
@@ -185,11 +198,6 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
         return out;
     }
 
-    /** Ingots of its material it takes to build. */
-    public int ingots() {
-        return cylinders * FTuning.ENGINE_INGOTS_PER_CYLINDER;
-    }
-
     /**
      * Whether an engine can be made of {@code m}: a metal, weighed, with a yield strength to rev
      * to and an ingot to pay in. One rule, asked by the stand's sample slot, its screen and the
@@ -198,22 +206,5 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
     public static boolean buildable(ResourceLocation id, Material m) {
         return m.kind().orElse(null) == Material.Kind.METAL && m.density().muPerMb() > 0
                 && m.mechanical().yieldStrength().isPresent() && m.item(id, "ingot").isPresent();
-    }
-
-    /** The material a sample item names for an engine -- any form of a buildable metal -- if any. */
-    public static java.util.Optional<ResourceLocation> sampleMaterial(java.util.Map<ResourceLocation, Material> materials,
-                                                                      net.minecraft.world.item.ItemStack sample) {
-        if (sample.isEmpty())
-            return java.util.Optional.empty();
-        return Material.find(materials, sample.getItem()).filter(l -> buildable(l.id(), l.material())).map(Material.Located::id);
-    }
-
-    public EngineDesign withMaterial(ResourceLocation m) {
-        return new EngineDesign(cylinders, boreMm, strokeMm, m, compression);
-    }
-
-    /** A first design for an empty stand: a 1.6 L-ish inline four. */
-    public static EngineDesign starter(ResourceLocation material) {
-        return new EngineDesign(4, 80, 80, material);
     }
 }
