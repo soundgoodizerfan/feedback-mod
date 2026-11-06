@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "feedback:block/fish_wheel"
+    },
+    "axis=z": {
+      "model": "feedback:block/fish_wheel",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "feedback:block/fish_wheel",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

@@ -25,6 +25,8 @@ import java.util.Map;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.machine.creel.CreelBlock;
 import io.github.soundgoodizerfan.feedback.machine.creel.CreelBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.fishwheel.FishWheelBlock;
+import io.github.soundgoodizerfan.feedback.machine.fishwheel.FishWheelBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.stoker.StokerBlock;
 import io.github.soundgoodizerfan.feedback.machine.stoker.StokerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.darkcell.CrushHeadBlock;
@@ -157,6 +159,13 @@ public final class FAutomation {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreelBlockEntity>> CREEL_ENTITY =
             BLOCK_ENTITIES.register("creel", () -> BlockEntityType.Builder.of(CreelBlockEntity::new, CREEL.get()).build(null));
 
+    /** The fish wheel: a water wheel with baskets. */
+    public static final DeferredBlock<FishWheelBlock> FISH_WHEEL = BLOCKS.register("fish_wheel",
+            () -> new FishWheelBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD).noOcclusion()));
+    public static final DeferredItem<BlockItem> FISH_WHEEL_ITEM = ITEMS.registerSimpleBlockItem(FISH_WHEEL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FishWheelBlockEntity>> FISH_WHEEL_ENTITY =
+            BLOCK_ENTITIES.register("fish_wheel", () -> BlockEntityType.Builder.of(FishWheelBlockEntity::new, FISH_WHEEL.get()).build(null));
+
     private FAutomation() {
     }
 
@@ -172,6 +181,7 @@ public final class FAutomation {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DARK_CELL_ENTITY.get(), (cell, side) -> cell.outputView());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, STOKER_ENTITY.get(), (stoker, side) -> stoker.hopper(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CREEL_ENTITY.get(), (creel, side) -> creel.catches());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FISH_WHEEL_ENTITY.get(), (wheel, side) -> wheel.catches());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FUME_PORT_ENTITY.get(), (port, side) -> port.tank());
     }
 
@@ -187,6 +197,7 @@ public final class FAutomation {
         output.accept(RADIATION_SOURCE_ITEM.get());
         output.accept(STOKER_ITEM.get());
         output.accept(CREEL_ITEM.get());
+        output.accept(FISH_WHEEL_ITEM.get());
         output.accept(PIVOT_MAST_ITEM.get());
         ARMS.values().forEach(i -> output.accept(i.get()));
         TIPS.values().forEach(i -> output.accept(i.get()));

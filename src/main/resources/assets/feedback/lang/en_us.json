@@ -5416,5 +5416,7 @@
   "block.feedback.creel": "Creel",
   "feedback.stoker.drum": "Drum size %s",
   "feedback.jei.info.stoker": "A screw feed that pushes solid fuel into the firebox in front of it, driven by a vertical shaft. Three drum sizes, stepped with an empty hand, set how much each turn moves. A hopper or belt fills it from any side but the front. It does not look at the fire: a full firebox refuses the fuel and the feed stalls.",
-  "feedback.jei.info.creel": "A basket trap for water. Set it where it is under water in a pond, river or sea; a puddle catches nothing. Every couple of minutes it draws a catch from the same fish and junk the water gives a rod, never treasure; bait in the top slot shortens the wait and is spent. An empty hand empties the basket, and a hopper can take from it. A full basket stops."
+  "feedback.jei.info.creel": "A basket trap for water. Set it where it is under water in a pond, river or sea; a puddle catches nothing. Every couple of minutes it draws a catch from the same fish and junk the water gives a rod, never treasure; bait in the top slot shortens the wait and is spent. An empty hand empties the basket, and a hopper can take from it. A full basket stops.",
+  "block.feedback.fish_wheel": "Fish Wheel",
+  "feedback.jei.info.fish_wheel": "A water wheel with baskets on its blades. It turns in a current like any wheel but gives half the power, and while it turns it draws a catch from the same fish the water gives a rod, never treasure; more blades in the current catch faster. An empty hand empties the baskets, and a hopper can take from them. A full basket stops the catch, not the wheel."
 }

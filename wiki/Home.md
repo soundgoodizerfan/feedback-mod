@@ -43,7 +43,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Logistics:** [Conveyor Belt](Conveyor_Belt.md) · [Belt Head Roller](Belt_Head_Roller.md) · [Belt Modules](Belt_Modules.md) · [Pneumatic Tube](Pneumatic_Tube.md) · [Carrier](Carrier.md) · [Tube Junction](Tube_Junction.md) · [Tube Station](Tube_Station.md) · [Ender Port](Ender_Port.md) · [Liquid Teleportant](Liquid_Teleportant.md)
 
-**Automation:** [Pivot Mast](Pivot_Mast.md) · [Dark Cell](Dark_Cell.md) · [Sensors](Sensors.md) · [Redstone Bridges](Redstone_Bridges.md) · [Stoker](Stoker.md) · [Creel](Creel.md)
+**Automation:** [Pivot Mast](Pivot_Mast.md) · [Dark Cell](Dark_Cell.md) · [Sensors](Sensors.md) · [Redstone Bridges](Redstone_Bridges.md) · [Stoker](Stoker.md) · [Creel](Creel.md) · [Fish Wheel](Fish_Wheel.md)
 
 **Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Machine Head](Machine_Head.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 

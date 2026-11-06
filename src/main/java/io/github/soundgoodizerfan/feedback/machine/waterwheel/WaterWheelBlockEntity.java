@@ -44,7 +44,17 @@ public class WaterWheelBlockEntity extends RotationNode {
     private int ticksUntilFlowCheck;
 
     public WaterWheelBlockEntity(BlockPos pos, BlockState state) {
-        super(FBlockEntities.WATER_WHEEL.get(), pos, state);
+        this(FBlockEntities.WATER_WHEEL.get(), pos, state);
+    }
+
+    /** For a wheel variant (the fish wheel) that is the same wheel under another block entity type. */
+    protected WaterWheelBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    /** How many blade faces moving water presses on, as last counted. */
+    public int flowing() {
+        return flowingSides;
     }
 
     public void tickServer() {
