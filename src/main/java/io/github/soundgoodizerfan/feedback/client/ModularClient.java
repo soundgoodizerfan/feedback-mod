@@ -44,9 +44,7 @@ public final class ModularClient {
 
     @SubscribeEvent
     public static void registerColors(RegisterColorHandlersEvent.Item event) {
-        event.register(ModularClient::tint, java.util.stream.Stream.concat(FModular.items().stream(),
-                java.util.stream.Stream.of((net.minecraft.world.item.Item) io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN.get()))
-                .toArray(net.minecraft.world.item.Item[]::new));
+        event.register(ModularClient::tint, FModular.items().toArray(net.minecraft.world.item.Item[]::new));
         event.register((stack, layer) -> {
             io.github.soundgoodizerfan.feedback.process.MadeOf made =
                     stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
@@ -66,6 +64,8 @@ public final class ModularClient {
     @SubscribeEvent
     public static void registerExtensions(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
         event.registerItem(new SpearClient.Extension(), FModular.SPEAR.get());
+        event.registerItem(new io.github.soundgoodizerfan.feedback.client.gun.GunRenderer.Extension(),
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN.get());
     }
 
     /**

@@ -56,7 +56,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
@@ -149,21 +148,6 @@ public final class GunClient {
         }
     }
 
-    /** Aimed, the gun in the main hand slides from the hip to the middle of the screen. */
-    @SubscribeEvent
-    public static void onHand(RenderHandEvent event) {
-        var mc = Minecraft.getInstance();
-        if (aim <= 0 || mc.player == null || event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND
-                || !(event.getItemStack().getItem() instanceof GunItem))
-            return;
-        float side = mc.player.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT ? 1f : -1f;
-        event.getPoseStack().translate(-side * ADS_ACROSS * aim, ADS_UP * aim, 0f);
-    }
-
-    /** How far the held gun moves to centre on the screen: the hip position's offset, in blocks of view space. */
-    private static final float ADS_ACROSS = 0.65f;
-    private static final float ADS_UP = 0.015f;
-
     /** Aimed down a sight the world is closer. */
     @SubscribeEvent
     public static void onFov(ComputeFovModifierEvent event) {
@@ -230,6 +214,7 @@ public final class GunClient {
             took = io.github.soundgoodizerfan.feedback.core.Haste.time(Math.round(took * GunShots.reloadScale(player)), player);
             if (took > 0) {
                 reloadUntilMs = now + took;
+                io.github.soundgoodizerfan.feedback.client.gun.GunMotion.reload(reloadUntilMs);
                 PacketDistributor.sendToServer(new GunReloadPayload(true));
                 mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN,
                         SoundSource.PLAYERS, 0.6f, 1.4f, false);
@@ -238,6 +223,7 @@ public final class GunClient {
             }
         } else if (!reloadDown && reloadWasDown) {
             reloadUntilMs = 0;
+            io.github.soundgoodizerfan.feedback.client.gun.GunMotion.reloadStop();
             PacketDistributor.sendToServer(new GunReloadPayload(false));
         }
         reloadWasDown = reloadDown;
@@ -357,6 +343,8 @@ public final class GunClient {
     private static void shoot(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunFigures f, boolean off, long now) {
         PacketDistributor.sendToServer(new GunFirePayload(player.getYRot(), player.getXRot(), aim > 0.5f, off));
         reloadUntilMs = 0; // a pull ends a reload; the server does the same
+        io.github.soundgoodizerfan.feedback.client.gun.GunMotion.reloadStop();
+        io.github.soundgoodizerfan.feedback.client.gun.GunMotion.shot(off, f.cycleMs(), f.kickDeg());
 
         for (GunSound.Layer layer : GunSound.layers(f, player.getRandom()))
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), layer.event(),

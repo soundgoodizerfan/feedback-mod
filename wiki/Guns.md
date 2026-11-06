@@ -4,6 +4,12 @@ Feedback doesn't have a list of guns. A gun is a **tool type** like a pick or a 
 
 There are two kinds of launcher: an ordinary **gun**, which burns powder in a chamber, and a **[coilgun](Coilgun.md)**, which throws an iron slug with a redstone-wound coil.
 
+## What it looks like
+
+A gun is drawn from its parts, each in its own metal's or wood's colour. The barrel shows at the length and thickness it was drilled to, the stock and forend take the grip's material, and every fitting appears where it mounts: a suppressor or brake on the muzzle, a tube under the barrel, a scope or reflex sight on top, a bipod, a bayonet, a steam chest on the side. A rifle, shotgun or machine gun is held in both hands.
+
+In your hands it moves: it kicks back and up on each shot (barely at all when aimed), the slide or bolt carrier snaps back and returns, and a bolt, lever or pump is worked between shots. An empty self-loading gun stays open, for you and for anyone looking at it. Reloading tips the gun over: a magazine drops out and a fresh one goes in, a revolver's cylinder swings out, a break action hinges open, a tube is thumbed full round by round. The gun lags a little behind fast turns, dips when you land, and lowers while you sprint.
+
 ## Getting one
 
 1. Draw the gun on paper at the [Blueprint Table](Blueprint_Table.md) and print it: a **blueprint** of the gun. It shows the figures the gun will have (at the reference round) before you make it.

@@ -586,11 +586,13 @@ groups** are the discrete choices (one per axis). Nothing else.
 
 **GPL-3.0 (JuaanP), read at `master` commit `9e84d99`, cloned to `../SableBarehanded-reference`.** Design only; **nothing copied.** *Taken:* the server-authoritative grab flow (the client only says the key is down; the server resolves the body from the hit position, checks reach and mass, and rejects tiny bodies) and dropping the hold on over-tension or when the player stands on the body. *Rejected:* the constraint-motor levitation of heavy bodies (heavy bodies are shoved by impulse and resisted by tires and brakes through Sable), config dials, potion strength, food exhaustion, the speed modifier and the log-mass force curve.
 
-## TacZ (guns, 2026-10-12 and 2026-10-21)
+## TacZ (guns, 2026-10-12, 2026-10-21 and 2026-11-05)
 
 **GPL-3.0, read at its `1.20.1` branch (commit `b482eff`); no 1.21.1 branch was checked.** Read for how a gun *feels* (spec 7.1, earlier) and, 2026-10-21, for how it models attachments and ammunition (spec 13). **No code was copied.** The earlier feel read was not recorded here when it was made; this entry covers both.
 
 *Taken:* the idea of folding installed parts into one cached figure set when something changes and reading it at the shot (already how the baked gun works); capacity in discrete steps; a melee block on a bayonet-style part; a blow split into a normal part and a piercing part by a fraction (to be the round's own figure). *Rejected, and why it matters:* attachments that rewrite the round's damage, speed, pierce, armour ignore, ignite and explosion (a grip can set a bullet alight, so the owner of a property is nobody), bullet figures stored in the gun's data with the ammunition item only an id (so there are no ammunition variants), an extended magazine standing in for a slug load, free-scalar and scripted modifiers, and compatibility by id lists. Feedback's rule is the opposite on each (spec 13.1). *Not read:* Point Blank (no public source).
+
+**2026-11-05, gun animation, read at its `1.21.1` branch (commit `7f5b112`; code GPL-3.0, its assets CC BY-NC-ND and never used).** Design only, nothing copied; the code is `client/gun/GunMotion`. *Taken:* the shot kick on the held model as a timestamp, a fast rise, an ease-out-cubic decay over about 0.3 s, a small random twist, almost none of it when aimed; turn lag squashed by `tanh` so a flick leans the gun and no more; a dip on take-off and landing; a springy aim; a slide that snaps back, returns slower and bounces once, held open on an empty self-loader. *Rejected:* per-gun keyframe clips and the per-gun Lua state machine (a gun assembled from parts has no single model to author clips for, so every motion here is built in code from the action, the feed and the gun's figures), the fixed 0.18 s slide cycle (here it follows the gun's own cycle, and a manual action takes its action's own time), the threaded second-order dynamics class (a per-frame spring), its Bedrock bone models and first-person arm rendering.
 
 ## Spartan Weaponry (thrown modular weapons, 2026-10-21)
 
@@ -783,12 +785,6 @@ Not from any source above. Rights: the project's, All Rights Reserved.
 | File | Source | Licence |
 | --- | --- | --- |
 | `assets/feedback/textures/entity/feedbacker_skin.png` | a Minecraft skin supplied by the author; only its right arm is drawn, as the Feedbacker's sleeve | Author's own supply; creator and licence not recorded. Confirm before any public release. |
-
-## Models
-
-| File | Source | Licence |
-| --- | --- | --- |
-| `assets/feedback/models/item/gun.json` | "[minecraft] pistol" by sedona1029 on Sketchfab. Converted from its glTF into a vanilla JSON element model (cube geometry and rotations kept; UVs replaced with the greyscale block sprite at one texel per unit, tint index per cube by gun role; display transforms added). Its own texture is not used. Placeholder for the gun item. | **CC BY 4.0**, credit: sedona1029 |
 
 ### cleannrooster/forg-cleannrooster-assets (skill tree icons, 2026-10-23)
 

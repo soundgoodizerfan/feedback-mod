@@ -71,6 +71,12 @@ public class GunItem extends ModularItem implements io.github.soundgoodizerfan.f
     }
 
     /** "Steel Revolver": the barrel's metal and the gun's real-world designation, else the type's own name. */
+    /** Every shot and reload rewrites the stack; only a different item or slot lowers the gun to raise it again. */
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+        return slotChanged || oldStack.getItem() != newStack.getItem();
+    }
+
     @Override
     public Component getName(ItemStack stack) {
         return GunSpec.of(stack).flatMap(spec -> GunDesignation.of(stack, spec).map(name ->

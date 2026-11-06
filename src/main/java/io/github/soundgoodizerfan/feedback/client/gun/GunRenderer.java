@@ -1,0 +1,123 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.client.gun;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+
+/**
+ * The gun item's renderer: draws {@link GunDraw}'s shape in every display context. In the hand it is
+ * placed by the grip and moved by {@link GunMotion}; in a slot, a frame or on the ground it is fitted
+ * to the square. Built every frame, since a gun's shape is its parts' and no fixed model can be.
+ */
+public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
+
+    /** Blocks per centimetre in first person. */
+    static final float FIRST_PERSON_SCALE = 0.04f;
+    private static final float THIRD_PERSON_SCALE = 0.04f;
+
+    private static GunRenderer instance;
+
+    private GunRenderer() {
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+    }
+
+    /** Lets the gun item draw through this renderer, and holds a long gun two-handed in third person. */
+    public static final class Extension implements IClientItemExtensions {
+        @Override
+        public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            if (instance == null)
+                instance = new GunRenderer();
+            return instance;
+        }
+
+        @Override
+        public HumanoidModel.ArmPose getArmPose(LivingEntity entity, InteractionHand hand, ItemStack stack) {
+            return GunView.of(stack).longGun() ? HumanoidModel.ArmPose.CROSSBOW_HOLD : null;
+        }
+    }
+
+    @Override
+    public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buffers,
+                             int light, int overlay) {
+        GunView view = GunView.of(stack);
+        long now = System.currentTimeMillis();
+        GunMotion.Hand hand = null;
+        pose.pushPose();
+        pose.translate(0.5f, 0.5f, 0.5f);
+        float[] at = view.hand();
+        switch (context) {
+            case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND -> {
+                var player = Minecraft.getInstance().player;
+                HumanoidArm arm = context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND ? HumanoidArm.RIGHT : HumanoidArm.LEFT;
+                boolean off = player != null && arm != player.getMainArm();
+                hand = GunMotion.hand(off);
+                float side = arm == HumanoidArm.RIGHT ? 1f : -1f;
+                // Where the old fixed model's grip sat, so the hip pose and aim offsets keep their meaning.
+                pose.translate(0.094f * side, 0.0125f, 0.056f);
+                pose.scale(FIRST_PERSON_SCALE, FIRST_PERSON_SCALE, FIRST_PERSON_SCALE);
+                pose.translate(-at[0], -at[1], -at[2]);
+                GunMotion.item(pose, view, hand, now);
+            }
+            case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> {
+                pose.translate(0, 0.075f, 0.369f);
+                pose.scale(THIRD_PERSON_SCALE, THIRD_PERSON_SCALE, THIRD_PERSON_SCALE);
+                pose.translate(-at[0], -at[1], -at[2]);
+            }
+            default -> fit(pose, view, context);
+        }
+        var mesh = new GunMesh(pose, ItemRenderer.getFoilBufferDirect(buffers,
+                RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS), true, stack.hasFoil()), light, overlay);
+        GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
+        pose.popPose();
+    }
+
+    /** Fit the whole gun into the item's square: side on, muzzle to the right, long guns laid on the diagonal. */
+    private static void fit(PoseStack pose, GunView view, ItemDisplayContext context) {
+        float front = -(view.len() + view.muzzleReach()), back = view.rear();
+        float top = view.top() + (view.has("S") ? 3.6f : 1.2f), bottom = view.bottom();
+        float length = back - front, height = top - bottom;
+        boolean flat = context == ItemDisplayContext.GUI || context == ItemDisplayContext.FIXED;
+        float tilt = flat && view.longGun() ? 30f : flat ? 8f : 0f;
+        // A diagonal holds about 1.3 of the square's side for a slim gun.
+        float room = flat ? (view.longGun() ? 1.25f : 0.92f) : context == ItemDisplayContext.GROUND ? 0.5f : 0.7f;
+        float s = room / Math.max(length, height * 1.6f);
+        if (flat)
+            pose.mulPose(Axis.ZP.rotationDegrees(tilt));
+        pose.mulPose(Axis.YP.rotationDegrees(-90));
+        pose.scale(s, s, s);
+        pose.translate(0, -(top + bottom) / 2, -(front + back) / 2);
+    }
+}
