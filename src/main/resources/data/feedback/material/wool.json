@@ -61,7 +61,8 @@
     "string": "minecraft:string"
   },
   "exclude": [
-    "grip"
+    "grip",
+    "paper_case"
   ],
   "enchantability": 15,
   "electrical": {

@@ -28,6 +28,7 @@
     "warped_planks": "minecraft:warped_planks"
   },
   "exclude": [
-    "grip"
+    "grip",
+    "paper_case"
   ]
 }

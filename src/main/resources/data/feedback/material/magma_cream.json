@@ -15,6 +15,7 @@
     }
   },
   "exclude": [
-    "grip"
+    "grip",
+    "paper_case"
   ]
 }

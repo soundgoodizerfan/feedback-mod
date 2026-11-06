@@ -30,5 +30,8 @@
     "mosaic": "minecraft:bamboo_mosaic",
     "scaffolding": "minecraft:scaffolding"
   },
-  "enchantability": 12
+  "enchantability": 12,
+  "exclude": [
+    "paper_case"
+  ]
 }

@@ -28,7 +28,8 @@
     "block": "minecraft:honey_block"
   },
   "exclude": [
-    "grip"
+    "grip",
+    "paper_case"
   ],
   "perks": {
     "cling": 1

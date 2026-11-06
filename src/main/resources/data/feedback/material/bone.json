@@ -23,5 +23,8 @@
     "meal": "minecraft:bone_meal",
     "block": "minecraft:bone_block"
   },
-  "enchantability": 8
+  "enchantability": 8,
+  "exclude": [
+    "paper_case"
+  ]
 }

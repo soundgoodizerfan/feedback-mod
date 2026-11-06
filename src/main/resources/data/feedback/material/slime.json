@@ -22,7 +22,8 @@
     "block": "minecraft:slime_block"
   },
   "exclude": [
-    "grip"
+    "grip",
+    "paper_case"
   ],
   "perks": {
     "bounce": 1

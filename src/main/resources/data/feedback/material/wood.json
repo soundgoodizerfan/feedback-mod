@@ -80,5 +80,8 @@
     "crossbow": "minecraft:crossbow",
     "shield": "minecraft:shield"
   },
-  "enchantability": 15
+  "enchantability": 15,
+  "exclude": [
+    "paper_case"
+  ]
 }

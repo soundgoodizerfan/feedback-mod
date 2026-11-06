@@ -33,7 +33,8 @@
     "boots": "minecraft:leather_boots"
   },
   "exclude": [
-    "grip"
+    "grip",
+    "paper_case"
   ],
   "enchantability": 15,
   "electrical": {
