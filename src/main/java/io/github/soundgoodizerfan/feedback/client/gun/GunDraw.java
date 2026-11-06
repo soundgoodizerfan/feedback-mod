@@ -50,8 +50,10 @@ final class GunDraw {
         m.push();
         if (p.breakOpen() > 0)
             m.turnX(-38f * p.breakOpen(), barrelsBottom(v), -0.5f);
+        m.glowAt(v.glow()); // a hot barrel lights itself; its colour is already drawn toward the glow (GunView)
         barrels(m, v);
         muzzle(m, v);
+        m.glowAt(0);
         underBarrel(m, v);
         m.pop();
         sight(m, v);
@@ -61,8 +63,8 @@ final class GunDraw {
     // --- receivers ---------------------------------------------------------------------------------
 
     private static void handgun(GunMesh m, GunView v, GunMotion.Parts p) {
-        int frame = v.colour("R");
-        m.colour(frame);
+
+        m.part(v, "R");
         if (!v.openFrame()) {
             float sf = v.slideFront();
             m.box(-0.75f, -1.75f, -sf + 0.75f, 0.75f, -0.75f, 0.5f, Tile.PANEL);
@@ -70,7 +72,7 @@ final class GunDraw {
             // The slide runs back on the shot and stays back on the last round.
             m.push();
             m.move(0, 0, p.slide() * 1.5f);
-            m.colour(v.colour("A"));
+            m.part(v, "A");
             m.box(-0.875f, -0.75f, -sf, 0.875f, 0.75f, 0.75f, Tile.METAL);
             m.box(-0.9375f, -0.5f, -0.75f, 0.9375f, 0.5f, 0.5f, Tile.RIBBED); // rear serrations
             m.box(-0.5f, 0.75f, -sf + 0.25f, 0.5f, 0.8125f, 0.5f, Tile.BRUSHED);
@@ -96,12 +98,12 @@ final class GunDraw {
             m.box(-0.75f, -1.5f, -3.5f, 0.75f, 0.5f, -3.0f, Tile.METAL); // front of the window
             m.box(-0.125f, 1.0f, -1.25f, 0.125f, 1.0625f, -0.25f, Tile.BORE); // sight groove
             cylinder(m, v, p, -0.5f, -3.0f, -0.25f, 1.0f, 0.6f);
-            m.colour(frame).box(-0.25f, -0.875f, -3.5f - Math.min(v.len(), 3f), 0.25f, -0.375f, -3.5f, Tile.METAL); // ejector rod
+            m.part(v, "R").box(-0.25f, -0.875f, -3.5f - Math.min(v.len(), 3f), 0.25f, -0.375f, -3.5f, Tile.METAL); // ejector rod
         } else {
             m.box(-0.75f, -1.75f, -3.5f, 0.75f, 1.0f, 1.25f, Tile.PANEL);
         }
         // The hammer: cocked back while the action works, down on the shot.
-        m.colour(v.has("K") ? v.colour("K") : frame);
+        m.part(v, v.has("K") ? "K" : "R");
         m.push();
         m.turnX(-30f * p.hammer(), 0.5f, 1.25f);
         m.box(-0.25f, 0.5f, 1.0f, 0.25f, 1.5f, 1.5f, Tile.METAL);
@@ -119,12 +121,12 @@ final class GunDraw {
                              float depth, boolean well) {
         m.push();
         m.turnX(rake, y, z);
-        m.colour(v.has("G") ? v.colour("G") : v.colour("R"));
+        m.part(v, v.has("G") ? "G" : "R");
         float f = z - depth;
         m.box(-0.625f, y - length, f, 0.625f, y, z, Tile.PANEL);
         m.box(-0.6875f, y - length + 0.5f, f + 0.25f, 0.6875f, y - 0.5f, z - 0.25f, Tile.CHECKER);
         if (v.has("X")) {
-            m.colour(v.colour("X"));
+            m.part(v, "X");
             for (int i = 0; i < 3; i++) {
                 float yy = y - 0.75f - i * (length - 1.25f) / 2f;
                 m.box(-0.75f, yy - 0.25f, f - 0.0625f, 0.75f, yy, z + 0.0625f, Tile.RUBBER);
@@ -157,7 +159,7 @@ final class GunDraw {
 
     /** The guard and blade under {@code y}, from {@code z0} (front) to {@code z1}. */
     private static void trigger(GunMesh m, GunView v, float y, float z0, float z1) {
-        m.colour(v.has("T") ? v.colour("T") : v.colour("R"));
+        m.part(v, v.has("T") ? "T" : "R");
         m.box(-0.25f, y - 1f, z0, 0.25f, y, z0 + 0.25f, Tile.METAL);
         m.box(-0.25f, y - 1f, z0, 0.25f, y - 0.75f, z1, Tile.METAL);
         float tz = z0 + (z1 - z0) * 0.5f;
@@ -171,7 +173,7 @@ final class GunDraw {
     private static void cylinder(GunMesh m, GunView v, GunMotion.Parts p, float y, float z0, float z1, float r,
                                  float mouth) {
         m.push();
-        m.colour(v.colour("F"));
+        m.part(v, "F");
         m.move(-1.25f * p.cylinderOut(), 0, 0);
         m.turnZ(p.cylinderTurn(), 0, y);
         m.rod(0, y, r, z0, z1, Tile.BRUSHED);
@@ -190,7 +192,7 @@ final class GunDraw {
         if (v.slide())
             hi = 1f; // the carrier cover rides above
         int receiver = v.colour("R");
-        m.colour(receiver);
+        m.part(v, "R");
         m.box(-hw, lo, -0.5f, hw, hi, back, Tile.PANEL);
         m.box(hw, -0.25f, 0.75f, hw + 0.0625f, 0.5f, 2.75f, Tile.BORE); // ejection port
 
@@ -201,16 +203,16 @@ final class GunDraw {
         if (v.action().equals("pump")) {
             m.push();
             m.move(0, 0, p.pump() * 2.5f);
-            m.colour(v.colour("K"));
+            m.part(v, "K");
             m.box(-0.875f, under - 1.25f, -fe, 0.875f, under + 0.25f, -fe * 0.4f, Tile.RIBBED);
             m.pop();
-            m.colour(receiver).box(-0.125f, under - 0.25f, -fe * 0.4f, 0.125f, under, -0.5f, Tile.METAL); // action bar
+            m.part(v, "R").box(-0.125f, under - 0.25f, -fe * 0.4f, 0.125f, under, -0.5f, Tile.METAL); // action bar
         } else {
-            m.colour(furniture).box(-0.875f, under - 1f, -fe, 0.875f, under + 0.25f, -0.5f, Tile.GRAIN);
+            m.part(v, v.has("G") ? "G" : "R").box(-0.875f, under - 1f, -fe, 0.875f, under + 0.25f, -0.5f, Tile.GRAIN);
         }
 
         // The stock: wrist down and back, comb, a butt deepening toward the shoulder, a pad.
-        m.colour(furniture);
+        m.part(v, v.has("G") ? "G" : "R");
         m.push();
         m.turnX(-12f, lo, back);
         m.box(-0.625f, lo - 1.25f, back, 0.625f, hi - 0.5f, back + 2.75f, Tile.GRAIN);
@@ -231,7 +233,7 @@ final class GunDraw {
     private static void machineGun(GunMesh m, GunView v, GunMotion.Parts p) {
         int receiver = v.colour("R");
         float hw = v.halfWidth(), back = v.back();
-        m.colour(receiver);
+        m.part(v, "R");
         m.box(-hw, -1.25f, -1f, hw, 1.5f, back, Tile.PANEL);
         m.box(hw, -0.5f, 0.5f, hw + 0.0625f, 0.5f, 3.5f, Tile.BORE);
         // Top cover, hinged at the back; it lifts to lay a belt.
@@ -251,7 +253,7 @@ final class GunDraw {
         // Ventilated handguard round the barrel's root.
         float under = barrelsBottom(v);
         float fe = GunView.snap(Math.min(Math.max(v.len() * 0.5f, 3f), 9f), 0.25f);
-        m.colour(v.has("G") ? v.colour("G") : receiver).box(-0.875f, under - 0.75f, -fe, 0.875f, 0.875f, -1f, Tile.VENT);
+        m.part(v, v.has("G") ? "G" : "R").box(-0.875f, under - 0.75f, -fe, 0.875f, 0.875f, -1f, Tile.VENT);
 
         action(m, v, p, hw, 1.5f, back);
         grip(m, v, p, -1.25f, back - 0.75f, 3.25f, -15f, 1.75f, false);
@@ -261,7 +263,7 @@ final class GunDraw {
 
     /** The action's visible bits on a long gun: a bolt handle, a lever loop, a charging handle, a top lever. */
     private static void action(GunMesh m, GunView v, GunMotion.Parts p, float hw, float hi, float back) {
-        m.colour(v.has("A") ? v.colour("A") : v.colour("K"));
+        m.part(v, v.has("A") ? "A" : "K");
         switch (v.action()) {
             case "bolt" -> {
                 // Lifts a quarter turn about the bore, then draws back.
@@ -300,12 +302,15 @@ final class GunDraw {
     /** What feeds the gun below or beside the receiver: a box magazine, a fixed box, a belt and its can. */
     private static void feed(GunMesh m, GunView v, GunMotion.Parts p, float lo, float z0, float z1) {
         if (v.has("b")) {
-            m.colour(v.colour("b")).box(-0.625f, lo - 2.5f, z0, 0.625f, lo, z1 + 0.5f, Tile.PANEL);
+            m.part(v, "b").box(-0.625f, lo - 2.5f, z0, 0.625f, lo, z1 + 0.5f, Tile.PANEL);
             return;
         }
         if (v.has("Y") || v.mag() == MagazineSize.BELT) {
             float hw = v.halfWidth();
-            m.colour(v.has("Y") ? v.colour("Y") : magColour());
+            if (v.has("Y"))
+                m.part(v, "Y");
+            else
+                m.colour(magColour());
             m.box(-hw - 2f, lo - 2.5f, z0 - 0.5f, -hw, lo + 0.5f, z1 + 1f, Tile.PANEL);
             m.box(-hw - 0.0625f, lo + 0.5f, z0, -hw + 0.25f, lo + 1.25f, z1, Tile.LINKS);
             return;
@@ -357,40 +362,40 @@ final class GunDraw {
 
     private static void barrels(GunMesh m, GunView v) {
         float start = breech(v), end = front(v), r = v.r(), len = start - end;
-        m.colour(v.colour("B"));
+        m.part(v, "B");
         m.rod(0, 0, r, start, end, Tile.BRUSHED);
         if (v.has("D")) {
             float y = -r - v.r2(), end2 = start - Math.max(v.len2(), 1f);
-            m.colour(v.colour("D"));
+            m.part(v, "D");
             m.rod(0, y, v.r2(), start, end2, Tile.BRUSHED);
             float b = Math.max(0.125f, v.r2() - 0.25f);
             m.box(-b, y - b, end2 - 0.0625f, b, y + b, end2, Tile.BORE);
         }
         // Iron sights: a front post as tall as the rear notch's line, so the two line up when aimed.
         if (v.longGun() && !v.has("S")) {
-            m.colour(v.colour("B")).box(-0.125f, r, end + 0.25f, 0.125f, Math.max(r + 0.5f, v.top() + 0.25f), end + 0.75f, Tile.METAL);
-            m.colour(v.colour("R"));
+            m.part(v, "B").box(-0.125f, r, end + 0.25f, 0.125f, Math.max(r + 0.5f, v.top() + 0.25f), end + 0.75f, Tile.METAL);
+            m.part(v, "R");
             float z = v.rearSight();
             m.box(-0.5f, v.top(), z, -0.125f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
             m.box(0.125f, v.top(), z, 0.5f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
         }
         if (v.openFrame() && !v.has("S"))
-            m.colour(v.colour("B")).box(-0.0625f, r, end + 0.25f, 0.0625f, Math.max(r + 0.25f, v.top() + 0.0625f), end + 0.75f, Tile.METAL);
+            m.part(v, "B").box(-0.0625f, r, end + 0.25f, 0.0625f, Math.max(r + 0.25f, v.top() + 0.0625f), end + 0.75f, Tile.METAL);
         if (v.has("H"))
-            m.colour(v.colour("H")).rod(0, 0, r + 0.25f, start, start - Math.max(1f, len * 0.7f), Tile.VENT);
+            m.part(v, "H").rod(0, 0, r + 0.25f, start, start - Math.max(1f, len * 0.7f), Tile.VENT);
         if (v.has("Z")) {
             float stop = start - Math.min(len - 0.5f, 6f);
-            m.colour(v.colour("Z"));
+            m.part(v, "Z");
             m.rings(0, 0, r + 0.25f, start - 0.25f, stop, Math.max(1, (int) ((start - stop) / 0.75f)), 0.25f, Tile.RIBBED);
         }
         if (v.has("J"))
-            m.colour(v.colour("J")).rod(0, 0, r + 0.25f, start - len * 0.3f, start - len * 0.65f, Tile.PANEL);
+            m.part(v, "J").rod(0, 0, r + 0.25f, start - len * 0.3f, start - len * 0.65f, Tile.PANEL);
         if (v.has("W")) {
             float stop = start - Math.min(len - 0.5f, 5f);
-            m.colour(v.colour("W")).rings(0, 0, r + 0.375f, start - 0.25f, stop, 5, 0.5f, Tile.COIL);
+            m.part(v, "W").rings(0, 0, r + 0.375f, start - 0.25f, stop, 5, 0.5f, Tile.COIL);
         }
         if (v.has("Q"))
-            m.colour(v.colour("Q")).rod(0, 0, r + 0.25f, end, end + Math.min(2.5f, len * 0.4f), Tile.BRUSHED);
+            m.part(v, "Q").rod(0, 0, r + 0.25f, end, end + Math.min(2.5f, len * 0.4f), Tile.BRUSHED);
         if (v.has("P")) {
             float f = switch (v.variant("P")) {
                 case "thread_breech" -> 0.18f;
@@ -398,10 +403,10 @@ final class GunDraw {
                 default -> 0.5f;
             };
             float z = GunView.snap(start - len * f, 0.25f);
-            m.colour(v.colour("P")).rod(0, 0, r + 0.25f, z - 0.375f, z + 0.375f, Tile.KNURL);
+            m.part(v, "P").rod(0, 0, r + 0.25f, z - 0.375f, z + 0.375f, Tile.KNURL);
         }
         if (v.has("V")) {
-            m.colour(v.colour("V"));
+            m.part(v, "V");
             for (int i = 0; i < 3; i++) {
                 float z = end + 0.5f + i * 0.75f;
                 if (z < start - 0.5f)
@@ -414,14 +419,14 @@ final class GunDraw {
     private static void muzzle(GunMesh m, GunView v) {
         float z = front(v), r = v.r();
         if (v.has("N")) {
-            m.colour(v.colour("N"));
+            m.part(v, "N");
             m.rod(0, 0, r + 0.125f, z, z - 1.5f, Tile.METAL);
             m.box(-r - 0.1875f, -r * 0.5f, z - 1.125f, r + 0.1875f, r * 0.5f, z - 0.625f, Tile.BORE);
             z -= 1.5f;
         }
         if (v.has("M")) {
             float rr = Math.max(0.875f, r + 0.375f);
-            m.colour(v.colour("M"));
+            m.part(v, "M");
             m.rod(0, 0, rr, z, z - 4.5f, Tile.BRUSHED);
             m.rod(0, 0, rr + 0.0625f, z, z - 0.5f, Tile.KNURL);
             m.rod(0, 0, rr + 0.0625f, z - 4f, z - 4.5f, Tile.KNURL);
@@ -437,21 +442,21 @@ final class GunDraw {
         float y = under - 0.375f;
         if (v.has("E")) {
             float stop = start - Math.max(Math.min(len * 0.85f, len - 0.5f), 2f);
-            m.colour(v.colour("E"));
+            m.part(v, "E");
             m.rod(0, y, 0.375f, start, stop, Tile.METAL);
             m.rod(0, y, 0.4375f, stop, stop - 0.25f, Tile.KNURL);
             y -= 0.75f;
         }
         if (v.has("U")) {
             float rr = v.variant("U").equals("heavy_spring") ? 0.625f : 0.5f;
-            m.colour(v.colour("U")).rod(0, y - rr + 0.375f, rr, start, start - Math.min(len * 0.6f + 1f, 6f), Tile.COIL);
+            m.part(v, "U").rod(0, y - rr + 0.375f, rr, start, start - Math.min(len * 0.6f + 1f, 6f), Tile.COIL);
             y -= 2 * rr;
         }
         if (v.has("C"))
-            m.colour(v.colour("C")).box(-0.5f, y - 0.75f, end + 0.25f, 0.5f, y + 0.375f, end + 2f, Tile.METAL);
+            m.part(v, "C").box(-0.5f, y - 0.75f, end + 0.25f, 0.5f, y + 0.375f, end + 2f, Tile.METAL);
         if (v.has("I")) {
             float zc = GunView.snap(end + len * 0.25f, 0.25f);
-            m.colour(v.colour("I"));
+            m.part(v, "I");
             m.rod(0, 0, v.r() + 0.125f, zc - 0.25f, zc + 0.25f, Tile.KNURL);
             for (float side : new float[]{-1f, 1f}) {
                 m.push();
@@ -462,7 +467,7 @@ final class GunDraw {
             }
         }
         if (v.has("a")) {
-            m.colour(v.colour("a"));
+            m.part(v, "a");
             m.rod(0, 0, v.r() + 0.125f, end, end + 0.75f, Tile.METAL);
             m.box(-0.0625f, under - 0.75f, end - 5.5f, 0.0625f, under - 0.25f, end + 0.5f, Tile.BRUSHED);
             m.push();
@@ -483,7 +488,7 @@ final class GunDraw {
             case "cross_reticle" -> 0xFF40FF60;
             default -> 0xFFFF3030;
         };
-        m.colour(v.colour("S"));
+        m.part(v, "S");
         if (v.variant("S").equals("scope")) {
             float zs = z0 - 0.5f, ze = zs + v.scopeLength(), y = top + 1f;
             m.box(-0.25f, top, zs + 0.5f, 0.25f, y, zs + 1f, Tile.METAL);
@@ -518,23 +523,23 @@ final class GunDraw {
         };
         float base = v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.5f;
         if (v.has("L"))
-            m.colour(v.colour("L")).box(-hw - 0.125f, base - 0.125f, at - 0.375f, -hw, base + 0.125f, at + 0.375f, Tile.KNURL);
+            m.part(v, "L").box(-hw - 0.125f, base - 0.125f, at - 0.375f, -hw, base + 0.125f, at + 0.375f, Tile.KNURL);
         if (v.has("d"))
-            m.colour(v.colour("d")).rod(-hw - 0.25f, base + 0.5f, 0.25f, at + 0.5f, at + 2f, Tile.BRUSHED);
+            m.part(v, "d").rod(-hw - 0.25f, base + 0.5f, 0.25f, at + 0.5f, at + 2f, Tile.BRUSHED);
         if (v.has("O")) {
             boolean large = v.variant("O").equals("large_chest");
             float rr = large ? 1f : 0.75f, len = large ? 6f : 4f, x = -hw - rr;
             float z0 = v.type() == GunLayout.Type.HANDGUN ? -1f : -0.5f;
-            m.colour(v.colour("O"));
+            m.part(v, "O");
             m.rod(x, 0, rr, z0, z0 - len, Tile.METAL);
             m.rod(x, 0, rr + 0.0625f, z0, z0 - 0.25f, Tile.PANEL);
             m.rod(x, 0, rr + 0.0625f, z0 - len + 0.25f, z0 - len, Tile.PANEL);
             m.box(x + rr * 0.5f, -0.25f, z0 - 0.25f, -hw, 0.25f, z0 + 0.25f, Tile.METAL); // feed pipe
             if (v.has("h"))
-                m.colour(v.colour("h")).rings(x, 0, rr + 0.0625f, z0 - 0.5f, z0 - len + 0.5f, (int) (len / 0.75f), 0.375f, Tile.RUBBER);
+                m.part(v, "h").rings(x, 0, rr + 0.0625f, z0 - 0.5f, z0 - len + 0.5f, (int) (len / 0.75f), 0.375f, Tile.RUBBER);
             if (v.has("g")) {
                 float zc = GunView.snap(z0 - len * 0.5f, 0.25f);
-                m.colour(v.colour("g"));
+                m.part(v, "g");
                 m.box(x - 0.125f, rr, zc - 0.125f, x + 0.125f, rr + 0.5f, zc + 0.125f, Tile.METAL);
                 if (v.variant("g").equals("dump_valve"))
                     m.box(x - 0.125f, rr + 0.5f, zc - 0.125f, x + 0.125f, rr + 0.625f, zc + 1f, Tile.KNURL);

@@ -33,6 +33,14 @@ import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 
+import io.github.soundgoodizerfan.feedback.client.GlowColours;
+import io.github.soundgoodizerfan.feedback.core.thermal.Incandescence;
+import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -50,12 +58,34 @@ import net.minecraft.world.item.ItemStack;
  * @param r        barrel radius (half the outer diameter)
  * @param bore     bore radius
  * @param mag      the detachable magazine in the gun, or null
+ * @param surfaces each part's surface kind, from its material
+ * @param glow     the barrel's glow as a block light level (0 cold): {@code Incandescence} of the gun's heat
  * @param rounds   rounds held, chamber included
  */
 record GunView(GunLayout.Type type, String action, boolean slide, float len, float r, float bore, float len2, float r2,
-               Map<String, Integer> colours, Map<String, String> variants, MagazineSize mag, int rounds) {
+               Map<String, Integer> colours, Map<String, String> variants, Map<String, Surface> surfaces, int glow,
+               MagazineSize mag, int rounds) {
 
     private static final int BARE = 0xFFB4B4B8;
+
+    /** What a part's material looks like on the surface, which picks its tile: grain only on wood, brushing only on metal. */
+    enum Surface {
+        METAL, WOOD, POLYMER, OTHER;
+
+        static Surface of(Material m) {
+            if (m == null)
+                return METAL;
+            Material.Kind kind = m.kind().orElse(Material.Kind.METAL);
+            if (kind == Material.Kind.METAL || kind == Material.Kind.METALLOID)
+                return METAL;
+            if (kind == Material.Kind.ORGANIC && m.traits().contains(Material.Trait.FIBROUS))
+                return WOOD;
+            return kind == Material.Kind.POLYMER ? POLYMER : OTHER;
+        }
+    }
+
+    /** The barrel and what sits on it: the parts that take the bore's heat and glow with it. */
+    private static final java.util.Set<String> HOT = java.util.Set.of("B", "D", "M", "N", "Q", "Z", "P", "V", "H", "J");
 
     static GunView of(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
@@ -69,10 +99,21 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             for (String k : new String[]{"R", "B", "A", "T", "G"})
                 colours.put(k, BARE);
             return new GunView(GunLayout.Type.HANDGUN, "self_loading", true, 4f, 0.625f, 0.25f, 0, 0, colours, variants,
-                    mag, rounds);
+                    Map.of(), 0, mag, rounds);
         }
+        Map<String, Surface> surfaces = new HashMap<>();
+        Map<ResourceLocation, Material> materials = ClientMaterials.get();
+        var level = Minecraft.getInstance().level;
+        float tu = level == null ? 0f : GunCondition.temperature(stack, level).value();
+        int glow = Incandescence.light(tu);
         for (ModularDesign.Part p : design.parts()) {
-            colours.put(p.role(), 0xFF000000 | MaterialColors.of(p.material()));
+            Material material = materials.get(p.material());
+            Surface surface = Surface.of(material);
+            surfaces.put(p.role(), surface);
+            int rgb = MaterialColors.of(p.material());
+            if (glow > 0 && HOT.contains(p.role()) && material != null && Incandescence.glows(material))
+                rgb = GlowColours.heated(rgb, tu);
+            colours.put(p.role(), 0xFF000000 | rgb);
             ModularType.Role role = type.roles().get(p.role());
             String variant = p.variant();
             if (variant.isEmpty() && role != null)
@@ -85,7 +126,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 : colours.containsKey("K") ? variants.getOrDefault("K", "bolt") : "none";
         float[] b = barrel(type, "B", design.part("B"));
         float[] d = barrel(type, "D", design.part("D"));
-        return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, mag, rounds);
+        return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, surfaces, glow, mag, rounds);
     }
 
     /**
@@ -117,6 +158,10 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
 
     int colour(String letter) {
         return colours.getOrDefault(letter, BARE);
+    }
+
+    Surface surface(String letter) {
+        return surfaces.getOrDefault(letter, Surface.METAL);
     }
 
     String variant(String letter) {

@@ -27,7 +27,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 /** The colour of a glowing body by light level (spec incandescence): dull red, orange, yellow, white. Client only. */
-final class GlowColours {
+public final class GlowColours {
 
     private GlowColours() {
     }
@@ -55,7 +55,12 @@ final class GlowColours {
         var level = Minecraft.getInstance().level;
         if (level == null || !stack.has(FDataComponents.TEMPERATURE.get()))
             return base;
-        float glow = Incandescence.light(io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value());
+        return heated(base, io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value());
+    }
+
+    /** {@code base} (0xRRGGBB) drawn toward the glow colour of a body at {@code tu}. */
+    public static int heated(int base, float tu) {
+        float glow = Incandescence.light(tu);
         if (glow <= 0f)
             return base;
         float t = along(glow);

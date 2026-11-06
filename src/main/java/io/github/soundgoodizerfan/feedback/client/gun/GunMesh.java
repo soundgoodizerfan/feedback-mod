@@ -65,7 +65,9 @@ final class GunMesh {
     final PoseStack pose;
     private final VertexConsumer out;
     private final TextureAtlasSprite sprite;
-    private final int light, overlay;
+    private final int baseLight, overlay;
+    private int light;
+    private GunView.Surface surface = GunView.Surface.METAL;
     /** Current part colour, ARGB. */
     private int colour = 0xFFFFFFFF;
     /** Varies the patch of a tile each box samples, so neighbouring faces do not repeat. */
@@ -80,14 +82,55 @@ final class GunMesh {
         this.pose = pose;
         this.out = out;
         this.light = light;
+        this.baseLight = light;
         this.overlay = overlay;
         this.sprite = sprite;
     }
 
-    /** Draw what follows in this ARGB colour (the part's material). */
+    /** Draw what follows in this ARGB colour, as metal. */
     GunMesh colour(int argb) {
         this.colour = argb;
+        this.surface = GunView.Surface.METAL;
         return this;
+    }
+
+    /** Draw what follows as {@code role}'s part: its material's colour and surface. */
+    GunMesh part(GunView v, String role) {
+        this.colour = v.colour(role);
+        this.surface = v.surface(role);
+        return this;
+    }
+
+    /** Light what follows at least at block light {@code level} (a glowing barrel), or back to the world's at 0. */
+    void glowAt(int level) {
+        int block = Math.max(baseLight & 0xFFFF, level << 4);
+        light = (baseLight & 0xFFFF0000) | block;
+    }
+
+    /**
+     * The tile a part is drawn with, for what it is made of: grain is for wood and brushing for metal,
+     * so a steel stock is not drawn as timber nor a wooden forend as plate.
+     */
+    private Tile surfaced(Tile t) {
+        return switch (surface) {
+            case WOOD -> switch (t) {
+                case METAL, BRUSHED, PANEL, RIBBED, VENT -> Tile.GRAIN;
+                default -> t;
+            };
+            case POLYMER -> switch (t) {
+                case GRAIN, BRUSHED, PANEL, END_GRAIN -> Tile.METAL;
+                default -> t;
+            };
+            case METAL -> switch (t) {
+                case GRAIN -> Tile.BRUSHED;
+                case END_GRAIN -> Tile.METAL;
+                default -> t;
+            };
+            case OTHER -> switch (t) {
+                case GRAIN, BRUSHED, END_GRAIN -> Tile.METAL;
+                default -> t;
+            };
+        };
     }
 
     void push() {
@@ -164,6 +207,7 @@ final class GunMesh {
     }
 
     private void box(float x0, float y0, float z0, float x1, float y1, float z1, Tile t, int lit) {
+        t = surfaced(t);
         int argb = t.tinted ? colour : 0xFFFFFFFF;
         if (t == Tile.LAMP)
             argb = colour;
@@ -178,34 +222,73 @@ final class GunMesh {
         face(p, t, argb, lit, 0, 0, -1, x0, y0, z0, x0, y1, z0, x1, y1, z0, x1, y0, z0);
     }
 
+    /**
+     * One face, cut like a picture frame: a rim half a pixel wide (one texel) on each side samples the
+     * tile's lit or shaded border, the middle a patch of its interior. Every box then has a crisp edge
+     * at one texel whatever its size, which is what makes a block model read as hand-made. Faces under
+     * 1.5 px across squeeze the rim to a third of the face.
+     */
     private void face(PoseStack.Pose p, Tile t, int argb, int lit, float nx, float ny, float nz, float... c) {
         // u along z on side and top faces (x on end faces), v down the face.
-        float uMin = Float.MAX_VALUE, uMax = -Float.MAX_VALUE, vMin = Float.MAX_VALUE, vMax = -Float.MAX_VALUE;
         float[] us = new float[4], vs = new float[4];
         for (int i = 0; i < 4; i++) {
             float x = c[i * 3], y = c[i * 3 + 1], z = c[i * 3 + 2];
             us[i] = nz != 0 ? x : z;
             vs[i] = ny != 0 ? x : -y;
-            uMin = Math.min(uMin, us[i]);
-            uMax = Math.max(uMax, us[i]);
-            vMin = Math.min(vMin, vs[i]);
-            vMax = Math.max(vMax, vs[i]);
         }
-        float uSpan = Math.min((uMax - uMin) * TEXELS_PER_PX, TILE), vSpan = Math.min((vMax - vMin) * TEXELS_PER_PX, TILE);
-        uSpan = Math.max(uSpan, 1f);
-        vSpan = Math.max(vSpan, 1f);
-        float uOff = Math.floorMod(seed, (int) (TILE - uSpan) + 1), vOff = Math.floorMod(seed >> 5, (int) (TILE - vSpan) + 1);
+        // Corners go (s0,t0) (s1,t0) (s1,t1) (s0,t1); u follows s or t, and so does v.
+        boolean uAlongS = Math.abs(us[1] - us[0]) > Math.abs(us[3] - us[0]);
+        float uMin = Math.min(us[0], us[2]), uMax = Math.max(us[0], us[2]);
+        float vMin = Math.min(vs[0], vs[2]), vMax = Math.max(vs[0], vs[2]);
+        float[] ub = breaks(uMax - uMin), vb = breaks(vMax - vMin);
+        int uSeed = Math.floorMod(seed, 31), vSeed = Math.floorMod(seed >> 5, 31);
         float tx = (t.index % 4) * TILE, ty = (t.index / 4) * TILE;
-        for (int i = 0; i < 4; i++) {
-            float fu = uMax == uMin ? 0 : (us[i] - uMin) / (uMax - uMin);
-            float fv = vMax == vMin ? 0 : (vs[i] - vMin) / (vMax - vMin);
-            float u = (tx + uOff + fu * uSpan) / SHEET, v = (ty + vOff + fv * vSpan) / SHEET;
-            if (sprite != null) {
-                u = sprite.getU(u);
-                v = sprite.getV(v);
+        for (int iu = 0; iu < 3; iu++)
+            for (int iv = 0; iv < 3; iv++) {
+                float u0 = uMin + ub[iu], u1 = uMin + ub[iu + 1], v0 = vMin + vb[iv], v1 = vMin + vb[iv + 1];
+                if (u1 - u0 < 1e-4f || v1 - v0 < 1e-4f)
+                    continue;
+                for (int k = 0; k < 4; k++) {
+                    // This corner's (u, v) inside the cell, kept on the same side as the face corner it stands for.
+                    float cu = us[k] == uMin ? u0 : u1, cv = vs[k] == vMin ? v0 : v1;
+                    float fu = (cu - uMin) / Math.max(uMax - uMin, 1e-6f), fv = (cv - vMin) / Math.max(vMax - vMin, 1e-6f);
+                    // Back to the face's own (s, t), then the world point by interpolating its corners.
+                    float fs = uAlongS ? (us[0] == uMin ? fu : 1 - fu) : (vs[0] == vMin ? fv : 1 - fv);
+                    float ft = uAlongS ? (vs[0] == vMin ? fv : 1 - fv) : (us[0] == uMin ? fu : 1 - fu);
+                    float x = c[0] + (c[3] - c[0]) * fs + (c[9] - c[0]) * ft;
+                    float y = c[1] + (c[4] - c[1]) * fs + (c[10] - c[1]) * ft;
+                    float z = c[2] + (c[5] - c[2]) * fs + (c[11] - c[2]) * ft;
+                    float u = (tx + texel(iu, cu - uMin - ub[iu], ub, uMax - uMin, uSeed)) / SHEET;
+                    float v = (ty + texel(iv, cv - vMin - vb[iv], vb, vMax - vMin, vSeed)) / SHEET;
+                    if (sprite != null) {
+                        u = sprite.getU(u);
+                        v = sprite.getV(v);
+                    }
+                    out.addVertex(p, x, y, z).setColor(argb).setUv(u, v).setOverlay(overlay).setLight(lit).setNormal(p, nx, ny, nz);
+                }
             }
-            out.addVertex(p, c[i * 3], c[i * 3 + 1], c[i * 3 + 2]).setColor(argb).setUv(u, v).setOverlay(overlay)
-                    .setLight(lit).setNormal(p, nx, ny, nz);
-        }
+    }
+
+    /** The four cuts across a face {@code span} long: rim, middle, rim. */
+    private static float[] breaks(float span) {
+        float rim = Math.min(0.5f, span / 3f);
+        return new float[]{0, rim, span - rim, span};
+    }
+
+    /**
+     * The tile coordinate (texels from the tile's edge) at {@code into} along piece {@code piece}: the
+     * rims are the tile's outermost texel row or column, the middle a patch of the 30 texels inside,
+     * stretched once the middle is longer than that.
+     */
+    private static float texel(int piece, float into, float[] cuts, float span, int seed) {
+        float width = cuts[piece + 1] - cuts[piece];
+        float f = width <= 0 ? 0 : into / width;
+        if (piece == 0)
+            return f;
+        if (piece == 2)
+            return TILE - 1 + f;
+        float texels = Math.max(1f, Math.min(width * TEXELS_PER_PX, TILE - 2));
+        float start = 1 + Math.floorMod(seed, (int) (TILE - 2 - texels) + 1);
+        return start + f * texels;
     }
 }
