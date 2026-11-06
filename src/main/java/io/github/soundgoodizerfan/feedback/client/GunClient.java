@@ -260,34 +260,37 @@ public final class GunClient {
         return now + GunBludgeon.cooldownTicks(f) * 50L;
     }
 
-    /** What the next round does in {@code gun} as it is now, or null when it cannot fire. */
-    /** The last figures each hand's gun baked: baking walks materials, traits and heat, so it runs once a tick, not once a frame. */
-    private static final long[] figureTick = {-1, -1};
-    private static final net.minecraft.world.item.ItemStack[] figureGun = new net.minecraft.world.item.ItemStack[2];
-    private static final GunFigures[] figureHeld = new GunFigures[2];
-
-    private static GunFigures figuresOf(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunSpec design) {
-        int hand = gun == player.getOffhandItem() ? 1 : 0;
-        long tick = mc.level.getGameTime();
-        if (figureTick[hand] == tick && figureGun[hand] == gun)
-            return figureHeld[hand];
-        GunFigures out = bakeFigures(mc, player, gun, design);
-        figureTick[hand] = tick;
-        figureGun[hand] = gun;
-        figureHeld[hand] = out;
-        return out;
+    /**
+     * The part of a gun's figures that only its design, its next round and its steam decide: the base bake, the load and the
+     * trait list. Redone only when one of those changes; heat, wear and haste are applied on top each frame.
+     */
+    private record Baked(GunSpec design, java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials,
+                         io.github.soundgoodizerfan.feedback.weapon.Cartridge round, boolean lastRound, float steam,
+                         java.util.Optional<GunFigures> base, java.util.Optional<GunSpec.Load> load, List<ModularTraits.Active> traits) {
     }
 
-    private static GunFigures bakeFigures(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunSpec design) {
+    private static final Baked[] baked = new Baked[2];
+
+    /** What the next round does in {@code gun} as it is now, or null when it cannot fire. */
+    private static GunFigures figuresOf(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunSpec design) {
         if (design == null || GunHazard.isSpent(gun))
             return null;
         var materials = ClientMaterials.on(mc.level);
-        var round = GunAmmo.next(gun).map(r -> r.at(mc.level.getGameTime()));
-        var base = round.flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r, GunSteam.stored(gun)));
-        var load = round.flatMap(r -> design.loadOf(materials, r));
-        if (base.isPresent() && load.isPresent() && !GunCondition.quenched(gun, mc.level, load.get()))
-        {
-            var aimed = ModularTraits.gunAimed(player, gun, GunCondition.effective(base.get(), gun, mc.level, load.get().ignitionTu()));
+        var next = GunAmmo.next(gun).map(r -> r.at(mc.level.getGameTime()));
+        if (next.isEmpty())
+            return null;
+        int hand = gun == player.getOffhandItem() ? 1 : 0;
+        boolean last = GunAmmo.count(gun) == 1;
+        float steam = GunSteam.stored(gun);
+        Baked b = baked[hand];
+        if (b == null || b.design != design || b.materials != materials || b.lastRound != last || b.steam != steam || !b.round.equals(next.get())) {
+            var r = next.get();
+            b = new Baked(design, materials, r, last, steam, design.firing(GunAmmo.count(gun)).bake(materials, r, steam),
+                    design.loadOf(materials, r), ModularTraits.allOf(gun));
+            baked[hand] = b;
+        }
+        if (b.base.isPresent() && b.load.isPresent() && !GunCondition.quenched(gun, mc.level, b.load.get())) {
+            var aimed = ModularTraits.gunAimed(player, gun, GunCondition.effective(b.base.get(), gun, mc.level, b.load.get().ignitionTu()), b.traits);
             if (GunItem.dualWielding(player))
                 aimed = aimed.oneHanded();
             return aimed.withCycle(1f / io.github.soundgoodizerfan.feedback.core.Haste.rate(player));

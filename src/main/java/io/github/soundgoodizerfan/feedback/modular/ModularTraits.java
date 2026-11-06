@@ -247,6 +247,14 @@ public final class ModularTraits {
         return f;
     }
 
+    /** As {@link #gunAimed(Player, ItemStack, io.github.soundgoodizerfan.feedback.weapon.GunFigures)} with the gun's traits already listed ({@link #allOf(ItemStack)}). */
+    public static io.github.soundgoodizerfan.feedback.weapon.GunFigures gunAimed(Player shooter, ItemStack gun,
+                                                                                  io.github.soundgoodizerfan.feedback.weapon.GunFigures f, List<Active> traits) {
+        for (Active a : traits)
+            f = a.trait().gunAimed(shooter, gun, f, a.params());
+        return f;
+    }
+
     public static void gunFired(net.minecraft.server.level.ServerPlayer shooter, ItemStack gun,
                                 io.github.soundgoodizerfan.feedback.weapon.GunFigures f) {
         for (Active a : allOf(gun))

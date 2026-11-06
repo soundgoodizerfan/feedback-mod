@@ -462,7 +462,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(MixtureCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(),
                 FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(), FItems.ARC_HEARTH.get());
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.BOILER.get(), FItems.LARGE_BOILER.get(), FItems.CONDENSER.get());
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.BOILER.get(), FItems.LARGE_BOILER.get(), FItems.CONDENSER.get(), FItems.REBOILER.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
