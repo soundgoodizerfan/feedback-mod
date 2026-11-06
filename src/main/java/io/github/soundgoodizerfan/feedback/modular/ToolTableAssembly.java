@@ -256,6 +256,11 @@ public final class ToolTableAssembly {
         boolean part = stack.has(FDataComponents.MADE_OF.get());
         if ((shaped && !part) || (!shaped && part && !role.forms().contains(what.form())))
             return false;
+        // A part shaped in a variant its role does not list (a coil barrel in a flintlock) is not that role's part.
+        var made = stack.get(FDataComponents.MADE_OF.get());
+        if (made != null && !made.variant().isEmpty() && role.part().filter(s -> !s.variants().isEmpty()).isPresent()
+                && role.part().get().variant(made.variant()).isEmpty())
+            return false;
         return stack.getCount() == wanted;
     }
 

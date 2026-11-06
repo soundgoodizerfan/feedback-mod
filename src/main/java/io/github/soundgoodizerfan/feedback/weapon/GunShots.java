@@ -318,6 +318,8 @@ public final class GunShots {
                     server.getAdvancements().award(holder, "done");
             }
         }
+        if (!together && shooter instanceof net.minecraft.server.level.ServerPlayer server)
+            GunStrain.shot(server, gun, hand, figures.kickDeg(), aimed);
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
             if (shooter instanceof Player player)
@@ -848,9 +850,7 @@ public final class GunShots {
                 float through = target instanceof net.minecraft.world.entity.LivingEntity living
                         ? pierce(s.hardness, armourHardness(living)) : 0f;
                 if (through > 0) {
-                    target.hurt(new net.minecraft.world.damagesource.DamageSource(level.registryAccess()
-                            .registryOrThrow(net.minecraft.core.registries.Registries.DAMAGE_TYPE)
-                            .getHolderOrThrow(BULLET_PIERCE), s.shooter), damage * through);
+                    target.hurt(io.github.soundgoodizerfan.feedback.core.hazard.Hazards.source(level, BULLET_PIERCE, s.shooter), damage * through);
                     target.invulnerableTime = 0;
                 }
                 target.hurt(attack(level, s.shooter), damage * (1 - through));

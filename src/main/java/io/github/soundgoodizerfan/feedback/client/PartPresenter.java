@@ -76,6 +76,11 @@ final class PartPresenter {
         out.add(Component.translatable("screen.feedback.gun_table.energy", num(g.muzzleEnergy())));
         out.add(Component.translatable("screen.feedback.gun_table.report", num(g.report())));
         out.add(Component.translatable("screen.feedback.gun_table.kick", num(g.kickDeg())));
+        int throwAt = io.github.soundgoodizerfan.feedback.weapon.GunStrain.shotsToThrow(g.kickDeg(), g.cycleMs());
+        out.add(Component.translatable("screen.feedback.gun_table.throws", throwAt == 0
+                ? Component.translatable("screen.feedback.gun_table.throws_never")
+                : throwAt == 1 ? Component.translatable("screen.feedback.gun_table.throws_first")
+                : Component.translatable("screen.feedback.gun_table.throws_after", throwAt)));
         out.add(Component.translatable("screen.feedback.gun_table.spread", num(g.spreadDeg())));
         out.add(Component.translatable("screen.feedback.gun_table.cycle", num(g.cycleMs())));
     }

@@ -2155,6 +2155,14 @@ public final class FTuning {
     public static final int GUN_BURST_ROUNDS = 3;
     /** Kick grows this much per shot of a streak, up to {@link #GUN_KICK_CLIMB_MAX} shots. */
     public static final float GUN_KICK_CLIMB_PER_SHOT = 0.12f;
+    /**
+     * A hand's hold on a gun: shots add their kick (degrees) to a strain that drains at {@link #GUN_STRAIN_DRAIN_DEG_PER_S}; past the
+     * limit (a view's worth, level to straight up) the gun is thrown from the hand, past twice that the shooter is hurt too, by
+     * {@link #GUN_STRAIN_DAMAGE} hp per limit over, up to the max. An impulse grip is thrown back at {@link #GUN_STRAIN_THROW_SPEED}
+     * blocks per tick per limit over instead. [OPEN] until played.
+     */
+    public static final float GUN_STRAIN_LIMIT_DEG = 90f, GUN_STRAIN_DRAIN_DEG_PER_S = 90f, GUN_STRAIN_DAMAGE = 4f,
+            GUN_STRAIN_DAMAGE_MAX = 12f, GUN_STRAIN_THROW_SPEED = 0.8f;
     public static final int GUN_KICK_CLIMB_MAX = 10;
     /** Plates a sight is built from at assembly: iron sights are cut in the slide, a reflex one, a scope two. */
     public static final int GUN_SIGHT_PLATES_IRON = 0, GUN_SIGHT_PLATES_REFLEX = 1, GUN_SIGHT_PLATES_SCOPE = 2;

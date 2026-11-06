@@ -23,8 +23,11 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
 /**
@@ -50,6 +53,7 @@ public final class Hazards {
     public static final ResourceKey<DamageType> HOT_CONTACT = key("hot_contact");
     public static final ResourceKey<DamageType> SCALD = key("scald");
     public static final ResourceKey<DamageType> SHOCK = key("shock");
+    public static final ResourceKey<DamageType> GUN_RECOIL = key("gun_recoil");
 
     private Hazards() {
     }
@@ -58,8 +62,29 @@ public final class Hazards {
         return ResourceKey.create(Registries.DAMAGE_TYPE, Feedback.id(name));
     }
 
+    /** Death messages per type: lang keys {@code death.attack.feedback.<type>.1..n}, plus {@code .player} when someone caused it. */
+    public static final int VARIANTS = 4;
+
     public static DamageSource source(Level level, ResourceKey<DamageType> type) {
-        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(type));
+        return source(level, type, null);
+    }
+
+    public static DamageSource source(Level level, ResourceKey<DamageType> type, Entity attacker) {
+        return new Funny(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(type), attacker);
+    }
+
+    /** A source whose death message is one of {@link #VARIANTS} picked at random. */
+    private static final class Funny extends DamageSource {
+        Funny(net.minecraft.core.Holder<DamageType> type, Entity attacker) {
+            super(type, attacker);
+        }
+
+        @Override
+        public Component getLocalizedDeathMessage(LivingEntity victim) {
+            String key = "death.attack." + type().msgId() + "." + (1 + victim.getRandom().nextInt(VARIANTS));
+            Entity killer = getEntity();
+            return killer == null ? Component.translatable(key, victim.getDisplayName())
+                    : Component.translatable(key + ".player", victim.getDisplayName(), killer.getDisplayName());
+        }
     }
 }

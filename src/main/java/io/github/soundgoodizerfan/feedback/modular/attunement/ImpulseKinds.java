@@ -114,6 +114,11 @@ public final class ImpulseKinds {
         arrow.getPersistentData().putInt(KICK_TAG, level);
     }
 
+    /** The impulse grip levels of a gun: with any, recoil cannot knock it from the hand and throws the shooter instead. */
+    public static int recoilLevel(ItemStack gun) {
+        return TideKinds.level(gun, "recoil");
+    }
+
     /** A stock's net kick: kickback throws shooter and target apart (positive), drag draws them together (negative). */
     private static int kick(ItemStack stack) {
         return TideKinds.level(stack, "kickback") - TideKinds.level(stack, "drag");

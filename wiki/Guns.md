@@ -206,6 +206,8 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why the sh
 
 **Recoil** throws your view upward. It's the bullet's push (plus a quarter again for the gas) divided by the gun's weight, and scaled by how grippy the grip is (see [Gun Parts](Gun_Parts.md#wrapping-the-grip)). A heavy gun with a grippy grip kicks least. Aiming takes 35% off it. A long string of shots climbs up to about twice the first shot's kick by the tenth, and settles when you stop.
 
+**Strain.** A view only turns so far, so kick that is too much for your hands goes into them. Every shot adds its kick in degrees to your strain (aimed shots add less), and the strain drains at 90 degrees a second while you are not firing. When it passes 90 degrees, a view's worth from level to straight up, **the gun leaves your hand** and drops at your feet. Past 180 degrees it also **hurts you**, more the further over you are, and armor does not help. One huge shot does it alone, and so does a long burst from a gun that is merely hard to hold, but moderate kick fired while looking up does not, because strain counts the kick and not where you are facing. The Gun Table lists **Throws the gun**: the first shot, after a number of shots on the trigger, or never. A gun with an **Impulse** grip stays in your hand, and the overshoot throws **you** back along the line of the shot instead.
+
 **Cycle** is 90 ms, plus a little for every bit of recoil, plus the action's hand time. Big bores and fast bullets cycle a little slower. **Haste** speeds the cycle and the reload by 20% a level, and Mining Fatigue slows them the same way (never below a fifth).
 
 ### One hand or two
