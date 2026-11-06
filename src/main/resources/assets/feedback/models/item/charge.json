@@ -1,8 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/iron_ingot",
-    "layer1": "minecraft:item/gunpowder",
-    "layer2": "feedback:item/modular/charge_2"
+    "layer0": "feedback:item/modular/grey/charge_dynamite"
   }
 }
