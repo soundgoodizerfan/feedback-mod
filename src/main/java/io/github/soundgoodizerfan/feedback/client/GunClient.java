@@ -261,7 +261,24 @@ public final class GunClient {
     }
 
     /** What the next round does in {@code gun} as it is now, or null when it cannot fire. */
+    /** The last figures each hand's gun baked: baking walks materials, traits and heat, so it runs once a tick, not once a frame. */
+    private static final long[] figureTick = {-1, -1};
+    private static final net.minecraft.world.item.ItemStack[] figureGun = new net.minecraft.world.item.ItemStack[2];
+    private static final GunFigures[] figureHeld = new GunFigures[2];
+
     private static GunFigures figuresOf(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunSpec design) {
+        int hand = gun == player.getOffhandItem() ? 1 : 0;
+        long tick = mc.level.getGameTime();
+        if (figureTick[hand] == tick && figureGun[hand] == gun)
+            return figureHeld[hand];
+        GunFigures out = bakeFigures(mc, player, gun, design);
+        figureTick[hand] = tick;
+        figureGun[hand] = gun;
+        figureHeld[hand] = out;
+        return out;
+    }
+
+    private static GunFigures bakeFigures(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunSpec design) {
         if (design == null || GunHazard.isSpent(gun))
             return null;
         var materials = ClientMaterials.on(mc.level);

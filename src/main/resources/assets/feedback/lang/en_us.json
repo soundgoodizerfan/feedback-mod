@@ -5306,7 +5306,7 @@
   "feedback.jei.ore_processing.leach": "Leach in the Reactor, then win the metal",
   "feedback.jei.ore_processing.smelt": "Roast or smelt the concentrate",
   "feedback.jei.ore_processing.none": "No further stage",
-  "feedback.jei.ore_processing.pays": "%s ingots a piece (%s%% of its metal)",
+  "feedback.jei.ore_processing.pays": "%s ingots each (%s%%)",
   "feedback.jei.separation.gangue": "Host rock",
   "feedback.jei.separation.ore.gravity": "Wash (Mixer, water)",
   "feedback.jei.separation.ore.magnetic": "Electromagnet",

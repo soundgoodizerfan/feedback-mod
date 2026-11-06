@@ -59,7 +59,7 @@ public class OreProcessingCategory implements IRecipeCategory<OreProcessingCateg
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "ore_processing", Card.class);
 
-    private static final int WIDTH = 168, HEIGHT = 116, TIER = 24, TOP = 16;
+    private static final int WIDTH = 200, HEIGHT = 148, TIER = 32, TOP = 16, TEXT_X = 22, TEXT_W = WIDTH - 22 - 20;
 
     private final IDrawable icon;
 
@@ -155,8 +155,13 @@ public class OreProcessingCategory implements IRecipeCategory<OreProcessingCateg
         m.stack(id, "tailings").ifPresent(t -> builder.addSlot(RecipeIngredientRole.OUTPUT, WIDTH - 17, TOP + 2 * TIER).addItemStack(t));
     }
 
-    private static void line(GuiGraphics graphics, Font font, int y, Component text, int colour) {
-        graphics.drawString(font, text, 22, y, colour, false);
+    /** Draws {@code text} wrapped to the room between the slot column and the right-hand slots; returns the y below it. */
+    private static int line(GuiGraphics graphics, Font font, int y, Component text, int colour) {
+        for (var part : font.split(text, TEXT_W)) {
+            graphics.drawString(font, part, TEXT_X, y, colour, false);
+            y += 10;
+        }
+        return y;
     }
 
     private static String ingots(float share, float recovery) {
@@ -177,9 +182,9 @@ public class OreProcessingCategory implements IRecipeCategory<OreProcessingCateg
         String[] keys = {"melt", "crush", "separate", leach ? "leach" : row.isPresent() ? "smelt" : "none"};
         for (int i = 0; i < 4; i++) {
             int y = TOP + i * TIER + 1;
-            line(graphics, font, y, Component.translatable("feedback.jei.ore_processing." + keys[i]), 0xFF262626);
+            int below = line(graphics, font, y, Component.translatable("feedback.jei.ore_processing." + keys[i]), 0xFF262626);
             if (i < 3 || row.isPresent())
-                line(graphics, font, y + 10, Component.translatable("feedback.jei.ore_processing.pays", ingots(share, recoveries[i]),
+                line(graphics, font, below, Component.translatable("feedback.jei.ore_processing.pays", ingots(share, recoveries[i]),
                         Readout.number(recoveries[i] * 100f)), 0xFF7A7A7A);
         }
     }
