@@ -68,8 +68,8 @@
       "layer": 0,
       "dims": {
         "bore": {
-          "min": 3,
-          "max": 24,
+          "min": 5,
+          "max": 20,
           "unit": "mm",
           "default": 9
         },
@@ -94,48 +94,37 @@
         "stock": [
           "turned_rod"
         ],
-        "base": "calibre_pistol",
+        "base": "light_barrel",
         "variants": [
           {
-            "name": "calibre_pistol",
+            "name": "light_barrel",
             "params": {
               "bore": 9,
-              "outer": 15,
+              "outer": 14,
               "length": 0.2
             }
           },
           {
-            "name": "calibre_rimfire",
-            "shape": [
-              "B"
-            ],
-            "params": {
-              "bore": 5,
-              "outer": 11,
-              "length": 0.15
-            }
-          },
-          {
-            "name": "calibre_intermediate",
-            "shape": [
-              "BB"
-            ],
+            "name": "stout_barrel",
             "params": {
               "bore": 12,
               "outer": 18,
               "length": 0.3
-            }
+            },
+            "shape": [
+              "BB"
+            ]
           },
           {
-            "name": "calibre_magnum",
-            "shape": [
-              "BBB"
-            ],
+            "name": "heavy_barrel",
             "params": {
               "bore": 20,
               "outer": 26,
               "length": 0.45
-            }
+            },
+            "shape": [
+              "BBB"
+            ]
           }
         ]
       }
@@ -150,8 +139,8 @@
       "alt": "B",
       "dims": {
         "bore": {
-          "min": 3,
-          "max": 24,
+          "min": 5,
+          "max": 20,
           "unit": "mm",
           "default": 9
         },
@@ -176,51 +165,39 @@
         "stock": [
           "turned_rod"
         ],
-        "base": "calibre_pistol",
+        "base": "light_barrel",
         "variants": [
           {
-            "name": "calibre_pistol",
+            "name": "light_barrel",
             "params": {
               "bore": 9,
-              "outer": 15,
+              "outer": 14,
               "length": 0.2
             },
             "trait": "double_barrel"
           },
           {
-            "name": "calibre_rimfire",
-            "shape": [
-              "D"
-            ],
-            "params": {
-              "bore": 5,
-              "outer": 11,
-              "length": 0.15
-            },
-            "trait": "double_barrel"
-          },
-          {
-            "name": "calibre_intermediate",
-            "shape": [
-              "DD"
-            ],
+            "name": "stout_barrel",
             "params": {
               "bore": 12,
               "outer": 18,
               "length": 0.3
             },
+            "shape": [
+              "DD"
+            ],
             "trait": "double_barrel"
           },
           {
-            "name": "calibre_magnum",
-            "shape": [
-              "DDD"
-            ],
+            "name": "heavy_barrel",
             "params": {
               "bore": 20,
               "outer": 26,
               "length": 0.45
             },
+            "shape": [
+              "DDD"
+            ],
             "trait": "double_barrel"
           }
         ]
@@ -1079,7 +1056,7 @@
         "is": {
           "variant": "handgun",
           "feed": "cylinder",
-          "calibre": "calibre_magnum"
+          "bore": "20"
         }
       },
       {

@@ -125,7 +125,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
 
     /** The screen's setting, and with {@code seat} the lever. */
     public void commit(int bore, boolean seat, Player player) {
-        boreMm = GunCalibres.nearest(bore).boreMm();
+        boreMm = Math.max(GunSpec.MIN_BORE_MM, Math.min(GunSpec.MAX_BORE_MM, bore));
         setChanged();
         if (!seat)
             return;

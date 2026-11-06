@@ -21,7 +21,7 @@ package io.github.soundgoodizerfan.feedback.machine;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
-import io.github.soundgoodizerfan.feedback.modular.MachineHeadItem;
+import io.github.soundgoodizerfan.feedback.modular.ModularHandTool;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.HolderLookup;
@@ -68,7 +68,7 @@ public final class HeadSlot {
 
     /** The most St a blow can carry now: the head's baked ceiling, less what wear has cost. Zero with no head. */
     public St ceiling() {
-        return new St(MachineHeadItem.strikeSt(head) * condition());
+        return new St(ModularHandTool.blow(head) * condition());
     }
 
     /**

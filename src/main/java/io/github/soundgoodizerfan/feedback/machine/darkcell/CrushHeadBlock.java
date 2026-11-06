@@ -22,7 +22,6 @@ package io.github.soundgoodizerfan.feedback.machine.darkcell;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
-import io.github.soundgoodizerfan.feedback.modular.MachineHeadItem;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -59,7 +58,7 @@ public class CrushHeadBlock extends Block implements EntityBlock, Rotatable, Kil
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                               InteractionHand hand, BlockHitResult hit) {
-        if (stack.getItem() instanceof MachineHeadItem && level.getBlockEntity(pos) instanceof CrushHeadBlockEntity be) {
+        if (stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.HAND_HAMMER.get()) && level.getBlockEntity(pos) instanceof CrushHeadBlockEntity be) {
             if (!level.isClientSide) {
                 ItemStack back = be.getHead().swap(stack.copy());
                 if (!player.getAbilities().instabuild)

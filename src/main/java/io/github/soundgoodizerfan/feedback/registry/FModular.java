@@ -296,9 +296,6 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularSpear(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularMaul> MAUL = ITEMS.register("maul",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularMaul(ModularStacks.properties()));
-    /** The replaceable head of a Mechanical Hammer or Press (machine shop spec 2.5). */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.MachineHeadItem> MACHINE_HEAD = ITEMS.register("machine_head",
-            () -> new io.github.soundgoodizerfan.feedback.modular.MachineHeadItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSickle> SICKLE = ITEMS.register("sickle",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularSickle(ModularStacks.properties()));
 

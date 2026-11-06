@@ -292,7 +292,7 @@ public final class FCommands {
     }
 
     private static int round(CommandContext<CommandSourceStack> c, boolean shot) throws CommandSyntaxException {
-        int bore = io.github.soundgoodizerfan.feedback.weapon.GunCalibres.nearest(IntegerArgumentType.getInteger(c, "bore")).boreMm();
+        int bore = IntegerArgumentType.getInteger(c, "bore");
         GunAmmo.give(c.getSource().getPlayerOrException(),
                 GunAmmo.loose(shot ? Cartridge.referenceShot(bore) : Cartridge.reference(bore)).copyWithCount(16));
         return 1;

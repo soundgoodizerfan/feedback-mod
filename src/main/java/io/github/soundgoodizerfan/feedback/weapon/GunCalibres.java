@@ -41,15 +41,12 @@ public final class GunCalibres {
     public record Calibre(String name, int boreMm) {
     }
 
-    /** The classes, smallest bore first; the reference 9 mm when the gun type is not loaded. */
+    private static final List<Calibre> CLASSES = List.of(new Calibre("calibre_rimfire", 5), new Calibre("calibre_pistol", 9),
+            new Calibre("calibre_intermediate", 12), new Calibre("calibre_magnum", 20));
+
+    /** The named classes, smallest bore first. A bore is any whole number of mm; these are the names it is called by, the nearest class. */
     public static List<Calibre> classes() {
-        ModularType gun = ModularTypes.known().get(Feedback.id("gun"));
-        ModularType.Role barrel = gun == null ? null : gun.roles().get("B");
-        List<Calibre> out = barrel == null || barrel.part().isEmpty() ? List.of()
-                : barrel.part().get().variants().stream()
-                .filter(v -> v.params().containsKey("bore"))
-                .map(v -> new Calibre(v.name(), Math.round(v.params().get("bore")))).sorted(Comparator.comparingInt(Calibre::boreMm)).toList();
-        return out.isEmpty() ? List.of(new Calibre("calibre_pistol", 9)) : out;
+        return CLASSES;
     }
 
     /** The class whose bore is nearest {@code boreMm}. */

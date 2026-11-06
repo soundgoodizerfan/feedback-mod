@@ -33,7 +33,6 @@ import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
 import io.github.soundgoodizerfan.feedback.machine.Headed;
 import io.github.soundgoodizerfan.feedback.machine.sensor.SensorBlock;
 import io.github.soundgoodizerfan.feedback.machine.sensor.SensorKind;
-import io.github.soundgoodizerfan.feedback.modular.MachineHeadItem;
 import io.github.soundgoodizerfan.feedback.registry.FAutomation;
 
 import net.minecraft.core.BlockPos;
@@ -160,7 +159,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         } else if (stack.getItem() instanceof PivotTipItem) {
             back = tip;
             tip = one;
-        } else if (stack.getItem() instanceof MachineHeadItem) {
+        } else if (stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.HAND_HAMMER.get())) {
             back = head.swap(stack.copy());
             if (!player.getAbilities().instabuild)
                 stack.shrink(1);

@@ -23,7 +23,6 @@ import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
-import io.github.soundgoodizerfan.feedback.modular.MachineHeadItem;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 
 import org.jetbrains.annotations.Nullable;
@@ -69,7 +68,7 @@ public class MechanicalPressBlock extends Block implements EntityBlock, Rotatabl
         if (!(level.getBlockEntity(pos) instanceof MechanicalPressBlockEntity press))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-        if (stack.getItem() instanceof MachineHeadItem) {
+        if (stack.is(io.github.soundgoodizerfan.feedback.registry.FModular.HAND_HAMMER.get())) {
             if (!level.isClientSide)
                 give(player, press.seatHead(stack));
             return ItemInteractionResult.sidedSuccess(level.isClientSide);

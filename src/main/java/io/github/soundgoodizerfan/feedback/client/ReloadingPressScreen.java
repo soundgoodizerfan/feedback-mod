@@ -64,7 +64,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     protected void init() {
         super.init();
         addRenderableWidget(GuiStyle.stepper(skin, leftPos + DIE_X, topPos + DIE_Y - 1, 56, 14, "<", ">",
-                () -> Component.translatable("modular.feedback.variant." + GunCalibres.nearest(bore).name()).getString() + ", " + bore + " mm", dir -> setBore(GunCalibres.step(bore, dir).boreMm()), true, FSounds.UI_DETENT::get));
+                () -> Component.translatable("modular.feedback.variant." + GunCalibres.nearest(bore).name()).getString() + ", " + bore + " mm", dir -> setBore(bore + dir), true, FSounds.UI_DETENT::get));
         addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.reloading_press.seat"), b -> {
                     if (gauge < 0)
                         skin.cue(GuiSkin.Cue.REJECT);
@@ -74,7 +74,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     }
 
     private void setBore(int value) {
-        bore = GunCalibres.nearest(value).boreMm();
+        bore = Mth.clamp(value, io.github.soundgoodizerfan.feedback.weapon.GunSpec.MIN_BORE_MM, io.github.soundgoodizerfan.feedback.weapon.GunSpec.MAX_BORE_MM);
         send(false);
     }
 

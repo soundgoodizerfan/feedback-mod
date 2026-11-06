@@ -50,20 +50,20 @@ public final class GunDesignation {
         if (type == null)
             return Optional.empty();
         Set<String> traits = ModularTraits.allOf(stack).stream().map(ModularTraits.Active::id).collect(Collectors.toSet());
-        ModularDesign.Part barrel = design.part("B");
-        String calibre = barrel == null ? "" : type.roles().get("B").variant(barrel).map(ModularType.Variant::name).orElse("");
-        return of(type, spec, calibre, traits);
+        return of(type, spec, traits);
     }
 
     /** As {@link #of(ItemStack, GunSpec)}, from the facts. */
-    public static Optional<String> of(ModularType type, GunSpec spec, String calibre, Set<String> traits) {
+    public static Optional<String> of(ModularType type, GunSpec spec, Set<String> traits) {
+        int bore = Math.round(spec.barrel().boreMm());
         Map<String, String> facts = Map.of(
                 "variant", spec.layout().type().getSerializedName(),
                 "action", spec.layout().action().getSerializedName(),
                 "feed", spec.layout().feed().getSerializedName(),
                 "sight", spec.sight().name().toLowerCase(Locale.ROOT),
                 "barrel", spec.barrelBand().name().toLowerCase(Locale.ROOT),
-                "calibre", calibre);
+                "calibre", GunCalibres.nearest(bore).name(),
+                "bore", String.valueOf(bore));
         for (ModularType.Designation d : type.names().designations()) {
             boolean ok = d.traits().stream().allMatch(traits::contains) && d.without().stream().noneMatch(traits::contains);
             for (Map.Entry<String, String> e : d.is().entrySet())

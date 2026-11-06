@@ -15,7 +15,7 @@
       "form": "turned_rod",
       "count": 2,
       "kind": "gun_barrel",
-      "variant": "calibre_intermediate",
+      "variant": "stout_barrel",
       "dims": {
         "bore": 12,
         "outer": 18,
