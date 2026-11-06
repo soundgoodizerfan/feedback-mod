@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "minecraft:bricks"
+    },
+    "X": {
+      "item": "feedback:shaft"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    }
+  },
+  "pattern": [
+    "BBB",
+    "PXP",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:kiln_zone"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/kiln_zone"
+    },
+    "facing=east": {
+      "model": "feedback:block/kiln_zone",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "feedback:block/kiln_zone",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "feedback:block/kiln_zone",
+      "y": 270
+    }
+  }
+}
