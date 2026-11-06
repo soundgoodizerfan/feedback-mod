@@ -68,6 +68,10 @@ public final class SpearClient {
     private static boolean sent;
     /** The charge ran its course; no more is sent until the key is let go. */
     private static boolean spent;
+    /** The local charge's cumulative stage ends in ticks, from the held spear. */
+    private static int[] stageEnds = {40, 70, 100};
+    /** What a remote wielder's stages are assumed to last, in ticks, until the next news. */
+    private static final float REMOTE_STAGE = 30f;
     /** Entity id to {stage, game time it was told}. */
     private static final Map<Integer, long[]> REMOTE = new HashMap<>();
 
@@ -89,6 +93,38 @@ public final class SpearClient {
             return stage;
         long[] told = REMOTE.get(entity.getId());
         return told == null || entity.level().getGameTime() - told[1] > REMOTE_LIFE ? 0 : (int) told[0];
+    }
+
+    /**
+     * Where the charge is, for the pose: {raise, tired, fade}, each 0 to 1. The raise brings the spear up to level in
+     * the first few ticks; tired grows through the second stage (the arm droops and wobbles); fade grows through the
+     * third (the spear falls and trembles) until the charge ends.
+     */
+    public static float[] phase(Entity entity, float partial) {
+        int s = stage(entity);
+        if (s == 0)
+            return new float[] {0, 0, 0};
+        if (entity == Minecraft.getInstance().player) {
+            float t = ticks + partial;
+            return new float[] {Mth.clamp(t / 6f, 0f, 1f), Mth.clamp((t - stageEnds[0]) / (stageEnds[1] - stageEnds[0]), 0f, 1f),
+                    Mth.clamp((t - stageEnds[1]) / (stageEnds[2] - stageEnds[1]), 0f, 1f)};
+        }
+        long[] told = REMOTE.get(entity.getId());
+        float in = told == null ? 0 : entity.level().getGameTime() - told[1] + partial;
+        return new float[] {s == 1 ? Mth.clamp(in / 6f, 0f, 1f) : 1f, s == 2 ? Mth.clamp(in / REMOTE_STAGE, 0f, 1f) : s == 3 ? 1f : 0f,
+                s == 3 ? Mth.clamp(in / REMOTE_STAGE, 0f, 1f) : 0f};
+    }
+
+    /** The backport's stab, a thrust along the look and a short return, for a swing of progress {@code swing}. */
+    static void stab(PoseStack pose, float swing) {
+        float g = -(Mth.cos(Mth.PI * Mth.clamp(swing / 0.05f, 0f, 1f)) - 1f) / 2f;
+        float h = Mth.clamp((swing - 0.05f) / 0.15f, 0f, 1f);
+        h *= h;
+        float j = Mth.clamp((swing - 0.4f) / 0.6f, 0f, 1f);
+        j = j < 0.5f ? (j == 0f ? 0f : (float) Math.pow(2, 20 * j - 10) / 2f) : (j == 1f ? 1f : (float) (2 - Math.pow(2, -20 * j + 10)) / 2f);
+        pose.translate(j * 0.1f * (g - h), -0.075f * (g - j), 0.65f * (g - h));
+        pose.mulPose(Axis.XP.rotationDegrees(-70f * (g - j)));
+        pose.translate(0, 0, -0.25f * (j - h));
     }
 
     @SubscribeEvent
@@ -118,6 +154,7 @@ public final class SpearClient {
         }
         ticks++;
         int[] stages = SpearCharge.stages(weapon, params.get());
+        stageEnds = stages;
         if (ticks >= stages[2]) {
             spent = true;
             ticks = -1;
@@ -147,21 +184,26 @@ public final class SpearClient {
         public boolean applyForgeHandTransform(PoseStack pose, LocalPlayer player, HumanoidArm arm, ItemStack stack,
                                                float partialTick, float equip, float swing) {
             int s = stage(player);
-            if (s == 0)
-                return false;
             int side = arm == HumanoidArm.RIGHT ? 1 : -1;
-            float t = player.tickCount + partialTick;
-            float x = 0.5f, y = -0.5f, z = -0.85f;
-            if (s == 2) {
-                x += Mth.sin(t * 1.7f) * 0.02f;
-                y += Mth.sin(t * 2.3f) * 0.02f;
-            } else if (s == 3) {
-                y -= 0.3f;
-                z += 0.2f;
+            if (s == 0) {
+                // A swing is a stab, not vanilla's arc: the spear goes out along the look and comes back.
+                if (swing <= 0)
+                    return false;
+                pose.translate(side * 0.56f, -0.52f - 0.6f * equip, -0.72f);
+                stab(pose, swing);
+                return true;
             }
+            float[] ph = phase(player, partialTick);
+            float t = player.tickCount + partialTick;
+            float raise = ph[0] * ph[0] * (3 - 2 * ph[0]), tired = ph[1], fade = ph[2];
+            // Braced low at the hip and level while engaged; the arm tires (droops, wobbles), then gives out (falls, shakes).
+            float x = 0.5f, y = -0.5f - 0.35f * (1 - raise) - 0.12f * tired - 0.3f * fade, z = -0.85f + 0.2f * fade;
+            float wobble = 0.01f + 0.03f * tired + 0.05f * fade;
+            x += Mth.sin(t * 1.7f) * wobble;
+            y += Mth.sin(t * 2.3f) * wobble + Mth.sin(t * 4.1f) * 0.03f * fade;
             pose.translate(side * x, y - 0.6f * equip, z);
-            if (s == 3)
-                pose.mulPose(Axis.XP.rotationDegrees(25));
+            pose.mulPose(Axis.XP.rotationDegrees(30f * (1 - raise) + 10f * tired + 25f * fade));
+            pose.mulPose(Axis.ZP.rotationDegrees(side * Mth.sin(t * 3.1f) * (1f + 5f * tired + 8f * fade)));
             return true;
         }
     }

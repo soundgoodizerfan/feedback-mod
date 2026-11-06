@@ -2,7 +2,7 @@
 
 A [gun](Guns.md) isn't crafted from ingots. It's **assembled from machined parts**, each made on the workshop machines and each made of whatever metal you chose for it. The gun's figures come from the parts you actually put in, not from the blueprint. A sloppy barrel makes a worse gun, never a refused one.
 
-Parts can also be shaped from stock with a hand hammer on the [Gun Table](Gun_Table.md), at the standard dimensions of their variant (the barrel at its calibre class, a medium length and a standard wall); a machine then cuts them to any size: the drill grows the bore, the lathe thins the wall and the cutoff wheel shortens the length.
+Parts can also be shaped from stock with a hand hammer on the [Gun Table](Gun_Table.md), at the standard dimensions of their variant (the barrel at its calibre class, that class's default length and a standard wall); a machine then cuts them to any size: the drill grows the bore, the lathe thins the wall and the cutoff wheel shortens the length.
 
 ## The parts
 
@@ -63,7 +63,7 @@ Work per cut is the machine's strength (St) divided by the metal's hardness. For
 
 ### Hitting the target
 
-The blueprint names a target bore, wall and barrel length (short 0.1 m, medium 0.2 m, long 0.4 m), but there's no tolerance check. Any barrel assembles. What happens is about how the cartridge fits:
+The blueprint names a target bore, wall and barrel length. A wider calibre is longer by default: rimfire **0.15 m**, pistol **0.2 m**, intermediate **0.3 m**, magnum **0.45 m**, but there's no tolerance check. Any barrel assembles. What happens is about how the cartridge fits:
 
 - A round will only **chamber** if its bore is within **1 mm** of the barrel's real bore.
 - **Too loose:** gas leaks past. For every mm loose the round loses 60% of its energy (down to a floor of 30%) and spreads **3° wider**.
@@ -80,9 +80,9 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 | Gun Barrel | always; its variant is the calibre class; a **second** barrel only on a break action |
 | Receiver | always; its variant is the gun's kind: handgun, rifle, shotgun, machine gun |
 | Slide **or** Bolt | the action; its variant says which: self-loading or automatic (slide); bolt, lever, pump, break, self-loading or automatic (bolt) |
-| Trigger Group, Grip | always |
+| Trigger Group, Grip | always; a grip is wood unless you choose another material |
 | Cylinder, Magazine Tube, Belt Feed or Box Feed | optional: the feed (none means a box magazine on a slide; a bolt or lever with none loads one round by hand, and a Box Feed gives it a box magazine; a break action holds its barrels) |
-| Sight | optional: a reflex sight or a scope (none is iron sights) |
+| Sight | optional: a reflex sight or a scope, a hollow tube with glass lenses and a clear view down the middle (none is iron sights) |
 | A fitting part | each fitting on the gun, one to a slot |
 | Blocks of Redstone | a coilgun: two for the winding |
 | A fibrous organic | wraps the grip |
@@ -116,6 +116,8 @@ Optional parts change what a gun does. They are tip-like parts, machined like an
 
 A suppressor, a brake and an eddy sleeve all go on the muzzle, so a gun has one of them.
 
+Some parts fit only some guns, and their blueprint tooltip carries an **only** line: the winding takes only coilguns, the main spring only spring guns, and the steam chest, steam valve and steam lagging only steam guns.
+
 ### Fittings made of the stuff itself
 
 These four are shaped at the Gun Table from raw stock, and the material decides what they do. All four act on the shot as you aim it, so the HUD and the spec sheet show the effect.
@@ -124,7 +126,7 @@ These four are shaped at the Gun Table from raw stock, and the material decides 
 | --- | --- | --- |
 | **Obturator** | Leather, or any raw stock such as phantom membrane | A ring that seals a loose chamber (a Flat Ring, a Cup Seal that cuts the most kick, or a Double Ring that tightens the group most). The softer the stuff, the more it cuts: up to **25%** less kick and **15%** tighter group. Once the barrel is hotter than the stuff's oxidation temperature it has burned away and leaks: **10%** more kick and **20%** wider group, until the barrel cools. |
 | **Hydraulic Buffer** | Something sticky: honey, slime | A sealed chamber of fluid the recoil pushes through. Honey takes kick to **50%** and slows the cycle by **30%**; thinner fluids do less. The fluid thins as the barrel heats and is no use at the round's ignition temperature. |
-| **Lit Reticle** | Something luminous: glowstone | Glowing mineral in the sight, needing no power. A **Dot** shows at light level 7 or less and tightens the group by up to **20%**; a **Ring** shows in dim light (11 or less) and tightens it less; a **Cross** shows only in deep dark (4 or less) and tightens it most. In daylight it does nothing. |
+| **Lit Reticle** | Something luminous, as dust or a block: glowstone, redstone | Glowing mineral in the sight, needing no power. A **Dot** shows at light level 7 or less and tightens the group by up to **20%**; a **Ring** shows in dim light (11 or less) and tightens it less; a **Cross** shows only in deep dark (4 or less) and tightens it most. In daylight it does nothing. |
 | **Magnetic Sear** | A magnetic metal: iron, steel, nickel | A magnet holds the sear: up to **15%** tighter group and a **10%** quicker cycle. The pull fades as the barrel warms and is gone at the metal's Curie temperature. A non-magnetic metal does nothing. |
 
 ### Changing a fitting

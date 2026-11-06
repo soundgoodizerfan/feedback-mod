@@ -48,7 +48,7 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 | Braced | a rifle or machine gun | crouched and still, less kick and tighter spread |
 
 
-The **name** on the tooltip is the real-world designation, read by a rule from the variant, calibre, barrel length, sight, action and traits: handgun with a cylinder is a **revolver**, a long rifle with a scope and a bolt a **sniper rifle**, a short double shotgun a **sawn-off**. It changes nothing in play.
+The **name** on the tooltip is the real-world designation, read by a rule from the variant, calibre, barrel length, sight, action and traits: handgun with a cylinder is a **revolver**, a long rifle with a scope and a bolt a **sniper rifle**, a short double shotgun a **sawn-off**. A handgun with a cylinder in the magnum class (20 mm) is a **Big Iron**, named with its material ("Steel Big Iron"); firing one earns a hidden advancement of the same name. It changes nothing in play.
 
 ### Calibre classes
 

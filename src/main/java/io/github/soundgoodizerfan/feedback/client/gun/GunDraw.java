@@ -48,8 +48,7 @@ final class GunDraw {
         }
         // A break action's barrels and everything on them tip about the hinge under the breech.
         m.push();
-        if (p.breakOpen() > 0)
-            m.turnX(-38f * p.breakOpen(), barrelsBottom(v), -0.5f);
+        breakTurn(m, v, p);
         m.glowAt(v.glow()); // a hot barrel lights itself; its colour is already drawn toward the glow (GunView)
         barrels(m, v);
         muzzle(m, v);
@@ -58,6 +57,19 @@ final class GunDraw {
         m.pop();
         sight(m, v);
         sides(m, v);
+    }
+
+    /** Where a break action hinges: under the barrels at the front of the frame (a revolver's front strap, a shotgun's breech face). */
+    private static float[] breakHinge(GunView v) {
+        return v.openFrame() ? new float[]{-1.5f, -3.25f} : new float[]{barrelsBottom(v), -0.5f};
+    }
+
+    /** Tips everything drawn after it about the break hinge: muzzle down, the rear of the barrels up and clear of the breech. */
+    private static void breakTurn(GunMesh m, GunView v, GunMotion.Parts p) {
+        if (p.breakOpen() > 0) {
+            float[] h = breakHinge(v);
+            m.turnX(-(v.openFrame() ? 30f : 38f) * p.breakOpen(), h[0], h[1]);
+        }
     }
 
     // --- receivers ---------------------------------------------------------------------------------
@@ -93,10 +105,14 @@ final class GunDraw {
         boolean cylinder = v.has("F");
         if (cylinder) {
             m.box(-0.75f, -1.75f, -3.5f, 0.75f, -1.5f, 1.25f, Tile.PANEL); // bottom strap
-            m.box(-0.625f, 0.5f, -3.5f, 0.625f, 1.0f, -0.25f, Tile.METAL); // top strap
             m.box(-0.875f, -1.5f, -0.25f, 0.875f, 1.0f, 1.25f, Tile.PANEL); // standing breech
+            // The top strap, the front of the window and the ejector rod are hinged with the barrel on a top-break.
+            m.push();
+            breakTurn(m, v, p);
+            m.box(-0.625f, 0.5f, -3.5f, 0.625f, 1.0f, -0.25f, Tile.METAL); // top strap
             m.box(-0.75f, -1.5f, -3.5f, 0.75f, 0.5f, -3.0f, Tile.METAL); // front of the window
             m.box(-0.125f, 1.0f, -1.25f, 0.125f, 1.0625f, -0.25f, Tile.BORE); // sight groove
+            m.pop();
             cylinder(m, v, p, -0.5f, -3.0f, -0.25f, 1.0f, 0.6f);
             m.part(v, "R").box(-0.25f, -0.875f, -3.5f - Math.min(v.len(), 3f), 0.25f, -0.375f, -3.5f, Tile.METAL); // ejector rod
         } else {
@@ -208,7 +224,11 @@ final class GunDraw {
             m.pop();
             m.part(v, "R").box(-0.125f, under - 0.25f, -fe * 0.4f, 0.125f, under, -0.5f, Tile.METAL); // action bar
         } else {
+            // The forend hangs on the barrels, so it tips with them on a break action.
+            m.push();
+            breakTurn(m, v, p);
             m.part(v, v.has("G") ? "G" : "R").box(-0.875f, under - 1f, -fe, 0.875f, under + 0.25f, -0.5f, Tile.GRAIN);
+            m.pop();
         }
 
         // The stock: wrist down and back, comb, a butt deepening toward the shoulder, a pad.
@@ -356,7 +376,13 @@ final class GunDraw {
     }
 
     /** Lowest point of the barrel or barrels. */
-    private static float barrelsBottom(GunView v) {
+    /** Where the support hand takes a long gun: under the barrels, midway along the forend (y, z). */
+    static float[] forend(GunView v) {
+        float fe = GunView.snap(Math.min(Math.max(v.len() * 0.55f + 1f, 3f), 10f), 0.25f);
+        return new float[]{barrelsBottom(v) - 0.5f, -fe * 0.6f};
+    }
+
+    static float barrelsBottom(GunView v) {
         return v.has("D") ? -v.r() - 2 * v.r2() : -v.r();
     }
 

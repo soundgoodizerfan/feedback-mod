@@ -92,7 +92,7 @@ Melting, smelting, steel, ceramics, tempering, boiling and condensing, quenching
 
 A reaction that takes more than one form of a material (steel from cast iron, roasting pyrite) shows its hold for the form on display: finer forms hold for less ([Dust](Materials.md#dust)). All thermal process cards share this layout. JEI shows no Work figures (Fu or *Needs*) and hides vanilla ores; each material's items list the mixing recipes they take part in.
 
-JEI's **Separation** tab lists per material what a magnet does to it, its reflectivity and its density; the **Fuel** tab lists its flame temperature, burn time and spread.
+JEI's **Separation** tab lists per material what a magnet does to it, its reflectivity and its density; the **Fuel** tab lists every fuel, solid or liquid, with its flame temperature, burn time and spread.
 
 If you drift out of the band, progress **slips back** as fast as it would have gained; it doesn't reset. Drift too hot and you risk the spoil line. The vessel doesn't know any of this. It keeps heating whether your batch is ready or not.
 

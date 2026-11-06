@@ -36,11 +36,19 @@ public final class ClientSettings {
             .comment("Held-item info HUD shown (also toggled in game by its key).")
             .define("itemInfoHud", true);
 
+    private static final ModConfigSpec.BooleanValue GUN_ARMS = B
+            .comment("Draw your arms on a gun held in first person.")
+            .define("gunArms", true);
+
     public static final ModConfigSpec SPEC = B.build();
 
     /** True when the player asked for less motion. False before the config has loaded. */
     public static boolean reduceMotion() {
         return SPEC.isLoaded() && REDUCE_MOTION.get();
+    }
+
+    public static boolean gunArms() {
+        return !SPEC.isLoaded() || GUN_ARMS.get();
     }
 
     public static boolean itemInfoHud() {

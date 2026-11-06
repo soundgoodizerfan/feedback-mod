@@ -24,7 +24,7 @@ S T S
 
 S is a Stainless Steel Plate, T is a Thorium Ingot and U is a Uranium Ingot.
 
-Both rods are radioactive from the moment they are made ([Radiation](Radiation.md)); the Fuel Rod is the stronger.
+Both rods are radioactive from the moment they are made ([Radiation](Radiation.md)); the Fuel Rod is the stronger. A clad rod is a finished assembly: it cannot serve as the material of a tool, gun or any other modular part.
 
 ## Fuel Rod
 

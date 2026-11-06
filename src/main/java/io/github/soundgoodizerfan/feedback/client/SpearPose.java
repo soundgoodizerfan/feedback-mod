@@ -37,10 +37,13 @@ public final class SpearPose {
 
     public static final EnumProxy<HumanoidModel.ArmPose> PROXY = new EnumProxy<>(HumanoidModel.ArmPose.class, false,
             (IArmPoseTransformer) (model, entity, arm) -> {
-                int s = SpearClient.stage(entity);
                 var part = arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;
-                part.xRot = (s == 3 ? -0.6f : -1.5f) + model.head.xRot;
+                float[] ph = SpearClient.phase(entity, 0f);
+                float raise = ph[0] * ph[0] * (3 - 2 * ph[0]), tired = ph[1], fade = ph[2];
+                float t = entity.tickCount;
+                // Level and braced while engaged; the arm sags and wobbles as it tires, then falls and shakes as it gives out.
+                part.xRot = -1.5f + model.head.xRot + 0.6f * (1 - raise) + 0.25f * tired + 0.7f * fade + Mth.sin(t * 4.1f) * 0.05f * fade;
                 part.yRot = arm == HumanoidArm.RIGHT ? -0.15f : 0.15f;
-                part.zRot = s == 2 ? Mth.sin(entity.tickCount * 1.7f) * 0.06f : 0f;
+                part.zRot = Mth.sin(t * 1.7f) * (0.02f + 0.06f * tired + 0.1f * fade);
             });
 }

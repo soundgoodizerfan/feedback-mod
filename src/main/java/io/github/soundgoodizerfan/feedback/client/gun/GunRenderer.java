@@ -75,6 +75,10 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         GunMotion.item(pose, view, hand, now);
         var mesh = new GunMesh(pose, outputs(buffers, stack), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
         GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
+        // The arms: the support hand only when nothing else is held in the other hand.
+        var player = Minecraft.getInstance().player;
+        if (player != null && io.github.soundgoodizerfan.feedback.client.ClientSettings.gunArms())
+            GunArms.draw(pose, buffers, light, view, side, player.getOffhandItem().isEmpty() && player.getMainHandItem() == stack);
         pose.popPose();
     }
 

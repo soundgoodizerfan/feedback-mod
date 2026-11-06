@@ -16,7 +16,7 @@ P is Paper and T is a Crafting Table.
 Right-click it to open the board. The item is drawn as a **diagram**: each part is a box placed where it sits in the finished piece. Drag to pan and use the wheel to zoom.
 
 - **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list by name.
-- **Click a part** to select it. Its panel shows **material swatches** (only materials the part can be made from; a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does.
+- **Click a part** to select it. Its panel has a **search box** (it matches a material's name, its kind and its traits), **material swatches** for every material, and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does. A material the part cannot be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) is dimmed with an x and cannot be picked; its tooltip reads *Does not fit this part.*
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
 - Set the **edge**, on a tool that has one.
@@ -32,7 +32,7 @@ Parts that touch are joined by a link, colored by how tight that joint is: thick
 The sheet shows the design's figures as **bars** (for a battery: cells, full voltage, capacity and the voltage band its case holds; for a backpack: slots, carry rating, mounting points left and store slots; for a [bedroll](Bedroll.md): comfort; for a belt: its grip on cargo and the hottest cargo it carries). Qualities and adjectives the design earns sit along the bottom edge.
 
 - A mark on each bar shows where the **first drawing** stood. An arrow shows which way the bar has moved since.
-- **Hold Shift** to read the exact figure.
+- **Hold Shift** to read the exact figure. Hover the **mass** bar for what it counts: the tooltip is written for the kind of thing drawn (a gun, a belt, a backpack, a bedroll, a shield, a battery cell, a charge, a vessel, a machine part).
 - **Hover a swatch, a shape, or a part while carrying a material** to preview how the bars would change.
 - **Hover a bar** to light the parts that moved it.
 - **Pin** keeps a draft: each pinned draft puts its own colored mark on every bar to compare against, up to three. Click a pinned draft to open it, Shift-click to drop it.
@@ -43,4 +43,6 @@ The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one
 
 ## What a blueprint is for
 
-Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work. Repairs and swaps never need one.
+Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work. Repairs and swaps never need one. A blueprint cannot be taken apart at the Tool Table.
+
+Operators can make a blueprint of the item in their hand with `/feedback blueprint`; it works on any modular item that is not itself a blueprint.
