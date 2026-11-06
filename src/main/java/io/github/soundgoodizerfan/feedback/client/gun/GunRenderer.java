@@ -44,9 +44,12 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
  */
 public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
 
-    /** Blocks per centimetre in first person. */
-    static final float FIRST_PERSON_SCALE = 0.04f;
-    private static final float THIRD_PERSON_SCALE = 0.04f;
+    /**
+     * Blocks per centimetre in first person. True scale is 0.01 (a player is 1.8 blocks and 1.8 m);
+     * first person is drawn larger so a pistol reads at arm's length, third person only a little.
+     */
+    static final float FIRST_PERSON_SCALE = 0.024f;
+    private static final float THIRD_PERSON_SCALE = 0.014f;
 
     private static GunRenderer instance;
 
