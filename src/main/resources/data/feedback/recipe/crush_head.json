@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "X": {
+      "item": "feedback:shaft"
+    },
+    "B": {
+      "item": "feedback:bearing"
+    }
+  },
+  "pattern": [
+    "PXP",
+    "PBP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:crush_head"
+  }
+}

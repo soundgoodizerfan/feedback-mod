@@ -360,6 +360,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.REDSTONE_EMITTER.get(), "redstone_emitter");
         io.github.soundgoodizerfan.feedback.registry.FAutomation.SENSOR_ITEMS.forEach((kind, item) -> info(registration, item.get(), kind.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.PIVOT_MAST_ITEM.get(), "pivot_mast");
+        for (var e : java.util.Map.of("dark_cell", io.github.soundgoodizerfan.feedback.registry.FAutomation.DARK_CELL_ITEM,
+                "fall_plate", io.github.soundgoodizerfan.feedback.registry.FAutomation.FALL_PLATE_ITEM,
+                "fire_plate", io.github.soundgoodizerfan.feedback.registry.FAutomation.FIRE_PLATE_ITEM,
+                "crush_head", io.github.soundgoodizerfan.feedback.registry.FAutomation.CRUSH_HEAD_ITEM,
+                "fume_port", io.github.soundgoodizerfan.feedback.registry.FAutomation.FUME_PORT_ITEM,
+                "shock_plate", io.github.soundgoodizerfan.feedback.registry.FAutomation.SHOCK_PLATE_ITEM,
+                "radiation_source", io.github.soundgoodizerfan.feedback.registry.FAutomation.RADIATION_SOURCE_ITEM).entrySet())
+            info(registration, e.getValue().get(), e.getKey());
         io.github.soundgoodizerfan.feedback.registry.FAutomation.ARMS.forEach((len, item) -> info(registration, item.get(), "pivot_arm"));
         io.github.soundgoodizerfan.feedback.registry.FAutomation.TIPS.forEach((tip, item) -> info(registration, item.get(), "pivot_tip_" + tip.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.ANALOG_ADAPTER.get(), "analog_adapter");

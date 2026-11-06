@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "S S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:fall_plate"
+  }
+}

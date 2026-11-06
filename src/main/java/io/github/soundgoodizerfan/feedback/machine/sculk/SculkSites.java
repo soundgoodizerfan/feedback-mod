@@ -99,6 +99,24 @@ public final class SculkSites {
         PER_LEVEL.remove(event.getLevel());
     }
 
+    /** Puts up to {@code points} of XP into the nearest tap's run within reach of {@code at}, as a death there would; returns what was taken. */
+    public static int capture(Level level, BlockPos at, int points) {
+        Sites s = PER_LEVEL.get(level);
+        if (s == null || s.taps.isEmpty() || points <= 0)
+            return 0;
+        double r2 = FTuning.TAP_RADIUS * FTuning.TAP_RADIUS;
+        int left = points;
+        for (BlockPos p : s.taps) {
+            if (left <= 0)
+                break;
+            if (p.distSqr(at) > r2 || !level.isLoaded(p))
+                continue;
+            if (level.getBlockEntity(p) instanceof CatalystTapBlockEntity tap && tap.network() != null)
+                left -= tap.network().inject(left);
+        }
+        return points - left;
+    }
+
     /** A death near a tap puts the XP it would have dropped into the tap's run; what the run cannot hold drops as usual. */
     @SubscribeEvent
     public static void onExperience(LivingExperienceDropEvent event) {

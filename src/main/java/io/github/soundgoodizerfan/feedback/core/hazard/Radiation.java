@@ -95,6 +95,8 @@ public final class Radiation {
                 if (m != null)
                     each += m.radioactivity().map(ru -> ru.value() * part.count() * FormItems.volume(part.form()) / 144f).orElse(0f);
             }
+        if (Boolean.TRUE.equals(stack.get(FDataComponents.CONTAMINATED.get())))
+            each += FTuning.CONTAMINATED_DROP_RU;
         return each * stack.getCount();
     }
 

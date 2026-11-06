@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "height=1": {
+      "model": "feedback:block/fall_plate"
+    },
+    "height=2": {
+      "model": "feedback:block/fall_plate"
+    },
+    "height=3": {
+      "model": "feedback:block/fall_plate"
+    }
+  }
+}

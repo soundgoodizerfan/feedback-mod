@@ -2766,6 +2766,34 @@ public final class FTuning {
     public static final float PUMP_MB_PER_RPM = 0.5f;
     public static final Su PUMP_LOAD_SU = new Su(8f);
 
+    // --- dark cell (docs/specs/feedback_automation_spec.md, section 4). Every figure here is invented. ---
+
+    /** Invented. Radiation a contaminated drop gives per item, Ru. */
+    public static final float CONTAMINATED_DROP_RU = 0.05f;
+    /** Invented. Ticks between kill cycles. */
+    public static final int DARKCELL_CYCLE_TICKS = 40;
+    /** Invented. Ticks a cell takes to spawn one mob per 100 blocks of volume. */
+    public static final float DARKCELL_SPAWN_TICKS_PER_100_BLOCKS = 200f;
+    /** Invented. Mu of mob a cell holds per block of interior volume. */
+    public static final float DARKCELL_MASS_PER_BLOCK = 0.6f;
+    /** Invented. Most interior blocks a cell may scan. */
+    public static final int DARKCELL_MAX_VOLUME = 2500;
+    /** Invented. Share of the population a lethal method works on each cycle. */
+    public static final float DARKCELL_THROUGHPUT = 0.5f;
+    /** Invented. Shield hit points per point of wall hardness. */
+    public static final float DARKCELL_SHIELD_PER_HARDNESS = 40f;
+    /** Invented. Shield damage per second per point of mob attack, at full pressure. */
+    public static final float DARKCELL_ATTACK_K = 0.05f;
+    /** Invented. Shield a wall block's hardness restores when a repairer is spent, per hardness. */
+    public static final float DARKCELL_REPAIR_PER_HARDNESS = 20f;
+    /** Invented. Mobs a breach lets out at most, and the interior blocks that make room for one. */
+    public static final int BREACH_MAX_MOBS = 40;
+    public static final float BREACH_BLOCKS_PER_MOB = 4f;
+    /** Invented. The share of a kill's XP a Catalyst Tap keeps from a machine, before the method's own share. */
+    public static final float MACHINE_XP_SHARE = 0.5f;
+    /** Invented. Items one cell's kill cycle may add to its output. */
+    public static final int DARKCELL_MAX_DROPS_PER_CYCLE = 64;
+
     // --- pivot mast (docs/specs/feedback_automation_spec.md, section 2). Every figure here is invented. ---
 
     /** Invented. The arm turns at this share of the shaft's phase: a slow, heavy sweep. */

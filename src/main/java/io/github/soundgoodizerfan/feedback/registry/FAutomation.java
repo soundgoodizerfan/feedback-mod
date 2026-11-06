@@ -23,6 +23,18 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.CrushHeadBlock;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.CrushHeadBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.DarkCellBlock;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.DarkCellBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.FallPlateBlock;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.FirePlateBlock;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.FumePortBlock;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.FumePortBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.RadiationSourceBlock;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.RadiationSourceBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.ShockPlateBlock;
+import io.github.soundgoodizerfan.feedback.machine.darkcell.ShockPlateBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.pivot.PivotArmItem;
 import io.github.soundgoodizerfan.feedback.machine.pivot.PivotMastBlock;
 import io.github.soundgoodizerfan.feedback.machine.pivot.PivotMastBlockEntity;
@@ -96,6 +108,38 @@ public final class FAutomation {
             TIPS.put(tip, ITEMS.register("pivot_tip_" + tip.id(), () -> new PivotTipItem(tip, new Item.Properties().stacksTo(1))));
     }
 
+    private static BlockBehaviour.Properties metal(float strength) {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(strength).sound(SoundType.METAL);
+    }
+
+    /** The dark cell: a controller set in the wall of a sealed, dark room. */
+    public static final DeferredBlock<DarkCellBlock> DARK_CELL = BLOCKS.register("dark_cell", () -> new DarkCellBlock(metal(4.0f)));
+    public static final DeferredItem<BlockItem> DARK_CELL_ITEM = ITEMS.registerSimpleBlockItem(DARK_CELL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DarkCellBlockEntity>> DARK_CELL_ENTITY =
+            BLOCK_ENTITIES.register("dark_cell", () -> BlockEntityType.Builder.of(DarkCellBlockEntity::new, DARK_CELL.get()).build(null));
+
+    /** The six kill methods, set in the wall. */
+    public static final DeferredBlock<FallPlateBlock> FALL_PLATE = BLOCKS.register("fall_plate", () -> new FallPlateBlock(metal(3.0f)));
+    public static final DeferredItem<BlockItem> FALL_PLATE_ITEM = ITEMS.registerSimpleBlockItem(FALL_PLATE);
+    public static final DeferredBlock<FirePlateBlock> FIRE_PLATE = BLOCKS.register("fire_plate", () -> new FirePlateBlock(metal(3.0f)));
+    public static final DeferredItem<BlockItem> FIRE_PLATE_ITEM = ITEMS.registerSimpleBlockItem(FIRE_PLATE);
+    public static final DeferredBlock<CrushHeadBlock> CRUSH_HEAD = BLOCKS.register("crush_head", () -> new CrushHeadBlock(metal(4.0f)));
+    public static final DeferredItem<BlockItem> CRUSH_HEAD_ITEM = ITEMS.registerSimpleBlockItem(CRUSH_HEAD);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrushHeadBlockEntity>> CRUSH_HEAD_ENTITY =
+            BLOCK_ENTITIES.register("crush_head", () -> BlockEntityType.Builder.of(CrushHeadBlockEntity::new, CRUSH_HEAD.get()).build(null));
+    public static final DeferredBlock<FumePortBlock> FUME_PORT = BLOCKS.register("fume_port", () -> new FumePortBlock(metal(3.0f)));
+    public static final DeferredItem<BlockItem> FUME_PORT_ITEM = ITEMS.registerSimpleBlockItem(FUME_PORT);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FumePortBlockEntity>> FUME_PORT_ENTITY =
+            BLOCK_ENTITIES.register("fume_port", () -> BlockEntityType.Builder.of(FumePortBlockEntity::new, FUME_PORT.get()).build(null));
+    public static final DeferredBlock<ShockPlateBlock> SHOCK_PLATE = BLOCKS.register("shock_plate", () -> new ShockPlateBlock(metal(3.0f)));
+    public static final DeferredItem<BlockItem> SHOCK_PLATE_ITEM = ITEMS.registerSimpleBlockItem(SHOCK_PLATE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ShockPlateBlockEntity>> SHOCK_PLATE_ENTITY =
+            BLOCK_ENTITIES.register("shock_plate", () -> BlockEntityType.Builder.of(ShockPlateBlockEntity::new, SHOCK_PLATE.get()).build(null));
+    public static final DeferredBlock<RadiationSourceBlock> RADIATION_SOURCE = BLOCKS.register("radiation_source", () -> new RadiationSourceBlock(metal(4.0f)));
+    public static final DeferredItem<BlockItem> RADIATION_SOURCE_ITEM = ITEMS.registerSimpleBlockItem(RADIATION_SOURCE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RadiationSourceBlockEntity>> RADIATION_SOURCE_ENTITY =
+            BLOCK_ENTITIES.register("radiation_source", () -> BlockEntityType.Builder.of(RadiationSourceBlockEntity::new, RADIATION_SOURCE.get()).build(null));
+
     private FAutomation() {
     }
 
@@ -108,11 +152,20 @@ public final class FAutomation {
 
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PIVOT_ENTITY.get(), (mast, side) -> mast.handler(side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DARK_CELL_ENTITY.get(), (cell, side) -> cell.outputView());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FUME_PORT_ENTITY.get(), (port, side) -> port.tank());
     }
 
     /** Every automation item, for the creative tab. */
     public static void fill(net.minecraft.world.item.CreativeModeTab.Output output) {
         SENSOR_ITEMS.values().forEach(i -> output.accept(i.get()));
+        output.accept(DARK_CELL_ITEM.get());
+        output.accept(FALL_PLATE_ITEM.get());
+        output.accept(FIRE_PLATE_ITEM.get());
+        output.accept(CRUSH_HEAD_ITEM.get());
+        output.accept(FUME_PORT_ITEM.get());
+        output.accept(SHOCK_PLATE_ITEM.get());
+        output.accept(RADIATION_SOURCE_ITEM.get());
         output.accept(PIVOT_MAST_ITEM.get());
         ARMS.values().forEach(i -> output.accept(i.get()));
         TIPS.values().forEach(i -> output.accept(i.get()));

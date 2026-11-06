@@ -190,6 +190,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.FLOAT)
                     .build());
 
+    /** Set on a drop that came out of a dark cell's radiation kill: it gives off a little radiation until the stack is gone. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CONTAMINATED =
+            COMPONENTS.register("contaminated", () -> DataComponentType.<Boolean>builder()
+                    .persistent(Codec.BOOL)
+                    .networkSynchronized(ByteBufCodecs.BOOL)
+                    .build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> TOOL_CONDITION =
             COMPONENTS.register("tool_condition", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)

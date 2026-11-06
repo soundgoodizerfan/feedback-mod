@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "T": {
+      "item": "feedback:tube"
+    }
+  },
+  "pattern": [
+    "PGP",
+    "PTP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:fume_port"
+  }
+}
