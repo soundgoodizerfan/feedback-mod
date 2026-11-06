@@ -101,16 +101,15 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private static final float MIN_ZOOM = 0.4f, MAX_ZOOM = 2.2f;
     private static final int MAX_PINS = 3;
     /** A design of more drawn parts than this folds the type's groups into clusters. */
-    private static final int COLLAPSE_AT = 12;
     /** Height of the test rig at the top of the figures panel. */
     private static final int RIG_H = 58;
     /** The series colours of the pinned drafts: data marks on the bars, not text. */
     private static final int[] PIN_COLOURS = {0xFFF2C14E, 0xFF7FE0B0, 0xFFE08FE8};
 
     /** A part (or a slot for one) on the canvas, at a place in drawing units. */
-    private record Node(String key, String role, boolean ghost, float x, float y, ItemStack icon, String group, boolean faint) {
-        Node(String key, String role, boolean ghost, float x, float y, ItemStack icon, String group) {
-            this(key, role, ghost, x, y, icon, group, false);
+    private record Node(String key, String role, boolean ghost, float x, float y, ItemStack icon, boolean faint) {
+        Node(String key, String role, boolean ghost, float x, float y, ItemStack icon) {
+            this(key, role, ghost, x, y, icon, false);
         }
     }
 
@@ -168,10 +167,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     /** Per link: the joint figure of its worst pair (1 is its limit) and that pair. */
     private float[] linkValue = new float[0];
     private String[][] linkWorst = new String[0][];
-    /** The groups a big design folds: name to the drawn roles in it; the ones in {@link #opened} (or holding the selected part) are shown whole. */
-    private Map<String, List<String>> groupDrawn = Map.of();
-    private Set<String> folded = Set.of();
-    private final Set<String> opened = new LinkedHashSet<>();
     /** The part whose slots are fanned open round it (a gun's attachments live on the part they fit), or null. */
     private String fanFor;
     /** An attachment's role to the role it fits, from the type's board joins; empty for a type that lays its parts flat. */
@@ -207,7 +202,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private final List<Pin> pins = new ArrayList<>();
 
     // --- hover, set every frame in renderBg ------------------------------------------------------
-    private String hoverGroupTab;
     private int hoverLink = -1, hoverNode = -1, hoverSwatch = -1, hoverShape = -1, hoverFig = -1, hoverChip = -1, hoverDrawer = -1, hoverFault = -1;
     private boolean hoverCorner;
     /** The would-be drawing under a swatch, a shape or a carried material, as its parts and its figures. */
@@ -446,7 +440,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         swatchScroll = 0;
         figScroll = 0;
         extras.clear();
-        opened.clear();
         fanFor = null;
         sizes.clear();
         shape.clear();
@@ -714,8 +707,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private void layout() {
         ModularType t = current();
         nodeOf.clear();
-        groupDrawn = Map.of();
-        folded = Set.of();
         if (t == null) {
             nodes = List.of();
             links = List.of();
@@ -773,51 +764,16 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                         at.put(role, new float[]{px[0] / PITCH, px[1] / PITCH, 1});
                 }
         }
-        if (!attach && rows.size() > COLLAPSE_AT) {
-            Map<String, List<String>> big = new LinkedHashMap<>();
-            board.groups().forEach((name, letters) -> {
-                List<String> drawn = letters.stream().filter(rows::contains).toList();
-                if (drawn.size() >= 2)
-                    big.put(name, drawn);
-            });
-            groupDrawn = big;
-            if (selected != null)
-                big.forEach((name, members) -> {
-                    if (members.contains(selected))
-                        opened.add(name);
-                });
-            folded = big.keySet().stream().filter(n -> !opened.contains(n)).collect(java.util.stream.Collectors.toSet());
-        }
-        Map<String, String> foldedRole = new HashMap<>();
-        for (String name : folded)
-            groupDrawn.get(name).forEach(r -> foldedRole.put(r, name));
         List<Node> out = new ArrayList<>();
         List<String> tray = new ArrayList<>();
         for (String role : rows) {
-            if (foldedRole.containsKey(role))
-                continue;
             float[] a = at.get(role);
             if (a == null) {
                 tray.add(role);
                 continue;
             }
             nodeOf.put(role, out.size());
-            out.add(new Node(role, role, false, a[0] / a[2] * PITCH, a[1] / a[2] * PITCH, ItemStack.EMPTY, null));
-        }
-        for (String name : folded) {
-            float x = 0, y = 0;
-            int n = 0;
-            for (String role : groupDrawn.get(name)) {
-                float[] a = at.get(role);
-                if (a == null)
-                    continue;
-                x += a[0] / a[2] * PITCH;
-                y += a[1] / a[2] * PITCH;
-                n++;
-            }
-            for (String role : groupDrawn.get(name))
-                nodeOf.put(role, out.size());
-            out.add(new Node("group:" + name, "", false, n == 0 ? 0 : x / n, n == 0 ? 0 : y / n, ItemStack.EMPTY, name));
+            out.add(new Node(role, role, false, a[0] / a[2] * PITCH, a[1] / a[2] * PITCH, ItemStack.EMPTY));
         }
         boolean wide = cols >= prow;
         int trayCols = wide ? Math.max(4, cols) : Math.max(3, prow);
@@ -825,7 +781,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         for (int pass = 0; pass < 2; pass++) {
             List<String> keys = pass == 0 ? tray : attach
                     ? java.util.stream.Stream.concat(offered().stream().filter(k -> !parents.containsKey(roleOf(k))), fanKeys.stream()).toList()
-                    : offered().stream().filter(k -> folded.stream().noneMatch(f -> board.groups().get(f).contains(roleOf(k)))).toList();
+                    : offered();
             for (String k : keys) {
                 String role = roleOf(k);
                 float[] a = pass == 1 ? at.get(role) : null;
@@ -848,7 +804,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 if (pass == 0)
                     nodeOf.put(role, out.size());
                 boolean faint = pass == 1 && attach && parents.containsKey(role) && !feasibleWith(k);
-                out.add(new Node(k, role, pass == 1, x, y, icon, null, faint));
+                out.add(new Node(k, role, pass == 1, x, y, icon, faint));
             }
         }
         nodes = List.copyOf(out);
@@ -1043,43 +999,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return -1;
     }
 
-    // --- groups and links ---------------------------------------------------------------------------
-
-    private static Component groupName(String name) {
-        return Component.translatable("gui.feedback.blueprint_table.group." + name);
-    }
-
-    /** The screen box (x0, y0, x1, y1) round an open group's drawn parts, or null. */
-    private int[] groupBox(String name) {
-        List<String> members = groupDrawn.get(name);
-        if (members == null)
-            return null;
-        int half = Math.round(NODE * zoom / 2) + 3;
-        int x0 = Integer.MAX_VALUE, y0 = Integer.MAX_VALUE, x1 = Integer.MIN_VALUE, y1 = Integer.MIN_VALUE;
-        for (String role : members) {
-            Integer i = nodeOf.get(role);
-            if (i == null)
-                continue;
-            Node n = nodes.get(i);
-            x0 = Math.min(x0, screenX(n.x) - half);
-            y0 = Math.min(y0, screenY(n.y) - half);
-            x1 = Math.max(x1, screenX(n.x) + half);
-            y1 = Math.max(y1, screenY(n.y) + half + 8);
-        }
-        return x0 > x1 ? null : new int[]{x0, y0, x1, y1};
-    }
-
-    /** The open group whose tab is at the pointer. */
-    private String groupTabAt(double mx, double my) {
-        for (String name : groupDrawn.keySet()) {
-            if (folded.contains(name))
-                continue;
-            int[] box = groupBox(name);
-            if (box != null && in(mx, my, box[0], box[1] - 10, font.width("- " + groupName(name).getString()) + 6, 10))
-                return name;
-        }
-        return null;
-    }
+    // --- links ---------------------------------------------------------------------------------------
 
     /** The link the pointer is on, or -1. */
     private int linkAt(double mx, double my) {
@@ -1353,26 +1273,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 return true;
             }
             if (overCanvas(mx, my)) {
-                String tab = groupTabAt(mx, my);
-                if (tab != null && button == 0) {
-                    GuiSkin.play(skin.click(), 1f);
-                    change(() -> {
-                        opened.remove(tab);
-                        selected = null;
-                    });
-                    return true;
-                }
                 int n = nodeAt(mx, my);
                 if (n >= 0 && button == 0) {
                     Node node = nodes.get(n);
                     ItemStack carried = menu.getCarried();
-                    if (node.group != null) {
-                        GuiSkin.play(skin.click(), 1f);
-                        change(() -> {
-                            opened.add(node.group);
-                            selected = groupDrawn.get(node.group).get(0);
-                        });
-                    } else if (node.ghost && node.faint) {
+                    if (node.ghost && node.faint) {
                         skin.cue(GuiSkin.Cue.REJECT);
                     } else if (node.ghost) {
                         GuiSkin.play(skin.click(), 1f);
@@ -1556,7 +1461,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private void updateHover(int mx, int my) {
         hoverNode = hoverSwatch = hoverShape = hoverFig = hoverChip = hoverDrawer = hoverFault = hoverLink = -1;
         hoverCorner = false;
-        hoverGroupTab = null;
         if (current() == null || !settled())
             return;
         if (in(mx, my, leftPos + DRAWER_X, topPos + 3, DRAWER_SLOTS * DRAWER_PITCH, 18)) {
@@ -1565,13 +1469,12 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         }
         if (overCanvas(mx, my)) {
             hoverNode = nodeAt(mx, my);
-            if (hoverNode >= 0 && !nodes.get(hoverNode).ghost && nodes.get(hoverNode).group == null) {
+            if (hoverNode >= 0 && !nodes.get(hoverNode).ghost) {
                 Node n = nodes.get(hoverNode);
                 int half = Math.round(NODE * zoom / 2);
                 hoverCorner = mx >= screenX(n.x) + half - 7 && my <= screenY(n.y) - half + 7;
             }
-            hoverGroupTab = groupTabAt(mx, my);
-            if (hoverNode < 0 && hoverGroupTab == null)
+            if (hoverNode < 0)
                 hoverLink = linkAt(mx, my);
             if (hoverNode < 0) {
                 int cy = topPos + CAN_Y + CAN_H - 13, x = leftPos + CAN_X + 4;
@@ -1627,7 +1530,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             gr = role;
             gm = choice(role).map(Material.Located::id).orElse(null);
             gs = hoverShape;
-        } else if (hoverNode >= 0 && !nodes.get(hoverNode).ghost && nodes.get(hoverNode).group == null && !menu.getCarried().isEmpty()) {
+        } else if (hoverNode >= 0 && !nodes.get(hoverNode).ghost && !menu.getCarried().isEmpty()) {
             Optional<Material.Located> named = Material.find(ClientMaterials.get(), menu.getCarried());
             if (named.isPresent()) {
                 gr = nodes.get(hoverNode).role;
@@ -1697,21 +1600,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         float time = GuiStyle.time();
         boolean still = ClientSettings.reduceMotion();
         int half = Math.round(NODE * zoom / 2);
-        // the folded design's open groups, boxed with a tab that closes them
-        for (String name : groupDrawn.keySet())
-            if (!folded.contains(name)) {
-                int[] box = groupBox(name);
-                if (box == null)
-                    continue;
-                boolean hot = name.equals(hoverGroupTab);
-                int colour = hot ? skin.ink() : alpha(skin.ink(), 0x70);
-                for (int from = 0; from < 2 * (box[2] - box[0] + box[3] - box[1]); from += 8)
-                    GuiStyle.perimeter(g, box[0], box[1], box[2], box[3], from, 4, colour);
-                String label = "- " + groupName(name).getString();
-                int tw = font.width(label) + 6;
-                skin.plaque(g, box[0], box[1] - 10, tw, 10);
-                g.drawString(font, label, box[0] + 3, box[1] - 9, hot ? skin.accent() : skin.dim(), false);
-            }
         // links, under the nodes, each by its own joint figure
         for (int i = 0; i < links.size(); i++) {
             Link l = links.get(i);
@@ -1804,11 +1692,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         Node n = nodes.get(i);
         drawNodeBody(g, i, half, time, still);
         int sx = screenX(n.x), sy = screenY(n.y);
-        if (n.group == null && !n.ghost && fannable.contains(n.role)) {
+        if (!n.ghost && fannable.contains(n.role)) {
             boolean open = n.role.equals(fanFor);
             g.drawString(font, open ? "-" : "+", sx + half - 5, sy + half - 9, open ? skin.accent() : skin.ink(), false);
         }
-        if (n.group == null && !inFan(n))
+        if (!inFan(n))
             g.fill(sx - half - 1, sy - half - 1, sx + half + 1, sy + half + 1, 0xA0101010);
         else if (n.ghost && n.faint)
             g.fill(sx - half, sy - half, sx + half, sy + half, 0x90101010);
@@ -1820,10 +1708,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         if (sx < leftPos + CAN_X - half - 20 || sx > leftPos + CAN_X + CAN_W + half + 20 || sy < topPos + CAN_Y - half - 20 || sy > topPos + CAN_Y + CAN_H + half + 20)
             return;
         boolean hot = i == hoverNode, picked = !n.ghost && n.role.equals(sel());
-        if (n.group != null) {
-            drawCluster(g, n, sx, sy, half, hot);
-            return;
-        }
         if (n.ghost) {
             Integer pi = nodeOf.get(parentOf.get(n.role));
             if (pi != null)
@@ -1880,21 +1764,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         g.pose().scale(k, k, 1f);
         g.drawString(font, text, -font.width(text) / 2, 0, colour, false);
         g.pose().popPose();
-    }
-
-    /** A folded group: one plate with its name and parts, a chip of each part's material along the foot, red if any of them fails. */
-    private void drawCluster(GuiGraphics g, Node n, int sx, int sy, int half, boolean hot) {
-        List<String> members = groupDrawn.get(n.group);
-        skin.plaque(g, sx - half, sy - half, 2 * half, 2 * half);
-        boolean bad = faults.stream().anyMatch(f -> f.roles().stream().anyMatch(members::contains));
-        g.renderOutline(sx - half - (bad || hot ? 1 : 0), sy - half - (bad || hot ? 1 : 0), 2 * half + (bad || hot ? 2 : 0), 2 * half + (bad || hot ? 2 : 0),
-                bad ? skin.warn() : hot ? skin.ink() : alpha(skin.ink(), 0x60));
-        g.drawCenteredString(font, "+" + members.size(), sx, sy - 5, skin.ink());
-        int chip = Math.max(2, Math.min(5, (2 * half - 6) / Math.max(1, members.size())));
-        int x = sx - members.size() * chip / 2;
-        for (String role : members)
-            g.fill(x, sy + half - 6, x += chip, sy + half - 3, 0xFF000000 | choice(role).map(l -> MaterialColors.of(l.id())).orElse(0x808080));
-        g.drawCenteredString(font, groupName(n.group), sx, sy + half + 2, hot ? skin.ink() : skin.dim());
     }
 
     /** {@code stack} filling a node of half-size {@code half} at (cx, cy). */
@@ -2162,19 +2031,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return List.of(faults.get(hoverFault).reason());
         if (hoverChip >= 0)
             return List.of(modifiers.get(hoverChip).line());
-        if (hoverGroupTab != null)
-            return List.of(Component.translatable("gui.feedback.blueprint_table.group_close", groupName(hoverGroupTab)));
-        if (hoverNode >= 0 && nodes.get(hoverNode).group != null) {
-            String name = nodes.get(hoverNode).group;
-            List<Component> out = new ArrayList<>();
-            out.add(Component.translatable("gui.feedback.blueprint_table.group_open", groupName(name)));
-            for (String role : groupDrawn.get(name))
-                out.add(Component.translatable("gui.feedback.blueprint_table.group_member", roleName(role), materialName(role)));
-            for (Fault f : faults)
-                if (f.roles().stream().anyMatch(groupDrawn.get(name)::contains))
-                    out.add(f.reason());
-            return out;
-        }
         if (hoverLink >= 0 && hoverNode < 0 && linkWorst[hoverLink] != null) {
             String[] pair = linkWorst[hoverLink];
             return List.of(Component.translatable("gui.feedback.blueprint_table.joint", roleName(pair[0]), roleName(pair[1]),

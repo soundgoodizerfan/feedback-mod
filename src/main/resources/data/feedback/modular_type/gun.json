@@ -1294,40 +1294,6 @@
         -2
       ]
     },
-    "groups": {
-      "sights": [
-        "S",
-        "e"
-      ],
-      "muzzle": [
-        "Q",
-        "M",
-        "N",
-        "a"
-      ],
-      "launcher": [
-        "W",
-        "U",
-        "O",
-        "g",
-        "h"
-      ],
-      "barrel_fittings": [
-        "c",
-        "V",
-        "H",
-        "Z",
-        "J"
-      ],
-      "accessories": [
-        "C",
-        "I",
-        "L",
-        "f",
-        "P",
-        "d"
-      ]
-    },
     "joins": [
       [
         "S",

@@ -96,15 +96,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *
      * @param layout where a part no pattern lays sits, by role letter, as {@code [column, row]} in the pattern's own cells
      *               (fractions allowed, negative to go above or left); parts without an entry go to the tray.
-     * @param groups sub-assemblies of a big design, name to role letters (lang {@code gui.feedback.blueprint_table.group.<name>}):
-     *               a design of many parts shows each group as one cluster, opened with a click.
-     * @param joins  pairs of role letters joined by a link although no pattern puts them side by side.
+     * @param joins  pairs {@code [part, parent]} of role letters joined by a link although no pattern puts them side by side; a part
+     *               not in a pattern that names a parent hangs off it as an attachment, fanned out when the parent is clicked.
      */
-    public record Board(Map<String, List<Float>> layout, Map<String, List<String>> groups, List<List<String>> joins) {
-        public static final Board NONE = new Board(Map.of(), Map.of(), List.of());
+    public record Board(Map<String, List<Float>> layout, List<List<String>> joins) {
+        public static final Board NONE = new Board(Map.of(), List.of());
         static final Codec<Board> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT.listOf()).optionalFieldOf("layout", Map.of()).forGetter(Board::layout),
-                Codec.unboundedMap(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("groups", Map.of()).forGetter(Board::groups),
                 Codec.STRING.listOf().listOf().optionalFieldOf("joins", List.of()).forGetter(Board::joins)
         ).apply(instance, Board::new));
     }
