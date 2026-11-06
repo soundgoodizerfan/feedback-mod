@@ -30,22 +30,15 @@
             "name": "long_gun",
             "shape": [
               "RR"
-            ],
-            "trait": "gun_braced",
-            "params": {
-              "kick_mult": 0.7,
-              "spread_mult": 0.6
-            }
+            ]
           },
           {
             "name": "machine_gun",
             "shape": [
               "RRR"
             ],
-            "trait": "open_bolt,gun_braced",
+            "trait": "open_bolt",
             "params": {
-              "kick_mult": 0.6,
-              "spread_mult": 0.7,
               "first_shot_spread": 2.0
             }
           }
@@ -1013,6 +1006,57 @@
         ],
         "variants": []
       }
+    },
+    "i": {
+      "name": "stock",
+      "forms": [
+        "gun_stock"
+      ],
+      "litres": 0.15,
+      "layer": 4,
+      "part": {
+        "item": "feedback:gun_stock",
+        "shape": [
+          "ii"
+        ],
+        "stock": [
+          "plate",
+          "*_planks"
+        ],
+        "base": "fixed",
+        "variants": [
+          {
+            "name": "fixed",
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.7,
+              "spread_mult": 0.6
+            }
+          },
+          {
+            "name": "skeleton",
+            "shape": [
+              "i"
+            ],
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.8,
+              "spread_mult": 0.75
+            }
+          },
+          {
+            "name": "folding",
+            "shape": [
+              "i"
+            ],
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.85,
+              "spread_mult": 0.85
+            }
+          }
+        ]
+      }
     }
   },
   "patterns": [
@@ -1049,7 +1093,8 @@
     "B": "feedback:steel",
     "A": "feedback:steel",
     "T": "feedback:steel",
-    "G": "feedback:wood"
+    "G": "feedback:wood",
+    "i": "feedback:wood"
   },
   "names": {
     "designations": [
@@ -1376,6 +1421,10 @@
       "d": [
         5,
         -2
+      ],
+      "i": [
+        5,
+        1
       ]
     },
     "joins": [
@@ -1497,6 +1546,10 @@
       ],
       [
         "b",
+        "R"
+      ],
+      [
+        "i",
         "R"
       ]
     ]

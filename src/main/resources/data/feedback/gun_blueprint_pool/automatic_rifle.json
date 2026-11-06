@@ -42,6 +42,14 @@
       "material": "feedback:wood",
       "form": "grip",
       "count": 1
+    },
+    {
+      "role": "i",
+      "material": "feedback:steel",
+      "form": "plate",
+      "count": 1,
+      "kind": "gun_stock",
+      "variant": "skeleton"
     }
   ]
 }

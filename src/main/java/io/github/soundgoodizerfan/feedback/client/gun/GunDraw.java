@@ -106,6 +106,7 @@ final class GunDraw {
             m.pop();
             grip(m, v, p, -1.75f, 0.5f, 3.5f, -18f, 2f, true);
             trigger(m, v, -1.75f, -3.75f, -1.25f);
+            stock(m, v, 1.25f, -1f, 0.75f);
             return;
         }
         // Revolver or single-shot frame: the barrel screws into its front at z = -3.5.
@@ -134,6 +135,7 @@ final class GunDraw {
         m.pop();
         grip(m, v, p, -1.75f, 1.25f, 3.25f, -28f, 1.75f, false);
         trigger(m, v, -1.75f, -2.75f, -0.25f);
+        stock(m, v, 1.5f, -1f, 1f);
     }
 
     /**
@@ -237,23 +239,52 @@ final class GunDraw {
             m.pop();
         }
 
-        // The stock: wrist down and back, comb, a butt deepening toward the shoulder, a pad.
-        m.part(v, v.has("G") ? "G" : "R");
-        m.push();
-        m.turnX(-12f, lo, back);
-        m.box(-0.625f, lo - 1.25f, back, 0.625f, hi - 0.5f, back + 2.75f, Tile.GRAIN);
-        m.pop();
-        float butt = back + 9.5f;
-        m.box(-0.75f, -0.75f, back + 2.25f, 0.75f, 0.5f, butt, Tile.GRAIN);
-        m.push();
-        m.turnX(6f, -0.75f, butt);
-        m.box(-0.6875f, -3.25f, back + 3f, 0.6875f, -0.75f, butt, Tile.GRAIN);
-        m.pop();
-        m.colour(darken(furniture)).box(-0.8125f, -3.25f, butt, 0.8125f, 0.5f, butt + 0.5f, Tile.RUBBER);
+        stock(m, v, back, lo, hi);
 
         action(m, v, p, hw, hi, back);
         trigger(m, v, lo, back * 0.45f, back * 0.45f + 2.25f);
         feed(m, v, p, lo, 0.25f, 2f);
+    }
+
+    /** The stock part, if the gun has one: fixed (furniture), skeleton (bare rods) or folding (a hinged tube), from {@code back} behind the receiver. */
+    private static void stock(GunMesh m, GunView v, float back, float lo, float hi) {
+        if (!v.has("i"))
+            return;
+        int colour = v.colour("i");
+        m.part(v, "i");
+        switch (v.variant("i")) {
+            case "skeleton" -> {
+                float butt = back + 6.5f;
+                m.box(-0.5f, 0.25f, back, 0.5f, 1f, butt, Tile.BRUSHED);
+                m.push();
+                m.turnX(10f, -2f, butt);
+                m.box(-0.5f, -2.5f, back + 1.5f, 0.5f, -1.875f, butt, Tile.BRUSHED);
+                m.pop();
+                m.box(-0.5f, -2f, butt - 0.75f, 0.5f, 0.25f, butt, Tile.METAL);
+                m.colour(darken(colour)).box(-0.625f, -2.5f, butt, 0.625f, 1.25f, butt + 0.5f, Tile.RUBBER);
+            }
+            case "folding" -> {
+                float butt = back + 7.5f;
+                m.box(-0.5f, -0.25f, back, 0.5f, 0.75f, back + 0.75f, Tile.METAL); // the hinge block
+                m.box(-0.25f, 0.25f, back + 0.75f, 0.25f, 0.75f, butt, Tile.BRUSHED);
+                m.box(-0.25f, -1.5f, back + 1.5f, 0.25f, -1f, butt, Tile.BRUSHED);
+                m.colour(darken(colour)).box(-0.5f, -1.75f, butt, 0.5f, 0.75f, butt + 0.5f, Tile.RUBBER);
+            }
+            default -> {
+                // Wrist down and back, comb, a butt deepening toward the shoulder, a pad.
+                m.push();
+                m.turnX(-12f, lo, back);
+                m.box(-0.625f, lo - 1.25f, back, 0.625f, hi - 0.5f, back + 2.75f, Tile.GRAIN);
+                m.pop();
+                float butt = back + 9.5f;
+                m.box(-0.75f, -0.75f, back + 2.25f, 0.75f, 0.5f, butt, Tile.GRAIN);
+                m.push();
+                m.turnX(6f, -0.75f, butt);
+                m.box(-0.6875f, -3.25f, back + 3f, 0.6875f, -0.75f, butt, Tile.GRAIN);
+                m.pop();
+                m.colour(darken(colour)).box(-0.8125f, -3.25f, butt, 0.8125f, 0.5f, butt + 0.5f, Tile.RUBBER);
+            }
+        }
     }
 
     private static void machineGun(GunMesh m, GunView v, GunMotion.Parts p) {
@@ -267,15 +298,7 @@ final class GunDraw {
         m.turnX(-55f * p.cover(), 1.5f, 6f);
         m.box(-hw, 1.5f, 0.5f, hw, 1.75f, 6f, Tile.METAL);
         m.pop();
-        // Skeleton buttstock in the receiver's metal, a pad at the shoulder.
-        float butt = back + 6.5f;
-        m.box(-0.5f, 0.25f, back, 0.5f, 1f, butt, Tile.BRUSHED);
-        m.push();
-        m.turnX(10f, -2f, butt);
-        m.box(-0.5f, -2.5f, back + 1.5f, 0.5f, -1.875f, butt, Tile.BRUSHED);
-        m.pop();
-        m.box(-0.5f, -2f, butt - 0.75f, 0.5f, 0.25f, butt, Tile.METAL);
-        m.colour(darken(receiver)).box(-0.625f, -2.5f, butt, 0.625f, 1.25f, butt + 0.5f, Tile.RUBBER);
+        stock(m, v, back, -1.25f, 1.5f);
         // Ventilated handguard round the barrel's root.
         float under = barrelsBottom(v);
         float fe = GunView.snap(Math.min(Math.max(v.len() * 0.5f, 3f), 9f), 0.25f);

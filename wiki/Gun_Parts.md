@@ -43,6 +43,10 @@ A plastic or rubber ingot turns into a grip as well, with the friction of its ma
 
 Leather, wool, paper and honey can't be turned into a grip, but they can **wrap** one (see [Assembling](#assembling)).
 
+## The stock
+
+A stock is made at the Gun Table from a plate (any metal, polymer or organic material that comes as one) or from planks, in one of three shapes: **fixed**, **skeleton** or **folding**. It takes the kick into your shoulder while you are crouched and still, so the gun kicks less and groups tighter ([Guns](Guns.md#frames)). It is optional, and fits any frame.
+
 ## The barrel
 
 The drill press makes a Gun Barrel by piercing a turned rod. A fresh barrel is a **3 mm** pilot bore through a rod **30 mm** across and **0.6 m** long. It's nowhere near a gun yet. You cut it to shape, and **each machine changes one dimension** for as long as you keep it working:

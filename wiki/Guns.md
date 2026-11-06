@@ -27,9 +27,11 @@ A gun has one **variant**, told by the **receiver**: its frame, which is only a 
 
 | Frame | Cells of stock | What makes it different |
 | --- | --- | --- |
-| **Handgun** | 1 | Held in one hand, no stock: kick and spread are the wrist's. |
-| **Long gun** | 2 | A shoulder stock takes the kick into the body and a long barrel steadies the bullet. Braced fire is steadier. |
+| **Handgun** | 1 | Held in one hand: kick and spread are the wrist's, unless it has a stock. |
+| **Long gun** | 2 | A longer receiver for a long barrel to steady the bullet. It has no shoulder of its own: add a stock (see below). |
 | **Machine gun** | 3 | A heavy frame and an open bolt, built for sustained fire. |
+
+A **stock** is its own part, on any frame, and changes what a gun is like to hold. A **fixed** stock (two cells) kicks 30% less and groups 40% tighter when braced, a **skeleton** one (one cell) 20% and 25%, a **folding** one (one cell) 15% each. A gun with none has no braced bonus and, being a long gun, is a long handgun: hard on your hands (see Strain under Recoil). A stock is cut from a plate or from planks.
 
 What the gun is called (rifle or shotgun, pistol or revolver) follows from the other parts, see [Names](#names).
 
@@ -70,7 +72,7 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 | Closed bolt | most actions | a round in the hot chamber can cook off |
 | Open bolt | a machine gun frame | nothing in the chamber to cook off; the first shot after a pause sprays wider |
 | Belt fed | a belt feed | a long reload |
-| Braced | a long gun or machine gun | crouched and still, less kick and tighter spread |
+| Braced | a stock | crouched and still, less kick and tighter spread |
 
 
 ### Names

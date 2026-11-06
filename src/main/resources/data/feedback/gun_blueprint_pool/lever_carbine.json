@@ -49,6 +49,14 @@
       "form": "rod",
       "count": 1,
       "kind": "magazine_tube"
+    },
+    {
+      "role": "i",
+      "material": "feedback:steel",
+      "form": "plate",
+      "count": 2,
+      "kind": "gun_stock",
+      "variant": "fixed"
     }
   ]
 }

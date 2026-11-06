@@ -1,0 +1,7 @@
+{
+  "from": "plate",
+  "to": "gun_stock",
+  "operation": "grind",
+  "base": 4,
+  "slope": 1
+}

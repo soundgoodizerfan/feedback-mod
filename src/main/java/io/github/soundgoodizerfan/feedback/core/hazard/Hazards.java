@@ -63,7 +63,7 @@ public final class Hazards {
     }
 
     /** Death messages per type: lang keys {@code death.attack.feedback.<type>.1..n}, plus {@code .player} when someone caused it. */
-    public static final int VARIANTS = 4;
+    public static final int VARIANTS = 8;
 
     public static DamageSource source(Level level, ResourceKey<DamageType> type) {
         return source(level, type, null);
