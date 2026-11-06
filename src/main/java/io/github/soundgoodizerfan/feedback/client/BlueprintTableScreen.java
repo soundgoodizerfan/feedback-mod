@@ -178,6 +178,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private final float[] tops = new float[Fig.values().length];
     private final Map<String, List<Material.Located>> materialLists = new HashMap<>();
     private Map<ResourceLocation, Material> listedFor;
+    /** Every material for a part, the ones that fit first, narrowed by the search; and which of them fit. */
+    private final Map<String, List<Material.Located>> swatchLists = new HashMap<>();
+    private final Map<String, Set<ResourceLocation>> fitSets = new HashMap<>();
+    private String query = "";
+    private net.minecraft.client.gui.components.EditBox searchBox;
 
     // --- view state ------------------------------------------------------------------------------
     private double camX, camY;
@@ -429,7 +434,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         sizes.clear();
         shape.clear();
         matId.clear();
-        materialLists.clear();
+        clearLists();
         flashes.clear();
         drawerScroll = Mth.clamp(type - DRAWER_SLOTS / 2, 0, Math.max(0, types.size() - DRAWER_SLOTS));
     }
@@ -482,7 +487,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return List.of();
         Map<ResourceLocation, Material> all = ClientMaterials.get();
         if (all != listedFor) {
-            materialLists.clear();
+            clearLists();
             listedFor = all;
         }
         return materialLists.computeIfAbsent(role + "|" + shapeIdx, k -> {
@@ -491,6 +496,48 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                     .thenComparing(l -> l.id().toString()));
             return List.copyOf(out);
         });
+    }
+
+    private void clearLists() {
+        materialLists.clear();
+        swatchLists.clear();
+        fitSets.clear();
+    }
+
+    private boolean matches(Material.Located l) {
+        String q = query.trim().toLowerCase(java.util.Locale.ROOT);
+        if (q.isEmpty() || materialLabel(l).getString().toLowerCase(java.util.Locale.ROOT).contains(q))
+            return true;
+        return l.material().kind().map(k -> k.name().toLowerCase(java.util.Locale.ROOT).contains(q)).orElse(false)
+                || l.material().traits().stream().anyMatch(tr -> tr.getSerializedName().contains(q));
+    }
+
+    /** What the part panel lists: every material, the ones that fit the part first, then the rest, narrowed by the search. */
+    private List<Material.Located> swatches(String role) {
+        List<Material.Located> fit = materials(role);
+        String key = role + "|" + shapeIndex(role);
+        return swatchLists.computeIfAbsent(key, k -> {
+            Set<ResourceLocation> ids = new java.util.HashSet<>();
+            fit.forEach(l -> ids.add(l.id()));
+            fitSets.put(k, ids);
+            List<Material.Located> out = new ArrayList<>(fit);
+            List<Material.Located> rest = new ArrayList<>();
+            ClientMaterials.get().forEach((id, m) -> {
+                if (!ids.contains(id) && !m.items(id).isEmpty())
+                    rest.add(new Material.Located(id, m, m.items(id).keySet().iterator().next()));
+            });
+            rest.sort(java.util.Comparator.<Material.Located>comparingInt(l -> l.material().kind().map(Enum::ordinal).orElse(99))
+                    .thenComparing(l -> l.id().toString()));
+            out.addAll(rest);
+            return List.copyOf(out.stream().filter(this::matches).toList());
+        });
+    }
+
+    /** Whether the part takes {@code l}; the rest of the swatches are shown struck out. */
+    private boolean usable(String role, Material.Located l) {
+        swatches(role);
+        Set<ResourceLocation> ids = fitSets.get(role + "|" + shapeIndex(role));
+        return ids != null && ids.contains(l.id());
     }
 
     private List<Material.Located> materials(String role) {
@@ -929,8 +976,10 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0);
     }
 
+    private static final int SEARCH_H = 14;
+
     private int swatchTop(String role) {
-        return topPos + PAN_Y + 15 + 15 * controlRows(role);
+        return topPos + PAN_Y + 15 + 15 * controlRows(role) + SEARCH_H;
     }
 
     private int shapesHeight(String role) {
@@ -953,6 +1002,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     @Override
     protected void init() {
         super.init();
+        searchBox = null;
         ModularType t = current();
         int top = topPos + 4;
         addRenderableWidget(GuiStyle.button(skin, Component.literal("..."), b -> typePopup.open(
@@ -1024,6 +1074,18 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             addRenderableWidget(GuiStyle.stepper(skin, x, y, CALL_W - 8, 14, "<", ">",
                     () -> Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()).getString(),
                     dir -> change(() -> edge = edge.step(dir)), false, null));
+        searchBox = new net.minecraft.client.gui.components.EditBox(font, x + 2, swatchTop(role) - SEARCH_H + 3, CALL_W - 8 - 4, 9,
+                Component.translatable("gui.feedback.popup.search"));
+        searchBox.setBordered(false);
+        searchBox.setTextColor(skin.ink());
+        searchBox.setHint(Component.translatable("gui.feedback.popup.search").withColor(skin.dim()));
+        searchBox.setValue(query);
+        searchBox.setResponder(v -> {
+            query = v;
+            swatchLists.clear();
+            swatchScroll = 0;
+        });
+        addRenderableWidget(searchBox);
     }
 
     private static boolean shiftDown() {
@@ -1089,6 +1151,10 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
+        if (!typePopup.active() && searchBox != null && searchBox.isFocused() && key != org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
+            searchBox.keyPressed(key, scan, modifiers);
+            return true;
+        }
         return typePopup.keyPressed(key, scan, modifiers) || super.keyPressed(key, scan, modifiers);
     }
 
@@ -1112,9 +1178,12 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             }
             String role = sel();
             if (button == 0 && hoverSwatch >= 0 && role != null) {
-                List<Material.Located> mats = materials(role);
+                List<Material.Located> mats = swatches(role);
                 if (hoverSwatch < mats.size()) {
-                    paint(role, mats.get(hoverSwatch));
+                    if (usable(role, mats.get(hoverSwatch)))
+                        paint(role, mats.get(hoverSwatch));
+                    else
+                        skin.cue(GuiSkin.Cue.REJECT);
                     return true;
                 }
             }
@@ -1219,7 +1288,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         }
         String role = sel();
         if (role != null && in(mx, my, leftPos + CALL_X, swatchTop(role), CALL_W, swatchRows(role) * SWATCH_PITCH)) {
-            int rows = (materials(role).size() + swatchCols() - 1) / swatchCols();
+            int rows = (swatches(role).size() + swatchCols() - 1) / swatchCols();
             swatchScroll = Mth.clamp(swatchScroll + dir, 0, Math.max(0, rows - swatchRows(role)));
             return true;
         }
@@ -1353,7 +1422,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         }
         String role = sel();
         if (role != null) {
-            List<Material.Located> mats = materials(role);
+            List<Material.Located> mats = swatches(role);
             int sx = leftPos + CALL_X + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
             if (in(mx, my, sx, sy, cols * SWATCH_PITCH, rows * SWATCH_PITCH)) {
                 int i = (swatchScroll + (my - sy) / SWATCH_PITCH) * cols + (mx - sx) / SWATCH_PITCH;
@@ -1381,9 +1450,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         String gr = null;
         ResourceLocation gm = null;
         int gs = -1;
-        if (hoverSwatch >= 0 && role != null && hoverSwatch < materials(role).size()) {
+        if (hoverSwatch >= 0 && role != null && hoverSwatch < swatches(role).size() && usable(role, swatches(role).get(hoverSwatch))) {
             gr = role;
-            gm = materials(role).get(hoverSwatch).id();
+            gm = swatches(role).get(hoverSwatch).id();
             gs = shapeIndex(role);
         } else if (hoverShape >= 0 && role != null) {
             gr = role;
@@ -1657,8 +1726,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         if (role == null)
             return;
         ModularType t = current();
-        List<Material.Located> mats = materials(role);
+        List<Material.Located> mats = swatches(role);
         Optional<Material.Located> now = choice(role);
+        skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, CALL_W - 8, SEARCH_H - 3);
         g.drawString(font, roleName(role), x + 5, y + 4, skin.ink(), false);
         String name = materialName(role);
         int nw = Math.min(font.width(name), 110);
@@ -1673,7 +1743,12 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                     break;
                 int px = sx + c * SWATCH_PITCH, py = sy + r * SWATCH_PITCH;
                 Material.Located l = mats.get(i);
+                boolean fits = usable(role, l);
                 g.fill(px, py, px + SWATCH, py + SWATCH, 0xFF000000 | MaterialColors.of(l.id()));
+                if (!fits) {
+                    g.fill(px, py, px + SWATCH, py + SWATCH, 0xB0202020);
+                    g.drawCenteredString(font, "x", px + SWATCH / 2 + 1, py + (SWATCH - 8) / 2 + 1, skin.warn());
+                }
                 boolean on = now.isPresent() && now.get().id().equals(l.id());
                 g.renderOutline(px - (on ? 1 : 0), py - (on ? 1 : 0), SWATCH + (on ? 2 : 0), SWATCH + (on ? 2 : 0),
                         on ? skin.accent() : i == hoverSwatch ? skin.ink() : alpha(skin.ink(), 0x40));
@@ -1935,7 +2010,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return out;
         }
         if (hoverSwatch >= 0 && sel() != null)
-            return List.of(materialLabel(materials(sel()).get(hoverSwatch)));
+        {
+            Material.Located l = swatches(sel()).get(hoverSwatch);
+            return usable(sel(), l) ? List.of(materialLabel(l))
+                    : List.of(materialLabel(l), Component.translatable("gui.feedback.blueprint_table.unfit").withStyle(net.minecraft.ChatFormatting.RED));
+        }
         if (hoverShape >= 0 && sel() != null)
             return PartPresenter.describe(shapes(sel()).get(hoverShape));
         if (hoverFig >= 0) {

@@ -5484,5 +5484,6 @@
   "commands.feedback.no_modular": "Hold a modular item (not a blueprint).",
   "gun.feedback.designation.big_iron": "Big Iron",
   "advancement.feedback.combat.big_iron.title": "Big Iron",
-  "advancement.feedback.combat.big_iron.description": "A big iron on your hip: fire a revolver chambered for 20 mm."
+  "advancement.feedback.combat.big_iron.description": "A big iron on your hip: fire a revolver chambered for 20 mm.",
+  "gui.feedback.blueprint_table.unfit": "Does not fit this part."
 }

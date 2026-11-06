@@ -68,7 +68,7 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
     private final Catchup offline = new Catchup();
 
     private final HeatedTank steamTank = new HeatedTank(FTuning.CONDENSER_TANK_MB,
-            stack -> stack.is(FTags.STEAM), this::setChanged);
+            stack -> stack.is(FTags.STEAM) || ThermalProcessTable.get().condensing(stack).isPresent(), this::setChanged);
     private final HeatedTank waterTank = new HeatedTank(FTuning.CONDENSER_TANK_MB, this::setChanged);
 
     public CondenserBlockEntity(BlockPos pos, BlockState state) {
@@ -127,6 +127,10 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
         setChanged();
         if (change.isEmpty())
             return;
+        var liquid = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(change.get().liquidFluid());
+        // A different condensate cannot join what the tank holds; keep the gas rather than lose it.
+        if (!waterTank.isEmpty() && waterTank.getFluid().getFluid() != liquid)
+            return;
         // Only the room left below boiling can take latent heat, and taking it spends that room.
         float boil = change.get().boil().value();
         int affordable = (int) ((boil - temperature) * FTuning.CONDENSER_MASS.workPerTu() / change.get().latent());
@@ -135,7 +139,6 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
         if (amount <= 0)
             return;
         steamTank.drain(amount, IFluidHandler.FluidAction.EXECUTE);
-        var liquid = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(change.get().liquidFluid());
         // The water leaves at the condenser's own temperature, no hotter than boiling.
         waterTank.fill(FluidHeat.stamp(new FluidStack(liquid, amount), Math.min(boil, temperature)),
                 IFluidHandler.FluidAction.EXECUTE);

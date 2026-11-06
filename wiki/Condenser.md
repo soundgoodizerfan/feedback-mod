@@ -2,6 +2,8 @@
 
 Turns steam back into water. It's a [Boiler](Boiler.md) in reverse: the heat the boiler put into the steam comes back out, into the condenser.
 
+It takes any vapor that has a boiling point, not only steam, and gives back that vapor's liquid. [Unstable Solvent Vapor](Liquid_Teleportant.md#unstable-solvent) condenses to Unstable Spatial Solvent, below 160 Tu. It holds one liquid at a time: while its tank holds one kind, a vapor that condenses to another waits until the tank is drained.
+
 ## Crafting
 
 ```
