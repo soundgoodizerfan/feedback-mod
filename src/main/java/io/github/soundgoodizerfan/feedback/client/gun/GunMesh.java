@@ -30,14 +30,15 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.inventory.InventoryMenu;
 
 /**
- * Immediate-mode boxes for the gun renderer, in centimetres, textured from one greyscale sheet
+ * Immediate-mode boxes for the gun renderer, in model pixels (1/16 block), textured from one greyscale sheet
  * ({@code textures/item/gun/sheet.png}, 4 by 4 tiles of 32 px) and tinted by the material of the
  * part being drawn. Built per frame rather than baked: a gun's shape follows its parts and their
  * measures (a barrel is drawn at its own length and diameter), which no fixed model can do.
  *
- * <p>Texture density is 2 texels per centimetre; a face longer than a tile stretches, which is why
- * the long-part tiles (brushed, grain, coil) only vary across the stretch direction. On side and
- * top faces u runs along the bore (z), so streaks follow the barrel.
+ * <p>Texture density is 2 texels per pixel everywhere, so every part shares one texel size (the
+ * half-pixel grid Scorched Guns' 32 px sheets use); boxes sit on a quarter-pixel grid. A face longer
+ * than a tile (16 px) stretches, which is why the long-part tiles (brushed, grain, coil) only vary
+ * across the stretch direction. On side and top faces u runs along the bore (z).
  */
 final class GunMesh {
 
@@ -57,7 +58,7 @@ final class GunMesh {
         }
     }
 
-    private static final float TEXELS_PER_CM = 2f;
+    private static final float TEXELS_PER_PX = 2f;
     private static final float TILE = 32f, SHEET = 128f;
     static final net.minecraft.resources.ResourceLocation SHEET_ID = Feedback.id("item/gun/sheet");
 
@@ -136,18 +137,19 @@ final class GunMesh {
     }
 
     /**
-     * An octagonal rod on the axis (x, y) from z0 to z1, {@code r} from the axis to a flat: a square
-     * and the same square turned 45 degrees. Reads as round at the sizes a gun is drawn at.
+     * A rod on the axis (x, y) from z0 to z1, {@code r} from the axis to a face: square, as Minecraft
+     * draws round things, with its corners stepped in an eighth of a pixel from 0.75 px up so a thick
+     * one reads round without leaving the grid.
      */
     void rod(float x, float y, float r, float z0, float z1, Tile t) {
         float lo = Math.min(z0, z1), hi = Math.max(z0, z1);
-        box(x - r, y - r * 0.414f, lo, x + r, y + r * 0.414f, hi, t);
-        box(x - r * 0.414f, y - r, lo, x + r * 0.414f, y + r, hi, t);
-        push();
-        turnZ(45, x, y);
-        box(x - r * 0.98f, y - r * 0.414f, lo, x + r * 0.98f, y + r * 0.414f, hi, t);
-        box(x - r * 0.414f, y - r * 0.98f, lo, x + r * 0.414f, y + r * 0.98f, hi, t);
-        pop();
+        if (r < 0.75f) {
+            box(x - r, y - r, lo, x + r, y + r, hi, t);
+            return;
+        }
+        float c = r >= 1.25f ? 0.25f : 0.125f;
+        box(x - r, y - r + c, lo, x + r, y + r - c, hi, t);
+        box(x - r + c, y - r, lo, x + r - c, y + r, hi, t);
     }
 
     /** Thin rings round an axis, {@code count} of them from z0 toward z1: fins, windings, lagging. */
@@ -189,7 +191,7 @@ final class GunMesh {
             vMin = Math.min(vMin, vs[i]);
             vMax = Math.max(vMax, vs[i]);
         }
-        float uSpan = Math.min((uMax - uMin) * TEXELS_PER_CM, TILE), vSpan = Math.min((vMax - vMin) * TEXELS_PER_CM, TILE);
+        float uSpan = Math.min((uMax - uMin) * TEXELS_PER_PX, TILE), vSpan = Math.min((vMax - vMin) * TEXELS_PER_PX, TILE);
         uSpan = Math.max(uSpan, 1f);
         vSpan = Math.max(vSpan, 1f);
         float uOff = Math.floorMod(seed, (int) (TILE - uSpan) + 1), vOff = Math.floorMod(seed >> 5, (int) (TILE - vSpan) + 1);

@@ -93,11 +93,10 @@ public final class GunMotion {
     private static float bump;
     private static long bumpMs;
 
-    /** Where the hip pose sits from the screen's middle, view-space blocks (the aim moves it across). */
-    private static final float ADS_ACROSS = 0.65f;
-    /** Vertical aim offset for a sight line {@link #ADS_REF_LINE} blocks above the hand; higher sights sit lower. */
-    private static final float ADS_UP = 0.015f;
-    private static final float ADS_REF_LINE = 0.44f;
+    /** Vanilla's first-person hand pivot in view space (ItemInHandRenderer.applyItemArmTransform), blocks. */
+    private static final float HAND_ACROSS = 0.56f, HAND_DOWN = -0.52f;
+    /** Where an aimed sight line sits on screen: a touch under the eye, view-space blocks. */
+    private static final float SIGHT_Y = -0.05f;
 
     private GunMotion() {
     }
@@ -218,7 +217,7 @@ public final class GunMotion {
         return new Parts(slide, boltLift, boltBack, lever, pump, breakOpen, out, turn, magDrop, magOut, cover, hammer);
     }
 
-    /** The shot kick and the reload tilt, turned about the hand ({@code hand} in centimetres, before the scale). */
+    /** The shot kick and the reload tilt, turned about the hand ({@code hand} in model pixels, before the scale). */
     static void item(PoseStack pose, GunView view, Hand h, long now) {
         float[] at = view.hand();
         float a = Mth.clamp(aimPos, 0f, 1f);
@@ -229,7 +228,7 @@ public final class GunMotion {
         float calm = ClientSettings.reduceMotion() ? 0.3f : 1f;
         float scale = Mth.clamp(h.kickDeg, 0.5f, 10f) * (1 - 0.8f * a) * calm;
         float pitch = k * scale * 1.6f;
-        float back = k * Mth.clamp(h.kickDeg * 0.3f, 0.4f, 2.5f) * (1 - 0.7f * a) * calm;
+        float back = k * Mth.clamp(h.kickDeg * 0.15f, 0.25f, 1.25f) * (1 - 0.7f * a) * calm;
         float twist = k * h.twist * scale * 0.4f;
 
         float p = reloadPhase(h, now);
@@ -245,7 +244,7 @@ public final class GunMotion {
         }
 
         pose.translate(at[0], at[1], at[2]);
-        pose.translate(0, -tilt * 1.5f, back);
+        pose.translate(0, -tilt * 0.75f, back);
         pose.mulPose(Axis.XP.rotationDegrees(pitch + lift));
         pose.mulPose(Axis.YP.rotationDegrees(twist));
         pose.mulPose(Axis.ZP.rotationDegrees(roll + twist * 0.5f));
@@ -313,9 +312,12 @@ public final class GunMotion {
         float calm = ClientSettings.reduceMotion() ? 0.3f : 1f;
 
         if (main && a != 0) {
+            // Solve the aim from the drawn gun: its centre line to the middle, its sight line to just under the eye.
             GunView view = GunView.of(stack);
-            float line = (view.sightLine() - view.hand()[1]) * GunRenderer.FIRST_PERSON_SCALE;
-            pose.translate(-side * ADS_ACROSS * a, (ADS_UP + ADS_REF_LINE - line) * a, 0.04f * a);
+            float[] grip = GunRenderer.firstPersonGrip(view);
+            float across = HAND_ACROSS + grip[0] / 16f;
+            float line = HAND_DOWN + grip[1] / 16f + (view.sightLine() - view.hand()[1]) * GunRenderer.FIRST_PERSON_SCALE;
+            pose.translate(-side * across * a, (SIGHT_Y - line) * a, 0.04f * a);
         }
         float loose = (1 - 0.85f * Mth.clamp(a, 0f, 1f)) * calm;
         pose.translate(-swayYaw * 0.04f * loose, swayPitch * 0.03f * loose, 0);

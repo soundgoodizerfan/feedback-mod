@@ -44,12 +44,21 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
  */
 public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
 
+    /** Blocks per model pixel: a gun is drawn at item scale in first person, a little larger in third, as Scorched Guns' display transforms do. */
+    static final float FIRST_PERSON_SCALE = 1f / 16f;
+    private static final float THIRD_PERSON_SCALE = 1.3f / 16f;
+
     /**
-     * Blocks per centimetre in first person. True scale is 0.01 (a player is 1.8 blocks and 1.8 m);
-     * first person is drawn larger so a pistol reads at arm's length, third person only a little.
+     * Where the grip sits from the hand's pivot in first person, pixels, right hand ({@code x} mirrors
+     * for the left): a little toward the middle of the screen and raised, as Scorched Guns places its
+     * guns (its first-person translation applied to where its grips are).
      */
-    static final float FIRST_PERSON_SCALE = 0.024f;
-    private static final float THIRD_PERSON_SCALE = 0.014f;
+    static float[] firstPersonGrip(GunView view) {
+        return view.longGun() ? new float[]{-5.5f, 2.5f, 7.75f} : new float[]{-4.75f, 3.5f, 6f};
+    }
+
+    /** The grip in third person: in the fist, a touch forward. */
+    private static final float[] THIRD_PERSON_GRIP = {0f, -1.65f, 3.1f};
 
     private static GunRenderer instance;
 
@@ -88,14 +97,14 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
                 boolean off = player != null && arm != player.getMainArm();
                 hand = GunMotion.hand(off);
                 float side = arm == HumanoidArm.RIGHT ? 1f : -1f;
-                // Where the old fixed model's grip sat, so the hip pose and aim offsets keep their meaning.
-                pose.translate(0.094f * side, 0.0125f, 0.056f);
+                float[] grip = firstPersonGrip(view);
+                pose.translate(grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
                 pose.scale(FIRST_PERSON_SCALE, FIRST_PERSON_SCALE, FIRST_PERSON_SCALE);
                 pose.translate(-at[0], -at[1], -at[2]);
                 GunMotion.item(pose, view, hand, now);
             }
             case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> {
-                pose.translate(0, 0.075f, 0.369f);
+                pose.translate(THIRD_PERSON_GRIP[0] / 16f, THIRD_PERSON_GRIP[1] / 16f, THIRD_PERSON_GRIP[2] / 16f);
                 pose.scale(THIRD_PERSON_SCALE, THIRD_PERSON_SCALE, THIRD_PERSON_SCALE);
                 pose.translate(-at[0], -at[1], -at[2]);
             }
@@ -109,8 +118,8 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
 
     /** Fit the whole gun into the item's square: side on, muzzle to the right, long guns laid on the diagonal. */
     private static void fit(PoseStack pose, GunView view, ItemDisplayContext context) {
-        float front = -(view.len() + view.muzzleReach()), back = view.rear();
-        float top = view.top() + (view.has("S") ? 3.6f : 1.2f), bottom = view.bottom();
+        float front = -(view.muzzle() + view.muzzleReach()), back = view.rear();
+        float top = view.top() + (view.has("S") ? 1.75f : 0.5f), bottom = view.bottom();
         float length = back - front, height = top - bottom;
         boolean flat = context == ItemDisplayContext.GUI || context == ItemDisplayContext.FIXED;
         float tilt = flat && view.longGun() ? 30f : flat ? 8f : 0f;

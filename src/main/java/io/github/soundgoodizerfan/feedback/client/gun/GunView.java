@@ -40,8 +40,8 @@ import net.minecraft.world.item.ItemStack;
  * real length and diameter, which parts are fitted and each part's material colour. Everything the
  * renderer and the motion read; nothing here is stored.
  *
- * <p>Units are centimetres. The frame: the bore axis runs along z with the muzzle toward -z, the
- * breech face at z = 0, y up, x to the gun's right.
+ * <p>Units are model pixels (1/16 block) on a quarter-pixel grid. The frame: the bore axis runs along
+ * z with the muzzle toward -z, the rear of the receiver near z = 0, y up, x to the gun's right.
  *
  * @param action   the action part's variant ({@code self_loading}, {@code bolt}, {@code lever}, ...),
  *                 or {@code none}
@@ -68,7 +68,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             // A bare gun item (creative tab): a plain self-loading pistol, unpainted.
             for (String k : new String[]{"R", "B", "A", "T", "G"})
                 colours.put(k, BARE);
-            return new GunView(GunLayout.Type.HANDGUN, "self_loading", true, 12f, 0.75f, 0.45f, 0, 0, colours, variants,
+            return new GunView(GunLayout.Type.HANDGUN, "self_loading", true, 4f, 0.625f, 0.25f, 0, 0, colours, variants,
                     mag, rounds);
         }
         for (ModularDesign.Part p : design.parts()) {
@@ -88,15 +88,27 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, mag, rounds);
     }
 
-    /** {length, radius, bore radius} in centimetres, zeros when the role is empty. */
+    /**
+     * {length, radius, bore radius} in model pixels (1/16 block), zeros when the role is empty. Guns
+     * are drawn in Minecraft's own proportions, not to scale: a barrel's length maps to 20 px per metre
+     * and its diameter to a quarter pixel per millimetre over a floor, so a pistol is about 9 px long
+     * and a rifle 25 to 30 (numbers taken from Scorched Guns' models, GPL-3.0, read for proportions
+     * only). Radii snap to an eighth of a pixel so every face lands on the half-pixel texel grid.
+     */
     private static float[] barrel(ModularType type, String letter, ModularDesign.Part part) {
         ModularType.Role role = type.roles().get(letter);
         if (part == null || role == null)
             return new float[3];
-        float length = role.dim(part, BarrelGeometry.LENGTH) * 100f;
-        float outer = role.dim(part, BarrelGeometry.OUTER) / 10f;
-        float bore = role.dim(part, BarrelGeometry.BORE) / 10f;
-        return new float[]{Math.max(length, 3f), Math.max(outer / 2f, 0.3f), Math.max(bore / 2f, 0.1f)};
+        float metres = role.dim(part, BarrelGeometry.LENGTH);
+        float outerMm = role.dim(part, BarrelGeometry.OUTER), boreMm = role.dim(part, BarrelGeometry.BORE);
+        float length = snap(Math.max(1.5f, Math.min(metres * 20f, 16f)), 0.25f);
+        float r = snap(Math.max(0.5f, Math.min(0.25f + outerMm * 0.025f, 1.25f)), 0.125f);
+        float bore = snap(Math.max(0.125f, Math.min(boreMm * 0.02f, r - 0.125f)), 0.125f);
+        return new float[]{length, r, bore};
+    }
+
+    static float snap(float v, float grid) {
+        return Math.round(v / grid) * grid;
     }
 
     boolean has(String letter) {
@@ -133,83 +145,96 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     /** Where the hand holds the gun: the grip's middle, or a long gun's wrist. */
     float[] hand() {
         return switch (type) {
-            case HANDGUN -> new float[]{0, -5.6f, 4.8f};
-            case RIFLE -> new float[]{0, -3.4f, 16.5f};
-            case SHOTGUN -> new float[]{0, -3.9f, 14.5f};
-            case MACHINE_GUN -> new float[]{0, -5.6f, 19.2f};
+            case HANDGUN -> openFrame() ? new float[]{0, -3.25f, 1.25f} : new float[]{0, -3.25f, 0f};
+            case RIFLE -> new float[]{0, -1.5f, 6.75f};
+            case SHOTGUN -> new float[]{0, -1.75f, 6.25f};
+            case MACHINE_GUN -> new float[]{0, -2.75f, 7.75f};
+        };
+    }
+
+    /** Half the receiver's width. */
+    float halfWidth() {
+        return switch (type) {
+            case HANDGUN -> 0.875f;
+            case RIFLE -> 0.75f;
+            case SHOTGUN -> 0.875f;
+            case MACHINE_GUN -> 1f;
+        };
+    }
+
+    /** Rear of the receiver, where a stock starts. */
+    float back() {
+        return switch (type) {
+            case HANDGUN -> 0.5f;
+            case RIFLE -> 5.5f;
+            case SHOTGUN -> 5f;
+            case MACHINE_GUN -> 9f;
         };
     }
 
     /** Top of the receiver or slide, where a sight sits. */
     float top() {
         return switch (type) {
-            case HANDGUN -> openFrame() ? 1.35f : 1.7f;
-            case RIFLE -> slide ? 2.4f : 1.6f;
-            case SHOTGUN -> 1.9f;
-            case MACHINE_GUN -> 3.1f;
+            case HANDGUN -> openFrame() ? 1f : 0.75f;
+            case RIFLE -> slide ? 1.5f : 1f;
+            case SHOTGUN -> 1f;
+            case MACHINE_GUN -> 1.75f;
         };
     }
 
-    /** The slide's front, a handgun's: it covers the barrel up to here. */
+    /** A pistol slide's front: the slide covers the barrel up to here. */
     float slideFront() {
-        return Math.max(7.5f, Math.min(len, 12f));
+        return 6f;
     }
 
     /** Where the muzzle is: the barrel's end, or a pistol slide's face when the barrel ends inside it. */
     float muzzle() {
-        return type == GunLayout.Type.HANDGUN && slide ? Math.max(len, slideFront()) : len;
+        if (type == GunLayout.Type.HANDGUN)
+            return slide ? Math.max(len, slideFront()) : len + 3.5f;
+        return len;
     }
 
     /** The height of the line of sight above the bore: what aiming lines up with the middle of the screen. */
     float sightLine() {
         if (has("S"))
-            return variant("S").equals("scope") ? top() + 1.9f : top() + 1.45f;
-        return type == GunLayout.Type.HANDGUN ? top() + 0.5f : r + 1.0f;
+            return variant("S").equals("scope") ? top() + 1f : top() + 0.75f;
+        return type == GunLayout.Type.HANDGUN ? top() + 0.25f : r + 0.5f;
     }
 
     /** How far forward of the muzzle the furthest muzzle device reaches. */
     float muzzleReach() {
         float reach = 0;
         if (has("N"))
-            reach += 4f;
+            reach += 1.5f;
         if (has("M"))
-            reach += 13f;
+            reach += 4.5f;
         if (has("a"))
-            reach = Math.max(reach, 16f);
+            reach = Math.max(reach, 6.5f);
         return reach;
     }
 
     /** Rearmost point: slide back, stock butt. */
     float rear() {
-        return switch (type) {
-            case HANDGUN -> has("d") ? 9f : 7.3f;
-            case RIFLE -> 44.4f;
-            case SHOTGUN -> 42.4f;
-            case MACHINE_GUN -> 39f;
-        };
+        return type == GunLayout.Type.HANDGUN ? 1.75f : back() + 10f;
     }
 
     /** Lowest point: grip butt or the bottom of the magazine. */
     float bottom() {
-        float base = switch (type) {
-            case HANDGUN -> -12f;
-            case RIFLE, SHOTGUN -> -9f;
-            case MACHINE_GUN -> -12.5f;
-        };
+        float base = type == GunLayout.Type.HANDGUN ? -5.75f : -4f;
         if (boxMagazine() && longGun())
-            base = Math.min(base, -1.6f - magLength() - 2f);
+            base = Math.min(base, -1f - magLength() - 0.5f);
         return base;
     }
 
-    /** A box magazine's body length below its well. */
+    /** A box magazine's body length below its well (a handgun's hangs below the grip only when extended). */
     float magLength() {
         if (mag == null)
             return 0;
+        boolean pistol = type == GunLayout.Type.HANDGUN;
         return switch (mag) {
-            case SMALL -> type == GunLayout.Type.HANDGUN ? 0f : 4f;
-            case STANDARD -> type == GunLayout.Type.HANDGUN ? 0.6f : 7f;
-            case EXTENDED -> type == GunLayout.Type.HANDGUN ? 5f : 12f;
-            case DRUM, BELT -> type == GunLayout.Type.HANDGUN ? 0.6f : 7f;
+            case SMALL -> pistol ? 0f : 1.5f;
+            case STANDARD, DRUM, BELT -> pistol ? 0f : 2.5f;
+            case EXTENDED -> pistol ? 2f : 4.5f;
         };
     }
 }

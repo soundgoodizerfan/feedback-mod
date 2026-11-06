@@ -594,6 +594,10 @@ groups** are the discrete choices (one per axis). Nothing else.
 
 **2026-11-05, gun animation, read at its `1.21.1` branch (commit `7f5b112`; code GPL-3.0, its assets CC BY-NC-ND and never used).** Design only, nothing copied; the code is `client/gun/GunMotion`. *Taken:* the shot kick on the held model as a timestamp, a fast rise, an ease-out-cubic decay over about 0.3 s, a small random twist, almost none of it when aimed; turn lag squashed by `tanh` so a flick leans the gun and no more; a dip on take-off and landing; a springy aim; a slide that snaps back, returns slower and bounces once, held open on an empty self-loader. *Rejected:* per-gun keyframe clips and the per-gun Lua state machine (a gun assembled from parts has no single model to author clips for, so every motion here is built in code from the action, the feed and the gun's figures), the fixed 0.18 s slide cycle (here it follows the gun's own cycle, and a manual action takes its action's own time), the threaded second-order dynamics class (a per-frame spring), its Bedrock bone models and first-person arm rendering.
 
+## Scorched Guns (gun model proportions, 2026-11-06)
+
+**GPL-3.0 (ribs498, `mods.toml`), read at `master` commit `d0daef8` (Minecraft 1.20.1; no 1.21.1 branch exists), cloned to `../ScorchedGuns-reference`.** Read for numbers only; **no model, texture or code copied** (its assets are never used). *Taken:* the proportions of a Minecraft gun model, which `client/gun/GunView` and `GunDraw` follow: a pistol about 9 px long and 5 tall, a long gun 24 to 30, receivers 1.5 to 2 px wide, barrels 1.25 to 1.5 px square, stocks about 6 px, everything on a quarter-pixel grid at 2 texels per pixel; its display transforms (scale 1 in first person, 1.3 in third, the grip raised and set toward the middle of the screen in first person), from which the grip positions in `GunRenderer` are worked out. *Rejected:* one fixed model per gun with attachment sub-models (Feedback draws the gun from its parts and their measures).
+
 ## Spartan Weaponry (thrown modular weapons, 2026-10-21)
 
 **Apache-2.0, read at its `1.20.1` branch (commit `e45342c`); no 1.21.1 source from the author.**
