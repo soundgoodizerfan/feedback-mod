@@ -72,10 +72,16 @@ public class FuelCategory implements IRecipeCategory<FuelCategory.Card> {
     public static List<Card> cards(Map<ResourceLocation, Material> materials) {
         List<Card> out = new ArrayList<>();
         materials.forEach((id, m) -> {
-            if (m.combustion().flatMap(c -> c.flameTemperature()).isPresent() && !m.items(id).isEmpty())
+            if (m.combustion().flatMap(c -> c.flameTemperature()).isPresent() && (!m.items(id).isEmpty() || liquid(id) != null))
                 out.add(new Card(id, m));
         });
         return out;
+    }
+
+    /** The liquid (not gas) a material is, by its id, or null: a fuel with no item form is poured, not stoked. */
+    private static net.minecraft.world.level.material.Fluid liquid(ResourceLocation id) {
+        var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID.get(id);
+        return fluid == net.minecraft.world.level.material.Fluids.EMPTY || fluid.getFluidType().isLighterThanAir() ? null : fluid;
     }
 
     @Override
@@ -106,7 +112,12 @@ public class FuelCategory implements IRecipeCategory<FuelCategory.Card> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Card card, IFocusGroup focuses) {
         List<Item> items = new ArrayList<>(card.material().items(card.id()).values());
-        builder.addInputSlot(WIDTH - 19, 1).setStandardSlotBackground().addItemStacks(items.stream().map(ItemStack::new).toList());
+        var slot = builder.addInputSlot(WIDTH - 19, 1).setStandardSlotBackground();
+        if (!items.isEmpty())
+            slot.addItemStacks(items.stream().map(ItemStack::new).toList());
+        var fluid = liquid(card.id());
+        if (fluid != null)
+            slot.addFluidStack(fluid, 1000);
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value) {
