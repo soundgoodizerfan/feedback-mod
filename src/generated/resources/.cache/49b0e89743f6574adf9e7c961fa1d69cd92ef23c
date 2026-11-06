@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-05T15:38:57.328530068	Item Models: feedback
+// 1.21.1	2026-11-05T21:09:26.271586554	Item Models: feedback
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/alumina_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
@@ -23,6 +23,7 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/aluminium_f
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/amethyst_crystal_plate.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/amethyst_dust.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/andesite_dust.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/argentite_calcine.json
 510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/argentite_concentrate.json
 81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/argentite_crushed.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/argentite_dust.json
@@ -110,6 +111,7 @@ ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/cermet_case
 472f28fb6e1b9aca6df02c39e2f5514ebf02c65b assets/feedback/models/item/cermet_scrap.json
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/cermet_swarf.json
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/cermet_turned_rod.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/chalcopyrite_calcine.json
 510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/chalcopyrite_concentrate.json
 81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/chalcopyrite_crushed.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/chalcopyrite_dust.json
@@ -157,6 +159,7 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/cobalt_foil
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/cobalt_swarf.json
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/cobalt_turned_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/cobalt_wire.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/cobaltite_calcine.json
 510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/cobaltite_concentrate.json
 81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/cobaltite_crushed.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/cobaltite_dust.json
@@ -252,7 +255,6 @@ bea4e1d0fc7d47249e45d97a21b25fb47d50ffd9 assets/feedback/models/item/gold_foil.j
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/ilmenite_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/ilmenite_lump.json
 4e4db6418bc86b3bc438ce254a661b2411f75280 assets/feedback/models/item/ilmenite_tailings.json
-4e4db6418bc86b3bc438ce254a661b2411f75280 assets/feedback/models/item/iron_bloom_tailings.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/iron_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/iron_case.json
 150176f3e58a46c0bd5e1f80d795ff9ef234b209 assets/feedback/models/item/iron_coin.json
@@ -425,6 +427,7 @@ dd0505a7090dbf85025d701d9d03b97d2655ec26 assets/feedback/models/item/optical_gla
 4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/optical_glass_rod.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/osmiridium_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/osmiridium_lump.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/pentlandite_calcine.json
 510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/pentlandite_concentrate.json
 81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/pentlandite_crushed.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/pentlandite_dust.json
@@ -469,6 +472,7 @@ dd0505a7090dbf85025d701d9d03b97d2655ec26 assets/feedback/models/item/quartz_glas
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/quartz_glass_plate.json
 4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/quartz_glass_rod.json
 cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/rabbit_rod.json
+94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/rare_earth_residue_dust.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/red_mud_dust.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/redstone_chromium_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/redstone_chromium_case.json
@@ -500,6 +504,7 @@ cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/salmon_rod.
 dd0505a7090dbf85025d701d9d03b97d2655ec26 assets/feedback/models/item/silica_glass_lens.json
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/silica_glass_plate.json
 4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/silica_glass_rod.json
+81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/silicate_slag_crushed.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/silicate_slag_dust.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/silicon_crude_dust.json
 818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/silicon_crude_ingot.json
@@ -546,6 +551,7 @@ ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/spent_fuel_
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/spent_fuel_rod_grip.json
 3508f976bea33c0c0db53857e13d1c2ca0abb57d assets/feedback/models/item/spent_fuel_rod_ground_ingot.json
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/spent_fuel_rod_swarf.json
+33ed87063800ba653a5a68113520f6e8f1a1ac99 assets/feedback/models/item/sphalerite_calcine.json
 510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/sphalerite_concentrate.json
 81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/sphalerite_crushed.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/sphalerite_dust.json
