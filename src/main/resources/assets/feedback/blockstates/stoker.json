@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "facing=north,drum=1": {
+      "model": "feedback:block/stoker"
+    },
+    "facing=north,drum=2": {
+      "model": "feedback:block/stoker"
+    },
+    "facing=north,drum=3": {
+      "model": "feedback:block/stoker"
+    },
+    "facing=east,drum=1": {
+      "model": "feedback:block/stoker",
+      "y": 90
+    },
+    "facing=east,drum=2": {
+      "model": "feedback:block/stoker",
+      "y": 90
+    },
+    "facing=east,drum=3": {
+      "model": "feedback:block/stoker",
+      "y": 90
+    },
+    "facing=south,drum=1": {
+      "model": "feedback:block/stoker",
+      "y": 180
+    },
+    "facing=south,drum=2": {
+      "model": "feedback:block/stoker",
+      "y": 180
+    },
+    "facing=south,drum=3": {
+      "model": "feedback:block/stoker",
+      "y": 180
+    },
+    "facing=west,drum=1": {
+      "model": "feedback:block/stoker",
+      "y": 270
+    },
+    "facing=west,drum=2": {
+      "model": "feedback:block/stoker",
+      "y": 270
+    },
+    "facing=west,drum=3": {
+      "model": "feedback:block/stoker",
+      "y": 270
+    }
+  }
+}

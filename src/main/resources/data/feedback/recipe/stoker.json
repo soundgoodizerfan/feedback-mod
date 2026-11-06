@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "X": {
+      "item": "feedback:shaft"
+    },
+    "H": {
+      "item": "minecraft:hopper"
+    }
+  },
+  "pattern": [
+    "PXP",
+    "PHP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:stoker"
+  }
+}

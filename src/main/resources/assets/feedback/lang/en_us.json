@@ -5411,5 +5411,10 @@
   "feedback.darkcell.fall_height": "Drop height %s",
   "feedback.darkcell.open": "The room is not closed.",
   "feedback.darkcell.lit": "The room is not dark.",
-  "feedback.darkcell.report": "Cell of %s blocks, %s mobs, shield %s%%, %s kill methods"
+  "feedback.darkcell.report": "Cell of %s blocks, %s mobs, shield %s%%, %s kill methods",
+  "block.feedback.stoker": "Stoker",
+  "block.feedback.creel": "Creel",
+  "feedback.stoker.drum": "Drum size %s",
+  "feedback.jei.info.stoker": "A screw feed that pushes solid fuel into the firebox in front of it, driven by a vertical shaft. Three drum sizes, stepped with an empty hand, set how much each turn moves. A hopper or belt fills it from any side but the front. It does not look at the fire: a full firebox refuses the fuel and the feed stalls.",
+  "feedback.jei.info.creel": "A basket trap for water. Set it where it is under water in a pond, river or sea; a puddle catches nothing. Every couple of minutes it draws a catch from the same fish and junk the water gives a rod, never treasure; bait in the top slot shortens the wait and is spent. An empty hand empties the basket, and a hopper can take from it. A full basket stops."
 }

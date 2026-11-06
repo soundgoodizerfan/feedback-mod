@@ -23,6 +23,10 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.machine.creel.CreelBlock;
+import io.github.soundgoodizerfan.feedback.machine.creel.CreelBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.stoker.StokerBlock;
+import io.github.soundgoodizerfan.feedback.machine.stoker.StokerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.darkcell.CrushHeadBlock;
 import io.github.soundgoodizerfan.feedback.machine.darkcell.CrushHeadBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.darkcell.DarkCellBlock;
@@ -140,6 +144,19 @@ public final class FAutomation {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RadiationSourceBlockEntity>> RADIATION_SOURCE_ENTITY =
             BLOCK_ENTITIES.register("radiation_source", () -> BlockEntityType.Builder.of(RadiationSourceBlockEntity::new, RADIATION_SOURCE.get()).build(null));
 
+    /** The stoker: a screw feed into a firebox. */
+    public static final DeferredBlock<StokerBlock> STOKER = BLOCKS.register("stoker", () -> new StokerBlock(metal(3.0f)));
+    public static final DeferredItem<BlockItem> STOKER_ITEM = ITEMS.registerSimpleBlockItem(STOKER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<StokerBlockEntity>> STOKER_ENTITY =
+            BLOCK_ENTITIES.register("stoker", () -> BlockEntityType.Builder.of(StokerBlockEntity::new, STOKER.get()).build(null));
+
+    /** The creel: a basket trap for fish. */
+    public static final DeferredBlock<CreelBlock> CREEL = BLOCKS.register("creel",
+            () -> new CreelBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(1.0f).sound(SoundType.WOOD).noOcclusion()));
+    public static final DeferredItem<BlockItem> CREEL_ITEM = ITEMS.registerSimpleBlockItem(CREEL);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CreelBlockEntity>> CREEL_ENTITY =
+            BLOCK_ENTITIES.register("creel", () -> BlockEntityType.Builder.of(CreelBlockEntity::new, CREEL.get()).build(null));
+
     private FAutomation() {
     }
 
@@ -153,6 +170,8 @@ public final class FAutomation {
     private static void capabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PIVOT_ENTITY.get(), (mast, side) -> mast.handler(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DARK_CELL_ENTITY.get(), (cell, side) -> cell.outputView());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, STOKER_ENTITY.get(), (stoker, side) -> stoker.hopper(side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CREEL_ENTITY.get(), (creel, side) -> creel.catches());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FUME_PORT_ENTITY.get(), (port, side) -> port.tank());
     }
 
@@ -166,6 +185,8 @@ public final class FAutomation {
         output.accept(FUME_PORT_ITEM.get());
         output.accept(SHOCK_PLATE_ITEM.get());
         output.accept(RADIATION_SOURCE_ITEM.get());
+        output.accept(STOKER_ITEM.get());
+        output.accept(CREEL_ITEM.get());
         output.accept(PIVOT_MAST_ITEM.get());
         ARMS.values().forEach(i -> output.accept(i.get()));
         TIPS.values().forEach(i -> output.accept(i.get()));

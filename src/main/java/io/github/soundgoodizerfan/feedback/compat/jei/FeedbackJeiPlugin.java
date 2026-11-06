@@ -360,6 +360,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.REDSTONE_EMITTER.get(), "redstone_emitter");
         io.github.soundgoodizerfan.feedback.registry.FAutomation.SENSOR_ITEMS.forEach((kind, item) -> info(registration, item.get(), kind.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.PIVOT_MAST_ITEM.get(), "pivot_mast");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.STOKER_ITEM.get(), "stoker");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.CREEL_ITEM.get(), "creel");
         for (var e : java.util.Map.of("dark_cell", io.github.soundgoodizerfan.feedback.registry.FAutomation.DARK_CELL_ITEM,
                 "fall_plate", io.github.soundgoodizerfan.feedback.registry.FAutomation.FALL_PLATE_ITEM,
                 "fire_plate", io.github.soundgoodizerfan.feedback.registry.FAutomation.FIRE_PLATE_ITEM,
