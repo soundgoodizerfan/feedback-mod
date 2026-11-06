@@ -75,7 +75,7 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 
 ### Names
 
-The **name** on the tooltip, and beside the type name in the Blueprint Table, is read by rule from the frame, action, feed, barrel finish, gauge and traits. A bore of **14 mm or wider** is a *wide* gauge; narrower is *narrow*. The launcher comes first: a coil barrel is a **coilgun**, a spring tube a **spring gun**, a steam tube a **steam gun**. A chamber gun is named by its frame; the first row that fits is the name:
+The **name** on the tooltip, and beside the type name in the Blueprint Table, is read by rule from the frame, action, feed, barrel finish, gauge and traits. A bore of **14 mm or wider** is a *wide* gauge; narrower is *narrow*. The launcher comes first: a coil barrel is a **Lightning lance** (long gun, long barrel, scope), a **Gauss rifle** (any other long gun), an **Arc chaingun** (machine gun), a **Rotary driver** (handgun with a cylinder), a **Sparkler** (any other handgun), or a plain **coilgun**; a spring tube a **spring gun**, a steam tube a **steam gun**. A chamber gun is named by its frame; the first row that fits is the name:
 
 | Frame | Name | What gives it |
 | --- | --- | --- |

@@ -5599,5 +5599,10 @@
   "modular.feedback.desc.variant.flintlock": "A hammer holding a flint, over a pan of priming powder. Slow to prime and cock between shots, and about one pull in eight flashes in the pan without firing.",
   "modular.feedback.modifier.shape.flintlock": "Flintlock",
   "message.feedback.gun.flash_pan": "Flash in the pan.",
-  "form.feedback.paper_case": "Rolled %s Case"
+  "form.feedback.paper_case": "Rolled %s Case",
+  "gun.feedback.designation.lightning_lance": "Lightning lance",
+  "gun.feedback.designation.gauss_rifle": "Gauss rifle",
+  "gun.feedback.designation.arc_chaingun": "Arc chaingun",
+  "gun.feedback.designation.sparkler": "Sparkler",
+  "gun.feedback.designation.rotary_driver": "Rotary driver"
 }

@@ -1054,6 +1054,44 @@
   "names": {
     "designations": [
       {
+        "name": "lightning_lance",
+        "is": {
+          "variant": "long_gun",
+          "finish": "coil",
+          "barrel": "long",
+          "sight": "scope"
+        }
+      },
+      {
+        "name": "gauss_rifle",
+        "is": {
+          "variant": "long_gun",
+          "finish": "coil"
+        }
+      },
+      {
+        "name": "arc_chaingun",
+        "is": {
+          "variant": "machine_gun",
+          "finish": "coil"
+        }
+      },
+      {
+        "name": "rotary_driver",
+        "is": {
+          "variant": "handgun",
+          "finish": "coil",
+          "feed": "cylinder"
+        }
+      },
+      {
+        "name": "sparkler",
+        "is": {
+          "variant": "handgun",
+          "finish": "coil"
+        }
+      },
+      {
         "name": "coilgun",
         "is": {
           "finish": "coil"
