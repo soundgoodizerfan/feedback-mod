@@ -123,7 +123,7 @@ Some professions sell a **blueprint**, one per day each, at a high price. A line
 | Weaponsmith | self-loading pistol | 30 | 4 | 30 |
 | Weaponsmith | automatic rifle | 50 | 5 | 60 |
 | Fletcher | crossbow | 15 | 3 | 10 |
-| Toolsmith | hand hammer | 6 | 2 | 10 |
+| Toolsmith | hammer | 6 | 2 | 10 |
 | Farmer | sickle | 6 | 2 | 10 |
 | Armorer | chestplate | 12 | 3 | 10 |
 | Farmer | wrap recipe card | 8 | 3 | 10 |

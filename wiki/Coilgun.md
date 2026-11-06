@@ -1,10 +1,10 @@
 # Coilgun
 
-A [gun](Guns.md) that throws a magnetic slug with a redstone-wound coil instead of burning powder. You make it on the [Gun Table](Gun_Table.md) by adding a **coil winding** to the gun.
+A [gun](Guns.md) that throws a magnetic slug with a redstone-wound coil instead of burning powder. You make it on the [Gun Table](Gun_Table.md) with a **Coil Barrel** and a **coil winding**.
 
 ## Building
 
-A coilgun is assembled from [parts](Gun_Parts.md) like any gun, **plus Blocks of Redstone** for the winding: **two** of them, as an optional part. The winding material must be one that drives a coil (redstone).
+A coilgun is assembled from [parts](Gun_Parts.md) like any gun, with a **Coil Barrel** ([Guns](Guns.md#barrels-and-launchers)) and **Blocks of Redstone** for the winding: **two** of them. The winding is required on a coil barrel, and the material must be one that drives a coil (redstone).
 
 ## Ammunition
 

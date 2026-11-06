@@ -22,7 +22,7 @@ Draw a **metal plate** through a [Wire Drawer](Wire_Drawer.md) to make a **case*
 | Brass | 3.75 Pu |
 | Copper | 3 Pu |
 
-A case weaker than the pressure inside it can hurt you even if the gun is fine. The press shows this before you seat anything.
+A case weaker than the pressure inside it can hurt you even if the gun is fine. The press shows this before you seat anything. A **Rolled Paper Case** stands in for a metal one and holds almost nothing: see [Paper cases](Reloading_Press.md#paper-cases).
 
 ## Bullets
 
@@ -91,7 +91,7 @@ Redstone is a charge for a **coilgun** only, and it can't be mixed with powder. 
 
 ## Shot shells
 
-Put a **nugget** in the projectile slot instead of a bullet and the press forms it into **shot**: a shell of buckshot pellets. Only a **shotgun** fires shells, and a shotgun fires only shells and **slugs** (an ordinary bullet of its bore).
+Put a **nugget** in the projectile slot instead of a bullet and the press forms it into **shot**: a shell of buckshot pellets. A **smoothbore** barrel fires shells; a rifled barrel cannot, because rifling spins the pellets into a ring.
 
 The pellet count is the bore's projectile volume cut into 8 mm balls, at most 12:
 

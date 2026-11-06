@@ -115,7 +115,7 @@ Ceramic itself comes from firing a **Clay Ball** in a [Kiln](Furnaces.md) or oth
 
 ## Hot dipping
 
-Dip a finished metal piece into a hot bath of zinc or tin and it comes out with a coat of that metal. Tools, weapons and armor qualify: pickaxe, axe, shovel, hoe, sword, shield, sickle, shears, saw blade, hand hammer, hand knife, spatula, helmet, chestplate, leggings and boots. Only finished pieces take a coat, not raw ingots or plates.
+Dip a finished metal piece into a hot bath of zinc or tin and it comes out with a coat of that metal. Tools, weapons and armor qualify: pickaxe, axe, shovel, hoe, sword, shield, sickle, shears, saw blade, hammer, hand knife, spatula, helmet, chestplate, leggings and boots. Only finished pieces take a coat, not raw ingots or plates.
 
 Hold the piece and right-click a vessel (a Thermal Vessel or a Crucible) that holds the melt, at the temperature below:
 

@@ -36,7 +36,7 @@ Read: [Rotation](Rotation.md), [Units](Units.md), [Transmission](Transmission.md
 
 ## 5. The machine shop
 
-Shaft-driven machines shape metal more exactly than any hand. The [Mechanical Hammer](Mechanical_Hammer.md) and [Mechanical Press](Mechanical_Press.md) work hot metal, the [Rolling Mill](Rolling_Mill.md) makes plate, the [Wire Drawer](Wire_Drawer.md) makes fine wire, and the [Drill Press](Drill_Press.md), [Lathe](Lathe.md) and [Grinding Wheel](Grinding_Wheel.md) finish parts with a [Machine Head](Machine_Head.md). Their output is the start of precise gun parts, pipes and cable, and of the [Engine](Engine.md).
+Shaft-driven machines shape metal more exactly than any hand. The [Mechanical Hammer](Mechanical_Hammer.md) and [Mechanical Press](Mechanical_Press.md) work hot metal, the [Rolling Mill](Rolling_Mill.md) makes plate, the [Wire Drawer](Wire_Drawer.md) makes fine wire, and the [Drill Press](Drill_Press.md), [Lathe](Lathe.md) and [Grinding Wheel](Grinding_Wheel.md) finish parts. Their output is the start of precise gun parts, pipes and cable, and of the [Engine](Engine.md).
 
 Read: [Metalworking](Metalworking.md), [Gun Parts](Gun_Parts.md), [Engine](Engine.md).
 

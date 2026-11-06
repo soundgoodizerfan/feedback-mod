@@ -20,7 +20,7 @@ Three things decide what a blow does:
 
 The rules:
 
-1. **A blow weaker than the metal's hardness does nothing at all.** It's not slow, it's impossible. A hand hammer (7 St at the very most) will never shape steel (15), however long you swing.
+1. **A blow weaker than the metal's hardness does nothing at all.** It's not slow, it's impossible. A hammer (7 St at the very most) will never shape steel (15), however long you swing.
 2. **Each blow does strength ÷ hardness in work**, rounded, never less than 1. A 3 St swing on copper is 3 Fu; a 24 St blow on steel is 2.
 3. **Extra work carries over.** If a blow does more than the step needs, the leftover goes straight into the *next* step. A hard enough blow on a soft enough metal can skip past the thing you wanted entirely.
 

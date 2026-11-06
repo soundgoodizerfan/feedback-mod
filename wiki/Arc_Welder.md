@@ -16,7 +16,7 @@ P is a Wrought Iron Plate, C is a Copper Rod, I is a Wrought Iron Rod and S is a
 
 It needs a charged [Battery](Battery.md) and an ingot of the part's own wear material in your inventory.
 
-- **A tool, weapon, armor piece, gun or machine head:** hold the welder in your main hand and the worn item in your off hand, then hold right-click for about 2 seconds.
+- **A tool, weapon, armor piece, gun or hammer:** hold the welder in your main hand and the worn item in your off hand, then hold right-click for about 2 seconds.
 - **A worn machine:** right-click it with the welder. This works on the shop machines, the [Mechanical Hammer](Mechanical_Hammer.md), the [Breaker](Breaker.md), the [Dynamotor](Dynamotor.md) and the [Battery](Battery.md). It takes iron if the machine has no material of its own.
 
 A weld costs **2,000 amp-ticks** of charge and one ingot. The status line reports "Nothing to weld.", "No charged battery in your pack." or which ingot is missing.

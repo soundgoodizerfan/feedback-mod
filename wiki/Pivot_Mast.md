@@ -21,7 +21,7 @@ Tip markers: string for Cutting, flint for Breaking, wheat seeds for Planting, w
 
 ## Using it
 
-Run a shaft into the top or bottom. Right-click the mast with an arm, then a tip. The Cutting, Breaking and Striking tips also need a [Machine Head](Machine_Head.md) seated the same way. Seed, feed or bone meal for the Planting and Feeding tips goes in as any other item, by hand or from a hopper; what the Collecting tip sweeps up is in the other slots, which a hopper can empty. Sneak with an empty hand to take parts back, one at a time. An empty hand reads the arm, the tip and the head's condition.
+Run a shaft into the top or bottom. Right-click the mast with an arm, then a tip. The Cutting, Breaking and Striking tips also need a [Hammer](Hammer.md) seated as the head, the same way. Seed, feed or bone meal for the Planting and Feeding tips goes in as any other item, by hand or from a hopper; what the Collecting tip sweeps up is in the other slots, which a hopper can empty. Sneak with an empty hand to take parts back, one at a time. An empty hand reads the arm, the tip and the head's condition.
 
 The arm turns slowly. A longer arm and a heavier head ask more of the drive, and a drive too weak for them stalls.
 

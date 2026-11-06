@@ -1,10 +1,10 @@
-# Hand Hammer
+# Hammer
 
-A hammer you swing yourself, in a crafting grid. It is a modular tool: a **head** on a **handle**. It's the first way to make plates, before you have any machines, and it teaches you the mod's main lesson the hard way.
+A hammer you swing yourself, in a crafting grid, or seat in a machine as its striking head. It is a modular tool: a **head** on a **handle**. It's the first way to make plates, before you have any machines, and it teaches you the mod's main lesson the hard way.
 
 ## Head shapes
 
-The head is a **head blank**, the same part a mechanical hammer carries, shaped as a standard head (four cells of stock), a **Broad-Faced Head** (six cells, heavy, so a harder blow) or a **Narrow-Faced Head** (two cells, concentrates the blow). The head can only carry as much of a swing as its material allows, so a broad head lets a soft material carry more of a blow.
+The head is a **head blank**, shaped as a standard head (four cells of stock), a **Broad-Faced Head** (six cells, heavy, so a harder blow) or a **Narrow-Faced Head** (two cells, concentrates the blow). The head can only carry as much of a swing as its material allows, so a broad head lets a soft material carry more of a blow.
 
 ## Crafting
 
@@ -29,6 +29,12 @@ Keep swinging and watch the result change. An ordinary swing lands **3 St**, whi
 ## At the Smithing Table
 
 The [Smithing Table](Smithing_Table.md) holds a hammer in a slot of its own and spends a point of it on every part you shape there. The [Anvil](Anvil.md) takes a hammer the same way, and forging is played there. The [Woodworking Table](Woodworking_Table.md) takes an axe in the same slot, and the [Stonecutter](Stonecutter.md) takes a [Sawblade](Sawblade.md).
+
+## In machines
+
+**Right-click** a [Mechanical Hammer](Mechanical_Hammer.md), a [Mechanical Press](Mechanical_Press.md), a [Pivot Mast](Pivot_Mast.md) (for its Cutting, Breaking and Striking tips) or the crush head of a [Dark Cell](Dark_Cell.md) with a hammer to seat it as the machine's head; the one it replaces comes back to your hand. **Sneak and right-click with an empty hand** to pull it. A machine with no hammer seated does nothing, wears nothing, and says *No head seated*.
+
+The hammer sets two things in the machine. Its **blow figure**, the St on its tooltip, is the **ceiling** of the machine's blow; a heavier or harder head lifts it, a light or soft one lowers it. And it is the part that wears: it takes the force the machine cannot put into the work (cold or too-hard metal, scrap, gearing past the ceiling), loses condition, and bottoms out at half. It never breaks in a machine and never stops. The condition stays on the hammer, so a worn one moved to another machine is still worn. [Calipers](Instruments.md#calipers) read a seated hammer's condition while the machine is stopped.
 
 ## How hard you swing
 
@@ -57,4 +63,4 @@ Very soft metals move a lot with each blow: 3 St on lead (0.3) is 10 Fu a swing.
 
 ## Wear
 
-Unlike machines, the hand hammer wears out from **normal use**, like any hand tool. A stone head is good for about **260 swings**, around fifty copper plates; an iron one lasts longer. A worn-out hammer is *broken*: it lands nothing, but you can mend it in a crafting grid instead of throwing it away. A worn head also carries a swing a little less well, near the end.
+In your hand the hammer wears out from **normal use**, like any hand tool. A stone head is good for about **260 swings**, around fifty copper plates; an iron one lasts longer. A worn-out hammer is *broken*: it lands nothing, but you can mend it in a crafting grid instead of throwing it away. A worn head also carries a swing a little less well, near the end.

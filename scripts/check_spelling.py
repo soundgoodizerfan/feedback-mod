@@ -6,7 +6,7 @@ WORDS = {"armour": "armor", "armoured": "armored", "unarmoured": "unarmored", "c
          "litre": "liter", "centre": "center", "tyre": "tire", "behaviour": "behavior", "favour": "favor", "honour": "honor",
          "neighbour": "neighbor", "flavour": "flavor", "harbour": "harbor", "labour": "labor", "vapour": "vapor", "sulphur": "sulfur",
          "aluminium": "aluminum", "oxidise": "oxidize", "realise": "realize", "analyse": "analyze", "grey": "gray", "defence": "defense",
-         "licence": "license", "offence": "offense", "catalogue": "catalog", "fibre": "fiber", "lustre": "luster", "plough": "plow"}
+         "licence": "license", "offence": "offense", "catalogue": "catalog", "fibre": "fiber", "lustre": "luster", "plough": "plow", "calibre": "caliber"}
 pat = re.compile(r"\b(" + "|".join(sorted(WORDS, key=len, reverse=True)) + r")(s|ing|ed)?\b", re.I)
 def swap(m):
     w = WORDS[m.group(1).lower()] + (m.group(2) or "")

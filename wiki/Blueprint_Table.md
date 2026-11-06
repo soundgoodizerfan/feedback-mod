@@ -15,18 +15,20 @@ P is Paper and T is a Crafting Table.
 
 Right-click it to open the board. The item is drawn as a **diagram**: each part is a box placed where it sits in the finished piece. Drag to pan and use the wheel to zoom.
 
-- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list by name.
+- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology, Food), with a search box.
 - **Click a part** to select it. Its panel has a **search box** (it matches a material's name, its kind and its traits), **material swatches** for every material, and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does. A material the part cannot be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) is dimmed with an x and cannot be picked; its tooltip reads *Does not fit this part.*
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
 - Set the **edge**, on a tool that has one.
-- A part that has a measure you can choose (an engine's bore and stroke, a gearbox's ratios) shows a **< >** stepper for it under the part's name.
-- On a gun, **attachments hang on the part they fit**. A part that can still take one wears a **+**; click it and the available attachments fan out round it while everything else dims. Attachments you have fitted stay drawn beside their part. An attachment that cannot go on with what is already fitted is grayed out. Attachments can hang on other attachments: a reticle on a sight, a valve on a steam chest. Click empty canvas to put the fan away. A tip or pommel sits where the finished piece carries it.
+- A part that has a measure you can choose (an engine's bore and stroke, a gearbox's ratios) shows a **< >** stepper for it under the part's name. A part with more than three such measures shows three at a time and scrolls the rest with the wheel. A gun barrel's bore steps 1 mm at a time from 5 to 20 mm.
+- On a gun, **attachments hang on the part they fit**. A part that can still take one wears a **+**; click it and the available attachments fan out round it while everything else dims. Attachments you have fitted stay drawn beside their part. An attachment that cannot go on with what is already fitted is grayed out. Attachments can hang on other attachments: a reticle on a sight, a valve on a steam chest. The **barrel is the launcher**: a coil barrel's winding, a spring tube's main spring and a steam tube's chest hang on it, and the slots for another launcher's parts are grayed out. Click empty canvas to put the fan away. A tip or pommel sits where the finished piece carries it.
 - **Rig** toggles a looping demonstration of the drawing in use, for pick-like tools, a sword, a bow, a shield and a battery.
 
 ### Links
 
 Parts that touch are joined by a link, colored by how tight that joint is: thick and cool with margin, amber near the limit, and **red and dashed** past it. Hover a link to read the percent of its limit it carries. A drawing that cannot be made shows the failing link in red with the reason beside it. A gun shows **every** failing link at once, and names the problems the same way: an action and feed that do not work together, a material that cannot be built into a gun, two devices on one mounting.
+
+A gun's name (pistol, rifle, coilgun...), read from its parts, is shown beside the type name.
 
 ### Figures
 

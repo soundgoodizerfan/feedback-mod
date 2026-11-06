@@ -2,7 +2,7 @@
 
 A [gun](Guns.md) isn't crafted from ingots. It's **assembled from machined parts**, each made on the workshop machines and each made of whatever metal you chose for it. The gun's figures come from the parts you actually put in, not from the blueprint. A sloppy barrel makes a worse gun, never a refused one.
 
-Parts can also be shaped from stock with a hand hammer on the [Gun Table](Gun_Table.md), at the standard dimensions of their variant (the barrel at its calibre class, that class's default length and a standard wall); a machine then cuts them to any size: the drill grows the bore, the lathe thins the wall and the cutoff wheel shortens the length.
+Parts can also be shaped from stock with a [hammer](Hammer.md) on the [Gun Table](Gun_Table.md), at the standard dimensions of their variant (the barrel at its variant's bore, length and wall); a machine then cuts them to any size: the drill grows the bore, the lathe thins the wall and the cutoff wheel shortens the length.
 
 ## The parts
 
@@ -63,7 +63,7 @@ Work per cut is the machine's strength (St) divided by the metal's hardness. For
 
 ### Hitting the target
 
-The blueprint names a target bore, wall and barrel length. A wider calibre is longer by default: rimfire **0.15 m**, pistol **0.2 m**, intermediate **0.3 m**, magnum **0.45 m**, but there's no tolerance check. Any barrel assembles. What happens is about how the cartridge fits:
+The blueprint names a target bore (5 to 20 mm), outside diameter and barrel length; there's no tolerance check. Any barrel assembles. What happens is about how the cartridge fits:
 
 - A round will only **chamber** if its bore is within **1 mm** of the barrel's real bore.
 - **Too loose:** gas leaks past. For every mm loose the round loses 60% of its energy (down to a floor of 30%) and spreads **3° wider**.
@@ -77,14 +77,14 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 
 | Part | Role |
 | --- | --- |
-| Gun Barrel | always; its variant is the calibre class; a **second** barrel only on a break action |
-| Receiver | always; its variant is the gun's kind: handgun, rifle, shotgun, machine gun |
+| Gun Barrel | always; its variant is the launcher: smoothbore, rifled, coil, spring tube or steam tube ([Guns](Guns.md#barrels-and-launchers)); a **second** barrel only on a break action |
+| Receiver | always; its variant is the frame: handgun, long gun or machine gun |
 | Slide **or** Bolt | the action; its variant says which: self-loading or automatic (slide); bolt, lever, pump, break, self-loading or automatic (bolt) |
 | Trigger Group, Grip | always; a grip is wood unless you choose another material |
 | Cylinder, Magazine Tube, Belt Feed or Box Feed | optional: the feed (none means a box magazine on a slide; a bolt or lever with none loads one round by hand, and a Box Feed gives it a box magazine; a break action holds its barrels) |
-| Sight | optional: a reflex sight or a scope, a hollow tube with glass lenses and a clear view down the middle (none is iron sights) |
+| Sight | optional: a reflex sight or a scope, an open tube with a clear view down the middle (none is iron sights) |
 | A fitting part | each fitting on the gun, one to a slot |
-| Blocks of Redstone | a coilgun: two for the winding |
+| Blocks of Redstone, Main Spring or Steam Chest | the barrel's launcher part, required: two Blocks of Redstone wind a coil barrel, a spring tube takes a main spring, a steam tube a steam chest |
 | A fibrous organic | wraps the grip |
 
 **Each part's material is on the part.** The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.

@@ -2,11 +2,11 @@
 
 Feedback doesn't have a list of guns. A gun is a **tool type** like a pick or a sword: you make **parts** (a receiver, a barrel, an action, a trigger group, a grip, and any fittings), each of a metal, and put them together at the [Gun Table](Gun_Table.md). You make the ammunition yourself at the [Reloading Press](Reloading_Press.md). Everything about how the gun behaves (how hard it hits, how far it throws, how much it kicks, how hot it gets, whether it blows up in your hand) comes from those parts and the round.
 
-There are two kinds of launcher: an ordinary **gun**, which burns powder in a chamber, and a **[coilgun](Coilgun.md)**, which throws an iron slug with a redstone-wound coil.
+What throws the round is the **launcher**, and the barrel you choose sets it (see [Barrels and launchers](#barrels-and-launchers)): an ordinary **chamber gun** burns powder, a **[coilgun](Coilgun.md)** throws an iron slug with a redstone-wound coil, a **spring gun** releases a wound spring, and a **steam gun** lets out steam. The [flintlock](#flintlock) is a chamber gun of its own, made without a blueprint.
 
 ## What it looks like
 
-A gun is drawn from its parts, each in its own metal's or wood's colour. The barrel shows at the length and thickness it was drilled to, the stock and forend take the grip's material, and every fitting appears where it mounts: a suppressor or brake on the muzzle, a tube under the barrel, a scope or reflex sight on top, a bipod, a bayonet, a steam chest on the side. Wooden parts are drawn in the bark of their wood, softened, metal parts are brushed or plated, and plastic ones are smooth. A hot barrel glows, dull red through orange to yellow as it heats, and lights itself in the dark. A rifle, shotgun or machine gun is held in both hands.
+A gun is drawn from its parts, each in its own metal's or wood's color. The barrel shows at the length and thickness it was drilled to, the stock and forend take the grip's material, and every fitting appears where it mounts: a suppressor or brake on the muzzle, a tube under the barrel, a scope or reflex sight on top, a bipod, a bayonet, a steam chest on the side. Wooden parts are drawn in the bark of their wood, softened, metal parts are brushed or plated, and plastic ones are smooth. A hot barrel glows, dull red through orange to yellow as it heats, and lights itself in the dark. A long gun or machine gun is held in both hands. In first person your own arms are drawn on the gun: the grip hand always, the support hand when the other hand is empty. The client setting **gunArms** (in the mod's client config) switches the arms off. A scope is an open tube: you see straight down it, with no lens in the way.
 
 In your hands it moves: it kicks back and up on each shot (barely at all when aimed), the slide or bolt carrier snaps back and returns, and a bolt, lever or pump is worked between shots. An empty self-loading gun stays open, for you and for anyone looking at it. Reloading tips the gun over: a magazine drops out and a fresh one goes in, a revolver's cylinder swings out, a break action hinges open, a tube is thumbed full round by round. The gun lags a little behind fast turns, dips when you land, and lowers while you sprint.
 
@@ -19,40 +19,92 @@ In your hands it moves: it kicks back and up on each shot (barely at all when ai
 
 A ready-made 9 mm steel handgun is also in the creative menu.
 
-## Variants, traits and names
+A [flintlock](#flintlock) needs no blueprint: it is put together from its parts at the [Smithing Table](Smithing_Table.md).
 
-A gun has one **variant**, told by the **receiver**: what kind of gun it fundamentally is.
+## Frames, barrels, traits and names
 
-| Variant | What makes it different |
-| --- | --- |
-| **Handgun** | Held in one hand, no stock: kick and spread are the wrist's. |
-| **Rifle** | A shoulder stock and a barrel long enough to steady the bullet. Braced fire is steadier. |
-| **Shotgun** | A smoothbore; the only gun that takes a shell. |
-| **Machine gun** | A heavy frame and an open bolt, built for sustained fire. |
+A gun has one **variant**, told by the **receiver**: its frame, which is only a matter of size.
+
+| Frame | Cells of stock | What makes it different |
+| --- | --- | --- |
+| **Handgun** | 1 | Held in one hand, no stock: kick and spread are the wrist's. |
+| **Long gun** | 2 | A shoulder stock takes the kick into the body and a long barrel steadies the bullet. Braced fire is steadier. |
+| **Machine gun** | 3 | A heavy frame and an open bolt, built for sustained fire. |
+
+What the gun is called (rifle or shotgun, pistol or revolver) follows from the other parts, see [Names](#names).
+
+### Barrels and launchers
+
+The **barrel** is the launcher. Its shape picks how the round is thrown, and the part that launcher needs hangs on it in the [Blueprint Table](Blueprint_Table.md); slots for another launcher's parts are grayed out. A barrel without the part for its launcher makes no gun.
+
+| Barrel | Stock | Launcher | Needs |
+| --- | --- | --- | --- |
+| **Smoothbore Barrel** | 1 cell | powder in a chamber | nothing. Bullets scatter more than from a rifled bore |
+| **Rifled Barrel** | 2 cells | powder in a chamber | nothing. A single bullet's spread is x0.6 of a smoothbore's; it cannot fire [shot](Ammunition.md#shot-shells) |
+| **Coil Barrel** | 2 cells | a pulsed field: a [coilgun](Coilgun.md) | a winding |
+| **Spring Tube** | 1 cell | a released spring | a main spring |
+| **Steam Tube** | 2 cells | steam: see [Steam launchers](#steam-launchers) | a steam chest |
+
+A **spring gun** fires a round with nothing in the case: no gas, no powder, no cook-off. The **main spring** is a single or a double spring (one or two coils of stock). Its stored energy goes as the stress its metal bears, squared, so only a good spring steel is worth fitting; each coil stores more and takes longer to recock. The tooltip shows the energy it stores.
+
+**Bore** is a free measure from **5 to 20 mm** in 1 mm steps, set with a **< >** stepper on the barrel in the Blueprint Table. The round is seated for a bore at the [Reloading Press](Reloading_Press.md); how the real barrel and the round fit is in [Gun Parts](Gun_Parts.md#hitting-the-target).
+
+### Flintlock
+
+A **Flintlock** is a gun made without a blueprint, from five parts: a **receiver** (handgun or long-gun frame), a **smoothbore barrel**, a **trigger**, a **grip** and a **lock** (shaped from a rod or an ingot). Nothing else fits it: no sights, feeds or fittings. It fires **one round at a time, loaded from the muzzle by hand**, and takes about **2.2 s** between shots. Roughly **one pull in eight flashes in the pan**: a click and a puff of smoke, the charge stays loaded and the pull still costs the cycle. A flintlock with a handgun frame is a **flintlock pistol**, with a long-gun frame a **flintlock musket**.
+
+It is slow and unreliable beside a modern gun: the weapon of the time before real guns.
 
 Everything else is a **trait**, read from the parts, and a gun has as many as its parts show (hold Shift on the tooltip for what each does):
 
 | Trait | From | Does |
 | --- | --- | --- |
-| Hammer | lever, pump, break, revolver | lets a cylinder be fitted and fanned |
+| Hammer | lever, pump, break, flintlock | lets a cylinder be fitted and fanned |
 | Fan | a cylinder on a hammer action | crouched, hold attack to slap the hammer as fast as the hand can, with more spread, kick and heat |
 | Double barrel | a second barrel | crouched, a pull fires both barrels at once for one recoil |
 | Select fire | an automatic action | semi, burst or full auto, switched in hand |
-| Manual cycle | bolt, lever, pump, break | the shooter brings the next round up: the action's time between shots |
+| Manual cycle | bolt, lever, pump, break, flintlock | the shooter brings the next round up: the action's time between shots |
 | Bolt lockup | a bolt action | the chamber is rated 25% stronger for the same steel, and the group tighter |
 | Blowback | a slide | only the bolt's mass holds the breech: a round above 3.6 Pu kicks harder and wears the bore faster |
 | Gas operated | a bolt-type self-loading or automatic action | a quicker cycle that pressure does not hurt, paid in heat and mass |
 | Closed bolt | most actions | a round in the hot chamber can cook off |
-| Open bolt | a machine gun | nothing in the chamber to cook off; the first shot after a pause sprays wider |
+| Open bolt | a machine gun frame | nothing in the chamber to cook off; the first shot after a pause sprays wider |
 | Belt fed | a belt feed | a long reload |
-| Braced | a rifle or machine gun | crouched and still, less kick and tighter spread |
+| Braced | a long gun or machine gun | crouched and still, less kick and tighter spread |
 
 
-The **name** on the tooltip is the real-world designation, read by a rule from the variant, calibre, barrel length, sight, action and traits: handgun with a cylinder is a **revolver**, a long rifle with a scope and a bolt a **sniper rifle**, a short double shotgun a **sawn-off**. A handgun with a cylinder in the magnum class (20 mm) is a **Big Iron**, named with its material ("Steel Big Iron"); firing one earns a hidden advancement of the same name. It changes nothing in play.
+### Names
 
-### Calibre classes
+The **name** on the tooltip, and beside the type name in the Blueprint Table, is read by rule from the frame, action, feed, barrel finish, gauge and traits. A bore of **14 mm or wider** is a *wide* gauge; narrower is *narrow*. The launcher comes first: a coil barrel is a **coilgun**, a spring tube a **spring gun**, a steam tube a **steam gun**. A chamber gun is named by its frame; the first row that fits is the name:
 
-Bore is a short list of named classes, the barrel's shape: **rimfire** (5 mm), **pistol** (9 mm), **intermediate** (12 mm) and **magnum** (20 mm). A round is seated for one class at the [Reloading Press](Reloading_Press.md). The barrel's *real* length, bore and wall are what the drill, lathe and cutoff wheel left on it ([Gun Parts](Gun_Parts.md)), and how loosely the round sits is in the figures.
+| Frame | Name | What gives it |
+| --- | --- | --- |
+| Handgun | **Derringer** | two barrels |
+| | **Big Iron** | a cylinder and a bore of exactly 20 mm (named with its material, "Steel Big Iron"; firing one earns a hidden advancement of the same name) |
+| | **Shot revolver** | a cylinder, smoothbore, wide gauge |
+| | **Shot pistol** | smoothbore, wide gauge |
+| | **Revolver** | a cylinder |
+| | **Machine pistol** | select fire |
+| | **Pistol** | anything else |
+| Long gun | **Sawn-off** | smoothbore, wide gauge, short barrel, two barrels |
+| | **Double shotgun** | smoothbore, wide gauge, two barrels |
+| | **Pump shotgun** | smoothbore, wide gauge, pump action |
+| | **Shotgun** | smoothbore, wide gauge |
+| | **Musket** | smoothbore, narrow gauge |
+| | **Slug gun** | rifled, wide gauge |
+| | **Submachine gun** | rifled, select fire, bore up to 10 mm |
+| | **Assault rifle** | rifled, select fire, bore from 11 mm |
+| | **Sniper rifle** | rifled, long barrel, a scope, a bolt or self-loading action |
+| | **Carbine** | rifled, short barrel |
+| | **Rifle** | rifled, anything else |
+| Machine gun | **General-purpose machine gun** | a belt feed |
+| | **Light machine gun** | anything else |
+
+A [flintlock](#flintlock) is a flintlock pistol or musket. A name changes nothing in play.
+
+### Bore
+
+Bore is any whole number from 5 to 20 mm. The [Reloading Press](Reloading_Press.md) labels it with the nearest of four named sizes: **rimfire** (5 mm), **pistol** (9 mm), **intermediate** (12 mm) and **magnum** (20 mm). The barrel's *real* length, bore and wall are what the drill, lathe and cutoff wheel left on it ([Gun Parts](Gun_Parts.md)), and how loosely the round sits is in the figures.
 
 ### Actions and feeds
 
@@ -62,10 +114,11 @@ Bore is a short list of named classes, the barrel's shape: **rimfire** (5 mm), *
 | **Lever** | Semi | 450 ms |
 | **Pump** | Semi | 550 ms |
 | **Bolt** | Semi | 800 ms |
+| **Flintlock** | Semi | 2200 ms |
 | **Self-loading** | Semi | none |
 | **Automatic** | Auto, Burst, Semi | none |
 
-Only an automatic can be held down. **Burst** fires three rounds, then forces a pause. A feed has to suit its action, or the parts make no gun: a cylinder needs a hammer (lever, pump, break or a slide), a tube a lever, pump or self-loading action, a belt an automatic one. A second barrel needs a break action. With no feed part a gun takes a **box magazine** (a break action holds its barrels).
+Only an automatic can be held down. **Burst** fires three rounds, then forces a pause. A feed has to suit its action, or the parts make no gun: a cylinder needs a hammer (lever, pump, break or a slide), a tube a lever, pump or self-loading action, a belt an automatic one. A second barrel needs a break action. With no feed part a gun takes a **box magazine** (a break action holds its barrels); a [flintlock](#flintlock) takes one round at a time.
 
 | Feed | Holds | Reloads |
 | --- | --- | --- |
@@ -198,7 +251,7 @@ As it heats up:
 
 - Spread opens up, to **2.5×** at the powder's ignition temperature.
 - The bore wears faster.
-- **Cook-off:** if the barrel gets hotter than the powder in the chambered round can stand, that round **fires by itself**, in whatever direction you're facing, and the blast hurts you (1 heart per four powder, up to 4 hearts). It keeps happening at the gun's firing rate until the gun is empty or you take the round out. **If the HUD says SMOKING, stop firing and press U.**
+- **Cook-off:** if the barrel gets hotter than the powder in the chambered round can stand, that round **fires by itself** in whatever direction you're facing. The blast hurts you (1 heart per four powder, up to 4 hearts), and the gun kicks your view and sounds like a shot you pulled. It keeps happening at the gun's firing rate until the gun is empty or you take the round out. **If the HUD says SMOKING, stop firing and press U.**
 
 | Powder | Cooks off at |
 | --- | --- |

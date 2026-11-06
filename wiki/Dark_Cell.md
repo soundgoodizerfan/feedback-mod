@@ -22,7 +22,7 @@ Set kill-method blocks in the wall so they touch the inside. They work together;
 | --- | --- | --- |
 | Fall Plate | anything that takes fall damage; empty hand steps the height | mobs immune to falls |
 | Fire Plate | anything that burns, as hot as the heat pointed at it | mobs immune to fire |
-| Crush Head | everything, with the strength of a seated Machine Head turned by a shaft | |
+| Crush Head | everything, with the strength of a seated [Hammer](Hammer.md) turned by a shaft | |
 | Fume Port | mobs that breathe, with the toxicity of the gas piped in | undead and non-breathers |
 | Shock Plate | anything, with the power fed to it | a few mobs, such as creepers |
 | Radiation Source | everything living, from a radioactive item loaded by hand | |
@@ -46,4 +46,4 @@ Drops come from each mob's loot table as when nobody kills it, so only drops tha
 
 ## See also
 
-- [Hazards](Hazards.md), [Radiation](Radiation.md), [Machine Head](Machine_Head.md)
+- [Hazards](Hazards.md), [Radiation](Radiation.md), [Hammer](Hammer.md)

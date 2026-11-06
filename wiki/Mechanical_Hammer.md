@@ -21,9 +21,9 @@ The linkage adds the hammer's **80 Su** load to your shaft network, so make sure
 
 ## The head
 
-The hammer does nothing without a **[Machine Head](Machine_Head.md)**. The head sets how hard a blow can land and is the part that wears.
+The hammer does nothing without a **[Hammer](Hammer.md)** seated as its head. The hammer sets how hard a blow can land and is the part that wears.
 
-- **Right-click with a head** to seat it. A head already seated comes back to your hand.
+- **Right-click with a hammer** to seat it. A hammer already seated comes back to your hand.
 - **Sneak and right-click with an empty hand** to pull it.
 - With no head seated the hammer does not move and wears nothing; Jade says *No head seated*.
 
@@ -72,11 +72,11 @@ How hard the hammer hits depends on the seated head, the linkage's **throw** and
 | Short throw | 1/2 of the ceiling |
 | Ceiling (most it can land) | the head's St |
 
-With an iron head of four ingots the ceiling is 24 St, so the throws are 3 and 12 St. A heavier or harder head lifts all three; a light or soft one lowers them (see [Machine Head](Machine_Head.md)).
+The ceiling is the St on the seated hammer's tooltip. A heavier or harder head lifts all three; a light or soft one lowers them (see [Hammer](Hammer.md#in-machines)).
 
 - **Long throw**: gentle. Use it for soft metals like copper, where you want to stop at plate (fifth blow).
 - **Short throw**: four times harder. It's too much for copper (it skips plate entirely and goes straight to foil), but you need it for harder metals: iron (6) and cast iron (12).
-- **Gearing down** (slower shaft, more force) multiplies the blow. A large cog driven by a small one doubles it. That's how you reach **steel** (hardness 15): a short throw geared down 2:1 lands 24 St on an iron head, 2 Fu a blow, so a steel plate (60 Fu) takes 30 blows. Steel also has to be between **900 and 1100 Tu** while you hit it.
+- **Gearing down** (slower shaft, more force) multiplies the blow. A large cog driven by a small one doubles it. That's how you reach **steel** (hardness 15): the blow has to reach past 15 St, which takes a heavy hammer on a short throw geared down. Steel also has to be between **900 and 1100 Tu** while you hit it.
 
 Gearing up past the head's ceiling doesn't make it hit harder. The extra force goes into the head and wears it.
 

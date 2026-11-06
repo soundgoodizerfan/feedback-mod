@@ -16,14 +16,14 @@ P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and I is a Wrought Iron Ingo
 
 | Slot | Takes |
 | --- | --- |
-| **Case** | a metal case |
+| **Case** | a metal case, or a [paper case](#paper-cases) |
 | **Charge** | loose powder (gunpowder, blaze powder, redstone dust) or a [Mixture](Mixer.md#using-it) from the Mixer. Leave empty for a jar round |
 | **+ Charge** | a second powder or Mixture, to make a blend |
 | **Bullet** | a metal bullet, or a **nugget** to make shot |
 | **Payload** | optional: glowstone dust, redstone dust, gunpowder or blaze powder |
 | **Round** | where the finished cartridge comes out |
 
-Set the **bore** with **< >** at the top. This is the die set. Every round you seat comes out at that size, and only guns of that bore (within 1 mm, on a built gun; see [Gun Parts](Gun_Parts.md#hitting-the-target)) will take it.
+Set the **bore** with **< >** at the top, from 5 to 20 mm in 1 mm steps; the label also names the nearest of four sizes (rimfire 5 mm, pistol 9 mm, intermediate 12 mm, magnum 20 mm). This is the die set. Every round you seat comes out at that size, and only guns of that bore (within 1 mm, on a built gun; see [Gun Parts](Gun_Parts.md#hitting-the-target)) will take it.
 
 Press **Seat** to make one round.
 
@@ -32,9 +32,13 @@ Press **Seat** to make one round.
 | Charge | Projectile | Round |
 | --- | --- | --- |
 | powder | bullet | an ordinary cartridge |
-| powder | nugget | a **shot shell**, for shotguns |
+| powder | nugget | a **shot shell**, for smoothbore barrels |
 | redstone | iron bullet | a coilgun round |
 | nothing | iron bullet | a **jar round**: *"Seated dry: a jar round. Charge it on a wire."* See [Round Charger](Round_Charger.md) |
+
+## Paper cases
+
+A sheet of paper put through a [Rolling Mill](Rolling_Mill.md) becomes a **Rolled Paper Case**, and the press takes it in the case slot. Paper holds almost no pressure. In a [flintlock](Guns.md#flintlock) the paper is torn open in the barrel and the round works. In a gun that chambers it, the case bursts.
 
 ## How much charge goes in
 
