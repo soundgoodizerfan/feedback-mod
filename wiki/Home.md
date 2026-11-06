@@ -29,6 +29,8 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 ## Guides
 
+- [Ore Processing](Ore_Processing.md)
+- [Making Wrought Iron](Making_Wrought_Iron.md)
 - [Making Steel](Steel.md)
 - [Heat Treatment](Heat_Treatment.md)
 - [Casting and Alloys](Casting.md)
@@ -39,11 +41,11 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Steam Turbine](Steam_Turbine.md) · [Engine](Engine.md) · [Dynamotor](Dynamotor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md) · [Transmission](Transmission.md) · [Car Design Stand](Car_Design_Stand.md)
 
-**Logistics:** [Conveyor Belt](Conveyor_Belt.md) · [Belt Head Roller](Belt_Head_Roller.md) · [Belt Modules](Belt_Modules.md) · [Pneumatic Tube](Pneumatic_Tube.md) · [Carrier](Carrier.md) · [Tube Junction](Tube_Junction.md) · [Tube Station](Tube_Station.md) · [Ender Port](Ender_Port.md)
+**Logistics:** [Conveyor Belt](Conveyor_Belt.md) · [Belt Head Roller](Belt_Head_Roller.md) · [Belt Modules](Belt_Modules.md) · [Pneumatic Tube](Pneumatic_Tube.md) · [Carrier](Carrier.md) · [Tube Junction](Tube_Junction.md) · [Tube Station](Tube_Station.md) · [Ender Port](Ender_Port.md) · [Liquid Teleportant](Liquid_Teleportant.md)
 
 **Shaping metal:** [Hand Hammer](Hand_Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Machine Head](Machine_Head.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
-**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Casting Basin](Casting_Basin.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Cryocooler](Cryocooler.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Fission Reactor](Fission_Reactor.md) · [Control Rod Assembly](Control_Rod.md) · [Nuclear Fuel](Nuclear_Fuel.md) · [Scram Trip](Scram_Trip.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
+**Heat:** [Arc Furnace](Arc_Furnace.md) · [Induction](Induction.md) · [Firebox](Firebox.md) · [Hearth](Hearth.md) · [Puddling Furnace](Puddling_Furnace.md) · [Heating Coil](Heating_Coil.md) · [Crucible](Crucible.md) · [Casting Basin](Casting_Basin.md) · [Furnaces](Furnaces.md) · [Powered Bellows](Powered_Bellows.md) · [Insulation](Insulation.md) · [Damper](Damper.md) · [Refractory Lining](Refractory_Lining.md) · [Heat Exchanger](Heat_Exchanger.md) · [Boiler](Boiler.md) · [Condenser](Condenser.md) · [Cryocooler](Cryocooler.md) · [Pressure Vessel](Pressure_Vessel.md) · [Valve](Valve.md) · [Fluid Burner](Fluid_Burner.md) · [Reactor](Reactor.md) · [Fission Reactor](Fission_Reactor.md) · [Control Rod Assembly](Control_Rod.md) · [Nuclear Fuel](Nuclear_Fuel.md) · [Scram Trip](Scram_Trip.md) · [Gas Turbine](Gas_Turbine.md) · [Flare Stack](Flare_Stack.md)
 
 **Petrochemistry:** [Magma Drill](Magma_Drill.md) · [Oil](Oil.md) · [Fuels](Fuels.md) · [Pipe](Pipe.md) · [Gas Tank](Gas_Tank.md) · [Gas Compressor](Gas_Compressor.md) · [Electrolyser](Electrolyser.md) · [Chemicals](Chemicals.md) · [Fertilizer](Fertilizer.md) · [Fractionating Column](Fractionating_Column.md) · [Thruster](Thruster.md)
 
@@ -59,11 +61,11 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md) · [Demolition Charge](Demolition_Charge.md)
 
-**Tools and armor:** [Backpack](Backpack.md) · [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
+**Tools and armor:** [Backpack](Backpack.md) · [Bedroll](Bedroll.md) · [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 
-**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Ancient Debris](Ancient_Debris.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Redstone Lamp](Redstone_Lamp.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md)
+**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Ancient Debris](Ancient_Debris.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Redstone Lamp](Redstone_Lamp.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Iron Ore](Iron_Ore.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
 

@@ -1,7 +1,9 @@
 {
   "color": "#b3802f",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "hardness": 3,
   "density": 3.6,
   "thermal": {
@@ -14,10 +16,11 @@
     "abrasiveness": 0.3
   },
   "separation": {
-    "reflectivity": 0.2
+    "reflectivity": 0.2,
+    "gangue": "feedback:clay"
   },
   "bears": {
-    "feedback:iron": 0.5
+    "feedback:cast_iron": 0.5
   },
   "traits": [
     "porous"

@@ -28,7 +28,8 @@
               "P"
             ],
             "params": {
-              "slots": 9
+              "slots": 9,
+              "points": 1
             }
           },
           {
@@ -39,7 +40,8 @@
               "PPP"
             ],
             "params": {
-              "slots": 27
+              "slots": 27,
+              "points": 4
             }
           }
         ]
@@ -54,6 +56,134 @@
       ],
       "litres": 0.02,
       "layer": 1
+    },
+    "F": {
+      "name": "pack_frame",
+      "forms": [
+        "rod",
+        "stick",
+        "bone"
+      ],
+      "litres": 0.02,
+      "layer": 2,
+      "bulk": 4
+    },
+    "H": {
+      "name": "holster",
+      "forms": [
+        "hide"
+      ],
+      "litres": 0.03,
+      "layer": 3,
+      "bulk": 2
+    },
+    "B": {
+      "name": "bottle_loops",
+      "forms": [
+        "bundle"
+      ],
+      "litres": 0.02,
+      "layer": 4,
+      "bulk": 1
+    },
+    "A": {
+      "name": "bandolier",
+      "forms": [
+        "bundle"
+      ],
+      "litres": 0.02,
+      "layer": 5,
+      "bulk": 2
+    },
+    "W": {
+      "name": "hip_belt",
+      "forms": [
+        "hide"
+      ],
+      "litres": 0.03,
+      "layer": 6,
+      "bulk": 3
+    },
+    "R": {
+      "name": "lashing",
+      "forms": [
+        "stick"
+      ],
+      "litres": 0.01,
+      "layer": 7,
+      "bulk": 2
+    },
+    "P": {
+      "name": "panel",
+      "forms": [
+        "*_carpet"
+      ],
+      "litres": 0.03,
+      "layer": 8,
+      "bulk": 2
+    },
+    "C": {
+      "name": "pad",
+      "forms": [
+        "*_planks"
+      ],
+      "litres": 0.08,
+      "layer": 9,
+      "bulk": 2
+    },
+    "L": {
+      "name": "hard_liner",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.03,
+      "layer": 10,
+      "bulk": 2
+    },
+    "X": {
+      "name": "fire_patch",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.02,
+      "layer": 11,
+      "bulk": 1
+    },
+    "O": {
+      "name": "oiled_coat",
+      "forms": [
+        "hide"
+      ],
+      "litres": 0.02,
+      "layer": 12,
+      "bulk": 1
+    },
+    "I": {
+      "name": "warm_liner",
+      "forms": [
+        "*_carpet"
+      ],
+      "litres": 0.04,
+      "layer": 13,
+      "bulk": 3
+    },
+    "Q": {
+      "name": "buckle",
+      "forms": [
+        "nugget"
+      ],
+      "litres": 0.005,
+      "layer": 14,
+      "bulk": 1
+    },
+    "K": {
+      "name": "lamp_bracket",
+      "forms": [
+        "rod"
+      ],
+      "litres": 0.01,
+      "layer": 15,
+      "bulk": 1
     }
   },
   "patterns": [

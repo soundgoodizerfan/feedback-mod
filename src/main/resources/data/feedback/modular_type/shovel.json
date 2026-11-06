@@ -168,5 +168,10 @@
   },
   "vanilla": {
     "shovel": "ingot"
+  },
+  "board": {
+    "layout": {
+      "T": [1, 0]
+    }
   }
 }

@@ -103,9 +103,13 @@ public class FormTable extends SimpleJsonResourceReloadListener {
         List<Removal> removed = new ArrayList<>();
         Map<ResourceLocation, FormStep> ordered = new TreeMap<>(steps);
         MaterialTable.get().materials().forEach((materialId, material) -> ordered.forEach((stepId, step) -> {
+            if (!step.appliesTo(material))
+                return;
             Map<String, Item> items = material.items(materialId);
             Ingredient from = material.ingredient(materialId, step.from()).orElse(null);
-            ItemStack to = material.stack(materialId, step.to()).orElse(null);
+            // A step may end in another material's form (a bloom hammered into wrought iron's ingot).
+            Material target = step.into().map(MaterialTable.get().materials()::get).orElse(material);
+            ItemStack to = target == null ? null : target.stack(step.into().orElse(materialId), step.to()).orElse(null);
             if (from == null || to == null)
                 return;
             int work = step.work(material.hardness().value());
@@ -115,7 +119,7 @@ public class FormTable extends SimpleJsonResourceReloadListener {
                         step.operation(), swarf == null ? ItemStack.EMPTY : new ItemStack(swarf), step.finer()));
             } else {
                 deformed.add(new Deformation(from, work, material.hardness(), to,
-                        material.minTemperature(), material.maxTemperature(), step.operation()));
+                        material.minTemperature(), material.maxTemperature(), step.operation(), step.byproduct()));
             }
         }));
         deformations = List.copyOf(deformed);

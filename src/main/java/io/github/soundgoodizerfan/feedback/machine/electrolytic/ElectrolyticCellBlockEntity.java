@@ -288,7 +288,9 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
                 dissolving = located.get().id();
                 dissolvingLeft = quPerItem(located.get().form()).value()
                         * (located.get().material().bears().isEmpty() || !leaching() ? 1f
-                        : located.get().material().bears().values().stream().reduce(0f, Float::sum));
+                        : located.get().material().bears().values().stream().reduce(0f, Float::sum)
+                        * io.github.soundgoodizerfan.feedback.process.OreLadder.ORE_CONTENT
+                        * io.github.soundgoodizerfan.feedback.process.OreLadder.dissolve(located.get()));
                 return true;
             }
         }

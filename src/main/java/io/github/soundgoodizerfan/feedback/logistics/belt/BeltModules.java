@@ -25,6 +25,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
+import io.github.soundgoodizerfan.feedback.process.OreLadder;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Reading;
 import io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty;
 import io.github.soundgoodizerfan.feedback.logistics.sort.SortReader;
@@ -47,7 +48,7 @@ final class BeltModules {
     private BeltModules() {
     }
 
-    static BeltRun.Action act(BeltRun run, BeltBlockEntity be, Cargo c, int idx, boolean last) {
+    static BeltRun.Action act(BeltRun run, ModuleHost be, Cargo c, int idx, boolean last) {
         Level level = run.level;
         BeltModule m = be.module();
         BlockPos pos = be.getBlockPos();
@@ -71,8 +72,12 @@ final class BeltModules {
                 if (!be.engaged() || !live)
                     yield BeltRun.Action.CONTINUE;
                 Band band = m == BeltModule.MAGNET || m == BeltModule.ELECTROMAGNET ? Band.PULLED : be.band();
-                if (m == BeltModule.OPTICAL)
+                if (m == BeltModule.OPTICAL) {
                     be.soil();
+                    BeltRun.Action ore = sortOre(level, pos, face, be, c);
+                    if (ore != null)
+                        yield ore;
+                }
                 Verdict v = Sorter.decide(band, c.stack, level, m.detector, be.dirty(), c.seed ^ (level.getGameTime() * 0x9E3779B97F4A7C15L));
                 yield switch (v) {
                     case MATCH -> sweep(level, pos, face, c);
@@ -121,8 +126,30 @@ final class BeltModules {
                 }
                 yield BeltRun.Action.CONTINUE;
             }
+            case HOOD, LINEAR -> BeltRun.Action.CONTINUE;
             case GATE -> be.engaged() ? BeltRun.Action.HOLD : BeltRun.Action.CONTINUE;
         };
+    }
+
+    /**
+     * The optical sorter on ground ore: a unit of a bearer's crushed or dust whose grains the head tells from their rock (reflectivity against
+     * the gangue's) is split, the concentrate swept off the side and the tailings dropped below; a unit it cannot tell goes on to be sorted
+     * again. Null when the unit is not ore feed, so the ordinary band verdict decides. A dirty head reads less, like any optical reading.
+     */
+    private static BeltRun.Action sortOre(Level level, BlockPos pos, Direction face, ModuleHost be, Cargo c) {
+        if (OreLadder.feed(c.stack).isEmpty())
+            return null;
+        if (be.dirty())
+            return BeltRun.Action.CONTINUE;
+        var split = OreLadder.attempt(c.stack, OreLadder.Mode.OPTICAL, level.random);
+        if (split.isEmpty())
+            return BeltRun.Action.CONTINUE;
+        ItemStack rest = BeltTargets.deliver(level, pos.relative(face), face.getOpposite(), split.get().concentrate().copy(), false, true);
+        if (!rest.isEmpty())
+            return BeltRun.Action.CONTINUE; // nowhere for the concentrate to go: leave the unit be
+        c.stack.shrink(1);
+        BeltTargets.fall(level, pos.below(), split.get().tailings().copy(), false, new boolean[1]);
+        return c.stack.isEmpty() ? BeltRun.Action.TAKEN : BeltRun.Action.CONTINUE;
     }
 
     /** A unit that was offered somewhere: gone, shortened (and held if it was the end), or untouched. */
@@ -140,7 +167,7 @@ final class BeltModules {
     }
 
     /** Drops the unit off the belt: into the column below the face, or the cell beside it. Brittle cargo breaks on a long drop. */
-    private static BeltRun.Action chute(Level level, BeltBlockEntity be, Cargo c, boolean last) {
+    private static BeltRun.Action chute(Level level, ModuleHost be, Cargo c, boolean last) {
         Direction face = be.face();
         BlockPos from = face == Direction.DOWN ? be.getBlockPos().below() : face == Direction.UP ? null : be.getBlockPos().relative(face);
         if (from == null)

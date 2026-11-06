@@ -1,7 +1,9 @@
 {
   "color": "#2e9c68",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "hardness": 3.5,
   "density": 4.0,
   "thermal": {
@@ -14,7 +16,8 @@
     "abrasiveness": 0.3
   },
   "separation": {
-    "reflectivity": 0.3
+    "reflectivity": 0.3,
+    "gangue": "feedback:calcite"
   },
   "bears": {
     "feedback:copper": 0.5

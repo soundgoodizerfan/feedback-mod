@@ -23,7 +23,8 @@
       "feedback:tube_mold",
       "feedback:glass_block_mold",
       "feedback:glass_pane_mold",
-      "feedback:glass_bottle_mold"
+      "feedback:glass_bottle_mold",
+      "feedback:atomising_mold"
     ]
   }
 }

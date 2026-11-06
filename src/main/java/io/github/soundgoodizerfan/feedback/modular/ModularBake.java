@@ -79,6 +79,11 @@ public final class ModularBake {
                 .orElse(ModularTuning.STRENGTH_FALLBACK);
     }
 
+    /** 1 for a material that gives under the hand, falling to 0 as it hardens. */
+    private static float soft(Material m) {
+        return 1f - GearTuning.saturate(m.hardness().value(), GearTuning.HARDNESS_HALF);
+    }
+
     /** Toughness, else the strength it would have stood on. */
     private static float toughness(Material m) {
         return m.mechanical().toughness().map(t -> t.value()).orElse(strength(m));
@@ -482,7 +487,40 @@ public final class ModularBake {
                 Material strap = by.get(ModularBackpack.STRAP);
                 f.put(Fig.SLOTS, shell == null ? ModularTuning.PACK_DEFAULT_SLOTS : type.roles().get(ModularBackpack.SHELL).variant(shell)
                         .map(v -> v.params().get("slots")).orElse(ModularTuning.PACK_DEFAULT_SLOTS));
-                f.put(Fig.CARRY, strap == null ? 0f : strength(strap) * ModularTuning.PACK_CARRY_PER_STRENGTH * worn);
+                // Fittings take mounting points from the shell (and the frame, which gives more); a hip belt hangs from a frame.
+                int budget = (shell == null ? ModularTuning.PACK_DEFAULT_POINTS : type.roles().get(ModularBackpack.SHELL).variant(shell)
+                        .map(v -> Math.round(v.params().get("points"))).orElse(ModularTuning.PACK_DEFAULT_POINTS))
+                        + (design.part(ModularBackpack.FRAME) == null ? 0 : ModularTuning.PACK_FRAME_POINTS);
+                int used = 0;
+                int stores = 0;
+                for (Part p : design.parts()) {
+                    used += ModularBackpack.cost(p.role());
+                    stores += ModularBackpack.STORES.getOrDefault(p.role(), 0);
+                }
+                if (used > budget || (design.part(ModularBackpack.BELT) != null && design.part(ModularBackpack.FRAME) == null))
+                    return Optional.empty();
+                f.put(Fig.POINTS, (float) (budget - used));
+                f.put(Fig.STORES, (float) stores);
+                float base = strap == null ? 0f : strength(strap) * ModularTuning.PACK_CARRY_PER_STRENGTH * worn;
+                float carry = base;
+                if (by.get(ModularBackpack.PANEL) != null)
+                    carry += base * ModularTuning.PACK_PANEL_GAIN
+                            * (1f - GearTuning.saturate(by.get(ModularBackpack.PANEL).hardness().value(), GearTuning.HARDNESS_HALF));
+                if (by.get(ModularBackpack.FRAME) != null)
+                    carry += strength(by.get(ModularBackpack.FRAME)) * ModularTuning.PACK_FRAME_CARRY;
+                if (by.get(ModularBackpack.BELT) != null)
+                    carry += strength(by.get(ModularBackpack.BELT)) * ModularTuning.PACK_BELT_CARRY * worn;
+                f.put(Fig.CARRY, carry);
+            }
+            case BEDROLL -> {
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
+                // Softness of what you lie on and what fills it: the fill counts most.
+                Material fill = by.get(ModularBedroll.FILL);
+                Material sheet = by.get(ModularBedroll.SHEET);
+                f.put(Fig.COMFORT, worn * (0.7f * (fill == null ? 0f : soft(fill)) + 0.3f * (sheet == null ? 0f : soft(sheet))));
             }
             case HEAD -> {
                 float total = 0;
@@ -699,24 +737,96 @@ public final class ModularBake {
         f.put(Fig.JOINT, joint(design, type, by, struck, reachLength, rodLength, heads));
     }
 
+    /** The strength a joint can lean on in {@code m}: a binding counts for its share of its own strength, any other part for all of it. */
+    private static float jointStrength(ModularType.Role r, Part p, Material m) {
+        if (r.name().equals("binding"))
+            return (m.kind().filter(k -> k == Material.Kind.METAL).isPresent()
+                    ? ModularTuning.PINNED_SHARE : ModularTuning.WRAPPED_SHARE) * strength(m) * param(r, p, "joint_mult");
+        return strength(m);
+    }
+
+    /** The weakest part a swung head hangs on, and what the binding adds. */
+    private record JointCapacity(float weakest, float binding) {
+    }
+
+    private static JointCapacity jointCapacity(ModularDesign design, ModularType type, Map<String, Material> by, List<String> heads) {
+        float weakest = Float.MAX_VALUE;
+        float binding = 0;
+        for (Part p : design.parts()) {
+            ModularType.Role r = type.roles().get(p.role());
+            if (r.name().equals("binding"))
+                binding = jointStrength(r, p, by.get(p.role()));
+            else if (r.rod() || heads.contains(p.role()))
+                weakest = Math.min(weakest, strength(by.get(p.role())));
+        }
+        return new JointCapacity(weakest, binding);
+    }
+
     /** Leverage on the joint over what the handle, head and any binding carry together. */
     private static float joint(ModularDesign design, ModularType type, Map<String, Material> by, float struck,
                                float reachLength, float rodLength, List<String> heads) {
         if (rodLength == 0)
             return 0;
-        float weakest = Float.MAX_VALUE;
-        float binding = 0;
-        for (Part p : design.parts()) {
-            ModularType.Role r = type.roles().get(p.role());
-            Material m = by.get(p.role());
-            if (r.name().equals("binding"))
-                binding = (m.kind().filter(k -> k == Material.Kind.METAL).isPresent()
-                        ? ModularTuning.PINNED_SHARE : ModularTuning.WRAPPED_SHARE) * strength(m) * param(r, p, "joint_mult");
-            else if (r.rod() || heads.contains(p.role()))
-                weakest = Math.min(weakest, strength(m));
-        }
-        float capacity = ModularTuning.JOINT_K * (weakest + binding);
+        JointCapacity c = jointCapacity(design, type, by, heads);
+        float capacity = ModularTuning.JOINT_K * (c.weakest() + c.binding());
         return capacity > 0 ? struck * reachLength / capacity : 0;
+    }
+
+    /**
+     * The joint figure of each pair of roles ({@code pairs}, role letters), the load a pair carries over what it can
+     * carry, 1 being its limit, for the Blueprint Table to colour each link by its own value. A swung tool's load is the
+     * whole item's leverage (the {@code JOINT} figure times what the whole joint carries), so a head on its handle reads as
+     * the item's {@code JOINT} and a guard on a grip, held by only its own strength, can read differently; a bow's pair of
+     * limbs and string is its {@code JOINT}; any other pair carries the lighter part's mass at
+     * {@link ModularTuning#JOINT_STATIC_LEVER} against the weaker part's strength. A pair with a part not drawn, or a
+     * material missing, reads 0.
+     */
+    public static float[] joints(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials, List<String[]> pairs) {
+        float[] out = new float[pairs.size()];
+        Map<String, Material> by = new java.util.HashMap<>();
+        for (Part p : design.parts()) {
+            Material m = materials.get(p.material());
+            if (m == null || !type.roles().containsKey(p.role()))
+                return out;
+            by.put(p.role(), m);
+        }
+        ModularType.Family family = type.family();
+        boolean swung = type.roles().values().stream().anyMatch(ModularType.Role::rod);
+        List<String> heads = type.strikers().isEmpty() ? List.of(type.wearRole()) : type.strikers();
+        float load = 0;
+        float binding = 0;
+        if (swung) {
+            Optional<ModularFigures> whole = bake(design, type, materials, 0);
+            JointCapacity c = jointCapacity(design, type, by, heads);
+            binding = c.binding();
+            load = whole.map(f -> f.get(Fig.JOINT)).orElse(0f) * ModularTuning.JOINT_K * (c.weakest() + c.binding());
+        }
+        for (int i = 0; i < out.length; i++) {
+            Part pa = design.part(pairs.get(i)[0]), pb = design.part(pairs.get(i)[1]);
+            if (pa == null || pb == null)
+                continue;
+            ModularType.Role ra = type.roles().get(pa.role()), rb = type.roles().get(pb.role());
+            Material ma = by.get(pa.role()), mb = by.get(pb.role());
+            if (family == ModularType.Family.BOW || family == ModularType.Family.CROSSBOW) {
+                boolean aString = ra.name().equals("string"), bString = rb.name().equals("string");
+                if (aString != bString) {
+                    float drive = strength(aString ? mb : ma), string = strength(aString ? ma : mb);
+                    out[i] = string > 0 ? drive / (ModularTuning.STRING_SHARE * string) : 0f;
+                    continue;
+                }
+            }
+            float held = Math.min(jointStrength(ra, pa, ma), jointStrength(rb, pb, mb));
+            if (swung) {
+                boolean headOnHandle = (ra.rod() && heads.contains(pb.role())) || (rb.rod() && heads.contains(pa.role()));
+                float capacity = ModularTuning.JOINT_K * (held + (headOnHandle ? binding : 0f));
+                out[i] = capacity > 0 ? load / capacity : 0f;
+            } else {
+                float hung = Math.min(mass(ra, pa, ma), mass(rb, pb, mb));
+                float capacity = ModularTuning.JOINT_K * held;
+                out[i] = capacity > 0 ? hung * ModularTuning.JOINT_STATIC_LEVER / capacity : 0f;
+            }
+        }
+        return out;
     }
 
     private static float clamp(float v, float lo, float hi) {

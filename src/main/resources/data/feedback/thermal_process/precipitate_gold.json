@@ -1,0 +1,26 @@
+{
+  "inputs": [],
+  "min_temperature": 20,
+  "optimal_temperature": 60,
+  "max_temperature": 100,
+  "required_tpu": 200,
+  "result": {
+    "id": "minecraft:gold_nugget",
+    "count": 9
+  },
+  "spoil_temperature": 160,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:gold_chloride",
+        "mb": 144
+      },
+      {
+        "fluid": "feedback:sulfur_dioxide",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 2
+  }
+}

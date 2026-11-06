@@ -1,3 +1,4 @@
 {
-  "kinds": ["ceramic"]
+  "kinds": ["ceramic"],
+  "grain": 0.5
 }

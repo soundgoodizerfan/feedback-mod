@@ -74,6 +74,8 @@ import net.minecraft.world.item.crafting.Ingredient;
  * @param minTemperature  how hot the workpiece must be for a blow to do anything, in Tu. Zero for
  *                  everything cold-workable, which is most things.
  * @param maxTemperature  how hot it may be. Unbounded unless a material says otherwise.
+ * @param byproduct what finishing this change drives out of the piece (slag from a bloom); empty for most entries. The caller that
+ *                  holds the workpiece decides where it goes: a machine throws it clear, a hand at the anvil is handed it.
  * @param operation how force must be delivered for this entry to apply -- see {@link Operation}.
  *                  Optional and defaults to {@code BLOW} so every existing hammer entry needed no
  *                  change. This is the second key {@link DeformationTable#find} matches on, and
@@ -81,7 +83,12 @@ import net.minecraft.world.item.crafting.Ingredient;
  *                  a hammer reaches, one a draw plate reaches) without either shadowing the other.
  */
 public record Deformation(Ingredient input, int work, St hardness, ItemStack result,
-                          Tu minTemperature, Tu maxTemperature, Operation operation) {
+                          Tu minTemperature, Tu maxTemperature, Operation operation, ItemStack byproduct) {
+
+    /** A change that drives nothing out of the piece: every step but a bloom's. */
+    public Deformation(Ingredient input, int work, St hardness, ItemStack result, Tu minTemperature, Tu maxTemperature, Operation operation) {
+        this(input, work, hardness, result, minTemperature, maxTemperature, operation, ItemStack.EMPTY);
+    }
 
     /**
      * {@code StreamCodec.composite} tops out at six fields ({@code Function6}), and this record
@@ -101,15 +108,31 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
      * browser is allowed to state {@code 14 Fu} exactly, on day one, with no instrument owned --
      * so the figures have to get across. Nothing on the client ever computes with them.
      */
-    public static final StreamCodec<RegistryFriendlyByteBuf, Deformation> STREAM_CODEC = StreamCodec.composite(
-            Ingredient.CONTENTS_STREAM_CODEC, Deformation::input,
-            ByteBufCodecs.VAR_INT, Deformation::work,
-            Units.streamCodec(St::new), Deformation::hardness,
-            ItemStack.STREAM_CODEC, Deformation::result,
-            TEMPERATURE_RANGE_STREAM_CODEC, d -> new Tu[] { d.minTemperature(), d.maxTemperature() },
-            Operation.STREAM_CODEC.cast(), Deformation::operation,
-            (input, work, hardness, result, range, operation) ->
-                    new Deformation(input, work, hardness, result, range[0], range[1], operation));
+    public static final StreamCodec<RegistryFriendlyByteBuf, Deformation> STREAM_CODEC = new StreamCodec<>() {
+        /** The first six fields as before; {@code composite} stops there, so the byproduct is written after them by hand. */
+        private final StreamCodec<RegistryFriendlyByteBuf, Deformation> head = StreamCodec.composite(
+                Ingredient.CONTENTS_STREAM_CODEC, Deformation::input,
+                ByteBufCodecs.VAR_INT, Deformation::work,
+                Units.streamCodec(St::new), Deformation::hardness,
+                ItemStack.STREAM_CODEC, Deformation::result,
+                TEMPERATURE_RANGE_STREAM_CODEC, d -> new Tu[] { d.minTemperature(), d.maxTemperature() },
+                Operation.STREAM_CODEC.cast(), Deformation::operation,
+                (input, work, hardness, result, range, operation) ->
+                        new Deformation(input, work, hardness, result, range[0], range[1], operation));
+
+        @Override
+        public Deformation decode(RegistryFriendlyByteBuf buffer) {
+            Deformation d = head.decode(buffer);
+            return new Deformation(d.input, d.work, d.hardness, d.result, d.minTemperature, d.maxTemperature, d.operation,
+                    ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
+        }
+
+        @Override
+        public void encode(RegistryFriendlyByteBuf buffer, Deformation d) {
+            head.encode(buffer, d);
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, d.byproduct);
+        }
+    };
 
     /**
      * Whether a workpiece at this temperature can be worked at all.

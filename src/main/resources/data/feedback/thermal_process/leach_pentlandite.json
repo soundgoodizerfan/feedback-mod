@@ -1,0 +1,44 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:pentlandite",
+      "forms": [
+        "calcine"
+      ]
+    }
+  ],
+  "min_temperature": 60,
+  "optimal_temperature": 90,
+  "max_temperature": 125,
+  "required_tpu": 300,
+  "result": {
+    "id": "feedback:cobalt_nugget",
+    "count": 2
+  },
+  "spoil_temperature": 180,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 150
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:nickel_sulfate",
+        "mb": 250
+      }
+    ],
+    "heat": 4,
+    "byproducts": [
+      {
+        "item": {
+          "id": "feedback:osmiridium_lump",
+          "count": 1
+        },
+        "chance": 0.05
+      }
+    ]
+  }
+}

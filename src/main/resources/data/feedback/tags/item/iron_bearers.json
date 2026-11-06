@@ -1,0 +1,104 @@
+{
+  "values": [
+    {
+      "id": "minecraft:raw_iron",
+      "required": false
+    },
+    {
+      "id": "minecraft:iron_ore",
+      "required": false
+    },
+    {
+      "id": "minecraft:deepslate_iron_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:iron_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:deepslate_iron_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:iron_crushed",
+      "required": false
+    },
+    {
+      "id": "feedback:iron_concentrate",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_lump",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_deepslate_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_crushed",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_concentrate",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_dust",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_lump",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_deepslate_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_crushed",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_concentrate",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_dust",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_lump",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_deepslate_ore",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_crushed",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_concentrate",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_dust",
+      "required": false
+    }
+  ]
+}

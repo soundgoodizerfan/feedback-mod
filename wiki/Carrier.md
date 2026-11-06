@@ -19,6 +19,10 @@ You do not fill a carrier by hand. Stock carriers in a [Tube Station](Tube_Stati
 
 The address is a dye color. Junctions read it and nothing else, never the contents. A heavy load slows a carrier.
 
+## Dyeing
+
+Put a carrier (of any kind) and a dye in the crafting grid to get that carrier with the dye's color as its address. Whatever it holds stays in it. A [Tube Station](Tube_Station.md) also stamps its own address on the carriers it sends.
+
 ## Magnetic Carrier
 
 A carrier with a magnetic plate. A [Linear Motor Ring](Pneumatic_Tube.md#linear-motor-ring) drives it through a tube block at twice the speed; it otherwise rides like a plain carrier.

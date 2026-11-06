@@ -1,0 +1,17 @@
+{
+  "color": "#b8b0a0",
+  "kind": "fluid",
+  "traits": [
+    "corrosive"
+  ],
+  "hardness": 0.1,
+  "density": 1.5,
+  "composition": {
+    "feedback:tungsten": 0.4,
+    "feedback:lye": 0.6
+  },
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  }
+}

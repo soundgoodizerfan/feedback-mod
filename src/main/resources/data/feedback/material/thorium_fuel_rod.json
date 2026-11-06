@@ -11,7 +11,7 @@
   "forms": {
     "ingot": "feedback:thorium_fuel_rod"
   },
-  "exclude": [
+  "exclude": ["dust", 
     "plate",
     "foil",
     "rod",

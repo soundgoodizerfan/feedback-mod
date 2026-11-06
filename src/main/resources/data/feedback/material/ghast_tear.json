@@ -14,7 +14,7 @@
       "vitamin": 0.03
     }
   },
-  "exclude": [
+  "exclude": ["dust", 
     "ingot",
     "grip"
   ]

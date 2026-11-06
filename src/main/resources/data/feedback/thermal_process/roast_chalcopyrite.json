@@ -1,0 +1,48 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:chalcopyrite",
+      "forms": [
+        "concentrate"
+      ]
+    }
+  ],
+  "min_temperature": 500,
+  "optimal_temperature": 700,
+  "max_temperature": 900,
+  "required_tpu": 200,
+  "result": {
+    "id": "feedback:chalcopyrite_calcine",
+    "count": 1
+  },
+  "spoil_temperature": 1000,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:sulfur_dioxide",
+        "mb": 100
+      }
+    ],
+    "byproducts": [
+      {
+        "item": {
+          "id": "minecraft:iron_nugget",
+          "count": 3
+        }
+      },
+      {
+        "item": {
+          "id": "feedback:sulfur",
+          "count": 1
+        }
+      }
+    ]
+  }
+}

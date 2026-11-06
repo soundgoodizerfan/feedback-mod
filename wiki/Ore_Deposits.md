@@ -28,7 +28,7 @@ Dig, as before. Each ore sits where it always did.
 
 ## Reading the surface
 
-A vein near enough to the surface sends up a sign: up to three, scattered over its width. Most are a **loose rock**, a small heap of cobble flecked in the color of the ore beneath, standing on dirt, sand or bare stone. Break one for a few nuggets or a raw piece of what lies below. Some veins show a second kind of sign beside the rock, and each spot is one or the other: **flowers** that tolerate the metal grow in a loose patch on the grass above (copper flower over the copper veins, zinc violet over the zinc ones, bladder campion over lead and galena), and **stained soil** replaces the dirt in a wider patch (rust-stained soil over iron gossan, black sand over tin, gossan rubble over gold, tarnished soil over the silver lode, sooty soil over the upper coal seam, bleached soil over the uranium lode). Flowers need ground they can stand on; stained soil shows in any biome that has dirt at the surface. Both drop themselves, and stained soil digs like dirt. The deeper the vein, the fewer signs reach the surface; the deep diamond, gold, lapis and redstone veins show only where a mountain stands over them, and the buried ones barely at all.
+A vein near enough to the surface sends up a sign: up to three, scattered over its width. Most are a **loose rock**, a small heap of cobble flecked in the color of the ore beneath, standing on dirt, sand or bare stone. Break one for a few nuggets or a raw piece of what lies below (iron loose rock gives cast iron nuggets). Some veins show a second kind of sign beside the rock, and each spot is one or the other: **flowers** that tolerate the metal grow in a loose patch on the grass above (copper flower over the copper veins, zinc violet over the zinc ones, bladder campion over lead and galena), and **stained soil** replaces the dirt in a wider patch (rust-stained soil over iron gossan, black sand over tin, gossan rubble over gold, tarnished soil over the silver lode, sooty soil over the upper coal seam, bleached soil over the uranium lode). Flowers need ground they can stand on; stained soil shows in any biome that has dirt at the surface. Both drop themselves, and stained soil digs like dirt. The deeper the vein, the fewer signs reach the surface; the deep diamond, gold, lapis and redstone veins show only where a mountain stands over them, and the buried ones barely at all.
 
 | Vein | Sign |
 | --- | --- |
@@ -68,6 +68,8 @@ A vein near enough to the surface sends up a sign: up to three, scattered over i
 
 Same tools, same drops. Coal ore gives coal, iron ore raw iron, copper ore several raw copper, gold ore raw gold, lapis ore a handful of lapis, redstone ore a few redstone dust, diamond ore a diamond, emerald ore an emerald, nether gold ore a few gold nuggets and nether quartz ore a quartz. Fortune gives more, and Silk Touch gives the ore block itself. Coal, lapis, diamond, emerald and the Nether's two also drop a little experience, and redstone too. Redstone ore lights up and glows when you touch or mine it, as before.
 
+What a mined ore is worth as metal depends on how far you process it; the raw rock gives the least ([Ore Processing](Ore_Processing.md)). Iron ore does not smelt to an ingot ([Making Wrought Iron](Making_Wrought_Iron.md)).
+
 Iron, copper and lapis want at least a stone pickaxe; gold, redstone, diamond and emerald want an iron one; coal and the Nether's two take any pickaxe.
 
 JEI's **Ore Vein** page lists every vein: its dimension, depth, size, richness and how common it is, and which ores sit in its core, cap, rim and scatter.
@@ -76,4 +78,4 @@ JEI's **Ore Vein** page lists every vein: its dimension, depth, size, richness a
 
 Vanilla's two huge veins, the ones that hold raw iron and raw copper blocks, still form in the ground and still hold vanilla's ore blocks. Ancient debris is still vanilla's ([Ancient Debris](Ancient_Debris.md)), and so are the other Nether deposits (gravel, magma, soul sand, blackstone).
 
-See also [Graphite](Materials.md#graphite), [Materials](Materials.md) and [Heat](Heat.md).
+See also [Ore Processing](Ore_Processing.md), [Making Wrought Iron](Making_Wrought_Iron.md), [Graphite](Materials.md#graphite), [Materials](Materials.md) and [Heat](Heat.md).

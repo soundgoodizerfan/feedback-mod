@@ -1,0 +1,8 @@
+{
+  "from": "ingot",
+  "to": "dust",
+  "operation": "roll",
+  "base": 6,
+  "slope": 1.5,
+  "kinds": ["mineral", "ceramic", "glass", "metalloid"]
+}

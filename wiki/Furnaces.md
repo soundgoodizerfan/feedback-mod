@@ -6,7 +6,7 @@ The Furnace, Smoker and Blast Furnace each cook one item at a time from an input
 
 ## What Feedback does
 
-Feedback **replaces** the vanilla Furnace, Smoker and Blast Furnace with its own. It has no vanilla furnace recipe; there is a family of six self-fired furnaces. They all work the same way, and what makes each one different is **how heavy it is, how well it holds heat, and how hot it can physically get**.
+Feedback **replaces** the vanilla Furnace, Smoker and Blast Furnace with its own. It has no vanilla furnace recipe; there is a family of seven self-fired furnaces. They all work the same way, and what makes each one different is **how heavy it is, how well it holds heat, and how hot it can physically get**.
 
 Like the vanilla blocks they replace, they are mined with a pickaxe and drop nothing without one.
 
@@ -22,7 +22,7 @@ Fuel works like in a [Firebox](Firebox.md): each fuel has its own flame temperat
 
 ## Vanilla recipes
 
-Every vanilla (and modded) smelting, smoking and blasting recipe still works, in every furnace. **How fast** depends on how hot the furnace is:
+Every vanilla (and modded) smelting, smoking and blasting recipe still works, in every furnace, except ore into metal: iron ore, raw iron and vanilla's [iron ore](Iron_Ore.md) do not smelt to an ingot in any vessel ([Making Wrought Iron](Making_Wrought_Iron.md)). **How fast** depends on how hot the furnace is:
 
 - **Metal and ore** recipes don't progress at all below **800 Tu**, and go fastest around 1000 (blasting recipes around 1400). A furnace burning only logs (760 Tu) **can't smelt ore**; coal or charcoal can.
 - **Food** cooks fastest around **250 Tu**. **Food in a furnace above 400 Tu burns away to nothing.** An unwatched furnace running on coal will do this.
@@ -38,7 +38,7 @@ Before you have bricks, bury a [Campfire](Campfire.md): cover it on every side, 
 
 The Annealing Furnace tops out at 380 Tu, so it can't overshoot; the Kiln needs watching. JEI shows the condition as *Atmosphere: Sealed: no air*.
 
-## The six furnaces
+## The seven furnaces
 
 | Furnace | Recipe | Character |
 | --- | --- | --- |
@@ -48,6 +48,7 @@ The Annealing Furnace tops out at 380 Tu, so it can't overshoot; the Kiln needs 
 | **Improved Furnace** | Furnace surrounded by Steel Ingots | Between the two. The only furnace with an opening, so a [Temperature Sensor](Instruments.md#temperature-sensor) can be fitted and a controller can watch it. |
 | **Kiln** | Bricks: a row of three over two columns (`###` / `#_#` / `#_#`) | For ceramics and sintered carbides. Tops out at **1330 Tu**: enough for **Firebrick** (1200–1500), never enough for steel (1350). |
 | **Annealing Furnace** | Steel Ingot surrounded by [Insulation](Insulation.md) | Tops out at **380 Tu**, inside tempering's 300–400, so it **can't overheat** a tempering batch. Heavy, so it cools slowly. |
+| **[Puddling Furnace](Puddling_Furnace.md)** | Bricks, a Furnace, a Wrought Iron Rod and Plate | A shaft into its back stirs the charge. Turns cast iron into a clean iron bloom. |
 
 Recipes shown as grids:
 

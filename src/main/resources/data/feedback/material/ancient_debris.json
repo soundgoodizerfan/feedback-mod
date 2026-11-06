@@ -1,6 +1,6 @@
 {
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": ["dust", "ingot"],
   "traits": [
     "fireproof"
   ],

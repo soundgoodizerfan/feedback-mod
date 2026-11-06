@@ -1,12 +1,15 @@
 {
   "color": "#6e5a38",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "hardness": 3.5,
   "density": 4.0,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 0.02
+    "conductivity": 0.02,
+    "oxidation_temperature": 600
   },
   "mechanical": {
     "toughness": 1,
@@ -14,7 +17,8 @@
     "abrasiveness": 0.3
   },
   "separation": {
-    "reflectivity": 0.35
+    "reflectivity": 0.35,
+    "gangue": "feedback:calcite"
   },
   "bears": {
     "feedback:zinc": 0.67

@@ -225,6 +225,10 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         }
 
         workpiece = blow.result();
+        // What the blow drove out of the piece (slag out of a bloom) falls clear of the hammer.
+        if (!blow.byproduct().isEmpty())
+            net.minecraft.world.Containers.dropItemStack(level, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5,
+                    blow.byproduct().copy());
         sync();
     }
 

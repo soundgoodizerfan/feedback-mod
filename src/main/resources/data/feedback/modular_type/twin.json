@@ -201,5 +201,11 @@
       "axe_head+axe_head": "double_axe",
       "pickaxe_head+pickaxe_head": "double_pick"
     }
+  },
+  "board": {
+    "layout": {
+      "T": [1, -1],
+      "P": [1, 2]
+    }
   }
 }

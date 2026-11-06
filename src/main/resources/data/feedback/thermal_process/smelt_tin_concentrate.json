@@ -1,0 +1,32 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:tin",
+      "forms": [
+        "concentrate"
+      ]
+    },
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "min_temperature": 600,
+  "optimal_temperature": 800,
+  "max_temperature": 1000,
+  "required_tpu": 200,
+  "result": {
+    "id": "minecraft:sand",
+    "count": 1
+  },
+  "spoil_temperature": 1100,
+  "reaction": {
+    "fluid_inputs": [],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:molten_tin",
+        "mb": 289
+      }
+    ]
+  }
+}

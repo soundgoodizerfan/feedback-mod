@@ -38,8 +38,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class GrappleSwing {
 
-    /** The line the player's own client is running, shortened by the reel from the hook's bite length. */
-    private static float rope;
+    /** The line the player's own client runs per hook (by entity id), shortened by the reel from the hook's bite length. */
+    private static final java.util.Map<Integer, Float> ropes = new java.util.HashMap<>();
     private static boolean swinging;
 
     private GrappleSwing() {
@@ -51,8 +51,9 @@ public final class GrappleSwing {
         var player = mc.player;
         if (player == null || mc.level == null || mc.isPaused() || player.isSpectator())
             return;
-        GrappleHook hook = GrappleHook.of(mc.level, player);
-        if (hook == null || !hook.anchored() || hook.swingRope() <= 0f) {
+        var hooks = new java.util.ArrayList<>(GrappleHook.allOf(mc.level, player));
+        hooks.removeIf(h -> !h.anchored() || h.swingRope() <= 0f);
+        if (hooks.isEmpty()) {
             // Letting go while moving throws the swing's momentum on (boosted, capped).
             Vec3 v = player.getDeltaMovement();
             if (swinging && v.length() >= ModularTuning.GRAPPLE_RELEASE_MIN && !player.onGround()) {
@@ -60,18 +61,24 @@ public final class GrappleSwing {
                 player.setDeltaMovement(boosted.length() > ModularTuning.GRAPPLE_RELEASE_MAX ? boosted.scale(ModularTuning.GRAPPLE_RELEASE_MAX / boosted.length()) : boosted);
             }
             swinging = false;
-            rope = 0f;
+            ropes.clear();
             return;
         }
         swinging = true;
-        if (rope <= 0f || rope > hook.swingRope())
-            rope = hook.swingRope();
-        // Holding use with the grapple in hand winches the line in.
-        if (mc.screen == null && mc.options.keyUse.isDown() && (player.getMainHandItem().getItem() instanceof GrappleItem
-                || player.getOffhandItem().getItem() instanceof GrappleItem))
-            rope = Math.max((float) ModularTuning.GRAPPLE_STOP_DISTANCE, rope - hook.reelSpeed());
-        Vec3 offset = hook.position().subtract(player.position().add(0, player.getBbHeight() * 0.5, 0));
-        player.setDeltaMovement(GrappleHook.constrain(offset, rope, player.getDeltaMovement()));
+        ropes.keySet().retainAll(hooks.stream().map(h -> h.getId()).toList());
+        // Holding use with the grapple in hand winches every line in.
+        boolean reeling = mc.screen == null && mc.options.keyUse.isDown() && (player.getMainHandItem().getItem() instanceof GrappleItem
+                || player.getOffhandItem().getItem() instanceof GrappleItem);
+        for (GrappleHook hook : hooks) {
+            float rope = ropes.getOrDefault(hook.getId(), 0f);
+            if (rope <= 0f || rope > hook.swingRope())
+                rope = hook.swingRope();
+            if (reeling)
+                rope = Math.max((float) ModularTuning.GRAPPLE_STOP_DISTANCE, rope - hook.reelSpeed());
+            ropes.put(hook.getId(), rope);
+            Vec3 offset = hook.position().subtract(player.position().add(0, player.getBbHeight() * 0.5, 0));
+            player.setDeltaMovement(GrappleHook.constrain(offset, rope, player.getDeltaMovement()));
+        }
         player.fallDistance = 0f;
     }
 }

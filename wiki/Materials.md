@@ -18,8 +18,8 @@ Amounts of metal and other stuff are counted in **Qu**. See [Units](Units.md#amo
 | Zinc | 2 | 7.1 | 3 | 420 Tu | For brass and the [Galvanic Cell](Galvanic_Cell.md). |
 | Brass | 4 | 8.5 | 5 | 900 Tu | 65% copper, 35% zinc. Good cartridge cases. |
 | Bronze | 5 | 8.8 | 6 | 950 Tu | 90% copper, 10% tin. |
-| Iron | 4.5 | 7.87 | 5 | 1538 Tu | **Magnetic.** Pure iron: what hematite, limonite and magnetite smelt to. Softer and weaker than wrought iron. |
-| Wrought Iron | 6 | 7.9 | 8 | 1600 Tu | **Magnetic.** Vanilla's iron: soft, tough, worked cold. |
+| Iron | 4.5 | 7.87 | 5 | 1538 Tu | **Magnetic.** Pure iron. Softer and weaker than wrought iron. |
+| Wrought Iron | 6 | 7.9 | 8 | 1600 Tu | **Magnetic.** Vanilla's iron: soft, tough, worked cold. Made by hammering the slag out of a bloom ([Making Wrought Iron](Making_Wrought_Iron.md)). |
 | Cast Iron | 12 | 7.2 | 6 | 1200 Tu | **Magnetic.** Too brittle for plates, rods or wire; good for steelmaking. |
 | Steel | 15 | 7.9 | 15 | 1450 Tu | **Magnetic.** Only moves between **900 and 1100 Tu**. See [Making Steel](Steel.md). |
 | Hardened Steel | 25 | 7.9 | 35 | 1450 Tu | **Magnetic.** Only the [Grinding Wheel](Grinding_Wheel.md) can shape it. |
@@ -213,11 +213,11 @@ A polymer grip on a tool or gun raises how securely it is held, by its friction.
 
 ## Ore minerals
 
-Ore minerals are not metal. Each melts into the metal it carries the most of. Find them in [Ore Deposits](Ore_Deposits.md).
+Ore minerals are not metal. Each melts into the metal it carries the most of, and gives more of it the further it is processed: crushed, separated into a concentrate, roasted and leached. See [Ore Processing](Ore_Processing.md). Find them in [Ore Deposits](Ore_Deposits.md).
 
-| Mineral | Smelts to |
+| Mineral | Gives |
 | --- | --- |
-| Hematite, Limonite, Magnetite | Iron |
+| Hematite, Limonite, Magnetite | Cast iron |
 | Chalcopyrite, Malachite, Cuprite | Copper (chalcopyrite carries iron too) |
 | Sphalerite | Zinc |
 | Argentite | Silver |
@@ -251,17 +251,29 @@ Every metal comes in a family of **forms**, each made by a particular machine:
 | Turned Rod | [Lathe](Lathe.md) |
 | Ground Ingot | [Grinding Wheel](Grinding_Wheel.md) |
 | Swarf | the leftovers of drilling, turning and grinding |
+| Dust | grinding a brittle ingot or gem in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust), or shattering a melt in an [Atomising Mold](Casting.md#atomising-mold) |
+| Crushed, Concentrate, Tailings, Roasted | ore stages: see [Ore Processing](Ore_Processing.md) |
 | Gun Barrel, Receiver, Slide, Bolt, Trigger Group, Grip, Cylinder, Magazine Tube, Suppressor, Muzzle Brake, Relief Vent, Barrel Shroud | machined: see [Gun Parts](Gun_Parts.md) |
 
 So there's a *Bronze Plate*, *Lead Wire*, *Gold Foil* and so on, for every metal. A few don't exist: cast iron is too brittle to be made into plates, rods or wire, and neither is hardened steel. Tempered steel is: plate, rod, wire and the machined parts, but no foil, nuggets or blocks.
 
 How much work each step takes depends on the metal: **a fixed amount plus a little more for every point of hardness**. A copper plate takes 14 Fu; a steel plate 60. JEI shows the figure for every step and every metal.
 
+## Dust
+
+Dust is the finest form: a material ground or shattered to grains. Nearly every material has one (not blaze rod, breeze rod, ice, blue ice, ancient debris, heavy core, ghast tear, ender pearl, echo shard, sugar, pepper, fuel rods or purpur). Brittle stock (a mineral, crystal, ceramic, glass or gem) grinds to dust in the [Rolling Mill](Rolling_Mill.md#grinding-to-dust); a ductile metal's dust comes from an [Atomising Mold](Casting.md#atomising-mold).
+
+Dust reacts and melts faster than a lump or ingot of the same material. A finer form shortens the hold of any reaction that takes more than one form (roasting pyrite, carburizing cast iron to steel), and JEI's thermal card shows the hold for the form on display. It also has costs:
+
+- **Metal dust burns off.** Dust melted in an open vessel above the metal's oxidation temperature loses part of its metal to oxide; the finer the dust, the more. A sealed vessel loses none.
+- **Toxic dust throws a fume.** A batch of a toxic dust that finishes in an open vessel lets a [fume cloud](Hazards.md#fume-clouds) go.
+- **Combustible dust flashes.** Fine dust of a fuel such as coal or sulfur in an open vessel at or above its ignition temperature flashes: the stack is lost and the air above the vessel catches fire.
+
 ## Where to find them
 
-Copper, gold and wrought iron come from vanilla's ores (iron ore and raw iron melt to wrought iron). The iron minerals hematite, limonite and magnetite ([Ore Deposits](Ore_Deposits.md)) smelt to pure **iron** instead: an ore melts into the metal it carries the most of. Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
+Copper and gold come from vanilla's ores. Iron ore, raw iron and the iron minerals hematite, limonite and magnetite ([Ore Deposits](Ore_Deposits.md)) melt to **cast iron**; **wrought iron** comes from an Iron Bloom ([Making Wrought Iron](Making_Wrought_Iron.md)). Brass and bronze are [alloyed](Casting.md#alloys). Steel and cast iron are made in a [crucible](Steel.md). Pure copper can also be refined out of brass or scrap in the [Electrolytic Cell](Electrolytic_Cell.md).
 
-Tin, zinc and lead are ores in the ground. **Silver** comes from **argentite**, which fills its own silver lode ([Ore Deposits](Ore_Deposits.md)) and shows up in a thin scatter through galena veins. Argentite smelts to silver (see [ore minerals](#ore-minerals)). Silver comes as ingots, nuggets and blocks.
+Tin, zinc and lead are ores in the ground. **Silver** comes from **argentite**, which fills its own silver lode ([Ore Deposits](Ore_Deposits.md)) and shows up in a thin scatter through galena veins. Argentite gives silver by roasting and leaching ([Ore Processing](Ore_Processing.md)). Silver comes as ingots, nuggets and blocks.
 
 JEI's **Material Stats** page shows every figure a material has (kind, XP top level, XP capacity, XP conductance, XP leak, oxygen share, hardness, density, heat, strength, electrical, and for foods moisture, fat, fiber, germs and toxin in Qu, with its compounds and perks). Figures that are zero are left out, and hovering a row says what it means. Hardness, density, melting point, service temperature, thermal conductivity, toughness, yield, friction and flame temperature carry a word beside the figure (low, middling or high, against the range across all materials); holding Shift while hovering gives the edges. Holding Shift over an item shows the same word beside its hardness, melting point and burning temperature.
 

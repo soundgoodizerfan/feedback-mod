@@ -1,0 +1,39 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:uraninite",
+      "forms": [
+        "concentrate"
+      ]
+    }
+  ],
+  "min_temperature": 40,
+  "optimal_temperature": 70,
+  "max_temperature": 100,
+  "required_tpu": 300,
+  "result": {
+    "id": "feedback:lead_nugget",
+    "count": 2
+  },
+  "spoil_temperature": 155,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 150
+      },
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:uranyl_sulfate",
+        "mb": 360
+      }
+    ],
+    "heat": 4
+  }
+}

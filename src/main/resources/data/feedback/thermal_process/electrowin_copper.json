@@ -1,0 +1,23 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "electrolysis": {
+    "feed": {
+      "fluid": "feedback:copper_sulfate"
+    },
+    "volts": 2.0,
+    "products": [
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 1,
+        "electrode": "anode"
+      }
+    ],
+    "deposit": {
+      "item": "feedback:copper_nugget",
+      "units": 16
+    }
+  }
+}

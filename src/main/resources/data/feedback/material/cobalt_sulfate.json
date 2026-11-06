@@ -1,0 +1,20 @@
+{
+  "color": "#c0407a",
+  "kind": "fluid",
+  "traits": [
+    "corrosive"
+  ],
+  "perks": {
+    "toxic": 1
+  },
+  "hardness": 0.1,
+  "density": 1.6,
+  "composition": {
+    "feedback:cobalt": 0.4,
+    "feedback:sulfuric_acid": 0.6
+  },
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  }
+}

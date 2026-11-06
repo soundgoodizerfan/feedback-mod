@@ -163,6 +163,9 @@ public class FItems {
             ITEMS.registerItem("grapple", io.github.soundgoodizerfan.feedback.item.GrappleItem::new,
                     new Item.Properties().stacksTo(1).durability(io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRAPPLE_DURABILITY));
 
+    /** A drum, crank and frame: the grapple's winch fitting (a faster reel). */
+    public static final DeferredItem<Item> GRAPPLE_WINCH = ITEMS.registerSimpleItem("grapple_winch");
+
     /** Crystal plate on a metal backing, hung in the electrolytic cell to read the deposit (mechanics 6.17). */
     public static final DeferredItem<Item> MASS_PROBE = ITEMS.register("mass_probe",
             () -> new io.github.soundgoodizerfan.feedback.item.MassProbeItem(new Item.Properties().stacksTo(1)));
@@ -205,6 +208,10 @@ public class FItems {
     public static final DeferredItem<net.minecraft.world.item.Item> SALT = ITEMS.registerSimpleItem("salt");
     public static final DeferredItem<net.minecraft.world.item.Item> ALUMINA = ITEMS.registerSimpleItem("alumina");
     public static final DeferredItem<net.minecraft.world.item.Item> SILICATE_SLAG = ITEMS.registerSimpleItem("silicate_slag");
+    /** The iron-stained waste of the Bayer leach of bauxite (the {@code red_mud} material's raw form). */
+    public static final DeferredItem<net.minecraft.world.item.Item> RED_MUD = ITEMS.registerSimpleItem("red_mud");
+    /** What is left of monazite after its thorium is leached out (the {@code rare_earth_residue} material's raw form). */
+    public static final DeferredItem<net.minecraft.world.item.Item> RARE_EARTH_RESIDUE = ITEMS.registerSimpleItem("rare_earth_residue");
     public static final DeferredItem<net.minecraft.world.item.Item> FERTILISER = ITEMS.register("fertiliser", () -> new io.github.soundgoodizerfan.feedback.item.FertiliserItem(new net.minecraft.world.item.Item.Properties()));
     /** Wheat and water (food spec 6): kneaded at the Prep Table, baked into a loaf. Raw dough is barely food. */
     public static final DeferredItem<net.minecraft.world.item.Item> DOUGH = ITEMS.registerSimpleItem("dough",
@@ -465,6 +472,10 @@ public class FItems {
     public static final DeferredItem<Item> OSMIUM_POWDER = ITEMS.registerSimpleItem("osmium_powder");
     public static final DeferredItem<Item> OSMIUM_GREEN_COMPACT = ITEMS.registerSimpleItem("osmium_green_compact");
     public static final DeferredItem<Item> BURNT_IRON = ITEMS.registerSimpleItem("burnt_iron");
+    /** The bloomery's spongy iron, slag in it as {@code MadeOf.flaw}; shingled at the anvil or the Mechanical Hammer into wrought iron. */
+    public static final DeferredItem<Item> IRON_BLOOM = ITEMS.registerItem("iron_bloom", io.github.soundgoodizerfan.feedback.item.BloomItem::new);
+    /** What a bloom gives up when it is worked: iron-rich slag, re-crushable and meltable for the iron it still holds. */
+    public static final DeferredItem<Item> BLOOMERY_SLAG = ITEMS.registerSimpleItem("bloomery_slag");
     public static final DeferredItem<Item> HARDENED_STEEL = ITEMS.registerSimpleItem("hardened_steel");
     /** Tempering's result -- brittle no longer. See {@code data/feedback/thermal_process/tempered_steel.json}. */
     public static final DeferredItem<Item> TEMPERED_STEEL = ITEMS.registerSimpleItem("tempered_steel");
@@ -576,6 +587,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> IMPROVED_FURNACE = ITEMS.registerSimpleBlockItem(FBlocks.IMPROVED_FURNACE);
     public static final DeferredItem<BlockItem> KILN = ITEMS.registerSimpleBlockItem(FBlocks.KILN);
     public static final DeferredItem<BlockItem> ANNEALING_FURNACE = ITEMS.registerSimpleBlockItem(FBlocks.ANNEALING_FURNACE);
+    public static final DeferredItem<BlockItem> PUDDLING_FURNACE = ITEMS.registerSimpleBlockItem(FBlocks.PUDDLING_FURNACE);
     public static final DeferredItem<BlockItem> HEAT_EXCHANGER = ITEMS.registerSimpleBlockItem(FBlocks.HEAT_EXCHANGER);
     public static final DeferredItem<BlockItem> PRESSURE_VESSEL = ITEMS.registerSimpleBlockItem(FBlocks.PRESSURE_VESSEL);
 
@@ -612,6 +624,10 @@ public class FItems {
             ITEMS.register("sickle_head_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "sickle_head"));
     public static final DeferredItem<MoldItem> SAW_BLADE_MOLD =
             ITEMS.register("saw_blade_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "saw_blade"));
+
+    /** A spray plate: the melt poured through it and doused in the basin shatters into dust (atomising, {@code mold/atomise.json}). */
+    public static final DeferredItem<MoldItem> ATOMISING_MOLD =
+            ITEMS.register("atomising_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "atomise"));
 
     // --- fitting / data link tech demo --------------------------------------------------------
 

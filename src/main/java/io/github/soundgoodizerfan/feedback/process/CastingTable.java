@@ -47,10 +47,16 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
 
     public static final String DIRECTORY = "mold";
 
-    private record Shape(String form, int count) {
+    /**
+     * @param quenched the pour sets only once it is cold ({@link io.github.soundgoodizerfan.feedback.core.FTuning#WARM_TU}), never at the
+     *                 melt's own freezing point: a spray shattered by water, which is how a melt becomes dust (atomising). Left to cool slowly
+     *                 it is simply a long wait; douse it in the basin and it is dust at once.
+     */
+    private record Shape(String form, int count, boolean quenched) {
         static final com.mojang.serialization.Codec<Shape> CODEC = com.mojang.serialization.codecs.RecordCodecBuilder.create(i -> i.group(
                 com.mojang.serialization.Codec.STRING.fieldOf("form").forGetter(Shape::form),
-                com.mojang.serialization.Codec.intRange(1, 64).optionalFieldOf("count", 1).forGetter(Shape::count)
+                com.mojang.serialization.Codec.intRange(1, 64).optionalFieldOf("count", 1).forGetter(Shape::count),
+                com.mojang.serialization.Codec.BOOL.optionalFieldOf("quenched", false).forGetter(Shape::quenched)
         ).apply(i, Shape::new));
     }
 
@@ -114,7 +120,7 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
                     if (result != null)
                         all.add(new Casting(new net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient(
                                 net.neoforged.neoforge.fluids.crafting.FluidIngredient.of(fluid.get()), FormType.DEFAULT_MB),
-                                melt.get(), result, mold));
+                                shape.quenched() ? io.github.soundgoodizerfan.feedback.core.FTuning.WARM_TU : melt.get(), result, mold));
                 });
             });
             entries = List.copyOf(all);

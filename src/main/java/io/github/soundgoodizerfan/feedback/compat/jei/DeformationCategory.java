@@ -98,6 +98,9 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Deformation recipe, IFocusGroup focuses) {
         WorkCard.slots(builder, recipe.input(), recipe.result());
+        // What the work drives out of the piece (a bloom's slag) is a second output.
+        if (!recipe.byproduct().isEmpty())
+            builder.addOutputSlot(1, 77).setOutputSlotBackground().addItemStack(recipe.byproduct());
     }
 
     @Override

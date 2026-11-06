@@ -34,6 +34,10 @@ Tubes that touch join into one run. **Right-click** a tube with an empty hand to
 - **Wide-Bore Tube**: passes [pods](Carrier.md#pod) and far heavier capsules. It joins narrow tubes freely, but a pod cannot enter a narrow one.
 - **Evacuated Tube**: a wide-bore tube sealed for vacuum. While a [Vacuum Pump](#vacuum-pump) holds the run under 0.05 Pu, capsules coast through at three times the plain speed with no air spent. Seals leak, so the pump must keep running; with the vacuum lost the tube behaves like a lined wide tube.
 
+### Losing the vacuum
+
+If an evacuated run's pressure rises past the level that holds the vacuum (a leak outruns the pump, or a stopped pump lets the seals leak in), air rushes in. Every capsule in an evacuated tube stalls for about three seconds, creatures within about 3 blocks of an evacuated tube are pulled toward it and hurt, and the run fills with air. Keep the pump running and the shaft up to speed.
+
 [Junctions](Tube_Junction.md) split a run by address, and a [Tube Station](Tube_Station.md) is the door where items go in and come out.
 
 ## Vacuum Pump

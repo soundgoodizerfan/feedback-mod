@@ -37,7 +37,7 @@
   "corrosion_resistance": 0.95,
   "enchantability": 8,
   "forms": {
-    "powder": "feedback:tungsten_carbide_powder",
+    "dust": "feedback:tungsten_carbide_powder",
     "green_compact": "feedback:tungsten_carbide_green_compact"
   },
   "exclude": [

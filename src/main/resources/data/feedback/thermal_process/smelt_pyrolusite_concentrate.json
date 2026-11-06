@@ -1,0 +1,32 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:pyrolusite",
+      "forms": [
+        "concentrate"
+      ]
+    },
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "min_temperature": 1000,
+  "optimal_temperature": 1150,
+  "max_temperature": 1300,
+  "required_tpu": 200,
+  "result": {
+    "id": "minecraft:sand",
+    "count": 1
+  },
+  "spoil_temperature": 1400,
+  "reaction": {
+    "fluid_inputs": [],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:molten_manganese",
+        "mb": 182
+      }
+    ]
+  }
+}

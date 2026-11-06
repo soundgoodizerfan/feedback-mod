@@ -74,10 +74,15 @@ public final class Deforming {
     }
 
     /**
-     * @param result  the workpiece after the blow, or the untouched input when nothing landed
-     * @param outcome why, which is the half the caller cannot recompute
+     * @param result    the workpiece after the blow, or the untouched input when nothing landed
+     * @param outcome   why, which is the half the caller cannot recompute
+     * @param byproduct what the blow drove out of the piece (slag from a bloom), to be thrown clear or handed over; empty for most blows
      */
-    public record Blow(ItemStack result, Outcome outcome) {
+    public record Blow(ItemStack result, Outcome outcome, ItemStack byproduct) {
+
+        public Blow(ItemStack result, Outcome outcome) {
+            this(result, outcome, ItemStack.EMPTY);
+        }
 
         public boolean landed() {
             return outcome.landed();
@@ -148,8 +153,15 @@ public final class Deforming {
         // enough material runs straight past what you wanted. Overshoot is the mechanic, not an
         // edge case.
         Deformation stage = deformation;
+        ItemStack driven = ItemStack.EMPTY;
         for (int guard = 0; guard < MAX_CASCADE && worked >= stage.work(); guard++) {
             worked -= stage.work();
+            if (!stage.byproduct().isEmpty()) {
+                if (driven.isEmpty())
+                    driven = stage.byproduct().copy();
+                else if (ItemStack.isSameItem(driven, stage.byproduct()))
+                    driven.grow(stage.byproduct().getCount());
+            }
 
             // The new stage inherits the old one's heat. Beating a hot ingot into a plate does not
             // cool it, and losing the stamp here would have made every hot-working chain a single
@@ -178,6 +190,6 @@ public final class Deforming {
             result.remove(FDataComponents.WORK_OPERATION.get());
         }
 
-        return new Blow(result, Outcome.WORKED);
+        return new Blow(result, Outcome.WORKED, driven);
     }
 }

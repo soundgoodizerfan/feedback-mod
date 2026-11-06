@@ -25,6 +25,6 @@
     }
   },
   "forms": {
-    "powder": "minecraft:gunpowder"
+    "dust": "minecraft:gunpowder"
   }
 }

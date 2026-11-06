@@ -43,7 +43,9 @@ public enum VesselKind {
     KILN(FTuning.KILN_MASS, FTuning.KILN_LEAK, FTuning.KILN_CEILING_TU.value(), false, 0f, true),
     /** See {@link FTuning#ANNEALING_FURNACE_CEILING_TU}. */
     ANNEALING_FURNACE(FTuning.ANNEALING_FURNACE_MASS, FTuning.ANNEALING_FURNACE_LEAK,
-            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false, 0f, true);
+            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false, 0f, true),
+    /** A reverberatory hearth with a rabble turned by a shaft: a row that names a rabble band runs here and nowhere else. */
+    PUDDLING_FURNACE(FTuning.PUDDLING_FURNACE_MASS, FTuning.PUDDLING_FURNACE_LEAK, Float.MAX_VALUE, false, 0f, false, true);
 
     private final ThermalMass mass;
     private final Conductance leak;
@@ -51,6 +53,7 @@ public enum VesselKind {
     private final boolean thermowell;
     private final float smoke;
     private final boolean sealed;
+    private final boolean rotates;
 
     VesselKind(ThermalMass mass, Conductance leak, float ceilingTu, boolean thermowell, float smoke) {
         this(mass, leak, ceilingTu, thermowell, smoke, false);
@@ -58,6 +61,12 @@ public enum VesselKind {
 
     /** {@code sealed}: closed chamber, no air reaches the load unless a bellows is blowing -- see {@link #sealed()}. */
     VesselKind(ThermalMass mass, Conductance leak, float ceilingTu, boolean thermowell, float smoke, boolean sealed) {
+        this(mass, leak, ceilingTu, thermowell, smoke, sealed, false);
+    }
+
+    /** {@code rotates}: a shaft enters the back and turns a rabble through the charge -- see {@link #rotates()}. */
+    VesselKind(ThermalMass mass, Conductance leak, float ceilingTu, boolean thermowell, float smoke, boolean sealed, boolean rotates) {
+        this.rotates = rotates;
         this.sealed = sealed;
         this.mass = mass;
         this.leak = leak;
@@ -87,6 +96,11 @@ public enum VesselKind {
     /** Whether the chamber is closed to air (Kiln, Annealing Furnace); gates {@code airless} thermal processes. */
     public boolean sealed() {
         return sealed;
+    }
+
+    /** Whether a shaft turns something inside it (the Puddling Furnace's rabble): the block takes a shaft at its back and draws Su from it. */
+    public boolean rotates() {
+        return rotates;
     }
 
     public boolean hasThermowell() {

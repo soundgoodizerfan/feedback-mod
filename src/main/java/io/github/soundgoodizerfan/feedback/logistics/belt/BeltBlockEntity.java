@@ -60,7 +60,7 @@ import net.neoforged.neoforge.items.IItemHandler;
  * only so a reload can hand it back. It is an {@link ElectricNode} so a powered module takes {@code Eu}
  * from the wire beside it, and {@link Switchable} so a controller can engage or release a module.
  */
-public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable, CargoSave.Holder {
+public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable, CargoSave.Holder, ModuleHost, io.github.soundgoodizerfan.feedback.control.ChannelSource {
 
     private BeltSpec spec = BeltSpec.PLAIN;
     private float condition = 1f;
@@ -74,6 +74,7 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
     private long passed, rateAt;
     private float rate;
     private List<Object[]> pending = List.of();
+    private long wetUntil;
 
     public BeltBlockEntity(BlockPos pos, BlockState state) {
         super(FLogistics.BELT_ENTITY.get(), pos, state);
@@ -85,33 +86,40 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         return spec;
     }
 
+    @Override
     public BeltModule module() {
         return module;
     }
 
+    @Override
     public Direction face() {
         return face;
     }
 
+    @Override
     public Band band() {
         return band;
     }
 
+    @Override
     public int aperture() {
         return aperture;
     }
 
+    @Override
     public boolean engaged() {
         return engaged;
     }
 
     /** Alternates a splitter's side: answers which it is now, then turns. */
-    boolean flip() {
+    @Override
+    public boolean flip() {
         flip = !flip;
         return !flip;
     }
 
-    void soil() {
+    @Override
+    public void soil() {
         dirt++;
     }
 
@@ -120,23 +128,43 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         return (module == BeltModule.SCREEN && fouled()) || (module == BeltModule.OPTICAL && dirty());
     }
 
-    boolean dirty() {
+    @Override
+    public boolean dirty() {
         return dirt >= LogisticsTuning.OPTICAL_DIRT_AT;
     }
 
-    void foul() {
+    @Override
+    public void foul() {
         fines++;
     }
 
-    boolean fouled() {
+    @Override
+    public boolean fouled() {
         return fines >= LogisticsTuning.SCREEN_FOUL_AT;
     }
 
-    void pass(long time) {
+    @Override
+    public void pass(long time) {
         passed++;
         float since = Math.max(1, time - rateAt);
         rate = rate * Math.max(0f, 1f - since / LogisticsTuning.COUNTER_WINDOW_TICKS) + 1f * 20f / LogisticsTuning.COUNTER_WINDOW_TICKS;
         rateAt = time;
+    }
+
+    /** Only a cell fitted with a counter is a source: key C reads the count, any other key (R by default) the rate per second. */
+    @Override
+    public boolean offersChannels() {
+        return module == BeltModule.COUNTER;
+    }
+
+    @Override
+    public float read(int channel) {
+        return channel == 67 ? getCount() : getRate();
+    }
+
+    @Override
+    public int defaultChannel() {
+        return 82;
     }
 
     /** Units counted since placed (a counter's reading, for the controller). */
@@ -150,12 +178,14 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         return rate * Math.max(0f, 1f - since / (float) LogisticsTuning.COUNTER_WINDOW_TICKS);
     }
 
-    boolean live() {
+    @Override
+    public boolean live() {
         return module == null || !module.powered || ElectricRules.rate(getVolts(), getAmps(), getWantedAmps(), ratedBand()) >= 0.5f;
     }
 
     /** The highest gas pressure (Pu) in a pipe run touching this cell; a puff draws a mB from it. */
-    float jetPressure() {
+    @Override
+    public float jetPressure() {
         if (level == null)
             return 0f;
         float best = 0f;
@@ -172,6 +202,25 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         return best;
     }
 
+    // --- wet ------------------------------------------------------------------------------------
+
+    /** Rain or a fluid above wets the band unless a hood covers it; a wet band dries slowly. */
+    boolean wetNow() {
+        if (level == null)
+            return false;
+        long now = level.getGameTime();
+        BlockPos up = worldPosition.above();
+        if (module != BeltModule.HOOD && (level.isRainingAt(up) || !level.getFluidState(up).isEmpty()))
+            wetUntil = now + LogisticsTuning.WET_DRY_TICKS;
+        return wetUntil > now;
+    }
+
+    /** A unit carrying fluid rode the band. */
+    void soak() {
+        if (level != null)
+            wetUntil = level.getGameTime() + LogisticsTuning.WET_DRY_TICKS;
+    }
+
     // --- wear -----------------------------------------------------------------------------------
 
     @Override
@@ -181,7 +230,7 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
 
     @Override
     public boolean isRunning() {
-        return level != null && BeltRuns.of(level).speedAt(worldPosition) > 0f;
+        return level != null && BeltRuns.of(level).speedAt(worldPosition) != 0f;
     }
 
     void wear(float amount) {
@@ -235,6 +284,7 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
     // --- modules --------------------------------------------------------------------------------
 
     /** Places {@code m} in this cell, acting on {@code side} if it has one. */
+    @Override
     public void install(BeltModule m, Direction side) {
         module = m;
         face = side;
@@ -260,7 +310,8 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
     }
 
     /** An empty hand on the cell: sneaking pulls the module (or turns the cell), a click on the top takes a unit off, a click on a side works the module. */
-    boolean handUse(Player player, BlockHitResult hit) {
+    @Override
+    public boolean handUse(Player player, BlockHitResult hit) {
         if (level == null)
             return false;
         if (player.isShiftKeyDown()) {
@@ -406,7 +457,7 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         if (over.isEmpty())
             over = pending;
         if (!over.isEmpty())
-            tag.put("Cargo", CargoSave.write(over, registries));
+            tag.put("Cargo", CargoSave.write(over, registries, level == null ? 0L : level.getGameTime()));
     }
 
     @Override

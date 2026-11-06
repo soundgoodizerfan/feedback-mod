@@ -1,0 +1,7 @@
+{
+  "from": "raw",
+  "to": "crushed",
+  "operation": "blow",
+  "base": 2,
+  "slope": 0.8
+}

@@ -1,3 +1,4 @@
 {
-  "kinds": ["polymer"]
+  "kinds": ["polymer"],
+  "grain": 0.1
 }

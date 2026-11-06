@@ -108,6 +108,11 @@ public class FMenus {
             MENUS.register("mixer",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.machine.mixer.MixerMenu::new));
 
+    /** Extended: the worn pack's rows and the kind of each slot ride in the open packet; what it holds is synced as slots. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.PackMenu>> PACK =
+            MENUS.register("pack",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.PackMenu::client));
+
     private FMenus() {
     }
 

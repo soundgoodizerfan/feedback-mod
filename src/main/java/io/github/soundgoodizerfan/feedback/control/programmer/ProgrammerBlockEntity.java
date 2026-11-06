@@ -238,7 +238,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         Optional<DataNode> resolved = DataNode.resolve(level, look);
         if (node instanceof SensorNode sensor) {
             // An actuator reads back as its own on/off state -- what a deadband needs (philosophy 13).
-            if (resolved.orElse(null) instanceof ChannelSource source)
+            if (resolved.orElse(null) instanceof ChannelSource source && source.offersChannels())
                 return new SensorNode(sensor.id(), ref, Quantity.CONTROL,
                         sensor.target() != null && sensor.target().equals(ref) ? sensor.channel() : source.defaultChannel());
             if (resolved.filter(Switchable.class::isInstance).isPresent())

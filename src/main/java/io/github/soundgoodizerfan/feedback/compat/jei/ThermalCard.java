@@ -25,8 +25,10 @@ import java.util.Locale;
 
 import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.process.Dip;
+import io.github.soundgoodizerfan.feedback.process.FormType;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -123,6 +125,7 @@ final class ThermalCard {
             e.item().ifPresent(in::item);
             e.residue().ifPresent(r -> out.fluid(r.fluid(), r.mb()));
             e.products().forEach(pr -> out.fluid(pr.fluid(), pr.mb()));
+            e.deposit().ifPresent(d -> out.item(d.stack()));
             return;
         }
         if (p.freeze().isPresent()) {
@@ -154,6 +157,8 @@ final class ThermalCard {
             out.item(p.inputs().get(0)); // the part comes out carrying the coat; the slot shows the parts that can
         else
             out.item(p.result());
+        for (var extra : reaction.map(ThermalProcess.Reaction::byproducts).orElse(List.of()))
+            out.item(extra.stack());
         for (var a : reaction.map(ThermalProcess.Reaction::fluidOutputs).orElse(List.of()))
             out.fluid(a.fluid(), a.mb());
         out.fluid(p.resultFluid());
@@ -162,11 +167,30 @@ final class ThermalCard {
     private record Row(String label, String value, int colour) {
     }
 
-    static void draw(ThermalProcess p, GuiGraphics graphics) {
+    /**
+     * The form on display in a form-agnostic row: of the input slots whose ingredient spans more than one form (the others are fuel
+     * or reagent), the displayed item of the coarsest, which is the one that sets the hold. Null for any other row.
+     */
+    private static FormType.Shown shownForm(ThermalProcess p, IRecipeSlotsView slots) {
+        if (!p.agnostic() || !p.hasHold())
+            return null;
+        FormType.Shown best = null;
+        for (var slot : slots.getSlotViews(RecipeIngredientRole.INPUT)) {
+            long forms = slot.getItemStacks().map(s -> FormType.shown(s).form()).filter(f -> !f.isEmpty()).distinct().count();
+            if (forms < 2)
+                continue;
+            var shown = slot.getDisplayedItemStack().map(FormType::shown);
+            if (shown.isPresent() && !shown.get().form().isEmpty() && (best == null || shown.get().grain() > best.grain()))
+                best = shown.get();
+        }
+        return best;
+    }
+
+    static void draw(ThermalProcess p, IRecipeSlotsView slots, GuiGraphics graphics) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, title(p).toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         int y = ROWS_Y;
-        for (Row r : rows(p)) {
+        for (Row r : rows(p, shownForm(p, slots))) {
             graphics.drawString(font, r.label, 1, y, LABEL_COLOUR, false);
             if (!r.value.isEmpty())
                 graphics.drawString(font, r.value, VALUE_X, y, r.colour, false);
@@ -207,7 +231,7 @@ final class ThermalCard {
         return p.result().isEmpty() ? t("feedback.jei.reaction") : p.result().getHoverName().getString();
     }
 
-    private static List<Row> rows(ThermalProcess p) {
+    private static List<Row> rows(ThermalProcess p, FormType.Shown shown) {
         List<Row> rows = new ArrayList<>();
         if (p.dip().isPresent()) {
             Dip d = p.dip().get();
@@ -235,6 +259,8 @@ final class ThermalCard {
                     rows.add(new Row(t("feedback.jei.electrolysis." + side.getSerializedName()), names, VALUE_COLOUR));
             }
             e.residue().ifPresent(r -> rows.add(new Row(t("feedback.jei.electrolysis.residue"), fluidName(r.fluid()), VALUE_COLOUR)));
+            e.deposit().ifPresent(d -> rows.add(new Row(t("feedback.jei.electrolysis.plates"),
+                    d.stack().getHoverName().getString() + " / " + d.units() + " mB", VALUE_COLOUR)));
             return rows;
         }
         if (p.freeze().isPresent()) {
@@ -261,9 +287,11 @@ final class ThermalCard {
                 : Readout.number(p.minTemperature().value()) + "+ Tu", VALUE_COLOUR));
         rows.add(new Row(t("feedback.jei.optimal"), Readout.number(p.optimalTemperature().value()) + " Tu", VALUE_COLOUR));
         // Time to complete held exactly at the optimum (ThermalProcess#requiredTpu); a pooled recipe has no hold and prints none.
+        // A form-agnostic row reads the form on display: the slot cycles through them and the hold follows.
         if (p.hasHold()) {
-            int ticks = Math.round(p.requiredTpu());
-            rows.add(new Row(t("feedback.jei.hold"), ticks + " t (" + Readout.number(ticks / 20f) + " s)", VALUE_COLOUR));
+            int ticks = Math.round(shown == null ? p.requiredTpu() : p.requiredAt(shown.grain()));
+            rows.add(new Row(t("feedback.jei.hold"), ticks + " t (" + Readout.number(ticks / 20f) + " s)"
+                    + (shown == null ? "" : " " + shown.form().replace('_', ' ')), VALUE_COLOUR));
         }
         if (p.maxRateTuPerTick().tuPerTick() < Float.MAX_VALUE)
             rows.add(new Row(t("feedback.jei.max_rate"), Readout.number(p.maxRateTuPerTick().tuPerTick()) + " Tu/t", VALUE_COLOUR));
@@ -277,6 +305,7 @@ final class ThermalCard {
             rows.add(new Row(t("feedback.jei.reaction.heat"), Readout.number(r.get().heat().get()) + " Tu/t", VALUE_COLOUR));
         if (p.spoilTemperature().value() < Float.MAX_VALUE)
             rows.add(new Row(t("feedback.jei.spoils"), "> " + Readout.number(p.spoilTemperature().value()) + " Tu", SPOIL_COLOUR));
+        p.rabble().ifPresent(b -> rows.add(new Row(t("feedback.jei.rabble"), Readout.number(b.minRpm()) + " to " + Readout.number(b.maxRpm()) + " RPM", VALUE_COLOUR)));
         if (p.airless())
             rows.add(new Row(t("feedback.jei.airless"), "Sealed: no air", VALUE_COLOUR));
         p.atmosphere().ifPresent(a -> rows.add(new Row(t("feedback.jei.atmosphere"),

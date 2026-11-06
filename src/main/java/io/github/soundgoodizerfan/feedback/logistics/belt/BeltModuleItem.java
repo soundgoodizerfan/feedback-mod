@@ -42,7 +42,8 @@ public class BeltModuleItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         BlockPos pos = context.getClickedPos();
-        if (!(context.getLevel().getBlockEntity(pos) instanceof BeltBlockEntity belt) || belt.module() != null)
+        if (!(context.getLevel().getBlockEntity(pos) instanceof ModuleHost belt) || belt.module() != null
+                || (belt instanceof BeltHeadBlockEntity && !module.onHead()))
             return InteractionResult.PASS;
         if (!context.getLevel().isClientSide) {
             Direction side = context.getClickedFace();

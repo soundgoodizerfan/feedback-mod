@@ -1,0 +1,26 @@
+{
+  "inputs": [],
+  "min_temperature": 400,
+  "optimal_temperature": 500,
+  "max_temperature": 600,
+  "required_tpu": 200,
+  "result": {
+    "id": "feedback:titanium_nugget",
+    "count": 9
+  },
+  "spoil_temperature": 660,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:titanyl_sulfate",
+        "mb": 144
+      },
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 400
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 2
+  }
+}

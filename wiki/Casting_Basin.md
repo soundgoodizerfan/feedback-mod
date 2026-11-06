@@ -16,7 +16,7 @@ B is a Brick.
 - **Place a crucible or vessel directly above it.** Its melt runs down into the basin.
 - **Right-click** the basin to open its four mold slots. Only molds fit.
 - **Sneak and right-click with an empty hand** to knock out whatever has set. Anything still molten stays.
-- **Right-click with a Water Bucket** to quench: everything in the basin drops to room temperature at once.
+- **Right-click with a Water Bucket** to quench: everything in the basin drops to room temperature at once. A pour in an [Atomising Mold](Casting.md#atomising-mold) shatters into dust.
 - **Right-click with a full Copper Bucket** of melt to pour the bucket into the basin, as a vessel above would.
 
 ## How it works

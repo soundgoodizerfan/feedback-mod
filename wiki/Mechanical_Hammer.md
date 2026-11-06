@@ -35,6 +35,14 @@ The hammer does nothing without a **[Machine Head](Machine_Head.md)**. The head 
 
 While the linkage turns, the hammer strikes. Each blow puts work into the piece. When the piece has taken enough, it becomes the next thing (ingot → plate), and **the hammer keeps right on hitting that**. Take it off at the right time. See [Metalworking](Metalworking.md).
 
+## Crushing ore
+
+Put raw ore or a lump on the anvil and the hammer breaks it into **Crushed** ore. See [Ore Processing](Ore_Processing.md#crushing-and-grinding).
+
+## Blooms
+
+A hot **Iron Bloom** on the anvil is driven into a Wrought Iron Ingot with a lump of Bloomery Slag beside it, unattended, as long as the bloom is between **900 and 1500 Tu**. A cooled bloom is left alone. See [Making Wrought Iron](Making_Wrought_Iron.md#under-the-mechanical-hammer).
+
 ## What it makes
 
 | From | Becomes | Then | Then |

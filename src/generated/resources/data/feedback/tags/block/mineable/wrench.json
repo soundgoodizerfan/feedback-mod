@@ -119,6 +119,7 @@
     "feedback:pressure_vessel",
     "feedback:programmed_junction",
     "feedback:programmer",
+    "feedback:puddling_furnace",
     "feedback:pump",
     "feedback:pvc_pipe",
     "feedback:reactor",

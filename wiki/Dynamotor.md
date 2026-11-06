@@ -28,7 +28,7 @@ The winding's turns set the volts per RPM. The same figure is the **Su each amp 
 
 Voltage is **shaft speed times the winding's figure**, and nothing else. To get a higher voltage, gear the shaft up with [cogs](Cogs.md) or [pulleys](Pulleys.md). A slow river gives a low voltage, and a shaft that is slowing down gives a falling one.
 
-The conductor must carry current: the winding's wire material sets how many amps it holds (copper is the reference; [aluminum](Materials.md#aluminum) carries less). **Rated amps** are the smaller of two limits: what the frame's torque allows (frame Su divided by volts per RPM) and what the wire can carry, which grows with the winding's size. A large frame on a dense winding is held to the frame's limit; a small frame on a heavy-dense winding is held to almost nothing.
+The conductor must carry current: the winding's wire material sets how many amps it holds (copper is the reference; [aluminum](Making_Aluminum.md) carries less). **Rated amps** are the smaller of two limits: what the frame's torque allows (frame Su divided by volts per RPM) and what the wire can carry, which grows with the winding's size. A large frame on a dense winding is held to the frame's limit; a small frame on a heavy-dense winding is held to almost nothing.
 
 ### Bearing
 

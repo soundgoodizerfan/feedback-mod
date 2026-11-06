@@ -27,7 +27,8 @@
     "density": 6.99
   },
   "separation": {
-    "reflectivity": 0.6
+    "reflectivity": 0.6,
+    "gangue": "feedback:granite"
   },
   "electrical": {
     "drop": 0.32,
@@ -42,5 +43,17 @@
     "deepslate_ore": "feedback:deepslate_tin_ore"
   },
   "enchantability": 6,
-  "attuning": {"temperature": 100, "lock": 50, "coercive": 0.15, "loop_width": 0.3, "lag": 5}
+  "attuning": {
+    "temperature": 100,
+    "lock": 50,
+    "coercive": 0.15,
+    "loop_width": 0.3,
+    "lag": 5
+  },
+  "bears": {
+    "feedback:tin": 1.0
+  },
+  "exclude": [
+    "lump"
+  ]
 }

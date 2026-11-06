@@ -70,7 +70,11 @@ Some reactions give off heat, which warms the reactor.
 | **Reduce osmium tetroxide** | 100 mB osmium tetroxide, 400 mB hydrogen | one **Osmium Sponge**, and some heat | 280 to 420 Tu, best 330 |
 | **Ammonia** | 100 mB nitrogen, 300 mB hydrogen, an iron bed | 200 mB [ammonia](Chemicals.md#ammonia), and some heat | 400 to 500 Tu, best 450 |
 | **Fertilizer** | 200 mB ammonia, 100 mB sulfuric acid | 2 [Fertilizer](Fertilizer.md) | 20 to 100 Tu, best 50 |
+| **Liquid Teleportant** | one Chorus Fruit, one Redstone, 200 mB [lye](Chemicals.md#lye) | 100 mB [Liquid Teleportant](Liquid_Teleportant.md) | 40 to 90 Tu, best 60 |
+| **Roast a sulfide concentrate** | one concentrate of chalcopyrite, sphalerite, pentlandite, cobaltite or argentite, 100 mB oxygen | one Roasted concentrate, 100 mB sulfur dioxide, sulfur (and iron nuggets for some) | 500 to 900 Tu, best 700 |
 | **Molten cryolite** | one Cryolite Ore | 144 mB [cryolite bath](Chemicals.md#cryolite-bath) | melts at 1010 Tu |
+
+**Leach rows.** Every ore concentrate has a leach row that dissolves its metal into a liquor, with a reagent (sulfuric acid, lye, or brine and hypochlorite) and a window of its own, and a row that precipitates a dissolved metal out with hydrogen or sulfur dioxide. They are laid out ore by ore in [Ore Processing](Ore_Processing.md#leaching-and-winning) and listed in JEI.
 
 The cold rows need no catalyst bed. Their temperatures are set by the Cryocooler against the reactor, not by a fire. A toxic gas the output tanks have no room for escapes as a [fume cloud](Hazards.md#fume-clouds). JEI shows every row, including the ones a pack adds. Polymerization and soul polymerization make the melts that become [Polymers](Materials.md#polymers); soul oil and wisp gas are fuels ([Soul Oil](Oil.md#soul-oil), [Fuels](Fuels.md)); the retort needs no bed.
 

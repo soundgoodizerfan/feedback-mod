@@ -15,6 +15,15 @@
     "raw": "feedback:silicate_slag"
   },
   "exclude": [
-    "ingot"
-  ]
+    "concentrate",
+    "deepslate_ore",
+    "ingot",
+    "loose_rock",
+    "lump",
+    "ore",
+    "tailings"
+  ],
+  "bears": {
+    "feedback:cast_iron": 0.1
+  }
 }

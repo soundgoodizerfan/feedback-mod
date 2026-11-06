@@ -1,0 +1,32 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:chromite",
+      "forms": [
+        "concentrate"
+      ]
+    },
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "min_temperature": 1200,
+  "optimal_temperature": 1350,
+  "max_temperature": 1500,
+  "required_tpu": 200,
+  "result": {
+    "id": "minecraft:iron_nugget",
+    "count": 2
+  },
+  "spoil_temperature": 1600,
+  "reaction": {
+    "fluid_inputs": [],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:molten_chromium",
+        "mb": 203
+      }
+    ]
+  }
+}

@@ -172,6 +172,11 @@ public class FRecipes {
             ENDER_PAIR = SERIALIZERS.register("ender_pair",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.ender.EnderPairRecipe::new));
 
+    /** A carrier and a dye -> the carrier addressed in that colour. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.tube.CarrierDyeRecipe>>
+            CARRIER_DYE = SERIALIZERS.register("carrier_dye",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.tube.CarrierDyeRecipe::new));
+
     private FRecipes() {
     }
 

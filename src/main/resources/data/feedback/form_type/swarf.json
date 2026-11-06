@@ -1,4 +1,5 @@
 {
   "kinds": ["metal"],
-  "mb": 36
+  "mb": 36,
+  "grain": 0.3
 }

@@ -50,9 +50,23 @@ import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
  * @param solvent      whether the feed is a bath that is not consumed.
  * @param minTemperature the bath temperature below which the row does not run, Tu.
  * @param residue      the fluid left in the cell per unit of work, if any.
+ * @param deposit      the solid that plates out on the cathode, if any: winning a metal from its liquor grows metal on the
+ *                     plate, it does not run off it as a melt.
  */
 public record Electrolysis(FluidIngredient feed, float volts, List<Product> products, Optional<Ingredient> item,
-                           int unitsPerItem, boolean solvent, float minTemperature, Optional<Residue> residue) {
+                           int unitsPerItem, boolean solvent, float minTemperature, Optional<Residue> residue,
+                           Optional<Deposit> deposit) {
+
+    /** One {@code item} plated on the cathode per {@code units} units of work (a nugget is 16 mB of the metal). */
+    public record Deposit(ResourceLocation item, int units) {
+        public static final Codec<Deposit> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ResourceLocation.CODEC.fieldOf("item").forGetter(Deposit::item),
+                Codec.intRange(1, 100000).optionalFieldOf("units", 16).forGetter(Deposit::units)).apply(i, Deposit::new));
+
+        public net.minecraft.world.item.ItemStack stack() {
+            return new net.minecraft.world.item.ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(item));
+        }
+    }
 
     /** {@code mb} millibuckets of {@code fluid} left in the cell per unit of work. */
     public record Residue(ResourceLocation fluid, int mb) {
@@ -88,12 +102,13 @@ public record Electrolysis(FluidIngredient feed, float volts, List<Product> prod
     public static final Codec<Electrolysis> CODEC = RecordCodecBuilder.create(i -> i.group(
             FluidIngredient.CODEC.fieldOf("feed").forGetter(Electrolysis::feed),
             Codec.floatRange(0f, 1000f).fieldOf("volts").forGetter(Electrolysis::volts),
-            Product.CODEC.listOf().fieldOf("products").forGetter(Electrolysis::products),
+            Product.CODEC.listOf().optionalFieldOf("products", List.of()).forGetter(Electrolysis::products),
             Ingredient.CODEC_NONEMPTY.optionalFieldOf("item").forGetter(Electrolysis::item),
             Codec.intRange(1, 100000).optionalFieldOf("units_per_item", 1).forGetter(Electrolysis::unitsPerItem),
             Codec.BOOL.optionalFieldOf("solvent", false).forGetter(Electrolysis::solvent),
             Codec.floatRange(0f, 5000f).optionalFieldOf("min_temperature", 0f).forGetter(Electrolysis::minTemperature),
-            Residue.CODEC.optionalFieldOf("residue").forGetter(Electrolysis::residue)).apply(i, Electrolysis::new));
+            Residue.CODEC.optionalFieldOf("residue").forGetter(Electrolysis::residue),
+            Deposit.CODEC.optionalFieldOf("deposit").forGetter(Electrolysis::deposit)).apply(i, Electrolysis::new));
 
     /** Whether {@code stack} is the solute this row consumes. */
     public boolean takes(net.minecraft.world.item.ItemStack stack) {

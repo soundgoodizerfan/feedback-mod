@@ -25,6 +25,6 @@
     }
   },
   "forms": {
-    "powder": "feedback:creeper_charge"
+    "dust": "feedback:creeper_charge"
   }
 }

@@ -160,7 +160,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             if (m == null)
                 continue;
             var loose = m.items(c.material());
-            net.minecraft.world.item.Item item = loose.getOrDefault("powder", loose.get("dust"));
+            net.minecraft.world.item.Item item = loose.get("dust");
             if (item != null)
                 out.add(new ItemStack(item, c.count()));
         }

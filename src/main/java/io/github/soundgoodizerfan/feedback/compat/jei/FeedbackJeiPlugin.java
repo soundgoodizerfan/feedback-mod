@@ -149,6 +149,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 io.github.soundgoodizerfan.feedback.item.HotToolRecipe.class, new HotToolCraftingExtension());
         ElectronicsCrafting.register(registration);
         registration.getCraftingCategory().addExtension(io.github.soundgoodizerfan.feedback.machine.ender.EnderPairRecipe.class, new EnderPairCraftingExtension());
+        registration.getCraftingCategory().addExtension(io.github.soundgoodizerfan.feedback.machine.tube.CarrierDyeRecipe.class, new CarrierDyeCraftingExtension());
         CodeRecipeExamples.register(registration);
     }
 
@@ -204,6 +205,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new MaterialStatsCategory(registration.getJeiHelpers().getGuiHelper()),
                 new BrewingIngredientCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SeparationCategory(registration.getJeiHelpers().getGuiHelper()),
+                new OreProcessingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new FuelCategory(registration.getJeiHelpers().getGuiHelper()),
                 new PotionShapeCategory(registration.getJeiHelpers().getGuiHelper()),
                 new MixtureCategory(registration.getJeiHelpers().getGuiHelper()),
@@ -239,7 +241,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
             if (made != null && made.food().isPresent())
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
+        registration.addIngredientInfo(FItems.PUDDLING_FURNACE.get(), Component.translatable("feedback.jei.info.puddling_furnace"));
+        registration.addIngredientInfo(FItems.IRON_BLOOM.get(), Component.translatable("feedback.jei.info.iron_bloom"));
+        registration.addIngredientInfo(FItems.BLOOMERY_SLAG.get(), Component.translatable("feedback.jei.info.bloomery_slag"));
         registration.addIngredientInfo(FItems.GRAPPLE.get(), Component.translatable("feedback.jei.info.grapple"));
+        registration.addIngredientInfo(FItems.GRAPPLE_WINCH.get(), Component.translatable("feedback.jei.info.grapple_winch"));
         registration.addIngredientInfo(FItems.ARC_HEARTH.get(), Component.translatable("feedback.jei.info.arc_hearth"));
         registration.addIngredientInfo(net.minecraft.world.item.Items.HEAVY_CORE, Component.translatable("feedback.jei.info.heavy_core"));
         registration.addIngredientInfo(FItems.INDUCTION_COIL.get(), Component.translatable("feedback.jei.info.induction_coil"));
@@ -274,6 +280,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.WRENCH.get(), Component.translatable("feedback.jei.info.hot_tool"));
         registration.addIngredientInfo(FItems.CROWBAR.get(), Component.translatable("feedback.jei.info.hot_tool"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BACKPACK.get(), Component.translatable("feedback.jei.info.backpack"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BEDROLL.get(), Component.translatable("feedback.jei.info.bedroll"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
         info(registration, FItems.COHERER.get(), "coherer");
@@ -412,9 +419,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get(),
                 FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get(),
-                FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get());
+                FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get(), FItems.ATOMISING_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
-        registration.addRecipeCatalysts(SeparationCategory.TYPE, FItems.ELECTROMAGNET.get());
+        registration.addRecipeCatalysts(SeparationCategory.TYPE, FItems.ELECTROMAGNET.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get());
+        registration.addRecipeCatalysts(OreProcessingCategory.TYPE, FItems.MECHANICAL_HAMMER.get(), FItems.ROLLING_MILL.get(),
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), FItems.ELECTROMAGNET.get(), FItems.REACTOR.get(), FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(FuelCategory.TYPE, FItems.FIREBOX.get(), FItems.BURNER.get());
         registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
@@ -429,7 +438,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // list gets to decide (§15, no whitelists).
         Item[] vessels = {FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(), FItems.ARC_HEARTH.get(),
                 FItems.FURNACE.get(), FItems.SMOKER.get(), FItems.BLAST_FURNACE.get(),
-                FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get()};
+                FItems.IMPROVED_FURNACE.get(), FItems.KILN.get(), FItems.ANNEALING_FURNACE.get(), FItems.PUDDLING_FURNACE.get()};
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, vessels);
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(MixtureCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(),
@@ -481,6 +490,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
             show(MaterialStatsCategory.TYPE, MaterialStatsCategory.cards(materials));
             show(BrewingIngredientCategory.TYPE, BrewingIngredientCategory.cards(materials));
             show(SeparationCategory.TYPE, SeparationCategory.cards(materials));
+            show(OreProcessingCategory.TYPE, OreProcessingCategory.cards(materials));
             show(FuelCategory.TYPE, FuelCategory.cards(materials));
             show(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
             showPartIngredients(materials);

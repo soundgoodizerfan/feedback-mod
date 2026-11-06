@@ -74,8 +74,10 @@ public final class ModularCause {
                 case STRIKE_ST -> true;
                 // a glove's: the metacarpal plate punches, guards and weighs; the body and lining only pad
                 // a backpack's: the strap carries it, the shell holds it
-                case CARRY -> p.role().equals(ModularBackpack.STRAP);
-                case SLOTS -> p.role().equals(ModularBackpack.SHELL);
+                case CARRY -> ModularBackpack.CARRY_ROLES.contains(p.role());
+                case SLOTS, POINTS -> p.role().equals(ModularBackpack.SHELL) || p.role().equals(ModularBackpack.FRAME);
+                case STORES -> ModularBackpack.STORE_ROLES.contains(p.role());
+                case COMFORT -> p.role().equals(ModularBedroll.FILL) || p.role().equals(ModularBedroll.SHEET);
                 case FIST, SWING_DRAG -> p.role().equals(ModularGlove.PLATE);
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
                 case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();

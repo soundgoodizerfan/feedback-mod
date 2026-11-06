@@ -71,6 +71,30 @@ public final class VanillaFallback {
         });
     }
 
+    private static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> IRON_BEARERS =
+            net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, io.github.soundgoodizerfan.feedback.Feedback.id("iron_bearers"));
+
+    /**
+     * Whether a vanilla smelting row would hand over a metal the ore does not melt into: an ore (an item of the {@code iron_bearers} tag, or
+     * any bearer whose cooking result is not the metal it bears) cooked straight to an ingot skips bloom, blast and puddling. Such a row is
+     * not offered; the ore goes through its own processes.
+     */
+    private static boolean bypassesReduction(net.minecraft.world.item.crafting.Ingredient input, ItemStack result) {
+        var materials = MaterialIngredient.materialsNow();
+        var made = Material.find(materials, result);
+        for (ItemStack stack : input.getItems()) {
+            if (stack.is(IRON_BEARERS))
+                return true;
+            var ore = Material.find(materials, stack);
+            if (ore.isEmpty() || ore.get().material().bears().isEmpty())
+                continue;
+            var bears = ore.get().material().bears().entrySet().stream().max(java.util.Map.Entry.comparingByValue()).get().getKey();
+            if (made.isEmpty() || !made.get().id().equals(bears) && !ore.get().id().equals(bears))
+                return true;
+        }
+        return false;
+    }
+
     /** Every cooking recipe of {@code level}'s recipe manager as a row (see {@link #rowsFor}). */
     @SuppressWarnings("unchecked")
     public static synchronized List<ThermalProcess> allRows(Level level) {
@@ -82,7 +106,7 @@ public final class VanillaFallback {
             for (RecipeType<? extends AbstractCookingRecipe> type : TYPES)
                 for (RecipeHolder<? extends AbstractCookingRecipe> holder : manager.getAllRecipesFor((RecipeType<AbstractCookingRecipe>) type)) {
                     var recipe = holder.value();
-                    if (recipe.getIngredients().isEmpty())
+                    if (recipe.getIngredients().isEmpty() || bypassesReduction(recipe.getIngredients().get(0), recipe.getResultItem(level.registryAccess())))
                         continue;
                     List<net.minecraft.world.item.crafting.Ingredient> inputs = List.of(recipe.getIngredients().get(0));
                     ItemStack result = recipe.getResultItem(level.registryAccess());

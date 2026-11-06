@@ -1,0 +1,80 @@
+{
+  "color": "#7a6a5c",
+  "kind": "metal",
+  "hardness": 3,
+  "density": 5,
+  "min_temperature": 900,
+  "max_temperature": 1500,
+  "thermal": {
+    "melting_point": 1600,
+    "boiling_point": 2862,
+    "cooling_rate": 1.5,
+    "conductivity": 0.008,
+    "oxidation_temperature": 570,
+    "service_temperature": 400
+  },
+  "mechanical": {
+    "toughness": 10,
+    "ductility": 2,
+    "friction": 0.7,
+    "abrasiveness": 0.5
+  },
+  "molten": {
+    "viscosity": 6,
+    "density": 6.98
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 770,
+    "reflectivity": 0.2
+  },
+  "forms": {
+    "bloom": "feedback:iron_bloom"
+  },
+  "exclude": [
+    "barrel_shroud",
+    "belt_feed",
+    "block",
+    "bolt",
+    "box_feed",
+    "bullet",
+    "case",
+    "coin",
+    "concentrate",
+    "crushed",
+    "cylinder",
+    "deepslate_ore",
+    "drilled_plate",
+    "dust",
+    "eddy_sleeve",
+    "fine_wire",
+    "foil",
+    "grip",
+    "ground_ingot",
+    "gun_barrel",
+    "ingot",
+    "loose_rock",
+    "lump",
+    "magazine_tube",
+    "muzzle_brake",
+    "nugget",
+    "ore",
+    "pipe",
+    "plate",
+    "receiver",
+    "relief_vent",
+    "rod",
+    "scrap",
+    "sight",
+    "slide",
+    "suppressor",
+    "swarf",
+    "tailings",
+    "trigger_group",
+    "turned_rod",
+    "wire"
+  ],
+  "bears": {
+    "feedback:wrought_iron": 0.7
+  }
+}

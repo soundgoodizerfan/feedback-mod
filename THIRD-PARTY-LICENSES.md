@@ -756,6 +756,7 @@ Copied or derived from Minecraft 1.21.1's textures (Mojang AB assets, reused by 
 - `block/lead_chest.png`: the vanilla chest texture, recoloured.
 - `item/copper_bucket.png`: the vanilla bucket, recoloured.
 - `item/form/lump.png`, `item/form/raw.png`: the vanilla raw iron sprite, recoloured (greyscale form sprites tinted at runtime).
+- `item/form/dust.png`: `items/material_dust_generic.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley), reduced to luminance (greyscale form sprite tinted at runtime).
 
 ### Exception: Feedback's own art (All Rights Reserved)
 
@@ -1057,3 +1058,22 @@ Mob-effect icons (2026-10-30), all from `malcolmriley/unused-textures` (CC BY 4.
 ## KaleidoscopeCookery (design only)
 
 Studied 2026-11-01 (BSD-3 code, CC BY-NC-SA assets, 1.21.1-neoforge). Taken: the idea that a held tool plus right-click is the whole cooking interface and that cookware shows its state in the world (pan items, particles, sound). Rejected: per-cookware recipe types, hidden quality ratios, fixed stir counts and phase timers, infinite-fuel stoves. No code or asset used (`machine/skillet/`, `client/SkilletRenderer`).
+
+## Belt cleat and still band (2026-11-05)
+
+From `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley). `textures/block/belt_cleat.png` is an unmodified copy of `items/material_bar_rubber.png`; `textures/block/conveyor_belt_still.png` is the first 16x16 frame of the animated `conveyor_belt.png`, cropped, shown while a belt is stopped.
+
+## Ore ladder forms (2026-11-05)
+
+From `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley). The three form sprites are luminance-only copies (greyscaled and stretched to the light range of the other `item/form/*` sprites, so `client/FormTint` can tint them per ore); `red_mud.png` is an unmodified copy.
+
+| Feedback file | Source path |
+| --- | --- |
+| `textures/item/form/crushed.png` | `items/chunk_raw_ore_1.png` (greyscaled) |
+| `textures/item/form/concentrate.png` | `items/material_dust_clay.png` (greyscaled) |
+| `textures/item/form/tailings.png` | `items/material_dust_dark_ash.png` (greyscaled) |
+| `textures/item/red_mud.png` | `items/dust_red_metal.png` |
+
+`textures/item/belt_module_hood.png` is an unmodified copy of unused-textures `items/material_plastic_sheet.png`; `textures/item/belt_module_linear.png` of `items/part_electronic_coil_copper.png` (CC BY 4.0, Malcolm Riley).
+| `textures/block/liquor.png` (+ `.mcmeta`) | `fluids/fluid_strange_gray.png` (unmodified; tinted per liquor at runtime) |
+| `textures/item/rare_earth_residue.png` | `items/material_dust_demersal.png` (unmodified) |

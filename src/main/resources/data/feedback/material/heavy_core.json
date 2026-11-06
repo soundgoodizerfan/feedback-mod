@@ -25,7 +25,7 @@
     "heavy_core": "minecraft:heavy_core",
     "mace": "minecraft:mace"
   },
-  "exclude": [
+  "exclude": ["dust", 
     "barrel_shroud",
     "block",
     "bolt",

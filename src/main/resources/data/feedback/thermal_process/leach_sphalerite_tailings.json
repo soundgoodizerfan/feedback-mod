@@ -1,0 +1,35 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:sphalerite",
+      "forms": [
+        "tailings"
+      ]
+    }
+  ],
+  "min_temperature": 60,
+  "optimal_temperature": 90,
+  "max_temperature": 125,
+  "required_tpu": 300,
+  "spoil_temperature": 180,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 150
+      },
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:zinc_sulfate",
+        "mb": 100
+      }
+    ],
+    "heat": 4
+  }
+}

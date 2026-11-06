@@ -88,6 +88,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     private final Station st;
     private final ForgePanel forge;
+    private final ShinglePanel shingle;
+    private Button shingleButton;
     private final BenchFan fan = new BenchFan();
     private float partial;
 
@@ -121,6 +123,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         inventoryLabelX = ToolTableMenu.INV_X;
         inventoryLabelY = ToolTableMenu.INV_Y - 11;
         forge = st.has(Station.Panel.FORGE) ? new ForgePanel(this) : null;
+        shingle = st.has(Station.Panel.FORGE) ? new ShinglePanel(this) : null;
     }
 
     // What the panels may ask of the bench.
@@ -188,7 +191,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     }
 
     private boolean busy() {
-        return forge != null && forge.busy();
+        return forge != null && forge.busy() || shingle != null && shingle.busy();
     }
 
     private Material.Kind stockKind() {
@@ -208,6 +211,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                     press(ToolTableMenu.BTN_APART);
                     skin.cue(GuiSkin.Cue.ABORT, stockKind(), 1f);
                 }, leftPos + VX + 4, topPos + VY + VH - 18, 66, 14));
+        shingleButton = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.bench.shingle"),
+                b -> {
+                    if (shingle != null && shingle.start())
+                        skin.cue(GuiSkin.Cue.START, stockKind(), 1f);
+                    else
+                        reject(Component.translatable("gui.feedback.tool_table.status.cold"));
+                }, leftPos + VX + VW / 2 - 40, topPos + VY + VH - 40, 80, 16, skin::click));
+        shingleButton.visible = false;
         apart.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.feedback.tool_table.apart.tip")));
         if (st.dishes()) {
             typePicker = addRenderableWidget(GuiStyle.stepper(skin, leftPos + VX + 4, topPos + VY + 4, 120, 14, "<", ">", this::typeName, d -> {
@@ -249,6 +260,10 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         read();
         if (forge != null)
             forge.tick();
+        if (shingle != null)
+            shingle.tick();
+        shingleButton.visible = menu.centre(level()) == ToolTableMenu.Centre.BLOOM && !busy();
+        shingleButton.active = menu.hasHammer();
         boolean tool = menu.centre(level()) == ToolTableMenu.Centre.TOOL;
         apart.visible = tool && !busy();
         apart.active = menu.hasHammer();
@@ -569,7 +584,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     public boolean mouseClicked(double mx, double my, int button) {
         if (!settled())
             return true;
-        if (forge != null && forge.click(mx, my, button))
+        if (forge != null && forge.click(mx, my, button) || shingle != null && shingle.click(mx, my, button))
             return true;
         Slot over = hoveredSlot;
         if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 0) {
@@ -624,7 +639,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
-        if (forge != null && settled() && forge.key(key, scan, modifiers))
+        if (settled() && (forge != null && forge.key(key, scan, modifiers) || shingle != null && shingle.key(key, scan, modifiers)))
             return true;
         return super.keyPressed(key, scan, modifiers);
     }
@@ -879,8 +894,10 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return;
         g.pose().pushPose();
         g.pose().translate(0, 0, 400);
-        if (busy())
+        if (forge != null && forge.busy())
             forge.overlay(g);
+        if (shingle != null && shingle.busy())
+            shingle.overlay(g);
         // A made part crosses from the stock to its slot on a short arc.
         float age = GuiStyle.time() - arcAt;
         if (!arcIcon.isEmpty() && age >= 0 && age < 9 && !ClientSettings.reduceMotion()) {

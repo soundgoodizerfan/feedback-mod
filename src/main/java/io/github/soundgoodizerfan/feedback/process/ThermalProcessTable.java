@@ -31,6 +31,7 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
@@ -154,8 +155,10 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         var materials = MaterialTable.get().materials();
         materials.forEach((id, material) -> {
             var best = material.bears().entrySet().stream().max(java.util.Map.Entry.comparingByValue());
-            if (best.isEmpty() || best.get().getKey().equals(id))
-                return; // native metal: metalMelts already melts it
+            if (best.isEmpty())
+                return;
+            // A native-metal ore (it bears itself) keeps its authored melts for the raw rock; only the ladder's forms are derived.
+            boolean selfBearing = best.get().getKey().equals(id);
             var metalId = best.get().getKey();
             var metal = materials.get(metalId);
             var fluid = net.minecraft.core.registries.BuiltInRegistries.FLUID
@@ -164,19 +167,38 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                 Feedback.LOGGER.warn("{} bears {} but that has no molten fluid or melting point; it will not smelt", id, metalId);
                 return;
             }
-            var items = material.items(id).values().stream()
-                    .filter(item -> authored.stream().noneMatch(p -> p.inputs().stream().anyMatch(i -> i.test(new ItemStack(item)))))
-                    .toArray(net.minecraft.world.level.ItemLike[]::new);
-            if (items.length == 0)
-                return;
+            // One melt per rung of the ore ladder (OreLadder.recovery): a crushed or separated form pays more metal than the raw
+            // rock, tailings less. Every form of a rung is one form-agnostic row, so a finer form melts sooner; a form some
+            // authored row already takes keeps to that row.
+            java.util.Map<Float, List<String>> rungs = new java.util.TreeMap<>();
+            material.items(id).forEach((form, item) -> {
+                if (selfBearing && !OreLadder.LADDER_FORMS.contains(form) || !isRock(form))
+                    return;
+                // Only a row that takes the item on its own covers it: a bloom needs charcoal beside the ore, and the bare ore still melts.
+                if (authored.stream().noneMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(item))))
+                    rungs.computeIfAbsent(OreLadder.recovery(form), k -> new ArrayList<>()).add(form);
+            });
             Tu melt = material.thermal().meltingPoint().orElse(metal.thermal().meltingPoint().get());
-            out.add(new ThermalProcess(List.of(Ingredient.of(items)),
-                    melt, melt, new Tu(Float.MAX_VALUE), 0f, new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
+            rungs.forEach((recovery, forms) -> out.add(new ThermalProcess(List.of(
+                    new MaterialIngredient(Optional.empty(), Optional.empty(), Optional.empty(), Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY,
+                            Optional.of(id), forms.size() == material.items(id).size() ? List.of() : List.copyOf(forms)).toVanilla()),
+                    melt, melt, new Tu(Float.MAX_VALUE), FTuning.MELT_HOLD_TPU, new TuRate(Float.MAX_VALUE), id.getPath().equals("silicate_slag") ? ItemStack.EMPTY : OreLadder.slag(recovery, material.items(id)),
                     new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
-                    new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), Math.round(FormType.DEFAULT_MB * best.get().getValue())),
-                    false));
+                    new net.neoforged.neoforge.fluids.FluidStack(fluid.get(),
+                            Math.round(FormType.DEFAULT_MB * best.get().getValue() * OreLadder.ORE_CONTENT * recovery)),
+                    false)));
         });
         return out;
+    }
+
+    /**
+     * Whether a form of a bearer is the rock (as dug, crushed, ground or separated) and not stock made from the metal: a native metal
+     * that bears another (iron bears pig iron) keeps its own ingots and plates out of the bearer melt.
+     */
+    private static boolean isRock(String form) {
+        var type = io.github.soundgoodizerfan.feedback.registry.FormItems.types().get(form);
+        return form.startsWith("raw") || form.endsWith("ore") || form.equals("dust") || OreLadder.LADDER_FORMS.contains(form)
+                || type != null && type.bearing();
     }
 
     /**
@@ -193,19 +215,31 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
             if (melt.isEmpty() || fluid.isEmpty())
                 return;
             // Scrap and swarf are the metal again, in the volume their form type names.
-            for (String form : List.of("ingot", "scrap", "swarf")) {
+            for (String form : List.of("ingot", "scrap", "swarf", "dust")) {
                 var item = material.items(id).get(form);
                 if (item == null
                         || authored.stream().anyMatch(p -> p.inputs().size() == 1 && p.inputs().get(0).test(new ItemStack(item))))
                     continue;
                 out.add(new ThermalProcess(List.of(Ingredient.of(item)),
-                        melt.get(), melt.get(), new Tu(Float.MAX_VALUE), 0f, new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
+                        melt.get(), melt.get(), new Tu(Float.MAX_VALUE), meltHold(form), new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
                         new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
                         new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)),
                         false));
             }
         });
         return out;
+    }
+
+    /**
+     * The hold of a derived melt of one piece of {@code form}: {@link FTuning#MELT_HOLD_TPU} for an ingot's volume, in proportion to the
+     * piece's volume, shortened by the form's grain exactly as any form-agnostic row is ({@link FormType#holdFactor}): a block
+     * takes nine ingots' time, a dust a fraction of one. At least one TPu, so a melt always takes a tick in the band.
+     */
+    static float meltHold(String form) {
+        var type = io.github.soundgoodizerfan.feedback.registry.FormItems.types().get(form);
+        float grain = type == null ? 1f : type.grain();
+        float volume = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form) / (float) FormType.DEFAULT_MB;
+        return Math.max(1f, FTuning.MELT_HOLD_TPU * volume * FormType.holdFactor(grain));
     }
 
     /** What the client's recipe browser is sent: the rows of {@link #entries()} and the phase rows. */

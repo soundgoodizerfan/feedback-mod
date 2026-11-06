@@ -35,12 +35,14 @@ final class CargoSave {
     private CargoSave() {
     }
 
-    static ListTag write(List<Object[]> saved, HolderLookup.Provider registries) {
+    /** {@code now} stamps each unit with when it was saved, so a reload can tell how long the run sat unloaded. */
+    static ListTag write(List<Object[]> saved, HolderLookup.Provider registries, long now) {
         ListTag list = new ListTag();
         for (Object[] s : saved) {
             CompoundTag t = new CompoundTag();
             t.put("Stack", ((ItemStack) s[0]).save(registries));
             t.putFloat("Off", (Float) s[1]);
+            t.putLong("At", s.length > 2 ? (Long) s[2] : now);
             list.add(t);
         }
         return list;
@@ -52,7 +54,7 @@ final class CargoSave {
             CompoundTag t = (CompoundTag) tag;
             ItemStack stack = ItemStack.parse(registries, t.getCompound("Stack")).orElse(ItemStack.EMPTY);
             if (!stack.isEmpty())
-                out.add(new Object[]{stack, t.getFloat("Off")});
+                out.add(new Object[]{stack, t.getFloat("Off"), t.getLong("At")});
         }
         return out;
     }

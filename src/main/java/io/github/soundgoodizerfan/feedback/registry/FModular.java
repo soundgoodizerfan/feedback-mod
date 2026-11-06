@@ -55,6 +55,13 @@ public final class FModular {
                     .networkSynchronized(ModularDesign.STREAM_CODEC)
                     .build());
 
+    /** The other drafts pinned beside a blueprint's own design when it was printed (at most {@code BlueprintTableMenu.MAX_VARIANTS}); the Blueprint Table puts them back as pins. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<ModularDesign>>> VARIANTS =
+            COMPONENTS.register("blueprint_variants", () -> DataComponentType.<java.util.List<ModularDesign>>builder()
+                    .persistent(ModularDesign.CODEC.listOf())
+                    .networkSynchronized(ModularDesign.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list()))
+                    .build());
+
     /** What that design makes, baked once and again at each step of wear. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ModularFigures>> FIGURES =
             COMPONENTS.register("modular_figures", () -> DataComponentType.<ModularFigures>builder()
@@ -88,7 +95,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "hammer_head", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band")
+            "hammer_head", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -159,6 +166,10 @@ public final class FModular {
     /** A pack worn on the back: a shell for the slots, a strap for the load. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBackpack> BACKPACK = ITEMS.register("backpack",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBackpack(ModularStacks.properties()));
+
+    /** A sleeping roll carried on a pack's lashing: skips the night where you stand, by its comfort. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBedroll> BEDROLL = ITEMS.register("bedroll",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBedroll(ModularStacks.properties()));
 
     /** A hand covering in the hands slot: a glove, which may carry a metacarpal plate. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularGlove> GLOVE = ITEMS.register("glove",

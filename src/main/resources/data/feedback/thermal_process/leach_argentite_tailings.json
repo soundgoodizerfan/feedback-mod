@@ -1,0 +1,35 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:argentite",
+      "forms": [
+        "tailings"
+      ]
+    }
+  ],
+  "min_temperature": 30,
+  "optimal_temperature": 60,
+  "max_temperature": 90,
+  "required_tpu": 300,
+  "spoil_temperature": 145,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:brine",
+        "mb": 150
+      },
+      {
+        "fluid": "feedback:hypochlorite",
+        "mb": 50
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:silver_chloride",
+        "mb": 120
+      }
+    ],
+    "heat": 4
+  }
+}

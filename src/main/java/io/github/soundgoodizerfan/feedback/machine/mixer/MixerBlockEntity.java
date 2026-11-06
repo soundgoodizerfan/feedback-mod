@@ -32,6 +32,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.process.OreLadder;
 import io.github.soundgoodizerfan.feedback.process.Mixture;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.Blast;
@@ -102,6 +103,8 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
     private FluidStack product = FluidStack.EMPTY;
     private float turns;
     private float heat;
+    /** Water in the drum, mB: the medium a turning drum washes ore in (gravity separation, {@link OreLadder}); not a mixture part. */
+    private int water;
     /** Body temperature, Tu; primitive field wrapped at the accessor. */
     private float temperature = FTuning.AMBIENT_TU.value();
     private final Catchup offline = new Catchup();
@@ -212,6 +215,14 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
 
     /** Takes fluid into the drum as a part; returns how much went in. Zero if it has no material, a product is waiting, or the drum is full. */
     public int fill(FluidStack stack, boolean simulate) {
+        if (stack.getFluid() == net.minecraft.world.level.material.Fluids.WATER) {
+            int taken = Math.max(0, Math.min(stack.getAmount(), OreLadder.WASH_WATER_MB - water));
+            if (taken > 0 && !simulate) {
+                water += taken;
+                sync();
+            }
+            return taken;
+        }
         if (stack.isEmpty() || !product.isEmpty())
             return 0;
         var material = Mixture.fluidMaterial(MaterialTable.get().materials(), stack.getFluid());
@@ -342,6 +353,10 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         // Items go in one at a time, as a hand pours.
         for (int i = 0; i < FTuning.MIXER_INPUT_SLOTS; i++) {
             ItemStack in = slots.getItem(i);
+            if (!in.isEmpty() && water > 0 && OreLadder.feed(in).isPresent()) {
+                wash(in, server);
+                continue;
+            }
             if (!in.isEmpty() && pour(in))
                 slots.setChanged();
         }
@@ -363,6 +378,22 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         Optional<Cartridge.Blend> blend = Cartridge.Blend.of(MaterialTable.get().materials(), contents);
         if (blend.isPresent() && trueTemperature().value() >= blend.get().ignitionTu())
             detonate(server, blend.get());
+    }
+
+    /**
+     * Ore feed (a bearer's crushed or dust) in a drum with water does not pour as a powder: while the shaft turns, the drum washes it
+     * one unit at a time. A unit whose grains the water tells from their rock (density against the gangue) leaves as a concentrate and
+     * its tailings, spilling over the rim; the rest stays in the slot to go round again. Nothing is lost on a miss.
+     */
+    private void wash(ItemStack in, ServerLevel server) {
+        if (Math.abs(getRpm().value()) <= FTuning.STOPPED_RPM_THRESHOLD.value() || server.getGameTime() % OreLadder.WASH_INTERVAL_TICKS != 0)
+            return;
+        OreLadder.attempt(in, OreLadder.Mode.GRAVITY, server.random).ifPresent(split -> {
+            in.shrink(1);
+            slots.setChanged();
+            net.minecraft.world.level.block.Block.popResource(server, worldPosition.above(), split.concentrate());
+            net.minecraft.world.level.block.Block.popResource(server, worldPosition.above(), split.tailings());
+        });
     }
 
     private void detonate(ServerLevel server, Cartridge.Blend blend) {
@@ -465,7 +496,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
 
             @Override
             public boolean isFluidValid(int tank, FluidStack stack) {
-                return Mixture.fluidMaterial(MaterialTable.get().materials(), stack.getFluid()).isPresent();
+                return stack.getFluid() == net.minecraft.world.level.material.Fluids.WATER || Mixture.fluidMaterial(MaterialTable.get().materials(), stack.getFluid()).isPresent();
             }
 
             @Override
@@ -507,6 +538,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         tag.put("Fluids", fluidList);
         tag.put("Slots", slots.createTag(registries));
         tag.put("Product", product.saveOptional(registries));
+        tag.putInt("Water", water);
         tag.putFloat("Turns", turns);
         tag.putFloat("Heat", heat);
         tag.putFloat("Temperature", temperature);
@@ -528,6 +560,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         }
         slots.fromTag(tag.getList("Slots", Tag.TAG_COMPOUND), registries);
         product = FluidStack.parseOptional(registries, tag.getCompound("Product"));
+        water = tag.getInt("Water");
         turns = tag.getFloat("Turns");
         heat = tag.getFloat("Heat");
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();

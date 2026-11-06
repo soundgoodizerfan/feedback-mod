@@ -137,6 +137,9 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> LIQUID_WISP_GAS = petroType("liquid_wisp_gas", 600, 200, 90);
     public static final DeferredHolder<FluidType, FluidType> CRYOLITE_BATH = petroType("cryolite_bath", 2100, 6000, 1500);
 
+    /** Refined chorus alkaloid in solution; what an Ender Port pays in (tag {@code feedback:teleportant}). */
+    public static final DeferredHolder<FluidType, FluidType> TELEPORTANT = petroType("teleportant", 1050, 800, 300);
+
     private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {
         return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
                 .descriptionId("fluid.feedback." + name)

@@ -320,6 +320,12 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> CRYOLITE_BATH_FLOWING =
             FLUIDS.register("cryolite_bath_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CRYOLITE_BATH, FFluids.CRYOLITE_BATH, FFluids.CRYOLITE_BATH_FLOWING)));
 
+    /** Liquid teleportant: chorus alkaloid extracted with lye (data/feedback/thermal_process/extract_teleportant.json). */
+    public static final DeferredHolder<Fluid, Fluid> TELEPORTANT =
+            FLUIDS.register("teleportant", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.TELEPORTANT, FFluids.TELEPORTANT, FFluids.TELEPORTANT_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> TELEPORTANT_FLOWING =
+            FLUIDS.register("teleportant_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.TELEPORTANT, FFluids.TELEPORTANT, FFluids.TELEPORTANT_FLOWING)));
+
     private static BaseFlowingFluid.Properties petro(DeferredHolder<net.neoforged.neoforge.fluids.FluidType, net.neoforged.neoforge.fluids.FluidType> type,
                                                      DeferredHolder<Fluid, Fluid> source, DeferredHolder<Fluid, Fluid> flowing) {
         return new BaseFlowingFluid.Properties(type, source, flowing);
@@ -413,5 +419,6 @@ public final class FFluids {
         FLUIDS.register(modBus);
         MoltenMetals.register(modBus);
         DyeFluids.register(modBus);
+        Liquors.register(modBus);
     }
 }

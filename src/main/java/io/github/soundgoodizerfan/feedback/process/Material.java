@@ -430,14 +430,19 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param curieTemperature above this it stops being magnetic -- hot iron passes the drum.
      * @param reflectivity     0 to 1, what an optical sorter sees. Two materials that look alike
      *                         should read alike, so the sorter is genuinely fooled.
+     * @param gangue           for a bearer (an ore): the host rock its grains are locked in. Ore separation reads the
+     *                         contrast between this material's density, magnetism and reflectivity and the bearer's
+     *                         ({@code OreLadder}); absent means {@code feedback:stone}.
      */
-    public record Separation(boolean magnetic, Optional<Tu> curieTemperature, Optional<Float> reflectivity) {
-        static final Separation NONE = new Separation(false, Optional.empty(), Optional.empty());
+    public record Separation(boolean magnetic, Optional<Tu> curieTemperature, Optional<Float> reflectivity,
+                             Optional<ResourceLocation> gangue) {
+        static final Separation NONE = new Separation(false, Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Separation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.BOOL.optionalFieldOf("magnetic", false).forGetter(Separation::magnetic),
                 Units.codec(Tu::new).optionalFieldOf("curie_temperature").forGetter(Separation::curieTemperature),
-                Codec.FLOAT.optionalFieldOf("reflectivity").forGetter(Separation::reflectivity)
+                Codec.FLOAT.optionalFieldOf("reflectivity").forGetter(Separation::reflectivity),
+                ResourceLocation.CODEC.optionalFieldOf("gangue").forGetter(Separation::gangue)
         ).apply(instance, Separation::new));
     }
 

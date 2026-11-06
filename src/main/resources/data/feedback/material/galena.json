@@ -17,10 +17,14 @@
     "rectifying": 1.0
   },
   "separation": {
-    "reflectivity": 0.7
+    "reflectivity": 0.7,
+    "gangue": "feedback:calcite"
   },
   "forms": {
     "lump": "feedback:galena",
     "ore": "feedback:galena_ore"
+  },
+  "bears": {
+    "feedback:lead": 0.85
   }
 }

@@ -41,12 +41,12 @@ import net.minecraft.world.level.Level;
 
 /**
  * A grapple and the parts of one fitting, in any arrangement -> that grapple carrying the fitting
- * ({@code grapple_fittings} bit set). A fitting is a physical part: a coil of string for line, a pulley
- * for the winch, rods for a barbed head. Each fits once.
+ * ({@code grapple_fittings} bit set). A fitting is a physical part: a coil of string for line, a winch
+ * for the reel, rods for a barbed head. Each fits once.
  *
  * <p>Prior art: the CurseForge "Grappling Hook Mod" (GPL; description and physics read only, no code
  * copied). Taken: upgrade-driven hook (rope length, reel speed, pulling creatures), reel while held,
- * momentum kept on release. Rejected: multi-hook (needs per-hook input and a second tether each).
+ * momentum kept on release, multi-hook as a fitting (a second use throws a second line; each hook has its own tether).
  */
 public class GrappleUpgradeRecipe extends CustomRecipe {
 
@@ -56,8 +56,9 @@ public class GrappleUpgradeRecipe extends CustomRecipe {
 
     public static final List<Fitting> FITTINGS = List.of(
             new Fitting(GrappleHook.ROPE, "rope", () -> Items.STRING, 4),
-            new Fitting(GrappleHook.WINCH, "winch", () -> FItems.SMALL_PULLEY.get(), 1),
-            new Fitting(GrappleHook.BARB, "barb", () -> BuiltInRegistries.ITEM.get(Feedback.id("wrought_iron_rod")), 2));
+            new Fitting(GrappleHook.WINCH, "winch", () -> FItems.GRAPPLE_WINCH.get(), 1),
+            new Fitting(GrappleHook.BARB, "barb", () -> BuiltInRegistries.ITEM.get(Feedback.id("wrought_iron_rod")), 2),
+            new Fitting(GrappleHook.MULTI, "multi", () -> BuiltInRegistries.ITEM.get(Feedback.id("wrought_iron_plate")), 3));
 
     public GrappleUpgradeRecipe(CraftingBookCategory category) {
         super(category);

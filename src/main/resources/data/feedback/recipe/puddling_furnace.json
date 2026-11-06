@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": { "item": "feedback:wrought_iron_plate" },
+    "F": { "item": "feedback:furnace" },
+    "B": { "item": "minecraft:bricks" },
+    "R": { "item": "feedback:wrought_iron_rod" }
+  },
+  "pattern": [
+    "BBB",
+    "RFI",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:puddling_furnace"
+  }
+}

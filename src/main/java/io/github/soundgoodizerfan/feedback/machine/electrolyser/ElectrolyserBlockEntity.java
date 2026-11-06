@@ -88,6 +88,25 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
             setChanged();
         }
     };
+    /** What plates out on the cathode (a won metal), taken off by hand or by a hopper at the back face. */
+    private final ItemStackHandler plate = new ItemStackHandler(1) {
+        @Override
+        public boolean isItemValid(int slot, ItemStack stack) {
+            return false;
+        }
+
+        @Override
+        public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+            return stack;
+        }
+
+        @Override
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
+    /** Units of work plated toward the next deposit item. */
+    private int plated;
     private float condition = 1f;
     private float owed;
     private float unitsLeft;
@@ -105,6 +124,26 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
     /** The slot a solute goes into (a hopper or a hand). */
     public ItemStackHandler solute() {
         return solute;
+    }
+
+    /** The cathode plate: what a won metal grows into. */
+    public ItemStackHandler plate() {
+        return plate;
+    }
+
+    /** The item handler a neighbour on {@code side} sees: the back face (the cathode) gives the plate, the rest take solute. */
+    public ItemStackHandler itemPort(@javax.annotation.Nullable Direction side) {
+        return side != null && side == front().getOpposite() ? plate : solute;
+    }
+
+    /** Items the plate can still grow by, as units of work. */
+    private int plateRoom(Electrolysis.Deposit d) {
+        ItemStack held = plate.getStackInSlot(0);
+        ItemStack next = d.stack();
+        if (!held.isEmpty() && !ItemStack.isSameItemSameComponents(held, next))
+            return 0;
+        int items = next.getMaxStackSize() - held.getCount();
+        return Math.max(0, items * d.units() - plated);
     }
 
     private FluidTank tank(Electrolysis.Electrode electrode) {
@@ -125,6 +164,8 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
             var r = row.residue().get();
             room = Math.min(room, ProcessRun.room(liquor, stackOf(r.fluid(), 1)) / r.mb());
         }
+        if (row.deposit().isPresent())
+            room = Math.min(room, plateRoom(row.deposit().get()));
         return room;
     }
 
@@ -207,6 +248,21 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
             ProcessRun.deposit(java.util.List.of(tank(p.electrode())), stackOf(p.fluid(), units * p.mb()));
         if (row.residue().isPresent())
             ProcessRun.deposit(java.util.List.of(liquor), stackOf(row.residue().get().fluid(), units * row.residue().get().mb()));
+        if (row.deposit().isPresent()) {
+            var d = row.deposit().get();
+            plated += units;
+            int grown = plated / d.units();
+            if (grown > 0) {
+                plated -= grown * d.units();
+                ItemStack add = d.stack();
+                add.setCount(grown);
+                ItemStack held = plate.getStackInSlot(0);
+                if (held.isEmpty())
+                    plate.setStackInSlot(0, add);
+                else
+                    held.grow(grown);
+            }
+        }
         setChanged();
     }
 
@@ -402,6 +458,8 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         tag.put("Anode", anode.writeToNBT(registries, new CompoundTag()));
         tag.put("Cathode", cathode.writeToNBT(registries, new CompoundTag()));
         tag.put("Solute", solute.serializeNBT(registries));
+        tag.put("Plate", plate.serializeNBT(registries));
+        tag.putInt("Plated", plated);
         tag.putFloat("Condition", condition);
         tag.putFloat("UnitsLeft", unitsLeft);
         tag.putFloat("Temperature", temperature);
@@ -415,6 +473,9 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         anode.readFromNBT(registries, tag.getCompound("Anode"));
         cathode.readFromNBT(registries, tag.getCompound("Cathode"));
         solute.deserializeNBT(registries, tag.getCompound("Solute"));
+        if (tag.contains("Plate"))
+            plate.deserializeNBT(registries, tag.getCompound("Plate"));
+        plated = tag.getInt("Plated");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         unitsLeft = tag.getFloat("UnitsLeft");
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();

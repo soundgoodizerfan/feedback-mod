@@ -187,5 +187,10 @@
     "W": "feedback:copper",
     "C": "feedback:wrought_iron",
     "H": "feedback:wrought_iron"
+  },
+  "board": {
+    "layout": {
+      "B": [2, 0.5]
+    }
   }
 }

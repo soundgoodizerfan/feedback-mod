@@ -24,7 +24,8 @@
     "density": 17.3
   },
   "separation": {
-    "reflectivity": 0.8
+    "reflectivity": 0.8,
+    "gangue": "feedback:quartz"
   },
   "electrical": {
     "conductivity": 0.7,
@@ -55,5 +56,17 @@
     "boots": "minecraft:golden_boots"
   },
   "enchantability": 22,
-  "attuning": {"temperature": 300, "lock": 220, "coercive": 0.12, "loop_width": 0.15, "lag": 4}
+  "attuning": {
+    "temperature": 300,
+    "lock": 220,
+    "coercive": 0.12,
+    "loop_width": 0.15,
+    "lag": 4
+  },
+  "bears": {
+    "feedback:gold": 1.0
+  },
+  "exclude": [
+    "lump"
+  ]
 }

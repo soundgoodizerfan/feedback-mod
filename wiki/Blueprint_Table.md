@@ -20,14 +20,16 @@ Right-click it to open the board. The item is drawn as a **diagram**: each part 
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
 - Set the **edge**, on a tool that has one.
+- A big gun folds its parts into **clusters**; click a cluster to open it. A tip or pommel sits where the finished piece carries it.
+- **Rig** toggles a looping demonstration of the drawing in use, for pick-like tools, a sword, a bow, a shield and a battery.
 
 ### Links
 
-Parts that touch are joined by a link, drawn by how tight the joint is: thick and cool with margin, amber near the limit, and **red and dashed** past it. A drawing that cannot be made shows the failing link in red with the reason beside it. A gun that cannot print names the problem the same way: an action and feed that do not work together, a material that cannot be built into a gun, two devices on one mounting.
+Parts that touch are joined by a link, colored by how tight that joint is: thick and cool with margin, amber near the limit, and **red and dashed** past it. Hover a link to read the percent of its limit it carries. A drawing that cannot be made shows the failing link in red with the reason beside it. A gun shows **every** failing link at once, and names the problems the same way: an action and feed that do not work together, a material that cannot be built into a gun, two devices on one mounting.
 
 ### Figures
 
-The sheet shows the design's figures as **bars** (for a battery: cells, full voltage, capacity and the voltage band its case holds; for a backpack: slots and carry rating; for a belt: its grip on cargo and the hottest cargo it carries). Qualities and adjectives the design earns sit along the bottom edge.
+The sheet shows the design's figures as **bars** (for a battery: cells, full voltage, capacity and the voltage band its case holds; for a backpack: slots, carry rating, mounting points left and store slots; for a [bedroll](Bedroll.md): comfort; for a belt: its grip on cargo and the hottest cargo it carries). Qualities and adjectives the design earns sit along the bottom edge.
 
 - A mark on each bar shows where the **first drawing** stood. An arrow shows which way the bar has moved since.
 - **Hold Shift** to read the exact figure.
@@ -37,7 +39,7 @@ The sheet shows the design's figures as **bars** (for a battery: cells, full vol
 
 The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds. Requirements and plans are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
 
-**Print**, at the bottom right, turns a sheet of paper in the paper slot into a **Blueprint** carrying the design and its figures. Put a Blueprint back in the slot to open it for drawing again. The table keeps nothing; the paper comes back to you when you close it.
+**Print**, at the bottom right, turns a sheet of paper in the paper slot into a **Blueprint** carrying the design and its figures. The pinned drafts print onto the paper too, and come back as pins when you put the Blueprint back in the slot to open it for drawing again. The table keeps nothing; the paper comes back to you when you close it.
 
 ## What a blueprint is for
 

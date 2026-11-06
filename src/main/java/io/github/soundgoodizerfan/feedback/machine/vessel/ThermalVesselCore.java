@@ -80,7 +80,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * <p>The tank is a view of the ledger only while a melt is in it. A vessel's tank may hold a foreign fluid too (a crude, a gas for an
  * atmosphere); a melt then stays solid rather than mixing into it.
  */
-public abstract class ThermalVesselCore extends BlockEntity implements ThermalBody, MoltenVessel, Fittable {
+public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedback.core.rotation.RotationNode implements ThermalBody, MoltenVessel, Fittable {
 
     /** One slot per face, a sensor or an adapter, never both. Indexed by {@link Direction#get3DDataValue()}. */
     protected final SidedFitting[] fittings = new SidedFitting[Direction.values().length];
@@ -129,6 +129,14 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
             return;
         io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.apply(level, worldPosition,
                 !darkened() ? io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.light(temperature) : 0);
+    }
+
+    /**
+     * How fast the rabble turns, in RPM: zero for a vessel with none. A row that names a rabble band only advances while this is inside
+     * it, so such a row runs in a vessel with a shaft and nowhere else.
+     */
+    protected float rabbleRpm() {
+        return 0f;
     }
 
     /** Whether the process is held in a sealed chamber with no air blowing in (charcoal, sintering). */
@@ -302,6 +310,16 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
             slotTpu[slot] = 0f;
             return;
         }
+        // A fine combustible dust in an open vessel past its ignition point flashes: the stack is gone and the air above it catches.
+        if (io.github.soundgoodizerfan.feedback.process.DustHazard.ignites(input, temperature, airlessRun())) {
+            input.setCount(0);
+            contents.set(slot, ItemStack.EMPTY);
+            net.minecraft.core.BlockPos above = worldPosition.above();
+            if (level.getBlockState(above).isAir())
+                level.setBlockAndUpdate(above, net.minecraft.world.level.block.BaseFireBlock.getState(level, above));
+            sync();
+            return;
+        }
         // Food is a material, not a recipe: the ladder takes it past done to dried and charred (food spec 4.3).
         var food = io.github.soundgoodizerfan.feedback.process.Cooking.findCookable(level, input);
         if (food.isPresent()) {
@@ -363,10 +381,14 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
 
         // Outside the band, or changing too fast to trust in either direction, TPu decays rather than resetting outright.
         float suitability = ProcessRun.limited(process, process.suitability(tu), lastDelta);
+        // A charge that wants stirring crusts when the rabble stalls or races: nothing advances, and the hold decays.
+        if (process.rabble().isPresent() && !process.rabble().get().holds(rabbleRpm()))
+            suitability = 0f;
         setTpu(slot, ProcessRun.hold(tpuOf(slot), suitability));
         if (suitability <= 0f)
             return;
-        if (tpuOf(slot) < process.requiredTpu())
+        // A form-agnostic row asks less of a finer form: the hold is read from what is actually held.
+        if (tpuOf(slot) < process.requiredFor(contents))
             return;
 
         complete(process, contents, slot);
@@ -383,6 +405,12 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         for (int held : assignment)
             contents.get(held).shrink(1);
         cleanEmpties(contents);
+
+        // A fine form is worse to hold: a toxic dust finishing open to the air throws up its fume.
+        int dustFume = io.github.soundgoodizerfan.feedback.process.DustHazard.fume(first, airlessRun());
+        if (dustFume > 0)
+            io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud.release(level,
+                    net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), dustFume);
 
         // A row that wants a gas spends it when it is there; without it the batch comes out as the row's ruin.
         // A sibling row (same result and hold, another gas: sintering in nitrogen or in argon) is the same batch under another atmosphere.
@@ -412,12 +440,16 @@ public abstract class ThermalVesselCore extends BlockEntity implements ThermalBo
         else if (process.hasFluidResult()) {
             // Whatever will not fit is lost: a full vessel melting more metal spills it. A full vessel stuck on a bad ratio
             // spills its own mix in proportion to make room, so the metal that corrects the ratio always gets in.
-            FluidStack result = process.resultFluid();
+            // A metal dust melting in air above its oxidation point loses a share to oxide.
+            float burnt = io.github.soundgoodizerfan.feedback.process.DustHazard.burnOff(first, temperature, airlessRun());
+            FluidStack result = process.resultFluid().copyWithAmount(Math.round(process.resultFluid().getAmount() * (1f - burnt)));
             int overflow = alloy.amount() + result.getAmount() - tank.getCapacity();
             if (overflow > 0 && alloy.resolve().isEmpty())
                 alloy.remove(Math.min(overflow, alloy.amount()));
             alloy.add(result.getFluid(), Math.min(result.getAmount(), tank.getCapacity() - alloy.amount()));
             refreshTank();
+            // A melt may also leave a solid behind (the slag of smelting an ore): its item result is that byproduct.
+            placeHot(process.result().copy());
         } else if (process.fire().isPresent())
             placeHot(io.github.soundgoodizerfan.feedback.modular.ModularStacks.fired(first, process.fire().get()));
         else

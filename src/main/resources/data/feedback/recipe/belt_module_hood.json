@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:wrought_iron_plate"
+    },
+    {
+      "item": "feedback:wrought_iron_plate"
+    },
+    {
+      "item": "minecraft:leather"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:belt_module_hood"
+  }
+}

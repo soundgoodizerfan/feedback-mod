@@ -36,6 +36,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.process.OreLadder;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -140,12 +141,41 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             if (!isMagnetic(item.getItem()) || aboveCurie(item.getItem()))
                 continue;
             Vec3 toward = centre.subtract(item.position());
+            if (toward.lengthSqr() < SEPARATE_REACH_SQ && OreLadder.feed(item.getItem()).isPresent())
+                separate(item);
             if (toward.lengthSqr() < 0.25 || toward.length() > range)
                 continue;
             item.setDeltaMovement(item.getDeltaMovement()
                     .add(toward.normalize().scale(FTuning.ELECTROMAGNET_PULL * field)));
             item.hasImpulse = true;
         }
+    }
+
+    private static final double SEPARATE_REACH_SQ = 1.5 * 1.5;
+    private static final int SEPARATE_PER_PULL = 8;
+
+    /**
+     * Magnetic separation: ground ore of a magnetic bearer that the magnet has drawn close sheds its gangue. Each unit the magnet can tell from
+     * its rock (the bearer's magnetism against its gangue's) becomes a concentrate, which clings, and a tailings, which is not pulled and
+     * falls away; the rest stays to be pulled again. At most {@link #SEPARATE_PER_PULL} units a pull.
+     */
+    private void separate(ItemEntity item) {
+        net.minecraft.world.item.ItemStack stack = item.getItem();
+        net.minecraft.world.item.ItemStack concentrate = net.minecraft.world.item.ItemStack.EMPTY, tailings = net.minecraft.world.item.ItemStack.EMPTY;
+        for (int i = 0; i < SEPARATE_PER_PULL && stack.getCount() > 0; i++) {
+            var split = OreLadder.attempt(stack, OreLadder.Mode.MAGNETIC, level.random);
+            if (split.isEmpty())
+                continue;
+            stack.shrink(1);
+            concentrate = concentrate.isEmpty() ? split.get().concentrate() : concentrate.copyWithCount(concentrate.getCount() + 1);
+            tailings = tailings.isEmpty() ? split.get().tailings() : tailings.copyWithCount(tailings.getCount() + 1);
+        }
+        if (concentrate.isEmpty())
+            return;
+        if (stack.isEmpty())
+            item.discard();
+        level.addFreshEntity(new ItemEntity(level, item.getX(), item.getY(), item.getZ(), concentrate));
+        level.addFreshEntity(new ItemEntity(level, item.getX(), item.getY() - 0.5, item.getZ(), tailings));
     }
 
     /** Whether a stack is hotter than its material's Curie point: a hot workpiece is not pulled (user ruling, 2026-10-23). */
@@ -173,7 +203,8 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             Set<Item> found = new HashSet<>();
             for (Map.Entry<ResourceLocation, Material> entry : MaterialTable.get().materials().entrySet())
                 if (entry.getValue().separation().magnetic())
-                    entry.getValue().items(entry.getKey()).values().stream()
+                    // Tailings are the gangue left over: the same material, but not what the magnet takes.
+                    entry.getValue().items(entry.getKey()).entrySet().stream().filter(e -> !e.getKey().equals("tailings")).map(Map.Entry::getValue)
                             .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)).forEach(found::add);
             magneticItems = found;
         }

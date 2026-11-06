@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "feedback:block/device_smelter_front",
+    "top": "feedback:block/device_smelter_top",
+    "side": "feedback:block/brick_refractory"
+  }
+}

@@ -94,7 +94,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** What the bench is doing, set from the centre: stock shapes, a part being added to, a tool being edited ({@link #MODE_PREPARE} at the Prep Table), a smithing template. */
     public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_REWORK = 2, MODE_PREPARE = MODE_REWORK, MODE_SMITH = 4;
     /** What the centre slot holds. */
-    public enum Centre { EMPTY, STOCK, PART, TOOL, TEMPLATE }
+    public enum Centre { EMPTY, STOCK, PART, TOOL, TEMPLATE, BLOOM }
     /**
      * Button ids. {@code PICK + n} chooses shape n, {@code CUT + n} cut n, {@code FIT + s} fits what lies in menu slot s,
      * {@code SHAPE + n} shapes option n from the stock slot and fits it, {@code OFF + k} takes off fitted part k (or tool
@@ -396,6 +396,9 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return Centre.TOOL;
         if (c.getItem() instanceof ModularPartItem && c.has(FDataComponents.MADE_OF.get()))
             return Centre.PART;
+        // A bloom (spongy iron with slag in it) is shingled, not shaped: the anvil plays it as its own work.
+        if (station.forges() && Material.find(ClientMaterials.on(level), c.getItem()).map(l -> l.form().equals("bloom")).orElse(false))
+            return Centre.BLOOM;
         // A flatbread is its own container: it opens the picker like a bowl does.
         if (dish && Material.find(ClientMaterials.on(level), c.getItem()).map(l -> l.material().traits().contains(Material.Trait.WRAPPER)).orElse(false))
             return Centre.PART;
@@ -605,7 +608,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Centre c = centre(level);
         if (c == Centre.TEMPLATE)
             return smithed(level);
-        if (c == Centre.EMPTY)
+        if (c == Centre.EMPTY || c == Centre.BLOOM)
             return ItemStack.EMPTY;
         if (cutting()) {
             ItemStack in = centreStack();
@@ -1425,6 +1428,117 @@ public class ToolTableMenu extends AbstractContainerMenu {
         refresh(true);
     }
 
+    // --- shingling, from the screen ------------------------------------------------------------
+
+    /** A shingling in play: when it began, how hot the bloom was, and what it began as, so the finish names the same piece. */
+    private record Shingle(long started, float temperature, long seed, int slag, int hash) { }
+
+    private static final java.util.Map<java.util.UUID, Shingle> SHINGLES = new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** The layout of a bloom's slag: from its grade and the tick it came out of the fire, which both sides can read. */
+    public static long shingleSeed(ItemStack bloom) {
+        return 7919L * io.github.soundgoodizerfan.feedback.item.BloomItem.slag(bloom)
+                + 31L * bloom.getOrDefault(FDataComponents.HEATED_AT.get(), 0L);
+    }
+
+    /** The material figures and hammer a shingling of {@code bloom} is played with, as the screen and the server both build them. */
+    public Optional<Shingling.Setup> shingleSetup(Level level, ItemStack bloom) {
+        var materials = ClientMaterials.on(level);
+        var located = Material.find(materials, bloom.getItem());
+        var slag = materials.get(io.github.soundgoodizerfan.feedback.Feedback.id("bloomery_slag"));
+        if (located.isEmpty() || slag == null)
+            return Optional.empty();
+        return Optional.of(Shingling.Setup.of(shingleSeed(bloom), io.github.soundgoodizerfan.feedback.item.BloomItem.slag(bloom),
+                ItemHeat.get(bloom, level).value(), hold(), located.get().material(), slag, strikes()));
+    }
+
+    /** Whether a bloom sits in the centre, a hammer is in, and the bloom is hot enough to work. */
+    private Optional<Shingling.Setup> shingleable(Level level) {
+        if (centre(level) != Centre.BLOOM || !hasHammer())
+            return Optional.empty();
+        ItemStack bloom = centreStack();
+        return shingleSetup(level, bloom).filter(s -> s.temperature() >= s.minWork() || s.hold() >= s.minWork());
+    }
+
+    public void beginShingle(ServerPlayer server) {
+        Level level = server.level();
+        Optional<Shingling.Setup> setup = shingleable(level);
+        if (setup.isEmpty()) {
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("forge.feedback.unworkable"), 60);
+            return;
+        }
+        ItemStack bloom = centreStack();
+        SHINGLES.put(server.getUUID(), new Shingle(level.getGameTime(), setup.get().temperature(), setup.get().seed(),
+                setup.get().slag(), ItemStack.hashItemAndComponents(bloom)));
+    }
+
+    /**
+     * The inputs of the shingling, replayed on the same piece the server noted. A result sent before the last blow could have been struck is
+     * refused. A finished piece is wrought iron (an ingot, a ninth lost to each split) with the slag it let out; an unfinished one goes back
+     * as a bloom carrying the slag it still holds, to be heated and worked again.
+     */
+    public void finishShingle(ServerPlayer server, List<Shingling.Event> events) {
+        Shingle begun = SHINGLES.remove(server.getUUID());
+        Level level = server.level();
+        Optional<Shingling.Setup> setup = shingleable(level);
+        if (begun == null || setup.isEmpty() || ItemStack.hashItemAndComponents(centreStack()) != begun.hash())
+            return;
+        long elapsed = level.getGameTime() - begun.started();
+        if (!events.isEmpty() && events.get(events.size() - 1).tick() > elapsed + 10)
+            return;
+        Shingling.Setup played = new Shingling.Setup(begun.seed(), begun.slag(), begun.temperature(), setup.get().hold(), setup.get().slagMelt(),
+                setup.get().slagViscosity(), setup.get().minWork(), setup.get().density(), setup.get().hardness(), setup.get().light(), setup.get().heavy());
+        Shingling.Result result = Shingling.replay(played, events);
+        int end = events.isEmpty() ? 0 : events.get(events.size() - 1).tick();
+        var heat = new io.github.soundgoodizerfan.feedback.core.unit.Tu(new Shingling(played).temperature(end));
+        var materials = ClientMaterials.on(level);
+        var iron = materials.get(io.github.soundgoodizerfan.feedback.Feedback.id("wrought_iron"));
+        ItemStack bloom = centreStack();
+        List<ItemStack> given = new java.util.ArrayList<>();
+        ItemStack main;
+        int scale = io.github.soundgoodizerfan.feedback.item.BloomItem.scale(bloom);
+        // A hearth that holds the piece over scaling heat for long enough burns it away.
+        Shingling clock = new Shingling(played);
+        int hotTicks = 0;
+        for (int t = 0; t <= end; t++)
+            if (clock.temperature(t) > FTuning.SHINGLE_SCALE_TU)
+                hotTicks++;
+        boolean burnt = hotTicks >= FTuning.SHINGLE_BURN_TICKS || scale >= FTuning.SHINGLE_SCALE_LIMIT;
+        if (burnt) {
+            main = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.BURNT_IRON.get());
+        } else if (result.done() && iron != null) {
+            int mb = Math.max(0, Shingling.metalMb(result) - 16 * scale);
+            var ingot = iron.item(io.github.soundgoodizerfan.feedback.Feedback.id("wrought_iron"), "ingot");
+            var nugget = iron.item(io.github.soundgoodizerfan.feedback.Feedback.id("wrought_iron"), "nugget");
+            main = mb >= 144 && ingot.isPresent() ? new ItemStack(ingot.get()) : ItemStack.EMPTY;
+            if (nugget.isPresent() && mb % 144 > 0)
+                given.add(new ItemStack(nugget.get(), (mb % 144) / 16));
+        } else {
+            // Working it again costs iron: each reheat scales a nugget's worth off (the scale is burnt iron).
+            main = io.github.soundgoodizerfan.feedback.item.BloomItem.of(bloom.getItem(), Shingling.slagLeft(result), scale + 1);
+            given.add(new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.BURNT_IRON.get()));
+        }
+        for (ItemStack s : given)
+            ItemHeat.set(s, heat, level);
+        if (!main.isEmpty())
+            ItemHeat.set(main, heat, level);
+        int slag = Shingling.slagDropped(result);
+        if (slag > 0)
+            given.add(new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.BLOOMERY_SLAG.get(), slag));
+        bloom.shrink(1);
+        if (bloom.isEmpty())
+            table.setItem(ToolTableBlockEntity.TOOL, main);
+        else if (!main.isEmpty())
+            given.add(main);
+        for (ItemStack s : given)
+            server.getInventory().placeItemBackInInventory(s);
+        wearHammer(1 + events.size() / 8);
+        level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.5f, 1.2f);
+        io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server,
+                Component.translatable(result.done() ? "forge.feedback.shingle.done" : "forge.feedback.shingle.left"), 80);
+        refresh(true);
+    }
+
     /** A Mechanical Hammer touching the table that is being driven and has a head seated, if there is one. */
     private MechanicalHammerBlockEntity machineBeside() {
         Level level = player.level();
@@ -1486,6 +1600,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
+        SHINGLES.remove(player.getUUID());
         ForgeRhythm.end(player.getUUID());
     }
 

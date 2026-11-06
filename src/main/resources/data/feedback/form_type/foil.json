@@ -1,3 +1,4 @@
 {
-  "kinds": ["metal"]
+  "kinds": ["metal"],
+  "grain": 0.1
 }

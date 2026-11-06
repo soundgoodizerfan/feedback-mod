@@ -58,8 +58,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
     public static final int CASE = 0, CHARGE = 1, CHARGE_B = 2, PROJECTILE = 3, PAYLOAD = 4, OUTPUT = 5;
     public static final int SLOTS = 6;
 
-    /** The form names a charge or a payload may be in: a powder, a dust. A whole rod is not a charge. */
-    private static final java.util.Set<String> LOOSE_FORMS = java.util.Set.of("powder", "dust");
+    /** The form names a charge or a payload may be in: a dust. A whole rod is not a charge. */
+    private static final java.util.Set<String> LOOSE_FORMS = java.util.Set.of("dust");
 
     private final NonNullList<ItemStack> slots = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private int boreMm = 9;

@@ -10,15 +10,16 @@ Put meltable things in a hot crucible and they melt into its tank once they reac
 | --- | --- |
 | Copper ore, raw copper | Molten Copper |
 | Gold ore, raw gold | Molten Gold |
-| Iron ore, raw iron | Molten Wrought Iron (needs a very hot, blown fire) |
-| Hematite, Limonite, Magnetite | Molten Iron (pure iron, a little cooler to melt) |
+| Iron ore, raw iron, Hematite, Limonite, Magnetite | Molten Cast Iron (see [Making Wrought Iron](Making_Wrought_Iron.md) for wrought iron) |
 | Cast Iron | Molten Cast Iron |
 | Tin, Zinc or Lead Ingot | Molten Tin / Zinc / Lead |
 | Sand or Red Sand | Molten Glass |
 | Nether Quartz | Molten Quartz Glass (casts into a Quartz Glass ingot) |
-| Scrap or Swarf of any metal with a molten form | 36 mB of that metal |
+| Scrap, Swarf or Dust of any metal with a molten form | Molten metal (scrap and swarf give 36 mB) |
 
-JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, glass 1400, iron 1538, wrought iron 1600, quartz glass 1650. One item makes one ingot's worth, **144 mB**. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
+JEI lists each melting point: tin 232 Tu, lead 327, zinc 420, gold 950, copper 1000, cast iron 1200, glass 1400, iron 1538, wrought iron 1600, quartz glass 1650. An ingot makes one ingot's worth, **144 mB**. An ore makes only part of its metal, and more of it the finer the stage it is melted at ([Ore Processing](Ore_Processing.md#how-much-metal-each-stage-gives)).
+
+Melting takes time. A vessel melts one piece at a time: about half a second for an ingot, nine times that for a block, a fraction of it for dust, and the finer the form the sooner it is done. A crucible's tank holds 1296 mB, nine ingots. If the tank is full, anything else that melts is lost.
 
 ## Molds
 
@@ -29,6 +30,7 @@ A mold's shape names a form. Any metal or glass with a molten fluid freezes into
 - **Glass Block Mold**: casts a **Glass Block** from 144 mB of molten glass. Four Wrought Iron Drilled Plates in a square.
 - **Glass Pane Mold**: casts **3 Glass Panes** from 144 mB of molten glass.
 - **Glass Bottle Mold**: casts a **Glass Bottle** from 144 mB of molten glass.
+- **Atomising Mold**: see [below](#atomising-mold).
 
 ```
 Glass Block Mold   Glass Pane Mold   Glass Bottle Mold
@@ -40,6 +42,17 @@ Glass Block Mold   Glass Pane Mold   Glass Bottle Mold
 D is a Wrought Iron Drilled Plate and S is a Stick.
 
 A mold's tooltip shows what it holds: *Empty*, or the melt and its amount, what it makes, and whether it is *Still molten* or *Set: use it to turn it out*. A melt the mold cannot shape reads *This mold can make nothing of it*.
+
+### Atomising Mold
+
+Made from three Wrought Iron Drilled Plates over a Stick:
+
+```
+D D D
+_ S _
+```
+
+D is a Wrought Iron Drilled Plate and S is a Stick. Set it in a [Casting Basin](Casting_Basin.md), pour a melt into it and right-click the basin with a Water Bucket: the melt shatters at once into **Dust** of that metal. This is the way to make dust of a ductile metal; the [Rolling Mill](Rolling_Mill.md#grinding-to-dust) only grinds brittle stock. Dust melts faster than an ingot, but burns off in an open vessel; see [Materials](Materials.md#dust).
 
 ### Tool part molds
 

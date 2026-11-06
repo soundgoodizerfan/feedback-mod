@@ -33,6 +33,10 @@ Hoppers and pipes can feed the inputs and take only what was drawn, never the dr
 
 With [Jade](https://modrinth.com/mod/jade) you can see what is in the drum, how mixed it is, and its heat before you draw it. The drum is open, so no instrument is needed for the load and the mix; the heat reads as any temperature does.
 
+## Washing ore
+
+A drum holding water (a full bucket, 1000 mB, from a bucket on the block or a pipe at the fluid port) washes ore instead of pouring it. Put crushed ore or dust in the input slots and turn the shaft: about every half second one unit is washed, and the water carries the lighter rock away from the heavier ore. A washed unit spills over the rim as one **Concentrate** and one **Tailings**; a unit the water cannot tell from its rock stays in the slot and goes round again, so nothing is lost. How well a wash works depends on how much denser the ore is than its host rock, which JEI's Separation card shows. See [Ore Processing](Ore_Processing.md#separating).
+
 ## Alloying with heat
 
 Put the drum over a fire or any other heat source below it, as with a [Crucible](Crucible.md). The drum warms toward the fire's temperature and cools back when the fire goes out. With no fire it stays at room temperature, and cold powder mixing works as usual.

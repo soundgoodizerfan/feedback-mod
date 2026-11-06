@@ -1,0 +1,18 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:limonite",
+      "forms": [
+        "dust"
+      ]
+    }
+  ],
+  "min_temperature": 300,
+  "optimal_temperature": 450,
+  "max_temperature": 600,
+  "required_tpu": 120,
+  "result": {
+    "id": "feedback:hematite_dust"
+  }
+}

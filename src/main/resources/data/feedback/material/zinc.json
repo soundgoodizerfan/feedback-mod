@@ -25,7 +25,8 @@
     "density": 6.57
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.5,
+    "gangue": "feedback:calcite"
   },
   "electrical": {
     "drop": 0.17,
@@ -40,5 +41,17 @@
     "deepslate_ore": "feedback:deepslate_zinc_ore"
   },
   "enchantability": 6,
-  "attuning": {"temperature": 150, "lock": 80, "coercive": 0.18, "loop_width": 0.3, "lag": 6}
+  "attuning": {
+    "temperature": 150,
+    "lock": 80,
+    "coercive": 0.18,
+    "loop_width": 0.3,
+    "lag": 6
+  },
+  "bears": {
+    "feedback:zinc": 1.0
+  },
+  "exclude": [
+    "lump"
+  ]
 }

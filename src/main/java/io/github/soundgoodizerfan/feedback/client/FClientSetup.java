@@ -102,6 +102,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.GALVANIC_CELL.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.ELECTROSTATIC_GENERATOR.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FLogistics.BELT_ENTITY.get(), BeltModuleRenderer::new);
+        event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FLogistics.HEAD_ENTITY.get(), BeltHeadRenderer::new);
     }
 
     /**
@@ -244,8 +245,31 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0xCCCFE6F2), FFluidTypes.LIQUID_AIR.get());
         event.registerFluidType(waterTinted(0xCCBFD8F0), FFluidTypes.LIQUID_OXYGEN.get());
         event.registerFluidType(moltenFluid(0xFFFFD8A0), FFluidTypes.CRYOLITE_BATH.get());
+        event.registerFluidType(waterTinted(0xFFB070E8), FFluidTypes.TELEPORTANT.get());
+        io.github.soundgoodizerfan.feedback.registry.Liquors.types().forEach((id, type) ->
+                event.registerFluidType(liquorFluid(io.github.soundgoodizerfan.feedback.registry.Liquors.tint(id)), type.get()));
         io.github.soundgoodizerfan.feedback.registry.DyeFluids.types().forEach((color, type) ->
                 event.registerFluidType(waterTinted(0xFF000000 | color.getTextureDiffuseColor()), type.get()));
+    }
+
+    /** A leach liquor: the animated grey liquor sprite, tinted by the material's colour. */
+    private static IClientFluidTypeExtensions liquorFluid(int tint) {
+        return new IClientFluidTypeExtensions() {
+            @Override
+            public ResourceLocation getStillTexture() {
+                return Feedback.id("block/liquor");
+            }
+
+            @Override
+            public ResourceLocation getFlowingTexture() {
+                return Feedback.id("block/liquor");
+            }
+
+            @Override
+            public int getTintColor() {
+                return tint;
+            }
+        };
     }
 
     private static IClientFluidTypeExtensions moltenFluid(int tint) {

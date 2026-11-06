@@ -47,16 +47,17 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public class BeltHeadBlock extends Block implements EntityBlock, BeltPart, Rotatable {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final net.minecraft.world.level.block.state.properties.BooleanProperty RUNNING = BeltBlock.RUNNING;
     private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 4, 16);
 
     public BeltHeadBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(RUNNING, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, RUNNING);
     }
 
     @Override
@@ -120,6 +121,23 @@ public class BeltHeadBlock extends Block implements EntityBlock, BeltPart, Rotat
         super.onRemove(state, level, pos, newState, moved);
         if (!level.isClientSide && !newState.is(this))
             BeltRuns.of(level).queue(pos);
+    }
+
+    @Override
+    protected net.minecraft.world.InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+            net.minecraft.world.entity.player.Player player, net.minecraft.world.phys.BlockHitResult hit) {
+        if (level.isClientSide)
+            return net.minecraft.world.InteractionResult.SUCCESS;
+        return level.getBlockEntity(pos) instanceof BeltHeadBlockEntity head && head.handUse(player, hit)
+                ? net.minecraft.world.InteractionResult.CONSUME : net.minecraft.world.InteractionResult.PASS;
+    }
+
+    @Override
+    protected java.util.List<net.minecraft.world.item.ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootParams.Builder params) {
+        java.util.List<net.minecraft.world.item.ItemStack> out = new java.util.ArrayList<>(super.getDrops(state, params));
+        if (params.getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY) instanceof BeltHeadBlockEntity head)
+            head.moduleDrop().ifPresent(out::add);
+        return out;
     }
 
     /** Carries what stands on it and takes dropped items, as a belt cell does. */

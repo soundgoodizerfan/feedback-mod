@@ -1,0 +1,35 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:ilmenite",
+      "forms": [
+        "concentrate"
+      ]
+    }
+  ],
+  "min_temperature": 80,
+  "optimal_temperature": 110,
+  "max_temperature": 150,
+  "required_tpu": 300,
+  "result": {
+    "id": "minecraft:iron_nugget",
+    "count": 3
+  },
+  "spoil_temperature": 205,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sulfuric_acid",
+        "mb": 200
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:titanyl_sulfate",
+        "mb": 210
+      }
+    ],
+    "heat": 4
+  }
+}

@@ -1,7 +1,9 @@
 {
   "inputs": [
     {
-      "tag": "feedback:pyrite_bearers"
+      "type": "feedback:material",
+      "material": "feedback:pyrite",
+      "forms": ["lump", "ore", "deepslate_ore", "crushed", "dust", "concentrate"]
     }
   ],
   "min_temperature": 500,

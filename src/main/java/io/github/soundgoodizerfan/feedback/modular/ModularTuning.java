@@ -140,6 +140,8 @@ public final class ModularTuning {
 
     /** Load a joint of strength 1 carries, in kg m (head mass times its distance from the hand). */
     public static final float JOINT_K = 1.2f;
+    /** [OPEN] Metres a part of a still item hangs from its joint: the lever of its weight against the joint's strength (a stand-in; the Blueprint Table's per-link figure). */
+    public static final float JOINT_STATIC_LEVER = 1f;
     public static final float WRAPPED_SHARE = 0.8f;
     public static final float PINNED_SHARE = 1.5f;
 
@@ -203,6 +205,23 @@ public final class ModularTuning {
     public static final int PACK_OVERLOAD_WEAR = 1;
     /** {@code Mu} of a stack item in the tag {@code feedback:pack_mass/light}, and in {@code heavy}, and of any other item no material explains. */
     public static final float PACK_MASS_LIGHT = 0.05f, PACK_MASS_HEAVY = 3f, PACK_MASS_DEFAULT = 0.5f;
+
+    /** Mounting points a shell with no named variant has, and a frame adds. Invented. */
+    public static final int PACK_DEFAULT_POINTS = 2, PACK_FRAME_POINTS = 2;
+    /** Mounting points each fitting takes (the crafting pad takes more); the frame takes none and gives {@link #PACK_FRAME_POINTS}. Invented. */
+    public static final int PACK_FITTING_POINTS = 1, PACK_PAD_POINTS = 2;
+    /** {@code Mu} of carry per unit of strength: a frame's rods (they never wear), a hip belt's band, a padded panel's softness times the strap's rating. Invented. */
+    public static final float PACK_FRAME_CARRY = 3f, PACK_BELT_CARRY = 5f, PACK_PANEL_GAIN = 0.25f;
+    /** Share of max health a night in a bedroll of comfort 1 gives back, and the wear it takes. Invented. */
+    public static final float BEDROLL_HEAL = 0.5f;
+    public static final int BEDROLL_WEAR = 1;
+    /** Blocks around the sleeper that a hostile must be outside of, as for a bed. */
+    public static final int BEDROLL_SAFE_RADIUS = 8;
+    /** Seconds between the fallback weighings of a worn pack (equip, unequip and every change of contents weigh at once). */
+    public static final int PACK_FALLBACK_TICKS = 200;
+    /** Load multiplier of a soaked cloth shell without a coat, wear a second a bare cloth shell takes while its wearer burns, ticks of freeze a warm liner takes off each second, and the light a lantern in the bracket gives. Invented. */
+    public static final float PACK_WET_FACTOR = 1.5f;
+    public static final int PACK_SCORCH_WEAR = 2, PACK_THAW_TICKS = 40, PACK_LAMP_LEVEL = 12, PACK_LIGHT_TICKS = 40;
 
     // --- instruments --------------------------------------------------------------------------
 

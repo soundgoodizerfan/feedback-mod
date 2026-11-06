@@ -19,6 +19,6 @@
     "insulation": "trunk"
   },
   "forms": {
-    "powder": "feedback:ptfe_powder"
+    "dust": "feedback:ptfe_powder"
   }
 }

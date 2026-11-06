@@ -178,6 +178,17 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         return kind.hasThermowell();
     }
 
+    /** A vessel with a rabble takes its shaft's turning off the network and works it against the charge. */
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.unit.Su getLoadSu() {
+        return kind.rotates() ? FTuning.PUDDLING_FURNACE_LOAD_SU : NO_SU;
+    }
+
+    @Override
+    protected float rabbleRpm() {
+        return kind.rotates() ? Math.abs(getRpm().value()) : 0f;
+    }
+
     @Override
     public Tu getFireTu() {
         if (fuelTicksLeft <= 0)

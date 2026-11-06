@@ -1,6 +1,6 @@
 # Belt Modules
 
-Fifteen fittings that give a [Conveyor Belt](Conveyor_Belt.md) cell a job: loading, unloading, sorting, dropping, counting and conditioning cargo. A cell holds one module. This page lists them in the order a line needs them: moving cargo on and off, sorting, then conditioning.
+Seventeen fittings that give a [Conveyor Belt](Conveyor_Belt.md) cell a job: loading, unloading, sorting, dropping, counting and conditioning cargo. A cell holds one module. This page lists them in the order a line needs them: moving cargo on and off, sorting, then conditioning. The output funnel, chute, diverter, splitter and gate also fit on the [Belt Head Roller](Belt_Head_Roller.md) at the end of a run.
 
 ## Fitting and using
 
@@ -8,7 +8,7 @@ Fifteen fittings that give a [Conveyor Belt](Conveyor_Belt.md) cell a job: loadi
 - **Sneak with an empty hand** to pull the module back out.
 - **Right-click the top** of a cell with an empty hand to take a unit of cargo off (the jam clear).
 - **Right-click a side** with an empty hand to wipe a fouled screen or a dirty optical reader, to cycle a reader's band or a screen's mesh, or to engage or release a gate, diverter, electromagnet or air jet.
-- A module that draws current ([Belt Electromagnet](#belt-electromagnet), [Belt Optical Reader](#belt-optical-reader), [Belt Weigher](#belt-weigher), [Belt Fan](#belt-fan)) needs a wire against its cell and does nothing without it. Each draws 1 A at LV. See [Electricity](Electricity.md).
+- A module that draws current ([Belt Electromagnet](#belt-electromagnet), [Belt Optical Reader](#belt-optical-reader), [Belt Weigher](#belt-weigher), [Belt Fan](#belt-fan), [Linear Motor Coil](#linear-motor-coil)) needs a wire against its cell and does nothing without it. Each draws 1 A at LV. See [Electricity](Electricity.md).
 
 ## Moving cargo
 
@@ -81,6 +81,8 @@ Crafting: [Electromagnet](Electromagnet.md) + Wrought Iron Plate.
 
 Reads the sheen of passing cargo and sweeps one band (dull, mid or bright) to its side. Click to choose the band. A dirty head is wiped by hand; it fouls with use. Draws current.
 
+Crushed ore and dust it meets are **separated** instead: it tells the ore from its rock by their sheen. The concentrate is swept off its side, the tailings drop below the cell, and a unit it cannot tell goes on to be tried again. A dirty head separates nothing. Chain readers along a belt to raise the share that gets sorted ([Ore Processing](Ore_Processing.md#separating)).
+
 Crafting: Optical Glass Lens + Wrought Iron Plate + Copper Wire.
 
 ### Belt Weigher
@@ -105,9 +107,21 @@ Crafting: 2 Iron Bars + Wrought Iron Plate.
 
 ### Belt Counter
 
-Counts what passes and reports the count and rate to a linked [Controller](Controller.md) (see [Data Connector](Data_Connector.md)). It controls nothing and reads nothing about the cargo.
+Counts what passes and reports to a linked [Controller](Controller.md) (see [Data Connector](Data_Connector.md)). Link it to a Sensor card: key **C** reads the count, any other key the rate. It controls nothing and reads nothing about the cargo.
 
 Crafting: 2 Copper Wire + Wrought Iron Plate.
+
+### Belt Hood
+
+A cover over a belt cell. Rain and fluid above no longer wet the band there, so a rise keeps its grip. Cargo that holds fluid still wets it.
+
+Crafting: 2 Wrought Iron Plates + Leather.
+
+### Linear Motor Coil
+
+A coil in place of a roller. While it has current it drives the whole run at a fixed speed, with or without a head roller or a shaft. Draws current.
+
+Crafting: Wrought Iron Plate + Iron Ingot + 2 Copper Wire.
 
 ### Belt Cooler
 

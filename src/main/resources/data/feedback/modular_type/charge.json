@@ -48,7 +48,6 @@
     "F": {
       "name": "filler",
       "forms": [
-        "powder",
         "dust"
       ],
       "litres": 0.01,
@@ -57,7 +56,6 @@
     "G": {
       "name": "filler_b",
       "forms": [
-        "powder",
         "dust"
       ],
       "litres": 0.01,

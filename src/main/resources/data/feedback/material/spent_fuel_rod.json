@@ -10,7 +10,7 @@
   "forms": {
     "ingot": "feedback:spent_fuel_rod"
   },
-  "exclude": [
+  "exclude": ["dust", 
     "plate",
     "foil",
     "rod",

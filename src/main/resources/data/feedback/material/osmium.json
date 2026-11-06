@@ -27,7 +27,7 @@
   "enchantability": 3,
   "forms": {
     "sponge": "feedback:osmium_sponge",
-    "powder": "feedback:osmium_powder",
+    "dust": "feedback:osmium_powder",
     "green_compact": "feedback:osmium_green_compact",
     "slug": "minecraft:heavy_core"
   },

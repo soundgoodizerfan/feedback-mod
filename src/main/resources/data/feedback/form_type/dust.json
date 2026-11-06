@@ -1,0 +1,4 @@
+{
+  "kinds": ["metal", "mineral", "crystal", "ceramic", "glass", "metalloid", "granular"],
+  "grain": 0.05
+}

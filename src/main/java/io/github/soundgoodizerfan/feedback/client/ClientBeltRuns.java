@@ -58,6 +58,8 @@ public final class ClientBeltRuns {
 
     private static final Map<Long, Snap> RUNS = new HashMap<>();
     private static final Map<Long, Snap> BY_BLOCK = new HashMap<>();
+    /** Per run: how far the band has turned (blocks along the travel) and when that was last advanced, for cleats. */
+    private static final Map<Long, double[]> PHASE = new HashMap<>();
     private static boolean hooked;
 
     private ClientBeltRuns() {
@@ -95,7 +97,23 @@ public final class ClientBeltRuns {
         if (event.getLevel().isClientSide()) {
             RUNS.clear();
             BY_BLOCK.clear();
+            PHASE.clear();
         }
+    }
+
+    /** Blocks the band has travelled, signed, as of this frame; the first cell drawn in a frame advances it. */
+    public static double cleatPhase(BlockPos pos, float partial) {
+        Snap s = BY_BLOCK.get(pos.asLong());
+        ClientLevel level = Minecraft.getInstance().level;
+        if (s == null || level == null)
+            return 0.0;
+        double t = level.getGameTime() + partial;
+        double[] ph = PHASE.computeIfAbsent(s.id, k -> new double[]{0.0, t});
+        double dt = t - ph[1];
+        if (dt > 0 && dt < 40)
+            ph[0] += s.speed * dt;
+        ph[1] = t;
+        return ph[0];
     }
 
     private static Vec3 world(Snap s, double c) {
@@ -125,7 +143,7 @@ public final class ClientBeltRuns {
             double elapsed = now - s.received + partial;
             double max = s.blocks.length - 0.1;
             for (BeltRunPayload.Entry e : s.cargo) {
-                double c = e.pinned() ? e.pos() : Math.min(max, e.pos() + s.speed * elapsed);
+                double c = e.pinned() ? e.pos() : Math.max(0.0, Math.min(max, e.pos() + s.speed * elapsed));
                 Vec3 at = world(s, c);
                 if (at.distanceToSqr(cam) > 48 * 48)
                     continue;

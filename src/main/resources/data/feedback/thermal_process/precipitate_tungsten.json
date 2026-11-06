@@ -1,0 +1,26 @@
+{
+  "inputs": [],
+  "min_temperature": 500,
+  "optimal_temperature": 600,
+  "max_temperature": 700,
+  "required_tpu": 200,
+  "result": {
+    "id": "feedback:tungsten_nugget",
+    "count": 9
+  },
+  "spoil_temperature": 760,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sodium_tungstate",
+        "mb": 144
+      },
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 400
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 2
+  }
+}

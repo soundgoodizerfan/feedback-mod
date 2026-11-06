@@ -41,7 +41,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * The Blueprint Table's paper slot, one sample slot per role row and the hotbar. A sample is an
  * item that names its role's material, as at the Gun Stand; it is a pattern to read, not a cost.
- * Printing bakes the drawn design on the server's
+ * Printing bakes the drawn design (and any pinned drafts of the same type, kept on the paper as variants) on the server's
  * own tables and turns the paper into a {@link ModularBlueprintItem}; a blueprint put in is opened
  * by the screen to draw on again.
  */
@@ -50,6 +50,8 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     public static final int PAPER_X = 294, PAPER_Y = 278, HOTBAR_X = 8, HOTBAR_Y = 278, W = 360, H = 300;
     /** Sample slots: one, for the part selected on the sheet. */
     public static final int ROLE_SLOTS = 1;
+    /** Most pinned drafts a printed blueprint keeps beside its own design. */
+    public static final int MAX_VARIANTS = 3;
     /** Button: send the samples back to the player, as the screen's page of rows has changed. */
     public static final int BTN_CLEAR = 1;
     public static final int SAMPLE_X = 186, SAMPLE_Y = 278, SAMPLE_STEP = 0;
@@ -125,7 +127,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     }
 
     /** The screen's Print: bake {@code design} here, where the tables are trusted, and write it onto the paper. */
-    public void print(ModularDesign design, Player player) {
+    public void print(ModularDesign design, List<ModularDesign> variants, Player player) {
         if (paper.getItem(0).isEmpty()) {
             send(player, Component.translatable("message.feedback.blueprint_table.no_paper"));
             return;
@@ -138,6 +140,11 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         ItemStack blueprint = new ItemStack(FModular.BLUEPRINT.get());
         blueprint.set(FModular.DESIGN.get(), design);
         blueprint.set(FModular.FIGURES.get(), figures.get());
+        // Pinned drafts ride on the paper when they are of the same type and make something here too.
+        List<ModularDesign> kept = variants.stream().limit(MAX_VARIANTS).filter(v -> v.type().equals(design.type())
+                && ToolDesigns.predict(v, ModularTypes.get().types(), MaterialTable.get().materials()).isPresent()).toList();
+        if (!kept.isEmpty())
+            blueprint.set(FModular.VARIANTS.get(), kept);
         paper.setItem(0, blueprint);
         broadcastChanges();
         send(player, Component.translatable("message.feedback.blueprint_table.printed"));

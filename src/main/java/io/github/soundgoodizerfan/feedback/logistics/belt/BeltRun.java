@@ -67,14 +67,21 @@ public final class BeltRun {
     final BeltBlock.Slope[] slopes;
     final Direction facing;
     final int n;
-    private final double[] evCoord;
-    private final int[] evBlock;
-    private final boolean[] evSlope;
-    private final int pulls;
+    private double[] evCoord;
+    private int[] evBlock;
+    private boolean[] evSlope;
+    private final int pulls, linears;
+    private boolean linearLive;
     final long id;
 
     double phase;
+    /** Blocks a tick along the run's facing: negative while the head turns backwards. The ledger runs on its magnitude. */
     float speed;
+    /** Reversed: cargo is carried toward the tail. The ledger's coordinate is then {@code n - s}, s being the place along the run. */
+    private boolean rev;
+    private boolean running;
+    /** Ticks the run sat unloaded, to be added to its phase once it turns (bounded by BELT_CATCHUP_MAX_TICKS). */
+    private long catchUp = -1, catchUntil;
     private double nextEvent = Double.NEGATIVE_INFINITY;
     private boolean wake;
     private final ArrayList<Cargo> cargo = new ArrayList<>();
@@ -94,18 +101,31 @@ public final class BeltRun {
         this.facing = facing;
         this.id = blocks[0].asLong();
         this.slopes = new BeltBlock.Slope[n];
-        List<double[]> evs = new ArrayList<>();
-        int pull = 0;
+        int pull = 0, lin = 0;
         for (int i = 0; i < n; i++) {
             BeltPart part = BeltPart.of(level.getBlockState(blocks[i]));
             slopes[i] = part == null ? BeltBlock.Slope.FLAT : part.beltSlope(level.getBlockState(blocks[i]));
-            if (slopes[i] == BeltBlock.Slope.UP)
+            if (host(i) != null && host(i).module() == BeltModule.FUNNEL_IN)
+                pull++;
+            if (host(i) != null && host(i).module() == BeltModule.LINEAR)
+                lin++;
+        }
+        this.linears = lin;
+        buildEvents();
+        this.pulls = pull;
+    }
+
+    /** Fills the event table for the current direction: slope feet where the climb is, and module centres, in ledger coordinates. */
+    private void buildEvents() {
+        List<double[]> evs = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            // A rise is climbed from its foot (the cell's tail edge); a fall is climbed backwards, from its lower end.
+            if (!rev && slopes[i] == BeltBlock.Slope.UP)
                 evs.add(new double[]{i, 1, i});
-            if (level.getBlockEntity(blocks[i]) instanceof BeltBlockEntity be && be.module() != null) {
-                evs.add(new double[]{i + 0.5, 0, i});
-                if (be.module() == BeltModule.FUNNEL_IN)
-                    pull++;
-            }
+            if (rev && slopes[i] == BeltBlock.Slope.DOWN)
+                evs.add(new double[]{n - i - 1, 1, i});
+            if (host(i) != null && host(i).module() != null)
+                evs.add(new double[]{rev ? n - i - 0.5 : i + 0.5, 0, i});
         }
         evs.sort((a, b) -> Double.compare(a[0], b[0]) != 0 ? Double.compare(a[0], b[0]) : Double.compare(b[1], a[1]));
         evCoord = new double[evs.size()];
@@ -116,7 +136,39 @@ public final class BeltRun {
             evSlope[i] = evs.get(i)[1] > 0;
             evBlock[i] = (int) evs.get(i)[2];
         }
-        this.pulls = pull;
+    }
+
+    /** Ledger coordinate to the place along the run (and back: the map is its own inverse). */
+    private double along(double u) {
+        return rev ? n - u : u;
+    }
+
+    @Nullable
+    ModuleHost host(int i) {
+        return level.isLoaded(blocks[i]) && level.getBlockEntity(blocks[i]) instanceof ModuleHost h ? h : null;
+    }
+
+    /** Turns the run about: every unit keeps its place, its ledger coordinate mirrors, and pins are let go. */
+    private void flip() {
+        rev = !rev;
+        buildEvents();
+        List<Cargo> old = new ArrayList<>(cargo);
+        cargo.clear();
+        for (Cargo c : old) {
+            double u = Math.max(0.0, Math.min(n - EXIT_MARGIN, n - c.pos(phase)));
+            c.reason = Cargo.Reason.NONE;
+            c.base = u - phase;
+            c.ev = firstEventAfter(u);
+        }
+        java.util.Collections.reverse(old);
+        cargo.addAll(old);
+        changed();
+    }
+
+    /** Notes that cargo sat unloaded for {@code ticks}; the run catches up by the least such wait once it turns. */
+    void sat(long ticks) {
+        if (ticks > 1)
+            catchUp = catchUp < 0 ? ticks : Math.min(catchUp, ticks);
     }
 
     // --- queries --------------------------------------------------------------------------------
@@ -196,7 +248,7 @@ public final class BeltRun {
     public ItemStack insert(ItemStack in, double at, boolean simulate) {
         if (in.isEmpty() || level.isClientSide)
             return in;
-        at = Math.max(0.0, Math.min(at, n - EXIT_MARGIN));
+        at = Math.max(0.0, Math.min(along(at), n - EXIT_MARGIN));
         float unit = Math.max(0.01f, SortReader.unitMass(in));
         int take = Math.min(in.getCount(), Math.max(1, (int) (LogisticsTuning.BELT_UNIT_MASS_CAP / unit)));
         if (cargo.size() >= n * LogisticsTuning.BELT_UNITS_PER_BLOCK)
@@ -228,7 +280,7 @@ public final class BeltRun {
     void seat(ItemStack stack, double at) {
         if (stack.isEmpty())
             return;
-        at = Math.max(0.0, Math.min(at, n - EXIT_MARGIN));
+        at = Math.max(0.0, Math.min(along(at), n - EXIT_MARGIN));
         Cargo c = new Cargo(stack, level.getGameTime() * 6364136223846793005L + counter++);
         c.base = at - phase;
         c.ev = firstEventAfter(at);
@@ -265,7 +317,7 @@ public final class BeltRun {
         Cargo best = null;
         double bestD = 1.0;
         for (Cargo c : cargo) {
-            double d = worldPos(c.pos(phase)).distanceTo(at);
+            double d = worldPos(along(c.pos(phase))).distanceTo(at);
             if (d < bestD) {
                 bestD = d;
                 best = c;
@@ -282,7 +334,7 @@ public final class BeltRun {
     List<ItemStack> stacksOver(int i) {
         List<ItemStack> out = new ArrayList<>();
         for (Cargo c : cargo) {
-            double p = c.pos(phase);
+            double p = along(c.pos(phase));
             if (p >= i && p < i + 1)
                 out.add(c.stack);
         }
@@ -293,7 +345,7 @@ public final class BeltRun {
     List<Object[]> savedOver(int i) {
         List<Object[]> out = new ArrayList<>();
         for (Cargo c : cargo) {
-            double p = c.pos(phase);
+            double p = along(c.pos(phase));
             if (p >= i && p < i + 1)
                 out.add(new Object[]{c.stack, (float) (p - i)});
         }
@@ -304,7 +356,7 @@ public final class BeltRun {
     List<Object[]> drain() {
         List<Object[]> out = new ArrayList<>();
         for (Cargo c : cargo) {
-            double p = c.pos(phase);
+            double p = along(c.pos(phase));
             int i = (int) Math.max(0, Math.min(n - 1, Math.floor(p)));
             out.add(new Object[]{blocks[i], (float) (p - i), c.stack});
         }
@@ -331,12 +383,31 @@ public final class BeltRun {
         BeltHeadBlockEntity head = head();
         if (slipStale)
             refreshSlip();
-        speed = head == null ? 0f : Math.abs(head.getRpm().value()) * LogisticsTuning.BELT_BLOCKS_PER_TICK_PER_RPM * slip;
+        float rpm = head == null ? 0f : head.getRpm().value();
+        if (rpm != 0f && (rpm < 0f) != rev)
+            flip();
+        if (linears > 0 && time % 10 == 0) {
+            linearLive = false;
+            for (int i = 0; i < n && !linearLive; i++)
+                linearLive = host(i) != null && host(i).module() == BeltModule.LINEAR && host(i).live();
+        }
+        float mag = Math.max(Math.abs(rpm) * LogisticsTuning.BELT_BLOCKS_PER_TICK_PER_RPM, linearLive ? LogisticsTuning.BELT_LINEAR_SPEED : 0f) * slip;
+        speed = rev ? -mag : mag;
+        setRunning(mag > 0f);
         if (cargo.isEmpty() && pulls == 0) {
             maybeSync(time, head);
             return;
         }
-        phase += speed;
+        if (catchUp > 0 && mag > 0f) {
+            phase += mag * Math.min(catchUp, LogisticsTuning.BELT_CATCHUP_MAX_TICKS);
+            catchUp = -1;
+            nextEvent = Double.NEGATIVE_INFINITY;
+            wake = true;
+        } else if (catchUp > 0 && catchUntil == 0)
+            catchUntil = time + 200;
+        else if (catchUp > 0 && time > catchUntil)
+            catchUp = -1;
+        phase += mag;
         boolean woken = wake;
         if (woken || phase >= nextEvent) {
             wake = false;
@@ -344,11 +415,25 @@ public final class BeltRun {
         }
         if (woken || time % LogisticsTuning.BELT_RETRY_TICKS == 0)
             retry();
-        if (pulls > 0 && speed > 0f && time % LogisticsTuning.BELT_PULL_TICKS == 0)
+        if (pulls > 0 && speed != 0f && time % LogisticsTuning.BELT_PULL_TICKS == 0)
             pull();
         if (time % 20 == 0 && !cargo.isEmpty())
             wear();
         maybeSync(time, head);
+    }
+
+    /** Shows the band moving or still: the cells' {@code running} state, written only when it changes. */
+    private void setRunning(boolean now) {
+        if (now == running)
+            return;
+        running = now;
+        for (BlockPos b : blocks) {
+            if (!level.isLoaded(b))
+                continue;
+            net.minecraft.world.level.block.state.BlockState st = level.getBlockState(b);
+            if (st.hasProperty(BeltBlock.RUNNING) && st.getValue(BeltBlock.RUNNING) != now)
+                level.setBlock(b, st.setValue(BeltBlock.RUNNING, now), net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+        }
     }
 
     private void refreshSlip() {
@@ -367,11 +452,14 @@ public final class BeltRun {
     private void wear() {
         boolean worn = false;
         for (Cargo c : cargo) {
-            double p = c.pos(phase);
+            double p = along(c.pos(phase));
             int i = (int) Math.max(0, Math.min(n - 1, Math.floor(p)));
             BeltBlockEntity be = belt(i);
             if (be == null)
                 continue;
+            if (c.stack.getCapability(Capabilities.FluidHandler.ITEM) instanceof net.neoforged.neoforge.fluids.capability.IFluidHandlerItem fh
+                    && fh.getTanks() > 0 && !fh.getFluidInTank(0).isEmpty())
+                be.soak();
             float over = ItemHeat.get(c.stack, level).value() - be.spec().maxTu();
             if (over > 0f) {
                 be.wear(over * LogisticsTuning.BELT_HOT_WEAR_PER_TU);
@@ -471,21 +559,32 @@ public final class BeltRun {
     }
 
     private Action act(Cargo c, int e) {
-        BeltBlockEntity be = belt(evBlock[e]);
+        ModuleHost host = host(evBlock[e]);
         if (evSlope[e]) {
+            BeltBlockEntity be = belt(evBlock[e]);
             if (be == null)
                 return Action.CONTINUE;
             float itemFriction = SortReader.read(c.stack, level).friction();
-            boolean wet = level.isRainingAt(blocks[evBlock[e]].above()) || !level.getFluidState(blocks[evBlock[e]].above()).isEmpty();
+            boolean wet = be.wetNow();
             float grip = be.spec().friction() * itemFriction * (wet ? LogisticsTuning.WET_GRIP : 1f);
             return grip >= LogisticsTuning.INCLINE_TAN ? Action.CONTINUE : Action.HOLD;
         }
-        if (be == null || be.module() == null)
+        if (host == null || host.module() == null)
             return Action.CONTINUE;
-        return BeltModules.act(this, be, c, evBlock[e], evBlock[e] >= (head() != null ? n - 2 : n - 1));
+        return BeltModules.act(this, host, c, evBlock[e], rev ? evBlock[e] <= 0 : evBlock[e] >= (head() != null ? n - 2 : n - 1));
     }
 
     private boolean exit(Cargo c) {
+        if (rev) {
+            // Behind the tail: the cell at the same level, one up or one down, whichever is a belt.
+            BlockPos back = blocks[0].relative(facing.getOpposite());
+            for (BlockPos t : new BlockPos[]{back, back.below(), back.above()})
+                if (level.isLoaded(t) && BeltPart.of(level.getBlockState(t)) != null) {
+                    c.stack = BeltTargets.intoBelt(level, t, facing.getOpposite(), c.stack, false);
+                    return c.stack.isEmpty();
+                }
+            return false;
+        }
         BlockPos t = BeltTargets.nextOf(level, blocks[n - 1]);
         if (t == null || !level.isLoaded(t))
             return false;
@@ -524,7 +623,7 @@ public final class BeltRun {
     /** Funnels facing a handler pull one unit each, if there is room at their cell. */
     private void pull() {
         for (int i = 0; i < n; i++) {
-            BeltBlockEntity be = belt(i);
+            ModuleHost be = host(i);
             if (be == null || be.module() != BeltModule.FUNNEL_IN)
                 continue;
             IItemHandler h = level.getCapability(Capabilities.ItemHandler.BLOCK, blocks[i].relative(be.face()), be.face().getOpposite());
@@ -574,7 +673,7 @@ public final class BeltRun {
         }
         List<BeltRunPayload.Entry> entries = new ArrayList<>(cargo.size());
         for (Cargo c : cargo)
-            entries.add(new BeltRunPayload.Entry(c.stack.copy(), (float) c.pos(phase), c.pinned()));
+            entries.add(new BeltRunPayload.Entry(c.stack.copy(), (float) along(c.pos(phase)), c.pinned()));
         Vec3 mid = worldPos(n / 2.0);
         PacketDistributor.sendToPlayersNear(server, null, mid.x, mid.y, mid.z, 64 + n,
                 new BeltRunPayload(id, facing.get3DDataValue(), shape, kinds, speed, server.getGameTime(), entries));

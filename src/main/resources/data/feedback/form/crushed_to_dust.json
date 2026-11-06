@@ -1,0 +1,13 @@
+{
+  "from": "crushed",
+  "to": "dust",
+  "operation": "roll",
+  "base": 3,
+  "slope": 1.2,
+  "kinds": [
+    "mineral",
+    "crystal",
+    "ceramic",
+    "metalloid"
+  ]
+}

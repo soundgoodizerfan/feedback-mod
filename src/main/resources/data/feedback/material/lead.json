@@ -1,7 +1,9 @@
 {
   "color": "#6a6f8a",
   "kind": "metal",
-  "neutron": {"absorption": 0.15},
+  "neutron": {
+    "absorption": 0.15
+  },
   "hardness": 0.3,
   "density": 11.34,
   "thermal": {
@@ -25,12 +27,19 @@
     "density": 10.66
   },
   "separation": {
-    "reflectivity": 0.4
+    "reflectivity": 0.4,
+    "gangue": "feedback:calcite"
   },
   "electrical": {
     "drop": 0.65,
     "electrode_potential": -0.13,
-    "secondary_cell": {"volts_full": 2.1, "volts_low": 1.95, "volts_empty": 1.6, "amp_ticks_per_ingot": 24000, "cold_factor": 0.5}
+    "secondary_cell": {
+      "volts_full": 2.1,
+      "volts_low": 1.95,
+      "volts_empty": 1.6,
+      "amp_ticks_per_ingot": 24000,
+      "cold_factor": 0.5
+    }
   },
   "ampacity": 0.08,
   "corrosion_resistance": 0.9,
@@ -44,5 +53,18 @@
   "perks": {
     "toxic": 1
   },
-  "attuning": {"temperature": 40, "lock": 0, "coercive": 0.1, "loop_width": 0.45, "lag": 14, "cold": true}
+  "attuning": {
+    "temperature": 40,
+    "lock": 0,
+    "coercive": 0.1,
+    "loop_width": 0.45,
+    "lag": 14,
+    "cold": true
+  },
+  "bears": {
+    "feedback:lead": 1.0
+  },
+  "exclude": [
+    "lump"
+  ]
 }

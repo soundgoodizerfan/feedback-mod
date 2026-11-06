@@ -3,5 +3,6 @@
     "metal",
     "metalloid"
   ],
-  "mb": 16
+  "mb": 16,
+  "grain": 0.4
 }

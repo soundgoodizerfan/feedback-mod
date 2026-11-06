@@ -76,6 +76,8 @@ public class BeltBlock extends Block implements EntityBlock, BeltPart {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<Slope> SLOPE = EnumProperty.create("slope", Slope.class);
+    /** Set by the run while the band moves; picks the animated band texture over the still one. */
+    public static final net.minecraft.world.level.block.state.properties.BooleanProperty RUNNING = net.minecraft.world.level.block.state.properties.BooleanProperty.create("running");
 
     /** How the cell lies: level, rising ahead (cargo leaves one block higher) or falling. */
     public enum Slope implements StringRepresentable {
@@ -120,12 +122,12 @@ public class BeltBlock extends Block implements EntityBlock, BeltPart {
 
     public BeltBlock(Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SLOPE, Slope.FLAT));
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH).setValue(SLOPE, Slope.FLAT).setValue(RUNNING, false));
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, SLOPE);
+        builder.add(FACING, SLOPE, RUNNING);
     }
 
     @Override
@@ -236,7 +238,7 @@ public class BeltBlock extends Block implements EntityBlock, BeltPart {
         if (level.isClientSide != (entity instanceof Player))
             return;
         float speed = level.isClientSide ? BeltRuns.clientSpeed.apply(pos) : BeltRuns.of(level).speedAt(pos);
-        if (speed <= 0f)
+        if (speed == 0f)
             return;
         Direction f = state.getValue(FACING);
         Vec3 push = new Vec3(f.getStepX(), 0, f.getStepZ()).scale(speed * LogisticsTuning.BELT_RIDE_GAIN);

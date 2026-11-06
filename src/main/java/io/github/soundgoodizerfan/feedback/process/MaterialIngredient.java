@@ -55,6 +55,15 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
  * of which must be some material's) names the stuff; {@code property} with {@code min} and/or
  * {@code max} bounds it. With no property it is "any material's wire".
  *
+ * <h2>Form-agnostic: {@code material} and {@code forms}</h2>
+ * A thermal row asks "this material, in any of these forms" with {@code material} (an id; absent is any material of the tag) and
+ * {@code forms} (a list; absent or empty is every form the material has). A row with such an input is <b>form-agnostic</b>
+ * ({@link #agnostic}): its authored hold is for the reference form (grain 1, the ingot) and the form actually held scales it
+ * ({@code ThermalProcess#requiredFor}). Dust is never listed as an ingredient of its own; it is one of the forms that satisfies the row.
+ * <pre>
+ * { "type": "feedback:material", "material": "feedback:cast_iron", "forms": ["ingot", "scrap", "swarf", "dust"] }
+ * </pre>
+ *
  * <h2>Which table it reads</h2>
  * The server's material table where one is loaded, else the client's copy ({@link ClientMaterials}).
  * Both exist on an integrated server and hold the same data. {@link #getItems} is cached by the
@@ -63,21 +72,28 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
  * {@code PlayerList} posts just ahead of the recipe packet, on a login and on a {@code /reload}.
  */
 public record MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> tag,
-                                 Optional<MaterialProperty> property, float min, float max) implements ICustomIngredient {
+                                 Optional<MaterialProperty> property, float min, float max,
+                                 Optional<ResourceLocation> material, List<String> forms) implements ICustomIngredient {
+
+    public MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> tag, Optional<MaterialProperty> property, float min, float max) {
+        this(form, tag, property, min, max, Optional.empty(), List.of());
+    }
 
     public static final MapCodec<MaterialIngredient> CODEC = RecordCodecBuilder.<MaterialIngredient>mapCodec(i -> i.group(
             Codec.STRING.optionalFieldOf("form").forGetter(MaterialIngredient::form),
             TagKey.codec(Registries.ITEM).optionalFieldOf("tag").forGetter(MaterialIngredient::tag),
             MaterialProperty.CODEC.optionalFieldOf("property").forGetter(MaterialIngredient::property),
             Codec.FLOAT.optionalFieldOf("min", Float.NEGATIVE_INFINITY).forGetter(MaterialIngredient::min),
-            Codec.FLOAT.optionalFieldOf("max", Float.POSITIVE_INFINITY).forGetter(MaterialIngredient::max)
+            Codec.FLOAT.optionalFieldOf("max", Float.POSITIVE_INFINITY).forGetter(MaterialIngredient::max),
+            ResourceLocation.CODEC.optionalFieldOf("material").forGetter(MaterialIngredient::material),
+            Codec.STRING.listOf().optionalFieldOf("forms", List.of()).forGetter(MaterialIngredient::forms)
     ).apply(i, MaterialIngredient::new)).flatXmap(MaterialIngredient::checked, MaterialIngredient::checked);
 
     public static final IngredientType<MaterialIngredient> TYPE = new IngredientType<>(CODEC);
 
     private static DataResult<MaterialIngredient> checked(MaterialIngredient in) {
-        if (in.form.isEmpty() && in.tag.isEmpty())
-            return DataResult.error(() -> "a material ingredient names a form or a tag");
+        if (in.form.isEmpty() && in.tag.isEmpty() && in.material.isEmpty())
+            return DataResult.error(() -> "a material ingredient names a form, a tag or a material");
         if ((in.min != Float.NEGATIVE_INFINITY || in.max != Float.POSITIVE_INFINITY) && in.property.isEmpty())
             return DataResult.error(() -> "min and max need a property");
         return DataResult.success(in);
@@ -88,18 +104,43 @@ public record MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> t
         return new MaterialIngredient(Optional.of(form), Optional.empty(), Optional.of(property), min, Float.POSITIVE_INFINITY);
     }
 
+    private static final Map<Item, Optional<Material.Located>> LOCATED = new java.util.concurrent.ConcurrentHashMap<>();
+    private static volatile Map<ResourceLocation, Material> locatedFor = Map.of();
+
+    /**
+     * What {@link Material#find} says of an item, memoised: a vessel matches its contents against every row every tick, and the
+     * search walks every material. Dropped when the material table is replaced (a reload or a sync).
+     */
+    public static Optional<Material.Located> locate(Item item) {
+        Map<ResourceLocation, Material> now = materialsNow();
+        if (now != locatedFor) {
+            LOCATED.clear();
+            locatedFor = now;
+        }
+        return LOCATED.computeIfAbsent(item, i -> Material.find(now, i));
+    }
+
+    /** Whether this asks for a material in a list of forms rather than one form: a row with such an input is form-agnostic. */
+    public boolean agnostic() {
+        return material.isPresent() || !forms.isEmpty();
+    }
+
     @Override
     public boolean test(ItemStack stack) {
         if (stack.isEmpty())
             return false;
         if (tag.isPresent() && !stack.is(tag.get()))
             return false;
-        return Material.find(materialsNow(), stack).filter(this::accepts).isPresent();
+        return locate(stack.getItem()).filter(this::accepts).isPresent();
     }
 
     /** Whether a located item is what this asks for: the form, and the figure in range. */
     public boolean accepts(Material.Located located) {
         if (form.isPresent() && !form.get().equals(located.form()))
+            return false;
+        if (!forms.isEmpty() && !forms.contains(located.form()))
+            return false;
+        if (material.isPresent() && !material.get().equals(located.id()))
             return false;
         if (property.isEmpty())
             return true;
@@ -111,7 +152,13 @@ public record MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> t
     public Stream<ItemStack> getItems() {
         Map<ResourceLocation, Material> materials = materialsNow();
         Stream<ItemStack> stacks;
-        if (form.isPresent()) {
+        if (form.isEmpty() && material.isPresent()) {
+            ResourceLocation id = material.get();
+            Material own = materials.get(id);
+            stacks = own == null ? Stream.empty() : own.items(id).keySet().stream()
+                    .filter(f -> accepts(new Material.Located(id, own, f)))
+                    .flatMap(f -> own.stack(id, f).stream());
+        } else if (form.isPresent()) {
             stacks = materials.entrySet().stream().flatMap(e -> e.getValue().stack(e.getKey(), form.get()).stream()
                     .filter(s -> accepts(new Material.Located(e.getKey(), e.getValue(), form.get()))));
         } else {

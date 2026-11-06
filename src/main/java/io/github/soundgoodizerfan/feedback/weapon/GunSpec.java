@@ -331,12 +331,18 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     }
 
     public static Optional<Fault> fault(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
+        return faults(design, type, materials).stream().findFirst();
+    }
+
+    /** Every place the drawing fails, not only the first, so the Blueprint Table can mark each failing link. */
+    public static List<Fault> faults(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
+        List<Fault> out = new java.util.ArrayList<>();
         if (type == null || type.family() != ModularType.Family.GUN)
-            return Optional.empty();
+            return out;
         String actionRole = design.part(SLIDE) != null ? SLIDE : BOLT;
         ModularDesign.Part action = design.part(actionRole);
         if (action == null || design.part(BARREL) == null)
-            return Optional.empty();
+            return out;
         List<String> feeds = List.of(CYLINDER, TUBE, BELT, BOX_FEED).stream().filter(r -> design.part(r) != null).toList();
         GunLayout.Action act = GunLayout.Action.of(type.roles().get(actionRole).variant(action).map(ModularType.Variant::name).orElse(""));
         GunLayout.Feed feed = feeds.isEmpty() ? (act == GunLayout.Action.BREAK ? GunLayout.Feed.BARRELS
@@ -345,34 +351,34 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 : design.part(BOX_FEED) != null ? GunLayout.Feed.BOX : GunLayout.Feed.BELT;
         boolean second = design.part(SECOND) != null;
         if (!feed.fits(act))
-            return Optional.of(new Fault(List.of(actionRole, feeds.isEmpty() ? BARREL : feeds.get(0)), "feed"));
+            out.add(new Fault(List.of(actionRole, feeds.isEmpty() ? BARREL : feeds.get(0)), "feed"));
         if (second && (act != GunLayout.Action.BREAK || feed != GunLayout.Feed.BARRELS))
-            return Optional.of(new Fault(List.of(SECOND, actionRole), "second"));
+            out.add(new Fault(List.of(SECOND, actionRole), "second"));
         if (feeds.size() > 1)
-            return Optional.of(new Fault(List.of(feeds.get(0), feeds.get(1)), "feeds"));
+            out.add(new Fault(List.of(feeds.get(0), feeds.get(1)), "feeds"));
         for (String r : List.of(BARREL, RECEIVER, TRIGGER, actionRole, SECOND, CYLINDER, TUBE, BELT, BOX_FEED)) {
             ModularDesign.Part p = design.part(r);
             if (p != null && (materials.get(p.material()) == null || !buildable(materials.get(p.material()))))
-                return Optional.of(new Fault(List.of(r), "material"));
+                out.add(new Fault(List.of(r), "material"));
         }
         ModularDesign.Part grip = design.part(GRIP), wrap = design.part(WRAP);
         if (grip != null && (materials.get(grip.material()) == null || !gripMaterial(materials.get(grip.material()))))
-            return Optional.of(new Fault(List.of(GRIP), "grip"));
+            out.add(new Fault(List.of(GRIP), "grip"));
         if (wrap != null && (materials.get(wrap.material()) == null || !wrapMaterial(materials.get(wrap.material()))))
-            return Optional.of(new Fault(List.of(WRAP), "material"));
+            out.add(new Fault(List.of(WRAP), "material"));
         List<String> launchers = List.of(SPRING, CHEST, WINDING).stream().filter(r -> design.part(r) != null).toList();
         if (launchers.size() > 1)
-            return Optional.of(new Fault(List.of(launchers.get(0), launchers.get(1)), "launcher"));
+            out.add(new Fault(List.of(launchers.get(0), launchers.get(1)), "launcher"));
         ModularDesign.Part winding = design.part(WINDING);
         if (winding != null) {
             Material wm = materials.get(winding.material());
             if (wm == null || wm.propellant().filter(p -> p.drive() == Material.Propellant.Drive.COIL).isEmpty())
-                return Optional.of(new Fault(List.of(WINDING), "winding"));
+                out.add(new Fault(List.of(WINDING), "winding"));
         }
         for (String r : List.of(SPRING, CHEST)) {
             ModularDesign.Part p = design.part(r);
             if (p != null && (materials.get(p.material()) == null || !buildable(materials.get(p.material()))))
-                return Optional.of(new Fault(List.of(r), "material"));
+                out.add(new Fault(List.of(r), "material"));
         }
         Map<String, String> slots = new HashMap<>();
         for (String letter : FITTED) {
@@ -381,13 +387,15 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 continue;
             Material fm = materials.get(p.material());
             Optional<GunOption> option = GunOptions.ofForm(p.kind());
-            if (fm == null || !buildable(fm) || option.isEmpty())
-                return Optional.of(new Fault(List.of(letter), "material"));
+            if (fm == null || !buildable(fm) || option.isEmpty()) {
+                out.add(new Fault(List.of(letter), "material"));
+                continue;
+            }
             String clash = slots.put(option.get().slot(), letter);
             if (clash != null)
-                return Optional.of(new Fault(List.of(clash, letter), "slot"));
+                out.add(new Fault(List.of(clash, letter), "slot"));
         }
-        return Optional.empty();
+        return out;
     }
 
     private static ModularDesign.Part firstOf(ModularDesign design, String... roles) {

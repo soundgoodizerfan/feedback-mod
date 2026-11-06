@@ -1,0 +1,31 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:monazite",
+      "forms": [
+        "tailings"
+      ]
+    }
+  ],
+  "min_temperature": 150,
+  "optimal_temperature": 200,
+  "max_temperature": 250,
+  "required_tpu": 300,
+  "spoil_temperature": 305,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:lye",
+        "mb": 200
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:thorium_hydroxide",
+        "mb": 80
+      }
+    ],
+    "heat": 4
+  }
+}

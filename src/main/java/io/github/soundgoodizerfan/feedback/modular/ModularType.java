@@ -80,6 +80,7 @@ import net.minecraft.world.entity.EquipmentSlot;
  *                    one to eight powders; writing seventy-two patterns for it would be the mistake.
  * @param bakes       for a dish: it is formed raw and cooked whole in a heated vessel ({@code Cooking#findCookable}), instead of
  *                    being served cooked through (a pie).
+ * @param board       the Blueprint Table's layout beyond the patterns ({@link Board}).
  * @param shapes      things the type's bench shapes that fill no role as a part: a food laid from dough at the Prep
  *                    Table's Parts tab (flatbread dough, noodles), the food item itself and no {@code MadeOf}.
  */
@@ -88,7 +89,25 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
                           Map<String, String> vanilla, float armourMax, boolean blueprint,
                           Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges,
-                          List<Shaping> shapes, boolean bakes) {
+                          List<Shaping> shapes, boolean bakes, Board board) {
+
+    /**
+     * How the Blueprint Table lays a type out beyond its patterns. All optional: a type with none is drawn from its patterns alone.
+     *
+     * @param layout where a part no pattern lays sits, by role letter, as {@code [column, row]} in the pattern's own cells
+     *               (fractions allowed, negative to go above or left); parts without an entry go to the tray.
+     * @param groups sub-assemblies of a big design, name to role letters (lang {@code gui.feedback.blueprint_table.group.<name>}):
+     *               a design of many parts shows each group as one cluster, opened with a click.
+     * @param joins  pairs of role letters joined by a link although no pattern puts them side by side.
+     */
+    public record Board(Map<String, List<Float>> layout, Map<String, List<String>> groups, List<List<String>> joins) {
+        public static final Board NONE = new Board(Map.of(), Map.of(), List.of());
+        static final Codec<Board> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.unboundedMap(Codec.STRING, Codec.FLOAT.listOf()).optionalFieldOf("layout", Map.of()).forGetter(Board::layout),
+                Codec.unboundedMap(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("groups", Map.of()).forGetter(Board::groups),
+                Codec.STRING.listOf().listOf().optionalFieldOf("joins", List.of()).forGetter(Board::joins)
+        ).apply(instance, Board::new));
+    }
 
     /**
      * The names a build gets. Naming only; what a build does comes from its parts.
@@ -149,6 +168,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         GLOVE,
         /** A pack worn on the back: the shell sets the slots, the strap sets the carry rating, the contents live on the stack. */
         BACKPACK,
+        /** A sleeping roll: sheet, fill and shell; its bake is the comfort the fill and sheet give ({@link ModularBedroll}). */
+        BEDROLL,
         /** A vessel that holds experience ({@code xp_container}): its bake is the ceiling its material's {@code xp_store} gives per cell of stock, written as an {@code XpStore} on the stack. A material that states no {@code xp_store} bakes nothing. No wear and no tool figures. */
         VESSEL,
         /** A rechargeable cell stack ({@code battery}): plates whose material states {@code electrical.secondary_cell}, in a case whose material insulates. Its bake is the {@link ModularBake#cell} spec the placed block runs on. */
@@ -376,11 +397,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.BOOL.optionalFieldOf("bakes", false))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.trait(), t.bakes())),
             Codec.mapPair(Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()),
-                    Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()))
-                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), t.shapes()))
+                    Codec.mapPair(Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()),
+                            Board.CODEC.optionalFieldOf("board", Board.NONE)))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), com.mojang.datafixers.util.Pair.of(t.shapes(), t.board())))
     ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
                        gate, names, traitBakes, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
-            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond(), traitBakes.getSecond())));
+            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond(), tail.getSecond().getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);

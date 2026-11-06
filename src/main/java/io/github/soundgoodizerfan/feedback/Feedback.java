@@ -298,6 +298,12 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.ShingleBeginPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ShingleBeginPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ShingleBeginPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.ShingleFinishPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ShingleFinishPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ShingleFinishPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload::handle)

@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.logistics.belt.BeltBlockEntity;
+import io.github.soundgoodizerfan.feedback.logistics.belt.ModuleHost;
 import io.github.soundgoodizerfan.feedback.logistics.belt.BeltRuns;
 
 import snownee.jade.api.BlockAccessor;
@@ -38,15 +39,17 @@ public class BeltServerData implements IServerDataProvider<BlockAccessor> {
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
-        if (!(accessor.getBlockEntity() instanceof BeltBlockEntity belt))
+        if (!(accessor.getBlockEntity() instanceof ModuleHost belt))
             return;
         data.putBoolean("Belt", true);
         if (belt.module() != null) {
             data.putInt(MODULE, belt.module().ordinal());
-            data.putBoolean(SOILED, belt.soiled());
+            data.putBoolean(SOILED, belt instanceof BeltBlockEntity b && b.soiled());
             data.putBoolean(ENGAGED, belt.engaged());
-            data.putLong(COUNT, belt.getCount());
-            data.putFloat(RATE, belt.getRate());
+            if (belt instanceof BeltBlockEntity b) {
+                data.putLong(COUNT, b.getCount());
+                data.putFloat(RATE, b.getRate());
+            }
         }
         var run = BeltRuns.of(accessor.getLevel()).runAt(belt.getBlockPos());
         data.putFloat(MASS, run == null ? 0f : run.mass());

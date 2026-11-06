@@ -28,11 +28,15 @@ Place cells end to end facing the same way, and finish the run with a [Belt Head
 - **Cargo** leaving a run goes onto the next belt, into a container or inventory the end faces, or falls to the floor.
 - **Right-click the top** of a cell with an empty hand to take a unit of cargo off the belt. That clears a jam.
 - A run carries a limited mass of cargo, and a single unit is capped too: a heavy stack rides as several units, and heavier cargo spaces itself further apart.
-- **Speed** follows the head roller's RPM. The roller loads its shaft with its own weight plus the cargo on the run, so a weak shaft slows a heavily loaded belt.
+- **Look.** The band moves while the run moves and stands still when it stops. A cleated band shows its cleat bars sliding along the run.
+- **Away from you.** Cargo on a run in an unloaded chunk catches up when the chunk loads: the run moves on by the time it waited, at most about a minute of travel.
+- **Speed** follows the head roller's RPM; a head turning the other way runs the belt backward. The roller loads its shaft with its own weight plus the cargo on the run, so a weak shaft slows a heavily loaded belt.
 
 ## Slopes
 
-Cargo holds on a rise only if the belt's grip times the cargo's grip is enough. A cleated or rubber band climbs where plain leather lets cargo slide back, slippery cargo climbs worst, and a belt wet from rain or a fluid above it slips sooner. A unit that cannot hold waits at the foot of the rise.
+Cargo holds on a rise only if the belt's grip times the cargo's grip is enough. A cleated or rubber band climbs where plain leather lets cargo slide back, slippery cargo climbs worst, and a wet belt slips sooner. A unit that cannot hold waits at the foot of the rise.
+
+A band turns **wet** when rain or a fluid falls on it, or when cargo that holds fluid rides it, and stays wet for about 30 seconds afterward. A wet band has about half the grip. A [Belt Hood](Belt_Modules.md#belt-hood) over a cell keeps rain and fluid from above off it; cargo that holds fluid still wets the band under it.
 
 ## Heat
 
@@ -43,6 +47,6 @@ Hot cargo and hot sources are [hazards](Hazards.md) like any other.
 
 ## Tips and automation
 
-A [Belt Counter](Belt_Modules.md#belt-counter) reports counts and rate to a [Controller](Controller.md). A [Belt Gate](Belt_Modules.md#belt-gate), diverter, electromagnet and air jet can be engaged and released by a controller.
+A [Belt Counter](Belt_Modules.md#belt-counter) reports counts and rate to a [Controller](Controller.md). A [Linear Motor Coil](Belt_Modules.md#linear-motor-coil) drives a run on current alone. A [Belt Gate](Belt_Modules.md#belt-gate), diverter, electromagnet and air jet can be engaged and released by a controller.
 
 [Tube Stations](Tube_Station.md) take items from a belt end and [funnels](Belt_Modules.md#belt-funnel-input) move cargo on and off a run.

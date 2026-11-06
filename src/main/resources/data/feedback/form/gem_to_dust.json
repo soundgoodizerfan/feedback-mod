@@ -1,0 +1,8 @@
+{
+  "from": "gem",
+  "to": "dust",
+  "operation": "roll",
+  "base": 6,
+  "slope": 1.5,
+  "kinds": ["crystal", "mineral"]
+}

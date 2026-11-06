@@ -39,7 +39,7 @@
   "corrosion_resistance": 0.95,
   "enchantability": 8,
   "forms": {
-    "powder": "feedback:netherite_powder",
+    "dust": "feedback:netherite_powder",
     "green_compact": "feedback:netherite_green_compact"
   },
   "exclude": [

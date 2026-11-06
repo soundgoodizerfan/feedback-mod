@@ -1,7 +1,9 @@
 {
   "color": "#8c3028",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "hardness": 5,
   "density": 5.3,
   "thermal": {
@@ -14,9 +16,10 @@
     "abrasiveness": 0.3
   },
   "separation": {
-    "reflectivity": 0.3
+    "reflectivity": 0.3,
+    "gangue": "feedback:sandstone"
   },
   "bears": {
-    "feedback:iron": 0.8
+    "feedback:cast_iron": 0.8
   }
 }

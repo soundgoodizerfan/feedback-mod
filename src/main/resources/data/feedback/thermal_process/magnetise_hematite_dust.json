@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:hematite",
+      "forms": [
+        "dust"
+      ]
+    },
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "min_temperature": 600,
+  "optimal_temperature": 700,
+  "max_temperature": 800,
+  "required_tpu": 200,
+  "max_rate": 8,
+  "result": {
+    "id": "feedback:magnetite_dust"
+  },
+  "spoil_temperature": 1000,
+  "spoiled": {
+    "id": "feedback:burnt_iron"
+  }
+}

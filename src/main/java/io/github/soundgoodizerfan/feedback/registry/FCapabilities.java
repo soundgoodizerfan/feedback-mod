@@ -134,7 +134,7 @@ public class FCapabilities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ELECTROLYSER.get(),
                 (electrolyser, side) -> side == null ? null : electrolyser.port(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FBlockEntities.ELECTROLYSER.get(),
-                (electrolyser, side) -> electrolyser.solute());
+                (electrolyser, side) -> electrolyser.itemPort(side));
         // The electrolytic cell's water, by bucket or pipe; draining it takes dissolved metal along.
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.ELECTROLYTIC_CELL.get(),
                 (cell, side) -> cell.getFluidHandler());

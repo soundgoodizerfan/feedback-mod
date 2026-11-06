@@ -2,7 +2,10 @@
   "color": "#8d8f98",
   "kind": "mineral",
   "exclude": [
-    "ingot"
+    "ingot",
+    "crushed",
+    "concentrate",
+    "tailings"
   ],
   "hardness": 7,
   "density": 19.5,

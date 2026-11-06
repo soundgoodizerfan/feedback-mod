@@ -45,7 +45,11 @@ public enum BeltModule {
     COUNTER(false, false, null, null, null),
     COOLER(false, false, null, null, null),
     GATE(false, false, null, null, null),
-    FAN(true, false, null, null, null);
+    FAN(true, false, null, null, null),
+    /** A cover over the cell: rain and fluid above no longer wet the band. */
+    HOOD(false, false, null, null, null),
+    /** A coil replacing a roller: while powered it drives the run at a fixed speed, shaft or none. */
+    LINEAR(true, false, null, null, null);
 
     public final boolean powered, sided;
     /** The head a sorting module reads with, or null. */
@@ -75,6 +79,11 @@ public enum BeltModule {
     /** Whether it reads cargo and sweeps matches to its side. */
     public boolean sorts() {
         return detector != null;
+    }
+
+    /** Whether the head roller may carry it: only the end-of-run modules that need no band, screen or wire. */
+    public boolean onHead() {
+        return this == FUNNEL_OUT || this == CHUTE || this == GATE || this == DIVERTER || this == SPLITTER;
     }
 
     public static BeltModule byOrdinal(int i) {

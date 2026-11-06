@@ -1,0 +1,17 @@
+{
+  "color": "#2f7fb8",
+  "kind": "fluid",
+  "traits": [
+    "corrosive"
+  ],
+  "hardness": 0.1,
+  "density": 1.6,
+  "composition": {
+    "feedback:copper": 0.4,
+    "feedback:sulfuric_acid": 0.6
+  },
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  }
+}

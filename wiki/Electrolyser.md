@@ -1,6 +1,6 @@
 # Electrolyser
 
-Runs electric current through a liquid and collects what comes apart at each electrode. It splits water into [hydrogen](Chemicals.md#hydrogen) and [oxygen](Chemicals.md#oxygen), [brine](Chemicals.md#brine) into hydrogen, [chlorine](Chemicals.md#chlorine) and [lye](Chemicals.md#lye), and a molten [cryolite bath](Chemicals.md#cryolite-bath) into [aluminum](Making_Aluminum.md) and oxygen. It is a different machine from the [Electrolytic Cell](Electrolytic_Cell.md), which dissolves and plates metal.
+Runs electric current through a liquid and collects what comes apart at each electrode. It splits water into [hydrogen](Chemicals.md#hydrogen) and [oxygen](Chemicals.md#oxygen), [brine](Chemicals.md#brine) into hydrogen, [chlorine](Chemicals.md#chlorine) and [lye](Chemicals.md#lye), the [leach liquors](Chemicals.md#leach-liquors) of copper, zinc, nickel and cobalt into metal plated on the cathode and oxygen, and a molten [cryolite bath](Chemicals.md#cryolite-bath) into [aluminum](Making_Aluminum.md) and oxygen. It is a different machine from the [Electrolytic Cell](Electrolytic_Cell.md), which dissolves and plates metal.
 
 ## Crafting
 
@@ -28,7 +28,15 @@ JEI's *Thermal process* card lists every liquid it can split, the voltage it nee
 | --- | --- | --- | --- | --- |
 | Water | 1.23 V | 2 mB hydrogen per mB | 1 mB oxygen per mB | |
 | Brine | 2.2 V | 1 mB hydrogen per mB | 1 mB chlorine per mB | 1 mB lye per mB stays in the cell |
+| Copper Sulfate Liquor | 2.0 V | 1 Copper Nugget plated per 16 mB | 1 mB oxygen per mB | |
+| Zinc Sulfate Liquor | 3.0 V | 1 Zinc Nugget plated per 16 mB | 1 mB oxygen per mB | |
+| Nickel Sulfate Liquor | 2.5 V | 1 Nickel Nugget plated per 16 mB | 1 mB oxygen per mB | |
+| Cobalt Sulfate Liquor | 2.5 V | 1 Cobalt Nugget plated per 16 mB | 1 mB oxygen per mB | |
 | Cryolite bath with alumina | 4.0 V | 1 mB molten aluminum per unit | 1 mB oxygen per unit | needs the bath at **950 Tu** or hotter |
+
+### Plated metal
+
+A sulfate liquor gives up its metal as **nuggets plated on the cathode**, not as a fluid. They collect in the cell: take them with an empty hand, or let a hopper draw them from the **back** (cathode) face. When the plate stack is full the cell stops until they are taken.
 
 ### Brine
 

@@ -398,7 +398,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
             rate *= (activity() <= r.activityFloor() ? 0f : (activity() - r.activityFloor()) / (1f - r.activityFloor()))
                     * (catalyst() == null ? 1f : catalyst().activity());
         progress = ProcessRun.hold(progress, ProcessRun.limited(row, rate, lastDelta));
-        if (progress < row.requiredTpu())
+        if (progress < row.requiredFor(hopper))
             return;
 
         // The batch happens, in window or out: inputs are consumed either way.
@@ -416,6 +416,10 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         }
         if (!over && !row.result().isEmpty())
             net.minecraft.world.level.block.Block.popResource(level, worldPosition.above(), row.result().copy());
+        if (!over)
+            for (ThermalProcess.Byproduct extra : r.byproducts())
+                if (extra.chance() >= 1f || level.random.nextFloat() < extra.chance())
+                    net.minecraft.world.level.block.Block.popResource(level, worldPosition.above(), extra.stack().copy());
         for (ThermalProcess.Amount a : over ? r.overTu() : r.fluidOutputs())
             emit(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()), temperature));
         if (r.catalyst().isPresent()) {

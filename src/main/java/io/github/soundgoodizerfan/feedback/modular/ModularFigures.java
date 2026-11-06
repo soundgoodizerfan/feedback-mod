@@ -178,7 +178,13 @@ public record ModularFigures(List<Float> values, int step) {
         /** {@code Mu}: the load the strap carries before the wearer is slowed; the strap's strength times the wear left. */
         CARRY,
         /** Item slots of the bag, fixed by the shell's shape. */
-        SLOTS
+        SLOTS,
+        /** Mounting points of the shell and frame left once the fittings are on; a fitting that does not fit refuses the bake. */
+        POINTS,
+        /** Extra typed slots the fittings add beside the fixed ones (holster, bottle loops, bedroll lashing, bandolier). */
+        STORES,
+        /** A bedroll's comfort: how soft its fill and sheet are; the share of health a night in it gives back. */
+        COMFORT
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

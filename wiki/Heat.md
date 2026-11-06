@@ -90,7 +90,7 @@ Melting, smelting, steel, ceramics, tempering, boiling and condensing, quenching
 - **Max rate**: if listed, how fast the temperature may be changing while it works.
 - **Spoils**: above this temperature the batch is **ruined instantly** (for example, iron burns to *Burnt Iron*).
 
-All thermal process cards share this layout. JEI shows no Work figures (Fu or *Needs*) and hides vanilla ores; each material's items list the mixing recipes they take part in.
+A reaction that takes more than one form of a material (steel from cast iron, roasting pyrite) shows its hold for the form on display: finer forms hold for less ([Dust](Materials.md#dust)). All thermal process cards share this layout. JEI shows no Work figures (Fu or *Needs*) and hides vanilla ores; each material's items list the mixing recipes they take part in.
 
 JEI's **Separation** tab lists per material what a magnet does to it, its reflectivity and its density; the **Fuel** tab lists its flame temperature, burn time and spread.
 

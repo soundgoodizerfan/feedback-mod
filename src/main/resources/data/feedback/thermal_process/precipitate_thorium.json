@@ -1,0 +1,26 @@
+{
+  "inputs": [],
+  "min_temperature": 300,
+  "optimal_temperature": 380,
+  "max_temperature": 450,
+  "required_tpu": 200,
+  "result": {
+    "id": "feedback:thorium_nugget",
+    "count": 9
+  },
+  "spoil_temperature": 510,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:thorium_hydroxide",
+        "mb": 144
+      },
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 300
+      }
+    ],
+    "fluid_outputs": [],
+    "heat": 2
+  }
+}

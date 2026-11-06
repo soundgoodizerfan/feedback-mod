@@ -14,11 +14,15 @@ W W W
 
 ## What it pulls
 
-Anything on the ground made of **iron, steel, cast iron, hardened steel or netherite**, in any form. That means ingots, nuggets, plates, rods, scrap, swarf, raw iron. (Assembled [tools and armor](Tools_and_Weapons.md) are not pulled yet.)
+Anything on the ground made of **iron, steel, cast iron, hardened steel or netherite**, in any form. That means ingots, nuggets, plates, rods, scrap, swarf, dust, raw iron. (Assembled [tools and armor](Tools_and_Weapons.md) are not pulled yet.)
 
 It ignores everything else: copper, gold, zinc, tin, brass, bronze, lead, stone, wood and so on. A magnet over a mixed pile will drag the iron and steel out and leave the rest behind. That's what it's for: **sorting by what something is made of**, not by which item it is.
 
 It only moves items that are lying on the ground. It doesn't pick anything up into an inventory, and it doesn't touch mobs or players. Put a hopper or a chest under where the items end up.
+
+## Separating ore
+
+Crushed ore or dust of a **magnetic** ore (such as magnetite) lying within about a block and a half of a powered magnet sheds its host rock. Each unit the magnet can tell from its rock splits into a **Concentrate**, which clings to the magnet, and a **Tailings**, which falls away and is never pulled; a unit it cannot tell stays to be pulled again. It works on a handful of units at a time. See [Ore Processing](Ore_Processing.md#separating).
 
 ## Power
 

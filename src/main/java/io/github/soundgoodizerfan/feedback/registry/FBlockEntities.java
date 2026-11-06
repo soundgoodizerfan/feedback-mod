@@ -417,7 +417,8 @@ public class FBlockEntities {
                                     state.getBlock() instanceof ThermalVesselBlock block
                                             ? block.getKind() : VesselKind.FURNACE),
                             FBlocks.FURNACE.get(), FBlocks.SMOKER.get(), FBlocks.BLAST_FURNACE.get(),
-                            FBlocks.KILN.get(), FBlocks.ANNEALING_FURNACE.get(), FBlocks.IMPROVED_FURNACE.get())
+                            FBlocks.KILN.get(), FBlocks.ANNEALING_FURNACE.get(), FBlocks.IMPROVED_FURNACE.get(),
+                            FBlocks.PUDDLING_FURNACE.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HeatExchangerBlockEntity>> HEAT_EXCHANGER =

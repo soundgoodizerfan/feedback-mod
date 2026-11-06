@@ -61,7 +61,7 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "separation", Card.class);
 
-    private static final int WIDTH = 168, HEIGHT = 82, ROW = 11;
+    private static final int WIDTH = 168, HEIGHT = 126, ROW = 11;
 
     private final IDrawable icon;
 
@@ -142,5 +142,21 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
                 io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.HARDNESS, io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.KIND})
             bands.append(bands.length() == 0 ? "" : ", ").append(Component.translatable("feedback.sort.band." + io.github.soundgoodizerfan.feedback.logistics.sort.SortReader.bandOf(r, p).key()).getString());
         row(graphics, font, y, "feedback.jei.separation.sorts_as", bands.toString());
+        // An ore: what each separator reports to the concentrate per pass, from its contrast with its host rock.
+        if (m.item(card.id(), "concentrate").isPresent()) {
+            y += ROW;
+            var materials = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.materialsNow();
+            var gangue = io.github.soundgoodizerfan.feedback.process.OreLadder.gangueOf(m, materials);
+            ResourceLocation host = m.separation().gangue().orElse(io.github.soundgoodizerfan.feedback.process.OreLadder.DEFAULT_GANGUE);
+            row(graphics, font, y, "feedback.jei.separation.gangue", Component.translatable("material." + host.getNamespace() + "." + host.getPath()).getString());
+            for (var mode : io.github.soundgoodizerfan.feedback.process.OreLadder.Mode.values()) {
+                y += ROW;
+                float dust = gangue.map(g -> io.github.soundgoodizerfan.feedback.process.OreLadder.share(mode, m, g, "dust")).orElse(0f);
+                float crushed = gangue.map(g -> io.github.soundgoodizerfan.feedback.process.OreLadder.share(mode, m, g, "crushed")).orElse(0f);
+                row(graphics, font, y, "feedback.jei.separation.ore." + mode.key(), dust <= 0f
+                        ? Component.translatable("feedback.jei.separation.ore.none").getString()
+                        : Component.translatable("feedback.jei.separation.ore.share", Math.round(dust * 100f), Math.round(crushed * 100f)).getString());
+            }
+        }
     }
 }

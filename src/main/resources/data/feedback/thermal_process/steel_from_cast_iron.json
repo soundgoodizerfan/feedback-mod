@@ -1,6 +1,6 @@
 {
   "inputs": [
-    { "item": "feedback:cast_iron" },
+    { "type": "feedback:material", "material": "feedback:cast_iron", "forms": ["ingot", "nugget", "scrap", "swarf", "dust"] },
     { "item": "minecraft:charcoal" }
   ],
   "min_temperature": 1350,

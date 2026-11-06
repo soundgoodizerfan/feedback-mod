@@ -1,0 +1,56 @@
+{
+  "values": [
+    {
+      "id": "feedback:hematite_lump",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_crushed",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_concentrate",
+      "required": false
+    },
+    {
+      "id": "feedback:hematite_dust",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_lump",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_crushed",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_concentrate",
+      "required": false
+    },
+    {
+      "id": "feedback:magnetite_dust",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_lump",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_crushed",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_concentrate",
+      "required": false
+    },
+    {
+      "id": "feedback:limonite_dust",
+      "required": false
+    },
+    {
+      "id": "feedback:burnt_iron",
+      "required": false
+    }
+  ]
+}

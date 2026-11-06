@@ -217,8 +217,11 @@ public final class BeltRuns {
         // Saved cargo of freshly loaded cells, then what the old runs carried.
         for (BeltRun run : built)
             for (int i = 0; i < run.n; i++)
-                for (Object[] saved : CargoSave.take(level.getBlockEntity(run.blocks[i])))
+                for (Object[] saved : CargoSave.take(level.getBlockEntity(run.blocks[i]))) {
                     run.seat((ItemStack) saved[0], i + (Float) saved[1]);
+                    if (saved.length > 2 && (Long) saved[2] > 0L)
+                        run.sat(level.getGameTime() - (Long) saved[2]);
+                }
         for (Object[] c : carried) {
             BlockPos at = (BlockPos) c[0];
             BeltRun run = byBlock.get(at);

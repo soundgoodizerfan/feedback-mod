@@ -25,7 +25,8 @@
     "density": 8.02
   },
   "separation": {
-    "reflectivity": 0.5
+    "reflectivity": 0.5,
+    "gangue": "feedback:stone"
   },
   "electrical": {
     "conductivity": 1,
@@ -44,5 +45,17 @@
     "tubing": "feedback:copper_tubing"
   },
   "enchantability": 8,
-  "attuning": {"temperature": 400, "lock": 280, "coercive": 0.15, "loop_width": 0.2, "lag": 5}
+  "attuning": {
+    "temperature": 400,
+    "lock": 280,
+    "coercive": 0.15,
+    "loop_width": 0.2,
+    "lag": 5
+  },
+  "bears": {
+    "feedback:copper": 1.0
+  },
+  "exclude": [
+    "lump"
+  ]
 }

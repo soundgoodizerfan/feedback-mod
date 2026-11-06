@@ -76,6 +76,8 @@ public class GrappleHook extends Projectile {
     public static final int WINCH = 2;
     /** A barbed head: a lighter creature the hook bites is reeled in, not swung from. */
     public static final int BARB = 4;
+    /** A second hook head: using the grapple again with a line out throws a second line. */
+    public static final int MULTI = 8;
 
     private static final EntityDataAccessor<Integer> DATA_FITTINGS = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_ANCHORED = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.BOOLEAN);
@@ -322,6 +324,11 @@ public class GrappleHook extends Projectile {
     /** Lets the line go. */
     public void release() {
         discard();
+    }
+
+    /** Every hook {@code owner} has out (at most two). */
+    public static java.util.List<GrappleHook> allOf(Level level, LivingEntity owner) {
+        return level.getEntitiesOfClass(GrappleHook.class, owner.getBoundingBox().inflate(ModularTuning.GRAPPLE_ROPE_LONG + 8), h -> h.getOwner() == owner);
     }
 
     /** The hook {@code owner} has out, or null. */

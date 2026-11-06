@@ -1,0 +1,41 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "tag": "feedback:iron_bearers",
+      "forms": [
+        "lump",
+        "ore",
+        "deepslate_ore",
+        "raw",
+        "crushed",
+        "concentrate",
+        "dust"
+      ]
+    },
+    {
+      "item": "minecraft:charcoal"
+    }
+  ],
+  "min_temperature": 1000,
+  "optimal_temperature": 1200,
+  "max_temperature": 1350,
+  "required_tpu": 400,
+  "max_rate": 6,
+  "result": {
+    "id": "feedback:iron_bloom",
+    "count": 1,
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:iron_bloom",
+        "stock": "bloom",
+        "cells": 1,
+        "flaw": 3
+      }
+    }
+  },
+  "spoil_temperature": 1400,
+  "spoiled": {
+    "id": "feedback:cast_iron"
+  }
+}

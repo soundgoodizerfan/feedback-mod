@@ -168,5 +168,10 @@
   },
   "vanilla": {
     "hoe": "ingot"
+  },
+  "board": {
+    "layout": {
+      "T": [1, 0]
+    }
   }
 }

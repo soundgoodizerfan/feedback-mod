@@ -1,48 +1,93 @@
 {
   "variants": {
-    "facing=north,slope=flat": {
+    "facing=north,slope=flat,running=true": {
       "model": "feedback:block/conveyor_belt_flat"
     },
-    "facing=north,slope=up": {
+    "facing=north,slope=flat,running=false": {
+      "model": "feedback:block/conveyor_belt_flat_still"
+    },
+    "facing=north,slope=up,running=true": {
       "model": "feedback:block/conveyor_belt_up"
     },
-    "facing=north,slope=down": {
+    "facing=north,slope=up,running=false": {
+      "model": "feedback:block/conveyor_belt_up_still"
+    },
+    "facing=north,slope=down,running=true": {
       "model": "feedback:block/conveyor_belt_down"
     },
-    "facing=east,slope=flat": {
+    "facing=north,slope=down,running=false": {
+      "model": "feedback:block/conveyor_belt_down_still"
+    },
+    "facing=east,slope=flat,running=true": {
       "model": "feedback:block/conveyor_belt_flat",
       "y": 90
     },
-    "facing=east,slope=up": {
+    "facing=east,slope=flat,running=false": {
+      "model": "feedback:block/conveyor_belt_flat_still",
+      "y": 90
+    },
+    "facing=east,slope=up,running=true": {
       "model": "feedback:block/conveyor_belt_up",
       "y": 90
     },
-    "facing=east,slope=down": {
+    "facing=east,slope=up,running=false": {
+      "model": "feedback:block/conveyor_belt_up_still",
+      "y": 90
+    },
+    "facing=east,slope=down,running=true": {
       "model": "feedback:block/conveyor_belt_down",
       "y": 90
     },
-    "facing=south,slope=flat": {
+    "facing=east,slope=down,running=false": {
+      "model": "feedback:block/conveyor_belt_down_still",
+      "y": 90
+    },
+    "facing=south,slope=flat,running=true": {
       "model": "feedback:block/conveyor_belt_flat",
       "y": 180
     },
-    "facing=south,slope=up": {
+    "facing=south,slope=flat,running=false": {
+      "model": "feedback:block/conveyor_belt_flat_still",
+      "y": 180
+    },
+    "facing=south,slope=up,running=true": {
       "model": "feedback:block/conveyor_belt_up",
       "y": 180
     },
-    "facing=south,slope=down": {
+    "facing=south,slope=up,running=false": {
+      "model": "feedback:block/conveyor_belt_up_still",
+      "y": 180
+    },
+    "facing=south,slope=down,running=true": {
       "model": "feedback:block/conveyor_belt_down",
       "y": 180
     },
-    "facing=west,slope=flat": {
+    "facing=south,slope=down,running=false": {
+      "model": "feedback:block/conveyor_belt_down_still",
+      "y": 180
+    },
+    "facing=west,slope=flat,running=true": {
       "model": "feedback:block/conveyor_belt_flat",
       "y": 270
     },
-    "facing=west,slope=up": {
+    "facing=west,slope=flat,running=false": {
+      "model": "feedback:block/conveyor_belt_flat_still",
+      "y": 270
+    },
+    "facing=west,slope=up,running=true": {
       "model": "feedback:block/conveyor_belt_up",
       "y": 270
     },
-    "facing=west,slope=down": {
+    "facing=west,slope=up,running=false": {
+      "model": "feedback:block/conveyor_belt_up_still",
+      "y": 270
+    },
+    "facing=west,slope=down,running=true": {
       "model": "feedback:block/conveyor_belt_down",
+      "y": 270
+    },
+    "facing=west,slope=down,running=false": {
+      "model": "feedback:block/conveyor_belt_down_still",
       "y": 270
     }
   }

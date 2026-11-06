@@ -1,0 +1,43 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:cast_iron"
+    },
+    {
+      "type": "feedback:material",
+      "tag": "feedback:iron_oxidisers",
+      "forms": [
+        "lump",
+        "crushed",
+        "concentrate",
+        "dust",
+        "burnt"
+      ]
+    }
+  ],
+  "min_temperature": 1250,
+  "optimal_temperature": 1350,
+  "max_temperature": 1450,
+  "required_tpu": 300,
+  "max_rate": 6,
+  "rabble": {
+    "min_rpm": 20,
+    "max_rpm": 60
+  },
+  "result": {
+    "id": "feedback:iron_bloom",
+    "count": 1,
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:iron_bloom",
+        "stock": "bloom",
+        "cells": 1,
+        "flaw": 1
+      }
+    }
+  },
+  "spoil_temperature": 1500,
+  "spoiled": {
+    "id": "feedback:burnt_iron"
+  }
+}

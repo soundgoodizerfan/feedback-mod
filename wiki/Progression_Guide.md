@@ -12,9 +12,9 @@ Read: [Heat](Heat.md), [Metalworking](Metalworking.md), [Casting and Alloys](Cas
 
 ## 2. Iron
 
-Iron needs a hotter fire that also strips the oxygen from the ore. Feed the fire air with bellows by hand, then with a [Powered Bellows](Powered_Bellows.md). Wrap the chamber in [Insulation](Insulation.md), line it with [Refractory Lining](Refractory_Lining.md) and trim the draft with a [Damper](Damper.md). The [Furnaces](Furnaces.md) page covers the vessels that take the place of the vanilla furnace. Smelting gives wrought iron and cast iron, and charcoal steel appears when the iron stays in a narrow temperature window.
+Iron needs a hotter fire that also strips the oxygen from the ore. Feed the fire air with bellows by hand, then with a [Powered Bellows](Powered_Bellows.md). Wrap the chamber in [Insulation](Insulation.md), line it with [Refractory Lining](Refractory_Lining.md) and trim the draft with a [Damper](Damper.md). The [Furnaces](Furnaces.md) page covers the vessels that take the place of the vanilla furnace. Iron ore does not smelt to an ingot: it becomes a spongy bloom that you hammer clean into wrought iron ([Making Wrought Iron](Making_Wrought_Iron.md)), or melts to cast iron, and charcoal steel appears when the iron stays in a narrow temperature window.
 
-Read: [Furnaces](Furnaces.md), [Making Steel](Steel.md), [Fuels](Fuels.md), [Materials](Materials.md).
+Read: [Furnaces](Furnaces.md), [Making Wrought Iron](Making_Wrought_Iron.md), [Ore Processing](Ore_Processing.md), [Making Steel](Steel.md), [Fuels](Fuels.md), [Materials](Materials.md).
 
 **The wall:** a tool of fresh steel is either brittle or soft. Look for how heat and cooling change the hardness of a finished part.
 

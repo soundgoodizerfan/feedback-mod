@@ -82,11 +82,26 @@ public class ElectrolyserBlock extends Block implements EntityBlock {
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 
+    /** An empty hand strips the cathode: whatever metal has plated out on it. */
+    @Override
+    protected net.minecraft.world.InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                                                  BlockHitResult hit) {
+        if (level.getBlockEntity(pos) instanceof ElectrolyserBlockEntity cell && !cell.plate().getStackInSlot(0).isEmpty()) {
+            if (!level.isClientSide)
+                player.getInventory().placeItemBackInInventory(cell.plate().extractItem(0, 64, false));
+            return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return net.minecraft.world.InteractionResult.PASS;
+    }
+
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
         if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ElectrolyserBlockEntity cell)
             net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
                     cell.solute().getStackInSlot(0));
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ElectrolyserBlockEntity cell)
+            net.minecraft.world.Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(),
+                    cell.plate().getStackInSlot(0));
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 

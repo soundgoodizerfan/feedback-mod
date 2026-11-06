@@ -307,7 +307,7 @@ public class ControllerBlockEntity extends RotationNode implements Container, Fi
         if (level == null || ref == null)
             return 0f;
         DataNode node = DataNode.resolveOrNull(level, ref);
-        if (node instanceof ChannelSource source)
+        if (node instanceof ChannelSource source && source.offersChannels())
             return source.read(sensor.channel());
         // An actuator's own state, read back: 1 engaged, 0 not. ProgramEvaluator turns it into a boolean.
         if (node instanceof Switchable sw)

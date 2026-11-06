@@ -97,6 +97,12 @@ public final class LogisticsTuning {
     public static final float BELT_UNIT_MASS_CAP = 32f;
     /** Ticks between a funnel's pulls from the handler it faces. */
     public static final int BELT_PULL_TICKS = 8;
+    /** Blocks a tick a powered linear-motor cell drives its run at (invented; about 80 RPM of a shaft). */
+    public static final float BELT_LINEAR_SPEED = 0.12f;
+    /** Ticks a band stays wet after a fluid was above it or a fluid-holding item rode it (invented). */
+    public static final int WET_DRY_TICKS = 600;
+    /** Most ticks of belt travel a run makes up in one jump when its chunk loads again (invented: a minute). */
+    public static final int BELT_CATCHUP_MAX_TICKS = 1200;
     /** Units a dirty optical head reads before it needs wiping. */
     public static final int OPTICAL_DIRT_AT = 200;
     /** Added grip coefficient of a cleat. */

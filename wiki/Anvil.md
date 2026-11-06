@@ -26,4 +26,12 @@ The Anvil has vanilla's shape and turns to face the way you place it. A [Hearth]
 
 A forged variant is played in the Anvil's screen: put the stock in the center and click the variant in the fan. **Tap** on the left lane (left click or Z) and **heavy** on the right (right click or X) as notes fall to the ring. A metronome clicks the tempo and counts four beats in. Each blow flashes Clean, Loose or Miss; a harder metal plays slower. The stock cools while you play: notes struck out of its window are dead. A sloppy run leaves **flaws** that take a share of the edge's toughness and durability. Players who learned Cadence ([Onslaught](Skills.md#onslaught)) see tempo pips under the beat: clean blows in a row light them, and each lit pip makes the next blows land a little more Work. The screen is a cold cast-iron panel with polished-steel trim, and the bench rings like an anvil. The pattern is played around the stock on the bench; nothing covers the screen.
 
+## Shingling
+
+A hot **Iron Bloom** in the center of the Anvil, with a hammer in the hammer slot, is not shaped but **shingled**: press **Shingle**. Left click strikes lightly, right click strikes heavily, `R` turns the piece a quarter and Space puts the hammer down. The piece is drawn with its slag pockets, and the blows squeeze them out through the edges before the piece cools. A good job gives a Wrought Iron Ingot and Bloomery Slag; an unfinished bloom comes back with its slag. A heavy blow can split the piece, which costs iron, and a piece held over about 1400 Tu burns. The Hearth beside the Anvil keeps it hot. The full walk-through is in [Making Wrought Iron](Making_Wrought_Iron.md#shingling-at-the-anvil).
+
+## Crushing ore
+
+Raw rock (a lump or raw ore) hammered by hand on the Anvil crushes to **Crushed** ore. See [Ore Processing](Ore_Processing.md#crushing-and-grinding).
+
 Which variants exist for each part is listed under [Forging variants by rhythm](Tools_and_Weapons.md#forging-variants-by-rhythm).

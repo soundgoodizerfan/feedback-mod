@@ -132,6 +132,6 @@ public class ThermalProcessCategory implements IRecipeCategory<ThermalProcess> {
 
     @Override
     public void draw(ThermalProcess recipe, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        ThermalCard.draw(recipe, graphics);
+        ThermalCard.draw(recipe, slots, graphics);
     }
 }

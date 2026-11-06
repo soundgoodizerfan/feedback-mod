@@ -173,8 +173,20 @@ public record ThermalProcess(List<Ingredient> inputs,
      * codec stays inside the sixteen fields a record codec takes; each is still a top-level key of the row's JSON.
      */
     public record Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip, Optional<Electrolysis> electrolysis,
-                          Optional<Casting> freeze, Optional<Dip.Coat> fire, Optional<net.minecraft.resources.ResourceLocation> medium) {
-        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                          Optional<Casting> freeze, Optional<Dip.Coat> fire, Optional<net.minecraft.resources.ResourceLocation> medium,
+                          boolean agnostic, Optional<Rabble> rabble) {
+        /** The row's working shape without a rabble: the arity every earlier caller uses. */
+        public Special(Optional<PhaseChange.Phase> phase, boolean quench, Optional<Dip> dip, Optional<Electrolysis> electrolysis,
+                       Optional<Casting> freeze, Optional<Dip.Coat> fire, Optional<net.minecraft.resources.ResourceLocation> medium, boolean agnostic) {
+            this(phase, quench, dip, electrolysis, freeze, fire, medium, agnostic, Optional.empty());
+        }
+
+        public static final Special NONE = new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), false);
+
+        /** The same with the form-agnostic flag set: what goes over the wire, since an ingredient reaches the client as a plain list of stacks. */
+        public Special withAgnostic(boolean value) {
+            return new Special(phase, quench, dip, electrolysis, freeze, fire, medium, value, rabble);
+        }
 
         public static final com.mojang.serialization.MapCodec<Special> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
                 PhaseChange.Phase.CODEC.optionalFieldOf("phase").forGetter(Special::phase),
@@ -183,8 +195,30 @@ public record ThermalProcess(List<Ingredient> inputs,
                 Electrolysis.CODEC.optionalFieldOf("electrolysis").forGetter(Special::electrolysis),
                 Casting.CODEC.optionalFieldOf("freeze").forGetter(Special::freeze),
                 Dip.Coat.CODEC.optionalFieldOf("fire").forGetter(Special::fire),
-                net.minecraft.resources.ResourceLocation.CODEC.optionalFieldOf("medium").forGetter(Special::medium)
+                net.minecraft.resources.ResourceLocation.CODEC.optionalFieldOf("medium").forGetter(Special::medium),
+                // Computed from the inputs on the server and set only for the wire; never authored.
+                Codec.BOOL.optionalFieldOf("agnostic", false).forGetter(Special::agnostic),
+                Rabble.CODEC.optionalFieldOf("rabble").forGetter(Special::rabble)
         ).apply(i, Special::new));
+    }
+
+    /**
+     * A row that needs a charge stirred while it works (puddling): the vessel's rabble must turn within this band of RPM or the hold does
+     * not advance. A vessel with no shaft never turns one, so the row runs only in a kind that has one.
+     */
+    public record Rabble(float minRpm, float maxRpm) {
+        public static final Codec<Rabble> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.FLOAT.fieldOf("min_rpm").forGetter(Rabble::minRpm),
+                Codec.FLOAT.fieldOf("max_rpm").forGetter(Rabble::maxRpm)
+        ).apply(i, Rabble::new));
+
+        public boolean holds(float rpm) {
+            return rpm >= minRpm && rpm <= maxRpm;
+        }
+    }
+
+    public Optional<Rabble> rabble() {
+        return special.rabble();
     }
 
     public Optional<PhaseChange.Phase> phase() {
@@ -222,7 +256,7 @@ public record ThermalProcess(List<Ingredient> inputs,
         Tu at = casting.solidifyTemperature();
         return new ThermalProcess(List.of(), at, at, new Tu(Float.MAX_VALUE), NO_HOLD, new TuRate(Float.MAX_VALUE), casting.result(),
                 new Tu(Float.MAX_VALUE), ItemStack.EMPTY, FluidStack.EMPTY, false, Optional.empty(), false, Optional.empty(),
-                new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.of(casting), Optional.empty(), Optional.empty()));
+                new Special(Optional.empty(), false, Optional.empty(), Optional.empty(), Optional.of(casting), Optional.empty(), Optional.empty(), false));
     }
 
     /** The item-and-heat special case: no reaction. Existing callers and files are this. */
@@ -252,10 +286,18 @@ public record ThermalProcess(List<Ingredient> inputs,
      * @param activityFloor bed activity below which the bed does nothing; rate scales with activity above it.
      * @param overTu        what a batch makes instead when held over {@code max_temperature} (coke, char).
      * @param heat          Work per batch, positive for exothermic, only read if present.
+     * @param byproducts    further items a finished batch leaves beside {@code result}, each with the chance it appears (a leach's slimes, a roast's sulfur).
      */
+    public record Byproduct(ItemStack stack, float chance) {
+        public static final Codec<Byproduct> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ItemStack.CODEC.fieldOf("item").forGetter(Byproduct::stack),
+                Codec.floatRange(0f, 1f).optionalFieldOf("chance", 1f).forGetter(Byproduct::chance)
+        ).apply(i, Byproduct::new));
+    }
+
     public record Reaction(List<Amount> fluidInputs, List<Amount> fluidOutputs, Optional<Pu> minPu,
                            Optional<Pu> optimalPu, Optional<TagKey<Item>> catalyst, float activityFloor,
-                           List<Amount> overTu, Optional<Float> heat) {
+                           List<Amount> overTu, Optional<Float> heat, List<Byproduct> byproducts) {
         public static final Codec<Reaction> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Amount.CODEC.listOf().optionalFieldOf("fluid_inputs", List.of()).forGetter(Reaction::fluidInputs),
                 Amount.CODEC.listOf().optionalFieldOf("fluid_outputs", List.of()).forGetter(Reaction::fluidOutputs),
@@ -264,7 +306,8 @@ public record ThermalProcess(List<Ingredient> inputs,
                 TagKey.codec(Registries.ITEM).optionalFieldOf("catalyst").forGetter(Reaction::catalyst),
                 Codec.FLOAT.optionalFieldOf("activity_floor", 0f).forGetter(Reaction::activityFloor),
                 Amount.CODEC.listOf().optionalFieldOf("over_tu", List.of()).forGetter(Reaction::overTu),
-                Codec.FLOAT.optionalFieldOf("heat").forGetter(Reaction::heat)
+                Codec.FLOAT.optionalFieldOf("heat").forGetter(Reaction::heat),
+                Byproduct.CODEC.listOf().optionalFieldOf("byproducts", List.of()).forGetter(Reaction::byproducts)
         ).apply(i, Reaction::new));
     }
 
@@ -338,7 +381,7 @@ public record ThermalProcess(List<Ingredient> inputs,
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Reaction.CODEC)).encode(buffer, process.reaction());
                     buffer.writeBoolean(process.airless());
                     ByteBufCodecs.optional(ByteBufCodecs.fromCodecWithRegistries(Amount.CODEC)).encode(buffer, process.atmosphere());
-                    ByteBufCodecs.fromCodecWithRegistries(Special.MAP_CODEC.codec()).encode(buffer, process.special());
+                    ByteBufCodecs.fromCodecWithRegistries(Special.MAP_CODEC.codec()).encode(buffer, process.special().withAgnostic(process.agnostic()));
                 }
             };
 
@@ -377,6 +420,39 @@ public record ThermalProcess(List<Ingredient> inputs,
      * printing one that was never true.
      */
     public static final float NO_HOLD = -1f;
+
+    /**
+     * Whether the row is form-agnostic: it takes a {@code feedback:material} ingredient with a forms list (or a material), so any form of
+     * it satisfies the row and the form held sets the hold ({@link #requiredFor}). On the client the flag arrives with the row, since
+     * ingredients are sent as plain stacks.
+     */
+    public boolean agnostic() {
+        return special.agnostic() || inputs.stream().anyMatch(i -> i.getCustomIngredient() instanceof MaterialIngredient m && m.agnostic());
+    }
+
+    /**
+     * The hold this row needs for what is actually held: the authored {@link #requiredTpu} (the reference form, grain 1) times
+     * {@code clamp(grain^k, FORM_HOLD_FLOOR, 1)}, where {@code grain} is the coarsest form among the contents that satisfy a form-agnostic
+     * input (the bottleneck sets the rate; fluids and other inputs are ignored). A row that is not form-agnostic, or a melt of hold 0,
+     * is unchanged.
+     */
+    public float requiredFor(List<ItemStack> contents) {
+        if (requiredTpu <= 0f || !agnostic())
+            return requiredTpu;
+        int[] used = ThermalProcessTable.match(inputs, contents);
+        if (used == null)
+            return requiredTpu;
+        float grain = -1f;
+        for (int i = 0; i < used.length; i++)
+            if (inputs.get(i).getCustomIngredient() instanceof MaterialIngredient m && m.agnostic())
+                grain = Math.max(grain, FormType.grainOf(contents.get(used[i])));
+        return grain < 0f ? requiredTpu : requiredAt(grain);
+    }
+
+    /** The hold for a reacting form of the given grain (what the recipe browser shows for the form on display). */
+    public float requiredAt(float grain) {
+        return requiredTpu * FormType.holdFactor(grain);
+    }
 
     public boolean hasHold() {
         return requiredTpu >= 0f;

@@ -1,7 +1,7 @@
 {
   "color": "#e8a22b",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": ["dust", "ingot"],
   "traits": [
     "luminous",
     "fireproof"

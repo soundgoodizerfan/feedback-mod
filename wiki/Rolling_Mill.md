@@ -30,6 +30,10 @@ There's nothing further to roll a rod or a pipe into. That makes the mill more f
 
 The mill rolls at **20 St**, hard enough for steel (heat steel to 900–1100 Tu first; see [Metalworking](Metalworking.md#hot-metal)). A copper rod is one stroke; a steel rod is about 40. It's a **50 Su** load.
 
+## Grinding to dust
+
+A **brittle** stock (a mineral, crystal, ceramic or glass ingot or gem) does not flatten under the rolls: they grind it to **Dust**. Crushed ore of a brittle ore grinds to dust the same way. A ductile metal cannot be ground; its dust comes from a melt shattered in water in an [Atomising Mold](Casting.md#atomising-mold). Dust reacts and melts faster than the lump it came from ([Materials](Materials.md#dust)). See [Ore Processing](Ore_Processing.md#crushing-and-grinding).
+
 ## Cladding
 
 A plate of a better metal can be bonded onto a plate of a cheaper one. The cheap plate is the **base** and the better plate is the **skin**. The base comes out carrying the skin's metal as a coat.

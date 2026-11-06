@@ -61,6 +61,7 @@ public class FCreativeTabs {
                         output.accept(FItems.HOE_HEAD_MOLD.get());
                         output.accept(FItems.SICKLE_HEAD_MOLD.get());
                         output.accept(FItems.SAW_BLADE_MOLD.get());
+                        output.accept(FItems.ATOMISING_MOLD.get());
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
                         ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
                         loaded.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
@@ -127,6 +128,7 @@ public class FCreativeTabs {
                         output.accept(FItems.WRENCH.get());
                         output.accept(FItems.TASTING_SPOON.get());
                         output.accept(FItems.GRAPPLE.get());
+                        output.accept(FItems.GRAPPLE_WINCH.get());
                         net.minecraft.world.item.ItemStack feedbacker = new net.minecraft.world.item.ItemStack(FItems.FEEDBACKER.get());
                         feedbacker.set(FDataComponents.GEAR.get(), new io.github.soundgoodizerfan.feedback.combat.gear.GearStats(
                                 io.github.soundgoodizerfan.feedback.Feedback.id("tempered_steel"), io.github.soundgoodizerfan.feedback.Feedback.id("leather"),
@@ -153,6 +155,8 @@ public class FCreativeTabs {
                         output.accept(FItems.SALT.get());
                         output.accept(FItems.ALUMINA.get());
                         output.accept(FItems.SILICATE_SLAG.get());
+                        output.accept(FItems.RED_MUD.get());
+                        output.accept(FItems.RARE_EARTH_RESIDUE.get());
                         output.accept(FItems.FERTILISER.get());
                         output.accept(FItems.COPPER_BUCKET.get());
                         // One filled bucket per source fluid: the bucket is one item, so each fluid's "form" is a component.
@@ -348,6 +352,9 @@ public class FCreativeTabs {
                         output.accept(FItems.XP_METER.get());
                         output.accept(FItems.STEEL_INGOT.get());
                         output.accept(FItems.BURNT_IRON.get());
+                        output.accept(io.github.soundgoodizerfan.feedback.item.BloomItem.of(FItems.IRON_BLOOM.get(), 3));
+                        output.accept(io.github.soundgoodizerfan.feedback.item.BloomItem.of(FItems.IRON_BLOOM.get(), 1));
+                        output.accept(FItems.BLOOMERY_SLAG.get());
                         output.accept(FItems.SCRAP_METAL.get());
                         output.accept(FItems.CHARRED_REMAINS.get());
                         output.accept(FItems.CRACKED_CERAMIC.get());
@@ -437,6 +444,7 @@ public class FCreativeTabs {
                         output.accept(FItems.IMPROVED_FURNACE.get());
                         output.accept(FItems.KILN.get());
                         output.accept(FItems.ANNEALING_FURNACE.get());
+                        output.accept(FItems.PUDDLING_FURNACE.get());
                         output.accept(FItems.HEAT_EXCHANGER.get());
                         output.accept(FItems.PRESSURE_VESSEL.get());
                         output.accept(FItems.INGOT_MOLD.get());

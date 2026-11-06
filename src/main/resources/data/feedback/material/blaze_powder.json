@@ -25,7 +25,7 @@
     }
   },
   "forms": {
-    "powder": "minecraft:blaze_powder"
+    "dust": "minecraft:blaze_powder"
   },
   "catalyst": {
     "activity": 2.0,

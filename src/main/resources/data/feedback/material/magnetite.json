@@ -1,7 +1,9 @@
 {
   "color": "#3b3d45",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "hardness": 5.5,
   "density": 5.2,
   "thermal": {
@@ -16,9 +18,10 @@
   "separation": {
     "magnetic": true,
     "curie_temperature": 580,
-    "reflectivity": 0.4
+    "reflectivity": 0.4,
+    "gangue": "feedback:granite"
   },
   "bears": {
-    "feedback:iron": 0.9
+    "feedback:cast_iron": 0.9
   }
 }

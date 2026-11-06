@@ -58,7 +58,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * Mirrors {@code FireboxBlock}'s shape (plain {@code Block implements EntityBlock}), plus facing
  * because these, unlike the firebox, have a door that should point somewhere.
  */
-public class ThermalVesselBlock extends Block implements EntityBlock {
+public class ThermalVesselBlock extends Block implements EntityBlock, io.github.soundgoodizerfan.feedback.core.rotation.Rotatable {
 
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -74,6 +74,17 @@ public class ThermalVesselBlock extends Block implements EntityBlock {
 
     public VesselKind getKind() {
         return kind;
+    }
+
+    /** The shaft of a vessel with a rabble runs through its back, opposite the door. */
+    @Override
+    public Direction.Axis getRotationAxis(BlockState state) {
+        return state.getValue(FACING).getAxis();
+    }
+
+    @Override
+    public boolean hasShaftTowards(net.minecraft.world.level.LevelAccessor level, BlockPos pos, BlockState state, Direction face) {
+        return kind.rotates() && face == state.getValue(FACING).getOpposite();
     }
 
     @Override

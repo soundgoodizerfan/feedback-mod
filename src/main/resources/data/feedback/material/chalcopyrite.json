@@ -1,12 +1,15 @@
 {
   "color": "#c9a62a",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "hardness": 3.5,
   "density": 4.2,
   "thermal": {
     "cooling_rate": 1,
-    "conductivity": 0.02
+    "conductivity": 0.02,
+    "oxidation_temperature": 500
   },
   "mechanical": {
     "toughness": 1,
@@ -14,7 +17,8 @@
     "abrasiveness": 0.3
   },
   "separation": {
-    "reflectivity": 0.7
+    "reflectivity": 0.7,
+    "gangue": "feedback:quartz"
   },
   "bears": {
     "feedback:copper": 0.7,

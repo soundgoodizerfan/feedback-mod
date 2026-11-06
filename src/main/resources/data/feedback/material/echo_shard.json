@@ -1,4 +1,5 @@
 {
+  "exclude": ["dust"],
   "xp_store": {
     "top_level": 30,
     "capacitance": 400,

@@ -11,7 +11,7 @@ Put one Ender Pearl and two metal plates (any metals, any arrangement) in the cr
 - Put items into a port with a hopper, a belt or a [tube station](Tube_Station.md); the partner pushes them into any inventory beside it.
 - **Right-click** a port to read its tank of liquid teleportant, whether its chunk is anchored and the state of its partner.
 - A pair moves only so much mass per minute. A stack heavier than the whole allowance is handed back.
-- Each crossing costs liquid teleportant from the port's tank: more for heavier items and for longer distances.
+- Each crossing costs [Liquid Teleportant](Liquid_Teleportant.md) from the port's tank, which a pipe fills: more for heavier items and for longer distances.
 - Shulker boxes, items that hold fluid and [pods](Carrier.md#pod) never cross.
 - A shulker box beside a port seals it.
 

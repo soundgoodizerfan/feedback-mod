@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "feedback:item/form/rod"
+    "layer0": "feedback:item/form/rod_meat"
   }
 }

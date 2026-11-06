@@ -1,6 +1,6 @@
 # Chemicals
 
-The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, fluorine compounds, bleach, nitrogen, argon, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
+The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, carbon dioxide, leach liquors, liquid teleportant, fluorine compounds, bleach, nitrogen, argon, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
 
 ## Hydrogen
 
@@ -37,7 +37,19 @@ A heavy toxic gas from the anode (front) of an Electrolyser running on brine. It
 
 ## Sulfur dioxide
 
-A heavy toxic gas. Roasting pyrite in a Reactor gives it, with iron nuggets.
+A heavy toxic gas. Roasting pyrite in a Reactor gives it, with iron nuggets; roasting a sulfide concentrate and smelting galena concentrate give it too ([Ore Processing](Ore_Processing.md#roasting-sulfides)).
+
+## Carbon dioxide
+
+A gas that comes off when malachite is leached with sulfuric acid in a [Reactor](Reactor.md) ([Ore Processing](Ore_Processing.md#leaching-and-winning)). Store it in a [Gas Tank](Gas_Tank.md) or pipe it away.
+
+## Leach liquors
+
+Leaching an ore concentrate in the Reactor leaves its metal dissolved in a liquor: Copper Sulfate, Zinc Sulfate, Nickel Sulfate, Cobalt Sulfate, Gold Chloride, Silver Chloride, Titanyl Sulfate, Sodium Tungstate, Uranyl Sulfate, Thorium Hydroxide and Sodium Aluminate. Pipe them like any fluid. The [Electrolyser](Electrolyser.md#what-it-splits) wins copper, zinc, nickel and cobalt out of theirs; the others give up their metal to a reducing gas in the Reactor. See [Ore Processing](Ore_Processing.md#leaching-and-winning).
+
+## Liquid Teleportant
+
+A fluid made from chorus fruit, redstone and lye. It pays for each crossing of an [Ender Port](Ender_Port.md). See [Liquid Teleportant](Liquid_Teleportant.md).
 
 ## Hypochlorite Bleach
 

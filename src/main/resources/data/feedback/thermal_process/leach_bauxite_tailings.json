@@ -1,0 +1,31 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:bauxite",
+      "forms": [
+        "tailings"
+      ]
+    }
+  ],
+  "min_temperature": 150,
+  "optimal_temperature": 200,
+  "max_temperature": 250,
+  "required_tpu": 300,
+  "spoil_temperature": 305,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:lye",
+        "mb": 250
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:sodium_aluminate",
+        "mb": 60
+      }
+    ],
+    "heat": 4
+  }
+}

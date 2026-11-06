@@ -13,7 +13,8 @@
     "abrasiveness": 0.3
   },
   "separation": {
-    "reflectivity": 0.4
+    "reflectivity": 0.4,
+    "gangue": "feedback:stone"
   },
   "bears": {
     "feedback:copper": 0.9

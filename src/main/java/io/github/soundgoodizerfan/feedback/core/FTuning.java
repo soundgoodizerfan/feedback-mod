@@ -1489,6 +1489,35 @@ public final class FTuning {
     public static final Tu ANNEALING_FURNACE_CEILING_TU = new Tu(380f);
 
     /**
+     * Invented. Puddling Furnace thermal mass and leak: a reverberatory hearth, so heavier than the Furnace and lighter than the Blast
+     * Furnace (it has to climb to 1450 with the charge and never be stoked past 1500), and the Su its rabble takes off a shaft while it
+     * stirs. The rabble's own speed band is on the row ({@code puddle_iron.json}), not here.
+     */
+    public static final ThermalMass PUDDLING_FURNACE_MASS = new ThermalMass(120f);
+    public static final Conductance PUDDLING_FURNACE_LEAK = new Conductance(0.015f);
+    public static final Su PUDDLING_FURNACE_LOAD_SU = new Su(60f);
+
+    /**
+     * Invented. Shingling, the hand version of hammering a bloom into iron (docs/dev/modular.md, Shingling): a billet is a unit square
+     * holding a few slag pockets per slag grade; one blow shifts a pocket by its landed force over the slag's viscosity, no further than
+     * the footprint. A bloom is done when at most this share of its pockets is left; a heavy blow splits a bloom whose delivered work
+     * per blow tops its density times the split figure, and each split loses a ninth of the metal.
+     */
+    public static final int SHINGLE_POCKETS_BASE = 3, SHINGLE_POCKETS_PER_SLAG = 3;
+    public static final float SHINGLE_DONE_SHARE = 0.2f, SHINGLE_FOOTPRINT = 0.22f, SHINGLE_PUSH = 0.05f, SHINGLE_SPLIT_PER_DENSITY = 1.1f;
+    /** Invented. Ticks a session may run past its slag's cool-down, and the longest one (a hearth holds the heat; this is the cap). */
+    public static final int SHINGLE_MAX_TICKS = 600;
+    /** Invented. Tu above the slag's melting point over which the pockets run at full speed; closer to it they creep. */
+    public static final float SHINGLE_FLUID_RANGE_TU = 150f;
+    /** Invented. Pockets leaked for each bloomery slag dropped. */
+    public static final int SHINGLE_LEAK_PER_SLAG = 3;
+    /** Invented. A bloom held above this Tu scales away: this many ticks of it in one session burn it to burnt iron. */
+    public static final float SHINGLE_SCALE_TU = 1400f;
+    public static final int SHINGLE_BURN_TICKS = 120;
+    /** Invented. Each unfinished return costs this many sixteenths (nuggets) of the iron to scale; nine of them burn the bloom. */
+    public static final int SHINGLE_SCALE_LIMIT = 9;
+
+    /**
      * Invented. How readily Work crosses a {@code HeatExchangerBlockEntity}, in the same {@code
      * Work/t/Tu} every other {@link Conductance} is in -- see {@code Heat#exchange}. Well under
      * {@link #FIRE_CONDUCTANCE} (0.6): a flame is in direct contact with a vessel, while two
@@ -1564,6 +1593,41 @@ public final class FTuning {
      * as it could gain it -- no free ratchet in either direction.
      */
     public static final float TPU_DECAY_PER_TICK = 1f;
+
+    /**
+     * Invented placeholder (ore processing spec 2.4). The least share of its authored hold a form-agnostic row asks of the
+     * finest form: effective hold is {@code required * clamp(grain^k, FORM_HOLD_FLOOR, 1)}, so a dust never finishes in zero
+     * ticks; it still needs the band and the fuel.
+     */
+    public static final float FORM_HOLD_FLOOR = 0.15f;
+
+    /**
+     * Invented placeholder. Exponent {@code k} of the hold formula, one for every row: 1 is a surface-limited reaction
+     * (rate goes with area). A per-row exponent for diffusion-limited rows is not built.
+     */
+    public static final float FORM_HOLD_EXPONENT = 1f;
+
+    /**
+     * Invented placeholder. Hold (TPu) of a derived melt row for one ingot's volume of a form of grain 1; a form of another volume
+     * holds in proportion, a finer form shorter (the same grain formula as any row). A stack melts one piece at a time, so this is
+     * also the ticks-per-ingot of a crucible at the optimum.
+     */
+    public static final float MELT_HOLD_TPU = 10f;
+
+    /**
+     * Invented placeholder. Share of a metal dust's melt lost to oxide per unit of fineness ({@code 1/grain - 1}) when it melts in
+     * air above its {@code oxidation_temperature}; sealed (airless) vessels lose none. Dust of grain 0.05 (fineness 19) loses 19 percent.
+     */
+    public static final float DUST_BURNOFF_PER_FINENESS = 0.01f;
+
+    /** Invented placeholder. Most of a melt any dust can burn off. */
+    public static final float DUST_BURNOFF_MAX = 0.5f;
+
+    /**
+     * Invented placeholder. Share of its material's own fume level a toxic dust throws up per unit of fineness when a vessel
+     * finishes a batch of it open to the air, capped at the full level.
+     */
+    public static final float DUST_FUME_PER_FINENESS = 0.05f;
 
     /**
      * Invented. Where a {@code minecraft:smoking}-classified vanilla-fallback recipe accumulates
@@ -3579,6 +3643,9 @@ public final class FTuning {
     public static final float TUBE_EVAC_MAX_PU = 0.05f;
     /** Air (mB) a second leaks into an evacuated tube block from outside; invented. */
     public static final int TUBE_EVAC_LEAK_MB_PER_SECOND = 2;
+    /** Inrush when an evacuated run loses its vacuum: reach (blocks), pull speed, damage, capsule stall (ticks). */
+    public static final float TUBE_INRUSH_REACH = 3f, TUBE_INRUSH_PULL = 0.7f, TUBE_INRUSH_DAMAGE = 3f;
+    public static final int TUBE_INRUSH_STALL_TICKS = 60;
     /** Time multiplier of a bend (any capsule) and, for a pod, of a bend and of a vertical run: corners and drops cost speed, not damage; invented. */
     public static final float TUBE_CORNER_FACTOR = 1.5f, POD_CORNER_FACTOR = 3f, POD_DROP_FACTOR = 2f;
     /** Ticks a blocked or stalled capsule waits before looking again; invented. */

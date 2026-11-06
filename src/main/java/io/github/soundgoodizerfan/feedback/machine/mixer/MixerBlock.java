@@ -67,6 +67,10 @@ public class MixerBlock extends BaseEntityBlock implements Rotatable {
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof MixerBlockEntity mixer) || stack.isEmpty())
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        // A water bucket (or any container of it) fills the drum's wash water.
+        if (net.neoforged.neoforge.fluids.FluidUtil.getFluidHandler(stack).isPresent()
+                && net.neoforged.neoforge.fluids.FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         if (!level.isClientSide) {
             boolean poured = MixerBlockEntity.pourable(stack, io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials())
                     && mixer.pour(stack);

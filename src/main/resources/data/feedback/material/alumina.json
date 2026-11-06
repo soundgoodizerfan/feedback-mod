@@ -23,6 +23,9 @@
     "raw": "feedback:alumina"
   },
   "exclude": [
-    "ingot"
+    "ingot",
+    "crushed",
+    "concentrate",
+    "tailings"
   ]
 }

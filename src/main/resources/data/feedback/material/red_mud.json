@@ -1,0 +1,35 @@
+{
+  "color": "#8a3a2a",
+  "kind": "granular",
+  "traits": [
+    "sticky"
+  ],
+  "hardness": 0.3,
+  "density": 1.9,
+  "thermal": {
+    "cooling_rate": 0.9,
+    "conductivity": 0.00025
+  },
+  "mechanical": {
+    "friction": 0.9,
+    "abrasiveness": 0.3
+  },
+  "separation": {
+    "reflectivity": 0.15
+  },
+  "forms": {
+    "raw": "feedback:red_mud"
+  },
+  "bears": {
+    "feedback:cast_iron": 0.25
+  },
+  "exclude": [
+    "lump",
+    "ore",
+    "deepslate_ore",
+    "loose_rock",
+    "crushed",
+    "concentrate",
+    "tailings"
+  ]
+}

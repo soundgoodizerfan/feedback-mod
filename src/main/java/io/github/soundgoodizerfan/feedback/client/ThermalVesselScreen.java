@@ -68,7 +68,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
     private static GuiSkin skinOf(ThermalVesselMenu menu) {
         return switch (menu.getKind()) {
             case SMOKER -> GuiSkin.SMOKE;
-            case BLAST_FURNACE -> GuiSkin.SLAG;
+            case BLAST_FURNACE, PUDDLING_FURNACE -> GuiSkin.SLAG;
             default -> GuiSkin.STONE;
         };
     }

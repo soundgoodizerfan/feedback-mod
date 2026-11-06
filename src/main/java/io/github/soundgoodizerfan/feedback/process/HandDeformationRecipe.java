@@ -168,6 +168,10 @@ public class HandDeformationRecipe extends CustomRecipe {
         // refused below the material's hardness floor a line later, so there is no list anywhere of
         // which tools deform -- the strength and the declared operation are the whole answer.
         HandToolItem handTool = (HandToolItem) tool.getItem();
+        // A crafting grid has nowhere to put what the work drives out (a bloom's slag): that is the anvil's shingling, not a swing in a grid.
+        var entry = DeformationTable.get().find(workpiece, handTool.getOperation());
+        if (entry.isPresent() && !entry.get().byproduct().isEmpty())
+            return null;
         Deforming.Blow blow = Deforming.apply(workpiece, handTool.getStrength(tool), level, handTool.getOperation());
         return blow.landed() ? blow.result() : null;
     }

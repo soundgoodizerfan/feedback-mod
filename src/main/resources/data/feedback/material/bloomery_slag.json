@@ -1,0 +1,37 @@
+{
+  "color": "#4a3f3a",
+  "kind": "granular",
+  "hardness": 3,
+  "density": 3.4,
+  "thermal": {
+    "melting_point": 1000,
+    "cooling_rate": 1,
+    "conductivity": 0.001
+  },
+  "mechanical": {
+    "friction": 0.6,
+    "abrasiveness": 0.5
+  },
+  "molten": {
+    "viscosity": 3,
+    "density": 2.9
+  },
+  "separation": {
+    "magnetic": true,
+    "curie_temperature": 580,
+    "reflectivity": 0.15
+  },
+  "forms": {
+    "raw": "feedback:bloomery_slag"
+  },
+  "exclude": [
+    "ingot",
+    "lump",
+    "ore",
+    "deepslate_ore",
+    "loose_rock"
+  ],
+  "bears": {
+    "feedback:cast_iron": 0.3
+  }
+}

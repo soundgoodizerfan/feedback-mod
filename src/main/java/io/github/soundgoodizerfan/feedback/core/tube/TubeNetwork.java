@@ -55,6 +55,8 @@ public class TubeNetwork {
     public final HeatedTank ledger;
     private final int volume;
     private boolean changed;
+    /** Whether an evacuated run last held its vacuum; null until first read, so a rebuilt run does not fire. */
+    private Boolean vacuum;
     private final PriorityQueue<Due> queue = new PriorityQueue<>((a, b) -> Long.compare(a.at, b.at));
     /** Tubes holding a pod with a rider: bounded by the player count, moved every tick. */
     private final Set<TubeBlockEntity> riders = new HashSet<>();
@@ -104,8 +106,10 @@ public class TubeNetwork {
         long now = level.getGameTime();
         if (now % 10 == 0 && hazard(level))
             return;
-        if (now % 20 == 0)
+        if (now % 20 == 0) {
             leak();
+            checkSeal(level, now);
+        }
         if (!riders.isEmpty())
             for (TubeBlockEntity t : new ArrayList<>(riders))
                 if (!t.moveRider(now) || t.isRemoved() || t.network() != this)
@@ -126,6 +130,44 @@ public class TubeNetwork {
         if (evacuated > 0)
             ledger.fill(new FluidStack(FFluids.AIR.get(), (int) (evacuated * FTuning.TUBE_EVAC_LEAK_MB_PER_SECOND)),
                     IFluidHandler.FluidAction.EXECUTE);
+    }
+
+    /** Losing the vacuum of an evacuated run (a seal given way, a pump off too long) lets air rush in. */
+    private void checkSeal(Level level, long now) {
+        if (members.stream().noneMatch(TubeBlockEntity::evacuated)) {
+            vacuum = null;
+            return;
+        }
+        boolean holds = pressure().value() <= FTuning.TUBE_EVAC_MAX_PU;
+        boolean failed = Boolean.TRUE.equals(vacuum) && !holds;
+        vacuum = holds;
+        if (failed)
+            inrush(level, now);
+    }
+
+    /** Capsules in evacuated blocks are jolted to a stall, entities near them are dragged in and hurt, and the run fills with air. */
+    private void inrush(Level level, long now) {
+        java.util.Set<net.minecraft.world.entity.Entity> hit = new HashSet<>();
+        for (TubeBlockEntity t : new ArrayList<>(members)) {
+            if (!t.evacuated())
+                continue;
+            Capsule c = t.capsule();
+            if (c != null) {
+                c.wakeAt = Math.max(c.wakeAt, now) + FTuning.TUBE_INRUSH_STALL_TICKS;
+                schedule(t);
+            }
+            net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(t.getBlockPos()).inflate(FTuning.TUBE_INRUSH_REACH);
+            for (net.minecraft.world.entity.Entity e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, box))
+                if (hit.add(e)) {
+                    net.minecraft.world.phys.Vec3 to = net.minecraft.world.phys.Vec3.atCenterOf(t.getBlockPos()).subtract(e.position());
+                    e.setDeltaMovement(e.getDeltaMovement().add(to.normalize().scale(FTuning.TUBE_INRUSH_PULL)));
+                    e.hurtMarked = true;
+                    e.hurt(level.damageSources().flyIntoWall(), FTuning.TUBE_INRUSH_DAMAGE);
+                }
+        }
+        ledger.fill(new FluidStack(FFluids.AIR.get(), Math.max(1, volume - ledger.getFluidAmount())), IFluidHandler.FluidAction.EXECUTE);
+        level.playSound(null, members.iterator().next().getBlockPos(), net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE.value(),
+                net.minecraft.sounds.SoundSource.BLOCKS, 0.6f, 1.6f);
     }
 
     private boolean hazard(Level level) {

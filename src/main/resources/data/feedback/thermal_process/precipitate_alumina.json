@@ -1,0 +1,26 @@
+{
+  "inputs": [],
+  "min_temperature": 20,
+  "optimal_temperature": 50,
+  "max_temperature": 90,
+  "required_tpu": 200,
+  "result": {
+    "id": "feedback:alumina",
+    "count": 1
+  },
+  "spoil_temperature": 150,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:sodium_aluminate",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:lye",
+        "mb": 80
+      }
+    ]
+  }
+}

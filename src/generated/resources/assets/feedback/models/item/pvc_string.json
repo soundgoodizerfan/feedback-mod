@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "feedback:item/form/string"
+    "layer0": "feedback:item/form/string_polymer"
   }
 }

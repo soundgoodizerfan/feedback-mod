@@ -226,5 +226,10 @@
   },
   "vanilla": {
     "trident": "shard"
+  },
+  "board": {
+    "layout": {
+      "T": [1, 0]
+    }
   }
 }

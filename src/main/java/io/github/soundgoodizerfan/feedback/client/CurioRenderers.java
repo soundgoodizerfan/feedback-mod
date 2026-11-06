@@ -83,6 +83,15 @@ public final class CurioRenderers {
     private CurioRenderers() {
     }
 
+    private static final ResourceLocation PACK_TEXTURE = Feedback.id("textures/entity/pack_worn.png");
+
+    /** A cube on the 64x32 pack sheet: {@code u} picks the stitched-fabric half (0) or the seamed half (32). */
+    private static ModelPart fbox(int u, float x, float y, float z, float w, float h, float d) {
+        MeshDefinition mesh = new MeshDefinition();
+        mesh.getRoot().addOrReplaceChild("p", CubeListBuilder.create().texOffs(u, 0).addBox(x, y, z, w, h, d), PartPose.ZERO);
+        return LayerDefinition.create(mesh, 64, 32).bakeRoot().getChild("p");
+    }
+
     private static ModelPart box(float x, float y, float z, float w, float h, float d) {
         MeshDefinition mesh = new MeshDefinition();
         mesh.getRoot().addOrReplaceChild("p", CubeListBuilder.create().texOffs(0, 0).addBox(x, y, z, w, h, d), PartPose.ZERO);
@@ -108,9 +117,13 @@ public final class CurioRenderers {
     private enum Limb { LEFT_ARM, BODY }
 
     private static void draw(ModelPart box, ModelPart limb, PoseStack pose, MultiBufferSource buffer, int light, int rgb) {
+        draw(box, limb, pose, buffer, light, rgb, TEXTURE);
+    }
+
+    private static void draw(ModelPart box, ModelPart limb, PoseStack pose, MultiBufferSource buffer, int light, int rgb, ResourceLocation texture) {
         pose.pushPose();
         limb.translateAndRotate(pose);
-        VertexConsumer vc = buffer.getBuffer(RenderType.entityCutoutNoCull(TEXTURE));
+        VertexConsumer vc = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
         box.render(pose, vc, light, OverlayTexture.NO_OVERLAY, 0xFF000000 | rgb);
         pose.popPose();
     }
@@ -237,9 +250,59 @@ public final class CurioRenderers {
         }
     }
 
-    /** The pack on the back, a box sized by its slots and tinted by the shell. */
+    /** One cube of the worn pack: drawn in the colour of the material of {@code role}, scaled by {@code shade}. */
+    private record Piece(ModelPart part, String role, float shade) {}
+
+    /**
+     * The pack on the back: a body sized by its slots with a lid, a front pocket, shoulder straps and a lining, plus whatever is
+     * fitted: frame rods up the sides, a side holster, bottle loops, a bandolier across the chest, a folded pad underneath,
+     * and a bedroll on top when one rides the lashing. Cubes are cached by shape and fittings; colours come from the materials.
+     */
     private static final class Packs implements ICurioRenderer {
-        private ModelPart pouch, satchel, pack;
+        private final java.util.Map<Integer, java.util.List<Piece>> cache = new java.util.HashMap<>();
+
+        private static final String ROLES = "FHBAWRPCQXK";
+
+        private static java.util.List<Piece> build(int slots, int mask, boolean roll) {
+            float w = slots <= 9 ? 4 : slots >= 27 ? 8 : 6, h = slots <= 9 ? 4 : slots >= 27 ? 10 : 7, d = slots <= 9 ? 2 : slots >= 27 ? 4 : 3;
+            float x = -w / 2, y = slots <= 9 ? 6 : slots >= 27 ? 0 : 3;
+            java.util.List<Piece> out = new java.util.ArrayList<>();
+            out.add(new Piece(fbox(0, x, y, 2f, w, h, d), "S", 1f));
+            out.add(new Piece(fbox(0, x - 0.3f, y - 0.5f, 1.8f, w + 0.6f, 2f, d + 0.4f), "S", 0.75f));
+            out.add(new Piece(fbox(0, x + 1f, y + h * 0.45f, 2f + d, w - 2f, h * 0.4f, 0.8f), "S", 0.85f));
+            out.add(new Piece(fbox(32, -3.2f, 0f, -2.4f, 1f, 7f, 0.6f), "T", 1f));
+            out.add(new Piece(fbox(32, 2.2f, 0f, -2.4f, 1f, 7f, 0.6f), "T", 1f));
+            for (int i = 0; i < ROLES.length(); i++) {
+                if ((mask & (1 << i)) == 0)
+                    continue;
+                String r = String.valueOf(ROLES.charAt(i));
+                switch (r) {
+                    case "F" -> {
+                        out.add(new Piece(fbox(32, x - 0.8f, y - 1f, 2f, 0.6f, h + 2f, 0.6f), r, 1f));
+                        out.add(new Piece(fbox(32, -x + 0.2f, y - 1f, 2f, 0.6f, h + 2f, 0.6f), r, 1f));
+                    }
+                    case "H" -> out.add(new Piece(fbox(32, -x, y + 1f, 2.2f, 1.2f, h - 1f, 1.6f), r, 0.8f));
+                    case "B" -> {
+                        for (int k = 0; k < 3; k++)
+                            out.add(new Piece(fbox(32, x - 1.4f, y + 0.5f + k * (h / 3.2f), 2.4f, 1.2f, Math.max(1.2f, h / 4f), 1.2f), r, 0.9f));
+                    }
+                    case "A" -> out.add(new Piece(fbox(32, -4.2f, 3f, -2.7f, 8.4f, 1f, 0.5f), r, 0.9f));
+                    case "W" -> out.add(new Piece(fbox(32, -4.3f, 10f, -2.5f, 8.6f, 1.2f, 5f), r, 0.8f));
+                    case "P" -> out.add(new Piece(fbox(32, x + 0.5f, y + 0.5f, 1.7f, w - 1f, h - 1f, 0.4f), r, 1f));
+                    case "Q" -> out.add(new Piece(fbox(32, -0.8f, 3.5f, -2.9f, 1.6f, 1.6f, 0.6f), r, 1.4f));
+                    case "X" -> out.add(new Piece(fbox(32, -x - 0.2f, y + h - 3f, 2.4f, 0.5f, 2.5f, 2.5f), r, 1.2f));
+                    case "K" -> {
+                        out.add(new Piece(fbox(32, x + 0.5f, y - 1.2f, 2f + d, 1.2f, 1.2f, 1.2f), r, 0.8f));
+                        out.add(new Piece(fbox(32, x + 0.7f, y - 3.4f, 2.2f + d, 0.8f, 2.2f, 0.8f), "K", 1.6f));
+                    }
+                    case "C" -> out.add(new Piece(fbox(32, x + 0.5f, y + h, 2.2f, w - 1f, 0.8f, d + 0.5f), r, 0.9f));
+                    default -> { }
+                }
+            }
+            if (roll)
+                out.add(new Piece(fbox(32, x - 0.6f, y - 3.2f, 2.2f, w + 1.2f, 3f, 3f), "R", 1f));
+            return out;
+        }
 
         @Override
         public <T extends LivingEntity, M extends EntityModel<T>> void render(ItemStack stack, SlotContext slot, PoseStack pose,
@@ -247,17 +310,38 @@ public final class CurioRenderers {
                 float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
             if (!(parent.getModel() instanceof HumanoidModel<?> m))
                 return;
-            if (pouch == null) {
-                pouch = box(-2f, 6f, 2f, 4f, 4f, 2f);
-                satchel = box(-3f, 3f, 2f, 6f, 7f, 3f);
-                pack = box(-4f, 0f, 2f, 8f, 10f, 4f);
-            }
             var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(stack);
-            var shell = design == null ? null : design.part(io.github.soundgoodizerfan.feedback.modular.ModularBackpack.SHELL);
             var figures = io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(stack);
             float slots = figures == null ? 18f : figures.get(io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig.SLOTS);
-            draw(slots <= 9 ? pouch : slots >= 27 ? pack : satchel, m.body, pose, buffer, light,
-                    shell == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.MaterialColors.of(shell.material()));
+            int mask = 0;
+            boolean roll = false;
+            if (design != null) {
+                for (int i = 0; i < Packs.ROLES.length(); i++)
+                    if (design.part(String.valueOf(Packs.ROLES.charAt(i))) != null)
+                        mask |= 1 << i;
+                roll = design.part(io.github.soundgoodizerfan.feedback.modular.ModularBackpack.LASHING) != null
+                        && stack.getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER,
+                                net.minecraft.world.item.component.ItemContainerContents.EMPTY).stream()
+                                .anyMatch(s -> s.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularBedroll);
+            }
+            int key = (slots <= 9 ? 0 : slots >= 27 ? 2 : 1) | mask << 2 | (roll ? 1 << 14 : 0);
+            final int fm = mask;
+            final boolean fr = roll;
+            var pieces = cache.computeIfAbsent(key, k -> build((int) slots, fm, fr));
+            for (Piece p : pieces) {
+                var part = design == null ? null : design.part(p.role());
+                int rgb = part == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.MaterialColors.of(part.material());
+                if (p.role().equals("R"))
+                    rgb = 0xB9A58A;
+                else if (p.role().equals("K") && p.shade() > 1.5f)
+                    rgb = 0xFFD070;
+                draw(p.part(), m.body, pose, buffer, light, shade(rgb, p.shade()), PACK_TEXTURE);
+            }
+        }
+
+        private static int shade(int rgb, float k) {
+            int r = Math.min(255, (int) ((rgb >> 16 & 255) * k)), g = Math.min(255, (int) ((rgb >> 8 & 255) * k)), b = Math.min(255, (int) ((rgb & 255) * k));
+            return r << 16 | g << 8 | b;
         }
     }
 

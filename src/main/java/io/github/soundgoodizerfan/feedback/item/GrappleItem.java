@@ -52,11 +52,12 @@ public class GrappleItem extends Item {
         ItemStack stack = player.getItemInHand(hand);
         if (level.isClientSide)
             return InteractionResultHolder.sidedSuccess(stack, true);
-        GrappleHook out = GrappleHook.of(level, player);
-        if (out != null) // a line is out: holding use winches it (client/GrappleSwing); sneaking lets go
+        int fittings = stack.getOrDefault(FDataComponents.GRAPPLE_FITTINGS.get(), 0);
+        // A line is out: holding use winches it (client/GrappleSwing), sneaking lets go; a second head throws a second line.
+        if (GrappleHook.allOf(level, player).size() >= ((fittings & GrappleHook.MULTI) != 0 ? 2 : 1))
             return InteractionResultHolder.sidedSuccess(stack, false);
         GrappleHook hook = new GrappleHook(level, player);
-        hook.setFittings(stack.getOrDefault(FDataComponents.GRAPPLE_FITTINGS.get(), 0));
+        hook.setFittings(fittings);
         hook.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, ModularTuning.GRAPPLE_SPEED, 0f);
         level.addFreshEntity(hook);
         level.playSound(null, player, SoundEvents.FISHING_BOBBER_THROW, SoundSource.PLAYERS, 0.7f, 0.9f);

@@ -84,6 +84,12 @@ public class FBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);
 
+    /** The invisible light a lantern on a worn pack gives; it removes itself unless its wearer still holds it. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.modular.PackLightBlock> PACK_LIGHT = BLOCKS.register("pack_light",
+            () -> new io.github.soundgoodizerfan.feedback.modular.PackLightBlock(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                    .noCollission().noOcclusion().replaceable().air().lightLevel(s -> io.github.soundgoodizerfan.feedback.modular.ModularTuning.PACK_LAMP_LEVEL)
+                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
+
     public static final DeferredBlock<ShaftBlock> SHAFT = BLOCKS.register("shaft",
             () -> new ShaftBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
@@ -934,6 +940,15 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
                     VesselKind.ANNEALING_FURNACE));
+
+    /** Cast iron and an oxidiser, stirred by a shaft in a reverberatory hearth: the mid-game road to wrought iron (docs/dev/machine.md). */
+    public static final DeferredBlock<ThermalVesselBlock> PUDDLING_FURNACE = BLOCKS.register("puddling_furnace",
+            () -> new ThermalVesselBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.5f)
+                    .sound(SoundType.METAL)
+                    .lightLevel(state -> Math.max(state.getValue(ThermalVesselBlock.LIT) ? 13 : 0, state.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW))),
+                    VesselKind.PUDDLING_FURNACE));
 
     public static final DeferredBlock<HeatExchangerBlock> HEAT_EXCHANGER = BLOCKS.register("heat_exchanger",
             () -> new HeatExchangerBlock(BlockBehaviour.Properties.of()

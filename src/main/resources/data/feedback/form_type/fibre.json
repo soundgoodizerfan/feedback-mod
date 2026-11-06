@@ -1,5 +1,6 @@
 {
   "kinds": [
     "glass"
-  ]
+  ],
+  "grain": 0.1
 }

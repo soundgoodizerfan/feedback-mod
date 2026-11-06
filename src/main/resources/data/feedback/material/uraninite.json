@@ -1,7 +1,9 @@
 {
   "color": "#2d3328",
   "kind": "mineral",
-  "exclude": ["ingot"],
+  "exclude": [
+    "ingot"
+  ],
   "hardness": 5,
   "density": 8.9,
   "thermal": {
@@ -14,7 +16,8 @@
     "abrasiveness": 0.3
   },
   "separation": {
-    "reflectivity": 0.15
+    "reflectivity": 0.15,
+    "gangue": "feedback:granite"
   },
   "bears": {
     "feedback:uranium": 0.88

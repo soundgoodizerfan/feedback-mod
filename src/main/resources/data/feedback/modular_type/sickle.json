@@ -179,5 +179,10 @@
     "S": "feedback:wood",
     "B": "feedback:leather"
   },
-  "vanilla": {}
+  "vanilla": {},
+  "board": {
+    "layout": {
+      "T": [1, 0]
+    }
+  }
 }
