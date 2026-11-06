@@ -8,14 +8,14 @@
     "H": {
       "name": "head",
       "forms": [
-        "hammer_head"
+        "head_blank"
       ],
       "litres": 0.125,
       "at": 0.08,
       "rides": true,
       "layer": 0,
       "part": {
-        "item": "feedback:hammer_head",
+        "item": "feedback:head_blank",
         "shape": [
           "HH",
           "HH"
@@ -24,29 +24,23 @@
           "ingot",
           "*_planks",
           "block",
+          "gem",
           "cobble"
         ],
-        "base": "engineer",
         "variants": [
           {
-            "name": "engineer"
-          },
-          {
-            "name": "sledge",
+            "name": "broad_face",
             "shape": [
               "HHH",
               "HHH"
-            ],
-            "centre": 0.02
+            ]
           },
           {
-            "name": "peen",
+            "name": "narrow_face",
             "shape": [
-              "HH",
-              "H "
+              "HH"
             ],
-            "strike": 1.2,
-            "centre": -0.01
+            "strike": 1.5
           }
         ]
       }

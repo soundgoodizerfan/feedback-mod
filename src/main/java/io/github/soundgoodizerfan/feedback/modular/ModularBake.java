@@ -180,6 +180,8 @@ public final class ModularBake {
      * {@code secondary_cell} and its case must insulate, a machine's winding must conduct and its housing state a conductivity, a vessel's body must hold experience, a charge's filler must be a chemical propellant. Other families take any material their role accepts.
      */
     public static boolean suits(ModularType type, String roleKey, Material material) {
+        if (material.traits().contains(Material.Trait.ASSEMBLY))
+            return false;
         boolean wear = roleKey.equals(type.wearRole());
         return switch (type.family()) {
             case CELL -> wear ? material.electrical().secondaryCell().isPresent() : material.electrical().insulation().isPresent();

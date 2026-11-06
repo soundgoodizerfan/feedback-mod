@@ -1,6 +1,7 @@
 {
   "color": "#5a5a52",
   "kind": "metal",
+  "traits": ["assembly"],
   "hardness": 20,
   "density": 10,
   "thermal": {

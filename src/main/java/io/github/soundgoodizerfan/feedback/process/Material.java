@@ -286,7 +286,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** Sculk: what a gun's sculk jacket role takes. */
         SCULK,
         /** A tunnelling-active fluid not yet damped (ender spec 2): loose or over its boiling point it undergoes premature spatial transitions that hop whatever stands near (core/hazard/SpatialHop). */
-        SPATIAL;
+        SPATIAL,
+        /** A made assembly (a clad fuel rod), not bulk stock: no modular part is built from it. */
+        ASSEMBLY;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 

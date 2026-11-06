@@ -4,7 +4,7 @@ A hammer you swing yourself, in a crafting grid. It is a modular tool: a **head*
 
 ## Head shapes
 
-The head is shaped as an **Engineer's Head** (standard), a **Sledge Head** (broad and heavy, more metal, so a harder blow) or a **Peen Head** (lean, lands a sharper blow for its weight). The head can only carry as much of a swing as its material allows, so a broad head lets a soft material carry more of a blow.
+The head is a **head blank**, the same part a mechanical hammer carries, shaped as a **Broad-Faced Head** (six cells of stock, heavy, so a harder blow) or a **Narrow-Faced Head** (two cells, concentrates the blow). The head can only carry as much of a swing as its material allows, so a broad head lets a soft material carry more of a blow.
 
 ## Crafting
 
