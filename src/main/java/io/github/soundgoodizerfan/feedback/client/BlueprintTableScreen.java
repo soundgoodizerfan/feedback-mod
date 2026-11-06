@@ -264,6 +264,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         out.add(roleName(role));
         if (I18n.exists("modular.feedback.role." + name + ".tip"))
             out.add(Component.translatable("modular.feedback.role." + name + ".tip"));
+        // A part that only one kind of launcher takes says so; a part with no line goes on anything.
+        if (I18n.exists("modular.feedback.role." + name + ".for"))
+            out.add(Component.translatable("modular.feedback.role." + name + ".for").withStyle(net.minecraft.ChatFormatting.GOLD));
         return out;
     }
 

@@ -5485,5 +5485,10 @@
   "gun.feedback.designation.big_iron": "Big Iron",
   "advancement.feedback.combat.big_iron.title": "Big Iron",
   "advancement.feedback.combat.big_iron.description": "A big iron on your hip: fire a revolver chambered for 20 mm.",
-  "gui.feedback.blueprint_table.unfit": "Does not fit this part."
+  "gui.feedback.blueprint_table.unfit": "Does not fit this part.",
+  "modular.feedback.role.winding.for": "Coilguns only.",
+  "modular.feedback.role.main_spring.for": "Spring guns only.",
+  "modular.feedback.role.steam_chest.for": "Steam guns only.",
+  "modular.feedback.role.steam_valve.for": "Steam guns only.",
+  "modular.feedback.role.steam_lagging.for": "Steam guns only."
 }
