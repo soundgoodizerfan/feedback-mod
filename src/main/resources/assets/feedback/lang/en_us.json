@@ -5478,5 +5478,7 @@
   "modular.feedback.fig.mass.tip.belt": "What the belt weighs.",
   "modular.feedback.fig.mass.tip.backpack": "What the pack weighs empty.",
   "modular.feedback.fig.mass.tip.bedroll": "What the roll weighs.",
-  "modular.feedback.fig.mass.tip.shield": "Every part's volume times its material's density. A heavier shield swings and raises slower."
+  "modular.feedback.fig.mass.tip.shield": "Every part's volume times its material's density. A heavier shield swings and raises slower.",
+  "commands.feedback.blueprint": "Gave a blueprint of the held item.",
+  "commands.feedback.no_modular": "Hold a modular item (not a blueprint)."
 }

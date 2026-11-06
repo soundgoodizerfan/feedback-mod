@@ -73,6 +73,8 @@ public final class FCommands {
 
     private static final SimpleCommandExceptionType NO_BLUEPRINT =
             new SimpleCommandExceptionType(Component.translatable("commands.feedback.no_blueprint"));
+    private static final SimpleCommandExceptionType NO_MODULAR =
+            new SimpleCommandExceptionType(Component.translatable("commands.feedback.no_modular"));
     private static final SimpleCommandExceptionType NO_MATERIAL =
             new SimpleCommandExceptionType(Component.translatable("commands.feedback.no_material"));
 
@@ -86,6 +88,7 @@ public final class FCommands {
 
     static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2))
+                .then(Commands.literal("blueprint").executes(FCommands::blueprintOf))
                 .then(Commands.literal("build").executes(FCommands::build)
                         .then(Commands.literal("parts").executes(FCommands::parts)))
                 .then(Commands.literal("part")
@@ -202,6 +205,25 @@ public final class FCommands {
         ItemStack blueprint = held(player);
         GunAmmo.give(player, toolFor(blueprint));
         c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.build"), false);
+        return 1;
+    }
+
+    /** A blueprint of the held modular item: its design and figures, under its name. */
+    private static int blueprintOf(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer player = c.getSource().getPlayerOrException();
+        ItemStack held = player.getMainHandItem();
+        ModularDesign design = ModularStacks.design(held);
+        if (design == null || held.is(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get()))
+            throw NO_MODULAR.create();
+        ItemStack out = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get());
+        out.set(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get(), design);
+        var figures = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
+        figures.ifPresent(f -> out.set(io.github.soundgoodizerfan.feedback.registry.FModular.FIGURES.get(), f));
+        var named = held.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
+        if (named != null)
+            out.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, named);
+        GunAmmo.give(player, out);
+        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.blueprint"), false);
         return 1;
     }
 
