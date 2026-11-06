@@ -20,7 +20,7 @@ Right-click it to open the board. The item is drawn as a **diagram**: each part 
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
 - Set the **edge**, on a tool that has one.
-- A big gun folds its parts into **clusters**; click a cluster to open it. A tip or pommel sits where the finished piece carries it.
+- On a gun, **attachments hang on the part they fit**. A part that can still take one wears a **+**; click it and the available attachments fan out round it while everything else dims. Attachments you have fitted stay drawn beside their part. An attachment that cannot go on with what is already fitted is grayed out. Attachments can hang on other attachments: a reticle on a sight, a valve on a steam chest. Click empty canvas to put the fan away. A tip or pommel sits where the finished piece carries it.
 - **Rig** toggles a looping demonstration of the drawing in use, for pick-like tools, a sword, a bow, a shield and a battery.
 
 ### Links

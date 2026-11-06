@@ -108,7 +108,10 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private static final int[] PIN_COLOURS = {0xFFF2C14E, 0xFF7FE0B0, 0xFFE08FE8};
 
     /** A part (or a slot for one) on the canvas, at a place in drawing units. */
-    private record Node(String key, String role, boolean ghost, float x, float y, ItemStack icon, String group) {
+    private record Node(String key, String role, boolean ghost, float x, float y, ItemStack icon, String group, boolean faint) {
+        Node(String key, String role, boolean ghost, float x, float y, ItemStack icon, String group) {
+            this(key, role, ghost, x, y, icon, group, false);
+        }
     }
 
     /** A link between two nodes, and the pairs of parts it stands for (several where a closed group's members join the same node). */
@@ -167,6 +170,14 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private Map<String, List<String>> groupDrawn = Map.of();
     private Set<String> folded = Set.of();
     private final Set<String> opened = new LinkedHashSet<>();
+    /** The part whose slots are fanned open round it (a gun's attachments live on the part they fit), or null. */
+    private String fanFor;
+    /** An attachment's role to the role it fits, from the type's board joins; empty for a type that lays its parts flat. */
+    private Map<String, String> parentOf = Map.of();
+    /** Roles that still have an attachment to offer: they wear a plus. */
+    private Set<String> fannable = Set.of();
+    /** Whether the pointer moved the canvas since the button went down: a click that did not closes the fan. */
+    private boolean dragged;
     private boolean rig;
     private float boundsX0, boundsY0, boundsX1, boundsY1;
     private boolean refit = true;
@@ -434,6 +445,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         figScroll = 0;
         extras.clear();
         opened.clear();
+        fanFor = null;
         sizes.clear();
         shape.clear();
         matId.clear();
@@ -698,12 +710,41 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 a[2]++;
             }
         ModularType.Board board = t.board();
+        Set<String> inPattern = new java.util.HashSet<>(at.keySet());
+        // A type whose board says what each part fits on hangs those parts off their parent instead of laying them flat.
+        Map<String, List<String>> kidsOf = new LinkedHashMap<>();
+        Map<String, String> parents = new HashMap<>();
+        for (List<String> j : board.joins())
+            if (j.size() == 2 && !inPattern.contains(j.get(0)) && !parents.containsKey(j.get(0))) {
+                parents.put(j.get(0), j.get(1));
+                kidsOf.computeIfAbsent(j.get(1), k -> new ArrayList<>()).add(j.get(0));
+            }
+        parentOf = parents;
+        boolean attach = !parents.isEmpty();
         board.layout().forEach((letter, xy) -> {
-            if (xy.size() == 2)
+            if (xy.size() == 2 && !parents.containsKey(letter))
                 at.putIfAbsent(letter, new float[]{xy.get(0), xy.get(1), 1});
         });
         List<String> rows = rows();
-        if (rows.size() > COLLAPSE_AT) {
+        Set<String> cur = now();
+        fannable = attach ? allKeys().stream().filter(k -> !cur.contains(k)).map(k -> parents.get(roleOf(k))).filter(java.util.Objects::nonNull)
+                .collect(java.util.stream.Collectors.toSet()) : Set.of();
+        if (fanFor != null && !rows.contains(fanFor))
+            fanFor = null;
+        List<String> fanKeys = attach ? childKeys(fanFor) : List.of();
+        if (attach) {
+            Map<String, float[]> memo = new HashMap<>();
+            Map<String, Integer> sides = new HashMap<>();
+            List<String> want = new ArrayList<>(rows);
+            fanKeys.forEach(k -> want.add(roleOf(k)));
+            for (String role : want)
+                if (parents.containsKey(role)) {
+                    float[] px = attachedPos(role, at, kidsOf, memo, sides);
+                    if (px != null)
+                        at.put(role, new float[]{px[0] / PITCH, px[1] / PITCH, 1});
+                }
+        }
+        if (!attach && rows.size() > COLLAPSE_AT) {
             Map<String, List<String>> big = new LinkedHashMap<>();
             board.groups().forEach((name, letters) -> {
                 List<String> drawn = letters.stream().filter(rows::contains).toList();
@@ -753,7 +794,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         int trayCols = wide ? Math.max(4, cols) : Math.max(3, prow);
         int placed = 0;
         for (int pass = 0; pass < 2; pass++) {
-            List<String> keys = pass == 0 ? tray : offered().stream().filter(k -> folded.stream().noneMatch(f -> board.groups().get(f).contains(roleOf(k)))).toList();
+            List<String> keys = pass == 0 ? tray : attach
+                    ? java.util.stream.Stream.concat(offered().stream().filter(k -> !parents.containsKey(roleOf(k))), fanKeys.stream()).toList()
+                    : offered().stream().filter(k -> folded.stream().noneMatch(f -> board.groups().get(f).contains(roleOf(k)))).toList();
             for (String k : keys) {
                 String role = roleOf(k);
                 float[] a = pass == 1 ? at.get(role) : null;
@@ -775,7 +818,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 ItemStack icon = pass == 1 && r.part().isPresent() ? new ItemStack(BuiltInRegistries.ITEM.get(r.part().get().item())) : ItemStack.EMPTY;
                 if (pass == 0)
                     nodeOf.put(role, out.size());
-                out.add(new Node(k, role, pass == 1, x, y, icon, null));
+                boolean faint = pass == 1 && attach && parents.containsKey(role) && !feasibleWith(k);
+                out.add(new Node(k, role, pass == 1, x, y, icon, null, faint));
             }
         }
         nodes = List.copyOf(out);
@@ -804,6 +848,66 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         }
         if (nodes.isEmpty())
             boundsX0 = boundsY0 = boundsX1 = boundsY1 = 0;
+    }
+
+    /** Where an attachment sits, in canvas units: on a ring round its parent, on one side of the row, its slot fixed by its place among its siblings. */
+    private float[] attachedPos(String role, Map<String, float[]> at, Map<String, List<String>> kidsOf, Map<String, float[]> memo, Map<String, Integer> sides) {
+        float[] done = memo.get(role);
+        if (done != null)
+            return done;
+        String parent = parentOf.get(role);
+        float[] out;
+        if (parent == null) {
+            float[] a = at.get(role);
+            out = a == null ? null : new float[]{a[0] / a[2] * PITCH, a[1] / a[2] * PITCH};
+        } else {
+            float[] pp = attachedPos(parent, at, kidsOf, memo, sides);
+            if (pp == null)
+                return null;
+            int k = kidsOf.get(parent).indexOf(role);
+            boolean top = !parentOf.containsKey(parent);
+            int side = top ? (k % 2 == 0 ? -1 : 1) : sides.getOrDefault(parent, -1);
+            sides.put(role, side);
+            float[] off = slot(top ? k / 2 : k, side);
+            out = new float[]{pp[0] + off[0], pp[1] + off[1]};
+        }
+        if (out != null)
+            memo.put(role, out);
+        return out;
+    }
+
+    /** Slot {@code j} on one side ({@code -1} up, {@code 1} down) of a part: straight out first, then wider rings of 3, 5, 7 round it. */
+    private static float[] slot(int j, int side) {
+        int[] caps = {1, 3, 5, 7, 9};
+        int left = j;
+        for (int ring = 0; ring < caps.length; ring++) {
+            if (left < caps[ring]) {
+                float radius = 44 + 32 * ring, a = (left - (caps[ring] - 1) / 2f) * (30f / radius);
+                return new float[]{Mth.sin(a) * radius, side * Mth.cos(a) * radius};
+            }
+            left -= caps[ring];
+        }
+        return new float[]{0, side * 220f};
+    }
+
+    /** The keys of the attachments that fit {@code parentRole} and are not fitted yet, the ones that cannot go on now included. */
+    private List<String> childKeys(String parentRole) {
+        if (parentRole == null)
+            return List.of();
+        Set<String> cur = now();
+        return allKeys().stream().filter(k -> !cur.contains(k)).filter(k -> parentRole.equals(parentOf.get(roleOf(k)))).toList();
+    }
+
+    /** Whether the sheet would still be one some form has with {@code key} added. */
+    private boolean feasibleWith(String key) {
+        Set<String> s = new LinkedHashSet<>(now());
+        s.add(key);
+        return feasible(s);
+    }
+
+    /** Whether a part belongs to the open fan: the part itself, what is fitted to it, and the slots round it. */
+    private boolean inFan(Node n) {
+        return fanFor == null || n.role.equals(fanFor) || fanFor.equals(parentOf.get(n.role));
     }
 
     /** Joins two drawn parts' nodes (nothing for a part not drawn, or two parts folded into one node); a pair already joined adds its pair of parts. */
@@ -1216,6 +1320,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                             opened.add(node.group);
                             selected = groupDrawn.get(node.group).get(0);
                         });
+                    } else if (node.ghost && node.faint) {
+                        skin.cue(GuiSkin.Cue.REJECT);
                     } else if (node.ghost) {
                         GuiSkin.play(skin.click(), 1f);
                         change(() -> {
@@ -1241,11 +1347,15 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                         });
                     } else {
                         GuiSkin.play(skin.click(), 1f);
-                        change(() -> selected = node.role);
+                        change(() -> {
+                            selected = node.role;
+                            fanFor = fannable.contains(node.role) && !node.role.equals(fanFor) ? node.role : null;
+                        });
                     }
                     return true;
                 }
                 panning = true;
+                dragged = false;
                 return true;
             }
         }
@@ -1255,6 +1365,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     @Override
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
         if (panning && settled()) {
+            dragged = true;
             camX -= dx / zoom;
             camY -= dy / zoom;
             clampCamera();
@@ -1265,6 +1376,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     @Override
     public boolean mouseReleased(double mx, double my, int button) {
+        // A click on bare canvas, not a drag, puts the fan away.
+        if (panning && !dragged && fanFor != null)
+            change(() -> fanFor = null);
         panning = false;
         return super.mouseReleased(mx, my, button);
     }
@@ -1633,7 +1747,22 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         }
     }
 
+    /** A part or slot, dimmed when a fan is open and it is not part of it, wearing a plus when it has attachments left to fit. */
     private void drawNode(GuiGraphics g, int i, int half, float time, boolean still) {
+        Node n = nodes.get(i);
+        drawNodeBody(g, i, half, time, still);
+        int sx = screenX(n.x), sy = screenY(n.y);
+        if (n.group == null && !n.ghost && fannable.contains(n.role)) {
+            boolean open = n.role.equals(fanFor);
+            g.drawString(font, open ? "-" : "+", sx + half - 5, sy + half - 9, open ? skin.accent() : skin.ink(), false);
+        }
+        if (n.group == null && !inFan(n))
+            g.fill(sx - half - 1, sy - half - 1, sx + half + 1, sy + half + 1, 0xA0101010);
+        else if (n.ghost && n.faint)
+            g.fill(sx - half, sy - half, sx + half, sy + half, 0x90101010);
+    }
+
+    private void drawNodeBody(GuiGraphics g, int i, int half, float time, boolean still) {
         Node n = nodes.get(i);
         int sx = screenX(n.x), sy = screenY(n.y) + (still ? 0 : Math.round(Mth.sin(time * 0.07f + i * 1.7f) * 1.2f * zoom));
         if (sx < leftPos + CAN_X - half - 20 || sx > leftPos + CAN_X + CAN_W + half + 20 || sy < topPos + CAN_Y - half - 20 || sy > topPos + CAN_Y + CAN_H + half + 20)
@@ -1644,6 +1773,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return;
         }
         if (n.ghost) {
+            Integer pi = nodeOf.get(parentOf.get(n.role));
+            if (pi != null)
+                segment(g, nodes.get(pi), n, half + 2, 1, alpha(skin.dim(), 0x90), true, time, still);
             int colour = hot ? skin.ink() : skin.dim();
             for (int from = 0; from < 8 * half; from += 8)
                 GuiStyle.perimeter(g, sx - half, sy - half, sx + half, sy + half, from, 4, colour);
@@ -2001,6 +2133,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             if (n.ghost) {
                 List<Component> out = new ArrayList<>(roleTip(n.role));
                 out.set(0, Component.translatable("gui.feedback.blueprint_table.add_tip", roleName(n.role)));
+                if (n.faint)
+                    out.add(Component.translatable("gui.feedback.blueprint_table.conflict").withStyle(net.minecraft.ChatFormatting.RED));
                 return out;
             }
             if (hoverCorner && keyOf(n.role) != null && removable(keyOf(n.role)))

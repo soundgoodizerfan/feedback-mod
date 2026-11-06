@@ -5490,5 +5490,6 @@
   "modular.feedback.role.main_spring.for": "Spring guns only.",
   "modular.feedback.role.steam_chest.for": "Steam guns only.",
   "modular.feedback.role.steam_valve.for": "Steam guns only.",
-  "modular.feedback.role.steam_lagging.for": "Steam guns only."
+  "modular.feedback.role.steam_lagging.for": "Steam guns only.",
+  "gui.feedback.blueprint_table.conflict": "Cannot go on with what is fitted now."
 }
