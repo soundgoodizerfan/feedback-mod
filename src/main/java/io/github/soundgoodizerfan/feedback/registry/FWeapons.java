@@ -182,6 +182,9 @@ public class FWeapons {
     /** A gun: a modular item of the gun type, its parts and figures the core's (modular spec 8.3). */
     public static final DeferredItem<GunItem> GUN = ITEMS.register("gun", () -> new GunItem(new Item.Properties()));
 
+    /** A flintlock: the gun type that needs no blueprint, made at the Tool Table from forged parts. */
+    public static final DeferredItem<GunItem> FLINTLOCK = ITEMS.register("flintlock", () -> new GunItem(new Item.Properties()));
+
     private FWeapons() {
     }
 

@@ -80,7 +80,7 @@ public final class ToolTableAssembly {
 
     public static Kind kindOf(ModularType type) {
         return switch (type.family()) {
-            case GUN -> Kind.GUN;
+            case GUN -> type.blueprint() ? Kind.GUN : Kind.TOOL;
             case DISH -> Kind.DISH;
             default -> Kind.TOOL;
         };

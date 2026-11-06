@@ -2258,6 +2258,9 @@ public final class FTuning {
      * Time a hand spends working a manual action between shots, in ms (spec 12): a break action
      * is the least (the next barrel is already loaded), a bolt the most. Placeholder.
      */
+    /** Ticks of a flintlock's reprime and cock between shots, ms, and the share of pulls whose priming flashes in the pan without firing the charge. */
+    public static final int GUN_CYCLE_MANUAL_MS_FLINTLOCK = 2200;
+    public static final float GUN_FLINT_MISFIRE = 0.12f;
     public static final int GUN_CYCLE_MANUAL_MS_BREAK = 150, GUN_CYCLE_MANUAL_MS_LEVER = 450,
             GUN_CYCLE_MANUAL_MS_PUMP = 550, GUN_CYCLE_MANUAL_MS_BOLT = 800;
     /**

@@ -296,7 +296,7 @@ public final class GunShots {
         if (design.launcher() == GunSpec.Launcher.STEAM)
             GunSteam.spend(gun);
         // Only a chamber's case holds the pressure; a spring or a steam gun's round is a dry slug in a shell.
-        float caseRating = design.launcher().chargeless() ? Float.MAX_VALUE
+        float caseRating = design.launcher().chargeless() || design.layout().action() == GunLayout.Action.FLINTLOCK ? Float.MAX_VALUE
                 : round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
         float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),

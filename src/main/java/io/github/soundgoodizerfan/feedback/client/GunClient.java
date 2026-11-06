@@ -356,6 +356,16 @@ public final class GunClient {
     }
 
     private static void shoot(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunFigures f, boolean off, long now) {
+        // A flintlock's priming sometimes flashes in the pan: a click and a puff, the charge stays loaded, and the pull still costs its cycle.
+        if (GunSpec.of(gun).map(g -> g.layout().action() == io.github.soundgoodizerfan.feedback.weapon.GunLayout.Action.FLINTLOCK).orElse(false)
+                && player.getRandom().nextFloat() < FTuning.GUN_FLINT_MISFIRE) {
+            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 0.8f, 1.2f, false);
+            Vec3 pan = player.getEyePosition().add(player.getLookAngle().scale(0.5));
+            mc.level.addParticle(ParticleTypes.SMOKE, pan.x, pan.y, pan.z, 0, 0.02, 0);
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.flash_pan"), true);
+            io.github.soundgoodizerfan.feedback.client.gun.GunMotion.shot(off, f.cycleMs(), 0.5f);
+            return;
+        }
         PacketDistributor.sendToServer(new GunFirePayload(player.getYRot(), player.getXRot(), aim > 0.5f, off));
         reloadUntilMs = 0; // a pull ends a reload; the server does the same
         io.github.soundgoodizerfan.feedback.client.gun.GunMotion.reloadStop();

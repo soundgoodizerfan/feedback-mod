@@ -91,7 +91,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         var material = found.get().material();
         boolean loose = LOOSE_FORMS.contains(found.get().form());
         return switch (slot) {
-            case CASE -> found.get().form().equals("case");
+            case CASE -> found.get().form().equals("case") || found.get().form().equals("paper_case");
             // A bullet seats as a bullet; a nugget is formed into shot by the die (spec 12).
             case PROJECTILE -> found.get().form().equals("bullet") || found.get().form().equals("nugget");
             // A charge is the powder of a propellant: a whole blaze rod is not one.

@@ -656,6 +656,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         List<Item> cases = new ArrayList<>(), bullets = new ArrayList<>();
         materials.forEach((id, m) -> {
             m.item(id, "case").ifPresent(cases::add);
+            m.item(id, "paper_case").ifPresent(cases::add);
             m.item(id, "bullet").ifPresent(bullets::add);
         });
         List<PressCategory.Card> cards = new ArrayList<>();

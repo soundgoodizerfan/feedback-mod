@@ -2537,7 +2537,7 @@
   "modular.feedback.role.string.tip": "Carries the limbs' energy to the arrow.",
   "modular.feedback.role.prod.tip": "The crossbow's short, stiff bow.",
   "modular.feedback.role.stock.tip": "The body the crossbow's parts are fixed to.",
-  "modular.feedback.role.lock.tip": "Holds the string drawn until released.",
+  "modular.feedback.role.lock.tip": "The flint and its hammer. Pulling the trigger snaps the flint on the pan: it takes a moment to prime and cock again, and the priming sometimes flashes without firing the charge.",
   "modular.feedback.role.pivot.tip": "The hinge the blades turn on.",
   "modular.feedback.role.plate.tip": "The main armor. Better plate takes more of every blow.",
   "modular.feedback.role.lining.tip": "Padding worn under the plate; it softens what gets through.",
@@ -5591,5 +5591,13 @@
   "gun.feedback.designation.shot_revolver": "Shot revolver",
   "gun.feedback.designation.shot_pistol": "Shot pistol",
   "gun.feedback.designation.musket": "Musket",
-  "gun.feedback.designation.slug_gun": "Slug gun"
+  "gun.feedback.designation.slug_gun": "Slug gun",
+  "item.feedback.flintlock": "Flintlock",
+  "gun.feedback.designation.flintlock_pistol": "Flintlock pistol",
+  "gun.feedback.designation.flintlock_musket": "Flintlock musket",
+  "modular.feedback.variant.flintlock": "Flintlock",
+  "modular.feedback.desc.variant.flintlock": "A hammer holding a flint, over a pan of priming powder. Slow to prime and cock between shots, and about one pull in eight flashes in the pan without firing.",
+  "modular.feedback.modifier.shape.flintlock": "Flintlock",
+  "message.feedback.gun.flash_pan": "Flash in the pan.",
+  "form.feedback.paper_case": "Rolled %s Case"
 }

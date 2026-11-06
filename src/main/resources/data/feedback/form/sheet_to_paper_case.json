@@ -1,0 +1,7 @@
+{
+  "from": "sheet",
+  "to": "paper_case",
+  "operation": "roll",
+  "base": 0.5,
+  "slope": 1
+}

@@ -239,7 +239,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         GunLayout.Type kind = GunLayout.Type.of(type.roles().get(RECEIVER).variant(receiver).map(ModularType.Variant::name).orElse(""));
         ModularDesign.Part feedPart = firstOf(design, CYLINDER, TUBE, BELT, BOX_FEED);
         GunLayout.Feed feed = feedPart == null ? (act == GunLayout.Action.BREAK ? GunLayout.Feed.BARRELS
-                : act == GunLayout.Action.BOLT || act == GunLayout.Action.LEVER ? GunLayout.Feed.SINGLE : GunLayout.Feed.BOX)
+                : act == GunLayout.Action.BOLT || act == GunLayout.Action.LEVER || act == GunLayout.Action.FLINTLOCK ? GunLayout.Feed.SINGLE : GunLayout.Feed.BOX)
                 : design.part(CYLINDER) != null ? GunLayout.Feed.CYLINDER : design.part(TUBE) != null ? GunLayout.Feed.TUBE
                 : design.part(BOX_FEED) != null ? GunLayout.Feed.BOX : GunLayout.Feed.BELT;
         if (!feed.fits(act) || (second != null && (act != GunLayout.Action.BREAK || feed != GunLayout.Feed.BARRELS)))
@@ -347,7 +347,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         List<String> feeds = List.of(CYLINDER, TUBE, BELT, BOX_FEED).stream().filter(r -> design.part(r) != null).toList();
         GunLayout.Action act = GunLayout.Action.of(type.roles().get(actionRole).variant(action).map(ModularType.Variant::name).orElse(""));
         GunLayout.Feed feed = feeds.isEmpty() ? (act == GunLayout.Action.BREAK ? GunLayout.Feed.BARRELS
-                : act == GunLayout.Action.BOLT || act == GunLayout.Action.LEVER ? GunLayout.Feed.SINGLE : GunLayout.Feed.BOX)
+                : act == GunLayout.Action.BOLT || act == GunLayout.Action.LEVER || act == GunLayout.Action.FLINTLOCK ? GunLayout.Feed.SINGLE : GunLayout.Feed.BOX)
                 : design.part(CYLINDER) != null ? GunLayout.Feed.CYLINDER : design.part(TUBE) != null ? GunLayout.Feed.TUBE
                 : design.part(BOX_FEED) != null ? GunLayout.Feed.BOX : GunLayout.Feed.BELT;
         boolean second = design.part(SECOND) != null;

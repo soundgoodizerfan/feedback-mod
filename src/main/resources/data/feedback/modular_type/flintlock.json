@@ -1,0 +1,175 @@
+{
+  "family": "gun",
+  "slot": "mainhand",
+  "wear_role": "B",
+  "primary": "R",
+  "blueprint": false,
+  "roles": {
+    "R": {
+      "name": "receiver",
+      "forms": [
+        "receiver"
+      ],
+      "litres": 0.3,
+      "layer": 1,
+      "part": {
+        "item": "feedback:receiver",
+        "shape": [
+          "R"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "handgun",
+        "variants": [
+          {
+            "name": "handgun",
+            "trait": "off_hand"
+          },
+          {
+            "name": "long_gun",
+            "shape": [
+              "RR"
+            ],
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.7,
+              "spread_mult": 0.6
+            }
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "barrel",
+      "forms": [
+        "gun_barrel"
+      ],
+      "litres": 0.3,
+      "layer": 0,
+      "dims": {
+        "bore": {
+          "min": 5,
+          "max": 20,
+          "unit": "mm",
+          "default": 9
+        },
+        "outer": {
+          "min": 5,
+          "max": 40,
+          "unit": "mm",
+          "default": 15
+        },
+        "length": {
+          "min": 0.05,
+          "max": 0.8,
+          "unit": "m",
+          "default": 0.2
+        }
+      },
+      "part": {
+        "item": "feedback:gun_barrel",
+        "shape": [
+          "B"
+        ],
+        "stock": [
+          "turned_rod",
+          "rod",
+          "ingot"
+        ],
+        "base": "smoothbore",
+        "variants": [
+          {
+            "name": "smoothbore",
+            "params": {
+              "bore": 9,
+              "outer": 14,
+              "length": 0.2,
+              "launcher": 0
+            }
+          }
+        ]
+      }
+    },
+    "T": {
+      "name": "trigger",
+      "forms": [
+        "trigger_group"
+      ],
+      "litres": 0.03,
+      "layer": 3,
+      "part": {
+        "item": "feedback:trigger_group",
+        "shape": [
+          "T"
+        ],
+        "stock": [
+          "drilled_plate",
+          "plate"
+        ],
+        "variants": []
+      }
+    },
+    "G": {
+      "name": "grip",
+      "forms": [
+        "grip"
+      ],
+      "litres": 0.12,
+      "layer": 4
+    },
+    "K": {
+      "name": "lock",
+      "forms": [
+        "bolt"
+      ],
+      "litres": 0.15,
+      "layer": 2,
+      "part": {
+        "item": "feedback:bolt",
+        "shape": [
+          "K"
+        ],
+        "stock": [
+          "rod",
+          "ingot"
+        ],
+        "base": "flintlock",
+        "variants": [
+          {
+            "name": "flintlock",
+            "trait": "hammer,manual_cycle"
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "RBTGK"
+    ]
+  ],
+  "defaults": {
+    "R": "feedback:wrought_iron",
+    "B": "feedback:wrought_iron",
+    "T": "feedback:wrought_iron",
+    "G": "feedback:wood",
+    "K": "feedback:wrought_iron"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "flintlock_pistol",
+        "is": {
+          "variant": "handgun"
+        }
+      },
+      {
+        "name": "flintlock_musket",
+        "is": {
+          "variant": "long_gun"
+        }
+      }
+    ]
+  }
+}

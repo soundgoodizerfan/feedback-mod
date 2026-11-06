@@ -64,6 +64,8 @@ public record GunLayout(Type type, Action action, Feed feed) {
      */
     public enum Action implements StringRepresentable {
         BREAK("break", true, FTuning.GUN_CYCLE_MANUAL_MS_BREAK, List.of(FireMode.SEMI)),
+        /** A flintlock: a hammer with a flint, a pan to prime and a muzzle-loaded round; slow to cock and prime again. */
+        FLINTLOCK("flintlock", true, FTuning.GUN_CYCLE_MANUAL_MS_FLINTLOCK, List.of(FireMode.SEMI)),
         LEVER("lever", true, FTuning.GUN_CYCLE_MANUAL_MS_LEVER, List.of(FireMode.SEMI)),
         BOLT("bolt", false, FTuning.GUN_CYCLE_MANUAL_MS_BOLT, List.of(FireMode.SEMI)),
         PUMP("pump", true, FTuning.GUN_CYCLE_MANUAL_MS_PUMP, List.of(FireMode.SEMI)),
@@ -156,7 +158,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
                 case BARRELS -> action == Action.BREAK;
                 case CYLINDER -> action.hammer();
                 case TUBE -> action == Action.LEVER || action == Action.PUMP || action == Action.SELF_LOADING;
-                case SINGLE -> action == Action.BOLT || action == Action.LEVER;
+                case SINGLE -> action == Action.BOLT || action == Action.LEVER || action == Action.FLINTLOCK;
                 case BOX -> action != Action.BREAK;
                 case BELT -> action == Action.AUTOMATIC;
             };
