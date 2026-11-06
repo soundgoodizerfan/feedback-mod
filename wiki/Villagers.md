@@ -16,7 +16,7 @@ While the screen is open the villager stops, faces you and waits, as in vanilla 
 
 ## Orders
 
-Each day a villager holds **2 plus its trade level** commissions. The orders are the same every time you open the screen that day and change the next day. Each order names a type of piece, what the villager wants of it, and the base pay.
+Each day a villager holds **2 plus its trade level** commissions. The orders are the same every time you open the screen that day and change the next day. Each order names a type of piece, what the villager wants of it (the materials of its parts for a tool, weapon or armor piece, qualities for a dish), and the base pay.
 
 | Profession | Orders |
 | --- | --- |
@@ -34,13 +34,14 @@ Higher-level villagers order more kinds of piece and pay more.
 
 ### Reading an order
 
-Each stated term reads "Noun: word", for example "Edge hardness: at least hard". Next to it a four-cell bar shows where in the usual range the target sits; a hard requirement fills every cell it allows. Hover a term to see what the figure means. A term line wider than its box slides back and forth so the whole text can be read. One term is a hard requirement, shown as "at least" or "no more than" a word. Some wants are never said; the complaint after a delivery is how you find them out.
+A tool, weapon or armor order lists the parts it cares about, one line each: "Head: bronze" asks for that material, "Head: any metal" asks for any material of that kind. A novice asks about one part and only soft materials such as copper, tin, wood or bronze; a villager asks about more parts and harder materials (iron, then steel, then gems and netherite) as it rises. Name the right material and the part scores in full; a different material scores by how alike it is (same kind, similar hardness and density), never in full. A missed kind scores nothing, and so does a missing part. The villager's complaint names the part that is wrong.
+
+A dish order's stated term reads "Noun: word", for example "Richness: at least rich". Next to it a four-cell bar shows where in the usual range the target sits; a hard requirement fills every cell it allows. Hover a term to see what the figure means. A term line wider than its box slides back and forth so the whole text can be read. One term is a hard requirement, shown as "at least" or "no more than" a word. Some wants are never said; the complaint after a delivery is how you find them out.
 
 ### Hints
 
-The **Hint** button on the Orders tab explains the selected order. Hints are free and stay until you press **Back** or pick another order.
+The **Hint** button on the Orders tab explains a selected dish order; tool orders state their materials outright and have no hint. Hints are free and stay until you press **Back** or pick another order.
 
-- For a tool or armor order, each stated term gets a line naming which part of the item to build from which materials, up to four materials, or saying that no single material gets there and you should combine or reshape parts. Each hint swaps one part of the plain design; the whole item is what is judged.
 - For a dish order, each stated term gets a line saying how to move it: more animal parts, delivering it hot, salted food, smoking, a sealed container and so on. Under it, a line reading "Try building with ..." names up to four foods to build the dish from: foods of the matching kind or cuisine for meat, seafood, plant, starch and cuisine terms, and the foods highest (or lowest, when the term wants low) in the figure for fat, fibre and moisture terms. A closing line points to the [Tasting Spoon](Tasting_Spoon.md).
 
 ### Delivering
@@ -49,7 +50,7 @@ The **Hint** button on the Orders tab explains the selected order. Hints are fre
 2. Put it in the delivery slot and press **Deliver**.
 3. The villager grades it as **Rejected**, **Poor**, **Fair**, **Good** or **Exceptional**, pays emeralds by grade, and names the one thing furthest off, for example "Not enough bite." or "Too much weight."
 
-Worn pieces are graded as worn. Missing the hard requirement costs a grade. An order can be delivered once a day, and then shows as done. A piece of the wrong type is refused and nothing happens.
+Worn pieces are graded as worn. On a dish, missing the hard requirement costs a grade. An order can be delivered once a day, and then shows as done. A piece of the wrong type is refused and nothing happens.
 
 A Rejected piece is handed back and the order stays open, but the villager thinks less of you.
 
