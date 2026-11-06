@@ -144,6 +144,9 @@ final class ThermalCard {
             if (liquids.length > 0)
                 in.fluid(liquids[0].getFluid(), 1000);
             out.fluid(phase.gasFluid(), 1000);
+            // A cut's vapor condenses to a different liquid than the one fed in; show it so the condensate is findable.
+            if (liquids.length == 0 || !phase.liquidFluid().equals(BuiltInRegistries.FLUID.getKey(liquids[0].getFluid())))
+                out.fluid(phase.liquidFluid(), 1000);
             return;
         }
         for (Ingredient input : p.inputs())
@@ -274,6 +277,9 @@ final class ThermalCard {
         }
         if (p.phase().isPresent()) {
             rows.add(new Row(t("feedback.jei.phase_change.boil"), Readout.number(p.minTemperature().value()) + " Tu", VALUE_COLOUR));
+            var phase = p.phase().get();
+            if (!phase.liquidFluid().equals(BuiltInRegistries.FLUID.getKey(phase.liquid().getStacks().length > 0 ? phase.liquid().getStacks()[0].getFluid() : net.minecraft.world.level.material.Fluids.EMPTY)))
+                rows.add(new Row(t("feedback.jei.phase_change.condense"), fluidName(phase.liquidFluid()), VALUE_COLOUR));
             return rows;
         }
         if (p.quench()) {

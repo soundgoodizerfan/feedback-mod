@@ -3401,6 +3401,7 @@
   "feedback.jei.electrolysis.hot": "Needs %s Tu",
   "feedback.jei.electrolysis.residue": "Left in",
   "feedback.jei.phase_change.boil": "Boils at",
+  "feedback.jei.phase_change.condense": "Vapor cools to",
   "feedback.mixer.empty": "Empty",
   "feedback.mixer.unmixed": "Unmixed: layered, lumpy",
   "feedback.mixer.partly": "Partly mixed",
@@ -5480,5 +5481,8 @@
   "modular.feedback.fig.mass.tip.bedroll": "What the roll weighs.",
   "modular.feedback.fig.mass.tip.shield": "Every part's volume times its material's density. A heavier shield swings and raises slower.",
   "commands.feedback.blueprint": "Gave a blueprint of the held item.",
-  "commands.feedback.no_modular": "Hold a modular item (not a blueprint)."
+  "commands.feedback.no_modular": "Hold a modular item (not a blueprint).",
+  "gun.feedback.designation.big_iron": "Big Iron",
+  "advancement.feedback.combat.big_iron.title": "Big Iron",
+  "advancement.feedback.combat.big_iron.description": "A big iron on your hip: fire a revolver chambered for 20 mm."
 }

@@ -308,8 +308,14 @@ public final class GunShots {
                 projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value(), gun,
                 round.blast(materials), RubberRounds.isRubber(projectile));
         GunFu.shotFired(level, shooter, gun, figures, heat);
-        if (shooter instanceof net.minecraft.server.level.ServerPlayer server)
+        if (shooter instanceof net.minecraft.server.level.ServerPlayer server) {
             ModularTraits.gunFired(server, gun, figures);
+            if (GunSpec.of(gun).flatMap(spec -> GunDesignation.of(gun, spec)).filter("big_iron"::equals).isPresent()) {
+                var holder = server.server.getAdvancements().get(io.github.soundgoodizerfan.feedback.Feedback.id("combat/big_iron"));
+                if (holder != null)
+                    server.getAdvancements().award(holder, "done");
+            }
+        }
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
             if (shooter instanceof Player player)
