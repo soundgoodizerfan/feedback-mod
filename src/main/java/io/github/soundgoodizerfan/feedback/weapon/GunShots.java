@@ -310,6 +310,8 @@ public final class GunShots {
         GunFu.shotFired(level, shooter, gun, figures, heat);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server) {
             ModularTraits.gunFired(server, gun, figures);
+            if (cookOff)
+                io.github.soundgoodizerfan.feedback.net.GunKickPayload.send(server, hand == InteractionHand.OFF_HAND, figures);
             if (GunSpec.of(gun).flatMap(spec -> GunDesignation.of(gun, spec)).filter("big_iron"::equals).isPresent()) {
                 var holder = server.server.getAdvancements().get(io.github.soundgoodizerfan.feedback.Feedback.id("combat/big_iron"));
                 if (holder != null)
@@ -343,7 +345,13 @@ public final class GunShots {
         if (load.isEmpty() || load.get().coil()
                 || GunCondition.temperature(gun, level).value() < load.get().ignitionTu())
             return false;
-        return shoot(level, holder, gun, design, round, holder.getYRot(), holder.getXRot(), nowMs, true, false, false, InteractionHand.MAIN_HAND);
+        // The server made this shot, so the holder's client played no sound of its own: let them hear it.
+        hearSelf = true;
+        try {
+            return shoot(level, holder, gun, design, round, holder.getYRot(), holder.getXRot(), nowMs, true, false, false, InteractionHand.MAIN_HAND);
+        } finally {
+            hearSelf = false;
+        }
     }
 
     /** A reload in progress: which gun, in which slot, and when its next beat is due. */

@@ -20,30 +20,19 @@
 package io.github.soundgoodizerfan.feedback.client.gun;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.world.entity.HumanoidArm;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 /**
- * The player's bare arms on a gun in first person: the shooting arm reaches in from the side to the grip, and the
- * other arm to the forend of a long gun when nothing else is in that hand. The vanilla arm model (skin, sleeve and
- * slim or wide build) is drawn in gun space, where one unit is one model pixel and so one arm-model unit, with its
- * shoulder placed behind, below and outside the hand so the forearm points along the line to it. Drawn inside the
- * gun's own pose, the arms follow its kick, sway and aim.
+ * The player's bare arms on a gun in first person. The arm is drawn with vanilla's own empty-hand arm transform
+ * ({@code ItemInHandRenderer.renderPlayerArm}), which is known to put a forearm in view from the lower corner of the
+ * screen, moved as a whole so its fist lands on the grip (and, for a long gun with a free off hand, the other arm's
+ * on the forend). Drawn in the hand-pivot space {@link GunRenderer#renderHeld} starts from.
  */
 final class GunArms {
-
-    /** Shoulder-to-hand direction for the shooting arm, in gun space (x toward the gun's own side, -z forward, y up). */
-    private static final Vector3f MAIN = new Vector3f(-0.35f, 0.45f, -0.85f).normalize();
-    /** The support arm comes from the other side. */
-    private static final Vector3f SUPPORT = new Vector3f(0.55f, 0.35f, -0.75f).normalize();
-    /** From the arm's pivot to the middle of the fist, in model pixels (the arm box runs 10 below its pivot). */
-    private static final float REACH = 8f;
 
     private GunArms() {
     }
@@ -56,26 +45,27 @@ final class GunArms {
         var player = Minecraft.getInstance().player;
         if (player == null || player.isInvisible())
             return;
-        float[] at = view.hand();
-        arm(pose, buffers, light, player, side > 0 ? HumanoidArm.RIGHT : HumanoidArm.LEFT, at[0], at[1], at[2], MAIN, side);
+        float[] grip = GunRenderer.firstPersonGrip(view), at = view.hand();
+        arm(pose, buffers, light, side, grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
         if (twoHanded && view.longGun()) {
             float[] fore = GunDraw.forend(view);
-            arm(pose, buffers, light, player, side > 0 ? HumanoidArm.LEFT : HumanoidArm.RIGHT, 0f, fore[0], fore[1], SUPPORT, side);
+            arm(pose, buffers, light, -side, (grip[0] * side - at[0]) / 16f, (grip[1] + fore[0] - at[1]) / 16f, (grip[2] + fore[1] - at[2]) / 16f);
         }
     }
 
-    private static void arm(PoseStack pose, MultiBufferSource buffers, int light, AbstractClientPlayer player, HumanoidArm which,
-                            float x, float y, float z, Vector3f direction, float side) {
+    /** One arm, vanilla's way, with its frame moved to ({@code x, y, z}) blocks from the hand pivot first. */
+    private static void arm(PoseStack pose, MultiBufferSource buffers, int light, float f, float x, float y, float z) {
+        var player = Minecraft.getInstance().player;
         var renderer = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
-        var part = which == HumanoidArm.RIGHT ? renderer.getModel().rightArm : renderer.getModel().leftArm;
-        // Mirror the direction's sideways part for the arm that is not the shooting arm's side.
-        Vector3f d = new Vector3f(direction.x * side, direction.y, direction.z);
         pose.pushPose();
-        pose.translate(x - d.x * REACH, y - d.y * REACH, z - d.z * REACH);
-        pose.mulPose(new Quaternionf().rotationTo(new Vector3f(0, 1, 0), d));
-        // The part draws itself about its own pivot on the body; bring that pivot to the origin.
-        pose.translate(-part.x, -part.y, -part.z);
-        if (which == HumanoidArm.RIGHT)
+        pose.translate(x, y, z);
+        pose.mulPose(Axis.YP.rotationDegrees(f * 45f));
+        pose.translate(f * -1f, 3.6f, 3.5f);
+        pose.mulPose(Axis.ZP.rotationDegrees(f * 120f));
+        pose.mulPose(Axis.XP.rotationDegrees(200f));
+        pose.mulPose(Axis.YP.rotationDegrees(f * -135f));
+        pose.translate(f * 5.6f, 0f, 0f);
+        if (f > 0)
             renderer.renderRightHand(pose, buffers, light, player);
         else
             renderer.renderLeftHand(pose, buffers, light, player);

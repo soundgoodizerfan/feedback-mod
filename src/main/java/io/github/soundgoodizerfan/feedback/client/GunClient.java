@@ -372,8 +372,21 @@ public final class GunClient {
             mc.level.addParticle(ParticleTypes.LARGE_SMOKE, muzzle.x, muzzle.y, muzzle.z,
                     (player.getRandom().nextFloat() - 0.5) * 0.02, 0.03, (player.getRandom().nextFloat() - 0.5) * 0.02);
 
+        kick(player, f.kickDeg(), f.cycleMs(), now);
+    }
+
+    /** A shot the server fired for this player (a cook-off): the gun and the view kick as for one of their own. */
+    public static void serverKick(boolean off, int cycleMs, float kickDeg) {
+        var player = Minecraft.getInstance().player;
+        if (player == null)
+            return;
+        io.github.soundgoodizerfan.feedback.client.gun.GunMotion.shot(off, cycleMs, kickDeg);
+        kick(player, kickDeg, cycleMs, System.currentTimeMillis());
+    }
+
+    private static void kick(LocalPlayer player, float kickDeg, int cycleMs, long now) {
         // Recoil climbs over a streak and settles after a pause; aiming takes the edge off it.
-        streak = now - lastShotMs < f.cycleMs() * 5L / 2 ? Math.min(streak + 1, FTuning.GUN_KICK_CLIMB_MAX) : 0;
+        streak = now - lastShotMs < cycleMs * 5L / 2 ? Math.min(streak + 1, FTuning.GUN_KICK_CLIMB_MAX) : 0;
         lastShotMs = now;
         float climb = 1 + FTuning.GUN_KICK_CLIMB_PER_SHOT * streak;
         float aimed = Mth.lerp(aim, 1f, FTuning.GUN_ADS_KICK);
@@ -381,7 +394,7 @@ public final class GunClient {
         float noise = 0.75f + player.getRandom().nextFloat() * 0.5f;
         float yawNoise = (player.getRandom().nextFloat() - 0.5f) * 0.6f;
         float steady = io.github.soundgoodizerfan.feedback.potion.SteadyHand.factor(player);
-        KICKS.add(new Kick(now, f.kickDeg() * noise * climb * aimed * steady, f.kickDeg() * yawNoise * aimed * steady));
+        KICKS.add(new Kick(now, kickDeg * noise * climb * aimed * steady, kickDeg * yawNoise * aimed * steady));
     }
 
     /** Land each kick over its time with an ease-out, by the part of it this frame adds. */

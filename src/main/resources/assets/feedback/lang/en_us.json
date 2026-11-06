@@ -5571,5 +5571,12 @@
   "modular.feedback.dim.g6": "Gear 6",
   "modular.feedback.unit.mm": "mm",
   "feedback.jei.info.engine": "A piston engine: block, pistons, crank and head, built at the Tool Table from a blueprint drawn at the Blueprint Table, where you also set the bore and stroke. Place it against the end of a shaft; it burns fuel from its own tank and turns the shaft like a Steam Engine.",
-  "feedback.jei.info.transmission": "A gearbox: gear set, synchro and case, built at the Tool Table from a blueprint drawn at the Blueprint Table, where you set the ratio of each gear. Place it in a drivetrain; a shifter picks neutral, a forward gear or reverse."
+  "feedback.jei.info.transmission": "A gearbox: gear set, synchro and case, built at the Tool Table from a blueprint drawn at the Blueprint Table, where you set the ratio of each gear. Place it in a drivetrain; a shifter picks neutral, a forward gear or reverse.",
+  "modular.feedback.dim.length": "Length",
+  "modular.feedback.dim.outer": "Outer diameter",
+  "gui.feedback.blueprint_table.cat.tools": "Tools",
+  "gui.feedback.blueprint_table.cat.weapons": "Weapons",
+  "gui.feedback.blueprint_table.cat.wearables": "Wearables",
+  "gui.feedback.blueprint_table.cat.technology": "Technology",
+  "gui.feedback.blueprint_table.cat.food": "Food"
 }

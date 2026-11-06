@@ -25,7 +25,10 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Locale;
 import java.util.function.Consumer;
 
@@ -40,18 +43,31 @@ import java.util.function.Consumer;
  */
 final class SkinPopup<T> {
 
-    /** One choice: what it stands for, its label, and a tooltip for what it is. */
-    record Entry<T>(T value, Component label, List<Component> tip) {
+    /**
+     * One choice: what it stands for, its label, a tooltip for what it is, and the heading it is listed under (empty for a
+     * plain list). A list with headings shows each as a row that folds its entries; a search ignores the headings.
+     */
+    record Entry<T>(T value, Component label, List<Component> tip, String group) {
+        Entry(T value, Component label, List<Component> tip) {
+            this(value, label, tip, "");
+        }
     }
 
-    private static final int W = 200, PAD = 10, TITLE_H = 16, ROW_H = 18, MAX_ROWS = 6, SEARCH_H = 16;
+    /** A line of the list: an entry, or a heading ({@code entry} null). */
+    private record Row<T>(Entry<T> entry, String heading, boolean open) {
+    }
+
+    private static final int W = 240, PAD = 10, TITLE_H = 16, ROW_H = 18, MAX_ROWS = 10, SEARCH_H = 16;
 
     private final GuiSkin skin;
     private final Component title;
     private Opening opening;
     private boolean shown;
-    /** Every entry, and those whose label has the search text in it. */
-    private List<Entry<T>> all = List.of(), entries = List.of();
+    /** Every entry, and the lines shown now: headings and the entries under the open ones, or what the search matches. */
+    private List<Entry<T>> all = List.of();
+    private List<Row<T>> entries = List.of();
+    private final Set<String> folded = new HashSet<>();
+    private String query = "";
     /** The search box, only for a list longer than a page. */
     private EditBox search;
     private Consumer<T> onPick = v -> {
@@ -72,7 +88,11 @@ final class SkinPopup<T> {
 
     void open(List<Entry<T>> entries, Consumer<T> onPick) {
         this.all = entries;
-        this.entries = entries;
+        query = "";
+        // A list with headings starts folded: a heading a click, not a wall of names.
+        folded.clear();
+        entries.stream().map(Entry::group).filter(g -> !g.isEmpty()).forEach(folded::add);
+        rebuild();
         var font = Minecraft.getInstance().font;
         search = entries.size() > MAX_ROWS ? new EditBox(font, 0, 0, W - 2 * PAD - 8, SEARCH_H - 8, Component.translatable("gui.feedback.popup.search")) : null;
         if (search != null) {
@@ -95,9 +115,29 @@ final class SkinPopup<T> {
     }
 
     private void filter(String text) {
-        String q = text.trim().toLowerCase(Locale.ROOT);
-        entries = q.isEmpty() ? all : all.stream().filter(e -> e.label().getString().toLowerCase(Locale.ROOT).contains(q)).toList();
+        query = text.trim().toLowerCase(Locale.ROOT);
+        rebuild();
         scroll = 0;
+    }
+
+    private void rebuild() {
+        List<Row<T>> out = new ArrayList<>();
+        if (!query.isEmpty()) {
+            for (Entry<T> e : all)
+                if (e.label().getString().toLowerCase(Locale.ROOT).contains(query))
+                    out.add(new Row<>(e, "", true));
+        } else {
+            String last = null;
+            for (Entry<T> e : all) {
+                if (!e.group().isEmpty() && !e.group().equals(last)) {
+                    out.add(new Row<>(null, e.group(), !folded.contains(e.group())));
+                    last = e.group();
+                }
+                if (e.group().isEmpty() || !folded.contains(e.group()))
+                    out.add(new Row<>(e, "", true));
+            }
+        }
+        entries = out;
     }
 
     private int searchH() {
@@ -152,12 +192,17 @@ final class SkinPopup<T> {
                 int i = scroll + r, ry = listY() + r * ROW_H;
                 skin.plaque(g, x + PAD, ry + 1, W - 2 * PAD, ROW_H - 2);
                 skin.row(g, x + PAD, ry + 1, W - 2 * PAD, ROW_H - 2, false, i == hover);
-                g.drawString(font, entries.get(i).label(), x + PAD + 5, ry + 5, i == hover ? skin.accent() : skin.ink(), false);
+                Row<T> row = entries.get(i);
+                if (row.entry() == null)
+                    g.drawString(font, (row.open() ? "- " : "+ ") + row.heading(), x + PAD + 5, ry + 5, i == hover ? skin.accent() : skin.ink(), false);
+                else
+                    g.drawString(font, row.entry().label(), x + PAD + (row.entry().group().isEmpty() || !query.isEmpty() ? 5 : 14), ry + 5,
+                            i == hover ? skin.accent() : skin.ink(), false);
             }
             skin.scrollbar(g, x + W - PAD + 1, listY(), rows() * ROW_H, entries.size(), rows(), scroll);
         });
-        if (hover >= 0 && !entries.get(hover).tip().isEmpty())
-            g.renderComponentTooltip(font, entries.get(hover).tip(), mx, my);
+        if (hover >= 0 && entries.get(hover).entry() != null && !entries.get(hover).entry().tip().isEmpty())
+            g.renderComponentTooltip(font, entries.get(hover).entry().tip(), mx, my);
         g.pose().popPose();
     }
 
@@ -172,9 +217,17 @@ final class SkinPopup<T> {
             return true;
         }
         int i = button == 0 ? at(mx, my) : -1;
-        if (i >= 0) {
+        if (i >= 0 && entries.get(i).entry() == null) {
+            // A heading folds or opens its entries.
             GuiSkin.play(skin.click(), 1f);
-            onPick.accept(entries.get(i).value());
+            String heading = entries.get(i).heading();
+            if (!folded.remove(heading))
+                folded.add(heading);
+            rebuild();
+            scroll = Math.min(scroll, Math.max(0, entries.size() - MAX_ROWS));
+        } else if (i >= 0) {
+            GuiSkin.play(skin.click(), 1f);
+            onPick.accept(entries.get(i).entry().value());
             opening.close();
         } else if (mx < x || mx >= x + W || my < y || my >= y + h)
             opening.close();

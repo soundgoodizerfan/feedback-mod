@@ -567,6 +567,37 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         return choice(role, shapeIndex(role));
     }
 
+    /** The type picker's choices: grouped under a heading each (tools, weapons, wearables, technology, food), a heading's types in name order. */
+    private List<SkinPopup.Entry<Integer>> typeEntries() {
+        String[] heads = {"tools", "weapons", "wearables", "technology", "food"};
+        return IntStream.range(0, types.size())
+                .mapToObj(i -> new SkinPopup.Entry<>(i, typeName(i), List.<Component>of(),
+                        Component.translatable("gui.feedback.blueprint_table.cat." + heads[categoryOf(types.get(i))]).getString()))
+                .sorted(java.util.Comparator.<SkinPopup.Entry<Integer>>comparingInt(e -> java.util.Arrays.asList(heads).indexOf(
+                        categoryKeyOf(e.group(), heads))).thenComparing(e -> e.label().getString())).toList();
+    }
+
+    private static String categoryKeyOf(String shown, String[] heads) {
+        for (String h : heads)
+            if (Component.translatable("gui.feedback.blueprint_table.cat." + h).getString().equals(shown))
+                return h;
+        return heads[0];
+    }
+
+    /** Which heading a type is listed under: 0 tools, 1 weapons, 2 wearables, 3 technology, 4 food. */
+    private static int categoryOf(ResourceLocation id) {
+        ModularType t = ModularTypes.known().get(id);
+        if (t == null)
+            return 0;
+        return switch (t.family()) {
+            case BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, GUN, CHARGE -> 1;
+            case ARMOUR, GLOVE, BACKPACK, BEDROLL -> 2;
+            case CELL, MACHINE, BELT, ENGINE, GEARBOX, HEAD, VESSEL -> 3;
+            case DISH -> 4;
+            default -> 0;
+        };
+    }
+
     private Component typeName(int i) {
         ResourceLocation id = types.get(Math.floorMod(i, types.size()));
         return Component.translatable("item." + id.getNamespace() + "." + id.getPath());
@@ -820,7 +851,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                     link(ls, String.valueOf(ch), String.valueOf(pat.get(r + 1).charAt(c)));
             }
         for (List<String> j : board.joins())
-            if (j.size() == 2)
+            if (j.size() == 2 && (!attach || parents.containsKey(j.get(0)))) // a part the pattern lays is joined by the pattern, not by a line across it
                 link(ls, j.get(0), j.get(1));
         links = List.copyOf(ls);
         boundsX0 = boundsY0 = Float.MAX_VALUE;
@@ -1029,7 +1060,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         ModularType t = current();
         String key = keyOf(role);
         int rows = t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0;
-        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0) + dimsOf(role).size();
+        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0) + Math.min(MAX_DIM_ROWS, dimsOf(role).size());
     }
 
     /** A scalar's row: its name and figure, in its unit. */
@@ -1042,6 +1073,17 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     private static final int SEARCH_H = 14;
+    /** Scalar rows shown at once; a part with more scrolls them, so the panel never outgrows its box. */
+    private static final int MAX_DIM_ROWS = 3;
+    private int dimScroll;
+
+    /** The part's stepper rows above its scalars: a count or swap or remove row, then the edge. */
+    private int rowsAboveDims(String role) {
+        ModularType t = current();
+        String key = keyOf(role);
+        return (t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0)
+                + (edged() && role.equals(t.wearRole()) ? 1 : 0);
+    }
 
     private int swatchTop(String role) {
         return topPos + PAN_Y + 15 + 15 * controlRows(role) + SEARCH_H;
@@ -1071,7 +1113,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         ModularType t = current();
         int top = topPos + 4;
         addRenderableWidget(GuiStyle.button(skin, Component.literal("..."), b -> typePopup.open(
-                IntStream.range(0, types.size()).mapToObj(i -> new SkinPopup.Entry<>(i, typeName(i), List.<Component>of())).toList(),
+                typeEntries(),
                 i -> change(() -> selectType(i))), leftPos + DRAWER_X + DRAWER_SLOTS * DRAWER_PITCH + 4, top, 16, 16));
         if (rigged())
             addRenderableWidget(GuiStyle.toggle(skin, Component.translatable("gui.feedback.blueprint_table.rig"), () -> rig, b -> rig = !rig,
@@ -1141,7 +1183,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                     dir -> change(() -> edge = edge.step(dir)), false, null));
             y += 15;
         }
-        for (Map.Entry<String, ModularType.Dim> d : dimsOf(role)) {
+        List<Map.Entry<String, ModularType.Dim>> allDims = dimsOf(role);
+        dimScroll = Mth.clamp(dimScroll, 0, Math.max(0, allDims.size() - MAX_DIM_ROWS));
+        for (Map.Entry<String, ModularType.Dim> d : allDims.subList(dimScroll, Math.min(allDims.size(), dimScroll + MAX_DIM_ROWS))) {
             String name = d.getKey();
             ModularType.Dim dim = d.getValue();
             addRenderableWidget(GuiStyle.stepper(skin, x, y, CALL_W - 8, 14, "<", ">", () -> dimLabel(role, name, dim),
@@ -1198,6 +1242,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         edit.run();
         if (type != type0 || !before.equals(String.valueOf(sel()))) {
             swatchScroll = 0;
+            dimScroll = 0;
             if (net.minecraft.client.Minecraft.getInstance().gameMode != null)
                 net.minecraft.client.Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, BlueprintTableMenu.BTN_CLEAR);
         }
@@ -1361,6 +1406,12 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return true;
         }
         String role = sel();
+        if (role != null && dimsOf(role).size() > MAX_DIM_ROWS
+                && in(mx, my, leftPos + CALL_X, topPos + PAN_Y + 15 + 15 * rowsAboveDims(role), CALL_W, 15 * MAX_DIM_ROWS)) {
+            dimScroll = Mth.clamp(dimScroll + dir, 0, dimsOf(role).size() - MAX_DIM_ROWS);
+            rebuildWidgets();
+            return true;
+        }
         if (role != null && in(mx, my, leftPos + CALL_X, swatchTop(role), CALL_W, swatchRows(role) * SWATCH_PITCH)) {
             int rows = (swatches(role).size() + swatchCols() - 1) / swatchCols();
             swatchScroll = Mth.clamp(swatchScroll + dir, 0, Math.max(0, rows - swatchRows(role)));
@@ -1785,6 +1836,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         List<Material.Located> mats = swatches(role);
         Optional<Material.Located> now = choice(role);
         skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, CALL_W - 8, SEARCH_H - 3);
+        if (dimsOf(role).size() > MAX_DIM_ROWS)
+            scrollbar(g, x + CALL_W - 4, y + 15 + 15 * rowsAboveDims(role), 15 * MAX_DIM_ROWS, dimsOf(role).size(), MAX_DIM_ROWS, dimScroll);
         g.drawString(font, roleName(role), x + 5, y + 4, skin.ink(), false);
         String name = materialName(role);
         int nw = Math.min(font.width(name), 110);

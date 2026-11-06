@@ -69,16 +69,16 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         long now = System.currentTimeMillis();
         float[] grip = firstPersonGrip(view), at = view.hand();
         pose.pushPose();
+        // The arms, from the hand pivot: the support hand only when nothing else is held in the other hand.
+        var player = Minecraft.getInstance().player;
+        if (player != null && io.github.soundgoodizerfan.feedback.client.ClientSettings.gunArms())
+            GunArms.draw(pose, buffers, light, view, side, player.getOffhandItem().isEmpty() && player.getMainHandItem() == stack);
         pose.translate(grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
         pose.scale(FIRST_PERSON_SCALE, FIRST_PERSON_SCALE, FIRST_PERSON_SCALE);
         pose.translate(-at[0], -at[1], -at[2]);
         GunMotion.item(pose, view, hand, now);
         var mesh = new GunMesh(pose, outputs(buffers, stack), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
         GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
-        // The arms: the support hand only when nothing else is held in the other hand.
-        var player = Minecraft.getInstance().player;
-        if (player != null && io.github.soundgoodizerfan.feedback.client.ClientSettings.gunArms())
-            GunArms.draw(pose, buffers, light, view, side, player.getOffhandItem().isEmpty() && player.getMainHandItem() == stack);
         pose.popPose();
     }
 
