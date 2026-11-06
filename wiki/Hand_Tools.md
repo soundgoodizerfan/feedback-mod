@@ -2,7 +2,7 @@
 
 The hand tools are the ones you carry and use yourself: a hammer for shaping metal, a wrench for turning blocks, a crowbar for prying fittings off, and the knife, spatula, spoon and tasting spoon for food, and the saw for stone. Most are hot-hammered from heated metal in a crafting grid, or have their metal blade shaped at a bench and assembled with a handle. Each has its own page.
 
-- [Hand Hammer](Hand_Hammer.md): shapes plates and stock by hand, and is the tool the others are hammered with. Made in a crafting grid from cobblestone and a stick, or a better head shaped at a bench and put on a handle.
+- [Hammer](Hammer.md): shapes plates and stock by hand, and is the tool the others are hammered with. Made in a crafting grid from cobblestone and a stick, or a better head shaped at a bench and put on a handle.
 - [Hand Knife](Prep_Table.md): cuts food and dough on the Prep Table. Made by shaping its blade hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), then assembling it with a handle.
 - [Mortar](Mortar.md): an ingredient of the [Brewing Stand](Brewing_Stand.md), whose bowl crushes plants. Made from a stick and stone in a crafting grid.
 - [Sawblade](Sawblade.md): goes in the Stonecutter's saw slot to cut stone and wood. Made by casting a saw blade in a [Saw Blade Mold](Casting.md#tool-part-molds), then assembling it at a bench.

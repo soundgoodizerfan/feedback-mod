@@ -12,6 +12,8 @@ def traits(v):
     t = v.get("trait"); return [x for x in (t.split(",") if isinstance(t, str) else t or [])]
 for f in sorted((R / "data/feedback/modular_type").glob("*.json")):
     d = json.loads(f.read_text()); n = f.stem
+    for des in d.get("names", {}).get("designations", []):
+        want(f"gun.feedback.designation.{des['name']}", f"{n} designation")
     for rid, role in d.get("roles", {}).items():
         want(f"modular.feedback.role.{role['name']}", f"{n} role {rid}")
         want(f"modular.feedback.role.{role['name']}.tip", f"{n} role {rid}")

@@ -7,7 +7,7 @@
       "form": "ingot",
       "count": 2,
       "kind": "receiver",
-      "variant": "rifle"
+      "variant": "long_gun"
     },
     {
       "role": "B",
@@ -15,7 +15,7 @@
       "form": "turned_rod",
       "count": 2,
       "kind": "gun_barrel",
-      "variant": "stout_barrel",
+      "variant": "rifled",
       "dims": {
         "bore": 12,
         "outer": 18,

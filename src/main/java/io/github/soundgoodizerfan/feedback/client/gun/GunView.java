@@ -203,8 +203,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     float[] hand() {
         return switch (type) {
             case HANDGUN -> openFrame() ? new float[]{0, -3.25f, 1.25f} : new float[]{0, -3.25f, 0f};
-            case RIFLE -> new float[]{0, -1.5f, 6.75f};
-            case SHOTGUN -> new float[]{0, -1.75f, 6.25f};
+            case LONG_GUN -> new float[]{0, -1.5f, 6.75f};
             case MACHINE_GUN -> new float[]{0, -2.75f, 7.75f};
         };
     }
@@ -213,8 +212,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     float halfWidth() {
         return switch (type) {
             case HANDGUN -> 0.875f;
-            case RIFLE -> 0.75f;
-            case SHOTGUN -> 0.875f;
+            case LONG_GUN -> 0.75f;
             case MACHINE_GUN -> 1f;
         };
     }
@@ -223,8 +221,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     float back() {
         return switch (type) {
             case HANDGUN -> 0.5f;
-            case RIFLE -> 5.5f;
-            case SHOTGUN -> 5f;
+            case LONG_GUN -> 5.5f;
             case MACHINE_GUN -> 9f;
         };
     }
@@ -233,8 +230,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     float top() {
         return switch (type) {
             case HANDGUN -> openFrame() ? 1f : 0.75f;
-            case RIFLE -> slide ? 1.5f : 1f;
-            case SHOTGUN -> 1f;
+            case LONG_GUN -> slide ? 1.5f : 1f;
             case MACHINE_GUN -> 1.75f;
         };
     }
@@ -255,8 +251,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     float opticZ() {
         return switch (type) {
             case HANDGUN -> openFrame() ? -1.5f : -2f;
-            case RIFLE -> 0.5f;
-            case SHOTGUN -> 0.25f;
+            case LONG_GUN -> 0.5f;
             case MACHINE_GUN -> 1.75f;
         };
     }

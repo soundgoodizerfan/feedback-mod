@@ -18,7 +18,8 @@
         "bore": 9,
         "outer": 15,
         "length": 0.25
-      }
+      },
+      "variant": "rifled"
     },
     {
       "role": "K",

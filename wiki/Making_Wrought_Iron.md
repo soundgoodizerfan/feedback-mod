@@ -7,7 +7,7 @@ A path from iron ore to wrought iron, the soft tough iron that plates, rods and 
 - A hot, blown fire in a [Crucible](Crucible.md) or a [furnace](Furnaces.md) that reaches **1350 Tu**; see [Heat](Heat.md). A [Thermometer](Instruments.md#thermometer) helps.
 - Iron ore, raw iron, or an iron mineral (hematite, magnetite, limonite) in any form: lump, crushed, dust or concentrate. See [Ore Processing](Ore_Processing.md) to prepare the ore.
 - **Charcoal**.
-- A [Hand Hammer](Hand_Hammer.md) and an [Anvil](Anvil.md), with a [Hearth](Hearth.md) beside it, or a [Mechanical Hammer](Mechanical_Hammer.md).
+- A [Hammer](Hammer.md) and an [Anvil](Anvil.md), with a [Hearth](Hearth.md) beside it, or a [Mechanical Hammer](Mechanical_Hammer.md).
 
 ## The route
 

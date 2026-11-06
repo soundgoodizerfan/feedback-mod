@@ -267,8 +267,12 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             other = Optional.of(new Second(second.material(), geometry(type, SECOND, second)));
         }
         ModularDesign.Part winding = design.part(WINDING);
-        Launcher launcher = Launcher.CHAMBER;
+        // The barrel names the launcher, and the part that launcher needs rides on it; no other launcher's part may be fitted.
+        Launcher launcher = launcherOf(type, barrel);
         ModularDesign.Part springPart = design.part(SPRING);
+        if ((winding != null) != (launcher == Launcher.COIL) || (springPart != null) != (launcher == Launcher.SPRING)
+                || (design.part(CHEST) != null) != (launcher == Launcher.STEAM))
+            return Optional.empty();
         Optional<Spring> spring = Optional.empty();
         // One launcher to a gun: a winding and a spring cannot both throw the one round.
         if (springPart != null) {
@@ -277,7 +281,6 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 return Optional.empty();
             float coils = type.roles().get(SPRING).variant(springPart).map(v -> v.params().getOrDefault("coils", 1f)).orElse(1f);
             spring = Optional.of(new Spring(springPart.material(), coils));
-            launcher = Launcher.SPRING;
         }
         ModularDesign.Part chestPart = design.part(CHEST);
         Optional<Chest> chest = Optional.empty();
@@ -288,13 +291,11 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             float capacity = type.roles().get(CHEST).variant(chestPart).map(v -> v.params().getOrDefault("capacity_mb", FTuning.GUN_STEAM_CHEST_REF_MB))
                     .orElse(FTuning.GUN_STEAM_CHEST_REF_MB);
             chest = Optional.of(new Chest(chestPart.material(), capacity));
-            launcher = Launcher.STEAM;
         }
         if (winding != null) {
             Material wm = materials.get(winding.material());
             if (wm == null || wm.propellant().filter(p -> p.drive() == Material.Propellant.Drive.COIL).isEmpty())
                 return Optional.empty();
-            launcher = Launcher.COIL;
         }
         ModularDesign.Part sightPart = design.part(SIGHT);
         Sight sight = sightPart == null ? Sight.IRON
@@ -366,9 +367,14 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             out.add(new Fault(List.of(GRIP), "grip"));
         if (wrap != null && (materials.get(wrap.material()) == null || !wrapMaterial(materials.get(wrap.material()))))
             out.add(new Fault(List.of(WRAP), "material"));
-        List<String> launchers = List.of(SPRING, CHEST, WINDING).stream().filter(r -> design.part(r) != null).toList();
-        if (launchers.size() > 1)
-            out.add(new Fault(List.of(launchers.get(0), launchers.get(1)), "launcher"));
+        // The barrel's variant is the launcher; its part is required and another launcher's part cannot be fitted.
+        Launcher wanted = launcherOf(type, design.part(BARREL));
+        for (String r : List.of(WINDING, SPRING, CHEST))
+            if (design.part(r) != null && launcherRole(r) != wanted)
+                out.add(new Fault(List.of(BARREL, r), "launcher"));
+        for (String r : List.of(WINDING, SPRING, CHEST))
+            if (launcherRole(r) == wanted && design.part(r) == null)
+                out.add(new Fault(List.of(BARREL), "launcher_part"));
         ModularDesign.Part winding = design.part(WINDING);
         if (winding != null) {
             Material wm = materials.get(winding.material());
@@ -396,6 +402,27 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 out.add(new Fault(List.of(clash, letter), "slot"));
         }
         return out;
+    }
+
+    /** What a barrel throws its round with, from its variant's {@code launcher} param (0 a chamber, 1 a coil, 2 a spring, 3 steam). */
+    public static Launcher launcherOf(ModularType type, ModularDesign.Part barrel) {
+        float code = barrel == null ? 0f : type.roles().get(BARREL).variant(barrel).map(v -> v.params().getOrDefault("launcher", 0f)).orElse(0f);
+        return switch (Math.round(code)) {
+            case 1 -> Launcher.COIL;
+            case 2 -> Launcher.SPRING;
+            case 3 -> Launcher.STEAM;
+            default -> Launcher.CHAMBER;
+        };
+    }
+
+    /** The launcher a part belongs to: the winding a coil's, the spring a spring gun's, the chest a steam gun's; a chamber's for any other. */
+    public static Launcher launcherRole(String role) {
+        return switch (role) {
+            case WINDING -> Launcher.COIL;
+            case SPRING -> Launcher.SPRING;
+            case CHEST -> Launcher.STEAM;
+            default -> Launcher.CHAMBER;
+        };
     }
 
     private static ModularDesign.Part firstOf(ModularDesign design, String... roles) {
@@ -646,8 +673,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * steam gun's pressure falls as it is spent. Any other launcher ignores it.
      */
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round, float steamMb) {
-        // Only a shotgun's open bore throws a pattern; it also takes a bullet of its bore, as a slug (spec 12).
-        if (round.shot() && layout.type() != GunLayout.Type.SHOTGUN)
+        // Only a smooth bore throws a pattern: rifling spins the shot into a ring (spec 12).
+        if (round.shot() && has("gun_rifling"))
             return Optional.empty();
         // A built barrel takes what will chamber in the bore it really has, and how loose or tight
         // it sits is in the figures.

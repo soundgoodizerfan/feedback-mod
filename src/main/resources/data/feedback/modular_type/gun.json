@@ -27,7 +27,7 @@
             "trait": "off_hand"
           },
           {
-            "name": "rifle",
+            "name": "long_gun",
             "shape": [
               "RR"
             ],
@@ -36,13 +36,6 @@
               "kick_mult": 0.7,
               "spread_mult": 0.6
             }
-          },
-          {
-            "name": "shotgun",
-            "shape": [
-              "R",
-              "R"
-            ]
           },
           {
             "name": "machine_gun",
@@ -94,36 +87,62 @@
         "stock": [
           "turned_rod"
         ],
-        "base": "light_barrel",
+        "base": "smoothbore",
         "variants": [
           {
-            "name": "light_barrel",
+            "name": "smoothbore",
             "params": {
               "bore": 9,
               "outer": 14,
-              "length": 0.2
+              "length": 0.2,
+              "launcher": 0
             }
           },
           {
-            "name": "stout_barrel",
+            "name": "rifled",
+            "params": {
+              "bore": 9,
+              "outer": 14,
+              "length": 0.2,
+              "launcher": 0,
+              "spread_mult": 0.6
+            },
+            "shape": [
+              "BB"
+            ],
+            "trait": "gun_rifling"
+          },
+          {
+            "name": "coil_barrel",
             "params": {
               "bore": 12,
-              "outer": 18,
-              "length": 0.3
+              "outer": 20,
+              "length": 0.45,
+              "launcher": 1
             },
             "shape": [
               "BB"
             ]
           },
           {
-            "name": "heavy_barrel",
+            "name": "spring_tube",
             "params": {
-              "bore": 20,
-              "outer": 26,
-              "length": 0.45
+              "bore": 12,
+              "outer": 16,
+              "length": 0.3,
+              "launcher": 2
+            }
+          },
+          {
+            "name": "steam_tube",
+            "params": {
+              "bore": 12,
+              "outer": 20,
+              "length": 0.3,
+              "launcher": 3
             },
             "shape": [
-              "BBB"
+              "BB"
             ]
           }
         ]
@@ -165,40 +184,31 @@
         "stock": [
           "turned_rod"
         ],
-        "base": "light_barrel",
+        "base": "smoothbore",
         "variants": [
           {
-            "name": "light_barrel",
+            "name": "smoothbore",
             "params": {
               "bore": 9,
               "outer": 14,
-              "length": 0.2
+              "length": 0.2,
+              "launcher": 0
             },
             "trait": "double_barrel"
           },
           {
-            "name": "stout_barrel",
+            "name": "rifled",
             "params": {
-              "bore": 12,
-              "outer": 18,
-              "length": 0.3
+              "bore": 9,
+              "outer": 14,
+              "length": 0.2,
+              "launcher": 0,
+              "spread_mult": 0.6
             },
             "shape": [
               "DD"
             ],
-            "trait": "double_barrel"
-          },
-          {
-            "name": "heavy_barrel",
-            "params": {
-              "bore": 20,
-              "outer": 26,
-              "length": 0.45
-            },
-            "shape": [
-              "DDD"
-            ],
-            "trait": "double_barrel"
+            "trait": "gun_rifling,double_barrel"
           }
         ]
       }
@@ -1043,6 +1053,24 @@
   "names": {
     "designations": [
       {
+        "name": "coilgun",
+        "is": {
+          "finish": "coil"
+        }
+      },
+      {
+        "name": "spring_gun",
+        "is": {
+          "finish": "spring"
+        }
+      },
+      {
+        "name": "steam_gun",
+        "is": {
+          "finish": "steam"
+        }
+      },
+      {
         "name": "derringer",
         "is": {
           "variant": "handgun"
@@ -1057,6 +1085,23 @@
           "variant": "handgun",
           "feed": "cylinder",
           "bore": "20"
+        }
+      },
+      {
+        "name": "shot_revolver",
+        "is": {
+          "variant": "handgun",
+          "feed": "cylinder",
+          "finish": "smooth",
+          "gauge": "wide"
+        }
+      },
+      {
+        "name": "shot_pistol",
+        "is": {
+          "variant": "handgun",
+          "finish": "smooth",
+          "gauge": "wide"
         }
       },
       {
@@ -1084,7 +1129,9 @@
       {
         "name": "sawn_off",
         "is": {
-          "variant": "shotgun",
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide",
           "barrel": "short"
         },
         "traits": [
@@ -1094,7 +1141,9 @@
       {
         "name": "double_shotgun",
         "is": {
-          "variant": "shotgun"
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide"
         },
         "traits": [
           "double_barrel"
@@ -1103,14 +1152,33 @@
       {
         "name": "pump_shotgun",
         "is": {
-          "variant": "shotgun",
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide",
           "action": "pump"
         }
       },
       {
         "name": "shotgun",
         "is": {
-          "variant": "shotgun"
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide"
+        }
+      },
+      {
+        "name": "musket",
+        "is": {
+          "variant": "long_gun",
+          "finish": "smooth"
+        }
+      },
+      {
+        "name": "slug_gun",
+        "is": {
+          "variant": "long_gun",
+          "finish": "rifled",
+          "gauge": "wide"
         }
       },
       {
@@ -1131,7 +1199,7 @@
       {
         "name": "submachine_gun",
         "is": {
-          "variant": "rifle",
+          "variant": "long_gun",
           "calibre": "calibre_rimfire|calibre_pistol"
         },
         "traits": [
@@ -1141,7 +1209,7 @@
       {
         "name": "assault_rifle",
         "is": {
-          "variant": "rifle",
+          "variant": "long_gun",
           "calibre": "calibre_intermediate|calibre_magnum"
         },
         "traits": [
@@ -1151,7 +1219,7 @@
       {
         "name": "sniper_rifle",
         "is": {
-          "variant": "rifle",
+          "variant": "long_gun",
           "barrel": "long",
           "sight": "scope",
           "action": "bolt|self_loading"
@@ -1160,14 +1228,14 @@
       {
         "name": "carbine",
         "is": {
-          "variant": "rifle",
+          "variant": "long_gun",
           "barrel": "short"
         }
       },
       {
         "name": "rifle",
         "is": {
-          "variant": "rifle"
+          "variant": "long_gun"
         }
       }
     ]
@@ -1310,11 +1378,11 @@
       ],
       [
         "U",
-        "R"
+        "B"
       ],
       [
         "O",
-        "R"
+        "B"
       ],
       [
         "g",

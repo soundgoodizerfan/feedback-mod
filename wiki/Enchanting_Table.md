@@ -45,7 +45,7 @@ The written word is graded on how well it matches the effect's name, letter by l
 | Past that, within two bands | two levels lower, **two flaws** |
 | Further, or the pen never marked | **nothing**. The part is never destroyed, but the experience is spent. |
 
-Flaws make a part weaker, as with [forging](Hand_Hammer.md). Some effects also add a flaw per level, or take one away, as part of what they do.
+Flaws make a part weaker, as with [forging](Hammer.md). Some effects also add a flaw per level, or take one away, as part of what they do.
 
 A word written **reversed** (Flip) that fits better than the normal one is judged as the mirror and gives the effect's **mirror**: the same coupling reversed (Bane's mirror is Kin, attraction to the undead). An effect with no mirror takes nothing there.
 

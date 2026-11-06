@@ -324,6 +324,7 @@ public final class ModularModifiers {
             case "blowback" -> new Object[]{n(p(v, "pressure_limit", 1.2f) * FTuning.GUN_PROPELLANT_PEAK_PU), n(p(v, "wear_mult", 2f))};
             case "bolt_lockup" -> new Object[]{n((p(v, "rating_mult", 1.25f) - 1) * 100), n((1 - p(v, "spread_mult", 0.8f)) * 100)};
             case "gas_operated" -> new Object[]{n((1 - p(v, "cycle_mult", 0.9f)) * 100), n((p(v, "heat_mult", 1.15f) - 1) * 100), n(p(v, "mass", 0.15f))};
+            case "gun_rifling" -> new Object[]{n(p(v, "spread_mult", 0.6f) * 100)};
             case "gun_braced" -> new Object[]{n((1 - p(v, "kick_mult", 0.7f)) * 100), n((1 - p(v, "spread_mult", 0.6f)) * 100)};
             case "open_bolt" -> new Object[]{n(p(v, "idle_ms", 1500) / 1000), n(p(v, "first_shot_spread", 2f))};
             case "belt_fed" -> new Object[]{n(p(v, "reload_mult", 2f))};

@@ -124,6 +124,7 @@ public final class ModularTraits {
         register("blowback", new io.github.soundgoodizerfan.feedback.modular.trait.GunBlowback());
         register("bolt_lockup", new io.github.soundgoodizerfan.feedback.modular.trait.GunBoltLockup());
         register("gas_operated", new io.github.soundgoodizerfan.feedback.modular.trait.GunGasOperated());
+        register("gun_rifling", new io.github.soundgoodizerfan.feedback.modular.trait.GunRifling());
         register("gun_obturator", new io.github.soundgoodizerfan.feedback.modular.trait.GunObturator());
         register("gun_buffer", new io.github.soundgoodizerfan.feedback.modular.trait.GunBuffer());
         register("gun_reticle", new io.github.soundgoodizerfan.feedback.modular.trait.GunReticle());

@@ -35,7 +35,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
 
     /** The four fundamentally different guns (spec 8.4): what the receiver is. */
     public enum Type implements StringRepresentable {
-        HANDGUN("handgun"), RIFLE("rifle"), SHOTGUN("shotgun"), MACHINE_GUN("machine_gun");
+        HANDGUN("handgun"), LONG_GUN("long_gun"), MACHINE_GUN("machine_gun");
 
         private final String id;
 

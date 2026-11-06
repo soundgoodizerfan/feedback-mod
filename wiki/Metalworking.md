@@ -14,7 +14,7 @@ Getting the item out **at the right moment** is the game. Instruments, gearing, 
 
 Three things decide what a blow does:
 
-- **Strength (St)**: how hard one blow lands. It's printed on every machine and depends on how you've geared it. A [Hand Hammer](Hand_Hammer.md) swings 1, 3 or 5 St (7 with Strength), as you choose; a [Mechanical Hammer](Mechanical_Hammer.md) lands 3 on a long throw and 12 on a short one.
+- **Strength (St)**: how hard one blow lands. It's printed on every machine and depends on how you've geared it. A [Hammer](Hammer.md) swings 1, 3 or 5 St (7 with Strength), as you choose; a [Mechanical Hammer](Mechanical_Hammer.md) lands 3 on a long throw and 12 on a short one.
 - **Hardness**: a property of the metal. Copper is 1, iron 6, steel 15. JEI shows it on every metalworking page, and so does [Materials](Materials.md).
 - **Work (Fu)**: how much shaping the piece has taken so far. Each step (ingot → plate, plate → foil…) needs a set amount: a fixed figure plus a bit more per point of hardness. A copper plate is 14 Fu, copper foil 9 more; a steel plate is 60.
 
@@ -64,7 +64,7 @@ The hammer is one of several. Each does a different action, and each makes a dif
 
 | Machine | Action | Chain |
 | --- | --- | --- |
-| [Hand Hammer](Hand_Hammer.md), [Mechanical Hammer](Mechanical_Hammer.md), [Mechanical Press](Mechanical_Press.md) | hammering | ingot → plate → foil → scrap; nugget → bullet |
+| [Hammer](Hammer.md), [Mechanical Hammer](Mechanical_Hammer.md), [Mechanical Press](Mechanical_Press.md) | hammering | ingot → plate → foil → scrap; nugget → bullet |
 | [Wire Drawer](Wire_Drawer.md) | drawing | rod → wire → fine wire; plate → case |
 | [Rolling Mill](Rolling_Mill.md) | rolling | ingot → rod; plate → pipe |
 | [Drill Press](Drill_Press.md) | drilling | plate → drilled plate → swarf; gun parts |

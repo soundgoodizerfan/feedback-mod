@@ -20,7 +20,7 @@ B is a Bronze Plate and P is any plank.
 
 ## What Feedback does
 
-The Smithing Table is where **metal parts** are shaped, with a [Hand Hammer](Hand_Hammer.md) in the hammer slot. Stock must be metal: a material of kind metal, or any material with a hot-working window. Forged variants (the ones played as a rhythm) are made at the [Anvil](Anvil.md); a [Hearth](Hearth.md) beside the Anvil keeps the stock hot. The block breaks fastest with an axe.
+The Smithing Table is where **metal parts** are shaped, with a [Hammer](Hammer.md) in the hammer slot. Stock must be metal: a material of kind metal, or any material with a hot-working window. Forged variants (the ones played as a rhythm) are made at the [Anvil](Anvil.md); a [Hearth](Hearth.md) beside the Anvil keeps the stock hot. The block breaks fastest with an axe.
 
 Every bench has the same screen: a bench top with a center slot and a column of slots on the right (the hand tool, a stock slot, a plan slot and the result). Put something in the center and the bench answers with a **fan** of floating nodes around it; drag to pan, scroll to zoom. What is in the center decides what the fan shows. The client setting **reduceMotion** (in the mod's client config) stills the fan's drifting nodes, the shake and the idle animations; sounds stay.
 

@@ -7,7 +7,7 @@
       "form": "ingot",
       "count": 2,
       "kind": "receiver",
-      "variant": "rifle"
+      "variant": "long_gun"
     },
     {
       "role": "B",
@@ -19,7 +19,8 @@
         "bore": 9,
         "outer": 15,
         "length": 0.35
-      }
+      },
+      "variant": "rifled"
     },
     {
       "role": "K",

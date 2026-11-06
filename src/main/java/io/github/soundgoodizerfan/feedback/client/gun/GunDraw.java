@@ -43,7 +43,7 @@ final class GunDraw {
     static void draw(GunMesh m, GunView v, GunMotion.Parts p) {
         switch (v.type()) {
             case HANDGUN -> handgun(m, v, p);
-            case RIFLE, SHOTGUN -> longGun(m, v, p);
+            case LONG_GUN -> longGun(m, v, p);
             case MACHINE_GUN -> machineGun(m, v, p);
         }
         // A break action's barrels and everything on them tip about the hinge under the breech.
@@ -210,8 +210,7 @@ final class GunDraw {
     }
 
     private static void longGun(GunMesh m, GunView v, GunMotion.Parts p) {
-        boolean shotgun = v.type() == GunLayout.Type.SHOTGUN;
-        float hw = v.halfWidth(), lo = shotgun ? -1.25f : -1f, hi = v.top(), back = v.back();
+        float hw = v.halfWidth(), lo = -1f, hi = v.top(), back = v.back();
         if (v.slide())
             hi = 1f; // the carrier cover rides above
         int receiver = v.colour("R");
@@ -554,8 +553,7 @@ final class GunDraw {
         float hw = v.halfWidth();
         float at = switch (v.type()) {
             case HANDGUN -> -0.5f;
-            case RIFLE -> 3.5f;
-            case SHOTGUN -> 3f;
+            case LONG_GUN -> 3.5f;
             case MACHINE_GUN -> 6.5f;
         };
         float base = v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.5f;

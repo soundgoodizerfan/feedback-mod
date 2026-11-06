@@ -40,6 +40,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
@@ -48,6 +49,7 @@ import io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
+import io.github.soundgoodizerfan.feedback.weapon.GunDesignation;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -168,6 +170,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private float[] linkValue = new float[0];
     private String[][] linkWorst = new String[0][];
     /** The part whose slots are fanned open round it (a gun's attachments live on the part they fit), or null. */
+    /** What the drawn gun is called (revolver, assault rifle...), or empty. */
+    private Component designation = Component.empty();
     private String fanFor;
     /** An attachment's role to the role it fits, from the type's board joins; empty for a type that lays its parts flat. */
     private Map<String, String> parentOf = Map.of();
@@ -675,6 +679,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         layout();
         Optional<ModularDesign> design = design(null, null, 0);
         baked = design;
+        designation = design.flatMap(d -> t != null && t.family() == ModularType.Family.GUN
+                        ? GunSpec.of(d, t, ClientMaterials.get()).flatMap(spec -> GunDesignation.of(t, spec,
+                                ModularTraits.allOf(d, t).stream().map(ModularTraits.Active::id).collect(java.util.stream.Collectors.toSet())))
+                        : Optional.empty())
+                .<Component>map(n -> Component.translatable("gun.feedback.designation." + n)).orElse(Component.empty());
         measureLinks();
         figures = design.flatMap(d -> ToolDesigns.predict(d, ModularTypes.known(), ClientMaterials.get()));
         uses = design.map(d -> usesOf(d)).orElse(List.of());
@@ -834,7 +843,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 ItemStack icon = pass == 1 && r.part().isPresent() ? new ItemStack(BuiltInRegistries.ITEM.get(r.part().get().item())) : ItemStack.EMPTY;
                 if (pass == 0)
                     nodeOf.put(role, out.size());
-                boolean faint = pass == 1 && attach && parents.containsKey(role) && !feasibleWith(k);
+                boolean faint = pass == 1 && attach && parents.containsKey(role) && (!feasibleWith(k) || launcherMismatch(role));
                 out.add(new Node(k, role, pass == 1, x, y, icon, faint));
             }
         }
@@ -912,6 +921,17 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return List.of();
         Set<String> cur = now();
         return allKeys().stream().filter(k -> !cur.contains(k)).filter(k -> parentRole.equals(parentOf.get(roleOf(k)))).toList();
+    }
+
+    /** Whether {@code role} is a launcher's part (winding, main spring, steam chest) for a kind of launcher the drawn barrel is not. */
+    private boolean launcherMismatch(String role) {
+        ModularType t = current();
+        GunSpec.Launcher mine = GunSpec.launcherRole(role);
+        if (t == null || t.family() != ModularType.Family.GUN || mine == GunSpec.Launcher.CHAMBER)
+            return false;
+        ToolTableShaping.Option o = shapeOf("B");
+        float code = o == null ? 0f : o.variant().params().getOrDefault("launcher", 0f);
+        return Math.round(code) != mine.ordinal();
     }
 
     /** Whether the sheet would still be one some form has with {@code key} added. */
@@ -1684,6 +1704,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         }
         // the type's name as the drawing's title block, and the qualities as stamped chips
         g.drawString(font, typeName(type), x0 + 5, y0 + 4, skin.ink(), false);
+        if (!designation.getString().isEmpty())
+            g.drawString(font, designation, x0 + 5 + font.width(typeName(type)) + 6, y0 + 4, skin.accent(), false);
         int cx = x0 + 4, cy = y0 + CAN_H - 13;
         for (int i = 0; i < chipText.size(); i++) {
             int w = font.width(chipText.get(i)) + 6;

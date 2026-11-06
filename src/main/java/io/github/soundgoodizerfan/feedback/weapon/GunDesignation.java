@@ -41,6 +41,9 @@ import java.util.stream.Collectors;
  */
 public final class GunDesignation {
 
+    /** A bore this wide or wider takes a shell: the line between a rifle and a shotgun, a pistol and a shot pistol. */
+    private static final int WIDE_BORE_MM = 14;
+
     private GunDesignation() {
     }
 
@@ -63,7 +66,11 @@ public final class GunDesignation {
                 "sight", spec.sight().name().toLowerCase(Locale.ROOT),
                 "barrel", spec.barrelBand().name().toLowerCase(Locale.ROOT),
                 "calibre", GunCalibres.nearest(bore).name(),
-                "bore", String.valueOf(bore));
+                "bore", String.valueOf(bore),
+                // What throws the round and, for a chamber, how its bore is finished; and whether the bore is wide enough to take a shell.
+                "finish", spec.launcher() != GunSpec.Launcher.CHAMBER ? spec.launcher().name().toLowerCase(Locale.ROOT)
+                        : traits.contains("gun_rifling") ? "rifled" : "smooth",
+                "gauge", bore >= WIDE_BORE_MM ? "wide" : "narrow");
         for (ModularType.Designation d : type.names().designations()) {
             boolean ok = d.traits().stream().allMatch(traits::contains) && d.without().stream().noneMatch(traits::contains);
             for (Map.Entry<String, String> e : d.is().entrySet())
