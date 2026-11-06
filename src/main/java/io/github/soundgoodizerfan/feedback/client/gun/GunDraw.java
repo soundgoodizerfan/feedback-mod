@@ -239,11 +239,6 @@ final class GunDraw {
         m.turnX(-55f * p.cover(), 1.5f, 6f);
         m.box(-hw, 1.5f, 0.5f, hw, 1.75f, 6f, Tile.METAL);
         m.pop();
-        if (!v.has("S")) {
-            m.box(-0.25f, 1.75f, 1.5f, 0.25f, 2.5f, 2f, Tile.METAL);
-            m.box(-0.25f, 1.75f, 4.5f, 0.25f, 2.5f, 5f, Tile.METAL);
-            m.box(-0.25f, 2.5f, 1.25f, 0.25f, 2.875f, 5.25f, Tile.KNURL);
-        }
         // Skeleton buttstock in the receiver's metal, a pad at the shoulder.
         float butt = back + 6.5f;
         m.box(-0.5f, 0.25f, back, 0.5f, 1f, butt, Tile.BRUSHED);
@@ -371,15 +366,16 @@ final class GunDraw {
             float b = Math.max(0.125f, v.r2() - 0.25f);
             m.box(-b, y - b, end2 - 0.0625f, b, y + b, end2, Tile.BORE);
         }
+        // Iron sights: a front post as tall as the rear notch's line, so the two line up when aimed.
         if (v.longGun() && !v.has("S")) {
-            m.colour(v.colour("B")).box(-0.125f, r, end + 0.25f, 0.125f, r + 0.5f, end + 0.75f, Tile.METAL);
-            if (v.type() != GunLayout.Type.MACHINE_GUN) {
-                m.colour(v.colour("R"));
-                float z = v.back() - 2f;
-                m.box(-0.5f, v.top(), z, -0.125f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
-                m.box(0.125f, v.top(), z, 0.5f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
-            }
+            m.colour(v.colour("B")).box(-0.125f, r, end + 0.25f, 0.125f, Math.max(r + 0.5f, v.top() + 0.25f), end + 0.75f, Tile.METAL);
+            m.colour(v.colour("R"));
+            float z = v.rearSight();
+            m.box(-0.5f, v.top(), z, -0.125f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
+            m.box(0.125f, v.top(), z, 0.5f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
         }
+        if (v.openFrame() && !v.has("S"))
+            m.colour(v.colour("B")).box(-0.0625f, r, end + 0.25f, 0.0625f, Math.max(r + 0.25f, v.top() + 0.0625f), end + 0.75f, Tile.METAL);
         if (v.has("H"))
             m.colour(v.colour("H")).rod(0, 0, r + 0.25f, start, start - Math.max(1f, len * 0.7f), Tile.VENT);
         if (v.has("Z")) {
@@ -481,12 +477,7 @@ final class GunDraw {
         if (!v.has("S"))
             return;
         float top = v.top();
-        float z0 = switch (v.type()) {
-            case HANDGUN -> v.openFrame() ? -1.5f : -2f;
-            case RIFLE -> 0.5f;
-            case SHOTGUN -> 0.25f;
-            case MACHINE_GUN -> 1.75f;
-        };
+        float z0 = v.opticZ();
         int lamp = switch (v.variant("e")) {
             case "ring_reticle" -> 0xFFFFA030;
             case "cross_reticle" -> 0xFF40FF60;
@@ -494,8 +485,7 @@ final class GunDraw {
         };
         m.colour(v.colour("S"));
         if (v.variant("S").equals("scope")) {
-            float len = v.type() == GunLayout.Type.HANDGUN ? 3f : 4.5f;
-            float zs = z0 - 0.5f, ze = zs + len, y = top + 1f;
+            float zs = z0 - 0.5f, ze = zs + v.scopeLength(), y = top + 1f;
             m.box(-0.25f, top, zs + 0.5f, 0.25f, y, zs + 1f, Tile.METAL);
             m.box(-0.25f, top, ze - 1f, 0.25f, y, ze - 0.5f, Tile.METAL);
             m.rod(0, y, 0.375f, zs, ze, Tile.BRUSHED);

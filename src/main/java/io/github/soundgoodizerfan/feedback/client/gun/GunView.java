@@ -194,11 +194,49 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         return len;
     }
 
+    /** Front of an optic's mount. */
+    float opticZ() {
+        return switch (type) {
+            case HANDGUN -> openFrame() ? -1.5f : -2f;
+            case RIFLE -> 0.5f;
+            case SHOTGUN -> 0.25f;
+            case MACHINE_GUN -> 1.75f;
+        };
+    }
+
+    float scopeLength() {
+        return type == GunLayout.Type.HANDGUN ? 3f : 4.5f;
+    }
+
+    /** Front of a long gun's rear iron sight. */
+    float rearSight() {
+        return type == GunLayout.Type.MACHINE_GUN ? back() - 3.5f : back() - 2f;
+    }
+
+    /**
+     * Where the eye goes when aimed, in model pixels: on the line of sight, a little behind the rear
+     * sight or the optic's eyepiece. Aiming moves the gun so this point is the camera, the way Scorched
+     * Guns places its iron-sight and scope cameras: so the eye looks down the sights and the receiver is
+     * behind it, never filling the screen.
+     */
+    float[] eye() {
+        float z;
+        if (has("S"))
+            z = variant("S").equals("scope") ? opticZ() - 0.5f + scopeLength() + 1f + 2.5f : opticZ() + 3.5f;
+        else if (type == GunLayout.Type.HANDGUN)
+            z = openFrame() ? 3.5f : 3.5f;
+        else
+            z = rearSight() + 3.5f;
+        return new float[]{0f, sightLine(), z};
+    }
+
     /** The height of the line of sight above the bore: what aiming lines up with the middle of the screen. */
     float sightLine() {
         if (has("S"))
             return variant("S").equals("scope") ? top() + 1f : top() + 0.75f;
-        return type == GunLayout.Type.HANDGUN ? top() + 0.25f : r + 0.5f;
+        if (type == GunLayout.Type.HANDGUN)
+            return openFrame() ? top() + 0.0625f : top() + 0.1875f;
+        return top() + 0.25f;
     }
 
     /** How far forward of the muzzle the furthest muzzle device reaches. */

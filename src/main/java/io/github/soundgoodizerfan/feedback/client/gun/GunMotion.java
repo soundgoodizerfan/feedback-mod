@@ -55,7 +55,7 @@ import net.neoforged.neoforge.client.event.RenderHandEvent;
  * manual action takes its action's own time), and its threaded second-order dynamics class (a
  * per-frame spring does the job). Reload is a short timeline built in code per feed type.
  *
- * <p>Two layers: {@link #onHand} moves the whole gun in view space (aim, sprint, sway, landing);
+ * <p>Two layers: {@link #onHand} draws the held gun and moves it in view space (bob, aim, sprint, sway, landing);
  * {@link #item} turns it about the hand in item space (kick, reload tilt); {@link #parts} says
  * where each moving part is (slide, bolt, lever, pump, hinge, cylinder, magazine).
  */
@@ -94,9 +94,7 @@ public final class GunMotion {
     private static long bumpMs;
 
     /** Vanilla's first-person hand pivot in view space (ItemInHandRenderer.applyItemArmTransform), blocks. */
-    private static final float HAND_ACROSS = 0.56f, HAND_DOWN = -0.52f;
-    /** Where an aimed sight line sits on screen: a touch under the eye, view-space blocks. */
-    private static final float SIGHT_Y = -0.05f;
+    private static final float HAND_ACROSS = 0.56f, HAND_DOWN = -0.52f, HAND_FORWARD = -0.72f;
 
     private GunMotion() {
     }
@@ -297,42 +295,100 @@ public final class GunMotion {
         lastVy = player.getDeltaMovement().y;
     }
 
-    /** View-space motion of a held gun: aim to the middle of the screen, sprint low, lag on turns, dip on landing. */
+    /**
+     * Draws a held gun in first person ourselves, as Scorched Guns does (GPL-3.0, read at {@code master}
+     * {@code d0daef8}; design taken, code written here): vanilla's draw is cancelled so the gun can
+     * <ul>
+     * <li>undo vanilla's view bob on the hand and put back only the share that suits the aim, so a
+     * sighted gun stays still while walking;</li>
+     * <li>aim by moving the gun until its eye point ({@link GunView#eye}) is the camera, so the eye looks
+     * down the sights and the receiver sits behind it;</li>
+     * <li>then lag on turns, dip on landing, lower for a sprint, swing for a bludgeon.</li>
+     * </ul>
+     */
     @SubscribeEvent
     public static void onHand(RenderHandEvent event) {
         var mc = Minecraft.getInstance();
         ItemStack stack = event.getItemStack();
         if (mc.player == null || !(stack.getItem() instanceof GunItem))
             return;
+        event.setCanceled(true);
         boolean main = event.getHand() == InteractionHand.MAIN_HAND;
         HumanoidArm arm = main ? mc.player.getMainArm() : mc.player.getMainArm().getOpposite();
         float side = arm == HumanoidArm.RIGHT ? 1f : -1f;
         PoseStack pose = event.getPoseStack();
-        float a = Mth.clamp(aimPos, -0.05f, 1.08f);
+        float pt = event.getPartialTick();
+        float aimed = ease(Mth.clamp(aimPos, 0f, 1f));
+        float a = main ? aimed : 0f;
         float calm = ClientSettings.reduceMotion() ? 0.3f : 1f;
+        GunView view = GunView.of(stack);
 
-        if (main && a != 0) {
-            // Solve the aim from the drawn gun: its centre line to the middle, its sight line to just under the eye.
-            GunView view = GunView.of(stack);
-            float[] grip = GunRenderer.firstPersonGrip(view);
-            float across = HAND_ACROSS + grip[0] / 16f;
-            float line = HAND_DOWN + grip[1] / 16f + (view.sightLine() - view.hand()[1]) * GunRenderer.FIRST_PERSON_SCALE;
-            pose.translate(-side * across * a, (SIGHT_Y - line) * a, 0.04f * a);
+        pose.pushPose();
+        rebob(pose, pt, 1f - aimed);
+        if (!main)
+            pose.translate(0, -aimed, 0); // the other gun drops out of the way of the sights
+        if (a > 0) {
+            float[] eye = GunRenderer.firstPersonEye(view, side);
+            pose.translate(-HAND_ACROSS * side * a, -HAND_DOWN * a, -HAND_FORWARD * a);
+            pose.translate(-eye[0] * a, -eye[1] * a, -eye[2] * a);
         }
-        float loose = (1 - 0.85f * Mth.clamp(a, 0f, 1f)) * calm;
+        float swing = event.getSwingProgress();
+        if (swing > 0) {
+            // Vanilla's swing, for the bludgeon: it draws nothing of ours otherwise.
+            float root = Mth.sqrt(swing);
+            pose.translate(side * -0.4f * Mth.sin(root * Mth.PI), 0.2f * Mth.sin(root * Mth.PI * 2), -0.2f * Mth.sin(swing * Mth.PI));
+        }
+        pose.translate(HAND_ACROSS * side, HAND_DOWN - 0.6f * event.getEquipProgress(), HAND_FORWARD);
+        if (swing > 0) {
+            float f = Mth.sin(swing * swing * Mth.PI), f1 = Mth.sin(Mth.sqrt(swing) * Mth.PI);
+            pose.mulPose(Axis.YP.rotationDegrees(side * (45f + f * -20f)));
+            pose.mulPose(Axis.ZP.rotationDegrees(side * f1 * -20f));
+            pose.mulPose(Axis.XP.rotationDegrees(f1 * -80f));
+            pose.mulPose(Axis.YP.rotationDegrees(side * -45f));
+        }
+        // A little roll through the raise, none at either end.
+        float through = Mth.sin(a * Mth.PI) * calm;
+        pose.mulPose(Axis.ZP.rotationDegrees(side * through * 6f));
+        pose.mulPose(Axis.XP.rotationDegrees(through * 3f));
+
+        float loose = (1 - 0.85f * a) * calm;
         pose.translate(-swayYaw * 0.04f * loose, swayPitch * 0.03f * loose, 0);
         pose.mulPose(Axis.YP.rotationDegrees(-swayYaw * 4f * loose));
         pose.mulPose(Axis.XP.rotationDegrees(-swayPitch * 3f * loose));
-
         float t = (System.currentTimeMillis() - bumpMs) / 1000f;
         if (t < 0.6f)
             pose.translate(0, -bump * 0.07f * (float) Math.exp(-t * 7f) * Mth.cos(t * 14f) * loose, 0);
-
         if (sprint > 0.001f) {
             float sp = sprint * calm;
             pose.translate(-side * 0.08f * sp, -0.1f * sp, 0.06f * sp);
             pose.mulPose(Axis.YP.rotationDegrees(side * 32f * sp));
             pose.mulPose(Axis.XP.rotationDegrees(-14f * sp));
         }
+        GunRenderer.renderHeld(stack, view, hand(!main), side, pose, event.getMultiBufferSource(), event.getPackedLight());
+        pose.popPose();
+    }
+
+    private static float ease(float x) {
+        return x * x * (3 - 2 * x);
+    }
+
+    /**
+     * Take vanilla's view bob off the hand ({@code GameRenderer.bobView} applied it to the whole hand
+     * pass, in this order) and put back {@code keep} of it.
+     */
+    private static void rebob(PoseStack pose, float pt, float keep) {
+        var mc = Minecraft.getInstance();
+        if (!mc.options.bobView().get() || !(mc.getCameraEntity() instanceof net.minecraft.world.entity.player.Player p))
+            return;
+        float walked = -(p.walkDist + (p.walkDist - p.walkDistO) * pt);
+        float b = Mth.lerp(pt, p.oBob, p.bob);
+        float s = Mth.sin(walked * Mth.PI), c = Math.abs(Mth.cos(walked * Mth.PI)), c2 = Math.abs(Mth.cos(walked * Mth.PI - 0.2f));
+        pose.mulPose(Axis.XP.rotationDegrees(-c2 * b * 5f));
+        pose.mulPose(Axis.ZP.rotationDegrees(-s * b * 3f));
+        pose.translate(-s * b * 0.5f, c * b, 0);
+        b *= keep;
+        pose.translate(s * b * 0.5f, -c * b, 0);
+        pose.mulPose(Axis.ZP.rotationDegrees(s * b * 3f));
+        pose.mulPose(Axis.XP.rotationDegrees(c2 * b * 5f));
     }
 }

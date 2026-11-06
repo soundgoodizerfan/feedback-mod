@@ -57,6 +57,29 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         return view.longGun() ? new float[]{-5.5f, 2.5f, 7.75f} : new float[]{-4.75f, 3.5f, 6f};
     }
 
+    /** The aimed eye point ({@link GunView#eye}) from the hand's pivot in first person, blocks. */
+    static float[] firstPersonEye(GunView view, float side) {
+        float[] grip = firstPersonGrip(view), at = view.hand(), eye = view.eye();
+        return new float[]{(grip[0] * side + eye[0] - at[0]) / 16f, (grip[1] + eye[1] - at[1]) / 16f, (grip[2] + eye[2] - at[2]) / 16f};
+    }
+
+    /** Draw a gun held in first person from the hand's pivot: placed by its grip, kicked and tilted by {@link GunMotion}. */
+    static void renderHeld(ItemStack stack, GunView view, GunMotion.Hand hand, float side, PoseStack pose,
+                           MultiBufferSource buffers, int light) {
+        long now = System.currentTimeMillis();
+        float[] grip = firstPersonGrip(view), at = view.hand();
+        pose.pushPose();
+        pose.translate(grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
+        pose.scale(FIRST_PERSON_SCALE, FIRST_PERSON_SCALE, FIRST_PERSON_SCALE);
+        pose.translate(-at[0], -at[1], -at[2]);
+        GunMotion.item(pose, view, hand, now);
+        var mesh = new GunMesh(pose, ItemRenderer.getFoilBufferDirect(buffers,
+                RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS), true, stack.hasFoil()), light,
+                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
+        pose.popPose();
+    }
+
     /** The grip in third person: in the fist, a touch forward. */
     private static final float[] THIRD_PERSON_GRIP = {0f, -1.65f, 3.1f};
 
@@ -92,16 +115,13 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         float[] at = view.hand();
         switch (context) {
             case FIRST_PERSON_RIGHT_HAND, FIRST_PERSON_LEFT_HAND -> {
+                // Our own hand pass (GunMotion.onHand) draws held guns; this is for anything else that asks.
                 var player = Minecraft.getInstance().player;
                 HumanoidArm arm = context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND ? HumanoidArm.RIGHT : HumanoidArm.LEFT;
                 boolean off = player != null && arm != player.getMainArm();
-                hand = GunMotion.hand(off);
-                float side = arm == HumanoidArm.RIGHT ? 1f : -1f;
-                float[] grip = firstPersonGrip(view);
-                pose.translate(grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
-                pose.scale(FIRST_PERSON_SCALE, FIRST_PERSON_SCALE, FIRST_PERSON_SCALE);
-                pose.translate(-at[0], -at[1], -at[2]);
-                GunMotion.item(pose, view, hand, now);
+                renderHeld(stack, view, GunMotion.hand(off), arm == HumanoidArm.RIGHT ? 1f : -1f, pose, buffers, light);
+                pose.popPose();
+                return;
             }
             case THIRD_PERSON_RIGHT_HAND, THIRD_PERSON_LEFT_HAND -> {
                 pose.translate(THIRD_PERSON_GRIP[0] / 16f, THIRD_PERSON_GRIP[1] / 16f, THIRD_PERSON_GRIP[2] / 16f);
