@@ -246,6 +246,7 @@ public class FClientSetup {
         event.registerFluidType(waterTinted(0xCCBFD8F0), FFluidTypes.LIQUID_OXYGEN.get());
         event.registerFluidType(moltenFluid(0xFFFFD8A0), FFluidTypes.CRYOLITE_BATH.get());
         event.registerFluidType(waterTinted(0xFFB070E8), FFluidTypes.TELEPORTANT.get());
+        event.registerFluidType(waterTinted(0x88C9A0F0), FFluidTypes.UNSTABLE_SOLVENT_VAPOUR.get());
         io.github.soundgoodizerfan.feedback.registry.Liquors.types().forEach((id, type) ->
                 event.registerFluidType(liquorFluid(io.github.soundgoodizerfan.feedback.registry.Liquors.tint(id)), type.get()));
         io.github.soundgoodizerfan.feedback.registry.DyeFluids.types().forEach((color, type) ->

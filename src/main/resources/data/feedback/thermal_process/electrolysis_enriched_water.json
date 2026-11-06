@@ -1,0 +1,29 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "electrolysis": {
+    "feed": {
+      "fluid": "feedback:enriched_water"
+    },
+    "volts": 1.8,
+    "products": [
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 2,
+        "electrode": "cathode"
+      },
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 1,
+        "electrode": "anode"
+      }
+    ],
+    "residue": {
+      "fluid": "feedback:heavy_water",
+      "mb": 1,
+      "per": 20
+    }
+  }
+}

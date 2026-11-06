@@ -18,7 +18,7 @@ The base of the column. Like a [Boiler](Boiler.md) it takes heat from **below**:
 
 - **Feed it** with a bucket (right-click), a [Pipe](Pipe.md), or a [Pump](Pump.md). It also reaches for crude from any neighbor at its sides and underneath, the way a [Steam Engine](Steam_Engine.md) reaches for steam. It only accepts a crude: water or anything else that is not boiled in cuts is refused.
 - **Steam cleans the trays.** Steam pumped into the reboiler is not stored. While the reboiler is under **420 Tu** it lifts coke off every tray.
-- Nothing can be taken out of it. The heavy bottoms stay in the reboiler; only the light cuts leave.
+- The heavy bottoms stay in the reboiler while it still has lights to boil; only the light cuts leave. Once the lights are boiled off, the spent bottoms drain out of the reboiler through a pipe.
 - Each cut starts boiling once the reboiler passes its boiling point: **naphtha 100 Tu, kerosene 180 Tu, diesel 300 Tu**. A hotter reboiler makes every tray hotter, so every cut moves heavier.
 
 The feed's grade matters. A crude with more light fraction gives more of every cut. As the lights are boiled off, the feed left in the reboiler holds less of them. See [grades](Oil.md#grades).
@@ -58,6 +58,10 @@ A tray hotter than **420 Tu** cokes up, faster for a heavier feed and faster the
 Whatever rises past the top tray goes into whatever sits above it, if that takes it. If nothing does, it escapes as flammable vapor. See [Oil](Oil.md#fire).
 
 A cold condenser on top pulls the whole profile colder, so lighter cuts stand at each tray and the cuts are sharper. Keep it cool the way you would any [Condenser](Condenser.md), with a [Heat Exchanger](Heat_Exchanger.md).
+
+## Spatial slurry
+
+The reboiler also takes **Raw Spatial Slurry** ([Liquid Teleportant](Liquid_Teleportant.md#making-it)). The slurry gives up water and steam first, then **Unstable Spatial Solvent**, which boils at 160 Tu. Vapor that escapes the top of the column hops nearby items and creatures. When the lights are gone, drain the spent bottoms from the reboiler with a pipe.
 
 ## Notes
 

@@ -1,0 +1,12 @@
+{
+  "color": "#d8ecf4",
+  "kind": "fluid",
+  "hardness": 0.1,
+  "density": 1.107,
+  "thermal": {
+    "melting_point": 3.82,
+    "boiling_point": 101.4,
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  }
+}

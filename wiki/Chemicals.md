@@ -1,6 +1,6 @@
 # Chemicals
 
-The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, carbon dioxide, leach liquors, liquid teleportant, fluorine compounds, bleach, nitrogen, argon, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
+The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, carbon dioxide, leach liquors, liquid teleportant, heavy water, fluorine compounds, bleach, nitrogen, argon, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
 
 ## Hydrogen
 
@@ -49,7 +49,11 @@ Leaching an ore concentrate in the Reactor leaves its metal dissolved in a liquo
 
 ## Liquid Teleportant
 
-A fluid made from chorus fruit, redstone and lye. It pays for each crossing of an [Ender Port](Ender_Port.md). See [Liquid Teleportant](Liquid_Teleportant.md).
+A fluid made from chorus fruit in four stages. It pays for each crossing of an [Ender Port](Ender_Port.md). See [Liquid Teleportant](Liquid_Teleportant.md).
+
+## Heavy Water
+
+A scarce residue of electrolysing enriched water. See [Heavy Water](Heavy_Water.md).
 
 ## Hypochlorite Bleach
 

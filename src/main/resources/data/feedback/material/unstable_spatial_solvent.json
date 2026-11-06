@@ -1,0 +1,14 @@
+{
+  "color": "#c9a0f0",
+  "kind": "fluid",
+  "traits": [
+    "spatial"
+  ],
+  "hardness": 0.1,
+  "density": 0.92,
+  "thermal": {
+    "boiling_point": 160,
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  }
+}

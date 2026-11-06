@@ -140,6 +140,9 @@ public final class FFluidTypes {
     /** Refined chorus alkaloid in solution; what an Ender Port pays in (tag {@code feedback:teleportant}). */
     public static final DeferredHolder<FluidType, FluidType> TELEPORTANT = petroType("teleportant", 1050, 800, 300);
 
+    /** The unstable spatial solvent boiled off a column's cut: a vapour, rises. */
+    public static final DeferredHolder<FluidType, FluidType> UNSTABLE_SOLVENT_VAPOUR = petroType("unstable_solvent_vapour", -3, 100, 400);
+
     private static DeferredHolder<FluidType, FluidType> petroType(String name, int density, int viscosity, int temperature) {
         return FLUID_TYPES.register(name, () -> new FluidType(FluidType.Properties.create()
                 .descriptionId("fluid.feedback." + name)

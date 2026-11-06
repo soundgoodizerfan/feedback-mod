@@ -114,7 +114,7 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     private final HeatedTank feed = new HeatedTank(FTuning.REBOILER_FEED_TANK_MB, this::setChanged);
     private final float[] owed = new float[8];
 
-    /** What the reboiler's face shows a pipe: crude in, and steam to clear the trays; nothing out. */
+    /** What the reboiler's face shows a pipe: crude in, and steam to clear the trays; out only the spent bottoms. */
     private final IFluidHandler handler = new IFluidHandler() {
         @Override
         public int getTanks() {
@@ -149,14 +149,19 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
         @Override
         public FluidStack drain(FluidStack resource, FluidAction action) {
-            return FluidStack.EMPTY;
+            return spent() && FluidStack.isSameFluid(resource, feed.getFluid()) ? feed.drain(resource.getAmount(), action) : FluidStack.EMPTY;
         }
 
         @Override
         public FluidStack drain(int maxDrain, FluidAction action) {
-            return FluidStack.EMPTY;
+            return spent() ? feed.drain(maxDrain, action) : FluidStack.EMPTY;
         }
     };
+
+    /** Whether the feed has nothing left to boil (its light fraction is drawn off): the bottoms may then be drained, which is how a column is emptied of its pomace or heavy residue. */
+    private boolean spent() {
+        return !feed.isEmpty() && CrudeGrade.of(feed.getFluid()).lightFraction() < FTuning.COLUMN_SPENT_LIGHTS;
+    }
 
     public ReboilerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.REBOILER.get(), pos, state);
@@ -300,8 +305,11 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         FluidStack gas = FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(cut.gasFluid()), mb), tu);
         IFluidHandler target = server.getCapability(Capabilities.FluidHandler.BLOCK, above, Direction.DOWN);
         int taken = target == null ? 0 : target.fill(gas, IFluidHandler.FluidAction.EXECUTE);
-        if (taken < mb)
+        if (taken < mb) {
             Vapour.source(server, above, 1f, 20, 0, false);
+            if (server.getGameTime() % 20 == 0)
+                io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.loose(server, net.minecraft.world.phys.Vec3.atCenterOf(above), gas.copyWithAmount(mb - taken));
+        }
     }
 
     // --- Part ------------------------------------------------------------------------------

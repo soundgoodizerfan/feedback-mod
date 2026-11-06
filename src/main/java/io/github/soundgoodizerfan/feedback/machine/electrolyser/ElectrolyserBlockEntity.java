@@ -109,6 +109,8 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
     private int plated;
     private float condition = 1f;
     private float owed;
+    /** The fraction of a residue millibucket not yet made, for a row that leaves less than one per unit. */
+    private float residueOwed;
     private float unitsLeft;
     private float bathLoss;
     private float temperature = FTuning.AMBIENT_TU.value();
@@ -162,7 +164,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         }
         if (row.residue().isPresent()) {
             var r = row.residue().get();
-            room = Math.min(room, ProcessRun.room(liquor, stackOf(r.fluid(), 1)) / r.mb());
+            room = Math.min(room, (int) ((long) ProcessRun.room(liquor, stackOf(r.fluid(), 1)) * r.per() / r.mb()));
         }
         if (row.deposit().isPresent())
             room = Math.min(room, plateRoom(row.deposit().get()));
@@ -246,8 +248,14 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
             feed.drain(units, IFluidHandler.FluidAction.EXECUTE);
         for (Electrolysis.Product p : row.products())
             ProcessRun.deposit(java.util.List.of(tank(p.electrode())), stackOf(p.fluid(), units * p.mb()));
-        if (row.residue().isPresent())
-            ProcessRun.deposit(java.util.List.of(liquor), stackOf(row.residue().get().fluid(), units * row.residue().get().mb()));
+        if (row.residue().isPresent()) {
+            var r = row.residue().get();
+            residueOwed += units * (float) r.mb() / r.per();
+            int whole = (int) residueOwed;
+            residueOwed -= whole;
+            if (whole > 0)
+                ProcessRun.deposit(java.util.List.of(liquor), stackOf(r.fluid(), whole));
+        }
         if (row.deposit().isPresent()) {
             var d = row.deposit().get();
             plated += units;
@@ -462,6 +470,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         tag.putInt("Plated", plated);
         tag.putFloat("Condition", condition);
         tag.putFloat("UnitsLeft", unitsLeft);
+        tag.putFloat("ResidueOwed", residueOwed);
         tag.putFloat("Temperature", temperature);
     }
 
@@ -478,6 +487,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         plated = tag.getInt("Plated");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         unitsLeft = tag.getFloat("UnitsLeft");
+        residueOwed = tag.getFloat("ResidueOwed");
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
     }
 }

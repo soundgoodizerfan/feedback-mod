@@ -284,7 +284,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** A pot serving (broth, stew) a soup is poured from: what a soup's base role takes. */
         BROTH,
         /** Sculk: what a gun's sculk jacket role takes. */
-        SCULK;
+        SCULK,
+        /** A tunnelling-active fluid not yet damped (ender spec 2): loose or over its boiling point it undergoes premature spatial transitions that hop whatever stands near (core/hazard/SpatialHop). */
+        SPATIAL;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 

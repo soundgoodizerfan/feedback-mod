@@ -1,0 +1,25 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 20,
+  "max_temperature": 80,
+  "required_tpu": 40,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "minecraft:water",
+        "mb": 500
+      },
+      {
+        "fluid": "feedback:lye",
+        "mb": 10
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:alkaline_water",
+        "mb": 500
+      }
+    ]
+  }
+}

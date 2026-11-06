@@ -123,8 +123,10 @@ final class ThermalCard {
             if (feeds.length > 0)
                 in.fluid(feeds[0].getFluid(), 1000);
             e.item().ifPresent(in::item);
-            e.residue().ifPresent(r -> out.fluid(r.fluid(), r.mb()));
-            e.products().forEach(pr -> out.fluid(pr.fluid(), pr.mb()));
+            // The input is drawn as 1000 mB of feed, so a no-solute row's per-unit figures are shown for that litre.
+            int scale = e.item().isPresent() ? 1 : 1000;
+            e.residue().ifPresent(r -> out.fluid(r.fluid(), Math.max(1, r.mb() * scale / r.per())));
+            e.products().forEach(pr -> out.fluid(pr.fluid(), pr.mb() * scale));
             e.deposit().ifPresent(d -> out.item(d.stack()));
             return;
         }

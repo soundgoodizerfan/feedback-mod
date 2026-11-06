@@ -1,0 +1,35 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:redstone",
+      "forms": [
+        "dust"
+      ]
+    }
+  ],
+  "min_temperature": 300,
+  "optimal_temperature": 900,
+  "max_temperature": 2200,
+  "required_tpu": 100,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:damped_spatial_solvent",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:teleportant",
+        "mb": 100
+      }
+    ],
+    "over_tu": [
+      {
+        "fluid": "feedback:unstable_solvent_vapour",
+        "mb": 100
+      }
+    ]
+  }
+}

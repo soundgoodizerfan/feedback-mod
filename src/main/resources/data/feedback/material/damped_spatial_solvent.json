@@ -1,0 +1,10 @@
+{
+  "color": "#a888e0",
+  "kind": "fluid",
+  "hardness": 0.1,
+  "density": 1.0,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0006
+  }
+}

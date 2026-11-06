@@ -1,0 +1,25 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:chorus_fruit"
+    }
+  ],
+  "min_temperature": 0,
+  "optimal_temperature": 25,
+  "max_temperature": 60,
+  "required_tpu": 60,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "minecraft:water",
+        "mb": 100
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:raw_spatial_slurry",
+        "mb": 100
+      }
+    ]
+  }
+}

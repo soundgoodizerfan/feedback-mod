@@ -320,7 +320,13 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> CRYOLITE_BATH_FLOWING =
             FLUIDS.register("cryolite_bath_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.CRYOLITE_BATH, FFluids.CRYOLITE_BATH, FFluids.CRYOLITE_BATH_FLOWING)));
 
-    /** Liquid teleportant: chorus alkaloid extracted with lye (data/feedback/thermal_process/extract_teleportant.json). */
+    /** The vapour of the unstable spatial solvent (data/feedback/thermal_process/phase_slurry_solvent.json); the liquids of the teleportant chain are in {@link Liquors}. */
+    public static final DeferredHolder<Fluid, Fluid> UNSTABLE_SOLVENT_VAPOUR =
+            FLUIDS.register("unstable_solvent_vapour", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.UNSTABLE_SOLVENT_VAPOUR, FFluids.UNSTABLE_SOLVENT_VAPOUR, FFluids.UNSTABLE_SOLVENT_VAPOUR_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> UNSTABLE_SOLVENT_VAPOUR_FLOWING =
+            FLUIDS.register("unstable_solvent_vapour_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.UNSTABLE_SOLVENT_VAPOUR, FFluids.UNSTABLE_SOLVENT_VAPOUR, FFluids.UNSTABLE_SOLVENT_VAPOUR_FLOWING)));
+
+    /** Liquid teleportant: the end of the four-stage chorus chain (data/feedback/thermal_process/strike_teleportant.json). */
     public static final DeferredHolder<Fluid, Fluid> TELEPORTANT =
             FLUIDS.register("teleportant", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.TELEPORTANT, FFluids.TELEPORTANT, FFluids.TELEPORTANT_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> TELEPORTANT_FLOWING =

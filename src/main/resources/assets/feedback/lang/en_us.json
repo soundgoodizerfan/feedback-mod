@@ -5333,5 +5333,19 @@
   "material.feedback.carbon_dioxide": "Carbon Dioxide",
   "item.feedback.rare_earth_residue": "Rare Earth Residue",
   "material.feedback.rare_earth_residue": "Rare Earth Residue",
-  "feedback.jei.electrolysis.plates": "Plates out on the cathode"
+  "feedback.jei.electrolysis.plates": "Plates out on the cathode",
+  "fluid.feedback.raw_spatial_slurry": "Raw Spatial Slurry",
+  "material.feedback.raw_spatial_slurry": "Raw Spatial Slurry",
+  "fluid.feedback.unstable_spatial_solvent": "Unstable Spatial Solvent",
+  "material.feedback.unstable_spatial_solvent": "Unstable Spatial Solvent",
+  "fluid.feedback.unstable_solvent_vapour": "Unstable Solvent Vapour",
+  "material.feedback.unstable_solvent_vapour": "Unstable Solvent Vapour",
+  "fluid.feedback.damped_spatial_solvent": "Damped Spatial Solvent",
+  "material.feedback.damped_spatial_solvent": "Damped Spatial Solvent",
+  "fluid.feedback.alkaline_water": "Alkaline Electrolyte",
+  "material.feedback.alkaline_water": "Alkaline Electrolyte",
+  "fluid.feedback.enriched_water": "Enriched Water",
+  "material.feedback.enriched_water": "Enriched Water",
+  "fluid.feedback.heavy_water": "Heavy Water",
+  "material.feedback.heavy_water": "Heavy Water"
 }

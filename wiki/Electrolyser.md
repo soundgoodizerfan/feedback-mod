@@ -27,6 +27,8 @@ JEI's *Thermal process* card lists every liquid it can split, the voltage it nee
 | Liquid | Voltage | Cathode (back) | Anode (front) | Also |
 | --- | --- | --- | --- | --- |
 | Water | 1.23 V | 2 mB hydrogen per mB | 1 mB oxygen per mB | |
+| Alkaline Electrolyte | 1.8 V | 2 mB hydrogen per mB | 1 mB oxygen per mB | about 1 mB [Enriched Water](Heavy_Water.md) stays per 25 mB |
+| Enriched Water | 1.8 V | 2 mB hydrogen per mB | 1 mB oxygen per mB | about 1 mB [Heavy Water](Heavy_Water.md) stays per 20 mB |
 | Brine | 2.2 V | 1 mB hydrogen per mB | 1 mB chlorine per mB | 1 mB lye per mB stays in the cell |
 | Copper Sulfate Liquor | 2.0 V | 1 Copper Nugget plated per 16 mB | 1 mB oxygen per mB | |
 | Zinc Sulfate Liquor | 3.0 V | 1 Zinc Nugget plated per 16 mB | 1 mB oxygen per mB | |

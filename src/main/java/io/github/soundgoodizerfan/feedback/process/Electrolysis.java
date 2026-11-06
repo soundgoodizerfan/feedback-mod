@@ -40,7 +40,7 @@ import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
  * A row may also name an {@code item} that is the thing actually split (a solute in a solvent): each item gives
  * {@code unitsPerItem} units of work, a unit being what a millibucket of feed is in a row with no item, and a
  * {@code solvent} feed is only the bath and is not used up. A row may need a {@code minTemperature}, and may leave a
- * {@code residue} in the cell (lye behind a splitting brine) per unit of work.
+ * {@code residue} in the cell (lye behind a splitting brine) per unit of work, or per several units.
  *
  * @param feed         the liquid that is split (or the bath, for a solvent row), by tag or id.
  * @param volts        the voltage the liquid decomposes at.
@@ -68,11 +68,16 @@ public record Electrolysis(FluidIngredient feed, float volts, List<Product> prod
         }
     }
 
-    /** {@code mb} millibuckets of {@code fluid} left in the cell per unit of work. */
-    public record Residue(ResourceLocation fluid, int mb) {
+    /**
+     * {@code mb} millibuckets of {@code fluid} left in the cell per {@code per} units of work (1 by default: a brine row leaves its lye
+     * unit for unit). A {@code per} above 1 is a small fraction that stays behind while the rest leaves as gas, the way the light
+     * hydrogen leaves heavy water behind in a long electrolysis; the cell carries the fractional remainder from tick to tick.
+     */
+    public record Residue(ResourceLocation fluid, int mb, int per) {
         public static final Codec<Residue> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("fluid").forGetter(Residue::fluid),
-                Codec.intRange(1, 1000).fieldOf("mb").forGetter(Residue::mb)).apply(i, Residue::new));
+                Codec.intRange(1, 1000).fieldOf("mb").forGetter(Residue::mb),
+                Codec.intRange(1, 100000).optionalFieldOf("per", 1).forGetter(Residue::per)).apply(i, Residue::new));
     }
 
     public enum Electrode implements StringRepresentable {

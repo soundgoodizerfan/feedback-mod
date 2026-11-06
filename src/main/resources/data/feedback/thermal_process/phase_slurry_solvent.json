@@ -1,0 +1,18 @@
+{
+  "inputs": [],
+  "min_temperature": 160,
+  "optimal_temperature": 160,
+  "required_tpu": 0,
+  "phase": {
+    "liquid": {
+      "fluid": "feedback:raw_spatial_slurry"
+    },
+    "gas": {
+      "fluid": "feedback:unstable_solvent_vapour"
+    },
+    "liquid_fluid": "feedback:unstable_spatial_solvent",
+    "gas_fluid": "feedback:unstable_solvent_vapour",
+    "latent": 14,
+    "light_share": 0.4
+  }
+}

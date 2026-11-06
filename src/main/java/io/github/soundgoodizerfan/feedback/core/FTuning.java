@@ -3441,6 +3441,11 @@ public final class FTuning {
     /** Invented. Air a culture holds (mB) and breathes a tick; the dish pulls it from a neighbouring gas holder once a second. */
     public static final int CULTURE_AIR_BUFFER_MB = 200;
     public static final float CULTURE_AIR_MB_PER_TICK = 0.1f;
+    /** Invented. A spatially unstable fluid let loose (core/hazard/SpatialHop): the radius (blocks) around the leak whose items and creatures may hop, the nearest and farthest hop (blocks), the chance at nothing lost, and the mB lost that adds a full point of chance. */
+    public static final float SPATIAL_HOP_RADIUS = 3f, SPATIAL_HOP_MIN = 2f, SPATIAL_HOP_MAX = 6f, SPATIAL_HOP_BASE_CHANCE = 0.2f;
+    public static final int SPATIAL_HOP_MB_FOR_CERTAIN = 125;
+    /** Invented. A column's spent bottoms: below this light fraction the reboiler's feed has nothing left to boil and a pipe may drain it. */
+    public static final float COLUMN_SPENT_LIGHTS = 0.02f;
     /** Invented. The electrolyser: amps it asks for, mB of feed split per tick per amp at full condition (8 A splits 0.4 mB a tick), its feed and electrode tanks (mB), and what over-voltage costs it. */
     public static final float ELECTROLYSER_AMPS = 8f, ELECTROLYSER_MB_PER_AMP_TICK = 0.05f,
             ELECTROLYSER_CONDITION_FLOOR = 0.2f, ELECTROLYSER_WEAR_PER_EXCESS = 0.00005f;

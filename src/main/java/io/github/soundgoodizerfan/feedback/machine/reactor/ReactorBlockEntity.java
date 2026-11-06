@@ -323,6 +323,11 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
             tank.relax(getTemperature());
         react();
         regenerate();
+        // A spatially unstable fluid held at or over its boiling point makes premature transitions, once a second.
+        if (level.getGameTime() % 20 == 0)
+            for (HeatedTank tank : heatedTanks())
+                if (io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.boiling(tank.getFluid(), temperature))
+                    io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.hop(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), tank.getFluidAmount());
         if (PressureBurst.fails(getPressure(), FTuning.PRESSURE_VESSEL_DANGER_PU, FTuning.PRESSURE_VESSEL_CRITICAL_PU,
                 level.random)) {
             for (HeatedTank tank : heatedTanks())
@@ -434,8 +439,10 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
     /** A product goes to the output tank already holding that fluid, else the first empty one; with neither, or what a full tank cannot take, it is lost (a toxic gas then lets a {@link io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud} go). */
     private void emit(FluidStack product) {
         int left = ProcessRun.deposit(List.of(outputs), product);
-        if (left > 0)
+        if (left > 0) {
             io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud.vent(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), product.copyWithAmount(left));
+            io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.loose(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), product.copyWithAmount(left));
+        }
     }
 
     private void pushOutput() {
