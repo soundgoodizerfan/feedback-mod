@@ -8,7 +8,7 @@ Draw the engine at the [Blueprint Table](Blueprint_Table.md) (pick *Engine* in t
 
 | Part | Choices | What it sets |
 | --- | --- | --- |
-| **Engine Block** | inline, vee, boxer | Inline is the plain layout. A vee is a short, light block (15% lighter) that revs 7% lower. A boxer cancels its own shake and revs 8% higher, but weighs 10% more and makes 3% less torque. |
+| **Engine Block** | inline, V, boxer | Inline is the plain layout. A V is a short, light block (15% lighter) that revs 7% lower. A boxer cancels its own shake and revs 8% higher, but weighs 10% more and makes 3% less torque. |
 | **Pistons** | 1, 2, 4, 6 or 8 cylinders | The number of cylinders (more mean more torque and more weight, and more metal). Their **bore** is the cylinder width: wider means more torque. Their metal sets the redline. |
 | **Crankshaft** | cast, forged | The **stroke**: longer adds torque but the engine **revs lower**; short-stroke engines rev high. A forged crank revs 20% higher than a cast one, for more metal. |
 | **Cylinder Head** | low, medium, high compression | Which fuels it can burn. See [Compression, fuel and knock](#compression-fuel-and-knock). A high head also makes 8% more torque, a low one 5% less. |

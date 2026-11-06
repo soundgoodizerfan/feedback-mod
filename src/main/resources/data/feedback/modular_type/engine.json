@@ -32,7 +32,7 @@
             }
           },
           {
-            "name": "vee_block",
+            "name": "v_block",
             "shape": [
               "KK",
               "K"
