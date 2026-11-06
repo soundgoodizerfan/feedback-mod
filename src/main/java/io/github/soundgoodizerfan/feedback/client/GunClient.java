@@ -25,6 +25,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.GunFirePayload;
 import io.github.soundgoodizerfan.feedback.net.GunModePayload;
 import io.github.soundgoodizerfan.feedback.net.GunReloadPayload;
+import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.net.GunSwingPayload;
 import io.github.soundgoodizerfan.feedback.weapon.GunBludgeon;
 import net.minecraft.world.InteractionHand;
@@ -101,12 +102,6 @@ public final class GunClient {
     public static final KeyMapping FIRE_MODE = new KeyMapping("key.feedback.fire_mode", InputConstants.KEY_V, "key.categories.feedback");
     public static final KeyMapping UNLOAD = new KeyMapping("key.feedback.unload", InputConstants.KEY_U, "key.categories.feedback");
 
-    /**
-     * Gun-fu stance, held: the gun's fire button swings it as a bludgeon instead of firing ({@link GunBludgeon}).
-     * Each hand is independent. Rebindable, e.g. to a mouse side button.
-     */
-    public static final KeyMapping STANCE = new KeyMapping("key.feedback.stance", InputConstants.KEY_Z, "key.categories.feedback");
-
     /** Wall-clock ms each hand's bludgeon may swing again. */
     private static long mainSwingMs, offSwingMs;
 
@@ -139,7 +134,7 @@ public final class GunClient {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null)
             return;
-        // The use key is also the off-hand pistol's trigger, when it has one. The stance key (held) is no
+        // The use key is also the off-hand pistol's trigger, when it has one. Barehanded mode is no
         // exception to the cancel: vanilla still does nothing, and onFrame swings the gun itself.
         boolean mainGun = player.getMainHandItem().getItem() instanceof GunItem;
         if ((event.isAttack() && mainGun) || (event.isUseItem() && (mainGun || GunItem.offHandFires(player)))) {
@@ -175,8 +170,8 @@ public final class GunClient {
         GunSpec offDesign = offItem.getItem() instanceof GunItem ? GunSpec.of(offItem).orElse(null) : null;
         boolean offFires = GunItem.offHandFires(player) && offDesign != null;
         boolean ready = mc.screen == null && mc.mouseHandler.isMouseGrabbed() && !player.isSpectator();
-        // In the stance the fire buttons swing the guns and nothing fires; releasing the key makes them guns again.
-        boolean stance = ready && STANCE.isDown();
+        // Barehanded mode: the fire buttons swing the guns and nothing fires; leaving it makes them guns again.
+        boolean stance = ready && BareMode.clientOn;
         boolean canAct = holding && design != null && ready && !stance;
         boolean offCanAct = offFires && ready && !stance;
         if (stance) {

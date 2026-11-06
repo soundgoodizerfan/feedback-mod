@@ -1704,6 +1704,16 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         }
     }
 
+    /** What a figure is; a family with its own line (key {@code .tip.<family>}) reads that instead of the generic tip. */
+    private List<Component> figureTip(Fig f) {
+        List<Component> out = new ArrayList<>(ModularBlueprintItem.explain(f));
+        ModularType t = current();
+        String key = "modular.feedback.fig." + f.name().toLowerCase(java.util.Locale.ROOT) + ".tip." + (t == null ? "" : t.family().name().toLowerCase(java.util.Locale.ROOT));
+        if (t != null && I18n.exists(key))
+            out.set(1, Component.translatable(key).withStyle(net.minecraft.ChatFormatting.GRAY));
+        return out;
+    }
+
     private String label(Fig f) {
         return labels.computeIfAbsent(f, k -> Component.translatable("modular.feedback.fig." + k.name().toLowerCase(java.util.Locale.ROOT))
                 .getString().split(",", 2)[0]);
@@ -1930,7 +1940,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             return PartPresenter.describe(shapes(sel()).get(hoverShape));
         if (hoverFig >= 0) {
             Fig f = shown.get(hoverFig);
-            List<Component> out = new ArrayList<>(ModularBlueprintItem.explain(f));
+            List<Component> out = figureTip(f);
             if (net.minecraft.client.gui.screens.Screen.hasShiftDown() && reference.isPresent() && figures.isPresent())
                 out.add(FigureCompare.line(f, reference.get().get(f), figures.get().get(f)));
             else

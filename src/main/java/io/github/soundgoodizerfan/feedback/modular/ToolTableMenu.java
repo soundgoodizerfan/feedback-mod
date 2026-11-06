@@ -392,7 +392,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         ItemStack c = centreStack();
         if (c.isEmpty())
             return Centre.EMPTY;
-        if (ModularStacks.design(c) != null && ToolTableAssembly.kindOf(c) == kind)
+        if (ModularStacks.design(c) != null && !c.is(FModular.BLUEPRINT.get()) && ToolTableAssembly.kindOf(c) == kind)
             return Centre.TOOL;
         if (c.getItem() instanceof ModularPartItem && c.has(FDataComponents.MADE_OF.get()))
             return Centre.PART;
@@ -1129,7 +1129,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private void apart(ServerPlayer server) {
         ItemStack tool = tool();
         Level level = server.level();
-        if (!hasHammer() || ModularStacks.design(tool) == null || (dish && !isDish(tool)))
+        if (!hasHammer() || ModularStacks.design(tool) == null || tool.is(FModular.BLUEPRINT.get()) || (dish && !isDish(tool)))
             return;
         List<ItemStack> parts;
         if (dish) {

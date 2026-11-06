@@ -14,7 +14,6 @@ All of these can be rebound under the *Feedback* category in Controls.
 | **Z**, **Y**, **G** | [Cast slots](#casts-and-stamina) 1, 2 and 3. Slots 4 and 5 are unbound until you set them. |
 | **C** | Cast radial: tap to cast the selected technique, hold to choose another |
 | **B** | Toggle [barehanded mode](#barehanded-mode) |
-| **Z**, held | [Gun melee stance](Guns.md#swinging-a-gun) |
 | **K** | [Skill tree](Skills.md) |
 | *(unbound)* | Off-hand attack |
 
@@ -109,7 +108,7 @@ A grab is a **short rope** (1.5 blocks) with no reel. The held thing is pinned c
 
 ## Off-hand weapons
 
-You can **dual wield**. Right-click with a weapon in the off hand and nothing else wants the click (a chest still opens, a shield still blocks) and the off hand swings, by its *own* damage, speed and reach, with its own cooldown, its own traits and perks, and its own wear. There is also an **Off-hand attack** key, unbound by default. The off-hand swing hits one target along your look rather than sweeping, and its blow wears the off-hand weapon. [Guns](Guns.md#swinging-a-gun) work the same way with the stance key.
+You can **dual wield**. Right-click with a weapon in the off hand and nothing else wants the click (a chest still opens, a shield still blocks) and the off hand swings, by its *own* damage, speed and reach, with its own cooldown, its own traits and perks, and its own wear. There is also an **Off-hand attack** key, unbound by default. The off-hand swing hits one target along your look rather than sweeping, and its blow wears the off-hand weapon. [Guns](Guns.md#swinging-a-gun) work the same way in barehanded mode.
 
 ## Barehanded mode
 

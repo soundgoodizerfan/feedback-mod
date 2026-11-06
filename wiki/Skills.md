@@ -106,7 +106,7 @@ Brute: overpower. Weight: the bigger hit, the heavier body, the harder push. Pis
 | Shove | 50 | Grab | Cast, held: hands on a vehicle body. A body no heavier than you and your armor is held up in front of the camera; a heavier one is shoved or dragged along the ground at your mass times your speed, with an equal push back on you. See [Shove and carry](Vehicles.md#shove-and-carry). Costs stamina for work delivered. |
 | Heavy lift | 40 | Shove | You can carry a body up to 1.5 times your weight before it must be shoved. |
 | Deadlift | 70 | Heavy lift | You can carry a body up to 2 times your weight. |
-| Pistol whip | 15 | Grab | Hold the melee-stance key to swing a held gun as a bludgeon. Damage and recovery follow the gun's mass. *(once used, rearms on a landed blow.)* |
+| Pistol whip | 15 | Grab | In barehanded mode, attacking with a held gun swings it as a bludgeon. Damage and recovery follow the gun's mass. *(once used, rearms on a landed blow.)* |
 | Firm grip | 25 | Grab | [Grab](Combat.md#grab) holds 1 second longer |
 | Mace quake | 60 | Grab | A mace blow of 5+ damage shakes the ground: bodies within 2.5 blocks of the target are knocked back and staggered. |
 | Quake leap | 60 | Grab | Cast: vault forward and up, and land hard. The landing shoves everything within reach and staggers it by your mass (armor counts) and how far you fell, over each target's own mass. A heavy armored fighter shakes the ground. Costs 25 stamina. |

@@ -100,7 +100,8 @@
             "name": "calibre_pistol",
             "params": {
               "bore": 9,
-              "outer": 15
+              "outer": 15,
+              "length": 0.2
             }
           },
           {
@@ -110,7 +111,8 @@
             ],
             "params": {
               "bore": 5,
-              "outer": 11
+              "outer": 11,
+              "length": 0.15
             }
           },
           {
@@ -120,7 +122,8 @@
             ],
             "params": {
               "bore": 12,
-              "outer": 18
+              "outer": 18,
+              "length": 0.3
             }
           },
           {
@@ -130,7 +133,8 @@
             ],
             "params": {
               "bore": 20,
-              "outer": 26
+              "outer": 26,
+              "length": 0.45
             }
           }
         ]
@@ -178,7 +182,8 @@
             "name": "calibre_pistol",
             "params": {
               "bore": 9,
-              "outer": 15
+              "outer": 15,
+              "length": 0.2
             },
             "trait": "double_barrel"
           },
@@ -189,7 +194,8 @@
             ],
             "params": {
               "bore": 5,
-              "outer": 11
+              "outer": 11,
+              "length": 0.15
             },
             "trait": "double_barrel"
           },
@@ -200,7 +206,8 @@
             ],
             "params": {
               "bore": 12,
-              "outer": 18
+              "outer": 18,
+              "length": 0.3
             },
             "trait": "double_barrel"
           },
@@ -211,7 +218,8 @@
             ],
             "params": {
               "bore": 20,
-              "outer": 26
+              "outer": 26,
+              "length": 0.45
             },
             "trait": "double_barrel"
           }

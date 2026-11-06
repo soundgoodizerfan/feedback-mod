@@ -85,7 +85,6 @@ Only an automatic can be held down. **Burst** fires three rounds, then forces a 
 | **V** | Switch fire mode (only the modes the action has) |
 | **U** | Unload: takes the magazine and the chambered round out |
 
-| **Z**, held | [Melee stance](#swinging-a-gun): attack swings the gun instead of firing it |
 
 All of these keys can be rebound under the *Feedback* category in Controls.
 
@@ -162,7 +161,7 @@ A gun light enough to carry at arm's length (**4 Mu or less**) and soft enough t
 
 ## Swinging a gun
 
-Hold **Z** and attack, and you swing the gun as a **bludgeon** instead of firing it. No gun has a row for this: everything comes from its baked mass.
+In barehanded mode (**B** toggles it), attacking with a gun swings it as a **bludgeon** instead of firing it. No gun has a row for this: everything comes from its baked mass. With anything else in hand, barehanded mode punches.
 
 | | |
 | --- | --- |
