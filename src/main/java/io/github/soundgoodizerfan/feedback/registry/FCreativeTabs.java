@@ -236,6 +236,8 @@ public class FCreativeTabs {
                         });
                         output.accept(FItems.DAMPER.get());
                         output.accept(FItems.VALVE.get());
+                        output.accept(FItems.REDSTONE_EMITTER.get());
+                        output.accept(FItems.ANALOG_ADAPTER.get());
                         output.accept(FItems.BELLOWS.get());
                         // One cable per conductor: every jar material that states an ampacity.
                         io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {

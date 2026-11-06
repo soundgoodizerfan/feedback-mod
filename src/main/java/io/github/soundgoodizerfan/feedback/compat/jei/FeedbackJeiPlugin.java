@@ -357,6 +357,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.DYNAMOTOR.get(), "dynamotor");
         info(registration, FModular.CONVEYOR_BELT.get(), "conveyor_belt");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FLogistics.HEAD_ITEM.get(), "belt_head");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.REDSTONE_EMITTER.get(), "redstone_emitter");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.ANALOG_ADAPTER.get(), "analog_adapter");
         io.github.soundgoodizerfan.feedback.registry.FLogistics.MODULE_ITEMS.forEach((m, item) -> info(registration, item.get(), "belt_module_" + m.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ELECTROMAGNET.get().asItem(), "electromagnet");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.LAMP.get().asItem(), "lamp");

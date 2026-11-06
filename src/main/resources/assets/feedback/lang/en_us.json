@@ -5347,5 +5347,10 @@
   "fluid.feedback.enriched_water": "Enriched Water",
   "material.feedback.enriched_water": "Enriched Water",
   "fluid.feedback.heavy_water": "Heavy Water",
-  "material.feedback.heavy_water": "Heavy Water"
+  "material.feedback.heavy_water": "Heavy Water",
+  "block.feedback.redstone_emitter": "Redstone Emitter",
+  "block.feedback.analog_adapter": "Analog Adapter",
+  "feedback.analog.opening": "Opening",
+  "feedback.jei.info.redstone_emitter": "Turns a data signal into redstone. A controller, timer or sensor program switches it like any actuator; engaged, it puts a full-strength redstone signal out of every face, so a vanilla piston, lamp or door can follow a Feedback sensor.",
+  "feedback.jei.info.analog_adapter": "A small fitting set on one face of a machine that has a variable setting, such as a valve's opening. Redstone power at the adapter sets that setting from 0 to 100 per cent in steps of one fifteenth: power 15 is fully open, power 0 is shut. Any machine with a switch also starts and stops from redstone directly, with no adapter."
 }
