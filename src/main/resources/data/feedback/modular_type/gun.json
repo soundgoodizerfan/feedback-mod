@@ -716,7 +716,8 @@
     "W": {
       "name": "winding",
       "forms": [
-        "block"
+        "block",
+        "wire"
       ],
       "litres": 0.1,
       "layer": 10,

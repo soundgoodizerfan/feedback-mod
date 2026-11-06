@@ -194,6 +194,9 @@ public final class ModularBake {
             case BELT -> !wear || (material.mechanical().friction().isPresent() && material.thermal().serviceTemperature().isPresent());
             case ENGINE -> engineMetal(material) && (!(roleKey.equals(ENGINE_PISTONS) || roleKey.equals(ENGINE_CRANK)) || material.mechanical().yieldStrength().isPresent());
             case GEARBOX -> engineMetal(material);
+            // A coilgun's winding is a material that carries a field: the rest cannot wind a gun.
+            case GUN -> !roleKey.equals("W")
+                    || material.propellant().filter(p -> p.drive() == Material.Propellant.Drive.COIL).isPresent();
             case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
             default -> true;
         };

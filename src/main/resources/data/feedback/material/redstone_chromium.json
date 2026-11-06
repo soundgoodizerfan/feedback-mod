@@ -34,6 +34,10 @@
     "electrode_potential": -0.6
   },
   "ampacity": 0.3,
+  "coil": {
+    "field_pressure": 4,
+    "quench_temperature": 700
+  },
   "corrosion_resistance": 0.9,
   "enchantability": 8
 }
