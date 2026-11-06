@@ -111,6 +111,18 @@ public class EngineBlock extends BaseEntityBlock implements Rotatable {
         return level.isClientSide ? null : createTickerHelper(type, FVehicles.ENGINE_ENTITY.get(), EngineBlockEntity::serverTick);
     }
 
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block, BlockPos from, boolean moved) {
+        io.github.soundgoodizerfan.feedback.fitting.RedstoneAnalogFitting.apply(level, pos);
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof EngineBlockEntity engine)
+            io.github.soundgoodizerfan.feedback.fitting.Fittable.dropAll(engine, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

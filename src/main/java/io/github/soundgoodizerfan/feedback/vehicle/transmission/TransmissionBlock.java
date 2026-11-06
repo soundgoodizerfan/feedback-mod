@@ -97,9 +97,16 @@ public class TransmissionBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, net.minecraft.world.level.block.Block block, BlockPos from, boolean moved) {
+        io.github.soundgoodizerfan.feedback.fitting.RedstoneAnalogFitting.apply(level, pos);
+    }
+
+    @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof TransmissionBlockEntity box)
+        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof TransmissionBlockEntity box) {
             box.unpublish();
+            io.github.soundgoodizerfan.feedback.fitting.Fittable.dropAll(box, level, pos);
+        }
         super.onRemove(state, level, pos, newState, moved);
     }
 

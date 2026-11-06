@@ -77,7 +77,15 @@ import org.jetbrains.annotations.Nullable;
  * at the moment of lifting, before the box existed, and Sable discarded the body. The cost of
  * the floor is that an engine designed lighter than 250 Mu weighs 250.
  */
-public class EngineBlockEntity extends RotationNode implements Switchable, Analog, DataNode, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart {
+public class EngineBlockEntity extends RotationNode implements Switchable, Analog, DataNode, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart,
+        io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
+
+    private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings() {
+        return fittings;
+    }
 
     /** Just inside the block, so the box never reaches past what is drawn. */
     private static final double BOX_HALF = 0.45;
@@ -340,6 +348,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         if (design != null)
             EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
         tag.putBoolean("Running", running);
+        fittings.save(tag);
         tag.putFloat("Throttle", throttle);
         tag.putFloat("Condition", condition);
         CompoundTag fuelTag = new CompoundTag();
@@ -352,6 +361,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
         running = tag.getBoolean("Running");
+        fittings.load(tag, this);
         throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 0;
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         if (tag.contains("Fuel"))

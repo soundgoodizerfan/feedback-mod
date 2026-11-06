@@ -65,7 +65,14 @@ import java.util.Set;
  * parts the link, so the input coasts free of the output, and a shift made then does not grind: the
  * clutch is how a gear is changed at speed without misuse. Dropped, it couples again at once.
  */
-public class TransmissionBlockEntity extends BlockEntity implements Analog, DataNode, Wearing {
+public class TransmissionBlockEntity extends BlockEntity implements Analog, DataNode, Wearing, io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
+
+    private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings() {
+        return fittings;
+    }
 
     @Nullable
     private TransmissionDesign design;
@@ -266,6 +273,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         if (design != null)
             TransmissionDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
         tag.putInt("Position", position);
+        fittings.save(tag);
         tag.putFloat("Condition", condition);
     }
 
@@ -274,6 +282,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? TransmissionDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
         position = tag.getInt("Position");
+        fittings.load(tag, this);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 }
