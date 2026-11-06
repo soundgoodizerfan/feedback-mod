@@ -73,11 +73,17 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         pose.scale(FIRST_PERSON_SCALE, FIRST_PERSON_SCALE, FIRST_PERSON_SCALE);
         pose.translate(-at[0], -at[1], -at[2]);
         GunMotion.item(pose, view, hand, now);
-        var mesh = new GunMesh(pose, ItemRenderer.getFoilBufferDirect(buffers,
-                RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS), true, stack.hasFoil()), light,
-                net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        var mesh = new GunMesh(pose, outputs(buffers, stack), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
         GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
         pose.popPose();
+    }
+
+    /** A consumer per texture: the gun sheet on the block atlas, or a wood image. */
+    private static java.util.function.Function<net.minecraft.resources.ResourceLocation, com.mojang.blaze3d.vertex.VertexConsumer> outputs(
+            MultiBufferSource buffers, ItemStack stack) {
+        boolean foil = stack.hasFoil();
+        return image -> ItemRenderer.getFoilBufferDirect(buffers,
+                RenderType.entityCutoutNoCull(image == null ? InventoryMenu.BLOCK_ATLAS : image), true, foil);
     }
 
     /** The grip in third person: in the fist, a touch forward. */
@@ -130,8 +136,7 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
             }
             default -> fit(pose, view, context);
         }
-        var mesh = new GunMesh(pose, ItemRenderer.getFoilBufferDirect(buffers,
-                RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS), true, stack.hasFoil()), light, overlay);
+        var mesh = new GunMesh(pose, outputs(buffers, stack), light, overlay);
         GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
         pose.popPose();
     }

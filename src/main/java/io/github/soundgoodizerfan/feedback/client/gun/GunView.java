@@ -59,11 +59,12 @@ import net.minecraft.world.item.ItemStack;
  * @param bore     bore radius
  * @param mag      the detachable magazine in the gun, or null
  * @param surfaces each part's surface kind, from its material
+ * @param woods    each wooden part's own bark, a low-contrast copy of its log's side ({@link GunWood})
  * @param glow     the barrel's glow as a block light level (0 cold): {@code Incandescence} of the gun's heat
  * @param rounds   rounds held, chamber included
  */
 record GunView(GunLayout.Type type, String action, boolean slide, float len, float r, float bore, float len2, float r2,
-               Map<String, Integer> colours, Map<String, String> variants, Map<String, Surface> surfaces, int glow,
+               Map<String, Integer> colours, Map<String, String> variants, Map<String, Surface> surfaces, Map<String, ResourceLocation> woods, int glow,
                MagazineSize mag, int rounds) {
 
     private static final int BARE = 0xFFB4B4B8;
@@ -99,9 +100,10 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             for (String k : new String[]{"R", "B", "A", "T", "G"})
                 colours.put(k, BARE);
             return new GunView(GunLayout.Type.HANDGUN, "self_loading", true, 4f, 0.625f, 0.25f, 0, 0, colours, variants,
-                    Map.of(), 0, mag, rounds);
+                    Map.of(), Map.of(), 0, mag, rounds);
         }
         Map<String, Surface> surfaces = new HashMap<>();
+        Map<String, ResourceLocation> woods = new HashMap<>();
         Map<ResourceLocation, Material> materials = ClientMaterials.get();
         var level = Minecraft.getInstance().level;
         float tu = level == null ? 0f : GunCondition.temperature(stack, level).value();
@@ -110,6 +112,11 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             Material material = materials.get(p.material());
             Surface surface = Surface.of(material);
             surfaces.put(p.role(), surface);
+            if (surface == Surface.WOOD) {
+                ResourceLocation bark = GunWood.texture(material, p.form());
+                if (bark != null)
+                    woods.put(p.role(), bark);
+            }
             int rgb = MaterialColors.of(p.material());
             if (glow > 0 && HOT.contains(p.role()) && material != null && Incandescence.glows(material))
                 rgb = GlowColours.heated(rgb, tu);
@@ -126,7 +133,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 : colours.containsKey("K") ? variants.getOrDefault("K", "bolt") : "none";
         float[] b = barrel(type, "B", design.part("B"));
         float[] d = barrel(type, "D", design.part("D"));
-        return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, surfaces, glow, mag, rounds);
+        return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, surfaces, woods, glow, mag, rounds);
     }
 
     /**
@@ -162,6 +169,11 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
 
     Surface surface(String letter) {
         return surfaces.getOrDefault(letter, Surface.METAL);
+    }
+
+    /** The bark image a wooden part draws with, or null for the sheet's grain. */
+    ResourceLocation wood(String letter) {
+        return woods.get(letter);
     }
 
     String variant(String letter) {

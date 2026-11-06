@@ -63,7 +63,12 @@ final class GunMesh {
     static final net.minecraft.resources.ResourceLocation SHEET_ID = Feedback.id("item/gun/sheet");
 
     final PoseStack pose;
-    private final VertexConsumer out;
+    /** The consumer for a texture: null is the gun sheet on the block atlas, else a wood image ({@link GunWood}). */
+    private final java.util.function.Function<net.minecraft.resources.ResourceLocation, VertexConsumer> buffers;
+    private VertexConsumer out;
+    /** The wood image the current part draws with, null for the sheet; {@code bound} is the one {@link #out} writes to. */
+    private net.minecraft.resources.ResourceLocation image, bound;
+    private boolean anyBound;
     private final TextureAtlasSprite sprite;
     private final int baseLight, overlay;
     private int light;
@@ -73,14 +78,19 @@ final class GunMesh {
     /** Varies the patch of a tile each box samples, so neighbouring faces do not repeat. */
     private int seed;
 
-    GunMesh(PoseStack pose, VertexConsumer out, int light, int overlay) {
-        this(pose, out, light, overlay, Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(SHEET_ID));
+    GunMesh(PoseStack pose, java.util.function.Function<net.minecraft.resources.ResourceLocation, VertexConsumer> buffers,
+            int light, int overlay) {
+        this(pose, buffers, light, overlay, Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(SHEET_ID));
     }
 
-    /** {@code sprite} null writes sheet coordinates (0 to 1) as they are: an offline preview reads them. */
-    GunMesh(PoseStack pose, VertexConsumer out, int light, int overlay, TextureAtlasSprite sprite) {
+    /**
+     * {@code sprite} null writes sheet coordinates (0 to 1) as they are: an offline preview reads them.
+     * Switching texture asks {@code buffers} again, which ends the previous batch, so a consumer is never kept across a switch.
+     */
+    GunMesh(PoseStack pose, java.util.function.Function<net.minecraft.resources.ResourceLocation, VertexConsumer> buffers,
+            int light, int overlay, TextureAtlasSprite sprite) {
         this.pose = pose;
-        this.out = out;
+        this.buffers = buffers;
         this.light = light;
         this.baseLight = light;
         this.overlay = overlay;
@@ -91,6 +101,7 @@ final class GunMesh {
     GunMesh colour(int argb) {
         this.colour = argb;
         this.surface = GunView.Surface.METAL;
+        this.image = null;
         return this;
     }
 
@@ -98,6 +109,7 @@ final class GunMesh {
     GunMesh part(GunView v, String role) {
         this.colour = v.colour(role);
         this.surface = v.surface(role);
+        this.image = v.wood(role);
         return this;
     }
 
@@ -208,7 +220,14 @@ final class GunMesh {
 
     private void box(float x0, float y0, float z0, float x1, float y1, float z1, Tile t, int lit) {
         t = surfaced(t);
-        int argb = t.tinted ? colour : 0xFFFFFFFF;
+        // Wood drawn with its own bark keeps the shape's special tiles (checkering, end grain, a pad) on the sheet.
+        net.minecraft.resources.ResourceLocation want = image != null && t == Tile.GRAIN ? image : null;
+        if (!anyBound || want != bound) {
+            out = buffers.apply(want);
+            bound = want;
+            anyBound = true;
+        }
+        int argb = t.tinted && bound == null ? colour : 0xFFFFFFFF;
         if (t == Tile.LAMP)
             argb = colour;
         seed = seed * 31 + 7;
@@ -243,11 +262,14 @@ final class GunMesh {
         float[] ub = breaks(uMax - uMin), vb = breaks(vMax - vMin);
         int uSeed = Math.floorMod(seed, 31), vSeed = Math.floorMod(seed >> 5, 31);
         float tx = (t.index % 4) * TILE, ty = (t.index / 4) * TILE;
+        boolean own = bound != null;
         for (int iu = 0; iu < 3; iu++)
             for (int iv = 0; iv < 3; iv++) {
                 float u0 = uMin + ub[iu], u1 = uMin + ub[iu + 1], v0 = vMin + vb[iv], v1 = vMin + vb[iv + 1];
                 if (u1 - u0 < 1e-4f || v1 - v0 < 1e-4f)
                     continue;
+                // An image has no rim texels, so its rim cells are shaded instead: the ends and the underside darker.
+                int cellArgb = own ? shade(argb, (iu != 1 ? 0.82f : 1f) * (iv == 2 ? 0.62f : 1f)) : argb;
                 for (int k = 0; k < 4; k++) {
                     // This corner's (u, v) inside the cell, kept on the same side as the face corner it stands for.
                     float cu = us[k] == uMin ? u0 : u1, cv = vs[k] == vMin ? v0 : v1;
@@ -258,15 +280,34 @@ final class GunMesh {
                     float x = c[0] + (c[3] - c[0]) * fs + (c[9] - c[0]) * ft;
                     float y = c[1] + (c[4] - c[1]) * fs + (c[10] - c[1]) * ft;
                     float z = c[2] + (c[5] - c[2]) * fs + (c[11] - c[2]) * ft;
-                    float u = (tx + texel(iu, cu - uMin - ub[iu], ub, uMax - uMin, uSeed)) / SHEET;
-                    float v = (ty + texel(iv, cv - vMin - vb[iv], vb, vMax - vMin, vSeed)) / SHEET;
-                    if (sprite != null) {
+                    float u, v;
+                    if (own) {
+                        // A log's bark runs down its texture; turned a quarter so the grain runs along the part.
+                        v = whole(cu - uMin, uMax - uMin, uSeed);
+                        u = whole(cv - vMin, vMax - vMin, vSeed);
+                    } else {
+                        u = (tx + texel(iu, cu - uMin - ub[iu], ub, uMax - uMin, uSeed)) / SHEET;
+                        v = (ty + texel(iv, cv - vMin - vb[iv], vb, vMax - vMin, vSeed)) / SHEET;
+                    }
+                    if (sprite != null && !own) {
                         u = sprite.getU(u);
                         v = sprite.getV(v);
                     }
-                    out.addVertex(p, x, y, z).setColor(argb).setUv(u, v).setOverlay(overlay).setLight(lit).setNormal(p, nx, ny, nz);
+                    out.addVertex(p, x, y, z).setColor(cellArgb).setUv(u, v).setOverlay(overlay).setLight(lit).setNormal(p, nx, ny, nz);
                 }
             }
+    }
+
+    /** A whole image's coordinate (0 to 1) at {@code into} of a face {@code span} long: 2 texels a pixel of its 16, stretched past that. */
+    private static float whole(float into, float span, int seed) {
+        float texels = Math.min(span * TEXELS_PER_PX, GunWood.SIZE);
+        float start = Math.floorMod(seed, (int) (GunWood.SIZE - texels) + 1);
+        return (start + into / Math.max(span, 1e-6f) * texels) / GunWood.SIZE;
+    }
+
+    private static int shade(int argb, float f) {
+        int r = Math.round((argb >> 16 & 0xFF) * f), g = Math.round((argb >> 8 & 0xFF) * f), b = Math.round((argb & 0xFF) * f);
+        return argb & 0xFF000000 | r << 16 | g << 8 | b;
     }
 
     /** The four cuts across a face {@code span} long: rim, middle, rim. */
