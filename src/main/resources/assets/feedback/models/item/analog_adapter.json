@@ -1,3 +1,4 @@
 {
-  "parent": "feedback:block/analog_adapter"
+  "parent": "minecraft:item/generated",
+  "textures": { "layer0": "feedback:item/analog_adapter" }
 }

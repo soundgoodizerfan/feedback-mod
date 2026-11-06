@@ -62,7 +62,15 @@ import org.jetbrains.annotations.Nullable;
  * putting a valve between them needs nothing from either. Flow is one way, input to output, like
  * {@link Blown}; {@link #getFluidLine} says which face answers to what.
  */
-public class ValveBlockEntity extends BlockEntity implements Blown, Switchable, DataNode, io.github.soundgoodizerfan.feedback.control.Analog {
+public class ValveBlockEntity extends BlockEntity implements Blown, Switchable, DataNode, io.github.soundgoodizerfan.feedback.control.Analog,
+        io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
+
+    private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings() {
+        return fittings;
+    }
 
     /** How far open it is, 0 to 1: a redstone adapter on a face sets it, a controller leaves it full. Scales the flow it passes. */
     private float opening = 1f;
@@ -234,12 +242,14 @@ public class ValveBlockEntity extends BlockEntity implements Blown, Switchable, 
     protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat("Opening", opening);
+        fittings.save(tag);
     }
 
     @Override
     protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         opening = tag.contains("Opening") ? tag.getFloat("Opening") : 1f;
+        fittings.load(tag, this);
     }
 
     // --- Analog: the opening ------------------------------------------------------------------

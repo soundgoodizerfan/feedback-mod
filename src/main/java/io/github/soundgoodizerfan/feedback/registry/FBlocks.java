@@ -869,11 +869,6 @@ public class FBlocks {
             () -> new io.github.soundgoodizerfan.feedback.machine.redstone.RedstoneEmitterBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
 
-    /** The sided redstone fitting: redstone power at it, over 15, sets the machine it faces. */
-    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.redstone.AnalogAdapterBlock> ANALOG_ADAPTER = BLOCKS.register("analog_adapter",
-            () -> new io.github.soundgoodizerfan.feedback.machine.redstone.AnalogAdapterBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL).strength(2.0f).sound(SoundType.METAL).noOcclusion()));
-
     public static final DeferredBlock<BellowsBlock> BELLOWS = BLOCKS.register("bellows",
             () -> new BellowsBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)

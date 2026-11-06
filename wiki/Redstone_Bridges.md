@@ -18,14 +18,12 @@ P R P
 
 ## Analog Adapter
 
-A small block set against a machine that has a variable setting. Redstone power at the adapter sets that setting from none to full in fifteen even steps: power 15 is full, power 0 is none. The [Valve](Valve.md) has one, its opening, and scales the flow it passes.
+A fitting for a machine with a variable setting. Right-click a face of the machine with it; redstone power arriving at that face then sets the setting from none to full in fifteen even steps: power 15 is full, power 0 is none. The [Valve](Valve.md) has one, its opening, and scales the flow it passes. Take the adapter off with a crowbar and the machine returns to full. A machine with no variable setting ignores it.
 
 ```
 P R
 R P        P wrought iron plate, R redstone
 ```
-
-Place it with its front against the machine. A machine with no variable setting ignores it.
 
 ## See also
 

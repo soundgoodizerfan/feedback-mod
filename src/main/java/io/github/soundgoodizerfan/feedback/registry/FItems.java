@@ -318,7 +318,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> DAMPER = ITEMS.registerSimpleBlockItem(FBlocks.DAMPER);
     public static final DeferredItem<BlockItem> VALVE = ITEMS.registerSimpleBlockItem(FBlocks.VALVE);
     public static final DeferredItem<BlockItem> REDSTONE_EMITTER = ITEMS.registerSimpleBlockItem(FBlocks.REDSTONE_EMITTER);
-    public static final DeferredItem<BlockItem> ANALOG_ADAPTER = ITEMS.registerSimpleBlockItem(FBlocks.ANALOG_ADAPTER);
+    /** The sided redstone fitting (an item fitted on a face), see {@code fitting/RedstoneAnalogFitting}. */
+    public static final DeferredItem<Item> ANALOG_ADAPTER = ITEMS.register("analog_adapter",
+            () -> new io.github.soundgoodizerfan.feedback.item.AnalogAdapterItem(new Item.Properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cable.CableItem> CABLE = ITEMS.register("cable",
             () -> new io.github.soundgoodizerfan.feedback.machine.cable.CableItem(FBlocks.CABLE.get(), new Item.Properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cable.CableItem> FENCE = ITEMS.register("fence",
