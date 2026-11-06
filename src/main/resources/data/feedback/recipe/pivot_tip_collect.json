@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:wrought_iron_plate"
+    },
+    {
+      "item": "feedback:wrought_iron_rod"
+    },
+    {
+      "item": "minecraft:hopper"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:pivot_tip_collect"
+  }
+}

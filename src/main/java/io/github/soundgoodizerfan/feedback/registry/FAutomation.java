@@ -23,18 +23,26 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.machine.pivot.PivotArmItem;
+import io.github.soundgoodizerfan.feedback.machine.pivot.PivotMastBlock;
+import io.github.soundgoodizerfan.feedback.machine.pivot.PivotMastBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.pivot.PivotTip;
+import io.github.soundgoodizerfan.feedback.machine.pivot.PivotTipItem;
 import io.github.soundgoodizerfan.feedback.machine.sensor.SensorBlock;
 import io.github.soundgoodizerfan.feedback.machine.sensor.SensorBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.sensor.SensorKind;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -68,6 +76,26 @@ public final class FAutomation {
             BLOCK_ENTITIES.register("sensor", () -> BlockEntityType.Builder.of(SensorBlockEntity::new,
                     SENSORS.values().stream().map(DeferredBlock::get).toArray(Block[]::new)).build(null));
 
+    /** The pivot mast: a shaft, an arm drawn by the renderer, and a tip. */
+    public static final DeferredBlock<PivotMastBlock> PIVOT_MAST = BLOCKS.register("pivot_mast",
+            () -> new PivotMastBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredItem<BlockItem> PIVOT_MAST_ITEM = ITEMS.registerSimpleBlockItem(PIVOT_MAST);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PivotMastBlockEntity>> PIVOT_ENTITY =
+            BLOCK_ENTITIES.register("pivot_mast", () -> BlockEntityType.Builder.of(PivotMastBlockEntity::new, PIVOT_MAST.get()).build(null));
+
+    /** Arms of three lengths in blocks: the radius of the field. */
+    public static final Map<String, DeferredItem<PivotArmItem>> ARMS = new java.util.LinkedHashMap<>();
+    /** One tip per {@link PivotTip}. */
+    public static final Map<PivotTip, DeferredItem<PivotTipItem>> TIPS = new EnumMap<>(PivotTip.class);
+
+    static {
+        ARMS.put("short", ITEMS.register("pivot_arm_short", () -> new PivotArmItem(3, new Item.Properties().stacksTo(1))));
+        ARMS.put("medium", ITEMS.register("pivot_arm_medium", () -> new PivotArmItem(5, new Item.Properties().stacksTo(1))));
+        ARMS.put("long", ITEMS.register("pivot_arm_long", () -> new PivotArmItem(8, new Item.Properties().stacksTo(1))));
+        for (PivotTip tip : PivotTip.values())
+            TIPS.put(tip, ITEMS.register("pivot_tip_" + tip.id(), () -> new PivotTipItem(tip, new Item.Properties().stacksTo(1))));
+    }
+
     private FAutomation() {
     }
 
@@ -75,10 +103,18 @@ public final class FAutomation {
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         BLOCK_ENTITIES.register(modBus);
+        modBus.addListener(FAutomation::capabilities);
+    }
+
+    private static void capabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PIVOT_ENTITY.get(), (mast, side) -> mast.handler(side));
     }
 
     /** Every automation item, for the creative tab. */
     public static void fill(net.minecraft.world.item.CreativeModeTab.Output output) {
         SENSOR_ITEMS.values().forEach(i -> output.accept(i.get()));
+        output.accept(PIVOT_MAST_ITEM.get());
+        ARMS.values().forEach(i -> output.accept(i.get()));
+        TIPS.values().forEach(i -> output.accept(i.get()));
     }
 }

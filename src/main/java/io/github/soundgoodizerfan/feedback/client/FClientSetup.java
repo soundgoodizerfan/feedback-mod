@@ -103,6 +103,7 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.ELECTROSTATIC_GENERATOR.get(), DataNodeRenderer::new);
         event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FLogistics.BELT_ENTITY.get(), BeltModuleRenderer::new);
         event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FLogistics.HEAD_ENTITY.get(), BeltHeadRenderer::new);
+        event.registerBlockEntityRenderer(io.github.soundgoodizerfan.feedback.registry.FAutomation.PIVOT_ENTITY.get(), PivotMastRenderer::new);
     }
 
     /**

@@ -97,7 +97,7 @@ public enum SensorKind {
     TELLTALE("tell_tale") {
         @Override
         public float read(Level level, BlockPos pos, Direction face, SensorBlockEntity self) {
-            return self.pulse() > 0 ? 1f : 0f;
+            return self != null && self.pulse() > 0 ? 1f : 0f;
         }
     };
 

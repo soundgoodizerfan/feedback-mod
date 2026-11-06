@@ -2765,6 +2765,29 @@ public final class FTuning {
      */
     public static final float PUMP_MB_PER_RPM = 0.5f;
     public static final Su PUMP_LOAD_SU = new Su(8f);
+
+    // --- pivot mast (docs/specs/feedback_automation_spec.md, section 2). Every figure here is invented. ---
+
+    /** Invented. The arm turns at this share of the shaft's phase: a slow, heavy sweep. */
+    public static final float PIVOT_GEAR = 0.25f;
+    /** Invented. The mast's own draw, Su. */
+    public static final float PIVOT_BASE_SU = 4f;
+    /** Invented. Draw per block of arm, Su: the lever. */
+    public static final float PIVOT_SU_PER_BLOCK = 1.5f;
+    /** Invented. Extra draw per block of arm while a head hangs on it, Su. */
+    public static final float PIVOT_HEAD_SU_PER_BLOCK = 0.8f;
+    /** Invented. Most cells one tick may work, so a fast arm cannot spike the server. */
+    public static final int PIVOT_CELLS_PER_TICK = 24;
+    /** Invented. St a head needs per point of block hardness to break it. */
+    public static final float PIVOT_BREAK_ST_PER_HARDNESS = 2f;
+    /** Invented. Damage a striking tip does per St of its head's ceiling. */
+    public static final float PIVOT_STRIKE_DAMAGE_PER_ST = 0.1f;
+    /** Invented. Hardest a single strike may hit. */
+    public static final float PIVOT_STRIKE_MAX_DAMAGE = 12f;
+    /** Invented. Head condition lost per St absorbed. */
+    public static final float PIVOT_HEAD_WEAR_PER_ST = 0.0005f;
+    /** Invented. A pivot head never wears below this condition. */
+    public static final float PIVOT_HEAD_FLOOR = 0.15f;
     /** Placeholder (user ruling, 2026-10-23). Extra Su a pump pays per block it lifts: facing up it lifts one, so a column is a stack of pumps each paying. */
     public static final Su PUMP_LIFT_SU_PER_BLOCK = new Su(6f);
 
