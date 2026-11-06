@@ -477,6 +477,15 @@ final class GunDraw {
         }
     }
 
+    /** A hollow square tube of half-width {@code r} about the sight line at height {@code y}: four walls, so the view down it is clear. */
+    private static void tube(GunMesh m, float y, float r, float z0, float z1, Tile tile) {
+        float wall = 0.125f;
+        m.box(-r, y + r - wall, z0, r, y + r, z1, tile);
+        m.box(-r, y - r, z0, r, y - r + wall, z1, tile);
+        m.box(-r, y - r + wall, z0, -r + wall, y + r - wall, z1, tile);
+        m.box(r - wall, y - r + wall, z0, r, y + r - wall, z1, tile);
+    }
+
     /** An optic on the top, or a lit dot on it. */
     private static void sight(GunMesh m, GunView v) {
         if (!v.has("S"))
@@ -493,12 +502,12 @@ final class GunDraw {
             float zs = z0 - 0.5f, ze = zs + v.scopeLength(), y = top + 1f;
             m.box(-0.25f, top, zs + 0.5f, 0.25f, y, zs + 1f, Tile.METAL);
             m.box(-0.25f, top, ze - 1f, 0.25f, y, ze - 0.5f, Tile.METAL);
-            m.rod(0, y, 0.375f, zs, ze, Tile.BRUSHED);
-            m.rod(0, y, 0.625f, zs - 1.25f, zs, Tile.METAL);
-            m.rod(0, y, 0.5f, ze, ze + 1f, Tile.METAL);
+            tube(m, y, 0.375f, zs, ze, Tile.BRUSHED);
+            tube(m, y, 0.625f, zs - 1.25f, zs, Tile.METAL);
+            tube(m, y, 0.5f, ze, ze + 1f, Tile.METAL);
             m.box(-0.25f, y + 0.375f, (zs + ze) / 2 - 0.25f, 0.25f, y + 0.75f, (zs + ze) / 2 + 0.25f, Tile.KNURL);
-            m.box(-0.625f, y - 0.5f, zs - 1.3125f, 0.625f, y + 0.5f, zs - 1.25f, Tile.LENS);
-            m.box(-0.375f, y - 0.375f, ze + 1f, 0.375f, y + 0.375f, ze + 1.0625f, Tile.LENS);
+            m.box(-0.625f, y - 0.5f, zs - 1.3125f, 0.625f, y + 0.5f, zs - 1.25f, Tile.GLASS);
+            m.box(-0.375f, y - 0.375f, ze + 1f, 0.375f, y + 0.375f, ze + 1.0625f, Tile.GLASS);
             if (v.has("e"))
                 m.colour(lamp).glow(-0.0625f, y - 0.0625f, ze + 1.0625f, 0.0625f, y + 0.0625f, ze + 1.09375f, Tile.LAMP);
         } else {
