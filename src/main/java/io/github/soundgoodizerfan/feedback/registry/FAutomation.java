@@ -30,6 +30,8 @@ import io.github.soundgoodizerfan.feedback.machine.fishwheel.FishWheelBlockEntit
 import io.github.soundgoodizerfan.feedback.machine.kiln.KilnZoneBlock;
 import io.github.soundgoodizerfan.feedback.machine.kiln.KilnZoneBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.stoker.StokerBlock;
+import io.github.soundgoodizerfan.feedback.village.CounterBlock;
+import io.github.soundgoodizerfan.feedback.village.CounterBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.stoker.StokerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.darkcell.CrushHeadBlock;
 import io.github.soundgoodizerfan.feedback.machine.darkcell.CrushHeadBlockEntity;
@@ -174,6 +176,13 @@ public final class FAutomation {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KilnZoneBlockEntity>> KILN_ZONE_ENTITY =
             BLOCK_ENTITIES.register("kiln_zone", () -> BlockEntityType.Builder.of(KilnZoneBlockEntity::new, KILN_ZONE.get()).build(null));
 
+    /** The Counter: delivers goods to, and sells goods to, the villager beside it. */
+    public static final DeferredBlock<CounterBlock> COUNTER = BLOCKS.register("counter",
+            () -> new CounterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)));
+    public static final DeferredItem<BlockItem> COUNTER_ITEM = ITEMS.registerSimpleBlockItem(COUNTER);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CounterBlockEntity>> COUNTER_ENTITY =
+            BLOCK_ENTITIES.register("counter", () -> BlockEntityType.Builder.of(CounterBlockEntity::new, COUNTER.get()).build(null));
+
     private FAutomation() {
     }
 
@@ -189,6 +198,7 @@ public final class FAutomation {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DARK_CELL_ENTITY.get(), (cell, side) -> cell.outputView());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, STOKER_ENTITY.get(), (stoker, side) -> stoker.hopper(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, KILN_ZONE_ENTITY.get(), (kiln, side) -> kiln.handler());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, COUNTER_ENTITY.get(), (counter, side) -> counter.handler());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CREEL_ENTITY.get(), (creel, side) -> creel.catches());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FISH_WHEEL_ENTITY.get(), (wheel, side) -> wheel.catches());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FUME_PORT_ENTITY.get(), (port, side) -> port.tank());
@@ -204,6 +214,7 @@ public final class FAutomation {
         output.accept(FUME_PORT_ITEM.get());
         output.accept(SHOCK_PLATE_ITEM.get());
         output.accept(RADIATION_SOURCE_ITEM.get());
+        output.accept(COUNTER_ITEM.get());
         output.accept(KILN_ZONE_ITEM.get());
         output.accept(STOKER_ITEM.get());
         output.accept(CREEL_ITEM.get());

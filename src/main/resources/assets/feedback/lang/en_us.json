@@ -5420,5 +5420,9 @@
   "feedback.jei.info.fish_wheel": "A water wheel with baskets on its blades. It turns in a current like any wheel but gives half the power, and while it turns it draws a catch from the same fish the water gives a rod, never treasure; more blades in the current catch faster. An empty hand empties the baskets, and a hopper can take from them. A full basket stops the catch, not the wheel.",
   "block.feedback.kiln_zone": "Kiln Zone",
   "feedback.jei.info.kiln_zone": "A tunnel kiln zone. Ware goes in at the back from a hopper or belt, rides a car through four positions of heat (a cool start, two hot, a cool finish) and comes out the front into whatever takes items. Heat comes from a firebox or burner pointed at it; the car is driven by a vertical shaft, and its speed sets how long ware stays: slow gives a clean result, fast leaves ware raw, a stopped car leaves it in the fire to char, crack or spoil. It runs food by its cooking ladder and anything else by the same rows a furnace uses, but does not melt metal.",
-  "item.feedback.analog_adapter": "Analog Adapter"
+  "item.feedback.analog_adapter": "Analog Adapter",
+  "block.feedback.counter": "Counter",
+  "feedback.counter.near": "A villager is within reach.",
+  "feedback.counter.alone": "No villager within reach.",
+  "feedback.jei.info.counter": "A shop counter that lets a line do business with a villager. Put it within 8 blocks of one. Goods fed in from a hopper or belt are handed to the nearest villager as a delivery would be: a made piece is judged against the orders of the day and, if it satisfies one, pays emeralds by its grade; anything else is offered to what the villager buys. Emeralds come out of the middle slots and whatever was not taken comes out of the last. It does not choose or read: sort upstream, or the return slots fill with rejects and the intake stalls. Poor work pays little and saturates the villager for days. Empty hand tells you whether a villager is in reach."
 }

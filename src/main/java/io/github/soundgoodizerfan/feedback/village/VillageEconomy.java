@@ -295,6 +295,62 @@ public final class VillageEconomy {
         }
     }
 
+    // --- a hand-over without a player (the Counter) ---
+
+    /** What a Counter's hand-over came to: taken (and what it paid in emeralds), judged below the line, or not wanted at all. */
+    public enum Fate { TAKEN, REJECTED, UNWANTED }
+
+    public record Handed(Fate fate, int emeralds) {
+    }
+
+    /**
+     * Hands {@code item} to a villager as a delivery would, with nobody standing at the screen. A modular piece is judged against today's
+     * undone orders of its type and pays by the same grade and saturation; the first order it satisfies takes it. Anything else is offered to
+     * the day's wants and sold up to their cap. {@code item} is shrunk by what was taken. No gossip changes either way: that is a player's
+     * standing, and nobody is here.
+     */
+    public static Handed handOver(Villager v, ItemStack item) {
+        long day = today(v);
+        Ledger ledger = v.getData(FVillage.LEDGER).on(day);
+        ModularDesign design = ModularStacks.design(item);
+        ModularFigures figures = DishProfile.read(item, v.level());
+        if (design != null && figures != null) {
+            List<Order> orders = OrderGen.orders(v.getUUID(), profession(v), villagerType(v), level(v), day);
+            boolean asked = false;
+            for (int i = 0; i < orders.size(); i++) {
+                Order order = orders.get(i);
+                if (ledger.done(i) || !design.type().equals(order.type()))
+                    continue;
+                asked = true;
+                CommissionJudge.Result r = CommissionJudge.judge(order, figures, design, MaterialTable.get().materials());
+                if (r.grade() == CommissionJudge.Grade.REJECTED)
+                    continue;
+                String bin = DishProfile.is(item) ? order.type() + "|" + DishProfile.bin(figures) : binKey(order.type(), design);
+                int paid = Math.round(order.pay() * r.grade().payFactor() * ledger.payKept(bin, day));
+                item.shrink(1);
+                v.setData(FVillage.LEDGER, ledger.delivered(i, bin, day));
+                addXp(v, r.grade().xp());
+                v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
+                return new Handed(Fate.TAKEN, paid);
+            }
+            return new Handed(asked ? Fate.REJECTED : Fate.UNWANTED, 0);
+        }
+        for (int key : wants(v, day)) {
+            Want w = BuysTable.get().entries().get(key);
+            if (!w.matches(item))
+                continue;
+            int n = Math.min(item.getCount(), w.max() - ledger.bought(key));
+            if (n <= 0)
+                continue;
+            item.shrink(n);
+            v.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day));
+            addXp(v, VillageTuning.BUY_XP);
+            v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
+            return new Handed(Fate.TAKEN, n * w.price());
+        }
+        return new Handed(Fate.UNWANTED, 0);
+    }
+
     // --- a purchase ---
 
     public static void buy(ServerPlayer p, VillagerMenu menu, int slot, int key) {
