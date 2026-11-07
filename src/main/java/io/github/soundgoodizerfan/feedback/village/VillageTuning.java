@@ -111,6 +111,17 @@ public final class VillageTuning {
     /** A sale under market gives one point of positive gossip every this many sales. */
     public static final int FAIR_REP_EVERY = 4;
 
+    // --- raids ---
+
+    /** Blocks within which a raider heads for a stocked Counter, and the total line value of shelf goods that makes a Counter worth the trip. */
+    public static final int RAID_BAIT_RADIUS = 48, RAID_BAIT_VALUE = 20;
+    /** Ticks between a raider's looks for a Counter to rob. */
+    public static final int RAID_LOOK_TICKS = 40;
+    /** Emeralds the board pays for one illager banner after a won raid. */
+    public static final int BOUNTY_PAY = 16;
+    /** Gossip a won raid gives every villager in range toward each player who has the hero's effect (major positive). */
+    public static final int RAID_PRAISE = 5;
+
     // --- regional trade and freshness ---
 
     /** The range a regional price multiplier is held to. */

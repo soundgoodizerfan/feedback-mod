@@ -5483,6 +5483,8 @@
   "village.feedback.cross.inactive": "This square is too small or not paved: the cross needs a wide, open, paved square.",
   "village.feedback.cross.today": "Market day. The trader is in.",
   "village.feedback.cross.in": "The next market is in %s days.",
+  "village.feedback.board.raid": "A raid is on. Stocked shelves draw raiders: guard them.",
+  "village.feedback.board.bounty": "A banner bounty stands: %s emeralds for an illager banner (%s owed). Put one in the slot on the Contracts tab and press Banner.",
   "village.feedback.board.market_none": "No market square stands near the board.",
   "village.feedback.board.market_today": "Market day today at the cross.",
   "village.feedback.board.market_in": "Market day in %s days.",

@@ -42,6 +42,11 @@ public final class FVillage {
     public static final Supplier<AttachmentType<Ledger>> LEDGER = ATTACHMENTS.register("ledger",
             () -> AttachmentType.builder(() -> Ledger.EMPTY).serialize(Ledger.CODEC).build());
 
+    /** What a raider carries out of a robbed Counter, dropped where it dies. */
+    public static final Supplier<AttachmentType<java.util.List<net.minecraft.world.item.ItemStack>>> LOOT = ATTACHMENTS.register("loot",
+            () -> AttachmentType.<java.util.List<net.minecraft.world.item.ItemStack>>builder(() -> java.util.List.of())
+                    .serialize(net.minecraft.world.item.ItemStack.CODEC.listOf()).build());
+
     public static void register(IEventBus modBus) {
         ATTACHMENTS.register(modBus);
     }

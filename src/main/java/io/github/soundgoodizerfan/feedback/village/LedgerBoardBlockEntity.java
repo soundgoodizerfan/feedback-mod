@@ -65,6 +65,10 @@ public class LedgerBoardBlockEntity extends BlockEntity {
     private final Map<Long, int[]> progress = new HashMap<>();
     /** The village's saturation bins, shared across its contracts per (type, kind). */
     private Ledger bins = Ledger.EMPTY;
+    /** Banner bounties owed for won raids. */
+    private int bounties;
+    /** The raid being watched; runtime only, lost on a reload (a raid that ends across one pays no bounty). */
+    private net.minecraft.world.entity.raid.Raid watched;
 
     public LedgerBoardBlockEntity(BlockPos pos, BlockState state) {
         super(FAutomation.BOARD_ENTITY.get(), pos, state);
@@ -154,9 +158,44 @@ public class LedgerBoardBlockEntity extends BlockEntity {
         return VillageEconomy.blueprint(ids.get((int) Math.floorMod(c.id() * 31L + worldPosition.asLong(), (long) ids.size())));
     }
 
-    /** Emeralds a banner in {@code item} earns as a raid's bounty; 0 when it is no banner or no raid is owed. Shrinks the stack when paid. */
+    /** Emeralds a banner in {@code item} earns as a raid's bounty; 0 when it is no illager banner or no won raid is owed. Shrinks the stack when paid. */
     public int bounty(ItemStack item) {
-        return 0;
+        if (bounties <= 0 || item.isEmpty() || !(level instanceof ServerLevel sl))
+            return 0;
+        ItemStack banner = net.minecraft.world.entity.raid.Raid.getLeaderBannerInstance(
+                sl.registryAccess().lookupOrThrow(net.minecraft.core.registries.Registries.BANNER_PATTERN));
+        if (!ItemStack.isSameItemSameComponents(item, banner))
+            return 0;
+        item.shrink(1);
+        bounties--;
+        setChanged();
+        return VillageTuning.BOUNTY_PAY;
+    }
+
+    /**
+     * Watches for a raid on the village: while one is on the notices warn of it; when it ends in victory every player with the hero's effect is
+     * praised by the villagers and one banner bounty is owed. Slow cadence; nothing per villager.
+     */
+    public void tickServer() {
+        if (!(level instanceof ServerLevel sl) || sl.getGameTime() % 100 != 7)
+            return;
+        net.minecraft.world.entity.raid.Raid r = sl.getRaids().getNearbyRaid(worldPosition,
+                VillageTuning.VILLAGE_RADIUS * VillageTuning.VILLAGE_RADIUS);
+        if (r != null) {
+            watched = r;
+            return;
+        }
+        if (watched != null) {
+            if (watched.isVictory()) {
+                bounties++;
+                for (net.minecraft.server.level.ServerPlayer p : sl.players())
+                    if (p.hasEffect(net.minecraft.world.effect.MobEffects.HERO_OF_THE_VILLAGE)
+                            && p.distanceToSqr(worldPosition.getCenter()) < (double) VillageTuning.VILLAGE_RADIUS * VillageTuning.VILLAGE_RADIUS)
+                        VillageStanding.praise(sl, worldPosition, p.getUUID(), VillageTuning.RAID_PRAISE);
+                setChanged();
+            }
+            watched = null;
+        }
     }
 
     // --- what the board shows ---
@@ -189,6 +228,10 @@ public class LedgerBoardBlockEntity extends BlockEntity {
 
     private List<Component> notices(ServerLevel level, long today, VillageStanding.Reading standing) {
         List<Component> out = new ArrayList<>();
+        if (watched != null && !watched.isOver())
+            out.add(Component.translatable("village.feedback.board.raid"));
+        if (bounties > 0)
+            out.add(Component.translatable("village.feedback.board.bounty", VillageTuning.BOUNTY_PAY, bounties));
         out.add(Component.translatable("village.feedback.board.standing." + standing.tier()));
         if (standing.tier() < VillageTuning.STANDING_TIERS.length)
             out.add(Component.translatable("village.feedback.board.next." + standing.tier()));
@@ -232,6 +275,7 @@ public class LedgerBoardBlockEntity extends BlockEntity {
             list.add(t);
         });
         tag.put("Progress", list);
+        tag.putInt("Bounties", bounties);
         DataResult<Tag> enc = Ledger.CODEC.encodeStart(NbtOps.INSTANCE, bins);
         enc.result().ifPresent(t -> tag.put("Bins", t));
     }
@@ -240,6 +284,7 @@ public class LedgerBoardBlockEntity extends BlockEntity {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         progress.clear();
+        bounties = tag.getInt("Bounties");
         for (Tag e : tag.getList("Progress", Tag.TAG_COMPOUND)) {
             CompoundTag t = (CompoundTag) e;
             progress.put(t.getLong("Id"), new int[]{t.getInt("N"), t.getInt("G")});

@@ -56,6 +56,13 @@ public class LedgerBoardBlock extends Block implements EntityBlock {
 
     @Nullable
     @Override
+    public <T extends BlockEntity> net.minecraft.world.level.block.entity.BlockEntityTicker<T> getTicker(Level level, BlockState state,
+                                                                                                   net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
+        return level.isClientSide ? null : (l, p, s, be) -> ((LedgerBoardBlockEntity) be).tickServer();
+    }
+
+    @Nullable
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new LedgerBoardBlockEntity(pos, state);
     }

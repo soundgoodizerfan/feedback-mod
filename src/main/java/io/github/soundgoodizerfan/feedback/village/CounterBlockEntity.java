@@ -326,7 +326,34 @@ public class CounterBlockEntity extends BlockEntity {
                 io.github.soundgoodizerfan.feedback.process.Cooking.settle(shelf.getStackInSlot(i), level, env);
     }
 
-    private boolean stocked() {
+    /** The market value of everything on the shelf: what a raider would think it worth the trip. */
+    public int shelfValue() {
+        int v = 0;
+        for (int i = 0; i < SHELF; i++) {
+            ItemStack s = shelf.getStackInSlot(i);
+            v += VillageEconomy.marketPrice(s) * s.getCount();
+        }
+        return v;
+    }
+
+    /** A raider takes the most valuable stack off the shelf and gets away with it. */
+    public ItemStack plunder() {
+        int best = -1, bv = 0;
+        for (int i = 0; i < SHELF; i++) {
+            int v = VillageEconomy.marketPrice(shelf.getStackInSlot(i)) * shelf.getStackInSlot(i).getCount();
+            if (v > bv) {
+                bv = v;
+                best = i;
+            }
+        }
+        if (best < 0)
+            return ItemStack.EMPTY;
+        ItemStack out = shelf.extractItem(best, shelf.getStackInSlot(best).getCount(), false);
+        setChanged();
+        return out;
+    }
+
+    public boolean stocked() {
         for (int i = 0; i < SHELF; i++)
             if (!shelf.getStackInSlot(i).isEmpty())
                 return true;
