@@ -25,6 +25,12 @@
     "studs": {
       "kind": "scavenge",
       "flaw": 0
+    },
+    "barrel": {
+      "kind": "fortune"
+    },
+    "second_barrel": {
+      "kind": "fortune"
     }
   },
   "mirror": {
@@ -35,6 +41,12 @@
     "tip": {
       "kind": "intact",
       "flaw": 0
+    },
+    "barrel": {
+      "kind": "intact"
+    },
+    "second_barrel": {
+      "kind": "intact"
     }
   }
 }

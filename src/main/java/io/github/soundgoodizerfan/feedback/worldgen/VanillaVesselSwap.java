@@ -1,25 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.worldgen;
 
 import java.util.ArrayDeque;
@@ -63,6 +43,15 @@ public final class VanillaVesselSwap {
             Map.entry(Blocks.CHIPPED_ANVIL, FModular.ANVIL.get()),
             Map.entry(Blocks.DAMAGED_ANVIL, FModular.ANVIL.get()),
             Map.entry(Blocks.REDSTONE_LAMP, FBlocks.LAMP.get()));
+
+    /** A vanilla job site's block states live in its point-of-interest type; ours join it, so a villager still claims the swapped block (toolsmith, mason, armorer, butcher, cleric). */
+    public static void onExtendPoi(net.neoforged.neoforge.common.world.poi.ExtendPoiTypesEvent event) {
+        event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.TOOLSMITH, FModular.SMITHING_TABLE.get());
+        event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.MASON, FModular.STONECUTTER.get());
+        event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.ARMORER, FBlocks.BLAST_FURNACE.get());
+        event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.BUTCHER, FBlocks.SMOKER.get());
+        event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.CLERIC, FBlocks.BREWING_STAND.get());
+    }
 
     private record Pending(ServerLevel level, BlockPos pos) {}
 

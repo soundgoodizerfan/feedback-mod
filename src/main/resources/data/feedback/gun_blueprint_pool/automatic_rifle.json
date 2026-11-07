@@ -47,8 +47,8 @@
     },
     {
       "role": "i",
-      "material": "feedback:steel",
-      "form": "plate",
+      "material": "feedback:wood",
+      "form": "oak_planks",
       "count": 1,
       "kind": "gun_stock",
       "variant": "skeleton"

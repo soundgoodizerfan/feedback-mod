@@ -2,10 +2,23 @@
   "target": 0.95,
   "band": 0.04,
   "roles": {
-    "head": { "kind": "gamble" },
-    "blade": { "kind": "gamble" },
-    "tip": { "kind": "gamble" },
-    "plate": { "kind": "gamble_ward" },
-    "studs": { "kind": "gamble_ward" }
+    "head": {
+      "kind": "gamble"
+    },
+    "blade": {
+      "kind": "gamble"
+    },
+    "tip": {
+      "kind": "gamble"
+    },
+    "plate": {
+      "kind": "gamble_ward"
+    },
+    "studs": {
+      "kind": "gamble_ward"
+    },
+    "trigger": {
+      "kind": "gamble"
+    }
   }
 }

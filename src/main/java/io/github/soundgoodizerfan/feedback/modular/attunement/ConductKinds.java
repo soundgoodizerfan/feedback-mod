@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
@@ -66,6 +49,14 @@ public final class ConductKinds {
     /** Conductivity taken for a conducting material whose file gives no figure. [OPEN] until played */
     private static final float DRAW_UNMEASURED = 0.3f;
 
+    /** Share of a hit a charged_round arcs, per level, to the nearest wet or metal-clad thing, and the reach of the arc. [OPEN] until played */
+    private static final float ARC_SHARE_PER_LEVEL = 0.3f;
+    private static final double ARC_RANGE = 4;
+    /** Armour hardness that counts as metal for the arc (a default bullet is 0.3). [OPEN] until played */
+    private static final float ARC_ARMOUR = 1.0f;
+    /** Share of a hit a grounded_round sheds per level. [OPEN] until played */
+    private static final float GROUND_PER_LEVEL = 0.2f;
+
     private ConductKinds() {
     }
 
@@ -73,6 +64,34 @@ public final class ConductKinds {
     private static final String SPARED = "feedback_spared";
 
     public static void register() {
+        // Conduct+ on a barrel: a hit arcs a share to the nearest other wet or metal-clad thing, and a storm bolt follows.
+        AttunementKinds.onStrike("charged_round", (event, a) -> {
+            LivingEntity victim = event.getEntity();
+            if (!(victim.level() instanceof ServerLevel level) || !(event.getSource().getEntity() instanceof LivingEntity shooter))
+                return;
+            float share = event.getAmount() * Math.min(1f, a.level() * ARC_SHARE_PER_LEVEL);
+            LivingEntity next = null;
+            double best = Double.MAX_VALUE;
+            for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, victim.getBoundingBox().inflate(ARC_RANGE),
+                    e -> e != victim && e != shooter && e.isAlive()
+                            && (e.isInWaterOrRain() || io.github.soundgoodizerfan.feedback.weapon.GunShots.armourHardness(e) >= ARC_ARMOUR))) {
+                double d = e.distanceToSqr(victim);
+                if (d < best) {
+                    best = d;
+                    next = e;
+                }
+            }
+            if (next != null) {
+                next.invulnerableTime = 0;
+                next.hurt(level.damageSources().lightningBolt(), share);
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, next.getX(), next.getY(0.5), next.getZ(), 8, 0.2, 0.3, 0.2, 0.1);
+            }
+            if (shooter instanceof Player p && level.isThundering() && level.canSeeSky(victim.blockPosition()))
+                strike(p, ItemStack.EMPTY, victim.position());
+        });
+        // Conduct- on a barrel: the hit sheds charge into the ground; the target takes less.
+        AttunementKinds.onStrike("grounded_round", (event, a) ->
+                event.setAmount(event.getAmount() * Math.max(0f, 1f - a.level() * GROUND_PER_LEVEL)));
         AttunementKinds.onStrike("channel", (event, a) -> {
             if (event.getSource().getEntity() instanceof Player wielder)
                 call(wielder, StrikeSource.weapon(wielder, event.getSource()), event.getEntity().position());

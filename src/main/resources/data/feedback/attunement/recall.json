@@ -21,6 +21,10 @@
     "studs": {
       "kind": "rewind",
       "flaw": 1
+    },
+    "receiver": {
+      "kind": "brass_return",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -30,6 +34,10 @@
     },
     "tip": {
       "kind": "anchor",
+      "flaw": 1
+    },
+    "receiver": {
+      "kind": "anchor_round",
       "flaw": 1
     }
   }

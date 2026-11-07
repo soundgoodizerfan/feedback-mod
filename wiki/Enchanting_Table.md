@@ -108,6 +108,19 @@ Each effect does something different on a different **role** (the part's place i
 
 Some effects need the material to be right: **Heat** on a handle is only as hot as the material burns, **Lode** and the magnetic **Dowse** die when the part is heated past its Curie point, and **Impulse** on a crossbow's stock recoils the shooter. **Impulse** on a gun's grip locks it in the hand against hard recoil and throws the shooter back instead (see [Guns](Guns.md#recoil)).
 
+## On a gun
+
+Every bullet that hits carries the attunements of the gun's parts, in the part's role:
+
+| Part | Effects |
+|---|---|
+| **Barrel**, second barrel | **Edge** (harder hits; mirror **Spread**), **Bane** (mirror **Kin**), **Heat** (sets the target alight; mirror **Cold**), **Impulse** (knocks the target back; mirror **Pull**), **Yield** (mirror **Intact**), **Hunger** (mirror **Famine**), **Cling** (mirror **Glaze**), **Echo** (mirror **Lag**) |
+| **Sight**, lit reticle | **Mark** (the next hit on the target does more), **Pack** (mirror **Lone**) |
+| **Trigger** | **Wager**: each shot is double damage or heals the target |
+| **Muzzle brake**, suppressor | **Ring** (the shot is heard; mirror **Hush**) |
+| **Grip**, stock | the handle effects above (**Impulse**, **Hold**, **Reservoir**, **Heat** burning you) |
+| **Any part** | **Ward** turns away part of the bore's wear (each level leaves one share in levels + 1); **Mend** drinks experience to close the bore's wear; its mirror **Tithe** pays experience per kill and wears the bore |
+
 ## The effect is on the part
 
 Attunements live on the **part**, not the tool. Set an attuned part into a tool and it carries across. **Reheating a part past its attuning point erases its attunements**, so keep the part out of a furnace, crucible or Hearth once it is attuned. A part already built into a tool is not reached.

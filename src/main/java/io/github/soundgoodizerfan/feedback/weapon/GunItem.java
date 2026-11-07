@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularItem;
@@ -54,7 +37,10 @@ public class GunItem extends ModularItem implements io.github.soundgoodizerfan.f
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.TuRate coolingRate(ItemStack stack) {
         GunFigures f = figures(stack);
-        return f == null ? io.github.soundgoodizerfan.feedback.core.FTuning.ITEM_COOLING_TU_PER_TICK : f.coolingRate();
+        if (f == null)
+            return io.github.soundgoodizerfan.feedback.core.FTuning.ITEM_COOLING_TU_PER_TICK;
+        return new io.github.soundgoodizerfan.feedback.core.unit.TuRate(f.coolingRate().tuPerTick()
+                * io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.gunCooling(stack));
     }
 
     @Override

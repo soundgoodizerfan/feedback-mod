@@ -25,6 +25,12 @@
     "studs": {
       "kind": "bane_ward",
       "flaw": 0
+    },
+    "barrel": {
+      "kind": "bane"
+    },
+    "second_barrel": {
+      "kind": "bane"
     }
   },
   "mirror": {
@@ -51,6 +57,12 @@
     "studs": {
       "kind": "kin_hide",
       "flaw": 0
+    },
+    "barrel": {
+      "kind": "kin_calm"
+    },
+    "second_barrel": {
+      "kind": "kin_calm"
     }
   }
 }

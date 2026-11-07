@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -71,7 +54,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
 
     /** The roles of the gun type, by the letters {@code modular_type/gun.json} gives them. */
     private static final String BARREL = "B", SECOND = "D", RECEIVER = "R", SLIDE = "A", BOLT = "K", TRIGGER = "T", GRIP = "G",
-            CYLINDER = "F", TUBE = "E", BELT = "Y", BOX_FEED = "b", SIGHT = "S", WINDING = "W", WRAP = "X", SPRING = "U", CHEST = "O";
+            CYLINDER = "F", TUBE = "E", BELT = "Y", BOX_FEED = "b", SIGHT = "S", WINDING = "W", WRAP = "X", SPRING = "U", CHEST = "O", STOCK = "i";
     private static final List<String> FITTED = List.of("M", "N", "Q", "V", "H");
 
     /** Whether the gun has the trait {@code id}. */
@@ -239,6 +222,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         String actionRole = design.part(SLIDE) != null ? SLIDE : BOLT;
         GunLayout.Action act = GunLayout.Action.of(type.roles().get(actionRole).variant(action).map(ModularType.Variant::name).orElse(""));
         GunLayout.Type kind = GunLayout.Type.of(type.roles().get(RECEIVER).variant(receiver).map(ModularType.Variant::name).orElse(""));
+        if (kind != GunLayout.Type.HANDGUN && design.part(STOCK) == null)
+            return Optional.empty();
         ModularDesign.Part feedPart = firstOf(design, CYLINDER, TUBE, BELT, BOX_FEED);
         GunLayout.Feed feed = feedPart == null ? (act == GunLayout.Action.BREAK ? GunLayout.Feed.BARRELS
                 : act == GunLayout.Action.BOLT || act == GunLayout.Action.LEVER || act == GunLayout.Action.FLINTLOCK ? GunLayout.Feed.SINGLE : GunLayout.Feed.BOX)
@@ -251,9 +236,11 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         Material metal = materials.get(barrel.material());
         if (metal == null || !buildable(metal))
             return Optional.empty();
-        for (ModularDesign.Part p : List.of(receiver, trigger, action))
+        for (ModularDesign.Part p : List.of(trigger, action))
             if (materials.get(p.material()) == null || !buildable(materials.get(p.material())))
                 return Optional.empty();
+        if (materials.get(receiver.material()) == null || !receiverMaterial(materials.get(receiver.material())))
+            return Optional.empty();
         if (materials.get(grip.material()) == null || !gripMaterial(materials.get(grip.material())))
             return Optional.empty();
         if (feedPart != null && (materials.get(feedPart.material()) == null || !buildable(materials.get(feedPart.material()))))
@@ -355,6 +342,10 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 : design.part(CYLINDER) != null ? GunLayout.Feed.CYLINDER : design.part(TUBE) != null ? GunLayout.Feed.TUBE
                 : design.part(BOX_FEED) != null ? GunLayout.Feed.BOX : GunLayout.Feed.BELT;
         boolean second = design.part(SECOND) != null;
+        ModularDesign.Part rec = design.part(RECEIVER);
+        if (rec != null && GunLayout.Type.of(type.roles().get(RECEIVER).variant(rec).map(ModularType.Variant::name).orElse("")) != GunLayout.Type.HANDGUN
+                && design.part(STOCK) == null)
+            out.add(new Fault(List.of(RECEIVER), "stock"));
         if (!feed.fits(act))
             out.add(new Fault(List.of(actionRole, feeds.isEmpty() ? BARREL : feeds.get(0)), "feed"));
         if (second && (act != GunLayout.Action.BREAK || feed != GunLayout.Feed.BARRELS))
@@ -363,7 +354,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             out.add(new Fault(List.of(feeds.get(0), feeds.get(1)), "feeds"));
         for (String r : List.of(BARREL, RECEIVER, TRIGGER, actionRole, SECOND, CYLINDER, TUBE, BELT, BOX_FEED)) {
             ModularDesign.Part p = design.part(r);
-            if (p != null && (materials.get(p.material()) == null || !buildable(materials.get(p.material()))))
+            if (p != null && (materials.get(p.material()) == null
+                    || !(r.equals(RECEIVER) ? receiverMaterial(materials.get(p.material())) : buildable(materials.get(p.material())))))
                 out.add(new Fault(List.of(r), "material"));
         }
         ModularDesign.Part grip = design.part(GRIP), wrap = design.part(WRAP);
@@ -528,6 +520,14 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     }
 
     /**
+     * A receiver holds the action and takes none of the chamber's pressure (the barrel's metal sets the rating),
+     * so a weighed polymer will do as well as a metal: a plastic frame.
+     */
+    public static boolean receiverMaterial(Material m) {
+        return buildable(m) || (m.kind().orElse(null) == Material.Kind.POLYMER && m.density().muPerMb() > 0);
+    }
+
+    /**
      * A grip is held, not stressed, so it needs no yield strength: a gun metal, or anything
      * organic that has been weighed -- wood, bone, bamboo, turned on the lathe like a metal one.
      */
@@ -536,11 +536,12 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     }
 
     /**
-     * What a grip can be wrapped in: something organic that is fibrous (leather, cloth, paper) or
-     * sticky (honey). Read by property, never by item; a plank counts as a poor wrap and is allowed.
+     * What a grip can be wrapped in: something organic or polymer that is fibrous (leather, cloth, paper) or
+     * sticky (honey, rubber). Read by property, never by item; a plank counts as a poor wrap and is allowed.
      */
     public static boolean wrapMaterial(Material m) {
-        return m.kind().orElse(null) == Material.Kind.ORGANIC
+        Material.Kind kind = m.kind().orElse(null);
+        return (kind == Material.Kind.ORGANIC || kind == Material.Kind.POLYMER)
                 && (m.traits().contains(Material.Trait.FIBROUS) || m.traits().contains(Material.Trait.STICKY));
     }
 
@@ -606,13 +607,13 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     /** What the parts off the barrel weigh, each in its own metal -- the feed's part and a double's other barrel included. */
     private Optional<Frame> frame(Map<ResourceLocation, Material> materials) {
         Material slide = materials.get(parts.slide()), trigger = materials.get(parts.trigger()), grip = materials.get(parts.grip()),
-                receiver = materials.get(parts.receiver()), feed = materials.get(parts.feed().orElse(parts.receiver())),
+                receiver = materials.get(parts.receiver()), feed = materials.get(parts.feed().orElse(parts.slide())),
                 other = materials.get(parts.second().map(Second::material).orElse(material)),
                 wrap = parts.wrap().map(materials::get).orElse(null);
         if (parts.wrap().isPresent() && (wrap == null || !wrapMaterial(wrap)))
             return Optional.empty();
         if (slide == null || trigger == null || grip == null || receiver == null || feed == null || other == null
-                || !buildable(slide) || !buildable(trigger) || !gripMaterial(grip) || !buildable(receiver) || !buildable(feed)
+                || !buildable(slide) || !buildable(trigger) || !gripMaterial(grip) || !receiverMaterial(receiver) || !buildable(feed)
                 || !buildable(other))
             return Optional.empty();
         float mu = FTuning.GUN_RECEIVER_METAL_MB * receiver.density().muPerMb()

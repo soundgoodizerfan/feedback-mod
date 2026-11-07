@@ -768,8 +768,9 @@
       "forms": [
         "*"
       ],
-      "traits": [
-        "fibrous"
+      "any_traits": [
+        "fibrous",
+        "sticky"
       ],
       "litres": 0.02,
       "layer": 11

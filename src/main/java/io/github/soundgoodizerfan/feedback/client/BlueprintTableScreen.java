@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
 import java.util.ArrayList;
@@ -200,6 +183,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     private double camX, camY;
     private float zoom = 1;
     private boolean panning;
+    private final io.github.soundgoodizerfan.feedback.client.gun.GunPreview preview = new io.github.soundgoodizerfan.feedback.client.gun.GunPreview();
     private int drawerScroll, swatchScroll, figScroll;
     private final Map<String, Long> flashes = new HashMap<>();
     private long stampAt;
@@ -252,8 +236,20 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         ModularType t = current();
         if (t == null)
             return List.of();
-        Map<String, Integer> counts = counts();
-        return t.order().stream().filter(counts::containsKey).toList();
+        if (rowsCache == null) {
+            Map<String, Integer> counts = counts();
+            rowsCache = t.order().stream().filter(counts::containsKey).toList();
+        }
+        return rowsCache;
+    }
+
+    /** {@link #rows} and {@link #choice(String)} worked out once: every node, hover and panel asks each frame. Dropped by {@link #dirty} on any edit. */
+    private List<String> rowsCache;
+    private final Map<String, Optional<Material.Located>> choiceCache = new HashMap<>();
+
+    private void dirty() {
+        rowsCache = null;
+        choiceCache.clear();
     }
 
     /** The selected part: the one picked if it is still drawn, else the first. */
@@ -357,6 +353,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         form = f;
         extras.clear();
         target.stream().filter(k -> !pair(k)).forEach(extras::add);
+        dirty();
     }
 
     private List<String> allKeys() {
@@ -474,12 +471,15 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                     shape.put(p.role(), i);
             matId.put(p.role(), p.material());
             p.dims().forEach((k, v) -> dimVals.put(p.role() + ":" + k, v));
-        });
+        });        dirty();
     }
+
+    /** Per role: its shapes, worked out once (the list walks every type, and every node asks several times a frame). */
+    private final Map<String, List<ToolTableShaping.Option>> shapeLists = new HashMap<>();
 
     private List<ToolTableShaping.Option> shapes(String role) {
         ModularType t = current();
-        return t == null ? List.of() : ToolDesigns.shapes(t.roles().get(role), ModularTypes.known());
+        return t == null ? List.of() : shapeLists.computeIfAbsent(role, r -> ToolDesigns.shapes(t.roles().get(r), ModularTypes.known()));
     }
 
     private int shapeIndex(String role) {
@@ -515,6 +515,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     private void clearLists() {
+        dirty();
+        shapeLists.clear();
         materialLists.clear();
         swatchLists.clear();
         fitSets.clear();
@@ -568,7 +570,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     }
 
     private Optional<Material.Located> choice(String role) {
-        return choice(role, shapeIndex(role));
+        materials(role); // drops the caches if the materials were reloaded
+        return choiceCache.computeIfAbsent(role, r -> choice(r, shapeIndex(r)));
     }
 
     /** The type picker's choices: grouped under a heading each (tools, weapons, wearables, technology, food), a heading's types in name order. */
@@ -676,6 +679,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         traceFor = null;
         trace.clear();
         icons.clear();
+        dirty();
+        shapeLists.clear(); // roles differ per type
         layout();
         Optional<ModularDesign> design = design(null, null, 0);
         baked = design;
@@ -1260,6 +1265,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
         String before = String.valueOf(sel());
         int type0 = type;
         edit.run();
+        dirty(); // the edit may have changed what sel() reads just below
         if (type != type0 || !before.equals(String.valueOf(sel()))) {
             swatchScroll = 0;
             dimScroll = 0;
@@ -1288,6 +1294,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
         typePopup.render(g, leftPos, topPos, imageWidth, imageHeight, mouseX, mouseY);
+        // The design turns in a drawer that pops out of the panel's left edge, when there is room.
+        preview.draw(g, skin, baked.orElse(null), leftPos, topPos);
+        preview.tooltip(g, mouseX, mouseY);
         if (stampAt > 0)
             GuiStyle.stamp(g, Component.translatable("message.feedback.blueprint_table.printed"), centreX(), centreY(),
                     System.currentTimeMillis() - stampAt, skin.accent() & 0xFFFFFF);
@@ -1310,6 +1319,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
         if (typePopup.mouseClicked(mx, my, button))
+            return true;
+        if (preview.click(mx, my, button)) // also keeps the click from dropping what the cursor carries
             return true;
         boolean onWidget = children().stream().anyMatch(c -> c.isMouseOver(mx, my));
         if (settled() && !onWidget && current() != null) {
@@ -1334,7 +1345,15 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
             if (button == 0 && hoverShape >= 0 && role != null) {
                 int pick = hoverShape;
                 GuiSkin.play(skin.click(), 1f);
-                change(() -> shape.put(role, pick));
+                change(() -> {
+                    shape.put(role, pick);
+                    // A long or machine gun frame takes a stock, so fit one as the frame is picked.
+                    ModularType gt = current();
+                    ToolTableShaping.Option o = shapeAt(role, pick);
+                    if (gt != null && gt.family() == ModularType.Family.GUN && role.equals("R") && o != null
+                            && !o.variant().name().equals("handgun") && gt.optionals().contains("i"))
+                        extras.add("i");
+                });
                 return true;
             }
             if (overCanvas(mx, my)) {
@@ -1386,6 +1405,8 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     @Override
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+        if (preview.drag(dx, dy))
+            return true;
         if (panning && settled()) {
             dragged = true;
             camX -= dx / zoom;
@@ -1398,6 +1419,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     @Override
     public boolean mouseReleased(double mx, double my, int button) {
+        preview.release();
         // A click on bare canvas, not a drag, puts the fan away.
         if (panning && !dragged && fanFor != null)
             change(() -> fanFor = null);
@@ -1407,7 +1429,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
 
     @Override
     public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
-        if (typePopup.mouseScrolled(scrollY))
+        if (typePopup.mouseScrolled(scrollY) || preview.scroll(mx, my, scrollY))
             return true;
         if (!settled() || current() == null)
             return super.mouseScrolled(mx, my, scrollX, scrollY);

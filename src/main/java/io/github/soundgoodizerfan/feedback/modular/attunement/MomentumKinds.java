@@ -1,21 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import java.util.HashMap;
@@ -66,6 +50,12 @@ public final class MomentumKinds {
     private static final float BRACE_PER_SECOND = 0.05f, BRACE_CAP = 0.6f;
     private static final int STILL_CAP_TICKS = 400;
 
+    /** Stock: bullet damage share per block run per level (a shot is lighter on its legs than a blow), and its cap. [OPEN] until played. */
+    private static final float RUN_GUN_PER_BLOCK = 0.02f, RUN_GUN_CAP = 0.5f;
+    /** Braced stock: ticks of standing still before it steadies, spread cut per level, and the most cut. [OPEN] until played. */
+    private static final int BRACE_GUN_TICKS = 10;
+    private static final float BRACE_GUN_PER_LEVEL = 0.15f, BRACE_GUN_CAP = 0.6f;
+
     /** Worn legs/boots: speed share per block run per level, and the most that can be. [OPEN] until played. */
     private static final float SPRINT_PER_BLOCK = 0.01f, SPRINT_CAP = 0.4f;
     /** Worn stance: damage cut per second stood still per level, and the most that can be. [OPEN] until played. */
@@ -99,6 +89,12 @@ public final class MomentumKinds {
             var attacker = event.getSource().getEntity();
             victim.knockback(kb, attacker.getX() - victim.getX(), attacker.getZ() - victim.getZ());
         });
+        // A bullet's hit is an ordinary blow from the shooter holding the gun, so the strike moment sees the stock.
+        onStrike("run_gun", (event, a) -> {
+            Track t = track(event);
+            if (t != null && t.run > 0f)
+                event.setAmount(event.getAmount() * (1f + Math.min(RUN_GUN_CAP, t.run * RUN_GUN_PER_BLOCK * a.level())));
+        });
         onStrike("brace", (event, a) -> {
             Track t = track(event);
             if (t == null || t.still <= 0)
@@ -106,6 +102,15 @@ public final class MomentumKinds {
             event.setAmount(event.getAmount()
                     * (1f + Math.min(BRACE_CAP, t.still / 20f * BRACE_PER_SECOND * a.level())));
         });
+    }
+
+    /** Spread multiplier for a shot from {@code gun} by {@code shooter}: under 1 when a {@code brace_gun} stock has stood still. */
+    public static float braceSpread(LivingEntity shooter, net.minecraft.world.item.ItemStack gun) {
+        Track t = TRACKS.get(shooter.getUUID());
+        if (t == null || t.still < BRACE_GUN_TICKS)
+            return 1f;
+        int n = TideKinds.level(gun, "brace_gun");
+        return n == 0 ? 1f : 1f - Math.min(BRACE_GUN_CAP, BRACE_GUN_PER_LEVEL * n);
     }
 
     private static Track track(LivingIncomingDamageEvent event) {

@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.gun;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -78,16 +61,18 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         pose.translate(-at[0], -at[1], -at[2]);
         GunMotion.item(pose, view, hand, now);
         var mesh = new GunMesh(pose, outputs(buffers, stack), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
+        mesh.sighted = hand == GunMotion.hand(false) && io.github.soundgoodizerfan.feedback.client.GunClient.aim() > 0.5f;
         GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
         pose.popPose();
     }
 
     /** A consumer per texture: the gun sheet on the block atlas, or a wood image. */
-    private static java.util.function.Function<net.minecraft.resources.ResourceLocation, com.mojang.blaze3d.vertex.VertexConsumer> outputs(
+    static java.util.function.Function<net.minecraft.resources.ResourceLocation, com.mojang.blaze3d.vertex.VertexConsumer> outputs(
             MultiBufferSource buffers, ItemStack stack) {
         boolean foil = stack.hasFoil();
-        return image -> ItemRenderer.getFoilBufferDirect(buffers,
-                RenderType.entityCutoutNoCull(image == null ? InventoryMenu.BLOCK_ATLAS : image), true, foil);
+        return image -> image == GunMesh.GLASS ? buffers.getBuffer(RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS))
+                : ItemRenderer.getFoilBufferDirect(buffers,
+                        RenderType.entityCutoutNoCull(image == null ? InventoryMenu.BLOCK_ATLAS : image), true, foil);
     }
 
     /** The grip in third person: in the fist, a touch forward. */

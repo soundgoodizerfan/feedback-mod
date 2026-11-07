@@ -11,6 +11,14 @@
     },
     "lining": {
       "kind": "worn_grow"
+    },
+    "barrel": {
+      "kind": "field_round",
+      "flaw": 1
+    },
+    "second_barrel": {
+      "kind": "field_round",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -23,6 +31,14 @@
     },
     "lining": {
       "kind": "worn_reap"
+    },
+    "barrel": {
+      "kind": "reap_round",
+      "flaw": 1
+    },
+    "second_barrel": {
+      "kind": "reap_round",
+      "flaw": 1
     }
   }
 }

@@ -11,6 +11,12 @@
     "plate": {
       "kind": "walker",
       "flaw": 1
+    },
+    "barrel": {
+      "kind": "wet_round"
+    },
+    "second_barrel": {
+      "kind": "wet_round"
     }
   },
   "mirror": {
@@ -29,6 +35,12 @@
     "tip": {
       "kind": "affinity",
       "flaw": 1
+    },
+    "barrel": {
+      "kind": "dry_round"
+    },
+    "second_barrel": {
+      "kind": "dry_round"
     }
   }
 }

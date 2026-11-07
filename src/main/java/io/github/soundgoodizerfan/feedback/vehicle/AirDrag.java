@@ -1,3 +1,6 @@
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 package io.github.soundgoodizerfan.feedback.vehicle;
 
 import java.util.HashSet;

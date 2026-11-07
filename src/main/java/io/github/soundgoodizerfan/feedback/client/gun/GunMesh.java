@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.gun;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -77,6 +60,11 @@ final class GunMesh {
     private int colour = 0xFFFFFFFF;
     /** Varies the patch of a tile each box samples, so neighbouring faces do not repeat. */
     private int seed;
+    /** Stands in for a texture: what follows goes to the translucent buffer. Never loaded. */
+    static final net.minecraft.resources.ResourceLocation GLASS = Feedback.id("gun_glass");
+    private boolean glassNow;
+    /** First person, aimed: the scope's lens and eyepiece plate are drawn. */
+    boolean sighted;
 
     GunMesh(PoseStack pose, java.util.function.Function<net.minecraft.resources.ResourceLocation, VertexConsumer> buffers,
             int light, int overlay) {
@@ -181,6 +169,27 @@ final class GunMesh {
         box(x0, y0, z0, x1, y1, z1, t, light);
     }
 
+    /** A see-through box tinted {@code argb} (its alpha counts), through the translucent buffer: draw these last. */
+    void pane(float x0, float y0, float z0, float x1, float y1, float z1, int argb, boolean lit) {
+        int old = colour;
+        colour = argb;
+        glassNow = true;
+        box(x0, y0, z0, x1, y1, z1, Tile.LAMP, lit ? 0xF000F0 : light);
+        glassNow = false;
+        colour = old;
+    }
+
+    /** A square showing the scope's lens image ({@link GunLens}), facing the eye (+z), unlit. */
+    void lens(float x0, float y0, float x1, float y1, float z) {
+        out = buffers.apply(GunLens.TEXTURE);
+        bound = GunLens.TEXTURE;
+        anyBound = true;
+        PoseStack.Pose p = pose.last();
+        float[][] c = {{x0, y0, 0, 0}, {x1, y0, 1, 0}, {x1, y1, 1, 1}, {x0, y1, 0, 1}};
+        for (float[] k : c)
+            out.addVertex(p, k[0], k[1], z).setColor(0xFFFFFFFF).setUv(k[2], k[3]).setOverlay(overlay).setLight(0xF000F0).setNormal(p, 0, 0, 1);
+    }
+
     /** A box that ignores the world's light: lamps and reticles. */
     void glow(float x0, float y0, float z0, float x1, float y1, float z1, Tile t) {
         box(x0, y0, z0, x1, y1, z1, t, 0xF000F0);
@@ -204,7 +213,7 @@ final class GunMesh {
         }
         float c = r >= 1.25f ? 0.25f : 0.125f;
         box(x - r, y - r + c, lo, x + r, y + r - c, hi, t);
-        box(x - r + c, y - r, lo, x + r - c, y + r, hi, t);
+        box(x - r + c, y - r, lo + 0.003f, x + r - c, y + r, hi - 0.003f, t); // inset: shares no cap plane with the first box
     }
 
     /** Thin rings round an axis, {@code count} of them from z0 toward z1: fins, windings, lagging. */
@@ -221,7 +230,7 @@ final class GunMesh {
     private void box(float x0, float y0, float z0, float x1, float y1, float z1, Tile t, int lit) {
         t = surfaced(t);
         // Wood drawn with its own bark keeps the shape's special tiles (checkering, end grain, a pad) on the sheet.
-        net.minecraft.resources.ResourceLocation want = image != null && t == Tile.GRAIN ? image : null;
+        net.minecraft.resources.ResourceLocation want = glassNow ? GLASS : image != null && t == Tile.GRAIN ? image : null;
         if (!anyBound || want != bound) {
             out = buffers.apply(want);
             bound = want;
@@ -262,7 +271,7 @@ final class GunMesh {
         float[] ub = breaks(uMax - uMin), vb = breaks(vMax - vMin);
         int uSeed = Math.floorMod(seed, 31), vSeed = Math.floorMod(seed >> 5, 31);
         float tx = (t.index % 4) * TILE, ty = (t.index / 4) * TILE;
-        boolean own = bound != null;
+        boolean own = bound != null && bound != GLASS;
         for (int iu = 0; iu < 3; iu++)
             for (int iv = 0; iv < 3; iv++) {
                 float u0 = uMin + ub[iu], u1 = uMin + ub[iu + 1], v0 = vMin + vb[iv], v1 = vMin + vb[iv + 1];

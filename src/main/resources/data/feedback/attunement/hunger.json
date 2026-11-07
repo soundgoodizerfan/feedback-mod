@@ -19,6 +19,12 @@
     },
     "studs": {
       "kind": "worn_reserve"
+    },
+    "barrel": {
+      "kind": "feed"
+    },
+    "second_barrel": {
+      "kind": "feed"
     }
   },
   "mirror": {
@@ -39,6 +45,12 @@
     },
     "studs": {
       "kind": "worn_famine"
+    },
+    "barrel": {
+      "kind": "drain"
+    },
+    "second_barrel": {
+      "kind": "drain"
     }
   }
 }

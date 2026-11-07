@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -44,7 +27,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * The runtime kinds of the Lode effect (magnetism). Weapon head/tip:
  * {@code draw} sends the drops of what the blow kills flying to the wielder, {@code fling} (the mirror) throws them
  * away. Armour: {@code worn_draw} is an item magnet, {@code worn_fling} turns metal-bearing arrows and tridents aside.
- * Every kind goes dead while its part is hotter than its material's Curie point. Wears nothing.
+ * A barrel bends its round ({@code draw_round}/{@code fling_round}). Every kind goes dead while its part is hotter than its material's Curie point. Wears nothing.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class LodeKinds {
@@ -57,6 +40,9 @@ public final class LodeKinds {
     private static final double DROP_SPEED_PER_BLOCK = 0.15, DROP_SPEED_CAP = 1.2;
     /** Share of an arrow's velocity left after the repeller turns it, reversed. [OPEN] until played */
     private static final double DEFLECT = 0.4;
+    /** Gun rounds: reach and half-angle (cos) of the cone a bent round sees, share of the aim it turns per tick per level, and the armour hardness that counts as metal (a default bullet is 0.3). [OPEN] until played */
+    private static final double BEND_RANGE = 24, BEND_COS = 0.9, BEND_PER_LEVEL = 0.06;
+    private static final float BEND_ARMOUR = 1.0f;
 
     private LodeKinds() {
     }
@@ -74,6 +60,45 @@ public final class LodeKinds {
                     .map(c -> ItemHeat.get(stack, level).value() > c.value()).orElse(false))
                 n += a.level();
         return n;
+    }
+
+    /**
+     * Signed bend of a round fired from {@code gun}: draw_round levels minus fling_round levels of barrels still below
+     * their Curie point at fire time. Read once at fire, held on the shot.
+     */
+    public static int bend(ItemStack gun, Level level) {
+        if (gun.isEmpty())
+            return 0;
+        float t = io.github.soundgoodizerfan.feedback.weapon.GunCondition.temperature(gun, level).value();
+        int n = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(gun))
+            if ((a.kind().equals("draw_round") || a.kind().equals("fling_round"))
+                    && !a.material().separation().curieTemperature().map(c -> t > c.value()).orElse(false))
+                n += a.kind().equals("draw_round") ? a.level() : -a.level();
+        return n;
+    }
+
+    /** One tick of a bent round: the velocity turned toward (or away from) the nearest heavily armoured living thing ahead, speed kept. */
+    public static Vec3 bend(net.minecraft.server.level.ServerLevel level, LivingEntity shooter, Vec3 pos, Vec3 velocity, int bend) {
+        double speed = velocity.length();
+        if (bend == 0 || speed < 1e-4)
+            return velocity;
+        Vec3 dir = velocity.scale(1 / speed);
+        LivingEntity best = null;
+        double bestD = Double.MAX_VALUE;
+        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(pos, pos.add(dir.scale(BEND_RANGE))).inflate(BEND_RANGE * 0.4),
+                e -> e != shooter && e.isAlive() && io.github.soundgoodizerfan.feedback.weapon.GunShots.armourHardness(e) >= BEND_ARMOUR)) {
+            Vec3 to = e.getBoundingBox().getCenter().subtract(pos);
+            double d = to.length();
+            if (d > 1e-3 && d < bestD && to.scale(1 / d).dot(dir) >= BEND_COS) {
+                best = e;
+                bestD = d;
+            }
+        }
+        if (best == null)
+            return velocity;
+        Vec3 want = best.getBoundingBox().getCenter().subtract(pos).normalize().scale(Math.signum(bend));
+        return dir.add(want.scale(Math.min(0.5, Math.abs(bend) * BEND_PER_LEVEL))).normalize().scale(speed);
     }
 
     private static int worn(LivingEntity wearer, String kind) {

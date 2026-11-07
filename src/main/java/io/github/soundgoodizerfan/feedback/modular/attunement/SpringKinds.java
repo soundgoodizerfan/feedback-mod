@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
@@ -52,7 +35,39 @@ public final class SpringKinds {
     private static final int COIL_WEAR_PER_LEVEL = 2;
     private static final String COIL_START = "feedback_coil_start";
 
+    /** Stored shot: ticks without firing that wind the spring, damage share per level it adds, and its cap. [OPEN] until played */
+    private static final int REST_TICKS = 40;
+    private static final float STORED_PER_LEVEL = 0.25f, STORED_CAP = 1.0f;
+    /** Snap shot: share of the fire interval cut per level, and the most cut. [OPEN] until played */
+    private static final float SNAP_PER_LEVEL = 0.08f, SNAP_MAX = 0.4f;
+
+    private static final java.util.Map<java.util.UUID, Long> LAST_FIRED = new java.util.HashMap<>();
+    /** Shooters whose latest shot came after a rest and has not landed yet. */
+    private static final java.util.Set<java.util.UUID> WOUND = new java.util.HashSet<>();
+
     private SpringKinds() {
+    }
+
+    /** Fire-interval multiplier for {@code gun}: under 1 with a {@code snap_shot} spring. */
+    public static float snap(ItemStack gun) {
+        int n = level(gun, "snap_shot");
+        return n == 0 ? 1f : 1f - Math.min(SNAP_MAX, SNAP_PER_LEVEL * n);
+    }
+
+    /** A shot left {@code gun}: a {@code stored_shot} spring that sat for {@link #REST_TICKS} winds its next hit. */
+    public static void fired(net.minecraft.world.entity.LivingEntity shooter, ItemStack gun) {
+        long now = shooter.level().getGameTime();
+        Long last = LAST_FIRED.put(shooter.getUUID(), now);
+        if ((last == null || now - last >= REST_TICKS) && level(gun, "stored_shot") > 0)
+            WOUND.add(shooter.getUUID());
+        else
+            WOUND.remove(shooter.getUUID());
+    }
+
+    @SubscribeEvent
+    public static void onLogout(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        LAST_FIRED.remove(event.getEntity().getUUID());
+        WOUND.remove(event.getEntity().getUUID());
     }
 
     /** Coil levels on legs and boots only (plate and lining are the armour roles; the slot picks the part). */
@@ -100,6 +115,11 @@ public final class SpringKinds {
     }
 
     public static void register() {
+        // shortcut: the wound flag is per shooter, so a second shot in flight can take the first's bonus; fine at gun ranges.
+        io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStrike("stored_shot", (event, a) -> {
+            if (event.getSource().getEntity() != null && WOUND.remove(event.getSource().getEntity().getUUID()))
+                event.setAmount(event.getAmount() * (1f + Math.min(STORED_CAP, STORED_PER_LEVEL * a.level())));
+        });
     }
 
     private static int level(ItemStack stack, String kind) {

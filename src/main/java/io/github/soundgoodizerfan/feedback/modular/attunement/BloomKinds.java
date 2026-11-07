@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -54,7 +37,35 @@ public final class BloomKinds {
     private static final int WORN_RADIUS = 1;
     private static final String WALKED = "feedback_bloom_walked";
 
+    /** Bone-meal steps per level a field round gives one landing, capped. [OPEN] until played */
+    private static final int FIELD_STEPS_PER_LEVEL = 1, FIELD_MAX_STEPS = 3;
+
     private BloomKinds() {
+    }
+
+    /** A bullet landed on {@code hit}: field_round bone-meals the crop there (or just above, as crops have no collision); reap_round harvests a ripe one. */
+    public static void landed(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.LivingEntity shooter,
+                              ItemStack gun, BlockPos hit, boolean allowed) {
+        if (!allowed)
+            return;
+        int field = TideKinds.level(gun, "field_round"), reap = TideKinds.level(gun, "reap_round");
+        if (field + reap == 0)
+            return;
+        for (BlockPos pos : new BlockPos[] { hit, hit.above() }) {
+            BlockState state = level.getBlockState(pos);
+            if (reap > 0 && state.getBlock() instanceof CropBlock crop && crop.isMaxAge(state)) {
+                level.destroyBlock(pos, true, shooter);
+                return;
+            }
+            if (field > 0 && state.getBlock() instanceof CropBlock) {
+                for (int i = Math.min(FIELD_MAX_STEPS, FIELD_STEPS_PER_LEVEL * field); i > 0; i--) {
+                    state = level.getBlockState(pos);
+                    if (state.getBlock() instanceof BonemealableBlock b && b.isValidBonemealTarget(level, pos, state))
+                        b.performBonemeal(level, level.random, pos, state);
+                }
+                return;
+            }
+        }
     }
 
     public static void register() {

@@ -26,6 +26,9 @@
     },
     "studs": {
       "kind": "worn_sprint"
+    },
+    "stock": {
+      "kind": "run_gun"
     }
   },
   "mirror": {
@@ -53,6 +56,9 @@
     },
     "studs": {
       "kind": "worn_stance"
+    },
+    "stock": {
+      "kind": "brace_gun"
     }
   }
 }

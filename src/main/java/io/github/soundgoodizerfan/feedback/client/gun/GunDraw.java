@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.gun;
 
 import com.mojang.math.Axis;
@@ -62,8 +45,8 @@ final class GunDraw {
             m.box(-0.5f, v.top(), z, -0.125f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
             m.box(0.125f, v.top(), z, 0.5f, v.top() + 0.375f, z + 0.5f, Tile.METAL);
         }
-        sight(m, v);
         sides(m, v);
+        sight(m, v); // last: its see-through panes and lens go through other buffers
     }
 
     /** Where a break action hinges: under the barrels at the front of the frame (a revolver's front strap, a shotgun's breech face). */
@@ -80,6 +63,9 @@ final class GunDraw {
     }
 
     // --- receivers ---------------------------------------------------------------------------------
+
+    /** The cylinder on a long or machine gun: axis height, z span and radius, shared with the receiver's window. */
+    private static final float CYL_Y = -0.25f, CYL_Z0 = -0.25f, CYL_Z1 = 1.75f, CYL_R = 0.875f;
 
     private static void handgun(GunMesh m, GunView v, GunMotion.Parts p) {
 
@@ -144,12 +130,28 @@ final class GunDraw {
      */
     private static void grip(GunMesh m, GunView v, GunMotion.Parts p, float y, float z, float length, float rake,
                              float depth, boolean well) {
+        String shape = v.has("G") ? v.variant("G") : "pistol_grip";
+        boolean straight = shape.equals("straight");
         m.push();
-        m.turnX(rake, y, z);
+        m.turnX(straight ? 0f : rake, y, z); // a straight grip hangs plumb
         m.part(v, v.has("G") ? "G" : "R");
         float f = z - depth;
-        m.box(-0.625f, y - length, f, 0.625f, y, z, Tile.PANEL);
-        m.box(-0.6875f, y - length + 0.5f, f + 0.25f, 0.6875f, y - 0.5f, z - 0.25f, Tile.CHECKER);
+        // Runs up into the frame: the rake swings the grip's front edge down, which would leave a wedge of daylight.
+        m.box(-0.625f, y - length, f, 0.625f, y + 0.75f, z, Tile.PANEL);
+        if (!straight)
+            m.box(-0.6875f, y - length + 0.5f, f + 0.25f, 0.6875f, y - 0.5f, z - 0.25f, Tile.CHECKER);
+        switch (shape) {
+            case "finger_groove" -> {
+                // Three ridges down the front, a groove between each for the fingers.
+                for (int i = 0; i < 3; i++) {
+                    float yy = y - 0.75f - i * (length - 1.5f) / 3f;
+                    m.box(-0.6875f, yy - 0.5f, f - 0.25f, 0.6875f, yy, f, Tile.RIBBED);
+                }
+            }
+            case "palm_swell" -> // A bulge behind, filling the palm.
+                m.box(-0.6875f, y - length * 0.8f, z, 0.6875f, y - length * 0.2f, z + 0.5f, Tile.GRAIN);
+            default -> { }
+        }
         if (v.has("X")) {
             m.part(v, "X");
             for (int i = 0; i < 3; i++) {
@@ -211,17 +213,36 @@ final class GunDraw {
         m.pop();
     }
 
+    /** The receiver block; with a cylinder it is a frame round the cylinder's open window, so the cylinder sits in a cut-out. */
+    private static void body(GunMesh m, GunView v, float hw, float lo, float hi, float z0, float back) {
+        if (!v.has("F")) {
+            m.box(-hw, lo, z0, hw, hi, back, Tile.PANEL);
+            return;
+        }
+        // A margin keeps the frame's faces off the cylinder's, which would z-fight.
+        float g = 0.125f, wy0 = CYL_Y - CYL_R - g, wy1 = CYL_Y + CYL_R + g, wz0 = CYL_Z0 - g, wz1 = CYL_Z1 + g;
+        if (wz0 > z0)
+            m.box(-hw, lo, z0, hw, hi, wz0, Tile.PANEL);
+        if (back > wz1)
+            m.box(-hw, lo, wz1, hw, hi, back, Tile.PANEL);
+        if (hi > wy1)
+            m.box(-hw, wy1, wz0, hw, hi, wz1, Tile.PANEL);
+        if (lo < wy0)
+            m.box(-hw, lo, wz0, hw, wy0, wz1, Tile.PANEL);
+    }
+
     private static void longGun(GunMesh m, GunView v, GunMotion.Parts p) {
         float hw = v.halfWidth(), lo = -1f, hi = v.top(), back = v.back();
         if (v.slide())
             hi = 1f; // the carrier cover rides above
         int receiver = v.colour("R");
         m.part(v, "R");
-        m.box(-hw, lo, -0.5f, hw, hi, back, Tile.PANEL);
-        m.box(hw, -0.25f, 0.75f, hw + 0.0625f, 0.5f, 2.75f, Tile.BORE); // ejection port
+        body(m, v, hw, lo, hi, -0.5f, back);
+        if (!v.has("F"))
+            m.box(hw, -0.25f, 0.75f, hw + 0.0625f, 0.5f, 2.75f, Tile.BORE); // ejection port
 
         // Furniture: the forend under the barrel is in the stock's material.
-        int furniture = v.has("G") ? v.colour("G") : receiver;
+        String furniture = v.has("i") ? "i" : v.has("G") ? "G" : "R";
         float under = barrelsBottom(v);
         float fe = GunView.snap(Math.min(Math.max(v.len() * 0.55f + 1f, 3f), 10f), 0.25f);
         if (v.action().equals("pump")) {
@@ -235,7 +256,7 @@ final class GunDraw {
             // The forend hangs on the barrels, so it tips with them on a break action.
             m.push();
             breakTurn(m, v, p);
-            m.part(v, v.has("G") ? "G" : "R").box(-0.875f, under - 1f, -fe, 0.875f, under + 0.25f, -0.5f, Tile.GRAIN);
+            m.part(v, furniture).box(-0.875f, under - 1f, -fe, 0.875f, under + 0.25f, -0.5f, Tile.GRAIN);
             m.pop();
         }
 
@@ -291,8 +312,9 @@ final class GunDraw {
         int receiver = v.colour("R");
         float hw = v.halfWidth(), back = v.back();
         m.part(v, "R");
-        m.box(-hw, -1.25f, -1f, hw, 1.5f, back, Tile.PANEL);
-        m.box(hw, -0.5f, 0.5f, hw + 0.0625f, 0.5f, 3.5f, Tile.BORE);
+        body(m, v, hw, -1.25f, 1.5f, -1f, back);
+        if (!v.has("F"))
+            m.box(hw, -0.5f, 0.5f, hw + 0.0625f, 0.5f, 3.5f, Tile.BORE);
         // Top cover, hinged at the back; it lifts to lay a belt.
         m.push();
         m.turnX(-55f * p.cover(), 1.5f, 6f);
@@ -365,7 +387,7 @@ final class GunDraw {
             return;
         }
         if (v.has("F")) {
-            cylinder(m, v, p, -0.25f, -0.25f, 1.75f, 0.875f, 0.55f);
+            cylinder(m, v, p, CYL_Y, CYL_Z0, CYL_Z1, CYL_R, 0.55f);
             return;
         }
         if (!(v.boxMagazine() || p.magDrop() > 0) || p.magOut())
@@ -537,37 +559,72 @@ final class GunDraw {
         m.box(r - wall, y - r + wall, z0, r, y + r - wall, z1, tile);
     }
 
+    /** The colour an illuminated reticle shines. */
+    static int lamp(GunView v) {
+        return switch (v.variant("e")) {
+            case "ring_reticle" -> 0xFFFFA030;
+            case "cross_reticle" -> 0xFF40FF60;
+            default -> 0xFFFF3030;
+        };
+    }
+
     /** An optic on the top, or a lit dot on it. */
     private static void sight(GunMesh m, GunView v) {
         if (!v.has("S"))
             return;
         float top = v.top();
         float z0 = v.opticZ();
-        int lamp = switch (v.variant("e")) {
-            case "ring_reticle" -> 0xFFFFA030;
-            case "cross_reticle" -> 0xFF40FF60;
-            default -> 0xFFFF3030;
-        };
+        int lamp = lamp(v);
         m.part(v, "S");
         if (v.variant("S").equals("scope")) {
             float zs = z0 - 0.5f, ze = zs + v.scopeLength(), y = top + 1f;
             m.box(-0.25f, top, zs + 0.5f, 0.25f, y, zs + 1f, Tile.METAL);
             m.box(-0.25f, top, ze - 1f, 0.25f, y, ze - 0.5f, Tile.METAL);
-            tube(m, y, 0.375f, zs, ze, Tile.BRUSHED);
-            tube(m, y, 0.625f, zs - 1.25f, zs, Tile.METAL);
-            tube(m, y, 0.5f, ze, ze + 1f, Tile.METAL);
+            tube(m, y, 0.75f, zs, ze, Tile.BRUSHED);
+            tube(m, y, 0.875f, zs - 1.25f, zs, Tile.METAL);
+            tube(m, y, 0.875f, ze, ze + 1f, Tile.METAL);
             m.box(-0.25f, y + 0.375f, (zs + ze) / 2 - 0.25f, 0.25f, y + 0.75f, (zs + ze) / 2 + 0.25f, Tile.KNURL);
-            // No lens plates: the tube is open end to end, since the gun draws cutout and glass would be a solid face.
-            if (v.has("e"))
-                m.colour(lamp).glow(-0.0625f, y - 0.0625f, ze + 1.0625f, 0.0625f, y + 0.0625f, ze + 1.09375f, Tile.LAMP);
+            if (m.sighted)
+                scopeView(m, v, y, ze, lamp);
+            else // the objective's glass, seen from outside
+                m.pane(-0.75f, y - 0.75f, zs - 1f, 0.75f, y + 0.75f, zs - 0.9375f, 0x4096C8FF, false);
         } else {
             m.box(-0.5f, top, z0, 0.5f, top + 0.25f, z0 + 1.5f, Tile.METAL);
             m.box(-0.5f, top + 0.25f, z0, -0.375f, top + 1.25f, z0 + 0.5f, Tile.METAL);
             m.box(0.375f, top + 0.25f, z0, 0.5f, top + 1.25f, z0 + 0.5f, Tile.METAL);
             m.box(-0.5f, top + 1.25f, z0, 0.5f, top + 1.375f, z0 + 0.5f, Tile.METAL);
-            m.box(-0.375f, top + 0.25f, z0 + 0.1875f, 0.375f, top + 1.25f, z0 + 0.25f, Tile.GLASS);
+            // See-through: a pale tint on the window, and a lit dot you can look through.
+            m.pane(-0.375f, top + 0.25f, z0 + 0.1875f, 0.375f, top + 1.25f, z0 + 0.25f, 0x2896C8FF, false);
             if (v.has("e"))
-                m.colour(lamp).glow(-0.0625f, top + 0.6875f, z0 + 0.25f, 0.0625f, top + 0.8125f, z0 + 0.28125f, Tile.LAMP);
+                m.pane(-0.0625f, top + 0.6875f, z0 + 0.15625f, 0.0625f, top + 0.8125f, z0 + 0.1875f, lamp & 0xFFFFFF | 0x99000000, true);
+        }
+    }
+
+    /**
+     * Looking through a scope: a dark plate behind the eyepiece frames the lens window (the lens image,
+     * {@link GunLens}), with the reticle across it. Until the first lens frame is ready the window is dark.
+     */
+    private static void scopeView(GunMesh m, GunView v, float y, float ze, int lamp) {
+        float h = v.lensHalf(), zl = v.lensZ(), pz = ze + 1f, big = 4f;
+        m.colour(0xFF121212);
+        m.box(-big, y + h, pz, big, y + big, pz + 0.25f, Tile.METAL);
+        m.box(-big, y - big, pz, big, y - h, pz + 0.25f, Tile.METAL);
+        m.box(-big, y - h, pz, -h, y + h, pz + 0.25f, Tile.METAL);
+        m.box(h, y - h, pz, big, y + h, pz + 0.25f, Tile.METAL);
+        if (GunLens.ready())
+            m.lens(-h, y - h, h, y + h, zl);
+        else
+            m.box(-h, y - h, zl, h, y + h, zl + 0.0625f, Tile.METAL);
+        // Fine hairlines on the lens, lit when the scope has an illuminated reticle.
+        float zr = zl + 0.09375f, t = 0.015625f;
+        if (v.has("e")) {
+            m.colour(lamp);
+            m.glow(-h, y - t, zr, h, y + t, zr + 0.03125f, Tile.LAMP);
+            m.glow(-t, y - h, zr, t, y + h, zr + 0.03125f, Tile.LAMP);
+        } else {
+            m.colour(0xFF101010);
+            m.box(-h, y - t, zr, h, y + t, zr + 0.03125f, Tile.LAMP);
+            m.box(-t, y - h, zr, t, y + h, zr + 0.03125f, Tile.LAMP);
         }
     }
 

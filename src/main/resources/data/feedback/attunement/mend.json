@@ -61,6 +61,105 @@
     },
     "studs": {
       "kind": "mend"
+    },
+    "receiver": {
+      "kind": "mend"
+    },
+    "barrel": {
+      "kind": "mend"
+    },
+    "second_barrel": {
+      "kind": "mend"
+    },
+    "slide": {
+      "kind": "mend"
+    },
+    "bolt": {
+      "kind": "mend"
+    },
+    "trigger": {
+      "kind": "mend"
+    },
+    "cylinder": {
+      "kind": "mend"
+    },
+    "tube": {
+      "kind": "mend"
+    },
+    "belt": {
+      "kind": "mend"
+    },
+    "box_feed": {
+      "kind": "mend"
+    },
+    "sight": {
+      "kind": "mend"
+    },
+    "suppressor": {
+      "kind": "mend"
+    },
+    "muzzle_brake": {
+      "kind": "mend"
+    },
+    "eddy_sleeve": {
+      "kind": "mend"
+    },
+    "thermal_sleeve": {
+      "kind": "mend"
+    },
+    "counterweight": {
+      "kind": "mend"
+    },
+    "bipod": {
+      "kind": "mend"
+    },
+    "bayonet": {
+      "kind": "mend"
+    },
+    "selector": {
+      "kind": "mend"
+    },
+    "sculk_jacket": {
+      "kind": "mend"
+    },
+    "resonance": {
+      "kind": "mend"
+    },
+    "vent": {
+      "kind": "mend"
+    },
+    "shroud": {
+      "kind": "mend"
+    },
+    "winding": {
+      "kind": "mend"
+    },
+    "wrap": {
+      "kind": "mend"
+    },
+    "main_spring": {
+      "kind": "mend"
+    },
+    "steam_chest": {
+      "kind": "mend"
+    },
+    "obturator": {
+      "kind": "mend"
+    },
+    "hydraulic_buffer": {
+      "kind": "mend"
+    },
+    "lit_reticle": {
+      "kind": "mend"
+    },
+    "magnetic_sear": {
+      "kind": "mend"
+    },
+    "steam_valve": {
+      "kind": "mend"
+    },
+    "steam_lagging": {
+      "kind": "mend"
     }
   },
   "mirror": {
@@ -122,6 +221,105 @@
       "kind": "tithe"
     },
     "studs": {
+      "kind": "tithe"
+    },
+    "receiver": {
+      "kind": "tithe"
+    },
+    "barrel": {
+      "kind": "tithe"
+    },
+    "second_barrel": {
+      "kind": "tithe"
+    },
+    "slide": {
+      "kind": "tithe"
+    },
+    "bolt": {
+      "kind": "tithe"
+    },
+    "trigger": {
+      "kind": "tithe"
+    },
+    "cylinder": {
+      "kind": "tithe"
+    },
+    "tube": {
+      "kind": "tithe"
+    },
+    "belt": {
+      "kind": "tithe"
+    },
+    "box_feed": {
+      "kind": "tithe"
+    },
+    "sight": {
+      "kind": "tithe"
+    },
+    "suppressor": {
+      "kind": "tithe"
+    },
+    "muzzle_brake": {
+      "kind": "tithe"
+    },
+    "eddy_sleeve": {
+      "kind": "tithe"
+    },
+    "thermal_sleeve": {
+      "kind": "tithe"
+    },
+    "counterweight": {
+      "kind": "tithe"
+    },
+    "bipod": {
+      "kind": "tithe"
+    },
+    "bayonet": {
+      "kind": "tithe"
+    },
+    "selector": {
+      "kind": "tithe"
+    },
+    "sculk_jacket": {
+      "kind": "tithe"
+    },
+    "resonance": {
+      "kind": "tithe"
+    },
+    "vent": {
+      "kind": "tithe"
+    },
+    "shroud": {
+      "kind": "tithe"
+    },
+    "winding": {
+      "kind": "tithe"
+    },
+    "wrap": {
+      "kind": "tithe"
+    },
+    "main_spring": {
+      "kind": "tithe"
+    },
+    "steam_chest": {
+      "kind": "tithe"
+    },
+    "obturator": {
+      "kind": "tithe"
+    },
+    "hydraulic_buffer": {
+      "kind": "tithe"
+    },
+    "lit_reticle": {
+      "kind": "tithe"
+    },
+    "magnetic_sear": {
+      "kind": "tithe"
+    },
+    "steam_valve": {
+      "kind": "tithe"
+    },
+    "steam_lagging": {
       "kind": "tithe"
     }
   }

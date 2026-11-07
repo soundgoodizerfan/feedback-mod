@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
@@ -47,6 +30,8 @@ public final class RecallKinds {
     private static final int ANCHOR_TICKS = 40;
     /** Slowness amplitude that stops a walker (past -100% speed). [OPEN] until played. */
     private static final int ANCHOR_SLOW = 6;
+    /** Brass return: refund chance per level and its cap. [OPEN] until played. */
+    private static final float BRASS_PER_LEVEL = 0.15f, BRASS_CAP = 0.6f;
 
     /** Ticks between position samples, and how many are kept: 12 x 10 t = 6 s of history. [OPEN] until played. */
     private static final int SAMPLE_EVERY = 10;
@@ -131,6 +116,23 @@ public final class RecallKinds {
     }
 
     public static void register() {
+        // A planted round holds the target: the same slowness a thrown anchor gives.
+        io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStrike("anchor_round", (event, a) ->
+                event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ANCHOR_TICKS * a.level(), ANCHOR_SLOW, false, false)));
+    }
+
+    /** Brass return: after a shot, a magnetic receiver below its Curie point may put the spent round back (never above capacity). */
+    public static void refund(ItemStack gun, Level level, io.github.soundgoodizerfan.feedback.weapon.Cartridge round) {
+        float chance = 0f;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(gun))
+            if (a.kind().equals("brass_return") && a.material().separation().magnetic()
+                    && a.material().separation().curieTemperature()
+                    .map(curie -> io.github.soundgoodizerfan.feedback.weapon.GunCondition.temperature(gun, level).value() <= curie.value()).orElse(true))
+                chance += a.level() * BRASS_PER_LEVEL;
+        if (chance > 0 && level.random.nextFloat() < Math.min(BRASS_CAP, chance)
+                && io.github.soundgoodizerfan.feedback.weapon.GunAmmo.count(gun) < io.github.soundgoodizerfan.feedback.weapon.GunAmmo.capacity(gun))
+            gun.set(io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE.get(),
+                    io.github.soundgoodizerfan.feedback.weapon.GunAmmo.magazine(gun).push(round));
     }
 
     /** The return rate attunement gives {@code weapon} when thrown: 0 unless a recalling part is magnetic and below its Curie point. */

@@ -3,25 +3,165 @@
   "target": 0.45,
   "band": 0.14,
   "roles": {
-    "plate": { "kind": "fracture", "flaw": -1 },
-    "head": { "kind": "soak" },
-    "second_head": { "kind": "soak" },
-    "blade": { "kind": "soak" },
-    "handle": { "kind": "soak" },
-    "binding": { "kind": "soak" },
-    "tip": { "kind": "soak" },
-    "grip": { "kind": "soak" },
-    "guard": { "kind": "soak" },
-    "pommel": { "kind": "soak" },
-    "pivot": { "kind": "soak" },
-    "face": { "kind": "soak" },
-    "rim": { "kind": "soak" },
-    "limbs": { "kind": "soak" },
-    "string": { "kind": "soak" },
-    "prod": { "kind": "soak" },
-    "stock": { "kind": "soak" },
-    "lock": { "kind": "soak" },
-    "lining": { "kind": "soak" },
-    "studs": { "kind": "soak" }
+    "plate": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "head": {
+      "kind": "soak"
+    },
+    "second_head": {
+      "kind": "soak"
+    },
+    "blade": {
+      "kind": "soak"
+    },
+    "handle": {
+      "kind": "soak"
+    },
+    "binding": {
+      "kind": "soak"
+    },
+    "tip": {
+      "kind": "soak"
+    },
+    "grip": {
+      "kind": "soak"
+    },
+    "guard": {
+      "kind": "soak"
+    },
+    "pommel": {
+      "kind": "soak"
+    },
+    "pivot": {
+      "kind": "soak"
+    },
+    "face": {
+      "kind": "soak"
+    },
+    "rim": {
+      "kind": "soak"
+    },
+    "limbs": {
+      "kind": "soak"
+    },
+    "string": {
+      "kind": "soak"
+    },
+    "prod": {
+      "kind": "soak"
+    },
+    "stock": {
+      "kind": "soak"
+    },
+    "lock": {
+      "kind": "soak"
+    },
+    "lining": {
+      "kind": "soak"
+    },
+    "studs": {
+      "kind": "soak"
+    },
+    "receiver": {
+      "kind": "soak"
+    },
+    "barrel": {
+      "kind": "soak"
+    },
+    "second_barrel": {
+      "kind": "soak"
+    },
+    "slide": {
+      "kind": "soak"
+    },
+    "bolt": {
+      "kind": "soak"
+    },
+    "trigger": {
+      "kind": "soak"
+    },
+    "cylinder": {
+      "kind": "soak"
+    },
+    "tube": {
+      "kind": "soak"
+    },
+    "belt": {
+      "kind": "soak"
+    },
+    "box_feed": {
+      "kind": "soak"
+    },
+    "sight": {
+      "kind": "soak"
+    },
+    "suppressor": {
+      "kind": "soak"
+    },
+    "muzzle_brake": {
+      "kind": "soak"
+    },
+    "eddy_sleeve": {
+      "kind": "soak"
+    },
+    "thermal_sleeve": {
+      "kind": "soak"
+    },
+    "counterweight": {
+      "kind": "soak"
+    },
+    "bipod": {
+      "kind": "soak"
+    },
+    "bayonet": {
+      "kind": "soak"
+    },
+    "selector": {
+      "kind": "soak"
+    },
+    "sculk_jacket": {
+      "kind": "soak"
+    },
+    "resonance": {
+      "kind": "soak"
+    },
+    "vent": {
+      "kind": "soak"
+    },
+    "shroud": {
+      "kind": "soak"
+    },
+    "winding": {
+      "kind": "soak"
+    },
+    "wrap": {
+      "kind": "soak"
+    },
+    "main_spring": {
+      "kind": "soak"
+    },
+    "steam_chest": {
+      "kind": "soak"
+    },
+    "obturator": {
+      "kind": "soak"
+    },
+    "hydraulic_buffer": {
+      "kind": "soak"
+    },
+    "lit_reticle": {
+      "kind": "soak"
+    },
+    "magnetic_sear": {
+      "kind": "soak"
+    },
+    "steam_valve": {
+      "kind": "soak"
+    },
+    "steam_lagging": {
+      "kind": "soak"
+    }
   }
 }

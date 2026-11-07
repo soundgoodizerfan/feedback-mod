@@ -91,20 +91,20 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 | Part | Role |
 | --- | --- |
 | Gun Barrel | always; its variant is the launcher: smoothbore, rifled, coil, spring tube or steam tube ([Guns](Guns.md#barrels-and-launchers)); a **second** barrel only on a break action |
-| Receiver | always; its variant is the frame: handgun, long gun or machine gun |
+| Receiver | always; its variant is the frame: handgun, long gun or machine gun (both need a stock) |
 | Slide **or** Bolt | the action; its variant says which: self-loading or automatic (slide); bolt, lever, pump, break, self-loading or automatic (bolt) |
 | Trigger Group, Gun Grip | always; a grip is wood unless you choose another material; its variant is straight, pistol grip, finger-groove or palm-swell |
 | Cylinder, Magazine Tube, Belt Feed or Box Feed | optional: the feed (none means a box magazine on a slide; a bolt or lever with none loads one round by hand, and a Box Feed gives it a box magazine; a break action holds its barrels) |
-| Sight | optional: a reflex sight or a scope, an open tube with a clear view down the middle (none is iron sights) |
+| Sight | optional: a reflex sight (see-through glass, with a lit dot if illuminated) or a scope (aimed, the zoom shows inside its round lens with a reticle; the view outside the lens stays normal) (none is iron sights) |
 | A fitting part | each fitting on the gun, one to a slot |
 | Blocks of Redstone, Main Spring or Steam Chest | the barrel's launcher part, required: two Blocks of Redstone wind a coil barrel, a spring tube takes a main spring, a steam tube a steam chest |
-| A fibrous organic | wraps the grip |
+| A fibrous or sticky organic or polymer | wraps the grip |
 
-**Each part's material is on the part.** The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.
+**Each part's material is on the part.** A receiver can be a metal or a polymer (a plastic frame): it holds the action and takes none of the chamber's pressure. The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.
 
 ### Wrapping the grip
 
-Add any **fibrous or sticky** organic to the assembly (leather, wool, paper, honey) and it **wraps the grip**. Your hand holds the wrap, so the wrap's grip friction replaces the grip's. Kick goes down as friction goes up:
+Add any **fibrous or sticky** organic or polymer to the assembly (leather, wool, paper, honey, synthetic rubber) and it **wraps the grip**. Your hand holds the wrap, so the wrap's grip friction replaces the grip's. Kick goes down as friction goes up:
 
 | Grip surface | Friction |
 | --- | --- |

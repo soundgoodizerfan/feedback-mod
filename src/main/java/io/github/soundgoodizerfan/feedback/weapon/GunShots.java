@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
@@ -105,6 +88,9 @@ public final class GunShots {
         boolean gassed;
         /** A vial breaks once. */
         boolean vialSpent;
+        /** Barrel attunements read at fire time: signed bend toward (+) or away (-) from heavy armour (Lode); keeps speed in water (Tide). */
+        int bend;
+        boolean keepsSpeedWet;
 
         Shot(LivingEntity shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -321,6 +307,7 @@ public final class GunShots {
             if (GunItem.dualWielding(player))
                 figures = figures.oneHanded();
         }
+        figures = figures.withCycle(io.github.soundgoodizerfan.feedback.modular.attunement.SpringKinds.snap(gun));
         if (!together && !accept(shooter, figures, nowMs, hand))
             return false;
         LAST_SHOT.put(shooter.getUUID(), System.currentTimeMillis());
@@ -334,8 +321,13 @@ public final class GunShots {
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat, round.boreWear(materials));
+        io.github.soundgoodizerfan.feedback.modular.attunement.SpringKinds.fired(shooter, gun);
+        if (shooter instanceof Player attuned)
+            io.github.soundgoodizerfan.feedback.modular.attunement.PiezoKinds.fired(attuned, gun, figures);
+        io.github.soundgoodizerfan.feedback.modular.attunement.RecallKinds.refund(gun, level, round);
         var projectile = materials.get(round.slugMaterial());
-        fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed) * round.shape().spread()), yaw, pitch,
+        fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed) * round.shape().spread()
+                        * io.github.soundgoodizerfan.feedback.modular.attunement.MomentumKinds.braceSpread(shooter, gun)), yaw, pitch,
                 round.tracer(materials), round.incendiary(materials), round.pellets(),
                 round.hardness(materials), gun,
                 round.blast(materials), RubberRounds.isRubber(projectile), Flight.of(round, materials));
@@ -639,6 +631,8 @@ public final class GunShots {
         // Dead Eye: the shot is exact, and its round is harder than it was (it goes through more armour).
         boolean exact = shooter instanceof net.minecraft.server.level.ServerPlayer sp
                 && io.github.soundgoodizerfan.feedback.combat.cast.DeadEye.consume(sp);
+        int bend = io.github.soundgoodizerfan.feedback.modular.attunement.LodeKinds.bend(gun, level);
+        boolean wet = !gun.isEmpty() && io.github.soundgoodizerfan.feedback.modular.attunement.TideKinds.level(gun, "wet_round") > 0;
         for (int k = 0; k < pellets; k++) {
             float r = exact ? 0f : each.spreadDeg() * Mth.sqrt(level.random.nextFloat());
             float theta = level.random.nextFloat() * Mth.TWO_PI;
@@ -653,6 +647,8 @@ public final class GunShots {
             shot.hardness = exact ? hardness * 2f : hardness;
             shot.gun = gun.copyWithCount(1);
             shot.flight = flight;
+            shot.bend = bend;
+            shot.keepsSpeedWet = wet;
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
@@ -892,6 +888,9 @@ public final class GunShots {
         // A seed that lands on a block it can grow in is planted there.
         if (s.flight.seed() != null && blockPos != null && face == net.minecraft.core.Direction.UP)
             plant(level, s, blockPos.above());
+        if (blockPos != null && !s.gun.isEmpty())
+            io.github.soundgoodizerfan.feedback.modular.attunement.BloomKinds.landed(level, s.shooter, s.gun, blockPos,
+                    mayChange(level, s.shooter, blockPos));
         if (perks.isEmpty())
             return;
         int toxic = perks.getOrDefault(io.github.soundgoodizerfan.feedback.process.Material.Perk.TOXIC, 0);
@@ -979,6 +978,8 @@ public final class GunShots {
     private static boolean step(ServerLevel level, Shot s) {
         if (s.shooter.isRemoved() || ++s.age > FTuning.GUN_MAX_LIFE_TICKS)
             return false;
+        if (s.bend != 0)
+            s.velocity = io.github.soundgoodizerfan.feedback.modular.attunement.LodeKinds.bend(level, s.shooter, s.pos, s.velocity, s.bend);
         Vec3 from = s.pos, to = from.add(s.velocity);
 
         // A coin the shooter flipped, struck by this round: the metal decides what it does (CoinShot).
@@ -1029,6 +1030,8 @@ public final class GunShots {
             } finally {
                 inBullet = false;
             }
+            if (target instanceof net.minecraft.world.entity.monster.EnderMan && s.shooter instanceof net.minecraft.world.entity.player.Player shotBy)
+                io.github.soundgoodizerfan.feedback.core.Awards.give(shotBy, "combat/dodge_this");
             if (s.rubber && target instanceof LivingEntity struck)
                 RubberRounds.landed(s.shooter, struck);
             if (s.incendiary)
@@ -1101,7 +1104,7 @@ public final class GunShots {
 
         // Still flying: drag in the medium it ends the tick in, then gravity.
         boolean inFluid = !level.getFluidState(BlockPos.containing(to)).isEmpty();
-        float drag = inFluid ? FTuning.GUN_FLUID_DRAG_PER_TICK : FTuning.GUN_DRAG_PER_TICK * s.flight.drag();
+        float drag = inFluid && !s.keepsSpeedWet ? FTuning.GUN_FLUID_DRAG_PER_TICK : FTuning.GUN_DRAG_PER_TICK * s.flight.drag();
         s.velocity = s.velocity.scale(1 - drag).add(0, -FTuning.GUN_GRAVITY_PER_TICK, 0);
         s.pos = to;
         return true;

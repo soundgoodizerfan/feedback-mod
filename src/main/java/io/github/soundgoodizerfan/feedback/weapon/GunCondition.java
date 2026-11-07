@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
@@ -79,10 +62,14 @@ public final class GunCondition {
      */
     public static void afterShot(ItemStack gun, GunFigures f, Level level, float heat, float boreWear) {
         float t = temperature(gun, level).value() + f.muzzleEnergy() * FTuning.GUN_HEAT_PER_WORK * f.heatFactor()
+                * io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.gunShotHeat(gun)
                 / f.thermalMass().workPerTu();
         gun.set(FDataComponents.TEMPERATURE.get(), t);
         gun.set(FDataComponents.HEATED_AT.get(), level.getGameTime());
-        gun.set(FWeapons.GUN_WEAR.get(), wear(gun) + f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat)));
+        float worn = f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat));
+        // An attuned Ward part turns wear away as it does on a tool: n levels leave 1/(n+1) of it.
+        gun.set(FWeapons.GUN_WEAR.get(), wear(gun)
+                + worn / (1 + io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.levels(gun)));
     }
 
     /**

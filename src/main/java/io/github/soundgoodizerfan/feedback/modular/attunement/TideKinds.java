@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
@@ -76,6 +59,8 @@ public final class TideKinds {
 
     /** Extra damage per level of douse against a target that water hurts. [OPEN] until played */
     private static final float DOUSE_DAMAGE_PER_LEVEL = 3f;
+    /** Share of a hit a dry_round loses per level out of water. [OPEN] until played */
+    private static final float DRY_LOSS_PER_LEVEL = 0.25f;
 
     /** Blocks of lava a level of walker cools under the feet, beyond the first two. [OPEN] until played */
     private static final int WALKER_RADIUS_BASE = 2;
@@ -90,6 +75,11 @@ public final class TideKinds {
 
     public static void register() {
         // Tide+ on a head: a blow puts the target out, and hurts what water hurts (blazes, endermen, snow golems).
+        // Tide- on a barrel: the round only bites in water; out of it a share of the hit is lost.
+        AttunementKinds.onStrike("dry_round", (event, a) -> {
+            if (!event.getEntity().isInWater())
+                event.setAmount(event.getAmount() * Math.max(0f, 1f - a.level() * DRY_LOSS_PER_LEVEL));
+        });
         AttunementKinds.onStrike("douse", (event, a) -> {
             LivingEntity target = event.getEntity();
             if (target.isSensitiveToWater())
@@ -117,7 +107,7 @@ public final class TideKinds {
     }
 
     /** The summed level of {@code kind} across the parts of {@code stack}. */
-    static int level(ItemStack stack, String kind) {
+    public static int level(ItemStack stack, String kind) {
         int n = 0;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
             if (a.kind().equals(kind))

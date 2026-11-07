@@ -19,6 +19,12 @@
     },
     "studs": {
       "kind": "worn_ring"
+    },
+    "muzzle_brake": {
+      "kind": "ring"
+    },
+    "suppressor": {
+      "kind": "ring"
     }
   },
   "mirror": {
@@ -39,6 +45,12 @@
     },
     "studs": {
       "kind": "worn_hush"
+    },
+    "muzzle_brake": {
+      "kind": "hush"
+    },
+    "suppressor": {
+      "kind": "hush"
     }
   }
 }

@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
@@ -58,7 +41,27 @@ public final class HeatKinds {
     /** Frozen ticks past the point where freezing starts to hurt, the most blows can stack. [OPEN] until played */
     private static final int FREEZE_OVERSTACK = 40;
 
+    /** Gun barrel cooling: share added per level of {@code vent_cold}, and the most the barrel may cool at (a trade, not a freeze). [OPEN] until played */
+    private static final float VENT_COLD_PER_LEVEL = 0.3f, VENT_COLD_MAX = 3f;
+    /** Gun barrel heat: share of extra heat per shot per level of {@code vent_hot}, and its ceiling. [OPEN] until played */
+    private static final float VENT_HOT_PER_LEVEL = 0.25f, VENT_HOT_MAX = 2.5f;
+
     private HeatKinds() {
+    }
+
+    private static float gunMult(ItemStack gun, String kind, float perLevel, float max) {
+        int n = TideKinds.level(gun, kind);
+        return n == 0 ? 1f : Math.min(max, 1f + perLevel * n);
+    }
+
+    /** Multiplier on a gun's cooling rate: 1 without a {@code vent_cold} part. */
+    public static float gunCooling(ItemStack gun) {
+        return gunMult(gun, "vent_cold", VENT_COLD_PER_LEVEL, VENT_COLD_MAX);
+    }
+
+    /** Multiplier on the heat a shot puts in the barrel: 1 without a {@code vent_hot} part. */
+    public static float gunShotHeat(ItemStack gun) {
+        return gunMult(gun, "vent_hot", VENT_HOT_PER_LEVEL, VENT_HOT_MAX);
     }
 
     public static void register() {

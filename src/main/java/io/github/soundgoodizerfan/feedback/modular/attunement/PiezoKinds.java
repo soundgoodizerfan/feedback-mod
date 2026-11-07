@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
@@ -62,7 +45,49 @@ public final class PiezoKinds {
     /** Damage over which a soak plate cuts the blow, the share of the excess cut per level, and its ceiling. [OPEN] until played */
     private static final float SOAK_ABOVE = 6f, SOAK_CUT_PER_LEVEL = 0.25f, SOAK_CUT_MAX = 0.75f;
 
+    /** Volts per joule of muzzle energy per level that a shot puts into a charged round in the pack (a hand-sized source). [OPEN] until played */
+    private static final float CYCLE_VOLTS_PER_JOULE = 0.002f;
+    /** Muzzle energy below and above which a shot reads as glancing or heavy on the gauge. [OPEN] until played */
+    private static final float SHOT_GLANCING = 200f, SHOT_HEAVY = 1500f;
+
     private PiezoKinds() {
+    }
+
+    /**
+     * A shot of a gun with a piezo bolt or slide: {@code cycle_charge} puts charge into the first charged jar round
+     * in the shooter's pack, to the same low cap a hand pulse reaches; {@code cycle_gauge} reports the shot's muzzle
+     * energy in words, and in a figure when the shooter carries an instrument for it.
+     */
+    public static void fired(Player shooter, ItemStack gun, io.github.soundgoodizerfan.feedback.weapon.GunFigures f) {
+        int charge = 0, gauge = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(gun)) {
+            if (a.kind().equals("cycle_charge"))
+                charge += a.level();
+            else if (a.kind().equals("cycle_gauge"))
+                gauge += a.level();
+        }
+        if (charge > 0) {
+            var inv = shooter.getInventory();
+            for (int i = 0; i < inv.getContainerSize(); i++) {
+                var round = inv.getItem(i).get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get());
+                if (round == null || !round.charged())
+                    continue;
+                long now = shooter.level().getGameTime();
+                var at = round.at(now);
+                float volts = Math.min(JAR_CAP_VOLTS, at.volts() + f.muzzleEnergy() * charge * CYCLE_VOLTS_PER_JOULE);
+                inv.getItem(i).set(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get(), at.withVolts(volts, now));
+                break;
+            }
+        }
+        if (gauge > 0) {
+            float e = f.muzzleEnergy();
+            Component word = Component.translatable(e < SHOT_GLANCING ? "feedback.piezo.glancing"
+                    : e < SHOT_HEAVY ? "feedback.piezo.solid" : "feedback.piezo.heavy");
+            var instrument = io.github.soundgoodizerfan.feedback.instrument.Instruments.reading(shooter,
+                    io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE);
+            shooter.displayClientMessage(instrument == null ? word : Component.empty().append(word).append(" (" + io.github.soundgoodizerfan.feedback.instrument.Instruments.format(
+                    e, instrument.resolution(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE)) + ")"), true);
+        }
     }
 
     public static void register() {

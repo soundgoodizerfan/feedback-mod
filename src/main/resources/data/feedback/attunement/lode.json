@@ -16,6 +16,12 @@
     },
     "studs": {
       "kind": "worn_draw"
+    },
+    "barrel": {
+      "kind": "draw_round"
+    },
+    "second_barrel": {
+      "kind": "draw_round"
     }
   },
   "mirror": {
@@ -33,6 +39,12 @@
     },
     "studs": {
       "kind": "worn_fling"
+    },
+    "barrel": {
+      "kind": "fling_round"
+    },
+    "second_barrel": {
+      "kind": "fling_round"
     }
   }
 }

@@ -13,6 +13,12 @@
     "tip": {
       "kind": "extra_damage",
       "flaw": 1
+    },
+    "barrel": {
+      "kind": "extra_damage"
+    },
+    "second_barrel": {
+      "kind": "extra_damage"
     }
   },
   "mirror": {
@@ -35,6 +41,12 @@
     "tip": {
       "kind": "pad",
       "flaw": 0
+    },
+    "barrel": {
+      "kind": "pad"
+    },
+    "second_barrel": {
+      "kind": "pad"
     }
   }
 }

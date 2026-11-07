@@ -13,6 +13,12 @@
     },
     "plate": {
       "kind": "arc"
+    },
+    "bolt": {
+      "kind": "cycle_charge"
+    },
+    "slide": {
+      "kind": "cycle_charge"
     }
   },
   "mirror": {
@@ -27,6 +33,12 @@
     },
     "plate": {
       "kind": "soak"
+    },
+    "bolt": {
+      "kind": "cycle_gauge"
+    },
+    "slide": {
+      "kind": "cycle_gauge"
     }
   }
 }

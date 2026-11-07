@@ -1,27 +1,12 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
 import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
 import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.registry.FWeapons;
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -51,6 +36,9 @@ public final class MendKinds {
     /** Experience points a level of tithe pays out per kill, and the durability it takes in exchange. [OPEN] until played */
     private static final int TITHE_XP_PER_LEVEL = 3, TITHE_WEAR_PER_LEVEL = 1;
 
+    /** Bore wear (0 as built, condition floors at 0.6) Mend closes per level per mend, and Tithe adds per level per kill. [OPEN] until played */
+    private static final float GUN_REPAIR_PER_LEVEL = 0.0005f, TITHE_GUN_WEAR_PER_LEVEL = 0.002f;
+
     private MendKinds() {
     }
 
@@ -64,7 +52,8 @@ public final class MendKinds {
             if (slot.getType() == EquipmentSlot.Type.ANIMAL_ARMOR)
                 continue;
             ItemStack stack = player.getItemBySlot(slot);
-            if (!stack.isDamaged() || (player.totalExperience <= 0 && ReservoirKinds.stored(stack) <= 0))
+            float boreWear = GunCondition.wear(stack);
+            if ((!stack.isDamaged() && boreWear <= 0f) || (player.totalExperience <= 0 && ReservoirKinds.stored(stack) <= 0))
                 continue;
             int level = 0;
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
@@ -76,6 +65,9 @@ public final class MendKinds {
             if (ReservoirKinds.take(stack, XP_COST) < XP_COST)
                 player.giveExperiencePoints(-XP_COST);
             stack.setDamageValue(Math.max(0, stack.getDamageValue() - level * REPAIR_PER_LEVEL));
+            // A gun has no durability: its bore wear is what Mend closes.
+            if (boreWear > 0f)
+                stack.set(FWeapons.GUN_WEAR.get(), Math.max(0f, boreWear - level * GUN_REPAIR_PER_LEVEL));
         }
     }
 
@@ -101,5 +93,7 @@ public final class MendKinds {
             ExperienceOrb.award((ServerLevel) killer.level(), event.getEntity().position(), pay);
         if (weapon.isDamageableItem())
             weapon.setDamageValue(Math.min(weapon.getMaxDamage() - 1, weapon.getDamageValue() + level * TITHE_WEAR_PER_LEVEL));
+        else if (weapon.has(FWeapons.GUN_WEAR.get()))
+            weapon.set(FWeapons.GUN_WEAR.get(), GunCondition.wear(weapon) + level * TITHE_GUN_WEAR_PER_LEVEL);
     }
 }

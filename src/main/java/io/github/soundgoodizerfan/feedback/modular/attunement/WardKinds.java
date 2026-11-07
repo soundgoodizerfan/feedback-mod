@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
@@ -40,10 +23,7 @@ public final class WardKinds {
      * ever shortens wear a use or a misuse already caused.
      */
     public static int soak(ItemStack stack, int amount) {
-        int n = 0;
-        for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
-            if (a.kind().equals("soak"))
-                n += a.level();
+        int n = levels(stack);
         if (n == 0)
             return amount;
         int kept = 0;
@@ -51,6 +31,15 @@ public final class WardKinds {
             if (java.util.concurrent.ThreadLocalRandom.current().nextInt(n + 1) == 0)
                 kept++;
         return kept;
+    }
+
+    /** The Ward levels across {@code stack}'s parts. A gun's bore wear is divided by {@code levels + 1}, the same odds as a tool's. */
+    public static int levels(ItemStack stack) {
+        int n = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
+            if (a.kind().equals("soak"))
+                n += a.level();
+        return n;
     }
 
     public static void register() {

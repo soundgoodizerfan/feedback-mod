@@ -16,6 +16,12 @@
     },
     "lining": {
       "kind": "worn_grip"
+    },
+    "barrel": {
+      "kind": "stick"
+    },
+    "second_barrel": {
+      "kind": "stick"
     }
   },
   "mirror": {
@@ -33,6 +39,12 @@
     },
     "lining": {
       "kind": "worn_slick"
+    },
+    "barrel": {
+      "kind": "slick"
+    },
+    "second_barrel": {
+      "kind": "slick"
     }
   }
 }

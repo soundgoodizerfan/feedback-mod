@@ -2,14 +2,41 @@
   "target": 0.85,
   "band": 0.07,
   "roles": {
-    "head": { "kind": "mark", "flaw": 0 },
-    "second_head": { "kind": "mark", "flaw": 0 },
-    "blade": { "kind": "mark", "flaw": 0 },
-    "tip": { "kind": "mark", "flaw": 0 }
+    "head": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "second_head": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "blade": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "tip": {
+      "kind": "mark",
+      "flaw": 0
+    },
+    "sight": {
+      "kind": "mark"
+    },
+    "lit_reticle": {
+      "kind": "mark"
+    }
   },
   "mirror": {
-    "plate": { "kind": "taunt", "flaw": 2 },
-    "lining": { "kind": "taunt", "flaw": 2 },
-    "studs": { "kind": "taunt", "flaw": 2 }
+    "plate": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "lining": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "studs": {
+      "kind": "taunt",
+      "flaw": 2
+    }
   }
 }

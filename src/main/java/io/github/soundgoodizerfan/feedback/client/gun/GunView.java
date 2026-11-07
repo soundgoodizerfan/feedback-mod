@@ -1,22 +1,5 @@
-/*
- * Feedback -- a Minecraft technology mod.
- * Copyright (C) 2026 soundgoodizerfan
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later
- * version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Assets under src/main/resources/assets are NOT covered by this licence.
- * See LICENSE-ASSETS.
- */
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.gun;
 
 import java.util.HashMap;
@@ -132,6 +115,11 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         String action = slide ? variants.getOrDefault("A", "self_loading")
                 : colours.containsKey("K") ? variants.getOrDefault("K", "bolt") : "none";
         float[] b = barrel(type, "B", design.part("B"));
+        // A pistol barrel sits inside the slide (half 0.875 wide, 0.75 tall); wider than 0.625 it shares or pokes through the slide's faces.
+        if (kind == GunLayout.Type.HANDGUN && slide && b[0] > 0) {
+            b[1] = Math.min(b[1], 0.625f);
+            b[2] = Math.min(b[2], b[1] - 0.125f);
+        }
         float[] d = barrel(type, "D", design.part("D"));
         return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, surfaces, woods, glow, mag, rounds);
     }
@@ -260,6 +248,21 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         return type == GunLayout.Type.HANDGUN ? 3f : 4.5f;
     }
 
+    /** The scope lens's plane: inside the eyepiece, a half pixel from its front. */
+    float lensZ() {
+        return opticZ() - 0.5f + scopeLength() + 0.5f;
+    }
+
+    /** Half the width of the lens window, pixels. */
+    float lensHalf() {
+        return 0.75f;
+    }
+
+    /** The angle the lens window spans from the eye, degrees: the field of view a zoom of 1 would show in it. */
+    float lensAngle() {
+        return (float) Math.toDegrees(2 * Math.atan(lensHalf() / (eye()[2] - lensZ())));
+    }
+
     /** Front of a long gun's rear iron sight. */
     float rearSight() {
         return type == GunLayout.Type.MACHINE_GUN ? back() - 3.5f : back() - 2f;
@@ -274,7 +277,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     float[] eye() {
         float z;
         if (has("S"))
-            z = variant("S").equals("scope") ? opticZ() - 0.5f + scopeLength() + 1f + 2.5f : opticZ() + 3.5f;
+            z = variant("S").equals("scope") ? opticZ() - 0.5f + scopeLength() + 1f + 1.5f : opticZ() + 3.5f;
         else if (type == GunLayout.Type.HANDGUN)
             z = openFrame() ? 3.5f : 3.5f;
         else

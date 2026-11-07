@@ -20,6 +20,21 @@
     },
     "plate": {
       "kind": "ignite_attacker"
+    },
+    "barrel": {
+      "kind": "ignite_target"
+    },
+    "second_barrel": {
+      "kind": "ignite_target"
+    },
+    "vent": {
+      "kind": "vent_hot"
+    },
+    "shroud": {
+      "kind": "vent_hot"
+    },
+    "thermal_sleeve": {
+      "kind": "vent_hot"
     }
   },
   "mirror": {
@@ -34,6 +49,21 @@
     },
     "tip": {
       "kind": "freeze"
+    },
+    "barrel": {
+      "kind": "freeze"
+    },
+    "second_barrel": {
+      "kind": "freeze"
+    },
+    "vent": {
+      "kind": "vent_cold"
+    },
+    "shroud": {
+      "kind": "vent_cold"
+    },
+    "thermal_sleeve": {
+      "kind": "vent_cold"
     }
   }
 }
