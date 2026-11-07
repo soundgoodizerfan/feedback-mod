@@ -148,7 +148,16 @@ The **payload** slot is optional. Whatever you put there is carried in the bulle
 | --- | --- |
 | Glowstone Dust or Redstone Dust | **Tracer**: the bullet draws a bright line along its path. |
 | Gunpowder or Blaze Powder | **Incendiary**: sets whatever it hits on fire for 5 s, and lights fire where it lands if fire spread is on and you're allowed to build there. |
-| A dust with a perk that works on what it strikes | The perk lands on a living thing the round hits, as it does for a struck target: poison, chill, cling (slows), radiant (withers and outlines) or bounce (throws up). Hover the round to see the perk. |
+| A dust with a **toxic** perk (lead, osmium) | **Gas round**: poisons what it hits and lets a lingering [fume cloud](Hazards.md) go where it lands, once per round. A stronger perk makes a stronger cloud. |
+| **Chill** (ice) | Chills what it hits, as powder snow does. |
+| **Cling** | Slows what it hits, as honey does. |
+| **Radiant** (uranium) | Withers what it hits and outlines it. |
+| **Bounce** (slime) | Throws what it hits upward. |
+| **Fire aspect** | Sets what it hits alight. |
+| **Echo** | Outlines what it hits so you can see it for a few seconds. |
+| **Smite** (silver) or **impaling** (prismarine) | **Silvered or barbed round**: extra damage to the undead, or to sea creatures. |
+| **Blink** (ender pearl) | **Hop round**: throws what it hits a few blocks in a random direction, further for a stronger perk. |
+| **Siphon** (sculk) | A kill with it yields a little extra experience. |
 
 ## Loading
 

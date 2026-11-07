@@ -2141,6 +2141,8 @@ public final class FTuning {
     public static final int GUN_RICOCHET_MAX = 2;
     /** The projectile's hardness when a shot names no material: lead's. */
     public static final float GUN_DEFAULT_PROJECTILE_HARDNESS = 0.3f;
+    /** How far a hop round throws what it hits, blocks per level of the payload's blink perk. Placeholder. */
+    public static final float GUN_HOP_BLOCKS_PER_LEVEL = 6f;
     /** Share of a jacketed bullet's volume that is its core (the rest is jacket). Placeholder. */
     public static final float GUN_CORE_FRACTION = 0.7f;
     /** A sabot's core meets armour this much harder than its metal, and flies on with this share of the drag. Placeholders. */

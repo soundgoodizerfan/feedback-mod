@@ -101,6 +101,8 @@ public final class GunShots {
         ItemStack gun = ItemStack.EMPTY;
         /** What the round's shape and payload do to the flight and the hit. */
         Flight flight = Flight.PLAIN;
+        /** A toxic payload lets its cloud go once, where it first lands. */
+        boolean gassed;
 
         Shot(LivingEntity shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -845,6 +847,40 @@ public final class GunShots {
         return true;
     }
 
+    /**
+     * What a payload does where the round lands, read from the payload material's own perks: a toxic one lets its fume cloud
+     * go once (a gas round), a perk that works on a living thing is applied to it (poison, chill, cling, radiant, bounce, fire,
+     * the echo's outline), an ender-like one hops it a few blocks, a sculk one pays a little experience for a kill. Hard
+     * on the undead and on sea things is a damage bonus, added where the damage is worked out.
+     *
+     * @param target what was struck, or null for a block.
+     */
+    private static void payloadHit(ServerLevel level, Shot s, Vec3 at, Entity target) {
+        var perks = s.flight.perks();
+        if (perks.isEmpty())
+            return;
+        int toxic = perks.getOrDefault(io.github.soundgoodizerfan.feedback.process.Material.Perk.TOXIC, 0);
+        if (toxic > 0 && !s.gassed) {
+            s.gassed = true;
+            io.github.soundgoodizerfan.feedback.core.hazard.FumeCloud.release(level, at, toxic);
+        }
+        if (!(target instanceof LivingEntity struck))
+            return;
+        io.github.soundgoodizerfan.feedback.modular.MaterialPerks.affect(perks, struck);
+        Integer hop = perks.get(io.github.soundgoodizerfan.feedback.process.Material.Perk.BLINK);
+        if (hop != null)
+            for (int i = 0; i < 8; i++) {
+                double reach = FTuning.GUN_HOP_BLOCKS_PER_LEVEL * hop;
+                if (struck.randomTeleport(struck.getX() + (level.random.nextDouble() - 0.5) * 2 * reach, struck.getY(),
+                        struck.getZ() + (level.random.nextDouble() - 0.5) * 2 * reach, true))
+                    break;
+            }
+        Integer siphon = perks.get(io.github.soundgoodizerfan.feedback.process.Material.Perk.SIPHON);
+        if (siphon != null && !struck.isAlive())
+            net.minecraft.world.entity.ExperienceOrb.award(level, struck.position(),
+                    siphon * io.github.soundgoodizerfan.feedback.modular.ModularTuning.PERK_SIPHON_XP_PER_LEVEL);
+    }
+
     /** One tick's travel. @return whether the shot is still flying. */
     private static boolean step(ServerLevel level, Shot s) {
         if (s.shooter.isRemoved() || ++s.age > FTuning.GUN_MAX_LIFE_TICKS)
@@ -871,6 +907,9 @@ public final class GunShots {
         if (hit != null) {
             Entity target = hit.getEntity();
             float damage = s.energy() * FTuning.GUN_DAMAGE_PER_WORK * s.flight.damage();
+            // A payload that is hard on the undead or the sea's things hits them harder.
+            if (target instanceof LivingEntity victim && !s.flight.perks().isEmpty())
+                damage += io.github.soundgoodizerfan.feedback.modular.MaterialPerks.bonus(s.flight.perks(), victim);
             // A Feedbacker in its parry window punches the round back instead of taking it.
             if (target instanceof LivingEntity catcher
                     && Parrying.catchBullet(level, s.shooter, catcher, s.massMu, (float) s.velocity.length(), damage))
@@ -900,8 +939,7 @@ public final class GunShots {
                 RubberRounds.landed(s.shooter, struck);
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
-            if (!s.flight.perks().isEmpty() && target instanceof LivingEntity struck)
-                io.github.soundgoodizerfan.feedback.modular.MaterialPerks.affect(s.flight.perks(), struck);
+            payloadHit(level, s, hit.getLocation(), target);
             GunFu.bulletHit(level, s.shooter, target, s.impulse);
             landed(level, s, target, hit.getLocation());
             if (detonate(level, s, hit.getLocation()))
@@ -940,6 +978,7 @@ public final class GunShots {
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),
                     p.x, p.y, p.z, 6, 0.05, 0.05, 0.05, 0.1);
             landed(level, s, null, p);
+            payloadHit(level, s, p, null);
             if (detonate(level, s, p.add(Vec3.atLowerCornerOf(block.getDirection().getNormal()).scale(0.1))))
                 return false;
             if (s.incendiary) {

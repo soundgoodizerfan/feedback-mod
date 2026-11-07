@@ -60,7 +60,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
 
     /** The perks a payload may carry to a living thing it strikes: what the press accepts besides a tracer, an incendiary or a filler. */
     private static final java.util.Set<Material.Perk> PAYLOAD_PERKS = java.util.EnumSet.of(Material.Perk.TOXIC,
-            Material.Perk.CHILL, Material.Perk.CLING, Material.Perk.RADIANT, Material.Perk.BOUNCE);
+            Material.Perk.CHILL, Material.Perk.CLING, Material.Perk.RADIANT, Material.Perk.BOUNCE, Material.Perk.SMITE,
+            Material.Perk.IMPALING, Material.Perk.ECHO, Material.Perk.FIRE_ASPECT, Material.Perk.BLINK, Material.Perk.SIPHON);
 
     /** The form names a charge or a payload may be in: a dust. A whole rod is not a charge. */
     private static final java.util.Set<String> LOOSE_FORMS = java.util.Set.of("dust");
