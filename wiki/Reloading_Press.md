@@ -26,7 +26,7 @@ P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and I is a Wrought Iron Ingo
 
 The panel has three panes: the components on the left, the die on the right, and the round's sheet along the bottom.
 
-The die has two steppers. **Bore** runs from 5 to 20 mm in 1 mm steps; the label also names the nearest of four sizes (rimfire 5 mm, pistol 9 mm, intermediate 12 mm, magnum 20 mm). Every round you seat comes out at that size, and only guns of that bore (within 1 mm, on a built gun; see [Gun Parts](Gun_Parts.md#hitting-the-target)) will take it. **Shape** is **As is** (the blank is seated as it is) or one of round ball, flat nose, hollow point, pointed, or, for a nugget, birdshot, buckshot, large shot or flechette; see [Bullet shapes](Ammunition.md#bullet-shapes) for what each does and which metals a cold die can stamp.
+The die has two steppers. **Bore** runs from 5 to 20 mm in 1 mm steps. Every round you seat comes out at that size, and only guns of that bore (within 1 mm, on a built gun; see [Gun Parts](Gun_Parts.md#hitting-the-target)) will take it. **Shape** is **As is** (the blank is seated as it is) or one of round ball, flat nose, hollow point, pointed, or, for a nugget, birdshot, buckshot, large shot or flechette; see [Bullet shapes](Ammunition.md#bullet-shapes) for what each does and which metals a cold die can stamp.
 
 Press **Seat** to make one round.
 

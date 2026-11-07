@@ -106,7 +106,7 @@ A [flintlock](#flintlock) is a flintlock pistol or musket. A name changes nothin
 
 ### Bore
 
-Bore is any whole number from 5 to 20 mm. The [Reloading Press](Reloading_Press.md) labels it with the nearest of four named sizes: **rimfire** (5 mm), **pistol** (9 mm), **intermediate** (12 mm) and **magnum** (20 mm). The barrel's *real* length, bore and wall are what the drill, lathe and cutoff wheel left on it ([Gun Parts](Gun_Parts.md)), and how loosely the round sits is in the figures.
+Bore is any whole number from 5 to 20 mm, and the [Reloading Press](Reloading_Press.md) steps through the same range. The barrel's *real* length, bore and wall are what the drill, lathe and cutoff wheel left on it ([Gun Parts](Gun_Parts.md)), and how loosely the round sits is in the figures.
 
 ### Actions and feeds
 

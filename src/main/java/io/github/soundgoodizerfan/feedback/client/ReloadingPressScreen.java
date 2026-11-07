@@ -27,7 +27,6 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.weapon.BulletShape;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
-import io.github.soundgoodizerfan.feedback.weapon.GunCalibres;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu;
 import net.minecraft.client.gui.GuiGraphics;
@@ -79,7 +78,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     protected void init() {
         super.init();
         addRenderableWidget(GuiStyle.stepper(skin, leftPos + 16, topPos + 130, 118, 14, "<", ">",
-                () -> Component.translatable("modular.feedback.variant." + GunCalibres.nearest(bore).name()).getString() + ", " + bore + " mm",
+                () -> bore + " mm",
                 dir -> setBore(bore + dir), true, FSounds.UI_DETENT::get));
         addRenderableWidget(GuiStyle.stepper(skin, leftPos + 150, topPos + 130, 118, 14, "<", ">",
                 () -> shapeName(die), this::stepDie, true, FSounds.UI_DETENT::get));

@@ -35,7 +35,7 @@ import net.minecraft.world.item.ItemStack;
 public class ReloadingPressMenu extends AbstractContainerMenu {
 
     /** Case, charge, second charge, bullet, core, payload, then the round that comes out. */
-    public static final int[][] SLOT_XY = {{22, 38}, {70, 38}, {92, 38}, {150, 38}, {172, 38}, {232, 38}, {284, 82}};
+    public static final int[][] SLOT_XY = {{22, 38}, {66, 38}, {100, 38}, {150, 38}, {184, 38}, {236, 38}, {284, 82}};
     public static final int HOTBAR_X = 80, HOTBAR_Y = 212;
     public static final int WIDTH = 320, HEIGHT = 234;
 
