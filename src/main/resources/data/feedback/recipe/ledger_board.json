@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": { "tag": "minecraft:planks" },
+    "S": { "item": "minecraft:paper" },
+    "F": { "tag": "minecraft:wooden_fences" }
+  },
+  "pattern": [
+    "PPP",
+    "PSP",
+    "F F"
+  ],
+  "result": { "count": 1, "id": "feedback:ledger_board" }
+}

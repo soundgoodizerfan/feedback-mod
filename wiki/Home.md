@@ -43,7 +43,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Logistics:** [Conveyor Belt](Conveyor_Belt.md) · [Belt Head Roller](Belt_Head_Roller.md) · [Belt Modules](Belt_Modules.md) · [Pneumatic Tube](Pneumatic_Tube.md) · [Carrier](Carrier.md) · [Tube Junction](Tube_Junction.md) · [Tube Station](Tube_Station.md) · [Ender Port](Ender_Port.md) · [Liquid Teleportant](Liquid_Teleportant.md) · [Synthetic Pearl](Synthetic_Pearl.md) · [Tuned Eye](Tuned_Eye.md)
 
-**Automation:** [Pivot Mast](Pivot_Mast.md) · [Dark Cell](Dark_Cell.md) · [Sensors](Sensors.md) · [Redstone Bridges](Redstone_Bridges.md) · [Stoker](Stoker.md) · [Counter](Counter.md) · [Kiln Zone](Kiln_Zone.md) · [Creel](Creel.md) · [Fish Wheel](Fish_Wheel.md)
+**Automation:** [Pivot Mast](Pivot_Mast.md) · [Dark Cell](Dark_Cell.md) · [Sensors](Sensors.md) · [Redstone Bridges](Redstone_Bridges.md) · [Stoker](Stoker.md) · [Counter](Counter.md) · [Depot](Depot.md) · [Ledger Board](Ledger_Board.md) · [Market Cross](Market_Cross.md) · [Kiln Zone](Kiln_Zone.md) · [Creel](Creel.md) · [Fish Wheel](Fish_Wheel.md)
 
 **Shaping metal:** [Hammer](Hammer.md) · [Crank Linkage](Crank_Linkage.md) · [Mechanical Hammer](Mechanical_Hammer.md) · [Mechanical Press](Mechanical_Press.md) · [Rolling Mill](Rolling_Mill.md) · [Wire Drawer](Wire_Drawer.md) · [Drill Press](Drill_Press.md) · [Lathe](Lathe.md) · [Grinding Wheel](Grinding_Wheel.md)
 
@@ -67,7 +67,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 
-**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Ancient Debris](Ancient_Debris.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Redstone Lamp](Redstone_Lamp.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Iron Ore](Iron_Ore.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md) · [End Stone](End_Stone.md) · [Shulker](Shulker.md) · [Elytra](Elytra.md)
+**Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Ancient Debris](Ancient_Debris.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Redstone Lamp](Redstone_Lamp.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Iron Ore](Iron_Ore.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md) · [Village Guilds](Village_Guilds.md) · [Village Stalls](Village_Stalls.md) · [End Stone](End_Stone.md) · [Shulker](Shulker.md) · [Elytra](Elytra.md)
 
 **Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
 

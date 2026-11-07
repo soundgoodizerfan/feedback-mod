@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": { "tag": "minecraft:logs" },
+    "B": { "item": "minecraft:stone_bricks" },
+    "E": { "item": "minecraft:emerald" }
+  },
+  "pattern": [
+    " E ",
+    "BLB",
+    " L "
+  ],
+  "result": { "count": 1, "id": "feedback:market_cross" }
+}

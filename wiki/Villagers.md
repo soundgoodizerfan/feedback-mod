@@ -131,7 +131,18 @@ Some professions sell a **blueprint**, one per day each, at a high price. A line
 
 Blueprints for tools and armor carry the type's default design. Gun blueprints carry that gun's design. A recipe card carries a dish layout: open it to read the layout and the predicted figures.
 
- The wandering trader sells a small fixed list with a daily stock and no standing.
+The wandering trader sells a small fixed list with a daily stock and no standing. On market day it sets up at a [Market Cross](Market_Cross.md).
+
+### Standards stall
+
+The cartographer sells calibrated reference instruments: calipers, thermometer, balance scale, pressure gauge, hydrometer and survey meter. A reference instrument reads exact figures and is marked "(reference standard)". It costs 24 to 28 emeralds, needs honoured standing and is sold once a week. See [Instruments](Instruments.md).
+
+## Beyond the screen
+
+- A villager also buys from a stocked [Counter](Counter.md) and delivers at the [Ledger Board](Ledger_Board.md), which lists every open order nearby and posts contracts.
+- Villagers of one profession working close together form a [guild](Village_Guilds.md).
+- Buy lines pay differently by the village's biome type: snow and taiga villages pay more for food, wool and coal, desert villages less. Some shop lines are sold only in certain biome types. Food pays by freshness: fresh in full, going off half, rotten refused.
+- Villagers who are farmers plant and harvest the mod's [crops](Crops.md). Generated villages can contain [stalls, a plaza and guild yards](Village_Stalls.md).
 
 ## See also
 
