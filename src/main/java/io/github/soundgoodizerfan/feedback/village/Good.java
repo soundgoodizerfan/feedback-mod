@@ -35,13 +35,17 @@ import net.minecraft.world.item.ItemStack;
  * @param blueprint     the stack is a blueprint of this design: the id of a gun blueprint pool entry, else of a modular type (its starter design)
  * @param guildTier     the least guild tier the villager's guild must have for this line to be sold (0: always)
  * @param types         villager types (biome: {@code desert}, {@code taiga}) that sell the line; empty means every type
+ * @param calibrated    an instrument sold as a reference standard: it reads at the truth tier
+ * @param weekly        sold at most once in {@link VillageTuning#WEEK_DAYS} days to a villager, whatever its day stock
  */
 public record Good(ResourceLocation profession, int level, Item item, int count, int price, int stock, int standing,
-                   boolean enchantedBook, java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types) {
+                   boolean enchantedBook, java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types,
+                   boolean calibrated, boolean weekly) {
 
     /** A line as a file writes it, under its profession. */
     public record Line(int level, Item item, int count, int price, int stock, int standing, boolean enchantedBook,
-                       java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types) {
+                       java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types,
+                       boolean calibrated, boolean weekly) {
 
         public static final Codec<Line> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.intRange(1, 5).optionalFieldOf("level", 1).forGetter(Line::level),
@@ -53,7 +57,9 @@ public record Good(ResourceLocation profession, int level, Item item, int count,
                 Codec.BOOL.optionalFieldOf("enchanted_book", false).forGetter(Line::enchantedBook),
                 ResourceLocation.CODEC.optionalFieldOf("blueprint").forGetter(Line::blueprint),
                 Codec.intRange(0, 3).optionalFieldOf("guild_tier", 0).forGetter(Line::guildTier),
-                Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Line::types)).apply(i, Line::new));
+                Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Line::types),
+                Codec.BOOL.optionalFieldOf("calibrated", false).forGetter(Line::calibrated),
+                Codec.BOOL.optionalFieldOf("weekly", false).forGetter(Line::weekly)).apply(i, Line::new));
     }
 
     /** A whole shop file. */
@@ -75,9 +81,14 @@ public record Good(ResourceLocation profession, int level, Item item, int count,
             Codec.BOOL.fieldOf("enchanted_book").forGetter(Good::enchantedBook),
             ResourceLocation.CODEC.optionalFieldOf("blueprint").forGetter(Good::blueprint),
             Codec.INT.optionalFieldOf("guild_tier", 0).forGetter(Good::guildTier),
-            Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Good::types)).apply(i, Good::new));
+            Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Good::types),
+            Codec.BOOL.optionalFieldOf("calibrated", false).forGetter(Good::calibrated),
+            Codec.BOOL.optionalFieldOf("weekly", false).forGetter(Good::weekly)).apply(i, Good::new));
 
     public ItemStack stack() {
-        return new ItemStack(item, count);
+        ItemStack s = new ItemStack(item, count);
+        if (calibrated)
+            s.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CALIBRATED.get(), true);
+        return s;
     }
 }

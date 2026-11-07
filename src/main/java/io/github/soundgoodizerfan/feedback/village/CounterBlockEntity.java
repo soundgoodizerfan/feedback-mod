@@ -302,6 +302,30 @@ public class CounterBlockEntity extends BlockEntity {
         return out;
     }
 
+    /**
+     * The air the shelf sits in: the world's ambient, pulled toward any thermal body (a stove, a cold box) touching the Counter by a share of its
+     * excess. A shelf by a fire ruins bread and one by cold keeps it, with no rule: the stack's own spoilage clock reads this when it is settled.
+     */
+    private float shelfTu() {
+        float amb = io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value();
+        float env = amb;
+        for (Direction d : Direction.values())
+            if (level.getBlockEntity(worldPosition.relative(d)) instanceof io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody tb) {
+                float pulled = amb + (tb.getTemperature().value() - amb) * VillageTuning.SHELF_HEAT_SHARE;
+                if (Math.abs(pulled - amb) > Math.abs(env - amb))
+                    env = pulled;
+            }
+        return env;
+    }
+
+    /** Brings every perishable on the shelf up to now in the shelf's air. */
+    private void settleShelf() {
+        float env = shelfTu();
+        for (int i = 0; i < SHELF; i++)
+            if (!shelf.getStackInSlot(i).isEmpty())
+                io.github.soundgoodizerfan.feedback.process.Cooking.settle(shelf.getStackInSlot(i), level, env);
+    }
+
     private boolean stocked() {
         for (int i = 0; i < SHELF; i++)
             if (!shelf.getStackInSlot(i).isEmpty())
@@ -336,6 +360,7 @@ public class CounterBlockEntity extends BlockEntity {
         Vec3 centre = worldPosition.getCenter();
         List<Villager> found = sl.getEntitiesOfClass(Villager.class, box, v -> !v.isBaby() && v.isAlive());
         found.sort(java.util.Comparator.comparingDouble(v -> v.distanceToSqr(centre)));
+        settleShelf();
         List<ItemStack> stock = stock();
         double r2 = (double) VillageTuning.PULL_RADIUS * VillageTuning.PULL_RADIUS;
         int paths = 0, seen = 0;
@@ -411,6 +436,7 @@ public class CounterBlockEntity extends BlockEntity {
             stalled++;
             return;
         }
+        settleShelf();
         List<ItemStack> stock = stock();
         int[] copy = prices.clone();
         VillageEconomy.Sale s = VillageEconomy.walkIn(v, stock, copy);

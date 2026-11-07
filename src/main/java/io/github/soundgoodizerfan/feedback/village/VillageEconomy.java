@@ -131,12 +131,12 @@ public final class VillageEconomy {
         List<GoodView> goods = new ArrayList<>();
         for (int idx : shop(m)) {
             Good g = GoodsTable.get().entries().get(idx);
-            goods.add(new GoodView(stackFor(m, g, idx, day), price(g, rep), Math.max(0, stock(m, g) - ledger.sold(idx)), rep < g.standing(), idx));
+            goods.add(new GoodView(stackFor(m, g, idx, day), price(g, rep), g.weekly() && !weeklyReady(ledger, idx, day) ? 0 : Math.max(0, stock(m, g) - ledger.sold(idx)), rep < g.standing(), idx));
         }
         List<VillagerView.WantView> wants = new ArrayList<>();
         for (int idx : wants(m, day)) {
             Want w = BuysTable.get().entries().get(idx);
-            wants.add(new VillagerView.WantView(w.icon(), w.food(), w.price(), Math.max(0, w.max() - ledger.bought(idx)), idx));
+            wants.add(new VillagerView.WantView(w.icon(), w.food(), w.priceFor(villagerType(m)), Math.max(0, w.max() - ledger.bought(idx)), idx));
         }
         int xp = 0, xpMax = 0;
         if (m instanceof Villager v && VillagerData.canLevelUp(level)) {
@@ -191,6 +191,12 @@ public final class VillageEconomy {
                     picked.add(extra);
         java.util.Collections.sort(picked);
         return picked;
+    }
+
+    /** Whether a weekly line has gone a week since this villager last sold it (the bin outlives the day's ledger reset). */
+    private static boolean weeklyReady(Ledger ledger, int idx, long day) {
+        Ledger.Bin b = ledger.bins().get("wk" + idx);
+        return b == null || day - b.day() >= VillageTuning.WEEK_DAYS;
     }
 
     /** A line's stock today: its own, doubled for a villager at market (shop stock restocks on market day). */
@@ -369,19 +375,37 @@ public final class VillageEconomy {
             if (!w.matches(item))
                 continue;
             int n = Math.min(item.getCount(), w.max() - ledger.bought(key));
-            if (n <= 0)
+            float fresh = freshness(item, v.level());
+            if (n <= 0 || fresh <= 0f)
                 continue;
             item.shrink(n);
             v.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day));
             addXp(v, VillageTuning.BUY_XP);
             v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
-            // The villager did not choose to come: a pushed want pays PUSH_RATE of the line.
-            return new Handed(Fate.TAKEN, Math.max(1, Math.round(n * w.price() * VillageTuning.PUSH_RATE)));
+            // The villager did not choose to come: a pushed want pays PUSH_RATE of the line, and a stale food half of that.
+            return new Handed(Fate.TAKEN, Math.max(1, Math.round(n * w.priceFor(villagerType(v)) * fresh * VillageTuning.PUSH_RATE)));
         }
         return new Handed(Fate.UNWANTED, 0);
     }
 
     // --- walk-in sales and the market price ---
+
+    /**
+     * What a food is worth for how it has kept: 1 fresh, {@link VillageTuning#STALE_FACTOR} going off, 0 rotten (refused). Read from the stack's own
+     * spoilage clock at this moment, so what sat on a warm shelf or rode a slow belt prices as it arrives. Anything that does not spoil is 1.
+     */
+    public static float freshness(ItemStack stack, net.minecraft.world.level.Level level) {
+        var entry = io.github.soundgoodizerfan.feedback.process.Cooking.findPerishable(level, stack);
+        if (entry.isEmpty())
+            return 1f;
+        var state = io.github.soundgoodizerfan.feedback.process.Cooking.current(stack, entry.get(), level,
+                io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable.at(level).value());
+        return switch (io.github.soundgoodizerfan.feedback.process.Cooking.spoilage(state)) {
+            case 0 -> 1f;
+            case 1 -> VillageTuning.STALE_FACTOR;
+            default -> 0f;
+        };
+    }
 
     /** The market price of {@code stack}: the highest price any buys line offers for it, 0 when no villager pool wants it. */
     public static int marketPrice(ItemStack stack) {
@@ -444,10 +468,11 @@ public final class VillageEconomy {
                 if (!w.matches(stack))
                     continue;
                 int cap = w.max() - ledger.bought(key);
-                if (cap <= 0)
+                float fresh = freshness(stack, v.level());
+                if (cap <= 0 || fresh <= 0f)
                     continue;
-                int each = prices[slot] > 0 ? prices[slot] : w.price();
                 int market = marketPrice(stack);
+                int each = prices[slot] > 0 ? prices[slot] : w.priceFor(villagerType(v));
                 if (each > ceiling(market)) {
                     dear = true;
                     continue;
@@ -456,7 +481,7 @@ public final class VillageEconomy {
                 v.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day).errand(day));
                 addXp(v, VillageTuning.BUY_XP);
                 v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
-                return new Sale(WalkIn.SOLD, slot, n, each, market);
+                return new Sale(WalkIn.SOLD, slot, n, Math.max(1, Math.round(each * fresh)), market);
             }
         }
         return dear ? new Sale(WalkIn.TOO_DEAR, -1, 0, 0, 0) : Sale.NOTHING;
@@ -494,7 +519,7 @@ public final class VillageEconomy {
         long day = today(m);
         Ledger ledger = m.getData(FVillage.LEDGER).on(day);
         int rep = standing(m, p);
-        if (rep < g.standing() || ledger.sold(idx) >= stock(m, g)) {
+        if (rep < g.standing() || ledger.sold(idx) >= stock(m, g) || (g.weekly() && !weeklyReady(ledger, idx, day))) {
             send(p, menu, view(p, m).withResult(VillagerView.SOLD, -1, false, 0));
             return;
         }
@@ -504,7 +529,7 @@ public final class VillageEconomy {
             return;
         }
         p.getInventory().placeItemBackInInventory(stackFor(m, g, idx, day));
-        m.setData(FVillage.LEDGER, ledger.sold(idx, day));
+        m.setData(FVillage.LEDGER, g.weekly() ? ledger.sold(idx, day).weeklyBought(idx, day) : ledger.sold(idx, day));
         if (m instanceof Villager v)
             addXp(v, VillageTuning.BUY_XP);
         p.level().playSound(null, m.blockPosition(), SoundEvents.VILLAGER_YES, SoundSource.NEUTRAL, 1f, 1f);
@@ -530,18 +555,20 @@ public final class VillageEconomy {
             return;
         }
         Ledger ledger = m.getData(FVillage.LEDGER).on(day);
+        float fresh = freshness(held, m.level());
         int n = Math.min(held.getCount(), w.max() - ledger.bought(key));
-        if (n <= 0) {
-            send(p, menu, view(p, m).withResult(VillagerView.FULL, -1, false, 0));
+        if (n <= 0 || fresh <= 0f) {
+            send(p, menu, view(p, m).withResult(fresh <= 0f ? VillagerView.NOT_WANTED : VillagerView.FULL, -1, false, 0));
             return;
         }
+        int pay = Math.max(1, Math.round(n * w.priceFor(villagerType(m)) * fresh));
         held.shrink(n);
-        p.getInventory().placeItemBackInInventory(new ItemStack(Items.EMERALD, n * w.price()));
+        p.getInventory().placeItemBackInInventory(new ItemStack(Items.EMERALD, pay));
         m.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day));
         if (m instanceof Villager v)
             addXp(v, VillageTuning.BUY_XP);
         p.level().playSound(null, m.blockPosition(), SoundEvents.VILLAGER_YES, SoundSource.NEUTRAL, 1f, 1f);
-        send(p, menu, view(p, m).withResult(VillagerView.SALE, -1, false, n * w.price()));
+        send(p, menu, view(p, m).withResult(VillagerView.SALE, -1, false, pay));
     }
 
     /** Takes {@code n} emeralds from the inventory, or nothing if it holds fewer. */

@@ -18,6 +18,66 @@
       "item": "minecraft:compass",
       "price": 6,
       "stock": 2
+    },
+    {
+      "level": 4,
+      "item": "feedback:calipers",
+      "price": 24,
+      "count": 1,
+      "stock": 1,
+      "standing": 60,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "level": 4,
+      "item": "feedback:thermometer",
+      "price": 24,
+      "count": 1,
+      "stock": 1,
+      "standing": 60,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "level": 4,
+      "item": "feedback:balance_scale",
+      "price": 24,
+      "count": 1,
+      "stock": 1,
+      "standing": 60,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "level": 4,
+      "item": "feedback:pressure_gauge",
+      "price": 28,
+      "count": 1,
+      "stock": 1,
+      "standing": 60,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "level": 4,
+      "item": "feedback:hydrometer",
+      "price": 24,
+      "count": 1,
+      "stock": 1,
+      "standing": 60,
+      "calibrated": true,
+      "weekly": true
+    },
+    {
+      "level": 4,
+      "item": "feedback:survey_meter",
+      "price": 28,
+      "count": 1,
+      "stock": 1,
+      "standing": 60,
+      "calibrated": true,
+      "weekly": true
     }
   ]
 }

@@ -111,6 +111,17 @@ public final class VillageTuning {
     /** A sale under market gives one point of positive gossip every this many sales. */
     public static final int FAIR_REP_EVERY = 4;
 
+    // --- regional trade and freshness ---
+
+    /** The range a regional price multiplier is held to. */
+    public static final float REGIONAL_MIN = 0.6f, REGIONAL_MAX = 1.6f;
+    /** Share of the price a stale food (going off) earns; a rotten one is refused. */
+    public static final float STALE_FACTOR = 0.5f;
+    /** Share of a nearby hot body's excess heat that reaches a shelf (the rest is the shelf's own distance and wood). */
+    public static final float SHELF_HEAT_SHARE = 0.15f;
+    /** Days between purchases of a weekly line. */
+    public static final int WEEK_DAYS = 7;
+
     // --- market day ---
 
     /** Days between market days (an octal week). */

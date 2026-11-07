@@ -140,8 +140,28 @@ public final class Instruments {
      * through a stack -- carried or held -- goes through this, so resolution is looked up in one place.
      */
     public static Instrument fitted(ItemStack stack, Instrument item) {
+        if (Boolean.TRUE.equals(stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CALIBRATED.get())))
+            return new Reference(item);
         Circuit circuit = Circuit.of(stack);
         return circuit.live() ? new Fitted(item, circuit.stepFactor()) : item;
+    }
+
+    /** A reference standard: the same device, calibrated against the village surveyor's gauges, reading the exact figure. */
+    private record Reference(Instrument base) implements Instrument {
+        @Override
+        public boolean canRead(Quantity quantity) {
+            return base.canRead(quantity);
+        }
+
+        @Override
+        public float resolution(Quantity quantity) {
+            return Instrument.TRUTH;
+        }
+
+        @Override
+        public Component label() {
+            return Component.translatable("feedback.instrument.calibrated", base.label());
+        }
     }
 
     private record Fitted(Instrument base, float factor) implements Instrument {

@@ -90,6 +90,13 @@ public record Ledger(long day, int doneMask, Map<String, Integer> bought, Map<St
         return new Ledger(today, doneMask, Map.copyOf(next), bins);
     }
 
+    /** Records a weekly line sold today, in a bin that outlives the day's reset. */
+    public Ledger weeklyBought(int good, long today) {
+        Map<String, Bin> next = new HashMap<>(bins);
+        next.put("wk" + good, new Bin(1f, today));
+        return new Ledger(today, doneMask, bought, Map.copyOf(next));
+    }
+
     /** Order {@code order} done without a delivery here (the guild's order, delivered at another member). */
     public Ledger markDone(int order) {
         return new Ledger(day, doneMask | (1 << order), bought, bins);

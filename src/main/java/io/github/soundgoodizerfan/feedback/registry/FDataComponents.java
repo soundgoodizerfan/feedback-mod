@@ -52,6 +52,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.VAR_INT)
                     .build());
 
+    /** An instrument sold as a reference standard (the cartographer's standards stall): it reads at the truth tier. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> CALIBRATED =
+            COMPONENTS.register("calibrated", () -> DataComponentType.<Boolean>builder()
+                    .persistent(Codec.BOOL)
+                    .networkSynchronized(ByteBufCodecs.BOOL)
+                    .build());
+
     /**
      * A fluid stack's temperature in Tu (mechanics 5.9): the stamp a tank, pipe or handler carries
      * with the fluid, so steam arrives as hot as it left. Absent reads as ambient. Not an energy

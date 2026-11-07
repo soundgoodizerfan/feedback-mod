@@ -63,7 +63,7 @@ public class BuysTable extends SimpleJsonResourceReloadListener {
                     if (l.food() == (l.item() != net.minecraft.world.item.Items.AIR))
                         Feedback.LOGGER.error("Buys line in {} needs exactly one of item or food", id);
                     else
-                        loaded.add(new Want(file.profession(), l.item(), l.food(), l.price(), l.max()));
+                        loaded.add(new Want(file.profession(), l.item(), l.food(), l.price(), l.max(), l.regional()));
                 })));
         entries = List.copyOf(loaded);
         Feedback.LOGGER.info("Loaded {} wants", entries.size());

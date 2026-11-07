@@ -60,7 +60,7 @@ public class GoodsTable extends SimpleJsonResourceReloadListener {
         json.forEach((id, element) -> Good.File.CODEC.parse(JsonOps.INSTANCE, element)
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad goods file {}: {}", id, error))
                 .ifPresent(file -> file.goods().forEach(l -> loaded.add(new Good(file.profession(), l.level(), l.item(), l.count(),
-                        l.price(), l.stock(), l.standing(), l.enchantedBook(), l.blueprint(), l.guildTier(), l.types())))));
+                        l.price(), l.stock(), l.standing(), l.enchantedBook(), l.blueprint(), l.guildTier(), l.types(), l.calibrated(), l.weekly())))));
         entries = List.copyOf(loaded);
         Feedback.LOGGER.info("Loaded {} goods", entries.size());
     }
