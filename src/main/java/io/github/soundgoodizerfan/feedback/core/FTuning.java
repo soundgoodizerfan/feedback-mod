@@ -2141,6 +2141,8 @@ public final class FTuning {
     public static final int GUN_RICOCHET_MAX = 2;
     /** The projectile's hardness when a shot names no material: lead's. */
     public static final float GUN_DEFAULT_PROJECTILE_HARDNESS = 0.3f;
+    /** A vial round's cloud against a thrown flask's reach, a share: a vial holds a mouthful. Placeholder. */
+    public static final float GUN_VIAL_REACH_SCALE = 0.5f;
     /** How far a hop round throws what it hits, blocks per level of the payload's blink perk. Placeholder. */
     public static final float GUN_HOP_BLOCKS_PER_LEVEL = 6f;
     /** Share of a jacketed bullet's volume that is its core (the rest is jacket). Placeholder. */

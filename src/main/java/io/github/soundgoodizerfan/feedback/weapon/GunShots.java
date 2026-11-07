@@ -103,6 +103,8 @@ public final class GunShots {
         Flight flight = Flight.PLAIN;
         /** A toxic payload lets its cloud go once, where it first lands. */
         boolean gassed;
+        /** A vial breaks once. */
+        boolean vialSpent;
 
         Shot(LivingEntity shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -144,15 +146,17 @@ public final class GunShots {
      * @param damage hurt per Work against a round nose's.
      * @param ease   how readily it breaks a brittle block (momentum needed is divided by this).
      * @param glance how readily it glances off a block (the turning angle is multiplied by this).
+     * @param vial   a potion the round carries, let go where it lands, or null.
      * @param perks  what the payload does to a living thing struck ({@link io.github.soundgoodizerfan.feedback.modular.MaterialPerks#affect}).
      */
-    public record Flight(float drag, float damage, float ease, float glance, java.util.Map<io.github.soundgoodizerfan.feedback.process.Material.Perk, Integer> perks) {
-        public static final Flight PLAIN = new Flight(1f, 1f, 1f, 1f, java.util.Map.of());
+    public record Flight(float drag, float damage, float ease, float glance, java.util.Map<io.github.soundgoodizerfan.feedback.process.Material.Perk, Integer> perks,
+                         io.github.soundgoodizerfan.feedback.potion.PotionState vial) {
+        public static final Flight PLAIN = new Flight(1f, 1f, 1f, 1f, java.util.Map.of(), null);
 
         /** The flight of {@code round} in {@code materials}. */
         public static Flight of(Cartridge round, java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
             return new Flight(round.drag(materials), round.shape().damage(), round.shape().ease(), round.shape().glance(),
-                    round.payloadPerks(materials));
+                    round.payloadPerks(materials), round.vial().orElse(null));
         }
     }
 
@@ -857,6 +861,13 @@ public final class GunShots {
      */
     private static void payloadHit(ServerLevel level, Shot s, Vec3 at, Entity target) {
         var perks = s.flight.perks();
+        // A vial breaks on the first thing the round meets, and what it held is let go there as a thrown flask lets it go.
+        if (s.flight.vial() != null && !s.vialSpent) {
+            s.vialSpent = true;
+            io.github.soundgoodizerfan.feedback.potion.PotionEffects.impact(level, s.shooter, s.shooter, at, s.flight.vial(),
+                    FTuning.GUN_VIAL_REACH_SCALE * io.github.soundgoodizerfan.feedback.potion.PotionTuning.throwReach());
+            level.sendParticles(ParticleTypes.SPLASH, at.x, at.y, at.z, 8, 0.2, 0.15, 0.2, 0.1);
+        }
         if (perks.isEmpty())
             return;
         int toxic = perks.getOrDefault(io.github.soundgoodizerfan.feedback.process.Material.Perk.TOXIC, 0);

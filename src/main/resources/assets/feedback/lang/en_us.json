@@ -3381,7 +3381,7 @@
   "feedback.jei.info.blueprint_table": "Draw a modular item here and print it on paper. The blueprint predicts the figures the parts would give if they came out exactly to drawing; what an item really has is read off the item with an instrument.",
   "feedback.jei.info.enchanting_table": "Open it with a part to enchant. The part is held while the screen is open and handed back when it closes.",
   "feedback.jei.info.gun_table": "Where guns are made. Pick a gun, put parts in its cells, and read its spec sheet against a round from its slot.",
-  "feedback.jei.info.reloading_press": "Use it to open it. Seat a bullet and a charge in a case to make a cartridge. The bullet's shape is the bullet you seat. A nugget makes buckshot; birdshot, large shot and flechettes are their own items. A nugget in the core slot sits inside a bullet's jacket.",
+  "feedback.jei.info.reloading_press": "Use it to open it. Seat a bullet and a charge in a case to make a cartridge. The bullet's shape is the bullet you seat. A nugget makes buckshot; birdshot, large shot and flechettes are their own items. A nugget in the core slot sits inside a bullet's jacket. A brewed potion in the payload slot is sealed in a glass vial in the bullet and let go where the round lands.",
   "feedback.jei.info.firebox": "A brick hole with a fire in it. Right-click with fuel to load it, and with an empty hand to take back fuel that has yet to catch. Set a Crucible or Boiler on top and it climbs toward the flame's temperature. Only real fuels burn here, by what they are made of.",
   "feedback.jei.info.stockpot": "A pot, made from five plates of one metal in a U; the metal sets how fast it follows its fire. It cooks a batch over a lit Firebox. Pour in up to two water buckets, add up to six foods raw or cooked, shake in salt, and ladle out bowls with a bowl in hand. Stir and skim with a spoon, and read it with an empty hand; sneak with an empty hand to tip it out, which burns if the pot is hot.",
   "feedback.jei.info.drying_rack": "A rack that dries food slowly. Right-click with a food to hang it, up to four, and right-click empty-handed to take the last one back. Dried food feeds less but keeps much longer; drying runs faster in warm air, and rain stops it, so put a roof over it.",
@@ -5868,5 +5868,6 @@
   "cartridge.feedback.perks": "%s",
   "form.feedback.birdshot": "%s Birdshot",
   "form.feedback.large_shot": "%s Large Shot",
-  "form.feedback.flechette": "%s Flechettes"
+  "form.feedback.flechette": "%s Flechettes",
+  "cartridge.feedback.vial": "Carries a vial of %s"
 }

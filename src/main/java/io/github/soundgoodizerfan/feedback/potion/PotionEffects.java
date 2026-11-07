@@ -147,6 +147,36 @@ public final class PotionEffects {
         return BuiltInRegistries.MOB_EFFECT.getHolder(id).map(h -> h.value().getDisplayName()).orElseGet(() -> Component.translatable(id.toLanguageKey("effect")));
     }
 
+    /**
+     * A potion {@code state} let go at {@code at}, from a flask or a round: its effect to every body within {@code reach} (the fire node
+     * burns and bursts, the explosion node explodes), the same place-and-strength act whoever let it go. A dud or a faded potion does nothing.
+     *
+     * @param owner the thrower or shooter, or null.
+     * @param cause what the explosion is blamed on when there is no owner (the flask itself); never null.
+     */
+    public static void impact(ServerLevel server, net.minecraft.world.entity.Entity owner, net.minecraft.world.entity.Entity cause,
+            net.minecraft.world.phys.Vec3 at, PotionState state, float reach) {
+        int amplifier = state == null || state.dud() ? -1 : state.amplifierNow(server);
+        if (amplifier < 0)
+            return;
+        var id = state.effect().get();
+        boolean blast = IGNITE.equals(id);
+        if (EXPLOSION.equals(id))
+            explode(server, owner != null ? owner : cause, at, amplifier);
+        else if (blast) for (LivingEntity body : server.getEntitiesOfClass(LivingEntity.class, new net.minecraft.world.phys.AABB(at, at).inflate(reach))) {
+            float near = 1f - (float) Math.sqrt(body.distanceToSqr(at)) / reach;
+            if (near <= 0f)
+                continue;
+            body.hurt(io.github.soundgoodizerfan.feedback.core.hazard.Hazards.source(server, io.github.soundgoodizerfan.feedback.core.hazard.Hazards.HOT_CONTACT),
+                    PotionTuning.BLAST_DAMAGE * (1 + amplifier) * near);
+            body.igniteForSeconds(PotionTuning.BLAST_BURN_SECONDS * near);
+        }
+        if (blast)
+            burst(server, BlockPos.containing(at));
+        else if (!EXPLOSION.equals(id))
+            splash(server, owner, at, reach, id, amplifier, state.duration());
+    }
+
     public static void burst(ServerLevel level, BlockPos at) {
         PressureBurst.hiss(level, at);
         level.sendParticles(ParticleTypes.EXPLOSION, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 1, 0, 0, 0, 0);

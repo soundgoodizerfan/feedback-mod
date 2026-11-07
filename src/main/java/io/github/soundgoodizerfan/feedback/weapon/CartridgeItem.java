@@ -71,6 +71,8 @@ public class CartridgeItem extends Item {
         tooltip.add(Component.translatable(coil ? "cartridge.feedback.drive" : "cartridge.feedback.charge", charge,
                 String.format("%.1f", load.get().peakPressure()), String.format("%.1f", rating.get().value()))
                 .withStyle(!coil && load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
+        round.vial().ifPresent(v -> v.effect().ifPresent(e -> tooltip.add(Component.translatable("cartridge.feedback.vial",
+                Component.translatable("effect." + e.getNamespace() + "." + e.getPath())).withStyle(ChatFormatting.GRAY))));
         round.payload().ifPresent(p -> {
             boolean tracer = round.tracer(materials), fire = round.incendiary(materials);
             float blast = round.blast(materials);

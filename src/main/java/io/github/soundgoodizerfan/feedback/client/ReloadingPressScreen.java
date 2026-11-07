@@ -170,8 +170,9 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
             if (core.isPresent())
                 drawBullet(g, bx + 6, by, shape, 0.5f, 0.8f, tint(core), 0);
         }
-        if (payload.isPresent()) {
-            int cx = bx + BULLET_L - (shot ? 2 : 10), c = tint(payload);
+        if (!menu.getSlot(ReloadingPressBlockEntity.PAYLOAD).getItem().isEmpty()) {
+            // A dust shows in its own colour, a vial of potion in glass blue.
+            int cx = bx + BULLET_L - (shot ? 2 : 10), c = payload.isPresent() ? tint(payload) : 0xFF6FA8DC;
             g.fill(cx - 2, by - 2, cx + 3, by + 3, 0xFF101010);
             g.fill(cx - 1, by - 1, cx + 2, by + 2, c);
         }

@@ -21,7 +21,7 @@ P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and I is a Wrought Iron Ingo
 | **+ Charge** | a second powder or Mixture, to make a blend |
 | **Bullet** | a metal or polymer bullet of any [shape](Ammunition.md#bullet-shapes), or a **nugget** or other [shot](Ammunition.md#shot-shells) to make a shell |
 | **core** (beside the bullet) | optional: a nugget of a second metal, set inside the bullet's jacket: see [Jacket and core](Ammunition.md#jacket-and-core) |
-| **Payload** | optional: glowstone dust, redstone dust, gunpowder, blaze powder, or a dust with a perk that works on what the round hits (see [Payloads](Ammunition.md#payloads)) |
+| **Payload** | optional: glowstone dust, redstone dust, gunpowder, blaze powder, a dust with a perk that works on what the round hits, or a brewed potion (see [Payloads](Ammunition.md#payloads)) |
 | **Round** | where the finished cartridge comes out |
 
 The top of the panel is a rail of sockets with the round being built drawn underneath: its case, powder, bullet, core and payload in the colours of what you seated, and the bullet in its real shape. A lead runs from each socket to its part. Under it the **Bore** stepper runs from 5 to 20 mm in 1 mm steps. Every round you seat comes out at that size, and only guns of that bore (within 1 mm, on a built gun; see [Gun Parts](Gun_Parts.md#hitting-the-target)) will take it. The shape is the bullet you seat; see [Bullet shapes](Ammunition.md#bullet-shapes).

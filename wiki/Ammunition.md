@@ -158,6 +158,7 @@ The **payload** slot is optional. Whatever you put there is carried in the bulle
 | **Smite** (silver) or **impaling** (prismarine) | **Silvered or barbed round**: extra damage to the undead, or to sea creatures. |
 | **Blink** (ender pearl) | **Hop round**: throws what it hits a few blocks in a random direction, further for a stronger perk. |
 | **Siphon** (sculk) | A kill with it yields a little extra experience. |
+| A brewed **potion** (any bottle that isn't a dud) | **Potion round**: the potion is sealed in a glass vial in the bullet and let go where the round lands, as a [thrown bottle](Thrown_and_Imbued_Potions.md) lets it go, over half the reach. It breaks on the first thing the round meets, and its strength fades on its own clock like any potion's, so an old round is a weak one. The bottle is used up. |
 
 ## Loading
 

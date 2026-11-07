@@ -30,3 +30,7 @@ Fine palate or assay thrown over dropped laced food reveals it to the thrower on
 A tool can be soaked in a potion so that its blows carry the potion's effect for a while. Hold the tool in one hand and the potion in the other and sneak and use: the bottle is spent and the tool takes a **soak**. Only sword-type and axe-type weapons (swords, axes, spears, mauls, twin blades, cleavers and sickles) take one, and only potions of an elemental effect do it: poison, fire and frost.
 
 Each blow you land lays the effect on the creature you hit and spends one of the soak's hits: twelve for fire and frost, twenty-four for poison, which clings to the blade longer (fewer if the potion had faded). A soak is not worn down by waiting. The effect it lays is weaker and shorter than the potion itself: half the level, a fifth of the length, at most eight seconds. The tool's tooltip shows the soak and the hits left. Soaking again replaces the old soak. An enchantment is unaffected.
+
+## Fired from a gun
+
+A brewed potion in a [Reloading Press](Reloading_Press.md)'s payload slot is sealed in a glass vial in the round (a *potion round*, see [Ammunition](Ammunition.md#payloads)). The vial breaks on the first thing the round meets and lets the potion go the way a thrown bottle does, over half the reach and once.

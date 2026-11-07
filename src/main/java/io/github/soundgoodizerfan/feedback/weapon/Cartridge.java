@@ -53,13 +53,16 @@ import java.util.Optional;
  * @param core         a bullet's core, when the bullet is a jacket (the {@code projectile} material) round a harder
  *                     or denser metal: the core sets the mass's weight and the hardness armour meets, the jacket
  *                     keeps the bore from it. A polymer jacket round a core is a sabot.
+ * @param vial         a potion carried in a glass vial in the bullet instead of a dust: it is let go where the round lands, as a thrown
+ *                     flask lets it go, a smaller reach. Its strength fades as the potion's does, from its own stamp.
  * @param stored       a round seated with no charge is a small jar (mechanics 6.6): its drive is
  *                     the volts it was charged to, read through {@link #at}, and it leaks wherever
  *                     it is. Present only on such a round. A coil fires it; a chamber does not.
  */
 public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
                         Optional<ResourceLocation> payload, boolean shot, BulletShape shape,
-                        Optional<ResourceLocation> core, Optional<Stored> stored) {
+                        Optional<ResourceLocation> core, Optional<io.github.soundgoodizerfan.feedback.potion.PotionState> vial,
+                        Optional<Stored> stored) {
 
     /**
      * Volts on a charged round as of {@code tick}: a stamp and a tick, the shape of a workpiece's
@@ -113,10 +116,11 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             Codec.BOOL.optionalFieldOf("shot", false).forGetter(Cartridge::shot),
             BulletShape.CODEC.optionalFieldOf("shape", BulletShape.ROUND_NOSE).forGetter(Cartridge::shape),
             ResourceLocation.CODEC.optionalFieldOf("core").forGetter(Cartridge::core),
+            io.github.soundgoodizerfan.feedback.potion.PotionState.CODEC.optionalFieldOf("vial").forGetter(Cartridge::vial),
             Stored.CODEC.optionalFieldOf("stored").forGetter(Cartridge::stored)
     ).apply(i, Cartridge::new)), LEGACY);
 
-    /** Written out by hand: nine fields is past what {@code composite} takes. */
+    /** Written out by hand: ten fields is past what {@code composite} takes. */
     public static final StreamCodec<RegistryFriendlyByteBuf, Cartridge> STREAM_CODEC = StreamCodec.of(
             (buf, c) -> {
                 ByteBufCodecs.VAR_INT.encode(buf, c.boreMm());
@@ -127,6 +131,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 ByteBufCodecs.BOOL.encode(buf, c.shot());
                 ByteBufCodecs.idMapper(i -> BulletShape.values()[i], BulletShape::ordinal).encode(buf, c.shape());
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.core());
+                ByteBufCodecs.optional(io.github.soundgoodizerfan.feedback.potion.PotionState.STREAM_CODEC).encode(buf, c.vial());
                 ByteBufCodecs.optional(Stored.STREAM_CODEC).encode(buf, c.stored());
             },
             buf -> new Cartridge(ByteBufCodecs.VAR_INT.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
@@ -134,6 +139,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                     ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf), ByteBufCodecs.BOOL.decode(buf),
                     ByteBufCodecs.idMapper(i -> BulletShape.values()[i], BulletShape::ordinal).decode(buf),
                     ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf),
+                    ByteBufCodecs.optional(io.github.soundgoodizerfan.feedback.potion.PotionState.STREAM_CODEC).decode(buf),
                     ByteBufCodecs.optional(Stored.STREAM_CODEC).decode(buf)));
 
     /** A shot shell always has a shot shape and a bullet never does; a missing one is the plain one. */
@@ -143,12 +149,21 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             shape = shot ? BulletShape.BUCKSHOT : BulletShape.ROUND_NOSE;
         if (core == null || shot)
             core = Optional.empty();
+        if (vial == null || shot)
+            vial = Optional.empty();
+    }
+
+    /** A round with no vial. */
+    public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
+                     Optional<ResourceLocation> payload, boolean shot, BulletShape shape, Optional<ResourceLocation> core,
+                     Optional<Stored> stored) {
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, Optional.empty(), stored);
     }
 
     /** A round of a plain shape and no core. */
     public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
                      Optional<ResourceLocation> payload, boolean shot, Optional<Stored> stored) {
-        this(boreMm, caseMaterial, charges, projectile, payload, shot, null, Optional.empty(), stored);
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, null, Optional.empty(), Optional.empty(), stored);
     }
 
     /** A round with no stored charge: every round before charged ones. */
@@ -174,7 +189,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
 
     /** This jar round holding {@code volts} as of {@code now}. */
     public Cartridge withVolts(float volts, long now) {
-        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core,
+        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, vial,
                 Optional.of(new Stored(Math.max(0, volts), now)));
     }
 

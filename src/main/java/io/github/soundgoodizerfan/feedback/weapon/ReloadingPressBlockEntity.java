@@ -22,6 +22,7 @@ package io.github.soundgoodizerfan.feedback.weapon;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -90,6 +91,9 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         if ((slot == CHARGE || slot == CHARGE_B) && stack.has(FWeapons.MIXTURE.get()))
             // A fluid part cannot be seated: it is not a powder.
             return !stack.has(FWeapons.MIXTURE_FLUID.get());
+        // A brewed potion goes in the payload slot as a vial: a dud holds nothing.
+        if (slot == PAYLOAD && stack.has(FDataComponents.POTION_STATE.get()))
+            return !stack.get(FDataComponents.POTION_STATE.get()).dud();
         var found = located(materials, stack);
         if (found.isEmpty())
             return false;
@@ -179,14 +183,15 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             player.displayClientMessage(Component.translatable("message.feedback.press.too_much", FTuning.GUN_CHARGE_MAX), true);
             return;
         }
-        var payload = slots.get(PAYLOAD).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
+        var vial = java.util.Optional.ofNullable(slots.get(PAYLOAD).get(FDataComponents.POTION_STATE.get()));
+        var payload = slots.get(PAYLOAD).isEmpty() || vial.isPresent() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(PAYLOAD)).get().id());
         BulletShape shape = BulletShape.ofForm(bullet.get().form()).orElse(BulletShape.ROUND_NOSE);
         boolean shot = shape.shot();
         // A core sits inside a bullet's jacket; shot has none.
         var core = shot || slots.get(CORE).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(CORE)).get().id());
-        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core,
+        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core, vial,
                 dry && level != null
                 ? java.util.Optional.of(new Cartridge.Stored(0, level.getGameTime())) : java.util.Optional.empty());
         if (cartridge.load(materials).isEmpty()) {
