@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:grinding_wheel"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.joke.skill_issue.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.joke.skill_issue.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/rotation/shop",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:gun"
+    },
+    "title": {
+      "translate": "advancement.feedback.combat.newton_was_right.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.combat.newton_was_right.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/combat/armed",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

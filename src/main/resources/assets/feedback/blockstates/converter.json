@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "ratio=div4": {
+      "model": "feedback:block/converter"
+    },
+    "ratio=div16": {
+      "model": "feedback:block/converter"
+    },
+    "ratio=mul4": {
+      "model": "feedback:block/converter"
+    }
+  }
+}

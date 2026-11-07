@@ -1,0 +1,28 @@
+{
+  "kind": "ceramic",
+  "exclude": [
+    "dust",
+    "shard",
+    "substrate"
+  ],
+  "hardness": 14,
+  "density": 0.8,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.0004,
+    "service_temperature": 1200
+  },
+  "mechanical": {
+    "toughness": 45,
+    "yield_strength": 18,
+    "friction": 0.35,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.5
+  },
+  "corrosion_resistance": 0.95,
+  "forms": {
+    "raw": "minecraft:shulker_shell"
+  }
+}

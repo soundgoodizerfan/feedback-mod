@@ -44,6 +44,10 @@ import java.util.UUID;
  */
 public class EnderPairRecipe extends CustomRecipe {
 
+    /** Every item that is a pearl by what it does: the real one and the synthetic. */
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> SPATIAL_ANCHORS = net.minecraft.tags.TagKey.create(
+            net.minecraft.core.registries.Registries.ITEM, io.github.soundgoodizerfan.feedback.Feedback.id("spatial_anchors"));
+
     public EnderPairRecipe(CraftingBookCategory category) {
         super(category);
     }
@@ -56,7 +60,7 @@ public class EnderPairRecipe extends CustomRecipe {
             ItemStack s = input.getItem(i);
             if (s.isEmpty())
                 continue;
-            if (s.is(Items.ENDER_PEARL))
+            if (s.is(SPATIAL_ANCHORS))
                 pearls++;
             else if (io.github.soundgoodizerfan.feedback.process.Material.find(materials, s).map(l -> l.form().equals("plate")).orElse(false))
                 plates++;

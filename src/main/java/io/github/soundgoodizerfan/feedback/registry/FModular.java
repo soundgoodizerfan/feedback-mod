@@ -94,7 +94,7 @@ public final class FModular {
             "cleaver_head", "spear_head", "sword_blade",
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
-            "gun_barrel", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
+            "gun_barrel", "gun_grip", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
             "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();

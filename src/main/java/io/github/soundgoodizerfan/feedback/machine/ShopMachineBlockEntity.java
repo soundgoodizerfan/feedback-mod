@@ -136,6 +136,8 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wel
     protected void wear(float stAbsorbed) {
         if (stAbsorbed <= 0)
             return;
+        if (level != null)
+            io.github.soundgoodizerfan.feedback.core.Awards.near(level, worldPosition, "progress/joke/skill_issue");
         int before = FTuning.conditionBand(condition);
         condition = Math.max(FTuning.SHOP_MACHINE_CONDITION_FLOOR,
                 condition - stAbsorbed * FTuning.SHOP_MACHINE_WEAR_PER_ST);

@@ -1,6 +1,6 @@
 # Liquid Teleportant
 
-A fluid made from chorus fruit in four stages. An [Ender Port](Ender_Port.md) spends it to send items across.
+A fluid made from chorus fruit in four stages. An [Ender Port](Ender_Port.md) spends it to send items across, and a [Synthetic Pearl](Synthetic_Pearl.md) is pressed with it.
 
 ## Making it
 

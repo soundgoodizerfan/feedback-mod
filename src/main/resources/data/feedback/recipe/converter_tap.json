@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "L": {
+      "item": "feedback:copper_coil"
+    },
+    "X": {
+      "item": "feedback:whisker"
+    },
+    "P": {
+      "item": "feedback:aluminium_plate"
+    }
+  },
+  "pattern": [
+    "LXL",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:converter_tap"
+  }
+}

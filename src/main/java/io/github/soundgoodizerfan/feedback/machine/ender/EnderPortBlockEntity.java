@@ -82,6 +82,8 @@ public class EnderPortBlockEntity extends BlockEntity {
     private float allowance = FTuning.PAIR_CAP_MU_PER_MIN;
     private long allowanceAt;
     private boolean unloaded;
+    /** Game time until which the link counts as running, because it just carried something: running dry inside this window destabilises it. */
+    private long liveUntil;
 
     private final FluidTank tank = new FluidTank(FTuning.PAIR_TANK_MB, fs -> fs.is(TELEPORTANT)) {
         @Override
@@ -228,14 +230,36 @@ public class EnderPortBlockEntity extends BlockEntity {
             return;
         }
         int cost = (int) Math.ceil(mass * FTuning.PAIR_TELEPORTANT_MB_PER_MU * (1f + distanceTo(other) / FTuning.PAIR_DISTANCE_SCALE));
-        if (allowance < mass || tank.getFluidAmount() < cost)
+        if (allowance < mass)
             return;
+        if (tank.getFluidAmount() < cost) {
+            // A link that was carrying and runs dry has nowhere clean to put what is mid-transit (ender spec 2.1); one that was never
+            // started simply waits.
+            if (now < liveUntil)
+                destabilise();
+            return;
+        }
+        liveUntil = now + FTuning.PAIR_LIVE_TICKS;
         allowance -= mass;
         tank.drain(cost, IFluidHandler.FluidAction.EXECUTE);
         other.out = in;
         in = ItemStack.EMPTY;
         other.setChanged();
         setChanged();
+    }
+
+    /** The feed failed while the link ran: the stack in transit is lost and what stands near either end may hop, as with chorus fruit. */
+    private void destabilise() {
+        liveUntil = 0L;
+        in = ItemStack.EMPTY;
+        setChanged();
+        io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.hop(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), FTuning.PAIR_DRY_HOP_MB);
+    }
+
+    /** The id this port is bonded under, or null. */
+    @Nullable
+    public UUID pairId() {
+        return pair;
     }
 
     private void pushOut() {
@@ -269,8 +293,10 @@ public class EnderPortBlockEntity extends BlockEntity {
     @Override
     public void onLoad() {
         super.onLoad();
-        if (level != null && !level.isClientSide && pair != null)
+        if (level != null && !level.isClientSide && pair != null) {
             LIVE.computeIfAbsent(pair, k -> new HashSet<>()).add(this);
+            PairBook.get(level.getServer()).put(pair, level.dimension(), worldPosition);
+        }
     }
 
     @Override
@@ -291,6 +317,8 @@ public class EnderPortBlockEntity extends BlockEntity {
     @Override
     public void setRemoved() {
         forget();
+        if (!unloaded && level != null && !level.isClientSide && pair != null)
+            PairBook.get(level.getServer()).remove(pair, level.dimension(), worldPosition);
         if (!unloaded && anchored && level != null && !level.isClientSide)
             force(false);
         super.setRemoved();

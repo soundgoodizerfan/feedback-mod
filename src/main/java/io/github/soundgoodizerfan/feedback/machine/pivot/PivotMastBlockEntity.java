@@ -91,6 +91,9 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
     private final HeadSlot head = new HeadSlot();
     private boolean engaged = true;
     private float lastAngle = Float.NaN;
+    /** The arm's own angle, 0-360. The shaft phase wraps every turn, so the gearing must be accumulated, not multiplied. */
+    private float armDeg;
+    private float lastShaft = Float.NaN;
 
     private final ItemStackHandler items = new ItemStackHandler(1 + OUT) {
         @Override
@@ -235,9 +238,27 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
 
     // --- the sweep ----------------------------------------------------------------------------
 
-    /** The arm's angle in degrees: the network's phase through the arm's reduction gearing. */
+    /** The arm's angle in degrees: the shaft's turning through the arm's reduction gearing, accumulated. */
     private float armAngle() {
-        return network == null ? visualAngle * FTuning.PIVOT_GEAR : network.getPhase() * ratio * FTuning.PIVOT_GEAR;
+        return armDeg;
+    }
+
+    private void trackArm() {
+        float shaft = network == null ? visualAngle : network.getPhase() * ratio;
+        if (!Float.isNaN(lastShaft))
+            armDeg = ((armDeg + (((shaft - lastShaft) % 360f + 540f) % 360f - 180f) * FTuning.PIVOT_GEAR) % 360f + 360f) % 360f;
+        lastShaft = shaft;
+    }
+
+    @Override
+    public void tickClient() {
+        super.tickClient();
+        trackArm();
+    }
+
+    /** The arm's angle at a point partway through the tick, for drawing. */
+    public float armAngle(float partialTick) {
+        return armDeg + (getVisualAngle(partialTick) - visualAngle) * FTuning.PIVOT_GEAR;
     }
 
     /** The cell the arm tip stands over, `radius` blocks out at `degrees`. */
@@ -249,6 +270,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
     public void tickServer() {
         if (!(level instanceof ServerLevel sl))
             return;
+        trackArm();
         float now = armAngle();
         if (Float.isNaN(lastAngle)) {
             lastAngle = now;
@@ -468,6 +490,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         head.save(tag, registries);
         tag.put("Items", items.serializeNBT(registries));
         tag.putBoolean("Engaged", engaged);
+        tag.putFloat("ArmDeg", armDeg);
     }
 
     @Override
@@ -479,6 +502,8 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         head.load(tag, registries);
         items.deserializeNBT(registries, tag.getCompound("Items"));
         engaged = !tag.contains("Engaged") || tag.getBoolean("Engaged");
+        armDeg = tag.getFloat("ArmDeg");
+        lastShaft = Float.NaN;
     }
 
     /** What the renderer needs; the tip's id picks the drawn shape. */

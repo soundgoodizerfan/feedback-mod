@@ -242,6 +242,12 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.SwingPlayPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SwingPlayPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SwingPlayPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.AimPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.AimPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.AimPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.AimPlayPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.AimPlayPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.AimPlayPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload::handle)

@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:pressure_vessel"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.chem.pressure.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.chem.pressure.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "feedback:progress/chem/oil",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:pressure_vessel"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

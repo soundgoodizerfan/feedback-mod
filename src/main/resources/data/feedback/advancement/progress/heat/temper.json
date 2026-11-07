@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:tempered_steel"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.heat.temper.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.heat.temper.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "feedback:progress/heat/steel",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:tempered_steel"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

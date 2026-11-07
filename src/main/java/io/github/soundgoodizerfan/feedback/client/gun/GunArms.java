@@ -46,19 +46,43 @@ final class GunArms {
         if (player == null || player.isInvisible())
             return;
         float[] grip = GunRenderer.firstPersonGrip(view), at = view.hand();
-        arm(pose, buffers, light, side, grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
+        arm(pose, buffers, light, tune(view), side, grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
         if (twoHanded && view.longGun()) {
             float[] fore = GunDraw.forend(view);
-            arm(pose, buffers, light, -side, (grip[0] * side - at[0]) / 16f, (grip[1] + fore[0] - at[1]) / 16f, (grip[2] + fore[1] - at[2]) / 16f);
+            arm(pose, buffers, light, tune(view), -side, (grip[0] * side - at[0]) / 16f, (grip[1] + fore[0] - at[1]) / 16f, (grip[2] + fore[1] - at[2]) / 16f);
         }
     }
 
+    /**
+     * Arm nudge per gun shape ({@link #shape}): x, y, z in pixels (x mirrors for the left arm), then yaw, pitch, roll
+     * in degrees. Baked values go in here; {@link GunArmTuneScreen} edits them live.
+     */
+    static final java.util.Map<String, float[]> TUNES = new java.util.HashMap<>();
+
+    static {
+        TUNES.put("handgun", new float[]{2.5f, -0.25f, 3.75f, 40f, 0f, -65f});
+        TUNES.put("long_gun", new float[]{3.75f, -4.25f, 1f, 73f, 38f, -65f});
+        TUNES.put("machine_gun", new float[]{6f, -1.25f, 2.5f, 71f, 2f, -69f});
+    }
+
+    /** The pose class a gun's arm is tuned for: its layout. */
+    static String shape(GunView view) {
+        return view.type().getSerializedName();
+    }
+
+    static float[] tune(GunView view) {
+        return TUNES.computeIfAbsent(shape(view), k -> new float[6]);
+    }
+
     /** One arm, vanilla's way, with its frame moved to ({@code x, y, z}) blocks from the hand pivot first. */
-    private static void arm(PoseStack pose, MultiBufferSource buffers, int light, float f, float x, float y, float z) {
+    private static void arm(PoseStack pose, MultiBufferSource buffers, int light, float[] t, float f, float x, float y, float z) {
         var player = Minecraft.getInstance().player;
         var renderer = (PlayerRenderer) Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(player);
         pose.pushPose();
-        pose.translate(x, y, z);
+        pose.translate(x + f * t[0] / 16f, y + t[1] / 16f, z + t[2] / 16f);
+        pose.mulPose(Axis.YP.rotationDegrees(f * t[3]));
+        pose.mulPose(Axis.XP.rotationDegrees(t[4]));
+        pose.mulPose(Axis.ZP.rotationDegrees(f * t[5]));
         pose.mulPose(Axis.YP.rotationDegrees(f * 45f));
         pose.translate(f * -1f, 3.6f, 3.5f);
         pose.mulPose(Axis.ZP.rotationDegrees(f * 120f));

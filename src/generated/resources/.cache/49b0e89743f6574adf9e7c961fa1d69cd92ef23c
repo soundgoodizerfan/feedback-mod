@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-06T11:45:54.875071924	Item Models: feedback
+// 1.21.1	2026-11-07T00:49:15.679868361	Item Models: feedback
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/alumina_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
@@ -473,6 +473,7 @@ dd0505a7090dbf85025d701d9d03b97d2655ec26 assets/feedback/models/item/quartz_glas
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/quartz_glass_plate.json
 4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/quartz_glass_rod.json
 cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/rabbit_rod.json
+818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/rare_earth_magnet_ingot.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/rare_earth_residue_dust.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/red_mud_dust.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/redstone_chromium_bullet.json

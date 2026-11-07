@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:blast_furnace"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.heat.iron_air.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.heat.iron_air.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "feedback:progress/heat/bronze",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:blast_furnace"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

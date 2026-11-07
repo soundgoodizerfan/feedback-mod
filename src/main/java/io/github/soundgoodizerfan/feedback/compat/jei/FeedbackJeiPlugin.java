@@ -289,6 +289,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.BATTERY.get(), "battery");
         info(registration, FItems.HYDROMETER.get(), "hydrometer");
         info(registration, FItems.RECTIFIER.get(), "rectifier");
+        info(registration, FItems.CONVERTER.get(), "converter");
+        info(registration, FItems.TUNED_EYE.get(), "tuned_eye");
+        info(registration, FItems.SYNTHETIC_PEARL.get(), "synthetic_pearl");
+        info(registration, FItems.POROUS_AGGREGATE.get(), "porous_aggregate");
+        info(registration, FItems.CONVERTER_TAP.get(), "converter_tap");
+        info(registration, FItems.HEATSINK.get(), "heatsink");
+        info(registration, FItems.THERMAL_STORE.get(), "thermal_store");
         info(registration, FItems.WHISKER.get(), "whisker");
         info(registration, FItems.RELAY.get(), "relay");
         info(registration, FItems.COMPONENT_TESTER.get(), "component_tester");

@@ -84,7 +84,13 @@ public final class Hazards {
             String key = "death.attack." + type().msgId() + "." + (1 + victim.getRandom().nextInt(VARIANTS));
             Entity killer = getEntity();
             return killer == null ? Component.translatable(key, victim.getDisplayName())
-                    : Component.translatable(key + ".player", victim.getDisplayName(), killer.getDisplayName());
+                    : Component.translatable(key + ".player", victim.getDisplayName(), killer.getDisplayName(), weapon(killer));
+        }
+
+        /** The killer's held item, for lines that name the gun; a bare hand reads "a weapon". */
+        private static Component weapon(Entity killer) {
+            return killer instanceof LivingEntity living && !living.getMainHandItem().isEmpty()
+                    ? living.getMainHandItem().getDisplayName() : Component.translatable("death.attack.feedback.no_weapon");
         }
     }
 }

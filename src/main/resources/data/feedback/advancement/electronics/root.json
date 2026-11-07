@@ -1,4 +1,5 @@
 {
+  "parent": "feedback:progress/control/memory",
   "display": {
     "icon": {
       "id": "feedback:trace_board"
@@ -10,13 +11,19 @@
       "translate": "advancement.feedback.electronics.root.description"
     },
     "frame": "task",
-    "show_toast": false,
-    "announce_to_chat": false,
-    "background": "minecraft:textures/block/smooth_stone.png"
+    "show_toast": true,
+    "announce_to_chat": false
   },
   "criteria": {
     "got": {
-      "trigger": "minecraft:tick"
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:grinding_wheel"
+          }
+        ]
+      }
     }
   },
   "requirements": [

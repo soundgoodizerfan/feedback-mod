@@ -138,9 +138,12 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         Vec3 centre = Vec3.atCenterOf(worldPosition);
         AABB reach = new AABB(worldPosition).inflate(range);
         for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, reach)) {
-            if (!isMagnetic(item.getItem()) || aboveCurie(item.getItem()))
+            boolean blank = item.getItem().is(io.github.soundgoodizerfan.feedback.registry.FItems.RARE_EARTH_MAGNET_BLANK.get());
+            if (!blank && (!isMagnetic(item.getItem()) || aboveCurie(item.getItem())))
                 continue;
             Vec3 toward = centre.subtract(item.position());
+            if (blank && field >= FTuning.MAGNETISE_FIELD && toward.lengthSqr() < SEPARATE_REACH_SQ)
+                magnetise(item);
             if (toward.lengthSqr() < SEPARATE_REACH_SQ && OreLadder.feed(item.getItem()).isPresent())
                 separate(item);
             if (toward.lengthSqr() < 0.25 || toward.length() > range)
@@ -149,6 +152,20 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
                     .add(toward.normalize().scale(FTuning.ELECTROMAGNET_PULL * field)));
             item.hasImpulse = true;
         }
+    }
+
+    /**
+     * Magnetising (grid spec 3): a sintered blank held close in a field at full strength becomes a magnet, one unit a pull. A
+     * weaker field does nothing; the blank is only pulled.
+     */
+    private void magnetise(ItemEntity item) {
+        net.minecraft.world.item.ItemStack stack = item.getItem();
+        stack.shrink(1);
+        if (stack.isEmpty())
+            item.discard();
+        level.addFreshEntity(new ItemEntity(level, item.getX(), item.getY(), item.getZ(),
+                new net.minecraft.world.item.ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                        io.github.soundgoodizerfan.feedback.Feedback.id("rare_earth_magnet_ingot")))));
     }
 
     private static final double SEPARATE_REACH_SQ = 1.5 * 1.5;

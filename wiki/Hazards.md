@@ -108,6 +108,10 @@ A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while
 
 Right-clicking a bare live wire with a [Galvanometer](Instruments.md#galvanometer) or [Electroscope](Instruments.md#electroscope) is still a hand on the wire, and it still shocks you.
 
+## Arc flash
+
+A [Breaker](Breaker.md#arc-flash) that opens under heavy current at about EHV (384 V) or more flashes: everything living within 3 blocks takes hot damage and catches fire. A player insulated for that voltage is spared. A breaker near its trip current at that voltage hums and sparks first.
+
 ## Fume clouds
 
 A toxic gas that has nowhere to go does not poison at once; it hangs as a **cloud** about 3 blocks across where it was let go. [Osmium tetroxide](Chemicals.md#osmium-tetroxide) makes one when a [Reactor](Reactor.md) has no room for it, when osmium powder is heated without its protective gas (see the [Heavy Core](Heavy_Core.md#making-it)), and when a batch of toxic [dust](Materials.md#dust) finishes in an open vessel. Fine dust of a fuel such as coal or sulfur in an open vessel at its ignition temperature flashes and lights the air above it.

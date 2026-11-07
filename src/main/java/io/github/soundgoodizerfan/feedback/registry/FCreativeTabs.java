@@ -295,6 +295,10 @@ public class FCreativeTabs {
                         output.accept(FItems.ELECTROLYSER.get());
                         output.accept(FItems.CHARGER.get());
                         output.accept(FItems.RECTIFIER.get());
+                        output.accept(FItems.CONVERTER.get());
+                        output.accept(FItems.CONVERTER_TAP.get());
+                        output.accept(FItems.HEATSINK.get());
+                        output.accept(FItems.THERMAL_STORE.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.LARGE_BOILER.get());
@@ -365,6 +369,12 @@ public class FCreativeTabs {
                         output.accept(FItems.CERMET_GREEN_COMPACT.get());
                         output.accept(FItems.TUNGSTEN_CARBIDE_POWDER.get());
                         output.accept(FItems.TUNGSTEN_CARBIDE_GREEN_COMPACT.get());
+                        output.accept(FItems.POROUS_AGGREGATE.get());
+                        output.accept(FItems.SYNTHETIC_PEARL.get());
+                        output.accept(FItems.TUNED_EYE.get());
+                        output.accept(FItems.RARE_EARTH_MAGNET_POWDER.get());
+                        output.accept(FItems.RARE_EARTH_MAGNET_GREEN_COMPACT.get());
+                        output.accept(FItems.RARE_EARTH_MAGNET_BLANK.get());
                         output.accept(FItems.OSMIUM_SPONGE.get());
                         output.accept(FItems.OSMIUM_POWDER.get());
                         output.accept(FItems.OSMIUM_GREEN_COMPACT.get());

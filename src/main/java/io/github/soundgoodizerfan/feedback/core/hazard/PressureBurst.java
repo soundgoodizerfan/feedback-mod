@@ -88,6 +88,7 @@ public final class PressureBurst {
 
     /** A burst: the blast, and the steam that goes with it reaching further than a seam's. */
     public static void burst(Level level, BlockPos pos, float power) {
+        io.github.soundgoodizerfan.feedback.core.Awards.near(level, pos, "progress/joke/pressure_cooker");
         scald(level, pos, FTuning.STEAM_BURST_REACH, FTuning.STEAM_BURST_DAMAGE);
         level.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, power,
                 Level.ExplosionInteraction.BLOCK);

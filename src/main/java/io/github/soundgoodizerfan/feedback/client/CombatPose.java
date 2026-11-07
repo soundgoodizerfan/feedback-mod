@@ -153,6 +153,22 @@ public final class CombatPose {
             (right ? pm.rightLeg : pm.leftLeg).visible = false;
             (right ? pm.rightPants : pm.leftPants).visible = false;
         }
+        if (e instanceof net.minecraft.world.entity.player.Player && e.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem
+                && GunClient.aimed(e) && event.getRenderer().getModel() instanceof HumanoidModel<?> gm) {
+            // Aimed: the vanilla bow pose, arms up along the sight line; a long gun gets the support hand too.
+            HumanoidArm main = e.getMainArm();
+            boolean two = e.getOffhandItem().isEmpty()
+                    && io.github.soundgoodizerfan.feedback.client.gun.GunRenderer.longGun(e.getMainHandItem());
+            if (main == HumanoidArm.RIGHT) {
+                gm.rightArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
+                if (two)
+                    gm.leftArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
+            } else {
+                gm.leftArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
+                if (two)
+                    gm.rightArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
+            }
+        }
         if (f == NONE)
             return;
         if (f.pitchDeg != 0f) {

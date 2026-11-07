@@ -39,6 +39,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | **Carrying and stopping** | |
 | [Copper Cable](Copper_Cable.md) | Carries 1, 4, 16 or 64 A, by gauge. |
 | [Breaker](Breaker.md) | A switch. Trips itself above the rating of its gauge. |
+| [Solid-State Converter](Converter.md) | Steps a line's voltage by a named ratio, with a Converter Tap. |
 | [Fuse Holder](Fuse.md) | Blows when the current is too high. |
 | [Redstone Coherer](Redstone_Coherer.md) | Closed by a nearby spark, opened by a tap. |
 | [Cat's Whisker Detector](Cats_Whisker_Detector.md) | Closes briefly on a nearby spark, if you found a good spot. |
@@ -62,7 +63,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 
 Everything that touches is connected. Put a source, some cable and a magnet next to each other and they form one line. You don't need to configure anything.
 
-**The highest voltage wins.** If two different sources are on one line, the stronger one does all the supplying and the weaker one just sits there. Look at the weaker one with Jade and it says *"Outbid by a higher voltage."* Sources at the same voltage share the work instead. That's why several Galvanic Cells on one line add up, but a Galvanic Cell next to a turning Electrostatic Generator goes quiet until the pulse ends.
+**The highest voltage wins.** If two different sources are on one line, the stronger one does all the supplying and the weaker one just sits there. Look at the weaker one with Jade and it says *"Outbid by a higher voltage."* Sources within 5 percent of the top voltage share the work by rating instead; sources further below are outbid. That's why several Galvanic Cells on one line add up, but a Galvanic Cell next to a turning Electrostatic Generator goes quiet until the pulse ends.
 
 **Long lines lose voltage.** Every block of cable takes some voltage off, in proportion to the current through it: standard copper cable loses **0.05 V per amp per block**; thicker gauges lose less ([Copper Cable](Copper_Cable.md#how-much-it-carries)). At 1 A, twenty blocks of copper cost 1 V. That's most of a cell. Shorten the run, or send it at a higher voltage (a higher voltage carries the same power on less current, so it loses less).
 
@@ -82,12 +83,14 @@ Everything that touches is connected. Put a source, some cable and a magnet next
 
 ## Changing voltage
 
-There's no transformer: Feedback's electricity is DC, and transformers need AC. Instead, the way to change voltage is a **motor-generator set**: an [Dynamotor](Dynamotor.md) run as a motor, turning a shaft that turns another run as a generator with the **other** winding.
+There's no transformer: Feedback's electricity is DC, and transformers need AC. Voltage changes with a **motor-generator set**: an [Dynamotor](Dynamotor.md) run as a motor, turning a shaft that turns another run as a generator with the **other** winding.
 
 - **Fine motor → coarse generator:** fewer volts, more amps. Send power a long way at MV, then step it down next to an LV machine.
 - **Coarse motor → fine generator:** more volts, fewer amps.
 
 The only loss is the friction of the shaft between them.
+
+A [Solid-State Converter](Converter.md) steps a line by a named ratio with no shaft, at about 95 percent efficiency. A [Substation](Substation.md) builds on one.
 
 ## Reading a line
 

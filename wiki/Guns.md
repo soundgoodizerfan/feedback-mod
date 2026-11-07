@@ -95,7 +95,7 @@ The **name** on the tooltip, and beside the type name in the Blueprint Table, is
 | | **Musket** | smoothbore, narrow gauge |
 | | **Slug gun** | rifled, wide gauge |
 | | **Submachine gun** | rifled, select fire, bore up to 10 mm |
-| | **Assault rifle** | rifled, select fire, bore from 11 mm |
+| | **Assault rifle** | rifled, select fire, bore from 11 mm (firing one with a pistol grip earns the hidden advancement "This is Very Illegal") |
 | | **Sniper rifle** | rifled, long barrel, a scope, a bolt or self-loading action |
 | | **Carbine** | rifled, short barrel |
 | | **Rifle** | rifled, anything else |

@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:creeper_charge"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.joke.aw_man.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.joke.aw_man.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/chem/acid",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

@@ -35,8 +35,7 @@
   },
   "ampacity": 0.3,
   "coil": {
-    "field_pressure": 4,
-    "quench_temperature": 700
+    "field_pressure": 4
   },
   "corrosion_resistance": 0.9,
   "enchantability": 8

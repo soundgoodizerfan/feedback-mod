@@ -163,7 +163,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
             number(rows, "xp_conductance", Optional.of(x.conductance()));
             number(rows, "xp_leak", Optional.of(x.leak()));
         });
-        m.propellant().ifPresent(p -> add(rows, "ignition", Optional.of(p.ignitionTemperature())));
+        m.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).ifPresent(p -> add(rows, "ignition", Optional.of(p.ignitionTemperature())));
         m.catalyst().ifPresent(c -> number(rows, "catalyst_activity", Optional.of(c.activity())));
         m.perks().forEach((perk, level) -> rows.add(new String[] {"perk:" + perk.getSerializedName(), String.valueOf(level)}));
         m.food().ifPresent(f -> {

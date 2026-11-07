@@ -331,10 +331,57 @@
     "G": {
       "name": "grip",
       "forms": [
-        "grip"
+        "gun_grip"
       ],
       "litres": 0.12,
-      "layer": 4
+      "layer": 4,
+      "part": {
+        "item": "feedback:gun_grip",
+        "shape": [
+          "G"
+        ],
+        "stock": [
+          "grip"
+        ],
+        "base": "straight",
+        "variants": [
+          {
+            "name": "straight",
+            "params": {
+              "friction_mult": 1.0
+            }
+          },
+          {
+            "name": "pistol_grip",
+            "shape": [
+              "G",
+              "G"
+            ],
+            "params": {
+              "friction_mult": 1.1
+            }
+          },
+          {
+            "name": "finger_groove",
+            "shape": [
+              "GG"
+            ],
+            "params": {
+              "friction_mult": 1.2
+            }
+          },
+          {
+            "name": "palm_swell",
+            "shape": [
+              "GG",
+              "GG"
+            ],
+            "params": {
+              "friction_mult": 1.4
+            }
+          }
+        ]
+      }
     },
     "F": {
       "name": "cylinder",

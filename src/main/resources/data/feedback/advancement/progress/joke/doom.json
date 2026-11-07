@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:phosphor_screen"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.joke.doom.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.joke.doom.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/control/controller",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "feedback:phosphor_screen"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

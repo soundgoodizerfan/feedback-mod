@@ -75,6 +75,7 @@ Some reactions give off heat, which warms the reactor.
 | **Raw Spatial Slurry** | one Chorus Fruit, 100 mB water | 100 mB Raw Spatial Slurry | 0 to 60 Tu, best 25 |
 | **Damped Spatial Solvent** | 100 mB Unstable Spatial Solvent, 5 mB [Heavy Water](Heavy_Water.md), one Lapis Lazuli dust | 100 mB Damped Spatial Solvent; above 70 Tu, solvent vapor | 5 to 70 Tu, best 30 |
 | **Liquid Teleportant** | 100 mB Damped Spatial Solvent, one Redstone dust, an [Arc Head](Arc_Furnace.md#the-arc-head) against the reactor | 100 mB [Liquid Teleportant](Liquid_Teleportant.md); above 2200 Tu, solvent vapor | 300 to 2200 Tu, best 900 |
+| **End stone** | one End Stone | 250 mB hydrogen and one [Porous Aggregate](End_Stone.md) | 700 to 1300 Tu, best 900 |
 | **Alkaline Electrolyte** | 500 mB water, 10 mB [lye](Chemicals.md#lye) | 500 mB Alkaline Electrolyte | 0 to 80 Tu, best 20 |
 | **Roast a sulfide concentrate** | one concentrate of chalcopyrite, sphalerite, pentlandite, cobaltite or argentite, 100 mB oxygen | one Roasted concentrate, 100 mB sulfur dioxide, sulfur (and iron nuggets for some) | 500 to 900 Tu, best 700 |
 | **Molten cryolite** | one Cryolite Ore | 144 mB [cryolite bath](Chemicals.md#cryolite-bath) | melts at 1010 Tu |

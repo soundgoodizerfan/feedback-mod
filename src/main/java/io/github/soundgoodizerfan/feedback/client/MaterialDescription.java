@@ -98,8 +98,10 @@ final class MaterialDescription {
             row(out, 5, "propellant", Component.translatable(p.drive() == Material.Propellant.Drive.COIL
                     ? "screen.feedback.probe.coil" : "screen.feedback.probe.powder").getString());
             row(out, 5, "peak", num(p.peakPressure().value()) + " Pu");
+            if (p.drive() == Material.Propellant.Drive.COIL)
+                return;
             row(out, 5, "burn_rate", num(p.burnRate()));
-            row(out, 5, p.drive() == Material.Propellant.Drive.COIL ? "quench_at" : "cook_off", num(p.ignitionTemperature().value()) + " Tu");
+            row(out, 5, "cook_off", num(p.ignitionTemperature().value()) + " Tu");
             row(out, 5, "oxygen", Component.translatable(p.oxygenBalance() > 0 ? "screen.feedback.probe.spare"
                     : p.oxygenBalance() < 0 ? "screen.feedback.probe.short" : "screen.feedback.probe.own").getString());
         });

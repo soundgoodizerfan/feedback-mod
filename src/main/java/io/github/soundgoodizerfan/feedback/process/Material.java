@@ -457,7 +457,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *
      * @param ignitionTemperature a round left chambered in a barrel this hot goes off by itself
      *                     (cook-off, {@code docs/specs/feedback_guns_spec.md} 3.4): the material's oxidation
-     *                     temperature. For a coil, the winding's quench temperature.
+     *                     temperature. A coil has none (the winding's quench is its metal's service temperature).
      * @param drive        a gas pressing a bullet, or a field pulling a slug.
      */
     public record Propellant(Pu peakPressure, float burnRate, Tu ignitionTemperature, float oxygenBalance, Drive drive) {
@@ -469,7 +469,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     /** This material as a gun's charge, if it is one: its combustion's chamber, or its coil. */
     public Optional<Propellant> propellant() {
         if (coil.isPresent())
-            return Optional.of(new Propellant(coil.get().fieldPressure(), 1f, coil.get().quenchTemperature(), 0f,
+            return Optional.of(new Propellant(coil.get().fieldPressure(), 1f, new Tu(Float.MAX_VALUE), 0f,
                     Propellant.Drive.COIL));
         return combustion.flatMap(c -> c.chamber().map(ch -> new Propellant(ch.peakPressure(), ch.burnRate(),
                 thermal.oxidationTemperature().orElse(new Tu(FTuning.GUN_PROPELLANT_IGNITION_TU)),
@@ -535,16 +535,14 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
 
     /**
      * A coil gun's charge: a field pulling a slug, not a gas pushing one. Not combustion, so it
-     * lives apart from it.
+     * lives apart from it. The winding's own limits (rating, quench) are read off its metal's
+     * ampacity, yield strength and service temperature, never off this.
      *
-     * @param fieldPressure     the magnetic pressure a nominal charge makes (it is a pressure).
-     * @param quenchTemperature past this the superconducting winding reverts and carries nothing
-     *                          until it has cooled -- the coil's cook-off figure.
+     * @param fieldPressure the magnetic pressure a nominal charge makes (it is a pressure).
      */
-    public record Coil(Pu fieldPressure, Tu quenchTemperature) {
+    public record Coil(Pu fieldPressure) {
         static final Codec<Coil> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Units.codec(Pu::new).fieldOf("field_pressure").forGetter(Coil::fieldPressure),
-                Units.codec(Tu::new).fieldOf("quench_temperature").forGetter(Coil::quenchTemperature)
+                Units.codec(Pu::new).fieldOf("field_pressure").forGetter(Coil::fieldPressure)
         ).apply(instance, Coil::new));
     }
 

@@ -2177,7 +2177,7 @@ public final class FTuning {
     /** A non-magnetic slug barely couples to the field (eddy currents, not pull). */
     public static final float GUN_COIL_NONMAGNETIC_COUPLING = 0.1f;
     /** Stages add up with coil length but saturate: the most a long coil gets over a medium one. */
-    public static final float GUN_COIL_STAGE_MAX = 1.6f;
+    public static final float GUN_COIL_LOSS = 1f;
     /**
      * Spring launcher (spec 13.4). Work stored goes as stress squared over the stock wound, times the
      * stroke the barrel gives: tempered steel's single spring in a medium barrel is about a third of a
@@ -2474,6 +2474,8 @@ public final class FTuning {
 
     /** Placeholder. Pull range in blocks at full field, per-pull velocity change, and ticks between pulls. */
     public static final float ELECTROMAGNET_RANGE = 4f;
+    /** Invented. Field strength (0 to 1) an Electromagnet needs to magnetise a sintered magnet blank: full rated volts and amps. */
+    public static final float MAGNETISE_FIELD = 0.95f;
     public static final float ELECTROMAGNET_PULL = 0.08f;
     public static final int ELECTROMAGNET_PULL_INTERVAL_TICKS = 2;
 
@@ -2978,6 +2980,40 @@ public final class FTuning {
      * wire's old single figure is the bottom band rather than a second rule.
      */
     public static final float SHOCK_MV_DAMAGE = 2f, SHOCK_HV_DAMAGE = 5f, SHOCK_UHV_DAMAGE = 10f, SHOCK_EHV_DAMAGE = 20f, SHOCK_TRUNK_DAMAGE = 40f;
+
+    /**
+     * Invented, grid spec 4.3. Droop: a source within this fraction of the run's top voltage joins the pool and shares by rating;
+     * the pool holds the rating-weighted mean of their volts. Further below is outbid, as before.
+     */
+    public static final float DROOP_TOLERANCE = 0.05f;
+
+    /**
+     * Invented, grid spec 4.1. Arc flash: a Breaker opening under load at {@link #BREAKER_FLASH_MIN_BAND_VOLTS} or more burns whatever
+     * unprotected stands within {@link #BREAKER_FLASH_RADIUS} blocks, for {@link #BREAKER_FLASH_DAMAGE_PER_AMP} per amp broken (capped) and
+     * {@link #BREAKER_FLASH_FIRE_TICKS} ticks of fire. Past {@link #BREAKER_FLASH_WARN_LOAD} of its trip current, the same breaker hums and
+     * sparks every {@link #BREAKER_FLASH_WARN_TICKS} ticks, so a correct setup is never a surprise.
+     */
+    public static final float BREAKER_FLASH_MIN_BAND_VOLTS = ELECTRIC_EHV_VOLTS * 0.9f, BREAKER_FLASH_RADIUS = 3f,
+            BREAKER_FLASH_DAMAGE_PER_AMP = 0.25f, BREAKER_FLASH_DAMAGE_CAP = 30f, BREAKER_FLASH_WARN_LOAD = 0.8f;
+    public static final int BREAKER_FLASH_FIRE_TICKS = 100, BREAKER_FLASH_WARN_TICKS = 20;
+
+    /**
+     * Invented, grid spec 5. Solid-state DC converter: {@code CONVERTER_EFFICIENCY} of the power in comes out (about 95 percent);
+     * {@code CONVERTER_RATED_WATTS} (volts times amps) is the most it passes; the loss becomes heat in the block at
+     * {@code CONVERTER_HEAT_SCALE} work per unit lost, shed at {@code CONVERTER_LEAK}, multiplied by
+     * {@code CONVERTER_HEATSINK_LEAK_MULTIPLE} for each adjacent heatsink (at most {@code CONVERTER_MAX_HEATSINKS}); past
+     * {@code CONVERTER_SERVICE_TU} it loses condition down to {@code CONVERTER_CONDITION_FLOOR}.
+     */
+    public static final float CONVERTER_EFFICIENCY = 0.95f, CONVERTER_RATED_WATTS = 3840f, CONVERTER_STANDING_AMPS = 0.02f,
+            CONVERTER_HEAT_SCALE = 0.04f, CONVERTER_HEATSINK_LEAK_MULTIPLE = 2f, CONVERTER_SERVICE_TU = 250f,
+            CONVERTER_CONDITION_FLOOR = 0.4f;
+    public static final int CONVERTER_MAX_HEATSINKS = 4, CONVERTER_SCAN_TICKS = 20;
+    public static final ThermalMass CONVERTER_MASS = new ThermalMass(10f);
+    public static final Conductance CONVERTER_LEAK = new Conductance(0.02f);
+
+    /** Invented, grid spec 2.3. A thermal store: a brick tank of salt, thirty times the Hearth's mass, leaking slowly to air. */
+    public static final ThermalMass THERMAL_STORE_MASS = new ThermalMass(1800f);
+    public static final Conductance THERMAL_STORE_LEAK = new Conductance(0.05f);
 
     /**
      * Invented. An insulating glove stops a shock up to this many volts and no further: HV's
@@ -3733,6 +3769,8 @@ public final class FTuning {
             PAIR_CROSS_DIMENSION_BLOCKS = 10000f;
     /** Teleportant (mB) an ender port can hold; invented. */
     public static final int PAIR_TANK_MB = 2000;
+    /** Invented, ender spec 2.1. A link that carried something within this many ticks is running; if its feed then runs dry it destabilises: the stack in transit is lost and a hop of this many mB of unstable fluid goes off at the port. */
+    public static final int PAIR_LIVE_TICKS = 200, PAIR_DRY_HOP_MB = 60;
     /** Stages a multi-stage sorting station chains, and the ticks each kind of head needs per load (the station runs at its slowest stage); invented. */
     public static final int SORT_STATION_STAGES = 3, SORT_STAGE_TICKS_MAGNETIC = 4, SORT_STAGE_TICKS_OPTICAL = 8,
             SORT_STAGE_TICKS_WEIGHER = 16;

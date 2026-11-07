@@ -1,13 +1,28 @@
 {
+  "parent": "feedback:progress/combat/armed",
   "display": {
-    "icon": {"id": "feedback:gun"},
-    "title": {"translate": "advancement.feedback.combat.big_iron.title"},
-    "description": {"translate": "advancement.feedback.combat.big_iron.description"},
+    "icon": {
+      "id": "feedback:gun"
+    },
+    "title": {
+      "translate": "advancement.feedback.combat.big_iron.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.combat.big_iron.description"
+    },
     "frame": "goal",
     "show_toast": true,
     "hidden": true,
     "announce_to_chat": true
   },
-  "criteria": {"done": {"trigger": "minecraft:impossible"}},
-  "requirements": [["done"]]
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
 }

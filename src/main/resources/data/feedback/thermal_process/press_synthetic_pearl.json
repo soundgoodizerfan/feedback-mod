@@ -1,0 +1,33 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:silica_glass",
+      "forms": [
+        "ingot"
+      ]
+    },
+    {
+      "type": "feedback:material",
+      "material": "feedback:redstone_chromium",
+      "forms": [
+        "ingot"
+      ]
+    }
+  ],
+  "min_temperature": 1100,
+  "optimal_temperature": 1250,
+  "max_temperature": 1500,
+  "required_tpu": 900,
+  "result": {
+    "id": "feedback:synthetic_pearl"
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:teleportant",
+        "mb": 250
+      }
+    ]
+  }
+}

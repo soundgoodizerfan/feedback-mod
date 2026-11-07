@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:husbandry/root",
+  "parent": "feedback:progress/food/prep",
   "display": {
     "icon": {
       "id": "feedback:hot_dog"

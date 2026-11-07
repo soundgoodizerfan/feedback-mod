@@ -114,6 +114,11 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         }
     }
 
+    /** Whether the stack is a long gun, which is held in two hands. */
+    public static boolean longGun(ItemStack stack) {
+        return GunView.of(stack).longGun();
+    }
+
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buffers,
                              int light, int overlay) {
@@ -153,7 +158,7 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         boolean flat = context == ItemDisplayContext.GUI || context == ItemDisplayContext.FIXED;
         float tilt = flat && view.longGun() ? 30f : flat ? 8f : 0f;
         // A diagonal holds about 1.3 of the square's side for a slim gun.
-        float room = flat ? (view.longGun() ? 1.25f : 0.92f) : context == ItemDisplayContext.GROUND ? 0.5f : 0.7f;
+        float room = flat ? (view.longGun() ? 1.25f : 0.92f) : context == ItemDisplayContext.GROUND ? 0.75f : 0.7f;
         float s = room / Math.max(length, height * 1.6f);
         if (flat)
             pose.mulPose(Axis.ZP.rotationDegrees(tilt));

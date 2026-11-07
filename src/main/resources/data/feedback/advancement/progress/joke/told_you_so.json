@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:overspeed_trip"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.joke.told_you_so.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.joke.told_you_so.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/rotation/wheel",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

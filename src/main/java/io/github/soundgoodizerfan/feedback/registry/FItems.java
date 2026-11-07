@@ -363,6 +363,10 @@ public class FItems {
     public static final DeferredItem<BlockItem> LEYDEN_JAR = ITEMS.registerSimpleBlockItem(FBlocks.LEYDEN_JAR);
     public static final DeferredItem<BlockItem> CHARGER = ITEMS.registerSimpleBlockItem(FBlocks.CHARGER);
     public static final DeferredItem<BlockItem> RECTIFIER = ITEMS.registerSimpleBlockItem(FBlocks.RECTIFIER);
+    public static final DeferredItem<BlockItem> CONVERTER = ITEMS.registerSimpleBlockItem(FBlocks.CONVERTER);
+    public static final DeferredItem<BlockItem> CONVERTER_TAP = ITEMS.registerSimpleBlockItem(FBlocks.CONVERTER_TAP);
+    public static final DeferredItem<BlockItem> HEATSINK = ITEMS.registerSimpleBlockItem(FBlocks.HEATSINK);
+    public static final DeferredItem<BlockItem> THERMAL_STORE = ITEMS.registerSimpleBlockItem(FBlocks.THERMAL_STORE);
     public static final DeferredItem<BlockItem> ELECTROSTATIC_GENERATOR =
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROSTATIC_GENERATOR);
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(FBlocks.BELLOWS);
@@ -471,6 +475,17 @@ public class FItems {
     public static final DeferredItem<Item> CERMET_GREEN_COMPACT = ITEMS.registerSimpleItem("cermet_green_compact");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_POWDER = ITEMS.registerSimpleItem("tungsten_carbide_powder");
     public static final DeferredItem<Item> TUNGSTEN_CARBIDE_GREEN_COMPACT = ITEMS.registerSimpleItem("tungsten_carbide_green_compact");
+    /** What end stone leaves after its trapped hydrogen is driven off: a porous, very light insulating rock (the {@code porous_aggregate} material's raw form). */
+    public static final DeferredItem<Item> POROUS_AGGREGATE = ITEMS.registerSimpleItem("porous_aggregate");
+    /** Pressed from silica, a redstone-chromium phase and teleportant: a pearl in every use. */
+    public static final DeferredItem<Item> SYNTHETIC_PEARL = ITEMS.registerSimpleItem("synthetic_pearl");
+    /** A pearl tuned to a bonded pair: points at the other end. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.TunedEyeItem> TUNED_EYE = ITEMS.register("tuned_eye",
+            () -> new io.github.soundgoodizerfan.feedback.item.TunedEyeItem(new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<Item> RARE_EARTH_MAGNET_POWDER = ITEMS.registerSimpleItem("rare_earth_magnet_powder");
+    public static final DeferredItem<Item> RARE_EARTH_MAGNET_GREEN_COMPACT = ITEMS.registerSimpleItem("rare_earth_magnet_green_compact");
+    /** Sintered but not yet a magnet: a strong electromagnet turns it into a rare-earth magnet ingot. */
+    public static final DeferredItem<Item> RARE_EARTH_MAGNET_BLANK = ITEMS.registerSimpleItem("rare_earth_magnet_blank");
     /** Osmium from the tetroxide's reduction, its pressable powder, the pressed compact and the sintered slug that is the vanilla Heavy Core (material {@code heavy_core}, form {@code slug}). */
     public static final DeferredItem<Item> OSMIUM_SPONGE = ITEMS.registerSimpleItem("osmium_sponge");
     public static final DeferredItem<Item> OSMIUM_POWDER = ITEMS.registerSimpleItem("osmium_powder");

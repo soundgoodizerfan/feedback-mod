@@ -28,6 +28,8 @@ A flywheel is as heavy as a [Water Wheel](Water_Wheel.md), about two hundred pla
 
 Its bearing drags at **0.2 Su per RPM**, twice a plain shaft's. That's the price of the momentum, paid every turn.
 
+A flywheel that spins past the speed its rim can take strains and loses condition. It never bursts.
+
 ## When to use one
 
 - A line that bogs down every time a heavy machine kicks in.

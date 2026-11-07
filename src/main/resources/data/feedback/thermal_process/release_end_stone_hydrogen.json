@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    {
+      "item": "minecraft:end_stone"
+    }
+  ],
+  "min_temperature": 700,
+  "optimal_temperature": 900,
+  "max_temperature": 1300,
+  "required_tpu": 200,
+  "result": {
+    "id": "feedback:porous_aggregate"
+  },
+  "reaction": {
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:hydrogen",
+        "mb": 250
+      }
+    ]
+  }
+}

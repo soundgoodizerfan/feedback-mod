@@ -1,13 +1,28 @@
 {
+  "parent": "feedback:progress/combat/armed",
   "display": {
-    "icon": {"id": "feedback:synthetic_rubber_bullet"},
-    "title": {"translate": "advancement.feedback.combat.rage_against_the_machine.title"},
-    "description": {"translate": "advancement.feedback.combat.rage_against_the_machine.description"},
+    "icon": {
+      "id": "feedback:synthetic_rubber_bullet"
+    },
+    "title": {
+      "translate": "advancement.feedback.combat.rage_against_the_machine.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.combat.rage_against_the_machine.description"
+    },
     "frame": "goal",
     "show_toast": true,
     "hidden": true,
     "announce_to_chat": true
   },
-  "criteria": {"done": {"trigger": "minecraft:impossible"}},
-  "requirements": [["done"]]
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
 }

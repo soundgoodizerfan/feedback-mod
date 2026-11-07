@@ -10,7 +10,7 @@ At the Tool Table, the Dynamotor takes four parts:
 | --- | --- | --- |
 | **Machine Frame** (plate) | small, medium or large | The most torque the machine carries: 2, 16 or 64 Su. Also how much heat it holds and how large a wall it sheds heat through. |
 | **Machine Winding** (wire) | coarse, fine, dense or heavy-dense | The volts per RPM, and with the wire's material the current it carries. |
-| **Core** (an ingot) | any metal ingot | The core's loss: the share of the power through it that turns to heat. Iron and steel are tuned for it. |
+| **Core** (an ingot) | any metal ingot | The core's loss: the share of the power through it that turns to heat. Iron and steel are tuned for it, and a [Rare-Earth Magnet](Rare_Earth_Magnet.md) wastes far less. |
 | **Machine Housing** (plate) | finned or jacketed | How well it sheds heat to the air, and whether it takes a water jacket. |
 
 A bigger frame, winding or housing variant takes more cells of its stock. Every part takes the material it is made of, and the tooltip of the finished machine shows its **volts per RPM** and its **rated amps**.

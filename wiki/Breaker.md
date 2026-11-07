@@ -19,7 +19,7 @@ Put two [cables](Copper_Cable.md) of one gauge where the wires go and the breake
 Place it in a line like a [cable](Copper_Cable.md).
 
 - **Right-click** to open or close it: *"Breaker open"* / *"Breaker closed"*.
-- A [Controller](Controller.md) can switch it with a *Switch* card, the same as any other switchable block.
+- A [Controller](Controller.md) can switch it with a *Switch* card, the same as any other switchable block. A Controller with [Current Sensor](Instruments.md#current-sensor) inputs can open the Breakers on low-priority branches when supply sags: see [Substation](Substation.md).
 
 ## It trips itself
 
@@ -32,6 +32,10 @@ Opening a breaker while current is flowing draws an **arc** that pits the contac
 Pitted contacts lose voltage: **0.02 V per amp** in a standard breaker, less in a thicker gauge (a quarter as much per step up) and more in a thinner one, and more as the condition drops. A worn breaker shows up as a sag on the far side of it. It bottoms out at 25% and keeps switching forever after that.
 
 **Opening it with no current flowing costs nothing.** Switch the load off first, or open the breaker on a line that's already idle, and it lasts forever. A controller flapping a breaker on and off under load with no gap between "on" and "off" will wear it out. See [Controller](Controller.md#holding-a-band).
+
+## Arc flash
+
+At about **EHV (384 V)** or more, a breaker close to its trip current hums and sparks as a warning. Opening one under heavy current at that voltage throws an **arc flash**: every living thing within **3 blocks** is burned (hot damage) and set alight. A player whose gear insulates for that voltage is spared. Open the load first, or keep a trunk breaker out of reach. See [Hazards](Hazards.md#arc-flash).
 
 ## Breaker or fuse?
 

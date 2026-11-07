@@ -1,0 +1,17 @@
+{
+  "parts": {
+    "feedback:iron": {
+      "min": 0.62,
+      "max": 0.78
+    },
+    "feedback:rare_earth_residue": {
+      "min": 0.22,
+      "max": 0.38
+    }
+  },
+  "stray": 0.06,
+  "max_temperature": 400,
+  "result": {
+    "id": "feedback:rare_earth_magnet_powder"
+  }
+}

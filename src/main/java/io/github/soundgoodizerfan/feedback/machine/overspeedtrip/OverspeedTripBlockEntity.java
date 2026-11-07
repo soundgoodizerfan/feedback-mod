@@ -91,7 +91,9 @@ public class OverspeedTripBlockEntity extends ClutchBlockEntity {
      */
     public void tickServer() {
         if (level != null && isEngaged()
-                && Math.abs(getRpm().value()) > tripRpm())
+                && Math.abs(getRpm().value()) > tripRpm()) {
             setEngaged(false);
+            io.github.soundgoodizerfan.feedback.core.Awards.near(level, worldPosition, "progress/joke/told_you_so");
+        }
     }
 }

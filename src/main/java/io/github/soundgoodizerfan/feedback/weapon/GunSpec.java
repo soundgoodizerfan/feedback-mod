@@ -148,12 +148,14 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      *               is the grip's.
      * @param spring the spring a spring launcher throws the projectile with.
      * @param chest  the vessel a steam launcher holds its steam in.
+     * @param winding the metal a coil launcher is wound of: its ampacity and yield strength rate the field it holds, its service temperature is where it quenches.
+     * @param hold   the grip variant's multiplier on the friction the hand gets from the grip (or its wrap).
      */
     public record Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver,
                         Optional<ResourceLocation> feed, Optional<Second> second, Optional<ResourceLocation> wrap,
-                        Optional<Spring> spring, Optional<Chest> chest) {
+                        Optional<Spring> spring, Optional<Chest> chest, Optional<ResourceLocation> winding, float hold) {
         Parts withSecond(Optional<Second> s) {
-            return new Parts(slide, trigger, grip, receiver, feed, s, wrap, spring, chest);
+            return new Parts(slide, trigger, grip, receiver, feed, s, wrap, spring, chest, winding, hold);
         }
     }
 
@@ -294,7 +296,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         }
         if (winding != null) {
             Material wm = materials.get(winding.material());
-            if (wm == null || wm.propellant().filter(p -> p.drive() == Material.Propellant.Drive.COIL).isEmpty())
+            if (wm == null || !windable(wm))
                 return Optional.empty();
         }
         ModularDesign.Part sightPart = design.part(SIGHT);
@@ -317,7 +319,9 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         }
         Parts parts = new Parts(action.material(), trigger.material(), grip.material(), receiver.material(),
                 Optional.ofNullable(feedPart).map(ModularDesign.Part::material), other,
-                Optional.ofNullable(wrap).map(ModularDesign.Part::material), spring, chest);
+                Optional.ofNullable(wrap).map(ModularDesign.Part::material), spring, chest,
+                Optional.ofNullable(winding).map(ModularDesign.Part::material),
+                type.roles().get(GRIP).variant(grip).map(v -> v.params().getOrDefault("friction_mult", 1f)).orElse(1f));
         return Optional.of(new GunSpec(barrel.material(), geometry(type, BARREL, barrel), sight, launcher, parts,
                 new GunLayout(kind, act, feed), fittings, ModularTraits.allOf(design, type)));
     }
@@ -378,7 +382,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         ModularDesign.Part winding = design.part(WINDING);
         if (winding != null) {
             Material wm = materials.get(winding.material());
-            if (wm == null || wm.propellant().filter(p -> p.drive() == Material.Propellant.Drive.COIL).isEmpty())
+            if (wm == null || !windable(wm))
                 out.add(new Fault(List.of(WINDING), "winding"));
         }
         for (String r : List.of(SPRING, CHEST)) {
@@ -498,6 +502,32 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     }
 
     /**
+     * Whether a coil can be wound of {@code m}: a conductor (ampacity) with a yield strength to hold the field's
+     * pressure and a service temperature to quench at. Powders and insulators cannot.
+     */
+    public static boolean windable(Material m) {
+        return m.ampacity().isPresent() && m.mechanical().yieldStrength().isPresent()
+                && m.thermal().serviceTemperature().isPresent();
+    }
+
+    /** The field pressure a winding of {@code m} holds before it gives: its yield strength, carried at its ampacity. */
+    private static float windingRating(Material m) {
+        return m.mechanical().yieldStrength().get().value() * m.ampacity().get();
+    }
+
+    /**
+     * A coil's load is the round's drive, but where it quenches is the winding's: the gun's winding metal's service
+     * temperature, never a charge's. Every other launcher's load is the round's own.
+     */
+    private Load withQuench(Load l, Map<ResourceLocation, Material> materials) {
+        if (!l.coil() || parts.winding().isEmpty())
+            return l;
+        Material wm = materials.get(parts.winding().get());
+        return wm == null || !windable(wm) ? l
+                : new Load(l.peakPressure(), l.burnRatePerM(), wm.thermal().serviceTemperature().get().value(), l.launcher(), l.charge());
+    }
+
+    /**
      * A grip is held, not stressed, so it needs no yield strength: a gun metal, or anything
      * organic that has been weighed -- wood, bone, bamboo, turned on the lathe like a metal one.
      */
@@ -522,8 +552,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         /** Gunpowder at its nominal charge: the figures a gun's spec sheet is read against. */
         public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M,
                 FTuning.GUN_PROPELLANT_IGNITION_TU, Launcher.CHAMBER, FTuning.GUN_CHARGE_NOMINAL);
-        /** A nominal redstone drive: a coil's spec sheet is read against this. Ignition is the quench temperature. */
-        public static final Load REFERENCE_COIL = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, 1f, 400f, Launcher.COIL,
+        /** A nominal redstone drive: a coil's spec sheet is read against this. Nothing ignites: the winding's metal sets the quench ({@link GunSpec#loadOf}). */
+        public static final Load REFERENCE_COIL = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, 1f, Float.MAX_VALUE, Launcher.COIL,
                 FTuning.GUN_CHARGE_NOMINAL);
         /** What a spring gun fires: no charge, so no pressure and nothing to ignite -- the gun's own spring is the work. */
         public static final Load SPRING = new Load(0f, 1f, Float.MAX_VALUE, Launcher.SPRING, 0f);
@@ -545,7 +575,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * The parts off the barrel: what they weigh, how well the grip holds the hand, and how hard the
      * fitted sleeves drag a bullet that couples to them ({@link #eddyOf}, summed).
      */
-    private record Frame(float mu, float gripFriction, float eddy, float springSt, float springCoils, float chestRating) {
+    private record Frame(float mu, float gripFriction, float eddy, float springSt, float springCoils, float chestRating, float windingRating, float windingAmpacity) {
     }
 
     /**
@@ -617,7 +647,15 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             chestRating = cm.mechanical().yieldStrength().get().value() * FTuning.GUN_STEAM_RATING_PER_ST;
             mu += FTuning.GUN_STEAM_METAL_MB * parts.chest().get().capacityMb() / FTuning.GUN_STEAM_CHEST_REF_MB * cm.density().muPerMb();
         }
-        return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip), eddy, springSt, springCoils, chestRating));
+        float windingRating = Float.MAX_VALUE, windingAmpacity = 1f;
+        if (parts.winding().isPresent()) {
+            Material wm = materials.get(parts.winding().get());
+            if (wm == null || !windable(wm))
+                return Optional.empty();
+            windingRating = windingRating(wm);
+            windingAmpacity = wm.ampacity().get();
+        }
+        return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip) * parts.hold(), eddy, springSt, springCoils, chestRating, windingRating, windingAmpacity));
     }
 
     /** What the fitted options do to the bake, folded: every figure the gun owns and an option reaches. */
@@ -673,6 +711,14 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * steam gun's pressure falls as it is spent. Any other launcher ignores it.
      */
     public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round, float steamMb) {
+        return bake(materials, round, steamMb, false);
+    }
+
+    /**
+     * As above, for a coil whose slug is {@code slugHot}: past its Curie point it is no longer magnetic and couples as a
+     * non-magnetic one does ({@link #slugHot}). Any other launcher ignores it.
+     */
+    public Optional<GunFigures> bake(Map<ResourceLocation, Material> materials, Cartridge round, float steamMb, boolean slugHot) {
         // Only a smooth bore throws a pattern: rifling spins the shot into a ring (spec 12).
         if (round.shot() && has("gun_rifling"))
             return Optional.empty();
@@ -687,7 +733,13 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             return Optional.empty();
         // A spring throws a round with nothing in the case to burn or charge: the spring is the work.
         Optional<Load> load = loadOf(materials, round);
-        return load.flatMap(l -> bake(metal, frame.get(), bullet, l, loose, steamMb));
+        return load.flatMap(l -> bake(metal, frame.get(), bullet, l, loose, steamMb, slugHot));
+    }
+
+    /** Whether {@code round}'s slug has been heated, by a barrel at {@code barrelTu}, past the Curie point it is magnetic below. */
+    public static boolean slugHot(Map<ResourceLocation, Material> materials, Cartridge round, float barrelTu) {
+        Material slug = materials.get(round.projectile());
+        return slug != null && slug.separation().curieTemperature().filter(c -> barrelTu >= c.value()).isPresent();
     }
 
     /**
@@ -696,7 +748,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      */
     public Optional<Load> loadOf(Map<ResourceLocation, Material> materials, Cartridge round) {
         return launcher.chargeless() ? Optional.of(launcher == Launcher.STEAM ? Load.STEAM : Load.SPRING).filter(l -> round.charges().isEmpty())
-                : round.load(materials);
+                : round.load(materials).map(l -> withQuench(l, materials));
     }
 
     /** @param loose how much wider the bore is than the round, in mm; negative is a squeeze. */
@@ -705,13 +757,18 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     }
 
     private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose, float steamMb) {
+        return bake(m, frame, projectile, load, loose, steamMb, false);
+    }
+
+    private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose, float steamMb, boolean slugHot) {
         if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.launcher() != launcher)
             return Optional.empty();
         double boreM = boreMmReal() / 1000.0, barrelM = barrel.lengthM();
         double area = Math.PI / 4 * boreM * boreM;
 
         float rating = launcher == Launcher.STEAM ? frame.chestRating()
-                : m.mechanical().yieldStrength().get().value() * barrel.wallMm() / (boreMmReal() / 2f);
+                : Math.min(m.mechanical().yieldStrength().get().value() * barrel.wallMm() / (boreMmReal() / 2f),
+                        launcher == Launcher.COIL ? frame.windingRating() : Float.MAX_VALUE);
         // A round squeezed into too tight a bore makes more pressure; one rattling in too loose a
         // bore leaks it past (below). Precision is never a gate: a sloppy barrel is a worse gun.
         float peak = launcher == Launcher.STEAM
@@ -736,11 +793,12 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * FTuning.GUN_WORK_PER_PU_M3
                     * FTuning.GUN_STEAM_WORK_FRACTION;
         } else if (load.coil()) {
-            // Stages add up along the coil, saturating; a slug that is not magnetic barely couples;
+            // Stages add up along the whole coil, so length is power and only the winding's rating and quench cap it;
+            // a slug that is not magnetic (or is past its Curie point) barely couples;
             // a winding past its rating (the field's pressure against its hoop strength) delivers
             // only what it held, the same venting rule as a chamber.
-            double stages = Math.min(FTuning.GUN_COIL_STAGE_MAX, barrelM / FTuning.GUN_BARREL_MEDIUM_M);
-            double coupling = projectile.separation().magnetic() ? 1.0 : FTuning.GUN_COIL_NONMAGNETIC_COUPLING;
+            double stages = barrelM / FTuning.GUN_BARREL_MEDIUM_M;
+            double coupling = projectile.separation().magnetic() && !slugHot ? 1.0 : FTuning.GUN_COIL_NONMAGNETIC_COUPLING;
             double held = peak <= 0 ? 0 : Math.min(1.0, rating / peak);
             work = load.charge() * FTuning.GUN_COIL_WORK_PER_DUST * stages * coupling * held;
         } else {
@@ -769,7 +827,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float speedMs = exitMs * (float) Math.sqrt(1 - drained);
 
         // A brake throws the gas sideways: most of its share of the recoil is gone.
-        float gas = launcher == Launcher.SPRING ? 0f : FTuning.GUN_GAS_IMPULSE_FRACTION * (1 - fx.gasCut());
+        float gas = launcher == Launcher.SPRING || launcher == Launcher.COIL ? 0f : FTuning.GUN_GAS_IMPULSE_FRACTION * (1 - fx.gasCut());
         float impulse = bulletMu * exitMs * (1 + gas);
 
         // Barrel tube in its metal, the rest in theirs.
@@ -794,7 +852,9 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float blast = launcher == Launcher.SPRING ? 0f : launcher == Launcher.STEAM ? FTuning.GUN_STEAM_BLAST * fx.blast() : fx.blast(); // a spring has no gas to roar; steam hisses
         float crack = Mth.clamp((speedMs / FTuning.SOUND_MS - (1 - FTuning.GUN_CRACK_RAMP)) / (2 * FTuning.GUN_CRACK_RAMP), 0f, 1f);
         float report = (1 - FTuning.GUN_CRACK_SHARE) * blast + FTuning.GUN_CRACK_SHARE * crack;
-        float heatFactor = fx.heat() * (1 + drained * FTuning.GUN_EDDY_HEAT);
+        // A coil's own heat is the current in its wire: a conductor that carries less (ampacity) loses more of every shot.
+        float heatFactor = fx.heat() * (1 + drained * FTuning.GUN_EDDY_HEAT)
+                * (launcher == Launcher.COIL ? 1 + FTuning.GUN_COIL_LOSS / frame.windingAmpacity() : 1f);
         float leakFactor = fx.shed();
         return Optional.of(ModularTraits.gunBaked(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,
                 new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, launcher, report, heatFactor, leakFactor), this));

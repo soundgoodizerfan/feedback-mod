@@ -76,6 +76,8 @@ public final class HotContact {
         boolean hurt = victim.hurt(Hazards.source(victim.level(), Hazards.HOT_CONTACT), band.damage);
         if (band.igniteSeconds > 0)
             victim.igniteForSeconds(band.igniteSeconds);
+        if (hurt && victim instanceof net.minecraft.world.entity.player.Player player)
+            io.github.soundgoodizerfan.feedback.core.Awards.give(player, "progress/joke/hot_take");
         return hurt;
     }
 }

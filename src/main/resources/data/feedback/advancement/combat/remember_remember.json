@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:flintlock"
+    },
+    "title": {
+      "translate": "advancement.feedback.combat.remember_remember.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.combat.remember_remember.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/combat/armed",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

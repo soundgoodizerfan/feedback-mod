@@ -1,0 +1,29 @@
+{
+  "kind": "ceramic",
+  "exclude": [
+    "dust",
+    "ingot",
+    "shard",
+    "substrate"
+  ],
+  "hardness": 10,
+  "density": 1.5,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.00025
+  },
+  "mechanical": {
+    "toughness": 3,
+    "friction": 0.3,
+    "abrasiveness": 0.2
+  },
+  "separation": {
+    "reflectivity": 0.2
+  },
+  "forms": {
+    "pearl": "feedback:synthetic_pearl"
+  },
+  "perks": {
+    "blink": 1
+  }
+}

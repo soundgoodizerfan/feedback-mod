@@ -43,6 +43,15 @@ A plastic or rubber ingot turns into a grip as well, with the friction of its ma
 
 Leather, wool, paper and honey can't be turned into a grip, but they can **wrap** one (see [Assembling](#assembling)).
 
+The turned grip is a blank. A gun takes it as a **Gun Grip**, shaped at the Gun Table (a grind) in one of four shapes, each multiplying the friction the hand gets (so less kick, see the table under Wrapping the grip):
+
+| Grip | Cells | Friction |
+| --- | --- | --- |
+| **Straight** | 1 | x1 |
+| **Pistol grip** | 2 | x1.1 |
+| **Finger-groove** | 2 | x1.2 |
+| **Palm-swell** | 4 | x1.4 |
+
 ## The stock
 
 A stock is made at the Gun Table from a plate (any metal, polymer or organic material that comes as one) or from planks, in one of three shapes: **fixed**, **skeleton** or **folding**. It takes the kick into your shoulder while you are crouched and still, so the gun kicks less and groups tighter ([Guns](Guns.md#frames)). It is optional, and fits any frame.
@@ -84,7 +93,7 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 | Gun Barrel | always; its variant is the launcher: smoothbore, rifled, coil, spring tube or steam tube ([Guns](Guns.md#barrels-and-launchers)); a **second** barrel only on a break action |
 | Receiver | always; its variant is the frame: handgun, long gun or machine gun |
 | Slide **or** Bolt | the action; its variant says which: self-loading or automatic (slide); bolt, lever, pump, break, self-loading or automatic (bolt) |
-| Trigger Group, Grip | always; a grip is wood unless you choose another material |
+| Trigger Group, Gun Grip | always; a grip is wood unless you choose another material; its variant is straight, pistol grip, finger-groove or palm-swell |
 | Cylinder, Magazine Tube, Belt Feed or Box Feed | optional: the feed (none means a box magazine on a slide; a bolt or lever with none loads one round by hand, and a Box Feed gives it a box magazine; a break action holds its barrels) |
 | Sight | optional: a reflex sight or a scope, an open tube with a clear view down the middle (none is iron sights) |
 | A fitting part | each fitting on the gun, one to a slot |
@@ -105,7 +114,7 @@ Add any **fibrous or sticky** organic to the assembly (leather, wool, paper, hon
 | Wood, bamboo, brass | 0.4 |
 | Bronze | 0.3 |
 
-Kick scales with 0.6 ÷ friction, so a bronze grip kicks twice as hard as a leather-wrapped one, and a honey wrap kicks at 40%.
+Kick scales with 0.6 ÷ friction, so a bronze grip kicks twice as hard as a leather-wrapped one, and a honey wrap kicks at 40%. The grip's shape multiplies the friction on top.
 
 ## Fittings
 

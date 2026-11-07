@@ -304,6 +304,21 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity::new, FBlocks.RECTIFIER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.converter.ConverterBlockEntity>> CONVERTER =
+            BLOCK_ENTITIES.register("converter", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.converter.ConverterBlockEntity::new, FBlocks.CONVERTER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.converter.ConverterTapBlockEntity>> CONVERTER_TAP =
+            BLOCK_ENTITIES.register("converter_tap", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.converter.ConverterTapBlockEntity::new, FBlocks.CONVERTER_TAP.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.thermalstore.ThermalStoreBlockEntity>> THERMAL_STORE =
+            BLOCK_ENTITIES.register("thermal_store", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.thermalstore.ThermalStoreBlockEntity::new, FBlocks.THERMAL_STORE.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DynamotorBlockEntity>> DYNAMOTOR =
             BLOCK_ENTITIES.register("dynamotor", () -> BlockEntityType.Builder
                     .of(DynamotorBlockEntity::new, FBlocks.DYNAMOTOR.get())

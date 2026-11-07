@@ -2,6 +2,8 @@
 
 A loose order of play, from the first fire to oil and circuits. Each stage names what you do and the problem that sends you to the next. Nothing is locked: if you can reach the temperature, strength or hardness, you can skip ahead. The guide only says where the problems usually show up first.
 
+The in-game advancement tab named Feedback follows the same stages as branches (heat, rotation, electricity, control, chemistry, food, combat and the Nether, Deep Dark, radiation, ender and flight beyond). Each entry describes the wall you have hit, not the answer, and none of them unlocks anything. Hidden entries branch off the main line for odd things you can do along the way: burst a boiler, wear a machine out, let an overspeed trip earn its keep, fire a flintlock, get thrown by your own recoil, burn yourself, carry a creeper charge into a fire, or put a phosphor screen on a controller.
+
 ## 1. First fire, clay and copper
 
 You start with stone and wood tools and no fire you control. Build a [Campfire](Campfire.md), then a [Firebox](Firebox.md) or [Hearth](Hearth.md) whose temperature you can read, and fire clay into vessels. A [Crucible](Crucible.md) melts copper, tin and lead, and [Casting](Casting.md) turns the melt into ingots and parts in molds. Bronze and brass are alloys you pour yourself. Shape hot metal with the [Hammer](Hammer.md) at the [Smithing Table](Smithing_Table.md), and join parts with solder.

@@ -137,7 +137,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
             return;
         }
         float peak = load.get().peakPressure(), limit = rating.get().value();
-        int tone = peak > limit ? skin.warn() : skin.ink();
+        int tone = !load.get().coil() && peak > limit ? skin.warn() : skin.ink();
         row(g, 102, Component.translatable(load.get().coil() ? "gui.feedback.reloading_press.row.drive" : "gui.feedback.reloading_press.row.charge"),
                 String.valueOf(round.charge()), tone);
         row(g, 102, Component.translatable("gui.feedback.reloading_press.row.peak"), String.format("%.1f Pu", peak), tone, true);

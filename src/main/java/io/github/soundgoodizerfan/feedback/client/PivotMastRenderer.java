@@ -57,7 +57,7 @@ public class PivotMastRenderer implements BlockEntityRenderer<PivotMastBlockEnti
         int len = mast.armLength();
         if (len == 0)
             return;
-        float angle = mast.getVisualAngle(partialTick) * FTuning.PIVOT_GEAR;
+        float angle = mast.armAngle(partialTick);
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
         // The cell maths puts angle 0 along +x and counts toward +z, which is a clockwise turn seen from above.

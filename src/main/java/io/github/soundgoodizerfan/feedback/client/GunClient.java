@@ -123,6 +123,23 @@ public final class GunClient {
         return System.currentTimeMillis() < reloadUntilMs;
     }
 
+    /** Entity ids of other players aiming a gun, as relayed by the server. */
+    private static final java.util.Set<Integer> AIMING = new java.util.HashSet<>();
+    private static boolean aimSent;
+
+    public static void setAimed(int entity, boolean aiming) {
+        if (aiming)
+            AIMING.add(entity);
+        else
+            AIMING.remove(entity);
+    }
+
+    /** Whether a player is drawn aiming: ours from the local ease, others from the relay. */
+    public static boolean aimed(net.minecraft.world.entity.LivingEntity e) {
+        var me = Minecraft.getInstance().player;
+        return e == me ? aim > 0.5f : AIMING.contains(e.getId());
+    }
+
     /** How far aimed the held gun is, 0 to 1. */
     public static float aim() {
         return aim;
@@ -189,6 +206,10 @@ public final class GunClient {
         boolean wantsAim = canAct && mc.options.keyUse.isDown() && !reloading() && !offFires;
         float step = design == null ? 1f : dt / (float) design.sight().raiseMs();
         aim = Mth.clamp(aim + (wantsAim ? step : -step * 1.5f), 0f, 1f);
+        if (wantsAim != aimSent) {
+            aimSent = wantsAim;
+            PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.AimPayload(wantsAim));
+        }
 
         // R is held, not tapped: the server reloads while it is down and stops when it comes up, both guns if there are two.
         while (RELOAD.consumeClick()) {
@@ -265,7 +286,7 @@ public final class GunClient {
      * trait list. Redone only when one of those changes; heat, wear and haste are applied on top each frame.
      */
     private record Baked(GunSpec design, java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials,
-                         io.github.soundgoodizerfan.feedback.weapon.Cartridge round, boolean lastRound, float steam,
+                         io.github.soundgoodizerfan.feedback.weapon.Cartridge round, boolean lastRound, float steam, boolean hot,
                          java.util.Optional<GunFigures> base, java.util.Optional<GunSpec.Load> load, List<ModularTraits.Active> traits) {
     }
 
@@ -282,10 +303,11 @@ public final class GunClient {
         int hand = gun == player.getOffhandItem() ? 1 : 0;
         boolean last = GunAmmo.count(gun) == 1;
         float steam = GunSteam.stored(gun);
+        boolean hot = GunSpec.slugHot(materials, next.get(), GunCondition.temperature(gun, mc.level).value());
         Baked b = baked[hand];
-        if (b == null || b.design != design || b.materials != materials || b.lastRound != last || b.steam != steam || !b.round.equals(next.get())) {
+        if (b == null || b.design != design || b.materials != materials || b.lastRound != last || b.steam != steam || b.hot != hot || !b.round.equals(next.get())) {
             var r = next.get();
-            b = new Baked(design, materials, r, last, steam, design.firing(GunAmmo.count(gun)).bake(materials, r, steam),
+            b = new Baked(design, materials, r, last, steam, hot, design.firing(GunAmmo.count(gun)).bake(materials, r, steam, hot),
                     design.loadOf(materials, r), ModularTraits.allOf(gun));
             baked[hand] = b;
         }

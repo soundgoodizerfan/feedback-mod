@@ -103,8 +103,37 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        if (closed && amps > FTuning.BREAKER_TRIP_AMPS * gauge.area())
+        float trip = FTuning.BREAKER_TRIP_AMPS * gauge.area();
+        if (closed && amps > trip)
             setEngaged(false);
+        else if (closed && level != null && !level.isClientSide && volts >= FTuning.BREAKER_FLASH_MIN_BAND_VOLTS
+                && amps > trip * FTuning.BREAKER_FLASH_WARN_LOAD && level.getGameTime() % FTuning.BREAKER_FLASH_WARN_TICKS == 0)
+            warn();
+    }
+
+    /** A joint nearing its limit at line voltage hums and sparks before it lets go (grid spec 4.1). */
+    private void warn() {
+        var level = this.level;
+        level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.BEEHIVE_WORK, net.minecraft.sounds.SoundSource.BLOCKS, 0.6f, 0.5f);
+        ((net.minecraft.server.level.ServerLevel) level).sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK,
+                worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, 6, 0.3, 0.3, 0.3, 0.1);
+    }
+
+    /** Opening under heavy current at line voltage throws an arc: it burns what stands close and is not insulated from it. */
+    private void flash(float volts, float amps) {
+        float damage = Math.min(FTuning.BREAKER_FLASH_DAMAGE_CAP, amps * FTuning.BREAKER_FLASH_DAMAGE_PER_AMP);
+        level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_IMPACT, net.minecraft.sounds.SoundSource.BLOCKS, 0.8f, 1.6f);
+        ((net.minecraft.server.level.ServerLevel) level).sendParticles(net.minecraft.core.particles.ParticleTypes.FLASH,
+                worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, 1, 0, 0, 0, 0);
+        for (var victim : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                new net.minecraft.world.phys.AABB(worldPosition).inflate(FTuning.BREAKER_FLASH_RADIUS))) {
+            if (victim instanceof net.minecraft.world.entity.player.Player player
+                    && io.github.soundgoodizerfan.feedback.core.hazard.Protection.shockProofVolts(player) >= volts)
+                continue;
+            if (victim.hurt(io.github.soundgoodizerfan.feedback.core.hazard.Hazards.source(level,
+                    io.github.soundgoodizerfan.feedback.core.hazard.Hazards.HOT_CONTACT), damage))
+                victim.igniteForTicks(FTuning.BREAKER_FLASH_FIRE_TICKS);
+        }
     }
 
     @Override
@@ -113,6 +142,8 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
             return;
         if (!engaged && getAmps() > 0f)
             io.github.soundgoodizerfan.feedback.core.electric.Sparks.emit(level, worldPosition, getAmps());
+        if (!engaged && getAmps() > 0f && getVolts() >= FTuning.BREAKER_FLASH_MIN_BAND_VOLTS)
+            flash(getVolts(), getAmps());
         if (!engaged && getAmps() > 0f)
             condition = Math.max(FTuning.BREAKER_CONDITION_FLOOR, condition - FTuning.BREAKER_ARC_WEAR_PER_AMP * getAmps());
         closed = engaged;

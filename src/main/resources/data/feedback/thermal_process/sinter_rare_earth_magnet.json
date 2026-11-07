@@ -1,0 +1,22 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:rare_earth_magnet_green_compact"
+    }
+  ],
+  "min_temperature": 1000,
+  "optimal_temperature": 1060,
+  "max_temperature": 1120,
+  "required_tpu": 500,
+  "result": {
+    "id": "feedback:rare_earth_magnet_blank"
+  },
+  "spoil_temperature": 1150,
+  "spoiled": {
+    "id": "feedback:porous_sinter"
+  },
+  "atmosphere": {
+    "fluid": "feedback:argon",
+    "mb": 50
+  }
+}

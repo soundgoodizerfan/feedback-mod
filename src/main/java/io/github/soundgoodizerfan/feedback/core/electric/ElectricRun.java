@@ -38,8 +38,9 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
  * <h2>What a tick does</h2>
  * <ol>
  *   <li><b>Who is supplying.</b> The highest nominal voltage among sources that are offering
- *       anything sets the run's voltage. Sources at that voltage form the <em>pool</em>; a source
- *       at a lower voltage is <em>blocked</em> and says so. They do not blend (6.2).</li>
+ *       anything sets the run's voltage. Sources within {@link FTuning#DROOP_TOLERANCE} of it form
+ *       the <em>pool</em> (the run holds their mean, weighted by rating); a source further below is
+ *       <em>blocked</em> and says so. Different bands do not blend (6.2).</li>
  *   <li><b>Shares.</b> Every reachable sink wants some current. If the pool can cover the total
  *       (up to {@link FTuning#SOURCE_OVERDRAW_LIMIT} times its rating) every sink gets what it
  *       wants; if not, every sink gets the same fraction of what it wants. There is no
@@ -63,8 +64,6 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
  * player acts on -- one wire carrying too much -- is exactly what it reports.
  */
 public final class ElectricRun {
-
-    private static final float SAME_VOLTAGE = 1e-3f;
 
     private final ElectricMember[] members;
     private final int[][] adjacent;
@@ -128,12 +127,17 @@ public final class ElectricRun {
                 topVolts = Math.max(topVolts, v);
             }
         }
-        float capacity = 0;
+        // Droop (grid spec 4.3): a source within FTuning.DROOP_TOLERANCE of the top voltage joins the pool, and the pool holds the
+        // mean of its members' volts weighted by rating, so near-equal sources share by rating and none takes everything.
+        float capacity = 0, voltAmps = 0;
         for (int i = 0; i < n; i++) {
-            pooledNow[i] = active[i] && Math.abs(members[i].sourceVolts() - topVolts) < SAME_VOLTAGE;
-            if (pooledNow[i])
+            pooledNow[i] = active[i] && members[i].sourceVolts() >= topVolts * (1f - FTuning.DROOP_TOLERANCE);
+            if (pooledNow[i]) {
                 capacity += members[i].sourceAmps();
+                voltAmps += members[i].sourceVolts() * members[i].sourceAmps();
+            }
         }
+        float poolVolts = capacity > 0 ? voltAmps / capacity : topVolts;
         if (!built || !Arrays.equals(pooledNow, pooled)) {
             System.arraycopy(pooledNow, 0, pooled, 0, n);
             route();
@@ -164,7 +168,7 @@ public final class ElectricRun {
         }
 
         // 3. Sag.
-        float rootVolts = topVolts * ElectricRules.sagFactor(capacity > 0 ? drawn / capacity : 0f);
+        float rootVolts = poolVolts * ElectricRules.sagFactor(capacity > 0 ? drawn / capacity : 0f);
 
         // 4. Drop, outward from the supply.
         for (int k = 0; k < order.length; k++) {

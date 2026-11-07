@@ -839,6 +839,26 @@ public class FBlocks {
                             .strength(1.5f)
                             .sound(SoundType.METAL)));
 
+    /** Input side of a solid-state converter: steps a line's voltage by a named ratio. See {@code ConverterBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.converter.ConverterBlock> CONVERTER =
+            BLOCKS.register("converter", () -> new io.github.soundgoodizerfan.feedback.machine.converter.ConverterBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(1.5f).sound(SoundType.METAL)));
+
+    /** Output side of a solid-state converter, set against the converter block. See {@code ConverterTapBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.converter.ConverterTapBlock> CONVERTER_TAP =
+            BLOCKS.register("converter_tap", () -> new io.github.soundgoodizerfan.feedback.machine.converter.ConverterTapBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(1.5f).sound(SoundType.METAL)));
+
+    /** Finned aluminium that sheds a converter's heat. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.converter.HeatsinkBlock> HEATSINK =
+            BLOCKS.register("heatsink", () -> new io.github.soundgoodizerfan.feedback.machine.converter.HeatsinkBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.5f).sound(SoundType.METAL)));
+
+    /** A brick tank of molten salt that stores heat for a boiler (grid spec 2.3). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.thermalstore.ThermalStoreBlock> THERMAL_STORE =
+            BLOCKS.register("thermal_store", () -> new io.github.soundgoodizerfan.feedback.machine.thermalstore.ThermalStoreBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3.0f).sound(SoundType.STONE)));
+
     /** A hand-turned pulse source. Holds no charge. */
     public static final DeferredBlock<ElectrostaticGeneratorBlock> ELECTROSTATIC_GENERATOR =
             BLOCKS.register("electrostatic_generator",

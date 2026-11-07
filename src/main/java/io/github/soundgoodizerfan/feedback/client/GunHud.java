@@ -113,7 +113,7 @@ public final class GunHud {
         FireMode mode = GunItem.mode(gun);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + mode.getSerializedName());
         // A hand can tell warm from hot; the figure is a thermometer's to give (philosophy 8).
-        float ignition = GunAmmo.next(gun).flatMap(r -> r.load(materials)).map(l -> l.ignitionTu())
+        float ignition = GunAmmo.next(gun).flatMap(r -> design.loadOf(materials, r)).map(l -> l.ignitionTu())
                 .orElse(FTuning.GUN_PROPELLANT_IGNITION_TU);
         float heat = GunCondition.heatFraction(gun, mc.level, ignition);
         Component barrel = Component.translatable("hud.feedback.gun.barrel",

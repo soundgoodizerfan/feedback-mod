@@ -41,7 +41,9 @@
       "role": "G",
       "material": "feedback:wood",
       "form": "grip",
-      "count": 1
+      "count": 1,
+      "kind": "gun_grip",
+      "variant": "straight"
     },
     {
       "role": "i",

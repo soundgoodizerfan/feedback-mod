@@ -114,7 +114,9 @@ public final class CreeperEvents {
                 inv.setItem(i, ItemStack.EMPTY);
             }
         }
-        if (total > 0f)
+        if (total > 0f) {
+            io.github.soundgoodizerfan.feedback.core.Awards.give(player, "progress/joke/aw_man");
             CreeperBlast.explode(level, player.position().add(0, 1, 0), total, false);
+        }
     }
 }

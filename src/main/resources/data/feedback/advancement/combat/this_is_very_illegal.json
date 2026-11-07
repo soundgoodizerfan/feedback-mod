@@ -1,0 +1,28 @@
+{
+  "parent": "feedback:progress/combat/armed",
+  "display": {
+    "icon": {
+      "id": "feedback:gun"
+    },
+    "title": {
+      "translate": "advancement.feedback.combat.this_is_very_illegal.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.combat.this_is_very_illegal.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "hidden": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ]
+}

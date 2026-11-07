@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:boiler"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.joke.pressure_cooker.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.joke.pressure_cooker.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/rotation/steam",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

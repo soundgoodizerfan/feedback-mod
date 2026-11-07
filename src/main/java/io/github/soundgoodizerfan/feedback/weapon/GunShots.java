@@ -265,7 +265,8 @@ public final class GunShots {
                                  boolean aimed, boolean together, InteractionHand hand) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
         round = round.at(level.getGameTime());
-        var base = design.firing(GunAmmo.count(gun)).bake(materials, round, GunSteam.stored(gun));
+        var base = design.firing(GunAmmo.count(gun)).bake(materials, round, GunSteam.stored(gun),
+                GunSpec.slugHot(materials, round, GunCondition.temperature(gun, level).value()));
         var load = design.loadOf(materials, round);
         if (base.isEmpty() || load.isEmpty())
             return false;
@@ -312,8 +313,16 @@ public final class GunShots {
             ModularTraits.gunFired(server, gun, figures);
             if (cookOff)
                 io.github.soundgoodizerfan.feedback.net.GunKickPayload.send(server, hand == InteractionHand.OFF_HAND, figures);
-            if (GunSpec.of(gun).flatMap(spec -> GunDesignation.of(gun, spec)).filter("big_iron"::equals).isPresent()) {
-                var holder = server.server.getAdvancements().get(io.github.soundgoodizerfan.feedback.Feedback.id("combat/big_iron"));
+            String designation = GunSpec.of(gun).flatMap(spec -> GunDesignation.of(gun, spec)).orElse("");
+            var built = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(gun);
+            var grip = built == null ? null : built.part("G");
+            if (GunSpec.of(gun).map(spec -> spec.layout().type().getSerializedName()).orElse("").equals("flintlock"))
+                io.github.soundgoodizerfan.feedback.core.Awards.give(server, "combat/remember_remember");
+            String advancement = designation.equals("big_iron") ? "combat/big_iron"
+                    : designation.equals("assault_rifle") && grip != null && grip.variant().equals("pistol_grip") ? "combat/this_is_very_illegal"
+                    : null;
+            if (advancement != null) {
+                var holder = server.server.getAdvancements().get(io.github.soundgoodizerfan.feedback.Feedback.id(advancement));
                 if (holder != null)
                     server.getAdvancements().award(holder, "done");
             }

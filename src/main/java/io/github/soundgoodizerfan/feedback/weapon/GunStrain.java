@@ -73,6 +73,7 @@ public final class GunStrain {
             return;
         float over = (s[0] - limit) / limit;
         s[0] = 0f;
+        io.github.soundgoodizerfan.feedback.core.Awards.give(shooter, "combat/newton_was_right");
         if (ImpulseKinds.recoilLevel(gun) > 0) {
             // The grip holds; the shooter goes instead, back along the line of the shot.
             Vec3 back = shooter.getLookAngle().scale(-Math.min(over, 2f) * FTuning.GUN_STRAIN_THROW_SPEED);
