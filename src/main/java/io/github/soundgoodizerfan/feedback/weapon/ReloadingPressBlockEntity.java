@@ -91,6 +91,9 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         if ((slot == CHARGE || slot == CHARGE_B) && stack.has(FWeapons.MIXTURE.get()))
             // A fluid part cannot be seated: it is not a powder.
             return !stack.has(FWeapons.MIXTURE_FLUID.get());
+        // A seed (anything that places a crop) goes in the payload slot to be planted where the round lands.
+        if (slot == PAYLOAD && isSeed(stack))
+            return true;
         // A brewed potion goes in the payload slot as a vial: a dud holds nothing.
         if (slot == PAYLOAD && stack.has(FDataComponents.POTION_STATE.get()))
             return !stack.get(FDataComponents.POTION_STATE.get()).dud();
@@ -110,11 +113,28 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             // A payload is read by what it is: a luminous powder makes a tracer, a flammable one
             // an incendiary. Nothing here names glowstone or blaze powder.
             // An explosive filler is a propellant that carries its own oxidizer: it goes up where the round stops.
-            case PAYLOAD -> loose && (material.traits().contains(Material.Trait.LUMINOUS)
+            case PAYLOAD -> blob(material, found.get().form()) || rope(material, found.get().form()) || loose && (material.traits().contains(Material.Trait.LUMINOUS)
                     || material.traits().contains(Material.Trait.FLAMMABLE) || material.propellant().isPresent()
                     || material.perks().keySet().stream().anyMatch(PAYLOAD_PERKS::contains));
             default -> false;
         };
+    }
+
+    /** Whether an item places a crop: what a seed round plants. */
+    public static boolean isSeed(ItemStack stack) {
+        return stack.getItem() instanceof net.minecraft.world.item.BlockItem block
+                && (block.getBlock() instanceof net.minecraft.world.level.block.CropBlock
+                || block.getBlock() instanceof net.minecraft.world.level.block.StemBlock);
+    }
+
+    /** A sticky lump (slime, magma cream, a daub of mud) a round can carry: it glues what it hits. */
+    private static boolean blob(Material material, String form) {
+        return material.traits().contains(Material.Trait.STICKY) && (form.equals("ball") || form.equals("raw"));
+    }
+
+    /** A strand (string, a thread) a round can trail behind it: it tethers. */
+    private static boolean rope(Material material, String form) {
+        return material.traits().contains(Material.Trait.FIBROUS) && form.equals("string");
     }
 
     /**
@@ -184,14 +204,16 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             return;
         }
         var vial = java.util.Optional.ofNullable(slots.get(PAYLOAD).get(FDataComponents.POTION_STATE.get()));
-        var payload = slots.get(PAYLOAD).isEmpty() || vial.isPresent() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
+        var seed = isSeed(slots.get(PAYLOAD)) ? java.util.Optional.of(net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(slots.get(PAYLOAD).getItem()))
+                : java.util.Optional.<net.minecraft.resources.ResourceLocation>empty();
+        var payload = slots.get(PAYLOAD).isEmpty() || vial.isPresent() || seed.isPresent() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(PAYLOAD)).get().id());
         BulletShape shape = BulletShape.ofForm(bullet.get().form()).orElse(BulletShape.ROUND_NOSE);
         boolean shot = shape.shot();
         // A core sits inside a bullet's jacket; shot has none.
         var core = shot || slots.get(CORE).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(CORE)).get().id());
-        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core, vial,
+        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core, vial, seed,
                 dry && level != null
                 ? java.util.Optional.of(new Cartridge.Stored(0, level.getGameTime())) : java.util.Optional.empty());
         if (cartridge.load(materials).isEmpty()) {

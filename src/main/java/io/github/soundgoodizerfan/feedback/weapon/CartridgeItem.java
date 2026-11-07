@@ -71,6 +71,8 @@ public class CartridgeItem extends Item {
         tooltip.add(Component.translatable(coil ? "cartridge.feedback.drive" : "cartridge.feedback.charge", charge,
                 String.format("%.1f", load.get().peakPressure()), String.format("%.1f", rating.get().value()))
                 .withStyle(!coil && load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
+        round.seed().ifPresent(sd -> tooltip.add(Component.translatable("cartridge.feedback.seed",
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.get(sd).getDescription()).withStyle(ChatFormatting.GRAY)));
         round.vial().ifPresent(v -> v.effect().ifPresent(e -> tooltip.add(Component.translatable("cartridge.feedback.vial",
                 Component.translatable("effect." + e.getNamespace() + "." + e.getPath())).withStyle(ChatFormatting.GRAY))));
         round.payload().ifPresent(p -> {
@@ -80,6 +82,8 @@ public class CartridgeItem extends Item {
                     blast > 0 ? Component.translatable("cartridge.feedback.explosive", String.format("%.1f", blast))
                             : Component.translatable(tracer && fire ? "cartridge.feedback.tracer_incendiary"
                             : tracer ? "cartridge.feedback.tracer" : fire ? "cartridge.feedback.incendiary"
+                            : round.payloadTraits(materials).contains(io.github.soundgoodizerfan.feedback.process.Material.Trait.STICKY) ? "cartridge.feedback.anchor"
+                            : round.payloadTraits(materials).contains(io.github.soundgoodizerfan.feedback.process.Material.Trait.FIBROUS) ? "cartridge.feedback.tether"
                             : round.payloadPerks(materials).isEmpty() ? "cartridge.feedback.inert" : "cartridge.feedback.perks",
                             round.payloadPerks(materials).keySet().stream().map(k -> Component.translatable("feedback.jei.perk." + k.getSerializedName()).getString())
                                     .collect(java.util.stream.Collectors.joining(", ")))).withStyle(ChatFormatting.GRAY));

@@ -146,17 +146,20 @@ public final class GunShots {
      * @param damage hurt per Work against a round nose's.
      * @param ease   how readily it breaks a brittle block (momentum needed is divided by this).
      * @param glance how readily it glances off a block (the turning angle is multiplied by this).
+     * @param traits what the payload material is (sticky glues, fibrous tethers); {@code seed} is a seed it plants on farmland.
      * @param vial   a potion the round carries, let go where it lands, or null.
      * @param perks  what the payload does to a living thing struck ({@link io.github.soundgoodizerfan.feedback.modular.MaterialPerks#affect}).
      */
     public record Flight(float drag, float damage, float ease, float glance, java.util.Map<io.github.soundgoodizerfan.feedback.process.Material.Perk, Integer> perks,
-                         io.github.soundgoodizerfan.feedback.potion.PotionState vial) {
-        public static final Flight PLAIN = new Flight(1f, 1f, 1f, 1f, java.util.Map.of(), null);
+                         io.github.soundgoodizerfan.feedback.potion.PotionState vial,
+                         java.util.Set<io.github.soundgoodizerfan.feedback.process.Material.Trait> traits,
+                         net.minecraft.resources.ResourceLocation seed) {
+        public static final Flight PLAIN = new Flight(1f, 1f, 1f, 1f, java.util.Map.of(), null, java.util.Set.of(), null);
 
         /** The flight of {@code round} in {@code materials}. */
         public static Flight of(Cartridge round, java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
             return new Flight(round.drag(materials), round.shape().damage(), round.shape().ease(), round.shape().glance(),
-                    round.payloadPerks(materials), round.vial().orElse(null));
+                    round.payloadPerks(materials), round.vial().orElse(null), round.payloadTraits(materials), round.seed().orElse(null));
         }
     }
 
@@ -857,9 +860,9 @@ public final class GunShots {
      * the echo's outline), an ender-like one hops it a few blocks, a sculk one pays a little experience for a kill. Hard
      * on the undead and on sea things is a damage bonus, added where the damage is worked out.
      *
-     * @param target what was struck, or null for a block.
+     * @param target what was struck, or null for a block; {@code blockPos} and {@code face} are the block struck.
      */
-    private static void payloadHit(ServerLevel level, Shot s, Vec3 at, Entity target) {
+    private static void payloadHit(ServerLevel level, Shot s, Vec3 at, Entity target, BlockPos blockPos, net.minecraft.core.Direction face) {
         var perks = s.flight.perks();
         // A vial breaks on the first thing the round meets, and what it held is let go there as a thrown flask lets it go.
         if (s.flight.vial() != null && !s.vialSpent) {
@@ -867,6 +870,34 @@ public final class GunShots {
             io.github.soundgoodizerfan.feedback.potion.PotionEffects.impact(level, s.shooter, s.shooter, at, s.flight.vial(),
                     FTuning.GUN_VIAL_REACH_SCALE * io.github.soundgoodizerfan.feedback.potion.PotionTuning.throwReach());
             level.sendParticles(ParticleTypes.SPLASH, at.x, at.y, at.z, 8, 0.2, 0.15, 0.2, 0.1);
+        }
+        var traits = s.flight.traits();
+        // A strand trailed behind the round reels: the body it hit is drawn to the shooter, or the shooter to the block.
+        if (traits.contains(io.github.soundgoodizerfan.feedback.process.Material.Trait.FIBROUS)) {
+            Vec3 eye = s.shooter.getEyePosition();
+            if (target instanceof LivingEntity struck)
+                reel(struck, eye);
+            else
+                reel(s.shooter, at);
+            for (int i = 1; i <= 12; i++) {
+                Vec3 q = eye.add(at.subtract(eye).scale(i / 12.0));
+                level.sendParticles(ParticleTypes.CRIT, q.x, q.y, q.z, 1, 0, 0, 0, 0);
+            }
+        }
+        // A sticky lump glues what it hits where it stands.
+        if (traits.contains(io.github.soundgoodizerfan.feedback.process.Material.Trait.STICKY) && target instanceof LivingEntity struck)
+            struck.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
+                    FTuning.GUN_ANCHOR_TICKS, FTuning.GUN_ANCHOR_AMPLIFIER));
+        // A seed that lands on a block it can grow in is planted there.
+        if (s.flight.seed() != null && blockPos != null && face == net.minecraft.core.Direction.UP)
+            plant(level, s, blockPos.above());
+        // A bouncing payload fired at the ground close by throws the shooter off it: a recoil cancel, a rocket jump with a pellet.
+        Integer bounce = perks.get(io.github.soundgoodizerfan.feedback.process.Material.Perk.BOUNCE);
+        if (bounce != null && face != null && s.shooter.position().distanceTo(at) <= FTuning.GUN_BOUNCE_REACH) {
+            Vec3 normal = Vec3.atLowerCornerOf(face.getNormal());
+            s.shooter.setDeltaMovement(s.shooter.getDeltaMovement().add(normal.scale(FTuning.GUN_BOUNCE_LAUNCH * bounce)));
+            s.shooter.hurtMarked = true;
+            s.shooter.fallDistance = 0f;
         }
         if (perks.isEmpty())
             return;
@@ -890,6 +921,46 @@ public final class GunShots {
         if (siphon != null && !struck.isAlive())
             net.minecraft.world.entity.ExperienceOrb.award(level, struck.position(),
                     siphon * io.github.soundgoodizerfan.feedback.modular.ModularTuning.PERK_SIPHON_XP_PER_LEVEL);
+    }
+
+    /** Draws {@code body} toward {@code toward}: a push that is stronger the further it has to go, capped, with a little lift off the ground. */
+    private static void reel(LivingEntity body, Vec3 toward) {
+        Vec3 d = toward.subtract(body.position().add(0, body.getBbHeight() / 2, 0));
+        double dist = d.length();
+        if (dist < 1.5)
+            return;
+        body.setDeltaMovement(body.getDeltaMovement().add(d.normalize().scale(Math.min(FTuning.GUN_TETHER_PULL, dist * 0.15))).add(0, 0.2, 0));
+        body.hurtMarked = true;
+        body.fallDistance = 0f;
+    }
+
+    /** Plants the seed a round carries at {@code pos} if that is empty and the crop can stand there; the round is the seed spent. */
+    private static void plant(ServerLevel level, Shot s, BlockPos pos) {
+        var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(s.flight.seed());
+        if (item.isEmpty() || !(item.get() instanceof net.minecraft.world.item.BlockItem seed) || !level.isEmptyBlock(pos) || !mayChange(level, s.shooter, pos))
+            return;
+        var crop = seed.getBlock().defaultBlockState();
+        if (!crop.canSurvive(level, pos))
+            return;
+        level.setBlockAndUpdate(pos, crop);
+        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, pos.getX() + 0.5, pos.getY() + 0.3, pos.getZ() + 0.5, 5, 0.2, 0.1, 0.2, 0);
+    }
+
+    /**
+     * What a burning payload sets off where it lands: a lit charge's neighbours catch in a chain. Dynamite goes up, candles and
+     * campfires light, where the world lets the shooter change things.
+     */
+    private static void fuse(ServerLevel level, Shot s, BlockPos at) {
+        for (BlockPos p : BlockPos.betweenClosed(at.offset(-1, -1, -1), at.offset(1, 1, 1))) {
+            if (!mayChange(level, s.shooter, p))
+                continue;
+            var state = level.getBlockState(p);
+            if (state.getBlock() instanceof net.minecraft.world.level.block.TntBlock) {
+                net.minecraft.world.level.block.TntBlock.explode(level, p);
+                level.removeBlock(p, false);
+            } else if (net.minecraft.world.level.block.CandleBlock.canLight(state) || net.minecraft.world.level.block.CampfireBlock.canLight(state))
+                level.setBlock(p.immutable(), state.setValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.LIT, true), 11);
+        }
     }
 
     /** One tick's travel. @return whether the shot is still flying. */
@@ -950,7 +1021,9 @@ public final class GunShots {
                 RubberRounds.landed(s.shooter, struck);
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
-            payloadHit(level, s, hit.getLocation(), target);
+            payloadHit(level, s, hit.getLocation(), target, null, null);
+            if (s.incendiary && target instanceof net.minecraft.world.entity.monster.Creeper creeper)
+                creeper.ignite();
             GunFu.bulletHit(level, s.shooter, target, s.impulse);
             landed(level, s, target, hit.getLocation());
             if (detonate(level, s, hit.getLocation()))
@@ -989,7 +1062,9 @@ public final class GunShots {
             level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),
                     p.x, p.y, p.z, 6, 0.05, 0.05, 0.05, 0.1);
             landed(level, s, null, p);
-            payloadHit(level, s, p, null);
+            payloadHit(level, s, p, null, at, block.getDirection());
+            if (s.incendiary)
+                fuse(level, s, at);
             if (detonate(level, s, p.add(Vec3.atLowerCornerOf(block.getDirection().getNormal()).scale(0.1))))
                 return false;
             if (s.incendiary) {

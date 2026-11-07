@@ -147,7 +147,7 @@ The **payload** slot is optional. Whatever you put there is carried in the bulle
 | Payload | Result |
 | --- | --- |
 | Glowstone Dust or Redstone Dust | **Tracer**: the bullet draws a bright line along its path. |
-| Gunpowder or Blaze Powder | **Incendiary**: sets whatever it hits on fire for 5 s, and lights fire where it lands if fire spread is on and you're allowed to build there. |
+| Gunpowder or Blaze Powder | **Incendiary / fuse round**: sets whatever it hits on fire for 5 s, and lights fire where it lands if fire spread is on and you're allowed to build there. It also **lights charges**: TNT within a block of where it lands goes up, candles and campfires light, and a creeper it hits starts its fuse. |
 | A dust with a **toxic** perk (lead, osmium) | **Gas round**: poisons what it hits and lets a lingering [fume cloud](Hazards.md) go where it lands, once per round. A stronger perk makes a stronger cloud. |
 | **Chill** (ice) | Chills what it hits, as powder snow does. |
 | **Cling** | Slows what it hits, as honey does. |
@@ -159,6 +159,10 @@ The **payload** slot is optional. Whatever you put there is carried in the bulle
 | **Blink** (ender pearl) | **Hop round**: throws what it hits a few blocks in a random direction, further for a stronger perk. |
 | **Siphon** (sculk) | A kill with it yields a little extra experience. |
 | A brewed **potion** (any bottle that isn't a dud) | **Potion round**: the potion is sealed in a glass vial in the bullet and let go where the round lands, as a [thrown bottle](Thrown_and_Imbued_Potions.md) lets it go, over half the reach. It breaks on the first thing the round meets, and its strength fades on its own clock like any potion's, so an old round is a weak one. The bottle is used up. |
+| A lump of something sticky (**slime ball**, **magma cream**, red mud) | **Anchor round**: glues what it hits to the spot for 5 s (Slowness VIII). Slime also **bounces** (below). |
+| A strand of **string** (or any fibrous thread) | **Tether round**: trails a line to the hit. A creature is reeled to you, and if the round hits a block it reels *you* to the block, a grapple with no hook. The pull is stronger the further away it is, up to a cap. |
+| A **seed** (any item that plants a crop) | **Seed round**: planted on the farmland the round lands on, if the crop can stand there. The round is the seed spent. |
+| Slime (**bounce**) fired at a block within 4 blocks | **Recoil cancel**: the block throws *you* off the face it was fired at, a rocket jump with a pellet. Aim at the ground at your feet. |
 
 ## Loading
 

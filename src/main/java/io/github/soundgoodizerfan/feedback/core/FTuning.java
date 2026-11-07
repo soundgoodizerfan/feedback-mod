@@ -2141,6 +2141,9 @@ public final class FTuning {
     public static final int GUN_RICOCHET_MAX = 2;
     /** The projectile's hardness when a shot names no material: lead's. */
     public static final float GUN_DEFAULT_PROJECTILE_HARDNESS = 0.3f;
+    /** Anchor round: ticks and Slowness level that glue a body in place. Tether round: reel speed cap, blocks per tick. Bounce: launch per level of the payload's bounce perk, and how close the shooter must be. Placeholders. */
+    public static final int GUN_ANCHOR_TICKS = 100, GUN_ANCHOR_AMPLIFIER = 7;
+    public static final float GUN_TETHER_PULL = 0.9f, GUN_BOUNCE_LAUNCH = 0.9f, GUN_BOUNCE_REACH = 4f;
     /** A vial round's cloud against a thrown flask's reach, a share: a vial holds a mouthful. Placeholder. */
     public static final float GUN_VIAL_REACH_SCALE = 0.5f;
     /** How far a hop round throws what it hits, blocks per level of the payload's blink perk. Placeholder. */

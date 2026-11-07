@@ -55,6 +55,8 @@ import java.util.Optional;
  *                     keeps the bore from it. A polymer jacket round a core is a sabot.
  * @param vial         a potion carried in a glass vial in the bullet instead of a dust: it is let go where the round lands, as a thrown
  *                     flask lets it go, a smaller reach. Its strength fades as the potion's does, from its own stamp.
+ * @param seed         the item id of a seed carried in the bullet: it is planted where the round lands on farmland. An item, not a material,
+ *                     because the thing planted is the block that item places; the press takes any item that places a crop.
  * @param stored       a round seated with no charge is a small jar (mechanics 6.6): its drive is
  *                     the volts it was charged to, read through {@link #at}, and it leaks wherever
  *                     it is. Present only on such a round. A coil fires it; a chamber does not.
@@ -62,7 +64,7 @@ import java.util.Optional;
 public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
                         Optional<ResourceLocation> payload, boolean shot, BulletShape shape,
                         Optional<ResourceLocation> core, Optional<io.github.soundgoodizerfan.feedback.potion.PotionState> vial,
-                        Optional<Stored> stored) {
+                        Optional<ResourceLocation> seed, Optional<Stored> stored) {
 
     /**
      * Volts on a charged round as of {@code tick}: a stamp and a tick, the shape of a workpiece's
@@ -117,10 +119,11 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             BulletShape.CODEC.optionalFieldOf("shape", BulletShape.ROUND_NOSE).forGetter(Cartridge::shape),
             ResourceLocation.CODEC.optionalFieldOf("core").forGetter(Cartridge::core),
             io.github.soundgoodizerfan.feedback.potion.PotionState.CODEC.optionalFieldOf("vial").forGetter(Cartridge::vial),
+            ResourceLocation.CODEC.optionalFieldOf("seed").forGetter(Cartridge::seed),
             Stored.CODEC.optionalFieldOf("stored").forGetter(Cartridge::stored)
     ).apply(i, Cartridge::new)), LEGACY);
 
-    /** Written out by hand: ten fields is past what {@code composite} takes. */
+    /** Written out by hand: eleven fields is past what {@code composite} takes. */
     public static final StreamCodec<RegistryFriendlyByteBuf, Cartridge> STREAM_CODEC = StreamCodec.of(
             (buf, c) -> {
                 ByteBufCodecs.VAR_INT.encode(buf, c.boreMm());
@@ -132,6 +135,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 ByteBufCodecs.idMapper(i -> BulletShape.values()[i], BulletShape::ordinal).encode(buf, c.shape());
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.core());
                 ByteBufCodecs.optional(io.github.soundgoodizerfan.feedback.potion.PotionState.STREAM_CODEC).encode(buf, c.vial());
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.seed());
                 ByteBufCodecs.optional(Stored.STREAM_CODEC).encode(buf, c.stored());
             },
             buf -> new Cartridge(ByteBufCodecs.VAR_INT.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
@@ -140,6 +144,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                     ByteBufCodecs.idMapper(i -> BulletShape.values()[i], BulletShape::ordinal).decode(buf),
                     ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf),
                     ByteBufCodecs.optional(io.github.soundgoodizerfan.feedback.potion.PotionState.STREAM_CODEC).decode(buf),
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf),
                     ByteBufCodecs.optional(Stored.STREAM_CODEC).decode(buf)));
 
     /** A shot shell always has a shot shape and a bullet never does; a missing one is the plain one. */
@@ -151,6 +156,15 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             core = Optional.empty();
         if (vial == null || shot)
             vial = Optional.empty();
+        if (seed == null || shot)
+            seed = Optional.empty();
+    }
+
+    /** A round with no seed. */
+    public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
+                     Optional<ResourceLocation> payload, boolean shot, BulletShape shape, Optional<ResourceLocation> core,
+                     Optional<io.github.soundgoodizerfan.feedback.potion.PotionState> vial, Optional<Stored> stored) {
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, vial, Optional.empty(), stored);
     }
 
     /** A round with no vial. */
@@ -189,7 +203,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
 
     /** This jar round holding {@code volts} as of {@code now}. */
     public Cartridge withVolts(float volts, long now) {
-        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, vial,
+        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, vial, seed,
                 Optional.of(new Stored(Math.max(0, volts), now)));
     }
 
@@ -433,6 +447,12 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         if (jacket != null && heart != null && heart.hardness().value() > 0)
             w *= Math.max(FTuning.GUN_JACKET_WEAR_FLOOR, Math.min(1f, jacket.hardness().value() / heart.hardness().value()));
         return w;
+    }
+
+    /** The traits of the payload's material: what it is, for the hooks that read what a payload is rather than what it does. */
+    public java.util.Set<Material.Trait> payloadTraits(Map<ResourceLocation, Material> materials) {
+        return payload.map(materials::get).map(m -> m.traits().isEmpty() ? java.util.Set.<Material.Trait>of()
+                : java.util.EnumSet.copyOf(m.traits())).orElse(java.util.Set.of());
     }
 
     /** What the payload does to a living thing it strikes: the payload material's own perks (poison, chill, cling...), none for no payload. */
