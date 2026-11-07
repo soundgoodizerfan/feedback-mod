@@ -88,6 +88,10 @@ public class GrappleHook extends Projectile {
     /** The fixed line length of a swing the owner is on (0 when the hook drags a creature or has not bitten): the owner's client runs the pendulum with it. */
     private static final EntityDataAccessor<Float> DATA_SWING_ROPE = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.FLOAT);
 
+    /** Where the line bends round block edges, anchor outward (synced; the server lays them, clients read them). */
+    private static final EntityDataAccessor<net.minecraft.nbt.CompoundTag> DATA_BENDS = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.COMPOUND_TAG);
+    private final java.util.List<Vec3> bends = new java.util.ArrayList<>();
+
     /** The creature the hook bit, or -1 for a block. */
     private int anchorEntity = -1;
     private Vec3 anchorPoint = Vec3.ZERO;
@@ -115,6 +119,12 @@ public class GrappleHook extends Projectile {
         builder.define(DATA_ANCHORED, false);
         builder.define(DATA_FITTINGS, 0);
         builder.define(DATA_SWING_ROPE, 0f);
+        builder.define(DATA_BENDS, RopeWrap.toTag(java.util.List.of()));
+    }
+
+    /** The bends in the line, anchor outward (empty when it runs straight). Read by the owner's client for the pendulum and by every client to draw. */
+    public java.util.List<Vec3> bends() {
+        return RopeWrap.fromTag(entityData.get(DATA_BENDS));
     }
 
     /** The line length of the swing the owner is on, or 0 when there is none. Read by the owner's client, which moves them. */
@@ -200,7 +210,8 @@ public class GrappleHook extends Projectile {
     @Override
     protected void onHitBlock(BlockHitResult hit) {
         super.onHitBlock(hit);
-        bite(null, hit.getLocation(), hit.getBlockPos());
+        // The anchor sits a hair off the face so the line's first ray does not start inside its own block.
+        bite(null, hit.getLocation().add(Vec3.atLowerCornerOf(hit.getDirection().getNormal()).scale(ModularTuning.GRAPPLE_BEND_CLEARANCE)), hit.getBlockPos());
     }
 
     @Override
@@ -272,7 +283,14 @@ public class GrappleHook extends Projectile {
         }
         boolean stalled = !swing && reelTicks > 2 && lastDistance - distance < reelSpeed() * ModularTuning.GRAPPLE_STALL_FRACTION;
         lastDistance = distance;
-        float load = BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f);
+        if (swing && anchorEntity < 0 && owner instanceof Player) {
+            Vec3 end = living.position().add(0, living.getBbHeight() * 0.5, 0);
+            if (RopeWrap.update(level(), this, to, bends, end))
+                entityData.set(DATA_BENDS, RopeWrap.toTag(bends));
+        }
+        // Each edge the line is dragged over saws at it: a bent line takes more than the body weighs.
+        float load = BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f)
+                * (1f + bends.size() * ModularTuning.GRAPPLE_BEND_LOAD);
         if (load > rating) {
             strain += (load / rating - 1f) * ModularTuning.GRAPPLE_STRAIN_PER_TICK;
             if (strain >= 1f) {

@@ -38,6 +38,7 @@ departs from all three of these deliberately.
 | **Cuisine Delight** (Minecraft-LightLand) | LGPL-2.1 (`LICENSE`, `mod_license`; "or any later version"). Read at `1.21`, commit `c49e2d7` | **Yes** | LGPL-2.1 §3 allows converting a copy to the ordinary GPL. Design only, nothing copied, assets never. Hard-depends on Farmer's Delight. See *Food* |
 | **ModularDelight** (Wintooo) | MIT. Read at `master`, commit `fc27e93`; **Fabric 1.20.1, not 1.21.1** | **Yes** | Permissive. Design only, nothing copied (it could not be ported anyway), assets never. See *Food* |
 | **Firmalife** (eerussianguy) | MIT. Read at `1.21.x`, commit `c1b2edf9`. A few spots are marked "copied from TFC" (EUPL): never taken | **Yes** | Permissive for its own code. Design only, nothing copied, assets never. Its decay engine is TerraFirmaCraft's, not its own. See *Food* |
+| **Grappling Hook Mod** (yyon) | GPL-3.0 (`LICENSE`; read at `1.21.1`, commit `3539c57`, cloned to `../grapplemod-reference`) | **Yes** | Same licence as this project. Design only, no code pasted, assets never. See *Grappling Hook Mod* |
 
 **Assets are a separate question and the answer there is still no, universally.** Create's are
 All Rights Reserved. GregTech's are third-party resource-pack imports (Gregtech: Refreshed,
@@ -1081,3 +1082,11 @@ From `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley). The three form s
 Greyscale item sprites (2026-11-06), luminance-only copies that `client/ModularClient` and `client/FormTint` tint per material. `item/modular/grey/charge_dynamite.png` is `items/tool_dynamite.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley). `item/modular/grey/vanilla_{iron_ingot,copper_ingot,gold_ingot,netherite_ingot,netherite_scrap,gunpowder,glass_bottle,stick,bowl}.png` are the Minecraft 1.21.1 item textures of those names, reduced to luminance and stretched to full brightness (Mojang's assets, shipped modified inside a mod for the game).
 
 `item/form/paper_case.png` (2026-11-06) is a copy of `item/form/case.png` (a luminance-only sprite from malcolmriley/unused-textures, CC BY 4.0, Malcolm Riley), kept as a stand-in for the paper cartridge case until it gets a sprite of its own; it is tinted per material at runtime.
+
+## Grappling Hook Mod
+
+yyon's mod (GPL-3.0, `1.21.1` branch, commit `3539c57`, read 2026-11-07) for the grapple's feel. Design only; the code is written fresh against Mojang names and Feedback's rules.
+
+**Taken (the idea):** the line as a list of bends round block edges with the pendulum hung from the nearest one (`SegmentHandler`; here `combat/tether/RopeWrap`, a different algorithm: nearest box edge to the blocked segment, no recursion); a motor that ramps up (here a winch drum spin-up); slowing near the anchor; direction input while swinging and keeping momentum through air drag (`AirfrictionController`); jumping off the rope; two hooks balanced rather than solved in turn. Sites say so: `RopeWrap`, `client/GrappleSwing`.
+
+**Not taken:** the whole customization record, modifier GUI and ten upgrade items (free scalars with no physical cause; Feedback's fittings are parts); block-id attach lists (identity); the flat infinite motor, look-steered "smart motor", rocket, forcefield, ender staff, wall-run, slide and double-jump enchantments (no mechanism behind them); hook magnet aim assist; `phaserope` and `sticky` toggles (they patch a missing rope model); its entity yank (Feedback's entity anchors, mass-based drag and Throw replace it); its trusting client position sync (strain and parting stay on the server); auto-attach when the bent line runs out.

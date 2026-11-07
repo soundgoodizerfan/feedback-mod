@@ -378,6 +378,32 @@ public final class ModularTuning {
     /** Durability the grapple loses when its line parts (a cast costs 1). */
     public static final int GRAPPLE_BREAK_WEAR = 20;
     public static final int GRAPPLE_DURABILITY = 240;
+    /** Most places a line bends round block edges (grapplemod's SegmentHandler idea, own algorithm). */
+    public static final int GRAPPLE_MAX_BENDS = 8;
+    /** How far outside a block edge a bend sits, blocks, so the line clears the block. */
+    public static final double GRAPPLE_BEND_CLEARANCE = 0.05;
+    /** Extra share of the load a line takes for every edge it is dragged over: a corner saws the line. */
+    public static final float GRAPPLE_BEND_LOAD = 0.25f;
+    /** Blocks per tick squared a held direction adds while the line is taut and the player is airborne (pumping a swing). */
+    public static final double GRAPPLE_AIR_ACCEL = 0.045;
+    /** Horizontal speed a pumped swing stops gaining at, blocks per tick. */
+    public static final double GRAPPLE_AIR_CAP = 0.9;
+    /** Share of horizontal speed kept per tick on a line or just after it; vanilla air drag keeps 0.91. */
+    public static final double GRAPPLE_AIR_KEEP = 0.985;
+    /** Ticks after letting go that the better air keep lasts. */
+    public static final int GRAPPLE_COAST_TICKS = 20;
+    /** Upward speed a jump off a line adds when airborne, blocks per tick. */
+    public static final double GRAPPLE_JUMP_IMPULSE = 0.45;
+    /** Ticks of winching a drum takes to reach full reel speed. */
+    public static final int GRAPPLE_SPIN_UP_TICKS = 10;
+    /** Blocks from the pivot inside which a winched line drags speed down, so the drum does not slam the player into the anchor. */
+    public static final double GRAPPLE_BRAKE_RADIUS = 3.0;
+    /** Share of speed kept per tick inside the brake radius while winching. */
+    public static final double GRAPPLE_BRAKE_KEEP = 0.8;
+    /** Blocks per tick the line pays out while the pay-out key is held. */
+    public static final float GRAPPLE_PAYOUT = 0.35f;
+    /** Passes the client makes over two lines so both hold together (a joint constraint, not one line then the other). */
+    public static final int GRAPPLE_JOINT_PASSES = 3;
 
     // --- attuning (EnchantGame, docs/specs/feedback_enchanting_spec.md): every figure [OPEN] until played ----
     /** Coercive field, loop width and lag (ticks) of a material with no {@code attuning} block. */

@@ -1410,6 +1410,7 @@
   "commands.feedback.feel": "Feel: flash %s, roll %s deg, fov pop %s, %s sparks, %s sound.",
   "key.feedback.parry": "Parry",
   "key.feedback.roll": "Roll",
+  "key.feedback.grapple_pay_out": "Grapple: pay out line",
   "key.feedback.cast_1": "Cast slot 1",
   "key.feedback.cast_2": "Cast slot 2",
   "key.feedback.cast_3": "Cast slot 3",

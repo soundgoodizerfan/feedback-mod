@@ -254,6 +254,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GrappleReleasePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GrappleReleasePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GrappleReleasePayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.BareModePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.BareModePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.BareModePayload::handle)

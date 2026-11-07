@@ -42,7 +42,16 @@ Use it to throw. The hook flies fast on a short arc and bites the first block or
 - **A creature, without a barb:** the creature is a swing anchor, whatever its size.
 - **A creature, with a barb:** a creature lighter than you is dragged to you. A heavier one is still a swing anchor. Mass is judged by body size, the same stand-in as the [parry](Combat.md#parry)'s.
 
-With a second hook fitted, using the grapple while a line is out throws the second hook, and both lines hold you as you swing.
+With a second hook fitted, using the grapple while a line is out throws the second hook, and both lines hold you as you swing. The two lines hold together: you cannot slip one by leaning on the other.
+
+### Swinging
+
+- **The line catches on edges.** A line that runs over a block corner bends round it and the swing hangs from the corner, with the line that is left. Up to eight bends. Each edge the line is dragged over saws at it: a bent line takes more load than a straight one (see below), so a line a straight swing would not part may part round corners.
+- **Winch.** The drum comes up to speed over half a second of holding use. Near the anchor the line drags your speed down so you stop at the anchor instead of hitting it.
+- **Pay out.** Hold **X** (*Grapple: pay out line*, rebindable) to let line out, up to the grapple's longest line (16 blocks, 28 with the extra coil).
+- **Pump.** In the air on a taut line, hold a direction to add speed along it, up to a limit. Air drag is lighter on a line and for a second after letting go, so a swing keeps the speed it was given.
+- **Jump** to let go with an upward kick (in the air) and the swing's momentum.
+- **The line shows its slack.** A loose line hangs; a taut one is straight, and the stretches over edges are straight.
 
 The line also lets go if it parts, if it has been out for ten seconds, or if either end is gone.
 
@@ -50,4 +59,4 @@ A [Tether](Combat.md#tethers) holds the body on the line, and a creature held th
 
 ## The line has a rating
 
-The line's material (string, wool's strength) sets the load it can take. The load is the mass of the body on the line. A creature being hauled in counts as far heavier on any tick its reel stalls (caught on a corner, held by the ground). While you swing, your own weight is the load, so a heavy player on a weak line can part it. Over the rating the line gains strain every tick and **parts at full strain**; a heavier overload parts it sooner. The grapple takes 20 wear when the line parts. A load under the rating never strains it, and wear is for misuse: a pull or swing under the rating costs nothing.
+The line's material (string, wool's strength) sets the load it can take. The load is the mass of the body on the line. A creature being hauled in counts as far heavier on any tick its reel stalls (caught on a corner, held by the ground). While you swing, your own weight is the load, plus a quarter of it for every edge the line is bent over, so a heavy player on a weak line can part it. Over the rating the line gains strain every tick and **parts at full strain**; a heavier overload parts it sooner. The grapple takes 20 wear when the line parts. A load under the rating never strains it, and wear is for misuse: a pull or swing under the rating costs nothing.
