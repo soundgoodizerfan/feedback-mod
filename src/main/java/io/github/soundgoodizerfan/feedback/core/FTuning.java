@@ -2141,6 +2141,14 @@ public final class FTuning {
     public static final int GUN_RICOCHET_MAX = 2;
     /** The projectile's hardness when a shot names no material: lead's. */
     public static final float GUN_DEFAULT_PROJECTILE_HARDNESS = 0.3f;
+    /** Share of a jacketed bullet's volume that is its core (the rest is jacket). Placeholder. */
+    public static final float GUN_CORE_FRACTION = 0.7f;
+    /** A sabot's core meets armour this much harder than its metal, and flies on with this share of the drag. Placeholders. */
+    public static final float GUN_SABOT_PIERCE = 1.2f, GUN_SABOT_DRAG = 0.6f;
+    /** Least share of a core's bore wear a soft jacket lets through. Placeholder. */
+    public static final float GUN_JACKET_WEAR_FLOOR = 0.3f;
+    /** Ductility a blank needs for a die to press a shape into it cold; a harder metal is cast or forged to shape. Placeholder. */
+    public static final float GUN_SWAGE_DUCTILITY = 8f;
     /** A bullet that has less than this share of its muzzle energy left drops where it is. */
     public static final float GUN_MIN_ENERGY_FRACTION = 0.03f;
     // --- Handling: aiming, stance, fire modes, recoil climb (spec 7). Placeholders. -------------

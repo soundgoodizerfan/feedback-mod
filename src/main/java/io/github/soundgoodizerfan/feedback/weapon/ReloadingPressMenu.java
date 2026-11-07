@@ -31,32 +31,34 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** The press's four slots and the hotbar, plus its position and die set at open. */
+/** The press's slots and the hotbar, plus its position and die set at open. */
 public class ReloadingPressMenu extends AbstractContainerMenu {
 
-    /** Case, charge, second charge, bullet, payload, then the round that comes out. */
-    public static final int[][] SLOT_XY = {{62, 20}, {62, 40}, {84, 40}, {62, 60}, {62, 80}, {148, 50}};
-    public static final int HOTBAR_X = 8, HOTBAR_Y = 160;
+    /** Case, charge, second charge, bullet, core, payload, then the round that comes out. */
+    public static final int[][] SLOT_XY = {{64, 26}, {64, 48}, {86, 48}, {64, 70}, {86, 70}, {64, 92}, {196, 88}};
+    public static final int HOTBAR_X = 32, HOTBAR_Y = 184;
+    public static final int WIDTH = 224, HEIGHT = 208;
 
     private final Container container;
     private final BlockPos pos;
-    private final int openedBore;
+    private final int openedBore, openedDie;
     private final Player player;
 
     public ReloadingPressMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(id, inventory, new SimpleContainer(ReloadingPressBlockEntity.SLOTS), buf.readBlockPos(), buf.readVarInt());
+        this(id, inventory, new SimpleContainer(ReloadingPressBlockEntity.SLOTS), buf.readBlockPos(), buf.readVarInt(), buf.readVarInt());
     }
 
     public ReloadingPressMenu(int id, Inventory inventory, ReloadingPressBlockEntity press) {
-        this(id, inventory, press, press.getBlockPos(), press.boreMm());
+        this(id, inventory, press, press.getBlockPos(), press.boreMm(), press.die() == null ? -1 : press.die().ordinal());
     }
 
-    private ReloadingPressMenu(int id, Inventory inventory, Container container, BlockPos pos, int bore) {
+    private ReloadingPressMenu(int id, Inventory inventory, Container container, BlockPos pos, int bore, int die) {
         super(FMenus.RELOADING_PRESS.get(), id);
         this.player = inventory.player;
         this.container = container;
         this.pos = pos;
         this.openedBore = bore;
+        this.openedDie = die;
         for (int i = 0; i < ReloadingPressBlockEntity.SLOTS; i++) {
             final int slot = i;
             addSlot(new Slot(container, i, SLOT_XY[i][0], SLOT_XY[i][1]) {
@@ -76,6 +78,11 @@ public class ReloadingPressMenu extends AbstractContainerMenu {
 
     public int openedBore() {
         return openedBore;
+    }
+
+    /** The die's shape (an index into {@link BulletShape#values}) when opened, or -1 for the blank as it is. */
+    public int openedDie() {
+        return openedDie;
     }
 
     @Override

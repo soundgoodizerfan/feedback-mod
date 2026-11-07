@@ -60,7 +60,7 @@ import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 public final class FormTint {
 
     /** The forms that have a sprite under {@code textures/item/form/}. A new form type needs a file and an entry here. */
-    private static final Set<String> SPRITE_FORMS = Set.of("ingot", "ground_ingot", "nugget", "bullet", "case",
+    private static final Set<String> SPRITE_FORMS = Set.of("ingot", "ground_ingot", "nugget", "bullet", "round_ball", "flat_nose_bullet", "pointed_bullet", "hollow_point_bullet", "case",
             "plate", "crystal_plate", "grip", "rod", "turned_rod", "wire", "fine_wire", "foil", "coin", "scrap", "swarf", "drilled_plate", "raw", "lump", "string", "dust");
 
     /** The metal of the machines drawn on the shared tank, block and coil-less sprites (their models tint layer 0). */

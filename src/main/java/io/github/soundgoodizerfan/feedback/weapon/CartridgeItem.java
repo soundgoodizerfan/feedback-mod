@@ -43,6 +43,9 @@ public class CartridgeItem extends Item {
             return;
         tooltip.add(Component.translatable("cartridge.feedback.settings", round.boreMm(),
                 name(round.caseMaterial()), name(round.projectile())).withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("gui.feedback.reloading_press.shape." + round.shape().getSerializedName())
+                .withStyle(ChatFormatting.GRAY));
+        round.core().ifPresent(c -> tooltip.add(Component.translatable("cartridge.feedback.core", name(c)).withStyle(ChatFormatting.GRAY)));
         if (round.shot())
             tooltip.add(Component.translatable("cartridge.feedback.shot", round.pellets()).withStyle(ChatFormatting.GRAY));
         var materials = context.level() == null ? java.util.Map.<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material>of()
@@ -75,7 +78,9 @@ public class CartridgeItem extends Item {
                     blast > 0 ? Component.translatable("cartridge.feedback.explosive", String.format("%.1f", blast))
                             : Component.translatable(tracer && fire ? "cartridge.feedback.tracer_incendiary"
                             : tracer ? "cartridge.feedback.tracer" : fire ? "cartridge.feedback.incendiary"
-                            : "cartridge.feedback.inert")).withStyle(ChatFormatting.GRAY));
+                            : round.payloadPerks(materials).isEmpty() ? "cartridge.feedback.inert" : "cartridge.feedback.perks",
+                            round.payloadPerks(materials).keySet().stream().map(k -> Component.translatable("feedback.jei.perk." + k.getSerializedName()).getString())
+                                    .collect(java.util.stream.Collectors.joining(", ")))).withStyle(ChatFormatting.GRAY));
         });
     }
 

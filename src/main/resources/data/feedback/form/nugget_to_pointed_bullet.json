@@ -1,0 +1,7 @@
+{
+  "from": "nugget",
+  "to": "pointed_bullet",
+  "operation": "blow",
+  "base": 7,
+  "slope": 2
+}

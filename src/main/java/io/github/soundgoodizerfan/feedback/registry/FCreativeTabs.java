@@ -52,6 +52,7 @@ public class FCreativeTabs {
                         FLogistics.fill(output);
                         FAutomation.fill(output);
                         output.accept(FItems.BULLET_MOLD.get());
+                        output.accept(FItems.BALL_MOLD.get());
                         output.accept(FItems.TUBE_MOLD.get());
                         output.accept(FItems.GLASS_BLOCK_MOLD.get());
                         output.accept(FItems.GLASS_PANE_MOLD.get());

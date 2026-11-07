@@ -442,7 +442,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAND_HAMMER.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.TUBE_MOLD.get(),
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.BALL_MOLD.get(), FItems.TUBE_MOLD.get(),
                 FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get(),
                 FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get(), FItems.ATOMISING_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
@@ -664,7 +664,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         materials.forEach((id, m) -> {
             m.item(id, "case").ifPresent(cases::add);
             m.item(id, "paper_case").ifPresent(cases::add);
-            m.item(id, "bullet").ifPresent(bullets::add);
+            for (var shape : io.github.soundgoodizerfan.feedback.weapon.BulletShape.values())
+                if (!shape.shot())
+                    m.item(id, shape.form()).ifPresent(bullets::add);
         });
         List<PressCategory.Card> cards = new ArrayList<>();
         materials.forEach((id, m) -> m.propellant().ifPresent(p -> {

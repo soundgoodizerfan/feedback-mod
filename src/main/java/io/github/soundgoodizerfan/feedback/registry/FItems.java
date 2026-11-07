@@ -618,6 +618,10 @@ public class FItems {
     public static final DeferredItem<MoldItem> BULLET_MOLD =
             ITEMS.register("bullet_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "bullet"));
 
+    /** A bullet mold for round ball: the same melt cast as spheres ({@code mold/round_ball.json}). */
+    public static final DeferredItem<MoldItem> BALL_MOLD =
+            ITEMS.register("ball_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "round_ball"));
+
     /** The third mold shape: molten glass cast as a tube (a glass tube is drawn or cast in practice; no blowing minigame). */
     public static final DeferredItem<MoldItem> TUBE_MOLD =
             ITEMS.register("tube_mold", () -> new MoldItem(new Item.Properties().stacksTo(1), "tube"));

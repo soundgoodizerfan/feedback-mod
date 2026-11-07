@@ -1,6 +1,6 @@
 # Reloading Press
 
-Where you assemble [ammunition](Ammunition.md). Put in a case, a charge and a projectile, choose the size, and pull the lever.
+Where you assemble [ammunition](Ammunition.md). Put in a case, a charge and a projectile, choose the size and the shape, and pull the lever.
 
 ## Crafting
 
@@ -19,11 +19,14 @@ P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and I is a Wrought Iron Ingo
 | **Case** | a metal case, or a [paper case](#paper-cases) |
 | **Charge** | loose powder (gunpowder, blaze powder, redstone dust) or a [Mixture](Mixer.md#using-it) from the Mixer. Leave empty for a jar round |
 | **+ Charge** | a second powder or Mixture, to make a blend |
-| **Bullet** | a metal bullet, or a **nugget** to make shot |
-| **Payload** | optional: glowstone dust, redstone dust, gunpowder or blaze powder |
+| **Bullet** | a metal or polymer bullet of any [shape](Ammunition.md#bullet-shapes), or a **nugget** to make shot |
+| **core** (beside the bullet) | optional: a nugget of a second metal, set inside the bullet's jacket: see [Jacket and core](Ammunition.md#jacket-and-core) |
+| **Payload** | optional: glowstone dust, redstone dust, gunpowder, blaze powder, or a dust with a perk (poison, chill, cling, radiant, bounce) |
 | **Round** | where the finished cartridge comes out |
 
-Set the **bore** with **< >** at the top, from 5 to 20 mm in 1 mm steps; the label also names the nearest of four sizes (rimfire 5 mm, pistol 9 mm, intermediate 12 mm, magnum 20 mm). This is the die set. Every round you seat comes out at that size, and only guns of that bore (within 1 mm, on a built gun; see [Gun Parts](Gun_Parts.md#hitting-the-target)) will take it.
+The panel has three panes: the components on the left, the die on the right, and the round's sheet along the bottom.
+
+The die has two steppers. **Bore** runs from 5 to 20 mm in 1 mm steps; the label also names the nearest of four sizes (rimfire 5 mm, pistol 9 mm, intermediate 12 mm, magnum 20 mm). Every round you seat comes out at that size, and only guns of that bore (within 1 mm, on a built gun; see [Gun Parts](Gun_Parts.md#hitting-the-target)) will take it. **Shape** is **As is** (the blank is seated as it is) or one of round ball, flat nose, hollow point, pointed, or, for a nugget, birdshot, buckshot, large shot or flechette; see [Bullet shapes](Ammunition.md#bullet-shapes) for what each does and which metals a cold die can stamp.
 
 Press **Seat** to make one round.
 
@@ -50,7 +53,7 @@ One case, one projectile and one payload are used per round. The charge slots ar
 
 ## The preview line
 
-With a case and charge in, a line at the bottom shows the pressure the charge will make **against what that case can hold**, e.g. *"Charge 4: 3.0 Pu against case 3.8 Pu"*. It turns **red** if the charge is more than the case can take.
+The sheet along the bottom shows the shape the press would seat, with its drag, pierce and hurt multipliers. With a case and charge in, it also shows the pressure the charge will make **against what that case can hold**, e.g. *"Charge 4: 3.0 Pu against case 3.8 Pu"*. It turns **red** if the charge is more than the case can take.
 
 That line is about the **case**. Whether your **gun** can take it is a separate question: compare it with the *Chamber* line on the gun's tooltip.
 
@@ -58,5 +61,7 @@ That line is about the **case**. Whether your **gun** can take it is a separate 
 
 - *"Needs a case and a bullet."*: something is missing, or something is in the wrong slot.
 - *"A case takes at most 8 charge."*: take some powder out.
+- *"That shape is for the other kind: shot from a nugget, a bullet shape from a bullet."*: the Shape die and the projectile slot disagree.
+- *"That metal is too hard to press cold into this shape. Cast or forge the blank."*: see [Bullet shapes](Ammunition.md#bullet-shapes).
 - *"That charge will not seat: a coil's drive cannot be blended with powder."*: you've mixed redstone with gunpowder or blaze powder.
 - *"Take the round out first."*: empty the output slot.

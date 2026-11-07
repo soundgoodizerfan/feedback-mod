@@ -689,7 +689,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         Material bullet = materials.get(Feedback.id(launcher == Launcher.COIL ? "wrought_iron" : "lead"));
         Optional<Frame> frame = frame(materials);
         return metal == null || bullet == null || frame.isEmpty() ? Optional.empty()
-                : bake(metal, frame.get(), bullet,
+                : bake(metal, frame.get(), Cartridge.Slug.of(bullet),
                         launcher == Launcher.COIL ? Load.REFERENCE_COIL : launcher == Launcher.SPRING ? Load.SPRING
                                 : launcher == Launcher.STEAM ? Load.STEAM : Load.REFERENCE,
                         boreMmReal() - Math.round(boreMmReal()));
@@ -727,18 +727,19 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float loose = boreMmReal() - round.boreMm();
         if (Math.abs(loose) > FTuning.GUN_BORE_FIT_MM)
             return Optional.empty();
-        Material metal = materials.get(material), bullet = materials.get(round.projectile());
+        Material metal = materials.get(material);
+        Optional<Cartridge.Slug> bullet = round.slug(materials);
         Optional<Frame> frame = frame(materials);
-        if (metal == null || bullet == null || frame.isEmpty())
+        if (metal == null || bullet.isEmpty() || frame.isEmpty())
             return Optional.empty();
         // A spring throws a round with nothing in the case to burn or charge: the spring is the work.
         Optional<Load> load = loadOf(materials, round);
-        return load.flatMap(l -> bake(metal, frame.get(), bullet, l, loose, steamMb, slugHot));
+        return load.flatMap(l -> bake(metal, frame.get(), bullet.get(), l, loose, steamMb, slugHot));
     }
 
     /** Whether {@code round}'s slug has been heated, by a barrel at {@code barrelTu}, past the Curie point it is magnetic below. */
     public static boolean slugHot(Map<ResourceLocation, Material> materials, Cartridge round, float barrelTu) {
-        Material slug = materials.get(round.projectile());
+        Material slug = materials.get(round.slugMaterial());
         return slug != null && slug.separation().curieTemperature().filter(c -> barrelTu >= c.value()).isPresent();
     }
 
@@ -752,16 +753,16 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     }
 
     /** @param loose how much wider the bore is than the round, in mm; negative is a squeeze. */
-    private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose) {
+    private Optional<GunFigures> bake(Material m, Frame frame, Cartridge.Slug projectile, Load load, float loose) {
         return bake(m, frame, projectile, load, loose, steamCapacityMb());
     }
 
-    private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose, float steamMb) {
+    private Optional<GunFigures> bake(Material m, Frame frame, Cartridge.Slug projectile, Load load, float loose, float steamMb) {
         return bake(m, frame, projectile, load, loose, steamMb, false);
     }
 
-    private Optional<GunFigures> bake(Material m, Frame frame, Material projectile, Load load, float loose, float steamMb, boolean slugHot) {
-        if (!buildable(m) || projectile.density().muPerMb() <= 0 || load.launcher() != launcher)
+    private Optional<GunFigures> bake(Material m, Frame frame, Cartridge.Slug projectile, Load load, float loose, float steamMb, boolean slugHot) {
+        if (!buildable(m) || projectile.density() <= 0 || load.launcher() != launcher)
             return Optional.empty();
         double boreM = boreMmReal() / 1000.0, barrelM = barrel.lengthM();
         double area = Math.PI / 4 * boreM * boreM;
@@ -798,7 +799,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             // a winding past its rating (the field's pressure against its hoop strength) delivers
             // only what it held, the same venting rule as a chamber.
             double stages = barrelM / FTuning.GUN_BARREL_MEDIUM_M;
-            double coupling = projectile.separation().magnetic() && !slugHot ? 1.0 : FTuning.GUN_COIL_NONMAGNETIC_COUPLING;
+            double coupling = projectile.magnetic() && !slugHot ? 1.0 : FTuning.GUN_COIL_NONMAGNETIC_COUPLING;
             double held = peak <= 0 ? 0 : Math.min(1.0, rating / peak);
             work = load.charge() * FTuning.GUN_COIL_WORK_PER_DUST * stages * coupling * held;
         } else {
@@ -816,12 +817,12 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         // 1 m3 is 1000 mB. A bullet is its own bore's area over a length of some bores.
         double roundM = (boreMmReal() - loose) / 1000.0;
         double bulletMb = Math.PI / 4 * roundM * roundM * (roundM * FTuning.GUN_PROJECTILE_LENGTH_PER_BORE) * 1000;
-        float bulletMu = (float) (bulletMb * projectile.density().muPerMb());
+        float bulletMu = (float) (bulletMb * projectile.density());
         float exitMs = (float) Math.sqrt(2 * work / bulletMu);
         // An eddy sleeve drags the bullet after it has left the barrel, so the recoil is the exit
         // speed's and the muzzle figures are the slowed one's: a bullet that does not couple to the
         // field (not magnetic) is dragged only a little. The energy goes into the sleeve as heat.
-        float couple = projectile.separation().magnetic() ? 1f : FTuning.GUN_EDDY_NONMAGNETIC_COUPLING;
+        float couple = projectile.magnetic() ? 1f : FTuning.GUN_EDDY_NONMAGNETIC_COUPLING;
         float drained = Mth.clamp(frame.eddy() * couple, 0f, FTuning.GUN_EDDY_MAX_DRAIN);
         work *= 1 - drained;
         float speedMs = exitMs * (float) Math.sqrt(1 - drained);

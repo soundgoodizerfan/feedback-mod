@@ -77,12 +77,12 @@ public final class GunCondition {
      * @param f    the figures the shot was fired at.
      * @param heat the barrel's heat fraction when it was fired.
      */
-    public static void afterShot(ItemStack gun, GunFigures f, Level level, float heat) {
+    public static void afterShot(ItemStack gun, GunFigures f, Level level, float heat, float boreWear) {
         float t = temperature(gun, level).value() + f.muzzleEnergy() * FTuning.GUN_HEAT_PER_WORK * f.heatFactor()
                 / f.thermalMass().workPerTu();
         gun.set(FDataComponents.TEMPERATURE.get(), t);
         gun.set(FDataComponents.HEATED_AT.get(), level.getGameTime());
-        gun.set(FWeapons.GUN_WEAR.get(), wear(gun) + f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * (1 + Math.max(0f, heat)));
+        gun.set(FWeapons.GUN_WEAR.get(), wear(gun) + f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat)));
     }
 
     /**

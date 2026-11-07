@@ -4,7 +4,7 @@ There's no "9 mm round" item that you craft. A cartridge is made of up to three 
 
 - a **case**, made of some metal
 - a **charge**: powder, or redstone for a [coilgun](Coilgun.md), or nothing at all for a [jar round](#jar-rounds)
-- a **projectile**: a bullet, or a nugget for [shot](#shot-shells)
+- a **projectile**: a bullet, or a nugget for [shot](#shot-shells), with an optional **core** inside a bullet
 
 You can also add a **payload** if you like. You put these together at the [Reloading Press](Reloading_Press.md), at whatever size (bore) you set the press to. A gun takes any cartridge that fits its bore, whoever made it and whatever it's made of.
 
@@ -39,6 +39,39 @@ S D S
 ```
 
 **Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armor and breaks less on hard faces: see [What bullets do](Guns.md#hardness-glass-glancing-armor). A coilgun *needs* a magnetic slug.
+
+### Bullet shapes
+
+A bullet has a shape. Each shape trades one thing for another and none is best; figures are against a plain round-nose bullet of the same metal.
+
+| Shape | Drag | Hurt | Armor and stone | Glass | Glances off | Bore wear |
+| --- | --- | --- | --- | --- | --- | --- |
+| **Round nose** | 1 | 1 | 1 | 1 | 1 | 1 |
+| **Round ball** | 1.35 | 1 | 0.85 | 1 | more | 0.7 |
+| **Flat nose** | 1.15 | 1.1 | 0.9 | breaks more | less | 1 |
+| **Pointed** | 0.65 | 0.9 | 1.4 | 1 | a little less | 1.2 |
+| **Hollow point** | 1 | 1.45 | 0.55 | a little less | 1 | 1 |
+
+Low drag keeps a bullet's speed over distance. *Armor and stone* is how hard the bullet presents itself, so it decides what it goes through. A hollow point opens on a soft target and hurts more, but armor stops it.
+
+There are three ways to a shaped bullet, and the metal decides which are open:
+
+- **Cast it.** The **Ball Mold** casts **round balls** the way the Bullet Mold casts round-nose bullets, eight to an ingot's worth. Any metal that melts in a crucible can be cast.
+- **Forge it.** Hammer a nugget into any shape, by hand or with a [Mechanical Hammer](Mechanical_Hammer.md). Pointed and hollow-point bullets take more work than round balls and flat noses, and a harder metal takes more again.
+- **Stamp it.** Set the press's **Shape** die and seat a bullet: the press stamps the shape into the blank. A cold die only works a ductile metal (lead, tin, gold, copper, brass and similar, **ductility 8** or more), and only round ball, flat nose and hollow point; a hard metal or a pointed bullet has to be cast or forged first. *"That metal is too hard to press cold into this shape. Cast or forge the blank."* A bullet already in the shape you want is seated as it is.
+
+**Ball Mold**: two Wrought Iron Drilled Plates with a Stick on each side, the bullet mold's pattern turned over.
+
+```
+S D S
+  D
+```
+
+### Jacket and core
+
+Put a **nugget** in the press's **core** slot and the bullet becomes a **jacket** (the bullet in the bullet slot) around a **core**. The core gives the bullet its weight in proportion (70% of the volume), its magnetism for a coilgun, and its hardness against armor and stone; the jacket protects the bore. A jacket softer than its core wears the bore less, in proportion to how much softer, down to a third. A hard core in a lead jacket goes through armor like the hard metal and wears like lead.
+
+A **polymer** jacket round a core is a **sabot**: the carrier is light, so the round leaves fast, and it flies with 0.6 of the drag and meets armor 1.2 times harder than the core alone would. Shot has no core.
 
 ### Rubber rounds
 
@@ -93,15 +126,16 @@ Redstone is a charge for a **coilgun** only, and it can't be mixed with powder. 
 
 Put a **nugget** in the projectile slot instead of a bullet and the press forms it into **shot**: a shell of buckshot pellets. A **smoothbore** barrel fires shells; a rifled barrel cannot, because rifling spins the pellets into a ring.
 
-The pellet count is the bore's projectile volume cut into 8 mm balls, at most 12:
+The press's **Shape** die sets what the shot is. The pellet count is the bore's projectile volume cut into balls of the shot's size, up to the shot's own limit:
 
-| Bore | Pellets |
-| --- | --- |
-| 10 mm | 4 |
-| 12 mm | 8 |
-| 14 mm and up | 12 |
+| Shot | Pellet size | Most pellets | Notes |
+| --- | --- | --- | --- |
+| **Birdshot** | 2.5 mm | 24 | many small pellets, a wider pattern, a gentle bore wear |
+| **Buckshot** (the default) | 8 mm | 12 | |
+| **Large shot** | 12 mm | 6 | few large pellets, a tighter pattern |
+| **Flechette** | 3.5 mm | 16 | darts: low drag, a tight pattern, 1.5 times harder against armor and stone |
 
-The pellets share the shell's energy and leave at the same speed, spread in a cone at least **4°** wide however long the barrel.
+For example a 12 mm bore throws about 8 buckshot pellets and a 10 mm bore about 4. The pellets share the shell's energy and leave at the same speed, spread in a cone at least **4°** wide however long the barrel.
 
 ## Jar rounds
 
@@ -115,6 +149,7 @@ The **payload** slot is optional. Whatever you put there is carried in the bulle
 | --- | --- |
 | Glowstone Dust or Redstone Dust | **Tracer**: the bullet draws a bright line along its path. |
 | Gunpowder or Blaze Powder | **Incendiary**: sets whatever it hits on fire for 5 s, and lights fire where it lands if fire spread is on and you're allowed to build there. |
+| A dust with a perk that works on what it strikes | The perk lands on a living thing the round hits, as it does for a struck target: poison, chill, cling (slows), radiant (withers and outlines) or bounce (throws up). Hover the round to see the perk. |
 
 ## Loading
 

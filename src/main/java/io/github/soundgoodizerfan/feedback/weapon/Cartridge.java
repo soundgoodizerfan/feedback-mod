@@ -49,12 +49,17 @@ import java.util.Optional;
  *                     makes it a tracer, a flammable one makes it incendiary.
  * @param shot         seated as shot, not a bullet: a shell, for a shotgun (spec 12). The press
  *                     makes shot of a nugget and a bullet of a bullet; it is what was put in.
+ * @param shape        what the projectile is shaped like ({@link BulletShape}); a shot shell's is a shot shape.
+ * @param core         a bullet's core, when the bullet is a jacket (the {@code projectile} material) round a harder
+ *                     or denser metal: the core sets the mass's weight and the hardness armour meets, the jacket
+ *                     keeps the bore from it. A polymer jacket round a core is a sabot.
  * @param stored       a round seated with no charge is a small jar (mechanics 6.6): its drive is
  *                     the volts it was charged to, read through {@link #at}, and it leaks wherever
  *                     it is. Present only on such a round. A coil fires it; a chamber does not.
  */
 public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
-                        Optional<ResourceLocation> payload, boolean shot, Optional<Stored> stored) {
+                        Optional<ResourceLocation> payload, boolean shot, BulletShape shape,
+                        Optional<ResourceLocation> core, Optional<Stored> stored) {
 
     /**
      * Volts on a charged round as of {@code tick}: a stamp and a tick, the shape of a workpiece's
@@ -106,10 +111,12 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             ResourceLocation.CODEC.fieldOf("projectile").forGetter(Cartridge::projectile),
             ResourceLocation.CODEC.optionalFieldOf("payload").forGetter(Cartridge::payload),
             Codec.BOOL.optionalFieldOf("shot", false).forGetter(Cartridge::shot),
+            BulletShape.CODEC.optionalFieldOf("shape", BulletShape.ROUND_NOSE).forGetter(Cartridge::shape),
+            ResourceLocation.CODEC.optionalFieldOf("core").forGetter(Cartridge::core),
             Stored.CODEC.optionalFieldOf("stored").forGetter(Cartridge::stored)
     ).apply(i, Cartridge::new)), LEGACY);
 
-    /** Written out by hand: seven fields is past what {@code composite} takes. */
+    /** Written out by hand: nine fields is past what {@code composite} takes. */
     public static final StreamCodec<RegistryFriendlyByteBuf, Cartridge> STREAM_CODEC = StreamCodec.of(
             (buf, c) -> {
                 ByteBufCodecs.VAR_INT.encode(buf, c.boreMm());
@@ -118,15 +125,30 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 ResourceLocation.STREAM_CODEC.encode(buf, c.projectile());
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.payload());
                 ByteBufCodecs.BOOL.encode(buf, c.shot());
+                ByteBufCodecs.idMapper(i -> BulletShape.values()[i], BulletShape::ordinal).encode(buf, c.shape());
+                ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.core());
                 ByteBufCodecs.optional(Stored.STREAM_CODEC).encode(buf, c.stored());
             },
             buf -> new Cartridge(ByteBufCodecs.VAR_INT.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
                     Charge.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
                     ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf), ByteBufCodecs.BOOL.decode(buf),
+                    ByteBufCodecs.idMapper(i -> BulletShape.values()[i], BulletShape::ordinal).decode(buf),
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf),
                     ByteBufCodecs.optional(Stored.STREAM_CODEC).decode(buf)));
 
+    /** A shot shell always has a shot shape and a bullet never does; a missing one is the plain one. */
     public Cartridge {
         charges = List.copyOf(charges);
+        if (shape == null || shape.shot() != shot)
+            shape = shot ? BulletShape.BUCKSHOT : BulletShape.ROUND_NOSE;
+        if (core == null || shot)
+            core = Optional.empty();
+    }
+
+    /** A round of a plain shape and no core. */
+    public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
+                     Optional<ResourceLocation> payload, boolean shot, Optional<Stored> stored) {
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, null, Optional.empty(), stored);
     }
 
     /** A round with no stored charge: every round before charged ones. */
@@ -152,7 +174,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
 
     /** This jar round holding {@code volts} as of {@code now}. */
     public Cartridge withVolts(float volts, long now) {
-        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot,
+        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core,
                 Optional.of(new Stored(Math.max(0, volts), now)));
     }
 
@@ -175,8 +197,8 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         if (!shot)
             return 1;
         double boreVolume = Math.PI / 4 * boreMm * boreMm * boreMm * FTuning.GUN_PROJECTILE_LENGTH_PER_BORE;
-        double pellet = Math.PI / 6 * Math.pow(FTuning.GUN_SHOT_PELLET_MM, 3);
-        return Math.max(1, Math.min(FTuning.GUN_SHOT_MAX_PELLETS, (int) Math.round(boreVolume / pellet)));
+        double pellet = Math.PI / 6 * Math.pow(shape.pelletMm(), 3);
+        return Math.max(1, Math.min(shape.maxPellets(), (int) Math.round(boreVolume / pellet)));
     }
 
     /** A shell of reference shot in {@code boreMm}: brass, nominal gunpowder, lead shot. */
@@ -335,5 +357,71 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     /** Whether the bullet carries a flammable payload: it sets what it hits alight. */
     public boolean incendiary(Map<ResourceLocation, Material> materials) {
         return payload.map(materials::get).map(m -> m.traits().contains(Material.Trait.FLAMMABLE)).orElse(false);
+    }
+
+    /** The material the bullet's behaviour is read from: the core where there is one, else the projectile. */
+    public ResourceLocation slugMaterial() {
+        return core.orElse(projectile);
+    }
+
+    /**
+     * The bullet's bulk figures in {@code materials}, or empty if a material is unknown: density
+     * (core and jacket by their volume share), magnetism and hardness (the core's where there is one).
+     */
+    public Optional<Slug> slug(Map<ResourceLocation, Material> materials) {
+        Material jacket = materials.get(projectile);
+        if (jacket == null)
+            return Optional.empty();
+        if (core.isEmpty())
+            return Optional.of(Slug.of(jacket));
+        Material heart = materials.get(core.get());
+        if (heart == null)
+            return Optional.empty();
+        float f = FTuning.GUN_CORE_FRACTION;
+        return Optional.of(new Slug((float) (f * heart.density().muPerMb() + (1 - f) * jacket.density().muPerMb()),
+                heart.separation().magnetic(), heart.hardness().value()));
+    }
+
+    /** What a bullet is as a mass and a hardness: see {@link #slug}. */
+    public record Slug(float density, boolean magnetic, float hardness) {
+        /** A bullet that is one material through. */
+        public static Slug of(Material m) {
+            return new Slug((float) m.density().muPerMb(), m.separation().magnetic(), m.hardness().value());
+        }
+    }
+
+    /** A polymer jacket round a core: the carrier falls away and the core flies on, light and fast. */
+    public boolean sabot(Map<ResourceLocation, Material> materials) {
+        Material jacket = materials.get(projectile);
+        return core.isPresent() && jacket != null && jacket.kind().filter(k -> k == Material.Kind.POLYMER).isPresent();
+    }
+
+    /** The hardness armour and stone meet: the bullet's, scaled by its shape (and a sabot's core, a little over). */
+    public float hardness(Map<ResourceLocation, Material> materials) {
+        float h = slug(materials).map(Slug::hardness).orElse(FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
+        return h * shape.pierce() * (sabot(materials) ? FTuning.GUN_SABOT_PIERCE : 1f);
+    }
+
+    /** Air drag against a round nose's: the shape's, and a sabot's is less. */
+    public float drag(Map<ResourceLocation, Material> materials) {
+        return shape.drag() * (sabot(materials) ? FTuning.GUN_SABOT_DRAG : 1f);
+    }
+
+    /**
+     * Bore erosion against a round nose's: the shape's, and a jacket softer than its core shields the bore
+     * from it in proportion.
+     */
+    public float boreWear(Map<ResourceLocation, Material> materials) {
+        float w = shape.wear();
+        Material jacket = materials.get(projectile);
+        Material heart = core.map(materials::get).orElse(null);
+        if (jacket != null && heart != null && heart.hardness().value() > 0)
+            w *= Math.max(FTuning.GUN_JACKET_WEAR_FLOOR, Math.min(1f, jacket.hardness().value() / heart.hardness().value()));
+        return w;
+    }
+
+    /** What the payload does to a living thing it strikes: the payload material's own perks (poison, chill, cling...), none for no payload. */
+    public Map<Material.Perk, Integer> payloadPerks(Map<ResourceLocation, Material> materials) {
+        return payload.map(materials::get).map(Material::perks).orElse(Map.of());
     }
 }

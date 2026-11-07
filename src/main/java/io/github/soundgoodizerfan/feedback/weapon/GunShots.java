@@ -99,6 +99,8 @@ public final class GunShots {
         boolean rubber;
         /** The gun it came from, so its traits hear where the round lands. */
         ItemStack gun = ItemStack.EMPTY;
+        /** What the round's shape and payload do to the flight and the hit. */
+        Flight flight = Flight.PLAIN;
 
         Shot(LivingEntity shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -129,6 +131,26 @@ public final class GunShots {
         float energy() {
             float v = (float) velocity.length();
             return muzzleEnergy * (v * v) / (muzzleSpeed * muzzleSpeed);
+        }
+    }
+
+    /**
+     * What a round's shape, jacket and payload change about its flight and its hit, as multipliers on what the
+     * materials already give ({@link BulletShape}); {@link #PLAIN} is a round nose of one metal with no payload.
+     *
+     * @param drag   air drag against a round nose's.
+     * @param damage hurt per Work against a round nose's.
+     * @param ease   how readily it breaks a brittle block (momentum needed is divided by this).
+     * @param glance how readily it glances off a block (the turning angle is multiplied by this).
+     * @param perks  what the payload does to a living thing struck ({@link io.github.soundgoodizerfan.feedback.modular.MaterialPerks#affect}).
+     */
+    public record Flight(float drag, float damage, float ease, float glance, java.util.Map<io.github.soundgoodizerfan.feedback.process.Material.Perk, Integer> perks) {
+        public static final Flight PLAIN = new Flight(1f, 1f, 1f, 1f, java.util.Map.of());
+
+        /** The flight of {@code round} in {@code materials}. */
+        public static Flight of(Cartridge round, java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
+            return new Flight(round.drag(materials), round.shape().damage(), round.shape().ease(), round.shape().glance(),
+                    round.payloadPerks(materials));
         }
     }
 
@@ -302,12 +324,12 @@ public final class GunShots {
         float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
-        GunCondition.afterShot(gun, figures, level, heat);
-        var projectile = materials.get(round.projectile());
-        fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed)), yaw, pitch,
+        GunCondition.afterShot(gun, figures, level, heat, round.boreWear(materials));
+        var projectile = materials.get(round.slugMaterial());
+        fire(level, shooter, figures.withSpread(GunStance.of(shooter, aimed) * round.shape().spread()), yaw, pitch,
                 round.tracer(materials), round.incendiary(materials), round.pellets(),
-                projectile == null ? FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS : projectile.hardness().value(), gun,
-                round.blast(materials), RubberRounds.isRubber(projectile));
+                round.hardness(materials), gun,
+                round.blast(materials), RubberRounds.isRubber(projectile), Flight.of(round, materials));
         GunFu.shotFired(level, shooter, gun, figures, heat);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server) {
             ModularTraits.gunFired(server, gun, figures);
@@ -595,6 +617,13 @@ public final class GunShots {
     public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun, float blast,
                             boolean rubber) {
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, hardness, gun, blast, rubber, Flight.PLAIN);
+    }
+
+    /** As above, with the round's {@link Flight}: what its shape and payload change. */
+    public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
+                            boolean tracer, boolean incendiary, int pellets, float hardness, ItemStack gun, float blast,
+                            boolean rubber, Flight flight) {
         GunFigures each = pellets > 1 ? f.asPellet(pellets) : f;
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         // Dead Eye: the shot is exact, and its round is harder than it was (it goes through more armour).
@@ -613,6 +642,7 @@ public final class GunShots {
             shot.rubber = rubber;
             shot.hardness = exact ? hardness * 2f : hardness;
             shot.gun = gun.copyWithCount(1);
+            shot.flight = flight;
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
@@ -840,7 +870,7 @@ public final class GunShots {
                 e -> e.isPickable() && !e.isSpectator() && e != s.shooter && !s.pierced.contains(e.getId()));
         if (hit != null) {
             Entity target = hit.getEntity();
-            float damage = s.energy() * FTuning.GUN_DAMAGE_PER_WORK;
+            float damage = s.energy() * FTuning.GUN_DAMAGE_PER_WORK * s.flight.damage();
             // A Feedbacker in its parry window punches the round back instead of taking it.
             if (target instanceof LivingEntity catcher
                     && Parrying.catchBullet(level, s.shooter, catcher, s.massMu, (float) s.velocity.length(), damage))
@@ -870,11 +900,13 @@ public final class GunShots {
                 RubberRounds.landed(s.shooter, struck);
             if (s.incendiary)
                 target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
+            if (!s.flight.perks().isEmpty() && target instanceof LivingEntity struck)
+                io.github.soundgoodizerfan.feedback.modular.MaterialPerks.affect(s.flight.perks(), struck);
             GunFu.bulletHit(level, s.shooter, target, s.impulse);
             landed(level, s, target, hit.getLocation());
             if (detonate(level, s, hit.getLocation()))
                 return false;
-            if (damage <= health || !s.spend(health / FTuning.GUN_DAMAGE_PER_WORK))
+            if (damage <= health || !s.spend(health / (FTuning.GUN_DAMAGE_PER_WORK * s.flight.damage())))
                 return false;
             s.pierced.add(target.getId());
             s.pos = hit.getLocation();
@@ -888,7 +920,7 @@ public final class GunShots {
             float cost = breakCost(toughness);
             boolean allowed = !Float.isNaN(cost) && mayChange(level, s.shooter, at);
             // What breaks a brittle block is the blow, momentum; what it costs the bullet is work.
-            if (allowed && breaks(toughness, s.momentum()) && s.energy() > cost && s.spend(cost)) {
+            if (allowed && breaks(toughness, s.momentum() * s.flight.ease()) && s.energy() > cost && s.spend(cost)) {
                 // Glass breaks and the bullet goes on, a little slower.
                 level.destroyBlock(at, false, s.shooter);
                 s.pos = p.add(s.velocity.normalize().scale(0.05));
@@ -897,7 +929,7 @@ public final class GunShots {
             // A soft bullet meeting a harder face at a shallow angle glances off it, slower.
             Vec3 normal = Vec3.atLowerCornerOf(block.getDirection().getNormal());
             float cos = (float) Math.abs(s.velocity.normalize().dot(normal));
-            if (s.bounces < FTuning.GUN_RICOCHET_MAX && glances(s.hardness, hardnessOf(hitBlock), cos)
+            if (s.bounces < FTuning.GUN_RICOCHET_MAX && glances(s.hardness, hardnessOf(hitBlock), cos / s.flight.glance())
                     && s.spend(s.energy() * (1 - FTuning.GUN_RICOCHET_KEEP))) {
                 s.velocity = s.velocity.subtract(normal.scale(2 * s.velocity.dot(normal)));
                 s.pos = p.add(normal.scale(0.05));
@@ -932,7 +964,7 @@ public final class GunShots {
 
         // Still flying: drag in the medium it ends the tick in, then gravity.
         boolean inFluid = !level.getFluidState(BlockPos.containing(to)).isEmpty();
-        float drag = inFluid ? FTuning.GUN_FLUID_DRAG_PER_TICK : FTuning.GUN_DRAG_PER_TICK;
+        float drag = inFluid ? FTuning.GUN_FLUID_DRAG_PER_TICK : FTuning.GUN_DRAG_PER_TICK * s.flight.drag();
         s.velocity = s.velocity.scale(1 - drag).add(0, -FTuning.GUN_GRAVITY_PER_TICK, 0);
         s.pos = to;
         return true;
