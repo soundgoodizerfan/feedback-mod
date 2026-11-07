@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/orientable",
   "textures": {
-    "all": "feedback:block/device_barrel_sides"
+    "top": "feedback:block/device_barrel_sides",
+    "side": "feedback:block/device_barrel_sides",
+    "front": "minecraft:block/fletching_table_front"
   }
 }

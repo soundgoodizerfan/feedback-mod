@@ -75,4 +75,48 @@ public final class VillageTuning {
 
     /** Blocks within which the screen stays open. */
     public static final double REACH = 8.0;
+
+    // --- walk-in shop (Counter) ---
+
+    /** Share of the line price a want sold by hand-over pays: the villager did not choose to come. */
+    public static final float PUSH_RATE = 0.75f;
+    /** A walk-in sale adds a point of gossip toward the keeper every this many sales. */
+    public static final int WALKIN_GOSSIP_EVERY = 4;
+    /** Ticks between catchment scans of a stocked Counter. */
+    public static final int PULL_SCAN_TICKS = 100;
+    /** Ticks between checks on villagers already walking to a Counter. */
+    public static final int ARRIVAL_TICKS = 10;
+    /** Straight reach of a Counter's pull, in blocks. */
+    public static final int PULL_RADIUS = 12;
+    /** Villagers considered, and paths asked for, per scan. */
+    public static final int PULL_MAX_PER_SCAN = 24, PULL_PATHS_PER_SCAN = 4;
+    /** Ticks a pull stays set on a villager before it clears itself. */
+    public static final int PULL_EXPIRY = 600;
+    /** Walk speed modifier given to the pulled villager. */
+    public static final float PULL_SPEED = 0.5f;
+    /** Blocks from the front face at which a villager counts as arrived. */
+    public static final double ARRIVE_DIST = 2.0;
+
+    /** Errands a villager makes in a day: 1 + level / 2. */
+    public static int errandsPerDay(int level) {
+        return 1 + level / 2;
+    }
+
+    // --- player trade and gouging ---
+
+    /** A villager buys above market up to this multiple (never less than +1 emerald). */
+    public static final float GOUGE_CEILING = 1.5f;
+    /** Chance per emerald over market of a minor-negative gossip against the keeper. */
+    public static final float GOUGE_REP_CHANCE = 0.25f;
+    /** A sale under market gives one point of positive gossip every this many sales. */
+    public static final int FAIR_REP_EVERY = 4;
+
+    // --- roads ---
+
+    /** Tiles of road a flood from the front face may walk, and how many it may hold. */
+    public static final int ROAD_REACH = 48, ROAD_FLOOD_MAX = 600;
+    /** Blocks from a reached road tile a villager still counts as in the catchment. */
+    public static final int ROAD_MARGIN = 3;
+    /** Ticks between road floods of one Counter. */
+    public static final int ROAD_RESCAN_TICKS = 1200;
 }

@@ -198,7 +198,7 @@ public final class FAutomation {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DARK_CELL_ENTITY.get(), (cell, side) -> cell.outputView());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, STOKER_ENTITY.get(), (stoker, side) -> stoker.hopper(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, KILN_ZONE_ENTITY.get(), (kiln, side) -> kiln.handler());
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, COUNTER_ENTITY.get(), (counter, side) -> counter.handler());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, COUNTER_ENTITY.get(), (counter, side) -> counter.port(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CREEL_ENTITY.get(), (creel, side) -> creel.catches());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FISH_WHEEL_ENTITY.get(), (wheel, side) -> wheel.catches());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FUME_PORT_ENTITY.get(), (port, side) -> port.tank());

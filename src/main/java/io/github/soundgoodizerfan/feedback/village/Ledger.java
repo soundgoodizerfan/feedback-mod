@@ -90,6 +90,17 @@ public record Ledger(long day, int doneMask, Map<String, Integer> bought, Map<St
         return new Ledger(today, doneMask, Map.copyOf(next), bins);
     }
 
+    /** Errands made today to a Counter, counted in the sales map under an {@code e} key. */
+    public int errands() {
+        return bought.getOrDefault("e", 0);
+    }
+
+    public Ledger errand(long today) {
+        Map<String, Integer> next = new HashMap<>(bought);
+        next.merge("e", 1, Integer::sum);
+        return new Ledger(today, doneMask, Map.copyOf(next), bins);
+    }
+
     public Ledger delivered(int order, String key, long today) {
         Map<String, Bin> next = new HashMap<>(bins);
         next.put(key, new Bin(load(key, today) + 1f, today));

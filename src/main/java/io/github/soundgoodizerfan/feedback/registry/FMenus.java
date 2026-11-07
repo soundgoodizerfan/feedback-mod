@@ -119,4 +119,9 @@ public class FMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.village.VillagerMenu>> VILLAGER =
             MENUS.register("villager",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.village.VillagerMenu::new));
+
+    /** Extended: the Counter's side (buy or keeper) and position ride in the open packet; the shelf is synced as slots, prices as data. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.village.CounterMenu>> COUNTER =
+            MENUS.register("counter",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.village.CounterMenu::new));
 }

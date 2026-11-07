@@ -88,7 +88,7 @@ public final class VillageEconomy {
         return m instanceof Villager v ? v.getVillagerData().getLevel() : 1;
     }
 
-    private static long today(AbstractVillager m) {
+    static long today(AbstractVillager m) {
         return m.level().getGameTime() / VillageTuning.DAY_TICKS;
     }
 
@@ -167,7 +167,7 @@ public final class VillageEconomy {
     }
 
     /** Indices into the buys table of what this merchant wants today: four to six lines of the shared and profession pools. */
-    private static List<Integer> wants(AbstractVillager m, long day) {
+    static List<Integer> wants(AbstractVillager m, long day) {
         ResourceLocation prof = profession(m);
         List<Want> all = BuysTable.get().entries();
         List<Integer> pool = new ArrayList<>();
@@ -346,9 +346,105 @@ public final class VillageEconomy {
             v.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day));
             addXp(v, VillageTuning.BUY_XP);
             v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
-            return new Handed(Fate.TAKEN, n * w.price());
+            // The villager did not choose to come: a pushed want pays PUSH_RATE of the line.
+            return new Handed(Fate.TAKEN, Math.max(1, Math.round(n * w.price() * VillageTuning.PUSH_RATE)));
         }
         return new Handed(Fate.UNWANTED, 0);
+    }
+
+    // --- walk-in sales and the market price ---
+
+    /** The market price of {@code stack}: the highest price any buys line offers for it, 0 when no villager pool wants it. */
+    public static int marketPrice(ItemStack stack) {
+        int best = 0;
+        if (stack.isEmpty())
+            return 0;
+        for (Want w : BuysTable.get().entries())
+            if (w.matches(stack))
+                best = Math.max(best, w.price());
+        return best;
+    }
+
+    /** The most a villager pays for something with this market price: {@link VillageTuning#GOUGE_CEILING} times, never under +1. */
+    public static int ceiling(int market) {
+        return Math.max(market + 1, Math.round(market * VillageTuning.GOUGE_CEILING));
+    }
+
+    /** Why a walk-in did not buy: nothing it wants stands on the shelf, or what it wants is priced past the ceiling. */
+    public enum WalkIn { SOLD, NOTHING, TOO_DEAR }
+
+    /** One shelf slot's offer to a villager: the day's want line it matches, or -1. */
+    public static int wantFor(Villager v, ItemStack stack, long day) {
+        Ledger ledger = v.getData(FVillage.LEDGER).on(day);
+        for (int key : wants(v, day)) {
+            Want w = BuysTable.get().entries().get(key);
+            if (w.matches(stack) && w.max() - ledger.bought(key) > 0)
+                return key;
+        }
+        return -1;
+    }
+
+    /**
+     * The result of a walk-in sale: what was sold from which slot and for how much. Built by {@link #walkIn}; the Counter applies it.
+     *
+     * @param fate   whether anything sold
+     * @param slot   shelf slot sold from
+     * @param count  items sold
+     * @param each   emeralds paid each
+     * @param market the market price of what sold, to tell a gouge from a fair price
+     */
+    public record Sale(WalkIn fate, int slot, int count, int each, int market) {
+        static final Sale NOTHING = new Sale(WalkIn.NOTHING, -1, 0, 0, 0);
+    }
+
+    /**
+     * A villager at the front face buys from the shelf: the first slot whose stack matches one of the day's wants it has cap left on,
+     * at the keeper's price ({@code prices[slot]}, 0 meaning the line's own price). Priced past the ceiling it will not buy. Writes the
+     * ledger (the sale and the errand) and XP; the caller moves the goods and pays the till.
+     */
+    public static Sale walkIn(Villager v, List<ItemStack> shelf, int[] prices) {
+        long day = today(v);
+        Ledger ledger = v.getData(FVillage.LEDGER).on(day);
+        boolean dear = false;
+        for (int slot = 0; slot < shelf.size(); slot++) {
+            ItemStack stack = shelf.get(slot);
+            if (stack.isEmpty())
+                continue;
+            for (int key : wants(v, day)) {
+                Want w = BuysTable.get().entries().get(key);
+                if (!w.matches(stack))
+                    continue;
+                int cap = w.max() - ledger.bought(key);
+                if (cap <= 0)
+                    continue;
+                int each = prices[slot] > 0 ? prices[slot] : w.price();
+                int market = marketPrice(stack);
+                if (each > ceiling(market)) {
+                    dear = true;
+                    continue;
+                }
+                int n = Math.min(stack.getCount(), cap);
+                v.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day).errand(day));
+                addXp(v, VillageTuning.BUY_XP);
+                v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
+                return new Sale(WalkIn.SOLD, slot, n, each, market);
+            }
+        }
+        return dear ? new Sale(WalkIn.TOO_DEAR, -1, 0, 0, 0) : Sale.NOTHING;
+    }
+
+    /** True when {@code v} still has an unmet want that something on the shelf serves. */
+    public static boolean wantsFrom(Villager v, List<ItemStack> shelf) {
+        long day = today(v);
+        for (ItemStack s : shelf)
+            if (!s.isEmpty() && wantFor(v, s, day) >= 0)
+                return true;
+        return false;
+    }
+
+    /** Errands this villager has left today. */
+    public static int errandsLeft(Villager v) {
+        return VillageTuning.errandsPerDay(level(v)) - v.getData(FVillage.LEDGER).on(today(v)).errands();
     }
 
     // --- a purchase ---
@@ -420,7 +516,7 @@ public final class VillageEconomy {
     }
 
     /** Takes {@code n} emeralds from the inventory, or nothing if it holds fewer. */
-    private static boolean takeEmeralds(ServerPlayer p, int n) {
+    static boolean takeEmeralds(net.minecraft.world.entity.player.Player p, int n) {
         int have = 0;
         for (ItemStack s : p.getInventory().items)
             if (s.is(Items.EMERALD))
