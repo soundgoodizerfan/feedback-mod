@@ -369,6 +369,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.STOKER_ITEM.get(), "stoker");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.COUNTER_ITEM.get(), "counter");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.BOARD_ITEM.get(), "ledger_board");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.CROSS_ITEM.get(), "market_cross");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.KILN_ZONE_ITEM.get(), "kiln_zone");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.CREEL_ITEM.get(), "creel");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FAutomation.FISH_WHEEL_ITEM.get(), "fish_wheel");

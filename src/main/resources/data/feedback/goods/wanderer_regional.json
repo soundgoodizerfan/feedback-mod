@@ -1,0 +1,15 @@
+{
+  "profession": "feedback:wanderer_regional",
+  "goods": [
+    { "item": "minecraft:hay_block", "price": 3, "count": 2, "stock": 3, "types": ["plains"] },
+    { "item": "minecraft:cactus", "price": 2, "count": 4, "stock": 3, "types": ["desert"] },
+    { "item": "minecraft:red_sand", "price": 2, "count": 8, "stock": 3, "types": ["desert"] },
+    { "item": "minecraft:snow_block", "price": 2, "count": 4, "stock": 3, "types": ["snow"] },
+    { "item": "minecraft:blue_ice", "price": 6, "count": 1, "stock": 2, "types": ["snow"] },
+    { "item": "minecraft:slime_ball", "price": 3, "count": 4, "stock": 3, "types": ["swamp"] },
+    { "item": "minecraft:lily_pad", "price": 1, "count": 8, "stock": 3, "types": ["swamp"] },
+    { "item": "minecraft:sweet_berries", "price": 1, "count": 8, "stock": 3, "types": ["taiga"] },
+    { "item": "minecraft:acacia_log", "price": 2, "count": 4, "stock": 3, "types": ["savanna"] },
+    { "item": "minecraft:cocoa_beans", "price": 2, "count": 4, "stock": 3, "types": ["jungle"] }
+  ]
+}

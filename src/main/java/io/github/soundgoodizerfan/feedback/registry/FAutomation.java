@@ -186,6 +186,15 @@ public final class FAutomation {
             () -> new io.github.soundgoodizerfan.feedback.village.LedgerBoardBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)));
     public static final DeferredItem<BlockItem> BOARD_ITEM = ITEMS.registerSimpleBlockItem(BOARD);
+
+    /** The Market Cross: a pillar on a paved square that makes it the village's market every eighth day. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.village.MarketCrossBlock> CROSS = BLOCKS.register("market_cross",
+            () -> new io.github.soundgoodizerfan.feedback.village.MarketCrossBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(2.0f).sound(SoundType.STONE).noOcclusion()));
+    public static final DeferredItem<BlockItem> CROSS_ITEM = ITEMS.registerSimpleBlockItem(CROSS);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.village.MarketCrossBlockEntity>> CROSS_ENTITY =
+            BLOCK_ENTITIES.register("market_cross",
+                    () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.village.MarketCrossBlockEntity::new, CROSS.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.village.LedgerBoardBlockEntity>> BOARD_ENTITY =
             BLOCK_ENTITIES.register("ledger_board",
                     () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.village.LedgerBoardBlockEntity::new, BOARD.get()).build(null));
@@ -225,6 +234,7 @@ public final class FAutomation {
         output.accept(RADIATION_SOURCE_ITEM.get());
         output.accept(COUNTER_ITEM.get());
         output.accept(BOARD_ITEM.get());
+        output.accept(CROSS_ITEM.get());
         output.accept(KILN_ZONE_ITEM.get());
         output.accept(STOKER_ITEM.get());
         output.accept(CREEL_ITEM.get());

@@ -1,0 +1,13 @@
+{
+  "profession": "feedback:market",
+  "wants": [
+    { "item": "minecraft:bread", "price": 2, "max": 8 },
+    { "item": "minecraft:cooked_beef", "price": 3, "max": 6 },
+    { "item": "minecraft:white_wool", "price": 2, "max": 8 },
+    { "item": "minecraft:paper", "price": 1, "max": 16 },
+    { "item": "minecraft:leather", "price": 2, "max": 8 },
+    { "item": "minecraft:coal", "price": 1, "max": 16 },
+    { "item": "minecraft:iron_ingot", "price": 3, "max": 8 },
+    { "item": "minecraft:glass_bottle", "price": 1, "max": 8 }
+  ]
+}

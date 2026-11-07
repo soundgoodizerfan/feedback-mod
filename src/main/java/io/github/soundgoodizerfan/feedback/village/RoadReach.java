@@ -59,6 +59,32 @@ public final class RoadReach {
         return new net.minecraft.world.phys.AABB(min).minmax(new net.minecraft.world.phys.AABB(max)).inflate(VillageTuning.ROAD_MARGIN + 1);
     }
 
+    /** Tiles with open sky above them. */
+    public int openToSky(Level level) {
+        int n = 0;
+        for (long l : tiles)
+            if (level.canSeeSky(BlockPos.of(l)))
+                n++;
+        return n;
+    }
+
+    /** Tiles whose eight horizontal neighbours are all reached tiles too: the heart of a square, not the line of a street. */
+    public int interior() {
+        int n = 0;
+        BlockPos.MutableBlockPos q = new BlockPos.MutableBlockPos();
+        for (long l : tiles) {
+            BlockPos p = BlockPos.of(l);
+            boolean all = true;
+            for (int dx = -1; dx <= 1 && all; dx++)
+                for (int dz = -1; dz <= 1 && all; dz++)
+                    if ((dx != 0 || dz != 0) && !tiles.contains(q.set(p.getX() + dx, p.getY(), p.getZ() + dz).asLong()))
+                        all = false;
+            if (all)
+                n++;
+        }
+        return n;
+    }
+
     /** Whether {@code p} stands within the margin of a reached tile. */
     public boolean near(BlockPos p) {
         if (tiles.isEmpty())

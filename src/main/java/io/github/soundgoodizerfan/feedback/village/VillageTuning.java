@@ -111,6 +111,21 @@ public final class VillageTuning {
     /** A sale under market gives one point of positive gossip every this many sales. */
     public static final int FAIR_REP_EVERY = 4;
 
+    // --- market day ---
+
+    /** Days between market days (an octal week). */
+    public static final int MARKET_PERIOD = 8;
+    /** Open road tiles and, among them, interior tiles (a square, not a street) a Market Cross needs to be active. */
+    public static final int MARKET_PLAZA_MIN = 25, MARKET_INTERIOR_MIN = 9;
+    /** Blocks around an active cross whose villagers and Counters feel market day. */
+    public static final int MARKET_REACH = 48;
+    /** Extra wants a villager draws from the market pool on market day. */
+    public static final int MARKET_EXTRA_WANTS = 3;
+    /** Day-stock of a shop line is this many times its usual on market day. */
+    public static final int MARKET_STOCK_MULT = 2;
+    /** Ticks between rechecks of whether a cross's plaza still stands. */
+    public static final int MARKET_RECHECK_TICKS = 200;
+
     // --- guilds ---
 
     /** Blocks within which job sites of one profession count as one guild, and the members it takes. */

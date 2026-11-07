@@ -192,6 +192,11 @@ public class LedgerBoardBlockEntity extends BlockEntity {
         out.add(Component.translatable("village.feedback.board.standing." + standing.tier()));
         if (standing.tier() < VillageTuning.STANDING_TIERS.length)
             out.add(Component.translatable("village.feedback.board.next." + standing.tier()));
+        int until = MarketDay.daysUntil(today);
+        MarketCrossBlockEntity cross = MarketDay.cross(level, worldPosition);
+        out.add(cross == null ? Component.translatable("village.feedback.board.market_none")
+                : until == 0 ? Component.translatable("village.feedback.board.market_today")
+                : Component.translatable("village.feedback.board.market_in", until));
         return out;
     }
 

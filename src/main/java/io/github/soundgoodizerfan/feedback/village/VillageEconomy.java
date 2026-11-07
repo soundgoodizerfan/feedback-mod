@@ -76,12 +76,14 @@ public final class VillageEconomy {
     public static final ResourceLocation WANDERER = Feedback.id("wanderer");
 
     public static ResourceLocation profession(AbstractVillager m) {
-        return m instanceof Villager v ? BuiltInRegistries.VILLAGER_PROFESSION.getKey(v.getVillagerData().getProfession()) : WANDERER;
+        return m instanceof Villager v ? BuiltInRegistries.VILLAGER_PROFESSION.getKey(v.getVillagerData().getProfession())
+                : m.getPersistentData().getBoolean(MarketDay.REGIONAL) ? MarketDay.REGIONAL_PROFESSION : WANDERER;
     }
 
     /** The villager's kind by home biome (taiga, desert, plains ...): what a dish order's lean is keyed on. */
     public static String villagerType(AbstractVillager m) {
-        return m instanceof Villager v ? BuiltInRegistries.VILLAGER_TYPE.getKey(v.getVillagerData().getType()).getPath() : "";
+        return m instanceof Villager v ? BuiltInRegistries.VILLAGER_TYPE.getKey(v.getVillagerData().getType()).getPath()
+                : m.getPersistentData().getString(MarketDay.TYPE);
     }
 
     public static int level(AbstractVillager m) {
@@ -129,7 +131,7 @@ public final class VillageEconomy {
         List<GoodView> goods = new ArrayList<>();
         for (int idx : shop(m)) {
             Good g = GoodsTable.get().entries().get(idx);
-            goods.add(new GoodView(stackFor(m, g, idx, day), price(g, rep), Math.max(0, g.stock() - ledger.sold(idx)), rep < g.standing(), idx));
+            goods.add(new GoodView(stackFor(m, g, idx, day), price(g, rep), Math.max(0, stock(m, g) - ledger.sold(idx)), rep < g.standing(), idx));
         }
         List<VillagerView.WantView> wants = new ArrayList<>();
         for (int idx : wants(m, day)) {
@@ -183,8 +185,17 @@ public final class VillageEconomy {
         RandomSource rnd = RandomSource.create(m.getUUID().getMostSignificantBits() * 31L + m.getUUID().getLeastSignificantBits() + day * 0x9E3779B97F4A7C15L);
         java.util.Collections.shuffle(pool, new java.util.Random(rnd.nextLong()));
         List<Integer> picked = new ArrayList<>(pool.subList(0, Math.min(pool.size(), VillageTuning.WANTS_MIN + rnd.nextInt(VillageTuning.WANTS_MAX - VillageTuning.WANTS_MIN + 1))));
+        if (MarketDay.feels(m))
+            for (int extra : MarketDay.extras(rnd.nextLong()))
+                if (!picked.contains(extra))
+                    picked.add(extra);
         java.util.Collections.sort(picked);
         return picked;
+    }
+
+    /** A line's stock today: its own, doubled for a villager at market (shop stock restocks on market day). */
+    private static int stock(AbstractVillager m, Good g) {
+        return g.stock() * (MarketDay.feels(m) ? VillageTuning.MARKET_STOCK_MULT : 1);
     }
 
     private static int price(Good g, int standing) {
@@ -462,7 +473,7 @@ public final class VillageEconomy {
 
     /** Errands this villager has left today. */
     public static int errandsLeft(Villager v) {
-        return VillageTuning.errandsPerDay(level(v)) - v.getData(FVillage.LEDGER).on(today(v)).errands();
+        return VillageTuning.errandsPerDay(level(v)) + (MarketDay.feels(v) ? 1 : 0) - v.getData(FVillage.LEDGER).on(today(v)).errands();
     }
 
     // --- a purchase ---
@@ -483,7 +494,7 @@ public final class VillageEconomy {
         long day = today(m);
         Ledger ledger = m.getData(FVillage.LEDGER).on(day);
         int rep = standing(m, p);
-        if (rep < g.standing() || ledger.sold(idx) >= g.stock()) {
+        if (rep < g.standing() || ledger.sold(idx) >= stock(m, g)) {
             send(p, menu, view(p, m).withResult(VillagerView.SOLD, -1, false, 0));
             return;
         }
