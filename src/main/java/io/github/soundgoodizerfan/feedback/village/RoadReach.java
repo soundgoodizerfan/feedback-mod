@@ -59,6 +59,22 @@ public final class RoadReach {
         return new net.minecraft.world.phys.AABB(min).minmax(new net.minecraft.world.phys.AABB(max)).inflate(VillageTuning.ROAD_MARGIN + 1);
     }
 
+    /** The reached tile farthest from {@code from} (by squared distance), or null when there are none: where a courier is sent. */
+    @org.jetbrains.annotations.Nullable
+    public BlockPos farthest(BlockPos from) {
+        BlockPos best = null;
+        double bd = -1;
+        for (long l : tiles) {
+            BlockPos p = BlockPos.of(l);
+            double d = p.distSqr(from);
+            if (d > bd) {
+                bd = d;
+                best = p;
+            }
+        }
+        return best;
+    }
+
     /** Tiles with open sky above them. */
     public int openToSky(Level level) {
         int n = 0;

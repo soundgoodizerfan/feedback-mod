@@ -111,6 +111,23 @@ public final class VillageTuning {
     /** A sale under market gives one point of positive gossip every this many sales. */
     public static final int FAIR_REP_EVERY = 4;
 
+    // --- freight ---
+
+    /** Road tiles that must leave a depot for a convoy to set out. */
+    public static final int FREIGHT_ROAD_MIN = 12;
+    /** Blocks around a depot searched for watch posts, the most that count, and how much of the loss chance each takes away. */
+    public static final int FREIGHT_POST_RADIUS = 12, FREIGHT_POST_MAX = 3;
+    public static final float FREIGHT_POST_SHIELD = 0.15f;
+    /** Chance a stack is lost to raiders on the road, and the least it falls to. */
+    public static final float FREIGHT_LOSS = 0.2f, FREIGHT_LOSS_FLOOR = 0.03f;
+    /** Ticks a convoy takes at least, and for each block between the depots. */
+    public static final long FREIGHT_MIN_TICKS = 1200L;
+    public static final float FREIGHT_TICKS_PER_BLOCK = 12f;
+    /** Ticks between a depot's looks for arrived goods, and before goods that did not fit are offered again. */
+    public static final int FREIGHT_COLLECT_TICKS = 200, FREIGHT_RETRY_TICKS = 1200;
+    /** Ticks a courier stays on the road in view. */
+    public static final long COURIER_TICKS = 600L;
+
     // --- village stalls ---
 
     /** What a player pays at a village-owned stall over the market price. */

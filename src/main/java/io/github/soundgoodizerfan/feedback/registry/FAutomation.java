@@ -187,6 +187,18 @@ public final class FAutomation {
                     BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)));
     public static final DeferredItem<BlockItem> BOARD_ITEM = ITEMS.registerSimpleBlockItem(BOARD);
 
+    /** The Depot: one end of a trade road between villages. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.village.DepotBlock> DEPOT = BLOCKS.register("depot",
+            () -> new io.github.soundgoodizerfan.feedback.village.DepotBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)));
+    public static final DeferredItem<BlockItem> DEPOT_ITEM = ITEMS.registerSimpleBlockItem(DEPOT);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.village.DepotBlockEntity>> DEPOT_ENTITY =
+            BLOCK_ENTITIES.register("depot",
+                    () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.village.DepotBlockEntity::new, DEPOT.get()).build(null));
+    /** Records one depot's place and links it to another: carried from one village to the other. */
+    public static final DeferredItem<net.minecraft.world.item.Item> DEPOT_LINK_CARD = ITEMS.registerItem("depot_link_card",
+            io.github.soundgoodizerfan.feedback.village.DepotLinkCardItem::new, new net.minecraft.world.item.Item.Properties().stacksTo(1));
+
     /** The Market Cross: a pillar on a paved square that makes it the village's market every eighth day. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.village.MarketCrossBlock> CROSS = BLOCKS.register("market_cross",
             () -> new io.github.soundgoodizerfan.feedback.village.MarketCrossBlock(
@@ -217,6 +229,7 @@ public final class FAutomation {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, STOKER_ENTITY.get(), (stoker, side) -> stoker.hopper(side));
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, KILN_ZONE_ENTITY.get(), (kiln, side) -> kiln.handler());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, COUNTER_ENTITY.get(), (counter, side) -> counter.port(side));
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, DEPOT_ENTITY.get(), (depot, side) -> depot.port());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, CREEL_ENTITY.get(), (creel, side) -> creel.catches());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FISH_WHEEL_ENTITY.get(), (wheel, side) -> wheel.catches());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FUME_PORT_ENTITY.get(), (port, side) -> port.tank());
@@ -235,6 +248,8 @@ public final class FAutomation {
         output.accept(COUNTER_ITEM.get());
         output.accept(BOARD_ITEM.get());
         output.accept(CROSS_ITEM.get());
+        output.accept(DEPOT_ITEM.get());
+        output.accept(DEPOT_LINK_CARD.get());
         output.accept(KILN_ZONE_ITEM.get());
         output.accept(STOKER_ITEM.get());
         output.accept(CREEL_ITEM.get());

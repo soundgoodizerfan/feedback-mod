@@ -178,6 +178,7 @@ public class FClientSetup {
         event.register(FMenus.VILLAGER.get(), VillagerScreen::new);
         event.register(FMenus.COUNTER.get(), CounterScreen::new);
         event.register(FMenus.BOARD.get(), BoardScreen::new);
+        event.register(FMenus.DEPOT.get(), DepotScreen::new);
     }
 
     /**
