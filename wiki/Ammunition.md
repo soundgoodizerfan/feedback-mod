@@ -54,11 +54,10 @@ A bullet has a shape. Each shape trades one thing for another and none is best; 
 
 Low drag keeps a bullet's speed over distance. *Armor and stone* is how hard the bullet presents itself, so it decides what it goes through. A hollow point opens on a soft target and hurts more, but armor stops it.
 
-There are three ways to a shaped bullet, and the metal decides which are open:
+The shape is the bullet you seat: each shape is its own item, a Round Ball, a Flat-Nose Bullet, a Pointed Bullet or a Hollow-Point Bullet of some metal, and the press reads it off the bullet slot. Two ways to get one:
 
 - **Cast it.** The **Ball Mold** casts **round balls** the way the Bullet Mold casts round-nose bullets, eight to an ingot's worth. Any metal that melts in a crucible can be cast.
 - **Forge it.** Hammer a nugget into any shape, by hand or with a [Mechanical Hammer](Mechanical_Hammer.md). Pointed and hollow-point bullets take more work than round balls and flat noses, and a harder metal takes more again.
-- **Stamp it.** Set the press's **Shape** die and seat a bullet: the press stamps the shape into the blank. A cold die only works a ductile metal (lead, tin, gold, copper, brass and similar, **ductility 8** or more), and only round ball, flat nose and hollow point; a hard metal or a pointed bullet has to be cast or forged first. *"That metal is too hard to press cold into this shape. Cast or forge the blank."* A bullet already in the shape you want is seated as it is.
 
 **Ball Mold**: two Wrought Iron Drilled Plates with a Stick on each side, the bullet mold's pattern turned over.
 
@@ -124,14 +123,14 @@ Redstone is a charge for a **coilgun** only, and it can't be mixed with powder. 
 
 ## Shot shells
 
-Put a **nugget** in the projectile slot instead of a bullet and the press forms it into **shot**: a shell of buckshot pellets. A **smoothbore** barrel fires shells; a rifled barrel cannot, because rifling spins the pellets into a ring.
+Put a **nugget** or another kind of shot in the projectile slot instead of a bullet and the press makes a **shot shell**. A **smoothbore** barrel fires shells; a rifled barrel cannot, because rifling spins the pellets into a ring.
 
-The press's **Shape** die sets what the shot is. The pellet count is the bore's projectile volume cut into balls of the shot's size, up to the shot's own limit:
+Shot is its own item. A plain **nugget** seats as buckshot; **Birdshot**, **Large Shot** and **Flechettes** are forged from a nugget the same way bullets are. The pellet count is the bore's projectile volume cut into balls of the shot's size, up to the shot's own limit:
 
 | Shot | Pellet size | Most pellets | Notes |
 | --- | --- | --- | --- |
 | **Birdshot** | 2.5 mm | 24 | many small pellets, a wider pattern, a gentle bore wear |
-| **Buckshot** (the default) | 8 mm | 12 | |
+| **Buckshot** (a nugget) | 8 mm | 12 | |
 | **Large shot** | 12 mm | 6 | few large pellets, a tighter pattern |
 | **Flechette** | 3.5 mm | 16 | darts: low drag, a tight pattern, 1.5 times harder against armor and stone |
 

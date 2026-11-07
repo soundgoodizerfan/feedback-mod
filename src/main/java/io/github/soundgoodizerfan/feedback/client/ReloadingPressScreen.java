@@ -43,7 +43,7 @@ import java.util.Optional;
  * The Reloading Press ({@code docs/specs/feedback_guns_spec.md} section 5), laid out as a bench: a rail of component
  * sockets along the top (case, one or two charges, a bullet with an optional core, a payload), under it the round
  * being built, drawn live in the colours of what is seated and in the bullet's real shape, with a lead from each socket
- * to its part. A strip at the foot of the view holds the die (the bore and the shape it stamps) and the lever. The sheet
+ * to its part. A strip at the foot of the view holds the die (the bore) and the lever. The bullet's shape is the bullet seated. The sheet
  * under the view is the round's own spec read as it would be seated now, the only help the press gives because it does
  * not know when a charge is enough. Iron and brass ({@link GuiSkin#FORGE}). The round drawing is screen-local colour,
  * like the Skillet's pan: it is the subject of the screen.
@@ -58,8 +58,6 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     private static final int CASE_X = 52, CASE_W = 110, CASE_H = 28, BULLET_X = 150, BULLET_L = 54, BULLET_H = 13, CENTRE_Y = 96;
 
     private int bore;
-    /** Which shape the die stamps: an index into {@link BulletShape#values}, or -1 to seat the blank as it is. */
-    private int die;
     /** The pressure bar as drawn, easing toward the figure; negative until there is one. */
     private float gauge = -1;
     private long lastFrame;
@@ -67,7 +65,6 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     public ReloadingPressScreen(ReloadingPressMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.FORGE);
         this.bore = menu.openedBore();
-        this.die = menu.openedDie();
         imageWidth = ReloadingPressMenu.WIDTH;
         imageHeight = ReloadingPressMenu.HEIGHT;
         titleLabelX = 12;
@@ -77,29 +74,18 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     @Override
     protected void init() {
         super.init();
-        addRenderableWidget(GuiStyle.stepper(skin, leftPos + 16, topPos + 130, 118, 14, "<", ">",
-                () -> bore + " mm",
-                dir -> setBore(bore + dir), true, FSounds.UI_DETENT::get));
-        addRenderableWidget(GuiStyle.stepper(skin, leftPos + 150, topPos + 130, 118, 14, "<", ">",
-                () -> shapeName(die), this::stepDie, true, FSounds.UI_DETENT::get));
+        addRenderableWidget(GuiStyle.stepper(skin, leftPos + 16, topPos + 130, 150, 14, "<", ">",
+                () -> bore + " mm", dir -> setBore(bore + dir), true, FSounds.UI_DETENT::get));
         addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.reloading_press.seat"), b -> {
                     if (gauge < 0)
                         skin.cue(GuiSkin.Cue.REJECT);
                     send(true);
                 },
-                leftPos + 276, topPos + 128, 30, 18, () -> SoundEvents.PISTON_EXTEND));
+                leftPos + 252, topPos + 128, 52, 18, () -> SoundEvents.PISTON_EXTEND));
     }
 
-    private static String shapeName(int index) {
-        return Component.translatable(index < 0 ? "gui.feedback.reloading_press.shape.as_is"
-                : "gui.feedback.reloading_press.shape." + BulletShape.values()[index].getSerializedName()).getString();
-    }
-
-    /** Steps the die through the shapes and "as is": a wrap, so every shape is a few clicks from either side. */
-    private void stepDie(int dir) {
-        int n = BulletShape.values().length + 1;
-        die = Math.floorMod(die + 1 + dir, n) - 1;
-        send(false);
+    private static String shapeName(BulletShape shape) {
+        return Component.translatable("gui.feedback.reloading_press.shape." + shape.getSerializedName()).getString();
     }
 
     private void setBore(int value) {
@@ -108,7 +94,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
     }
 
     private void send(boolean seat) {
-        PacketDistributor.sendToServer(new PressPayload(menu.getPos(), bore, die, seat));
+        PacketDistributor.sendToServer(new PressPayload(menu.getPos(), bore, seat));
     }
 
     /** The material of what is in {@code slot}, if it is one. */
@@ -143,8 +129,8 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         var blank = seated(ReloadingPressBlockEntity.PROJECTILE);
         var core = seated(ReloadingPressBlockEntity.CORE);
         var payload = seated(ReloadingPressBlockEntity.PAYLOAD);
-        boolean shot = blank.isPresent() && blank.get().form().equals("nugget");
-        BulletShape shape = shapeSeated(blank, shot);
+        BulletShape shape = shapeSeated(blank);
+        boolean shot = shape.shot();
         int faint = GuiSkin.lerp(skin.dim(), 0x00000000, 0.55f), edge = skin.dim();
 
         // The case: a rim and a body, filled in the case metal, or only its outline while the socket is empty.
@@ -302,7 +288,6 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         Component roundLabel = Component.translatable("gui.feedback.reloading_press.round");
         g.drawString(font, roundLabel, ReloadingPressMenu.SLOT_XY[6][0] + 8 - font.width(roundLabel) / 2, ReloadingPressMenu.SLOT_XY[6][1] - 14, skin.dim(), false);
         g.drawString(font, Component.translatable("gui.feedback.reloading_press.bore"), 18, 120, skin.dim(), false);
-        g.drawString(font, Component.translatable("gui.feedback.reloading_press.die"), 152, 120, skin.dim(), false);
 
         long now = net.minecraft.Util.getMillis();
         float dt = lastFrame == 0 ? 0 : Math.min(now - lastFrame, 100L) / 1000f;
@@ -311,8 +296,8 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         var cas = seated(ReloadingPressBlockEntity.CASE);
         var blank = seated(ReloadingPressBlockEntity.PROJECTILE);
         var coreFound = seated(ReloadingPressBlockEntity.CORE);
-        boolean shot = blank.isPresent() && blank.get().form().equals("nugget");
-        BulletShape shape = shapeSeated(blank, shot);
+        BulletShape shape = shapeSeated(blank);
+        boolean shot = shape.shot();
         Optional<ResourceLocation> projectile = blank.map(Material.Located::id).or(() -> cas.map(Material.Located::id));
         Optional<Cartridge> shapeRound = projectile.map(p -> new Cartridge(bore, p, java.util.List.of(), p, Optional.empty(), shot, shape,
                 shot ? Optional.empty() : coreFound.map(Material.Located::id), Optional.empty()));
@@ -320,7 +305,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         // What the shape and the jacket do to the shot, as multipliers on a round nose of one metal.
         int sy = SHEET_Y + 6;
         String shapeLine = Component.translatable("gui.feedback.reloading_press.row.shape").getString() + " "
-                + shapeName(shape.ordinal()) + "    "
+                + shapeName(shape) + "    "
                 + String.format("%s %.2f   %s %.2f   %s %.2f",
                 Component.translatable("gui.feedback.reloading_press.row.drag").getString(), shapeRound.map(r -> r.drag(materials)).orElse(shape.drag()),
                 Component.translatable("gui.feedback.reloading_press.row.pierce").getString(),
@@ -367,13 +352,9 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         skin.bar(g, SHEET_X + 6, BAR_Y, SHEET_W - 12, 4, gauge / 1.5f, 2 / 3f);
     }
 
-    /** The shape the press would seat for what is in the bullet slot now, as the server will read it. */
-    private BulletShape shapeSeated(Optional<Material.Located> blank, boolean shot) {
-        BulletShape chosen = die < 0 ? null : BulletShape.values()[die];
-        if (shot)
-            return chosen != null && chosen.shot() ? chosen : BulletShape.BUCKSHOT;
-        BulletShape held = blank.flatMap(b -> BulletShape.ofForm(b.form())).orElse(BulletShape.ROUND_NOSE);
-        return chosen == null || chosen.shot() ? held : chosen;
+    /** The shape of what is in the bullet slot: a plain round nose until something is seated. */
+    private BulletShape shapeSeated(Optional<Material.Located> blank) {
+        return blank.flatMap(b -> BulletShape.ofForm(b.form())).orElse(BulletShape.ROUND_NOSE);
     }
 
     private void row(GuiGraphics g, int y, Component label, String figure, int colour) {

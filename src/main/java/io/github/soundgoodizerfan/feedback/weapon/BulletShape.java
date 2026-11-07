@@ -32,11 +32,10 @@ import java.util.Locale;
  * best: a pointed bullet flies far and goes through armour but hits soft; a hollow point is the
  * reverse. Placeholders, retunable here.
  *
- * <p>A bullet shape is the <em>form</em> of the projectile item ({@link #form}): the blank is shaped
- * by a mould, by a die at the Reloading Press, or forged, and the press seats what it holds. A shot
- * shape has no form: it is the die a nugget is formed into shot by.
+ * <p>A shape is the <em>form</em> of the projectile item ({@link #form}): a blank is cast in a mould
+ * or forged to shape, and the press seats what it holds. A nugget is buckshot.
  *
- * @param form      the material form the press expects in the bullet slot; empty for shot.
+ * @param form      the material form of the item that is this shape: the press reads the shape off the item in the bullet slot.
  * @param shot      thrown as pellets from a smooth bore.
  * @param drag      speed lost to the air, against a round nose's 1.
  * @param damage    share of the energy that becomes hurt; a hollow point opens up and gives more.
@@ -47,18 +46,17 @@ import java.util.Locale;
  * @param pelletMm  shot: pellet diameter (0 reads {@link FTuning#GUN_SHOT_PELLET_MM}).
  * @param maxPellets shot: most pellets a shell throws.
  * @param spread    shot: width of the pattern, against a buckshot's 1.
- * @param swage     whether a die can press it cold into a ductile blank; the rest are forged or cast.
  */
 public enum BulletShape implements StringRepresentable {
-    ROUND_NOSE("bullet", false, 1f, 1f, 1f, 1f, 1f, 1f, 0, 1, 1f, true),
-    ROUND_BALL("round_ball", false, 1.35f, 1f, 0.85f, 1f, 1.4f, 0.7f, 0, 1, 1f, true),
-    FLAT_NOSE("flat_nose_bullet", false, 1.15f, 1.1f, 0.9f, 1.5f, 0.6f, 1f, 0, 1, 1f, true),
-    POINTED("pointed_bullet", false, 0.65f, 0.9f, 1.4f, 1f, 0.8f, 1.2f, 0, 1, 1f, false),
-    HOLLOW_POINT("hollow_point_bullet", false, 1f, 1.45f, 0.55f, 0.8f, 1f, 1f, 0, 1, 1f, true),
-    BIRDSHOT("", true, 1f, 1f, 1f, 1f, 1f, 0.5f, 2.5f, 24, 1.2f, true),
-    BUCKSHOT("", true, 1f, 1f, 1f, 1f, 1f, 0.8f, 0, FTuning.GUN_SHOT_MAX_PELLETS, 1f, true),
-    LARGE_SHOT("", true, 1f, 1f, 1f, 1f, 1f, 1f, 12f, 6, 0.8f, true),
-    FLECHETTE("", true, 0.7f, 0.9f, 1.5f, 1f, 0.5f, 1.2f, 3.5f, 16, 0.5f, true);
+    ROUND_NOSE("bullet", false, 1f, 1f, 1f, 1f, 1f, 1f, 0, 1, 1f),
+    ROUND_BALL("round_ball", false, 1.35f, 1f, 0.85f, 1f, 1.4f, 0.7f, 0, 1, 1f),
+    FLAT_NOSE("flat_nose_bullet", false, 1.15f, 1.1f, 0.9f, 1.5f, 0.6f, 1f, 0, 1, 1f),
+    POINTED("pointed_bullet", false, 0.65f, 0.9f, 1.4f, 1f, 0.8f, 1.2f, 0, 1, 1f),
+    HOLLOW_POINT("hollow_point_bullet", false, 1f, 1.45f, 0.55f, 0.8f, 1f, 1f, 0, 1, 1f),
+    BIRDSHOT("birdshot", true, 1f, 1f, 1f, 1f, 1f, 0.5f, 2.5f, 24, 1.2f),
+    BUCKSHOT("nugget", true, 1f, 1f, 1f, 1f, 1f, 0.8f, 0, FTuning.GUN_SHOT_MAX_PELLETS, 1f),
+    LARGE_SHOT("large_shot", true, 1f, 1f, 1f, 1f, 1f, 1f, 12f, 6, 0.8f),
+    FLECHETTE("flechette", true, 0.7f, 0.9f, 1.5f, 1f, 0.5f, 1.2f, 3.5f, 16, 0.5f);
 
     public static final Codec<BulletShape> CODEC = StringRepresentable.fromEnum(BulletShape::values);
 
@@ -66,10 +64,9 @@ public enum BulletShape implements StringRepresentable {
     private final boolean shot;
     private final float drag, damage, pierce, ease, glance, wear, pelletMm, spread;
     private final int maxPellets;
-    private final boolean swage;
 
     BulletShape(String form, boolean shot, float drag, float damage, float pierce, float ease, float glance, float wear,
-                float pelletMm, int maxPellets, float spread, boolean swage) {
+                float pelletMm, int maxPellets, float spread) {
         this.form = form;
         this.shot = shot;
         this.drag = drag;
@@ -81,7 +78,6 @@ public enum BulletShape implements StringRepresentable {
         this.pelletMm = pelletMm;
         this.maxPellets = maxPellets;
         this.spread = spread;
-        this.swage = swage;
     }
 
     public String form() { return form; }
@@ -94,17 +90,16 @@ public enum BulletShape implements StringRepresentable {
     public float wear() { return wear; }
     public float spread() { return spread; }
     public int maxPellets() { return maxPellets; }
-    public boolean swage() { return swage; }
 
     /** Pellet diameter, mm; a bullet shape has none. */
     public float pelletMm() {
         return pelletMm > 0 ? pelletMm : FTuning.GUN_SHOT_PELLET_MM;
     }
 
-    /** The shape a bullet form is, or empty if the form is no bullet's. */
+    /** The shape a projectile form is, or empty if the form is no projectile's. */
     public static java.util.Optional<BulletShape> ofForm(String form) {
         for (BulletShape s : values())
-            if (!s.shot && s.form.equals(form))
+            if (s.form.equals(form))
                 return java.util.Optional.of(s);
         return java.util.Optional.empty();
     }

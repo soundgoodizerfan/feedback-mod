@@ -41,24 +41,23 @@ public class ReloadingPressMenu extends AbstractContainerMenu {
 
     private final Container container;
     private final BlockPos pos;
-    private final int openedBore, openedDie;
+    private final int openedBore;
     private final Player player;
 
     public ReloadingPressMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(id, inventory, new SimpleContainer(ReloadingPressBlockEntity.SLOTS), buf.readBlockPos(), buf.readVarInt(), buf.readVarInt());
+        this(id, inventory, new SimpleContainer(ReloadingPressBlockEntity.SLOTS), buf.readBlockPos(), buf.readVarInt());
     }
 
     public ReloadingPressMenu(int id, Inventory inventory, ReloadingPressBlockEntity press) {
-        this(id, inventory, press, press.getBlockPos(), press.boreMm(), press.die() == null ? -1 : press.die().ordinal());
+        this(id, inventory, press, press.getBlockPos(), press.boreMm());
     }
 
-    private ReloadingPressMenu(int id, Inventory inventory, Container container, BlockPos pos, int bore, int die) {
+    private ReloadingPressMenu(int id, Inventory inventory, Container container, BlockPos pos, int bore) {
         super(FMenus.RELOADING_PRESS.get(), id);
         this.player = inventory.player;
         this.container = container;
         this.pos = pos;
         this.openedBore = bore;
-        this.openedDie = die;
         for (int i = 0; i < ReloadingPressBlockEntity.SLOTS; i++) {
             final int slot = i;
             addSlot(new Slot(container, i, SLOT_XY[i][0], SLOT_XY[i][1]) {
@@ -80,10 +79,6 @@ public class ReloadingPressMenu extends AbstractContainerMenu {
         return openedBore;
     }
 
-    /** The die's shape (an index into {@link BulletShape#values}) when opened, or -1 for the blank as it is. */
-    public int openedDie() {
-        return openedDie;
-    }
 
     @Override
     public boolean stillValid(Player player) {

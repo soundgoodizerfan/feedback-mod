@@ -665,8 +665,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
             m.item(id, "case").ifPresent(cases::add);
             m.item(id, "paper_case").ifPresent(cases::add);
             for (var shape : io.github.soundgoodizerfan.feedback.weapon.BulletShape.values())
-                if (!shape.shot())
-                    m.item(id, shape.form()).ifPresent(bullets::add);
+                m.item(id, shape.form()).ifPresent(bullets::add);
         });
         List<PressCategory.Card> cards = new ArrayList<>();
         materials.forEach((id, m) -> m.propellant().ifPresent(p -> {

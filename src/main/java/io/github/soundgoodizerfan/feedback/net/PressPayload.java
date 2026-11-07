@@ -29,15 +29,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** The Reloading Press screen: the die set's bore, its shape (an index into the shapes, -1 for none), and whether the lever was pulled. */
-public record PressPayload(BlockPos pos, int bore, int die, boolean seat) implements CustomPacketPayload {
+/** The Reloading Press screen: the die set's bore and whether the lever was pulled. */
+public record PressPayload(BlockPos pos, int bore, boolean seat) implements CustomPacketPayload {
 
     public static final Type<PressPayload> TYPE = new Type<>(Feedback.id("reloading_press"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, PressPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, PressPayload::pos,
             ByteBufCodecs.VAR_INT, PressPayload::bore,
-            ByteBufCodecs.VAR_INT, PressPayload::die,
             ByteBufCodecs.BOOL, PressPayload::seat,
             PressPayload::new);
 
@@ -50,7 +49,7 @@ public record PressPayload(BlockPos pos, int bore, int die, boolean seat) implem
         context.enqueueWork(() -> {
             if (context.player().containerMenu instanceof ReloadingPressMenu menu && menu.getPos().equals(payload.pos())
                     && context.player().level().getBlockEntity(payload.pos()) instanceof ReloadingPressBlockEntity press)
-                press.commit(payload.bore(), payload.die(), payload.seat(), context.player());
+                press.commit(payload.bore(), payload.seat(), context.player());
         });
     }
 }

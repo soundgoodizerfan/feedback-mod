@@ -67,8 +67,6 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
 
     private final NonNullList<ItemStack> slots = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private int boreMm = 9;
-    /** The die's shape: what the press stamps into the blank it seats, or null to seat the blank as it is. */
-    private BulletShape die;
 
     public ReloadingPressBlockEntity(BlockPos pos, BlockState state) {
         super(FWeapons.PRESS_ENTITY.get(), pos, state);
@@ -76,11 +74,6 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
 
     public int boreMm() {
         return boreMm;
-    }
-
-    /** The die's shape, or null when it seats the blank as it is. */
-    public BulletShape die() {
-        return die;
     }
 
     /** What an item is, as a part of a round, in {@code materials}: the material and the form it was found as. */
@@ -104,7 +97,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         return switch (slot) {
             case CASE -> found.get().form().equals("case") || found.get().form().equals("paper_case");
             // A bullet seats as a bullet; a nugget is formed into shot by the die (spec 12).
-            case PROJECTILE -> BulletShape.ofForm(found.get().form()).isPresent() || found.get().form().equals("nugget");
+            case PROJECTILE -> BulletShape.ofForm(found.get().form()).isPresent();
             // A core is a small piece of a harder or denser metal set inside the bullet's jacket.
             case CORE -> found.get().form().equals("nugget") && material.density().muPerMb() > 0;
             // A charge is the powder of a propellant: a whole blaze rod is not one.
@@ -138,9 +131,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
     }
 
     /** The screen's setting, and with {@code seat} the lever. */
-    public void commit(int bore, int dieIndex, boolean seat, Player player) {
+    public void commit(int bore, boolean seat, Player player) {
         boreMm = Math.max(GunSpec.MIN_BORE_MM, Math.min(GunSpec.MAX_BORE_MM, bore));
-        die = dieIndex < 0 || dieIndex >= BulletShape.values().length ? null : BulletShape.values()[dieIndex];
         setChanged();
         if (!seat)
             return;
@@ -188,14 +180,12 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         }
         var payload = slots.get(PAYLOAD).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(PAYLOAD)).get().id());
-        boolean shot = bullet.get().form().equals("nugget");
-        var shape = shapeSeated(bullet.get(), shot, player);
-        if (shape.isEmpty())
-            return;
+        BulletShape shape = BulletShape.ofForm(bullet.get().form()).orElse(BulletShape.ROUND_NOSE);
+        boolean shot = shape.shot();
         // A core sits inside a bullet's jacket; shot has none.
         var core = shot || slots.get(CORE).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(CORE)).get().id());
-        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape.get(), core,
+        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core,
                 dry && level != null
                 ? java.util.Optional.of(new Cartridge.Stored(0, level.getGameTime())) : java.util.Optional.empty());
         if (cartridge.load(materials).isEmpty()) {
@@ -213,35 +203,6 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         slots.set(OUTPUT, round);
         setChanged();
         player.displayClientMessage(Component.translatable(dry ? "message.feedback.press.seated_dry" : "message.feedback.press.seated"), true);
-    }
-
-    /**
-     * The shape the die gives what is in the projectile slot, or empty (with the reason told to the player) when it cannot.
-     * A blank already shaped (cast in a mould, forged) is seated as it is; a die presses a new shape into a blank only if the
-     * metal is ductile enough to take it cold ({@link FTuning#GUN_SWAGE_DUCTILITY}) and the shape is one a die can make. A
-     * nugget is formed into shot, and the die picks the shot's size.
-     */
-    private java.util.Optional<BulletShape> shapeSeated(Material.Located blank, boolean shot, Player player) {
-        if (shot) {
-            if (die != null && !die.shot()) {
-                player.displayClientMessage(Component.translatable("message.feedback.press.die_mismatch"), true);
-                return java.util.Optional.empty();
-            }
-            return java.util.Optional.of(die == null ? BulletShape.BUCKSHOT : die);
-        }
-        BulletShape held = BulletShape.ofForm(blank.form()).orElse(BulletShape.ROUND_NOSE);
-        if (die == null || die == held)
-            return java.util.Optional.of(held);
-        if (die.shot()) {
-            player.displayClientMessage(Component.translatable("message.feedback.press.die_mismatch"), true);
-            return java.util.Optional.empty();
-        }
-        float ductility = blank.material().mechanical().ductility().orElse(0);
-        if (!die.swage() || ductility < FTuning.GUN_SWAGE_DUCTILITY) {
-            player.displayClientMessage(Component.translatable("message.feedback.press.too_hard"), true);
-            return java.util.Optional.empty();
-        }
-        return java.util.Optional.of(die);
     }
 
     // --- Container -----------------------------------------------------------------------------
@@ -311,8 +272,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         super.saveAdditional(tag, registries);
         ContainerHelper.saveAllItems(tag, slots, registries);
         tag.putInt("Bore", boreMm);
-        if (die != null)
-            tag.putString("Die", die.getSerializedName());
+
     }
 
     @Override
@@ -322,7 +282,5 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         ContainerHelper.loadAllItems(tag, slots, registries);
         if (tag.contains("Bore"))
             boreMm = tag.getInt("Bore");
-        die = tag.contains("Die") ? BulletShape.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, net.minecraft.nbt.StringTag.valueOf(tag.getString("Die")))
-                .result().orElse(null) : null;
     }
 }

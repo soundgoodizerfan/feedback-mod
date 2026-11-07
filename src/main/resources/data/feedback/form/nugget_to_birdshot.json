@@ -1,0 +1,7 @@
+{
+  "from": "nugget",
+  "to": "birdshot",
+  "operation": "blow",
+  "base": 3,
+  "slope": 1.2
+}

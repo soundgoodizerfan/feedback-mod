@@ -1,0 +1,7 @@
+{
+  "from": "nugget",
+  "to": "flechette",
+  "operation": "blow",
+  "base": 6,
+  "slope": 1.8
+}

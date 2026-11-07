@@ -59,7 +59,6 @@ public class ReloadingPressBlock extends BaseEntityBlock {
             player.openMenu(press, buf -> {
                 buf.writeBlockPos(pos);
                 buf.writeVarInt(press.boreMm());
-                buf.writeVarInt(press.die() == null ? -1 : press.die().ordinal());
             });
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
