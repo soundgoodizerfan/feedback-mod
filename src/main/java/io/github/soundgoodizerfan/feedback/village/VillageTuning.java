@@ -111,6 +111,23 @@ public final class VillageTuning {
     /** A sale under market gives one point of positive gossip every this many sales. */
     public static final int FAIR_REP_EVERY = 4;
 
+    // --- the ledger board ---
+
+    /** Blocks from a board (or a bell near it) within which villagers count toward the village. */
+    public static final int VILLAGE_RADIUS = 48;
+    /** Villagers read for standing, and listed for orders, at most. */
+    public static final int STANDING_SAMPLE_MAX = 24, BOARD_VILLAGERS_MAX = 24;
+    /** Days a contract stays open after it is posted. */
+    public static final int CONTRACT_DAYS = 3;
+    /** Pieces a contract asks, least and most. */
+    public static final int CONTRACT_MIN = 4, CONTRACT_MAX = 16;
+    /** Emeralds a finished contract adds, per standing tier above none (1 + tier times this). */
+    public static final int CONTRACT_BONUS = 8;
+    /** Gossip a finished contract gives every villager in range toward whoever finished it (major positive). */
+    public static final int CONTRACT_GOSSIP = 2;
+    /** Blocks within which a Counter fills the contracts of a board. */
+    public static final int LINK_REACH = 12;
+
     // --- roads ---
 
     /** Tiles of road a flood from the front face may walk, and how many it may hold. */

@@ -146,7 +146,7 @@ public final class VillageEconomy {
     }
 
     /** A blueprint of the named design: a gun pool entry, else the starter design of a modular type; empty if neither exists. */
-    private static ItemStack blueprint(ResourceLocation id) {
+    static ItemStack blueprint(ResourceLocation id) {
         return io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get().design(id)
                 .or(() -> io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(id,
                         io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(), MaterialTable.get().materials()))
@@ -267,7 +267,7 @@ public final class VillageEconomy {
     }
 
     /** The saturation bin of a delivery: the type and the kind of its primary part's material. */
-    private static String binKey(ResourceLocation type, ModularDesign design) {
+    static String binKey(ResourceLocation type, ModularDesign design) {
         String kind = "";
         if (design != null) {
             ModularType t = ModularTypes.known().get(type);
@@ -279,7 +279,7 @@ public final class VillageEconomy {
         return type + "|" + kind;
     }
 
-    private static void addXp(Villager v, int xp) {
+    static void addXp(Villager v, int xp) {
         if (xp <= 0)
             return;
         v.setVillagerXp(v.getVillagerXp() + xp);

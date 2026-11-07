@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "minecraft:block/lectern_top",
+    "side": "minecraft:block/cartography_table_side3"
+  }
+}

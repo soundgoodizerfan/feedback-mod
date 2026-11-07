@@ -120,6 +120,11 @@ public class FMenus {
             MENUS.register("villager",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.village.VillagerMenu::new));
 
+    /** Extended: the board's position rides in the open packet; what it shows is sent as a view. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.village.BoardMenu>> BOARD =
+            MENUS.register("board",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.village.BoardMenu::new));
+
     /** Extended: the Counter's side (buy or keeper) and position ride in the open packet; the shelf is synced as slots, prices as data. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.village.CounterMenu>> COUNTER =
             MENUS.register("counter",

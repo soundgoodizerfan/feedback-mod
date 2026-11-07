@@ -192,6 +192,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.VillagerStatePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.VillagerStatePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.VillagerStatePayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.BoardStatePayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.BoardStatePayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.BoardStatePayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.VillagerActionPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.VillagerActionPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.VillagerActionPayload::handle)

@@ -65,6 +65,11 @@ public class CommissionTable extends SimpleJsonResourceReloadListener {
         Feedback.LOGGER.info("Loaded commission profiles for {} professions", byProfession.size());
     }
 
+    /** Every profession that commissions something, in id order. */
+    public List<ResourceLocation> professions() {
+        return byProfession.keySet().stream().sorted(java.util.Comparator.comparing(ResourceLocation::toString)).toList();
+    }
+
     /** What {@code profession} commissions, in file order; empty for a profession that commissions nothing. */
     public List<CommissionProfile.Entry> forProfession(ResourceLocation profession) {
         return byProfession.getOrDefault(profession, List.of());

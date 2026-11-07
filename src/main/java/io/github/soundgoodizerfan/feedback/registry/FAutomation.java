@@ -180,6 +180,15 @@ public final class FAutomation {
     public static final DeferredBlock<CounterBlock> COUNTER = BLOCKS.register("counter",
             () -> new CounterBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)));
     public static final DeferredItem<BlockItem> COUNTER_ITEM = ITEMS.registerSimpleBlockItem(COUNTER);
+
+    /** The ledger board: the village's notice board (standing, every open order, contracts, notices). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.village.LedgerBoardBlock> BOARD = BLOCKS.register("ledger_board",
+            () -> new io.github.soundgoodizerfan.feedback.village.LedgerBoardBlock(
+                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)));
+    public static final DeferredItem<BlockItem> BOARD_ITEM = ITEMS.registerSimpleBlockItem(BOARD);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.village.LedgerBoardBlockEntity>> BOARD_ENTITY =
+            BLOCK_ENTITIES.register("ledger_board",
+                    () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.village.LedgerBoardBlockEntity::new, BOARD.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CounterBlockEntity>> COUNTER_ENTITY =
             BLOCK_ENTITIES.register("counter", () -> BlockEntityType.Builder.of(CounterBlockEntity::new, COUNTER.get()).build(null));
 
@@ -215,6 +224,7 @@ public final class FAutomation {
         output.accept(SHOCK_PLATE_ITEM.get());
         output.accept(RADIATION_SOURCE_ITEM.get());
         output.accept(COUNTER_ITEM.get());
+        output.accept(BOARD_ITEM.get());
         output.accept(KILN_ZONE_ITEM.get());
         output.accept(STOKER_ITEM.get());
         output.accept(CREEL_ITEM.get());

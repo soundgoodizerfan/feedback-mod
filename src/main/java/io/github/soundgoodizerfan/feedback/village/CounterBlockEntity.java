@@ -258,9 +258,27 @@ public class CounterBlockEntity extends BlockEntity {
                 .min(java.util.Comparator.comparingDouble(x -> x.distanceToSqr(worldPosition.getCenter()))).orElse(null);
         near = v != null;
         ItemStack work = intake.getStackInSlot(0);
-        if (v == null || work.isEmpty() || full(till) || full(returns))
+        if (work.isEmpty() || full(till) || full(returns))
             return;
         rollDay(level.getGameTime() / VillageTuning.DAY_TICKS);
+        // A board within reach takes what its open contracts ask for before any villager does; what it refuses goes on to the villager.
+        if (level instanceof ServerLevel sl && LedgerBoardBlockEntity.near(sl, worldPosition) instanceof LedgerBoardBlockEntity board) {
+            LedgerBoardBlockEntity.Delivered d = board.deliver(sl, work, keeper);
+            if (d.fate() == LedgerBoardBlockEntity.Delivered.Fate.TAKEN) {
+                if (d.paid() > 0)
+                    ItemHandlerHelper.insertItem(till, new ItemStack(Items.EMERALD, d.paid()), false);
+                if (!d.reward().isEmpty()) {
+                    ItemStack left = ItemHandlerHelper.insertItem(returns, d.reward(), false);
+                    if (!left.isEmpty())
+                        net.minecraft.world.Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY() + 1, worldPosition.getZ(), left);
+                }
+                handSales++;
+                setChanged();
+                return;
+            }
+        }
+        if (v == null)
+            return;
         VillageEconomy.Handed done = VillageEconomy.handOver(v, work);
         if (done.fate() == VillageEconomy.Fate.TAKEN) {
             handSales++;
