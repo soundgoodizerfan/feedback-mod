@@ -339,6 +339,7 @@ public final class GunShots {
                 round.tracer(materials), round.incendiary(materials), round.pellets(),
                 round.hardness(materials), gun,
                 round.blast(materials), RubberRounds.isRubber(projectile), Flight.of(round, materials));
+        recoilCancel(level, shooter, round.payloadPerks(materials).get(io.github.soundgoodizerfan.feedback.process.Material.Perk.BOUNCE), yaw, pitch);
         GunFu.shotFired(level, shooter, gun, figures, heat);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server) {
             ModularTraits.gunFired(server, gun, figures);
@@ -891,14 +892,6 @@ public final class GunShots {
         // A seed that lands on a block it can grow in is planted there.
         if (s.flight.seed() != null && blockPos != null && face == net.minecraft.core.Direction.UP)
             plant(level, s, blockPos.above());
-        // A bouncing payload fired at the ground close by throws the shooter off it: a recoil cancel, a rocket jump with a pellet.
-        Integer bounce = perks.get(io.github.soundgoodizerfan.feedback.process.Material.Perk.BOUNCE);
-        if (bounce != null && face != null && s.shooter.position().distanceTo(at) <= FTuning.GUN_BOUNCE_REACH) {
-            Vec3 normal = Vec3.atLowerCornerOf(face.getNormal());
-            s.shooter.setDeltaMovement(s.shooter.getDeltaMovement().add(normal.scale(FTuning.GUN_BOUNCE_LAUNCH * bounce)));
-            s.shooter.hurtMarked = true;
-            s.shooter.fallDistance = 0f;
-        }
         if (perks.isEmpty())
             return;
         int toxic = perks.getOrDefault(io.github.soundgoodizerfan.feedback.process.Material.Perk.TOXIC, 0);
@@ -921,6 +914,25 @@ public final class GunShots {
         if (siphon != null && !struck.isAlive())
             net.minecraft.world.entity.ExperienceOrb.award(level, struck.position(),
                     siphon * io.github.soundgoodizerfan.feedback.modular.ModularTuning.PERK_SIPHON_XP_PER_LEVEL);
+    }
+
+    /**
+     * A bouncing payload fired at a surface close by throws the shooter back along the line of aim, on the pull itself and not when the
+     * round lands: the rocket jump. Aim down and the shooter goes up; aim ahead and they go back. Nothing close in line, nothing to push off.
+     *
+     * @param bounce the payload's bounce perk level, or null for a round without one.
+     */
+    private static void recoilCancel(ServerLevel level, LivingEntity shooter, Integer bounce, float yaw, float pitch) {
+        if (bounce == null)
+            return;
+        Vec3 eye = shooter.getEyePosition(), look = Vec3.directionFromRotation(pitch, yaw);
+        var wall = level.clip(new ClipContext(eye, eye.add(look.scale(FTuning.GUN_BOUNCE_REACH)), ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE, CollisionContext.empty()));
+        if (wall.getType() == HitResult.Type.MISS)
+            return;
+        shooter.setDeltaMovement(shooter.getDeltaMovement().add(look.scale(-FTuning.GUN_BOUNCE_LAUNCH * bounce)));
+        shooter.hurtMarked = true;
+        shooter.fallDistance = 0f;
     }
 
     /** Draws {@code body} toward {@code toward}: a push that is stronger the further it has to go, capped, with a little lift off the ground. */

@@ -162,7 +162,7 @@ The **payload** slot is optional. Whatever you put there is carried in the bulle
 | A lump of something sticky (**slime ball**, **magma cream**, red mud) | **Anchor round**: glues what it hits to the spot for 5 s (Slowness VIII). Slime also **bounces** (below). |
 | A strand of **string** (or any fibrous thread) | **Tether round**: trails a line to the hit. A creature is reeled to you, and if the round hits a block it reels *you* to the block, a grapple with no hook. The pull is stronger the further away it is, up to a cap. |
 | A **seed** (any item that plants a crop) | **Seed round**: planted on the farmland the round lands on, if the crop can stand there. The round is the seed spent. |
-| Slime (**bounce**) fired at a block within 4 blocks | **Recoil cancel**: the block throws *you* off the face it was fired at, a rocket jump with a pellet. Aim at the ground at your feet. |
+| Slime (**bounce**) fired at a surface within 4 blocks | **Recoil cancel**: the moment you pull the trigger it throws you *backwards along your aim*, a rocket jump with a pellet. Aim down at your feet and you go up; aim straight ahead and you go back. Nothing within 4 blocks in line, nothing to push off. |
 
 ## Loading
 
