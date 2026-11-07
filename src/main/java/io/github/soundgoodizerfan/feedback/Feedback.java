@@ -113,6 +113,7 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onGrindstone);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.VillageEvents::onInteract);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.MarketDay::onLevelTick);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.VillagePieces::onServerAboutToStart);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.RaidEvents::onJoin);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.RaidEvents::onDrops);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.weapon.ArmedSkeletons::onEntityJoin);

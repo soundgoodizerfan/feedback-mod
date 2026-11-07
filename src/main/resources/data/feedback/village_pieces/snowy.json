@@ -1,0 +1,29 @@
+{
+  "pieces": [
+    {
+      "pool": "minecraft:village/snowy/houses",
+      "piece": "feedback:village/snowy/stall",
+      "weight": 3
+    },
+    {
+      "pool": "minecraft:village/snowy/houses",
+      "piece": "feedback:village/snowy/stall_row",
+      "weight": 2
+    },
+    {
+      "pool": "minecraft:village/snowy/houses",
+      "piece": "feedback:village/snowy/guild_yard_toolsmith",
+      "weight": 2
+    },
+    {
+      "pool": "minecraft:village/snowy/houses",
+      "piece": "feedback:village/snowy/guild_yard_mason",
+      "weight": 1
+    },
+    {
+      "pool": "minecraft:village/snowy/town_centers",
+      "piece": "feedback:village/snowy/plaza_centre",
+      "weight": 30
+    }
+  ]
+}

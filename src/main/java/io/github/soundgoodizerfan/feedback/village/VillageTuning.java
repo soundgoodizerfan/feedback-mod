@@ -111,6 +111,13 @@ public final class VillageTuning {
     /** A sale under market gives one point of positive gossip every this many sales. */
     public static final int FAIR_REP_EVERY = 4;
 
+    // --- village stalls ---
+
+    /** What a player pays at a village-owned stall over the market price. */
+    public static final float VILLAGE_MARKUP = 0.25f;
+    /** Blocks within which a stall looks for the job site that names its trade. */
+    public static final int STALL_TRADE_RADIUS = 32;
+
     // --- raids ---
 
     /** Blocks within which a raider heads for a stocked Counter, and the total line value of shelf goods that makes a Counter worth the trip. */

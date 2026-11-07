@@ -106,6 +106,9 @@ public class CounterBlockEntity extends BlockEntity {
     /** The last player to open the back menu: used only to aim gossip, never to allow or refuse anything. */
     @Nullable
     private UUID keeper;
+    /** Set by the structure that placed this Counter (a village stall): the village stocks it daily, prices it at market and keeps no till. */
+    private boolean villageOwned;
+    private long restockDay = -1;
 
     // runtime only
     private final Map<UUID, Long> pulled = new HashMap<>();
@@ -179,6 +182,54 @@ public class CounterBlockEntity extends BlockEntity {
         }
     }
 
+    public boolean villageOwned() {
+        return villageOwned;
+    }
+
+    /**
+     * A village stall is restocked from its trade's loot table the first time anything touches it on a new day: nothing ticks, the day number and
+     * the trade (the nearest claimed job site) decide it. Anything else does nothing.
+     */
+    public void touch() {
+        if (!villageOwned || !(level instanceof ServerLevel sl))
+            return;
+        long day = sl.getGameTime() / VillageTuning.DAY_TICKS;
+        if (day == restockDay)
+            return;
+        restockDay = day;
+        for (int i = 0; i < SHELF; i++)
+            shelf.setStackInSlot(i, ItemStack.EMPTY);
+        var key = net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE,
+                io.github.soundgoodizerfan.feedback.Feedback.id("village_stall/" + stallTrade(sl)));
+        var table = sl.getServer().reloadableRegistries().getLootTable(key);
+        var params = new net.minecraft.world.level.storage.loot.LootParams.Builder(sl)
+                .withParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.ORIGIN, worldPosition.getCenter())
+                .create(net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.CHEST);
+        int[] slot = {0};
+        table.getRandomItems(params, worldPosition.asLong() ^ (day * 0x9E3779B97F4A7C15L), s -> {
+            if (slot[0] < SHELF && !s.isEmpty())
+                shelf.setStackInSlot(slot[0]++, s);
+        });
+        setChanged();
+    }
+
+    /** The trade a stall sells for: that of the nearest claimed job site, or {@code any}. */
+    private String stallTrade(ServerLevel sl) {
+        var poi = sl.getPoiManager();
+        java.util.function.Predicate<net.minecraft.core.Holder<net.minecraft.world.entity.ai.village.poi.PoiType>> isSite =
+                h -> net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.stream().anyMatch(p -> p.heldJobSite().test(h));
+        var at = poi.findClosest(isSite, worldPosition, VillageTuning.STALL_TRADE_RADIUS, net.minecraft.world.entity.ai.village.poi.PoiManager.Occupancy.ANY);
+        if (at.isEmpty())
+            return "any";
+        var type = poi.getType(at.get());
+        if (type.isEmpty())
+            return "any";
+        for (var prof : net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION)
+            if (prof.heldJobSite().test(type.get()))
+                return net.minecraft.core.registries.BuiltInRegistries.VILLAGER_PROFESSION.getKey(prof).getPath();
+        return "any";
+    }
+
     public int price(int slot) {
         return prices[slot];
     }
@@ -193,7 +244,7 @@ public class CounterBlockEntity extends BlockEntity {
         return new ContainerData() {
             @Override
             public int get(int i) {
-                return i < SHELF ? prices[i] : VillageEconomy.marketPrice(shelf.getStackInSlot(i - SHELF));
+                return i < SHELF ? (villageOwned ? playerPrice(i) : prices[i]) : VillageEconomy.marketPrice(shelf.getStackInSlot(i - SHELF));
             }
 
             @Override
@@ -211,12 +262,16 @@ public class CounterBlockEntity extends BlockEntity {
 
     /** What a player pays for one item of shelf slot {@code slot}: the keeper's price, or the market price when none is set. */
     public int playerPrice(int slot) {
+        if (villageOwned)
+            return Math.max(1, (int) Math.ceil(VillageEconomy.marketPrice(shelf.getStackInSlot(slot)) * (1f + VillageTuning.VILLAGE_MARKUP)));
         int each = prices[slot];
         return each > 0 ? each : Math.max(1, VillageEconomy.marketPrice(shelf.getStackInSlot(slot)));
     }
 
     /** Puts {@code n} emeralds in the till; false (nothing moved) when it cannot hold them all. */
     public boolean payTill(int n) {
+        if (villageOwned)
+            return true; // a village stall keeps no till: what it earns is not stored, so it is no emerald farm
         List<ItemStack> stacks = new ArrayList<>();
         for (int left = n; left > 0; left -= 64)
             stacks.add(new ItemStack(Items.EMERALD, Math.min(64, left)));
@@ -371,6 +426,7 @@ public class CounterBlockEntity extends BlockEntity {
 
     private void scan(ServerLevel sl, long t) {
         rollDay(t / VillageTuning.DAY_TICKS);
+        touch();
         inReach = wanting = errandsPending = sealed = 0;
         if (!stocked()) {
             road = RoadReach.NONE;
@@ -459,13 +515,13 @@ public class CounterBlockEntity extends BlockEntity {
 
     /** A villager at the front face buys from the shelf. */
     private void sell(Villager v) {
-        if (full(till)) {
+        if (!villageOwned && full(till)) {
             stalled++;
             return;
         }
         settleShelf();
         List<ItemStack> stock = stock();
-        int[] copy = prices.clone();
+        int[] copy = villageOwned ? new int[SHELF] : prices.clone();
         VillageEconomy.Sale s = VillageEconomy.walkIn(v, stock, copy);
         if (s.fate() == VillageEconomy.WalkIn.TOO_DEAR) {
             tooDear++;
@@ -474,7 +530,7 @@ public class CounterBlockEntity extends BlockEntity {
         if (s.fate() != VillageEconomy.WalkIn.SOLD)
             return;
         shelf.extractItem(s.slot(), s.count(), false);
-        ItemStack pay = new ItemStack(Items.EMERALD, s.each() * s.count());
+        ItemStack pay = new ItemStack(Items.EMERALD, villageOwned ? 0 : s.each() * s.count());
         for (int left = pay.getCount(); left > 0; left -= 64) {
             ItemStack part = new ItemStack(Items.EMERALD, Math.min(64, left));
             ItemStack rest = ItemHandlerHelper.insertItem(till, part, false);
@@ -576,6 +632,8 @@ public class CounterBlockEntity extends BlockEntity {
         tag.putIntArray("Prices", prices);
         if (keeper != null)
             tag.putUUID("Keeper", keeper);
+        tag.putBoolean("VillageOwned", villageOwned);
+        tag.putLong("RestockDay", restockDay);
     }
 
     @Override
@@ -589,5 +647,7 @@ public class CounterBlockEntity extends BlockEntity {
         for (int i = 0; i < SHELF; i++)
             prices[i] = i < p.length ? p[i] : 0;
         keeper = tag.hasUUID("Keeper") ? tag.getUUID("Keeper") : null;
+        villageOwned = tag.getBoolean("VillageOwned");
+        restockDay = tag.contains("RestockDay") ? tag.getLong("RestockDay") : -1;
     }
 }

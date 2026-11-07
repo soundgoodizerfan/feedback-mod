@@ -1,0 +1,29 @@
+{
+  "pieces": [
+    {
+      "pool": "minecraft:village/desert/houses",
+      "piece": "feedback:village/desert/stall",
+      "weight": 3
+    },
+    {
+      "pool": "minecraft:village/desert/houses",
+      "piece": "feedback:village/desert/stall_row",
+      "weight": 2
+    },
+    {
+      "pool": "minecraft:village/desert/houses",
+      "piece": "feedback:village/desert/guild_yard_toolsmith",
+      "weight": 2
+    },
+    {
+      "pool": "minecraft:village/desert/houses",
+      "piece": "feedback:village/desert/guild_yard_mason",
+      "weight": 1
+    },
+    {
+      "pool": "minecraft:village/desert/town_centers",
+      "piece": "feedback:village/desert/plaza_centre",
+      "weight": 30
+    }
+  ]
+}

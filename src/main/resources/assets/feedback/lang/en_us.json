@@ -5478,6 +5478,7 @@
   "feedback.counter.alone": "No villager within reach.",
   "block.feedback.ledger_board": "Ledger Board",
   "village.feedback.guild": "Guild of %s, %s members, tier %s",
+  "feedback.counter.village_keeps": "The village keeps this stall.",
   "feedback.instrument.calibrated": "%s (reference standard)",
   "block.feedback.market_cross": "Market Cross",
   "village.feedback.cross.inactive": "This square is too small or not paved: the cross needs a wide, open, paved square.",

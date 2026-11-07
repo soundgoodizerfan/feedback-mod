@@ -83,9 +83,14 @@ public class CounterBlock extends Block implements EntityBlock {
             return InteractionResult.PASS;
         Direction face = hit.getDirection();
         Direction front = state.getValue(FACING);
+        counter.touch();
         if (face == front || face == Direction.UP) {
             open(sp, counter, CounterMenu.BUY, "feedback.counter.buy");
         } else if (face == front.getOpposite()) {
+            if (counter.villageOwned()) {
+                player.displayClientMessage(Component.translatable("feedback.counter.village_keeps"), true);
+                return InteractionResult.CONSUME;
+            }
             counter.keeper(player.getUUID());
             open(sp, counter, CounterMenu.KEEPER, "feedback.counter.keeper");
         } else {
