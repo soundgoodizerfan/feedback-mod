@@ -5477,6 +5477,7 @@
   "feedback.counter.near": "A villager is within reach.",
   "feedback.counter.alone": "No villager within reach.",
   "block.feedback.ledger_board": "Ledger Board",
+  "village.feedback.guild": "Guild of %s, %s members, tier %s",
   "gui.feedback.board.orders": "Orders",
   "gui.feedback.board.contracts": "Contracts",
   "gui.feedback.board.notices": "Notices",

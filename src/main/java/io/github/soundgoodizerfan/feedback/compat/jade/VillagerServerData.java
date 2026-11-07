@@ -33,12 +33,19 @@ public class VillagerServerData implements IServerDataProvider<EntityAccessor> {
 
     public static final VillagerServerData INSTANCE = new VillagerServerData();
 
-    static final String STANDING = "VillageStanding";
+    static final String STANDING = "VillageStanding", GUILD_PROFESSION = "GuildProfession", GUILD_SIZE = "GuildSize", GUILD_TIER = "GuildTier";
 
     @Override
     public void appendServerData(CompoundTag data, EntityAccessor accessor) {
-        if (accessor.getEntity() instanceof Villager v)
+        if (accessor.getEntity() instanceof Villager v) {
             data.putInt(STANDING, v.getPlayerReputation(accessor.getPlayer()));
+            var guild = io.github.soundgoodizerfan.feedback.village.Guilds.of(v);
+            if (guild != null) {
+                data.putString(GUILD_PROFESSION, guild.profession().getPath());
+                data.putInt(GUILD_SIZE, guild.members().size());
+                data.putInt(GUILD_TIER, guild.tier());
+            }
+        }
     }
 
     @Override

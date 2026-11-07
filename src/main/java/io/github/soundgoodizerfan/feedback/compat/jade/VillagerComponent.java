@@ -42,6 +42,9 @@ public class VillagerComponent implements IEntityComponentProvider {
         CompoundTag data = accessor.getServerData();
         if (!data.contains(VillagerServerData.STANDING))
             return;
+        if (data.contains(VillagerServerData.GUILD_SIZE))
+            tooltip.add(Component.translatable("village.feedback.guild", Component.translatable("entity.minecraft.villager." + data.getString(VillagerServerData.GUILD_PROFESSION)),
+                    data.getInt(VillagerServerData.GUILD_SIZE), data.getInt(VillagerServerData.GUILD_TIER)).withStyle(ChatFormatting.GOLD));
         int rep = data.getInt(VillagerServerData.STANDING);
         int tier = 0;
         for (int t : VillageTuning.STANDING_TIERS)

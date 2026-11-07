@@ -33,6 +33,30 @@
       "stock": 1,
       "standing": 10,
       "blueprint": "feedback:chestplate"
+    },
+    {
+      "level": 1,
+      "item": "feedback:bronze_ingot",
+      "price": 3,
+      "count": 4,
+      "stock": 2,
+      "guild_tier": 1
+    },
+    {
+      "level": 1,
+      "item": "feedback:steel_ingot",
+      "price": 5,
+      "count": 4,
+      "stock": 2,
+      "guild_tier": 2
+    },
+    {
+      "level": 1,
+      "item": "minecraft:diamond",
+      "price": 12,
+      "count": 1,
+      "stock": 2,
+      "guild_tier": 3
     }
   ]
 }

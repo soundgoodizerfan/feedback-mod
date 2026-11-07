@@ -90,6 +90,22 @@ public record Ledger(long day, int doneMask, Map<String, Integer> bought, Map<St
         return new Ledger(today, doneMask, Map.copyOf(next), bins);
     }
 
+    /** Order {@code order} done without a delivery here (the guild's order, delivered at another member). */
+    public Ledger markDone(int order) {
+        return new Ledger(day, doneMask | (1 << order), bought, bins);
+    }
+
+    /** Experience a guild-mate shared with this villager today, counted under an {@code m} key. */
+    public int mentored() {
+        return bought.getOrDefault("m", 0);
+    }
+
+    public Ledger mentor(int xp, long today) {
+        Map<String, Integer> next = new HashMap<>(bought);
+        next.merge("m", xp, Integer::sum);
+        return new Ledger(today, doneMask, Map.copyOf(next), bins);
+    }
+
     /** Errands made today to a Counter, counted in the sales map under an {@code e} key. */
     public int errands() {
         return bought.getOrDefault("e", 0);

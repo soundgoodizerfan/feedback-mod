@@ -111,6 +111,16 @@ public final class VillageTuning {
     /** A sale under market gives one point of positive gossip every this many sales. */
     public static final int FAIR_REP_EVERY = 4;
 
+    // --- guilds ---
+
+    /** Blocks within which job sites of one profession count as one guild, and the members it takes. */
+    public static final int GUILD_RADIUS = 16, GUILD_MIN = 3;
+    /** The guild order's pay against the same order from a single villager, plus this much more for each tier above the first. */
+    public static final float GUILD_PAY_MULT = 1.5f, GUILD_TIER_PAY = 0.1f;
+    /** Share of a member's delivery experience each guild-mate earns, and the most a member may be given in a day. */
+    public static final float MENTOR_SHARE = 0.25f;
+    public static final int MENTOR_CAP_PER_DAY = 6;
+
     // --- the ledger board ---
 
     /** Blocks from a board (or a bell near it) within which villagers count toward the village. */

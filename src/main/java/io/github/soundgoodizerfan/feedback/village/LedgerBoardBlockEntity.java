@@ -167,7 +167,7 @@ public class LedgerBoardBlockEntity extends BlockEntity {
         List<BoardView.OrderLine> orders = new ArrayList<>();
         for (Villager v : VillageStanding.villagers(level, worldPosition, VillageTuning.BOARD_VILLAGERS_MAX)) {
             Ledger ledger = v.getData(io.github.soundgoodizerfan.feedback.registry.FVillage.LEDGER).on(today);
-            List<Order> list = OrderGen.orders(v.getUUID(), VillageEconomy.profession(v), VillageEconomy.villagerType(v), VillageEconomy.level(v), today);
+            List<Order> list = Guilds.ordersOf(v, today);
             for (int i = 0; i < list.size(); i++) {
                 Order o = list.get(i);
                 orders.add(new BoardView.OrderLine(OrderWords.typeName(o.type()),

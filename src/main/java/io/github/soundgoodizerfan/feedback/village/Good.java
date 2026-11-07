@@ -33,13 +33,15 @@ import net.minecraft.world.item.ItemStack;
  *
  * @param enchantedBook the stack is a book carrying one enchantment the villager picks for the day
  * @param blueprint     the stack is a blueprint of this design: the id of a gun blueprint pool entry, else of a modular type (its starter design)
+ * @param guildTier     the least guild tier the villager's guild must have for this line to be sold (0: always)
+ * @param types         villager types (biome: {@code desert}, {@code taiga}) that sell the line; empty means every type
  */
 public record Good(ResourceLocation profession, int level, Item item, int count, int price, int stock, int standing,
-                   boolean enchantedBook, java.util.Optional<ResourceLocation> blueprint) {
+                   boolean enchantedBook, java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types) {
 
     /** A line as a file writes it, under its profession. */
     public record Line(int level, Item item, int count, int price, int stock, int standing, boolean enchantedBook,
-                       java.util.Optional<ResourceLocation> blueprint) {
+                       java.util.Optional<ResourceLocation> blueprint, int guildTier, java.util.List<String> types) {
 
         public static final Codec<Line> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.intRange(1, 5).optionalFieldOf("level", 1).forGetter(Line::level),
@@ -49,7 +51,9 @@ public record Good(ResourceLocation profession, int level, Item item, int count,
                 Codec.intRange(1, 64).optionalFieldOf("stock", 4).forGetter(Line::stock),
                 Codec.INT.optionalFieldOf("standing", 0).forGetter(Line::standing),
                 Codec.BOOL.optionalFieldOf("enchanted_book", false).forGetter(Line::enchantedBook),
-                ResourceLocation.CODEC.optionalFieldOf("blueprint").forGetter(Line::blueprint)).apply(i, Line::new));
+                ResourceLocation.CODEC.optionalFieldOf("blueprint").forGetter(Line::blueprint),
+                Codec.intRange(0, 3).optionalFieldOf("guild_tier", 0).forGetter(Line::guildTier),
+                Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Line::types)).apply(i, Line::new));
     }
 
     /** A whole shop file. */
@@ -69,7 +73,9 @@ public record Good(ResourceLocation profession, int level, Item item, int count,
             Codec.INT.fieldOf("stock").forGetter(Good::stock),
             Codec.INT.fieldOf("standing").forGetter(Good::standing),
             Codec.BOOL.fieldOf("enchanted_book").forGetter(Good::enchantedBook),
-            ResourceLocation.CODEC.optionalFieldOf("blueprint").forGetter(Good::blueprint)).apply(i, Good::new));
+            ResourceLocation.CODEC.optionalFieldOf("blueprint").forGetter(Good::blueprint),
+            Codec.INT.optionalFieldOf("guild_tier", 0).forGetter(Good::guildTier),
+            Codec.STRING.listOf().optionalFieldOf("types", java.util.List.of()).forGetter(Good::types)).apply(i, Good::new));
 
     public ItemStack stack() {
         return new ItemStack(item, count);

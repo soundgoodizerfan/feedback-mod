@@ -119,7 +119,7 @@ public final class VillageEconomy {
         boolean wanderer = !(m instanceof Villager);
         List<OrderView> orders = new ArrayList<>();
         if (!wanderer) {
-            for (Order o : OrderGen.orders(m.getUUID(), profession(m), villagerType(m), level, day)) {
+            for (Order o : Guilds.ordersOf((Villager) m, day)) {
                 List<TermView> terms = new ArrayList<>();
                 for (Order.Term t : o.terms())
                     terms.add(new TermView(t.fig(), t.band(), t.must(), t.above()));
@@ -159,10 +159,16 @@ public final class VillageEconomy {
         int level = level(m);
         List<Good> all = GoodsTable.get().entries();
         List<Integer> out = new ArrayList<>();
-        for (int i = 0; i < all.size(); i++)
-            if (all.get(i).profession().equals(prof) && all.get(i).level() <= level
-                    && all.get(i).blueprint().map(b -> !blueprint(b).isEmpty()).orElse(true))
+        Guilds.Guild guild = m instanceof Villager v ? Guilds.of(v) : null;
+        int guildTier = guild == null ? 0 : guild.tier();
+        String type = villagerType(m);
+        for (int i = 0; i < all.size(); i++) {
+            Good g = all.get(i);
+            if (g.profession().equals(prof) && g.level() <= level && g.guildTier() <= guildTier
+                    && (g.types().isEmpty() || g.types().contains(type))
+                    && g.blueprint().map(b -> !blueprint(b).isEmpty()).orElse(true))
                 out.add(i);
+        }
         return out;
     }
 
@@ -208,7 +214,7 @@ public final class VillageEconomy {
         AbstractVillager m = menu.merchant();
         if (!(m instanceof Villager v) || !menu.stillValid(p))
             return;
-        List<Order> orders = OrderGen.orders(v.getUUID(), profession(v), villagerType(v), level(v), today(v));
+        List<Order> orders = Guilds.ordersOf(v, today(v));
         if (index < 0 || index >= orders.size() || orders.get(index).type().hashCode() != key) {
             send(p, menu, view(p, v));
             return;
@@ -224,7 +230,7 @@ public final class VillageEconomy {
             return;
         long day = today(v);
         Ledger ledger = v.getData(FVillage.LEDGER).on(day);
-        List<Order> orders = OrderGen.orders(v.getUUID(), profession(v), villagerType(v), level(v), day);
+        List<Order> orders = Guilds.ordersOf(v, day);
         if (index < 0 || index >= orders.size() || ledger.done(index))
             return;
         Order order = orders.get(index);
@@ -240,10 +246,11 @@ public final class VillageEconomy {
             return;
         }
         CommissionJudge.Result r = CommissionJudge.judge(order, figures, design, MaterialTable.get().materials());
-        if (r.grade() == CommissionJudge.Grade.REJECTED) {
+        boolean guildOrder = Guilds.isGuildOrder(v, index);
+        if (r.grade() == CommissionJudge.Grade.REJECTED || (guildOrder && r.grade().ordinal() < CommissionJudge.Grade.GOOD.ordinal())) {
             v.getGossips().add(p.getUUID(), GossipType.MINOR_NEGATIVE, VillageTuning.GOSSIP_REJECTED);
             v.playSound(SoundEvents.VILLAGER_NO, 1f, v.getVoicePitch());
-            send(p, menu, view(p, v).withResult(r.grade().ordinal(), complaint(r), r.worstHigh(), 0));
+            send(p, menu, view(p, v).withResult(CommissionJudge.Grade.REJECTED.ordinal(), complaint(r), r.worstHigh(), 0));
             return;
         }
         String bin = DishProfile.is(item) ? order.type() + "|" + DishProfile.bin(figures) : binKey(order.type(), design);
@@ -252,11 +259,13 @@ public final class VillageEconomy {
         if (paid > 0)
             p.getInventory().placeItemBackInInventory(new ItemStack(Items.EMERALD, paid));
         v.setData(FVillage.LEDGER, ledger.delivered(index, bin, day));
+        if (guildOrder)
+            Guilds.markDone(v, day);
         if (r.grade() == CommissionJudge.Grade.EXCEPTIONAL)
             v.getGossips().add(p.getUUID(), GossipType.MAJOR_POSITIVE, VillageTuning.GOSSIP_EXCEPTIONAL);
         else if (r.grade() == CommissionJudge.Grade.GOOD)
             v.getGossips().add(p.getUUID(), GossipType.MAJOR_POSITIVE, VillageTuning.GOSSIP_GOOD);
-        addXp(v, r.grade().xp());
+        earn(v, r.grade().xp(), day);
         v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
         send(p, menu, view(p, v).withResult(r.grade().ordinal(), complaint(r), r.worstHigh(), paid));
     }
@@ -277,6 +286,12 @@ public final class VillageEconomy {
                 kind = m.kind().map(Enum::name).orElse("");
         }
         return type + "|" + kind;
+    }
+
+    /** Delivery experience: the villager's own, and a share to each other member of its guild. */
+    static void earn(Villager v, int xp, long day) {
+        addXp(v, xp);
+        Guilds.mentor(v, xp, day);
     }
 
     static void addXp(Villager v, int xp) {
@@ -315,7 +330,7 @@ public final class VillageEconomy {
         ModularDesign design = ModularStacks.design(item);
         ModularFigures figures = DishProfile.read(item, v.level());
         if (design != null && figures != null) {
-            List<Order> orders = OrderGen.orders(v.getUUID(), profession(v), villagerType(v), level(v), day);
+            List<Order> orders = Guilds.ordersOf(v, day);
             boolean asked = false;
             for (int i = 0; i < orders.size(); i++) {
                 Order order = orders.get(i);
@@ -323,13 +338,16 @@ public final class VillageEconomy {
                     continue;
                 asked = true;
                 CommissionJudge.Result r = CommissionJudge.judge(order, figures, design, MaterialTable.get().materials());
-                if (r.grade() == CommissionJudge.Grade.REJECTED)
+                if (r.grade() == CommissionJudge.Grade.REJECTED
+                        || (Guilds.isGuildOrder(v, i) && r.grade().ordinal() < CommissionJudge.Grade.GOOD.ordinal()))
                     continue;
                 String bin = DishProfile.is(item) ? order.type() + "|" + DishProfile.bin(figures) : binKey(order.type(), design);
                 int paid = Math.round(order.pay() * r.grade().payFactor() * ledger.payKept(bin, day));
                 item.shrink(1);
                 v.setData(FVillage.LEDGER, ledger.delivered(i, bin, day));
-                addXp(v, r.grade().xp());
+                if (Guilds.isGuildOrder(v, i))
+                    Guilds.markDone(v, day);
+                earn(v, r.grade().xp(), day);
                 v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
                 return new Handed(Fate.TAKEN, paid);
             }
