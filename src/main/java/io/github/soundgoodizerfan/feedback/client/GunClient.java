@@ -227,7 +227,7 @@ public final class GunClient {
                 var gunDesign = (GunSpec) pair[1];
                 if (gunDesign != null)
                     took += gunDesign.internalCapacity().isPresent()
-                            ? (long) GunAmmo.loadable(player.getInventory(), gun, gunDesign).size() * FTuning.GUN_RELOAD_ROUND_MS
+                            ? (long) GunAmmo.loadable(player.getInventory(), gun, gunDesign).size() * GunAmmo.roundMs(gunDesign)
                             : GunAmmo.reloadMs(gun);
             }
             took = io.github.soundgoodizerfan.feedback.core.Haste.time(Math.round(took * GunShots.reloadScale(player)), player);

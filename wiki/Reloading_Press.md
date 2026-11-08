@@ -43,7 +43,7 @@ A sheet of paper put through a [Rolling Mill](Rolling_Mill.md) becomes a **Rolle
 
 ## How much charge goes in
 
-**The press seats everything in the charge slots.** Put in a stack of three and you get a three-powder round. The press doesn't decide how much is "right"; that's up to you. It refuses more than a case can physically hold (8 in total).
+**The press seats everything in the charge slots.** Put in a stack of three and you get a three-powder round. The press doesn't decide how much is "right"; that's up to you. It refuses more than the case's bore can hold: 8 in total at 9 mm, more in a wider case (see [Charges](Ammunition.md#charges)).
 
 A Mixture seats as the loose powders it holds. A Mixture with fluid parts is refused. The [JEI](https://modrinth.com/mod/jei) *Mixing* card lists the recipes.
 
@@ -58,6 +58,6 @@ That line is about the **case**. Whether your **gun** can take it is a separate 
 ## Messages
 
 - *"Needs a case and a bullet."*: something is missing, or something is in the wrong slot.
-- *"A case takes at most 8 charge."*: take some powder out.
+- *"A case takes at most N charge."* (N is the most for that bore): take some powder out.
 - *"That charge will not seat: a coil's drive cannot be blended with powder."*: you've mixed redstone with gunpowder or blaze powder.
 - *"Take the round out first."*: empty the output slot.

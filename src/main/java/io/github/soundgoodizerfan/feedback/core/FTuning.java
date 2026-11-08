@@ -1982,6 +1982,8 @@ public final class FTuning {
     public static final float GUN_PROPELLANT_PEAK_PU = 3f;
     /** Work done on a projectile per Pu over one cubic metre. Anchors Pu to joules: 3 Pu is about 100 MPa. */
     public static final float GUN_WORK_PER_PU_M3 = 3.3e7f;
+    /** Most work a nominal charge of the reference propellant can give a round, however wide or long the barrel (a soft ceiling; scales with the charge's pressure). */
+    public static final float GUN_WORK_PER_NOMINAL_CHARGE = 160f;
     /** Mean pressure behind the projectile over the barrel, as a fraction of the peak. */
     public static final float GUN_PRESSURE_FILL = 0.35f;
     /** Projectile length as a multiple of bore. */
@@ -2037,6 +2039,12 @@ public final class FTuning {
             GUN_HAZARD_SHOOTER_MAX_HP = 16f, GUN_HAZARD_NOISE = 0.25f;
     /** Charge items that make the propellant's nominal peak pressure, and the most a case will take. */
     public static final int GUN_CHARGE_NOMINAL = 4, GUN_CHARGE_MAX = 8;
+    /** Bore (mm) at which {@link #GUN_CHARGE_NOMINAL} and {@link #GUN_CHARGE_MAX} hold; a case's room (and so its nominal charge) grows with the bore's area. */
+    public static final float GUN_CHARGE_REF_BORE_MM = 9f;
+    /** Case room grows as bore to this power (2 would be the area; less keeps a magnum from being sixteen rimfires). */
+    public static final float GUN_CASE_ROOM_EXPONENT = 1.5f;
+    /** Hard ceiling on a charge's count, whatever the bore (the widest case at {@link #GUN_CHARGE_REF_BORE_MM} scaling); only a codec bound. */
+    public static final int GUN_CHARGE_CEILING = 40;
     /**
      * The Mixer's drum (guns spec 13.4b). Placeholders. Turns to blend a load to uniform; past that
      * the drum grinds the finished blend, so the grains break down (uniformity falls toward its
@@ -2066,6 +2074,8 @@ public final class FTuning {
     public static final int GUN_RELOAD_MS = 1400;
     /** Wall-clock ms to put one round into a gun's own feed, and a reload is that per round. */
     public static final int GUN_RELOAD_ROUND_MS = 450;
+    /** Wall-clock ms per round into a break action's barrels: they dump and are fed together, so a round costs less than thumbing one into a tube. Placeholder. */
+    public static final int GUN_RELOAD_BARREL_ROUND_MS = 200;
     /** Work rate per level of Haste (vanilla's mining-speed step), and the same less per level of Mining Fatigue; the rate never falls below the floor. */
     public static final float HASTE_RATE_PER_LEVEL = 0.2f, HASTE_RATE_FLOOR = 0.2f;
     /**
@@ -2098,6 +2108,8 @@ public final class FTuning {
     public static final float GUN_CONDITION_FLOOR = 0.4f;
     /** At the floor a gun delivers this much less energy; spread opens by 1 / condition. */
     public static final float GUN_WEAR_ENERGY_LOSS = 0.3f;
+    /** Damage a lever tube's chain-fired round does the gun, as a share of its life. Placeholder. */
+    public static final float GUN_CHAIN_FIRE_GUN_DAMAGE = 0.1f;
     /** A cooked-off round hurts the shooter this much per nominal charge, capped. */
     public static final float GUN_COOKOFF_HP = 2f, GUN_COOKOFF_HP_MAX = 8f;
     // --- What a hit does (spec 3.5). Placeholders. ---------------------------------------------
@@ -2169,7 +2181,7 @@ public final class FTuning {
     /** A charge that is mostly fuel still gives this much of its pressure: a fizzle, not a nothing. */
     public static final float GUN_FIZZLE_FLOOR = 0.1f;
     /** Work per redstone dust at a medium coil with a magnetic slug: four dust is about a pistol's shot. */
-    public static final float GUN_COIL_WORK_PER_DUST = 110f;
+    public static final float GUN_COIL_WORK_PER_DUST = 35f;
     /** A non-magnetic slug barely couples to the field (eddy currents, not pull). */
     public static final float GUN_COIL_NONMAGNETIC_COUPLING = 0.1f;
     /** Stages add up with coil length but saturate: the most a long coil gets over a medium one. */
@@ -2180,6 +2192,8 @@ public final class FTuning {
      * pistol's shot, iron's is next to nothing. Recocking costs the work back, by hand, per work.
      */
     public static final float GUN_SPRING_WORK_PER_ST2 = 0.19f, GUN_SPRING_STROKE_MAX = 1.6f, GUN_SPRING_COCK_MS_PER_WORK = 3f;
+    /** Soft ceiling on a spring's stored work: stress squared otherwise runs away for a strong metal. */
+    public static final float GUN_SPRING_WORK_MAX = 300f;
     /** Metal in one coil's worth of spring stock, mB. */
     public static final float GUN_SPRING_METAL_MB = 30f;
     /**
@@ -2284,7 +2298,7 @@ public final class FTuning {
     public static final float GUN_KICK_REFERENCE_MU = 2.6f, GUN_KICK_REFERENCE_FRICTION = 0.6f;
     public static final int GUN_KICK_MS = 90;
     /** Damage per Work delivered. */
-    public static final float GUN_DAMAGE_PER_WORK = 0.04f;
+    public static final float GUN_DAMAGE_PER_WORK = 0.03f;
     /** Air drag fraction of speed lost per tick, and in a fluid; gravity in blocks per tick squared (9.8 m/s² over 400). */
     public static final float GUN_DRAG_PER_TICK = 0.005f, GUN_FLUID_DRAG_PER_TICK = 0.35f, GUN_GRAVITY_PER_TICK = 0.0245f;
     /** A shot that has not hit anything by now is gone. */

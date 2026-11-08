@@ -80,7 +80,7 @@ public record Mixture(Map<ResourceLocation, Range> parts, float stray, ItemStack
 
         /** This part counted as whole parts beside the item parts (at least one). */
         public Cartridge.Charge asCharge() {
-            return new Cartridge.Charge(material, Math.max(1, Math.min(FTuning.GUN_CHARGE_MAX, Math.round(mb / (float) FTuning.MIXER_MB_PER_PART))));
+            return new Cartridge.Charge(material, Math.max(1, Math.min(FTuning.GUN_CHARGE_CEILING, Math.round(mb / (float) FTuning.MIXER_MB_PER_PART))));
         }
     }
 

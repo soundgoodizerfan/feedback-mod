@@ -182,8 +182,8 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             }
         }
         int n = charges.stream().mapToInt(Cartridge.Charge::count).sum();
-        if (n > FTuning.GUN_CHARGE_MAX) {
-            player.displayClientMessage(Component.translatable("message.feedback.press.too_much", FTuning.GUN_CHARGE_MAX), true);
+        if (n > Cartridge.maxCharge(boreMm)) {
+            player.displayClientMessage(Component.translatable("message.feedback.press.too_much", Cartridge.maxCharge(boreMm)), true);
             return;
         }
         var vial = java.util.Optional.ofNullable(slots.get(PAYLOAD).get(FDataComponents.POTION_STATE.get()));

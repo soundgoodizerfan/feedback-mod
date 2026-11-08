@@ -92,7 +92,7 @@ public class MixerScreen extends SkinnedScreen<MixerMenu> {
         skin.slot(graphics, leftPos + MixerMenu.OUT_X, topPos + MixerMenu.SLOTS_Y);
 
         int colour = tankColour();
-        double cap = FTuning.GUN_CHARGE_MAX * FTuning.MIXER_MB_PER_PART;
+        double cap = FTuning.GUN_CHARGE_CEILING * FTuning.MIXER_MB_PER_PART;
         Gauge.of(() -> (menu.productMb() > 0 ? menu.productMb() : menu.fluidMb()) / cap).lead(() -> colour).vertical()
                 .render(graphics, skin, leftPos + MixerMenu.TANK_X, topPos + MixerMenu.TANK_Y, MixerMenu.TANK_W, MixerMenu.TANK_H);
 
@@ -150,7 +150,7 @@ public class MixerScreen extends SkinnedScreen<MixerMenu> {
             var fluids = fluidParts();
             var biggest = fluids.stream().max(java.util.Comparator.comparingInt(Mixture.FluidPart::mb));
             ResourceLocation material = biggest.map(Mixture.FluidPart::material).orElse(null);
-            float share = menu.fluidMb() / (float) (FTuning.GUN_CHARGE_MAX * FTuning.MIXER_MB_PER_PART);
+            float share = menu.fluidMb() / (float) (FTuning.GUN_CHARGE_CEILING * FTuning.MIXER_MB_PER_PART);
             line = material == null ? Component.empty() : Component.translatable(
                     "tooltip.feedback.mixture." + (share >= 0.5f ? "mostly" : share >= 0.2f ? "some" : "little"), CartridgeItem.name(material));
         } else

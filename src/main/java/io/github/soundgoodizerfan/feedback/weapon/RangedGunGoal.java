@@ -172,7 +172,7 @@ public final class RangedGunGoal extends Goal {
 
     /** One beat: a round a beat into an internal feed, a swap's time for a box. */
     private int beatTicks(ItemStack gun, GunSpec design) {
-        long ms = design.internalCapacity().isPresent() ? FTuning.GUN_RELOAD_ROUND_MS : GunAmmo.reloadMs(gun);
+        long ms = design.internalCapacity().isPresent() ? GunAmmo.roundMs(design) : GunAmmo.reloadMs(gun);
         return (int) Math.max(1, Haste.time(ms, mob) / 50);
     }
 

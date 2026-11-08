@@ -74,7 +74,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     public record Charge(ResourceLocation material, int count) {
         public static final Codec<Charge> CODEC = RecordCodecBuilder.create(i -> i.group(
                 ResourceLocation.CODEC.fieldOf("material").forGetter(Charge::material),
-                Codec.intRange(1, FTuning.GUN_CHARGE_MAX).fieldOf("count").forGetter(Charge::count)
+                Codec.intRange(1, FTuning.GUN_CHARGE_CEILING).fieldOf("count").forGetter(Charge::count)
         ).apply(i, Charge::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, Charge> STREAM_CODEC = StreamCodec.composite(
@@ -88,7 +88,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             Codec.intRange(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM).fieldOf("bore").forGetter(Cartridge::boreMm),
             ResourceLocation.CODEC.fieldOf("case").forGetter(Cartridge::caseMaterial),
             ResourceLocation.CODEC.fieldOf("propellant").forGetter(Cartridge::propellant),
-            Codec.intRange(1, FTuning.GUN_CHARGE_MAX).fieldOf("charge").forGetter(Cartridge::charge),
+            Codec.intRange(1, FTuning.GUN_CHARGE_CEILING).fieldOf("charge").forGetter(Cartridge::charge),
             ResourceLocation.CODEC.fieldOf("projectile").forGetter(Cartridge::projectile)
     ).apply(i, Cartridge::new));
 
@@ -274,6 +274,16 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      * quench is the winding's, which is redstone whatever charged it. Call on a round {@link #at}
      * the moment it is fired; this reads the volts as stamped.
      */
+    /** How much room a case of this bore has, against the reference bore's: its area. */
+    public static float caseScale(float boreMm) {
+        return (float) Math.pow(boreMm / FTuning.GUN_CHARGE_REF_BORE_MM, FTuning.GUN_CASE_ROOM_EXPONENT);
+    }
+
+    /** The most charge a case of this bore takes. */
+    public static int maxCharge(int boreMm) {
+        return Math.max(1, Math.min(FTuning.GUN_CHARGE_CEILING, Math.round(FTuning.GUN_CHARGE_MAX * caseScale(boreMm))));
+    }
+
     public Optional<GunSpec.Load> load(Map<ResourceLocation, Material> materials) {
         if (stored.isPresent()) {
             if (!charges.isEmpty())
@@ -288,10 +298,12 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             return Optional.empty();
         Blend b = blend.get();
         if (b.coil()) {
-            float drive = b.total() / (float) FTuning.GUN_CHARGE_NOMINAL;
-            return Optional.of(new GunSpec.Load(b.potential() * drive, 1f, b.ignitionTu(), GunSpec.Launcher.COIL, b.total()));
+            float drive = b.total() / (FTuning.GUN_CHARGE_NOMINAL * caseScale(boreMm));
+            // A coil's work is the drive in the case, not the count: a wider case holds more dust at the same drive.
+            return Optional.of(new GunSpec.Load(b.potential() * drive, 1f, b.ignitionTu(), GunSpec.Launcher.COIL, b.total() / caseScale(boreMm)));
         }
-        return Optional.of(new GunSpec.Load(b.potential() * b.burned(), b.burnRate(), b.ignitionTu(), GunSpec.Launcher.CHAMBER, b.total()));
+        // Pressure is how full the case is: the same count in a wider case is thinner.
+        return Optional.of(new GunSpec.Load(b.potential() / caseScale(boreMm) * b.burned(), b.burnRate(), b.ignitionTu(), GunSpec.Launcher.CHAMBER, b.total()));
     }
 
     /**

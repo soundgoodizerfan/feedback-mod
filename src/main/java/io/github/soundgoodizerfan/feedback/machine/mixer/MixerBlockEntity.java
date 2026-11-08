@@ -171,7 +171,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
     public boolean pour(ItemStack stack) {
         var materials = MaterialTable.get().materials();
         var found = Material.find(materials, stack.getItem());
-        if (found.isEmpty() || load() + 1 > FTuning.GUN_CHARGE_MAX)
+        if (found.isEmpty() || load() + 1 > FTuning.GUN_CHARGE_CEILING)
             return false;
         ResourceLocation id = found.get().id();
         List<Cartridge.Charge> next = new ArrayList<>(contents);
@@ -211,7 +211,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         var material = Mixture.fluidMaterial(MaterialTable.get().materials(), stack.getFluid());
         if (material.isEmpty())
             return 0;
-        int room = (int) ((FTuning.GUN_CHARGE_MAX - load()) * FTuning.MIXER_MB_PER_PART);
+        int room = (int) ((FTuning.GUN_CHARGE_CEILING - load()) * FTuning.MIXER_MB_PER_PART);
         int taken = Math.min(stack.getAmount(), room);
         if (taken <= 0 || simulate)
             return Math.max(taken, 0);
@@ -474,7 +474,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
 
             @Override
             public int getTankCapacity(int tank) {
-                return FTuning.GUN_CHARGE_MAX * FTuning.MIXER_MB_PER_PART;
+                return FTuning.GUN_CHARGE_CEILING * FTuning.MIXER_MB_PER_PART;
             }
 
             @Override

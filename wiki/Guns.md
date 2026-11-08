@@ -47,7 +47,7 @@ The **barrel** is the launcher. Its shape picks how the round is thrown, and the
 | **Spring Tube** | 1 cell | a released spring | a main spring |
 | **Steam Tube** | 2 cells | steam: see [Steam launchers](#steam-launchers) | a steam chest |
 
-A **spring gun** fires a round with nothing in the case: no gas, no powder, no cook-off. The **main spring** is a single or a double spring (one or two coils of stock). Its stored energy goes as the stress its metal bears, squared, so only a good spring steel is worth fitting; each coil stores more and takes longer to recock. The tooltip shows the energy it stores.
+A **spring gun** fires a round with nothing in the case: no gas, no powder, no cook-off. The **main spring** is a single or a double spring (one or two coils of stock). Its stored energy rises with the stress its metal bears, squared, but levels off toward a ceiling, so a very strong metal gains less and less. A steel single spring throws a bullet for about 1 damage and netherite for about 5 to 7. Each coil stores more and takes longer to recock. The tooltip shows the energy it stores.
 
 **Bore** is a free measure from **5 to 20 mm** in 1 mm steps, set with a **< >** stepper on the barrel in the Blueprint Table. The round is seated for a bore at the [Reloading Press](Reloading_Press.md); how the real barrel and the round fit is in [Gun Parts](Gun_Parts.md#hitting-the-target).
 
@@ -66,9 +66,10 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 | Double barrel | a second barrel | crouched, a pull fires both barrels at once for one recoil |
 | Select fire | an automatic action | semi, burst or full auto, switched in hand |
 | Manual cycle | bolt, lever, pump, break, flintlock | the shooter brings the next round up: the action's time between shots |
-| Bolt lockup | a bolt action | the chamber is rated 25% stronger for the same steel, and the group tighter |
+| Lockup | bolt, lever, break | how firmly the breech is held shut: a bolt rates the chamber 25% above the barrel's own strength and groups tighter, a lever 25% below, a break action 40% below. Pump and self-loading actions hold the barrel's own rating |
 | Blowback | a slide | only the bolt's mass holds the breech: a round above 3.6 Pu kicks harder and wears the bore faster |
 | Gas operated | a bolt-type self-loading or automatic action | a quicker cycle that pressure does not hurt, paid in heat and mass |
+| Tube chain-fire | a lever with a tube | rounds in the tube lie nose to primer, and the recoil of each shot drives a bullet onto the primer ahead of it: behind a **pointed** bullet, the round in front goes off inside the tube, hurting you and the gun. Round, flat-nosed and hollow-point bullets never do it |
 | Closed bolt | most actions | a round in the hot chamber can cook off |
 | Open bolt | a machine gun frame | nothing in the chamber to cook off; the first shot after a pause sprays wider |
 | Belt fed | a belt feed | a long reload |
@@ -146,7 +147,7 @@ All of these keys can be rebound under the *Feedback* category in Controls.
 **Reloading is held, not tapped.**
 
 - A **magazine** gun swaps in the fullest magazine of the right size from your inventory once R has been held for the whole **1.4 s**. Let go early and nothing changes.
-- A gun with its **own feed** (cylinder, tube, barrels) loads one loose round every **0.45 s** while R is down, and keeps whatever is in when you let go.
+- A gun with its **own feed** (cylinder, tube, barrels) loads one loose round every **0.45 s** while R is down (a break action's barrels take a round every **0.2 s**, being fed together), and keeps whatever is in when you let go.
 
 Firing or putting the gun away stops a reload.
 
@@ -170,21 +171,24 @@ Every gun and blueprint shows its spec sheet:
 - **Mass**: the gun's weight, and the bullet's.
 - The tooltip also lists the parts and what is fitted, part by part, and the Shift glossary.
 
-Those figures are for a standard round: four gunpowder behind a lead bullet (an iron slug and four redstone for a coilgun). What you actually load can push them up or down. JEI's material pages list each metal's own figures (hardness, density, melting point) to read against them.
+Those figures are for a standard round: the standard charge for the bore (four gunpowder at 9 mm) behind a lead bullet (an iron slug and four redstone for a coilgun). What you actually load can push them up or down. JEI's material pages list each metal's own figures (hardness, density, melting point) to read against them.
 
 ## Damage
 
-**Every 25 Work of energy a bullet still carries when it hits is 1 damage** (half a heart). The tooltip's muzzle energy is that figure at point-blank range.
+**Every 33 Work of energy a bullet still carries when it hits is 1 damage** (half a heart). The tooltip's muzzle energy is that figure at point-blank range.
 
-For a sense of scale, a steel 9 mm pistol with a standard wall on a standard round:
+For a sense of scale, a steel barrel with a lead round-nose bullet on the standard charge, by bore and barrel length:
 
-| Barrel | Muzzle energy | Damage |
-| --- | --- | --- |
-| Short (0.1 m) | about 95 Work | 4 (2 hearts) |
-| Medium (0.2 m) | about 375 Work | 15 (7½ hearts) |
-| Long (0.4 m) | about 880 Work | 35 (17½ hearts) |
+| Bore | 0.1 m | 0.2 m | 0.45 m | 0.8 m |
+| --- | --- | --- | --- | --- |
+| 5 mm | 0.7 | 1.5 | 2.0 | 2.1 |
+| 9 mm | 1.8 | 3.4 | 4.1 | 4.4 |
+| 12 mm | 2.9 | 5.3 | 6.3 | 6.7 |
+| 20 mm | 7.3 | 12.1 | 14.1 | 14.7 |
 
-Gunpowder burns slowly and a short barrel wastes most of it, which is why the short barrel is so much weaker. See [Ammunition](Ammunition.md#gunpowder).
+Damage is in hit points (2 per heart). A maximum charge in a steel case roughly doubles it: a 9 mm gives 3.5, 6.7, 8.3 and 8.8, a 20 mm gives 15, 25, 29 and 31. A brass case is rated 3.75 Pu, so a maximum charge in one is over its pressure and hurts the shooter (see [Overpressure](#overpressure)).
+
+Gunpowder burns slowly and a short barrel wastes most of it, which is why a short barrel is so much weaker. A longer barrel or a wider bore adds little once the powder is spent. See [Ammunition](Ammunition.md#gunpowder).
 
 ## Handling
 
@@ -282,7 +286,7 @@ To make a gun that holds more pressure: use a stronger metal, a thicker chamber 
 
 ## Steam launchers
 
-A gun built with a **steam chest** (a plate part, small or large) fires from steam instead of powder. The round is a plain slug. Right-click a [Boiler](Boiler.md) with the gun to fill the chest. The chest fills only as far as the boiler's pressure allows: a boiler at 1.5 Pu fills it halfway, a boiler near 3 Pu fills it full. Each shot lets out 100 mB, a gun with less than that only hisses, and steam in a carried gun slowly condenses away.
+A gun built with a **steam chest** (a plate part, small or large) fires from steam instead of powder. The round is a plain slug. Right-click a [Boiler](Boiler.md) with the gun to fill the chest. The chest fills only as far as the boiler's pressure allows: a boiler at 1.5 Pu fills it halfway, a boiler near 3 Pu fills it full. The shot's energy is capped by the chest pressure and the case's room: a 9 mm steam gun hits for about 1.5 damage and a 20 mm for about 6. Each shot lets out 100 mB, a gun with less than that only hisses, and steam in a carried gun slowly condenses away.
 
 Two fittings change how a steam launcher behaves. A **Steam Valve** is metered (about 60% of the steam per shot, a slower cycle) or a dump valve (about 150%, a faster cycle). **Lagging** round the chest makes carried steam condense away at a quarter of the rate.
 

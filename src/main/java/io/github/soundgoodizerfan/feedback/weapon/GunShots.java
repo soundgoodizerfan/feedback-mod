@@ -359,7 +359,42 @@ public final class GunShots {
                 player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
             shooter.hurt(level.damageSources().explosion(null, null), hp);
         }
+        chainFire(level, shooter, gun, design, noise);
         return true;
+    }
+
+    /**
+     * A lever's tube stacks rounds nose to primer, and the shot's recoil drives each bullet back onto the primer ahead of
+     * it: behind a pointed nose the round in front goes off inside the tube. It hurts the holder and the gun, and the
+     * round is gone. Flat noses and round noses are what such a tube is made for. Misuse only: a tube of safe rounds never does it.
+     */
+    private static void chainFire(ServerLevel level, LivingEntity shooter, net.minecraft.world.item.ItemStack gun, GunSpec design, float noise) {
+        if (design.layout().action() != GunLayout.Action.LEVER || design.layout().feed() != GunLayout.Feed.TUBE)
+            return;
+        boolean chambered = gun.has(FWeapons.CHAMBER.get());
+        var rounds = GunAmmo.magazine(gun).rounds();
+        int n = rounds.size(), total = n + (chambered ? 1 : 0);
+        for (int j = 1; j < total; j++) {
+            Cartridge behind = rounds.get(chambered ? n - j : n - 1 - j);
+            if (behind.shape() != BulletShape.POINTED)
+                continue;
+            Cartridge ahead = j == 1 && chambered ? gun.get(FWeapons.CHAMBER.get()) : rounds.get(chambered ? n - (j - 1) : n - j);
+            if (j == 1 && chambered) {
+                gun.remove(FWeapons.CHAMBER.get());
+                GunAmmo.feed(gun);
+            } else {
+                var left = new java.util.ArrayList<>(rounds);
+                left.remove(chambered ? n - (j - 1) : n - j);
+                gun.set(FWeapons.MAGAZINE.get(), new Magazine(left));
+            }
+            gun.set(FWeapons.GUN_DAMAGE.get(), GunHazard.damage(gun) + FTuning.GUN_CHAIN_FIRE_GUN_DAMAGE);
+            if (shooter instanceof Player player)
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.chain_fire"), true);
+            level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(),
+                    net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE.value(), net.minecraft.sounds.SoundSource.PLAYERS, 0.4f, 1.8f);
+            shooter.hurt(level.damageSources().explosion(null, null), GunHazard.cookOffHp(ahead.charge(), noise));
+            return;
+        }
     }
 
     /**
@@ -445,9 +480,9 @@ public final class GunShots {
 
     /** How long one beat of {@code gun}'s reload takes now: a round, or a magazine swap, scaled for two guns. */
     private static long beatMs(Player player, ItemStack gun) {
-        boolean byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
-        long ms = io.github.soundgoodizerfan.feedback.core.Haste.time(
-                Math.round((byRound ? FTuning.GUN_RELOAD_ROUND_MS : GunAmmo.reloadMs(gun)) * reloadScale(player)), player);
+        GunSpec spec = GunSpec.of(gun).orElse(null);
+        long base = spec == null ? FTuning.GUN_RELOAD_ROUND_MS : spec.internalCapacity().isPresent() ? GunAmmo.roundMs(spec) : GunAmmo.reloadMs(gun);
+        long ms = io.github.soundgoodizerfan.feedback.core.Haste.time(Math.round(base * reloadScale(player)), player);
         // Spent-Case Draw: reloading mid-roll, the roll's own remaining time is the beat if that is shorter.
         var phase = io.github.soundgoodizerfan.feedback.combat.state.CombatState.of(player);
         if ((phase.phase() == io.github.soundgoodizerfan.feedback.combat.state.CombatPhase.ROLL

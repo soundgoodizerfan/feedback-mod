@@ -54,6 +54,8 @@ A bullet has a shape. Each shape trades one thing for another and none is best; 
 
 Low drag keeps a bullet's speed over distance. *Armor and stone* is how hard the bullet presents itself, so it decides what it goes through. A hollow point opens on a soft target and hurts more, but armor stops it.
 
+A pointed bullet in a lever's tube chain-fires the round ahead of it ([Guns](Guns.md#traits)).
+
 The shape is the bullet you seat: each shape is its own item, a Round Ball, a Flat-Nose Bullet, a Pointed Bullet or a Hollow-Point Bullet of some metal, and the press reads it off the bullet slot. Two ways to get one:
 
 - **Cast it.** The **Ball Mold** casts **round balls** the way the Bullet Mold casts round-nose bullets, eight to an ingot's worth. Any metal that melts in a crucible can be cast.
@@ -83,13 +85,15 @@ Two advancements belong to rubber rounds:
 
 ## Charges
 
-The charge is loose powder. The press takes **everything** in its charge slots, so the size of the stack you put in is how much powder goes into the round. A case holds **at most 8** items of charge. **Four** of anything is the "standard" charge the spec sheets are read against.
+The charge is loose powder. The press takes **everything** in its charge slots, so the size of the stack you put in is how much powder goes into the round. A case holds only as much charge as its room allows, and the room grows quickly with the bore: **at most 3** items at 5 mm, **8** at 9 mm, **12** at 12 mm and **27** at 20 mm. The "standard" charge the spec sheets are read against grows with it: about **2** at 5 mm, **4** at 9 mm, **6** at 12 mm and **13** at 20 mm. The same count in a wider case makes less pressure, because the powder has more room.
+
+The powder also caps what a shot can do. A wider bore or a longer barrel could throw a bullet harder, but never with more energy than the powder holds, so a big gun costs a lot of powder.
 
 **More charge means more pressure.** More pressure means a faster bullet, but too much is dangerous to the gun and to you. See [Overpressure](Guns.md#overpressure).
 
 ### Gunpowder
 
-The standard propellant: **0.75 Pu per item**, so a standard four makes **3 Pu**. It's reliable and fairly gentle. It burns slowly, so it needs a long barrel to burn completely: a 0.2 m barrel burns 85% of it, a 0.1 m barrel less than half. Cooks off at **300 Tu**. Besides wild creepers, it is crafted from 3 [saltpetre](Materials.md#saltpetre) + 1 [sulfur](Materials.md#sulfur) + 1 charcoal (shapeless) for 4 gunpowder.
+The standard propellant: **0.75 Pu per item** in a 9 mm case, so a standard four makes **3 Pu**. It's reliable and fairly gentle. It burns slowly, so it needs a long barrel to burn completely: a 0.2 m barrel burns 85% of it, a 0.1 m barrel less than half. Cooks off at **300 Tu**. Besides wild creepers, it is crafted from 3 [saltpetre](Materials.md#saltpetre) + 1 [sulfur](Materials.md#sulfur) + 1 charcoal (shapeless) for 4 gunpowder.
 
 ### Creeper Charge
 

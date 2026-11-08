@@ -63,6 +63,11 @@ public final class GunAmmo {
         return Math.round(FTuning.GUN_RELOAD_MS * io.github.soundgoodizerfan.feedback.modular.ModularTraits.gunReloadMult(gun));
     }
 
+    /** Ms to put one round into {@code design}'s own feed: a break action's barrels are fed together, anything else a round at a time. */
+    public static long roundMs(GunSpec design) {
+        return design.layout().feed() == GunLayout.Feed.BARRELS ? FTuning.GUN_RELOAD_BARREL_ROUND_MS : FTuning.GUN_RELOAD_ROUND_MS;
+    }
+
     /** A magazine item's size band; one made before bands is standard. */
     public static MagazineSize size(ItemStack magazine) {
         return magazine.getOrDefault(FWeapons.MAGAZINE_SIZE.get(), MagazineSize.STANDARD);

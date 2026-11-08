@@ -262,7 +262,7 @@
         "variants": [
           {
             "name": "bolt",
-            "trait": "bolt_lockup,manual_cycle,closed_bolt",
+            "trait": "lockup,manual_cycle,closed_bolt",
             "params": {
               "rating_mult": 1.25,
               "spread_mult": 0.8
@@ -273,7 +273,10 @@
             "shape": [
               "KK"
             ],
-            "trait": "hammer,manual_cycle,closed_bolt"
+            "trait": "lockup,hammer,manual_cycle,closed_bolt",
+            "params": {
+              "rating_mult": 0.75
+            }
           },
           {
             "name": "pump",
@@ -288,7 +291,10 @@
             "shape": [
               "KKK"
             ],
-            "trait": "hammer,manual_cycle"
+            "trait": "lockup,hammer,manual_cycle",
+            "params": {
+              "rating_mult": 0.6
+            }
           },
           {
             "name": "self_loading",

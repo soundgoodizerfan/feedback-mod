@@ -97,7 +97,7 @@ public class PressCategory implements IRecipeCategory<PressCategory.Card> {
         graphics.fill(1, 11, WIDTH - 1, 12, 0x40000000);
         row(graphics, font, 18, "feedback.jei.press.peak", Readout.number(card.peakPressure()) + " Pu");
         row(graphics, font, 30, "feedback.jei.press.burn", Readout.number(card.burnRate()) + " per m");
-        row(graphics, font, 42, "feedback.jei.press.charge", FTuning.GUN_CHARGE_NOMINAL + " nominal, " + FTuning.GUN_CHARGE_MAX + " most");
+        row(graphics, font, 42, "feedback.jei.press.charge", FTuning.GUN_CHARGE_NOMINAL + " nominal, " + FTuning.GUN_CHARGE_MAX + " most at " + Math.round(FTuning.GUN_CHARGE_REF_BORE_MM) + " mm (more in a wider case)");
         graphics.drawString(font, Component.translatable("feedback.jei.press.note"), 24, 58, LABEL_COLOUR, false);
     }
 

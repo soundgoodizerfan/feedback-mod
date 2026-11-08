@@ -168,7 +168,7 @@ A standard round of gunpowder makes **3 Pu**. So a 9 mm chamber with a 3 mm wall
 | Tin | 1 | 0.7 Pu | wrecked almost at once |
 | Lead | 0.5 | 0.3 Pu | wrecked on the first shot. Lead is for bullets |
 
-Halving the bore doubles the rating; so does going from a 1.5 mm wall to 3 mm. The other parts don't affect the chamber: they add weight and their own metal. A bolt action's lockup rates the same steel 25% higher.
+Halving the bore doubles the rating; so does going from a 1.5 mm wall to 3 mm. The other parts don't affect the chamber: they add weight and their own metal. The action then scales it: a bolt's locking lugs rate the same steel 25% higher, a pump or self-loading action holds it as is, a lever rates it 25% lower and a break action 40% lower, so a break gun takes shot and low-pressure rounds while a bolt rifle takes the hot ones.
 
 ## Test commands
 

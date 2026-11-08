@@ -14,7 +14,7 @@ P is a Wrought Iron Plate, B is a [Bearing](Bearing.md) and S is a Shaft.
 
 ## Using it
 
-- **Right click with any item that is a material** pours one in, up to a full load of **8 parts**. A coil's redstone drive cannot be mixed with a gas powder when the drum holds only powders.
+- **Right click with any item that is a material** pours one in, up to a full load of **40 parts**. A coil's redstone drive cannot be mixed with a gas powder when the drum holds only powders.
 - **Right click empty-handed** opens the screen.
 - **A pipe** fills the drum with any fluid that has a material (molten metals among them). **144 mB** counts as one part, and fluid shares the 8-part limit with items. Buckets cannot fill it.
 

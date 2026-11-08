@@ -19,9 +19,9 @@ Seated at the [Reloading Press](Reloading_Press.md) like any other round, with t
 - **The charge is Redstone Dust**, alone. It can't be blended with gunpowder or blaze powder, and the press won't seat it if you try.
 - **The bullet has to be magnetic: iron, in practice.** A copper, lead or gold slug couples at only a tenth of the strength; the coil just doesn't grip it.
 
-**More redstone gives a much stronger field.** It goes as the square: the field pressure is **3 Pu × (dust ÷ 4)²**. Four dust makes 3 Pu, six make 6.75, eight make 12. The gun's tooltip shows the *Winding* line: the field a standard four-dust charge makes against what the winding can hold. Go past what the winding can hold and you damage the gun exactly as [overpressure](Guns.md#overpressure) damages a powder gun.
+**More redstone gives a much stronger field.** It goes as the square: in a 9 mm case the field pressure is **3 Pu × (dust ÷ 4)²**. Four dust makes 3 Pu, six make 6.75, eight make 12. The gun's tooltip shows the *Winding* line: the field a standard four-dust charge makes against what the winding can hold. Go past what the winding can hold and you damage the gun exactly as [overpressure](Guns.md#overpressure) damages a powder gun.
 
-A medium coil gives a magnetic slug about **110 Work per dust**, so four dust is about a pistol's shot. **Length is power:** every stage along the barrel adds as much as the last, so a long coil throws a slug much harder than a short one. Only the winding's rating and its quench temperature stop it.
+How hard a dust drives depends on the case, not the count: the drive is read against the case's room, so a wider case needs more dust for the same push. A 9 mm coilgun on the standard charge hits for about 4, 9 and 17 damage at 0.2, 0.45 and 0.8 m of barrel. **Length is power:** every stage along the barrel adds as much as the last, so a long coil throws a slug much harder than a short one. Only the winding's rating and its quench temperature stop it.
 
 ### Jar rounds
 

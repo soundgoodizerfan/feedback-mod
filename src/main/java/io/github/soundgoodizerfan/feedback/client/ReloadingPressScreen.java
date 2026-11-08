@@ -130,7 +130,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
             if (stack.isEmpty())
                 continue;
             var found = seated(slot);
-            int n = Math.min(stack.getCount(), FTuning.GUN_CHARGE_MAX);
+            int n = Math.min(stack.getCount(), Cartridge.maxCharge(bore));
             int colour = found.isPresent() ? 0xFF000000 | MaterialColors.of(found.get().id()) : 0xFF8A8A8A;
             parts.add(new int[]{n, colour});
             total += n;
@@ -138,7 +138,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
         int px = ox + CASE_X + 3;
         int span = CASE_W - 6;
         for (int[] part : parts) {
-            int w = Math.max(2, Math.round(span * Math.min(1f, total / (float) FTuning.GUN_CHARGE_MAX) * part[0] / total));
+            int w = Math.max(2, Math.round(span * Math.min(1f, total / (float) Cartridge.maxCharge(bore)) * part[0] / total));
             g.fill(px, cy0 + 4, px + w, cy0 + CASE_H - 4, part[1]);
             px += w;
         }
@@ -306,7 +306,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
             }
             var found = ReloadingPressBlockEntity.located(materials, stack);
             if (found.isPresent() && found.get().material().propellant().isPresent())
-                charges.add(new Cartridge.Charge(found.get().id(), Math.min(stack.getCount(), FTuning.GUN_CHARGE_MAX)));
+                charges.add(new Cartridge.Charge(found.get().id(), Math.min(stack.getCount(), Cartridge.maxCharge(bore))));
         }
         if (cas.isEmpty() || charges.isEmpty()) {
             g.drawString(font, Component.translatable("gui.feedback.reloading_press.idle"), SHEET_X + 6, sy, skin.dim(), false);

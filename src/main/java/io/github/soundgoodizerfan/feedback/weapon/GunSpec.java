@@ -789,11 +789,16 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             // like a coil's stages. The spring is the gun's: the round brings only its mass.
             double stroke = Math.min(FTuning.GUN_SPRING_STROKE_MAX, barrelM / FTuning.GUN_BARREL_MEDIUM_M);
             work = FTuning.GUN_SPRING_WORK_PER_ST2 * frame.springSt() * frame.springSt() * frame.springCoils() * stroke;
+            work = work * FTuning.GUN_SPRING_WORK_MAX / (work + FTuning.GUN_SPRING_WORK_MAX);
         } else if (launcher == Launcher.STEAM) {
             // Steam expands the whole barrel (nothing is left to burn), but it is no powder: it is the pressure the chest
             // holds, spent as the gun is, and a chest past its rating vents rather than delivers, as a chamber does.
             work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * FTuning.GUN_WORK_PER_PU_M3
                     * FTuning.GUN_STEAM_WORK_FRACTION;
+            // Same powder budget, for the pressure the chest holds: a wider bore or longer barrel never makes more than the steam has.
+            double steamBudget = FTuning.GUN_WORK_PER_NOMINAL_CHARGE * FTuning.GUN_STEAM_WORK_FRACTION
+                    * (Math.min(peak, rating) / FTuning.GUN_PROPELLANT_PEAK_PU) * Cartridge.caseScale(boreMmReal());
+            work = steamBudget <= 0 ? 0 : work * steamBudget / (work + steamBudget);
         } else if (load.coil()) {
             // Stages add up along the whole coil, so length is power and only the winding's rating and quench cap it;
             // a slug that is not magnetic (or is past its Curie point) barely couples;
@@ -808,6 +813,10 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             double burned = Math.min(1.0, load.burnRatePerM() * barrelM);
             // A chamber past its rating vents rather than delivers: the push is the pressure it held.
             work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
+            // The powder is the energy budget: a wider or longer barrel can use more of it but never makes more than
+            // the charge holds, so a big gun is paid for in powder. A soft ceiling, so bore and length still matter.
+            double budget = FTuning.GUN_WORK_PER_NOMINAL_CHARGE * (load.peakPressure() / FTuning.GUN_PROPELLANT_PEAK_PU) * Cartridge.caseScale(boreMmReal());
+            work = budget <= 0 ? 0 : work * budget / (work + budget);
         }
         // A spring has no gas to leak past a loose round or out of a port.
         if (launcher != Launcher.SPRING) {

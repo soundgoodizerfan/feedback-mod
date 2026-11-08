@@ -32,7 +32,7 @@ public final class PotionTuning {
      * there, which a fast stir (pace 1) hits twice as hard as a still one. So a slow stir spends less path in a zone and loses less to it, and
      * a fast one covers ground at a price. Potency recovers outside a zone.
      */
-    public static final float DRAIN_STILL_PER_TICK = 0.0003f, DRAIN_PER_DISTANCE = 0.35f, FAST_HIT = 1f, RECOVER_PER_TICK = 0.002f;
+    public static final float DRAIN_STILL_PER_TICK = 0.002f, DRAIN_PER_DISTANCE = 1.5f, FAST_HIT = 1f, RECOVER_PER_TICK = 0.0007f;
     /** A ladle of water sends the marker this far straight toward the centre (or home, if nearer) and costs this much potency. */
     public static final float LADLE_STEP = 0.15f, LADLE_POTENCY = 0.1f;
     /** Fog: the map is a grid of cells over this half-width; the marker uncovers cells within the reveal radius as it passes. */
