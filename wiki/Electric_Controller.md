@@ -18,7 +18,7 @@ A [Programmer](Programming.md) that takes every medium. Crafted from a Programme
 
 An Electric Programmer and an Electric Controller in one block, with a desktop. Crafted from an Electric Controller, an Electric Programmer and a Silicon Ingot.
 
-Right-click it to open the desktop. Down the left are **drive bays A to D** and a **RUN** slot, shown as icons: drag program media (Punch Card, Circuit Board, Floppy Disk, USB Drive) onto them from the hotbar along the top, and off again. Click an icon's label to open its **Drive window**:
+Right-click it to open the desktop, drawn as a green-on-black terminal: scanlines, a slow bright band rolling down the glass, and a bright line that grows to fill the screen as it powers up. Down the left are **drive bays A to D** and a **RUN** slot, shown as icons: drag program media (Punch Card, Circuit Board, Floppy Disk, USB Drive) onto them from the hotbar along the top, and off again. Click an icon's label to open its **Drive window**:
 
 - **Edit** opens the medium in the full [Programmer](Programming.md) editor; closing the editor puts the medium back in its bay and returns to the desktop.
 - **Run** moves the medium to the RUN slot, where it runs while the Computer is powered (the Controller's limits and upgrades apply). **Stop** puts it back in a free bay.

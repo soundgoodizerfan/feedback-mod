@@ -1028,6 +1028,124 @@ public enum GuiSkin {
         public SoundEvent close() {
             return SoundEvents.IRON_DOOR_CLOSE;
         }
+    },
+
+    /**
+     * A green-phosphor terminal: black glass with a faint glow, scanlines, one slow bright band rolling down it, green on black text.
+     * Buttons are outlined boxes that invert under the pointer; the primary one is double-ruled. It opens as a CRT does, a bright line
+     * at the middle that grows to the full screen. Used by the Computer's desktop.
+     */
+    TERMINAL(0xFF5CFF7A, 0xFF2E9E48, 0xFFC4FFCE, 0xFFFFB02E, 0xFF020804, 0xFF1F6B33, 0xFF07140B) {
+        private static final int GLASS = 0xFF030A05, FRAME = 0xFF161A17, LINE = 0xFF5CFF7A;
+
+        private static int glow(int alpha) {
+            return alpha << 24 | 0x2CFF5A;
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x70000000);
+            g.fill(x, y, x + w, y + h, FRAME);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFF0B0F0C);
+            // the glass, a little brighter at the middle than the rim
+            g.fill(x + 3, y + 3, x + w - 3, y + h - 3, GLASS);
+            g.fillGradient(x + 3, y + 3, x + w - 3, y + 3 + (h - 6) / 2, glow(0x00), glow(0x12));
+            g.fillGradient(x + 3, y + 3 + (h - 6) / 2, x + w - 3, y + h - 3, glow(0x12), glow(0x00));
+            // scanlines
+            for (int yy = y + 4; yy < y + h - 3; yy += 3)
+                g.fill(x + 3, yy, x + w - 3, yy + 1, 0x30000000);
+            // one slow bright band rolling down the glass
+            if (!ClientSettings.reduceMotion()) {
+                float phase = (GuiStyle.time() * 0.45f) % (h + 40);
+                int by = y + (int) phase - 20;
+                for (int i = 0; i < 14; i++) {
+                    int yy = by + i;
+                    if (yy > y + 3 && yy < y + h - 3)
+                        g.fill(x + 3, yy, x + w - 3, yy + 1, glow(0x0A - i / 2));
+                }
+            }
+            g.renderOutline(x + 2, y + 2, w - 4, h - 4, 0x701F6B33);
+            // corner brackets
+            for (int[] c : new int[][] {{x + 6, y + 6, 1, 1}, {x + w - 6, y + 6, -1, 1}, {x + 6, y + h - 6, 1, -1}, {x + w - 6, y + h - 6, -1, -1}}) {
+                g.fill(Math.min(c[0], c[0] + 6 * c[2]), c[1], Math.max(c[0], c[0] + 6 * c[2]), c[1] + 1, 0xB01F8A3C);
+                g.fill(c[0], Math.min(c[1], c[1] + 6 * c[3]), c[0] + 1, Math.max(c[1], c[1] + 6 * c[3]), 0xB01F8A3C);
+            }
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF010402);
+            g.renderOutline(x - 1, y - 1, 18, 18, 0xFF1F6B33);
+            // the corners lit, as a bracket
+            for (int[] c : new int[][] {{x - 1, y - 1, 1, 1}, {x + 16, y - 1, -1, 1}, {x - 1, y + 16, 1, -1}, {x + 16, y + 16, -1, -1}}) {
+                g.fill(c[0], c[1], c[0] + c[2] * 4 + (c[2] < 0 ? 1 : 0), c[1] + 1, 0xFF4BD264);
+                g.fill(c[0], c[1], c[0] + 1, c[1] + c[3] * 4 + (c[3] < 0 ? 1 : 0), 0xFF4BD264);
+            }
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int line, text, fill;
+            if (!active) {
+                line = 0xFF14401F;
+                text = 0xFF1D5A2C;
+                fill = 0xFF020804;
+            } else {
+                // inverted when the pointer is on it: green slab, black text
+                fill = lerp(primary ? 0xFF06200C : 0xFF020804, LINE, glow);
+                line = primary ? 0xFF8AFF9E : 0xFF2E9E48;
+                text = lerp(primary ? 0xFFC4FFCE : ink(), 0xFF020804, glow);
+            }
+            if (down) {
+                fill = lerp(fill, 0xFF020804, 0.3f);
+            }
+            g.fill(x, y, x + w, y + h, fill);
+            g.renderOutline(x, y, w, h, line);
+            if (primary && active)
+                g.renderOutline(x + 2, y + 2, w - 4, h - 4, 0x602E9E48);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.COMPARATOR_CLICK;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return SoundEvents.BEACON_ACTIVATE;
+        }
+
+        @Override
+        public SoundEvent close() {
+            return SoundEvents.BEACON_DEACTIVATE;
+        }
+
+        private static int gap(int h, float t) {
+            return Math.round(Math.max(1f, (h / 2f + 4) * t));
+        }
+
+        @Override
+        public void beginReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            if (t < 1)
+                g.enableScissor(x - 4, y + h / 2 - gap(h, t), x + w + 8, y + h / 2 + gap(h, t));
+        }
+
+        @Override
+        public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            if (t >= 1)
+                return;
+            g.flush();
+            g.disableScissor();
+            // the bright line the picture collapses to at the centre, fading out as it opens
+            int mid = y + h / 2, gap = gap(h, t);
+            int alpha = (int) (0xFF * (1f - t));
+            g.fill(x, mid - gap, x + w, mid - gap + 1, alpha << 24 | 0x8AFF9E);
+            g.fill(x, mid + gap - 1, x + w, mid + gap, alpha << 24 | 0x8AFF9E);
+        }
     };
 
     private final int ink, dim, accent, warn, well, trim, plate;
@@ -1315,6 +1433,13 @@ public enum GuiSkin {
                 case STAGE, START -> SoundEvents.FIRECHARGE_USE;
                 case FINISH -> SoundEvents.IRON_DOOR_OPEN;
                 case ABORT -> SoundEvents.IRON_DOOR_CLOSE;
+            };
+            case TERMINAL -> switch (cue) {
+                case SEAT -> SoundEvents.COMPARATOR_CLICK;
+                case REJECT -> SoundEvents.NOTE_BLOCK_BASS.value();
+                case STAGE, START -> SoundEvents.UI_BUTTON_CLICK.value();
+                case FINISH -> SoundEvents.BEACON_POWER_SELECT;
+                case ABORT -> SoundEvents.BEACON_DEACTIVATE;
             };
             case VANILLA -> cue == Cue.REJECT ? SoundEvents.DISPENSER_FAIL : click();
         };

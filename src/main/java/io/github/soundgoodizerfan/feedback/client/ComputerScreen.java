@@ -37,7 +37,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 public class ComputerScreen extends SkinnedScreen<ComputerMenu> {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.TERMINAL;
     private static final int MIN_X = 64, TASKBAR = 24, TITLE = 14, RUN = ComputerBays.SIZE;
 
     private enum App { DRIVE, MONITOR, LINKS }
