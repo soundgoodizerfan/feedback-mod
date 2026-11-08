@@ -200,7 +200,11 @@ public final class VillageEconomy {
             return g.stack();
         RandomSource rnd = RandomSource.create(m.getUUID().getLeastSignificantBits() ^ (day * 31L + idx));
         Optional<HolderSet.Named<Enchantment>> tag = m.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getTag(EnchantmentTags.TRADEABLE);
-        Optional<Holder<Enchantment>> pick = tag.flatMap(t -> t.getRandomElement(rnd));
+        // The book is sold for what it teaches, so the pick is among the enchantments some attunement names; any tradeable one if none is.
+        List<Holder<Enchantment>> teaching = tag.map(t -> t.stream().filter(h -> h.unwrapKey().map(k -> io.github.soundgoodizerfan.feedback.modular.Attunements.get()
+                .effects().values().stream().anyMatch(e -> e.books().contains(k.location()))).orElse(false)).toList()).orElse(List.of());
+        Optional<Holder<Enchantment>> pick = !teaching.isEmpty() ? Optional.of(teaching.get(rnd.nextInt(teaching.size())))
+                : tag.flatMap(t -> t.getRandomElement(rnd));
         if (pick.isEmpty())
             return new ItemStack(Items.BOOK);
         Holder<Enchantment> e = pick.get();

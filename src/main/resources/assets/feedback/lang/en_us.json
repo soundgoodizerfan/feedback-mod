@@ -6066,5 +6066,13 @@
   "gui.feedback.computer.no_variables": "None declared.",
   "gui.feedback.computer.sensors": "Sensors",
   "gui.feedback.computer.no_links": "The running program has no linked cards.",
-  "block.feedback.computer.desktop": "Computer"
+  "block.feedback.computer.desktop": "Computer",
+  "gui.feedback.enchant.study": "Study",
+  "gui.feedback.enchant.unknown": "???",
+  "gui.feedback.enchant.unknown_tip": "You do not know this effect. Attempt it blind (no guide on the pad, full price), study a part that already has it, or read a book.",
+  "message.feedback.book.learned": "You learned %s.",
+  "message.feedback.book.known": "You already know what this book teaches.",
+  "message.feedback.book.nothing": "This book teaches nothing here.",
+  "message.feedback.enchant.known": "You already know this effect.",
+  "message.feedback.enchant.nothing_to_study": "Nothing here to study."
 }

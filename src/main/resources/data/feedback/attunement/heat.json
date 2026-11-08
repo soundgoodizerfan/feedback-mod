@@ -65,5 +65,9 @@
     "thermal_sleeve": {
       "kind": "vent_cold"
     }
-  }
+  },
+  "books": [
+    "minecraft:fire_aspect",
+    "minecraft:flame"
+  ]
 }

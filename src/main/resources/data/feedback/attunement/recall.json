@@ -40,5 +40,8 @@
       "kind": "anchor_round",
       "flaw": 1
     }
-  }
+  },
+  "books": [
+    "minecraft:loyalty"
+  ]
 }

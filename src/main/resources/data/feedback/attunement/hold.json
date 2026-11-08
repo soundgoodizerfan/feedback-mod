@@ -32,5 +32,9 @@
       "kind": "slip",
       "flaw": -1
     }
-  }
+  },
+  "starter": true,
+  "books": [
+    "minecraft:unbreaking"
+  ]
 }

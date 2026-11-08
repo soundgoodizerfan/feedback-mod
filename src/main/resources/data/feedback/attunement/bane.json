@@ -64,5 +64,9 @@
     "second_barrel": {
       "kind": "kin_calm"
     }
-  }
+  },
+  "books": [
+    "minecraft:smite",
+    "minecraft:bane_of_arthropods"
+  ]
 }

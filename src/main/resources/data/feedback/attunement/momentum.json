@@ -60,5 +60,9 @@
     "stock": {
       "kind": "brace_gun"
     }
-  }
+  },
+  "books": [
+    "minecraft:sweeping_edge",
+    "minecraft:efficiency"
+  ]
 }

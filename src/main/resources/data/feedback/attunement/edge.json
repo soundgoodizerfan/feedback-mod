@@ -48,5 +48,9 @@
     "second_barrel": {
       "kind": "pad"
     }
-  }
+  },
+  "starter": true,
+  "books": [
+    "minecraft:sharpness"
+  ]
 }

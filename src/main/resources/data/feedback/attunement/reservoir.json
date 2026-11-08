@@ -23,5 +23,8 @@
     "stock": {
       "kind": "reserve"
     }
-  }
+  },
+  "books": [
+    "minecraft:infinity"
+  ]
 }

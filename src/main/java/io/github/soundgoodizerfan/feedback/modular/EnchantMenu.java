@@ -199,6 +199,21 @@ public class EnchantMenu extends AbstractContainerMenu {
             EnchantGame.begin(server.getUUID(), new EnchantGame.Session(effect, server.level().getGameTime(), temperature));
     }
 
+    /** The player studied an attuned part: an effect it already holds, which they did not know, is learned for nothing. */
+    public void study(ServerPlayer server, ResourceLocation effect) {
+        Attunements.Effect e = Attunements.get().effects().get(effect);
+        MadeOf made = part().get(FDataComponents.MADE_OF.get());
+        if (e == null || made == null || !made.dims().containsKey(e.key())) {
+            say(server, "nothing_to_study");
+            return;
+        }
+        if (AttunementKnowledge.learn(server, e))
+            server.displayClientMessage(Component.translatable("message.feedback.book.learned",
+                    Component.translatable("attunement.feedback." + e.id().getPath())), false);
+        else
+            say(server, "known");
+    }
+
     /** The pen the player held, tick by tick: replay it, judge it, and mark the part. Never trusts a client result. */
     public void finish(ServerPlayer server, ResourceLocation effect, float start, List<Integer> samples) {
         EnchantGame.Session session = EnchantGame.end(server.getUUID());
@@ -245,6 +260,10 @@ public class EnchantMenu extends AbstractContainerMenu {
                 Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + verdict.flaw()), made.withDim(e.key(), verdict.level()).dims()));
         broadcastChanges();
         say(server, verdict.flaw() > 0 ? "flawed" : "clean");
+        // A clean attempt at an effect you did not know teaches it: discovery ends in knowing.
+        if (verdict.flaw() == 0 && AttunementKnowledge.learn(server, e))
+            server.displayClientMessage(Component.translatable("message.feedback.book.learned",
+                    Component.translatable("attunement.feedback." + e.id().getPath())), false);
     }
 
     @Override

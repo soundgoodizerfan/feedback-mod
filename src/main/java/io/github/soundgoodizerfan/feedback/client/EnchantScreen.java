@@ -61,7 +61,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
 
     private final List<Attunements.Effect> effects = new ArrayList<>(Attunements.known().values());
     private int chosen = -1, scroll;
-    private Button begin, commit;
+    private Button begin, commit, study;
 
     private boolean playing;
     private float startTemperature;
@@ -106,6 +106,12 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
         commit = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.enchant.commit"), b -> finish(),
                 leftPos + BTN_X, topPos + BTN_Y, BTN_W, 14));
         commit.visible = false;
+        study = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.enchant.study"), b -> {
+            Attunements.Effect e = effect();
+            if (e != null)
+                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.EnchantStudyPayload(menu.containerId, e.id()));
+        }, leftPos + BTN_X, topPos + BTN_Y, BTN_W, 14, FSounds.UI_STAMP::get));
+        study.visible = false;
         flipBox = addRenderableWidget(GuiStyle.checkbox(skin, Component.translatable("gui.feedback.enchant.flip"), () -> flip,
                 b -> flip = !flip, leftPos + SCOPE_X + 3, topPos + SCOPE_Y + SCOPE_H - 14, 40));
         flipBox.visible = false;
@@ -113,6 +119,22 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
 
     private Attunements.Effect effect() {
         return chosen < 0 || chosen >= effects.size() ? null : effects.get(chosen);
+    }
+
+    /** Whether the player may attempt this effect with its guide: a starter, or one learned. */
+    private boolean known(Attunements.Effect e) {
+        return minecraft != null && minecraft.player != null && io.github.soundgoodizerfan.feedback.modular.AttunementKnowledge.knows(minecraft.player, e);
+    }
+
+    /** What the list and the pad call an effect: its name, or a blank until the player knows it. */
+    private Component shown(Attunements.Effect e) {
+        return known(e) ? labelOf(e) : Component.translatable("gui.feedback.enchant.unknown");
+    }
+
+    /** The chosen effect is one the player has not learned: no guide on the pad, no description. */
+    private boolean blind() {
+        Attunements.Effect e = effect();
+        return e != null && !known(e);
     }
 
     private static Component labelOf(Attunements.Effect e) {
@@ -357,7 +379,9 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
             skin.cue(GuiSkin.Cue.SEAT, m == null ? null : m.kind().orElse(null), 1f);
         }
         hadPart = has;
-        begin.visible = !playing;
+        Attunements.Effect picked = effect();
+        study.visible = !playing && picked != null && owned(picked) && !known(picked);
+        begin.visible = !playing && !study.visible;
         begin.active = !playing && why().equals("ready");
         commit.visible = playing;
         flipBox.visible = effect() != null && effect().hasMirror();
@@ -535,7 +559,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
             boolean picked = scroll + r == chosen;
             skin.row(g, rx, ry, rw, ROW, picked, !playing && over(mx, my, LIST_X + 1, LIST_Y + 2 + r * ROW, rw, ROW));
             int colour = picked ? skin.accent() : inert(row) ? skin.dim() : skin.ink();
-            g.drawString(font, font.plainSubstrByWidth(labelOf(row).getString(), rw - 14), rx + 4, ry + 2, colour, false);
+            g.drawString(font, font.plainSubstrByWidth(shown(row).getString(), rw - 14), rx + 4, ry + 2, colour, false);
             if (owned(row))
                 pip(g, rx + rw - 6, ry + ROW / 2, skin.accent());
         }
@@ -585,7 +609,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
         skin.inset(g, sx, sy, SCOPE_W, SCOPE_H);
         boolean session = pen != null && (playing || !result.isEmpty());
         if (playing && pen != null) {
-            if (!pen.done()) {
+            if (!pen.done() && !blind()) {
                 int pulse = ClientSettings.reduceMotion() ? 0 : (int) (0x10 * Mth.sin(t * 0.15f));
                 for (int[] c : glyphs[pen.letter()]) {
                     int cx = ix + Math.round(Sigil.ORIGIN_X + (col(c) + 0.5f) * Sigil.CELL), cy = iy + Math.round(Sigil.ORIGIN_Y + (c[1] + 0.5f) * Sigil.CELL);
@@ -611,7 +635,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
             g.fill(hx - 3, hy - 3, hx + 4, hy + 4, (pen.marking() ? 0x50 : 0x28) << 24 | (pen.marking() ? GOLD_HI : VIOLET));
             g.fill(hx - 1, hy - 1, hx + 2, hy + 2, pen.marking() ? 0xFFFFFFFF : skin.ink());
             // Written letters, small in the left margin.
-            for (int i = 0; i < pen.letter() && i < glyphs.length; i++)
+            for (int i = 0; i < pen.letter() && i < glyphs.length && !blind(); i++)
                 glyph(g, glyphs[i], slotX(i) + (sx - leftPos - SCOPE_X), slotY(i), 2, 0xFF000000 | (accuracy[i] >= 0.75f ? GOLD : skin.dim()));
             ink.render(g, skin, ix + iw - 9, iy + 3, 5, ih - 6);
             if (!pen.reached() && !dragging)
@@ -619,7 +643,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
             return;
         }
         // Idle or finished: the whole word, readable; coloured by accuracy once written.
-        if (!word.isEmpty()) {
+        if (!word.isEmpty() && !blind()) {
             int wx = ix + (iw - (word.length() * 19 - 4)) / 2, wy = iy + 8;
             for (int i = 0; i < glyphs.length; i++)
                 glyph(g, glyphs[i], wx + i * 19, wy, 3, 0xFF000000 | (!session ? skin.ink() : accuracy[i] >= 0.75f ? GOLD : skin.dim()));
@@ -655,7 +679,9 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
         int row = rowAt(mouseX, mouseY);
         if (row >= 0) {
             Attunements.Effect e = effects.get(row);
-            List<Component> lines = new ArrayList<>(effectLines(e));
+            List<Component> lines = known(e) ? new ArrayList<>(effectLines(e)) : new ArrayList<>(List.of(
+                    shown(e).copy().withStyle(ChatFormatting.LIGHT_PURPLE),
+                    Component.translatable("gui.feedback.enchant.unknown_tip").withStyle(ChatFormatting.GRAY)));
             if (owned(e))
                 lines.add(Component.translatable("gui.feedback.enchant.owned").withStyle(ChatFormatting.YELLOW));
             if (inert(e))
@@ -692,7 +718,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
             g.drawString(font, font.plainSubstrByWidth(menu.part().getHoverName().getString(), 72), 40, 27, skin.ink(), false);
         g.drawString(font, Component.translatable("gui.feedback.enchant.list"), LIST_X + 2, LIST_Y - 10, skin.dim(), false);
         Attunements.Effect e = effect();
-        g.drawString(font, e == null ? Component.translatable("gui.feedback.enchant.no_effect").getString() : font.plainSubstrByWidth(labelOf(e).getString(), SCOPE_W - 4),
+        g.drawString(font, e == null ? Component.translatable("gui.feedback.enchant.no_effect").getString() : font.plainSubstrByWidth(shown(e).getString(), SCOPE_W - 4),
                 SCOPE_X + 2, SCOPE_Y - 11, e == null ? skin.dim() : skin.accent(), false);
         g.drawString(font, Component.translatable("gui.feedback.enchant.heat"), HEAT_X + HEAT_W / 2 - font.width(Component.translatable("gui.feedback.enchant.heat")) / 2,
                 SCOPE_Y - 11, skin.dim(), false);

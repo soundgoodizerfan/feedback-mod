@@ -48,5 +48,10 @@
     "second_barrel": {
       "kind": "intact"
     }
-  }
+  },
+  "starter": true,
+  "books": [
+    "minecraft:fortune",
+    "minecraft:looting"
+  ]
 }

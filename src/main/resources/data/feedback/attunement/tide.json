@@ -42,5 +42,9 @@
     "second_barrel": {
       "kind": "dry_round"
     }
-  }
+  },
+  "books": [
+    "minecraft:depth_strider",
+    "minecraft:riptide"
+  ]
 }

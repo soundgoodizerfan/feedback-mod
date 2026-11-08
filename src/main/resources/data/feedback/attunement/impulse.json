@@ -72,5 +72,9 @@
     "second_barrel": {
       "kind": "pull"
     }
-  }
+  },
+  "books": [
+    "minecraft:knockback",
+    "minecraft:punch"
+  ]
 }

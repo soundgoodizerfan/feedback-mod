@@ -28,5 +28,8 @@
     "second_barrel": {
       "kind": "grounded_round"
     }
-  }
+  },
+  "books": [
+    "minecraft:channeling"
+  ]
 }
