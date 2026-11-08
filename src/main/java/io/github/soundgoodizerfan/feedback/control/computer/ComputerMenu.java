@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 public class ComputerMenu extends AbstractContainerMenu {
 
     /** Where the icons' slots sit, relative to the screen. */
-    public static final int ICON_X = 14, ICON_Y = 34, ICON_STEP = 40;
+    public static final int ICON_X = 12, ICON_Y = 28, ICON_STEP = 30;
     public static final int RUNNING = ComputerBays.SIZE;
 
     private final BlockPos pos;

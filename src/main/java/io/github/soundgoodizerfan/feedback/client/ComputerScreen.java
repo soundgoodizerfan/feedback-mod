@@ -38,7 +38,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class ComputerScreen extends SkinnedScreen<ComputerMenu> {
 
     private static final GuiSkin SKIN = GuiSkin.TERMINAL;
-    private static final int MIN_X = 64, TASKBAR = 24, TITLE = 14, RUN = ComputerBays.SIZE;
+    private static final int MIN_X = 52, TASKBAR = 24, TITLE = 14, RUN = ComputerBays.SIZE, PANEL_W = 330, PANEL_H = 210;
 
     private enum App { DRIVE, MONITOR, LINKS }
 
@@ -66,13 +66,14 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> {
         }
     }
 
-    private final Win drive = new Win(App.DRIVE, 80, 40, 176, 112);
-    private final Win monitor = new Win(App.MONITOR, 270, 40, 196, 150);
-    private final Win links = new Win(App.LINKS, 120, 120, 214, 130);
+    private final Win drive = new Win(App.DRIVE, 0, 0, 150, 100);
+    private final Win monitor = new Win(App.MONITOR, 0, 0, 170, 130);
+    private final Win links = new Win(App.LINKS, 0, 0, 180, 110);
     private final List<Win> windows = new ArrayList<>(List.of(drive, monitor, links));
     private Win dragging;
     private double grabX, grabY;
     private int shown = 0;
+    private boolean placed;
     private int linkScroll;
 
     private final Button[] driveLabels = new Button[ComputerBays.SIZE + 1];
@@ -85,24 +86,33 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> {
 
     @Override
     protected void init() {
-        imageWidth = width;
-        imageHeight = height;
+        imageWidth = Math.min(width - 8, PANEL_W);
+        imageHeight = Math.min(height - 8, PANEL_H);
         super.init();
+        if (!placed) {
+            placed = true;
+            drive.x = leftPos + 58;
+            drive.y = topPos + 30;
+            monitor.x = leftPos + imageWidth - monitor.w - 8;
+            monitor.y = topPos + 30;
+            links.x = leftPos + 66;
+            links.y = topPos + imageHeight - TASKBAR - links.h - 4;
+        }
         for (int i = 0; i <= RUN; i++) {
             final int which = i;
             String label = i == RUN ? "RUN" : String.valueOf((char) ('A' + i));
             driveLabels[i] = addRenderableWidget(GuiStyle.button(SKIN, Component.literal(label), b -> openDrive(which),
-                    ComputerMenu.ICON_X - 6, ComputerMenu.ICON_Y + i * ComputerMenu.ICON_STEP + 19, 28, 12));
+                    leftPos + ComputerMenu.ICON_X - 6, topPos + ComputerMenu.ICON_Y + i * ComputerMenu.ICON_STEP + 17, 28, 11));
         }
-        editButton = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.edit"), b -> send(ComputerActionPayload.EDIT), 0, 0, 52, 14));
-        runButton = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.run"), b -> send(shown == RUN ? ComputerActionPayload.STOP : ComputerActionPayload.RUN), 0, 0, 52, 14));
-        ejectButton = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.eject"), b -> send(ComputerActionPayload.EJECT), 0, 0, 52, 14));
+        editButton = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.edit"), b -> send(ComputerActionPayload.EDIT), 0, 0, 44, 14));
+        runButton = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.run"), b -> send(shown == RUN ? ComputerActionPayload.STOP : ComputerActionPayload.RUN), 0, 0, 44, 14));
+        ejectButton = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.eject"), b -> send(ComputerActionPayload.EJECT), 0, 0, 44, 14));
         for (int i = 0; i < 3; i++) {
             final Win win = i == 0 ? drive : i == 1 ? monitor : links;
             close[i] = addRenderableWidget(GuiStyle.button(SKIN, Component.literal("x"), b -> win.open = false, 0, 0, 12, 11));
         }
-        monitorTask = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.monitor"), b -> toggle(monitor), 70, height - TASKBAR + 5, 56, 14));
-        linksTask = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.links"), b -> toggle(links), 130, height - TASKBAR + 5, 56, 14));
+        monitorTask = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.monitor"), b -> toggle(monitor), leftPos + 60, topPos + imageHeight - TASKBAR + 5, 56, 14));
+        linksTask = addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.computer.links"), b -> toggle(links), leftPos + 120, topPos + imageHeight - TASKBAR + 5, 56, 14));
     }
 
     private void openDrive(int which) {
@@ -138,20 +148,20 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> {
 
     @Override
     protected void renderBg(GuiGraphics g, float partial, int mx, int my) {
-        SKIN.panel(g, 0, 0, width, height);
-        SKIN.inset(g, 6, 24, width - 12, height - 24 - TASKBAR - 2);
+        SKIN.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        SKIN.inset(g, leftPos + 6, topPos + 24, imageWidth - 12, imageHeight - 24 - TASKBAR - 2);
         for (int i = 0; i <= RUN; i++) {
             int y = ComputerMenu.ICON_Y + i * ComputerMenu.ICON_STEP;
-            SKIN.slot(g, ComputerMenu.ICON_X, y);
+            SKIN.slot(g, leftPos + ComputerMenu.ICON_X, topPos + y);
         }
         for (int c = 0; c < 9; c++)
-            SKIN.slot(g, ProgrammerMenu.HOTBAR_X + c * 18, ProgrammerMenu.STRIP_SLOT_Y);
-        SKIN.plaque(g, 4, height - TASKBAR, width - 8, TASKBAR - 4);
-        g.drawString(font, title, 8, 10, SKIN.ink(), false);
+            SKIN.slot(g, leftPos + ProgrammerMenu.HOTBAR_X + c * 18, topPos + ProgrammerMenu.STRIP_SLOT_Y);
+        SKIN.plaque(g, leftPos + 4, topPos + imageHeight - TASKBAR, imageWidth - 8, TASKBAR - 4);
+        g.drawString(font, title, leftPos + 8, topPos + imageHeight - TASKBAR + 8, SKIN.ink(), false);
         boolean live = !menu.getSlot(RUN).getItem().isEmpty();
-        g.drawString(font, Component.translatable(live ? "gui.feedback.computer.running" : "gui.feedback.computer.idle"),
-                width - 10 - font.width(Component.translatable(live ? "gui.feedback.computer.running" : "gui.feedback.computer.idle")),
-                height - TASKBAR + 8, live ? SKIN.accent() : SKIN.dim(), false);
+        Component state = Component.translatable(live ? "gui.feedback.computer.running" : "gui.feedback.computer.idle");
+        g.drawString(font, state, leftPos + imageWidth - 10 - font.width(state), topPos + imageHeight - TASKBAR + 8,
+                live ? SKIN.accent() : SKIN.dim(), false);
 
         for (Win win : windows)
             if (win.open)
@@ -286,9 +296,9 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> {
         ejectButton.visible = show && !running;
         editButton.active = show && !running;
         if (show) {
-            editButton.setPosition(drive.x + 8, drive.y + drive.h - 22);
-            runButton.setPosition(drive.x + 62, drive.y + drive.h - 22);
-            ejectButton.setPosition(drive.x + 116, drive.y + drive.h - 22);
+            editButton.setPosition(drive.x + 6, drive.y + drive.h - 22);
+            runButton.setPosition(drive.x + 54, drive.y + drive.h - 22);
+            ejectButton.setPosition(drive.x + 102, drive.y + drive.h - 22);
             runButton.setMessage(Component.translatable(running ? "gui.feedback.computer.stop" : "gui.feedback.computer.run"));
         }
     }
@@ -321,8 +331,8 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> {
     @Override
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
         if (dragging != null) {
-            dragging.x = (int) Math.max(MIN_X, Math.min(width - dragging.w, mx - grabX));
-            dragging.y = (int) Math.max(22, Math.min(height - TASKBAR - dragging.h, my - grabY));
+            dragging.x = (int) Math.max(leftPos + MIN_X, Math.min(leftPos + imageWidth - dragging.w - 3, mx - grabX));
+            dragging.y = (int) Math.max(topPos + 22, Math.min(topPos + imageHeight - TASKBAR - dragging.h, my - grabY));
             return true;
         }
         return super.mouseDragged(mx, my, button, dx, dy);
