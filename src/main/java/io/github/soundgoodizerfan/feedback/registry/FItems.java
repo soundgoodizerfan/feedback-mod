@@ -92,6 +92,18 @@ public class FItems {
      */
     public static final DeferredItem<Item> PUNCH_CARD =
             ITEMS.registerItem("punch_card", Item::new, new Item.Properties());
+    /** Mid medium: a printed circuit board, written once like a punch card. */
+    public static final DeferredItem<Item> CIRCUIT_BOARD =
+            ITEMS.registerItem("circuit_board", Item::new, new Item.Properties());
+    /** Late medium: a floppy disk, erased and written again by the Programmer. */
+    public static final DeferredItem<Item> FLOPPY_DISK =
+            ITEMS.registerItem("floppy_disk", Item::new, new Item.Properties());
+    /** End medium: a USB drive, erased and written again by the Programmer. */
+    public static final DeferredItem<Item> USB_DRIVE =
+            ITEMS.registerItem("usb_drive", Item::new, new Item.Properties());
+    /** A saved selection of cards: stamped into a Programmer's working copy as plain cards. Carries a program graph, never runs. */
+    public static final DeferredItem<Item> FUNCTION_CARD =
+            ITEMS.registerItem("function_card", Item::new, new Item.Properties().stacksTo(1));
 
     /**
      * Tongs, made of two rods and a grip by {@code TongsRecipe}; the component says which. A

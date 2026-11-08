@@ -6024,5 +6024,20 @@
   "message.feedback.gas_centrifuge": "Feed: %s ingots. Acid: %s mB. Batch: %s%%.",
   "feedback.jei.info.gas_centrifuge": "Put it on a shaft. Natural uranium ingots go in by hand (four to a batch), hydrofluoric acid by bucket or pipe (50 mB a batch). Above 24 RPM it spins out a batch: one Enriched Uranium ingot and three Depleted Uranium ingots, faster the faster the shaft turns (by the square). Right-click with an empty hand to take what it made, or to read it.",
   "feedback.jei.info.enriched_fuel_rod": "Enriched uranium clad in stainless steel: much stronger than a natural Fuel Rod, so a core runs hotter on fewer rods.",
-  "feedback.jei.info.breeder_rod": "Depleted uranium around thorium. It breeds fissile fuel fast, but only in a hard spectrum: put it where no moderator or flowing coolant touches it."
+  "feedback.jei.info.breeder_rod": "Depleted uranium around thorium. It breeds fissile fuel fast, but only in a hard spectrum: put it where no moderator or flowing coolant touches it.",
+  "item.feedback.circuit_board": "Circuit Board",
+  "item.feedback.floppy_disk": "Floppy Disk",
+  "item.feedback.usb_drive": "USB Drive",
+  "item.feedback.function_card": "Function Card",
+  "feedback.programmer.erase": "Erase",
+  "feedback.programmer.stamp": "Stamp",
+  "feedback.programmer.save_function": "Save fn",
+  "feedback.programmer.erased": "Erased. The program is back in the editor.",
+  "feedback.programmer.function_saved": "Saved to the Function Card.",
+  "feedback.programmer.function_bad": "That selection cannot be saved as a function.",
+  "feedback.programmer.function_no_card": "Hold a blank Function Card.",
+  "feedback.jei.info.circuit_board": "A Controller's mid-game program medium: written once at a Programmer like a Punch Card, to be thrown away and replaced rather than rewritten.",
+  "feedback.jei.info.floppy_disk": "A program medium you can rewrite. Put a printed disk in a Programmer and press Erase: the program comes back into the editor, and Print writes the new one onto the same disk.",
+  "feedback.jei.info.usb_drive": "A program medium you can rewrite, like a Floppy Disk. Any Controller takes it where it takes a Punch Card.",
+  "feedback.jei.info.function_card": "Saves a selection of cards from a Programmer. Hold a blank one, select cards, press Save fn. Hold a saved one and press Stamp to drop its cards into the editor as plain cards with their inputs unwired; Print flattens them into the program. Needs no Controller support: a function is a convenience, not a new kind of card."
 }

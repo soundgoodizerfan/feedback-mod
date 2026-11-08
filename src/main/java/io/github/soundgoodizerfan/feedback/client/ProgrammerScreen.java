@@ -237,6 +237,9 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     private String nameText = "";
 
     private Button printButton;
+    private Button eraseButton;
+    private Button stampButton;
+    private Button saveFunctionButton;
     private Component status = Component.empty();
     private long statusUntil;
 
@@ -255,6 +258,14 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         super.init();
         printButton = addRenderableWidget(GuiStyle.primary(GuiSkin.PANEL, Component.translatable("feedback.programmer.print"), b -> print(),
                 PRINT_X, 4, 60, 20, FSounds.UI_PUNCH::get));
+        eraseButton = addRenderableWidget(GuiStyle.button(GuiSkin.PANEL, Component.translatable("feedback.programmer.erase"),
+                b -> PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload(
+                        menu.getPos(), io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload.ERASE, ProgramGraph.EMPTY)),
+                PRINT_X, 26, 60, 16));
+        stampButton = addRenderableWidget(GuiStyle.button(GuiSkin.PANEL, Component.translatable("feedback.programmer.stamp"), b -> stampFunction(),
+                PRINT_X - 64, 4, 60, 20));
+        saveFunctionButton = addRenderableWidget(GuiStyle.button(GuiSkin.PANEL, Component.translatable("feedback.programmer.save_function"),
+                b -> saveFunction(), PRINT_X - 128, 4, 60, 20));
         nameBox = addRenderableWidget(new EditBox(font, panelX() + 4, PANEL_Y + 15, 62, 12, Component.empty()));
         nameBox.setMaxLength(FTuning.VARIABLE_NAME_MAX);
         nameBox.setValue(nameText);
@@ -436,6 +447,9 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
         }
         hadCard = hasCard;
         printButton.active = !isPrinted();
+        eraseButton.visible = isPrinted() && menu.getSlot(0).getItem().is(io.github.soundgoodizerfan.feedback.registry.FTags.SOFT_CARDS);
+        stampButton.active = !isPrinted() && heldFunction() != null;
+        saveFunctionButton.active = !isPrinted() && !selection.isEmpty();
         nameBox.visible = typeButton.visible = addButton.visible = !isPrinted();
 
         // The block entity's sync can land after the menu opens, so until the first edit keep
@@ -659,6 +673,66 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             if (selection.contains(graph.nodes().get(i).id()))
                 copied.put(graph.nodes().get(i).id(), posOf(graph, i));
         clipboard = new Snapshot(new ProgramGraph(nodes), copied);
+    }
+
+    /** The program graph on a Function Card in either hand, or null. */
+    @Nullable
+    private ProgramGraph heldFunction() {
+        if (minecraft == null || minecraft.player == null)
+            return null;
+        for (net.minecraft.world.InteractionHand hand : net.minecraft.world.InteractionHand.values()) {
+            var held = minecraft.player.getItemInHand(hand);
+            if (held.is(io.github.soundgoodizerfan.feedback.registry.FItems.FUNCTION_CARD.get())) {
+                ProgramGraph g = held.getOrDefault(FDataComponents.PROGRAM_GRAPH, ProgramGraph.EMPTY);
+                if (!g.nodes().isEmpty())
+                    return g;
+            }
+        }
+        return null;
+    }
+
+    /** Stamps the held Function Card into the working copy as plain cards, at the cursor; its inputs stay unwired for the player to wire. */
+    private void stampFunction() {
+        ProgramGraph fn = heldFunction();
+        if (fn == null)
+            return;
+        Map<Integer, NodePos> laid = new HashMap<>();
+        for (int i = 0; i < fn.nodes().size(); i++)
+            laid.put(fn.nodes().get(i).id(), posOf(fn, i));
+        List<io.github.soundgoodizerfan.feedback.control.program.ProgramVariable> merged = new ArrayList<>(graph.variables());
+        for (var v : fn.variables())
+            if (merged.stream().noneMatch(m -> m.name().equals(v.name())) && merged.size() < ControllerLimits.MAX.variables())
+                merged.add(v);
+        graph = new ProgramGraph(graph.nodes(), merged);
+        clipboard = new Snapshot(fn, laid);
+        paste();
+    }
+
+    /** Sends the selected cards to a blank Function Card in hand; wires from outside the selection are cut so the template stands alone. */
+    private void saveFunction() {
+        List<ProgramNode> chosen = graph.nodes().stream().filter(n -> selection.contains(n.id())).toList();
+        if (chosen.isEmpty())
+            return;
+        List<ProgramNode> alone = new ArrayList<>();
+        for (ProgramNode n : chosen) {
+            ProgramNode copy = n;
+            List<Integer> ports = n.ports();
+            for (int slot = 0; slot < ports.size(); slot++)
+                if (ports.get(slot) != ProgramNode.UNWIRED && !selection.contains(ports.get(slot)))
+                    copy = copy.withInput(slot, ProgramNode.UNWIRED);
+            alone.add(copy);
+        }
+        java.util.Set<String> used = new java.util.HashSet<>();
+        for (ProgramNode n : alone) {
+            if (n instanceof io.github.soundgoodizerfan.feedback.control.program.ReadNode r)
+                used.add(r.variable());
+            if (n instanceof io.github.soundgoodizerfan.feedback.control.program.WriteNode w)
+                used.add(w.variable());
+        }
+        List<io.github.soundgoodizerfan.feedback.control.program.ProgramVariable> vars = graph.variables().stream()
+                .filter(v -> used.contains(v.name())).toList();
+        PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload(menu.getPos(),
+                io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerActionPayload.SAVE_FUNCTION, new ProgramGraph(alone, vars)));
     }
 
     /** Pastes {@link #clipboard} at the cursor with fresh ids. Wires between pasted cards survive; wires from outside the copy don't. */

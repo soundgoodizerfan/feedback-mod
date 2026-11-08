@@ -104,6 +104,10 @@ public class FCreativeTabs {
                         output.accept(FItems.CONTROLLER.get());
                         output.accept(FItems.PROGRAMMER.get());
                         output.accept(FItems.PUNCH_CARD.get());
+                        output.accept(FItems.CIRCUIT_BOARD.get());
+                        output.accept(FItems.FLOPPY_DISK.get());
+                        output.accept(FItems.USB_DRIVE.get());
+                        output.accept(FItems.FUNCTION_CARD.get());
                         output.accept(FItems.MEMORY_DRUM.get());
                         output.accept(FItems.CARD_RACK.get());
                         output.accept(FItems.ESCAPEMENT.get());

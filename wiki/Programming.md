@@ -90,7 +90,20 @@ Press **Print**. The program is checked first, and you'll be told if:
 
 Print does not know which Controller the card will go in. A Controller refuses to take a card that needs more cards or variables than it has room for, or a typed Delay length without an Escapement fitted, and says why.
 
-A printed card is **read-only**: *"Printed -- read only."* To change a program, print a new card.
+A printed Punch Card is **read-only**: *"Printed -- read only."* To change a program, print a new card.
+
+## Media
+
+A Controller takes any program medium the Programmer can print:
+
+- **Punch Card**: written once.
+- **Circuit Board**: written once. Made from a Punch Card and two copper wires.
+- **Floppy Disk**: made from a Circuit Board and an iron plate. Put a printed disk in the Programmer and press **Erase**: the program comes back into the editor, the disk is blank, and Print writes the new program onto the same disk.
+- **USB Drive**: a Floppy Disk, a copper wire and a silicon ingot. Rewritten the same way as a Floppy Disk.
+
+## Function Cards
+
+A **Function Card** (a Punch Card and a piece of paper) saves a part of a program. Select cards in the editor, hold a blank Function Card and press **Save fn**: the selected cards go onto it, with any wire that led outside the selection cut. Hold a saved Function Card and press **Stamp**: its cards appear at the cursor as ordinary cards, inputs unwired, with the variables they use declared. Sensor and switch cards come back unlinked. A stamped function is just cards, so it counts against the Controller's card limit like any others.
 
 **Close the Programmer only after printing.** Unprinted edits are lost when you close it.
 

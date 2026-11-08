@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:floppy_disk"
+    },
+    {
+      "item": "feedback:copper_wire"
+    },
+    {
+      "item": "feedback:silicon_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:usb_drive"
+  }
+}

@@ -246,6 +246,29 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         return null;
     }
 
+    /**
+     * A soft medium (Floppy Disk, USB Drive) wiped: its printed program comes back as the working copy, the card is blank again, and
+     * the usual edit-then-print flow writes over it. A hard medium cannot be erased.
+     */
+    public void erase(Player player) {
+        if (level == null || level.isClientSide || !stillValid(player) || card.isEmpty())
+            return;
+        if (!card.is(io.github.soundgoodizerfan.feedback.registry.FTags.SOFT_CARDS)) {
+            player.displayClientMessage(Component.translatable("feedback.programmer.already_printed"), true);
+            return;
+        }
+        ProgramGraph printed = card.getOrDefault(FDataComponents.PROGRAM_GRAPH, ProgramGraph.EMPTY);
+        if (printed.nodes().isEmpty())
+            return;
+        working = printed;
+        positions.clear();
+        card.remove(FDataComponents.PROGRAM_GRAPH);
+        card.remove(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE);
+        setChanged();
+        level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        player.displayClientMessage(Component.translatable("feedback.programmer.erased"), true);
+    }
+
     private void print(Player player) {
         if (card.isEmpty()) {
             // card is ItemStack.EMPTY here -- the shared vanilla singleton. card.set(...) below
