@@ -158,9 +158,15 @@ public class FBlockEntities {
                     .of(ControllerBlockEntity::new, FBlocks.CONTROLLER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.control.controller.ElectricControllerBlockEntity>> ELECTRIC_CONTROLLER =
+            BLOCK_ENTITIES.register("electric_controller", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.control.controller.ElectricControllerBlockEntity::new, FBlocks.ELECTRIC_CONTROLLER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.control.computer.ComputerBlockEntity>> COMPUTER =
+            BLOCK_ENTITIES.register("computer", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.control.computer.ComputerBlockEntity::new, FBlocks.COMPUTER.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProgrammerBlockEntity>> PROGRAMMER =
             BLOCK_ENTITIES.register("programmer", () -> BlockEntityType.Builder
-                    .of(ProgrammerBlockEntity::new, FBlocks.PROGRAMMER.get())
+                    .of(ProgrammerBlockEntity::new, FBlocks.PROGRAMMER.get(), FBlocks.ELECTRIC_PROGRAMMER.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FireboxBlockEntity>> FIREBOX =

@@ -103,6 +103,9 @@ public class FCreativeTabs {
                         output.accept(FItems.TIMER.get());
                         output.accept(FItems.CONTROLLER.get());
                         output.accept(FItems.PROGRAMMER.get());
+                        output.accept(FItems.ELECTRIC_CONTROLLER.get());
+                        output.accept(FItems.ELECTRIC_PROGRAMMER.get());
+                        output.accept(FItems.COMPUTER.get());
                         output.accept(FItems.PUNCH_CARD.get());
                         output.accept(FItems.CIRCUIT_BOARD.get());
                         output.accept(FItems.FLOPPY_DISK.get());

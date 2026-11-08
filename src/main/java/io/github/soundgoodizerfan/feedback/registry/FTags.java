@@ -19,6 +19,8 @@ public final class FTags {
     /** What a Controller or Programmer accepts as its program card. */
     /** Media a Programmer can erase and print over (controller spec section 2): Floppy Disk and USB Drive. */
     public static final TagKey<Item> SOFT_CARDS = TagKey.create(Registries.ITEM, Feedback.id("soft_cards"));
+    /** The media a mechanical Controller and Programmer take: the Punch Card alone. Every other medium needs an electric host. */
+    public static final TagKey<Item> MECHANICAL_CARDS = TagKey.create(Registries.ITEM, Feedback.id("mechanical_cards"));
     public static final TagKey<Item> PUNCH_CARDS = TagKey.create(Registries.ITEM, Feedback.id("punch_cards"));
     /** What an Engine Stand prints a design onto: blank paper, or a blueprint to edit. */
     public static final TagKey<Item> BLUEPRINT_PAPER = TagKey.create(Registries.ITEM, Feedback.id("blueprint_paper"));

@@ -18,14 +18,27 @@ import net.minecraft.world.phys.BlockHitResult;
 /** Where a Punch Card's program is authored. Right click to open the node editor. */
 public class ProgrammerBlock extends Block implements EntityBlock {
 
+    private final boolean electric;
+
     public ProgrammerBlock(Properties properties) {
+        this(properties, false);
+    }
+
+    /** {@code electric}: the Electric Programmer, which takes every program medium; the plain one takes the Punch Card alone. */
+    public ProgrammerBlock(Properties properties, boolean electric) {
         super(properties);
+        this.electric = electric;
+    }
+
+    public boolean electric() {
+        return electric;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof ProgrammerBlockEntity programmer))
+        ProgrammerBlockEntity programmer = ProgrammerBlockEntity.at(level, pos);
+        if (programmer == null)
             return InteractionResult.PASS;
         if (!level.isClientSide) {
             programmer.sync();

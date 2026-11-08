@@ -42,8 +42,8 @@ public record ProgrammerCommitPayload(BlockPos pos, ProgramGraph graph, Map<Inte
             // Menu check first: an arbitrary pos from the client must never reach getBlockEntity,
             // which would load that chunk.
             if (context.player().containerMenu instanceof ProgrammerMenu menu && menu.getPos().equals(payload.pos())
-                    && context.player().level().getBlockEntity(payload.pos()) instanceof ProgrammerBlockEntity programmer)
-                programmer.commit(payload.graph(), payload.positions(), payload.print(), context.player());
+                    && menu.getProgrammer() != null)
+                menu.getProgrammer().commit(payload.graph(), payload.positions(), payload.print(), context.player());
         });
     }
 }

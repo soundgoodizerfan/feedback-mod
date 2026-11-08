@@ -45,41 +45,19 @@ public class ControllerBlock extends Block implements EntityBlock, Rotatable {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!stack.is(FTags.PUNCH_CARDS) || player.isShiftKeyDown())
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        if (!(level.getBlockEntity(pos) instanceof ControllerBlockEntity controller) || !controller.getItem(0).isEmpty())
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        Optional<String> refusal = controller.refusalFor(stack);
-        if (refusal.isPresent()) {
-            if (!level.isClientSide)
-                player.displayClientMessage(Component.translatable("feedback.controller.card_refused",
-                        Component.translatable("feedback.programmer.error." + refusal.get())), true);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
-        if (!level.isClientSide)
-            controller.setItem(0, stack.split(1));
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return ControllerHands.insert(stack, level, pos, player);
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
-        if (!(level.getBlockEntity(pos) instanceof ControllerBlockEntity controller))
-            return InteractionResult.PASS;
-        if (!level.isClientSide) {
-            ItemStack taken = controller.removeItemNoUpdate(0);
-            if (!taken.isEmpty() && !player.getInventory().add(taken))
-                player.drop(taken, false);
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return ControllerHands.take(level, pos, player);
     }
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock()) && level.getBlockEntity(pos) instanceof ControllerBlockEntity controller) {
-            Containers.dropContents(level, pos, controller);
-            Fittable.dropAll(controller, level, pos);
-        }
+        if (!state.is(newState.getBlock()))
+            ControllerHands.dropContents(level, pos);
         super.onRemove(state, level, pos, newState, movedByPiston);
     }
 

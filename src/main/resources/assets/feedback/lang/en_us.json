@@ -6039,5 +6039,12 @@
   "feedback.jei.info.circuit_board": "A Controller's mid-game program medium: written once at a Programmer like a Punch Card, to be thrown away and replaced rather than rewritten.",
   "feedback.jei.info.floppy_disk": "A program medium you can rewrite. Put a printed disk in a Programmer and press Erase: the program comes back into the editor, and Print writes the new one onto the same disk.",
   "feedback.jei.info.usb_drive": "A program medium you can rewrite, like a Floppy Disk. Any Controller takes it where it takes a Punch Card.",
-  "feedback.jei.info.function_card": "Saves a selection of cards from a Programmer. Hold a blank one, select cards, press Save fn. Hold a saved one and press Stamp to drop its cards into the editor as plain cards with their inputs unwired; Print flattens them into the program. Needs no Controller support: a function is a convenience, not a new kind of card."
+  "feedback.jei.info.function_card": "Saves a selection of cards from a Programmer. Hold a blank one, select cards, press Save fn. Hold a saved one and press Stamp to drop its cards into the editor as plain cards with their inputs unwired; Print flattens them into the program. Needs no Controller support: a function is a convenience, not a new kind of card.",
+  "block.feedback.electric_controller": "Electric Controller",
+  "block.feedback.electric_programmer": "Electric Programmer",
+  "block.feedback.computer": "Computer",
+  "feedback.controller.wrong_medium": "This block does not take that medium.",
+  "feedback.jei.info.electric_controller": "A Controller powered from a cable, not a shaft. It takes every program medium: Punch Card, Circuit Board, Floppy Disk and USB Drive. It runs while the line delivers at least half of what it wants.",
+  "feedback.jei.info.electric_programmer": "A Programmer that takes every program medium. The mechanical Programmer takes the Punch Card only. Erase works on a printed Floppy Disk or USB Drive.",
+  "feedback.jei.info.computer": "An Electric Programmer and an Electric Controller in one block. A medium in hand goes into its Controller slot; an empty hand opens the editor, whose own slot is where a program is written and printed; sneak with an empty hand to take the medium out of the Controller slot. The editor works without power; the Controller runs only while the cable delivers."
 }

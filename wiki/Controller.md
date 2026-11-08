@@ -1,6 +1,6 @@
 # Controller
 
-A mechanical logic box. It reads sensors, compares numbers, and switches things **on or off**, following a program punched into a **Punch Card**.
+A mechanical logic box. It reads sensors, compares numbers, and switches things **on or off**, following a program punched into a **Punch Card**. It takes the Punch Card only; the [Electric Controller](Electric_Controller.md) and the [Computer](Electric_Controller.md#computer) take every [program medium](Programming.md#media).
 
 It's the step up from a [Timer](Timer.md) or [Bimetallic Strip](Bimetallic_Strip.md): it can watch more than one thing, compare against any number you like, and switch several things at once.
 

@@ -88,6 +88,33 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         super(FBlockEntities.PROGRAMMER.get(), pos, state);
     }
 
+    /** Whether this Programmer is the electric kind, which takes every medium; the mechanical one takes the Punch Card alone. */
+    protected boolean electric() {
+        return getBlockState().getBlock() instanceof ProgrammerBlock block && block.electric();
+    }
+
+    /** Whether the medium may sit in this Programmer's slot. */
+    public boolean takes(ItemStack stack) {
+        return stack.is(electric() ? FTags.PUNCH_CARDS : FTags.MECHANICAL_CARDS);
+    }
+
+    /** The Programmer at {@code pos}: the block entity itself, or the one a Computer carries. */
+    @Nullable
+    public static ProgrammerBlockEntity at(net.minecraft.world.level.Level level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof ProgrammerBlockEntity programmer)
+            return programmer;
+        return be instanceof ProgrammerProvider provider ? provider.programmer() : null;
+    }
+
+    public void saveEmbedded(CompoundTag tag, HolderLookup.Provider registries) {
+        saveAdditional(tag, registries);
+    }
+
+    public void loadEmbedded(CompoundTag tag, HolderLookup.Provider registries) {
+        loadAdditional(tag, registries);
+    }
+
     public boolean isPrinted() {
         return !card.getOrDefault(FDataComponents.PROGRAM_GRAPH, ProgramGraph.EMPTY).nodes().isEmpty();
     }
@@ -342,7 +369,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return card.isEmpty() && stack.is(FTags.PUNCH_CARDS);
+        return card.isEmpty() && takes(stack);
     }
 
     private void resetWorking() {

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:electric_controller"
+    },
+    {
+      "item": "feedback:electric_programmer"
+    },
+    {
+      "item": "feedback:silicon_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:computer"
+  }
+}

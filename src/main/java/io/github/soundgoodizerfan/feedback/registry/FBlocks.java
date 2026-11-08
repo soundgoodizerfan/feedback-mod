@@ -271,6 +271,14 @@ public class FBlocks {
                     .sound(SoundType.COPPER)
                     .noOcclusion()));
 
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.control.controller.ElectricControllerBlock> ELECTRIC_CONTROLLER = BLOCKS.register("electric_controller",
+            () -> new io.github.soundgoodizerfan.feedback.control.controller.ElectricControllerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<ProgrammerBlock> ELECTRIC_PROGRAMMER = BLOCKS.register("electric_programmer",
+            () -> new ProgrammerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f).sound(SoundType.METAL), true));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.control.computer.ComputerBlock> COMPUTER = BLOCKS.register("computer",
+            () -> new io.github.soundgoodizerfan.feedback.control.computer.ComputerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<ProgrammerBlock> PROGRAMMER = BLOCKS.register("programmer",
             () -> new ProgrammerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)

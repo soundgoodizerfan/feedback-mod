@@ -55,7 +55,7 @@ public class ProgrammerMenu extends AbstractContainerMenu {
         addSlot(new Slot(container, CARD_SLOT, CARD_SLOT_X, STRIP_SLOT_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
-                return stack.is(FTags.PUNCH_CARDS);
+                return programmer != null ? programmer.takes(stack) : stack.is(FTags.PUNCH_CARDS);
             }
         });
 
@@ -65,8 +65,7 @@ public class ProgrammerMenu extends AbstractContainerMenu {
 
     @Nullable
     private static ProgrammerBlockEntity resolve(Inventory inventory, BlockPos pos) {
-        return inventory.player.level().getBlockEntity(pos) instanceof ProgrammerBlockEntity programmer
-                ? programmer : null;
+        return ProgrammerBlockEntity.at(inventory.player.level(), pos);
     }
 
     public BlockPos getPos() {

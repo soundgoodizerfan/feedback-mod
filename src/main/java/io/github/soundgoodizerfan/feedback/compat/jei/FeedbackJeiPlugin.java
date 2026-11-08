@@ -337,6 +337,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.BALANCE_SCALE.get(), "balance_scale");
         info(registration, FModular.SURVEY_METER.get(), "survey_meter");
         info(registration, FItems.XP_METER.get(), "xp_meter");
+        info(registration, FItems.ELECTRIC_CONTROLLER.get(), "electric_controller");
+        info(registration, FItems.ELECTRIC_PROGRAMMER.get(), "electric_programmer");
+        info(registration, FItems.COMPUTER.get(), "computer");
         info(registration, FItems.CIRCUIT_BOARD.get(), "circuit_board");
         info(registration, FItems.FLOPPY_DISK.get(), "floppy_disk");
         info(registration, FItems.USB_DRIVE.get(), "usb_drive");

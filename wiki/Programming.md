@@ -94,7 +94,7 @@ A printed Punch Card is **read-only**: *"Printed -- read only."* To change a pro
 
 ## Media
 
-A Controller takes any program medium the Programmer can print:
+A mechanical Controller and Programmer take the Punch Card only. The [Electric Controller, Electric Programmer and Computer](Electric_Controller.md) take every medium:
 
 - **Punch Card**: written once.
 - **Circuit Board**: written once. Made from a Punch Card and two copper wires.

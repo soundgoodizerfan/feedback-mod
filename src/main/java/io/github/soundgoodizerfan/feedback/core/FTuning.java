@@ -2502,6 +2502,8 @@ public final class FTuning {
      */
     public static final float LAMP_RATED_VOLTS = ELECTRIC_MV_VOLTS;
     public static final float LAMP_RATED_AMPS = 0.5f;
+    /** Invented. Amps an Electric Controller and a Computer want from the line. */
+    public static final float CONTROLLER_ELECTRIC_AMPS = 0.3f, COMPUTER_AMPS = 0.6f;
     public static final float[] LAMP_STEP_THRESHOLDS = {0.05f, 0.35f, 0.75f};
     public static final float LAMP_HYSTERESIS = 0.04f;
     public static final float LAMP_BURNOUT_VOLT_FACTOR = 2f;

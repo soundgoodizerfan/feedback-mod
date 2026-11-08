@@ -81,6 +81,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> TIMER = ITEMS.registerSimpleBlockItem(FBlocks.TIMER);
     public static final DeferredItem<BlockItem> CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.CONTROLLER);
     public static final DeferredItem<BlockItem> PROGRAMMER = ITEMS.registerSimpleBlockItem(FBlocks.PROGRAMMER);
+    public static final DeferredItem<BlockItem> ELECTRIC_CONTROLLER = ITEMS.registerSimpleBlockItem(FBlocks.ELECTRIC_CONTROLLER);
+    public static final DeferredItem<BlockItem> ELECTRIC_PROGRAMMER = ITEMS.registerSimpleBlockItem(FBlocks.ELECTRIC_PROGRAMMER);
+    public static final DeferredItem<BlockItem> COMPUTER = ITEMS.registerSimpleBlockItem(FBlocks.COMPUTER);
 
     /**
      * Blank until printed by a Programmer. No default {@code PROGRAM_GRAPH} component is set

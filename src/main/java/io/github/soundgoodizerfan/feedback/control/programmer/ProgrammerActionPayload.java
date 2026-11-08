@@ -47,8 +47,8 @@ public record ProgrammerActionPayload(BlockPos pos, int action, ProgramGraph gra
                 return;
             var player = context.player();
             if (payload.action() == ERASE) {
-                if (player.level().getBlockEntity(payload.pos()) instanceof ProgrammerBlockEntity programmer)
-                    programmer.erase(player);
+                if (menu.getProgrammer() != null)
+                    menu.getProgrammer().erase(player);
             } else if (payload.action() == SAVE_FUNCTION) {
                 if (payload.graph().nodes().isEmpty() || payload.graph().findEditError(ControllerLimits.MAX).isPresent()) {
                     player.displayClientMessage(Component.translatable("feedback.programmer.function_bad"), true);
