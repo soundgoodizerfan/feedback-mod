@@ -367,6 +367,20 @@ public final class ModularTuning {
     public static final double GRAPPLE_BEND_CLEARANCE = 0.05;
     /** Extra share of the load a line takes for every edge it is dragged over: a corner saws the line. */
     public static final float GRAPPLE_BEND_LOAD = 0.25f;
+    /** STAND-IN: Mu a block holds a hook per point of hardness (a player is ~78 Mu: dirt lets go, stone holds). */
+    public static final float GRAPPLE_HOLD_PER_HARDNESS = 100f;
+    /** STAND-IN: share of the holding figure a falling block (sand, gravel) keeps. */
+    public static final float GRAPPLE_HOLD_LOOSE = 0.5f;
+    /** STAND-IN: share a slick block (ice) keeps, and the block friction from which it counts as slick. */
+    public static final float GRAPPLE_HOLD_SLICK = 0.3f;
+    public static final float GRAPPLE_SLICK_FRICTION = 0.9f;
+    /** STAND-IN: line strain per tick while fire or lava touches a line it can burn (20 ticks to part). */
+    public static final float GRAPPLE_BURN_PER_TICK = 0.05f;
+    /** STAND-IN: strain per (attack damage over rating) for a blade or arrow across the line. */
+    public static final float GRAPPLE_CUT_PER_DAMAGE = 20f;
+    /** STAND-IN: blocks from the line a weapon swing or arrow counts as touching it. */
+    public static final double GRAPPLE_CUT_WIDTH = 0.6;
+    public static final double GRAPPLE_CUT_REACH = 3.0;
     /** Blocks per tick squared a held direction adds while the line is taut and the player is airborne (pumping a swing). */
     public static final double GRAPPLE_AIR_ACCEL = 0.045;
     /** Horizontal speed a pumped swing stops gaining at, blocks per tick. */

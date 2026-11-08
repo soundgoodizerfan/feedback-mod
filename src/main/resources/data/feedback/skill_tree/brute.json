@@ -282,6 +282,17 @@
       "branch": "haul"
     },
     {
+      "id": "momentum",
+      "cost": 40,
+      "requires": [
+        "heavy_butt"
+      ],
+      "effect": {
+        "figure": "momentum_hit",
+        "amount": 0.4
+      }
+    },
+    {
       "id": "heavy_lift",
       "cost": 40,
       "requires": [

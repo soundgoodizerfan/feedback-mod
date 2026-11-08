@@ -114,7 +114,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *
      * @param name   lang key tail ({@code gun.feedback.designation.<name>}).
      * @param is     facts that must equal one alternative: {@code variant}, {@code action}, {@code feed},
-     *               {@code sight}, {@code barrel} (short, medium, long) and {@code calibre} (the barrel's class).
+     *               {@code sight}, {@code barrel} (short, medium, long) and {@code calibre} (the barrel's class), {@code bore} (mm) and {@code length} (barrel, whole cm).
      * @param traits trait ids the build must have.
      * @param without trait ids it must not have.
      */

@@ -104,6 +104,7 @@ Brute: overpower. Weight: the bigger hit, the heavier body, the harder push. Pis
 | --- | --- | --- | --- |
 | Grab | 20 |  | Take hold of what is in front of you, bare-handed. A worn glove improves it: a longer hold, and heavier targets. Throw and the grip nodes build on it. |
 | Shove | 50 | Grab | Cast, held: hands on a vehicle body. A body no heavier than you and your armor is held up in front of the camera; a heavier one is shoved or dragged along the ground at your mass times your speed, with an equal push back on you. See [Shove and carry](Vehicles.md#shove-and-carry). Costs stamina for work delivered. |
+| Momentum | 40 | Heavy butt | A melee blow lands up to 40% harder at a full sprint for an average body: speed times mass, with armor counting. A heavier body gains more, a light one less, and a standing swing gains nothing. |
 | Heavy lift | 40 | Shove | You can carry a body up to 1.5 times your weight before it must be shoved. |
 | Deadlift | 70 | Heavy lift | You can carry a body up to 2 times your weight. |
 | Pistol whip | 15 | Grab | In barehanded mode, attacking with a held gun swings it as a bludgeon. Damage and recovery follow the gun's mass. *(once used, rearms on a landed blow.)* |

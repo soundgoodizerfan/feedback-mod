@@ -86,6 +86,12 @@ public class GrappleHook extends Projectile {
     private float rating;
     /** The fixed line length of a swing, in blocks. */
     private float rope;
+    /** The block a swing is hooked to, or null (creature anchor, drag). */
+    private BlockPos anchorBlock;
+    /** Strain on what the hook bit into: over the block's holding figure it works loose and rips free. */
+    private float holdStrain;
+    private int lastCutter = -1;
+    private int lastCutTick;
 
     public GrappleHook(EntityType<? extends GrappleHook> type, Level level) {
         super(type, level);
@@ -218,6 +224,7 @@ public class GrappleHook extends Projectile {
                 : target != null ? new Tether.Anchor.OnEntity(target.getId()) : new Tether.Anchor.OnBlock(block);
         anchorEntity = target != null ? target.getId() : -1;
         anchorPoint = at;
+        anchorBlock = block;
         heldId = held.getId();
         rating = lineRating();
         lastDistance = (float) held.position().distanceTo(anchorPoint());
@@ -251,6 +258,10 @@ public class GrappleHook extends Projectile {
             discard();
             return;
         }
+        if (anchorBlock != null && level().getBlockState(anchorBlock).isAir()) {
+            discard();
+            return;
+        }
         Vec3 to = anchorPoint();
         setPos(to);
         Vec3 offset = to.subtract(living.position().add(0, living.getBbHeight() * 0.5, 0));
@@ -274,14 +285,28 @@ public class GrappleHook extends Projectile {
         // Each edge the line is dragged over saws at it: a bent line takes more than the body weighs.
         float load = BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f)
                 * (1f + bends.size() * ModularTuning.GRAPPLE_BEND_LOAD);
-        if (load > rating) {
+        if (load > rating)
             strain += (load / rating - 1f) * ModularTuning.GRAPPLE_STRAIN_PER_TICK;
-            if (strain >= 1f) {
-                playSound(SoundEvents.LEASH_KNOT_BREAK, 1f, 1f);
-                if (owner instanceof Player p)
-                    GrappleItem.wear(p, ModularTuning.GRAPPLE_BREAK_WEAR);
-                discard();
-                return;
+        Vec3 end = living.position().add(0, living.getBbHeight() * 0.5, 0);
+        java.util.List<Vec3> path = path(to, end);
+        strain += burn(path) + cut(path, owner, living, rating);
+        if (strain >= 1f) {
+            playSound(SoundEvents.LEASH_KNOT_BREAK, 1f, 1f);
+            if (owner instanceof Player p)
+                GrappleItem.wear(p, ModularTuning.GRAPPLE_BREAK_WEAR);
+            discard();
+            return;
+        }
+        // A hook in soft or loose ground works out under the same load; a drag has no block to lose.
+        if (anchorBlock != null) {
+            float hold = holdingFigure(level().getBlockState(anchorBlock), level(), anchorBlock);
+            if (load > hold) {
+                holdStrain += (load / hold - 1f) * ModularTuning.GRAPPLE_STRAIN_PER_TICK;
+                if (holdStrain >= 1f) {
+                    level().playSound(null, anchorBlock, SoundEvents.CHAIN_BREAK, net.minecraft.sounds.SoundSource.PLAYERS, 1f, 0.8f);
+                    discard();
+                    return;
+                }
             }
         }
         if (swing) {
@@ -313,6 +338,102 @@ public class GrappleHook extends Projectile {
             return;
         body.setDeltaMovement(constrain(offset, rope, new Vec3(body.getX() - body.xo, body.getY() - body.yo, body.getZ() - body.zo)));
         body.hurtMarked = true;
+    }
+
+    // --- what the world does to the line and the bite -------------------------------------------
+
+    /**
+     * The load, in Mu, the block the hook bit holds: its hardness times {@link ModularTuning#GRAPPLE_HOLD_PER_HARDNESS}.
+     * A falling block (sand, gravel) holds half, and a slick one (ice) a third; an unbreakable block holds anything.
+     */
+    static float holdingFigure(net.minecraft.world.level.block.state.BlockState state, Level level, BlockPos pos) {
+        float hardness = state.getDestroySpeed(level, pos);
+        if (hardness < 0)
+            return Float.MAX_VALUE;
+        float hold = Math.max(hardness, 0.05f) * ModularTuning.GRAPPLE_HOLD_PER_HARDNESS;
+        if (state.getBlock() instanceof net.minecraft.world.level.block.Fallable)
+            hold *= ModularTuning.GRAPPLE_HOLD_LOOSE;
+        if (state.getBlock().getFriction() >= ModularTuning.GRAPPLE_SLICK_FRICTION)
+            hold *= ModularTuning.GRAPPLE_HOLD_SLICK;
+        return hold;
+    }
+
+    /** The line as a polyline: the anchor, each bend, the held body. */
+    private java.util.List<Vec3> path(Vec3 anchor, Vec3 end) {
+        java.util.List<Vec3> pts = new java.util.ArrayList<>(bends.size() + 2);
+        pts.add(anchor);
+        pts.addAll(bends);
+        pts.add(end);
+        return pts;
+    }
+
+    private static double distanceToSegment(Vec3 p, Vec3 a, Vec3 b) {
+        Vec3 ab = b.subtract(a);
+        double len2 = ab.lengthSqr();
+        double t = len2 < 1.0e-9 ? 0 : Math.max(0, Math.min(1, p.subtract(a).dot(ab) / len2));
+        return p.distanceTo(a.add(ab.scale(t)));
+    }
+
+    private static double distanceToLine(Vec3 p, java.util.List<Vec3> path) {
+        double best = Double.MAX_VALUE;
+        for (int i = 0; i + 1 < path.size(); i++)
+            best = Math.min(best, distanceToSegment(p, path.get(i), path.get(i + 1)));
+        return best;
+    }
+
+    /** Strain this tick from fire or lava touching the line, when it is hotter than the line's material oxidises. */
+    private float burn(java.util.List<Vec3> path) {
+        Material m = MaterialTable.get().materials().get(ROPE_MATERIAL);
+        if (m == null || m.thermal().oxidationTemperature().isEmpty())
+            return 0f;
+        float oxidises = m.thermal().oxidationTemperature().get().value();
+        for (int i = 0; i + 1 < path.size(); i++) {
+            Vec3 a = path.get(i), b = path.get(i + 1);
+            int steps = Math.max(1, (int) Math.ceil(a.distanceTo(b) / 2.0));
+            for (int k = 0; k <= steps; k++) {
+                Vec3 p = a.lerp(b, k / (double) steps);
+                BlockPos at = BlockPos.containing(p);
+                net.minecraft.world.level.block.state.BlockState state = level().getBlockState(at);
+                float heat = state.getFluidState().is(net.minecraft.tags.FluidTags.LAVA) ? io.github.soundgoodizerfan.feedback.core.FTuning.FIRE_TU_LAVA.value()
+                        : state.is(net.minecraft.tags.BlockTags.FIRE) ? io.github.soundgoodizerfan.feedback.core.FTuning.FIRE_TU_CAMPFIRE.value() : 0f;
+                if (heat > oxidises) {
+                    ((net.minecraft.server.level.ServerLevel) level()).sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0.01);
+                    return ModularTuning.GRAPPLE_BURN_PER_TICK;
+                }
+            }
+        }
+        return 0f;
+    }
+
+    /**
+     * Strain from a blade swung across the line or an arrow through it: the attacker's attack damage (arrow: speed times
+     * base damage) over the line's rating, times {@link ModularTuning#GRAPPLE_CUT_PER_DAMAGE}. Your own arrows pass.
+     */
+    private float cut(java.util.List<Vec3> path, Entity owner, LivingEntity held, float rating) {
+        net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(path.get(0), path.get(0));
+        for (Vec3 p : path)
+            box = box.minmax(new net.minecraft.world.phys.AABB(p, p));
+        box = box.inflate(ModularTuning.GRAPPLE_CUT_REACH + 1.0);
+        float edge = 0f;
+        for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, box, e -> e != owner && e != held && e.swinging && e.swingTime <= 0)) {
+            if (lastCutter == e.getId() && tickCount - lastCutTick < 8)
+                continue;
+            Vec3 eye = e.getEyePosition(), look = e.getLookAngle();
+            for (int k = 1; k <= 3; k++) {
+                if (distanceToLine(eye.add(look.scale(k)), path) < ModularTuning.GRAPPLE_CUT_WIDTH) {
+                    edge += (float) e.getAttributeValue(Attributes.ATTACK_DAMAGE);
+                    lastCutter = e.getId();
+                    lastCutTick = tickCount;
+                    break;
+                }
+            }
+        }
+        for (net.minecraft.world.entity.projectile.AbstractArrow a : level().getEntitiesOfClass(net.minecraft.world.entity.projectile.AbstractArrow.class, box,
+                a -> a.getOwner() != owner && !a.onGround() && a.getDeltaMovement().lengthSqr() > 0.04)) {
+            if (distanceToLine(a.position(), path) < ModularTuning.GRAPPLE_CUT_WIDTH)
+                edge += (float) (a.getDeltaMovement().length() * a.getBaseDamage());
+        }
+        return edge <= 0f ? 0f : edge / rating * ModularTuning.GRAPPLE_CUT_PER_DAMAGE;
     }
 
     @Override

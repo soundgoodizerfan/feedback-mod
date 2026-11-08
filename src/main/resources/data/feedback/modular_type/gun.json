@@ -1216,7 +1216,7 @@
         "is": {
           "variant": "handgun",
           "feed": "cylinder",
-          "bore": "20"
+          "length": "80"
         }
       },
       {

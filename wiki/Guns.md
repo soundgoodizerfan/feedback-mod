@@ -82,7 +82,7 @@ The **name** on the tooltip, and beside the type name in the Blueprint Table, is
 | Frame | Name | What gives it |
 | --- | --- | --- |
 | Handgun | **Derringer** | two barrels |
-| | **Big Iron** | a cylinder and a bore of exactly 20 mm (named with its material, "Steel Big Iron"; firing one earns a hidden advancement of the same name) |
+| | **Big Iron** | a cylinder and a barrel of the maximum length, 80 cm (named with its material, "Steel Big Iron"; firing one earns a hidden advancement of the same name) |
 | | **Shot revolver** | a cylinder, smoothbore, wide gauge |
 | | **Shot pistol** | smoothbore, wide gauge |
 | | **Revolver** | a cylinder |

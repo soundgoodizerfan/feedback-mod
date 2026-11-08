@@ -140,6 +140,8 @@ A **tether** is a line that holds a living thing. A [harpoon](Tools_and_Weapons.
 
 ## How a hit feels
 
+**Landing on someone.** A fall of two blocks or more that ends on a creature lands on it, not the ground: it takes the fall by your share of the two masses (armor counts) and is staggered by the drop's energy, and you take half the fall damage. No skill is needed.
+
 Landing a parry gives an **impact frame**: a one-to-two-frame white flash, a camera roll and field-of-view pop, sparks, and a sound that's heavier for a heavy blow. The two fighters get all of it; bystanders within 16 blocks get a third of the flash. There is no hit-stop (the world never freezes). Missed windows thud dully, a press you can't use clicks, and a faint tick tells you when you're free again.
 
 Fighters also move: the arm raises for a parry (a dagger fast, a greatsword slow and low), you tumble through a roll, and a stagger recoils the body.

@@ -301,8 +301,8 @@ public final class ModularModifiers {
             case "studded" -> new Object[]{n(p(v, "per_stud", 1)), n(p(v, "max", 3)), n(p(v, "wear", 1))};
             case "rigid" -> new Object[]{n(p(v, "absorb_mult", 0.7f))};
             case "mail" -> new Object[]{n(p(v, "slash_mult", 0.75f)), n(p(v, "blunt_mult", 1.3f))};
-            case "kick" -> new Object[]{n(p(v, "strength", 1)), n(p(v, "exhaustion", 0.3f)), n(p(v, "wear", 1)),
-                    n(p(v, "cooldown_ticks", 30) / 20)};
+            case "push_through" -> new Object[]{n(p(v, "max", 0.8f) * 100), n(p(v, "exhaustion", 0.3f)), n(p(v, "wear", 1)),
+                    n(p(v, "cooldown_ticks", 30) / 20), n(p(v, "ref_mu", 200))};
             case "braced" -> new Object[]{n(p(v, "knock_mult", 0.6f)), n(p(v, "swim_slow", 0.15f) * 100)};
             case "blowback" -> new Object[]{n(p(v, "pressure_limit", 1.2f) * FTuning.GUN_PROPELLANT_PEAK_PU), n(p(v, "wear_mult", 2f))};
             case "bolt_lockup" -> new Object[]{n((p(v, "rating_mult", 1.25f) - 1) * 100), n((1 - p(v, "spread_mult", 0.8f)) * 100)};
@@ -311,8 +311,8 @@ public final class ModularModifiers {
             case "gun_braced" -> new Object[]{n((1 - p(v, "kick_mult", 0.7f)) * 100), n((1 - p(v, "spread_mult", 0.6f)) * 100)};
             case "open_bolt" -> new Object[]{n(p(v, "idle_ms", 1500) / 1000), n(p(v, "first_shot_spread", 2f))};
             case "belt_fed" -> new Object[]{n(p(v, "reload_mult", 2f))};
-            case "trample" -> new Object[]{n(p(v, "min_fall", 3)), n(p(v, "radius", 1.5f)), n(p(v, "per_block", 1)),
-                    n(p(v, "max", 12)), n(p(v, "wear", 1))};
+            case "trample" -> new Object[]{n(p(v, "min_fall", 3)), n(p(v, "radius", 1.5f)), n(p(v, "weight", 40)),
+                    n(p(v, "wear", 1))};
             case "spurs" -> new Object[]{n(p(v, "boost_ticks", 60) / 20), n(p(v, "level", 1)), n(p(v, "cooldown_ticks", 200) / 20)};
             default -> new Object[0];
         };

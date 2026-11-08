@@ -57,6 +57,14 @@ The line also lets go if it parts, if it has been out for ten seconds, or if eit
 
 A [Tether](Combat.md#tethers) holds the body on the line, and a creature held that way takes extra damage as with a harpoon.
 
+## What the hook bites into
+
+A swing's hook holds by the block it bit: its hardness sets the load it takes. Stone, logs and metal hold a player easily; dirt, netherrack, snow, leaves and wool let go under a player's weight, sand and gravel hold half as well as their hardness says, and ice a third. A block that cannot be broken holds anything. Over the figure the hook works loose, gaining strain each tick, and **rips free at full strain** (no wear on the grapple). If the block is broken out from under the hook, the line lets go.
+
+## Fire and blades
+
+Fire or lava touching the line burns it through in about a second if the line's material oxidises below the flame's temperature (string does). A sword swung across the line, or an arrow flying through it (not your own), strains it by the attacker's damage over the line's rating: an iron sword parts string in a swing or two, a bare fist takes many.
+
 ## The line has a rating
 
 The line's material (string, wool's strength) sets the load it can take. The load is the mass of the body on the line. A creature being hauled in counts as far heavier on any tick its reel stalls (caught on a corner, held by the ground). While you swing, your own weight is the load, plus a quarter of it for every edge the line is bent over, so a heavy player on a weak line can part it. Over the rating the line gains strain every tick and **parts at full strain**; a heavier overload parts it sooner. The grapple takes 20 wear when the line parts. A load under the rating never strains it, and wear is for misuse: a pull or swing under the rating costs nothing.

@@ -50,6 +50,8 @@ public final class GunDesignation {
                 "barrel", spec.barrelBand().name().toLowerCase(Locale.ROOT),
                 "calibre", GunCalibres.nearest(bore).name(),
                 "bore", String.valueOf(bore),
+                // Barrel length in whole centimetres: the longest barrel a gun can be fitted with reads "80".
+                "length", String.valueOf(Math.round(spec.barrel().lengthM() * 100)),
                 // What throws the round and, for a chamber, how its bore is finished; and whether the bore is wide enough to take a shell.
                 "finish", spec.launcher() != GunSpec.Launcher.CHAMBER ? spec.launcher().name().toLowerCase(Locale.ROOT)
                         : traits.contains("gun_rifling") ? "rifled" : "smooth",

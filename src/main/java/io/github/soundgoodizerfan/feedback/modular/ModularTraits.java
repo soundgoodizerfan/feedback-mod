@@ -65,7 +65,7 @@ public final class ModularTraits {
         register("studded", new io.github.soundgoodizerfan.feedback.modular.trait.Studded());
         register("rigid", new io.github.soundgoodizerfan.feedback.modular.trait.Rigid());
         register("mail", new io.github.soundgoodizerfan.feedback.modular.trait.Mail());
-        register("kick", new io.github.soundgoodizerfan.feedback.modular.trait.Kick());
+        register("push_through", new io.github.soundgoodizerfan.feedback.modular.trait.PushThrough());
         register("braced", new io.github.soundgoodizerfan.feedback.modular.trait.Braced());
         register("trample", new io.github.soundgoodizerfan.feedback.modular.trait.Trample());
         register("spurs", new io.github.soundgoodizerfan.feedback.modular.trait.Spurs());

@@ -36,9 +36,10 @@
           {
             "name": "greaves",
             "rhythm": "t.h.t.h.t.h.",
-            "trait": "kick",
+            "trait": "push_through",
             "params": {
-              "strength": 1.0,
+              "max": 0.8,
+              "ref_mu": 200,
               "exhaustion": 0.3,
               "wear": 1,
               "cooldown_ticks": 30

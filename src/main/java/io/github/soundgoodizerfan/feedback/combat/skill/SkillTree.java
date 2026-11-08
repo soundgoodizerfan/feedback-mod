@@ -53,6 +53,8 @@ public record SkillTree(String tree, List<Node> nodes) {
         LOW_STAMINA_REGEN,
         /** Added to the ratio of body mass to yours that Shove and Carry will carry (rather than shove): 0.5 is half again your weight. */
         CARRY_RATIO,
+        /** Fraction added to a melee blow at a full sprint by an average body: speed times mass (0.4 is two-fifths more). */
+        MOMENTUM_HIT,
         /** Fraction taken off a tether's pull on you while crouched, scaled up by worn armour mass (0.3 is under a third bare). */
         FOOTING,
         /** Ticks a click on a hand crank keeps it turning, added while the crank's network is under load. */

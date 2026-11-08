@@ -737,6 +737,13 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> {
                 out.add(new Fault(f.roles(), Component.translatable("message.feedback.blueprint_table.fault." + f.reason())));
             if (!found.isEmpty())
                 return out;
+            // The physics accepts the parts but the print still fails: say whether the table would not read them back or the bake has no figures.
+            if (GunSpec.of(design.get(), t, ClientMaterials.get()).isPresent()) {
+                boolean read = ToolDesigns.make(design.get(), ModularTypes.known(), ClientMaterials.get()).isPresent();
+                out.add(new Fault(List.of(), Component.translatable(read ? "message.feedback.blueprint_table.cannot_print_gun_bake"
+                        : "message.feedback.blueprint_table.cannot_print_gun_read")));
+                return out;
+            }
         }
         out.add(new Fault(List.of(), Component.translatable(t.family() == ModularType.Family.GUN
                 ? "message.feedback.blueprint_table.cannot_print_gun" : "message.feedback.blueprint_table.cannot_print")));
