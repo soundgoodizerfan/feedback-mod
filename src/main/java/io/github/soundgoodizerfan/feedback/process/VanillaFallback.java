@@ -38,6 +38,13 @@ public final class VanillaFallback {
 
     private static net.minecraft.world.item.crafting.RecipeManager builtFor;
     private static List<ThermalProcess> built = List.of();
+    /** The experience each built row's recipe pays, by row identity; a row that is not here pays none. */
+    private static final java.util.Map<ThermalProcess, Float> XP = new java.util.IdentityHashMap<>();
+
+    /** Experience a finished run of {@code row} banks: the cooking recipe's own figure, 0 for an authored row. */
+    public static synchronized float xpOf(ThermalProcess row) {
+        return XP.getOrDefault(row, 0f);
+    }
     private static final java.util.Map<net.minecraft.world.item.Item, List<ThermalProcess>> BY_ITEM = new java.util.HashMap<>();
 
     /**
@@ -85,6 +92,7 @@ public final class VanillaFallback {
         if (manager != builtFor) {
             builtFor = manager;
             BY_ITEM.clear();
+            XP.clear();
             List<ThermalProcess> all = new java.util.ArrayList<>();
             for (RecipeType<? extends AbstractCookingRecipe> type : TYPES)
                 for (RecipeHolder<? extends AbstractCookingRecipe> holder : manager.getAllRecipesFor((RecipeType<AbstractCookingRecipe>) type)) {
@@ -94,6 +102,7 @@ public final class VanillaFallback {
                     List<net.minecraft.world.item.crafting.Ingredient> inputs = List.of(recipe.getIngredients().get(0));
                     ItemStack result = recipe.getResultItem(level.registryAccess());
                     float hold = recipe.getCookingTime();
+                    int before = all.size();
                     if (recipe instanceof SmokingRecipe)
                         all.add(new ThermalProcess(inputs, FTuning.AMBIENT_TU, FTuning.SMOKING_OPTIMAL_TU, FTuning.FOOD_MAX_TU, hold,
                                 new io.github.soundgoodizerfan.feedback.core.unit.TuRate(Float.MAX_VALUE), result, FTuning.FOOD_MAX_TU,
@@ -103,6 +112,8 @@ public final class VanillaFallback {
                                 recipe instanceof BlastingRecipe ? FTuning.BLASTING_OPTIMAL_TU : FTuning.SMELTING_OPTIMAL_TU,
                                 new Tu(Float.MAX_VALUE), hold, new io.github.soundgoodizerfan.feedback.core.unit.TuRate(Float.MAX_VALUE),
                                 result, new Tu(Float.MAX_VALUE), ItemStack.EMPTY, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false));
+                    for (int row = before; row < all.size(); row++)
+                        XP.put(all.get(row), recipe.getExperience());
                 }
             built = List.copyOf(all);
         }

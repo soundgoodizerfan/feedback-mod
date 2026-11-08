@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "minecraft:lapis_block"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    }
+  },
+  "pattern": [
+    "PWP",
+    "WLW",
+    "PWP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:ore_tap"
+  }
+}

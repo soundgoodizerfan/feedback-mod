@@ -431,6 +431,8 @@ public final class ModularTuning {
     public static final int ENCHANT_TICK_SLACK = 40;
     /** Experience a session costs, spent whatever the outcome: drawn from a Creative XP source beside the table, else the player's own points. */
     public static final XPu ENCHANT_XP_COST = new XPu(30);
+    /** Invented. The level an XP run beside the table must stand at before it pays a session; a trickle at a low level cannot push a sigil through. [OPEN] */
+    public static final float ENCHANT_RUN_MIN_LEVEL = 5f;
     /** The share of {@link #ENCHANT_XP_COST} a part at its attuning point or hotter saves; a part at its lock saves none. [OPEN] */
     public static final float ENCHANT_HOT_DISCOUNT = 0.6f;
     /** The share of the experience cost a fresh potion burned as an attunement's reagent saves, times its potency. [OPEN] until played */

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "G": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "pattern": [
+    " G ",
+    "WAW",
+    " P "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:xp_meter"
+  }
+}

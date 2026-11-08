@@ -207,6 +207,11 @@ public class FCreativeTabs {
                         output.accept(FItems.CRYSTAL_HOLDER.get());
                         output.accept(FItems.CULTURE_DISH.get());
                         output.accept(FItems.CATALYST_TAP.get());
+                        output.accept(FItems.ORB_ABSORBER.get());
+                        output.accept(FItems.ORE_TAP.get());
+                        output.accept(FItems.TRADE_TAP.get());
+                        output.accept(FItems.SMELTER_TAP.get());
+                        output.accept(FItems.DISENCHANT_STONE.get());
                         output.accept(FItems.SCULK_RELAY.get());
                         output.accept(FItems.DATA_SENSOR.get());
                         output.accept(FItems.CULTURE_SEED.get());

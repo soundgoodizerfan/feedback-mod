@@ -438,6 +438,8 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         else
             placeHot(process.result().copy());
 
+        bankedXp = Math.min(FTuning.VESSEL_XP_BANK_MAX, bankedXp
+                + io.github.soundgoodizerfan.feedback.process.VanillaFallback.xpOf(process));
         setTpu(slot, 0f);
         sync();
     }
@@ -631,6 +633,24 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             sync();
     }
 
+    /** Experience a vanilla cooking recipe banked here, in points; a Smelter Tap drains it, a broken vessel spills it. */
+    private float bankedXp;
+
+    /** Points banked, whole. */
+    public int bankedXp() {
+        return (int) bankedXp;
+    }
+
+    /** Takes up to {@code wanted} whole points out of the bank; the points that came. */
+    public int drainXp(int wanted) {
+        int took = Math.min(wanted, (int) bankedXp);
+        if (took > 0) {
+            bankedXp -= took;
+            setChanged();
+        }
+        return took;
+    }
+
     public void sync() {
         setChanged();
         if (level != null && !level.isClientSide)
@@ -643,6 +663,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
     protected void saveCore(CompoundTag tag) {
         tag.putFloat("Temperature", temperature);
         tag.putFloat("CurrentTpu", currentTpu);
+        tag.putFloat("BankedXp", bankedXp);
         for (int i = 0; i < slotTpu.length; i++)
             tag.putFloat("SlotTpu" + i, slotTpu[i]);
         alloy.writeNbt(tag);
@@ -660,6 +681,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
     protected void loadCore(CompoundTag tag) {
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         currentTpu = tag.getFloat("CurrentTpu");
+        bankedXp = tag.getFloat("BankedXp");
         List<ItemStack> held = processSlots();
         slotTpu = new float[held.size()];
         for (int i = 0; i < slotTpu.length; i++)

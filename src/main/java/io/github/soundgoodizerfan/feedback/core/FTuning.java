@@ -3572,6 +3572,16 @@ public final class FTuning {
     public static final float CULTURE_SEED_CHANCE = 1f / 3f;
     /** Invented. Blocks around a Catalyst Tap within which a death's XP is taken into the run, and blocks within which sculk relays join runs. */
     public static final double TAP_RADIUS = 8.0, RELAY_RANGE = 24.0;
+    /** Invented. Blocks around an Orb Absorber from which it pulls loose orbs into its run, once a second. */
+    public static final double ABSORBER_RADIUS = 4.0;
+    /** Invented. Blocks around an Ore Tap and a Trade Tap within which a block broken or a trade made gives its XP to the run. */
+    public static final double ORE_TAP_RADIUS = 8.0, TRADE_TAP_RADIUS = 8.0;
+    /** Invented. Points a vessel banks from vanilla cooking recipes before it stops banking; a Smelter Tap drains the bank a second at a time. */
+    public static final float VESSEL_XP_BANK_MAX = 400f;
+    /** Invented. Points a Smelter Tap moves from a vessel's bank to its run each second. */
+    public static final int SMELTER_TAP_POINTS_PER_SECOND = 20;
+    /** Invented. Share of an attunement's session cost that stripping it at the Disenchanting Stone gives back. */
+    public static final float UNATTUNE_REFUND = 0.5f;
     /** Invented. A Data Sensor hears within this many blocks (vanilla's sensor radius) and holds a heard frequency this many ticks (vanilla's cooldown). */
     public static final int DATA_SENSOR_RADIUS = 8, DATA_SENSOR_HOLD_TICKS = 40;
 

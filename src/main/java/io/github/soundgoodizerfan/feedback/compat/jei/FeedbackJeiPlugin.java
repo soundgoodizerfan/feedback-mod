@@ -337,6 +337,12 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.BALANCE_SCALE.get(), "balance_scale");
         info(registration, FModular.SURVEY_METER.get(), "survey_meter");
         info(registration, FItems.XP_METER.get(), "xp_meter");
+        info(registration, FItems.ORB_ABSORBER.get(), "orb_absorber");
+        info(registration, FItems.ORE_TAP.get(), "ore_tap");
+        info(registration, FItems.TRADE_TAP.get(), "trade_tap");
+        info(registration, FItems.SMELTER_TAP.get(), "smelter_tap");
+        info(registration, FItems.DISENCHANT_STONE.get(), "disenchant_stone");
+        info(registration, FItems.CRYSTAL_HOLDER.get(), "crystal_holder");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BURNER.get().asItem(), "burner");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BREAKER.get().asItem(), "breaker");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BELLOWS.get().asItem(), "bellows");

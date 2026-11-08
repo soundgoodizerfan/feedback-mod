@@ -1027,6 +1027,35 @@ public class FBlocks {
                     .mapColor(MapColor.COLOR_CYAN)
                     .strength(2.0f)
                     .sound(SoundType.SCULK_CATALYST)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock> ORB_ABSORBER = BLOCKS.register("orb_absorber",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_CYAN)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL),
+                    io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock.Kind.ORB));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock> ORE_TAP = BLOCKS.register("ore_tap",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.LAPIS)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL),
+                    io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock.Kind.ORE));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock> TRADE_TAP = BLOCKS.register("trade_tap",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.EMERALD)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL),
+                    io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock.Kind.TRADE));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock> SMELTER_TAP = BLOCKS.register("smelter_tap",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GRAY)
+                    .strength(2.0f)
+                    .sound(SoundType.METAL),
+                    io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlock.Kind.SMELTER));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.xp.DisenchantStoneBlock> DISENCHANT_STONE = BLOCKS.register("disenchant_stone",
+            () -> new io.github.soundgoodizerfan.feedback.machine.xp.DisenchantStoneBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(2.5f)
+                    .sound(SoundType.STONE)));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.sculk.SculkRelayBlock> SCULK_RELAY = BLOCKS.register("sculk_relay",
             () -> new io.github.soundgoodizerfan.feedback.machine.sculk.SculkRelayBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_CYAN)

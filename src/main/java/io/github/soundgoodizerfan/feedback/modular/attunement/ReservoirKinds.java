@@ -112,6 +112,32 @@ public final class ReservoirKinds {
         event.setCanceled(true);
     }
 
+    /**
+     * Sneak-use on any other XP node on a run: the lower level gives to the higher one, as in the air, at {@link #TRANSFER} points a use.
+     * A tool below the run's level draws from it; a tool above it gives back.
+     */
+    @SubscribeEvent
+    public static void onUseOnRun(PlayerInteractEvent.RightClickBlock event) {
+        Player player = event.getEntity();
+        ItemStack stack = event.getItemStack();
+        XpStore s = store(stack);
+        if (player.level().isClientSide || !player.isShiftKeyDown() || s == null
+                || !(player.level().getBlockEntity(event.getPos()) instanceof io.github.soundgoodizerfan.feedback.core.xp.XpNode node)
+                || node instanceof CreativeXpBlockEntity || node.network() == null)
+            return;
+        var run = node.network();
+        int moved;
+        if (run.level() > s.level()) {
+            moved = add(stack, run.draw(Math.min(TRANSFER, s.maxPoints() - s.points())));
+        } else {
+            int out = take(stack, TRANSFER);
+            moved = run.inject(out);
+            add(stack, out - moved);
+        }
+        player.displayClientMessage(Component.translatable(moved > 0 ? "feedback.reservoir.filled" : "feedback.reservoir.full"), true);
+        event.setCanceled(true);
+    }
+
     /** Sneak-use in the air: the lower level gives to the higher one, so the two settle toward each other. */
     @SubscribeEvent
     public static void onUse(PlayerInteractEvent.RightClickItem event) {

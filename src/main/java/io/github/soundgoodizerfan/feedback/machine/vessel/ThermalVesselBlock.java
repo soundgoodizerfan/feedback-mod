@@ -115,6 +115,8 @@ public class ThermalVesselBlock extends Block implements EntityBlock, io.github.
                         ItemHeat.set(vessel.getItem(slot), vessel.getTemperature(), level);
                 Containers.dropContents(level, pos, vessel);
                 Fittable.dropAll(vessel, level, pos);
+                if (level instanceof net.minecraft.server.level.ServerLevel server && vessel.bankedXp() > 0)
+                    net.minecraft.world.entity.ExperienceOrb.award(server, net.minecraft.world.phys.Vec3.atCenterOf(pos), vessel.bankedXp());
                 level.updateNeighbourForOutputSignal(pos, this);
             }
             super.onRemove(state, level, pos, newState, movedByPiston);

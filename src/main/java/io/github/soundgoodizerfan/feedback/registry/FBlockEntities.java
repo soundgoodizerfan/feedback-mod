@@ -462,6 +462,10 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity>> CULTURE_DISH =
             BLOCK_ENTITIES.register("culture_dish", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity::new, FBlocks.CULTURE_DISH.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlockEntity>> XP_TAP =
+            BLOCK_ENTITIES.register("xp_tap", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.xp.XpTapBlockEntity::new, FBlocks.ORB_ABSORBER.get(), FBlocks.ORE_TAP.get(),
+                            FBlocks.TRADE_TAP.get(), FBlocks.SMELTER_TAP.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlockEntity>> CATALYST_TAP =
             BLOCK_ENTITIES.register("catalyst_tap", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.sculk.CatalystTapBlockEntity::new, FBlocks.CATALYST_TAP.get()).build(null));

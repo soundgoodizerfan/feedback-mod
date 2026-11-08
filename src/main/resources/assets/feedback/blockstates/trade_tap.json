@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "feedback:block/trade_tap"
+    }
+  }
+}

@@ -145,6 +145,17 @@ public class EnchantMenu extends AbstractContainerMenu {
         }).flatMap(o -> o).orElse(null);
     }
 
+    /** The XP run beside the table that can pay {@code cost} at a level of at least the minimum, or null. */
+    private io.github.soundgoodizerfan.feedback.core.xp.XpNetwork run(int cost) {
+        return access.evaluate((level, pos) -> {
+            for (Direction d : Direction.values())
+                if (level.getBlockEntity(pos.relative(d)) instanceof io.github.soundgoodizerfan.feedback.core.xp.XpNode node
+                        && node.network() != null && node.network().canPay(cost, ModularTuning.ENCHANT_RUN_MIN_LEVEL))
+                    return Optional.of(node.network());
+            return Optional.<io.github.soundgoodizerfan.feedback.core.xp.XpNetwork>empty();
+        }).flatMap(o -> o).orElse(null);
+    }
+
     /** The slot of a potion bottle in {@code server}'s inventory matching the effect's optional potion reagent, or -1. */
     private static int reagentSlot(ServerPlayer server, Attunements.Effect e) {
         if (e.reagent().isEmpty())
@@ -182,7 +193,7 @@ public class EnchantMenu extends AbstractContainerMenu {
         int owed = price(server, Attunements.get().effects().get(effect), EnchantGame.cost(m.attuning(), temperature));
         if (attuned(effect)) {
             say(server, "attuned");
-        } else if (!server.isCreative() && tap(owed) == null && server.totalExperience < owed) {
+        } else if (!server.isCreative() && tap(owed) == null && run(owed) == null && server.totalExperience < owed) {
             say(server, "xp");
         } else
             EnchantGame.begin(server.getUUID(), new EnchantGame.Session(effect, server.level().getGameTime(), temperature));
@@ -215,8 +226,13 @@ public class EnchantMenu extends AbstractContainerMenu {
             server.getInventory().setItem(reagent, new ItemStack(net.minecraft.world.item.Items.GLASS_BOTTLE));
             server.containerMenu.broadcastChanges();
         }
-        if (!server.isCreative() && tap(cost) == null)
-            server.giveExperiencePoints(-cost);
+        if (!server.isCreative() && tap(cost) == null) {
+            var run = run(cost);
+            if (run != null)
+                run.draw(cost);
+            else
+                server.giveExperiencePoints(-cost);
+        }
         if (verdict.none()) {
             say(server, "nothing");
             return;

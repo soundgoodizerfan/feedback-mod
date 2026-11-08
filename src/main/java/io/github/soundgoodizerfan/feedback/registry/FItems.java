@@ -372,6 +372,11 @@ public class FItems {
     public static final DeferredItem<Item> RELAY_ORGAN = ITEMS.registerSimpleItem("relay_organ");
     public static final DeferredItem<BlockItem> CULTURE_DISH = ITEMS.registerSimpleBlockItem(FBlocks.CULTURE_DISH);
     public static final DeferredItem<BlockItem> CATALYST_TAP = ITEMS.registerSimpleBlockItem(FBlocks.CATALYST_TAP);
+    public static final DeferredItem<BlockItem> ORB_ABSORBER = ITEMS.registerSimpleBlockItem(FBlocks.ORB_ABSORBER);
+    public static final DeferredItem<BlockItem> ORE_TAP = ITEMS.registerSimpleBlockItem(FBlocks.ORE_TAP);
+    public static final DeferredItem<BlockItem> TRADE_TAP = ITEMS.registerSimpleBlockItem(FBlocks.TRADE_TAP);
+    public static final DeferredItem<BlockItem> SMELTER_TAP = ITEMS.registerSimpleBlockItem(FBlocks.SMELTER_TAP);
+    public static final DeferredItem<BlockItem> DISENCHANT_STONE = ITEMS.registerSimpleBlockItem(FBlocks.DISENCHANT_STONE);
     public static final DeferredItem<BlockItem> SCULK_RELAY = ITEMS.registerSimpleBlockItem(FBlocks.SCULK_RELAY);
     public static final DeferredItem<BlockItem> DATA_SENSOR = ITEMS.registerSimpleBlockItem(FBlocks.DATA_SENSOR);
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.xp.XpWireItem> XP_WIRE = ITEMS.register("xp_wire",

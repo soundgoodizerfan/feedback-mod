@@ -18,7 +18,7 @@ Pick an effect from the list on the left. Each row shows what the effect does on
 
 Some effects name a potion as a reagent (their tooltip says which: Heat takes a potion of fire, Ward a potion of resistance). A bottle of that potion in your inventory is burned with the session, whatever the result, and the empty bottle returns. A fresh potion saves up to half of the experience cost; a faded one saves less.
 
-Four lamps under the pad say what stands between you and Begin: a part seated, whether the part is hot (lit: cheaper but timed; dark: full price, no rush), an effect picked with room for it, and experience to pay. Hover a lamp to read what it means.
+Four lamps under the pad say what stands between you and Begin: a part seated, whether the part is hot (lit: cheaper but timed; dark: full price, no rush), an effect picked with room for it, and experience to pay (from an [XP run](Experience.md#drawing-from-a-run) touching the table if it stands high enough, else from you). Hover a lamp to read what it means.
 
 On the right of the screen is the **pad**, with the part's heat beside it.
 

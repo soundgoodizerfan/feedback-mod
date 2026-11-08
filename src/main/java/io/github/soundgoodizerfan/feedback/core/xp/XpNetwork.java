@@ -98,6 +98,38 @@ public final class XpNetwork {
         return points - left;
     }
 
+    /**
+     * Takes up to {@code points} out of the run's containers, the fullest level first, and returns how many came. A run
+     * pinned by a creative source gives all of it and loses none.
+     */
+    public int draw(int points) {
+        if (!Float.isNaN(pinned()))
+            return points;
+        int left = points;
+        while (left > 0) {
+            XpNode high = null;
+            for (XpNode n : members) {
+                XpStore s = n.xpStore();
+                if (s != null && s.points() > 0 && (high == null || s.level() > high.xpStore().level()))
+                    high = n;
+            }
+            if (high == null)
+                break;
+            XpStore s = high.xpStore();
+            int took = Math.min(left, s.points());
+            high.xpSet(s.with(s.points() - took));
+            left -= took;
+        }
+        if (left < points)
+            wake();
+        return points - left;
+    }
+
+    /** Whether the run holds at least {@code points} and stands at {@code minLevel} or higher. */
+    public boolean canPay(int points, float minLevel) {
+        return level() >= minLevel && (!Float.isNaN(pinned()) || points() >= points);
+    }
+
     void tick(Level level) {
         if (settled && leaked == 0)
             return;

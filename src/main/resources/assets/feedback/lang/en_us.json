@@ -2600,7 +2600,7 @@
   "message.feedback.blueprint_table.fault.launcher": "That part belongs to another kind of launcher than this barrel.",
   "message.feedback.blueprint_table.fault.winding": "This winding cannot drive a round.",
   "message.feedback.blueprint_table.fault.stock": "A long gun or machine gun receiver needs a stock.",
-  "message.feedback.blueprint_table.fault.slot":"Two devices on one mounting.",
+  "message.feedback.blueprint_table.fault.slot": "Two devices on one mounting.",
   "gui.feedback.blueprint_table.print": "Print",
   "gui.feedback.blueprint_table.remove": "Take this part off the drawing",
   "gui.feedback.blueprint_table.sample": "Sample material to preview.",
@@ -5981,5 +5981,17 @@
   "cartridge.feedback.vial": "Carries a vial of %s",
   "cartridge.feedback.anchor": "anchor: glues what it hits",
   "cartridge.feedback.tether": "tether: reels",
-  "cartridge.feedback.seed": "Carries a seed: %s"
+  "cartridge.feedback.seed": "Carries a seed: %s",
+  "block.feedback.orb_absorber": "Orb Absorber",
+  "block.feedback.ore_tap": "Ore Tap",
+  "block.feedback.trade_tap": "Trade Tap",
+  "block.feedback.smelter_tap": "Smelter Tap",
+  "block.feedback.disenchant_stone": "Disenchanting Stone",
+  "message.feedback.disenchant_stone": "An attunement ground off the part.",
+  "feedback.jei.info.orb_absorber": "Pulls loose experience orbs within a few blocks into the XP wire it sits on, once a second. What the run cannot hold stays in the world as orbs.",
+  "feedback.jei.info.ore_tap": "Takes the experience of ore (or any block that pays it) broken within eight blocks into its XP run. Mining machines pay XP the same as a pickaxe.",
+  "feedback.jei.info.trade_tap": "Takes the experience a villager trade pays, when the villager is within eight blocks, into its XP run.",
+  "feedback.jei.info.smelter_tap": "Drains the experience a vessel beside it banked from cooking recipes into its XP run, twenty points a second. A vessel with no tap holds its bank until broken, then spills it as orbs.",
+  "feedback.jei.info.disenchant_stone": "Right-click with an attuned part: one attunement is ground off, and half of what the session cost comes back as XP into a run beside the stone, or as orbs if there is none.",
+  "feedback.jei.info.crystal_holder": "Seats one XP container (an XP container tool or a Reservoir-attuned tool) and shows its store on the XP wire next to it. Take the stack out to take its XP."
 }
