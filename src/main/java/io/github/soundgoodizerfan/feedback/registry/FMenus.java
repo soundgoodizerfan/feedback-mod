@@ -32,6 +32,10 @@ public class FMenus {
     public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> CRUCIBLE =
             MENUS.register("crucible", () -> new MenuType<>(CrucibleMenu::new, FeatureFlags.VANILLA_SET));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.control.computer.ComputerMenu>> COMPUTER =
+            MENUS.register("computer",
+                    () -> IMenuTypeExtension.create((id, inv, buf) -> new io.github.soundgoodizerfan.feedback.control.computer.ComputerMenu(id, inv, buf.readBlockPos())));
+
     /** Extended, not plain -- the client needs the Programmer's {@code BlockPos} to open at. */
     public static final DeferredHolder<MenuType<?>, MenuType<ProgrammerMenu>> PROGRAMMER =
             MENUS.register("programmer",

@@ -16,10 +16,17 @@ A [Programmer](Programming.md) that takes every medium. Crafted from a Programme
 
 ## Computer
 
-An Electric Programmer and an Electric Controller in one block. Crafted from an Electric Controller, an Electric Programmer and a Silicon Ingot.
+An Electric Programmer and an Electric Controller in one block, with a desktop. Crafted from an Electric Controller, an Electric Programmer and a Silicon Ingot.
 
-- Right-click with a medium: it goes into the **Controller slot**, and that program runs while the Computer is powered.
-- Right-click with an empty hand: opens the editor, whose own slot is where you write, print or erase a program.
-- Sneak with an empty hand: takes the medium out of the Controller slot.
+Right-click it to open the desktop. Down the left are **drive bays A to D** and a **RUN** slot, shown as icons: drag program media (Punch Card, Circuit Board, Floppy Disk, USB Drive) onto them from the hotbar along the top, and off again. Click an icon's label to open its **Drive window**:
 
-To run a program, print it in the editor, take the medium out and put it into the Controller slot. The editor needs no power; the Controller slot runs only while the cable delivers.
+- **Edit** opens the medium in the full [Programmer](Programming.md) editor; closing the editor puts the medium back in its bay and returns to the desktop.
+- **Run** moves the medium to the RUN slot, where it runs while the Computer is powered (the Controller's limits and upgrades apply). **Stop** puts it back in a free bay.
+- **Eject** takes it into your inventory.
+
+The taskbar opens two more apps as windows, which you drag by their title bars:
+
+- **Monitor**: the running program's variables and the last reading of each of its sensor cards.
+- **Links**: the blocks the running program's cards are linked to, with their positions.
+
+Right-click with a medium in hand puts it straight into the RUN slot; sneaking with an empty hand takes the running medium out. The editor works without power; the program runs only while the cable delivers.

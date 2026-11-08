@@ -150,6 +150,7 @@ public class FClientSetup {
         event.register(FMenus.MIXER.get(), MixerScreen::new);
         event.register(FMenus.BREWING_STAND.get(), StandScreen::new);
         event.register(FMenus.PROGRAMMER.get(), ProgrammerScreen::new);
+        event.register(FMenus.COMPUTER.get(), ComputerScreen::new);
         event.register(FMenus.CASTING_BASIN.get(), CastingBasinScreen::new);
         event.register(FMenus.RELOADING_PRESS.get(), ReloadingPressScreen::new);
         event.register(FMenus.GUN_TABLE.get(), BenchScreen::new);

@@ -78,6 +78,13 @@ public class ProgrammerMenu extends AbstractContainerMenu {
     }
 
     @Override
+    public void removed(Player player) {
+        super.removed(player);
+        if (programmer instanceof EmbeddedProgrammer embedded && player instanceof net.minecraft.server.level.ServerPlayer server)
+            embedded.editorClosed(server);
+    }
+
+    @Override
     public boolean stillValid(Player player) {
         return container.stillValid(player);
     }

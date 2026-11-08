@@ -4,8 +4,6 @@ package io.github.soundgoodizerfan.feedback.control.computer;
 
 import io.github.soundgoodizerfan.feedback.control.controller.ControllerHands;
 import io.github.soundgoodizerfan.feedback.control.controller.ControllerHost;
-import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlockEntity;
-import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerProvider;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -45,21 +43,20 @@ public class ComputerBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (player.isShiftKeyDown())
             return ControllerHands.take(level, pos, player);
-        ProgrammerBlockEntity programmer = ProgrammerBlockEntity.at(level, pos);
-        if (programmer == null)
+        if (!(level.getBlockEntity(pos) instanceof ComputerBlockEntity computer))
             return InteractionResult.PASS;
-        if (!level.isClientSide) {
-            programmer.sync();
-            player.openMenu(programmer, pos);
-        }
+        if (!level.isClientSide)
+            player.openMenu(computer, pos);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState next, boolean moved) {
         if (!state.is(next.getBlock())) {
-            if (level.getBlockEntity(pos) instanceof ProgrammerProvider provider)
-                Containers.dropContents(level, pos, provider.programmer());
+            if (level.getBlockEntity(pos) instanceof ComputerBlockEntity computer) {
+                Containers.dropContents(level, pos, computer.programmer());
+                Containers.dropContents(level, pos, computer.bays());
+            }
             ControllerHands.dropContents(level, pos);
         }
         super.onRemove(state, level, pos, next, moved);

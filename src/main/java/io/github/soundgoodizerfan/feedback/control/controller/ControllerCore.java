@@ -118,6 +118,21 @@ public class ControllerCore implements Container, Fittable {
         host.setChanged();
     }
 
+    /** The program's variables and their values (a Float or a Boolean each), as last saved or synced; for a monitor. */
+    public Map<String, Object> variables() {
+        return java.util.Collections.unmodifiableMap(variables);
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
+    /** The last reading of each sensor card of the running program, in the plan's sensor order; for a monitor. */
+    public float[] readings() {
+        return current.clone();
+    }
+
     /** Whether this host takes the medium at all: a mechanical Controller takes the Punch Card only. */
     public boolean takesMedium(ItemStack stack) {
         return takes.test(stack);
