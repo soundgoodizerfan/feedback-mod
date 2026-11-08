@@ -67,6 +67,11 @@ public final class XpTaps {
         return points - left;
     }
 
+    /** Pays {@code points} into Trade Taps within reach of {@code at}; whatever no run can hold is not paid at all. */
+    public static void pay(ServerLevel level, net.minecraft.world.phys.Vec3 at, int points) {
+        feed(level, XpTapBlock.Kind.TRADE, at, FTuning.TRADE_TAP_RADIUS, points);
+    }
+
     /** Ore (or anything that pays XP) broken near an Ore Tap: the run takes what it can hold, the rest drops as usual. */
     @SubscribeEvent
     public static void onBreak(BlockDropsEvent event) {

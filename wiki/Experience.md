@@ -39,7 +39,7 @@ Four blocks put the world's experience into the run they sit on. Each joins the 
 |---|---|---|
 | **Orb Absorber** | loose XP orbs, once a second | 4 blocks |
 | **Ore Tap** | the XP of ore (or any block that pays it) broken near it, by hand or by machine | 8 blocks |
-| **Trade Tap** | the XP a villager's trade pays | 8 blocks |
+| **Trade Tap** | the XP a villager's trade pays, and the XP a [Counter](Counter.md) transaction pays (3 points per point of villager experience earned; with no tap in reach a Counter pays no XP at all) | 8 blocks |
 | **Smelter Tap** | the XP a furnace or other vessel beside it earned from smelting, smoking and blasting recipes, 20 points a second | touching the vessel |
 
 A vessel with no Smelter Tap keeps what it earned, up to a cap, and spills it as orbs when it is broken. Authored processes (steel, ceramics, alloys) earn none; only vanilla and modded cooking recipes do.

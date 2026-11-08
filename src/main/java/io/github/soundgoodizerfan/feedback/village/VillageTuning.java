@@ -28,6 +28,8 @@ public final class VillageTuning {
     public static final int WANTS_MIN = 4, WANTS_MAX = 6;
     /** Villager experience a purchase or sale gives. */
     public static final int BUY_XP = 1;
+    /** Invented. Player XP points a Trade Tap is paid per point of villager experience a Counter transaction earns. */
+    public static final int TAP_XP_PER_VILLAGER_XP = 3;
 
     /** Half-width of a band term, as a share of the figure's range: novice, then less each level, to a floor. */
     public static final float TOLERANCE_NOVICE = 0.36f, TOLERANCE_STEP = 0.06f, TOLERANCE_FLOOR = 0.14f;

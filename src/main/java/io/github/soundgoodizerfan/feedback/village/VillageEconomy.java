@@ -290,8 +290,18 @@ public final class VillageEconomy {
 
     /** Delivery experience: the villager's own, and a share to each other member of its guild. */
     static void earn(Villager v, int xp, long day) {
-        addXp(v, xp);
+        sale(v, xp);
         Guilds.mentor(v, xp, day);
+    }
+
+    /**
+     * Villager experience for a completed Counter transaction, and the same trade paid as player XP into a Trade Tap
+     * within reach, if one has room. Nothing drops as orbs: a village with no tap near it pays no player XP.
+     */
+    static void sale(Villager v, int xp) {
+        addXp(v, xp);
+        if (xp > 0 && v.level() instanceof net.minecraft.server.level.ServerLevel level)
+            io.github.soundgoodizerfan.feedback.machine.xp.XpTaps.pay(level, v.position(), xp * VillageTuning.TAP_XP_PER_VILLAGER_XP);
     }
 
     static void addXp(Villager v, int xp) {
@@ -363,7 +373,7 @@ public final class VillageEconomy {
                 continue;
             item.shrink(n);
             v.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day));
-            addXp(v, VillageTuning.BUY_XP);
+            sale(v, VillageTuning.BUY_XP);
             v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
             // The villager did not choose to come: a pushed want pays PUSH_RATE of the line, and a stale food half of that.
             return new Handed(Fate.TAKEN, Math.max(1, Math.round(n * w.priceFor(villagerType(v)) * fresh * VillageTuning.PUSH_RATE)));
@@ -462,7 +472,7 @@ public final class VillageEconomy {
                 }
                 int n = Math.min(stack.getCount(), cap);
                 v.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day).errand(day));
-                addXp(v, VillageTuning.BUY_XP);
+                sale(v, VillageTuning.BUY_XP);
                 v.playSound(SoundEvents.VILLAGER_YES, 1f, v.getVoicePitch());
                 return new Sale(WalkIn.SOLD, slot, n, Math.max(1, Math.round(each * fresh)), market);
             }
@@ -514,7 +524,7 @@ public final class VillageEconomy {
         p.getInventory().placeItemBackInInventory(stackFor(m, g, idx, day));
         m.setData(FVillage.LEDGER, g.weekly() ? ledger.sold(idx, day).weeklyBought(idx, day) : ledger.sold(idx, day));
         if (m instanceof Villager v)
-            addXp(v, VillageTuning.BUY_XP);
+            sale(v, VillageTuning.BUY_XP);
         p.level().playSound(null, m.blockPosition(), SoundEvents.VILLAGER_YES, SoundSource.NEUTRAL, 1f, 1f);
         send(p, menu, view(p, m));
     }
@@ -549,7 +559,7 @@ public final class VillageEconomy {
         p.getInventory().placeItemBackInInventory(new ItemStack(Items.EMERALD, pay));
         m.setData(FVillage.LEDGER, ledger.boughtMore(key, n, day));
         if (m instanceof Villager v)
-            addXp(v, VillageTuning.BUY_XP);
+            sale(v, VillageTuning.BUY_XP);
         p.level().playSound(null, m.blockPosition(), SoundEvents.VILLAGER_YES, SoundSource.NEUTRAL, 1f, 1f);
         send(p, menu, view(p, m).withResult(VillagerView.SALE, -1, false, pay));
     }
