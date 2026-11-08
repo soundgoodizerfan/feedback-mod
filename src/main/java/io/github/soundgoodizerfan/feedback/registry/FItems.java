@@ -395,6 +395,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> REACTOR_CORE = ITEMS.registerSimpleBlockItem(FBlocks.REACTOR_CORE);
     public static final DeferredItem<BlockItem> FUEL_CHANNEL = ITEMS.registerSimpleBlockItem(FBlocks.FUEL_CHANNEL);
     public static final DeferredItem<BlockItem> CONTROL_ASSEMBLY = ITEMS.registerSimpleBlockItem(FBlocks.CONTROL_ASSEMBLY);
+    public static final DeferredItem<BlockItem> GAS_CENTRIFUGE = ITEMS.registerSimpleBlockItem(FBlocks.GAS_CENTRIFUGE);
     public static final DeferredItem<BlockItem> SCRAM_TRIP = ITEMS.registerSimpleBlockItem(FBlocks.SCRAM_TRIP);
     public static final DeferredItem<BlockItem> SPENT_FUEL_POOL = ITEMS.registerSimpleBlockItem(FBlocks.SPENT_FUEL_POOL);
     public static final DeferredItem<BlockItem> COOLANT_PORT = ITEMS.registerSimpleBlockItem(FBlocks.COOLANT_PORT);
@@ -408,6 +409,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> CORE_SLAG = ITEMS.registerSimpleBlockItem(FBlocks.CORE_SLAG);
     public static final DeferredItem<Item> FUEL_ROD = ITEMS.registerSimpleItem("fuel_rod");
     public static final DeferredItem<Item> THORIUM_FUEL_ROD = ITEMS.registerSimpleItem("thorium_fuel_rod");
+    public static final DeferredItem<Item> ENRICHED_FUEL_ROD = ITEMS.registerSimpleItem("enriched_fuel_rod");
+    public static final DeferredItem<Item> BREEDER_ROD = ITEMS.registerSimpleItem("breeder_rod");
     public static final DeferredItem<Item> SPENT_FUEL_ROD = ITEMS.registerSimpleItem("spent_fuel_rod");
     public static final DeferredItem<BlockItem> MAGMA_HEAD = ITEMS.registerSimpleBlockItem(FBlocks.MAGMA_HEAD);
     public static final DeferredItem<BlockItem> SEEP = ITEMS.registerSimpleBlockItem(FBlocks.SEEP);

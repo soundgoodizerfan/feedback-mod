@@ -31,6 +31,7 @@ public class FuelChannelBlockEntity extends BlockEntity implements RadiationEmit
     private float condition = 1f;
     private Material.Neutron neutron;
     private boolean neutronKnown;
+    private float spectrum = 1f;
 
     public FuelChannelBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.FUEL_CHANNEL.get(), pos, state);
@@ -70,7 +71,16 @@ public class FuelChannelBlockEntity extends BlockEntity implements RadiationEmit
     /** The multiplication this rod gives on its own, 0 for none: fissile plus what breeding has added, scaled by condition. */
     public float fissile() {
         Material.Neutron n = neutron();
-        return n == null ? 0f : (n.fissile() + n.fertile() * burn * FTuning.REACTOR_BREED_GAIN) * condition;
+        if (n == null)
+            return 0f;
+        // A fast breeder rod breeds well only in a hard spectrum: moderator or flowing coolant beside it softens that away.
+        float breed = n.fast() ? FTuning.REACTOR_FAST_BREED_GAIN * spectrum : FTuning.REACTOR_BREED_GAIN;
+        return (n.fissile() + n.fertile() * burn * breed) * condition;
+    }
+
+    /** The core's reading of what slows the neutrons at this cell: 1 for a bare cell, less when a moderator or flowing coolant touches it. */
+    public void spectrum(float share) {
+        spectrum = share;
     }
 
     /** Puts a rod in if the channel is empty, carrying its burnup and condition from the stack. */

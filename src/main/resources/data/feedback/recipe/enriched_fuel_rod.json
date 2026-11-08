@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "U": {
+      "item": "feedback:uranium_enriched_ingot"
+    },
+    "S": {
+      "item": "feedback:stainless_steel_plate"
+    }
+  },
+  "pattern": [
+    "SUS",
+    "SUS",
+    "SUS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:enriched_fuel_rod"
+  }
+}

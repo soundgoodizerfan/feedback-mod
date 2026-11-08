@@ -1,0 +1,32 @@
+{
+  "color": "#a8d08a",
+  "kind": "metal",
+  "traits": [
+    "assembly"
+  ],
+  "hardness": 20,
+  "density": 10,
+  "thermal": {
+    "melting_point": 1132
+  },
+  "radioactivity": 0.8,
+  "neutron": {
+    "fissile": 1.6
+  },
+  "forms": {
+    "ingot": "feedback:enriched_fuel_rod"
+  },
+  "exclude": [
+    "dust",
+    "plate",
+    "foil",
+    "rod",
+    "wire",
+    "fine_wire",
+    "scrap",
+    "drilled_plate",
+    "turned_rod",
+    "nugget",
+    "block"
+  ]
+}

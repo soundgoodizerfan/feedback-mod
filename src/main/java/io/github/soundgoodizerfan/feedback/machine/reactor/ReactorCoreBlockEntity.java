@@ -225,7 +225,8 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
                 }
         float healthSum = 0f;
         for (FuelChannelBlockEntity ch : fuel) {
-            float k = ch.fissile() + (starSeated ? FTuning.REACTOR_STAR_K : 0f);
+            float k = 0f;
+            boolean slowed = false;
             BlockPos at = ch.getBlockPos();
             for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values()) {
                 BlockPos n = at.relative(d);
@@ -243,10 +244,16 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
                 }
                 if (flowing && ns.is(FBlocks.COOLANT_CHANNEL.get())) {
                     k += FTuning.REACTOR_COOLANT_MODERATION;
+                    slowed = true;
                     continue;
                 }
-                k += Neutrons.of(ns).map(m -> m.moderation() * FTuning.REACTOR_MODERATOR_GAIN).orElse(0f);
+                float slow = Neutrons.of(ns).map(m -> m.moderation()).orElse(0f);
+                if (slow > 0f)
+                    slowed = true;
+                k += slow * FTuning.REACTOR_MODERATOR_GAIN;
             }
+            ch.spectrum(slowed ? FTuning.REACTOR_FAST_MODERATED_SHARE : 1f);
+            k += ch.fissile() + (starSeated ? FTuning.REACTOR_STAR_K : 0f);
             sumBase += k;
             healthSum += ch.condition();
         }

@@ -6013,5 +6013,16 @@
   "feedback.channel.rod.step_in": "Step in",
   "feedback.channel.rod.step_out": "Step out",
   "material.feedback.boron": "Boron",
-  "material.feedback.borax": "Borax"
+  "material.feedback.borax": "Borax",
+  "block.feedback.gas_centrifuge": "Gas Centrifuge",
+  "item.feedback.enriched_fuel_rod": "Enriched Fuel Rod",
+  "item.feedback.breeder_rod": "Breeder Rod",
+  "material.feedback.enriched_fuel_rod": "Enriched Fuel Rod",
+  "material.feedback.breeder_rod": "Breeder Rod",
+  "material.feedback.uranium_enriched": "Enriched Uranium",
+  "material.feedback.uranium_depleted": "Depleted Uranium",
+  "message.feedback.gas_centrifuge": "Feed: %s ingots. Acid: %s mB. Batch: %s%%.",
+  "feedback.jei.info.gas_centrifuge": "Put it on a shaft. Natural uranium ingots go in by hand (four to a batch), hydrofluoric acid by bucket or pipe (50 mB a batch). Above 24 RPM it spins out a batch: one Enriched Uranium ingot and three Depleted Uranium ingots, faster the faster the shaft turns (by the square). Right-click with an empty hand to take what it made, or to read it.",
+  "feedback.jei.info.enriched_fuel_rod": "Enriched uranium clad in stainless steel: much stronger than a natural Fuel Rod, so a core runs hotter on fewer rods.",
+  "feedback.jei.info.breeder_rod": "Depleted uranium around thorium. It breeds fissile fuel fast, but only in a hard spectrum: put it where no moderator or flowing coolant touches it."
 }

@@ -134,12 +134,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * how much it slows neutrons so neighbouring fuel runs hotter, {@code absorption} how much it soaks them up. Read by the core
      * from the item's material, never from an id; a pack adds a fuel, moderator or absorber by writing this block.
      */
-    public record Neutron(float fissile, float fertile, float moderation, float absorption) {
+    public record Neutron(float fissile, float fertile, float moderation, float absorption, boolean fast) {
         public static final Codec<Neutron> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.FLOAT.optionalFieldOf("fissile", 0f).forGetter(Neutron::fissile),
                 Codec.FLOAT.optionalFieldOf("fertile", 0f).forGetter(Neutron::fertile),
                 Codec.FLOAT.optionalFieldOf("moderation", 0f).forGetter(Neutron::moderation),
-                Codec.FLOAT.optionalFieldOf("absorption", 0f).forGetter(Neutron::absorption)
+                Codec.FLOAT.optionalFieldOf("absorption", 0f).forGetter(Neutron::absorption),
+                Codec.BOOL.optionalFieldOf("fast", false).forGetter(Neutron::fast)
         ).apply(i, Neutron::new));
     }
 

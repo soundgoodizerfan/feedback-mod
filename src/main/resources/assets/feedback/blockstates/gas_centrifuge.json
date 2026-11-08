@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "feedback:block/gas_centrifuge"
+    },
+    "facing=south": {
+      "model": "feedback:block/gas_centrifuge"
+    },
+    "facing=east": {
+      "model": "feedback:block/gas_centrifuge"
+    },
+    "facing=west": {
+      "model": "feedback:block/gas_centrifuge"
+    },
+    "facing=up": {
+      "model": "feedback:block/gas_centrifuge"
+    },
+    "facing=down": {
+      "model": "feedback:block/gas_centrifuge"
+    }
+  }
+}

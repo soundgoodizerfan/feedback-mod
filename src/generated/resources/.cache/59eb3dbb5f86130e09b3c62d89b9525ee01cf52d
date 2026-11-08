@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-08T15:35:47.200211573	Loot Tables
+// 1.21.1	2026-11-08T15:39:13.103912132	Loot Tables
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
 e8b9eb8f398fc5db293d44e293b27087ca13e1c1 data/feedback/loot_table/blocks/alumina_loose_rock.json
 1f7e17fa516043a080aefa325ce773149cf23063 data/feedback/loot_table/blocks/alumina_ore.json
@@ -18,6 +18,7 @@ d0970fb6467402af8238aa9886a59d75038b7fde data/feedback/loot_table/blocks/borax_d
 9806efe0e5532430c52d711429f835b5afb3b9e4 data/feedback/loot_table/blocks/borax_ore.json
 5da3e6d0b83b21e665af51aa7293c11a4f53a9d3 data/feedback/loot_table/blocks/brass_block.json
 1a609e88ed1edfa2381868b33388dc049b39cb4e data/feedback/loot_table/blocks/brass_pipe.json
+79db02a7ab475b15bb37a5c2d556e4528bdea3c5 data/feedback/loot_table/blocks/breeder_rod_pipe.json
 7842a0af43d8c8e9a5b52b4f178d44b2cddfb3e0 data/feedback/loot_table/blocks/bronze_block.json
 50a1a217856d50c07fdfcb5e4b99cb07fb941d1b data/feedback/loot_table/blocks/bronze_pipe.json
 0bbe1b179f8d130963c356e08f4799be015d4732 data/feedback/loot_table/blocks/cast_iron_block.json
@@ -51,6 +52,7 @@ a4841ebd8ebdb9d64ba98ede6802628d4c692156 data/feedback/loot_table/blocks/cuprite
 22d7c207db0bdbba0f74027dc35aca7d426ed7cf data/feedback/loot_table/blocks/cuprite_ore.json
 927dd2ccd3045d5d7b717efe14c7db66042c94cd data/feedback/loot_table/blocks/diamond_loose_rock.json
 43f25c72c6791069722385dd35521d9fe25168a9 data/feedback/loot_table/blocks/emerald_loose_rock.json
+092f18339499742fbc65e1e5a9ca8d0556e6b287 data/feedback/loot_table/blocks/enriched_fuel_rod_pipe.json
 260c068783b7806ec36673bdeaec126e1e055b9d data/feedback/loot_table/blocks/fuel_rod_pipe.json
 9702d06173769f33280ae22e0f165f669b89b24d data/feedback/loot_table/blocks/galena_deepslate_ore.json
 ee4c79a415d77f34d4bb3574149d390ae1c31c4f data/feedback/loot_table/blocks/galena_loose_rock.json
@@ -161,6 +163,10 @@ acb63ba6af1a07fc4d6e1d9bb410e811a9398c7e data/feedback/loot_table/blocks/uranini
 185d88db370f95ece4b928dfda19c07181f07c11 data/feedback/loot_table/blocks/uraninite_loose_rock.json
 8a457dea65009ec038bfde78eacefde20b731005 data/feedback/loot_table/blocks/uraninite_ore.json
 9b0eb72a3962bb2b62f5b96188fc19926695ea32 data/feedback/loot_table/blocks/uranium_block.json
+58a390039b7d61561c40b0fce3156ed8fb6caae3 data/feedback/loot_table/blocks/uranium_depleted_block.json
+e18c5a76599dc35d98dcaacda643c66a6ee7d143 data/feedback/loot_table/blocks/uranium_depleted_pipe.json
+f668fc6296c44f91c4bb2ad56377b6241facff67 data/feedback/loot_table/blocks/uranium_enriched_block.json
+7740b7e3973975effe03d645c65b645f4b063737 data/feedback/loot_table/blocks/uranium_enriched_pipe.json
 ba63a28f57e44a79cbe6182da02086cd2811492e data/feedback/loot_table/blocks/uranium_pipe.json
 ddae798d12a949903024415c36f536b95fa4f0d5 data/feedback/loot_table/blocks/wolframite_deepslate_ore.json
 5234ef6efb0ff28ac0a632b54b6fc2e0bab58b93 data/feedback/loot_table/blocks/wolframite_loose_rock.json

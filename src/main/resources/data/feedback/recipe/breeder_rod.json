@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "D": {
+      "item": "feedback:uranium_depleted_ingot"
+    },
+    "T": {
+      "item": "feedback:thorium_ingot"
+    },
+    "S": {
+      "item": "feedback:stainless_steel_plate"
+    }
+  },
+  "pattern": [
+    "SDS",
+    "STS",
+    "SDS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:breeder_rod"
+  }
+}

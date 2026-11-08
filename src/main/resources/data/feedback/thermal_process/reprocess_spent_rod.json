@@ -1,0 +1,35 @@
+{
+  "inputs": [
+    {
+      "type": "feedback:material",
+      "material": "feedback:spent_fuel_rod",
+      "forms": [
+        "ingot"
+      ]
+    }
+  ],
+  "min_temperature": 150,
+  "optimal_temperature": 200,
+  "max_temperature": 260,
+  "required_tpu": 600,
+  "result": {
+    "id": "feedback:uranium_enriched_nugget",
+    "count": 4
+  },
+  "spoil_temperature": 300,
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:hydrofluoric_acid",
+        "mb": 200
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:hydrofluoric_acid",
+        "mb": 80
+      }
+    ],
+    "heat": 6
+  }
+}

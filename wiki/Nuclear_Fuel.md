@@ -1,6 +1,6 @@
 # Nuclear Fuel
 
-The rods that go into the Fuel Channels of a [Fission Reactor](Fission_Reactor.md): the Fuel Rod, the Thorium Fuel Rod and the Spent Fuel Rod they become.
+The rods that go into the Fuel Channels of a [Fission Reactor](Fission_Reactor.md): the Fuel Rod, the Enriched Fuel Rod, the Thorium Fuel Rod, the Breeder Rod and the Spent Fuel Rod they become.
 
 ## Crafting
 
@@ -33,6 +33,32 @@ Both rods are radioactive from the moment they are made ([Radiation](Radiation.m
 ## Thorium Fuel Rod
 
 [Thorium](Materials.md#thorium) and a little uranium. The thorium slowly turns into fissile fuel while the rod runs, so the rod starts weaker than a uranium rod and gets stronger as it burns. It lasts longer than a uranium rod for the same power.
+
+## Enriched Fuel Rod
+
+Enriched uranium clad in stainless steel, made from the ingots a [Gas Centrifuge](Gas_Centrifuge.md) separates. It starts far stronger than a Fuel Rod, so a core runs hotter on fewer rods.
+
+```
+S U S
+S U S
+S U S
+```
+S is a Stainless Steel Plate and U is an Enriched Uranium ingot.
+
+## Breeder Rod
+
+Depleted uranium around thorium. It breeds fissile fuel faster than a Thorium Fuel Rod, but only in a hard spectrum: a [moderator](Fission_Reactor.md#how-it-works) or a flowing coolant channel touching its cell softens the neutrons and leaves it with a small part of that breeding. Put it among control rods and bare channels.
+
+```
+S D S
+S T S
+S D S
+```
+S is a Stainless Steel Plate, D is a Depleted Uranium ingot and T is a Thorium Ingot.
+
+## Reprocessing
+
+A spent rod can be dissolved in hydrofluoric acid at a warm temperature (the recipe and its window are in JEI) to recover nuggets of enriched uranium, which go back into new rods.
 
 ## Spent Fuel Rod
 

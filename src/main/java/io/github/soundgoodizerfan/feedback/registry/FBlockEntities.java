@@ -508,6 +508,9 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.SpentFuelPoolBlockEntity>> SPENT_FUEL_POOL =
             BLOCK_ENTITIES.register("spent_fuel_pool", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.reactor.SpentFuelPoolBlockEntity::new, FBlocks.SPENT_FUEL_POOL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.centrifuge.GasCentrifugeBlockEntity>> GAS_CENTRIFUGE =
+            BLOCK_ENTITIES.register("gas_centrifuge", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.centrifuge.GasCentrifugeBlockEntity::new, FBlocks.GAS_CENTRIFUGE.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity>> REACTOR_CORE =
             BLOCK_ENTITIES.register("reactor_core", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity::new, FBlocks.REACTOR_CORE.get()).build(null));

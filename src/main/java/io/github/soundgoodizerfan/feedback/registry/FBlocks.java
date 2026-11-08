@@ -1269,6 +1269,8 @@ public class FBlocks {
             () -> new io.github.soundgoodizerfan.feedback.machine.tube.TubeStationBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.5f).sound(SoundType.METAL), true));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.VacuumPumpBlock> VACUUM_PUMP = BLOCKS.register("vacuum_pump",
             () -> new io.github.soundgoodizerfan.feedback.machine.tube.VacuumPumpBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(4.0f).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.centrifuge.GasCentrifugeBlock> GAS_CENTRIFUGE = BLOCKS.register("gas_centrifuge",
+            () -> new io.github.soundgoodizerfan.feedback.machine.centrifuge.GasCentrifugeBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(4.0f).sound(SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.LinearMotorBlock> LINEAR_MOTOR = BLOCKS.register("linear_motor",
             () -> new io.github.soundgoodizerfan.feedback.machine.tube.LinearMotorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL).noOcclusion()));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.tube.AirSourceBlock> CREATIVE_AIR = BLOCKS.register("creative_air",

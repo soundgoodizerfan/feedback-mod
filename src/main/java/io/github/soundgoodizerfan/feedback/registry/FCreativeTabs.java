@@ -342,7 +342,10 @@ public class FCreativeTabs {
                         output.accept(FItems.GRAPHITE_MODERATOR.get());
                         output.accept(FItems.FUEL_ROD.get());
                         output.accept(FItems.THORIUM_FUEL_ROD.get());
+                        output.accept(FItems.ENRICHED_FUEL_ROD.get());
+                        output.accept(FItems.BREEDER_ROD.get());
                         output.accept(FItems.SPENT_FUEL_ROD.get());
+                        output.accept(FItems.GAS_CENTRIFUGE.get());
                         output.accept(FItems.CORE_SLAG.get());
                         output.accept(FItems.MAGMA_HEAD.get());
                         output.accept(FItems.BASTION_RUBBLE.get());

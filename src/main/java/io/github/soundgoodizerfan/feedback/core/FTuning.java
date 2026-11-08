@@ -3763,6 +3763,12 @@ public final class FTuning {
     public static final ThermalMass REACTOR_POOL_MASS = new ThermalMass(400f);
     /** Invented. Dose a pool's rods give at point blank with no water over them (Ru per rod), the share water leaves, and the Tu at which a dry pool's rods slump into slag. */
     public static final float REACTOR_POOL_DRY_RU = 60f, REACTOR_POOL_WET_SHARE = 0.05f, REACTOR_POOL_MELT_TU = 1200f;
+    /** Invented. A fast breeder rod's breeding gain in a hard spectrum, and the share of it left when a moderator or flowing coolant touches the cell. */
+    public static final float REACTOR_FAST_BREED_GAIN = 1.6f, REACTOR_FAST_MODERATED_SHARE = 0.15f;
+    /** Invented. Gas centrifuge: least RPM that separates anything, ingots and hydrofluoric acid a batch takes, ticks a batch takes at the least RPM (faster spins finish sooner, by the square), and its shaft load. */
+    public static final float CENTRIFUGE_MIN_RPM = 24f;
+    public static final int CENTRIFUGE_BATCH_INGOTS = 4, CENTRIFUGE_HF_MB = 50, CENTRIFUGE_BATCH_TICKS = 1200, CENTRIFUGE_HF_TANK_MB = 400;
+    public static final Su CENTRIFUGE_LOAD_SU = new Su(60f);
     /** Invented. The longest away-time a reloaded core simulates tick by tick, in ticks (an hour). */
     public static final long REACTOR_OFFLINE_MAX_TICKS = 72000L;
     /** The flux meter's step, as a fraction of full power. [OPEN] until played */
