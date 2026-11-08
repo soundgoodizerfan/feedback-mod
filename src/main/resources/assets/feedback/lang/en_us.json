@@ -6008,5 +6008,10 @@
   "feedback.jei.info.flux_meter": "Reads a reactor core's neutron flux as a fraction of full power. Use it on the core.",
   "block.feedback.spent_fuel_pool": "Spent Fuel Pool",
   "message.feedback.spent_fuel_pool": "Spent rods: %s. Water: %s mB. %s Tu.",
-  "feedback.jei.info.spent_fuel_pool": "Holds up to nine spent fuel rods under water. A freshly discharged rod keeps making decay heat for days; the water takes it, boiling away over 100 Tu, so keep the pool topped up. A pool run dry heats its rods until they slump into radioactive slag, and gives off a dose while it is dry. Put a rod in with the rod in hand, fill with a bucket, sneak with an empty hand to take one out."
+  "feedback.jei.info.spent_fuel_pool": "Holds up to nine spent fuel rods under water. A freshly discharged rod keeps making decay heat for days; the water takes it, boiling away over 100 Tu, so keep the pool topped up. A pool run dry heats its rods until they slump into radioactive slag, and gives off a dose while it is dry. Put a rod in with the rod in hand, fill with a bucket, sneak with an empty hand to take one out.",
+  "feedback.channel.rod.switch": "Switch (all in or out)",
+  "feedback.channel.rod.step_in": "Step in",
+  "feedback.channel.rod.step_out": "Step out",
+  "material.feedback.boron": "Boron",
+  "material.feedback.borax": "Borax"
 }

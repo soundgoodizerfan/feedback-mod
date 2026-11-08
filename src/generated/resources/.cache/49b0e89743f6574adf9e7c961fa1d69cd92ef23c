@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-07T10:51:18.297307124	Item Models: feedback
+// 1.21.1	2026-11-08T15:35:47.195328959	Item Models: feedback
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/alumina_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
@@ -62,6 +62,16 @@ b39e2f19bb62a516f16192ae7d7767baa3f016a4 assets/feedback/models/item/bitumen_str
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/bloomery_slag_dust.json
 4e4db6418bc86b3bc438ce254a661b2411f75280 assets/feedback/models/item/bloomery_slag_tailings.json
 65f5ba7f72e4fca87b13d4ce890377b47b0160dd assets/feedback/models/item/bone_grip.json
+510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/borax_concentrate.json
+81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/borax_crushed.json
+94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/borax_dust.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/borax_lump.json
+4e4db6418bc86b3bc438ce254a661b2411f75280 assets/feedback/models/item/borax_tailings.json
+94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/boron_dust.json
+818834fa8233d053be2a56ebd2326b3a619cef53 assets/feedback/models/item/boron_ingot.json
+0188e1e3b3b7fa5f82fd33bc4e8334fe69fbcb21 assets/feedback/models/item/boron_nugget.json
+261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/boron_plate.json
+4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/boron_rod.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/brass_birdshot.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/brass_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/brass_case.json

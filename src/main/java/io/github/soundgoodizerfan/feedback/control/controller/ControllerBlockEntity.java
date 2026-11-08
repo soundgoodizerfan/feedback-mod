@@ -310,6 +310,10 @@ public class ControllerBlockEntity extends RotationNode implements Container, Fi
         if (ref == null)
             return;
         DataNode target = DataNode.resolve(level, ref).orElse(null);
+        if (value instanceof Boolean pulse && channel > 0 && target instanceof io.github.soundgoodizerfan.feedback.control.Steppable stepper) {
+            stepper.pulse(channel, pulse);
+            return;
+        }
         if (value instanceof Float level && target instanceof Analog analog)
             analog.setLevel(channel, level);
         else if (value instanceof Boolean on) {

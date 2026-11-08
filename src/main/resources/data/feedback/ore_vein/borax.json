@@ -1,0 +1,16 @@
+{
+  "radius": 7,
+  "thickness": 2,
+  "density": 0.7,
+  "triangle": true,
+  "dimension_filter": [
+    "minecraft:overworld"
+  ],
+  "biomes": "#feedback:evaporite_basins",
+  "indicator": "feedback:borax_loose_rock",
+  "ore": "feedback:borax_ore",
+  "deepslate_ore": "feedback:borax_deepslate_ore",
+  "weight": 6,
+  "min_y": 30,
+  "max_y": 80
+}

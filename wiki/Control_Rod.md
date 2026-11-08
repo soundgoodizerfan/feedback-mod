@@ -28,6 +28,7 @@ How much an assembly soaks up depends on what it holds and how far in it is:
 
 | Absorber | Absorption |
 | --- | --- |
+| Boron | 1.1 |
 | Cobalt | 0.5 |
 | Tungsten | 0.4 |
 | Lead | 0.15 |
@@ -35,3 +36,5 @@ How much an assembly soaks up depends on what it holds and how far in it is:
 The figure is for a full bundle of 8 items; a part-full bundle absorbs in proportion. The assembly's reading in Jade shows its absorber strength as a percentage. The deeper the position, the more it takes off the core's multiplication ([Fission Reactor](Fission_Reactor.md#how-it-works)). Fuel cells right beside the assembly feel it far more than the rest of the lattice, so spread assemblies among the fuel.
 
 Any item whose material absorbs neutrons works ([Materials](Materials.md#neutrons)).
+
+A [Controller](Controller.md) actuator card aimed at an assembly offers three channels: the plain switch (all the way in or out), **step in** and **step out**. A step channel moves the rod one position on the change of its input to true, and does nothing while the input holds, so a program walks a rod by pulsing it.

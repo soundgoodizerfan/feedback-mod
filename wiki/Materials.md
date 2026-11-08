@@ -142,6 +142,10 @@ A dark, brittle metalloid. It casts like a metal but breaks like glass, and it i
 
 Both cast into ingots. Plates and rods are worked from the ingot like a metal's, with a hard enough hammer.
 
+## Boron
+
+A dark, hard metalloid that soaks up neutrons better than any metal: a bundle of boron in a [Control Rod Assembly](Control_Rod.md) takes off more than the same bundle of cobalt, tungsten or lead. Hardness 11, melts at 2076 Tu. It comes from **Borax**, a pale evaporite ore found in veins in **deserts and badlands** (a loose rock on the surface marks one). Borax goes through the [ore ladder](Ore_Processing.md) like any other ore and ends as boron ingots, from which plates and rods are worked.
+
 ## Silica Glass and Optical Glass
 
 Melt sand with a silicon ingot in a crucible at 1500 Tu or more and it makes glass. Crude silicon makes **Silica Glass**; pure silicon makes **Optical Glass**, the clearest there is. Both have hardness 30, insulate to HV, cast into ingots, and plates and rods are worked from them. See [Optics](Optics.md).

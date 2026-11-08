@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-07T00:45:10.740309507	Loot Tables
+// 1.21.1	2026-11-08T15:35:47.200211573	Loot Tables
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
 e8b9eb8f398fc5db293d44e293b27087ca13e1c1 data/feedback/loot_table/blocks/alumina_loose_rock.json
 1f7e17fa516043a080aefa325ce773149cf23063 data/feedback/loot_table/blocks/alumina_ore.json
@@ -13,6 +13,9 @@ fcd6370945396dc42ba94c6f69e8cdc027419d8c data/feedback/loot_table/blocks/bauxite
 d4a860e0cbdb10c6a8b7734599c5761412d8b3fa data/feedback/loot_table/blocks/beef_block.json
 b46a842a863f4d4548b466148287adc0716d2165 data/feedback/loot_table/blocks/bitumen_block.json
 bf4b9ae8604873cadcb6c3a149cf613663fa8606 data/feedback/loot_table/blocks/bitumen_pipe.json
+d0970fb6467402af8238aa9886a59d75038b7fde data/feedback/loot_table/blocks/borax_deepslate_ore.json
+100d9c620ca10c55eec48aeca81f81c330e6c5b4 data/feedback/loot_table/blocks/borax_loose_rock.json
+9806efe0e5532430c52d711429f835b5afb3b9e4 data/feedback/loot_table/blocks/borax_ore.json
 5da3e6d0b83b21e665af51aa7293c11a4f53a9d3 data/feedback/loot_table/blocks/brass_block.json
 1a609e88ed1edfa2381868b33388dc049b39cb4e data/feedback/loot_table/blocks/brass_pipe.json
 7842a0af43d8c8e9a5b52b4f178d44b2cddfb3e0 data/feedback/loot_table/blocks/bronze_block.json

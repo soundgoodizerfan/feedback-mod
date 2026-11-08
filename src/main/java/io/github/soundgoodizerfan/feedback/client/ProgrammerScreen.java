@@ -836,8 +836,11 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     /** The inputs of the analog part an actuator card names, looked up in the client's own world. */
     private static String[] channelKeys(ActuatorNode node) {
         var level = Minecraft.getInstance().level;
-        return node.target() != null && level != null
-                && level.getBlockEntity(node.target().linkedAt()) instanceof Analog analog ? analog.channelKeys() : new String[0];
+        if (node.target() == null || level == null)
+            return new String[0];
+        var be = level.getBlockEntity(node.target().linkedAt());
+        return be instanceof Analog analog ? analog.channelKeys()
+                : be instanceof io.github.soundgoodizerfan.feedback.control.Steppable stepper ? stepper.channelKeys() : new String[0];
     }
 
     private void cycleOp(LogicNode n) {

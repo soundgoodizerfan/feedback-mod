@@ -1,0 +1,25 @@
+{
+  "color": "#e9e4d4",
+  "kind": "mineral",
+  "exclude": [
+    "ingot"
+  ],
+  "hardness": 2.5,
+  "density": 1.7,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 0.003,
+    "melting_point": 740
+  },
+  "mechanical": {
+    "toughness": 1,
+    "friction": 0.4,
+    "abrasiveness": 0.1
+  },
+  "separation": {
+    "reflectivity": 0.8
+  },
+  "bears": {
+    "feedback:boron": 0.2
+  }
+}

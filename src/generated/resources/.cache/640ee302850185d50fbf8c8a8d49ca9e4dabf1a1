@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-07T00:45:10.734215895	Block States: feedback
+// 1.21.1	2026-11-08T15:35:47.192152092	Block States: feedback
 4a4a4f3dba74d39a8a934c2874f25fc8932a02e5 assets/feedback/blockstates/alumina_deepslate_ore.json
 b16fc3b8f6931373210a7c1d637cc12dbaf4f01e assets/feedback/blockstates/alumina_loose_rock.json
 f027b531a80892ab856c188ddf2409a7bab2ef9b assets/feedback/blockstates/alumina_ore.json
@@ -13,6 +13,9 @@ dd9f357a248639985b43fe7bb2dc088d7441e6c6 assets/feedback/blockstates/bauxite_ore
 ea07fcbfd4c8ed59c5afce00467c9659c1fd4702 assets/feedback/blockstates/beef_block.json
 718a0cea221626405987ee0f8eb5b6fd8248f333 assets/feedback/blockstates/bitumen_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/bitumen_pipe.json
+49b295d39a485e887de3b83a37cd72d6844b681d assets/feedback/blockstates/borax_deepslate_ore.json
+e0ed8fdea2e545b7d7d422d653111ea8b25356a7 assets/feedback/blockstates/borax_loose_rock.json
+592fcb9ca61cf0149417044cac7c362aa94eac9e assets/feedback/blockstates/borax_ore.json
 9a40257958785a308683e7bad652d347c89144a5 assets/feedback/blockstates/brass_block.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/brass_pipe.json
 ddeb084f0fa04c2bd3415871514285f6f6250ae8 assets/feedback/blockstates/bronze_block.json
@@ -178,6 +181,9 @@ a7bc49b65068f3c835cd5ee5b0d3e704923b6ef3 assets/feedback/models/block/bauxite_lo
 619016b0c98f02dffadab254f1d903c879d932f5 assets/feedback/models/block/bauxite_ore.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/beef_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/bitumen_block.json
+6974550804162d82149d67ef91a5e8c1d95cf0ec assets/feedback/models/block/borax_deepslate_ore.json
+a7bc49b65068f3c835cd5ee5b0d3e704923b6ef3 assets/feedback/models/block/borax_loose_rock.json
+619016b0c98f02dffadab254f1d903c879d932f5 assets/feedback/models/block/borax_ore.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/brass_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/bronze_block.json
 a25a6fdf9eae81c710624b79e3dd9f7d6181a9dd assets/feedback/models/block/cast_iron_block.json
@@ -302,6 +308,9 @@ afa67627ad438f943bed03931527ea2beec93d54 assets/feedback/models/item/argentite_o
 b8b22f2b623ef565b69c13a21cdb9ed688ddeb9f assets/feedback/models/item/beef_block.json
 2f960c153d73ca483cb197cd1ddf25145cbd0c57 assets/feedback/models/item/bitumen_block.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/bitumen_pipe.json
+87ce9a9b0bc4f99d4fea5d88d0c3368190a6786d assets/feedback/models/item/borax_deepslate_ore.json
+39fc670d1e12b7ced62fcac3b1311a4bb2a2473b assets/feedback/models/item/borax_loose_rock.json
+bcf5dfc453bbed125fc3a5dab1dd10ce70f26378 assets/feedback/models/item/borax_ore.json
 a3097108dc1d038a5724eb58aa2a92d63c50a816 assets/feedback/models/item/brass_block.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/brass_pipe.json
 3c7d7b1994e85ee2a9515fe3153c4ec575331dbf assets/feedback/models/item/bronze_block.json

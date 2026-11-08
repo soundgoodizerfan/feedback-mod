@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * five named positions, out (0) to in (4). It moves one step per {@code REACTOR_ROD_STEP_TICKS} toward its target, so it coasts;
  * a Controller's switch sets the target (engaged is all the way in), a hand click cycles it, and the core drops it at once on a SCRAM.
  */
-public class ControlAssemblyBlockEntity extends BlockEntity implements Switchable {
+public class ControlAssemblyBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.control.Steppable {
 
     public static final int IN = 4;
 
@@ -102,6 +102,26 @@ public class ControlAssemblyBlockEntity extends BlockEntity implements Switchabl
         int t = engaged ? IN : 0;
         if (t != target) {
             target = t;
+            setChanged();
+        }
+    }
+
+    private final boolean[] pulseHeld = new boolean[3];
+
+    @Override
+    public String[] channelKeys() {
+        return new String[]{"feedback.channel.rod.switch", "feedback.channel.rod.step_in", "feedback.channel.rod.step_out"};
+    }
+
+    /** Channel 1 steps the target one position in, channel 2 one position out, each on the rising edge. */
+    @Override
+    public void pulse(int channel, boolean on) {
+        if (channel < 1 || channel > 2)
+            return;
+        boolean rising = on && !pulseHeld[channel];
+        pulseHeld[channel] = on;
+        if (rising) {
+            target = Math.max(0, Math.min(IN, target + (channel == 1 ? 1 : -1)));
             setChanged();
         }
     }
