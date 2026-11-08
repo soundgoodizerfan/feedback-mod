@@ -63,6 +63,7 @@ public class FCapabilities {
         // Both sides of the thermal-to-rotation bridge, so a bucket, a hopper, or a future pipe
         // already works against either block without either of them knowing the other exists --
         // see FTuning's "--- the boiler ---" section.
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.COOLANT_PORT.get(), (port, side) -> port.handler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.BOILER.get(),
                 (boiler, side) -> new BoilerFluidHandler(boiler));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FBlockEntities.STEAM_ENGINE.get(),

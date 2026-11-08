@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "S": {
+      "item": "feedback:stainless_steel_plate"
+    },
+    "P": {
+      "item": "feedback:lead_plate"
+    }
+  },
+  "pattern": [
+    " G ",
+    "WPW",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:flux_meter"
+  }
+}

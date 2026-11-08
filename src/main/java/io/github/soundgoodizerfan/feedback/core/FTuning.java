@@ -3747,6 +3747,20 @@ public final class FTuning {
     public static final float REACTOR_RUNNING_RU = 400f;
     /** A control rod moves one position this often (ticks), and a full absorber bundle is this many items. */
     public static final int REACTOR_ROD_STEP_TICKS = 20, REACTOR_ABSORBER_FULL_BUNDLE = 8;
+    /** Invented. Capacity of each tank of a coolant port, mB. */
+    public static final int REACTOR_PORT_TANK_MB = 4000;
+    /** Invented. Work a tick one coolant channel carries off per Tu the core stands over the water's boiling point, and the most one carries. */
+    public static final float REACTOR_CHANNEL_CONDUCT = 0.03f, REACTOR_CHANNEL_MAX_WORK = 20f;
+    /** Invented. Moderation a flowing coolant channel gives a fuel cell beside it: light water slows neutrons; lose the water and this goes. */
+    public static final float REACTOR_COOLANT_MODERATION = 0.15f;
+    /** Invented. Multiplication a reflector block gives each fuel cell it touches. */
+    public static final float REACTOR_REFLECTOR_GAIN = 0.2f;
+    /** Invented. A seated Nether star: multiplication it adds to every live cell, the Tu its temperature feedback starts later, and the idle power and cells' worth of heat it makes with no fuel at all. */
+    public static final float REACTOR_STAR_K = 0.25f, REACTOR_STAR_FEEDBACK_BONUS_TU = 300f, REACTOR_STAR_IDLE_POWER = 0.12f, REACTOR_STAR_IDLE_CELLS = 3f;
+    /** Invented. The longest away-time a reloaded core simulates tick by tick, in ticks (an hour). */
+    public static final long REACTOR_OFFLINE_MAX_TICKS = 72000L;
+    /** The flux meter's step, as a fraction of full power. [OPEN] until played */
+    public static final float FLUX_METER_RESOLUTION = 0.05f;
 
     // --- pneumatic tubes, pods, late tube upgrades, ender trickle (item logistics spec 4, 6) -----------
 

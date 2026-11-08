@@ -65,6 +65,39 @@ Each fuel cell has a **multiplication**: how many neutrons its fission leaves to
 
 Power is shown as a percentage of the design output. 100% is full power; the core can be pushed to 150%. At 100% each fuel cell makes heat steadily and burns its rod down in about two hours ([Nuclear Fuel](Nuclear_Fuel.md)).
 
+### Coolant channels and the Coolant Port
+
+A second way to carry the heat off is to boil water in the core itself. A **Coolant Port** is a wall cell of the shell with two tanks: water goes in by pipe or bucket, steam comes out the same block for a pipe to carry to a [Steam Turbine](Steam_Turbine.md). **Coolant Channels** are lattice cells that draw water from the port and boil it on the core's heat: the further over the boiling point the core stands, the more each channel takes off, up to a limit, and one mB of water makes one mB of steam. A port with no water takes nothing away and the core climbs. The water slows neutrons a little, so a fuel cell beside a flowing channel multiplies more; a channel run dry gives that back.
+
+```
+S T S              S S S
+S T S  Channel x2  T B T  Port
+S T S              S S S
+```
+S is a Stainless Steel Plate, T is Copper Tubing, B is a bucket.
+
+### Reflectors
+
+A **Neutron Reflector** in a shell face counts as a sound wall and sends neutrons back into the fuel cells it touches, raising their multiplication. A lead plate and smooth stone make one:
+
+```
+L G L
+G L G
+L G L
+```
+L is a Lead Plate, G is smooth stone.
+
+### Star Seat
+
+A **Star Seat** is a lattice cell that seats one Nether star (right-click with it; an empty hand takes it back). The star is never used up. Every live fuel cell multiplies more, the heat throttle starts about 300 Tu later, and a core with no fuel at all holds a low idle and a little heat. Taking the star out of a running core drops its power back to the fuel's own.
+
+```
+S O S
+O H O
+S O S
+```
+S is a Stainless Steel Plate, O is obsidian, H is a hopper.
+
 ### Carrying the heat
 
 The core is heavy: it warms and cools slowly. A [Heat Exchanger](Heat_Exchanger.md) touching the core carries its heat to whatever is on the far side, hot to cold. Put a [Boiler](Boiler.md) there with water in it and the boiler makes steam for a [Steam Turbine](Steam_Turbine.md) or a [Steam Engine](Steam_Engine.md). A core with nothing taking its heat climbs until something gives.
@@ -75,7 +108,7 @@ Dropping the control rods in ends the chain, but a shut-down core is not cold.
 
 - **Decay heat.** After the rods go in, the fuel keeps heating the core at **6% of the last power**, falling away over about **30 minutes**. Keep the heat exchanger and boiler working through that time.
 - A [Scram Trip](Scram_Trip.md) in the shell drops every rod by itself when the core passes **850 Tu**, and the core lets the rods out again after it falls to 650 Tu. Without one, nothing drops the rods but you or a [Controller](Controller.md).
-- A core in a chunk nobody has loaded keeps cooling and gathering decay heat, but makes no power.
+- A core in a chunk nobody has loaded keeps running for up to an hour of the time away: power, fuel burn, coolant and damage carry on, and a core with nobody to scram it can still overheat and burst. Time beyond the hour settles as cooling and decay heat.
 
 ## Misuse and hazards
 
@@ -87,4 +120,5 @@ Dropping the control rods in ends the chain, but a shut-down core is not cold.
 ## Tips and automation
 
 - A [Controller](Controller.md) can switch a control rod assembly: engaged is all the way in, off is all the way out.
+- A **Flux Meter** used on the core reads its neutron flux as a fraction of full power.
 - Read the core with an empty hand, or with Jade: power, multiplication, live fuel cells and their condition, decay heat, vessel pressure, rod positions and shell flaws are all shown.

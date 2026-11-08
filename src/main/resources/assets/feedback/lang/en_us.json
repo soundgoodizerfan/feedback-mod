@@ -5993,5 +5993,17 @@
   "feedback.jei.info.trade_tap": "Takes the experience a villager trade pays, when the villager is within eight blocks, into its XP run. A Counter sale or purchase pays it too, only into a tap: no orbs drop.",
   "feedback.jei.info.smelter_tap": "Drains the experience a vessel beside it banked from cooking recipes into its XP run, twenty points a second. A vessel with no tap holds its bank until broken, then spills it as orbs.",
   "feedback.jei.info.disenchant_stone": "Right-click with an attuned part: one attunement is ground off, and half of what the session cost comes back as XP into a run beside the stone, or as orbs if there is none.",
-  "feedback.jei.info.crystal_holder": "Seats one XP container (an XP container tool or a Reservoir-attuned tool) and shows its store on the XP wire next to it. Take the stack out to take its XP."
+  "feedback.jei.info.crystal_holder": "Seats one XP container (an XP container tool or a Reservoir-attuned tool) and shows its store on the XP wire next to it. Take the stack out to take its XP.",
+  "block.feedback.coolant_port": "Coolant Port",
+  "block.feedback.coolant_channel": "Coolant Channel",
+  "block.feedback.neutron_reflector": "Neutron Reflector",
+  "block.feedback.star_seat": "Star Seat",
+  "item.feedback.flux_meter": "Flux Meter",
+  "feedback.instrument.flux_meter": "Flux Meter",
+  "feedback.flux.reading": "Neutron flux: %s of full power",
+  "feedback.jei.info.coolant_port": "A wall cell of the reactor shell. Water goes in by pipe or bucket; the core feeds it to its coolant channels, and the steam they make comes out the same block. With no water the channels carry nothing away and the core climbs.",
+  "feedback.jei.info.coolant_channel": "A lattice cell that carries heat off the core as water boiling to steam in the Coolant Port. The water slows neutrons a little for the fuel cells beside it, so a channel run dry costs the core some reactivity.",
+  "feedback.jei.info.neutron_reflector": "A shell wall cell that sends neutrons back into the fuel cells it touches, raising their multiplication. Counts as a sound wall.",
+  "feedback.jei.info.star_seat": "A lattice cell that seats one Nether star. The star is never used up: it adds reactivity to every live fuel cell, delays the core's temperature feedback, and holds a core with no fuel at a low idle.",
+  "feedback.jei.info.flux_meter": "Reads a reactor core's neutron flux as a fraction of full power. Use it on the core."
 }

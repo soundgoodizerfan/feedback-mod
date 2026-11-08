@@ -499,6 +499,12 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.derrick.DerrickCasingBlockEntity>> DERRICK_CASING =
             BLOCK_ENTITIES.register("derrick_casing", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.derrick.DerrickCasingBlockEntity::new, FBlocks.DERRICK_CASING.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.CoolantPortBlockEntity>> COOLANT_PORT =
+            BLOCK_ENTITIES.register("coolant_port", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.CoolantPortBlockEntity::new, FBlocks.COOLANT_PORT.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlockEntity>> STAR_SEAT =
+            BLOCK_ENTITIES.register("star_seat", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlockEntity::new, FBlocks.STAR_SEAT.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity>> REACTOR_CORE =
             BLOCK_ENTITIES.register("reactor_core", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity::new, FBlocks.REACTOR_CORE.get()).build(null));

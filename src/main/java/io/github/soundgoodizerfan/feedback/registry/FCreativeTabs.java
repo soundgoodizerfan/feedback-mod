@@ -333,6 +333,11 @@ public class FCreativeTabs {
                         output.accept(FItems.FUEL_CHANNEL.get());
                         output.accept(FItems.CONTROL_ASSEMBLY.get());
                         output.accept(FItems.SCRAM_TRIP.get());
+                        output.accept(FItems.COOLANT_PORT.get());
+                        output.accept(FItems.COOLANT_CHANNEL.get());
+                        output.accept(FItems.NEUTRON_REFLECTOR.get());
+                        output.accept(FItems.STAR_SEAT.get());
+                        output.accept(FItems.FLUX_METER.get());
                         output.accept(FItems.GRAPHITE_MODERATOR.get());
                         output.accept(FItems.FUEL_ROD.get());
                         output.accept(FItems.THORIUM_FUEL_ROD.get());

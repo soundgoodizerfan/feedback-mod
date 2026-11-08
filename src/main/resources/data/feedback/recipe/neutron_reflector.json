@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "feedback:lead_plate"
+    },
+    "G": {
+      "item": "minecraft:smooth_stone"
+    }
+  },
+  "pattern": [
+    "LGL",
+    "GLG",
+    "LGL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:neutron_reflector"
+  }
+}

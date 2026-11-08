@@ -1110,6 +1110,16 @@ public class FBlocks {
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.ControlAssemblyBlock> CONTROL_ASSEMBLY = BLOCKS.register("control_assembly",
             () -> new io.github.soundgoodizerfan.feedback.machine.reactor.ControlAssemblyBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(3.0f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.CoolantPortBlock> COOLANT_PORT = BLOCKS.register("coolant_port",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.CoolantPortBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(5.0f).sound(SoundType.METAL)));
+    public static final DeferredBlock<Block> COOLANT_CHANNEL = BLOCKS.register("coolant_channel",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(4.0f).sound(SoundType.METAL)));
+    public static final DeferredBlock<Block> NEUTRON_REFLECTOR = BLOCKS.register("neutron_reflector",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0f).sound(SoundType.METAL)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlock> STAR_SEAT = BLOCKS.register("star_seat",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).strength(5.0f).sound(SoundType.METAL)));
     public static final DeferredBlock<Block> SCRAM_TRIP = BLOCKS.register("scram_trip",
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(3.0f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> GRAPHITE_MODERATOR = BLOCKS.register("graphite_moderator",

@@ -104,7 +104,9 @@ public enum Quantity implements StringRepresentable {
     /** The level an XP container stands at, fractional: the potential its points are held at. An XP meter reads it. Appended, never inserted. */
     XP_LEVEL("xp_level"),
     /** A secondary cell's state of charge, 0 to 1 of its capacity: a fraction like condition. A hydrometer reads it. Appended, never inserted. */
-    CHARGE("charge");
+    CHARGE("charge"),
+    /** A reactor core's neutron flux, as a fraction of full power. A flux meter reads it. Appended, never inserted. */
+    FLUX("flux");
 
     private final String key;
 

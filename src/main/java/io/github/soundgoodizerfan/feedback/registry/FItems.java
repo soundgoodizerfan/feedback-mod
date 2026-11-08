@@ -396,6 +396,13 @@ public class FItems {
     public static final DeferredItem<BlockItem> FUEL_CHANNEL = ITEMS.registerSimpleBlockItem(FBlocks.FUEL_CHANNEL);
     public static final DeferredItem<BlockItem> CONTROL_ASSEMBLY = ITEMS.registerSimpleBlockItem(FBlocks.CONTROL_ASSEMBLY);
     public static final DeferredItem<BlockItem> SCRAM_TRIP = ITEMS.registerSimpleBlockItem(FBlocks.SCRAM_TRIP);
+    public static final DeferredItem<BlockItem> COOLANT_PORT = ITEMS.registerSimpleBlockItem(FBlocks.COOLANT_PORT);
+    public static final DeferredItem<BlockItem> COOLANT_CHANNEL = ITEMS.registerSimpleBlockItem(FBlocks.COOLANT_CHANNEL);
+    public static final DeferredItem<BlockItem> NEUTRON_REFLECTOR = ITEMS.registerSimpleBlockItem(FBlocks.NEUTRON_REFLECTOR);
+    public static final DeferredItem<BlockItem> STAR_SEAT = ITEMS.registerSimpleBlockItem(FBlocks.STAR_SEAT);
+    /** Reads a reactor core's neutron flux. */
+    public static final DeferredItem<Item> FLUX_METER =
+            ITEMS.registerItem("flux_meter", io.github.soundgoodizerfan.feedback.item.FluxMeterItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> GRAPHITE_MODERATOR = ITEMS.registerSimpleBlockItem(FBlocks.GRAPHITE_MODERATOR);
     public static final DeferredItem<BlockItem> CORE_SLAG = ITEMS.registerSimpleBlockItem(FBlocks.CORE_SLAG);
     public static final DeferredItem<Item> FUEL_ROD = ITEMS.registerSimpleItem("fuel_rod");
