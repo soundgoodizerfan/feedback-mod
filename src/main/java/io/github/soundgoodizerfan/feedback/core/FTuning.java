@@ -3516,6 +3516,13 @@ public final class FTuning {
     public static final float TURBINE_STRESS_PER_DENSITY_RPM2 = 0.0004f;
     /** Invented. How much oxygen balance a fuel brings, as a share of full draught, to a firebox that burns it (spec 10.1): it carries its own oxidiser, so it burns as if blown. */
     public static final float FIREBOX_OXIDISER_DRAUGHT = 1f;
+    /** Invented. An oxygen-poor fuel (blaze powder, blaze rod) with no oxidiser: the share of its flame temperature it reaches, and of its burn time it lasts. */
+    /** Invented. A magma-head bit whose service temperature is at least this reaches the rich melt (more nickel and cobalt, and chromium and manganese). */
+    public static final float MAGMA_RICH_BIT_SERVICE_TU = 1800f;
+    public static final float SMOULDER_TEMPERATURE = 0.4f, SMOULDER_DURATION = 0.5f;
+    /** Invented. A Firebox's oxygen tank (mB), the oxygen one oxygen-poor piece burns, and how long a piece lasts when saltpetre is its oxidiser (a short violent burst, as a share). */
+    public static final int FIREBOX_OXYGEN_TANK_MB = 500, FIREBOX_OXYGEN_MB_PER_PIECE = 25;
+    public static final float NITRE_BURST_DURATION = 0.5f;
 
     /** Invented. The fluid-fuel burner: what it holds (mB) and burns a tick. */
     public static final int BURNER_TANK_MB = 2000;

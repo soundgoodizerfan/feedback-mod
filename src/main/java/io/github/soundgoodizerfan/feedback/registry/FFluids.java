@@ -182,6 +182,11 @@ public final class FFluids {
     public static final DeferredHolder<Fluid, Fluid> MAGMA_MELT_FLOWING =
             FLUIDS.register("magma_melt_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.MAGMA_MELT, FFluids.MAGMA_MELT, FFluids.MAGMA_MELT_FLOWING)));
 
+    public static final DeferredHolder<Fluid, Fluid> MAGMA_MELT_RICH =
+            FLUIDS.register("magma_melt_rich", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.MAGMA_MELT_RICH, FFluids.MAGMA_MELT_RICH, FFluids.MAGMA_MELT_RICH_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> MAGMA_MELT_RICH_FLOWING =
+            FLUIDS.register("magma_melt_rich_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.MAGMA_MELT_RICH, FFluids.MAGMA_MELT_RICH, FFluids.MAGMA_MELT_RICH_FLOWING)));
+
     public static final DeferredHolder<Fluid, Fluid> LIQUID_WISP_GAS =
             FLUIDS.register("liquid_wisp_gas", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LIQUID_WISP_GAS, FFluids.LIQUID_WISP_GAS, FFluids.LIQUID_WISP_GAS_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> LIQUID_WISP_GAS_FLOWING =

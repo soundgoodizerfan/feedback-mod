@@ -6074,5 +6074,7 @@
   "message.feedback.book.known": "You already know what this book teaches.",
   "message.feedback.book.nothing": "This book teaches nothing here.",
   "message.feedback.enchant.known": "You already know this effect.",
-  "message.feedback.enchant.nothing_to_study": "Nothing here to study."
+  "message.feedback.enchant.nothing_to_study": "Nothing here to study.",
+  "fluid.feedback.magma_melt_rich": "Rich Magma Melt",
+  "material.feedback.magma_melt_rich": "Rich Magma Melt"
 }

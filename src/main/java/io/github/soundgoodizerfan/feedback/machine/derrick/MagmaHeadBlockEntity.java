@@ -93,7 +93,9 @@ public class MagmaHeadBlockEntity extends RotationNode {
     }
 
     private int push(ServerLevel server, int amount) {
-        FluidStack offer = new FluidStack(FFluids.MAGMA_MELT.get(), amount);
+        // A bit that takes more heat reaches the richer melt below the lean first layer; a poorer one only brings up the lean.
+        boolean rich = DerrickBitItem.serviceTemperature(bit) >= FTuning.MAGMA_RICH_BIT_SERVICE_TU;
+        FluidStack offer = new FluidStack((rich ? FFluids.MAGMA_MELT_RICH : FFluids.MAGMA_MELT).get(), amount);
         int moved = 0;
         for (Direction d : Direction.values()) {
             if (moved >= amount)

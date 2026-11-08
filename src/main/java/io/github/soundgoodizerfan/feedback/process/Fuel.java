@@ -30,7 +30,20 @@ import net.minecraft.world.item.ItemStack;
  * @param spread      how much the flame varies, as a fraction, rolled once per item and held for
  *                    its whole burn, so it is learnable in aggregate rather than jittery.
  */
-public record Fuel(int duration, Tu temperature, float spread) {
+public record Fuel(int duration, Tu temperature, float spread, boolean poor) {
+
+    /** What an oxygen-poor fuel does with no oxidiser: cool and short. Any other fuel is unchanged. */
+    public Fuel smouldering() {
+        if (!poor)
+            return this;
+        return new Fuel(Math.max(1, Math.round(duration * io.github.soundgoodizerfan.feedback.core.FTuning.SMOULDER_DURATION)),
+                new Tu(temperature.value() * io.github.soundgoodizerfan.feedback.core.FTuning.SMOULDER_TEMPERATURE), spread, true);
+    }
+
+    /** What {@code stack} does in a fire fed only air: an oxygen-poor fuel smoulders. */
+    public static Optional<Fuel> findInAir(ItemStack stack) {
+        return find(stack).map(Fuel::smouldering);
+    }
 
     /** What {@code stack} does in a fire, by the server's material table. */
     public static Optional<Fuel> find(ItemStack stack) {
@@ -44,7 +57,7 @@ public record Fuel(int duration, Tu temperature, float spread) {
         Material m = at.material();
         return m.combustion().flatMap(c -> c.flameTemperature().flatMap(t -> c.burnTicks().flatMap(n -> {
             int ticks = Math.round(n * pieces(at.form()));
-            return ticks > 0 ? Optional.of(new Fuel(ticks, t, c.spread())) : Optional.empty();
+            return ticks > 0 ? Optional.of(new Fuel(ticks, t, c.spread(), c.oxygenBalance() < 0f)) : Optional.empty();
         })));
     }
 

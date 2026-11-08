@@ -22,7 +22,10 @@
     "chamber": {
       "peak_pressure": 9,
       "burn_rate": 9
-    }
+    },
+    "flame_temperature": 2000,
+    "burn_ticks": 400,
+    "spread": 0.12
   },
   "forms": {
     "dust": "minecraft:blaze_powder"

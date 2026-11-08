@@ -288,7 +288,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         }
         ItemStack stack = items.get(SLOT_FUEL);
         while (left > 0L && !stack.isEmpty()) {
-            Optional<Fuel> found = Fuel.find(stack);
+            Optional<Fuel> found = Fuel.findInAir(stack);
             if (found.isEmpty())
                 break;
             Fuel burning = found.get();
@@ -314,7 +314,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
 
     private void light() {
         ItemStack fuelStack = items.get(SLOT_FUEL);
-        Optional<Fuel> found = Fuel.find(fuelStack);
+        Optional<Fuel> found = Fuel.findInAir(fuelStack);
         if (found.isEmpty())
             return;
 

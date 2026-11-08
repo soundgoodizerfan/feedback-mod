@@ -73,6 +73,16 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     private float draught;
     /** Oxygen balance of the piece burning (spec 10.1); not saved, so a reload reads it again at the next piece. */
     private float burnOxygen;
+    /** One oxidiser piece (saltpetre, any item whose material has a positive oxygen balance), burned with an oxygen-poor fuel when no oxygen gas is on hand. */
+    private ItemStack oxidiser = ItemStack.EMPTY;
+    private final net.neoforged.neoforge.fluids.capability.templates.FluidTank oxygen =
+            new net.neoforged.neoforge.fluids.capability.templates.FluidTank(FTuning.FIREBOX_OXYGEN_TANK_MB,
+                    s -> s.getFluid() == io.github.soundgoodizerfan.feedback.registry.FFluids.OXYGEN.get()) {
+                @Override
+                protected void onContentsChanged() {
+                    setChanged();
+                }
+            };
 
     public FireboxBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.FIREBOX.get(), pos, state);
@@ -86,7 +96,36 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         return burnTicks > 0;
     }
 
+    /** The oxygen tank, for a pipe or bucket. */
+    public net.neoforged.neoforge.fluids.capability.IFluidHandler oxygenHandler() {
+        return oxygen;
+    }
+
+    public ItemStack getOxidiser() {
+        return oxidiser;
+    }
+
+    private static boolean oxidising(ItemStack stack) {
+        return !stack.isEmpty() && io.github.soundgoodizerfan.feedback.process.Material.find(
+                io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials(), stack.getItem())
+                .flatMap(l -> l.material().combustion()).map(c -> c.oxygenBalance() > 0f).orElse(false);
+    }
+
     public boolean insertFuel(ItemStack stack) {
+        if (oxidising(stack) && Fuel.find(stack).isEmpty()) {
+            if (!oxidiser.isEmpty() && !ItemStack.isSameItemSameComponents(oxidiser, stack))
+                return false;
+            if (oxidiser.getCount() >= oxidiser.getMaxStackSize())
+                return false;
+            if (oxidiser.isEmpty())
+                oxidiser = stack.split(1);
+            else {
+                oxidiser.grow(1);
+                stack.shrink(1);
+            }
+            setChanged();
+            return true;
+        }
         if (stack.isEmpty() || Fuel.find(stack).isEmpty())
             return false;
         if (!fuel.isEmpty() && !ItemStack.isSameItemSameComponents(fuel, stack))
@@ -105,6 +144,12 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     }
 
     public ItemStack removeFuel() {
+        if (fuel.isEmpty() && !oxidiser.isEmpty()) {
+            ItemStack taken = oxidiser;
+            oxidiser = ItemStack.EMPTY;
+            setChanged();
+            return taken;
+        }
         ItemStack taken = fuel;
         fuel = ItemStack.EMPTY;
         setChanged();
@@ -181,7 +226,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
                 fuel = ItemStack.EMPTY;
                 break;
             }
-            Fuel burning = maybe.get();
+            Fuel burning = maybe.get().smouldering();
             long t = Math.min(burning.duration(), left);
             lit += t;
             left -= t;
@@ -230,6 +275,16 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
             return;
         }
         Fuel burning = maybe.get();
+        // An oxygen-poor fuel reaches its full flame only with an oxidiser: oxygen gas first, else a piece of saltpetre (a short, violent burn).
+        if (burning.poor()) {
+            if (oxygen.getFluidAmount() >= FTuning.FIREBOX_OXYGEN_MB_PER_PIECE) {
+                oxygen.drain(FTuning.FIREBOX_OXYGEN_MB_PER_PIECE, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            } else if (!oxidiser.isEmpty()) {
+                oxidiser.shrink(1);
+                burning = new Fuel(Math.max(1, Math.round(burning.duration() * FTuning.NITRE_BURST_DURATION)), burning.temperature(), burning.spread(), true);
+            } else
+                burning = burning.smouldering();
+        }
 
         burnTicks = burning.duration();
         // Rolled once, here, and held for the whole burn. See the class note on why per-tick
@@ -257,6 +312,8 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.put("Fuel", fuel.saveOptional(registries));
+        tag.put("Oxidiser", oxidiser.saveOptional(registries));
+        tag.put("Oxygen", oxygen.writeToNBT(registries, new CompoundTag()));
         tag.putInt("BurnTicks", burnTicks);
         tag.putFloat("BurnTu", burnTu);
         tag.putFloat("Air", air);
@@ -267,6 +324,8 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         fuel = ItemStack.parseOptional(registries, tag.getCompound("Fuel"));
+        oxidiser = ItemStack.parseOptional(registries, tag.getCompound("Oxidiser"));
+        oxygen.readFromNBT(registries, tag.getCompound("Oxygen"));
         burnTicks = tag.getInt("BurnTicks");
         burnTu = tag.contains("BurnTu") ? tag.getFloat("BurnTu") : FTuning.AMBIENT_TU.value();
         air = tag.getFloat("Air");

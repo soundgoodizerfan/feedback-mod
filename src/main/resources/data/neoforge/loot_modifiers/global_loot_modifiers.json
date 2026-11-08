@@ -8,6 +8,7 @@
     "feedback:warden_organs",
     "feedback:ghast_organs",
     "feedback:piglin_trash",
-    "feedback:piglin_brute_trash"
+    "feedback:piglin_brute_trash",
+    "feedback:bastion_rubble"
   ]
 }

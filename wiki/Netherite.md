@@ -5,6 +5,7 @@ The hardest metal, made from Nether scrap or synthesized from powders. Both rout
 ## Getting the scrap
 
 - **Ancient debris** is mined as in vanilla. Hardness of at least 40 digs it ([Tools and Weapons](Tools_and_Weapons.md)).
+- **Bastion chests** hold Bastion Rubble: any of a bastion's chests (treasure, bridge, hoglin stable and the rest) may hold one to three, in about six chests in ten.
 - **Worn Netherite Bits** drop from **Bastion Rubble**, a rare block in the Nether (1 to 3 per block), and from piglins and piglin brutes killed by a player (15% of kills, 1 or 2 bits).
 - Vanilla's smelting of debris into scrap, the scrap-and-gold recipe and the smithing-table upgrades do not exist here. See [Ancient Debris](Ancient_Debris.md).
 
@@ -19,7 +20,7 @@ Ancient debris, netherite scrap, Worn Netherite Bits, netherite ingots, netherit
 | Worn Netherite Bits | 48 mB |
 | Cast Netherite Ingot | 144 mB |
 
-Netherite gear melts down the same way, so existing pieces return as metal.
+Any piece of netherite gear (sword, pickaxe, axe, shovel, hoe, helmet, chestplate, leggings or boots) melts for **144 mB**, the netherite ingot in it. The diamond is lost.
 
 Cast the melt in a [Casting Basin](Casting_Basin.md) to a **Cast Netherite Ingot**. It is a magnetic, fireproof alloy of hardness **26**, short of netherite's 40.
 

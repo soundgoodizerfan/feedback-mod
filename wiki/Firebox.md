@@ -32,6 +32,14 @@ Only real fuels burn here, and an item burns because of what it's *made of*: log
 | Charcoal | 1220 Tu | 1830 Tu | 80 s | 6% |
 | Block of Coal | 1180 Tu | 1770 Tu | 18 min | 10% |
 | Blaze Rod | 1400 Tu | 2100 Tu | 2 min | 3% |
+| Blaze Powder | 2000 Tu | 3000 Tu | 20 s | 12% |
+
+**Blaze rod and blaze powder are oxygen-poor**: the figures above are what they make *with an oxidiser*. In plain air they only smoulder, at 40% of the flame temperature and half the time (a rod: 560 Tu for 1 minute; a powder: 800 Tu for 10 s). Two oxidisers:
+
+- **Oxygen gas.** Pipe oxygen (or a bucket) into the Firebox's tank (500 mB). Each oxygen-poor piece lit takes 25 mB and burns full strength for its full time.
+- **Saltpetre.** Put a piece of saltpetre in the Firebox (the same click as fuel: it goes in its own slot). Each oxygen-poor piece lit uses one and burns at full strength for half its time, a short violent burn.
+
+With neither, the piece smoulders. Self-fired vessels have no oxidiser input, so a blaze fuel in one only smoulders. Nothing is damaged by a smouldering fuel.
 
 Wood fires are too cool for any metalwork. Coal and charcoal will melt copper (1000 Tu) and gold (950 Tu) but **won't reach steel** (1350 Tu) on their own.
 

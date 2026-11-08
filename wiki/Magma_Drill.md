@@ -29,6 +29,8 @@ The melt is pushed into any tank or pipe that touches the head.
 
 A bit in a hot hole wears only when the fire is **hotter than the bit material's service temperature**, faster the further over. A bit of a material that stands the heat does not wear. A worn bit pumps less, so read its condition.
 
+A bit that takes **1800 Tu or more** brings up **Rich Magma Melt** instead of the lean melt; a lesser bit only reaches the lean one.
+
 ### Settling the melt
 
 Magma Melt is not a metal yet. Feed it into a [Reactor](Reactor.md#the-reactions) at **1550 Tu or more** (best 1700 Tu). Each **1000 mB** gives:
@@ -39,6 +41,17 @@ Magma Melt is not a metal yet. Feed it into a [Reactor](Reactor.md#the-reactions
 | Molten nickel | 60 mB |
 | Molten cobalt | 20 mB |
 | Molten slag | 300 mB |
+
+**Rich Magma Melt** settles the same way, with a richer yield per **1000 mB**:
+
+| Product | Amount |
+| --- | --- |
+| Molten iron | 380 mB |
+| Molten nickel | 100 mB |
+| Molten cobalt | 45 mB |
+| Molten chromium | 35 mB |
+| Molten manganese | 25 mB |
+| Molten slag | 260 mB |
 
 Cast the metals as any other melt ([Casting and Alloys](Casting.md)). Molten slag freezes to silicate slag, and silicate slag melts back at 1300 Tu.
 

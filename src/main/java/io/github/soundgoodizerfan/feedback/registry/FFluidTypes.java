@@ -117,6 +117,7 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> LIQUID_OXYGEN = petroType("liquid_oxygen", 1140, 200, 90);
     /** The Nether arc: mixed magma melt (denser than any metal slag, hot) and wisp gas liquefied. */
     public static final DeferredHolder<FluidType, FluidType> MAGMA_MELT = petroType("magma_melt", 2800, 8000, 1900);
+    public static final DeferredHolder<FluidType, FluidType> MAGMA_MELT_RICH = petroType("magma_melt_rich", 2900, 8000, 1950);
     public static final DeferredHolder<FluidType, FluidType> LIQUID_WISP_GAS = petroType("liquid_wisp_gas", 600, 200, 90);
     public static final DeferredHolder<FluidType, FluidType> CRYOLITE_BATH = petroType("cryolite_bath", 2100, 6000, 1500);
 

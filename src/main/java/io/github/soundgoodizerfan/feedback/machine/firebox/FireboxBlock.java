@@ -101,6 +101,8 @@ public class FireboxBlock extends Block implements EntityBlock {
             ItemStack held = firebox.getFuel();
             if (!held.isEmpty())
                 Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), held);
+            if (!firebox.getOxidiser().isEmpty())
+                Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), firebox.getOxidiser());
         }
         super.onRemove(state, level, pos, newState, moved);
     }
