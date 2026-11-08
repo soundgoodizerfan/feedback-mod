@@ -1120,6 +1120,9 @@ public class FBlocks {
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlock> STAR_SEAT = BLOCKS.register("star_seat",
             () -> new io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK).strength(5.0f).sound(SoundType.METAL)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.SpentFuelPoolBlock> SPENT_FUEL_POOL = BLOCKS.register("spent_fuel_pool",
+            () -> new io.github.soundgoodizerfan.feedback.machine.reactor.SpentFuelPoolBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLUE).strength(5.0f).sound(SoundType.METAL)));
     public static final DeferredBlock<Block> SCRAM_TRIP = BLOCKS.register("scram_trip",
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(3.0f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> GRAPHITE_MODERATOR = BLOCKS.register("graphite_moderator",

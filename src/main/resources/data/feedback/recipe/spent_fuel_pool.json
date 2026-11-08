@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "item": "feedback:lead_plate"
+    },
+    "S": {
+      "item": "feedback:stainless_steel_plate"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "pattern": [
+    "L L",
+    "LBL",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:spent_fuel_pool"
+  }
+}

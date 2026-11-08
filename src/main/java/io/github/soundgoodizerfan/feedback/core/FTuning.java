@@ -3757,6 +3757,12 @@ public final class FTuning {
     public static final float REACTOR_REFLECTOR_GAIN = 0.2f;
     /** Invented. A seated Nether star: multiplication it adds to every live cell, the Tu its temperature feedback starts later, and the idle power and cells' worth of heat it makes with no fuel at all. */
     public static final float REACTOR_STAR_K = 0.25f, REACTOR_STAR_FEEDBACK_BONUS_TU = 300f, REACTOR_STAR_IDLE_POWER = 0.12f, REACTOR_STAR_IDLE_CELLS = 3f;
+    /** Invented. A spent rod's decay heat the tick it is discharged (work), and the ticks it takes to fall to a third; a pool's slot count, tank (mB) and thermal mass. */
+    public static final float REACTOR_SPENT_HEAT = 0.5f, REACTOR_SPENT_TAU_TICKS = 120000f;
+    public static final int REACTOR_POOL_SLOTS = 9, REACTOR_POOL_TANK_MB = 8000;
+    public static final ThermalMass REACTOR_POOL_MASS = new ThermalMass(400f);
+    /** Invented. Dose a pool's rods give at point blank with no water over them (Ru per rod), the share water leaves, and the Tu at which a dry pool's rods slump into slag. */
+    public static final float REACTOR_POOL_DRY_RU = 60f, REACTOR_POOL_WET_SHARE = 0.05f, REACTOR_POOL_MELT_TU = 1200f;
     /** Invented. The longest away-time a reloaded core simulates tick by tick, in ticks (an hour). */
     public static final long REACTOR_OFFLINE_MAX_TICKS = 72000L;
     /** The flux meter's step, as a fraction of full power. [OPEN] until played */

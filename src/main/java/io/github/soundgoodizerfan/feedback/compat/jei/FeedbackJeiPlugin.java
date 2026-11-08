@@ -337,6 +337,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.BALANCE_SCALE.get(), "balance_scale");
         info(registration, FModular.SURVEY_METER.get(), "survey_meter");
         info(registration, FItems.XP_METER.get(), "xp_meter");
+        info(registration, FItems.SPENT_FUEL_POOL.get(), "spent_fuel_pool");
         info(registration, FItems.COOLANT_PORT.get(), "coolant_port");
         info(registration, FItems.COOLANT_CHANNEL.get(), "coolant_channel");
         info(registration, FItems.NEUTRON_REFLECTOR.get(), "neutron_reflector");

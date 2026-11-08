@@ -6005,5 +6005,8 @@
   "feedback.jei.info.coolant_channel": "A lattice cell that carries heat off the core as water boiling to steam in the Coolant Port. The water slows neutrons a little for the fuel cells beside it, so a channel run dry costs the core some reactivity.",
   "feedback.jei.info.neutron_reflector": "A shell wall cell that sends neutrons back into the fuel cells it touches, raising their multiplication. Counts as a sound wall.",
   "feedback.jei.info.star_seat": "A lattice cell that seats one Nether star. The star is never used up: it adds reactivity to every live fuel cell, delays the core's temperature feedback, and holds a core with no fuel at a low idle.",
-  "feedback.jei.info.flux_meter": "Reads a reactor core's neutron flux as a fraction of full power. Use it on the core."
+  "feedback.jei.info.flux_meter": "Reads a reactor core's neutron flux as a fraction of full power. Use it on the core.",
+  "block.feedback.spent_fuel_pool": "Spent Fuel Pool",
+  "message.feedback.spent_fuel_pool": "Spent rods: %s. Water: %s mB. %s Tu.",
+  "feedback.jei.info.spent_fuel_pool": "Holds up to nine spent fuel rods under water. A freshly discharged rod keeps making decay heat for days; the water takes it, boiling away over 100 Tu, so keep the pool topped up. A pool run dry heats its rods until they slump into radioactive slag, and gives off a dose while it is dry. Put a rod in with the rod in hand, fill with a bucket, sneak with an empty hand to take one out."
 }

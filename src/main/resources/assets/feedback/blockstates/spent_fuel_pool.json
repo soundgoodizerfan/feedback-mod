@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "feedback:block/spent_fuel_pool"
+    }
+  }
+}

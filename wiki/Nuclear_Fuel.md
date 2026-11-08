@@ -38,6 +38,17 @@ Both rods are radioactive from the moment they are made ([Radiation](Radiation.m
 
 A burnt-out rod: it makes no power and gives off about ten times the radiation of a fresh Fuel Rod. Carrying it is a heavy dose; keep it in a lead-lined chest and take it out of the reactor with the sneak click on the channel ([Fission Reactor](Fission_Reactor.md#fuel-channel)).
 
+### Cooling a spent rod
+
+A rod keeps making decay heat after it is discharged, falling over days. A **Spent Fuel Pool** holds up to nine spent rods under water and takes that heat: right-click with a rod to put it in, with a water bucket to fill it, sneak with an empty hand to take a rod out, and use an empty hand for its rods, water and temperature. Over 100 Tu the water boils away, so a pool with fresh rods needs topping up. A pool left dry gives off a dose of about sixty Ru a rod, and heats until the rods slump into [Core Slag](Fission_Reactor.md#misuse-and-hazards).
+
+```
+L   L
+L B L
+S S S
+```
+L is a Lead Plate, S is a Stainless Steel Plate, B is a bucket.
+
 ## Burn and condition
 
 A channel reads two figures for the rod it holds, in percent:

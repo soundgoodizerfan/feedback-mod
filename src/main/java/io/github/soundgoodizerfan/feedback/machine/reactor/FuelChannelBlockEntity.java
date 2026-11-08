@@ -111,7 +111,13 @@ public class FuelChannelBlockEntity extends BlockEntity implements RadiationEmit
         float fertile = neutron().fertile();
         burn += power * FTuning.REACTOR_BURN_PER_TICK / (1f + fertile);
         if (burn >= 1f) {
-            rod = new ItemStack(FItems.SPENT_FUEL_ROD.get());
+            ItemStack spent = new ItemStack(FItems.SPENT_FUEL_ROD.get());
+            if (level != null) {
+                CompoundTag stamp = new CompoundTag();
+                stamp.putLong("Discharged", level.getGameTime());
+                spent.set(DataComponents.CUSTOM_DATA, CustomData.of(stamp));
+            }
+            rod = spent;
             neutronKnown = false;
             burn = 1f;
         }

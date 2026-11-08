@@ -396,6 +396,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> FUEL_CHANNEL = ITEMS.registerSimpleBlockItem(FBlocks.FUEL_CHANNEL);
     public static final DeferredItem<BlockItem> CONTROL_ASSEMBLY = ITEMS.registerSimpleBlockItem(FBlocks.CONTROL_ASSEMBLY);
     public static final DeferredItem<BlockItem> SCRAM_TRIP = ITEMS.registerSimpleBlockItem(FBlocks.SCRAM_TRIP);
+    public static final DeferredItem<BlockItem> SPENT_FUEL_POOL = ITEMS.registerSimpleBlockItem(FBlocks.SPENT_FUEL_POOL);
     public static final DeferredItem<BlockItem> COOLANT_PORT = ITEMS.registerSimpleBlockItem(FBlocks.COOLANT_PORT);
     public static final DeferredItem<BlockItem> COOLANT_CHANNEL = ITEMS.registerSimpleBlockItem(FBlocks.COOLANT_CHANNEL);
     public static final DeferredItem<BlockItem> NEUTRON_REFLECTOR = ITEMS.registerSimpleBlockItem(FBlocks.NEUTRON_REFLECTOR);

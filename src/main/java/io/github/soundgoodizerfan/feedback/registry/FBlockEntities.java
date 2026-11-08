@@ -505,6 +505,9 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlockEntity>> STAR_SEAT =
             BLOCK_ENTITIES.register("star_seat", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.reactor.StarSeatBlockEntity::new, FBlocks.STAR_SEAT.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.SpentFuelPoolBlockEntity>> SPENT_FUEL_POOL =
+            BLOCK_ENTITIES.register("spent_fuel_pool", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.reactor.SpentFuelPoolBlockEntity::new, FBlocks.SPENT_FUEL_POOL.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity>> REACTOR_CORE =
             BLOCK_ENTITIES.register("reactor_core", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.reactor.ReactorCoreBlockEntity::new, FBlocks.REACTOR_CORE.get()).build(null));
