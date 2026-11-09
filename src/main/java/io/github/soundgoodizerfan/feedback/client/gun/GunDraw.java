@@ -113,12 +113,15 @@ final class GunDraw {
             m.box(-0.75f, -1.75f, -3.5f, 0.75f, 1.0f, 1.25f, Tile.PANEL);
         }
         // The hammer: cocked back while the action works, down on the shot.
-        m.part(v, v.has("K") ? "K" : "R");
-        m.push();
-        m.turnX(-30f * p.hammer(), 0.5f, 1.25f);
-        m.box(-0.25f, 0.5f, 1.0f, 0.25f, 1.5f, 1.5f, Tile.METAL);
-        m.box(-0.25f, 1.25f, 1.25f, 0.25f, 1.5f, 2.0f, Tile.KNURL);
-        m.pop();
+        // A self-loading or automatic action has no hammer trait, so none is drawn.
+        if (!v.selfLoading()) {
+            m.part(v, v.has("K") ? "K" : "R");
+            m.push();
+            m.turnX(-30f * p.hammer(), 0.5f, 1.25f);
+            m.box(-0.25f, 0.5f, 1.0f, 0.25f, 1.5f, 1.5f, Tile.METAL);
+            m.box(-0.25f, 1.25f, 1.25f, 0.25f, 1.5f, 2.0f, Tile.KNURL);
+            m.pop();
+        }
         grip(m, v, p, -1.75f, 1.25f, 3.25f, -28f, 1.75f, false);
         trigger(m, v, -1.75f, -2.75f, -0.25f);
         stock(m, v, 1.5f, -1f, 1f);

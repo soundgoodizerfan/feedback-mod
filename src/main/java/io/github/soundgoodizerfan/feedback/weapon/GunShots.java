@@ -501,7 +501,9 @@ public final class GunShots {
             return;
         ItemStack gun = player.getItemInHand(hand);
         boolean byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
-        RELOADS.put(player.getUUID(), new Reload(gun, hand, player.getInventory().selected, byRound, nowMs + beatMs(player, gun)));
+        // A gun still cycling from its last shot cannot be reloaded until it could fire again.
+        long ready = Math.max(nowMs, NEXT_OK.getOrDefault(new HandKey(player.getUUID(), hand == InteractionHand.OFF_HAND), 0L));
+        RELOADS.put(player.getUUID(), new Reload(gun, hand, player.getInventory().selected, byRound, ready + beatMs(player, gun)));
         player.level().playSound(player, player.getX(), player.getEyeY(), player.getZ(),
                 net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.6f, 1.4f);
     }
@@ -555,6 +557,18 @@ public final class GunShots {
             due += beatMs(player, gun);
         }
         RELOADS.put(player.getUUID(), new Reload(gun, hand, r.slot(), byRound, due));
+    }
+
+    /** A gun knocked or dropped from a hand is baked afresh as it is picked up, so it never comes back stale or unseen. */
+    @SubscribeEvent
+    public static void onPickup(net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent.Pre event) {
+        ItemStack picked = event.getItemEntity().getItem();
+        if (!event.getPlayer().level().isClientSide && picked.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem)
+            rebakeGun(picked);
+    }
+
+    private static void rebakeGun(ItemStack gun) {
+        io.github.soundgoodizerfan.feedback.modular.ModularStacks.rebake(gun);
     }
 
     @SubscribeEvent

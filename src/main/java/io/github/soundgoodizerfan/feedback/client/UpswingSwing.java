@@ -241,7 +241,11 @@ public final class UpswingSwing {
             if (mc.hitResult instanceof EntityHitResult hit && hit.getEntity().isAlive())
                 mc.gameMode.attack(player, hit.getEntity());
             else {
-                MeleeSweepClient.sweepIfExpected(player);
+                if (mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult b
+                        && mc.level.getBlockState(b.getBlockPos()).getBlock() instanceof io.github.soundgoodizerfan.feedback.modular.TestRigBlock)
+                    PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload());
+                else
+                    MeleeSweepClient.sweepIfExpected(player);
                 player.resetAttackStrengthTicker();
             }
             player.swing(InteractionHand.MAIN_HAND);

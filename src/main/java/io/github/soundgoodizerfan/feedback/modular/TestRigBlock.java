@@ -62,6 +62,19 @@ public class TestRigBlock extends Block {
             report(player, player.getMainHandItem());
     }
 
+    /**
+     * A Better Combat swing at a block never reaches {@link #attack} (the click is ours, not vanilla's), so the swing's strike
+     * tick lands here: if the player is looking at a Strike Post within reach, it reports as a left click would.
+     */
+    public static void swing(Player player) {
+        if (player.level().isClientSide)
+            return;
+        if (player.pick(player.blockInteractionRange(), 1f, false) instanceof BlockHitResult hit
+                && hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
+                && player.level().getBlockState(hit.getBlockPos()).getBlock() instanceof TestRigBlock rig && rig.kind == Kind.POST)
+            rig.report(player, player.getMainHandItem());
+    }
+
     private void report(Player player, ItemStack held) {
         ModularFigures f = ModularStacks.figures(held);
         Component line;

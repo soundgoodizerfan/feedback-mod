@@ -85,6 +85,7 @@ public final class MeleeSweep {
     /** A swing the client's pick missed everything on. */
     public static void miss(ServerPlayer player) {
         restoreFall(player);
+        io.github.soundgoodizerfan.feedback.modular.TestRigBlock.swing(player);
         SweptVolume.halfWidth(player).ifPresent(w -> {
             List<LivingEntity> targets = SweptVolume.targets(player, w);
             if (!targets.isEmpty()) {

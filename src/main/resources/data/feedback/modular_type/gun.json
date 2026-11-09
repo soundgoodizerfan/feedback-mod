@@ -667,6 +667,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:sculk_jacket",
+        "traits": ["sculk"],
         "shape": [
           "J"
         ],
@@ -924,6 +925,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:hydraulic_buffer",
+        "traits": ["sticky"],
         "shape": [
           "d"
         ],
@@ -945,6 +947,7 @@
       "layer": 6,
       "part": {
         "item": "feedback:lit_reticle",
+        "traits": ["luminous"],
         "shape": [
           "e"
         ],

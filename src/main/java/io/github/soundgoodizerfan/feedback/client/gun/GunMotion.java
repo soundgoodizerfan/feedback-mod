@@ -66,7 +66,10 @@ public final class GunMotion {
 
     // View-space state, eased every frame.
     private static float aimPos, aimVel;
+    /** A shot (the gun pointed and firing) holds the sprint carry off for this long, so the firing pose has priority. */
+    private static final long SPRINT_AFTER_SHOT_MS = 600;
     private static float sprint;
+    private static boolean hadGun;
     private static float swayYaw, swayPitch;
     private static float lastYaw, lastPitch;
     private static long lastFrameMs;
@@ -254,7 +257,14 @@ public final class GunMotion {
         }
 
         boolean holding = player.getMainHandItem().getItem() instanceof GunItem || player.getOffhandItem().getItem() instanceof GunItem;
-        boolean wantSprint = holding && player.isSprinting() && GunClient.aim() < 0.05f && !GunClient.reloading();
+        // Taking up a gun again (picked up after being knocked away) starts its motion from rest.
+        if (holding && !hadGun) {
+            aimPos = aimVel = sprint = 0;
+            MAIN.reloadEnd = OFF.reloadEnd = 0;
+        }
+        hadGun = holding;
+        boolean wantSprint = holding && player.isSprinting() && GunClient.aim() < 0.05f && !GunClient.reloading()
+                && System.currentTimeMillis() - Math.max(MAIN.shotMs, OFF.shotMs) > SPRINT_AFTER_SHOT_MS;
         sprint += ((wantSprint ? 1 : 0) - sprint) * Math.min(1f, dt * 9f);
 
         // Turn lag: how fast the view turns, squashed by tanh so a flick leans the gun and no more.

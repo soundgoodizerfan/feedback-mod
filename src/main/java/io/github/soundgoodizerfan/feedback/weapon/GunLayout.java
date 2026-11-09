@@ -52,7 +52,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
         LEVER("lever", true, FTuning.GUN_CYCLE_MANUAL_MS_LEVER, List.of(FireMode.SEMI)),
         BOLT("bolt", false, FTuning.GUN_CYCLE_MANUAL_MS_BOLT, List.of(FireMode.SEMI)),
         PUMP("pump", true, FTuning.GUN_CYCLE_MANUAL_MS_PUMP, List.of(FireMode.SEMI)),
-        SELF_LOADING("self_loading", true, 0, List.of(FireMode.SEMI)),
+        SELF_LOADING("self_loading", false, 0, List.of(FireMode.SEMI)),
         AUTOMATIC("automatic", false, 0, List.of(FireMode.AUTO, FireMode.BURST, FireMode.SEMI));
 
         private final String id;
