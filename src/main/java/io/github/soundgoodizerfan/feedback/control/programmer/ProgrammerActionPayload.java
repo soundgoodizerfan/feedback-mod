@@ -43,7 +43,7 @@ public record ProgrammerActionPayload(BlockPos pos, int action, ProgramGraph gra
 
     public static void handle(ProgrammerActionPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (!(context.player().containerMenu instanceof ProgrammerMenu menu) || !menu.getPos().equals(payload.pos()))
+            if (!(context.player().containerMenu instanceof ProgrammerAccess menu) || !menu.getPos().equals(payload.pos()))
                 return;
             var player = context.player();
             if (payload.action() == ERASE) {

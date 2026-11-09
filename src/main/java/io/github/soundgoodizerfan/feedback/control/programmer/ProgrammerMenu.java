@@ -23,7 +23,7 @@ import net.minecraft.world.item.ItemStack;
  * straight off the block entity the way Jade reads other block entities, and
  * sending edits back over {@link ProgrammerCommitPayload} rather than through a slot.
  */
-public class ProgrammerMenu extends AbstractContainerMenu {
+public class ProgrammerMenu extends AbstractContainerMenu implements ProgrammerAccess {
 
     private static final int CARD_SLOT = 0;
     /** Slot row in the screen's top strip; {@code ProgrammerScreen.STRIP_H} must clear it. Slot positions are final, so a strip along the bottom of a resizable window isn't possible. */
@@ -68,20 +68,15 @@ public class ProgrammerMenu extends AbstractContainerMenu {
         return ProgrammerBlockEntity.at(inventory.player.level(), pos);
     }
 
+    @Override
     public BlockPos getPos() {
         return pos;
     }
 
+    @Override
     @Nullable
     public ProgrammerBlockEntity getProgrammer() {
         return programmer;
-    }
-
-    @Override
-    public void removed(Player player) {
-        super.removed(player);
-        if (programmer instanceof EmbeddedProgrammer embedded && player instanceof net.minecraft.server.level.ServerPlayer server)
-            embedded.editorClosed(server);
     }
 
     @Override

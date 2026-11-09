@@ -224,6 +224,12 @@ public class ControllerCore implements Container, Fittable {
 
     private final ProgramEvaluator.SensorReader reader = (node, index) -> current[index];
     private final ProgramEvaluator.ActuatorWriter actuatorWriter = this::writeActuator;
+    /** Told (key, argument) when the program switches something; the Computer's console listens. Never null. */
+    private java.util.function.BiConsumer<String, String> events = (key, arg) -> { };
+
+    public void events(java.util.function.BiConsumer<String, String> events) {
+        this.events = events;
+    }
     private static final ProgramEvaluator.ActuatorWriter NO_WRITE = (target, channel, value) -> { };
 
     private boolean needsPriming(ProgramGraph graph) {
@@ -328,9 +334,12 @@ public class ControllerCore implements Container, Fittable {
         if (value instanceof Float amount && target instanceof Analog analog)
             analog.setLevel(channel, amount);
         else if (value instanceof Boolean on) {
-            if (target instanceof Switchable sw)
+            if (target instanceof Switchable sw) {
+                boolean was = sw.isEngaged();
                 sw.setEngaged(on);
-            else if (target instanceof Analog analog)
+                if (was != on)
+                    events.accept(on ? "switch_on" : "switch_off", level().getBlockState(ref.linkedAt()).getBlock().getDescriptionId());
+            } else if (target instanceof Analog analog)
                 analog.setLevel(channel, on ? 1 : 0);
         }
     }

@@ -44,6 +44,8 @@ The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one
 
 **Print**, at the bottom right, turns a sheet of paper in the paper slot into a **Blueprint** carrying the design and its figures. The pinned drafts print onto the paper too, and come back as pins when you put the Blueprint back in the slot to open it for drawing again. The table keeps nothing; the paper comes back to you when you close it.
 
+A [Computer](Electric_Controller.md#apps) can run the same board as the **Blueprint App Disk**, in the desktop's colors. It cannot print onto paper and has no sample slot.
+
 ## What a blueprint is for
 
 Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work. Repairs and swaps never need one. A blueprint cannot be taken apart at the Tool Table.

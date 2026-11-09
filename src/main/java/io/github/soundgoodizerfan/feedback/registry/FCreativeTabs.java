@@ -110,6 +110,8 @@ public class FCreativeTabs {
                         output.accept(FItems.CIRCUIT_BOARD.get());
                         output.accept(FItems.FLOPPY_DISK.get());
                         output.accept(FItems.USB_DRIVE.get());
+                        for (String app : io.github.soundgoodizerfan.feedback.control.computer.ComputerApps.DISK_APPS)
+                            output.accept(io.github.soundgoodizerfan.feedback.control.computer.ComputerApps.disk(app));
                         output.accept(FItems.FUNCTION_CARD.get());
                         output.accept(FItems.MEMORY_DRUM.get());
                         output.accept(FItems.CARD_RACK.get());

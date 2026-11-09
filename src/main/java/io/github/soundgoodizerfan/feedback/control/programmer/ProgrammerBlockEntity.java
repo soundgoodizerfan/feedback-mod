@@ -95,7 +95,8 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
 
     /** Whether the medium may sit in this Programmer's slot. */
     public boolean takes(ItemStack stack) {
-        return stack.is(electric() ? FTags.PUNCH_CARDS : FTags.MECHANICAL_CARDS);
+        return stack.is(electric() ? FTags.PUNCH_CARDS : FTags.MECHANICAL_CARDS)
+                && !io.github.soundgoodizerfan.feedback.control.computer.ComputerApps.isApp(stack);
     }
 
     /** The Programmer at {@code pos}: the block entity itself, or the one a Computer carries. */

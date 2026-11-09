@@ -28,13 +28,13 @@ A mold's shape names a form. Any metal or glass with a molten fluid freezes into
 - **Ingot Mold**: casts one ingot. Craft it from three Bricks in a row, a flat tray. Fired clay, so no metal needed to make your first one.
 - **Ball Mold**: casts **eight round balls** from one ingot's worth (see [Bullet shapes](Ammunition.md#bullet-shapes)).
 - **Bullet Mold**: casts **eight bullets** from one ingot's worth. Crafted from two Wrought Iron Drilled Plates and two Sticks (see [Ammunition](Ammunition.md#bullets)).
-- **Glass Block Mold**: casts a **Glass Block** from 144 mB of molten glass. Four Wrought Iron Drilled Plates in a square.
+- **Block Mold**: casts a **Glass Block** from 144 mB of molten glass. Four Wrought Iron Drilled Plates in a square.
 - **Glass Pane Mold**: casts **3 Glass Panes** from 144 mB of molten glass.
 - **Glass Bottle Mold**: casts a **Glass Bottle** from 144 mB of molten glass.
 - **Atomising Mold**: see [below](#atomising-mold).
 
 ```
-Glass Block Mold   Glass Pane Mold   Glass Bottle Mold
+Block Mold         Glass Pane Mold   Glass Bottle Mold
 
   D D                D D               D S D
   D D                S                   D

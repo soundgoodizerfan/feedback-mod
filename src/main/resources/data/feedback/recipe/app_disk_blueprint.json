@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:floppy_disk"
+    },
+    {
+      "item": "minecraft:paper"
+    },
+    {
+      "item": "minecraft:blue_dye"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:floppy_disk",
+    "components": {
+      "feedback:app": "blueprint",
+      "minecraft:item_name": "{\"translate\":\"item.feedback.app.blueprint\"}"
+    }
+  }
+}

@@ -13,17 +13,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class EmbeddedProgrammer extends ProgrammerBlockEntity {
 
     private final BlockEntity host;
-    private java.util.function.Consumer<net.minecraft.server.level.ServerPlayer> closed = p -> { };
-
-    /** Told, on the server, when a player's editor menu closes: the Computer puts the medium back in its bay and reopens the desktop. */
-    public void onEditorClosed(java.util.function.Consumer<net.minecraft.server.level.ServerPlayer> closed) {
-        this.closed = closed;
-    }
-
-    void editorClosed(net.minecraft.server.level.ServerPlayer player) {
-        closed.accept(player);
-    }
-
     public EmbeddedProgrammer(BlockEntity host) {
         super(host.getBlockPos(), host.getBlockState());
         this.host = host;

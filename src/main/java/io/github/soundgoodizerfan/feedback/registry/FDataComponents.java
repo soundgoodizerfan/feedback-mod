@@ -251,6 +251,16 @@ public class FDataComponents {
                     .networkSynchronized(ProgramGraph.STREAM_CODEC)
                     .build());
 
+    /**
+     * An app on a medium (a Floppy Disk): the id of a Computer app that runs while the disk sits in one of its drive bays
+     * ({@code control/computer/ComputerApps}). A disk with an app is not a program medium.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> APP =
+            COMPONENTS.register("app", () -> DataComponentType.<String>builder()
+                    .persistent(com.mojang.serialization.Codec.STRING)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8)
+                    .build());
+
     /** A coat electroplated onto the item -- see {@code process/Plating}. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Plating>> PLATING =
             COMPONENTS.register("plating", () -> DataComponentType.<Plating>builder()

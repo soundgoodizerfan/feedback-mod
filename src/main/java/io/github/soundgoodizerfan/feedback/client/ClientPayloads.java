@@ -12,10 +12,12 @@ public final class ClientPayloads {
     private ClientPayloads() {
     }
 
-    /** Routes a link reply to the open Programmer screen, if it is still that Programmer's. */
+    /** Routes a link reply to the open Programmer screen, or the Computer's editor window, if it is still that one's. */
     public static void programmerLinked(ProgrammerLinkedPayload payload) {
         if (Minecraft.getInstance().screen instanceof ProgrammerScreen screen && screen.getMenu().getPos().equals(payload.pos()))
             screen.applyLink(payload);
+        else if (Minecraft.getInstance().screen instanceof ComputerScreen desktop && desktop.getMenu().getPos().equals(payload.pos()))
+            desktop.applyLink(payload);
     }
 
     /** A cast wants the view turned: {@link CameraTurn} eases it there. */
