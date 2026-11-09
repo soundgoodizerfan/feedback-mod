@@ -292,6 +292,16 @@
         "unlock": "spoor"
       },
       "rearm": "time"
+    },
+    {
+      "id": "read_the_draw",
+      "cost": 40,
+      "requires": [
+        "size_up"
+      ],
+      "effect": {
+        "unlock": "read_the_draw"
+      }
     }
   ]
 }

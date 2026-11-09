@@ -204,6 +204,7 @@ Observation: see and exploit. Aimed shots, coins, weapon reach, and reading a cr
 | Case file | 45 | Size up | Every kill of a creature type adds 1% to your blows against that type, up to 20%, read or not. Kept across deaths. |
 | Pattern | 40 | Case file | After 10 kills of a type, size up lasts twice as long and shows what the creature hits for. |
 | Herd read | 40 | Case file | Size up also reads creatures of the same kind within 6 blocks. |
+| Read the draw | 40 | Size up | A creature drawing a bow or crossbow, or a mob holding a gun with its eyes on someone, glows on your screen within 48 blocks while it does. Only you see it, and it needs no read. |
 | Read the room | 45 | Herd read | Size up on a player also shows their gun in words: empty, one round left, barrel hot. |
 | Spoor | 50 | Case file | Cast: follow the last creature you read as a trail only you see, for 20 seconds, up to 64 blocks away. Costs 20 stamina. *(once used, rearms on a timer.)* |
 
