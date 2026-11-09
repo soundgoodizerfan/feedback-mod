@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "P": { "item": "feedback:iron_plate" }, "L": { "tag": "minecraft:logs" } },
+  "pattern": [ "P", "L", "L" ],
+  "result": { "count": 1, "id": "feedback:strike_post" }
+}

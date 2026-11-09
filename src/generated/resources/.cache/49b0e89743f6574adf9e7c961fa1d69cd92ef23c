@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-08T15:39:13.098893718	Item Models: feedback
+// 1.21.1	2026-11-09T06:41:00.892574413	Item Models: feedback
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/alumina_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
@@ -732,6 +732,12 @@ fb06b5aefa4539926d784d9bd25e20da947ae459 assets/feedback/models/item/redstone_ch
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/redstone_chromium_swarf.json
 62d1e8961ae1cfe84c84aef5dbf7d66444136377 assets/feedback/models/item/redstone_chromium_turned_rod.json
 45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/redstone_chromium_wire.json
+fa1470dc1d45fc17ed626c368f7f81ac3fff92cd assets/feedback/models/item/redstone_filament_fine_wire.json
+4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/redstone_filament_rod.json
+45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/redstone_filament_wire.json
+45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/redstone_superconductor_fair_wire.json
+45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/redstone_superconductor_poor_wire.json
+45b92b867fd674f9299593d0fc5b99feac2976b0 assets/feedback/models/item/redstone_superconductor_wire.json
 cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/rotten_flesh_rod.json
 cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/salmon_rod.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/salt_dust.json

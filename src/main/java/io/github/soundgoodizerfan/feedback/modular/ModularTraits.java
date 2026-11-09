@@ -84,6 +84,8 @@ public final class ModularTraits {
         register("lunge", new io.github.soundgoodizerfan.feedback.modular.trait.Lunge());
         register("trident", new io.github.soundgoodizerfan.feedback.modular.trait.TridentThrow());
         register("smash", new io.github.soundgoodizerfan.feedback.modular.trait.SmashAttack());
+        register("spring_strike", new io.github.soundgoodizerfan.feedback.modular.trait.SpringStrike());
+        register("spring_throw", new io.github.soundgoodizerfan.feedback.modular.trait.SpringThrow());
         register("harpoon", new io.github.soundgoodizerfan.feedback.modular.trait.Harpoon());
         register("fork", new io.github.soundgoodizerfan.feedback.modular.trait.Fork());
         register("snap_shot", new io.github.soundgoodizerfan.feedback.modular.trait.Handling());

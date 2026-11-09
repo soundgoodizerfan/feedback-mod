@@ -1,0 +1,39 @@
+{
+  "inputs": [
+    {
+      "type": "neoforge:components",
+      "items": "feedback:redstone_filament_fine_wire",
+      "components": {
+        "feedback:texture": 1
+      }
+    }
+  ],
+  "min_temperature": 840,
+  "optimal_temperature": 880,
+  "max_temperature": 920,
+  "required_tpu": 600,
+  "result": {
+    "id": "feedback:redstone_superconductor_poor_wire",
+    "count": 1
+  },
+  "spoiled": {
+    "id": "minecraft:redstone",
+    "count": 1
+  },
+  "reaction": {
+    "fluid_inputs": [
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 160
+      }
+    ],
+    "fluid_outputs": [
+      {
+        "fluid": "feedback:oxygen",
+        "mb": 160
+      }
+    ],
+    "min_pu": 3.8,
+    "optimal_pu": 4.6
+  }
+}

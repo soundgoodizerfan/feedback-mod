@@ -307,6 +307,17 @@ public class ControllerCore implements Container, Fittable {
         if (level() == null || ref == null)
             return 0f;
         DataNode node = DataNode.resolveOrNull(level(), ref);
+        // An electric host reads only down a wire: no path of links, no reading; poor wire rounds it.
+        if (node != null && node.acceptsLinks() && host instanceof DataNode self) {
+            var wire = io.github.soundgoodizerfan.feedback.control.data.DataWires.reach(self, node);
+            if (wire.isEmpty())
+                return 0f;
+            return io.github.soundgoodizerfan.feedback.control.data.DataWires.deliver(readNode(node, sensor), wire.get());
+        }
+        return readNode(node, sensor);
+    }
+
+    private float readNode(DataNode node, SensorNode sensor) {
         if (node instanceof ChannelSource source && source.offersChannels())
             return source.read(sensor.channel());
         // An actuator's own state, read back: 1 engaged, 0 not. ProgramEvaluator turns it into a boolean.

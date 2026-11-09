@@ -49,7 +49,9 @@ public final class Deforming {
         /** A hot-working material outside its window -- too cold to move, or too hot to survive. */
         WRONG_TEMPERATURE,
         /** Below the material's hardness floor. A genuine impossibility, not a slower route (§7). */
-        TOO_SOFT;
+        TOO_SOFT,
+        /** A cold metal that has taken all the draws and rolls its ductility allows: anneal it first ({@link WorkHardening}). Nothing is lost. */
+        WORK_HARDENED;
 
         public boolean landed() {
             return this == WORKED;
@@ -121,6 +123,15 @@ public final class Deforming {
         if (delivered <= 0)
             return new Blow(workpiece, Outcome.TOO_SOFT);
 
+        // A drawn or rolled metal strains as it is cold worked; one at its limit will not move until it has been annealed.
+        Material hardening = operation == Operation.DRAW || operation == Operation.ROLL
+                ? WorkHardening.strained(ClientMaterials.on(level), workpiece).orElse(null) : null;
+        int strain = hardening == null ? 0 : WorkHardening.strain(workpiece);
+        boolean warm = hardening != null
+                && ItemHeat.get(workpiece, level).value() >= hardening.thermal().annealTemperature().get().value();
+        if (hardening != null && !warm && strain >= WorkHardening.limit(hardening))
+            return new Blow(workpiece, Outcome.WORK_HARDENED);
+
         ItemStack result = workpiece.copy();
 
         // Progress does not carry across a change of operation -- a blow and a draw are
@@ -138,6 +149,11 @@ public final class Deforming {
         Deformation stage = deformation;
         ItemStack driven = ItemStack.EMPTY;
         for (int guard = 0; guard < MAX_CASCADE && worked >= stage.work(); guard++) {
+            // Each cold stage finished adds a step of strain; at the limit the rest of the blow's work waits in the piece.
+            if (hardening != null && !warm && strain >= WorkHardening.limit(hardening))
+                break;
+            if (hardening != null && !warm)
+                strain++;
             worked -= stage.work();
             if (!stage.byproduct().isEmpty()) {
                 if (driven.isEmpty())
@@ -150,7 +166,10 @@ public final class Deforming {
             // cool it, and losing the stamp here would have made every hot-working chain a single
             // step by accident.
             Tu carried = ItemHeat.get(result, level);
+            int texture = WorkHardening.texture(result);
             result = stage.result().copy();
+            if (texture > 0)
+                result.set(FDataComponents.TEXTURE.get(), texture);
             ItemHeat.set(result, carried, level);
 
             Optional<Deformation> next = DeformationTable.get().find(result, operation);
@@ -161,6 +180,8 @@ public final class Deforming {
             stage = next.get();
         }
 
+        if (hardening != null && !warm && strain > 0)
+            result.set(FDataComponents.STRAIN.get(), strain);
         if (worked > 0) {
             result.set(FDataComponents.WORK.get(), worked);
             // Required work rides along so the workpiece can describe its own progress wherever it

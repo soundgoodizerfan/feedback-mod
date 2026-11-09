@@ -12,7 +12,7 @@ Five blocks that look at the face they were placed against and report what they 
 
 ## Using them
 
-Place a sensor with its face against what you want to watch, then link it to a Controller with a Sensor card. The reading is quantized: a probe reports a crop as unripe, a quarter, half, three quarters or ripe, never a finer figure.
+Place a sensor with its face against what you want to watch, then link it to a Controller with a Sensor card. An Electric Controller or Computer reads it only down a wire: join the sensor to it with the [Data Connector](Data_Connector.md#linking-nodes), which costs fine wire by distance. The reading is quantized: a probe reports a crop as unripe, a quarter, half, three quarters or ripe, never a finer figure.
 
 A Ripeness Probe reads any block that has an age, so a modded crop works too. A Photocell reads its own lamp's light, so a lamp it switches can switch it back; keep the lamp out of its sight. A Tell-Tale reports a change a moment late.
 

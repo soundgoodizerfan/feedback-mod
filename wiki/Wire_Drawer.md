@@ -41,7 +41,7 @@ The drawer is a **30 Su** load.
 
 ## Wear
 
-A draw that can't move the metal goes into the machine instead and wears it. That happens when the metal is too hard for the setting, or there's nothing left to draw (fine wire is as far as it goes). Correct use never wears it.
+A draw that can't move the metal goes into the machine instead and wears it. That happens when the metal is too hard for the setting, when the piece is cold-worked to its limit and needs an anneal ([Work hardening](Metalworking.md#work-hardening)), or there's nothing left to draw (fine wire is as far as it goes). Correct use never wears it.
 
 ## Steel Cable
 

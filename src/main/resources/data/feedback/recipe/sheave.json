@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "P": { "item": "feedback:iron_plate" }, "I": { "item": "minecraft:iron_ingot" } },
+  "pattern": [ " P ", "PIP", " P " ],
+  "result": { "count": 1, "id": "feedback:sheave" }
+}

@@ -37,6 +37,8 @@ public abstract class DesktopWindow {
     int x, y, w, h;
     int restoreX, restoreY, restoreW, restoreH;
     boolean open, minimised, maximised, placed;
+    /** 0 free, 1 snapped to the left half of the work area, 2 to the right half. */
+    int snap;
     final int startX, startY;
     final int minW, minH;
     final boolean resizable;
@@ -172,6 +174,11 @@ public abstract class DesktopWindow {
 
     protected boolean mouseClicked(double lx, double ly, int button) {
         return false;
+    }
+
+    /** The entries of the right-click menu at (lx, ly) in the content; empty for none (the default), and the desktop opens nothing. */
+    protected List<ContextMenu.Item> contextItems(double lx, double ly) {
+        return List.of();
     }
 
     protected boolean mouseDragged(double lx, double ly, int button, double dx, double dy) {

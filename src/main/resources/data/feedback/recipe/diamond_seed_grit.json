@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "feedback:diamond_grit" }, { "item": "feedback:diamond_grit" },
+    { "item": "feedback:diamond_grit" }, { "item": "feedback:diamond_grit" },
+    { "item": "feedback:diamond_grit" }, { "item": "feedback:diamond_grit" },
+    { "item": "feedback:diamond_grit" }, { "item": "feedback:diamond_grit" }
+  ],
+  "result": { "count": 1, "id": "feedback:diamond_seed" }
+}

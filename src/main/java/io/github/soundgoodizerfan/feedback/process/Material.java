@@ -272,7 +272,9 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** A tunnelling-active fluid not yet damped (ender spec 2): loose or over its boiling point it undergoes premature spatial transitions that hop whatever stands near (core/hazard/SpatialHop). */
         SPATIAL,
         /** A made assembly (a clad fuel rod), not bulk stock: no modular part is built from it. */
-        ASSEMBLY;
+        ASSEMBLY,
+        /** A drawn filament whose texture grows with each draw-then-anneal cycle (process/WorkHardening): the superconductor's. Opts in to work hardening at any ductility. */
+        TEXTURED;
 
         public static final Codec<Trait> CODEC = StringRepresentable.fromEnum(Trait::values);
 
@@ -552,13 +554,15 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                           battery's lead). Absent, it is no battery plate.
      * @param coreLoss           the share, 0 to 1, of the power through a machine's core of it that is lost as heat in
      *                           the core (hysteresis and eddy currents). Absent, {@code FTuning.CORE_LOSS_DEFAULT}.
+     * @param quenchDrop         a superconductor's drop once it quenches (current past its ampacity). Absent, the
+     *                           conductor never quenches: it only heats when overloaded.
      */
     public record Electrical(Optional<Float> drop, Optional<Float> electrodePotential, Optional<Float> conductivity,
                              Optional<VoltageBand> insulation,
                              Optional<Float> piezoCoupling, Optional<Float> rectifying,
-                             Optional<SecondaryCell> secondaryCell, Optional<Float> coreLoss) {
+                             Optional<SecondaryCell> secondaryCell, Optional<Float> coreLoss, Optional<Float> quenchDrop) {
         static final Electrical NONE = new Electrical(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 
         static final Codec<Electrical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.optionalFieldOf("drop").forGetter(Electrical::drop),
@@ -568,7 +572,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.FLOAT.optionalFieldOf("piezo_coupling").forGetter(Electrical::piezoCoupling),
                 Codec.FLOAT.optionalFieldOf("rectifying").forGetter(Electrical::rectifying),
                 SecondaryCell.CODEC.optionalFieldOf("secondary_cell").forGetter(Electrical::secondaryCell),
-                Codec.FLOAT.optionalFieldOf("core_loss").forGetter(Electrical::coreLoss)
+                Codec.FLOAT.optionalFieldOf("core_loss").forGetter(Electrical::coreLoss),
+                Codec.FLOAT.optionalFieldOf("quench_drop").forGetter(Electrical::quenchDrop)
         ).apply(instance, Electrical::new));
     }
 

@@ -32,7 +32,7 @@ final class ConsoleWindow extends DesktopWindow {
         return Glyph.CONSOLE;
     }
 
-    private static Component text(ComputerBlockEntity.LogEntry e) {
+    static Component text(ComputerBlockEntity.LogEntry e) {
         Component arg = e.key().startsWith("switch") || e.key().equals("refused") ? Component.translatable(e.arg()) : Component.literal(e.arg());
         return Component.translatable("gui.feedback.computer.log." + e.key(), arg);
     }

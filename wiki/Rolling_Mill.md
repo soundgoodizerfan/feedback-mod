@@ -26,7 +26,7 @@ The mill has two slots side by side: the **workpiece**, and a **skin** for [clad
 
 **Ingot → Rod** and **Plate → Pipe**, for every metal.
 
-There's nothing further to roll a rod or a pipe into. That makes the mill more forgiving than the [hammer](Mechanical_Hammer.md): a finished piece doesn't get ruined if you leave it. But the mill keeps rolling, and **rolling a finished rod or pipe wears the mill**. Take it out promptly, or use a hopper.
+There's nothing further to roll a rod or a pipe into. That makes the mill more forgiving than the [hammer](Mechanical_Hammer.md): a finished piece doesn't get ruined if you leave it. But the mill keeps rolling, and **rolling a finished rod or pipe wears the mill**. So does rolling a piece that is cold-worked to its limit; anneal it first ([Work hardening](Metalworking.md#work-hardening)). Take it out promptly, or use a hopper.
 
 The mill rolls at **20 St**, hard enough for steel (heat steel to 900–1100 Tu first; see [Metalworking](Metalworking.md#hot-metal)). A copper rod is one stroke; a steel rod is about 40. It's a **50 Su** load.
 

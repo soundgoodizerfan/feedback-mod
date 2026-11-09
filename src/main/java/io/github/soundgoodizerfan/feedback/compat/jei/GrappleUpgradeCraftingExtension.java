@@ -34,6 +34,14 @@ public class GrappleUpgradeCraftingExtension implements ICraftingCategoryExtensi
             out.set(FDataComponents.GRAPPLE_FITTINGS.get(), f.bit());
             outputs.add(out);
         }
+        // Re-lining: four wires of a metal (iron's shown) give the grapple that metal for a line.
+        slots.get(0).add(new ItemStack(FItems.GRAPPLE.get()));
+        net.minecraft.world.item.Item wire = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(io.github.soundgoodizerfan.feedback.Feedback.id("iron_wire"));
+        for (int i = 1; i < 5; i++)
+            slots.get(i).add(wire == net.minecraft.world.item.Items.AIR ? ItemStack.EMPTY : new ItemStack(wire));
+        ItemStack relined = new ItemStack(FItems.GRAPPLE.get());
+        relined.set(FDataComponents.GRAPPLE_LINE.get(), io.github.soundgoodizerfan.feedback.Feedback.id("iron"));
+        outputs.add(relined);
         grid.createAndSetInputs(builder, slots, 3, 2);
         grid.createAndSetOutputs(builder, outputs);
     }

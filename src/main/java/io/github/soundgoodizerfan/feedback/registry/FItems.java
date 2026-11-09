@@ -421,6 +421,22 @@ public class FItems {
     public static final DeferredItem<Item> FLUX_METER =
             ITEMS.registerItem("flux_meter", io.github.soundgoodizerfan.feedback.item.FluxMeterItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> GRAPHITE_MODERATOR = ITEMS.registerSimpleBlockItem(FBlocks.GRAPHITE_MODERATOR);
+    public static final DeferredItem<BlockItem> IMPACT_PENDULUM = ITEMS.registerSimpleBlockItem(FBlocks.IMPACT_PENDULUM);
+    public static final DeferredItem<BlockItem> STRIKE_POST = ITEMS.registerSimpleBlockItem(FBlocks.STRIKE_POST);
+    public static final DeferredItem<BlockItem> SHEAVE = ITEMS.registerSimpleBlockItem(FBlocks.SHEAVE);
+    public static final DeferredItem<BlockItem> SHOCK_CAPSULE = ITEMS.registerSimpleBlockItem(FBlocks.SHOCK_CAPSULE);
+    /** Nanodiamond from a shock capsule: too small to cut, enough to seed a growth. */
+    /** A head-slot mask that cuts fume doses; see {@code item/RespiratorItem}. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.item.RespiratorItem> RESPIRATOR =
+            ITEMS.registerItem("respirator", io.github.soundgoodizerfan.feedback.item.RespiratorItem::new, new Item.Properties().stacksTo(1));
+    /** The refined-redstone superconductor chain (process/WorkHardening, thermal_process/superconductor_*): purified dust, the blend, the calcined powder, the silver-sheathed billet it is drawn from. */
+    public static final DeferredItem<Item> PURIFIED_REDSTONE = ITEMS.registerSimpleItem("purified_redstone");
+    public static final DeferredItem<Item> SUPERCONDUCTOR_BLEND = ITEMS.registerSimpleItem("superconductor_blend");
+    public static final DeferredItem<Item> CALCINED_BLEND = ITEMS.registerSimpleItem("calcined_blend");
+    public static final DeferredItem<Item> SHEATHED_BILLET = ITEMS.registerSimpleItem("sheathed_billet");
+    public static final DeferredItem<Item> DIAMOND_GRIT = ITEMS.registerSimpleItem("diamond_grit");
+    /** A chip of diamond a crystal grows on, in a Reactor (high pressure or vapour). */
+    public static final DeferredItem<Item> DIAMOND_SEED = ITEMS.registerSimpleItem("diamond_seed");
     public static final DeferredItem<BlockItem> CORE_SLAG = ITEMS.registerSimpleBlockItem(FBlocks.CORE_SLAG);
     public static final DeferredItem<Item> FUEL_ROD = ITEMS.registerSimpleItem("fuel_rod");
     public static final DeferredItem<Item> THORIUM_FUEL_ROD = ITEMS.registerSimpleItem("thorium_fuel_rod");

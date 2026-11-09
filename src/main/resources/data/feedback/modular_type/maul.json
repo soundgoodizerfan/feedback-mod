@@ -82,6 +82,24 @@
             "section": 1.3,
             "strike": 0.5,
             "mass": 0.89
+          },
+          {
+            "name": "spring_hammer",
+            "trait": "spring_strike",
+            "params": {
+              "stored": 6,
+              "reset": 30,
+              "rating": 12
+            },
+            "shape": [
+              "HHHH",
+              "HHHH"
+            ],
+            "reach": 0.0,
+            "centre": 0.02,
+            "section": 1.1,
+            "strike": 0.9,
+            "mass": 1.0
           }
         ]
       }

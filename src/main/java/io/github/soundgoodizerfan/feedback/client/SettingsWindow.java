@@ -50,7 +50,8 @@ final class SettingsWindow extends DesktopWindow {
                 i -> ctx.change(ctx.settings().with(ComputerSettings.Phosphor.values()[i]))), 0, 10);
         wallpaper = add(GuiStyle.tabs(skin, 0, 0, w, 14,
                 List.of(Component.translatable("gui.feedback.computer.wallpaper.grid"), Component.translatable("gui.feedback.computer.wallpaper.scans"),
-                        Component.translatable("gui.feedback.computer.wallpaper.circuit"), Component.translatable("gui.feedback.computer.wallpaper.blank")),
+                        Component.translatable("gui.feedback.computer.wallpaper.circuit"), Component.translatable("gui.feedback.computer.wallpaper.horizon"),
+                        Component.translatable("gui.feedback.computer.wallpaper.blank")),
                 () -> ctx.settings().wallpaper().ordinal(),
                 i -> ctx.change(ctx.settings().with(ComputerSettings.Wallpaper.values()[i]))), 0, 40);
         for (int i = 0; i < FLAGS.length; i++) {

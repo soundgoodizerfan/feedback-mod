@@ -45,12 +45,19 @@ Some metals, **steel** for one, can only be worked **inside a temperature window
 
 Hot items cool down wherever they are, at 30 Tu a second: in your hand, in a chest, in a hopper. Steel at the top of its window has about **7 seconds** of working before it's too cold. See [Heat](Heat.md). The trip from the fire to the hammer is a race, and a hot piece burns bare hands: see [Hazards](Hazards.md).
 
+## Work hardening
+
+Drawing and rolling at room temperature strains a metal that is ductile enough to be cold worked (a ductility of 3 or more, shown in JEI). Each draw or roll stage a piece finishes adds one **strain**. A metal takes as many strain steps as its ductility; at that limit the next draw or roll does not move it: the blow does not land, nothing is lost, and the machine's die wears as for any blow that cannot land (see below). **Annealing** clears the strain: heat the piece to its anneal temperature (the *Anneals at* figure JEI shows), in a [Crucible](Crucible.md) (take the piece out while the crucible is at or over that temperature) or a [Kiln zone](Kiln_Zone.md). The [Annealing Furnace](Furnaces.md) tops out at 380 Tu, so it cannot reach the anneal of metals that need more. A piece at or above its anneal temperature is worked hot, without strain.
+
+A strained piece's tooltip reads *Cold-worked: n of m steps*, in red at the limit. Hammer blows never strain a piece. Hand drawing and hand rolling strain a piece the same way.
+
 ## Wear: hitting the wrong thing
 
 When a blow can't go into the metal, it goes into the **machine** instead. That happens when:
 
 - the metal is too hard for the blow,
 - the metal is the wrong temperature,
+- the piece is cold-worked to its limit ([Work hardening](#work-hardening)),
 - the blow is harder than the machine is built to take (over-geared), or
 - there's nothing left to make (scrap stays scrap).
 

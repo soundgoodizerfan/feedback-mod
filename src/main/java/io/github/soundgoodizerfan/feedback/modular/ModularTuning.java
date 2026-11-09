@@ -56,6 +56,8 @@ public final class ModularTuning {
      * materials with nothing set for them. It was 1.4, fitted to nothing: an iron sword was 4.3.
      */
     public static final float DAMAGE_K = 1.8f;
+    /** Invented. What each test rig can distinguish: the Impact Pendulum's step in toughness, the Strike Post's in joules and in damage. */
+    public static final float PENDULUM_STEP = 5f, POST_JOULE_STEP = 0.5f, POST_DAMAGE_STEP = 0.5f;
     /** Dig speed per unit of blow, fitted to an iron pickaxe that digs near 6. */
     public static final float DIG_K = 2f;
     /** Durability per (edge competence x litre of wearing edge). */
@@ -350,6 +352,12 @@ public final class ModularTuning {
     public static final int GRAPPLE_SNEAK_GRACE = 6;
     /** Mu of load a line takes per St of its material's yield strength (string is wool's 3 St: 120 Mu, a little over a player's 78). Stand-in. */
     public static final float GRAPPLE_RATING_PER_ST = 40f;
+    /** Invented. A line's weight: its material's density times the longest line it carries times this, added to the load it takes. */
+    public static final float GRAPPLE_LINE_AREA = 0.15f;
+    /** Invented. Share of its rating a fibrous line keeps wet (swimming or in rain). */
+    public static final float GRAPPLE_WET_RATING = 0.75f;
+    /** Invented. Chance each second that lightning finds a metal line and its holder out in a thunderstorm. */
+    public static final float GRAPPLE_STRIKE_CHANCE = 0.03f;
     /** Yield strength assumed when the rope material has no figure. */
     public static final float GRAPPLE_FALLBACK_ST = 1f;
     /** A tick that closed less than this share of the reel's rate is a stall (caught on a corner, held by the ground). */

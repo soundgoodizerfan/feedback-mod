@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "item": "feedback:superconductor_blend"
+    }
+  ],
+  "min_temperature": 780,
+  "optimal_temperature": 850,
+  "max_temperature": 920,
+  "required_tpu": 400,
+  "result": {
+    "id": "feedback:calcined_blend",
+    "count": 1
+  },
+  "spoil_temperature": 1000,
+  "spoiled": {
+    "id": "minecraft:redstone",
+    "count": 1
+  }
+}

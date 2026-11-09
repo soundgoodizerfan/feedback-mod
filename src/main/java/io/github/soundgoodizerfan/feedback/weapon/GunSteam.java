@@ -27,6 +27,26 @@ public final class GunSteam {
         return gun.getOrDefault(FWeapons.GUN_STEAM.get(), 0f);
     }
 
+    /** Tu of the steam in the chest: what it was filled at, cooling while the gun is carried. A chest never given a stamped fill counts as just hot enough. */
+    public static float temperature(ItemStack gun) {
+        return gun.getOrDefault(FWeapons.GUN_STEAM_TU.get(), FTuning.GUN_STEAM_MIN_TU);
+    }
+
+    /** Takes in {@code mb} of steam at {@code tu}, mixing by mass with what is already there. */
+    private static void add(ItemStack gun, float mb, float tu) {
+        if (mb <= 0f)
+            return;
+        float was = stored(gun);
+        gun.set(FWeapons.GUN_STEAM_TU.get(), io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.merge(temperature(gun), Math.round(was), tu, Math.round(mb)));
+        set(gun, was + mb);
+    }
+
+    /** The temperature a fluid stack was stamped with, or just-hot-enough for steam from a source that stamps none. */
+    private static float stampOf(FluidStack stack) {
+        return stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.FLUID_TEMPERATURE.get())
+                ? io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.of(stack).value() : FTuning.GUN_STEAM_MIN_TU;
+    }
+
     public static void set(ItemStack gun, float mb) {
         gun.set(FWeapons.GUN_STEAM.get(), Math.max(0f, mb));
     }
@@ -46,7 +66,7 @@ public final class GunSteam {
 
     /** Whether the chest holds enough for one more shot. */
     public static boolean canFire(ItemStack gun) {
-        return stored(gun) >= perShot(gun);
+        return stored(gun) >= perShot(gun) && temperature(gun) >= FTuning.GUN_STEAM_MIN_TU;
     }
 
     /** A shot lets its steam out. */
@@ -57,8 +77,12 @@ public final class GunSteam {
     /** Carried steam condenses: the gun's own chest is not a boiler, and nothing keeps it hot. */
     public static void condense(ItemStack gun) {
         float mb = stored(gun);
-        if (mb > 0)
-            set(gun, mb - FTuning.GUN_STEAM_LEAK_MB_PER_TICK * fitted(gun, "gun_lagging", "leak_mult", 1f));
+        if (mb > 0) {
+            float lag = fitted(gun, "gun_lagging", "leak_mult", 1f);
+            set(gun, mb - FTuning.GUN_STEAM_LEAK_MB_PER_TICK * lag);
+            float tu = temperature(gun);
+            gun.set(FWeapons.GUN_STEAM_TU.get(), tu + (FTuning.AMBIENT_TU.value() - tu) * FTuning.GUN_STEAM_RELAX_PER_TICK * lag);
+        }
     }
 
     /**
@@ -79,8 +103,9 @@ public final class GunSteam {
         FluidStack offered = source.drain(new FluidStack(FFluids.STEAM.get(), want), IFluidHandler.FluidAction.SIMULATE);
         if (offered.isEmpty() || !offered.is(FTags.STEAM))
             return 0;
-        int moved = source.drain(offered.getAmount(), IFluidHandler.FluidAction.EXECUTE).getAmount();
-        set(gun, stored(gun) + moved);
+        FluidStack drained = source.drain(offered.getAmount(), IFluidHandler.FluidAction.EXECUTE);
+        int moved = drained.getAmount();
+        add(gun, moved, stampOf(drained.isEmpty() ? offered : drained));
         float rating = spec.get().steamRating(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
         float held = FTuning.GUN_STEAM_FULL_PU * stored(gun) / capacity;
         if (rating > 0 && held > rating) {
@@ -112,7 +137,8 @@ public final class GunSteam {
         @Override
         public FluidStack getFluidInTank(int tank) {
             int mb = (int) stored(gun);
-            return mb <= 0 ? FluidStack.EMPTY : new FluidStack(FFluids.STEAM.get(), mb);
+            return mb <= 0 ? FluidStack.EMPTY
+                    : io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.stamp(new FluidStack(FFluids.STEAM.get(), mb), temperature(gun));
         }
 
         @Override
@@ -131,7 +157,7 @@ public final class GunSteam {
                 return 0;
             int taken = Math.min(resource.getAmount(), capacity - (int) stored(gun));
             if (taken > 0 && action.execute())
-                set(gun, stored(gun) + taken);
+                add(gun, taken, stampOf(resource));
             return Math.max(0, taken);
         }
 
@@ -147,7 +173,7 @@ public final class GunSteam {
                 return FluidStack.EMPTY;
             if (action.execute())
                 set(gun, stored(gun) - out);
-            return new FluidStack(FFluids.STEAM.get(), out);
+            return io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.stamp(new FluidStack(FFluids.STEAM.get(), out), temperature(gun));
         }
     }
 }

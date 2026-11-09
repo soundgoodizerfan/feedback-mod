@@ -98,6 +98,26 @@
             "section": 1.1,
             "strike": 1.0,
             "mass": 1.92
+          },
+          {
+            "name": "spring_blade",
+            "trait": "spring_throw",
+            "shape": [
+              "H",
+              "H"
+            ],
+            "params": {
+              "speed_mult": 1.6,
+              "rating": 6,
+              "min_charge_ticks": 2,
+              "full_charge_ticks": 4,
+              "return": 0
+            },
+            "reach": 0.0,
+            "centre": 0.0,
+            "section": 0.8,
+            "strike": 0.9,
+            "mass": 1.0
           }
         ]
       }
@@ -229,7 +249,10 @@
   },
   "board": {
     "layout": {
-      "T": [1, 0]
+      "T": [
+        1,
+        0
+      ]
     }
   }
 }

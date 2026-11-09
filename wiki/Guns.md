@@ -286,9 +286,11 @@ To make a gun that holds more pressure: use a stronger metal, a thicker chamber 
 
 ## Steam launchers
 
-A gun built with a **steam chest** (a plate part, small or large) fires from steam instead of powder. The round is a plain slug. Right-click a [Boiler](Boiler.md) with the gun to fill the chest. The chest fills only as far as the boiler's pressure allows: a boiler at 1.5 Pu fills it halfway, a boiler near 3 Pu fills it full. The shot's energy is capped by the chest pressure and the case's room: a 9 mm steam gun hits for about 1.5 damage and a 20 mm for about 6. Each shot lets out 100 mB, a gun with less than that only hisses, and steam in a carried gun slowly condenses away.
+A gun built with a **steam chest** (a plate part, small or large) fires from steam instead of powder. The round is a plain slug. Right-click a [Boiler](Boiler.md) with the gun to fill the chest. The chest fills only as far as the boiler's pressure allows: a boiler at 1.5 Pu fills it halfway, a boiler near 3 Pu fills it full. The shot's energy is capped by the chest pressure and the case's room: a 9 mm steam gun hits for about 1.5 damage and a 20 mm for about 6. Each shot lets out 100 mB, and a gun with less than that only hisses.
 
-Two fittings change how a steam launcher behaves. A **Steam Valve** is metered (about 60% of the steam per shot, a slower cycle) or a dump valve (about 150%, a faster cycle). **Lagging** round the chest makes carried steam condense away at a quarter of the rate.
+The chest remembers the **temperature** of its steam. The tooltip reads "Steam: x / y mB at z Tu", in red when the steam is too cool. Topping up mixes new steam with the old by amount, so cooler steam in the chest drags the temperature down. Carried steam slowly cools and condenses away. Below **100 Tu** the steam has condensed and the gun will not fire.
+
+Two fittings change how a steam launcher behaves. A **Steam Valve** is metered (about 60% of the steam per shot, a slower cycle) or a dump valve (about 150%, a faster cycle). **Lagging** round the chest makes carried steam cool and condense away at a quarter of the rate.
 
 The HUD shows the steam in the chest in place of spare rounds. The chest has a pressure rating from its metal's strength. Fill it past that rating and it lets go: the gun is damaged, steam scalds whoever is holding it, and the chest empties. A shot taken at a pressure above the rating hurts the same way as an overpressure round.
 

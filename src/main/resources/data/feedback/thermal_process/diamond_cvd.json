@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    { "item": "feedback:diamond_seed" }
+  ],
+  "min_temperature": 780,
+  "optimal_temperature": 880,
+  "max_temperature": 950,
+  "required_tpu": 3000,
+  "result": { "id": "minecraft:diamond", "count": 2 },
+  "spoiled": { "id": "feedback:graphite", "count": 1 },
+  "reaction": {
+    "fluid_inputs": [
+      { "fluid": "feedback:methane", "mb": 8 },
+      { "fluid": "feedback:hydrogen", "mb": 72 }
+    ],
+    "fluid_outputs": [ { "fluid": "feedback:hydrogen", "mb": 64 } ],
+    "min_pu": 1.5,
+    "optimal_pu": 2
+  }
+}

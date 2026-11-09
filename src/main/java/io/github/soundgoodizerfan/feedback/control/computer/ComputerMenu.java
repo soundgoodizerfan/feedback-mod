@@ -35,6 +35,28 @@ public class ComputerMenu extends AbstractContainerMenu implements io.github.sou
     public static final int DOCK_X = (PANEL_W - 9 * 18) / 2 + 1, DOCK_Y = PANEL_H - BAR_H - BAR_GAP - 30;
     public static final int RUNNING = ComputerBays.SIZE;
 
+    /**
+     * A slot the screen can hide: the desktop's windows are drawn in the screen's background, under any slot item, so a slot a window
+     * covers is switched off (not drawn, not hovered, not clicked) for as long as it is covered. Set by the client screen only.
+     */
+    public static final class DeskSlot extends Slot {
+
+        private boolean hidden;
+
+        public DeskSlot(Container container, int index, int x, int y) {
+            super(container, index, x, y);
+        }
+
+        public void hide(boolean hidden) {
+            this.hidden = hidden;
+        }
+
+        @Override
+        public boolean isActive() {
+            return !hidden;
+        }
+    }
+
     private final BlockPos pos;
     @Nullable
     private final ComputerBlockEntity computer;
@@ -54,10 +76,10 @@ public class ComputerMenu extends AbstractContainerMenu implements io.github.sou
         this.bays = computer != null ? computer.bays() : new SimpleContainer(ComputerBays.SIZE);
         this.running = computer != null ? computer.core() : new SimpleContainer(1);
         for (int i = 0; i < ComputerBays.SIZE; i++)
-            addSlot(new Slot(bays, i, iconX(), ICON_Y + i * ICON_STEP));
-        addSlot(new Slot(running, 0, iconX(), ICON_Y + ComputerBays.SIZE * ICON_STEP));
+            addSlot(new DeskSlot(bays, i, iconX(), ICON_Y + i * ICON_STEP));
+        addSlot(new DeskSlot(running, 0, iconX(), ICON_Y + ComputerBays.SIZE * ICON_STEP));
         for (int column = 0; column < 9; column++)
-            addSlot(new Slot(inventory, column, DOCK_X + column * 18, DOCK_Y));
+            addSlot(new DeskSlot(inventory, column, DOCK_X + column * 18, DOCK_Y));
         if (computer != null && !inventory.player.level().isClientSide) {
             // a medium left in the editor (a restart, a crash) goes home when the next desktop opens on an idle Computer
             if (computer.watching() == 0 && inventory.player instanceof net.minecraft.server.level.ServerPlayer server)

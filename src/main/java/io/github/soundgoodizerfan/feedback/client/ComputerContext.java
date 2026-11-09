@@ -32,4 +32,10 @@ interface ComputerContext {
 
     /** Applies new settings at once on this screen and sends them to the server. */
     void change(ComputerSettings settings);
+
+    /** Whether a disk with this app is in a bay. */
+    boolean installed(String id);
+
+    /** A short notice in the desktop's corner. */
+    void toast(net.minecraft.network.chat.Component text);
 }

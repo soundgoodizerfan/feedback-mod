@@ -18,5 +18,6 @@ Set it **on top of a [Firebox](Firebox.md)** (or any fire below it, lava include
 While the pan is hot, hot-working stock lying in the Anvil's cells (steel and the like) is pulled toward the pan's heat, **3% of the gap each tick**, so cold stock warms quickly and warm stock barely at all. Stock also cools at its usual 1.5 Tu a tick, so it settles about **50 Tu under the pan** and never over it. The pan is a middling mass (between the small and large [crucible](Crucible.md)): it takes a while to come up, and holds through a cold piece being laid on it. Planks, stone and other cold-worked stock are not heated. A Smithing Table beside the pan is not reheated. The forging rhythm on the Anvil allows for the pan's heat.
 
 - Stock left in too long can get hotter than the metal's working window; the Anvil then refuses it until it cools.
+- Raw stock (ingots and the like, not a shaped part) sitting above its material's oxidation temperature scales: now and then one piece of the stack is lost, more often the hotter it sits past that temperature. Shaped parts are not affected.
 - It has no screen and holds nothing. It wears from nothing.
 - A hot pan burns a bare hand like any hot block: wear [gloves](Hazards.md#gloves) or leave it alone.

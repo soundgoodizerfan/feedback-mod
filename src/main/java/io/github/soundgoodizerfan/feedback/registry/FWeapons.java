@@ -74,6 +74,13 @@ public class FWeapons {
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
                     .build());
 
+    /** Temperature (Tu) of the steam in a steam gun's chest. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> GUN_STEAM_TU =
+            COMPONENTS.register("gun_steam_tu", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.FLOAT)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
     /** What one trigger pull does. Absent means automatic, which is what held fire always was. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<FireMode>> FIRE_MODE =
             COMPONENTS.register("fire_mode", () -> DataComponentType.<FireMode>builder()

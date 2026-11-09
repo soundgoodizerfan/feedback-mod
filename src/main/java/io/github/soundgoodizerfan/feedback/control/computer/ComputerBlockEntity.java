@@ -148,26 +148,59 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
 
     /** Copies the program in bay {@code drive} onto a blank soft medium (Floppy, USB) in another bay. */
     public void copy(int drive, ServerPlayer player) {
-        if (drive < 0 || drive >= ComputerBays.SIZE || bays.getItem(drive).isEmpty() || ComputerApps.isApp(bays.getItem(drive)) || !hasApp("library"))
+        if (!copyable(drive) || !hasApp("library"))
             return;
-        var graph = bays.getItem(drive).getOrDefault(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH,
-                io.github.soundgoodizerfan.feedback.control.program.ProgramGraph.EMPTY);
-        if (graph.nodes().isEmpty())
-            return;
-        for (int i = 0; i < ComputerBays.SIZE; i++) {
-            ItemStack target = bays.getItem(i);
-            if (i == drive || target.getCount() != 1 || !target.is(FTags.SOFT_CARDS) || ComputerApps.isApp(target) || !target.getOrDefault(
-                    io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH,
-                    io.github.soundgoodizerfan.feedback.control.program.ProgramGraph.EMPTY).nodes().isEmpty())
-                continue;
-            target.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH, graph);
-            // as a printed card: one of a kind
-            target.set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 1);
-            bays.setChanged();
-            log("copy", String.valueOf((char) ('A' + drive)));
-            return;
-        }
+        for (int i = 0; i < ComputerBays.SIZE; i++)
+            if (i != drive && blank(bays.getItem(i))) {
+                write(drive, i);
+                return;
+            }
         player.displayClientMessage(Component.translatable("gui.feedback.computer.no_blank"), true);
+    }
+
+    /** Copies the program in bay {@code source} onto the blank soft medium in bay {@code target}: the Files app's drag, with the Library disk in. */
+    public void copyTo(int source, int target, ServerPlayer player) {
+        if (!copyable(source) || !hasApp("library") || target < 0 || target >= ComputerBays.SIZE || target == source)
+            return;
+        if (blank(bays.getItem(target)))
+            write(source, target);
+        else
+            player.displayClientMessage(Component.translatable("gui.feedback.computer.no_blank_there", String.valueOf((char) ('A' + target))), true);
+    }
+
+    /** Wipes the program from the medium in bay {@code drive}, leaving it blank to be written again. */
+    public void erase(int drive, ServerPlayer player) {
+        if (drive < 0 || drive >= ComputerBays.SIZE || bays.getItem(drive).isEmpty() || ComputerApps.isApp(bays.getItem(drive)))
+            return;
+        bays.getItem(drive).set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH,
+                io.github.soundgoodizerfan.feedback.control.program.ProgramGraph.EMPTY);
+        bays.setChanged();
+        log("erase", String.valueOf((char) ('A' + drive)));
+    }
+
+    /** Whether bay {@code drive} holds a program medium with something written on it. */
+    private boolean copyable(int drive) {
+        return drive >= 0 && drive < ComputerBays.SIZE && !bays.getItem(drive).isEmpty() && !ComputerApps.isApp(bays.getItem(drive))
+                && !bays.getItem(drive).getOrDefault(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH,
+                        io.github.soundgoodizerfan.feedback.control.program.ProgramGraph.EMPTY).nodes().isEmpty();
+    }
+
+    /** A lone Floppy or USB drive with nothing on it. */
+    private static boolean blank(ItemStack target) {
+        return target.getCount() == 1 && target.is(FTags.SOFT_CARDS) && !ComputerApps.isApp(target) && target.getOrDefault(
+                io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH,
+                io.github.soundgoodizerfan.feedback.control.program.ProgramGraph.EMPTY).nodes().isEmpty();
+    }
+
+    private void write(int source, int target) {
+        var graph = bays.getItem(source).getOrDefault(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH,
+                io.github.soundgoodizerfan.feedback.control.program.ProgramGraph.EMPTY);
+        ItemStack medium = bays.getItem(target);
+        medium.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PROGRAM_GRAPH, graph);
+        // as a printed card: one of a kind
+        medium.set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 1);
+        bays.setChanged();
+        log("copy", String.valueOf((char) ('A' + source)));
     }
 
     @Override

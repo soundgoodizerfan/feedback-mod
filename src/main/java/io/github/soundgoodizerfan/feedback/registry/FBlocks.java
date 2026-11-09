@@ -1135,6 +1135,16 @@ public class FBlocks {
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).strength(3.0f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
     public static final DeferredBlock<Block> GRAPHITE_MODERATOR = BLOCKS.register("graphite_moderator",
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(2.0f, 6.0f).sound(SoundType.STONE).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.modular.TestRigBlock> IMPACT_PENDULUM = BLOCKS.register("impact_pendulum",
+            () -> new io.github.soundgoodizerfan.feedback.modular.TestRigBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f, 6.0f).sound(SoundType.METAL).noOcclusion(),
+                    io.github.soundgoodizerfan.feedback.modular.TestRigBlock.Kind.PENDULUM));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.modular.TestRigBlock> STRIKE_POST = BLOCKS.register("strike_post",
+            () -> new io.github.soundgoodizerfan.feedback.modular.TestRigBlock(BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(3.0f, 6.0f).sound(SoundType.WOOD).noOcclusion(),
+                    io.github.soundgoodizerfan.feedback.modular.TestRigBlock.Kind.POST));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.combat.tether.SheaveBlock> SHEAVE = BLOCKS.register("sheave",
+            () -> new io.github.soundgoodizerfan.feedback.combat.tether.SheaveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f, 4.0f).sound(SoundType.METAL).noOcclusion().noCollission()));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.weapon.ShockCapsuleBlock> SHOCK_CAPSULE = BLOCKS.register("shock_capsule",
+            () -> new io.github.soundgoodizerfan.feedback.weapon.ShockCapsuleBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(1.0f, 1.0f).sound(SoundType.METAL)));
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.reactor.CoreSlagBlock> CORE_SLAG = BLOCKS.register("core_slag",
             () -> new io.github.soundgoodizerfan.feedback.machine.reactor.CoreSlagBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK).strength(2.0f, 3.0f).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops()));

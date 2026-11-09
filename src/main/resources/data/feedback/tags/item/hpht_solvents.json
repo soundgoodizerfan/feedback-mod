@@ -1,0 +1,7 @@
+{
+  "values": [
+    "minecraft:iron_ingot",
+    { "id": "feedback:nickel_ingot", "required": false },
+    { "id": "feedback:cobalt_ingot", "required": false }
+  ]
+}

@@ -41,6 +41,9 @@ public class GrappleItem extends Item {
             return InteractionResultHolder.sidedSuccess(stack, false);
         GrappleHook hook = new GrappleHook(level, player);
         hook.setFittings(fittings);
+        var line = stack.get(FDataComponents.GRAPPLE_LINE.get());
+        if (line != null)
+            hook.setLine(line);
         hook.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, ModularTuning.GRAPPLE_SPEED, 0f);
         level.addFreshEntity(hook);
         level.playSound(null, player, SoundEvents.FISHING_BOBBER_THROW, SoundSource.PLAYERS, 0.7f, 0.9f);
@@ -51,6 +54,10 @@ public class GrappleItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         int fittings = stack.getOrDefault(FDataComponents.GRAPPLE_FITTINGS.get(), 0);
+        var line = stack.get(FDataComponents.GRAPPLE_LINE.get());
+        if (line != null)
+            tooltip.add(Component.translatable("tooltip.feedback.grapple.line",
+                    Component.translatable("material." + line.getNamespace() + "." + line.getPath())).withStyle(ChatFormatting.GRAY));
         for (GrappleUpgradeRecipe.Fitting f : GrappleUpgradeRecipe.FITTINGS)
             if ((fittings & f.bit()) != 0)
                 tooltip.add(Component.translatable("tooltip.feedback.grapple." + f.name()).withStyle(ChatFormatting.GRAY));

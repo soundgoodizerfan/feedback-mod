@@ -160,7 +160,9 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     @Override
     protected float boilCost(PhaseChange cut, int mB) {
-        return mB * cut.latent() / (FTuning.BOILER_MASS.workPerTu() * scale());
+        // Water that comes in hot (condensate returned, a preheated line) needs less lifting to the boiling point: cold feed pays for the climb.
+        float climb = Math.max(0f, cut.boil().value() - tank.temperature().value());
+        return mB * cut.latent() * (1f + climb * FTuning.FEED_SENSIBLE_PER_TU) / (FTuning.BOILER_MASS.workPerTu() * scale());
     }
 
     @Override

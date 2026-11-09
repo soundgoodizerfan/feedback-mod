@@ -156,6 +156,9 @@ public class Feedback {
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
         event.registrar("3")
+                .playToClient(io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.DataSelectionPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.SoundingPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SoundingPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SoundingPayload::handle)

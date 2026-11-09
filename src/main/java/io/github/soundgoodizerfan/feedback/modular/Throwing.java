@@ -51,6 +51,16 @@ public final class Throwing {
         float speed = Mth.clamp(ModularTuning.THROW_SPEED_K / (float) Math.sqrt(mass), ModularTuning.THROW_SPEED_MIN, ModularTuning.THROW_SPEED_MAX)
                 * effort;
 
+        // A spring-launched head: the spring adds to the throw, a set takes some of that back, and a heavy head at that speed overloads it.
+        float springMult = params.get("speed_mult", 1f);
+        if (springMult != 1f) {
+            float set = SpringSet.set(weapon);
+            speed *= 1f + (springMult - 1f) * (1f - set);
+            float rating = params.get("rating", 0f);
+            if (rating > 0f)
+                SpringSet.overload(weapon, mass * springMult * springMult / rating, player);
+        }
+
         float returns = params.get("return", 0f);
         if (level instanceof ServerLevel server)
             returns = Math.max(returns, EnchantmentHelper.getTridentReturnToOwnerAcceleration(server, weapon, player));

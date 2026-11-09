@@ -124,6 +124,20 @@ public class FDataComponents {
      * tooltip say "nearly there" without the client knowing the deformation table, and it is the
      * same pair the calipers will eventually report as {@code 16 / 20 Fu}.
      */
+    /** Cold draw and roll steps taken since the piece was last annealed (process/WorkHardening). Absent means none. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> STRAIN =
+            COMPONENTS.register("strain", () -> DataComponentType.<Integer>builder()
+                    .persistent(Codec.INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+                    .build());
+
+    /** Cycles of draw-to-the-limit-then-anneal a textured filament has been through. Absent means none. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> TEXTURE =
+            COMPONENTS.register("texture", () -> DataComponentType.<Integer>builder()
+                    .persistent(Codec.INT)
+                    .networkSynchronized(ByteBufCodecs.VAR_INT)
+                    .build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> WORK_REQUIRED =
             COMPONENTS.register("work_required", () -> DataComponentType.<Integer>builder()
                     .persistent(Codec.INT)
@@ -325,6 +339,13 @@ public class FDataComponents {
                     .build());
 
     /** Fittings on a grapple, a bit set (see {@code GrappleHook.ROPE}, {@code WINCH}, {@code BARB}). */
+    /** The material a grapple's line is made of (a metal's wire, say); absent is wool's. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.resources.ResourceLocation>> GRAPPLE_LINE =
+            COMPONENTS.register("grapple_line", () -> DataComponentType.<net.minecraft.resources.ResourceLocation>builder()
+                    .persistent(net.minecraft.resources.ResourceLocation.CODEC)
+                    .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC)
+                    .build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> GRAPPLE_FITTINGS =
             COMPONENTS.register("grapple_fittings", () -> DataComponentType.<Integer>builder()
                     .persistent(Codec.INT)

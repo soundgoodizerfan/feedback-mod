@@ -78,6 +78,10 @@ Some reactions give off heat, which warms the reactor.
 | **End stone** | one End Stone | 250 mB hydrogen and one [Porous Aggregate](End_Stone.md) | 700 to 1300 Tu, best 900 |
 | **Alkaline Electrolyte** | 500 mB water, 10 mB [lye](Chemicals.md#lye) | 500 mB Alkaline Electrolyte | 0 to 80 Tu, best 20 |
 | **Roast a sulfide concentrate** | one concentrate of chalcopyrite, sphalerite, pentlandite, cobaltite or argentite, 100 mB oxygen | one Roasted concentrate, 100 mB sulfur dioxide, sulfur (and iron nuggets for some) | 500 to 900 Tu, best 700 |
+| **Diamond (high pressure)** | one Graphite and one Diamond Seed in the hopper, 160 mB [argon](Chemicals.md#argon), an iron, nickel or cobalt ingot bed, **3.8 Pu** at least (best at 4.6 Pu) | 1 Diamond, the argon returned; over 1700 Tu, a Graphite instead | 1400 to 1700 Tu, best 1550 |
+| **Diamond (vapor)** | one Diamond Seed, 8 mB [methane](Chemicals.md#fluorine-and-ptfe), 72 mB hydrogen, **1.5 Pu** at least (best at 2 Pu) | 2 Diamonds and 64 mB hydrogen; over 950 Tu, a Graphite instead | 780 to 950 Tu, best 880 |
+| **Purify redstone** | one Redstone dust, 50 mB hydrochloric acid | one [Purified Redstone](Materials.md#superconductor) | 40 to 120 Tu, best 60 |
+| **Superconductor anneal** | one fine wire of Redstone Filament with texture 1, 2 or 3, 160 mB oxygen, **3.8 Pu** at least (best at 4.6 Pu) | a poor, fair or best Redstone Superconductor Wire (by texture), the oxygen returned; too hot, redstone dust | 840 to 920 Tu, best 880 |
 | **Molten cryolite** | one Cryolite Ore | 144 mB [cryolite bath](Chemicals.md#cryolite-bath) | melts at 1010 Tu |
 
 **Leach rows.** Every ore concentrate has a leach row that dissolves its metal into a liquor, with a reagent (sulfuric acid, lye, or brine and hypochlorite) and a window of its own, and a row that precipitates a dissolved metal out with hydrogen or sulfur dioxide. They are laid out ore by ore in [Ore Processing](Ore_Processing.md#leaching-and-winning) and listed in JEI.
@@ -86,7 +90,7 @@ The cold rows need no catalyst bed. Their temperatures are set by the Cryocooler
 
 ## Catalysts
 
-A catalyst speeds a reaction up without being used up. The bed is an item whose **material** says it is a catalyst, so any item of that material works, and a reaction names a *kind* of catalyst, not an item. Two are known for cracking, nitrogen separation and sulfuric acid; ammonia is made over an iron ingot bed.
+A catalyst speeds a reaction up without being used up. The bed is an item whose **material** says it is a catalyst, so any item of that material works, and a reaction names a *kind* of catalyst, not an item. Two are known for cracking, nitrogen separation and sulfuric acid; ammonia is made over an iron ingot bed, and the high-pressure diamond row over an iron, nickel or cobalt ingot bed.
 
 | Bed | Speed | Sulfur tolerance | Burn it clean at | Sinters at |
 | --- | --- | --- | --- | --- |

@@ -43,6 +43,16 @@ public class GrappleUpgradeRecipe extends CustomRecipe {
             new Fitting(GrappleHook.BARB, "barb", () -> BuiltInRegistries.ITEM.get(Feedback.id("wrought_iron_rod")), 2),
             new Fitting(GrappleHook.MULTI, "multi", () -> BuiltInRegistries.ITEM.get(Feedback.id("wrought_iron_plate")), 3));
 
+    /** Re-lining: four wires of a metal make it the grapple's line (no fitting bit). */
+    public static final Fitting LINE = new Fitting(0, "line", () -> Items.AIR, 4);
+
+    /** The material whose wire {@code stack} is, from the item's name (material id plus {@code _wire}), or null. */
+    private static net.minecraft.resources.ResourceLocation wireOf(ItemStack stack) {
+        net.minecraft.resources.ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return key.getPath().endsWith("_wire")
+                ? net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(key.getNamespace(), key.getPath().substring(0, key.getPath().length() - 5)) : null;
+    }
+
     public GrappleUpgradeRecipe(CraftingBookCategory category) {
         super(category);
     }
@@ -51,6 +61,7 @@ public class GrappleUpgradeRecipe extends CustomRecipe {
     private static Fitting read(CraftingInput input, ItemStack[] grapple) {
         grapple[0] = null;
         Item part = null;
+        ItemStack partStack = ItemStack.EMPTY;
         int count = 0;
         for (int i = 0; i < input.size(); i++) {
             ItemStack s = input.getItem(i);
@@ -60,12 +71,18 @@ public class GrappleUpgradeRecipe extends CustomRecipe {
                 grapple[0] = s;
             else if (part == null || s.is(part)) {
                 part = s.getItem();
+                partStack = s;
                 count++;
             } else
                 return null;
         }
         if (grapple[0] == null || part == null)
             return null;
+        net.minecraft.resources.ResourceLocation wire = wireOf(partStack);
+        if (wire != null && count == LINE.count() && io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().containsKey(wire)
+                && io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(wire).mechanical().yieldStrength().isPresent()
+                && !wire.equals(grapple[0].get(FDataComponents.GRAPPLE_LINE.get())))
+            return LINE;
         int have = grapple[0].getOrDefault(FDataComponents.GRAPPLE_FITTINGS.get(), 0);
         for (Fitting f : FITTINGS)
             if (f.part().get() == part && f.count() == count && (have & f.bit()) == 0)
@@ -85,6 +102,16 @@ public class GrappleUpgradeRecipe extends CustomRecipe {
         if (f == null)
             return ItemStack.EMPTY;
         ItemStack out = grapple[0].copyWithCount(1);
+        if (f == LINE) {
+            for (int i = 0; i < input.size(); i++) {
+                net.minecraft.resources.ResourceLocation wire = wireOf(input.getItem(i));
+                if (wire != null && !input.getItem(i).is(FItems.GRAPPLE.get())) {
+                    out.set(FDataComponents.GRAPPLE_LINE.get(), wire);
+                    break;
+                }
+            }
+            return out;
+        }
         out.set(FDataComponents.GRAPPLE_FITTINGS.get(), out.getOrDefault(FDataComponents.GRAPPLE_FITTINGS.get(), 0) | f.bit());
         return out;
     }

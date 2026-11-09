@@ -46,7 +46,9 @@ public final class GunTooltip {
             figures(f).forEach(tooltip::add);
         GunSpec.of(stack).filter(g -> g.launcher() == GunSpec.Launcher.STEAM).ifPresent(g ->
                 tooltip.add(Component.translatable("gun.feedback.steam", Math.round(GunSteam.stored(stack)),
-                        Math.round(g.steamCapacityMb())).withStyle(ChatFormatting.GRAY)));
+                        Math.round(g.steamCapacityMb()), Math.round(GunSteam.temperature(stack))).withStyle(
+                        GunSteam.temperature(stack) < io.github.soundgoodizerfan.feedback.core.FTuning.GUN_STEAM_MIN_TU
+                                ? ChatFormatting.RED : ChatFormatting.GRAY)));
     }
 
     /** "9.0 mm, 0.20 m barrel, 3.0 mm wall, iron sights, steel": the build, free to read off the barrel in your hand. */

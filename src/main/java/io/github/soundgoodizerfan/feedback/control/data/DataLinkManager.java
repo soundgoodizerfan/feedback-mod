@@ -53,12 +53,34 @@ public final class DataLinkManager {
 
         if (previous == null || previous.equals(node.getNodeRef())) {
             pending.put(id, new Pending(level.dimension(), node.getNodeRef()));
+            tell(player, io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.of(node.getNodeRef()));
             player.displayClientMessage(Component.translatable("feedback.data_connector.selected"), true);
             return;
         }
 
+        tell(player, io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.cleared());
         Optional<DataNode> from = DataNode.resolve(level, previous);
-        boolean linked = from.isPresent() && from.get().linkTo(node);
+        if (from.isEmpty()) {
+            player.displayClientMessage(Component.translatable("feedback.data_connector.failed"), true);
+            return;
+        }
+        DataNode a = from.get();
+        a.pruneNodeLinks();
+        node.pruneNodeLinks();
+        if (!a.canLinkTo(node)) {
+            player.displayClientMessage(Component.translatable("feedback.data_connector.failed"), true);
+            return;
+        }
+        int blocks = (int) Math.ceil(Math.sqrt(a.getNodePos().distSqr(node.getNodePos())));
+        DataWires.Paid paid = DataWires.pay(player, blocks);
+        if (!paid.enough()) {
+            player.displayClientMessage(Component.translatable(paid.inRange()
+                    ? "feedback.data_connector.wire" : "feedback.data_connector.range", paid.pieces()), true);
+            return;
+        }
+        boolean linked = a.linkTo(node);
+        if (linked)
+            DataWires.record(level, a.getNodeRef(), node.getNodeRef(), paid.grade());
         player.displayClientMessage(Component.translatable(linked
                 ? "feedback.data_connector.linked" : "feedback.data_connector.failed"), true);
     }
@@ -66,6 +88,12 @@ public final class DataLinkManager {
     /** Drops a player's half-made link -- called on logout so it can't outlive the session. */
     public void clear(Player player) {
         pending.remove(player.getUUID());
+    }
+
+    /** Tells the player's client what is selected, so it can stretch a wire to the aim. */
+    private static void tell(Player player, io.github.soundgoodizerfan.feedback.net.DataSelectionPayload payload) {
+        if (player instanceof net.minecraft.server.level.ServerPlayer sp)
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(sp, payload);
     }
 
     /**
@@ -77,6 +105,7 @@ public final class DataLinkManager {
     public Optional<DataNodeRef> takePending(Player player) {
         Optional<DataNodeRef> found = peekPending(player);
         pending.remove(player.getUUID());
+        tell(player, io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.cleared());
         return found;
     }
 

@@ -54,8 +54,9 @@ import java.util.Optional;
  * material, not an item.
  * <p>
  * Too hot is the player's to notice. Stock left in a pan hotter than its material's window is
- * refused by the table until it cools, and loses nothing; scale loss at the material's oxidation
- * temperature is an open ruling.
+ * refused by the table until it cools. Raw stock (not a shaped part) held above its material's
+ * oxidation temperature scales: now and then one piece of the stack is lost, more often the further
+ * over it sits ({@link FTuning#HEARTH_SCALE_RATE}).
  *
  * <h2>What a pan does not do</h2>
  * Stock does not cool the pan (a few ingots against {@link FTuning#HEARTH_MASS} would not change
@@ -151,6 +152,19 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
         float now = ItemHeat.get(stock, level).value();
         if (temperature > now)
             ItemHeat.set(stock, new Tu(now + FTuning.HEARTH_STOCK_GRIP * (temperature - now)), level);
+        scale(stock, what.get().material());
+    }
+
+    /** Raw stock held over its oxidation temperature loses a piece now and then (a shaped part is left alone). */
+    private void scale(ItemStack stock, Material material) {
+        if (stock.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()))
+            return;
+        var oxidises = material.thermal().oxidationTemperature();
+        if (oxidises.isEmpty() || oxidises.get().value() <= 0f)
+            return;
+        float over = (ItemHeat.get(stock, level).value() - oxidises.get().value()) / oxidises.get().value();
+        if (over > 0f && level.random.nextFloat() < FTuning.HEARTH_SCALE_RATE * over)
+            stock.shrink(1);
     }
 
     @Override

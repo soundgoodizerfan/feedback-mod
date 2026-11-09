@@ -380,7 +380,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         if (row == null)
             return;
         ThermalProcess.Reaction r = row.reaction().get();
-        boolean over = !r.overTu().isEmpty() && temperature >= row.maxTemperature().value();
+        boolean over = (!r.overTu().isEmpty() || !row.spoiled().isEmpty()) && temperature >= row.maxTemperature().value();
         float rate = over ? 1f : row.suitability(getTemperature()) * pressureFactor(r);
         if (r.catalyst().isPresent())
             rate *= (activity() <= r.activityFloor() ? 0f : (activity() - r.activityFloor()) / (1f - r.activityFloor()))
@@ -404,6 +404,8 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         }
         if (!over && !row.result().isEmpty())
             net.minecraft.world.level.block.Block.popResource(level, worldPosition.above(), row.result().copy());
+        if (over && !row.spoiled().isEmpty())
+            net.minecraft.world.level.block.Block.popResource(level, worldPosition.above(), row.spoiled().copy());
         if (!over)
             for (ThermalProcess.Byproduct extra : r.byproducts())
                 if (extra.chance() >= 1f || level.random.nextFloat() < extra.chance())

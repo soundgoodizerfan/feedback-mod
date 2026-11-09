@@ -71,6 +71,10 @@ Nothing on this list happens suddenly. You'll see it coming if you look.
 
 Taking the load off lets the cable cool back down, but **damage doesn't heal**: a scorched cable stays bare, and a degraded one stays degraded. Cable cannot be repaired. Break it and lay new cable.
 
+## Superconducting cable
+
+Cable made from Redstone Superconductor Wire carries up to its **critical current** with no voltage drop. At standard gauge the critical current is **4 A** for the poor grade, **10 A** for fair and **25 A** for the best grade; other gauges scale like copper. Past it the cable **quenches**: it goes resistive, with a heavy voltage drop, and heats on what it carries. It recovers once it has cooled to near room temperature and carries no more than its rating. Left heating, it degrades and burns out like any wire ([Overloading](#overloading)). All figures are placeholders.
+
 ## Protecting it
 
 - A [Breaker](Breaker.md) built from cables of a gauge trips at exactly that gauge's rating.

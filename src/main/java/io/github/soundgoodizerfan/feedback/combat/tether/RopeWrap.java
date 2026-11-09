@@ -46,13 +46,20 @@ public final class RopeWrap {
         boolean changed = false;
         while (!bends.isEmpty()) {
             Vec3 prev = bends.size() >= 2 ? bends.get(bends.size() - 2) : anchor;
-            if (!clear(level, context, prev, end))
+            // A line still running through the sheave it turns on stays turned: the sheave is not an edge it can slip off.
+            if (!clear(level, context, prev, end) || onSheave(level, bends.get(bends.size() - 1)) && passes(prev, end, bends.get(bends.size() - 1)))
                 break;
             bends.remove(bends.size() - 1);
             changed = true;
         }
         for (int i = 0; i < PER_TICK && bends.size() < ModularTuning.GRAPPLE_MAX_BENDS; i++) {
             Vec3 last = bends.isEmpty() ? anchor : bends.get(bends.size() - 1);
+            Vec3 sheave = sheaveBetween(level, last, end);
+            if (sheave != null) {
+                bends.add(sheave);
+                changed = true;
+                continue;
+            }
             BlockHitResult hit = level.clip(new ClipContext(last, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, context));
             if (hit.getType() == HitResult.Type.MISS)
                 break;
@@ -63,6 +70,42 @@ public final class RopeWrap {
             changed = true;
         }
         return changed;
+    }
+
+    /** Whether the bend at {@code at} sits in a sheave block: a bend the line runs round without sawing. */
+    public static boolean onSheave(Level level, Vec3 at) {
+        return level.getBlockState(BlockPos.containing(at)).is(SHEAVES);
+    }
+
+    public static final net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block> SHEAVES =
+            net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.BLOCK,
+                    io.github.soundgoodizerfan.feedback.Feedback.id("sheaves"));
+
+    /** Whether the segment {@code a} to {@code b} passes within the reach of a sheave's wheel at {@code at}. */
+    private static boolean passes(Vec3 a, Vec3 b, Vec3 at) {
+        Vec3 d = b.subtract(a);
+        double len2 = d.lengthSqr();
+        double t = len2 < 1.0e-9 ? 0 : Math.max(0, Math.min(1, at.subtract(a).dot(d) / len2));
+        return a.add(d.scale(t)).distanceToSqr(at) < 0.8 * 0.8;
+    }
+
+    /** The centre of the first sheave the segment {@code from} to {@code to} runs through that it is not already turned on, or null. */
+    private static Vec3 sheaveBetween(Level level, Vec3 from, Vec3 to) {
+        Vec3 d = to.subtract(from);
+        double len = d.length();
+        if (len < 0.5)
+            return null;
+        int steps = (int) Math.ceil(len / 0.5);
+        for (int k = 1; k < steps; k++) {
+            Vec3 p = from.add(d.scale(k / (double) steps));
+            BlockPos pos = BlockPos.containing(p);
+            if (level.getBlockState(pos).is(SHEAVES)) {
+                Vec3 centre = Vec3.atCenterOf(pos);
+                if (centre.distanceToSqr(from) > 0.8 * 0.8)
+                    return centre;
+            }
+        }
+        return null;
     }
 
     /** Total length of the polyline from {@code anchor} through {@code bends} to {@code end}. */

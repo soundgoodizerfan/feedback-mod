@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "P": { "item": "feedback:iron_plate" }, "S": { "item": "minecraft:string" }, "I": { "item": "minecraft:iron_ingot" } },
+  "pattern": [ "PPP", " S ", " I " ],
+  "result": { "count": 1, "id": "feedback:impact_pendulum" }
+}

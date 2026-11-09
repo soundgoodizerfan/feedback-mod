@@ -65,8 +65,19 @@ public class GrappleHook extends Projectile {
     private static final EntityDataAccessor<Integer> DATA_FITTINGS = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> DATA_ANCHORED = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.BOOLEAN);
 
-    /** The material the line is made of; the grapple's recipe takes string. */
+    /** The material a line is made of unless its grapple says otherwise; the grapple's recipe takes string. */
     private static final ResourceLocation ROPE_MATERIAL = Feedback.id("wool");
+
+    /** The material this hook's line is made of (from the grapple that threw it). */
+    private ResourceLocation line = ROPE_MATERIAL;
+
+    public void setLine(ResourceLocation material) {
+        line = material;
+    }
+
+    private Material lineMaterial() {
+        return MaterialTable.get().materials().get(line);
+    }
 
     /** The fixed line length of a swing the owner is on (0 when the hook drags a creature or has not bitten): the owner's client runs the pendulum with it. */
     private static final EntityDataAccessor<Float> DATA_SWING_ROPE = SynchedEntityData.defineId(GrappleHook.class, EntityDataSerializers.FLOAT);
@@ -160,12 +171,34 @@ public class GrappleHook extends Projectile {
         return true;
     }
 
-    /** The load the line takes, in Mu. */
-    private static float lineRating() {
-        Material m = MaterialTable.get().materials().get(ROPE_MATERIAL);
+    /** The load the line takes, in Mu: its material's yield strength, less when a fibrous line is wet. */
+    private float lineRating() {
+        Material m = lineMaterial();
         float st = m != null ? m.mechanical().yieldStrength().map(s -> s.value()).orElse(ModularTuning.GRAPPLE_FALLBACK_ST)
                 : ModularTuning.GRAPPLE_FALLBACK_ST;
-        return st * ModularTuning.GRAPPLE_RATING_PER_ST;
+        float wet = m != null && m.traits().contains(Material.Trait.FIBROUS) && getOwner() != null && getOwner().isInWaterOrRain()
+                ? ModularTuning.GRAPPLE_WET_RATING : 1f;
+        return st * ModularTuning.GRAPPLE_RATING_PER_ST * wet;
+    }
+
+    /** What the line itself weighs, in Mu: a heavy chain hangs on the one holding it, a thread hardly does. */
+    private float lineWeight() {
+        Material m = lineMaterial();
+        return m == null ? 0f : m.density().muPerMb() * maxRope() * ModularTuning.GRAPPLE_LINE_AREA;
+    }
+
+    /** A metal line is a path for lightning: out in a thunderstorm under open sky, it draws a strike on its holder now and then. */
+    private boolean struck(Entity holder) {
+        Material m = lineMaterial();
+        if (m == null || m.kind().orElse(null) != Material.Kind.METAL || !level().isThundering() || level().getGameTime() % 20 != 0
+                || !level().canSeeSky(holder.blockPosition()) || level().random.nextFloat() >= ModularTuning.GRAPPLE_STRIKE_CHANCE)
+            return false;
+        var bolt = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(level());
+        if (bolt == null)
+            return false;
+        bolt.moveTo(holder.position());
+        level().addFreshEntity(bolt);
+        return true;
     }
 
     // --- flight ---------------------------------------------------------------------------------
@@ -238,6 +271,31 @@ public class GrappleHook extends Projectile {
         playSound(SoundEvents.CHAIN_HIT, 1f, 1f);
     }
 
+    /**
+     * What the line says about its load to the one holding the grapple: in words (slack, taut, straining, about to part) for anyone,
+     * exact to the percent for a reader at the truth tier. A line load over 1 is a rating exceeded, and strain is already building.
+     */
+    private void tension(Entity owner, float ratio) {
+        if (!(owner instanceof net.minecraft.server.level.ServerPlayer player) || tickCount % 5 != 0
+                || !(player.getMainHandItem().getItem() instanceof GrappleItem || player.getOffhandItem().getItem() instanceof GrappleItem))
+            return;
+        net.minecraft.network.chat.Component line = io.github.soundgoodizerfan.feedback.instrument.Instruments.exact(player,
+                io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE)
+                ? net.minecraft.network.chat.Component.translatable("feedback.grapple.tension.exact", Math.round(ratio * 100), Math.round(strain * 100))
+                : net.minecraft.network.chat.Component.translatable(ratio < 0.3f ? "feedback.grapple.tension.slack" : ratio < 0.7f
+                        ? "feedback.grapple.tension.taut" : ratio <= 1f ? "feedback.grapple.tension.straining" : "feedback.grapple.tension.parting");
+        player.displayClientMessage(line, true);
+    }
+
+    /** Bends that are edges the line is dragged over, not sheaves it runs free round. */
+    private int sawing() {
+        int n = 0;
+        for (Vec3 b : bends)
+            if (!RopeWrap.onSheave(level(), b))
+                n++;
+        return n;
+    }
+
     /** Where the line is fixed: the hit point, or the middle of the creature it bit. */
     private Vec3 anchorPoint() {
         if (anchorEntity >= 0) {
@@ -283,10 +341,17 @@ public class GrappleHook extends Projectile {
                 entityData.set(DATA_BENDS, RopeWrap.toTag(bends));
         }
         // Each edge the line is dragged over saws at it: a bent line takes more than the body weighs.
-        float load = BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f)
-                * (1f + bends.size() * ModularTuning.GRAPPLE_BEND_LOAD);
+        rating = lineRating();
+        if (struck(owner)) {
+            discard();
+            return;
+        }
+        // A sheave turns the line without sawing it: only the edges it is dragged over count.
+        float load = (BodyMass.of(living) * (stalled ? ModularTuning.GRAPPLE_STALL_LOAD : 1f) + lineWeight())
+                * (1f + sawing() * ModularTuning.GRAPPLE_BEND_LOAD);
         if (load > rating)
             strain += (load / rating - 1f) * ModularTuning.GRAPPLE_STRAIN_PER_TICK;
+        tension(owner, load / rating);
         Vec3 end = living.position().add(0, living.getBbHeight() * 0.5, 0);
         java.util.List<Vec3> path = path(to, end);
         strain += burn(path) + cut(path, owner, living, rating);
@@ -383,7 +448,7 @@ public class GrappleHook extends Projectile {
 
     /** Strain this tick from fire or lava touching the line, when it is hotter than the line's material oxidises. */
     private float burn(java.util.List<Vec3> path) {
-        Material m = MaterialTable.get().materials().get(ROPE_MATERIAL);
+        Material m = lineMaterial();
         if (m == null || m.thermal().oxidationTemperature().isEmpty())
             return 0f;
         float oxidises = m.thermal().oxidationTemperature().get().value();

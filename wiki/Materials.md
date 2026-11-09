@@ -65,7 +65,7 @@ Not everything is metal. A few others matter for parts and protection:
 | Leather | 0.3 | 0.6 | 100 Tu | gloves; wrapping a grip |
 | Wool, Paper | | 0.5 | | wrapping a grip |
 | Honey | | 1.5 | | wrapping a grip: the grippiest there is |
-| Diamond | 100 | | | armor: nothing pierces it |
+| Diamond | 100 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
 | Heavy Core | 9 | | | dense as osmium, sintered from osmium powder: see [Heavy Core](Heavy_Core.md) |
 | Silicon, glasses, graphite, polymers | | | | sections below |
 
@@ -82,6 +82,20 @@ A magnetic alloy of about half nickel and half iron, melting at 1480 Tu. Melt eq
 A soft, dark, fireproof mineral. Coal baked at 2200 to 2600 Tu turns to graphite; above 2900 Tu the batch is ruined into Silicate Slag. Graphite is also mined as an ore. It is the carbon mixed into molten titanium and tungsten to make [titanium carbide and tungsten carbide](Mixer.md#alloying-with-heat).
 
 Graphite ore sits in veins in stone and deepslate, rarer than coal, in small seams of dark flecks; the two look alike apart from the rock around them. It is soft, softer than coal ore, but needs a pickaxe. Mining it gives graphite lumps; Silk Touch gives the ore block. A loose rock on the surface marks a vein ([Ore Deposits](Ore_Deposits.md)). Graphite stands heat that would ruin most things, which suits the parts of a build next to the hottest fires ([Refractory Lining](Refractory_Lining.md), [Heat](Heat.md)).
+
+## Synthetic diamond
+
+Diamond can be grown. Everything starts from a **Diamond Seed**, a chip of diamond for a crystal to grow on. Two ways make one:
+
+- 1 Diamond cuts into 2 Diamond Seeds (shapeless).
+- 8 Diamond Grit press into 1 Diamond Seed (shapeless). Diamond Grit comes from a [Shock Capsule](Shock_Capsule.md) set off by a blast.
+
+A seed then grows in a [Reactor](Reactor.md#the-reactions), two ways:
+
+- **High pressure.** Graphite and a seed in the hopper, an iron, nickel or cobalt ingot as the bed, argon as the pressure medium. One Diamond, then the argon comes back.
+- **Vapor growth.** A seed in the hopper, a thin mix of methane and hydrogen. Two Diamonds, and most of the hydrogen comes back.
+
+Held too hot, either one gives Graphite instead. The windows and the pressure to hold are in the Reactor's table.
 
 ## Saltpetre
 
@@ -132,6 +146,18 @@ In a [Fission Reactor](Fission_Reactor.md) a material meets neutrons one of thre
 - **Absorber.** Cobalt (strongest), tungsten and lead soak neutrons up when loaded into a [Control Rod Assembly](Control_Rod.md).
 
 The walls of the reactor shell must be dense: density 7 or more in the table above.
+
+## Superconductor
+
+A late-game wire that carries current with no voltage drop up to a limit. It is made in four steps.
+
+1. **Purify.** Purify Redstone dust in a [Reactor](Reactor.md) with hydrochloric acid to get Purified Redstone.
+2. **Blend and calcine.** Blend 62 to 70% Purified Redstone with 28 to 36% chromium in the [Mixer](Mixer.md) for Superconductor Blend. Calcine it in a [Crucible](Crucible.md) or [Kiln zone](Kiln_Zone.md) at 780 to 920 Tu for Calcined Blend. Hotter ruins it into redstone dust.
+3. **Sheath.** Four Calcined Blend and a Silver Ingot, shapeless, make a Sheathed Billet.
+4. **Draw it.** Roll the billet to a rod, draw it to a wire, draw that to a fine wire. The filament takes **one cold stage per anneal**, so anneal it (heat to 600 Tu in a Crucible or Kiln zone) after every stage. Each anneal taken at the limit adds one cycle of **texture** (tooltip *Texture: n*); an anneal taken early adds nothing. See [Work hardening](Metalworking.md#work-hardening).
+5. **Reaction anneal.** Put the fine wire in a Reactor at 840 to 920 Tu (best 880) with oxygen held at 3.8 to 4.6 Pu; burst danger starts at 5 Pu ([Pressure](Reactor.md#pressure)). Texture 3 gives Redstone Superconductor Wire, texture 2 a fair grade, texture 1 a poor grade, texture 0 nothing. Too hot gives redstone dust.
+
+Cable made from the wire is a superconductor: see [Superconducting cable](Copper_Cable.md#superconducting-cable). All figures are placeholders.
 
 ## Silicon
 

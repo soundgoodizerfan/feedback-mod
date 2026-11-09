@@ -84,6 +84,12 @@ public class DataNodeRenderer<T extends BlockEntity> implements BlockEntityRende
 
     private static void drawLine(DeferredDataRenderer renderer, PoseStack pose, VertexConsumer consumer,
                                  Vec3 from, Vec3 to) {
+        drawLine(renderer, pose, consumer, from, to, NODE_COLOUR);
+    }
+
+    /** A line of any colour between two world points, for the connector's rubber-band wire too. */
+    static void drawLine(DeferredDataRenderer renderer, PoseStack pose, VertexConsumer consumer,
+                         Vec3 from, Vec3 to, int colour) {
         pose.pushPose();
         pose.translate(from.x, from.y, from.z);
         Vec3 delta = to.subtract(from);
@@ -93,7 +99,7 @@ public class DataNodeRenderer<T extends BlockEntity> implements BlockEntityRende
         pose.mulPose(Axis.ZP.rotation((float) pitch));
         Matrix4f matrix = pose.last().pose();
         AABB box = new AABB(0, -LINE_THICKNESS, -LINE_THICKNESS, delta.length(), LINE_THICKNESS, LINE_THICKNESS);
-        renderer.drawColouredBox(matrix, consumer, box, NODE_COLOUR, 0.8f);
+        renderer.drawColouredBox(matrix, consumer, box, colour, 0.8f);
         pose.popPose();
     }
 

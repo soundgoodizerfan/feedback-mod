@@ -9,6 +9,8 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 | [Calipers](#calipers) | Work done on a piece, machine wear, gun barrel size | Wear to 5%; barrel to 0.1 mm |
 | [Balance Scale](#balance-scale) | Mass of a tool, weapon or armor piece | 0.1 Mu |
 | [Scratch File Set](#scratch-file-set) | Hardness of an edge or plate | One of eight rungs, not a number |
+| [Impact Pendulum](#impact-pendulum) | Toughness of a made tool's edge, or of a made armor piece | Nearest 5 |
+| [Strike Post](#strike-post) | Joules a blow carries and the damage it deals | Nearest 0.5 |
 | [Test Strip](#test-strip) | Toxin in a food | Steps of 0.025 Qu/mB |
 | [Thermometer](#thermometer) | Temperature of items and blocks | 25 Tu steps |
 | [Pyrometer](Optics.md#pyrometer) | Temperature of a vessel up to 24 blocks away | 10 Tu steps |
@@ -69,6 +71,34 @@ Shapeless: a Wrought Iron Ingot, Flint, a Nether Quartz and Leather.
 Carry it anywhere in your inventory. A modular item's tooltip gains a line like *"Scratch files: scratched by file 5, not by file 4"*. The set has eight files, each harder than the last. A file scratches anything softer than itself, so the reading is a **rung**, not a number: your edge is harder than file 4 and softer than file 5.
 
 Hardness decides what a tool can dig (see [Tools and Weapons](Tools_and_Weapons.md#what-the-parts-do)) and how hard a plate is to pierce. [Materials](Materials.md) lists the numbers if you would rather look them up than measure.
+
+## Impact Pendulum
+
+A block that swings into an edge and reports its toughness. The tooltip gives toughness in words; the pendulum gives a figure.
+
+```
+P P P
+  S
+  I
+```
+
+P is an Iron Plate, S is String and I is an Iron Ingot.
+
+**Right-click** it holding a tool or armor piece made at a bench. The action bar shows the edge's toughness, to the nearest 5. A twin-headed tool reports both heads. An armor piece reports its armor toughness. Anything else says *"Nothing here to test."* The pendulum does not mark or wear the piece.
+
+## Strike Post
+
+A block that takes a blow and reports what it carried.
+
+```
+P
+L
+L
+```
+
+P is an Iron Plate and L is any log.
+
+**Swing at it** (left-click) with a tool made at a bench. The action bar shows the joules the blow carries and the damage it deals, both to the nearest half. A tool that is not made at a bench says *"Nothing here to test."* The post does not mark or wear the tool.
 
 ## Test Strip
 

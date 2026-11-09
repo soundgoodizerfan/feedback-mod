@@ -30,6 +30,7 @@ public class DataLinkFrame {
         if (mc.player == null || mc.level == null)
             return;
 
+        DataSelection.queueWire(mc, event.getPartialTick().getGameTimeDeltaPartialTick(true));
         PoseStack stack = event.getPoseStack();
         stack.pushPose();
         Vec3 camera = event.getCamera().getPosition();

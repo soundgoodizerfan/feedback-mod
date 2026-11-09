@@ -24,6 +24,8 @@ import java.util.function.Predicate;
 public class HeatedTank extends FluidTank {
 
     private float temperature = FTuning.AMBIENT_TU.value();
+    /** Game time this tank was saved at, until the first {@link #relax} after a load spends it (-1 for none). */
+    private long savedAt = -1L;
     private final Runnable onChange;
 
     public HeatedTank(int capacity, Predicate<FluidStack> validator, Runnable onChange) {
@@ -41,8 +43,24 @@ public class HeatedTank extends FluidTank {
 
     /** Pulls the contents toward {@code toward} by a fixed share per tick (a tank in a hot body relaxes to the body, not the room). */
     public void relax(Tu toward) {
+        if (savedAt >= 0L) {
+            // What sat in a chunk nobody had loaded cooled (or warmed) all the while: close the whole gap at once, the
+            // same law a tick applies, solved for the number of ticks away.
+            long now = gameTime();
+            long gap = now < 0L ? 0L : now - savedAt;
+            savedAt = -1L;
+            if (gap >= FTuning.CATCHUP_MIN_TICKS && !fluid.isEmpty())
+                temperature = toward.value() + (temperature - toward.value())
+                        * (float) Math.pow(1f - FTuning.FLUID_RELAX_PER_TICK, gap);
+        }
         if (!fluid.isEmpty())
             temperature += (toward.value() - temperature) * FTuning.FLUID_RELAX_PER_TICK;
+    }
+
+    /** The server's game time, or -1 where there is no server (a remote client). */
+    private static long gameTime() {
+        var server = net.neoforged.neoforge.server.ServerLifecycleHooks.getCurrentServer();
+        return server == null ? -1L : server.overworld().getGameTime();
     }
 
     @Override
@@ -105,6 +123,7 @@ public class HeatedTank extends FluidTank {
     public FluidTank readFromNBT(HolderLookup.Provider registries, CompoundTag nbt) {
         super.readFromNBT(registries, nbt);
         temperature = nbt.contains("FluidTu") ? nbt.getFloat("FluidTu") : FTuning.AMBIENT_TU.value();
+        savedAt = nbt.contains("FluidAt") ? nbt.getLong("FluidAt") : -1L;
         return this;
     }
 
@@ -112,6 +131,9 @@ public class HeatedTank extends FluidTank {
     public CompoundTag writeToNBT(HolderLookup.Provider registries, CompoundTag nbt) {
         super.writeToNBT(registries, nbt);
         nbt.putFloat("FluidTu", temperature);
+        long now = gameTime();
+        if (now >= 0L)
+            nbt.putLong("FluidAt", now);
         return nbt;
     }
 }

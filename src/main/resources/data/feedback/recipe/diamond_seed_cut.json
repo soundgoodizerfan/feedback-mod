@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [ { "item": "minecraft:diamond" } ],
+  "result": { "count": 2, "id": "feedback:diamond_seed" }
+}

@@ -629,6 +629,8 @@ public final class FTuning {
      * 1.5 / 0.03 = 50 Tu under it.
      */
     public static final float HEARTH_STOCK_GRIP = 0.03f;
+    /** Invented. Chance per tick, per unit of how far over its oxidation temperature (as a share of it) a piece of raw stock sits in a Hearth, that one piece scales away. */
+    public static final float HEARTH_SCALE_RATE = 0.0085f;
 
     /** Invented. How many items a crucible holds. Two, because carburizing needs iron and carbon. */
     public static final int CRUCIBLE_SLOTS = 2;
@@ -823,6 +825,10 @@ public final class FTuning {
      * above that line, and a condenser takes whatever is left.
      */
     public static final float FLUID_RELAX_PER_TICK = 0.002f;
+    /** Invented. The share of a boiling's latent work that lifting water one Tu toward its boiling point costs (about a sixth over a 100 Tu climb, as for real water). */
+    public static final float FEED_SENSIBLE_PER_TU = 0.00185f;
+    /** Invented. Steam in a gun chest below this (Tu) has condensed and cannot drive a shot; the share of the gap to ambient a carried chest closes each tick. */
+    public static final float GUN_STEAM_MIN_TU = 100f, GUN_STEAM_RELAX_PER_TICK = 0.002f;
     public static final float STEAM_ENGINE_MIN_TU = 110f, STEAM_ENGINE_EXHAUST_DROP_TU = 40f;
     /**
      * Placeholder (user ruling, 2026-10-23: output scales with the steam it gets). The engine's capacity is
@@ -2431,6 +2437,8 @@ public final class FTuning {
      * service, this much at 2x. 0.002 means a conductor held at 2x service is gone in 500 ticks.
      */
     public static final float WIRE_DEGRADE_PER_TICK = 0.002f;
+    /** Invented. A quenched superconducting cable heats by this Work per amp a tick, and recovers once it is back within this many Tu of ambient and carrying no more than its rating. */
+    public static final float WIRE_QUENCH_WORK_PER_AMP = 4f, WIRE_QUENCH_RECOVER_MARGIN_TU = 5f;
 
     /**
      * Placeholder, and [OPEN] (6.2): how far past its rated current a source can be drawn, as a
@@ -3306,6 +3314,10 @@ public final class FTuning {
     public static final int FUME_CLOUD_INTERVAL_TICKS = 20;
     public static final float FUME_CLOUD_DOSE_PER_LEVEL = 0.5f;
     public static final float FUME_CLOUD_DECAY_PER_SECOND = 2f;
+    /** Invented. Data wire (control/data/DataWires): the blocks a link may span on poor (copper) and good (redstone-chromium) wire, the links an end may carry before good wire quenches, and the ticks a quenched line stays dark. */
+    public static final int WIRE_RANGE_POOR = 8, WIRE_RANGE_GOOD = 32, WIRE_CRITICAL_LINKS = 3, WIRE_QUENCH_TICKS = 200;
+    /** Invented. The share of a fume dose a worn Respirator lets through. */
+    public static final float RESPIRATOR_FUME_SHARE = 0.2f;
     public static final float FUME_CLOUD_NAUSEA = 4f, FUME_CLOUD_BLIND = 8f, FUME_CLOUD_HURT = 12f;
     public static final float FUME_CLOUD_DAMAGE = 1f, FUME_CLOUD_DAMAGE_FLOOR_HEALTH = 2f;
 
@@ -3452,6 +3464,13 @@ public final class FTuning {
     public static final float TRAY_BUBBLE_CAP_FOUL = 1f, TRAY_SIEVE_FOUL = 1.5f, TRAY_PACKED_FOUL = 0.6f;
     /** Invented. A tray hotter than this coats with coke, per tick by this much times how far over (as a share of it); steam through a cold column clears this much per mB. */
     public static final float COLUMN_COKE_TU = 420f, COLUMN_FOUL_PER_TICK = 0.0004f, COLUMN_DECOKE_PER_MB = 0.002f;
+
+    // --- synthetic diamond: invented ------------------------------------------------------------
+
+    /** Invented. A Shock Capsule makes grit only when the blast that reaches it has a radius in this window (vanilla: creeper 3, TNT 4, respawn anchor 5, charged creeper and end crystal 6); weaker leaves it whole, stronger vaporises the carbon back to graphite. */
+    public static final float SHOCK_MIN_RADIUS = 2.5f, SHOCK_MAX_RADIUS = 5.5f;
+    /** Invented. Grit one capsule yields. */
+    public static final int SHOCK_GRIT = 4;
 
     // --- the reactor (spec 7.4, 7.5): invented -------------------------------------------------------
 

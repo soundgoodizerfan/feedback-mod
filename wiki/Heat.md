@@ -112,7 +112,7 @@ Some batches name their own ruin instead. Cast iron and steel leave **Burnt Iron
 
 ## While you're away
 
-A vessel in a chunk that unloads doesn't freeze. When you come back, it's brought up to date as if you'd been there: its fire **burns the fuel it had** (unblown; nobody was working the bellows), the vessel follows the fire while it was lit, and cools toward the room once it went out.
+A vessel in a chunk that unloads doesn't freeze. When you come back, it's brought up to date as if you'd been there: its fire **burns the fuel it had** (unblown; nobody was working the bellows), the vessel follows the fire while it was lit, and cools toward the room once it went out. Fluid in a tank (a boiler's water and steam, a gas tank, a reactor, a condenser) cools toward the room too, so hot water or steam you walk away from is cooler when you return.
 
 What isn't caught up is **progress**. A batch in the crucible doesn't finish while you're away; it picks up where it left off, at whatever temperature the crucible is now.
 

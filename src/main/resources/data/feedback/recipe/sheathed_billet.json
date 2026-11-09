@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "feedback:calcined_blend"
+    },
+    {
+      "item": "feedback:calcined_blend"
+    },
+    {
+      "item": "feedback:calcined_blend"
+    },
+    {
+      "item": "feedback:calcined_blend"
+    },
+    {
+      "item": "feedback:silver_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:sheathed_billet"
+  }
+}

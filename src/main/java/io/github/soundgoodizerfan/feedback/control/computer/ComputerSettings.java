@@ -16,7 +16,7 @@ public record ComputerSettings(Phosphor phosphor, Wallpaper wallpaper, boolean s
 
     public enum Phosphor { GREEN, AMBER, WHITE, BLUE }
 
-    public enum Wallpaper { GRID, SCANS, CIRCUIT, BLANK }
+    public enum Wallpaper { GRID, SCANS, CIRCUIT, HORIZON, BLANK }
 
     public static final ComputerSettings DEFAULT = new ComputerSettings(Phosphor.GREEN, Wallpaper.GRID, true, true, true, true, true, true, true, false);
 

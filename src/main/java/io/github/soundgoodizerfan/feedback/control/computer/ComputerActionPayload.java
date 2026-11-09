@@ -15,7 +15,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /** Client -> server: a button on the Computer's desktop. Only honoured while that player has that Computer's desktop open. */
 public record ComputerActionPayload(BlockPos pos, int action, int drive) implements CustomPacketPayload {
 
-    public static final int RUN = 0, STOP = 1, EDIT = 2, EJECT = 3, CLOSE_EDITOR = 4, COPY = 5;
+    /** {@code COPY_TO} carries {@code source + 8 * target} in {@code drive}; {@code ERASE} wipes the program on the drive. */
+    public static final int RUN = 0, STOP = 1, EDIT = 2, EJECT = 3, CLOSE_EDITOR = 4, COPY = 5, COPY_TO = 6, ERASE = 7;
 
     public static final Type<ComputerActionPayload> TYPE = new Type<>(Feedback.id("computer_action"));
 
@@ -43,6 +44,8 @@ public record ComputerActionPayload(BlockPos pos, int action, int drive) impleme
                 case EJECT -> computer.eject(payload.drive(), player);
                 case CLOSE_EDITOR -> computer.closeEditor(player);
                 case COPY -> computer.copy(payload.drive(), player);
+                case COPY_TO -> computer.copyTo(payload.drive() & 7, payload.drive() >> 3, player);
+                case ERASE -> computer.erase(payload.drive(), player);
                 default -> { }
             }
         });

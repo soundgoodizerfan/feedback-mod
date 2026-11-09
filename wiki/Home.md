@@ -61,7 +61,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Control:** [Timer](Timer.md) · [Bimetallic Strip](Bimetallic_Strip.md) · [Controller](Controller.md) · [Electric Controller](Electric_Controller.md) · [Programming](Programming.md) · [Data Connector](Data_Connector.md)
 
-**Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md) · [Demolition Charge](Demolition_Charge.md)
+**Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md) · [Demolition Charge](Demolition_Charge.md) · [Shock Capsule](Shock_Capsule.md)
 
 **Tools and armor:** [Backpack](Backpack.md) · [Bedroll](Bedroll.md) · [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
@@ -69,7 +69,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Vanilla blocks and fluids, changed:** [Furnaces](Furnaces.md) · [Ancient Debris](Ancient_Debris.md) · [Enchanting Table](Enchanting_Table.md) · [Brewing Stand](Brewing_Stand.md) · [Thrown and Imbued Potions](Thrown_and_Imbued_Potions.md) · [Potion Salts](Potion_Salts.md) · [Crafting Table](Crafting_Table.md) · [Redstone Lamp](Redstone_Lamp.md) · [Grindstone](Grindstone.md) · [Anvil](Anvil.md) · [Iron Ore](Iron_Ore.md) · [Lava](Lava.md) · [Campfire](Campfire.md) · [Water](Water.md) · [Food](Food.md) · [Skillet](Skillet.md) · [Stockpot](Stockpot.md) · [Ice Box](Ice_Box.md) · [Cold Room](Cold_Room.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Drying Rack](Drying_Rack.md) · [Prep Table](Prep_Table.md) · [Dough](Dough.md) · [Villagers](Villagers.md) · [Village Guilds](Village_Guilds.md) · [Village Stalls](Village_Stalls.md) · [End Stone](End_Stone.md) · [Shulker](Shulker.md) · [Elytra](Elytra.md)
 
-**Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Combat Gear](Combat_Gear.md)
+**Protection:** [Leather Gloves](Hazards.md#gloves) · [Tongs](Hazards.md#tongs) · [Respirator](Respirator.md) · [Combat Gear](Combat_Gear.md)
 
 ## A few things worth knowing
 

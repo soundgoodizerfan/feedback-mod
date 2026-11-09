@@ -1,0 +1,17 @@
+{
+  "parts": {
+    "feedback:purified_redstone": {
+      "min": 0.62,
+      "max": 0.7
+    },
+    "feedback:chromium": {
+      "min": 0.28,
+      "max": 0.36
+    }
+  },
+  "stray": 0.02,
+  "max_temperature": 100,
+  "result": {
+    "id": "feedback:superconductor_blend"
+  }
+}

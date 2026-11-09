@@ -4,6 +4,7 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import java.util.Random;
 
+import io.github.soundgoodizerfan.feedback.client.desktop.ContextMenu;
 import io.github.soundgoodizerfan.feedback.client.desktop.Desktop;
 import io.github.soundgoodizerfan.feedback.client.desktop.DesktopApp;
 import io.github.soundgoodizerfan.feedback.client.desktop.Glyph;
@@ -60,6 +61,11 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
 
     private final Button[] driveLabels = new Button[ComputerBays.SIZE + 1];
 
+    /** What the notices last saw: whether each bay held a medium, the newest console line, and whether the first look is done. */
+    private final boolean[] bayFull = new boolean[ComputerBays.SIZE];
+    private ComputerBlockEntity.LogEntry lastLog;
+    private boolean primed;
+
     public ComputerScreen(ComputerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, skinFor(settingsOf(menu)));
         local = lastSeen = settingsOf(menu);
@@ -67,6 +73,7 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
         applyEffects();
         desktop = new Desktop(look);
         desktop.register(new DesktopApp("drive", Component.translatable("gui.feedback.computer.drives"), Glyph.DRIVE, false, () -> new DriveWindow(this)));
+        desktop.register(new DesktopApp("files", Component.translatable("gui.feedback.computer.files"), Glyph.FILES, true, () -> new FilesWindow(this)));
         desktop.register(new DesktopApp("monitor", Component.translatable("gui.feedback.computer.monitor"), Glyph.MONITOR, true, () -> new MonitorWindow(this)));
         desktop.register(new DesktopApp("links", Component.translatable("gui.feedback.computer.links"), Glyph.LINKS, true, () -> new LinksWindow(this)));
         desktop.register(new DesktopApp("editor", Component.translatable("gui.feedback.computer.editor"), Glyph.EDITOR, false, () -> new EditorWindow(this)));
@@ -94,8 +101,14 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
         });
     }
 
+    @Override
+    public void toast(Component text) {
+        desktop.toast(text);
+    }
+
     /** Whether a disk with this app is in a bay, as the menu's slots show it. */
-    private boolean installed(String id) {
+    @Override
+    public boolean installed(String id) {
         for (int i = 0; i < ComputerBays.SIZE; i++)
             if (id.equals(ComputerApps.idOf(menu.getSlot(i).getItem())))
                 return true;
@@ -177,8 +190,9 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
         super.init();
         look = skinFor(local);
         boolean right = menu.iconX() == ComputerMenu.ICON_X_RIGHT;
-        int workX = leftPos + (right ? 8 : ICONS_W);
-        desktop.area(workX, topPos + DESK_TOP + 2, W - ICONS_W - 8, ComputerMenu.DOCK_Y - 8 - DESK_TOP - 2);
+        // the whole desktop: a window over an icon or the dock switches those slots off (see hideCovered)
+        desktop.area(leftPos + 8, topPos + DESK_TOP + 2, W - 16, DESK_BOTTOM - DESK_TOP - 4);
+        desktop.spawn(right ? 0 : ICONS_W - 8);
         desktop.bar(leftPos + 4, topPos + BAR_Y, W - 8, BAR);
         desktop.rebuild(look);
         for (int i = 0; i <= RUN; i++) {
@@ -206,11 +220,32 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
             rebuildWidgets();
         }
         desktop.tick();
+        notices(computer);
         if (++ticks % 2 == 0) {
             float[] seen = computer == null ? new float[0] : computer.readings();
             trace[traceAt] = running().nodes().isEmpty() || seen.length == 0 ? 0f : seen[0];
             traceAt = (traceAt + 1) % TRACE;
         }
+    }
+
+    /**
+     * Toasts: an app disk put into a bay, and what the Computer logs that is worth a notice (programs started and stopped, media moved and
+     * wiped, power). The first look only records the state, so opening the desktop does not replay old events.
+     */
+    private void notices(ComputerBlockEntity computer) {
+        for (int i = 0; i < RUN; i++) {
+            boolean in = !menu.getSlot(i).getItem().isEmpty();
+            // only app disks: a program medium also comes back to its bay when a program stops or the editor closes, and the log says so
+            if (primed && in && !bayFull[i] && ComputerApps.isApp(menu.getSlot(i).getItem()))
+                desktop.toast(Component.translatable("gui.feedback.computer.toast.app", menu.getSlot(i).getItem().getHoverName()));
+            bayFull[i] = in;
+        }
+        var entries = computer == null ? java.util.List.<ComputerBlockEntity.LogEntry>of() : computer.logEntries();
+        ComputerBlockEntity.LogEntry latest = entries.isEmpty() ? null : entries.get(entries.size() - 1);
+        if (primed && latest != null && !latest.equals(lastLog) && !latest.key().startsWith("switch") && !latest.key().equals("edit"))
+            desktop.toast(ConsoleWindow.text(latest));
+        lastLog = latest;
+        primed = true;
     }
 
     /** Sends an unsent edit before the close begins, while the server still has the menu open. */
@@ -238,12 +273,26 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
     @Override
     protected void renderBg(GuiGraphics g, float partial, int mx, int my) {
         applyEffects();
+        hideCovered();
         look.panel(g, leftPos, topPos, imageWidth, imageHeight);
         drawWallpaper(g);
         drawIcons(g, mx, my);
         drawWidgets(g);
         drawDock(g);
         desktop.render(g, mx, my, partial);
+    }
+
+    /**
+     * The screen draws slot items and widgets after this background, over any window. So a slot or drive label a window (or menu, or
+     * toast) overlaps is switched off for the frame: not drawn, not hovered, not clicked.
+     */
+    private void hideCovered() {
+        for (var slot : menu.slots)
+            if (slot instanceof ComputerMenu.DeskSlot desk)
+                desk.hide(desktop.overlaps(leftPos + slot.x - 1, topPos + slot.y - 1, 18, 18));
+        for (Button label : driveLabels)
+            if (label != null)
+                label.visible = !desktop.overlaps(label.getX(), label.getY(), label.getWidth(), label.getHeight());
     }
 
     /** The wallpaper: a sunken screen, dressed as the settings say, with the system's name watermarked large across it. */
@@ -264,6 +313,7 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
                 g.fillGradient(x + 1, y + 1, x + w - 1, y + h / 3, fade(look.ink(), 0x10), fade(look.ink(), 0x00));
             }
             case CIRCUIT -> drawCircuit(g, x, y, w, h);
+            case HORIZON -> drawHorizon(g, x, y, w, h);
             case BLANK -> {
             }
         }
@@ -274,6 +324,21 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
             pose.scale(2.5f, 2.5f, 1f);
             g.drawString(font, "FEEDBACK", 0, 0, fade(look.ink(), 0x26), false);
             pose.popPose();
+        }
+    }
+
+    /** A plain running to the horizon: a rule, a faint glow above it, lines fanning out from the vanishing point and rows bunching toward it. */
+    private void drawHorizon(GuiGraphics g, int x, int y, int w, int h) {
+        int hy = y + h * 11 / 20, floor = y + h - 2;
+        int rule = fade(look.ink(), 0x38), faint = fade(look.ink(), 0x1C);
+        g.fillGradient(x + 1, hy - h / 6, x + w - 1, hy, fade(look.ink(), 0x00), fade(look.ink(), 0x14));
+        g.fill(x + 1, hy, x + w - 1, hy + 1, rule);
+        int cx = x + w / 2;
+        for (int k = 0; k <= 12; k++)
+            GuiStyle.line(g, cx, hy + 1, x + 2 + (w - 5) * k / 12, floor, faint);
+        for (int t = 1; t <= 6; t++) {
+            int ly = hy + (int) ((floor - hy) * (t / 6f) * (t / 6f));
+            g.fill(x + 1, ly, x + w - 1, ly + 1, faint);
         }
     }
 
@@ -447,7 +512,36 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
     public boolean mouseClicked(double mx, double my, int button) {
         if (!settled())
             return true;
-        return desktop.mouseClicked(mx, my, button) || super.mouseClicked(mx, my, button);
+        if (desktop.mouseClicked(mx, my, button))
+            return true;
+        if (button == 1 && rightClick((int) mx, (int) my))
+            return true;
+        return super.mouseClicked(mx, my, button);
+    }
+
+    /** A right-click on the wallpaper or a drive icon, which no window has taken: opens that thing's menu. Returns whether it did. */
+    private boolean rightClick(int mx, int my) {
+        if (hoveredSlot != null && hoveredSlot.index <= RUN) {
+            var items = DriveMenu.of(this, desktop, hoveredSlot.index);
+            if (items.isEmpty())
+                return false;
+            showDrive(hoveredSlot.index);
+            desktop.openMenu(mx, my, items);
+            return true;
+        }
+        boolean onDock = mx >= leftPos + ComputerMenu.DOCK_X - 6 && mx < leftPos + ComputerMenu.DOCK_X + 9 * 18 + 4
+                && my >= topPos + ComputerMenu.DOCK_Y - 5 && my < topPos + ComputerMenu.DOCK_Y + 23;
+        boolean onWallpaper = mx >= leftPos + 6 && mx < leftPos + imageWidth - 6 && my >= topPos + DESK_TOP && my < topPos + DESK_BOTTOM;
+        if (hoveredSlot != null || onDock || !onWallpaper)
+            return false;
+        ComputerSettings.Wallpaper[] papers = ComputerSettings.Wallpaper.values();
+        desktop.openMenu(mx, my, java.util.List.of(
+                new ContextMenu.Item(Component.translatable("gui.feedback.computer.files"), () -> desktop.open("files")),
+                new ContextMenu.Item(Component.translatable("gui.feedback.computer.settings"), () -> desktop.open("settings")),
+                new ContextMenu.Item(Component.translatable("gui.feedback.computer.menu.wallpaper"),
+                        () -> change(local.with(papers[(local.wallpaper().ordinal() + 1) % papers.length]))),
+                new ContextMenu.Item(Component.translatable("gui.feedback.computer.menu.show_desktop"), desktop::minimiseAll)));
+        return true;
     }
 
     @Override

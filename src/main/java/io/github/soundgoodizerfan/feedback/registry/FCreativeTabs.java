@@ -349,6 +349,17 @@ public class FCreativeTabs {
                         output.accept(FItems.STAR_SEAT.get());
                         output.accept(FItems.FLUX_METER.get());
                         output.accept(FItems.GRAPHITE_MODERATOR.get());
+                        output.accept(FItems.SHOCK_CAPSULE.get());
+                        output.accept(FItems.SHEAVE.get());
+                        output.accept(FItems.PURIFIED_REDSTONE.get());
+                        output.accept(FItems.SUPERCONDUCTOR_BLEND.get());
+                        output.accept(FItems.CALCINED_BLEND.get());
+                        output.accept(FItems.SHEATHED_BILLET.get());
+                        output.accept(FItems.IMPACT_PENDULUM.get());
+                        output.accept(FItems.STRIKE_POST.get());
+                        output.accept(FItems.RESPIRATOR.get());
+                        output.accept(FItems.DIAMOND_GRIT.get());
+                        output.accept(FItems.DIAMOND_SEED.get());
                         output.accept(FItems.FUEL_ROD.get());
                         output.accept(FItems.THORIUM_FUEL_ROD.get());
                         output.accept(FItems.ENRICHED_FUEL_ROD.get());

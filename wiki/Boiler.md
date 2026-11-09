@@ -21,6 +21,8 @@ P is a [Steel Plate](Mechanical_Hammer.md).
 2. **Fill it with water**: right-click it with a Water Bucket, or feed it with a [Pump](Pump.md). It holds 4000 mB of water and 4000 mB of steam.
 3. Once it reaches **120 Tu**, it starts turning water into steam.
 
+Water that is already hot, such as condensate returned from a [Condenser](Condenser.md), needs less heat to boil than cold water: cold feed costs about a sixth more over its climb to 100 Tu.
+
 A boiler needs far less heat than metalwork. It starts boiling well below a red glow, so even a modest fire runs it.
 
 ## How much steam

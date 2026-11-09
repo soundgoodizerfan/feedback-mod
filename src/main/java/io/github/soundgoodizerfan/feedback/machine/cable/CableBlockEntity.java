@@ -92,6 +92,10 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     private float baseRating;
     private float baseDrop;
     private float serviceTu = Float.MAX_VALUE;
+    /** A superconductor's drop once quenched, per unit area; negative when this conductor cannot quench. */
+    private float quenchDrop = -1f;
+    /** A superconductor that has gone resistive: lossy and heating until it has cooled and carries within its rating again. */
+    private boolean quenched;
 
     public CableBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CABLE.get(), pos, state);
@@ -110,6 +114,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         figuresGeneration = MaterialTable.generation();
         baseRating = 0;
         baseDrop = 0;
+        quenchDrop = -1f;
         serviceTu = Float.MAX_VALUE;
         if (this.material == null)
             return;
@@ -121,6 +126,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         float area = gauge().area();
         baseRating = material.ampacity().orElse(0f) * FTuning.WIRE_AMPS_PER_AMPACITY * area;
         baseDrop = material.electrical().drop().orElse(0f) / area;
+        quenchDrop = material.electrical().quenchDrop().map(d -> d / area).orElse(-1f);
         material.thermal().serviceTemperature().ifPresent(tu -> serviceTu = tu.value());
     }
 
@@ -175,6 +181,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     public float dropPerAmp() {
         figures();
         // A degraded conductor loses more per amp. Bounded so a nearly-gone one is bad, not infinite.
+        if (quenched && quenchDrop >= 0f)
+            return quenchDrop / Math.max(0.1f, condition);
         return baseDrop / Math.max(0.1f, condition);
     }
 
@@ -292,6 +300,16 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     public void step(float amps) {
         Tu ambient = AmbientTable.at(level);
         float over = amps - getRatingAmps();
+        figures();
+        if (quenchDrop >= 0f) {
+            // A superconductor carries to its critical current with no drop; past it, it goes resistive and heats on what it still carries.
+            if (!quenched && over > 0f)
+                setQuenched(true);
+            else if (quenched && over <= 0f && temperature <= ambient.value() + FTuning.WIRE_QUENCH_RECOVER_MARGIN_TU)
+                setQuenched(false);
+            if (quenched)
+                Heat.warm(this, FTuning.WIRE_QUENCH_WORK_PER_AMP * amps);
+        }
         if (over > 0f)
             Heat.warm(this, FTuning.WIRE_OVERLOAD_WORK_PER_AMP * over);
         Heat.tick(this, ambient, ambient, false);
@@ -306,6 +324,24 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
             if (condition <= 0f)
                 burnOut();
         }
+    }
+
+    private void setQuenched(boolean now) {
+        quenched = now;
+        setChanged();
+        if (level != null && !level.isClientSide) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            ElectricPropagator.requeue(level, worldPosition);
+            if (now && level instanceof ServerLevel server) {
+                server.sendParticles(ParticleTypes.SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, 5, 0.15, 0.15, 0.15, 0.01);
+                server.playSound(null, worldPosition, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.4f, 0.6f);
+            }
+        }
+    }
+
+    /** A superconductor gone resistive (it carries its load at a heavy drop and heats until it has cooled). */
+    public boolean isQuenched() {
+        return quenched;
     }
 
     private void burnOut() {
@@ -381,6 +417,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
             tag.putString("Material", material.toString());
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Condition", condition);
+        if (quenched)
+            tag.putBoolean("Quenched", true);
         if (insulation != null)
             tag.putString("Insulation", insulation.getSerializedName());
         // One concrete SidedFitting fits a wire, so this stays a direct check, as the crucible's does.
@@ -400,6 +438,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         if (tag.contains("Temperature"))
             temperature = tag.getFloat("Temperature");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        quenched = tag.getBoolean("Quenched");
         insulation = tag.contains("Insulation") ? VoltageBand.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(tag.getString("Insulation"))).result().orElse(null) : null;
         for (Direction side : Direction.values()) {
             String key = "Sensor" + side.get3DDataValue();
