@@ -52,4 +52,13 @@ final class CombatPoseTuning {
     static final float RECOIL_DEG = 14f;
     /** The recoil fades over this many ticks left; a stagger shorter than this starts already part-faded. */
     static final float RECOIL_FADE_TICKS = 8f;
+
+    // ---- long gun stance, third person ({@link GunStance}) ----
+
+    /** How far below the line of sight a carried long gun points, degrees; aimed it is level with it. */
+    static final float GUN_READY_DROP_DEG = 25f;
+    /** How far the body turns toward the gun side, degrees, carried and aimed. */
+    static final float GUN_BODY_TURN_IDLE_DEG = 30f, GUN_BODY_TURN_AIM_DEG = 45f;
+    /** Where the grip sits along the shooting arm from the shoulder, and how far the support hand reaches from its shoulder, in model pixels. */
+    static final float GUN_GRIP_PX = 7f, GUN_SUPPORT_REACH_PX = 10f;
 }

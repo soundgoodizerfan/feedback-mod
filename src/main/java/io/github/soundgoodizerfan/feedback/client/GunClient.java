@@ -123,6 +123,12 @@ public final class GunClient {
         return e == me ? aim > 0.5f : AIMING.contains(e.getId());
     }
 
+    /** How far a player is drawn aimed, 0 to 1: ours eased, others' the relayed on or off. */
+    public static float aimAmount(net.minecraft.world.entity.LivingEntity e) {
+        var me = Minecraft.getInstance().player;
+        return e == me ? aim : AIMING.contains(e.getId()) ? 1f : 0f;
+    }
+
     /** How far aimed the held gun is, 0 to 1. */
     public static float aim() {
         return aim;

@@ -28,7 +28,7 @@ public final class PlateDraw {
     /** {@code pose} sits at the vanilla part (translated and rotated, in blocks); boxes are then given in model pixels. */
     public PlateDraw(PoseStack pose, MultiBufferSource buffers, int light, int overlay) {
         this.pose = pose;
-        this.mesh = new GunMesh(pose, image -> buffers.getBuffer(RenderType.armorCutoutNoCull(SHEET)), light, overlay, null);
+        this.mesh = new GunMesh(pose, image -> buffers.getBuffer(RenderType.armorCutoutNoCull(SHEET)), light, overlay, null).texelPx(1f);
         pose.pushPose();
         pose.scale(1f / 16f, 1f / 16f, 1f / 16f);
         pose.mulPose(Axis.ZP.rotationDegrees(180f)); // y up, x mirrored: the gun frame

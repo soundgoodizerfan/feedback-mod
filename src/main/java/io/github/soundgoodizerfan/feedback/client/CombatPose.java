@@ -136,21 +136,14 @@ public final class CombatPose {
             (right ? pm.rightLeg : pm.leftLeg).visible = false;
             (right ? pm.rightPants : pm.leftPants).visible = false;
         }
-        if (e instanceof net.minecraft.world.entity.player.Player && e.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem
+        if (!GunStance.begin(event) && e instanceof net.minecraft.world.entity.player.Player
+                && e.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem
                 && GunClient.aimed(e) && event.getRenderer().getModel() instanceof HumanoidModel<?> gm) {
-            // Aimed: the vanilla bow pose, arms up along the sight line; a long gun gets the support hand too.
-            HumanoidArm main = e.getMainArm();
-            boolean two = e.getOffhandItem().isEmpty()
-                    && io.github.soundgoodizerfan.feedback.client.gun.GunRenderer.longGun(e.getMainHandItem());
-            if (main == HumanoidArm.RIGHT) {
+            // A one-handed gun aimed: the vanilla bow pose on the shooting arm.
+            if (e.getMainArm() == HumanoidArm.RIGHT)
                 gm.rightArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
-                if (two)
-                    gm.leftArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
-            } else {
+            else
                 gm.leftArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
-                if (two)
-                    gm.rightArmPose = HumanoidModel.ArmPose.BOW_AND_ARROW;
-            }
         }
         if (f == NONE)
             return;
@@ -174,6 +167,12 @@ public final class CombatPose {
             else
                 model.leftArmPose = parryPose;
         }
+    }
+
+    /** Puts back what {@link GunStance} changed for the draw. */
+    @SubscribeEvent
+    public static void onLivingDone(RenderLivingEvent.Post<?, ?> event) {
+        GunStance.end(event.getEntity());
     }
 
     /** First person: the weapon hand for a parry; both hands for a stagger. */

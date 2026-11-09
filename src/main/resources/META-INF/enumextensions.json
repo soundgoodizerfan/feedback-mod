@@ -17,6 +17,24 @@
         "class": "io/github/soundgoodizerfan/feedback/client/CombatPose",
         "field": "PARRY_PROXY"
       }
+    },
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "FEEDBACK_GUN_MAIN",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "io/github/soundgoodizerfan/feedback/client/GunStance",
+        "field": "MAIN_PROXY"
+      }
+    },
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "FEEDBACK_GUN_SUPPORT",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "io/github/soundgoodizerfan/feedback/client/GunStance",
+        "field": "SUPPORT_PROXY"
+      }
     }
   ]
 }

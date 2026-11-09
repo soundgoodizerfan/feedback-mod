@@ -93,10 +93,15 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
             return instance;
         }
 
-        @Override
-        public HumanoidModel.ArmPose getArmPose(LivingEntity entity, InteractionHand hand, ItemStack stack) {
-            return GunView.of(stack).longGun() ? HumanoidModel.ArmPose.CROSSBOW_HOLD : null;
-        }
+    }
+
+    /**
+     * How far forward of the shooting hand the support hand would take the gun, in third-person model pixels: the
+     * forend, measured along the barrel from the grip.
+     */
+    public static float forendReach(ItemStack stack) {
+        GunView view = GunView.of(stack);
+        return Math.max(0f, view.hand()[2] - GunDraw.forend(view)[1]) * THIRD_PERSON_SCALE * 16f;
     }
 
     /** Whether the stack is a long gun, which is held in two hands. */

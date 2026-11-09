@@ -69,6 +69,7 @@
     "feedback:electrolytic_cell",
     "feedback:electromagnet",
     "feedback:electrostatic_generator",
+    "feedback:enchanting_table",
     "feedback:ender_port",
     "feedback:engine",
     "feedback:enriched_fuel_rod_pipe",

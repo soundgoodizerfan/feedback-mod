@@ -41,7 +41,8 @@ public final class GunMesh {
         }
     }
 
-    private static final float TEXELS_PER_PX = 2f;
+    /** Model pixels one texel spans: a gun's detail is half a pixel fine, worn armour's is vanilla's one. */
+    private float texelPx = 0.5f;
     private static final float TILE = 32f, SHEET = 128f;
     static final net.minecraft.resources.ResourceLocation SHEET_ID = Feedback.id("item/gun/sheet");
 
@@ -83,6 +84,12 @@ public final class GunMesh {
         this.baseLight = light;
         this.overlay = overlay;
         this.sprite = sprite;
+    }
+
+    /** Texels this mesh draws a model pixel with: worn armour wants vanilla's one a pixel. */
+    public GunMesh texelPx(float px) {
+        this.texelPx = px;
+        return this;
     }
 
     /** Draw what follows in this ARGB colour, as metal. */
@@ -275,7 +282,7 @@ public final class GunMesh {
         boolean uAlongS = Math.abs(us[1] - us[0]) > Math.abs(us[3] - us[0]);
         float uMin = Math.min(us[0], us[2]), uMax = Math.max(us[0], us[2]);
         float vMin = Math.min(vs[0], vs[2]), vMax = Math.max(vs[0], vs[2]);
-        float[] ub = breaks(uMax - uMin), vb = breaks(vMax - vMin);
+        float[] ub = breaks(uMax - uMin, texelPx), vb = breaks(vMax - vMin, texelPx);
         int uSeed = Math.floorMod(seed, 31), vSeed = Math.floorMod(seed >> 5, 31);
         float tx = (t.index % 4) * TILE, ty = (t.index / 4) * TILE;
         boolean own = bound != null && bound != GLASS;
@@ -299,11 +306,11 @@ public final class GunMesh {
                     float u, v;
                     if (own) {
                         // A log's bark runs down its texture; turned a quarter so the grain runs along the part.
-                        v = whole(cu - uMin, uMax - uMin, uSeed);
-                        u = whole(cv - vMin, vMax - vMin, vSeed);
+                        v = whole(cu - uMin, uMax - uMin, uSeed, texelPx);
+                        u = whole(cv - vMin, vMax - vMin, vSeed, texelPx);
                     } else {
-                        u = (tx + texel(iu, cu - uMin - ub[iu], ub, uMax - uMin, uSeed)) / SHEET;
-                        v = (ty + texel(iv, cv - vMin - vb[iv], vb, vMax - vMin, vSeed)) / SHEET;
+                        u = (tx + texel(iu, cu - uMin - ub[iu], ub, uMax - uMin, uSeed, texelPx)) / SHEET;
+                        v = (ty + texel(iv, cv - vMin - vb[iv], vb, vMax - vMin, vSeed, texelPx)) / SHEET;
                     }
                     if (sprite != null && !own) {
                         u = sprite.getU(u);
@@ -315,8 +322,8 @@ public final class GunMesh {
     }
 
     /** A whole image's coordinate (0 to 1) at {@code into} of a face {@code span} long: 2 texels a pixel of its 16, stretched past that. */
-    private static float whole(float into, float span, int seed) {
-        float texels = Math.min(span * TEXELS_PER_PX, GunWood.SIZE);
+    private static float whole(float into, float span, int seed, float texelPx) {
+        float texels = Math.min(span / texelPx, GunWood.SIZE);
         float start = Math.floorMod(seed, (int) (GunWood.SIZE - texels) + 1);
         return (start + into / Math.max(span, 1e-6f) * texels) / GunWood.SIZE;
     }
@@ -327,8 +334,8 @@ public final class GunMesh {
     }
 
     /** The four cuts across a face {@code span} long: rim, middle, rim. */
-    private static float[] breaks(float span) {
-        float rim = Math.min(0.5f, span / 3f);
+    private static float[] breaks(float span, float texelPx) {
+        float rim = Math.min(texelPx, span / 3f);
         return new float[]{0, rim, span - rim, span};
     }
 
@@ -337,14 +344,14 @@ public final class GunMesh {
      * rims are the tile's outermost texel row or column, the middle a patch of the 30 texels inside,
      * stretched once the middle is longer than that.
      */
-    private static float texel(int piece, float into, float[] cuts, float span, int seed) {
+    private static float texel(int piece, float into, float[] cuts, float span, int seed, float texelPx) {
         float width = cuts[piece + 1] - cuts[piece];
         float f = width <= 0 ? 0 : into / width;
         if (piece == 0)
             return f;
         if (piece == 2)
             return TILE - 1 + f;
-        float texels = Math.max(1f, Math.min(width * TEXELS_PER_PX, TILE - 2));
+        float texels = Math.max(1f, Math.min(width / texelPx, TILE - 2));
         float start = 1 + Math.floorMod(seed, (int) (TILE - 2 - texels) + 1);
         return start + f * texels;
     }

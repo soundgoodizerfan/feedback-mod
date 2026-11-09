@@ -74,7 +74,7 @@ public final class GearModels {
                 // Chestplate (shell 10 wide, 6 deep)
                 new Extra("collar", "body", new float[]{-5.25f, -0.5f, -3.25f, 10.5f, 1.5f, 6.5f}, cube(16, 16, -5.25f, -0.5f, -3.25f, 10.5f, 1.5f, 6.5f)),
                 new Extra("ridge", "body", new float[]{-3f, 1f, -3.5f, 6, 7, 1}, cube(16, 16, -3f, 1f, -3.5f, 6, 7, 1)),
-                new Extra("skirt", "body", new float[]{-5.25f, 12.5f, -3.25f, 10.5f, 4, 6.5f}, cube(16, 16, -5.25f, 12.5f, -3.25f, 10.5f, 4, 6.5f)),
+                new Extra("skirt", "body", new float[]{-5.25f, 12f, -3.25f, 10.5f, 2.5f, 6.5f}, cube(16, 16, -5.25f, 12f, -3.25f, 10.5f, 2.5f, 6.5f)),
                 new Extra("pauldron_r", "right_arm", new float[]{-4.5f, -3.5f, -3.5f, 6.5f, 3, 7}, cube(40, 16, -4.5f, -3.5f, -3.5f, 6.5f, 3, 7)),
                 new Extra("pauldron_l", "left_arm", new float[]{-2.5f, -3.5f, -3.5f, 6.5f, 3, 7}, cube(40, 16, -2.5f, -3.5f, -3.5f, 6.5f, 3, 7)),
                 // Leggings
