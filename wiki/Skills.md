@@ -179,7 +179,7 @@ Observation: see and exploit. Aimed shots, coins, weapon reach, and reading a cr
 
 | Node | Cost | Needs | Does |
 | --- | --- | --- | --- |
-| Called shot | 70 |  | Cast: the round is aimed not at where the thing under your crosshair is but at where its motion puts it by the time the round arrives. Needs line of sight, forty blocks at most. Costs a round, its heat and 25 stamina. *(once used, rearms on a timer.)* |
+| Called shot | 70 | Size up | Cast: the round is aimed not at where the thing under your crosshair is but at where its motion puts it by the time the round arrives. Needs line of sight, forty blocks at most. Costs a round, its heat and 25 stamina. *(once used, rearms on a timer.)* |
 | Close work | 30 | Called shot | Blows landing inside half your reach recharge the swing faster. Price: at the tip you get nothing. Excludes Far end. *(excludes Far end; respec to swap.)* |
 | Far end | 30 | Called shot | Blows landing out at the tip of your reach hit harder, more the more head-heavy the weapon. Price: up close you get nothing. Excludes Close work. *(excludes Close work; respec to swap.)* |
 | Coin flip | 60 | Called shot | Cast: toss a coin and shoot it. A harder coin than the round rebounds it to the nearest thing within 24 blocks that has a clear line from the coin, seen or not; a softer one is punched through. Heavy coins slow the round. Price: a stamped coin, 15 stamina, and it rearms when you land a blow, or after 30 s out of a fight. *(once used, rearms on a landed blow.)* |
@@ -190,11 +190,22 @@ Observation: see and exploit. Aimed shots, coins, weapon reach, and reading a cr
 | Second mark | 60 | Coin flip | The coin cast may be used twice: a second coin goes up while the first is still in the air, with no rearm of its own. A rebound goes into the other coin first, so you can shoot a coin into a coin and on to a target. Price: a second stamped coin and a second 15 stamina, and the shot has to be fast. *(excludes Round the corner; respec to swap.)* |
 | Round the corner | 70 | Coin flip | The rebound looks three times as far for a target. Price: it still needs a clear line from the coin, and it gives up the second press. *(excludes Second mark; respec to swap.)* |
 | Mark and fire | 90 | Dead eye | Held cast, with a hammer-and-cylinder gun (a revolver): hold the key and your sights on things, and each beat marks one more of the rounds chambered, a thing can take several. Let go, fill the cylinder or run dry of stamina, and the hammer lets go: you swing round to each mark in turn and put an exact shot in it, two ticks apart. You walk slowly while laying it and have six seconds. Every round still heats the barrel and spends ammo. Costs 10 stamina, then 4 a second while held. *(does nothing without a weapon with the `fan` trait.)* |
-| Size up | 40 |  | Cast: read the creature under your crosshair (24 blocks, in sight) for 15 seconds. The action bar gives its armor, toughness and health, and what it is giving away right now: facing away, unaware, burning, wet or staggered. Every weakness skill here works only on a read creature, with any weapon. Costs 15 stamina. *(once used, rearms on a timer.)* |
-| Seams | 50 | Size up | A blow on a read creature lands harder the more armor and toughness it wears: 2% per point, up to 40%. Any weapon: melee, bullet or arrow. |
-| Opening | 50 | Size up | A blow on a read creature lands harder for each opening it shows: facing away 25%, unaware or asleep 25%, burning 20%, wet 10%, staggered 30%, up to 80%. Any weapon. |
-| Exploit | 70 | Opening | Cast: spend the read on one blow. For 3 seconds the next hit on that creature lands 50% harder, plus every opening it shows, and the read is used up. Needs a read creature under the crosshair. Costs 30 stamina. *(once used, rearms on a strike.)* |
-| Case file | 45 | Seams | Every kill of a creature type adds 1% to your blows against that type, up to 20%, read or not. Kept across deaths. |
+| Size up | 40 |  | Cast: read the creature under your crosshair (24 blocks, in sight) for 15 seconds. The action bar gives its armor, toughness, health and what it is giving away right now: facing away, unaware, burning, wet or staggered. Every weakness skill here works only on a read creature, with any weapon, unless it says otherwise. Costs 15 stamina. *(once used, rearms on a timer.)* |
+| Hardness gap | 50 | Size up | Blows land 3% harder for every point your weapon's edge hardness exceeds the mean hardness of the armor the creature wears, up to 40%. No armor, no bonus. |
+| Soft spot | 60 | Hardness gap | Cast: pick the worn piece under your crosshair (head, chest, legs or feet, by height). Your next blow within 3 seconds ignores 4% of it for every point of its armor and toughness, up to 50%. A bare slot costs nothing. Costs 25 stamina. *(once used, rearms on a strike.)* |
+| Opening | 50 | Size up | A blow lands harder for each opening the creature shows: facing away 25%, unaware or asleep 25%, burning 20%, wet 10%, staggered 30%, up to 80%. |
+| Exploit | 70 | Opening | Cast: spend the read on one blow. The next hit within 3 seconds lands 50% harder, plus every opening the creature shows, and the read is used up. Costs 30 stamina. *(once used, rearms on a strike.)* |
+| Tell | 45 | Opening | A creature that has just swung is open for about 12 ticks: +30%. |
+| Pressure point | 60 | Tell | A blow on a staggered creature, or one that has just swung, staggers it by the ratio of your mass to its own. |
+| Culling | 40 | Opening | A creature under 30% health is open: +20%. |
+| Edge | 55 | Culling | A drop, lava, fire, a magma block or a cactus 1 to 2 blocks behind the creature: +25% and a shove that way. |
+| Quench | 60 | Opening | A hot weapon in your hand, or a hot gun barrel, on a wet creature: up to +40%, more the hotter it is. The hit cools the weapon by 80 Tu. |
+| Conductor | 50 | Quench | Shock damage on a read creature that is wet or heavily armored (armor value 10 or more): +50%. |
+| Case file | 45 | Size up | Every kill of a creature type adds 1% to your blows against that type, up to 20%, read or not. Kept across deaths. |
+| Pattern | 40 | Case file | After 10 kills of a type, size up lasts twice as long and shows what the creature hits for. |
+| Herd read | 40 | Case file | Size up also reads creatures of the same kind within 6 blocks. |
+| Read the room | 45 | Herd read | Size up on a player also shows their gun in words: empty, one round left, barrel hot. |
+| Spoor | 50 | Case file | Cast: follow the last creature you read as a trail only you see, for 20 seconds, up to 64 blocks away. Costs 20 stamina. *(once used, rearms on a timer.)* |
 
 ### Proficiency
 

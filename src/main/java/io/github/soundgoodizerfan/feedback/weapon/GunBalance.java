@@ -18,7 +18,7 @@ import java.util.Optional;
  * tube magazine are ahead; a grip, a trigger group, a stock and a buffer are behind; a receiver, slide, box magazine and
  * cylinder straddle the grip and count half each way. A gun heavier in front than behind is nose-heavy: the hand has to
  * hold the muzzle up, so the view sinks slowly while it is held ({@link #drift}), and spread and kick grow
- * ({@link #apply}). The figure is felt, never printed. A bipod braced on the ground takes the front's weight off the hand.
+ * ({@link #apply}). The figure is felt, never printed. Only a one-handed gun feels it; a two-handed gun holds the muzzle up with the other hand. A bipod braced on the ground takes the front's weight off the hand.
  */
 public final class GunBalance {
 
@@ -95,6 +95,9 @@ public final class GunBalance {
 
     /** The nose-heaviness {@code shooter} feels from {@code gun}: none while a bipod holds the muzzle up. */
     public static float felt(Player shooter, ItemStack gun) {
+        // Balance is a one-handed gun's problem: a second hand on a long gun holds the muzzle up.
+        if (!GunItem.oneHanded(gun))
+            return 0f;
         Optional<GunSpec> spec = GunSpec.of(gun);
         if (spec.isEmpty())
             return 0f;

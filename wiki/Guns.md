@@ -213,9 +213,9 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why a shor
 
 ### Balance
 
-A gun has a front and a back. **Ahead of the grip:** the barrel, muzzle devices, a shroud, lagging, a bipod and a tube magazine. **Behind it:** the grip, the trigger group, a stock and a hydraulic buffer. The receiver, slide, box magazine and cylinder sit over the grip and count half each way. The heavier the front is against the back, the more **nose-heavy** the gun is.
+A gun has a front and a back. **Ahead of the grip:** the barrel, muzzle devices, a shroud, lagging, a bipod and a tube magazine. **Behind it:** the grip, the trigger group, a stock and a hydraulic buffer. The receiver, slide, box magazine and cylinder sit over the grip and count half each way. The heavier the front is against the back, the more **nose-heavy** the gun is. Balance matters only for guns held in one hand (see below); a two-handed gun is held up by the other hand and feels no nose-heaviness.
 
-A nose-heavy gun is felt, not read: the Blueprint Table and the tooltip do not show it. While you hold one, your view **slowly sinks** as the hand fights to keep the muzzle up. Its shots **spread wider and kick harder**, and harder kick throws the gun from your hand sooner (see Strain above). A **bipod** takes the front's weight off the hand: crouched and standing still, a gun with one feels none of it.
+A nose-heavy gun is felt, not read: the Blueprint Table and the tooltip do not show it. While you hold one in one hand, your view **slowly sinks** as the hand fights to keep the muzzle up. Its shots **spread wider and kick harder**, and harder kick throws the gun from your hand sooner (see Strain above). A **bipod** takes the front's weight off the hand: crouched and standing still, a one-handed gun with one feels none of it.
 
 A long barrel is mostly front, so it is impractical on a gun with nothing behind it. A grip of dense metal, a stock and a counterweight behind the grip (a hydraulic buffer is all back) balance it.
 

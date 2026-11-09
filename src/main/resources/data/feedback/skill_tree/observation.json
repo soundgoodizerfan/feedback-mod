@@ -4,7 +4,9 @@
     {
       "id": "called_shot",
       "cost": 70,
-      "requires": [],
+      "requires": [
+        "size_up"
+      ],
       "effect": {
         "unlock": "called_shot"
       },
@@ -139,14 +141,25 @@
       "rearm": "time"
     },
     {
-      "id": "seams",
+      "id": "hardness_gap",
       "cost": 50,
       "requires": [
         "size_up"
       ],
       "effect": {
-        "unlock": "seams"
+        "unlock": "hardness_gap"
       }
+    },
+    {
+      "id": "soft_spot",
+      "cost": 60,
+      "requires": [
+        "hardness_gap"
+      ],
+      "effect": {
+        "unlock": "soft_spot"
+      },
+      "rearm": "strike"
     },
     {
       "id": "opening",
@@ -170,14 +183,115 @@
       "rearm": "strike"
     },
     {
+      "id": "tell",
+      "cost": 45,
+      "requires": [
+        "opening"
+      ],
+      "effect": {
+        "unlock": "tell"
+      }
+    },
+    {
+      "id": "pressure_point",
+      "cost": 60,
+      "requires": [
+        "tell"
+      ],
+      "effect": {
+        "unlock": "pressure_point"
+      }
+    },
+    {
+      "id": "culling",
+      "cost": 40,
+      "requires": [
+        "opening"
+      ],
+      "effect": {
+        "unlock": "culling"
+      }
+    },
+    {
+      "id": "edge",
+      "cost": 55,
+      "requires": [
+        "culling"
+      ],
+      "effect": {
+        "unlock": "edge"
+      }
+    },
+    {
+      "id": "quench",
+      "cost": 60,
+      "requires": [
+        "opening"
+      ],
+      "effect": {
+        "unlock": "quench"
+      }
+    },
+    {
+      "id": "conductor",
+      "cost": 50,
+      "requires": [
+        "quench"
+      ],
+      "effect": {
+        "unlock": "conductor"
+      }
+    },
+    {
       "id": "case_file",
       "cost": 45,
       "requires": [
-        "seams"
+        "size_up"
       ],
       "effect": {
         "unlock": "case_file"
       }
+    },
+    {
+      "id": "pattern",
+      "cost": 40,
+      "requires": [
+        "case_file"
+      ],
+      "effect": {
+        "unlock": "pattern"
+      }
+    },
+    {
+      "id": "herd_read",
+      "cost": 40,
+      "requires": [
+        "case_file"
+      ],
+      "effect": {
+        "unlock": "herd_read"
+      }
+    },
+    {
+      "id": "read_the_room",
+      "cost": 45,
+      "requires": [
+        "herd_read"
+      ],
+      "effect": {
+        "unlock": "read_the_room"
+      }
+    },
+    {
+      "id": "spoor",
+      "cost": 50,
+      "requires": [
+        "case_file"
+      ],
+      "effect": {
+        "unlock": "spoor"
+      },
+      "rearm": "time"
     }
   ]
 }
