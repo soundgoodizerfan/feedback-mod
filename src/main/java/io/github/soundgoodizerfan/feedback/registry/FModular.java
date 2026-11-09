@@ -268,6 +268,11 @@ public final class FModular {
                     .of(io.github.soundgoodizerfan.feedback.modular.StationBlockEntity::new,
                             SMITHING_TABLE.get(), ANVIL.get(), WOODWORKING_TABLE.get(), STONECUTTER.get()).build(null));
 
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlockEntity>> ENCHANTING_TABLE_ENTITY =
+            BLOCK_ENTITIES.register("enchanting_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlockEntity::new, ENCHANTING_TABLE.get()).build(null));
+
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));
 

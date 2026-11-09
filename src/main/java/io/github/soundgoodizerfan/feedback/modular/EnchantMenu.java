@@ -32,7 +32,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * The Enchanting Table's menu ({@code docs/specs/feedback_enchanting_spec.md} 4): one slot for a hot shaped part, the
  * player's inventory, and the attuning game ({@link EnchantGame}) the screen plays against it. Like the vanilla table
- * it keeps nothing: the part goes back to the player when the screen closes.
+ * the slot is the table's block entity container, so the part stays on the table when the screen closes.
  *
  * <p>shortcut: one slot and no reagent. The spec's reagent slot waits on its [OPEN] questions; the cost is
  * {@link ModularTuning#ENCHANT_XP_COST} of experience, drawn from a Creative XP source beside the table (nothing else
@@ -43,17 +43,18 @@ public class EnchantMenu extends AbstractContainerMenu {
 
     public static final int W = 292, H = 232, PART_X = 16, PART_Y = 27, INV_X = 65, INV_Y = 148;
 
-    private final Container part = new SimpleContainer(1);
+    private final Container part;
     private final ContainerLevelAccess access;
     private final Player player;
 
     /** Client-side open. */
     public EnchantMenu(int id, Inventory inventory) {
-        this(id, inventory, ContainerLevelAccess.NULL);
+        this(id, inventory, ContainerLevelAccess.NULL, new SimpleContainer(1));
     }
 
-    public EnchantMenu(int id, Inventory inventory, ContainerLevelAccess access) {
+    public EnchantMenu(int id, Inventory inventory, ContainerLevelAccess access, Container part) {
         super(FMenus.ENCHANT.get(), id);
+        this.part = part;
         this.access = access;
         this.player = inventory.player;
         addSlot(new Slot(part, 0, PART_X, PART_Y) {
@@ -270,7 +271,8 @@ public class EnchantMenu extends AbstractContainerMenu {
     public void removed(Player player) {
         super.removed(player);
         EnchantGame.end(player.getUUID());
-        access.execute((level, pos) -> clearContainer(player, part));
+        if (part instanceof SimpleContainer)
+            access.execute((level, pos) -> clearContainer(player, part));
     }
 
     @Override

@@ -14,7 +14,7 @@ Nothing is rolled and there are no bookshelves. An enchantment is called an **at
 
 Put one part in the slot: a shaped part, or raw stock that some tool takes as a part (a rod, a grip, a bone). Any part can be attuned, hot or cold. A part you have just heated in a [furnace](Furnaces.md) or the [Hearth](Hearth.md) and carried over costs less experience, but it cools while you write and the window closes; a cold part costs full price and takes as long as it needs. The table doesn't heat anything.
 
-Pick an effect from the list on the left. Each row shows what the effect does on the part's role in its tooltip; a dimmed row does nothing on this part, and a gold pip marks an effect the part already has. A row of pips under the part's name shows how many attunements it can hold, filled for those it has. Then press **Begin**. Attuning costs **30 experience points** for a cold part (about three levels from the start), and down to 12 for a part at its attuning point or hotter, spent whatever the result. A Creative XP source touching the table pays instead, and Creative players pay nothing. The part goes back to your inventory when you close the screen.
+Pick an effect from the list on the left. Each row shows what the effect does on the part's role in its tooltip; a dimmed row does nothing on this part, and a gold pip marks an effect the part already has. A row of pips under the part's name shows how many attunements it can hold, filled for those it has. Then press **Begin**. Attuning costs **30 experience points** for a cold part (about three levels from the start), and down to 12 for a part at its attuning point or hotter, spent whatever the result. A Creative XP source touching the table pays instead, and Creative players pay nothing. The part stays on the table's pad when you close the screen, cooling on its own while it sits, and drops when the table is broken. Take it out of the slot to carry it away.
 
 Some effects name a potion as a reagent (their tooltip says which: Heat takes a potion of fire, Ward a potion of resistance). A bottle of that potion in your inventory is burned with the session, whatever the result, and the empty bottle returns. A fresh potion saves up to half of the experience cost; a faded one saves less.
 
@@ -123,7 +123,7 @@ Every bullet that hits carries the attunements of the gun's parts, in the part's
 
 ## The effect is on the part
 
-Attunements live on the **part**, not the tool. Set an attuned part into a tool and it carries across. **Reheating a part past its attuning point erases its attunements**, so keep the part out of a furnace, crucible or Hearth once it is attuned. A part already built into a tool is not reached.
+Attunements live on the **part**, not the tool. Set an attuned part into a tool and it carries across. **Reheating a part past its attuning point erases its attunements**, so keep the part out of a furnace, crucible or Hearth once it is attuned. A finished tool heated past a part's attuning point loses that part's attunements the same way, judged against each part's own material.
 
 Vanilla gear converted into modular gear keeps the enchantments it already had.
 

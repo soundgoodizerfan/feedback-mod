@@ -136,10 +136,15 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
     /**
      * Reheating past a part's attuning point erases the attunements in it (spec 6). Called wherever a heat stamp is
      * written ({@link io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat#set}), so a part in a furnace, crucible
-     * or Hearth loses them the moment it is stamped hot. Parts already inside an assembled tool are not reached.
+     * or Hearth loses them the moment it is stamped hot. An assembled tool is handled part by part against each part's own material, then rebaked.
      */
     public static void eraseIfOverheated(net.minecraft.world.item.ItemStack stack,
             io.github.soundgoodizerfan.feedback.core.unit.Tu tu, net.minecraft.world.level.Level level) {
+        ModularDesign design = stack.get(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get());
+        if (design != null) {
+            eraseInTool(stack, design, tu, level);
+            return;
+        }
         io.github.soundgoodizerfan.feedback.process.MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
         if (made == null || made.dims().keySet().stream().noneMatch(k -> k.startsWith(PREFIX)))
             return;
@@ -151,6 +156,26 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
         kept.keySet().removeIf(k -> k.startsWith(PREFIX));
         stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(
                 made.material(), made.stock(), made.cells(), made.variant(), made.flaw(), kept));
+    }
+
+    /** The same erasure for an assembled tool: each part stamped past its own material's attuning point loses its attunements, and the tool is rebaked. */
+    private static void eraseInTool(net.minecraft.world.item.ItemStack stack, ModularDesign design,
+            io.github.soundgoodizerfan.feedback.core.unit.Tu tu, net.minecraft.world.level.Level level) {
+        Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials =
+                io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(level);
+        ModularDesign out = design;
+        for (ModularDesign.Part p : design.parts()) {
+            if (p.dims().keySet().stream().noneMatch(k -> k.startsWith(PREFIX)))
+                continue;
+            io.github.soundgoodizerfan.feedback.process.Material m = materials.get(p.material());
+            if (m == null || tu.value() <= m.attuning().temperature().value())
+                continue;
+            Map<String, Float> kept = new java.util.HashMap<>(p.dims());
+            kept.keySet().removeIf(k -> k.startsWith(PREFIX));
+            out = out.withPart(new ModularDesign.Part(p.role(), p.material(), p.form(), p.count(), p.kind(), p.variant(), p.flaw(), kept));
+        }
+        if (out != design)
+            ModularStacks.assemble(stack, out, materials, ModularTypes.get().types());
     }
 
     @Override

@@ -76,7 +76,7 @@ public class FMenus {
             MENUS.register("blueprint_table",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu::new, FeatureFlags.VANILLA_SET));
 
-    /** Plain: the table keeps nothing, so the client needs nothing to open it. */
+    /** Plain: the pad slot is synced as a slot, so the client needs nothing to open it. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.EnchantMenu>> ENCHANT =
             MENUS.register("enchanting",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.EnchantMenu::new, FeatureFlags.VANILLA_SET));

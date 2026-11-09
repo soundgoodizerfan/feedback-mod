@@ -81,13 +81,16 @@ public final class Weakness {
             EDGE = 0.25f, EDGE_SHOVE = 0.5f, QUENCH = 0.4f, QUENCH_COOL_TU = 80f, QUENCH_REF_TU = 300f, SPOT_PER_POINT = 0.04f, SPOT_CAP = 0.5f,
             CONDUCT = 0.5f, HEAVY_ARMOUR = 10f, WOUNDED = 0.3f;
     /** Hardness stand-ins: an unknown weapon, a bare hand, and a vanilla piece's hardness per point of defence. */
+    /** Right tool: the share a blow of a class the creature is weak to adds ([OPEN]). */
+    static final float RIGHT_TOOL = 0.3f;
     static final float WEAPON_DEFAULT = 4.5f, WEAPON_BARE = 1f, PIECE_PER_DEFENCE = 0.75f;
     /** Joules a point of blow damage carries into a pressure point's stagger. */
     static final float PRESSURE_JOULES_PER_DAMAGE = 20f;
 
     /** The words {@link #openings} and {@link #gunWords} use, in bit order for {@code SizeUpPayload}. */
     public static final List<String> OPENING_WORDS = List.of("facing away", "unaware", "burning", "wet", "staggered", "just swung",
-            "nearly dead", "gun empty", "one round left", "barrel hot");
+            "nearly dead", "gun empty", "one round left", "barrel hot", "weak to blunt", "weak to pierce", "weak to slash",
+            "weak to fire", "weak to shock");
 
     private static final Map<UUID, Map<UUID, Long>> READ = new HashMap<>();
     private static final Map<UUID, Long> ARMED = new HashMap<>();
@@ -197,6 +200,22 @@ public final class Weakness {
         return n == 0 ? 0f : weaponHardness(p) - sum / n;
     }
 
+    /** The classes {@code t} is weak to, from its state and the hardness of what it wears. */
+    static java.util.Set<DamageClass.Kind> weaknesses(LivingEntity t) {
+        float sum = 0;
+        int n = 0;
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR)
+                continue;
+            ItemStack piece = t.getItemBySlot(slot);
+            if (!piece.isEmpty()) {
+                sum += pieceHardness(piece, slot);
+                n++;
+            }
+        }
+        return DamageClass.weakTo(t, n == 0 ? 0f : sum / n, n);
+    }
+
     private static boolean recovering(LivingEntity t) {
         Long until = RECOVER.get(t.getUUID());
         return until != null && until > t.level().getGameTime();
@@ -297,6 +316,9 @@ public final class Weakness {
         List<String> words = openings(p, t, new float[1]);
         if (t instanceof Player other && Skills.unlocked(p, "read_the_room"))
             words.addAll(gunWords(other));
+        if (Skills.unlocked(p, "right_tool"))
+            for (DamageClass.Kind k : weaknesses(t))
+                words.add("weak to " + k.name().toLowerCase(java.util.Locale.ROOT));
         int mask = 0;
         for (String w : words)
             mask |= 1 << OPENING_WORDS.indexOf(w);
@@ -433,7 +455,7 @@ public final class Weakness {
                 var who = t.level().getServer() == null ? null : t.level().getServer().getPlayerList().getPlayer(e.getKey());
                 if (until != null && until > t.level().getGameTime() && who != null && Skills.unlocked(who, "conductor")
                         && (t.isInWaterOrRain() || t.getArmorValue() >= HEAVY_ARMOUR)) {
-                    event.setAmount(event.getAmount() * (1 + CONDUCT));
+                    event.setAmount(event.getAmount() * (1 + CONDUCT + (Skills.unlocked(who, "right_tool") && t.isInWaterOrRain() ? RIGHT_TOOL : 0f)));
                     break;
                 }
             }
@@ -474,6 +496,14 @@ public final class Weakness {
                 io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/exploit");
                 READ.getOrDefault(p.getUUID(), Map.of()).remove(t.getUUID());
                 p.serverLevel().sendParticles(ParticleTypes.CRIT, t.getX(), t.getY() + t.getBbHeight() / 2, t.getZ(), 18, 0.3, 0.4, 0.3, 0.5);
+            }
+            if (Skills.unlocked(p, "right_tool")) {
+                DamageClass.Kind kind = DamageClass.of(event.getSource(), p);
+                if (kind != null && weaknesses(t).contains(kind)) {
+                    mult += RIGHT_TOOL;
+                    io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/right_tool");
+                    p.serverLevel().sendParticles(ParticleTypes.CRIT, t.getX(), t.getY() + t.getBbHeight() / 2, t.getZ(), 6, 0.25, 0.3, 0.25, 0.3);
+                }
             }
             if (Skills.unlocked(p, "edge") && edge(t, p)) {
                 mult += EDGE;
