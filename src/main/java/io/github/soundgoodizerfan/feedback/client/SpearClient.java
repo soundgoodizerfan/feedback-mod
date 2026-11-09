@@ -185,7 +185,8 @@ public final class SpearClient {
             x += Mth.sin(t * 1.7f) * wobble;
             y += Mth.sin(t * 2.3f) * wobble + Mth.sin(t * 4.1f) * 0.03f * fade;
             pose.translate(side * x, y - 0.6f * equip, z);
-            pose.mulPose(Axis.XP.rotationDegrees(30f * (1 - raise) + 10f * tired + 25f * fade));
+            // The handheld sprite stands tip-up; bracing tips it forward to point along the look, drooping as the arm tires.
+            pose.mulPose(Axis.XP.rotationDegrees(30f * (1 - raise) - 75f * raise + 10f * tired + 25f * fade));
             pose.mulPose(Axis.ZP.rotationDegrees(side * Mth.sin(t * 3.1f) * (1f + 5f * tired + 8f * fade)));
             return true;
         }

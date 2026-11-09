@@ -286,4 +286,4 @@ Trees are datapack files (`data/<namespace>/skill_tree/*.json`): a tree name and
 
 ## Commands
 
-`/feedback skill grant <tree> <points>` (operators) gives points to test with. Trees: `anchor`, `veil`, `brute`, `onslaught`, `observation`, `proficiency`, `chaos`.
+`/feedback skill grant <tree> <points>` (operators) gives points to test with. `/feedback skill unlock <tree|all>` (operators) owns every node of one tree, or of every tree with `all`, free of cost and without spending points; of nodes sharing an exclusive choice only the first is taken. Trees: `anchor`, `veil`, `brute`, `onslaught`, `observation`, `proficiency`, `chaos`.

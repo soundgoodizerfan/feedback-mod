@@ -153,6 +153,7 @@ Operator-only testing commands:
 - `/feedback combat`: prints the window, recovery and cone your held weapon would parry with, and what your worn gear adds.
 - `/feedback feel light|heavy|custom ...`: plays the impact feel at the look point.
 - `/feedback skill grant <tree> <points>`: gives [skill points](Skills.md).
+- `/feedback skill unlock <tree|all>`: owns every node of one tree, or of every tree with `all`, free of cost and without spending points. Of nodes sharing an exclusive choice only the first is taken.
 
 ## See also
 
