@@ -178,13 +178,27 @@ public final class SizeUpHud {
         for (int i = 0; i < Weakness.OPENING_WORDS.size(); i++)
             if ((s.entry.mask() >> i & 1) != 0)
                 chips.add(Component.translatable("hud.feedback.size_up.open." + i));
-        int rows = Math.max(1, (chips.size() + 1) / 2);
-        int h = 36 + rows * 10 + ((s.entry.flags() & 16) != 0 ? 10 : 0);
+        // Chips flow left to right and wrap at the card's width, each as wide as its own text.
+        int inner = CARD_W - 12;
+        int[] cx = new int[chips.size()], cr = new int[chips.size()];
+        int px0 = 0, row = 0;
+        for (int i = 0; i < chips.size(); i++) {
+            int w = mc.font.width(chips.get(i)) + 4;
+            if (px0 > 0 && px0 + w > inner) {
+                px0 = 0;
+                row++;
+            }
+            cx[i] = px0;
+            cr[i] = row;
+            px0 += w + 3;
+        }
+        int rows = chips.isEmpty() ? 1 : row + 1;
+        int h = 36 + rows * 12 + ((s.entry.flags() & 16) != 0 ? 10 : 0);
         GuiStyle.hudCard(g, x, y, x + CARD_W, y + h, alpha);
         int ink = (Math.round(255 * alpha) << 24) | SKIN.ink() & 0xFFFFFF, dim = (Math.round(255 * alpha) << 24) | SKIN.dim() & 0xFFFFFF;
         g.drawString(mc.font, mc.font.plainSubstrByWidth(t.getDisplayName().getString(), CARD_W - 12), x + 6, y + 5, ink, false);
         float hp = t.getHealth(), max = Math.max(1f, t.getMaxHealth());
-        SKIN.bar(g, x + 6, y + 16, CARD_W - 12, 6, Mth.clamp(hp / max, 0f, 1f), 0.3f, 0xFFB03030);
+        SKIN.bar(g, x + 6, y + 16, CARD_W - 12, 6, Mth.clamp(hp / max, 0f, 1f), -1f, 0xFFB03030);
         g.drawString(mc.font, Math.round(hp) + "/" + Math.round(max), x + 6, y + 24, dim, false);
         // Armour in pips of two points; toughness in diamonds.
         int armour = Math.min(10, Math.round(t.getArmorValue() / 2f)), tough = Math.min(6, Math.round((float) t.getAttributeValue(Attributes.ARMOR_TOUGHNESS)));
@@ -198,10 +212,10 @@ public final class SizeUpHud {
         if (chips.isEmpty())
             g.drawString(mc.font, Component.translatable("hud.feedback.size_up.closed"), x + 6, cy, dim, false);
         for (int i = 0; i < chips.size(); i++) {
-            int cx = x + 6 + (i % 2) * ((CARD_W - 12) / 2), ry = cy + (i / 2) * 10;
+            int chipX = x + 6 + cx[i], ry = cy + cr[i] * 12;
             int w = mc.font.width(chips.get(i));
-            g.fill(cx - 1, ry - 1, cx + w + 1, ry + 9, (Math.round(200 * alpha) << 24) | SKIN.accent() & 0xFFFFFF);
-            g.drawString(mc.font, chips.get(i), cx, ry, (Math.round(255 * alpha) << 24) | 0x101010, false);
+            g.fill(chipX, ry - 1, chipX + w + 4, ry + 9, (Math.round(200 * alpha) << 24) | SKIN.accent() & 0xFFFFFF);
+            g.drawString(mc.font, chips.get(i), chipX + 2, ry, (Math.round(255 * alpha) << 24) | 0x101010, false);
         }
         if ((s.entry.flags() & 16) != 0)
             g.drawString(mc.font, Component.translatable("hud.feedback.size_up.hits", s.entry.hits()), x + 6, y + h - 12, dim, false);
