@@ -83,6 +83,10 @@ public final class Weakness {
     /** Joules a point of blow damage carries into a pressure point's stagger. */
     static final float PRESSURE_JOULES_PER_DAMAGE = 20f;
 
+    /** The words {@link #openings} and {@link #gunWords} use, in bit order for {@code SizeUpPayload}. */
+    public static final List<String> OPENING_WORDS = List.of("facing away", "unaware", "burning", "wet", "staggered", "just swung",
+            "nearly dead", "gun empty", "one round left", "barrel hot");
+
     private static final Map<UUID, Map<UUID, Long>> READ = new HashMap<>();
     private static final Map<UUID, Long> ARMED = new HashMap<>();
     private static final Map<UUID, Object[]> SPOT = new HashMap<>();
@@ -245,21 +249,56 @@ public final class Weakness {
         if (Skills.unlocked(p, "herd_read"))
             for (LivingEntity e : p.level().getEntitiesOfClass(LivingEntity.class, t.getBoundingBox().inflate(HERD), e -> e != p && e != t && e.isAlive() && e.getType() == t.getType()))
                 read(p, e);
-        float[] share = new float[1];
-        List<String> words = openings(p, t, share);
-        if (t instanceof Player other && Skills.unlocked(p, "read_the_room"))
-            words.addAll(gunWords(other));
-        float armour = (float) t.getArmorValue(), tough = (float) t.getAttributeValue(Attributes.ARMOR_TOUGHNESS);
-        Component open = words.isEmpty() ? Component.translatable("message.feedback.size_up.closed") : Component.literal(String.join(", ", words));
-        if (Skills.unlocked(p, "pattern") && known(p, t) >= KNOWN_KILLS)
-            open = Component.translatable("message.feedback.size_up.known", open, Math.round((float) t.getAttributeValue(Attributes.ATTACK_DAMAGE)));
-        p.displayClientMessage(Component.translatable("message.feedback.size_up", t.getDisplayName(), Math.round(armour), Math.round(tough),
-                Math.round(t.getHealth()), Math.round(t.getMaxHealth()), open), true);
-        t.addEffect(new MobEffectInstance(MobEffects.GLOWING, 40, 0, false, false));
+        push(p);
         ServerLevel level = p.serverLevel();
         level.playSound(null, p.getX(), p.getEyeY(), p.getZ(), SoundEvents.SPYGLASS_USE, SoundSource.PLAYERS, 0.8f, 1.3f);
         level.sendParticles(ParticleTypes.ENCHANT, t.getX(), t.getY() + t.getBbHeight() / 2, t.getZ(), 14, 0.3, 0.4, 0.3, 0.6);
         return true;
+    }
+
+    private static final java.util.Set<UUID> SENT = new java.util.HashSet<>();
+
+    /** The openings of {@code t} for {@code p} as the bit set {@code SizeUpPayload} carries. */
+    private static int maskOf(ServerPlayer p, LivingEntity t) {
+        List<String> words = openings(p, t, new float[1]);
+        if (t instanceof Player other && Skills.unlocked(p, "read_the_room"))
+            words.addAll(gunWords(other));
+        int mask = 0;
+        for (String w : words)
+            mask |= 1 << OPENING_WORDS.indexOf(w);
+        return mask;
+    }
+
+    /** Tell {@code p}'s HUD every creature still read, nearest first, eight at most; an empty list once when the last is gone. */
+    private static void push(ServerPlayer p) {
+        Map<UUID, Long> mine = READ.get(p.getUUID());
+        long now = p.level().getGameTime();
+        List<LivingEntity> live = new ArrayList<>();
+        if (mine != null) {
+            mine.values().removeIf(u -> u <= now);
+            for (UUID id : mine.keySet())
+                if (p.serverLevel().getEntity(id) instanceof LivingEntity t && t.isAlive() && t.distanceTo(p) <= SPOOR_RANGE)
+                    live.add(t);
+        }
+        if (live.isEmpty() && !SENT.remove(p.getUUID()))
+            return;
+        live.sort(java.util.Comparator.comparingDouble(t -> t.distanceToSqr(p)));
+        Long armed = ARMED.get(p.getUUID());
+        Object[] spot = SPOT.get(p.getUUID());
+        List<io.github.soundgoodizerfan.feedback.net.SizeUpPayload.Entry> out = new ArrayList<>();
+        for (LivingEntity t : live.subList(0, Math.min(8, live.size()))) {
+            int flags = armed != null && armed > now ? 1 : 0;
+            if (spot != null && spot[0].equals(t.getUUID()) && (Long) spot[2] > now)
+                flags |= ((Integer) spot[3] + 1) << 1;
+            boolean known = Skills.unlocked(p, "pattern") && known(p, t) >= KNOWN_KILLS;
+            if (known)
+                flags |= 16;
+            out.add(new io.github.soundgoodizerfan.feedback.net.SizeUpPayload.Entry(t.getId(), (int) Math.max(0, mine.get(t.getUUID()) - now),
+                    maskOf(p, t), flags, known ? Math.round((float) t.getAttributeValue(Attributes.ATTACK_DAMAGE)) : 0));
+        }
+        if (!out.isEmpty())
+            SENT.add(p.getUUID());
+        io.github.soundgoodizerfan.feedback.net.SizeUpPayload.send(p, out);
     }
 
     /** A read player's gun, in words: what a trained eye sees of a barrel and a magazine. */
@@ -287,6 +326,7 @@ public final class Weakness {
             return false;
         ARMED.put(p.getUUID(), p.level().getGameTime() + ARMED_TICKS);
         p.serverLevel().playSound(null, p.getX(), p.getEyeY(), p.getZ(), SoundEvents.TRIDENT_RETURN, SoundSource.PLAYERS, 0.7f, 1.6f);
+        push(p);
         return true;
     }
 
@@ -305,9 +345,11 @@ public final class Weakness {
             p.displayClientMessage(Component.translatable("message.feedback.soft_spot.bare", Component.translatable("slot.feedback." + slot.getName())), true);
             return false;
         }
-        SPOT.put(p.getUUID(), new Object[] {t.getUUID(), Math.min(SPOT_CAP, (a[0] + a[1]) * SPOT_PER_POINT), p.level().getGameTime() + ARMED_TICKS});
+        SPOT.put(p.getUUID(), new Object[] {t.getUUID(), Math.min(SPOT_CAP, (a[0] + a[1]) * SPOT_PER_POINT), p.level().getGameTime() + ARMED_TICKS,
+                slot == EquipmentSlot.HEAD ? 0 : slot == EquipmentSlot.CHEST ? 1 : slot == EquipmentSlot.LEGS ? 2 : 3});
         p.displayClientMessage(Component.translatable("message.feedback.soft_spot", Component.translatable("slot.feedback." + slot.getName()), piece.getHoverName()), true);
         p.serverLevel().playSound(null, p.getX(), p.getEyeY(), p.getZ(), SoundEvents.CHAIN_HIT, SoundSource.PLAYERS, 0.8f, 1.5f);
+        push(p);
         return true;
     }
 
@@ -324,7 +366,11 @@ public final class Weakness {
 
     @SubscribeEvent
     static void onTick(PlayerTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer p) || SPOOR.isEmpty() || p.tickCount % 4 != 0)
+        if (!(event.getEntity() instanceof ServerPlayer p))
+            return;
+        if (p.tickCount % 5 == 0 && (READ.containsKey(p.getUUID()) || SENT.contains(p.getUUID())))
+            push(p);
+        if (SPOOR.isEmpty() || p.tickCount % 4 != 0)
             return;
         Object[] s = SPOOR.get(p.getUUID());
         if (s == null)

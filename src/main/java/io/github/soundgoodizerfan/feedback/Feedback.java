@@ -304,6 +304,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunFirePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunFirePayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.SizeUpPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SizeUpPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SizeUpPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunKickPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunKickPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunKickPayload::handle)

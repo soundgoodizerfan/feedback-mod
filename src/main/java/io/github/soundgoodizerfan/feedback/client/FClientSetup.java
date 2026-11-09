@@ -121,6 +121,7 @@ public class FClientSetup {
         OffhandHud.register(event);
         CastHud.register(event);
         StoredHud.register(event);
+        SizeUpHud.register(event);
     }
 
     @SubscribeEvent
