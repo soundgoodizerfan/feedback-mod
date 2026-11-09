@@ -64,7 +64,8 @@ public final class GunStrain {
             shooter.hurtMarked = true;
         } else {
             shooter.setItemInHand(hand, ItemStack.EMPTY);
-            shooter.drop(gun, false);
+            // A copy: the rest of the shot still works on `gun`, and the dropped stack must not alias it.
+            shooter.drop(gun.copy(), false);
         }
         if (over > 1f)
             shooter.hurt(Hazards.source(shooter.level(), Hazards.GUN_RECOIL),

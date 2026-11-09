@@ -261,6 +261,9 @@ public final class GunMotion {
         if (holding && !hadGun) {
             aimPos = aimVel = sprint = 0;
             MAIN.reloadEnd = OFF.reloadEnd = 0;
+            MAIN.shotMs = OFF.shotMs = -1_000_000;
+            MAIN.kickDeg = OFF.kickDeg = 0;
+            bump = 0;
         }
         hadGun = holding;
         boolean wantSprint = holding && player.isSprinting() && GunClient.aim() < 0.05f && !GunClient.reloading()
