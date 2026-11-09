@@ -455,6 +455,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         placeHot(Failure.ruined(process, first));
         setTpu(slot, 0f);
         sync();
+        io.github.soundgoodizerfan.feedback.core.Awards.near(level, worldPosition, "progress/joke/overdone");
     }
 
     private void placeHot(ItemStack stack) {

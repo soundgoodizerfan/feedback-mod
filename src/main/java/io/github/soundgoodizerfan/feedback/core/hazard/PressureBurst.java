@@ -69,6 +69,20 @@ public final class PressureBurst {
         }
     }
 
+    /**
+     * A seam weeping: the hiss and the scald, and a player who stands in it and lives has met what a boiler's pressure feels like
+     * (advancement {@code progress/hazard/steam}).
+     */
+    public static void weep(Level level, BlockPos pos) {
+        hiss(level, pos);
+        scald(level, pos, FTuning.STEAM_SCALD_REACH, FTuning.STEAM_SCALD_DAMAGE);
+        if (!level.isClientSide)
+            for (net.minecraft.world.entity.player.Player p : level.getEntitiesOfClass(net.minecraft.world.entity.player.Player.class,
+                    new AABB(pos).inflate(FTuning.STEAM_SCALD_REACH)))
+                if (p.isAlive())
+                    io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/hazard/steam");
+    }
+
     /** A burst: the blast, and the steam that goes with it reaching further than a seam's. */
     public static void burst(Level level, BlockPos pos, float power) {
         io.github.soundgoodizerfan.feedback.core.Awards.near(level, pos, "progress/joke/pressure_cooker");

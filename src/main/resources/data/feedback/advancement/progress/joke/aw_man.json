@@ -17,7 +17,10 @@
   "parent": "feedback:progress/chem/acid",
   "criteria": {
     "got": {
-      "trigger": "minecraft:impossible"
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/joke/aw_man"
+      }
     }
   },
   "requirements": [

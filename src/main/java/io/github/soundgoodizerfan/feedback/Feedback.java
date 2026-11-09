@@ -56,6 +56,7 @@ public class Feedback {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public Feedback(IEventBus modBus, ModContainer container) {
+        io.github.soundgoodizerfan.feedback.core.EventTrigger.register(modBus);
         FFluidTypes.register(modBus);
         FFluids.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FCrops.init();

@@ -17,7 +17,10 @@
   },
   "criteria": {
     "done": {
-      "trigger": "minecraft:impossible"
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "combat/rage_against_the_machine"
+      }
     }
   },
   "requirements": [

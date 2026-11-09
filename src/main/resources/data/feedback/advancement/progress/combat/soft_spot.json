@@ -1,0 +1,31 @@
+{
+  "parent": "feedback:progress/combat/size_up",
+  "display": {
+    "icon": {
+      "id": "minecraft:chainmail_chestplate"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.combat.soft_spot.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.combat.soft_spot.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "got": {
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/combat/soft_spot"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

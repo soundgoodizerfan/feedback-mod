@@ -118,4 +118,12 @@ public final class HeatKinds {
         }
         event.setAmount(event.getAmount() * Math.max(kept, 1f - INSULATE_MAX));
     }
+
+    /** A kill made with a Heat+ edge in hand (a blade or a gun barrel) is the advancement. */
+    @SubscribeEvent
+    public static void onKill(net.neoforged.neoforge.event.entity.living.LivingDeathEvent event) {
+        if (event.getSource().getEntity() instanceof net.minecraft.server.level.ServerPlayer p
+                && (edgeTu(p.getMainHandItem()) != null || edgeTu(p.getOffhandItem()) != null))
+            io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/hot_edge");
+    }
 }

@@ -2,7 +2,13 @@
 
 A loose order of play, from the first fire to oil and circuits. Each stage names what you do and the problem that sends you to the next. Nothing is locked: if you can reach the temperature, strength or hardness, you can skip ahead. The guide only says where the problems usually show up first.
 
-Advancements are in three tabs: **Technology**, **Combat** (guns) and **Survival** (cooking). Technology follows the same stages as branches (heat, rotation, electricity, control, chemistry, food and the Nether, Deep Dark, radiation, ender and flight beyond). Each entry describes the wall you have hit, not the answer, and none of them unlocks anything. Hidden entries branch off the main line for odd things you can do along the way: burst a boiler, wear a machine out, let an overspeed trip earn its keep, fire a flintlock or a gun with the longest barrel, get thrown by your own recoil, burn yourself, carry a creeper charge into a fire, or put a phosphor screen on a controller.
+Advancements are in three tabs: **Technology**, **Combat** and **Survival**. Technology follows the same stages as branches (heat, rotation, electricity, control, chemistry, food and the Nether, Deep Dark, radiation, ender and flight beyond). Each entry describes the wall you have hit, not the answer, and none of them unlocks anything. Every entry is visible except the jokes.
+
+Side entries along the Technology branches mark things you find or survive on the way: tin, lead, brass, glass, quartz glass, firebrick and graphite in the heat branch; carrying hot things with tongs or gloves; a fuel-free fire such as lava; standing in boiler steam and backing a weeping boiler off before it lets go; carrying a dosimeter through radiation sickness; arriving in the Nether and the End; growing in a sealed dark void; recording what the Deep Dark's vibrations say; drying food on a rack and pulling a dish off at the right moment.
+
+The Combat tab covers sizing up a creature, exploiting a read, striking a soft spot, reading a draw, hitting armor with the wrong or the right tool, fighting with a hot edge, landing a spear hit while the use key is held, taking a blow in armor you built (and in a full set), and casting a technique from each skill tree. A gun entry covers building one at the Gun Table.
+
+Hidden entries branch off for odd things you can do along the way: burst a boiler, wear a machine out, let an overspeed trip earn its keep, fire a flintlock, a gun with the longest barrel or a round the chamber was never built for, get thrown by your own recoil, burn yourself, carry a creeper charge into a fire, leave a batch in the heat far too long, or put a phosphor screen on a controller.
 
 ## 1. First fire, clay and copper
 

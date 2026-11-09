@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:tongs"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.joke.overdone.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.joke.overdone.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "parent": "feedback:progress/heat/pour",
+  "criteria": {
+    "got": {
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/joke/overdone"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

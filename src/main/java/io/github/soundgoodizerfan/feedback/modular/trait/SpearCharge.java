@@ -210,6 +210,7 @@ public final class SpearCharge implements ModularTrait {
         } finally {
             charging = false;
         }
+        io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(user instanceof Player pl ? pl : null, "progress/combat/spear_point");
         if (knocks && speed >= params.get("knockback_speed", 5.1f))
             target.knockback(0.4 + 0.05 * speed, Mth.sin(user.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(user.getYRot() * Mth.DEG_TO_RAD));
         if (dismounts && target.isPassenger())

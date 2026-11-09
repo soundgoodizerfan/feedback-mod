@@ -83,6 +83,8 @@ public class DryingRackBlockEntity extends BlockEntity {
                         s.rot(), s.stamp(), s.envTu(), s.smoke(), s.salt());
                 stack.set(FDataComponents.FOOD_STATE.get(), now);
                 Cooking.apply(stack, entry, now);
+                if (Cooking.doneness(entry, now) == Cooking.Doneness.DRIED)
+                    io.github.soundgoodizerfan.feedback.core.Awards.near(level, worldPosition, "progress/food/dried");
             });
         }
         setChanged();

@@ -38,6 +38,15 @@ public final class Protection {
         return best;
     }
 
+    /** Whether a worn or held {@link Insulator} (gloves, tongs) is what stands between this player and a piece at {@code tu}. */
+    public static boolean insulatedFrom(Player player, float tu) {
+        Level level = player.level();
+        for (ItemStack stack : carried(player))
+            if (stack.getItem() instanceof Insulator in && in.handlesUpToTu(stack, level) >= tu)
+                return true;
+        return false;
+    }
+
     /** The highest voltage of a bare conductor this player is insulated from, or {@code 0}. */
     public static float shockProofVolts(Player player) {
         Level level = player.level();

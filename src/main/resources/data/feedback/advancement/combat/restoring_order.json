@@ -16,7 +16,10 @@
   },
   "criteria": {
     "done": {
-      "trigger": "minecraft:impossible"
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "combat/restoring_order"
+      }
     }
   },
   "requirements": [

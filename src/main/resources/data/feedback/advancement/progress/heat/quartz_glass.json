@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:quartz_glass_ingot"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.heat.quartz_glass.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.heat.quartz_glass.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "feedback:progress/heat/glass",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:quartz_glass_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

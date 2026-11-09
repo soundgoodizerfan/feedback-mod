@@ -142,6 +142,15 @@ public final class Casts {
         return null;
     }
 
+    /** The skill tree whose node unlocks cast {@code id}, if any. */
+    private static java.util.Optional<String> treeOf(String id) {
+        for (var tree : io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get().trees())
+            for (var node : tree.nodes())
+                if (node.effect().unlock().filter(id::equals).isPresent())
+                    return java.util.Optional.of(tree.tree());
+        return java.util.Optional.empty();
+    }
+
     /** Slots {@code tech} (or clears the slot, for ""): only a technique the player has and that is castable. */
     public static void slot(ServerPlayer p, int slot, String tech) {
         if (slot < 0 || slot >= CastState.SLOTS || !tech.isEmpty() && (find(tech) == null || !Skills.owned(p, tech)))
@@ -169,6 +178,8 @@ public final class Casts {
             return;
         if (!c.act().test(p))
             return;
+        io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/first_cast");
+        treeOf(c.id()).ifPresent(t -> io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/cast_" + t));
         Stamina.spend(p, c.cost());
         if (c.rearms() && !followUp)
             Rearms.spend(p, c.id()); // after the act, so a stagger it dealt does not rearm it at once

@@ -17,7 +17,10 @@
   "parent": "feedback:progress/rotation/wheel",
   "criteria": {
     "got": {
-      "trigger": "minecraft:impossible"
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/joke/told_you_so"
+      }
     }
   },
   "requirements": [

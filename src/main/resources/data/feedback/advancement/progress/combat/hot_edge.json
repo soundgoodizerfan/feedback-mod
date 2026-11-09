@@ -1,0 +1,31 @@
+{
+  "parent": "feedback:progress/combat_root",
+  "display": {
+    "icon": {
+      "id": "minecraft:blaze_powder"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.combat.hot_edge.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.combat.hot_edge.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "got": {
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/combat/hot_edge"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

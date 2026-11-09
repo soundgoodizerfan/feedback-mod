@@ -17,7 +17,10 @@
   "parent": "feedback:progress/heat/pour",
   "criteria": {
     "got": {
-      "trigger": "minecraft:impossible"
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/joke/hot_take"
+      }
     }
   },
   "requirements": [

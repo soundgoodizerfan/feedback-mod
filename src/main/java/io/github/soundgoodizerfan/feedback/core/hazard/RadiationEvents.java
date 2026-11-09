@@ -41,6 +41,10 @@ public final class RadiationEvents {
         if (next != dose)
             player.setData(FCombat.RADIATION_DOSE, next);
         int ticks = FTuning.RAD_INTERVAL_TICKS * 3;
+        if (dose >= FTuning.RAD_SICK_DOSE && next < FTuning.RAD_SICK_DOSE && player.isAlive()
+                && player.getInventory().hasAnyMatching(s -> s.getItem() instanceof io.github.soundgoodizerfan.feedback.item.GeigerCounterItem
+                        || s.getItem() instanceof io.github.soundgoodizerfan.feedback.item.DosimeterItem))
+            io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/hazard/radiation");
         if (next >= FTuning.RAD_SICK_DOSE) {
             io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardHandled(player, "radiation", 1f - passes);
             player.addEffect(new MobEffectInstance(MobEffects.HUNGER, ticks, 0, false, false));

@@ -61,6 +61,8 @@ public final class HazardEvents {
             float limit = held.getItem() instanceof Handled h ? Math.max(safe, h.holdsUpToTu(held, player.level())) : safe;
             if (tu.value() > limit && HotContact.burn(player, tu))
                 warn(player, "hazard.feedback.hot_hand");
+            else if (tu.value() > FTuning.CONTACT_PAIN_TU.value() && tu.value() <= limit && Protection.insulatedFrom(player, tu.value()))
+                io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/heat/tongs");
         }
     }
 

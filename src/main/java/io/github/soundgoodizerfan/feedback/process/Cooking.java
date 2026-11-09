@@ -220,6 +220,17 @@ public final class Cooking {
         return state.rot() >= FTuning.FOOD_ROT_TOXIC_AT ? 2 : state.rot() >= FTuning.FOOD_ROT_GOING_OFF ? 1 : 0;
     }
 
+    /** A piece lifted off the heat by {@code player}: done through and not yet charred is the sweet spot, and earns the advancement. */
+    public static void served(net.minecraft.world.entity.player.Player player, Level level, ItemStack piece) {
+        if (piece.isEmpty())
+            return;
+        find(level, piece).ifPresent(entry -> {
+            FoodState state = state(piece, entry);
+            if (doneness(entry, state) == Doneness.DONE && state.charred() <= 0.02f)
+                io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/food/just_right");
+        });
+    }
+
     public static Doneness doneness(Entry entry, FoodState state) {
         if (state.charred() >= 1f)
             return Doneness.CHARRED;

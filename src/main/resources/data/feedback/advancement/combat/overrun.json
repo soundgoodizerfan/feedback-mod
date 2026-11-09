@@ -1,0 +1,31 @@
+{
+  "parent": "feedback:progress/combat/armed",
+  "display": {
+    "icon": {
+      "id": "minecraft:tnt"
+    },
+    "title": {
+      "translate": "advancement.feedback.combat.overrun.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.combat.overrun.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "got": {
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "combat/overrun"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

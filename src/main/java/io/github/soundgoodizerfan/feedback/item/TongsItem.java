@@ -85,6 +85,8 @@ public class TongsItem extends Item implements Insulator {
         if (pan == null)
             return;
         pan.lift();
+        if (pan.panTu() > FTuning.CONTACT_PAIN_TU.value() && pan.panTu() <= handlesUpToTu(stack, level))
+            io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/heat/tongs");
         if ((getUseDuration(stack, user) - remaining) % 20 == 0 && pan.panTu() > handlesUpToTu(stack, level))
             HotContact.burn(player, new Tu(pan.panTu()));
     }

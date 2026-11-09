@@ -17,7 +17,10 @@
   "parent": "feedback:progress/rotation/steam",
   "criteria": {
     "got": {
-      "trigger": "minecraft:impossible"
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/joke/pressure_cooker"
+      }
     }
   },
   "requirements": [

@@ -2,27 +2,22 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
-/** Grants the code-awarded (joke) advancements, whose criterion is {@code minecraft:impossible}. */
+/** Fires the code-awarded advancements: each names its path as the {@code event} of a {@link EventTrigger} criterion. */
 public final class Awards {
     private static final double NEAR = 24;
 
     private Awards() {
     }
 
-    /** Award {@code feedback:<path>} to {@code player}; a no-op if it is missing or already held. */
+    /** Fire event {@code path} at {@code player}; the advancement that names it is awarded. */
     public static void give(Player player, String path) {
-        if (!(player instanceof ServerPlayer sp))
-            return;
-        var holder = sp.server.getAdvancements().get(Feedback.id(path));
-        if (holder != null)
-            sp.getAdvancements().award(holder, "got");
+        EventTrigger.fire(player, path);
     }
 
     /** Machines have no owner: award every player within a screen's reach of {@code pos}. */

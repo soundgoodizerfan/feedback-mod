@@ -220,8 +220,10 @@ public interface HeatSource {
             if (tu > best.tu())
                 best = new FireSpan(span.litTicks(), tu);
         }
-        if (level.getFluidState(pos.below()).is(FluidTags.LAVA) && FTuning.FIRE_TU_LAVA.value() > best.tu())
+        if (level.getFluidState(pos.below()).is(FluidTags.LAVA) && FTuning.FIRE_TU_LAVA.value() > best.tu()) {
+            io.github.soundgoodizerfan.feedback.core.Awards.near(level, pos, "progress/heat/lava_fire");
             return new FireSpan(gap, FTuning.FIRE_TU_LAVA.value());
+        }
         return best;
     }
 

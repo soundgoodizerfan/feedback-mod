@@ -1,0 +1,31 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:lava_bucket"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.heat.lava_fire.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.heat.lava_fire.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "feedback:progress/heat/hotter",
+  "criteria": {
+    "got": {
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/heat/lava_fire"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

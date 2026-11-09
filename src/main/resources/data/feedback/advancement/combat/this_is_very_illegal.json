@@ -17,7 +17,10 @@
   },
   "criteria": {
     "done": {
-      "trigger": "minecraft:impossible"
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "combat/this_is_very_illegal"
+      }
     }
   },
   "requirements": [

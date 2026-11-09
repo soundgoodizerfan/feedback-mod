@@ -164,6 +164,22 @@ public final class Weakness {
         return n == 0 ? 0f : Math.max(0f, Math.min(GAP_CAP, (weaponHardness(p) - sum / n) * GAP_PER_POINT));
     }
 
+    /** The weapon's hardness less the mean of the worn pieces' (negative: the wrong tool for that armour); 0 if nothing is worn. */
+    private static float rawGap(ServerPlayer p, LivingEntity t) {
+        float sum = 0;
+        int n = 0;
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR)
+                continue;
+            ItemStack piece = t.getItemBySlot(slot);
+            if (!piece.isEmpty()) {
+                sum += pieceHardness(piece, slot);
+                n++;
+            }
+        }
+        return n == 0 ? 0f : weaponHardness(p) - sum / n;
+    }
+
     private static boolean recovering(LivingEntity t) {
         Long until = RECOVER.get(t.getUUID());
         return until != null && until > t.level().getGameTime();
@@ -246,6 +262,7 @@ public final class Weakness {
         if (t == null)
             return false;
         read(p, t);
+        io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/size_up");
         if (Skills.unlocked(p, "herd_read"))
             for (LivingEntity e : p.level().getEntitiesOfClass(LivingEntity.class, t.getBoundingBox().inflate(HERD), e -> e != p && e != t && e.isAlive() && e.getType() == t.getType()))
                 read(p, e);
@@ -408,11 +425,17 @@ public final class Weakness {
         if (!(event.getSource().getEntity() instanceof ServerPlayer p))
             return;
         float mult = 1f;
+        float raw = rawGap(p, t);
+        if (raw < 0f)
+            io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/wrong_tool");
         boolean read = reading(p, t);
         long now = p.level().getGameTime();
         if (read) {
-            if (Skills.unlocked(p, "hardness_gap"))
+            if (Skills.unlocked(p, "hardness_gap")) {
                 mult += gap(p, t);
+                if (gap(p, t) > 0f)
+                    io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/right_tool");
+            }
             float[] share = new float[1];
             List<String> words = openings(p, t, share);
             if (Skills.unlocked(p, "opening"))
@@ -421,11 +444,13 @@ public final class Weakness {
             if (spot != null && spot[0].equals(t.getUUID()) && (Long) spot[2] > now && Skills.unlocked(p, "soft_spot")) {
                 mult += (Float) spot[1];
                 SPOT.remove(p.getUUID());
+                io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/soft_spot");
             }
             Long armed = ARMED.get(p.getUUID());
             if (armed != null && armed > now && Skills.unlocked(p, "exploit")) {
                 mult += EXPLOIT + (Skills.unlocked(p, "opening") ? share[0] : 0f);
                 ARMED.remove(p.getUUID());
+                io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/exploit");
                 READ.getOrDefault(p.getUUID(), Map.of()).remove(t.getUUID());
                 p.serverLevel().sendParticles(ParticleTypes.CRIT, t.getX(), t.getY() + t.getBbHeight() / 2, t.getZ(), 18, 0.3, 0.4, 0.3, 0.5);
             }

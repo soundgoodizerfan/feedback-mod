@@ -207,6 +207,10 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
      * and then, if nothing was done, it lets go. The weep is also a partial relief, so a boiler a
      * little over the line loses steam and may settle; one under a real fire does not.
      */
+    private static final long BACK_OFF_TICKS = 600;
+    /** Game time its seams last wept, or -1; transient. */
+    private long weptAt = -1;
+
     private void holdPressure() {
         Pu pressure = getPressure();
         float relief = pressure.value() - FTuning.BOILER_RELIEF_PU.value();
@@ -217,8 +221,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
                     Math.max(1, Math.round(relief * FTuning.BOILER_RELIEF_MB_PER_PU)));
             steamTank.drain(vented, IFluidHandler.FluidAction.EXECUTE);
             if (level.getGameTime() % FTuning.CONTACT_INTERVAL_TICKS == 0) {
-                PressureBurst.hiss(level, worldPosition);
-                PressureBurst.scald(level, worldPosition, FTuning.STEAM_SCALD_REACH, FTuning.STEAM_SCALD_DAMAGE);
+                PressureBurst.weep(level, worldPosition);
             }
             pressure = getPressure();
         }
@@ -227,10 +230,16 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
             int lost = Math.min(steamTank.getFluidAmount(),
                     Math.max(1, Math.round(over * FTuning.BOILER_SEEP_MB_PER_PU)));
             steamTank.drain(lost, IFluidHandler.FluidAction.EXECUTE);
+            weptAt = level.getGameTime();
             if (level.getGameTime() % FTuning.CONTACT_INTERVAL_TICKS == 0) {
-                PressureBurst.hiss(level, worldPosition);
-                PressureBurst.scald(level, worldPosition, FTuning.STEAM_SCALD_REACH, FTuning.STEAM_SCALD_DAMAGE);
+                PressureBurst.weep(level, worldPosition);
             }
+        } else if (weptAt >= 0 && level.getGameTime() - weptAt <= BACK_OFF_TICKS) {
+            // Its seams wept and it came back under their line unaided by a burst: the boiler was read and backed off in time.
+            weptAt = -1;
+            io.github.soundgoodizerfan.feedback.core.Awards.near(level, worldPosition, "progress/hazard/back_off");
+        } else if (weptAt >= 0) {
+            weptAt = -1;
         }
         if (PressureBurst.fails(pressure, FTuning.PRESSURE_VESSEL_DANGER_PU,
                 FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random)) {

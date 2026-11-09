@@ -1,0 +1,31 @@
+{
+  "parent": "feedback:progress/combat_root",
+  "display": {
+    "icon": {
+      "id": "minecraft:blaze_rod"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.combat.first_cast.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.combat.first_cast.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "got": {
+      "trigger": "feedback:event",
+      "conditions": {
+        "event": "progress/combat/first_cast"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

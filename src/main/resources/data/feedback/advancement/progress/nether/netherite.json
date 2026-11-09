@@ -14,7 +14,7 @@
     "announce_to_chat": true,
     "hidden": false
   },
-  "parent": "feedback:progress/heat/hotter",
+  "parent": "feedback:progress/nether/arrive",
   "criteria": {
     "got": {
       "trigger": "minecraft:inventory_changed",

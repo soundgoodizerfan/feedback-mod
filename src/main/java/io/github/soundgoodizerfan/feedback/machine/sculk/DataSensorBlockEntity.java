@@ -77,6 +77,7 @@ public class DataSensorBlockEntity extends BlockEntity
                 return false;
             frequency = VibrationSystem.getGameEventFrequency(event);
             heardAt = level.getGameTime();
+            io.github.soundgoodizerfan.feedback.core.Awards.near(level, getBlockPos(), "progress/deepdark/listen");
             return true;
         }
     }

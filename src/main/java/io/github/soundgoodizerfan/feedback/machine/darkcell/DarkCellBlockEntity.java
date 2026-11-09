@@ -211,6 +211,8 @@ public class DarkCellBlockEntity extends BlockEntity {
                 break;
             mass += m;
             population.merge(id, 1, Integer::sum);
+            if (sl.dimension() == net.minecraft.world.level.Level.END)
+                io.github.soundgoodizerfan.feedback.core.Awards.near(sl, worldPosition, "progress/ender/void_farm");
         }
         // Pressure on the walls: only a crowded cell hurts them.
         float pressure = capacity() <= 0f ? 0f : mass / capacity();

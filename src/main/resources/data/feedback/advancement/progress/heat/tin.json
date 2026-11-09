@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "feedback:tin_ingot"
+    },
+    "title": {
+      "translate": "advancement.feedback.progress.heat.tin.title"
+    },
+    "description": {
+      "translate": "advancement.feedback.progress.heat.tin.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "parent": "feedback:progress/heat/pour",
+  "criteria": {
+    "got": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "feedback:tin_ingot"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got"
+    ]
+  ]
+}

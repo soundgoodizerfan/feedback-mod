@@ -125,6 +125,7 @@ public class SkilletBlock extends BaseEntityBlock {
         int slot = slot(pos, hit);
         if (plate) {
             ItemStack piece = pan.take(slot);
+            Cooking.served(player, level, piece);
             if (!piece.isEmpty() && !player.getInventory().add(piece))
                 player.drop(piece, false);
         } else if (pan.lay(slot, held.copyWithCount(1)) && !player.getAbilities().instabuild)
@@ -147,6 +148,7 @@ public class SkilletBlock extends BaseEntityBlock {
         float tu = pan.takeTu(slot);
         ItemStack piece = pan.take(slot);
         if (!piece.isEmpty()) {
+            Cooking.served(player, level, piece);
             HotContact.burn(player, new Tu(tu));
             if (!player.getInventory().add(piece))
                 player.drop(piece, false);

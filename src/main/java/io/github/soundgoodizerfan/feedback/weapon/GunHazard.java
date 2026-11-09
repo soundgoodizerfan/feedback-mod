@@ -70,6 +70,8 @@ public final class GunHazard {
             return;
         if (outcome.gunDamage() > 0)
             gun.set(FWeapons.GUN_DAMAGE.get(), damage(gun) + outcome.gunDamage());
+        if (outcome.gunDamage() > 0)
+            io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(shooter instanceof net.minecraft.world.entity.player.Player pl ? pl : null, "combat/overrun");
         float loudness = Mth.clamp(outcome.ratio() / 4f, 0.3f, 1.5f);
         level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(),
                 SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, loudness, 1.6f);
