@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import io.github.soundgoodizerfan.feedback.item.DataConnectorMode;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.resources.ResourceKey;
@@ -45,7 +47,17 @@ public final class DataLinkManager {
     }
 
     /** Called server-side when a player right-clicks a data node with the connector. */
-    public void onNodeInteract(Player player, DataNode node) {
+    public void onNodeInteract(Player player, DataNode node, DataConnectorMode mode) {
+        if (mode == DataConnectorMode.CLEAR) {
+            pending.remove(player.getUUID());
+            tell(player, io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.cleared());
+            node.pruneNodeLinks();
+            boolean had = !node.getNodeLinks().isEmpty();
+            node.unlinkAll();
+            player.displayClientMessage(Component.translatable(had
+                    ? "feedback.data_connector.cleared" : "feedback.data_connector.no_links"), true);
+            return;
+        }
         UUID id = player.getUUID();
         Level level = node.getNodeLevel();
         DataNodeRef previous = Optional.ofNullable(pending.remove(id))
@@ -67,6 +79,16 @@ public final class DataLinkManager {
         DataNode a = from.get();
         a.pruneNodeLinks();
         node.pruneNodeLinks();
+        if (mode == DataConnectorMode.UNLINK) {
+            boolean joined = a.getNodeLinks().contains(node.getNodeRef());
+            if (joined) {
+                a.unlink(node.getNodeRef());
+                node.unlink(a.getNodeRef());
+            }
+            player.displayClientMessage(Component.translatable(joined
+                    ? "feedback.data_connector.unlinked" : "feedback.data_connector.not_linked"), true);
+            return;
+        }
         if (!a.canLinkTo(node)) {
             player.displayClientMessage(Component.translatable("feedback.data_connector.failed"), true);
             return;

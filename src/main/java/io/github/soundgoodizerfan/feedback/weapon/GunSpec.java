@@ -567,7 +567,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     }
 
     /** What a barrel tube of this shape weighs in {@code m}: outer and inner diameter, a little over its length; 1 m3 = 1000 mB. */
-    private static float tubeMu(BarrelGeometry g, Material m) {
+    static float tubeMu(BarrelGeometry g, Material m) {
         double bore = g.boreMm() / 1000.0, outer = g.outerMm() / 1000.0;
         return (float) (Math.PI / 4 * (outer * outer - bore * bore) * (g.lengthM() + 0.1) * 1000 * m.density().muPerMb());
     }
@@ -815,7 +815,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
             // The powder is the energy budget: a wider or longer barrel can use more of it but never makes more than
             // the charge holds, so a big gun is paid for in powder. A soft ceiling, so bore and length still matter.
-            double budget = FTuning.GUN_WORK_PER_NOMINAL_CHARGE * (load.peakPressure() / FTuning.GUN_PROPELLANT_PEAK_PU) * Cartridge.caseScale(boreMmReal());
+            double budget = FTuning.GUN_WORK_PER_NOMINAL_CHARGE * FTuning.GUN_BUDGET_HEADROOM * (load.peakPressure() / FTuning.GUN_PROPELLANT_PEAK_PU) * Cartridge.caseScale(boreMmReal());
             work = budget <= 0 ? 0 : work * budget / (work + budget);
         }
         // A spring has no gas to leak past a loose round or out of a port.
@@ -845,7 +845,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float gunMu = tubeMu(new BarrelGeometry(boreMmReal(), boreMmReal() + 2 * barrel.wallMm(), (float) barrelM), m) + frame.mu();
 
         int cycleMs = Math.round(FTuning.GUN_CYCLE_BASE_MS + FTuning.GUN_CYCLE_MS_PER_IMPULSE * impulse)
-                + layout.action().manualMs();
+                + Math.round(layout.action().manualMs() * Mth.clamp((float) Math.sqrt(gunMu / FTuning.GUN_KICK_REFERENCE_MU), FTuning.GUN_MANUAL_MASS_MIN, FTuning.GUN_MANUAL_MASS_MAX));
         // Recocking a spring is the work it stores, put back by hand: a stiffer spring is a slower gun.
         if (launcher == Launcher.SPRING)
             cycleMs += Math.round((float) work * FTuning.GUN_SPRING_COCK_MS_PER_WORK);

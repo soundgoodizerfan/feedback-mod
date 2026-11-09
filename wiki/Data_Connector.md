@@ -11,6 +11,18 @@ The tool that tells a [Programmer](Programming.md) **which** sensor or block a c
 
 For sensors attached to a face, click **the face the sensor is on**.
 
+## Modes
+
+The connector has three modes. Sneak and scroll with it in your main hand to change mode; the bar message names the mode. Changing mode drops a half-made selection.
+
+| Mode | Use on a node |
+| --- | --- |
+| Link nodes | Select the node, then a second one to join them with wire. This is the mode in effect until you change it. |
+| Cut a link | Select one node, then a second that is linked to it: the wire between them is cut. If they are not linked, the bar says "Those aren't linked". |
+| Cut every link on a node | Cuts every wire the node carries at once. The bar says "All links cut", or "Nothing connected" when the node had none. |
+
+A cut wire is not refunded.
+
 ## Linking nodes
 
 An [Electric Controller](Electric_Controller.md) or [Computer](Electric_Controller.md#computer) reads a sensor only through a path of linked nodes. Right-click the first node, then right-click the second: the two are linked. A chain of links works as a path, so a sensor can reach a Computer through other linked nodes.

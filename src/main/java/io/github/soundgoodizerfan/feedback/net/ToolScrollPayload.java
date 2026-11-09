@@ -44,6 +44,17 @@ public record ToolScrollPayload(int direction) implements CustomPacketPayload {
                         io.github.soundgoodizerfan.feedback.core.unit.Units.figure(io.github.soundgoodizerfan.feedback.modular.ModularHandTool.of(stack, swing))), true);
                 return;
             }
+            if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.DataConnectorItem) {
+                var comp = io.github.soundgoodizerfan.feedback.registry.FDataComponents.DATA_CONNECTOR_MODE.get();
+                var mode = stack.getOrDefault(comp, io.github.soundgoodizerfan.feedback.item.DataConnectorMode.LINK)
+                        .step(Integer.signum(payload.direction()));
+                stack.set(comp, mode);
+                // A half-made link means something else in the new mode.
+                io.github.soundgoodizerfan.feedback.control.data.DataLinkManager.get().clear(player);
+                player.displayClientMessage(Component.translatable("feedback.data_connector.mode",
+                        Component.translatable("feedback.data_connector.mode." + mode.name().toLowerCase(java.util.Locale.ROOT))), true);
+                return;
+            }
             if (!stack.is(FVehicles.WELDER.get()))
                 return;
             WelderMode now = stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT)

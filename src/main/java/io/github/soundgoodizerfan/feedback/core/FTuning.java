@@ -1990,6 +1990,8 @@ public final class FTuning {
     public static final float GUN_WORK_PER_PU_M3 = 3.3e7f;
     /** Most work a nominal charge of the reference propellant can give a round, however wide or long the barrel (a soft ceiling; scales with the charge's pressure). */
     public static final float GUN_WORK_PER_NOMINAL_CHARGE = 160f;
+    /** How far past the nominal charge's work a long barrel can still gain (the soft ceiling's headroom), and how a gun's mass scales the hand work of a manual action (root of mass over the reference, clamped). */
+    public static final float GUN_BUDGET_HEADROOM = 1.7f, GUN_MANUAL_MASS_MIN = 0.8f, GUN_MANUAL_MASS_MAX = 2.5f;
     /** Mean pressure behind the projectile over the barrel, as a fraction of the peak. */
     public static final float GUN_PRESSURE_FILL = 0.35f;
     /** Projectile length as a multiple of bore. */
@@ -2256,6 +2258,9 @@ public final class FTuning {
      * each in its own material (spec 2, "a gun is parts"). They were one 0.3 mB frame in the
      * barrel's metal, and still add up to it.
      */
+    /** Balance: the share of a barrel's mass ahead of the grip; the front/back ratio above 1 is the nose-heaviness (capped), which adds this much spread and kick per unit, and sinks the view this many degrees a second. */
+    public static final float GUN_BARREL_FRONT_SHARE = 0.85f, GUN_NOSE_MAX = 3f, GUN_NOSE_SPREAD = 0.6f, GUN_NOSE_KICK = 0.5f,
+            GUN_NOSE_DRIFT_DEG_PER_S = 2.5f, GUN_STOCK_BACK_MU = 0.8f;
     public static final float GUN_RECEIVER_METAL_MB = 0.08f, GUN_SLIDE_METAL_MB = 0.07f, GUN_TRIGGER_METAL_MB = 0.03f,
             GUN_GRIP_METAL_MB = 0.12f;
     // --- Fittings are data: data/feedback/gun_option/*.json (spec 2, 11 step 7). Placeholders. ---

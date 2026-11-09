@@ -230,6 +230,13 @@ public class FDataComponents {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.item.HandSwing.STREAM_CODEC)
                     .build());
 
+    /** Which job a Data Connector's use does; chosen by sneak-scroll. Absent is link. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.DataConnectorMode>> DATA_CONNECTOR_MODE =
+            COMPONENTS.register("data_connector_mode", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.DataConnectorMode>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.DataConnectorMode.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.DataConnectorMode.STREAM_CODEC)
+                    .build());
+
     /** The game tick {@link #TEMPERATURE} was stamped on. Meaningless without it. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Long>> HEATED_AT =
             COMPONENTS.register("heated_at", () -> DataComponentType.<Long>builder()

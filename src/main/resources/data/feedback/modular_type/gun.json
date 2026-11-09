@@ -1229,6 +1229,14 @@
         }
       },
       {
+        "name": "long_ass_gun",
+        "is": {
+          "variant": "handgun",
+          "feed": "barrels|tube|single|box|belt",
+          "length": "80"
+        }
+      },
+      {
         "name": "shot_revolver",
         "is": {
           "variant": "handgun",

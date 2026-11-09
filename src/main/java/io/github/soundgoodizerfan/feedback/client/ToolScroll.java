@@ -14,7 +14,7 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * Shift-scroll with a Welder or a hand hammer in the main hand changes its mode or
+ * Shift-scroll with a Welder, a Data Connector or a hand hammer in the main hand changes its mode or
  * swing instead of the hotbar slot.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
@@ -28,6 +28,7 @@ public final class ToolScroll {
         Player player = Minecraft.getInstance().player;
         if (player == null || Minecraft.getInstance().screen != null || !player.isShiftKeyDown()
                 || !(player.getMainHandItem().is(FVehicles.WELDER.get())
+                        || player.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.item.DataConnectorItem
                         || io.github.soundgoodizerfan.feedback.modular.ModularHandTool.strikes(player.getMainHandItem()))
                 || event.getScrollDeltaY() == 0)
             return;

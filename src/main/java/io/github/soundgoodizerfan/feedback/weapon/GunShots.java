@@ -343,6 +343,7 @@ public final class GunShots {
             if (GunSpec.of(gun).map(spec -> spec.layout().type().getSerializedName()).orElse("").equals("flintlock"))
                 io.github.soundgoodizerfan.feedback.core.Awards.give(server, "combat/remember_remember");
             String advancement = designation.equals("big_iron") ? "combat/big_iron"
+                    : designation.equals("long_ass_gun") ? "combat/long_ass_gun"
                     : designation.equals("assault_rifle") && grip != null && grip.variant().equals("pistol_grip") ? "combat/this_is_very_illegal"
                     : null;
             if (advancement != null) {

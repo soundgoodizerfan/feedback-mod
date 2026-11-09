@@ -194,6 +194,14 @@ public final class GunClient {
         boolean stance = ready && BareMode.clientOn;
         boolean canAct = holding && design != null && ready && !stance;
         boolean offCanAct = offFires && ready && !stance;
+        // A nose-heavy gun sinks the view while it is held: a recoil the hand fights without a shot being fired.
+        if (canAct && !player.isSpectator() && !player.isPassenger()) {
+            float sink = io.github.soundgoodizerfan.feedback.weapon.GunBalance.drift(player, held);
+            if (sink > 0f) {
+                float pitch = Mth.clamp(player.getXRot() + sink * dt / 1000f, -90f, 90f);
+                player.setXRot(pitch);
+            }
+        }
         if (stance) {
             if (holding && design != null && mc.options.keyAttack.isDown())
                 mainSwingMs = bludgeon(player, held, false, mainSwingMs, now);
