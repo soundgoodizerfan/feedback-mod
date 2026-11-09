@@ -38,9 +38,9 @@ final class Cauterize {
             return false;
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = p.getItemInHand(hand);
-            if (!ItemHeat.isHot(stack, p.level()))
+            if (!ItemHeat.isHotFelt(stack, p.level()))
                 continue;
-            Tu tu = ItemHeat.get(stack, p.level());
+            Tu tu = ItemHeat.felt(stack, p.level());
             HotContact.Band band = HotContact.band(tu);
             if (band != HotContact.Band.BURN && band != HotContact.Band.SEAR)
                 continue;
@@ -48,7 +48,7 @@ final class Cauterize {
             p.heal(band == HotContact.Band.SEAR ? HEAL_SEAR : HEAL_BURN);
             if (band == HotContact.Band.SEAR && Skills.unlocked(p, "sear_shut"))
                 ShakeOff.clearWorst(p); // Sear Shut: heat as medicine
-            ItemHeat.set(stack, new Tu(tu.value() - SPENT), p.level());
+            ItemHeat.drain(stack, p.level(), SPENT);
             Vec3 at = p.position().add(0, 1, 0);
             p.serverLevel().sendParticles(ParticleTypes.LARGE_SMOKE, at.x, at.y, at.z, 12, 0.25, 0.3, 0.25, 0.02);
             p.serverLevel().sendParticles(ParticleTypes.LAVA, at.x, at.y, at.z, 4, 0.2, 0.2, 0.2, 0);

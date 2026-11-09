@@ -439,10 +439,10 @@ public final class Weakness {
             }
             if (Skills.unlocked(p, "quench") && t.isInWaterOrRain()) {
                 ItemStack held = p.getMainHandItem();
-                float temp = ItemHeat.get(held, p.level()).value() - FTuning.WARM_TU.value();
+                float temp = ItemHeat.felt(held, p.level()).value() - FTuning.WARM_TU.value();
                 if (temp > 0f) {
                     mult += QUENCH * Math.min(1f, temp / QUENCH_REF_TU);
-                    ItemHeat.set(held, new Tu(Math.max(FTuning.WARM_TU.value(), ItemHeat.get(held, p.level()).value() - QUENCH_COOL_TU)), p.level());
+                    ItemHeat.drain(held, p.level(), QUENCH_COOL_TU);
                     p.serverLevel().sendParticles(ParticleTypes.CLOUD, t.getX(), t.getY() + t.getBbHeight() / 2, t.getZ(), 10, 0.3, 0.3, 0.3, 0.05);
                     p.serverLevel().playSound(null, t.getX(), t.getY(), t.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.8f, 1.2f);
                 }

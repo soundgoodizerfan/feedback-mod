@@ -100,6 +100,39 @@ public final class ItemHeat {
         return floor != null && floor.value() > cooled.value() ? floor : cooled;
     }
 
+    /**
+     * What a skill that reads "a hot held item" feels: the stack's real temperature, or the standing heat of an
+     * attuned Heat+ edge if that is hotter. The attunement is part of the item, so it never cools.
+     */
+    public static Tu felt(ItemStack stack, Level level) {
+        Tu real = get(stack, level);
+        Tu edge = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularItem
+                ? io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.edgeTu(stack) : null;
+        return edge != null && edge.value() > real.value() ? edge : real;
+    }
+
+    /**
+     * What a skill that excludes guns feels: a gun's barrel heat is its own business, so a gun counts only through its
+     * Heat+ edge (null if none); anything else is {@link #felt}, or null if not hot.
+     */
+    public static Tu feltNoBarrel(ItemStack stack, Level level) {
+        Tu t = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem
+                ? io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.edgeTu(stack) : felt(stack, level);
+        return t != null && t.value() > FTuning.WARM_TU.value() ? t : null;
+    }
+
+    /** {@link #isHot} counting a Heat+ edge. */
+    public static boolean isHotFelt(ItemStack stack, Level level) {
+        return felt(stack, level).value() > FTuning.WARM_TU.value();
+    }
+
+    /** A skill spends heat: only the real temperature falls (never below ambient); an attuned edge is not used up. */
+    public static void drain(ItemStack stack, Level level, float amount) {
+        if (!isHot(stack, level))
+            return;
+        set(stack, new Tu(Math.max(AmbientTable.at(level).value(), get(stack, level).value() - amount)), level);
+    }
+
     public static boolean isHot(ItemStack stack, Level level) {
         return stack.has(FDataComponents.TEMPERATURE.get())
                 && get(stack, level).value() > FTuning.WARM_TU.value();

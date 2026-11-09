@@ -158,7 +158,7 @@ public final class GunFu {
         CombatCues.everyone(p, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, 0.8f);
     }
 
-    /** Searing Strike: a held, non-gun item above the burn line sears what it lands on, and cools. */
+    /** Searing Strike: a held item above the burn line (a gun only through its Heat+ edge) sears what it lands on, and cools. */
     @SubscribeEvent
     public static void onDamaged(LivingDamageEvent.Post event) {
         DamageSource source = event.getSource();
@@ -167,16 +167,19 @@ public final class GunFu {
                 || !Skills.unlocked(p, "searing_strike"))
             return;
         ItemStack held = p.getMainHandItem();
-        if (held.isEmpty() || held.getItem() instanceof GunItem || !ItemHeat.isHot(held, p.level()))
+        if (held.isEmpty())
             return;
-        Tu tu = ItemHeat.get(held, p.level());
+        Tu tu = ItemHeat.feltNoBarrel(held, p.level());
+        if (tu == null)
+            return;
         LivingEntity target = event.getEntity();
         target.invulnerableTime = 0; // the sear is its own blow
         if (HotContact.burn(target, tu)) {
             if (Skills.unlocked(p, "scorch"))
                 target.setRemainingFireTicks(target.getRemainingFireTicks() * 2);
             io.github.soundgoodizerfan.feedback.combat.cast.Disorder.kindled(p, target);
-            ItemHeat.set(held, new Tu(Math.max(AmbientTable.at(p.level()).value(), tu.value() - GunFuTuning.SEAR_COOL_TU)), p.level());
+            if (!(held.getItem() instanceof GunItem))
+                ItemHeat.drain(held, p.level(), GunFuTuning.SEAR_COOL_TU);
         }
     }
 

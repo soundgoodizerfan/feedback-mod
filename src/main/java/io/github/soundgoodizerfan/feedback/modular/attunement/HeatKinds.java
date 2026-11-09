@@ -64,6 +64,23 @@ public final class HeatKinds {
         return gunMult(gun, "vent_hot", VENT_HOT_PER_LEVEL, VENT_HOT_MAX);
     }
 
+    /**
+     * The temperature a stack's Heat+ edge (an {@code ignite_target} part: blade, head, tip or barrel) holds it at, or null
+     * for none: the hottest part's flame temperature, else the fixed enchant heat. A permanent figure, never spent.
+     */
+    public static Tu edgeTu(ItemStack stack) {
+        Tu hottest = null;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack)) {
+            if (!a.kind().equals("ignite_target"))
+                continue;
+            Tu t = a.material().combustion().flatMap(Material.Combustion::flameTemperature)
+                    .orElse(new Tu(ModularTuning.ENCHANT_BURN_FALLBACK_TU));
+            if (hottest == null || t.value() > hottest.value())
+                hottest = t;
+        }
+        return hottest;
+    }
+
     public static void register() {
         // Heat- on an edge: each blow stacks freezing as powder snow does, so the target slows and then takes damage.
         onStrike("freeze", (event, a) -> {

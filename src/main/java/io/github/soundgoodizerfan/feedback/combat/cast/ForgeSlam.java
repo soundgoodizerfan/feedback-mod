@@ -5,9 +5,9 @@ package io.github.soundgoodizerfan.feedback.combat.cast;
 import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
-import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -28,9 +28,11 @@ final class ForgeSlam {
     /** Slams a hot held item into the ground: a ring of searing around the feet, and the item gives up its heat to it. */
     static boolean act(ServerPlayer p) {
         ItemStack held = p.getMainHandItem();
-        if (held.isEmpty() || held.getItem() instanceof GunItem || !ItemHeat.isHot(held, p.level()))
+        if (held.isEmpty())
             return false;
-        Tu tu = ItemHeat.get(held, p.level());
+        Tu tu = ItemHeat.feltNoBarrel(held, p.level());
+        if (tu == null)
+            return false;
         ServerLevel level = p.serverLevel();
         int burned = 0;
         for (LivingEntity e : near(p, p.position(), 3.5)) {
@@ -39,7 +41,8 @@ final class ForgeSlam {
                 burned++;
         }
         float lost = 150f + burned * 40f; // the more it sears, the more the iron gives up
-        ItemHeat.set(held, new Tu(Math.max(AmbientTable.at(p.level()).value(), tu.value() - lost)), p.level());
+        if (!(held.getItem() instanceof GunItem))
+            ItemHeat.drain(held, p.level(), lost);
         level.sendParticles(ParticleTypes.LAVA, p.getX(), p.getY() + 0.2, p.getZ(), 20, 1.5, 0.1, 1.5, 0);
         level.sendParticles(ParticleTypes.FLAME, p.getX(), p.getY() + 0.1, p.getZ(), 40, 1.8, 0.05, 1.8, 0.05);
         // heat reads in the colour: a molten ring spreading out, cracks glowing in the floor, sparks and smoke rising
