@@ -66,7 +66,15 @@ public final class GunCondition {
                 / f.thermalMass().workPerTu();
         gun.set(FDataComponents.TEMPERATURE.get(), t);
         gun.set(FDataComponents.HEATED_AT.get(), level.getGameTime());
-        float worn = f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat));
+        // A receiver the barrel's heat carries past its service temperature softens: each shot wears the gun by the excess.
+        float soft = 0f;
+        var spec = GunSpec.of(gun);
+        if (spec.isPresent()) {
+            var rm = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(spec.get().parts().receiver());
+            float service = rm == null ? Float.MAX_VALUE : rm.thermal().serviceTemperature().map(v -> v.value()).orElse(Float.MAX_VALUE);
+            soft = Math.max(0f, t - service) * FTuning.GUN_RECEIVER_SOFT_WEAR_PER_TU;
+        }
+        float worn = soft + f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat));
         // An attuned Ward part turns wear away as it does on a tool: n levels leave 1/(n+1) of it.
         gun.set(FWeapons.GUN_WEAR.get(), wear(gun)
                 + worn / (1 + io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.levels(gun)));

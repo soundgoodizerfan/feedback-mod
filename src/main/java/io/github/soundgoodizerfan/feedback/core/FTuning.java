@@ -2261,6 +2261,8 @@ public final class FTuning {
     /** Balance: the share of a barrel's mass ahead of the grip; the front/back ratio above 1 is the nose-heaviness (capped), which adds this much spread and kick per unit, and sinks the view this many degrees a second. */
     public static final float GUN_BARREL_FRONT_SHARE = 0.85f, GUN_NOSE_MAX = 3f, GUN_NOSE_SPREAD = 0.6f, GUN_NOSE_KICK = 0.5f,
             GUN_NOSE_DRIFT_DEG_PER_S = 2.5f, GUN_STOCK_BACK_MU = 0.8f;
+    /** Chamber rating a receiver that holds the breech gives, per St of yield; and the wear a shot adds per Tu the barrel runs over the receiver's service temperature. */
+    public static final float GUN_RECEIVER_RATING_PER_ST = 0.5f, GUN_RECEIVER_SOFT_WEAR_PER_TU = 0.0005f;
     public static final float GUN_RECEIVER_METAL_MB = 0.08f, GUN_SLIDE_METAL_MB = 0.07f, GUN_TRIGGER_METAL_MB = 0.03f,
             GUN_GRIP_METAL_MB = 0.12f;
     // --- Fittings are data: data/feedback/gun_option/*.json (spec 2, 11 step 7). Placeholders. ---

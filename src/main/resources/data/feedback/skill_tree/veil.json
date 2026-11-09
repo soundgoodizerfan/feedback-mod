@@ -245,6 +245,53 @@
         "amount": 0.15
       },
       "branch": "quiet_hand"
+    },
+    {
+      "id": "light_foot",
+      "cost": 30,
+      "requires": [
+        "shadow_step"
+      ],
+      "effect": {
+        "figure": "light_foot",
+        "amount": 0.25
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "running_start",
+      "cost": 40,
+      "requires": [
+        "light_foot"
+      ],
+      "effect": {
+        "unlock": "running_start"
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "fleet",
+      "cost": 60,
+      "requires": [
+        "running_start"
+      ],
+      "effect": {
+        "unlock": "fleet"
+      },
+      "rearm": "strike",
+      "branch": "pace"
+    },
+    {
+      "id": "steady_walk",
+      "cost": 35,
+      "requires": [
+        "light_foot"
+      ],
+      "effect": {
+        "figure": "steady_walk",
+        "amount": 0.5
+      },
+      "branch": "pace"
     }
   ]
 }

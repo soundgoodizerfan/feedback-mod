@@ -100,7 +100,7 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 | Blocks of Redstone, Main Spring or Steam Chest | the barrel's launcher part, required: two Blocks of Redstone wind a coil barrel, a spring tube takes a main spring, a steam tube a steam chest |
 | A fibrous or sticky organic or polymer | wraps the grip |
 
-**Each part's material is on the part.** A receiver can be a metal or a polymer (a plastic frame): it holds the action and takes none of the chamber's pressure. The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.
+**Each part's material is on the part.** A receiver can be a metal or a polymer (a plastic frame): it holds the action, and on a gun without a slide it also holds the breech, so it limits the chamber (see [The chamber](#the-chamber)). The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.
 
 ### Wrapping the grip
 
@@ -169,6 +169,10 @@ A standard round of gunpowder makes **3 Pu**. So a 9 mm chamber with a 3 mm wall
 | Lead | 0.5 | 0.3 Pu | wrecked on the first shot. Lead is for bullets |
 
 Halving the bore doubles the rating; so does going from a 1.5 mm wall to 3 mm. The other parts don't affect the chamber: they add weight and their own metal. The action then scales it: a bolt's locking lugs rate the same steel 25% higher, a pump or self-loading action holds it as is, a lever rates it 25% lower and a break action 40% lower, so a break gun takes shot and low-pressure rounds while a bolt rifle takes the hot ones.
+
+**The receiver.** On a bolt, lever, pump, break or self-loading gun (any gun without a slide), the receiver holds the breech shut, so it caps the rating at **half its metal's strength**, whatever the barrel could take. Steel and other strong metals never reach the cap; a polymer or soft-metal receiver (lead, tin, polyethylene) holds only weak loads, and the chamber figure turns red when a round is over it. A slide pistol is exempt: the slide carries the breech, and the receiver takes none of the pressure.
+
+**A softening receiver.** Every receiver material has a service temperature, and the barrel's heat reaches the receiver. Polyethylene softens at **80 Tu**. Each shot fired with the barrel above the receiver's service temperature wears the gun faster, more the further over it runs, so a plastic frame wants a cool barrel.
 
 ## Test commands
 

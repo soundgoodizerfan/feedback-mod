@@ -84,6 +84,7 @@ The **name** on the tooltip, and beside the type name in the Blueprint Table, is
 | --- | --- | --- |
 | Handgun | **Derringer** | two barrels |
 | | **Big Iron** | a cylinder and a barrel of the maximum length, 80 cm (named with its material, "Steel Big Iron"; firing one earns a hidden advancement of the same name) |
+| **Long-Ass Gun** | no cylinder, and a barrel of the maximum length, 80 cm (firing one earns the hidden advancement "A Gun, of the Long-Ass Variety") |
 | | **Shot revolver** | a cylinder, smoothbore, wide gauge |
 | | **Shot pistol** | smoothbore, wide gauge |
 | | **Revolver** | a cylinder |
@@ -121,7 +122,9 @@ Bore is any whole number from 5 to 20 mm, and the [Reloading Press](Reloading_Pr
 | **Self-loading** | Semi | none |
 | **Automatic** | Auto, Burst, Semi | none |
 
-Only an automatic can be held down. **Burst** fires three rounds, then forces a pause. A feed has to suit its action, or the parts make no gun: a cylinder needs a hammer (lever, pump, break or a slide), a tube a lever, pump or self-loading action, a belt an automatic one. A second barrel needs a break action. With no feed part a gun takes a **box magazine** (a break action holds its barrels); a [flintlock](#flintlock) takes one round at a time.
+The hand time is for a gun of ordinary weight. A heavier gun takes longer to work, a lighter one a little less.
+
+Only an automatic can be held down. **Burst** fires three rounds, then forces a pause. A feed has to suit its action, or the parts make no gun: a cylinder needs a hammer (lever, pump, break or flintlock; a self-loading or automatic action has none, so none is drawn on the gun and no cylinder fits), a tube a lever, pump or self-loading action, a belt an automatic one. A second barrel needs a break action. With no feed part a gun takes a **box magazine** (a break action holds its barrels); a [flintlock](#flintlock) takes one round at a time.
 
 | Feed | Holds | Reloads |
 | --- | --- | --- |
@@ -147,6 +150,7 @@ All of these keys can be rebound under the *Feedback* category in Controls.
 **Reloading is held, not tapped.**
 
 - A **magazine** gun swaps in the fullest magazine of the right size from your inventory once R has been held for the whole **1.4 s**. Let go early and nothing changes.
+- A gun cannot be reloaded until it could fire again: a reload held down during the cycle waits for the cycle to finish.
 - A gun with its **own feed** (cylinder, tube, barrels) loads one loose round every **0.45 s** while R is down (a break action's barrels take a round every **0.2 s**, being fed together), and keeps whatever is in when you let go.
 
 Firing or putting the gun away stops a reload.
@@ -177,18 +181,9 @@ Those figures are for a standard round: the standard charge for the bore (four g
 
 **Every 33 Work of energy a bullet still carries when it hits is 1 damage** (half a heart). The tooltip's muzzle energy is that figure at point-blank range.
 
-For a sense of scale, a steel barrel with a lead round-nose bullet on the standard charge, by bore and barrel length:
+The Gun Table lists a gun's muzzle energy and the damage it makes. A maximum charge in a steel case roughly doubles the energy of a standard one. A brass case is rated 3.75 Pu, so a maximum charge in one is over its pressure and hurts the shooter (see [Overpressure](#overpressure)).
 
-| Bore | 0.1 m | 0.2 m | 0.45 m | 0.8 m |
-| --- | --- | --- | --- | --- |
-| 5 mm | 0.7 | 1.5 | 2.0 | 2.1 |
-| 9 mm | 1.8 | 3.4 | 4.1 | 4.4 |
-| 12 mm | 2.9 | 5.3 | 6.3 | 6.7 |
-| 20 mm | 7.3 | 12.1 | 14.1 | 14.7 |
-
-Damage is in hit points (2 per heart). A maximum charge in a steel case roughly doubles it: a 9 mm gives 3.5, 6.7, 8.3 and 8.8, a 20 mm gives 15, 25, 29 and 31. A brass case is rated 3.75 Pu, so a maximum charge in one is over its pressure and hurts the shooter (see [Overpressure](#overpressure)).
-
-Gunpowder burns slowly and a short barrel wastes most of it, which is why a short barrel is so much weaker. A longer barrel or a wider bore adds little once the powder is spent. See [Ammunition](Ammunition.md#gunpowder).
+Gunpowder burns slowly and a short barrel wastes most of it, which is why a short barrel is so much weaker. A longer barrel hits harder, up to a ceiling the powder charge sets; a wider bore holds more powder and raises the ceiling. See [Ammunition](Ammunition.md#gunpowder).
 
 ## Handling
 
@@ -215,6 +210,14 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why a shor
 **Strain.** A view only turns so far, so kick that is too much for your hands goes into them. Every shot adds its kick in degrees to your strain (aimed shots add less), and the strain drains at 90 degrees a second while you are not firing. When it passes 90 degrees, a view's worth from level to straight up, **the gun leaves your hand** and drops at your feet. Past 180 degrees it also **hurts you**, more the further over you are, and armor does not help. One huge shot does it alone, and so does a long burst from a gun that is merely hard to hold, but moderate kick fired while looking up does not, because strain counts the kick and not where you are facing. The Gun Table lists **Throws the gun**: the first shot, after a number of shots on the trigger, or never. A gun with an **Impulse** grip stays in your hand, and the overshoot throws **you** back along the line of the shot instead.
 
 **Cycle** is 90 ms, plus a little for every bit of recoil, plus the action's hand time. Big bores and fast bullets cycle a little slower. **Haste** speeds the cycle and the reload by 20% a level, and Mining Fatigue slows them the same way (never below a fifth).
+
+### Balance
+
+A gun has a front and a back. **Ahead of the grip:** the barrel, muzzle devices, a shroud, lagging, a bipod and a tube magazine. **Behind it:** the grip, the trigger group, a stock and a hydraulic buffer. The receiver, slide, box magazine and cylinder sit over the grip and count half each way. The heavier the front is against the back, the more **nose-heavy** the gun is.
+
+A nose-heavy gun is felt, not read: the Blueprint Table and the tooltip do not show it. While you hold one, your view **slowly sinks** as the hand fights to keep the muzzle up. Its shots **spread wider and kick harder**, and harder kick throws the gun from your hand sooner (see Strain above). A **bipod** takes the front's weight off the hand: crouched and standing still, a gun with one feels none of it.
+
+A long barrel is mostly front, so it is impractical on a gun with nothing behind it. A grip of dense metal, a stock and a counterweight behind the grip (a hydraulic buffer is all back) balance it.
 
 ### One hand or two
 
@@ -282,7 +285,7 @@ Go **more than 1.5×** over the limit, the chamber's or the cartridge case's, an
 
 None of this is random. If the tooltip and the HUD aren't red, a round can't hurt the gun. A [Relief Vent](Gun_Parts.md#fittings) keeps the chamber under its rating, at a price.
 
-To make a gun that holds more pressure: use a stronger metal, a thicker chamber wall, or a smaller bore.
+To make a gun that holds more pressure: use a stronger metal, a thicker chamber wall, or a smaller bore. On a gun without a slide the receiver is a limit too (see [Gun Parts](Gun_Parts.md#the-chamber)).
 
 ## Steam launchers
 

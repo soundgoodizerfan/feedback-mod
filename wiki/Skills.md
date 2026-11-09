@@ -90,6 +90,10 @@ Veil: act unseen. Rolls, shadow steps, smoke, wall kicks; the Quiet hand limb sh
 | Vanish | 70 | Smoke step | Cast: invisible for about five seconds, less the more armor you wear (mass clanks); landing a blow gives you away. Reads worn armor mass. Costs 20 stamina. *(once used, rearms on a timer.)* |
 | Far roll | 25 | Long roll | Roll goes 1 block further |
 | Long shadow | 40 | Vanish | Rider: Vanish lasts three seconds longer. |
+| Light foot | 30 | Shadow step | Hands back a quarter of the movement-speed penalty your worn armor carries. Armor that slows you less gives less to return. |
+| Running start | 40 | Light foot | A straight sprint builds speed, up to a quarter faster after three seconds. A hard turn or a stop lets it go. |
+| Fleet | 60 | Running start | Cast: a burst of speed for two and a half seconds with a trail of dust. Sixty percent faster with no armor speed penalty; the more speed your worn armor costs, the less of the gain you keep, down to a fifth of it. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
+| Steady walk | 35 | Light foot | Walking adds half the spread to a shot that it otherwise would. |
 | Spent-case draw | 40 | Dodge charge | Reloading during a roll takes only as long as the roll has left. Price: the reload still needs the roll to be long enough. |
 | Wall kick | 70 | Long roll | Tap jump in the air, facing a wall, within 1.2 s of sprinting or rolling on the ground, to kick off it, up and back. Costs 10 stamina; resets fall distance. *(once used, rearms on a timer.)* |
 | Wall rebound | 60 | Wall kick | A wall kick keeps its momentum for one more kick off a second wall before you touch ground. Price: it needs a second wall. *(excludes Wall smash; respec to swap.)* |
@@ -171,7 +175,7 @@ Onslaught: relentless rhythm. Fist and kick chains, dual-wield tempo, running gu
 
 ### Observation
 
-Observation: see and reach. Aimed shots, coins, weapon reach, the grapple. Pool `observation`.
+Observation: see and exploit. Aimed shots, coins, weapon reach, and reading a creature for its weaknesses. Pool `observation`.
 
 | Node | Cost | Needs | Does |
 | --- | --- | --- | --- |
@@ -179,22 +183,18 @@ Observation: see and reach. Aimed shots, coins, weapon reach, the grapple. Pool 
 | Close work | 30 | Called shot | Blows landing inside half your reach recharge the swing faster. Price: at the tip you get nothing. Excludes Far end. *(excludes Far end; respec to swap.)* |
 | Far end | 30 | Called shot | Blows landing out at the tip of your reach hit harder, more the more head-heavy the weapon. Price: up close you get nothing. Excludes Close work. *(excludes Close work; respec to swap.)* |
 | Coin flip | 60 | Called shot | Cast: toss a coin and shoot it. A harder coin than the round rebounds it to the nearest thing within 24 blocks that has a clear line from the coin, seen or not; a softer one is punched through. Heavy coins slow the round. Price: a stamped coin, 15 stamina, and it rearms when you land a blow, or after 30 s out of a fight. *(once used, rearms on a landed blow.)* |
-| Recoil vault | 60 | Called shot | A shot fired airborne or against a surface pushes you by the gun's impulse over your mass: a rifle launches you, a pocket pistol nudges. Price: a hot or worn gun wears faster when used as a thruster. |
 | Dead eye | 70 | Called shot | Cast: for five seconds, your next shot leaves exact, with no spread, and its round counts as twice as hard against armor. Rearms when you land a blow. Costs 25 stamina. *(once used, rearms on a landed blow.)* |
-| Light foot | 30 | Recoil vault | Hands back a quarter of the movement-speed penalty your worn armor carries. Armor that slows you less gives less to return. |
-| Running start | 40 | Light foot | A straight sprint builds speed, up to a quarter faster after three seconds. A hard turn or a stop lets it go. |
-| Fleet | 60 | Running start | Cast: a burst of speed for two and a half seconds with a trail of dust. Sixty percent faster with no armor speed penalty; the more speed your worn armor costs, the less of the gain you keep, down to a fifth of it. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
-| Steady walk | 35 | Light foot | Walking adds half the spread to a shot that it otherwise would. |
-| Practised reload | 30 | Steady walk | Every reload beat takes a fifth less time. |
-| Quick draw | 50 | Practised reload | Cast: the first gun in your hotbar comes up and fires on the same tick, and stays in your hand. If it cannot fire (empty, unchambered, cycling, no gun in the hotbar) nothing is spent. The snap shot spreads wider the heavier the gun is against your body mass. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
-| Fine eye | 40 | Quarry mark | Every instrument you carry reads one step finer: its step halves, so a thermometer that read to 25 Tu reads to 12.5. The instrument signs the reading as before. |
-| Sharper eye | 60 | Fine eye | A second halving of every carried instrument's step. A reading never goes finer than the exact figure the world holds. |
 | Patient hand | 30 | Dead eye | Every timer rearm takes 1 seconds less |
 | Keen eye | 35 | Far end | Parry window +1 ticks |
 | Vault | 60 | Keen eye | Cast: spring off the shoulders of the nearest thing in front and land behind it; it is staggered by your mass pushed off it. Costs 25 stamina. |
 | Second mark | 60 | Coin flip | The coin cast may be used twice: a second coin goes up while the first is still in the air, with no rearm of its own. A rebound goes into the other coin first, so you can shoot a coin into a coin and on to a target. Price: a second stamped coin and a second 15 stamina, and the shot has to be fast. *(excludes Round the corner; respec to swap.)* |
 | Round the corner | 70 | Coin flip | The rebound looks three times as far for a target. Price: it still needs a clear line from the coin, and it gives up the second press. *(excludes Second mark; respec to swap.)* |
 | Mark and fire | 90 | Dead eye | Held cast, with a hammer-and-cylinder gun (a revolver): hold the key and your sights on things, and each beat marks one more of the rounds chambered, a thing can take several. Let go, fill the cylinder or run dry of stamina, and the hammer lets go: you swing round to each mark in turn and put an exact shot in it, two ticks apart. You walk slowly while laying it and have six seconds. Every round still heats the barrel and spends ammo. Costs 10 stamina, then 4 a second while held. *(does nothing without a weapon with the `fan` trait.)* |
+| Size up | 40 |  | Cast: read the creature under your crosshair (24 blocks, in sight) for 15 seconds. The action bar gives its armor, toughness and health, and what it is giving away right now: facing away, unaware, burning, wet or staggered. Every weakness skill here works only on a read creature, with any weapon. Costs 15 stamina. *(once used, rearms on a timer.)* |
+| Seams | 50 | Size up | A blow on a read creature lands harder the more armor and toughness it wears: 2% per point, up to 40%. Any weapon: melee, bullet or arrow. |
+| Opening | 50 | Size up | A blow on a read creature lands harder for each opening it shows: facing away 25%, unaware or asleep 25%, burning 20%, wet 10%, staggered 30%, up to 80%. Any weapon. |
+| Exploit | 70 | Opening | Cast: spend the read on one blow. For 3 seconds the next hit on that creature lands 50% harder, plus every opening it shows, and the read is used up. Needs a read creature under the crosshair. Costs 30 stamina. *(once used, rearms on a strike.)* |
+| Case file | 45 | Seams | Every kill of a creature type adds 1% to your blows against that type, up to 20%, read or not. Kept across deaths. |
 
 ### Proficiency
 
@@ -225,6 +225,12 @@ Proficiency: survive. Healing, breath, heat, getting out of trouble. Pool `profi
 | Cauterize | 60 | Callused hands | Cast: press a hot piece from either hand to the wound. A piece hot enough to burn heals three hearts, one hot enough to sear heals six, and you take that band's burn and catch fire. The piece comes away 200 Tu cooler. Needs something at least burning hot in hand. *(once used, rearms on a timer.)* |
 | Sear shut | 50 | Cauterize | A Cauterize with a piece hot enough to sear also clears the harmful effect with the most time left. Price: the sear's own burn and fire. |
 | Wind back | 50 | Adrenaline | A parry landed while your stamina is under 30 gives 15 back, without pausing regen. Price: you have to be low and still parry; rearms on the clock. *(once used, rearms on a timer.)* |
+| Recoil vault | 60 | Quick hands | A shot fired airborne or against a surface pushes you by the gun's impulse over your mass: a rifle launches you, a pocket pistol nudges. Price: a hot or worn gun wears faster when used as a thruster. |
+| Practised reload | 30 | Quick hands | Every reload beat takes a fifth less time. |
+| Quick draw | 50 | Practised reload | Cast: the first gun in your hotbar comes up and fires on the same tick, and stays in your hand. If it cannot fire (empty, unchambered, cycling, no gun in the hotbar) nothing is spent. The snap shot spreads wider the heavier the gun is against your body mass. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
+| Fine eye | 40 | Steady lungs | Every instrument you carry reads one step finer: its step halves, so a thermometer that read to 25 Tu reads to 12.5. The instrument signs the reading as before. |
+| Sharper eye | 60 | Fine eye | A second halving of every carried instrument's step. A reading never goes finer than the exact figure the world holds. |
+| Far sight | 50 | Steady lungs | A hard-drawn arrow flies flat for its first second before it starts to drop, so a long shot needs no lead. Price: only a near-full draw, and it drops after the second. |
 
 ### Chaos
 

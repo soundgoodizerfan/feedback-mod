@@ -98,7 +98,7 @@ L
 
 P is an Iron Plate and L is any log.
 
-**Swing at it** (left-click) with a tool made at a bench. The action bar shows the joules the blow carries and the damage it deals, both to the nearest half. A tool that is not made at a bench says *"Nothing here to test."* The post does not mark or wear the tool.
+**Swing at it** (left-click, or a [Better Combat](Combat.md#better-combat-required) swing) with a weapon or tool made at a bench. The action bar shows the joules the blow carries and the damage it deals, both to the nearest half. A tool that is not made at a bench says *"Nothing here to test."* The post does not mark or wear the tool.
 
 ## Test Strip
 

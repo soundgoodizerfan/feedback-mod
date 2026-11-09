@@ -2,7 +2,7 @@
 
 A loose order of play, from the first fire to oil and circuits. Each stage names what you do and the problem that sends you to the next. Nothing is locked: if you can reach the temperature, strength or hardness, you can skip ahead. The guide only says where the problems usually show up first.
 
-The in-game advancement tab named Feedback follows the same stages as branches (heat, rotation, electricity, control, chemistry, food, combat and the Nether, Deep Dark, radiation, ender and flight beyond). Each entry describes the wall you have hit, not the answer, and none of them unlocks anything. Hidden entries branch off the main line for odd things you can do along the way: burst a boiler, wear a machine out, let an overspeed trip earn its keep, fire a flintlock, get thrown by your own recoil, burn yourself, carry a creeper charge into a fire, or put a phosphor screen on a controller.
+Advancements are in three tabs: **Technology**, **Combat** (guns) and **Survival** (cooking). Technology follows the same stages as branches (heat, rotation, electricity, control, chemistry, food and the Nether, Deep Dark, radiation, ender and flight beyond). Each entry describes the wall you have hit, not the answer, and none of them unlocks anything. Hidden entries branch off the main line for odd things you can do along the way: burst a boiler, wear a machine out, let an overspeed trip earn its keep, fire a flintlock or a gun with the longest barrel, get thrown by your own recoil, burn yourself, carry a creeper charge into a fire, or put a phosphor screen on a controller.
 
 ## 1. First fire, clay and copper
 

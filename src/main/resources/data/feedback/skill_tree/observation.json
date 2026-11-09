@@ -66,16 +66,6 @@
       "needs_trait": "fan"
     },
     {
-      "id": "recoil_vault",
-      "cost": 60,
-      "requires": [
-        "called_shot"
-      ],
-      "effect": {
-        "unlock": "gun_fu_recoil_vault"
-      }
-    },
-    {
       "id": "keen_eye",
       "cost": 35,
       "requires": [
@@ -140,109 +130,54 @@
       }
     },
     {
-      "id": "far_sight",
+      "id": "size_up",
+      "cost": 40,
+      "requires": [],
+      "effect": {
+        "unlock": "size_up"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "seams",
       "cost": 50,
       "requires": [
-        "dead_eye"
+        "size_up"
       ],
       "effect": {
-        "unlock": "far_sight"
+        "unlock": "seams"
       }
     },
     {
-      "id": "light_foot",
-      "cost": 30,
-      "requires": [
-        "recoil_vault"
-      ],
-      "effect": {
-        "figure": "light_foot",
-        "amount": 0.25
-      },
-      "branch": "pace"
-    },
-    {
-      "id": "running_start",
-      "cost": 40,
-      "requires": [
-        "light_foot"
-      ],
-      "effect": {
-        "unlock": "running_start"
-      },
-      "branch": "pace"
-    },
-    {
-      "id": "fleet",
-      "cost": 60,
-      "requires": [
-        "running_start"
-      ],
-      "effect": {
-        "unlock": "fleet"
-      },
-      "rearm": "strike",
-      "branch": "pace"
-    },
-    {
-      "id": "steady_walk",
-      "cost": 35,
-      "requires": [
-        "light_foot"
-      ],
-      "effect": {
-        "figure": "steady_walk",
-        "amount": 0.5
-      },
-      "branch": "pace"
-    },
-    {
-      "id": "practised_reload",
-      "cost": 30,
-      "requires": [
-        "steady_walk"
-      ],
-      "effect": {
-        "figure": "practised_reload",
-        "amount": 0.2
-      },
-      "branch": "pace"
-    },
-    {
-      "id": "quick_draw",
+      "id": "opening",
       "cost": 50,
       "requires": [
-        "practised_reload"
+        "size_up"
       ],
       "effect": {
-        "unlock": "quick_draw"
-      },
-      "rearm": "strike",
-      "branch": "pace"
+        "unlock": "opening"
+      }
     },
     {
-      "id": "fine_eye",
-      "cost": 40,
+      "id": "exploit",
+      "cost": 70,
       "requires": [
-        "quarry_mark"
+        "opening"
       ],
       "effect": {
-        "figure": "fine_eye",
-        "amount": 1
+        "unlock": "exploit"
       },
-      "branch": "fine"
+      "rearm": "strike"
     },
     {
-      "id": "sharper_eye",
-      "cost": 60,
+      "id": "case_file",
+      "cost": 45,
       "requires": [
-        "fine_eye"
+        "seams"
       ],
       "effect": {
-        "figure": "fine_eye",
-        "amount": 1
-      },
-      "branch": "fine"
+        "unlock": "case_file"
+      }
     }
   ]
 }

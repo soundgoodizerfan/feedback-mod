@@ -120,6 +120,8 @@ public final class Casts {
             new Cast("barge", 25, Barge::act),
             new Cast("stampede", 20, Stampede::act),
             new Cast("called_shot", 25, CalledShot::act),
+            new Cast("size_up", 15, io.github.soundgoodizerfan.feedback.combat.skill.Weakness::sizeUp),
+            new Cast("exploit", 30, io.github.soundgoodizerfan.feedback.combat.skill.Weakness::exploit),
             new Cast("fleet", 20, Pace::act),
             new Cast("point_blank", 25, PointBlank::act),
             new Cast("snap_volley", 30, SnapVolley::act),

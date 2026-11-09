@@ -132,13 +132,14 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * @param spring the spring a spring launcher throws the projectile with.
      * @param chest  the vessel a steam launcher holds its steam in.
      * @param winding the metal a coil launcher is wound of: its ampacity and yield strength rate the field it holds, its service temperature is where it quenches.
+     * @param slid   whether the action is a slide that carries the breech (a slide pistol); otherwise the receiver holds it.
      * @param hold   the grip variant's multiplier on the friction the hand gets from the grip (or its wrap).
      */
     public record Parts(ResourceLocation slide, ResourceLocation trigger, ResourceLocation grip, ResourceLocation receiver,
                         Optional<ResourceLocation> feed, Optional<Second> second, Optional<ResourceLocation> wrap,
-                        Optional<Spring> spring, Optional<Chest> chest, Optional<ResourceLocation> winding, float hold) {
+                        Optional<Spring> spring, Optional<Chest> chest, Optional<ResourceLocation> winding, float hold, boolean slid) {
         Parts withSecond(Optional<Second> s) {
-            return new Parts(slide, trigger, grip, receiver, feed, s, wrap, spring, chest, winding, hold);
+            return new Parts(slide, trigger, grip, receiver, feed, s, wrap, spring, chest, winding, hold, slid);
         }
     }
 
@@ -308,7 +309,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 Optional.ofNullable(feedPart).map(ModularDesign.Part::material), other,
                 Optional.ofNullable(wrap).map(ModularDesign.Part::material), spring, chest,
                 Optional.ofNullable(winding).map(ModularDesign.Part::material),
-                type.roles().get(GRIP).variant(grip).map(v -> v.params().getOrDefault("friction_mult", 1f)).orElse(1f));
+                type.roles().get(GRIP).variant(grip).map(v -> v.params().getOrDefault("friction_mult", 1f)).orElse(1f), design.part(SLIDE) != null);
         return Optional.of(new GunSpec(barrel.material(), geometry(type, BARREL, barrel), sight, launcher, parts,
                 new GunLayout(kind, act, feed), fittings, ModularTraits.allOf(design, type)));
     }
@@ -576,7 +577,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * The parts off the barrel: what they weigh, how well the grip holds the hand, and how hard the
      * fitted sleeves drag a bullet that couples to them ({@link #eddyOf}, summed).
      */
-    private record Frame(float mu, float gripFriction, float eddy, float springSt, float springCoils, float chestRating, float windingRating, float windingAmpacity) {
+    private record Frame(float mu, float gripFriction, float eddy, float springSt, float springCoils, float chestRating, float windingRating, float windingAmpacity, float receiverRating) {
     }
 
     /**
@@ -656,7 +657,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             windingRating = windingRating(wm);
             windingAmpacity = wm.ampacity().get();
         }
-        return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip) * parts.hold(), eddy, springSt, springCoils, chestRating, windingRating, windingAmpacity));
+        return Optional.of(new Frame(mu, gripFriction(wrap != null ? wrap : grip) * parts.hold(), eddy, springSt, springCoils, chestRating, windingRating, windingAmpacity,
+                parts.slid() ? Float.MAX_VALUE : receiver.mechanical().yieldStrength().map(y -> y.value() * FTuning.GUN_RECEIVER_RATING_PER_ST).orElse(Float.MAX_VALUE)));
     }
 
     /** What the fitted options do to the bake, folded: every figure the gun owns and an option reaches. */
@@ -771,6 +773,9 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float rating = launcher == Launcher.STEAM ? frame.chestRating()
                 : Math.min(m.mechanical().yieldStrength().get().value() * barrel.wallMm() / (boreMmReal() / 2f),
                         launcher == Launcher.COIL ? frame.windingRating() : Float.MAX_VALUE);
+        // Where the receiver holds the breech (no slide to carry it), a weak receiver is the weak link.
+        if (launcher == Launcher.CHAMBER)
+            rating = Math.min(rating, frame.receiverRating());
         // A round squeezed into too tight a bore makes more pressure; one rattling in too loose a
         // bore leaks it past (below). Precision is never a gate: a sloppy barrel is a worse gun.
         float peak = launcher == Launcher.STEAM

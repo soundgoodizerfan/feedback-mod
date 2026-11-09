@@ -259,6 +259,74 @@
         "amount": 0.4
       },
       "branch": "hardy"
+    },
+    {
+      "id": "recoil_vault",
+      "cost": 60,
+      "requires": [
+        "quick_hands"
+      ],
+      "effect": {
+        "unlock": "gun_fu_recoil_vault"
+      }
+    },
+    {
+      "id": "practised_reload",
+      "cost": 30,
+      "requires": [
+        "quick_hands"
+      ],
+      "effect": {
+        "figure": "practised_reload",
+        "amount": 0.2
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "quick_draw",
+      "cost": 50,
+      "requires": [
+        "practised_reload"
+      ],
+      "effect": {
+        "unlock": "quick_draw"
+      },
+      "rearm": "strike",
+      "branch": "pace"
+    },
+    {
+      "id": "fine_eye",
+      "cost": 40,
+      "requires": [
+        "steady_lungs"
+      ],
+      "effect": {
+        "figure": "fine_eye",
+        "amount": 1
+      },
+      "branch": "fine"
+    },
+    {
+      "id": "sharper_eye",
+      "cost": 60,
+      "requires": [
+        "fine_eye"
+      ],
+      "effect": {
+        "figure": "fine_eye",
+        "amount": 1
+      },
+      "branch": "fine"
+    },
+    {
+      "id": "far_sight",
+      "cost": 50,
+      "requires": [
+        "steady_lungs"
+      ],
+      "effect": {
+        "unlock": "far_sight"
+      }
     }
   ]
 }
