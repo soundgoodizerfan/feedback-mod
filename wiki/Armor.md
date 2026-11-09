@@ -40,7 +40,22 @@ Click a fitted lining or studs in the fan to take them off; the piece stays whol
 - **Dense metal resists being pushed.** Heavy metals like gold and netherite give knockback resistance.
 - **Weight slows you.** A chestplate of dense metal (gold is nearly three times iron's weight) makes you a little slower. Iron is light enough not to.
 
-The piece is drawn in a plain gray sprite **tinted by the plate**, so you can see at a glance what someone is wearing.
+The piece is drawn on the vanilla armor shape, **tinted by the plate**, so you can see at a glance what someone is wearing. Each plate variant adds its own pieces to the silhouette:
+
+| Piece | Variant | Added shape |
+| --- | --- | --- |
+| Helmet | open helm | crest |
+| Helmet | great helm | visor and brim |
+| Helmet | sallet | neck guard and brim |
+| Chestplate | brigandine | collar |
+| Chestplate | breastplate | ridge and pauldrons |
+| Chestplate | hauberk | collar and mail skirt |
+| Leggings | greaves | knee guards |
+| Leggings | cuisses | thigh plates |
+| Boots | sabatons | toe caps |
+| Boots | riding boots | cuffs and spurs |
+
+[Studs](#studs) on a helmet or chestplate show on the piece in the color of their own material.
 
 ## Wearing out
 

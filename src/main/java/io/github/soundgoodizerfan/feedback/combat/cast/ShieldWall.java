@@ -68,8 +68,18 @@ final class ShieldWall {
                                 p.getX() + dir.x * 1.5, p.getY() + 0.2 + row * 0.55, p.getZ() + dir.z * 1.5, 1, 0, 0, 0, 0);
             }
         }
-        for (LivingEntity e : near(p, face, 2.2)) {
-            Vec3 to = e.position().subtract(p.position()).multiply(1, 0, 1);
+        // Phalanx: allies standing behind you within three blocks are covered by the wall too.
+        java.util.List<LivingEntity> covered = new java.util.ArrayList<>(java.util.List.of(p));
+        if (io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "phalanx"))
+            for (LivingEntity ally : near(p, p.position(), 3))
+                if (ally instanceof net.minecraft.world.entity.player.Player && p.isAlliedTo(ally)
+                        && ally.position().subtract(p.position()).multiply(1, 0, 1).dot(look) < 0)
+                    covered.add(ally);
+        for (LivingEntity guarded : covered)
+        for (LivingEntity e : near(p, guarded == p ? face : guarded.position().add(look.scale(1.2)).add(0, 1, 0), 2.2)) {
+            if (covered.contains(e) || e instanceof net.minecraft.world.entity.player.Player && p.isAlliedTo(e))
+                continue;
+            Vec3 to = e.position().subtract(guarded.position()).multiply(1, 0, 1);
             if (to.lengthSqr() < 1e-6 || to.normalize().dot(look) < 0.4 || !w.turned().add(e.getId()))
                 continue;
             double speed = e.getDeltaMovement().multiply(1, 0, 1).length();

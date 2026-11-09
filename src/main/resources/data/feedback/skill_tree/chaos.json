@@ -14,7 +14,7 @@
       "id": "rending_heel",
       "cost": 45,
       "requires": [
-        "rend"
+        "axe_kick"
       ],
       "effect": {
         "unlock": "rending_heel"
@@ -215,17 +215,6 @@
       }
     },
     {
-      "id": "disarm_shot",
-      "cost": 60,
-      "requires": [
-        "powder_burn"
-      ],
-      "effect": {
-        "unlock": "disarm_shot"
-      },
-      "rearm": "time"
-    },
-    {
       "id": "barbed_shaft",
       "cost": 45,
       "requires": [
@@ -234,6 +223,69 @@
       "effect": {
         "unlock": "barbed_shaft"
       }
+    },
+    {
+      "id": "axe_kick",
+      "cost": 60,
+      "requires": [
+        "rend"
+      ],
+      "effect": {
+        "unlock": "axe_kick"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "gouge",
+      "cost": 50,
+      "requires": [
+        "rend"
+      ],
+      "effect": {
+        "unlock": "gouge"
+      }
+    },
+    {
+      "id": "tear_straps",
+      "cost": 45,
+      "requires": [
+        "gouge"
+      ],
+      "effect": {
+        "unlock": "tear_straps"
+      }
+    },
+    {
+      "id": "burning_ground",
+      "cost": 50,
+      "requires": [
+        "kindle"
+      ],
+      "effect": {
+        "unlock": "burning_ground"
+      }
+    },
+    {
+      "id": "overwatch",
+      "cost": 60,
+      "requires": [
+        "pin_down"
+      ],
+      "effect": {
+        "unlock": "overwatch"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "suppressing_fire",
+      "cost": 65,
+      "requires": [
+        "overwatch"
+      ],
+      "effect": {
+        "unlock": "suppressing_fire"
+      },
+      "rearm": "time"
     }
   ]
 }

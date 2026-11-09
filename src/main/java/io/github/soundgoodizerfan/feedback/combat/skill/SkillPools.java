@@ -60,8 +60,26 @@ public record SkillPools(Map<String, Integer> points, Set<String> unlocked, List
         return points.getOrDefault(tree, 0);
     }
 
+    /** Whether {@code node} of {@code tree} is owned: bought, or its twin in another tree is ({@link #twinOwned}). */
     public boolean has(String tree, String node) {
-        return unlocked.contains(key(tree, node));
+        return unlocked.contains(key(tree, node)) || twinOwned(tree, node);
+    }
+
+    /**
+     * Whether the same unlock is bought through a node in another tree. A skill listed in two trees (Grab) is one
+     * skill, unlocked with either tree's points; owning one node shows the other as owned and a second purchase is
+     * refused, so it is paid for once.
+     */
+    private boolean twinOwned(String tree, String node) {
+        var own = SkillTrees.get().find(tree).flatMap(t -> t.node(node)).flatMap(n -> n.effect().unlock());
+        if (own.isEmpty())
+            return false;
+        for (SkillTree t : SkillTrees.get().trees())
+            if (!t.tree().equals(tree))
+                for (SkillTree.Node n : t.nodes())
+                    if (own.equals(n.effect().unlock()) && unlocked.contains(key(t.tree(), n.id())))
+                        return true;
+        return false;
     }
 
     public SkillPools withPoints(String tree, int amount) {

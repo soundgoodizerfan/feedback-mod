@@ -23,10 +23,10 @@ import net.minecraft.world.inventory.InventoryMenu;
  * than a tile (16 px) stretches, which is why the long-part tiles (brushed, grain, coil) only vary
  * across the stretch direction. On side and top faces u runs along the bore (z).
  */
-final class GunMesh {
+public final class GunMesh {
 
     /** A tile of the sheet. Tinted tiles take the part's material colour; the rest keep their own. */
-    enum Tile {
+    public enum Tile {
         METAL(0, true), BRUSHED(1, true), RIBBED(2, true), PANEL(3, true),
         GRAIN(4, true), END_GRAIN(5, true), CHECKER(6, true), RUBBER(7, true),
         GLASS(8, false), BORE(9, false), COIL(10, true), KNURL(11, true),
@@ -86,7 +86,7 @@ final class GunMesh {
     }
 
     /** Draw what follows in this ARGB colour, as metal. */
-    GunMesh colour(int argb) {
+    public GunMesh colour(int argb) {
         this.colour = argb;
         this.surface = GunView.Surface.METAL;
         this.image = null;
@@ -133,6 +133,13 @@ final class GunMesh {
         };
     }
 
+    /** Draw what follows as this kind of surface (grain on wood, brushing on metal). */
+    GunMesh surface(GunView.Surface surface) {
+        this.surface = surface;
+        this.image = null;
+        return this;
+    }
+
     void push() {
         pose.pushPose();
     }
@@ -165,7 +172,7 @@ final class GunMesh {
     }
 
     /** An axis-aligned box between two corners, all six faces. */
-    void box(float x0, float y0, float z0, float x1, float y1, float z1, Tile t) {
+    public void box(float x0, float y0, float z0, float x1, float y1, float z1, Tile t) {
         box(x0, y0, z0, x1, y1, z1, t, light);
     }
 

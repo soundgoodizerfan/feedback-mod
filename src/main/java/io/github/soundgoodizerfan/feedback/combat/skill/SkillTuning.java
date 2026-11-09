@@ -21,6 +21,16 @@ public final class SkillTuning {
     /** Out-of-combat trickles: a loaded crank click, a tether pull held against crouched, a vibration listener left unwoken ([OPEN] all). */
     public static final int CRANK = 2, HELD_PULL = 1, HUSHED = 2;
 
+    /**
+     * Hit payouts by axis ([OPEN] all). {@code HIT}: a landed blow pays the tree of the weapon's strongest of burst, tempo
+     * and precision. {@code NATURE_HIT}: it also pays the tree whose kind of swing it was (a blow of at least
+     * {@code BRUTE_HIT_J} joules, one landed within {@code CHAIN_TICKS} of the last, a placed hit). {@code STEALTH_HIT} times
+     * the weapon's stealth share is what a blow on an unaware creature pays Veil. A melee blow at {@code REACH_TIP} of the
+     * reach or beyond lands at the tip.
+     */
+    public static final int HIT = 3, NATURE_HIT = 3, STEALTH_HIT = 4, CHAIN_TICKS = 30;
+    public static final float BRUTE_HIT_J = 50f, REACH_TIP = 0.75f;
+
     public static final double OBSERVE_RANGE = 6.0;
     /** Fraction of the previous payout each repeat on one target keeps. */
     public static final float DECAY = 0.6f;

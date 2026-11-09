@@ -43,7 +43,7 @@ public record GunFirePayload(float yaw, float pitch, boolean aimed, boolean offH
             var stack = player.getItemInHand(hand);
             if (!(stack.getItem() instanceof GunItem) || (payload.offHand() && !GunItem.offHandFires(player)))
                 return;
-            GunShots.trigger(level, player, stack, payload.yaw(), payload.pitch(), System.currentTimeMillis(),
+            GunShots.triggerFromClient(level, player, stack, payload.yaw(), payload.pitch(), System.currentTimeMillis(),
                     payload.aimed() && !payload.offHand(), hand);
         });
     }

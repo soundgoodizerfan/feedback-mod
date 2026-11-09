@@ -72,6 +72,8 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class Weakness {
 
+    /** Thread the gap: ticks of stagger a fully precise weapon's soft spot blow adds ([OPEN]). */
+    static final int THREAD_TICKS = 20;
     static final int READ_TICKS = 300, ARMED_TICKS = 60, RECOVER_TICKS = 12, SPOOR_TICKS = 400, KNOWN_KILLS = 10;
     static final double REACH = 24, HERD = 6, SPOOR_RANGE = 64;
     /** Shares added to a blow. */
@@ -101,6 +103,21 @@ public final class Weakness {
         Map<UUID, Long> mine = READ.get(p.getUUID());
         Long until = mine == null ? null : mine.get(t.getUUID());
         return until != null && until > p.level().getGameTime();
+    }
+
+    /** Whether {@code p} has {@code t} under a Size up read. */
+    public static boolean isRead(ServerPlayer p, LivingEntity t) {
+        return reading(p, t);
+    }
+
+    /** Whether {@code t} has not noticed anyone: asleep, or a mob with nothing targeted. */
+    public static boolean unaware(LivingEntity t) {
+        return t.isSleeping() || t instanceof Mob m && m.getTarget() == null;
+    }
+
+    /** Whether {@code t} faces away from {@code p}. */
+    public static boolean backTurned(ServerPlayer p, LivingEntity t) {
+        return t.getLookAngle().dot(p.position().subtract(t.position())) < 0;
     }
 
     private static LivingEntity look(ServerPlayer p) {
@@ -444,6 +461,10 @@ public final class Weakness {
             if (spot != null && spot[0].equals(t.getUUID()) && (Long) spot[2] > now && Skills.unlocked(p, "soft_spot")) {
                 mult += (Float) spot[1];
                 SPOT.remove(p.getUUID());
+                // Thread the gap: a precise weapon's soft spot blow also staggers, longer the more precise it is.
+                float precision = io.github.soundgoodizerfan.feedback.combat.hit.WeaponProfile.meleeOf(p).precision();
+                if (Skills.unlocked(p, "thread_the_gap") && precision >= Tipping.MIN_PRECISION)
+                    CombatTicker.stagger(t, Math.round(THREAD_TICKS * precision), ParryTuning.STAGGER_SLOW);
                 io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/combat/soft_spot");
             }
             Long armed = ARMED.get(p.getUUID());

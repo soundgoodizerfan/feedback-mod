@@ -205,10 +205,20 @@
       }
     },
     {
+      "id": "grab",
+      "cost": 20,
+      "requires": [
+        "brace"
+      ],
+      "effect": {
+        "unlock": "grab"
+      }
+    },
+    {
       "id": "human_shield",
       "cost": 60,
       "requires": [
-        "brace"
+        "grab"
       ],
       "effect": {
         "unlock": "human_shield"
@@ -283,6 +293,69 @@
         "amount": 0.2
       },
       "branch": "steady"
+    },
+    {
+      "id": "keen_eye",
+      "cost": 35,
+      "requires": [
+        "settle"
+      ],
+      "effect": {
+        "figure": "parry_window",
+        "amount": 1
+      }
+    },
+    {
+      "id": "grit_teeth",
+      "cost": 50,
+      "requires": [
+        "brace"
+      ],
+      "effect": {
+        "unlock": "grit_teeth"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "plate_up",
+      "cost": 40,
+      "requires": [
+        "brace"
+      ],
+      "effect": {
+        "unlock": "plate_up"
+      }
+    },
+    {
+      "id": "phalanx",
+      "cost": 50,
+      "requires": [
+        "shield_wall"
+      ],
+      "effect": {
+        "unlock": "phalanx"
+      }
+    },
+    {
+      "id": "pavise",
+      "cost": 60,
+      "requires": [
+        "shield_wall"
+      ],
+      "effect": {
+        "unlock": "pavise"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "lee_side",
+      "cost": 30,
+      "requires": [
+        "plant_feet"
+      ],
+      "effect": {
+        "unlock": "lee_side"
+      }
     }
   ]
 }

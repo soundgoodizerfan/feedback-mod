@@ -59,6 +59,11 @@ public class ModularGlove extends ModularItem implements Insulator {
         return type.roles().get(PLATE).variant(plate).map(ModularType.Variant::params).orElse(java.util.Map.of());
     }
 
+    /** Whether {@code stack} is a plated glove whose plate is the claw variant: its barehanded hits open a bleed. */
+    public static boolean claws(ItemStack stack) {
+        return plated(stack) && plateParams(stack).containsKey("bleed_damage");
+    }
+
     /** Whether {@code stack} is a whole glove carrying a metacarpal plate. */
     public static boolean plated(ItemStack stack) {
         if (!(stack.getItem() instanceof ModularGlove) || ModularStacks.broken(stack))

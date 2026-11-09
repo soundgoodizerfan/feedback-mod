@@ -171,6 +171,20 @@ public final class GunPreview {
         });
     }
 
+    private static net.minecraft.client.player.RemotePlayer mannequin;
+
+    /** Puts {@code stack} on the mannequin (the player's own skin, nothing else worn) so it draws as it looks worn; false if there is no world to hold one. */
+    private static boolean dress(ItemStack stack, ModularType type) {
+        var mc = net.minecraft.client.Minecraft.getInstance();
+        if (mc.level == null || mc.player == null)
+            return false;
+        if (mannequin == null || mannequin.level() != mc.level)
+            mannequin = new net.minecraft.client.player.RemotePlayer(mc.level, mc.player.getGameProfile());
+        for (net.minecraft.world.entity.EquipmentSlot s : net.minecraft.world.entity.EquipmentSlot.values())
+            mannequin.setItemSlot(s, s == type.slot().equipment() ? stack : ItemStack.EMPTY);
+        return true;
+    }
+
     /**
      * {@code stack} drawn centred on (cx, cy) filling about {@code size} pixels, turned by yaw and pitch, at depth z. A gun
      * is its own mesh, bare of hands; anything else goes through the item renderer (a slab of tinted layers).
@@ -180,6 +194,14 @@ public final class GunPreview {
             return;
         ModularDesign design = ModularStacks.design(stack);
         ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type != null && type.family() == ModularType.Family.ARMOUR && dress(stack, type)) {
+            net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory(g, cx, cy + size * 0.45f, size * 0.5f,
+                    new org.joml.Vector3f(0f, 0f, z - 50f), new org.joml.Quaternionf().rotationZ((float) Math.PI)
+                            .rotateY((float) Math.toRadians(yaw - 90f)).rotateX((float) Math.toRadians(-pitch)),
+                    null, mannequin);
+            g.flush();
+            return;
+        }
         PoseStack pose = g.pose();
         pose.pushPose();
         pose.translate(cx, cy, z);

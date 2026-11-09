@@ -89,6 +89,38 @@ public final class BowCraft {
             SNAP.put(p.getUUID(), p.level().getGameTime() + SNAP_TICKS);
     }
 
+    /** Called draw: the target a player has called, and the game tick the call ends; the next arrow loosed flies at where it will be. */
+    private record Called(UUID target, long until) {
+    }
+
+    private static final Map<UUID, Called> CALLED = new HashMap<>();
+    /** Held draw: ticks a player has held a full draw, counted only while the skill is owned. */
+    private static final Map<UUID, Integer> HELD = new HashMap<>();
+    /** STAND-INS ([OPEN]): ticks a call lasts, full-draw ticks that steady the arrow, and where the hands start to shake; stamina a held tick costs. */
+    private static final int CALL_TICKS = 60, STEADY_TICKS = 20, SHAKE_TICKS = 100;
+    private static final float HOLD_COST = 0.2f;
+
+    /** Called draw: calls {@code target} for the next arrow {@code p} looses. */
+    public static void call(ServerPlayer p, LivingEntity target) {
+        CALLED.put(p.getUUID(), new Called(target.getUUID(), p.level().getGameTime() + CALL_TICKS));
+    }
+
+    @SubscribeEvent
+    public static void onHold(net.neoforged.neoforge.event.tick.PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer p) || !Skills.unlocked(p, "held_draw"))
+            return;
+        var using = p.getUseItem();
+        if (!p.isUsingItem() || !(using.getItem() instanceof ProjectileWeaponItem)
+                || p.getTicksUsingItem() < io.github.soundgoodizerfan.feedback.modular.ModularStacks.drawTicks(using)) {
+            if (!p.isUsingItem())
+                HELD.remove(p.getUUID());
+            return;
+        }
+        int held = HELD.merge(p.getUUID(), 1, Integer::sum);
+        if (held <= SHAKE_TICKS && !Stamina.spend(p, HOLD_COST))
+            HELD.put(p.getUUID(), SHAKE_TICKS + 1); // out of breath: the aim goes
+    }
+
     @SubscribeEvent
     public static void onLoosed(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide() || !(event.getEntity() instanceof AbstractArrow arrow) || arrow.tickCount > 0)
@@ -101,6 +133,20 @@ public final class BowCraft {
         if (snap != null && p.level().getGameTime() <= snap && v.length() < FULL_DRAW) {
             arrow.setDeltaMovement(v.normalize().scale(FULL_DRAW));
             arrow.setCritArrow(true);
+        }
+        // Held draw: a full draw held a second is steady, aimed exactly down the look; held too long, it shakes.
+        Integer held = HELD.remove(p.getUUID());
+        if (held != null && held >= STEADY_TICKS && held <= SHAKE_TICKS)
+            arrow.setDeltaMovement(p.getLookAngle().scale(arrow.getDeltaMovement().length()));
+        // Called draw: the arrow flies at where the called creature will be when it arrives.
+        Called call = CALLED.remove(p.getUUID());
+        if (call != null && p.level().getGameTime() <= call.until() && p.serverLevel().getEntity(call.target()) instanceof LivingEntity t
+                && t.isAlive()) {
+            double speed = arrow.getDeltaMovement().length();
+            Vec3 c = t.getBoundingBox().getCenter();
+            double flight = c.distanceTo(arrow.position()) / Math.max(0.1, speed);
+            Vec3 lead = c.add(t.getDeltaMovement().multiply(1, t.onGround() ? 0 : 1, 1).scale(flight)).add(0, 0.5 * 0.05 * flight * flight, 0);
+            arrow.setDeltaMovement(lead.subtract(arrow.position()).normalize().scale(speed));
         }
         if (Skills.unlocked(p, "braced_draw") && GunFu.braced(p))
             arrow.setDeltaMovement(p.getLookAngle().scale(arrow.getDeltaMovement().length()));

@@ -223,6 +223,40 @@ public final class GunShots {
 
     /** Set only inside {@link #triggerHeard}; the server thread is the only one that fires, so a flag is enough. */
     private static boolean hearSelf;
+    /** Set only inside {@link #triggerFromClient}: the shooter's own client fired this shot and kicked its own view, so the server sends no kick. */
+    private static boolean clientShot;
+    /** Set only inside {@link #triggerTurned}: the cast turned the shooter's camera to the target itself, so a view kick would fight the turn. */
+    private static boolean cameraTurned;
+
+    /**
+     * A shot the shooter's own client fired (the fire payload): the client already kicked its view for it. Every other
+     * player shot is the server's (a cast, a free shot after a stagger) and sends the kick, so a skill that shoots a gun
+     * kicks and heats the gun as a pull of the trigger does.
+     */
+    public static boolean triggerFromClient(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                            float yaw, float pitch, long nowMs, boolean aimed, InteractionHand hand) {
+        clientShot = true;
+        try {
+            return trigger(level, shooter, gun, yaw, pitch, nowMs, aimed, hand);
+        } finally {
+            clientShot = false;
+        }
+    }
+
+    /**
+     * A server-made shot, heard by the shooter, from a cast that turns the shooter's camera to the target itself
+     * (Mark and fire): it sends no view kick, since the camera is already moving to the mark. Heat, wear and recoil
+     * impulse apply as for any shot.
+     */
+    public static boolean triggerTurned(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                        float yaw, float pitch, long nowMs, boolean aimed, InteractionHand hand) {
+        cameraTurned = true;
+        try {
+            return triggerHeard(level, shooter, gun, yaw, pitch, nowMs, aimed, hand);
+        } finally {
+            cameraTurned = false;
+        }
+    }
 
     public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
                                   float yaw, float pitch, long nowMs) {
@@ -335,7 +369,8 @@ public final class GunShots {
         GunFu.shotFired(level, shooter, gun, figures, heat);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server) {
             ModularTraits.gunFired(server, gun, figures);
-            if (cookOff)
+            // A shot the server made (a cook-off, a cast, a free shot) kicks the view as the player's own pull would, unless the cast turns the camera itself.
+            if (cookOff || !together && !clientShot && !cameraTurned)
                 io.github.soundgoodizerfan.feedback.net.GunKickPayload.send(server, hand == InteractionHand.OFF_HAND, figures);
             String designation = GunSpec.of(gun).flatMap(spec -> GunDesignation.of(gun, spec)).orElse("");
             var built = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(gun);
@@ -705,7 +740,7 @@ public final class GunShots {
         for (GunSound.Layer layer : GunSound.layers(f, level.random))
             level.playSound(shooter instanceof Player player && !hearSelf ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
-        level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT ? FWeapons.GUNSHOT_QUIET
+        level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT * (shooter instanceof Player mp && Skills.unlocked(mp, "muffled_report") ? FTuning.GUN_MUFFLED_SHARE : 1f) ? FWeapons.GUNSHOT_QUIET
                 : f.report() >= FTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
         // Only a chamber has burning gas to show; a coil crackles and a spring flicks dust.
         level.sendParticles(f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,

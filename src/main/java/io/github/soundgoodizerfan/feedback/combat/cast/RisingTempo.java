@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
-import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +31,10 @@ final class RisingTempo {
     public static void onBlow(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof ServerPlayer p) || event.getSource().getDirectEntity() != p)
             return;
-        if (!BareMode.mainHand(p).isEmpty() || !io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rising_tempo"))
+        if (!io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rising_tempo")
+                || io.github.soundgoodizerfan.feedback.combat.hit.WeaponProfile.meleeOf(p).tempo() < io.github.soundgoodizerfan.feedback.combat.hit.ProfileTuning.TEMPO_MIN)
             return;
-        // Innate: the first bare-handed blow starts the chain, so there is nothing to cast.
+        // Innate: the first quick blow, bare-handed or with a quick weapon, starts the chain, so there is nothing to cast.
         long[] chain = CHAINS.computeIfAbsent(p.getUUID(), k -> new long[]{0, 0});
         event.setAmount(event.getAmount() * (1f + PER_BLOW * chain[1]));
         chain[1] = Math.min(MAX, chain[1] + 1);

@@ -1092,3 +1092,7 @@ yyon's mod (GPL-3.0, `1.21.1` branch, commit `3539c57`, read 2026-11-07) for the
 **Not taken:** the whole customization record, modifier GUI and ten upgrade items (free scalars with no physical cause; Feedback's fittings are parts); block-id attach lists (identity); the flat infinite motor, look-steered "smart motor", rocket, forcefield, ender staff, wall-run, slide and double-jump enchantments (no mechanism behind them); hook magnet aim assist; `phaserope` and `sticky` toggles (they patch a missing rope model); its entity yank (Feedback's entity anchors, mass-based drag and Throw replace it); its trusting client position sync (strain and parting stay on the server); auto-attach when the bent line runs out.
 
 Village freight (2026-11-07), from `malcolmriley/unused-textures` (CC BY 4.0, Malcolm Riley): `textures/item/depot_link_card.png` is an unmodified copy of `items/part_punchcard_written_2.png`. The Ledger Board, Market Cross and village pieces use Minecraft 1.21.1 block textures by name (Mojang assets, referenced not copied).
+
+Shield look (2026-11-09): `textures/entity/modular_shield.png` is Mojang's `shield_base_nopattern.png` desaturated to greyscale so the face, rim and grip materials can tint it (a Mojang asset, used as the ore overlays are).
+
+Worn armour look (2026-11-09): `textures/models/armor/modular_layer_1.png` and `modular_layer_2.png` are Mojang's `iron_layer_1.png` and `iron_layer_2.png` desaturated to greyscale and brightened so the plate's dye colour tints them (Mojang assets, used as the ore overlays are).

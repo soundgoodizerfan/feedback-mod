@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
@@ -25,7 +26,7 @@ final class Haymaker {
     private Haymaker() {
     }
 
-    /** Haymaker: wind up for half a second, then throw one punch for nine damage that shoves a body back by your mass over its. A miss leaves you staggered. */
+    /** Haymaker: wind up for half a second, then throw one punch for nine damage (a worn plate adds its fist damage) that shoves a body back by your mass over its. A miss leaves you staggered. */
     static boolean act(ServerPlayer p) {
         if (!BareMode.mainHand(p).isEmpty())
             return false;
@@ -48,10 +49,11 @@ final class Haymaker {
             Vec3 look = p.getLookAngle().multiply(1, 0, 1).normalize();
             double shove = Mth.clamp(mine / theirs, 0.2, 2.0) * 0.9;
             t.invulnerableTime = 0;
-            t.hurt(p.damageSources().playerAttack(p), 9f);
+            float dmg = 9f + CombatGear.of(p).fist();
+            t.hurt(p.damageSources().playerAttack(p), dmg);
             t.push(look.x * shove, 0.3, look.z * shove);
             t.hurtMarked = true;
-            stagger(p, t, 9f * ParryTuning.JOULES_PER_DAMAGE);
+            stagger(p, t, dmg * ParryTuning.JOULES_PER_DAMAGE);
             Vec3 c = t.getBoundingBox().getCenter();
             lv.sendParticles(ParticleTypes.EXPLOSION, c.x, c.y, c.z, 1, 0, 0, 0, 0);
             lv.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 24, 0.3, 0.3, 0.3, 0.6);

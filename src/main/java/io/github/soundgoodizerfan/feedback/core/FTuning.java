@@ -2279,6 +2279,8 @@ public final class FTuning {
     public static final float GUN_EDDY_NONMAGNETIC_COUPLING = 0.1f, GUN_EDDY_MAX_DRAIN = 0.75f, GUN_EDDY_HEAT = 1.5f;
     /** A report below this is a quiet vibration, heard by sculk at a short range. */
     public static final float GUN_QUIET_REPORT = 0.5f;
+    /** Muffled report: the quiet band reaches this many times further up the report scale for a shooter who owns it ([OPEN]). */
+    public static final float GUN_MUFFLED_SHARE = 1.5f;
     /** Placeholder. A report at or above this is thunderous: sculk hears it from twice as far as a loud one. */
     public static final float GUN_THUNDEROUS_REPORT = 0.95f;
     /** Metal in a revolver's cylinder and in a tube magazine, in mB: the feed's own part, when it has one. */

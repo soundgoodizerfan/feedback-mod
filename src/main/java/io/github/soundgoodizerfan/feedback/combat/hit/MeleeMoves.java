@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
  * <ul>
  * <li><b>blade_flourish</b>: a blade hit takes {@link MeleeTuning#FLOURISH_SHAVE} ticks off the cooldown
  * running on the fighter, so a strike flows into the next roll, parry or kick.</li>
- * <li><b>mace_quake</b>: a full-weight mace blow shakes the ground; every other body within
+ * <li><b>mace_quake</b>: a full-weight blow of any weapon (damage over {@link MeleeTuning#QUAKE_MIN_DAMAGE}) shakes the ground; every other body within
  * {@link MeleeTuning#QUAKE_RADIUS} is shoved and staggered by the blow's impact over its own stand-in mass,
  * the parry's formula, so a golem shrugs it off.</li>
  * <li><b>spear_vault</b>: a sprinting wielder whose thrust lands is carried up and over the target.</li>
@@ -58,8 +58,9 @@ public final class MeleeMoves {
             CombatState s = CombatState.of(player);
             if (s.phase() == CombatPhase.IDLE && s.ticksLeft() > 0)
                 CombatState.set(player, new CombatState(CombatPhase.IDLE, Math.max(0, s.ticksLeft() - MeleeTuning.FLOURISH_SHAVE), 0, s.iFrames()));
-        } else if (family == ModularType.Family.MACE && event.getNewDamage() >= MeleeTuning.QUAKE_MIN_DAMAGE
-                && Skills.unlocked(player, "mace_quake")) {
+        }
+        // Any blow that carries the energy, not a mace in particular: a maul, a greatsword, a gauntlet, a gun's butt.
+        if (event.getNewDamage() >= MeleeTuning.QUAKE_MIN_DAMAGE && Skills.unlocked(player, "mace_quake")) {
             float impact = event.getNewDamage() * ParryTuning.JOULES_PER_DAMAGE;
             for (LivingEntity near : target.level().getEntitiesOfClass(LivingEntity.class,
                     target.getBoundingBox().inflate(MeleeTuning.QUAKE_RADIUS),
@@ -68,7 +69,8 @@ public final class MeleeMoves {
                 CombatTicker.stagger(near, ParryTuning.staggerTicks(impact, ParryTuning.standInMass(near)), ParryTuning.STAGGER_SLOW);
                 io.github.soundgoodizerfan.feedback.combat.skill.Rearms.on(player, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Rearm.STAGGER);
             }
-        } else if (family == ModularType.Family.SPEAR && player.isSprinting() && player.onGround()
+        }
+        if (family == ModularType.Family.SPEAR && player.isSprinting() && player.onGround()
                 && player.level().getGameTime() >= NEXT_VAULT.getOrDefault(player.getUUID(), 0L)
                 && Skills.unlocked(player, "spear_vault")) {
             NEXT_VAULT.put(player.getUUID(), player.level().getGameTime() + MeleeTuning.VAULT_COOLDOWN);

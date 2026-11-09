@@ -23,4 +23,8 @@ public final class FistTuning {
 
     private FistTuning() {
     }
+
+    /** Claws ([OPEN] all): Opening cut's bleed multiplier, Gouge's most stacks, and the share of iron-class hardness Tear straps rakes armour with. */
+    public static final float OPENING_CUT = 2f, TEAR_HARDNESS_SHARE = 0.5f;
+    public static final int GOUGE_STACKS = 3;
 }

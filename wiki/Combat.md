@@ -92,7 +92,7 @@ A skill (Onslaught tree; gear can grant it) you slot into a cast slot. It kicks 
 
 ## Grab
 
-A skill (Brute tree) you slot into a cast slot: pressing it takes hold of something within 2 blocks, pressing it again lets go. It is free to cast, so you can always let go. A glove in the Curios *hands* slot ([leather gloves](Hazards.md#gloves) will do) isn't required, but it improves the grab.
+A skill (Brute or Anchor tree) you slot into a cast slot: pressing it takes hold of something within 2 blocks, pressing it again lets go. It is free to cast, so you can always let go. A glove in the Curios *hands* slot ([leather gloves](Hazards.md#gloves) will do) isn't required, but it improves the grab.
 
 A grab is a **short rope** (1.5 blocks) with no reel. The held thing is pinned close, can't parry or roll, and **takes 25% more damage**. The hold ends when:
 
@@ -123,7 +123,7 @@ Your movement when a punch lands picks the move (each is a separate skill in the
 | Sprinting | **Lunge** | staggers 1.5× longer and leaves you guarded (invulnerable) for 4 ticks |
 | Falling | **Chop** | drives the target down and staggers it |
 
-**Chain them**: a Lunge or Sweep within 1.5 seconds of a Jab, or a Chop after a Lunge, hits **30% harder**. The chain is a bonus, not a gate. [Uppercut](Skills.md) is a cast, not a stance.
+**Chain them**: a Lunge or Sweep within 1.5 seconds of a Jab, or a Chop after a Lunge, hits **30% harder**. The chain is a bonus, not a gate. [Uppercut](Skills.md#brute) is a cast, not a stance.
 
 ## Melee riders
 

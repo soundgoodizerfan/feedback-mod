@@ -103,17 +103,6 @@
       }
     },
     {
-      "id": "wall_smash",
-      "cost": 60,
-      "requires": [
-        "wall_kick"
-      ],
-      "effect": {
-        "unlock": "wall_smash"
-      },
-      "exclusive": "wall_kick_payoff"
-    },
-    {
       "id": "long_roll",
       "cost": 20,
       "requires": [
@@ -164,28 +153,6 @@
       ],
       "effect": {
         "unlock": "wall_rebound"
-      },
-      "exclusive": "wall_kick_payoff"
-    },
-    {
-      "id": "dodge_charge",
-      "cost": 40,
-      "requires": [
-        "quiet_roll"
-      ],
-      "effect": {
-        "unlock": "gun_fu_dodge_charge"
-      },
-      "rearm": "time"
-    },
-    {
-      "id": "spent_case_draw",
-      "cost": 40,
-      "requires": [
-        "dodge_charge"
-      ],
-      "effect": {
-        "unlock": "gun_fu_spent_case_draw"
       }
     },
     {
@@ -282,16 +249,64 @@
       "branch": "pace"
     },
     {
-      "id": "steady_walk",
-      "cost": 35,
+      "id": "concealed_carry",
+      "cost": 40,
       "requires": [
-        "light_foot"
+        "hushed_step"
       ],
       "effect": {
-        "figure": "steady_walk",
-        "amount": 0.5
-      },
-      "branch": "pace"
+        "unlock": "concealed_carry"
+      }
+    },
+    {
+      "id": "hush_the_kill",
+      "cost": 50,
+      "requires": [
+        "ambush"
+      ],
+      "effect": {
+        "unlock": "hush_the_kill"
+      }
+    },
+    {
+      "id": "dull_edge",
+      "cost": 30,
+      "requires": [
+        "hush_the_kill"
+      ],
+      "effect": {
+        "unlock": "dull_edge"
+      }
+    },
+    {
+      "id": "muffled_report",
+      "cost": 40,
+      "requires": [
+        "soft_hands"
+      ],
+      "effect": {
+        "unlock": "muffled_report"
+      }
+    },
+    {
+      "id": "clawhold",
+      "cost": 50,
+      "requires": [
+        "wall_run"
+      ],
+      "effect": {
+        "unlock": "clawhold"
+      }
+    },
+    {
+      "id": "opening_cut",
+      "cost": 45,
+      "requires": [
+        "ambush"
+      ],
+      "effect": {
+        "unlock": "opening_cut"
+      }
     }
   ]
 }

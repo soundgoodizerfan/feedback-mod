@@ -19,8 +19,7 @@
         "pistol_whip"
       ],
       "effect": {
-        "figure": "stagger_power",
-        "amount": 0.15
+        "unlock": "gun_fu_heavy_butt"
       }
     },
     {
@@ -315,6 +314,68 @@
         "amount": 0.5
       },
       "branch": "haul"
+    },
+    {
+      "id": "uppercut",
+      "cost": 70,
+      "requires": [
+        "grab"
+      ],
+      "effect": {
+        "unlock": "uppercut"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "rising_uppercut",
+      "cost": 60,
+      "requires": [
+        "uppercut"
+      ],
+      "effect": {
+        "unlock": "rising_uppercut"
+      }
+    },
+    {
+      "id": "haymaker",
+      "cost": 60,
+      "requires": [
+        "grab"
+      ],
+      "effect": {
+        "unlock": "haymaker"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "vault",
+      "cost": 60,
+      "requires": [
+        "quake_leap"
+      ],
+      "effect": {
+        "unlock": "vault"
+      }
+    },
+    {
+      "id": "recoil_vault",
+      "cost": 60,
+      "requires": [
+        "momentum"
+      ],
+      "effect": {
+        "unlock": "gun_fu_recoil_vault"
+      }
+    },
+    {
+      "id": "breather",
+      "cost": 45,
+      "requires": [
+        "mace_quake"
+      ],
+      "effect": {
+        "unlock": "breather"
+      }
     }
   ]
 }

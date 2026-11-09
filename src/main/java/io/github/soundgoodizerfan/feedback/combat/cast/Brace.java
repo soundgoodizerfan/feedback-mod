@@ -29,12 +29,18 @@ final class Brace {
     private Brace() {
     }
 
+    /** Mass (Mu) each point of worn armour toughness adds to what holds a blow, with Plate up ([OPEN]). */
+    private static final float PLATE_UP_MU_PER_TOUGHNESS = 1.5f;
+
     @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.HIGH)
     public static void onBraced(net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer p) || !braced(p)
                 || !(event.getSource().getEntity() instanceof LivingEntity foe) || foe.distanceToSqr(p) > 36)
             return;
         float mine = BodyMass.of(p) + BodyMass.armour(p), theirs = BodyMass.of(foe) + BodyMass.armour(foe);
+        // Plate up: worn armour toughness holds as well as its mass.
+        if (io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "plate_up"))
+            mine += (float) p.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR_TOUGHNESS) * PLATE_UP_MU_PER_TOUGHNESS;
         float held = event.getAmount() * Mth.clamp(mine / (mine + theirs), 0.3f, 0.8f);        event.setAmount(event.getAmount() - held);
         stagger(p, foe, held * ParryTuning.JOULES_PER_DAMAGE);
         ItemStack weapon = p.getMainHandItem();

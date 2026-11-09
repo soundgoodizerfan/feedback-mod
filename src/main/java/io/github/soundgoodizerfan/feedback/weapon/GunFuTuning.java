@@ -12,6 +12,8 @@ public final class GunFuTuning {
 
     /** Muzzle Stagger: ticks after a whip lands in which a point-blank shot at the same target counts, and how close (blocks) is point blank. */
     public static final int MUZZLE_TICKS = 12;
+    /** Factor Heavy Butt puts on a pistol-whip's knockback; [OPEN] stand-in until played. */
+    public static final float HEAVY_BUTT_KNOCK = 1.5f;
     public static final double MUZZLE_RANGE = 3.0;
     /** STAND-IN: joules of stagger-impact a kg m/s of the round's impulse carries (the kick's own impact over mass then reads it). */
     public static final float MUZZLE_JOULES_PER_IMPULSE = 40f;

@@ -68,17 +68,6 @@
       "needs_trait": "fan"
     },
     {
-      "id": "keen_eye",
-      "cost": 35,
-      "requires": [
-        "far_end"
-      ],
-      "effect": {
-        "figure": "parry_window",
-        "amount": 1
-      }
-    },
-    {
       "id": "far_end",
       "cost": 30,
       "requires": [
@@ -99,16 +88,6 @@
         "unlock": "close_work"
       },
       "exclusive": "reach_stance"
-    },
-    {
-      "id": "vault",
-      "cost": 60,
-      "requires": [
-        "keen_eye"
-      ],
-      "effect": {
-        "unlock": "vault"
-      }
     },
     {
       "id": "patient_hand",
@@ -301,6 +280,103 @@
       ],
       "effect": {
         "unlock": "read_the_draw"
+      }
+    },
+    {
+      "id": "far_sight",
+      "cost": 50,
+      "requires": [
+        "dead_eye"
+      ],
+      "effect": {
+        "unlock": "far_sight"
+      }
+    },
+    {
+      "id": "steady_walk",
+      "cost": 35,
+      "requires": [
+        "dead_eye"
+      ],
+      "effect": {
+        "figure": "steady_walk",
+        "amount": 0.5
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "fine_eye",
+      "cost": 40,
+      "requires": [
+        "case_file"
+      ],
+      "effect": {
+        "figure": "fine_eye",
+        "amount": 1
+      },
+      "branch": "fine"
+    },
+    {
+      "id": "sharper_eye",
+      "cost": 60,
+      "requires": [
+        "fine_eye"
+      ],
+      "effect": {
+        "figure": "fine_eye",
+        "amount": 1
+      },
+      "branch": "fine"
+    },
+    {
+      "id": "disarm_shot",
+      "cost": 60,
+      "requires": [
+        "quarry_mark"
+      ],
+      "effect": {
+        "unlock": "disarm_shot"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "called_draw",
+      "cost": 45,
+      "requires": [
+        "called_shot"
+      ],
+      "effect": {
+        "unlock": "called_draw"
+      }
+    },
+    {
+      "id": "held_draw",
+      "cost": 40,
+      "requires": [
+        "dead_eye"
+      ],
+      "effect": {
+        "unlock": "held_draw"
+      }
+    },
+    {
+      "id": "tipping_point",
+      "cost": 50,
+      "requires": [
+        "far_end"
+      ],
+      "effect": {
+        "unlock": "tipping_point"
+      }
+    },
+    {
+      "id": "thread_the_gap",
+      "cost": 50,
+      "requires": [
+        "soft_spot"
+      ],
+      "effect": {
+        "unlock": "thread_the_gap"
       }
     }
   ]

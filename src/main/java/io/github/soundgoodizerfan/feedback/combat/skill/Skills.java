@@ -112,11 +112,26 @@ public final class Skills {
 
     /** Multiplier on a tether's pull on {@code who}: a crouched player with {@code FOOTING} holds back a share, and worn armour mass adds to the hold. */
     public static float tetherPullScale(LivingEntity who) {
+        float lee = leeSide(who) ? 0.5f : 1f;
         float footing = who.isShiftKeyDown() ? modifier(who, Figure.FOOTING) : 0f;
         if (footing <= 0f)
-            return 1f;
+            return lee;
         float body = Math.max(1f, io.github.soundgoodizerfan.feedback.combat.tether.BodyMass.of(who));
-        return 1f - Math.min(0.7f, footing * (1f + io.github.soundgoodizerfan.feedback.combat.tether.BodyMass.armour(who) / body));
+        return lee * (1f - Math.min(0.7f, footing * (1f + io.github.soundgoodizerfan.feedback.combat.tether.BodyMass.armour(who) / body)));
+    }
+
+    /** Lee side: crouched with a full block against you (at foot or head height), you are sheltered from a pull and a shove. */
+    public static boolean leeSide(LivingEntity who) {
+        if (!who.isShiftKeyDown() || !unlocked(who, "lee_side"))
+            return false;
+        var level = who.level();
+        for (net.minecraft.core.Direction d : net.minecraft.core.Direction.Plane.HORIZONTAL)
+            for (int dy = 0; dy <= 1; dy++) {
+                var pos = who.blockPosition().above(dy).relative(d);
+                if (level.getBlockState(pos).isFaceSturdy(level, pos, d.getOpposite()))
+                    return true;
+            }
+        return false;
     }
 
     /** Extra ticks one click keeps a hand crank turning, when the crank's network carries a load. */

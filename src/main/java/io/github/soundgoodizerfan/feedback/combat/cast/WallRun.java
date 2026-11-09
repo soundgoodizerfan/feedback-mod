@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
+import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
+import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;
@@ -36,6 +39,18 @@ final class WallRun {
         return false;
     }
 
+    /** Whether the wall beside {@code p} is a soft one claws bite: wood, dirt or leaves. */
+    private static boolean softWallBeside(ServerPlayer p) {
+        for (int i = 0; i < 8; i++) {
+            double a = i * Math.PI / 4;
+            var state = p.level().getBlockState(net.minecraft.core.BlockPos.containing(p.position().add(Math.cos(a) * 0.9, 0.5, Math.sin(a) * 0.9)));
+            if (state.is(net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE) || state.is(net.minecraft.tags.BlockTags.MINEABLE_WITH_SHOVEL)
+                    || state.is(net.minecraft.tags.BlockTags.LEAVES))
+                return true;
+        }
+        return false;
+    }
+
     private static Vec3 along(ServerPlayer p) {
         Vec3 look = p.getLookAngle().multiply(1, 0, 1);
         return look.lengthSqr() < 1e-6 ? Vec3.ZERO : look.normalize();
@@ -45,7 +60,9 @@ final class WallRun {
     static boolean act(ServerPlayer p) {
         if (p.isPassenger() || !p.isSprinting() && p.onGround() || !wallBeside(p) || along(p).equals(Vec3.ZERO))
             return false;
-        RUNS.put(p.getUUID(), new long[]{p.level().getGameTime() + 18, 0});
+        // Clawhold: claws bite wood, dirt and leaves, and the run lasts twice as long on them.
+        int ticks = Skills.unlocked(p, "clawhold") && ModularGlove.claws(CombatGear.platedGlove(p)) && softWallBeside(p) ? 36 : 18;
+        RUNS.put(p.getUUID(), new long[]{p.level().getGameTime() + ticks, 0});
         Vec3 d = along(p);
         p.setDeltaMovement(d.x * 0.6, 0.3, d.z * 0.6);
         p.hurtMarked = true;

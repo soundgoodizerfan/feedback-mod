@@ -143,7 +143,7 @@ final class MarkAndFire {
                 // Ask the client to ease the view round to it, so the volley sweeps the player round the room, one mark at a time.
                 net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(p, new CastPayloads.Turn(yaw, pitch));
                 DeadEye.arm(p, 2); // each of these is exact
-                GunShots.triggerHeard(p.serverLevel(), p, held, yaw, pitch, System.currentTimeMillis(), false, InteractionHand.MAIN_HAND);
+                GunShots.triggerTurned(p.serverLevel(), p, held, yaw, pitch, System.currentTimeMillis(), false, InteractionHand.MAIN_HAND);
             });
         }
     }

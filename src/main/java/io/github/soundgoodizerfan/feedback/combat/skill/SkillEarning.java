@@ -4,6 +4,7 @@ package io.github.soundgoodizerfan.feedback.combat.skill;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
+import io.github.soundgoodizerfan.feedback.combat.hit.WeaponProfile;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
@@ -31,11 +32,9 @@ import org.joml.Vector3f;
  * <li>Anchor: a parry that lands ({@link #parried}, called from the parry resolver), per attacker.</li>
  * <li>Veil: a roll that cancelled a blow struck by something ({@link #dodged}, called from the roll's i-frame
  * cancel), per attacker. Fire ticks and other sourceless damage do not pay.</li>
- * <li>Brute: a hit with a blade, mace or spear, by baked family, never an item id. Either hand: the weapon is the one
- * the damage source names ({@link StrikeSource}), so an off-hand blow pays by the off-hand weapon.</li>
- * <li>Onslaught: any blow with an empty main hand (a punch, a kick).</li>
- * <li>Observation: a hit with any projectile weapon (gun, bow, crossbow) at or past {@link SkillTuning#OBSERVE_RANGE}
- * blocks. Arrows are paid in {@link BowCraft}; the weapon is found by type ({@code ProjectileWeaponItem}), never an id.</li>
+ * <li>Brute, Onslaught, Observation (and Veil): a landed blow, by the weapon's strongest axis and the swing's nature
+ * ({@link #hit}). Either hand: the weapon is the one the damage source names ({@link StrikeSource}), so an off-hand blow pays
+ * by the off-hand weapon. Arrows are paid in {@link BowCraft}.</li>
  * <li>Proficiency: deliberate acts only -- aid given to an ally, handling a hazard while protected from it, eating a
  * well-cooked meal. Taking a blow pays nothing.</li>
  * <li>Chaos: variety. A new kind of disorder left on a target ({@link #disorder}: burning, armour worn, weapon stripped,
@@ -79,18 +78,50 @@ public final class SkillEarning {
         String target = event.getEntity().getStringUUID();
         // The weapon of the hand that struck; in barehanded mode either hand is a fist whatever it holds.
         ItemStack weapon = BareMode.on(player) ? ItemStack.EMPTY : StrikeSource.weapon(player, source);
-        // Hands and feet: any blow with an empty hand (a punch, the Feedbacker, a kick).
-        if (weapon.isEmpty()) {
-            award(player, ONSLAUGHT, target, SkillTuning.FIST_HIT);
-            return;
+        hit(player, event.getEntity(), weapon, event.getNewDamage());
+    }
+
+    /** Per player: the game tick of their last landed blow, so a quick follow-up reads as a chain. */
+    private static final java.util.Map<java.util.UUID, Long> LAST_HIT = new java.util.HashMap<>();
+
+    @SubscribeEvent
+    public static void onLogout(net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent event) {
+        LAST_HIT.remove(event.getEntity().getUUID());
+    }
+
+    /**
+     * A landed blow, paid by the weapon and by the swing. The weapon's strongest of burst, tempo and precision names the home
+     * pool (Brute, Onslaught, Observation), so a maul, a pair of daggers and a sniper rifle each have one; the swing adds the
+     * pool of what it was: a blow of real energy (Brute), one in a quick chain (Onslaught), a placed hit -- from range, at
+     * the tip of the reach, on a read, unaware or back-turned creature (Observation) -- and a blow on an unaware creature
+     * pays Veil by the weapon's stealth. Each pool pays once, diminishing per target like any award.
+     */
+    private static void hit(ServerPlayer player, LivingEntity target, ItemStack weapon, float damage) {
+        var profile = weapon.isEmpty() ? WeaponProfile.of(player) : WeaponProfile.of(weapon);
+        String key = target.getStringUUID();
+        long now = player.level().getGameTime();
+        Long last = LAST_HIT.put(player.getUUID(), now);
+        java.util.Set<String> paid = new java.util.LinkedHashSet<>();
+        if (profile.burst() > 0 || profile.tempo() > 0 || profile.precision() > 0) {
+            String home = profile.burst() >= profile.tempo() && profile.burst() >= profile.precision() ? BRUTE
+                    : profile.tempo() >= profile.precision() ? ONSLAUGHT : OBSERVATION;
+            award(player, home, key, SkillTuning.HIT);
+            paid.add(home);
         }
-        ModularType.Family family = family(weapon);
-        if (family == ModularType.Family.GUN) {
-            if (player.distanceTo(event.getEntity()) >= SkillTuning.OBSERVE_RANGE)
-                award(player, OBSERVATION, target, SkillTuning.GUN_HIT);
-        } else if (family == ModularType.Family.BLADE || family == ModularType.Family.MACE
-                || family == ModularType.Family.SPEAR)
-            award(player, BRUTE, target, SkillTuning.MELEE_HIT);
+        if (damage * io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning.JOULES_PER_DAMAGE >= SkillTuning.BRUTE_HIT_J && paid.add(BRUTE))
+            award(player, BRUTE, key, SkillTuning.NATURE_HIT);
+        if (last != null && now - last <= SkillTuning.CHAIN_TICKS && paid.add(ONSLAUGHT))
+            award(player, ONSLAUGHT, key, SkillTuning.NATURE_HIT);
+        double reach = player.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ENTITY_INTERACTION_RANGE);
+        double dist = player.distanceTo(target);
+        boolean unaware = Weakness.unaware(target);
+        boolean placed = dist >= SkillTuning.OBSERVE_RANGE || dist >= reach * SkillTuning.REACH_TIP
+                || Weakness.isRead(player, target) || unaware || Weakness.backTurned(player, target);
+        if (placed && paid.add(OBSERVATION))
+            award(player, OBSERVATION, key, SkillTuning.NATURE_HIT);
+        int quiet = Math.round(SkillTuning.STEALTH_HIT * profile.stealth());
+        if (unaware && quiet > 0)
+            award(player, VEIL, key, quiet);
     }
 
     /** {@code player} left {@code target} in a {@code kind} of disorder: paid per kind per target, diminishing as that pair repeats. */

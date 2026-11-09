@@ -25,7 +25,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class Billhook implements ModularTrait {
 
-    private record Bleed(LivingEntity victim, long end, float damage) {
+    private record Bleed(LivingEntity victim, long end, float damage, int stacks) {
     }
 
     private static final Map<UUID, Bleed> BLEEDS = new ConcurrentHashMap<>();
@@ -38,7 +38,22 @@ public final class Billhook implements ModularTrait {
 
     /** Opens a bleed on {@code victim}, unless one is already running (claws on a glove use it too). */
     public static void open(LivingEntity victim, float seconds, float damage) {
-        BLEEDS.putIfAbsent(victim.getUUID(), new Bleed(victim, victim.level().getGameTime() + (long) (seconds * 20), damage));
+        BLEEDS.putIfAbsent(victim.getUUID(), new Bleed(victim, victim.level().getGameTime() + (long) (seconds * 20), damage, 1));
+    }
+
+    /** Whether {@code victim} has a bleed running. */
+    public static boolean bleeding(LivingEntity victim) {
+        return BLEEDS.containsKey(victim.getUUID());
+    }
+
+    /** Adds a stack to a running bleed (up to {@code max}) and runs it {@code seconds} longer from now; false if there is none. */
+    public static boolean stack(LivingEntity victim, int max, float seconds) {
+        Bleed b = BLEEDS.get(victim.getUUID());
+        if (b == null)
+            return false;
+        BLEEDS.put(victim.getUUID(), new Bleed(victim, Math.max(b.end, victim.level().getGameTime() + (long) (seconds * 20)),
+                b.damage, Math.min(max, b.stacks + 1)));
+        return true;
     }
 
     @SubscribeEvent
@@ -52,7 +67,7 @@ public final class Billhook implements ModularTrait {
                 BLEEDS.remove(b.victim.getUUID());
                 continue;
             }
-            b.victim.hurt(b.victim.damageSources().generic(), b.damage);
+            b.victim.hurt(b.victim.damageSources().generic(), b.damage * b.stacks);
         }
     }
 }

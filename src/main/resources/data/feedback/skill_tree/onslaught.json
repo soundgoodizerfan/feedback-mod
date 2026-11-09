@@ -40,27 +40,6 @@
       }
     },
     {
-      "id": "uppercut",
-      "cost": 70,
-      "requires": [
-        "chop"
-      ],
-      "effect": {
-        "unlock": "uppercut"
-      },
-      "rearm": "time"
-    },
-    {
-      "id": "rising_uppercut",
-      "cost": 60,
-      "requires": [
-        "uppercut"
-      ],
-      "effect": {
-        "unlock": "rising_uppercut"
-      }
-    },
-    {
       "id": "flurry",
       "cost": 60,
       "requires": [
@@ -99,17 +78,6 @@
       ],
       "effect": {
         "unlock": "frenzy"
-      },
-      "rearm": "time"
-    },
-    {
-      "id": "haymaker",
-      "cost": 60,
-      "requires": [
-        "chop"
-      ],
-      "effect": {
-        "unlock": "haymaker"
       },
       "rearm": "time"
     },
@@ -166,47 +134,14 @@
       }
     },
     {
-      "id": "axe_kick",
-      "cost": 60,
-      "requires": [
-        "breach_kick"
-      ],
-      "effect": {
-        "unlock": "axe_kick"
-      },
-      "rearm": "time"
-    },
-    {
-      "id": "hard_kick",
-      "cost": 30,
-      "requires": [
-        "breach_kick"
-      ],
-      "effect": {
-        "figure": "kick_wall_bonus",
-        "amount": 0.25
-      }
-    },
-    {
       "id": "wall_force",
-      "cost": 40,
+      "cost": 70,
       "requires": [
         "kick"
       ],
       "effect": {
         "figure": "kick_wall_bonus",
-        "amount": 0.5
-      }
-    },
-    {
-      "id": "wall_crush",
-      "cost": 30,
-      "requires": [
-        "hard_kick"
-      ],
-      "effect": {
-        "figure": "kick_wall_bonus",
-        "amount": 0.25
+        "amount": 1.0
       }
     },
     {
@@ -243,17 +178,6 @@
       },
       "rearm": "time",
       "branch": "dual"
-    },
-    {
-      "id": "swing",
-      "cost": 60,
-      "requires": [
-        "rising_tempo"
-      ],
-      "effect": {
-        "unlock": "swing"
-      },
-      "rearm": "time"
     },
     {
       "id": "snap_volley",
@@ -331,6 +255,61 @@
         "unlock": "forge_steady"
       },
       "branch": "cadence"
+    },
+    {
+      "id": "practised_reload",
+      "cost": 30,
+      "requires": [
+        "twin_reload"
+      ],
+      "effect": {
+        "figure": "practised_reload",
+        "amount": 0.2
+      },
+      "branch": "pace"
+    },
+    {
+      "id": "quick_draw",
+      "cost": 50,
+      "requires": [
+        "practised_reload"
+      ],
+      "effect": {
+        "unlock": "quick_draw"
+      },
+      "rearm": "strike",
+      "branch": "pace"
+    },
+    {
+      "id": "dodge_charge",
+      "cost": 40,
+      "requires": [
+        "practised_reload"
+      ],
+      "effect": {
+        "unlock": "gun_fu_dodge_charge"
+      },
+      "rearm": "time"
+    },
+    {
+      "id": "spent_case_draw",
+      "cost": 40,
+      "requires": [
+        "dodge_charge"
+      ],
+      "effect": {
+        "unlock": "gun_fu_spent_case_draw"
+      }
+    },
+    {
+      "id": "wall_smash",
+      "cost": 60,
+      "requires": [
+        "wall_force"
+      ],
+      "effect": {
+        "unlock": "wall_smash"
+      }
     }
   ]
 }

@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.hit;
 
+import io.github.soundgoodizerfan.feedback.combat.cast.Disorder;
+import io.github.soundgoodizerfan.feedback.combat.skill.Weakness;
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -93,9 +96,25 @@ public final class FistStances {
             float charge = p.getAttackStrengthScale(0.5f);
             event.setAmount(event.getAmount() + fist * (0.2f + charge * charge * 0.8f));
         }
-        var plate = ModularGlove.plateParams(CombatGear.platedGlove(p));
-        if (plate.containsKey("bleed_damage"))
-            Billhook.open(target, plate.getOrDefault("bleed_seconds", 5f), plate.get("bleed_damage"));
+        var glove = CombatGear.platedGlove(p);
+        var plate = ModularGlove.plateParams(glove);
+        if (plate.containsKey("bleed_damage")) {
+            float seconds = plate.getOrDefault("bleed_seconds", 5f), bleed = plate.get("bleed_damage");
+            // Opening cut: claws on an unaware or back-turned creature open a bleed twice as deep.
+            if (Skills.unlocked(p, "opening_cut") && (Weakness.unaware(target) || Weakness.backTurned(p, target)))
+                bleed *= FistTuning.OPENING_CUT;
+            // Gouge: a claw hit on a creature already bleeding stacks the bleed, and bleeding is a kind of disorder.
+            if (Skills.unlocked(p, "gouge") && Billhook.stack(target, FistTuning.GOUGE_STACKS, seconds))
+                Disorder.note(p, target, Disorder.Kind.BLEEDING);
+            else
+                Billhook.open(target, seconds, bleed);
+            // Tear straps: the claws rake the target's armour, and wear on their own points.
+            if (Skills.unlocked(p, "tear_straps")) {
+                Disorder.wearArmour(target, ModularTuning.IRON_CLASS_HARDNESS * FistTuning.TEAR_HARDNESS_SHARE);
+                if (glove.isDamageableItem() && glove.getDamageValue() < glove.getMaxDamage() - 1)
+                    glove.setDamageValue(glove.getDamageValue() + 1);
+            }
+        }
         long now = p.level().getGameTime();
         String move = null;
         Vec3 v = p.getDeltaMovement();

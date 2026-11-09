@@ -53,10 +53,10 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
     private static final int BARE = 0xFFB4B4B8;
 
     /** What a part's material looks like on the surface, which picks its tile: grain only on wood, brushing only on metal. */
-    enum Surface {
+    public enum Surface {
         METAL, WOOD, POLYMER, OTHER;
 
-        static Surface of(Material m) {
+        public static Surface of(Material m) {
             if (m == null)
                 return METAL;
             Material.Kind kind = m.kind().orElse(Material.Kind.METAL);

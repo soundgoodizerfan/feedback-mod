@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
+import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.hit.FistTuning;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
@@ -45,14 +46,15 @@ final class Uppercut {
                 return;
             }
             t.invulnerableTime = 0;
-            t.hurt(p.damageSources().playerAttack(p), 7f);
+            float dmg = 7f + CombatGear.of(p).fist();
+            t.hurt(p.damageSources().playerAttack(p), dmg);
             t.setDeltaMovement(t.getDeltaMovement().x, FistTuning.LAUNCH, t.getDeltaMovement().z);
             t.hurtMarked = true;
             if (crouched && io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(p, "rising_uppercut")) {
                 p.setDeltaMovement(p.getDeltaMovement().x, FistTuning.LAUNCH, p.getDeltaMovement().z);
                 p.hurtMarked = true;
             }
-            stagger(p, t, 7f * ParryTuning.JOULES_PER_DAMAGE);
+            stagger(p, t, dmg * ParryTuning.JOULES_PER_DAMAGE);
             Vec3 c = t.getBoundingBox().getCenter();
             lv.sendParticles(ParticleTypes.CRIT, c.x, c.y, c.z, 20, 0.2, 0.4, 0.2, 0.5);
             CastFx.sound(lv, c, SoundEvents.PLAYER_ATTACK_KNOCKBACK, 1f, 0.8f);

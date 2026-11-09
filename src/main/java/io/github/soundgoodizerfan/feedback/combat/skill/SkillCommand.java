@@ -76,8 +76,10 @@ public final class SkillCommand {
             for (SkillTree.Node n : t.nodes()) {
                 if (n.exclusive().isPresent() && !taken.add(n.exclusive().get()))
                     continue;
-                if (owned.add(SkillPools.key(t.tree(), n.id())))
-                    added++;
+                if (SkillPools.of(p).withUnlocked(owned).has(t.tree(), n.id()))
+                    continue; // already owned, or its twin in another tree is: a shared skill is bought once
+                owned.add(SkillPools.key(t.tree(), n.id()));
+                added++;
             }
         }
         SkillPools.set(p, SkillPools.of(p).withUnlocked(owned));

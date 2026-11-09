@@ -31,7 +31,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 public final class Disorder {
 
     /** The kinds of disorder a target can be left in; Chaos pays once per kind per target (decaying). */
-    public enum Kind { BURNING, WORN, STRIPPED, COLLIDED, BLINDED, TRIPPED, PINNED, POWDERED, PANICKED }
+    public enum Kind { BURNING, WORN, STRIPPED, COLLIDED, BLINDED, TRIPPED, PINNED, POWDERED, PANICKED, BLEEDING }
 
     /** STAND-IN: wear points a strike of equal hardness puts on a piece, and the ratio limits. */
     static final int BASE_WEAR = 6;
@@ -62,7 +62,7 @@ public final class Disorder {
     }
 
     /** Wears every damageable armour piece {@code t} has on by {@code mine} against its hardness; returns the hardest piece's hardness, 0 if nothing was worn. */
-    static float wearArmour(LivingEntity t, float mine) {
+    public static float wearArmour(LivingEntity t, float mine) {
         float hardest = 0f;
         for (EquipmentSlot slot : new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET}) {
             ItemStack worn = t.getItemBySlot(slot);

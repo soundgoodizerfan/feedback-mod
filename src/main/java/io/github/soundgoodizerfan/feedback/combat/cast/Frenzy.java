@@ -29,9 +29,9 @@ final class Frenzy {
     /** Per fighter: the game tick the frenzy ends and the tick the gasping after it ends. */
     private static final Map<UUID, long[]> STATE = new HashMap<>();
 
-    /** Frenzy: with empty hands, swing eighty percent faster for five seconds; afterwards three seconds of swinging a third slower, winded. */
+    /** Frenzy: with bare hands or a quick weapon, swing eighty percent faster for five seconds; afterwards three seconds of swinging a third slower, winded. */
     static boolean act(ServerPlayer p) {
-        if (!p.getMainHandItem().isEmpty())
+        if (io.github.soundgoodizerfan.feedback.combat.hit.WeaponProfile.meleeOf(p).tempo() < io.github.soundgoodizerfan.feedback.combat.hit.ProfileTuning.TEMPO_MIN)
             return false;
         long now = p.level().getGameTime();
         var speed = p.getAttribute(Attributes.ATTACK_SPEED);
