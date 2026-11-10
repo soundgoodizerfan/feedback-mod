@@ -1,0 +1,6 @@
+{
+  "form": "module_actuator",
+  "operation": "drill",
+  "dimension": "bore",
+  "per_fu": 0.1
+}

@@ -3587,7 +3587,7 @@
   "feedback.jei.info.woodworking_table": "Where wood, bone, leather, fiber and paper parts are shaped. Pick a part, put stock in its cells, and spend a point of an axe from its slot.",
   "feedback.jei.info.stonecutter": "Where stone, ceramic, glass and crystal parts are shaped. Pick a part, put stock in its cells, and spend a point of a Sawblade from its slot. A cut made with a Data Stick in the off hand is recorded for a Power Cutter.",
   "feedback.jei.info.prep_table": "Where dishes are made. Pick a dish, put food in its cells, and cut with a knife from its slot.",
-  "feedback.jei.info.blueprint_table": "Draw a modular item here and print it on paper. The blueprint predicts the figures the parts would give if they came out exactly to drawing; what an item really has is read off the item with an instrument.",
+  "feedback.jei.info.blueprint_table": "Draw a modular item here and print it on paper. The blueprint predicts the figures the parts would give if they came out exactly to drawing; what an item really has is read off the item with an instrument. A second slot beside the paper holds a blueprint to copy: press Copy with blank paper in the paper slot and the original stays.",
   "feedback.jei.info.enchanting_table": "Open it with a part to enchant. The part is held while the screen is open and handed back when it closes.",
   "feedback.jei.info.gun_table": "Where guns are made. Pick a gun, put parts in its cells, and read its spec sheet against a round from its slot.",
   "feedback.jei.info.reloading_press": "Use it to open it. Seat a bullet and a charge in a case to make a cartridge. The bullet's shape is the bullet you seat. A nugget makes buckshot; birdshot, large shot and flechettes are their own items. A nugget in the core slot sits inside a bullet's jacket. A brewed potion in the payload slot is sealed in a glass vial in the bullet and let go where the round lands. A seed, a strand of string or a lump of slime also go in the payload slot.",
@@ -6880,5 +6880,8 @@
   "message.feedback.treatise.written": "Taking it apart, you write down what you learn: a treatise on %s.",
   "feedback.jei.info.treatise_binder": "Holds treatises like a bundle; click a treatise onto it to put it in. The Blueprint Table counts the treatises inside as held.",
   "feedback.jei.info.treatise_shelf": "A shelf for treatises and binders. Put it against a Blueprint Table: what it holds counts as held by whoever draws there.",
-  "feedback.jei.info.blank_treatise": "Take a machine, gun or powered-suit module apart at a bench with this in the blueprint slot and it becomes a treatise on that school. A treatise lets the Blueprint Table draw blueprints of that school's types."
+  "feedback.jei.info.blank_treatise": "Take a machine, gun or powered-suit module apart at a bench with this in the blueprint slot and it becomes a treatise on that school. A treatise lets the Blueprint Table draw blueprints of that school's types.",
+  "gui.feedback.blueprint_table.copy": "Copy",
+  "message.feedback.blueprint_table.copied": "Copied onto the paper.",
+  "message.feedback.blueprint_table.cannot_copy": "Put a blueprint in the left slot and blank paper in the right to copy it."
 }

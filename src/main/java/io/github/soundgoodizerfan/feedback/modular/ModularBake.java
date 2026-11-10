@@ -458,6 +458,13 @@ public final class ModularBake {
                 power = competence(m) / k.get("competence");
             else if (k.containsKey("optic"))
                 power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
+            // A bored part (a cylinder, a nozzle) works as well as its bore is cut to the size the upgrade wants: uncut or overbored, it still
+            // works, only worse. The cut comes off the part (a drill, per Fu), never a gate.
+            if (k.containsKey("bore_target") && role.dims().containsKey("bore")) {
+                float want = k.get("bore_target"), cut = p.dim("bore", role.dims().get("bore").def());
+                float closeness = Math.max(0f, 1f - Math.abs(cut - want) / want);
+                power *= ModularTuning.BORE_FLOOR + (1f - ModularTuning.BORE_FLOOR) * closeness;
+            }
             out.put(Fig.att(n), k.get("module"));
             out.put(Fig.pow(n), clamp(power * supported, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
             n++;

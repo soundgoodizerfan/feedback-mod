@@ -37,10 +37,15 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     public static final int MAX_VARIANTS = 3;
     /** Button: send the samples back to the player, as the screen's page of rows has changed. */
     public static final int BTN_CLEAR = 1;
+    /** Button: copy the blueprint in the source slot onto the blank paper. */
+    public static final int BTN_COPY = 2;
+    public static final int SOURCE_X = 240, SOURCE_Y = 278;
     public static final int SAMPLE_X = 186, SAMPLE_Y = 278, SAMPLE_STEP = 0;
 
     private final Container paper = new SimpleContainer(1);
     private final Container samples = new SimpleContainer(ROLE_SLOTS);
+    /** A blueprint to copy from; kept when copied. */
+    private final Container source = new SimpleContainer(1);
     private final Player player;
     /** Which role rows the screen draws a material for; the other sample slots are inactive. Client side only. */
     private List<Boolean> shown = List.of();
@@ -85,6 +90,17 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
                 }
             });
         }
+        addSlot(new Slot(source, 0, SOURCE_X, SOURCE_Y) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return stack.getItem() instanceof ModularBlueprintItem && ModularStacks.design(stack) != null;
+            }
+
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(inventory, column, HOTBAR_X + column * 18, HOTBAR_Y));
     }
@@ -142,6 +158,17 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (id == BTN_COPY) {
+            // Copying needs no treatise: it is the same drawing, onto blank paper. The original stays.
+            ItemStack from = source.getItem(0), onto = paper.getItem(0);
+            if (!from.isEmpty() && !onto.isEmpty() && onto.is(net.minecraft.world.item.Items.PAPER)) {
+                paper.setItem(0, from.copyWithCount(1));
+                broadcastChanges();
+                send(player, Component.translatable("message.feedback.blueprint_table.copied"));
+            } else
+                send(player, Component.translatable("message.feedback.blueprint_table.cannot_copy"));
+            return true;
+        }
         if (id != BTN_CLEAR)
             return false;
         access.execute((level, pos) -> clearContainer(player, samples));
@@ -154,6 +181,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         access.execute((level, pos) -> {
             clearContainer(player, paper);
             clearContainer(player, samples);
+            clearContainer(player, source);
         });
     }
 
@@ -169,7 +197,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         ItemStack held = slot.getItem();
         ItemStack moved = held.copy();
-        int hotbar = 1 + ROLE_SLOTS;
+        int hotbar = 2 + ROLE_SLOTS;
         if (index < hotbar) {
             if (!moveItemStackTo(held, hotbar, slots.size(), true))
                 return ItemStack.EMPTY;

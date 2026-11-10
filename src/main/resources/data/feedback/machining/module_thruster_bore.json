@@ -1,0 +1,6 @@
+{
+  "form": "module_thruster",
+  "operation": "drill",
+  "dimension": "bore",
+  "per_fu": 0.1
+}

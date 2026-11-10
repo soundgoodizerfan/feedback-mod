@@ -375,7 +375,8 @@
             "params": {
               "module": 18.0,
               "electric": 0.6,
-              "needs_motor": 1.0
+              "needs_motor": 1.0,
+              "bore_target": 14.0
             }
           },
           {
@@ -386,7 +387,8 @@
             "params": {
               "module": 19.0,
               "competence": 4.0,
-              "needs_motor": 1.0
+              "needs_motor": 1.0,
+              "bore_target": 18.0
             }
           },
           {
@@ -397,7 +399,8 @@
             "params": {
               "module": 27.0,
               "electric": 0.6,
-              "needs_cell": 1.0
+              "needs_cell": 1.0,
+              "bore_target": 12.0
             }
           },
           {
@@ -408,7 +411,8 @@
             ],
             "params": {
               "module": 28.0,
-              "competence": 4.0
+              "competence": 4.0,
+              "bore_target": 20.0
             }
           },
           {
@@ -419,7 +423,8 @@
             ],
             "params": {
               "module": 21.0,
-              "competence": 4.0
+              "competence": 4.0,
+              "bore_target": 16.0
             }
           },
           {
@@ -431,7 +436,8 @@
             "params": {
               "module": 30.0,
               "competence": 4.0,
-              "needs_motor": 1.0
+              "needs_motor": 1.0,
+              "bore_target": 24.0
             }
           },
           {
@@ -441,7 +447,8 @@
             ],
             "params": {
               "module": 22.0,
-              "competence": 4.0
+              "competence": 4.0,
+              "bore_target": 10.0
             }
           },
           {
@@ -451,7 +458,8 @@
             ],
             "params": {
               "module": 20.0,
-              "competence": 4.0
+              "competence": 4.0,
+              "bore_target": 10.0
             }
           },
           {
@@ -463,10 +471,20 @@
             "params": {
               "module": 33.0,
               "competence": 4.0,
-              "needs_motor": 1.0
+              "needs_motor": 1.0,
+              "bore_target": 22.0
             }
           }
         ]
+      },
+      "dims": {
+        "bore": {
+          "min": 0,
+          "max": 40,
+          "unit": "mm",
+          "default": 0,
+          "step": 1
+        }
       }
     },
     "R": {
@@ -495,7 +513,8 @@
             ],
             "params": {
               "module": 29.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "bore_target": 8.0
             }
           },
           {
@@ -509,10 +528,20 @@
               "module": 32.0,
               "electric": 0.6,
               "needs_cell": 1.0,
-              "needs_motor": 1.0
+              "needs_motor": 1.0,
+              "bore_target": 16.0
             }
           }
         ]
+      },
+      "dims": {
+        "bore": {
+          "min": 0,
+          "max": 40,
+          "unit": "mm",
+          "default": 0,
+          "step": 1
+        }
       }
     },
     "C": {

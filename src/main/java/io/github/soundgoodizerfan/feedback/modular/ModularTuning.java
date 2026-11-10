@@ -174,6 +174,8 @@ public final class ModularTuning {
     public static final float WIRING_AMPS_PER_ATTACHMENT = 8f;
     /** A suit module's support parts: the share of an upgrade's strength a worthless one still gives, and the capacity (amp-ticks) and rating (amps) at which a cell or motor is half as good as it gets; placeholders. */
     public static final float SUPPORT_FLOOR = 0.5f, SUPPORT_CELL_HALF = 2000f, SUPPORT_MOTOR_HALF = 20f;
+    /** The share of its strength an upgrade whose bore is cut far from the size it wants still has. */
+    public static final float BORE_FLOOR = 0.5f;
     /** The grade a drawing assumes for a support it does not have: a middling one. */
     public static final float DRAWN_SUPPORT_GRADE = 0.5f;
     /** Plate this saturated gives armour toughness, running 0 to 3 over the last tenth: steel a little, diamond and netherite most. */

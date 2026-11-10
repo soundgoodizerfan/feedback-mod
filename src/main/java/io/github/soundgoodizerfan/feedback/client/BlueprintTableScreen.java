@@ -47,6 +47,9 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
             } else
                 skin.cue(GuiSkin.Cue.REJECT);
         }, leftPos + BlueprintTableMenu.PAPER_X + 20, topPos + BlueprintTableMenu.PAPER_Y, 38, 16));
+        addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.blueprint_table.copy"),
+                b -> minecraft.gameMode.handleInventoryButtonClick(menu.containerId, BlueprintTableMenu.BTN_COPY),
+                leftPos + BlueprintTableMenu.SOURCE_X + 20, topPos + BlueprintTableMenu.SOURCE_Y, 30, 16));
     }
 
     // --- BlueprintBoard.Host ------------------------------------------------------------------
@@ -80,6 +83,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
         skin.slot(g, leftPos + BlueprintTableMenu.PAPER_X, topPos + BlueprintTableMenu.PAPER_Y);
+        skin.slot(g, leftPos + BlueprintTableMenu.SOURCE_X, topPos + BlueprintTableMenu.SOURCE_Y);
         for (int i = 0; i < 9; i++)
             skin.slot(g, leftPos + BlueprintTableMenu.HOTBAR_X + i * 18, topPos + BlueprintTableMenu.HOTBAR_Y);
         if (board.hasSelection())
