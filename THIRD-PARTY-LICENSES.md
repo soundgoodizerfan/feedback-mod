@@ -773,7 +773,8 @@ Not from any source above. Rights: the project's, All Rights Reserved.
 - Crop items: `item/<crop>.png` and `item/<crop>_seed.png` for `cabbage`, `chile_pepper`, `corn`, `garlic`, `ginger`, `onion`, `pepper`, `rice`, `soybean`, `tomato`, `turnip`.
 - Cooked foods: `item/french_fries.png`, `item/fried_egg.png`, `item/mashed_potatoes.png`, `item/potato_chips.png`.
 - Ore overlays: `block/ore/overlay_{chunk,cluster,lump,speck}.png`, `block/ore_overlay_{0,1,2,3}.png`.
-- Modular layers not from Silent Gear: `item/modular/{boots_0,bow_0,bow_1,chestplate_0,cleaver_0,cleaver_1,crossbow_0,crossbow_1,crossbow_2,crossbow_3,hand_hammer_0,hand_hammer_1,hand_knife_0,hand_knife_1,helmet_0,leggings_0,sawblade_0,shield_0,shield_1,shield_2,spatula_0,spatula_1,spoon_0,spoon_1,twin_0,twin_1,twin_2}.png`.
+- Modular layers not from Silent Gear: `item/modular/{bow_0,bow_1,cleaver_0,cleaver_1,crossbow_0,crossbow_1,crossbow_2,crossbow_3,hand_hammer_0,hand_hammer_1,hand_knife_0,hand_knife_1,sawblade_0,shield_0,shield_1,shield_2,spatula_0,spatula_1,spoon_0,spoon_1,twin_0,twin_1,twin_2}.png`.
+- Armour item icons: `item/modular/{helmet_0,chestplate_0,leggings_0,boots_0}.png` are Minecraft's own `iron_helmet`, `iron_chestplate`, `iron_leggings` and `iron_boots` item sprites (Mojang, from the 1.21.1 client assets), desaturated to greyscale (luminance, alpha kept) so the modular item model can tint them by the plate's material like the other modular layers. Derived from Mojang's art, not Malcolm Riley's; see the note below.
 - Status effect icons: `mob_effect/{featherstep,heat_ward,quench,second_wind}.png`.
 - Armour layers: `models/armor/modular_layer_1.png`, `models/armor/modular_layer_2.png`.
 - `entity/feedbacker_skin.png` is a supplied Minecraft skin; see Skins below.
