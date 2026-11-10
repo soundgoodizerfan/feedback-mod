@@ -73,6 +73,11 @@ public class ModularTypes extends SimpleJsonResourceReloadListener {
         return client.isEmpty() ? INSTANCE.types() : new TreeMap<>(client);
     }
 
+    /** One type as {@link #known()} has it, without copying the table: for a hot path that asks about one stack. */
+    public static ModularType known(ResourceLocation id) {
+        return client.isEmpty() ? INSTANCE.types.get(id) : client.get(id);
+    }
+
     /** The types as {@code level}'s side knows them. */
     public static Map<ResourceLocation, ModularType> on(Level level) {
         return level.isClientSide ? new TreeMap<>(client) : INSTANCE.types();

@@ -136,6 +136,7 @@ public class FClientSetup {
         event.register(PackKey.KEY);
         event.register(SuitKeys.WHEEL);
         event.register(SuitKeys.DASH);
+        event.register(SuitKeys.JET);
         event.register(SuitKeys.SCREEN);
         event.register(CombatKeys.PARRY);
         event.register(CombatKeys.ROLL);

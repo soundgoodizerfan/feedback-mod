@@ -1,0 +1,501 @@
+{
+  "family": "suit_module",
+  "slot": "mainhand",
+  "wear_litres": 0.05,
+  "wear_role": "H",
+  "primary": "C",
+  "roles": {
+    "H": {
+      "name": "casing",
+      "forms": [
+        "module_casing"
+      ],
+      "litres": 0.05,
+      "layer": 0,
+      "part": {
+        "item": "feedback:module_casing",
+        "shape": [
+          "PP"
+        ],
+        "stock": [
+          "plate"
+        ]
+      }
+    },
+    "W": {
+      "name": "wiring",
+      "forms": [
+        "module_wiring"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "part": {
+        "item": "feedback:module_wiring",
+        "shape": [
+          "W"
+        ],
+        "stock": [
+          "wire"
+        ],
+        "base": "coarse",
+        "variants": [
+          {
+            "name": "coarse"
+          },
+          {
+            "name": "fine",
+            "shape": [
+              "WW"
+            ]
+          },
+          {
+            "name": "dense",
+            "shape": [
+              "WW",
+              "WW"
+            ]
+          }
+        ]
+      }
+    },
+    "C": {
+      "name": "core",
+      "forms": [
+        "module_core"
+      ],
+      "litres": 0.03,
+      "layer": 2,
+      "part": {
+        "item": "feedback:module_core",
+        "shape": [
+          "P"
+        ],
+        "stock": [
+          "ingot",
+          "plate",
+          "rod"
+        ],
+        "variants": [
+          {
+            "name": "rebreather",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 1.0,
+              "competence": 4.0,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "rangefinder",
+            "shape": [
+              "PP"
+            ],
+            "params": {
+              "module": 2.0,
+              "optic": 0.6,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "respirator",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 3.0,
+              "competence": 4.0,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "glare_filter",
+            "shape": [
+              "PP"
+            ],
+            "params": {
+              "module": 4.0,
+              "optic": 0.6,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "long_lens",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 5.0,
+              "optic": 0.6,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "crash_liner",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 6.0,
+              "competence": 4.0,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "reflex_link",
+            "shape": [
+              "PP"
+            ],
+            "params": {
+              "module": 7.0,
+              "electric": 0.6,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "heat_sink",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 8.0,
+              "thermal": 0.08,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "coolant_loop",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 9.0,
+              "thermal": 0.08,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "efficiency_bus",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 10.0,
+              "electric": 0.6,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "autodoc",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 11.0,
+              "electric": 0.6,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "reactive_plating",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 12.0,
+              "competence": 4.0,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "blast_shell",
+            "shape": [
+              "PPP",
+              "PPP"
+            ],
+            "params": {
+              "module": 13.0,
+              "competence": 4.0,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "thorn_array",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 14.0,
+              "electric": 0.6,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "thermal_lining",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 15.0,
+              "thermal": 0.08,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "magnet_pickup",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 16.0,
+              "electric": 0.6,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "fire_curtain",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 17.0,
+              "thermal": 0.08,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "strider_pistons",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 18.0,
+              "electric": 0.6,
+              "piece": 3.0
+            }
+          },
+          {
+            "name": "step_assist",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 19.0,
+              "competence": 4.0,
+              "piece": 3.0
+            }
+          },
+          {
+            "name": "swim_fins",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 20.0,
+              "competence": 4.0,
+              "piece": 3.0
+            }
+          },
+          {
+            "name": "shock_absorbers",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 21.0,
+              "competence": 4.0,
+              "piece": 3.0
+            }
+          },
+          {
+            "name": "grip_pads",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 22.0,
+              "competence": 4.0,
+              "piece": 3.0
+            }
+          },
+          {
+            "name": "load_frame",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 23.0,
+              "competence": 4.0,
+              "piece": 3.0
+            }
+          },
+          {
+            "name": "stabiliser",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 24.0,
+              "competence": 4.0,
+              "piece": 3.0
+            }
+          },
+          {
+            "name": "mag_anchor",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 25.0,
+              "competence": 4.0,
+              "piece": 4.0
+            }
+          },
+          {
+            "name": "heat_shield",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 26.0,
+              "thermal": 0.08,
+              "piece": 4.0
+            }
+          },
+          {
+            "name": "jump_coil",
+            "shape": [
+              "PPP"
+            ],
+            "params": {
+              "module": 27.0,
+              "electric": 0.6,
+              "piece": 4.0
+            }
+          },
+          {
+            "name": "landing_gear",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 28.0,
+              "competence": 4.0,
+              "piece": 4.0
+            }
+          },
+          {
+            "name": "rocket_spur",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 29.0,
+              "electric": 0.6,
+              "piece": 4.0
+            }
+          },
+          {
+            "name": "stomp_actuator",
+            "shape": [
+              "PPP",
+              "PPP"
+            ],
+            "params": {
+              "module": 30.0,
+              "competence": 4.0,
+              "piece": 4.0
+            }
+          },
+          {
+            "name": "cloak_field",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 31.0,
+              "thermal": 0.08,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "jet_pack",
+            "shape": [
+              "PPP",
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 32.0,
+              "electric": 0.6,
+              "piece": 2.0
+            }
+          },
+          {
+            "name": "shock_ram",
+            "shape": [
+              "PPP",
+              "PPP"
+            ],
+            "params": {
+              "module": 33.0,
+              "competence": 4.0,
+              "piece": 4.0
+            }
+          },
+          {
+            "name": "scan_ping",
+            "shape": [
+              "PP",
+              "PP"
+            ],
+            "params": {
+              "module": 34.0,
+              "optic": 0.5,
+              "piece": 1.0
+            }
+          },
+          {
+            "name": "emp_coil",
+            "shape": [
+              "PPP",
+              "PP"
+            ],
+            "params": {
+              "module": 35.0,
+              "electric": 0.6,
+              "piece": 3.0
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "H",
+      "W",
+      "C"
+    ]
+  ],
+  "defaults": {}
+}

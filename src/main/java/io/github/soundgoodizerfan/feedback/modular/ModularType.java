@@ -164,7 +164,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         GEARBOX,
         /** An aircraft propeller ({@code propeller}): hub and blades, whose bake is the {@link ModularBake#propeller} design the placed block runs on. */
         PROPELLER,
+        /** A suit upgrade module ({@code suit_module}): casing, wiring and a core cut in the shape that names what it does. Made at the Tool Table, then held whole in an armour piece's upgrade role ({@link ModularNest}); its bake is {@link ModularBake#suitModule}. No wear bar of its own. */
+        SUIT_MODULE,
         MACHINE;
+
+        /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). */
+        public String nestForm() {
+            return this == SUIT_MODULE ? "suit_module" : "";
+        }
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
 

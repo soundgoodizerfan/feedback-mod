@@ -64,7 +64,9 @@ public final class ModularCause {
                 case SUIT_GAUGE -> role.name().equals("gauge");
                 case SUIT_SENSE -> role.name().equals("sensor_head");
                 case SUIT_BAY -> role.name().equals("battery_bay");
-                case SUIT_MODULE, SUIT_POWER -> role.name().equals("upgrade");
+                case SUIT_MODULE, SUIT_POWER -> role.name().equals("upgrade") || role.name().equals("core");
+                case SUIT_WIRING -> role.name().equals("wiring");
+                case SUIT_PIECE -> role.name().equals("core");
                 case COMFORT -> p.role().equals(ModularBedroll.FILL) || p.role().equals(ModularBedroll.SHEET);
                 case FIST, SWING_DRAG -> p.role().equals(ModularGlove.PLATE);
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds

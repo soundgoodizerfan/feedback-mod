@@ -22,9 +22,10 @@ public final class SuitKeys {
 
     public static final KeyMapping WHEEL = new KeyMapping("key.feedback.suit_wheel", InputConstants.KEY_V, "key.categories.feedback");
     public static final KeyMapping DASH = new KeyMapping("key.feedback.suit_dash", InputConstants.KEY_B, "key.categories.feedback");
+    public static final KeyMapping JET = new KeyMapping("key.feedback.suit_jet", InputConstants.KEY_G, "key.categories.feedback");
     public static final KeyMapping SCREEN = new KeyMapping("key.feedback.suit_screen", InputConstants.KEY_J, "key.categories.feedback");
 
-    private static boolean dash;
+    private static boolean dash, jet;
 
     private SuitKeys() {
     }
@@ -47,6 +48,11 @@ public final class SuitKeys {
         if (want != dash) {
             dash = want;
             PacketDistributor.sendToServer(new SuitPayload(SuitPayload.DASH, want ? 1 : 0));
+        }
+        boolean lift = worn && mc.screen == null && JET.isDown() && SuitClient.live(Ability.JET);
+        if (lift != jet) {
+            jet = lift;
+            PacketDistributor.sendToServer(new SuitPayload(SuitPayload.JET, lift ? 1 : 0));
         }
     }
 }

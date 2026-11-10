@@ -54,6 +54,19 @@ public final class SuitTuning {
     public static final float THERMAL_BASE_RANGE = 12f, THERMAL_RANGE_PER_CELL = 6f, THERMAL_MAX_RANGE = 24f;
     public static final int THERMAL_SCAN_TICKS = 5, THERMAL_MAX_ENTRIES = 256;
 
+    // --- module abilities ---------------------------------------------------------------------------
+    /** Cloak: amps a tick to hold the field, and ticks each refresh of the hidden invisibility lasts. */
+    public static final float CLOAK_AMPS = 1.2f;
+    public static final int CLOAK_REFRESH = 10, CLOAK_TICKS = 40;
+    /** Jet: amps a tick of thrust, vertical acceleration (blocks per tick squared) at full power, the climb it tops out at, and the hold it gives against a fall. */
+    public static final float JET_AMPS = 2.5f, JET_ACCEL = 0.08f, JET_TOP = 0.45f;
+    /** Pulses: amp-ticks each costs, ticks before it can fire again, and its reach in blocks at full power. */
+    public static final float SHOCK_COST = 160f, SCAN_COST = 90f, EMP_COST = 220f;
+    public static final int SHOCK_COOLDOWN = 100, SCAN_COOLDOWN = 60, EMP_COOLDOWN = 200;
+    public static final float SHOCK_RADIUS = 4f, SHOCK_DAMAGE = 5f, SHOCK_PUSH = 1.4f, SCAN_RADIUS = 28f, EMP_RADIUS = 7f;
+    /** Ticks a scanned thing glows and a jammed mob stays slowed and blind. */
+    public static final int SCAN_GLOW_TICKS = 160, EMP_TICKS = 140;
+
     // --- sync -----------------------------------------------------------------------------------
     /** Ticks between writing the battery's drain and the suit's state back to the stacks (every change would resend the slot). */
     public static final int WRITE_TICKS = 20;

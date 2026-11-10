@@ -12,6 +12,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * What a modular item was put together as: a type and the parts in it. Nothing derived -- the
@@ -42,11 +43,36 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
      * @param dims     as-built measures the machine left on it (a barrel's real bore, outside and length), by the
      *                 names its role declares ({@link ModularType.Dim}); empty for a part whose role declares none,
      *                 and for a name left out the role's default is read.
+     * @param sub      for a role that holds a finished modular item (a suit's upgrade module): that item, whole, with its own design,
+     *                 figures, wear and attunements, and any items nested in it in turn. Empty for every other part. {@code material}
+     *                 then names the held item's wearing material, so the part is found like any other.
      */
     public record Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw,
-                       Map<String, Float> dims) {
+                       Map<String, Float> dims, ItemStack sub) {
         public Part {
             dims = Map.copyOf(dims);
+        }
+
+        public Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw,
+                    Map<String, Float> dims) {
+            this(role, material, form, count, kind, variant, flaw, dims, ItemStack.EMPTY);
+        }
+
+        /** A part that is a finished modular item held whole. */
+        public static Part holding(String role, ResourceLocation material, String form, ItemStack held) {
+            return new Part(role, material, form, 1, "", "", 0, Map.of(), held.copyWithCount(1));
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o instanceof Part p && role.equals(p.role) && material.equals(p.material) && form.equals(p.form) && count == p.count
+                    && kind.equals(p.kind) && variant.equals(p.variant) && flaw == p.flaw && dims.equals(p.dims)
+                    && ItemStack.matches(sub, p.sub);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(role, material, form, count, kind, variant, flaw, dims, ItemStack.hashItemAndComponents(sub));
         }
 
         public Part(String role, ResourceLocation material, String form, int count) {
@@ -65,7 +91,8 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
                 Codec.STRING.optionalFieldOf("kind", "").forGetter(Part::kind),
                 Codec.STRING.optionalFieldOf("variant", "").forGetter(Part::variant),
                 Codec.INT.optionalFieldOf("flaw", 0).forGetter(Part::flaw),
-                Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("dims", Map.of()).forGetter(Part::dims)
+                Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("dims", Map.of()).forGetter(Part::dims),
+                ItemStack.OPTIONAL_CODEC.optionalFieldOf("sub", ItemStack.EMPTY).forGetter(Part::sub)
         ).apply(instance, Part::new));
 
         /** Eight fields, two more than {@code StreamCodec.composite} takes. */
@@ -79,11 +106,12 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
                     ByteBufCodecs.STRING_UTF8.encode(buf, p.variant());
                     ByteBufCodecs.VAR_INT.encode(buf, p.flaw());
                     Part.DIMS.encode(buf, p.dims());
+                    ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, p.sub());
                 },
                 buf -> new Part(ByteBufCodecs.STRING_UTF8.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
                         ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
                         ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf),
-                        ByteBufCodecs.VAR_INT.decode(buf), Part.DIMS.decode(buf)));
+                        ByteBufCodecs.VAR_INT.decode(buf), Part.DIMS.decode(buf), ItemStack.OPTIONAL_STREAM_CODEC.decode(buf)));
 
         static final StreamCodec<RegistryFriendlyByteBuf, Map<String, Float>> DIMS =
                 ByteBufCodecs.map(java.util.HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.FLOAT);

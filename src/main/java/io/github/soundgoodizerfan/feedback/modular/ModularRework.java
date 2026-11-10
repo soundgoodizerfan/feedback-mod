@@ -77,7 +77,10 @@ public final class ModularRework {
             return Optional.of(out);
         }
         // Swap: a different material, in as many cells as the part has (or one shaped part), replaces that part.
+        // A held modular item is never a swap (its slot is taken out and refilled whole); it only goes into an empty role, below.
         for (Map.Entry<String, ModularType.Role> r : type.roles().entrySet()) {
+            if (ModularNest.holdable(stock.get(0)))
+                break;
             Part part = design.part(r.getKey());
             boolean shaped = r.getValue().part().isPresent() || r.getValue().striker();
             int cells = shaped ? 1 : part == null ? -1 : part.count();
@@ -101,7 +104,9 @@ public final class ModularRework {
         // Add: an optional part (a tip, a binding, a gun's fitting or sight, an armour piece's lining or studs), as many pieces as
         // its role asks, on a tool made without one. A part the type's patterns do not lay is optional, and so is everything on armour
         // but its plate (the plate is the piece); a design the bake refuses (a second muzzle device on a gun) is refused here too.
-        List<String> optional = type.family() == ModularType.Family.ARMOUR
+        // A finished module is held whole by a role that lists its nest form (never laid at assembly, so marked after).
+        List<String> optional = ModularNest.holdable(stock.get(0)) ? type.order()
+                : type.family() == ModularType.Family.ARMOUR
                 ? type.placed().stream().filter(k -> !k.equals(type.primary())).toList() : type.extras();
         for (String key : optional) {
             ModularType.Role role = type.roles().get(key);
@@ -148,6 +153,10 @@ public final class ModularRework {
             ModularType.Role role = type.roles().get(part.role());
             if (role == null)
                 continue;
+            if (!part.sub().isEmpty()) {
+                out.add(part.sub().copy());
+                continue;
+            }
             int count = part.role().equals(type.wearRole()) ? (int) Math.floor(part.count() * kept) : part.count();
             if (count <= 0)
                 continue;

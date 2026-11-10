@@ -67,7 +67,7 @@ final class SuitScreen extends Screen {
     @Override
     protected void init() {
         opening.start();
-        int x = px() + COL_X, y = py() + H - 12 - 3 * 16;
+        int x = px() + COL_X, y = py() + H - 12 - 5 * 16;
         Ability[] all = Ability.values();
         for (int i = 0; i < all.length; i++) {
             final int a = i;
@@ -191,7 +191,7 @@ final class SuitScreen extends Screen {
     /** The right-hand column: the picked node's figures, in words or numbers as the gauges allow. */
     private void column(GuiGraphics g, SuitSyncPayload s) {
         int x = px() + COL_X, y = py() + 22;
-        SKIN.inset(g, x, y, COL_W, H - 32 - 3 * 16 - 46);
+        SKIN.inset(g, x, y, COL_W, H - 32 - 5 * 16 - 46);
         int tx = x + 6, ty = y + 6;
         ItemStack stack = stackOf(picked);
         g.drawString(font, Component.translatable("screen.feedback.suit.node." + picked.id), tx, ty, SKIN.accent() | 0xFF000000, false);

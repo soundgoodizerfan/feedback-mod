@@ -56,7 +56,9 @@ public final class SuitServer {
     /** One wearer's live state. */
     private static final class Run {
         float heat, pending, draw, carry = 1f, coldMult = 1f, lastSpeed;
-        boolean cut, dash, hopped, powered, plating, jumpOn, nv, asked;
+        boolean cut, dash, hopped, powered, plating, jumpOn, nv, asked, jet, cloak;
+        /** Ticks left before each pulse ability may fire again, by ability ordinal. */
+        final int[] cool = new int[Ability.values().length];
         float[] mods;
         int toggles, sinceWrite, fxSig = -1, stun;
         SuitSyncPayload sent;
@@ -126,9 +128,14 @@ public final class SuitServer {
         float left = ready ? BatteryStack.charge(bt) - r.pending : 0f;
         boolean powered = ready && left > 0f && !r.cut;
         int on = r.toggles & rig.available();
+        for (int i = 0; i < r.cool.length; i++)
+            if (r.cool[i] > 0)
+                r.cool[i]--;
 
         if ((on & Ability.JUMP_DASH.bit()) == 0)
             r.dash = false;
+        if ((on & Ability.JET.bit()) == 0)
+            r.jet = false;
         float drawn = 0f, waste = 0f;
         if (powered) {
             if ((on & Ability.STRENGTH.bit()) != 0) {
@@ -150,11 +157,26 @@ public final class SuitServer {
             if ((on & Ability.THERMAL.bit()) != 0 && p.tickCount % SuitTuning.THERMAL_SCAN_TICKS == 0)
                 ThermalScan.scan(p, Math.min(SuitTuning.THERMAL_MAX_RANGE * SuitModules.lens(rig.mod()),
                         (SuitTuning.THERMAL_BASE_RANGE + SuitTuning.THERMAL_RANGE_PER_CELL * rig.sense()) * SuitModules.lens(rig.mod())));
-            drawn += SuitModules.tick(p, rig.mod());
+            if ((on & Ability.CLOAK.bit()) != 0) {
+                SuitPulses.cloak(p);
+                drawn += SuitTuning.CLOAK_AMPS;
+                waste += SuitTuning.CLOAK_AMPS * rig.lossChest();
+            }
+            if (r.jet && (on & Ability.JET.bit()) != 0) {
+                float thrust = SuitPulses.jet(p, power(rig, Ability.JET), Math.min(1f, AirDensityTable.at(p.level(), p.getY()) / SuitTuning.REF_AIR_DENSITY));
+                drawn += SuitTuning.JET_AMPS * thrust;
+                waste += SuitTuning.JET_AMPS * thrust * rig.lossChest();
+            }
+            drawn += SuitModules.tick(p, rig.mod()) * rig.wiring();
             drawn *= SuitModules.efficiency(rig.mod());
         } else {
             r.dash = false;
+            r.jet = false;
         }
+        boolean cloak = powered && (on & Ability.CLOAK.bit()) != 0;
+        if (!cloak && r.cloak)
+            SuitPulses.dropCloak(p);
+        r.cloak = cloak;
         r.pending += drawn;
         r.draw = drawn;
 
@@ -195,6 +217,24 @@ public final class SuitServer {
             r.sinceWrite = 0;
         }
         sync(p, r, rig, chest, bt, left, limit);
+    }
+
+    /** How strongly the module that gives {@code a} works (0.25 to 1.5), or 0 when none is fitted. */
+    private static float power(ExoSuit.Rig rig, Ability a) {
+        int id = SuitModules.moduleOf(a);
+        return id > 0 && rig.mod() != null ? rig.mod()[id] : 0f;
+    }
+
+    /** Fires a pulse ability if the suit is powered and it has cooled; the cost is drawn and a share of it heats the suit. */
+    private static void pulse(ServerPlayer p, Run r, ExoSuit.Rig rig, Ability a) {
+        float power = power(rig, a);
+        if (!r.powered || power <= 0f || r.cool[a.ordinal()] > 0)
+            return;
+        float cost = SuitPulses.cost(a) * rig.wiring();
+        SuitPulses.fire(p, a, power);
+        r.cool[a.ordinal()] = SuitPulses.cooldown(a);
+        r.pending += cost;
+        r.heat += cost * rig.lossChest() * SuitTuning.HEAT_PER_WASTE;
     }
 
     /** Held thrust: forward along the look, thinned by the air, with a short hop off the ground. Returns the amps it draws. */
@@ -357,7 +397,9 @@ public final class SuitServer {
         switch (action) {
             case SuitPayload.TOGGLE -> {
                 Ability a = Ability.of(arg);
-                if (a != null && rig.can(a)) {
+                if (a != null && rig.can(a) && a.pulse()) {
+                    pulse(p, r, rig, a);
+                } else if (a != null && rig.can(a)) {
                     r.toggles ^= a.bit();
                     flush(chest, r);
                     r.fxSig = -1;
@@ -367,6 +409,7 @@ public final class SuitServer {
                 r.asked = arg == 1 && r.cut;
                 r.dash = arg == 1 && r.powered && (r.toggles & Ability.JUMP_DASH.bit()) != 0 && rig.can(Ability.JUMP_DASH);
             }
+            case SuitPayload.JET -> r.jet = arg == 1 && r.powered && (r.toggles & Ability.JET.bit()) != 0 && rig.can(Ability.JET);
             case SuitPayload.BAY_PUT -> {
                 if (!ExoSuit.battery(chest).isEmpty() || arg < 0 || arg >= p.getInventory().getContainerSize())
                     return;

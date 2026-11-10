@@ -13,12 +13,12 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * The wearer asks the suit for something: switch an ability ({@link #TOGGLE}, arg the ability's ordinal), hold or let go of the dash
- * ({@link #DASH}, arg 1 or 0), put the battery from an inventory slot into the bay ({@link #BAY_PUT}, arg the slot) or take it out
+ * ({@link #DASH}, arg 1 or 0) or the jet ({@link #JET}, the same), choosing a pulse ability fires it instead of switching it, put the battery from an inventory slot into the bay ({@link #BAY_PUT}, arg the slot) or take it out
  * ({@link #BAY_TAKE}). The server checks every one against what is worn; the client only asks.
  */
 public record SuitPayload(byte action, int arg) implements CustomPacketPayload {
 
-    public static final byte TOGGLE = 0, DASH = 1, BAY_PUT = 2, BAY_TAKE = 3;
+    public static final byte TOGGLE = 0, DASH = 1, BAY_PUT = 2, BAY_TAKE = 3, JET = 4;
 
     public static final Type<SuitPayload> TYPE = new Type<>(Feedback.id("suit"));
 

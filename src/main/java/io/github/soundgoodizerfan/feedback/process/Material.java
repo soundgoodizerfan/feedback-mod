@@ -822,6 +822,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * item, {@code pickaxe_head}), anything else by its item.
      */
     public static Optional<Located> find(Map<ResourceLocation, Material> materials, net.minecraft.world.item.ItemStack stack) {
+        // A finished modular item that can be held in another (a suit module) is found by its nest form and wearing material.
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular) {
+            Optional<Located> held = io.github.soundgoodizerfan.feedback.modular.ModularNest.locate(materials, stack);
+            if (held.isPresent())
+                return held;
+        }
         MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
         // Raw stock the enchanting table stamped (a rod, a grip) is still found by its item: the stamp only carries the attunement.
         if (made == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem))

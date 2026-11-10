@@ -177,6 +177,8 @@ public final class ModularBake {
             case BELT -> !wear || (material.mechanical().friction().isPresent() && material.thermal().serviceTemperature().isPresent());
             case ENGINE -> engineMetal(material) && (!(roleKey.equals(ENGINE_PISTONS) || roleKey.equals(ENGINE_CRANK)) || material.mechanical().yieldStrength().isPresent());
             case GEARBOX -> engineMetal(material);
+            // a module's wiring must conduct; its casing and core take any material their shapes accept
+            case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
             // A coilgun's winding is a conductor that holds a field and has a quench point: the rest cannot wind a gun.
             case GUN -> !roleKey.equals("W") || io.github.soundgoodizerfan.feedback.weapon.GunSpec.windable(material);
@@ -372,7 +374,7 @@ public final class ModularBake {
      * drop, as a machine's winding does), the gauge's step off its lens glass (the clearer, the finer, as a carried lens does), the sensor
      * head's reach off its cells of fibre, and the bay is the plate that holds the battery. A piece with none bakes zero.
      */
-    private static void suitFitting(Map<Fig, Float> f, ModularType.Role role, Part part, Material m) {
+    private static void suitFitting(Map<Fig, Float> f, ModularType type, ModularType.Role role, Part part, Material m) {
         switch (role.name()) {
             case "servo" -> {
                 int cells = stockCells(role, part);
@@ -383,26 +385,52 @@ public final class ModularBake {
             case "gauge" -> f.put(Fig.SUIT_GAUGE, Math.min(1f, 0.5f + 5f * m.separation().reflectivity().orElse(0.2f)));
             case "sensor_head" -> f.merge(Fig.SUIT_SENSE, (float) part.count(), Float::sum);
             case "battery_bay" -> f.put(Fig.SUIT_BAY, 1f);
-            case "upgrade" -> role.variant(part).ifPresent(v -> {
-                Map<String, Float> k = v.params();
-                float id = k.getOrDefault("module", 0f);
-                if (id <= 0f)
-                    return;
-                // the variant names the property that makes it work and the figure that is full strength; the material's share of it is the power
-                float power = 1f;
-                if (k.containsKey("thermal"))
-                    power = m.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) / k.get("thermal");
-                else if (k.containsKey("electric"))
-                    power = m.ampacity().orElse(0f) / k.get("electric");
-                else if (k.containsKey("competence"))
-                    power = competence(m) / k.get("competence");
-                else if (k.containsKey("optic"))
-                    power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
-                f.put(Fig.SUIT_MODULE, id);
-                f.put(Fig.SUIT_POWER, clamp(power, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
-            });
+            // the held module's own baked figures: what it is and how strongly it works, and how well it is wired
+            case "upgrade" -> {
+                ModularFigures held = ModularNest.figures(part);
+                int piece = Math.round(held == null ? 0f : held.get(Fig.SUIT_PIECE));
+                if (held != null && held.get(Fig.SUIT_MODULE) > 0f && (piece == 0 || piece == type.slot().ordinal() - 1)) {
+                    f.put(Fig.SUIT_MODULE, held.get(Fig.SUIT_MODULE));
+                    f.put(Fig.SUIT_POWER, held.get(Fig.SUIT_POWER));
+                    f.put(Fig.SUIT_WIRING, held.get(Fig.SUIT_WIRING));
+                }
+            }
             default -> { }
         }
+    }
+
+    /**
+     * What a suit module's core is and how hard it works. The core's shape (its variant) names the module and the property of its
+     * material that makes it work, with the figure that is full strength; the material's share of that figure is the power
+     * ({@code SUIT_POWER_MIN} to {@code SUIT_POWER_MAX}). The wiring's conductor, over its cells, sets how much of the module's draw
+     * becomes waste. Empty if the core is not cut in a module shape.
+     */
+    private static Optional<Map<Fig, Float>> suitModule(ModularType type, Map<String, Material> by, ModularDesign design) {
+        Part core = design.part("C"), wiring = design.part("W");
+        if (core == null || wiring == null || by.get("C") == null || by.get("W") == null)
+            return Optional.empty();
+        Optional<ModularType.Variant> v = type.roles().get("C").variant(core);
+        if (v.isEmpty() || v.get().params().getOrDefault("module", 0f) <= 0f)
+            return Optional.empty();
+        Map<String, Float> k = v.get().params();
+        Material m = by.get("C");
+        float power = 1f;
+        if (k.containsKey("thermal"))
+            power = m.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) / k.get("thermal");
+        else if (k.containsKey("electric"))
+            power = m.ampacity().orElse(0f) / k.get("electric");
+        else if (k.containsKey("competence"))
+            power = competence(m) / k.get("competence");
+        else if (k.containsKey("optic"))
+            power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
+        float amps = by.get("W").ampacity().orElse(0f) * stockCells(type.roles().get("W"), wiring);
+        float wired = ModularTuning.WIRING_WORST + (ModularTuning.WIRING_BEST - ModularTuning.WIRING_WORST) * (amps / (amps + ModularTuning.WIRING_HALF_AMPS));
+        Map<Fig, Float> out = new EnumMap<>(Fig.class);
+        out.put(Fig.SUIT_MODULE, k.get("module"));
+        out.put(Fig.SUIT_POWER, clamp(power, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
+        out.put(Fig.SUIT_WIRING, wired);
+        out.put(Fig.SUIT_PIECE, k.getOrDefault("piece", 0f));
+        return Optional.of(out);
     }
 
     private static int stockCells(ModularType.Role role, Part part) {
@@ -568,7 +596,7 @@ public final class ModularBake {
                         float c = competence(by.get(p.role()));
                         points += type.armourMax() * ModularTuning.LINING_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
                     }
-                    suitFitting(f, r, p, by.get(p.role()));
+                    suitFitting(f, type, r, p, by.get(p.role()));
                 }
                 f.put(Fig.MASS, total);
                 f.put(Fig.ARMOUR, points * worn);
@@ -677,6 +705,16 @@ public final class ModularBake {
                 // Heavier, harder and tougher lifts the ceiling; brittleness has already cost the competence its square.
                 f.put(Fig.STRIKE_ST, FTuning.HEAD_ST_PER_MU_COMPETENCE * total * zone.wear()
                         * type.roles().get(type.wearRole()).strike(wearPart));
+            }
+            case SUIT_MODULE -> {
+                Optional<Map<Fig, Float>> module = suitModule(type, by, design);
+                if (module.isEmpty())
+                    return Optional.empty();
+                f.putAll(module.get());
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                f.put(Fig.MASS, total);
             }
             case CELL -> {
                 if (cell(design, type, materials).isEmpty())
@@ -789,6 +827,10 @@ public final class ModularBake {
     }
 
     static float mass(ModularType.Role role, Part part, Material m) {
+        if (!part.sub().isEmpty()) {
+            ModularFigures held = ModularNest.figures(part);
+            return held == null ? 0f : held.get(Fig.MASS);
+        }
         return role.litres() * part.count() * m.density().muPerMb() * role.factor(part.form()) * role.kept(part);
     }
 

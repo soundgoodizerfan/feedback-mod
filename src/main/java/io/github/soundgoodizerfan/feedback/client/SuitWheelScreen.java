@@ -22,7 +22,7 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * The suit's ability wheel, opened by holding {@link SuitKeys#WHEEL}: five armour segments round a hexagonal ring, one per {@link Ability}.
+ * The suit's ability wheel, opened by holding {@link SuitKeys#WHEEL}: ten segments round a hexagonal ring, one per {@link Ability} (a pulse fires when chosen rather than switching).
  * Letting the key go over a segment throws that ability's switch. A segment shows its state in its rim (cyan and breathing when it is on and
  * live, amber and stuttering when it is on but the suit cannot feed it, dark when it is off, hatched when no fitting provides it), and the
  * middle carries two dials: charge on the left, heat on the right. The dials read in words or figures as the suit's gauges allow
@@ -227,7 +227,7 @@ final class SuitWheelScreen extends Screen {
         int shown = hov >= 0 ? hov : -1;
         if (shown >= 0) {
             Ability a = ORDER[shown];
-            Component line = Component.translatable("gui.feedback.suit.hint." + (!SuitClient.can(a) ? "none" : SuitClient.on(a) ? "off" : "on"),
+            Component line = Component.translatable("gui.feedback.suit.hint." + (!SuitClient.can(a) ? "none" : a.pulse() ? "fire" : SuitClient.on(a) ? "off" : "on"),
                     Component.translatable("gui.feedback.suit.ability." + a.key()));
             g.drawCenteredString(font, line, width / 2, height / 2 + R_OUT + 14, fade(SKIN.accent() | 0xFF000000, t));
         }

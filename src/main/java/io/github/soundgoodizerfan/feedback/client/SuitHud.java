@@ -21,8 +21,8 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 final class SuitHud {
 
     private static final GuiSkin SKIN = GuiSkin.SUIT;
-    private static final int W = 104, BAR_H = 5;
-    private static final String[] TAG = { "ST", "JP", "PL", "NV", "TH" };
+    private static final int BASE_W = 104, BAR_H = 5;
+    private static final String[] TAG = { "ST", "JP", "PL", "NV", "TH", "CL", "JT", "SK", "SC", "EM" };
 
     private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide();
     private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(2);
@@ -45,6 +45,13 @@ final class SuitHud {
         double ct = SuitReadout.shown(s.charge(), s), ht = SuitReadout.shown(SuitReadout.heatShare(s), s);
         charge = charge < 0 ? ct : charge + (ct - charge) * 0.25;
         heat = heat < 0 ? ht : heat + (ht - heat) * 0.25;
+        // the five built-in lamps always, then a lamp for each module ability that is fitted
+        Ability[] all = Ability.values();
+        java.util.List<Integer> lit = new java.util.ArrayList<>();
+        for (int i = 0; i < all.length; i++)
+            if (i < 5 || SuitClient.can(all[i]))
+                lit.add(i);
+        int W = Math.max(BASE_W, 10 + lit.size() * 19);
         int slide = SLIDE.offset(Boolean.TRUE, W + 14);
         int x0 = 6 - slide, y1 = g.guiHeight() - 6, h = 60, y0 = y1 - h, x1 = x0 + W;
         long now = net.minecraft.Util.getMillis();
@@ -60,10 +67,10 @@ final class SuitHud {
 
         var font = mc.font;
         // lamps
-        Ability[] all = Ability.values();
-        for (int i = 0; i < all.length; i++) {
+        for (int k = 0; k < lit.size(); k++) {
+            int i = lit.get(k);
             Ability a = all[i];
-            int lx = x0 + 5 + i * 19, ly = y0 + 5;
+            int lx = x0 + 5 + k * 19, ly = y0 + 5;
             boolean can = SuitClient.can(a), on = SuitClient.on(a), live = SuitClient.live(a);
             int c = !can ? 0x40 << 24 | 0x7C99A6 : live ? 0xFF << 24 | 0x4FE3FF : on ? ((now / 90) % 3 != 0 ? 0xFF << 24 | 0xFFA52E : 0x60 << 24 | 0xFFA52E) : 0xA0 << 24 | 0x2E7F94;
             if (live)

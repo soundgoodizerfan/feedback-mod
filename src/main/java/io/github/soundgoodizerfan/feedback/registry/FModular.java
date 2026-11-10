@@ -78,7 +78,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "gun_grip", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "suit_module")
+            "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "module_casing", "module_wiring", "module_core")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -275,6 +275,10 @@ public final class FModular {
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));
+
+    /** A suit upgrade module (family {@code suit_module}): built at the Tool Table from a casing, wiring and a core, then held whole in an armour piece's upgrade role. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> SUIT_MODULE = ITEMS.register("suit_module",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(new Item.Properties().stacksTo(1)));
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> TWIN = ITEMS.register("twin",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));

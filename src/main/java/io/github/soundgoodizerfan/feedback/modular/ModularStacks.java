@@ -116,7 +116,7 @@ public final class ModularStacks {
                 && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL
                 && type.family() != ModularType.Family.MACHINE && type.family() != ModularType.Family.BELT
                 && type.family() != ModularType.Family.ENGINE && type.family() != ModularType.Family.GEARBOX
-                && type.family() != ModularType.Family.PROPELLER) {
+                && type.family() != ModularType.Family.PROPELLER && type.family() != ModularType.Family.SUIT_MODULE) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }

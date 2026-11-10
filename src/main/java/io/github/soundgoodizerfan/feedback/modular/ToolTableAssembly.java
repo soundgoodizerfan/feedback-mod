@@ -249,6 +249,8 @@ public final class ToolTableAssembly {
 
     /** The part a role gets from {@code stack}: a shaped part by what it was shaped from, raw stock as it lies. */
     public static Part part(String role, Material.Located what, ItemStack stack, int count) {
+        if (ModularNest.holdable(stack))
+            return Part.holding(role, what.id(), what.form(), stack);
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
         // A pot serving is food already baked: its figures come off the stack, not a material block.
         if (made == null && what.material().traits().contains(Material.Trait.BROTH))

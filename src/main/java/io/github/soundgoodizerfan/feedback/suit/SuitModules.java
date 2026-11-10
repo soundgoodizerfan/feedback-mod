@@ -42,12 +42,14 @@ public final class SuitModules {
             HEAT_SINK = 8, COOLANT_LOOP = 9, EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
             THERMAL_LINING = 15, MAGNET_PICKUP = 16, FIRE_CURTAIN = 17, STRIDER_PISTONS = 18, STEP_ASSIST = 19, SWIM_FINS = 20,
             SHOCK_ABSORBERS = 21, GRIP_PADS = 22, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, HEAT_SHIELD = 26, JUMP_COIL = 27,
-            LANDING_GEAR = 28, ROCKET_SPUR = 29, STOMP_ACTUATOR = 30;
+            LANDING_GEAR = 28, ROCKET_SPUR = 29, STOMP_ACTUATOR = 30,
+            // modules that give the wheel a segment of its own (see ability)
+            CLOAK_FIELD = 31, JET_PACK = 32, SHOCK_RAM = 33, SCAN_PING = 34, EMP_COIL = 35;
     /** The variant name of each id, which is also its lang key suffix; index 0 is none. */
     private static final String[] KEYS = {"", "rebreather", "rangefinder", "respirator", "glare_filter", "long_lens", "crash_liner", "reflex_link", "heat_sink",
             "coolant_loop", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "thermal_lining", "magnet_pickup", "fire_curtain",
             "strider_pistons", "step_assist", "swim_fins", "shock_absorbers", "grip_pads", "load_frame", "stabiliser", "mag_anchor", "heat_shield", "jump_coil",
-            "landing_gear", "rocket_spur", "stomp_actuator"};
+            "landing_gear", "rocket_spur", "stomp_actuator", "cloak_field", "jet_pack", "shock_ram", "scan_ping", "emp_coil"};
 
     /** The name key of upgrade {@code id} (translate {@code modular.feedback.variant.<key>}), or empty for none. */
     public static String key(int id) {
@@ -55,7 +57,27 @@ public final class SuitModules {
     }
 
     /** Size of a power array: ids are 1-based. */
-    public static final int COUNT = 31;
+    public static final int COUNT = 36;
+
+    /** The wheel segment module {@code id} gives, or null for one that only adds to a segment already there. */
+    public static Ability ability(int id) {
+        return switch (id) {
+            case CLOAK_FIELD -> Ability.CLOAK;
+            case JET_PACK -> Ability.JET;
+            case SHOCK_RAM -> Ability.SHOCK;
+            case SCAN_PING -> Ability.SCAN;
+            case EMP_COIL -> Ability.EMP;
+            default -> null;
+        };
+    }
+
+    /** The module that gives {@code a}, or 0 for a built-in segment. */
+    public static int moduleOf(Ability a) {
+        for (int id = 1; id < COUNT; id++)
+            if (ability(id) == a)
+                return id;
+        return 0;
+    }
 
     // --- placeholder figures, tuned in play (the suit's own file is SuitTuning; these are per-module and live beside their code) ---
     private static final float OXYGEN = 3f, BLOCK_REACH = 1.5f, ENTITY_REACH = 1f, ATTACK_SPEED = 0.2f, KB_PLATING = 0.6f, KB_ANCHOR = 0.5f,
