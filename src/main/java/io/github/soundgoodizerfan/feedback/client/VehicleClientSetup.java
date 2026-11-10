@@ -19,6 +19,7 @@ public final class VehicleClientSetup {
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(FVehicles.FRAME_ENTITY.get(), FrameRenderer::new);
+        event.registerBlockEntityRenderer(FVehicles.PROPELLER_ENTITY.get(), PropRenderer::new);
         event.registerEntityRenderer(FVehicles.SEAT_RIDE.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
     }
 }

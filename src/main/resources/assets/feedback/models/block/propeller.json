@@ -1,7 +1,32 @@
 {
-  "parent": "minecraft:block/cube_column",
+  "parent": "minecraft:block/block",
   "textures": {
     "end": "feedback:block/device_gearbox_sides",
-    "side": "feedback:block/block_metal_hepatizon"
-  }
+    "side": "feedback:block/block_metal_hepatizon",
+    "particle": "feedback:block/block_metal_hepatizon"
+  },
+  "elements": [
+    {
+      "from": [5, 4, 5], "to": [11, 12, 11],
+      "faces": {
+        "north": { "texture": "#side", "uv": [5, 4, 11, 12] },
+        "south": { "texture": "#side", "uv": [5, 4, 11, 12] },
+        "west":  { "texture": "#side", "uv": [5, 4, 11, 12] },
+        "east":  { "texture": "#side", "uv": [5, 4, 11, 12] },
+        "up":    { "texture": "#end",  "uv": [5, 5, 11, 11] },
+        "down":  { "texture": "#end",  "uv": [5, 5, 11, 11] }
+      }
+    },
+    {
+      "from": [6.5, 0, 6.5], "to": [9.5, 16, 9.5],
+      "faces": {
+        "north": { "texture": "#side", "uv": [6.5, 0, 9.5, 16] },
+        "south": { "texture": "#side", "uv": [6.5, 0, 9.5, 16] },
+        "west":  { "texture": "#side", "uv": [6.5, 0, 9.5, 16] },
+        "east":  { "texture": "#side", "uv": [6.5, 0, 9.5, 16] },
+        "up":    { "texture": "#end",  "uv": [6.5, 6.5, 9.5, 9.5] },
+        "down":  { "texture": "#end",  "uv": [6.5, 6.5, 9.5, 9.5] }
+      }
+    }
+  ]
 }

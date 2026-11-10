@@ -78,6 +78,8 @@ public class PropBlock extends BaseEntityBlock implements Rotatable {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? null : createTickerHelper(type, FVehicles.PROPELLER_ENTITY.get(), (l, p, s, be) -> be.tickServer());
+        // The client ticks to advance the drawn blade angle.
+        return level.isClientSide ? createTickerHelper(type, FVehicles.PROPELLER_ENTITY.get(), (l, p, s, be) -> be.tickClient())
+                : createTickerHelper(type, FVehicles.PROPELLER_ENTITY.get(), (l, p, s, be) -> be.tickServer());
     }
 }
