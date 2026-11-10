@@ -211,6 +211,14 @@ public final class FModular {
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUEPRINT_TABLE_ITEM = ITEMS.registerSimpleBlockItem(BLUEPRINT_TABLE);
 
+    /** The drawing table for machines and what they are built from ({@code Drafting.ENGINEERING}). */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.BlueprintTableBlock> ENGINEERING_TABLE =
+            BLOCKS.register("engineering_table", () -> new io.github.soundgoodizerfan.feedback.modular.BlueprintTableBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3f)
+                            .sound(net.minecraft.world.level.block.SoundType.METAL), io.github.soundgoodizerfan.feedback.modular.Drafting.ENGINEERING));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ENGINEERING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(ENGINEERING_TABLE);
+
     /** Where dishes are made: the Tool Table's code with the dish filter and a knife slot (dish spec 3). */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.PrepTableBlock> PREP_TABLE =
             BLOCKS.register("prep_table", () -> new io.github.soundgoodizerfan.feedback.modular.PrepTableBlock(

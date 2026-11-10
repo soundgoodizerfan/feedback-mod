@@ -65,53 +65,63 @@ Mob body heat is a datapack folder; entity-type tags such as `feedback:warm_bloo
 
 ## Upgrade modules
 
-Each of the four pieces takes one **Suit Module**, a finished item built from a casing, wiring and one to four attachments, shaped and assembled at a bench like any other [tool](Tools_and_Weapons.md#putting-one-together):
+Each of the four pieces takes one **Suit Module**, a finished item built from a casing, wiring, attachments and support parts, shaped and assembled at a bench like any other [tool](Tools_and_Weapons.md#putting-one-together). A module has at most six parts at the bench: the casing, the wiring and four others. Modules must be learned first; see [Learning a module](#learning-a-module).
 
 - **Module Casing**: plate, 2 cells. Its material sets the module's weight.
 - **Module Wiring**: wire, 1, 2 or 4 cells. The conductor sets how much of what the module draws is wasted as heat, and how many attachments it can feed. Heavier wiring feeds more attachments, up to four, and wastes less.
-- **Attachments**: each is a part of one of seven kinds (Module Optic, Module Filter, Module Thermal, Module Plating, Module Actuator, Module Thruster, Module Coil), cut from an ingot, plate or rod. The shape it is cut in is the upgrade it gives, so two attachments of one kind do very different things. The material sets how strongly the upgrade works. Heat upgrades follow the material's thermal conductivity, electric ones its wire current rating, sturdy ones its hardness and strength, and optic ones its reflectivity.
+- **Attachments**: one to four, each is a part of one of seven kinds (Module Optic, Module Filter, Module Thermal, Module Plating, Module Actuator, Module Thruster, Module Coil), cut from an ingot, plate or rod. The shape it is cut in is the upgrade it gives, so two attachments of one kind do very different things. The material sets how strongly the upgrade works. Heat upgrades follow the material's thermal conductivity, electric ones its wire current rating, sturdy ones its hardness and strength, and optic ones its reflectivity.
+- **Support parts**: some upgrades need a **controller** (a circuit), a **power cell** (a [Battery](Battery.md)) or a **motor** (a [Dynamotor](Dynamotor.md)) set beside the attachments, as the table below lists. A better circuit, a higher-capacity battery or a motor rated for more current makes the upgrade stronger. An upgrade whose support part is missing does not work.
 
 A module fits any armor piece. To fit it, put the armor piece in the center of the bench and click the module you carry in the fan; it goes into the piece's upgrade place, one per piece. Taking the piece apart gives the module back whole. The Suit diagnostic screen (`J`) shows the upgrade each piece carries.
 
 Upgrades work whenever the suit is powered. The Heat Sink always works. Some upgrades draw charge as they act, as noted. Fourteen upgrades give the wheel a segment of their own: Cloak Field, Jet Pack, Shock Ram, Scan Ping, EMP Coil, Magnet Pickup, Strider Pistons, Step Assist, Rangefinder, Long Lens, Autodoc, Coolant Loop, Rocket Spur and Thorn Array (see [Abilities](#abilities)). Their effects work only through the wheel, except the Coolant Loop and Rocket Spur, which also work without it.
 
-| Attachment | Upgrade | What it does |
-| --- | --- | --- |
-| Optic | Rangefinder | Longer reach for blocks and attacks while switched on. |
-| Optic | Long Lens | Thermal view reaches farther while switched on. |
-| Optic | Glare Filter | Clears blindness and darkness. |
-| Optic | Scan Ping | Pulse that makes nearby living things glow. |
-| Filter | Rebreather | Breath lasts longer underwater. |
-| Filter | Respirator | Clears poison, nausea and hunger. |
-| Thermal | Heat Sink | The suit sheds heat faster. |
-| Thermal | Coolant Loop | The servos cut out at a higher temperature. Pulse: vents most of the suit's heat. |
-| Thermal | Thermal Lining | Immune to freezing. |
-| Thermal | Heat Shield | Fire and lava do not burn you while the battery lasts; heavy draw. |
-| Thermal | Fire Curtain | Less fire damage. |
-| Thermal | Cloak Field | Hides the wearer while switched on; draws constantly. |
-| Plating | Reactive Plating | Less knockback. |
-| Plating | Blast Shell | Less explosion damage. |
-| Plating | Crash Liner | Less damage from projectiles. |
-| Plating | Thorn Array | Pulse: hurts everything in arm's reach. |
-| Plating | Magnetic Anchor | Far less knockback. |
-| Plating | Stabiliser | Faster sneaking and a little less knockback. |
-| Plating | Load Frame | A [Backpack](Backpack.md) carries more before it slows you. |
-| Actuator | Strider Pistons | Faster walking while switched on; draws charge while you move. |
-| Actuator | Step Assist | Steps up a full block without jumping while switched on. |
-| Actuator | Jump Coil | A higher jump. |
-| Actuator | Landing Gear | You fall farther without damage. |
-| Actuator | Shock Absorbers | Less fall damage. |
-| Actuator | Stomp Actuator | Landing from 3 or more blocks damages everything around you; draws charge per landing. |
-| Actuator | Grip Pads | Soft ground, webs and water slow you less. |
-| Actuator | Swim Fins | Better movement in water. |
-| Actuator | Shock Ram | Pulse: a shockwave that knocks back and hurts everything near. |
-| Thruster | Rocket Spur | A harder, faster dash. Pulse: a single burst of thrust along your look. |
-| Thruster | Jet Pack | Lifts you while `G` is held; burns charge fast. |
-| Coil | Efficiency Bus | Everything the suit does draws less charge. |
-| Coil | Autodoc | Pulse: heals you at once; heavy draw. |
-| Coil | Reflex Link | Faster attack speed. |
-| Coil | Magnet Pickup | Draws loose items to you while switched on. |
-| Coil | EMP Coil | Pulse that slows, weakens and blinds nearby creatures. |
+| Attachment | Upgrade | Needs | What it does |
+| --- | --- | --- | --- |
+| Optic | Rangefinder | none | Longer reach for blocks and attacks while switched on. |
+| Optic | Long Lens | none | Thermal view reaches farther while switched on. |
+| Optic | Glare Filter | none | Clears blindness and darkness. |
+| Optic | Scan Ping | controller | Pulse that makes nearby living things glow. |
+| Filter | Rebreather | none | Breath lasts longer underwater. |
+| Filter | Respirator | none | Clears poison, nausea and hunger. |
+| Thermal | Heat Sink | none | The suit sheds heat faster. |
+| Thermal | Coolant Loop | motor | The servos cut out at a higher temperature. Pulse: vents most of the suit's heat. |
+| Thermal | Thermal Lining | none | Immune to freezing. |
+| Thermal | Heat Shield | none | Fire and lava do not burn you while the battery lasts; heavy draw. |
+| Thermal | Fire Curtain | none | Less fire damage. |
+| Thermal | Cloak Field | controller | Hides the wearer while switched on; draws constantly. |
+| Plating | Reactive Plating | none | Less knockback. |
+| Plating | Blast Shell | none | Less explosion damage. |
+| Plating | Crash Liner | none | Less damage from projectiles. |
+| Plating | Thorn Array | none | Pulse: hurts everything in arm's reach. |
+| Plating | Magnetic Anchor | none | Far less knockback. |
+| Plating | Stabiliser | none | Faster sneaking and a little less knockback. |
+| Plating | Load Frame | none | A [Backpack](Backpack.md) carries more before it slows you. |
+| Actuator | Strider Pistons | motor | Faster walking while switched on; draws charge while you move. |
+| Actuator | Step Assist | motor | Steps up a full block without jumping while switched on. |
+| Actuator | Jump Coil | cell | A higher jump. |
+| Actuator | Landing Gear | none | You fall farther without damage. |
+| Actuator | Shock Absorbers | none | Less fall damage. |
+| Actuator | Stomp Actuator | motor | Landing from 3 or more blocks damages everything around you; draws charge per landing. |
+| Actuator | Grip Pads | none | Soft ground, webs and water slow you less. |
+| Actuator | Swim Fins | none | Better movement in water. |
+| Actuator | Shock Ram | motor | Pulse: a shockwave that knocks back and hurts everything near. |
+| Thruster | Rocket Spur | none | A harder, faster dash. Pulse: a single burst of thrust along your look. |
+| Thruster | Jet Pack | cell and motor | Lifts you while `G` is held; burns charge fast. |
+| Coil | Efficiency Bus | controller | Everything the suit does draws less charge. |
+| Coil | Autodoc | controller and cell | Pulse: heals you at once; heavy draw. |
+| Coil | Reflex Link | controller | Faster attack speed. |
+| Coil | Magnet Pickup | motor | Draws loose items to you while switched on. |
+| Coil | EMP Coil | cell and controller | Pulse that slows, weakens and blinds nearby creatures. |
+
+### Learning a module
+
+A module is drawn only at the [Engineering Table](Engineering_Table.md), and only with a plan sheet of a suit module in the paper slot; the bench builds one only with that plan in its plan slot. A [Blueprint Book](Blueprint_Book.md) in the plan slot offers every sheet inside it.
+
+Plans come two ways:
+
+- Rare finds in chests.
+- Measuring: take a module apart at the bench with blank paper in the plan slot, and the paper becomes a plan of that design.
 
 ## Weight and heat
 

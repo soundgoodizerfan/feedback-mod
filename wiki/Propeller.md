@@ -4,7 +4,7 @@ A modular propeller that sits on a [shaft](Shaft.md) and pulls a [vehicle](Vehic
 
 ## Building it
 
-Draw the propeller at the [Blueprint Table](Blueprint_Table.md) (pick *Propeller* in the type row), set the diameter, and build it at the [Smithing Table](Smithing_Table.md). A blueprint is required.
+Draw the propeller at the [Engineering Table](Engineering_Table.md) (pick *Propeller* in the type row), set the diameter, and build it at the [Smithing Table](Smithing_Table.md). A blueprint is required.
 
 | Part | Choices | What it sets |
 | --- | --- | --- |

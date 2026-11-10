@@ -71,10 +71,10 @@ public class FMenus {
             MENUS.register("material_probe",
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu::new, FeatureFlags.VANILLA_SET));
 
-    /** Plain: the table keeps nothing, so the client needs nothing to open it. */
+    /** The table keeps nothing; the client is told which kind of table it is ({@code Drafting}). */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu>> BLUEPRINT_TABLE =
             MENUS.register("blueprint_table",
-                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu::new, FeatureFlags.VANILLA_SET));
+                    () -> IMenuTypeExtension.create((id, inv, buf) -> new io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu(id, inv, buf.readVarInt())));
 
     /** Plain: the pad slot is synced as a slot, so the client needs nothing to open it. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.EnchantMenu>> ENCHANT =

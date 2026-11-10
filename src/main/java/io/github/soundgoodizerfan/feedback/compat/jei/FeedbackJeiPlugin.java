@@ -321,6 +321,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.WOODWORKING_TABLE_ITEM.get(), "woodworking_table");
         info(registration, FModular.STONECUTTER_ITEM.get(), "stonecutter");
         info(registration, FModular.BLUEPRINT_TABLE_ITEM.get(), "blueprint_table");
+        info(registration, FModular.ENGINEERING_TABLE_ITEM.get(), "engineering_table");
         info(registration, FModular.ENCHANTING_TABLE_ITEM.get(), "enchanting_table");
         info(registration, FModular.BLUEPRINT.get(), "modular_blueprint");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ITEM.get(), "engine");

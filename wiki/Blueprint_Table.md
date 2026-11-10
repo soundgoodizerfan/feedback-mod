@@ -1,6 +1,6 @@
 # Blueprint Table
 
-A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [belt](Conveyor_Belt.md), [engine](Engine.md), [gearbox](Transmission.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md).
+A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md). Machines and their parts (engines, gearboxes, propellers, motors, cells, belts and suit modules) are drawn at the [Engineering Table](Engineering_Table.md), which refuses everything else.
 
 ## Crafting
 
@@ -15,12 +15,12 @@ P is Paper and T is a Crafting Table.
 
 Right-click it to open the board. The item is drawn as a **diagram**: each part is a box placed where it sits in the finished piece. Drag to pan and use the wheel to zoom.
 
-- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology, Food), with a search box.
+- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology, Food) for this table, with a search box.
 - **Click a part** to select it. Its panel has a **search box** (it matches a material's name, its kind and its traits), **material swatches** for every material, and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does. A material the part cannot be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) is dimmed with an x and cannot be picked; its tooltip reads *Does not fit this part.*
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
 - Set the **edge**, on a tool that has one.
-- A part that has a measure you can choose (an engine's bore and stroke, a gearbox's ratios) shows a **< >** stepper for it under the part's name. A part with more than three such measures shows three at a time and scrolls the rest with the wheel. A gun barrel's bore steps 1 mm at a time from 5 to 20 mm.
+- On the Engineering Table, a part that has a measure you can choose (an engine's bore and stroke, a gearbox's ratios) shows a **< >** stepper for it under the part's name. A part with more than three such measures shows three at a time and scrolls the rest with the wheel. A gun barrel's bore steps 1 mm at a time from 5 to 20 mm.
 - On a gun, **attachments hang on the part they fit**. A part that can still take one wears a **+**; click it and the available attachments fan out round it while everything else dims. Attachments you have fitted stay drawn beside their part. An attachment that cannot go on with what is already fitted is grayed out. Attachments can hang on other attachments: a reticle on a sight, a valve on a steam chest. The **barrel is the launcher**: a coil barrel's winding, a spring tube's main spring and a steam tube's chest hang on it, and the slots for another launcher's parts are grayed out. Click empty canvas to put the fan away. A tip or pommel sits where the finished piece carries it.
 - **Rig** toggles a looping demonstration of the drawing in use, for pick-like tools, a sword, a bow, a shield and a battery.
 
@@ -48,6 +48,11 @@ A [Computer](Electric_Controller.md#apps) can run the same board as the **Bluepr
 
 ## What a blueprint is for
 
-Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work. Repairs and swaps never need one. A blueprint cannot be taken apart at a bench.
+Mostly it's a plan to look at. Two things **need** one.
+
+- A [suit module](Exosuit.md#learning-a-module) is drawn only from a plan sheet of its kind in the paper slot, and built only with that plan in the bench's plan slot. A plan sheet can sit in a [Blueprint Book](Blueprint_Book.md).
+- The [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work.
+
+Repairs and swaps never need one.
 
 Operators can make a blueprint of the item in their hand with `/feedback blueprint`; it works on any modular item that is not itself a blueprint.

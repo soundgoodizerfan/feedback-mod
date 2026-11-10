@@ -20,16 +20,24 @@ import net.minecraft.world.phys.BlockHitResult;
  */
 public class BlueprintTableBlock extends Block {
 
+    private final Drafting drafting;
+
     public BlueprintTableBlock(Properties properties) {
+        this(properties, Drafting.DRAFTING);
+    }
+
+    public BlueprintTableBlock(Properties properties, Drafting drafting) {
         super(properties);
+        this.drafting = drafting;
     }
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide)
             player.openMenu(new SimpleMenuProvider((id, inventory, p) ->
-                    new BlueprintTableMenu(id, inventory, ContainerLevelAccess.create(level, pos)),
-                    Component.translatable("block.feedback.blueprint_table")));
+                    new BlueprintTableMenu(id, inventory, ContainerLevelAccess.create(level, pos), drafting),
+                    Component.translatable(drafting == Drafting.ENGINEERING ? "block.feedback.engineering_table" : "block.feedback.blueprint_table")),
+                    buf -> buf.writeVarInt(drafting.ordinal()));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

@@ -6864,5 +6864,8 @@
   "item.feedback.blueprint_book": "Blueprint Book",
   "message.feedback.plan.measured": "You measure it as you take it apart: the paper becomes a plan.",
   "message.feedback.blueprint_table.no_reference": "This has to be learned first: put a plan of the same kind on the table as paper, or measure one by taking it apart.",
-  "feedback.jei.info.blueprint_book": "Holds plan sheets like a bundle. Click a sheet onto it to put it in, click it on an empty slot to take one out. A bench that wants a plan reads the sheets in a book in its plan slot."
+  "feedback.jei.info.blueprint_book": "Holds plan sheets like a bundle. Click a sheet onto it to put it in, click it on an empty slot to take one out. A bench that wants a plan reads the sheets in a book in its plan slot.",
+  "block.feedback.engineering_table": "Engineering Table",
+  "message.feedback.blueprint_table.wrong_table": "This is not drawn at this table: machines and their parts are drawn at the Engineering Table, the rest at the Blueprint Table.",
+  "feedback.jei.info.engineering_table": "A drawing table for machines and what they are built from: engines, gearboxes, propellers, motors, cells, belts and suit modules. The Blueprint Table draws everything else. A type that must be learned still needs a plan of its own kind."
 }

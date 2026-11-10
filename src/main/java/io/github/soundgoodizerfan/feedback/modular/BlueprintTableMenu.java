@@ -46,14 +46,17 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     private List<Boolean> shown = List.of();
     private final ContainerLevelAccess access;
 
-    /** Client-side open. */
-    public BlueprintTableMenu(int id, Inventory inventory) {
-        this(id, inventory, ContainerLevelAccess.NULL);
+    private final Drafting drafting;
+
+    /** Client-side open: the kind of table comes with the open packet. */
+    public BlueprintTableMenu(int id, Inventory inventory, int drafting) {
+        this(id, inventory, ContainerLevelAccess.NULL, Drafting.of(drafting));
     }
 
-    public BlueprintTableMenu(int id, Inventory inventory, ContainerLevelAccess access) {
+    public BlueprintTableMenu(int id, Inventory inventory, ContainerLevelAccess access, Drafting drafting) {
         super(FMenus.BLUEPRINT_TABLE.get(), id);
         this.access = access;
+        this.drafting = drafting;
         this.player = inventory.player;
         addSlot(new Slot(paper, 0, PAPER_X, PAPER_Y) {
             @Override
@@ -89,6 +92,11 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, column, HOTBAR_X + column * 18, HOTBAR_Y));
     }
 
+    /** Which kind of drawing table this is. */
+    public Drafting drafting() {
+        return drafting;
+    }
+
     /** Whether {@code stack} is some material in some form, as this side knows the materials. */
     public boolean isSample(ItemStack stack) {
         return !stack.isEmpty() && Material.find(ClientMaterials.on(player.level()), stack).isPresent();
@@ -119,6 +127,10 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         ModularType drawn = ModularTypes.get().types().get(design.type());
         if (drawn != null && drawn.family().planGated() && !ModularPlans.references(paper.getItem(0), design.type())) {
             send(player, Component.translatable("message.feedback.blueprint_table.no_reference"));
+            return;
+        }
+        if (drawn != null && !drafting.draws(drawn)) {
+            send(player, Component.translatable("message.feedback.blueprint_table.wrong_table"));
             return;
         }
         var figures = ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
@@ -158,7 +170,8 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(access, player, FModular.BLUEPRINT_TABLE.get());
+        return drafting == Drafting.ENGINEERING ? stillValid(access, player, FModular.ENGINEERING_TABLE.get())
+                : stillValid(access, player, FModular.BLUEPRINT_TABLE.get());
     }
 
     @Override

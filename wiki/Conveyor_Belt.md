@@ -12,7 +12,7 @@ A belt is a modular item made at the [Woodworking Table](Woodworking_Table.md) (
   - A **link** band is a chain of short plates. It grips less but takes much hotter cargo, so a steel link band carries what would char a hide.
 - **Cleat**: bars across the band, from a rod or stick. They roughen the face so the belt holds cargo on a steeper slope.
 
-The [Blueprint Table](Blueprint_Table.md) shows a drawing's **grip on cargo** and the hottest cargo it carries, in Tu, before you make it. The band's material sets both: leather and rubber grip, steel link takes the heat.
+The [Engineering Table](Engineering_Table.md) shows a drawing's **grip on cargo** and the hottest cargo it carries, in Tu, before you make it. The band's material sets both: leather and rubber grip, steel link takes the heat.
 
 ## Laying a run
 
