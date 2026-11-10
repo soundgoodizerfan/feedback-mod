@@ -17,6 +17,8 @@ The **diameter** is set on the blades, from 80 to 600 cm. The blades' metal need
 
 Place the propeller on the end of a shaft. The shaft runs along the propeller's facing, and the craft is pushed along that facing. It pulls only when the shaft turns.
 
+The block is a small hub and shaft; the blades are drawn in the world around it. Their count, diameter and pitch angle (fine, medium, coarse) match the design, and the blade metal tints them. The blades spin with the shaft, and spin the other way when the shaft is reversed.
+
 With [Jade](https://modrinth.com/mod/jade) it reads **Still**, **Pulling**, **Stalled** or **Blade tips too fast**, and **Blades worn** when they are.
 
 ## How it works
@@ -26,6 +28,7 @@ Thrust grows with the shaft's turns, the disc diameter, the blade count, the pit
 - **Pitch.** Fine pitch pulls hard from a standstill and quits at low speed. Coarse pitch pulls less but keeps pulling at speed. Medium is between.
 - **Thin air.** Thrust and the load on the shaft both fall with air density. See [air drag](Vehicles.md#air-density).
 - **Stall.** Past the speed where a prop's thrust reaches zero it reads *Stalled*.
+- **Reverse.** A shaft turning backwards pushes the craft the other way, with noticeably weaker thrust than forward.
 - **Reaction.** The torque the blades take from the shaft pushes the airframe the other way, so a lone propeller rolls the craft against its spin.
 - **Water.** Under water a propeller is a ship's screw, with a load about 816 times that of air.
 
