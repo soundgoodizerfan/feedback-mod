@@ -10,6 +10,7 @@ Put one Ender Pearl or [Synthetic Pearl](Synthetic_Pearl.md) and two metal plate
 
 - Put items into a port with a hopper, a belt or a [tube station](Tube_Station.md); the partner pushes them into any inventory beside it.
 - **Right-click** a port to read its tank of liquid teleportant, whether its chunk is anchored and the state of its partner.
+- With [Jade](https://modrinth.com/mod/jade) installed, looking at a port shows the same without a click: whether it is paired, how many blocks away its partner is, its teleportant level in mB and whether its chunk is anchored.
 - A pair moves only so much mass per minute. A stack heavier than the whole allowance is handed back.
 - Each crossing costs [Liquid Teleportant](Liquid_Teleportant.md) from the port's tank, which a pipe fills (the page says how to make it): more for heavier items and for longer distances.
 - Shulker boxes, items that hold fluid and [pods](Carrier.md#pod) never cross.

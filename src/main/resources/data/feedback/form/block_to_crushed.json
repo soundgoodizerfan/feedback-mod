@@ -1,0 +1,10 @@
+{
+  "from": "block",
+  "to": "crushed",
+  "operation": "blow",
+  "base": 4,
+  "slope": 1.0,
+  "kinds": [
+    "mineral"
+  ]
+}

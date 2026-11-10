@@ -50,6 +50,7 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockDataProvider(AirServerData.INSTANCE, io.github.soundgoodizerfan.feedback.vehicle.air.BallastTankBlockEntity.class);
         registration.registerBlockDataProvider(AirServerData.INSTANCE, io.github.soundgoodizerfan.feedback.vehicle.air.PropBlockEntity.class);
         registration.registerEntityDataProvider(VillagerServerData.INSTANCE, net.minecraft.world.entity.npc.Villager.class);
+        registration.registerBlockDataProvider(EnderPortServerData.INSTANCE, io.github.soundgoodizerfan.feedback.machine.ender.EnderPortBlockEntity.class);
         registration.registerBlockDataProvider(CounterServerData.INSTANCE, io.github.soundgoodizerfan.feedback.village.CounterBlockEntity.class);
     }
 
@@ -76,5 +77,6 @@ public class FeedbackJadePlugin implements IWailaPlugin {
         registration.registerBlockComponent(ReactorComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(PreheatComponent.INSTANCE, Block.class);
         registration.registerBlockComponent(BeltComponent.INSTANCE, Block.class);
+        registration.registerBlockComponent(EnderPortComponent.INSTANCE, Block.class);
     }
 }

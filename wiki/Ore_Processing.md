@@ -74,6 +74,7 @@ Leaching dissolves the metal out of a concentrate into a **liquor**, a fluid nam
 | Argentite (roasted) | brine and hypochlorite | Silver Chloride | a lead nugget | precipitate silver with hydrogen |
 | Ilmenite | sulfuric acid | Titanyl Sulfate | 3 iron nuggets | precipitate titanium with hydrogen |
 | Wolframite | lye | Sodium Tungstate | 2 manganese nuggets | precipitate tungsten with hydrogen |
+| End Stone | lye | Sodium Tungstate | nothing | precipitate tungsten with hydrogen |
 | Uraninite | sulfuric acid and oxygen | Uranyl Sulfate | 2 lead nuggets | precipitate uranium with hydrogen |
 | Monazite | lye | Thorium Hydroxide | Silicate Slag, Rare Earth Residue | precipitate thorium with hydrogen |
 | Bauxite | lye | Sodium Aluminate | Red Mud | precipitate alumina (see [Making Aluminum](Making_Aluminum.md)) |

@@ -171,6 +171,12 @@ public class EnderPortBlockEntity extends BlockEntity {
                 : p == null ? "message.feedback.ender_port.away" : "message.feedback.ender_port.linked");
     }
 
+    /** Blocks to the other end of the pair (the cross-dimension figure when it is in another dimension), or -1 with no partner here. */
+    public float partnerDistance() {
+        EnderPortBlockEntity p = partner();
+        return p == null ? -1f : distanceTo(p);
+    }
+
     private float distanceTo(EnderPortBlockEntity p) {
         if (p.level != level)
             return FTuning.PAIR_CROSS_DIMENSION_BLOCKS;
