@@ -56,7 +56,7 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
                 case "main" -> main = material;
                 case "base" -> {
                     // A soup is its serving: named for the broth or stew poured in, not for a material.
-                    float serving = p.dim(DishBake.SERVING, -1f);
+                    float serving = p.state(DishBake.SERVING, -1f);
                     if (serving >= 0f)
                         soup = Component.translatable("item.feedback.meal." + DishBake.SERVINGS.get(Math.round(serving)));
                     base = material;
@@ -82,7 +82,7 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
         ModularType type = design == null ? null : ModularTypes.known().get(design.type());
         Part finish = type == null || type.afterRole() == null ? null : design.part(type.afterRole());
         if (finish != null)
-            tooltip.add(ToolTableMenu.pourName(finish.dim("pour", FTuning.POUR_AUTOMATION)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(ToolTableMenu.pourName(finish.state("pour", FTuning.POUR_AUTOMATION)).withStyle(ChatFormatting.GRAY));
         DishFigures figures = stack.get(FDataComponents.DISH_FIGURES.get());
         if (figures == null)
             return;

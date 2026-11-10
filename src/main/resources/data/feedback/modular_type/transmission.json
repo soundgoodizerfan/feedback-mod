@@ -13,7 +13,7 @@
       ],
       "litres": 0.125,
       "layer": 0,
-      "dims": {
+      "axes": {
         "g1": {
           "min": 0.5,
           "max": 5,

@@ -77,7 +77,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
 
 
     public static final int MIN_CYLINDERS = 1, MAX_CYLINDERS = 8;
-    /** Bore and stroke range, in mm (the {@code bore} and {@code stroke} dims of {@code engine.json} declare the same). */
+    /** Bore and stroke range, in mm (the {@code bore} and {@code stroke} axes of {@code engine.json} declare the same). */
     public static final int MIN_MM = 40, MAX_MM = 120;
 
     public static final Codec<EngineDesign> CODEC = RecordCodecBuilder.create(i -> i.group(

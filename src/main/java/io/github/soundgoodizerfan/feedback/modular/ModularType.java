@@ -241,8 +241,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param set    a hard piece set into the wearing part rather than a part in its own right: a
      *               tip in a head or blade, studs in plate. It lends the wearing part its hardness
      *               and takes its toughness from the body ({@link ModularBake}).
-     * @param dims   the as-built measures a part of this role carries, each with its range and unit
-     *               ({@link Dim}); empty for a role whose part is only a material and a shape. A machine writes
+     * @param axes   the as-built measures a part of this role carries, each with its range and unit
+     *               ({@link Axis}); empty for a role whose part is only a material and a shape. A machine writes
      *               them ({@code Machining}), the bake reads them.
      * @param alt    for a second part of the same kind as another role (a double gun's second barrel): that
      *               role's letter. The two take the same parts by design, so the audit does not count their
@@ -256,7 +256,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
-                       List<String> stock, boolean set, Map<String, Dim> dims, String alt, int bulk, boolean after, int seal,
+                       List<String> stock, boolean set, Map<String, Axis> axes, String alt, int bulk, boolean after, int seal,
                        List<Material.Trait> anyTraits) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
@@ -271,15 +271,15 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Shaping.CODEC.optionalFieldOf("part").forGetter(Role::part),
                 Codec.STRING.listOf().optionalFieldOf("stock", List.of()).forGetter(Role::stock),
                 Codec.BOOL.optionalFieldOf("set", false).forGetter(Role::set),
-                Codec.unboundedMap(Codec.STRING, Dim.CODEC).optionalFieldOf("dims", Map.of()).forGetter(Role::dims),
+                Codec.unboundedMap(Codec.STRING, Axis.CODEC).optionalFieldOf("axes", Map.of()).forGetter(Role::axes),
                 Codec.mapPair(Codec.STRING.optionalFieldOf("alt", ""), Material.Trait.CODEC.listOf().optionalFieldOf("any_traits", List.of()))
                         .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.alt(), r.anyTraits())),
                 Codec.INT.optionalFieldOf("bulk", 1).forGetter(Role::bulk),
                 // A group holds sixteen fields, so these two share one.
                 Codec.mapPair(Codec.BOOL.optionalFieldOf("after", false), Codec.INT.optionalFieldOf("seal", 0))
                         .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.after(), r.seal()))
-        ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alts, bulk, flags) ->
-                new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, dims, alts.getFirst(), bulk,
+        ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts, bulk, flags) ->
+                new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts.getFirst(), bulk,
                         flags.getFirst(), flags.getSecond(), alts.getSecond())));
 
         public boolean rod() {
@@ -290,12 +290,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
          * The measure {@code name} of {@code made}: what the machine left on it, else the shape's own nominal
          * (a barrel variant names its bore), else the role's default. Clamped to the role's range.
          */
-        public float dim(ModularDesign.Part made, String name) {
-            Dim d = dims.get(name);
+        public float axis(ModularDesign.Part made, String name) {
+            Axis d = axes.get(name);
             if (d == null)
-                return made.dim(name, 0f);
+                return made.axis(name, 0f);
             float nominal = variant(made).map(v -> v.params().get(name)).orElse(d.def());
-            return d.clamp(made.dim(name, nominal));
+            return d.clamp(made.axis(name, nominal));
         }
 
         public boolean accepts(Material.Located l) {
@@ -417,7 +417,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
 
     /**
-     * One as-built measure a part may carry ({@link ModularDesign.Part#dims}): the range a machine can leave it
+     * One as-built measure a part may carry ({@link ModularDesign.Part#measures}): the range a machine can leave it
      * in, the unit it is quoted in, and what a part nothing has cut reads as. A continuous figure has a place in
      * the core, so a type that wants one declares it per role instead of growing a field on the design.
      *
@@ -428,16 +428,16 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param step the grain the Blueprint Table moves it in; 0 for a fifth-of-the-range default.
      * @param when for a figure that exists only on some shapes: the shape param ({@code gears}) that must reach {@code atLeast}.
      */
-    public record Dim(float min, float max, String unit, float def, float step, String when, float atLeast) {
-        static final Codec<Dim> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.FLOAT.fieldOf("min").forGetter(Dim::min),
-                Codec.FLOAT.fieldOf("max").forGetter(Dim::max),
-                Codec.STRING.optionalFieldOf("unit", "").forGetter(Dim::unit),
-                Codec.FLOAT.fieldOf("default").forGetter(Dim::def),
-                Codec.FLOAT.optionalFieldOf("step", 0f).forGetter(Dim::step),
-                Codec.STRING.optionalFieldOf("when", "").forGetter(Dim::when),
-                Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Dim::atLeast)
-        ).apply(instance, Dim::new));
+    public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast) {
+        static final Codec<Axis> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.FLOAT.fieldOf("min").forGetter(Axis::min),
+                Codec.FLOAT.fieldOf("max").forGetter(Axis::max),
+                Codec.STRING.optionalFieldOf("unit", "").forGetter(Axis::unit),
+                Codec.FLOAT.fieldOf("default").forGetter(Axis::def),
+                Codec.FLOAT.optionalFieldOf("step", 0f).forGetter(Axis::step),
+                Codec.STRING.optionalFieldOf("when", "").forGetter(Axis::when),
+                Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Axis::atLeast)
+        ).apply(instance, Axis::new));
 
         /** The grain a stepper moves it in. */
         public float grain() {

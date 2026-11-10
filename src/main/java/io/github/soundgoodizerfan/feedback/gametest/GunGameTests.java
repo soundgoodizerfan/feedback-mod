@@ -68,8 +68,8 @@ public class GunGameTests {
     }
 
     public static ModularDesign.Part part(String role, String material, String form, int count, String kind, String variant,
-                                          Map<String, Float> dims) {
-        return new ModularDesign.Part(role, Feedback.id(material), form, count, kind, variant, 0, dims);
+                                          Map<String, Float> axes) {
+        return new ModularDesign.Part(role, Feedback.id(material), form, count, kind, variant, 0, io.github.soundgoodizerfan.feedback.process.Measures.ofAxes(axes));
     }
 
     /** The barrel as the lathe left it: a bore, an outside and a length. */

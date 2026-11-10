@@ -27,34 +27,29 @@ import net.minecraft.resources.ResourceLocation;
  *                 empty for the standard one.
  * @param flaw     how badly it was forged, 0 (clean) to 3: each step costs the edge toughness
  *                 ({@code ForgeRhythm}). A flawed part is never refused, only weaker.
- * @param dims     as-built measures a machine left on it, by the names its role declares
- *                 ({@link io.github.soundgoodizerfan.feedback.modular.ModularType.Dim}): a barrel's bore, outside and
- *                 length. Empty for a part whose role declares none.
+ * @param measures as-built axes, forge work, attunements and live state ({@link Measures}).
  */
-public record MadeOf(ResourceLocation material, String stock, int cells, String variant, int flaw,
-                     java.util.Map<String, Float> dims) {
-
-    public MadeOf {
-        dims = java.util.Map.copyOf(dims);
-    }
+public record MadeOf(ResourceLocation material, String stock, int cells, String variant, int flaw, Measures measures) {
 
     public MadeOf(ResourceLocation material, String stock, int cells) {
-        this(material, stock, cells, "", 0, java.util.Map.of());
+        this(material, stock, cells, "", 0, Measures.NONE);
     }
 
     public MadeOf(ResourceLocation material, String stock, int cells, String variant) {
-        this(material, stock, cells, variant, 0, java.util.Map.of());
+        this(material, stock, cells, variant, 0, Measures.NONE);
     }
 
     public MadeOf(ResourceLocation material, String stock, int cells, String variant, int flaw) {
-        this(material, stock, cells, variant, flaw, java.util.Map.of());
+        this(material, stock, cells, variant, flaw, Measures.NONE);
     }
 
-    /** This part with the measure {@code name} set: what a drill, a lathe or a cutoff wheel leaves on it. */
-    public MadeOf withDim(String name, float value) {
-        java.util.Map<String, Float> out = new java.util.HashMap<>(dims);
-        out.put(name, value);
-        return new MadeOf(material, stock, cells, variant, flaw, out);
+    /** This part with the as-built axis {@code name} set: what a drill, a lathe or a cutoff wheel leaves on it. */
+    public MadeOf withAxis(String name, float value) {
+        return withMeasures(measures.withAxis(name, value));
+    }
+
+    public MadeOf withMeasures(Measures m) {
+        return new MadeOf(material, stock, cells, variant, flaw, m);
     }
 
     public static final Codec<MadeOf> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -63,7 +58,7 @@ public record MadeOf(ResourceLocation material, String stock, int cells, String 
             Codec.INT.fieldOf("cells").forGetter(MadeOf::cells),
             Codec.STRING.optionalFieldOf("variant", "").forGetter(MadeOf::variant),
             Codec.INT.optionalFieldOf("flaw", 0).forGetter(MadeOf::flaw),
-            Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("dims", java.util.Map.of()).forGetter(MadeOf::dims)
+            Measures.CODEC.optionalFieldOf("measures", Measures.NONE).forGetter(MadeOf::measures)
     ).apply(i, MadeOf::new));
 
     public static final StreamCodec<ByteBuf, MadeOf> STREAM_CODEC = StreamCodec.composite(
@@ -72,6 +67,6 @@ public record MadeOf(ResourceLocation material, String stock, int cells, String 
             ByteBufCodecs.VAR_INT, MadeOf::cells,
             ByteBufCodecs.STRING_UTF8, MadeOf::variant,
             ByteBufCodecs.VAR_INT, MadeOf::flaw,
-            ByteBufCodecs.map(java.util.HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.FLOAT), MadeOf::dims,
+            Measures.STREAM_CODEC, MadeOf::measures,
             MadeOf::new);
 }

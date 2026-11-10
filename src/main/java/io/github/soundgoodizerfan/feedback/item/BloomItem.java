@@ -31,7 +31,7 @@ public class BloomItem extends Item {
     /** Nuggets of its iron a bloom has already lost to scale in reheating. */
     public static int scale(ItemStack stack) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
-        return made == null ? 0 : Math.round(made.dims().getOrDefault("scale", 0f));
+        return made == null ? 0 : Math.round(made.measures().state("scale", 0f));
     }
 
     /** A bloom of the given slag grade, as the furnaces make it. */
@@ -44,7 +44,7 @@ public class BloomItem extends Item {
     public static ItemStack of(Item bloom, int slag, int scale) {
         ItemStack stack = of(bloom, slag);
         if (scale > 0)
-            stack.set(FDataComponents.MADE_OF.get(), stack.get(FDataComponents.MADE_OF.get()).withDim("scale", scale));
+            stack.set(FDataComponents.MADE_OF.get(), stack.get(FDataComponents.MADE_OF.get()).withMeasures(stack.get(FDataComponents.MADE_OF.get()).measures().withState("scale", scale)));
         return stack;
     }
 

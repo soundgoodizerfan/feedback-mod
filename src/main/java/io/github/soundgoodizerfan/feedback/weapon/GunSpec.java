@@ -38,7 +38,7 @@ import java.util.Optional;
  * barrel is that the pressure acts over (guns spec 3.2 and 3.3).
  *
  * @param material the barrel's metal.
- * @param barrel   the barrel's real shape: its part's {@code dims}.
+ * @param barrel   the barrel's real shape: its part's {@code axes}.
  * @param sight    iron without a sight part, else the sight part's variant.
  * @param launcher a coil if a winding is on, else a chamber.
  * @param parts    the metals of the other parts.
@@ -429,10 +429,10 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         return null;
     }
 
-    /** The barrel part's real shape: its {@code dims}, else what its calibre class and the role default to. */
+    /** The barrel part's real shape: its {@code axes}, else what its calibre class and the role default to. */
     private static BarrelGeometry geometry(ModularType type, String role, ModularDesign.Part barrel) {
         ModularType.Role r = type.roles().get(role);
-        return new BarrelGeometry(r.dim(barrel, BarrelGeometry.BORE), r.dim(barrel, BarrelGeometry.OUTER), r.dim(barrel, BarrelGeometry.LENGTH));
+        return new BarrelGeometry(r.axis(barrel, BarrelGeometry.BORE), r.axis(barrel, BarrelGeometry.OUTER), r.axis(barrel, BarrelGeometry.LENGTH));
     }
 
     // --- what the design is, in words the rest of the gun code uses ---------------------------------

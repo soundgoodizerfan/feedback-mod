@@ -52,7 +52,7 @@
       ],
       "litres": 0.3,
       "layer": 0,
-      "dims": {
+      "axes": {
         "bore": {
           "min": 5,
           "max": 20,
@@ -149,7 +149,7 @@
       "litres": 0.3,
       "layer": 0,
       "alt": "B",
-      "dims": {
+      "axes": {
         "bore": {
           "min": 5,
           "max": 20,

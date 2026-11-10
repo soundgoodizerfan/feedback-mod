@@ -283,8 +283,8 @@ public final class ModularBake {
                 return Optional.empty();
         }
         int cylinders = Math.round(param(type, pistons, "cylinders", 4f));
-        int bore = Math.round(type.roles().get(ENGINE_PISTONS).dim(pistons, "bore"));
-        int stroke = Math.round(type.roles().get(ENGINE_CRANK).dim(crank, "stroke"));
+        int bore = Math.round(type.roles().get(ENGINE_PISTONS).axis(pistons, "bore"));
+        int stroke = Math.round(type.roles().get(ENGINE_CRANK).axis(crank, "stroke"));
         var compression = io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign.Compression.values()[
                 Math.max(0, Math.min(2, Math.round(param(type, head, "compression", 1f))))];
         float torque = param(type, block, "torque", 1f) * param(type, head, "torque", 1f);
@@ -314,14 +314,14 @@ public final class ModularBake {
         }
         Material bm = materials.get(blades.material());
         int count = Math.round(param(type, hub, "blades", 3f));
-        int diameter = Math.round(type.roles().get(PROP_BLADES).dim(blades, "diameter"));
+        int diameter = Math.round(type.roles().get(PROP_BLADES).axis(blades, "diameter"));
         int pitch = Math.round(param(type, blades, "pitch", 1f));
         float mass = param(type, hub, "mass", 1f) * massBlend(design, type, materials, bm, PROP_HUB, PROP_BLADES);
         return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign(count, diameter, pitch, blades.material(), mass));
     }
 
     /**
-     * The gearbox a design makes. The gear set's variant is the gear count and its dims {@code g1} to {@code g6} the ratios (in
+     * The gearbox a design makes. The gear set's variant is the gear count and its axes {@code g1} to {@code g6} the ratios (in
      * steps of 0.05, the grain of a transmission); the gear set's metal is the box's, which sets how fast a shift at speed wears it;
      * the synchronisers and the case each multiply the wear ({@code wear}) and the weight ({@code mass}), the other parts' metals
      * weighing it too. Empty if a part is missing or is not a weighed metal.
@@ -340,7 +340,7 @@ public final class ModularBake {
         int count = Math.round(param(type, gears, "gears", 4f));
         java.util.List<Integer> steps = new java.util.ArrayList<>();
         for (int g = 1; g <= count; g++)
-            steps.add(Math.round(role.dim(gears, "g" + g) * io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.PER_UNIT));
+            steps.add(Math.round(role.axis(gears, "g" + g) * io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.PER_UNIT));
         float wear = param(type, synchro, "wear", 1f) * param(type, box, "wear", 1f);
         float mass = param(type, synchro, "mass", 1f) * param(type, box, "mass", 1f)
                 * massBlend(design, type, materials, materials.get(gears.material()), GEAR_SET, GEAR_SYNCHRO, GEAR_CASE);
@@ -460,8 +460,8 @@ public final class ModularBake {
                 power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
             // A bored part (a cylinder, a nozzle) works as well as its bore is cut to the size the upgrade wants: uncut or overbored, it still
             // works, only worse. The cut comes off the part (a drill, per Fu), never a gate.
-            if (k.containsKey("bore_target") && role.dims().containsKey("bore")) {
-                float want = k.get("bore_target"), cut = p.dim("bore", role.dims().get("bore").def());
+            if (k.containsKey("bore_target") && role.axes().containsKey("bore")) {
+                float want = k.get("bore_target"), cut = p.axis("bore", role.axes().get("bore").def());
                 float closeness = Math.max(0f, 1f - Math.abs(cut - want) / want);
                 power *= ModularTuning.BORE_FLOOR + (1f - ModularTuning.BORE_FLOOR) * closeness;
             }

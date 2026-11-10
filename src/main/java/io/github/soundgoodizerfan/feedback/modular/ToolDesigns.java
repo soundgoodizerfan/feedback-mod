@@ -220,7 +220,7 @@ public final class ToolDesigns {
                     : role.striker() ? ModularHeads.kindOf(part, role) : role.part().get().item().getPath();
             BuiltInRegistries.ITEM.getOptional(ResourceLocation.fromNamespaceAndPath(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID, kind)).ifPresent(item -> {
                 ItemStack stack = new ItemStack(item);
-                stack.set(FDataComponents.MADE_OF.get(), new MadeOf(part.material(), part.form(), part.count(), part.variant(), part.flaw(), part.dims()));
+                stack.set(FDataComponents.MADE_OF.get(), new MadeOf(part.material(), part.form(), part.count(), part.variant(), part.flaw(), part.measures()));
                 out.add(stack);
             });
         } else if (material != null) {

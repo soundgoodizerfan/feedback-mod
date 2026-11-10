@@ -240,7 +240,7 @@ public final class FCommands {
                 String kind = role.striker() ? ModularHeads.kindOf(p, role) : role.part().get().item().getPath();
                 ItemStack part = new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id(kind)));
                 part.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
-                        new io.github.soundgoodizerfan.feedback.process.MadeOf(p.material(), p.form(), p.count(), p.variant(), p.flaw(), p.dims()));
+                        new io.github.soundgoodizerfan.feedback.process.MadeOf(p.material(), p.form(), p.count(), p.variant(), p.flaw(), p.measures()));
                 out.add(part);
             } else {
                 ItemStack stock = m.stack(p.material(), p.form()).orElseThrow(NO_MATERIAL::create);

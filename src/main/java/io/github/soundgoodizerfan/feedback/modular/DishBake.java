@@ -21,7 +21,7 @@ import net.minecraft.world.food.FoodProperties;
 
 /**
  * What a dish is, from its parts: a pure function of the
- * design and the material table, so it reads each part's {@link FoodState} off {@link Part#dims} where the
+ * design and the material table, so it reads each part's {@link FoodState} off {@link Part#measures} where the
  * Tool Table put it. A dish is as good as its worst part for hazards, and a bowl can only hold so much meal.
  *
  * <p>The dish also leaves with a {@link FoodState} of its own (rot of the worst part, the rest blended by part
@@ -48,8 +48,8 @@ public final class DishBake {
     /** The pot serving words, so a soup's name can say which one it was poured from. */
     public static final java.util.List<String> SERVINGS = java.util.List.of("broth", "stew", "scorched");
 
-    /** A pot serving's figures as part dims: its baked nutrition, load, fat and fibre, its compounds as {@code c:name}. */
-    public static Map<String, Float> servingDims(net.minecraft.world.item.ItemStack stack) {
+    /** A pot serving's figures as part state: its baked nutrition, load, fat and fibre, its compounds as {@code c:name}. */
+    public static Map<String, Float> servingState(net.minecraft.world.item.ItemStack stack) {
         Map<String, Float> out = new HashMap<>();
         FoodProperties food = stack.has(DataComponents.FOOD) ? stack.get(DataComponents.FOOD) : stack.getItem().components().get(DataComponents.FOOD);
         io.github.soundgoodizerfan.feedback.item.Meal meal = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MEAL.get());
@@ -70,7 +70,7 @@ public final class DishBake {
         return out;
     }
 
-    /** The part dims that carry a food's state ({@link FoodState}), written by the Tool Table. */
+    /** The part state that carries a food's state ({@link FoodState}), written by the Tool Table. */
     private static final String COOK = "cook", MOISTURE = "moisture", PATHOGEN = "pathogen", TOXIN = "toxin",
             CHARRED = "charred", ROT = "rot", SMOKE = "smoke", SALT = "salt",
             HUNGER = "hunger", SATURATION = "saturation", COMPOUND = "c:";
@@ -81,8 +81,8 @@ public final class DishBake {
     /** The dim a serving part carries: which of {@link #SERVINGS} it is. A dish's name reads it. */
     public static final String SERVING = "serving";
 
-    /** A food's state as dims on its part: the one place the key names are spelled. */
-    public static Map<String, Float> dimsOf(FoodState s) {
+    /** A food's state as state on its part: the one place the key names are spelled. */
+    public static Map<String, Float> stateOf(FoodState s) {
         Map<String, Float> out = new HashMap<>();
         out.put(COOK, s.cook());
         out.put(MOISTURE, s.moisture());
@@ -101,20 +101,20 @@ public final class DishBake {
         return new FoodState(cooked ? 1f : 0f, food.moisture(), cooked ? 0f : food.pathogen(), food.toxin(), 0f, 0f, 0L, FTuning.AMBIENT_TU.value(), 0f, 0f);
     }
 
-    /** A food part's cut (level, grade) and pour off its dims; absent dims are whole, and a finish nobody poured is the automation floor. */
+    /** A food part's cut (level, grade) and pour off its state; absent state is whole, and a finish nobody poured is the automation floor. */
     private static final String CUT = "cut", EVENNESS = "evenness", POUR = "pour";
 
     static FoodState stateOf(Part p, Material.Food food) {
         FoodState f = fresh(food, p.form());
-        return new FoodState(p.dim(COOK, f.cook()), p.dim(MOISTURE, f.moisture()), p.dim(PATHOGEN, f.pathogen()),
-                p.dim(TOXIN, f.toxin()), p.dim(CHARRED, f.charred()), p.dim(ROT, f.rot()), 0L, f.envTu(), p.dim(SMOKE, 0f), p.dim(SALT, 0f));
+        return new FoodState(p.state(COOK, f.cook()), p.state(MOISTURE, f.moisture()), p.state(PATHOGEN, f.pathogen()),
+                p.state(TOXIN, f.toxin()), p.state(CHARRED, f.charred()), p.state(ROT, f.rot()), 0L, f.envTu(), p.state(SMOKE, 0f), p.state(SALT, 0f));
     }
 
     /** How the knead scales a dough part, as {@link Cooking#apply} scales a loaf: its class, or the unskilled floor for dough nobody kneaded; 1 for anything else. */
     private static float kneaded(Part p, Material m) {
         if (!m.traits().contains(Material.Trait.KNEADABLE))
             return 1f;
-        float grade = p.dim(KNEAD, -1f);
+        float grade = p.state(KNEAD, -1f);
         return grade < 0f ? FTuning.KNEAD_UNKNEADED_SCALE : new io.github.soundgoodizerfan.feedback.process.FoodKnead(Math.round(grade)).scale();
     }
 
@@ -183,19 +183,19 @@ public final class DishBake {
             // A pot serving is a food already baked: its nutrition counts once, and the pot's water is in it.
             if (m.traits().contains(Material.Trait.BROTH)) {
                 float v = FTuning.DISH_PART_MB;
-                hunger += p.dim(HUNGER, 0f);
-                saturation += p.dim(SATURATION, 0f);
+                hunger += p.state(HUNGER, 0f);
+                saturation += p.state(SATURATION, 0f);
                 if (FTuning.SERVING_MOISTURE > wetMoisture) {
                     wetMoisture = FTuning.SERVING_MOISTURE;
-                    wetHunger = p.dim(HUNGER, 0f);
-                    wetSaturation = p.dim(SATURATION, 0f);
+                    wetHunger = p.state(HUNGER, 0f);
+                    wetSaturation = p.state(SATURATION, 0f);
                 }
                 fill += v;
-                pathogen = Math.max(pathogen, p.dim(PATHOGEN, 0f));
-                toxinMass += p.dim(TOXIN, 0f) * v;
-                fatMass += p.dim("fat", 0f) * v;
-                fibreMass += p.dim("fibre", 0f) * v;
-                p.dims().forEach((key, strength) -> {
+                pathogen = Math.max(pathogen, p.state(PATHOGEN, 0f));
+                toxinMass += p.state(TOXIN, 0f) * v;
+                fatMass += p.state("fat", 0f) * v;
+                fibreMass += p.state("fibre", 0f) * v;
+                p.measures().state().forEach((key, strength) -> {
                     if (key.startsWith(COMPOUND))
                         compoundMass.merge(key.substring(COMPOUND.length()), strength * v, Float::sum);
                 });
@@ -218,12 +218,12 @@ public final class DishBake {
             boolean soak = soaked[at];
             // The water that has crept in decides whether it still counts as dried out; the dish keeps its own blend.
             FoodState wetted = new FoodState(s.cook(), migrated[at], s.pathogen(), s.toxin(), s.charred(), s.rot(), 0L, s.envTu(), s.smoke(), s.salt());
-            int cutLevel = Math.round(p.dim(CUT, 0f));
+            int cutLevel = Math.round(p.state(CUT, 0f));
             cutSum += cutLevel;
             foodParts++;
-            boolean ragged = cutLevel > 0 && Math.round(p.dim(EVENNESS, 0f)) == FoodCut.RAGGED;
+            boolean ragged = cutLevel > 0 && Math.round(p.state(EVENNESS, 0f)) == FoodCut.RAGGED;
             // Part.role is the role's letter; the finish is the type's after role.
-            float pour = p.role().equals(type.afterRole()) ? p.dim(POUR, FTuning.POUR_AUTOMATION) : 1f;
+            float pour = p.role().equals(type.afterRole()) ? p.state(POUR, FTuning.POUR_AUTOMATION) : 1f;
             // The same raw-to-done interpolation the pot makes, then the ladder's scale and what rot has taken.
             FoodProperties held = eaten(m, p.form()).orElse(null);
             FoodProperties done = eaten(m, "cooked").orElse(held);

@@ -65,7 +65,7 @@
       ],
       "litres": 0.125,
       "layer": 1,
-      "dims": {
+      "axes": {
         "bore": {
           "min": 40,
           "max": 120,
@@ -139,7 +139,7 @@
       ],
       "litres": 0.125,
       "layer": 2,
-      "dims": {
+      "axes": {
         "stroke": {
           "min": 40,
           "max": 120,

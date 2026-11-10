@@ -179,11 +179,11 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
             List<Material.Trait> traits = m == null ? List.of() : m.traits();
             Component pieceName = Component.translatable("material." + p.material().getNamespace() + "." + p.material().getPath());
             // A serving carries its pot's ingredient shares: the big ones lend their traits and cuisine, the biggest names it.
-            if (p.dims().keySet().stream().anyMatch(k -> k.startsWith(DishBake.ING))) {
+            if (p.measures().state().keySet().stream().anyMatch(k -> k.startsWith(DishBake.ING))) {
                 traits = new ArrayList<>(traits);
                 String top = "";
                 float topShare = 0f;
-                for (Map.Entry<String, Float> e : p.dims().entrySet()) {
+                for (Map.Entry<String, Float> e : p.measures().state().entrySet()) {
                     if (!e.getKey().startsWith(DishBake.ING))
                         continue;
                     String path = e.getKey().substring(DishBake.ING.length());
@@ -207,19 +207,19 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
                     votes.merge(t, 1, Integer::sum);
             if (role.after()) {
                 // A runny finish poured to the line is silky (a shaken or placed one has no pour to judge).
-                if (m != null && p.dim("pour", -1f) >= 0f && PrepWork.mode(m) == PrepWork.POUR && Math.abs(p.dim("pour", 0f) - 1f) <= FTuning.POUR_CLEAN)
+                if (m != null && p.state("pour", -1f) >= 0f && PrepWork.mode(m) == PrepWork.POUR && Math.abs(p.state("pour", 0f) - 1f) <= FTuning.POUR_CLEAN)
                     silky = true;
                 continue;
             }
             if (role.name().equals("container")) {
                 container = p.kind().isEmpty() ? p.material().getPath() : p.kind();
                 shapeLaid = p.variant();
-                kneadGrade = Math.round(p.dim(DishBake.KNEAD, -1f));
+                kneadGrade = Math.round(p.state(DishBake.KNEAD, -1f));
                 continue;
             }
             roles.computeIfAbsent(role.name(), k -> new ArrayList<>()).add(new Piece(traits,
-                    pieceName, Math.round(p.dim("cut", 0f)),
-                    p.dim("cut", 0f) > 0f && Math.round(p.dim("evenness", 0f)) == FoodCut.RAGGED));
+                    pieceName, Math.round(p.state("cut", 0f)),
+                    p.state("cut", 0f) > 0f && Math.round(p.state("evenness", 0f)) == FoodCut.RAGGED));
         }
         int best = votes.values().stream().max(Integer::compare).orElse(0);
         java.util.Set<Material.Trait> top = new java.util.HashSet<>();

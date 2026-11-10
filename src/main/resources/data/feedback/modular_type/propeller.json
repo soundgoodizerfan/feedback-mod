@@ -61,7 +61,7 @@
       ],
       "litres": 0.125,
       "layer": 1,
-      "dims": {
+      "axes": {
         "diameter": {
           "min": 80,
           "max": 600,

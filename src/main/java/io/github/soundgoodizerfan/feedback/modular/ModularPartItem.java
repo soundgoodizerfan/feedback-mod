@@ -47,17 +47,17 @@ public class ModularPartItem extends Item {
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
         if (made != null)
             attuned(made, tooltip);
-        if (made != null && made.dims().containsKey(ForgeRhythm.WORK)
+        if (made != null && made.measures().work() != 1f
                 && io.github.soundgoodizerfan.feedback.client.Readout.exact(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE))
             tooltip.add(Component.translatable("tooltip.feedback.part.worked",
                     io.github.soundgoodizerfan.feedback.client.Readout.figure(
-                            io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE, made.dims().get(ForgeRhythm.WORK) * 100f))
+                            io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE, made.measures().work() * 100f))
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 
     /** The attunement lines of a part, shaped or raw stock the enchanting table stamped. */
     public static void attuned(MadeOf made, java.util.List<Component> tooltip) {
-        made.dims().forEach((key, level) -> {
+        made.measures().attuned().forEach((key, level) -> {
             Attunements.Effect effect = Attunements.byKey(key);
             if (effect != null)
                 tooltip.add(Component.translatable("tooltip.feedback.part.attuned",

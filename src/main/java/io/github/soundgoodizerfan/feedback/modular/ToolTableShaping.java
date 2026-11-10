@@ -193,7 +193,7 @@ public final class ToolTableShaping {
         return BuiltInRegistries.ITEM.getOptional(option.shaping().item()).map(item -> {
             ItemStack out = new ItemStack(item);
             MadeOf made = new MadeOf(stock.what().id(), stock.what().form(), stock.cells(), option.variant().name(), flaw);
-            out.set(FDataComponents.MADE_OF.get(), work == 1f ? made : made.withDim(ForgeRhythm.WORK, work));
+            out.set(FDataComponents.MADE_OF.get(), work == 1f ? made : made.withMeasures(made.measures().withWork(work)));
             if (stock.coldest() > 0 && stock.what().material().minTemperature().value() > 0)
                 ItemHeat.set(out, new Tu(stock.coldest()), level);
             return out;

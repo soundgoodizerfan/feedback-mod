@@ -205,9 +205,9 @@ public final class ModularRework {
             food.set(FDataComponents.FOOD_STATE.get(), new FoodState(was.cook(), was.moisture() * dry, Math.max(was.pathogen(), rot * FTuning.FOOD_ROT_PATHOGEN),
                     now.rot() >= FTuning.FOOD_ROT_TOXIC_AT ? Math.max(was.toxin(), now.toxin()) : was.toxin(), was.charred(), rot, now.stamp(), now.envTu(),
                     was.smoke(), was.salt()));
-            int cut = Math.round(part.dim("cut", 0f));
+            int cut = Math.round(part.state("cut", 0f));
             if (cut > 0)
-                food.set(FDataComponents.FOOD_CUT.get(), new FoodCut(cut, Math.round(part.dim("evenness", 0f))));
+                food.set(FDataComponents.FOOD_CUT.get(), new FoodCut(cut, Math.round(part.state("evenness", 0f))));
             out.add(food);
         }
         return Optional.of(out);

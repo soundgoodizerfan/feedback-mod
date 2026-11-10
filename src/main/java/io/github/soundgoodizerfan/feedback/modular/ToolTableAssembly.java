@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
+import io.github.soundgoodizerfan.feedback.process.Measures;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -131,7 +132,7 @@ public final class ToolTableAssembly {
                 if (drawn == null)
                     continue;
             }
-            ModularDesign design = type.blueprint() ? withDrawnDims(drawn, best.design, type) : best.design;
+            ModularDesign design = type.blueprint() ? withDrawnAxes(drawn, best.design, type) : best.design;
             // A coat rolled onto the wearing plate (roll cladding) rides onto the tool, where ModularBake reads it.
             io.github.soundgoodizerfan.feedback.process.Plating coat = null;
             for (int i = 0; i < used.size(); i++)
@@ -155,7 +156,7 @@ public final class ToolTableAssembly {
 
     /**
      * Whether {@code made} is the thing {@code drawn} shows: the same parts, role for role, in the same material and shape and number.
-     * Ground-in figures (dims, flaw) are measured on the part and left to the bake; the drawing predicts them.
+     * Ground-in figures (axes, flaw) are measured on the part and left to the bake; the drawing predicts them.
      */
     private static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
         // a held component (a circuit, a cell) is what the builder brings: the sheet does not pin it
@@ -174,19 +175,19 @@ public final class ToolTableAssembly {
      * {@code made} with the as-built measures the drawing chose, for the roles that declare any (an engine's bore and stroke):
      * a measure the blueprint sets is the part's own, which no machine has cut.
      */
-    private static ModularDesign withDrawnDims(ModularDesign drawn, ModularDesign made, ModularType type) {
+    private static ModularDesign withDrawnAxes(ModularDesign drawn, ModularDesign made, ModularType type) {
         ModularDesign out = made;
         for (Part want : drawn.parts()) {
             ModularType.Role role = type.roles().get(want.role());
             Part got = made.part(want.role());
-            if (role == null || role.dims().isEmpty() || got == null || want.dims().isEmpty())
+            if (role == null || role.axes().isEmpty() || got == null || want.measures().axes().isEmpty())
                 continue;
-            var dims = new java.util.HashMap<>(got.dims());
-            want.dims().forEach((k, v) -> {
-                if (role.dims().containsKey(k))
-                    dims.put(k, v);
+            var axes = new java.util.HashMap<>(got.measures().axes());
+            want.measures().axes().forEach((k, v) -> {
+                if (role.axes().containsKey(k))
+                    axes.put(k, v);
             });
-            out = out.withPart(new Part(got.role(), got.material(), got.form(), got.count(), got.kind(), got.variant(), got.flaw(), dims));
+            out = out.withPart(got.withMeasures(got.measures().withAxes(axes)));
         }
         return out;
     }
@@ -260,28 +261,28 @@ public final class ToolTableAssembly {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
         // A pot serving is food already baked: its figures come off the stack, not a material block.
         if (made == null && what.material().traits().contains(Material.Trait.BROTH))
-            return new Part(role, what.id(), what.form(), count, "", "", 0, DishBake.servingDims(stack));
+            return new Part(role, what.id(), what.form(), count, "", "", 0, Measures.ofState(DishBake.servingState(stack)));
         if (made == null && what.material().food().isPresent())
-            return new Part(role, what.id(), what.form(), count, "", stack.getOrDefault(FDataComponents.FOOD_SHAPE.get(), ""), 0, foodDims(stack, what));
+            return new Part(role, what.id(), what.form(), count, "", stack.getOrDefault(FDataComponents.FOOD_SHAPE.get(), ""), 0, Measures.ofState(foodStateMap(stack, what)));
         if (made != null && !(stack.getItem() instanceof ModularPartItem)) // raw stock the enchanting table stamped
-            return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.dims());
+            return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.measures());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells(),
-                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.dims())
+                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.measures())
                 : new Part(role, what.id(), what.form(), count);
     }
 
     /** A food's state plus what the Prep Table did to it: its cut level and evenness grade. */
-    private static java.util.Map<String, Float> foodDims(ItemStack stack, Material.Located what) {
-        java.util.Map<String, Float> dims = DishBake.dimsOf(foodState(stack, what));
+    private static java.util.Map<String, Float> foodStateMap(ItemStack stack, Material.Located what) {
+        java.util.Map<String, Float> state = DishBake.stateOf(foodState(stack, what));
         io.github.soundgoodizerfan.feedback.process.FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         if (cut != null) {
-            dims.put("cut", (float) cut.level());
-            dims.put("evenness", (float) cut.grade());
+            state.put("cut", (float) cut.level());
+            state.put("evenness", (float) cut.grade());
         }
         io.github.soundgoodizerfan.feedback.process.FoodKnead knead = stack.get(FDataComponents.FOOD_KNEAD.get());
         if (knead != null)
-            dims.put(DishBake.KNEAD, (float) knead.grade());
-        return dims;
+            state.put(DishBake.KNEAD, (float) knead.grade());
+        return state;
     }
 
     /** A food stack's state as it is stored (infer has no level to settle it by), else its material's own: the dish bakes from it. */

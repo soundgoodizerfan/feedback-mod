@@ -14,6 +14,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
+import io.github.soundgoodizerfan.feedback.process.Measures;
+
 /**
  * What a modular item was put together as: a type and the parts in it. Nothing derived -- the
  * figures are {@link ModularFigures}, baked from this and the material table. Like the gun's
@@ -40,47 +42,49 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
      * @param variant  which shape of the part it was made in ({@link ModularType.Variant}); empty for the
      *                 standard one. Its geometry is read from the type, never stored here.
      * @param flaw     how badly it was forged, 0 to 3 ({@code MadeOf#flaw}).
-     * @param dims     as-built measures the machine left on it (a barrel's real bore, outside and length), by the
-     *                 names its role declares ({@link ModularType.Dim}); empty for a part whose role declares none,
-     *                 and for a name left out the role's default is read.
+     * @param measures as-built axes (a barrel's real bore, outside and length, by the names its role declares,
+     *                 {@link ModularType.Axis}), forge work, attunements and live food state ({@link Measures});
+     *                 {@link Measures#NONE} for a part with none. A role axis left out reads the axis's default.
      * @param sub      for a role that holds a finished modular item (a suit's upgrade module): that item, whole, with its own design,
      *                 figures, wear and attunements, and any items nested in it in turn. Empty for every other part. {@code material}
      *                 then names the held item's wearing material, so the part is found like any other.
      */
     public record Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw,
-                       Map<String, Float> dims, ItemStack sub) {
-        public Part {
-            dims = Map.copyOf(dims);
-        }
+                       Measures measures, ItemStack sub) {
 
         public Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw,
-                    Map<String, Float> dims) {
-            this(role, material, form, count, kind, variant, flaw, dims, ItemStack.EMPTY);
+                    Measures measures) {
+            this(role, material, form, count, kind, variant, flaw, measures, ItemStack.EMPTY);
         }
 
         /** A part that is a finished modular item held whole. */
         public static Part holding(String role, ResourceLocation material, String form, ItemStack held) {
-            return new Part(role, material, form, 1, "", "", 0, Map.of(), held.copyWithCount(1));
+            return new Part(role, material, form, 1, "", "", 0, Measures.NONE, held.copyWithCount(1));
         }
 
         @Override
         public boolean equals(Object o) {
             return o instanceof Part p && role.equals(p.role) && material.equals(p.material) && form.equals(p.form) && count == p.count
-                    && kind.equals(p.kind) && variant.equals(p.variant) && flaw == p.flaw && dims.equals(p.dims)
+                    && kind.equals(p.kind) && variant.equals(p.variant) && flaw == p.flaw && measures.equals(p.measures)
                     && ItemStack.matches(sub, p.sub);
         }
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(role, material, form, count, kind, variant, flaw, dims, ItemStack.hashItemAndComponents(sub));
+            return java.util.Objects.hash(role, material, form, count, kind, variant, flaw, measures, ItemStack.hashItemAndComponents(sub));
         }
 
         public Part(String role, ResourceLocation material, String form, int count) {
-            this(role, material, form, count, "", "", 0, Map.of());
+            this(role, material, form, count, "", "", 0, Measures.NONE);
         }
 
         public Part(String role, ResourceLocation material, String form, int count, String kind, String variant, int flaw) {
-            this(role, material, form, count, kind, variant, flaw, Map.of());
+            this(role, material, form, count, kind, variant, flaw, Measures.NONE);
+        }
+
+        /** This part with {@code m} in place of its measures. */
+        public Part withMeasures(Measures m) {
+            return new Part(role, material, form, count, kind, variant, flaw, m, sub);
         }
 
         public static final Codec<Part> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -91,7 +95,7 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
                 Codec.STRING.optionalFieldOf("kind", "").forGetter(Part::kind),
                 Codec.STRING.optionalFieldOf("variant", "").forGetter(Part::variant),
                 Codec.INT.optionalFieldOf("flaw", 0).forGetter(Part::flaw),
-                Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("dims", Map.of()).forGetter(Part::dims),
+                Measures.CODEC.optionalFieldOf("measures", Measures.NONE).forGetter(Part::measures),
                 ItemStack.OPTIONAL_CODEC.optionalFieldOf("sub", ItemStack.EMPTY).forGetter(Part::sub)
         ).apply(instance, Part::new));
 
@@ -105,16 +109,13 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
                     ByteBufCodecs.STRING_UTF8.encode(buf, p.kind());
                     ByteBufCodecs.STRING_UTF8.encode(buf, p.variant());
                     ByteBufCodecs.VAR_INT.encode(buf, p.flaw());
-                    Part.DIMS.encode(buf, p.dims());
+                    Measures.STREAM_CODEC.encode(buf, p.measures());
                     ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, p.sub());
                 },
                 buf -> new Part(ByteBufCodecs.STRING_UTF8.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
                         ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
                         ByteBufCodecs.STRING_UTF8.decode(buf), ByteBufCodecs.STRING_UTF8.decode(buf),
-                        ByteBufCodecs.VAR_INT.decode(buf), Part.DIMS.decode(buf), ItemStack.OPTIONAL_STREAM_CODEC.decode(buf)));
-
-        static final StreamCodec<RegistryFriendlyByteBuf, Map<String, Float>> DIMS =
-                ByteBufCodecs.map(java.util.HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.FLOAT);
+                        ByteBufCodecs.VAR_INT.decode(buf), Measures.STREAM_CODEC.decode(buf), ItemStack.OPTIONAL_STREAM_CODEC.decode(buf)));
 
         /**
          * Thickness and mass of this part against the drawing, from the work its forging did against
@@ -122,12 +123,17 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
          * 1 for a part that was not forged by hand, which is the drawing.
          */
         public float built() {
-            return 1f / dims.getOrDefault(ForgeRhythm.WORK, 1f);
+            return 1f / measures.work();
         }
 
-        /** The measure called {@code name}, else {@code fallback}. */
-        public float dim(String name, float fallback) {
-            return dims.getOrDefault(name, fallback);
+        /** The as-built axis called {@code name}, else {@code fallback}. */
+        public float axis(String name, float fallback) {
+            return measures.axis(name, fallback);
+        }
+
+        /** The live state entry called {@code name} (food parts), else {@code fallback}. */
+        public float state(String name, float fallback) {
+            return measures.state(name, fallback);
         }
     }
 

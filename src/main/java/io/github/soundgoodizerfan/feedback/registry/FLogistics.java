@@ -110,7 +110,7 @@ public final class FLogistics {
                 return;
             List<ModularDesign.Part> parts = new ArrayList<>();
             for (ModularDesign.Part p : starter.get().parts())
-                parts.add(p.role().equals("B") ? new ModularDesign.Part(p.role(), id, form, p.count(), p.kind(), p.variant(), p.flaw(), p.dims()) : p);
+                parts.add(p.role().equals("B") ? new ModularDesign.Part(p.role(), id, form, p.count(), p.kind(), p.variant(), p.flaw(), p.measures()) : p);
             ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(type));
             if (ModularStacks.assemble(stack, new ModularDesign(type, parts, starter.get().edge()), materials, types))
                 out.add(stack);

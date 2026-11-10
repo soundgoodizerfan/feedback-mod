@@ -44,16 +44,16 @@ public class DisenchantStoneBlock extends Block {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
-        String key = made == null ? null : made.dims().keySet().stream().filter(k -> k.startsWith(Attunements.PREFIX))
+        String key = made == null ? null : made.measures().attuned().keySet().stream()
                 .min(Comparator.naturalOrder()).orElse(null);
         if (key == null)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (level.isClientSide)
             return ItemInteractionResult.SUCCESS;
-        Map<String, Float> dims = new HashMap<>(made.dims());
-        dims.remove(key);
+        Map<String, Float> kept = new HashMap<>(made.measures().attuned());
+        kept.remove(key);
         ItemStack one = stack.copyWithCount(1);
-        one.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(), made.variant(), made.flaw(), dims));
+        one.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(), made.variant(), made.flaw(), made.measures().withAttuned(kept)));
         stack.shrink(1);
         if (stack.isEmpty())
             player.setItemInHand(hand, one);

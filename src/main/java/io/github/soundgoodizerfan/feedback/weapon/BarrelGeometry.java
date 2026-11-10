@@ -6,7 +6,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 /**
  * A barrel's real shape as the bake reads it: what the drill, the lathe and the cutoff wheel made of
- * it. It is a view, not a stored thing: the three measures are the barrel part's {@code dims}
+ * it. It is a view, not a stored thing: the three measures are the barrel part's {@code axes}
  * ({@code bore}, {@code outer}, {@code length}; {@link io.github.soundgoodizerfan.feedback.modular.ModularType.Dim}),
  * carried on the part beside its material, and written by {@link io.github.soundgoodizerfan.feedback.process.Machining}.
  *

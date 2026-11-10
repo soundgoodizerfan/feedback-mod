@@ -16,10 +16,12 @@
       "count": 2,
       "kind": "gun_barrel",
       "variant": "rifled",
-      "dims": {
-        "bore": 12,
-        "outer": 18,
-        "length": 0.5
+      "measures": {
+        "axes": {
+          "bore": 12,
+          "outer": 18,
+          "length": 0.5
+        }
       }
     },
     {

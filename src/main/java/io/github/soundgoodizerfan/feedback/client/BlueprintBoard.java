@@ -143,7 +143,7 @@ final class BlueprintBoard {
 
     /** Everything about an edit that can be put back: a pinned draft. */
     private record Draft(int type, int form, Set<String> extras, Map<String, Integer> sizes, Map<String, Integer> shape,
-                         Map<String, ResourceLocation> material, Edge edge, String selected, Map<String, Float> dims) {
+                         Map<String, ResourceLocation> material, Edge edge, String selected, Map<String, Float> axes) {
     }
 
     private record Pin(Draft draft, ModularFigures figures, ModularDesign design) {
@@ -167,7 +167,7 @@ final class BlueprintBoard {
     private final Map<String, Integer> shape = new HashMap<>();
     private final Map<String, ResourceLocation> matId = new HashMap<>();
     /** The scalar the drawing sets on a part, keyed {@code role:name} (an engine's bore, a gear's ratio); absent is the role's default. */
-    private final Map<String, Float> dimVals = new HashMap<>();
+    private final Map<String, Float> axisVals = new HashMap<>();
     /** What the sample slot held when last read, so a sample sets its material once. */
     private ItemStack seen = ItemStack.EMPTY;
     /** The paper last seen, so only a blueprint newly put in is opened. */
@@ -559,7 +559,7 @@ final class BlueprintBoard {
         sizes.clear();
         shape.clear();
         matId.clear();
-        dimVals.clear();
+        axisVals.clear();
         clearLists();
         flashes.clear();
         drawerScroll = Mth.clamp(type - drawerSlots / 2, 0, Math.max(0, types.size() - drawerSlots));
@@ -584,7 +584,7 @@ final class BlueprintBoard {
                         && (p.kind().isEmpty() || options.get(i).shaping().item().getPath().equals(p.kind())))
                     shape.put(p.role(), i);
             matId.put(p.role(), p.material());
-            p.dims().forEach((k, v) -> dimVals.put(p.role() + ":" + k, v));
+            p.measures().axes().forEach((k, v) -> axisVals.put(p.role() + ":" + k, v));
         });        dirty();
     }
 
@@ -752,33 +752,33 @@ final class BlueprintBoard {
             if (c.isEmpty())
                 return Optional.empty();
             ModularDesign.Part made = ToolDesigns.part(role, c.get(), shapeAt(role, si), counts.get(role));
-            Map<String, Float> dims = new HashMap<>();
-            for (String name : t.roles().get(role).dims().keySet())
-                dims.put(name, dimValue(role, name, made));
-            parts.add(dims.isEmpty() ? made : new ModularDesign.Part(made.role(), made.material(), made.form(), made.count(), made.kind(), made.variant(), made.flaw(), dims));
+            Map<String, Float> axes = new HashMap<>();
+            for (String name : t.roles().get(role).axes().keySet())
+                axes.put(name, axisValue(role, name, made));
+            parts.add(axes.isEmpty() ? made : made.withMeasures(made.measures().withAxes(axes)));
         }
         return Optional.of(new ModularDesign(types.get(type), parts, edged() ? edge : Edge.STANDARD));
     }
 
     /** The scalars of {@code role} the sheet shows now: those whose {@code when} the shape in use meets, in name order. */
-    private List<Map.Entry<String, ModularType.Dim>> dimsOf(String role) {
+    private List<Map.Entry<String, ModularType.Axis>> axesOf(String role) {
         ModularType t = current();
         if (t == null || role == null || t.roles().get(role) == null)
             return List.of();
         ModularType.Role r = t.roles().get(role);
         ToolTableShaping.Option o = shapeOf(role);
-        return r.dims().entrySet().stream().sorted(Map.Entry.comparingByKey())
+        return r.axes().entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .filter(e -> e.getValue().when().isEmpty()
                         || (o != null && o.variant().params().getOrDefault(e.getValue().when(), 0f) >= e.getValue().atLeast()))
                 .toList();
     }
 
     /** What the drawing has {@code name} of {@code role} at: the sheet's own setting, else the shape's nominal, else the role's default. */
-    private float dimValue(String role, String name, ModularDesign.Part made) {
+    private float axisValue(String role, String name, ModularDesign.Part made) {
         ModularType.Role r = current().roles().get(role);
-        Float set = dimVals.get(role + ":" + name);
-        return r.dim(set == null ? made : new ModularDesign.Part(made.role(), made.material(), made.form(), made.count(), made.kind(),
-                made.variant(), made.flaw(), Map.of(name, set)), name);
+        Float set = axisVals.get(role + ":" + name);
+        return r.axis(set == null ? made : new ModularDesign.Part(made.role(), made.material(), made.form(), made.count(), made.kind(),
+                made.variant(), made.flaw(), io.github.soundgoodizerfan.feedback.process.Measures.ofAxes(Map.of(name, set))), name);
     }
 
     // --- worked out on an edit, never per frame -----------------------------------------------------
@@ -1206,13 +1206,13 @@ final class BlueprintBoard {
         ModularType t = current();
         String key = keyOf(role);
         int rows = t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0;
-        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0) + Math.min(MAX_DIM_ROWS, dimsOf(role).size());
+        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0) + Math.min(MAX_AXIS_ROWS, axesOf(role).size());
     }
 
     /** A scalar's row: its name and figure, in its unit. */
-    private String dimLabel(String role, String name, ModularType.Dim dim) {
+    private String axisLabel(String role, String name, ModularType.Axis dim) {
         Optional<Material.Located> c = choice(role);
-        float v = c.isEmpty() ? dim.def() : dimValue(role, name, ToolDesigns.part(role, c.get(), shapeOf(role), 1));
+        float v = c.isEmpty() ? dim.def() : axisValue(role, name, ToolDesigns.part(role, c.get(), shapeOf(role), 1));
         String unit = dim.unit().isEmpty() ? "" : " " + (I18n.exists("modular.feedback.unit." + dim.unit())
                 ? I18n.get("modular.feedback.unit." + dim.unit()) : dim.unit());
         return I18n.get("modular.feedback.dim." + name) + ": " + (dim.grain() < 1f ? String.format(java.util.Locale.ROOT, "%.2f", v) : String.valueOf(Math.round(v))) + unit;
@@ -1220,11 +1220,11 @@ final class BlueprintBoard {
 
     private static final int SEARCH_H = 14;
     /** Scalar rows shown at once; a part with more scrolls them, so the panel never outgrows its box. */
-    private static final int MAX_DIM_ROWS = 3;
-    private int dimScroll;
+    private static final int MAX_AXIS_ROWS = 3;
+    private int axisScroll;
 
     /** The part's stepper rows above its scalars: a count or swap or remove row, then the edge. */
-    private int rowsAboveDims(String role) {
+    private int rowsAboveAxes(String role) {
         ModularType t = current();
         String key = keyOf(role);
         return (t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0)
@@ -1319,16 +1319,16 @@ final class BlueprintBoard {
                     dir -> change(() -> edge = edge.step(dir)), false, null));
             y += 15;
         }
-        List<Map.Entry<String, ModularType.Dim>> allDims = dimsOf(role);
-        dimScroll = Mth.clamp(dimScroll, 0, Math.max(0, allDims.size() - MAX_DIM_ROWS));
-        for (Map.Entry<String, ModularType.Dim> d : allDims.subList(dimScroll, Math.min(allDims.size(), dimScroll + MAX_DIM_ROWS))) {
+        List<Map.Entry<String, ModularType.Axis>> allAxes = axesOf(role);
+        axisScroll = Mth.clamp(axisScroll, 0, Math.max(0, allAxes.size() - MAX_AXIS_ROWS));
+        for (Map.Entry<String, ModularType.Axis> d : allAxes.subList(axisScroll, Math.min(allAxes.size(), axisScroll + MAX_AXIS_ROWS))) {
             String name = d.getKey();
-            ModularType.Dim dim = d.getValue();
-            widgetAdd(GuiStyle.stepper(skin, x, y, call.w() - 8, 14, "<", ">", () -> dimLabel(role, name, dim),
+            ModularType.Axis dim = d.getValue();
+            widgetAdd(GuiStyle.stepper(skin, x, y, call.w() - 8, 14, "<", ">", () -> axisLabel(role, name, dim),
                     dir -> change(() -> {
-                        float now = dimValue(role, name, ToolDesigns.part(role, choice(role).orElseThrow(), shapeOf(role), 1));
+                        float now = axisValue(role, name, ToolDesigns.part(role, choice(role).orElseThrow(), shapeOf(role), 1));
                         float next = Math.round((now + dir * dim.grain()) / dim.grain()) * dim.grain();
-                        dimVals.put(role + ":" + name, dim.clamp(next));
+                        axisVals.put(role + ":" + name, dim.clamp(next));
                     }), false, null));
             y += 15;
         }
@@ -1359,7 +1359,7 @@ final class BlueprintBoard {
     // --- drafts -----------------------------------------------------------------------------------
 
     private Draft capture() {
-        return new Draft(type, form, Set.copyOf(extras), Map.copyOf(sizes), Map.copyOf(shape), Map.copyOf(matId), edge, selected, Map.copyOf(dimVals));
+        return new Draft(type, form, Set.copyOf(extras), Map.copyOf(sizes), Map.copyOf(shape), Map.copyOf(matId), edge, selected, Map.copyOf(axisVals));
     }
 
     private void restore(Draft d) {
@@ -1370,7 +1370,7 @@ final class BlueprintBoard {
             sizes.putAll(d.sizes());
             shape.putAll(d.shape());
             matId.putAll(d.material());
-            dimVals.putAll(d.dims());
+            axisVals.putAll(d.axes());
             edge = d.edge();
             selected = d.selected();
             refit = true;
@@ -1385,7 +1385,7 @@ final class BlueprintBoard {
         dirty(); // the edit may have changed what sel() reads just below
         if (type != type0 || !before.equals(String.valueOf(sel()))) {
             swatchScroll = 0;
-            dimScroll = 0;
+            axisScroll = 0;
             host.selectionChanged();
         }
         refresh();
@@ -1571,9 +1571,9 @@ final class BlueprintBoard {
             return true;
         }
         String role = sel();
-        if (role != null && dimsOf(role).size() > MAX_DIM_ROWS
-                && in(mx, my, ox + call.x(), oy + panelY + 15 + 15 * rowsAboveDims(role), call.w(), 15 * MAX_DIM_ROWS)) {
-            dimScroll = Mth.clamp(dimScroll + dir, 0, dimsOf(role).size() - MAX_DIM_ROWS);
+        if (role != null && axesOf(role).size() > MAX_AXIS_ROWS
+                && in(mx, my, ox + call.x(), oy + panelY + 15 + 15 * rowsAboveAxes(role), call.w(), 15 * MAX_AXIS_ROWS)) {
+            axisScroll = Mth.clamp(axisScroll + dir, 0, axesOf(role).size() - MAX_AXIS_ROWS);
             build();
             return true;
         }
@@ -2018,8 +2018,8 @@ final class BlueprintBoard {
         List<Material.Located> mats = swatches(role);
         Optional<Material.Located> now = choice(role);
         skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, call.w() - 8, SEARCH_H - 3);
-        if (dimsOf(role).size() > MAX_DIM_ROWS)
-            skin.scrollbar(g, x + call.w() - 4, y + 15 + 15 * rowsAboveDims(role), 15 * MAX_DIM_ROWS, dimsOf(role).size(), MAX_DIM_ROWS, dimScroll);
+        if (axesOf(role).size() > MAX_AXIS_ROWS)
+            skin.scrollbar(g, x + call.w() - 4, y + 15 + 15 * rowsAboveAxes(role), 15 * MAX_AXIS_ROWS, axesOf(role).size(), MAX_AXIS_ROWS, axisScroll);
         g.drawString(font, roleName(role), x + 5, y + 4, skin.ink(), false);
         String name = materialName(role);
         int nw = Math.min(font.width(name), 110);

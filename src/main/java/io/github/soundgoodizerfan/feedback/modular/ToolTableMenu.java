@@ -1347,10 +1347,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
             }
             // The seasoning joins the design as its finish part, carrying its state and any cut, plus how it was poured.
             ModularDesign.Part base = ToolTableAssembly.part(type.afterRole(), what.get(), seasoning, 1);
-            java.util.Map<String, Float> dims = new java.util.HashMap<>(base.dims());
-            dims.put("pour", strength);
+            java.util.Map<String, Float> state = new java.util.HashMap<>(base.measures().state());
+            state.put("pour", strength);
             List<ModularDesign.Part> parts = new ArrayList<>(design.parts());
-            parts.add(new ModularDesign.Part(base.role(), base.material(), base.form(), base.count(), base.kind(), base.variant(), base.flaw(), dims));
+            parts.add(new ModularDesign.Part(base.role(), base.material(), base.form(), base.count(), base.kind(), base.variant(), base.flaw(), base.measures().withState(state)));
             ItemStack done = work().copy();
             if (!ModularStacks.assemble(done, new ModularDesign(design.type(), parts, design.edge()), materials, ModularTypes.on(level)))
                 return false;
