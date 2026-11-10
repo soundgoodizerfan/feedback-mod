@@ -1,6 +1,6 @@
 # Electricity
 
-Electricity in Feedback is made from chemistry, static and shafts; carried on cable; switched and protected; stored in jars and batteries; and spent on magnets, heat, refining, motors and coilgun rounds.
+Electricity in Feedback is made from chemistry, static and shafts; carried on cable; switched and protected; stored in jars and batteries; and spent on magnets, heat, refining and motors.
 
 It is not the "universal" power of other tech mods. Your mechanical and thermal setups never need to be converted into electricity. Electricity is one option among several, good at some jobs and bad at others.
 
@@ -50,7 +50,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Dynamotor](Dynamotor.md) | Electricity in, shaft out, as a motor. |
 | [Heating Coil](Heating_Coil.md) | Electricity in, heat out, under a vessel. |
 | [Electrolytic Cell](Electrolytic_Cell.md) | Refines and plates metal. |
-| [Charger](Charger.md) | Charges jar rounds for a [coilgun](Coilgun.md) or one battery. |
+| [Charger](Charger.md) | Charges one battery. |
 | [Charging Gantry](Charging_Gantry.md) | Charges the battery of a worn exosuit. |
 | [Glowstone Lamp](Lamp.md) | Light in four steps, by how well it is fed. |
 | [Rectifier](Rectifier.md) | Makes a battery beside it charge about three times faster. |

@@ -46,13 +46,6 @@ public class BoilerBlock extends Block implements EntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
-        // A steam gun fills to the boiler's pressure, not to the brim.
-        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem
-                && io.github.soundgoodizerfan.feedback.weapon.GunSteam.handler(stack) != null) {
-            if (level instanceof net.minecraft.server.level.ServerLevel server && level.getBlockEntity(pos) instanceof BoilerBlockEntity boiler)
-                io.github.soundgoodizerfan.feedback.weapon.GunSteam.fillFrom(server, player, stack, boiler.getSteamTank(), boiler.getPressure());
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        }
         if (FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection()))
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;

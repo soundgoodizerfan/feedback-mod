@@ -77,11 +77,6 @@ public class GunGameTests {
         return with(d, part("B", material, "ingot", 1, "gun_barrel", "", Map.of("bore", bore, "outer", bore + 2 * wall, "length", length)));
     }
 
-    /** {@code d} wound as a coil gun: two blocks of redstone on the chamber's parts. */
-    public static ModularDesign coil(ModularDesign d) {
-        return with(d, part("W", "redstone", "block", 2, "", "", Map.of()));
-    }
-
     public static GunSpec spec(ModularDesign d) {
         return GunSpec.of(d, ModularTypes.get().types().get(GUN), MaterialTable.get().materials()).orElseThrow(() -> new AssertionError("a gun: " + d));
     }

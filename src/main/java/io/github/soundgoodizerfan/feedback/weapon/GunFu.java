@@ -192,7 +192,7 @@ public final class GunFu {
         if (round == null || !p.isCrouching() || !Skills.unlocked(p, "gun_fu_hot_clear"))
             return false;
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
-        var load = GunSpec.of(gun).flatMap(d -> d.loadOf(materials, round));
+        var load = round.load(materials);
         if (load.isEmpty() || GunCondition.heatFraction(gun, p.level(), load.get().ignitionTu()) < GunFuTuning.HOT_CLEAR_LINE)
             return false;
         GunAmmo.give(p, GunAmmo.loose(round));

@@ -822,7 +822,7 @@ public class FBlocks {
                             .sound(SoundType.METAL)
                             .noOcclusion()));
 
-    /** Charges jar rounds off a wire. See {@code ChargerBlockEntity}. */
+    /** Charges a battery off a wire. See {@code ChargerBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock> CHARGER =
             BLOCKS.register("charger", () -> new io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock(
                     BlockBehaviour.Properties.of()

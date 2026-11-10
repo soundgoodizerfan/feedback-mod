@@ -385,9 +385,6 @@ final class BlueprintBoard {
         out.add(roleName(role));
         if (I18n.exists("modular.feedback.role." + name + ".tip"))
             out.add(Component.translatable("modular.feedback.role." + name + ".tip"));
-        // A part that only one kind of launcher takes says so; a part with no line goes on anything.
-        if (I18n.exists("modular.feedback.role." + name + ".for"))
-            out.add(Component.translatable("modular.feedback.role." + name + ".for").withStyle(net.minecraft.ChatFormatting.GOLD));
         return out;
     }
 
@@ -969,7 +966,7 @@ final class BlueprintBoard {
                 ItemStack icon = pass == 1 && r.part().isPresent() ? new ItemStack(BuiltInRegistries.ITEM.get(r.part().get().item())) : ItemStack.EMPTY;
                 if (pass == 0)
                     nodeOf.put(role, out.size());
-                boolean faint = pass == 1 && attach && parents.containsKey(role) && (!feasibleWith(k) || launcherMismatch(role));
+                boolean faint = pass == 1 && attach && parents.containsKey(role) && (!feasibleWith(k));
                 out.add(new Node(k, role, pass == 1, x, y, icon, faint));
             }
         }
@@ -1047,17 +1044,6 @@ final class BlueprintBoard {
             return List.of();
         Set<String> cur = now();
         return allKeys().stream().filter(k -> !cur.contains(k)).filter(k -> parentRole.equals(parentOf.get(roleOf(k)))).toList();
-    }
-
-    /** Whether {@code role} is a launcher's part (winding, main spring, steam chest) for a kind of launcher the drawn barrel is not. */
-    private boolean launcherMismatch(String role) {
-        ModularType t = current();
-        GunSpec.Launcher mine = GunSpec.launcherRole(role);
-        if (t == null || t.family() != ModularType.Family.GUN || mine == GunSpec.Launcher.CHAMBER)
-            return false;
-        ToolTableShaping.Option o = shapeOf("B");
-        float code = o == null ? 0f : o.variant().params().getOrDefault("launcher", 0f);
-        return Math.round(code) != mine.ordinal();
     }
 
     /** Whether the sheet would still be one some form has with {@code key} added. */

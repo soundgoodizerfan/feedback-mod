@@ -180,9 +180,7 @@ public final class ModularBake {
             // a module's wiring must conduct; its casing and core take any material their shapes accept
             case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
-            // A coilgun's winding is a conductor that holds a field and has a quench point: the rest cannot wind a gun.
-            case GUN -> !roleKey.equals("W") || io.github.soundgoodizerfan.feedback.weapon.GunSpec.windable(material);
-            case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
+            case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().isPresent();
             default -> true;
         };
     }
@@ -348,7 +346,7 @@ public final class ModularBake {
     }
 
     /** The role letters of the dynamotor's four parts. */
-    public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H", MACHINE_BEARING = "B";
+    public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H", MACHINE_BEARING = "B", MACHINE_COOLING = "K";
 
     /**
      * What a dynamotor design is, read by the placed block.
@@ -554,9 +552,15 @@ public final class ModularBake {
         float amps = Math.min(su / vpr, wm.ampacity().get() * wireCells * FTuning.WINDING_AMPS_PER_AMPACITY);
         float drop = wm.electrical().drop().orElse(0f) * wireCells * FTuning.WINDING_BLOCKS_PER_CELL;
         float leak = hm.thermal().conductivity().get().workPerTickPerTu() * area * FTuning.MACHINE_SHED_PER_CONDUCTIVITY;
+        // A cooling addon (plate fins, or pipe for a water jacket) sheds more: its material's conductivity over its volume.
+        Part cooling = design.part(MACHINE_COOLING);
+        Material km = cooling == null ? null : materials.get(cooling.material());
+        if (km != null && km.thermal().conductivity().isPresent())
+            leak += km.thermal().conductivity().get().workPerTickPerTu() * type.roles().get(MACHINE_COOLING).volume(cooling)
+                    * ModularTuning.COOLING_SHED_PER_LS;
         float service = hm.thermal().serviceTemperature().map(Tu::value).orElse(FTuning.MACHINE_SERVICE_TU);
         return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOf(vpr * FTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
-                cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, shapeName(type.roles().get(MACHINE_HOUSING), housing).equals("jacketed")));
+                cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, cooling != null && cooling.form().equals("pipe")));
     }
 
     public static int enchantability(Material m) {
@@ -857,7 +861,7 @@ public final class ModularBake {
             if (io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, p.role()))
                 filler.add(new io.github.soundgoodizerfan.feedback.weapon.Cartridge.Charge(p.material(), p.count()));
         Optional<io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend> blend =
-                io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend.of(materials, filler).filter(b -> !b.coil());
+                io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend.of(materials, filler);
         if (read.isEmpty() || blend.isEmpty() || blend.get().total() > FTuning.DEMO_FILLER_MAX)
             return Optional.empty();
         Map<Fig, Float> f = new EnumMap<>(Fig.class);

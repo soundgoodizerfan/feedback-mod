@@ -92,8 +92,6 @@ public record ModularFigures(List<Float> values, int step) {
         SPREAD,
         /** Camera kick per shot, degrees. */
         KICK,
-        /** {@code GunSpec.Launcher} ordinal: what throws the projectile. */
-        LAUNCHER,
         /** How loud a shot is against an open muzzle. */
         REPORT,
         /** Heat a shot leaves in the gun against an open muzzle's. */

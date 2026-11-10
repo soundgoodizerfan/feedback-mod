@@ -3,7 +3,7 @@
 There's no "9 mm round" item that you craft. A cartridge is made of up to three things:
 
 - a **case**, made of some metal
-- a **charge**: powder, or redstone for a [coilgun](Coilgun.md), or nothing at all for a [jar round](#jar-rounds)
+- a **charge**: powder
 - a **projectile**: a bullet, or a nugget for [shot](#shot-shells), with an optional **core** inside a bullet
 
 You can also add a **payload** if you like. You put these together at the [Reloading Press](Reloading_Press.md), at whatever size (bore) you set the press to. A gun takes any cartridge that fits its bore, whoever made it and whatever it's made of.
@@ -38,7 +38,7 @@ Two ways to make them:
 S D S
 ```
 
-**Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armor and breaks less on hard faces: see [What bullets do](Guns.md#hardness-glass-glancing-armor). A coilgun *needs* a magnetic slug.
+**Lead** is the usual bullet metal because it's dense (11.3, against iron's 7.9): heavy bullets keep their energy. But lead is soft. A **harder** bullet goes through armor and breaks less on hard faces: see [What bullets do](Guns.md#hardness-glass-glancing-armor).
 
 ### Bullet shapes
 
@@ -70,7 +70,7 @@ S D S
 
 ### Jacket and core
 
-Put a **nugget** in the press's **core** slot and the bullet becomes a **jacket** (the bullet in the bullet slot) around a **core**. The core gives the bullet its weight in proportion (70% of the volume), its magnetism for a coilgun, and its hardness against armor and stone; the jacket protects the bore. A jacket softer than its core wears the bore less, in proportion to how much softer, down to a third. A hard core in a lead jacket goes through armor like the hard metal and wears like lead.
+Put a **nugget** in the press's **core** slot and the bullet becomes a **jacket** (the bullet in the bullet slot) around a **core**. The core gives the bullet its weight in proportion (70% of the volume), and its hardness against armor and stone; the jacket protects the bore. A jacket softer than its core wears the bore less, in proportion to how much softer, down to a third. A hard core in a lead jacket goes through armor like the hard metal and wears like lead.
 
 A **polymer** jacket round a core is a **sabot**: the carrier is light, so the round leaves fast, and it flies with 0.6 of the drag and meets armor 1.2 times harder than the core alone would. Shot has no core.
 
@@ -121,10 +121,6 @@ A blend also burns fast, so it works even in a short barrel. Downsides:
 
 Lean blends (more than one blaze to two gunpowder) don't burn completely and lose much of their punch.
 
-### Redstone
-
-Redstone is a charge for a **coilgun** only, and it can't be mixed with powder. See [Coilgun](Coilgun.md).
-
 ## Shot shells
 
 Put a **nugget** or another kind of shot in the projectile slot instead of a bullet and the press makes a **shot shell**. A **smoothbore** barrel fires shells; a rifled barrel cannot, because rifling spins the pellets into a ring.
@@ -139,10 +135,6 @@ Shot is its own item. A plain **nugget** seats as buckshot; **Birdshot**, **Larg
 | **Flechette** | 3.5 mm | 16 | darts: low drag, a tight pattern, 1.5 times harder against armor and stone |
 
 For example a 12 mm bore throws about 8 buckshot pellets and a 10 mm bore about 4. The pellets share the shell's energy and leave at the same speed, spread in a cone at least **4°** wide however long the barrel.
-
-## Jar rounds
-
-Seat a case and an iron slug with **nothing in the charge slots** and you get a **jar round**: a coilgun round that carries its drive as an electric charge, a tiny capacitor. It's flat when made. Charge it on a [Charger](Charger.md).
 
 ## Payloads
 

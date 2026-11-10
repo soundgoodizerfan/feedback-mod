@@ -114,9 +114,6 @@ public final class ItemInfoHud {
         list.add(PlatingTooltip.thickness(plating));
         list.add(PlatingTooltip.intact(plating));
         list.add(PlatingTooltip.deposit(stack, plating));
-        Cartridge round = stack.get(FWeapons.CARTRIDGE.get());
-        if (round != null && round.charged() && Readout.instrumented(Quantity.VOLTAGE))
-            list.add(Readout.chargeReading(round.at(player.level().getGameTime()).volts()));
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.GeigerCounterItem && Readout.instrumented(Quantity.RADIATION))
             list.add(Readout.reading(Quantity.RADIATION, "feedback.readout.radiation",
                     Readout.figure(Quantity.RADIATION, GeigerClient.reading())));

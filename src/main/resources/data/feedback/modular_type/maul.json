@@ -72,21 +72,6 @@
             "section": 1.3,
             "strike": 0.5,
             "mass": 0.89
-          },
-          {
-            "name": "spring_hammer",
-            "trait": "spring_strike",
-            "params": {
-              "stored": 6,
-              "reset": 30,
-              "rating": 12
-            },
-            "cells": 8,
-            "reach": 0.0,
-            "centre": 0.02,
-            "section": 1.1,
-            "strike": 0.9,
-            "mass": 1.0
           }
         ]
       }
@@ -133,6 +118,21 @@
             }
           }
         ]
+      }
+    },
+    "R": {
+      "name": "spring",
+      "forms": [
+        "wire",
+        "rod"
+      ],
+      "litres": 0.025,
+      "bulk": 4,
+      "trait": "spring",
+      "params": {
+        "reset": 30,
+        "rating": 12,
+        "throw_rating": 6
       }
     }
   },

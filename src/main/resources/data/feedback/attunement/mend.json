@@ -131,18 +131,6 @@
     "shroud": {
       "kind": "mend"
     },
-    "winding": {
-      "kind": "mend"
-    },
-    "wrap": {
-      "kind": "mend"
-    },
-    "main_spring": {
-      "kind": "mend"
-    },
-    "steam_chest": {
-      "kind": "mend"
-    },
     "obturator": {
       "kind": "mend"
     },
@@ -153,12 +141,6 @@
       "kind": "mend"
     },
     "magnetic_sear": {
-      "kind": "mend"
-    },
-    "steam_valve": {
-      "kind": "mend"
-    },
-    "steam_lagging": {
       "kind": "mend"
     }
   },
@@ -292,18 +274,6 @@
     "shroud": {
       "kind": "tithe"
     },
-    "winding": {
-      "kind": "tithe"
-    },
-    "wrap": {
-      "kind": "tithe"
-    },
-    "main_spring": {
-      "kind": "tithe"
-    },
-    "steam_chest": {
-      "kind": "tithe"
-    },
     "obturator": {
       "kind": "tithe"
     },
@@ -314,12 +284,6 @@
       "kind": "tithe"
     },
     "magnetic_sear": {
-      "kind": "tithe"
-    },
-    "steam_valve": {
-      "kind": "tithe"
-    },
-    "steam_lagging": {
       "kind": "tithe"
     }
   },

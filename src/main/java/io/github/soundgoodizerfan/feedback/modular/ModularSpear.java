@@ -41,7 +41,7 @@ public class ModularSpear extends net.minecraft.world.item.TridentItem implement
 
     /** Whether the head on this spear is thrown rather than charged: any variant but the standard's. */
     private static boolean thrown(ItemStack stack) {
-        return ModularTraits.of(stack).map(a -> !(a.trait() instanceof SpearCharge)).orElse(true);
+        return SpringPart.of(stack).isPresent() || ModularTraits.of(stack).map(a -> !(a.trait() instanceof SpearCharge)).orElse(true);
     }
 
     @Override

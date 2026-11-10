@@ -84,8 +84,7 @@ public final class ModularTraits {
         register("lunge", new io.github.soundgoodizerfan.feedback.modular.trait.Lunge());
         register("trident", new io.github.soundgoodizerfan.feedback.modular.trait.TridentThrow());
         register("smash", new io.github.soundgoodizerfan.feedback.modular.trait.SmashAttack());
-        register("spring_strike", new io.github.soundgoodizerfan.feedback.modular.trait.SpringStrike());
-        register("spring_throw", new io.github.soundgoodizerfan.feedback.modular.trait.SpringThrow());
+        register("spring", new io.github.soundgoodizerfan.feedback.modular.trait.Spring());
         register("harpoon", new io.github.soundgoodizerfan.feedback.modular.trait.Harpoon());
         register("fork", new io.github.soundgoodizerfan.feedback.modular.trait.Fork());
         register("snap_shot", new io.github.soundgoodizerfan.feedback.modular.trait.Handling());
@@ -114,8 +113,6 @@ public final class ModularTraits {
         register("gun_buffer", new io.github.soundgoodizerfan.feedback.modular.trait.GunBuffer());
         register("gun_reticle", new io.github.soundgoodizerfan.feedback.modular.trait.GunReticle());
         register("gun_sear", new io.github.soundgoodizerfan.feedback.modular.trait.GunSear());
-        register("gun_valve", new io.github.soundgoodizerfan.feedback.modular.trait.GunValve());
-        register("gun_lagging", new io.github.soundgoodizerfan.feedback.modular.trait.GunLagging());
         register("gun_braced", new io.github.soundgoodizerfan.feedback.modular.trait.GunBraced());
         register("open_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.GunOpenBolt());
         register("fan", new io.github.soundgoodizerfan.feedback.modular.trait.GunFan());
@@ -160,6 +157,59 @@ public final class ModularTraits {
                 return v;
         }
         return Optional.empty();
+    }
+
+    /**
+     * The addon traits {@code stack} has: the trait of each filled role that names one ({@link ModularType.Role#trait}), in role order.
+     * An addon adds to what the item does and never replaces what its parts' variants give, so these run beside {@link #of}.
+     */
+    public static List<Active> addons(ItemStack stack) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type == null)
+            return List.of();
+        List<Active> out = new ArrayList<>(2);
+        for (String key : type.order()) {
+            ModularType.Role role = type.roles().get(key);
+            ModularDesign.Part part = role == null ? null : design.part(key);
+            if (part == null)
+                continue;
+            if (!role.trait().isEmpty()) {
+                Optional<String> id = firstId(role.trait());
+                if (id.isPresent())
+                    out.add(new Active(id.get(), REGISTRY.get(id.get()), new ModularTrait.Params(role.params())));
+            }
+            // A band of an axis may grant a trait where physics has no model of the range (a closed face opening is a closed visor).
+            for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
+                ModularType.Band band = a.getValue().band(part.axis(a.getKey(), a.getValue().def()));
+                Optional<String> id = band == null ? Optional.empty() : firstId(band.trait());
+                if (id.isPresent())
+                    out.add(new Active(id.get(), REGISTRY.get(id.get()), new ModularTrait.Params(band.params())));
+            }
+        }
+        return out;
+    }
+
+    /** The traits that fire on {@code stack}'s hooks: the one its variants or type give, then its addons (each id once). */
+    public static List<Active> actives(ItemStack stack) {
+        List<Active> out = new ArrayList<>(2);
+        of(stack).ifPresent(out::add);
+        for (Active a : addons(stack))
+            if (out.stream().noneMatch(o -> o.id().equals(a.id())))
+                out.add(a);
+        return out;
+    }
+
+    /** The litres of the filled roles of {@code stack} that name the trait {@code id}: how much of an addon is fitted. */
+    public static float addonVolume(ItemStack stack, String id) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        float litres = 0f;
+        if (type != null)
+            for (Map.Entry<String, ModularType.Role> e : type.roles().entrySet())
+                if (id.equals(e.getValue().trait()) && design.part(e.getKey()) != null)
+                    litres += e.getValue().volume(design.part(e.getKey()));
+        return litres;
     }
 
     /** The trait {@code stack} has, if it is a modular item and its variant or type names a known one. */
@@ -278,7 +328,12 @@ public final class ModularTraits {
     // --- item hooks, forwarded by the item classes ---------------------------------------------
 
     public static InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand, ItemStack stack) {
-        return of(stack).map(a -> a.trait().use(level, player, hand, stack, a.params())).orElse(InteractionResultHolder.pass(stack));
+        for (Active a : actives(stack)) {
+            InteractionResultHolder<ItemStack> result = a.trait().use(level, player, hand, stack, a.params());
+            if (result.getResult() != net.minecraft.world.InteractionResult.PASS)
+                return result;
+        }
+        return InteractionResultHolder.pass(stack);
     }
 
     public static int useDuration(ItemStack stack) {
@@ -315,12 +370,11 @@ public final class ModularTraits {
             ItemStack piece = entity.getItemBySlot(slot);
             if (!(piece.getItem() instanceof ModularArmor))
                 continue;
-            Optional<Active> a = of(piece);
-            if (a.isEmpty())
-                continue;
-            String id = idOf(a.get().trait());
-            if (id != null && out.stream().noneMatch(w -> w.id().equals(id)))
-                out.add(new Worn(id, a.get().trait(), a.get().params(), piece, slot));
+            for (Active a : actives(piece)) {
+                String id = idOf(a.trait());
+                if (id != null && out.stream().noneMatch(w -> w.id().equals(id)))
+                    out.add(new Worn(id, a.trait(), a.params(), piece, slot));
+            }
         }
         return out;
     }
@@ -344,7 +398,7 @@ public final class ModularTraits {
                 && event.getSource().getDirectEntity() == attacker) {
             ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
             ModularStacks.struck(weapon, event.getAmount());
-            of(weapon).ifPresent(a -> a.trait().onAttack(event, attacker, weapon, a.params()));
+            actives(weapon).forEach(a -> a.trait().onAttack(event, attacker, weapon, a.params()));
         }
     }
 
@@ -413,20 +467,20 @@ public final class ModularTraits {
         if (player.level().isClientSide || event.getAction() != net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.START)
             return;
         ItemStack weapon = player.getMainHandItem();
-        of(weapon).ifPresent(a -> a.trait().onGroundHit(event, player, weapon, a.params()));
+        actives(weapon).forEach(a -> a.trait().onGroundHit(event, player, weapon, a.params()));
     }
 
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (event.getSource().getEntity() instanceof LivingEntity attacker && !attacker.level().isClientSide) {
             ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
-            of(weapon).ifPresent(a -> a.trait().onKill(event, attacker, weapon, a.params()));
+            actives(weapon).forEach(a -> a.trait().onKill(event, attacker, weapon, a.params()));
         }
     }
 
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
         ItemStack weapon = event.getPlayer().getMainHandItem();
-        of(weapon).ifPresent(a -> a.trait().onBlockBreak(event, weapon, a.params()));
+        actives(weapon).forEach(a -> a.trait().onBlockBreak(event, weapon, a.params()));
     }
 }

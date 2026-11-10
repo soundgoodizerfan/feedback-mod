@@ -75,6 +75,18 @@ public final class ModularTuning {
     /** Share of a piece of plate each set stud covers, and the most they cover. */
     public static final float STUD_SHARE = 0.1f;
     public static final float STUD_MAX = 0.5f;
+    // --- addons that carry a trait of their own ---------------------------------------------------
+
+    /** Placeholders [OPEN]. A spring's stored blow damage and its throw-speed gain per litre of spring times the stock's yield strength (iron 5): 0.1 L of iron stores 6 and throws 1.6 times as fast. */
+    public static final float SPRING_STORED_PER_LS = 12f, SPRING_THROW_PER_LS = 1.2f;
+    /** Placeholder [OPEN]. How far a cocked spring's release lunges a blade's wielder forward, in blocks per tick of speed. */
+    public static final float SPRING_LUNGE = 0.6f;
+    /** Ticks a spring-thrown weapon needs to be held before it goes, and to reach full effort. */
+    public static final float SPRING_MIN_CHARGE_TICKS = 2f, SPRING_FULL_CHARGE_TICKS = 4f;
+    /** Placeholder [OPEN]. Heat a cooling addon sheds, Work per tick per Tu, per litre of it times its material's conductivity. */
+    public static final float COOLING_SHED_PER_LS = 120f;
+    /** Placeholder [OPEN]. Litres of magazine that hold one bolt (a repeater's load is the magazine's volume over this). */
+    public static final float MAGAZINE_LITRES_PER_BOLT = 0.04f;
     /** What the vanilla item of a crystal (a diamond pick) is made of when converted: this metal, the crystal set in it. */
     public static final net.minecraft.resources.ResourceLocation CRYSTAL_BODY =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel");

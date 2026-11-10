@@ -116,7 +116,6 @@ public final class AttunementKinds {
         HoldKinds.register();
         ConductKinds.register();
         RecallKinds.register();
-        SpringKinds.register();
         YieldKinds.register();
         PiezoKinds.register();
         ChargeKinds.register();

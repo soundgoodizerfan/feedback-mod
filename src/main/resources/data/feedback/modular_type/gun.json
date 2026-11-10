@@ -79,8 +79,7 @@
             "params": {
               "bore": 9,
               "outer": 14,
-              "length": 0.2,
-              "launcher": 0
+              "length": 0.2
             }
           },
           {
@@ -89,40 +88,10 @@
               "bore": 9,
               "outer": 14,
               "length": 0.2,
-              "launcher": 0,
               "spread_mult": 0.6
             },
             "cells": 2,
             "trait": "gun_rifling"
-          },
-          {
-            "name": "coil_barrel",
-            "params": {
-              "bore": 12,
-              "outer": 20,
-              "length": 0.45,
-              "launcher": 1
-            },
-            "cells": 2
-          },
-          {
-            "name": "spring_tube",
-            "params": {
-              "bore": 12,
-              "outer": 16,
-              "length": 0.3,
-              "launcher": 2
-            }
-          },
-          {
-            "name": "steam_tube",
-            "params": {
-              "bore": 12,
-              "outer": 20,
-              "length": 0.3,
-              "launcher": 3
-            },
-            "cells": 2
           }
         ]
       }
@@ -168,8 +137,7 @@
             "params": {
               "bore": 9,
               "outer": 14,
-              "length": 0.2,
-              "launcher": 0
+              "length": 0.2
             },
             "trait": "double_barrel"
           },
@@ -179,7 +147,6 @@
               "bore": 9,
               "outer": 14,
               "length": 0.2,
-              "launcher": 0,
               "spread_mult": 0.6
             },
             "cells": 2,
@@ -672,90 +639,6 @@
         "variants": []
       }
     },
-    "W": {
-      "name": "winding",
-      "forms": [
-        "block",
-        "wire"
-      ],
-      "litres": 0.1,
-      "layer": 10,
-      "bulk": 2
-    },
-    "X": {
-      "name": "wrap",
-      "forms": [
-        "*"
-      ],
-      "any_traits": [
-        "fibrous",
-        "sticky"
-      ],
-      "litres": 0.02,
-      "layer": 11
-    },
-    "U": {
-      "name": "main_spring",
-      "forms": [
-        "main_spring"
-      ],
-      "litres": 0.05,
-      "layer": 9,
-      "part": {
-        "item": "feedback:main_spring",
-        "cells": 1,
-        "stock": [
-          "rod"
-        ],
-        "base": "light_spring",
-        "variants": [
-          {
-            "name": "light_spring",
-            "params": {
-              "coils": 1.0
-            }
-          },
-          {
-            "name": "heavy_spring",
-            "cells": 2,
-            "params": {
-              "coils": 2.0
-            }
-          }
-        ]
-      }
-    },
-    "O": {
-      "name": "steam_chest",
-      "forms": [
-        "steam_chest"
-      ],
-      "litres": 0.1,
-      "layer": 9,
-      "part": {
-        "item": "feedback:steam_chest",
-        "cells": 1,
-        "stock": [
-          "plate"
-        ],
-        "base": "small_chest",
-        "variants": [
-          {
-            "name": "small_chest",
-            "params": {
-              "capacity_mb": 400.0
-            }
-          },
-          {
-            "name": "large_chest",
-            "cells": 2,
-            "params": {
-              "capacity_mb": 1000.0
-            }
-          }
-        ]
-      }
-    },
     "c": {
       "name": "obturator",
       "forms": [
@@ -899,57 +782,6 @@
         "variants": []
       }
     },
-    "g": {
-      "name": "steam_valve",
-      "forms": [
-        "steam_valve"
-      ],
-      "litres": 0.05,
-      "layer": 12,
-      "part": {
-        "item": "feedback:steam_valve",
-        "cells": 1,
-        "stock": [
-          "nugget"
-        ],
-        "base": "metered_valve",
-        "variants": [
-          {
-            "name": "metered_valve",
-            "trait": "gun_valve",
-            "params": {
-              "steam_mult": 0.6,
-              "cycle_mult": 1.25
-            }
-          },
-          {
-            "name": "dump_valve",
-            "trait": "gun_valve",
-            "params": {
-              "steam_mult": 1.5,
-              "cycle_mult": 0.8
-            }
-          }
-        ]
-      }
-    },
-    "h": {
-      "name": "steam_lagging",
-      "forms": [
-        "steam_lagging"
-      ],
-      "litres": 0.05,
-      "layer": 9,
-      "part": {
-        "item": "feedback:steam_lagging",
-        "cells": 1,
-        "stock": [
-          "plate",
-          "leather"
-        ],
-        "variants": []
-      }
-    },
     "i": {
       "name": "stock",
       "forms": [
@@ -1035,62 +867,6 @@
   },
   "names": {
     "designations": [
-      {
-        "name": "lightning_lance",
-        "is": {
-          "variant": "long_gun",
-          "finish": "coil",
-          "barrel": "long",
-          "sight": "scope"
-        }
-      },
-      {
-        "name": "gauss_rifle",
-        "is": {
-          "variant": "long_gun",
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "arc_chaingun",
-        "is": {
-          "variant": "machine_gun",
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "rotary_driver",
-        "is": {
-          "variant": "handgun",
-          "finish": "coil",
-          "feed": "cylinder"
-        }
-      },
-      {
-        "name": "sparkler",
-        "is": {
-          "variant": "handgun",
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "coilgun",
-        "is": {
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "spring_gun",
-        "is": {
-          "finish": "spring"
-        }
-      },
-      {
-        "name": "steam_gun",
-        "is": {
-          "finish": "steam"
-        }
-      },
       {
         "name": "derringer",
         "is": {
@@ -1299,49 +1075,25 @@
         3,
         1
       ],
-      "X": [
-        4,
-        1
-      ],
-      "W": [
-        0,
-        2
-      ],
-      "U": [
-        1,
-        2
-      ],
-      "O": [
-        2,
-        2
-      ],
-      "g": [
-        3,
-        2
-      ],
-      "h": [
-        4,
-        2
-      ],
       "c": [
         0,
-        3
+        2
       ],
       "V": [
         1,
-        3
+        2
       ],
       "H": [
         2,
-        3
+        2
       ],
       "Z": [
         3,
-        3
+        2
       ],
       "J": [
         4,
-        3
+        2
       ],
       "C": [
         0,
@@ -1400,30 +1152,6 @@
       [
         "a",
         "B"
-      ],
-      [
-        "X",
-        "G"
-      ],
-      [
-        "W",
-        "B"
-      ],
-      [
-        "U",
-        "B"
-      ],
-      [
-        "O",
-        "B"
-      ],
-      [
-        "g",
-        "O"
-      ],
-      [
-        "h",
-        "O"
       ],
       [
         "c",

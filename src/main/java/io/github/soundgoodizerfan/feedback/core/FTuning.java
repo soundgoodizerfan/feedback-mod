@@ -827,8 +827,6 @@ public final class FTuning {
     public static final float FLUID_RELAX_PER_TICK = 0.002f;
     /** Invented. The share of a boiling's latent work that lifting water one Tu toward its boiling point costs (about a sixth over a 100 Tu climb, as for real water). */
     public static final float FEED_SENSIBLE_PER_TU = 0.00185f;
-    /** Invented. Steam in a gun chest below this (Tu) has condensed and cannot drive a shot; the share of the gap to ambient a carried chest closes each tick. */
-    public static final float GUN_STEAM_MIN_TU = 100f, GUN_STEAM_RELAX_PER_TICK = 0.002f;
     public static final float STEAM_ENGINE_MIN_TU = 110f, STEAM_ENGINE_EXHAUST_DROP_TU = 40f;
     /**
      * Placeholder (user ruling, 2026-10-23: output scales with the steam it gets). The engine's capacity is
@@ -2185,37 +2183,9 @@ public final class FTuning {
     /** FOV multiplier aimed through each sight, and ms to come up to it. */
     public static final float GUN_SIGHT_FOV_IRON = 0.85f, GUN_SIGHT_FOV_REFLEX = 0.8f, GUN_SIGHT_FOV_SCOPE = 0.4f;
     public static final int GUN_SIGHT_MS_IRON = 120, GUN_SIGHT_MS_REFLEX = 150, GUN_SIGHT_MS_SCOPE = 300;
-    // --- Blends, coil drive, payloads (spec 3.6, 3.7). Placeholders. ---------------------------
+    // --- Blends, payloads (spec 3.6). Placeholders. ---------------------------
     /** A charge that is mostly fuel still gives this much of its pressure: a fizzle, not a nothing. */
     public static final float GUN_FIZZLE_FLOOR = 0.1f;
-    /** Work per redstone dust at a medium coil with a magnetic slug: four dust is about a pistol's shot. */
-    public static final float GUN_COIL_WORK_PER_DUST = 35f;
-    /** A non-magnetic slug barely couples to the field (eddy currents, not pull). */
-    public static final float GUN_COIL_NONMAGNETIC_COUPLING = 0.1f;
-    /** Stages add up with coil length but saturate: the most a long coil gets over a medium one. */
-    public static final float GUN_COIL_LOSS = 1f;
-    /**
-     * Spring launcher (spec 13.4). Work stored goes as stress squared over the stock wound, times the
-     * stroke the barrel gives: tempered steel's single spring in a medium barrel is about a third of a
-     * pistol's shot, iron's is next to nothing. Recocking costs the work back, by hand, per work.
-     */
-    public static final float GUN_SPRING_WORK_PER_ST2 = 0.19f, GUN_SPRING_STROKE_MAX = 1.6f, GUN_SPRING_COCK_MS_PER_WORK = 3f;
-    /** Soft ceiling on a spring's stored work: stress squared otherwise runs away for a strong metal. */
-    public static final float GUN_SPRING_WORK_MAX = 300f;
-    /** Metal in one coil's worth of spring stock, mB. */
-    public static final float GUN_SPRING_METAL_MB = 30f;
-    /**
-     * Steam launcher (spec 13.4). A full chest holds the boiler's relief line; the chest's rating is its metal's
-     * yield strength times this; steam gives a fraction of what powder at the same pressure does, because there is
-     * no combustion in it; a shot lets out a fixed volume, so a bigger chest is more shots and not a stronger one;
-     * and the steam in a carried gun condenses away.
-     */
-    public static final float GUN_STEAM_FULL_PU = 3f, GUN_STEAM_RATING_PER_ST = 0.2f, GUN_STEAM_WORK_FRACTION = 0.4f,
-            GUN_STEAM_BLAST = 0.3f;
-    public static final int GUN_STEAM_MB_PER_SHOT = 100;
-    public static final float GUN_STEAM_LEAK_MB_PER_TICK = 0.25f;
-    /** Metal in a chest of the reference size, mB, and that size. */
-    public static final float GUN_STEAM_METAL_MB = 40f, GUN_STEAM_CHEST_REF_MB = 400f;
     /**
      * Demolition charge (guns spec 13.4a). Power goes as the square root of the blend's burned
      * potential: sixteen gunpowder bare is about a block of TNT, tempered steel round it nearly
@@ -2233,24 +2203,6 @@ public final class FTuning {
             GRENADE_PAYLOAD_FRAG = 0.12f, GRENADE_FLASH_REACH = 6f;
     public static final int GRENADE_FLASH_TICKS = 100;
     public static final int DEMO_ROUND_ARM_TICKS = 2;
-    /** Redstone blocks the winding of each coil length takes. */
-    public static final int GUN_COIL_BLOCKS_SHORT = 1, GUN_COIL_BLOCKS_MEDIUM = 2, GUN_COIL_BLOCKS_LONG = 3;
-    /**
-     * A charged coil round (spec 3.7, mechanics 6.6): the volts that drive a coil as hard as a
-     * nominal redstone charge. MV, so a dynamo at a steam engine's speed on its fine winding fills
-     * a round to nominal, a cell to a fifth of it, and a hand-cranked fine dynamo past it -- into
-     * the winding's rating. Volts over this go as the square in field pressure, as dust does.
-     */
-    public static final float GUN_COIL_NOMINAL_VOLTS = 6f;
-    /** Amp-ticks a round takes per volt: a round is a small jar. At one amp, nominal in 12 ticks. */
-    public static final float GUN_ROUND_CAPACITANCE = 2f;
-    /**
-     * Volts a charged round loses a tick, wherever it is: linear, like a workpiece's heat, so
-     * "this round is flat in five minutes" is literally true (nominal to nothing in 6000 t).
-     */
-    public static final float GUN_ROUND_LEAK_VOLTS_PER_TICK = 0.001f;
-    /** Current the charger asks for while anything in it is below the line. */
-    public static final float GUN_CHARGER_AMPS = 1f;
     /** Seconds a target burns from an incendiary hit. */
     public static final int GUN_INCENDIARY_SECONDS = 5;
     /**

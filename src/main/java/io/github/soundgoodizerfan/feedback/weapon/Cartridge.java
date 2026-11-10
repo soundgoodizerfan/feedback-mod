@@ -40,35 +40,11 @@ import java.util.Optional;
  *                     flask lets it go, a smaller reach. Its strength fades as the potion's does, from its own stamp.
  * @param seed         the item id of a seed carried in the bullet: it is planted where the round lands on farmland. An item, not a material,
  *                     because the thing planted is the block that item places; the press takes any item that places a crop.
- * @param stored       a round seated with no charge is a small jar (mechanics 6.6): its drive is
- *                     the volts it was charged to, read through {@link #at}, and it leaks wherever
- *                     it is. Present only on such a round. A coil fires it; a chamber does not.
  */
 public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
                         Optional<ResourceLocation> payload, boolean shot, BulletShape shape,
                         Optional<ResourceLocation> core, Optional<io.github.soundgoodizerfan.feedback.potion.PotionState> vial,
-                        Optional<ResourceLocation> seed, Optional<Stored> stored) {
-
-    /**
-     * Volts on a charged round as of {@code tick}: a stamp and a tick, the shape of a workpiece's
-     * heat, so a round goes flat in a chest because nothing has to remember to drain it.
-     */
-    public record Stored(float volts, long tick) {
-        static final Codec<Stored> CODEC = RecordCodecBuilder.create(i -> i.group(
-                Codec.FLOAT.fieldOf("volts").forGetter(Stored::volts),
-                Codec.LONG.fieldOf("tick").forGetter(Stored::tick)
-        ).apply(i, Stored::new));
-
-        static final StreamCodec<RegistryFriendlyByteBuf, Stored> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.FLOAT, Stored::volts,
-                ByteBufCodecs.VAR_LONG, Stored::tick,
-                Stored::new);
-
-        /** Volts left at {@code now}, leaked linearly ({@link FTuning#GUN_ROUND_LEAK_VOLTS_PER_TICK}). */
-        public float voltsAt(long now) {
-            return Math.max(0, volts - Math.max(0, now - tick) * FTuning.GUN_ROUND_LEAK_VOLTS_PER_TICK);
-        }
-    }
+                        Optional<ResourceLocation> seed) {
 
     /** One component of a charge. */
     public record Charge(ResourceLocation material, int count) {
@@ -102,11 +78,10 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             BulletShape.CODEC.optionalFieldOf("shape", BulletShape.ROUND_NOSE).forGetter(Cartridge::shape),
             ResourceLocation.CODEC.optionalFieldOf("core").forGetter(Cartridge::core),
             io.github.soundgoodizerfan.feedback.potion.PotionState.CODEC.optionalFieldOf("vial").forGetter(Cartridge::vial),
-            ResourceLocation.CODEC.optionalFieldOf("seed").forGetter(Cartridge::seed),
-            Stored.CODEC.optionalFieldOf("stored").forGetter(Cartridge::stored)
+            ResourceLocation.CODEC.optionalFieldOf("seed").forGetter(Cartridge::seed)
     ).apply(i, Cartridge::new)), LEGACY);
 
-    /** Written out by hand: eleven fields is past what {@code composite} takes. */
+    /** Written out by hand: ten fields is past what {@code composite} takes. */
     public static final StreamCodec<RegistryFriendlyByteBuf, Cartridge> STREAM_CODEC = StreamCodec.of(
             (buf, c) -> {
                 ByteBufCodecs.VAR_INT.encode(buf, c.boreMm());
@@ -119,7 +94,6 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.core());
                 ByteBufCodecs.optional(io.github.soundgoodizerfan.feedback.potion.PotionState.STREAM_CODEC).encode(buf, c.vial());
                 ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).encode(buf, c.seed());
-                ByteBufCodecs.optional(Stored.STREAM_CODEC).encode(buf, c.stored());
             },
             buf -> new Cartridge(ByteBufCodecs.VAR_INT.decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
                     Charge.STREAM_CODEC.apply(ByteBufCodecs.list()).decode(buf), ResourceLocation.STREAM_CODEC.decode(buf),
@@ -127,8 +101,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                     ByteBufCodecs.idMapper(i -> BulletShape.values()[i], BulletShape::ordinal).decode(buf),
                     ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf),
                     ByteBufCodecs.optional(io.github.soundgoodizerfan.feedback.potion.PotionState.STREAM_CODEC).decode(buf),
-                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf),
-                    ByteBufCodecs.optional(Stored.STREAM_CODEC).decode(buf)));
+                    ByteBufCodecs.optional(ResourceLocation.STREAM_CODEC).decode(buf)));
 
     /** A shot shell always has a shot shape and a bullet never does; a missing one is the plain one. */
     public Cartridge {
@@ -146,53 +119,20 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     /** A round with no seed. */
     public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
                      Optional<ResourceLocation> payload, boolean shot, BulletShape shape, Optional<ResourceLocation> core,
-                     Optional<io.github.soundgoodizerfan.feedback.potion.PotionState> vial, Optional<Stored> stored) {
-        this(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, vial, Optional.empty(), stored);
+                     Optional<io.github.soundgoodizerfan.feedback.potion.PotionState> vial) {
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, vial, Optional.empty());
     }
 
     /** A round with no vial. */
     public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
-                     Optional<ResourceLocation> payload, boolean shot, BulletShape shape, Optional<ResourceLocation> core,
-                     Optional<Stored> stored) {
-        this(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, Optional.empty(), stored);
+                     Optional<ResourceLocation> payload, boolean shot, BulletShape shape, Optional<ResourceLocation> core) {
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, Optional.empty());
     }
 
     /** A round of a plain shape and no core. */
     public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
-                     Optional<ResourceLocation> payload, boolean shot, Optional<Stored> stored) {
-        this(boreMm, caseMaterial, charges, projectile, payload, shot, null, Optional.empty(), Optional.empty(), stored);
-    }
-
-    /** A round with no stored charge: every round before charged ones. */
-    public Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> charges, ResourceLocation projectile,
                      Optional<ResourceLocation> payload, boolean shot) {
-        this(boreMm, caseMaterial, charges, projectile, payload, shot, Optional.empty());
-    }
-
-    /** Whether a coil drives this round (a jar round or a redstone charge); false for a chemical one or one that loads nowhere. */
-    public boolean coilDriven(Map<ResourceLocation, Material> materials) {
-        return load(materials).map(GunSpec.Load::coil).orElse(false);
-    }
-
-    /** Whether this is a jar round: seated dry, driven by what it was charged to. */
-    public boolean charged() {
-        return stored.isPresent();
-    }
-
-    /** This round as it is at {@code now}: a charged one's volts leaked down and restamped. */
-    public Cartridge at(long now) {
-        return stored.map(s -> withVolts(s.voltsAt(now), now)).orElse(this);
-    }
-
-    /** This jar round holding {@code volts} as of {@code now}. */
-    public Cartridge withVolts(float volts, long now) {
-        return new Cartridge(boreMm, caseMaterial, charges, projectile, payload, shot, shape, core, vial, seed,
-                Optional.of(new Stored(Math.max(0, volts), now)));
-    }
-
-    /** Volts a jar round holds as of its own stamp; zero for any other. Read {@link #at} first. */
-    public float volts() {
-        return stored.map(Stored::volts).orElse(0f);
+        this(boreMm, caseMaterial, charges, projectile, payload, shot, null, Optional.empty());
     }
 
     /** A bullet: what every round was before shot. */
@@ -230,10 +170,10 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         return charges.stream().mapToInt(Charge::count).sum();
     }
 
-    /** The material most of the charge is: what a tooltip and a card name it by. A jar round's is its winding's drive, redstone. */
+    /** The material most of the charge is: what a tooltip and a card name it by. */
     public ResourceLocation propellant() {
         return charges.stream().max(java.util.Comparator.comparingInt(Charge::count)).map(Charge::material)
-                .orElse(ResourceLocation.fromNamespaceAndPath("feedback", "redstone"));
+                .orElse(ResourceLocation.fromNamespaceAndPath("feedback", "gunpowder"));
     }
 
     /**
@@ -246,15 +186,8 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 ResourceLocation.fromNamespaceAndPath("feedback", "lead"));
     }
 
-    /** A slug for a coil: a wrought iron bullet (it must couple to the field) on a nominal charge of redstone. */
-    public static Cartridge referenceCoil(int boreMm) {
-        return new Cartridge(boreMm, ResourceLocation.fromNamespaceAndPath("feedback", "brass"),
-                ResourceLocation.fromNamespaceAndPath("feedback", "redstone"), FTuning.GUN_CHARGE_NOMINAL,
-                ResourceLocation.fromNamespaceAndPath("feedback", "wrought_iron"));
-    }
-
     /**
-     * What this round asks of a chamber (or a winding), from its charge's figures and how much of
+     * What this round asks of a chamber, from its charge's figures and how much of
      * each was seated.
      *
      * <p><b>Chemical blends.</b> Each item brings its propellant's pressure potential, and an
@@ -263,16 +196,6 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      * (never to nothing -- a fizzle floor). So blaze powder alone barely does anything, and a
      * blend near the balance is the hottest and fastest charge there is, with the lowest ignition
      * temperature of what is in it. Case room caps the total, so more fuel is less oxidizer.
-     *
-     * <p><b>Coil.</b> A redstone charge is a field, not a gas: the pressure it makes goes as the
-     * square of the drive (magnetic pressure is a pressure), and it cannot be blended with a
-     * chemical charge.
-     *
-     * <p><b>Charged.</b> A jar round drives a coil by its volts against {@link
-     * FTuning#GUN_COIL_NOMINAL_VOLTS}, the same square law as dust: a round charged past nominal
-     * presses the winding past what nominal dust does, and one left to go flat barely pushes. The
-     * quench is the winding's, which is redstone whatever charged it. Call on a round {@link #at}
-     * the moment it is fired; this reads the volts as stamped.
      */
     /** How much room a case of this bore has, against the reference bore's: its area. */
     public static float caseScale(float boreMm) {
@@ -285,25 +208,12 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     }
 
     public Optional<GunSpec.Load> load(Map<ResourceLocation, Material> materials) {
-        if (stored.isPresent()) {
-            if (!charges.isEmpty())
-                return Optional.empty();
-            float drive = volts() / FTuning.GUN_COIL_NOMINAL_VOLTS;
-            GunSpec.Load ref = GunSpec.Load.REFERENCE_COIL;
-            return Optional.of(new GunSpec.Load(ref.peakPressure() * drive * drive, 1f, ref.ignitionTu(), GunSpec.Launcher.COIL,
-                    drive * FTuning.GUN_CHARGE_NOMINAL));
-        }
         Optional<Blend> blend = Blend.of(materials, charges);
         if (blend.isEmpty())
             return Optional.empty();
         Blend b = blend.get();
-        if (b.coil()) {
-            float drive = b.total() / (FTuning.GUN_CHARGE_NOMINAL * caseScale(boreMm));
-            // A coil's work is the drive in the case, not the count: a wider case holds more dust at the same drive.
-            return Optional.of(new GunSpec.Load(b.potential() * drive, 1f, b.ignitionTu(), GunSpec.Launcher.COIL, b.total() / caseScale(boreMm)));
-        }
         // Pressure is how full the case is: the same count in a wider case is thinner.
-        return Optional.of(new GunSpec.Load(b.potential() / caseScale(boreMm) * b.burned(), b.burnRate(), b.ignitionTu(), GunSpec.Launcher.CHAMBER, b.total()));
+        return Optional.of(new GunSpec.Load(b.potential() / caseScale(boreMm) * b.burned(), b.burnRate(), b.ignitionTu(), b.total()));
     }
 
     /**
@@ -314,36 +224,29 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      * @param potential  pressure potential, in nominal charges' worth of the reference.
      * @param burned     the fraction that burns: 1 at a balanced or oxidizer-rich blend, falling to a floor as it runs fuel-rich.
      * @param burnRate   the count-weighted burn rate.
-     * @param coil       whether the charge is a field's (redstone) and not a gas's.
-     * @param chemical   whether any of it is a gas's.
      */
-    public record Blend(float potential, float burned, float burnRate, float ignitionTu, int total, boolean coil, boolean chemical) {
-        /** Empty for no charge, an item with no propellant, or a coil mixed with a chemical one. */
+    public record Blend(float potential, float burned, float burnRate, float ignitionTu, int total) {
+        /** Empty for no charge or an item with no propellant. */
         public static Optional<Blend> of(Map<ResourceLocation, Material> materials, List<Charge> charges) {
             if (charges.isEmpty())
                 return Optional.empty();
             float potential = 0, burnWeighted = 0, balance = 0, ignition = Float.MAX_VALUE;
             int total = 0;
-            boolean coil = false, chemical = false;
             for (Charge c : charges) {
                 Material m = materials.get(c.material());
                 if (m == null || m.propellant().isEmpty())
                     return Optional.empty();
                 var p = m.propellant().get();
-                if (p.drive() == Material.Propellant.Drive.COIL)
-                    coil = true;
-                else
-                    chemical = true;
                 potential += c.count() * p.peakPressure().value() / FTuning.GUN_CHARGE_NOMINAL;
                 burnWeighted += c.count() * p.burnRate();
                 balance += c.count() * p.oxygenBalance();
                 ignition = Math.min(ignition, p.ignitionTemperature().value());
                 total += c.count();
             }
-            if (coil && (chemical || charges.size() > 1) || total <= 0)
+            if (total <= 0)
                 return Optional.empty();
             float burned = balance >= 0 ? 1f : Math.max(FTuning.GUN_FIZZLE_FLOOR, 1f + balance / total);
-            return Optional.of(new Blend(potential, burned, burnWeighted / total, ignition, total, coil, chemical));
+            return Optional.of(new Blend(potential, burned, burnWeighted / total, ignition, total));
         }
     }
 
@@ -371,7 +274,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      */
     public float blast(Map<ResourceLocation, Material> materials) {
         float power = payload.flatMap(p -> Blend.of(materials, List.of(new Charge(p, 1))))
-                .filter(b -> !b.coil() && b.burned() >= 1f)
+                .filter(b -> b.burned() >= 1f)
                 .map(b -> FTuning.DEMO_POWER_PER_SQRT * FTuning.DEMO_ROUND_SCALE * (float) Math.sqrt(b.potential()
                         * Math.pow(boreMm / 9.0, 3)))
                 .orElse(0f);

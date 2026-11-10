@@ -133,18 +133,6 @@
     "shroud": {
       "kind": "soak"
     },
-    "winding": {
-      "kind": "soak"
-    },
-    "wrap": {
-      "kind": "soak"
-    },
-    "main_spring": {
-      "kind": "soak"
-    },
-    "steam_chest": {
-      "kind": "soak"
-    },
     "obturator": {
       "kind": "soak"
     },
@@ -155,12 +143,6 @@
       "kind": "soak"
     },
     "magnetic_sear": {
-      "kind": "soak"
-    },
-    "steam_valve": {
-      "kind": "soak"
-    },
-    "steam_lagging": {
       "kind": "soak"
     }
   },

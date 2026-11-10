@@ -41,6 +41,14 @@ public final class Throwing {
      */
     public static boolean release(ItemStack weapon, Level level, Player player, int held, Params params,
                                   float defaultPerBlock, float defaultMaxMult, int defaultWear) {
+        // A spring on the weapon lets it go quickly, and adds to the throw below.
+        SpringPart spring = SpringPart.of(weapon).orElse(null);
+        if (spring != null) {
+            java.util.Map<String, Float> merged = new java.util.HashMap<>(params.values());
+            merged.put("min_charge_ticks", ModularTuning.SPRING_MIN_CHARGE_TICKS);
+            merged.put("full_charge_ticks", ModularTuning.SPRING_FULL_CHARGE_TICKS);
+            params = new Params(merged);
+        }
         if (level.isClientSide || held < params.get("min_charge_ticks", 10))
             return false;
         ModularFigures figures = ModularStacks.figures(weapon);
@@ -52,11 +60,12 @@ public final class Throwing {
                 * effort;
 
         // A spring-launched head: the spring adds to the throw, a set takes some of that back, and a heavy head at that speed overloads it.
-        float springMult = params.get("speed_mult", 1f);
-        if (springMult != 1f) {
+        if (spring != null) {
+            float springMult = spring.throwMult();
             float set = SpringSet.set(weapon);
             speed *= 1f + (springMult - 1f) * (1f - set);
-            float rating = params.get("rating", 0f);
+            float toughness = figures.get(Fig.EDGE_TOUGHNESS);
+            float rating = spring.param("throw_rating", 6f) * Mth.clamp(toughness / 20f, 0.25f, 2f);
             if (rating > 0f)
                 SpringSet.overload(weapon, mass * springMult * springMult / rating, player);
         }

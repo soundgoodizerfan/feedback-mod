@@ -31,13 +31,7 @@
         "variants": [
           {
             "name": "brigandine",
-            "cells": 7,
-            "trait": "studded",
-            "params": {
-              "per_stud": 1,
-              "max": 3,
-              "wear": 1
-            }
+            "cells": 7
           },
           {
             "name": "breastplate",
@@ -79,7 +73,13 @@
       ],
       "litres": 0.01,
       "bulk": 2,
-      "set": true
+      "set": true,
+      "trait": "studded",
+      "params": {
+        "per_stud": 1,
+        "max": 3,
+        "wear": 1
+      }
     },
     "S": {
       "name": "servo",

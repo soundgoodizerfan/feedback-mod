@@ -253,11 +253,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param anyTraits observations of which the material must show at least one, besides all of {@code traits}; empty for none
      *               (a pie's filling is vegetal or protein).
      * @param seal   for a dish's container: 0 open, 1 covered (slows drying, migration and spill), 2 sealed (also stops rot).
+     * @param trait  an addon's signature behaviour, by trait id ({@link ModularTraits}): it works when the role is filled, on top of
+     *               whatever trait the part variants give the item (studs bite, a spring stores a blow). Empty for none.
+     * @param params numbers that trait reads, by name.
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
                        List<String> stock, boolean set, Map<String, Axis> axes, String alt, int bulk, boolean after, int seal,
-                       List<Material.Trait> anyTraits) {
+                       List<Material.Trait> anyTraits, String trait, Map<String, Float> params) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -276,11 +279,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                         .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.alt(), r.anyTraits())),
                 Codec.INT.optionalFieldOf("bulk", 1).forGetter(Role::bulk),
                 // A group holds sixteen fields, so these two share one.
-                Codec.mapPair(Codec.BOOL.optionalFieldOf("after", false), Codec.INT.optionalFieldOf("seal", 0))
-                        .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.after(), r.seal()))
+                Codec.mapPair(Codec.mapPair(Codec.BOOL.optionalFieldOf("after", false), Codec.INT.optionalFieldOf("seal", 0)),
+                        Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of())))
+                        .forGetter(r -> com.mojang.datafixers.util.Pair.of(com.mojang.datafixers.util.Pair.of(r.after(), r.seal()),
+                                com.mojang.datafixers.util.Pair.of(r.trait(), r.params())))
         ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts, bulk, flags) ->
                 new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts.getFirst(), bulk,
-                        flags.getFirst(), flags.getSecond(), alts.getSecond())));
+                        flags.getFirst().getFirst(), flags.getFirst().getSecond(), alts.getSecond(),
+                        flags.getSecond().getFirst(), flags.getSecond().getSecond())));
 
         public boolean rod() {
             return length > 0;
@@ -456,8 +462,11 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param step the grain the Blueprint Table moves it in; 0 for a fifth-of-the-range default.
      * @param when for a figure that exists only on some shapes: the shape param ({@code gears}) that must reach {@code atLeast}.
      * @param scales whether the part's volume (and so its stock, mass and cost) follows this axis in proportion to {@code value / default}.
+     * @param bands  named ranges of the value, ascending by {@code max} (the last may leave it out to run to the axis's end). A band is a label
+     *               for a range, never a switch the player picks: it feeds names and tooltips, and may carry a trait and params where physics
+     *               has no model ({@link Band}).
      */
-    public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast, boolean scales) {
+    public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast, boolean scales, List<Band> bands) {
         static final Codec<Axis> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.fieldOf("min").forGetter(Axis::min),
                 Codec.FLOAT.fieldOf("max").forGetter(Axis::max),
@@ -466,8 +475,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.FLOAT.optionalFieldOf("step", 0f).forGetter(Axis::step),
                 Codec.STRING.optionalFieldOf("when", "").forGetter(Axis::when),
                 Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Axis::atLeast),
-                Codec.BOOL.optionalFieldOf("scales", false).forGetter(Axis::scales)
+                Codec.BOOL.optionalFieldOf("scales", false).forGetter(Axis::scales),
+                Band.CODEC.listOf().optionalFieldOf("bands", List.of()).forGetter(Axis::bands)
         ).apply(instance, Axis::new));
+
+        /** The band {@code value} falls in, or null for an axis with none. */
+        public Band band(float value) {
+            for (Band b : bands)
+                if (b.max() <= 0f || value <= b.max())
+                    return b;
+            return bands.isEmpty() ? null : bands.get(bands.size() - 1);
+        }
 
         /** The grain a stepper moves it in. */
         public float grain() {
@@ -477,6 +495,23 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         public float clamp(float v) {
             return Math.min(max, Math.max(min, v));
         }
+    }
+
+    /**
+     * A named range of an axis (thin, normal, wide).
+     *
+     * @param name   lang key tail ({@code modular.feedback.band.<name>}) and the word designations match on.
+     * @param max    the largest value in the band; 0 for the last band, which runs to the axis's end.
+     * @param trait  a trait the band grants, by id ({@link ModularTraits}): where physics has no model of what the range does.
+     * @param params numbers that trait reads.
+     */
+    public record Band(String name, float max, String trait, Map<String, Float> params) {
+        static final Codec<Band> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.fieldOf("name").forGetter(Band::name),
+                Codec.FLOAT.optionalFieldOf("max", 0f).forGetter(Band::max),
+                Codec.STRING.optionalFieldOf("trait", "").forGetter(Band::trait),
+                Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of()).forGetter(Band::params)
+        ).apply(instance, Band::new));
     }
 
     /**

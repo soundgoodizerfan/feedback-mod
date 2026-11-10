@@ -85,23 +85,6 @@
             "section": 1.1,
             "strike": 1.0,
             "mass": 1.92
-          },
-          {
-            "name": "spring_blade",
-            "trait": "spring_throw",
-            "cells": 2,
-            "params": {
-              "speed_mult": 1.6,
-              "rating": 6,
-              "min_charge_ticks": 2,
-              "full_charge_ticks": 4,
-              "return": 0
-            },
-            "reach": 0.0,
-            "centre": 0.0,
-            "section": 0.8,
-            "strike": 0.9,
-            "mass": 1.0
           }
         ]
       }
@@ -179,6 +162,21 @@
             "section": 1.35
           }
         ]
+      }
+    },
+    "R": {
+      "name": "spring",
+      "forms": [
+        "wire",
+        "rod"
+      ],
+      "litres": 0.025,
+      "bulk": 4,
+      "trait": "spring",
+      "params": {
+        "reset": 30,
+        "rating": 12,
+        "throw_rating": 6
       }
     }
   },

@@ -234,6 +234,22 @@
           }
         ]
       }
+    },
+    "R": {
+      "name": "spring",
+      "forms": [
+        "wire",
+        "rod"
+      ],
+      "litres": 0.025,
+      "bulk": 4,
+      "trait": "spring",
+      "params": {
+        "reset": 30,
+        "rating": 12,
+        "throw_rating": 6,
+        "lunge": 1
+      }
     }
   },
   "patterns": [

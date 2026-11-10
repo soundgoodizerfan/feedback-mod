@@ -44,11 +44,6 @@ public final class GunTooltip {
         GunFigures f = GunItem.figures(stack);
         if (f != null)
             figures(f).forEach(tooltip::add);
-        GunSpec.of(stack).filter(g -> g.launcher() == GunSpec.Launcher.STEAM).ifPresent(g ->
-                tooltip.add(Component.translatable("gun.feedback.steam", Math.round(GunSteam.stored(stack)),
-                        Math.round(g.steamCapacityMb()), Math.round(GunSteam.temperature(stack))).withStyle(
-                        GunSteam.temperature(stack) < io.github.soundgoodizerfan.feedback.core.FTuning.GUN_STEAM_MIN_TU
-                                ? ChatFormatting.RED : ChatFormatting.GRAY)));
     }
 
     /** "9.0 mm, 0.20 m barrel, 3.0 mm wall, iron sights, steel": the build, free to read off the barrel in your hand. */
@@ -56,8 +51,7 @@ public final class GunTooltip {
         return Component.translatable("gun.feedback.build", String.format("%.1f", spec.barrel().boreMm()),
                 String.format("%.2f", spec.barrel().lengthM()), String.format("%.1f", spec.barrel().wallMm()),
                 Component.translatable("gun.feedback.sight." + spec.sight().name().toLowerCase(java.util.Locale.ROOT)),
-                name(spec.material()),
-                Component.translatable("gun.feedback.launcher." + spec.launcher().name().toLowerCase(java.util.Locale.ROOT)));
+                name(spec.material()));
     }
 
     /** What is fitted, each in its metal: "Fitted: steel suppressor, iron barrel shroud". */
@@ -83,9 +77,7 @@ public final class GunTooltip {
      */
     public static List<Component> figures(GunFigures f) {
         return List.of(
-                f.launcher() == GunSpec.Launcher.SPRING
-                        ? Component.translatable("gun.feedback.spring", Math.round(f.muzzleEnergy())).withStyle(ChatFormatting.GRAY)
-                        : Component.translatable(f.coil() ? "gun.feedback.winding" : f.launcher() == GunSpec.Launcher.STEAM ? "gun.feedback.chest" : "gun.feedback.chamber",
+                Component.translatable("gun.feedback.chamber",
                         String.format("%.1f", f.peakPressure().value()),
                         String.format("%.1f", f.chamberRating().value()))
                         .withStyle(f.overpressure() > 1 ? ChatFormatting.RED : ChatFormatting.GRAY),

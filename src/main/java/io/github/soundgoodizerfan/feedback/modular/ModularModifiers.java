@@ -271,8 +271,7 @@ public final class ModularModifiers {
             case "butcher" -> new Object[]{n(p(v, "animal_mult", 1.5f)), n(p(v, "extra_chance", 0.5f) * 100), n(p(v, "monster_mult", 0.85f))};
             case "line_cut" -> new Object[]{n(p(v, "length", 3)), n(p(v, "line_mult", 0.7f) * 100), n(p(v, "main_mult", 0.9f) * 100), n(p(v, "wear", 1))};
             case "lunge" -> new Object[]{n(p(v, "sprint_mult", 1.4f)), n(p(v, "still_mult", 0.85f))};
-            case "spring_strike" -> new Object[]{n(p(v, "stored", 6f)), n(p(v, "reset", 30f) / 20), n(p(v, "rating", 12f))};
-            case "spring_throw" -> new Object[]{n(p(v, "speed_mult", 1.6f) * 100), n(p(v, "rating", 6f))};
+            case "spring" -> new Object[]{n(p(v, "reset", 30f) / 20), n(p(v, "rating", 12f)), n(p(v, "throw_rating", 6f))};
             case "harpoon" -> new Object[]{n(p(v, "rope", 14)), n(p(v, "pull", 0.5f) * 20), n(p(v, "water_mult", 1.8f))};
             case "fork" -> new Object[]{n(p(v, "extra", 2)), n(p(v, "reach", 3.5f)), n(p(v, "side_mult", 0.7f) * 100), n(p(v, "main_mult", 0.7f) * 100), n(p(v, "wear", 1))};
             case "snap_shot" -> new Object[]{n(p(v, "draw_mult", 0.6f) * 100), n(p(v, "velocity_mult", 0.8f) * 100)};

@@ -87,16 +87,6 @@
         "cells": 3,
         "stock": [
           "plate"
-        ],
-        "base": "finned",
-        "variants": [
-          {
-            "name": "finned"
-          },
-          {
-            "name": "jacketed",
-            "cells": 4
-          }
         ]
       }
     },
@@ -141,6 +131,15 @@
           }
         ]
       }
+    },
+    "K": {
+      "name": "cooling",
+      "forms": [
+        "plate",
+        "pipe"
+      ],
+      "litres": 0.02,
+      "bulk": 2
     }
   },
   "patterns": [

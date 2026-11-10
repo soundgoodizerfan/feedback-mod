@@ -52,9 +52,8 @@ public final class GunDesignation {
                 "bore", String.valueOf(bore),
                 // Barrel length in whole centimetres: the longest barrel a gun can be fitted with reads "80".
                 "length", String.valueOf(Math.round(spec.barrel().lengthM() * 100)),
-                // What throws the round and, for a chamber, how its bore is finished; and whether the bore is wide enough to take a shell.
-                "finish", spec.launcher() != GunSpec.Launcher.CHAMBER ? spec.launcher().name().toLowerCase(Locale.ROOT)
-                        : traits.contains("gun_rifling") ? "rifled" : "smooth",
+                // How the bore is finished; and whether the bore is wide enough to take a shell.
+                "finish", traits.contains("gun_rifling") ? "rifled" : "smooth",
                 "gauge", bore >= WIDE_BORE_MM ? "wide" : "narrow");
         for (ModularType.Designation d : type.names().designations()) {
             boolean ok = d.traits().stream().allMatch(traits::contains) && d.without().stream().noneMatch(traits::contains);

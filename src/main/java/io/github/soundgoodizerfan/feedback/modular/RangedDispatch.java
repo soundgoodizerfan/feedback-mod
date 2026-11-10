@@ -31,8 +31,16 @@ public final class RangedDispatch {
     /** True for the length of a hushed bow's release, on the server thread only. */
     private static boolean hush;
 
+    /** The product of {@code name} over the traits the weapon has (its archetype and its addons); {@code fallback} when none names it. */
     private static float param(ItemStack weapon, String name, float fallback) {
-        return ModularTraits.of(weapon).map(a -> a.params().get(name, fallback)).orElse(fallback);
+        float product = 1f;
+        boolean any = false;
+        for (ModularTraits.Active a : ModularTraits.actives(weapon))
+            if (a.params().values().containsKey(name)) {
+                product *= a.params().get(name, 1f);
+                any = true;
+            }
+        return any ? product : fallback;
     }
 
     /** The multiple of the baked draw (or load) time this weapon's archetype takes. */

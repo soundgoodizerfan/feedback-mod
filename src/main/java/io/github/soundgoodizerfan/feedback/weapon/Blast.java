@@ -30,8 +30,6 @@ public final class Blast {
 
     /** Explosion power: the square root of the burned potential, times the casing's confinement, capped. */
     public static float power(Cartridge.Blend blend, Material casing) {
-        if (blend.coil())
-            return 0f;
         return Math.min(FTuning.DEMO_POWER_MAX,
                 FTuning.DEMO_POWER_PER_SQRT * (float) Math.sqrt(blend.potential() * blend.burned()) * confinement(casing));
     }
@@ -105,8 +103,8 @@ public final class Blast {
         float c = confine, f = frag, add = burnAdd, pf = payloadFrag;
         boolean fireAlways = forceFire, flashed = flash, hit = impact;
         int fuse = ticks;
-        return Cartridge.Blend.of(materials, filler).filter(b -> !b.coil()).map(b -> {
-            Cartridge.Blend primed = new Cartridge.Blend(b.potential(), Math.min(1f, b.burned() + add), b.burnRate(), b.ignitionTu(), b.total(), b.coil(), b.chemical());
+        return Cartridge.Blend.of(materials, filler).map(b -> {
+            Cartridge.Blend primed = new Cartridge.Blend(b.potential(), Math.min(1f, b.burned() + add), b.burnRate(), b.ignitionTu(), b.total());
             float damage = Math.min(FTuning.GRENADE_FRAG_DAMAGE_MAX, (cased == null ? 0f
                     : cased.hardness().value() * FTuning.GRENADE_FRAG_DAMAGE_PER_HARDNESS * f) + pf);
             float power = Math.min(FTuning.DEMO_POWER_MAX, FTuning.DEMO_POWER_PER_SQRT

@@ -17,18 +17,12 @@
     "lining": {
       "kind": "coil",
       "flaw": 1
-    },
-    "main_spring": {
-      "kind": "stored_shot"
     }
   },
   "mirror": {
     "string": {
       "kind": "release",
       "flaw": 1
-    },
-    "main_spring": {
-      "kind": "snap_shot"
     }
   }
 }

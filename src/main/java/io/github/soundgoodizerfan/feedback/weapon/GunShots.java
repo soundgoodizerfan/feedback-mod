@@ -315,24 +315,10 @@ public final class GunShots {
                                  GunSpec design, Cartridge round, float yaw, float pitch, long nowMs, boolean cookOff,
                                  boolean aimed, boolean together, InteractionHand hand) {
         var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
-        round = round.at(level.getGameTime());
-        var base = design.firing(GunAmmo.count(gun)).bake(materials, round, GunSteam.stored(gun),
-                GunSpec.slugHot(materials, round, GunCondition.temperature(gun, level).value()));
-        var load = design.loadOf(materials, round);
+        var base = design.firing(GunAmmo.count(gun)).bake(materials, round);
+        var load = round.load(materials);
         if (base.isEmpty() || load.isEmpty())
             return false;
-        // A steam gun with less than a shot's steam in the chest only hisses.
-        if (design.launcher() == GunSpec.Launcher.STEAM && !GunSteam.canFire(gun)) {
-            if (shooter instanceof Player player)
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.no_steam"), true);
-            return false;
-        }
-        // A winding above its quench temperature carries nothing: a hard gate with a cause.
-        if (GunCondition.quenched(gun, level, load.get())) {
-            if (shooter instanceof Player player)
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.quenched"), true);
-            return false;
-        }
         float heat = GunCondition.heatFraction(gun, level, load.get().ignitionTu());
         GunFigures figures = base.get().aged(GunCondition.condition(gun), GunFu.bloomHeat(shooter, heat));
         // Traits that read the shooter's hands and the dual-wield rule are a player's; a mob fires the bake as it stands.
@@ -341,21 +327,17 @@ public final class GunShots {
             if (GunItem.dualWielding(player))
                 figures = figures.oneHanded();
         }
-        figures = figures.withCycle(io.github.soundgoodizerfan.feedback.modular.attunement.SpringKinds.snap(gun));
         if (!together && !accept(shooter, figures, nowMs, hand))
             return false;
         LAST_SHOT.put(shooter.getUUID(), System.currentTimeMillis());
         GunAmmo.spend(gun);
-        if (design.launcher() == GunSpec.Launcher.STEAM)
-            GunSteam.spend(gun);
-        // Only a chamber's case holds the pressure; a spring or a steam gun's round is a dry slug in a shell.
-        float caseRating = design.launcher().chargeless() || design.layout().action() == GunLayout.Action.FLINTLOCK ? Float.MAX_VALUE
+        // A flintlock's case is not rated: the barrel holds the pressure.
+        float caseRating = design.layout().action() == GunLayout.Action.FLINTLOCK ? Float.MAX_VALUE
                 : round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
         float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat, round.boreWear(materials));
-        io.github.soundgoodizerfan.feedback.modular.attunement.SpringKinds.fired(shooter, gun);
         if (shooter instanceof Player attuned)
             io.github.soundgoodizerfan.feedback.modular.attunement.PiezoKinds.fired(attuned, gun, figures);
         io.github.soundgoodizerfan.feedback.modular.attunement.RecallKinds.refund(gun, level, round);
@@ -448,7 +430,7 @@ public final class GunShots {
         if (design == null || round == null || GunHazard.isSpent(gun) || !ModularTraits.cooksOff(gun))
             return false;
         var load = round.load(io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
-        if (load.isEmpty() || load.get().coil()
+        if (load.isEmpty()
                 || GunCondition.temperature(gun, level).value() < load.get().ignitionTu())
             return false;
         // The server made this shot, so the holder's client played no sound of its own: let them hear it.
@@ -617,7 +599,6 @@ public final class GunShots {
     private static int bestMagazine(Player player, GunSpec design) {
         var inventory = player.getInventory();
         int best = -1, most = -1;
-        boolean bestPreferred = false;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             var s = inventory.getItem(i);
             if (!s.is(FWeapons.MAGAZINE_ITEM.get()) || GunAmmo.size(s).feed() != design.layout().feed())
@@ -625,12 +606,9 @@ public final class GunShots {
             Magazine m = MagazineItem.rounds(s);
             if (!m.isEmpty() && m.boreMm() != design.boreMm())
                 continue;
-            // A magazine of the rounds this launcher drives beats a fuller one of the other kind.
-            boolean preferred = m.isEmpty() || GunAmmo.prefers(design, m.top());
-            if (best < 0 || (preferred && !bestPreferred) || (preferred == bestPreferred && m.rounds().size() > most)) {
+            if (best < 0 || m.rounds().size() > most) {
                 best = i;
                 most = m.rounds().size();
-                bestPreferred = preferred;
             }
         }
         return best;
@@ -742,7 +720,7 @@ public final class GunShots {
                     layer.volume(), layer.pitch());
         level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT * (shooter instanceof Player mp && Skills.unlocked(mp, "muffled_report") ? FTuning.GUN_MUFFLED_SHARE : 1f) ? FWeapons.GUNSHOT_QUIET
                 : f.report() >= FTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
-        // Only a chamber has burning gas to show; a coil crackles and a spring flicks dust.
+        // The burning gas shows as smoke at the muzzle.
         level.sendParticles(f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,
                 3, 0.02, 0.02, 0.02, 0.01);
     }

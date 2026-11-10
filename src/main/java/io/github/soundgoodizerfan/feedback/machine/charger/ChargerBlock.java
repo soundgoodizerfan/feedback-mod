@@ -21,8 +21,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Charges jar rounds from a wire. Right click with rounds to put them in, empty-handed to take
- * them out. See {@link ChargerBlockEntity}.
+ * Charges a battery from a wire. Right click with a battery to put it in, empty-handed to take
+ * it out. See {@link ChargerBlockEntity}.
  */
 public class ChargerBlock extends Block implements EntityBlock {
 
