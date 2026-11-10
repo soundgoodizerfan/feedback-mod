@@ -13,9 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:charge_casing",
-        "shape": [
-          "C"
-        ],
+        "cells": 1,
         "stock": [
           "plate"
         ],
@@ -71,9 +69,7 @@
       "layer": 3,
       "part": {
         "item": "feedback:charge_fuse",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "raw",
           "leather",
@@ -121,9 +117,7 @@
       "layer": 4,
       "part": {
         "item": "feedback:charge_primer",
-        "shape": [
-          "R"
-        ],
+        "cells": 1,
         "stock": [
           "nugget",
           "raw"

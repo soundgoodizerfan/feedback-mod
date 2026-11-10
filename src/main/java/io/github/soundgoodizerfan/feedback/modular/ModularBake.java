@@ -152,7 +152,7 @@ public final class ModularBake {
         if (m == null || m.xpStore().isEmpty())
             return Optional.empty();
         ModularType.Role role = type.roles().get(p.role());
-        int cells = role.variant(p).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        float cells = role.cells(p) * role.volumeScale(p);
         Material.XpCapacity x = m.xpStore().get();
         XpStore empty = XpStore.empty(Math.max(1, Math.round(cells * x.capacitance())), x.topLevel());
         return Optional.of(held == null ? empty : empty.with(held.points()));
@@ -204,7 +204,7 @@ public final class ModularBake {
         if (pm == null || cm == null || pm.electrical().secondaryCell().isEmpty() || cm.electrical().insulation().isEmpty())
             return Optional.empty();
         ModularType.Role role = type.roles().get(plates.role());
-        int stock = role.variant(plates).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        int stock = Math.max(1, Math.round(role.cells(plates) * role.volumeScale(plates)));
         int perCell = role.variant(plates).map(v -> v.params().get("ingots_per_cell")).map(Math::round).orElse(FTuning.BATTERY_INGOTS_PER_CELL);
         int cells = Math.max(1, stock / perCell);
         Material.SecondaryCell sc = pm.electrical().secondaryCell().get();
@@ -500,7 +500,7 @@ public final class ModularBake {
     }
 
     private static int stockCells(ModularType.Role role, Part part) {
-        return role.variant(part).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        return Math.max(1, Math.round(role.cells(part) * role.volumeScale(part)));
     }
 
     /** The name of the shape {@code part} was made in, the standard shape's base name when it has no variant. */
@@ -897,7 +897,7 @@ public final class ModularBake {
             ModularFigures held = ModularNest.figures(part);
             return held == null ? 0f : held.get(Fig.MASS);
         }
-        return role.litres() * part.count() * m.density().muPerMb() * role.factor(part.form()) * role.kept(part);
+        return role.volume(part) * m.density().muPerMb() * role.factor(part.form()) * role.kept(part);
     }
 
     /**

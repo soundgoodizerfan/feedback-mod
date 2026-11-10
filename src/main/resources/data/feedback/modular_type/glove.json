@@ -13,10 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:glove_body",
-        "shape": [
-          "PP",
-          "PP"
-        ],
+        "cells": 4,
         "stock": [
           "leather",
           "*_carpet"
@@ -43,10 +40,7 @@
       "layer": 2,
       "part": {
         "item": "feedback:metacarpal_plate",
-        "shape": [
-          "PP",
-          "PP"
-        ],
+        "cells": 4,
         "stock": [
           "ingot",
           "plate"
@@ -54,9 +48,7 @@
         "variants": [
           {
             "name": "knuckles",
-            "shape": [
-              "PPPP"
-            ],
+            "cells": 4,
             "strike": 1.4,
             "params": {
               "armour": 0.3
@@ -64,10 +56,7 @@
           },
           {
             "name": "claws",
-            "shape": [
-              "P P P",
-              " PPP "
-            ],
+            "cells": 6,
             "strike": 0.9,
             "mass": 0.6,
             "params": {

@@ -2054,16 +2054,13 @@ final class BlueprintBoard {
                 skin.plaque(g, px, py, THUMB, THUMB);
                 skin.row(g, px, py, THUMB, THUMB, i == cur, i == hoverShape);
                 ToolTableShaping.Option o = options.get(i);
-                List<String> grid = o.variant().shape().isEmpty() ? o.shaping().shape() : o.variant().shape();
-                int gw = 1, gh = grid.size();
-                for (String row : grid)
-                    gw = Math.max(gw, row.length());
-                int cell = Math.max(1, Math.min(3, (THUMB - 4) / Math.max(gw, gh)));
-                int ox = px + (THUMB - gw * cell) / 2, oy = py + (THUMB - gh * cell) / 2;
-                for (int r = 0; r < gh; r++)
-                    for (int c = 0; c < grid.get(r).length(); c++)
-                        if (grid.get(r).charAt(c) != ' ')
-                            g.fill(ox + c * cell, oy + r * cell, ox + (c + 1) * cell, oy + (r + 1) * cell, 0xFF000000 | rgb);
+                // The thumbnail is the size: one square a cell of stock, gridRows as even as they go.
+                int n = Math.max(1, o.cells());
+                int perRow = n <= 3 ? n : (int) Math.ceil(Math.sqrt(n)), gridRows = (n + perRow - 1) / perRow;
+                int cell = Math.max(1, Math.min(3, (THUMB - 4) / Math.max(perRow, gridRows)));
+                int ox = px + (THUMB - perRow * cell) / 2, oy = py + (THUMB - gridRows * cell) / 2;
+                for (int c = 0; c < n; c++)
+                    g.fill(ox + c % perRow * cell, oy + c / perRow * cell, ox + (c % perRow + 1) * cell, oy + (c / perRow + 1) * cell, 0xFF000000 | rgb);
                 if (o.forged())
                     g.fill(px + THUMB - 5, py + 2, px + THUMB - 2, py + 5, skin.accent());
             }

@@ -13,11 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:shield_face",
-        "shape": [
-          "FF",
-          "FF",
-          "FF"
-        ],
+        "cells": 6,
         "stock": [
           "*_planks",
           "plate",
@@ -28,10 +24,7 @@
         "variants": [
           {
             "name": "buckler",
-            "shape": [
-              "FF",
-              "FF"
-            ],
+            "cells": 4,
             "trait": "parry",
             "params": {
               "parry_ticks": 4,
@@ -42,11 +35,7 @@
           },
           {
             "name": "kite",
-            "shape": [
-              "FF",
-              "FF",
-              "F "
-            ],
+            "cells": 5,
             "trait": "deflect",
             "params": {
               "melee_mult": 0.75,
@@ -55,11 +44,7 @@
           },
           {
             "name": "tower",
-            "shape": [
-              "FFF",
-              "FFF",
-              "FFF"
-            ],
+            "cells": 9,
             "trait": "bulwark",
             "params": {
               "capacity_mult": 1.5,
@@ -85,9 +70,7 @@
       "layer": 1,
       "part": {
         "item": "feedback:shield_rim",
-        "shape": [
-          "R"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "block",
@@ -98,19 +81,14 @@
         "variants": [
           {
             "name": "banded",
-            "shape": [
-              "RR"
-            ],
+            "cells": 2,
             "params": {
               "capacity_mult": 1.15
             }
           },
           {
             "name": "flanged",
-            "shape": [
-              "RR",
-              "R "
-            ],
+            "cells": 3,
             "params": {
               "capacity_mult": 1.3
             }

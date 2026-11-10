@@ -13,10 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:ceramic_bowl",
-        "shape": [
-          "C C",
-          " C "
-        ],
+        "cells": 3,
         "stock": [
           "brick",
           "ball",
@@ -80,8 +77,14 @@
     ]
   ],
   "ranges": {
-    "B": [0, 1],
-    "S": [0, 1]
+    "B": [
+      0,
+      1
+    ],
+    "S": [
+      0,
+      1
+    ]
   },
   "defaults": {
     "C": "feedback:brick",
@@ -90,11 +93,13 @@
   "shapes": [
     {
       "item": "feedback:noodles",
-      "shape": [
-        "DDD"
+      "cells": 3,
+      "stock": [
+        "raw"
       ],
-      "stock": ["raw"],
-      "traits": ["kneadable"]
+      "traits": [
+        "kneadable"
+      ]
     }
   ]
 }

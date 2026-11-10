@@ -18,10 +18,7 @@
       },
       "part": {
         "item": "feedback:helmet_plate",
-        "shape": [
-          "PPP",
-          "P P"
-        ],
+        "cells": 5,
         "stock": [
           "ingot",
           "block",
@@ -34,10 +31,7 @@
         "variants": [
           {
             "name": "open_helm",
-            "shape": [
-              "PPP",
-              "P  "
-            ],
+            "cells": 4,
             "trait": "open_face",
             "params": {
               "projectile_mult": 1.3
@@ -45,11 +39,7 @@
           },
           {
             "name": "great_helm",
-            "shape": [
-              "PPP",
-              "PPP",
-              "P"
-            ],
+            "cells": 7,
             "trait": "closed_visor",
             "params": {
               "projectile_mult": 0.6,
@@ -58,11 +48,7 @@
           },
           {
             "name": "sallet",
-            "shape": [
-              "PPP",
-              "P P",
-              "P"
-            ],
+            "cells": 6,
             "trait": "neck_guard",
             "params": {
               "behind_mult": 0.8,
@@ -103,9 +89,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:machine_winding",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "wire"
         ],
@@ -116,24 +100,15 @@
           },
           {
             "name": "fine",
-            "shape": [
-              "WW"
-            ]
+            "cells": 2
           },
           {
             "name": "dense",
-            "shape": [
-              "WW",
-              "WW"
-            ]
+            "cells": 4
           },
           {
             "name": "heavy_dense",
-            "shape": [
-              "WWW",
-              "WWW",
-              "WW"
-            ]
+            "cells": 8
           }
         ]
       }

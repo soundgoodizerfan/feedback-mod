@@ -14,10 +14,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:crossbow_prod",
-        "shape": [
-          "P",
-          "P"
-        ],
+        "cells": 2,
         "stock": [
           "stick",
           "rod",
@@ -26,10 +23,7 @@
         "variants": [
           {
             "name": "arbalest",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "trait": "heavy_bolt",
             "params": {
               "draw_mult": 2.2,
@@ -40,9 +34,7 @@
           },
           {
             "name": "pistol",
-            "shape": [
-              "P"
-            ],
+            "cells": 1,
             "trait": "snap_bolt",
             "params": {
               "draw_mult": 0.45,

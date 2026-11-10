@@ -13,11 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:bow_limbs",
-        "shape": [
-          "L",
-          "L",
-          "L"
-        ],
+        "cells": 3,
         "stock": [
           "stick",
           "rod",
@@ -26,10 +22,7 @@
         "variants": [
           {
             "name": "shortbow",
-            "shape": [
-              "L",
-              "L"
-            ],
+            "cells": 2,
             "trait": "snap_shot",
             "params": {
               "draw_mult": 0.6,
@@ -39,10 +32,7 @@
           },
           {
             "name": "longbow",
-            "shape": [
-              "LL",
-              "LL"
-            ],
+            "cells": 4,
             "trait": "heavy_draw",
             "params": {
               "draw_mult": 1.5,

@@ -354,7 +354,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                 if (!ToolTableShaping.takes(menu.station(), o, stuff.get()))
                     continue;
                 BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.SHAPE, partIcon(o, stuff.get()), o.label(), "", ToolTableMenu.BTN_PICK + i, 0, i);
-                n.faint = have < o.cells() * io.github.soundgoodizerfan.feedback.modular.ModularTuning.CELL_MB;
+                n.faint = have < o.stockMb(1f);
                 n.forged = o.forged();
                 shapes.add(n);
             }

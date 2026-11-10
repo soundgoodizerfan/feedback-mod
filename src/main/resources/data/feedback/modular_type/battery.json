@@ -14,54 +14,36 @@
       "layer": 0,
       "part": {
         "item": "feedback:battery_plates",
-        "shape": [
-          "PP"
-        ],
+        "cells": 2,
         "stock": [
           "plate"
         ],
         "variants": [
           {
             "name": "light_cell",
-            "shape": [
-              "P"
-            ],
+            "cells": 1,
             "params": {
               "ingots_per_cell": 1
             }
           },
           {
             "name": "heavy_cell",
-            "shape": [
-              "PPPP"
-            ],
+            "cells": 4,
             "params": {
               "ingots_per_cell": 4
             }
           },
           {
             "name": "three_cell",
-            "shape": [
-              "PPP",
-              "PPP"
-            ]
+            "cells": 6
           },
           {
             "name": "six_cell",
-            "shape": [
-              "PPPP",
-              "PPPP",
-              "PPPP"
-            ]
+            "cells": 12
           },
           {
             "name": "twelve_cell",
-            "shape": [
-              "PPPPPP",
-              "PPPPPP",
-              "PPPPPP",
-              "PPPPPP"
-            ]
+            "cells": 24
           }
         ]
       }

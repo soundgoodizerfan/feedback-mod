@@ -18,11 +18,7 @@
       },
       "part": {
         "item": "feedback:leggings_plate",
-        "shape": [
-          "PPP",
-          "P P",
-          "P P"
-        ],
+        "cells": 7,
         "stock": [
           "ingot",
           "block",
@@ -88,9 +84,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:machine_winding",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "wire"
         ],
@@ -101,24 +95,15 @@
           },
           {
             "name": "fine",
-            "shape": [
-              "WW"
-            ]
+            "cells": 2
           },
           {
             "name": "dense",
-            "shape": [
-              "WW",
-              "WW"
-            ]
+            "cells": 4
           },
           {
             "name": "heavy_dense",
-            "shape": [
-              "WWW",
-              "WWW",
-              "WW"
-            ]
+            "cells": 8
           }
         ]
       }

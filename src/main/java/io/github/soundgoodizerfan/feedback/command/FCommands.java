@@ -137,7 +137,7 @@ public final class FCommands {
                 if (m == null || form.contains("*") || m.item(id, form).isEmpty()
                         || !ToolTableShaping.takes(Station.TOOL, o, new Material.Located(id, m, form)))
                     continue;
-                var stock = new ToolTableShaping.Stock(new Material.Located(id, m, form), o.cells(), 0f, 0);
+                var stock = new ToolTableShaping.Stock(new Material.Located(id, m, form), o.cells(), o.stockMb(1f), 0f, 0);
                 ItemStack part = ToolTableShaping.part(o, stock, 0, level).orElseThrow(NO_MATERIAL::create);
                 GunAmmo.give(player, part);
                 c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.part", part.getHoverName()), false);

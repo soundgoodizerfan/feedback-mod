@@ -34,7 +34,7 @@ public record ModularHeads(List<ModularType.Mine> mines, float strike, int cells
                 if (wear == null || wear.striker() || wear.part().isEmpty() || type.mines().isEmpty())
                     continue;
                 ModularType.Shaping shaping = wear.part().get();
-                built.put(shaping.item().getPath(), new ModularHeads(type.mines(), type.strike(), shaping.cells(), shaping));
+                built.put(shaping.item().getPath(), new ModularHeads(type.mines(), type.strike(), (int) Math.ceil(shaping.cells()), shaping));
             }
             cache = built;
             generation = ModularTypes.generation();

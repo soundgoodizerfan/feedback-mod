@@ -13,9 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:wooden_skewer",
-        "shape": [
-          "C"
-        ],
+        "cells": 1,
         "stock": [
           "stick",
           "rod"

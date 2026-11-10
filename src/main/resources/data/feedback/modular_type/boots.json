@@ -18,10 +18,7 @@
       },
       "part": {
         "item": "feedback:boots_plate",
-        "shape": [
-          "P P",
-          "P P"
-        ],
+        "cells": 4,
         "stock": [
           "ingot",
           "block",
@@ -34,11 +31,7 @@
         "variants": [
           {
             "name": "sabatons",
-            "shape": [
-              "PP",
-              "PP",
-              "PP"
-            ],
+            "cells": 6,
             "trait": "trample",
             "params": {
               "min_fall": 3,
@@ -49,10 +42,7 @@
           },
           {
             "name": "riding_boots",
-            "shape": [
-              "P P",
-              "P"
-            ],
+            "cells": 3,
             "trait": "spurs",
             "params": {
               "boost_ticks": 60,
@@ -94,9 +84,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:machine_winding",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "wire"
         ],
@@ -107,24 +95,15 @@
           },
           {
             "name": "fine",
-            "shape": [
-              "WW"
-            ]
+            "cells": 2
           },
           {
             "name": "dense",
-            "shape": [
-              "WW",
-              "WW"
-            ]
+            "cells": 4
           },
           {
             "name": "heavy_dense",
-            "shape": [
-              "WWW",
-              "WWW",
-              "WW"
-            ]
+            "cells": 8
           }
         ]
       }

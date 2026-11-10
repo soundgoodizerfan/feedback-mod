@@ -55,12 +55,23 @@ public final class ToolTableShaping {
 
         /** Whether it is played on the anvil rather than made as soon as the stock is in. */
         public boolean forged() {
-            return variant.shape().isEmpty() && !variant.rhythm().isEmpty();
+            return variant.cells() <= 0f && !variant.rhythm().isEmpty();
         }
 
-        /** Items of stock it takes: its own cells if laid, the standard shape's if forged. */
-        public int cells() {
+        /** Its size in cells of stock at default axes: its own if made at its own size, the standard shape's if forged. */
+        public float size() {
             return forged() || variant.name().isEmpty() ? shaping.cells() : variant.cells();
+        }
+
+        /** Whole cells of stock it takes at default axes, rounded up: what a part item records and a tooltip counts. */
+        public int cells() {
+            return (int) Math.ceil(size());
+        }
+
+        /** Millibuckets of stock it takes when its axes scale its volume by {@code scale}, up to the next nugget (the smallest stock there is). */
+        public int stockMb(float scale) {
+            int nuggets = (int) Math.ceil(size() * scale * ModularTuning.CELL_MB / ModularTuning.NUGGET_MB - 1e-3f);
+            return Math.max(1, nuggets) * ModularTuning.NUGGET_MB;
         }
 
         /** The name the list shows: the part, and the shape if it is not the standard one. */
@@ -123,12 +134,7 @@ public final class ToolTableShaping {
     }
 
     /** What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. */
-    public record Stock(Material.Located what, int cells, float coldest, int mb) {
-
-        /** Millibuckets the shape spends. */
-        public int spent() {
-            return cells * ModularTuning.CELL_MB;
-        }
+    public record Stock(Material.Located what, int cells, int spent, float coldest, int mb) {
 
         /** Millibuckets of the pile the shape leaves. */
         public int left() {
@@ -170,13 +176,13 @@ public final class ToolTableShaping {
             mb += s.getCount() * FormItems.volume(l.get().form());
             coldest = Math.min(coldest, ItemHeat.get(s, level).value());
         }
-        int need = option.cells() * ModularTuning.CELL_MB;
+        int need = option.stockMb(1f);
         if (what == null || !takes(station, option, what) || (exact ? mb != need : mb < need))
             return Optional.empty();
         Material m = what.material();
         if (m.minTemperature().value() > 0 && (coldest < m.minTemperature().value() || coldest > m.maxTemperature().value()))
             return Optional.empty();
-        return Optional.of(new Stock(what, option.cells(), coldest, mb));
+        return Optional.of(new Stock(what, option.cells(), need, coldest, mb));
     }
 
     /** The part {@code stock} makes in {@code option}, with {@code flaw} flaws, at the stock's heat; empty if the part item is gone. */

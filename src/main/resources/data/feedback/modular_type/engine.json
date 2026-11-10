@@ -15,9 +15,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:engine_block",
-        "shape": [
-          "KKKK"
-        ],
+        "cells": 4,
         "stock": [
           "ingot"
         ],
@@ -33,10 +31,7 @@
           },
           {
             "name": "v_block",
-            "shape": [
-              "KK",
-              "K"
-            ],
+            "cells": 3,
             "params": {
               "torque": 1.0,
               "rev": 0.93,
@@ -45,10 +40,7 @@
           },
           {
             "name": "boxer_block",
-            "shape": [
-              "KKK",
-              "KK"
-            ],
+            "cells": 5,
             "params": {
               "torque": 0.97,
               "rev": 1.08,
@@ -76,10 +68,7 @@
       },
       "part": {
         "item": "feedback:piston_set",
-        "shape": [
-          "PP",
-          "PP"
-        ],
+        "cells": 4,
         "stock": [
           "ingot"
         ],
@@ -87,18 +76,14 @@
         "variants": [
           {
             "name": "one_cylinder",
-            "shape": [
-              "P"
-            ],
+            "cells": 1,
             "params": {
               "cylinders": 1
             }
           },
           {
             "name": "two_cylinder",
-            "shape": [
-              "PP"
-            ],
+            "cells": 2,
             "params": {
               "cylinders": 2
             }
@@ -111,20 +96,14 @@
           },
           {
             "name": "six_cylinder",
-            "shape": [
-              "PPP",
-              "PPP"
-            ],
+            "cells": 6,
             "params": {
               "cylinders": 6
             }
           },
           {
             "name": "eight_cylinder",
-            "shape": [
-              "PPPP",
-              "PPPP"
-            ],
+            "cells": 8,
             "params": {
               "cylinders": 8
             }
@@ -150,9 +129,7 @@
       },
       "part": {
         "item": "feedback:crankshaft",
-        "shape": [
-          "CC"
-        ],
+        "cells": 2,
         "stock": [
           "ingot"
         ],
@@ -166,10 +143,7 @@
           },
           {
             "name": "forged_crank",
-            "shape": [
-              "CC",
-              "C"
-            ],
+            "cells": 3,
             "params": {
               "rev": 1.08
             }
@@ -186,9 +160,7 @@
       "layer": 3,
       "part": {
         "item": "feedback:cylinder_head",
-        "shape": [
-          "HH"
-        ],
+        "cells": 2,
         "stock": [
           "plate"
         ],
@@ -196,9 +168,7 @@
         "variants": [
           {
             "name": "low_compression",
-            "shape": [
-              "H"
-            ],
+            "cells": 1,
             "params": {
               "compression": 0,
               "torque": 0.95
@@ -213,10 +183,7 @@
           },
           {
             "name": "high_compression",
-            "shape": [
-              "HH",
-              "H"
-            ],
+            "cells": 3,
             "params": {
               "compression": 2,
               "torque": 1.08

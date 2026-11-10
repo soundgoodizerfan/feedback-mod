@@ -15,9 +15,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:prop_hub",
-        "shape": [
-          "HH"
-        ],
+        "cells": 2,
         "stock": [
           "ingot"
         ],
@@ -25,9 +23,7 @@
         "variants": [
           {
             "name": "two_blade",
-            "shape": [
-              "H"
-            ],
+            "cells": 1,
             "params": {
               "blades": 2,
               "mass": 0.8
@@ -42,10 +38,7 @@
           },
           {
             "name": "four_blade",
-            "shape": [
-              "HH",
-              "H"
-            ],
+            "cells": 3,
             "params": {
               "blades": 4,
               "mass": 1.2
@@ -72,9 +65,7 @@
       },
       "part": {
         "item": "feedback:prop_blades",
-        "shape": [
-          "BB"
-        ],
+        "cells": 2,
         "stock": [
           "plate"
         ],

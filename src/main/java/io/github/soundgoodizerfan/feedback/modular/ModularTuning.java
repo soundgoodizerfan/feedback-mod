@@ -80,6 +80,8 @@ public final class ModularTuning {
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel");
     /** Millibuckets in a cell of a shaped part: one ingot of stock. A part's size is counted in cells, its stock in volume. */
     public static final int CELL_MB = 144;
+    /** The smallest stock there is: a nugget, a ninth of a cell (one Qu of metal). A part's stock is rounded up to it. */
+    public static final int NUGGET_MB = 16;
     /** Studs on a converted crystal armour piece: it was eight diamonds, now four set in steel. */
     public static final int CONVERT_STUDS = 4;
     /** Share of its hardness (and wear) a plated armour plate takes from a sound coat: a skin, not a stud. */

@@ -371,6 +371,34 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             return variantOf(made);
         }
 
+        /**
+         * The volume of {@code made} in litres: a shaped part's size in cells (its variant's, else the standard shape's)
+         * times the role's {@code litres} times what its scaling axes make of it; raw stock is its count of items.
+         */
+        public float volume(ModularDesign.Part made) {
+            return litres * (cells(made) * volumeScale(made));
+        }
+
+        /** The size of {@code made} in cells of stock at its default axes: the shape's, for a part shaped from stock; else the count of items. */
+        public float cells(ModularDesign.Part made) {
+            if (made.kind().isEmpty())
+                return made.count();
+            Optional<Shaping> shaping = striker() ? ModularHeads.of(ModularHeads.kindOf(made, this)).map(ModularHeads::shaping) : part;
+            if (shaping.isEmpty())
+                return made.count();
+            float own = variantOf(made).map(Variant::cells).orElse(0f);
+            return own > 0f ? own : shaping.get().cells();
+        }
+
+        /** What the part's axes that scale volume make of it, against the default size: the product of {@code value / default}. */
+        public float volumeScale(ModularDesign.Part made) {
+            float scale = 1f;
+            for (Map.Entry<String, Axis> a : axes.entrySet())
+                if (a.getValue().scales() && a.getValue().def() > 0f)
+                    scale *= a.getValue().clamp(made.axis(a.getKey(), a.getValue().def())) / a.getValue().def();
+            return scale;
+        }
+
         /** The share of the stock {@code made}'s shape keeps, and as hammered ({@link ModularDesign.Part#built}). */
         public float kept(ModularDesign.Part made) {
             return variantOf(made).map(Variant::mass).orElse(1f) * made.built();
@@ -427,8 +455,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param def  its value on a part no machine has touched.
      * @param step the grain the Blueprint Table moves it in; 0 for a fifth-of-the-range default.
      * @param when for a figure that exists only on some shapes: the shape param ({@code gears}) that must reach {@code atLeast}.
+     * @param scales whether the part's volume (and so its stock, mass and cost) follows this axis in proportion to {@code value / default}.
      */
-    public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast) {
+    public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast, boolean scales) {
         static final Codec<Axis> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.fieldOf("min").forGetter(Axis::min),
                 Codec.FLOAT.fieldOf("max").forGetter(Axis::max),
@@ -436,7 +465,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.FLOAT.fieldOf("default").forGetter(Axis::def),
                 Codec.FLOAT.optionalFieldOf("step", 0f).forGetter(Axis::step),
                 Codec.STRING.optionalFieldOf("when", "").forGetter(Axis::when),
-                Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Axis::atLeast)
+                Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Axis::atLeast),
+                Codec.BOOL.optionalFieldOf("scales", false).forGetter(Axis::scales)
         ).apply(instance, Axis::new));
 
         /** The grain a stepper moves it in. */
@@ -455,8 +485,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * per part, the material on the stack ({@link io.github.soundgoodizerfan.feedback.process.MadeOf}).
      *
      * @param item  the part's item.
-     * @param shape rows of the role's letter, a space for nothing; mirrored freely. Its cells are
-     *              the part's size, as a pattern's were.
+     * @param cells the part's size at its default axes, in cells of stock (an ingot is one): how much stock it
+     *              takes and, times the role's {@code litres}, its volume. Continuous: 2.5 is a size.
      * @param stock forms of a material it can be shaped from, as a role's {@code forms}.
      * @param traits traits the stock's material must have, as a role's {@code traits}: a food shape takes
      *               only dough ({@code kneadable}), where any material in the form would otherwise do.
@@ -465,28 +495,28 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *              the variant of that name in {@code variants} (which has no shape of its own) holds its
      *              traits and numbers. Empty when the standard shape is only the plain part.
      */
-    public record Shaping(ResourceLocation item, List<String> shape, List<String> stock, List<Variant> variants, String base,
+    public record Shaping(ResourceLocation item, float cells, List<String> stock, List<Variant> variants, String base,
                           List<Material.Trait> traits) {
         static final Codec<Shaping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(Shaping::item),
-                Codec.STRING.listOf().fieldOf("shape").forGetter(Shaping::shape),
+                Codec.FLOAT.fieldOf("cells").forGetter(Shaping::cells),
                 Codec.STRING.listOf().fieldOf("stock").forGetter(Shaping::stock),
                 Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(Shaping::variants),
                 Codec.STRING.optionalFieldOf("base", "").forGetter(Shaping::base),
                 Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Shaping::traits)
         ).apply(instance, Shaping::new));
 
-        /** Every shape the part is laid in (a cell diagram and a cell count): the standard one first, then the variants that have a shape. */
+        /** Every shape the part is made in from stock of its own size: the standard one first, then the variants that have a size. */
         public List<Variant> laid() {
             List<Variant> out = new ArrayList<>();
-            out.add(new Variant("", shape, 0f, 1f, "", 1f, 0f, 1f, "", Map.of()));
-            variants.stream().filter(v -> !v.shape().isEmpty()).forEach(out::add);
+            out.add(new Variant("", cells, 0f, 1f, "", 1f, 0f, 1f, "", Map.of()));
+            variants.stream().filter(v -> v.cells() > 0f).forEach(out::add);
             return out;
         }
 
-        /** The variants a standard part is forged into by rhythm ({@code ForgeRhythm}): those with a pattern and no shape of their own. */
+        /** The variants a standard part is forged into by rhythm ({@code ForgeRhythm}): those with a pattern and no size of their own. */
         public List<Variant> forged() {
-            return variants.stream().filter(v -> v.shape().isEmpty() && !v.rhythm().isEmpty()).toList();
+            return variants.stream().filter(v -> v.cells() <= 0f && !v.rhythm().isEmpty()).toList();
         }
 
         /** The variant called {@code name}; empty for the standard shape or a name the type does not have. */
@@ -494,26 +524,16 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             return variants.stream().filter(v -> v.name().equals(name)).findFirst();
         }
 
-        public int cells() {
-            int n = 0;
-            for (String row : shape)
-                for (char c : row.toCharArray())
-                    if (c != ' ')
-                        n++;
-            return n;
-        }
     }
 
     /**
-     * Another shape a part is made in: the same item, a different layout of cells, and the geometry
-     * that layout stands for (spec 3). The cells are the size, as everywhere (more cells, more mass);
+     * Another shape a part is made in: the same item, its own size in cells, and the geometry
+     * that shape stands for (spec 3). The cells are the size, as everywhere (more cells, more mass);
      * the rest is what the shape does to the figures. Each variant has to be a trade, never a
      * strict upgrade -- a thin blade is lighter, reaches further and bites, and chips.
-     * <p>The layout must be unique across every part of every type: the part recipe knows only a
-     * shape, so two parts laid alike would be one recipe.
      *
      * @param name    lang key tail ({@code modular.feedback.variant.<name>}); empty is the standard shape.
-     * @param shape   rows of the role's letter, as {@link Shaping#shape}.
+     * @param cells   its size in cells of stock, as {@link Shaping#cells}; 0 for a forged variant, which is made from the standard shape's size.
      * @param reach   metres added to the part's distance from the hand.
      * @param section thickness against the standard: a thin edge bites more (square root) and a thick
      *                one resists chipping (linearly). Mass does not move with it: the cells hold the
@@ -534,11 +554,11 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *                character per step ({@code t} a tap, {@code h} a heavy blow, {@code .} a rest).
      *                A forged variant has no shape, since it is made from a standard part.
      */
-    public record Variant(String name, List<String> shape, float reach, float section, String rhythm, float strike,
+    public record Variant(String name, float cells, float reach, float section, String rhythm, float strike,
                           float centre, float mass, String trait, Map<String, Float> params) {
         static final Codec<Variant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Variant::name),
-                Codec.STRING.listOf().optionalFieldOf("shape", List.of()).forGetter(Variant::shape),
+                Codec.FLOAT.optionalFieldOf("cells", 0f).forGetter(Variant::cells),
                 Codec.FLOAT.optionalFieldOf("reach", 0f).forGetter(Variant::reach),
                 Codec.FLOAT.optionalFieldOf("section", 1f).forGetter(Variant::section),
                 Codec.STRING.optionalFieldOf("rhythm", "").forGetter(Variant::rhythm),
@@ -549,15 +569,6 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of()).forGetter(Variant::params)
         ).apply(instance, Variant::new));
 
-        /** How many cells of stock its shape lays; a forged variant has none of its own. */
-        public int cells() {
-            int n = 0;
-            for (String row : shape)
-                for (char c : row.toCharArray())
-                    if (c != ' ')
-                        n++;
-            return n;
-        }
     }
 
     /** Whether {@code form} is one of {@code forms}, {@code *_planks} meaning any form ending so. */
@@ -594,7 +605,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         Map<String, Integer> out = letters(index);
         out.replaceAll((k, n) -> !roles.containsKey(k) ? n
                 : roles.get(k).striker() ? ModularHeads.of(roles.get(k).forms().get(0)).map(ModularHeads::cells).orElse(n)
-                : roles.get(k).part().map(Shaping::cells).orElse(n));
+                : roles.get(k).part().map(sh -> (int) Math.ceil(sh.cells())).orElse(n));
         return out;
     }
 

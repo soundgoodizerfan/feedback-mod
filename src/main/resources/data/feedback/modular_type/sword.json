@@ -15,10 +15,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:sword_blade",
-        "shape": [
-          "B",
-          "B"
-        ],
+        "cells": 2,
         "stock": [
           "ingot",
           "block",
@@ -30,11 +27,7 @@
         "variants": [
           {
             "name": "claymore",
-            "shape": [
-              "BB",
-              "B ",
-              "B "
-            ],
+            "cells": 4,
             "reach": 0.15,
             "centre": 0.12,
             "section": 1.1,
@@ -49,10 +42,7 @@
           },
           {
             "name": "dagger",
-            "shape": [
-              "B ",
-              " B"
-            ],
+            "cells": 2,
             "reach": -0.25,
             "centre": -0.25,
             "section": 1.0,
@@ -154,9 +144,7 @@
       "layer": 2,
       "part": {
         "item": "feedback:sword_guard",
-        "shape": [
-          "G"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "block",
@@ -168,9 +156,7 @@
         "variants": [
           {
             "name": "crossguard",
-            "shape": [
-              "GGG"
-            ],
+            "cells": 3,
             "trait": "blocking",
             "params": {
               "block_mult": 0.5,
@@ -196,9 +182,7 @@
       "layer": 3,
       "part": {
         "item": "feedback:sword_pommel",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "nugget",
           "ingot",
@@ -210,17 +194,12 @@
         "variants": [
           {
             "name": "wheel",
-            "shape": [
-              "PP"
-            ],
+            "cells": 2,
             "centre": -0.03
           },
           {
             "name": "counterweight",
-            "shape": [
-              "PP",
-              "P "
-            ],
+            "cells": 3,
             "centre": -0.06
           }
         ]
@@ -236,9 +215,7 @@
       "set": true,
       "part": {
         "item": "feedback:tool_tip",
-        "shape": [
-          "T"
-        ],
+        "cells": 1,
         "stock": [
           "gem",
           "shard",
@@ -247,17 +224,12 @@
         "variants": [
           {
             "name": "needle",
-            "shape": [
-              "TT"
-            ],
+            "cells": 2,
             "section": 0.75
           },
           {
             "name": "capped",
-            "shape": [
-              "TT",
-              "T "
-            ],
+            "cells": 3,
             "section": 1.35
           }
         ]
@@ -286,7 +258,10 @@
   },
   "board": {
     "layout": {
-      "T": [1, 0]
+      "T": [
+        1,
+        0
+      ]
     }
   }
 }
