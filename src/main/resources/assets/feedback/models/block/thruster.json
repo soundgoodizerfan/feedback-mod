@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "feedback:block/space-plating-vent",
+    "side": "feedback:block/block_metal_hepatizon"
+  }
+}

@@ -2,7 +2,7 @@
   "inputs": [
     {
       "type": "neoforge:components",
-      "items": "feedback:redstone_filament_fine_wire",
+      "items": ["feedback:redstone_filament_fine_wire"],
       "components": {
         "feedback:texture": 3
       }

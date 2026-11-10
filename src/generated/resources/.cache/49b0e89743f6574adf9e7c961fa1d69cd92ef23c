@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-09T06:41:00.892574413	Item Models: feedback
+// 1.21.1	2026-11-10T10:31:26.750686248	Item Models: feedback
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/alumina_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
@@ -301,7 +301,11 @@ fb06b5aefa4539926d784d9bd25e20da947ae459 assets/feedback/models/item/copper_poin
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/echo_shard_crystal_plate.json
 21846dfdaf5a3ea62826b14b823c76e6d9131271 assets/feedback/models/item/emerald_crystal_plate.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/emerald_dust.json
+510fd73d2786927ef5d6754d07b577502f291dd5 assets/feedback/models/item/end_stone_concentrate.json
+81225bf472e505bcf541f3821c502d4f0867aef4 assets/feedback/models/item/end_stone_crushed.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/end_stone_dust.json
+4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/end_stone_lump.json
+4e4db6418bc86b3bc438ce254a661b2411f75280 assets/feedback/models/item/end_stone_tailings.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/enriched_fuel_rod_birdshot.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/enriched_fuel_rod_bullet.json
 ff79ab50270fe1b648f4bd4de325622d80debbc7 assets/feedback/models/item/enriched_fuel_rod_case.json

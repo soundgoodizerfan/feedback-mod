@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-08T15:39:13.095758101	Block States: feedback
+// 1.21.1	2026-11-10T10:31:26.747126009	Block States: feedback
 4a4a4f3dba74d39a8a934c2874f25fc8932a02e5 assets/feedback/blockstates/alumina_deepslate_ore.json
 b16fc3b8f6931373210a7c1d637cc12dbaf4f01e assets/feedback/blockstates/alumina_loose_rock.json
 f027b531a80892ab856c188ddf2409a7bab2ef9b assets/feedback/blockstates/alumina_ore.json
@@ -52,6 +52,9 @@ b6548a993a95a6813c1bab0d998edf9eaa9fae7b assets/feedback/blockstates/cuprite_loo
 cd9124138044d885da76611b1954d7fa7a64b662 assets/feedback/blockstates/cuprite_ore.json
 4a78619bb515f9cdf85a87faaee7b7b0e43b674e assets/feedback/blockstates/diamond_loose_rock.json
 7c86dad61802766f4444ccfc2dda961640d2947c assets/feedback/blockstates/emerald_loose_rock.json
+4829e7b3ebff543269f391866364e2e992ac7ba0 assets/feedback/blockstates/end_stone_deepslate_ore.json
+1dca6f2d8bc10b243fd5413e3fd48c4840f0f991 assets/feedback/blockstates/end_stone_loose_rock.json
+74ac3ede485d9f4889bdb161081983fa96daf648 assets/feedback/blockstates/end_stone_ore.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/enriched_fuel_rod_pipe.json
 50ce162472eb5d1ced5989c7d098f6ea1a570ccf assets/feedback/blockstates/fuel_rod_pipe.json
 709efa0ccc203203e416a94c33fe9fb60b37ee81 assets/feedback/blockstates/galena_deepslate_ore.json
@@ -217,6 +220,9 @@ eeb2b7fdd623f92b323c9c3b84696a306aa13b50 assets/feedback/models/block/cuprite_de
 55da8edf27a5c9c02f3abacd24405597fe70fd0a assets/feedback/models/block/cuprite_ore.json
 a7bc49b65068f3c835cd5ee5b0d3e704923b6ef3 assets/feedback/models/block/diamond_loose_rock.json
 a7bc49b65068f3c835cd5ee5b0d3e704923b6ef3 assets/feedback/models/block/emerald_loose_rock.json
+d4bcd2d3de9a37f283661c519bbd317960b60ac5 assets/feedback/models/block/end_stone_deepslate_ore.json
+5658b93c064de4b8d37ed011c74129e00346d38f assets/feedback/models/block/end_stone_loose_rock.json
+161a9f9ce79e23ee9bb9ab97c749077b6c0a365e assets/feedback/models/block/end_stone_ore.json
 eeb2b7fdd623f92b323c9c3b84696a306aa13b50 assets/feedback/models/block/galena_deepslate_ore.json
 41c469807b9f8b416a624096624583d4b08f5c13 assets/feedback/models/block/galena_loose_rock.json
 a7bc49b65068f3c835cd5ee5b0d3e704923b6ef3 assets/feedback/models/block/gold_loose_rock.json
@@ -355,6 +361,9 @@ deda014938931cfc916538feb6c19fae8576af77 assets/feedback/models/item/cuprite_loo
 6159140e6283aa2b2563dfaf31302ab9b1eedb76 assets/feedback/models/item/cuprite_ore.json
 833c04e197b01b63d01d54b0f2ec0ef301f95cd1 assets/feedback/models/item/diamond_loose_rock.json
 a7632c6ab3edd6386241cbcc2018ac5886a1c6fc assets/feedback/models/item/emerald_loose_rock.json
+7b5e7f2a87db4b6ff2780c13e40f67d4b90df977 assets/feedback/models/item/end_stone_deepslate_ore.json
+8d05bc5efc768f47db939c63595072bcded92019 assets/feedback/models/item/end_stone_loose_rock.json
+2251d993fba97cc3477150b9fccbc98fc96ea199 assets/feedback/models/item/end_stone_ore.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/enriched_fuel_rod_pipe.json
 220c3a56bd41c563f0690f6c2070049e10f96e54 assets/feedback/models/item/fuel_rod_pipe.json
 13240e49648d2bade32aa55c7ece678def3f7c77 assets/feedback/models/item/galena_deepslate_ore.json

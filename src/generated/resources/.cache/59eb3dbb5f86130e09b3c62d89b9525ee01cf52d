@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-08T15:39:13.103912132	Loot Tables
+// 1.21.1	2026-11-10T10:31:26.75653071	Loot Tables
 3dbf826722fc8d036ed34e23303ae65d958687ca data/feedback/loot_table/blocks/alumina_deepslate_ore.json
 e8b9eb8f398fc5db293d44e293b27087ca13e1c1 data/feedback/loot_table/blocks/alumina_loose_rock.json
 1f7e17fa516043a080aefa325ce773149cf23063 data/feedback/loot_table/blocks/alumina_ore.json
@@ -52,6 +52,9 @@ a4841ebd8ebdb9d64ba98ede6802628d4c692156 data/feedback/loot_table/blocks/cuprite
 22d7c207db0bdbba0f74027dc35aca7d426ed7cf data/feedback/loot_table/blocks/cuprite_ore.json
 927dd2ccd3045d5d7b717efe14c7db66042c94cd data/feedback/loot_table/blocks/diamond_loose_rock.json
 43f25c72c6791069722385dd35521d9fe25168a9 data/feedback/loot_table/blocks/emerald_loose_rock.json
+34448d943d12beb73b9a8d64124c93e176c985e8 data/feedback/loot_table/blocks/end_stone_deepslate_ore.json
+590193e415ae4174f0df58c2a46063f09aade65a data/feedback/loot_table/blocks/end_stone_loose_rock.json
+13b460a5ac172f98e661bdbf091516b7c66c56b3 data/feedback/loot_table/blocks/end_stone_ore.json
 092f18339499742fbc65e1e5a9ca8d0556e6b287 data/feedback/loot_table/blocks/enriched_fuel_rod_pipe.json
 260c068783b7806ec36673bdeaec126e1e055b9d data/feedback/loot_table/blocks/fuel_rod_pipe.json
 9702d06173769f33280ae22e0f165f669b89b24d data/feedback/loot_table/blocks/galena_deepslate_ore.json

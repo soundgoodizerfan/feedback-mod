@@ -161,7 +161,6 @@
       ],
       "litres": 0.03,
       "layer": 9,
-      "bulk": 2,
       "part": {
         "item": "feedback:suit_module",
         "shape": [

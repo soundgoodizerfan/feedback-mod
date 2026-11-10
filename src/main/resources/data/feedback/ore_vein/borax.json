@@ -6,7 +6,7 @@
   "dimension_filter": [
     "minecraft:overworld"
   ],
-  "biomes": "#feedback:evaporite_basins",
+  "biomes": "feedback:evaporite_basins",
   "indicator": "feedback:borax_loose_rock",
   "ore": "feedback:borax_ore",
   "deepslate_ore": "feedback:borax_deepslate_ore",
