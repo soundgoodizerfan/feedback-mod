@@ -2,6 +2,8 @@
 
 Where a **dish** is put together from a container and foods. It takes a **knife** in the slot where a forging bench takes a hammer, and it is where the containers are made. It is the one bench screen with a knife: what is in the center decides what the fan offers (shapes for a food or dough, foods that fit a container, and cut, knead or finish).
 
+The screen has two tabs, **Prep** and **Blueprint**. Everything below belongs to the Prep tab unless it says otherwise; see [Blueprint tab](#blueprint-tab).
+
 ## Crafting
 
 ```
@@ -75,6 +77,10 @@ The table's screen is fired brick with pale calcite trim; the Gun Table's is bla
 ### The reveal
 
 When you let go of the pour the result is already decided, but you are not told yet. The dish is covered and music plays for how it went (a bright tune for a clean pour, a steady one for a shaky one, a sad one for a failed one), so you can hear it before you see it. Then the cover lifts, with a fanfare for a good pour or a failed one. Click or press Esc to skip the music. Kneading ends the same way, with the dough resting under a cloth, and so does the cut: on Done the board is covered with a cloth while the music of how even the cut was plays (a bright tune for even, a steady one for mixed, a sad one for ragged), then the cloth lifts with the fanfare and the pieces wobble apart.
+
+### Blueprint tab
+
+The Blueprint tab shows a drafting board like the [Blueprint Table](Blueprint_Table.md#using-it), for dishes only. No treatise is needed. Draw a dish, then put paper in the paper slot at the bench's lower right and press **Print** to get a blueprint of it. A printed blueprint put back in the paper slot reopens on the board.
 
 ### Honey on a skewer
 

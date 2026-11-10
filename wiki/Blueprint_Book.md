@@ -1,6 +1,6 @@
 # Blueprint Book
 
-Carries blueprints, the way a bundle carries items. A bench that wants a blueprint reads every sheet inside the book from its blueprint slot.
+Carries up to sixteen blueprints, the way a bundle carries items. A bench that wants a blueprint reads every sheet inside the book from its blueprint slot.
 
 ## Crafting
 

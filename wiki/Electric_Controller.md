@@ -28,9 +28,11 @@ Down the left are **drive bays A to D** and a **RUN** slot, shown as icons with 
 
 ### Windows
 
-Drive, Editor and every app open as windows. Drag a window by its title bar and resize it by dragging its right or bottom edge. Each has a minimize button, a maximize button (**o**) and a close button (**x**). The focused window has the bright title. Windows stay inside the desktop area, clear of the drive icons and the hotbar dock.
+Drive, Editor and every app open as windows. Drag a window by its title bar and resize it by dragging its right or bottom edge. Each has a minimize button, a maximize button (**o**), a **fullscreen** button (**[]**) and a close button (**x**). The focused window has the bright title. Windows stay inside the desktop area, clear of the drive icons and the hotbar dock, except in fullscreen.
 
 Drag a title bar to the left or right edge of the screen area to snap the window to that half, or to the top edge to maximize it. Dragging a maximized or snapped window away restores its size. Double-click a title bar to maximize or restore.
+
+**Fullscreen** makes the window fill the whole game screen, over the Computer's panel and dock; its own title bar stays. The fullscreen button, the **Fullscreen** entry of the right-click menu (**Leave fullscreen** while it is on) and the same menu's restore entry, maximize, a double-click on the title bar, dragging the title bar and snapping all bring the window back to its normal size.
 
 With a window focused:
 
@@ -40,7 +42,7 @@ With a window focused:
 - **Alt+Down** restores, or minimizes a window that is already restored.
 - **Ctrl+W** closes.
 
-Right-click opens a menu. On a title bar or a task button: minimize or restore, maximize, snap left, snap right, close. On the wallpaper: Files, Settings, Next wallpaper, Show desktop. On a drive icon or a Files row: Open, Edit, Run or Stop, Copy, Eject, Erase (it asks first).
+Right-click opens a menu. On a title bar or a task button: minimize or restore, maximize, fullscreen, snap left, snap right, close. On the wallpaper: Files, Settings, Next wallpaper, Show desktop. On a drive icon or a Files row: Open, Edit, Run or Stop, Copy, Eject, Erase (it asks first).
 
 Short **toasts** appear in the top-right corner of the work area for about 6 seconds and vanish when clicked. They report an app disk inserted and Console events: a program started or stopped, a medium ejected, copied or erased, power on or lost, and refusals.
 
@@ -82,7 +84,7 @@ Each app disk is shapeless: one blank Floppy Disk plus one item.
 - **Library**: every drive at a glance, each with **Open** and **Copy**. Copy writes a bay's program onto a blank Floppy Disk or USB Drive sitting alone in another bay; the blank medium is used up as the cost.
 - **Power**: whether the Computer is powered, its voltage, current and what it wants (read to the precision of the instrument you carry), its voltage band, a bar showing how much of the band's voltage arrives, and a half-minute voltage trace.
 - **Arcade**: Snake (arrows or WASD, space to start) and Minesweeper (click to dig, right-click to flag; 14 mines on a 14x8 field). The best Snake length and the fastest cleared field are kept on the block.
-- **Blueprint**: the [Blueprint Table](Blueprint_Table.md)'s drafting board in a window, in the desktop's colors: draw designs from the types, pick parts, materials and shapes, read the predicted figures, compare and pin up to three drafts, and run the test rig. It cannot print onto paper and has no sample slot: carry a material item on the cursor from the hotbar dock and click a part to paint it. The window scrolls with Ctrl plus the wheel, or by dragging the strip down its right edge.
+- **Blueprint**: the [Blueprint Table](Blueprint_Table.md)'s drafting board in a window, in the desktop's colors: draw designs from the types, pick parts, materials and shapes, read the predicted figures, compare and pin up to three drafts, and run the test rig. The type selector, edge selector and search stay with the window, and the board takes the window's size, showing more types when the window is wide. It cannot print onto paper and has no sample slot: carry a material item on the cursor from the hotbar dock and click a part to paint it. The window scrolls with Ctrl plus the wheel, or by dragging the strip down its right edge.
 
 ### Settings
 

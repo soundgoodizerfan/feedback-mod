@@ -4,7 +4,7 @@ The Treatise Binder and the Treatise Shelf carry [treatises](Treatise.md) so tha
 
 ## Treatise Binder
 
-Carries treatises the way a bundle carries items. The treatises inside count as held while the binder is in your inventory.
+Carries up to sixteen treatises the way a bundle carries items. The treatises inside count as held while the binder is in your inventory.
 
 ```
 Leather + String + String + Iron Ingot (shapeless)

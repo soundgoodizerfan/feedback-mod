@@ -15,7 +15,7 @@ P is Paper and T is a Crafting Table.
 
 Right-click it to open the board. The item is drawn as a **diagram**: each part is a box placed where it sits in the finished piece. Drag to pan and use the wheel to zoom.
 
-- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology, Food) with a search box.
+- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology) with a search box.
 - **Click a part** to select it. Its panel has a **search box** (it matches a material's name, its kind and its traits), **material swatches** for every material, and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does. A material the part cannot be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) is dimmed with an x and cannot be picked; its tooltip reads *Does not fit this part.*
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
@@ -40,7 +40,7 @@ The sheet shows the design's figures as **bars** (for a battery: cells, full vol
 - **Hover a bar** to light the parts that moved it.
 - **Pin** keeps a draft: each pinned draft puts its own colored mark on every bar to compare against, up to three. Click a pinned draft to open it, Shift-click to drop it.
 
-The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds. Requirements and blueprints are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
+Blueprints stack to sixteen. The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds. Requirements and blueprints are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
 
 **Print**, at the bottom right, turns a sheet of paper in the paper slot into a **Blueprint** carrying the design and its figures. The pinned drafts print onto the paper too, and come back as pins when you put the Blueprint back in the slot to open it for drawing again. The table keeps nothing; the paper, the source blueprint and the samples come back to you when you close it.
 
@@ -50,9 +50,11 @@ The **source slot** takes a blueprint. Put blank paper in the paper slot and pre
 
 A [Computer](Electric_Controller.md#apps) can run the same board as the **Blueprint App Disk**, in the desktop's colors. It cannot print onto paper and has no sample slot.
 
+The [Prep Table](Prep_Table.md#blueprint-tab) has a Blueprint tab with a board for dishes only; the Blueprint Table itself does not draw dishes.
+
 ## Schools
 
-A type that belongs to a **school** is drawn here only while you hold that school's [treatise](Treatise.md). Press **Print** without it and the table says which treatise the type takes. A treatise counts as held when it lies loose in your inventory, sits inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or sits in a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table. It is kept, never used up.
+A type that belongs to a **school** is drawn here only while you hold that school's [treatise](Treatise.md). Press **Print** without it and the table says which treatise the type takes. A school's types are left out of the type row and list while you do not hold its treatise, and the treatise's tooltip lists what it opens. A treatise counts as held when it lies loose in your inventory, sits inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or sits in a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table. It is kept, never used up.
 
 | School | Types |
 | --- | --- |
