@@ -79,11 +79,6 @@ final class BlueprintBoard {
 
         /** Whether a sample slot is wanted for the selected part (the table's), which it shows only while one is selected. */
         void sampleWanted(boolean wanted);
-
-        /** Which kind of table this board is on: the types it offers are those that table draws. */
-        default io.github.soundgoodizerfan.feedback.modular.Drafting drafting() {
-            return io.github.soundgoodizerfan.feedback.modular.Drafting.ANY;
-        }
     }
 
     /** The board's size, which its geometry below is laid out in. */
@@ -231,7 +226,7 @@ final class BlueprintBoard {
     BlueprintBoard(Host host, GuiSkin skin) {
         this.host = host;
         this.skin = skin;
-        types = ToolDesigns.drawable(ModularTypes.known(), host.drafting());
+        types = ToolDesigns.drawable(ModularTypes.known());
         typePopup = new SkinPopup<>(skin, Component.translatable("gui.feedback.blueprint_table.pick_type"));
         for (ResourceLocation id : types)
             typeIcons.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));

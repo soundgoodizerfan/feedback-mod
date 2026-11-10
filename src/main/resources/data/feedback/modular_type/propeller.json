@@ -110,5 +110,6 @@
   "defaults": {
     "H": "feedback:steel",
     "B": "feedback:aluminium"
-  }
+  },
+  "school": "aerospace"
 }

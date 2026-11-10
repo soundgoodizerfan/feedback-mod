@@ -72,7 +72,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
                           Map<String, String> vanilla, float armourMax, boolean blueprint,
                           Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges,
-                          List<Shaping> shapes, boolean bakes, Board board) {
+                          List<Shaping> shapes, boolean bakes, Board board, String school) {
 
     /**
      * How the Blueprint Table lays a type out beyond its patterns. All optional: a type with none is drawn from its patterns alone.
@@ -167,14 +167,6 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** A suit upgrade module ({@code suit_module}): casing, wiring and a core cut in the shape that names what it does. Made at the Tool Table, then held whole in an armour piece's upgrade role ({@link ModularNest}); its bake is {@link ModularBake#suitModule}. No wear bar of its own. */
         SUIT_MODULE,
         MACHINE;
-
-        /**
-         * Whether a design of this family can be drawn only from a plan already in hand: the Blueprint Table copies and changes plans, it
-         * does not invent one. The first plan comes from measuring a specimen or from where plans are found ({@link ModularBlueprints}).
-         */
-        public boolean blueprintGated() {
-            return this == SUIT_MODULE;
-        }
 
         /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). A circuit is held too, as form {@code circuit}, though it is no modular family. */
         public String nestForm() {
@@ -410,15 +402,16 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                     Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).optionalFieldOf("ranges", Map.of()))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.blueprint(), t.ranges())),
             Naming.CODEC.optionalFieldOf("names", Naming.NONE).forGetter(ModularType::names),
-            Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.BOOL.optionalFieldOf("bakes", false))
-                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.trait(), t.bakes())),
+            Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""),
+                    Codec.mapPair(Codec.BOOL.optionalFieldOf("bakes", false), Codec.STRING.optionalFieldOf("school", "")))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.trait(), com.mojang.datafixers.util.Pair.of(t.bakes(), t.school()))),
             Codec.mapPair(Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()),
                     Codec.mapPair(Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()),
                             Board.CODEC.optionalFieldOf("board", Board.NONE)))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), com.mojang.datafixers.util.Pair.of(t.shapes(), t.board())))
     ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
                        gate, names, traitBakes, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
-            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond(), tail.getSecond().getSecond())));
+            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond().getFirst(), tail.getSecond().getSecond(), traitBakes.getSecond().getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);

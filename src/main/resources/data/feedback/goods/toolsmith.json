@@ -63,6 +63,14 @@
       "count": 1,
       "stock": 2,
       "guild_tier": 3
+    },
+    {
+      "level": 4,
+      "item": "feedback:treatise_mechanical",
+      "price": 32,
+      "count": 1,
+      "standing": 10,
+      "stock": 1
     }
   ]
 }

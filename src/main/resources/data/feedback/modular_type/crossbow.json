@@ -110,5 +110,6 @@
   },
   "vanilla": {
     "crossbow": "stick"
-  }
+  },
+  "school": "weapons"
 }

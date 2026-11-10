@@ -46,17 +46,14 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     private List<Boolean> shown = List.of();
     private final ContainerLevelAccess access;
 
-    private final Drafting drafting;
-
-    /** Client-side open: the kind of table comes with the open packet. */
-    public BlueprintTableMenu(int id, Inventory inventory, int drafting) {
-        this(id, inventory, ContainerLevelAccess.NULL, Drafting.of(drafting));
+    /** Client-side open. */
+    public BlueprintTableMenu(int id, Inventory inventory) {
+        this(id, inventory, ContainerLevelAccess.NULL);
     }
 
-    public BlueprintTableMenu(int id, Inventory inventory, ContainerLevelAccess access, Drafting drafting) {
+    public BlueprintTableMenu(int id, Inventory inventory, ContainerLevelAccess access) {
         super(FMenus.BLUEPRINT_TABLE.get(), id);
         this.access = access;
-        this.drafting = drafting;
         this.player = inventory.player;
         addSlot(new Slot(paper, 0, PAPER_X, PAPER_Y) {
             @Override
@@ -92,11 +89,6 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             addSlot(new Slot(inventory, column, HOTBAR_X + column * 18, HOTBAR_Y));
     }
 
-    /** Which kind of drawing table this is. */
-    public Drafting drafting() {
-        return drafting;
-    }
-
     /** Whether {@code stack} is some material in some form, as this side knows the materials. */
     public boolean isSample(ItemStack stack) {
         return !stack.isEmpty() && Material.find(ClientMaterials.on(player.level()), stack).isPresent();
@@ -123,14 +115,11 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             send(player, Component.translatable("message.feedback.blueprint_table.no_paper"));
             return;
         }
-        // A type that must be learned is drawn only from a plan already in hand: the paper in the slot is a sheet of the same type.
+        // A type of a school is drawn only by someone holding that school's treatise (in the inventory, a binder, or a shelf beside the table).
         ModularType drawn = ModularTypes.get().types().get(design.type());
-        if (drawn != null && drawn.family().blueprintGated() && !ModularBlueprints.references(paper.getItem(0), design.type())) {
-            send(player, Component.translatable("message.feedback.blueprint_table.no_reference"));
-            return;
-        }
-        if (drawn != null && !drafting.draws(drawn)) {
-            send(player, Component.translatable("message.feedback.blueprint_table.wrong_table"));
+        School school = drawn == null ? null : School.of(drawn.school());
+        if (school != null && !Treatises.has(player, access, school)) {
+            send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable("school.feedback." + school.id())));
             return;
         }
         var figures = ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
@@ -170,8 +159,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player player) {
-        return drafting == Drafting.ENGINEERING ? stillValid(access, player, FModular.ENGINEERING_TABLE.get())
-                : stillValid(access, player, FModular.BLUEPRINT_TABLE.get());
+        return stillValid(access, player, FModular.BLUEPRINT_TABLE.get());
     }
 
     @Override

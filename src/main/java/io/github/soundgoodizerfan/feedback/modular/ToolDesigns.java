@@ -51,13 +51,8 @@ public final class ToolDesigns {
 
     /** The types a blueprint can be drawn of: every one with a way to be made (a gun too, since 2026-10-21; a dish not, dish spec 5). */
     public static List<ResourceLocation> drawable(Map<ResourceLocation, ModularType> types) {
-        return drawable(types, Drafting.ANY);
-    }
-
-    /** As {@link #drawable(Map)}, those a table of kind {@code table} draws. */
-    public static List<ResourceLocation> drawable(Map<ResourceLocation, ModularType> types, Drafting table) {
         return types.entrySet().stream()
-                .filter(e -> !e.getValue().patterns().isEmpty() && e.getValue().family() != ModularType.Family.DISH && table.draws(e.getValue()))
+                .filter(e -> !e.getValue().patterns().isEmpty() && e.getValue().family() != ModularType.Family.DISH)
                 .map(Map.Entry::getKey).toList();
     }
 

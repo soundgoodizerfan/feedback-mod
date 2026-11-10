@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "feedback:engineering_table"
+          "name": "feedback:treatise_shelf"
         }
       ],
       "conditions": [

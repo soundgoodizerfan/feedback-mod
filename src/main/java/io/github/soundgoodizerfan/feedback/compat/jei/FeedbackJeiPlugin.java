@@ -230,6 +230,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.CHARGING_GANTRY.get(), Component.translatable("feedback.jei.info.charging_gantry"));
         registration.addIngredientInfo(FItems.CHARGER.get(), Component.translatable("feedback.jei.info.charger"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.CHESTPLATE.get(), Component.translatable("feedback.jei.info.exosuit"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.TREATISE_BINDER.get(), Component.translatable("feedback.jei.info.treatise_binder"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.TREATISE_SHELF_ITEM.get(), Component.translatable("feedback.jei.info.treatise_shelf"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BLANK_TREATISE.get(), Component.translatable("feedback.jei.info.blank_treatise"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT_BOOK.get(), Component.translatable("feedback.jei.info.blueprint_book"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.SUIT_MODULE.get(), Component.translatable("feedback.jei.info.suit_module"));
         registration.addIngredientInfo(FItems.GRAPPLE.get(), Component.translatable("feedback.jei.info.grapple"));
@@ -321,7 +324,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.WOODWORKING_TABLE_ITEM.get(), "woodworking_table");
         info(registration, FModular.STONECUTTER_ITEM.get(), "stonecutter");
         info(registration, FModular.BLUEPRINT_TABLE_ITEM.get(), "blueprint_table");
-        info(registration, FModular.ENGINEERING_TABLE_ITEM.get(), "engineering_table");
         info(registration, FModular.ENCHANTING_TABLE_ITEM.get(), "enchanting_table");
         info(registration, FModular.BLUEPRINT.get(), "modular_blueprint");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ITEM.get(), "engine");

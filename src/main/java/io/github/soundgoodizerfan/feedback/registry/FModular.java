@@ -211,13 +211,14 @@ public final class FModular {
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> BLUEPRINT_TABLE_ITEM = ITEMS.registerSimpleBlockItem(BLUEPRINT_TABLE);
 
-    /** The drawing table for machines and what they are built from ({@code Drafting.ENGINEERING}). */
-    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.BlueprintTableBlock> ENGINEERING_TABLE =
-            BLOCKS.register("engineering_table", () -> new io.github.soundgoodizerfan.feedback.modular.BlueprintTableBlock(
+    /** A shelf for treatises; against a Blueprint Table, what it holds counts as held. */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.TreatiseShelfBlock> TREATISE_SHELF =
+            BLOCKS.register("treatise_shelf", () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseShelfBlock(
                     net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
-                            .mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3f)
-                            .sound(net.minecraft.world.level.block.SoundType.METAL), io.github.soundgoodizerfan.feedback.modular.Drafting.ENGINEERING));
-    public static final DeferredItem<net.minecraft.world.item.BlockItem> ENGINEERING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(ENGINEERING_TABLE);
+                            .mapColor(net.minecraft.world.level.material.MapColor.WOOD).strength(2f)
+                            .sound(net.minecraft.world.level.block.SoundType.WOOD)));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TREATISE_SHELF_ITEM = ITEMS.registerSimpleBlockItem(TREATISE_SHELF);
+
 
     /** Where dishes are made: the Tool Table's code with the dish filter and a knife slot (dish spec 3). */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.PrepTableBlock> PREP_TABLE =
@@ -271,6 +272,10 @@ public final class FModular {
     public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
     public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.TreatiseShelfBlockEntity>> TREATISE_SHELF_ENTITY =
+            BLOCK_ENTITIES.register("treatise_shelf", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.modular.TreatiseShelfBlockEntity::new, TREATISE_SHELF.get()).build(null));
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
             net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity>> PREP_TABLE_ENTITY =
             BLOCK_ENTITIES.register("prep_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity::new, PREP_TABLE.get()).build(null));
@@ -288,6 +293,29 @@ public final class FModular {
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));
+
+    /** One treatise per {@link io.github.soundgoodizerfan.feedback.modular.School}: holding it lets the Blueprint Table draw that school's types. */
+    public static final java.util.Map<io.github.soundgoodizerfan.feedback.modular.School, DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>> TREATISES;
+
+    static {
+        java.util.Map<io.github.soundgoodizerfan.feedback.modular.School, DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>> map =
+                new java.util.EnumMap<>(io.github.soundgoodizerfan.feedback.modular.School.class);
+        for (io.github.soundgoodizerfan.feedback.modular.School school : io.github.soundgoodizerfan.feedback.modular.School.values())
+            map.put(school, ITEMS.register("treatise_" + school.id(),
+                    () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseItem(school, new Item.Properties().stacksTo(1))));
+        TREATISES = java.util.Collections.unmodifiableMap(map);
+    }
+
+    /** Paper that becomes a school's treatise when a specimen of that school is taken apart onto it. */
+    public static final DeferredItem<Item> BLANK_TREATISE = ITEMS.registerSimpleItem("blank_treatise", new Item.Properties().stacksTo(1));
+    /** A binder of treatises that works like a bundle. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseBinderItem> TREATISE_BINDER = ITEMS.register("treatise_binder",
+            () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseBinderItem(new Item.Properties().stacksTo(1)
+                    .component(net.minecraft.core.component.DataComponents.BUNDLE_CONTENTS, net.minecraft.world.item.component.BundleContents.EMPTY)));
+    /** Adds a treatise to a chest. */
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
+            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.Treatises.Loot>> TREATISE_LOOT =
+            LOOT_MODIFIERS.register("treatise", () -> io.github.soundgoodizerfan.feedback.modular.Treatises.Loot.CODEC);
 
     /** A suit upgrade module (family {@code suit_module}): built at the Tool Table from a casing, wiring and a core, then held whole in an armour piece's upgrade role. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> SUIT_MODULE = ITEMS.register("suit_module",

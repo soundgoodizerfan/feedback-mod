@@ -321,7 +321,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
      * design onto ({@link #measure}).
      */
     public static boolean isPlanItem(ItemStack stack) {
-        return stack.is(FModular.BLUEPRINT.get()) || stack.getItem() instanceof BlueprintBookItem
+        return stack.is(FModular.BLUEPRINT.get()) || stack.getItem() instanceof BlueprintBookItem || stack.is(FModular.BLANK_TREATISE.get())
                 || stack.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER);
     }
 
@@ -333,6 +333,14 @@ public class ToolTableMenu extends AbstractContainerMenu {
         ItemStack paper = table.getItem(ToolTableBlockEntity.PLAN);
         ModularDesign design = ModularStacks.design(tool);
         ModularType type = design == null ? null : types(level).get(design.type());
+        // a blank treatise takes the specimen's school: the item goes in and the knowledge comes out
+        School school = type == null ? null : School.of(type.school());
+        if (school != null && paper.is(FModular.BLANK_TREATISE.get())) {
+            table.setItem(ToolTableBlockEntity.PLAN, Treatises.of(school));
+            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("message.feedback.treatise.written",
+                    Component.translatable("school.feedback." + school.id())), 60);
+            return;
+        }
         if (type == null || !type.blueprint() || paper.isEmpty() || paper.is(FModular.BLUEPRINT.get()) || !paper.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER))
             return;
         ModularDesign pinned = new ModularDesign(design.type(), design.parts().stream().filter(p -> p.sub().isEmpty()).toList(), design.edge());

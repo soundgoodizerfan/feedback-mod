@@ -24,11 +24,6 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
     private final BlueprintBoard board;
     private long stampAt;
 
-    @Override
-    public io.github.soundgoodizerfan.feedback.modular.Drafting drafting() {
-        return menu.drafting();
-    }
-
     public BlueprintTableScreen(BlueprintTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.BLUEPRINT);
         imageWidth = BlueprintTableMenu.W;

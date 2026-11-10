@@ -629,5 +629,6 @@
     ]
   ],
   "defaults": {},
-  "blueprint": true
+  "blueprint": true,
+  "school": "robotics"
 }
