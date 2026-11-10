@@ -24,7 +24,7 @@ Charge the battery by taking the suit's battery out and seating it in a [Charger
 
 ## Controls
 
-- `V` (hold): the ability wheel, a ring of ten segments. Release over a segment to switch that ability on or off, or to fire it if it is a pulse.
+- `V` (hold): the ability wheel, a ring of the five built-in segments plus one for each ability a fitted module gives. Release over a segment to switch that ability on or off, or to fire it if it is a pulse.
 - `B` (hold): dash thrust.
 - `G` (hold): jet thrust, once the Jet Pack is switched on.
 - `J`: the Suit diagnostic screen.
@@ -43,10 +43,19 @@ Charge the battery by taking the suit's battery out and seating it in a [Charger
 | **Shock** | Shock Ram module | A pulse: a shockwave that knocks back and hurts everything near. |
 | **Scan** | Scan Ping module | A pulse: every living thing in a wide ring glows for a while. |
 | **EMP** | EMP Coil module | A pulse: nearby creatures are slowed, weakened and blinded. |
+| **Magnet** | Magnet Pickup module | A switch: draws loose items to you while on. |
+| **Stride** | Strider Pistons module | A switch: faster walking while on. |
+| **Step** | Step Assist module | A switch: steps up a full block while on. |
+| **Range** | Rangefinder module | A switch: longer reach for blocks and attacks while on. |
+| **Lens** | Long Lens module | A switch: thermal view reaches farther while on. |
+| **Heal** | Autodoc module | A pulse: heals you at once. Long cooldown. |
+| **Vent** | Coolant Loop module | A pulse: vents most of the suit's heat at once, which can end a heat cut-out. |
+| **Burst** | Rocket Spur module | A pulse: a single burst of thrust along the direction you look. |
+| **Thorns** | Thorn Array module | A pulse: hurts everything within arm's reach. |
 
 A stronger servo gives a larger effect and draws harder for it.
 
-A segment whose fitting is missing shows hatched and does nothing. The three pulses fire once when you release over them, then need cooling before they fire again.
+A segment whose fitting is missing shows hatched and does nothing. A pulse fires once when you release over it, then needs cooling before it fires again. A switch module works only while its segment is on.
 
 ### Thermal view
 
@@ -64,32 +73,32 @@ Each of the four pieces takes one **Suit Module**, a finished item built from th
 
 To fit it, put the armor piece in the center of the bench and click the module you carry in the fan; it goes into the piece's upgrade place, one per piece. Taking the piece apart gives the module back whole. The Suit diagnostic screen (`J`) shows the upgrade each piece carries.
 
-Upgrades work whenever the suit is powered. The Heat Sink and Coolant Loop always work. Some upgrades draw charge as they act, as noted. The Cloak Field, Jet Pack, Shock Ram, Scan Ping and EMP Coil give the wheel a segment of their own (see [Abilities](#abilities)).
+Upgrades work whenever the suit is powered. The Heat Sink always works. Some upgrades draw charge as they act, as noted. Fourteen modules give the wheel a segment of their own: Cloak Field, Jet Pack, Shock Ram, Scan Ping, EMP Coil, Magnet Pickup, Strider Pistons, Step Assist, Rangefinder, Long Lens, Autodoc, Coolant Loop, Rocket Spur and Thorn Array (see [Abilities](#abilities)). Their effects work only through the wheel, except the Coolant Loop and Rocket Spur, which also work without it.
 
 | Piece | Upgrade | What it does |
 | --- | --- | --- |
 | Helmet | Rebreather | Breath lasts longer underwater. |
-| Helmet | Rangefinder | Longer reach for blocks and attacks. |
+| Helmet | Rangefinder | Longer reach for blocks and attacks while switched on. |
 | Helmet | Respirator | Clears poison, nausea and hunger. |
 | Helmet | Glare Filter | Clears blindness and darkness. |
-| Helmet | Long Lens | Thermal view reaches farther. |
+| Helmet | Long Lens | Thermal view reaches farther while switched on. |
 | Helmet | Crash Liner | Less damage from projectiles. |
 | Helmet | Reflex Link | Faster attack speed. |
 | Helmet | Scan Ping | Pulse that makes nearby living things glow. |
 | Chestplate | Heat Sink | The suit sheds heat faster. |
-| Chestplate | Coolant Loop | The servos cut out at a higher temperature. |
+| Chestplate | Coolant Loop | The servos cut out at a higher temperature. Pulse: vents most of the suit's heat. |
 | Chestplate | Efficiency Bus | Everything the suit does draws less charge. |
-| Chestplate | Autodoc | Slowly heals you; heavy draw. |
+| Chestplate | Autodoc | Pulse: heals you at once; heavy draw. |
 | Chestplate | Reactive Plating | Less knockback. |
 | Chestplate | Blast Shell | Less explosion damage. |
-| Chestplate | Thorn Array | Shocks melee attackers; draws charge per hit. |
+| Chestplate | Thorn Array | Pulse: hurts everything in arm's reach. |
 | Chestplate | Thermal Lining | Immune to freezing. |
-| Chestplate | Magnet Pickup | Draws loose items to you. |
+| Chestplate | Magnet Pickup | Draws loose items to you while switched on. |
 | Chestplate | Fire Curtain | Less fire damage. |
 | Chestplate | Cloak Field | Hides the wearer while switched on; draws constantly. |
 | Chestplate | Jet Pack | Lifts you while `G` is held; burns charge fast. |
-| Leggings | Strider Pistons | Faster walking; draws charge while you move. |
-| Leggings | Step Assist | Steps up blocks without jumping. |
+| Leggings | Strider Pistons | Faster walking while switched on; draws charge while you move. |
+| Leggings | Step Assist | Steps up a full block without jumping while switched on. |
 | Leggings | Swim Fins | Better movement in water. |
 | Leggings | Shock Absorbers | Less fall damage. |
 | Leggings | Grip Pads | Soft ground, webs and water slow you less. |
@@ -100,7 +109,7 @@ Upgrades work whenever the suit is powered. The Heat Sink and Coolant Loop alway
 | Boots | Heat Shield | Fire and lava do not burn you while the battery lasts; heavy draw. |
 | Boots | Jump Coil | A higher jump. |
 | Boots | Landing Gear | You fall farther without damage. |
-| Boots | Rocket Spur | A harder, faster dash. |
+| Boots | Rocket Spur | A harder, faster dash. Pulse: a single burst of thrust along your look. |
 | Boots | Stomp Actuator | Landing from 3 or more blocks damages everything around you; draws charge per landing. |
 | Boots | Shock Ram | Pulse: a shockwave that knocks back and hurts everything near. |
 
@@ -112,7 +121,7 @@ The servos waste a share of what they draw as heat, and the suit warms. It sheds
 
 ## HUD
 
-A card at the bottom left shows five lamps (ST, JP, PL, NV, TH) for the abilities, one more lamp (CL, JT, SK, SC, EM) for each fitted module ability, a charge bar and a heat bar. **PACK OVERLOAD** shows when the [Backpack](Backpack.md) is heavier than you can carry.
+A card at the bottom left shows five lamps (ST, JP, PL, NV, TH) for the abilities, one more lamp for each fitted module ability, a charge bar and a heat bar. **PACK OVERLOAD** shows when the [Backpack](Backpack.md) is heavier than you can carry.
 
 ## Misuse and hazards
 

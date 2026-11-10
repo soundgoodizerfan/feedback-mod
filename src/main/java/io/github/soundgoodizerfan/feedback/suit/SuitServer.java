@@ -128,6 +128,7 @@ public final class SuitServer {
         float left = ready ? BatteryStack.charge(bt) - r.pending : 0f;
         boolean powered = ready && left > 0f && !r.cut;
         int on = r.toggles & rig.available();
+        rig = rig.gated(on);
         for (int i = 0; i < r.cool.length; i++)
             if (r.cool[i] > 0)
                 r.cool[i]--;
@@ -231,7 +232,16 @@ public final class SuitServer {
         if (!r.powered || power <= 0f || r.cool[a.ordinal()] > 0)
             return;
         float cost = SuitPulses.cost(a) * rig.wiring();
-        SuitPulses.fire(p, a, power);
+        if (a == Ability.VENT) {
+            float amb = AmbientTable.at(p.level()).value();
+            r.heat = amb + Math.max(0f, r.heat - amb) * (1f - Math.min(0.9f, SuitTuning.VENT_SHARE * power));
+            if (r.cut && r.heat < SuitTuning.RESUME_TU)
+                r.cut = false;
+            p.serverLevel().sendParticles(net.minecraft.core.particles.ParticleTypes.CLOUD, p.getX(), p.getY() + 1, p.getZ(), 20, 0.3, 0.5, 0.3, 0.05);
+            p.serverLevel().playSound(null, p.blockPosition(), net.minecraft.sounds.SoundEvents.FIRE_EXTINGUISH, net.minecraft.sounds.SoundSource.PLAYERS, 0.8f, 1f);
+        } else {
+            SuitPulses.fire(p, a, power);
+        }
         r.cool[a.ordinal()] = SuitPulses.cooldown(a);
         r.pending += cost;
         r.heat += cost * rig.lossChest() * SuitTuning.HEAT_PER_WASTE;

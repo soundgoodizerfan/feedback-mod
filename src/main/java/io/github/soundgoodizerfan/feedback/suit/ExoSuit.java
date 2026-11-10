@@ -49,6 +49,19 @@ public final class ExoSuit {
             return ExoSuit.mass(head) + ExoSuit.mass(chest) + ExoSuit.mass(legs) + ExoSuit.mass(feet);
         }
 
+        /** This rig with each switch module whose segment is not in {@code on} zeroed, so everything downstream reads only what is switched on. */
+        public Rig gated(int on) {
+            if (mod == null)
+                return this;
+            float[] live = mod.clone();
+            for (int id = 1; id < live.length; id++) {
+                Ability a = SuitModules.ability(id);
+                if (a != null && !a.pulse() && !a.builtIn() && (on & a.bit()) == 0)
+                    live[id] = 0f;
+            }
+            return new Rig(head, chest, legs, feet, driveChest, driveLegs, driveFeet, sense, lossChest, lossLegs, lossFeet, gauge, bay, available, live, wiring);
+        }
+
         public boolean can(Ability a) {
             return (available & a.bit()) != 0;
         }

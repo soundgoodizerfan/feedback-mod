@@ -22,7 +22,7 @@ final class SuitHud {
 
     private static final GuiSkin SKIN = GuiSkin.SUIT;
     private static final int BASE_W = 104, BAR_H = 5;
-    private static final String[] TAG = { "ST", "JP", "PL", "NV", "TH", "CL", "JT", "SK", "SC", "EM" };
+    private static final String[] TAG = { "ST", "JP", "PL", "NV", "TH", "CL", "JT", "SK", "SC", "EM", "MG", "SD", "SP", "RG", "LN", "HL", "VT", "BU", "TH" };
 
     private static final GuiStyle.Slide SLIDE = new GuiStyle.Slide();
     private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(2);
@@ -49,7 +49,7 @@ final class SuitHud {
         Ability[] all = Ability.values();
         java.util.List<Integer> lit = new java.util.ArrayList<>();
         for (int i = 0; i < all.length; i++)
-            if (i < 5 || SuitClient.can(all[i]))
+            if (all[i].builtIn() || SuitClient.can(all[i]))
                 lit.add(i);
         int W = Math.max(BASE_W, 10 + lit.size() * 19);
         int slide = SLIDE.offset(Boolean.TRUE, W + 14);

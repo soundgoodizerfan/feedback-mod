@@ -41,6 +41,11 @@ public final class SuitClient {
         return state.worn() && on(a) && can(a) && state.battery() && state.charge() > 0f && !state.cut();
     }
 
+    /** The wheel's segments: the five built-in ones always, then each module ability the suit has. */
+    public static Ability[] shown() {
+        return java.util.Arrays.stream(Ability.values()).filter(a -> a.builtIn() || can(a)).toArray(Ability[]::new);
+    }
+
     public static void clear() {
         state = SuitSyncPayload.OFF;
     }

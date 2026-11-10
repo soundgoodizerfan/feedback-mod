@@ -19,7 +19,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
@@ -59,7 +58,7 @@ public final class SuitModules {
     /** Size of a power array: ids are 1-based. */
     public static final int COUNT = 36;
 
-    /** The wheel segment module {@code id} gives, or null for one that only adds to a segment already there. */
+    /** The wheel segment module {@code id} gives, or null for one with none. A switch module works only while its segment is on; a pulse module's segment fires it; the heat sink-like ones stay passive. */
     public static Ability ability(int id) {
         return switch (id) {
             case CLOAK_FIELD -> Ability.CLOAK;
@@ -67,6 +66,15 @@ public final class SuitModules {
             case SHOCK_RAM -> Ability.SHOCK;
             case SCAN_PING -> Ability.SCAN;
             case EMP_COIL -> Ability.EMP;
+            case MAGNET_PICKUP -> Ability.MAGNET;
+            case STRIDER_PISTONS -> Ability.STRIDE;
+            case STEP_ASSIST -> Ability.STEP;
+            case RANGEFINDER -> Ability.RANGE;
+            case LONG_LENS -> Ability.LENS;
+            case AUTODOC -> Ability.HEAL;
+            case COOLANT_LOOP -> Ability.VENT;
+            case ROCKET_SPUR -> Ability.BURST;
+            case THORN_ARRAY -> Ability.THORNS;
             default -> null;
         };
     }
@@ -189,10 +197,6 @@ public final class SuitModules {
                 pl.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, true, false, false));
             draw += SHIELD_AMPS * shield;
         }
-        if (p(m, AUTODOC) > 0f && t % HEAL_TICKS == 0 && pl.getHealth() < pl.getMaxHealth()) {
-            pl.heal(1f);
-            draw += HEAL_COST;
-        }
         float magnet = p(m, MAGNET_PICKUP);
         if (magnet > 0f && t % 2 == 0) {
             double r = MAGNET_BASE + MAGNET_PER * magnet;
@@ -241,20 +245,6 @@ public final class SuitModules {
             k -= SHOT_CUT * m[CRASH_LINER];
         if (k < 1f)
             event.setAmount(event.getAmount() * Math.max(0.1f, k));
-    }
-
-    @SubscribeEvent
-    public static void onHurt(LivingDamageEvent.Post event) {
-        if (!(event.getEntity() instanceof ServerPlayer pl))
-            return;
-        float[] m = SuitServer.mods(pl);
-        if (m == null || m[THORN_ARRAY] <= 0f)
-            return;
-        var src = event.getSource();
-        if (src.getEntity() instanceof LivingEntity attacker && src.getDirectEntity() == attacker && attacker != pl) {
-            attacker.hurt(pl.damageSources().thorns(pl), THORN_DAMAGE * m[THORN_ARRAY]);
-            SuitServer.charge(pl, THORN_COST);
-        }
     }
 
     @SubscribeEvent

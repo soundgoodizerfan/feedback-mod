@@ -32,37 +32,78 @@ import net.neoforged.neoforge.network.PacketDistributor;
 final class SuitWheelScreen extends Screen {
 
     private static final GuiSkin SKIN = GuiSkin.SUIT;
-    private static final Ability[] ORDER = Ability.values();
-    private static final int N = ORDER.length;
     /** The hexagon's apothem for the outer and inner edge, the gap between wedges and the lit rim, all in pixels. */
     private static final int R_OUT = 92, R_IN = 44, GAP = 3, RIM = 2;
     private static final double COS30 = Math.cos(Math.PI / 6);
 
-    private static final int[] RUN_Y, RUN_X0, RUN_X1, RUN_CODE;
-    private static final int[] SLOT_FROM = new int[N + 1];
+    /** The ring cut into runs for {@code n} segments; one per segment count, built when first asked for. */
+    private static final class Ring {
+        final int n;
+        final int[] runY, runX0, runX1, runCode;
+        final int[] slotFrom;
 
-    static {
-        var runs = new java.util.ArrayList<int[]>();
-        int span = (int) Math.ceil(R_OUT / COS30) + 1;
-        for (int dy = -span; dy <= span; dy++) {
-            int prev = -1, start = 0;
-            for (int dx = -span; dx <= span + 1; dx++) {
-                int code = dx > span ? -1 : code(dx, dy);
-                if (code != prev) {
-                    if (prev >= 0)
-                        runs.add(new int[] { dy, start, dx, prev });
-                    start = dx;
-                    prev = code;
+        Ring(int n) {
+            this.n = n;
+            slotFrom = new int[n + 1];
+            var runs = new java.util.ArrayList<int[]>();
+            int span = (int) Math.ceil(R_OUT / COS30) + 1;
+            for (int dy = -span; dy <= span; dy++) {
+                int prev = -1, start = 0;
+                for (int dx = -span; dx <= span + 1; dx++) {
+                    int code = dx > span ? -1 : code(dx, dy);
+                    if (code != prev) {
+                        if (prev >= 0)
+                            runs.add(new int[] { dy, start, dx, prev });
+                        start = dx;
+                        prev = code;
+                    }
                 }
             }
+            runs.sort(java.util.Comparator.comparingInt(r -> r[3] >> 1));
+            runY = runs.stream().mapToInt(r -> r[0]).toArray();
+            runX0 = runs.stream().mapToInt(r -> r[1]).toArray();
+            runX1 = runs.stream().mapToInt(r -> r[2]).toArray();
+            runCode = runs.stream().mapToInt(r -> r[3]).toArray();
+            for (int r = runCode.length - 1; r >= 0; r--)
+                slotFrom[(runCode[r] >> 1) + 1] = Math.max(slotFrom[(runCode[r] >> 1) + 1], r + 1);
         }
-        runs.sort(java.util.Comparator.comparingInt(r -> r[3] >> 1));
-        RUN_Y = runs.stream().mapToInt(r -> r[0]).toArray();
-        RUN_X0 = runs.stream().mapToInt(r -> r[1]).toArray();
-        RUN_X1 = runs.stream().mapToInt(r -> r[2]).toArray();
-        RUN_CODE = runs.stream().mapToInt(r -> r[3]).toArray();
-        for (int r = RUN_CODE.length - 1; r >= 0; r--)
-            SLOT_FROM[(RUN_CODE[r] >> 1) + 1] = Math.max(SLOT_FROM[(RUN_CODE[r] >> 1) + 1], r + 1);
+
+        private int code(int dx, int dy) {
+            double px = dx + 0.5, py = dy + 0.5, u = hex(px, py);
+            if (u > R_OUT || u < R_IN)
+                return -1;
+            double at = Math.atan2(py, px), r = Math.sqrt(px * px + py * py);
+            int slot = nearest(at);
+            double off = Math.abs(wrap(at - angle(slot)));
+            if (r * Math.sin(Math.PI / n - off) < GAP / 2.0)
+                return -1;
+            return slot * 2 + (u > R_OUT - RIM || u < R_IN + RIM ? 1 : 0);
+        }
+
+        double angle(int i) {
+            return -Math.PI / 2 + i * 2 * Math.PI / n;
+        }
+
+        int nearest(double at) {
+            int best = 0;
+            double bestD = Double.MAX_VALUE;
+            for (int i = 0; i < n; i++) {
+                double d = Math.abs(wrap(at - angle(i)));
+                if (d < bestD) {
+                    bestD = d;
+                    best = i;
+                }
+            }
+            return best;
+        }
+    }
+
+    private static final Ring[] RINGS = new Ring[32];
+
+    private static Ring ring(int n) {
+        if (RINGS[n] == null)
+            RINGS[n] = new Ring(n);
+        return RINGS[n];
     }
 
     /** Distance from the middle in hexagon units: the projection on the nearest edge's normal, so equal values lie on one hexagon. */
@@ -72,38 +113,14 @@ final class SuitWheelScreen extends Screen {
         return r * Math.cos(phi - Math.PI / 6);
     }
 
-    private static int code(int dx, int dy) {
-        double px = dx + 0.5, py = dy + 0.5, u = hex(px, py);
-        if (u > R_OUT || u < R_IN)
-            return -1;
-        double at = Math.atan2(py, px), r = Math.sqrt(px * px + py * py);
-        int slot = nearest(at);
-        double off = Math.abs(wrap(at - angle(slot)));
-        if (r * Math.sin(Math.PI / N - off) < GAP / 2.0)
-            return -1;
-        return slot * 2 + (u > R_OUT - RIM || u < R_IN + RIM ? 1 : 0);
-    }
-
     private static double wrap(double a) {
         return Math.atan2(Math.sin(a), Math.cos(a));
     }
 
-    private static double angle(int i) {
-        return -Math.PI / 2 + i * 2 * Math.PI / N;
-    }
-
-    private static int nearest(double at) {
-        int best = 0;
-        double bestD = Double.MAX_VALUE;
-        for (int i = 0; i < N; i++) {
-            double d = Math.abs(wrap(at - angle(i)));
-            if (d < bestD) {
-                bestD = d;
-                best = i;
-            }
-        }
-        return best;
-    }
+    /** The segments on the wheel: the five the armour's fittings give, then one for each module ability fitted. */
+    private final Ability[] order = SuitClient.shown();
+    private final int N = order.length;
+    private final Ring ring = ring(N);
 
     private static final long OPEN_MS = 200;
     private final long openedAt = Util.getMillis();
@@ -133,14 +150,14 @@ final class SuitWheelScreen extends Screen {
         double dx = mx - width / 2.0, dy = my - height / 2.0;
         if (hex(dx, dy) < R_IN)
             return -1;
-        return nearest(Math.atan2(dy, dx));
+        return ring.nearest(Math.atan2(dy, dx));
     }
 
     private void choose(double mx, double my) {
         int h = hovered(mx, my);
-        if (h >= 0 && SuitClient.can(ORDER[h])) {
-            PacketDistributor.sendToServer(new SuitPayload(SuitPayload.TOGGLE, h));
-            GuiSkin.play(SKIN.click(), SuitClient.on(ORDER[h]) ? 0.8f : 1.2f, 0.7f);
+        if (h >= 0 && SuitClient.can(order[h])) {
+            PacketDistributor.sendToServer(new SuitPayload(SuitPayload.TOGGLE, order[h].ordinal()));
+            GuiSkin.play(SKIN.click(), SuitClient.on(order[h]) ? 0.8f : 1.2f, 0.7f);
         }
         onClose();
     }
@@ -174,7 +191,7 @@ final class SuitWheelScreen extends Screen {
         float t = GuiStyle.easeOut(Math.min(1f, (now - openedAt) / (float) OPEN_MS)), dt = Math.min(100, now - lastMs);
         lastMs = now;
         int hov = hovered(mx, my);
-        boolean hovCan = hov >= 0 && SuitClient.can(ORDER[hov]);
+        boolean hovCan = hov >= 0 && SuitClient.can(order[hov]);
         if (hovCan && hov != lastHover)
             GuiSkin.play(SKIN.click(), 1.6f, 0.4f);
         lastHover = hovCan ? hov : -1;
@@ -188,7 +205,7 @@ final class SuitWheelScreen extends Screen {
         if (!ClientSettings.reduceMotion())
             g.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees((1 - t) * -14f));
         for (int i = 0; i < N; i++) {
-            Ability a = ORDER[i];
+            Ability a = order[i];
             boolean can = SuitClient.can(a), on = SuitClient.on(a);
             pop[i] += ((i == lastHover ? 1f : 0f) - pop[i]) * Math.min(1f, dt / 70f);
             int rim = rim(a, now);
@@ -196,16 +213,16 @@ final class SuitWheelScreen extends Screen {
                     : GuiSkin.lerp(0xB0141A1E, 0xC02A3A42, pop[i]);
             if (can && i == lastHover)
                 rim = GuiSkin.lerp(rim, 0xFFFFFFFF, 0.35f * pop[i]);
-            float push = pop[i] * 5f, dx = (float) Math.cos(angle(i)) * push, dy = (float) Math.sin(angle(i)) * push;
+            float push = pop[i] * 5f, dx = (float) Math.cos(ring.angle(i)) * push, dy = (float) Math.sin(ring.angle(i)) * push;
             g.pose().pushPose();
             g.pose().translate(dx, dy, 0);
-            for (int r = SLOT_FROM[i]; r < SLOT_FROM[i + 1]; r++) {
-                g.fill(RUN_X0[r], RUN_Y[r], RUN_X1[r], RUN_Y[r] + 1, fade((RUN_CODE[r] & 1) == 0 ? face : rim, t));
-                if (!can && (RUN_Y[r] & 3) == 0 && (RUN_CODE[r] & 1) == 0) // hatching: nothing fitted provides it
-                    g.fill(RUN_X0[r], RUN_Y[r], RUN_X1[r], RUN_Y[r] + 1, fade(0x30 << 24 | 0x7C99A6, t));
+            for (int r = ring.slotFrom[i]; r < ring.slotFrom[i + 1]; r++) {
+                g.fill(ring.runX0[r], ring.runY[r], ring.runX1[r], ring.runY[r] + 1, fade((ring.runCode[r] & 1) == 0 ? face : rim, t));
+                if (!can && (ring.runY[r] & 3) == 0 && (ring.runCode[r] & 1) == 0) // hatching: nothing fitted provides it
+                    g.fill(ring.runX0[r], ring.runY[r], ring.runX1[r], ring.runY[r] + 1, fade(0x30 << 24 | 0x7C99A6, t));
             }
             int lr = (R_OUT + R_IN) / 2;
-            int lx = (int) Math.round(Math.cos(angle(i)) * lr), ly = (int) Math.round(Math.sin(angle(i)) * lr);
+            int lx = (int) Math.round(Math.cos(ring.angle(i)) * lr), ly = (int) Math.round(Math.sin(ring.angle(i)) * lr);
             Component name = Component.translatable("gui.feedback.suit.ability." + a.key());
             Component state = Component.translatable(!can ? "gui.feedback.suit.state.none" : !on ? "gui.feedback.suit.state.off"
                     : SuitClient.live(a) ? "gui.feedback.suit.state.on" : "gui.feedback.suit.state.starved");
@@ -226,7 +243,7 @@ final class SuitWheelScreen extends Screen {
         // the hovered ability named beneath the ring, with what a release would do
         int shown = hov >= 0 ? hov : -1;
         if (shown >= 0) {
-            Ability a = ORDER[shown];
+            Ability a = order[shown];
             Component line = Component.translatable("gui.feedback.suit.hint." + (!SuitClient.can(a) ? "none" : a.pulse() ? "fire" : SuitClient.on(a) ? "off" : "on"),
                     Component.translatable("gui.feedback.suit.ability." + a.key()));
             g.drawCenteredString(font, line, width / 2, height / 2 + R_OUT + 14, fade(SKIN.accent() | 0xFF000000, t));

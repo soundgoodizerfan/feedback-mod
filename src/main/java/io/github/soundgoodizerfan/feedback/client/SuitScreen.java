@@ -68,9 +68,9 @@ final class SuitScreen extends Screen {
     protected void init() {
         opening.start();
         int x = px() + COL_X, y = py() + H - 12 - 5 * 16;
-        Ability[] all = Ability.values();
+        Ability[] all = SuitClient.shown();
         for (int i = 0; i < all.length; i++) {
-            final int a = i;
+            final int a = all[i].ordinal();
             addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.feedback.suit.ability." + all[i].key()),
                     b -> PacketDistributor.sendToServer(new SuitPayload(SuitPayload.TOGGLE, a)), x + (i % 2) * (COL_W / 2 + 1), y + (i / 2) * 16, COL_W / 2 - 1, 14));
         }
