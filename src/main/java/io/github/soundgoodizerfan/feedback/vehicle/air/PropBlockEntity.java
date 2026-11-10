@@ -157,7 +157,9 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
         var pose = subLevel.logicalPose();
         pose.transformNormal(dir, worldDir);
         handle.getLinearVelocity(lin);
-        double airspeed = Math.max(0, lin.dot(worldDir));
+        // A reversed shaft pushes the other way and is measured against motion along its own thrust direction.
+        float sense = Math.signum(turn);
+        double airspeed = Math.max(0, lin.dot(worldDir) * sense);
         float n = Math.abs(turn) / 60f;
         double diameter = d.diameter();
         double j = airspeed / (n * diameter);
@@ -168,8 +170,10 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
         if (tip > limit)
             ct *= limit / tip;
         double thrustKpg = ct * rho * n * n * Math.pow(diameter, 4) / 1000.0 * condition; // N -> kpg blocks / s^2
+        if (sense < 0)
+            thrustKpg *= FTuning.PROP_REVERSE_EFFICIENCY;
         centre.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
-        pushed.set(dir).mul(thrustKpg * dt);
+        pushed.set(dir).mul(sense * thrustKpg * dt);
         force.applyImpulseAtPoint(subLevel.getMassTracker(), centre, pushed);
         // The spin's reaction on the airframe: the torque the disc takes from the shaft, against its sense.
         double q = torqueNm(d, n, rho) / Units.SU_PER_KPG_TORQUE;

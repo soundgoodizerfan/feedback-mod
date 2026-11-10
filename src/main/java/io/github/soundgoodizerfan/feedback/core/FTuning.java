@@ -3876,6 +3876,8 @@ public final class FTuning {
     /** Placeholder [OPEN]. A propeller (flight A2): thrust coefficient at zero airspeed and the advance ratio J = V/(nD) where thrust reaches zero, for fine, medium and coarse pitch; thrust and power go as (blades/3)^PROP_BLADE_EXPONENT. */
     public static final float[] PROP_CT0 = {0.14f, 0.11f, 0.08f}, PROP_J0 = {0.55f, 0.85f, 1.25f};
     public static final float PROP_BLADE_EXPONENT = 0.7f;
+    /** Share of forward thrust a propeller makes spun backwards (blade sections run trailing edge first). Invented, tuned in play. */
+    public static final float PROP_REVERSE_EFFICIENCY = 0.6f;
     /** Placeholder [OPEN]. Power coefficient as a share of Ct0 x J0, chosen so peak efficiency is about 0.8 at half the zero-thrust advance ratio. */
     public static final float PROP_CP_PER_CT0_J0 = 0.3125f;
     /** Placeholder [OPEN]. Blade tip speed (m/s) a metal survives per sqrt(yield/density), capped near the speed of sound; past it a prop loses thrust and wears. */
