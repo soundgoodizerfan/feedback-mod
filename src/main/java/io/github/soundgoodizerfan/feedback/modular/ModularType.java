@@ -166,6 +166,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         PROPELLER,
         /** A suit upgrade module ({@code suit_module}): casing, wiring and a core cut in the shape that names what it does. Made at the Tool Table, then held whole in an armour piece's upgrade role ({@link ModularNest}); its bake is {@link ModularBake#suitModule}. No wear bar of its own. */
         SUIT_MODULE,
+        /** A pressure vessel ({@code pressure_vessel}): a shell whose wall, shape and metal set the pressure it holds and the room inside; its bake is the {@link ModularBake#tank} spec the placed block runs on. */
+        PRESSURE,
         MACHINE;
 
         /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). A circuit is held too, as form {@code circuit}, though it is no modular family. */

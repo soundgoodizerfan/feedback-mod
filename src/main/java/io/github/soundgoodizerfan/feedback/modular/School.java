@@ -18,7 +18,11 @@ public enum School {
     /** Propellers and what flies. */
     AEROSPACE,
     /** Powered armour and its modules. */
-    ROBOTICS;
+    ROBOTICS,
+    /** Pressure vessels, exchangers, boilers and the plant that holds and moves a process (chemical engineering). */
+    CHEMICAL,
+    /** Rolls, dies, bits and the parts a machine shop works metal with (materials engineering). */
+    MATERIALS;
 
     public String id() {
         return name().toLowerCase(Locale.ROOT);

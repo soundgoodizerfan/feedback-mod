@@ -1,6 +1,6 @@
 # Blueprint Table
 
-A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md), and so are machines and their parts (engines, gearboxes, propellers, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
+A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md), and so are machines and their parts (engines, gearboxes, propellers, pressure vessels, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
 
 ## Crafting
 
@@ -62,6 +62,8 @@ A type that belongs to a **school** is drawn here only while you hold that schoo
 | Mechanical | engine, transmission |
 | Aerospace | propeller |
 | Robotics | suit module |
+| Chemical | pressure vessel |
+| Materials | none yet |
 
 Every other type (tools, armor, backpack, bedroll, dynamotor, battery, belt and the rest) needs no treatise.
 

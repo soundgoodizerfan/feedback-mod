@@ -179,6 +179,8 @@ public final class ModularBake {
             case GEARBOX -> engineMetal(material);
             // a module's wiring must conduct; its casing and core take any material their shapes accept
             case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
+            // a shell holds pressure by its yield strength: a metal that states none cannot be rated
+            case PRESSURE -> engineMetal(material) && material.mechanical().yieldStrength().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
             // A coilgun's winding is a conductor that holds a field and has a quench point: the rest cannot wind a gun.
             case GUN -> !roleKey.equals("W") || io.github.soundgoodizerfan.feedback.weapon.GunSpec.windable(material);
@@ -233,6 +235,8 @@ public final class ModularBake {
     public static final String ENGINE_BLOCK = "K", ENGINE_PISTONS = "P", ENGINE_CRANK = "C", ENGINE_HEAD = "H";
     /** The role letters of the propeller's two parts. */
     public static final String PROP_HUB = "H", PROP_BLADES = "B";
+    /** The role letter of the pressure vessel's shell. */
+    public static final String TANK_SHELL = "S";
     public static final String GEAR_SET = "G", GEAR_SYNCHRO = "S", GEAR_CASE = "H";
 
     /** A weighed metal: what an engine or gearbox part is cast from. */
@@ -295,6 +299,41 @@ public final class ModularBake {
         float mass = param(type, block, "mass", 1f) * massBlend(design, type, materials, pm, ENGINE_BLOCK, ENGINE_CRANK, ENGINE_HEAD);
         return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign(cylinders, bore, stroke, pistons.material(),
                 compression, torque, rev, mass));
+    }
+
+    /**
+     * What a pressure vessel design is, read by the placed block.
+     *
+     * @param volumeMb   the room inside, in mB of air: the block's metre cube less the walls, times the shape's fill.
+     * @param dangerPu   the pressure past which it starts to risk letting go.
+     * @param criticalPu the pressure at which it lets go outright.
+     * @param mass       the shell's weight against a plain one (the wall and the metal's density).
+     */
+    public record TankSpec(float volumeMb, float dangerPu, float criticalPu, float mass) {
+    }
+
+    /**
+     * The pressure vessel a design makes. The shell's variant is its shape ({@code rating}: how well it carries a load for its wall,
+     * a flat box poorly, a sphere twice a cylinder; {@code fill}: how much of the block's cube the room takes), its {@code wall}
+     * dim the thickness in cm. A thick wall holds more and leaves less room: the rating is the metal's yield strength times the
+     * wall over the inner radius ({@code (50 - wall)} cm), the room is the cube left inside. Empty if the metal states no yield.
+     */
+    public static Optional<TankSpec> tank(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
+        Part shell = design.part(TANK_SHELL);
+        if (shell == null)
+            return Optional.empty();
+        Material m = materials.get(shell.material());
+        if (m == null || !suits(type, TANK_SHELL, m))
+            return Optional.empty();
+        float wall = type.roles().get(TANK_SHELL).dim(shell, "wall");
+        float inner = Math.max(1f, ModularTuning.TANK_HALF_CM - wall);
+        float rating = param(type, shell, "rating", 1f);
+        float fill = param(type, shell, "fill", 1f);
+        float danger = ModularTuning.TANK_PU_PER_STRESS * m.mechanical().yieldStrength().get().value() * rating * wall / inner;
+        float room = 2f * inner / (2f * ModularTuning.TANK_HALF_CM);
+        float volume = ModularTuning.TANK_CUBE_MB * fill * room * room * room;
+        float steel = m.density().muPerMb() * wall / ModularTuning.TANK_REF_WALL_CM;
+        return Optional.of(new TankSpec(volume, danger, danger * ModularTuning.TANK_CRITICAL_OVER_DANGER, steel));
     }
 
     /**
@@ -798,8 +837,9 @@ public final class ModularBake {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 f.put(Fig.MASS, total);
             }
-            case ENGINE, GEARBOX, PROPELLER -> {
+            case ENGINE, GEARBOX, PROPELLER, PRESSURE -> {
                 if (switch (type.family()) {
+                    case PRESSURE -> tank(design, type, materials).isEmpty();
                     case ENGINE -> engine(design, type, materials).isEmpty();
                     case PROPELLER -> propeller(design, type, materials).isEmpty();
                     default -> gearbox(design, type, materials).isEmpty();

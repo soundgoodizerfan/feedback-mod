@@ -468,4 +468,14 @@ public final class ModularTuning {
     public static final int ENCHANT_PER_LEVEL = 8, ENCHANT_MAX_LEVEL = 3;
     /** Flame a handle burns the wielder at when its material has no flame temperature of its own, Tu. */
     public static final float ENCHANT_BURN_FALLBACK_TU = 500f;
+
+    /** Pressure vessel: half the block's side in cm, the cube's volume in mB, and the wall (cm) the reference density is quoted at. */
+    public static final float TANK_HALF_CM = 50f, TANK_CUBE_MB = 1000f, TANK_REF_WALL_CM = 5f;
+    /**
+     * Pu a shell holds per unit of yield strength times wall over inner radius, for a cylinder. Fitted so a 5 cm iron cylinder
+     * danger line lands on the old fixed vessel's 5 Pu.
+     */
+    public static final float TANK_PU_PER_STRESS = 9f;
+    /** The critical pressure over the danger one: the old vessel's 7 over 5. */
+    public static final float TANK_CRITICAL_OVER_DANGER = 1.4f;
 }

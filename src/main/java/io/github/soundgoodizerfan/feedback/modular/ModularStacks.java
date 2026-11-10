@@ -116,7 +116,8 @@ public final class ModularStacks {
                 && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL
                 && type.family() != ModularType.Family.MACHINE && type.family() != ModularType.Family.BELT
                 && type.family() != ModularType.Family.ENGINE && type.family() != ModularType.Family.GEARBOX
-                && type.family() != ModularType.Family.PROPELLER && type.family() != ModularType.Family.SUIT_MODULE) {
+                && type.family() != ModularType.Family.PROPELLER && type.family() != ModularType.Family.SUIT_MODULE
+                && type.family() != ModularType.Family.PRESSURE) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
@@ -128,6 +129,15 @@ public final class ModularStacks {
             ModularBake.cell(design, type, materials).ifPresent(c -> batteryState(stack, c));
         if (type.family() == ModularType.Family.MACHINE)
             ModularBake.machine(design, type, materials).ifPresent(m -> machineState(stack, m));
+        if (type.family() == ModularType.Family.PRESSURE)
+            ModularBake.tank(design, type, materials).ifPresent(v -> {
+                net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.PRESSURE_VESSEL.get(), new net.minecraft.nbt.CompoundTag()).copy();
+                tag.putFloat("Volume", v.volumeMb());
+                tag.putFloat("Danger", v.dangerPu());
+                tag.putFloat("Critical", v.criticalPu());
+                tag.putFloat("Mass", v.mass());
+                stack.set(FDataComponents.PRESSURE_VESSEL.get(), tag);
+            });
         if (type.family() == ModularType.Family.ENGINE)
             ModularBake.engine(design, type, materials).ifPresent(e -> stack.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get(), e));
         if (type.family() == ModularType.Family.PROPELLER)

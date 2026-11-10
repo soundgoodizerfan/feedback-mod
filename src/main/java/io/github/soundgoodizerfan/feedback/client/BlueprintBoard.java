@@ -713,7 +713,7 @@ final class BlueprintBoard {
         return switch (t.family()) {
             case BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, GUN, CHARGE -> 1;
             case ARMOUR, GLOVE, BACKPACK, BEDROLL -> 2;
-            case CELL, MACHINE, BELT, ENGINE, GEARBOX, PROPELLER, HEAD, VESSEL -> 3;
+            case CELL, MACHINE, BELT, ENGINE, GEARBOX, PROPELLER, PRESSURE, HEAD, VESSEL -> 3;
             case DISH -> 4;
             default -> 0;
         };
@@ -2195,6 +2195,11 @@ final class BlueprintBoard {
         return switch (t.family()) {
             case CELL -> ModularBake.cell(d, t, ClientMaterials.get()).map(BlueprintBoard::cellLines).orElse(List.of());
             case MACHINE -> ModularBake.machine(d, t, ClientMaterials.get()).map(BlueprintBoard::machineLines).orElse(List.of());
+            case PRESSURE -> ModularBake.tank(d, t, ClientMaterials.get()).<List<Component>>map(v -> List.of(
+                    Component.translatable("gui.feedback.blueprint_table.tank.room", Math.round(v.volumeMb())),
+                    Component.translatable("gui.feedback.blueprint_table.tank.danger", String.format(java.util.Locale.ROOT, "%.1f", v.dangerPu())),
+                    Component.translatable("gui.feedback.blueprint_table.tank.critical", String.format(java.util.Locale.ROOT, "%.1f", v.criticalPu()))))
+                    .orElse(List.of());
             case VESSEL -> ModularBake.xpStore(d, t, ClientMaterials.get(), null).<List<Component>>map(x -> List.of(
                     Component.translatable("gui.feedback.blueprint_table.vessel.points", x.maxPoints()),
                     Component.translatable("gui.feedback.blueprint_table.vessel.level", String.format(java.util.Locale.ROOT, "%.0f", x.maxPoints() / x.perLevel()))))

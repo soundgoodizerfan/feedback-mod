@@ -33,6 +33,14 @@
       "price": 10,
       "stock": 2,
       "standing": 30
+    },
+    {
+      "level": 4,
+      "item": "feedback:treatise_chemical",
+      "price": 32,
+      "count": 1,
+      "standing": 10,
+      "stock": 1
     }
   ]
 }

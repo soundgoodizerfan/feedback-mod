@@ -482,7 +482,6 @@ public class FCreativeTabs {
                         output.accept(FItems.ANNEALING_FURNACE.get());
                         output.accept(FItems.PUDDLING_FURNACE.get());
                         output.accept(FItems.HEAT_EXCHANGER.get());
-                        output.accept(FItems.PRESSURE_VESSEL.get());
                         output.accept(FItems.INGOT_MOLD.get());
                         output.accept(FItems.TEMPERATURE_SENSOR.get());
                         output.accept(FItems.GALVANOMETER.get());

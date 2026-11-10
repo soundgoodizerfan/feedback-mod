@@ -639,7 +639,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> ANNEALING_FURNACE = ITEMS.registerSimpleBlockItem(FBlocks.ANNEALING_FURNACE);
     public static final DeferredItem<BlockItem> PUDDLING_FURNACE = ITEMS.registerSimpleBlockItem(FBlocks.PUDDLING_FURNACE);
     public static final DeferredItem<BlockItem> HEAT_EXCHANGER = ITEMS.registerSimpleBlockItem(FBlocks.HEAT_EXCHANGER);
-    public static final DeferredItem<BlockItem> PRESSURE_VESSEL = ITEMS.registerSimpleBlockItem(FBlocks.PRESSURE_VESSEL);
 
     /** One shape, an ingot -- see {@link MoldItem}'s own doc for why a second shape waits. */
     public static final DeferredItem<MoldItem> INGOT_MOLD =

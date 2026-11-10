@@ -77,6 +77,23 @@ public class PressureVesselBlock extends Block implements EntityBlock {
         super.onRemove(state, level, pos, next, moved);
     }
 
+    @Override
+    protected java.util.List<ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootParams.Builder params) {
+        ItemStack stack = new ItemStack(asItem());
+        BlockEntity be = params.getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.BLOCK_ENTITY);
+        if (be != null)
+            stack.applyComponents(be.collectComponents());
+        return java.util.List.of(stack);
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader level, BlockPos pos, BlockState state) {
+        ItemStack stack = new ItemStack(asItem());
+        if (level.getBlockEntity(pos) != null)
+            stack.applyComponents(level.getBlockEntity(pos).collectComponents());
+        return stack;
+    }
+
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {

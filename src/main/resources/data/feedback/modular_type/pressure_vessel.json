@@ -1,0 +1,70 @@
+{
+  "family": "pressure",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "vessel_shell",
+      "forms": [
+        "vessel_shell"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "wall": {
+          "min": 1,
+          "max": 20,
+          "unit": "cm",
+          "default": 5,
+          "step": 1
+        }
+      },
+      "part": {
+        "item": "feedback:vessel_shell",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "tank_cylinder",
+        "variants": [
+          {
+            "name": "tank_box",
+            "params": {
+              "rating": 0.35,
+              "fill": 1.0
+            }
+          },
+          {
+            "name": "tank_cylinder",
+            "params": {
+              "rating": 1.0,
+              "fill": 0.8
+            }
+          },
+          {
+            "name": "tank_sphere",
+            "params": {
+              "rating": 2.0,
+              "fill": 0.52
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:steel"
+  },
+  "school": "chemical"
+}

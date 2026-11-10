@@ -438,7 +438,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HAND_CRANK.get().asItem(), "hand_crank");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.LEYDEN_JAR.get().asItem(), "leyden_jar");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.OVERSPEED_TRIP.get().asItem(), "overspeed_trip");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PRESSURE_VESSEL.get().asItem(), "pressure_vessel");
+        info(registration, FModular.PRESSURE_VESSEL.get(), "pressure_vessel");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PUMP.get().asItem(), "pump");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STEAM_ENGINE.get().asItem(), "steam_engine");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STEAM_TURBINE.get().asItem(), "steam_turbine");
