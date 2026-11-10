@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * A book of plan sheets that works like a bundle: click a sheet onto it to put it in, click it on an empty slot to take one out. It takes
- * only plan sheets. A bench reads the sheets in a book as it reads a sheet in its plan slot ({@link ModularPlans}); the book carries nothing
+ * only plan sheets. A bench reads the sheets in a book as it reads a sheet in its plan slot ({@link ModularBlueprints}); the book carries nothing
  * a sheet does not.
  */
 public class BlueprintBookItem extends BundleItem {

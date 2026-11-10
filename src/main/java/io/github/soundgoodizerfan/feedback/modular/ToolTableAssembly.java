@@ -114,7 +114,7 @@ public final class ToolTableAssembly {
         }
         if (used.isEmpty())
             return Optional.empty();
-        List<ModularDesign> sheets = ModularPlans.designs(plan);
+        List<ModularDesign> sheets = ModularBlueprints.designs(plan);
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
             ModularType type = e.getValue();
             if (type.blueprint() && sheets.stream().noneMatch(d -> d.type().equals(e.getKey())))
@@ -310,7 +310,7 @@ public final class ToolTableAssembly {
         if (what.isEmpty())
             return List.of();
         List<ResourceLocation> out = new ArrayList<>();
-        List<ModularDesign> sheets = ModularPlans.designs(plan);
+        List<ModularDesign> sheets = ModularBlueprints.designs(plan);
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
             ModularType type = e.getValue();
             if (type.patterns().isEmpty() || (type.blueprint() && sheets.stream().noneMatch(d -> d.type().equals(e.getKey()))))

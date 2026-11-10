@@ -30,9 +30,9 @@ import net.minecraft.world.item.component.BundleContents;
  * {@link BlueprintBookItem} holding sheets like a bundle. A bench that wants a plan reads every sheet in what lies in its plan slot, so
  * a book is only a tidier way to carry sheets; a plan in a book is the same sheet. A plan is never a flag on the player.
  */
-public final class ModularPlans {
+public final class ModularBlueprints {
 
-    private ModularPlans() {
+    private ModularBlueprints() {
     }
 
     /** The plan sheets in {@code stack}: itself if it is a sheet, its sheets if it is a book. */

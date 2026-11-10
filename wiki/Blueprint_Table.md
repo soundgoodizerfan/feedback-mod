@@ -40,7 +40,7 @@ The sheet shows the design's figures as **bars** (for a battery: cells, full vol
 - **Hover a bar** to light the parts that moved it.
 - **Pin** keeps a draft: each pinned draft puts its own colored mark on every bar to compare against, up to three. Click a pinned draft to open it, Shift-click to drop it.
 
-The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds. Requirements and plans are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
+The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds. Requirements and blueprints are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
 
 **Print**, at the bottom right, turns a sheet of paper in the paper slot into a **Blueprint** carrying the design and its figures. The pinned drafts print onto the paper too, and come back as pins when you put the Blueprint back in the slot to open it for drawing again. The table keeps nothing; the paper comes back to you when you close it.
 
@@ -48,9 +48,9 @@ A [Computer](Electric_Controller.md#apps) can run the same board as the **Bluepr
 
 ## What a blueprint is for
 
-Mostly it's a plan to look at. Two things **need** one.
+Mostly it's a drawing to look at. Two things **need** one.
 
-- A [suit module](Exosuit.md#learning-a-module) is drawn only from a plan sheet of its kind in the paper slot, and built only with that plan in the bench's plan slot. A plan sheet can sit in a [Blueprint Book](Blueprint_Book.md).
+- A [suit module](Exosuit.md#learning-a-module) is drawn only from a blueprint of its kind in the paper slot, and built only with that blueprint in the bench's blueprint slot. A blueprint can sit in a [Blueprint Book](Blueprint_Book.md).
 - The [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work.
 
 Repairs and swaps never need one.

@@ -125,7 +125,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         }
         // A type that must be learned is drawn only from a plan already in hand: the paper in the slot is a sheet of the same type.
         ModularType drawn = ModularTypes.get().types().get(design.type());
-        if (drawn != null && drawn.family().planGated() && !ModularPlans.references(paper.getItem(0), design.type())) {
+        if (drawn != null && drawn.family().blueprintGated() && !ModularBlueprints.references(paper.getItem(0), design.type())) {
             send(player, Component.translatable("message.feedback.blueprint_table.no_reference"));
             return;
         }

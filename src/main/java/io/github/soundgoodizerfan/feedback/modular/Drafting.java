@@ -8,7 +8,7 @@ import java.util.Set;
  * Which kind of drawing table a Blueprint Table is. Each table draws the families its descriptor lists; the menu, the screen and the
  * list of drawable types all ask {@link #draws}, so a new table is one constant and one block. {@link #ANY} is the table inside a
  * program, which draws everything. What a table can draw says nothing about what the player may: a type that must be learned still
- * needs a plan ({@link ModularPlans}).
+ * needs a plan ({@link ModularBlueprints}).
  */
 public enum Drafting {
     /** Tools, weapons, armour, guns and worn gear: everything not listed for the engineering table. */

@@ -10,7 +10,7 @@ It has a hammer slot (every act costs the [hammer](Hammer.md) a point) and works
 
 
 - **Stock in the center.** Shape a part from stock. The fan shows every gun part and its shapes: a **receiver** as a handgun, long-gun or machine-gun frame; a **barrel** as a smoothbore, rifled, coil, spring or steam barrel; a **slide** or **bolt** as an action; a **sight** as a reflex or a scope; and the fittings.
-- **A part in the center.** Fit parts to it, up to sixteen, with a **Plan** slot for the gun's **blueprint** (print one at the [Blueprint Table](Blueprint_Table.md)) and a **Round** slot. The parts imply the gun; you never choose a type.
+- **A part in the center.** Fit parts to it, up to sixteen, with a **Blueprint** slot for the gun's **blueprint** (print one at the [Blueprint Table](Blueprint_Table.md)) and a **Round** slot. The parts imply the gun; you never choose a type.
 - **A gun in the center.** Its parts are the fan: swap a part, add a fitting, a sight, a second barrel, the barrel's launcher part or a grip wrap, or take it apart.
 
 Machined parts (from the [Drill Press](Drill_Press.md), [Lathe](Lathe.md) and so on) go in the slots just the same: see [Gun Parts](Gun_Parts.md).

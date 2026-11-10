@@ -65,8 +65,8 @@ public final class FModular {
 
     /** Adds a suit module plan to a chest. */
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
-            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.ModularPlans.Loot>> MODULE_PLAN_LOOT =
-            LOOT_MODIFIERS.register("module_plan", () -> io.github.soundgoodizerfan.feedback.modular.ModularPlans.Loot.CODEC);
+            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.ModularBlueprints.Loot>> MODULE_PLAN_LOOT =
+            LOOT_MODIFIERS.register("module_plan", () -> io.github.soundgoodizerfan.feedback.modular.ModularBlueprints.Loot.CODEC);
 
     /** Adds a gun blueprint from the pool to a chest. */
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
@@ -293,7 +293,7 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> SUIT_MODULE = ITEMS.register("suit_module",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(new Item.Properties().stacksTo(1)));
 
-    /** A book of plan sheets that works like a bundle ({@link io.github.soundgoodizerfan.feedback.modular.ModularPlans}). */
+    /** A book of plan sheets that works like a bundle ({@link io.github.soundgoodizerfan.feedback.modular.ModularBlueprints}). */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.BlueprintBookItem> BLUEPRINT_BOOK = ITEMS.register("blueprint_book",
             () -> new io.github.soundgoodizerfan.feedback.modular.BlueprintBookItem(new Item.Properties().stacksTo(1)
                     .component(net.minecraft.core.component.DataComponents.BUNDLE_CONTENTS, net.minecraft.world.item.component.BundleContents.EMPTY)));

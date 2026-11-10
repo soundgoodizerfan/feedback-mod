@@ -337,7 +337,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return;
         ModularDesign pinned = new ModularDesign(design.type(), design.parts().stream().filter(p -> p.sub().isEmpty()).toList(), design.edge());
         var figures = ToolDesigns.predict(pinned, types(level), ClientMaterials.on(level));
-        table.setItem(ToolTableBlockEntity.PLAN, ModularPlans.sheet(pinned, figures.orElse(null)));
+        table.setItem(ToolTableBlockEntity.PLAN, ModularBlueprints.sheet(pinned, figures.orElse(null)));
         io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("message.feedback.plan.measured"), 60);
     }
 

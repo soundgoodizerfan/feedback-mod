@@ -116,12 +116,12 @@ Upgrades work whenever the suit is powered. The Heat Sink always works. Some upg
 
 ### Learning a module
 
-A module is drawn only at the [Engineering Table](Engineering_Table.md), and only with a plan sheet of a suit module in the paper slot; the bench builds one only with that plan in its plan slot. A [Blueprint Book](Blueprint_Book.md) in the plan slot offers every sheet inside it.
+A module is drawn only at the [Engineering Table](Engineering_Table.md), and only with a blueprint of a suit module in the paper slot; the bench builds one only with that blueprint in its blueprint slot. A [Blueprint Book](Blueprint_Book.md) in the blueprint slot offers every sheet inside it.
 
-Plans come two ways:
+Blueprints come two ways:
 
 - Rare finds in chests.
-- Measuring: take a module apart at the bench with blank paper in the plan slot, and the paper becomes a plan of that design.
+- Measuring: take a module apart at the bench with blank paper in the blueprint slot, and the paper becomes a blueprint of that design.
 
 ## Weight and heat
 

@@ -170,9 +170,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
         /**
          * Whether a design of this family can be drawn only from a plan already in hand: the Blueprint Table copies and changes plans, it
-         * does not invent one. The first plan comes from measuring a specimen or from where plans are found ({@link ModularPlans}).
+         * does not invent one. The first plan comes from measuring a specimen or from where plans are found ({@link ModularBlueprints}).
          */
-        public boolean planGated() {
+        public boolean blueprintGated() {
             return this == SUIT_MODULE;
         }
 
