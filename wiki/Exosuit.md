@@ -74,6 +74,22 @@ Each of the four pieces takes one **Suit Module**, a finished item built from a 
 
 A module fits any armor piece. To fit it, put the armor piece in the center of the bench and click the module you carry in the fan; it goes into the piece's upgrade place, one per piece. Taking the piece apart gives the module back whole. The Suit diagnostic screen (`J`) shows the upgrade each piece carries.
 
+An Actuator or Thruster attachment has a **Bore** (in mm, up to 40) that you set on the drawing and cut with a drill. Each upgrade wants a bore of about its own size:
+
+| Upgrade | Bore (mm) |
+| --- | --- |
+| Rocket Spur | 8 |
+| Grip Pads, Swim Fins | 10 |
+| Jump Coil | 12 |
+| Strider Pistons | 14 |
+| Jet Pack, Shock Absorbers | 16 |
+| Step Assist | 18 |
+| Landing Gear | 20 |
+| Shock Ram | 22 |
+| Stomp Actuator | 24 |
+
+The closer the cut is to that size, the stronger the upgrade; far off, it works at about half strength. A part left uncut still works.
+
 Upgrades work whenever the suit is powered. The Heat Sink always works. Some upgrades draw charge as they act, as noted. Fourteen upgrades give the wheel a segment of their own: Cloak Field, Jet Pack, Shock Ram, Scan Ping, EMP Coil, Magnet Pickup, Strider Pistons, Step Assist, Rangefinder, Long Lens, Autodoc, Coolant Loop, Rocket Spur and Thorn Array (see [Abilities](#abilities)). Their effects work only through the wheel, except the Coolant Loop and Rocket Spur, which also work without it.
 
 | Attachment | Upgrade | Needs | What it does |
@@ -116,11 +132,12 @@ Upgrades work whenever the suit is powered. The Heat Sink always works. Some upg
 
 ### Learning a module
 
-A module is drawn only at the [Engineering Table](Engineering_Table.md), and only with a blueprint of a suit module in the paper slot; the bench builds one only with that blueprint in its blueprint slot. A [Blueprint Book](Blueprint_Book.md) in the blueprint slot offers every sheet inside it.
+A module is drawn at the [Blueprint Table](Blueprint_Table.md), and only while you hold a Robotics [Treatise](Treatise.md); the bench builds one only with its blueprint in the bench's blueprint slot. A [Blueprint Book](Blueprint_Book.md) in the blueprint slot offers every sheet inside it.
 
-Blueprints come two ways:
+Blueprints come from:
 
 - Rare finds in chests.
+- Drawing it yourself at the Blueprint Table and printing it.
 - Measuring: take a module apart at the bench with blank paper in the blueprint slot, and the paper becomes a blueprint of that design.
 
 ## Weight and heat
