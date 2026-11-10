@@ -183,6 +183,7 @@
     "feedback:argentite_deepslate_ore",
     "feedback:argentite_loose_rock",
     "feedback:argentite_ore",
+    "feedback:ballast_tank",
     "feedback:bastion_rubble",
     "feedback:battery",
     "feedback:bauxite_deepslate_ore",
@@ -326,6 +327,9 @@
     "feedback:galena_ore",
     "feedback:galvanic_cell",
     "feedback:galvanic_cell_pack",
+    "feedback:gas_cell_cloth",
+    "feedback:gas_cell_plate",
+    "feedback:gas_cell_rubber",
     "feedback:gas_centrifuge",
     "feedback:gas_tank",
     "feedback:gas_turbine",
@@ -436,6 +440,7 @@
     "feedback:pressure_vessel",
     "feedback:programmed_junction",
     "feedback:programmer",
+    "feedback:propeller",
     "feedback:puddling_furnace",
     "feedback:pump",
     "feedback:pvc_block",
@@ -549,6 +554,7 @@
     "feedback:vacuum_dryer",
     "feedback:vacuum_pump",
     "feedback:valve",
+    "feedback:vent_valve",
     "feedback:water_wheel",
     "feedback:wellhead",
     "feedback:whisker",
@@ -595,6 +601,7 @@
     "feedback:galena_ore",
     "feedback:pyrite_ore",
     "feedback:kaolinite_deposit",
-    "feedback:lead_chest"
+    "feedback:lead_chest",
+    "feedback:charging_gantry"
   ]
 }

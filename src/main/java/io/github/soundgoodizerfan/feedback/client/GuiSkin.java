@@ -1206,6 +1206,165 @@ public enum GuiSkin {
         public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
             TerminalLook.endReveal(this, g, x, y, w, h, t);
         }
+    },
+
+    /**
+     * The powered suit's own material: matte carbon weave under armour plate, cyan hairlines where it is lit, amber where it warns. Corners
+     * are chamfered and braced, the top edge carries a row of latches, and a slot is a dark socket with cyan corner brackets. It opens as two
+     * armour plates draw apart from the middle with a servo's push, and closes the same way in reverse. Built from fills and a fixed-seed
+     * speckle, so nothing crawls.
+     */
+    SUIT(0xFFE4F1F6, 0xFF7C99A6, 0xFF4FE3FF, 0xFFFFA52E, 0xFF06090B, 0x9035B6D0, 0xFF1B2328) {
+        private static final int FACE = 0xFF14181B, WEAVE = 0xFF191F23, EDGE = 0xFF05080A, CYAN = 0xFF4FE3FF, AMBER = 0xFFFFA52E;
+        private static final float[] SPECK = speck();
+
+        private static float[] speck() {
+            Random r = new Random(0x5017);
+            float[] out = new float[2 * 300];
+            for (int i = 0; i < out.length; i++)
+                out[i] = r.nextFloat();
+            return out;
+        }
+
+        /** The carbon weave: horizontal bands two pixels deep, every other one a shade lighter, crossed by faint verticals every four. */
+        private static void weave(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x, y, x + w, y + h, FACE);
+            for (int row = 0; row < h; row += 4)
+                g.fill(x, y + row, x + w, Math.min(y + h, y + row + 2), WEAVE);
+            for (int col = 0; col < w; col += 4)
+                g.fill(x + col, y, x + col + 1, y + h, 0x14000000);
+        }
+
+        /** A chamfered corner brace: cyan L-bracket six pixels long. */
+        private static void brace(GuiGraphics g, int x, int y, int dx, int dy) {
+            g.fill(Math.min(x, x + dx * 6), y, Math.max(x, x + dx * 6) + 1, y + 1, 0xA035B6D0);
+            g.fill(x, Math.min(y, y + dy * 6), x + 1, Math.max(y, y + dy * 6) + 1, 0xA035B6D0);
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fill(x, y, x + w, y + h, EDGE);
+            weave(g, x + 1, y + 1, w - 2, h - 2);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + Math.min(h - 1, 30), 0x1CFFFFFF, 0x00FFFFFF);
+            for (int i = 0; i < SPECK.length; i += 2) {
+                int sx = x + 2 + (int) (SPECK[i] * (w - 4)), sy = y + 2 + (int) (SPECK[i + 1] * (h - 4));
+                g.fill(sx, sy, sx + 1, sy + 1, (i & 2) == 0 ? 0x10FFFFFF : 0x28000000);
+            }
+            // chamfered corners
+            for (int i = 0; i < 4; i++) {
+                g.fill(x + i, y + 3 - i, x + i + 1, y + 4 - i, EDGE);
+                g.fill(x + w - 1 - i, y + 3 - i, x + w - i, y + 4 - i, EDGE);
+                g.fill(x + i, y + h - 4 + i, x + i + 1, y + h - 3 + i, EDGE);
+                g.fill(x + w - 1 - i, y + h - 4 + i, x + w - i, y + h - 3 + i, EDGE);
+            }
+            g.renderOutline(x + 3, y + 3, w - 6, h - 6, 0x3835B6D0);
+            brace(g, x + 5, y + 5, 1, 1);
+            brace(g, x + w - 6, y + 5, -1, 1);
+            brace(g, x + 5, y + h - 6, 1, -1);
+            brace(g, x + w - 6, y + h - 6, -1, -1);
+            // the row of latches along the top edge
+            for (int lx = x + 14; lx < x + w - 14; lx += 10)
+                g.fill(lx, y + 1, lx + 5, y + 3, (lx / 10 & 3) == 0 ? AMBER : 0xFF2A353B);
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x2CFFFFFF);
+            g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, 0x60000000);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF06090B);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0x3035B6D0);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0x3035B6D0);
+            int c = 0xC04FE3FF;
+            g.fill(x - 1, y - 1, x + 3, y, c);
+            g.fill(x - 1, y - 1, x, y + 3, c);
+            g.fill(x + 14, y + 16, x + 17, y + 17, c);
+            g.fill(x + 16, y + 14, x + 17, y + 17, c);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int top, bottom, text, line;
+            if (!active) {
+                top = 0xFF1B2125;
+                bottom = 0xFF14191C;
+                text = 0xFF4A5A62;
+                line = 0xFF26323A;
+            } else if (primary) {
+                top = lerp(0xFF4A3410, 0xFF9A6A1C, glow);
+                bottom = lerp(0xFF2E200A, 0xFF6A4810, glow);
+                text = 0xFFFFE6B8;
+                line = AMBER;
+            } else {
+                top = lerp(0xFF222B31, 0xFF2E3C44, glow);
+                bottom = lerp(0xFF161C20, 0xFF1E282E, glow);
+                text = lerp(dim(), ink(), glow);
+                line = lerp(0xFF2E7F94, CYAN, glow);
+            }
+            if (down) {
+                top = lerp(top, 0xFF000000, 0.3f);
+                bottom = lerp(bottom, 0xFF000000, 0.3f);
+            }
+            g.fill(x, y, x + w, y + h, EDGE);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, top, bottom);
+            g.renderOutline(x, y, w, h, line);
+            g.fill(x + 1, y + 1, x + 4, y + 2, line); // a lit tab at the corner
+            if (active && glow > 0)
+                g.renderOutline(x - 1, y - 1, w + 2, h + 2, (int) (glow * 0x50) << 24 | (primary ? 0xFFA52E : 0x4FE3FF));
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.IRON_TRAPDOOR_OPEN;
+        }
+
+        @Override
+        public SoundEvent open() {
+            return SoundEvents.PISTON_EXTEND;
+        }
+
+        @Override
+        public SoundEvent close() {
+            return SoundEvents.PISTON_CONTRACT;
+        }
+
+        private int gap(int w, float t) {
+            return Math.round((w / 2f + 6) * t);
+        }
+
+        @Override
+        public void beginReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            if (t < 1)
+                g.enableScissor(x + w / 2 - gap(w, t) - 1, y - 4, x + w / 2 + gap(w, t) + 1, y + h + 8);
+        }
+
+        @Override
+        public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
+            if (t >= 1)
+                return;
+            g.flush();
+            g.disableScissor();
+            int mid = x + w / 2, gap = gap(w, t);
+            // The two armour plates, drawing back from the middle into their housings.
+            int left = mid - gap - x, right = x + w - (mid + gap);
+            if (left > 0) {
+                weave(g, x, y, left, h);
+                g.fill(x, y, x + left, y + 1, EDGE);
+                g.fill(x + left - 2, y, x + left, y + h, CYAN);
+                for (int cy = y + 6; cy < y + h - 6; cy += 12)
+                    g.fill(x + left - 8, cy, x + left - 3, cy + 3, AMBER);
+            }
+            if (right > 0) {
+                weave(g, mid + gap, y, right, h);
+                g.fill(mid + gap, y, mid + gap + 2, y + h, CYAN);
+                for (int cy = y + 6; cy < y + h - 6; cy += 12)
+                    g.fill(mid + gap + 3, cy, mid + gap + 8, cy + 3, AMBER);
+            }
+        }
     };
 
     private final int ink, dim, accent, warn, well, trim, plate;
@@ -1500,6 +1659,14 @@ public enum GuiSkin {
                 case STAGE, START -> SoundEvents.UI_BUTTON_CLICK.value();
                 case FINISH -> SoundEvents.BEACON_POWER_SELECT;
                 case ABORT -> SoundEvents.BEACON_DEACTIVATE;
+            };
+            case SUIT -> switch (cue) {
+                case SEAT -> SoundEvents.IRON_TRAPDOOR_CLOSE;
+                case REJECT -> SoundEvents.DISPENSER_FAIL;
+                case STAGE -> SoundEvents.PISTON_EXTEND;
+                case START -> SoundEvents.BEACON_POWER_SELECT;
+                case FINISH -> SoundEvents.BEACON_ACTIVATE;
+                case ABORT -> SoundEvents.PISTON_CONTRACT;
             };
             case VANILLA -> cue == Cue.REJECT ? SoundEvents.DISPENSER_FAIL : click();
         };

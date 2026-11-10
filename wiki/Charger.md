@@ -1,6 +1,6 @@
-# Round Charger
+# Charger
 
-A clip on an [electrical](Electricity.md) line that charges **jar rounds** for a [coilgun](Coilgun.md). The charge rides in the round, not in the gun: one round, one shot.
+A clip on an [electrical](Electricity.md) line that charges **jar rounds** for a [coilgun](Coilgun.md), or one [Battery](Battery.md) item. The charge rides in the round, not in the gun: one round, one shot.
 
 ## Crafting
 
@@ -18,7 +18,8 @@ A **jar round** is a coilgun round seated **dry**: a case and an iron slug at th
 ## Using it
 
 - **Right-click with a stack of jar rounds** to put the whole stack in.
-- **Right-click with an empty hand** to take them out.
+- **Right-click with a Battery** to seat it (one at a time, and only while the clip is empty). It charges as a placed battery does: it draws its own charge current while the line is above its voltage, and a line over its case's insulation band wears it.
+- **Right-click with an empty hand** to take out what is in it.
 
 Connect it to a line. While its rounds hold less than the line's voltage, it draws **1 A** and charges them **up to the line's voltage, never past it**.
 

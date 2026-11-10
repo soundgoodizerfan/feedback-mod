@@ -84,6 +84,58 @@
       "litres": 0.01,
       "bulk": 2,
       "set": true
+    },
+    "S": {
+      "name": "servo",
+      "forms": [
+        "machine_winding"
+      ],
+      "litres": 0.02,
+      "layer": 5,
+      "part": {
+        "item": "feedback:machine_winding",
+        "shape": [
+          "W"
+        ],
+        "stock": [
+          "wire"
+        ],
+        "base": "coarse",
+        "variants": [
+          {
+            "name": "coarse"
+          },
+          {
+            "name": "fine",
+            "shape": [
+              "WW"
+            ]
+          },
+          {
+            "name": "dense",
+            "shape": [
+              "WW",
+              "WW"
+            ]
+          },
+          {
+            "name": "heavy_dense",
+            "shape": [
+              "WWW",
+              "WWW",
+              "WW"
+            ]
+          }
+        ]
+      }
+    },
+    "G": {
+      "name": "gauge",
+      "forms": [
+        "lens"
+      ],
+      "litres": 0.005,
+      "layer": 6
     }
   },
   "patterns": [

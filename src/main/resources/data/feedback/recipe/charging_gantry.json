@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "P": {
+      "item": "feedback:steel_plate"
+    },
+    "C": {
+      "item": "feedback:charger"
+    }
+  },
+  "pattern": [
+    "PWP",
+    "P P",
+    "PCP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:charging_gantry"
+  }
+}

@@ -367,6 +367,26 @@ public final class ModularBake {
     }
 
     /** The cells of stock a part of {@code role} was shaped from: its variant's, else the standard shape's. */
+    /**
+     * What a powered-suit fitting gives the piece it is on: the servo's drive and loss come off its winding conductor (ampacity and
+     * drop, as a machine's winding does), the gauge's step off its lens glass (the clearer, the finer, as a carried lens does), the sensor
+     * head's reach off its cells of fibre, and the bay is the plate that holds the battery. A piece with none bakes zero.
+     */
+    private static void suitFitting(Map<Fig, Float> f, ModularType.Role role, Part part, Material m) {
+        switch (role.name()) {
+            case "servo" -> {
+                int cells = stockCells(role, part);
+                f.merge(Fig.SUIT_DRIVE, m.ampacity().orElse(0f) * cells * ModularTuning.SUIT_DRIVE_PER_AMPACITY, Float::sum);
+                f.put(Fig.SUIT_LOSS, clamp(ModularTuning.SUIT_LOSS_FLOOR + m.electrical().drop().orElse(0f) * cells
+                        * ModularTuning.SUIT_LOSS_PER_DROP, 0f, ModularTuning.SUIT_LOSS_MAX));
+            }
+            case "gauge" -> f.put(Fig.SUIT_GAUGE, Math.min(1f, 0.5f + 5f * m.separation().reflectivity().orElse(0.2f)));
+            case "sensor_head" -> f.merge(Fig.SUIT_SENSE, (float) part.count(), Float::sum);
+            case "battery_bay" -> f.put(Fig.SUIT_BAY, 1f);
+            default -> { }
+        }
+    }
+
     private static int stockCells(ModularType.Role role, Part part) {
         return role.variant(part).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
     }
@@ -530,6 +550,7 @@ public final class ModularBake {
                         float c = competence(by.get(p.role()));
                         points += type.armourMax() * ModularTuning.LINING_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
                     }
+                    suitFitting(f, r, p, by.get(p.role()));
                 }
                 f.put(Fig.MASS, total);
                 f.put(Fig.ARMOUR, points * worn);

@@ -360,6 +360,7 @@ public class FItems {
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYTIC_CELL);
     public static final DeferredItem<BlockItem> LEYDEN_JAR = ITEMS.registerSimpleBlockItem(FBlocks.LEYDEN_JAR);
     public static final DeferredItem<BlockItem> CHARGER = ITEMS.registerSimpleBlockItem(FBlocks.CHARGER);
+    public static final DeferredItem<BlockItem> CHARGING_GANTRY = ITEMS.registerSimpleBlockItem(FBlocks.CHARGING_GANTRY);
     public static final DeferredItem<BlockItem> RECTIFIER = ITEMS.registerSimpleBlockItem(FBlocks.RECTIFIER);
     public static final DeferredItem<BlockItem> CONVERTER = ITEMS.registerSimpleBlockItem(FBlocks.CONVERTER);
     public static final DeferredItem<BlockItem> CONVERTER_TAP = ITEMS.registerSimpleBlockItem(FBlocks.CONVERTER_TAP);

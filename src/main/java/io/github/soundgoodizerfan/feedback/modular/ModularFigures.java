@@ -167,7 +167,18 @@ public record ModularFigures(List<Float> values, int step) {
         /** Extra typed slots the fittings add beside the fixed ones (holster, bottle loops, bedroll lashing, bandolier). */
         STORES,
         /** A bedroll's comfort: how soft its fill and sheet are; the share of health a night in it gives back. */
-        COMFORT
+        COMFORT,
+        // --- a powered suit piece's (family ARMOUR), zero where no servo or fitting is on ---
+        /** Amps the servo winding carries: the winding conductor's ampacity times its cells of wire. The piece's muscle. */
+        SUIT_DRIVE,
+        /** 0 to 1: the share of the servo's drain that leaves as waste heat (the winding conductor's drop over its length). */
+        SUIT_LOSS,
+        /** The step factor of the gauge lens on the piece (0.65 clearest, 1 none): how finely the suit's gauges read. 0 when there is no gauge. */
+        SUIT_GAUGE,
+        /** Cells of fibre in the sensor head; 0 without one. Longer bundles see further. */
+        SUIT_SENSE,
+        /** 1 when the piece has a battery bay (the plate that holds it), else 0. */
+        SUIT_BAY
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

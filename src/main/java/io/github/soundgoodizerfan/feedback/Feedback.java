@@ -132,6 +132,7 @@ public class Feedback {
         event.addListener(AmbientTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.modular.ShieldSources.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.suit.MobHeat.get());
         event.addListener(MaterialTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.CompoundTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.potion.PotionMap.get());
@@ -350,6 +351,15 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.feel.FeelPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.ThermalFeedPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.ThermalFeedPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.ThermalFeedPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.SuitPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SuitPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SuitPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.SuitSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.SuitSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.SuitSyncPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.modular.PackPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.modular.PackPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.modular.PackPayload::handle)

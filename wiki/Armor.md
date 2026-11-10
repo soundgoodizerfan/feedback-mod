@@ -57,6 +57,10 @@ The piece is drawn on the vanilla armor shape, **tinted by the plate**, so you c
 
 [Studs](#studs) on a helmet or chestplate show on the piece in the color of their own material.
 
+## Powered suit
+
+A set of armor with servos, a sensor head and a battery bay fitted is an [Exosuit](Exosuit.md).
+
 ## Wearing out
 
 Armor wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired by putting it in the center of a bench and picking stock of the plate's material. Old vanilla armor you find is converted; diamond armor becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).

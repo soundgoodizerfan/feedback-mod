@@ -295,7 +295,7 @@ public class ModularBackpack extends ModularItem {
             player.getPersistentData().putBoolean(WET, wet);
             if (wet)
                 load *= ModularTuning.PACK_WET_FACTOR;
-            over = f != null && load > f.get(Fig.CARRY);
+            over = f != null && load > f.get(Fig.CARRY) * io.github.soundgoodizerfan.feedback.suit.ExoSuit.carryFactor(player);
             if (over)
                 speed.addTransientModifier(new AttributeModifier(LOAD_ID, -ModularTuning.PACK_OVERLOAD_SLOW, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
             lit = fitted(bag, LAMP) && !stored(bag, LAMP).isEmpty();

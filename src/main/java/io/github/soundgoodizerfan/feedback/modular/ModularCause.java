@@ -60,6 +60,10 @@ public final class ModularCause {
                 case CARRY -> ModularBackpack.CARRY_ROLES.contains(p.role());
                 case SLOTS, POINTS -> p.role().equals(ModularBackpack.SHELL) || p.role().equals(ModularBackpack.FRAME);
                 case STORES -> ModularBackpack.STORE_ROLES.contains(p.role());
+                case SUIT_DRIVE, SUIT_LOSS -> role.name().equals("servo");
+                case SUIT_GAUGE -> role.name().equals("gauge");
+                case SUIT_SENSE -> role.name().equals("sensor_head");
+                case SUIT_BAY -> role.name().equals("battery_bay");
                 case COMFORT -> p.role().equals(ModularBedroll.FILL) || p.role().equals(ModularBedroll.SHEET);
                 case FIST, SWING_DRAG -> p.role().equals(ModularGlove.PLATE);
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds

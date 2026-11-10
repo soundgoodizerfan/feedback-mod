@@ -62,4 +62,4 @@ See [Hazards](Hazards.md) for the general rules.
 - **Overvoltage.** A line above the case's insulation band costs condition.
 - **Cold.** Capacity falls as the body cools below 20 Tu, to half at 0 Tu for lead and much less for nickel-iron, as in an [Ice Box](Ice_Box.md).
 
-An [Arc Welder](Arc_Welder.md) draws its charge from a Battery in your inventory.
+An [Arc Welder](Arc_Welder.md) draws its charge from a Battery in your inventory. A [Charger](Charger.md) takes one Battery item, and the chestplate of an [Exosuit](Exosuit.md) holds the Battery that runs the suit; a [Charging Gantry](Charging_Gantry.md) charges it while worn.

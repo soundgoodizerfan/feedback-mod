@@ -4,7 +4,9 @@ package io.github.soundgoodizerfan.feedback.machine.charger;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 
@@ -15,8 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A clip on a wire that charges jar rounds ({@code docs/specs/feedback_guns_spec.md}, the coil's electric
- * drive; mechanics 6.6). It is a sink: while a round in it holds less than the line, it asks
+ * A clip on a wire that charges what carries our power: jar rounds ({@code docs/specs/feedback_guns_spec.md}, the coil's electric
+ * drive; mechanics 6.6) and batteries as items (a suit's cell). It is a sink: while a round in it holds less than the line, it asks
  * for {@link FTuning#GUN_CHARGER_AMPS}, and what it is delivered raises the stack's volts by amps
  * over the stack's capacitance -- a stack of sixteen fills sixteen times slower than one -- up to
  * the voltage it sees and never past it.
@@ -30,6 +32,10 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <p>It does not discharge into the line: a round holding more than the line simply stops
  * charging. Rounds keep leaking while they sit here, as anywhere.
+ *
+ * <p>A battery stack charges as a placed battery does (same figures, {@link BatteryStack}): it asks for its own charge current while
+ * the line is above its terminal, loses the charge efficiency as heat it does not model here, and wears if the line is over its case's
+ * band. Only a single battery goes in (a stack of them is refused).
  */
 public class ChargerBlockEntity extends ElectricNode {
 
@@ -55,6 +61,9 @@ public class ChargerBlockEntity extends ElectricNode {
 
     @Override
     public float wantedAmps() {
+        CompoundTag battery = BatteryStack.state(rounds);
+        if (battery != null)
+            return BatteryStack.wantedAmps(battery, getVolts());
         return round().filter(c -> getVolts() > c.volts() + FTuning.LEYDEN_JAR_SWITCH_VOLTS).isPresent()
                 ? FTuning.GUN_CHARGER_AMPS : 0;
     }
@@ -62,6 +71,14 @@ public class ChargerBlockEntity extends ElectricNode {
     public void tickServer() {
         if (level == null || getAmps() <= 0)
             return;
+        CompoundTag battery = BatteryStack.state(rounds);
+        if (battery != null) {
+            CompoundTag next = battery.copy();
+            BatteryStack.charge(next, getAmps(), getVolts());
+            rounds.set(FDataComponents.BATTERY.get(), next);
+            setChanged();
+            return;
+        }
         round().ifPresent(c -> {
             float volts = Math.min(getVolts(), c.volts() + getAmps() / (FTuning.GUN_ROUND_CAPACITANCE * rounds.getCount()));
             rounds.set(FWeapons.CARTRIDGE.get(), c.withVolts(Math.max(c.volts(), volts), level.getGameTime()));
@@ -73,10 +90,11 @@ public class ChargerBlockEntity extends ElectricNode {
         return rounds;
     }
 
-    /** Takes jar rounds, the whole stack; anything else is refused. Returns what is left in hand. */
+    /** Takes jar rounds, the whole stack, or one battery; anything else is refused. Returns what is left in hand. */
     public ItemStack insert(ItemStack stack) {
         Cartridge c = stack.get(FWeapons.CARTRIDGE.get());
-        if (!rounds.isEmpty() || c == null || !c.charged())
+        boolean battery = BatteryStack.is(stack) && stack.getCount() == 1;
+        if (!rounds.isEmpty() || !battery && (c == null || !c.charged()))
             return stack;
         rounds = stack.copy();
         setChanged();

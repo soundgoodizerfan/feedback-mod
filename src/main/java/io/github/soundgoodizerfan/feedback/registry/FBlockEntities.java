@@ -288,6 +288,11 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlockEntity::new, FBlocks.CHARGER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.gantry.GantryBlockEntity>> GANTRY =
+            BLOCK_ENTITIES.register("charging_gantry", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.gantry.GantryBlockEntity::new, FBlocks.CHARGING_GANTRY.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity>> RECTIFIER =
             BLOCK_ENTITIES.register("rectifier", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity::new, FBlocks.RECTIFIER.get())

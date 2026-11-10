@@ -103,6 +103,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
 
+    /** A worn powered suit's memory on its chestplate: heat, which abilities are on, whether heat has cut it out. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.suit.SuitState>> SUIT =
+            COMPONENTS.register("suit", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.suit.SuitState>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.suit.SuitState.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.suit.SuitState.STREAM_CODEC)
+                    .build());
+
     /** A conveyor belt's band (material, grip, heat limit, cleat) and condition, carried by the item and the block alike. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> BELT =
             COMPONENTS.register("belt", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()

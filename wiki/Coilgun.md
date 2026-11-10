@@ -25,7 +25,7 @@ How hard a dust drives depends on the case, not the count: the drive is read aga
 
 ### Jar rounds
 
-A round seated **dry** (no charge) is a **jar round**, and it's charged with electricity on a [Round Charger](Round_Charger.md). A jar round at **6 V** drives the coil exactly as hard as four redstone dust. Its energy rises in step with its voltage, and its pressure on the winding as the square. Jar rounds go flat over **5 minutes**.
+A round seated **dry** (no charge) is a **jar round**, and it's charged with electricity on a [Charger](Charger.md). A jar round at **6 V** drives the coil exactly as hard as four redstone dust. Its energy rises in step with its voltage, and its pressure on the winding as the square. Jar rounds go flat over **5 minutes**.
 
 You can still give coilgun rounds a [payload](Ammunition.md#payloads), so tracers and incendiary rounds both work.
 

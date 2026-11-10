@@ -78,6 +78,6 @@ Wear takes condition down to **half** and no further. The machine never refuses 
 ## Uses
 
 - A steady supply that never runs out, from any shaft you already have.
-- A fine winding at a steam engine's speed is the reference voltage for a [Round Charger](Round_Charger.md).
+- A fine winding at a steam engine's speed is the reference voltage for a [Charger](Charger.md).
 - A dense or heavy-dense winding on a turbine powers an [Arc Furnace](Arc_Furnace.md#power).
 - A motor starts a [Gas Turbine](Gas_Turbine.md) spinning.

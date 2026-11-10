@@ -142,7 +142,7 @@ For example a 12 mm bore throws about 8 buckshot pellets and a 10 mm bore about 
 
 ## Jar rounds
 
-Seat a case and an iron slug with **nothing in the charge slots** and you get a **jar round**: a coilgun round that carries its drive as an electric charge, a tiny capacitor. It's flat when made. Charge it on a [Round Charger](Round_Charger.md).
+Seat a case and an iron slug with **nothing in the charge slots** and you get a **jar round**: a coilgun round that carries its drive as an electric charge, a tiny capacitor. It's flat when made. Charge it on a [Charger](Charger.md).
 
 ## Payloads
 

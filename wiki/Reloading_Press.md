@@ -35,7 +35,7 @@ Press **Seat** to make one round.
 | powder | bullet | an ordinary cartridge |
 | powder | nugget | a **shot shell**, for smoothbore barrels |
 | redstone | iron bullet | a coilgun round |
-| nothing | iron bullet | a **jar round**: *"Seated dry: a jar round. Charge it on a wire."* See [Round Charger](Round_Charger.md) |
+| nothing | iron bullet | a **jar round**: *"Seated dry: a jar round. Charge it on a wire."* See [Charger](Charger.md) |
 
 ## Paper cases
 

@@ -813,6 +813,15 @@ public class FBlocks {
                     .strength(1.5f)
                     .sound(SoundType.METAL)));
 
+    /** Charges the suit its wearer stands in. See {@code GantryBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.gantry.GantryBlock> CHARGING_GANTRY =
+            BLOCKS.register("charging_gantry", () -> new io.github.soundgoodizerfan.feedback.machine.gantry.GantryBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(2.0f)
+                            .sound(SoundType.METAL)
+                            .noOcclusion()));
+
     /** Charges jar rounds off a wire. See {@code ChargerBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock> CHARGER =
             BLOCKS.register("charger", () -> new io.github.soundgoodizerfan.feedback.machine.charger.ChargerBlock(

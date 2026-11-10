@@ -21,7 +21,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Heat](Heat.md): fires, vessels, processes
 - [Electricity](Electricity.md): volts, amps, and what happens when you get them wrong
 - [Guns](Guns.md) and [Gun Parts](Gun_Parts.md)
-- [Tools and Weapons](Tools_and_Weapons.md) and [Armor](Armor.md)
+- [Tools and Weapons](Tools_and_Weapons.md), [Armor](Armor.md) and [Exosuit](Exosuit.md)
 - [Combat](Combat.md), [Skills](Skills.md) and [Material Perks](Material_Perks.md)
 - [Hazards](Hazards.md): heat, steam and shock
 - [Vehicles](Vehicles.md)
@@ -53,7 +53,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Petrochemistry:** [Magma Drill](Magma_Drill.md) · [Oil](Oil.md) · [Fuels](Fuels.md) · [Pipe](Pipe.md) · [Gas Tank](Gas_Tank.md) · [Gas Compressor](Gas_Compressor.md) · [Electrolyser](Electrolyser.md) · [Chemicals](Chemicals.md) · [Fertilizer](Fertilizer.md) · [Fractionating Column](Fractionating_Column.md) · [Heavy Water](Heavy_Water.md) · [Thruster](Thruster.md)
 
-**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Battery](Battery.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamotor](Dynamotor.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Solid-State Converter](Converter.md) · [Substation](Substation.md) · [Rare-Earth Magnet](Rare_Earth_Magnet.md) · [Fuse](Fuse.md) · [Glowstone Lamp](Lamp.md) · [Rectifier](Rectifier.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Phosphor Screen](Phosphor_Screen.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Round Charger](Round_Charger.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Jar Baton](Jar_Baton.md) · [Electrified Fence](Electrified_Fence.md) · [Power Cutter](Power_Cutter.md)
+**Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Battery](Battery.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamotor](Dynamotor.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Solid-State Converter](Converter.md) · [Substation](Substation.md) · [Rare-Earth Magnet](Rare_Earth_Magnet.md) · [Fuse](Fuse.md) · [Glowstone Lamp](Lamp.md) · [Rectifier](Rectifier.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Phosphor Screen](Phosphor_Screen.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Charger](Charger.md) · [Charging Gantry](Charging_Gantry.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Jar Baton](Jar_Baton.md) · [Electrified Fence](Electrified_Fence.md) · [Power Cutter](Power_Cutter.md)
 
 **Measuring:** [Instruments](Instruments.md) · [Phosphor Screen](Phosphor_Screen.md) · [Pyrometer](Optics.md#pyrometer)
 
@@ -65,7 +65,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Guns:** [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Mixer](Mixer.md) · [Coilgun](Coilgun.md) · [Demolition Charge](Demolition_Charge.md) · [Shock Capsule](Shock_Capsule.md)
 
-**Tools and armor:** [Backpack](Backpack.md) · [Bedroll](Bedroll.md) · [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
+**Tools and armor:** [Backpack](Backpack.md) · [Bedroll](Bedroll.md) · [Hand Tools](Hand_Tools.md) · [Mortar](Mortar.md) · [Wrench](Wrench.md) · [Crowbar](Crowbar.md) · [Sawblade](Sawblade.md) · [Spatula](Spatula.md) · [Spoon](Spoon.md) · [Tasting Spoon](Tasting_Spoon.md) · [Smithing Table](Smithing_Table.md) · [Anvil](Anvil.md) · [Woodworking Table](Woodworking_Table.md) · [Stonecutter](Stonecutter.md) · [Recipe Data Stick](Data_Stick.md) · [Arc Welder](Arc_Welder.md) · [Tools and Weapons](Tools_and_Weapons.md) · [Armor](Armor.md) · [Exosuit](Exosuit.md) · [Heavy Core](Heavy_Core.md) · [Blueprint Table](Blueprint_Table.md)
 
 **Combat:** [Combat](Combat.md) · [Skills](Skills.md) · [Combat Gear](Combat_Gear.md) · [Grapple](Grapple.md) · [Feedbacker](Feedbacker.md) · [Material Perks](Material_Perks.md)
 

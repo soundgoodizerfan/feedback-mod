@@ -120,6 +120,8 @@ public class FClientSetup {
         RollReadyHud.register(event);
         OffhandHud.register(event);
         CastHud.register(event);
+        SuitHud.register(event);
+        ThermalOverlay.register(event);
         StoredHud.register(event);
         SizeUpHud.register(event);
     }
@@ -132,6 +134,9 @@ public class FClientSetup {
         event.register(OffhandStrikeClient.KEY);
         event.register(OffhandStrikeClient.BARE_TOGGLE);
         event.register(PackKey.KEY);
+        event.register(SuitKeys.WHEEL);
+        event.register(SuitKeys.DASH);
+        event.register(SuitKeys.SCREEN);
         event.register(CombatKeys.PARRY);
         event.register(CombatKeys.ROLL);
         for (var k : CombatKeys.CAST)

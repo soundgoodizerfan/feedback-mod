@@ -5,6 +5,7 @@
     "feedback:anvil",
     "feedback:arc_head",
     "feedback:arc_hearth",
+    "feedback:ballast_tank",
     "feedback:battery",
     "feedback:bearing",
     "feedback:bellows",
@@ -87,6 +88,9 @@
     "feedback:fuse",
     "feedback:galvanic_cell",
     "feedback:galvanic_cell_pack",
+    "feedback:gas_cell_cloth",
+    "feedback:gas_cell_plate",
+    "feedback:gas_cell_rubber",
     "feedback:gas_centrifuge",
     "feedback:gas_tank",
     "feedback:gas_turbine",
@@ -144,6 +148,7 @@
     "feedback:pressure_vessel",
     "feedback:programmed_junction",
     "feedback:programmer",
+    "feedback:propeller",
     "feedback:puddling_furnace",
     "feedback:pump",
     "feedback:pvc_pipe",
@@ -213,12 +218,14 @@
     "feedback:vacuum_dryer",
     "feedback:vacuum_pump",
     "feedback:valve",
+    "feedback:vent_valve",
     "feedback:water_wheel",
     "feedback:wellhead",
     "feedback:whisker",
     "feedback:wide_tube",
     "feedback:wire_drawer",
     "feedback:wrought_iron_pipe",
-    "feedback:zinc_pipe"
+    "feedback:zinc_pipe",
+    "feedback:charging_gantry"
   ]
 }

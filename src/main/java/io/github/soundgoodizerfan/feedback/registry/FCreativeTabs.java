@@ -297,6 +297,7 @@ public class FCreativeTabs {
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
                         output.accept(FItems.ELECTROLYSER.get());
                         output.accept(FItems.CHARGER.get());
+                        output.accept(FItems.CHARGING_GANTRY.get());
                         output.accept(FItems.RECTIFIER.get());
                         output.accept(FItems.CONVERTER.get());
                         output.accept(FItems.CONVERTER_TAP.get());
