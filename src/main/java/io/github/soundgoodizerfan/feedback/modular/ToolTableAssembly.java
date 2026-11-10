@@ -342,7 +342,7 @@ public final class ToolTableAssembly {
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             ModularType t = e.getValue();
             // A gun carries more optional parts than its table has slots, by design: it takes a pick of them, so only its base form must fit.
-            int extras = t.family() == ModularType.Family.GUN ? 0 : t.extras().size();
+            int extras = t.family() == ModularType.Family.GUN || t.family() == ModularType.Family.SUIT_MODULE ? 0 : t.extras().size();
             for (Map<String, Integer> form : t.forms()) {
                 if (form.size() + extras > slots(t))
                     out.add(e.getKey() + " has up to " + (form.size() + extras) + " roles in " + form + (extras > 0 ? " and every optional part" : "") + ", more than the " + slots(t) + " slots of its table");

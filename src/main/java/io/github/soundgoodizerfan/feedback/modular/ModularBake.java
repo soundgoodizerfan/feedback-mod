@@ -388,10 +388,11 @@ public final class ModularBake {
             // the held module's own baked figures: what it is and how strongly it works, and how well it is wired
             case "upgrade" -> {
                 ModularFigures held = ModularNest.figures(part);
-                int piece = Math.round(held == null ? 0f : held.get(Fig.SUIT_PIECE));
-                if (held != null && held.get(Fig.SUIT_MODULE) > 0f && (piece == 0 || piece == type.slot().ordinal() - 1)) {
-                    f.put(Fig.SUIT_MODULE, held.get(Fig.SUIT_MODULE));
-                    f.put(Fig.SUIT_POWER, held.get(Fig.SUIT_POWER));
+                if (held != null && held.get(Fig.SUIT_ATT_1) > 0f) {
+                    for (int i = 0; i < Fig.ATTACHMENTS; i++) {
+                        f.put(Fig.att(i), held.get(Fig.att(i)));
+                        f.put(Fig.pow(i), held.get(Fig.pow(i)));
+                    }
                     f.put(Fig.SUIT_WIRING, held.get(Fig.SUIT_WIRING));
                 }
             }
@@ -400,36 +401,46 @@ public final class ModularBake {
     }
 
     /**
-     * What a suit module's core is and how hard it works. The core's shape (its variant) names the module and the property of its
-     * material that makes it work, with the figure that is full strength; the material's share of that figure is the power
-     * ({@code SUIT_POWER_MIN} to {@code SUIT_POWER_MAX}). The wiring's conductor, over its cells, sets how much of the module's draw
-     * becomes waste. Empty if the core is not cut in a module shape.
+     * What a suit module is: its attachments (each a part of one mechanism, cut in a variant that is the upgrade) and how hard each
+     * works. A variant names the upgrade ({@code module} param) and the property of the attachment's material that makes it work,
+     * with the figure that is full strength; the material's share of that figure is its power ({@code SUIT_POWER_MIN} to
+     * {@code SUIT_POWER_MAX}). The wiring's conductor, over its cells, sets how much of the module's draw becomes waste and how many
+     * attachments it can feed ({@code WIRING_AMPS_PER_ATTACHMENT}). Empty with no attachment, one that is not cut in an upgrade
+     * shape, or more than the wiring feeds.
      */
     private static Optional<Map<Fig, Float>> suitModule(ModularType type, Map<String, Material> by, ModularDesign design) {
-        Part core = design.part("C"), wiring = design.part("W");
-        if (core == null || wiring == null || by.get("C") == null || by.get("W") == null)
+        Part wiring = design.part("W");
+        if (wiring == null || by.get("W") == null)
             return Optional.empty();
-        Optional<ModularType.Variant> v = type.roles().get("C").variant(core);
-        if (v.isEmpty() || v.get().params().getOrDefault("module", 0f) <= 0f)
-            return Optional.empty();
-        Map<String, Float> k = v.get().params();
-        Material m = by.get("C");
-        float power = 1f;
-        if (k.containsKey("thermal"))
-            power = m.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) / k.get("thermal");
-        else if (k.containsKey("electric"))
-            power = m.ampacity().orElse(0f) / k.get("electric");
-        else if (k.containsKey("competence"))
-            power = competence(m) / k.get("competence");
-        else if (k.containsKey("optic"))
-            power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
         float amps = by.get("W").ampacity().orElse(0f) * stockCells(type.roles().get("W"), wiring);
-        float wired = ModularTuning.WIRING_WORST + (ModularTuning.WIRING_BEST - ModularTuning.WIRING_WORST) * (amps / (amps + ModularTuning.WIRING_HALF_AMPS));
+        int budget = Math.min(Fig.ATTACHMENTS, Math.max(1, (int) (amps / ModularTuning.WIRING_AMPS_PER_ATTACHMENT)));
         Map<Fig, Float> out = new EnumMap<>(Fig.class);
-        out.put(Fig.SUIT_MODULE, k.get("module"));
-        out.put(Fig.SUIT_POWER, clamp(power, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
-        out.put(Fig.SUIT_WIRING, wired);
-        out.put(Fig.SUIT_PIECE, k.getOrDefault("piece", 0f));
+        int n = 0;
+        for (Part p : design.parts()) {
+            ModularType.Role role = type.roles().get(p.role());
+            if (!role.name().startsWith("module_") || by.get(p.role()) == null)
+                continue;
+            Optional<ModularType.Variant> v = role.variant(p);
+            if (v.isEmpty() || v.get().params().getOrDefault("module", 0f) <= 0f || n >= budget)
+                return Optional.empty();
+            Map<String, Float> k = v.get().params();
+            Material m = by.get(p.role());
+            float power = 1f;
+            if (k.containsKey("thermal"))
+                power = m.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) / k.get("thermal");
+            else if (k.containsKey("electric"))
+                power = m.ampacity().orElse(0f) / k.get("electric");
+            else if (k.containsKey("competence"))
+                power = competence(m) / k.get("competence");
+            else if (k.containsKey("optic"))
+                power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
+            out.put(Fig.att(n), k.get("module"));
+            out.put(Fig.pow(n), clamp(power, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
+            n++;
+        }
+        if (n == 0)
+            return Optional.empty();
+        out.put(Fig.SUIT_WIRING, ModularTuning.WIRING_WORST + (ModularTuning.WIRING_BEST - ModularTuning.WIRING_WORST) * (amps / (amps + ModularTuning.WIRING_HALF_AMPS)));
         return Optional.of(out);
     }
 

@@ -179,14 +179,25 @@ public record ModularFigures(List<Float> values, int step) {
         SUIT_SENSE,
         /** 1 when the piece has a battery bay (the plate that holds it), else 0. */
         SUIT_BAY,
-        /** The id of the suit upgrade the piece carries (see {@code suit/SuitModules}), 0 for none. */
-        SUIT_MODULE,
-        /** How strongly that upgrade works, from the material its core is cut in (0.25 to 1.5). */
-        SUIT_POWER,
+        /** The ids of the suit upgrades the piece's module carries (see {@code suit/SuitModules}), one figure per attachment, 0 for none. */
+        SUIT_ATT_1, SUIT_ATT_2, SUIT_ATT_3, SUIT_ATT_4,
+        /** How strongly each of those upgrades works, from the material its attachment is cut in (0.25 to 1.5), in the same order. */
+        SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4,
         /** A suit module's draw multiplier from its wiring: heavy conductor runs it cooler (below 1), thin wire wastes more (above 1). 0 where no module is held. */
-        SUIT_WIRING,
-        /** The armour piece a suit module is built for: 1 helmet, 2 chestplate, 3 leggings, 4 boots, 0 for any. A piece takes no other. */
-        SUIT_PIECE
+        SUIT_WIRING;
+
+        /** Most attachments one module carries. */
+        public static final int ATTACHMENTS = 4;
+
+        /** The attachment figure of attachment {@code i}, 0 to {@link #ATTACHMENTS} - 1. */
+        public static Fig att(int i) {
+            return values()[SUIT_ATT_1.ordinal() + i];
+        }
+
+        /** The power figure of attachment {@code i}. */
+        public static Fig pow(int i) {
+            return values()[SUIT_POW_1.ordinal() + i];
+        }
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

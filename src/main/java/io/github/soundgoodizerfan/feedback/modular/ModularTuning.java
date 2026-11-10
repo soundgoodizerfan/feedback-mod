@@ -170,6 +170,8 @@ public final class ModularTuning {
     public static final float SUIT_POWER_MIN = 0.25f, SUIT_POWER_MAX = 1.5f;
     /** A module's draw multiplier runs from thin wire to heavy conductor: {@code WIRING_WORST} down to {@code WIRING_BEST}, the wiring's ampacity over cells half-saturating at {@code WIRING_HALF_AMPS}. */
     public static final float WIRING_WORST = 1.3f, WIRING_BEST = 0.7f, WIRING_HALF_AMPS = 12f;
+    /** Amps of wiring (ampacity times cells) per attachment a module can feed, at least one. */
+    public static final float WIRING_AMPS_PER_ATTACHMENT = 8f;
     /** Plate this saturated gives armour toughness, running 0 to 3 over the last tenth: steel a little, diamond and netherite most. */
     public static final float TOUGHNESS_FROM_SHARE = 0.9f;
     public static final float TOUGHNESS_MAX = 3f;

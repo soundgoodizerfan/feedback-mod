@@ -119,18 +119,20 @@ public final class ExoSuit {
         }
         float[] mod = null;
         for (ItemStack s : List.of(head, chest, legs, feet)) {
-            int id = Math.round(fig(s, Fig.SUIT_MODULE));
-            if (id > 0 && id < io.github.soundgoodizerfan.feedback.suit.SuitModules.COUNT) {
-                if (mod == null)
-                    mod = new float[io.github.soundgoodizerfan.feedback.suit.SuitModules.COUNT];
-                mod[id] = Math.max(mod[id], fig(s, Fig.SUIT_POWER));
+            for (int i = 0; i < Fig.ATTACHMENTS; i++) {
+                int id = Math.round(fig(s, Fig.att(i)));
+                if (id > 0 && id < SuitModules.COUNT) {
+                    if (mod == null)
+                        mod = new float[SuitModules.COUNT];
+                    mod[id] = Math.max(mod[id], fig(s, Fig.pow(i)));
+                }
             }
         }
         float wiring = 0f;
         int held = 0;
         for (ItemStack s : List.of(head, chest, legs, feet)) {
             float w = fig(s, Fig.SUIT_WIRING);
-            if (w > 0f && Math.round(fig(s, Fig.SUIT_MODULE)) > 0) {
+            if (w > 0f && Math.round(fig(s, Fig.SUIT_ATT_1)) > 0) {
                 wiring += w;
                 held++;
             }
