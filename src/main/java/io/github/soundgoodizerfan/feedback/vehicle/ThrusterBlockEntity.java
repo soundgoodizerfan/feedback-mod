@@ -7,6 +7,7 @@ import org.joml.Vector3d;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import dev.ryanhcode.sable.api.physics.force.ForceTotal;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
+import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
@@ -15,6 +16,7 @@ import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.FuelBlend;
 
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -77,7 +79,10 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
 
     /** Air by place: an atmosphere, with the nozzle in the open. */
     private boolean hasAir(Level level) {
-        return AirDensityTable.oxygen(level) && AirDensityTable.at(level) >= FTuning.THRUSTER_MIN_AIR_DENSITY && level.getFluidState(worldPosition).isEmpty();
+        double y = worldPosition.getY();
+        if (SableCompanion.INSTANCE.getContaining(this) instanceof ServerSubLevel body)
+            y = body.logicalPose().transformPosition(Vec3.atCenterOf(worldPosition)).y;
+        return AirDensityTable.oxygen(level) && AirDensityTable.at(level, y) >= FTuning.THRUSTER_MIN_AIR_DENSITY && level.getFluidState(worldPosition).isEmpty();
     }
 
     public void tickServer() {

@@ -171,7 +171,7 @@ public final class Drivetrain {
     /** Pad wear piled up by misuse since the last {@link #wearPads}; filled on the physics step. */
     private final Map<Integer, Double> padWear = new java.util.concurrent.ConcurrentHashMap<>();
 
-    public void rebuild(Frame frame) {
+    public void rebuild(Frame frame, java.util.function.IntFunction<Integer> groupOf) {
         welds.clear();
         lines.clear();
         sums.clear();
@@ -249,7 +249,7 @@ public final class Drivetrain {
         Direction[] faces = {Direction.EAST, Direction.WEST, Direction.UP, Direction.DOWN, Direction.SOUTH, Direction.NORTH};
         for (int i = 0; i < 6; i++)
             vdrag[i] = frame.vdrag(Vec3.atLowerCornerOf(faces[i].getNormal()), p -> !frame.isWing(p)).areaBlocks2();
-        wings.build(frame);
+        wings.build(frame, groupOf);
     }
 
     /**
@@ -757,11 +757,11 @@ public final class Drivetrain {
             double area = Math.max(dir.x, 0) * vdrag[0] + Math.max(-dir.x, 0) * vdrag[1]
                     + Math.max(dir.y, 0) * vdrag[2] + Math.max(-dir.y, 0) * vdrag[3]
                     + Math.max(dir.z, 0) * vdrag[4] + Math.max(-dir.z, 0) * vdrag[5];
-            bodyForces.applyLinearImpulse(dir.mul(-FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level) * area * speed * speed * dt));
+            bodyForces.applyLinearImpulse(dir.mul(-FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level, pose.position().y()) * area * speed * speed * dt));
             any = true;
         }
-        if (wings.tick(bodyForces, mass, pose, handle, origin,
-                FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level), dt))
+        if (wings.tick(level, frame, bodyForces, mass, pose, handle, subLevel, origin,
+                FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level, pose.position().y()), dt))
             any = true;
         if (any)
             handle.applyForcesAndReset(bodyForces);

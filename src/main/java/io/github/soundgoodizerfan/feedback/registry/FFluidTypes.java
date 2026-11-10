@@ -113,6 +113,8 @@ public final class FFluidTypes {
     public static final DeferredHolder<FluidType, FluidType> NITROGEN = petroType("nitrogen", -1, 20, 300);
     /** The air gases of the cryogenic route: argon (a gas) and the two cold liquids, liquid air and oxygen-rich liquid. */
     public static final DeferredHolder<FluidType, FluidType> ARGON = petroType("argon", -1, 20, 300);
+    /** The lightest noble gas: lift gas that never burns. */
+    public static final DeferredHolder<FluidType, FluidType> HELIUM = petroType("helium", -4, 10, 300);
     public static final DeferredHolder<FluidType, FluidType> LIQUID_AIR = petroType("liquid_air", 870, 200, 80);
     public static final DeferredHolder<FluidType, FluidType> LIQUID_OXYGEN = petroType("liquid_oxygen", 1140, 200, 90);
     /** The Nether arc: mixed magma melt (denser than any metal slag, hot) and wisp gas liquefied. */

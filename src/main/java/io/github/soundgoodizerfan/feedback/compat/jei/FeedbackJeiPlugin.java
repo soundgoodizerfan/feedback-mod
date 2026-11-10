@@ -319,6 +319,12 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FModular.ENCHANTING_TABLE_ITEM.get(), "enchanting_table");
         info(registration, FModular.BLUEPRINT.get(), "modular_blueprint");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_ITEM.get(), "engine");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.PROPELLER_ITEM.get(), "propeller");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_CLOTH_ITEM.get(), "gas_cell");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_RUBBER_ITEM.get(), "gas_cell");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_PLATE_ITEM.get(), "gas_cell");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.VENT_VALVE_ITEM.get(), "vent_valve");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.BALLAST_TANK_ITEM.get(), "ballast_tank");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_ITEM.get(), "transmission");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get(), "gun_table");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(), "reloading_press");

@@ -16,6 +16,10 @@
       {
         "fluid": "feedback:hydrogen",
         "mb": 250
+      },
+      {
+        "fluid": "feedback:helium",
+        "mb": 100
       }
     ]
   }

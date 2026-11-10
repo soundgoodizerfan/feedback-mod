@@ -295,6 +295,10 @@ public final class FFluids {
             FLUIDS.register("argon", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.ARGON, FFluids.ARGON, FFluids.ARGON_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> ARGON_FLOWING =
             FLUIDS.register("argon_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.ARGON, FFluids.ARGON, FFluids.ARGON_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HELIUM =
+            FLUIDS.register("helium", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.HELIUM, FFluids.HELIUM, FFluids.HELIUM_FLOWING)));
+    public static final DeferredHolder<Fluid, Fluid> HELIUM_FLOWING =
+            FLUIDS.register("helium_flowing", () -> new BaseFlowingFluid.Flowing(petro(FFluidTypes.HELIUM, FFluids.HELIUM, FFluids.HELIUM_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> LIQUID_AIR =
             FLUIDS.register("liquid_air", () -> new BaseFlowingFluid.Source(petro(FFluidTypes.LIQUID_AIR, FFluids.LIQUID_AIR, FFluids.LIQUID_AIR_FLOWING)));
     public static final DeferredHolder<Fluid, Fluid> LIQUID_AIR_FLOWING =

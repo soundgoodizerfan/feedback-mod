@@ -21,4 +21,5 @@ Everything that moves through air is slowed, in proportion to the **square of it
 
 - Overworld air is the reference density; the Nether's is a little thicker, and the **End is very thin** (about a twentieth of the Overworld's): wings and rotors barely bite and drag is small, and it has no oxygen, so a thruster there burns only fuel that brings its own.
 - A body with a thruster is also held to a speed ceiling of about **40 blocks a second**, so it cannot fly through walls.
+- In the Overworld the air also thins with height (see [air density](Vehicles.md#air-density)), so drag falls as a craft climbs.
 - A car built on a drive line drags by its own silhouette instead ([Vehicles](Vehicles.md#connecting-to-the-drive)).

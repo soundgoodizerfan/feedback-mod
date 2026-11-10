@@ -1,0 +1,114 @@
+{
+  "family": "propeller",
+  "slot": "mainhand",
+  "wear_litres": 0.25,
+  "wear_role": "H",
+  "primary": "B",
+  "blueprint": true,
+  "roles": {
+    "H": {
+      "name": "prop_hub",
+      "forms": [
+        "prop_hub"
+      ],
+      "litres": 0.125,
+      "layer": 0,
+      "part": {
+        "item": "feedback:prop_hub",
+        "shape": [
+          "HH"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "three_blade",
+        "variants": [
+          {
+            "name": "two_blade",
+            "shape": [
+              "H"
+            ],
+            "params": {
+              "blades": 2,
+              "mass": 0.8
+            }
+          },
+          {
+            "name": "three_blade",
+            "params": {
+              "blades": 3,
+              "mass": 1.0
+            }
+          },
+          {
+            "name": "four_blade",
+            "shape": [
+              "HH",
+              "H"
+            ],
+            "params": {
+              "blades": 4,
+              "mass": 1.2
+            }
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "prop_blades",
+      "forms": [
+        "prop_blades"
+      ],
+      "litres": 0.125,
+      "layer": 1,
+      "dims": {
+        "diameter": {
+          "min": 80,
+          "max": 600,
+          "unit": "cm",
+          "default": 200,
+          "step": 10
+        }
+      },
+      "part": {
+        "item": "feedback:prop_blades",
+        "shape": [
+          "BB"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "medium_pitch",
+        "variants": [
+          {
+            "name": "fine_pitch",
+            "params": {
+              "pitch": 0
+            }
+          },
+          {
+            "name": "medium_pitch",
+            "params": {
+              "pitch": 1
+            }
+          },
+          {
+            "name": "coarse_pitch",
+            "params": {
+              "pitch": 2
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "HB"
+    ]
+  ],
+  "defaults": {
+    "H": "feedback:steel",
+    "B": "feedback:aluminium"
+  }
+}

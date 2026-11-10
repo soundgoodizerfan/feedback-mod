@@ -177,6 +177,7 @@ public final class ModularBake {
             case BELT -> !wear || (material.mechanical().friction().isPresent() && material.thermal().serviceTemperature().isPresent());
             case ENGINE -> engineMetal(material) && (!(roleKey.equals(ENGINE_PISTONS) || roleKey.equals(ENGINE_CRANK)) || material.mechanical().yieldStrength().isPresent());
             case GEARBOX -> engineMetal(material);
+            case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
             // A coilgun's winding is a conductor that holds a field and has a quench point: the rest cannot wind a gun.
             case GUN -> !roleKey.equals("W") || io.github.soundgoodizerfan.feedback.weapon.GunSpec.windable(material);
             case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
@@ -228,6 +229,8 @@ public final class ModularBake {
 
     /** The role letters of the engine's four parts and the gearbox's three. */
     public static final String ENGINE_BLOCK = "K", ENGINE_PISTONS = "P", ENGINE_CRANK = "C", ENGINE_HEAD = "H";
+    /** The role letters of the propeller's two parts. */
+    public static final String PROP_HUB = "H", PROP_BLADES = "B";
     public static final String GEAR_SET = "G", GEAR_SYNCHRO = "S", GEAR_CASE = "H";
 
     /** A weighed metal: what an engine or gearbox part is cast from. */
@@ -290,6 +293,29 @@ public final class ModularBake {
         float mass = param(type, block, "mass", 1f) * massBlend(design, type, materials, pm, ENGINE_BLOCK, ENGINE_CRANK, ENGINE_HEAD);
         return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign(cylinders, bore, stroke, pistons.material(),
                 compression, torque, rev, mass));
+    }
+
+    /**
+     * The propeller a design makes. The hub's variant is the blade count ({@code blades}) and its {@code mass}; the blades' variant
+     * is the pitch (0 fine, 1 medium, 2 coarse) and their {@code diameter} dim the sweep in cm. The blades' metal is the
+     * propeller's (it sets the tip speed it survives); the hub's metal weighs it. Empty if a part is missing or a metal does not suit.
+     */
+    public static Optional<io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign> propeller(ModularDesign design, ModularType type,
+                                                                                                  Map<ResourceLocation, Material> materials) {
+        Part hub = design.part(PROP_HUB), blades = design.part(PROP_BLADES);
+        if (hub == null || blades == null)
+            return Optional.empty();
+        for (Part p : design.parts()) {
+            Material m = materials.get(p.material());
+            if (m == null || !suits(type, p.role(), m))
+                return Optional.empty();
+        }
+        Material bm = materials.get(blades.material());
+        int count = Math.round(param(type, hub, "blades", 3f));
+        int diameter = Math.round(type.roles().get(PROP_BLADES).dim(blades, "diameter"));
+        int pitch = Math.round(param(type, blades, "pitch", 1f));
+        float mass = param(type, hub, "mass", 1f) * massBlend(design, type, materials, bm, PROP_HUB, PROP_BLADES);
+        return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign(count, diameter, pitch, blades.material(), mass));
     }
 
     /**
@@ -629,8 +655,12 @@ public final class ModularBake {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 f.put(Fig.MASS, total);
             }
-            case ENGINE, GEARBOX -> {
-                if (type.family() == ModularType.Family.ENGINE ? engine(design, type, materials).isEmpty() : gearbox(design, type, materials).isEmpty())
+            case ENGINE, GEARBOX, PROPELLER -> {
+                if (switch (type.family()) {
+                    case ENGINE -> engine(design, type, materials).isEmpty();
+                    case PROPELLER -> propeller(design, type, materials).isEmpty();
+                    default -> gearbox(design, type, materials).isEmpty();
+                })
                     return Optional.empty();
                 float total = 0;
                 for (Part p : design.parts())

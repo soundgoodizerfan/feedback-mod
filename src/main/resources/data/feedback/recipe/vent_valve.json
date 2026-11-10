@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "P": { "item": "feedback:steel_plate" }, "B": { "item": "minecraft:iron_bars" }, "L": { "item": "minecraft:lever" } },
+  "pattern": ["PBP"," L "],
+  "result": { "count": 1, "id": "feedback:vent_valve" }
+}

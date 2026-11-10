@@ -162,6 +162,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         ENGINE,
         /** A gearbox ({@code transmission}): gears, synchronisers and case, whose bake is the {@link ModularBake#gearbox} design the placed block runs on. */
         GEARBOX,
+        /** An aircraft propeller ({@code propeller}): hub and blades, whose bake is the {@link ModularBake#propeller} design the placed block runs on. */
+        PROPELLER,
         MACHINE;
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);

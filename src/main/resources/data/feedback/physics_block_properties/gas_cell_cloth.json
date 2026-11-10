@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:gas_cell_cloth",
+  "properties": {
+    "sable:mass": 0.001
+  }
+}

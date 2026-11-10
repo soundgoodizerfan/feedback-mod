@@ -36,7 +36,6 @@ public final class AirDrag {
     public static void onPhysicsTick(ForgeSablePrePhysicsTickEvent event) {
         ServerLevel level = event.getPhysicsSystem().getLevel();
         double dt = event.getTimeStep();
-        double density = AirDensityTable.at(level);
         var bodies = ServerSubLevelContainer.getContainer(level).getAllSubLevels();
 
         Set<UUID> frameBodies = new HashSet<>();
@@ -59,6 +58,7 @@ public final class AirDrag {
             if (speed < 1e-3)
                 continue;
             double mass = body.getMassTracker().getMass();
+            double density = AirDensityTable.at(level, body.logicalPose().position().y());
             Vector3d back = body.logicalPose().transformNormalInverse(new Vector3d(vel).div(speed), new Vector3d()).negate();
             ForceTotal force = new ForceTotal();
             if (density > 0 && !frameBodies.contains(body.getUniqueId()))

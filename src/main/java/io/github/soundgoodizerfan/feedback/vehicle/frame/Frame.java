@@ -94,7 +94,11 @@ public final class Frame {
      * a kingpin turned to an angle by the frame's steering level, through a servo no stronger than
      * the driver's arm ({@link FrameBlockEntity}, spec section 5, <em>Steering</em>).
      */
-    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers, int differential, int band) {
+    public record Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers, int differential, int band, int surface) {
+        public Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives, boolean steers, int differential, int band) {
+            this(kind, axis, drives, steers, differential, band, 0);
+        }
+
         public Pivot(FrameJoint.Kind kind, Vec3 axis, boolean drives) {
             this(kind, axis, drives, false, NO_DIFFERENTIAL, Tire.STOCK);
         }
@@ -111,16 +115,21 @@ public final class Frame {
         }
 
         public Pivot withDrive(boolean drives) {
-            return new Pivot(kind, axis, drives, steers, drives ? differential : NO_DIFFERENTIAL, band);
+            return new Pivot(kind, axis, drives, steers, drives ? differential : NO_DIFFERENTIAL, band, surface);
         }
 
         public Pivot withAxis(Vec3 axis) {
-            return new Pivot(kind, axis, drives, steers, differential, band);
+            return new Pivot(kind, axis, drives, steers, differential, band, surface);
+        }
+
+        /** A control surface: 0 none, else roll (1), pitch (2) or yaw (3), negative for the opposite sense. A surface is never steered. */
+        public Pivot withSurface(int surface) {
+            return new Pivot(kind, axis, drives, false, differential, band, surface);
         }
 
         /** A slider's spring band, soft / stock / stiff: an index into {@code FTuning.SUSPENSION_HZ}. */
         public Pivot withBand(int band) {
-            return new Pivot(kind, axis, drives, steers, differential, band);
+            return new Pivot(kind, axis, drives, steers, differential, band, surface);
         }
 
         /**
@@ -128,7 +137,7 @@ public final class Frame {
          * (a differential, spec 5 step 3: open, limited slip or locked). Only a driving point can be one.
          */
         public Pivot withDifferential(int differential) {
-            return new Pivot(kind, axis, drives, steers, drives ? differential : NO_DIFFERENTIAL, band);
+            return new Pivot(kind, axis, drives, steers, drives ? differential : NO_DIFFERENTIAL, band, surface);
         }
 
         /**
@@ -345,7 +354,7 @@ public final class Frame {
             pivots.remove(id);
         else
             pivots.put(id, pivot);
-        if (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers())
+        if (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers() || pivot.surface() != 0)
             tires.remove(id);
     }
 
@@ -358,7 +367,7 @@ public final class Frame {
     /** Makes hinge point {@code id} a hub, or takes its tire off with {@code null}. Refused on any other point, a kingpin included. */
     public boolean setTire(int id, @org.jetbrains.annotations.Nullable Tire tire) {
         Pivot pivot = pivots.get(id);
-        if (tire != null && (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers()))
+        if (tire != null && (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers() || pivot.surface() != 0))
             return false;
         if (tire == null)
             tires.remove(id);
@@ -702,6 +711,7 @@ public final class Frame {
             e.putDouble("AxisZ", p.axis().z);
             e.putBoolean("Drives", p.drives());
             e.putBoolean("Steers", p.steers());
+            e.putInt("Surface", p.surface());
             e.putInt("Differential", p.differential());
             e.putInt("Band", p.band());
             pv.add(e);
@@ -775,7 +785,8 @@ public final class Frame {
             if (kind.bearing() && vertices.containsKey(e.getInt("Id")))
                 pivots.put(e.getInt("Id"), new Pivot(kind, axis.lengthSqr() < 1e-9 ? new Vec3(0, 1, 0) : axis.normalize(),
                         e.getBoolean("Drives"), kind == FrameJoint.Kind.HINGE && e.getBoolean("Steers"), Math.clamp(e.getInt("Differential"), 0, 3),
-                        e.contains("Band") ? Math.clamp(e.getInt("Band"), 0, 2) : Tire.STOCK));
+                        e.contains("Band") ? Math.clamp(e.getInt("Band"), 0, 2) : Tire.STOCK,
+                        kind == FrameJoint.Kind.HINGE ? Math.clamp(e.getInt("Surface"), -3, 3) : 0));
         }
         for (Tag t : tag.getList("Anchors", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
@@ -787,7 +798,7 @@ public final class Frame {
             CompoundTag e = (CompoundTag) t;
             ResourceLocation material = ResourceLocation.tryParse(e.getString("Material"));
             Pivot pivot = pivots.get(e.getInt("Id"));
-            if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE && !pivot.steers())
+            if (material != null && pivot != null && pivot.kind() == FrameJoint.Kind.HINGE && !pivot.steers() && pivot.surface() == 0)
                 tires.put(e.getInt("Id"), new Tire(material, Math.floorMod(e.getInt("Size"), TIRE_SIZES.length),
                         e.contains("Brake") ? ResourceLocation.tryParse(e.getString("Brake")) : null,
                         e.contains("Suspension") ? Math.floorMod(e.getInt("Suspension"), 3) : Tire.STOCK,

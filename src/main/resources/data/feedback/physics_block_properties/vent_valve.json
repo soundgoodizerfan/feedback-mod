@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:vent_valve",
+  "properties": {
+    "sable:mass": 0.004
+  }
+}

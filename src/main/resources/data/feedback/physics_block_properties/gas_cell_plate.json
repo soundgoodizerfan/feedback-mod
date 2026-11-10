@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:gas_cell_plate",
+  "properties": {
+    "sable:mass": 0.012
+  }
+}

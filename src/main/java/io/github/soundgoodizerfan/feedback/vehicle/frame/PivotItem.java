@@ -51,6 +51,9 @@ import java.util.Locale;
  */
 public class PivotItem extends Item {
 
+    /** The control-surface roles a hinge steps through: roll, pitch, yaw, each then its opposite sense. */
+    private static final java.util.List<Integer> SURFACES = java.util.List.of(1, -1, 2, -2, 3, -3);
+
     public PivotItem(Properties properties) {
         super(properties);
     }
@@ -205,10 +208,12 @@ public class PivotItem extends Item {
             frame.setPivot(hit, was.withDrive(!was.drives()));
         } else {
             boolean hinge = was != null && was.kind() == FrameJoint.Kind.HINGE;
-            // A plain hinge steps to a steered one, which keeps its axis: a kingpin is set by
-            // the same look as the hinge it was.
-            boolean steers = hinge && !was.steers();
-            FrameJoint.Kind next = was == null ? FrameJoint.Kind.HINGE : steers ? FrameJoint.Kind.HINGE : switch (was.kind()) {
+            // A hinge steps through its roles -- plain, steered, then the control surfaces (roll, pitch and
+            // yaw, each in both senses) -- and then on to a ball; every role keeps the hinge's axis, so
+            // one look sets them all.
+            int role = hinge ? (was.steers() ? 1 : was.surface() == 0 ? 0 : 2 + SURFACES.indexOf(was.surface())) : -1;
+            boolean stay = hinge && role + 1 <= 1 + SURFACES.size();
+            FrameJoint.Kind next = was == null ? FrameJoint.Kind.HINGE : stay ? FrameJoint.Kind.HINGE : switch (was.kind()) {
                 case HINGE -> FrameJoint.Kind.BALL;
                 case BALL -> FrameJoint.Kind.LOCKED;
                 case LOCKED -> FrameJoint.Kind.SLIDER;
@@ -219,15 +224,18 @@ public class PivotItem extends Item {
                 Vec3 along = WelderItem.tubeDirection(frame, hit);
                 axis = along != null ? along : WelderItem.nearestAxis(aim.look());
             }
-            frame.setPivot(hit, next == null ? null : new Frame.Pivot(next, axis != null ? axis : new Vec3(0, 1, 0),
-                    was != null && was.drives(), steers));
+            Frame.Pivot made = next == null ? null : new Frame.Pivot(next, axis != null ? axis : new Vec3(0, 1, 0),
+                    was != null && was.drives(), stay && role + 1 == 1);
+            if (made != null && stay && role + 1 >= 2)
+                made = made.withSurface(SURFACES.get(role + 1 - 2));
+            frame.setPivot(hit, made);
         }
         spread(player, be, hit);
         be.changed();
 
         Frame.Pivot now = frame.pivots().get(hit);
         player.displayClientMessage(now == null ? Component.translatable("message.feedback.pivot.cleared")
-                : Component.translatable("message.feedback.pivot." + (now.steers() ? "steered" : now.kind().name().toLowerCase(Locale.ROOT)),
+                : Component.translatable("message.feedback.pivot." + (now.steers() ? "steered" : now.surface() != 0 ? "surface" + now.surface() : now.kind().name().toLowerCase(Locale.ROOT)),
                         String.format("(%.2f, %.2f, %.2f)", now.axis().x, now.axis().y, now.axis().z))
                 .append(Component.translatable(now.drives() ? "message.feedback.pivot.drives" : "message.feedback.pivot.free")), true);
         return InteractionResultHolder.consume(stack);

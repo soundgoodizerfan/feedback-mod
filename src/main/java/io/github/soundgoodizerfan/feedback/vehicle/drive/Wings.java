@@ -11,7 +11,10 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.physics.mass.MassData;
 import dev.ryanhcode.sable.companion.math.Pose3dc;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -37,9 +40,58 @@ final class Wings {
     private int n;
     private double[] nx = new double[0], ny, nz, cx, cy, cz, area, stall, sinStall;
 
-    /** Rebuild from the frame; run only when the frame changed. */
-    void build(Frame f) {
-        var list = f.plates().stream().filter(f::isWing).toList();
+    /** One group's wings each; a plate on a hinged part rides that part's body, so it turns with the hinge. */
+    private record Groups(Wings[] sub, int[] vertex) {
+    }
+
+    /** Published whole, so the physics thread never sees groups half built. */
+    private volatile Groups groups = new Groups(new Wings[0], new int[0]);
+    private final ForceTotal own = new ForceTotal();
+
+    /** Rebuild from the frame, plates split by the group (body) that carries them; run only when the frame changed. */
+    void build(Frame f, java.util.function.IntFunction<Integer> groupOf) {
+        var by = new java.util.LinkedHashMap<Integer, java.util.List<Frame.Plate>>();
+        for (Frame.Plate p : f.plates())
+            if (f.isWing(p)) {
+                Integer g = groupOf.apply(p.a());
+                by.computeIfAbsent(g == null ? Integer.MIN_VALUE : g, k -> new java.util.ArrayList<>()).add(p);
+            }
+        Wings[] built = new Wings[by.size()];
+        int[] vertex = new int[by.size()];
+        int i = 0;
+        for (var list : by.values()) {
+            built[i] = new Wings();
+            built[i].fill(f, list);
+            vertex[i++] = list.get(0).a();
+        }
+        groups = new Groups(built, vertex);
+    }
+
+    /**
+     * Lift and drag for every group: each on the body that carries it (the frame's own, or a hinged
+     * part's), so an aileron deflected on its hinge changes the force on its own plate.
+     * @return whether any impulse was added to {@code out}, the frame body's total.
+     */
+    boolean tick(ServerLevel level, FrameBlockEntity frame, ForceTotal out, MassData mass, Pose3dc pose,
+                 RigidBodyHandle handle, ServerSubLevel base, Vec3 origin, double halfRho, double dt) {
+        boolean any = false;
+        Groups g = groups;
+        Wings[] sub = g.sub();
+        for (int i = 0; i < sub.length; i++) {
+            FrameBlockEntity.Mount m = frame.mount(level, g.vertex()[i]);
+            if (m == null || m.body() == base) {
+                any |= sub[i].tickOne(out, mass, pose, handle, origin, halfRho, dt);
+                continue;
+            }
+            RigidBodyHandle h = RigidBodyHandle.of(m.body());
+            if (h != null && sub[i].tickOne(sub[i].own, m.body().getMassTracker(), m.body().logicalPose(), h,
+                    Vec3.atLowerCornerOf(m.origin()), halfRho, dt))
+                h.applyForcesAndReset(sub[i].own);
+        }
+        return any;
+    }
+
+    private void fill(Frame f, java.util.List<Frame.Plate> list) {
         n = list.size();
         nx = new double[n]; ny = new double[n]; nz = new double[n];
         cx = new double[n]; cy = new double[n]; cz = new double[n];
@@ -62,7 +114,7 @@ final class Wings {
             imp = new Vector3d();
 
     /** @return whether any impulse was added. {@code halfRho} is half the air density in kpg per block^3. */
-    boolean tick(ForceTotal out, MassData mass, Pose3dc pose, RigidBodyHandle handle, Vec3 origin, double halfRho, double dt) {
+    private boolean tickOne(ForceTotal out, MassData mass, Pose3dc pose, RigidBodyHandle handle, Vec3 origin, double halfRho, double dt) {
         Vector3dc com = mass.getCenterOfMass();
         if (n == 0 || halfRho <= 0 || com == null)
             return false;

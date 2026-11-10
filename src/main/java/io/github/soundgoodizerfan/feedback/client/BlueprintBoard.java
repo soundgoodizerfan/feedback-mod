@@ -622,7 +622,7 @@ final class BlueprintBoard {
         return switch (t.family()) {
             case BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, GUN, CHARGE -> 1;
             case ARMOUR, GLOVE, BACKPACK, BEDROLL -> 2;
-            case CELL, MACHINE, BELT, ENGINE, GEARBOX, HEAD, VESSEL -> 3;
+            case CELL, MACHINE, BELT, ENGINE, GEARBOX, PROPELLER, HEAD, VESSEL -> 3;
             case DISH -> 4;
             default -> 0;
         };

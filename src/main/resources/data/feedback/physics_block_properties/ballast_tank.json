@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:ballast_tank",
+  "properties": {
+    "sable:mass": 0.02
+  }
+}

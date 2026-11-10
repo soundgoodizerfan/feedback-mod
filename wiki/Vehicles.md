@@ -11,10 +11,12 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Lift** | The stand you build on. Turns what's on it into a single moving object. |
 | **Chassis Frame** | The block a welded frame is built around. |
 | **Welder** | Places points, joins them with tubes, lays plates between them, and welds points to blocks. |
-| **Pivot Setter** | Turns a point into a hinge, a ball joint or a locked joint. |
+| **Pivot Setter** | Turns a point into a hinge, a steered hinge, a control surface, a ball joint or a locked joint. |
 | **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the Tool Table. |
 | **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the Tool Table. |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
+| **[Propeller](Propeller.md)** | Pulls the whole body along its facing from a turning shaft. |
+| **[Gas Cell](Gas_Cell.md)** | Holds a lift gas; an [Airship](Airship.md) floats on a block of them. |
 | **[Flight Sensor](Instruments.md#flight-sensor)** | Reads altitude, airspeed, pitch or roll for a program. |
 | **Driver's Seat** | Sit in it; your keyboard becomes the car's controls. |
 
@@ -115,9 +117,10 @@ Parts that swing on a joint collide with the rest of the frame: an arm swung int
 
 Look at a point and right-click:
 
-- On a point of a frame: cycles **plain → hinge → steered hinge → ball → locked → slider → plain**.
+- On a point of a frame: cycles **plain → hinge → steered hinge → aileron → reversed aileron → elevator → reversed elevator → rudder → reversed rudder → ball → locked → slider → plain**.
   - **Hinge** turns about one axis only. If one tube runs through the point, it turns around that tube, like a shaft. Otherwise it turns around the grid axis nearest to where you're looking.
   - **Steered hinge** is a hinge that always cuts the frame: the part beyond it (the knuckle) moves on its own, and the vehicle's steering level turns it, up to about 34° either way. See [Steering](#steering).
+  - **Aileron, elevator and rudder** are hinges that deflect with the frame's roll, pitch or yaw command, up to about 29 degrees; the reversed kind deflects the opposite way. See [Control Surfaces](Control_Surfaces.md).
   - **Ball** turns freely in every direction.
   - **Slider** is a spring: the part beyond it slides along the point's axis, held at rest by a spring and a shock. How far it can travel depends on the **material of the strongest tube meeting the point** (a tougher metal travels further, a weaker one less). Hold a Pivot tool in each hand and sneak-right-click it to pick **soft**, **stock** or **stiff**. Pushed against the end of its travel for three quarters of a second, the spring **snaps** and the point becomes a loose ball joint; set it back to a slider to fit a new one.
   - **Locked** is rigid, but you can switch it back. A locked joint doesn't split the frame: both sides move as one piece.
@@ -175,7 +178,19 @@ Each driven tire pushes the car, and pushes back on the shaft: the engine feels 
 
 The car also pays **air drag**, from the silhouette of what you welded: the bigger its face to the wind, the more power it takes to go fast.
 
-Every moving body is slowed by the air, in proportion to its speed **squared** and the dimension's **air density**: twice as fast is four times the drag. A craft pushed by [Thrusters](Thruster.md) tops out where its push equals the drag, about 20 blocks a second for one standard thruster and higher with more. The Nether's air is a little thicker than the Overworld's and the **End has none**: no drag there, and no air for a thruster to burn. A drive-line car drags by its welded silhouette (above) instead, and a body with a thruster is held to about 40 blocks a second so it cannot fly through walls.
+Every moving body is slowed by the air, in proportion to its speed **squared** and the dimension's **air density**: twice as fast is four times the drag. A craft pushed by [Thrusters](Thruster.md) tops out where its push equals the drag, about 20 blocks a second for one standard thruster and higher with more. The Nether's air is a little thicker than the Overworld's and the **End's is very thin** and holds no oxygen for a thruster to burn. A drive-line car drags by its welded silhouette (above) instead, and a body with a thruster is held to about 40 blocks a second so it cannot fly through walls.
+
+### Air density
+
+Air thins with height in the Overworld, and wings, [propellers](Propeller.md) and the lift of [gas cells](Gas_Cell.md) all weaken with it:
+
+| Height | Density |
+| --- | --- |
+| y 62 | 1.0 |
+| y 128 | 0.75 |
+| y 192 | 0.5 |
+| y 256 | 0.3 |
+| y 320 | 0.15 |
 
 ## Reading a frame
 
@@ -205,7 +220,7 @@ A card that points at a part of a vehicle (a frame, an engine, a seat) remembers
 
 ### Steering
 
-A [Frame](#building-a-frame) is a controllable part too. Link it as a Switch card's target the way you link an engine, and a number sets it: **channel 0 is steering** (−1 to 1), **channel 1 is the brake** (0 to 1). The brake works on every hub with a lining; see [Tires](#tires).
+A [Frame](#building-a-frame) is a controllable part too. Link it as a Switch card's target the way you link an engine, and a number sets it: **channel 0 is steering** (−1 to 1), **channel 1 is the brake** (0 to 1). The brake works on every hub with a lining; see [Tires](#tires). **Channels 2, 3 and 4 are Roll, Pitch and Yaw** for [control surfaces](Control_Surfaces.md).
 
 Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge** with the Pivot Setter, and weld the tie rod between knuckles yourself: with none, each knuckle turns on its own. The steering is held by the driver's arm, so there's a limit to what it can turn: parked, a heavy car's tires scrub and steering is heavy; rolling, it's light. A steered hinge takes no tire: the hub is a hinge beyond it.
 
@@ -214,6 +229,8 @@ Steering is mechanical. Set the hinge at each front knuckle to a **steered hinge
 ## Wings
 
 A big, thin plate in a frame is a wing, and its size decides it, not the material. Moving through air, it pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the plate tilts into the wind, up to a stall angle of roughly 8 to 18 degrees: thin sheets let go earlier. Tilt past that and lift collapses to a fraction while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the plate, a wing behind the center of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only.
+
+A wing plate on a hinged part rides that part's own body, so a deflected [aileron or elevator](Control_Surfaces.md) changes the lift on its own plate.
 
 ## Shove and carry
 

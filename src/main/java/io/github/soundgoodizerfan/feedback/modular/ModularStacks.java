@@ -115,7 +115,8 @@ public final class ModularStacks {
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
                 && type.family() != ModularType.Family.VESSEL && type.family() != ModularType.Family.CELL
                 && type.family() != ModularType.Family.MACHINE && type.family() != ModularType.Family.BELT
-                && type.family() != ModularType.Family.ENGINE && type.family() != ModularType.Family.GEARBOX) {
+                && type.family() != ModularType.Family.ENGINE && type.family() != ModularType.Family.GEARBOX
+                && type.family() != ModularType.Family.PROPELLER) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
@@ -129,6 +130,8 @@ public final class ModularStacks {
             ModularBake.machine(design, type, materials).ifPresent(m -> machineState(stack, m));
         if (type.family() == ModularType.Family.ENGINE)
             ModularBake.engine(design, type, materials).ifPresent(e -> stack.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.ENGINE_DESIGN.get(), e));
+        if (type.family() == ModularType.Family.PROPELLER)
+            ModularBake.propeller(design, type, materials).ifPresent(p -> stack.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.PROP_DESIGN.get(), p));
         if (type.family() == ModularType.Family.GEARBOX)
             ModularBake.gearbox(design, type, materials).ifPresent(t -> stack.set(io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_DESIGN.get(), t));
         if (type.family() == ModularType.Family.BELT)

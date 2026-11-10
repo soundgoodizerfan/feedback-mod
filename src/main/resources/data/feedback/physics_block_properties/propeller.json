@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:propeller",
+  "properties": {
+    "sable:mass": 0.01
+  }
+}

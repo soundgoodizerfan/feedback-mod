@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:gas_cell_rubber",
+  "properties": {
+    "sable:mass": 0.0015
+  }
+}

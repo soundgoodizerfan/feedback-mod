@@ -1,13 +1,13 @@
 # Chemicals
 
-The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, carbon dioxide, leach liquors, liquid teleportant, heavy water, fluorine compounds, bleach, nitrogen, argon, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
+The gases and liquids of the chemical chain: hydrogen and oxygen from the [Electrolyser](Electrolyser.md), brine, lye, acids, carbon dioxide, leach liquors, liquid teleportant, heavy water, fluorine compounds, bleach, nitrogen, argon, helium, ammonia and the molten cryolite bath. Gases are stored in a [Gas Tank](Gas_Tank.md), carried by a [Pipe](Pipe.md) and compressed by a [Gas Compressor](Gas_Compressor.md). Most are made in the [Reactor](Reactor.md).
 
 ## Hydrogen
 
 A very light, flammable gas. The Electrolyser makes it from water.
 
 - **Fuel.** It burns at a flame temperature of **2200 Tu**, hotter than any fuel in [Fuels](Fuels.md). A [Fluid Burner](Fluid_Burner.md), [Gas Turbine](Gas_Turbine.md), [Engine](Engine.md) or [Thruster](Thruster.md) burns it like any other fluid that reaches it.
-- **Light.** It weighs very little for its volume.
+- **Light.** It weighs very little for its volume, so it lifts an [airship](Airship.md) in [Gas Cells](Gas_Cell.md). It burns there too.
 - A flammable gas in a hot line is a [hazard](Hazards.md).
 
 ## Oxygen
@@ -64,7 +64,7 @@ Made in a Reactor from chlorine and lye. Dip a block of dyed wool in a vessel ho
 Air is split into its parts in two ways.
 
 - **Catalyst bed.** A Reactor separates nitrogen from air over a catalyst bed, warm and cheap.
-- **Cold.** A [Reactor](Reactor.md#the-reactions) chilled by a [Cryocooler](Cryocooler.md) liquefies compressed air into **Liquid Air**, boils nitrogen off it into a gas and leaves an **Oxygen-Rich Liquid**, then boils that liquid into **Argon** and oxygen. The cold route is the only source of argon.
+- **Cold.** A [Reactor](Reactor.md#the-reactions) chilled by a [Cryocooler](Cryocooler.md) liquefies compressed air into **Liquid Air**, boils nitrogen off it into a gas and leaves an **Oxygen-Rich Liquid**, then boils that liquid into **Argon** and oxygen. The cold route is the only source of argon. A further cut of cold nitrogen gives [helium](#helium).
 
 ## Nitrogen
 
@@ -73,6 +73,15 @@ The inert part of air. It is the feed for ammonia, and the protective atmosphere
 ## Argon
 
 An inert gas from the last cold cut of air. It does the work of nitrogen as a sintering atmosphere, and takes much less of it: 150 mB in the [Arc Hearth](Arc_Furnace.md#sintering-under-gas) against 300 mB of nitrogen.
+
+## Helium
+
+The lightest noble gas, and a lift gas for an [airship](Airship.md) that never burns. It has two sources:
+
+- **End stone.** Heating [End Stone](End_Stone.md) in a Reactor releases 100 mB of helium along with the hydrogen.
+- **Cold cut.** 100 mB of nitrogen in a Reactor at **-196 to -189 Tu** (best -193) gives 4 mB of helium and returns 96 mB of nitrogen. Too warm and the nitrogen comes back unchanged.
+
+Store it in a [Gas Tank](Gas_Tank.md) and carry it by [Pipe](Pipe.md) like any gas.
 
 ## Osmium tetroxide
 

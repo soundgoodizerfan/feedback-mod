@@ -3857,4 +3857,29 @@ public final class FTuning {
     /** Stages a multi-stage sorting station chains, and the ticks each kind of head needs per load (the station runs at its slowest stage); invented. */
     public static final int SORT_STATION_STAGES = 3, SORT_STAGE_TICKS_MAGNETIC = 4, SORT_STAGE_TICKS_OPTICAL = 8,
             SORT_STAGE_TICKS_WEIGHER = 16;
+
+    /** Placeholder [OPEN]. Gas cells (flight A1): mB one cell block holds (a block is 1000 mB), the most cells one connected group counts, and how far past its rest volume each skin stretches before it weeps (cloth, rubberised, plate). */
+    public static final int GAS_CELL_MB = 1000, GAS_GROUP_MAX_CELLS = 4096;
+    public static final float GAS_STRETCH_CLOTH = 1.15f, GAS_STRETCH_RUBBER = 1.5f, GAS_STRETCH_PLATE = 3f;
+    /** Placeholder [OPEN]. A stretched skin leaks this many mB a tick per unit of stretch past its limit; an arrow or bullet hole leaks this many mB a tick until patched; a patch seals this share of leaks at once (1 = all). */
+    public static final float GAS_LEAK_PER_STRETCH = 4f, GAS_HOLE_LEAK_MB_PER_TICK = 3f;
+    /** Placeholder [OPEN]. A burning cell group: the least share of its gas it loses a tick however slow the fuel's own burn is, how many seconds a creature beside a burning cell is set alight, and the chance a tick a burning cell lights a flammable neighbour. */
+    public static final float GAS_BURN_MIN_SHARE = 0.01f, GAS_BURN_IGNITE_CHANCE = 0.2f;
+    public static final int GAS_BURN_ENTITY_SECONDS = 6;
+    /** Placeholder [OPEN]. The vent valve's flow at full open (mB a tick) and the ballast tank's size (mB) and dump flow at full open (mB a tick). */
+    public static final float VENT_MB_PER_TICK = 25f, BALLAST_DUMP_MB_PER_TICK = 20f;
+    public static final int BALLAST_TANK_MB = 4000;
+    /** Placeholder [OPEN]. A control surface's full deflection, in radians (about 29 degrees); the arm's force limit is the driver's (STEER_ARM_SU). */
+    public static final float SURFACE_MAX_ANGLE = 0.5f;
+    /** Placeholder [OPEN]. A propeller (flight A2): thrust coefficient at zero airspeed and the advance ratio J = V/(nD) where thrust reaches zero, for fine, medium and coarse pitch; thrust and power go as (blades/3)^PROP_BLADE_EXPONENT. */
+    public static final float[] PROP_CT0 = {0.14f, 0.11f, 0.08f}, PROP_J0 = {0.55f, 0.85f, 1.25f};
+    public static final float PROP_BLADE_EXPONENT = 0.7f;
+    /** Placeholder [OPEN]. Power coefficient as a share of Ct0 x J0, chosen so peak efficiency is about 0.8 at half the zero-thrust advance ratio. */
+    public static final float PROP_CP_PER_CT0_J0 = 0.3125f;
+    /** Placeholder [OPEN]. Blade tip speed (m/s) a metal survives per sqrt(yield/density), capped near the speed of sound; past it a prop loses thrust and wears. */
+    public static final float PROP_TIP_SPEED_PER_SQRT_SPECIFIC_YIELD = 220f, PROP_TIP_SPEED_CAP = 290f, PROP_TIP_SPEED_WATER = 40f;
+    /** Placeholder [OPEN]. Condition a prop loses per tick per unit of tip speed over its limit (relative), and the lowest it falls to. */
+    public static final float PROP_WEAR_PER_TICK = 0.002f, PROP_CONDITION_FLOOR = 0.2f;
+    /** Real-world derived. Water over air by density, for a screw in water. */
+    public static final float WATER_OVER_AIR_DENSITY = 816f;
 }

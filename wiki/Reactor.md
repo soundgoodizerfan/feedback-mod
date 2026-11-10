@@ -67,6 +67,7 @@ Some reactions give off heat, which warms the reactor.
 | **Liquefy air** | 160 mB air, **2 Pu** at least (best from 4 Pu), a [Cryocooler](Cryocooler.md) on its deep stage | 32 mB liquid air | -200 to -188 Tu, best -194 |
 | **Rectify air** | 32 mB liquid air, a Cryocooler on its middle stage | 125 mB nitrogen and 7 mB oxygen-rich liquid; too warm, the liquid boils back to air | -196 to -186 Tu, best -190.5 |
 | **Liquefy wisp gas** | 160 mB wisp gas, **2 Pu** at least (best from 4 Pu), a [Cryocooler](Cryocooler.md) | 32 mB [liquid wisp gas](Oil.md#soul-oil) | -120 to -100 Tu, best -110 |
+| **Helium cut** | 100 mB nitrogen | 4 mB [helium](Chemicals.md#helium) and 96 mB nitrogen; too warm, only the nitrogen | -196 to -189 Tu, best -193 |
 | **Argon cut** | 7 mB oxygen-rich liquid, a Cryocooler on its shallow stage | 2 mB [argon](Chemicals.md#argon) and 33 mB oxygen; too warm, only oxygen | -188 to -182.5 Tu, best -185 |
 | **Leach osmiridium** | one Raw Osmiridium, 200 mB sulfuric acid, 100 mB oxygen | 100 mB [osmium tetroxide](Chemicals.md#osmium-tetroxide), and some heat | 60 to 125 Tu, best 90 |
 | **Reduce osmium tetroxide** | 100 mB osmium tetroxide, 400 mB hydrogen | one **Osmium Sponge**, and some heat | 280 to 420 Tu, best 330 |
@@ -75,7 +76,7 @@ Some reactions give off heat, which warms the reactor.
 | **Raw Spatial Slurry** | one Chorus Fruit, 100 mB water | 100 mB Raw Spatial Slurry | 0 to 60 Tu, best 25 |
 | **Damped Spatial Solvent** | 100 mB Unstable Spatial Solvent, 5 mB [Heavy Water](Heavy_Water.md), one Lapis Lazuli dust | 100 mB Damped Spatial Solvent; above 70 Tu, solvent vapor | 5 to 70 Tu, best 30 |
 | **Liquid Teleportant** | 100 mB Damped Spatial Solvent, one Redstone dust, an [Arc Head](Arc_Furnace.md#the-arc-head) against the reactor | 100 mB [Liquid Teleportant](Liquid_Teleportant.md); above 2200 Tu, solvent vapor | 300 to 2200 Tu, best 900 |
-| **End stone** | one End Stone | 250 mB hydrogen and one [Porous Aggregate](End_Stone.md) | 700 to 1300 Tu, best 900 |
+| **End stone** | one End Stone | 250 mB hydrogen, 100 mB [helium](Chemicals.md#helium) and one [Porous Aggregate](End_Stone.md) | 700 to 1300 Tu, best 900 |
 | **Alkaline Electrolyte** | 500 mB water, 10 mB [lye](Chemicals.md#lye) | 500 mB Alkaline Electrolyte | 0 to 80 Tu, best 20 |
 | **Roast a sulfide concentrate** | one concentrate of chalcopyrite, sphalerite, pentlandite, cobaltite or argentite, 100 mB oxygen | one Roasted concentrate, 100 mB sulfur dioxide, sulfur (and iron nuggets for some) | 500 to 900 Tu, best 700 |
 | **Diamond (high pressure)** | one Graphite and one Diamond Seed in the hopper, 160 mB [argon](Chemicals.md#argon), an iron, nickel or cobalt ingot bed, **3.8 Pu** at least (best at 4.6 Pu) | 1 Diamond, the argon returned; over 1700 Tu, a Graphite instead | 1400 to 1700 Tu, best 1550 |

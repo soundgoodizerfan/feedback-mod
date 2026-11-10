@@ -180,6 +180,54 @@ public class FVehicles {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlockEntity>> FLIGHT_SENSOR_ENTITY =
             BLOCK_ENTITIES.register("flight_sensor", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.FlightSensorBlockEntity::new, FLIGHT_SENSOR.get()).build(null));
 
+    /** What a propeller's parts bake to, on a Propeller. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign>> PROP_DESIGN =
+            COMPONENTS.register("prop_design", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign.STREAM_CODEC)
+                    .build());
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.PropBlock> PROPELLER = BLOCKS.register("propeller",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.PropBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL).noOcclusion()));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.vehicle.air.PropItem> PROPELLER_ITEM = ITEMS.register("propeller",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.PropItem(PROPELLER.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.air.PropBlockEntity>> PROPELLER_ENTITY =
+            BLOCK_ENTITIES.register("propeller", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.air.PropBlockEntity::new, PROPELLER.get()).build(null));
+
+    // --- Airships (flight A1): gas cells, vent, ballast ----------------------------------------------
+
+    private static BlockBehaviour.Properties cellProps(MapColor color, SoundType sound, float strength) {
+        return BlockBehaviour.Properties.of().mapColor(color).strength(strength).sound(sound).noOcclusion();
+    }
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock> GAS_CELL_CLOTH = BLOCKS.register("gas_cell_cloth",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock(cellProps(MapColor.SNOW, SoundType.WOOL, 0.4f),
+                    io.github.soundgoodizerfan.feedback.vehicle.air.Skin.CLOTH));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock> GAS_CELL_RUBBER = BLOCKS.register("gas_cell_rubber",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock(cellProps(MapColor.COLOR_BLACK, SoundType.WOOL, 0.6f),
+                    io.github.soundgoodizerfan.feedback.vehicle.air.Skin.RUBBER));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock> GAS_CELL_PLATE = BLOCKS.register("gas_cell_plate",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock(cellProps(MapColor.METAL, SoundType.METAL, 2.0f),
+                    io.github.soundgoodizerfan.feedback.vehicle.air.Skin.PLATE));
+    public static final DeferredItem<BlockItem> GAS_CELL_CLOTH_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_CLOTH);
+    public static final DeferredItem<BlockItem> GAS_CELL_RUBBER_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_RUBBER);
+    public static final DeferredItem<BlockItem> GAS_CELL_PLATE_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_PLATE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlockEntity>> GAS_CELL_ENTITY =
+            BLOCK_ENTITIES.register("gas_cell", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlockEntity::new,
+                    GAS_CELL_CLOTH.get(), GAS_CELL_RUBBER.get(), GAS_CELL_PLATE.get()).build(null));
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.VentValveBlock> VENT_VALVE = BLOCKS.register("vent_valve",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.VentValveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f).sound(SoundType.METAL)));
+    public static final DeferredItem<BlockItem> VENT_VALVE_ITEM = ITEMS.registerSimpleBlockItem(VENT_VALVE);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.air.VentValveBlockEntity>> VENT_VALVE_ENTITY =
+            BLOCK_ENTITIES.register("vent_valve", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.air.VentValveBlockEntity::new, VENT_VALVE.get()).build(null));
+
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.BallastTankBlock> BALLAST_TANK = BLOCKS.register("ballast_tank",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.BallastTankBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
+    public static final DeferredItem<BlockItem> BALLAST_TANK_ITEM = ITEMS.registerSimpleBlockItem(BALLAST_TANK);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.air.BallastTankBlockEntity>> BALLAST_TANK_ENTITY =
+            BLOCK_ENTITIES.register("ballast_tank", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.air.BallastTankBlockEntity::new, BALLAST_TANK.get()).build(null));
+
     // --- Transmissions (spec section 6, a modular build at the Tool Table) -----------------------
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign>> TRANSMISSION_DESIGN =

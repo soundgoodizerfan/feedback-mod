@@ -108,6 +108,15 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
 
     private final List<Steered> steered = new ArrayList<>();
 
+    /** Roll, pitch and yaw levels, -1 to 1 (channels 2 to 4), and the hinges they move: control surfaces. */
+    private final float[] surfaceLevel = new float[3];
+
+    /** A control surface's hinge, its knuckle's inertia and its role (1 roll, 2 pitch, 3 yaw; negative reverses the sense). */
+    private record Surfaced(PhysicsConstraintHandle handle, double inertia, int role) {
+    }
+
+    private final List<Surfaced> surfaced = new ArrayList<>();
+
     /** A slider's joint, with the bodies it joins and the band its spring was set to. */
     private record Sprung(dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle handle, Mount a, Mount b, int band,
                           int vertex, Vector3d va, Vector3d vb, Vector3d axis, double travel, int[] strain) {
@@ -270,7 +279,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      */
     private void pivots(ServerLevel level, ServerSubLevel own) {
         StringBuilder sig = new StringBuilder();
-        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.steers()).append(p.differential()).append(p.band()).append(p.axis()).append(';'));
+        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.steers()).append(p.surface()).append(p.differential()).append(p.band()).append(p.axis()).append(';'));
         new java.util.TreeMap<>(frame.anchors()).forEach((v, off) -> sig.append(v).append('@').append(off.toShortString())
                 .append(level.getBlockState(worldPosition.offset(off)).isAir() ? '-' : '+').append(';'));
         new java.util.TreeMap<>(groupBodies).forEach((g, b) -> sig.append('g').append(g).append(b.body()).append(';'));
@@ -348,6 +357,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         }
         if (pivot.steers() && pivot.kind() == FrameJoint.Kind.HINGE)
             steered.add(new Steered(h, inertiaAbout(b, vb, n)));
+        if (pivot.surface() != 0 && pivot.kind() == FrameJoint.Kind.HINGE)
+            surfaced.add(new Surfaced(h, inertiaAbout(b, vb, n), pivot.surface()));
         return h;
     }
 
@@ -379,6 +390,12 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle.DEFAULT_AXIS,
                         steer * FTuning.STEER_MAX_ANGLE, rate * rate * s.inertia(),
                         2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * s.inertia(), true, arm);
+        for (Surfaced s : surfaced)
+            if (s.handle().isValid())
+                s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle.DEFAULT_AXIS,
+                        Math.signum(s.role()) * surfaceLevel[Math.abs(s.role()) - 1] * FTuning.SURFACE_MAX_ANGLE,
+                        rate * rate * s.inertia(), 2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * s.inertia(), true,
+                        FTuning.STEER_ARM_SU.value() / Units.SU_PER_KPG_TORQUE);
     }
 
     /**
@@ -457,6 +474,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         switch (channel) {
             case 0 -> steer = Math.clamp(level, -1, 1);
             case 1 -> brake = Math.clamp(level, 0, 1);
+            case 2, 3, 4 -> surfaceLevel[channel - 2] = Math.clamp(level, -1, 1);
             default -> {
                 return;
             }
@@ -466,7 +484,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
 
     @Override
     public String[] channelKeys() {
-        return new String[]{"feedback.analog.steer", "feedback.analog.brake"};
+        return new String[]{"feedback.analog.steer", "feedback.analog.brake", "feedback.analog.roll", "feedback.analog.pitch", "feedback.analog.yaw"};
     }
 
     // --- DataNode -----------------------------------------------------------------------------
@@ -514,6 +532,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         pivotHandles.clear();
         anchorHandles.clear();
         steered.clear();
+        surfaced.clear();
         sprung.clear();
         pivotSignature = "";
     }
@@ -804,7 +823,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         // only the tires need a body under them (physicsTick).
         if (!level.isClientSide) {
             if (be.drivetrainStale)
-                be.drivetrain.rebuild(be.frame);
+                be.drivetrain.rebuild(be.frame, be::groupOf);
             be.drivetrainStale = false;
             be.drivetrain.tick(level, pos, be.brake, be.steer);
             if (level.getGameTime() % 20 == 0 && be.drivetrain.wearPads(be.frame))
