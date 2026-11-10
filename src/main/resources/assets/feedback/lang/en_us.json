@@ -6355,6 +6355,8 @@
   "gui.feedback.desktop.menu": "Menu",
   "gui.feedback.desktop.minimise": "Minimise",
   "gui.feedback.desktop.maximise": "Maximise",
+  "gui.feedback.desktop.fullscreen": "Fullscreen",
+  "gui.feedback.desktop.leave_fullscreen": "Leave fullscreen",
   "gui.feedback.desktop.restore": "Restore",
   "gui.feedback.desktop.snap_left": "Snap left",
   "gui.feedback.desktop.snap_right": "Snap right",

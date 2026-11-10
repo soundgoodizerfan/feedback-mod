@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 
 /**
  * The compositor of a Computer's desktop: it owns the windows and everything between them, the way a display server and window manager
- * do. It keeps the stacking order and the focus, draws each window's frame (title bar, minimise, maximise, close) and clips its
+ * do. It keeps the stacking order and the focus, draws each window's frame (title bar, minimise, maximise, game-window fullscreen, close) and clips its
  * content, moves a window by its title bar and resizes it by its right and bottom edges, keeps every window inside the work area, hands
  * each input event to the right window in window-local coordinates, and runs the panel along the bottom: launcher menu, one task button
  * per open window, a tray the shell paints, and a show-desktop sliver.
@@ -39,7 +39,7 @@ public final class Desktop {
         void paint(GuiGraphics g, int x, int y, int w, int h);
     }
 
-    private record Chrome(Button min, Button max, Button close, Button task) {
+    private record Chrome(Button min, Button max, Button full, Button close, Button task) {
     }
 
     /** A notice in the corner of the work area: shown for {@link #TOAST_LIFE} ticks, fading over the last {@link #TOAST_FADE}. */
@@ -90,7 +90,9 @@ public final class Desktop {
         workW = w;
         workH = h;
         for (DesktopWindow win : stack)
-            if (win.maximised) {
+            if (win.fullscreen) {
+                fitFullscreen(win);
+            } else if (win.maximised) {
                 win.x = x;
                 win.y = y;
                 win.w = w;
@@ -112,6 +114,21 @@ public final class Desktop {
         };
     }
 
+    /** The whole game window in GUI-scaled pixels: x, y, w, h. */
+    private static int[] gameRect() {
+        var window = Minecraft.getInstance().getWindow();
+        return new int[] {0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight()};
+    }
+
+    private void fitFullscreen(DesktopWindow win) {
+        int[] r = gameRect();
+        win.x = r[0];
+        win.y = r[1];
+        win.w = r[2];
+        win.h = r[3];
+        win.layout(win.contentW(), win.contentH());
+    }
+
     private void fitSnap(DesktopWindow win) {
         int[] r = snapRect(win.snap);
         win.x = r[0];
@@ -126,6 +143,8 @@ public final class Desktop {
      * or maximise again, gives it back. A window that cannot be resized does not snap.
      */
     public void snap(DesktopWindow win, int mode) {
+        if (win.fullscreen)
+            exitFullscreen(win);
         if (!win.resizable || !win.placed)
             return;
         if (mode == SNAP_TOP) {
@@ -179,9 +198,11 @@ public final class Desktop {
         else
             items.add(new ContextMenu.Item(Component.translatable("gui.feedback.desktop.minimise"), () -> win.minimised = true));
         if (win.resizable) {
-            boolean big = win.maximised || win.snap != SNAP_NONE;
+            boolean big = win.maximised || win.snap != SNAP_NONE || win.fullscreen;
             items.add(new ContextMenu.Item(Component.translatable(big ? "gui.feedback.desktop.restore" : "gui.feedback.desktop.maximise"),
                     () -> toggleMaximise(win)));
+            items.add(new ContextMenu.Item(Component.translatable(win.fullscreen ? "gui.feedback.desktop.leave_fullscreen" : "gui.feedback.desktop.fullscreen"),
+                    () -> toggleFullscreen(win)));
             items.add(new ContextMenu.Item(Component.translatable("gui.feedback.desktop.snap_left"), () -> snapLeft(win)));
             items.add(new ContextMenu.Item(Component.translatable("gui.feedback.desktop.snap_right"), () -> snapRight(win)));
         }
@@ -225,9 +246,10 @@ public final class Desktop {
             win.build(skin);
             Button min = GuiStyle.button(skin, Component.literal("_"), b -> win.minimised = true, 0, 0, 12, 11);
             Button max = GuiStyle.button(skin, Component.literal("o"), b -> toggleMaximise(win), 0, 0, 12, 11);
+            Button full = GuiStyle.button(skin, Component.literal("[]"), b -> toggleFullscreen(win), 0, 0, 12, 11);
             Button close = GuiStyle.button(skin, Component.literal("x"), b -> close(win), 0, 0, 12, 11);
             Button task = GuiStyle.button(skin, Component.empty(), b -> clickTask(win), 0, 0, TASK_W - 2, 14);
-            chrome.put(win, new Chrome(min, max, close, task));
+            chrome.put(win, new Chrome(min, max, full, close, task));
             if (win.placed)
                 win.layout(win.contentW(), win.contentH());
         }
@@ -327,9 +349,41 @@ public final class Desktop {
             raise(win);
     }
 
+    /**
+     * Fills the whole game window (not only the desktop's work area), over the panel and the shell, with the window's own title bar kept.
+     * Whatever the window was (free, snapped, maximised) is remembered and comes back when it is toggled off.
+     */
+    private void toggleFullscreen(DesktopWindow win) {
+        if (!win.resizable)
+            return;
+        if (win.fullscreen) {
+            exitFullscreen(win);
+        } else {
+            win.fsX = win.x;
+            win.fsY = win.y;
+            win.fsW = win.w;
+            win.fsH = win.h;
+            win.fullscreen = true;
+            fitFullscreen(win);
+        }
+    }
+
+    private void exitFullscreen(DesktopWindow win) {
+        win.fullscreen = false;
+        win.x = win.fsX;
+        win.y = win.fsY;
+        win.w = win.fsW;
+        win.h = win.fsH;
+        win.layout(win.contentW(), win.contentH());
+    }
+
     private void toggleMaximise(DesktopWindow win) {
         if (!win.resizable)
             return;
+        if (win.fullscreen) {
+            exitFullscreen(win);
+            return;
+        }
         if (win.maximised || win.snap != SNAP_NONE) {
             unsnap(win);
             clamp(win);
@@ -484,7 +538,7 @@ public final class Desktop {
             g.fill(win.x + 4, win.y + DesktopWindow.TITLE, win.x + win.w - 4, win.y + DesktopWindow.TITLE + 1, skin.accent());
         win.glyph().draw(g, win.x + 6, win.y + 4, focus ? skin.accent() : skin.dim());
         var font = ui.font();
-        int buttons = win.resizable ? 42 : 16;
+        int buttons = win.resizable ? 55 : 16;
         g.drawString(font, font.plainSubstrByWidth(win.title().getString(), win.w - 20 - buttons), win.x + 17, win.y + 5,
                 focus ? skin.ink() : skin.dim(), false);
         Chrome c = chrome.get(win);
@@ -494,6 +548,8 @@ public final class Desktop {
             c.max.setPosition(win.x + win.w - 29, win.y + 3);
             c.max.render(g, mx, my, partial);
             c.min.setPosition(win.x + win.w - 42, win.y + 3);
+            c.full.setPosition(win.x + win.w - 55, win.y + 3);
+            c.full.render(g, mx, my, partial);
         } else {
             c.min.setPosition(win.x + win.w - 29, win.y + 3);
         }
@@ -506,7 +562,7 @@ public final class Desktop {
         win.positionWidgets(cx, cy);
         win.renderWidgets(g, mx, my, partial);
         g.disableScissor();
-        if (win.resizable && !win.maximised) {
+        if (win.resizable && !win.maximised && !win.fullscreen) {
             int gx = win.x + win.w - 8, gy = win.y + win.h - 8;
             for (int i = 0; i < 3; i++)
                 g.fill(gx + 5 - i * 2, gy + 5, gx + 6 - i * 2, gy + 6, focus ? skin.ink() : skin.dim());
@@ -633,7 +689,7 @@ public final class Desktop {
             if (other != win)
                 other.focusOn(null);
         Chrome c = chrome.get(win);
-        if (c.close.mouseClicked(mx, my, button) || (win.resizable && c.max.mouseClicked(mx, my, button)) || c.min.mouseClicked(mx, my, button))
+        if (c.close.mouseClicked(mx, my, button) || (win.resizable && (c.max.mouseClicked(mx, my, button) || c.full.mouseClicked(mx, my, button))) || c.min.mouseClicked(mx, my, button))
             return true;
         if (button == 1) {
             List<ContextMenu.Item> items = my < win.y + DesktopWindow.TITLE ? windowMenu(win)
@@ -643,7 +699,7 @@ public final class Desktop {
         }
         if (button != 0 && my < win.y + DesktopWindow.TITLE)
             return true;
-        if (win.resizable && !win.maximised && win.snap == SNAP_NONE && (mx >= win.x + win.w - 5 || my >= win.y + win.h - 5)) {
+        if (win.resizable && !win.maximised && !win.fullscreen && win.snap == SNAP_NONE && (mx >= win.x + win.w - 5 || my >= win.y + win.h - 5)) {
             resizing = win;
             resizeX = mx >= win.x + win.w - 5;
             resizeY = my >= win.y + win.h - 5;
@@ -674,6 +730,12 @@ public final class Desktop {
 
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
         if (dragging != null) {
+            if (dragging.fullscreen) {
+                // pulled out of the game-window fill: back to what it was, under the pointer
+                grabX = grabX / Math.max(1, dragging.w) * dragging.fsW;
+                grabY = Math.min(grabY, DesktopWindow.TITLE - 2);
+                exitFullscreen(dragging);
+            }
             if (dragging.maximised || dragging.snap != SNAP_NONE) {
                 // pulled out of a maximised or snapped place: the window shrinks to its old size under the pointer
                 grabX = grabX / Math.max(1, dragging.w) * dragging.restoreW;

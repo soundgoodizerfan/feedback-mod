@@ -12,7 +12,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 
 /**
- * One window of the desktop: an app's content in a frame the {@link Desktop} owns (title bar, minimise, maximise, close, drag and edge
+ * One window of the desktop: an app's content in a frame the {@link Desktop} owns (title bar, minimise, maximise, game-window fullscreen, close, drag and edge
  * resize, focus and stacking). A subclass is an app: it names itself, draws into a {@link Ui} in its own coordinates, and puts widgets
  * where it wants them, relative to its content; the desktop moves, clips and hides all of it with the window.
  *
@@ -37,6 +37,9 @@ public abstract class DesktopWindow {
     int x, y, w, h;
     int restoreX, restoreY, restoreW, restoreH;
     boolean open, minimised, maximised, placed;
+    /** Filling the whole game window, over the desktop's own frame; the place it had is kept to come back to. */
+    boolean fullscreen;
+    int fsX, fsY, fsW, fsH;
     /** 0 free, 1 snapped to the left half of the work area, 2 to the right half. */
     int snap;
     final int startX, startY;
