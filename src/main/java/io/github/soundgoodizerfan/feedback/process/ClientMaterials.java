@@ -20,7 +20,7 @@ public final class ClientMaterials {
     };
 
     public static void set(Map<ResourceLocation, Material> incoming) {
-        materials = Map.copyOf(incoming);
+        materials = java.util.Collections.unmodifiableSortedMap(new TreeMap<>(incoming));
         listener.run();
     }
 
@@ -37,6 +37,6 @@ public final class ClientMaterials {
 
     /** The materials as {@code level}'s side knows them, sorted by id: the server's table, or this copy. */
     public static Map<ResourceLocation, Material> on(Level level) {
-        return level.isClientSide ? new TreeMap<>(materials) : MaterialTable.get().materials();
+        return level.isClientSide ? materials : MaterialTable.get().materials();
     }
 }

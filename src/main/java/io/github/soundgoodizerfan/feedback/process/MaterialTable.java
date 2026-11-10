@@ -38,11 +38,11 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager resources, ProfilerFiller profiler) {
         generation++;
-        Map<ResourceLocation, Material> loaded = new TreeMap<>();
+        TreeMap<ResourceLocation, Material> loaded = new TreeMap<>();
         json.forEach((id, element) -> Material.CODEC.parse(JsonOps.INSTANCE, resolve(id, element, json, new HashSet<>()))
                 .resultOrPartial(error -> Feedback.LOGGER.error("Bad material {}: {}", id, error))
                 .ifPresent(material -> loaded.put(id, material)));
-        materials = Map.copyOf(loaded);
+        materials = java.util.Collections.unmodifiableSortedMap(loaded);
         Feedback.LOGGER.info("Loaded {} materials", materials.size());
         FormTable.get().invalidate();
         ThermalProcessTable.get().invalidate();
@@ -92,7 +92,12 @@ public class MaterialTable extends SimpleJsonResourceReloadListener {
         return generation;
     }
 
+    /**
+     * The loaded table, sorted by id, read-only, and the same instance until the next reload. Callers memoise on its identity
+     * ({@link MaterialIngredient#locate}): a fresh copy per call once emptied that cache on every lookup, and a vessel's tick spent
+     * most of the server's time re-walking every material.
+     */
     public Map<ResourceLocation, Material> materials() {
-        return new TreeMap<>(materials);
+        return materials;
     }
 }
