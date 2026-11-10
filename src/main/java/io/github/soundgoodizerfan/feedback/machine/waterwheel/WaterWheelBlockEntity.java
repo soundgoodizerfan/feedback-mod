@@ -6,6 +6,9 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -22,6 +25,33 @@ import net.minecraft.world.level.material.FluidState;
  * decision rather than a placement. Placeholder RPM -- the slice fixes Su, never speed.
  */
 public class WaterWheelBlockEntity extends RotationNode {
+
+
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
+    }
 
     private int flowingSides;
     private int ticksUntilFlowCheck;
@@ -72,16 +102,16 @@ public class WaterWheelBlockEntity extends RotationNode {
 
     @Override
     public Inertia getInertia() {
-        return FTuning.WATER_WHEEL_INERTIA;
+        return new Inertia(figures.get("Inertia", FTuning.WATER_WHEEL_INERTIA.suTicksPerRpm()));
     }
 
     @Override
     public Rpm getGeneratedRpm() {
-        return new Rpm(flowingSides * FTuning.WATER_WHEEL_RPM_PER_FLOW.value());
+        return new Rpm(flowingSides * figures.get("RpmPerFlow", FTuning.WATER_WHEEL_RPM_PER_FLOW.value()));
     }
 
     @Override
     public Su getCapacitySu() {
-        return FTuning.WATER_WHEEL_CAPACITY_SU;
+        return new Su(figures.get("Power", FTuning.WATER_WHEEL_CAPACITY_SU.value()));
     }
 }

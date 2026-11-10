@@ -117,7 +117,7 @@ public final class ModularStacks {
                 && type.family() != ModularType.Family.MACHINE && type.family() != ModularType.Family.BELT
                 && type.family() != ModularType.Family.ENGINE && type.family() != ModularType.Family.GEARBOX
                 && type.family() != ModularType.Family.PROPELLER && type.family() != ModularType.Family.SUIT_MODULE
-                && type.family() != ModularType.Family.PRESSURE) {
+                && type.family() != ModularType.Family.PRESSURE && type.family() != ModularType.Family.BLOCK) {
             stack.set(DataComponents.MAX_DAMAGE, (int) baked.get().get(Fig.DURABILITY));
             stack.set(DataComponents.DAMAGE, Math.min(stack.getDamageValue(), stack.getMaxDamage() - 1));
         }
@@ -129,6 +129,8 @@ public final class ModularStacks {
             ModularBake.cell(design, type, materials).ifPresent(c -> batteryState(stack, c));
         if (type.family() == ModularType.Family.MACHINE)
             ModularBake.machine(design, type, materials).ifPresent(m -> machineState(stack, m));
+        if (type.family() == ModularType.Family.BLOCK)
+            BlockFigures.of(design, type, materials).ifPresent(t -> stack.set(FDataComponents.BLOCK_FIGURES.get(), t));
         if (type.family() == ModularType.Family.PRESSURE)
             ModularBake.tank(design, type, materials).ifPresent(v -> {
                 net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.PRESSURE_VESSEL.get(), new net.minecraft.nbt.CompoundTag()).copy();

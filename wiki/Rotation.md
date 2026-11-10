@@ -18,7 +18,7 @@ Every source can carry a certain load, and every machine adds load. Both are mea
 | --- | --- | --- |
 | [Hand Crank](Hand_Crank.md) | 12 | 32 RPM |
 | [Steam Engine](Steam_Engine.md) | 64 | 16 RPM |
-| [Water Wheel](Water_Wheel.md) | 256 | 4 RPM per side of flowing water, up to 16 |
+| [Water Wheel](Water_Wheel.md) | 256 for a 200 cm, 8-bucket wheel | 4 RPM per side of flowing water for that wheel, up to four sides |
 | [Engine](Engine.md) | by design | by design |
 
 | Machine | Su |

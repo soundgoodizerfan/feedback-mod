@@ -1,0 +1,59 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "wheel_rim",
+      "forms": [
+        "wheel_rim"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "diameter": {
+          "min": 100,
+          "max": 400,
+          "unit": "cm",
+          "default": 200,
+          "step": 20
+        },
+        "buckets": {
+          "min": 4,
+          "max": 16,
+          "unit": "",
+          "default": 8,
+          "step": 1
+        }
+      },
+      "part": {
+        "item": "feedback:wheel_rim",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "*_planks"
+        ],
+        "base": "wheel_slatted",
+        "variants": [
+          {
+            "name": "wheel_slatted"
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:wood"
+  },
+  "school": "mechanical"
+}

@@ -180,6 +180,7 @@ public final class ModularBake {
             // a module's wiring must conduct; its casing and core take any material their shapes accept
             case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
             // a shell holds pressure by its yield strength: a metal that states none cannot be rated
+            case BLOCK -> BlockFigures.suits(type, material);
             case PRESSURE -> engineMetal(material) && material.mechanical().yieldStrength().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
             // A coilgun's winding is a conductor that holds a field and has a quench point: the rest cannot wind a gun.
@@ -245,7 +246,7 @@ public final class ModularBake {
     }
 
     /** A shape param of {@code part}'s variant, else {@code fallback}. */
-    private static float param(ModularType type, Part part, String name, float fallback) {
+    static float param(ModularType type, Part part, String name, float fallback) {
         return type.roles().get(part.role()).variant(part).map(v -> v.params().getOrDefault(name, fallback)).orElse(fallback);
     }
 
@@ -837,8 +838,9 @@ public final class ModularBake {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 f.put(Fig.MASS, total);
             }
-            case ENGINE, GEARBOX, PROPELLER, PRESSURE -> {
+            case ENGINE, GEARBOX, PROPELLER, PRESSURE, BLOCK -> {
                 if (switch (type.family()) {
+                    case BLOCK -> BlockFigures.of(design, type, materials).isEmpty();
                     case PRESSURE -> tank(design, type, materials).isEmpty();
                     case ENGINE -> engine(design, type, materials).isEmpty();
                     case PROPELLER -> propeller(design, type, materials).isEmpty();

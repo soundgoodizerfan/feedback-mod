@@ -1,0 +1,58 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "jar_glass",
+      "forms": [
+        "jar_glass"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "area": {
+          "min": 20,
+          "max": 100,
+          "unit": "%",
+          "default": 50,
+          "step": 5
+        },
+        "wall": {
+          "min": 2,
+          "max": 10,
+          "unit": "mm",
+          "default": 4,
+          "step": 1
+        }
+      },
+      "part": {
+        "item": "feedback:jar_glass",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "jar_lined",
+        "variants": [
+          {
+            "name": "jar_lined"
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:glass"
+  }
+}

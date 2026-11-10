@@ -24,7 +24,7 @@ The shaft can't share the fluid's direction, so it goes in **across** it: from a
 
 | Shaft | Moves |
 | --- | --- |
-| [Water Wheel](Water_Wheel.md), one side of flow (4 RPM) | 2 mB/t |
+| [Water Wheel](Water_Wheel.md), default wheel, one side of flow (4 RPM) | 2 mB/t |
 | [Steam Engine](Steam_Engine.md) (16 RPM) | 8 mB/t |
 | 20 RPM | 10 mB/t, enough to keep a [Boiler](Boiler.md) fed for one engine |
 | [Hand Crank](Hand_Crank.md) (32 RPM) | 16 mB/t |

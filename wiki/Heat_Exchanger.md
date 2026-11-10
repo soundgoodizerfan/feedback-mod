@@ -1,16 +1,20 @@
 # Heat Exchanger
 
-A copper-and-brick wall that lets heat flow between the two things on either side of it, **from hot to cold**, all the time.
+A wall of tubes that lets heat flow between the two things on either side of it, **from hot to cold**, all the time. It is built from a blueprint.
 
-## Crafting
+## Designing and building
 
-```
-C B C
-B   B
-C B C
-```
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Heat Exchanger* in the type row); drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Exchanger Core**, with three choices:
 
-C is a Copper Ingot and B is a Brick.
+| Choice | What it sets |
+| --- | --- |
+| **Tubes** | Plain tubes, or finned tubes that carry 1.6 times as much heat. |
+| **Tube area** | From 20 to 100 percent of the wall, in steps of 5; the default is 50. More area carries more heat. |
+| **Metal** | The plate the tubes are made from. A metal that conducts heat well carries more. It must be a metal with a stated conductivity. |
+
+How fast it carries heat is the tube metal's conductivity times the tube area. Copper tubes at the default area carry what a plain copper exchanger does.
+
+At the [Smithing Table](Smithing_Table.md), put the Heat Exchanger Blueprint in the blueprint slot and shape the core from plate of the metal you chose. The Heat Exchanger comes out with the design, and the blueprint is kept. Its tooltip shows how fast it carries heat ("Carries heat at"). Breaking the block gives the same exchanger back.
 
 ## Using it
 
@@ -18,7 +22,7 @@ It connects along one axis: the two faces at either end of the direction you pla
 
 It works with anything that has a temperature: [crucibles](Crucible.md), [furnaces](Furnaces.md), a [Boiler](Boiler.md), even overloaded [cable](Copper_Cable.md). It is how a [Fission Reactor](Fission_Reactor.md) core hands its heat to a boiler.
 
-There's no power, no switch and no direction to set. Heat always runs downhill. The only decision is **where you put it**.
+There's no power, no switch and no direction to set. Heat always runs downhill. The decisions are **where you put it** and what you build it from.
 
 ## Ideas
 

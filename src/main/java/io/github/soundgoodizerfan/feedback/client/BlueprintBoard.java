@@ -713,7 +713,7 @@ final class BlueprintBoard {
         return switch (t.family()) {
             case BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, GUN, CHARGE -> 1;
             case ARMOUR, GLOVE, BACKPACK, BEDROLL -> 2;
-            case CELL, MACHINE, BELT, ENGINE, GEARBOX, PROPELLER, PRESSURE, HEAD, VESSEL -> 3;
+            case CELL, MACHINE, BELT, ENGINE, GEARBOX, PROPELLER, PRESSURE, BLOCK, HEAD, VESSEL -> 3;
             case DISH -> 4;
             default -> 0;
         };
@@ -2195,6 +2195,9 @@ final class BlueprintBoard {
         return switch (t.family()) {
             case CELL -> ModularBake.cell(d, t, ClientMaterials.get()).map(BlueprintBoard::cellLines).orElse(List.of());
             case MACHINE -> ModularBake.machine(d, t, ClientMaterials.get()).map(BlueprintBoard::machineLines).orElse(List.of());
+            case BLOCK -> io.github.soundgoodizerfan.feedback.modular.BlockFigures.of(d, t, ClientMaterials.get()).<List<Component>>map(tag -> tag.getAllKeys().stream()
+                    .<Component>map(k -> Component.translatable("figure.feedback.block." + k, String.format(java.util.Locale.ROOT, "%.3g", tag.getFloat(k))))
+                    .toList()).orElse(List.of());
             case PRESSURE -> ModularBake.tank(d, t, ClientMaterials.get()).<List<Component>>map(v -> List.of(
                     Component.translatable("gui.feedback.blueprint_table.tank.room", Math.round(v.volumeMb())),
                     Component.translatable("gui.feedback.blueprint_table.tank.danger", String.format(java.util.Locale.ROOT, "%.1f", v.dangerPu())),

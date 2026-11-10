@@ -38,7 +38,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> HAND_CRANK = ITEMS.registerSimpleBlockItem(FBlocks.HAND_CRANK);
     public static final DeferredItem<BlockItem> CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.CAMPFIRE);
     public static final DeferredItem<BlockItem> SOUL_CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_CAMPFIRE);
-    public static final DeferredItem<BlockItem> WATER_WHEEL = ITEMS.registerSimpleBlockItem(FBlocks.WATER_WHEEL);
 
     public static final DeferredItem<BlockItem> CRANK_LINKAGE = ITEMS.registerSimpleBlockItem(FBlocks.CRANK_LINKAGE);
     public static final DeferredItem<BlockItem> MECHANICAL_HAMMER = ITEMS.registerSimpleBlockItem(FBlocks.MECHANICAL_HAMMER);
@@ -358,14 +357,12 @@ public class FItems {
     public static final DeferredItem<Item> PYRITE = ITEMS.registerSimpleItem("pyrite");
     public static final DeferredItem<BlockItem> ELECTROLYTIC_CELL =
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROLYTIC_CELL);
-    public static final DeferredItem<BlockItem> LEYDEN_JAR = ITEMS.registerSimpleBlockItem(FBlocks.LEYDEN_JAR);
     public static final DeferredItem<BlockItem> CHARGER = ITEMS.registerSimpleBlockItem(FBlocks.CHARGER);
     public static final DeferredItem<BlockItem> CHARGING_GANTRY = ITEMS.registerSimpleBlockItem(FBlocks.CHARGING_GANTRY);
     public static final DeferredItem<BlockItem> RECTIFIER = ITEMS.registerSimpleBlockItem(FBlocks.RECTIFIER);
     public static final DeferredItem<BlockItem> CONVERTER = ITEMS.registerSimpleBlockItem(FBlocks.CONVERTER);
     public static final DeferredItem<BlockItem> CONVERTER_TAP = ITEMS.registerSimpleBlockItem(FBlocks.CONVERTER_TAP);
     public static final DeferredItem<BlockItem> HEATSINK = ITEMS.registerSimpleBlockItem(FBlocks.HEATSINK);
-    public static final DeferredItem<BlockItem> THERMAL_STORE = ITEMS.registerSimpleBlockItem(FBlocks.THERMAL_STORE);
     public static final DeferredItem<BlockItem> ELECTROSTATIC_GENERATOR =
             ITEMS.registerSimpleBlockItem(FBlocks.ELECTROSTATIC_GENERATOR);
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(FBlocks.BELLOWS);
@@ -459,7 +456,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> GAS_TURBINE = ITEMS.registerSimpleBlockItem(FBlocks.GAS_TURBINE);
     public static final DeferredItem<BlockItem> FLARE = ITEMS.registerSimpleBlockItem(FBlocks.FLARE);
     public static final DeferredItem<BlockItem> COMPRESSOR = ITEMS.registerSimpleBlockItem(FBlocks.COMPRESSOR);
-    public static final DeferredItem<BlockItem> GAS_TANK = ITEMS.registerSimpleBlockItem(FBlocks.GAS_TANK);
     /** What is left of soul sand after the retort: the carbon-poor residue, sand-like (petrochemistry spec 10.1). */
     public static final DeferredItem<net.minecraft.world.item.Item> HUSK_SAND = ITEMS.registerSimpleItem("husk_sand");
     public static final DeferredItem<BlockItem> BURNER = ITEMS.registerSimpleBlockItem(FBlocks.BURNER);
@@ -638,7 +634,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> KILN = ITEMS.registerSimpleBlockItem(FBlocks.KILN);
     public static final DeferredItem<BlockItem> ANNEALING_FURNACE = ITEMS.registerSimpleBlockItem(FBlocks.ANNEALING_FURNACE);
     public static final DeferredItem<BlockItem> PUDDLING_FURNACE = ITEMS.registerSimpleBlockItem(FBlocks.PUDDLING_FURNACE);
-    public static final DeferredItem<BlockItem> HEAT_EXCHANGER = ITEMS.registerSimpleBlockItem(FBlocks.HEAT_EXCHANGER);
 
     /** One shape, an ingot -- see {@link MoldItem}'s own doc for why a second shape waits. */
     public static final DeferredItem<MoldItem> INGOT_MOLD =

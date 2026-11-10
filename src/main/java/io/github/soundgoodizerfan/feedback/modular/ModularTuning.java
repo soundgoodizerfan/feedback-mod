@@ -478,4 +478,17 @@ public final class ModularTuning {
     public static final float TANK_PU_PER_STRESS = 9f;
     /** The critical pressure over the danger one: the old vessel's 7 over 5. */
     public static final float TANK_CRITICAL_OVER_DANGER = 1.4f;
+
+    /** Heat exchanger: the tube area (percent of the wall) the fixed block's conductance was quoted at. */
+    public static final float EXCHANGER_REF_AREA = 50f;
+    /** Gas tank: cubes of gas a bottle holds, and mB of gas per Pu per cube (the old 16000 mB at 1500 mB per Pu). */
+    public static final float GAS_TANK_ROOMS = 16f, GAS_TANK_MB_PER_ROOM_PU = 1.5f;
+    /** Water wheel: the diameter (cm) and bucket count the fixed wheel stands for, its Su, RPM per flowing face and inertia, and the density the inertia is quoted at (wood, Mu per mB). */
+    public static final float WHEEL_REF_CM = 200f, WHEEL_REF_BUCKETS = 8f, WHEEL_CAPACITY_SU = 256f, WHEEL_RPM_PER_FLOW = 4f,
+            WHEEL_INERTIA = 400f, WHEEL_REF_DENSITY = 0.6f;
+
+    /** Thermal store: the wall (cm) the fixed block stands for, its heat mass and leak, and the brick density and conductivity they were quoted at. */
+    public static final float STORE_REF_CM = 20f, STORE_MASS = 1800f, STORE_LEAK = 0.05f, STORE_REF_DENSITY = 1.9f, STORE_REF_CONDUCTIVITY = 0.000175f;
+    /** Leyden jar: the plate area (percent) and glass wall (mm) the fixed jar stands for, and its capacitance, leak per tick and burst amps. */
+    public static final float JAR_REF_AREA = 50f, JAR_REF_WALL_MM = 4f, JAR_CAPACITANCE = 10f, JAR_LEAK = 0.002f, JAR_BURST_AMPS = 8f;
 }

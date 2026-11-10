@@ -7,10 +7,10 @@ A treatise is a book on one **school** of engineering. Holding it lets the [Blue
 | Treatise | Types it opens |
 | --- | --- |
 | Weapons Treatise | gun, crossbow |
-| Mechanical Treatise | engine, transmission |
+| Mechanical Treatise | engine, transmission, water wheel |
 | Aerospace Treatise | propeller |
 | Robotics Treatise | suit module |
-| Chemical Treatise | pressure vessel |
+| Chemical Treatise | pressure vessel, heat exchanger, gas tank |
 | Materials Treatise | no types |
 
 Types outside every school (tools, armor, dynamotor, battery, belt and the rest) need no treatise. A school is a subject of its own: one treatise opens nothing in another.

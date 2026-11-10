@@ -26,8 +26,7 @@
       "feedback:bellows",
       "feedback:bimetallic_strip",
       "feedback:thermometer",
-      "feedback:kiln",
-      "feedback:heat_exchanger"
+      "feedback:kiln"
     ]
   }
 }

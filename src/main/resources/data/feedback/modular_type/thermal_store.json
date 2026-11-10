@@ -1,0 +1,51 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "store_core",
+      "forms": [
+        "store_core"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "wall": {
+          "min": 10,
+          "max": 40,
+          "unit": "cm",
+          "default": 20,
+          "step": 2
+        }
+      },
+      "part": {
+        "item": "feedback:store_core",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "brick"
+        ],
+        "base": "store_walled",
+        "variants": [
+          {
+            "name": "store_walled"
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:brick"
+  }
+}

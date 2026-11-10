@@ -293,7 +293,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.POROUS_AGGREGATE.get(), "porous_aggregate");
         info(registration, FItems.CONVERTER_TAP.get(), "converter_tap");
         info(registration, FItems.HEATSINK.get(), "heatsink");
-        info(registration, FItems.THERMAL_STORE.get(), "thermal_store");
+        info(registration, FModular.THERMAL_STORE.get(), "thermal_store");
         info(registration, FItems.WHISKER.get(), "whisker");
         info(registration, FItems.RELAY.get(), "relay");
         info(registration, FItems.COMPONENT_TESTER.get(), "component_tester");
@@ -415,7 +415,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.registry.FLogistics.MODULE_ITEMS.forEach((m, item) -> info(registration, item.get(), "belt_module_" + m.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ELECTROMAGNET.get().asItem(), "electromagnet");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.LAMP.get().asItem(), "lamp");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GAS_TANK.get().asItem(), "gas_tank");
+        info(registration, FModular.GAS_TANK.get(), "gas_tank");
         info(registration, FItems.TUBE.get(), "tube");
         info(registration, FItems.LINED_TUBE.get(), "lined_tube");
         info(registration, FItems.WIDE_TUBE.get(), "wide_tube");
@@ -434,16 +434,16 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.ENDER_PORT.get(), "ender_port");
         info(registration, FItems.ENDER_ANCHOR.get(), "ender_anchor");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GAS_TURBINE.get().asItem(), "gas_turbine");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HEAT_EXCHANGER.get().asItem(), "heat_exchanger");
+        info(registration, FModular.HEAT_EXCHANGER.get(), "heat_exchanger");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HAND_CRANK.get().asItem(), "hand_crank");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.LEYDEN_JAR.get().asItem(), "leyden_jar");
+        info(registration, FModular.LEYDEN_JAR.get(), "leyden_jar");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.OVERSPEED_TRIP.get().asItem(), "overspeed_trip");
         info(registration, FModular.PRESSURE_VESSEL.get(), "pressure_vessel");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PUMP.get().asItem(), "pump");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STEAM_ENGINE.get().asItem(), "steam_engine");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STEAM_TURBINE.get().asItem(), "steam_turbine");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.TIMER.get().asItem(), "timer");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.WATER_WHEEL.get().asItem(), "water_wheel");
+        info(registration, FModular.WATER_WHEEL.get(), "water_wheel");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GALVANIC_CELL.get().asItem(), "galvanic_cell");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.SCULK_RELAY.get().asItem(), "sculk_relay");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DATA_SENSOR.get().asItem(), "data_sensor");

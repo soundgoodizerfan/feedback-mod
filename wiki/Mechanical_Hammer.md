@@ -17,7 +17,7 @@ P is a [Copper Plate](#what-it-makes), S is a [Shaft](Shaft.md) and B is Cobbles
 1. Run a shaft from a power source to a **Crank Linkage**. A [Water Wheel](Water_Wheel.md) is the usual first choice. A [Hand Crank](Hand_Crank.md) is too weak, and one [Steam Engine](Steam_Engine.md) on its own isn't quite enough either.
 2. Put the hammer **directly in front of** the linkage. The linkage turns rotation into hammer blows.
 
-The linkage adds the hammer's **80 Su** load to your shaft network, so make sure your source can carry it. A water wheel (256 Su) carries three.
+The linkage adds the hammer's **80 Su** load to your shaft network, so make sure your source can carry it. A default [Water Wheel](Water_Wheel.md) (256 Su) carries three.
 
 ## The head
 
