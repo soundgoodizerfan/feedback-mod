@@ -279,10 +279,16 @@ public final class ToolDesigns {
             plan.set(FModular.DESIGN.get(), design);
         }
         ItemStack drawn = plan;
-        return layout(stacks(design, type, materials), ToolTableAssembly.slots(type))
-                .flatMap(slots -> ToolTableAssembly.infer(slots, drawn, materials,
-                        ToolTableAssembly.ofKind(types, ToolTableAssembly.kindOf(type))))
-                .filter(m -> m.type().equals(design.type()));
+        // a drawing has no components, so an upgrade that needs one is baked as if a middling one were fitted
+        ModularBake.drawing(true);
+        try {
+            return layout(stacks(design, type, materials), ToolTableAssembly.slots(type))
+                    .flatMap(slots -> ToolTableAssembly.infer(slots, drawn, materials,
+                            ToolTableAssembly.ofKind(types, ToolTableAssembly.kindOf(type))))
+                    .filter(m -> m.type().equals(design.type()));
+        } finally {
+            ModularBake.drawing(false);
+        }
     }
 
     /** The item {@code design} makes at the Tool Table, with the edge it was drawn with: what {@code /feedback build} hands out. */
@@ -344,6 +350,9 @@ public final class ToolDesigns {
             // A type with many optional parts (a gun's fittings) has thousands of assemblies: its plain drawings are
             // checked with at most one optional part on, which still reaches every role.
             for (ModularType.Assembly a : type.assembliesUpTo(type.extras().size() > 4 ? 1 : type.extras().size())) {
+                // a held component is brought by the builder, not drawn: drawings of a type leave it out
+                if (a.counts().keySet().stream().anyMatch(k -> type.roles().get(k).component()))
+                    continue;
                 Optional<ModularDesign> d = plain(id, types, a.counts(), false, materials);
                 // A drawing the bake itself refuses (an action the feed does not suit, a winding that is no coil) is
                 // not a part set the table could be asked to read back.

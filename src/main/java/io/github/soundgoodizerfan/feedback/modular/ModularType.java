@@ -168,6 +168,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         SUIT_MODULE,
         MACHINE;
 
+        /**
+         * Whether a design of this family can be drawn only from a plan already in hand: the Blueprint Table copies and changes plans, it
+         * does not invent one. The first plan comes from measuring a specimen or from where plans are found ({@link ModularPlans}).
+         */
+        public boolean planGated() {
+            return this == SUIT_MODULE;
+        }
+
         /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). A circuit is held too, as form {@code circuit}, though it is no modular family. */
         public String nestForm() {
             return switch (this) {
@@ -313,6 +321,15 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             List<Material.Trait> out = new ArrayList<>(traits);
             out.addAll(anyTraits);
             return out;
+        }
+
+        /**
+         * Whether the role takes a finished component whose state is read off it (a circuit, a power cell, a motor) rather than
+         * stock or a shaped part. A component is not drawn on a blueprint: the sheet pins what is shaped, and the component is whatever
+         * the builder brings ({@link ModularNest}).
+         */
+        public boolean component() {
+            return part.isEmpty() && stock.isEmpty() && forms.size() == 1 && ModularNest.COMPONENT_FORMS.contains(forms.get(0));
         }
 
         /** The raw stock the role is made of: the part's, if it takes a part, else what it takes. */
@@ -673,7 +690,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     /** The parts the sheet can add or take off: the {@link #extras}, and each ranged role that may be none. */
     public List<String> optionals() {
         List<String> extras = extras();
-        return order().stream().filter(k -> extras.contains(k) || (ranges.containsKey(k) && ranges.get(k).get(0) == 0)).toList();
+        return order().stream().filter(k -> !roles.get(k).component() && (extras.contains(k) || (ranges.containsKey(k) && ranges.get(k).get(0) == 0))).toList();
     }
 
     private List<Map<String, Integer>> makeForms() {

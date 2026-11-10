@@ -24,6 +24,9 @@ public final class ModularNest {
     private ModularNest() {
     }
 
+    /** The forms of components a role reads the state of, as against a finished modular item held for what it is. */
+    public static final java.util.Set<String> COMPONENT_FORMS = java.util.Set.of("circuit", "power_cell", "motor");
+
     /** The nest form of {@code stack}, or empty if it is not a finished item that can be held. */
     public static String form(ItemStack stack) {
         if (stack.isEmpty())

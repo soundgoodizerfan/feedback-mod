@@ -115,6 +115,12 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             send(player, Component.translatable("message.feedback.blueprint_table.no_paper"));
             return;
         }
+        // A type that must be learned is drawn only from a plan already in hand: the paper in the slot is a sheet of the same type.
+        ModularType drawn = ModularTypes.get().types().get(design.type());
+        if (drawn != null && drawn.family().planGated() && !ModularPlans.references(paper.getItem(0), design.type())) {
+            send(player, Component.translatable("message.feedback.blueprint_table.no_reference"));
+            return;
+        }
         var figures = ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
         if (figures.isEmpty()) {
             send(player, Component.translatable("message.feedback.blueprint_table.cannot_print"));

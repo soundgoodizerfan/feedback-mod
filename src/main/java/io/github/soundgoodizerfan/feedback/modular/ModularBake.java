@@ -400,6 +400,13 @@ public final class ModularBake {
         }
     }
 
+    private static final ThreadLocal<Boolean> DRAWING = ThreadLocal.withInitial(() -> false);
+
+    /** Sets whether this thread is baking a drawing (a blueprint's prediction), which has no components fitted. */
+    static void drawing(boolean on) {
+        DRAWING.set(on);
+    }
+
     /**
      * What a suit module is: its attachments (each a part of one mechanism, cut in a variant that is the upgrade) and how hard each
      * works. A variant names the upgrade ({@code module} param) and the property of the attachment's material that makes it work,
@@ -435,6 +442,8 @@ public final class ModularBake {
             for (String need : new String[] {"controller", "cell", "motor"})
                 if (k.containsKey("needs_" + need)) {
                     Float grade = supports.get(need);
+                    if (grade == null && DRAWING.get())
+                        grade = ModularTuning.DRAWN_SUPPORT_GRADE;
                     if (grade == null)
                         return Optional.empty();
                     supported *= ModularTuning.SUPPORT_FLOOR + (1f - ModularTuning.SUPPORT_FLOOR) * grade;

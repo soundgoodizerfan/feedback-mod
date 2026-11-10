@@ -114,18 +114,23 @@ public final class ToolTableAssembly {
         }
         if (used.isEmpty())
             return Optional.empty();
-        ModularDesign drawn = plan.isEmpty() ? null : ModularStacks.design(plan);
+        List<ModularDesign> sheets = ModularPlans.designs(plan);
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
             ModularType type = e.getValue();
-            if (type.blueprint() && (drawn == null || !drawn.type().equals(e.getKey())))
+            if (type.blueprint() && sheets.stream().noneMatch(d -> d.type().equals(e.getKey())))
                 continue;
+            ModularDesign drawn = null;
             Best best = new Best();
             for (ModularType.Assembly a : type.assemblies(used.size()))
                 assign(type, e.getKey(), a.counts(), slots, used, what, 0, new String[used.size()], new boolean[used.size()], best);
             if (best.design == null)
                 continue;
-            if (type.blueprint() && !drawnTo(drawn, best.design))
-                continue;
+            if (type.blueprint()) {
+                ModularDesign made = best.design;
+                drawn = sheets.stream().filter(d -> d.type().equals(e.getKey()) && drawnTo(d, made)).findFirst().orElse(null);
+                if (drawn == null)
+                    continue;
+            }
             ModularDesign design = type.blueprint() ? withDrawnDims(drawn, best.design, type) : best.design;
             // A coat rolled onto the wearing plate (roll cladding) rides onto the tool, where ModularBake reads it.
             io.github.soundgoodizerfan.feedback.process.Plating coat = null;
@@ -153,10 +158,11 @@ public final class ToolTableAssembly {
      * Ground-in figures (dims, flaw) are measured on the part and left to the bake; the drawing predicts them.
      */
     private static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
-        if (drawn.parts().size() != made.parts().size())
+        // a held component (a circuit, a cell) is what the builder brings: the sheet does not pin it
+        if (drawn.parts().size() != made.parts().stream().filter(p -> p.sub().isEmpty()).count())
             return false;
         for (Part want : drawn.parts()) {
-            boolean found = made.parts().stream().anyMatch(p -> p.role().equals(want.role()) && p.material().equals(want.material())
+            boolean found = made.parts().stream().anyMatch(p -> p.sub().isEmpty() && p.role().equals(want.role()) && p.material().equals(want.material())
                     && p.kind().equals(want.kind()) && p.count() == want.count());
             if (!found)
                 return false;
@@ -304,10 +310,10 @@ public final class ToolTableAssembly {
         if (what.isEmpty())
             return List.of();
         List<ResourceLocation> out = new ArrayList<>();
-        ModularDesign drawn = plan.isEmpty() ? null : ModularStacks.design(plan);
+        List<ModularDesign> sheets = ModularPlans.designs(plan);
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
             ModularType type = e.getValue();
-            if (type.patterns().isEmpty() || (type.blueprint() && (drawn == null || !drawn.type().equals(e.getKey()))))
+            if (type.patterns().isEmpty() || (type.blueprint() && sheets.stream().noneMatch(d -> d.type().equals(e.getKey()))))
                 continue;
             if (reaches(new ArrayList<>(type.roles().values().stream().filter(r -> !r.after()).toList()), what, 0))
                 out.add(e.getKey());

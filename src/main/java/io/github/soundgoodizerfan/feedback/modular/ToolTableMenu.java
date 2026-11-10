@@ -165,7 +165,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         addSlot(new TableSlot(ToolTableBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim(), 64, s -> true));
         // The plan slot: a blueprint, or at the Prep Table the seasoning a finish pours onto the dish.
         addSlot(new TableSlot(ToolTableBlockEntity.PLAN, PLAN_X, PLAN_Y, () -> !trim() && (planShown.get() == 1 || !table.getItem(ToolTableBlockEntity.PLAN).isEmpty()), 1,
-                s -> dish ? isSeasoning(player.level(), s) : s.is(FModular.BLUEPRINT.get())));
+                s -> dish ? isSeasoning(player.level(), s) : isPlanItem(s)));
         if (gun) {
             // The rest of a gun's sixteen part slots, and the round its spec sheet is read against (not spent).
             for (int i = ToolTableAssembly.SLOTS; i < ToolTableAssembly.GUN_SLOTS; i++)
@@ -314,6 +314,31 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** The centre slot's stack. */
     public ItemStack centreStack() {
         return table.getItem(ToolTableBlockEntity.TOOL);
+    }
+
+    /**
+     * Whether {@code stack} belongs in the plan slot: a plan sheet, a book of them, or blank paper, which a taken-apart item writes its
+     * design onto ({@link #measure}).
+     */
+    public static boolean isPlanItem(ItemStack stack) {
+        return stack.is(FModular.BLUEPRINT.get()) || stack.getItem() instanceof BlueprintBookItem
+                || stack.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER);
+    }
+
+    /**
+     * Taking a plan-needing item apart with blank paper in the plan slot measures it: the paper becomes a plan sheet of its design (the
+     * parts of it that are shaped; a circuit or cell it carried is not part of what a plan pins). The item and the paper both go in.
+     */
+    private void measure(ServerPlayer server, ItemStack tool, Level level) {
+        ItemStack paper = table.getItem(ToolTableBlockEntity.PLAN);
+        ModularDesign design = ModularStacks.design(tool);
+        ModularType type = design == null ? null : types(level).get(design.type());
+        if (type == null || !type.blueprint() || paper.isEmpty() || paper.is(FModular.BLUEPRINT.get()) || !paper.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER))
+            return;
+        ModularDesign pinned = new ModularDesign(design.type(), design.parts().stream().filter(p -> p.sub().isEmpty()).toList(), design.edge());
+        var figures = ToolDesigns.predict(pinned, types(level), ClientMaterials.on(level));
+        table.setItem(ToolTableBlockEntity.PLAN, ModularPlans.sheet(pinned, figures.orElse(null)));
+        io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("message.feedback.plan.measured"), 60);
     }
 
     /** The finished tool (or dish) in the centre, else empty. */
@@ -640,6 +665,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (dish)
             return true;
         ItemStack c = centreStack();
+        // a finished item that needs a plan can be measured onto paper put in the plan slot
+        ModularDesign made = ModularStacks.design(c);
+        if (made != null && types(level).get(made.type()) != null && types(level).get(made.type()).blueprint())
+            return true;
         if (!(c.getItem() instanceof ModularPartItem))
             return false;
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(c.getItem());
@@ -1131,6 +1160,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
             if (ModularStacks.worn(tool) > 0f)
                 io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.salvaged(server, "apart/" + ModularStacks.design(tool).type());
         }
+        if (!dish)
+            measure(server, tool, level);
         table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
         parts.forEach(p -> server.getInventory().placeItemBackInInventory(p));
         level.playSound(null, pos, dish ? SoundEvents.AXE_STRIP : SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
@@ -1631,7 +1662,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 return ItemStack.EMPTY;
         } else {
             // From the inventory: a tool to the hammer slot, a blueprint or seasoning to the plan slot, a round to the round slot, else the centre, then the stock slot.
-            boolean plan = dish ? isSeasoning(player.level(), held) : held.is(FModular.BLUEPRINT.get());
+            boolean plan = dish ? isSeasoning(player.level(), held) : isPlanItem(held);
             boolean round = gun && held.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE_ITEM.get());
             if (trim() ? !moveItemStackTo(held, EXTRA, EXTRA + 3, false)
                     : !(plan && moveItemStackTo(held, PLAN, PLAN + 1, false)) && !(round && moveItemStackTo(held, inv() - 1, inv(), false))

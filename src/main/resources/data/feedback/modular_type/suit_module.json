@@ -628,5 +628,6 @@
       "W"
     ]
   ],
-  "defaults": {}
+  "defaults": {},
+  "blueprint": true
 }

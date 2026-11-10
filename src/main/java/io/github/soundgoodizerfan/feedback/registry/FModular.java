@@ -63,6 +63,11 @@ public final class FModular {
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.crop.SeedLoot>> CROP_SEEDS_LOOT =
             LOOT_MODIFIERS.register("crop_seeds", () -> io.github.soundgoodizerfan.feedback.crop.SeedLoot.CODEC);
 
+    /** Adds a suit module plan to a chest. */
+    public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
+            com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.modular.ModularPlans.Loot>> MODULE_PLAN_LOOT =
+            LOOT_MODIFIERS.register("module_plan", () -> io.github.soundgoodizerfan.feedback.modular.ModularPlans.Loot.CODEC);
+
     /** Adds a gun blueprint from the pool to a chest. */
     public static final DeferredHolder<com.mojang.serialization.MapCodec<? extends net.neoforged.neoforge.common.loot.IGlobalLootModifier>,
             com.mojang.serialization.MapCodec<io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.Loot>> GUN_BLUEPRINT_LOOT =
@@ -279,6 +284,11 @@ public final class FModular {
     /** A suit upgrade module (family {@code suit_module}): built at the Tool Table from a casing, wiring and a core, then held whole in an armour piece's upgrade role. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> SUIT_MODULE = ITEMS.register("suit_module",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(new Item.Properties().stacksTo(1)));
+
+    /** A book of plan sheets that works like a bundle ({@link io.github.soundgoodizerfan.feedback.modular.ModularPlans}). */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.BlueprintBookItem> BLUEPRINT_BOOK = ITEMS.register("blueprint_book",
+            () -> new io.github.soundgoodizerfan.feedback.modular.BlueprintBookItem(new Item.Properties().stacksTo(1)
+                    .component(net.minecraft.core.component.DataComponents.BUNDLE_CONTENTS, net.minecraft.world.item.component.BundleContents.EMPTY)));
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> TWIN = ITEMS.register("twin",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
