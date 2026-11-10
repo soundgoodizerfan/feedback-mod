@@ -4,7 +4,7 @@ A rolled bed for the road. Lie down in it on firm ground at night, or in a storm
 
 ## Crafting
 
-Made at the Tool Table from three parts, as for any [modular tool](Tools_and_Weapons.md):
+Made at the [Woodworking Table](Woodworking_Table.md) from three parts, as for any [modular tool](Tools_and_Weapons.md):
 
 - **Sheet** (Bedroll Sheet): the cloth or leather you lie on, leather or carpet.
 - **Fill**: fibrous stuffing between the sheet and the shell. The softer it is, the better the sleep.

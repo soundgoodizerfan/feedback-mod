@@ -48,6 +48,6 @@ A [Computer](Electric_Controller.md#apps) can run the same board as the **Bluepr
 
 ## What a blueprint is for
 
-Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work. Repairs and swaps never need one. A blueprint cannot be taken apart at the Tool Table.
+Mostly it's a plan to look at. The one thing that **needs** one is the [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work. Repairs and swaps never need one. A blueprint cannot be taken apart at a bench.
 
 Operators can make a blueprint of the item in their hand with `/feedback blueprint`; it works on any modular item that is not itself a blueprint.

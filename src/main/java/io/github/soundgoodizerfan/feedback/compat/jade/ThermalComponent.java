@@ -96,9 +96,13 @@ public class ThermalComponent implements IBlockComponentProvider {
             if (insulation > 0)
                 tooltip.add(Component.translatable("feedback.spec.insulation", insulation)
                         .withStyle(ChatFormatting.DARK_GRAY));
-            for (ItemStack held : crucible.getContents())
-                if (!held.isEmpty())
-                    tooltip.add(held.getHoverName());
+        }
+
+        // What each held piece is at: a cold piece laid in a hot vessel is seen warming.
+        for (net.minecraft.nbt.Tag t : data.getList(ThermalServerData.HELD, net.minecraft.nbt.Tag.TAG_COMPOUND)) {
+            CompoundTag entry = (CompoundTag) t;
+            tooltip.add(Component.literal(entry.getString("Name")).append(": ")
+                    .append(Readout.temperatureReading(new Tu(entry.getFloat("Tu")))));
         }
 
         if (accessor.getBlockEntity() instanceof BimetallicStripBlockEntity strip) {

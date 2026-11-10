@@ -1,6 +1,6 @@
 # Rectifier
 
-A fitting that makes a [battery](Battery.md) beside it charge in about 3 minutes from empty instead of about 10.
+A fitting that makes a [battery](Battery.md) beside it charge in about 1 minute from empty instead of about 2.5.
 
 ## Crafting
 

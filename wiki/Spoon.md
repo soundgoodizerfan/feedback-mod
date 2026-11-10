@@ -4,7 +4,7 @@ A modular hand tool for working a [Stockpot](Stockpot.md): hold it to stir, tap 
 
 ## Crafting
 
-Shape a **Spoon Bowl** (from a plate, planks or bone; metal is shaped hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md)) and put it with a handle (stick or bone) at the Tool Table, as for any [modular tool](Tools_and_Weapons.md).
+Shape a **Spoon Bowl** (from a plate, planks or bone; metal is shaped hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md)) and put it with a handle (stick or bone) at the [Woodworking Table](Woodworking_Table.md), as for any [modular tool](Tools_and_Weapons.md).
 
 ## Using it
 

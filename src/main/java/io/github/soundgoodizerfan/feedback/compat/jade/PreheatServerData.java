@@ -16,12 +16,20 @@ public class PreheatServerData implements IServerDataProvider<BlockAccessor> {
 
     public static final PreheatServerData INSTANCE = new PreheatServerData();
 
-    static final String TARGET = "PreheatTarget";
+    static final String TARGET = "PreheatTarget", HELD = "PreheatHeld", HELD_TU = "PreheatHeldTu", COUPLES = "PreheatCouples", HEATING = "PreheatHeating";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
         if (accessor.getBlockEntity() instanceof PreheatCoilBlockEntity coil)
+        {
             data.putInt(TARGET, Math.round(coil.targetTu()));
+            if (!coil.held().isEmpty()) {
+                data.putString(HELD, coil.held().getHoverName().getString());
+                data.putFloat(HELD_TU, coil.heldTemperature().value());
+                data.putBoolean(COUPLES, coil.couples());
+                data.putBoolean(HEATING, coil.heating());
+            }
+        }
     }
 
     @Override

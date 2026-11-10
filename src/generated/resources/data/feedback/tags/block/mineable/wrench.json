@@ -27,6 +27,7 @@
     "feedback:catalyst_tap",
     "feedback:cermet_pipe",
     "feedback:charger",
+    "feedback:charging_gantry",
     "feedback:chassis_frame",
     "feedback:chromium_pipe",
     "feedback:clutch",
@@ -225,7 +226,6 @@
     "feedback:wide_tube",
     "feedback:wire_drawer",
     "feedback:wrought_iron_pipe",
-    "feedback:zinc_pipe",
-    "feedback:charging_gantry"
+    "feedback:zinc_pipe"
   ]
 }

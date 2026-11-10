@@ -45,6 +45,23 @@ public class PreheatCoilBlockEntity extends ElectricNode {
         return FTuning.PREHEAT_TARGETS_TU[target];
     }
 
+    /** The held piece's temperature now, or null with nothing laid in. */
+    public Tu heldTemperature() {
+        return level == null || held.isEmpty() ? null : ItemHeat.get(held, level);
+    }
+
+    /** Whether the coil is delivering power to the piece this tick, which a readout tells apart from a piece that is not a metal. */
+    public boolean heating() {
+        return power > 0f && wantsHeat();
+    }
+
+    /** Whether the held piece couples to the field (is a metal). */
+    public boolean couples() {
+        if (!coupledKnown)
+            findCoupling();
+        return coupled;
+    }
+
     public void cycleTarget() {
         target = (target + 1) % FTuning.PREHEAT_TARGETS_TU.length;
         setChanged();

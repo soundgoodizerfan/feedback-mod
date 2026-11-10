@@ -88,7 +88,7 @@ A skill (Onslaught tree; gear can grant it) you slot into a cast slot. It kicks 
 - It **shoves** by the kick's impact against the target's mass, and **staggers** a free target only if the stagger comes to at least half a second. An iron golem is only shoved. The kick carries 1 joule for every Mu of your own mass (armor counts, so a heavy fighter kicks harder), plus 20 for the foot.
 - A target with a **raised shield loses its guard**: the shield goes on cooldown (1 to 5 seconds, longer the lighter the target) and the target staggers at least half a second.
 - A kick costs stamina and shares the 30 tick cooldown with the roll and the parry. The leg visibly kicks for 7 ticks.
-- Skills build on it. **Wall smash**: a target kicked into a wall takes the weight of the armor it wears as extra stagger. **Breach kick**: a target already staggered is knocked down for 2.5 seconds; a steady one only shoves. **Dropkick** and **Axe kick** are casts of their own.
+- Skills build on it. **Wall smash**: a target kicked into a wall takes the weight of the armor it wears as extra stagger. **Breach kick**: a target already staggered is knocked down for 2.5 seconds; a steady one only shoves. **Dropkick** (which carries the first creature it strikes down to the landing) and **Axe kick** are casts of their own.
 
 ## Grab
 

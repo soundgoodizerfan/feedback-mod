@@ -39,6 +39,7 @@ public class ThermalServerData implements IServerDataProvider<BlockAccessor> {
     static final String INSULATION = "Insulation";
     static final String FIRE_TU = "FireTu";
     static final String FLUIDS = "FluidHeat";
+    static final String HELD = "HeldHeat";
 
     @Override
     public void appendServerData(CompoundTag data, BlockAccessor accessor) {
@@ -48,6 +49,17 @@ public class ThermalServerData implements IServerDataProvider<BlockAccessor> {
             data.putBoolean(THERMAL, true);
             data.putBoolean(READABLE, body.hasThermowell());
             data.putFloat(TEMPERATURE, body.getTemperature().value());
+        }
+
+        if (be instanceof io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore vessel && vessel.hasThermowell()) {
+            var list = new net.minecraft.nbt.ListTag();
+            for (var held : vessel.heldReadings()) {
+                CompoundTag entry = new CompoundTag();
+                entry.putString("Name", held.getKey().getString());
+                entry.putFloat("Tu", held.getValue().value());
+                list.add(entry);
+            }
+            data.put(HELD, list);
         }
 
         if (be instanceof CrucibleBlockEntity crucible) {

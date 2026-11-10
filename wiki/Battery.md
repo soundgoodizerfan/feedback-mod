@@ -39,7 +39,7 @@ Wire it to a line like any other electrical block; see [Electricity](Electricity
 
 The battery switches between three states on its own, shown in Jade:
 
-- **Charging**: the line is above the battery's voltage. It draws current and fills, from empty to full in about 10 minutes at its limit, or about 3 minutes beside a powered [Rectifier](Rectifier.md).
+- **Charging**: the line is above the battery's voltage. It draws current and fills, from empty to full in about 2.5 minutes at its limit, or about 1 minute beside a powered [Rectifier](Rectifier.md).
 - **Supplying**: the line has dropped below it. It becomes a source, and a full battery can run flat in about 5 minutes at its limit.
 - **Holding**: the line is at its own voltage; it neither takes nor gives.
 

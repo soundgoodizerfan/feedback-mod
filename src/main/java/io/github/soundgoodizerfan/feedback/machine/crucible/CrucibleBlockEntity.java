@@ -184,10 +184,8 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
                 continue;
             ItemStack taken = stack.split(1);
             // A cold item put into a hot vessel is still cold; it is the vessel that will heat it.
-            // Clearing any stale stamp here is what stops an ingot that was hot an hour ago
-            // arriving with a temperature it no longer has.
-            if (level != null)
-                ItemHeat.settle(taken, level);
+            // The temperature it arrives at is remembered per slot and soaks toward the vessel's.
+            soakStart(slot, taken);
             contents.set(slot, taken);
             resetSlot(slot);
             sync();
@@ -200,19 +198,20 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
      * Take something out, at the temperature the vessel is at.
      *
      * <h3>Where a workpiece picks up its heat</h3>
-     * Contents are not stamped while they sit here -- they are at the vessel's temperature by
-     * definition, and re-stamping every tick would rewrite a data component sixty times a second
-     * to say something already known. The stamp is applied at the moment the item leaves, which
-     * is the moment it starts cooling on its own and the moment anybody could ask.
+     * Contents are not stamped while they sit here: each slot remembers the temperature its item arrived at
+     * and when, and {@link #slotTemperature} soaks that toward the vessel's, closed-form, so a cold piece laid
+     * in a hot crucible reads as warming rather than as already hot. The stamp is applied at the moment the item
+     * leaves, which is the moment it starts cooling on its own and the moment anybody could ask.
      */
     public ItemStack removeItem(int slot) {
         ItemStack taken = contents.get(slot);
         if (taken.isEmpty())
             return ItemStack.EMPTY;
+        Tu now = slotTemperature(slot);
         contents.set(slot, ItemStack.EMPTY);
         resetSlot(slot);
         if (level != null)
-            ItemHeat.set(taken, new Tu(temperature), level);
+            ItemHeat.set(taken, now, level);
         sync();
         return taken;
     }
@@ -224,17 +223,17 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
             return ItemStack.EMPTY;
         if (count >= held.getCount())
             return removeItem(slot);
+        Tu now = slotTemperature(slot);
         ItemStack taken = held.split(count);
         if (level != null)
-            ItemHeat.set(taken, new Tu(temperature), level);
+            ItemHeat.set(taken, now, level);
         sync();
         return taken;
     }
 
     /** Put a stack into a slot by hand; a cold item arrives cold, as {@link #insert} has it. */
     public void putItem(int slot, ItemStack stack) {
-        if (level != null)
-            ItemHeat.settle(stack, level);
+        soakStart(slot, stack);
         contents.set(slot, stack);
         resetSlot(slot);
         sync();

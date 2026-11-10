@@ -57,6 +57,7 @@ public final class SuitServer {
     private static final class Run {
         float heat, pending, draw, carry = 1f, coldMult = 1f, lastSpeed;
         boolean cut, dash, hopped, powered, plating, jumpOn, nv, asked;
+        float[] mods;
         int toggles, sinceWrite, fxSig = -1, stun;
         SuitSyncPayload sent;
     }
@@ -66,6 +67,19 @@ public final class SuitServer {
     static float carryFactor(net.minecraft.world.entity.player.Player player) {
         Run r = RUNS.get(player.getUUID());
         return r == null ? 1f : r.carry;
+    }
+
+    /** The wearer's upgrade powers while the suit is powered, else null (index by {@link SuitModules} id). */
+    static float[] mods(net.minecraft.world.entity.player.Player player) {
+        Run r = RUNS.get(player.getUUID());
+        return r == null ? null : r.mods;
+    }
+
+    /** Adds amp-ticks to the battery's pending draw (an event's cost). */
+    static void charge(net.minecraft.world.entity.player.Player player, float ampTicks) {
+        Run r = RUNS.get(player.getUUID());
+        if (r != null)
+            r.pending += ampTicks;
     }
 
     private static Run run(ServerPlayer p, ExoSuit.Rig rig) {
@@ -126,7 +140,7 @@ public final class SuitServer {
                 float drive = rig.driveLegs() + rig.driveFeet();
                 float d = SuitTuning.JUMP_IDLE_DRAW * drive;
                 if (r.dash)
-                    d += dash(p, r, drive, rig.driveLegs() > 0f);
+                    d += dash(p, r, drive, rig.driveLegs() > 0f, rig.mod());
                 drawn += d;
                 waste += d * rig.lossLegs();
             }
@@ -134,7 +148,10 @@ public final class SuitServer {
             drawn += sensor;
             waste += sensor * rig.lossChest();
             if ((on & Ability.THERMAL.bit()) != 0 && p.tickCount % SuitTuning.THERMAL_SCAN_TICKS == 0)
-                ThermalScan.scan(p, Math.min(SuitTuning.THERMAL_MAX_RANGE, SuitTuning.THERMAL_BASE_RANGE + SuitTuning.THERMAL_RANGE_PER_CELL * rig.sense()));
+                ThermalScan.scan(p, Math.min(SuitTuning.THERMAL_MAX_RANGE * SuitModules.lens(rig.mod()),
+                        (SuitTuning.THERMAL_BASE_RANGE + SuitTuning.THERMAL_RANGE_PER_CELL * rig.sense()) * SuitModules.lens(rig.mod())));
+            drawn += SuitModules.tick(p, rig.mod());
+            drawn *= SuitModules.efficiency(rig.mod());
         } else {
             r.dash = false;
         }
@@ -148,22 +165,24 @@ public final class SuitServer {
         if (p.tickCount % 20 == 0)
             r.coldMult = p.level().getBiome(p.blockPosition()).value().coldEnoughToSnow(p.blockPosition()) ? SuitTuning.COOL_COLD : 1f;
         float mult = p.isInWater() ? SuitTuning.COOL_WATER : p.isInWaterOrRain() ? SuitTuning.COOL_RAIN : r.coldMult;
-        heat -= (heat - amb) * SuitTuning.COOL_RATE * mult;
-        if (!r.cut && heat > SuitTuning.LIMIT_TU)
+        heat -= (heat - amb) * SuitTuning.COOL_RATE * mult * SuitModules.cooling(rig.mod());
+        float limit = SuitTuning.LIMIT_TU + SuitModules.limitBonus(rig.mod());
+        if (!r.cut && heat > limit)
             r.cut = true;
-        else if (r.cut && heat < SuitTuning.RESUME_TU)
+        else if (r.cut && heat < SuitTuning.RESUME_TU + SuitModules.limitBonus(rig.mod()))
             r.cut = false;
         r.heat = heat;
         // the wearer keeps asking for thrust while the servos are cut out: that, and nothing idle, wears the chestplate
         if (r.cut && r.asked && p.tickCount % SuitTuning.OVERHEAT_WEAR_TICKS == 0)
             chest.hurtAndBreak(1, p, EquipmentSlot.CHEST);
 
-        int sig = (powered ? 1 : 0) | on << 1;
+        int sig = ((powered ? 1 : 0) | on << 1) + 31 * rig.modSig();
         if (sig != r.fxSig || p.tickCount % 40 == 0) {
             effects(p, r, rig, powered, on);
             r.fxSig = sig;
         }
         r.powered = powered;
+        r.mods = powered ? rig.mod() : null;
         boolean nv = powered && (on & Ability.NIGHT.bit()) != 0;
         if (nv && p.tickCount % 20 == 0)
             p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION, 260, 0, true, false, false));
@@ -175,11 +194,11 @@ public final class SuitServer {
             flush(chest, r);
             r.sinceWrite = 0;
         }
-        sync(p, r, rig, chest, bt, left);
+        sync(p, r, rig, chest, bt, left, limit);
     }
 
     /** Held thrust: forward along the look, thinned by the air, with a short hop off the ground. Returns the amps it draws. */
-    private static float dash(ServerPlayer p, Run r, float drive, boolean legs) {
+    private static float dash(ServerPlayer p, Run r, float drive, boolean legs, float[] mod) {
         float density = Math.min(1f, AirDensityTable.at(p.level(), p.getY()) / SuitTuning.REF_AIR_DENSITY);
         Vec3 v = p.getDeltaMovement();
         double speed = Math.hypot(v.x, v.z);
@@ -193,8 +212,8 @@ public final class SuitServer {
             Vec3 look = p.getLookAngle();
             double hx = look.x, hz = look.z, hl = Math.hypot(hx, hz);
             if (hl > 1e-4) {
-                double accel = SuitTuning.DASH_ACCEL * Math.min(1f, drive / SuitTuning.DASH_REF_AMPS) * density;
-                double top = SuitTuning.DASH_TOP_SPEED * density;
+                double accel = SuitTuning.DASH_ACCEL * Math.min(1f, drive / SuitTuning.DASH_REF_AMPS) * density * SuitModules.spurAccel(mod);
+                double top = SuitTuning.DASH_TOP_SPEED * density * SuitModules.spurTop(mod);
                 double nx = v.x + hx / hl * accel, nz = v.z + hz / hl * accel, ns = Math.hypot(nx, nz);
                 if (ns > Math.max(top, speed)) {
                     double k = Math.max(top, speed) / ns;
@@ -233,12 +252,13 @@ public final class SuitServer {
         mod(p, Attributes.ARMOR, ARMOUR, plate ? Math.min(SuitTuning.PLATING_ARMOUR_MAX, SuitTuning.PLATING_ARMOUR_PER_AMP * dc) : 0f,
                 AttributeModifier.Operation.ADD_VALUE);
         mod(p, Attributes.ARMOR_TOUGHNESS, TOUGH, plate ? SuitTuning.PLATING_TOUGHNESS : 0f, AttributeModifier.Operation.ADD_VALUE);
-        r.carry = str ? 1f + Math.min(SuitTuning.STRENGTH_CARRY_MAX, SuitTuning.STRENGTH_CARRY_PER_AMP * dc) : 1f;
+        r.carry = (str ? 1f + Math.min(SuitTuning.STRENGTH_CARRY_MAX, SuitTuning.STRENGTH_CARRY_PER_AMP * dc) : 1f) + (powered ? SuitModules.carry(rig.mod()) : 0f);
+        SuitModules.attributes(p, powered ? rig.mod() : null);
         r.plating = plate;
         r.jumpOn = jump;
     }
 
-    private static void mod(ServerPlayer p, Holder<Attribute> attribute, ResourceLocation id, float value, AttributeModifier.Operation op) {
+    static void mod(ServerPlayer p, Holder<Attribute> attribute, ResourceLocation id, float value, AttributeModifier.Operation op) {
         AttributeInstance a = p.getAttribute(attribute);
         if (a == null)
             return;
@@ -256,6 +276,7 @@ public final class SuitServer {
         mod(p, Attributes.SAFE_FALL_DISTANCE, FALL, 0f, AttributeModifier.Operation.ADD_VALUE);
         mod(p, Attributes.ARMOR, ARMOUR, 0f, AttributeModifier.Operation.ADD_VALUE);
         mod(p, Attributes.ARMOR_TOUGHNESS, TOUGH, 0f, AttributeModifier.Operation.ADD_VALUE);
+        SuitModules.attributes(p, null);
     }
 
     /** Takes off the night-vision the suit lent, leaving a longer or visible one (a potion's) alone. */
@@ -292,10 +313,10 @@ public final class SuitServer {
             chest.set(FDataComponents.SUIT.get(), now);
     }
 
-    private static void sync(ServerPlayer p, Run r, ExoSuit.Rig rig, ItemStack chest, CompoundTag bt, float left) {
+    private static void sync(ServerPlayer p, Run r, ExoSuit.Rig rig, ItemStack chest, CompoundTag bt, float left, float limit) {
         float charge = bt == null || !BatteryStack.ready(bt) ? 0f : Math.max(0f, left) / Math.max(1e-3f, BatteryStack.effectiveCapacity(bt));
         SuitSyncPayload now = new SuitSyncPayload(true, rig.available(), r.toggles & rig.available(), Math.round(Math.min(1f, charge) * 64f) / 64f, bt != null,
-                Math.round(r.heat), r.cut, p.getPersistentData().getBoolean("feedback_pack_over"), rig.gauge(), Math.round(rig.mass() * 10f) / 10f, Math.round(r.draw * 10f) / 10f, SuitTuning.LIMIT_TU);
+                Math.round(r.heat), r.cut, p.getPersistentData().getBoolean("feedback_pack_over"), rig.gauge(), Math.round(rig.mass() * 10f) / 10f, Math.round(r.draw * 10f) / 10f, limit);
         if (!now.equals(r.sent)) {
             r.sent = now;
             PacketDistributor.sendToPlayer(p, now);

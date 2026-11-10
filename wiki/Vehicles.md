@@ -12,8 +12,8 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Chassis Frame** | The block a welded frame is built around. |
 | **Welder** | Places points, joins them with tubes, lays plates between them, and welds points to blocks. |
 | **Pivot Setter** | Turns a point into a hinge, a steered hinge, a control surface, a ball joint or a locked joint. |
-| **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the Tool Table. |
-| **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the Tool Table. |
+| **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
+| **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
 | **[Propeller](Propeller.md)** | Pulls the whole body along its facing from a turning shaft. |
 | **[Gas Cell](Gas_Cell.md)** | Holds a lift gas; an [Airship](Airship.md) floats on a block of them. |

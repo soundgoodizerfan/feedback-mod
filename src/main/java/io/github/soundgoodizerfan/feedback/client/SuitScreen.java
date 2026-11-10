@@ -224,8 +224,11 @@ final class SuitScreen extends Screen {
             line(g, tx, ty + 55, "screen.feedback.suit.fig.sense", Component.literal(Math.round(f.get(Fig.SUIT_SENSE)) + ""));
         if (f.get(Fig.SUIT_BAY) > 0f)
             line(g, tx, ty + 66, "screen.feedback.suit.fig.bay", Component.translatable("screen.feedback.suit.fig.yes"));
-        g.drawString(font, SuitReadout.mass(s), tx, ty + 80, SKIN.dim() | 0xFF000000, false);
-        g.drawString(font, SuitReadout.heat(s), tx, ty + 91, flash.colour(0, SuitReadout.heat(s).getString(), SKIN.dim() | 0xFF000000, SKIN.accent() | 0xFF000000), false);
+        String up = io.github.soundgoodizerfan.feedback.suit.SuitModules.key(Math.round(f.get(Fig.SUIT_MODULE)));
+        if (!up.isEmpty())
+            line(g, tx, ty + 77, "screen.feedback.suit.fig.upgrade", Component.translatable("modular.feedback.variant." + up));
+        g.drawString(font, SuitReadout.mass(s), tx, ty + 91, SKIN.dim() | 0xFF000000, false);
+        g.drawString(font, SuitReadout.heat(s), tx, ty + 102, flash.colour(0, SuitReadout.heat(s).getString(), SKIN.dim() | 0xFF000000, SKIN.accent() | 0xFF000000), false);
     }
 
     private static float shown(float v, SuitSyncPayload s) {

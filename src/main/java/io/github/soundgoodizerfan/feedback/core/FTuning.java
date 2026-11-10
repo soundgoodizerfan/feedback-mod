@@ -2750,7 +2750,7 @@ public final class FTuning {
      * which charging electrolyses water. Self-discharge is the share lost a day, caught up lazily.
      */
     public static final int BATTERY_INGOTS_PER_CELL = 2;
-    public static final float BATTERY_DISCHARGE_TICKS = 6000f, BATTERY_CHARGE_TICKS = 12000f;
+    public static final float BATTERY_DISCHARGE_TICKS = 6000f, BATTERY_CHARGE_TICKS = 3000f;
     public static final float BATTERY_CHARGE_EFFICIENCY = 0.85f;
     public static final int BATTERY_ACID_MB_PER_CELL = 250, BATTERY_WATER_TANK_MB = 1000;
     public static final float BATTERY_SWITCH_VOLTS = 0.05f;
@@ -2777,12 +2777,12 @@ public final class FTuning {
     public static final float BATTERY_SOC_LOW = 0.2f, BATTERY_SOC_PART = 0.6f, BATTERY_SOC_NEARLY = 0.9f;
     /**
      * Placeholders, the Rectifier (roadmap E4). Set against a battery and powered, it lets that battery charge in
-     * {@code RECTIFIER_CHARGE_TICKS} (capacity over that, about three minutes empty to full) instead of
+     * {@code RECTIFIER_CHARGE_TICKS} (capacity over that, about a minute empty to full) instead of
      * {@code BATTERY_CHARGE_TICKS}; the extra current is the battery's own heat and gassing logic's to answer. It asks a small
      * standing {@code RECTIFIER_AMPS} at MV whether or not a battery is there. A battery re-reads its neighbours every
      * {@code RECTIFIER_SCAN_TICKS} ticks, never every tick.
      */
-    public static final float RECTIFIER_AMPS = 0.25f, RECTIFIER_CHARGE_TICKS = 3600f;
+    public static final float RECTIFIER_AMPS = 0.25f, RECTIFIER_CHARGE_TICKS = 1200f;
     public static final int RECTIFIER_SCAN_TICKS = 20;
     /** Hydrometer: state of charge it reads to, as a share. */
     public static final float HYDROMETER_RESOLUTION = 0.05f;
@@ -3728,6 +3728,8 @@ public final class FTuning {
     public static final float[] PREHEAT_TARGETS_TU = {0f, 600f, 800f, 1000f, 1200f, 1400f, 1600f, 1800f};
     /** Invented. The step a new preheat coil is set to (an index into {@link #PREHEAT_TARGETS_TU}). */
     public static final int PREHEAT_DEFAULT_TARGET = 3;
+    /** Invented. The share of the gap to the crucible's temperature a laid-in piece closes each tick (about 5 s to settle). */
+    public static final float CRUCIBLE_SOAK_PER_TICK = 0.01f;
     /** Placeholder. The stockpot is a pot of cast iron cookware; there is no pot variant to read a material from. */
     public static final net.minecraft.resources.ResourceLocation POT_MATERIAL = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "wrought_iron");
 

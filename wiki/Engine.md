@@ -28,7 +28,7 @@ The pistons' metal decides how fast the engine can rev. **Light, strong metals r
 
 ## Building it
 
-At the Tool Table, put the **Engine Blueprint** in the plan slot and the four parts (a block, a piston set, a crankshaft and a cylinder head, each made from ingots or plate of the metal you chose) in the slots. The Engine comes out, with the bore and stroke you drew, and the blueprint is kept.
+At the [Smithing Table](Smithing_Table.md), put the **Engine Blueprint** in the plan slot and the four parts (a block, a piston set, a crankshaft and a cylinder head, each made from ingots or plate of the metal you chose) in the slots. The Engine comes out, with the bore and stroke you drew, and the blueprint is kept.
 
 ## Fuel
 

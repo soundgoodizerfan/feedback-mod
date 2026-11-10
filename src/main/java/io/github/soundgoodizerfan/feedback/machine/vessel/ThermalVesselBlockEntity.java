@@ -365,7 +365,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     /** Anything leaving a working slot -- by hand, hopper or pipe -- leaves at the vessel's temperature (§9). */
     private ItemStack stampLeaving(int slot, ItemStack taken) {
         if (slot < SLOTS && level != null && !taken.isEmpty())
-            ItemHeat.set(taken, new Tu(temperature), level);
+            ItemHeat.set(taken, slotTemperature(slot), level);
         return taken;
     }
 
@@ -383,6 +383,8 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     public void setItem(int slot, ItemStack stack) {
         if (!ItemStack.isSameItemSameComponents(items.get(slot), stack))
             resetSlotProgress(slot);
+        if (slot < SLOTS && !ItemStack.isSameItemSameComponents(items.get(slot), stack))
+            soakStart(slot, stack);
         items.set(slot, stack);
         stack.limitSize(getMaxStackSize(stack));
         setChanged();

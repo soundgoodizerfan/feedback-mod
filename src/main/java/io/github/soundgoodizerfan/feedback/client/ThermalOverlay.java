@@ -14,6 +14,18 @@ import io.github.soundgoodizerfan.feedback.net.SuitSyncPayload;
 import io.github.soundgoodizerfan.feedback.net.ThermalFeedPayload.Entry;
 import io.github.soundgoodizerfan.feedback.suit.Ability;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexSorting;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4fStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -164,7 +176,7 @@ final class ThermalOverlay {
             quad(g, SOLID, 0, 0, w, h, 0.30f, 0.26f, 0.62f, 1f, 4, 4);
             RenderSystem.blendFunc(GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
             quad(g, SOLID, 0, 0, w, h, 0.015f, 0.012f, 0.06f, 1f, 4, 4);
-            blobs(g, mc, w, h);
+            blobs(g, mc, delta, w, h);
             // scanlines, drifting slowly, and a grain of faint lines
             RenderSystem.defaultBlendFunc();
             int drift = (int) (now / 90 % 3);
@@ -219,31 +231,129 @@ final class ThermalOverlay {
         return true;
     }
 
-    private static void blobs(GuiGraphics g, Minecraft mc, int w, int h) {
+    /** Forces every vertex a model writes to one flat colour, full bright, on the white texel; a name tag or a glint is dropped. */
+    private static final class Flat implements MultiBufferSource {
+        private final MultiBufferSource.BufferSource real;
+        float r, g, b;
+
+        Flat(MultiBufferSource.BufferSource real) {
+            this.real = real;
+        }
+
+        @Override
+        public VertexConsumer getBuffer(RenderType type) {
+            String n = type.toString();
+            if (n.contains("text") || n.contains("glint") || n.contains("line") || n.contains("shadow") || n.contains("debug"))
+                return NOOP;
+            return new Tint(real.getBuffer(RenderType.entityTranslucent(SOLID)), r, g, b);
+        }
+    }
+
+    private static final VertexConsumer NOOP = new VertexConsumer() {
+        @Override public VertexConsumer addVertex(float x, float y, float z) { return this; }
+        @Override public VertexConsumer setColor(int r, int g, int b, int a) { return this; }
+        @Override public VertexConsumer setUv(float u, float v) { return this; }
+        @Override public VertexConsumer setUv1(int u, int v) { return this; }
+        @Override public VertexConsumer setUv2(int u, int v) { return this; }
+        @Override public VertexConsumer setNormal(float x, float y, float z) { return this; }
+    };
+
+    private record Tint(VertexConsumer out, float r, float g, float b) implements VertexConsumer {
+        @Override public VertexConsumer addVertex(float x, float y, float z) { out.addVertex(x, y, z); return this; }
+        @Override public VertexConsumer setColor(int cr, int cg, int cb, int ca) {
+            // the model's own shading (face brightness) survives as a grey multiplier, so edges and folds read
+            float k = (cr + cg + cb) / 765f;
+            out.setColor(Math.round(r * k * 255f), Math.round(g * k * 255f), Math.round(b * k * 255f), 235);
+            return this;
+        }
+        @Override public VertexConsumer setUv(float u, float v) { out.setUv(0.5f, 0.5f); return this; }
+        @Override public VertexConsumer setUv1(int u, int v) { out.setUv1(0, 10); return this; }
+        @Override public VertexConsumer setUv2(int u, int v) { out.setUv2(240, 240); return this; }
+        @Override public VertexConsumer setNormal(float x, float y, float z) { out.setNormal(x, y, z); return this; }
+    }
+
+    /**
+     * Traces every visible thing as its own model, flat-lit in its temperature's colour: a block is its real baked model, a mob or a dropped
+     * item is drawn by its own renderer. Drawn from the GUI layer (so the cooling wash does not swallow it) with the world's camera and depth,
+     * so a thing behind a corner is still cut by it. Lava, which has no model of its own, stays a soft glow.
+     */
+    private static void blobs(GuiGraphics g, Minecraft mc, DeltaTracker delta, int w, int h) {
         if (!haveCamera)
             return;
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
-        float focal = h / (2f * (float) Math.tan(Math.toRadians(mc.options.fov().get()) / 2.0));
-        float[] p = new float[3];
+        float partial = delta.getGameTimeDeltaPartialTick(false);
+        var bs = mc.renderBuffers().bufferSource();
+        Flat flat = new Flat(bs);
+        Matrix4fStack mv = RenderSystem.getModelViewStack();
+        Matrix4f oldProj = new Matrix4f(RenderSystem.getProjectionMatrix());
+        var oldSort = RenderSystem.getVertexSorting();
+        RenderSystem.setProjectionMatrix(PROJ, VertexSorting.DISTANCE_TO_ORIGIN);
+        mv.pushMatrix();
+        mv.set(VIEW);
+        RenderSystem.applyModelViewMatrix();
+        RenderSystem.enableDepthTest();
+        RenderSystem.depthMask(true);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
+        List<Entry> glow = new ArrayList<>();
+        var dispatcher = mc.getEntityRenderDispatcher();
+        dispatcher.setRenderShadow(false);
+        boolean hitboxes = dispatcher.shouldRenderHitBoxes();
+        dispatcher.setRenderHitBoxes(false);
         List<Entry> list = seen;
         for (int i = 0; i < list.size() && i < visible.length; i++) {
             if (!visible[i])
                 continue;
             Entry e = list.get(i);
+            float[] c = palette(e.tu());
+            flat.r = c[0];
+            flat.g = c[1];
+            flat.b = c[2];
+            PoseStack ps = new PoseStack();
+            boolean traced = false;
+            if (e.kind() == 0) {
+                BlockPos pos = BlockPos.containing(e.x(), e.y(), e.z());
+                BlockState state = mc.level.getBlockState(pos);
+                if (state.getRenderShape() == RenderShape.MODEL) {
+                    ps.translate(pos.getX() - camPos.x, pos.getY() - camPos.y, pos.getZ() - camPos.z);
+                    // a hair larger than the block so the trace lies over the real surface instead of z-fighting with it
+                    ps.translate(0.5, 0.5, 0.5);
+                    ps.scale(1.004f, 1.004f, 1.004f);
+                    ps.translate(-0.5, -0.5, -0.5);
+                    mc.getBlockRenderer().renderSingleBlock(state, ps, flat, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                    traced = true;
+                }
+            } else if ((e.kind() == 1 || e.kind() == 2) && e.id() >= 0) {
+                Entity ent = mc.level.getEntity(e.id());
+                if (ent != null) {
+                    Vec3 at = ent.getPosition(partial);
+                    dispatcher.render(ent, at.x - camPos.x, at.y - camPos.y, at.z - camPos.z, Mth.lerp(partial, ent.yRotO, ent.getYRot()), partial, ps, flat,
+                            LightTexture.FULL_BRIGHT);
+                    traced = true;
+                }
+            }
+            if (!traced)
+                glow.add(e);
+        }
+        bs.endBatch();
+        dispatcher.setRenderShadow(true);
+        dispatcher.setRenderHitBoxes(hitboxes);
+        mv.popMatrix();
+        RenderSystem.applyModelViewMatrix();
+        RenderSystem.setProjectionMatrix(oldProj, oldSort);
+        RenderSystem.disableDepthTest();
+
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
+        float focal = h / (2f * (float) Math.tan(Math.toRadians(mc.options.fov().get()) / 2.0));
+        float[] p = new float[3];
+        for (Entry e : glow) {
             if (!project(e.x(), e.y(), e.z(), w, h, p))
                 continue;
             float dist = Math.max(0.5f, p[2]);
-            float px = e.size() * focal / dist * (e.kind() == 2 ? 1.6f : e.kind() == 3 ? 2.2f : 2.6f);
-            px = Mth.clamp(px, 3f, h * 0.9f);
+            float px = Mth.clamp(e.size() * focal / dist * 2.6f, 3f, h * 0.9f);
             float[] c = palette(e.tu());
-            float intensity = Mth.clamp(Math.abs(e.tu() - 20f) / 40f, 0f, 1f);
-            float a = 0.30f + 0.70f * intensity;
             int half = (int) (px / 2f);
-            quad(g, BLOB, (int) p[0] - half, (int) p[1] - half, half * 2, half * 2, c[0], c[1], c[2], a, 64, 64);
-            if (e.tu() > 60f) { // a hot thing has a hard bright core
-                int core = Math.max(2, half / 3);
-                quad(g, BLOB, (int) p[0] - core, (int) p[1] - core, core * 2, core * 2, 1f, 0.95f, 0.8f, Math.min(1f, a), 64, 64);
-            }
+            quad(g, BLOB, (int) p[0] - half, (int) p[1] - half, half * 2, half * 2, c[0], c[1], c[2], 0.7f, 64, 64);
         }
     }
 

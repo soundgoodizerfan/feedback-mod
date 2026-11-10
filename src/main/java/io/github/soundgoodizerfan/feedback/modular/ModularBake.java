@@ -383,6 +383,24 @@ public final class ModularBake {
             case "gauge" -> f.put(Fig.SUIT_GAUGE, Math.min(1f, 0.5f + 5f * m.separation().reflectivity().orElse(0.2f)));
             case "sensor_head" -> f.merge(Fig.SUIT_SENSE, (float) part.count(), Float::sum);
             case "battery_bay" -> f.put(Fig.SUIT_BAY, 1f);
+            case "upgrade" -> role.variant(part).ifPresent(v -> {
+                Map<String, Float> k = v.params();
+                float id = k.getOrDefault("module", 0f);
+                if (id <= 0f)
+                    return;
+                // the variant names the property that makes it work and the figure that is full strength; the material's share of it is the power
+                float power = 1f;
+                if (k.containsKey("thermal"))
+                    power = m.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) / k.get("thermal");
+                else if (k.containsKey("electric"))
+                    power = m.ampacity().orElse(0f) / k.get("electric");
+                else if (k.containsKey("competence"))
+                    power = competence(m) / k.get("competence");
+                else if (k.containsKey("optic"))
+                    power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
+                f.put(Fig.SUIT_MODULE, id);
+                f.put(Fig.SUIT_POWER, clamp(power, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
+            });
             default -> { }
         }
     }

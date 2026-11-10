@@ -30,7 +30,12 @@ public final class ExoSuit {
     /** The worn pieces and what their fittings add up to. {@code bay} is true when the chestplate has a battery bay. */
     public record Rig(ItemStack head, ItemStack chest, ItemStack legs, ItemStack feet,
                       float driveChest, float driveLegs, float driveFeet, float sense, float lossChest, float lossLegs, float lossFeet,
-                      float gauge, boolean bay, int available) {
+                      float gauge, boolean bay, int available, float[] mod) {
+
+        /** A figure that changes whenever the upgrades fitted or their power change. */
+        public int modSig() {
+            return mod == null ? 0 : java.util.Arrays.hashCode(mod);
+        }
 
         public boolean worn() {
             return bay;
@@ -99,7 +104,16 @@ public final class ExoSuit {
             if (sense > 0f)
                 mask |= Ability.NIGHT.bit() | Ability.THERMAL.bit();
         }
-        return new Rig(head, chest, legs, feet, dc, dl, df, sense, loss(chest), loss(legs), loss(feet), anyGauge ? gauge : 0f, bay, mask);
+        float[] mod = null;
+        for (ItemStack s : List.of(head, chest, legs, feet)) {
+            int id = Math.round(fig(s, Fig.SUIT_MODULE));
+            if (id > 0 && id < io.github.soundgoodizerfan.feedback.suit.SuitModules.COUNT) {
+                if (mod == null)
+                    mod = new float[io.github.soundgoodizerfan.feedback.suit.SuitModules.COUNT];
+                mod[id] = Math.max(mod[id], fig(s, Fig.SUIT_POWER));
+            }
+        }
+        return new Rig(head, chest, legs, feet, dc, dl, df, sense, loss(chest), loss(legs), loss(feet), anyGauge ? gauge : 0f, bay, mask, mod);
     }
 
     // --- the battery in the bay ----------------------------------------------------------------------

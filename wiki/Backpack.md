@@ -4,7 +4,7 @@ A pack worn in the Curios **back** slot. It holds 9, 18 or 27 items, and the str
 
 ## Crafting
 
-Made at the Tool Table from two parts, as for any [modular tool](Tools_and_Weapons.md):
+Made at the [Woodworking Table](Woodworking_Table.md) (or the [Smithing Table](Smithing_Table.md) for plate parts) from two parts, as for any [modular tool](Tools_and_Weapons.md):
 
 - **Shell** (Backpack Shell): the body, shaped from leather, carpet or plate stock. Its shape fixes the slots: a **pouch** (one cell) holds 9, a **satchel** (three cells, the standard shape) holds 18, a **pack** (nine cells) holds 27. The shell's material only decides how heavy it is.
 - **Strap**: leather, string or wire. It sets the carry rating, and it is the part that wears.
@@ -31,7 +31,7 @@ With the load over the rating you are **30% slower** and **cannot sprint**, and 
 
 ## Fittings
 
-A finished pack takes **fittings**: rework it at the Tool Table and lay the stock on it. Take the pack apart to remove one. Every fitting costs **mounting points**; the shell gives them (pouch 1, satchel 2, pack 4) and a frame adds 2. A fitting that does not fit in the points left is refused.
+A finished pack takes **fittings**: rework it at the [Woodworking Table](Woodworking_Table.md) (the [Smithing Table](Smithing_Table.md) for plate fittings) and lay the stock on it. Take the pack apart to remove one. Every fitting costs **mounting points**; the shell gives them (pouch 1, satchel 2, pack 4) and a frame adds 2. A fitting that does not fit in the points left is refused.
 
 | Fitting | Stock | Points | What it does |
 | --- | --- | --- | --- |

@@ -44,6 +44,21 @@ public final class KickTuning {
     public static final int DOWN_TICKS = 50;
     public static final double DOWN_POP = 0.3, DOWN_SLOW = 1.0;
 
+    /** Carry: a target heavier than the kicker by more than this factor (BodyMass plus armour) bounces the kicker off instead. */
+    public static final float CARRY_MASS_RATIO = 2f;
+    /** Carry: blocks per tick the kicker rebounds from a too-heavy target. */
+    public static final double CARRY_REBOUND = 0.45;
+    /** Carry: ticks the longest carry lasts before it lets go. */
+    public static final int CARRY_MAX_TICKS = 80;
+    /** Carry: the target is let go when farther than this from where it should hang, blocks. */
+    public static final double CARRY_BREAK_DISTANCE = 3.0;
+    /** Carry: blocks per tick the most a lagging target is pulled back to the kicker. */
+    public static final double CARRY_MAX_PULL = 1.5;
+    /** Carry: one hit on the kicker of at least this much damage (hp) knocks the target loose. */
+    public static final float CARRY_BREAK_DAMAGE = 4f;
+    /** Carry: least ticks the target stays staggered after the carry ends. */
+    public static final int CARRY_STAGGER_MIN = 20;
+
     private KickTuning() {
     }
 }

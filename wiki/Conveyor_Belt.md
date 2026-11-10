@@ -4,7 +4,7 @@ A strip of moving band that carries items, dropped stacks and creatures along a 
 
 ## Crafting
 
-A belt is a modular item made at the Tool Table from a **band** and an optional **cleat**, as for any [modular tool](Tools_and_Weapons.md).
+A belt is a modular item made at the [Woodworking Table](Woodworking_Table.md) (the [Smithing Table](Smithing_Table.md) for a steel link strip) from a **band** and an optional **cleat**, as for any [modular tool](Tools_and_Weapons.md).
 
 - **Band** (Belt Band): leather or a plate of any material that can bend into a strip.
   - The standard band is one strip.

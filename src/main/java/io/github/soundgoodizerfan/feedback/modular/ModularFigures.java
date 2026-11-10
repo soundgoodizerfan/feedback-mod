@@ -178,7 +178,11 @@ public record ModularFigures(List<Float> values, int step) {
         /** Cells of fibre in the sensor head; 0 without one. Longer bundles see further. */
         SUIT_SENSE,
         /** 1 when the piece has a battery bay (the plate that holds it), else 0. */
-        SUIT_BAY
+        SUIT_BAY,
+        /** The id of the suit upgrade the piece carries (see {@code suit/SuitModules}), 0 for none. */
+        SUIT_MODULE,
+        /** How strongly that upgrade works, from the material it is cut in (0.25 to 1.5). */
+        SUIT_POWER
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

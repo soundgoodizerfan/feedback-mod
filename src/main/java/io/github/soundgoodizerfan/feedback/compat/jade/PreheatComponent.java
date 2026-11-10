@@ -3,6 +3,8 @@
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
@@ -27,6 +29,14 @@ public class PreheatComponent implements IBlockComponentProvider {
         int target = data.getInt(PreheatServerData.TARGET);
         tooltip.add((target <= 0 ? Component.translatable("message.feedback.preheat_off")
                 : Component.translatable("message.feedback.preheat_target", target)).withStyle(ChatFormatting.GRAY));
+        if (!data.contains(PreheatServerData.HELD))
+            return;
+        tooltip.add(Component.literal(data.getString(PreheatServerData.HELD)).append(": ")
+                .append(Readout.temperatureReading(new Tu(data.getFloat(PreheatServerData.HELD_TU)))));
+        if (!data.getBoolean(PreheatServerData.COUPLES))
+            tooltip.add(Component.translatable("message.feedback.preheat_not_metal").withStyle(ChatFormatting.RED));
+        else if (target > 0 && data.getFloat(PreheatServerData.HELD_TU) < target && !data.getBoolean(PreheatServerData.HEATING))
+            tooltip.add(Component.translatable("message.feedback.preheat_no_power").withStyle(ChatFormatting.RED));
     }
 
     @Override

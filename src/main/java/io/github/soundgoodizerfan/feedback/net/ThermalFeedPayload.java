@@ -21,8 +21,8 @@ public record ThermalFeedPayload(List<Entry> entries) implements CustomPacketPay
 
     public static final byte BLOCK = 0, ITEM = 1, MOB = 2, FLUID = 3;
 
-    /** One warm or cold thing: where it is, its temperature, which of the four kinds it is and how big it looks. */
-    public record Entry(float x, float y, float z, float tu, byte kind, float size) {
+    /** One warm or cold thing: where it is, its temperature, which of the four kinds it is, how big it looks and, for a mob or an item, its entity id (else -1) so the client can trace its model. */
+    public record Entry(float x, float y, float z, float tu, byte kind, float size, int id) {
     }
 
     public static final Type<ThermalFeedPayload> TYPE = new Type<>(Feedback.id("thermal_feed"));
@@ -37,13 +37,14 @@ public record ThermalFeedPayload(List<Entry> entries) implements CustomPacketPay
                     buf.writeFloat(e.tu());
                     buf.writeByte(e.kind());
                     buf.writeFloat(e.size());
+                    buf.writeVarInt(e.id() + 1);
                 }
             },
             buf -> {
                 int n = buf.readVarInt();
                 List<Entry> out = new ArrayList<>(n);
                 for (int i = 0; i < n; i++)
-                    out.add(new Entry(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readByte(), buf.readFloat()));
+                    out.add(new Entry(buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readByte(), buf.readFloat(), buf.readVarInt() - 1));
                 return new ThermalFeedPayload(out);
             });
 

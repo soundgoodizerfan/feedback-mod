@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -150,6 +151,45 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
     /** How much smoke the vessel gives a cooking food (a smoker's); none by default. */
     protected float smoke() {
         return 0f;
+    }
+
+    private float[] soakFrom = new float[0];
+    private long[] soakAt = new long[0];
+
+    private void soakSized(int n) {
+        if (soakFrom.length < n) {
+            soakFrom = java.util.Arrays.copyOf(soakFrom, n);
+            soakAt = java.util.Arrays.copyOf(soakAt, n);
+        }
+    }
+
+    /** Remember what a piece laid in this slot is at right now, then drop its stale stamp so it stacks like an unheated one. */
+    protected final void soakStart(int slot, ItemStack stack) {
+        if (level == null || slot < 0 || stack.isEmpty())
+            return;
+        soakSized(slot + 1);
+        soakFrom[slot] = ItemHeat.get(stack, level).value();
+        soakAt[slot] = level.getGameTime();
+        ItemHeat.clear(stack);
+    }
+
+    /** What the item in a slot is at: the vessel's temperature, less the part of the gap it has not yet soaked up since it was laid in. */
+    @Override
+    public Tu slotTemperature(int slot) {
+        if (level == null || slot < 0 || slot >= soakFrom.length)
+            return new Tu(temperature);
+        float dt = Math.max(0L, level.getGameTime() - soakAt[slot]);
+        return new Tu(temperature + (soakFrom[slot] - temperature) * (float) Math.exp(-FTuning.CRUCIBLE_SOAK_PER_TICK * dt));
+    }
+
+    /** Each held stack's name and what it is at now, for a readout. */
+    public List<java.util.Map.Entry<net.minecraft.network.chat.Component, Tu>> heldReadings() {
+        List<java.util.Map.Entry<net.minecraft.network.chat.Component, Tu>> out = new java.util.ArrayList<>();
+        List<ItemStack> held = processSlots();
+        for (int i = 0; i < held.size(); i++)
+            if (!held.get(i).isEmpty())
+                out.add(java.util.Map.entry(held.get(i).getHoverName(), slotTemperature(i)));
+        return out;
     }
 
     /** A slot's progress belongs to what was in it, not to whatever arrives next. */
@@ -667,6 +707,11 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         tag.putFloat("BankedXp", bankedXp);
         for (int i = 0; i < slotTpu.length; i++)
             tag.putFloat("SlotTpu" + i, slotTpu[i]);
+        int[] bits = new int[soakFrom.length];
+        for (int i = 0; i < bits.length; i++)
+            bits[i] = Float.floatToIntBits(soakFrom[i]);
+        tag.putIntArray("SoakFrom", bits);
+        tag.putLongArray("SoakAt", soakAt);
         alloy.writeNbt(tag);
         // One concrete UpgradeFitting, stateless: a flag is its whole persistence.
         tag.putBoolean("Lining", upgrades.stream().anyMatch(RefractoryLiningFitting.class::isInstance));
@@ -687,6 +732,13 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         slotTpu = new float[held.size()];
         for (int i = 0; i < slotTpu.length; i++)
             slotTpu[i] = tag.getFloat("SlotTpu" + i);
+        int[] bits = tag.getIntArray("SoakFrom");
+        long[] at = tag.getLongArray("SoakAt");
+        int n = Math.min(bits.length, at.length);
+        soakFrom = new float[n];
+        soakAt = Arrays.copyOf(at, n);
+        for (int i = 0; i < n; i++)
+            soakFrom[i] = Float.intBitsToFloat(bits[i]);
         alloy.readNbt(tag);
         ledgerOwned = false;
         refreshTank();

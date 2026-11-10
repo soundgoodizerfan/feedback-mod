@@ -223,6 +223,7 @@
     "feedback:chalcopyrite_loose_rock",
     "feedback:chalcopyrite_ore",
     "feedback:charger",
+    "feedback:charging_gantry",
     "feedback:chassis_frame",
     "feedback:chromite_deepslate_ore",
     "feedback:chromite_loose_rock",
@@ -601,7 +602,6 @@
     "feedback:galena_ore",
     "feedback:pyrite_ore",
     "feedback:kaolinite_deposit",
-    "feedback:lead_chest",
-    "feedback:charging_gantry"
+    "feedback:lead_chest"
   ]
 }

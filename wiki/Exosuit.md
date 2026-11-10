@@ -12,6 +12,7 @@ Make the pieces as described on [Armor](Armor.md), then add parts the usual way:
 | **Gauge** | a lens | any piece | Without any gauge the suit reports in words; with one it reports in figures, finer with clearer glass. |
 | **Sensor head** | fibre, 2 cells | helmet | Night sight and thermal view. |
 | **Battery bay** | plates, 2 cells | chestplate | Holds the battery the whole suit runs on. |
+| **Suit Module** | ingot, plate or rod, 2 to 6 cells | any piece | One upgrade for that piece; see [Upgrade modules](#upgrade-modules). |
 
 A servo's drive is the conductor's current rating times the wire cells in the winding times 11 A. A thicker winding drives harder. The waste share is 12% at the least, plus what the conductor loses to its resistance.
 
@@ -44,6 +45,45 @@ A stronger servo gives a larger effect and draws harder for it.
 Floor items, hot blocks and machines show at their real [Tu](Units.md), mobs by a body-heat class (warm-blooded, cold-blooded and so on), and lava. Walls block it. The reticle names the temperature of what is nearest the crosshair: a word, or a figure if the suit has a gauge. More fibre in the sensor head reaches farther.
 
 Mob body heat is a datapack folder; entity-type tags such as `feedback:warm_blooded` map to a temperature.
+
+## Upgrade modules
+
+Each of the four pieces takes one **Suit Module**, cut at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md) from an ingot, plate or rod. The shape it is cut in (2 to 6 cells) names the upgrade; the material sets how strongly it works, from a quarter of full strength to one and a half times. Heat upgrades follow the material's thermal conductivity, electric ones its wire current rating, sturdy ones its hardness and strength, and optic ones its reflectivity. The Suit diagnostic screen (`J`) shows the upgrade each piece carries.
+
+Upgrades work whenever the suit is powered and need no wheel segment. The Heat Sink and Coolant Loop always work. Some upgrades draw charge as they act, as noted.
+
+| Piece | Upgrade | What it does |
+| --- | --- | --- |
+| Helmet | Rebreather | Breath lasts longer underwater. |
+| Helmet | Rangefinder | Longer reach for blocks and attacks. |
+| Helmet | Respirator | Clears poison, nausea and hunger. |
+| Helmet | Glare Filter | Clears blindness and darkness. |
+| Helmet | Long Lens | Thermal view reaches farther. |
+| Helmet | Crash Liner | Less damage from projectiles. |
+| Helmet | Reflex Link | Faster attack speed. |
+| Chestplate | Heat Sink | The suit sheds heat faster. |
+| Chestplate | Coolant Loop | The servos cut out at a higher temperature. |
+| Chestplate | Efficiency Bus | Everything the suit does draws less charge. |
+| Chestplate | Autodoc | Slowly heals you; heavy draw. |
+| Chestplate | Reactive Plating | Less knockback. |
+| Chestplate | Blast Shell | Less explosion damage. |
+| Chestplate | Thorn Array | Shocks melee attackers; draws charge per hit. |
+| Chestplate | Thermal Lining | Immune to freezing. |
+| Chestplate | Magnet Pickup | Draws loose items to you. |
+| Chestplate | Fire Curtain | Less fire damage. |
+| Leggings | Strider Pistons | Faster walking; draws charge while you move. |
+| Leggings | Step Assist | Steps up blocks without jumping. |
+| Leggings | Swim Fins | Better movement in water. |
+| Leggings | Shock Absorbers | Less fall damage. |
+| Leggings | Grip Pads | Soft ground, webs and water slow you less. |
+| Leggings | Load Frame | A [Backpack](Backpack.md) carries more before it slows you. |
+| Leggings | Stabiliser | Faster sneaking and a little less knockback. |
+| Boots | Magnetic Anchor | Far less knockback. |
+| Boots | Heat Shield | Fire and lava do not burn you while the battery lasts; heavy draw. |
+| Boots | Jump Coil | A higher jump. |
+| Boots | Landing Gear | You fall farther without damage. |
+| Boots | Rocket Spur | A harder, faster dash. |
+| Boots | Stomp Actuator | Landing from 3 or more blocks damages everything around you; draws charge per landing. |
 
 ## Weight and heat
 

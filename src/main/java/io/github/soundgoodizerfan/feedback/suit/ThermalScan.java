@@ -72,7 +72,7 @@ final class ThermalScan {
                         continue;
                     float tu = body.getTemperature().value();
                     if (Math.abs(tu - amb) >= MIN_DELTA)
-                        out.add(new Entry((float) (pos.getX() + 0.5), (float) (pos.getY() + 0.5), (float) (pos.getZ() + 0.5), tu, ThermalFeedPayload.BLOCK, 1f));
+                        out.add(new Entry((float) (pos.getX() + 0.5), (float) (pos.getY() + 0.5), (float) (pos.getZ() + 0.5), tu, ThermalFeedPayload.BLOCK, 1f, -1));
                 }
             }
         var box = p.getBoundingBox().inflate(range);
@@ -82,14 +82,14 @@ final class ThermalScan {
                 continue;
             float tu = ItemHeat.get(item.getItem(), level).value();
             if (Math.abs(tu - amb) >= MIN_DELTA)
-                out.add(new Entry((float) e.getX(), (float) (e.getY() + 0.15), (float) e.getZ(), tu, ThermalFeedPayload.ITEM, 0.3f));
+                out.add(new Entry((float) e.getX(), (float) (e.getY() + 0.15), (float) e.getZ(), tu, ThermalFeedPayload.ITEM, 0.3f, e.getId()));
         }
         // 2. living things, by body-heat class
         for (Entity e : near) {
             if (out.size() >= cap || e.distanceToSqr(p) > rr || !(e instanceof LivingEntity living) || living.isSpectator() || living.isInvisible() && !living.isCurrentlyGlowing())
                 continue;
             out.add(new Entry((float) e.getX(), (float) (e.getY() + e.getBbHeight() * 0.5), (float) e.getZ(), MobHeat.get().tu(e), ThermalFeedPayload.MOB,
-                    Math.max(e.getBbWidth(), e.getBbHeight() * 0.6f)));
+                    Math.max(e.getBbWidth(), e.getBbHeight() * 0.6f), e.getId()));
         }
         // 3. lava, on a coarse grid
         if (out.size() < cap) {
@@ -104,7 +104,7 @@ final class ThermalScan {
                         double dx = x + 0.5 - px, dy = y + 0.5 - py, dz = z + 0.5 - pz;
                         if (dx * dx + dy * dy + dz * dz > rr || !level.hasChunkAt(pos) || !level.getFluidState(pos).is(FluidTags.LAVA))
                             continue;
-                        out.add(new Entry(x + 0.5f, y + 0.5f, z + 0.5f, LAVA_TU, ThermalFeedPayload.FLUID, LAVA_GRID * 0.5f));
+                        out.add(new Entry(x + 0.5f, y + 0.5f, z + 0.5f, LAVA_TU, ThermalFeedPayload.FLUID, LAVA_GRID * 0.5f, -1));
                     }
         }
 

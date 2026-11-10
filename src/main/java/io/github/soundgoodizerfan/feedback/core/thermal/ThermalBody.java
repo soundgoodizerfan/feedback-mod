@@ -29,6 +29,11 @@ public interface ThermalBody {
     /** Current temperature. */
     Tu getTemperature();
 
+    /** What the item held in a slot of this body is at: a body that lags its contents says so; the default is the body's own temperature. */
+    default Tu slotTemperature(int slot) {
+        return getTemperature();
+    }
+
     void setTemperature(Tu tu);
 
     /**

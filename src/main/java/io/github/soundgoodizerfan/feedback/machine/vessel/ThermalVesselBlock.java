@@ -112,7 +112,7 @@ public class ThermalVesselBlock extends Block implements EntityBlock, io.github.
                 // Contents leave at the vessel's temperature, as they would through the menu.
                 for (int slot = 0; slot < ThermalVesselBlockEntity.SLOTS; slot++)
                     if (!vessel.getItem(slot).isEmpty())
-                        ItemHeat.set(vessel.getItem(slot), vessel.getTemperature(), level);
+                        ItemHeat.set(vessel.getItem(slot), vessel.slotTemperature(slot), level);
                 Containers.dropContents(level, pos, vessel);
                 Fittable.dropAll(vessel, level, pos);
                 if (level instanceof net.minecraft.server.level.ServerLevel server && vessel.bankedXp() > 0)
