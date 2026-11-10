@@ -87,8 +87,8 @@ final class BlueprintBoard {
         }
     }
 
-    /** The board's size, which its geometry below is laid out in. */
-    static final int W = 360, H = 276;
+    /** The smallest the board is laid out at; a host with more room passes it through {@link #resize}. */
+    static final int MIN_W = 360, MIN_H = 276;
 
     private final Host host;
     private final GuiSkin skin;
@@ -96,14 +96,19 @@ final class BlueprintBoard {
     /** Where the board's top-left is on the screen; set by the host before it draws or forwards input. */
     private int ox, oy;
     private final List<AbstractWidget> widgets = new ArrayList<>();
+    /** Each widget's place relative to the board's top-left, so a move of the board (a window dragged or scrolled) moves them. */
+    private final List<int[]> widgetAt = new ArrayList<>();
 
 
-    // geometry, relative to the panel
-    private static final int CAN_X = 8, CAN_Y = 24, CAN_W = 344, CAN_H = 116;
-    private static final int PAN_Y = 144, PAN_H = 128;
-    private static final int CALL_X = 8, CALL_W = 204;
-    private static final int RES_X = 216, RES_W = 136;
-    private static final int DRAWER_X = 8, DRAWER_SLOTS = 12, DRAWER_PITCH = 18;
+    // geometry, relative to the board's top-left; worked out from the board's size by layout()
+    private static final int MARGIN = 8, GAP = 4, BAR_H = 16, PANEL_H = 128, DRAWER_X = 8, DRAWER_PITCH = 18, MIN_DRAWER = 4;
+    /** The board's size now. */
+    private int width = MIN_W, height = MIN_H;
+    private int drawerSlots = 12;
+    private int panelY = 144, panelH = PANEL_H;
+    private Layout.Rect canvas = new Layout.Rect(8, 24, 344, 116), call = new Layout.Rect(8, 144, 204, 128), res = new Layout.Rect(216, 144, 136, 128);
+    private Layout.Rect searchBtn = new Layout.Rect(228, 4, 16, 16), rigBtn = new Layout.Rect(244, 4, 32, 16),
+            pinsArea = new Layout.Rect(278, 4, 48, 16), pinBtn = new Layout.Rect(326, 4, 26, 16);
     /** A node's size and the distance between nodes, in drawing units. */
     private static final float NODE = 26, PITCH = 40;
     private static final int ROW_H = 10, LABEL_W = 50, BAR_W = 62;
@@ -236,6 +241,7 @@ final class BlueprintBoard {
         this.skin = skin;
         typePopup = new SkinPopup<>(skin, Component.translatable("gui.feedback.blueprint_table.pick_type"));
         cutTypes();
+        arrange();
         selectType(0);
         refresh();
     }
@@ -259,7 +265,7 @@ final class BlueprintBoard {
         int at = current == null ? -1 : types.indexOf(current);
         if (at >= 0) {
             type = at;
-            drawerScroll = Mth.clamp(drawerScroll, 0, Math.max(0, types.size() - DRAWER_SLOTS));
+            drawerScroll = Mth.clamp(drawerScroll, 0, Math.max(0, types.size() - drawerSlots));
         } else
             selectType(0);
     }
@@ -268,6 +274,55 @@ final class BlueprintBoard {
     void origin(int x, int y) {
         ox = x;
         oy = y;
+        for (int i = 0; i < widgets.size(); i++)
+            widgets.get(i).setPosition(ox + widgetAt.get(i)[0], oy + widgetAt.get(i)[1]);
+    }
+
+    /** The board's width and height now. */
+    int width() {
+        return width;
+    }
+
+    int height() {
+        return height;
+    }
+
+    /**
+     * Lays the board out for a {@code w} x {@code h} area (never below {@link #MIN_W} x {@link #MIN_H}) and rebuilds its controls.
+     * Extra width widens the part panel and the figures panel together and the drawer shows more types; extra height goes to the canvas.
+     * Controls are anchored to the board, so they follow {@link #origin} and every resize.
+     */
+    void resize(int w, int h) {
+        w = Math.max(MIN_W, w);
+        h = Math.max(MIN_H, h);
+        if (w == width && h == height)
+            return;
+        width = w;
+        height = h;
+        arrange();
+        build();
+    }
+
+    private void arrange() {
+        Layout.Rect all = new Layout.Rect(0, 0, width, height);
+        // the toolbar runs from the right edge: pin, the pinned drafts, the rig toggle; the drawer takes what is left
+        Layout.Rect bar = all.top(BAR_H + 4).inset(MARGIN, 4, MARGIN, 0).top(BAR_H);
+        Layout.Flow right = Layout.Flow.rowFromRight(bar, 0);
+        pinBtn = right.next(26, BAR_H);
+        pinsArea = new Layout.Rect(pinBtn.x() - MAX_PINS * 16, bar.y(), MAX_PINS * 16, BAR_H);
+        right.next(MAX_PINS * 16, BAR_H);
+        rigBtn = right.next(32, BAR_H);
+        drawerSlots = Math.max(MIN_DRAWER, Math.min(Math.max(12, types.size()), (rigBtn.x() - DRAWER_X - 4 - 16) / DRAWER_PITCH));
+        searchBtn = new Layout.Rect(DRAWER_X + drawerSlots * DRAWER_PITCH + 4, bar.y(), 16, BAR_H);
+        Layout.Rect body = all.inset(MARGIN, 24, MARGIN, 4);
+        panelH = PANEL_H;
+        Layout.Rect panels = body.bottom(panelH);
+        panelY = panels.y();
+        canvas = body.beforeBottom(panelH + GAP);
+        int callW = 204 + Math.max(0, panels.w() - (204 + GAP + 136)) / 2;
+        call = panels.left(callW);
+        res = panels.afterLeft(callW + GAP);
+        drawerScroll = Mth.clamp(drawerScroll, 0, Math.max(0, types.size() - drawerSlots));
     }
 
     private ModularType current() {
@@ -502,7 +557,7 @@ final class BlueprintBoard {
         dimVals.clear();
         clearLists();
         flashes.clear();
-        drawerScroll = Mth.clamp(type - DRAWER_SLOTS / 2, 0, Math.max(0, types.size() - DRAWER_SLOTS));
+        drawerScroll = Mth.clamp(type - drawerSlots / 2, 0, Math.max(0, types.size() - drawerSlots));
     }
 
     /** Open a blueprint: its type, form and extras, and each part's shape and material where it is a choice. */
@@ -1068,7 +1123,7 @@ final class BlueprintBoard {
             zoom = 1;
             return;
         }
-        zoom = Mth.clamp(Math.min((CAN_W - 24) / (x1 - x0), (CAN_H - 34) / (y1 - y0)), MIN_ZOOM, 1.6f);
+        zoom = Mth.clamp(Math.min((canvas.w() - 24) / (x1 - x0), (canvas.h() - 34) / (y1 - y0)), MIN_ZOOM, 1.6f);
         camX = (x0 + x1) / 2;
         camY = (y0 + y1) / 2 + 6 / zoom;
     }
@@ -1081,11 +1136,11 @@ final class BlueprintBoard {
     // --- view maths -------------------------------------------------------------------------------
 
     private float centreX() {
-        return ox + CAN_X + CAN_W / 2f;
+        return ox + canvas.x() + canvas.w() / 2f;
     }
 
     private float centreY() {
-        return oy + CAN_Y + CAN_H / 2f;
+        return oy + canvas.y() + canvas.h() / 2f;
     }
 
     private int screenX(float wx) {
@@ -1097,7 +1152,7 @@ final class BlueprintBoard {
     }
 
     private boolean overCanvas(double mx, double my) {
-        return mx >= ox + CAN_X && mx < ox + CAN_X + CAN_W && my >= oy + CAN_Y && my < oy + CAN_Y + CAN_H;
+        return mx >= ox + canvas.x() && mx < ox + canvas.x() + canvas.w() && my >= oy + canvas.y() && my < oy + canvas.y() + canvas.h();
     }
 
     private static boolean in(double mx, double my, int x, int y, int w, int h) {
@@ -1172,20 +1227,20 @@ final class BlueprintBoard {
     }
 
     private int swatchTop(String role) {
-        return oy + PAN_Y + 15 + 15 * controlRows(role) + SEARCH_H;
+        return oy + panelY + 15 + 15 * controlRows(role) + SEARCH_H;
     }
 
     private int shapesHeight(String role) {
         int n = role == null ? 0 : shapes(role).size();
-        return n < 2 ? 0 : THUMB + 4 + (n > (CALL_W - 8) / THUMB_PITCH ? THUMB_PITCH : 0);
+        return n < 2 ? 0 : THUMB + 4 + (n > (call.w() - 8) / THUMB_PITCH ? THUMB_PITCH : 0);
     }
 
     private int shapesTop(String role) {
-        return oy + PAN_Y + PAN_H - 3 - shapesHeight(role);
+        return oy + panelY + panelH - 3 - shapesHeight(role);
     }
 
     private int swatchCols() {
-        return (CALL_W - 8) / SWATCH_PITCH;
+        return (call.w() - 8) / SWATCH_PITCH;
     }
 
     private int swatchRows(String role) {
@@ -1195,15 +1250,15 @@ final class BlueprintBoard {
     /** Makes the board's controls (again after any edit that changes which are needed). */
     void build() {
         widgets.clear();
+        widgetAt.clear();
         searchBox = null;
         ModularType t = current();
-        int top = oy + 4;
         widgetAdd(GuiStyle.button(skin, Component.literal("..."), b -> typePopup.open(
                 typeEntries(),
-                i -> change(() -> selectType(i))), ox + DRAWER_X + DRAWER_SLOTS * DRAWER_PITCH + 4, top, 16, 16));
+                i -> change(() -> selectType(i))), ox + searchBtn.x(), oy + searchBtn.y(), searchBtn.w(), searchBtn.h()));
         if (rigged())
             widgetAdd(GuiStyle.toggle(skin, Component.translatable("gui.feedback.blueprint_table.rig"), () -> rig, b -> rig = !rig,
-                    ox + 244, top, 32));
+                    ox + rigBtn.x(), oy + rigBtn.y(), rigBtn.w()));
         for (int i = 0; i < pins.size(); i++) {
             int pin = i;
             widgetAdd(GuiStyle.button(skin, Component.literal(String.valueOf(i + 1)), b -> {
@@ -1212,7 +1267,7 @@ final class BlueprintBoard {
                 else
                     restore(pins.get(pin).draft());
                 build();
-            }, ox + 278 + i * 16, top, 14, 16));
+            }, ox + pinsArea.x() + i * 16, oy + pinsArea.y(), 14, BAR_H));
         }
         widgetAdd(GuiStyle.button(skin, Component.translatable("gui.feedback.blueprint_table.pin"), b -> {
             if (figures.isEmpty()) {
@@ -1224,16 +1279,16 @@ final class BlueprintBoard {
             pins.add(new Pin(capture(), figures.get(), baked.get()));
             skin.cue(GuiSkin.Cue.SEAT, null, 1.1f);
             build();
-        }, ox + 326, top, 26, 16));
+        }, ox + pinBtn.x(), oy + pinBtn.y(), pinBtn.w(), pinBtn.h()));
         String role = t == null ? null : sel();
         host.sampleWanted(role != null);
         if (role == null)
             return;
-        int y = oy + PAN_Y + 15;
+        int y = oy + panelY + 15;
         String key = keyOf(role);
-        int x = ox + CALL_X + 4;
+        int x = ox + call.x() + 4;
         boolean rem = key != null && removable(key);
-        int sw = CALL_W - 8 - (rem ? 18 : 0);
+        int sw = call.w() - 8 - (rem ? 18 : 0);
         if (t.ranged(role)) {
             List<Integer> range = t.ranges().get(role);
             int lo = Math.max(1, range.get(0)), hi = range.get(1);
@@ -1250,11 +1305,11 @@ final class BlueprintBoard {
                 Set<String> rest = now();
                 rest.remove(key);
                 set(rest);
-            }), x + CALL_W - 8 - 14, y, 14, 14));
+            }), x + call.w() - 8 - 14, y, 14, 14));
         if (rem || t.ranged(role) || (key != null && swaps(key).size() > 1))
             y += 15;
         if (edged() && role.equals(t.wearRole())) {
-            widgetAdd(GuiStyle.stepper(skin, x, y, CALL_W - 8, 14, "<", ">",
+            widgetAdd(GuiStyle.stepper(skin, x, y, call.w() - 8, 14, "<", ">",
                     () -> Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()).getString(),
                     dir -> change(() -> edge = edge.step(dir)), false, null));
             y += 15;
@@ -1264,7 +1319,7 @@ final class BlueprintBoard {
         for (Map.Entry<String, ModularType.Dim> d : allDims.subList(dimScroll, Math.min(allDims.size(), dimScroll + MAX_DIM_ROWS))) {
             String name = d.getKey();
             ModularType.Dim dim = d.getValue();
-            widgetAdd(GuiStyle.stepper(skin, x, y, CALL_W - 8, 14, "<", ">", () -> dimLabel(role, name, dim),
+            widgetAdd(GuiStyle.stepper(skin, x, y, call.w() - 8, 14, "<", ">", () -> dimLabel(role, name, dim),
                     dir -> change(() -> {
                         float now = dimValue(role, name, ToolDesigns.part(role, choice(role).orElseThrow(), shapeOf(role), 1));
                         float next = Math.round((now + dir * dim.grain()) / dim.grain()) * dim.grain();
@@ -1272,7 +1327,7 @@ final class BlueprintBoard {
                     }), false, null));
             y += 15;
         }
-        searchBox = new net.minecraft.client.gui.components.EditBox(font, x + 2, swatchTop(role) - SEARCH_H + 3, CALL_W - 8 - 4, 9,
+        searchBox = new net.minecraft.client.gui.components.EditBox(font, x + 2, swatchTop(role) - SEARCH_H + 3, call.w() - 8 - 4, 9,
                 Component.translatable("gui.feedback.popup.search"));
         searchBox.setBordered(false);
         searchBox.setTextColor(skin.ink());
@@ -1288,6 +1343,7 @@ final class BlueprintBoard {
 
     private <T extends AbstractWidget> T widgetAdd(T widget) {
         widgets.add(widget);
+        widgetAt.add(new int[] {widget.getX() - ox, widget.getY() - oy});
         return widget;
     }
 
@@ -1347,7 +1403,7 @@ final class BlueprintBoard {
 
     /** What goes over everything the table draws: the type picker, and the gun's turning drawer. */
     void drawOverlay(GuiGraphics g, int mouseX, int mouseY) {
-        typePopup.render(g, ox, oy, W, H, mouseX, mouseY);
+        typePopup.render(g, ox, oy, width, height, mouseX, mouseY);
         // The design turns in a drawer that pops out of the panel's left edge, when there is room.
         preview.draw(g, skin, baked.orElse(null), ox, oy);
         preview.tooltip(g, mouseX, mouseY);
@@ -1496,8 +1552,8 @@ final class BlueprintBoard {
         if (current() == null)
             return false;
         int dir = (int) -Math.signum(scrollY);
-        if (in(mx, my, ox + DRAWER_X, oy + 3, DRAWER_SLOTS * DRAWER_PITCH, 18)) {
-            drawerScroll = Mth.clamp(drawerScroll + dir, 0, Math.max(0, types.size() - DRAWER_SLOTS));
+        if (in(mx, my, ox + DRAWER_X, oy + 3, drawerSlots * DRAWER_PITCH, 18)) {
+            drawerScroll = Mth.clamp(drawerScroll + dir, 0, Math.max(0, types.size() - drawerSlots));
             return true;
         }
         if (overCanvas(mx, my)) {
@@ -1511,17 +1567,17 @@ final class BlueprintBoard {
         }
         String role = sel();
         if (role != null && dimsOf(role).size() > MAX_DIM_ROWS
-                && in(mx, my, ox + CALL_X, oy + PAN_Y + 15 + 15 * rowsAboveDims(role), CALL_W, 15 * MAX_DIM_ROWS)) {
+                && in(mx, my, ox + call.x(), oy + panelY + 15 + 15 * rowsAboveDims(role), call.w(), 15 * MAX_DIM_ROWS)) {
             dimScroll = Mth.clamp(dimScroll + dir, 0, dimsOf(role).size() - MAX_DIM_ROWS);
             build();
             return true;
         }
-        if (role != null && in(mx, my, ox + CALL_X, swatchTop(role), CALL_W, swatchRows(role) * SWATCH_PITCH)) {
+        if (role != null && in(mx, my, ox + call.x(), swatchTop(role), call.w(), swatchRows(role) * SWATCH_PITCH)) {
             int rows = (swatches(role).size() + swatchCols() - 1) / swatchCols();
             swatchScroll = Mth.clamp(swatchScroll + dir, 0, Math.max(0, rows - swatchRows(role)));
             return true;
         }
-        if (in(mx, my, ox + RES_X, oy + PAN_Y, RES_W, PAN_H)) {
+        if (in(mx, my, ox + res.x(), oy + panelY, res.w(), panelH)) {
             figScroll = Mth.clamp(figScroll + dir, 0, Math.max(0, shown.size() - figRows()));
             return true;
         }
@@ -1596,7 +1652,7 @@ final class BlueprintBoard {
     }
 
     private int figRows() {
-        return Math.max(1, (PAN_H - 10 - rigH() - Math.min(uses.size(), 4) * 9) / ROW_H);
+        return Math.max(1, (panelH - 10 - rigH() - Math.min(uses.size(), 4) * 9) / ROW_H);
     }
 
     /** Whether the type has a test rig, and the height it takes off the top of the figures panel while it is on. */
@@ -1635,7 +1691,7 @@ final class BlueprintBoard {
         hoverCorner = false;
         if (current() == null)
             return;
-        if (in(mx, my, ox + DRAWER_X, oy + 3, DRAWER_SLOTS * DRAWER_PITCH, 18)) {
+        if (in(mx, my, ox + DRAWER_X, oy + 3, drawerSlots * DRAWER_PITCH, 18)) {
             int i = drawerScroll + (mx - ox - DRAWER_X) / DRAWER_PITCH;
             hoverDrawer = i < types.size() ? i : -1;
         }
@@ -1649,7 +1705,7 @@ final class BlueprintBoard {
             if (hoverNode < 0)
                 hoverLink = linkAt(mx, my);
             if (hoverNode < 0) {
-                int cy = oy + CAN_Y + CAN_H - 13, x = ox + CAN_X + 4;
+                int cy = oy + canvas.y() + canvas.h() - 13, x = ox + canvas.x() + 4;
                 for (int i = 0; i < chipText.size(); i++) {
                     int w = font.width(chipText.get(i)) + 6;
                     if (in(mx, my, x, cy, w, 11))
@@ -1667,22 +1723,22 @@ final class BlueprintBoard {
         String role = sel();
         if (role != null) {
             List<Material.Located> mats = swatches(role);
-            int sx = ox + CALL_X + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
+            int sx = ox + call.x() + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
             if (in(mx, my, sx, sy, cols * SWATCH_PITCH, rows * SWATCH_PITCH)) {
                 int i = (swatchScroll + (my - sy) / SWATCH_PITCH) * cols + (mx - sx) / SWATCH_PITCH;
                 hoverSwatch = i < mats.size() ? i : -1;
             }
             int n = shapes(role).size();
             if (n > 1) {
-                int ty = shapesTop(role), per = (CALL_W - 8) / THUMB_PITCH;
+                int ty = shapesTop(role), per = (call.w() - 8) / THUMB_PITCH;
                 if (in(mx, my, sx, ty, per * THUMB_PITCH, shapesHeight(role))) {
                     int i = (my - ty) / THUMB_PITCH * per + (mx - sx) / THUMB_PITCH;
                     hoverShape = i < n ? i : -1;
                 }
             }
         }
-        if (in(mx, my, ox + RES_X + 2, oy + PAN_Y + 5 + rigH(), RES_W - 4, figRows() * ROW_H)) {
-            int i = figScroll + (my - oy - PAN_Y - 5 - rigH()) / ROW_H;
+        if (in(mx, my, ox + res.x() + 2, oy + panelY + 5 + rigH(), res.w() - 4, figRows() * ROW_H)) {
+            int i = figScroll + (my - oy - panelY - 5 - rigH()) / ROW_H;
             hoverFig = i < shown.size() ? i : -1;
         }
         updateGhost();
@@ -1745,28 +1801,28 @@ final class BlueprintBoard {
 
     private void drawDrawer(GuiGraphics g) {
         int x = ox + DRAWER_X, y = oy + 3;
-        skin.inset(g, x - 1, y - 1, DRAWER_SLOTS * DRAWER_PITCH + 2, 20);
-        for (int i = 0; i < DRAWER_SLOTS && drawerScroll + i < types.size(); i++) {
+        skin.inset(g, x - 1, y - 1, drawerSlots * DRAWER_PITCH + 2, 20);
+        for (int i = 0; i < drawerSlots && drawerScroll + i < types.size(); i++) {
             int idx = drawerScroll + i;
             skin.row(g, x + i * DRAWER_PITCH, y, DRAWER_PITCH, 18, idx == type, idx == hoverDrawer);
             g.renderItem(typeIcons.get(idx), x + i * DRAWER_PITCH + 1, y + 1);
         }
-        skin.scrollbar(g, x + DRAWER_SLOTS * DRAWER_PITCH - 2, y, 18, types.size(), DRAWER_SLOTS, drawerScroll);
+        skin.scrollbar(g, x + drawerSlots * DRAWER_PITCH - 2, y, 18, types.size(), drawerSlots, drawerScroll);
     }
 
     private void drawCanvas(GuiGraphics g, int mx, int my) {
-        int x0 = ox + CAN_X, y0 = oy + CAN_Y;
-        skin.inset(g, x0, y0, CAN_W, CAN_H);
-        g.enableScissor(x0 + 1, y0 + 1, x0 + CAN_W - 1, y0 + CAN_H - 1);
+        int x0 = ox + canvas.x(), y0 = oy + canvas.y();
+        skin.inset(g, x0, y0, canvas.w(), canvas.h());
+        g.enableScissor(x0 + 1, y0 + 1, x0 + canvas.w() - 1, y0 + canvas.h() - 1);
         // faint ruled grid that moves with the drawing
         float step = 40 * zoom;
         int grid = alpha(skin.ink(), 0x12);
-        for (float gx = centreX() + (float) ((Math.floor(camX / 40) * 40 - camX) * zoom) - step * 20; gx < x0 + CAN_W; gx += step)
+        for (float gx = centreX() + (float) ((Math.floor(camX / 40) * 40 - camX) * zoom) - step * 20; gx < x0 + canvas.w(); gx += step)
             if (gx > x0)
-                g.fill((int) gx, y0 + 1, (int) gx + 1, y0 + CAN_H - 1, grid);
-        for (float gy = centreY() + (float) ((Math.floor(camY / 40) * 40 - camY) * zoom) - step * 20; gy < y0 + CAN_H; gy += step)
+                g.fill((int) gx, y0 + 1, (int) gx + 1, y0 + canvas.h() - 1, grid);
+        for (float gy = centreY() + (float) ((Math.floor(camY / 40) * 40 - camY) * zoom) - step * 20; gy < y0 + canvas.h(); gy += step)
             if (gy > y0)
-                g.fill(x0 + 1, (int) gy, x0 + CAN_W - 1, (int) gy + 1, grid);
+                g.fill(x0 + 1, (int) gy, x0 + canvas.w() - 1, (int) gy + 1, grid);
         float time = GuiStyle.time();
         boolean still = ClientSettings.reduceMotion();
         int half = Math.round(NODE * zoom / 2);
@@ -1805,10 +1861,10 @@ final class BlueprintBoard {
         g.drawString(font, typeName(type), x0 + 5, y0 + 4, skin.ink(), false);
         if (!designation.getString().isEmpty())
             g.drawString(font, designation, x0 + 5 + font.width(typeName(type)) + 6, y0 + 4, skin.accent(), false);
-        int cx = x0 + 4, cy = y0 + CAN_H - 13;
+        int cx = x0 + 4, cy = y0 + canvas.h() - 13;
         for (int i = 0; i < chipText.size(); i++) {
             int w = font.width(chipText.get(i)) + 6;
-            if (cx + w > x0 + CAN_W - 4)
+            if (cx + w > x0 + canvas.w() - 4)
                 break;
             skin.plaque(g, cx, cy, w, 11);
             if (i == hoverChip)
@@ -1877,7 +1933,7 @@ final class BlueprintBoard {
     private void drawNodeBody(GuiGraphics g, int i, int half, float time, boolean still) {
         Node n = nodes.get(i);
         int sx = screenX(n.x), sy = screenY(n.y) + (still ? 0 : Math.round(Mth.sin(time * 0.07f + i * 1.7f) * 1.2f * zoom));
-        if (sx < ox + CAN_X - half - 20 || sx > ox + CAN_X + CAN_W + half + 20 || sy < oy + CAN_Y - half - 20 || sy > oy + CAN_Y + CAN_H + half + 20)
+        if (sx < ox + canvas.x() - half - 20 || sx > ox + canvas.x() + canvas.w() + half + 20 || sy < oy + canvas.y() - half - 20 || sy > oy + canvas.y() + canvas.h() + half + 20)
             return;
         boolean hot = i == hoverNode, picked = !n.ghost && n.role.equals(sel());
         if (n.ghost) {
@@ -1949,20 +2005,20 @@ final class BlueprintBoard {
     }
 
     private void drawParts(GuiGraphics g, String role) {
-        int x = ox + CALL_X, y = oy + PAN_Y;
-        skin.inset(g, x, y, CALL_W, PAN_H);
+        int x = ox + call.x(), y = oy + panelY;
+        skin.inset(g, x, y, call.w(), panelH);
         if (role == null)
             return;
         ModularType t = current();
         List<Material.Located> mats = swatches(role);
         Optional<Material.Located> now = choice(role);
-        skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, CALL_W - 8, SEARCH_H - 3);
+        skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, call.w() - 8, SEARCH_H - 3);
         if (dimsOf(role).size() > MAX_DIM_ROWS)
-            skin.scrollbar(g, x + CALL_W - 4, y + 15 + 15 * rowsAboveDims(role), 15 * MAX_DIM_ROWS, dimsOf(role).size(), MAX_DIM_ROWS, dimScroll);
+            skin.scrollbar(g, x + call.w() - 4, y + 15 + 15 * rowsAboveDims(role), 15 * MAX_DIM_ROWS, dimsOf(role).size(), MAX_DIM_ROWS, dimScroll);
         g.drawString(font, roleName(role), x + 5, y + 4, skin.ink(), false);
         String name = materialName(role);
         int nw = Math.min(font.width(name), 110);
-        fit(g, name, x + CALL_W - 5 - nw, y + 4, 110, skin.dim());
+        fit(g, name, x + call.w() - 5 - nw, y + 4, 110, skin.dim());
         int sx = x + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
         int total = (mats.size() + cols - 1) / cols;
         swatchScroll = Mth.clamp(swatchScroll, 0, Math.max(0, total - rows));
@@ -1983,10 +2039,10 @@ final class BlueprintBoard {
                 g.renderOutline(px - (on ? 1 : 0), py - (on ? 1 : 0), SWATCH + (on ? 2 : 0), SWATCH + (on ? 2 : 0),
                         on ? skin.accent() : i == hoverSwatch ? skin.ink() : alpha(skin.ink(), 0x40));
             }
-        skin.scrollbar(g, x + CALL_W - 4, sy, rows * SWATCH_PITCH, total, rows, swatchScroll);
+        skin.scrollbar(g, x + call.w() - 4, sy, rows * SWATCH_PITCH, total, rows, swatchScroll);
         List<ToolTableShaping.Option> options = shapes(role);
         if (options.size() > 1) {
-            int per = (CALL_W - 8) / THUMB_PITCH, ty = shapesTop(role), cur = shapeIndex(role);
+            int per = (call.w() - 8) / THUMB_PITCH, ty = shapesTop(role), cur = shapeIndex(role);
             int rgb = now.map(l -> MaterialColors.of(l.id())).orElse(0x808080);
             for (int i = 0; i < options.size() && i < per * 2; i++) {
                 int px = sx + i % per * THUMB_PITCH, py = ty + i / per * THUMB_PITCH;
@@ -2030,12 +2086,12 @@ final class BlueprintBoard {
     }
 
     private void drawFigures(GuiGraphics g) {
-        int x = ox + RES_X, y = oy + PAN_Y;
-        skin.inset(g, x, y, RES_W, PAN_H);
+        int x = ox + res.x(), y = oy + panelY;
+        skin.inset(g, x, y, res.w(), panelH);
         if (figures.isEmpty()) {
             int ty = y + 5;
             for (Fault f : faults)
-                for (net.minecraft.util.FormattedCharSequence line : font.split(f.reason(), RES_W - 10)) {
+                for (net.minecraft.util.FormattedCharSequence line : font.split(f.reason(), res.w() - 10)) {
                     g.drawString(font, line, x + 5, ty, skin.warn(), false);
                     ty += 10;
                 }
@@ -2045,8 +2101,8 @@ final class BlueprintBoard {
         int rows = figRows();
         int top = y + 5 + rigH();
         if (rigH() > 0) {
-            BlueprintRig.draw(g, skin, rigInputs(), x + 2, y + 2, RES_W - 4, RIG_H - 4, GuiStyle.time(), ClientSettings.reduceMotion());
-            g.fill(x + 3, y + RIG_H - 1, x + RES_W - 3, y + RIG_H, alpha(skin.ink(), 0x40));
+            BlueprintRig.draw(g, skin, rigInputs(), x + 2, y + 2, res.w() - 4, RIG_H - 4, GuiStyle.time(), ClientSettings.reduceMotion());
+            g.fill(x + 3, y + RIG_H - 1, x + res.w() - 3, y + RIG_H, alpha(skin.ink(), 0x40));
         }
         figScroll = Mth.clamp(figScroll, 0, Math.max(0, shown.size() - rows));
         boolean shift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
@@ -2054,7 +2110,7 @@ final class BlueprintBoard {
         for (int r = 0; r < rows && figScroll + r < shown.size(); r++) {
             Fig f = shown.get(figScroll + r);
             int ry = top + r * ROW_H;
-            skin.row(g, x + 2, ry - 1, RES_W - 7, ROW_H, false, figScroll + r == hoverFig);
+            skin.row(g, x + 2, ry - 1, res.w() - 7, ROW_H, false, figScroll + r == hoverFig);
             fit(g, label(f), x + 5, ry + 1, LABEL_W, skin.dim());
             float v = cur.get(f);
             if (shift) {
@@ -2082,11 +2138,11 @@ final class BlueprintBoard {
                 float was = reference.get().get(f);
                 float share = was == 0 ? (v == 0 ? 0 : 1) : (v - was) / Math.abs(was);
                 if (Math.abs(share) > 0.01f)
-                    g.drawString(font, share > 0 ? "▲" : "▼", x + RES_W - 13, ry + 1, skin.accent(), false);
+                    g.drawString(font, share > 0 ? "▲" : "▼", x + res.w() - 13, ry + 1, skin.accent(), false);
             }
         }
-        skin.scrollbar(g, x + RES_W - 4, top, rows * ROW_H, shown.size(), rows, figScroll);
-        int uy = y + PAN_H - 4 - Math.min(uses.size(), 4) * 9;
+        skin.scrollbar(g, x + res.w() - 4, top, rows * ROW_H, shown.size(), rows, figScroll);
+        int uy = y + panelH - 4 - Math.min(uses.size(), 4) * 9;
         for (int i = 0; i < uses.size() && i < 4; i++)
             g.drawString(font, uses.get(i), x + 5, uy + i * 9, skin.ink(), false);
         // the parts that changed a hovered figure, found once per figure
@@ -2185,13 +2241,13 @@ final class BlueprintBoard {
             return null;
         if (hoverDrawer >= 0)
             return List.of(typeName(hoverDrawer));
-        if (in(mx, my, ox + DRAWER_X + DRAWER_SLOTS * DRAWER_PITCH + 4, oy + 4, 16, 16))
+        if (in(mx, my, ox + searchBtn.x(), oy + searchBtn.y(), searchBtn.w(), searchBtn.h()))
             return List.of(Component.translatable("gui.feedback.blueprint_table.search"));
-        if (rigged() && in(mx, my, ox + 244, oy + 4, 32, 16))
+        if (rigged() && in(mx, my, ox + rigBtn.x(), oy + rigBtn.y(), rigBtn.w(), rigBtn.h()))
             return List.of(Component.translatable("gui.feedback.blueprint_table.rig.tip"));
-        if (in(mx, my, ox + 326, oy + 4, 26, 16))
+        if (in(mx, my, ox + pinBtn.x(), oy + pinBtn.y(), pinBtn.w(), pinBtn.h()))
             return List.of(Component.translatable("gui.feedback.blueprint_table.pin.tip"));
-        if (in(mx, my, ox + 278, oy + 4, pins.size() * 16, 16))
+        if (in(mx, my, ox + pinsArea.x(), oy + pinsArea.y(), pins.size() * 16, BAR_H))
             return List.of(Component.translatable("gui.feedback.blueprint_table.unpin"));
         if (hoverFault >= 0)
             return List.of(faults.get(hoverFault).reason());

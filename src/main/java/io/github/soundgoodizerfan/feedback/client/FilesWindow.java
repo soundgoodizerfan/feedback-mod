@@ -69,11 +69,11 @@ final class FilesWindow extends DesktopWindow {
 
     @Override
     protected void layout(int cw, int ch) {
-        int each = (cw - 9) / 4;
         Button[] bar = {open, edit, run, eject};
+        java.util.List<Layout.Rect> cells = new Layout.Rect(0, 0, cw, ch).bottom(14).columns(bar.length, 3);
         for (int i = 0; i < bar.length; i++) {
-            bar[i].setWidth(each);
-            place(bar[i], i * (each + 3), ch - 14);
+            bar[i].setWidth(cells.get(i).w());
+            place(bar[i], cells.get(i).x(), cells.get(i).y());
         }
     }
 

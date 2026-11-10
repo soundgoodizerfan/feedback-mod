@@ -12,8 +12,9 @@ import net.minecraft.world.item.ItemStack;
 /**
  * The Blueprint app: the Blueprint Table's drafting board ({@link BlueprintBoard}) in a window, in the Computer's skin. Everything the
  * table lets you draw, compare and pin is here; what it cannot do is write the drawing onto a sheet of paper, and it has no sample slot
- * (a material item carried on the cursor from the dock paints a part instead). The board is a fixed size, taller than the desktop's work
- * area, so the window scrolls: the wheel with Ctrl held, or a drag on the strip down its right edge.
+ * (a material item carried on the cursor from the dock paints a part instead). The board lays itself out to the window's content size
+ * ({@link BlueprintBoard#resize}), so a bigger window gives the canvas and panels more room; below the board's smallest size the window
+ * scrolls: the wheel with Ctrl held, or a drag on the strip down its right edge.
  */
 final class BlueprintWindow extends DesktopWindow implements BlueprintBoard.Host {
 
@@ -41,11 +42,18 @@ final class BlueprintWindow extends DesktopWindow implements BlueprintBoard.Host
     }
 
     @Override
+    protected void layout(int cw, int ch) {
+        if (board != null)
+            board.resize(cw - GUTTER, ch);
+    }
+
+    @Override
     protected void build(GuiSkin skin) {
         // a new skin is a new board; the drawing is not kept across it
         this.skin = skin;
         board = new BlueprintBoard(this, skin);
         board.build();
+        board.resize(contentW() - GUTTER, contentH());
     }
 
     // --- BlueprintBoard.Host ------------------------------------------------------------------
@@ -66,7 +74,7 @@ final class BlueprintWindow extends DesktopWindow implements BlueprintBoard.Host
     // --- window ------------------------------------------------------------------------------
 
     private int maxScroll() {
-        return Math.max(0, BlueprintBoard.H - viewH);
+        return Math.max(0, board.height() - viewH);
     }
 
     @Override
@@ -80,7 +88,7 @@ final class BlueprintWindow extends DesktopWindow implements BlueprintBoard.Host
         board.drawBoard(ui.graphics(), ax, ay, 0f);
         board.drawOverlay(ui.graphics(), ax, ay);
         board.tooltip(ui.graphics(), ax, ay);
-        ui.scrollbar(ui.w() - 3, 0, ui.h(), BlueprintBoard.H, ui.h(), scroll);
+        ui.scrollbar(ui.w() - 3, 0, ui.h(), board.height(), ui.h(), scroll);
     }
 
     private boolean onStrip(double lx) {
@@ -88,7 +96,7 @@ final class BlueprintWindow extends DesktopWindow implements BlueprintBoard.Host
     }
 
     private void dragBar(double ly) {
-        scroll = (int) Math.max(0, Math.min(maxScroll(), ly / Math.max(1, viewH) * BlueprintBoard.H - viewH / 2.0));
+        scroll = (int) Math.max(0, Math.min(maxScroll(), ly / Math.max(1, viewH) * board.height() - viewH / 2.0));
     }
 
     @Override
