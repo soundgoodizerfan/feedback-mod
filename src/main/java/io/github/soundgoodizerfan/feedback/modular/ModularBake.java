@@ -414,6 +414,13 @@ public final class ModularBake {
             return Optional.empty();
         float amps = by.get("W").ampacity().orElse(0f) * stockCells(type.roles().get("W"), wiring);
         int budget = Math.min(Fig.ATTACHMENTS, Math.max(1, (int) (amps / ModularTuning.WIRING_AMPS_PER_ATTACHMENT)));
+        // the support parts the module carries, each as a grade 0 to 1 read off the held item; an upgrade that needs one the module lacks is refused
+        Map<String, Float> supports = new java.util.HashMap<>();
+        for (Part p : design.parts()) {
+            String name = type.roles().get(p.role()).name();
+            if (name.equals("controller") || name.equals("cell") || name.equals("motor"))
+                supports.put(name, supportGrade(name, p.sub()));
+        }
         Map<Fig, Float> out = new EnumMap<>(Fig.class);
         int n = 0;
         for (Part p : design.parts()) {
@@ -424,6 +431,14 @@ public final class ModularBake {
             if (v.isEmpty() || v.get().params().getOrDefault("module", 0f) <= 0f || n >= budget)
                 return Optional.empty();
             Map<String, Float> k = v.get().params();
+            float supported = 1f;
+            for (String need : new String[] {"controller", "cell", "motor"})
+                if (k.containsKey("needs_" + need)) {
+                    Float grade = supports.get(need);
+                    if (grade == null)
+                        return Optional.empty();
+                    supported *= ModularTuning.SUPPORT_FLOOR + (1f - ModularTuning.SUPPORT_FLOOR) * grade;
+                }
             Material m = by.get(p.role());
             float power = 1f;
             if (k.containsKey("thermal"))
@@ -435,13 +450,37 @@ public final class ModularBake {
             else if (k.containsKey("optic"))
                 power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
             out.put(Fig.att(n), k.get("module"));
-            out.put(Fig.pow(n), clamp(power, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
+            out.put(Fig.pow(n), clamp(power * supported, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
             n++;
         }
         if (n == 0)
             return Optional.empty();
         out.put(Fig.SUIT_WIRING, ModularTuning.WIRING_WORST + (ModularTuning.WIRING_BEST - ModularTuning.WIRING_WORST) * (amps / (amps + ModularTuning.WIRING_HALF_AMPS)));
         return Optional.of(out);
+    }
+
+    /**
+     * How good the held support {@code name} is, 0 to 1, from the item's own state: a controller is its circuit's speed times its quiet, a
+     * cell is the capacity its plates hold against {@code SUPPORT_CELL_HALF}, a motor the amps it is rated for against {@code SUPPORT_MOTOR_HALF}.
+     * The item is read, never named, so any circuit, cell or motor works.
+     */
+    private static float supportGrade(String name, net.minecraft.world.item.ItemStack held) {
+        switch (name) {
+            case "controller" -> {
+                io.github.soundgoodizerfan.feedback.process.Circuit c = io.github.soundgoodizerfan.feedback.process.Circuit.of(held);
+                return c.live() ? clamp(c.speed() * (1f - c.noise()), 0f, 1f) : 0f;
+            }
+            case "cell" -> {
+                net.minecraft.nbt.CompoundTag t = io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.state(held);
+                float cap = t == null ? 0f : io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.effectiveCapacity(t);
+                return cap / (cap + ModularTuning.SUPPORT_CELL_HALF);
+            }
+            default -> {
+                net.minecraft.nbt.CompoundTag t = held.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DYNAMOTOR.get());
+                float amps = t == null ? 0f : t.getFloat("RatedAmps");
+                return amps / (amps + ModularTuning.SUPPORT_MOTOR_HALF);
+            }
+        }
     }
 
     private static int stockCells(ModularType.Role role, Part part) {

@@ -114,7 +114,8 @@
             ],
             "params": {
               "module": 34.0,
-              "optic": 0.5
+              "optic": 0.5,
+              "needs_controller": 1.0
             }
           }
         ]
@@ -198,7 +199,8 @@
             ],
             "params": {
               "module": 9.0,
-              "thermal": 0.08
+              "thermal": 0.08,
+              "needs_motor": 1.0
             }
           },
           {
@@ -242,7 +244,8 @@
             ],
             "params": {
               "module": 31.0,
-              "thermal": 0.08
+              "thermal": 0.08,
+              "needs_controller": 1.0
             }
           }
         ]
@@ -371,7 +374,8 @@
             ],
             "params": {
               "module": 18.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_motor": 1.0
             }
           },
           {
@@ -381,7 +385,8 @@
             ],
             "params": {
               "module": 19.0,
-              "competence": 4.0
+              "competence": 4.0,
+              "needs_motor": 1.0
             }
           },
           {
@@ -391,7 +396,8 @@
             ],
             "params": {
               "module": 27.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_cell": 1.0
             }
           },
           {
@@ -424,7 +430,8 @@
             ],
             "params": {
               "module": 30.0,
-              "competence": 4.0
+              "competence": 4.0,
+              "needs_motor": 1.0
             }
           },
           {
@@ -455,7 +462,8 @@
             ],
             "params": {
               "module": 33.0,
-              "competence": 4.0
+              "competence": 4.0,
+              "needs_motor": 1.0
             }
           }
         ]
@@ -499,7 +507,9 @@
             ],
             "params": {
               "module": 32.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_cell": 1.0,
+              "needs_motor": 1.0
             }
           }
         ]
@@ -531,7 +541,8 @@
             ],
             "params": {
               "module": 10.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_controller": 1.0
             }
           },
           {
@@ -542,7 +553,9 @@
             ],
             "params": {
               "module": 11.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_controller": 1.0,
+              "needs_cell": 1.0
             }
           },
           {
@@ -552,7 +565,8 @@
             ],
             "params": {
               "module": 7.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_controller": 1.0
             }
           },
           {
@@ -563,7 +577,8 @@
             ],
             "params": {
               "module": 16.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_motor": 1.0
             }
           },
           {
@@ -574,11 +589,37 @@
             ],
             "params": {
               "module": 35.0,
-              "electric": 0.6
+              "electric": 0.6,
+              "needs_cell": 1.0,
+              "needs_controller": 1.0
             }
           }
         ]
       }
+    },
+    "K": {
+      "name": "controller",
+      "forms": [
+        "circuit"
+      ],
+      "litres": 0.01,
+      "layer": 20
+    },
+    "E": {
+      "name": "cell",
+      "forms": [
+        "power_cell"
+      ],
+      "litres": 0.02,
+      "layer": 21
+    },
+    "N": {
+      "name": "motor",
+      "forms": [
+        "motor"
+      ],
+      "litres": 0.03,
+      "layer": 22
     }
   },
   "patterns": [

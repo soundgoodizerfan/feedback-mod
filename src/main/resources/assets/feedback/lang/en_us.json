@@ -6810,7 +6810,7 @@
   "modular.feedback.variant.emp_coil": "EMP Coil",
   "modular.feedback.archetype.emp_coil": "EMP Coil",
   "modular.feedback.desc.variant.emp_coil": "A coil that dumps a field into nearby creatures when fired from the wheel: they slow, weaken and lose the wearer, then must cool before it fires again.",
-  "feedback.jei.info.suit_module": "A suit module is built at the bench from a casing (plate), wiring (wire) and one to four attachments. Each attachment is a part of one kind (optic, filter, thermal, plating, actuator, thruster, coil), and the shape it is cut in is the upgrade it gives, so two attachments of one kind can do very different things. The material sets how strongly each works; heavier wiring feeds more attachments and wastes less. Fit the finished module into a suit piece; taking the piece apart gives the module back whole. It only works while the suit is powered.",
+  "feedback.jei.info.suit_module": "A suit module is built at the bench from a casing (plate), wiring (wire) and one to four attachments and the support parts they need: some upgrades need a circuit as a controller, a battery as a power cell, or a motor, and a better one makes the upgrade stronger. Each attachment is a part of one kind (optic, filter, thermal, plating, actuator, thruster, coil), and the shape it is cut in is the upgrade it gives, so two attachments of one kind can do very different things. The material sets how strongly each works; heavier wiring feeds more attachments and wastes less. Fit the finished module into a suit piece; taking the piece apart gives the module back whole. It only works while the suit is powered.",
   "gui.feedback.suit.ability.magnet": "Magnet",
   "gui.feedback.suit.ability.stride": "Stride",
   "gui.feedback.suit.ability.step": "Step",
@@ -6854,5 +6854,11 @@
   "form.feedback.module_coil": "%s Module Coil",
   "modular.feedback.desc.part.module_coil": "Electrical work: bus, repair, reflex link, magnet and EMP. The shape chooses which; a better conductor works harder. It is fed from the module's wiring.",
   "modular.feedback.role.module_coil": "coil",
-  "modular.feedback.role.module_coil.tip": "An attachment of one kind: a field coil. Each shape it is cut in is a different upgrade. The wiring can feed only a few attachments."
+  "modular.feedback.role.module_coil.tip": "An attachment of one kind: a field coil. Each shape it is cut in is a different upgrade. The wiring can feed only a few attachments.",
+  "modular.feedback.role.controller": "controller",
+  "modular.feedback.role.controller.tip": "A circuit the module is run by. Upgrades that need one work only with it, and a faster, quieter circuit makes them work harder. Read off the circuit itself.",
+  "modular.feedback.role.cell": "power cell",
+  "modular.feedback.role.cell.tip": "A battery the module carries for itself. Upgrades that need one work only with it, and a bigger cell makes them work harder.",
+  "modular.feedback.role.motor": "motor",
+  "modular.feedback.role.motor.tip": "A motor or dynamo built into the module. Upgrades that need one work only with it, and a higher-rated one makes them work harder."
 }

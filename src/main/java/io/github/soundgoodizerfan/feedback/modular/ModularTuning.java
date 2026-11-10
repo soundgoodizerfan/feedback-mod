@@ -172,6 +172,8 @@ public final class ModularTuning {
     public static final float WIRING_WORST = 1.3f, WIRING_BEST = 0.7f, WIRING_HALF_AMPS = 12f;
     /** Amps of wiring (ampacity times cells) per attachment a module can feed, at least one. */
     public static final float WIRING_AMPS_PER_ATTACHMENT = 8f;
+    /** A suit module's support parts: the share of an upgrade's strength a worthless one still gives, and the capacity (amp-ticks) and rating (amps) at which a cell or motor is half as good as it gets; placeholders. */
+    public static final float SUPPORT_FLOOR = 0.5f, SUPPORT_CELL_HALF = 2000f, SUPPORT_MOTOR_HALF = 20f;
     /** Plate this saturated gives armour toughness, running 0 to 3 over the last tenth: steel a little, diamond and netherite most. */
     public static final float TOUGHNESS_FROM_SHARE = 0.9f;
     public static final float TOUGHNESS_MAX = 3f;

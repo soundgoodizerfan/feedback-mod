@@ -26,7 +26,13 @@ public final class ModularNest {
 
     /** The nest form of {@code stack}, or empty if it is not a finished item that can be held. */
     public static String form(ItemStack stack) {
-        ModularDesign design = stack.isEmpty() ? null : ModularStacks.design(stack);
+        if (stack.isEmpty())
+            return "";
+        // a live circuit is a held component too, read through Circuit.of
+        if (stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CIRCUIT.get())
+                && io.github.soundgoodizerfan.feedback.process.Circuit.of(stack).live())
+            return "circuit";
+        ModularDesign design = ModularStacks.design(stack);
         if (design == null)
             return "";
         ModularType type = ModularTypes.known(design.type());
@@ -42,11 +48,21 @@ public final class ModularNest {
         String form = form(stack);
         if (form.isEmpty())
             return Optional.empty();
+        if (form.equals("circuit"))
+            return placeholder(materials).map(e -> new Material.Located(e.getKey(), e.getValue(), form));
         ModularDesign design = ModularStacks.design(stack);
         ModularType type = ModularTypes.known(design.type());
         ModularDesign.Part wear = design.part(type.wearRole());
         Material m = wear == null ? null : materials.get(wear.material());
         return m == null ? Optional.empty() : Optional.of(new Material.Located(wear.material(), m, form));
+    }
+
+    /**
+     * A circuit is made of no one material, but a located thing carries one: the table's first, by id. Nothing reads it; what a held
+     * circuit is comes off the stack ({@code Circuit.of}).
+     */
+    private static Optional<Map.Entry<ResourceLocation, Material>> placeholder(Map<ResourceLocation, Material> materials) {
+        return materials.entrySet().stream().min(Map.Entry.comparingByKey());
     }
 
     /** The baked figures of a held item, or null if it is empty or spent. */

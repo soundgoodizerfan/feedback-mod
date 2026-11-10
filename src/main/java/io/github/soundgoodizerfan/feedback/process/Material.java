@@ -823,7 +823,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     public static Optional<Located> find(Map<ResourceLocation, Material> materials, net.minecraft.world.item.ItemStack stack) {
         // A finished modular item that can be held in another (a suit module) is found by its nest form and wearing material.
-        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular) {
+        if (stack.has(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get())
+                || stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CIRCUIT.get())) {
             Optional<Located> held = io.github.soundgoodizerfan.feedback.modular.ModularNest.locate(materials, stack);
             if (held.isPresent())
                 return held;

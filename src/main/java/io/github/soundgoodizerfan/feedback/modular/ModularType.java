@@ -168,9 +168,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         SUIT_MODULE,
         MACHINE;
 
-        /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). */
+        /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). A circuit is held too, as form {@code circuit}, though it is no modular family. */
         public String nestForm() {
-            return this == SUIT_MODULE ? "suit_module" : "";
+            return switch (this) {
+                case SUIT_MODULE -> "suit_module";
+                case CELL -> "power_cell";
+                case MACHINE -> "motor";
+                default -> "";
+            };
         }
 
         static final Codec<Family> CODEC = StringRepresentable.fromEnum(Family::values);
