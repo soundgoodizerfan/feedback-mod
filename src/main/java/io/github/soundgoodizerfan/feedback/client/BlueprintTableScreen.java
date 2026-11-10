@@ -24,6 +24,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
     private final BlueprintBoard board;
     private long stampAt;
 
+    @Override
+    public int schools() {
+        return menu.schools();
+    }
+
     public BlueprintTableScreen(BlueprintTableMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.BLUEPRINT);
         imageWidth = BlueprintTableMenu.W;

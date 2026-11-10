@@ -68,6 +68,26 @@ public final class Treatises {
         return false;
     }
 
+    /** The schools {@code player} holds a treatise of at the table {@code access} names, one bit per {@link School#ordinal}. */
+    public static int mask(Player player, ContainerLevelAccess access) {
+        int mask = 0;
+        for (School school : School.values())
+            if (has(player, access, school))
+                mask |= 1 << school.ordinal();
+        return mask;
+    }
+
+    /** As {@link #mask}, for the inventory alone: what a program on a computer can count, with no table beside it. */
+    public static int mask(Player player) {
+        return mask(player, ContainerLevelAccess.NULL);
+    }
+
+    /** Whether {@code mask} lets a player draw {@code type}: it has no school, or its school's bit is set. */
+    public static boolean draws(int mask, ModularType type) {
+        School school = School.of(type.school());
+        return school == null || (mask & (1 << school.ordinal())) != 0;
+    }
+
     /** The treatise item of {@code school}. */
     public static ItemStack of(School school) {
         return new ItemStack(FModular.TREATISES.get(school).get());

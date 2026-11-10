@@ -30,5 +30,10 @@ public class TreatiseItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.feedback.treatise").withStyle(ChatFormatting.GRAY));
+        // what it lets you draw: every type of its school, by name
+        for (var e : ModularTypes.known().entrySet())
+            if (school.id().equals(e.getValue().school()))
+                tooltip.add(Component.literal("- ").append(Component.translatable("item." + e.getKey().getNamespace() + "." + e.getKey().getPath()))
+                        .withStyle(ChatFormatting.DARK_AQUA));
     }
 }

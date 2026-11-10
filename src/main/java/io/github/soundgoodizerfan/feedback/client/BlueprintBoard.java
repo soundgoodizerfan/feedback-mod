@@ -79,6 +79,12 @@ final class BlueprintBoard {
 
         /** Whether a sample slot is wanted for the selected part (the table's), which it shows only while one is selected. */
         void sampleWanted(boolean wanted);
+
+        /** The schools whose treatise the player holds here, one bit each; the board offers only types it can draw. */
+        default int schools() {
+            net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
+            return player == null ? 0 : io.github.soundgoodizerfan.feedback.modular.Treatises.mask(player);
+        }
     }
 
     /** The board's size, which its geometry below is laid out in. */
@@ -133,8 +139,10 @@ final class BlueprintBoard {
     private record Pin(Draft draft, ModularFigures figures, ModularDesign design) {
     }
 
-    private final List<ResourceLocation> types;
+    private List<ResourceLocation> types;
     private final List<ItemStack> typeIcons = new ArrayList<>();
+    /** The schools the types were last cut to; the list is rebuilt when the host says otherwise. */
+    private int schoolsSeen;
     private int type;
     private int form;
     private final Set<String> extras = new LinkedHashSet<>();
@@ -226,12 +234,34 @@ final class BlueprintBoard {
     BlueprintBoard(Host host, GuiSkin skin) {
         this.host = host;
         this.skin = skin;
-        types = ToolDesigns.drawable(ModularTypes.known());
         typePopup = new SkinPopup<>(skin, Component.translatable("gui.feedback.blueprint_table.pick_type"));
-        for (ResourceLocation id : types)
-            typeIcons.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));
+        cutTypes();
         selectType(0);
         refresh();
+    }
+
+    /** The drawable types the player may draw: those with no school, and those of a school whose treatise is held. */
+    private void cutTypes() {
+        schoolsSeen = host.schools();
+        types = ToolDesigns.drawable(ModularTypes.known()).stream()
+                .filter(id -> io.github.soundgoodizerfan.feedback.modular.Treatises.draws(schoolsSeen, ModularTypes.known().get(id))).toList();
+        typeIcons.clear();
+        for (ResourceLocation id : types)
+            typeIcons.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));
+    }
+
+    /** Re-cuts the type list when the treatises held have changed; the type being drawn stays if it is still allowed, else the first. */
+    void syncSchools() {
+        if (host.schools() == schoolsSeen)
+            return;
+        ResourceLocation current = types.isEmpty() ? null : types.get(type);
+        cutTypes();
+        int at = current == null ? -1 : types.indexOf(current);
+        if (at >= 0) {
+            type = at;
+            drawerScroll = Mth.clamp(drawerScroll, 0, Math.max(0, types.size() - DRAWER_SLOTS));
+        } else
+            selectType(0);
     }
 
     /** Puts the board's top-left at (x, y) on the screen. */
@@ -1698,6 +1728,7 @@ final class BlueprintBoard {
 
     /** Draws the board and its controls; the host has drawn whatever it stands on. */
     void drawBoard(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        syncSchools();
         ModularType t = current();
         if (t == null)
             return;

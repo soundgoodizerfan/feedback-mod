@@ -33,4 +33,4 @@ A treatise counts as held when it is:
 - inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or
 - inside a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table.
 
-Without it, the table refuses to print a drawing of that school's type and names the treatise it wants. Building to a blueprint is separate: a type that needs a blueprint is built with the blueprint in the bench's blueprint slot, whether or not you hold the treatise. Copying a blueprint needs no treatise.
+Without it, the types of that school are left out of the table's type row and list altogether, so nothing of them can be picked or drawn. The treatise's tooltip lists every type it opens. Treatises stack to sixteen. Building to a blueprint is separate: a type that needs a blueprint is built with the blueprint in the bench's blueprint slot, whether or not you hold the treatise. Copying a blueprint needs no treatise.

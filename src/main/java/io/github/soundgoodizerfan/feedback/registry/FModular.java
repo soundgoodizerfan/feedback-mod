@@ -292,7 +292,7 @@ public final class FModular {
                     .of(io.github.soundgoodizerfan.feedback.modular.EnchantingTableBlockEntity::new, ENCHANTING_TABLE.get()).build(null));
 
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(1)));
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(16)));
 
     /** One treatise per {@link io.github.soundgoodizerfan.feedback.modular.School}: holding it lets the Blueprint Table draw that school's types. */
     public static final java.util.Map<io.github.soundgoodizerfan.feedback.modular.School, DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>> TREATISES;
@@ -302,7 +302,7 @@ public final class FModular {
                 new java.util.EnumMap<>(io.github.soundgoodizerfan.feedback.modular.School.class);
         for (io.github.soundgoodizerfan.feedback.modular.School school : io.github.soundgoodizerfan.feedback.modular.School.values())
             map.put(school, ITEMS.register("treatise_" + school.id(),
-                    () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseItem(school, new Item.Properties().stacksTo(1))));
+                    () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseItem(school, new Item.Properties().stacksTo(16))));
         TREATISES = java.util.Collections.unmodifiableMap(map);
     }
 

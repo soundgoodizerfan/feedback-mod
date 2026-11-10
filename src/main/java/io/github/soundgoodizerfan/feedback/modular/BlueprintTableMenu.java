@@ -46,6 +46,8 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     private final Container samples = new SimpleContainer(ROLE_SLOTS);
     /** A blueprint to copy from; kept when copied. */
     private final Container source = new SimpleContainer(1);
+    /** The schools whose treatise the player holds here (bits of {@link School#ordinal}), kept by the server and synced, so the screen can leave out what cannot be drawn. */
+    private final net.minecraft.world.inventory.DataSlot schools = net.minecraft.world.inventory.DataSlot.standalone();
     private final Player player;
     /** Which role rows the screen draws a material for; the other sample slots are inactive. Client side only. */
     private List<Boolean> shown = List.of();
@@ -60,6 +62,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         super(FMenus.BLUEPRINT_TABLE.get(), id);
         this.access = access;
         this.player = inventory.player;
+        addDataSlot(schools);
         addSlot(new Slot(paper, 0, PAPER_X, PAPER_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -103,6 +106,18 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         });
         for (int column = 0; column < 9; column++)
             addSlot(new Slot(inventory, column, HOTBAR_X + column * 18, HOTBAR_Y));
+    }
+
+    /** The schools the player holds a treatise of, as the server last said. */
+    public int schools() {
+        return schools.get();
+    }
+
+    @Override
+    public void broadcastChanges() {
+        if (player instanceof net.minecraft.server.level.ServerPlayer)
+            schools.set(Treatises.mask(player, access));
+        super.broadcastChanges();
     }
 
     /** Whether {@code stack} is some material in some form, as this side knows the materials. */
