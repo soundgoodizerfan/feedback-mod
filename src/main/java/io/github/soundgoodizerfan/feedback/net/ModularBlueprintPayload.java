@@ -10,7 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** The Blueprint Table screen's Print: the design drawn, and the drafts pinned beside it. */
+/** The Blueprint Table screen's Print (also the Prep Table's Blueprint tab's): the design drawn, and the drafts pinned beside it. */
 public record ModularBlueprintPayload(ModularDesign design, java.util.List<ModularDesign> variants) implements CustomPacketPayload {
 
     public static final Type<ModularBlueprintPayload> TYPE = new Type<>(Feedback.id("modular_blueprint"));
@@ -29,6 +29,8 @@ public record ModularBlueprintPayload(ModularDesign design, java.util.List<Modul
         context.enqueueWork(() -> {
             if (context.player().containerMenu instanceof BlueprintTableMenu menu)
                 menu.print(payload.design(), payload.variants(), context.player());
+            else if (context.player().containerMenu instanceof io.github.soundgoodizerfan.feedback.modular.ToolTableMenu bench)
+                bench.printBlueprint(payload.design(), payload.variants(), context.player());
         });
     }
 }

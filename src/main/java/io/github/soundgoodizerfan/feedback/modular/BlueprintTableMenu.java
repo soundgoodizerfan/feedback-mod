@@ -135,7 +135,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         return samples.getItem(row);
     }
 
-    private static void send(Player player, Component text) {
+    static void send(Player player, Component text) {
         if (player instanceof net.minecraft.server.level.ServerPlayer sp)
             io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(sp, text, 50);
     }
@@ -153,10 +153,24 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable("school.feedback." + school.id())));
             return;
         }
+        if (write(paper, design, variants, player))
+            broadcastChanges();
+    }
+
+    /**
+     * Bakes {@code design} on the server's own tables and turns the paper in {@code paper} slot 0 into a blueprint of it (the pinned drafts
+     * of the same type ride along). Says why on the player's HUD when it cannot; true when it wrote. The Prep Table's Blueprint tab prints
+     * through here too, so the two cannot disagree about what a sheet holds.
+     */
+    public static boolean write(Container paper, ModularDesign design, List<ModularDesign> variants, Player player) {
+        if (paper.getItem(0).isEmpty()) {
+            send(player, Component.translatable("message.feedback.blueprint_table.no_paper"));
+            return false;
+        }
         var figures = ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
         if (figures.isEmpty()) {
             send(player, Component.translatable("message.feedback.blueprint_table.cannot_print"));
-            return;
+            return false;
         }
         ItemStack blueprint = new ItemStack(FModular.BLUEPRINT.get());
         blueprint.set(FModular.DESIGN.get(), design);
@@ -167,8 +181,8 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         if (!kept.isEmpty())
             blueprint.set(FModular.VARIANTS.get(), kept);
         paper.setItem(0, blueprint);
-        broadcastChanges();
         send(player, Component.translatable("message.feedback.blueprint_table.printed"));
+        return true;
     }
 
     @Override

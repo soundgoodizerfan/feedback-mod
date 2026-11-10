@@ -92,9 +92,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
     public static final int CENTRE_X = 152, CENTRE_Y = 86;
     public static final int HAMMER_X = 326, HAMMER_Y = 20, STOCK_X = 326, STOCK_Y = 50, STOCK1_Y = 70, PLAN_X = 326, PLAN_Y = 96, ROUND_X = 326, ROUND_Y = 126,
             OUT_X = 326, OUT_Y = 152, TRIM_X = 108, TRIM_GAP = 44;
+    /** The Blueprint tab's paper slot and the height its board gets: the board fills the bench above the hotbar's row. */
+    public static final int PAPER_X = 294, PAPER_Y = INV_Y + 58, BOARD_H = INV_Y + 58;
 
     private final Container table;
     private final SimpleContainer output = new SimpleContainer(1);
+    /** The Prep Table's Blueprint tab's paper; empty and unused elsewhere. */
+    private final SimpleContainer paper = new SimpleContainer(1);
     private final BlockPos pos;
     private final Player player;
     private final DataSlot mode = DataSlot.standalone();
@@ -136,7 +140,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         this.kind = kind;
         this.gun = kind == ToolTableAssembly.Kind.GUN;
         this.dish = kind == ToolTableAssembly.Kind.DISH;
-        this.tabs = new MenuTabs(BTN_TAB, station.tabs().size());
+        this.tabs = new MenuTabs(BTN_TAB, tabList().size());
         pick.set(-1);
         this.player = inventory.player;
         this.pos = pos;
@@ -151,20 +155,25 @@ public class ToolTableMenu extends AbstractContainerMenu {
             }
 
             @Override
+            public boolean isActive() {
+                return !blueprintTab();
+            }
+
+            @Override
             public void onTake(Player p, ItemStack stack) {
                 taken();
             }
         });
-        addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> station.usesTool() && !trim(), 1, this::workTool));
+        addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> station.usesTool() && !trim() && !blueprintTab(), 1, this::workTool));
         // The fitted parts: nodes on the fan, not slots on the screen.
         for (int i = 0; i < ToolTableAssembly.SLOTS; i++)
             addSlot(new TableSlot(ToolTableBlockEntity.ASSEMBLY + i, -1000, -1000, () -> false, gun ? 2 : dish ? 1 : ToolTableAssembly.CAPACITY, s -> true));
         for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
-            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, i == 0 ? STOCK_X : -1000, STOCK_Y, i == 0 ? () -> !trim() && !cutTab() : () -> false, 64, s -> true));
+            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, i == 0 ? STOCK_X : -1000, STOCK_Y, i == 0 ? () -> !trim() && !cutTab() && !blueprintTab() : () -> false, 64, s -> true));
         // The centre: stock, a part, a tool, or at the Prep Table a food or a dish.
-        addSlot(new TableSlot(ToolTableBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim(), 64, s -> true));
+        addSlot(new TableSlot(ToolTableBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim() && !blueprintTab(), 64, s -> true));
         // The plan slot: a blueprint, or at the Prep Table the seasoning a finish pours onto the dish.
-        addSlot(new TableSlot(ToolTableBlockEntity.PLAN, PLAN_X, PLAN_Y, () -> !trim() && (planShown.get() == 1 || !table.getItem(ToolTableBlockEntity.PLAN).isEmpty()), 1,
+        addSlot(new TableSlot(ToolTableBlockEntity.PLAN, PLAN_X, PLAN_Y, () -> !trim() && !blueprintTab() && (planShown.get() == 1 || !table.getItem(ToolTableBlockEntity.PLAN).isEmpty()), 1,
                 s -> dish ? isSeasoning(player.level(), s) : isPlanItem(s)));
         if (gun) {
             // The rest of a gun's sixteen part slots, and the round its spec sheet is read against (not spent).
@@ -178,6 +187,25 @@ public class ToolTableMenu extends AbstractContainerMenu {
             addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TRIM_X, CENTRE_Y, this::trim, 64, s -> true));
             addSlot(new TableSlot(ToolTableBlockEntity.STOCK, TRIM_X + TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
             addSlot(new TableSlot(ToolTableBlockEntity.STOCK + 1, TRIM_X + 2 * TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
+        }
+        if (dish) {
+            // The Blueprint tab's paper, kept in the menu (it goes back to the player when the bench closes), at the bench's lower right.
+            addSlot(new Slot(paper, 0, PAPER_X, PAPER_Y) {
+                @Override
+                public boolean mayPlace(ItemStack stack) {
+                    return stack.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER);
+                }
+
+                @Override
+                public int getMaxStackSize() {
+                    return 1;
+                }
+
+                @Override
+                public boolean isActive() {
+                    return blueprintTab();
+                }
+            });
         }
         for (int row = 0; row < 3; row++)
             for (int column = 0; column < 9; column++)
@@ -393,7 +421,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** The menu slot index where the player's inventory begins. */
     public int inv() {
-        return EXTRA + (gun ? ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS + 1 : 0) + (station.smiths() ? 3 : 0);
+        return EXTRA + (dish ? 1 : 0) + (gun ? ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS + 1 : 0) + (station.smiths() ? 3 : 0);
     }
 
     /** Which bench this is: {@link Station#TOOL} at the Gun Table and Prep Table (their menus carry the kind). */
@@ -427,8 +455,21 @@ public class ToolTableMenu extends AbstractContainerMenu {
     }
 
     private String tabId() {
-        List<Station.Tab> list = station.tabs();
+        List<Station.Tab> list = tabList();
         return list.isEmpty() ? "" : list.get(tabs.get()).id();
+    }
+
+    /** The folder tabs of this menu's bench: the Prep Table's menu runs on the Tool Table's stock filter but has its own tabs. */
+    private List<Station.Tab> tabList() {
+        return dish ? Station.PREP.tabs() : station.tabs();
+    }
+
+    /**
+     * The Prep Table's Blueprint tab: the drafting board over the whole bench, drawing dishes only, with the paper slot and the hotbar. The
+     * bench's own slots are switched off while it is open.
+     */
+    public boolean blueprintTab() {
+        return dish && tabId().equals("blueprint");
     }
 
     /** The smithing table's Trim tab: vanilla smithing, template in the first slot, no fan. */
@@ -1622,6 +1663,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
     @Override
     public void removed(Player player) {
         super.removed(player);
+        if (dish)
+            clearContainer(player, paper);
         SHINGLES.remove(player.getUUID());
         ForgeRhythm.end(player.getUUID());
     }
@@ -1670,6 +1713,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 return ItemStack.EMPTY;
         } else {
             // From the inventory: a tool to the hammer slot, a blueprint or seasoning to the plan slot, a round to the round slot, else the centre, then the stock slot.
+            if (blueprintTab() && held.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER))
+                return moveItemStackTo(held, EXTRA, EXTRA + 1, false) ? moved : ItemStack.EMPTY;
             boolean plan = dish ? isSeasoning(player.level(), held) : isPlanItem(held);
             boolean round = gun && held.is(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE_ITEM.get());
             if (trim() ? !moveItemStackTo(held, EXTRA, EXTRA + 3, false)
@@ -1687,6 +1732,27 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (index == OUT)
             player.drop(held, false);
         return moved;
+    }
+
+    /**
+     * The Blueprint tab's Print: bake {@code design}, a dish type only (this bench draws food and nothing else), and write it onto the paper in
+     * the tab's slot. Food needs no treatise. The server checks everything: the tab is open, the type is a dish, the design bakes.
+     */
+    public void printBlueprint(ModularDesign design, List<ModularDesign> variants, Player player) {
+        if (!blueprintTab())
+            return;
+        ModularType drawn = ModularTypes.get().types().get(design.type());
+        if (drawn == null || drawn.family() != ModularType.Family.DISH) {
+            BlueprintTableMenu.send(player, Component.translatable("message.feedback.blueprint_table.cannot_print"));
+            return;
+        }
+        if (BlueprintTableMenu.write(paper, design, variants, player))
+            broadcastChanges();
+    }
+
+    /** The Blueprint tab's paper, or a blueprint printed onto it. */
+    public ItemStack paper() {
+        return paper.getItem(0);
     }
 
     /** The heat a Hearth beside this table holds the stock at: read from the world on the server, from the synced slot on the client. */

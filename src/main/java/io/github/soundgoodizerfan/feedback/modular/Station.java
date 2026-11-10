@@ -32,7 +32,7 @@ public enum Station implements StringRepresentable {
     WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", List.of(tab("parts"), tab("saw"))),
     STONECUTTING("STONE", "saw", "gui.feedback.tool_table.saw", List.of(tab("parts"), tab("cut"))),
     GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
-    PREP("BRICK", "knife", "gui.feedback.prep_table.knife", List.of(), Panel.FORGE, Panel.PREP);
+    PREP("BRICK", "knife", "gui.feedback.prep_table.knife", List.of(tab("prep"), tab("blueprint")), Panel.FORGE, Panel.PREP);
 
     public static final Codec<Station> CODEC = StringRepresentable.fromEnum(Station::values);
 

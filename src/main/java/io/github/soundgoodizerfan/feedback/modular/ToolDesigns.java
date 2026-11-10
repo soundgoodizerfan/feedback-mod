@@ -56,6 +56,13 @@ public final class ToolDesigns {
                 .map(Map.Entry::getKey).toList();
     }
 
+    /** The dish types a cooking blueprint can be drawn of: the Prep Table's Blueprint tab draws these, and only these. */
+    public static List<ResourceLocation> drawableDishes(Map<ResourceLocation, ModularType> types) {
+        return types.entrySet().stream()
+                .filter(e -> !e.getValue().patterns().isEmpty() && e.getValue().family() == ModularType.Family.DISH)
+                .map(Map.Entry::getKey).toList();
+    }
+
     /** The items each role has in form {@code form} of {@code type} with {@code extras} on, in role order. */
     public static Map<String, Integer> counts(ModularType type, int form, Set<String> extras) {
         Map<String, Integer> base = type.forms().get(Math.floorMod(form, type.forms().size()));

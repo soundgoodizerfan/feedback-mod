@@ -4757,6 +4757,8 @@
   "gui.feedback.tool_table.tip.stock": "Stock to shape a part from, or to mend with.",
   "gui.feedback.bench.tab.forge": "Forge",
   "gui.feedback.bench.tab.trim": "Trim",
+  "gui.feedback.bench.tab.prep": "Prep",
+  "gui.feedback.bench.tab.blueprint": "Blueprint",
   "gui.feedback.bench.tab.parts": "Parts",
   "gui.feedback.bench.tab.cut": "Cut",
   "gui.feedback.bench.tab.saw": "Saw",

@@ -80,6 +80,11 @@ final class BlueprintBoard {
         /** Whether a sample slot is wanted for the selected part (the table's), which it shows only while one is selected. */
         void sampleWanted(boolean wanted);
 
+        /** Whether the board offers only food: dish types (and every one of them), no treatise needed. The Prep Table's Blueprint tab says yes. */
+        default boolean foodOnly() {
+            return false;
+        }
+
         /** The schools whose treatise the player holds here, one bit each; the board offers only types it can draw. */
         default int schools() {
             net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
@@ -87,8 +92,8 @@ final class BlueprintBoard {
         }
     }
 
-    /** The smallest the board is laid out at; a host with more room passes it through {@link #resize}. */
-    static final int MIN_W = 360, MIN_H = 276;
+    /** The smallest the board is laid out at (a host with more room passes it through {@link #resize}), and the height it starts at. */
+    static final int MIN_W = 360, MIN_H = 232, DEFAULT_H = 276;
 
     private final Host host;
     private final GuiSkin skin;
@@ -103,7 +108,7 @@ final class BlueprintBoard {
     // geometry, relative to the board's top-left; worked out from the board's size by layout()
     private static final int MARGIN = 8, GAP = 4, BAR_H = 16, PANEL_H = 128, DRAWER_X = 8, DRAWER_PITCH = 18, MIN_DRAWER = 4;
     /** The board's size now. */
-    private int width = MIN_W, height = MIN_H;
+    private int width = MIN_W, height = DEFAULT_H;
     private int drawerSlots = 12;
     private int panelY = 144, panelH = PANEL_H;
     private Layout.Rect canvas = new Layout.Rect(8, 24, 344, 116), call = new Layout.Rect(8, 144, 204, 128), res = new Layout.Rect(216, 144, 136, 128);
@@ -249,7 +254,7 @@ final class BlueprintBoard {
     /** The drawable types the player may draw: those with no school, and those of a school whose treatise is held. */
     private void cutTypes() {
         schoolsSeen = host.schools();
-        types = ToolDesigns.drawable(ModularTypes.known()).stream()
+        types = (host.foodOnly() ? ToolDesigns.drawableDishes(ModularTypes.known()) : ToolDesigns.drawable(ModularTypes.known())).stream()
                 .filter(id -> io.github.soundgoodizerfan.feedback.modular.Treatises.draws(schoolsSeen, ModularTypes.known().get(id))).toList();
         typeIcons.clear();
         for (ResourceLocation id : types)

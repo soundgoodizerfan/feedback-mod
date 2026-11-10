@@ -72,6 +72,9 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private final Station st;
     private final ForgePanel forge;
     private final ShinglePanel shingle;
+    /** The Prep Table's Blueprint tab (null at the other benches). */
+    private final PrepBlueprintPanel blueprint;
+    private Button printButton;
     private Button shingleButton;
     private final BenchFan fan = new BenchFan();
     private float partial;
@@ -107,6 +110,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         inventoryLabelY = ToolTableMenu.INV_Y - 11;
         forge = st.has(Station.Panel.FORGE) ? new ForgePanel(this) : null;
         shingle = st.has(Station.Panel.FORGE) ? new ShinglePanel(this) : null;
+        blueprint = st.dishes() ? new PrepBlueprintPanel(menu, skin) : null;
     }
 
     // What the panels may ask of the bench.
@@ -210,7 +214,30 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             }, true, null));
             typePicker.visible = false;
         }
+        if (blueprint != null) {
+            printButton = addRenderableWidget(blueprint.printButton(leftPos, topPos));
+            printButton.visible = false;
+        }
         readKey = Integer.MIN_VALUE;
+    }
+
+    /** The Prep Table's Blueprint tab is open: the board has the bench, and the fan's controls and the main inventory are out of the way. */
+    private boolean drafting() {
+        return blueprint != null && blueprint.active();
+    }
+
+    /** Parks the main inventory's slots off screen while the board is up (the hotbar's row stays, under the board), and puts them back after. */
+    private void seatInventory() {
+        boolean away = drafting();
+        for (Slot s : menu.slots) {
+            if (!(s.container instanceof net.minecraft.world.entity.player.Inventory))
+                continue;
+            int i = s.getContainerSlot();
+            if (i < 9 || i > 35)
+                continue;
+            s.x = away ? -1000 : ToolTableMenu.INV_X + (i - 9) % 9 * 18;
+            s.y = away ? -1000 : ToolTableMenu.INV_Y + (i - 9) / 9 * 18;
+        }
     }
 
     private String typeName() {
@@ -245,6 +272,17 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             forge.tick();
         if (shingle != null)
             shingle.tick();
+        seatInventory();
+        if (printButton != null)
+            printButton.visible = drafting();
+        if (drafting()) {
+            blueprint.tick();
+            shingleButton.visible = false;
+            apart.visible = false;
+            if (typePicker != null)
+                typePicker.visible = false;
+            return;
+        }
         shingleButton.visible = menu.centre(level()) == ToolTableMenu.Centre.BLOOM && !busy();
         shingleButton.active = menu.hasHammer();
         boolean tool = menu.centre(level()) == ToolTableMenu.Centre.TOOL;
@@ -567,6 +605,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     public boolean mouseClicked(double mx, double my, int button) {
         if (!settled())
             return true;
+        if (drafting())
+            return blueprint.mouseClicked(mx, my, button) || super.mouseClicked(mx, my, button);
         if (forge != null && forge.click(mx, my, button) || shingle != null && shingle.click(mx, my, button))
             return true;
         Slot over = hoveredSlot;
@@ -598,6 +638,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     @Override
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+        if (drafting())
+            return settled() && blueprint.mouseDragged(mx, my, button, dx, dy) || super.mouseDragged(mx, my, button, dx, dy);
         if (panning && settled()) {
             fan.pan(dx, dy);
             return true;
@@ -608,11 +650,15 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     @Override
     public boolean mouseReleased(double mx, double my, int button) {
         panning = false;
+        if (drafting())
+            blueprint.mouseReleased(mx, my, button);
         return super.mouseReleased(mx, my, button);
     }
 
     @Override
     public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+        if (drafting())
+            return settled() && blueprint.mouseScrolled(mx, my, scrollY) || super.mouseScrolled(mx, my, scrollX, scrollY);
         if (settled() && !busy() && inCanvas(mx, my)) {
             fan.zoomAbout(scrollY, mx, my, cx(), cy());
             return true;
@@ -622,9 +668,16 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
+        if (drafting())
+            return blueprint.keyPressed(key, scan, modifiers) || super.keyPressed(key, scan, modifiers);
         if (settled() && (forge != null && forge.key(key, scan, modifiers) || shingle != null && shingle.key(key, scan, modifiers)))
             return true;
         return super.keyPressed(key, scan, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char c, int modifiers) {
+        return drafting() && blueprint.charTyped(c, modifiers) || super.charTyped(c, modifiers);
     }
 
     // --- drawing -------------------------------------------------------------------------------------
@@ -633,6 +686,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
         partial = partialTick;
         skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        if (drafting()) {
+            blueprint.draw(g, leftPos, topPos, mouseX, mouseY, partialTick);
+            Slot paper = menu.getSlot(menu.inv() - 1);
+            skin.slot(g, leftPos + paper.x, topPos + paper.y);
+            for (int c = 0; c < 9; c++)
+                skin.slot(g, leftPos + ToolTableMenu.INV_X + c * 18, topPos + ToolTableMenu.INV_Y + 58);
+            return;
+        }
         int x = leftPos + VX, y = topPos + VY;
         float heat = menu.heat(level());
         boolean fired = skin == GuiSkin.FORGE || skin == GuiSkin.ANVIL;
@@ -776,6 +837,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     /** The slot captions and the one line of text, on a raised layer so nothing in the fan hides them. */
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+        if (drafting())
+            return;
         g.pose().pushPose();
         g.pose().translate(0, 0, 300);
         g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
@@ -844,6 +907,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     /** An empty slot says what it takes when the pointer rests on it; a shape under the pointer says what it is and how it differs from the standard one. */
     @Override
     protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
+        if (drafting()) {
+            if (blueprint.popupActive())
+                return;
+            super.renderTooltip(g, mouseX, mouseY);
+            if (hoveredSlot == null || !hoveredSlot.hasItem())
+                blueprint.tooltip(g, mouseX, mouseY);
+            return;
+        }
         if (busy())
             return;
         BenchFan.Node n = fan.over();
@@ -875,6 +946,13 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         super.render(g, mouseX, mouseY, partialTick);
         if (!settled())
             return;
+        if (drafting()) {
+            g.pose().pushPose();
+            g.pose().translate(0, 0, 400);
+            blueprint.overlay(g, mouseX, mouseY);
+            g.pose().popPose();
+            return;
+        }
         g.pose().pushPose();
         g.pose().translate(0, 0, 400);
         if (forge != null && forge.busy())
