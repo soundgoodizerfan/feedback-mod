@@ -24,7 +24,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Tools and Weapons](Tools_and_Weapons.md), [Armor](Armor.md) and [Exosuit](Exosuit.md)
 - [Combat](Combat.md), [Skills](Skills.md) and [Material Perks](Material_Perks.md)
 - [Hazards](Hazards.md): heat, steam and shock
-- [Vehicles](Vehicles.md)
+- [Vehicles](Vehicles.md) and [Micro Core](Micro_Core.md) builds
 - [Controller](Controller.md): automation
 
 ## Guides
@@ -39,7 +39,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 ## Blocks and items
 
-**Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Steam Turbine](Steam_Turbine.md) · [Engine](Engine.md) · [Dynamotor](Dynamotor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md) · [Transmission](Transmission.md)
+**Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Steam Turbine](Steam_Turbine.md) · [Engine](Engine.md) · [Dynamotor](Dynamotor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Rotary Bearing](Rotary_Bearing.md) · [Ring Gear](Ring_Gear.md) · [Rotation Adapter](Rotation_Adapter.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md) · [Transmission](Transmission.md)
 
 **Logistics:** [Conveyor Belt](Conveyor_Belt.md) · [Belt Head Roller](Belt_Head_Roller.md) · [Belt Modules](Belt_Modules.md) · [Pneumatic Tube](Pneumatic_Tube.md) · [Carrier](Carrier.md) · [Tube Junction](Tube_Junction.md) · [Tube Station](Tube_Station.md) · [Ender Port](Ender_Port.md) · [Liquid Teleportant](Liquid_Teleportant.md) · [Synthetic Pearl](Synthetic_Pearl.md) · [Tuned Eye](Tuned_Eye.md)
 

@@ -10,7 +10,7 @@ S
 I
 ```
 
-I is a Wrought Iron Ingot and S is a Shaft. Makes **two**.
+I is a Wrought Iron Plate and S is a Shaft. Makes **two**.
 
 ## Using it
 
@@ -18,4 +18,4 @@ Use it anywhere you'd use a shaft. Friction adds up on long runs and fast lines,
 
 Bearings are also an ingredient in most of the shaft-driven workshop machines: the [Wire Drawer](Wire_Drawer.md), [Rolling Mill](Rolling_Mill.md), [Mechanical Press](Mechanical_Press.md), [Drill Press](Drill_Press.md), [Lathe](Lathe.md) and [Grinding Wheel](Grinding_Wheel.md).
 
-> Not to be confused with the bearing *joints* on a [vehicle](Vehicles.md#joints-the-pivot-setter) frame, which are a different thing entirely.
+> Not to be confused with the [Rotary Bearing](Rotary_Bearing.md), which turns a built piece, or the bearing *joints* on a [vehicle](Vehicles.md#joints-the-pivot-setter) frame.
