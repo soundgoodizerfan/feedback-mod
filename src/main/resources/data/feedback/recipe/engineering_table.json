@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "minecraft:gray_concrete"
+    },
+    "S": {
+      "item": "feedback:steel_plate"
+    },
+    "T": {
+      "item": "minecraft:crafting_table"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "STS",
+    "SSS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:engineering_table"
+  }
+}

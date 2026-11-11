@@ -1,5 +1,6 @@
 {
   "family": "shield",
+  "minigame": "feedback:fitting",
   "wear_litres": 2.9,
   "wear_role": "F",
   "primary": "F",

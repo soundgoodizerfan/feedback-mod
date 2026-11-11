@@ -1,5 +1,7 @@
 {
   "family": "armour",
+  "minigame": "feedback:fitting",
+  "fit_order": ["L", "U"],
   "slot": "head",
   "armour_max": 3,
   "wear_litres": 0.2,

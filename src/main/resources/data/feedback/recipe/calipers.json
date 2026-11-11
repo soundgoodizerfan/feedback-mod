@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "key": {
     "P": {
       "item": "feedback:copper_plate"
@@ -16,5 +15,15 @@
   "result": {
     "count": 1,
     "id": "feedback:calipers"
+  },
+  "tool": [
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
   }
 }

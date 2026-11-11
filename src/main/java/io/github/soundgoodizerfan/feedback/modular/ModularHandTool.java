@@ -124,6 +124,12 @@ public class ModularHandTool extends HandToolItem implements Modular {
                     Units.figure(getStrength(stack))).withStyle(ChatFormatting.GRAY));
     }
 
+    /** The Engineering Table's tool abilities, by what the type is ({@link io.github.soundgoodizerfan.feedback.modular.engineering.ToolAbilities#of}). */
+    @Override
+    public boolean canPerformAction(ItemStack stack, net.neoforged.neoforge.common.ItemAbility ability) {
+        return ability.equals(io.github.soundgoodizerfan.feedback.modular.engineering.ToolAbilities.of(stack));
+    }
+
     @Override
     public int getEnchantmentValue(ItemStack stack) {
         return ModularStacks.enchantability(stack, 1);

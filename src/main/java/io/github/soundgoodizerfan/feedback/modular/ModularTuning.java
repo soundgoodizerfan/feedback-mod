@@ -602,4 +602,53 @@ public final class ModularTuning {
     public static final float STORE_SALT_MASS = 900f, STORE_SALT_DENSITY = 2.16f, STORE_LAG_FLOOR = 0.2f;
     /** Leyden jar: the current the foil's ampacity is quoted at, and the share of leak an outer sleeve keeps. */
     public static final float JAR_REF_AMPACITY = 8f, JAR_SLEEVE_LEAK = 0.5f;
+
+    // --- fit: a blueprint is a specification, a part is judged against it --------------------
+
+    /** Share of each axis's range a hand-fitted part (no blueprint) may be off its mate before the fit takes a flaw. */
+    public static final float FIT_TOLERANCE_HAND = 0.20f;
+    /** The same, for a part built to a blueprint. */
+    public static final float FIT_TOLERANCE_BLUEPRINT = 0.05f;
+    /** Overshoot past the tolerance, in shares of the axis range, that gives a part its full fit flaw: the flaw grows linearly to here and stops. */
+    public static final float FIT_FLAW_FULL_OVERSHOOT = 0.30f;
+    /** Share of joint strength a full fit flaw costs. */
+    public static final float FIT_JOINT_LOSS_CAP = 0.30f;
+    /** A material this far below a drawn material's yield strength, hardness or conductivity is still clean. */
+    public static final float FIT_FLOOR_SLACK = 0.15f;
+    /** A material within this share of the drawn material's density keeps the mass the drawing predicts. */
+    public static final float FIT_DENSITY_BAND = 0.25f;
+    /** A gun's spread grows by this per share of fit lost. */
+    public static final float FIT_SPREAD_PER_LOSS = 2f;
+    /** The least the fit figure and the durability head start fall to. */
+    public static final float FIT_MIN = 0.5f, HEAD_MIN = 0.5f;
+    /** Share of the durability head start lost when every axis is out of tolerance (scaled by the out share). */
+    public static final float HEAD_OUT_LOSS = 0.25f;
+    /** Start condition per fastener level above (or, negative, short of) the floor, for both figures. */
+    public static final float START_PER_LEVEL = 0.05f;
+    /** Fastener levels a blueprint's presence counts as. */
+    public static final int START_BLUEPRINT_LEVELS = 1;
+    /** Width of the start-condition swing a minigame score of 0 to 1 gives, centred on 0.5 (so a perfect play adds half of it). */
+    public static final float START_MINIGAME_SPAN = 0.10f;
+    /** Start-condition levels lost when a hammer falls short of a recipe's {@code hammer_strength} by the most a craft allows (half of it); in between, in proportion. */
+    public static final int START_HAMMER_SHORT_LEVELS = 2;
+    /** The share of a recipe's {@code hammer_strength} a hammer may fall short by; past it the craft is physically impossible and refused. */
+    public static final float HAMMER_SHORT_REFUSE = 0.5f;
+
+    /** Torque minigame: the most pulls one assembly plays (one per fastener spent, so a long fastener list is capped). */
+    public static final int TORQUE_MAX_PULLS = 8;
+    /** Torque minigame: half the width of the green band (share of the gauge) for a quality-0 fastener, and what each quality level adds. */
+    public static final float TORQUE_BAND_BASE = 0.045f, TORQUE_BAND_PER_QUALITY = 0.012f;
+    /** Torque minigame: how far past the band the thread-strip zone runs (share of the gauge); held past it, the thread strips. */
+    public static final float TORQUE_STRIP = 0.12f;
+    /** Torque minigame: ticks of holding to wind the gauge from empty to full (about two seconds). */
+    public static final int TORQUE_WIND_TICKS = 42;
+    /** Torque minigame: the fewest ticks one pull can honestly take; a result sent sooner than pulls times this scores nothing. */
+    public static final int TORQUE_MIN_PULL_TICKS = 14;
+
+    /** Fitting minigame: the most pieces one assembly plays (the grid has nine slots). */
+    public static final int FIT_MAX_PIECES = 9;
+    /** Fitting minigame: the fewest ticks seating one piece can honestly take; a result sent sooner than pieces times this scores nothing. */
+    public static final int FIT_MIN_SEAT_TICKS = 6;
+    /** Fitting minigame: how much one mis-seat costs, in pieces: the score is pieces over pieces plus this times the mis-seats. */
+    public static final float FIT_MISSEAT_WEIGHT = 1.5f;
 }

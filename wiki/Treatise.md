@@ -1,6 +1,6 @@
 # Treatise
 
-A treatise is a numbered book on one **school** of engineering. Holding a volume lets the [Blueprint Table](Blueprint_Table.md) draw blueprints of the types that volume covers. It is kept, never used up.
+A treatise is a numbered book on one **school** of engineering. Holding a volume lets the [Blueprint Table](Blueprint_Table.md) draw blueprints of the types that volume covers and lets the [Engineering Table](Engineering_Table.md) assemble them. It is kept, never used up.
 
 ## Volumes
 
@@ -25,7 +25,7 @@ Types outside every volume (tools, armor, water wheel, thermal store, Leyden jar
 
 ## Obtaining
 
-- **Write one.** Craft a **Blank Treatise**, put it in the blueprint slot of a bench, and take an item of that volume's types apart there. The item goes in and the Blank Treatise becomes that volume. Most types that need a treatise have a [specimen](#specimens) you can craft to take apart first; a maul, spear, cleaver or charge is made the usual way.
+- **Write one.** Craft a **Blank Treatise**, put it in the blank slot on the Treatise tab of the Engineering Table, put an item of that volume's types in the specimen slot and press **Take apart**. The item is taken apart and the Blank Treatise becomes that volume. Most types that need a treatise have a [specimen](#specimens) you can craft to take apart first; a maul, spear, cleaver or charge is made the usual way.
 - **Find one.** A treatise of a random school and volume turns up, rarely, in dungeon, mineshaft, desert temple, stronghold and bastion chests.
 - **Buy one.** Weaponsmiths, toolsmiths, cartographers, librarians, clerics and masons sell volume I of their school at a high trade level, and the later volumes at higher levels; clerics sell Chemical I and II, and weaponsmiths all three Weapons volumes. See [Villagers](Villagers.md#blueprints).
 
@@ -37,7 +37,7 @@ Paper + Paper + Leather + Ink Sac (shapeless)
 
 ### Specimens
 
-A specimen is one ready-made item of a type, built to a fixed cheap design, crafted in the crafting grid. It is not a good tool; it is something to take apart at a bench with a Blank Treatise in the blueprint slot. A specimen is made of the metal or wood named after it. Layouts are shown as in a grid; blank spaces are empty.
+A specimen is one ready-made item of a type, built to a fixed cheap design, crafted in the crafting grid. It is not a good tool; it is something to take apart on the Engineering Table's [Treatise tab](Engineering_Table.md#treatise-tab) with a Blank Treatise. A specimen is made of the metal or wood named after it. Layouts are shown as in a grid; blank spaces are empty.
 
 ```
 Gun (iron)                 Spring gun (iron)         Crossbow (wood)
@@ -93,10 +93,11 @@ I iron ingot, P piston, H hopper
 
 ## Using it
 
-A treatise counts as held when it is:
+A treatise counts as held, at the Blueprint Table and at the Engineering Table, when it is:
 
 - loose in your inventory,
 - inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or
-- inside a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table.
+- inside a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table, or
+- inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in the Engineering Table's binder slot.
 
-Without a volume, the types it covers are left out of the table's type row and list altogether, so nothing of them can be picked or drawn. The treatise's tooltip lists every type it opens. Treatises stack to sixteen. Building to a blueprint is separate: a type that needs a blueprint is built with the blueprint in the bench's blueprint slot, whether or not you hold the treatise. Copying a blueprint needs no treatise.
+Without a volume, the types it covers are left out of the Blueprint Table's type row and list altogether, so nothing of them can be picked or drawn, and the Engineering Table does not offer to assemble them: its status line names the volume it needs. The treatise's tooltip lists every type it opens. Treatises stack to sixteen. Copying a blueprint needs no treatise, and neither do repairing an item and taking it apart.

@@ -29,7 +29,6 @@ public class FCreativeTabs {
                         output.accept(new ItemStack(FWeapons.GUN.get()));
                         output.accept(FWeapons.RELOADING_PRESS_ITEM.get());
                         output.accept(FWeapons.MIXER_ITEM.get());
-                        output.accept(FWeapons.GUN_TABLE_ITEM.get());
                         output.accept(FWeapons.DEMOLITION_CHARGE_ITEM.get());
                         FModular.items().forEach(output::accept);
                         FLogistics.fill(output);
@@ -198,6 +197,7 @@ public class FCreativeTabs {
                                 output.accept(io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem.of(id));
                         });
                         output.accept(FItems.POWER_CUTTER.get());
+                        output.accept(FItems.AUTO_ENGINEER.get());
                         output.accept(FItems.DATA_STICK.get());
                         // One cutter head of each kind per material hard enough to be one.
                         io.github.soundgoodizerfan.feedback.registry.FormItems.materials().forEach((id, material) -> {

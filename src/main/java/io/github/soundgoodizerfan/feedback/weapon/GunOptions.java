@@ -18,7 +18,7 @@ import java.util.TreeMap;
 /**
  * Loads every {@link GunOption} from {@code data/<namespace>/gun_option/*.json}, and keeps the
  * client's copy ({@code GunOptionSyncPayload}) beside it: the bake runs on both sides (the
- * Stand, the Gun Table and a tooltip all ask what a gun does).
+ * Stand, the Engineering Table and a tooltip all ask what a gun does).
  */
 public class GunOptions extends SimpleJsonResourceReloadListener {
 

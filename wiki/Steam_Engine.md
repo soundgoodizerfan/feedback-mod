@@ -9,7 +9,7 @@ P P
 S S
 ```
 
-P is a [Steel Plate](Mechanical_Hammer.md) and S is a [Shaft](Shaft.md).
+P is a Steel Plate and S is a [Shaft](Shaft.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 [fasteners](Fasteners.md).
 
 ## Using it
 

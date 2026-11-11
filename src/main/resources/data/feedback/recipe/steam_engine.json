@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "P": {
       "item": "feedback:steel_plate"
@@ -16,5 +15,15 @@
   "result": {
     "count": 1,
     "id": "feedback:steam_engine"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 2
   }
 }

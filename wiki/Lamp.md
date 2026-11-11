@@ -4,7 +4,7 @@ A panel of glowstone that lights by how well a power line feeds it. It replaces 
 
 ## Building it
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Glowstone Lamp* in the type row); the gauge is set there, along with the filament shape and addon. It needs a blueprint but no treatise. Shape a **Lamp Filament** from wire at a bench, then put it together at the bench with the Glowstone Lamp Blueprint in the blueprint slot; the lamp comes out with the design, and the blueprint is kept. The wire's metal must conduct.
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Glowstone Lamp* in the type row); the gauge is set there, along with the filament shape and addon. It needs no treatise. Shape a **Lamp Filament** from wire at a bench, then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Glowstone Lamp Blueprint in the blueprint slot judges the fit against your drawing. The lamp comes out with the design of the filament, and the blueprint is kept. The wire's metal must conduct.
 
 The filament has one measure, its **gauge**, from 20 to 100 percent (50 by default). The draw rises with the square of the gauge, and a thicker filament lasts longer under overvoltage. Its **shape** trades draw against toughness:
 

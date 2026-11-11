@@ -12,7 +12,7 @@ Draw the gearbox at the [Blueprint Table](Blueprint_Table.md) (pick *Transmissio
 | **Synchro Ring** | dog clutch, synchromesh | A dog clutch is plain. A synchromesh matches speeds before the gear meshes, so a shift at speed wears the box about two fifths less, for a tenth more weight. |
 | **Gearbox Case** | dry, splash, pressure oiled | The oiling. Dry is the lightest and wears most; splash wears a quarter less; pressure oiling wears half as much, in the heaviest case. |
 
-At the [Smithing Table](Smithing_Table.md), put the **Transmission Blueprint** in the blueprint slot and the three parts in the slots to get the block. The blueprint is kept.
+Make the three parts at the [Smithing Table](Smithing_Table.md), then assemble them at the [Engineering Table](Engineering_Table.md): the parts in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the **Transmission Blueprint** in the blueprint slot to judge the fit against your drawing. The blueprint is kept.
 
 ## Using it
 

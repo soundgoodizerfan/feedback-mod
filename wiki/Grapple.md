@@ -29,11 +29,11 @@ A metal line can be fitted again with a different metal's wire. See [The line ha
 The **Grapple Winch** is its own item:
 
 ```
-R _ _
+  R
 P S P
 ```
 
-R is a Wrought Iron Rod, P is a Wrought Iron Plate and S is a [Shaft](Shaft.md).
+P is a Wrought Iron Plate, R is a Wrought Iron Rod and S is a [Shaft](Shaft.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 [fasteners](Fasteners.md).
 
 ## Using it
 

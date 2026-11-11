@@ -1,11 +1,36 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key": { "T": { "item": "feedback:tungsten_carbide_plate" }, "S": { "item": "feedback:steel_plate" } },
-  "pattern": [ "TTT", "TST" ],
+  "type": "feedback:engineering",
+  "key": {
+    "T": {
+      "item": "feedback:tungsten_carbide_plate"
+    },
+    "S": {
+      "item": "feedback:steel_plate"
+    }
+  },
+  "pattern": [
+    "TTT",
+    "TST"
+  ],
   "result": {
     "count": 1,
     "id": "feedback:saw_head",
-    "components": { "feedback:made_of": { "material": "feedback:tungsten_carbide", "stock": "plate", "cells": 1 } }
+    "components": {
+      "feedback:made_of": {
+        "material": "feedback:tungsten_carbide",
+        "stock": "plate",
+        "cells": 1
+      }
+    }
+  },
+  "tool": [
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
   }
 }

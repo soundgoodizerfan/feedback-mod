@@ -523,6 +523,13 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.METAL)));
 
+    /** An EHV sink that plays back a recorded hand assembly with its own tools and fasteners. See {@code AutoEngineerBlockEntity}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.engineer.AutoEngineerBlock> AUTO_ENGINEER = BLOCKS.register("auto_engineer",
+            () -> new io.github.soundgoodizerfan.feedback.machine.engineer.AutoEngineerBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(4.0f)
+                    .sound(SoundType.METAL)));
+
     /** Eu to Thermal around a crucible: heats the metal in it. See {@code InductionCoilBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlock> INDUCTION_COIL = BLOCKS.register("induction_coil",
             () -> new io.github.soundgoodizerfan.feedback.machine.induction.InductionCoilBlock(BlockBehaviour.Properties.of()

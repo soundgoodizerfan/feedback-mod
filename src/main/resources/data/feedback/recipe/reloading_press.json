@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "I": {
       "item": "feedback:wrought_iron_plate"
@@ -20,5 +19,15 @@
   "result": {
     "count": 1,
     "id": "feedback:reloading_press"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
   }
 }

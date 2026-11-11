@@ -12,8 +12,8 @@ A vehicle is a build of [micro cells](Micro_Core.md) and full-size blocks that a
 | **[Micro Core](Micro_Core.md)** | Builds in voxels, a 64th of a block each, with line, box and mirror tools. |
 | **[Micro Wedge](Micro_Wedge.md)** | A four-step ramp voxel. |
 | **[Joints](#joints)** | [Rotary Bearing](Rotary_Bearing.md), [Ring Gear](Ring_Gear.md), [Large Ring Gear](Large_Ring_Gear.md), [Ball Joint](Ball_Joint.md), [Locked Joint](Locked_Joint.md), [Slider Joint](Slider_Joint.md) and [Piston Joint](Piston_Joint.md), used as micro-blocks. |
-| **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
-| **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
+| **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the [Engineering Table](Engineering_Table.md). |
+| **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the [Engineering Table](Engineering_Table.md). |
 | **[Clutch](Clutch.md)** | Can be a micro voxel that a card switches. |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
 | **[Propeller](Propeller.md)** | Pulls the whole body along its facing from a turning shaft. |
@@ -24,12 +24,12 @@ A vehicle is a build of [micro cells](Micro_Core.md) and full-size blocks that a
 ## The Lift
 
 ```
-PPP
-R R
-R R
+P P P
+R   R
+R   R
 ```
 
-P is a Wrought Iron Plate and R is a Wrought Iron Rod.
+P is a Wrought Iron Plate and R is a Wrought Iron Rod. Craft it at the [Engineering Table](Engineering_Table.md) with a [hammer](Hammer.md) in the tool row and 3 [fasteners](Fasteners.md).
 
 1. Place a **Lift** and build on top of it. Everything that touches the lift, block to block, becomes the vehicle: micro cells, bearings and other joints, adapters, thrusters, seats. **It mustn't touch the ground or anything else**, or the lift complains *"Too big -- is it touching something besides the lift?"*
 2. **Right-click** the lift. Everything on it becomes one object, held still: *"Lifted."*

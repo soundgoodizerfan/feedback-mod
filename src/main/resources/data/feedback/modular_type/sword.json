@@ -1,5 +1,6 @@
 {
   "family": "blade",
+  "minigame": "feedback:fitting",
   "strike": 1.0,
   "wear_litres": 0.25,
   "wear_role": "B",

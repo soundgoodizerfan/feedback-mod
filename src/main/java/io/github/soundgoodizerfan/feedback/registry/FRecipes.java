@@ -75,6 +75,11 @@ public class FRecipes {
             BOOTSTRAP_TOOL = SERIALIZERS.register("bootstrap_tool",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe::new));
 
+    /** The plain crafting table's assembly of every simple modular type from its parts. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe>>
+            MODULAR_ASSEMBLY = SERIALIZERS.register("modular_assembly",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe::new));
+
     /** A grid -> one prebaked specimen of a treatise-gated modular type, so taking it apart can write the treatise. */
     public static final DeferredHolder<RecipeSerializer<?>, io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.Serializer>
             BOOTSTRAP_SPECIMEN = SERIALIZERS.register("bootstrap_specimen",

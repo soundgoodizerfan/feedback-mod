@@ -48,7 +48,7 @@ public class ModularGameTests {
             else
                 slots.add(s.copy());
         }
-        while (slots.size() < ToolTableAssembly.SLOTS)
+        while (slots.size() < ToolTableAssembly.GRID_SLOTS)
             slots.add(ItemStack.EMPTY);
         return ToolTableAssembly.infer(slots, ItemStack.EMPTY, ClientMaterials.on(helper.getLevel()), ModularTypes.on(helper.getLevel()))
                 .map(ToolTableAssembly.Match::tool).orElseGet(() -> {

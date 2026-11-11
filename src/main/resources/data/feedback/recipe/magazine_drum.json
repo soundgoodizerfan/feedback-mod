@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "P": {
       "item": "feedback:wrought_iron_plate"
@@ -17,5 +16,16 @@
     "components": {
       "feedback:magazine_size": "drum"
     }
-  }
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "weapons:2"
 }

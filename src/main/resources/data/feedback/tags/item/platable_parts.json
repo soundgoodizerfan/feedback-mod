@@ -10,6 +10,8 @@
     "feedback:shears",
     "feedback:sawblade",
     "feedback:hand_hammer",
+    "feedback:file",
+    "feedback:screwdriver",
     "feedback:hand_knife",
     "feedback:spatula",
     "feedback:spoon",

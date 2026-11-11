@@ -31,7 +31,14 @@ Two ways to make them:
 - **Cast them.** Pour molten metal into a **Bullet Mold** from a crucible. One ingot's worth makes eight bullets. Copper, gold, wrought iron, lead, bronze and brass can all be cast this way.
 - **Hammer them.** Hammer a **nugget** into a bullet, by hand or with a [Mechanical Hammer](Mechanical_Hammer.md).
 
-**Bullet Mold**: two Wrought Iron Drilled Plates (from the [Drill Press](Drill_Press.md)) with a Stick on each side.
+**Bullet Mold**:
+
+```
+  D
+S D S
+```
+
+D is a Wrought Iron Drilled Plate and S is a Stick. Craft it at the [Engineering Table](Engineering_Table.md) with a [file](Hand_Tools.md#file) in the tool row, holding Weapons Treatise II.
 
 ```
   D

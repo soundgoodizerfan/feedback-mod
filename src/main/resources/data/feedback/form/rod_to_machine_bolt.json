@@ -1,0 +1,7 @@
+{
+  "from": "rod",
+  "to": "machine_bolt",
+  "operation": "turn",
+  "base": 1,
+  "slope": 1
+}

@@ -3757,6 +3757,21 @@ public final class FTuning {
     /** Placeholder. Hardness assumed for a cutter head that carries no material. */
     public static final float CUTTER_DEFAULT_HEAD_HARDNESS = 30f;
 
+    /** Placeholder. Current the Auto Engineer asks for while it has parts to work: about 1 kW at EHV (384 V). */
+    public static final float ENGINEER_AMPS = 2.6f;
+    /** Placeholder. Ticks of full-power running one assembly (or one scrapping) takes: three seconds. */
+    public static final float ENGINEER_TICKS_PER_ASSEMBLY = 60f;
+    /** Placeholder. Condition one unit of misuse costs an Auto Engineer (stock too hard, a full output, over-voltage, scrapping). */
+    public static final float ENGINEER_WEAR_PER_MISUSE = 0.002f;
+    /** Placeholder. Units of misuse per assembly for each unit of fraction the supply is over the Auto Engineer's EHV rating. */
+    public static final float ENGINEER_OVERVOLT_WEAR_UNITS = 50f;
+    /** Placeholder. A worn Auto Engineer bottoms out here: it works at a quarter of its rate and never stops. */
+    public static final float ENGINEER_CONDITION_FLOOR = 0.25f;
+    /** Placeholder. The hardest stock (a material's hardness) the Auto Engineer's construction takes; harder stock is spoiled and wears it by the ratio. */
+    public static final float ENGINEER_STOCK_HARDNESS = 60f;
+    /** Placeholder. Share of its mass a scrapped input keeps as nuggets: the rest is lost. */
+    public static final float ENGINEER_SCRAP_YIELD = 0.5f;
+
     /** Placeholder. The hottest an induction coil or the forging preheat coil drives its charge: about 1,800 Tu, below the arc. */
     public static final Tu INDUCTION_CEILING_TU = new Tu(1800f);
     /** Placeholder. The induction stove's ceiling: cookware scale, enough to sear a pan, far under a furnace's. */

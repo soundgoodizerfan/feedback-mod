@@ -9,7 +9,7 @@ I B I
   S
 ```
 
-I is a Wrought Iron Ingot, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md).
+I is a Wrought Iron Plate, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 [fasteners](Fasteners.md).
 
 ## Setting it up
 

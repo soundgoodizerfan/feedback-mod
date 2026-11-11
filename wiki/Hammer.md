@@ -18,7 +18,7 @@ S is Cobblestone and T is a Stick. This gives the first hammer: a stone head on 
 
 ## Making a better one
 
-Shape a **Head Blank** (ingots, blocks, gems, planks or cobblestone) at a bench ([Smithing Table](Smithing_Table.md) for metal, [Stonecutter](Stonecutter.md) for stone, [Woodworking Table](Woodworking_Table.md) for wood), then put it with a handle (stick, rod or bone) and assemble. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
+Shape a **Head Blank** (ingots, blocks, gems, planks or cobblestone) at a bench ([Smithing Table](Smithing_Table.md) for metal, [Stonecutter](Stonecutter.md) for stone, [Woodworking Table](Woodworking_Table.md) for wood), then put it with a handle (stick, rod or bone) in a crafting grid. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
 
 ## Using it
 
@@ -26,9 +26,11 @@ Put the hammer and **one** workpiece anywhere in a crafting grid. The output slo
 
 Keep swinging and watch the result change. An ordinary swing lands **3 St**, which is 3 Fu on copper: a copper ingot becomes a **Copper Plate** on the fifth swing, **Copper Foil** on the eighth, then **Copper Scrap**.
 
-## At the Smithing Table
+## At the benches
 
 The [Smithing Table](Smithing_Table.md) holds a hammer in a slot of its own and spends a point of it on every part you shape there. The [Anvil](Anvil.md) takes a hammer the same way, and forging is played there. The [Woodworking Table](Woodworking_Table.md) takes an axe in the same slot, and the [Stonecutter](Stonecutter.md) takes a [Sawblade](Sawblade.md).
+
+The [Engineering Table](Engineering_Table.md) takes a hammer in its tool row. Its recipes for furnaces, presses and mills ask for one, and its Fit, Repair and Treatise tabs spend a point of it on every act.
 
 ## In machines
 
@@ -63,4 +65,4 @@ Very soft metals move a lot with each blow: 3 St on lead (0.3) is 10 Fu a swing.
 
 ## Wear
 
-In your hand the hammer wears out from **normal use**, like any hand tool. A stone head is good for about **260 swings**, around fifty copper plates; an iron one lasts longer. A worn-out hammer is *broken*: it lands nothing, but you can mend it in a crafting grid instead of throwing it away. A worn head also carries a swing a little less well, near the end.
+In your hand the hammer wears out from **normal use**, like any hand tool. A stone head is good for about **260 swings**, around fifty copper plates; an iron one lasts longer. A worn-out hammer is *broken*: it lands nothing, but you can mend it on the Repair tab of the [Engineering Table](Engineering_Table.md#repair-tab) instead of throwing it away. A worn head also carries a swing a little less well, near the end.

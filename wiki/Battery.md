@@ -4,7 +4,7 @@ A rechargeable battery, lead-acid or nickel-iron: cells in series that charge fr
 
 ## Crafting
 
-Build it at a bench, as for any [modular tool](Tools_and_Weapons.md), from two parts:
+Shape the parts at a bench and put them together in a crafting grid, as for any [modular tool](Tools_and_Weapons.md). It has two parts:
 
 - **Battery Plates**, shaped from plates of a metal that takes a charge: lead or [nickel-iron](Materials.md#nickel-iron). The shape sets the cell count and how much each cell holds:
 

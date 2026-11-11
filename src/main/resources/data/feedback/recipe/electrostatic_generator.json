@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "redstone",
+  "type": "feedback:engineering",
   "key": {
     "P": {
       "item": "feedback:copper_plate"
@@ -19,5 +18,15 @@
   "result": {
     "count": 1,
     "id": "feedback:electrostatic_generator"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
   }
 }

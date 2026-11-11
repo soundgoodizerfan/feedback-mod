@@ -32,7 +32,7 @@ public class GunOptionCategory implements IRecipeCategory<GunOption> {
     private final IDrawable icon;
 
     public GunOptionCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FWeapons.GUN_TABLE_ITEM.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FWeapons.GUN.get()));
     }
 
     @Override

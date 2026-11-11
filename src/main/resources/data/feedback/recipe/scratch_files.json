@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "ingredients": [
     {
       "item": "minecraft:iron_ingot"
@@ -18,5 +17,15 @@
   "result": {
     "count": 1,
     "id": "feedback:scratch_files"
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
   }
 }

@@ -1,4 +1,5 @@
 {
+  "fastener": 4,
   "color": "#6e7378",
   "kind": "metal",
   "neutron": {"absorption": 0.4},

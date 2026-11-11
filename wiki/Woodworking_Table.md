@@ -10,7 +10,7 @@ A carpet (any wool carpet) on top of a Crafting Table.
 
 An **axe** in its own slot instead of a hammer (any axe, vanilla or modular; each act costs it a point).
 
-The screen is the [Smithing Table](Smithing_Table.md)'s: a center slot, a **fan** of nodes around whatever is in it, and a column of slots on the right. Putting a part or a tool in the center works as described there. Stock in the center works like this:
+The screen is the [Smithing Table](Smithing_Table.md)'s: a center slot, a **fan** of nodes around the stock in it, and a column of slots on the right. Stock in the center works like this:
 
 - **Stock** in the center: the fan shows every shape that stock can become, as icons. Shapes the pile is too small for are faint. Hover one for a ghost of the part by the result slot and a few bars (hardness, toughness, weight); click it to make it. A part takes only the stock it needs and the rest comes back as smaller items: a block that makes a one-ingot part gives the part and eight more ingots (ingots, for stone). **Break down** turns a big piece (a block) into ingot-sized pieces without making anything.
 
@@ -21,4 +21,4 @@ What the stock offers here:
 
 The Saw tab reads the recipe book, so a modded recipe made of planks and sticks joins the list. It does not do recipes that need anything else (a barrel's slabs, a ladder's sticks alone).
 
-Metal parts are made at the [Smithing Table](Smithing_Table.md); stone, ceramic, glass and crystal at the [Stonecutter](Stonecutter.md). A tool is put together here, by fitting parts to a part. The screen is oak planks and dark board.
+Metal parts are made at the [Smithing Table](Smithing_Table.md); stone, ceramic, glass and crystal at the [Stonecutter](Stonecutter.md). Parts are put together at the [Crafting Table](Crafting_Table.md) or the [Engineering Table](Engineering_Table.md). The screen is oak planks and dark board.

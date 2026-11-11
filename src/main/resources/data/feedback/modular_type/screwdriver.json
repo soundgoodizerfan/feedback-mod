@@ -1,0 +1,52 @@
+{
+  "family": "hand",
+  "strike": 0.0,
+  "wear_litres": 0.4,
+  "wear_role": "H",
+  "primary": "H",
+  "roles": {
+    "H": {
+      "name": "bit",
+      "forms": [
+        "driver_bit"
+      ],
+      "litres": 0.06,
+      "at": 0.08,
+      "rides": true,
+      "layer": 0,
+      "part": {
+        "item": "feedback:driver_bit",
+        "cells": 1,
+        "stock": [
+          "rod",
+          "ingot"
+        ]
+      }
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "rod",
+        "bone"
+      ],
+      "litres": 0.05,
+      "length": 0.3,
+      "layer": 1
+    }
+  },
+  "patterns": [
+    [
+      "H",
+      "S"
+    ],
+    [
+      "H"
+    ]
+  ],
+  "defaults": {
+    "H": "feedback:wrought_iron",
+    "S": "feedback:wood"
+  },
+  "vanilla": {}
+}

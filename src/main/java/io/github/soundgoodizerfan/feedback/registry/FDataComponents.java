@@ -200,6 +200,12 @@ public class FDataComponents {
                     .persistent(io.github.soundgoodizerfan.feedback.item.RecordedCut.CODEC)
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.item.RecordedCut.STREAM_CODEC)
                     .build());
+    /** The one hand assembly a recipe data stick holds when recorded at the Engineering Table -- see {@code item/RecordedAssembly}. Absent means none. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.RecordedAssembly>> RECORDED_ASSEMBLY =
+            COMPONENTS.register("recorded_assembly", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.RecordedAssembly>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.RecordedAssembly.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.RecordedAssembly.STREAM_CODEC)
+                    .build());
 
     /** How much of a galvanic cell's anode is left, 0 to 1: a mined cell keeps what it has eaten. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> ANODE_REMAINING =

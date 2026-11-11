@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "W": {
       "item": "feedback:copper_wire"
@@ -20,5 +19,15 @@
   "result": {
     "count": 1,
     "id": "feedback:electrolyser"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
   }
 }

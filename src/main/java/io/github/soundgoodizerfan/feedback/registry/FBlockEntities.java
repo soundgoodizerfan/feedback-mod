@@ -232,6 +232,11 @@ public class FBlockEntities {
                     .of(io.github.soundgoodizerfan.feedback.machine.cutter.PowerCutterBlockEntity::new, FBlocks.POWER_CUTTER.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.engineer.AutoEngineerBlockEntity>> AUTO_ENGINEER =
+            BLOCK_ENTITIES.register("auto_engineer", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.engineer.AutoEngineerBlockEntity::new, FBlocks.AUTO_ENGINEER.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.cryocooler.CryocoolerBlockEntity>> CRYOCOOLER =
             BLOCK_ENTITIES.register("cryocooler", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.machine.cryocooler.CryocoolerBlockEntity::new, FBlocks.CRYOCOOLER.get())

@@ -4,7 +4,7 @@ Moves fluid from its back to its front while its shaft turns. Any fluid: water, 
 
 ## Building it
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Pump* in the type row); the diameter is set there, along with the impeller shape and addon. It needs a blueprint but no treatise. Shape a **Pump Impeller** from plate at a bench (the [Smithing Table](Smithing_Table.md) for metal), then put it together at the bench with the Pump Blueprint in the blueprint slot; the pump comes out with the design, and the blueprint is kept.
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Pump* in the type row); the diameter is set there, along with the impeller shape and addon. It needs no treatise. Shape a **Pump Impeller** from plate at a bench (the [Smithing Table](Smithing_Table.md) for metal), then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Pump Blueprint in the blueprint slot judges the fit against your drawing. The pump comes out with the design of the impeller, and the blueprint is kept.
 
 The impeller has one measure, the **diameter**, from 10 to 60 cm (30 by default). A bigger impeller moves more fluid and loads the shaft more. Its **shape** trades flow against lift:
 

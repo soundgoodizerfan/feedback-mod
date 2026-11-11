@@ -10,7 +10,7 @@ L R L
 P P P
 ```
 
-P is a Steel Plate, L is a Lead Plate and R is a Steel Rod.
+P is a Steel Plate, L is a Lead Plate and R is a Steel Rod. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 3 [fasteners](Fasteners.md).
 
 ## Using it
 

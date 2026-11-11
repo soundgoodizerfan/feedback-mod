@@ -14,7 +14,7 @@ The vessel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.
 
 The sheet shows three figures: **Room inside** in mB, **Risks letting go over** in Pu, and **Gives way at** in Pu.
 
-At the [Smithing Table](Smithing_Table.md), put the Pressure Vessel Blueprint in the blueprint slot and shape the shell from plate of the metal you chose. The Pressure Vessel comes out with the shape, wall and metal you drew, and the blueprint is kept. Its tooltip shows the room and the danger line.
+Shape the shell from plate of the metal you chose at the [Smithing Table](Smithing_Table.md), then assemble it at the [Engineering Table](Engineering_Table.md): the shell in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the Pressure Vessel Blueprint in the blueprint slot to judge the fit against your drawing. The Pressure Vessel comes out with the shape, wall and metal of the shell, and the blueprint is kept. Its tooltip shows the room and the danger line.
 
 ## Shapes
 
@@ -43,7 +43,7 @@ The [Boiler](Boiler.md) follows the same ladder.
 
 ## Addons
 
-An addon is an optional extra part made from raw stock, added when you assemble the vessel or by reworking a finished one. The vessel works without either; each only adds.
+An addon is an optional extra part made from raw stock, added when you assemble the vessel or afterward on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The vessel works without either; each only adds.
 
 | Addon | Stock | What it does |
 | --- | --- | --- |

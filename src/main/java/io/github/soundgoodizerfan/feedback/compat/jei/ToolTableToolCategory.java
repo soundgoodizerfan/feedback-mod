@@ -15,7 +15,6 @@ import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
-import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -47,8 +46,6 @@ import net.minecraft.world.item.ItemStack;
 public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCategory.Card> {
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "tool_table_tool", Card.class);
-    /** The gun's own tab: same card, its own type so JEI lists it apart from the tools. */
-    static final RecipeType<Card> GUN_TYPE = RecipeType.create("feedback", "gun_table_gun", Card.class);
 
     /** One form of one type. */
     public record Card(ResourceLocation type, int form) {
@@ -64,27 +61,19 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
-    private final RecipeType<Card> recipeType;
-    private final String titleKey;
 
     public ToolTableToolCategory(IGuiHelper guiHelper) {
-        this(guiHelper, TYPE, "feedback.jei.tool_table_tool", new ItemStack(net.minecraft.world.item.Items.CRAFTING_TABLE));
-    }
-
-    public ToolTableToolCategory(IGuiHelper guiHelper, RecipeType<Card> recipeType, String titleKey, ItemStack icon) {
-        this.icon = guiHelper.createDrawableItemStack(icon);
-        this.recipeType = recipeType;
-        this.titleKey = titleKey;
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(net.minecraft.world.item.Items.CRAFTING_TABLE));
     }
 
     @Override
     public RecipeType<Card> getRecipeType() {
-        return recipeType;
+        return TYPE;
     }
 
     @Override
     public Component getTitle() {
-        return Component.translatable(titleKey);
+        return Component.translatable("feedback.jei.tool_table_tool");
     }
 
     @Override

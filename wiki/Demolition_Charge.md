@@ -4,7 +4,7 @@ A casing packed with powder that blasts when its fuse runs out. It is placed as 
 
 ## Making one
 
-Make it at a [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), or design it first at the [Blueprint Table](Blueprint_Table.md) (under Technology; drawing it takes Chemical Treatise III, see [Treatise](Treatise.md)): a **casing** (a plate of a metal) and one or two **fillers** (powders), up to 16 in all. The blast is read from what is inside, never from a name.
+Shape the **casing** (a plate of a metal) at a [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), then put it with one or two **fillers** (powders), up to 16 in all, in a crafting grid; the [Engineering Table](Engineering_Table.md) assembles it too. You can design one first at the [Blueprint Table](Blueprint_Table.md) (under Technology); drawing it, and assembling it at the Engineering Table, take Chemical Treatise III, see [Treatise](Treatise.md). The blast is read from what is inside, never from a name.
 
 ## Casing, primer and payload
 

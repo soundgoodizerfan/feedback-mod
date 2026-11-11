@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
+  "type": "feedback:engineering",
   "key": {
     "B": {
       "item": "feedback:insulation"
@@ -17,5 +16,15 @@
   "result": {
     "count": 1,
     "id": "feedback:arc_hearth"
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
   }
 }

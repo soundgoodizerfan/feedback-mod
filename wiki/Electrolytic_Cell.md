@@ -10,7 +10,7 @@ G   G
 G G G
 ```
 
-W is [Copper Wire](Wire_Drawer.md) and G is Glass.
+G is Glass and W is [Copper Wire](Wire_Drawer.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 [fasteners](Fasteners.md).
 
 ## Setting it up
 

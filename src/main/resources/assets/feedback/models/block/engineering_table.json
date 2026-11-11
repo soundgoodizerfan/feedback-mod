@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "feedback:block/engineering_table_top",
+    "bottom": "feedback:block/metal_steel_block",
+    "side": "feedback:block/metal_steel_block"
+  }
+}

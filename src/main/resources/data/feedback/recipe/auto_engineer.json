@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "E": { "item": "feedback:engineering_table" },
+    "M": { "item": "feedback:dynamotor" },
+    "S": { "item": "feedback:steel_plate" }
+  },
+  "pattern": [ "SSS", "EMS", "SSS" ],
+  "result": { "count": 1, "id": "feedback:auto_engineer" }
+}

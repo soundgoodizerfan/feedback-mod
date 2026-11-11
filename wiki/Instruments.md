@@ -40,7 +40,7 @@ P   P
   N
 ```
 
-P is a [Copper Plate](Mechanical_Hammer.md) and N is a Wrought Iron Nugget.
+P is a Copper Plate and N is an Iron Nugget. Craft it at the [Engineering Table](Engineering_Table.md) with a [file](Hand_Tools.md#file) in the tool row.
 
 **Work in progress.** Without calipers, a half-worked item tells you what it **needs** as a number (*"Needs 14 Fu"*) but only roughly how far it has got: *Barely marked*, *Taking shape*, *Visibly worked*, *Nearly there*. Carry calipers anywhere in your inventory and that changes to an exact figure, like *"Calipers: 9 / 14 Fu"*, on the item's tooltip and in Jade, on whatever is sitting in a hammer, press, mill, drawer, drill, lathe or grinder. You do not need calipers to make a plate; the words are enough to avoid ruining one. You need them to **aim** at something that only lasts a blow or two, like copper foil, and hit it every time.
 
@@ -66,7 +66,7 @@ Carry it anywhere in your inventory. Every modular item's tooltip gains a line l
 
 Tells you how hard an edge or a plate is, by which file bites it.
 
-Shapeless: a Wrought Iron Ingot, Flint, a Nether Quartz and Leather.
+Shapeless: Iron Ingot + Flint + Nether Quartz + Leather. Craft it at the [Engineering Table](Engineering_Table.md) with a [hammer](Hammer.md) in the tool row.
 
 Carry it anywhere in your inventory. A modular item's tooltip gains a line like *"Scratch files: scratched by file 5, not by file 4"*. The set has eight files, each harder than the last. A file scratches anything softer than itself, so the reading is a **rung**, not a number: your edge is harder than file 4 and softer than file 5.
 

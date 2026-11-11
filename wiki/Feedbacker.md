@@ -6,15 +6,13 @@ It is a bracer-slot [combat gear](Combat_Gear.md) piece, and it grants the techn
 
 ## Getting one
 
-Craft it:
-
 ```
 P C P
 P E P
-_ L _
+  L
 ```
 
-P is a Steel Plate, C a Copper Coil, E an Electromagnet and L Leather. The recipe appears once you have a steel plate; the gauntlet comes out tempered steel.
+P is a Steel Plate, C is a Copper Heating Coil, E is an [Electromagnet](Electromagnet.md) and L is Leather. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 3 [fasteners](Fasteners.md). The gauntlet comes out tempered steel.
 
 It is also a **rare find** (about 4%) in dungeon, stronghold and ancient city chests, already 30 to 70% worn.
 

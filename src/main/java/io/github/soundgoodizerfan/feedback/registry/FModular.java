@@ -52,6 +52,13 @@ public final class FModular {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.STREAM_CODEC)
                     .build());
 
+    /** How well the item fit when it was built: the fit figure and the durability head start, kept apart (see {@code ModularFit}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.modular.ModularFit.Fit>> FIT =
+            COMPONENTS.register("modular_fit", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.modular.ModularFit.Fit>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.modular.ModularFit.Fit.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.modular.ModularFit.Fit.STREAM_CODEC)
+                    .build());
+
     /** What that design makes, baked once and again at each step of wear. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ModularFigures>> FIGURES =
             COMPONENTS.register("modular_figures", () -> DataComponentType.<ModularFigures>builder()
@@ -90,7 +97,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "gun_grip", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "thruster_nozzle", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "module_casing", "module_wiring", "module_optic", "module_filter", "module_thermal", "module_plating", "module_actuator", "module_thruster", "module_coil", "spring_gun_barrel", "spring_gun_receiver", "steam_valve", "steam_lagging", "main_spring", "steam_chest", "vessel_shell", "exchanger_core", "tank_shell", "wheel_rim", "cell_anode", "lamp_filament", "pump_impeller", "compressor_rotor", "burner_nozzle", "crank_arm", "magnet_core", "store_core", "jar_glass", "electric_gun_barrel", "flywheel_disc", "boiler_shell", "large_boiler_shell")
+            "thruster_nozzle", "knife_blade", "saw_blade", "file_head", "driver_bit", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "module_casing", "module_wiring", "module_optic", "module_filter", "module_thermal", "module_plating", "module_actuator", "module_thruster", "module_coil", "spring_gun_barrel", "spring_gun_receiver", "steam_valve", "steam_lagging", "main_spring", "steam_chest", "vessel_shell", "exchanger_core", "tank_shell", "wheel_rim", "cell_anode", "lamp_filament", "pump_impeller", "compressor_rotor", "burner_nozzle", "crank_arm", "magnet_core", "store_core", "jar_glass", "electric_gun_barrel", "flywheel_disc", "boiler_shell", "large_boiler_shell")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -152,6 +159,12 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_HAMMER = ITEMS.register("hand_hammer",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_KNIFE = ITEMS.register("hand_knife",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
+    /** A file: handle and a toothed head; the Engineering Table's {@code feedback:file} ability. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> FILE = ITEMS.register("file",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
+    /** A screwdriver: handle and a bit; the Engineering Table's {@code feedback:driver} ability. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> SCREWDRIVER = ITEMS.register("screwdriver",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
     /** The pan tool: right-click flips the piece under the cursor. */
     public static final DeferredItem<ModularItem> SPATULA = ITEMS.register("spatula",
@@ -240,6 +253,14 @@ public final class FModular {
                             .sound(net.minecraft.world.level.block.SoundType.WOOD)));
     public static final DeferredItem<net.minecraft.world.item.BlockItem> PREP_TABLE_ITEM = ITEMS.registerSimpleBlockItem(PREP_TABLE);
 
+    /** Where parts are put together, fitted, mended and written up (docs/dev/engineering.md). */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableBlock> ENGINEERING_TABLE =
+            BLOCKS.register("engineering_table", () -> new io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.METAL).strength(3.5f)
+                            .sound(net.minecraft.world.level.block.SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> ENGINEERING_TABLE_ITEM = ITEMS.registerSimpleBlockItem(ENGINEERING_TABLE);
+
     /** The part-making benches: the Tool Table's code with a stock filter. The first two replace vanilla's smithing table and stonecutter. */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.StationBlock> SMITHING_TABLE =
             BLOCKS.register("smithing_table", () -> new io.github.soundgoodizerfan.feedback.modular.StationBlock(
@@ -291,6 +312,11 @@ public final class FModular {
             net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity>> PREP_TABLE_ENTITY =
             BLOCK_ENTITIES.register("prep_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.modular.PrepTableBlockEntity::new, PREP_TABLE.get()).build(null));
+
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableBlockEntity>> ENGINEERING_TABLE_ENTITY =
+            BLOCK_ENTITIES.register("engineering_table", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableBlockEntity::new, ENGINEERING_TABLE.get()).build(null));
 
     public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
             net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.StationBlockEntity>> STATION_ENTITY =

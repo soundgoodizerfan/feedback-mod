@@ -17,7 +17,7 @@ Stock is ingots, plates, leather, gems or chain, all the same material. A metal 
 
 ## Lining and studs
 
-Put the piece in the center of a bench and fit to it a **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (a pair), one stack of stock at a time from the stock slot or by clicking the empty place in the fan:
+Put the piece in the item slot of the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab) and the **lining** (anything fibrous: leather, wool) for a little extra protection, and/or **studs** (a pair) in the attachment slots, one stack of stock to a slot, and press **Apply**:
 
 | On the piece | Gives |
 | --- | --- |
@@ -26,7 +26,7 @@ Put the piece in the center of a bench and fit to it a **lining** (anything fibr
 | studs | studded |
 | lining, studs | lined and studded |
 
-Click a fitted lining or studs in the fan to take them off; the piece stays whole and is worn as it is.
+To take a lining or studs off, take the piece apart on the Repair tab and fit the rest again; a plain piece is worn as it is.
 
 ### Studs
 
@@ -125,7 +125,7 @@ A set of armor with servos, a sensor head and a battery bay fitted is an [Exosui
 
 ## Wearing out
 
-Armor wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired by putting it in the center of a bench and picking stock of the plate's material. Old vanilla armor you find is converted; diamond armor becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
+Armor wears like any [tool](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts): it stops one point short of gone and gives nothing until it's repaired on the Repair tab of the [Engineering Table](Engineering_Table.md#repair-tab) with stock of the plate's material. Old vanilla armor you find is converted; diamond armor becomes [steel with four diamond studs](Tools_and_Weapons.md#old-vanilla-tools).
 
 Armor can be [plated](Tools_and_Weapons.md#plating) in an [Electrolytic Cell](Electrolytic_Cell.md#electroplating), by [hot dipping](Casting.md#hot-dipping), or with a clad plate from the [Rolling Mill](Rolling_Mill.md#cladding). A sound coat of a harder metal is a skin over the whole plate and adds about a tenth of its hardness.
 

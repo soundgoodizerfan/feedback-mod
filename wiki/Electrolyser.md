@@ -10,7 +10,7 @@ G G G
 P P P
 ```
 
-W is [Copper Wire](Wire_Drawer.md), G is Glass and P is a wrought iron plate.
+W is [Copper Wire](Wire_Drawer.md), G is Glass and P is a Wrought Iron Plate. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 [fasteners](Fasteners.md).
 
 ## Using it
 

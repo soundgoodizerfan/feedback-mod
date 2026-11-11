@@ -27,11 +27,11 @@ What an item weighs:
 
 ## Overloading
 
-With the load over the rating you are **30% slower** and **cannot sprint**, and the strap wears one point every second. At its last point the strap lets go: the pack drops off you with everything in it. Rework the strap to mend it (see [mending](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts)).
+With the load over the rating you are **30% slower** and **cannot sprint**, and the strap wears one point every second. At its last point the strap lets go: the pack drops off you with everything in it. Mend the strap on the Repair tab (see [mending](Tools_and_Weapons.md#when-it-breaks-mending-and-swapping-parts)).
 
 ## Fittings
 
-A finished pack takes **fittings**: rework it at the [Woodworking Table](Woodworking_Table.md) (the [Smithing Table](Smithing_Table.md) for plate fittings) and lay the stock on it. Take the pack apart to remove one. Every fitting costs **mounting points**; the shell gives them (pouch 1, satchel 2, pack 4) and a frame adds 2. A fitting that does not fit in the points left is refused.
+A finished pack takes **fittings**: fit them on the [Fit tab](Engineering_Table.md#fit-tab) of the Engineering Table (shape plate fittings at the [Smithing Table](Smithing_Table.md) and wood ones at the [Woodworking Table](Woodworking_Table.md) first). Take the pack apart on the Repair tab to remove one. Every fitting costs **mounting points**; the shell gives them (pouch 1, satchel 2, pack 4) and a frame adds 2. A fitting that does not fit in the points left is refused.
 
 | Fitting | Stock | Points | What it does |
 | --- | --- | --- | --- |

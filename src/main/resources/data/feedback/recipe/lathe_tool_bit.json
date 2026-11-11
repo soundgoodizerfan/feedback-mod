@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "I": {
       "item": "minecraft:iron_ingot"
@@ -13,5 +12,15 @@
   "result": {
     "count": 1,
     "id": "feedback:lathe_tool_bit"
+  },
+  "tool": [
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
   }
 }

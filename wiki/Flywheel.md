@@ -13,7 +13,7 @@ A flywheel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.
 | **Thickness** | 5 to 30 cm. A thicker disc holds more momentum. |
 | **Metal** | Plate or ingot of a metal with a measured weight and yield strength. A dense metal gives more momentum; a strong, light metal lets the disc spin faster. |
 
-At the [Smithing Table](Smithing_Table.md), put the Flywheel Blueprint in the blueprint slot and shape the disc from plate or ingot of the metal you chose. The Flywheel comes out with the design you drew, and the blueprint is kept.
+Shape the disc from plate or ingot of the metal you chose at the [Smithing Table](Smithing_Table.md), then assemble it at the [Engineering Table](Engineering_Table.md): the disc in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the Flywheel Blueprint in the blueprint slot to judge the fit against your drawing. The Flywheel comes out with the design of the disc, and the blueprint is kept.
 
 ### Shapes
 

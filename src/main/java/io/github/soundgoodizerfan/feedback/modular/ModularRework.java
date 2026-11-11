@@ -8,12 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.process.DishFigures;
-import io.github.soundgoodizerfan.feedback.process.FoodCut;
-import io.github.soundgoodizerfan.feedback.process.FoodState;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -23,8 +18,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Working on a tool that is already made, at the Tool Table's tool slot. It moved here from the
- * crafting recipe, with its rules unchanged:
+ * Working on a tool that is already made, at the Engineering Table's Repair and Fit tabs ({@code EngineeringRework}):
  *
  * <ul>
  *   <li><b>Repair.</b> The stuff the wearing part is made of: each piece puts back its share of the
@@ -46,9 +40,28 @@ public final class ModularRework {
     private ModularRework() {
     }
 
+    /** Which of the three things {@link #rework} does is allowed: {@code ALL} allows each; the Engineering Table splits them across tabs. */
+    public enum Mode {
+        ALL(true, true, true), MEND(true, false, false), SWAP(false, true, false), ADD(false, false, true);
+
+        final boolean mend, swap, add;
+
+        Mode(boolean mend, boolean swap, boolean add) {
+            this.mend = mend;
+            this.swap = swap;
+            this.add = add;
+        }
+    }
+
     /** What {@code stock} does to {@code tool}: the changed item, or empty if nothing it does. */
     public static Optional<ItemStack> rework(ItemStack tool, List<ItemStack> stock, Map<ResourceLocation, Material> materials,
                                              Map<ResourceLocation, ModularType> types) {
+        return rework(tool, stock, materials, types, Mode.ALL);
+    }
+
+    /** As {@link #rework(ItemStack, List, Map, Map)}, doing only what {@code mode} allows (mend, swap and add never overlap). */
+    public static Optional<ItemStack> rework(ItemStack tool, List<ItemStack> stock, Map<ResourceLocation, Material> materials,
+                                             Map<ResourceLocation, ModularType> types, Mode mode) {
         ModularDesign design = ModularStacks.design(tool);
         ModularType type = design == null ? null : types.get(design.type());
         if (type == null || stock.isEmpty())
@@ -65,7 +78,7 @@ public final class ModularRework {
         out.setCount(1);
         Part wearing = design.part(type.wearRole());
         // Repair: the stuff the wearing part is made of puts its share of the durability back.
-        if (wearing != null && wearing.material().equals(what.id()) && type.roles().get(type.wearRole()).acceptsStock(what)) {
+        if (mode.mend && wearing != null && wearing.material().equals(what.id()) && type.roles().get(type.wearRole()).acceptsStock(what)) {
             if (tool.getDamageValue() == 0)
                 return Optional.empty();
             int share = tool.getMaxDamage() / Math.max(1, wearing.count());
@@ -79,7 +92,7 @@ public final class ModularRework {
         // Swap: a different material, in as many cells as the part has (or one shaped part), replaces that part.
         // A held modular item is never a swap (its slot is taken out and refilled whole); it only goes into an empty role, below.
         for (Map.Entry<String, ModularType.Role> r : type.roles().entrySet()) {
-            if (ModularNest.holdable(stock.get(0)))
+            if (!mode.swap || ModularNest.holdable(stock.get(0)))
                 break;
             Part part = design.part(r.getKey());
             boolean shaped = r.getValue().part().isPresent() || r.getValue().striker();
@@ -105,6 +118,8 @@ public final class ModularRework {
         // its role asks, on a tool made without one. A part the type's patterns do not lay is optional, and so is everything on armour
         // but its plate (the plate is the piece); a design the bake refuses (a second muzzle device on a gun) is refused here too.
         // A finished module is held whole by a role that lists its nest form (never laid at assembly, so marked after).
+        if (!mode.add)
+            return Optional.empty();
         List<String> optional = ModularNest.holdable(stock.get(0)) ? type.order()
                 : type.family() == ModularType.Family.ARMOUR
                 ? type.placed().stream().filter(k -> !k.equals(type.primary())).toList() : type.extras();
@@ -122,6 +137,37 @@ public final class ModularRework {
                     ? Optional.of(out) : Optional.empty();
         }
         return Optional.empty();
+    }
+
+    /** The outcome of {@link #addAll}: the fitted item and the pieces each group used, or why it was refused ({@code failed} is the group that did not fit). */
+    public record Added(Optional<ItemStack> out, int[] used, int failed) {
+        public boolean ok() {
+            return out.isPresent();
+        }
+    }
+
+    /**
+     * Fits several attachments at once. Each group is the stack of one attachment (its pieces, in order); the groups go on one after the
+     * other, each onto the item the last made, so every addon is checked against the others fitted (a clashing extra, a second muzzle
+     * device, is refused by the bake exactly as one at a time). A group takes the fewest pieces of its stack that fit (a shaped part one,
+     * stock as many as its role's bulk). All or nothing: when one group does not fit, nothing is fitted and {@code failed} names it.
+     */
+    public static Added addAll(ItemStack tool, List<List<ItemStack>> groups, Map<ResourceLocation, Material> materials,
+                               Map<ResourceLocation, ModularType> types) {
+        ItemStack now = tool;
+        int[] used = new int[groups.size()];
+        for (int g = 0; g < groups.size(); g++) {
+            List<ItemStack> pieces = groups.get(g);
+            Optional<ItemStack> next = Optional.empty();
+            for (int n = 1; n <= pieces.size() && next.isEmpty(); n++) {
+                next = rework(now, pieces.subList(0, n), materials, types, Mode.ADD);
+                used[g] = n;
+            }
+            if (next.isEmpty())
+                return new Added(Optional.empty(), used, g);
+            now = next.get();
+        }
+        return new Added(groups.isEmpty() ? Optional.empty() : Optional.of(now), used, groups.isEmpty() ? 0 : -1);
     }
 
     /**
@@ -163,53 +209,5 @@ public final class ModularRework {
             out.addAll(ToolDesigns.items(part, role, materials, count));
         }
         return out;
-    }
-
-    /**
-     * The parts of a finished dish as items (dish spec 3), or empty if it is a soup (a mixture does not come apart) or a baked type (a loaf is one piece, never dough again). Each food
-     * comes back in its material's form carrying the state it was baked from, aged by the dish's clock so spoilage goes on, and
-     * its cut; a shaped container comes back whole as its part; the finish and any salt are lost (they are on the dish). The
-     * caller settles the dish's clock first.
-     */
-    public static Optional<List<ItemStack>> dismantleDish(ItemStack dish, Map<ResourceLocation, Material> materials,
-                                                          Map<ResourceLocation, ModularType> types) {
-        ModularDesign design = ModularStacks.design(dish);
-        ModularType type = design == null ? null : types.get(design.type());
-        FoodState now = dish.get(FDataComponents.FOOD_STATE.get());
-        DishFigures baked = dish.get(FDataComponents.DISH_FIGURES.get());
-        if (type == null || now == null || baked == null || type.bakes())
-            return Optional.empty();
-        for (Part part : design.parts()) {
-            Material m = materials.get(part.material());
-            if (m != null && m.traits().contains(Material.Trait.BROTH))
-                return Optional.empty();
-        }
-        // Drying took water from the whole dish; each part gives up the same share.
-        float dry = baked.moisture() > 0f ? Math.min(1f, now.moisture() / baked.moisture()) : 1f;
-        List<ItemStack> out = new ArrayList<>();
-        for (Part part : design.parts()) {
-            ModularType.Role role = type.roles().get(part.role());
-            Material m = materials.get(part.material());
-            if (role == null || m == null || role.after() || m.food().isEmpty() && part.kind().isEmpty())
-                continue;
-            if (!part.kind().isEmpty()) {
-                out.addAll(ToolDesigns.items(part, role, materials, part.count()));
-                continue;
-            }
-            Optional<net.minecraft.world.item.Item> item = m.item(part.material(), part.form());
-            if (item.isEmpty())
-                continue;
-            FoodState was = DishBake.stateOf(part, m.food().get());
-            float rot = Math.max(was.rot(), now.rot());
-            ItemStack food = new ItemStack(item.get(), part.count());
-            food.set(FDataComponents.FOOD_STATE.get(), new FoodState(was.cook(), was.moisture() * dry, Math.max(was.pathogen(), rot * FTuning.FOOD_ROT_PATHOGEN),
-                    now.rot() >= FTuning.FOOD_ROT_TOXIC_AT ? Math.max(was.toxin(), now.toxin()) : was.toxin(), was.charred(), rot, now.stamp(), now.envTu(),
-                    was.smoke(), was.salt()));
-            int cut = Math.round(part.state("cut", 0f));
-            if (cut > 0)
-                food.set(FDataComponents.FOOD_CUT.get(), new FoodCut(cut, Math.round(part.state("evenness", 0f))));
-            out.add(food);
-        }
-        return Optional.of(out);
     }
 }

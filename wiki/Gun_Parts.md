@@ -2,7 +2,7 @@
 
 A [gun](Guns.md) isn't crafted from ingots. It's **assembled from machined parts**, each made on the workshop machines and each made of whatever metal you chose for it. The gun's figures come from the parts you actually put in, not from the blueprint. A sloppy barrel makes a worse gun, never a refused one.
 
-Parts can also be shaped from stock with a [hammer](Hammer.md) on the [Gun Table](Gun_Table.md), at the standard dimensions of their variant (the barrel at its variant's bore, length and wall); a machine then cuts them to any size: the drill grows the bore, the lathe thins the wall and the cutoff wheel shortens the length.
+Parts can also be shaped from stock at the bench for the stock's material (metal at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md) with a [hammer](Hammer.md), wood, bone and leather at the [Woodworking Table](Woodworking_Table.md), cold stock at the [Stonecutter](Stonecutter.md)), at the standard dimensions of their variant (the barrel at its variant's bore, length and wall); a machine then cuts them to any size: the drill grows the bore, the lathe thins the wall and the cutoff wheel shortens the length.
 
 ## The parts
 
@@ -41,7 +41,7 @@ A grip carries no load, so it doesn't have to be a strong metal. The lathe also 
 
 A plastic or rubber ingot turns into a grip as well, with the friction of its material (synthetic rubber 1.2, polyethylene 0.3).
 
-The turned grip is a blank. A gun takes it as a **Gun Grip**, shaped at the Gun Table (a grind) in one of four shapes, each multiplying the friction the hand gets (so less kick, see the table under Grip friction):
+The turned grip is a blank. A gun takes it as a **Gun Grip**, shaped at a bench (a grind) in one of four shapes, each multiplying the friction the hand gets (so less kick, see the table under Grip friction):
 
 | Grip | Cells | Friction |
 | --- | --- | --- |
@@ -52,7 +52,7 @@ The turned grip is a blank. A gun takes it as a **Gun Grip**, shaped at the Gun 
 
 ## The stock
 
-A stock is made at the Gun Table from a plate (any metal, polymer or organic material that comes as one) or from planks, in one of three shapes: **fixed**, **skeleton** or **folding**. It takes the kick into your shoulder while you are crouched and still, so the gun kicks less and groups tighter ([Guns](Guns.md#frames)). It is optional, and fits any frame.
+A stock is made at a bench from a plate (any metal, polymer or organic material that comes as one) or from planks, in one of three shapes: **fixed**, **skeleton** or **folding**. It takes the kick into your shoulder while you are crouched and still, so the gun kicks less and groups tighter ([Guns](Guns.md#frames)). It is optional, and fits any frame.
 
 ## The barrel
 
@@ -74,7 +74,7 @@ Work per cut is the machine's strength (St) divided by the metal's hardness. For
 
 ### Hitting the target
 
-The blueprint names a target bore (5 to 20 mm), outside diameter and barrel length; there's no tolerance check. Any barrel assembles. What happens is about how the cartridge fits:
+The blueprint names a target bore (5 to 20 mm), outside diameter and barrel length. Any barrel assembles; one whose size is off the drawing past the tolerance ([Fit and head start](Engineering_Table.md#fit-and-head-start)) gives the gun a fit flaw, a wider spread. What happens in the barrel is about how the cartridge fits:
 
 - A round will only **chamber** if its bore is within **1 mm** of the barrel's real bore.
 - **Too loose:** gas leaks past. For every mm loose the round loses 60% of its energy (down to a floor of 30%) and spreads **3° wider**.
@@ -84,7 +84,7 @@ Get the bore to within a few tenths of a millimetre of your cartridges.
 
 ## Assembling
 
-Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any slots: the parts decide the gun. You get the gun and **keep the blueprint**. The parts a gun is made of:
+Lay the gun's parts in the grid of the [Engineering Table](Engineering_Table.md), in any slots, with two [fasteners](Fasteners.md) in the fastener slots: the parts decide the gun. Assembling a gun takes Weapons Treatise II ([Treatise](Treatise.md)). A blueprint in the blueprint slot is optional; it judges the fit of the parts against the drawing, skips the torque game and is kept. The parts a gun is made of:
 
 | Part | Role |
 | --- | --- |
@@ -94,7 +94,7 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 | Trigger Group, Gun Grip | always; a grip is wood unless you choose another material; its variant is straight, pistol grip, finger-groove or palm-swell |
 | Cylinder, Magazine Tube, Belt Feed or Box Feed | optional: the feed (none means a box magazine on a slide; a bolt or lever with none loads one round by hand, and a Box Feed gives it a box magazine; a break action holds its barrels) |
 | Sight | optional: a reflex sight (see-through glass, with a lit dot if illuminated) or a scope (aimed, the zoom shows inside its round lens with a reticle; the view outside the lens stays normal) (none is iron sights) |
-| A fitting part | each fitting on the gun, one to a slot |
+| A fitting part | each fitting on the gun, one to a slot, added on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab) |
 
 **Each part's material is on the part.** A receiver can be a metal or a polymer (a plastic frame): it holds the action, and on a gun without a slide it also holds the breech, so it limits the chamber (see [The chamber](#the-chamber)). The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.
 
@@ -113,7 +113,7 @@ Kick scales with 0.6 ÷ friction, so a bronze grip kicks twice as hard as a stee
 
 ## Fittings
 
-Optional parts change what a gun does. They are tip-like parts, machined like any other and added at the [Gun Table](Gun_Table.md) (in the Assemble tab, or on a finished gun in the Rework tab). Each weighs what its metal weighs. A fitting may only change figures, only add a trait, or both.
+Optional parts change what a gun does. They are tip-like parts, machined like any other and added to a finished gun on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). Each weighs what its metal weighs. A fitting may only change figures, only add a trait, or both.
 
 | Fitting | Effect |
 | --- | --- |
@@ -126,7 +126,7 @@ A suppressor, a brake and an eddy sleeve all go on the muzzle, so a gun has one 
 
 ### Fittings made of the stuff itself
 
-These four are shaped at the Gun Table from raw stock, and the material decides what they do. All four act on the shot as you aim it, so the HUD and the spec sheet show the effect.
+These four are shaped at a bench from raw stock, and the material decides what they do. All four act on the shot as you aim it, so the HUD and the spec sheet show the effect.
 
 | Fitting | Made of | Effect |
 | --- | --- | --- |
@@ -137,7 +137,7 @@ These four are shaped at the Gun Table from raw stock, and the material decides 
 
 ### Changing a fitting
 
-Add a fitting to a finished gun in the **Rework** tab. A gun takes one fitting to a slot, so to swap a suppressor for a brake, take the gun apart or swap the part in place with another of its own kind.
+Add a fitting to a finished gun on the [Fit tab](Engineering_Table.md#fit-tab) of the Engineering Table. A gun takes one fitting to a slot, so to swap a suppressor for a brake, take the gun apart or swap the part in place with another of its own kind on the Repair tab.
 
 ## The chamber
 

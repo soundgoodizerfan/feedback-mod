@@ -23,7 +23,7 @@ T T T
 T S T
 ```
 
-T is a Tungsten Carbide Plate and S is a Steel Plate.
+T is a Tungsten Carbide Plate and S is a Steel Plate. Craft it at the [Engineering Table](Engineering_Table.md) with a [file](Hand_Tools.md#file) in the tool row.
 
 - **Plasma Head** cuts conducting metal plate only, since the arc needs something to conduct.
 

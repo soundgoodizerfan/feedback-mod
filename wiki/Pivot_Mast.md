@@ -6,9 +6,11 @@ A vertical shaft whose arm sweeps a circle. The tip on the arm works every block
 
 ```
 P S P
-P G P      P wrought iron plate, S shaft, G gearbox, B bearing
+P G P
 P B P
 ```
+
+P is a Wrought Iron Plate, S is a [Shaft](Shaft.md), G is a [Gearbox](Cogs.md#gearbox) and B is a [Bearing](Bearing.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 3 [fasteners](Fasteners.md).
 
 | Part | Recipe |
 | --- | --- |

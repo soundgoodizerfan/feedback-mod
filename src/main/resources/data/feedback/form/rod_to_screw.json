@@ -1,0 +1,7 @@
+{
+  "from": "rod",
+  "to": "screw",
+  "operation": "turn",
+  "base": 1,
+  "slope": 1
+}

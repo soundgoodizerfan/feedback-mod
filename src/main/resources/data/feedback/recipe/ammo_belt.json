@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "N": {
       "item": "minecraft:iron_nugget"
@@ -15,5 +14,16 @@
     "components": {
       "feedback:magazine_size": "belt"
     }
-  }
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "weapons:2"
 }

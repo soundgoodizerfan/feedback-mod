@@ -1,11 +1,18 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "key": {
-    "P": {"item": "feedback:steel_plate"},
-    "C": {"item": "feedback:copper_coil"},
-    "E": {"item": "feedback:electromagnet"},
-    "L": {"item": "minecraft:leather"}
+    "P": {
+      "item": "feedback:steel_plate"
+    },
+    "C": {
+      "item": "feedback:copper_coil"
+    },
+    "E": {
+      "item": "feedback:electromagnet"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
   },
   "pattern": [
     "PCP",
@@ -26,7 +33,19 @@
         "i_frames": 0,
         "mass": 0
       },
-      "feedback:grants": ["feedback:punch_projectiles"]
+      "feedback:grants": [
+        "feedback:punch_projectiles"
+      ]
     }
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 2
   }
 }

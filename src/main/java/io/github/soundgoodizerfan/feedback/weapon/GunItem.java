@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
  * ({@link GunFigures#of} is the shot logic's view of them); firing is driven from the client (prediction,
  * guns spec 7) and resolved on the server ({@link GunShots}), so the item itself does nothing on use.
  *
- * <p>A gun made at the Gun Table arrives with its figures. The one that does not is the creative tab's
+ * <p>A gun made at the Engineering Table arrives with its figures. The one that does not is the creative tab's
  * starter gun, baked by the core the first time it is ticked ({@link ModularStacks#tick}).
  */
 public abstract class GunItem extends ModularItem implements io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.Cooling {

@@ -100,11 +100,6 @@ public class FWeapons {
 
     public static final DeferredItem<BlockItem> RELOADING_PRESS_ITEM = ITEMS.registerSimpleBlockItem(RELOADING_PRESS);
 
-    /** Where parts become a gun, read against a round (guns spec 13.6). */
-    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.weapon.GunTableBlock> GUN_TABLE =
-            BLOCKS.register("gun_table", () -> new io.github.soundgoodizerfan.feedback.weapon.GunTableBlock(
-                    BlockBehaviour.Properties.of().mapColor(MapColor.WOOD).strength(2.5f).sound(SoundType.WOOD)));
-
     /** A placed explosive, packed by hand and lit by anything hot (guns spec 13.4a). */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlock> DEMOLITION_CHARGE =
             BLOCKS.register("demolition_charge", () -> new io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlock(
@@ -115,12 +110,6 @@ public class FWeapons {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlockEntity>> DEMOLITION_CHARGE_ENTITY =
             BLOCK_ENTITIES.register("demolition_charge", () -> BlockEntityType.Builder
                     .of(io.github.soundgoodizerfan.feedback.weapon.DemolitionChargeBlockEntity::new, DEMOLITION_CHARGE.get()).build(null));
-
-    public static final DeferredItem<BlockItem> GUN_TABLE_ITEM = ITEMS.registerSimpleBlockItem(GUN_TABLE);
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.weapon.GunTableBlockEntity>> GUN_TABLE_ENTITY =
-            BLOCK_ENTITIES.register("gun_table", () -> BlockEntityType.Builder
-                    .of(io.github.soundgoodizerfan.feedback.weapon.GunTableBlockEntity::new, GUN_TABLE.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ReloadingPressBlockEntity>> PRESS_ENTITY =
             BLOCK_ENTITIES.register("reloading_press",

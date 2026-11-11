@@ -16,22 +16,22 @@ import net.minecraft.util.StringRepresentable;
  * serves ({@code docs/gui/gui_flow_structure.md}). The three part-making benches split stock by what it is made of, read off the
  * material's kind and never its name, so a pack's own wood or stone is handled the same: metal is smithed, anything
  * organic (wood, bone, leather, fibre) is worked at the woodworking table, and the stonecutter takes any cold stock, organic
- * included, so it does all the woodworking table does as well as stone, ceramic, glass and crystal. {@link #TOOL}, {@link #GUN} and {@link #PREP} take any stock; the Gun
- * and Prep Tables have no block of their own keyed on this enum, they are what {@link #of(ToolTableMenu)} names for their
- * menus (which keep {@link #TOOL} as their stock filter). The anvil takes the smithing table's metal and also forges it (plays the
+ * included, so it does all the woodworking table does as well as stone, ceramic, glass and crystal. {@link #TOOL} and {@link #PREP} take any stock; the
+ * Prep Table has no block of its own keyed on this enum, it is what {@link #of(ToolTableMenu)} names for its
+ * menu (which keeps {@link #TOOL} as its stock filter). Every part of every modular type, a gun's included, is shaped at the bench
+ * for its stock's material. The anvil takes the smithing table's metal and also forges it (plays the
  * forging pattern); the smithing table makes the unforged shapes only, as the stonecutter does the woodworking table's work and more.
  *
  * <p>The descriptor is data only and server-safe, so the skin is a {@code GuiSkin} constant name that the client reads.
  * {@link #CODEC} is used only by {@link StationBlock}'s block codec, never saved, so the extra entries need no migration.
  */
 public enum Station implements StringRepresentable {
-    /** The stock filter of the Gun and Prep Tables' menus: any stock, any shape. Not a block of its own. */
+    /** The stock filter of the Prep Table's menu: any stock, any shape. Not a block of its own. */
     TOOL("STONE", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
     SMITHING("FORGE", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
     ANVIL("ANVIL", "hammer", "gui.feedback.tool_table.hammer", List.of(tab("forge"), tab("trim")), Panel.FORGE),
     WOODWORKING("WOOD", "axe", "gui.feedback.tool_table.axe", List.of(tab("parts"), tab("saw"))),
     STONECUTTING("STONE", "saw", "gui.feedback.tool_table.saw", List.of(tab("parts"), tab("cut"))),
-    GUN("PANEL", "hammer", "gui.feedback.tool_table.hammer", List.of(), Panel.FORGE),
     PREP("BRICK", "knife", "gui.feedback.prep_table.knife", List.of(tab("prep"), tab("blueprint")), Panel.FORGE, Panel.PREP);
 
     public static final Codec<Station> CODEC = StringRepresentable.fromEnum(Station::values);
@@ -61,9 +61,9 @@ public enum Station implements StringRepresentable {
         this.panels = List.of(panels);
     }
 
-    /** The descriptor for a menu: the Gun and Prep Tables run on {@link #TOOL} menus, so the menu's flags name them. */
+    /** The descriptor for a menu: the Prep Table runs on a {@link #TOOL} menu, so the menu's flag names it. */
     public static Station of(ToolTableMenu menu) {
-        return menu.gunTable() ? GUN : menu.dishTable() ? PREP : menu.station();
+        return menu.dishTable() ? PREP : menu.station();
     }
 
     /** The {@code GuiSkin} constant name this station is drawn on. */
@@ -91,17 +91,12 @@ public enum Station implements StringRepresentable {
         return this == PREP;
     }
 
-    /** The Gun Table: sixteen fitted parts, a round slot and the spec sheet. */
-    public boolean gun() {
-        return this == GUN;
-    }
-
     /** The woodworking table: an axe and a saw, where the others have a hammer and a cut. */
     public boolean saws() {
         return this == WOODWORKING;
     }
 
-    /** The tooltip key of an empty slot of {@code slot} ({@code hammer, centre, stock, plan, round}) here. */
+    /** The tooltip key of an empty slot of {@code slot} ({@code hammer, centre, stock, plan}) here. */
     public String tip(String slot) {
         if (slot.equals("hammer"))
             return toolTip;

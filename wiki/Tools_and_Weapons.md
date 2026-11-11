@@ -1,6 +1,6 @@
 # Tools and Weapons
 
-Pickaxes, axes, swords, bows, shields and the rest are not a fixed list of wooden, stone, iron, golden, diamond and netherite kinds. Every one is **assembled from parts**, and what it does comes from what those parts are made of. Vanilla's tool recipes do not exist (a wooden or stone pickaxe, axe and shovel still craft by hand, so you can build the first table, and are converted like any old tool, below); make the parts at a bench (the [Smithing Table](Smithing_Table.md), [Woodworking Table](Woodworking_Table.md) or [Stonecutter](Stonecutter.md)) and put them together in a crafting grid.
+Pickaxes, axes, swords, bows, shields and the rest are not a fixed list of wooden, stone, iron, golden, diamond and netherite kinds. Every one is **assembled from parts**, and what it does comes from what those parts are made of. Vanilla's tool recipes do not exist (a wooden or stone pickaxe, axe and shovel still craft by hand, so you can build the first table, and are converted like any old tool, below); make the parts at a bench (the [Smithing Table](Smithing_Table.md), [Woodworking Table](Woodworking_Table.md) or [Stonecutter](Stonecutter.md)) and put them together in a crafting grid or at the [Engineering Table](Engineering_Table.md).
 
 Armor works the same way: see [Armor](Armor.md).
 
@@ -33,7 +33,9 @@ Every piece must be the same stock. **Stock** is ingots, gems, planks, cobblesto
 
 ## Putting one together
 
-Put one part in the center of a bench (the [Smithing Table](Smithing_Table.md), [Woodworking Table](Woodworking_Table.md) or [Stonecutter](Stonecutter.md); guns at the [Gun Table](Gun_Table.md)) and fit the others to it, in any order: the bench's fan shows what you are carrying that attaches. Each shaped part is **one item**; **handles** are sticks, rods or bone, stacked as many as the handle is long; all of one part must be the same material. The table works out what you are making from the parts.
+Lay the parts in the 3 by 3 grid of the [Crafting Table](Crafting_Table.md) or the Crafting tab of the [Engineering Table](Engineering_Table.md), in any positions, one item to a slot. The result appears when the parts make a tool. Each shaped part is **one item**; **handles** are sticks, rods or bone, one to a slot, as many as the handle is long; all of one part must be the same material. The grid works out what you are making from the parts.
+
+The Crafting Table assembles the tools below except the crossbow. The Engineering Table assembles all of them: it plays a hand-work game for swords, spears, shields and bows, and it judges how well the joints fit. See [Fit and head start](Engineering_Table.md#fit-and-head-start).
 
 | Item | Parts |
 | --- | --- |
@@ -45,11 +47,11 @@ Put one part in the center of a bench (the [Smithing Table](Smithing_Table.md), 
 | **Mace** | a [heavy core](Heavy_Core.md) (or a block of metal), two rods, binding |
 | **Trident** | tines, two shafts, binding |
 | **Bow** | three limbs, three lengths of string |
-| **Crossbow** | a prod (two cells), string, three stock, a lock, **plus a Crossbow Blueprint** (below) |
+| **Crossbow** | a prod (two cells), string, three stock, a lock: a mechanism, put together at the Engineering Table only (below) |
 | **Shield** | six faces, a rim part (a grip makes it five faces) |
 | **Shears** | two blades (a pivot is optional) |
 | **Twin-headed tool** | two heads of any kind (pick, axe, shovel, hoe), each its own material, one handle, binding: digs what both heads dig. A pick and an axe make a **mattock**, two axes a double-bit axe. A second head slows the swing and weakens the blow, because the handle carries both |
-| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one. Drawing a cleaver, maul or spear at the Blueprint Table takes Weapons Treatise I ([Treatise](Treatise.md)) |
+| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one. Drawing a cleaver, maul or spear at the Blueprint Table, and assembling one at the Engineering Table, takes Weapons Treatise I ([Treatise](Treatise.md)) |
 | **Pike** | head, three handles, binding: reaches further |
 | **Maul** | head, two handles, binding: splits wood and staggers what it hits |
 | **Sickle** | head, grip, binding: cutting a crop or a leaf takes its neighbors too |
@@ -60,19 +62,19 @@ You can add:
 - A **tip** part, below.
 - Armor and shields can take a **grip** or **lining**.
 
-A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first, like a head, so a stack of ingots is never ambiguous: the item says what it is.
+A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first, like a head, so a stack of ingots is never ambiguous: the item says what it is. A tip, a pommel and the other optional extras are added to a finished tool on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab).
 
 ### Tips
 
-A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then fit it with the other parts (or add it to a finished tool in the center) and the tool is tipped. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one later at a bench; swapping in a different gem replaces it.
+A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then fit it to the finished tool on the Fit tab and the tool is tipped. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one at any time on the Fit tab; swapping in a different gem replaces it.
 
 ### Brittle heads
 
 A whole diamond head is possible and bites superbly, but diamond is brittle: it keeps only a sixteenth of the durability its hardness suggests. Anything tougher than a fifth of its hardness (iron, stone, steel) is unaffected. Set diamond as a tip instead.
 
-### Crossbow Blueprint
+### Crossbow
 
-The crossbow is the one tool with a mechanism, so it needs a **Crossbow Blueprint** in the blueprint slot with the parts, made at the [Blueprint Table](Blueprint_Table.md). The blueprint must show the same parts as the ones put in, role for role (same material, same part, same count); ground-in qualities need not match, and a blueprint of a different design does not work.
+The crossbow is the one tool with a mechanism. It is a complex type: it takes Weapons Treatise II ([Treatise](Treatise.md)), is assembled only at the [Engineering Table](Engineering_Table.md) and spends [fasteners](Fasteners.md). A [blueprint](Blueprint_Table.md) of a crossbow in the blueprint slot judges the fit of its parts; without one the parts are hand-fitted.
 
 ## What the parts do
 
@@ -96,15 +98,15 @@ A tool wears with use, like any hand tool, but misuse costs extra and tells you 
 
 An edged tool has an edge: **keen**, **standard** or **blunt**. Keen bites harder and chips sooner. Blunt is tougher.
 
-A new tool comes with the standard edge unless a [Blueprint](Blueprint_Table.md) says otherwise. **Regrind** it at a **grindstone**: sneak and right-click the grindstone with the tool in hand to step to the next edge. Each grind costs **2 points of durability** (never the last), so an edge is a choice, not a toggle.
+A tool comes with the standard edge unless a [Blueprint](Blueprint_Table.md) says otherwise. **Regrind** it at a **grindstone**: sneak and right-click the grindstone with the tool in hand to step to the next edge. Each grind costs **2 points of durability** (never the last), so an edge is a choice, not a toggle.
 
 ## When it breaks, mending, and swapping parts
 
 A tool doesn't vanish when it's spent. It stops with one point left and acts like an empty hand until you repair it. It also gets visibly worse on the way down: *Worn*, *Battered*, *Nearly spent*.
 
-**Repairing:** put the tool in the center of a bench, click its wearing part and pick stock of the material it is made of (an iron pickaxe with iron ingots). Each ingot puts back its share.
+**Repairing:** on the Repair tab of the [Engineering Table](Engineering_Table.md#repair-tab), put the tool in the item slot and stock of the material of its wearing part in the part stock (an iron pickaxe with iron ingots), and press **Repair**. Each ingot puts back its share.
 
-**Swapping a part:** put the tool in the center, click the part and pick a *different* part, or stock of a different material (a bronze pickaxe head on an iron pickaxe replaces its head; the old head comes back to you). A part can also be taken off, which leaves the part it was built on with the rest fitted to it. A new wearing part is fresh. Enchantments stay.
+**Swapping a part:** on the same tab, put the tool in and stock of a *different* material, or a different part, in the stock (a bronze pickaxe head on an iron pickaxe replaces its head; the old head comes back to you), and press **Swap part**. **Take apart** returns every part. The replacement wearing part is fresh. Enchantments stay.
 
 ## Old vanilla tools
 
@@ -213,7 +215,7 @@ A shield is drawn as a vanilla-style shield sized by its face: a buckler is smal
 
 ## Fittings
 
-Beyond the parts of the pattern, a finished tool takes optional **fittings**, one stack at a time at a bench (the way a tip or lining is fitted):
+Beyond the parts of the pattern, a finished tool takes optional **fittings**, put on at the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab) (the way a tip is fitted):
 
 | Fitting | On | Does |
 | --- | --- | --- |

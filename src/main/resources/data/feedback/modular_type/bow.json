@@ -1,5 +1,6 @@
 {
   "family": "bow",
+  "minigame": "feedback:fitting",
   "wear_litres": 3.3,
   "wear_role": "L",
   "primary": "L",

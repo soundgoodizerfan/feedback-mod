@@ -1,6 +1,6 @@
 # Blueprint Table
 
-A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md), and so are machines and their parts (engines, gearboxes, propellers, thrusters, flywheels, pressure vessels, boilers, heat exchangers, gas tanks, gas compressors, water wheels, thermal stores, Leyden jars, pumps, fluid burners, electromagnets, galvanic cells, lamps, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
+A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, and so are machines and their parts (engines, gearboxes, propellers, thrusters, flywheels, pressure vessels, boilers, heat exchangers, gas tanks, gas compressors, water wheels, thermal stores, Leyden jars, pumps, fluid burners, electromagnets, galvanic cells, lamps, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
 
 ## Crafting
 
@@ -40,7 +40,7 @@ The sheet shows the design's figures as **bars** (for a battery: cells, full vol
 - **Hover a bar** to light the parts that moved it.
 - **Pin** keeps a draft: each pinned draft puts its own colored mark on every bar to compare against, up to three. Click a pinned draft to open it, Shift-click to drop it.
 
-Blueprints stack to sixteen. The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts fitted together at a bench make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds. Requirements and blueprints are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
+Blueprints stack to sixteen. The table offers exactly what a [crafting grid](Tools_and_Weapons.md#putting-one-together) can assemble, because it asks the same rules: if a drawing is on the sheet, those parts put together at the [Engineering Table](Engineering_Table.md) make that tool. Heat and forging flaws are not part of a drawing: a blueprint is paper, and flaws are what forging adds. Requirements and blueprints are free; what a finished piece *has* still costs an instrument ([Balance Scale](Instruments.md#balance-scale), [Scratch Files](Instruments.md#scratch-file-set)).
 
 **Print**, at the bottom right, turns a sheet of paper in the paper slot into a **Blueprint** carrying the design and its figures. The pinned drafts print onto the paper too, and come back as pins when you put the Blueprint back in the slot to open it for drawing again. The table keeps nothing; the paper, the source blueprint and the samples come back to you when you close it.
 
@@ -75,15 +75,14 @@ Every other type (tools, armor, backpack, bedroll, water wheel, thermal store, L
 
 ## What a blueprint is for
 
-Mostly it's a drawing to look at. Some things **need** one to be built.
+A blueprint is a **drawn fit**: a specification that the [Engineering Table](Engineering_Table.md) judges an assembly against. It is never required to build anything.
 
-- A [suit module](Exosuit.md#learning-a-module), an [engine](Engine.md), a [transmission](Transmission.md) and a [propeller](Propeller.md) are built only with their blueprint in the bench's blueprint slot. A blueprint can sit in a [Blueprint Book](Blueprint_Book.md).
-- A [Water Wheel](Water_Wheel.md), [Thermal Store](Thermal_Store.md), [Leyden Jar](Leyden_Jar.md), [Pump](Pump.md), [Fluid Burner](Fluid_Burner.md), [Electromagnet](Electromagnet.md), [Galvanic Cell](Galvanic_Cell.md) and [Glowstone Lamp](Lamp.md) are built only with their blueprint in the bench's blueprint slot, and the dimension (diameter, bore, turns, size, gauge, wall, area, buckets) is set here on the drawing. The [Boiler](Boiler.md) and Large Boiler, [Flywheel](Flywheel.md), [Pressure Vessel](Pressure_Vessel.md), [Heat Exchanger](Heat_Exchanger.md), [Gas Tank](Gas_Tank.md) and [Gas Compressor](Gas_Compressor.md) need a blueprint too, and the Chemical treatise to draw it (volume I for the boiler, pressure vessel and gas tank, II for the heat exchanger and gas compressor; the Mechanical treatise I for the flywheel). The [Thruster](Thruster.md) is drawn with Aerospace II. The [Hand Crank](Hand_Crank.md) needs neither.
-- The [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work.
+- Put it in the Engineering Table's blueprint slot (a [Blueprint Book](Blueprint_Book.md) works too) with the parts in the grid. A part whose material lies inside the properties the drawing names (strength, hardness, conductivity, insulation, density) fits clean. Another material still builds, and the item is marked **off the drawing**.
+- Each axis (a bore, a wall, a length) has a target. Parts built to a blueprint may be off by 5% of the axis range; past that the item takes a **fit flaw** (looser joints, and for a gun a wider spread). Without a blueprint the parts are judged against each other at 20%.
+- A blueprint skips the hand-work game and counts as a small bonus to the start. See [Fit and head start](Engineering_Table.md#fit-and-head-start).
+- The dimension of a machine (diameter, bore, turns, size, gauge, wall, area, buckets) is set here on the drawing. The [Water Wheel](Water_Wheel.md), [Thermal Store](Thermal_Store.md), [Leyden Jar](Leyden_Jar.md), [Pump](Pump.md), [Fluid Burner](Fluid_Burner.md), [Electromagnet](Electromagnet.md), [Galvanic Cell](Galvanic_Cell.md), [Glowstone Lamp](Lamp.md), [Boiler](Boiler.md) and Large Boiler, [Flywheel](Flywheel.md), [Pressure Vessel](Pressure_Vessel.md), [Heat Exchanger](Heat_Exchanger.md), [Gas Tank](Gas_Tank.md), [Gas Compressor](Gas_Compressor.md), [Thruster](Thruster.md), [engine](Engine.md), [transmission](Transmission.md), [propeller](Propeller.md), [suit module](Exosuit.md#learning-a-module) and [crossbow](Tools_and_Weapons.md#crossbow) are complex types: only the Engineering Table assembles them. Some need a treatise to draw and to assemble. The [Hand Crank](Hand_Crank.md) needs neither.
 
-Repairs and swaps never need one.
-
-A blueprint comes from the Print button, a copy, a villager or a chest, or from taking an item apart at a bench with blank paper in the blueprint slot, which writes a blueprint of its design.
+A blueprint comes from the Print button, a copy, a villager or a chest, or from taking a complex item apart on the Treatise tab of the Engineering Table with blank paper in the blank slot, which writes a blueprint of its design.
 
 Operators can make a blueprint of the item in their hand with `/feedback blueprint`; it works on any modular item that is not itself a blueprint.
 
@@ -91,7 +90,7 @@ Operators can make a blueprint of the item in their hand with `/feedback bluepri
 
 The table has a **title** field: what you type goes on the printed blueprint, with a credit, **Designed by** your name (the table writes it, you cannot sign someone else's). Both show on the blueprint's tooltip. A copy keeps them. A thing made to the drawing carries the title and the credit in its tooltip, whoever makes it; if it departs from the drawing, the credit goes. The item's name is still whatever it is by its parts.
 
-A blueprint is never required. Any bench takes one in its blueprint slot for anything, and it gates nothing; it gives the credit and a **checklist**. Right-click a blueprint to open a recipe card listing its parts, materials, shapes and axis values. At a bench, the checklist sits beside the slots and ticks as you place the parts. It lists a missing material and never refuses to work without it.
+A blueprint is never required and gates nothing; it gives the credit and a **recipe card**. Right-click a blueprint to open the card listing its parts, materials, shapes and axis values. It lists a missing material and never refuses to work without it.
 
 A part with **axes** (a chestplate's width, a sword blade's length) shows steppers on the drawing for the target value of each.
 

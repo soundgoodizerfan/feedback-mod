@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "C": {
       "item": "feedback:small_cog"
@@ -17,5 +16,15 @@
   "result": {
     "count": 1,
     "id": "feedback:gearbox"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
   }
 }

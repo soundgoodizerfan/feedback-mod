@@ -14,7 +14,7 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Heat Exchanger* in t
 
 How fast it carries heat is the tube metal's conductivity times the tube area. Copper tubes at the default area carry what a plain copper exchanger does.
 
-At the [Smithing Table](Smithing_Table.md), put the Heat Exchanger Blueprint in the blueprint slot and shape the core from plate of the metal you chose. The Heat Exchanger comes out with the design, and the blueprint is kept. Its tooltip shows how fast it carries heat ("Carries heat at"). Breaking the block gives the same exchanger back.
+Shape the core from plate of the metal you chose at the [Smithing Table](Smithing_Table.md), then assemble it at the [Engineering Table](Engineering_Table.md): the core in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the Heat Exchanger Blueprint in the blueprint slot to judge the fit against your drawing. The Heat Exchanger comes out with the design of the core, and the blueprint is kept. Its tooltip shows how fast it carries heat ("Carries heat at"). Breaking the block gives the same exchanger back.
 
 ## Tube types
 
@@ -29,7 +29,7 @@ Each type is cut from a different number of stock cells, and the ones that carry
 
 ## Addons
 
-An addon is an optional extra part made from raw stock, added when you assemble the exchanger or by reworking a finished one. The exchanger works without it.
+An addon is an optional extra part made from raw stock, added when you assemble the exchanger or afterward on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The exchanger works without it.
 
 - **Fin stack** (plate of a second metal): its conductivity adds 60% of its value to the tubes', so the exchanger carries more heat.
 

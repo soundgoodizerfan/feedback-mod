@@ -1,9 +1,25 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
+  "type": "feedback:engineering",
   "ingredients": [
-    { "item": "feedback:compressor" },
-    { "item": "minecraft:glass" }
+    {
+      "item": "feedback:compressor"
+    },
+    {
+      "item": "minecraft:glass"
+    }
   ],
-  "result": { "count": 1, "id": "feedback:vacuum_dryer" }
+  "result": {
+    "count": 1,
+    "id": "feedback:vacuum_dryer"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
+  }
 }

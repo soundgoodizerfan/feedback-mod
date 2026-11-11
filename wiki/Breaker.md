@@ -6,13 +6,13 @@ A switch for [electricity](Electricity.md). Closed, it's a piece of wire. Open, 
 
 ```
 C L C
-W I W
+W S W
 C C C
 ```
 
-C is Ceramic, L is a Lever, W is [Copper Wire](Wire_Drawer.md) and I is a Wrought Iron Plate. This makes a standard breaker.
+C is Ceramic, W is [Copper Wire](Wire_Drawer.md), L is a Lever and S is a Wrought Iron Plate. This makes a standard breaker. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 [fasteners](Fasteners.md).
 
-Put two [cables](Copper_Cable.md) of one gauge where the wires go and the breaker takes that gauge: thin, standard, heavy or bus bar. Two cables of different gauges make nothing.
+In a crafting grid, put two [cables](Copper_Cable.md) of one gauge where the wires go and the breaker takes that gauge: thin, standard, heavy or bus bar. Two cables of different gauges make nothing.
 
 ## Using it
 

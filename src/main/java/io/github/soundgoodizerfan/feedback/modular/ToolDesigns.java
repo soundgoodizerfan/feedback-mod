@@ -16,7 +16,6 @@ import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
-import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -299,12 +298,12 @@ public final class ToolDesigns {
         return out;
     }
 
-    /** {@code stacks} in the six slots, largest first, or empty if they do not fit. */
+    /** {@code stacks} in the Engineering Table's nine grid slots, largest first, or empty if they do not fit. */
     public static Optional<List<ItemStack>> layout(List<ItemStack> stacks) {
-        return layout(stacks, ToolTableAssembly.SLOTS);
+        return layout(stacks, ToolTableAssembly.GRID_SLOTS);
     }
 
-    /** {@code stacks} in the {@code n} slots of a table (the Gun Table's sixteen), largest first, or empty if they do not fit. */
+    /** {@code stacks} in the {@code n} slots of a table, largest first, or empty if they do not fit. */
     public static Optional<List<ItemStack>> layout(List<ItemStack> stacks, int n) {
         if (stacks.size() > n || stacks.stream().anyMatch(s -> s.getCount() > ToolTableAssembly.CAPACITY))
             return Optional.empty();
@@ -322,25 +321,20 @@ public final class ToolDesigns {
     // --- makeable -------------------------------------------------------------------------------
 
     /**
-     * What the Tool Table makes from {@code design}'s parts, if it makes {@code design}'s type from
-     * them: the design is put on the table and read back. A type that needs a blueprint is given one
-     * of its own, since the plan is the gate and the parts are the item.
+     * What the Engineering Table makes from {@code design}'s parts, if it makes {@code design}'s type from
+     * them: the design is put on the table and read back. No blueprint is given: a sheet gates nothing, and the
+     * parts of a drawing fit it as drawn.
      */
     public static Optional<ToolTableAssembly.Match> make(ModularDesign design, Map<ResourceLocation, ModularType> types,
                                                          Map<ResourceLocation, Material> materials) {
         ModularType type = types.get(design.type());
         if (type == null)
             return Optional.empty();
-        ItemStack plan = ItemStack.EMPTY;
-        if (type.blueprint()) {
-            plan = new ItemStack(FModular.BLUEPRINT.get());
-            plan.set(FModular.DESIGN.get(), design);
-        }
-        ItemStack drawn = plan;
+        ItemStack drawn = ItemStack.EMPTY;
         // a drawing has no components, so an upgrade that needs one is baked as if a middling one were fitted
         ModularBake.drawing(true);
         try {
-            return layout(stacks(design, type, materials), ToolTableAssembly.slots(type))
+            return layout(stacks(design, type, materials), ToolTableAssembly.GRID_SLOTS)
                     .flatMap(slots -> ToolTableAssembly.infer(slots, drawn, materials,
                             ToolTableAssembly.ofKind(types, ToolTableAssembly.kindOf(type))))
                     .filter(m -> m.type().equals(design.type()));

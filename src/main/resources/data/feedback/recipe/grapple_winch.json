@@ -1,14 +1,32 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "key": {
-    "P": {"item": "feedback:wrought_iron_plate"},
-    "R": {"item": "feedback:wrought_iron_rod"},
-    "S": {"item": "feedback:shaft"}
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "R": {
+      "item": "feedback:wrought_iron_rod"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
   },
   "pattern": [
     " R ",
     "PSP"
   ],
-  "result": {"count": 1, "id": "feedback:grapple_winch"}
+  "result": {
+    "count": 1,
+    "id": "feedback:grapple_winch"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
+  }
 }

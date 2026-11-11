@@ -189,7 +189,7 @@ public final class FormData {
             // Everything else Feedback registers (machines, stations, wires) gets a tool so it is not
             // hand-mined at bare-hand speed. Instant-break plants, fluids and shovel soils stay out.
             java.util.Set<String> wooden = java.util.Set.of("drying_rack", "woodworking_table",
-                    "prep_table", "gun_table", "blueprint_table", "ice_box");
+                    "prep_table", "blueprint_table", "ice_box");
             net.minecraft.core.registries.BuiltInRegistries.BLOCK.entrySet().stream()
                     // Registry order varies per run; sort so the generated tags are byte-stable.
                     .sorted(java.util.Comparator.comparing(e -> e.getKey().location().toString()))

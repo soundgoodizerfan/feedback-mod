@@ -10,7 +10,7 @@ A spinning bit over a workpiece. The shaft keeps the bit turning, but **nothing 
 I I I
 ```
 
-S is a [Shaft](Shaft.md), B is a [Bearing](Bearing.md) and I is a Wrought Iron Ingot.
+I is a Wrought Iron Plate, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 3 [fasteners](Fasteners.md).
 
 ## Using it
 

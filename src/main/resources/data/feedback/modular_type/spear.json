@@ -1,6 +1,7 @@
 {
   "school": "weapons:1",
   "family": "spear",
+  "minigame": "feedback:fitting",
   "strike": 1.2,
   "wear_litres": 0.375,
   "wear_role": "H",

@@ -41,15 +41,15 @@ public class FMenus {
             MENUS.register("programmer",
                     () -> IMenuTypeExtension.create((id, inv, buf) -> new ProgrammerMenu(id, inv, buf.readBlockPos())));
 
-    /** Extended: the table's position rides in the open packet; what it holds is synced as slots. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.GunTableMenu>> GUN_TABLE =
-            MENUS.register("gun_table",
-                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.weapon.GunTableMenu::new));
-
     /** Extended: as the Tool Table's. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.PrepTableMenu>> PREP_TABLE =
             MENUS.register("prep_table",
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.PrepTableMenu::new));
+
+    /** Extended: the table's position rides in the open packet; what it holds is synced as slots. */
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu>> ENGINEERING_TABLE =
+            MENUS.register("engineering_table",
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu::new));
 
     /** Extended: as the Tool Table's; the block at the position says which bench it is. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.StationMenu>> STATION =

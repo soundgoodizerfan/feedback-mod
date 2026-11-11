@@ -6,7 +6,7 @@ A big pressure shell for gas, built from a blueprint. It is where a compressed l
 
 Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Gas Tank* in the type row); drawing it takes Chemical Treatise I ([Treatise](Treatise.md)). It has one part, the **Tank Shell**, with the same three choices as the [Pressure Vessel](Pressure_Vessel.md#designing-and-building): shape (box, cylinder, capsule or sphere, with the same trade of strength against room as the [Pressure Vessel's shapes](Pressure_Vessel.md#shapes)), wall thickness from 1 to 20 cm, and the metal, which must have a measured yield strength. The shell is the vessel's, many times the size: it holds 16 cubes of gas at the pressure one such cube would, so the same wall carries the same line.
 
-At the [Smithing Table](Smithing_Table.md), put the Gas Tank Blueprint in the blueprint slot and shape the shell from plate of the metal you chose. The Gas Tank comes out with the design, and the blueprint is kept. Its tooltip shows what it holds, the mB it takes for each Pu, the pressure it risks letting go over and the pressure it gives way at. Breaking the block gives the same tank back.
+Shape the shell from plate of the metal you chose at the [Smithing Table](Smithing_Table.md), then assemble it at the [Engineering Table](Engineering_Table.md): the shell in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the Gas Tank Blueprint in the blueprint slot to judge the fit against your drawing. The Gas Tank comes out with the design of the shell, and the blueprint is kept. Its tooltip shows what it holds, the mB it takes for each Pu, the pressure it risks letting go over and the pressure it gives way at. Breaking the block gives the same tank back.
 
 ## Using it
 
@@ -17,7 +17,7 @@ At the [Smithing Table](Smithing_Table.md), put the Gas Tank Blueprint in the bl
 
 ## Addons
 
-An addon is an optional extra part made from raw stock, added when you assemble the tank or by reworking a finished one. The tank works without either; each only adds.
+An addon is an optional extra part made from raw stock, added when you assemble the tank or afterward on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The tank works without either; each only adds.
 
 | Addon | Stock | What it does |
 | --- | --- | --- |

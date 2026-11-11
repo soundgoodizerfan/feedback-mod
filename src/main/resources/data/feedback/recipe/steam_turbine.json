@@ -1,14 +1,32 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
-    "P": { "item": "feedback:steel_plate" },
-    "B": { "item": "feedback:bearing" },
-    "S": { "item": "feedback:shaft" }
+    "P": {
+      "item": "feedback:steel_plate"
+    },
+    "B": {
+      "item": "feedback:bearing"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
   },
   "pattern": [
     "PPP",
     "BSB"
   ],
-  "result": { "count": 1, "id": "feedback:steam_turbine" }
+  "result": {
+    "count": 1,
+    "id": "feedback:steam_turbine"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 2
+  }
 }

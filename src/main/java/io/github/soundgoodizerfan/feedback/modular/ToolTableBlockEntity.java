@@ -18,26 +18,23 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * What the Tool Table holds: the hand hammer it works with, the six slots a tool is put together
- * from, the stock a part or a mend is made of, the finished tool being reworked, and a blueprint.
- * It is all kept when the screen closes -- a table is a workbench, not a crafting grid -- and
- * dropped when the block is broken.
+ * What a part-making bench holds: the hand tool it works with, the stock a part is shaped from in the centre slot, the stock beside
+ * it, and at the Prep Table the slots a dish is put together from and the seasoning that finishes it. It is all kept when the screen
+ * closes -- a table is a workbench, not a crafting grid -- and dropped when the block is broken.
  *
- * <p>The hammer is the table's: nearly every act here costs it a point ({@link ToolTableMenu}),
- * which is the hand tool's accepted wear (CLAUDE.md), and no hammer means no work.
+ * <p>The tool is the table's: nearly every act here costs it a point ({@link ToolTableMenu}),
+ * which is the hand tool's accepted wear (CLAUDE.md), and no tool means no work.
  */
 public abstract class ToolTableBlockEntity extends BlockEntity implements Container, MenuProvider {
 
-    public static final int HAMMER = 0, ASSEMBLY = 1, STOCK = 1 + ToolTableAssembly.SLOTS, TOOL = STOCK + 9, PLAN = TOOL + 1,
+    public static final int HAMMER = 0, ASSEMBLY = 1, STOCK = 1 + ToolTableAssembly.DISH_SLOTS, TOOL = STOCK + 9, PLAN = TOOL + 1,
             SIZE = PLAN + 1;
-    /** The Gun Table's extra part slots after the plan, then the round its spec sheet is read against. */
-    public static final int EXTRA = SIZE, ROUND = EXTRA + ToolTableAssembly.GUN_SLOTS - ToolTableAssembly.SLOTS, GUN_SIZE = ROUND + 1;
     /** Cells of stock the table holds: a chestplate's plate is the most any shape takes (eight). */
     public static final int STOCK_SLOTS = 9;
 
     private final NonNullList<ItemStack> items;
 
-    /** What every bench is built on: the Gun Table has more slots ({@link #GUN_SIZE}); each has its own block entity type. */
+    /** What every bench is built on; each has its own block entity type. */
     protected ToolTableBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state, int size) {
         super(type, pos, state);
         items = NonNullList.withSize(size, ItemStack.EMPTY);

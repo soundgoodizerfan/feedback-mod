@@ -13,7 +13,7 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Leyden Jar* in the t
 | **Glass wall** | From 2 to 10 mm; the default is 4. Thinner glass stores more but leaks as the square: half the thickness leaks four times as fast. |
 | **Glass** | The material of the wall. It must insulate. |
 
-Shape the glass from a glass ingot at the [Stonecutter](Stonecutter.md), then put it together at the bench with the Leyden Jar Blueprint in the blueprint slot. The Leyden Jar comes out with the design, and the blueprint is kept. Its tooltip shows what it stores, how fast it leaks and the amps it bursts at. Breaking the block gives the same jar back.
+Shape the glass from a glass ingot at the [Stonecutter](Stonecutter.md), then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Leyden Jar Blueprint in the blueprint slot judges the fit against your drawing. The Leyden Jar comes out with the design of the glass, and the blueprint is kept. Its tooltip shows what it stores, how fast it leaks and the amps it bursts at. Breaking the block gives the same jar back.
 
 ## How it works
 
@@ -36,7 +36,7 @@ Each type is cut from a different number of stock cells. The lined jar is the st
 
 ## Addons
 
-An addon is an optional extra part made from raw stock, added when you assemble the jar or by reworking a finished one. The jar works without either; each only adds.
+An addon is an optional extra part made from raw stock, added when you assemble the jar or afterward on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The jar works without either; each only adds.
 
 | Addon | Stock | What it does |
 | --- | --- | --- |

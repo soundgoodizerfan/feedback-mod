@@ -1,10 +1,10 @@
 # Exosuit
 
-A powered suit built from ordinary modular [armor](Armor.md) with fittings added at the bench. A [Battery](Battery.md) in the chestplate runs five abilities (strength, jump and dash, plating, night sight and thermal view), and upgrade modules fitted to the pieces add more.
+A powered suit built from ordinary modular [armor](Armor.md) with fittings added at the [Engineering Table](Engineering_Table.md). A [Battery](Battery.md) in the chestplate runs five abilities (strength, jump and dash, plating, night sight and thermal view), and upgrade modules fitted to the pieces add more.
 
 ## Building the suit
 
-Make the pieces as described on [Armor](Armor.md), then add parts the usual way: put the piece in the center of the [Smithing Table](Smithing_Table.md), the [Woodworking Table](Woodworking_Table.md) or the [Stonecutter](Stonecutter.md) and add the part for the stock's bench. The fittings:
+Make the pieces as described on [Armor](Armor.md), then add parts on the [Fit tab](Engineering_Table.md#fit-tab) of the Engineering Table: the piece in the item slot, the part in an attachment slot (shape each at the bench for its stock first). The fittings:
 
 | Fitting | Made from | Goes on | What it does |
 | --- | --- | --- | --- |
@@ -65,14 +65,14 @@ Mob body heat is a datapack folder; entity-type tags such as `feedback:warm_bloo
 
 ## Upgrade modules
 
-Each of the four pieces takes one **Suit Module**, a finished item built from a casing, wiring, attachments and support parts, shaped and assembled at a bench like any other [tool](Tools_and_Weapons.md#putting-one-together). A module has at most six parts at the bench: the casing, the wiring and four others. Modules must be learned first; see [Learning a module](#learning-a-module).
+Each of the four pieces takes one **Suit Module**, a finished item built from a casing, wiring, attachments and support parts, shaped at a bench and assembled at the [Engineering Table](Engineering_Table.md) like any other complex item. A module has at most six parts: the casing, the wiring and four others. Modules need a treatise; see [Learning a module](#learning-a-module).
 
 - **Module Casing**: plate, 2 cells. Its material sets the module's weight.
 - **Module Wiring**: wire, 1, 2 or 4 cells. The conductor sets how much of what the module draws is wasted as heat, and how many attachments it can feed. Heavier wiring feeds more attachments, up to four, and wastes less.
 - **Attachments**: one to four, each is a part of one of seven kinds (Module Optic, Module Filter, Module Thermal, Module Plating, Module Actuator, Module Thruster, Module Coil), cut from an ingot, plate or rod. The shape it is cut in is the upgrade it gives, so two attachments of one kind do very different things. The material sets how strongly the upgrade works. Heat upgrades follow the material's thermal conductivity, electric ones its wire current rating, sturdy ones its hardness and strength, and optic ones its reflectivity.
 - **Support parts**: some upgrades need a **controller** (a circuit), a **power cell** (a [Battery](Battery.md)) or a **motor** (a [Dynamotor](Dynamotor.md)) set beside the attachments, as the table below lists. A better circuit, a higher-capacity battery or a motor rated for more current makes the upgrade stronger. An upgrade whose support part is missing does not work.
 
-A module fits any armor piece. To fit it, put the armor piece in the center of the bench and click the module you carry in the fan; it goes into the piece's upgrade place, one per piece. Taking the piece apart gives the module back whole. The Suit diagnostic screen (`J`) shows the upgrade each piece carries.
+A module fits any armor piece. To fit it, put the armor piece in the item slot of the Engineering Table's Fit tab and the module in an attachment slot; it goes into the piece's upgrade place, one per piece. Taking the piece apart on the Repair tab gives the module back whole. The Suit diagnostic screen (`J`) shows the upgrade each piece carries.
 
 An Actuator or Thruster attachment has a **Bore** (in mm, up to 40) that you set on the drawing and cut with a drill. Each upgrade wants a bore of about its own size:
 
@@ -132,13 +132,13 @@ Upgrades work whenever the suit is powered. The Heat Sink always works. Some upg
 
 ### Learning a module
 
-A module is drawn at the [Blueprint Table](Blueprint_Table.md), and only while you hold Robotics Treatise I: Suit Modules ([Treatise](Treatise.md)); the bench builds one only with its blueprint in the bench's blueprint slot. A [Blueprint Book](Blueprint_Book.md) in the blueprint slot offers every sheet inside it.
+A module is drawn at the [Blueprint Table](Blueprint_Table.md), and assembled at the Engineering Table, only while you hold Robotics Treatise I: Suit Modules ([Treatise](Treatise.md)). A blueprint is not required to assemble one; it judges the fit against the drawing, and a [Blueprint Book](Blueprint_Book.md) in the blueprint slot offers every sheet inside it.
 
 Blueprints come from:
 
 - Rare finds in chests.
 - Drawing it yourself at the Blueprint Table and printing it.
-- Measuring: take a module apart at the bench with blank paper in the blueprint slot, and the paper becomes a blueprint of that design.
+- Measuring: take a module apart on the Treatise tab of the Engineering Table with blank paper in the blank slot, and the paper becomes a blueprint of that design.
 
 ## Weight and heat
 

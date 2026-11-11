@@ -6,11 +6,11 @@ The capital route to a joint: a chamber that holds up to four pasted boards at o
 
 ```
 P P P
-C _ C
+C   C
 B B B
 ```
 
-P is a Wrought Iron Plate, C is Ceramic and B is Bricks.
+P is a Wrought Iron Plate, C is Ceramic and B is Bricks. Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 2 [fasteners](Fasteners.md).
 
 ## Using it
 

@@ -12,7 +12,7 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thermal Store* in th
 | **Wall** | Thickness from 10 to 40 cm, in steps of 2; the default is 20. A thicker wall has more heat mass, so it charges slowly, and it leaks less. |
 | **Material** | The brick the wall is made from. Its conductivity sets the leak: ceramic keeps heat and metal gives it away. It must have a stated conductivity. |
 
-Shape the core from brick at the [Stonecutter](Stonecutter.md), then put it together at the bench with the Thermal Store Blueprint in the blueprint slot. The Thermal Store comes out with the design, and the blueprint is kept. Its tooltip shows its heat mass and how much it loses. Breaking the block gives the same store back.
+Shape the core from brick at the [Stonecutter](Stonecutter.md), then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Thermal Store Blueprint in the blueprint slot judges the fit against your drawing. The Thermal Store comes out with the design of the core, and the blueprint is kept. Its tooltip shows its heat mass and how much it loses. Breaking the block gives the same store back.
 
 ## Store types
 
@@ -26,7 +26,7 @@ Each type is cut from a different number of stock cells. The walled store is the
 
 ## Addons
 
-An addon is an optional extra part made from raw stock, added when you assemble the store or by reworking a finished one. The store works without either; each only adds.
+An addon is an optional extra part made from raw stock, added when you assemble the store or afterward on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The store works without either; each only adds.
 
 | Addon | Stock | What it does |
 | --- | --- | --- |

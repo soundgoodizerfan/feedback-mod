@@ -4,69 +4,24 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.Station;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 
 /**
- * The figures of parts and results, written once ({@code docs/gui/gui_flow_information.md}): the Gun Table's spec sheet, a shape's
+ * The figures of parts and results, written once ({@code docs/gui/gui_flow_information.md}): a shape's
  * description and the glyph bars a hovered shape shows. Every station and the Blueprint
  * Table call here, so a figure never has two spellings; every number goes through {@link Readout}.
  */
 final class PartPresenter {
 
     private PartPresenter() { }
-
-    /**
-     * The Gun Table's spec sheet: the gun the parts make, baked against the round in the round slot -- chamber against
-     * rating, speed, energy, report, kick, spread and cycle, free and exact (philosophy 8, an equipment spec). The
-     * table changes no figure (guns spec 13.1); it lets the player see the interaction and which side to change.
-     */
-    static void sheet(List<Component> out, ToolTableMenu menu, Level level, ItemStack gun, Map<ResourceLocation, Material> materials) {
-        net.minecraft.ChatFormatting dim = net.minecraft.ChatFormatting.GRAY;
-        var cartridge = menu.round().get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get());
-        if (menu.round().isEmpty() || cartridge == null) {
-            out.add(Component.translatable("screen.feedback.gun_table.add_round").withStyle(dim));
-            return;
-        }
-        var spec = io.github.soundgoodizerfan.feedback.weapon.GunSpec.of(gun);
-        var f = spec.flatMap(g -> g.bake(materials, cartridge));
-        if (f.isEmpty()) {
-            out.add(Component.translatable("screen.feedback.gun_table.no_fit").withStyle(net.minecraft.ChatFormatting.RED));
-            return;
-        }
-        var g = f.get();
-        net.minecraft.ChatFormatting pressure = g.overpressure() > 1 ? net.minecraft.ChatFormatting.RED : net.minecraft.ChatFormatting.WHITE;
-        out.add(Component.translatable("screen.feedback.gun_table.sheet").withStyle(net.minecraft.ChatFormatting.GOLD));
-        out.add(Component.translatable("screen.feedback.gun_table.charge", num(g.peakPressure().value())).withStyle(pressure));
-        out.add(Component.translatable("screen.feedback.gun_table.rating", num(g.chamberRating().value())));
-        out.add(Component.translatable("screen.feedback.gun_table.over", num(g.overpressure())).withStyle(pressure));
-        out.add(Component.translatable("screen.feedback.gun_table.speed", num(g.muzzleSpeed() * 20),
-                Component.translatable(g.muzzleSpeed() * 20 >= io.github.soundgoodizerfan.feedback.core.FTuning.SOUND_MS
-                        ? "screen.feedback.gun_table.supersonic" : "screen.feedback.gun_table.subsonic")));
-        out.add(Component.translatable("screen.feedback.gun_table.energy", num(g.muzzleEnergy())));
-        out.add(Component.translatable("screen.feedback.gun_table.report", num(g.report())));
-        out.add(Component.translatable("screen.feedback.gun_table.kick", num(g.kickDeg())));
-        int throwAt = io.github.soundgoodizerfan.feedback.weapon.GunStrain.shotsToThrow(g.kickDeg(), g.cycleMs());
-        out.add(Component.translatable("screen.feedback.gun_table.throws", throwAt == 0
-                ? Component.translatable("screen.feedback.gun_table.throws_never")
-                : throwAt == 1 ? Component.translatable("screen.feedback.gun_table.throws_first")
-                : Component.translatable("screen.feedback.gun_table.throws_after", throwAt)));
-        out.add(Component.translatable("screen.feedback.gun_table.spread", num(g.spreadDeg())));
-        out.add(Component.translatable("screen.feedback.gun_table.cycle", num(g.cycleMs())));
-    }
 
     /**
      * The glyph figures of a stock: how hard it is, how tough, how heavy, each as 0..1 along a log scale so a bar tells more than a

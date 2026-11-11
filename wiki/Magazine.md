@@ -12,9 +12,11 @@ The recipe decides the size. All of them are crafted from Wrought Iron Plates, e
 | **Magazine** | 10 | 5 Wrought Iron Plates: `P _ P` over `P P P` |
 | **Extended Magazine** | 20 | 7 Wrought Iron Plates: `P _ P`, `P P P`, `P _ P` |
 | **Drum Magazine** | 50 | 8 Wrought Iron Plates: a ring |
-| **Ammo Belt** | 100 | 3 Wrought Iron Nuggets in a row (belt-fed automatics only) |
+| **Ammo Belt** | 100 | 3 Iron Nuggets in a row (belt-fed automatics only) |
 
 Any gun of the right bore and feed takes any size.
+
+Every magazine is crafted at the [Engineering Table](Engineering_Table.md) with a [hammer](Hammer.md) in the tool row, holding Weapons Treatise II ([Treatise](Treatise.md)).
 
 ## Filling it
 

@@ -1,6 +1,6 @@
 # Dynamotor
 
-Turns [rotation](Rotation.md) into [electricity](Electricity.md) and back. One block, built to order at a bench from a frame, a winding, a core and a housing, and switched between **generator** (shaft in, volts out) and **motor** (volts in, shaft out).
+Turns [rotation](Rotation.md) into [electricity](Electricity.md) and back. One block, built to order from a frame, a winding, a core and a housing, shaped at a bench and assembled in a crafting grid or at the [Engineering Table](Engineering_Table.md), and switched between **generator** (shaft in, volts out) and **motor** (volts in, shaft out).
 
 ## Building it
 

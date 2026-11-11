@@ -21,11 +21,11 @@ import net.minecraft.world.item.ItemStack;
 final class BenchFan {
 
     /** What a node does when it is clicked. */
-    enum Kind { SHAPE, CUT, BREAK, FITTED, HELD, BUILD, ROLE, ALT, OFF, PREP, HUB }
+    enum Kind { SHAPE, CUT, BREAK, FITTED, HELD, BUILD, PREP, HUB }
 
     /**
      * One node. {@code group} picks the ring it lies on; {@code action} is the menu button it presses (or the screen's own code for
-     * a {@link Kind#ROLE}, {@link Kind#HUB} or {@link Kind#PREP}); {@code index} is whatever the screen needs to find it again.
+     * a {@link Kind#HUB} or {@link Kind#PREP}); {@code index} is whatever the screen needs to find it again.
      */
     static final class Node {
         final Kind kind;

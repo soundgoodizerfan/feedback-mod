@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "D": {
       "item": "feedback:wrought_iron_drilled_plate"
@@ -16,5 +15,16 @@
   "result": {
     "count": 1,
     "id": "feedback:bullet_mold"
-  }
+  },
+  "tool": [
+    {
+      "ability": "feedback:file",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "school": "weapons:2"
 }

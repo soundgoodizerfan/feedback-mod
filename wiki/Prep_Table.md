@@ -11,7 +11,7 @@ S S S
 W W W
 ```
 
-S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is a modular tool: shape its blade hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), then assemble it with a handle as described in [Tools and Weapons](Tools_and_Weapons.md#putting-one-together). The blade's material sets how long it lasts.
+S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is a modular tool: shape its blade hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), then put it together with a handle at the [Crafting Table](Crafting_Table.md) or [Engineering Table](Engineering_Table.md), as described in [Tools and Weapons](Tools_and_Weapons.md#putting-one-together). The blade's material sets how long it lasts.
 
 ## Making a dish
 
@@ -40,7 +40,7 @@ The table names the dish ("Making: ...") for the type you picked; a container of
 
 **Pies.** A pie is formed, then cooked, then eaten. Put **Pastry Dough** (a dough and an egg, two from the bench) in as the container, a vegetable or fruit filling, optionally a meat and a second pastry as a lid, and form it at the Prep Table. It comes out raw: it feeds little and carries whatever was live in the filling. Set the whole pie in a heated vessel (a hearth, an oven) and it bakes through, killing the load and filling out the meal. Left on, it dries and then chars like any food. Sugar in the Prepare tab sweetens it. Named from its filling: *Pumpkin Pie*.
 
-**Bread.** Bread is formed raw and baked whole, like a pie. Put a **dough** in as the container (kneaded first for a better loaf), up to two enrichments (egg, sugar, honey), and form it. To choose a shape, lay one dough in the Parts tab as a Loaf, Flat or Roll first. Bake the raw bread in a heated vessel. Named from the shape and the enrichments: *Lean Bread*, *Enriched Flatbread*, *Bread Roll*. A baked loaf is one piece: it cannot be taken apart.
+**Bread.** Bread is formed raw and baked whole, like a pie. Put a **dough** in as the container (kneaded first for a better loaf), up to two enrichments (egg, sugar, honey), and form it. To choose a shape, lay one dough in the Parts tab as a Loaf, Flat or Roll first. Bake the raw bread in a heated vessel. Named from the shape and the enrichments: *Lean Bread*, *Enriched Flatbread*, *Bread Roll*.
 
 ## What the dish is
 
@@ -68,11 +68,9 @@ Put **one food** (to cut), **one dough** (to knead) or a **finished dish** (to f
 
 **Overfull.** A container holds only so much. Put more food in than it can hold and the dish is still made, but the left column says *Overfull: it will spill when carried*. Each time you pick it up, throw it down, or spill it out of your pack when you die, it loses some of its wettest part (less hunger and saturation, a *Spilling* line on the tooltip, then *Spilled N%*), until it is down to what the container holds. The water goes; anything live or toxic in it does not, so the rest is no cleaner. A skewer with a main and a side is a little overfull by design; a plate is not.
 
-**Taking a dish apart.** Put a finished dish in the center and press **Take apart** (a point off the knife). The foods come back as they are now, spoilage and all, with their cuts; the container comes back whole. The finish is lost, since it is on the dish. A soup cannot be taken apart: a stew is a mixture.
-
 **Soup.** Pick *Soup Bowl* in the type picker, put in a bowl and one serving ladled from a [Stockpot](Stockpot.md) (broth, stew or scorched stew), and the serving is the dish's base. It is counted once (the pot already watered it down), the bowl still caps how much it feeds, and it can take a finish like any dish. It is named for what was poured in: *Bowl of Stew*.
 
-The table's screen is fired brick with pale calcite trim; the Gun Table's is black steel.
+The table's screen is fired brick with pale calcite trim.
 
 ### The reveal
 

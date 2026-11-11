@@ -4,7 +4,7 @@ The simplest source of [rotation](Rotation.md): it turns as long as you keep tur
 
 ## Building it
 
-Shape a **Crank Arm** from a rod or a stick at a bench, then put it together at the bench; the crank comes out with that arm. It needs no blueprint and no treatise.
+Shape a **Crank Arm** from a rod or a stick at a bench, then put the arm in a crafting grid; the crank comes out with that arm. It needs no blueprint and no treatise.
 
 The crank has no dimension to set. Its **lever** is a choice of shape that trades Su against speed:
 

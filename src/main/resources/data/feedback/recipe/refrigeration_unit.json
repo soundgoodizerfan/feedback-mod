@@ -1,15 +1,33 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "key": {
-    "P": { "item": "feedback:wrought_iron_plate" },
-    "K": { "item": "feedback:copper_coil" },
-    "N": { "item": "feedback:condenser" }
+    "P": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "K": {
+      "item": "feedback:copper_coil"
+    },
+    "N": {
+      "item": "feedback:condenser"
+    }
   },
   "pattern": [
     "PPP",
     "KNK",
     "PPP"
   ],
-  "result": { "count": 1, "id": "feedback:refrigeration_unit" }
+  "result": {
+    "count": 1,
+    "id": "feedback:refrigeration_unit"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 1
+  }
 }

@@ -1,6 +1,6 @@
 # Guns
 
-Feedback doesn't have a list of guns. A gun is a **tool type** like a pick or a sword: you make **parts** (a receiver, a barrel, an action, a trigger group, a grip, and any fittings), each of a metal, and put them together at the [Gun Table](Gun_Table.md). You make the ammunition yourself at the [Reloading Press](Reloading_Press.md). Everything about how the gun behaves (how hard it hits, how far it throws, how much it kicks, how hot it gets, whether it blows up in your hand) comes from those parts and the round.
+Feedback doesn't have a list of guns. A gun is a **tool type** like a pick or a sword: you make **parts** (a receiver, a barrel, an action, a trigger group, a grip, and any fittings), each of a metal, and put them together at the [Engineering Table](Engineering_Table.md). You make the ammunition yourself at the [Reloading Press](Reloading_Press.md). Everything about how the gun behaves (how hard it hits, how far it throws, how much it kicks, how hot it gets, whether it blows up in your hand) comes from those parts and the round.
 
 A gun burns powder in a chamber and throws a projectile with the gas. The barrel you choose sets how the bore is finished (see [Barrels](#barrels)). The [flintlock](#flintlock) is a chamber gun of its own, made without a blueprint.
 
@@ -12,14 +12,14 @@ In your hands it moves: it kicks back and up on each shot (barely at all when ai
 
 ## Getting one
 
-1. Draw the gun on paper at the [Blueprint Table](Blueprint_Table.md) (it takes Weapons Treatise II: Firearms, see [Treatise](Treatise.md)) and print it: a **blueprint** of the gun. It shows the figures the gun will have (at the reference round) before you make it.
-2. Make the parts: shape them at the [Gun Table](Gun_Table.md) or machine them ([Gun Parts](Gun_Parts.md)).
-3. Put the blueprint and the parts on the Gun Table. You get the **Gun**.
+1. Optionally, draw the gun on paper at the [Blueprint Table](Blueprint_Table.md) (it takes Weapons Treatise II: Firearms, see [Treatise](Treatise.md)) and print it: a **blueprint** of the gun. It shows the figures the gun will have (at the reference round) before you make it.
+2. Make the parts: shape them at the bench for their stock (metal at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), wood, bone and leather at the [Woodworking Table](Woodworking_Table.md), cold stock at the [Stonecutter](Stonecutter.md)) or machine them ([Gun Parts](Gun_Parts.md)).
+3. Put the parts in the grid of the Engineering Table with two [fasteners](Fasteners.md), holding Weapons Treatise II. You get the **Gun**. A blueprint in the blueprint slot judges the fit of the parts against the drawing and skips the hand work.
 4. Make [ammunition](Ammunition.md) and load it.
 
 A ready-made 9 mm steel handgun is also in the creative menu.
 
-A [flintlock](#flintlock) needs no blueprint: it is put together from its parts at the [Smithing Table](Smithing_Table.md).
+A [flintlock](#flintlock) is put together from its parts at the Engineering Table the same way.
 
 ## Frames, barrels, traits and names
 
@@ -48,7 +48,7 @@ The **barrel** sets how the bore is finished.
 
 ### Flintlock
 
-A **Flintlock** is a gun made without a blueprint, from five parts: a **receiver** (handgun or long-gun frame), a **smoothbore barrel**, a **trigger**, a **grip** and a **lock** (shaped from a rod or an ingot). Nothing else fits it: no sights, feeds or fittings. It fires **one round at a time, loaded from the muzzle by hand**, and takes about **2.2 s** between shots. Roughly **one pull in eight flashes in the pan**: a click and a puff of smoke, the charge stays loaded and the pull still costs the cycle. A flintlock with a handgun frame is a **flintlock pistol**, with a long-gun frame a **flintlock musket**.
+A **Flintlock** is a gun made from five parts: a **receiver** (handgun or long-gun frame), a **smoothbore barrel**, a **trigger**, a **grip** and a **lock** (shaped from a rod or an ingot). Nothing else fits it: no sights, feeds or fittings. It fires **one round at a time, loaded from the muzzle by hand**, and takes about **2.2 s** between shots. Roughly **one pull in eight flashes in the pan**: a click and a puff of smoke, the charge stays loaded and the pull still costs the cycle. A flintlock with a handgun frame is a **flintlock pistol**, with a long-gun frame a **flintlock musket**.
 
 It is slow and unreliable beside a modern gun: the weapon of the time before real guns.
 
@@ -176,7 +176,7 @@ Those figures are for a standard round: the standard charge for the bore (four g
 
 **Every 33 Work of energy a bullet still carries when it hits is 1 damage** (half a heart). The tooltip's muzzle energy is that figure at point-blank range.
 
-The Gun Table lists a gun's muzzle energy and the damage it makes. A maximum charge in a steel case roughly doubles the energy of a standard one. A brass case is rated 3.75 Pu, so a maximum charge in one is over its pressure and hurts the shooter (see [Overpressure](#overpressure)).
+The tooltip lists a gun's muzzle energy, and the damage is that energy divided as above. A maximum charge in a steel case roughly doubles the energy of a standard one. A brass case is rated 3.75 Pu, so a maximum charge in one is over its pressure and hurts the shooter (see [Overpressure](#overpressure)).
 
 Gunpowder burns slowly and a short barrel wastes most of it, which is why a short barrel is so much weaker. A longer barrel hits harder, up to a ceiling the powder charge sets; a wider bore holds more powder and raises the ceiling. See [Ammunition](Ammunition.md#gunpowder).
 
@@ -202,7 +202,7 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why a shor
 
 **Recoil** throws your view upward. It's the bullet's push (plus a quarter again for the gas) divided by the gun's weight, and scaled by how grippy the grip is (see [Gun Parts](Gun_Parts.md#grip-friction)). A heavy gun with a grippy grip kicks least. Aiming takes 35% off it. A long string of shots climbs up to about twice the first shot's kick by the tenth, and settles when you stop. Gun techniques that fire the gun kick the view the same way (see [Skills](Skills.md)).
 
-**Strain.** A view only turns so far, so kick that is too much for your hands goes into them. Every shot adds its kick in degrees to your strain (aimed shots add less), and the strain drains at 90 degrees a second while you are not firing. When it passes 90 degrees, a view's worth from level to straight up, **the gun leaves your hand** and drops at your feet. Past 180 degrees it also **hurts you**, more the further over you are, and armor does not help. One huge shot does it alone, and so does a long burst from a gun that is merely hard to hold, but moderate kick fired while looking up does not, because strain counts the kick and not where you are facing. The Gun Table lists **Throws the gun**: the first shot, after a number of shots on the trigger, or never. A gun with an **Impulse** grip stays in your hand, and the overshoot throws **you** back along the line of the shot instead.
+**Strain.** A view only turns so far, so kick that is too much for your hands goes into them. Every shot adds its kick in degrees to your strain (aimed shots add less), and the strain drains at 90 degrees a second while you are not firing. When it passes 90 degrees, a view's worth from level to straight up, **the gun leaves your hand** and drops at your feet. Past 180 degrees it also **hurts you**, more the further over you are, and armor does not help. One huge shot does it alone, and so does a long burst from a gun that is merely hard to hold, but moderate kick fired while looking up does not, because strain counts the kick and not where you are facing. A gun with an **Impulse** grip stays in your hand, and the overshoot throws **you** back along the line of the shot instead.
 
 **Cycle** is 90 ms, plus a little for every bit of recoil, plus the action's hand time. Big bores and fast bullets cycle a little slower. **Haste** speeds the cycle and the reload by 20% a level, and Mining Fatigue slows them the same way (never below a fifth).
 
@@ -294,4 +294,4 @@ Operators can use `/feedback build` (the item built exactly to the held blueprin
 A few skeletons (and wither skeletons, a little more often) spawn holding an early gun. The gun is as hot as the dimension it is carried in: in the Nether it starts hot, heats as it fires, and can cook off or burst sooner. It may hurt the skeleton holding it.
 
 - [Combat](Combat.md) · [Skills](Skills.md#brute)
-- [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md)
+- [Engineering Table](Engineering_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md)

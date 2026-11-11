@@ -203,9 +203,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CircuitChainCategory(registration.getJeiHelpers().getGuiHelper()),
                 new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
-                new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper(), ToolTableToolCategory.GUN_TYPE, "feedback.jei.gun_table_gun",
-                        new net.minecraft.world.item.ItemStack(io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get())),
-                new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()));
+                new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()),
+                new EngineeringCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     /**
@@ -223,10 +222,20 @@ public class FeedbackJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
+        var level = Minecraft.getInstance().level;
+        if (level != null) {
+            List<EngineeringCategory.Card> cards = new ArrayList<>();
+            for (var holder : level.getRecipeManager().getAllRecipesFor(io.github.soundgoodizerfan.feedback.registry.FEngineering.TYPE.get()))
+                cards.add(EngineeringCategory.of(holder.id(), holder.value()));
+            registration.addRecipes(EngineeringCategory.TYPE, cards);
+        }
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get(), "engineering_table");
         for (var form : io.github.soundgoodizerfan.feedback.registry.FormItems.all()) {
             var made = io.github.soundgoodizerfan.feedback.registry.FormItems.materials().get(form.material());
             if (made != null && made.food().isPresent())
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
+            if (io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.isFastenerForm(form.form()))
+                registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.fastener"));
         }
         registration.addIngredientInfo(FItems.MICRO_WEDGE.get(), Component.translatable("feedback.jei.info.micro_wedge"));
         registration.addIngredientInfo(FItems.LARGE_RING_GEAR.get(), Component.translatable("feedback.jei.info.large_ring_gear"));
@@ -275,6 +284,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.SPENT_FUEL_ROD.get(), Component.translatable("feedback.jei.info.spent_fuel_rod"));
         registration.addIngredientInfo(FItems.CORE_SLAG.get(), Component.translatable("feedback.jei.info.core_slag"));
         registration.addIngredientInfo(FItems.POWER_CUTTER.get(), Component.translatable("feedback.jei.info.power_cutter"));
+        registration.addIngredientInfo(FItems.AUTO_ENGINEER.get(), Component.translatable("feedback.jei.info.auto_engineer"));
         registration.addIngredientInfo(FItems.SAW_HEAD.get(), Component.translatable("feedback.jei.info.saw_head"));
         registration.addIngredientInfo(FItems.PLASMA_HEAD.get(), Component.translatable("feedback.jei.info.plasma_head"));
         registration.addIngredientInfo(FItems.DATA_STICK.get(), Component.translatable("feedback.jei.info.data_stick"));
@@ -282,6 +292,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.ARC_ELECTRODE.get(), Component.translatable("feedback.jei.info.arc_electrode"));
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
         registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
+        registration.addIngredientInfo(FModular.FILE.get(), Component.translatable("feedback.jei.info.file"));
+        registration.addIngredientInfo(FModular.SCREWDRIVER.get(), Component.translatable("feedback.jei.info.screwdriver"));
         registration.addIngredientInfo(FItems.SKILLET.get(), Component.translatable("feedback.jei.info.skillet"));
         registration.addIngredientInfo(FItems.REFRIGERATION_UNIT.get(), Component.translatable("feedback.jei.info.refrigeration_unit"));
         registration.addIngredientInfo(FItems.CRYOCOOLER.get(), Component.translatable("feedback.jei.info.cryocooler"));
@@ -349,7 +361,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.VENT_VALVE_ITEM.get(), "vent_valve");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.BALLAST_TANK_ITEM.get(), "ballast_tank");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_ITEM.get(), "transmission");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get(), "gun_table");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(), "reloading_press");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FWeapons.MAGAZINE_ITEM.get(), "magazine");
         // Machines and instruments with no catalyst category; each page says what the thing is and how to use it.
@@ -481,7 +492,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
      */
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalysts(GunOptionCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(GunOptionCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
         registration.addRecipeCatalysts(DeformationCategory.TYPE,
                 FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
                 FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAND_HAMMER.get());
@@ -517,10 +528,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
-        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE);
-        registration.addRecipeCatalysts(ToolTableToolCategory.GUN_TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
-        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.ANVIL_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.WOODWORKING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER_ITEM.get(),
-                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(EngineeringCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.ANVIL_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.WOODWORKING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER_ITEM.get());
     }
 
     @Override
@@ -730,14 +740,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
         if (runtime == null)
             return;
         var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
-        List<ToolTableToolCategory.Card> tools = new ArrayList<>(), guns = new ArrayList<>();
-        var gunId = io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN.getId();
+        List<ToolTableToolCategory.Card> tools = new ArrayList<>();
         types.forEach((id, type) -> {
             for (int i = 0; i < type.baseForms().size(); i++)
-                (id.equals(gunId) ? guns : tools).add(new ToolTableToolCategory.Card(id, i));
+                tools.add(new ToolTableToolCategory.Card(id, i));
         });
         show(ToolTableToolCategory.TYPE, tools);
-        show(ToolTableToolCategory.GUN_TYPE, guns);
+        show(EngineeringCategory.TYPE, EngineeringCategory.generated(types));
         show(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.ToolTableShaping.options(types));
     }
 

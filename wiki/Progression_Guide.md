@@ -6,7 +6,7 @@ Advancements are in three tabs: **Technology**, **Combat** and **Survival**. Tec
 
 Side entries along the Technology branches mark things you find or survive on the way: tin, lead, brass, glass, quartz glass, firebrick and graphite in the heat branch; carrying hot things with tongs or gloves; a fuel-free fire such as lava; standing in boiler steam and backing a weeping boiler off before it lets go; carrying a dosimeter through radiation sickness; arriving in the Nether and the End; growing in a sealed dark void; recording what the Deep Dark's vibrations say; drying food on a rack and pulling a dish off at the right moment.
 
-The Combat tab covers sizing up a creature, exploiting a read, striking a soft spot, reading a draw, hitting armor with the wrong or the right tool, fighting with a hot edge, landing a spear hit while the use key is held, taking a blow in armor you built (and in a full set), and casting a technique from each skill tree. A gun entry covers building one at the Gun Table.
+The Combat tab covers sizing up a creature, exploiting a read, striking a soft spot, reading a draw, hitting armor with the wrong or the right tool, fighting with a hot edge, landing a spear hit while the use key is held, taking a blow in armor you built (and in a full set), and casting a technique from each skill tree. A gun entry covers building one at the Engineering Table.
 
 Hidden entries branch off for odd things you can do along the way: burst a boiler, wear a machine out, let an overspeed trip earn its keep, fire a flintlock, a gun with the longest barrel or a round the chamber was never built for, get thrown by your own recoil, burn yourself, carry a creeper charge into a fire, leave a batch in the heat far too long, or put a phosphor screen on a controller.
 
@@ -78,5 +78,5 @@ These paths run in parallel with the ones above.
 
 - **Food and survival:** [Crops](Crops.md) and the [Food](Food.md) chain from foraging to cooking in a [Skillet](Skillet.md) or [Stockpot](Stockpot.md), then preserving with a [Drying Rack](Drying_Rack.md), [Ice Box](Ice_Box.md) and [Cold Room](Cold_Room.md). [Brewing Stand](Brewing_Stand.md) potions need a brew map.
 - **Trading:** [Villagers](Villagers.md) take commissions for tools, weapons and armor.
-- **Fighting:** [Combat](Combat.md) is timing and stamina first. Assembled gear, then [Guns](Guns.md) built at the [Gun Table](Gun_Table.md), then the [Grapple](Grapple.md) widens what you carry.
+- **Fighting:** [Combat](Combat.md) is timing and stamina first. Assembled gear, then [Guns](Guns.md) built at the [Engineering Table](Engineering_Table.md), then the [Grapple](Grapple.md) widens what you carry.
 - **Experience and radiation:** the [Enchanting Table](Enchanting_Table.md) and [Experience](Experience.md) store and spend XP, and [Radiation](Radiation.md) is a hazard you learn to measure and shield against.

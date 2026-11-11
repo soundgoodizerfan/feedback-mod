@@ -19,8 +19,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 /**
- * A recipe data stick: blank until a player makes a cut at a hand bench with it in the off hand, then it holds that one
- * operation ({@link RecordedCut}) and plays it back in a powered machine. The machine knows nothing; the stick does.
+ * A recipe data stick: blank until a player makes a cut at a hand bench (or an assembly at the Engineering Table) with it in the off hand, then it holds that one
+ * operation ({@link RecordedCut}, {@link RecordedAssembly}) and plays it back in a powered machine. The machine knows nothing; the stick does.
  */
 public class DataStickItem extends Item {
 
@@ -42,13 +42,35 @@ public class DataStickItem extends Item {
             return;
         String kind = input.get().material().kind().map(Material.Kind::getSerializedName).orElse("");
         String resultForm = Material.find(materials, result).map(Material.Located::form).orElse("");
+        stick.remove(FDataComponents.RECORDED_ASSEMBLY.get());
         stick.set(FDataComponents.RECORDED_CUT.get(), new RecordedCut(station, kind, input.get().form(),
                 BuiltInRegistries.ITEM.getKey(result.getItem()).toString(), resultForm));
+    }
+
+    /** The stick in the player's off hand, or empty when there is none: where a bench writes a recording. */
+    public static ItemStack offHandStick(Player player) {
+        ItemStack stick = player.getItemInHand(InteractionHand.OFF_HAND);
+        return stick.getItem() instanceof DataStickItem ? stick : ItemStack.EMPTY;
+    }
+
+    /** An assembly was just made at the Engineering Table: write it onto the stick in the off hand, replacing any cut or assembly it held. */
+    public static void recordAssembly(Player player, RecordedAssembly assembly) {
+        ItemStack stick = offHandStick(player);
+        if (stick.isEmpty())
+            return;
+        stick.remove(FDataComponents.RECORDED_CUT.get());
+        stick.set(FDataComponents.RECORDED_ASSEMBLY.get(), assembly);
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         RecordedCut cut = stack.get(FDataComponents.RECORDED_CUT.get());
+        RecordedAssembly assembly = stack.get(FDataComponents.RECORDED_ASSEMBLY.get());
+        if (cut == null && assembly != null) {
+            Item made = BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse(assembly.result()));
+            tooltip.add(Component.translatable("tooltip.feedback.data_stick.assembly", made.getDescription(), assembly.classes().size()));
+            return;
+        }
         if (cut == null) {
             tooltip.add(Component.translatable("tooltip.feedback.data_stick.blank"));
             return;

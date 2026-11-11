@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "equipment",
+  "type": "feedback:engineering",
   "key": {
     "S": {
       "item": "feedback:steel_plate"
@@ -20,5 +19,15 @@
   "result": {
     "count": 1,
     "id": "feedback:cryocooler"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 4,
+    "floor": 2
   }
 }

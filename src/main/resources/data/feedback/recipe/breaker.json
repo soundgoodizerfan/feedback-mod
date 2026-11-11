@@ -1,16 +1,36 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "redstone",
+  "type": "feedback:engineering",
   "key": {
-    "C": { "item": "feedback:ceramic" },
-    "W": { "item": "feedback:copper_wire" },
-    "L": { "item": "minecraft:lever" },
-    "S": { "item": "feedback:wrought_iron_plate" }
+    "C": {
+      "item": "feedback:ceramic"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "L": {
+      "item": "minecraft:lever"
+    },
+    "S": {
+      "item": "feedback:wrought_iron_plate"
+    }
   },
   "pattern": [
     "CLC",
     "WSW",
     "CCC"
   ],
-  "result": { "count": 1, "id": "feedback:breaker" }
+  "result": {
+    "count": 1,
+    "id": "feedback:breaker"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
+  }
 }

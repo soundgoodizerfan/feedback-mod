@@ -125,7 +125,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst,
                        Optional<Potion> potion, Optional<XpCapacity> xpStore,
-                       Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron) {
+                       Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron, Optional<Integer> fastener) {
 
     /**
      * How a material meets neutrons in a reactor core (fission spec 2.5): {@code fissile} is what a rod of it gives per neutron
@@ -615,18 +615,20 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor(), m.neutron()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor(), m.neutron(), m.fastener()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron())));
+            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron(), tail.fastener())));
 
     /**
      * The keys that did not fit the codec's sixteen.
      *
      * @param luminance block light (0 to 15) a lit lamp panel of this phosphor gives at full; absent, none.
      * @param phosphor  whether it glows under an electric current (an electroluminescent lamp panel can be made of it).
+     * @param fastener coarse quality, 1 to 5, of a screw, bolt or rivet made of it (the Engineering Table's fasteners): strength, corrosion
+     *                 and fit in one figure. Absent for a material that makes no fastener.
      * @param enchantability how well it takes an enchantment, on vanilla's scale (gold 22, stone 5):
      *                       the one figure a modular item's enchanting reads, from its main part
      *                      . Absent reads as poor.
@@ -635,7 +637,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                         Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                         Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion, Optional<XpCapacity> xpStore,
-                        Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron) {
+                        Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron, Optional<Integer> fastener) {
         static final com.mojang.serialization.MapCodec<Tail> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
@@ -651,7 +653,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 XpCapacity.CODEC.optionalFieldOf("xp_store").forGetter(Tail::xpStore),
                 Codec.intRange(0, 15).optionalFieldOf("luminance").forGetter(Tail::luminance),
                 Codec.BOOL.optionalFieldOf("phosphor", false).forGetter(Tail::phosphor),
-                Neutron.CODEC.optionalFieldOf("neutron").forGetter(Tail::neutron)
+                Neutron.CODEC.optionalFieldOf("neutron").forGetter(Tail::neutron),
+                Codec.intRange(1, 5).optionalFieldOf("fastener").forGetter(Tail::fastener)
         ).apply(instance, Tail::new));
     }
 

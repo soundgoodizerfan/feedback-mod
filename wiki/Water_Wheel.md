@@ -15,7 +15,7 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the 
 
 A 200 cm wheel with 8 buckets makes 256 Su and turns 4 RPM for each flowing side.
 
-Shape the rim from planks at the [Woodworking Table](Woodworking_Table.md), then put it together at the bench with the Water Wheel Blueprint in the blueprint slot. The Water Wheel comes out with the design, and the blueprint is kept. Its tooltip shows the Su it makes, the RPM per flowing side and its momentum. Breaking the block gives the same wheel back.
+Shape the rim from planks at the [Woodworking Table](Woodworking_Table.md), then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Water Wheel Blueprint in the blueprint slot judges the fit against your drawing. The Water Wheel comes out with the design of the rim, and the blueprint is kept. Its tooltip shows the Su it makes, the RPM per flowing side and its momentum. Breaking the block gives the same wheel back.
 
 ## Wheel types
 
@@ -29,7 +29,7 @@ Each type is cut from a different number of stock cells. The slatted wheel is th
 
 ## Addons
 
-An addon is an optional extra part made from raw stock, added when you assemble the wheel or by reworking a finished one. The wheel works without it.
+An addon is an optional extra part made from raw stock, added when you assemble the wheel or afterward on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). The wheel works without it.
 
 - **Rim ring** (plate): adds momentum by the metal's density, so a denser metal adds more. The wheel is slower to spin up.
 

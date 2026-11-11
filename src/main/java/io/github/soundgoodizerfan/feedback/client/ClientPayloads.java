@@ -20,6 +20,12 @@ public final class ClientPayloads {
             desktop.applyLink(payload);
     }
 
+    /** The Engineering Table asked for a hand-work game: open its screen over the table screen it belongs to. */
+    public static void openMinigame(io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload payload) {
+        if (Minecraft.getInstance().screen instanceof EngineeringTableScreen screen && screen.getMenu().containerId == payload.container())
+            MinigameScreens.open(screen, payload);
+    }
+
     /** A cast wants the view turned: {@link CameraTurn} eases it there. */
     public static void turn(float yaw, float pitch) {
         CameraTurn.aim(yaw, pitch);

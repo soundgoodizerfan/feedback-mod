@@ -10,7 +10,7 @@ N R N
 S S S
 ```
 
-S is a [Steel Plate](Mechanical_Hammer.md), N is a [Condenser](Condenser.md) and R is a [Refrigeration Unit](Refrigeration_Unit.md).
+S is a Steel Plate, N is a [Condenser](Condenser.md) and R is a [Refrigeration Unit](Refrigeration_Unit.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 4 [fasteners](Fasteners.md).
 
 ## Using it
 

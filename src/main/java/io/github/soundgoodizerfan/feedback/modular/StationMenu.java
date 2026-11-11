@@ -10,8 +10,8 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * The part-making benches' menu: {@link ToolTableMenu} on the Parts tab alone (assembly and rework stay at the Tool Table), with
- * its {@link Station} filtering the stock. The stonecutter adds the vanilla cut as a second tab.
+ * The part-making benches' menu: {@link ToolTableMenu} on the Parts tab (shaping, forging, cuts; assembly and rework are the Engineering
+ * Table's), with its {@link Station} filtering the stock. The stonecutter adds the vanilla cut as a second tab.
  */
 public class StationMenu extends ToolTableMenu {
 

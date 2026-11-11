@@ -10,7 +10,7 @@ S B S
 S T S
 ```
 
-S is a Stainless Steel Plate, T is Copper Tubing and B is a Bearing.
+S is a Stainless Steel Plate, T is Copper Tubing and B is a [Bearing](Bearing.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 4 [fasteners](Fasteners.md).
 
 ## Using it
 

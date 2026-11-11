@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
+  "type": "feedback:engineering",
   "ingredients": [
     {
       "item": "feedback:pump"
@@ -12,5 +11,15 @@
   "result": {
     "count": 1,
     "id": "feedback:vacuum_pump"
+  },
+  "tool": [
+    {
+      "ability": "feedback:driver",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 2,
+    "floor": 1
   }
 }

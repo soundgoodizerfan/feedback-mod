@@ -1,6 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "type": "feedback:engineering",
   "key": {
     "P": {
       "item": "feedback:copper_plate"
@@ -20,5 +19,15 @@
   "result": {
     "count": 1,
     "id": "feedback:mechanical_hammer"
+  },
+  "tool": [
+    {
+      "ability": "feedback:hammer",
+      "wear": 1
+    }
+  ],
+  "fasteners": {
+    "count": 3,
+    "floor": 1
   }
 }

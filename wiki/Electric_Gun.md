@@ -1,10 +1,10 @@
 # Electric Gun
 
-The electric gun throws a projectile with a battery's charge instead of burning powder, so it is not a [gun](Guns.md). It is made at the [Gun Table](Gun_Table.md) from a **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons), and needs Weapons Treatise III: Electric Guns to draw.
+The electric gun throws a projectile with a battery's charge instead of burning powder, so it is not a [gun](Guns.md). It is assembled at the [Engineering Table](Engineering_Table.md) from its parts. A **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons) is optional; drawing it and assembling it both take Weapons Treatise III: Electric Guns.
 
 ## Parts
 
-Made at the [Gun Table](Gun_Table.md) from a **Blueprint**, out of the same parts as a [gun](Gun_Parts.md), minus everything that needs powder: no action, bolt, slide, cylinder or magazine.
+Shaped and assembled like a [gun](Gun_Parts.md), out of the same parts, minus everything that needs powder: no action, bolt, slide, cylinder or magazine.
 
 | Part | Takes | Does |
 | --- | --- | --- |

@@ -10,7 +10,7 @@ P B P
 P S P
 ```
 
-P is a Wrought Iron Plate, B is a [Bearing](Bearing.md) and S is a Shaft.
+P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and B is a [Bearing](Bearing.md). Craft it at the [Engineering Table](Engineering_Table.md) with a [screwdriver](Hand_Tools.md#screwdriver) in the tool row and 3 [fasteners](Fasteners.md).
 
 ## Using it
 

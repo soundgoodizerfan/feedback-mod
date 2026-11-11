@@ -51,6 +51,7 @@ final class CodeRecipeExamples {
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.FoodSaltingRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.FoodMergeRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.JarFillRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.HandDeformationRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
     }
 
@@ -192,6 +193,34 @@ final class CodeRecipeExamples {
             out.add(holder("bootstrap_" + BuiltInRegistries.ITEM.getKey(layout.getResultItem(null).getItem()).getPath(),
                     in, layout.getWidth(), layout.getHeight(), List.of(made)));
         }
+        modular(materials, out);
         return out;
+    }
+
+    /**
+     * The plain crafting table's modular assembly ({@code ModularCraftingRecipe}): one card per simple type, one slot per item of the
+     * type's first form with positions free, each slot cycling the parts (or stock) of every material the role takes; the output is
+     * the type's default build. A type whose items would not fit the grid is left to its Tools card.
+     */
+    private static void modular(Map<ResourceLocation, Material> materials, List<RecipeHolder<CraftingRecipe>> out) {
+        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
+        types.forEach((id, type) -> {
+            if (type.blueprint() || type.family() == io.github.soundgoodizerfan.feedback.modular.ModularType.Family.DISH || type.patterns().isEmpty())
+                return;
+            var counts = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.counts(type, 0, java.util.Set.of());
+            List<List<ItemStack>> in = new ArrayList<>();
+            for (Map.Entry<String, Integer> r : counts.entrySet()) {
+                List<ItemStack> choices = ToolTableToolCategory.stacks(type.roles().get(r.getKey()), 1, materials);
+                if (choices.isEmpty())
+                    return;
+                for (int i = 0; i < r.getValue(); i++)
+                    in.add(choices);
+            }
+            if (in.isEmpty() || in.size() > 9)
+                return;
+            io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(id, types, materials)
+                    .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(d, types, materials))
+                    .ifPresent(made -> out.add(holder("modular_" + id.getPath(), in, Math.min(3, in.size()), (in.size() + 2) / 3, List.of(made))));
+        });
     }
 }

@@ -8,11 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.Station;
-import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
 import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -32,8 +29,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The bench: the smithing table, the woodworking table, the stonecutter, the Gun Table and the Prep Table are this one screen, each a skin, a hand
- * tool and a set of limits ({@link Station}). {@code docs/gui/gui_bench.md} is the spec; this is the data flow it needs.
+ * The bench: the smithing table, the anvil, the woodworking table, the stonecutter and the Prep Table are this one screen, each a skin, a hand
+ * tool and a set of limits ({@link Station}). They make parts (and at the Prep Table dishes); putting a tool together, mending it, swapping
+ * a part and taking it apart are the Engineering Table's. {@code docs/gui/gui_bench.md} is the spec; this is the data flow it needs.
  *
  * <pre>
  * What the player does               What the menu holds                       What the fan shows (nodes)
@@ -43,15 +41,12 @@ import net.minecraft.world.item.ItemStack;
  *                                                                              the Prep Table cut/knead; click = make it
  *                                                                              (instant: BTN_PICK then BTN_MAKE; forged: the
  *                                                                              rhythm is played around the stock, ForgePanel)
- * a part in the centre slot          Centre.PART, mode MODE_ASSEMBLE           fitted parts (come off: BTN_OFF), then what the
- *                                    fitted parts in the assembly slots        player holds that attaches (BTN_FIT slot), then
- *                                                                              parts that could attach and would be shaped from
+ * (Prep Table) a container in the   Centre.PART, mode MODE_ASSEMBLE           fitted foods (come off: BTN_OFF), then what the
+ * centre slot                        fitted foods in the assembly slots        player holds that attaches (BTN_FIT slot), then
+ *                                                                              foods that could attach and would be shaped from
  *                                                                              the stock slot (BTN_SHAPE option); fitting the
- *                                                                              last one makes the tool, which is the centre
- * a tool in the centre slot          Centre.TOOL, mode MODE_REWORK             its parts, one node a role; click one and the
- *                                    stock slot = what mends or swaps          fan offers what the player holds for that role
- *                                                                              (BTN_SWAP role * 256 + slot) and "take off"
- *                                                                              (BTN_OFF role); a tool is a part with others fitted
+ *                                                                              last one makes the dish, which is the centre
+ * (Prep Table) a dish in the centre  Centre.TOOL, mode MODE_PREPARE            the finish node
  * a smithing template in the centre  Centre.TEMPLATE, mode MODE_SMITH          nothing: base and addition go in the stock slots
  * </pre>
  *
@@ -84,9 +79,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private int optionsGeneration = -1;
     private int readKey = Integer.MIN_VALUE;
     private ItemStack seated = ItemStack.EMPTY;
-    private int selectedRole = -1;
     private boolean recentre = true;
-    private List<Component> sheet = List.of();
 
     // Feel: when the last reject, seat and make happened, and what is arcing to the output slot.
     private float shakeAt = Float.NEGATIVE_INFINITY, seatAt = Float.NEGATIVE_INFINITY, arcAt = Float.NEGATIVE_INFINITY, saidAt = Float.NEGATIVE_INFINITY;
@@ -96,8 +89,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     // Dragging the fan.
     private boolean panning;
 
-    private BlueprintChecklistPanel checklist;
-    private Button apart;
     private AbstractWidget typePicker;
     private final float[] bars = new float[3], against = new float[3];
 
@@ -111,7 +102,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         inventoryLabelX = ToolTableMenu.INV_X;
         inventoryLabelY = ToolTableMenu.INV_Y - 11;
         forge = st.has(Station.Panel.FORGE) ? new ForgePanel(this) : null;
-        checklist = new BlueprintChecklistPanel(skin, menu);
         shingle = st.has(Station.Panel.FORGE) ? new ShinglePanel(this) : null;
         blueprint = st.dishes() ? new PrepBlueprintPanel(menu, skin) : null;
         axis = new AxisPanel(this, skin);
@@ -202,11 +192,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         // The station's folder tabs (data on Station), stood above the panel; none for a station with a single job.
         folderTabs(st.tabs().stream().map(t -> new FolderTabs.Def(Component.translatable(t.key()))).toList(), menu::tab,
                 i -> press(ToolTableMenu.BTN_TAB + i));
-        apart = addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.tool_table.apart"),
-                b -> {
-                    press(ToolTableMenu.BTN_APART);
-                    skin.cue(GuiSkin.Cue.ABORT, stockKind(), 1f);
-                }, leftPos + VX + 4, topPos + VY + VH - 18, 66, 14));
         shingleButton = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.bench.shingle"),
                 b -> {
                     if (shingle != null && shingle.start())
@@ -215,7 +200,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                         reject(Component.translatable("gui.feedback.tool_table.status.cold"));
                 }, leftPos + VX + VW / 2 - 40, topPos + VY + VH - 40, 80, 16, skin::click));
         shingleButton.visible = false;
-        apart.setTooltip(net.minecraft.client.gui.components.Tooltip.create(Component.translatable("gui.feedback.tool_table.apart.tip")));
         if (st.dishes()) {
             typePicker = addRenderableWidget(GuiStyle.stepper(skin, leftPos + VX + 4, topPos + VY + 4, 120, 14, "<", ">", this::typeName, d -> {
                 int n = Math.max(1, menu.dishTypes(level()).size());
@@ -289,16 +273,12 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         if (drafting()) {
             blueprint.tick();
             shingleButton.visible = false;
-            apart.visible = false;
             if (typePicker != null)
                 typePicker.visible = false;
             return;
         }
         shingleButton.visible = menu.centre(level()) == ToolTableMenu.Centre.BLOOM && !busy();
         shingleButton.active = menu.hasHammer();
-        boolean tool = menu.centre(level()) == ToolTableMenu.Centre.TOOL;
-        apart.visible = tool && !busy();
-        apart.active = menu.hasHammer();
         if (typePicker != null)
             typePicker.visible = menu.mode() == ToolTableMenu.MODE_ASSEMBLE && !busy();
     }
@@ -308,7 +288,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         List<ItemStack> all = new ArrayList<>();
         for (int i = 0; i < menu.slots.size(); i++)
             all.add(menu.getSlot(i).getItem());
-        int key = java.util.Objects.hash(menu.mode(), menu.picked(), menu.cutPicked(), menu.typePicked(level()), menu.tab(), selectedRole, ItemStack.hashStackList(all),
+        int key = java.util.Objects.hash(menu.mode(), menu.picked(), menu.cutPicked(), menu.typePicked(level()), menu.tab(), ItemStack.hashStackList(all),
                 ModularTypes.generation(), ClientMaterials.get().size());
         if (key == readKey)
             return;
@@ -317,7 +297,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         boolean fresh = !ItemStack.isSameItem(centre, seated);
         if (fresh) {
             recentre = true;
-            selectedRole = -1;
             if (!centre.isEmpty()) {
                 skin.cue(GuiSkin.Cue.SEAT, stockKind(), 1f);
                 seatAt = GuiStyle.time();
@@ -332,8 +311,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private void rebuild() {
         var level = level();
         List<BenchFan.Node> list = new ArrayList<>();
-        sheet = List.of();
-        // The Cut and Saw tabs work stock only; a part or tool in the centre waits for the Parts tab.
+        // The Cut and Saw tabs work stock only; a dish container in the centre waits for the Parts tab.
         switch (menu.cutTab() && menu.centre(level) != ToolTableMenu.Centre.STOCK ? ToolTableMenu.Centre.EMPTY : menu.centre(level)) {
             case STOCK -> stockNodes(list);
             case PART -> partNodes(list);
@@ -391,7 +369,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     /** The wheel's order for the types a bench makes shapes of: weapons, then tools, then armour head to foot, then the rest. */
     private static final List<String> WHEEL = List.of("sword", "cleaver", "maul", "spear", "twin", "axe", "pickaxe", "shovel", "hoe", "sickle",
-            "shears", "hand_hammer", "hand_knife", "spoon", "sawblade", "bow", "crossbow", "flintlock", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
+            "shears", "hand_hammer", "hand_knife", "spoon", "sawblade", "file", "screwdriver", "bow", "crossbow", "flintlock", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
 
     private static int wheelRank(String type) {
         int i = WHEEL.indexOf(type);
@@ -436,51 +414,10 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         }
     }
 
+    /** A finished dish in the centre (Prep Table): the finish is its one node. */
     private void toolNodes(List<BenchFan.Node> out) {
-        var level = level();
-        var materials = ClientMaterials.on(level);
-        ItemStack tool = menu.centreStack();
-        var design = ModularStacks.design(tool);
-        ModularType type = design == null ? null : menu.types(level).get(design.type());
-        if (type == null)
-            return;
-        float wear = tool.getMaxDamage() > 0 ? tool.getDamageValue() / (float) tool.getMaxDamage() : 0f;
-        for (int k = 0; k < type.order().size(); k++) {
-            String key = type.order().get(k);
-            ModularType.Role role = type.roles().get(key);
-            var part = design.part(key);
-            if (part == null && !type.extras().contains(key))
-                continue;
-            Component name = Component.translatable("modular.feedback.role." + role.name());
-            ItemStack icon = ItemStack.EMPTY;
-            if (part != null) {
-                List<ItemStack> items = ToolDesigns.items(part, role, materials, part.count());
-                icon = items.isEmpty() ? ItemStack.EMPTY : items.get(0).copyWithCount(1);
-            }
-            BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.ROLE, icon, name, part == null ? "+" : icon.isEmpty() ? name.getString().substring(0, 1) : "", 0, 0, k);
-            n.faint = part == null;
-            n.selected = k == selectedRole;
-            if (part != null && key.equals(type.wearRole()))
-                n.wear = wear;
-            out.add(n);
-        }
-        if (selectedRole >= 0) {
-            if (design.part(type.order().get(selectedRole)) != null)
-                out.add(new BenchFan.Node(BenchFan.Kind.OFF, ItemStack.EMPTY, Component.translatable("gui.feedback.bench.off"), "x", ToolTableMenu.BTN_OFF + selectedRole, 1, selectedRole));
-            for (int s : menu.roleChoices(level, selectedRole)) {
-                ItemStack held = menu.getSlot(s).getItem();
-                out.add(new BenchFan.Node(BenchFan.Kind.ALT, held.copyWithCount(1), held.getHoverName(), "", ToolTableMenu.BTN_SWAP + selectedRole * 256 + s, 1, s));
-            }
-        }
-        if (st.dishes() || st.gun()) {
-            if (st.dishes())
-                prepNodes(out, true);
-            if (st.gun() && menu.gunTable()) {
-                List<Component> lines = new ArrayList<>();
-                PartPresenter.sheet(lines, menu, level, tool, materials);
-                sheet = lines;
-            }
-        }
+        if (st.dishes())
+            prepNodes(out, true);
     }
 
     /** The Prep Table's own work as nodes: cut and knead a food, finish a dish. */
@@ -525,12 +462,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             GuiSkin.play(skin.click(), 1f);
             return;
         }
-        if (n.kind == BenchFan.Kind.ROLE) {
-            selectedRole = selectedRole == n.index ? -1 : n.index;
-            skin.cue(GuiSkin.Cue.STAGE, stockKind(), 1f);
-            readKey = Integer.MIN_VALUE;
-            return;
-        }
         if (n.kind == BenchFan.Kind.PREP) {
             prepare(n);
             return;
@@ -557,7 +488,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                 press(n.action);
                 skin.cue(GuiSkin.Cue.FINISH, stockKind(), 0.9f);
             }
-            case FITTED, OFF -> {
+            case FITTED -> {
                 press(n.action);
                 skin.cue(GuiSkin.Cue.ABORT, stockKind(), 1f);
             }
@@ -625,8 +556,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return true;
         if (drafting())
             return blueprint.mouseClicked(mx, my, button) || super.mouseClicked(mx, my, button);
-        if (checklist.click(mx, my, button))
-            return true;
         if (forge != null && forge.click(mx, my, button) || shingle != null && shingle.click(mx, my, button))
             return true;
         if (axis.click(mx, my, button))
@@ -640,9 +569,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                 panning = true;
             return true;
         }
-        // A right click lets go of what is chosen: the shape, the role, the pinned hub.
+        // A right click lets go of what is chosen: the shape, the pinned hub.
         if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 1 && !busy()) {
-            selectedRole = -1;
             for (BenchFan.Node n : fan.nodes())
                 n.selected = false;
             press(ToolTableMenu.BTN_DESELECT);
@@ -879,17 +807,12 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), ToolTableMenu.TRIM_X + ToolTableMenu.TRIM_GAP, ToolTableMenu.CENTRE_Y, true);
             caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), ToolTableMenu.TRIM_X + 2 * ToolTableMenu.TRIM_GAP, ToolTableMenu.CENTRE_Y, true);
         }
-        if (menu.gunTable())
-            caption(g, Component.translatable("gui.feedback.gun_table.round"), ToolTableMenu.ROUND_X, ToolTableMenu.ROUND_Y, true);
         caption(g, Component.translatable("gui.feedback.tool_table.result"), ToolTableMenu.OUT_X, ToolTableMenu.OUT_Y, true);
         // The one line: what the pointer is on, or what to do next.
         Component line = line();
         int ly = VY + VH - 11;
         if (!line.getString().isEmpty())
             g.drawString(font, line, VX + VW / 2 - font.width(line) / 2, ly, fan.over() != null ? skin.ink() : skin.dim(), false);
-        if (!sheet.isEmpty() && net.minecraft.client.gui.screens.Screen.hasShiftDown())
-            for (int i = 0; i < sheet.size(); i++)
-                g.drawString(font, sheet.get(i), VX + 6, VY + 6 + i * 10, skin.ink(), false);
         g.pose().popPose();
     }
 
@@ -959,7 +882,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         Slot s = hoveredSlot;
         if (s != null && s.isActive() && !s.hasItem() && s.index >= ToolTableMenu.HAMMER && s.index < menu.inv()) {
             String key = s.index == ToolTableMenu.HAMMER ? st.tip("hammer") : s.index == ToolTableMenu.TOOL ? st.tip("centre") : s.index == ToolTableMenu.PLAN ? st.tip("plan")
-                    : s.index == menu.inv() - 1 && menu.gunTable() ? "round" : st.tip("stock");
+                    : st.tip("stock");
             g.renderTooltip(font, font.split(Component.translatable("gui.feedback.tool_table.tip." + key), 190), mouseX, mouseY);
             return;
         }
@@ -980,7 +903,6 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             g.pose().popPose();
             return;
         }
-        checklist.draw(g, font, leftPos, topPos, imageWidth, width);
         g.pose().pushPose();
         g.pose().translate(0, 0, 400);
         if (forge != null && forge.busy())

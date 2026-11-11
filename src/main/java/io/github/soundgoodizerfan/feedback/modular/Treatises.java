@@ -89,6 +89,25 @@ public final class Treatises {
         return school == null || (mask & (1 << school.bit(School.volumeOf(type.school())))) != 0;
     }
 
+    /**
+     * The school gate for assembly as a predicate over types, for {@link ToolTableAssembly#infer}: the types whose school's volume bit is
+     * in {@code mask}, plus every type with no school. A bench ORs the masks of every place it looks (inventory and shelf by
+     * {@link #mask(Player, ContainerLevelAccess)}, its binder slot by {@link #mask(ItemStack)}).
+     */
+    public static java.util.function.Predicate<ModularType> assembles(int mask) {
+        return type -> draws(mask, type);
+    }
+
+    /** The volumes {@code stack} is, or a binder in it holds, one bit per school and volume ({@link School#bit}). */
+    public static int mask(ItemStack stack) {
+        int mask = 0;
+        for (School school : School.values())
+            for (int v = 1; v <= school.volumes(); v++)
+                if (holds(stack, school, v))
+                    mask |= 1 << school.bit(v);
+        return mask;
+    }
+
     /** Volume {@code volume} of {@code school}'s treatise. */
     public static ItemStack of(School school, int volume) {
         return new ItemStack(FModular.TREATISES.get(school).get(Math.max(1, Math.min(volume, school.volumes())) - 1).get());

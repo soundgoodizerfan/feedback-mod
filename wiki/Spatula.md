@@ -4,7 +4,7 @@ A modular hand tool for flipping the food in a [Skillet](Skillet.md).
 
 ## Crafting
 
-Shape a **Spatula Blade** (from a plate, planks or bone; metal is shaped hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md)) and put it with a handle (stick or bone) at a bench, as for any [modular tool](Tools_and_Weapons.md).
+Shape a **Spatula Blade** (from a plate, planks or bone; metal is shaped hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md)) and put it with a handle (stick or bone) in a crafting grid, as for any [modular tool](Tools_and_Weapons.md).
 
 ## Using it
 

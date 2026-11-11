@@ -292,6 +292,7 @@ public class FItems {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem> ARC_ELECTRODE = ITEMS.register("arc_electrode",
             () -> new io.github.soundgoodizerfan.feedback.machine.arc.ElectrodeItem(new net.minecraft.world.item.Item.Properties().stacksTo(1)));
     public static final DeferredItem<BlockItem> POWER_CUTTER = ITEMS.registerSimpleBlockItem(FBlocks.POWER_CUTTER);
+    public static final DeferredItem<BlockItem> AUTO_ENGINEER = ITEMS.registerSimpleBlockItem(FBlocks.AUTO_ENGINEER);
     /** The cutting element of a Power Cutter, of a material stamped on it. See {@code CutterHeadItem}. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem> SAW_HEAD = ITEMS.register("saw_head",
             () -> new io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem(io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.Type.SAW,

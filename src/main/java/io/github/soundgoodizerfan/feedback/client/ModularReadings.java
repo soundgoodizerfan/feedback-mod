@@ -19,13 +19,11 @@ import io.github.soundgoodizerfan.feedback.modular.ModularTooltip;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
@@ -41,7 +39,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
  * At the truth tier (the debug helmet) every baked figure prints, exact, iterated off
  * {@link ModularFigures.Fig} so a figure added to the bake shows with no edit here. Holding Shift
  * says what each modifier means, in the figure and threshold that decide it, and which part's
- * material it is down to; the Tool Table's result over a tool in its tool slot lists what the work changes.
+ * material it is down to.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class ModularReadings {
@@ -62,26 +60,6 @@ public final class ModularReadings {
             scroll = 0;
         }
         window(readings(stack, f), tooltip);
-        compare(stack, f, tooltip);
-    }
-
-    /**
-     * On the Tool Table's result when a finished tool is in its tool slot (a part swapped, a tip
-     * added, a piece mended), what the work would change, at the truth tier like the figures.
-     */
-    private static void compare(ItemStack result, ModularFigures after, List<Component> tooltip) {
-        if (!Readout.exact(Quantity.FIGURE) || !(Minecraft.getInstance().screen instanceof AbstractContainerScreen<?> screen)
-                || !(screen.getMenu() instanceof ToolTableMenu menu)
-                || screen.getSlotUnderMouse() != menu.getSlot(ToolTableMenu.OUT)
-                || !ItemStack.isSameItemSameComponents(menu.getSlot(ToolTableMenu.OUT).getItem(), result))
-            return;
-        ModularFigures before = ModularStacks.figures(menu.tool());
-        if (before == null)
-            return;
-        List<Component> lines = FigureCompare.lines(before, after);
-        if (!lines.isEmpty())
-            tooltip.add(Component.translatable("feedback.compare.heading").withStyle(ChatFormatting.GRAY));
-        tooltip.addAll(lines);
     }
 
     /** {@code line} with the parts it is down to while Shift is held: {@code Mass - from Iron head}. */

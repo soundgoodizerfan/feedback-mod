@@ -57,6 +57,14 @@ import net.minecraft.world.entity.EquipmentSlot;
  * @param traitParams numbers the type's trait reads.
  * @param blueprint   whether making one takes a blueprint of it in the Tool Table's plan slot (spec 1: complicated
  *                    items are designed on paper first; simple ones are their parts).
+ * @param fasteners   what an assembly at the Engineering Table spends in fasteners (count) and the quality it is built for (floor);
+ *                    {@code fasteners} in the JSON, default two of quality 1 for a complex ({@code blueprint}) type and none otherwise.
+ * @param minigame    the hand-work game an assembly at the Engineering Table plays ({@code feedback:fitting}), or empty for the default:
+ *                    torque when the assembly spends fasteners, none otherwise.
+ * @param fitOrder    role letters that seat first, in this order, in the fitting game, before the order derived from the roles' geometry
+ *                    ({@link io.github.soundgoodizerfan.feedback.modular.engineering.FittingOrder}); an optional fallback for a type the
+ *                    derivation orders badly (a gun's receiver before its barrel). Empty for none.
+ * @param tools       ids of the item abilities ({@code feedback:hammer}) an assembly at the Engineering Table wears a point of; default none.
  * @param ranges      for a raw-stock role whose size is the player's to choose, the fewest and most items it takes
  *                    ({@code [min, max]}; a minimum of 0 makes the role optional): a pattern then names the role once
  *                    and the type makes one form of every size, instead of a pattern for each. A charge's filler is
@@ -72,7 +80,9 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                           List<List<String>> patterns, Map<String, ResourceLocation> defaults,
                           Map<String, String> vanilla, float armourMax, boolean blueprint,
                           Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges,
-                          List<Shaping> shapes, boolean bakes, Board board, String school) {
+                          List<Shaping> shapes, boolean bakes, Board board, String school,
+                          io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need fasteners, List<String> tools,
+                          String minigame, List<String> fitOrder) {
 
     /**
      * How the Blueprint Table lays a type out beyond its patterns. All optional: a type with none is drawn from its patterns alone.
@@ -485,17 +495,26 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             Codec.mapPair(Codec.BOOL.optionalFieldOf("blueprint", false),
                     Codec.unboundedMap(Codec.STRING, Codec.INT.listOf()).optionalFieldOf("ranges", Map.of()))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.blueprint(), t.ranges())),
-            Naming.CODEC.optionalFieldOf("names", Naming.NONE).forGetter(ModularType::names),
+            Codec.mapPair(Naming.CODEC.optionalFieldOf("names", Naming.NONE),
+                    Codec.mapPair(io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need.CODEC.optionalFieldOf("fasteners"),
+                            Codec.STRING.listOf().optionalFieldOf("tools", List.of())))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.names(), com.mojang.datafixers.util.Pair.of(java.util.Optional.of(t.fasteners()), t.tools()))),
             Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""),
                     Codec.mapPair(Codec.BOOL.optionalFieldOf("bakes", false), Codec.STRING.optionalFieldOf("school", "")))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.trait(), com.mojang.datafixers.util.Pair.of(t.bakes(), t.school()))),
             Codec.mapPair(Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()),
                     Codec.mapPair(Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()),
-                            Board.CODEC.optionalFieldOf("board", Board.NONE)))
-                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), com.mojang.datafixers.util.Pair.of(t.shapes(), t.board())))
+                            Codec.mapPair(Board.CODEC.optionalFieldOf("board", Board.NONE),
+                                    Codec.mapPair(Codec.STRING.optionalFieldOf("minigame", ""),
+                                            Codec.STRING.listOf().optionalFieldOf("fit_order", List.of())))))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), com.mojang.datafixers.util.Pair.of(t.shapes(),
+                            com.mojang.datafixers.util.Pair.of(t.board(), com.mojang.datafixers.util.Pair.of(t.minigame(), t.fitOrder())))))
     ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
-                       gate, names, traitBakes, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
-            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), names, traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond().getFirst(), tail.getSecond().getSecond(), traitBakes.getSecond().getSecond())));
+                       gate, namesNeeds, traitBakes, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
+            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), namesNeeds.getFirst(), traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond().getFirst(), tail.getSecond().getSecond().getFirst(), traitBakes.getSecond().getSecond(),
+            namesNeeds.getSecond().getFirst().orElse(gate.getFirst() ? io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need.DEFAULT
+                    : new io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need(0, 1)), namesNeeds.getSecond().getSecond(),
+            tail.getSecond().getSecond().getSecond().getFirst(), tail.getSecond().getSecond().getSecond().getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);

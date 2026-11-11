@@ -77,6 +77,7 @@ public class Feedback {
         io.github.soundgoodizerfan.feedback.modular.AttunementKnowledge.register(modBus);
         FCapabilities.register(modBus);
         FRecipes.register(modBus);
+        io.github.soundgoodizerfan.feedback.registry.FEngineering.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FModular.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FEntities.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FCombat.register(modBus);
@@ -324,6 +325,12 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.MinigameResultPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.MinigameResultPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.MinigameResultPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload::handle)

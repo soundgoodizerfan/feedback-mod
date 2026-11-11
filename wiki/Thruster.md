@@ -4,13 +4,13 @@ A rocket engine for a [vehicle](Vehicles.md). It burns liquid fuel and pushes th
 
 ## Designing and building
 
-A thruster is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thruster* in the type row, under Technology); drawing it takes Aerospace Treatise II: Thrusters ([Treatise](Treatise.md)). It has one part, the **Thruster Nozzle**, shaped from plate of a metal with a measured yield strength at the [Smithing Table](Smithing_Table.md) with the blueprint in the blueprint slot. The thruster comes out with the design, and the blueprint is kept.
+A thruster is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thruster* in the type row, under Technology); drawing it takes Aerospace Treatise II: Thrusters ([Treatise](Treatise.md)). It has one part, the **Thruster Nozzle**, shaped from plate of a metal with a measured yield strength at the [Smithing Table](Smithing_Table.md). Assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the blueprint in the blueprint slot judges the fit against your drawing. The thruster comes out with the design of the nozzle, and the blueprint is kept.
 
 - **Bore** is a stepper from 8 to 40 mm in steps of 2, 20 mm by default. A wider bore pushes harder and burns more fuel; both follow the bore's area.
 - **Shape** trades push against fuel. A **Bell** is the baseline. A **Cone** pushes 30% harder and burns 50% more fuel. A **Throat** pushes 30% less and burns half the fuel.
 - **Regen jacket** is an optional addon, a plate wrapped round the nozzle that the fuel runs through first. The fuel arrives warm, so 15% less of it burns for the same push.
 
-The bench sheet and the thruster's tooltip show how many times a reference thruster (20 mm bell) it pushes. A specimen to take apart for the treatise is in [Treatise](Treatise.md#specimens).
+The blueprint sheet and the thruster's tooltip show how many times a reference thruster (20 mm bell) it pushes. A specimen to take apart for the treatise is in [Treatise](Treatise.md#specimens).
 
 It does nothing on blocks that stand in the world. Like everything on a [Lift](Vehicles.md#the-lift), it works once the vehicle is lifted into a moving body.
 
