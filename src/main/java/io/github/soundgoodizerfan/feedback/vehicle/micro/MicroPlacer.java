@@ -76,6 +76,9 @@ public final class MicroPlacer {
     public static boolean fits(ItemStack stack) {
         if (!(stack.getItem() instanceof BlockItem item))
             return false;
+        // A flywheel's rim strains with speed and a voxel has no condition to keep it in: it stays full size.
+        if (item.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.shaft.FlywheelBlock)
+            return false;
         if (item.getBlock() instanceof MicroRotation)
             return true;
         BlockState state = item.getBlock().defaultBlockState();

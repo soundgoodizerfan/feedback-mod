@@ -284,6 +284,7 @@
   "message.feedback.joint.role.4": "Yaw surface: a card sets its angle.",
   "feedback.channel.piston_level": "Piston level",
   "feedback.channel.brake": "Brake",
+  "feedback.channel.clutch": "Engaged",
   "feedback.channel.joint_angle": "Angle",
   "message.feedback.micro.credit": "%s voxels left of the last block.",
   "message.feedback.micro.mode.single": "One voxel at a time.",

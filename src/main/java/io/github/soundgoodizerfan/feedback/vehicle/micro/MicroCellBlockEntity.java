@@ -109,6 +109,10 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     /** A piston voxel's commanded level, -1 to 1 of its travel, by voxel index; set by a card or a test, not saved. */
     private final float[] levels = new float[VOXELS];
 
+    public float level(int index) {
+        return levels[index];
+    }
+
     public void setLevel(int index, float level) {
         levels[index] = Math.clamp(level, -1f, 1f);
     }

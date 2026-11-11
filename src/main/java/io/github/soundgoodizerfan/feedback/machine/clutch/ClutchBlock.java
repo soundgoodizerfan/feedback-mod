@@ -40,7 +40,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * the run into two networks, and the far one simply has no source. The inertia model does the
  * rest.
  */
-public class ClutchBlock extends Block implements EntityBlock, Rotatable {
+public class ClutchBlock extends Block implements EntityBlock, io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation {
 
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty ENGAGED = BooleanProperty.create("engaged");
@@ -69,6 +69,16 @@ public class ClutchBlock extends Block implements EntityBlock, Rotatable {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof ClutchBlockEntity clutch)
             clutch.setEngaged(!clutch.isEngaged());
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.unit.Drag getDragSuPerRpm() {
+        return io.github.soundgoodizerfan.feedback.core.FTuning.SHAFT_DRAG_SU_PER_RPM;
+    }
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.unit.Inertia getInertia() {
+        return io.github.soundgoodizerfan.feedback.core.FTuning.SHAFT_INERTIA;
     }
 
     @Override

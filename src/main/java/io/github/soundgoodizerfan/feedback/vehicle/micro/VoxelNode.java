@@ -24,7 +24,7 @@ import java.util.Set;
  * to a control surface takes a level for its angle; a driven hinge takes a brake level. Nothing links
  * to it; a card targets it directly, as every vehicle part.
  */
-public final class VoxelNode implements DataNode, Analog {
+public final class VoxelNode implements DataNode, Analog, io.github.soundgoodizerfan.feedback.control.Switchable {
 
     private final MicroCellBlockEntity cell;
     private final int index;
@@ -37,9 +37,39 @@ public final class VoxelNode implements DataNode, Analog {
 
     /** True if the voxel is a part a card can set: a piston, or a Rotary Bearing (not a ring gear). */
     static boolean settable(@Nullable BlockState state) {
+        if (state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock)
+            return true;
         if (state == null || !(state.getBlock() instanceof JointPart part))
             return false;
         return part.kind() == Joint.Kind.PISTON || part.kind() == Joint.Kind.HINGE;
+    }
+
+    private boolean clutch() {
+        return cell.get(index) != null && cell.get(index).getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock;
+    }
+
+    /** A clutch voxel is engaged or let go; any other settable voxel is full or off (a piston at one end, a brake on or off). */
+    @Override
+    public void setEngaged(boolean engaged) {
+        BlockState state = cell.get(index);
+        if (state == null)
+            return;
+        if (clutch()) {
+            if (state.getValue(io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock.ENGAGED) == engaged)
+                return;
+            // The voxel takes the other state; the cell makes its rotor anew and the runs on both sides are rebuilt.
+            cell.set(index, state.setValue(io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock.ENGAGED, engaged));
+            cell.commit();
+        } else
+            setLevel(0, engaged ? 1 : 0);
+    }
+
+    @Override
+    public boolean isEngaged() {
+        BlockState state = cell.get(index);
+        if (state == null)
+            return false;
+        return clutch() ? state.getValue(io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock.ENGAGED) : cell.level(index) > 0;
     }
 
     @Override
@@ -47,6 +77,10 @@ public final class VoxelNode implements DataNode, Analog {
         BlockState state = cell.get(index);
         if (!settable(state) || channel != 0)
             return;
+        if (clutch()) {
+            setEngaged(level > 0.5f);
+            return;
+        }
         if (state.getBlock() instanceof JointPart part && part.kind() == Joint.Kind.HINGE && role(state) == 0)
             cell.setBrake(index, level);
         else
@@ -62,6 +96,8 @@ public final class VoxelNode implements DataNode, Analog {
         BlockState state = cell.get(index);
         if (state == null)
             return new String[0];
+        if (clutch())
+            return new String[]{"feedback.channel.clutch"};
         if (state.getBlock() instanceof JointPart part && part.kind() == Joint.Kind.PISTON)
             return new String[]{"feedback.channel.piston_level"};
         return new String[]{role(state) == 0 ? "feedback.channel.brake" : "feedback.channel.joint_angle"};
