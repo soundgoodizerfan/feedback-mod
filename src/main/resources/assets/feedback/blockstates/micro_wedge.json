@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=north,half=bottom": {
+      "model": "feedback:block/micro_wedge_north_bottom"
+    },
+    "facing=north,half=top": {
+      "model": "feedback:block/micro_wedge_north_top"
+    },
+    "facing=east,half=bottom": {
+      "model": "feedback:block/micro_wedge_east_bottom"
+    },
+    "facing=east,half=top": {
+      "model": "feedback:block/micro_wedge_east_top"
+    },
+    "facing=south,half=bottom": {
+      "model": "feedback:block/micro_wedge_south_bottom"
+    },
+    "facing=south,half=top": {
+      "model": "feedback:block/micro_wedge_south_top"
+    },
+    "facing=west,half=bottom": {
+      "model": "feedback:block/micro_wedge_west_bottom"
+    },
+    "facing=west,half=top": {
+      "model": "feedback:block/micro_wedge_west_top"
+    }
+  }
+}

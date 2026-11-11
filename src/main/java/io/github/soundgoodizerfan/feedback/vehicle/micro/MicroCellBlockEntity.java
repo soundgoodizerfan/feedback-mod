@@ -233,7 +233,8 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         var found = Material.find(MaterialTable.get().materials(), state.getBlock().asItem());
         float density = found.isPresent() && found.get().material().density().muPerMb() > 0
                 ? found.get().material().density().muPerMb() : FTuning.MICRO_FALLBACK_DENSITY.muPerMb();
-        return Units.kpg(new Mu(density * VOXEL_MB));
+        // A wedge is half a cube.
+        return Units.kpg(new Mu(density * VOXEL_MB * (MicroWedgeBlock.is(state) ? 0.5f : 1f)));
     }
 
     /** The cell's Sable mass, kpg: its voxels summed. */
@@ -339,6 +340,30 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         return lit;
     }
 
+    /** The wedge voxels: their colliders are the steps of the ramp, not a cube. */
+    public long wedgeBits() {
+        long bits = 0;
+        for (int i = 0; i < VOXELS; i++)
+            if (voxels[i] != null && MicroWedgeBlock.is(voxels[i]))
+                bits |= 1L << i;
+        return bits;
+    }
+
+    /** The step boxes of every wedge voxel, in blocks of this cell. */
+    List<double[]> wedgeBoxes() {
+        List<double[]> out = new ArrayList<>();
+        for (int i = 0; i < VOXELS; i++) {
+            BlockState v = voxels[i];
+            if (v == null || !MicroWedgeBlock.is(v))
+                continue;
+            double ox = (i & 3) * 0.25, oy = (i >> 2 & 3) * 0.25, oz = (i >> 4) * 0.25;
+            // The steps in voxel sixteenths (0 to 4) become blocks of the cell: a sixteenth is 1/16.
+            for (int[] b : MicroWedgeBlock.steps(v.getValue(MicroWedgeBlock.FACING), v.getValue(MicroWedgeBlock.HALF), MicroWedgeBlock.STEPS))
+                out.add(new double[]{ox + b[0] / 16.0, oy + b[1] / 16.0, oz + b[2] / 16.0, ox + b[3] / 16.0, oy + b[4] / 16.0, oz + b[5] / 16.0});
+        }
+        return out;
+    }
+
     public boolean hasTire() {
         return tireBits() != 0;
     }
@@ -347,7 +372,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     public void applyCollider() {
         colliderDue = false;
         if (level instanceof ServerLevel server && filled != 0)
-            MicroColliders.apply(server, worldPosition, getBlockState(), filled & ~hinge & ~tireBits());
+            MicroColliders.apply(server, worldPosition, getBlockState(), filled & ~hinge & ~tireBits() & ~wedgeBits(), wedgeBoxes());
     }
 
     /** Sets the voxels left out of the voxel collider (see {@link #hinge}). */
@@ -466,8 +491,11 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
 
     /** The filled voxels as boxes, in the cell's own space: what players walk into and see outlined. */
     VoxelShape shape() {
-        if (shape == null)
-            shape = merge(filled);
+        if (shape == null) {
+            shape = merge(filled & ~wedgeBits());
+            for (double[] b : wedgeBoxes())
+                shape = net.minecraft.world.phys.shapes.Shapes.or(shape, net.minecraft.world.phys.shapes.Shapes.box(b[0], b[1], b[2], b[3], b[4], b[5]));
+        }
         return shape;
     }
 

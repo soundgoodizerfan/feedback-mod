@@ -166,6 +166,11 @@ public class FBlocks {
         return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.COPPER).noOcclusion();
     }
 
+    /** A four-step ramp for micro builds; see {@code MicroWedgeBlock}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.micro.MicroWedgeBlock> MICRO_WEDGE = BLOCKS.register("micro_wedge",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.micro.MicroWedgeBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(2.0f).sound(SoundType.STONE).noOcclusion()));
+
     /** The same, driven at its rim by a cog: hollow; see {@code RingGearBlock}. */
     public static final DeferredBlock<RingGearBlock> RING_GEAR = BLOCKS.register("ring_gear",
             () -> new RingGearBlock(BlockBehaviour.Properties.of()

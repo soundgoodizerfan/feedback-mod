@@ -37,6 +37,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> ROTATION_ADAPTER = ITEMS.registerSimpleBlockItem(FBlocks.ROTATION_ADAPTER);
     public static final DeferredItem<BlockItem> ROTARY_BEARING = ITEMS.registerSimpleBlockItem(FBlocks.ROTARY_BEARING);
     public static final DeferredItem<BlockItem> RING_GEAR = ITEMS.registerSimpleBlockItem(FBlocks.RING_GEAR);
+    public static final DeferredItem<BlockItem> MICRO_WEDGE = ITEMS.registerSimpleBlockItem(FBlocks.MICRO_WEDGE);
     public static final DeferredItem<BlockItem> BALL_JOINT = ITEMS.registerSimpleBlockItem(FBlocks.BALL_JOINT);
     public static final DeferredItem<BlockItem> LOCKED_JOINT = ITEMS.registerSimpleBlockItem(FBlocks.LOCKED_JOINT);
     public static final DeferredItem<BlockItem> SLIDER_JOINT = ITEMS.registerSimpleBlockItem(FBlocks.SLIDER_JOINT);

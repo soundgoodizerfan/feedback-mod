@@ -59,7 +59,11 @@ public final class MicroColliders {
     private static final Logger LOG = LoggerFactory.getLogger("feedback.microcollider");
     /** Ticks between re-applying, in case Sable re-uploaded a section without a block change. */
     public static final int REFRESH = 40;
-    private static final Long2ObjectOpenHashMap<RapierVoxelColliderData> ENTRIES = new Long2ObjectOpenHashMap<>();
+    /** A collider's identity: the cube voxels' mask and a hash of the wedge boxes beside them (two hashes, so a clash is not a worry). */
+    private record Key(long mask, long wedgeA, long wedgeB) {
+    }
+
+    private static final java.util.HashMap<Key, RapierVoxelColliderData> ENTRIES = new java.util.HashMap<>();
     private static final Map<ServerLevel, LevelAccelerator> ACCELERATORS = new WeakHashMap<>();
     private static boolean broken;
 
@@ -68,10 +72,23 @@ public final class MicroColliders {
 
     /** Writes the collider of {@code pattern} (voxel bits, as MicroCellBlockEntity#filled) at {@code pos}. */
     public static void apply(ServerLevel level, BlockPos pos, BlockState state, long pattern) {
+        apply(level, pos, state, pattern, java.util.List.of());
+    }
+
+    /** As {@link #apply(ServerLevel, BlockPos, BlockState, long)}, with extra boxes ({@code [x0, y0, z0, x1, y1, z1]} in blocks of the cell): wedge steps. */
+    public static void apply(ServerLevel level, BlockPos pos, BlockState state, long pattern, java.util.List<double[]> extra) {
         if (broken)
             return;
+        long ha = 1125899906842597L, hb = 7;
+        for (double[] b : extra)
+            for (double v : b) {
+                long bits = Double.doubleToLongBits(v);
+                ha = ha * 31 + bits;
+                hb = (hb ^ bits) * 0x9E3779B97F4A7C15L;
+            }
+        Key key = new Key(pattern, ha, hb);
         try {
-            RapierVoxelColliderData entry = ENTRIES.get(pattern);
+            RapierVoxelColliderData entry = ENTRIES.get(key);
             if (entry == null) {
                 entry = Rapier3D.createVoxelColliderEntry(PhysicsBlockPropertyHelper.getFriction(state),
                         PhysicsBlockPropertyHelper.getVolume(state), PhysicsBlockPropertyHelper.getRestitution(state), false,
@@ -79,7 +96,9 @@ public final class MicroColliders {
                 RapierVoxelColliderData e = entry;
                 MicroCellBlockEntity.merge(pattern).forAllBoxes((x0, y0, z0, x1, y1, z1) ->
                         e.addBox(new Vector3d(x0, y0, z0), new Vector3d(x1, y1, z1)));
-                ENTRIES.put(pattern, entry);
+                for (double[] b : extra)
+                    e.addBox(new Vector3d(b[0], b[1], b[2]), new Vector3d(b[3], b[4], b[5]));
+                ENTRIES.put(key, entry);
             }
             LevelAccelerator accelerator = ACCELERATORS.computeIfAbsent(level, LevelAccelerator::new);
             accelerator.clearCache();
