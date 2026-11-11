@@ -60,7 +60,7 @@ public final class GunLens {
 
     /** Whether the stack is a gun fitted with a scope. */
     public static boolean hasScope(net.minecraft.world.item.ItemStack stack) {
-        if (!(stack.getItem() instanceof GunItem))
+        if (!GunLike.is(stack.getItem()))
             return false;
         GunView v = GunView.of(stack);
         return v.has("S") && v.variant("S").equals("scope");

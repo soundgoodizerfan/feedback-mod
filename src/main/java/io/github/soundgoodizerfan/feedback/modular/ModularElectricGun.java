@@ -146,11 +146,23 @@ public class ModularElectricGun extends Item implements Modular {
         }
         if (!BatteryStack.is(other))
             return false;
+        if (!fits(gun, other, player))
+            return true;
         ItemStack old = cell(gun);
         setCell(gun, other);
         access.set(old);
         player.playSound(SoundEvents.BUNDLE_INSERT, 0.8f, 1f);
         return true;
+    }
+
+    /** Whether the receiver's type takes a battery this big; says so if it does not. */
+    private static boolean fits(ItemStack gun, ItemStack battery, Player player) {
+        ElectricGunSpec spec = spec(gun).orElse(null);
+        CompoundTag state = BatteryStack.state(battery);
+        if (spec == null || state == null || Math.max(1, state.getInt("Cells")) <= spec.maxCells())
+            return true;
+        player.displayClientMessage(Component.translatable("message.feedback.electric_gun.too_big", spec.maxCells()), true);
+        return false;
     }
 
     /** The gun on the cursor takes a battery from the slot it is clicked on, or puts its cell into an empty slot. */
@@ -170,6 +182,8 @@ public class ModularElectricGun extends Item implements Modular {
         }
         if (!BatteryStack.is(other))
             return false;
+        if (!fits(gun, other, player))
+            return true;
         ItemStack old = cell(gun);
         setCell(gun, other);
         slot.set(old);
@@ -192,14 +206,14 @@ public class ModularElectricGun extends Item implements Modular {
     }
 
     /** The gun's heat, 0 to 1, now: what the last shots left, cooled by the time since (a lazy clock; nothing ticks). */
-    private static float heat(ItemStack gun, long now) {
+    private static float heat(ItemStack gun, long now, float shed) {
         CustomData data = gun.get(DataComponents.CUSTOM_DATA);
         if (data == null)
             return 0f;
         CompoundTag tag = data.copyTag();
         float h = tag.getFloat(HEAT);
         float seconds = Math.max(0L, now - tag.getLong(HEAT_AT)) / 20f;
-        return Math.max(0f, h - seconds * ModularTuning.EGUN_HEAT_COOLING_PER_S);
+        return Math.max(0f, h - seconds * ModularTuning.EGUN_HEAT_COOLING_PER_S * shed);
     }
 
     private static void setHeat(ItemStack gun, float heat, long now) {
@@ -295,13 +309,17 @@ public class ModularElectricGun extends Item implements Modular {
         if (spec.kind() == ElectricGunSpec.Kind.PLASMA)
             plasma(level, player, shot, muzzle);
         else {
-            float speed = RangedDispatch.launch(gun, shot.speed());
+            // An eddy sleeve drains a conductor slug's energy after it leaves the barrel, so it leaves slower.
+            float speed = RangedDispatch.launch(gun, shot.speed()) * (1f - Math.min(0.9f, ModularTuning.EGUN_EDDY_BRAKE * spec.eddy()));
             Arrow slug = new Arrow(level, player, m.item(metal, "nugget").map(ItemStack::new).orElse(new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET)), gun.copy());
             slug.pickup = AbstractArrow.Pickup.DISALLOWED;
             slug.setBaseDamage(shot.damage() / Math.max(0.1f, shot.speed()));
             slug.setCritArrow(false);
-            float spread = ModularTuning.AIR_SPREAD * ModularTuning.EGUN_LENGTH_HALF / Math.max(0.05f, spec.lengthM());
-            slug.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, speed, RangedDispatch.spread(gun, spread));
+            float spread = ModularTuning.AIR_SPREAD * ModularTuning.EGUN_LENGTH_HALF / Math.max(0.05f, spec.lengthM()) * spec.spreadMult();
+            // A lit reticle helps where it is dark.
+            if (spec.darkAt() > 0f && level.getMaxLocalRawBrightness(player.blockPosition()) <= spec.darkAt())
+                spread *= 1f - spec.darkCut();
+            slug.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, speed, spread);
             RangedDispatch.arrow(slug, gun);
             level.addFreshEntity(slug);
             if (slugs(gun) > 0)
@@ -313,10 +331,11 @@ public class ModularElectricGun extends Item implements Modular {
             case RAIL -> SoundEvents.FIREWORK_ROCKET_BLAST;
             case COIL -> SoundEvents.PISTON_EXTEND;
             case PLASMA -> SoundEvents.BLAZE_SHOOT;
-        }, SoundSource.PLAYERS, ModularTuning.EGUN_VOLUME, spec.kind() == ElectricGunSpec.Kind.RAIL ? 1.6f : 1.1f);
+        }, SoundSource.PLAYERS, ModularTuning.EGUN_VOLUME * spec.report(), spec.kind() == ElectricGunSpec.Kind.RAIL ? 1.6f : 1.1f);
         // Heat and the recovery it slows.
         long now = level.getGameTime();
-        float heat = heat(gun, now) + ModularTuning.EGUN_HEAT_PER_SHOT * (1f - spec.efficiency());
+        float heat = heat(gun, now, spec.shed())
+                + ModularTuning.EGUN_HEAT_PER_SHOT * (1f - spec.efficiency()) * spec.heatGain() * spec.heatMult();
         setHeat(gun, heat, now);
         player.getCooldowns().addCooldown(gun.getItem(), Math.round(ModularTuning.EGUN_COOLDOWN + heat * ModularTuning.EGUN_HEAT_COOLDOWN_TICKS));
     }

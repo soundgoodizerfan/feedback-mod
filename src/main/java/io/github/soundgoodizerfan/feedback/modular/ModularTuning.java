@@ -145,6 +145,8 @@ public final class ModularTuning {
     /** Current over rating at which the conductor fuses and the gun is wrecked; damage to the wielder from a shock, and per excess of overvoltage. */
     public static final float EGUN_FUSE_RATIO = 2f, EGUN_SHOCK = 2f, EGUN_SHOCK_PER_EXCESS = 4f;
     public static final float EGUN_VOLUME = 0.6f;
+    /** Share of a conductor slug's speed an eddy sleeve of full strength takes off. */
+    public static final float EGUN_EDDY_BRAKE = 0.3f;
     /** The cell voltage the Blueprint Table's load figure assumes. */
     public static final float EGUN_REF_VOLTS = 6f;
     /** Placeholder [OPEN]. The fewest and most a wielder's strength scales the cocking time by. */

@@ -31,9 +31,18 @@ import io.github.soundgoodizerfan.feedback.process.Material;
  * @param ampsRating amps the barrel's conductor carries before it wears.
  * @param band       the voltage band the receiver's insulation holds off.
  * @param barrelMass kilograms of the barrel.
+ * @param maxCells   the most cells of battery the receiver's type takes.
+ * @param heatMult   multiple of the heat a shot leaves, from the receiver's type (a heavy frame keeps cooler).
+ * @param report     multiple of how loud a shot is (a suppressor cuts it, a brake raises it).
+ * @param heatGain   multiple of the heat a shot leaves, from fittings.
+ * @param shed       multiple of how fast the gun sheds heat (a shroud, a thermal sleeve).
+ * @param eddy       share of a conductor slug's energy an eddy sleeve drains.
+ * @param spreadMult multiple of the shot's spread (a stock, a bipod).
+ * @param darkAt     light level at or below which a lit reticle helps (0 for none), and by how much it cuts spread.
  */
 public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages, float energyIn, float ampsRating, VoltageBand band,
-                              float barrelMass) {
+                              float barrelMass, int maxCells, float heatMult, float report, float heatGain, float shed, float eddy,
+                              float spreadMult, float darkAt, float darkCut) {
 
     public enum Kind {
         COIL, RAIL, PLASMA
@@ -58,8 +67,10 @@ public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages
         float bore = 0, length = 0, amps = 0, mass = 0;
         int stages = 1;
         VoltageBand band = VoltageBand.LV;
-        boolean barrel = false, receiver = false;
+        boolean barrel = false, receiver = false, trigger = false;
         float conductivity = 0;
+        int maxCells = 2;
+        float heatMult = 1f, report = 1f, heatGain = 1f, shed = 1f, eddy = 0f, spreadMult = 1f, darkAt = 0f, darkCut = 0f;
         for (ModularDesign.Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             Material m = materials.get(p.material());
@@ -80,19 +91,43 @@ public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages
                 }
                 case RECEIVER -> {
                     band = m.electrical().insulation().orElse(VoltageBand.LV);
+                    var v = role.variant(p);
+                    maxCells = Math.round(v.map(x -> x.params().getOrDefault("max_cells", 2f)).orElse(2f));
+                    heatMult = v.map(x -> x.params().getOrDefault("heat_mult", 1f)).orElse(1f);
                     receiver = true;
                 }
-                default -> { }
+                case "trigger" -> trigger = true;
+                default -> {
+                    // A stock's variant steadies the aim; a lit reticle cuts spread in the dark.
+                    var v = role.variant(p);
+                    spreadMult *= v.map(x -> x.params().getOrDefault("spread_mult", 1f)).orElse(1f);
+                    if (v.isPresent() && v.get().params().containsKey("dark_at")) {
+                        darkAt = v.get().params().get("dark_at");
+                        darkCut = v.get().params().getOrDefault("spread_cut", 0f);
+                    }
+                }
+            }
+            // A fitted attachment (a gun option, by the part's form): the figures it owns that mean something here.
+            var option = p.kind().isEmpty() ? java.util.Optional.<io.github.soundgoodizerfan.feedback.weapon.GunOption>empty()
+                    : io.github.soundgoodizerfan.feedback.weapon.GunOptions.ofForm(p.kind());
+            if (option.isPresent()) {
+                var o = option.get();
+                report *= o.blast();
+                heatGain *= o.heat();
+                shed *= o.shed();
+                eddy += o.eddy();
+                spreadMult *= o.params().getOrDefault("spread_mult", 1f);
             }
         }
-        if (!barrel || !receiver || bore <= 0 || length <= 0 || conductivity <= 0)
+        if (!barrel || !receiver || !trigger || bore <= 0 || length <= 0 || conductivity <= 0)
             return Optional.empty();
         float in = switch (kind) {
             case COIL -> stages * ModularTuning.EGUN_STAGE_J;
             case RAIL -> amps * ModularTuning.EGUN_RAIL_J_PER_AMP;
             case PLASMA -> ModularTuning.EGUN_ARC_J * (bore / ModularTuning.EGUN_BORE_HALF) * (bore / ModularTuning.EGUN_BORE_HALF);
         };
-        return Optional.of(new ElectricGunSpec(kind, bore, length, stages, in, amps, band, mass));
+        return Optional.of(new ElectricGunSpec(kind, bore, length, stages, in, amps, band, mass, maxCells, heatMult, report, heatGain,
+                shed, eddy, spreadMult, darkAt, darkCut));
     }
 
     /** Share of the energy taken that reaches the projectile. */

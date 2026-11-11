@@ -57,7 +57,7 @@ public final class ToolTableAssembly {
 
     /** Slots the table that makes {@code type} has: guns are made at the Gun Table, which has more. */
     public static int slots(ModularType type) {
-        return type.family() == ModularType.Family.GUN ? GUN_SLOTS : SLOTS;
+        return type.family() == ModularType.Family.GUN || type.family() == ModularType.Family.ELECTRIC_GUN ? GUN_SLOTS : SLOTS;
     }
 
     /** Which table makes a type: guns at the Gun Table, dishes at the Prep Table, everything else at the Tool Table. */
@@ -65,7 +65,7 @@ public final class ToolTableAssembly {
 
     public static Kind kindOf(ModularType type) {
         return switch (type.family()) {
-            case GUN -> type.blueprint() ? Kind.GUN : Kind.TOOL;
+            case GUN, ELECTRIC_GUN -> type.blueprint() ? Kind.GUN : Kind.TOOL;
             case DISH -> Kind.DISH;
             default -> Kind.TOOL;
         };
