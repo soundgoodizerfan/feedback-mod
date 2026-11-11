@@ -115,6 +115,38 @@ public final class ModularTuning {
     /** Placeholder [OPEN]. Ticks between a shot and the next click, and the loudness of the release against a bow's. */
     public static final int AIR_SHOT_COOLDOWN = 6;
     public static final float AIR_VOLUME = 0.25f;
+
+    // --- the electric gun (ElectricGunSpec); every figure a placeholder [OPEN] ----------------------------
+
+    /** Joules a coil stage adds, and per amp of rating a rail takes in a shot. */
+    public static final float EGUN_STAGE_J = 120f, EGUN_RAIL_J_PER_AMP = 6f;
+    /** Joules an arc channel of the reference bore costs to strike, and the vaporisation energy per kilogram of metal. */
+    public static final float EGUN_ARC_J = 60f, EGUN_VAPOR_J_PER_KG = 6000f;
+    /** Amps a barrel carries per litre of conductor per unit of the metal's ampacity. */
+    public static final float EGUN_AMPS_PER_LS = 100f;
+    /** Seconds a shot's current pulse lasts: the energy over the volts over this is the current. */
+    public static final float EGUN_PULSE_S = 1f;
+    /** Joules of energy one volt of one amp-tick of a cell's charge is worth. */
+    public static final float EGUN_J_PER_VAMPTICK = 1f;
+    /** Barrel length and bore at which the push is half kept and a wide bore wastes half. */
+    public static final float EGUN_LENGTH_HALF = 0.25f, EGUN_BORE_HALF = 8f;
+    /** Coil: metres of barrel a stage needs, the share a stage the barrel cannot fit still adds, and the best efficiency. */
+    public static final float EGUN_STAGE_SPACING_M = 0.12f, EGUN_STAGE_WASTE = 0.2f, EGUN_COIL_EFF = 0.5f;
+    /** Rail and plasma efficiencies. */
+    public static final float EGUN_RAIL_EFF = 0.6f, EGUN_PLASMA_EFF = 0.4f;
+    /** A slug's length in bores, litres in a nugget, the damage a joule does, and the fastest a slug goes (blocks per tick). */
+    public static final float EGUN_SLUG_LENGTHS = 1.5f, EGUN_NUGGET_LITRES = 0.016f, EGUN_DAMAGE_PER_J = 0.04f, EGUN_SPEED_MAX = 6f;
+    /** A plasma bolt: damage per joule delivered, range in blocks, and the ticks it sets a target alight. */
+    public static final float EGUN_PLASMA_DAMAGE_PER_J = 0.06f, EGUN_PLASMA_RANGE = 14f;
+    public static final int EGUN_PLASMA_BURN_TICKS = 80;
+    /** Cooldown after a shot, ticks, and the extra per share of the gun's heat; heat falls by this share each second. */
+    public static final int EGUN_COOLDOWN = 12;
+    public static final float EGUN_HEAT_PER_SHOT = 0.25f, EGUN_HEAT_COOLING_PER_S = 0.15f, EGUN_HEAT_COOLDOWN_TICKS = 40f;
+    /** Current over rating at which the conductor fuses and the gun is wrecked; damage to the wielder from a shock, and per excess of overvoltage. */
+    public static final float EGUN_FUSE_RATIO = 2f, EGUN_SHOCK = 2f, EGUN_SHOCK_PER_EXCESS = 4f;
+    public static final float EGUN_VOLUME = 0.6f;
+    /** The cell voltage the Blueprint Table's load figure assumes. */
+    public static final float EGUN_REF_VOLTS = 6f;
     /** Placeholder [OPEN]. The fewest and most a wielder's strength scales the cocking time by. */
     public static final float AIR_PULL_MIN = 0.5f, AIR_PULL_MAX = 3f;
     /** What the vanilla item of a crystal (a diamond pick) is made of when converted: this metal, the crystal set in it. */

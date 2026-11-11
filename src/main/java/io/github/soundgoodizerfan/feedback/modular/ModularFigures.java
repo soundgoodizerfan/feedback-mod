@@ -192,7 +192,10 @@ public record ModularFigures(List<Float> values, int step) {
         /** Joules the cocked spring stores, before any set. */
         SPRING_ENERGY,
         /** 0 to 1: the share of the spring's energy that reaches the pellet, from the barrel's length and bore. */
-        AIR_EFFICIENCY;
+        AIR_EFFICIENCY,
+        // --- an electric gun's (family ELECTRIC_GUN) ---
+        /** Joules a shot takes from the battery at full draw. */
+        SHOT_ENERGY;
 
         /** Most attachments one module carries. */
         public static final int ATTACHMENTS = 4;

@@ -20,7 +20,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - [Rotation](Rotation.md): shafts, power and gearing
 - [Heat](Heat.md): fires, vessels, processes
 - [Electricity](Electricity.md): volts, amps, and what happens when you get them wrong
-- [Guns](Guns.md) · [Spring Gun](Spring_Gun.md) and [Gun Parts](Gun_Parts.md)
+- [Guns](Guns.md) · [Spring Gun](Spring_Gun.md) · [Electric Gun](Electric_Gun.md) and [Gun Parts](Gun_Parts.md)
 - [Tools and Weapons](Tools_and_Weapons.md), [Armor](Armor.md) and [Exosuit](Exosuit.md)
 - [Combat](Combat.md), [Skills](Skills.md) and [Material Perks](Material_Perks.md)
 - [Hazards](Hazards.md): heat, steam and shock

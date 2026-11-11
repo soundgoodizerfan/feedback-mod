@@ -2,6 +2,7 @@
   "values": [
     "feedback:bow",
     "feedback:crossbow",
-    "feedback:spring_gun"
+    "feedback:spring_gun",
+    "feedback:electric_gun"
   ]
 }

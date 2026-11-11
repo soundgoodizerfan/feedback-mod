@@ -184,6 +184,8 @@ public final class ModularBake {
             case PRESSURE -> engineMetal(material) && material.mechanical().yieldStrength().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
             // a spring gun's barrel, piston and spring are metal (the spring states a yield strength); its receiver takes any material
+            // an electric gun's barrel must conduct; its receiver and grip take any material
+            case ELECTRIC_GUN -> !type.roles().get(roleKey).name().equals(ElectricGunSpec.BARREL) || material.ampacity().isPresent();
             case AIR_GUN -> {
                 String name = type.roles().get(roleKey).name();
                 yield name.equals(SpringGunSpec.RECEIVER) || (engineMetal(material)
@@ -723,6 +725,19 @@ public final class ModularBake {
                 f.put(Fig.VELOCITY, air.shot(ModularTuning.AIR_REF_DENSITY, 1f - worn).speed() / ModularTuning.AIR_BOW_ARROW_SPEED);
                 f.put(Fig.DRAW, air.cockTicks());
                 f.put(Fig.JOINT, air.load(0f));
+            }
+            case ELECTRIC_GUN -> {
+                Optional<ElectricGunSpec> spec = ElectricGunSpec.of(design, type, materials);
+                if (spec.isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                ElectricGunSpec egun = spec.get();
+                f.put(Fig.MASS, total);
+                f.put(Fig.SHOT_ENERGY, egun.energyIn() * worn);
+                f.put(Fig.VELOCITY, egun.shot(ModularTuning.AIR_REF_DENSITY, 1f).speed() / ModularTuning.AIR_BOW_ARROW_SPEED);
+                f.put(Fig.JOINT, egun.load(ModularTuning.EGUN_REF_VOLTS));
             }
             case ARMOUR -> {
                 Part plate = wearPart;

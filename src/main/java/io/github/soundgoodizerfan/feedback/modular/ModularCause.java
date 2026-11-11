@@ -29,7 +29,7 @@ public final class ModularCause {
     public static List<Part> of(Fig fig, ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
         List<Part> out = new ArrayList<>();
         boolean bow = type.family() == ModularType.Family.BOW || type.family() == ModularType.Family.CROSSBOW;
-        boolean air = type.family() == ModularType.Family.AIR_GUN;
+        boolean air = type.family() == ModularType.Family.AIR_GUN || type.family() == ModularType.Family.ELECTRIC_GUN;
         for (Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             if (role == null)
@@ -80,8 +80,10 @@ public final class ModularCause {
                 // a spring gun's: the spring stores it, the barrel and bore hand it on, the receiver is what the spring is rated against
                 case SPRING_ENERGY -> role.name().equals(SpringGunSpec.SPRING);
                 case AIR_EFFICIENCY -> role.name().equals(SpringGunSpec.BARREL);
+                case SHOT_ENERGY -> role.name().equals(ElectricGunSpec.BARREL);
                 case JOINT, DRAW, VELOCITY -> air
                         ? (fig == Fig.JOINT ? role.name().equals(SpringGunSpec.RECEIVER) || role.name().equals(SpringGunSpec.SPRING)
+                        || (type.family() == ModularType.Family.ELECTRIC_GUN && role.name().equals(ElectricGunSpec.BARREL))
                         : fig == Fig.DRAW ? role.name().equals(SpringGunSpec.SPRING)
                         : !role.name().equals(SpringGunSpec.RECEIVER))
                         : bow

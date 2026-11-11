@@ -4,7 +4,7 @@ The spring gun is a spring-piston air gun. It does not ignite anything, so it is
 
 ## Parts
 
-Made at the [Tool Table](Tool_Table.md) from a **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons):
+Made at the bench that suits the stock ([Smithing Table](Smithing_Table.md) for metal, [Woodworking Table](Woodworking_Table.md) for wood) from a **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons):
 
 | Part | Takes | Does |
 | --- | --- | --- |
