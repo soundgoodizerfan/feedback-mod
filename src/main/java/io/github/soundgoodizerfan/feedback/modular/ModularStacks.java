@@ -585,8 +585,8 @@ public final class ModularStacks {
         Part main = d.part(type != null ? type.primary() : d.parts().get(0).role());
         if (main == null)
             return typeName;
-        if (type != null && type.family() == ModularType.Family.ARMOUR) {
-            Optional<Component> built = ArmourNames.of(d, type, typeName);
+        if (type != null && BuildNames.names(type)) {
+            Optional<Component> built = BuildNames.of(d, type, typeName);
             if (built.isPresent())
                 return built.get();
         }

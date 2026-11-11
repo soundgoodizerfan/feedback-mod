@@ -35,20 +35,6 @@
         ],
         "variants": [
           {
-            "name": "sledge",
-            "trait": "slam",
-            "params": {
-              "radius": 3.5,
-              "shove": 1,
-              "wear": 3
-            },
-            "cells": 8,
-            "reach": 0.02,
-            "centre": 0.04,
-            "section": 1.2,
-            "strike": 1.1
-          },
-          {
             "name": "war_hammer",
             "trait": "pierce",
             "params": {
@@ -74,6 +60,56 @@
             "mass": 0.89
           }
         ]
+      },
+      "axes": {
+        "edge_length": {
+          "min": 5,
+          "max": 20,
+          "unit": "cm",
+          "default": 10,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 7.5
+            },
+            {
+              "name": "normal",
+              "max": 12.5
+            },
+            {
+              "name": "long"
+            }
+          ]
+        },
+        "head_size": {
+          "min": 8,
+          "max": 26,
+          "unit": "cm",
+          "default": 14,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "small",
+              "max": 10.5
+            },
+            {
+              "name": "normal",
+              "max": 17.5
+            },
+            {
+              "name": "large",
+              "trait": "slam",
+              "params": {
+                "radius": 3.5,
+                "shove": 1,
+                "wear": 3
+              }
+            }
+          ]
+        }
       }
     },
     "S": {
@@ -152,5 +188,15 @@
   },
   "vanilla": {
     "mace": "heavy_core"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "sledgehammer",
+        "is": {
+          "head_size": "large"
+        }
+      }
+    ]
   }
 }

@@ -32,18 +32,6 @@
         ],
         "variants": [
           {
-            "name": "scythe",
-            "trait": "scythe",
-            "params": {
-              "per_wear": 3,
-              "mob_mult": 0.7
-            },
-            "cells": 4,
-            "reach": 0.05,
-            "centre": 0.05,
-            "strike": 0.8
-          },
-          {
             "name": "billhook",
             "trait": "billhook",
             "params": {
@@ -70,6 +58,55 @@
             "mass": 0.9
           }
         ]
+      },
+      "axes": {
+        "edge_length": {
+          "min": 12,
+          "max": 50,
+          "unit": "cm",
+          "default": 25,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 18.75
+            },
+            {
+              "name": "normal",
+              "max": 31.25
+            },
+            {
+              "name": "long",
+              "trait": "scythe",
+              "params": {
+                "per_wear": 3,
+                "mob_mult": 0.7
+              }
+            }
+          ]
+        },
+        "head_size": {
+          "min": 8,
+          "max": 24,
+          "unit": "cm",
+          "default": 14,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "small",
+              "max": 10.5
+            },
+            {
+              "name": "normal",
+              "max": 17.5
+            },
+            {
+              "name": "large"
+            }
+          ]
+        }
       }
     },
     "S": {
@@ -167,5 +204,15 @@
         0
       ]
     }
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "scythe",
+        "is": {
+          "edge_length": "long"
+        }
+      }
+    ]
   }
 }

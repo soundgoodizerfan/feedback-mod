@@ -29,6 +29,7 @@ public final class ModularCause {
     public static List<Part> of(Fig fig, ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
         List<Part> out = new ArrayList<>();
         boolean bow = type.family() == ModularType.Family.BOW || type.family() == ModularType.Family.CROSSBOW;
+        boolean air = type.family() == ModularType.Family.AIR_GUN;
         for (Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             if (role == null)
@@ -76,7 +77,14 @@ public final class ModularCause {
                 // a dish's profile is read live off the whole dish, no one part is down to it
                 case DISH_COOK, DISH_MOISTURE, DISH_SALT, DISH_SMOKE, DISH_FRESH, DISH_WARMTH, SHARE_MEAT, SHARE_SEAFOOD, SHARE_PLANT, SHARE_STARCH,
                         CUISINE_ITALIAN, CUISINE_EAST_ASIAN, CUISINE_MEXICAN, CUISINE_EASTERN_EUROPEAN -> false;
-                case JOINT, DRAW, VELOCITY -> bow
+                // a spring gun's: the spring stores it, the barrel and bore hand it on, the receiver is what the spring is rated against
+                case SPRING_ENERGY -> role.name().equals(SpringGunSpec.SPRING);
+                case AIR_EFFICIENCY -> role.name().equals(SpringGunSpec.BARREL);
+                case JOINT, DRAW, VELOCITY -> air
+                        ? (fig == Fig.JOINT ? role.name().equals(SpringGunSpec.RECEIVER) || role.name().equals(SpringGunSpec.SPRING)
+                        : fig == Fig.DRAW ? role.name().equals(SpringGunSpec.SPRING)
+                        : !role.name().equals(SpringGunSpec.RECEIVER))
+                        : bow
                         ? role.name().equals("string") || role.name().equals("limbs") || role.name().equals("prod")
                         : role.name().equals("binding") || p.equals(weakest(design, type, materials));
             };

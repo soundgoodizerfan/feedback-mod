@@ -24,22 +24,32 @@ public record ModularHeads(List<ModularType.Mine> mines, float strike, int cells
 
     private static int generation = -1;
     private static Map<String, ModularHeads> cache = Map.of();
+    private static Map<String, Map<String, ModularType.Axis>> axesCache = Map.of();
 
     /** The head kind {@code kind} names ({@code pickaxe_head}), if some single-head type's wearing role is made of it. */
     public static Optional<ModularHeads> of(String kind) {
         if (generation != ModularTypes.generation()) {
             Map<String, ModularHeads> built = new HashMap<>();
+            Map<String, Map<String, ModularType.Axis>> axes = new HashMap<>();
             for (ModularType type : ModularTypes.known().values()) {
                 ModularType.Role wear = type.roles().get(type.wearRole());
                 if (wear == null || wear.striker() || wear.part().isEmpty() || type.mines().isEmpty())
                     continue;
                 ModularType.Shaping shaping = wear.part().get();
                 built.put(shaping.item().getPath(), new ModularHeads(type.mines(), type.strike(), (int) Math.ceil(shaping.cells()), shaping));
+                axes.put(shaping.item().getPath(), wear.axes());
             }
             cache = built;
+            axesCache = axes;
             generation = ModularTypes.generation();
         }
         return Optional.ofNullable(cache.get(kind));
+    }
+
+    /** The axes a head of kind {@code kind} carries (the single-head type's own: head size, edge length); empty for a kind with none. */
+    public static Map<String, ModularType.Axis> axesOf(String kind) {
+        of(kind);
+        return axesCache.getOrDefault(kind, Map.of());
     }
 
     /** The kind a part of a striking role is: what it records, else the role's first kind. */

@@ -187,7 +187,12 @@ public record ModularFigures(List<Float> values, int step) {
         /** 0 to {@code PIERCE_RESIST_MAX}: the share of pierce (projectile) damage the piece turns aside; worn pieces add by slot weight. */
         PIERCE_RESIST,
         /** The plate material's thermal conductivity times the plate's volume: how readily it carries fire's heat to the wearer. 0 for cloth and leather. */
-        FIRE_CONDUCT;
+        FIRE_CONDUCT,
+        // --- a spring gun's (family AIR_GUN) ---
+        /** Joules the cocked spring stores, before any set. */
+        SPRING_ENERGY,
+        /** 0 to 1: the share of the spring's energy that reaches the pellet, from the barrel's length and bore. */
+        AIR_EFFICIENCY;
 
         /** Most attachments one module carries. */
         public static final int ATTACHMENTS = 4;

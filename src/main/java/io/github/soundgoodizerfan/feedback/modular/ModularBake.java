@@ -160,7 +160,7 @@ public final class ModularBake {
 
     /**
      * Whether {@code material} can fill {@code roleKey} of a {@code type} and still bake: a battery's plates must state a
-     * {@code secondary_cell} and its case must insulate, a machine's winding must conduct and its housing state a conductivity, a vessel's body must hold experience, a charge's filler must be a chemical propellant. Other families take any material their role accepts.
+     * {@code secondary_cell} and its case must insulate, a machine's winding must conduct and its housing state a conductivity, a vessel's body must hold experience, a charge's filler must be a chemical propellant, a spring gun's barrel, piston and spring must be metal (the spring with a yield strength). Other families take any material their role accepts.
      */
     public static boolean suits(ModularType type, String roleKey, Material material) {
         if (material.traits().contains(Material.Trait.ASSEMBLY))
@@ -180,6 +180,12 @@ public final class ModularBake {
             // a module's wiring must conduct; its casing and core take any material their shapes accept
             case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
+            // a spring gun's barrel, piston and spring are metal (the spring states a yield strength); its receiver takes any material
+            case AIR_GUN -> {
+                String name = type.roles().get(roleKey).name();
+                yield name.equals(SpringGunSpec.RECEIVER) || (engineMetal(material)
+                        && (!name.equals(SpringGunSpec.SPRING) || material.mechanical().yieldStrength().isPresent()));
+            }
             case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().isPresent();
             default -> true;
         };
@@ -652,6 +658,21 @@ public final class ModularBake {
                 f.put(Fig.DRAW, clamp(ModularTuning.DRAW_REFERENCE_TICKS * (float) Math.sqrt(ratio),
                         ModularTuning.DRAW_MIN_TICKS, ModularTuning.DRAW_MAX_TICKS));
                 f.put(Fig.JOINT, string > 0 ? drive / (ModularTuning.STRING_SHARE * string) : 0f);
+            }
+            case AIR_GUN -> {
+                Optional<SpringGunSpec> spec = SpringGunSpec.of(design, type, materials);
+                if (spec.isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                SpringGunSpec air = spec.get();
+                f.put(Fig.MASS, total);
+                f.put(Fig.SPRING_ENERGY, air.energy() * worn);
+                f.put(Fig.AIR_EFFICIENCY, air.efficiency());
+                f.put(Fig.VELOCITY, air.shot(ModularTuning.AIR_REF_DENSITY, 1f - worn).speed() / ModularTuning.AIR_BOW_ARROW_SPEED);
+                f.put(Fig.DRAW, air.cockTicks());
+                f.put(Fig.JOINT, air.load(0f));
             }
             case ARMOUR -> {
                 Part plate = wearPart;

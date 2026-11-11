@@ -139,6 +139,10 @@ public final class ModularModifiers {
             forVariant(type, variant.get()).stream().filter(m -> m.kind() != Kind.SHAPE).forEach(out::add);
         else
             trait(type.trait(), type.traitParams()).ifPresent(out::add);
+        // The traits the bands of its axes grant (a long blade swings overhead), each once.
+        for (ModularTraits.Active a : ModularTraits.bands(design, type))
+            if (out.stream().noneMatch(m -> m.kind() == Kind.TRAIT && m.id().equals(a.id())))
+                trait(a.id(), a.params().values()).ifPresent(out::add);
         return out;
     }
 

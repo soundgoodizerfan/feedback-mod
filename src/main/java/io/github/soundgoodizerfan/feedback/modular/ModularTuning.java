@@ -87,6 +87,36 @@ public final class ModularTuning {
     public static final float COOLING_SHED_PER_LS = 120f;
     /** Placeholder [OPEN]. Litres of magazine that hold one bolt (a repeater's load is the magazine's volume over this). */
     public static final float MAGAZINE_LITRES_PER_BOLT = 0.04f;
+    // --- the spring gun ({@link SpringGunSpec}) ---------------------------------------------------
+
+    /** Placeholder [OPEN]. Joules a spring stores per litre of spring times its stock's yield strength (wrought iron 8: two 0.05 L wires store 120 J). */
+    public static final float AIR_JOULES_PER_LS = 150f;
+    /** Placeholder [OPEN]. Joules per litre of receiver times its yield strength that the mount holds before the spring takes a set. */
+    public static final float AIR_RATING_PER_LS = 150f;
+    /** Placeholder [OPEN]. Joules of spring a wielder of strength 1 cocks per tick: the cocking time is the stored energy over this. */
+    public static final float AIR_COCK_J_PER_TICK = 5f;
+    public static final float AIR_COCK_MIN_TICKS = 12f, AIR_COCK_MAX_TICKS = 200f;
+    /** Placeholder [OPEN]. The share of its energy that the push can give the piston and pellet at best, before the barrel and bore take theirs. */
+    public static final float AIR_ENVELOPE = 0.8f;
+    /** Placeholder [OPEN]. A barrel this long (m) keeps half the push; a bore this wide (mm) wastes half of what reaches it. */
+    public static final float AIR_LENGTH_HALF = 0.15f, AIR_BORE_HALF = 8f;
+    /** Placeholder [OPEN]. The share of the piston's mass that moves with the pellet at the muzzle. */
+    public static final float AIR_PISTON_SHARE = 0.3f;
+    /** Placeholder [OPEN]. A pellet is a plug of its length in bores of the bore: its volume is this times the bore's disc area times the bore. */
+    public static final float AIR_PELLET_LENGTHS = 1.5f;
+    /** Litres of metal in one nugget (1 Qu, 16 mB): how many pellets of a bore it is worth. */
+    public static final float AIR_NUGGET_LITRES = 0.016f;
+    /** Placeholder [OPEN]. Hit damage per joule the pellet carries, and the fastest one leaves, in blocks per tick (a vanilla bow's arrow: 3). */
+    public static final float AIR_DAMAGE_PER_J = 0.5f, AIR_SPEED_MAX = 4.5f, AIR_BOW_ARROW_SPEED = 3f;
+    /** Placeholder [OPEN]. The reference pellet metal's density (iron, kg per litre) the baked velocity figure reads. */
+    public static final float AIR_REF_DENSITY = 7.87f;
+    /** Placeholder [OPEN]. The shot's inaccuracy at a barrel as long as {@link #AIR_LENGTH_HALF}; a longer barrel shoots truer. */
+    public static final float AIR_SPREAD = 1.5f;
+    /** Placeholder [OPEN]. Ticks between a shot and the next click, and the loudness of the release against a bow's. */
+    public static final int AIR_SHOT_COOLDOWN = 6;
+    public static final float AIR_VOLUME = 0.25f;
+    /** Placeholder [OPEN]. The fewest and most a wielder's strength scales the cocking time by. */
+    public static final float AIR_PULL_MIN = 0.5f, AIR_PULL_MAX = 3f;
     /** What the vanilla item of a crystal (a diamond pick) is made of when converted: this metal, the crystal set in it. */
     public static final net.minecraft.resources.ResourceLocation CRYSTAL_BODY =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel");
@@ -488,6 +518,10 @@ public final class ModularTuning {
     public static final float AXIS_ERROR_RATIO_SPAN = 0.5f, AXIS_ERROR_PER_FLAW = 0.02f;
     /** Placeholder [OPEN]. The most an armour piece's cover reaches: a tall, wide plate covers more than the canonical one, to this share. */
     public static final float ARMOUR_COVER_MAX = 1.3f;
+    /** Placeholder [OPEN]. A {@code length} axis (cm): metres of reach per unit beyond its default, and the share of that the centre of mass moves. */
+    public static final float AXIS_LENGTH_M_PER_UNIT = 0.01f, AXIS_LENGTH_CENTRE_SHARE = 0.5f;
+    /** Placeholder [OPEN]. A {@code width} axis scales strike by the square root of its ratio, kept within these. */
+    public static final float AXIS_WIDTH_STRIKE_MIN = 0.8f, AXIS_WIDTH_STRIKE_MAX = 1.25f;
     /** Placeholder [OPEN]. The most pierce damage one piece turns aside, as a share. */
     public static final float PIERCE_RESIST_MAX = 0.6f;
     /** Placeholder [OPEN]. How much of the whole pierce resistance each worn slot carries: chest, legs, head, feet (they sum to 1). */

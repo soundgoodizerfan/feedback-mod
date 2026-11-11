@@ -188,7 +188,22 @@ public final class ModularTraits {
                 if (id.isPresent())
                     out.add(new Active(id.get(), REGISTRY.get(id.get()), new ModularTrait.Params(role.params())));
             }
-            // A band of an axis may grant a trait where physics has no model of the range (a closed face opening is a closed visor).
+        }
+        return out;
+    }
+
+    /**
+     * The traits the bands of {@code design}'s axes grant, in role order: where physics has no model of a range (a closed face opening is a
+     * closed visor, a long blade swings overhead), the band names the trait and its numbers ({@link ModularType.Band}).
+     */
+    public static List<Active> bands(ModularDesign design, ModularType type) {
+        List<Active> out = new ArrayList<>(2);
+        for (String key : type.order()) {
+            ModularType.Role role = type.roles().get(key);
+            ModularDesign.Part part = role == null ? null : design.part(key);
+            if (part == null)
+                continue;
+            // Only a role's own axes grant traits: a head set in a twin tool keeps its size but not the single tool's behaviour.
             for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
                 ModularType.Band band = a.getValue().band(part.axis(a.getKey(), a.getValue().def()));
                 Optional<String> id = band == null ? Optional.empty() : firstId(band.trait());
@@ -203,7 +218,12 @@ public final class ModularTraits {
     public static List<Active> actives(ItemStack stack) {
         List<Active> out = new ArrayList<>(2);
         of(stack).ifPresent(out::add);
-        for (Active a : addons(stack))
+        List<Active> more = new ArrayList<>(addons(stack));
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type != null)
+            more.addAll(bands(design, type));
+        for (Active a : more)
             if (out.stream().noneMatch(o -> o.id().equals(a.id())))
                 out.add(a);
         return out;
@@ -234,6 +254,9 @@ public final class ModularTraits {
             String id = firstId(variant.get().trait()).get();
             return Optional.of(new Active(id, REGISTRY.get(id), new ModularTrait.Params(variant.get().params())));
         }
+        List<Active> banded = bands(design, type);
+        if (!banded.isEmpty())
+            return Optional.of(banded.get(0));
         if (!type.trait().isEmpty() && REGISTRY.containsKey(type.trait()))
             return Optional.of(new Active(type.trait(), REGISTRY.get(type.trait()), new ModularTrait.Params(type.traitParams())));
         return Optional.empty();

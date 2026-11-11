@@ -56,6 +56,50 @@
             "strike": 1.15
           }
         ]
+      },
+      "axes": {
+        "edge_length": {
+          "min": 8,
+          "max": 28,
+          "unit": "cm",
+          "default": 16,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 12.0
+            },
+            {
+              "name": "normal",
+              "max": 20.0
+            },
+            {
+              "name": "long"
+            }
+          ]
+        },
+        "head_size": {
+          "min": 8,
+          "max": 24,
+          "unit": "cm",
+          "default": 14,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "small",
+              "max": 10.5
+            },
+            {
+              "name": "normal",
+              "max": 17.5
+            },
+            {
+              "name": "large"
+            }
+          ]
+        }
       }
     },
     "S": {

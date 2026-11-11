@@ -21,26 +21,6 @@
         ],
         "variants": [
           {
-            "name": "shortbow",
-            "cells": 2,
-            "trait": "snap_shot",
-            "params": {
-              "draw_mult": 0.6,
-              "velocity_mult": 0.8,
-              "slow": 0
-            }
-          },
-          {
-            "name": "longbow",
-            "cells": 4,
-            "trait": "heavy_draw",
-            "params": {
-              "draw_mult": 1.5,
-              "velocity_mult": 1.3,
-              "slow": 0.3
-            }
-          },
-          {
             "name": "recurve",
             "rhythm": "t.th.t.th.t.",
             "trait": "recurve",
@@ -63,6 +43,41 @@
             }
           }
         ]
+      },
+      "axes": {
+        "limb_length": {
+          "min": 60,
+          "max": 180,
+          "unit": "cm",
+          "default": 110,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 85,
+              "trait": "snap_shot",
+              "params": {
+                "draw_mult": 0.6,
+                "velocity_mult": 0.8,
+                "slow": 0
+              }
+            },
+            {
+              "name": "normal",
+              "max": 135
+            },
+            {
+              "name": "long",
+              "trait": "heavy_draw",
+              "params": {
+                "draw_mult": 1.5,
+                "velocity_mult": 1.3,
+                "slow": 0.3
+              }
+            }
+          ]
+        }
       }
     },
     "W": {
@@ -89,5 +104,21 @@
   },
   "vanilla": {
     "bow": "stick"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "shortbow",
+        "is": {
+          "limb_length": "short"
+        }
+      },
+      {
+        "name": "longbow",
+        "is": {
+          "limb_length": "long"
+        }
+      }
+    ]
   }
 }

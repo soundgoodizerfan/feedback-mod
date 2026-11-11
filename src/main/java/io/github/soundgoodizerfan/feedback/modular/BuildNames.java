@@ -13,22 +13,30 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 /**
- * The retroactive name of an armour build (spec 3, naming). Armour has no fixed list of kinds, so a build is named after it is made:
- * the first of the type's ordered {@code designations} ({@link ModularType.Designation}) whose conditions hold of the plate's bands,
- * its variant and the roles filled, else an automatic name in the grammar <em>size, variant, material, designation or type</em>
- * ("Long Scale Iron Chestplate"). A word a designation's rule already requires is dropped from the automatic name (a designation that
+ * The retroactive name of a build (spec 3, naming), for every type but the gun (which has {@code GunDesignation}). A build has no fixed list
+ * of kinds, so it is named after it is made: the first of the type's ordered {@code designations} ({@link ModularType.Designation}) whose
+ * conditions hold of the wearing part's bands, its variant and the roles filled, else an automatic name in the grammar
+ * <em>size, variant, material, designation or type</em> ("Long Scale Iron Chestplate", "Wide Serrated Iron Sword"). A word a designation's rule already requires is dropped from the automatic name (a designation that
  * needs the {@code long} band never says "long" twice), as is any a designation lists under {@code implies}. A name is a signpost, never a
  * bonus: what the piece does comes from its choices and their traits, so archetypes grant no set effect.
  *
- * <p>A rule's {@code is} keys are the names of an axis of the plate ({@code width: wide|narrow}), {@code variant}, or the name of a role
+ * <p>A rule's {@code is} keys are the names of an axis of the wearing part ({@code width: wide|narrow}), {@code variant}, or the name of a role
  * filled on the piece ({@code collar: fitted}). A value may list alternatives with {@code |}.
  */
-public final class ArmourNames {
+public final class BuildNames {
 
     /** The value a filled addon role has among a build's facts. */
     public static final String FITTED = "fitted";
 
-    private ArmourNames() {
+    private BuildNames() {
+    }
+
+    /** Whether {@code type} names its builds this way: it lists designations, or its wearing part has axes whose bands make size words. */
+    public static boolean names(ModularType type) {
+        if (type.family() == ModularType.Family.GUN)
+            return false;
+        ModularType.Role wear = type.roles().get(type.wearRole());
+        return !type.names().designations().isEmpty() || wear != null && wear.axes().values().stream().anyMatch(a -> !a.bands().isEmpty());
     }
 
     /** The facts a designation rule reads: the plate's axis bands, its variant, and the roles filled. */
@@ -37,7 +45,7 @@ public final class ArmourNames {
         ModularDesign.Part plate = design.part(type.wearRole());
         ModularType.Role role = type.roles().get(type.wearRole());
         if (plate != null && role != null) {
-            for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
+            for (Map.Entry<String, ModularType.Axis> a : role.axesFor(plate).entrySet()) {
                 ModularType.Band band = a.getValue().band(plate.axis(a.getKey(), a.getValue().def()));
                 if (band != null)
                     facts.put(a.getKey(), band.name());
@@ -81,15 +89,32 @@ public final class ArmourNames {
         ModularType.Role role = type.roles().get(type.wearRole());
         // Size words: the bands the plate's axes sit in, but the unremarkable one.
         if (role != null)
-            for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
+            for (Map.Entry<String, ModularType.Axis> a : role.axesFor(plate).entrySet()) {
                 ModularType.Band band = a.getValue().band(plate.axis(a.getKey(), a.getValue().def()));
                 if (band != null && !band.name().equals("normal") && !dropped.contains(band.name()))
                     out.append(Component.translatable("modular.feedback.band." + band.name())).append(" ");
             }
-        if (!plate.variant().isEmpty() && !dropped.contains(plate.variant()))
-            out.append(Component.translatable("modular.feedback.archetype." + plate.variant())).append(" ");
-        out.append(Component.translatable("material." + plate.material().getNamespace() + "." + plate.material().getPath())).append(" ");
-        out.append(named.<Component>map(d -> Component.translatable("armour.feedback.designation." + d.name())).orElse(typeName));
+        // A shape that is an adjective stands beside the type's name; one that names the whole thing (a pitchfork) stands for it.
+        boolean adjective = type.family() == ModularType.Family.ARMOUR || role != null && role.variant(plate).map(ModularType.Variant::adjective).orElse(false);
+        Component shape = null;
+        if (!plate.variant().isEmpty() && !dropped.contains(plate.variant())) {
+            Component word = Component.translatable("modular.feedback.archetype." + plate.variant());
+            if (adjective)
+                out.append(word).append(" ");
+            else
+                shape = word;
+        }
+        MutableComponent material = Component.translatable("material." + plate.material().getNamespace() + "." + plate.material().getPath());
+        Component noun = named.<Component>map(d -> Component.translatable("armour.feedback.designation." + d.name())).orElse(shape != null ? shape : typeName);
+        // A hard piece set into the wearing part (a tip, studs) names the build as it names a plain one.
+        for (ModularDesign.Part p : design.parts()) {
+            ModularType.Role r = type.roles().get(p.role());
+            if (r != null && r.set())
+                return Optional.of(Component.translatable("item.feedback.modular_name." + r.name(),
+                        Component.translatable("material." + p.material().getNamespace() + "." + p.material().getPath()),
+                        out.append(material), noun));
+        }
+        out.append(material).append(" ").append(noun);
         return Optional.of(out);
     }
 }

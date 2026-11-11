@@ -43,41 +43,68 @@
             "reach": 0.02,
             "centre": 0.02,
             "strike": 1.1
-          },
-          {
-            "name": "hatchet",
-            "trait": "throw",
-            "params": {
-              "min_charge_ticks": 10,
-              "damage_per_block": 0.35,
-              "max_mult": 2.5,
-              "full_charge_ticks": 20,
-              "tumble": 1,
-              "return": 0,
-              "wear": 2
-            },
-            "rhythm": "t.tt.t.tt.t.",
-            "reach": -0.03,
-            "centre": -0.03,
-            "section": 0.9,
-            "strike": 0.9,
-            "mass": 0.8
-          },
-          {
-            "name": "felling",
-            "trait": "timber",
-            "params": {
-              "cap": 24,
-              "max_radius": 12,
-              "wear_per_log": 1
-            },
-            "rhythm": "h.h..h.h..hh",
-            "reach": 0.03,
-            "centre": 0.03,
-            "section": 1.15,
-            "strike": 1.2
           }
         ]
+      },
+      "axes": {
+        "edge_length": {
+          "min": 5,
+          "max": 20,
+          "unit": "cm",
+          "default": 10,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 7.5
+            },
+            {
+              "name": "normal",
+              "max": 12.5
+            },
+            {
+              "name": "long"
+            }
+          ]
+        },
+        "head_size": {
+          "min": 8,
+          "max": 24,
+          "unit": "cm",
+          "default": 14,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "small",
+              "max": 10.5,
+              "trait": "throw",
+              "params": {
+                "min_charge_ticks": 10,
+                "damage_per_block": 0.35,
+                "max_mult": 2.5,
+                "full_charge_ticks": 20,
+                "tumble": 1,
+                "return": 0,
+                "wear": 2
+              }
+            },
+            {
+              "name": "normal",
+              "max": 17.5
+            },
+            {
+              "name": "large",
+              "trait": "timber",
+              "params": {
+                "cap": 24,
+                "max_radius": 12,
+                "wear_per_log": 1
+              }
+            }
+          ]
+        }
       }
     },
     "S": {
@@ -178,5 +205,21 @@
         0
       ]
     }
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "hatchet",
+        "is": {
+          "head_size": "small"
+        }
+      },
+      {
+        "name": "felling_axe",
+        "is": {
+          "head_size": "large"
+        }
+      }
+    ]
   }
 }

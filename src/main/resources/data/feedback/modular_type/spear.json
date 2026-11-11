@@ -39,20 +39,6 @@
             "mass": 1.92
           },
           {
-            "name": "javelin",
-            "cells": 2,
-            "trait": "lunge",
-            "params": {
-              "sprint_mult": 1.4,
-              "still_mult": 0.85
-            },
-            "reach": 0.08,
-            "centre": -0.02,
-            "section": 0.7,
-            "strike": 1.0,
-            "mass": 1.7
-          },
-          {
             "name": "harpoon",
             "trait": "harpoon",
             "params": {
@@ -87,6 +73,55 @@
             "mass": 1.92
           }
         ]
+      },
+      "axes": {
+        "edge_length": {
+          "min": 10,
+          "max": 40,
+          "unit": "cm",
+          "default": 20,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 15.0
+            },
+            {
+              "name": "normal",
+              "max": 25.0
+            },
+            {
+              "name": "long"
+            }
+          ]
+        },
+        "head_size": {
+          "min": 6,
+          "max": 22,
+          "unit": "cm",
+          "default": 12,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "small",
+              "max": 9.0,
+              "trait": "lunge",
+              "params": {
+                "sprint_mult": 1.4,
+                "still_mult": 0.85
+              }
+            },
+            {
+              "name": "normal",
+              "max": 15.0
+            },
+            {
+              "name": "large"
+            }
+          ]
+        }
       }
     },
     "S": {
@@ -222,5 +257,15 @@
         0
       ]
     }
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "javelin",
+        "is": {
+          "head_size": "small"
+        }
+      }
+    ]
   }
 }
