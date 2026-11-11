@@ -106,6 +106,8 @@ public final class Joint {
     public enum Kind { HINGE, BALL, LOCKED, SLIDER, PISTON }
 
     private Kind kind = Kind.HINGE;
+    /** A linkage: it ties a body that already existed to the joint's own, instead of holding one the joint made. Putting it back only lets it go. */
+    private boolean linked;
     /** The cone (ball) or spring band (slider) the player chose: an index into {@link FTuning#BALL_CONE_RAD} or {@link FTuning#SUSPENSION_HZ}. */
     private int variant = 1;
     /** Reach either side of rest of a slider or piston, blocks. */
@@ -248,6 +250,14 @@ public final class Joint {
 
     public Kind kind() {
         return kind;
+    }
+
+    public boolean linked() {
+        return linked;
+    }
+
+    public void markLinked() {
+        linked = true;
     }
 
     public float condition() {
@@ -715,6 +725,7 @@ public final class Joint {
         CompoundTag tag = new CompoundTag();
         tag.putUUID("Body", body);
         tag.putString("Kind", kind.name());
+        tag.putBoolean("Linked", linked);
         tag.putInt("Variant", variant);
         tag.putFloat("Condition", condition);
         tag.putFloat("Pad", pad);
@@ -737,6 +748,7 @@ public final class Joint {
         Joint j = new Joint(tag.getUUID("Body"), BlockPos.of(tag.getLong("HomeFrom")), BlockPos.of(tag.getLong("HomeTo")));
         if (tag.contains("Kind"))
             j.kind = parseKind(tag.getString("Kind"));
+        j.linked = tag.getBoolean("Linked");
         j.variant = Math.clamp(tag.getInt("Variant"), 0, 4);
         j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
         j.pad = tag.contains("Pad") ? tag.getFloat("Pad") : 1;

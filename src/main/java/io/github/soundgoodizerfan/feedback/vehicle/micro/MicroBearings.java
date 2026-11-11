@@ -129,6 +129,13 @@ public final class MicroBearings {
                             skins.put(voxel(e.getKey(), i), c.skin(i));
                     }
         List<BlockPos> cells = new ArrayList<>(staying.keySet());
+        // Inside a body, the full-size blocks the arm touches (an engine, a chest) go with it. Not in the world: the ground would come too.
+        if (parent != null) {
+            List<BlockPos> full = fullBeside(level, moving, cellPos, MicroPlacer.cellOf(host.getX(), host.getY(), host.getZ()));
+            if (full == null)
+                return "too_big";
+            cells.addAll(full);
+        }
         // What each world cell carries besides its voxels -- other bearings' holds, their clearances --
         // goes into the body with the whole cell, so it is taken now and given to the cell made anew.
         Map<BlockPos, Carried> carried = new LinkedHashMap<>();
@@ -211,6 +218,40 @@ public final class MicroBearings {
         return "assembled";
     }
 
+    /**
+     * The full-size blocks that touch the cells of {@code moving} voxels across a cell edge, and the blocks joined to those through
+     * their faces, apart from the bearing's cell and its host's; null if there are too many.
+     */
+    @Nullable
+    private static List<BlockPos> fullBeside(ServerLevel level, Set<BlockPos> moving, BlockPos bearingCell, BlockPos hostCell) {
+        Set<BlockPos> found = new java.util.LinkedHashSet<>();
+        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        for (BlockPos v : moving)
+            for (Direction d : Direction.values()) {
+                BlockPos from = MicroPlacer.cellOf(v.getX(), v.getY(), v.getZ()), c = MicroPlacer.cellOf(v.getX() + d.getStepX(), v.getY() + d.getStepY(), v.getZ() + d.getStepZ());
+                if (!c.equals(from) && wholeBlock(level, c) && !c.equals(bearingCell) && !c.equals(hostCell) && found.add(c.immutable()))
+                    queue.add(c.immutable());
+            }
+        while (!queue.isEmpty()) {
+            BlockPos c = queue.poll();
+            for (Direction d : Direction.values()) {
+                BlockPos n = c.relative(d);
+                if (wholeBlock(level, n) && !n.equals(bearingCell) && !n.equals(hostCell) && found.add(n)) {
+                    if (found.size() > FTuning.ROTARY_BEARING_MAX_BLOCKS)
+                        return null;
+                    queue.add(n);
+                }
+            }
+        }
+        return new ArrayList<>(found);
+    }
+
+    /** A full-size block stands at {@code pos}: not air, not replaceable, not a micro cell. */
+    private static boolean wholeBlock(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return !state.isAir() && !state.canBeReplaced() && !(state.getBlock() instanceof MicroCellBlock);
+    }
+
     private static org.joml.Vector3d faceCentre(BlockPos v, Direction f) {
         return new org.joml.Vector3d((v.getX() + 0.5 + 0.5 * f.getStepX()) / N, (v.getY() + 0.5 + 0.5 * f.getStepY()) / N,
                 (v.getZ() + 0.5 + 0.5 * f.getStepZ()) / N);
@@ -228,6 +269,13 @@ public final class MicroBearings {
     }
 
     private static String putBack(ServerLevel level, MicroCellBlockEntity cell, int index, Joint joint, Direction f) {
+        // A linkage held a body that was already there: it only lets go.
+        if (joint.linked()) {
+            joint.letGo();
+            cell.setBearing(index, null);
+            unclear(level, joint);
+            return "disassembled";
+        }
         ServerSubLevel s = joint.held(level);
         if (s == null)
             return "not_loaded";
@@ -254,6 +302,28 @@ public final class MicroBearings {
                         if (inBody.skin(i) != null)
                             skinMoves.put(to, inBody.skin(i));
                     }
+        // The full-size blocks of the body: each lands on the grid only if the turn puts its voxels on whole cells; else it must be turned back first.
+        Map<BlockPos, BlockPos> fullTargets = new LinkedHashMap<>();
+        java.util.function.UnaryOperator<BlockState> stateTurn = st -> hinge ? turn(st, axis, k) : turn(st, snapped);
+        for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ())) {
+            BlockState st = level.getBlockState(p);
+            if (st.isAir() || st instanceof BlockState && st.getBlock() instanceof MicroCellBlock)
+                continue;
+            BlockPos q = p.offset(offset), lo = new BlockPos(q.getX() * N, q.getY() * N, q.getZ() * N), hi = lo.offset(N - 1, N - 1, N - 1);
+            BlockPos a = hinge ? turn(lo, b, axis, k) : turn(lo, b, snapped), c2 = hinge ? turn(hi, b, axis, k) : turn(hi, b, snapped);
+            int mx = Math.min(a.getX(), c2.getX()), my = Math.min(a.getY(), c2.getY()), mz = Math.min(a.getZ(), c2.getZ());
+            if (Math.floorMod(mx, N) != 0 || Math.floorMod(my, N) != 0 || Math.floorMod(mz, N) != 0)
+                return "misaligned";
+            fullTargets.put(p.immutable(), new BlockPos(Math.floorDiv(mx, N), Math.floorDiv(my, N), Math.floorDiv(mz, N)));
+        }
+        java.util.Set<BlockPos> microCells = new java.util.HashSet<>();
+        for (BlockPos v : moves.keySet())
+            microCells.add(MicroPlacer.cellOf(v.getX(), v.getY(), v.getZ()));
+        for (BlockPos t : fullTargets.values()) {
+            BlockState there = level.getBlockState(t);
+            if (microCells.contains(t) || !(there.isAir() || there.canBeReplaced() && there.getFluidState().isEmpty()))
+                return "blocked";
+        }
         for (BlockPos v : moves.keySet()) {
             BlockPos c = MicroPlacer.cellOf(v.getX(), v.getY(), v.getZ());
             BlockState there = level.getBlockState(c);
@@ -265,6 +335,8 @@ public final class MicroBearings {
         joint.letGo();
         cell.setBearing(index, null);
         unclear(level, joint);
+        if (!fullTargets.isEmpty())
+            SubLevelAssemblyHelper.moveBlocks(level, new FullBlockTransform(joint.homeFrom(), joint.homeTo(), level, fullTargets, stateTurn), new ArrayList<>(fullTargets.keySet()));
         ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
         for (var m : moves.entrySet()) {
             MicroPlacer.put(level, m.getKey().getX(), m.getKey().getY(), m.getKey().getZ(), m.getValue());

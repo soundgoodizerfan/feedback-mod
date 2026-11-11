@@ -248,6 +248,12 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
     @Override
     protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                                                   net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+        if (stack.getItem() instanceof JointLinkItem && level.getBlockEntity(pos) instanceof MicroCellBlockEntity linked) {
+            int p = linked.pick(hit.getLocation(), hit.getDirection());
+            if (p >= 0 && !level.isClientSide)
+                MicroLinks.use(player, linked, p);
+            return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.BeltItem && level.getBlockEntity(pos) instanceof MicroCellBlockEntity belted) {
             int p = belted.pick(hit.getLocation(), hit.getDirection());
             if (p >= 0 && belted.get(p) != null && belted.get(p).getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock) {

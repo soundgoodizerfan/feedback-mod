@@ -81,6 +81,10 @@ public class FItems {
     public static final DeferredItem<Item> BELT = ITEMS.register("belt",
             () -> new BeltItem(new Item.Properties().stacksTo(1)));
 
+    /** Ties two bodies at a joint voxel -- see {@code JointLinkItem}/{@code MicroLinks}. A reusable tool, like the Belt. */
+    public static final DeferredItem<Item> JOINT_LINK = ITEMS.register("joint_link",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.micro.JointLinkItem(new Item.Properties().stacksTo(1)));
+
     public static final DeferredItem<BlockItem> CLUTCH = ITEMS.registerSimpleBlockItem(FBlocks.CLUTCH);
     public static final DeferredItem<BlockItem> OVERSPEED_TRIP = ITEMS.registerSimpleBlockItem(FBlocks.OVERSPEED_TRIP);
 
