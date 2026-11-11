@@ -1,0 +1,91 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "cell_anode",
+      "forms": [
+        "cell_anode"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "anode": {
+          "min": 20,
+          "max": 100,
+          "unit": "%",
+          "default": 50,
+          "step": 10
+        }
+      },
+      "part": {
+        "item": "feedback:cell_anode",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "ingot"
+        ],
+        "base": "anode_rod",
+        "variants": [
+          {
+            "name": "anode_rod",
+            "shape": [
+              "SSS",
+              "SSS"
+            ],
+            "params": {
+              "amps": 1.0,
+              "life": 1.0
+            }
+          },
+          {
+            "name": "anode_plate",
+            "shape": [
+              "SS",
+              "SS"
+            ],
+            "params": {
+              "amps": 1.6,
+              "life": 0.7
+            }
+          },
+          {
+            "name": "anode_block",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "amps": 0.8,
+              "life": 1.9
+            }
+          }
+        ]
+      }
+    },
+    "C": {
+      "name": "copper_cathode",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:zinc"
+  }
+}

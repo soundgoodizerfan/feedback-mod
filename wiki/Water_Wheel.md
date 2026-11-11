@@ -2,9 +2,9 @@
 
 Free, continuous [rotation](Rotation.md) from flowing water. It's the first source that can actually run machines.
 
-## Designing and building
+## Building it
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the type row); drawing it takes a Mechanical [Treatise](Treatise.md). It has one part, the **Wheel Rim**, with four choices:
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the type row); the diameter and bucket count are set there, along with the wheel type and addons. It needs a blueprint but no treatise. It has one part, the **Wheel Rim**, with four choices:
 
 | Choice | What it sets |
 | --- | --- |
@@ -15,7 +15,7 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the 
 
 A 200 cm wheel with 8 buckets makes 256 Su and turns 4 RPM for each flowing side.
 
-At the [Woodworking Table](Woodworking_Table.md), put the Water Wheel Blueprint in the blueprint slot and shape the rim from planks. The Water Wheel comes out with the design, and the blueprint is kept. Its tooltip shows the Su it makes, the RPM per flowing side and its momentum. Breaking the block gives the same wheel back.
+Shape the rim from planks at the [Woodworking Table](Woodworking_Table.md), then put it together at the bench with the Water Wheel Blueprint in the blueprint slot. The Water Wheel comes out with the design, and the blueprint is kept. Its tooltip shows the Su it makes, the RPM per flowing side and its momentum. Breaking the block gives the same wheel back.
 
 ## Wheel types
 

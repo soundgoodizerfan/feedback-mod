@@ -1,0 +1,92 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "pump_impeller",
+      "forms": [
+        "pump_impeller"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "diameter": {
+          "min": 10,
+          "max": 60,
+          "unit": "cm",
+          "default": 30,
+          "step": 5
+        }
+      },
+      "part": {
+        "item": "feedback:pump_impeller",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "impeller_centrifugal",
+        "variants": [
+          {
+            "name": "impeller_centrifugal",
+            "shape": [
+              "SSS",
+              "SSS"
+            ],
+            "params": {
+              "flow": 1.0,
+              "lift": 1.0
+            }
+          },
+          {
+            "name": "impeller_axial",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "flow": 1.6,
+              "lift": 0.5
+            }
+          },
+          {
+            "name": "impeller_screw",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "flow": 0.7,
+              "lift": 1.6
+            }
+          }
+        ]
+      }
+    },
+    "V": {
+      "name": "volute",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:steel"
+  }
+}

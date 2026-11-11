@@ -1,0 +1,91 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "burner_nozzle",
+      "forms": [
+        "burner_nozzle"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "bore": {
+          "min": 4,
+          "max": 20,
+          "unit": "mm",
+          "default": 10,
+          "step": 1
+        }
+      },
+      "part": {
+        "item": "feedback:burner_nozzle",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "plate"
+        ],
+        "base": "nozzle_ring",
+        "variants": [
+          {
+            "name": "nozzle_ring",
+            "shape": [
+              "SSS",
+              "SSS"
+            ],
+            "params": {
+              "burn": 1.0,
+              "flame": 1.0
+            }
+          },
+          {
+            "name": "nozzle_jet",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "burn": 1.5,
+              "flame": 1.08
+            }
+          },
+          {
+            "name": "nozzle_wick",
+            "shape": [
+              "SS",
+              "SS"
+            ],
+            "params": {
+              "burn": 0.6,
+              "flame": 0.92
+            }
+          }
+        ]
+      }
+    },
+    "F": {
+      "name": "flame_holder",
+      "forms": [
+        "nugget"
+      ],
+      "litres": 0.01,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:iron"
+  }
+}

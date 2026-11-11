@@ -1,0 +1,95 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": false,
+  "roles": {
+    "S": {
+      "name": "crank_arm",
+      "forms": [
+        "crank_arm"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "part": {
+        "item": "feedback:crank_arm",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "rod",
+          "stick"
+        ],
+        "base": "crank_straight",
+        "variants": [
+          {
+            "name": "crank_short",
+            "shape": [
+              "SS",
+              "SS"
+            ],
+            "params": {
+              "lever": 0.7,
+              "rpm": 1.4
+            }
+          },
+          {
+            "name": "crank_straight",
+            "shape": [
+              "SSS",
+              "SSS"
+            ],
+            "params": {
+              "lever": 1.0,
+              "rpm": 1.0
+            }
+          },
+          {
+            "name": "crank_long",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "lever": 1.4,
+              "rpm": 0.75
+            }
+          },
+          {
+            "name": "crank_offset",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "lever": 1.3,
+              "rpm": 0.9
+            }
+          }
+        ]
+      }
+    },
+    "G": {
+      "name": "crank_flywheel",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.03,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:wood"
+  }
+}

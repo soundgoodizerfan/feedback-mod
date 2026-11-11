@@ -1,10 +1,10 @@
 # Thermal Store
 
-A tank of salt in a ceramic wall that holds heat. A fire, [Heating Coil](Heating_Coil.md) or arc head under it charges it, and a [Boiler](Boiler.md) on top draws it down into steam for a [Steam Turbine](Steam_Turbine.md). It is built from a blueprint.
+A tank of salt in a ceramic wall that holds heat. A fire, [Heating Coil](Heating_Coil.md) or arc head under it charges it, and a [Boiler](Boiler.md) on top draws it down into steam for a [Steam Turbine](Steam_Turbine.md).
 
-## Designing and building
+## Building it
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thermal Store* in the type row); it needs no treatise. It has one part, the **Store Core**, with three choices:
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thermal Store* in the type row); the wall thickness is set there, along with the store type and addons. It needs a blueprint but no treatise. It has one part, the **Store Core**, with three choices:
 
 | Choice | What it sets |
 | --- | --- |
@@ -12,7 +12,7 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thermal Store* in th
 | **Wall** | Thickness from 10 to 40 cm, in steps of 2; the default is 20. A thicker wall has more heat mass, so it charges slowly, and it leaks less. |
 | **Material** | The brick the wall is made from. Its conductivity sets the leak: ceramic keeps heat and metal gives it away. It must have a stated conductivity. |
 
-Shape the core from brick at the [Stonecutter](Stonecutter.md) with the Thermal Store Blueprint in the blueprint slot. The Thermal Store comes out with the design, and the blueprint is kept. Its tooltip shows its heat mass and how much it loses. Breaking the block gives the same store back.
+Shape the core from brick at the [Stonecutter](Stonecutter.md), then put it together at the bench with the Thermal Store Blueprint in the blueprint slot. The Thermal Store comes out with the design, and the blueprint is kept. Its tooltip shows its heat mass and how much it loses. Breaking the block gives the same store back.
 
 ## Store types
 

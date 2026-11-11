@@ -83,7 +83,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "gun_grip", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "vessel_shell", "exchanger_core", "tank_shell", "wheel_rim", "store_core", "jar_glass", "module_casing", "module_wiring", "module_optic", "module_filter", "module_thermal", "module_plating", "module_actuator", "module_thruster", "module_coil")
+            "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "steam_valve", "steam_lagging", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "main_spring", "steam_chest", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "vessel_shell", "exchanger_core", "tank_shell", "wheel_rim", "cell_anode", "lamp_filament", "pump_impeller", "compressor_rotor", "burner_nozzle", "crank_arm", "magnet_core", "store_core", "jar_glass", "module_casing", "module_wiring", "module_optic", "module_filter", "module_thermal", "module_plating", "module_actuator", "module_thruster", "module_coil")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -357,6 +357,22 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.THERMAL_STORE.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> LEYDEN_JAR = ITEMS.register("leyden_jar",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.LEYDEN_JAR.get(), new Item.Properties().stacksTo(1)));
+
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> PUMP = ITEMS.register("pump",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.PUMP.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> COMPRESSOR = ITEMS.register("compressor",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.COMPRESSOR.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> BURNER = ITEMS.register("burner",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.BURNER.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> HAND_CRANK = ITEMS.register("hand_crank",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.HAND_CRANK.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> ELECTROMAGNET = ITEMS.register("electromagnet",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.ELECTROMAGNET.get(), new Item.Properties().stacksTo(1)));
+
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> GALVANIC_CELL = ITEMS.register("galvanic_cell",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.GALVANIC_CELL.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> LAMP = ITEMS.register("lamp",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.LAMP.get(), new Item.Properties().stacksTo(1)));
 
     /** The pressure vessel: a Tool Table build that places as the {@code pressure_vessel} block. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.PressureVesselItem> PRESSURE_VESSEL = ITEMS.register("pressure_vessel",

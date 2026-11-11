@@ -380,11 +380,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.SMELTER_TAP.get(), "smelter_tap");
         info(registration, FItems.DISENCHANT_STONE.get(), "disenchant_stone");
         info(registration, FItems.CRYSTAL_HOLDER.get(), "crystal_holder");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BURNER.get().asItem(), "burner");
+        info(registration, FModular.BURNER.get(), "burner");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BREAKER.get().asItem(), "breaker");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BELLOWS.get().asItem(), "bellows");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BIMETALLIC_STRIP.get().asItem(), "bimetallic_strip");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.COMPRESSOR.get().asItem(), "compressor");
+        info(registration, FModular.COMPRESSOR.get(), "compressor");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DAMPER.get().asItem(), "damper");
         info(registration, FModular.DYNAMOTOR.get(), "dynamotor");
         info(registration, FModular.CONVEYOR_BELT.get(), "conveyor_belt");
@@ -413,8 +413,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.registry.FAutomation.TIPS.forEach((tip, item) -> info(registration, item.get(), "pivot_tip_" + tip.id()));
         info(registration, io.github.soundgoodizerfan.feedback.registry.FItems.ANALOG_ADAPTER.get(), "analog_adapter");
         io.github.soundgoodizerfan.feedback.registry.FLogistics.MODULE_ITEMS.forEach((m, item) -> info(registration, item.get(), "belt_module_" + m.id()));
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ELECTROMAGNET.get().asItem(), "electromagnet");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.LAMP.get().asItem(), "lamp");
+        info(registration, FModular.ELECTROMAGNET.get(), "electromagnet");
+        info(registration, FModular.LAMP.get(), "lamp");
         info(registration, FModular.GAS_TANK.get(), "gas_tank");
         info(registration, FItems.TUBE.get(), "tube");
         info(registration, FItems.LINED_TUBE.get(), "lined_tube");
@@ -435,16 +435,16 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.ENDER_ANCHOR.get(), "ender_anchor");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GAS_TURBINE.get().asItem(), "gas_turbine");
         info(registration, FModular.HEAT_EXCHANGER.get(), "heat_exchanger");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HAND_CRANK.get().asItem(), "hand_crank");
+        info(registration, FModular.HAND_CRANK.get(), "hand_crank");
         info(registration, FModular.LEYDEN_JAR.get(), "leyden_jar");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.OVERSPEED_TRIP.get().asItem(), "overspeed_trip");
         info(registration, FModular.PRESSURE_VESSEL.get(), "pressure_vessel");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PUMP.get().asItem(), "pump");
+        info(registration, FModular.PUMP.get(), "pump");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STEAM_ENGINE.get().asItem(), "steam_engine");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.STEAM_TURBINE.get().asItem(), "steam_turbine");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.TIMER.get().asItem(), "timer");
         info(registration, FModular.WATER_WHEEL.get(), "water_wheel");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.GALVANIC_CELL.get().asItem(), "galvanic_cell");
+        info(registration, FModular.GALVANIC_CELL.get(), "galvanic_cell");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.SCULK_RELAY.get().asItem(), "sculk_relay");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DATA_SENSOR.get().asItem(), "data_sensor");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.REBOILER.get().asItem(), "reboiler");
@@ -476,10 +476,10 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 FItems.GLASS_BLOCK_MOLD.get(), FItems.GLASS_PANE_MOLD.get(), FItems.GLASS_BOTTLE_MOLD.get(),
                 FItems.PICKAXE_HEAD_MOLD.get(), FItems.AXE_HEAD_MOLD.get(), FItems.SHOVEL_HEAD_MOLD.get(), FItems.HOE_HEAD_MOLD.get(), FItems.SICKLE_HEAD_MOLD.get(), FItems.SAW_BLADE_MOLD.get(), FItems.ATOMISING_MOLD.get());
         registration.addRecipeCatalysts(BrewingIngredientCategory.TYPE, FItems.BREWING_STAND.get());
-        registration.addRecipeCatalysts(SeparationCategory.TYPE, FItems.ELECTROMAGNET.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get());
+        registration.addRecipeCatalysts(SeparationCategory.TYPE, FModular.ELECTROMAGNET.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get());
         registration.addRecipeCatalysts(OreProcessingCategory.TYPE, FItems.MECHANICAL_HAMMER.get(), FItems.ROLLING_MILL.get(),
-                io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), FItems.ELECTROMAGNET.get(), FItems.REACTOR.get(), FItems.ELECTROLYSER.get());
-        registration.addRecipeCatalysts(FuelCategory.TYPE, FItems.FIREBOX.get(), FItems.BURNER.get());
+                io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), FModular.ELECTROMAGNET.get(), FItems.REACTOR.get(), FItems.ELECTROLYSER.get());
+        registration.addRecipeCatalysts(FuelCategory.TYPE, FItems.FIREBOX.get(), FModular.BURNER.get());
         registration.addRecipeCatalysts(PotionShapeCategory.TYPE, FItems.BREWING_STAND.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, net.minecraft.world.item.Items.WATER_BUCKET);
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.REACTOR.get());

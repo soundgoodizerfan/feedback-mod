@@ -6,6 +6,9 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,6 +39,32 @@ public class PumpBlockEntity extends RotationNode {
     /** Fraction of an mB owed from earlier ticks, so a slow pump still moves something. */
     private float owed;
 
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
+    }
+
     public PumpBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.PUMP.get(), pos, state);
     }
@@ -43,14 +72,14 @@ public class PumpBlockEntity extends RotationNode {
     @Override
     public Su getLoadSu() {
         return getBlockState().getValue(PumpBlock.FACING) == Direction.UP
-                ? new Su(FTuning.PUMP_LOAD_SU.value() + FTuning.PUMP_LIFT_SU_PER_BLOCK.value())
-                : FTuning.PUMP_LOAD_SU;
+                ? new Su(figures.get("Load", FTuning.PUMP_LOAD_SU.value()) + figures.get("Lift", FTuning.PUMP_LIFT_SU_PER_BLOCK.value()))
+                : new Su(figures.get("Load", FTuning.PUMP_LOAD_SU.value()));
     }
 
     public void tickServer() {
         if (level == null)
             return;
-        owed += Math.abs(getRpm().value()) * FTuning.PUMP_MB_PER_RPM;
+        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", FTuning.PUMP_MB_PER_RPM);
         int amount = (int) owed;
         if (amount <= 0)
             return;

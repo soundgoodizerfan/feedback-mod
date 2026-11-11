@@ -10,6 +10,9 @@ import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -36,6 +39,20 @@ public class BurnerBlockEntity extends BlockEntity implements HeatSource {
     private final HeatedTank fuel = new HeatedTank(FTuning.BURNER_TANK_MB, this::setChanged);
     private float owed;
     private float flameTu;
+
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
 
     public BurnerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BURNER.get(), pos, state);
@@ -68,8 +85,8 @@ public class BurnerBlockEntity extends BlockEntity implements HeatSource {
             flameTu = 0f;
         } else {
             float blown = Mth.clamp(c.oxygenBalance(), 0f, 1f);
-            flameTu = c.flameTemperature().get().value() * Mth.lerp(blown, 1f, FTuning.FULL_AIR_TEMPERATURE_FACTOR);
-            owed += FTuning.BURNER_MB_PER_TICK;
+            flameTu = c.flameTemperature().get().value() * Mth.lerp(blown, 1f, FTuning.FULL_AIR_TEMPERATURE_FACTOR) * figures.get("Flame", 1f);
+            owed += figures.get("Burn", FTuning.BURNER_MB_PER_TICK);
             int drawn = (int) owed;
             owed -= drawn;
             if (drawn > 0)
@@ -99,12 +116,14 @@ public class BurnerBlockEntity extends BlockEntity implements HeatSource {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.put("Fuel", fuel.writeToNBT(registries, new CompoundTag()));
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         if (tag.contains("Fuel"))
             fuel.readFromNBT(registries, tag.getCompound("Fuel"));
     }

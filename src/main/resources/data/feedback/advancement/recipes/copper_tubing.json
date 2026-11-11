@@ -20,7 +20,6 @@
   "rewards": {
     "recipes": [
       "feedback:condenser",
-      "feedback:pump",
       "feedback:pressure_gauge"
     ]
   }

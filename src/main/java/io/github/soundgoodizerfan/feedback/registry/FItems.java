@@ -35,7 +35,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> SMALL_COG = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_COG);
     public static final DeferredItem<BlockItem> LARGE_COG = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_COG);
     public static final DeferredItem<BlockItem> GEARBOX = ITEMS.registerSimpleBlockItem(FBlocks.GEARBOX);
-    public static final DeferredItem<BlockItem> HAND_CRANK = ITEMS.registerSimpleBlockItem(FBlocks.HAND_CRANK);
     public static final DeferredItem<BlockItem> CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.CAMPFIRE);
     public static final DeferredItem<BlockItem> SOUL_CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_CAMPFIRE);
 
@@ -322,10 +321,7 @@ public class FItems {
             () -> new io.github.soundgoodizerfan.feedback.machine.cable.CableItem(FBlocks.CABLE.get(), new Item.Properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.machine.cable.CableItem> FENCE = ITEMS.register("fence",
             () -> new io.github.soundgoodizerfan.feedback.machine.cable.CableItem(FBlocks.FENCE.get(), new Item.Properties()));
-    public static final DeferredItem<BlockItem> GALVANIC_CELL =ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL);
     public static final DeferredItem<BlockItem> GALVANIC_CELL_PACK = ITEMS.registerSimpleBlockItem(FBlocks.GALVANIC_CELL_PACK);
-    public static final DeferredItem<BlockItem> LAMP = ITEMS.registerSimpleBlockItem(FBlocks.LAMP);
-    public static final DeferredItem<BlockItem> ELECTROMAGNET = ITEMS.registerSimpleBlockItem(FBlocks.ELECTROMAGNET);
     public static final DeferredItem<BlockItem> COPPER_COIL = ITEMS.registerSimpleBlockItem(FBlocks.COPPER_COIL);
     public static final DeferredItem<BlockItem> IRON_COIL = ITEMS.registerSimpleBlockItem(FBlocks.IRON_COIL);
     public static final DeferredItem<BlockItem> INDUCTION_COIL = ITEMS.registerSimpleBlockItem(FBlocks.INDUCTION_COIL);
@@ -455,11 +451,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> REACTOR = ITEMS.registerSimpleBlockItem(FBlocks.REACTOR);
     public static final DeferredItem<BlockItem> GAS_TURBINE = ITEMS.registerSimpleBlockItem(FBlocks.GAS_TURBINE);
     public static final DeferredItem<BlockItem> FLARE = ITEMS.registerSimpleBlockItem(FBlocks.FLARE);
-    public static final DeferredItem<BlockItem> COMPRESSOR = ITEMS.registerSimpleBlockItem(FBlocks.COMPRESSOR);
     /** What is left of soul sand after the retort: the carbon-poor residue, sand-like (petrochemistry spec 10.1). */
     public static final DeferredItem<net.minecraft.world.item.Item> HUSK_SAND = ITEMS.registerSimpleItem("husk_sand");
-    public static final DeferredItem<BlockItem> BURNER = ITEMS.registerSimpleBlockItem(FBlocks.BURNER);
-    public static final DeferredItem<BlockItem> PUMP = ITEMS.registerSimpleBlockItem(FBlocks.PUMP);
 
     /**
      * The slice's second instrument, and the one that reveals rather than refines.

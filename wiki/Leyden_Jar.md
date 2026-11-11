@@ -2,9 +2,9 @@
 
 A glass jar lined with copper foil that **stores a charge and gives it back as a burst**. It's what makes the [Electrostatic Generator](Electrostatic_Generator.md)'s one-second pulse useful.
 
-## Designing and building
+## Building it
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Leyden Jar* in the type row); it needs no treatise. It has one part, the **Jar Glass**, with four choices:
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Leyden Jar* in the type row); the plate area and glass wall are set there, along with the jar type and addons. It needs a blueprint but no treatise. It has one part, the **Jar Glass**, with four choices:
 
 | Choice | What it sets |
 | --- | --- |
@@ -13,7 +13,7 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Leyden Jar* in the t
 | **Glass wall** | From 2 to 10 mm; the default is 4. Thinner glass stores more but leaks as the square: half the thickness leaks four times as fast. |
 | **Glass** | The material of the wall. It must insulate. |
 
-Shape the glass from a glass ingot at the [Stonecutter](Stonecutter.md) with the Leyden Jar Blueprint in the blueprint slot. The Leyden Jar comes out with the design, and the blueprint is kept. Its tooltip shows what it stores, how fast it leaks and the amps it bursts at. Breaking the block gives the same jar back.
+Shape the glass from a glass ingot at the [Stonecutter](Stonecutter.md), then put it together at the bench with the Leyden Jar Blueprint in the blueprint slot. The Leyden Jar comes out with the design, and the blueprint is kept. Its tooltip shows what it stores, how fast it leaks and the amps it bursts at. Breaking the block gives the same jar back.
 
 ## How it works
 

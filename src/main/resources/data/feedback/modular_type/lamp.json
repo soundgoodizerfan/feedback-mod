@@ -1,0 +1,91 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "lamp_filament",
+      "forms": [
+        "lamp_filament"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "dims": {
+        "gauge": {
+          "min": 20,
+          "max": 100,
+          "unit": "%",
+          "default": 50,
+          "step": 10
+        }
+      },
+      "part": {
+        "item": "feedback:lamp_filament",
+        "shape": [
+          "SSS",
+          "SSS"
+        ],
+        "stock": [
+          "wire"
+        ],
+        "base": "filament_coil",
+        "variants": [
+          {
+            "name": "filament_coil",
+            "shape": [
+              "SSS",
+              "SSS"
+            ],
+            "params": {
+              "amps": 1.0,
+              "tough": 1.0
+            }
+          },
+          {
+            "name": "filament_carbon",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "amps": 1.4,
+              "tough": 1.3
+            }
+          },
+          {
+            "name": "filament_fine",
+            "shape": [
+              "SS",
+              "SS"
+            ],
+            "params": {
+              "amps": 0.6,
+              "tough": 0.8
+            }
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "ballast",
+      "forms": [
+        "nugget"
+      ],
+      "litres": 0.01,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:copper"
+  }
+}

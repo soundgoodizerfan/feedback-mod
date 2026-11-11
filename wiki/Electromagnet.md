@@ -2,15 +2,19 @@
 
 The first machine that runs on [electricity](Electricity.md). While it's powered, it pulls nearby dropped items toward itself, but only items made of a magnetic metal.
 
-## Crafting
+## Building it
 
-Eight [Copper Wire](Wire_Drawer.md) wrapped around a Wrought Iron Ingot.
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Electromagnet* in the type row); the turns are set there, along with the core shape and addon. It needs a blueprint but no treatise. Shape a **Magnet Core** from a metal ingot at a bench (the [Smithing Table](Smithing_Table.md)), then put it together at the bench with the Electromagnet Blueprint in the blueprint slot; the magnet comes out with the design, and the blueprint is kept.
 
-```
-W W W
-W I W
-W W W
-```
+The core has one measure, the **turns**, from 50 to 150 percent (100 by default). More turns pull harder and draw more current. Its **shape** trades pull against reach:
+
+| Core | Pull | Reach |
+| --- | --- | --- |
+| Bar | standard | standard |
+| Horseshoe | 1.4 times | 0.7 times |
+| Pot | 1.8 times | 0.5 times |
+
+**Addon.** A **yoke** (plate) is an optional piece that closes the magnetic path, adding 20% to the pull.
 
 ## What it pulls
 
@@ -30,7 +34,7 @@ Connect it to a [Galvanic Cell](Galvanic_Cell.md) or an [Electrostatic Generator
 
 How hard and how far it pulls depends on how much power actually reaches it:
 
-It's rated for **1.5 V at 1 A**. Its strength is the share of that voltage it sees **times** the share of that current it gets, and at full strength it reaches **4 blocks**.
+A standard core (100 percent turns) is rated for **1.5 V at 1 A**; the rating's current follows the turns. Its strength is the share of that voltage it sees **times** the share of that current it gets, and at full strength it reaches **4 blocks**.
 
 - **On an Electrostatic Generator pulse** (1.5 V) it pulls at full strength.
 - **On a single Galvanic Cell** (1.1 V) it works at about three-quarters strength, with a shorter reach.

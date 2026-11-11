@@ -6,6 +6,9 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -28,6 +31,20 @@ import net.minecraft.world.level.block.state.BlockState;
 public class HandCrankBlockEntity extends RotationNode {
 
     private int turningTicks;
+
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
 
     public HandCrankBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.HAND_CRANK.get(), pos, state);
@@ -65,28 +82,30 @@ public class HandCrankBlockEntity extends RotationNode {
 
     @Override
     public Rpm getGeneratedRpm() {
-        return turningTicks > 0 ? FTuning.HAND_CRANK_RPM : ZERO_RPM;
+        return turningTicks > 0 ? new Rpm(figures.get("Rpm", FTuning.HAND_CRANK_RPM.value())) : ZERO_RPM;
     }
 
     @Override
     public Su getCapacitySu() {
-        return FTuning.HAND_CRANK_CAPACITY_SU;
+        return new Su(figures.get("Power", FTuning.HAND_CRANK_CAPACITY_SU.value()));
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.HAND_CRANK_INERTIA;
+        return new Inertia(figures.get("Inertia", FTuning.HAND_CRANK_INERTIA.suTicksPerRpm()));
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.putInt("TurningTicks", turningTicks);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         turningTicks = tag.getInt("TurningTicks");
     }
 }
