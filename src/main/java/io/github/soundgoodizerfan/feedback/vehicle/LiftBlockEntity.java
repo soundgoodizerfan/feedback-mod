@@ -16,8 +16,6 @@ import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
@@ -53,10 +51,6 @@ public class LiftBlockEntity extends BlockEntity {
     public static final int MAX_BLOCKS = 4096;
 
     private int height;
-    /** Cells the last lift could not place because a block stood there. Not saved. */
-    private int blockedCells;
-    /** Bearings of the last lift with nothing on their far side. Not saved. */
-    private int lonelyBearings;
     /** Closed joint loops in the last lift: reported, never refused. Not saved. */
     private int jointLoops;
     /** The body held, by Sable's id for it; null when the lift is bare. */
@@ -73,14 +67,6 @@ public class LiftBlockEntity extends BlockEntity {
 
     public LiftBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.LIFT_ENTITY.get(), pos, state);
-    }
-
-    public int blockedCells() {
-        return blockedCells;
-    }
-
-    public int lonelyBearings() {
-        return lonelyBearings;
     }
 
     public int jointLoops() {
@@ -112,46 +98,14 @@ public class LiftBlockEntity extends BlockEntity {
         BlockPos start = worldPosition.above();
         if (level.getBlockState(start).isAir())
             return "empty";
-        // What touches the lift, and then what a frame among it is welded to, and what touches
-        // that, until nothing new turns up: a block held out on a tube is part of the vehicle, though
-        // the tube is no block until the lift makes its cells (playtest 2026-10-16).
-        java.util.Set<BlockPos> found = new java.util.LinkedHashSet<>();
-        java.util.ArrayDeque<BlockPos> starts = new java.util.ArrayDeque<>(List.of(start));
-        while (!starts.isEmpty()) {
-            BlockPos from = starts.pop();
-            if (found.contains(from) || from.equals(worldPosition) || level.getBlockState(from).isAir())
-                continue;
-            var gathered = SubLevelAssemblyHelper.gatherConnectedBlocks(from, level, MAX_BLOCKS - found.size(),
-                    (a, aState, to, toState, direction) -> !to.equals(worldPosition));
-            if (gathered.assemblyState() == SubLevelAssemblyHelper.GatherResult.State.NO_BLOCKS)
-                return "empty";
-            if (gathered.assemblyState() != SubLevelAssemblyHelper.GatherResult.State.SUCCESS || gathered.blocks() == null)
-                return "too_big";
-            found.addAll(gathered.blocks());
-            for (BlockPos p : gathered.blocks())
-                if (level.getBlockEntity(p) instanceof FrameBlockEntity f && f.frame().locked())
-                    return "locked";
-            for (BlockPos p : gathered.blocks())
-                if (level.getBlockEntity(p) instanceof FrameBlockEntity frame) {
-                    for (BlockPos off : frame.frame().anchors().values())
-                        starts.add(p.offset(off));
-                    // A frame joined to this one, frame to frame, is the same vehicle.
-                    for (FrameBlockEntity far : frame.partners())
-                        if (SableCompanion.INSTANCE.getContaining(far) == null)
-                            starts.add(far.getBlockPos());
-                }
-        }
-        // Each frame's plates and tubes become cells: welded groups go up with the rest, every
-        // other group is lifted on its own and hangs by its bearings.
-        List<BlockPos> blocks = new ArrayList<>(found);
-        blockedCells = 0;
-        lonelyBearings = 0;
-        for (BlockPos p : found)
-            if (level.getBlockEntity(p) instanceof FrameBlockEntity frame) {
-                lonelyBearings += FrameAssembly.bearingsWithoutFarSide(frame.frame());
-                blocks.addAll(FrameAssembly.cut(level, p, frame));
-                blockedCells += frame.blockedCells();
-            }
+        // Everything that touches the lift, block to block: micro cells, bearings, adapters, thrusters, seats.
+        var gathered = SubLevelAssemblyHelper.gatherConnectedBlocks(start, level, MAX_BLOCKS,
+                (a, aState, to, toState, direction) -> !to.equals(worldPosition));
+        if (gathered.assemblyState() == SubLevelAssemblyHelper.GatherResult.State.NO_BLOCKS)
+            return "empty";
+        if (gathered.assemblyState() != SubLevelAssemblyHelper.GatherResult.State.SUCCESS || gathered.blocks() == null)
+            return "too_big";
+        List<BlockPos> blocks = new ArrayList<>(gathered.blocks());
         ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, blocks, BoundingBox3i.from(blocks));
         // Cells and bearings moved into the body's plot by one shift; each joint they hold keeps its child
         // (a joint rides in its block's data) and is made anew against the body, so its way back follows.
@@ -265,7 +219,6 @@ public class LiftBlockEntity extends BlockEntity {
             for (BlockPos p : plan.blocks)
                 back.put(p.immutable(), plan.transform.apply(p));
         for (Lowering plan : plans) {
-            plan.frames.forEach(f -> f.disassemble(level));
             SubLevelAssemblyHelper.moveBlocks(level, plan.transform, plan.blocks);
             for (BlockPos p : plan.blocks)
                 if (level.getBlockEntity(plan.transform.apply(p)) instanceof io.github.soundgoodizerfan.feedback.control.controller.ControllerHost host)
@@ -281,28 +234,24 @@ public class LiftBlockEntity extends BlockEntity {
     }
 
     /** One body's way back to blocks: its blocks, its frames, and where they land. */
-    private record Lowering(ServerSubLevel body, List<BlockPos> blocks, List<FrameBlockEntity> frames,
-                            SubLevelAssemblyHelper.AssemblyTransform transform) {
+    private record Lowering(ServerSubLevel body, List<BlockPos> blocks, SubLevelAssemblyHelper.AssemblyTransform transform) {
     }
 
     @Nullable
     private static Lowering plan(ServerLevel level, ServerSubLevel s) {
         var box = s.getPlot().getBoundingBox();
         List<BlockPos> blocks = new ArrayList<>();
-        List<FrameBlockEntity> frames = new ArrayList<>();
         for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ())) {
             BlockState state = level.getBlockState(p);
-            if (state.isAir() || state.is(FVehicles.CHASSIS_CELL.get()))
+            if (state.isAir())
                 continue;
             blocks.add(p.immutable());
-            if (level.getBlockEntity(p) instanceof FrameBlockEntity frame)
-                frames.add(frame);
         }
         if (blocks.isEmpty())
             return null;
         BlockPos from = blocks.get(0);
         BlockPos to = BlockPos.containing(s.logicalPose().transformPosition(Vec3.atCenterOf(from)));
-        return new Lowering(s, blocks, frames, new SubLevelAssemblyHelper.AssemblyTransform(from, to, 0, Rotation.NONE, level));
+        return new Lowering(s, blocks, new SubLevelAssemblyHelper.AssemblyTransform(from, to, 0, Rotation.NONE, level));
     }
 
     /** Drops the vehicle into physics: the lift is bare and back at rest. */

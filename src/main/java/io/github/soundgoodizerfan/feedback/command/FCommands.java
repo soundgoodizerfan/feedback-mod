@@ -24,7 +24,6 @@ import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
@@ -75,7 +74,6 @@ public final class FCommands {
     static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("blueprint").executes(FCommands::blueprintOf))
-                .then(Commands.literal("framedebug").executes(FCommands::frameDebug))
                 .then(Commands.literal("build").executes(FCommands::build)
                         .then(Commands.literal("parts").executes(FCommands::parts)))
                 .then(Commands.literal("part")
@@ -159,25 +157,6 @@ public final class FCommands {
             p.setData(io.github.soundgoodizerfan.feedback.potion.PotionAttachments.KNOWLEDGE.get(), all);
         c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.potion_revealed", players.size()), true);
         return players.size();
-    }
-
-    /**
-     * Prints, and logs, what the nearest vehicle frame's bodies are doing (author, 2026-10-29: the
-     * render of a swinging part and its hitbox were not agreeing and there was nothing to compare).
-     */
-    private static int frameDebug(CommandContext<CommandSourceStack> c) {
-        var level = c.getSource().getLevel();
-        FrameBlockEntity frame = FrameBlockEntity.nearest(level, BlockPos.containing(c.getSource().getPosition()));
-        if (frame == null) {
-            c.getSource().sendFailure(Component.literal("No loaded vehicle frame."));
-            return 0;
-        }
-        var log = LogUtils.getLogger();
-        for (String line : frame.debugReport(level)) {
-            log.info("[feedback] framedebug {}", line);
-            c.getSource().sendSuccess(() -> Component.literal(line), false);
-        }
-        return 1;
     }
 
     /** A skeleton at the source, always armed from the early pool (the named entry, else a random one); no chance roll. */

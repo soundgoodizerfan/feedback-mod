@@ -68,7 +68,6 @@ public class FCreativeTabs {
                                         io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceCoil(9))));
                         output.accept(coilMag);
                         output.accept(FVehicles.LIFT_ITEM.get());
-                        output.accept(FVehicles.FRAME_ITEM.get());
                         output.accept(FVehicles.THRUSTER_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_CLOTH_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_RUBBER_ITEM.get());
@@ -76,8 +75,6 @@ public class FCreativeTabs {
                         output.accept(FVehicles.VENT_VALVE_ITEM.get());
                         output.accept(FVehicles.BALLAST_TANK_ITEM.get());
                         output.accept(FVehicles.FLIGHT_SENSOR_ITEM.get());
-                        output.accept(FVehicles.WELDER.get());
-                        output.accept(FVehicles.PIVOT_SETTER.get());
                         output.accept(FVehicles.MICRO_CORE.get());
                         output.accept(FVehicles.SEAT_ITEM.get());
                         output.accept(FItems.SHAFT.get());

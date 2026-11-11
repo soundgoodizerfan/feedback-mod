@@ -284,7 +284,7 @@ public final class Joint {
         }
         ServerSubLevel s = held(level);
         if (s == null || s.isRemoved())
-            return false; // not loaded yet: wait, as FrameBlockEntity.pair does
+            return false; // not loaded yet: wait
         ServerSubLevel p = parentOf(level, bearingPos);
         if (p != null && p.isRemoved())
             return false;

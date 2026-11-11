@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle;
 
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.SableCompanion;
@@ -90,16 +89,6 @@ public class LiftItem extends BlockItem {
             player.displayClientMessage(Component.translatable("message.feedback.lift.blocked"), true);
             return;
         }
-        for (FrameBlockEntity f : FrameBlockEntity.loadedOn(level))
-            if (f.frame().locked() && SableCompanion.INSTANCE.getContaining(f) == body) {
-                player.displayClientMessage(Component.translatable("message.feedback.lift.locked"), true);
-                return;
-            }
-        for (FrameBlockEntity f : FrameBlockEntity.loadedOn(level))
-            if (SableCompanion.INSTANCE.getContaining(f) == body) {
-                f.breakCells(level); // the cell blocks too, or they would ride along in the template
-                f.disassemble(level);
-            }
         CompoundTag creation = capture(level, body);
         if (creation == null)
             return;

@@ -172,9 +172,6 @@ public class Feedback {
                         DeformationSyncPayload::handle)
                 .playToClient(RemovalSyncPayload.TYPE, RemovalSyncPayload.STREAM_CODEC,
                         RemovalSyncPayload::handle)
-                .playToClient(io.github.soundgoodizerfan.feedback.net.FrameSpinPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.FrameSpinPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.FrameSpinPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload::handle)
@@ -279,15 +276,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.SpearStagePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SpearStagePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SpearStagePayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.net.FrameEditPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.FrameEditPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.FrameEditPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.CreativeSourcePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.CreativeSourcePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.CreativeSourcePayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.net.FrameMirrorPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload::handle)

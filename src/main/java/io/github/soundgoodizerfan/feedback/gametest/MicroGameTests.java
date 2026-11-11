@@ -189,8 +189,6 @@ public class MicroGameTests {
     @GameTest(template = "empty")
     public static void onlyPlainBlocksFit(GameTestHelper helper) {
         helper.assertTrue(MicroPlacer.fits(new ItemStack(Items.IRON_BLOCK)), "iron block fits");
-        helper.assertFalse(MicroPlacer.fits(new ItemStack(FVehicles.WELDER.get())), "the Welder is not a block");
-        helper.assertFalse(MicroPlacer.fits(new ItemStack(FVehicles.PIVOT_SETTER.get())), "nor is the Pivot Setter");
         helper.assertFalse(MicroPlacer.fits(new ItemStack(FVehicles.LIFT_ITEM.get())), "a Lift has a block entity");
         helper.assertFalse(MicroPlacer.fits(new ItemStack(Items.CHEST)), "so does a chest");
         helper.succeed();

@@ -348,7 +348,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.DRYING_RACK.get().asItem(), "drying_rack");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.HEARTH.get().asItem(), "hearth");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.ICE_BOX.get().asItem(), "ice_box");
-        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.WELDER.get(), "welder");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.CONTROLLER.get().asItem(), "controller");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.PROGRAMMER.get().asItem(), "programmer");
         info(registration, FItems.THERMOMETER.get(), "thermometer");

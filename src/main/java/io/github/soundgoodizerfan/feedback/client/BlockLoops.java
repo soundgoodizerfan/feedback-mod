@@ -5,7 +5,6 @@ package io.github.soundgoodizerfan.feedback.client;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
@@ -68,14 +67,6 @@ public final class BlockLoops {
         }
     }
 
-    /** A frame's tires: a rumble that rises with the fastest one. */
-    public static void wheels(FrameBlockEntity frame) {
-        if (frame.spin().fastestHub() < 0.5 || has(frame, "wheels"))
-            return;
-        start(new Loop(frame, "wheels", SoundEvents.MINECART_RIDING,
-                () -> Mth.clamp(frame.spin().fastestHub() / 25, 0, 1) * 0.5,
-                () -> Mth.clamp(0.6 + frame.spin().fastestHub() / 30, 0.6, 1.5)));
-    }
 
     private static double rpm(EngineBlockEntity engine) {
         return Math.max(Math.abs(engine.getRpm().value()), 300);

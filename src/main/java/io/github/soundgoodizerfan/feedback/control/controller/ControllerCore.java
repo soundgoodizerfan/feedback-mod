@@ -31,7 +31,6 @@ import io.github.soundgoodizerfan.feedback.fitting.upgrade.EscapementFitting;
 import io.github.soundgoodizerfan.feedback.fitting.upgrade.MemoryDrumFitting;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 
 import org.jetbrains.annotations.Nullable;
 

@@ -26,7 +26,6 @@ import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -219,7 +218,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             return;
         }
         ProgramNode probe = actuator ? new ActuatorNode(nodeId, ProgramNode.UNWIRED, null) : new SensorNode(nodeId, null, null);
-        DataNodeRef stored = FrameBlockEntity.framed(level, pending.get());
+        DataNodeRef stored = pending.get();
         ProgramNode linked = resolveLink(probe, pending.get(), stored);
         if (linked == null) {
             if (!quiet)

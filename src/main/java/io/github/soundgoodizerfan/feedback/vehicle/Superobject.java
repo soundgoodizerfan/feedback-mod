@@ -12,11 +12,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
-import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroBearings;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -24,11 +22,10 @@ import net.minecraft.server.level.ServerLevel;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * One vehicle as the player sees it, though Sable holds it as several bodies: a frame's body, the
- * body of each part swinging on its bearings, and every other frame joined to it by a
- * frame-to-frame joint, with theirs; and the bodies hung on one another by micro or full-size joints
- * ({@link Joint}). The Lift and the Lift item act on all of it -- before, they
- * took the one body clicked, and an arm was picked up alone or left floating (playtest 2026-10-16).
+ * One vehicle as the player sees it, though Sable holds it as several bodies: a body, and every body
+ * hung on it, or on those, by a micro or full-size joint ({@link Joint}). The Lift and the Lift item
+ * act on all of it -- before, they took the one body clicked, and an arm was picked up alone or left
+ * floating (playtest 2026-10-16).
  */
 public final class Superobject {
 
@@ -60,7 +57,6 @@ public final class Superobject {
     /** Every body joined to {@code start}, {@code start} included. */
     public static Set<ServerSubLevel> of(ServerLevel level, ServerSubLevel start) {
         var container = ServerSubLevelContainer.getContainer(level);
-        List<FrameBlockEntity> frames = FrameBlockEntity.loadedOn(level);
         // Joint edges both ways, once: parent to child, and child back to parent.
         Map<UUID, List<ServerSubLevel>> linked = new HashMap<>();
         for (ServerSubLevel s : container.getAllSubLevels())
@@ -76,30 +72,15 @@ public final class Superobject {
             if (!found.add(body))
                 continue;
             linked.getOrDefault(body.getUniqueId(), List.of()).forEach(b -> add(todo, b));
-            for (FrameBlockEntity f : frames) {
-                boolean in = SableCompanion.INSTANCE.getContaining(f) == body
-                        || f.groupBodies().values().stream().anyMatch(g -> g.body().equals(body.getUniqueId()));
-                if (!in)
-                    continue;
-                add(todo, SableCompanion.INSTANCE.getContaining(f));
-                f.groupBodies().values().forEach(g -> add(todo, container.getSubLevel(g.body())));
-                for (FrameBlockEntity far : f.partners()) {
-                    add(todo, SableCompanion.INSTANCE.getContaining(far));
-                    far.groupBodies().values().forEach(g -> add(todo, container.getSubLevel(g.body())));
-                }
-            }
         }
         return found;
     }
 
     /**
-     * The bodies of {@code all} that are not some frame's swinging part nor held by a joint: the
-     * ones holding real blocks.
+     * The bodies of {@code all} that no joint holds: the ones holding real blocks.
      */
     public static List<ServerSubLevel> roots(ServerLevel level, Set<ServerSubLevel> all) {
         Set<UUID> parts = new java.util.HashSet<>();
-        for (FrameBlockEntity f : FrameBlockEntity.loadedOn(level))
-            f.groupBodies().values().forEach(g -> parts.add(g.body()));
         for (ServerSubLevel s : all)
             for (Hold h : holds(level, s))
                 parts.add(h.child().getUniqueId());

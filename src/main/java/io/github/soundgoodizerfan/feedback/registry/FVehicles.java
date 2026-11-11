@@ -14,15 +14,6 @@ import net.minecraft.nbt.CompoundTag;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.seat.DriverSeatEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlock;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.ChassisCellBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlock;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.PivotItem;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderMode;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCoreItem;
@@ -77,39 +68,6 @@ public class FVehicles {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LiftBlockEntity>> LIFT_ENTITY =
             BLOCK_ENTITIES.register("lift", () -> BlockEntityType.Builder.of(LiftBlockEntity::new, LIFT.get()).build(null));
 
-    /** The anchor a chassis is welded around (spec section 4). */
-    public static final DeferredBlock<FrameBlock> FRAME = BLOCKS.register("chassis_frame",
-            () -> new FrameBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(3.0f)
-                    .sound(SoundType.METAL)
-                    .noOcclusion()));
-
-    public static final DeferredItem<BlockItem> FRAME_ITEM = ITEMS.registerSimpleBlockItem(FRAME);
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FrameBlockEntity>> FRAME_ENTITY =
-            BLOCK_ENTITIES.register("chassis_frame",
-                    () -> BlockEntityType.Builder.of(FrameBlockEntity::new, FRAME.get()).build(null));
-
-    /**
-     * A hidden block of an assembled frame (spec section 4, <em>cells, again</em>). Placed only
-     * by assembly; not broken by hand. Dynamic shape: its fine shape is per position, and a
-     * state-cached shape would hand every cell the first one asked for.
-     */
-    public static final DeferredBlock<ChassisCellBlock> CHASSIS_CELL = BLOCKS.register("chassis_cell",
-            () -> new ChassisCellBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(-1.0f, 3600000.0f)
-                    .noLootTable()
-                    .sound(SoundType.METAL)
-                    .noOcclusion()
-                    .dynamicShape()
-                    .isValidSpawn((s, l, p, e) -> false)));
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChassisCellBlockEntity>> CHASSIS_CELL_ENTITY =
-            BLOCK_ENTITIES.register("chassis_cell",
-                    () -> BlockEntityType.Builder.of(ChassisCellBlockEntity::new, CHASSIS_CELL.get()).build(null));
-
     // --- Micro-blocks (docs/specs/feedback_micro_spec.md) ---------------------------------------------
 
     /**
@@ -133,47 +91,6 @@ public class FVehicles {
     /** Starts a build: a micro cell with one voxel of stone in it. Every voxel after is a block held against the build. */
     public static final DeferredItem<MicroCoreItem> MICRO_CORE = ITEMS.register("micro_core",
             () -> new MicroCoreItem(new Item.Properties()));
-
-    /** The vertex a Welder is holding; synced so the client can highlight it. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderSelection>> WELDER_SELECTION =
-            COMPONENTS.register("welder_selection", () -> DataComponentType.<WelderSelection>builder()
-                    .persistent(WelderSelection.CODEC)
-                    .networkSynchronized(WelderSelection.STREAM_CODEC)
-                    .build());
-
-    /** Which of the Welder's three jobs a use does (shift-scroll). */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderMode>> WELDER_MODE =
-            COMPONENTS.register("welder_mode", () -> DataComponentType.<WelderMode>builder()
-                    .persistent(WelderMode.CODEC)
-                    .networkSynchronized(WelderMode.STREAM_CODEC)
-                    .build());
-
-    /** Points chosen for a plate so far. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected>> WELDER_SELECTED =
-            COMPONENTS.register("welder_selected", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected>builder()
-                    .persistent(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected.CODEC)
-                    .networkSynchronized(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected.STREAM_CODEC)
-                    .build());
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner>> WELDER_CORNER =
-            COMPONENTS.register("welder_corner", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner>builder()
-                    .persistent(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner.CODEC)
-                    .networkSynchronized(io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner.STREAM_CODEC)
-                    .build());
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderPicks>> WELDER_PICKS =
-            COMPONENTS.register("welder_picks", () -> DataComponentType.<WelderPicks>builder()
-                    .persistent(WelderPicks.CODEC)
-                    .networkSynchronized(WelderPicks.STREAM_CODEC)
-                    .build());
-
-    public static final DeferredItem<WelderItem> WELDER = ITEMS.register("welder",
-            () -> new WelderItem(new Item.Properties().stacksTo(1)));
-
-    /**
-     * Sets a point to be a bearing and switches its kind (spec section 4a). Not the shaft Bearing
-     * block: that is a support in the mechanical network, this is a joint between rigid bodies.
-     */
-    public static final DeferredItem<PivotItem> PIVOT_SETTER = ITEMS.register("pivot_setter",
-            () -> new PivotItem(new Item.Properties().stacksTo(1)));
 
     // --- Engines (spec section 6, a modular build at the Tool Table) ----------------------------------------------
 

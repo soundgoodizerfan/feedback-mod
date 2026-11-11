@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderMode;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -16,7 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * Shift-scroll on a held tool: steps a Welder's mode, or a hand tool's swing, forward ({@code 1}) or
+ * Shift-scroll on a held tool: steps a Data Connector's mode, or a hand tool's swing, forward ({@code 1}) or
  * back ({@code -1}).
  */
 public record ToolScrollPayload(int direction) implements CustomPacketPayload {
@@ -55,16 +54,6 @@ public record ToolScrollPayload(int direction) implements CustomPacketPayload {
                         Component.translatable("feedback.data_connector.mode." + mode.name().toLowerCase(java.util.Locale.ROOT))), true);
                 return;
             }
-            if (!stack.is(FVehicles.WELDER.get()))
-                return;
-            WelderMode now = stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT)
-                    .step(Integer.signum(payload.direction()));
-            stack.set(FVehicles.WELDER_MODE.get(), now);
-            // A half-made selection means something else in the new mode.
-            stack.remove(FVehicles.WELDER_SELECTION.get());
-            stack.remove(FVehicles.WELDER_PICKS.get());
-            player.displayClientMessage(Component.translatable("message.feedback.welder.mode",
-                    Component.translatable("message.feedback.welder.mode." + now.name().toLowerCase(java.util.Locale.ROOT))), true);
         });
     }
 }
