@@ -182,7 +182,7 @@ public final class FTuning {
     /** Placeholder. Game ticks a ball, slider or piston must sit forced against its stop before that counts as misuse (5 s). */
     public static final int JOINT_STRAIN_GRACE_TICKS = 100;
     /** Placeholder. Condition lost per game tick of forced strain past the grace (a stalled hinge loses about the same per tick). */
-    public static final float JOINT_STRAIN_WEAR_PER_TICK = 0.0015f;
+    public static final float JOINT_STRAIN_WEAR_PER_TICK = 0.0002f;
     /** Placeholder. Brake pad condition lost per physics step the drive pushes against a held brake past the grace. */
     public static final float BRAKE_PAD_WEAR_PER_STEP = 0.0005f;
     public static final float JOINT_CONDITION_FLOOR = 0.3f;

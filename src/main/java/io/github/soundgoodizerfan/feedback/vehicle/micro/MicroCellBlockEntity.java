@@ -194,7 +194,10 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             if (level != null && !level.isClientSide)
                 MicroBearings.unclear(level, was);
         }
+        float wear = rotors[index] != null && state != null && rotors[index].state() == state ? rotors[index].condition() : 1f;
         rotors[index] = state != null && state.getBlock() instanceof MicroRotation ? new MicroRotor(this, index, state) : null;
+        if (rotors[index] != null)
+            rotors[index].setCondition(wear);
         flywheels = state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.shaft.FlywheelBlock
                 ? flywheels | 1L << index : flywheels & ~(1L << index);
         rotorAdded |= rotors[index] != null;
@@ -693,6 +696,8 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             kinds[i] = NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), palette.getCompound(i));
         byte[] ids = tag.getByteArray("Voxels");
         Arrays.fill(voxels, null);
+        Arrays.fill(skins, null);
+        flywheels = 0;
         filled = 0;
         // A block that no longer exists reads back as air, and a voxel of air is no voxel.
         for (int i = 0; i < Math.min(ids.length, VOXELS); i++) {

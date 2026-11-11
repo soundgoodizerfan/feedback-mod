@@ -420,8 +420,7 @@ public final class Joint {
                 double omega = 2 * Math.PI * hz;
                 double target = kind == Kind.PISTON ? pistonLevel * travel : 0;
                 double limit = kind == Kind.PISTON ? FTuning.ROTARY_BEARING_MAX_TORQUE * condition : 0;
-                // A worn spring is a softer one.
-                generic.setMotor(ConstraintJointAxis.LINEAR_X, target, reduced * omega * omega * (kind == Kind.SLIDER ? condition : 1),
+                generic.setMotor(ConstraintJointAxis.LINEAR_X, target, reduced * omega * omega,
                         2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, kind == Kind.PISTON, limit);
             }
             case HINGE -> {
@@ -587,7 +586,7 @@ public final class Joint {
         if (Math.abs(impulse) >= cap && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
             // The drive pushing against a held brake wears the pad; the same push with no brake wears the joint.
             if (++stallRun > FTuning.JOINT_STALL_GRACE_STEPS) {
-                if (brake > 0)
+                if (brake > 0 && wheel != null)
                     padWorn.incrementAndGet();
                 else
                     stalledTicks.incrementAndGet();

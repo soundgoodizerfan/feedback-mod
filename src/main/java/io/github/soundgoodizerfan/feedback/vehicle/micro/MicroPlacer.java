@@ -85,8 +85,32 @@ public final class MicroPlacer {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         Level level = event.getLevel();
-        if (event.getEntity().isSpectator() || !(level.getBlockState(event.getPos()).getBlock() instanceof MicroCellBlock)
-                || !fits(event.getItemStack()))
+        if (event.getEntity().isSpectator() || !(level.getBlockState(event.getPos()).getBlock() instanceof MicroCellBlock))
+            return;
+        // A full-size Bearing on an assembled joint voxel fits it new, before it could be placed as a voxel.
+        if (event.getItemStack().is(io.github.soundgoodizerfan.feedback.registry.FItems.BEARING.get())
+                && level.getBlockEntity(event.getPos()) instanceof MicroCellBlockEntity cell) {
+            int i = cell.pick(event.getHitVec().getLocation(), event.getHitVec().getDirection());
+            var joint = i < 0 ? null : cell.bearing(i);
+            if (joint != null) {
+                event.setCanceled(true);
+                event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
+                if (!level.isClientSide) {
+                    var player = event.getEntity();
+                    if (joint.condition() >= 1 && joint.pad() >= 1)
+                        player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.joint.as_built"), true);
+                    else {
+                        joint.repair();
+                        cell.setChanged();
+                        if (!player.isCreative())
+                            event.getItemStack().shrink(1);
+                        player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.joint.repaired"), true);
+                    }
+                }
+                return;
+            }
+        }
+        if (!fits(event.getItemStack()))
             return;
         event.setCanceled(true);
         event.setCancellationResult(InteractionResult.sidedSuccess(level.isClientSide));
@@ -296,6 +320,10 @@ public final class MicroPlacer {
                 player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.too_big", MAX_SPAN), true);
                 return false;
             }
+            if (Math.abs(at.getX() - corner.getX()) > 64 || Math.abs(at.getY() - corner.getY()) > 64 || Math.abs(at.getZ() - corner.getZ()) > 64) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.too_big", MAX_SPAN), true);
+                return false;
+            }
             span = MicroTool.span(mode, corner, at);
         } else
             span = java.util.Set.of(at);
@@ -303,8 +331,19 @@ public final class MicroPlacer {
         for (BlockPos p : span)
             voxels.put(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
         boolean any = false;
-        for (BlockPos p : MicroTool.mirrored(voxels, MicroTool.planes(core)).keySet())
+        for (BlockPos p : MicroTool.mirrored(voxels, MicroTool.planes(core)).keySet()) {
+            // The same rule as mining one: what cannot be broken by hand stays, and a swept voxel needs its tool to give anything.
+            BlockPos c = cellOf(p.getX(), p.getY(), p.getZ());
+            if (!player.level().isLoaded(c))
+                continue;
+            if (player.level().getBlockEntity(c) instanceof MicroCellBlockEntity mc) {
+                BlockState there = mc.skin(indexOf(p.getX(), p.getY(), p.getZ())) != null ? mc.skin(indexOf(p.getX(), p.getY(), p.getZ()))
+                        : mc.get(indexOf(p.getX(), p.getY(), p.getZ()));
+                if (there != null && (there.getDestroySpeed(player.level(), c) < 0 || !player.isCreative() && there.requiresCorrectToolForDrops() && !player.hasCorrectToolForDrops(there)))
+                    continue;
+            }
             any |= remove(player, p.getX(), p.getY(), p.getZ());
+        }
         return any;
     }
 
