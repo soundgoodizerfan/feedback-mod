@@ -47,10 +47,44 @@ public class MicroCoreItem extends Item {
         super(properties);
     }
 
+    /** Sneaking with the core in the air steps its mode, as on a block. */
+    @Override
+    public net.minecraft.world.InteractionResultHolder<net.minecraft.world.item.ItemStack> use(Level level, Player player,
+                                                                                           net.minecraft.world.InteractionHand hand) {
+        net.minecraft.world.item.ItemStack stack = player.getItemInHand(hand);
+        if (player.isShiftKeyDown() && !level.isClientSide)
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                    "message.feedback.micro.mode." + MicroTool.cycle(stack).name().toLowerCase(java.util.Locale.ROOT)), true);
+        return player.isShiftKeyDown() ? net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide)
+                : super.use(level, player, hand);
+    }
+
     @Override
     public InteractionResult useOn(UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
+        if (player != null && player.isShiftKeyDown()) {
+            if (!level.isClientSide)
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.mode."
+                        + MicroTool.cycle(context.getItemInHand()).name().toLowerCase(java.util.Locale.ROOT)), true);
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        // In mirror mode a click on a build sets a plane through the face clicked, or takes it away.
+        if (player != null && MicroTool.mode(context.getItemInHand()) == MicroTool.Mode.MIRROR
+                && level.getBlockEntity(context.getClickedPos()) instanceof MicroCellBlockEntity cell) {
+            if (level.isClientSide)
+                return InteractionResult.SUCCESS;
+            int hit = cell.pick(context.getClickLocation(), context.getClickedFace());
+            if (hit < 0)
+                return InteractionResult.FAIL;
+            BlockPos c = context.getClickedPos();
+            BlockPos voxel = new BlockPos(c.getX() * N + (hit & 3), c.getY() * N + (hit >> 2 & 3), c.getZ() * N + (hit >> 4));
+            boolean ok = MicroTool.togglePlane(context.getItemInHand(), voxel, context.getClickedFace());
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                    ok ? "message.feedback.micro.planes" : "message.feedback.micro.planes_full",
+                    MicroTool.planes(context.getItemInHand()).size()), true);
+            return InteractionResult.CONSUME;
+        }
         // On a micro cell it adds a stone voxel in front of the face it hit, so the core builds on its
         // own cell and not only one voxel to a block.
         if (player != null && level.getBlockEntity(context.getClickedPos()) instanceof MicroCellBlockEntity cell) {

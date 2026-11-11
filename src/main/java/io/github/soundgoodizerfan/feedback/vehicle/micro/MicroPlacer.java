@@ -109,7 +109,45 @@ public final class MicroPlacer {
         Direction face = hit.getDirection();
         int tx = vx + face.getStepX(), ty = vy + face.getStepY(), tz = vz + face.getStepZ();
         BlockState voxel = placementState(player, held, hit, be.get(hitVoxel), tx, ty, tz);
-        return voxel != null && place(player, held, voxel, tx, ty, tz, face);
+        if (voxel == null)
+            return false;
+        // A Micro Core in the other hand sets how the block in this one goes: a line, a box, mirrored.
+        ItemStack other = held == player.getMainHandItem() ? player.getOffhandItem() : player.getMainHandItem();
+        if (other.getItem() instanceof MicroCoreItem)
+            return useTool(player, held, other, voxel, new BlockPos(tx, ty, tz), face);
+        return place(player, held, voxel, tx, ty, tz, face);
+    }
+
+    /** Most voxels one line or box may put in a click: a click that could stall the server is refused. */
+    private static final int MAX_SPAN = 4096;
+
+    private static boolean useTool(Player player, ItemStack held, ItemStack core, BlockState voxel, BlockPos target, Direction face) {
+        var mode = MicroTool.mode(core);
+        java.util.Set<BlockPos> span;
+        if (mode == MicroTool.Mode.LINE || mode == MicroTool.Mode.BOX) {
+            BlockPos corner = MicroTool.corner(core);
+            if (corner == null) {
+                MicroTool.setCorner(core, target);
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.corner"), true);
+                return true;
+            }
+            MicroTool.setCorner(core, null);
+            long size = (long) (Math.abs(target.getX() - corner.getX()) + 1) * (Math.abs(target.getY() - corner.getY()) + 1)
+                    * (Math.abs(target.getZ() - corner.getZ()) + 1);
+            if (mode == MicroTool.Mode.BOX && size > MAX_SPAN || size > MAX_SPAN * 4L) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.too_big", MAX_SPAN), true);
+                return false;
+            }
+            span = MicroTool.span(mode, corner, target);
+        } else
+            span = java.util.Set.of(target);
+        java.util.Map<BlockPos, BlockState> voxels = new java.util.LinkedHashMap<>();
+        for (BlockPos p : span)
+            voxels.put(p, voxel);
+        boolean any = false;
+        for (var e : MicroTool.mirrored(voxels, MicroTool.planes(core)).entrySet())
+            any |= place(player, held, e.getValue(), e.getKey().getX(), e.getKey().getY(), e.getKey().getZ(), face);
+        return any;
     }
 
     /**
