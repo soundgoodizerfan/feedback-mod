@@ -45,9 +45,8 @@ public final class MicroWings {
     private static final double ELEMENT_AREA = 1.0 / 16;
     private static final double[][] AXES = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
-    private final double[] nx, ny, nz, cx, cy, cz;
+    private final double[] nx, ny, nz, cx, cy, cz, sinStall, cd0;
     private final int n;
-    private final double stall, sinStall;
     private final ForceTotal total = new ForceTotal();
     private final Vector3d lin = new Vector3d(), ang = new Vector3d(), tmp = new Vector3d(), at = new Vector3d(), imp = new Vector3d();
 
@@ -57,7 +56,7 @@ public final class MicroWings {
     private static final java.util.Set<UUID> SCANNED = new java.util.HashSet<>();
     private static long scannedEdits = -1;
 
-    private MicroWings(int n, double[] nx, double[] ny, double[] nz, double[] cx, double[] cy, double[] cz) {
+    private MicroWings(int n, double[] nx, double[] ny, double[] nz, double[] cx, double[] cy, double[] cz, double[] layers) {
         this.n = n;
         this.nx = nx;
         this.ny = ny;
@@ -65,10 +64,18 @@ public final class MicroWings {
         this.cx = cx;
         this.cy = cy;
         this.cz = cz;
-        // One voxel thick against a chord of about a block: the thinner the sheet the later it stalls.
-        double r = Math.min(1, 0.25 / FTuning.WING_MAX_THIN);
-        this.stall = FTuning.WING_STALL_MIN_RAD + (FTuning.WING_STALL_MAX_RAD - FTuning.WING_STALL_MIN_RAD) * r;
-        this.sinStall = Math.sin(stall);
+        // A slab's layers over a chord of about a block (four voxels): a thicker one stalls later, and drags more.
+        this.sinStall = new double[n];
+        this.cd0 = new double[n];
+        for (int i = 0; i < n; i++) {
+            double ratio = layers[i] / 4;
+            double r = Math.min(1, ratio / FTuning.WING_MAX_THIN);
+            double stall = FTuning.WING_STALL_MIN_RAD + (FTuning.WING_STALL_MAX_RAD - FTuning.WING_STALL_MIN_RAD) * r;
+            if (ratio > FTuning.WING_MAX_THIN)
+                stall += (FTuning.WING_STALL_THICK_RAD - FTuning.WING_STALL_MAX_RAD) * Math.min(1, (ratio - FTuning.WING_MAX_THIN) / (FTuning.WING_THICK_FULL - FTuning.WING_MAX_THIN));
+            sinStall[i] = Math.sin(stall);
+            cd0[i] = FTuning.WING_CD0 + FTuning.WING_CD_PER_LAYER * (layers[i] - 1);
+        }
     }
 
     private static long key(int x, int y, int z) {
@@ -89,13 +96,19 @@ public final class MicroWings {
         if (voxels.isEmpty())
             return null;
         int cap = 64;
-        double[][] out = new double[6][cap];
+        double[][] out = new double[7][cap];
         int n = 0;
         for (long k : voxels) {
             int x = (int) (k >> 42 & 0x1FFFFF), y = (int) (k >> 21 & 0x1FFFFF), z = (int) (k & 0x1FFFFF);
             for (int a = 0; a < 3; a++) {
                 int ax = (int) AXES[a][0], ay = (int) AXES[a][1], az = (int) AXES[a][2];
-                if (voxels.contains(key(x + ax, y + ay, z + az)) || voxels.contains(key(x - ax, y - ay, z - az)))
+                // The column along the axis starts here (nothing below it) and is at most a few voxels: a slab, one element a column.
+                if (voxels.contains(key(x - ax, y - ay, z - az)))
+                    continue;
+                int layers = 1;
+                while (layers <= FTuning.WING_MAX_LAYERS && voxels.contains(key(x + ax * layers, y + ay * layers, z + az * layers)))
+                    layers++;
+                if (layers > FTuning.WING_MAX_LAYERS)
                     continue;
                 // The four neighbours in the plane: at least two make it a piece of a sheet.
                 int around = 0;
@@ -112,15 +125,17 @@ public final class MicroWings {
                     continue;
                 if (n == cap) {
                     cap *= 2;
-                    for (int j = 0; j < 6; j++)
+                    for (int j = 0; j < 7; j++)
                         out[j] = java.util.Arrays.copyOf(out[j], cap);
                 }
                 out[0][n] = AXES[a][0];
                 out[1][n] = AXES[a][1];
                 out[2][n] = AXES[a][2];
-                out[3][n] = (x + ox + 0.5) / 4;
-                out[4][n] = (y + oy + 0.5) / 4;
-                out[5][n] = (z + oz + 0.5) / 4;
+                // The column's middle.
+                out[3][n] = (x + ox + 0.5 + ax * (layers - 1) / 2.0) / 4;
+                out[4][n] = (y + oy + 0.5 + ay * (layers - 1) / 2.0) / 4;
+                out[5][n] = (z + oz + 0.5 + az * (layers - 1) / 2.0) / 4;
+                out[6][n] = layers;
                 n++;
                 break;
             }
@@ -128,7 +143,7 @@ public final class MicroWings {
         if (n == 0)
             return null;
         return new MicroWings(n, java.util.Arrays.copyOf(out[0], n), java.util.Arrays.copyOf(out[1], n), java.util.Arrays.copyOf(out[2], n),
-                java.util.Arrays.copyOf(out[3], n), java.util.Arrays.copyOf(out[4], n), java.util.Arrays.copyOf(out[5], n));
+                java.util.Arrays.copyOf(out[3], n), java.util.Arrays.copyOf(out[4], n), java.util.Arrays.copyOf(out[5], n), java.util.Arrays.copyOf(out[6], n));
     }
 
     @SubscribeEvent
@@ -204,8 +219,8 @@ public final class MicroWings {
             double s = Math.sqrt(s2);
             double vn = (vx * nx[i] + vy * ny[i] + vz * nz[i]) / s; // signed sin(alpha)
             double sinA = Math.min(1, Math.abs(vn)), cosA = Math.sqrt(1 - sinA * sinA);
-            double cl = sinA <= sinStall ? k * Math.asin(sinA) : cdn * sinA * cosA;
-            double cd = FTuning.WING_CD0 + cdn * sinA * sinA;
+            double cl = sinA <= sinStall[i] ? k * Math.asin(sinA) : cdn * sinA * cosA;
+            double cd = cd0[i] + cdn * sinA * sinA;
             double q = halfRho * ELEMENT_AREA * s2 * dt;
             double sc = Math.min(1, cap * s / (q * (cl + cd)));
             double sg = vn < 0 ? 1 : -1, lift = cosA > 1e-3 ? q * cl * sc / cosA : 0, drag = q * cd * sc / s;

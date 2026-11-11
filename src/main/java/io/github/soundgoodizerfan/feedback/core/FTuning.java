@@ -3009,6 +3009,13 @@ public final class FTuning {
      * 18 at this ratio: a thinner sheet lets go earlier, a thicker one holds the flow longer.
      */
     public static final float WING_MAX_THIN = 0.25f, WING_STALL_MIN_RAD = 0.14f, WING_STALL_MAX_RAD = 0.31f;
+    /**
+     * Placeholder. A slab thicker than {@link #WING_MAX_THIN} of its chord (a block, four voxels) stalls later still, up to this angle at
+     * {@link #WING_THICK_FULL} of the chord, and drags more: {@code WING_CD_PER_LAYER} on top of {@link #WING_CD0} for each layer past the first.
+     * A column of more than {@link #WING_MAX_LAYERS} voxels is a bluff body, not a wing.
+     */
+    public static final float WING_STALL_THICK_RAD = 0.45f, WING_THICK_FULL = 0.75f, WING_CD_PER_LAYER = 0.04f;
+    public static final int WING_MAX_LAYERS = 4;
 
     // --- hazards: hot contact, scalding, shock ------------------------------------------------
 
