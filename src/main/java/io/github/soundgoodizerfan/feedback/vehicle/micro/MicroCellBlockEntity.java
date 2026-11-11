@@ -85,6 +85,13 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     private final BlockState[] voxels = new BlockState[VOXELS];
     /** Bit {@code index(x, y, z)}: that voxel holds a block. */
     private long filled;
+    /** Counts every {@link #commit}: a body's scans (wheels, wings) are redone only when this has moved. */
+    private static final java.util.concurrent.atomic.AtomicLong EDITS = new java.util.concurrent.atomic.AtomicLong();
+
+    public static long edits() {
+        return EDITS.get();
+    }
+
     private final MicroRotor[] rotors = new MicroRotor[VOXELS];
     /** The block a wedge voxel is made of (its look, weight and what mining it gives back); null: the stock wedge. */
     private final BlockState[] skins = new BlockState[VOXELS];
@@ -189,6 +196,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
 
     /** Puts {@code state} in voxel {@code index}, or empties it for null. Call {@link #commit} once the edits are done. */
     public void set(int index, @Nullable BlockState state) {
+        BlockState was = voxels[index];
         voxels[index] = state;
         skins[index] = null;
         filled = state == null ? filled & ~(1L << index) : filled | 1L << index;
@@ -196,11 +204,17 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         if (rotors[index] != null)
             gone.add(rotors[index]);
         // A bearing voxel taken out lets its body go (it falls free, as a full-size bearing broken does).
-        Joint was = bearings.remove(index);
-        if (was != null) {
-            was.letGo();
-            if (level != null && !level.isClientSide)
-                MicroBearings.unclear(level, was);
+        Joint held = bearings.remove(index);
+        if (held != null) {
+            // Broken, the bearing gives its body back to the world as voxels; if it cannot (blocked, or a body of its own on it) the body is let go.
+            boolean back = level instanceof net.minecraft.server.level.ServerLevel server && was != null
+                    && (state == null || !(state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.bearing.JointPart))
+                    && MicroBearings.release(server, this, index, was, held);
+            if (!back) {
+                held.letGo();
+                if (level != null && !level.isClientSide)
+                    MicroBearings.unclear(level, held);
+            }
         }
         float wear = rotors[index] != null && state != null && rotors[index].state() == state ? rotors[index].condition() : 1f;
         rotors[index] = state != null && state.getBlock() instanceof MicroRotation ? new MicroRotor(this, index, state) : null;
@@ -333,6 +347,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
      * the state, never off this entity -- {@link MicroCellBlock}), and the clients get the voxels.
      */
     public void commit() {
+        EDITS.incrementAndGet();
         shape = null;
         if (level == null)
             return;
@@ -586,6 +601,9 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             if (over > 0f && rotor.condition() > io.github.soundgoodizerfan.feedback.core.FTuning.FLYWHEEL_CONDITION_FLOOR) {
                 rotor.setCondition(Math.max(io.github.soundgoodizerfan.feedback.core.FTuning.FLYWHEEL_CONDITION_FLOOR,
                         rotor.condition() - io.github.soundgoodizerfan.feedback.core.FTuning.FLYWHEEL_WEAR_PER_OVER * over));
+                // The run weighs less now: tell it, or its inertia is stale until it is next rebuilt.
+                if (rotor.getNetwork() != null)
+                    rotor.getNetwork().recalculate();
                 setChanged();
             }
         }

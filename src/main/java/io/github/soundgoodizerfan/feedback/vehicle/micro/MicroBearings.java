@@ -70,7 +70,7 @@ public final class MicroBearings {
         if (!(level.getBlockEntity(cellPos) instanceof MicroCellBlockEntity cell))
             return "empty";
         Joint joint = cell.bearing(index);
-        return joint == null ? assemble(level, cell, index) : putBack(level, cell, index, joint);
+        return joint == null ? assemble(level, cell, index) : putBack(level, cell, index, joint, cell.get(index).getValue(RotaryBearingBlock.FACING));
     }
 
     private static BlockPos voxel(BlockPos cell, int index) {
@@ -216,13 +216,23 @@ public final class MicroBearings {
                 (v.getZ() + 0.5 + 0.5 * f.getStepZ()) / N);
     }
 
-    private static String putBack(ServerLevel level, MicroCellBlockEntity cell, int index, Joint joint) {
+    /**
+     * The bearing voxel {@code index} of {@code cell}, whose state was {@code was}, has been broken: the body it turned goes back
+     * into the world as voxels, as a click would have put it. False if it cannot (the way is blocked, or it holds a body of its own).
+     */
+    public static boolean release(ServerLevel level, MicroCellBlockEntity cell, int index, BlockState was, Joint joint) {
+        if (!(was.getBlock() instanceof JointPart))
+            return false;
+        String result = putBack(level, cell, index, joint, was.getValue(RotaryBearingBlock.FACING));
+        return result.equals("disassembled");
+    }
+
+    private static String putBack(ServerLevel level, MicroCellBlockEntity cell, int index, Joint joint, Direction f) {
         ServerSubLevel s = joint.held(level);
         if (s == null)
             return "not_loaded";
         if (Joint.carriesChild(level, s))
             return "has_child";
-        Direction f = cell.get(index).getValue(RotaryBearingBlock.FACING);
         Direction.Axis axis = f.getAxis();
         float sign = f.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1;
         // The body's angle about the axis's positive direction, to the nearest quarter turn; any other
@@ -343,7 +353,7 @@ public final class MicroBearings {
     }
 
     /** Voxel {@code v} turned {@code k} quarter turns about {@code axis} through the centre of voxel {@code b}, right-handed. */
-    static BlockPos turn(BlockPos v, BlockPos b, Direction.Axis axis, int k) {
+    public static BlockPos turn(BlockPos v, BlockPos b, Direction.Axis axis, int k) {
         // Doubled coordinates, so the centre line is on the integer grid and the turn is exact.
         int x = 2 * (v.getX() - b.getX()), y = 2 * (v.getY() - b.getY()), z = 2 * (v.getZ() - b.getZ());
         for (int i = 0; i < k; i++) {
@@ -358,7 +368,7 @@ public final class MicroBearings {
     }
 
     /** {@code state} turned {@code k} quarter turns about {@code axis}: its axis and Direction properties. */
-    static BlockState turn(BlockState state, Direction.Axis axis, int k) {
+    public static BlockState turn(BlockState state, Direction.Axis axis, int k) {
         if (k == 0)
             return state;
         for (Property<?> property : state.getProperties())

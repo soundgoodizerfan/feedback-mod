@@ -88,6 +88,7 @@ public class FCreativeTabs {
                         output.accept(FItems.ROTATION_ADAPTER.get());
                         output.accept(FItems.ROTARY_BEARING.get());
                         output.accept(FItems.RING_GEAR.get());
+                        output.accept(FItems.LARGE_RING_GEAR.get());
                         output.accept(FItems.MICRO_WEDGE.get());
                         output.accept(FItems.TIRE_RUBBER.get());
                         output.accept(FItems.BALL_JOINT.get());

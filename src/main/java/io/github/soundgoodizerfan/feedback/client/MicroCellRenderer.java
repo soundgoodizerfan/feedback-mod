@@ -86,11 +86,10 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
         BlockColors colors = Minecraft.getInstance().getBlockColors();
         RandomSource random = RandomSource.create();
         float s = 1f / N;
-        // A belt: two lines between the pulleys' centres, drawn once, from the end that sorts first.
+        // A belt: two lines from this pulley to the midpoint between the pulleys; the far end draws the other half.
         for (int i = 0; i < MicroCellBlockEntity.VOXELS; i++) {
             var far = cell.belt(i);
-            if (far == null || far.pos().asLong() < cell.getBlockPos().asLong()
-                    || far.pos().equals(cell.getBlockPos()) && far.index() < i)
+            if (far == null)
                 continue;
             float ax = (i & 3) * s + s / 2, ay = (i >> 2 & 3) * s + s / 2, az = (i >> 4) * s + s / 2;
             int j = far.index();
@@ -98,6 +97,9 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
             float by = (far.pos().getY() - cell.getBlockPos().getY()) + (j >> 2 & 3) * s + s / 2;
             float bz = (far.pos().getZ() - cell.getBlockPos().getZ()) + (j >> 4) * s + s / 2;
             VertexConsumer belt = buffers.getBuffer(RenderType.lines());
+            bx = (ax + bx) / 2;
+            by = (ay + by) / 2;
+            bz = (az + bz) / 2;
             float dx = bx - ax, dy = by - ay, dz = bz - az, len = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
             if (len < 1e-4f)
                 continue;
@@ -145,38 +147,55 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
                     }
                     BakedModel model = blocks.getBlockModel(state);
                     BlockState skin = cell.skin(MicroCellBlockEntity.index(x, y, z));
-                    TextureAtlasSprite skinSprite = skin == null ? null : spriteOf(skin, random);
+                    Look look = skin == null ? null : looks.computeIfAbsent(skin, k -> lookOf(k, random));
                     for (RenderType type : model.getRenderTypes(state, random, ModelData.EMPTY)) {
                         VertexConsumer out = buffers.getBuffer(RenderTypeHelper.getEntityRenderType(type, false));
                         for (Direction side : Direction.values())
                             if (!hidden(cell, state, x, y, z, side)) {
                                 random.setSeed(42L);
-                                draw(out, poseStack.last(), colors, level, cell.getBlockPos(), state,
-                                        reskinned(model.getQuads(state, side, random, ModelData.EMPTY, type), skinSprite), light, overlay);
+                                draw(out, poseStack.last(), colors, level, cell.getBlockPos(), skin != null ? skin : state,
+                                        reskinned(model.getQuads(state, side, random, ModelData.EMPTY, type), look), light, overlay);
                             }
                         random.setSeed(42L);
-                        draw(out, poseStack.last(), colors, level, cell.getBlockPos(), state,
-                                reskinned(model.getQuads(state, null, random, ModelData.EMPTY, type), skinSprite), light, overlay);
+                        draw(out, poseStack.last(), colors, level, cell.getBlockPos(), skin != null ? skin : state,
+                                reskinned(model.getQuads(state, null, random, ModelData.EMPTY, type), look), light, overlay);
                     }
                     poseStack.popPose();
                 }
     }
 
-    /** The look of {@code skin}: its model's side texture, or its particle if it has none. */
-    private TextureAtlasSprite spriteOf(BlockState skin, RandomSource random) {
+    /** What a skinned wedge wears on each of its six faces: the block's own sprite there and the tint index it asks for. */
+    private record Look(TextureAtlasSprite[] sprite, int[] tint) {
+    }
+
+    private final java.util.Map<BlockState, Look> looks = new java.util.HashMap<>();
+
+    /** The look of {@code skin}, read face by face from its model (a horizontal face with no quad takes the north one's; none at all, its particle). */
+    private Look lookOf(BlockState skin, RandomSource random) {
         BakedModel model = blocks.getBlockModel(skin);
-        random.setSeed(42L);
-        List<BakedQuad> side = model.getQuads(skin, Direction.NORTH, random, ModelData.EMPTY, null);
-        return side.isEmpty() ? model.getParticleIcon(ModelData.EMPTY) : side.get(0).getSprite();
+        TextureAtlasSprite[] sprites = new TextureAtlasSprite[6];
+        int[] tints = new int[6];
+        for (Direction d : Direction.values()) {
+            random.setSeed(42L);
+            List<BakedQuad> quads = model.getQuads(skin, d, random, ModelData.EMPTY, null);
+            if (quads.isEmpty() && d.getAxis().isHorizontal()) {
+                random.setSeed(42L);
+                quads = model.getQuads(skin, Direction.NORTH, random, ModelData.EMPTY, null);
+            }
+            sprites[d.ordinal()] = quads.isEmpty() ? model.getParticleIcon(ModelData.EMPTY) : quads.get(0).getSprite();
+            tints[d.ordinal()] = quads.isEmpty() ? -1 : quads.get(0).getTintIndex();
+        }
+        return new Look(sprites, tints);
     }
 
     /** {@code quads} with their texture swapped for {@code to}, each corner's coordinates carried across the new sprite. */
-    private static List<BakedQuad> reskinned(List<BakedQuad> quads, TextureAtlasSprite to) {
-        if (to == null || quads.isEmpty())
+    private static List<BakedQuad> reskinned(List<BakedQuad> quads, Look look) {
+        if (look == null || quads.isEmpty())
             return quads;
         List<BakedQuad> out = new java.util.ArrayList<>(quads.size());
         for (BakedQuad q : quads) {
             TextureAtlasSprite from = q.getSprite();
+            TextureAtlasSprite to = look.sprite()[q.getDirection().ordinal()];
             int[] v = q.getVertices().clone();
             float du = from.getU1() - from.getU0(), dv = from.getV1() - from.getV0();
             for (int k = 0; k < 4; k++) {
@@ -185,7 +204,7 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
                 v[k * 8 + 4] = Float.floatToRawIntBits(to.getU0() + (to.getU1() - to.getU0()) * fu);
                 v[k * 8 + 5] = Float.floatToRawIntBits(to.getV0() + (to.getV1() - to.getV0()) * fv);
             }
-            out.add(new BakedQuad(v, -1, q.getDirection(), to, q.isShade(), q.hasAmbientOcclusion()));
+            out.add(new BakedQuad(v, look.tint()[q.getDirection().ordinal()], q.getDirection(), to, q.isShade(), q.hasAmbientOcclusion()));
         }
         return out;
     }

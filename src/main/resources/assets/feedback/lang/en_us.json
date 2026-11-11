@@ -313,6 +313,8 @@
   "message.feedback.joint.micro_only": "It only works as a micro-block: put it in a micro cell.",
   "message.feedback.joint.variant": "Choice %s of 3.",
   "block.feedback.ring_gear": "Ring Gear",
+  "block.feedback.large_ring_gear": "Large Ring Gear",
+  "feedback.jei.info.large_ring_gear": "A ring gear with a large cog's teeth: a small cog driving it turns what it carries at half the speed, and a large cog beside it turns it as it would a large cog. Everything else is as the Ring Gear.",
   "message.feedback.rotary_bearing.assembled": "Assembled: it turns with the shaft",
   "message.feedback.rotary_bearing.disassembled": "Put back as blocks",
   "message.feedback.rotary_bearing.empty": "Nothing in front of it to turn",

@@ -189,6 +189,11 @@ public class FBlocks {
                     .sound(SoundType.COPPER)
                     .noOcclusion()));
 
+    /** A ring gear with a large cog's teeth: turns what it carries at half a small ring's speed; see {@code LargeRingGearBlock}. */
+    public static final DeferredBlock<RingGearBlock> LARGE_RING_GEAR = BLOCKS.register("large_ring_gear",
+            () -> new io.github.soundgoodizerfan.feedback.machine.bearing.LargeRingGearBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.COPPER).noOcclusion()));
+
     public static final DeferredBlock<HandCrankBlock> HAND_CRANK = BLOCKS.register("hand_crank",
             () -> new HandCrankBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)

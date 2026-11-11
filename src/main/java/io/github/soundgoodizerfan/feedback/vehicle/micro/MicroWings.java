@@ -53,6 +53,9 @@ public final class MicroWings {
 
     /** The sheets of each body with any, by Sable's id. Written on the game thread, read by the physics thread. */
     private static final Map<UUID, MicroWings> BODIES = new ConcurrentHashMap<>();
+    /** Bodies scanned since the last edit anywhere, and the edit count that was. */
+    private static final java.util.Set<UUID> SCANNED = new java.util.HashSet<>();
+    private static long scannedEdits = -1;
 
     private MicroWings(int n, double[] nx, double[] ny, double[] nz, double[] cx, double[] cy, double[] cz) {
         this.n = n;
@@ -133,6 +136,9 @@ public final class MicroWings {
         if (event.getServer().getTickCount() % RESCAN != 0)
             return;
         java.util.Set<UUID> live = new java.util.HashSet<>();
+        // A body is scanned when it is new, or when any cell has been edited since the last pass: a plot walk is not free.
+        long edits = MicroCellBlockEntity.edits();
+        boolean all = edits != scannedEdits;
         for (ServerLevel level : event.getServer().getAllLevels()) {
             var container = ServerSubLevelContainer.getContainer(level);
             if (container == null)
@@ -141,6 +147,9 @@ public final class MicroWings {
                 if (body.isRemoved())
                     continue;
                 live.add(body.getUniqueId());
+                if (!all && SCANNED.contains(body.getUniqueId()))
+                    continue;
+                SCANNED.add(body.getUniqueId());
                 MicroWings wings = scan(level, body);
                 if (wings == null)
                     BODIES.remove(body.getUniqueId());
@@ -150,6 +159,8 @@ public final class MicroWings {
         }
         // Bodies put back or unloaded are forgotten.
         BODIES.keySet().retainAll(live);
+        SCANNED.retainAll(live);
+        scannedEdits = edits;
     }
 
     @SubscribeEvent

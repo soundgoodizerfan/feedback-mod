@@ -120,6 +120,9 @@ public final class Joint {
     private volatile double carried;
     /** Brake level 0 to 1, from a card; the road's torque on the wheel summed over physics steps, kpg x block^2 / s. */
     private volatile float brake;
+    /** The arm's weight about the hinge's axis this tick, kpg x block^2 / s^2; read with the road's. */
+    private volatile double gravityTorque;
+    private long scanEdits = -1;
     /** 1 as built, falling to the floor when the drive pushes against a held brake past the grace; it scales the brake's grip. */
     private volatile float pad = 1;
     private final java.util.concurrent.atomic.AtomicInteger padWorn = new java.util.concurrent.atomic.AtomicInteger();
@@ -345,8 +348,10 @@ public final class Joint {
         driveInertia = housing > 0 ? child * housing / (child + housing) : child;
         parentInertia = p == null ? 0 : spinInertia(p, localAxis);
         servo(s, p, facing, localAnchor);
-        if (kind == Kind.HINGE && ticks % 20 == 0)
+        if (kind == Kind.HINGE && ticks % 20 == 0 && editsMoved())
             scanWheel(level, s);
+        if (kind == Kind.HINGE && variant == 0)
+            gravityOn(s, p, facing);
         if (++ticks % LOG_EVERY == 0)
             diagnose(s, p, localAnchor, facing, rpm);
         return rebuild;
@@ -508,6 +513,33 @@ public final class Joint {
         vehicle = new java.util.HashSet<dev.ryanhcode.sable.sublevel.SubLevel>(all);
     }
 
+    /** True once per change of the world's micro edits: a plot is scanned for wheels only after something was built or broken. */
+    private boolean editsMoved() {
+        long e = io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity.edits();
+        if (e == scanEdits)
+            return false;
+        scanEdits = e;
+        return true;
+    }
+
+    /**
+     * The arm's weight about the hinge, as a torque the run feels: an off-centre arm is load going up and a help coming down. Only while
+     * the arm is driven or turning: one held at rest by its servo pushes nothing.
+     */
+    private void gravityOn(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing) {
+        var mass = s.getMassTracker();
+        if (mass.getCenterOfMass() == null || targetRadPerS == 0 && Math.abs(relativeSpin(s, p, facing)) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
+            gravityTorque = 0;
+            return;
+        }
+        Vector3d com = s.logicalPose().transformPosition(new Vector3d(mass.getCenterOfMass()), new Vector3d());
+        Vector3d anchor = s.logicalPose().transformPosition(new Vector3d(plotAnchor), new Vector3d());
+        Vector3d axis = toWorld(p, localAxis, false).normalize();
+        Vector3d lever = com.sub(anchor);
+        // r x (m g down) . axis
+        gravityTorque = lever.cross(new Vector3d(0, -mass.getMass() * FTuning.GRAVITY_BLOCKS_PER_S2, 0), new Vector3d()).dot(axis);
+    }
+
     /** Sets the brake level, 0 to 1 (a card). */
     public void setBrake(float level) {
         brake = Math.clamp(level, 0f, 1f);
@@ -524,7 +556,7 @@ public final class Joint {
             impulse = roadImpulse;
             roadImpulse = 0;
         }
-        return (float) (facingSign * impulse / Math.max(ticks / 20.0, 1e-6) * io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
+        return (float) (facingSign * (impulse / Math.max(ticks / 20.0, 1e-6) + gravityTorque) * io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
     }
 
     /** The body's spin about the facing relative to its parent's, rad/s (positive about the positive axis). */

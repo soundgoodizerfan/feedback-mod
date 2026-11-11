@@ -1,0 +1,134 @@
+{
+  "variants": {
+    "facing=up,role=0": {
+      "model": "feedback:block/ring_gear"
+    },
+    "facing=up,role=1": {
+      "model": "feedback:block/ring_gear"
+    },
+    "facing=up,role=2": {
+      "model": "feedback:block/ring_gear"
+    },
+    "facing=up,role=3": {
+      "model": "feedback:block/ring_gear"
+    },
+    "facing=up,role=4": {
+      "model": "feedback:block/ring_gear"
+    },
+    "facing=down,role=0": {
+      "model": "feedback:block/ring_gear",
+      "x": 180
+    },
+    "facing=down,role=1": {
+      "model": "feedback:block/ring_gear",
+      "x": 180
+    },
+    "facing=down,role=2": {
+      "model": "feedback:block/ring_gear",
+      "x": 180
+    },
+    "facing=down,role=3": {
+      "model": "feedback:block/ring_gear",
+      "x": 180
+    },
+    "facing=down,role=4": {
+      "model": "feedback:block/ring_gear",
+      "x": 180
+    },
+    "facing=north,role=0": {
+      "model": "feedback:block/ring_gear",
+      "x": 90
+    },
+    "facing=north,role=1": {
+      "model": "feedback:block/ring_gear",
+      "x": 90
+    },
+    "facing=north,role=2": {
+      "model": "feedback:block/ring_gear",
+      "x": 90
+    },
+    "facing=north,role=3": {
+      "model": "feedback:block/ring_gear",
+      "x": 90
+    },
+    "facing=north,role=4": {
+      "model": "feedback:block/ring_gear",
+      "x": 90
+    },
+    "facing=south,role=0": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,role=1": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,role=2": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,role=3": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 180
+    },
+    "facing=south,role=4": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 180
+    },
+    "facing=west,role=0": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,role=1": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,role=2": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,role=3": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 270
+    },
+    "facing=west,role=4": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 270
+    },
+    "facing=east,role=0": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,role=1": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,role=2": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,role=3": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 90
+    },
+    "facing=east,role=4": {
+      "model": "feedback:block/ring_gear",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

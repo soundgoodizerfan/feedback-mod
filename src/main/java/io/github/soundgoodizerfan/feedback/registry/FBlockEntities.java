@@ -96,7 +96,7 @@ public class FBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RotaryBearingBlockEntity>> ROTARY_BEARING =
             BLOCK_ENTITIES.register("rotary_bearing", () -> BlockEntityType.Builder
-                    .of(RotaryBearingBlockEntity::new, FBlocks.ROTARY_BEARING.get(), FBlocks.RING_GEAR.get())
+                    .of(RotaryBearingBlockEntity::new, FBlocks.ROTARY_BEARING.get(), FBlocks.RING_GEAR.get(), FBlocks.LARGE_RING_GEAR.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandCrankBlockEntity>> HAND_CRANK =

@@ -45,7 +45,7 @@ public class RingGearBlock extends RotaryBearingBlock {
         return false;
     }
 
-    /** A small cog's teeth, at its block's edge. shortcut: one ring size; a large ring is [OPEN] in the spec. */
+    /** A small cog's teeth, at its block's edge; {@link LargeRingGearBlock} has a large cog's. */
     @Override
     public int teeth(BlockState state) {
         return CogBlock.SMALL;

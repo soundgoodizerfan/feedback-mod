@@ -56,6 +56,9 @@ public class RotaryBearingBlockEntity extends RotationNode {
     @Nullable
     private Joint bearing;
 
+    /** The facing as last ticked: what a broken bearing's body is put back about, when the block's own state is gone. */
+    private Direction lastFacing;
+
     public RotaryBearingBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ROTARY_BEARING.get(), pos, state);
     }
@@ -117,6 +120,11 @@ public class RotaryBearingBlockEntity extends RotationNode {
     }
 
     private String disassemble(ServerLevel level) {
+        return disassemble(level, facing());
+    }
+
+    /** Puts the body back at the nearest quarter turn about {@code f}'s axis; its blocks and their states turn with it. */
+    private String disassemble(ServerLevel level, Direction f) {
         ServerSubLevel s = bearing.held(level);
         if (s == null)
             return "not_loaded";
@@ -127,8 +135,9 @@ public class RotaryBearingBlockEntity extends RotationNode {
         for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()))
             if (!level.getBlockState(p).isAir())
                 blocks.add(p.immutable());
-        // Home, unturned: Sable's block move turns only about Y, and the Lift puts back unturned too.
-        var transform = new SubLevelAssemblyHelper.AssemblyTransform(bearing.homeFrom(), bearing.homeTo(), 0, Rotation.NONE, level);
+        float sign = f.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1;
+        int k = Math.floorMod(Math.round(sign * bearing.turned(s, Joint.parentOf(level, worldPosition), f) / 90f), 4);
+        var transform = new TurnedTransform(bearing.homeFrom(), bearing.homeTo(), worldPosition, f.getAxis(), k, level);
         for (BlockPos p : blocks)
             if (!level.getBlockState(transform.apply(p)).canBeReplaced())
                 return "blocked";
@@ -155,6 +164,7 @@ public class RotaryBearingBlockEntity extends RotationNode {
             forget(level);
             return;
         }
+        lastFacing = facing();
         boolean rebuild = bearing.tick(level, worldPosition, worldAnchor(), facing(), getRpm().value());
         // What the road does to a wheel on this bearing reaches the run as a push.
         float road = bearing.takeRoadSu(facing().getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1, 1);
@@ -174,8 +184,12 @@ public class RotaryBearingBlockEntity extends RotationNode {
     /** Broken or unloaded: the joint goes (an assembled body broken off falls free). */
     @Override
     public void setRemoved() {
-        if (bearing != null)
-            bearing.letGo();
+        if (bearing != null) {
+            // Broken (the block is gone), not unloaded: the body goes back into the world; if it cannot, it is let go and falls free.
+            boolean broken = level instanceof ServerLevel && lastFacing != null && !(level.getBlockState(worldPosition).getBlock() instanceof RotaryBearingBlock);
+            if (!broken || !"disassembled".equals(disassemble((ServerLevel) level, lastFacing)))
+                bearing.letGo();
+        }
         super.setRemoved();
     }
 
