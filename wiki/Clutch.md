@@ -27,6 +27,10 @@ A clutch **doesn't brake**. It stops *driving* the far side. Whatever is downstr
 
 The disengaged clutch stays part of the driving side, so the power source keeps running normally.
 
+## Micro clutch
+
+A Clutch can be a voxel of a [micro build](Micro_Core.md). A [Controller](Controller.md) card switches a micro clutch, engaged or not. Point a [Data Connector](Data_Connector.md) at the clutch voxel and link a card to its **Engaged** channel.
+
 ## Uses
 
 - Stopping one machine without stopping the whole line.

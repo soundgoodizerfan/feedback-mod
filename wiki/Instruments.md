@@ -333,7 +333,7 @@ Place it on the vehicle. Its front is the way it faces; pitch and roll are measu
 
 **Sneak-right-click** shows the current reading.
 
-To use it, point a Data Connector at it and link an *Input* card on the [Programmer](Programming.md) to it. The card reads the sensor's current reading and carries its kind, so the program cannot compare altitude with speed. Link the card again after changing what the sensor reads. A card that points at it remembers it as an offset from the vehicle's frame, so the program still works after the vehicle is lifted or put back.
+To use it, point a Data Connector at it and link an *Input* card on the [Programmer](Programming.md) to it. The card reads the sensor's current reading and carries its kind, so the program cannot compare altitude with speed. Link the card again after changing what the sensor reads. A card that points at it remembers it as an offset from the vehicle, so the program still works after the vehicle is lifted or put back.
 
 ## Fitting a circuit
 

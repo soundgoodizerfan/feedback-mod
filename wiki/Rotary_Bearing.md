@@ -1,6 +1,6 @@
 # Rotary Bearing
 
-Turns whatever you build in front of it, as one piece, at the speed of the shaft behind it. It is how an arm, a rotor or a sail spins on a line of [rotation](Rotation.md).
+Turns whatever you build in front of it, as one piece, at the speed of the shaft behind it. It is how an arm, a rotor, a wheel or a sail spins on a line of [rotation](Rotation.md), and as a micro-block it is a hinge that a card can steer.
 
 ## Crafting
 
@@ -30,10 +30,26 @@ Breaking the bearing lets its piece go free.
 
 ## Micro bearings
 
-A Rotary Bearing can be a voxel of a micro build. It turns the voxels joined to its front face; the rest of their cell stays. Putting back lands the voxels at the nearest quarter turn. A piece can hold up to 16384 voxels. Several spinning arms fit in one block as long as their voxels never meet.
+A Rotary Bearing can be a voxel of a micro build, used with an empty hand. It turns the voxels joined to its front face; the rest of their cell stays. Putting back lands the voxels at the nearest quarter turn. A piece can hold up to 16384 voxels. Several spinning arms fit in one block as long as their voxels never meet.
+
+### Roles
+
+Before assembling, **sneak-use** the bearing with an empty hand to cycle its role; the message names it.
+
+| Role | What the piece does |
+| --- | --- |
+| 0 | Turns at the shaft's speed. A card can brake it through the **Brake** channel. |
+| 1 | Steers: a card sets its angle through the **Angle** channel. |
+| 2, 3, 4 | Roll, pitch and yaw [control surface](Control_Surfaces.md): a card sets its angle. |
+
+A bearing that is stopped and undriven holds its angle and does not sag.
+
+A hinge drive that sits at its torque cap while the arm does not turn is stalled, and a stalled drive loses condition down to a floor of 30%, which cuts its torque. Time spent running costs nothing.
+
+A role 0 bearing whose piece holds tire stock is a wheel; see [Wheels](Vehicles.md#wheels).
 
 ## See also
 
 - [Ring Gear](Ring_Gear.md): the same, driven from the side by a cog instead of from behind.
 - [Bearing](Bearing.md): the low-friction shaft, a different block.
-- [Vehicles](Vehicles.md#joints-the-pivot-setter): bearing joints on a welded frame.
+- [Vehicles](Vehicles.md#joints): the other joints a micro-block build uses.

@@ -40,7 +40,7 @@ public record DataNodeRef(BlockPos pos, @Nullable Direction side, int voxel) imp
     /**
      * A micro-block voxel is named by its cell's position and its index in the cell ({@code voxel}, 0
      * to 63); -1 for every other node. The position is where the block stands now, in the world or
-     * in a vehicle's plot; the Lift rewrites the references it moves ({@code ControllerCore#moved}).
+     * in a vehicle's plot; the Lift rewrites the references it moves ({@code ControllerCore#retarget}).
      */
     public boolean isVoxel() {
         return voxel >= 0;

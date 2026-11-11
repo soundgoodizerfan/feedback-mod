@@ -73,9 +73,9 @@ public class LiftItem extends BlockItem {
 
     /**
      * Takes the vehicle {@code body} belongs to into one Lift from the stack in hand. Clicking a
-     * swinging part takes the whole vehicle, and the parts are folded back into their frames first
-     * (they are made again when it is next lifted). Two vehicles joined frame to frame are two
-     * grids, and one template holds one: refused, until the joint is cut.
+     * swinging part takes the whole vehicle, and the bodies hung on joints are put back into it first
+     * (they are made again by clicking the joints). More than one body that no joint holds is more than
+     * one grid, and one template holds one: refused.
      */
     private static void pickUp(ServerLevel level, ServerSubLevel clicked, Player player, ItemStack stack, UseOnContext ctx) {
         List<ServerSubLevel> roots = Superobject.roots(level, Superobject.of(level, clicked));

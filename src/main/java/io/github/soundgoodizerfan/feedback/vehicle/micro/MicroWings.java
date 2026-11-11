@@ -132,6 +132,7 @@ public final class MicroWings {
     public static void onServerTick(ServerTickEvent.Post event) {
         if (event.getServer().getTickCount() % RESCAN != 0)
             return;
+        java.util.Set<UUID> live = new java.util.HashSet<>();
         for (ServerLevel level : event.getServer().getAllLevels()) {
             var container = ServerSubLevelContainer.getContainer(level);
             if (container == null)
@@ -139,6 +140,7 @@ public final class MicroWings {
             for (ServerSubLevel body : container.getAllSubLevels()) {
                 if (body.isRemoved())
                     continue;
+                live.add(body.getUniqueId());
                 MicroWings wings = scan(level, body);
                 if (wings == null)
                     BODIES.remove(body.getUniqueId());
@@ -146,6 +148,8 @@ public final class MicroWings {
                     BODIES.put(body.getUniqueId(), wings);
             }
         }
+        // Bodies put back or unloaded are forgotten.
+        BODIES.keySet().retainAll(live);
     }
 
     @SubscribeEvent

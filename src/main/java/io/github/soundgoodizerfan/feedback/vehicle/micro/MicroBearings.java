@@ -93,7 +93,9 @@ public final class MicroBearings {
         ServerSubLevel parent = Joint.parentOf(level, cellPos);
         Direction f = cell.get(index).getValue(RotaryBearingBlock.FACING);
         Joint.Kind kind = ((JointPart) cell.get(index).getBlock()).kind();
-        int variant = cell.get(index).hasProperty(JointBlock.VARIANT) ? cell.get(index).getValue(JointBlock.VARIANT) : 1;
+        // A hinge's variant is its role (0 driven, 1 steers, 2 to 4 control surfaces); another joint's is its named choice.
+        int variant = kind == Joint.Kind.HINGE ? VoxelNode.role(cell.get(index))
+                : cell.get(index).hasProperty(JointBlock.VARIANT) ? cell.get(index).getValue(JointBlock.VARIANT) : 1;
         BlockPos b = voxel(cellPos, index), front = b.relative(f), host = b.relative(f.getOpposite());
         if (at(level, front) == null)
             return "empty";

@@ -235,9 +235,7 @@ Drilling gives a [Pipe](Pipe.md) of that polymer; a metal ingot drills into one 
 
 Every polymer has an **insulation band**, shown in the table: how high a voltage it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that sees more voltage than its band loses its coat. The bands run LV, MV, HV, UHV, EHV, Trunk: polyethylene and rubber hold HV, which quartz glass and quartz beat, and PTFE holds Trunk, above any other insulator. PTFE is a powder made in the [Reactor](Reactor.md#the-reactions) ([Chemicals](Chemicals.md#fluorine-and-ptfe)) and sintered at 360 to 410 Tu into its *Insulation* form in any vessel that holds that heat; above 450 Tu the powder spoils into charred remains.
 
-### Polymer tires and grips
-
-A **Block** of a polymer is tire stock. Hold it in the off-hand and right-click a hinge with the Welder or Pivot Setter as with any block ([tires](Vehicles.md#tires)). **Synthetic rubber** grips at 1.2, against 0.4 for planks and 0.6 for iron; only slime and honey grip more. It is soft, so a rubber tire flexes as it rolls and drags like any soft tire.
+### Polymer grips
 
 A polymer grip on a tool or gun raises how securely it is held, by its friction. Rubber's is highest of the polymers.
 

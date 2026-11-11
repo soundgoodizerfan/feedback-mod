@@ -174,10 +174,11 @@ public final class FTuning {
     public static final double JOINT_HOLD_RATE = 20;
     /**
      * Placeholders. Joint wear, by misuse only: condition lost per tick a hinge drive sits at its
-     * torque cap with no relative turning (a stalled drive), or a ball, slider or piston sits on its
-     * stop under load; the lowest condition reached; and condition's cut of the torque cap.
+     * torque cap with no relative turning for longer than a start-up takes (a stalled drive); the lowest condition reached; and condition's cut of the torque cap.
      */
     public static final float JOINT_STALL_WEAR_PER_TICK = 0.0005f;
+    /** Placeholder. Physics steps a drive must sit at its cap without turning the arm before that counts as a stall (about 5 s). */
+    public static final int JOINT_STALL_GRACE_STEPS = 300;
     public static final float JOINT_CONDITION_FLOOR = 0.3f;
     /** Placeholder. Half the swing of a ball joint's cone in radians: narrow, stock, wide. */
     public static final float[] BALL_CONE_RAD = {(float) Math.toRadians(20), (float) Math.toRadians(45), (float) Math.toRadians(90)};

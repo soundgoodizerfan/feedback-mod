@@ -7,6 +7,8 @@ The tool that tells a [Programmer](Programming.md) **which** sensor or block a c
 ## Using it
 
 1. **Right-click** a sensor or switchable block: a [Temperature Sensor](Instruments.md#temperature-sensor) or [Current Sensor](Instruments.md#current-sensor) face, a [Lathe](Lathe.md), a [Clutch](Clutch.md), [Valve](Valve.md), [Damper](Damper.md), [Breaker](Breaker.md), [Engine](Engine.md) or a [Driver's Seat](Vehicles.md#the-drivers-seat). You'll see *"Node selected."*
+
+On a [micro cell](Micro_Core.md), the connector picks the single joint voxel you aim at instead of the cell. The card then reads or sets that voxel: a [Piston Joint](Piston_Joint.md)'s **Piston level**, a hinge's **Angle** or **Brake** (see [Rotary Bearing](Rotary_Bearing.md#roles)), a micro [Clutch](Clutch.md#micro-clutch)'s **Engaged**.
 2. Open the Programmer and click the **link** button on the card that should use it.
 
 For sensors attached to a face, click **the face the sensor is on**.

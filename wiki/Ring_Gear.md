@@ -25,7 +25,7 @@ Nothing behind it drives it: a shaft or gearbox face behind turns freely inside 
 
 See [Cogs](Cogs.md#how-cogs-work) for the full meshing rules. It costs the network **0.2 Su per RPM** of friction.
 
-A Ring Gear can also be a voxel of a micro build, turning the voxels joined to its front face.
+A Ring Gear can also be a voxel of a micro build, used with an empty hand: it turns the voxels joined to its front face, and putting back lands them at the nearest quarter turn. See [Vehicles](Vehicles.md#joints).
 
 ## See also
 

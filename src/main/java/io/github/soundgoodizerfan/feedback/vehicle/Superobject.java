@@ -105,6 +105,7 @@ public final class Superobject {
      */
     @Nullable
     public static String unwind(ServerLevel level, ServerSubLevel root) {
+        int last = Integer.MAX_VALUE;
         for (int guard = 0; guard < 4096; guard++) {
             // The joints below the root only (never up to a parent, never across a frame).
             List<Hold> below = new ArrayList<>();
@@ -118,6 +119,10 @@ public final class Superobject {
                 }
             if (below.isEmpty())
                 return null;
+            // A pass that put nothing back would repeat for ever.
+            if (below.size() >= last)
+                return "blocked";
+            last = below.size();
             Hold leaf = null;
             for (Hold h : below)
                 if (holds(level, h.child()).isEmpty()) {

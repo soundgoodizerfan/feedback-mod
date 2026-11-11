@@ -92,7 +92,7 @@ public final class Joint {
     /** Ticks between diagnostic lines while a bearing holds a body (the frame bearings' cadence). */
     private static final int LOG_EVERY = 40;
     /** Joints with a live constraint, driven by the physics step. Server thread only. */
-    private static final Set<Joint> LIVE = Collections.newSetFromMap(new IdentityHashMap<>());
+    private static final Set<Joint> LIVE = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     /** World cells whose physics collider a micro bearing cleared (see MicroCellBlockEntity#clear). */
     public final List<BlockPos> cleared = new ArrayList<>();
@@ -111,7 +111,7 @@ public final class Joint {
     /** Reach either side of rest of a slider or piston, blocks. */
     private float travel = FTuning.SPRING_TRAVEL;
     /** 1 as built, falling to {@link FTuning#JOINT_CONDITION_FLOOR} by misuse only; it cuts the torque cap and the piston's force. */
-    private float condition = 1;
+    private volatile float condition = 1;
     /** The wheel this hinge turns (tire voxels on its body), rescanned every few seconds on the game thread; null if none. */
     @Nullable
     private volatile MicroWheels.Shape wheel;
@@ -122,7 +122,9 @@ public final class Joint {
     private volatile float brake;
     private double roadImpulse;
     /** Physics steps the hinge's torque sat at its cap with no relative turning, summed for the game tick. */
-    private volatile int stalledTicks;
+    private final java.util.concurrent.atomic.AtomicInteger stalledTicks = new java.util.concurrent.atomic.AtomicInteger();
+    /** Consecutive physics steps the drive has sat at its cap without the arm turning; physics thread only. */
+    private int stallRun;
     /** Held angle (rad, from the constraint's own zero) when a hinge rests; NaN while it is driven. */
     private double holdAngle = Double.NaN;
     /** Angle (deg) the body had turned against its parent when the live constraint was made: the servo's zero. */
@@ -141,22 +143,22 @@ public final class Joint {
     private final BlockPos homeFrom;
     private BlockPos homeTo;
     /** The body's moment of inertia about the axis, kpg x block^2; read when the joint is made. */
-    private double bodyInertia;
+    private volatile double bodyInertia;
     @Nullable
-    private PhysicsConstraintHandle joint;
+    private volatile PhysicsConstraintHandle joint;
 
     /** Set each game tick, read each physics step: where, which way, how fast (rad/s about the facing). */
     @Nullable
-    private ServerLevel level;
+    private volatile ServerLevel level;
     /** The axis in the parent's frame (the bearing's facing), and the parent the live joint was made to; null is the world. */
     private final Vector3d localAxis = new Vector3d();
     @Nullable
-    private UUID parent;
-    private double targetRadPerS;
+    private volatile UUID parent;
+    private volatile double targetRadPerS;
     /** The reduced inertia the drive pulls, kpg x block^2: the child's, or child and parent's in series. */
-    private double driveInertia;
+    private volatile double driveInertia;
     /** The parent's moment of inertia about the axis through its own centre of mass: what its reaction spins. */
-    private double parentInertia;
+    private volatile double parentInertia;
     /** The last physics step's drive impulse about the axis, for the diagnostics. */
     private double lastDrive;
 
@@ -173,7 +175,7 @@ public final class Joint {
      */
     public static Joint of(ServerSubLevel made, Vector3d localAnchor, Direction facing, BlockPos home,
                                   @Nullable ServerSubLevel parent) {
-        return of(Kind.HINGE, 1, made, localAnchor, facing, home, parent);
+        return of(Kind.HINGE, 0, made, localAnchor, facing, home, parent);
     }
 
     /** As {@link #of(ServerSubLevel, Vector3d, Direction, BlockPos, ServerSubLevel)} for any kind; {@code variant} is the cone or spring band. */
@@ -277,9 +279,8 @@ public final class Joint {
         float rpm = kind == Kind.HINGE && variant == 0 ? command : 0;
         angleLevel = kind == Kind.HINGE && variant > 0 ? Math.clamp(command, -1f, 1f) : 0;
         pistonLevel = kind == Kind.PISTON ? Math.clamp(command, -1f, 1f) : 0;
-        int stalled = stalledTicks;
+        int stalled = stalledTicks.getAndSet(0);
         if (stalled > 0) {
-            stalledTicks = 0;
             condition = Math.max(FTuning.JOINT_CONDITION_FLOOR, condition - stalled * FTuning.JOINT_STALL_WEAR_PER_TICK);
         }
         ServerSubLevel s = held(level);
@@ -514,8 +515,12 @@ public final class Joint {
         }
         double cap = FTuning.ROTARY_BEARING_MAX_TORQUE * condition * dt;
         // Wear by misuse only: a drive pinned at its cap while the arm does not turn (a stalled drive).
-        if (Math.abs(impulse) >= cap && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S)
-            stalledTicks++;
+        // Starting a heavy arm, or a drive held by its brake, sits at the cap too: only a stall that goes on past the grace is misuse.
+        if (Math.abs(impulse) >= cap && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S && brake <= 0) {
+            if (++stallRun > FTuning.JOINT_STALL_GRACE_STEPS)
+                stalledTicks.incrementAndGet();
+        } else
+            stallRun = 0;
         impulse = Math.max(-cap, Math.min(cap, impulse));
         lastDrive = impulse;
         if (impulse == 0)
@@ -626,7 +631,7 @@ public final class Joint {
             return null;
         Joint j = new Joint(tag.getUUID("Body"), BlockPos.of(tag.getLong("HomeFrom")), BlockPos.of(tag.getLong("HomeTo")));
         if (tag.contains("Kind"))
-            j.kind = Kind.valueOf(tag.getString("Kind"));
+            j.kind = parseKind(tag.getString("Kind"));
         j.variant = Math.clamp(tag.getInt("Variant"), 0, 4);
         j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
         if (j.kind == Kind.PISTON)
@@ -637,6 +642,14 @@ public final class Joint {
         for (Tag t : tag.getList("Cleared", Tag.TAG_LONG))
             j.cleared.add(BlockPos.of(((LongTag) t).getAsLong()));
         return j;
+    }
+
+    private static Kind parseKind(String name) {
+        try {
+            return Kind.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return Kind.HINGE;
+        }
     }
 
     private static void put(CompoundTag tag, String key, Vector3d v) {

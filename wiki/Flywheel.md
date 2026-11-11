@@ -32,7 +32,7 @@ At the [Smithing Table](Smithing_Table.md), put the Flywheel Blueprint in the bl
 
 ## Using it
 
-Place it in a shaft line like any shaft.
+Place it in a shaft line like any shaft. It is always a full-size block; it cannot be a voxel of a [micro build](Micro_Core.md).
 
 ## What it does
 

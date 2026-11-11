@@ -1373,6 +1373,7 @@
   "message.feedback.lift.on_vehicle": "This lift is part of a vehicle -- it can't lift.",
   "message.feedback.lift.loops": "%s closed joint loops: they will be stiff and may jitter.",
   "message.feedback.lift.picked_up": "Picked up (%s blocks).",
+  "message.feedback.lift.joined": "Two vehicles are joined to this one at a joint -- put the joint back to carry them apart.",
   "message.feedback.lift.no_room": "No room to put it down here.",
   "item.feedback.lift.carrying": "Carrying a creation (%s blocks)",
   "message.feedback.lift.height": "Lift at %s.",
