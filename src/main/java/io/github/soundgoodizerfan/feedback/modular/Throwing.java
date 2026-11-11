@@ -70,7 +70,11 @@ public final class Throwing {
                 SpringSet.overload(weapon, mass * springMult * springMult / rating, player);
         }
 
-        float returns = params.get("return", 0f);
+        // A lanyard on the weapon is a line to the hand: it costs throw speed, reels what it hits and pulls the weapon weakly back.
+        ModularTraits.Active lanyard = ModularTraits.addons(weapon).stream().filter(a -> a.id().equals("lanyard")).findFirst().orElse(null);
+        if (lanyard != null)
+            speed *= lanyard.params().get("speed_mult", 0.9f);
+        float returns = Math.max(params.get("return", 0f), lanyard == null ? 0f : lanyard.params().get("return", 0.1f));
         if (level instanceof ServerLevel server)
             returns = Math.max(returns, EnchantmentHelper.getTridentReturnToOwnerAcceleration(server, weapon, player));
         returns = Math.max(returns, RecallKinds.returns(weapon, level));
@@ -78,7 +82,9 @@ public final class Throwing {
 
         ThrownWeapon.Flight flight = new ThrownWeapon.Flight(figures.get(Fig.DAMAGE) * effort,
                 params.get("damage_per_block", defaultPerBlock) * effort, params.get("max_mult", defaultMaxMult), returns,
-                params.get("rope", 0f), params.get("pull", 0f), params.get("water_mult", 1f), params.get("tumble", 0f) > 0f);
+                Math.max(params.get("rope", 0f), lanyard == null ? 0f : lanyard.params().get("rope", 10f)),
+                Math.max(params.get("pull", 0f), lanyard == null ? 0f : lanyard.params().get("pull", 0.3f)),
+                params.get("water_mult", 1f), params.get("tumble", 0f) > 0f);
 
         weapon.hurtAndBreak(ModularStacks.cap(weapon, (int) params.get("wear", defaultWear)), player,
                 LivingEntity.getSlotForHand(player.getUsedItemHand()));

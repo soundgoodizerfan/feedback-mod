@@ -43,6 +43,9 @@ public final class Vambrace implements ModularTrait {
 
     /** Whether {@code target} wears a vambrace, which keeps a disarming shot from taking what it holds. */
     public static boolean resistsDisarm(LivingEntity target) {
+        // A lanyard on what the target holds is a line to the hand: it cannot be stripped away.
+        if (ModularTraits.addons(target.getMainHandItem()).stream().anyMatch(a -> a.id().equals("lanyard")))
+            return true;
         for (ModularTraits.Worn w : ModularTraits.worn(target))
             if (w.trait() instanceof Vambrace)
                 return true;

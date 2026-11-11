@@ -176,6 +176,14 @@
           }
         ]
       }
+    },
+    "Z": {
+      "name": "edge_guard",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.03,
+      "bulk": 1
     }
   },
   "patterns": [

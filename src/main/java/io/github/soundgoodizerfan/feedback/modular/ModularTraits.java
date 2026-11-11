@@ -126,6 +126,9 @@ public final class ModularTraits {
         register("poleyn", new io.github.soundgoodizerfan.feedback.modular.trait.Poleyn());
         register("vambrace", new io.github.soundgoodizerfan.feedback.modular.trait.Vambrace());
         register("hobnails", new io.github.soundgoodizerfan.feedback.modular.trait.Hobnails());
+        register("steady", new io.github.soundgoodizerfan.feedback.modular.trait.Steady());
+        register("stabiliser", new io.github.soundgoodizerfan.feedback.modular.trait.Stabiliser());
+        register("lanyard", new io.github.soundgoodizerfan.feedback.modular.trait.Lanyard());
     }
 
     private static void register(String id, ModularTrait trait) {

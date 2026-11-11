@@ -1033,9 +1033,9 @@ public final class ModularBake {
         f.put(Fig.JOINT, joint(design, type, by, struck, reachLength, rodLength, heads));
     }
 
-    /** The strength a joint can lean on in {@code m}: a binding counts for its share of its own strength, any other part for all of it. */
+    /** The strength a joint can lean on in {@code m}: a binding or an edge guard counts for its share of its own strength, any other part for all of it. */
     private static float jointStrength(ModularType.Role r, Part p, Material m) {
-        if (r.name().equals("binding"))
+        if (r.name().equals("binding") || r.name().equals("edge_guard"))
             return (m.kind().filter(k -> k == Material.Kind.METAL).isPresent()
                     ? ModularTuning.PINNED_SHARE : ModularTuning.WRAPPED_SHARE) * strength(m) * param(r, p, "joint_mult");
         return strength(m);
@@ -1050,8 +1050,8 @@ public final class ModularBake {
         float binding = 0;
         for (Part p : design.parts()) {
             ModularType.Role r = type.roles().get(p.role());
-            if (r.name().equals("binding"))
-                binding = jointStrength(r, p, by.get(p.role()));
+            if (r.name().equals("binding") || r.name().equals("edge_guard"))
+                binding += jointStrength(r, p, by.get(p.role()));
             else if (r.rod() || heads.contains(p.role()))
                 weakest = Math.min(weakest, strength(by.get(p.role())));
         }

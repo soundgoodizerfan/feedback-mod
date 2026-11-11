@@ -372,8 +372,9 @@ public final class ToolTableAssembly {
         // The fullest assembly of a form is the form with every optional part on, so the limits are checked on that, not on each combination.
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             ModularType t = e.getValue();
-            // A gun carries more optional parts than its table has slots, by design: it takes a pick of them, so only its base form must fit.
-            int extras = t.family() == ModularType.Family.GUN || t.family() == ModularType.Family.SUIT_MODULE ? 0 : t.extras().size();
+            // Optional parts are fitted one at a time to a finished item (ModularRework add), so they never have to share the table's slots
+            // at assembly: only the laid roles of a form must fit, as for a gun.
+            int extras = 0;
             for (Map<String, Integer> form : t.forms()) {
                 if (form.size() + extras > slots(t))
                     out.add(e.getKey() + " has up to " + (form.size() + extras) + " roles in " + form + (extras > 0 ? " and every optional part" : "") + ", more than the " + slots(t) + " slots of its table");
