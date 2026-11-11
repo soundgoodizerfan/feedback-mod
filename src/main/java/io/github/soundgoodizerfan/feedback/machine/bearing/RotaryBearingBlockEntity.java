@@ -155,7 +155,13 @@ public class RotaryBearingBlockEntity extends RotationNode {
             forget(level);
             return;
         }
-        if (bearing.tick(level, worldPosition, worldAnchor(), facing(), getRpm().value()))
+        boolean rebuild = bearing.tick(level, worldPosition, worldAnchor(), facing(), getRpm().value());
+        // What the road does to a wheel on this bearing reaches the run as a push.
+        float road = bearing.takeRoadSu(facing().getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1, 1);
+        if (road != 0 && getNetwork() != null)
+            getNetwork().driveExternally(new io.github.soundgoodizerfan.feedback.core.unit.Su(road),
+                    new Drag(0f), new Inertia(0f));
+        if (rebuild)
             RotationPropagator.rebuildFrom(level, worldPosition);
     }
 

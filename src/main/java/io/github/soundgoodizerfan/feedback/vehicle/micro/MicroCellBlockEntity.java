@@ -295,11 +295,24 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         super.setRemoved();
     }
 
+    /** The voxels that are tire stock ({@link MicroWheels#TIRE}): a raycast does the tread's work, so they have no collider. */
+    public long tireBits() {
+        long bits = 0;
+        for (int i = 0; i < VOXELS; i++)
+            if (voxels[i] != null && MicroWheels.isTire(voxels[i]))
+                bits |= 1L << i;
+        return bits;
+    }
+
+    public boolean hasTire() {
+        return tireBits() != 0;
+    }
+
     /** Writes this cell's voxel collider into Sable's scene (MicroColliders); server only. */
     public void applyCollider() {
         colliderDue = false;
         if (level instanceof ServerLevel server && filled != 0)
-            MicroColliders.apply(server, worldPosition, getBlockState(), filled & ~hinge);
+            MicroColliders.apply(server, worldPosition, getBlockState(), filled & ~hinge & ~tireBits());
     }
 
     /** Sets the voxels left out of the voxel collider (see {@link #hinge}). */
@@ -388,6 +401,12 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             Direction f = voxel.getValue(RotaryBearingBlock.FACING);
             rebuild |= e.getValue().tick(server, pos, cell.faceCentre(e.getIntKey(), f), f,
                     hinge ? rotor.getRpm().value() : cell.levels[e.getIntKey()]);
+            if (hinge && rotor.getNetwork() != null) {
+                float road = e.getValue().takeRoadSu(f.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1, 1);
+                if (road != 0)
+                    rotor.getNetwork().driveExternally(new io.github.soundgoodizerfan.feedback.core.unit.Su(road),
+                            new io.github.soundgoodizerfan.feedback.core.unit.Drag(0f), new io.github.soundgoodizerfan.feedback.core.unit.Inertia(0f));
+            }
         }
         if (rebuild) {
             cell.setChanged();

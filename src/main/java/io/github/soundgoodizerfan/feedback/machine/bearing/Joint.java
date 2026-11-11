@@ -34,6 +34,7 @@ import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroWheels;
 
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
@@ -111,6 +112,15 @@ public final class Joint {
     private float travel = FTuning.SPRING_TRAVEL;
     /** 1 as built, falling to {@link FTuning#JOINT_CONDITION_FLOOR} by misuse only; it cuts the torque cap and the piston's force. */
     private float condition = 1;
+    /** The wheel this hinge turns (tire voxels on its body), rescanned every few seconds on the game thread; null if none. */
+    @Nullable
+    private volatile MicroWheels.Shape wheel;
+    /** The vehicle's bodies (rays pass through them) and the mass each of its wheels bears. */
+    private volatile Set<dev.ryanhcode.sable.sublevel.SubLevel> vehicle = Set.of();
+    private volatile double carried;
+    /** Brake level 0 to 1, from a card; the road's torque on the wheel summed over physics steps, kpg x block^2 / s. */
+    private volatile float brake;
+    private double roadImpulse;
     /** Physics steps the hinge's torque sat at its cap with no relative turning, summed for the game tick. */
     private volatile int stalledTicks;
     /** Held angle (rad, from the constraint's own zero) when a hinge rests; NaN while it is driven. */
@@ -310,6 +320,8 @@ public final class Joint {
         driveInertia = housing > 0 ? child * housing / (child + housing) : child;
         parentInertia = p == null ? 0 : spinInertia(p, localAxis);
         servo(s, p, facing);
+        if (kind == Kind.HINGE && ticks % 20 == 0)
+            scanWheel(level, s);
         if (++ticks % LOG_EVERY == 0)
             diagnose(s, p, localAnchor, facing, rpm);
         return rebuild;
@@ -393,6 +405,49 @@ public final class Joint {
         }
     }
 
+    /**
+     * Looks for tire voxels on the turned body, and counts the wheels the vehicle shares its weight
+     * over. Game thread, once a second: a build changes rarely, and a scan walks the plot.
+     */
+    private void scanWheel(ServerLevel level, ServerSubLevel s) {
+        MicroWheels.Shape shape = MicroWheels.scan(level, s, plotAnchor, plotAxis);
+        wheel = shape;
+        if (shape == null) {
+            vehicle = Set.of();
+            return;
+        }
+        var all = io.github.soundgoodizerfan.feedback.vehicle.Superobject.of(level, s);
+        double mass = 0;
+        int wheels = 0;
+        for (ServerSubLevel b : all) {
+            mass += b.getMassTracker().getMass();
+            for (var h : io.github.soundgoodizerfan.feedback.vehicle.Superobject.holds(level, b))
+                if (h.joint().kind() == Kind.HINGE && MicroWheels.scan(level, h.child(), h.joint().plotAnchor, h.joint().plotAxis) != null)
+                    wheels++;
+        }
+        carried = mass / Math.max(1, wheels);
+        vehicle = new java.util.HashSet<dev.ryanhcode.sable.sublevel.SubLevel>(all);
+    }
+
+    /** Sets the brake level, 0 to 1 (a card). */
+    public void setBrake(float level) {
+        brake = Math.clamp(level, 0f, 1f);
+    }
+
+    /**
+     * The road's torque on the wheel this game tick, in Su, along the rotation network's positive sense,
+     * and the sum cleared. The network feels it as a push: a wheel the road drives faster than the shaft
+     * helps it, one the road holds back loads it.
+     */
+    public float takeRoadSu(float facingSign, double ticks) {
+        double impulse;
+        synchronized (this) {
+            impulse = roadImpulse;
+            roadImpulse = 0;
+        }
+        return (float) (facingSign * impulse / Math.max(ticks / 20.0, 1e-6) * io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
+    }
+
     /** The body's spin about the facing relative to its parent's, rad/s (positive about the positive axis). */
     private double relativeSpin(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing) {
         Vector3d axis = toWorld(p, normal(facing), false);
@@ -426,6 +481,15 @@ public final class Joint {
         if (h == null || (p != null && hp == null))
             return;
         Vector3d axis = toWorld(p, localAxis, false);
+        MicroWheels.Shape wh = wheel;
+        if (wh != null) {
+            Vector3d centre = s.logicalPose().transformPosition(new Vector3d(plotAnchor), new Vector3d());
+            double road = MicroWheels.step(level, s, vehicle, centre, axis, wh, carried, brake, dt);
+            if (road != 0)
+                synchronized (this) {
+                    roadImpulse += road * dt;
+                }
+        }
         double w = h.getAngularVelocity(new Vector3d()).dot(axis) - (hp == null ? 0 : hp.getAngularVelocity(new Vector3d()).dot(axis));
         // The step toward the target speed, ramped: no faster than the bearing's angular acceleration.
         double step = (targetRadPerS - w) * (1 - Math.exp(-FTuning.ROTARY_BEARING_DRIVE_RATE * dt));
