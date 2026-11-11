@@ -31,6 +31,13 @@ public class BalanceScaleItem extends Item implements Instrument {
         return ModularTuning.BALANCE_RESOLUTION;
     }
 
+    /** Held against a made item in the other hand: stamps its mass and balance on it, exact. */
+    @Override
+    public net.minecraft.world.InteractionResultHolder<net.minecraft.world.item.ItemStack> use(net.minecraft.world.level.Level level,
+            net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
+        return io.github.soundgoodizerfan.feedback.modular.Measured.apply(io.github.soundgoodizerfan.feedback.modular.Measured.Kind.BALANCE, level, player, hand);
+    }
+
     @Override
     public Component label() {
         return Component.translatable("feedback.instrument.balance_scale");

@@ -92,9 +92,13 @@ public final class ModularReadings {
             truthFigures(stack, f, out);
             return out;
         }
-        if (Readout.instrumented(Quantity.MASS))
-            out.add(caused(Readout.reading(Quantity.MASS, "feedback.readout.mass", Readout.figure(Quantity.MASS, f.mass().value())),
-                    stack, ModularFigures.Fig.MASS));
+        if (Readout.instrumented(Quantity.MASS)) {
+            // A figure no instrument stamped on the item is a range, as wide as the fit left it uncertain; a stamp is exact.
+            float mass = f.mass().value(), spread = io.github.soundgoodizerfan.feedback.modular.ModularFit.spread(stack);
+            String shown = io.github.soundgoodizerfan.feedback.modular.Measured.has(stack, "mass") ? Readout.figure(Quantity.MASS, mass)
+                    : Readout.figure(Quantity.MASS, mass * (1f - spread)) + "\u2013" + Readout.figure(Quantity.MASS, mass * (1f + spread));
+            out.add(caused(Readout.reading(Quantity.MASS, "feedback.readout.mass", shown), stack, ModularFigures.Fig.MASS));
+        }
         if (Readout.instrumented(Quantity.HARDNESS)) {
             float hardness = f.get(ModularFigures.Fig.HARDNESS);
             out.add(caused(Readout.reading(Quantity.HARDNESS, "feedback.readout.hardness", Readout.exact(Quantity.HARDNESS)
@@ -103,6 +107,13 @@ public final class ModularReadings {
             if (Screen.hasShiftDown())
                 out.add(gloss("feedback.gloss.scratch_files", files()));
         }
+        // What an instrument stamped on it, exact, as it was read.
+        io.github.soundgoodizerfan.feedback.modular.Measured.of(stack).entrySet().stream().sorted(java.util.Map.Entry.comparingByKey()).forEach(e -> {
+            String key = e.getKey();
+            Component name = key.startsWith("axis.") ? Component.translatable("modular.feedback.axis." + key.substring(key.lastIndexOf('.') + 1))
+                    : Component.translatableWithFallback("modular.feedback.fig." + key, key);
+            out.add(Component.translatable("feedback.readout.measured", name, Readout.figure(Quantity.FIGURE, e.getValue())).withStyle(ChatFormatting.GRAY));
+        });
         return out;
     }
 

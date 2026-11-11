@@ -59,6 +59,13 @@ public final class FModular {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.modular.ModularFit.Fit.STREAM_CODEC)
                     .build());
 
+    /** What an instrument read off the item and stamped on it: key to the figure as it was then ({@code Measured}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.Map<String, Float>>> MEASURED =
+            COMPONENTS.register("measured", () -> DataComponentType.<java.util.Map<String, Float>>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.modular.Measured.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.modular.Measured.STREAM_CODEC)
+                    .build());
+
     /** What that design makes, baked once and again at each step of wear. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ModularFigures>> FIGURES =
             COMPONENTS.register("modular_figures", () -> DataComponentType.<ModularFigures>builder()
@@ -197,6 +204,9 @@ public final class FModular {
 
     public static final DeferredItem<Item> BALANCE_SCALE = ITEMS.registerItem("balance_scale",
             io.github.soundgoodizerfan.feedback.item.BalanceScaleItem::new, new Item.Properties().stacksTo(1));
+    /** Reads the draw and launch figures of a bow, a crossbow, a spring or a spring gun and stamps them on it. */
+    public static final DeferredItem<Item> DRAW_GAUGE = ITEMS.registerItem("draw_gauge",
+            io.github.soundgoodizerfan.feedback.item.DrawGaugeItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> SURVEY_METER = ITEMS.registerItem("survey_meter",
             io.github.soundgoodizerfan.feedback.item.SurveyMeterItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<Item> GEIGER_COUNTER = ITEMS.registerItem("geiger_counter",

@@ -240,6 +240,11 @@ public final class ModularFit {
     }
 
     /** The fit {@code stack} carries, else clean. */
+    public static float spread(ItemStack stack) {
+        return (BlueprintCredit.of(stack) != null ? ModularTuning.FIT_TOLERANCE_BLUEPRINT : ModularTuning.FIT_TOLERANCE_HAND) / 2f;
+    }
+
+    /** The fit {@code stack} carries, or null if it has none. */
     public static Fit of(ItemStack stack) {
         return stack.getOrDefault(FModular.FIT.get(), Fit.CLEAN);
     }

@@ -119,6 +119,7 @@ public class FCreativeTabs {
                         output.accept(FItems.CARD_RACK.get());
                         output.accept(FItems.ESCAPEMENT.get());
                         output.accept(FItems.CALIPERS.get());
+                        output.accept(FModular.DRAW_GAUGE.get());
                         output.accept(FItems.INSTRUMENT_BAG.get());
                         output.accept(FItems.WRENCH.get());
                         output.accept(FItems.TASTING_SPOON.get());

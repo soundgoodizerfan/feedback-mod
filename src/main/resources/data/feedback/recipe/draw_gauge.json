@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "R": {
+      "item": "minecraft:stick"
+    },
+    "I": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    " S ",
+    " R ",
+    "III"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:draw_gauge"
+  }
+}
