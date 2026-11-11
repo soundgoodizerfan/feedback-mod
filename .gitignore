@@ -41,5 +41,6 @@ CLAUDE.md
 .mcp.json
 TODO.md
 build-and-deploy.sh
+build-and-deploy-offline.sh
 /handoff
 AGENTS.md
