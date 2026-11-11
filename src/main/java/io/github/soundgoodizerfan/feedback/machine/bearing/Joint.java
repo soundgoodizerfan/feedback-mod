@@ -19,6 +19,11 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.bearing;
 
+import dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis;
+import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle;
+import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
 import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
@@ -31,12 +36,14 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Quaterniond;
 import org.joml.Vector3d;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
@@ -78,17 +85,43 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * target stepped -48 degrees per 40 ticks, which is 12288 mod 360). A speed has no wrap.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
-public final class BearingJoint {
+public final class Joint {
 
     private static final Logger LOG = LoggerFactory.getLogger("feedback.joint");
     /** Ticks between diagnostic lines while a bearing holds a body (the frame bearings' cadence). */
     private static final int LOG_EVERY = 40;
     /** Joints with a live constraint, driven by the physics step. Server thread only. */
-    private static final Set<BearingJoint> LIVE = Collections.newSetFromMap(new IdentityHashMap<>());
+    private static final Set<Joint> LIVE = Collections.newSetFromMap(new IdentityHashMap<>());
 
     /** World cells whose physics collider a micro bearing cleared (see MicroCellBlockEntity#clear). */
     public final List<BlockPos> cleared = new ArrayList<>();
     private int ticks;
+
+    /**
+     * What the joint allows between parent and body. A hinge turns about the facing and is driven
+     * (the rest of this class); a ball swings inside a cone; a lock holds the two as one rigid piece;
+     * a slider moves along the facing against a spring; a piston is a slider a servo holds at a level.
+     */
+    public enum Kind { HINGE, BALL, LOCKED, SLIDER, PISTON }
+
+    private Kind kind = Kind.HINGE;
+    /** The cone (ball) or spring band (slider) the player chose: an index into {@link FTuning#BALL_CONE_RAD} or {@link FTuning#SUSPENSION_HZ}. */
+    private int variant = 1;
+    /** Reach either side of rest of a slider or piston, blocks. */
+    private float travel = FTuning.SPRING_TRAVEL;
+    /** 1 as built, falling to {@link FTuning#JOINT_CONDITION_FLOOR} by misuse only; it cuts the torque cap and the piston's force. */
+    private float condition = 1;
+    /** Physics steps the hinge's torque sat at its cap with no relative turning, summed for the game tick. */
+    private volatile int stalledTicks;
+    /** Held angle (rad, from the constraint's own zero) when a hinge rests; NaN while it is driven. */
+    private double holdAngle = Double.NaN;
+    /** Angle (deg) the body had turned against its parent when the live constraint was made: the servo's zero. */
+    private float zeroTurn;
+    /** A piston's level, -1 to 1 of its travel, from the card; a slider ignores it. */
+    private float pistonLevel;
+    /** The live constraint as a Generic one, to move its motor; null for the other kinds. */
+    @Nullable
+    private GenericConstraintHandle generic;
 
     private final UUID body;
     /** The front face's centre in the body's plot, the axis there, and a direction across it there. */
@@ -98,7 +131,7 @@ public final class BearingJoint {
     /** The body's moment of inertia about the axis, kpg x block^2; read when the joint is made. */
     private double bodyInertia;
     @Nullable
-    private RotaryConstraintHandle joint;
+    private PhysicsConstraintHandle joint;
 
     /** Set each game tick, read each physics step: where, which way, how fast (rad/s about the facing). */
     @Nullable
@@ -115,7 +148,7 @@ public final class BearingJoint {
     /** The last physics step's drive impulse about the axis, for the diagnostics. */
     private double lastDrive;
 
-    private BearingJoint(UUID body, BlockPos homeFrom, BlockPos homeTo) {
+    private Joint(UUID body, BlockPos homeFrom, BlockPos homeTo) {
         this.body = body;
         this.homeFrom = homeFrom;
         this.homeTo = homeTo;
@@ -126,11 +159,21 @@ public final class BearingJoint {
      * (in the bearing's level space), {@code localAnchor} the hinge there, and {@code parent} the body
      * the bearing is in (null: the world).
      */
-    public static BearingJoint of(ServerSubLevel made, Vector3d localAnchor, Direction facing, BlockPos home,
+    public static Joint of(ServerSubLevel made, Vector3d localAnchor, Direction facing, BlockPos home,
                                   @Nullable ServerSubLevel parent) {
+        return of(Kind.HINGE, 1, made, localAnchor, facing, home, parent);
+    }
+
+    /** As {@link #of(ServerSubLevel, Vector3d, Direction, BlockPos, ServerSubLevel)} for any kind; {@code variant} is the cone or spring band. */
+    public static Joint of(Kind kind, int variant, ServerSubLevel made, Vector3d localAnchor, Direction facing, BlockPos home,
+                           @Nullable ServerSubLevel parent) {
         Vec3 homeWorld = parent == null ? Vec3.atCenterOf(home) : parent.logicalPose().transformPosition(Vec3.atCenterOf(home));
-        BearingJoint j = new BearingJoint(made.getUniqueId(),
+        Joint j = new Joint(made.getUniqueId(),
                 BlockPos.containing(made.logicalPose().transformPositionInverse(homeWorld)), home);
+        j.kind = kind;
+        j.variant = Math.clamp(variant, 0, 2);
+        if (kind == Kind.PISTON)
+            j.travel = FTuning.PISTON_TRAVEL;
         made.logicalPose().transformPositionInverse(toWorld(parent, localAnchor, true), j.plotAnchor);
         made.logicalPose().transformNormalInverse(toWorld(parent, normal(facing), false), j.plotAxis);
         made.logicalPose().transformNormalInverse(toWorld(parent, across(facing), false), j.plotRef);
@@ -165,6 +208,14 @@ public final class BearingJoint {
         return false;
     }
 
+    public Kind kind() {
+        return kind;
+    }
+
+    public float condition() {
+        return condition;
+    }
+
     public BlockPos homeFrom() {
         return homeFrom;
     }
@@ -190,11 +241,19 @@ public final class BearingJoint {
     }
 
     /**
-     * Makes the joint once the body is loaded and sets the speed the physics step drives it toward,
-     * the bearing turning at {@code rpm} about its axis's positive direction. True when the body's
-     * inertia moved and the run should be rebuilt to count it.
+     * Makes the joint once the body is loaded. A hinge turns at {@code command} RPM about its axis's
+     * positive direction (the speed the physics step drives it toward); a piston is held at
+     * {@code command} of its travel, -1 to 1; the other kinds ignore it. True when the body's inertia
+     * moved and the run should be rebuilt to count it.
      */
-    public boolean tick(ServerLevel level, BlockPos bearingPos, Vector3d localAnchor, Direction facing, float rpm) {
+    public boolean tick(ServerLevel level, BlockPos bearingPos, Vector3d localAnchor, Direction facing, float command) {
+        float rpm = kind == Kind.HINGE ? command : 0;
+        pistonLevel = kind == Kind.PISTON ? Math.clamp(command, -1f, 1f) : 0;
+        int stalled = stalledTicks;
+        if (stalled > 0) {
+            stalledTicks = 0;
+            condition = Math.max(FTuning.JOINT_CONDITION_FLOOR, condition - stalled * FTuning.JOINT_STALL_WEAR_PER_TICK);
+        }
         ServerSubLevel s = held(level);
         if (s == null || s.isRemoved())
             return false; // not loaded yet: wait, as FrameBlockEntity.pair does
@@ -213,10 +272,11 @@ public final class BearingJoint {
         boolean rebuild = false;
         if (joint == null || !joint.isValid()) {
             var pipeline = SubLevelPhysicsSystem.get(level).getPipeline();
-            joint = pipeline.addConstraint(p, s,
-                    new RotaryConstraintConfiguration(localAnchor, new Vector3d(plotAnchor), normal(facing), new Vector3d(plotAxis)));
+            made(pipeline, p, s, localAnchor, facing);
             parent = parentId;
-            // The two sides meet at the bearing by design, as the frame bearings and Simulated's do.
+            zeroTurn = turned(s, p, facing);
+            holdAngle = Double.NaN;
+            // The two sides meet at the joint by design, as the frame bearings and Simulated's do.
             joint.setContactsEnabled(false);
             pipeline.wakeUp(s);
             if (p != null)
@@ -234,16 +294,102 @@ public final class BearingJoint {
         double housing = p == null ? 0 : inertiaAbout(p, localAnchor, localAxis);
         driveInertia = housing > 0 ? child * housing / (child + housing) : child;
         parentInertia = p == null ? 0 : spinInertia(p, localAxis);
+        servo(s, p, facing);
         if (++ticks % LOG_EVERY == 0)
             diagnose(s, p, localAnchor, facing, rpm);
         return rebuild;
+    }
+
+    /** The Sable constraint for this kind, between {@code p} (null: the world) and {@code s}, anchors in each one's own space. */
+    private void made(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline, @Nullable ServerSubLevel p, ServerSubLevel s,
+                      Vector3d localAnchor, Direction facing) {
+        Vector3d anchor = new Vector3d(plotAnchor);
+        // How each side is turned now, so a rebuilt joint (a reload) keeps the pose and closes no gap by snapping.
+        Quaterniond qp = p == null ? new Quaterniond() : new Quaterniond(p.logicalPose().orientation());
+        Quaterniond qs = new Quaterniond(s.logicalPose().orientation());
+        Quaterniond relative = new Quaterniond(qp).conjugate().mul(qs);
+        // The frame whose x is the facing, so a slider's free axis is the facing.
+        Quaterniond twist = new Quaterniond().rotationTo(1, 0, 0, facing.getStepX(), facing.getStepY(), facing.getStepZ());
+        Quaterniond twistChild = new Quaterniond(relative).conjugate().mul(twist);
+        generic = null;
+        switch (kind) {
+            case HINGE -> joint = pipeline.addConstraint(p, s,
+                    new RotaryConstraintConfiguration(localAnchor, anchor, normal(facing), new Vector3d(plotAxis)));
+            case LOCKED -> joint = pipeline.addConstraint(p, s, new FixedConstraintConfiguration(localAnchor, anchor, relative));
+            case BALL -> {
+                joint = pipeline.addConstraint(p, s, new GenericConstraintConfiguration(localAnchor, anchor,
+                        new Quaterniond(), new Quaterniond(relative).conjugate(), Set.of(ConstraintJointAxis.LINEAR)));
+                generic = (GenericConstraintHandle) joint;
+                float cone = FTuning.BALL_CONE_RAD[variant];
+                // Swing limited either side, twist free: a ball joint turns about its own shaft.
+                generic.setLimit(ConstraintJointAxis.ANGULAR_Y, -cone, cone);
+                generic.setLimit(ConstraintJointAxis.ANGULAR_Z, -cone, cone);
+            }
+            case SLIDER, PISTON -> {
+                joint = pipeline.addConstraint(p, s, new GenericConstraintConfiguration(localAnchor, anchor,
+                        twist, twistChild, EnumSet.of(ConstraintJointAxis.LINEAR_Y, ConstraintJointAxis.LINEAR_Z,
+                        ConstraintJointAxis.ANGULAR_X, ConstraintJointAxis.ANGULAR_Y, ConstraintJointAxis.ANGULAR_Z)));
+                generic = (GenericConstraintHandle) joint;
+                generic.setLimit(ConstraintJointAxis.LINEAR_X, -travel, travel);
+            }
+        }
+    }
+
+    /**
+     * Once a game tick: the slider's spring, the piston's servo and the hinge's hold at rest. Gains
+     * scale with the moving mass (inertia for a turn), so a heavy arm is held as firmly as a light one.
+     * The motor is Sable's PD motor and stays set in between.
+     */
+    private void servo(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing) {
+        if (joint == null || !joint.isValid())
+            return;
+        switch (kind) {
+            case SLIDER, PISTON -> {
+                double mb = s.getMassTracker().getMass(), ma = p == null ? 0 : p.getMassTracker().getMass();
+                double reduced = ma <= 0 ? mb : mb <= 0 ? 0 : ma * mb / (ma + mb);
+                if (reduced <= 0 || generic == null)
+                    return;
+                double hz = kind == Kind.SLIDER ? FTuning.SUSPENSION_HZ[variant] : FTuning.PISTON_SERVO_RATE / (2 * Math.PI);
+                double omega = 2 * Math.PI * hz;
+                double target = kind == Kind.PISTON ? pistonLevel * travel : 0;
+                double limit = kind == Kind.PISTON ? FTuning.ROTARY_BEARING_MAX_TORQUE * condition : 0;
+                generic.setMotor(ConstraintJointAxis.LINEAR_X, target, reduced * omega * omega,
+                        2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, kind == Kind.PISTON, limit);
+            }
+            case HINGE -> {
+                double inertia = bodyInertia > 0 ? bodyInertia : FTuning.ROTARY_BEARING_MIN_INERTIA;
+                double w = relativeSpin(s, p, facing);
+                if (targetRadPerS == 0 && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
+                    // At rest and asked for nothing: hold the angle it settled at, so an unbalanced arm does not creep.
+                    if (Double.isNaN(holdAngle))
+                        holdAngle = Math.toRadians(turned(s, p, facing) - zeroTurn);
+                    double rate = FTuning.JOINT_HOLD_RATE;
+                    joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, holdAngle, rate * rate * inertia,
+                            2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * inertia, true,
+                            FTuning.STEER_ARM_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
+                } else {
+                    holdAngle = Double.NaN;
+                    // A free bearing is not frictionless (BEARING_DAMPING_RATE): damping scaled by the arm's inertia.
+                    joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, 0, 0, FTuning.BEARING_DAMPING_RATE * inertia, false, 0);
+                }
+            }
+            default -> {
+            }
+        }
+    }
+
+    /** The body's spin about the facing relative to its parent's, rad/s (positive about the positive axis). */
+    private double relativeSpin(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing) {
+        Vector3d axis = toWorld(p, normal(facing), false);
+        double w = RigidBodyHandle.of(s).getAngularVelocity(new Vector3d()).dot(axis);
+        return p == null ? w : w - RigidBodyHandle.of(p).getAngularVelocity(new Vector3d()).dot(axis);
     }
 
     @SubscribeEvent
     public static void onPhysicsTick(ForgeSablePrePhysicsTickEvent event) {
         ServerLevel level = event.getPhysicsSystem().getLevel();
         double dt = event.getTimeStep();
-        for (BearingJoint j : LIVE)
+        for (Joint j : LIVE)
             if (j.level == level)
                 j.drive(event.getPhysicsSystem(), dt);
     }
@@ -254,7 +400,7 @@ public final class BearingJoint {
      */
     private void drive(SubLevelPhysicsSystem physics, double dt) {
         ServerSubLevel s = level == null ? null : held(level);
-        if (s == null || s.isRemoved() || joint == null || !joint.isValid())
+        if (kind != Kind.HINGE || s == null || s.isRemoved() || joint == null || !joint.isValid())
             return;
         ServerSubLevel p = parent == null ? null
                 : ServerSubLevelContainer.getContainer(level).getSubLevel(parent) instanceof ServerSubLevel ps && !ps.isRemoved() ? ps : null;
@@ -276,7 +422,10 @@ public final class BearingJoint {
             double parentCap = parentInertia * FTuning.ROTARY_BEARING_MAX_PARENT_ACCEL * dt;
             impulse = Math.max(-parentCap, Math.min(parentCap, impulse));
         }
-        double cap = FTuning.ROTARY_BEARING_MAX_TORQUE * dt;
+        double cap = FTuning.ROTARY_BEARING_MAX_TORQUE * condition * dt;
+        // Wear by misuse only: a drive pinned at its cap while the arm does not turn (a stalled drive).
+        if (Math.abs(impulse) >= cap && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S)
+            stalledTicks++;
         impulse = Math.max(-cap, Math.min(cap, impulse));
         lastDrive = impulse;
         if (impulse == 0)
@@ -366,6 +515,9 @@ public final class BearingJoint {
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         tag.putUUID("Body", body);
+        tag.putString("Kind", kind.name());
+        tag.putInt("Variant", variant);
+        tag.putFloat("Condition", condition);
         put(tag, "Anchor", plotAnchor);
         put(tag, "Axis", plotAxis);
         put(tag, "Ref", plotRef);
@@ -379,10 +531,16 @@ public final class BearingJoint {
     }
 
     @Nullable
-    public static BearingJoint load(CompoundTag tag) {
+    public static Joint load(CompoundTag tag) {
         if (!tag.hasUUID("Body"))
             return null;
-        BearingJoint j = new BearingJoint(tag.getUUID("Body"), BlockPos.of(tag.getLong("HomeFrom")), BlockPos.of(tag.getLong("HomeTo")));
+        Joint j = new Joint(tag.getUUID("Body"), BlockPos.of(tag.getLong("HomeFrom")), BlockPos.of(tag.getLong("HomeTo")));
+        if (tag.contains("Kind"))
+            j.kind = Kind.valueOf(tag.getString("Kind"));
+        j.variant = Math.clamp(tag.getInt("Variant"), 0, 2);
+        j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
+        if (j.kind == Kind.PISTON)
+            j.travel = FTuning.PISTON_TRAVEL;
         get(tag, "Anchor", j.plotAnchor);
         get(tag, "Axis", j.plotAxis);
         get(tag, "Ref", j.plotRef);

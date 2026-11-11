@@ -147,7 +147,7 @@ public final class FTuning {
     /** Placeholder. The most voxels a micro bearing turns: a quarter of a full-size bearing's block cap, in voxels. */
     public static final int ROTARY_BEARING_MAX_VOXELS = 16384;
     /**
-     * Placeholders. The bearing's speed drive (BearingJoint): how fast, per second, the body's spin
+     * Placeholders. The bearing's speed drive (Joint): how fast, per second, the body's spin
      * closes on the run's speed (a first-order lag, solved exactly, so stable at any step); the most
      * torque it applies (kpg x block^2 / s^2), so a jammed body is not wound up; and the least inertia
      * it assumes, so a body Sable has not weighed yet still gets a pull.
@@ -164,6 +164,27 @@ public final class FTuning {
     public static final double ROTARY_BEARING_MAX_ACCEL = 4;
     public static final double ROTARY_BEARING_MAX_PARENT_ACCEL = 0.5;
     public static final float ROTARY_BEARING_INERTIA_PER_KPG_BLOCK2 = 0.5f;
+
+    /**
+     * Placeholders. Hold at rest: a hinge whose drive asks no speed and that turns slower than this
+     * (rad/s against its parent) is held at its angle by a position servo of this rate (per second,
+     * as {@link #STEER_SERVO_RATE}), its force capped at the torque the same arm gives a kingpin.
+     */
+    public static final double JOINT_HOLD_BELOW_RAD_PER_S = 0.05;
+    public static final double JOINT_HOLD_RATE = 20;
+    /**
+     * Placeholders. Joint wear, by misuse only: condition lost per tick a hinge drive sits at its
+     * torque cap with no relative turning (a stalled drive), or a ball, slider or piston sits on its
+     * stop under load; the lowest condition reached; and condition's cut of the torque cap.
+     */
+    public static final float JOINT_STALL_WEAR_PER_TICK = 0.0005f;
+    public static final float JOINT_CONDITION_FLOOR = 0.3f;
+    /** Placeholder. Half the swing of a ball joint's cone in radians: narrow, stock, wide. */
+    public static final float[] BALL_CONE_RAD = {(float) Math.toRadians(20), (float) Math.toRadians(45), (float) Math.toRadians(90)};
+    /** Placeholder. Reach either side of rest of a piston, blocks (a slider's is {@link #SPRING_TRAVEL}). */
+    public static final float PISTON_TRAVEL = 0.5f;
+    /** Placeholder. A piston servo's stiffness rate per second, per unit of reduced mass. */
+    public static final double PISTON_SERVO_RATE = 20;
 
     /** Invented. A generator is a lump of mass too; without this a bare source has no momentum. */
     public static final Inertia HAND_CRANK_INERTIA = new Inertia(4f);

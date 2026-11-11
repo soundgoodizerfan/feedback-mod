@@ -48,13 +48,13 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A full-size Rotary Bearing or Ring Gear on the network, and its hold on the body it turns
- * ({@link BearingJoint}; {@code docs/specs/feedback_micro_spec.md}, <em>Bearings and ring gears</em>).
+ * ({@link Joint}; {@code docs/specs/feedback_micro_spec.md}, <em>Bearings and ring gears</em>).
  * Assembles whole blocks as the Lift does; puts them back home, unturned.
  */
 public class RotaryBearingBlockEntity extends RotationNode {
 
     @Nullable
-    private BearingJoint bearing;
+    private Joint bearing;
 
     public RotaryBearingBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ROTARY_BEARING.get(), pos, state);
@@ -97,9 +97,9 @@ public class RotaryBearingBlockEntity extends RotationNode {
             return "too_big";
         List<BlockPos> blocks = new ArrayList<>(gathered.blocks());
         // From a body too: Sable starts the new body at its parent's pose and speed, so nothing moves.
-        ServerSubLevel parent = BearingJoint.parentOf(level, worldPosition);
+        ServerSubLevel parent = Joint.parentOf(level, worldPosition);
         ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, front, blocks, BoundingBox3i.from(blocks));
-        bearing = BearingJoint.of(made, worldAnchor(), f, front, parent);
+        bearing = Joint.of(made, worldAnchor(), f, front, parent);
         setChanged();
         return "assembled";
     }
@@ -108,7 +108,7 @@ public class RotaryBearingBlockEntity extends RotationNode {
         ServerSubLevel s = bearing.held(level);
         if (s == null)
             return "not_loaded";
-        if (BearingJoint.carriesChild(level, s))
+        if (Joint.carriesChild(level, s))
             return "has_child";
         var box = s.getPlot().getBoundingBox();
         List<BlockPos> blocks = new ArrayList<>();
@@ -171,6 +171,6 @@ public class RotaryBearingBlockEntity extends RotationNode {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        bearing = tag.contains("Bearing") ? BearingJoint.load(tag.getCompound("Bearing")) : null;
+        bearing = tag.contains("Bearing") ? Joint.load(tag.getCompound("Bearing")) : null;
     }
 }

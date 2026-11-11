@@ -23,7 +23,7 @@ import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
-import io.github.soundgoodizerfan.feedback.machine.bearing.BearingJoint;
+import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerLevel;
@@ -106,7 +106,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     /** The voxel collider is to be written on the next server tick (after a load). */
     private boolean colliderDue = true;
     /** Micro bearings among the voxels that have a body assembled, by voxel index. */
-    private final Int2ObjectOpenHashMap<BearingJoint> bearings = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectOpenHashMap<Joint> bearings = new Int2ObjectOpenHashMap<>();
     /** Set by chunk unload, so setRemoved does not take an unload for the cell being broken. */
     private boolean unloaded;
     @Nullable
@@ -152,7 +152,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         if (rotors[index] != null)
             gone.add(rotors[index]);
         // A bearing voxel taken out lets its body go (it falls free, as a full-size bearing broken does).
-        BearingJoint was = bearings.remove(index);
+        Joint was = bearings.remove(index);
         if (was != null) {
             was.letGo();
             if (level != null && !level.isClientSide)
@@ -274,7 +274,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     /** As {@link io.github.soundgoodizerfan.feedback.core.rotation.RotationNode#setRemoved}: an unload leaves the runs without a rebuild. */
     @Override
     public void setRemoved() {
-        for (BearingJoint joint : bearings.values())
+        for (Joint joint : bearings.values())
             joint.letGo();
         if (level != null && !level.isClientSide) {
             if (!unloaded)
@@ -325,18 +325,18 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     }
 
     /** The bearings this cell holds, by voxel index: kept across a re-made cell (MicroBearings). */
-    public Int2ObjectOpenHashMap<BearingJoint> bearings() {
+    public Int2ObjectOpenHashMap<Joint> bearings() {
         return bearings;
     }
 
     /** The hold of the micro bearing in voxel {@code index}, or null if it has no body. */
     @Nullable
-    public BearingJoint bearing(int index) {
+    public Joint bearing(int index) {
         return bearings.get(index);
     }
 
     /** Voxel {@code index}, a micro bearing, now holds {@code joint} (null: none). */
-    public void setBearing(int index, @Nullable BearingJoint joint) {
+    public void setBearing(int index, @Nullable Joint joint) {
         if (joint == null)
             bearings.remove(index);
         else
@@ -541,7 +541,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         colliderDue = true;
         ListTag held = tag.getList("Bearings", Tag.TAG_COMPOUND);
         for (int k = 0; k < held.size(); k++) {
-            BearingJoint joint = BearingJoint.load(held.getCompound(k));
+            Joint joint = Joint.load(held.getCompound(k));
             if (joint != null)
                 bearings.put(held.getCompound(k).getByte("I") & (VOXELS - 1), joint);
         }

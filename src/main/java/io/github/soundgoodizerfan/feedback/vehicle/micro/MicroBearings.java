@@ -27,7 +27,7 @@ import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
-import io.github.soundgoodizerfan.feedback.machine.bearing.BearingJoint;
+import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -67,7 +67,7 @@ public final class MicroBearings {
     public static String toggle(ServerLevel level, BlockPos cellPos, int index) {
         if (!(level.getBlockEntity(cellPos) instanceof MicroCellBlockEntity cell))
             return "empty";
-        BearingJoint joint = cell.bearing(index);
+        Joint joint = cell.bearing(index);
         return joint == null ? assemble(level, cell, index) : putBack(level, cell, index, joint);
     }
 
@@ -88,7 +88,7 @@ public final class MicroBearings {
     private static String assemble(ServerLevel level, MicroCellBlockEntity cell, int index) {
         BlockPos cellPos = cell.getBlockPos();
         // From a body too: Sable starts the new body at its parent's pose and speed.
-        ServerSubLevel parent = BearingJoint.parentOf(level, cellPos);
+        ServerSubLevel parent = Joint.parentOf(level, cellPos);
         Direction f = cell.get(index).getValue(RotaryBearingBlock.FACING);
         BlockPos b = voxel(cellPos, index), front = b.relative(f), host = b.relative(f.getOpposite());
         if (at(level, front) == null)
@@ -175,7 +175,7 @@ public final class MicroBearings {
                 w.setClear(w.clear() | c.clear());
                 w.setHinge(c.hinge() & w.filled());
             }
-        BearingJoint joint = BearingJoint.of(made, faceCentre(b, f), f, cells.get(0), parent);
+        Joint joint = Joint.of(made, faceCentre(b, f), f, cells.get(0), parent);
         for (var e : statorClear.entrySet())
             if (level.getBlockEntity(e.getKey()) instanceof MicroCellBlockEntity stator) {
                 stator.setClear(stator.clear() | e.getValue());
@@ -202,17 +202,17 @@ public final class MicroBearings {
                 (v.getZ() + 0.5 + 0.5 * f.getStepZ()) / N);
     }
 
-    private static String putBack(ServerLevel level, MicroCellBlockEntity cell, int index, BearingJoint joint) {
+    private static String putBack(ServerLevel level, MicroCellBlockEntity cell, int index, Joint joint) {
         ServerSubLevel s = joint.held(level);
         if (s == null)
             return "not_loaded";
-        if (BearingJoint.carriesChild(level, s))
+        if (Joint.carriesChild(level, s))
             return "has_child";
         Direction f = cell.get(index).getValue(RotaryBearingBlock.FACING);
         Direction.Axis axis = f.getAxis();
         float sign = f.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1;
         // The body's angle about the axis's positive direction, to the nearest quarter turn.
-        int k = Math.floorMod(Math.round(sign * joint.turned(s, BearingJoint.parentOf(level, cell.getBlockPos()), f) / 90f), 4);
+        int k = Math.floorMod(Math.round(sign * joint.turned(s, Joint.parentOf(level, cell.getBlockPos()), f) / 90f), 4);
         BlockPos b = voxel(cell.getBlockPos(), index);
         BlockPos offset = joint.homeTo().subtract(joint.homeFrom());
         Map<BlockPos, BlockState> moves = new LinkedHashMap<>();
@@ -246,7 +246,7 @@ public final class MicroBearings {
      * clearance there until it is re-assembled; with voxel colliders on, the octant mask is not what
      * collides, so this only matters when they are off.
      */
-    public static void unclear(net.minecraft.world.level.Level level, BearingJoint joint) {
+    public static void unclear(net.minecraft.world.level.Level level, Joint joint) {
         for (BlockPos p : joint.cleared)
             if (level.getBlockEntity(p) instanceof MicroCellBlockEntity c) {
                 c.setClear(0);
@@ -256,7 +256,7 @@ public final class MicroBearings {
     }
 
     /** What a world cell carries besides its voxels, kept across its being made anew. */
-    private record Carried(it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<BearingJoint> bearings, int clear, long hinge) {
+    private record Carried(it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<Joint> bearings, int clear, long hinge) {
     }
 
     /** Voxel {@code v} turned {@code k} quarter turns about {@code axis} through the centre of voxel {@code b}, right-handed. */
