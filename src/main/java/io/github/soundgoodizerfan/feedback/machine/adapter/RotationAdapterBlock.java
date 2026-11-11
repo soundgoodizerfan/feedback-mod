@@ -131,7 +131,8 @@ public class RotationAdapterBlock extends Block implements EntityBlock, Rotatabl
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide ? (l, p, s, be) -> ((io.github.soundgoodizerfan.feedback.core.rotation.RotationNode) be).tickClient() : null;
+        return level.isClientSide ? (l, p, s, be) -> ((io.github.soundgoodizerfan.feedback.core.rotation.RotationNode) be).tickClient()
+                : (l, p, s, be) -> ((RotationAdapterBlockEntity) be).tickServer();
     }
 
     @Nullable

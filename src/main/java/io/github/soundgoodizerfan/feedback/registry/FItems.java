@@ -34,6 +34,7 @@ public class FItems {
     public static final DeferredItem<BlockItem> SMALL_COG = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_COG);
     public static final DeferredItem<BlockItem> LARGE_COG = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_COG);
     public static final DeferredItem<BlockItem> GEARBOX = ITEMS.registerSimpleBlockItem(FBlocks.GEARBOX);
+    public static final DeferredItem<BlockItem> DIFFERENTIAL = ITEMS.registerSimpleBlockItem(FBlocks.DIFFERENTIAL);
     public static final DeferredItem<BlockItem> ROTATION_ADAPTER = ITEMS.registerSimpleBlockItem(FBlocks.ROTATION_ADAPTER);
     public static final DeferredItem<BlockItem> ROTARY_BEARING = ITEMS.registerSimpleBlockItem(FBlocks.ROTARY_BEARING);
     public static final DeferredItem<BlockItem> RING_GEAR = ITEMS.registerSimpleBlockItem(FBlocks.RING_GEAR);
@@ -41,7 +42,8 @@ public class FItems {
     public static final DeferredItem<BlockItem> TIRE_RUBBER = ITEMS.registerSimpleBlockItem(FBlocks.TIRE_RUBBER);
     public static final DeferredItem<BlockItem> BALL_JOINT = ITEMS.registerSimpleBlockItem(FBlocks.BALL_JOINT);
     public static final DeferredItem<BlockItem> LOCKED_JOINT = ITEMS.registerSimpleBlockItem(FBlocks.LOCKED_JOINT);
-    public static final DeferredItem<BlockItem> SLIDER_JOINT = ITEMS.registerSimpleBlockItem(FBlocks.SLIDER_JOINT);
+    public static final DeferredItem<BlockItem> SLIDER_JOINT = ITEMS.register("slider_joint",
+            () -> new io.github.soundgoodizerfan.feedback.machine.bearing.SliderJointItem(FBlocks.SLIDER_JOINT.get(), new net.minecraft.world.item.Item.Properties()));
     public static final DeferredItem<BlockItem> PISTON_JOINT = ITEMS.registerSimpleBlockItem(FBlocks.PISTON_JOINT);
     public static final DeferredItem<BlockItem> CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.CAMPFIRE);
     public static final DeferredItem<BlockItem> SOUL_CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_CAMPFIRE);

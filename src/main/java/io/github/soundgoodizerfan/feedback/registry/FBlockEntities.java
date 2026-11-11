@@ -84,6 +84,11 @@ public class FBlockEntities {
                     .of(GearboxBlockEntity::new, FBlocks.GEARBOX.get())
                     .build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlockEntity>> DIFFERENTIAL =
+            BLOCK_ENTITIES.register("differential", () -> BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlockEntity::new, FBlocks.DIFFERENTIAL.get())
+                    .build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RotationAdapterBlockEntity>> ROTATION_ADAPTER =
             BLOCK_ENTITIES.register("rotation_adapter", () -> BlockEntityType.Builder
                     .of(RotationAdapterBlockEntity::new, FBlocks.ROTATION_ADAPTER.get())

@@ -88,6 +88,14 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     private final MicroRotor[] rotors = new MicroRotor[VOXELS];
     /** The block a wedge voxel is made of (its look, weight and what mining it gives back); null: the stock wedge. */
     private final BlockState[] skins = new BlockState[VOXELS];
+    /** Belts from pulley voxels to pulley voxels (see {@link MicroBelts}), each with its condition. */
+    private final it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<MicroBelts.End> belts = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
+    private final float[] beltWear = new float[VOXELS];
+    /** Which voxels are pulleys: only these are looked at for belts. */
+    private long pulleys;
+    /** Which voxels are differentials, and how far each has shared its speed from even. */
+    private long diffs;
+    private final float[] shares = new float[VOXELS];
     /** Which voxels are flywheels: only these are looked at for rim strain. */
     private long flywheels;
     /** Server: rotors taken out since the last {@link #commit}, and whether any came in. */
@@ -198,9 +206,51 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         rotors[index] = state != null && state.getBlock() instanceof MicroRotation ? new MicroRotor(this, index, state) : null;
         if (rotors[index] != null)
             rotors[index].setCondition(wear);
+        unlinkBelt(index);
+        pulleys = state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock
+                ? pulleys | 1L << index : pulleys & ~(1L << index);
+        diffs = state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock
+                ? diffs | 1L << index : diffs & ~(1L << index);
+        shares[index] = 0;
         flywheels = state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.shaft.FlywheelBlock
                 ? flywheels | 1L << index : flywheels & ~(1L << index);
         rotorAdded |= rotors[index] != null;
+    }
+
+    @Nullable
+    public MicroBelts.End belt(int index) {
+        return belts.get(index);
+    }
+
+    void setBelt(int index, MicroBelts.End far) {
+        belts.put(index, far);
+        beltWear[index] = 1;
+        setChanged();
+    }
+
+    float beltCondition(int index) {
+        return beltWear[index] == 0 ? 1 : beltWear[index];
+    }
+
+    void wearBelt(int index, float condition) {
+        beltWear[index] = condition;
+        setChanged();
+    }
+
+    /** Drops the belt at voxel {@code index} from both ends; the far end only if it is loaded. */
+    void unlinkBelt(int index) {
+        MicroBelts.End far = belts.remove(index);
+        beltWear[index] = 0;
+        if (far == null)
+            return;
+        setChanged();
+        if (level != null && level.isLoaded(far.pos()) && level.getBlockEntity(far.pos()) instanceof MicroCellBlockEntity other) {
+            MicroBelts.End back = other.belts.get(far.index());
+            if (back != null && back.pos().equals(worldPosition) && back.index() == index) {
+                other.belts.remove(far.index());
+                other.setChanged();
+            }
+        }
     }
 
     /** The block voxel {@code index}, a wedge, is made of; null for the stock wedge or a voxel that is not one. */
@@ -434,6 +484,9 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     public void moved(BlockPos delta) {
         for (Joint joint : bearings.values())
             joint.shift(delta);
+        // The partners moved with it (a belt links two pulleys of one body): their addresses follow.
+        for (var e : belts.int2ObjectEntrySet())
+            e.setValue(new MicroBelts.End(e.getValue().pos().offset(delta), e.getValue().index()));
     }
 
     public boolean holdsBearing() {
@@ -474,6 +527,15 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             cell.applyCollider();
         if (cell.flywheels != 0 && !level.isClientSide)
             cell.strainFlywheels();
+        if (cell.pulleys != 0 && !cell.belts.isEmpty() && !level.isClientSide)
+            for (int i : cell.belts.keySet().toIntArray())
+                MicroBelts.step(level, cell, i);
+        if (cell.diffs != 0 && !level.isClientSide)
+            for (long m = cell.diffs; m != 0; m &= m - 1) {
+                int i = Long.numberOfTrailingZeros(m);
+                if (cell.rotors[i] != null && cell.voxels[i] != null)
+                    cell.shares[i] = io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock.step(level, cell.rotors[i], cell.voxels[i], cell.shares[i]);
+            }
         if (cell.bearings.isEmpty() || !(level instanceof ServerLevel server))
             return;
         boolean rebuild = false;
@@ -667,6 +729,16 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
                 worn.add(one);
             }
         tag.put("Worn", worn);
+        ListTag strapped = new ListTag();
+        for (var e : belts.int2ObjectEntrySet()) {
+            CompoundTag one = new CompoundTag();
+            one.putByte("I", (byte) e.getIntKey());
+            one.putLong("P", e.getValue().pos().asLong());
+            one.putByte("J", (byte) e.getValue().index());
+            one.putFloat("C", beltCondition(e.getIntKey()));
+            strapped.add(one);
+        }
+        tag.put("Belts", strapped);
         ListTag skinned = new ListTag();
         for (int i = 0; i < VOXELS; i++)
             if (skins[i] != null) {
@@ -695,9 +767,14 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         for (int i = 0; i < kinds.length; i++)
             kinds[i] = NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), palette.getCompound(i));
         byte[] ids = tag.getByteArray("Voxels");
+        // A load is the cell as it stands: its belts are read back below, and the far ends are not touched.
+        belts.clear();
+        Arrays.fill(beltWear, 0);
         Arrays.fill(voxels, null);
         Arrays.fill(skins, null);
         flywheels = 0;
+        diffs = 0;
+        pulleys = 0;
         filled = 0;
         // A block that no longer exists reads back as air, and a voxel of air is no voxel.
         for (int i = 0; i < Math.min(ids.length, VOXELS); i++) {
@@ -723,6 +800,13 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             BlockState skin = NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), skinned.getCompound(k).getCompound("S"));
             if (!skin.isAir())
                 setSkin(skinned.getCompound(k).getByte("I") & (VOXELS - 1), skin);
+        }
+        ListTag strapped = tag.getList("Belts", Tag.TAG_COMPOUND);
+        for (int k = 0; k < strapped.size(); k++) {
+            CompoundTag one = strapped.getCompound(k);
+            int i = one.getByte("I") & (VOXELS - 1);
+            belts.put(i, new MicroBelts.End(BlockPos.of(one.getLong("P")), one.getByte("J") & (VOXELS - 1)));
+            beltWear[i] = one.getFloat("C");
         }
         ListTag worn = tag.getList("Worn", Tag.TAG_COMPOUND);
         for (int k = 0; k < worn.size(); k++) {

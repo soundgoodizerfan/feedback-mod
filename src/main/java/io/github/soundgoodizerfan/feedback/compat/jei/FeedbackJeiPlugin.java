@@ -129,6 +129,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe.class, new GrappleUpgradeCraftingExtension());
         registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.machine.bearing.SliderSpringRecipe.class, new SliderSpringCraftingExtension());
+        registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.HotToolRecipe.class, new HotToolCraftingExtension());
         ElectronicsCrafting.register(registration);
         registration.getCraftingCategory().addExtension(io.github.soundgoodizerfan.feedback.machine.ender.EnderPairRecipe.class, new EnderPairCraftingExtension());
@@ -225,6 +227,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
         registration.addIngredientInfo(FItems.MICRO_WEDGE.get(), Component.translatable("feedback.jei.info.micro_wedge"));
+        registration.addIngredientInfo(FItems.DIFFERENTIAL.get(), Component.translatable("feedback.jei.info.differential"));
         registration.addIngredientInfo(FItems.TIRE_RUBBER.get(), Component.translatable("feedback.jei.info.tire_rubber"));
         registration.addIngredientInfo(FItems.BALL_JOINT.get(), Component.translatable("feedback.jei.info.ball_joint"));
         registration.addIngredientInfo(FItems.LOCKED_JOINT.get(), Component.translatable("feedback.jei.info.locked_joint"));

@@ -27,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * handled entirely inside {@link PulleyBlockEntity} and is invisible to {@code RotationPropagator}.
  * Two sizes, one block class, the same split {@code CogBlock} already uses.
  */
-public class PulleyBlock extends RotatedPillarBlock implements EntityBlock, Rotatable {
+public class PulleyBlock extends RotatedPillarBlock implements EntityBlock, io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation {
 
     private final int radius;
     private final VoxelShape shapeX;
@@ -48,6 +48,16 @@ public class PulleyBlock extends RotatedPillarBlock implements EntityBlock, Rota
         this.shapeZ = box(low, low, near, high, high, far);
     }
 
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.unit.Drag getDragSuPerRpm() {
+        return io.github.soundgoodizerfan.feedback.core.FTuning.PULLEY_DRAG_SU_PER_RPM;
+    }
+
+    @Override
+    public io.github.soundgoodizerfan.feedback.core.unit.Inertia getInertia() {
+        return io.github.soundgoodizerfan.feedback.core.FTuning.PULLEY_INERTIA;
+    }
+
     public int getRadius() {
         return radius;
     }
@@ -63,13 +73,15 @@ public class PulleyBlock extends RotatedPillarBlock implements EntityBlock, Rota
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return getStateForPlacement(context, context.getLevel().getBlockState(context.getClickedPos().relative(context.getClickedFace().getOpposite())));
+    }
+
+    /** Takes the axis of what it is placed against: the world's block full size, the clicked voxel as a micro-block. */
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context, @Nullable BlockState against) {
         Direction face = context.getClickedFace();
-        if (context.getPlayer() == null || !context.getPlayer().isShiftKeyDown()) {
-            BlockState against = context.getLevel()
-                    .getBlockState(context.getClickedPos().relative(face.getOpposite()));
-            if (against.getBlock() instanceof Rotatable rotatable)
-                return defaultBlockState().setValue(AXIS, rotatable.getRotationAxis(against));
-        }
+        if ((context.getPlayer() == null || !context.getPlayer().isShiftKeyDown()) && against != null && against.getBlock() instanceof Rotatable rotatable)
+            return defaultBlockState().setValue(AXIS, rotatable.getRotationAxis(against));
         return defaultBlockState().setValue(AXIS, face.getAxis());
     }
 

@@ -44,4 +44,31 @@ public class RotationAdapterBlockEntity extends RotationNode {
     public Inertia getInertia() {
         return FTuning.ROTATION_ADAPTER_INERTIA;
     }
+
+    /**
+     * Once a tick: feeds each run the four voxels at the middle of the cell in front belong to, at this adapter's own
+     * speed (each voxel's sign), so a wheel's run can stall, slip or overstress without taking the others' with it.
+     */
+    public void tickServer() {
+        if (level == null || level.isClientSide || getNetwork() == null)
+            return;
+        net.minecraft.core.Direction face = RotationAdapterBlock.microFace(getBlockState());
+        if (face == null || !level.isLoaded(worldPosition.relative(face))
+                || !(level.getBlockEntity(worldPosition.relative(face)) instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell))
+            return;
+        java.util.List<io.github.soundgoodizerfan.feedback.core.rotation.RotationMember> outs = new java.util.ArrayList<>(4);
+        float[] wants = new float[4];
+        float rpm = getRpm().value();
+        for (int i : io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator.centralFace(face.getOpposite())) {
+            var rotor = cell.rotor(i);
+            if (rotor == null)
+                continue;
+            float sign = io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator.microLink(level, cell.getBlockPos(), rotor.state(), face.getOpposite());
+            if (sign == 0)
+                continue;
+            wants[outs.size()] = rpm * sign;
+            outs.add(rotor);
+        }
+        io.github.soundgoodizerfan.feedback.core.rotation.RotationSplit.drive(getNetwork(), outs, wants);
+    }
 }

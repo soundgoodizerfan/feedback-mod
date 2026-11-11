@@ -248,6 +248,14 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
     @Override
     protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                                                   net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.BeltItem && level.getBlockEntity(pos) instanceof MicroCellBlockEntity belted) {
+            int p = belted.pick(hit.getLocation(), hit.getDirection());
+            if (p >= 0 && belted.get(p) != null && belted.get(p).getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock) {
+                if (!level.isClientSide)
+                    MicroBelts.select(player, belted, p);
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
         if (!stack.is(io.github.soundgoodizerfan.feedback.registry.FItems.BEARING.get()) || !(level.getBlockEntity(pos) instanceof MicroCellBlockEntity cell))
             return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         int i = cell.pick(hit.getLocation(), hit.getDirection());
@@ -274,6 +282,19 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
         if (!(level.getBlockEntity(pos) instanceof MicroCellBlockEntity cell))
             return InteractionResult.PASS;
         int i = cell.pick(hit.getLocation(), hit.getDirection());
+        // Sneaking on a differential voxel steps it through open, limited slip and locked.
+        if (i >= 0 && player.isShiftKeyDown() && cell.get(i) != null
+                && cell.get(i).getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock) {
+            if (!level.isClientSide) {
+                BlockState next = cell.get(i).setValue(io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock.MODE,
+                        (cell.get(i).getValue(io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock.MODE) + 1) % 3);
+                cell.set(i, next);
+                cell.commit();
+                player.displayClientMessage(Component.translatable("message.feedback.differential.mode."
+                        + next.getValue(io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock.MODE)), true);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (i < 0 || cell.get(i) == null || !(cell.get(i).getBlock() instanceof JointPart))
             return InteractionResult.PASS;
         // Sneaking on an assembled joint reads its condition and brake pad instead of putting it back.

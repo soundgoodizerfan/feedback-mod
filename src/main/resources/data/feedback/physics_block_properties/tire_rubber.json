@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:tire_rubber",
+  "properties": {
+    "sable:friction": 1.2
+  }
+}

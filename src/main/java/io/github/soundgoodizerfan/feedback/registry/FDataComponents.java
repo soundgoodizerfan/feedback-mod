@@ -374,6 +374,13 @@ public class FDataComponents {
                     .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC)
                     .build());
 
+    /** The metal wound into a Slider Joint's spring; absent is the stock band. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.resources.ResourceLocation>> SLIDER_SPRING =
+            COMPONENTS.register("slider_spring", () -> DataComponentType.<net.minecraft.resources.ResourceLocation>builder()
+                    .persistent(net.minecraft.resources.ResourceLocation.CODEC)
+                    .networkSynchronized(net.minecraft.resources.ResourceLocation.STREAM_CODEC)
+                    .build());
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> GRAPPLE_FITTINGS =
             COMPONENTS.register("grapple_fittings", () -> DataComponentType.<Integer>builder()
                     .persistent(Codec.INT)

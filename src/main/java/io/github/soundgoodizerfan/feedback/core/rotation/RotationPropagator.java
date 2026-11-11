@@ -327,14 +327,8 @@ public class RotationPropagator {
                 float linked = networks.linkRatio(pos, next);
                 add(out, gearings, other, linked != 0 ? linked
                         : ratioBetween(level, pos, node.getBlockState(), next, other.getBlockState(), face));
-            } else if (be instanceof MicroCellBlockEntity cell && RotationAdapterBlock.microFace(node.getBlockState()) == face) {
-                // The mixed link, an adapter's micro face: the central rotors of the cell's face toward it.
-                for (int i : centralFace(face.getOpposite())) {
-                    MicroRotor other = cell.rotor(i);
-                    if (other != null)
-                        add(out, gearings, other, microLink(level, next, other.state(), face.getOpposite()));
-                }
             }
+            // An adapter's micro face is not coupled here: it feeds the cell's four central voxels run by run (RotationSplit).
         }
         BlockState state = node.getBlockState();
         if (state.getBlock() instanceof Rotatable rotatable && rotatable.meshesDiagonally(state))
@@ -377,9 +371,6 @@ public class RotationPropagator {
                 MicroRotor other = cell.rotor(MicroCellBlockEntity.index(Math.floorMod(nx, N), Math.floorMod(ny, N), Math.floorMod(nz, N)));
                 if (other != null)
                     add(out, gearings, other, ratioBetween(level, pos, rotor.state(), next, other.state(), face));
-            } else if (be instanceof RotationNode node && isCentralFace(rotor.index(), face)
-                    && RotationAdapterBlock.microFace(node.getBlockState()) == face.getOpposite()) {
-                add(out, gearings, node, microLink(level, pos, rotor.state(), face));
             }
         }
     }
@@ -408,7 +399,7 @@ public class RotationPropagator {
      * The four voxels in the middle of a cell's {@code face}: the ones a full-size shaft (six to ten
      * sixteenths across) overlaps, and so the only ones on its line.
      */
-    private static int[] centralFace(Direction face) {
+    public static int[] centralFace(Direction face) {
         int layer = face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? N - 1 : 0;
         int[] out = new int[4];
         int k = 0;
@@ -455,7 +446,7 @@ public class RotationPropagator {
      * voxel's sign (the adapter's own is +1). Never meshing: a quarter cog and a full one are not the
      * same pitch. The micro spec says why the boundary is not a gear ratio.
      */
-    private static float microLink(Level level, BlockPos pos, BlockState state, Direction face) {
+    public static float microLink(Level level, BlockPos pos, BlockState state, Direction face) {
         if (!(state.getBlock() instanceof Rotatable rotatable) || !rotatable.hasShaftTowards(level, pos, state, face))
             return 0;
         return rotatable.shaftSignTowards(state, face);

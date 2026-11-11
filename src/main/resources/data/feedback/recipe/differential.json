@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "feedback:small_cog"
+    },
+    "G": {
+      "item": "feedback:gearbox"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "CGC",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:differential"
+  }
+}

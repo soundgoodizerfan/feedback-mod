@@ -86,6 +86,29 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
         BlockColors colors = Minecraft.getInstance().getBlockColors();
         RandomSource random = RandomSource.create();
         float s = 1f / N;
+        // A belt: two lines between the pulleys' centres, drawn once, from the end that sorts first.
+        for (int i = 0; i < MicroCellBlockEntity.VOXELS; i++) {
+            var far = cell.belt(i);
+            if (far == null || far.pos().asLong() < cell.getBlockPos().asLong()
+                    || far.pos().equals(cell.getBlockPos()) && far.index() < i)
+                continue;
+            var state = cell.get(i);
+            double r = state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock p ? p.getRadius() / 16.0 / N * 1.0 : 0.1;
+            float ax = (i & 3) * s + s / 2, ay = (i >> 2 & 3) * s + s / 2, az = (i >> 4) * s + s / 2;
+            int j = far.index();
+            float bx = (far.pos().getX() - cell.getBlockPos().getX()) + (j & 3) * s + s / 2;
+            float by = (far.pos().getY() - cell.getBlockPos().getY()) + (j >> 2 & 3) * s + s / 2;
+            float bz = (far.pos().getZ() - cell.getBlockPos().getZ()) + (j >> 4) * s + s / 2;
+            VertexConsumer belt = buffers.getBuffer(RenderType.lines());
+            float dx = bx - ax, dy = by - ay, dz = bz - az, len = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (len < 1e-4f)
+                continue;
+            for (int side = -1; side <= 1; side += 2) {
+                float ox = side * s * 0.15f;
+                belt.addVertex(poseStack.last(), ax + ox, ay, az).setColor(40, 30, 25, 255).setNormal(poseStack.last(), dx / len, dy / len, dz / len);
+                belt.addVertex(poseStack.last(), bx + ox, by, bz).setColor(40, 30, 25, 255).setNormal(poseStack.last(), dx / len, dy / len, dz / len);
+            }
+        }
         // With a Data Connector in hand, the voxels a card can set are outlined in the cell's own space, so they ride the body.
         var player = Minecraft.getInstance().player;
         if (player != null && player.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.item.DataConnectorItem) {

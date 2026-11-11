@@ -84,6 +84,7 @@ public class FCreativeTabs {
                         output.accept(FItems.SMALL_COG.get());
                         output.accept(FItems.LARGE_COG.get());
                         output.accept(FItems.GEARBOX.get());
+                        output.accept(FItems.DIFFERENTIAL.get());
                         output.accept(FItems.ROTATION_ADAPTER.get());
                         output.accept(FItems.ROTARY_BEARING.get());
                         output.accept(FItems.RING_GEAR.get());

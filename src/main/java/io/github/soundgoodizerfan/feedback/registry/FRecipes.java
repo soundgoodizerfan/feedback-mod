@@ -55,6 +55,11 @@ public class FRecipes {
             INSTRUMENT_FIT = SERIALIZERS.register("instrument_fit",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.InstrumentFitRecipe::new));
 
+    /** A Slider Joint and four wires of a metal -> that slider with the metal as its spring. */
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.machine.bearing.SliderSpringRecipe>>
+            SLIDER_SPRING = SERIALIZERS.register("slider_spring",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.machine.bearing.SliderSpringRecipe::new));
+
     /** A grapple and a fitting (extra coil, winch, barbed head) -> that grapple carrying it. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe>>
             GRAPPLE_UPGRADE = SERIALIZERS.register("grapple_upgrade",

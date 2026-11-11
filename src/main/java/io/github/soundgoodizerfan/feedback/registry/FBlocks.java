@@ -136,6 +136,11 @@ public class FBlocks {
                     .sound(SoundType.COPPER)
                     .noOcclusion()));
 
+    /** One shaft in, two axles out, sharing the speed by their loads; see {@code DifferentialBlock}. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock> DIFFERENTIAL = BLOCKS.register("differential",
+            () -> new io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.COPPER).noOcclusion()));
+
     /** The joint between full-size rotation and micro-block rotation; see {@code RotationAdapterBlock}. */
     public static final DeferredBlock<RotationAdapterBlock> ROTATION_ADAPTER = BLOCKS.register("rotation_adapter",
             () -> new RotationAdapterBlock(BlockBehaviour.Properties.of()

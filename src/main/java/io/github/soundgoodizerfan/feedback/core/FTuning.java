@@ -129,6 +129,10 @@ public final class FTuning {
     /** Invented. A gearbox is a crowded little box of bevels: more friction than a bare shaft. */
     public static final Drag GEARBOX_DRAG_SU_PER_RPM = new Drag(0.2f);
     public static final Inertia GEARBOX_INERTIA = new Inertia(4f);
+    /** Placeholder. A limited-slip differential lets its axles' speed shares differ from even by at most this fraction of the input's. */
+    public static final float DIFFERENTIAL_SLIP_LIMIT = 0.3f;
+    /** Placeholder. Fraction of the way a differential's share moves toward what the loads ask, per tick: smooth, so a wheel losing grip hands over its speed over a few ticks. */
+    public static final float DIFFERENTIAL_SHARE_RATE = 0.2f;
     /**
      * Placeholder. The Rotation Adapter ({@code docs/specs/feedback_micro_spec.md}, micro rotation): a
      * small housing of bevels from one full-size shaft to four quarter ones, so a gearbox's figures.
@@ -181,6 +185,8 @@ public final class FTuning {
     public static final int JOINT_STALL_GRACE_STEPS = 300;
     /** Placeholder. Game ticks a ball, slider or piston must sit forced against its stop before that counts as misuse (5 s). */
     public static final int JOINT_STRAIN_GRACE_TICKS = 100;
+    /** Placeholder. A spring wound of a metal whose yield strength is under this rides soft; from {@link #SPRING_STIFF_FROM_YIELD} up, stiff; between, stock. Lead and tin are soft, iron stock, steel stiff. */
+    public static final float SPRING_SOFT_BELOW_YIELD = 4f, SPRING_STIFF_FROM_YIELD = 12f;
     /** Placeholder. Condition lost per game tick of forced strain past the grace (a stalled hinge loses about the same per tick). */
     public static final float JOINT_STRAIN_WEAR_PER_TICK = 0.0002f;
     /** Placeholder. Brake pad condition lost per physics step the drive pushes against a held brake past the grace. */

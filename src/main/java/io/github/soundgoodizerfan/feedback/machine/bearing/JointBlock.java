@@ -62,7 +62,10 @@ public class JointBlock extends Block implements JointPart {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, context.getClickedFace());
+        BlockState state = defaultBlockState().setValue(FACING, context.getClickedFace());
+        // A slider wound of a metal rides in the band that metal's yield strength gives; the joint is not made of it afterwards.
+        var metal = context.getItemInHand().get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.SLIDER_SPRING.get());
+        return kind == Joint.Kind.SLIDER && metal != null ? state.setValue(VARIANT, SliderSpringRecipe.band(metal)) : state;
     }
 
     @Override
