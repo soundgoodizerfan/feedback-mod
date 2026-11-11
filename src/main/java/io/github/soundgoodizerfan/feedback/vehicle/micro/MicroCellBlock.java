@@ -238,6 +238,12 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
             cell.applyCollider();
     }
 
+    /** The brightest of the cell's voxels: a glowing block lights the space it is in. */
+    @Override
+    public int getLightEmission(BlockState state, net.minecraft.world.level.BlockGetter level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof MicroCellBlockEntity cell ? cell.light() : 0;
+    }
+
     /** An empty hand on a micro bearing voxel assembles or puts back what it turns ({@link MicroBearings}). */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {

@@ -150,14 +150,46 @@ public final class MicroPlacer {
     public static boolean place(Player player, ItemStack paid, BlockState voxel, int vx, int vy, int vz, Direction face) {
         Level level = player.level();
         BlockPos at = cellOf(vx, vy, vz);
+        // A voxel is a 64th of a block: the player's credit of that block pays it, and a whole block is
+        // taken from the hand only when the credit has run out (the core starting a build is paid whole).
+        boolean credited = !player.isCreative() && paid.getItem() instanceof BlockItem bi && bi.getBlock() == voxel.getBlock();
+        if (credited && credit(player, voxel) <= 0 && paid.isEmpty())
+            return false;
         if (!level.mayInteract(player, at) || !player.mayUseItemAt(at, face, paid) || !put(level, vx, vy, vz, voxel))
             return false;
         SoundType sound = voxel.getSoundType();
         level.playSound(null, at, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1f) / 2f, sound.getPitch() * 0.8f);
         level.gameEvent(GameEvent.BLOCK_PLACE, at, GameEvent.Context.of(player, voxel));
-        if (!player.isCreative())
+        if (credited) {
+            int have = credit(player, voxel);
+            if (have <= 0) {
+                paid.shrink(1);
+                have = VOXELS_PER_BLOCK;
+            }
+            setCredit(player, voxel, have - 1);
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.credit", have - 1), true);
+        } else if (!player.isCreative())
             paid.shrink(1);
         return true;
+    }
+
+    /** Voxels one block pays for: the cell's 4 x 4 x 4. */
+    public static final int VOXELS_PER_BLOCK = MicroCellBlockEntity.VOXELS;
+    private static final String CREDIT = "feedback_micro_credit";
+
+    private static String creditKey(BlockState voxel) {
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(voxel.getBlock()).toString();
+    }
+
+    /** Voxels of {@code voxel}'s block the player has paid for and not yet placed. */
+    public static int credit(Player player, BlockState voxel) {
+        return player.getPersistentData().getCompound(CREDIT).getInt(creditKey(voxel));
+    }
+
+    private static void setCredit(Player player, BlockState voxel, int n) {
+        var all = player.getPersistentData().getCompound(CREDIT);
+        all.putInt(creditKey(voxel), n);
+        player.getPersistentData().put(CREDIT, all);
     }
 
     /**
@@ -231,10 +263,17 @@ public final class MicroPlacer {
         level.playSound(null, at, sound.getBreakSound(), SoundSource.BLOCKS, (sound.getVolume() + 1f) / 2f, sound.getPitch() * 0.8f);
         level.gameEvent(GameEvent.BLOCK_DESTROY, at, GameEvent.Context.of(player, was));
         // A voxel that wants a tool (stone wants a pickaxe) gives its block only to one; the rest is lost.
+        // The voxel goes back into the credit; a whole block comes out of it once there are enough.
         if (!player.isCreative() && (!was.requiresCorrectToolForDrops() || player.hasCorrectToolForDrops(was))) {
-            ItemStack back = new ItemStack(was.getBlock());
-            if (!back.isEmpty() && !player.getInventory().add(back))
-                player.drop(back, false);
+            int have = credit(player, was) + 1;
+            if (have >= VOXELS_PER_BLOCK) {
+                have -= VOXELS_PER_BLOCK;
+                ItemStack back = new ItemStack(was.getBlock());
+                if (!back.isEmpty() && !player.getInventory().add(back))
+                    player.drop(back, false);
+            }
+            setCredit(player, was, have);
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.credit", have), true);
         }
         return true;
     }

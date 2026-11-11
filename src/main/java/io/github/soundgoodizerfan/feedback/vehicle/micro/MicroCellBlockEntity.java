@@ -264,6 +264,9 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         }
         gone.clear();
         rotorAdded = false;
+        int lit = light();
+        boolean relit = lit != light;
+        light = lit;
         if (filled == 0) {
             level.removeBlock(worldPosition, false);
             return;
@@ -277,6 +280,8 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             level.setBlock(worldPosition, want, Block.UPDATE_ALL);
         // After the state: Sable has just written the state's octant collider here; this replaces it.
         applyCollider();
+        if (relit)
+            level.getLightEngine().checkBlock(worldPosition);
         setChanged();
         level.sendBlockUpdated(worldPosition, want, want, Block.UPDATE_CLIENTS);
     }
@@ -321,6 +326,17 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             if (voxels[i] != null && MicroWheels.isTire(voxels[i]))
                 bits |= 1L << i;
         return bits;
+    }
+
+    private int light = -1;
+
+    /** The highest light level of the voxels' blocks, 0 to 15. */
+    public int light() {
+        int lit = 0;
+        for (BlockState v : voxels)
+            if (v != null)
+                lit = Math.max(lit, v.getLightEmission());
+        return lit;
     }
 
     public boolean hasTire() {

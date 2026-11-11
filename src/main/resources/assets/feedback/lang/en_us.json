@@ -283,6 +283,7 @@
   "feedback.channel.piston_level": "Piston level",
   "feedback.channel.brake": "Brake",
   "feedback.channel.joint_angle": "Angle",
+  "message.feedback.micro.credit": "%s voxels left of the last block.",
   "message.feedback.joint.micro_only": "It only works as a micro-block: put it in a micro cell.",
   "message.feedback.joint.variant": "Choice %s of 3.",
   "block.feedback.ring_gear": "Ring Gear",

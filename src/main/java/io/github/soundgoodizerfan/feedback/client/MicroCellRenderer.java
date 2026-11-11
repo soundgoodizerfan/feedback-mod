@@ -58,9 +58,9 @@ import java.util.List;
  * hidden by a full block in the next voxel is not drawn, and each tinted quad gets its own tint
  * index. Lit as the cell is (one light for all its voxels) and shaded by face; no ambient occlusion.
  *
- * <p>Phase 1: a face on the edge of the cell is drawn whatever stands in the next cell, which only
- * costs fill rate (the two faces meet back to back inside the solid). Culling across cells, and
- * baking a cell's quads once instead of every frame, are the upgrade a chunk mesh would bring.
+ * <p>A face on the edge of the cell is hidden by the voxel across it in the next cell, read from that
+ * cell's entity when the face is drawn. Baking a cell's quads once instead of every frame is the upgrade
+ * a chunk mesh would bring.
  *
  * <p>A rotation voxel whose full-size block is drawn turning (render shape
  * {@code ENTITYBLOCK_ANIMATED}: shaft, cog; not the gearbox, whose box stands still) is turned about
@@ -148,9 +148,14 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
      */
     private static boolean hidden(MicroCellBlockEntity cell, BlockState state, int x, int y, int z, Direction side) {
         int nx = x + side.getStepX(), ny = y + side.getStepY(), nz = z + side.getStepZ();
-        if (nx < 0 || ny < 0 || nz < 0 || nx >= N || ny >= N || nz >= N)
-            return false;
-        BlockState next = cell.get(nx, ny, nz);
+        BlockState next;
+        if (nx < 0 || ny < 0 || nz < 0 || nx >= N || ny >= N || nz >= N) {
+            // On the cell's edge: the voxel across it is in the next cell, if that is one.
+            if (cell.getLevel() == null || !(cell.getLevel().getBlockEntity(cell.getBlockPos().relative(side)) instanceof MicroCellBlockEntity other))
+                return false;
+            next = other.get(Math.floorMod(nx, N), Math.floorMod(ny, N), Math.floorMod(nz, N));
+        } else
+            next = cell.get(nx, ny, nz);
         return next != null && (state.skipRendering(next, side)
                 || next.canOcclude() && Block.isFaceFull(next.getOcclusionShape(EmptyBlockGetter.INSTANCE, BlockPos.ZERO), side.getOpposite()));
     }
