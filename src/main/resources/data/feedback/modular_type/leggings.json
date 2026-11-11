@@ -205,6 +205,14 @@
         "fall_mult": 0.75,
         "stagger_mult": 0.5
       }
+    },
+    "U": {
+      "name": "underlayer",
+      "forms": [
+        "chain"
+      ],
+      "litres": 0.02,
+      "layer": 1
     }
   },
   "patterns": [

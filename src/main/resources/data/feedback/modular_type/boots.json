@@ -214,6 +214,14 @@
         "grip_mult": 0.3,
         "visibility_mult": 1.15
       }
+    },
+    "U": {
+      "name": "underlayer",
+      "forms": [
+        "chain"
+      ],
+      "litres": 0.02,
+      "layer": 1
     }
   },
   "patterns": [

@@ -147,6 +147,20 @@
         "spread_mult": 0.85,
         "draw_mult": 1.2
       }
+    },
+    "H": {
+      "name": "laminate",
+      "forms": [
+        "bone"
+      ],
+      "litres": 0.03,
+      "bulk": 2,
+      "trait": "laminate",
+      "params": {
+        "velocity_mult": 1.12,
+        "draw_mult": 1.1,
+        "wet_mult": 0.85
+      }
     }
   },
   "patterns": [

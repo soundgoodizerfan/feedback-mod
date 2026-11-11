@@ -135,6 +135,32 @@
       ],
       "litres": 0.03,
       "layer": 2
+    },
+    "O": {
+      "name": "boss",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.04,
+      "bulk": 1,
+      "trait": "boss",
+      "params": {
+        "bash": 3,
+        "shove": 0.5,
+        "capacity_mult": 0.9
+      }
+    },
+    "A": {
+      "name": "strap",
+      "forms": [
+        "string",
+        "wire"
+      ],
+      "litres": 0.01,
+      "bulk": 2,
+      "params": {
+        "capacity_mult": 1.1
+      }
     }
   },
   "patterns": [

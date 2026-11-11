@@ -178,3 +178,21 @@ A shield is drawn as a vanilla-style shield sized by its face: a buckler is smal
 
 **Shields get hot.** Every blow a shield stops leaves heat in its face, more for a light face than a heavy one, and the heat stacks until the shield has rested (it cools by itself, even in a chest). Fire and lava warm the face towards their own temperature and no further. A hot face is felt: a shield too hot to hold hurts the hand, unless its grip or its face is wood, leather or another thing that does not carry heat, or you wear gloves. Near the temperature its material softens at, the shield holds less of each blow, and past it every blow wears it twice as hard. It never breaks all at once. A metal face takes heat slowly and softens late; a wooden one warms fast but burns its holder less. Shift on the shield's tooltip says where the line is.
 
+## Fittings
+
+Beyond the parts of the pattern, a finished tool takes optional **fittings**, one stack at a time at a bench (the way a tip or lining is fitted):
+
+| Fitting | On | Does |
+| --- | --- | --- |
+| binding | sword, hand hammer, hand knife, bow, crossbow, and the tools that already had one | Lashing where head meets handle: takes some of the shock. |
+| pommel | axe, maul, spear, pickaxe | A knob, ball or counterweight at the butt that moves the weight toward your hand. |
+| tip | maul, hand hammer, and the tools that already had one | A hard piece set in the head. |
+| spring | maul, spear, sword | Wire or rod of metal. Right click cocks it, the next blow lets it go for extra damage; a sword's release also lunges you forward; on a spear it lets the head be thrown from the spring. Stored energy is its volume times its stiffness; a spring worked past what its head can take takes a permanent set and finally snaps. |
+| lanyard | sword, axe, maul, spear | A chain to the hand. Thrown, it reels what it hits and pulls the weapon weakly back at a cost in throw speed; held, a disarming shot cannot strip it. |
+| edge guard | axe, spear, pickaxe, shovel | A plate strip down the haft that stiffens it, at a cost in mass. |
+| magazine | crossbow | A box of plate or plank: its volume sets how many bolts a load takes, scattered, slower to load. |
+| rest | bow, crossbow | A padded rest: steadier aim. |
+| stabiliser | bow, crossbow | A counter-mass slug: steadier, slower to raise. |
+| laminate | bow | Horn on the limbs: more energy for the length, weaker in rain or water. |
+| boss | shield | A plate dome: a turned blow bashes and shoves the attacker, at a cost in mass and a weak spot. |
+| strap | shield | String or wire carrying the weight: the face holds a little more. |

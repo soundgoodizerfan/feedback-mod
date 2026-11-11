@@ -215,6 +215,14 @@
         "stiff_share": 0.5,
         "flex_share": 0.2
       }
+    },
+    "U": {
+      "name": "underlayer",
+      "forms": [
+        "chain"
+      ],
+      "litres": 0.02,
+      "layer": 1
     }
   },
   "patterns": [

@@ -762,6 +762,8 @@ public final class ModularBake {
                 for (Part p : design.parts()) {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                     held *= param(type.roles().get(p.role()), p, "capacity_mult");
+                    // An addon role may state its own multiple (a boss is a weak spot, a strap carries the weight).
+                    held *= type.roles().get(p.role()).params().getOrDefault("capacity_mult", 1f);
                 }
                 f.put(Fig.MASS, total);
                 f.put(Fig.CAPACITY, (ModularTuning.SHIELD_BASE_CAPACITY + comp * worn) * held);

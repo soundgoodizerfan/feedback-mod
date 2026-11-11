@@ -48,7 +48,7 @@ One stack at a time from the same fan as the lining and studs:
 
 | Fitting | On | Does |
 | --- | --- | --- |
-| underlayer (the old lining) | all | A softer layer under the plate: a little extra protection. |
+| underlayer | all | A softer layer under the plate: a little extra protection. |
 | studs | all | Bite whoever strikes you in melee, whatever plate they are set in. |
 | collar | helmet, chestplate | Cuts the extra damage of a critical hit or a backstab. Stiff plate cuts more than flexible mail or cloth. |
 | pauldron | chestplate | Cuts overhead blows and falling blocks. |
@@ -67,18 +67,17 @@ One stack at a time from the same fan as the lining and studs:
 
 The piece is drawn on the vanilla armor shape, **tinted by the plate**, so you can see at a glance what someone is wearing. Each plate variant adds its own pieces to the silhouette:
 
-| Piece | Variant | Added shape |
+| Piece | Shape | Added shape |
 | --- | --- | --- |
-| Helmet | open helm | crest |
-| Helmet | great helm | visor and brim |
-| Helmet | sallet | neck guard and brim |
+| Helmet | conical, ridged | crest |
+| Helmet | pointed-faced | visor and brim |
+| Helmet | tailed | neck guard and brim |
 | Chestplate | brigandine | collar |
-| Chestplate | breastplate | ridge and pauldrons |
-| Chestplate | hauberk | collar and mail skirt |
-| Leggings | greaves | knee guards |
-| Leggings | cuisses | thigh plates |
+| Chestplate | breastplate, segmented | ridge and pauldrons |
+| Chestplate | hauberk, scale, lamellar | collar and skirt |
+| Leggings | articulated | knee guards |
+| Leggings | mail chausses | thigh plates |
 | Boots | sabatons | toe caps |
-| Boots | riding boots | cuffs and spurs |
 
 [Studs](#studs) on a helmet or chestplate show on the piece in the color of their own material.
 

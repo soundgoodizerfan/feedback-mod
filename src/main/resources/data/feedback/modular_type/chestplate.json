@@ -249,6 +249,14 @@
         "overhead_mult": 0.7,
         "falling_mult": 0.6
       }
+    },
+    "U": {
+      "name": "underlayer",
+      "forms": [
+        "chain"
+      ],
+      "litres": 0.02,
+      "layer": 1
     }
   },
   "patterns": [
