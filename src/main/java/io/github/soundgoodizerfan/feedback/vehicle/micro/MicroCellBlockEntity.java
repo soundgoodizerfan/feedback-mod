@@ -86,6 +86,10 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     /** Bit {@code index(x, y, z)}: that voxel holds a block. */
     private long filled;
     private final MicroRotor[] rotors = new MicroRotor[VOXELS];
+    /** The block a wedge voxel is made of (its look, weight and what mining it gives back); null: the stock wedge. */
+    private final BlockState[] skins = new BlockState[VOXELS];
+    /** Which voxels are flywheels: only these are looked at for rim strain. */
+    private long flywheels;
     /** Server: rotors taken out since the last {@link #commit}, and whether any came in. */
     private final List<MicroRotor> gone = new ArrayList<>();
     private boolean rotorAdded;
@@ -178,6 +182,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     /** Puts {@code state} in voxel {@code index}, or empties it for null. Call {@link #commit} once the edits are done. */
     public void set(int index, @Nullable BlockState state) {
         voxels[index] = state;
+        skins[index] = null;
         filled = state == null ? filled & ~(1L << index) : filled | 1L << index;
         shape = null;
         if (rotors[index] != null)
@@ -190,7 +195,20 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
                 MicroBearings.unclear(level, was);
         }
         rotors[index] = state != null && state.getBlock() instanceof MicroRotation ? new MicroRotor(this, index, state) : null;
+        flywheels = state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.shaft.FlywheelBlock
+                ? flywheels | 1L << index : flywheels & ~(1L << index);
         rotorAdded |= rotors[index] != null;
+    }
+
+    /** The block voxel {@code index}, a wedge, is made of; null for the stock wedge or a voxel that is not one. */
+    @Nullable
+    public BlockState skin(int index) {
+        return skins[index];
+    }
+
+    /** Makes wedge voxel {@code index} of {@code skin}; call {@link #commit} after. */
+    public void setSkin(int index, @Nullable BlockState skin) {
+        skins[index] = voxels[index] != null && MicroWedgeBlock.is(voxels[index]) ? skin : null;
     }
 
     /** The rotor in voxel {@code index}, or null if that voxel is not a rotation part. */
@@ -249,6 +267,10 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         for (BlockState state : voxels)
             if (state != null)
                 sum += each.computeIfAbsent(state.getBlock(), b -> voxelKpg(state));
+        // A skinned wedge weighs half its skin's block, not half the stock wedge's.
+        for (int i = 0; i < VOXELS; i++)
+            if (skins[i] != null && voxels[i] != null)
+                sum += 0.5 * voxelKpg(skins[i]) - voxelKpg(voxels[i]);
         return sum;
     }
 
@@ -447,6 +469,8 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         // Staggered, so a build's cells do not all refresh on one tick.
         if (cell.colliderDue || (level.getGameTime() + pos.hashCode()) % MicroColliders.REFRESH == 0)
             cell.applyCollider();
+        if (cell.flywheels != 0 && !level.isClientSide)
+            cell.strainFlywheels();
         if (cell.bearings.isEmpty() || !(level instanceof ServerLevel server))
             return;
         boolean rebuild = false;
@@ -477,6 +501,28 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         if (rebuild) {
             cell.setChanged();
             RotationPropagator.rebuildFrom(server, pos);
+        }
+    }
+
+    /**
+     * Rim strain, as {@code ShaftBlockEntity} has it: past the rim speed a flywheel's condition falls, to the
+     * floor and never to a burst. A voxel's rim is a quarter of the radius, so it holds {@link #N} times the speed.
+     */
+    private void strainFlywheels() {
+        var iron = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(io.github.soundgoodizerfan.feedback.Feedback.id("cast_iron"));
+        if (iron == null)
+            return;
+        float rim = io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlockEntity.rimLimitRpm(iron) * N;
+        for (long m = flywheels; m != 0; m &= m - 1) {
+            MicroRotor rotor = rotors[Long.numberOfTrailingZeros(m)];
+            if (rotor == null)
+                continue;
+            float over = Math.abs(rotor.liveRpm()) / rim - 1f;
+            if (over > 0f && rotor.condition() > io.github.soundgoodizerfan.feedback.core.FTuning.FLYWHEEL_CONDITION_FLOOR) {
+                rotor.setCondition(Math.max(io.github.soundgoodizerfan.feedback.core.FTuning.FLYWHEEL_CONDITION_FLOOR,
+                        rotor.condition() - io.github.soundgoodizerfan.feedback.core.FTuning.FLYWHEEL_WEAR_PER_OVER * over));
+                setChanged();
+            }
         }
     }
 
@@ -609,6 +655,24 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
                 spin.add(one);
             }
         tag.put("Spin", spin);
+        ListTag worn = new ListTag();
+        for (MicroRotor rotor : rotors())
+            if (rotor.condition() < 1f) {
+                CompoundTag one = new CompoundTag();
+                one.putByte("I", (byte) rotor.index());
+                one.putFloat("C", rotor.condition());
+                worn.add(one);
+            }
+        tag.put("Worn", worn);
+        ListTag skinned = new ListTag();
+        for (int i = 0; i < VOXELS; i++)
+            if (skins[i] != null) {
+                CompoundTag one = new CompoundTag();
+                one.putByte("I", (byte) i);
+                one.put("S", NbtUtils.writeBlockState(skins[i]));
+                skinned.add(one);
+            }
+        tag.put("Skins", skinned);
         ListTag held = new ListTag();
         for (var e : bearings.int2ObjectEntrySet()) {
             CompoundTag one = e.getValue().save();
@@ -648,6 +712,18 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             Joint joint = Joint.load(held.getCompound(k));
             if (joint != null)
                 bearings.put(held.getCompound(k).getByte("I") & (VOXELS - 1), joint);
+        }
+        ListTag skinned = tag.getList("Skins", Tag.TAG_COMPOUND);
+        for (int k = 0; k < skinned.size(); k++) {
+            BlockState skin = NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), skinned.getCompound(k).getCompound("S"));
+            if (!skin.isAir())
+                setSkin(skinned.getCompound(k).getByte("I") & (VOXELS - 1), skin);
+        }
+        ListTag worn = tag.getList("Worn", Tag.TAG_COMPOUND);
+        for (int k = 0; k < worn.size(); k++) {
+            MicroRotor rotor = rotors[worn.getCompound(k).getByte("I") & (VOXELS - 1)];
+            if (rotor != null)
+                rotor.setCondition(worn.getCompound(k).getFloat("C"));
         }
         ListTag spin = tag.getList("Spin", Tag.TAG_COMPOUND);
         for (int k = 0; k < spin.size(); k++) {

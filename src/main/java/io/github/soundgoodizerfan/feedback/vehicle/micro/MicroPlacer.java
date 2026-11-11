@@ -76,9 +76,6 @@ public final class MicroPlacer {
     public static boolean fits(ItemStack stack) {
         if (!(stack.getItem() instanceof BlockItem item))
             return false;
-        // A flywheel's rim strains with speed and a voxel has no condition to keep it in: it stays full size.
-        if (item.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.shaft.FlywheelBlock)
-            return false;
         if (item.getBlock() instanceof MicroRotation)
             return true;
         BlockState state = item.getBlock().defaultBlockState();
@@ -111,20 +108,35 @@ public final class MicroPlacer {
         int vx = cell.getX() * N + (hitVoxel & 3), vy = cell.getY() * N + (hitVoxel >> 2 & 3), vz = cell.getZ() * N + (hitVoxel >> 4);
         Direction face = hit.getDirection();
         int tx = vx + face.getStepX(), ty = vy + face.getStepY(), tz = vz + face.getStepZ();
-        BlockState voxel = placementState(player, held, hit, be.get(hitVoxel), tx, ty, tz);
+        // A Micro Core in the other hand sets how the block in this one goes: a line, a box, mirrored, or as a wedge of it.
+        ItemStack other = held == player.getMainHandItem() ? player.getOffhandItem() : player.getMainHandItem();
+        BlockState skin = null;
+        BlockState voxel;
+        if (other.getItem() instanceof MicroCoreItem && MicroTool.mode(other) == MicroTool.Mode.WEDGE && wedgeable(held)) {
+            skin = ((BlockItem) held.getItem()).getBlock().defaultBlockState();
+            voxel = placementState(player, held, hit, be.get(hitVoxel), tx, ty, tz, io.github.soundgoodizerfan.feedback.registry.FBlocks.MICRO_WEDGE.get());
+        } else
+            voxel = placementState(player, held, hit, be.get(hitVoxel), tx, ty, tz, null);
         if (voxel == null)
             return false;
-        // A Micro Core in the other hand sets how the block in this one goes: a line, a box, mirrored.
-        ItemStack other = held == player.getMainHandItem() ? player.getOffhandItem() : player.getMainHandItem();
         if (other.getItem() instanceof MicroCoreItem)
-            return useTool(player, held, other, voxel, new BlockPos(tx, ty, tz), face);
+            return useTool(player, held, other, voxel, skin, new BlockPos(tx, ty, tz), face);
         return place(player, held, voxel, tx, ty, tz, face);
     }
 
     /** Most voxels one line or box may put in a click: a click that could stall the server is refused. */
     private static final int MAX_SPAN = 4096;
 
-    private static boolean useTool(Player player, ItemStack held, ItemStack core, BlockState voxel, BlockPos target, Direction face) {
+    /** A plain whole block can be cut to a wedge of itself; a rotation part, a joint or a wedge already cannot. */
+    private static boolean wedgeable(ItemStack held) {
+        if (!(held.getItem() instanceof BlockItem item) || !fits(held))
+            return false;
+        var block = item.getBlock();
+        return !(block instanceof MicroRotation) && !(block instanceof MicroWedgeBlock)
+                && block.defaultBlockState().isCollisionShapeFullBlock(net.minecraft.world.level.EmptyBlockGetter.INSTANCE, BlockPos.ZERO);
+    }
+
+    private static boolean useTool(Player player, ItemStack held, ItemStack core, BlockState voxel, @Nullable BlockState skin, BlockPos target, Direction face) {
         var mode = MicroTool.mode(core);
         java.util.Set<BlockPos> span;
         if (mode == MicroTool.Mode.LINE || mode == MicroTool.Mode.BOX) {
@@ -149,7 +161,7 @@ public final class MicroPlacer {
             voxels.put(p, voxel);
         boolean any = false;
         for (var e : MicroTool.mirrored(voxels, MicroTool.planes(core)).entrySet())
-            any |= place(player, held, e.getValue(), e.getKey().getX(), e.getKey().getY(), e.getKey().getZ(), face);
+            any |= place(player, held, e.getValue(), e.getKey().getX(), e.getKey().getY(), e.getKey().getZ(), face, skin);
         return any;
     }
 
@@ -164,7 +176,7 @@ public final class MicroPlacer {
      */
     @Nullable
     private static BlockState placementState(Player player, ItemStack held, BlockHitResult hit, @Nullable BlockState against,
-                                             int tx, int ty, int tz) {
+                                             int tx, int ty, int tz, @Nullable Block as) {
         BlockPos at = cellOf(tx, ty, tz);
         Vec3 inVoxel = hit.getLocation().scale(N).subtract(tx, ty, tz);
         BlockHitResult asBlock = new BlockHitResult(Vec3.atLowerCornerOf(at).add(inVoxel), hit.getDirection(),
@@ -179,7 +191,7 @@ public final class MicroPlacer {
                 return at;
             }
         };
-        Block block = ((BlockItem) held.getItem()).getBlock();
+        Block block = as != null ? as : ((BlockItem) held.getItem()).getBlock();
         return block instanceof MicroRotation part ? part.getStateForPlacement(context, against) : block.getStateForPlacement(context);
     }
 
@@ -189,25 +201,35 @@ public final class MicroPlacer {
      * build there, the voxel is taken, or the block in its cell is not air.
      */
     public static boolean place(Player player, ItemStack paid, BlockState voxel, int vx, int vy, int vz, Direction face) {
+        return place(player, paid, voxel, vx, vy, vz, face, null);
+    }
+
+    /** As {@link #place(Player, ItemStack, BlockState, int, int, int, Direction)}; {@code skin}, for a wedge, is the block it is made of and the one paid for. */
+    public static boolean place(Player player, ItemStack paid, BlockState voxel, int vx, int vy, int vz, Direction face, @Nullable BlockState skin) {
         Level level = player.level();
+        BlockState pay = skin != null ? skin : voxel;
         BlockPos at = cellOf(vx, vy, vz);
         // A voxel is a 64th of a block: the player's credit of that block pays it, and a whole block is
         // taken from the hand only when the credit has run out (the core starting a build is paid whole).
-        boolean credited = !player.isCreative() && paid.getItem() instanceof BlockItem bi && bi.getBlock() == voxel.getBlock();
-        if (credited && credit(player, voxel) <= 0 && paid.isEmpty())
+        boolean credited = !player.isCreative() && paid.getItem() instanceof BlockItem bi && bi.getBlock() == pay.getBlock();
+        if (credited && credit(player, pay) <= 0 && paid.isEmpty())
             return false;
         if (!level.mayInteract(player, at) || !player.mayUseItemAt(at, face, paid) || !put(level, vx, vy, vz, voxel))
             return false;
-        SoundType sound = voxel.getSoundType();
+        if (skin != null && level.getBlockEntity(at) instanceof MicroCellBlockEntity cell) {
+            cell.setSkin(indexOf(vx, vy, vz), skin);
+            cell.commit();
+        }
+        SoundType sound = pay.getSoundType();
         level.playSound(null, at, sound.getPlaceSound(), SoundSource.BLOCKS, (sound.getVolume() + 1f) / 2f, sound.getPitch() * 0.8f);
         level.gameEvent(GameEvent.BLOCK_PLACE, at, GameEvent.Context.of(player, voxel));
         if (credited) {
-            int have = credit(player, voxel);
+            int have = credit(player, pay);
             if (have <= 0) {
                 paid.shrink(1);
                 have = VOXELS_PER_BLOCK;
             }
-            setCredit(player, voxel, have - 1);
+            setCredit(player, pay, have - 1);
             player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.credit", have - 1), true);
         } else if (!player.isCreative())
             paid.shrink(1);
@@ -311,7 +333,7 @@ public final class MicroPlacer {
         if (!(player.level().getBlockEntity(cell) instanceof MicroCellBlockEntity be))
             return;
         int index = lookedVoxel(player, cell, be);
-        BlockState voxel = index < 0 ? null : be.get(index);
+        BlockState voxel = index < 0 ? null : be.skin(index) != null ? be.skin(index) : be.get(index);
         if (voxel == null)
             return;
         float theirs = voxel.getDestroySpeed(player.level(), cell);
@@ -332,9 +354,12 @@ public final class MicroPlacer {
         BlockPos at = cellOf(vx, vy, vz);
         if (!level.mayInteract(player, at))
             return false;
+        BlockState skin = level.getBlockEntity(at) instanceof MicroCellBlockEntity cell ? cell.skin(indexOf(vx, vy, vz)) : null;
         BlockState was = take(level, vx, vy, vz);
         if (was == null)
             return false;
+        if (skin != null)
+            was = skin;
         SoundType sound = was.getSoundType();
         level.playSound(null, at, sound.getBreakSound(), SoundSource.BLOCKS, (sound.getVolume() + 1f) / 2f, sound.getPitch() * 0.8f);
         level.gameEvent(GameEvent.BLOCK_DESTROY, at, GameEvent.Context.of(player, was));

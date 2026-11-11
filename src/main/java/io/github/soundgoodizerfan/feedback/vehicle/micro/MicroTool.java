@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public final class MicroTool {
 
-    public enum Mode { SINGLE, LINE, BOX, MIRROR }
+    public enum Mode { SINGLE, LINE, BOX, MIRROR, WEDGE }
 
     public static final int MAX_PLANES = 3;
     private static final String MODE = "MicroMode", CORNER = "MicroCorner", HAS_CORNER = "MicroHasCorner", PLANES = "MicroPlanes",

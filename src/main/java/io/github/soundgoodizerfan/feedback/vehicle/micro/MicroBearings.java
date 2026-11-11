@@ -117,13 +117,17 @@ public final class MicroBearings {
         }
         // By cell: what stays in each (put back into the world after the cell is assembled whole).
         Map<BlockPos, Map<Integer, BlockState>> staying = new LinkedHashMap<>();
+        Map<BlockPos, BlockState> skins = new LinkedHashMap<>();
         for (BlockPos v : moving)
             staying.computeIfAbsent(MicroPlacer.cellOf(v.getX(), v.getY(), v.getZ()), c -> new LinkedHashMap<>());
         for (var e : staying.entrySet())
             if (level.getBlockEntity(e.getKey()) instanceof MicroCellBlockEntity c)
                 for (int i = 0; i < MicroCellBlockEntity.VOXELS; i++)
-                    if (c.get(i) != null && !moving.contains(voxel(e.getKey(), i)))
+                    if (c.get(i) != null && !moving.contains(voxel(e.getKey(), i))) {
                         e.getValue().put(i, c.get(i));
+                        if (c.skin(i) != null)
+                            skins.put(voxel(e.getKey(), i), c.skin(i));
+                    }
         List<BlockPos> cells = new ArrayList<>(staying.keySet());
         // What each world cell carries besides its voxels -- other bearings' holds, their clearances --
         // goes into the body with the whole cell, so it is taken now and given to the cell made anew.
@@ -169,6 +173,10 @@ public final class MicroBearings {
             for (var v : e.getValue().entrySet()) {
                 BlockPos w = voxel(e.getKey(), v.getKey());
                 MicroPlacer.put(level, w.getX(), w.getY(), w.getZ(), v.getValue());
+                if (skins.containsKey(w) && level.getBlockEntity(e.getKey()) instanceof MicroCellBlockEntity put) {
+                    put.setSkin(v.getKey(), skins.get(w));
+                    put.commit();
+                }
             }
         }
         // The cells made anew keep what they carried (other bearings, their clearances), minus what moved.
@@ -225,13 +233,17 @@ public final class MicroBearings {
         BlockPos b = voxel(cell.getBlockPos(), index);
         BlockPos offset = joint.homeTo().subtract(joint.homeFrom());
         Map<BlockPos, BlockState> moves = new LinkedHashMap<>();
+        Map<BlockPos, BlockState> skinMoves = new LinkedHashMap<>();
         var box = s.getPlot().getBoundingBox();
         for (BlockPos p : BlockPos.betweenClosed(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ()))
             if (level.getBlockEntity(p) instanceof MicroCellBlockEntity inBody)
                 for (int i = 0; i < MicroCellBlockEntity.VOXELS; i++)
-                    if (inBody.get(i) != null)
-                        moves.put(hinge ? turn(voxel(p.offset(offset), i), b, axis, k) : turn(voxel(p.offset(offset), i), b, snapped),
-                                hinge ? turn(inBody.get(i), axis, k) : turn(inBody.get(i), snapped));
+                    if (inBody.get(i) != null) {
+                        BlockPos to = hinge ? turn(voxel(p.offset(offset), i), b, axis, k) : turn(voxel(p.offset(offset), i), b, snapped);
+                        moves.put(to, hinge ? turn(inBody.get(i), axis, k) : turn(inBody.get(i), snapped));
+                        if (inBody.skin(i) != null)
+                            skinMoves.put(to, inBody.skin(i));
+                    }
         for (BlockPos v : moves.keySet()) {
             BlockPos c = MicroPlacer.cellOf(v.getX(), v.getY(), v.getZ());
             BlockState there = level.getBlockState(c);
@@ -244,8 +256,14 @@ public final class MicroBearings {
         cell.setBearing(index, null);
         unclear(level, joint);
         ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
-        for (var m : moves.entrySet())
+        for (var m : moves.entrySet()) {
             MicroPlacer.put(level, m.getKey().getX(), m.getKey().getY(), m.getKey().getZ(), m.getValue());
+            BlockState skin = skinMoves.get(m.getKey());
+            if (skin != null && level.getBlockEntity(MicroPlacer.cellOf(m.getKey().getX(), m.getKey().getY(), m.getKey().getZ())) instanceof MicroCellBlockEntity put) {
+                put.setSkin(indexOf(m.getKey()), skin);
+                put.commit();
+            }
+        }
         RotationPropagator.rebuildFrom(level, cell.getBlockPos());
         return "disassembled";
     }

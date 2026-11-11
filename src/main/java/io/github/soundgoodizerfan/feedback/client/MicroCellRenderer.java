@@ -31,6 +31,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.resources.model.BakedModel;
@@ -122,20 +123,50 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
                         poseStack.translate(-0.5f, -0.5f, -0.5f);
                     }
                     BakedModel model = blocks.getBlockModel(state);
+                    BlockState skin = cell.skin(MicroCellBlockEntity.index(x, y, z));
+                    TextureAtlasSprite skinSprite = skin == null ? null : spriteOf(skin, random);
                     for (RenderType type : model.getRenderTypes(state, random, ModelData.EMPTY)) {
                         VertexConsumer out = buffers.getBuffer(RenderTypeHelper.getEntityRenderType(type, false));
                         for (Direction side : Direction.values())
                             if (!hidden(cell, state, x, y, z, side)) {
                                 random.setSeed(42L);
                                 draw(out, poseStack.last(), colors, level, cell.getBlockPos(), state,
-                                        model.getQuads(state, side, random, ModelData.EMPTY, type), light, overlay);
+                                        reskinned(model.getQuads(state, side, random, ModelData.EMPTY, type), skinSprite), light, overlay);
                             }
                         random.setSeed(42L);
                         draw(out, poseStack.last(), colors, level, cell.getBlockPos(), state,
-                                model.getQuads(state, null, random, ModelData.EMPTY, type), light, overlay);
+                                reskinned(model.getQuads(state, null, random, ModelData.EMPTY, type), skinSprite), light, overlay);
                     }
                     poseStack.popPose();
                 }
+    }
+
+    /** The look of {@code skin}: its model's side texture, or its particle if it has none. */
+    private TextureAtlasSprite spriteOf(BlockState skin, RandomSource random) {
+        BakedModel model = blocks.getBlockModel(skin);
+        random.setSeed(42L);
+        List<BakedQuad> side = model.getQuads(skin, Direction.NORTH, random, ModelData.EMPTY, null);
+        return side.isEmpty() ? model.getParticleIcon(ModelData.EMPTY) : side.get(0).getSprite();
+    }
+
+    /** {@code quads} with their texture swapped for {@code to}, each corner's coordinates carried across the new sprite. */
+    private static List<BakedQuad> reskinned(List<BakedQuad> quads, TextureAtlasSprite to) {
+        if (to == null || quads.isEmpty())
+            return quads;
+        List<BakedQuad> out = new java.util.ArrayList<>(quads.size());
+        for (BakedQuad q : quads) {
+            TextureAtlasSprite from = q.getSprite();
+            int[] v = q.getVertices().clone();
+            float du = from.getU1() - from.getU0(), dv = from.getV1() - from.getV0();
+            for (int k = 0; k < 4; k++) {
+                float fu = du == 0 ? 0 : (Float.intBitsToFloat(v[k * 8 + 4]) - from.getU0()) / du;
+                float fv = dv == 0 ? 0 : (Float.intBitsToFloat(v[k * 8 + 5]) - from.getV0()) / dv;
+                v[k * 8 + 4] = Float.floatToRawIntBits(to.getU0() + (to.getU1() - to.getU0()) * fu);
+                v[k * 8 + 5] = Float.floatToRawIntBits(to.getV0() + (to.getV1() - to.getV0()) * fv);
+            }
+            out.add(new BakedQuad(v, -1, q.getDirection(), to, q.isShade(), q.hasAmbientOcclusion()));
+        }
+        return out;
     }
 
     private static void draw(VertexConsumer out, PoseStack.Pose pose, BlockColors colors, Level level, BlockPos pos,

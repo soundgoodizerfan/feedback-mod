@@ -52,6 +52,8 @@ public final class MicroRotor implements RotationMember {
     private final BlockState state;
 
     private float ratio = 1f;
+    /** A flywheel voxel's rim condition, 1 down to {@link FTuning#FLYWHEEL_CONDITION_FLOOR}; a strained rim carries less inertia. */
+    private float condition = 1f;
     @Nullable
     private RotationNetwork network;
     /** Speed and angle as the client last heard them (and, with no network yet, the server's last). */
@@ -80,6 +82,14 @@ public final class MicroRotor implements RotationMember {
 
     private MicroRotation part() {
         return (MicroRotation) state.getBlock();
+    }
+
+    public float condition() {
+        return condition;
+    }
+
+    void setCondition(float condition) {
+        this.condition = condition;
     }
 
     @Override
@@ -127,7 +137,7 @@ public final class MicroRotor implements RotationMember {
     public Inertia getInertia() {
         var bearing = cell.bearing(index);
         // A turned body's inertia is the real body's: no micro scale on it.
-        return new Inertia(part().getInertia().suTicksPerRpm() * FTuning.MICRO_ROTATION_INERTIA_SCALE
+        return new Inertia(part().getInertia().suTicksPerRpm() * FTuning.MICRO_ROTATION_INERTIA_SCALE * condition
                 + (bearing == null ? 0 : bearing.runInertia()));
     }
 
