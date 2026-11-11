@@ -50,9 +50,10 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
  * The one joint between the full-size rotation world and the micro one
  * ({@code docs/specs/feedback_micro_spec.md}, <em>Micro rotation nodes</em>). Its back, the big face,
  * couples to full-size rotation blocks as a shaft end does; its {@link #FACING}, the micro face,
- * couples only to the four voxels around the centre of the micro cell's face in front of it -- the
- * grid is four on a side, so no voxel is dead centre -- as one connection, 1:1 in speed. The
- * propagator reads {@link #microFace}; {@link #hasShaftTowards} answers for the big face alone, so
+ * reaches only the four voxels around the centre of the micro cell's face in front of it -- the
+ * grid is four on a side, so no voxel is dead centre -- not through the propagator but by feeding each of
+ * their runs at the adapter's speed ({@code RotationAdapterBlockEntity#tickServer}), and the other way when
+ * a micro run in front is fed from elsewhere. {@link #hasShaftTowards} answers for the big face alone, so
  * no full-size block couples to the micro face.
  *
  * <p>Pure transmission: no source, no load, no inventory. Not itself a voxel: it is the boundary.

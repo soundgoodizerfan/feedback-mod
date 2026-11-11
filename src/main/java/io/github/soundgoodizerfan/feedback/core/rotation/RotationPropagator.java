@@ -413,13 +413,6 @@ public class RotationPropagator {
         return out;
     }
 
-    private static boolean isCentralFace(int index, Direction face) {
-        for (int i : centralFace(face))
-            if (i == index)
-                return true;
-        return false;
-    }
-
     /**
      * Speed multiplier from a block of {@code from} at {@code fromPos} to one of {@code to} across
      * {@code face}, or 0 when they are not coupled. Run on block states, so a voxel couples by

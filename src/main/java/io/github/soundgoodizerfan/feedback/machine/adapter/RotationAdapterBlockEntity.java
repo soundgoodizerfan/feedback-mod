@@ -69,6 +69,24 @@ public class RotationAdapterBlockEntity extends RotationNode {
             wants[outs.size()] = rpm * sign;
             outs.add(rotor);
         }
-        io.github.soundgoodizerfan.feedback.core.rotation.RotationSplit.drive(getNetwork(), outs, wants);
+        long now = level.getGameTime();
+        var own = getNetwork();
+        // Which way it runs: full-size drives micro, unless this run has no source of its own and a micro run in front is fed from
+        // elsewhere (another adapter or a belt), when micro drives this one.
+        if (own.getCapacitySu().value() <= 0 && (own.fedFrom(now) == null || outs.stream().anyMatch(o -> own.fedFrom(now) == o.getNetwork()))) {
+            for (int k = 0; k < outs.size(); k++) {
+                var run = outs.get(k).getNetwork();
+                var feeder = run == null ? null : run.fedFrom(now);
+                if (feeder != null && feeder != own && run.getSettledCapacitySu().value() > 0 && outs.get(k).getRatio() != 0 && getRatio() != 0) {
+                    float sign = wants[k] == 0 || rpm == 0 ? 1f : Math.signum(wants[k] / rpm);
+                    own.driveByBelt(new io.github.soundgoodizerfan.feedback.core.unit.Rpm(outs.get(k).getRpm().value() * sign / getRatio()),
+                            run.getSettledCapacitySu());
+                    own.markFed(run, now);
+                    run.loadByBelt(new io.github.soundgoodizerfan.feedback.core.unit.Su(Math.min(own.getSettledLoadSu().value(), run.getSettledCapacitySu().value())));
+                    return;
+                }
+            }
+        }
+        io.github.soundgoodizerfan.feedback.core.rotation.RotationSplit.drive(own, outs, wants, now);
     }
 }

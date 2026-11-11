@@ -65,10 +65,10 @@ public final class RotationSplit {
      * turn at), once per distinct run, and charges {@code in} for what they carry. A member whose run
      * has a source of its own, or a zero ratio, is left alone.
      */
-    public static void drive(RotationNetwork in, List<RotationMember> outs, float[] wants) {
+    public static void drive(RotationNetwork in, List<RotationMember> outs, float[] wants, long now) {
         Set<RotationNetwork> done = new HashSet<>();
         List<RotationNetwork> runs = new ArrayList<>(outs.size());
-        float capacity = in.getCapacitySu().value();
+        float capacity = in.getSettledCapacitySu().value();
         float carried = 0;
         for (int i = 0; i < outs.size(); i++) {
             RotationMember out = outs.get(i);
@@ -76,7 +76,8 @@ public final class RotationSplit {
             if (run == null || run == in || out.getRatio() == 0 || !done.add(run) || run.getTargetRpm().value() != 0)
                 continue;
             run.driveByBelt(new Rpm(wants[i] / out.getRatio()), new Su(capacity));
-            carried += Math.min(run.getLoadSu().value(), capacity);
+            run.markFed(in, now);
+            carried += Math.min(run.getSettledLoadSu().value(), capacity);
             runs.add(run);
         }
         if (carried > 0)

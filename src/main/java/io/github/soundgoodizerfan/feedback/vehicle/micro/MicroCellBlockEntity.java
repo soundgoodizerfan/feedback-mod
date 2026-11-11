@@ -225,7 +225,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     void setBelt(int index, MicroBelts.End far) {
         belts.put(index, far);
         beltWear[index] = 1;
-        setChanged();
+        syncSpin();
     }
 
     float beltCondition(int index) {
@@ -243,12 +243,12 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         beltWear[index] = 0;
         if (far == null)
             return;
-        setChanged();
+        syncSpin();
         if (level != null && level.isLoaded(far.pos()) && level.getBlockEntity(far.pos()) instanceof MicroCellBlockEntity other) {
             MicroBelts.End back = other.belts.get(far.index());
             if (back != null && back.pos().equals(worldPosition) && back.index() == index) {
                 other.belts.remove(far.index());
-                other.setChanged();
+                other.syncSpin();
             }
         }
     }

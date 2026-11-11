@@ -118,7 +118,9 @@ public class DifferentialBlock extends Block implements EntityBlock, MicroRotati
         float la = load(a), lb = load(b);
         int mode = state.getValue(MODE);
         float want = 0;
-        if (mode != 2 && la + lb > 1e-3f)
+        // Two separate runs to share between; one axle (or both in one run) is just fed the input's speed.
+        boolean two = a != null && b != null && a.getNetwork() != null && b.getNetwork() != null && a.getNetwork() != b.getNetwork();
+        if (two && mode != 2 && la + lb > 1e-3f)
             // The axle that resists more gives up speed to the one that resists less.
             want = (lb - la) / (la + lb);
         if (mode == 1)
@@ -135,12 +137,12 @@ public class DifferentialBlock extends Block implements EntityBlock, MicroRotati
             wants[outs.size()] = rpm * (1 - share);
             outs.add(b);
         }
-        RotationSplit.drive(in, outs, wants);
+        RotationSplit.drive(in, outs, wants, level.getGameTime());
         return share;
     }
 
     private static float load(@Nullable RotationMember member) {
-        return member == null || member.getNetwork() == null ? 0 : member.getNetwork().getLoadSu().value();
+        return member == null || member.getNetwork() == null ? 0 : member.getNetwork().getSettledLoadSu().value();
     }
 
     /** A sneak-click on a full-size differential steps its mode. */

@@ -92,8 +92,6 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
             if (far == null || far.pos().asLong() < cell.getBlockPos().asLong()
                     || far.pos().equals(cell.getBlockPos()) && far.index() < i)
                 continue;
-            var state = cell.get(i);
-            double r = state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlock p ? p.getRadius() / 16.0 / N * 1.0 : 0.1;
             float ax = (i & 3) * s + s / 2, ay = (i >> 2 & 3) * s + s / 2, az = (i >> 4) * s + s / 2;
             int j = far.index();
             float bx = (far.pos().getX() - cell.getBlockPos().getX()) + (j & 3) * s + s / 2;

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.rotation;
 
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -168,6 +169,33 @@ public class RotationNetwork {
         return dragSuPerRpm + externalDragSuPerRpm;
     }
 
+    private float settledCapacitySu, settledLoadSu;
+    @Nullable
+    private RotationNetwork fedFrom;
+    private long fedAt;
+
+    /** Last tick's capacity, own sources and what was fed in: the supply a splitter hands on. */
+    public Su getSettledCapacitySu() {
+        return new Su(settledCapacitySu);
+    }
+
+    /** Last tick's load, drag included. */
+    public Su getSettledLoadSu() {
+        return new Su(settledLoadSu);
+    }
+
+    /** {@code from} fed this run at game time {@code now} (a splitter, through {@code RotationSplit}). */
+    public void markFed(RotationNetwork from, long now) {
+        fedFrom = from;
+        fedAt = now;
+    }
+
+    /** The run that fed this one within the last two ticks, or null. */
+    @Nullable
+    public RotationNetwork fedFrom(long now) {
+        return fedFrom != null && now - fedAt <= 2 ? fedFrom : null;
+    }
+
     /** Own sources plus whatever a belt is feeding in. */
     private float totalCapacitySu() {
         return capacitySu + beltCapacitySu;
@@ -275,6 +303,10 @@ public class RotationNetwork {
      */
     public void tick() {
         tickSpeed();
+        // What the run carried and was given this tick, kept past the clearing below: a splitter reads these, so what it
+        // sees does not depend on which block entity ticked first.
+        settledCapacitySu = totalCapacitySu();
+        settledLoadSu = liveLoadSu();
         beltCapacitySu = 0;
         beltTargetRpm = 0;
         beltLoadSu = 0;
