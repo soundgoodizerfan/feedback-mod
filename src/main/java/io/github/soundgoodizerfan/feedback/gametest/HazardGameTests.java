@@ -89,9 +89,12 @@ public class HazardGameTests {
         long now = helper.getLevel().getGameTime();
         Catchup away = new Catchup();
         CompoundTag tag = new CompoundTag();
-        tag.putLong("SavedAt", now - 500);
+        // A fresh test world is younger than 500 ticks, and a stamp before tick 0 reads as never saved.
+        long gap = Math.min(500, now);
+        helper.assertTrue(gap >= FTuning.CATCHUP_MIN_TICKS, "the test world is old enough to have been away, got tick " + now);
+        tag.putLong("SavedAt", now - gap);
         away.load(tag);
-        helper.assertTrue(away.take(helper.getLevel()) == 500, "away for the whole gap");
+        helper.assertTrue(away.take(helper.getLevel()) == gap, "away for the whole gap");
         helper.assertTrue(away.take(helper.getLevel()) == 0, "and only told once");
 
         Catchup brief = new Catchup();

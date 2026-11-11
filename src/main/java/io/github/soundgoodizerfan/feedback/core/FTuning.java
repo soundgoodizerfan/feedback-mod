@@ -2779,6 +2779,10 @@ public final class FTuning {
     public static final float BATTERY_CHARGE_EFFICIENCY = 0.85f;
     public static final int BATTERY_ACID_MB_PER_CELL = 250, BATTERY_WATER_TANK_MB = 1000;
     public static final float BATTERY_SWITCH_VOLTS = 0.05f;
+    /** Volts per cell over the terminal at which a battery asks its full charge current; under it the ask tapers to nothing, so a weak line settles instead of sagging under the terminal. */
+    public static final float BATTERY_TAPER_VOLTS_PER_CELL = 0.15f;
+    /** Share of the gap to its target a battery's charge ask closes each tick; small enough that a long cable's sag cannot make it ring. */
+    public static final float BATTERY_ASK_SMOOTHING = 0.1f;
     public static final float BATTERY_SELF_DISCHARGE_PER_DAY = 0.01f;
     public static final float BATTERY_GASSING_FACTOR = 1.1f, BATTERY_TRICKLE_SHARE = 0.05f;
     /** mB of water electrolysed and of hydrogen released per amp-tick that goes into a full cell. */

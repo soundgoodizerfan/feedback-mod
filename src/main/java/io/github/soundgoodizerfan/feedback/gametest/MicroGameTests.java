@@ -63,11 +63,22 @@ public class MicroGameTests {
     private static final BlockState STONE = Blocks.STONE.defaultBlockState();
     private static final BlockState IRON = Blocks.IRON_BLOCK.defaultBlockState();
 
+    /**
+     * The cell these tests build in. The empty template is a single block ringed with barrier, which
+     * a cell is rightly not made over, so the cell and the two neighbours the tests use are cleared first.
+     */
+    private static BlockPos clearCell(net.minecraft.gametest.framework.GameTestHelper helper) {
+        BlockPos cell = helper.absolutePos(new BlockPos(1, 2, 1));
+        for (BlockPos p : new BlockPos[] {cell, cell.east(), cell.above()})
+            helper.getLevel().setBlock(p, Blocks.AIR.defaultBlockState(), 3);
+        return cell;
+    }
+
     /** Three voxels, two kinds: the exact shape is those three, Sable's is whole octants round them, and a save reads back the same. */
     @GameTest(template = "empty")
     public static void voxelsMakeTheShapeAndSurviveASave(GameTestHelper helper) {
         var level = helper.getLevel();
-        BlockPos cell = helper.absolutePos(new BlockPos(1, 2, 1));
+        BlockPos cell = clearCell(helper);
         int vx = cell.getX() * 4, vy = cell.getY() * 4, vz = cell.getZ() * 4;
         helper.assertTrue(MicroPlacer.put(level, vx, vy, vz, STONE), "the first voxel makes the cell");
         helper.assertTrue(MicroPlacer.put(level, vx + 1, vy, vz, STONE), "a second beside it");
@@ -110,7 +121,7 @@ public class MicroGameTests {
     @GameTest(template = "empty")
     public static void aVoxelPastTheEdgeIsInTheNextCell(GameTestHelper helper) {
         var level = helper.getLevel();
-        BlockPos cell = helper.absolutePos(new BlockPos(1, 2, 1));
+        BlockPos cell = clearCell(helper);
         int vx = cell.getX() * 4, vy = cell.getY() * 4, vz = cell.getZ() * 4;
         helper.assertTrue(MicroPlacer.put(level, vx + 3, vy, vz, STONE), "a voxel on the east edge");
         helper.assertTrue(level.getBlockState(cell.east()).isAir(), "nothing in the next cell yet");
@@ -135,7 +146,7 @@ public class MicroGameTests {
     @GameTest(template = "empty")
     public static void aCellWeighsItsVoxelsByMaterial(GameTestHelper helper) {
         var level = helper.getLevel();
-        BlockPos cell = helper.absolutePos(new BlockPos(1, 2, 1));
+        BlockPos cell = clearCell(helper);
         int vx = cell.getX() * 4, vy = cell.getY() * 4, vz = cell.getZ() * 4;
         for (int i = 0; i < 8; i++)
             MicroPlacer.put(level, vx + (i & 1), vy + (i >> 1 & 1), vz + (i >> 2 & 1), STONE);
@@ -153,11 +164,11 @@ public class MicroGameTests {
         helper.succeed();
     }
 
-    /** A held block places in front of the face hit and costs one; sneaking takes the voxel hit and gives it back; creative pays nothing. */
+    /** A held block places in front of the face hit and costs one; sneaking removes nothing (mining does that); creative pays nothing. */
     @GameTest(template = "empty")
     public static void aHeldBlockPlacesAndSneakRemoves(GameTestHelper helper) {
         var level = helper.getLevel();
-        BlockPos cell = helper.absolutePos(new BlockPos(1, 2, 1));
+        BlockPos cell = clearCell(helper);
         helper.assertTrue(MicroPlacer.put(level, cell.getX() * 4, cell.getY() * 4, cell.getZ() * 4, STONE), "a first voxel");
         var be = (MicroCellBlockEntity) level.getBlockEntity(cell);
         // The middle of the first voxel's east face.
@@ -170,9 +181,10 @@ public class MicroGameTests {
         helper.assertTrue(be.get(1) == IRON && survival.getMainHandItem().getCount() == 2, "the voxel east of the one hit is iron, and it cost one block");
 
         survival.setShiftKeyDown(true);
-        helper.assertTrue(MicroPlacer.use(survival, survival.getMainHandItem(), cell, east), "sneaking removes");
-        helper.assertTrue(be.get(0) == null && be.get(1) == IRON, "the voxel hit is gone and the other stays");
-        helper.assertTrue(survival.getInventory().countItem(Items.STONE) == 1, "the block comes back to the hand");
+        // Taking a voxel out is mining it with a tool, never a sneak-click: sneaking changes nothing here.
+        helper.assertFalse(MicroPlacer.use(survival, survival.getMainHandItem(), cell, east), "sneaking does not remove, and the voxel beyond is taken");
+        helper.assertTrue(be.get(0) == STONE && be.get(1) == IRON && survival.getMainHandItem().getCount() == 2,
+                "both voxels stay and nothing more is paid");
 
         var creative = helper.makeMockPlayer(GameType.CREATIVE);
         creative.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_BLOCK, 3));

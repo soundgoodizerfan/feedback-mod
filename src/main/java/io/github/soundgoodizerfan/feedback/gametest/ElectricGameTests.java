@@ -814,9 +814,10 @@ public class ElectricGameTests {
         run(cell, 1.1f, ticksFor(2));   // overrun, anode long gone
         helper.assertTrue(cell.getAnode().isEmpty(), "the anode dissolved");
         helper.assertFalse(cell.getDeposit().containsKey(ZINC), "no zinc plated: " + cell.getDeposit());
-        helper.assertTrue(Math.abs(cell.getDeposit().getOrDefault(COPPER, 0f) - 13f) < 0.05f,
+        // Brass is 65 % copper, 35 % zinc by Qu, and two ingots are 18 Qu: 11.7 and 6.3.
+        helper.assertTrue(Math.abs(cell.getDeposit().getOrDefault(COPPER, 0f) - 11.7f) < 0.05f,
                 "the copper share of two ingots plated: " + cell.getDeposit());
-        helper.assertTrue(Math.abs(cell.getSolution().getOrDefault(ZINC, 0f) - 7f) < 0.05f,
+        helper.assertTrue(Math.abs(cell.getSolution().getOrDefault(ZINC, 0f) - 6.3f) < 0.05f,
                 "and the zinc stayed in the water: " + cell.getSolution());
         List<ItemStack> off = cell.takeCathode();
         helper.assertTrue(off.size() == 1 && off.get(0).is(Items.COPPER_INGOT) && off.get(0).getCount() == 1,
@@ -836,7 +837,7 @@ public class ElectricGameTests {
         ElectrolyticCellBlockEntity cell = brassCell(helper, at, 2);
         run(cell, 1.1f, ticksFor(2));
         run(cell, 1.5f, ticksFor(1));
-        helper.assertTrue(cell.getDeposit().getOrDefault(ZINC, 0f) > 6.9f, "the zinc plated: " + cell.getDeposit());
+        helper.assertTrue(cell.getDeposit().getOrDefault(ZINC, 0f) > 6.2f, "the zinc plated: " + cell.getDeposit());
         List<ItemStack> off = cell.takeCathode();
         helper.assertTrue(off.size() == 1 && off.get(0).is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id("copper_scrap"))) && off.get(0).getCount() == 2,
                 "the whole deposit is copper scrap now: " + off);
@@ -976,5 +977,87 @@ public class ElectricGameTests {
         helper.assertTrue(ticks < 60, "and quickly, took " + ticks + " t");
         helper.setBlock(at, Blocks.AIR.defaultBlockState());
         helper.succeed();
+    }
+
+    // --- the lead-acid battery ---------------------------------------------------------------
+
+    /** Charging inside its means must not wear it, cook it or boil it dry. */
+    private static void assertBatteryHealthy(GameTestHelper helper, io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity battery) {
+        helper.assertTrue(battery.getCondition() > 0.999f, "condition held, now " + battery.getCondition());
+        helper.assertTrue(battery.getTemperature().value() < FTuning.BATTERY_HOT_TU, "case stayed under the hot line, now " + battery.getTemperature().value() + " Tu");
+        helper.assertTrue(battery.water() > FTuning.BATTERY_WATER_TANK_MB - 1f, "no water vented, now " + battery.water() + " mB");
+        helper.assertTrue(battery.gas() < 0.5f, "no hydrogen released, now " + battery.gas() + " mB");
+    }
+
+    /** A battery of {@code cells} cells, acid filled, charge set to {@code share} of capacity, with a creative source of {@code lineVolts} beside it by a cable. */
+    private static io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity chargingBattery(GameTestHelper helper, int cells, float share, float lineVolts) {
+        BlockPos sourceAt = new BlockPos(1, 2, 1), batteryAt = sourceAt.east(2);
+        helper.setBlock(sourceAt, FBlocks.CREATIVE_ELECTRIC.get().defaultBlockState());
+        ((io.github.soundgoodizerfan.feedback.machine.creative.CreativeElectricBlockEntity) helper.getBlockEntity(sourceAt))
+                .configure(true, new float[] {lineVolts, 1000f});
+        placeCable(helper, sourceAt.east());
+        helper.setBlock(batteryAt, FBlocks.BATTERY.get().defaultBlockState());
+        var battery = (io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity) helper.getBlockEntity(batteryAt);
+        var registries = helper.getLevel().registryAccess();
+        net.minecraft.nbt.CompoundTag tag = battery.saveWithoutMetadata(registries);
+        float capacity = tag.getFloat("Capacity");
+        tag.putInt("Cells", cells);
+        tag.putFloat("Acid", cells * FTuning.BATTERY_ACID_MB_PER_CELL);
+        tag.putFloat("Water", FTuning.BATTERY_WATER_TANK_MB);
+        tag.putFloat("Charge", capacity * share);
+        tag.putBoolean("Supplying", false);
+        tag.putString("CaseBand", VoltageBand.MV.getSerializedName());   // a built case has an insulation band; the default LV would count every line here as overvoltage
+        battery.loadCustomOnly(tag, registries);
+        return battery;
+    }
+
+    /** One cell on a line above its full voltage but under its gassing voltage charges to full and stops there. */
+    @GameTest(template = "empty", timeoutTicks = 1300)
+    public static void batteryChargesToFullOnAHighEnoughLine(GameTestHelper helper) {
+        var battery = chargingBattery(helper, 1, 0.97f, 2.25f);
+        helper.runAtTickTime(1200, () -> {
+            helper.assertTrue(!battery.isSupplying(), "still a sink, not flipped to supplying; soc " + battery.stateOfCharge());
+            helper.assertTrue(battery.stateOfCharge() > 0.999f,
+                    "full on a 2.25 V line, soc " + battery.stateOfCharge() + ", sees " + battery.getVolts() + " V, terminal " + battery.terminalVolts());
+            assertBatteryHealthy(helper, battery);
+            helper.succeed();
+        });
+    }
+
+    /** A line at the nominal band voltage (LV 1.5 V) sits under one cell's 2.1 V: it must not charge it, and says what happens. */
+    @GameTest(template = "empty", timeoutTicks = 600)
+    public static void batteryOnALowVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
+        var battery = chargingBattery(helper, 1, 0.5f, FTuning.ELECTRIC_LV_VOLTS);
+        helper.runAtTickTime(300, () -> {
+            helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
+                    + ", terminal " + battery.terminalVolts() + " V");
+            helper.assertTrue(battery.getCondition() > 0.999f, "and costs no condition, now " + battery.getCondition());
+            helper.succeed();
+        });
+    }
+
+    /** Three cells (6.3 V full) on a nominal MV line (6 V). */
+    @GameTest(template = "empty", timeoutTicks = 600)
+    public static void batteryOnAMediumVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
+        var battery = chargingBattery(helper, 3, 0.5f, FTuning.ELECTRIC_MV_VOLTS);
+        helper.runAtTickTime(300, () -> {
+            helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
+                    + ", terminal " + battery.terminalVolts() + " V");
+            helper.assertTrue(battery.getCondition() > 0.999f, "and costs no condition, now " + battery.getCondition());
+            helper.succeed();
+        });
+    }
+
+    /** The user's case: one cell, a 2.2 V creative line, half charged. */
+    @GameTest(template = "empty", timeoutTicks = 600)
+    public static void batteryOnA2Point2VoltLineChargesSteadily(GameTestHelper helper) {
+        var battery = chargingBattery(helper, 1, 0.5f, 2.2f);
+        helper.runAtTickTime(300, () -> {
+            helper.assertTrue(battery.stateOfCharge() > 0.51f && !battery.isSupplying(),
+                    "1 cell on a 2.2 V line should gain charge; soc " + battery.stateOfCharge()
+                            + ", supplying " + battery.isSupplying() + ", terminal " + battery.terminalVolts() + " V, line " + battery.getVolts() + " V, amps " + battery.getAmps());
+            assertBatteryHealthy(helper, battery);
+            helper.succeed();
+        });
     }
 }

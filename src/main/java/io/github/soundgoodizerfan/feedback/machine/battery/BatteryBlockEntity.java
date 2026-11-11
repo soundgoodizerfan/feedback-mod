@@ -86,6 +86,8 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     private float gas;
     private float temperature = FTuning.AMBIENT_TU.value();
     private boolean supplying;
+    /** The charge current asked while the line is weak, eased toward what the line's headroom allows. */
+    private float askAmps;
     private boolean venting;
     private long lastTime = -1;
 
@@ -197,10 +199,11 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         if (supplying || !ready())
             return 0f;
         float chargeAmps = effectiveCapacity() / (rectified ? FTuning.RECTIFIER_CHARGE_TICKS : FTuning.BATTERY_CHARGE_TICKS);
-        if (getVolts() <= terminalVolts() + FTuning.BATTERY_SWITCH_VOLTS)
+        float headroom = getVolts() - terminalVolts();
+        if (headroom <= 0f)
             return 0f;
         if (!full())
-            return chargeAmps;
+            return Math.min(chargeAmps, askAmps);
         return gassing && getVolts() > cells * voltsFull * FTuning.BATTERY_GASSING_FACTOR ? chargeAmps * FTuning.BATTERY_TRICKLE_SHARE : 0f;
     }
 
@@ -211,6 +214,13 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
             return;
         boolean dirty = false;
         float heat = 0f;
+        if (!supplying) {
+            // The ask follows the headroom the line left at the last draw, a tenth of the way a tick: asked all at once, a weak line
+            // sags under the terminal, the ask drops to nothing, the line recovers, and it flips every tick.
+            float chargeAmps = effectiveCapacity() / (rectified ? FTuning.RECTIFIER_CHARGE_TICKS : FTuning.BATTERY_CHARGE_TICKS);
+            float target = chargeAmps * Mth.clamp((volts - terminalVolts()) / (cells * FTuning.BATTERY_TAPER_VOLTS_PER_CELL), 0.02f, 1f);
+            askAmps += FTuning.BATTERY_ASK_SMOOTHING * (target - askAmps);
+        }
         if (supplying) {
             if (amps > 0f) {
                 charge = Math.max(0f, charge - amps);
@@ -283,7 +293,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         float held = terminalVolts();
         boolean flip = supplying
                 ? charge <= 0f || !ready() || isBlocked()
-                : ready() && charge > 0f && getVolts() <= held + FTuning.BATTERY_SWITCH_VOLTS;
+                : ready() && charge > 0f && getVolts() <= held;
         if (flip) {
             supplying = !supplying;
             setChanged();

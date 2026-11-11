@@ -146,7 +146,7 @@ public class GunGameTests {
     public static void theActionAndTheFeedHaveToWork(GameTestHelper helper) {
         ModularDesign d = steel();
         ModularDesign.Part cylinder = part("F", "steel", "ground_ingot", 1, "cylinder", "", Map.of());
-        helper.assertTrue(legal(with(d, cylinder)), "a self-loading hammer action takes a cylinder");
+        helper.assertFalse(legal(with(d, cylinder)), "a self-loading slide is striker-fired: no hammer for a cylinder");
         ModularDesign bolt = new ModularDesign(d.type(), d.parts().stream().filter(p -> !p.role().equals("A")).toList(), d.edge());
         bolt = with(bolt, part("K", "steel", "rod", 1, "bolt", "", Map.of()));
         helper.assertTrue(legal(bolt) && !legal(with(bolt, cylinder)), "a bolt action has no hammer for a cylinder");
@@ -186,11 +186,17 @@ public class GunGameTests {
                 "a slide is blowback, got " + ids);
         helper.assertTrue(ModularTraits.cooksOff(gun), "a closed bolt can cook off");
         helper.assertTrue(GunDesignation.of(gun, spec(d)).orElse("").equals("pistol"), "a self-loading handgun is a pistol");
-        ModularDesign revolver = with(d, part("F", "steel", "ground_ingot", 1, "cylinder", "", Map.of()));
-        helper.assertTrue(GunDesignation.of(ToolDesigns.build(revolver, types, materials).orElseThrow(), spec(revolver)).orElse("").equals("revolver"),
+        // A cylinder wants a hammer: the self-loading slide has none, so a revolver is a lever-action handgun with one.
+        ModularDesign hammered = new ModularDesign(d.type(), d.parts().stream().filter(p -> !p.role().equals("A")).toList(), d.edge());
+        ModularDesign revolver = with(with(hammered, part("K", "steel", "rod", 1, "bolt", "lever", Map.of())),
+                part("F", "steel", "ground_ingot", 1, "cylinder", "", Map.of()));
+        helper.assertTrue(GunDesignation.of(ToolDesigns.build(revolver, types, materials)
+                .orElseThrow(() -> new AssertionError("the table builds the revolver: " + revolver.parts())), spec(revolver)).orElse("").equals("revolver"),
                 "a handgun with a cylinder is a revolver");
-        ModularDesign mg = with(d, part("R", "steel", "ingot", 3, "receiver", "machine_gun", Map.of()));
-        ItemStack mgGun = ToolDesigns.build(mg, types, materials).orElseThrow();
+        // A long receiver is shouldered: it is no gun without a stock.
+        ModularDesign mg = with(with(d, part("R", "steel", "ingot", 3, "receiver", "machine_gun", Map.of())),
+                part("i", "wood", "gun_stock", 1, "gun_stock", "fixed", Map.of()));
+        ItemStack mgGun = ToolDesigns.build(mg, types, materials).orElseThrow(() -> new AssertionError("the table builds the machine gun: " + mg.parts()));
         helper.assertFalse(ModularTraits.cooksOff(mgGun), "an open bolt has nothing in the hot chamber to cook off");
         helper.succeed();
     }

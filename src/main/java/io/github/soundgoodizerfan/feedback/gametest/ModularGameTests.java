@@ -73,11 +73,16 @@ public class ModularGameTests {
         return part(helper, FModular.PARTS.stream().filter(p -> p.getId().getPath().equals(id)).findFirst().orElseThrow(), stock, cells);
     }
 
-    /** A pickaxe head of three over two handles, made of whatever the head item is. */
+    /** The leather binding every handled tool's pattern asks for, one cell. */
+    static ItemStack binding(GameTestHelper helper) {
+        return partOf(helper, "tool_binding", Items.LEATHER, 1);
+    }
+
+    /** A pickaxe head of three over two handles and a binding, made of whatever the head item is. */
     static ItemStack pickaxe(GameTestHelper helper, Item head) {
         ItemStack h = partOf(helper, "pickaxe_head", head, 3);
         ItemStack s = new ItemStack(Items.STICK);
-        return craft(helper, List.of(h, s, s));
+        return craft(helper, List.of(h, s, s, binding(helper)));
     }
 
     /** Three ingots at the table, with the pickaxe head's shape chosen, are a pickaxe head of three cells. */
@@ -148,11 +153,12 @@ public class ModularGameTests {
     public static void swordAndMaceAssemble(GameTestHelper helper) {
         ItemStack i = new ItemStack(Items.IRON_INGOT);
         ItemStack s = new ItemStack(Items.STICK);
-        ItemStack sword = craft(helper, List.of(partOf(helper, "sword_blade", Items.IRON_INGOT, 2), s));
-        helper.assertTrue(sword.is(FModular.SWORD.get()), "two blades over a grip are a sword, got " + sword);
+        ItemStack sword = craft(helper, List.of(partOf(helper, "sword_blade", Items.IRON_INGOT, 2),
+                partOf(helper, "sword_guard", Items.IRON_INGOT, 1), s));
+        helper.assertTrue(sword.is(FModular.SWORD.get()), "a blade over a guard and a grip is a sword, got " + sword);
         helper.assertTrue(sword.has(DataComponents.TOOL), "a sword cuts cobweb");
-        ItemStack maul = craft(helper, List.of(partOf(helper, "maul_head", Items.IRON_INGOT, 6), s, s));
-        helper.assertTrue(maul.is(FModular.MAUL.get()), "a maul head over two sticks is a maul, got " + maul);
+        ItemStack maul = craft(helper, List.of(partOf(helper, "maul_head", Items.IRON_INGOT, 6), s, s, binding(helper)));
+        helper.assertTrue(maul.is(FModular.MAUL.get()), "a maul head over two sticks and a binding is a maul, got " + maul);
         helper.succeed();
     }
 
@@ -197,11 +203,11 @@ public class ModularGameTests {
         ItemStack i = new ItemStack(Items.IRON_INGOT);
         ItemStack s = new ItemStack(Items.STICK);
         ItemStack e = ItemStack.EMPTY;
-        ItemStack cleaver = craft(helper, List.of(partOf(helper, "cleaver_head", i.getItem(), 4), s));
-        helper.assertTrue(cleaver.is(FModular.CLEAVER.get()), "four heads and a grip are a cleaver, got " + cleaver);
-        ItemStack spear = craft(helper, List.of(partOf(helper, "spear_head", i.getItem(), 3), s, s, s));
-        helper.assertTrue(spear.is(FModular.SPEAR.get()), "one head over three handles is a spear, got " + spear);
-        ItemStack shovel = craft(helper, List.of(partOf(helper, "shovel_head", i.getItem(), 3), s, s));
+        ItemStack cleaver = craft(helper, List.of(partOf(helper, "cleaver_head", i.getItem(), 4), s, binding(helper)));
+        helper.assertTrue(cleaver.is(FModular.CLEAVER.get()), "a cleaver head over a handle and a binding is a cleaver, got " + cleaver);
+        ItemStack spear = craft(helper, List.of(partOf(helper, "spear_head", i.getItem(), 3), s, s, s, binding(helper)));
+        helper.assertTrue(spear.is(FModular.SPEAR.get()), "one head over three handles and a binding is a spear, got " + spear);
+        ItemStack shovel = craft(helper, List.of(partOf(helper, "shovel_head", i.getItem(), 3), s, s, binding(helper)));
         helper.assertTrue(ModularStacks.figures(spear).get(Fig.REACH) > ModularStacks.figures(shovel).get(Fig.REACH),
                 "a spear reaches further than a shovel");
         helper.succeed();
