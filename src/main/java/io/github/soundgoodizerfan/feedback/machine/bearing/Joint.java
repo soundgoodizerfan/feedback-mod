@@ -310,6 +310,8 @@ public final class Joint {
         float rpm = kind == Kind.HINGE && variant == 0 ? command : 0;
         angleLevel = kind == Kind.HINGE && variant > 0 ? Math.clamp(command, -1f, 1f) : 0;
         pistonLevel = kind == Kind.PISTON ? Math.clamp(command, -1f, 1f) : 0;
+        // Nothing pushes the run while this joint cannot say what its arm weighs (set again below).
+        gravityTorque = 0;
         int worn = padWorn.getAndSet(0);
         if (worn > 0)
             pad = Math.max(FTuning.JOINT_CONDITION_FLOOR, pad - worn * FTuning.BRAKE_PAD_WEAR_PER_STEP);

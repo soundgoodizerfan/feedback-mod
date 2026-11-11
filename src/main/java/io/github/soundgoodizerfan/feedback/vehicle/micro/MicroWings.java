@@ -100,6 +100,8 @@ public final class MicroWings {
         int n = 0;
         for (long k : voxels) {
             int x = (int) (k >> 42 & 0x1FFFFF), y = (int) (k >> 21 & 0x1FFFFF), z = (int) (k & 0x1FFFFF);
+            // The sheet's normal is the axis along which its column here is shortest (a plate four voxels across is thin in its thin way).
+            int best = -1, bestLayers = Integer.MAX_VALUE;
             for (int a = 0; a < 3; a++) {
                 int ax = (int) AXES[a][0], ay = (int) AXES[a][1], az = (int) AXES[a][2];
                 // The column along the axis starts here (nothing below it) and is at most a few voxels: a slab, one element a column.
@@ -108,14 +110,14 @@ public final class MicroWings {
                 int layers = 1;
                 while (layers <= FTuning.WING_MAX_LAYERS && voxels.contains(key(x + ax * layers, y + ay * layers, z + az * layers)))
                     layers++;
-                if (layers > FTuning.WING_MAX_LAYERS)
+                if (layers > FTuning.WING_MAX_LAYERS || layers >= bestLayers)
                     continue;
                 // The four neighbours in the plane: at least two make it a piece of a sheet.
                 int around = 0;
-                for (int b = 0; b < 3; b++) {
-                    if (b == a)
+                for (int c = 0; c < 3; c++) {
+                    if (c == a)
                         continue;
-                    int bx = (int) AXES[b][0], by = (int) AXES[b][1], bz = (int) AXES[b][2];
+                    int bx = (int) AXES[c][0], by = (int) AXES[c][1], bz = (int) AXES[c][2];
                     if (voxels.contains(key(x + bx, y + by, z + bz)))
                         around++;
                     if (voxels.contains(key(x - bx, y - by, z - bz)))
@@ -123,22 +125,26 @@ public final class MicroWings {
                 }
                 if (around < 2)
                     continue;
-                if (n == cap) {
-                    cap *= 2;
-                    for (int j = 0; j < 7; j++)
-                        out[j] = java.util.Arrays.copyOf(out[j], cap);
-                }
-                out[0][n] = AXES[a][0];
-                out[1][n] = AXES[a][1];
-                out[2][n] = AXES[a][2];
-                // The column's middle.
-                out[3][n] = (x + ox + 0.5 + ax * (layers - 1) / 2.0) / 4;
-                out[4][n] = (y + oy + 0.5 + ay * (layers - 1) / 2.0) / 4;
-                out[5][n] = (z + oz + 0.5 + az * (layers - 1) / 2.0) / 4;
-                out[6][n] = layers;
-                n++;
-                break;
+                best = a;
+                bestLayers = layers;
             }
+            if (best < 0)
+                continue;
+            int ax = (int) AXES[best][0], ay = (int) AXES[best][1], az = (int) AXES[best][2], layers = bestLayers;
+            if (n == cap) {
+                cap *= 2;
+                for (int j = 0; j < 7; j++)
+                    out[j] = java.util.Arrays.copyOf(out[j], cap);
+            }
+            out[0][n] = AXES[best][0];
+            out[1][n] = AXES[best][1];
+            out[2][n] = AXES[best][2];
+            // The column's middle.
+            out[3][n] = (x + ox + 0.5 + ax * (layers - 1) / 2.0) / 4;
+            out[4][n] = (y + oy + 0.5 + ay * (layers - 1) / 2.0) / 4;
+            out[5][n] = (z + oz + 0.5 + az * (layers - 1) / 2.0) / 4;
+            out[6][n] = layers;
+            n++;
         }
         if (n == 0)
             return null;

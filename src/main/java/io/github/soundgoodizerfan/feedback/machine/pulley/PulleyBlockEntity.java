@@ -117,7 +117,11 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         net.minecraft.world.phys.Vec3 there = net.minecraft.world.phys.Vec3.atCenterOf(cell.getBlockPos());
         if (sub != null)
             there = sub.logicalPose().transformPosition(there);
-        if (there.distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(worldPosition)) > FTuning.BELT_MAX_LENGTH)
+        net.minecraft.world.phys.Vec3 here = net.minecraft.world.phys.Vec3.atCenterOf(worldPosition);
+        var own = dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.getContaining(level, worldPosition);
+        if (own != null)
+            here = own.logicalPose().transformPosition(here);
+        if (there.distanceTo(here) > FTuning.BELT_MAX_LENGTH)
             return false;
         unlinkBelt();
         cell.unlinkBelt(index);

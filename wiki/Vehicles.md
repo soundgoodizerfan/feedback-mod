@@ -11,7 +11,7 @@ A vehicle is a build of [micro cells](Micro_Core.md) and full-size blocks that a
 | **[Lift](#the-lift)** | The stand you build on. Turns what is on it into a single moving object. |
 | **[Micro Core](Micro_Core.md)** | Builds in voxels, a 64th of a block each, with line, box and mirror tools. |
 | **[Micro Wedge](Micro_Wedge.md)** | A four-step ramp voxel. |
-| **[Joints](#joints)** | [Rotary Bearing](Rotary_Bearing.md), [Ring Gear](Ring_Gear.md), [Ball Joint](Ball_Joint.md), [Locked Joint](Locked_Joint.md), [Slider Joint](Slider_Joint.md) and [Piston Joint](Piston_Joint.md), used as micro-blocks. |
+| **[Joints](#joints)** | [Rotary Bearing](Rotary_Bearing.md), [Ring Gear](Ring_Gear.md), [Large Ring Gear](Large_Ring_Gear.md), [Ball Joint](Ball_Joint.md), [Locked Joint](Locked_Joint.md), [Slider Joint](Slider_Joint.md) and [Piston Joint](Piston_Joint.md), used as micro-blocks. |
 | **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
 | **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
 | **[Clutch](Clutch.md)** | Can be a micro voxel that a card switches. |
@@ -59,12 +59,17 @@ A joint is a block you place as a micro-block, with its **front** toward the par
 | --- | --- |
 | [Rotary Bearing](Rotary_Bearing.md) | Turns about its axis. Its role sets whether the shaft turns it, a card steers it, or a card sets it as a roll, pitch or yaw surface. |
 | [Ring Gear](Ring_Gear.md) | Turns about its axis, driven from the side by a cog. |
+| [Large Ring Gear](Large_Ring_Gear.md) | Turns about its axis, driven from the side by a cog with a large cog's teeth. |
 | [Ball Joint](Ball_Joint.md) | Swings inside a cone. |
 | [Locked Joint](Locked_Joint.md) | Holds two bodies as one rigid piece; can anchor to a world block. |
 | [Slider Joint](Slider_Joint.md) | Slides along its front axis against a spring: suspension. |
 | [Piston Joint](Piston_Joint.md) | Slides to a level a card sets. |
 
 A joint placed as a full-size block does nothing: *"It only works as a micro-block: put it in a micro cell."* A joint can sit on a body that another joint turned, so an arm can carry a wheel. Put the outermost body back first.
+
+Breaking an assembled bearing, as a micro voxel or as a full-size block, puts its body back into the world as voxels or blocks, as a click would. The body is let go only if something blocks the put-back or it carries a body of its own. A [Joint Link](Joint_Link.md) holds a lifted body to a joint voxel without making a new body; a Lift refuses a vehicle that has a link until it is let go.
+
+Full-size blocks touching a micro arm join it when its bearing is inside a body. Putting such an arm back lands them only at turns that put them on the grid; otherwise the message says to turn it back first.
 
 A [Data Connector](Data_Connector.md) picks a single joint voxel, so a [Controller](Controller.md) card can brake or steer a bearing, set a piston's level or switch a micro [Clutch](Clutch.md#micro-clutch).
 
@@ -87,7 +92,7 @@ A ball joint at the edge of its cone, a slider bottomed out or a piston that can
 
 ## Wings
 
-Any voxel with nothing on either side along one axis and neighbors in its plane belongs to a **sheet** one voxel thick, and a sheet is a wing. Moving through air, it pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the sheet tilts into the wind, up to a stall angle; tilt past that and lift collapses while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the sheet, a wing behind the center of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only. The sheets of a vehicle are found again about every 2 seconds, so a wing finished mid-flight starts to work after a short wait.
+Any voxel with nothing on either side along one axis and neighbors in its plane belongs to a **sheet**, and a sheet is a wing. A slab 1 to 4 voxel layers thick is a wing; a thicker slab stalls later and drags more. A column over 4 voxels thick is not a wing. Moving through air, a wing pushes the vehicle sideways to its own face (lift) and slows it (drag), both stronger the faster you go and the thinner the air. Lift grows as the sheet tilts into the wind, up to a stall angle; tilt past that and lift collapses while drag climbs, so a nose pitched too high mushes and sinks. Because the force acts at the sheet, a wing behind the center of mass steadies the nose and one off to a side rolls the vehicle. Wings work in air only. The sheets of a vehicle are found again about every 2 seconds, so a wing finished mid-flight starts to work after a short wait.
 
 A sheet on a hinged part turns with it, so a rotary bearing set as a roll, pitch or yaw surface changes the lift on its own sheet. See [Control Surfaces](Control_Surfaces.md).
 

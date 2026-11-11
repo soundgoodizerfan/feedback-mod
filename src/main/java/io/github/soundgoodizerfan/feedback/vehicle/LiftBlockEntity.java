@@ -106,7 +106,13 @@ public class LiftBlockEntity extends BlockEntity {
         if (gathered.assemblyState() != SubLevelAssemblyHelper.GatherResult.State.SUCCESS || gathered.blocks() == null)
             return "too_big";
         List<BlockPos> blocks = new ArrayList<>(gathered.blocks());
-        ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, blocks, BoundingBox3i.from(blocks));
+        io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.enter();
+        ServerSubLevel made;
+        try {
+            made = SubLevelAssemblyHelper.assembleBlocks(level, start, blocks, BoundingBox3i.from(blocks));
+        } finally {
+            io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.leave();
+        }
         // Cells and bearings moved into the body's plot by one shift; each joint they hold keeps its child
         // (a joint rides in its block's data) and is made anew against the body, so its way back follows.
         BlockPos delta = made.getPlot().getCenterBlock().subtract(start);
@@ -222,7 +228,12 @@ public class LiftBlockEntity extends BlockEntity {
             for (BlockPos p : plan.blocks)
                 back.put(p.immutable(), plan.transform.apply(p));
         for (Lowering plan : plans) {
-            SubLevelAssemblyHelper.moveBlocks(level, plan.transform, plan.blocks);
+            io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.enter();
+            try {
+                SubLevelAssemblyHelper.moveBlocks(level, plan.transform, plan.blocks);
+            } finally {
+                io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.leave();
+            }
             for (BlockPos p : plan.blocks) {
                 var put = level.getBlockEntity(plan.transform.apply(p));
                 if (put instanceof io.github.soundgoodizerfan.feedback.control.controller.ControllerHost host)

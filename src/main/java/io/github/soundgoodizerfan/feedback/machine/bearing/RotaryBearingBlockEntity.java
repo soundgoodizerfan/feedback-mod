@@ -113,7 +113,13 @@ public class RotaryBearingBlockEntity extends RotationNode {
         List<BlockPos> blocks = new ArrayList<>(gathered.blocks());
         // From a body too: Sable starts the new body at its parent's pose and speed, so nothing moves.
         ServerSubLevel parent = Joint.parentOf(level, worldPosition);
-        ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, front, blocks, BoundingBox3i.from(blocks));
+        BlockMoves.enter();
+        ServerSubLevel made;
+        try {
+            made = SubLevelAssemblyHelper.assembleBlocks(level, front, blocks, BoundingBox3i.from(blocks));
+        } finally {
+            BlockMoves.leave();
+        }
         bearing = Joint.of(made, worldAnchor(), f, front, parent);
         setChanged();
         return "assembled";
@@ -137,14 +143,24 @@ public class RotaryBearingBlockEntity extends RotationNode {
                 blocks.add(p.immutable());
         float sign = f.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1;
         int k = Math.floorMod(Math.round(sign * bearing.turned(s, Joint.parentOf(level, worldPosition), f) / 90f), 4);
+        // A micro cell's voxels are not turned by a block move, only its position: a body with cells goes back unturned.
+        if (k != 0)
+            for (BlockPos p : blocks)
+                if (level.getBlockState(p).getBlock() instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlock)
+                    return "misaligned";
         var transform = new TurnedTransform(bearing.homeFrom(), bearing.homeTo(), worldPosition, f.getAxis(), k, level);
         for (BlockPos p : blocks)
             if (!level.getBlockState(transform.apply(p)).canBeReplaced())
                 return "blocked";
         bearing.letGo();
-        if (!blocks.isEmpty())
-            SubLevelAssemblyHelper.moveBlocks(level, transform, blocks);
-        ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
+        BlockMoves.enter();
+        try {
+            if (!blocks.isEmpty())
+                SubLevelAssemblyHelper.moveBlocks(level, transform, blocks);
+            ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
+        } finally {
+            BlockMoves.leave();
+        }
         forget(level);
         return "disassembled";
     }
@@ -186,7 +202,8 @@ public class RotaryBearingBlockEntity extends RotationNode {
     public void setRemoved() {
         if (bearing != null) {
             // Broken (the block is gone), not unloaded: the body goes back into the world; if it cannot, it is let go and falls free.
-            boolean broken = level instanceof ServerLevel && lastFacing != null && !(level.getBlockState(worldPosition).getBlock() instanceof RotaryBearingBlock);
+            boolean broken = !BlockMoves.active() && level instanceof ServerLevel && lastFacing != null && level.isLoaded(worldPosition)
+                    && !(level.getBlockState(worldPosition).getBlock() instanceof RotaryBearingBlock);
             if (!broken || !"disassembled".equals(disassemble((ServerLevel) level, lastFacing)))
                 bearing.letGo();
         }

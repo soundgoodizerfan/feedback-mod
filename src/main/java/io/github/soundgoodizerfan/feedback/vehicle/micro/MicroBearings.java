@@ -131,10 +131,7 @@ public final class MicroBearings {
         List<BlockPos> cells = new ArrayList<>(staying.keySet());
         // Inside a body, the full-size blocks the arm touches (an engine, a chest) go with it. Not in the world: the ground would come too.
         if (parent != null) {
-            List<BlockPos> full = fullBeside(level, moving, cellPos, MicroPlacer.cellOf(host.getX(), host.getY(), host.getZ()));
-            if (full == null)
-                return "too_big";
-            cells.addAll(full);
+            cells.addAll(fullBeside(level, moving, cellPos, MicroPlacer.cellOf(host.getX(), host.getY(), host.getZ())));
         }
         // What each world cell carries besides its voxels -- other bearings' holds, their clearances --
         // goes into the body with the whole cell, so it is taken now and given to the cell made anew.
@@ -142,7 +139,13 @@ public final class MicroBearings {
         for (BlockPos c : cells)
             if (level.getBlockEntity(c) instanceof MicroCellBlockEntity w)
                 carried.put(c, new Carried(new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>(w.bearings()), w.clear(), w.hinge()));
-        ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, cells.get(0), cells, BoundingBox3i.from(cells));
+        io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.enter();
+        ServerSubLevel made;
+        try {
+            made = SubLevelAssemblyHelper.assembleBlocks(level, cells.get(0), cells, BoundingBox3i.from(cells));
+        } finally {
+            io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.leave();
+        }
         // Clearance (see MicroCellBlockEntity#clear): in a cell split in two, the octants both halves
         // hold leave both colliders; the bearing voxel's octant leaves the stator's, and the voxel in
         // front's octant leaves the body's, so the hinge faces never touch.
@@ -220,9 +223,8 @@ public final class MicroBearings {
 
     /**
      * The full-size blocks that touch the cells of {@code moving} voxels across a cell edge, and the blocks joined to those through
-     * their faces, apart from the bearing's cell and its host's; null if there are too many.
+     * their faces, apart from the bearing's cell and its host's; none at all if there are too many, or they touch the rest of the vehicle.
      */
-    @Nullable
     private static List<BlockPos> fullBeside(ServerLevel level, Set<BlockPos> moving, BlockPos bearingCell, BlockPos hostCell) {
         Set<BlockPos> found = new java.util.LinkedHashSet<>();
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
@@ -238,11 +240,21 @@ public final class MicroBearings {
                 BlockPos n = c.relative(d);
                 if (wholeBlock(level, n) && !n.equals(bearingCell) && !n.equals(hostCell) && found.add(n)) {
                     if (found.size() > FTuning.ROTARY_BEARING_MAX_BLOCKS)
-                        return null;
+                        return List.of();
                     queue.add(n);
                 }
             }
         }
+        // Blocks that touch other micro structure than the arm's are the vehicle's own (a wall the arm leans on), not the arm's: none join.
+        Set<BlockPos> armCells = new HashSet<>();
+        for (BlockPos v : moving)
+            armCells.add(MicroPlacer.cellOf(v.getX(), v.getY(), v.getZ()));
+        for (BlockPos c : found)
+            for (Direction d : Direction.values()) {
+                BlockPos n = c.relative(d);
+                if (level.getBlockState(n).getBlock() instanceof MicroCellBlock && !armCells.contains(n) && !n.equals(bearingCell) && !n.equals(hostCell))
+                    return List.of();
+            }
         return new ArrayList<>(found);
     }
 
@@ -274,6 +286,7 @@ public final class MicroBearings {
             joint.letGo();
             cell.setBearing(index, null);
             unclear(level, joint);
+            RotationPropagator.rebuildFrom(level, cell.getBlockPos());
             return "disassembled";
         }
         ServerSubLevel s = joint.held(level);
@@ -335,9 +348,14 @@ public final class MicroBearings {
         joint.letGo();
         cell.setBearing(index, null);
         unclear(level, joint);
-        if (!fullTargets.isEmpty())
-            SubLevelAssemblyHelper.moveBlocks(level, new FullBlockTransform(joint.homeFrom(), joint.homeTo(), level, fullTargets, stateTurn), new ArrayList<>(fullTargets.keySet()));
-        ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
+        io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.enter();
+        try {
+            if (!fullTargets.isEmpty())
+                SubLevelAssemblyHelper.moveBlocks(level, new FullBlockTransform(joint.homeFrom(), joint.homeTo(), level, fullTargets, stateTurn), new ArrayList<>(fullTargets.keySet()));
+            ServerSubLevelContainer.getContainer(level).removeSubLevel(s, SubLevelRemovalReason.REMOVED);
+        } finally {
+            io.github.soundgoodizerfan.feedback.machine.bearing.BlockMoves.leave();
+        }
         for (var m : moves.entrySet()) {
             MicroPlacer.put(level, m.getKey().getX(), m.getKey().getY(), m.getKey().getZ(), m.getValue());
             BlockState skin = skinMoves.get(m.getKey());

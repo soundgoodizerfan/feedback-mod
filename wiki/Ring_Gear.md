@@ -30,3 +30,4 @@ A Ring Gear can also be a voxel of a micro build, used with an empty hand: it tu
 ## See also
 
 - [Rotary Bearing](Rotary_Bearing.md): the shaft-driven version.
+- [Large Ring Gear](Large_Ring_Gear.md): the same with a large cog's teeth.

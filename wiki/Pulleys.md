@@ -44,9 +44,9 @@ Slipping is also the only thing that **wears a belt**. A worn belt carries less 
 
 ## Micro pulleys
 
-Both pulley items can be placed as voxels of a [micro build](Micro_Core.md). Use the **Belt** on one pulley voxel and then on another: *"Pulley selected,"* then *"Belt fitted."* Both voxels must be in the same body, or both in the world, and up to **16 blocks** apart. The belt is drawn as two dark lines. It slips instead of stalling and wears the same way as a full-size belt. A [Lift](Vehicles.md#the-lift) carries its belts along.
+Both pulley items can be placed as voxels of a [micro build](Micro_Core.md). Use the **Belt** on one pulley voxel and then on another: *"Pulley selected,"* then *"Belt fitted."* Two voxels belt together when they are up to **16 blocks** apart. The belt is drawn as two dark lines. It slips instead of stalling and wears the same way as a full-size belt. A [Lift](Vehicles.md#the-lift) carries its belts along.
 
-A micro pulley belts only to another micro pulley, not to a full-size one.
+A micro pulley can also be belted to a full-size pulley block: select one, then the other. The belt is drawn through the world. A micro pulley counts a quarter of the block pulley's radius, so it turns faster than the block pulley it is belted to.
 
 ## Limitations
 
