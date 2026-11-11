@@ -48,7 +48,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     private final Container samples = new SimpleContainer(ROLE_SLOTS);
     /** A blueprint to copy from; kept when copied. */
     private final Container source = new SimpleContainer(1);
-    /** The schools whose treatise the player holds here (bits of {@link School#ordinal}), kept by the server and synced, so the screen can leave out what cannot be drawn. */
+    /** The treatise volumes the player holds here (bits of {@link School#bit}), kept by the server and synced, so the screen can leave out what cannot be drawn. */
     private final net.minecraft.world.inventory.DataSlot schools = net.minecraft.world.inventory.DataSlot.standalone();
     private final Player player;
     /** Which role rows the screen draws a material for; the other sample slots are inactive. Client side only. */
@@ -151,8 +151,9 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         // A type of a school is drawn only by someone holding that school's treatise (in the inventory, a binder, or a shelf beside the table).
         ModularType drawn = ModularTypes.get().types().get(design.type());
         School school = drawn == null ? null : School.of(drawn.school());
-        if (school != null && !Treatises.has(player, access, school)) {
-            send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable("school.feedback." + school.id())));
+        int volume = drawn == null ? 1 : School.volumeOf(drawn.school());
+        if (school != null && !Treatises.has(player, access, school, volume)) {
+            send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable(school.itemKey(volume))));
             return;
         }
         if (write(paper, design, variants, title, player))

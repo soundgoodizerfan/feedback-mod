@@ -30,7 +30,7 @@ public final class BlockFigures {
         if (!roleKey.equals(ROLE))
             return switch (idOf(type) + "/" + roleKey) {
                 case "heat_exchanger/F" -> material.thermal().conductivity().isPresent();
-                case "water_wheel/R", "pump/V", "compressor/I", "burner/F", "hand_crank/G", "electromagnet/Y", "boiler/B", "large_boiler/B", "flywheel/B", "flywheel/G", "galvanic_cell/C", "lamp/B" -> material.density().muPerMb() > 0;
+                case "water_wheel/R", "pump/V", "compressor/I", "burner/F", "thruster/J", "hand_crank/G", "electromagnet/Y", "boiler/B", "large_boiler/B", "flywheel/B", "flywheel/G", "galvanic_cell/C", "lamp/B" -> material.density().muPerMb() > 0;
                 case "thermal_store/I" -> true;
                 case "thermal_store/F" -> material.density().muPerMb() > 0;
                 case "leyden_jar/F" -> material.ampacity().isPresent();
@@ -41,6 +41,8 @@ public final class BlockFigures {
             case "heat_exchanger" -> material.thermal().conductivity().isPresent();
             case "flywheel" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0 && material.mechanical().yieldStrength().isPresent();
             case "gas_tank", "boiler", "large_boiler" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0
+                    && material.mechanical().yieldStrength().isPresent();
+            case "thruster" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0
                     && material.mechanical().yieldStrength().isPresent();
             case "water_wheel", "pump", "compressor", "burner", "hand_crank" -> material.density().muPerMb() > 0;
             case "galvanic_cell" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0;
@@ -164,6 +166,12 @@ float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK 
                 float b = role.axis(part, "bore") / 10f;
                 out.putFloat("Burn", 0.5f * b * b * ModularBake.param(type, part, "burn", 1f));
                 out.putFloat("Flame", ModularBake.param(type, part, "flame", 1f) * (design.part("F") == null ? 1f : 1.03f));
+            }
+            // Nozzle: push and fuel burned both go with the bore area; the variant trades push against fuel; a regen jacket (an addon) warms the fuel first, so less of it burns.
+            case "thruster" -> {
+                float b = role.axis(part, "bore") / 20f;
+                out.putFloat("Force", b * b * ModularBake.param(type, part, "thrust", 1f));
+                out.putFloat("Burn", io.github.soundgoodizerfan.feedback.core.FTuning.THRUSTER_FUEL_MB_PER_TICK * b * b * ModularBake.param(type, part, "burn", 1f) * (design.part("J") == null ? 1f : 0.85f));
             }
             // Crank: a longer arm is more lever and a slower hand; a flywheel (an addon) carries it through the dead spot.
             case "hand_crank" -> {

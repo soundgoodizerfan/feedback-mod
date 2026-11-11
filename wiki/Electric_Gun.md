@@ -1,6 +1,6 @@
 # Electric Gun
 
-The electric gun throws a projectile with a battery's charge instead of burning powder, so it is not a [gun](Guns.md). It is made at the [Gun Table](Gun_Table.md) from a **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons), and needs the weapons treatise like the other weapons.
+The electric gun throws a projectile with a battery's charge instead of burning powder, so it is not a [gun](Guns.md). It is made at the [Gun Table](Gun_Table.md) from a **Blueprint** (draw one at the [Blueprint Table](Blueprint_Table.md), under Weapons), and needs Weapons Treatise III: Electric Guns to draw.
 
 ## Parts
 
@@ -18,7 +18,7 @@ Made at the [Gun Table](Gun_Table.md) from a **Blueprint**, out of the same part
 ### Barrels
 
 - **Coil barrel:** windings round the bore, drawn as a ring for each stage. Each **stage** adds energy, but only as many as the barrel is long enough to fit work well; the rest are mostly wasted as switching losses. The slug must be a **magnetic** metal (iron, for one).
-- **Rail barrel:** two rails the slug bridges. It takes what its conductor is rated for, and any conductor slug will do. A longer pair keeps the push.
+- **Rail barrel:** two rails the slug bridges. It takes what its conductor is rated for, and any conductor slug works. A longer pair keeps the push.
 - **Plasma barrel:** a glass arc channel. A shot vaporises a conductor nugget into a short bolt that burns what it hits and falls off with distance.
 
 ### Names
@@ -42,9 +42,19 @@ The gun is drawn from its parts like a powder gun: the frame by receiver type, t
 
 ## Using it
 
-**Load a battery** (one that fits the receiver) by clicking the gun in your inventory with a [battery](Battery.md) on your cursor; click the gun with an empty cursor to take it out. The battery keeps its charge, so it goes back to a [Charger](Charger.md) as it is. Use fires. Each shot takes one metal nugget from your inventory and the shot's energy from the battery: a weak battery gives a weaker shot, never a refusal. Coil and rail slugs fly like arrows; a plasma bolt is instant and short-ranged.
+**Load a battery** (one that fits the receiver) by clicking the gun in your inventory with a [battery](Battery.md) on your cursor; click the gun with an empty cursor to take it out. The battery keeps its charge, so it goes back to a [Charger](Charger.md) as it is.
 
-Each shot warms the gun, and a warm gun recovers more slowly. A rail gives a crack, a coil a thump, and an arc of sparks leaves the muzzle.
+The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fires, and holding it repeats; **V** cycles the fire mode between automatic, semi-automatic and burst; use (right mouse), held, aims down the sights. The view kicks and the hand strains on each shot as with a powder gun (see [Handling](Guns.md#handling)). It has no reload; a battery is changed by hand in the inventory.
+
+Each shot takes one metal nugget from your inventory and the shot's energy from the battery: a weak battery gives a weaker shot, never a refusal. A nugget fills the chamber with several slugs, shown on the HUD, and the next shots use those before another nugget is taken. Coil and rail slugs are real bullets: they hit, meet armor and meet blocks by the same rules as a firearm's bullets ([What bullets do](Guns.md#what-bullets-do)). A plasma bolt is a fast bolt that sets what it hits alight, loses speed quickly and hits weaker with distance; it reaches about 14 blocks.
+
+Each shot warms the gun, and a warm gun recovers more slowly, so the cycle lengthens as it heats. A rail gives a crack, a coil a thump, and an arc of sparks leaves the muzzle.
+
+Gun skills and casts that need firearm rounds (such as Overwatch and Snap Volley) do not fire it.
+
+### HUD
+
+Holding the gun shows a card with the battery's charge in percent, the slugs chambered, the barrel's heat and the fire mode. **NO CELL** shows when no battery is loaded, and **CELL FLAT** when the battery has no charge left.
 
 ## Misuse
 

@@ -138,6 +138,10 @@ public final class ModularTuning {
     public static final float EGUN_SLUG_LENGTHS = 1.5f, EGUN_NUGGET_LITRES = 0.016f, EGUN_DAMAGE_PER_J = 0.04f, EGUN_SPEED_MAX = 6f;
     /** A plasma bolt: damage per joule delivered, range in blocks, and the ticks it sets a target alight. */
     public static final float EGUN_PLASMA_DAMAGE_PER_J = 0.06f, EGUN_PLASMA_RANGE = 14f;
+    /** A plasma bolt is a fast round that loses this share of its speed each tick (so it reaches about {@code EGUN_PLASMA_RANGE} blocks and hits weaker with distance). */
+    public static final float EGUN_PLASMA_DRAG = 0.3f;
+    /** Degrees of a shot's cone for each unit of the old arrow inaccuracy an electric gun's length and fittings gave. */
+    public static final float EGUN_SPREAD_DEG_PER_UNIT = 0.5f;
     public static final int EGUN_PLASMA_BURN_TICKS = 80;
     /** Cooldown after a shot, ticks, and the extra per share of the gun's heat; heat falls by this share each second. */
     public static final int EGUN_COOLDOWN = 12;

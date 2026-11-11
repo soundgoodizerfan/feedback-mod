@@ -91,5 +91,5 @@
   "defaults": {
     "S": "feedback:cast_iron"
   },
-  "school": "mechanical"
+  "school": "mechanical:1"
 }

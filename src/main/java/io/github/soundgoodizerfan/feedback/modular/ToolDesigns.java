@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -119,6 +120,22 @@ public final class ToolDesigns {
      * the item itself for raw stock.
      */
     public static List<Material.Located> materials(ModularType.Role role, ToolTableShaping.Option shape, Map<ResourceLocation, Material> materials) {
+        Cache cache = CACHE.get();
+        if (cache == null)
+            return scanMaterials(role, shape, materials);
+        String key = shape == null ? "" : shape.type() + "|" + shape.shaping().item() + "|" + shape.variant().name();
+        return cache.materials.computeIfAbsent(role, r -> new HashMap<>()).computeIfAbsent(key, k -> scanMaterials(role, shape, materials));
+    }
+
+    /** Answers kept while {@link #consistency} draws every assembly of every type, which asks the same few questions of every material thousands of times; null otherwise. */
+    private static final ThreadLocal<Cache> CACHE = new ThreadLocal<>();
+
+    private static final class Cache {
+        final Map<ModularType.Role, Map<String, List<Material.Located>>> materials = new java.util.IdentityHashMap<>();
+        final Map<ModularType.Role, java.util.Optional<ToolTableShaping.Option>> standard = new java.util.IdentityHashMap<>();
+    }
+
+    private static List<Material.Located> scanMaterials(ModularType.Role role, ToolTableShaping.Option shape, Map<ResourceLocation, Material> materials) {
         List<Material.Located> out = new ArrayList<>();
         materials.forEach((id, m) -> {
             // The smallest piece that fits: ingots before a block, which only fills a shape that is a whole number of blocks.
@@ -165,6 +182,13 @@ public final class ToolDesigns {
 
     /** The standard shape of a role (a twin's head: its first kind, as the role lists them), or null for raw stock. */
     public static ToolTableShaping.Option standard(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
+        Cache cache = CACHE.get();
+        if (cache == null)
+            return findStandard(role, types);
+        return cache.standard.computeIfAbsent(role, r -> java.util.Optional.ofNullable(findStandard(role, types))).orElse(null);
+    }
+
+    private static ToolTableShaping.Option findStandard(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
         return shapes(role, types).stream().filter(o -> o.variant().name().isEmpty())
                 .min(Comparator.comparingInt(o -> role.striker() && !o.shaping().item().getPath().equals(role.forms().get(0)) ? 1 : 0))
                 .orElse(null);
@@ -200,6 +224,33 @@ public final class ToolDesigns {
     public static Optional<ModularDesign> starter(ResourceLocation id, Map<ResourceLocation, ModularType> types, Map<ResourceLocation, Material> materials) {
         ModularType type = types.get(id);
         return type == null || type.patterns().isEmpty() ? Optional.empty() : plain(id, types, counts(type, 0, Set.of()), true, materials);
+    }
+
+    /**
+     * The cheapest honest specimen of a type: its starter design with every role that can be made of {@code material} made of it,
+     * the rest in the type's own default. A bootstrap recipe hands one out so a treatise-gated type can be taken apart
+     * (and so learned) before anything was drawn.
+     */
+    public static Optional<ModularDesign> specimen(ResourceLocation id, ResourceLocation material, Map<ResourceLocation, ModularType> types,
+                                                   Map<ResourceLocation, Material> materials) {
+        ModularType type = types.get(id);
+        if (type == null || type.patterns().isEmpty())
+            return Optional.empty();
+        List<Part> parts = new ArrayList<>();
+        for (Map.Entry<String, Integer> r : counts(type, 0, Set.of()).entrySet()) {
+            ModularType.Role role = type.roles().get(r.getKey());
+            ToolTableShaping.Option shape = role == null ? null : standard(role, types);
+            if (role == null || (shaped(role) && shape == null))
+                return Optional.empty();
+            List<Material.Located> choices = materials(type, r.getKey(), shape, materials);
+            ResourceLocation wanted = type.defaults().get(r.getKey());
+            Optional<Material.Located> l = choices.stream().filter(c -> c.id().equals(material)).findFirst()
+                    .or(() -> choices.stream().filter(c -> c.id().equals(wanted)).findFirst()).or(() -> choices.stream().findFirst());
+            if (l.isEmpty())
+                return Optional.empty();
+            parts.add(part(r.getKey(), l.get(), shape, r.getValue()));
+        }
+        return Optional.of(new ModularDesign(id, parts, Edge.STANDARD));
     }
 
     // --- items ----------------------------------------------------------------------------------
@@ -347,6 +398,15 @@ public final class ToolDesigns {
      * data the table and the blueprint would disagree about.
      */
     public static List<String> consistency(Map<ResourceLocation, ModularType> types, Map<ResourceLocation, Material> materials) {
+        CACHE.set(new Cache());
+        try {
+            return checkConsistency(types, materials);
+        } finally {
+            CACHE.remove();
+        }
+    }
+
+    private static List<String> checkConsistency(Map<ResourceLocation, ModularType> types, Map<ResourceLocation, Material> materials) {
         List<String> out = new ArrayList<>();
         // A dish is not drawn on paper but is still held to the same round trip.
         for (ResourceLocation id : types.keySet().stream().filter(k -> !types.get(k).patterns().isEmpty()).toList()) {

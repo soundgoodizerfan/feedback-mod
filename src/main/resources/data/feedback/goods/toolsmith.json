@@ -66,8 +66,16 @@
     },
     {
       "level": 4,
-      "item": "feedback:treatise_mechanical",
+      "item": "feedback:treatise_mechanical_1",
       "price": 32,
+      "count": 1,
+      "standing": 10,
+      "stock": 1
+    },
+    {
+      "level": 5,
+      "item": "feedback:treatise_mechanical_2",
+      "price": 40,
       "count": 1,
       "standing": 10,
       "stock": 1

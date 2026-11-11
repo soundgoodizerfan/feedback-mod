@@ -375,12 +375,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
         ItemStack paper = table.getItem(ToolTableBlockEntity.PLAN);
         ModularDesign design = ModularStacks.design(tool);
         ModularType type = design == null ? null : types(level).get(design.type());
-        // a blank treatise takes the specimen's school: the item goes in and the knowledge comes out
+        // a blank treatise takes the specimen's school and volume: the item goes in and the knowledge comes out
         School school = type == null ? null : School.of(type.school());
         if (school != null && paper.is(FModular.BLANK_TREATISE.get())) {
-            table.setItem(ToolTableBlockEntity.PLAN, Treatises.of(school));
+            int volume = School.volumeOf(type.school());
+            table.setItem(ToolTableBlockEntity.PLAN, Treatises.of(school, volume));
             io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, Component.translatable("message.feedback.treatise.written",
-                    Component.translatable("school.feedback." + school.id())), 60);
+                    Component.translatable(school.itemKey(volume))), 60);
             return;
         }
         if (type == null || !type.blueprint() || paper.isEmpty() || paper.is(FModular.BLUEPRINT.get()) || !paper.is(io.github.soundgoodizerfan.feedback.registry.FTags.BLUEPRINT_PAPER))

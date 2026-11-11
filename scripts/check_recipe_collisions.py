@@ -66,7 +66,7 @@ for f in load("*/recipe/*.json"):
         continue  # disabled: an override that removes a vanilla recipe
     t = r.get("type")
     n = f"{f.split('/data/')[1]}"
-    if t == "minecraft:crafting_shaped":
+    if t in ("minecraft:crafting_shaped", "feedback:bootstrap_specimen"):
         recipes.append((n, "shaped", shaped(r)))
     elif t == "minecraft:crafting_shapeless":
         recipes.append((n, "shapeless", [ing(i) for i in r["ingredients"]]))

@@ -1,6 +1,6 @@
 # Blueprint Table
 
-A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md), and so are machines and their parts (engines, gearboxes, propellers, flywheels, pressure vessels, boilers, heat exchangers, gas tanks, gas compressors, water wheels, thermal stores, Leyden jars, pumps, fluid burners, electromagnets, galvanic cells, lamps, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
+A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md), and so are machines and their parts (engines, gearboxes, propellers, thrusters, flywheels, pressure vessels, boilers, heat exchangers, gas tanks, gas compressors, water wheels, thermal stores, Leyden jars, pumps, fluid burners, electromagnets, galvanic cells, lamps, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
 
 ## Crafting
 
@@ -15,7 +15,7 @@ P is Paper and T is a Crafting Table.
 
 Right-click it to open the board. The item is drawn as a **diagram**: each part is a box placed where it sits in the finished piece. Drag to pan and use the wheel to zoom.
 
-- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology) with a search box.
+- **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology; the demolition charge sits under Technology) with a search box.
 - **Click a part** to select it. Its panel has a **search box** (it matches a material's name, its kind and its traits), **material swatches** for every material, and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does. A material the part cannot be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) is dimmed with an x and cannot be picked; its tooltip reads *Does not fit this part.*
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
@@ -54,16 +54,22 @@ The [Prep Table](Prep_Table.md#blueprint-tab) has a Blueprint tab with a board f
 
 ## Schools
 
-A type that belongs to a **school** is drawn here only while you hold that school's [treatise](Treatise.md). Press **Print** without it and the table says which treatise the type takes. A school's types are left out of the type row and list while you do not hold its treatise, and the treatise's tooltip lists what it opens. A treatise counts as held when it lies loose in your inventory, sits inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or sits in a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table. It is kept, never used up.
+A type that belongs to a **school** is drawn here only while you hold the right numbered volume of that school's [treatise](Treatise.md); each volume is a subject of its own. Press **Print** without it and the table says which volume the type takes. A volume's types are left out of the type row and list while you do not hold it, and the treatise's tooltip lists what it opens. A treatise counts as held when it lies loose in your inventory, sits inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or sits in a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table. It is kept, never used up.
 
-| School | Types |
+| Volume | Types |
 | --- | --- |
-| Weapons | gun, crossbow |
-| Mechanical | engine, transmission, flywheel |
-| Aerospace | propeller |
-| Robotics | suit module |
-| Chemical | pressure vessel, boiler, large boiler, heat exchanger, gas tank, gas compressor |
-| Materials | none |
+| Weapons I | maul, spear, cleaver |
+| Weapons II | gun, spring gun, crossbow |
+| Weapons III | electric gun |
+| Mechanical I | engine, flywheel |
+| Mechanical II | transmission |
+| Aerospace I | propeller |
+| Aerospace II | thruster |
+| Robotics I | suit module |
+| Chemical I | pressure vessel, boiler, large boiler, gas tank |
+| Chemical II | heat exchanger, gas compressor |
+| Chemical III | demolition charge |
+| Materials I | none |
 
 Every other type (tools, armor, backpack, bedroll, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) needs no treatise.
 
@@ -72,7 +78,7 @@ Every other type (tools, armor, backpack, bedroll, water wheel, thermal store, L
 Mostly it's a drawing to look at. Some things **need** one to be built.
 
 - A [suit module](Exosuit.md#learning-a-module), an [engine](Engine.md), a [transmission](Transmission.md) and a [propeller](Propeller.md) are built only with their blueprint in the bench's blueprint slot. A blueprint can sit in a [Blueprint Book](Blueprint_Book.md).
-- A [Water Wheel](Water_Wheel.md), [Thermal Store](Thermal_Store.md), [Leyden Jar](Leyden_Jar.md), [Pump](Pump.md), [Fluid Burner](Fluid_Burner.md), [Electromagnet](Electromagnet.md), [Galvanic Cell](Galvanic_Cell.md) and [Glowstone Lamp](Lamp.md) are built only with their blueprint in the bench's blueprint slot, and the dimension (diameter, bore, turns, size, gauge, wall, area, buckets) is set here on the drawing. The [Boiler](Boiler.md) and Large Boiler, [Flywheel](Flywheel.md), [Pressure Vessel](Pressure_Vessel.md), [Heat Exchanger](Heat_Exchanger.md), [Gas Tank](Gas_Tank.md) and [Gas Compressor](Gas_Compressor.md) need a blueprint too, and the Chemical treatise to draw it (the Mechanical treatise for the flywheel). The [Hand Crank](Hand_Crank.md) needs neither.
+- A [Water Wheel](Water_Wheel.md), [Thermal Store](Thermal_Store.md), [Leyden Jar](Leyden_Jar.md), [Pump](Pump.md), [Fluid Burner](Fluid_Burner.md), [Electromagnet](Electromagnet.md), [Galvanic Cell](Galvanic_Cell.md) and [Glowstone Lamp](Lamp.md) are built only with their blueprint in the bench's blueprint slot, and the dimension (diameter, bore, turns, size, gauge, wall, area, buckets) is set here on the drawing. The [Boiler](Boiler.md) and Large Boiler, [Flywheel](Flywheel.md), [Pressure Vessel](Pressure_Vessel.md), [Heat Exchanger](Heat_Exchanger.md), [Gas Tank](Gas_Tank.md) and [Gas Compressor](Gas_Compressor.md) need a blueprint too, and the Chemical treatise to draw it (volume I for the boiler, pressure vessel and gas tank, II for the heat exchanger and gas compressor; the Mechanical treatise I for the flywheel). The [Thruster](Thruster.md) is drawn with Aerospace II. The [Hand Crank](Hand_Crank.md) needs neither.
 - The [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work.
 
 Repairs and swaps never need one.

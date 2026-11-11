@@ -165,5 +165,5 @@
   "vanilla": {
     "crossbow": "stick"
   },
-  "school": "weapons"
+  "school": "weapons:2"
 }

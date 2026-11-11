@@ -4,7 +4,7 @@ A piston engine built from parts. Once built, it's a rotation source. Put it on 
 
 ## Designing one
 
-Draw the engine at the [Blueprint Table](Blueprint_Table.md) (pick *Engine* in the type row) and print it on paper. Drawing it takes a Mechanical [Treatise](Treatise.md). Each part has its own panel; the pistons and the crank also have a **Bore** and a **Stroke** stepper, 40 to 120 mm in steps of 5.
+Draw the engine at the [Blueprint Table](Blueprint_Table.md) (pick *Engine* in the type row) and print it on paper. Drawing it takes Mechanical Treatise I ([Treatise](Treatise.md)). Each part has its own panel; the pistons and the crank also have a **Bore** and a **Stroke** stepper, 40 to 120 mm in steps of 5.
 
 | Part | Choices | What it sets |
 | --- | --- | --- |

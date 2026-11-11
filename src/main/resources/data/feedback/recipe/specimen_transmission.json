@@ -1,0 +1,22 @@
+{
+  "type": "feedback:bootstrap_specimen",
+  "category": "equipment",
+  "modular_type": "feedback:transmission",
+  "material": "feedback:iron",
+  "pattern": [
+    "III",
+    "PCP",
+    "III"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "C": {
+      "item": "minecraft:comparator"
+    }
+  }
+}

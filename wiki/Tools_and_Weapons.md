@@ -49,7 +49,7 @@ Put one part in the center of a bench (the [Smithing Table](Smithing_Table.md), 
 | **Shield** | six faces, a rim part (a grip makes it five faces) |
 | **Shears** | two blades (a pivot is optional) |
 | **Twin-headed tool** | two heads of any kind (pick, axe, shovel, hoe), each its own material, one handle, binding: digs what both heads dig. A pick and an axe make a **mattock**, two axes a double-bit axe. A second head slows the swing and weakens the blow, because the handle carries both |
-| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one |
+| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one. Drawing a cleaver, maul or spear at the Blueprint Table takes Weapons Treatise I ([Treatise](Treatise.md)) |
 | **Pike** | head, three handles, binding: reaches further |
 | **Maul** | head, two handles, binding: splits wood and staggers what it hits |
 | **Sickle** | head, grip, binding: cutting a crop or a leaf takes its neighbors too |

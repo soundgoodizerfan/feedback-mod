@@ -270,6 +270,13 @@ public final class GunShots {
 
     public static boolean trigger(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
                                   float yaw, float pitch, long nowMs, boolean aimed, InteractionHand hand) {
+        GunMechanism mechanism = GunItem.mechanismOf(gun);
+        return mechanism != null && mechanism.trigger(level, shooter, gun, yaw, pitch, nowMs, aimed, hand);
+    }
+
+    /** A firearm's pull ({@link FirearmMechanism}): see {@link #trigger}. */
+    static boolean triggerFirearm(ServerLevel level, Player shooter, net.minecraft.world.item.ItemStack gun,
+                                  float yaw, float pitch, long nowMs, boolean aimed, InteractionHand hand) {
         GunSpec design = GunSpec.of(gun).orElse(null);
         if (design == null || GunHazard.isSpent(gun))
             return false;
@@ -299,6 +306,12 @@ public final class GunShots {
 
     /** As above, along {@code yaw}/{@code pitch}: the goal's aim, which it corrects for drop. */
     public static boolean triggerMob(ServerLevel level, LivingEntity mob, ItemStack gun, long nowGameTick, float yaw, float pitch) {
+        GunMechanism mechanism = GunItem.mechanismOf(gun);
+        return mechanism != null && mechanism.triggerMob(level, mob, gun, nowGameTick, yaw, pitch);
+    }
+
+    /** A mob's firearm pull ({@link FirearmMechanism}): see {@link #triggerMob}. */
+    static boolean triggerMobFirearm(ServerLevel level, LivingEntity mob, ItemStack gun, long nowGameTick, float yaw, float pitch) {
         GunSpec design = GunSpec.of(gun).orElse(null);
         if (design == null || GunHazard.isSpent(gun))
             return false;
@@ -379,6 +392,22 @@ public final class GunShots {
         }
         chainFire(level, shooter, gun, design, noise);
         return true;
+    }
+
+    /**
+     * What a shot books once it has left a gun that is not a firearm (an electric gun): the recoil-vault impulse and the traits'
+     * hearing, the view kick the shooter's own client has not already made, and the strain on the hand. A firearm books the same
+     * inside {@link #shoot}.
+     */
+    public static void bookShot(ServerLevel level, LivingEntity shooter, ItemStack gun, GunFigures figures, float heat,
+                                InteractionHand hand, boolean aimed) {
+        GunFu.shotFired(level, shooter, gun, figures, heat);
+        if (shooter instanceof net.minecraft.server.level.ServerPlayer server) {
+            ModularTraits.gunFired(server, gun, figures);
+            if (!clientShot && !cameraTurned)
+                io.github.soundgoodizerfan.feedback.net.GunKickPayload.send(server, hand == InteractionHand.OFF_HAND, figures);
+            GunStrain.shot(server, gun, hand, figures.kickDeg(), aimed);
+        }
     }
 
     /**
@@ -715,13 +744,14 @@ public final class GunShots {
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
-        for (GunSound.Layer layer : GunSound.layers(f, level.random))
+        GunMechanism mechanism = GunItem.mechanismOf(gun);
+        for (GunSound.Layer layer : mechanism != null ? mechanism.sound(gun, f, level.random) : GunSound.layers(f, level.random))
             level.playSound(shooter instanceof Player player && !hearSelf ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
         level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT * (shooter instanceof Player mp && Skills.unlocked(mp, "muffled_report") ? FTuning.GUN_MUFFLED_SHARE : 1f) ? FWeapons.GUNSHOT_QUIET
                 : f.report() >= FTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
         // The burning gas shows as smoke at the muzzle.
-        level.sendParticles(f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,
+        level.sendParticles(mechanism != null ? mechanism.muzzleParticle(gun, f) : f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,
                 3, 0.02, 0.02, 0.02, 0.01);
     }
 

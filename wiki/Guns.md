@@ -12,7 +12,7 @@ In your hands it moves: it kicks back and up on each shot (barely at all when ai
 
 ## Getting one
 
-1. Draw the gun on paper at the [Blueprint Table](Blueprint_Table.md) and print it: a **blueprint** of the gun. It shows the figures the gun will have (at the reference round) before you make it.
+1. Draw the gun on paper at the [Blueprint Table](Blueprint_Table.md) (it takes Weapons Treatise II: Firearms, see [Treatise](Treatise.md)) and print it: a **blueprint** of the gun. It shows the figures the gun will have (at the reference round) before you make it.
 2. Make the parts: shape them at the [Gun Table](Gun_Table.md) or machine them ([Gun Parts](Gun_Parts.md)).
 3. Put the blueprint and the parts on the Gun Table. You get the **Gun**.
 4. Make [ammunition](Ammunition.md) and load it.

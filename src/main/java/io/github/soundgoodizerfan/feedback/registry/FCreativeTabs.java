@@ -61,7 +61,6 @@ public class FCreativeTabs {
                         output.accept(shell);
                         output.accept(FVehicles.LIFT_ITEM.get());
                         output.accept(FVehicles.FRAME_ITEM.get());
-                        output.accept(FVehicles.THRUSTER_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_CLOTH_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_RUBBER_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_PLATE_ITEM.get());

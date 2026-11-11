@@ -1,4 +1,5 @@
 {
+  "school": "weapons:1",
   "parent": "feedback:axe",
   "strike": 2.0,
   "patterns": [

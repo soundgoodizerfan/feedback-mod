@@ -738,6 +738,9 @@ public final class ModularBake {
                 f.put(Fig.SHOT_ENERGY, egun.energyIn() * worn);
                 f.put(Fig.VELOCITY, egun.shot(ModularTuning.AIR_REF_DENSITY, 1f).speed() / ModularTuning.AIR_BOW_ARROW_SPEED);
                 f.put(Fig.JOINT, egun.load(ModularTuning.EGUN_REF_VOLTS));
+                // The shared gun figures at the reference slug and a full draw: what the gun pipeline reads (cycle, kick, sound, the HUD).
+                f.putAll(egun.figures(ModularTuning.AIR_REF_DENSITY, 1f, total, 0f, 1f, 1f).figs());
+                f.put(Fig.MASS, total);
             }
             case ARMOUR -> {
                 Part plate = wearPart;

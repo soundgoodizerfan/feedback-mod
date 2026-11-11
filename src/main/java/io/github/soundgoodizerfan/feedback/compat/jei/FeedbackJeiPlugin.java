@@ -127,6 +127,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.class, new BootstrapGloveExtension());
         registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.class, new BootstrapSpecimenExtension());
+        registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe.class, new GrappleUpgradeCraftingExtension());
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.HotToolRecipe.class, new HotToolCraftingExtension());
@@ -383,6 +385,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.DISENCHANT_STONE.get(), "disenchant_stone");
         info(registration, FItems.CRYSTAL_HOLDER.get(), "crystal_holder");
         info(registration, FModular.BURNER.get(), "burner");
+        info(registration, FModular.THRUSTER.get(), "thruster");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BREAKER.get().asItem(), "breaker");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BELLOWS.get().asItem(), "bellows");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BIMETALLIC_STRIP.get().asItem(), "bimetallic_strip");

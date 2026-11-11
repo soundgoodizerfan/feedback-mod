@@ -7,7 +7,11 @@ import java.util.Optional;
 
 import net.minecraft.resources.ResourceLocation;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.unit.Mu;
+import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 /**
@@ -176,6 +180,30 @@ public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages
         speed = Math.min(speed, ModularTuning.EGUN_SPEED_MAX);
         float joules = 0.5f * mass * (speed * 20f) * (speed * 20f);
         return new Shot(speed, joules, joules * ModularTuning.EGUN_DAMAGE_PER_J, mass);
+    }
+
+    /**
+     * The shot as the gun pipeline reads it ({@link GunFigures}), for a slug of {@code density} when the cell gave {@code fraction}
+     * of the full draw. The muzzle energy is the work that gives the same hit as the shot's damage, so the tuning of what a shot
+     * hurts stays in {@code EGUN_DAMAGE_PER_J}.
+     *
+     * @param gunKg     the gun's mass.
+     * @param heat      the gun's heat now, 0 to 1: it lengthens the cycle.
+     * @param speedMult what an eddy sleeve and the archetype do to the slug's speed (energy follows its square).
+     * @param spreadMult what a lit reticle and the like do to the cone.
+     */
+    public GunFigures figures(float density, float fraction, float gunKg, float heat, float speedMult, float spreadMult) {
+        Shot s = shot(density, fraction);
+        boolean plasma = kind == Kind.PLASMA;
+        float speed = (plasma ? ModularTuning.EGUN_PLASMA_RANGE * ModularTuning.EGUN_PLASMA_DRAG : s.speed()) * speedMult;
+        float energy = s.damage() / FTuning.GUN_DAMAGE_PER_WORK * speedMult * speedMult;
+        float impulse = s.mass() * speed * 20f;
+        int cycleMs = Math.round((ModularTuning.EGUN_COOLDOWN + heat * ModularTuning.EGUN_HEAT_COOLDOWN_TICKS) * 50f);
+        float inaccuracy = ModularTuning.AIR_SPREAD * ModularTuning.EGUN_LENGTH_HALF / Math.max(0.05f, lengthM) * this.spreadMult;
+        float spread = Math.max(FTuning.GUN_SPREAD_FLOOR_DEG, ModularTuning.EGUN_SPREAD_DEG_PER_UNIT * inaccuracy * spreadMult);
+        float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (FTuning.GUN_KICK_REFERENCE_MU / Math.max(0.05f, gunKg));
+        return new GunFigures(new Pu(0f), new Pu(0f), speed, energy, new Mu(s.mass()), new Mu(gunKg), impulse, cycleMs, spread, kick,
+                report, heatGain * heatMult, shed);
     }
 
     /** The current a shot pulls from a cell at {@code volts}: the energy over the volts and the pulse length. */

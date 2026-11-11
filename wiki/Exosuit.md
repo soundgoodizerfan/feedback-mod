@@ -132,7 +132,7 @@ Upgrades work whenever the suit is powered. The Heat Sink always works. Some upg
 
 ### Learning a module
 
-A module is drawn at the [Blueprint Table](Blueprint_Table.md), and only while you hold a Robotics [Treatise](Treatise.md); the bench builds one only with its blueprint in the bench's blueprint slot. A [Blueprint Book](Blueprint_Book.md) in the blueprint slot offers every sheet inside it.
+A module is drawn at the [Blueprint Table](Blueprint_Table.md), and only while you hold Robotics Treatise I: Suit Modules ([Treatise](Treatise.md)); the bench builds one only with its blueprint in the bench's blueprint slot. A [Blueprint Book](Blueprint_Book.md) in the blueprint slot offers every sheet inside it.
 
 Blueprints come from:
 

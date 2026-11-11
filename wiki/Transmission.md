@@ -4,7 +4,7 @@ A gearbox built from parts. It couples the shaft behind it to the shaft in front
 
 ## Designing one
 
-Draw the gearbox at the [Blueprint Table](Blueprint_Table.md) (pick *Transmission* in the type row) and print it on paper. Drawing it takes a Mechanical [Treatise](Treatise.md). The gear set's shape is how many forward gears it has (2 to 6), and its panel has a stepper for each gear's ratio, in steps of 0.05, from 0.5 to 5.0. A ratio is input turns per output turn: 3.5 is a low gear, 0.8 an overdrive.
+Draw the gearbox at the [Blueprint Table](Blueprint_Table.md) (pick *Transmission* in the type row) and print it on paper. Drawing it takes Mechanical Treatise II ([Treatise](Treatise.md)). The gear set's shape is how many forward gears it has (2 to 6), and its panel has a stepper for each gear's ratio, in steps of 0.05, from 0.5 to 5.0. A ratio is input turns per output turn: 3.5 is a low gear, 0.8 an overdrive.
 
 | Part | Choices | What it sets |
 | --- | --- | --- |

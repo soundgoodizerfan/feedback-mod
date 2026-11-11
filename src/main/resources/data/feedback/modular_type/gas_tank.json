@@ -89,5 +89,5 @@
   "defaults": {
     "S": "feedback:steel"
   },
-  "school": "chemical"
+  "school": "chemical:1"
 }

@@ -1,0 +1,25 @@
+{
+  "type": "feedback:bootstrap_specimen",
+  "category": "equipment",
+  "modular_type": "feedback:thruster",
+  "material": "feedback:iron",
+  "pattern": [
+    "IBI",
+    "ICI",
+    " N "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "C": {
+      "item": "minecraft:blaze_powder"
+    },
+    "N": {
+      "item": "minecraft:iron_bars"
+    }
+  }
+}

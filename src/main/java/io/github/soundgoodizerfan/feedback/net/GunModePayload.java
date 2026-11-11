@@ -26,9 +26,8 @@ public record GunModePayload(boolean offHand) implements CustomPacketPayload {
     public static void handle(GunModePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             var stack = payload.offHand() ? context.player().getOffhandItem() : context.player().getMainHandItem();
-            var design = GunSpec.of(stack).orElse(null);
-            if (stack.getItem() instanceof GunItem && design != null)
-                stack.set(FWeapons.FIRE_MODE.get(), design.layout().action().next(GunItem.mode(stack)));
+            if (stack.getItem() instanceof GunItem gun && gun.mechanism().built(stack))
+                stack.set(FWeapons.FIRE_MODE.get(), gun.mechanism().next(stack, GunItem.mode(stack)));
         });
     }
 }

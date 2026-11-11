@@ -90,7 +90,7 @@ public final class FModular {
             "helmet_plate", "chestplate_plate", "leggings_plate", "boots_plate",
             "tool_tip", "tool_binding", "sword_guard", "sword_pommel", "shield_rim", "crossbow_prod", "bow_limbs", "shield_face",
             "gun_barrel", "gun_grip", "receiver", "slide", "bolt", "trigger_group", "cylinder", "magazine_tube",
-            "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "module_casing", "module_wiring", "module_optic", "module_filter", "module_thermal", "module_plating", "module_actuator", "module_thruster", "module_coil", "spring_gun_barrel", "spring_gun_receiver", "steam_valve", "steam_lagging", "main_spring", "steam_chest", "vessel_shell", "exchanger_core", "tank_shell", "wheel_rim", "cell_anode", "lamp_filament", "pump_impeller", "compressor_rotor", "burner_nozzle", "crank_arm", "magnet_core", "store_core", "jar_glass", "electric_gun_barrel", "flywheel_disc", "boiler_shell", "large_boiler_shell")
+            "thruster_nozzle", "knife_blade", "saw_blade", "head_blank", "suppressor", "muzzle_brake", "eddy_sleeve", "thermal_sleeve", "counterweight", "sculk_jacket", "resonance_weight", "bipod", "bayonet", "selector_switch", "relief_vent", "charge_fuse", "machine_bearing", "engine_block", "piston_set", "crankshaft", "cylinder_head", "gear_set", "synchro_ring", "gearbox_case", "prop_hub", "prop_blades", "tool_pommel", "charge_casing", "charge_primer", "obturator", "hydraulic_buffer", "lit_reticle", "magnetic_sear", "barrel_shroud", "sight", "gun_stock", "belt_feed", "box_feed", "ceramic_bowl", "ceramic_plate", "wooden_skewer", "glove_body", "backpack_shell", "bedroll_sheet", "metacarpal_plate", "vial_body", "spatula_blade", "spoon_bowl", "battery_plates", "machine_frame", "machine_winding", "machine_housing", "belt_band", "module_casing", "module_wiring", "module_optic", "module_filter", "module_thermal", "module_plating", "module_actuator", "module_thruster", "module_coil", "spring_gun_barrel", "spring_gun_receiver", "steam_valve", "steam_lagging", "main_spring", "steam_chest", "vessel_shell", "exchanger_core", "tank_shell", "wheel_rim", "cell_anode", "lamp_filament", "pump_impeller", "compressor_rotor", "burner_nozzle", "crank_arm", "magnet_core", "store_core", "jar_glass", "electric_gun_barrel", "flywheel_disc", "boiler_shell", "large_boiler_shell")
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
@@ -113,7 +113,7 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBow(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularCrossbow> CROSSBOW = ITEMS.register("crossbow",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularCrossbow(ModularStacks.properties()));
-    /** A spring-piston air gun: not a powder gun, so not a {@code GunItem}. Cocked by hand, throws a metal pellet. */
+    /** A spring-piston air gun: a gas gun, not yet a {@code GunItem}. Cocked by hand, throws a metal pellet. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularElectricGun> ELECTRIC_GUN = ITEMS.register("electric_gun",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularElectricGun(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSpringGun> SPRING_GUN = ITEMS.register("spring_gun",
@@ -306,15 +306,21 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem> BLUEPRINT = ITEMS.register("modular_blueprint",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem(new Item.Properties().stacksTo(16)));
 
-    /** One treatise per {@link io.github.soundgoodizerfan.feedback.modular.School}: holding it lets the Blueprint Table draw that school's types. */
-    public static final java.util.Map<io.github.soundgoodizerfan.feedback.modular.School, DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>> TREATISES;
+    /** The volumes of each {@link io.github.soundgoodizerfan.feedback.modular.School}'s treatise, in order: holding one lets the Blueprint Table draw the types that name that volume. */
+    public static final java.util.Map<io.github.soundgoodizerfan.feedback.modular.School, java.util.List<DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>>> TREATISES;
 
     static {
-        java.util.Map<io.github.soundgoodizerfan.feedback.modular.School, DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>> map =
+        java.util.Map<io.github.soundgoodizerfan.feedback.modular.School, java.util.List<DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>>> map =
                 new java.util.EnumMap<>(io.github.soundgoodizerfan.feedback.modular.School.class);
-        for (io.github.soundgoodizerfan.feedback.modular.School school : io.github.soundgoodizerfan.feedback.modular.School.values())
-            map.put(school, ITEMS.register("treatise_" + school.id(),
-                    () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseItem(school, new Item.Properties().stacksTo(16))));
+        for (io.github.soundgoodizerfan.feedback.modular.School school : io.github.soundgoodizerfan.feedback.modular.School.values()) {
+            java.util.List<DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseItem>> volumes = new java.util.ArrayList<>();
+            for (int v = 1; v <= school.volumes(); v++) {
+                int volume = v;
+                volumes.add(ITEMS.register(school.itemId(v),
+                        () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseItem(school, volume, new Item.Properties().stacksTo(16))));
+            }
+            map.put(school, java.util.Collections.unmodifiableList(volumes));
+        }
         TREATISES = java.util.Collections.unmodifiableMap(map);
     }
 
@@ -376,6 +382,8 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.COMPRESSOR.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> BURNER = ITEMS.register("burner",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.BURNER.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> THRUSTER = ITEMS.register("thruster",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(io.github.soundgoodizerfan.feedback.registry.FVehicles.THRUSTER.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> HAND_CRANK = ITEMS.register("hand_crank",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularBlockItem(FBlocks.HAND_CRANK.get(), new Item.Properties().stacksTo(1)));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularBlockItem> ELECTROMAGNET = ITEMS.register("electromagnet",

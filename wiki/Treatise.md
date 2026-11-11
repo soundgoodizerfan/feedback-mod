@@ -1,30 +1,94 @@
 # Treatise
 
-A treatise is a book on one **school** of engineering. Holding it lets the [Blueprint Table](Blueprint_Table.md) draw blueprints of that school's types. It is kept, never used up.
+A treatise is a numbered book on one **school** of engineering. Holding a volume lets the [Blueprint Table](Blueprint_Table.md) draw blueprints of the types that volume covers. It is kept, never used up.
 
-## Schools
+## Volumes
+
+Each school has one item per volume. Every volume is a subject of its own: holding Weapons Treatise II does not give you Weapons Treatise I, and nothing in one school opens a type in another.
 
 | Treatise | Types it opens |
 | --- | --- |
-| Weapons Treatise | gun, crossbow |
-| Mechanical Treatise | engine, transmission, flywheel |
-| Aerospace Treatise | propeller |
-| Robotics Treatise | suit module |
-| Chemical Treatise | pressure vessel, boiler, large boiler, heat exchanger, gas tank, gas compressor |
-| Materials Treatise | no types |
+| Weapons Treatise I: Blades and Heads | maul, spear, cleaver |
+| Weapons Treatise II: Firearms | gun, spring gun, crossbow |
+| Weapons Treatise III: Electric Guns | electric gun |
+| Mechanical Treatise I: Engines and Flywheels | engine, flywheel |
+| Mechanical Treatise II: Transmission | transmission |
+| Aerospace Treatise I: Propellers | propeller |
+| Aerospace Treatise II: Thrusters | thruster |
+| Robotics Treatise I: Suit Modules | suit module |
+| Chemical Treatise I: Pressure Vessels | pressure vessel, boiler, large boiler, gas tank |
+| Chemical Treatise II: Heat and Compression | heat exchanger, gas compressor |
+| Chemical Treatise III: Explosives | demolition charge |
+| Materials Treatise I: Machine-Shop Consumables | no types |
 
-Types outside every school (tools, armor, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) need no treatise. A school is a subject of its own: one treatise opens nothing in another.
+Types outside every volume (tools, armor, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) need no treatise.
 
 ## Obtaining
 
-- **Write one.** Craft a **Blank Treatise**, put it in the blueprint slot of a bench, and take a gun, crossbow, engine, gearbox, propeller or suit module apart there. The item goes in and the Blank Treatise becomes a treatise of that item's school.
-- **Find one.** A treatise turns up, rarely, in dungeon, mineshaft, desert temple, stronghold and bastion chests.
-- **Buy one.** Weaponsmiths sell the Weapons Treatise, toolsmiths the Mechanical, cartographers the Aerospace, librarians the Robotics, clerics the Chemical and masons the Materials, at a high trade level. See [Villagers](Villagers.md#blueprints).
+- **Write one.** Craft a **Blank Treatise**, put it in the blueprint slot of a bench, and take an item of that volume's types apart there. The item goes in and the Blank Treatise becomes that volume. Most types that need a treatise have a [specimen](#specimens) you can craft to take apart first; a maul, spear, cleaver or charge is made the usual way.
+- **Find one.** A treatise of a random school and volume turns up, rarely, in dungeon, mineshaft, desert temple, stronghold and bastion chests.
+- **Buy one.** Weaponsmiths, toolsmiths, cartographers, librarians, clerics and masons sell volume I of their school at a high trade level, and the later volumes at higher levels; clerics sell Chemical I and II, and weaponsmiths all three Weapons volumes. See [Villagers](Villagers.md#blueprints).
 
 ### Blank Treatise
 
 ```
 Paper + Paper + Leather + Ink Sac (shapeless)
+```
+
+### Specimens
+
+A specimen is one ready-made item of a type, built to a fixed cheap design, crafted in the crafting grid. It is not a good tool; it is something to take apart at a bench with a Blank Treatise in the blueprint slot. A specimen is made of the metal or wood named after it. Layouts are shown as in a grid; blank spaces are empty.
+
+```
+Gun (iron)                 Spring gun (iron)         Crossbow (wood)
+I I G                      I I S                     S I S
+  P S                      P C I                     T P T
+    S                          S                       S
+
+I iron ingot, G gunpowder, P any plank, S stick, C piston, T string
+
+Electric gun (copper)      Engine (iron)             Transmission (iron)
+C C R                      I P I                     I I I
+P R S                      I C I                     P C P
+    S                      I B I                     I I I
+
+C copper ingot, R redstone, P any plank, S stick
+Engine: I iron ingot, P piston, C chain, B bucket
+Transmission: I iron ingot, P piston, C comparator
+
+Flywheel (iron)            Propeller (wood)          Thruster (iron)
+I I I                      P   P                     I B I
+I B I                        I                       I C I
+I I I                      P   P                       N
+
+Flywheel: I iron ingot, B iron block
+Propeller: P any plank, I iron ingot
+Thruster: I iron ingot, B bucket, C blaze powder, N iron bars
+
+Suit module (copper)       Pressure vessel (iron)    Gas tank (iron)
+C R C                      I I I                     I I I
+I D I                      I B I                     I G I
+C R C                      I G I                     I I I
+
+Suit module: C copper ingot, R redstone, I iron ingot, D diamond
+Pressure vessel: I iron ingot, B bucket, G iron nugget
+Gas tank: I iron ingot, G glass pane
+
+Boiler (iron)              Large boiler (iron)       Heat exchanger (copper)
+I I I                      I C I                     C C C
+I C I                      I C I                     I B I
+I B I                      I C I                     C C C
+
+Boiler: I iron ingot, C cauldron, B bucket
+Large boiler: I iron ingot, C cauldron
+Heat exchanger: C copper ingot, I iron bars, B copper block
+
+Gas compressor (iron)
+I P I
+I H I
+I I I
+
+I iron ingot, P piston, H hopper
 ```
 
 ## Using it
@@ -35,4 +99,4 @@ A treatise counts as held when it is:
 - inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or
 - inside a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table.
 
-Without it, the types of that school are left out of the table's type row and list altogether, so nothing of them can be picked or drawn. The treatise's tooltip lists every type it opens. Treatises stack to sixteen. Building to a blueprint is separate: a type that needs a blueprint is built with the blueprint in the bench's blueprint slot, whether or not you hold the treatise. Copying a blueprint needs no treatise.
+Without a volume, the types it covers are left out of the table's type row and list altogether, so nothing of them can be picked or drawn. The treatise's tooltip lists every type it opens. Treatises stack to sixteen. Building to a blueprint is separate: a type that needs a blueprint is built with the blueprint in the bench's blueprint slot, whether or not you hold the treatise. Copying a blueprint needs no treatise.

@@ -4,7 +4,7 @@ A wall of tubes that lets heat flow between the two things on either side of it,
 
 ## Designing and building
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Heat Exchanger* in the type row); drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Exchanger Core**, with three choices:
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Heat Exchanger* in the type row); drawing it takes Chemical Treatise II ([Treatise](Treatise.md)). It has one part, the **Exchanger Core**, with three choices:
 
 | Choice | What it sets |
 | --- | --- |

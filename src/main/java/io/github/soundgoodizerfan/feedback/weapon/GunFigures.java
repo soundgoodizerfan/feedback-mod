@@ -41,9 +41,9 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                          Mu projectileMass, Mu gunMass, float impulse, int cycleMs, float spreadDeg,
                          float kickDeg, float report, float heatFactor, float leakFactor) {
 
-    /** The gun figures of a baked item, or null if it has none (a pick, or a gun not yet baked). */
+    /** The gun figures of a baked item, or null if it has none (a pick, or a gun not yet baked). A gun with no chamber (an electric gun) has a muzzle speed and no rating. */
     public static GunFigures of(ModularFigures f) {
-        if (f == null || f.get(Fig.CHAMBER_RATING) <= 0)
+        if (f == null || f.get(Fig.CHAMBER_RATING) <= 0 && f.get(Fig.MUZZLE_SPEED) <= 0)
             return null;
         return new GunFigures(new Pu(f.get(Fig.PEAK_PRESSURE)), new Pu(f.get(Fig.CHAMBER_RATING)), f.get(Fig.MUZZLE_SPEED),
                 f.get(Fig.MUZZLE_ENERGY), new Mu(f.get(Fig.BULLET_MASS)), new Mu(f.get(Fig.MASS)), f.get(Fig.IMPULSE),

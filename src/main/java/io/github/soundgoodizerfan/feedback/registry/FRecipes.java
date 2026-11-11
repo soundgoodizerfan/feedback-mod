@@ -70,6 +70,11 @@ public class FRecipes {
             BOOTSTRAP_TOOL = SERIALIZERS.register("bootstrap_tool",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe::new));
 
+    /** A grid -> one prebaked specimen of a treatise-gated modular type, so taking it apart can write the treatise. */
+    public static final DeferredHolder<RecipeSerializer<?>, io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.Serializer>
+            BOOTSTRAP_SPECIMEN = SERIALIZERS.register("bootstrap_specimen",
+                    io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.Serializer::new);
+
     /** Plates and straps -> a bracer, sash or back piece baked from them (combat gear). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.combat.gear.GearRecipe>>
             GEAR = SERIALIZERS.register("gear",
