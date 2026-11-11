@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 /**
@@ -49,10 +50,12 @@ public final class FrameAssembly {
     /** Sample spacing across a plate, in blocks: finer than a voxel, so none a plate crosses is missed. */
     private static final double SAMPLE = 1.0 / 32;
     private static final int G = Frame.GRID;
-    /** How far round a cutting bearing both sides keep no physics cell, in blocks. */
+    /** How far round a one-point cutting bearing both sides keep no physics cell, in blocks. */
     private static final double BEARING_CLEAR = 0.5;
 
     public enum Result { ASSEMBLED, NOTHING_TO_ASSEMBLE }
+
+    private static final org.slf4j.Logger LOG = com.mojang.logging.LogUtils.getLogger();
 
     private FrameAssembly() {
     }
@@ -75,14 +78,6 @@ public final class FrameAssembly {
             octants |= o.octants;
             voxels.or(o.voxels);
             mass += o.mass;
-        }
-
-        public int octants() {
-            return octants;
-        }
-
-        public double mass() {
-            return mass;
         }
     }
 
@@ -138,6 +133,10 @@ public final class FrameAssembly {
             ServerSubLevel body = SubLevelAssemblyHelper.assembleBlocks(level, anchor, blocks, BoundingBox3i.from(blocks));
             be.addGroupBody(g.id(), body.getUniqueId(),
                     framePos.subtract(anchor).offset(body.getPlot().getCenterBlock()), rel);
+            // Diagnostic (2026-10-29): is the anchor block really at the plot's centre, as origin assumes?
+            LOG.info("[feedback] lift group {} anchor={} centre={} origin={} cellAtCentre={} body={}", g.id(), anchor,
+                    body.getPlot().getCenterBlock(), framePos.subtract(anchor).offset(body.getPlot().getCenterBlock()),
+                    level.getBlockState(body.getPlot().getCenterBlock()).is(FVehicles.CHASSIS_CELL.get()), body.getUniqueId());
         }
         Set<BlockPos> rel = place(level, framePos, rigid, true, be.id(), blocked);
         be.setBaseCells(rel);
@@ -207,10 +206,14 @@ public final class FrameAssembly {
     }
 
     /** Swaps the cells at {@code origin + old} for {@code want}; returns those placed. */
-    private static Set<BlockPos> replace(ServerLevel level, BlockPos origin, Set<BlockPos> old, Map<BlockPos, Cell> want, java.util.UUID frame, int[] blocked) {
-        for (BlockPos rel : old)
-            if (!want.containsKey(rel) && level.getBlockState(origin.offset(rel)).is(FVehicles.CHASSIS_CELL.get()))
+    private static Set<BlockPos> replace(ServerLevel level, BlockPos origin, Set<BlockPos> old, Map<BlockPos, Cell> want, UUID frame, int[] blocked) {
+        for (BlockPos rel : old) {
+            // A cell left with no octant (a tire or bearing now reaches it) stays in want for its mass
+            // but is never placed, so it must go like a cell want dropped.
+            Cell c = want.get(rel);
+            if ((c == null || c.octants == 0) && level.getBlockState(origin.offset(rel)).is(FVehicles.CHASSIS_CELL.get()))
                 level.setBlock(origin.offset(rel), Blocks.AIR.defaultBlockState(), 3);
+        }
         return place(level, origin, want, false, frame, blocked);
     }
 
@@ -227,7 +230,7 @@ public final class FrameAssembly {
      * Puts each cell at {@code origin + rel} where the world is air (or, when {@code fresh} is
      * false, already a cell), with its voxels. Returns those placed.
      */
-    private static Set<BlockPos> place(ServerLevel level, BlockPos origin, Map<BlockPos, Cell> cells, boolean fresh, java.util.UUID frame, int[] blocked) {
+    private static Set<BlockPos> place(ServerLevel level, BlockPos origin, Map<BlockPos, Cell> cells, boolean fresh, UUID frame, int[] blocked) {
         // Where a cell cannot go (a block of the base stands there, or a tire's reach emptied it)
         // its mass is shared out over the cells that can, so the vehicle still weighs its plates.
         double total = 0, kept = 0;
@@ -235,9 +238,9 @@ public final class FrameAssembly {
         for (Map.Entry<BlockPos, Cell> e : cells.entrySet()) {
             Cell c = e.getValue();
             total += c.mass;
-            BlockState there = level.getBlockState(origin.offset(e.getKey()));
             if (c.octants == 0)
                 continue;
+            BlockState there = level.getBlockState(origin.offset(e.getKey()));
             if (!there.isAir() && (fresh || !there.is(FVehicles.CHASSIS_CELL.get()))) {
                 blocked[0]++;
                 continue;
@@ -303,10 +306,17 @@ public final class FrameAssembly {
         // Round a bearing that cuts, both sides' cells would meet: the joint holds the two bodies
         // there and the colliders would fight it. Cleared, the two sides may collide everywhere
         // else -- an arm swings into the chassis and stops, rather than through it.
-        frame.pivots().forEach((vertex, pivot) -> {
-            if (pivot.cuts() && group.vertices().contains(vertex))
+        // A stator-rotor bearing needs none of this: its two bodies share no point and do not collide
+        // with each other (FrameBlockEntity.pair).
+        Map<BlockPos, Integer> before = new HashMap<>();
+        out.forEach((pos, c) -> before.put(pos, c.octants));
+        for (int vertex : frame.pivots().keySet())
+            if (cutsAt(frame, vertex) && group.vertices().contains(vertex))
                 clear(out, frame.pos(vertex), BEARING_CLEAR);
-        });
+        // An arm shorter than the clearing would have no cell at all, so no body, and would hang rigid
+        // on the chassis it is meant to swing from (playtest 2026-10-29): keep what it had.
+        if (out.values().stream().allMatch(c -> c.octants == 0))
+            out.forEach((pos, c) -> c.octants = before.get(pos));
         return out;
     }
 
@@ -383,7 +393,9 @@ public final class FrameAssembly {
      *
      * <p>Two non-pivot vertices on one edge are one side, so they are united; a plate or tube
      * belongs to the side of its non-pivot vertex. An edge between two pivots, with nothing on it
-     * to join it to a side (a link rod between two bearings), is a part of its own.
+     * to join it to a side (a link rod between two bearings), is a part of its own. A stator-rotor
+     * link ({@link #isLink}) joins nothing, so the bodies on its two sides come apart there with
+     * neither point a pivot.
      *
      * <p>A locked bearing does not cut. It holds its two sides rigid, and one body is steadier
      * than two held by a joint -- a chain of short shafts on locked joints, each its own small
@@ -392,11 +404,10 @@ public final class FrameAssembly {
      */
     public static List<Part> parts(Frame frame) {
         Set<Integer> pivots = new HashSet<>();
-        frame.pivots().forEach((v, p) -> {
-            if (p.cuts())
+        for (int v : frame.pivots().keySet())
+            if (cutsAt(frame, v))
                 pivots.add(v);
-        });
-        if (pivots.isEmpty())
+        if (pivots.isEmpty() && frame.rotors().isEmpty())
             return List.of();
         Map<Integer, Integer> root = new HashMap<>();
         for (int v : frame.vertices().keySet())
@@ -404,7 +415,7 @@ public final class FrameAssembly {
                 root.put(v, v);
         for (long key : frame.edgeKeys()) {
             int a = Frame.edgeA(key), b = Frame.edgeB(key);
-            if (root.containsKey(a) && root.containsKey(b))
+            if (root.containsKey(a) && root.containsKey(b) && !isLink(frame, a, b))
                 root.put(find(root, a), find(root, b));
         }
         Map<Object, Set<Integer>> verts = new LinkedHashMap<>();
@@ -432,6 +443,8 @@ public final class FrameAssembly {
         }
         for (long key : frame.edgeKeys()) {
             int a = Frame.edgeA(key), b = Frame.edgeB(key);
+            if (isLink(frame, a, b))
+                continue;
             Object side = root.containsKey(a) ? find(root, a) : root.containsKey(b) ? find(root, b) : (Object) key;
             side(verts, edges, plates, side);
             edges.get(side).add(key);
@@ -467,9 +480,18 @@ public final class FrameAssembly {
     public static int bearingsWithoutFarSide(Frame frame) {
         List<Part> parts = parts(frame);
         int lonely = 0;
-        for (Map.Entry<Integer, Frame.Pivot> e : frame.pivots().entrySet()) {
-            int v = e.getKey();
-            if (!e.getValue().cuts() || frame.anchors().containsKey(v))
+        for (int v : frame.pivots().keySet()) {
+            Integer rotor = frame.rotors().get(v);
+            if (rotor != null) {
+                // Paired: it swings something if a solid hangs on the rotor, and the stator side is a
+                // solid or a weld.
+                boolean far = parts.stream().anyMatch(p -> p.vertices().contains(rotor));
+                boolean near = frame.anchors().containsKey(v) || parts.stream().anyMatch(p -> p.vertices().contains(v));
+                if (!far || !near)
+                    lonely++;
+                continue;
+            }
+            if (!cutsAt(frame, v) || frame.anchors().containsKey(v))
                 continue;
             if (parts.stream().filter(p -> p.vertices().contains(v)).count() < 2)
                 lonely++;
@@ -477,9 +499,15 @@ public final class FrameAssembly {
         return lonely;
     }
 
+    /** Whether {@code vertex} is a one-point bearing that cuts the frame; a stator-rotor bearing cuts at its link instead. */
     private static boolean cutsAt(Frame frame, int vertex) {
         Frame.Pivot p = frame.pivots().get(vertex);
-        return p != null && p.cuts();
+        return p != null && p.cuts() && !frame.rotors().containsKey(vertex);
+    }
+
+    /** Whether {@code a-b} is the stator-rotor link of a bearing, which joins no two points of one body. */
+    private static boolean isLink(Frame frame, int a, int b) {
+        return Integer.valueOf(b).equals(frame.rotors().get(a)) || Integer.valueOf(a).equals(frame.rotors().get(b));
     }
 
     private static Set<Integer> side(Map<Object, Set<Integer>> verts, Map<Object, Set<Long>> edges,

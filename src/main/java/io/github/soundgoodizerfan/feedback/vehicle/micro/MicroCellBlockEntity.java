@@ -1,0 +1,567 @@
+/*
+ * Feedback -- a Minecraft technology mod.
+ * Copyright (C) 2026 soundgoodizerfan
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * Assets under src/main/resources/assets are NOT covered by this licence.
+ * See LICENSE-ASSETS.
+ */
+package io.github.soundgoodizerfan.feedback.vehicle.micro;
+
+import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
+import io.github.soundgoodizerfan.feedback.machine.bearing.BearingJoint;
+import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import net.minecraft.server.level.ServerLevel;
+import org.joml.Vector3d;
+import io.github.soundgoodizerfan.feedback.core.unit.Mu;
+import io.github.soundgoodizerfan.feedback.core.unit.Units;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
+/**
+ * The micro-blocks inside one {@link MicroCellBlock} ({@code docs/specs/feedback_micro_spec.md}): up to
+ * 64 block states, one per quarter-block voxel, four to a side. A voxel is a bare block state, so
+ * only blocks with no block entity of their own can be one.
+ *
+ * <p>Voxel {@code (x, y, z)} is index {@code x + 4y + 16z}, and the same bit of {@link #filled}.
+ * Saved with a palette (a cell is mostly a few kinds of block) and synced, because the renderer
+ * draws the voxels on the client and the outline is traced from them there.
+ *
+ * <p>A voxel whose block is a {@link MicroRotation} (shaft, cog, gearbox) also has a
+ * {@link MicroRotor}, a rotation network member held here: no block entity per voxel. The cell
+ * tells the propagator when rotors come and go, and saves and syncs their speed and angle.
+ */
+public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubLevelActor {
+
+    /** Voxels along one edge of a cell: each is a quarter block. */
+    public static final int N = 4;
+    public static final int VOXELS = N * N * N;
+    /** A block is 1000 mB (philosophy section 17), so a voxel is a 64th of that. */
+    private static final float VOXEL_MB = 1000f / VOXELS;
+
+    private final BlockState[] voxels = new BlockState[VOXELS];
+    /** Bit {@code index(x, y, z)}: that voxel holds a block. */
+    private long filled;
+    private final MicroRotor[] rotors = new MicroRotor[VOXELS];
+    /** Server: rotors taken out since the last {@link #commit}, and whether any came in. */
+    private final List<MicroRotor> gone = new ArrayList<>();
+    private boolean rotorAdded;
+    /**
+     * Octants left out of this cell's physics collider (not its players' shape): a micro bearing's
+     * clearance. After a split the turned body's cells keep their places, so a body cell and the world
+     * cell it was split from share a position and would share half-block octants -- and the bearing
+     * voxel's octant would touch the turned voxel's -- so the body would collide with its own stator
+     * and stall (playtest 2026-11-02: "turns a little and stops"). Set on both sides by
+     * {@link MicroBearings}, cleared on put-back.
+     */
+    private int clear;
+    /**
+     * Voxels left out of the voxel collider (MicroColliders): a micro bearing's hinge -- the bearing
+     * voxel on the stator side, the voxel in front on the turned side -- whose faces touch at the
+     * turning face and would rub. Set by MicroBearings, cleared on put-back.
+     */
+    private long hinge;
+    /** The voxel collider is to be written on the next server tick (after a load). */
+    private boolean colliderDue = true;
+    /** Micro bearings among the voxels that have a body assembled, by voxel index. */
+    private final Int2ObjectOpenHashMap<BearingJoint> bearings = new Int2ObjectOpenHashMap<>();
+    /** Set by chunk unload, so setRemoved does not take an unload for the cell being broken. */
+    private boolean unloaded;
+    @Nullable
+    private VoxelShape shape;
+
+    public MicroCellBlockEntity(BlockPos pos, BlockState state) {
+        super(FVehicles.MICRO_CELL_ENTITY.get(), pos, state);
+    }
+
+    public static int index(int x, int y, int z) {
+        return x + N * y + N * N * z;
+    }
+
+    /** The block in voxel {@code index}, or null if it is empty. */
+    @Nullable
+    public BlockState get(int index) {
+        return voxels[index];
+    }
+
+    @Nullable
+    public BlockState get(int x, int y, int z) {
+        return voxels[index(x, y, z)];
+    }
+
+    public boolean isEmpty() {
+        return filled == 0;
+    }
+
+    /** How many voxels hold a block; the air drag of a body of cells goes by it ({@code AirDrag}). */
+    public int voxelCount() {
+        return Long.bitCount(filled);
+    }
+
+    public long filled() {
+        return filled;
+    }
+
+    /** Puts {@code state} in voxel {@code index}, or empties it for null. Call {@link #commit} once the edits are done. */
+    public void set(int index, @Nullable BlockState state) {
+        voxels[index] = state;
+        filled = state == null ? filled & ~(1L << index) : filled | 1L << index;
+        shape = null;
+        if (rotors[index] != null)
+            gone.add(rotors[index]);
+        // A bearing voxel taken out lets its body go (it falls free, as a full-size bearing broken does).
+        BearingJoint was = bearings.remove(index);
+        if (was != null) {
+            was.letGo();
+            if (level != null && !level.isClientSide)
+                MicroBearings.unclear(level, was);
+        }
+        rotors[index] = state != null && state.getBlock() instanceof MicroRotation ? new MicroRotor(this, index, state) : null;
+        rotorAdded |= rotors[index] != null;
+    }
+
+    /** The rotor in voxel {@code index}, or null if that voxel is not a rotation part. */
+    @Nullable
+    public MicroRotor rotor(int index) {
+        return rotors[index];
+    }
+
+    /** Every rotor in this cell. */
+    public List<MicroRotor> rotors() {
+        List<MicroRotor> out = new ArrayList<>();
+        for (MicroRotor rotor : rotors)
+            if (rotor != null)
+                out.add(rotor);
+        return out;
+    }
+
+    /** Hands every filled voxel's block to {@code each}. */
+    public void forEachVoxel(Consumer<BlockState> each) {
+        for (BlockState state : voxels)
+            if (state != null)
+                each.accept(state);
+    }
+
+    // --- physics -------------------------------------------------------------------------------
+
+    /** Bit {@code x/2 + 2 (y/2) + 4 (z/2)}: that half-block octant holds a voxel of {@code filled}. Zero only if none is. */
+    public static int octants(long filled) {
+        int out = 0;
+        for (int i = 0; i < VOXELS; i++) {
+            int x = i & 3, y = i >> 2 & 3, z = i >> 4;
+            if ((filled >>> i & 1) != 0)
+                out |= 1 << (x >> 1) + 2 * (y >> 1) + 4 * (z >> 1);
+        }
+        return out;
+    }
+
+    /**
+     * What a voxel of {@code state} weighs, in Sable's unit: its block's material density over a
+     * 64th of a block. The material table is the one source; a block no material claims weighs
+     * {@link FTuning#MICRO_FALLBACK_DENSITY}.
+     */
+    public static double voxelKpg(BlockState state) {
+        var found = Material.find(MaterialTable.get().materials(), state.getBlock().asItem());
+        float density = found.isPresent() && found.get().material().density().muPerMb() > 0
+                ? found.get().material().density().muPerMb() : FTuning.MICRO_FALLBACK_DENSITY.muPerMb();
+        return Units.kpg(new Mu(density * VOXEL_MB));
+    }
+
+    /** The cell's Sable mass, kpg: its voxels summed. */
+    public double kpg() {
+        // The material lookup scans the whole table, so weigh each kind of block once.
+        Map<Block, Double> each = new HashMap<>();
+        double sum = 0;
+        for (BlockState state : voxels)
+            if (state != null)
+                sum += each.computeIfAbsent(state.getBlock(), b -> voxelKpg(state));
+        return sum;
+    }
+
+    /**
+     * Brings the world in line with the voxels after an edit: the cell goes when its last voxel
+     * does, otherwise its block state takes the new octants and mass class (Sable reads both off
+     * the state, never off this entity -- {@link MicroCellBlock}), and the clients get the voxels.
+     */
+    public void commit() {
+        shape = null;
+        if (level == null)
+            return;
+        // Before the cell can go: a removed rotor's run is rebuilt without it, an added one queued.
+        if (!level.isClientSide) {
+            RotationPropagator.onRemoved(level, List.copyOf(gone));
+            if (rotorAdded)
+                RotationPropagator.queue(level, worldPosition);
+        }
+        gone.clear();
+        rotorAdded = false;
+        if (filled == 0) {
+            level.removeBlock(worldPosition, false);
+            return;
+        }
+        // Never zero: Sable weighs a state only if its collision shape is non-empty (VoxelNeighborhoodState.isSolid),
+        // so a fully cleared mask would give the cell no mass at all. The exact voxel collider decides what collides.
+        int mask = octants(filled) & ~clear;
+        BlockState want = MicroCellBlock.stateFor(mask != 0 ? mask : octants(filled), kpg());
+        // The same block with another state keeps this entity.
+        if (level.getBlockState(worldPosition) != want)
+            level.setBlock(worldPosition, want, Block.UPDATE_ALL);
+        // After the state: Sable has just written the state's octant collider here; this replaces it.
+        applyCollider();
+        setChanged();
+        level.sendBlockUpdated(worldPosition, want, want, Block.UPDATE_CLIENTS);
+    }
+
+    // --- rotation ------------------------------------------------------------------------------
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        gone.clear();
+        rotorAdded = false;
+        if (level != null && !level.isClientSide && !rotors().isEmpty())
+            RotationPropagator.queue(level, worldPosition);
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        unloaded = true;
+    }
+
+    /** As {@link io.github.soundgoodizerfan.feedback.core.rotation.RotationNode#setRemoved}: an unload leaves the runs without a rebuild. */
+    @Override
+    public void setRemoved() {
+        for (BearingJoint joint : bearings.values())
+            joint.letGo();
+        if (level != null && !level.isClientSide) {
+            if (!unloaded)
+                RotationPropagator.onRemoved(level, rotors());
+            else
+                for (MicroRotor rotor : rotors())
+                    if (rotor.getNetwork() != null)
+                        rotor.getNetwork().remove(rotor);
+        }
+        super.setRemoved();
+    }
+
+    /** Writes this cell's voxel collider into Sable's scene (MicroColliders); server only. */
+    public void applyCollider() {
+        colliderDue = false;
+        if (level instanceof ServerLevel server && filled != 0)
+            MicroColliders.apply(server, worldPosition, getBlockState(), filled & ~hinge);
+    }
+
+    /** Sets the voxels left out of the voxel collider (see {@link #hinge}). */
+    public void setHinge(long voxels) {
+        if (hinge == voxels)
+            return;
+        hinge = voxels;
+        setChanged();
+        applyCollider();
+    }
+
+    public long hinge() {
+        return hinge;
+    }
+
+    public int clear() {
+        return clear;
+    }
+
+    /** Sets the octants left out of the physics collider (see {@link #clear}) and updates the state. */
+    public void setClear(int octants) {
+        if (clear == octants)
+            return;
+        clear = octants;
+        commit();
+    }
+
+    /** True if a micro bearing here holds a body. */
+    public boolean holdsBearing() {
+        return !bearings.isEmpty();
+    }
+
+    /** The bearings this cell holds, by voxel index: kept across a re-made cell (MicroBearings). */
+    public Int2ObjectOpenHashMap<BearingJoint> bearings() {
+        return bearings;
+    }
+
+    /** The hold of the micro bearing in voxel {@code index}, or null if it has no body. */
+    @Nullable
+    public BearingJoint bearing(int index) {
+        return bearings.get(index);
+    }
+
+    /** Voxel {@code index}, a micro bearing, now holds {@code joint} (null: none). */
+    public void setBearing(int index, @Nullable BearingJoint joint) {
+        if (joint == null)
+            bearings.remove(index);
+        else
+            bearings.put(index, joint);
+        setChanged();
+    }
+
+    /** The centre of voxel {@code index}'s face toward {@code f}, in this cell's level: a micro bearing's hinge. */
+    public Vector3d faceCentre(int index, Direction f) {
+        return new Vector3d(worldPosition.getX() + ((index & 3) + 0.5 + 0.5 * f.getStepX()) / N,
+                worldPosition.getY() + ((index >> 2 & 3) + 0.5 + 0.5 * f.getStepY()) / N,
+                worldPosition.getZ() + ((index >> 4) + 0.5 + 0.5 * f.getStepZ()) / N);
+    }
+
+    /** Drives the micro bearings that hold a body; nothing for a cell without one. */
+    public static void tickServer(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, MicroCellBlockEntity cell) {
+        // Staggered, so a build's cells do not all refresh on one tick.
+        if (cell.colliderDue || (level.getGameTime() + pos.hashCode()) % MicroColliders.REFRESH == 0)
+            cell.applyCollider();
+        if (cell.bearings.isEmpty() || !(level instanceof ServerLevel server))
+            return;
+        boolean rebuild = false;
+        for (var it = cell.bearings.int2ObjectEntrySet().iterator(); it.hasNext(); ) {
+            var e = it.next();
+            BlockState voxel = cell.voxels[e.getIntKey()];
+            MicroRotor rotor = cell.rotors[e.getIntKey()];
+            if (voxel == null || rotor == null || !(voxel.getBlock() instanceof RotaryBearingBlock) || e.getValue().gone(server)) {
+                e.getValue().letGo();
+                MicroBearings.unclear(server, e.getValue());
+                it.remove();
+                rebuild = true;
+                continue;
+            }
+            Direction f = voxel.getValue(RotaryBearingBlock.FACING);
+            rebuild |= e.getValue().tick(server, pos, cell.faceCentre(e.getIntKey(), f), f, rotor.getRpm().value());
+        }
+        if (rebuild) {
+            cell.setChanged();
+            RotationPropagator.rebuildFrom(server, pos);
+        }
+    }
+
+    /** A rotor's speed moved or its run was rebuilt: the clients hear the cell again. */
+    void syncSpin() {
+        setChanged();
+        if (level != null && !level.isClientSide)
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    // --- shape ---------------------------------------------------------------------------------
+
+    boolean hasShape() {
+        return filled != 0;
+    }
+
+    /** The filled voxels as boxes, in the cell's own space: what players walk into and see outlined. */
+    VoxelShape shape() {
+        if (shape == null)
+            shape = merge(filled);
+        return shape;
+    }
+
+    /** Greedy-merges voxels into boxes: runs along x, widened along z, stacked along y. */
+    static VoxelShape merge(long in) {
+        long on = in;
+        List<VoxelShape> boxes = new ArrayList<>();
+        for (int y = 0; y < N; y++)
+            for (int z = 0; z < N; z++)
+                for (int x = 0; x < N; x++) {
+                    if ((on >>> index(x, y, z) & 1) == 0)
+                        continue;
+                    int x1 = x;
+                    while (x1 + 1 < N && (on >>> index(x1 + 1, y, z) & 1) != 0)
+                        x1++;
+                    int z1 = z;
+                    while (z1 + 1 < N && run(on, x, x1, y, z1 + 1))
+                        z1++;
+                    int y1 = y;
+                    while (y1 + 1 < N && slab(on, x, x1, y1 + 1, z, z1))
+                        y1++;
+                    for (int yy = y; yy <= y1; yy++)
+                        for (int zz = z; zz <= z1; zz++)
+                            for (int xx = x; xx <= x1; xx++)
+                                on &= ~(1L << index(xx, yy, zz));
+                    // Block.box is in sixteenths: a voxel is four of them.
+                    boxes.add(Block.box(x * 4, y * 4, z * 4, (x1 + 1) * 4, (y1 + 1) * 4, (z1 + 1) * 4));
+                }
+        if (boxes.isEmpty())
+            return Shapes.empty();
+        return Shapes.or(boxes.get(0), boxes.subList(1, boxes.size()).toArray(VoxelShape[]::new));
+    }
+
+    private static boolean run(long on, int x0, int x1, int y, int z) {
+        for (int x = x0; x <= x1; x++)
+            if ((on >>> index(x, y, z) & 1) == 0)
+                return false;
+        return true;
+    }
+
+    private static boolean slab(long on, int x0, int x1, int y, int z0, int z1) {
+        for (int z = z0; z <= z1; z++)
+            if (!run(on, x0, x1, y, z))
+                return false;
+        return true;
+    }
+
+    /**
+     * The filled voxel a ray hit at {@code at} (a world position) on side {@code face} of the cell's
+     * shape, or -1 if the cell is empty: the point nudged a hair back into the solid, else, if a
+     * rounding error left it outside, the filled voxel nearest it.
+     */
+    public int pick(Vec3 at, Direction face) {
+        double lx = (at.x - worldPosition.getX()) * N - face.getStepX() * 1e-3;
+        double ly = (at.y - worldPosition.getY()) * N - face.getStepY() * 1e-3;
+        double lz = (at.z - worldPosition.getZ()) * N - face.getStepZ() * 1e-3;
+        int i = index(Mth.clamp((int) Math.floor(lx), 0, N - 1), Mth.clamp((int) Math.floor(ly), 0, N - 1),
+                Mth.clamp((int) Math.floor(lz), 0, N - 1));
+        if ((filled >>> i & 1) != 0)
+            return i;
+        int best = -1;
+        double bestD = Double.MAX_VALUE;
+        for (int j = 0; j < VOXELS; j++) {
+            if ((filled >>> j & 1) == 0)
+                continue;
+            double dx = Math.max(Math.max((j & 3) - lx, lx - ((j & 3) + 1)), 0);
+            double dy = Math.max(Math.max((j >> 2 & 3) - ly, ly - ((j >> 2 & 3) + 1)), 0);
+            double dz = Math.max(Math.max((j >> 4) - lz, lz - ((j >> 4) + 1)), 0);
+            double d = dx * dx + dy * dy + dz * dz;
+            if (d < bestD) {
+                best = j;
+                bestD = d;
+            }
+        }
+        return best;
+    }
+
+    // --- save and sync -------------------------------------------------------------------------
+
+    @Override
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        List<BlockState> kinds = new ArrayList<>();
+        ListTag palette = new ListTag();
+        // 0 is empty, n is palette entry n - 1; at most 64 kinds, so a byte holds it.
+        byte[] ids = new byte[VOXELS];
+        for (int i = 0; i < VOXELS; i++) {
+            if (voxels[i] == null)
+                continue;
+            int kind = kinds.indexOf(voxels[i]);
+            if (kind < 0) {
+                kind = kinds.size();
+                kinds.add(voxels[i]);
+                palette.add(NbtUtils.writeBlockState(voxels[i]));
+            }
+            ids[i] = (byte) (kind + 1);
+        }
+        tag.put("Palette", palette);
+        tag.putByteArray("Voxels", ids);
+        ListTag spin = new ListTag();
+        for (MicroRotor rotor : rotors())
+            if (rotor.liveRpm() != 0 || rotor.livePhase() != 0) {
+                CompoundTag one = new CompoundTag();
+                one.putByte("I", (byte) rotor.index());
+                one.putFloat("Rpm", rotor.liveRpm());
+                one.putFloat("Phase", rotor.livePhase());
+                spin.add(one);
+            }
+        tag.put("Spin", spin);
+        ListTag held = new ListTag();
+        for (var e : bearings.int2ObjectEntrySet()) {
+            CompoundTag one = e.getValue().save();
+            one.putByte("I", (byte) e.getIntKey());
+            held.add(one);
+        }
+        tag.put("Bearings", held);
+        tag.putInt("Clear", clear);
+        tag.putLong("Hinge", hinge);
+    }
+
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        ListTag palette = tag.getList("Palette", Tag.TAG_COMPOUND);
+        BlockState[] kinds = new BlockState[palette.size()];
+        for (int i = 0; i < kinds.length; i++)
+            kinds[i] = NbtUtils.readBlockState(registries.lookupOrThrow(Registries.BLOCK), palette.getCompound(i));
+        byte[] ids = tag.getByteArray("Voxels");
+        Arrays.fill(voxels, null);
+        filled = 0;
+        // A block that no longer exists reads back as air, and a voxel of air is no voxel.
+        for (int i = 0; i < Math.min(ids.length, VOXELS); i++) {
+            int kind = ids[i] - 1;
+            if (kind >= 0 && kind < kinds.length && !kinds[kind].isAir())
+                set(i, kinds[kind]);
+        }
+        shape = null;
+        // A load is the cell as it stands, not an edit: nothing for the propagator to undo.
+        gone.clear();
+        bearings.clear();
+        clear = tag.getInt("Clear");
+        hinge = tag.getLong("Hinge");
+        colliderDue = true;
+        ListTag held = tag.getList("Bearings", Tag.TAG_COMPOUND);
+        for (int k = 0; k < held.size(); k++) {
+            BearingJoint joint = BearingJoint.load(held.getCompound(k));
+            if (joint != null)
+                bearings.put(held.getCompound(k).getByte("I") & (VOXELS - 1), joint);
+        }
+        ListTag spin = tag.getList("Spin", Tag.TAG_COMPOUND);
+        for (int k = 0; k < spin.size(); k++) {
+            CompoundTag one = spin.getCompound(k);
+            MicroRotor rotor = rotors[one.getByte("I") & (VOXELS - 1)];
+            if (rotor != null)
+                rotor.load(one.getFloat("Rpm"), one.getFloat("Phase"));
+        }
+    }
+
+    @Override
+    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        return saveWithoutMetadata(registries);
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+}

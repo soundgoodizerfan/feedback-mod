@@ -19,7 +19,6 @@
   ],
   "rewards": {
     "recipes": [
-      "feedback:boiler",
       "feedback:steam_engine",
       "feedback:steam_turbine",
       "feedback:annealing_furnace",

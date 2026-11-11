@@ -79,7 +79,7 @@ Grips are turned on the [Lathe](Lathe.md) from a stick, a bone or a bamboo stalk
 
 A [Boiler](Boiler.md) with nowhere to send its steam builds pressure:
 
-- **Weeping:** above 3.5 Pu its seams leak. It hisses, vents a cloud, and **scalds** anyone within about 1.5 blocks for 1 heart at a time.
+- **Weeping:** above 3.5 Pu (on a shell with a 5 Pu danger line; see [Boiler](Boiler.md#designing-and-building)) its seams leak. It hisses, vents a cloud, and **scalds** anyone within about 1.5 blocks for 1 heart at a time.
 - **Bursting:** a boiler that keeps climbing explodes, wrecking blocks and scalding everyone within 4 blocks for 4 hearts.
 
 Steam gets in under a glove. Only **Fire Resistance** helps.

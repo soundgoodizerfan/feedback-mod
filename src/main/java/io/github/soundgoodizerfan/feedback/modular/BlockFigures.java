@@ -30,7 +30,7 @@ public final class BlockFigures {
         if (!roleKey.equals(ROLE))
             return switch (idOf(type) + "/" + roleKey) {
                 case "heat_exchanger/F" -> material.thermal().conductivity().isPresent();
-                case "water_wheel/R", "pump/V", "compressor/I", "burner/F", "hand_crank/G", "electromagnet/Y", "galvanic_cell/C", "lamp/B" -> material.density().muPerMb() > 0;
+                case "water_wheel/R", "pump/V", "compressor/I", "burner/F", "hand_crank/G", "electromagnet/Y", "boiler/B", "large_boiler/B", "flywheel/B", "flywheel/G", "galvanic_cell/C", "lamp/B" -> material.density().muPerMb() > 0;
                 case "thermal_store/I" -> true;
                 case "thermal_store/F" -> material.density().muPerMb() > 0;
                 case "leyden_jar/F" -> material.ampacity().isPresent();
@@ -39,7 +39,8 @@ public final class BlockFigures {
             };
         return switch (idOf(type)) {
             case "heat_exchanger" -> material.thermal().conductivity().isPresent();
-            case "gas_tank" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0
+            case "flywheel" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0 && material.mechanical().yieldStrength().isPresent();
+            case "gas_tank", "boiler", "large_boiler" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0
                     && material.mechanical().yieldStrength().isPresent();
             case "water_wheel", "pump", "compressor", "burner", "hand_crank" -> material.density().muPerMb() > 0;
             case "galvanic_cell" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0;
@@ -188,6 +189,29 @@ float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK 
                 float g = role.axis(part, "gauge") / 50f;
                 out.putFloat("Amps", 0.5f * g * g * ModularBake.param(type, part, "amps", 1f));
                 out.putFloat("Burnout", 1.5f * ModularBake.param(type, part, "tough", 1f) * (0.6f + 0.4f * g) * (design.part("B") == null ? 1f : 1.2f));
+            }
+            // A boiler is a shell like the vessel's: the shell sets the pressure it risks and gives way at, and the pressure its seams weep and its valve opens at follow it.
+            case "boiler", "large_boiler" -> {
+                Optional<ModularBake.TankSpec> t = ModularBake.tank(design, type, materials);
+                if (t.isEmpty())
+                    return Optional.empty();
+                out.putFloat("Danger", t.get().dangerPu());
+                out.putFloat("Critical", t.get().criticalPu());
+            }
+            // Disc: momentum goes with the fourth power of the radius and the thickness; the rim speed it survives falls as it grows (the rim moves faster at the same RPM)
+            // and rises with the metal's strength over density; the variant trades mass against rim strength. Bands (an addon) hold the rim; a bearing (an addon) cuts the drag.
+            case "flywheel" -> {
+                float r = role.axis(part, "radius") / 50f, th = role.axis(part, "thickness") / 10f;
+                float inertia = 400f * r * r * r * r * th * ModularBake.param(type, part, "mass", 1f) * (float) m.density().muPerMb() / 7.2f;
+                float yield = m.mechanical().yieldStrength().get().value();
+                Part bands = design.part("B");
+                Material bm = bands == null ? null : materials.get(bands.material());
+                float rim = 44f * (float) Math.sqrt(yield / m.density().muPerMb()) / r * ModularBake.param(type, part, "rim", 1f);
+                if (bm != null && bm.mechanical().yieldStrength().isPresent())
+                    rim *= 1f + 0.25f * bm.mechanical().yieldStrength().get().value() / (bm.mechanical().yieldStrength().get().value() + yield);
+                out.putFloat("Inertia", inertia);
+                out.putFloat("RimRpm", rim);
+                out.putFloat("Drag", 0.2f * r * (design.part("G") == null ? 1f : 0.7f));
             }
             default -> {
             }

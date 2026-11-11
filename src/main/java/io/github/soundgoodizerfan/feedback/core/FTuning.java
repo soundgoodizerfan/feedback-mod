@@ -5,6 +5,7 @@ package io.github.soundgoodizerfan.feedback.core;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
@@ -128,6 +129,41 @@ public final class FTuning {
     /** Invented. A gearbox is a crowded little box of bevels: more friction than a bare shaft. */
     public static final Drag GEARBOX_DRAG_SU_PER_RPM = new Drag(0.2f);
     public static final Inertia GEARBOX_INERTIA = new Inertia(4f);
+    /**
+     * Placeholder. The Rotation Adapter ({@code docs/specs/feedback_micro_spec.md}, micro rotation): a
+     * small housing of bevels from one full-size shaft to four quarter ones, so a gearbox's figures.
+     */
+    public static final Drag ROTATION_ADAPTER_DRAG_SU_PER_RPM = new Drag(0.2f);
+    public static final Inertia ROTATION_ADAPTER_INERTIA = new Inertia(4f);
+    /**
+     * Placeholders. The Rotary Bearing and Ring Gear ({@code docs/specs/feedback_micro_spec.md}, bearings):
+     * a gearbox's drag and mass for the housing; the biggest body one turns (Lift's figure is 4096,
+     * a bearing's load is an arm, not a car); and the turned body's moment of inertia (kpg x block^2)
+     * counted on the run as a flywheel would be.
+     */
+    public static final Drag ROTARY_BEARING_DRAG_SU_PER_RPM = new Drag(0.2f);
+    public static final Inertia ROTARY_BEARING_INERTIA = new Inertia(4f);
+    public static final int ROTARY_BEARING_MAX_BLOCKS = 1024;
+    /** Placeholder. The most voxels a micro bearing turns: a quarter of a full-size bearing's block cap, in voxels. */
+    public static final int ROTARY_BEARING_MAX_VOXELS = 16384;
+    /**
+     * Placeholders. The bearing's speed drive (BearingJoint): how fast, per second, the body's spin
+     * closes on the run's speed (a first-order lag, solved exactly, so stable at any step); the most
+     * torque it applies (kpg x block^2 / s^2), so a jammed body is not wound up; and the least inertia
+     * it assumes, so a body Sable has not weighed yet still gets a pull.
+     */
+    public static final double ROTARY_BEARING_DRIVE_RATE = 20;
+    public static final double ROTARY_BEARING_MAX_TORQUE = 5000;
+    public static final double ROTARY_BEARING_MIN_INERTIA = 0.05;
+    /**
+     * Placeholders. How fast a bearing may change its arm's speed against its parent, rad/s^2 (16 RPM
+     * is reached in about half a second); and how fast its reaction may spin a parent body, rad/s^2,
+     * as a share of that body's own inertia -- so a light car is twisted gently enough for its weight
+     * and the ground to hold it, and its arm spins up as slowly as that demands.
+     */
+    public static final double ROTARY_BEARING_MAX_ACCEL = 4;
+    public static final double ROTARY_BEARING_MAX_PARENT_ACCEL = 0.5;
+    public static final float ROTARY_BEARING_INERTIA_PER_KPG_BLOCK2 = 0.5f;
 
     /** Invented. A generator is a lump of mass too; without this a bare source has no momentum. */
     public static final Inertia HAND_CRANK_INERTIA = new Inertia(4f);
@@ -3144,6 +3180,13 @@ public final class FTuning {
     public static final float STEER_ASSIST_FULL_RPM = 16f, STEER_ASSIST_DRAW = 0.1f;
     public static final float STEER_SERVO_DAMPING_RATIO = 0.7f;
     /**
+     * Placeholder. The share of its turning rate a free hinge or ball takes off the swinging body each
+     * second (1/s): an arm let go comes to rest in a few seconds rather than swinging for ever. A
+     * bearing is not frictionless, and this is Create Simulated's unpowered-swivel friction (MIT)
+     * without a stiffness; it is a rate on the body's inertia, so a heavy arm settles as fast as a light one.
+     */
+    public static final float BEARING_DAMPING_RATE = 2f;
+    /**
      * Invented. How hard a brake's pads clamp at full brake, as a torque before the pad's
      * friction: {@code brake x friction x this} is what the brake holds at the hub. With an iron
      * pad (0.6) about 1.5 kN m, which locks a wheel under a quarter of a tonne -- so a full brake
@@ -3515,6 +3558,8 @@ public final class FTuning {
     public static final float THRUSTER_FORCE = 20000f, THRUSTER_FUEL_MB_PER_TICK = 1f;
     /** Invented. Air drag on every body (kpg per block): force is this times relative air density times speed squared, so a thruster body's terminal speed is sqrt(thrust / this) (about 20 blocks/s for one reference thruster). Drivetrain frames drag by silhouette instead. */
     public static final float AIR_DRAG = 50f;
+    /** Invented. Air drag of a body of micro cells (kpg per block of cross-section, which is a cube's of its voxels): {@link #AIR_DRAG} is tuned for heavy thruster bodies and holds a small light one to under 1 block/s. This puts a stone block's terminal speed near 40 blocks/s. */
+    public static final float MICRO_AIR_DRAG = 0.6f;
     /** Invented. Tunnelling guard: the farthest (blocks) a thruster body may move in one physics step; its speed ceiling is this over the step. Sable steps 1/40 s by default (2 substeps), so 1.0 is 40 blocks/s, above the ~20 blocks/s drag terminal speed of one thruster. */
     public static final float THRUSTER_MAX_STEP_BLOCKS = 1.0f;
     /** Invented. Air thinner than this share of the overworld's gives an air-breathing thruster nothing to burn. */
@@ -3841,4 +3886,23 @@ public final class FTuning {
     public static final float PROP_WEAR_PER_TICK = 0.002f, PROP_CONDITION_FLOOR = 0.2f;
     /** Real-world derived. Water over air by density, for a screw in water. */
     public static final float WATER_OVER_AIR_DENSITY = 816f;
+    /**
+     * Placeholder (micro-blocks, {@code docs/specs/feedback_micro_spec.md}). The density a voxel weighs at
+     * when no material file claims its block, roughly rock's: a voxel is 1/64 of a block's 1000 mB
+     * times its block's material density, and a block nobody has weighed still has to weigh something.
+     */
+    public static final Density MICRO_FALLBACK_DENSITY = new Density(2.5f);
+    /**
+     * Placeholder (micro rotation, {@code docs/specs/feedback_micro_spec.md}). A quarter-size rotation
+     * voxel's inertia over its full-size part's: mass times radius squared, mass by volume (1/64,
+     * as a voxel's mass already is) and radius by size (1/4), so (1/4)^5.
+     */
+    public static final float MICRO_ROTATION_INERTIA_SCALE = 1f / 1024f;
+    /**
+     * Placeholder (micro rotation). A rotation voxel's drag over its full-size part's: by length, so
+     * four micro shafts across a block drag as one full shaft does. Drag is the price of a run per
+     * block of layout ({@link #SHAFT_DRAG_SU_PER_RPM}); a smaller bearing's lower friction is left out
+     * so micro shafting is not a free way past "a long run turns slower".
+     */
+    public static final float MICRO_ROTATION_DRAG_SCALE = 0.25f;
 }

@@ -1,0 +1,152 @@
+{
+  "selector": "feedback:micro_cell",
+  "properties": {
+    "sable:mass": 0.002
+  },
+  "overrides": {
+    "load=0": {
+      "sable:mass": 0.002
+    },
+    "load=1": {
+      "sable:mass": 0.00252
+    },
+    "load=2": {
+      "sable:mass": 0.003175
+    },
+    "load=3": {
+      "sable:mass": 0.004
+    },
+    "load=4": {
+      "sable:mass": 0.00504
+    },
+    "load=5": {
+      "sable:mass": 0.00635
+    },
+    "load=6": {
+      "sable:mass": 0.008
+    },
+    "load=7": {
+      "sable:mass": 0.010079
+    },
+    "load=8": {
+      "sable:mass": 0.012699
+    },
+    "load=9": {
+      "sable:mass": 0.016
+    },
+    "load=10": {
+      "sable:mass": 0.020159
+    },
+    "load=11": {
+      "sable:mass": 0.025398
+    },
+    "load=12": {
+      "sable:mass": 0.032
+    },
+    "load=13": {
+      "sable:mass": 0.040317
+    },
+    "load=14": {
+      "sable:mass": 0.050797
+    },
+    "load=15": {
+      "sable:mass": 0.064
+    },
+    "load=16": {
+      "sable:mass": 0.080635
+    },
+    "load=17": {
+      "sable:mass": 0.101594
+    },
+    "load=18": {
+      "sable:mass": 0.128
+    },
+    "load=19": {
+      "sable:mass": 0.16127
+    },
+    "load=20": {
+      "sable:mass": 0.203187
+    },
+    "load=21": {
+      "sable:mass": 0.256
+    },
+    "load=22": {
+      "sable:mass": 0.32254
+    },
+    "load=23": {
+      "sable:mass": 0.406375
+    },
+    "load=24": {
+      "sable:mass": 0.512
+    },
+    "load=25": {
+      "sable:mass": 0.64508
+    },
+    "load=26": {
+      "sable:mass": 0.812749
+    },
+    "load=27": {
+      "sable:mass": 1.024
+    },
+    "load=28": {
+      "sable:mass": 1.290159
+    },
+    "load=29": {
+      "sable:mass": 1.625499
+    },
+    "load=30": {
+      "sable:mass": 2.048
+    },
+    "load=31": {
+      "sable:mass": 2.580318
+    },
+    "load=32": {
+      "sable:mass": 3.250997
+    },
+    "load=33": {
+      "sable:mass": 4.096
+    },
+    "load=34": {
+      "sable:mass": 5.160637
+    },
+    "load=35": {
+      "sable:mass": 6.501995
+    },
+    "load=36": {
+      "sable:mass": 8.192
+    },
+    "load=37": {
+      "sable:mass": 10.321273
+    },
+    "load=38": {
+      "sable:mass": 13.003989
+    },
+    "load=39": {
+      "sable:mass": 16.384
+    },
+    "load=40": {
+      "sable:mass": 20.642546
+    },
+    "load=41": {
+      "sable:mass": 26.007979
+    },
+    "load=42": {
+      "sable:mass": 32.768
+    },
+    "load=43": {
+      "sable:mass": 41.285093
+    },
+    "load=44": {
+      "sable:mass": 52.015958
+    },
+    "load=45": {
+      "sable:mass": 65.536
+    },
+    "load=46": {
+      "sable:mass": 82.570186
+    },
+    "load=47": {
+      "sable:mass": 104.031915
+    }
+  }
+}

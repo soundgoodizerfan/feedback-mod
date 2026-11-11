@@ -12,6 +12,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Chassis Frame** | The block a welded frame is built around. |
 | **Welder** | Places points, joins them with tubes, lays plates between them, and welds points to blocks. |
 | **Pivot Setter** | Turns a point into a hinge, a steered hinge, a control surface, a ball joint or a locked joint. |
+| **[Micro Core](Micro_Core.md)** | Starts a micro-block build: see [Micro-blocks](#micro-blocks). |
 | **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
 | **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
@@ -35,6 +36,14 @@ A lift that's part of a vehicle itself can't lift anything.
 ### Carrying a creation
 
 Right-click any creation with a **Lift item** and the whole thing goes *into the item*, with every block and everything in every chest: *"Picked up (N blocks)."* Clicking any part of a vehicle -- a swinging arm included -- takes the whole vehicle. Two vehicles welded frame to frame can't be carried as one: cut the joint first. The tooltip shows how big it is. Right-click the ground to set it back down on a new lift, already held. If anything is in the way you'll get *"No room to put it down here,"* and nothing is placed.
+
+## Micro-blocks
+
+Use a [Micro Core](Micro_Core.md) on a block and a **micro cell** appears, holding voxels a quarter of a block on a side: up to 64 to a cell. Hold a block and right-click to fill a voxel; mine a voxel to take it out. A cell weighs its voxels by what they are made of, and a micro build lifts on a [Lift](#the-lift) like any other. Bodies collide voxel by voxel, so several spinning arms fit in one block as long as their voxels never meet.
+
+Micro shafts, cogs and bearings join full-size rotation through a [Rotation Adapter](Rotation_Adapter.md).
+
+**Turning a built piece.** A [Rotary Bearing](Rotary_Bearing.md) or [Ring Gear](Ring_Gear.md) on the face of a shaft end, gearbox or cog turns what is built in front of it, blocks and micro cells alike, as one piece. A bearing also works on something that moves, a car or the arm of another bearing: the part it turns pushes back on what carries it.
 
 ## Building a frame
 
@@ -130,6 +139,16 @@ Look at a point and right-click:
 - If the point is part of a Welder selection you built by **clicking points one by one**, whatever you do to it happens to every point in the selection (a box selection doesn't do this).
 
 Use hinges and ball joints that **spin free** to make things like suspension arms. Weld the inner end to a block, set it to a hinge, and the arm swings. When the vehicle is lifted, each piece of the frame between free hinges or ball joints becomes its own moving part, hanging on its joints; a piece welded straight to a block moves with the vehicle.
+
+### Stator and rotor
+
+A hinge or ball can have a **rotor**, a second point that is the moving side:
+
+1. Place a point and set it to a hinge or ball with the Pivot Setter. It is the **stator**, and it belongs to the body the bearing sits on.
+2. With the stator still selected, use **Place points** again. The new point becomes the **rotor**, exactly **one grid step** (1/16 block) from the stator along the axis your click leans toward. It is drawn dark orange.
+3. Connect tubes and plates to the **rotor**. Everything attached to it is the moving part; everything attached to the stator stays with the body.
+
+The line from stator to rotor is a hinge's axis, so there is no axis to guess. The two sides share no point, and the stator-rotor link joins nothing by itself. Turning the stator back to a plain point, a locked joint or a slider removes the rotor link. Hubs, steering, differentials and drive lines still use the one-point bearings above for now.
 
 If you change bearings on a vehicle that's already lifted, lower it back to blocks and lift it again to be sure the new layout takes.
 

@@ -11,13 +11,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,9 +29,9 @@ import java.util.Locale;
  * section 4a). Look at a point and use:
  *
  * <ul>
- *   <li><b>A point of a frame</b> cycles it plain, hinge, steered hinge, ball, locked, plain. A
- *       steered hinge is a kingpin: the frame's steering level turns it (spec section 5,
- *       <em>Steering</em>). On a frame not
+ *   <li><b>A point of a frame</b> cycles it plain, hinge, steered hinge, ball, locked, slider,
+ *       plain. A steered hinge is a kingpin: the frame's steering level turns it (spec section 5,
+ *       <em>Steering</em>); a slider is the running gear's spring. On a frame not
  *       yet a body it is only recorded and wakes up when the chassis is assembled; on a vehicle
  *       it takes effect at once, the cut part going back to its rest pose as it is re-made.</li>
  *   <li><b>A point with a joint on it</b> -- two frames welded or already bearing -- cycles that
@@ -39,6 +42,9 @@ import java.util.Locale;
  *       the size up, large wrapping to small, as tubes do. Cycling the hinge away takes the tire off.</li>
  *   <li><b>A hub, sneaking, with a block in the off hand</b>, is given a brake lined with that
  *       block's material; the same material again takes it off.</li>
+ *   <li><b>A second Pivot Setter in the off hand</b> sets the running gear's finer choices: sneaking
+ *       on a hub or a slider steps its spring band, soft / stock / stiff; not sneaking on a driving
+ *       point with no tire steps its differential, none / open / limited slip / locked.</li>
  * </ul>
  *
  * <p>The tool is a switch, not a dial: a bearing is one of a few named things, never a stiffness
@@ -58,18 +64,10 @@ public class PivotItem extends Item {
         super(properties);
     }
 
-    /**
-     * Claims the click before the block under the crosshair gets it. Points hang in the air where
-     * vanilla's block hit cannot see them, so a point in front of an engine used to send the click
-     * to the engine -- switching it on and off -- and never to this tool (playtest 2026-10-16).
-     * Near a frame, every click is the tool's.
-     */
+    /** Claims the click before the block under the crosshair gets it, as the Welder does: near a frame, every click is the tool's. */
     @Override
-    public net.minecraft.world.InteractionResult onItemUseFirst(ItemStack stack, net.minecraft.world.item.context.UseOnContext context) {
-        Player player = context.getPlayer();
-        if (player == null || WelderItem.aim(context.getLevel(), player) == null)
-            return net.minecraft.world.InteractionResult.PASS;
-        return use(context.getLevel(), player, context.getHand()).getResult();
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        return WelderItem.claim(this, context);
     }
 
     /**
@@ -79,7 +77,7 @@ public class PivotItem extends Item {
      */
     private static void spread(Player player, FrameBlockEntity be, int hit) {
         Frame frame = be.frame();
-        List<Integer> also = new java.util.ArrayList<>();
+        List<Integer> also = new ArrayList<>();
         for (ItemStack s : player.getInventory().items)
             if (s.getItem() instanceof WelderItem) {
                 WelderSelected sel = WelderItem.selected(s, be);
@@ -103,6 +101,12 @@ public class PivotItem extends Item {
         }
         Symmetry.copyPoint(frame, hit);
         also.forEach(v -> Symmetry.copyPoint(frame, v));
+    }
+
+    /** Whether {@code item}'s material has a friction figure: with none it is neither a tread nor a brake lining. */
+    private static boolean grips(Item item) {
+        return Material.find(MaterialTable.get().materials(), item).map(m -> m.material().mechanical())
+                .flatMap(Material.Mechanical::friction).isPresent();
     }
 
     @Override
@@ -137,12 +141,12 @@ public class PivotItem extends Item {
             return InteractionResultHolder.consume(stack);
         }
         Frame.Pivot was = frame.pivots().get(hit);
-        ResourceLocation stock = FrameMaterial.plate(player.getOffhandItem());
-        if (!player.isShiftKeyDown() && was != null && was.kind() == FrameJoint.Kind.HINGE && stock != null) {
-            ResourceLocation material = stock;
+        ResourceLocation material = FrameMaterial.plate(player.getOffhandItem());
+        // A kingpin or a stator takes no tire (Frame.setTire): there the click cycles it, as without a block.
+        if (!player.isShiftKeyDown() && was != null && was.kind() == FrameJoint.Kind.HINGE && !was.steers()
+                && !frame.rotors().containsKey(hit) && material != null) {
             Block block = BuiltInRegistries.BLOCK.get(material);
-            if (Material.find(MaterialTable.get().materials(), block.asItem()).map(m -> m.material().mechanical())
-                    .flatMap(Material.Mechanical::friction).isEmpty()) {
+            if (!grips(block.asItem())) {
                 player.displayClientMessage(Component.translatable("message.feedback.tire.no_grip"), true);
                 return InteractionResultHolder.consume(stack);
             }
@@ -186,8 +190,7 @@ public class PivotItem extends Item {
         }
         if (player.isShiftKeyDown() && frame.tires().containsKey(hit) && player.getOffhandItem().getItem() instanceof BlockItem block) {
             ResourceLocation pad = BuiltInRegistries.BLOCK.getKey(block.getBlock());
-            if (Material.find(MaterialTable.get().materials(), block).map(m -> m.material().mechanical())
-                    .flatMap(Material.Mechanical::friction).isEmpty()) {
+            if (!grips(block)) {
                 player.displayClientMessage(Component.translatable("message.feedback.tire.no_grip"), true);
                 return InteractionResultHolder.consume(stack);
             }
@@ -207,28 +210,37 @@ public class PivotItem extends Item {
             }
             frame.setPivot(hit, was.withDrive(!was.drives()));
         } else {
-            boolean hinge = was != null && was.kind() == FrameJoint.Kind.HINGE;
+            if (frame.rotors().containsValue(hit)) {
+                player.displayClientMessage(Component.translatable("message.feedback.pivot.is_rotor"), true);
+                return InteractionResultHolder.consume(stack);
+            }
+            boolean stator = frame.rotors().containsKey(hit);
+            boolean hinge = !stator && was != null && was.kind() == FrameJoint.Kind.HINGE;
             // A hinge steps through its roles -- plain, steered, then the control surfaces (roll, pitch and
             // yaw, each in both senses) -- and then on to a ball; every role keeps the hinge's axis, so
-            // one look sets them all.
+            // one look sets them all. A stator only swaps hinge and ball, keeping its rotor.
             int role = hinge ? (was.steers() ? 1 : was.surface() == 0 ? 0 : 2 + SURFACES.indexOf(was.surface())) : -1;
             boolean stay = hinge && role + 1 <= 1 + SURFACES.size();
-            FrameJoint.Kind next = was == null ? FrameJoint.Kind.HINGE : stay ? FrameJoint.Kind.HINGE : switch (was.kind()) {
+            FrameJoint.Kind next = stator ? (was.kind() == FrameJoint.Kind.HINGE ? FrameJoint.Kind.BALL : FrameJoint.Kind.HINGE)
+                    : was == null || stay ? FrameJoint.Kind.HINGE : switch (was.kind()) {
                 case HINGE -> FrameJoint.Kind.BALL;
                 case BALL -> FrameJoint.Kind.LOCKED;
                 case LOCKED -> FrameJoint.Kind.SLIDER;
                 default -> null;
             };
-            Vec3 axis = was != null ? was.axis() : null;
-            if (was == null) {
-                Vec3 along = WelderItem.tubeDirection(frame, hit);
-                axis = along != null ? along : WelderItem.nearestAxis(aim.look());
-            }
+            Vec3 along = was == null ? WelderItem.tubeDirection(frame, hit) : null;
+            Vec3 axis = was != null ? was.axis() : along != null ? along : WelderItem.nearestAxis(aim.look());
             Frame.Pivot made = next == null ? null : new Frame.Pivot(next, axis != null ? axis : new Vec3(0, 1, 0),
                     was != null && was.drives(), stay && role + 1 == 1);
             if (made != null && stay && role + 1 >= 2)
                 made = made.withSurface(SURFACES.get(role + 1 - 2));
             frame.setPivot(hit, made);
+            if (was == null) {
+                // The first click from one side makes the stator: its rotor goes one step on, the way you look.
+                Frame.Vertex s = frame.vertices().get(hit);
+                WelderItem.placeRotor(player, frame, hit, new Frame.Vertex(s.x() + (int) Math.round(aim.look().x * 8),
+                        s.y() + (int) Math.round(aim.look().y * 8), s.z() + (int) Math.round(aim.look().z * 8)));
+            }
         }
         spread(player, be, hit);
         be.changed();

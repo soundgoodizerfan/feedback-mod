@@ -24,6 +24,9 @@ import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
 import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
 import io.github.soundgoodizerfan.feedback.fitting.upgrade.ReliefValveFitting;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -63,6 +66,29 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB * scaleOf(getBlockState()),
             stack -> stack.is(FTags.STEAM), this::setChanged);
+
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
+    private float dangerPu() {
+        return figures.get("Danger", FTuning.PRESSURE_VESSEL_DANGER_PU.value());
+    }
+
+    /** The shell's danger line over the fixed one: a stronger shell lifts the pressure its valve and seams are set at with it. */
+    private float shellScale() {
+        return dangerPu() / FTuning.PRESSURE_VESSEL_DANGER_PU.value();
+    }
 
     public BoilerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.BOILER.get(), pos, state);
@@ -213,7 +239,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     private void holdPressure() {
         Pu pressure = getPressure();
-        float relief = pressure.value() - FTuning.BOILER_RELIEF_PU.value();
+        float relief = pressure.value() - FTuning.BOILER_RELIEF_PU.value() * shellScale();
         if (relief > 0f && hasReliefValve()) {
             // Venting un-traps a full tank, which drops the over-temperature term with it -- so
             // pressure is re-read: the seams only weep if the valve could not keep up.
@@ -225,7 +251,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
             }
             pressure = getPressure();
         }
-        float over = pressure.value() - FTuning.BOILER_SEEP_PU.value();
+        float over = pressure.value() - FTuning.BOILER_SEEP_PU.value() * shellScale();
         if (over > 0f) {
             int lost = Math.min(steamTank.getFluidAmount(),
                     Math.max(1, Math.round(over * FTuning.BOILER_SEEP_MB_PER_PU)));
@@ -241,8 +267,8 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         } else if (weptAt >= 0) {
             weptAt = -1;
         }
-        if (PressureBurst.fails(pressure, FTuning.PRESSURE_VESSEL_DANGER_PU,
-                FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random)) {
+        if (PressureBurst.fails(pressure, new Pu(dangerPu()),
+                new Pu(figures.get("Critical", FTuning.PRESSURE_VESSEL_CRITICAL_PU.value())), level.random)) {
             steamTank.setFluid(FluidStack.EMPTY);
             tank.setFluid(FluidStack.EMPTY);
             PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
@@ -281,6 +307,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.putFloat("Temperature", temperature);
         tag.put("WaterTank", tank.writeToNBT(registries, new CompoundTag()));
         tag.put("SteamTank", steamTank.writeToNBT(registries, new CompoundTag()));
@@ -291,6 +318,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         if (tag.contains("WaterTank"))
             tank.readFromNBT(registries, tag.getCompound("WaterTank"));

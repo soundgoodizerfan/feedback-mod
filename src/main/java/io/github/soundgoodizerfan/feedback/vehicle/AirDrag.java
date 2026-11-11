@@ -17,6 +17,7 @@ import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -61,9 +62,17 @@ public final class AirDrag {
             double density = AirDensityTable.at(level, body.logicalPose().position().y());
             Vector3d back = body.logicalPose().transformNormalInverse(new Vector3d(vel).div(speed), new Vector3d()).negate();
             ForceTotal force = new ForceTotal();
+            // A body of micro cells drags by its size: the constant below is tuned for a heavy thruster
+            // body and would hold a small light one to a crawl. Its cross-section is a cube's of its voxels.
+            int voxels = 0;
+            for (BlockEntitySubLevelActor a : body.getPlot().getBlockEntityActors())
+                if (a instanceof MicroCellBlockEntity cell)
+                    voxels += cell.voxelCount();
+            double drag = voxels == 0 ? FTuning.AIR_DRAG
+                    : FTuning.MICRO_AIR_DRAG * Math.pow(voxels, 2.0 / 3) / (MicroCellBlockEntity.N * MicroCellBlockEntity.N);
             if (density > 0 && !frameBodies.contains(body.getUniqueId()))
                 force.applyLinearImpulse(new Vector3d(back).mul(
-                        Math.min(FTuning.AIR_DRAG * density * speed * speed * dt, mass * speed)));
+                        Math.min(drag * density * speed * speed * dt, mass * speed)));
             // shortcut: speed ceiling = BODY_MAX_STEP_BLOCKS / step, a tunnelling guard against walls, only
             // for bodies with a thruster (the ones that outrun it); upgrade to continuous collision if
             // other bodies need it.
