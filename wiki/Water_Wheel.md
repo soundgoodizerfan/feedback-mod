@@ -16,6 +16,12 @@ A 200 cm wheel with 8 buckets makes 256 Su and turns 4 RPM for each flowing side
 
 At the [Woodworking Table](Woodworking_Table.md), put the Water Wheel Blueprint in the blueprint slot and shape the rim from planks. The Water Wheel comes out with the design, and the blueprint is kept. Its tooltip shows the Su it makes, the RPM per flowing side and its momentum. Breaking the block gives the same wheel back.
 
+## Addons
+
+An addon is an optional extra part made from raw stock, added when you assemble the wheel or by reworking a finished one. The wheel works without it.
+
+- **Rim ring** (plate): adds momentum by the metal's density, so a denser metal adds more. The wheel is slower to spin up.
+
 ## Using it
 
 Place it with **flowing water** against it. Its axle runs along the face you place it on, and shafts connect at either end of the axle.

@@ -138,6 +138,7 @@ public final class ModularStacks {
                 tag.putFloat("Danger", v.dangerPu());
                 tag.putFloat("Critical", v.criticalPu());
                 tag.putFloat("Mass", v.mass());
+                tag.putFloat("Relief", v.reliefMb());
                 stack.set(FDataComponents.PRESSURE_VESSEL.get(), tag);
             });
         if (type.family() == ModularType.Family.ENGINE)

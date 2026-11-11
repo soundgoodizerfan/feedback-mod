@@ -15,6 +15,15 @@ At the [Smithing Table](Smithing_Table.md), put the Gas Tank Blueprint in the bl
 - **Right-click** with an empty hand to read what it holds and its pressure. A [Pressure Gauge](Instruments.md#pressure-gauge) reads the pressure too.
 - Its gas cools toward the air around it.
 
+## Addons
+
+An addon is an optional extra part made from raw stock, added when you assemble the tank or by reworking a finished one. The tank works without either; each only adds.
+
+| Addon | Stock | What it does |
+| --- | --- | --- |
+| **Hoop bands** | rod | Bands round the shell. A band metal stronger than the shell's raises the danger line, by up to 60% at best. |
+| **Relief valve** | nugget | Opens above 90% of the danger line and vents gas, so a compressor that outruns what you draw off cannot burst the tank. |
+
 ## It can burst
 
 Over the danger line on its tooltip the tank can burst, the chance climbing as the pressure does. At the critical pressure it is certain. The gas is lost with it, in an explosion. The only way to reach that line is to compress more in than you draw off. Burning the gas off or using it keeps the pressure down.

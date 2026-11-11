@@ -180,7 +180,7 @@ public final class ModularBake {
             // a module's wiring must conduct; its casing and core take any material their shapes accept
             case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
             // a shell holds pressure by its yield strength: a metal that states none cannot be rated
-            case BLOCK -> BlockFigures.suits(type, material);
+            case BLOCK -> BlockFigures.suits(type, roleKey, material);
             case PRESSURE -> engineMetal(material) && material.mechanical().yieldStrength().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
             // A coilgun's winding is a conductor that holds a field and has a quench point: the rest cannot wind a gun.
@@ -237,7 +237,7 @@ public final class ModularBake {
     /** The role letters of the propeller's two parts. */
     public static final String PROP_HUB = "H", PROP_BLADES = "B";
     /** The role letter of the pressure vessel's shell. */
-    public static final String TANK_SHELL = "S";
+    public static final String TANK_SHELL = "S", TANK_BANDS = "B", TANK_VALVE = "V";
     public static final String GEAR_SET = "G", GEAR_SYNCHRO = "S", GEAR_CASE = "H";
 
     /** A weighed metal: what an engine or gearbox part is cast from. */
@@ -309,8 +309,9 @@ public final class ModularBake {
      * @param dangerPu   the pressure past which it starts to risk letting go.
      * @param criticalPu the pressure at which it lets go outright.
      * @param mass       the shell's weight against a plain one (the wall and the metal's density).
+     * @param reliefMb   mB of air a relief valve lets out each tick once the pressure nears the danger line; 0 with no valve.
      */
-    public record TankSpec(float volumeMb, float dangerPu, float criticalPu, float mass) {
+    public record TankSpec(float volumeMb, float dangerPu, float criticalPu, float mass, float reliefMb) {
     }
 
     /**
@@ -334,7 +335,16 @@ public final class ModularBake {
         float room = 2f * inner / (2f * ModularTuning.TANK_HALF_CM);
         float volume = ModularTuning.TANK_CUBE_MB * fill * room * room * room;
         float steel = m.density().muPerMb() * wall / ModularTuning.TANK_REF_WALL_CM;
-        return Optional.of(new TankSpec(volume, danger, danger * ModularTuning.TANK_CRITICAL_OVER_DANGER, steel));
+        // Bands (an addon): hoop bands of their own metal share the load, the more the stronger they are against the shell.
+        Part bands = design.part(TANK_BANDS);
+        Material bm = bands == null ? null : materials.get(bands.material());
+        if (bm != null && bm.mechanical().yieldStrength().isPresent()) {
+            float shellYield = m.mechanical().yieldStrength().get().value(), bandYield = bm.mechanical().yieldStrength().get().value();
+            danger *= 1f + ModularTuning.TANK_BANDS_GAIN * bandYield / (bandYield + shellYield);
+        }
+        // A relief valve (an addon) vents a share of the room a tick near the danger line, so a pump that outruns the leak still cannot burst it.
+        float relief = design.part(TANK_VALVE) == null ? 0f : volume * ModularTuning.TANK_RELIEF_PER_ROOM;
+        return Optional.of(new TankSpec(volume, danger, danger * ModularTuning.TANK_CRITICAL_OVER_DANGER, steel, relief));
     }
 
     /**

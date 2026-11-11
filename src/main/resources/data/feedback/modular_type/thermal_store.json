@@ -38,6 +38,24 @@
           }
         ]
       }
+    },
+    "I": {
+      "name": "lagging",
+      "forms": [
+        "*_carpet"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 2
+    },
+    "F": {
+      "name": "salt_fill",
+      "forms": [
+        "raw"
+      ],
+      "litres": 0.02,
+      "layer": 2,
+      "bulk": 4
     }
   },
   "patterns": [

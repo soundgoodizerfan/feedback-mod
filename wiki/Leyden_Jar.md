@@ -23,6 +23,15 @@ Put it on a line with a source. It switches between two jobs on its own:
 
 A jar at the default area and wall holds **10 amp-ticks per volt**. One Electrostatic Generator pulse (1 A for 20 ticks) fills it to the generator's 1.5 V with a little to spare.
 
+## Addons
+
+An addon is an optional extra part made from raw stock, added when you assemble the jar or by reworking a finished one. The jar works without either; each only adds.
+
+| Addon | Stock | What it does |
+| --- | --- | --- |
+| **Foil** | foil | Burst current scales with the metal's ampacity. |
+| **Outer sleeve** | glass tubing | A second insulator over the jar; halves the leak. |
+
 ## A burst, not a battery
 
 Its voltage **falls as it empties**, so anything running off it slows down as it goes: a strong start that tails off. It also **leaks** charge every tick, whether or not anything is connected: at the default wall about 0.2% a tick, which halves it in roughly 17 seconds.

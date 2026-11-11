@@ -491,4 +491,15 @@ public final class ModularTuning {
     public static final float STORE_REF_CM = 20f, STORE_MASS = 1800f, STORE_LEAK = 0.05f, STORE_REF_DENSITY = 1.9f, STORE_REF_CONDUCTIVITY = 0.000175f;
     /** Leyden jar: the plate area (percent) and glass wall (mm) the fixed jar stands for, and its capacitance, leak per tick and burst amps. */
     public static final float JAR_REF_AREA = 50f, JAR_REF_WALL_MM = 4f, JAR_CAPACITANCE = 10f, JAR_LEAK = 0.002f, JAR_BURST_AMPS = 8f;
+
+    /** Pressure shell addons: how much the bands raise the danger line at best, and the share of the room a relief valve vents per tick. */
+    public static final float TANK_BANDS_GAIN = 0.6f, TANK_RELIEF_PER_ROOM = 0.004f;
+    /** Heat exchanger fins: the share of a fin metal's conductivity that counts. */
+    public static final float FIN_SHARE = 0.6f;
+    /** Water wheel rim ring: inertia per unit of ring density. */
+    public static final float RING_INERTIA = 120f;
+    /** Thermal store: the salt fill's heat mass at the reference density, and the least a lagging can cut the leak to. */
+    public static final float STORE_SALT_MASS = 900f, STORE_SALT_DENSITY = 2.16f, STORE_LAG_FLOOR = 0.2f;
+    /** Leyden jar: the current the foil's ampacity is quoted at, and the share of leak an outer sleeve keeps. */
+    public static final float JAR_REF_AMPACITY = 8f, JAR_SLEEVE_LEAK = 0.5f;
 }

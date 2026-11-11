@@ -13,6 +13,15 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thermal Store* in th
 
 Shape the core from brick at the [Stonecutter](Stonecutter.md) with the Thermal Store Blueprint in the blueprint slot. The Thermal Store comes out with the design, and the blueprint is kept. Its tooltip shows its heat mass and how much it loses. Breaking the block gives the same store back.
 
+## Addons
+
+An addon is an optional extra part made from raw stock, added when you assemble the store or by reworking a finished one. The store works without either; each only adds.
+
+| Addon | Stock | What it does |
+| --- | --- | --- |
+| **Lagging** | carpet | Wrapped round the outside. The poorer its conductivity, the less heat leaks, down to a fifth of the leak at best. |
+| **Salt fill** | raw salt | Adds heat mass. |
+
 ## Using it
 
 Set it over a heat source, and set a Boiler on top of it. The store warms toward the source and the Boiler heats from the store. A [Firebox](Firebox.md), a coil or an [arc head](Arc_Furnace.md#the-arc-head) all charge it.

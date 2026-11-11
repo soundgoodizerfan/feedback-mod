@@ -47,6 +47,15 @@
           }
         ]
       }
+    },
+    "F": {
+      "name": "fin_stack",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 2
     }
   },
   "patterns": [

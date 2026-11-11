@@ -129,6 +129,9 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
         if (level == null || gas.isEmpty())
             return;
         gas.relax(AmbientTable.at(level));
+        float relief = figures.get("Relief", 0f);
+        if (relief > 0 && getPressure().value() > danger().value() * FTuning.RELIEF_OPENS_AT)
+            gas.drain(Math.round(relief), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         if (PressureBurst.fails(getPressure(), danger(), critical(),
                 level.random)) {
             gas.setFluid(FluidStack.EMPTY);

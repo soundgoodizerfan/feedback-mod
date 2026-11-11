@@ -45,6 +45,24 @@
           }
         ]
       }
+    },
+    "F": {
+      "name": "foil",
+      "forms": [
+        "foil"
+      ],
+      "litres": 0.01,
+      "layer": 1,
+      "bulk": 2
+    },
+    "W": {
+      "name": "outer_sleeve",
+      "forms": [
+        "tubing"
+      ],
+      "litres": 0.02,
+      "layer": 2,
+      "bulk": 1
     }
   },
   "patterns": [

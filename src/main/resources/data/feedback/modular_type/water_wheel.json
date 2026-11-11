@@ -45,6 +45,15 @@
           }
         ]
       }
+    },
+    "R": {
+      "name": "rim_ring",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.03,
+      "layer": 1,
+      "bulk": 2
     }
   },
   "patterns": [

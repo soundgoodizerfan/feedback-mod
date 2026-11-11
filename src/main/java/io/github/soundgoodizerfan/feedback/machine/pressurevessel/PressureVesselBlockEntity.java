@@ -68,6 +68,8 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
     private float volume = FTuning.PRESSURE_VESSEL_VOLUME.value();
     private float danger = FTuning.PRESSURE_VESSEL_DANGER_PU.value();
     private float critical = FTuning.PRESSURE_VESSEL_CRITICAL_PU.value();
+    /** mB a relief valve vents a tick near the danger line; 0 with none. */
+    private float relief;
     /** The design it was built from, kept so the broken block drops the same item. */
     private ModularDesign design;
     private ModularFigures figures;
@@ -96,6 +98,12 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
 
         if (amount > 0) {
             amount = Math.max(0, amount - FTuning.PRESSURE_VESSEL_LEAK_PER_TICK.value());
+            setChanged();
+        }
+
+        // A relief valve opens near the danger line and lets air out faster than a pump usually puts it in.
+        if (relief > 0 && amount > 0 && getPressure().value() > danger * FTuning.RELIEF_OPENS_AT) {
+            amount = Math.max(0, amount - relief);
             setChanged();
         }
 
@@ -223,6 +231,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         tag.putFloat("Volume", volume);
         tag.putFloat("Danger", danger);
         tag.putFloat("Critical", critical);
+        tag.putFloat("Relief", relief);
         return tag;
     }
 
@@ -230,6 +239,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         volume = tag.contains("Volume") ? Math.max(1f, tag.getFloat("Volume")) : volume;
         danger = tag.contains("Danger") ? tag.getFloat("Danger") : danger;
         critical = tag.contains("Critical") ? tag.getFloat("Critical") : critical;
+        relief = tag.contains("Relief") ? tag.getFloat("Relief") : relief;
     }
 
     @Override

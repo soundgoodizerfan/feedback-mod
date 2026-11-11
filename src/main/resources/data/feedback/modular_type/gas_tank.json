@@ -56,6 +56,24 @@
           }
         ]
       }
+    },
+    "B": {
+      "name": "reinforcing_bands",
+      "forms": [
+        "rod"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 4
+    },
+    "V": {
+      "name": "relief_valve",
+      "forms": [
+        "nugget"
+      ],
+      "litres": 0.01,
+      "layer": 2,
+      "bulk": 2
     }
   },
   "patterns": [

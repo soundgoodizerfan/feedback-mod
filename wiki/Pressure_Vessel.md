@@ -30,6 +30,15 @@ The explosion damages blocks around it. Breaking the vessel gives back the same 
 
 The [Boiler](Boiler.md) follows the same ladder.
 
+## Addons
+
+An addon is an optional extra part made from raw stock, added when you assemble the vessel or by reworking a finished one. The vessel works without either; each only adds.
+
+| Addon | Stock | What it does |
+| --- | --- | --- |
+| **Hoop bands** | rod | Bands round the shell. A band metal stronger than the shell's raises the danger line, by up to 60% at best. |
+| **Relief valve** | nugget | Opens above 90% of the danger line and vents air, so a pump that outruns the leak cannot burst the vessel. |
+
 ## Canning
 
 Set the vessel on a [Firebox](Firebox.md) (or lava) and it can sterilize jars of food (see [Food](Food.md)). Right click with a jarred food to put one in (up to four); sneak with an empty hand to take the last one out; breaking the vessel drops them. Pressure raises the boiling point, so with a fire under it the inside climbs past the 100 Tu a pot tops out at, up to 6 Tu for each Pu. Sterilising needs 116 Tu, which about 2.7 Pu and a fire that hot give. Keep that under the vessel's danger line: pump to the working window, not to the limit. A jar of food is not a hazard, and jars do not change when the vessel bursts.

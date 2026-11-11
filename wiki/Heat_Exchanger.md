@@ -16,6 +16,12 @@ How fast it carries heat is the tube metal's conductivity times the tube area. C
 
 At the [Smithing Table](Smithing_Table.md), put the Heat Exchanger Blueprint in the blueprint slot and shape the core from plate of the metal you chose. The Heat Exchanger comes out with the design, and the blueprint is kept. Its tooltip shows how fast it carries heat ("Carries heat at"). Breaking the block gives the same exchanger back.
 
+## Addons
+
+An addon is an optional extra part made from raw stock, added when you assemble the exchanger or by reworking a finished one. The exchanger works without it.
+
+- **Fin stack** (plate of a second metal): its conductivity adds 60% of its value to the tubes', so the exchanger carries more heat.
+
 ## Using it
 
 It connects along one axis: the two faces at either end of the direction you placed it. Put a hot thing on one end and a cooler thing on the other. Heat flows from the hotter to the cooler, faster the bigger the difference, until they're about level.
