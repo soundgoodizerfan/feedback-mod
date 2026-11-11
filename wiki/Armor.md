@@ -38,9 +38,47 @@ Each plate has **axes**: continuous measures you aim at the bench before you mak
 
 A word for the range an axis sits in (narrow, wide, short, long, closed, open, thin, thick...) is a **band**. Some bands carry a trait: a long torso is cramped to crouch in, a tall crown is a lever for blows to the head, long leggings tire a sprint and drag in water, a high boot shaft keeps water and powder snow out, a thick sole cuts fall damage, a closed face is a closed visor and an open one sees well.
 
-A finished piece is named after what it is: a recognised build gets its real name (a **cuirass**, a **brigandine**, a **hauberk**, a **lorica segmentata**, a **bascinet**, a **sallet**, **sabatons**), anything else is named by its size, shape and material ("Long Scale Iron Chestplate"). The name is a signpost only; the piece does what its parts do.
+### Names
 
-Plates are **forged** in one of the rhythm patterns or laid from stock. Chestplate shapes: brigandine, breastplate, hauberk, scale, lamellar, segmented. Helmet domes: round, conical, ridged, tailed, pointed-faced. Leggings: plain, articulated, mail chausses, quilted. Boots: plain, sabatons, wrapped. Plate and mail guard differently: a plate turns more of an arrow than mail does, and metal armour **conducts heat**: while you burn or stand in lava it heats through the metal and hurts you more than leather would.
+A finished piece is named by rule from its plate's shape, the bands its axes sit in and the fittings on it. A band is a range, written here as "up to" its top figure; the last band of an axis is "over" the one before. A name gives no bonus: the piece does what its parts, bands and shapes do. A build that fits no row is named by its size, shape and material: size words for the bands that are not normal, then the shape and material, then the type, as in "Long Scale Iron Chestplate". A name never repeats a word its rule already needs: Cuisses are not "Short Cuisses". A set stud goes in front ("Gold-studded Iron Cuirass").
+
+| Piece | Name | What gives it |
+| --- | --- | --- |
+| Chestplate | **Lorica Segmentata** | the segmented shape |
+| | **Lamellar Cuirass** | the lamellar shape |
+| | **Scale Hauberk** | the scale shape |
+| | **Hauberk** | the hauberk shape |
+| | **Coat of Plates** | the brigandine shape with an underlayer fitted |
+| | **Brigandine** | the brigandine shape |
+| | **Cuirass** | the breastplate shape |
+| Helmet | **Bascinet** | the pointed-faced dome |
+| | **Sallet** | the tailed dome |
+| | **Morion** | the ridged dome |
+| | **Spangenhelm** | the conical dome |
+| | **Great Helm** | a closed face (up to 2 cm) on any dome |
+| Leggings | **Chausses** | the mail chausses shape |
+| | **Quilted Chausses** | the quilted shape |
+| | **Greaves** | the articulated shape |
+| | **Cuisses** | the plain shape, short (up to 52 cm) |
+| Boots | **Sabatons** | the sabatons shape |
+| | **Riding Boots** | the plain shape with spurs fitted |
+
+Helmets go in the order of the rows, so a closed face on a pointed, tailed, ridged or conical dome is named for the dome. Any build that fits no row, such as a round dome, a wrapped boot or plain leggings that are not short, is named by size, shape and material ("Round Iron Helmet", "Long Plain Iron Leggings").
+
+The bands that make the size words:
+
+| Piece | Axis | Bands |
+| --- | --- | --- |
+| Chestplate | Width | narrow up to 36 cm, normal up to 48 cm, wide over 48 cm |
+| | Torso length | short up to 48 cm, normal up to 64 cm, long over 64 cm |
+| Helmet | Face opening | closed up to 2 cm, normal up to 9 cm, open over 9 cm |
+| | Crown | low up to 10 cm, normal up to 18 cm, tall over 18 cm |
+| Leggings | Length | short up to 52 cm, normal up to 74 cm, long over 74 cm |
+| | Width | slim up to 17 cm, normal up to 24 cm, wide over 24 cm |
+| Boots | Shaft | ankle up to 12 cm, normal up to 24 cm, high over 24 cm |
+| | Sole | thin up to 7 mm, normal up to 16 mm, thick over 16 mm |
+
+Plates are **forged** in one of the rhythm patterns or laid from stock. Chestplate shapes: brigandine, breastplate, hauberk, scale, lamellar, segmented. Helmet domes: round, conical, ridged, tailed, pointed-faced. Leggings: plain, articulated, mail chausses, quilted. Boots: plain, sabatons, wrapped. Plate and mail guard differently: a plate turns more of an arrow than mail does, and metal armor **conducts heat**: while you burn or stand in lava it heats through the metal and hurts you more than leather would.
 
 ### More fittings
 

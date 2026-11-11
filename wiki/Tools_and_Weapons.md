@@ -126,17 +126,50 @@ Some variants are not laid out in cells but **forged**, at the [Anvil](Anvil.md#
 
 The stock cools as you play. Notes struck while it is too cold (or still too hot) are dead and count against you. A sloppy run never ruins the part, but it leaves **flaws**: each one takes a share of the edge's toughness and durability (a ruined part starts at half), and the part reads "rough", "flawed" or "ruined" on its tooltip. A clean run leaves none, though even a good player is sometimes a hair off.
 
-**What you can forge:** a sword blade is forged **curved**, **tapered**, **serrated**, **fullered** or **leaf**-shaped; the plain blade is straight. A blade, a head or a limb also has **axes**: length, width and thickness of a blade, head size and edge length of a head, face size of a shield, limb length of a bow. Aim them at the bench before you make the part (see [Armor](Armor.md#axes-aiming-and-names) for how aiming works). More length reaches further, a wider blade hits harder, a thicker one resists chipping and a thinner one bites, and all of it is more stock and more weight. The range an axis sits in is a **band**, and a band can carry a signature: a **short** blade is a stabber (strike from behind), a **long** one a chopper (a heavy overhead blow), a **small** axe head is thrown, a **large** one fells trees, a large pickaxe head quarries, a large maul slams. The item is named for what you built: a long, thin, tapered blade is a **rapier**, a curved narrow one a **katana**, a curved short one a **cutlass**, a broad serrated or leaf blade a **machete**, a long wide one a **claymore**, a short one a **dagger**; a small axe head a **hatchet**, a large one a **felling axe**; a large pickaxe head a **heavy pick**; a large maul a **sledgehammer**; a large shield face a **tower shield**, a small one a **buckler**; a short bow a **shortbow**, a long one a **longbow**. Anything else is named by its size, shape and material. A name never gives a bonus; the bands and shapes do.
+**What you can forge:** a sword blade is forged **curved**, **tapered**, **serrated**, **fullered** or **leaf**-shaped; the plain blade is straight. A blade, a head or a limb also has **axes**: length, width and thickness of a blade, head size and edge length of a head, face size of a shield, limb length of a bow. Aim them at the bench before you make the part (see [Armor](Armor.md#axes-aiming-and-names) for how aiming works). More length reaches further, a wider blade hits harder, a thicker one resists chipping and a thinner one bites, and all of it is more stock and more weight. The range an axis sits in is a **band**, and a band can carry a signature: a **short** blade is a stabber (strike from behind), a **long** one a chopper (a heavy overhead blow), a **small** axe head is thrown, a **large** one fells trees, a large pickaxe head quarries, a large maul slams.
+
+### Names
+
+A finished tool or weapon is named by rule from its blade, head, face or limb: its shape and the bands its axes sit in. A band is a range, written here as "up to" its top figure; the last band of an axis is "over" the one before. A name gives no bonus: the perks come only from the parts, the bands and the shapes. A build that fits no row is named by its size, shape and material: size words for the bands that are not normal, then the shape and material, then the type, as in "Wide Serrated Iron Sword". A name never repeats a word its rule already needs: a Dagger is not a "Short Dagger". A hard tip or stud set into the part goes in front ("Iron-tipped Steel Sword").
+
+**Swords.** The first row that fits is the name.
+
+| Name | What gives it |
+| --- | --- |
+| **Rapier** | a tapered blade, long (over 105 cm) and thin (up to 3.5 mm) |
+| **Katana** | a curved blade, normal or long (over 65 cm) and narrow (up to 3 cm) |
+| **Cutlass** | a curved blade, short or normal (up to 105 cm) |
+| **Machete** | a serrated or leaf blade, wide (over 5.5 cm) |
+| **Claymore** | any blade, long (over 105 cm) and wide (over 5.5 cm) |
+| **Dagger** | any blade, short (up to 65 cm) |
+
+**Other tools and weapons.** One rule each.
+
+| Type | Name | What gives it |
+| --- | --- | --- |
+| Axe | **Hatchet** | a small head (up to 10.5 cm) |
+| | **Felling Axe** | a large head (over 17.5 cm) |
+| Pickaxe | **Heavy Pick** | a large head (over 17.5 cm) |
+| Maul | **Sledgehammer** | a large head (over 17.5 cm) |
+| Spear | **Javelin** | a small head (up to 9 cm) |
+| Sickle | **Scythe** | a long edge (over 31.25 cm) |
+| Shield | **Tower Shield** | a large face (over 75 cm) of the rectangular shape |
+| | **Kite Shield** | the kite shape, at any face size |
+| | **Buckler** | a small face (up to 42 cm) of any other shape |
+| Bow | **Shortbow** | short limbs (up to 85 cm) |
+| | **Longbow** | long limbs (over 135 cm) |
+
+A large face of the round or heater shape is not a tower shield; it is named by its size and shape. What the shield names do in a fight is under [Shields](Combat.md#shields).
 
 ### How each one fights
 
 - **Pike.** Left click is a jab: long reach, but it cannot hit anything closer than 2 blocks. Hold right click to lower it into a charge: you keep sprinting while it is held out, and it tires and lowers as the charge runs out. While you and a target close at 4.6 blocks a second or faster, each thing in front of you at 2 to 4.5 blocks is struck once for damage that grows with your closing speed, the pike's strike and the weight of its head. From 5.1 blocks a second it knocks them back, and early in the charge it pulls riders off their mounts. The charge tires in three stages (full, then no dismount, then damage only), and a weakly bound pike tires sooner. A fast hit wears the pike more. A pike cannot crit, and Strength and Weakness do not change a charge.
-- **Tapered blade (a rapier).** Keep hitting the same target without pause and each hit hurts more; getting hit or switching target resets it.
-- **Curved blade (a katana).** Wait before the first cut to land a heavy bleeding strike.
-- **Serrated blade (a machete).** Great against the unarmored and for clearing brush, poor against armor.
-- **Long blade (a claymore).** Wait for a full swing and it hits everything around your target; mash it and it is weak.
-- **Short blade (a dagger).** Strike from behind or at unaware mobs, especially while sneaking; face to face it is worse than a plain blade.
-- **Leaf blade (a cutlass).** A kill readies your next swing and speeds you up, and fighting a crowd hits harder.
+- **Tapered blade.** Keep hitting the same target without pause and each hit hurts more; getting hit or switching target resets it.
+- **Curved blade.** Wait before the first cut to land a heavy bleeding strike.
+- **Serrated blade.** Great against the unarmored and for clearing brush, poor against armor.
+- **Long blade.** Wait for a full swing and it hits everything around your target; mash it and it is weak.
+- **Short blade.** Strike from behind or at unaware mobs, especially while sneaking; face to face it is worse than a plain blade.
+- **Leaf blade.** A kill readies your next swing and speeds you up, and fighting a crowd hits harder.
 - **Prospector's pick.** Right click to ping: ore within 12 blocks glows through the stone for 6 seconds. It is slow to recharge (10 seconds) and wears the pick, so ping and then dig.
 - **Miner's pick.** Mine one ore and the connected ore of the same kind comes with it, up to 8 more, at a small extra wear each. It will not spend the pick's last point. Sneak to mine a single block.
 - **Large axe head (a felling axe).** Break a log and the whole connected tree comes down, up to 24 logs. Each log costs extra durability, and sneaking breaks one log only.
@@ -149,7 +182,7 @@ Melee weapons hit everything in their swept volume, can [parry](Combat.md#parry)
 
 ### Reading what sets a tool apart
 
-Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Quarry, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as rapier or claymore. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The bench shows a part's trait when you hover it in the list, before you make it.
+Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Quarry, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as tapered or curved. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The bench shows a part's trait when you hover it in the list, before you make it.
 
 Messages like the Flurry count, a forged part's quality and a Blueprint Table's print status appear as small cards at the bottom right, above your ammo counter if you hold a gun. They fade after a few seconds, and at most three show at once.
 

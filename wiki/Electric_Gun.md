@@ -21,7 +21,18 @@ Made at the [Gun Table](Gun_Table.md) from a **Blueprint**, out of the same part
 - **Rail barrel:** two rails the slug bridges. It takes what its conductor is rated for, and any conductor slug will do. A longer pair keeps the push.
 - **Plasma barrel:** a glass arc channel. A shot vaporises a conductor nugget into a short bolt that burns what it hits and falls off with distance.
 
-A built gun is named for what it is: a **coilgun**, a **gauss rifle** (a coil with many stages), a **railgun**, a **plasma gun**. The name gives no bonus.
+### Names
+
+A built gun is named by rule from its barrel kind and, for a coil, its stages. The first row that fits is the name:
+
+| Name | What gives it |
+| --- | --- |
+| **Gauss Rifle** | a coil barrel with many stages (over 3) |
+| **Coilgun** | a coil barrel with few stages (up to 3) |
+| **Railgun** | a rail barrel |
+| **Plasma Gun** | a plasma barrel |
+
+A name gives no bonus: the perks come only from the parts. A name never repeats a word its rule already needs.
 
 ### Attachments
 
