@@ -17,7 +17,7 @@ Place it as voxels of a [micro build](Micro_Core.md) in the piece a role 0 Rotar
 
 ## How it works
 
-Next to black wool, a rubber tire holds the ground better, so it pushes the vehicle harder before it slips, and it rolls with less resistance. See [Wheels](Vehicles.md#wheels) for how the ground changes that.
+Rubber has a friction of 1.2. Next to black wool, a rubber tire holds the ground better, so it pushes the vehicle harder before it slips, and it rolls with less resistance. See [Wheels](Vehicles.md#wheels) for how the ground changes that.
 
 ## See also
 

@@ -42,6 +42,12 @@ A belt can carry **60 Su**, less than a full [Mechanical Hammer](Mechanical_Hamm
 
 Slipping is also the only thing that **wears a belt**. A worn belt carries less and slips sooner, down to 30% condition. Keep the load under 60 Su and it lasts forever.
 
+## Micro pulleys
+
+Both pulley items can be placed as voxels of a [micro build](Micro_Core.md). Use the **Belt** on one pulley voxel and then on another: *"Pulley selected,"* then *"Belt fitted."* Both voxels must be in the same body, or both in the world, and up to **16 blocks** apart. The belt is drawn as two dark lines. It slips instead of stalling and wears the same way as a full-size belt. A [Lift](Vehicles.md#the-lift) carries its belts along.
+
+A micro pulley belts only to another micro pulley, not to a full-size one.
+
 ## Limitations
 
 - The driven side should have **no source of its own**. If both lines already have their own power, the belt does nothing.

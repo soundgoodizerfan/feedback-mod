@@ -55,4 +55,4 @@ C is a Small Cog and S is a Shaft.
 
 A gearbox connects shafts on **any of its six faces** at the same speed, so you can take power round corners and split it. Its friction is **0.2 Su per RPM**, twice a plain shaft's 0.1.
 
-It has no settings. Which way each output turns depends on which faces you use: shafts on **opposite** faces turn opposite ways. If something's spinning the wrong way, add a pair of cogs to flip it.
+To split one shaft into two axles that share speed by load, see the [Differential](Differential.md). The gearbox has no settings. Which way each output turns depends on which faces you use: shafts on **opposite** faces turn opposite ways. If something's spinning the wrong way, add a pair of cogs to flip it.

@@ -39,7 +39,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 ## Blocks and items
 
-**Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Steam Turbine](Steam_Turbine.md) · [Engine](Engine.md) · [Dynamotor](Dynamotor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Rotary Bearing](Rotary_Bearing.md) · [Ring Gear](Ring_Gear.md) · [Rotation Adapter](Rotation_Adapter.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md) · [Transmission](Transmission.md)
+**Power and transmission:** [Hand Crank](Hand_Crank.md) · [Water Wheel](Water_Wheel.md) · [Steam Engine](Steam_Engine.md) · [Steam Turbine](Steam_Turbine.md) · [Engine](Engine.md) · [Differential](Differential.md) · [Dynamotor](Dynamotor.md) · [Shaft](Shaft.md) · [Bearing](Bearing.md) · [Rotary Bearing](Rotary_Bearing.md) · [Ring Gear](Ring_Gear.md) · [Rotation Adapter](Rotation_Adapter.md) · [Flywheel](Flywheel.md) · [Cogs and Gearbox](Cogs.md) · [Pulleys and Belt](Pulleys.md) · [Clutch](Clutch.md) · [Overspeed Trip](Overspeed_Trip.md) · [Pump](Pump.md) · [Transmission](Transmission.md)
 
 **Micro-blocks and vehicles:** [Micro Core](Micro_Core.md) · [Micro Wedge](Micro_Wedge.md) · [Ball Joint](Ball_Joint.md) · [Locked Joint](Locked_Joint.md) · [Slider Joint](Slider_Joint.md) · [Piston Joint](Piston_Joint.md) · [Rotary Bearing](Rotary_Bearing.md) · [Ring Gear](Ring_Gear.md) · [Tire Rubber](Tire_Rubber.md) · [Vehicles](Vehicles.md)
 

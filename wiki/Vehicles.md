@@ -49,7 +49,7 @@ Right-click any creation with a **Lift item** and the whole thing goes *into the
 
 Use a [Micro Core](Micro_Core.md) on a block and a **micro cell** appears, holding voxels a quarter of a block on a side: up to 64 to a cell. A voxel costs a 64th of a block. Hold a block and right-click to fill a voxel; mine a voxel to take it out. A second Micro Core in the other hand changes how the block in your main hand is placed: a line, a filled box, or mirrored across up to three planes. A cell weighs its voxels by what they are made of. Bodies collide voxel by voxel, so several spinning arms fit in one block as long as their voxels never meet.
 
-Micro shafts, cogs and bearings join full-size rotation through a [Rotation Adapter](Rotation_Adapter.md). A micro pulley and separate outputs from a rotation adapter are not available.
+Micro shafts, cogs and bearings join full-size rotation through a [Rotation Adapter](Rotation_Adapter.md). Micro [pulleys](Pulleys.md#micro-pulleys) join each other by belt. A [Differential](Differential.md) shares a drive shaft between two axles.
 
 ## Joints
 
@@ -76,7 +76,7 @@ A [Rotary Bearing](Rotary_Bearing.md) with role 0 whose turned body contains **t
 - **Springing.** The tire is a spring and a damper: the body squats on it and rebounds.
 - **Grip.** The tire pushes the vehicle as hard as the tire's friction against the ground's allows. A wheel pushed past its grip slips.
 - **Brake and rolling resistance.** A card brakes the wheel through the bearing's **Brake** channel. Rolling costs speed: a soft tire and loose or sinking ground roll harder, and ice wastes none.
-- **Drive.** The road's torque on the wheel loads the shaft, or helps it turn when the vehicle rolls downhill. All driven wheels on one shaft run at the same speed; there is no differential.
+- **Drive.** The road's torque on the wheel loads the shaft, or helps it turn when the vehicle rolls downhill. All driven wheels on one shaft run at the same speed; a [Differential](Differential.md) lets two wheels turn at different speeds.
 - **Walls.** Rays around the rim keep the wheel out of walls, steps and other vehicles.
 
 ## Wear
