@@ -114,9 +114,6 @@ public final class ItemInfoHud {
         list.add(PlatingTooltip.thickness(plating));
         list.add(PlatingTooltip.intact(plating));
         list.add(PlatingTooltip.deposit(stack, plating));
-        Cartridge round = stack.get(FWeapons.CARTRIDGE.get());
-        if (round != null && round.charged() && Readout.instrumented(Quantity.VOLTAGE))
-            list.add(Readout.chargeReading(round.at(player.level().getGameTime()).volts()));
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.GeigerCounterItem && Readout.instrumented(Quantity.RADIATION))
             list.add(Readout.reading(Quantity.RADIATION, "feedback.readout.radiation",
                     Readout.figure(Quantity.RADIATION, GeigerClient.reading())));
@@ -132,9 +129,9 @@ public final class ItemInfoHud {
         if (wear != null && Readout.exact(Quantity.CONDITION))
             list.add(Readout.conditionReading(wear));
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
-        if (made != null && made.dims().containsKey(ForgeRhythm.WORK) && Readout.exact(Quantity.FIGURE))
+        if (made != null && made.measures().work() != 1f && Readout.exact(Quantity.FIGURE))
             list.add(Readout.reading(Quantity.FIGURE, "tooltip.feedback.part.worked",
-                    Readout.figure(Quantity.FIGURE, made.dims().get(ForgeRhythm.WORK) * 100f)));
+                    Readout.figure(Quantity.FIGURE, made.measures().work() * 100f)));
         list.addAll(FoodTooltip.readings(stack, player.level()));
         ModularFigures figures = ModularStacks.figures(stack);
         if (figures != null)

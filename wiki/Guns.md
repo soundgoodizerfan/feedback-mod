@@ -2,11 +2,11 @@
 
 Feedback doesn't have a list of guns. A gun is a **tool type** like a pick or a sword: you make **parts** (a receiver, a barrel, an action, a trigger group, a grip, and any fittings), each of a metal, and put them together at the [Gun Table](Gun_Table.md). You make the ammunition yourself at the [Reloading Press](Reloading_Press.md). Everything about how the gun behaves (how hard it hits, how far it throws, how much it kicks, how hot it gets, whether it blows up in your hand) comes from those parts and the round.
 
-What throws the round is the **launcher**, and the barrel you choose sets it (see [Barrels and launchers](#barrels-and-launchers)): an ordinary **chamber gun** burns powder, a **[coilgun](Coilgun.md)** throws an iron slug with a redstone-wound coil, a **spring gun** releases a wound spring, and a **steam gun** lets out steam. The [flintlock](#flintlock) is a chamber gun of its own, made without a blueprint.
+A gun burns powder in a chamber and throws a projectile with the gas. The barrel you choose sets how the bore is finished (see [Barrels](#barrels)). The [flintlock](#flintlock) is a chamber gun of its own, made without a blueprint.
 
 ## What it looks like
 
-A gun is drawn from its parts, each in its own metal's or wood's color. The barrel shows at the length and thickness it was drilled to, the stock and forend take the grip's material, and every fitting appears where it mounts: a suppressor or brake on the muzzle, a tube under the barrel, a scope or reflex sight on top, a bipod, a bayonet, a steam chest on the side. Wooden parts are drawn in the bark of their wood, softened, metal parts are brushed or plated, and plastic ones are smooth. A hot barrel glows, dull red through orange to yellow as it heats, and lights itself in the dark. A long gun or machine gun is held in both hands. In first person your own arms are drawn on the gun: the grip hand always, the support hand when the other hand is empty. The client setting **gunArms** (in the mod's client config) switches the arms off. A scope is an open tube: you see straight down it, with no lens in the way.
+A gun is drawn from its parts, each in its own metal's or wood's color. The barrel shows at the length and thickness it was drilled to, the stock and forend take the grip's material, and every fitting appears where it mounts: a suppressor or brake on the muzzle, a tube under the barrel, a scope or reflex sight on top, a bipod, a bayonet. Wooden parts are drawn in the bark of their wood, softened, metal parts are brushed or plated, and plastic ones are smooth. A hot barrel glows, dull red through orange to yellow as it heats, and lights itself in the dark. A long gun or machine gun is held in both hands. In first person your own arms are drawn on the gun: the grip hand always, the support hand when the other hand is empty. The client setting **gunArms** (in the mod's client config) switches the arms off. A scope is an open tube: you see straight down it, with no lens in the way.
 
 In your hands it moves: it kicks back and up on each shot (barely at all when aimed), the slide or bolt carrier snaps back and returns, and a bolt, lever or pump is worked between shots. An empty self-loading gun stays open, for you and for anyone looking at it. Reloading tips the gun over: a magazine drops out and a fresh one goes in, a revolver's cylinder swings out, a break action hinges open, a tube is thumbed full round by round. The gun lags a little behind fast turns, dips when you land, and lowers while you sprint.
 
@@ -35,19 +35,14 @@ A **stock** is its own part, on any frame, and changes what a gun is like to hol
 
 What the gun is called (rifle or shotgun, pistol or revolver) follows from the other parts, see [Names](#names).
 
-### Barrels and launchers
+### Barrels
 
-The **barrel** is the launcher. Its shape picks how the round is thrown, and the part that launcher needs hangs on it in the [Blueprint Table](Blueprint_Table.md); slots for another launcher's parts are grayed out. A barrel without the part for its launcher makes no gun.
+The **barrel** sets how the bore is finished.
 
-| Barrel | Stock | Launcher | Needs |
-| --- | --- | --- | --- |
-| **Smoothbore Barrel** | 1 cell | powder in a chamber | nothing. Bullets scatter more than from a rifled bore |
-| **Rifled Barrel** | 2 cells | powder in a chamber | nothing. A single bullet's spread is x0.6 of a smoothbore's; it cannot fire [shot](Ammunition.md#shot-shells) |
-| **Coil Barrel** | 2 cells | a pulsed field: a [coilgun](Coilgun.md) | a winding |
-| **Spring Tube** | 1 cell | a released spring | a main spring |
-| **Steam Tube** | 2 cells | steam: see [Steam launchers](#steam-launchers) | a steam chest |
-
-A **spring gun** fires a round with nothing in the case: no gas, no powder, no cook-off. The **main spring** is a single or a double spring (one or two coils of stock). Its stored energy rises with the stress its metal bears, squared, but levels off toward a ceiling, so a very strong metal gains less and less. A steel single spring throws a bullet for about 1 damage and netherite for about 5 to 7. Each coil stores more and takes longer to recock. The tooltip shows the energy it stores.
+| Barrel | Stock | Notes |
+| --- | --- | --- |
+| **Smoothbore Barrel** | 1 cell | Bullets scatter more than from a rifled bore |
+| **Rifled Barrel** | 2 cells | A single bullet's spread is x0.6 of a smoothbore's; it cannot fire [shot](Ammunition.md#shot-shells) |
 
 **Bore** is a free measure from **5 to 20 mm** in 1 mm steps, set with a **< >** stepper on the barrel in the Blueprint Table. The round is seated for a bore at the [Reloading Press](Reloading_Press.md); how the real barrel and the round fit is in [Gun Parts](Gun_Parts.md#hitting-the-target).
 
@@ -78,7 +73,7 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 
 ### Names
 
-The **name** on the tooltip, and beside the type name in the Blueprint Table, is read by rule from the frame, action, feed, barrel finish, gauge and traits. A bore of **14 mm or wider** is a *wide* gauge; narrower is *narrow*. The launcher comes first: a coil barrel is a **Lightning lance** (long gun, long barrel, scope), a **Gauss rifle** (any other long gun), an **Arc chaingun** (machine gun), a **Rotary driver** (handgun with a cylinder), a **Sparkler** (any other handgun), or a plain **coilgun**; a spring tube a **spring gun**, a steam tube a **steam gun**. A chamber gun is named by its frame; the first row that fits is the name:
+The **name** on the tooltip, and beside the type name in the Blueprint Table, is read by rule from the frame, action, feed, barrel finish, gauge and traits. A bore of **14 mm or wider** is a *wide* gauge; narrower is *narrow*. A gun is named by its frame; the first row that fits is the name:
 
 | Frame | Name | What gives it |
 | --- | --- | --- |
@@ -175,7 +170,7 @@ Every gun and blueprint shows its spec sheet:
 - **Mass**: the gun's weight, and the bullet's.
 - The tooltip also lists the parts and what is fitted, part by part, and the Shift glossary.
 
-Those figures are for a standard round: the standard charge for the bore (four gunpowder at 9 mm) behind a lead bullet (an iron slug and four redstone for a coilgun). What you actually load can push them up or down. JEI's material pages list each metal's own figures (hardness, density, melting point) to read against them.
+Those figures are for a standard round: the standard charge for the bore (four gunpowder at 9 mm) behind a lead bullet. What you actually load can push them up or down. JEI's material pages list each metal's own figures (hardness, density, melting point) to read against them.
 
 ## Damage
 
@@ -205,7 +200,7 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why a shor
 | Reflex | 80% | 0.15 s | 1 plate |
 | Scope | 40% | 0.3 s | 2 plates |
 
-**Recoil** throws your view upward. It's the bullet's push (plus a quarter again for the gas) divided by the gun's weight, and scaled by how grippy the grip is (see [Gun Parts](Gun_Parts.md#wrapping-the-grip)). A heavy gun with a grippy grip kicks least. Aiming takes 35% off it. A long string of shots climbs up to about twice the first shot's kick by the tenth, and settles when you stop. Gun techniques that fire the gun kick the view the same way (see [Skills](Skills.md)).
+**Recoil** throws your view upward. It's the bullet's push (plus a quarter again for the gas) divided by the gun's weight, and scaled by how grippy the grip is (see [Gun Parts](Gun_Parts.md#grip-friction)). A heavy gun with a grippy grip kicks least. Aiming takes 35% off it. A long string of shots climbs up to about twice the first shot's kick by the tenth, and settles when you stop. Gun techniques that fire the gun kick the view the same way (see [Skills](Skills.md)).
 
 **Strain.** A view only turns so far, so kick that is too much for your hands goes into them. Every shot adds its kick in degrees to your strain (aimed shots add less), and the strain drains at 90 degrees a second while you are not firing. When it passes 90 degrees, a view's worth from level to straight up, **the gun leaves your hand** and drops at your feet. Past 180 degrees it also **hurts you**, more the further over you are, and armor does not help. One huge shot does it alone, and so does a long burst from a gun that is merely hard to hold, but moderate kick fired while looking up does not, because strain counts the kick and not where you are facing. The Gun Table lists **Throws the gun**: the first shot, after a number of shots on the trigger, or never. A gun with an **Impulse** grip stays in your hand, and the overshoot throws **you** back along the line of the shot instead.
 
@@ -213,7 +208,7 @@ Gunpowder burns slowly and a short barrel wastes most of it, which is why a shor
 
 ### Balance
 
-A gun has a front and a back. **Ahead of the grip:** the barrel, muzzle devices, a shroud, lagging, a bipod and a tube magazine. **Behind it:** the grip, the trigger group, a stock and a hydraulic buffer. The receiver, slide, box magazine and cylinder sit over the grip and count half each way. The heavier the front is against the back, the more **nose-heavy** the gun is. Balance matters only for guns held in one hand (see below); a two-handed gun is held up by the other hand and feels no nose-heaviness.
+A gun has a front and a back. **Ahead of the grip:** the barrel, muzzle devices, a shroud, a bipod and a tube magazine. **Behind it:** the grip, the trigger group, a stock and a hydraulic buffer. The receiver, slide, box magazine and cylinder sit over the grip and count half each way. The heavier the front is against the back, the more **nose-heavy** the gun is. Balance matters only for guns held in one hand (see below); a two-handed gun is held up by the other hand and feels no nose-heaviness.
 
 A nose-heavy gun is felt, not read: the Blueprint Table and the tooltip do not show it. While you hold one in one hand, your view **slowly sinks** as the hand fights to keep the muzzle up. Its shots **spread wider and kick harder**, and harder kick throws the gun from your hand sooner (see Strain above). A **bipod** takes the front's weight off the hand: crouched and standing still, a one-handed gun with one feels none of it.
 
@@ -287,16 +282,6 @@ None of this is random. If the tooltip and the HUD aren't red, a round can't hur
 
 To make a gun that holds more pressure: use a stronger metal, a thicker chamber wall, or a smaller bore. On a gun without a slide the receiver is a limit too (see [Gun Parts](Gun_Parts.md#the-chamber)).
 
-## Steam launchers
-
-A gun built with a **steam chest** (a plate part, small or large) fires from steam instead of powder. The round is a plain slug. Right-click a [Boiler](Boiler.md) with the gun to fill the chest. The chest fills only as far as the boiler's pressure allows: a boiler at 1.5 Pu fills it halfway, a boiler near 3 Pu fills it full. The shot's energy is capped by the chest pressure and the case's room: a 9 mm steam gun hits for about 1.5 damage and a 20 mm for about 6. Each shot lets out 100 mB, and a gun with less than that only hisses.
-
-The chest remembers the **temperature** of its steam. The tooltip reads "Steam: x / y mB at z Tu", in red when the steam is too cool. Topping up mixes new steam with the old by amount, so cooler steam in the chest drags the temperature down. Carried steam slowly cools and condenses away. Below **100 Tu** the steam has condensed and the gun will not fire.
-
-Two fittings change how a steam launcher behaves. A **Steam Valve** is metered (about 60% of the steam per shot, a slower cycle) or a dump valve (about 150%, a faster cycle). **Lagging** round the chest makes carried steam cool and condense away at a quarter of the rate.
-
-The HUD shows the steam in the chest in place of spare rounds. The chest has a pressure rating from its metal's strength. Fill it past that rating and it lets go: the gun is damaged, steam scalds whoever is holding it, and the chest empties. A shot taken at a pressure above the rating hurts the same way as an overpressure round.
-
 ## Test commands
 
 Operators can use `/feedback build` (the item built exactly to the held blueprint, a gun or any tool), `/feedback build parts`, `/feedback barrel`, `/feedback round` and `/feedback magazine`. They hand out items carrying data no recipe browser can show, for testing. They aren't a survival route.
@@ -309,4 +294,4 @@ Operators can use `/feedback build` (the item built exactly to the held blueprin
 A few skeletons (and wither skeletons, a little more often) spawn holding an early gun. The gun is as hot as the dimension it is carried in: in the Nether it starts hot, heats as it fires, and can cook off or burst sooner. It may hurt the skeleton holding it.
 
 - [Combat](Combat.md) · [Skills](Skills.md#brute)
-- [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md) · [Coilgun](Coilgun.md) · [Charger](Charger.md)
+- [Gun Table](Gun_Table.md) · [Gun Parts](Gun_Parts.md) · [Ammunition](Ammunition.md) · [Reloading Press](Reloading_Press.md) · [Magazine](Magazine.md)

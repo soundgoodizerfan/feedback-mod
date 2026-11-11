@@ -75,11 +75,87 @@ public final class ModularTuning {
     /** Share of a piece of plate each set stud covers, and the most they cover. */
     public static final float STUD_SHARE = 0.1f;
     public static final float STUD_MAX = 0.5f;
+    // --- addons that carry a trait of their own ---------------------------------------------------
+
+    /** Placeholders [OPEN]. A spring's stored blow damage and its throw-speed gain per litre of spring times the stock's yield strength (iron 5): 0.1 L of iron stores 6 and throws 1.6 times as fast. */
+    public static final float SPRING_STORED_PER_LS = 12f, SPRING_THROW_PER_LS = 1.2f;
+    /** Placeholder [OPEN]. How far a cocked spring's release lunges a blade's wielder forward, in blocks per tick of speed. */
+    public static final float SPRING_LUNGE = 0.6f;
+    /** Ticks a spring-thrown weapon needs to be held before it goes, and to reach full effort. */
+    public static final float SPRING_MIN_CHARGE_TICKS = 2f, SPRING_FULL_CHARGE_TICKS = 4f;
+    /** Placeholder [OPEN]. Heat a cooling addon sheds, Work per tick per Tu, per litre of it times its material's conductivity. */
+    public static final float COOLING_SHED_PER_LS = 120f;
+    /** Placeholder [OPEN]. Litres of magazine that hold one bolt (a repeater's load is the magazine's volume over this). */
+    public static final float MAGAZINE_LITRES_PER_BOLT = 0.04f;
+    // --- the spring gun ({@link SpringGunSpec}) ---------------------------------------------------
+
+    /** Placeholder [OPEN]. Joules a spring stores per litre of spring times its stock's yield strength (wrought iron 8: two 0.05 L wires store 120 J). */
+    public static final float AIR_JOULES_PER_LS = 150f;
+    /** Placeholder [OPEN]. Joules per litre of receiver times its yield strength that the mount holds before the spring takes a set. */
+    public static final float AIR_RATING_PER_LS = 150f;
+    /** Placeholder [OPEN]. Joules of spring a wielder of strength 1 cocks per tick: the cocking time is the stored energy over this. */
+    public static final float AIR_COCK_J_PER_TICK = 5f;
+    public static final float AIR_COCK_MIN_TICKS = 12f, AIR_COCK_MAX_TICKS = 200f;
+    /** Placeholder [OPEN]. The share of its energy that the push can give the piston and pellet at best, before the barrel and bore take theirs. */
+    public static final float AIR_ENVELOPE = 0.8f;
+    /** Placeholder [OPEN]. A barrel this long (m) keeps half the push; a bore this wide (mm) wastes half of what reaches it. */
+    public static final float AIR_LENGTH_HALF = 0.15f, AIR_BORE_HALF = 8f;
+    /** Placeholder [OPEN]. The share of the piston's mass that moves with the pellet at the muzzle. */
+    public static final float AIR_PISTON_SHARE = 0.3f;
+    /** Placeholder [OPEN]. A pellet is a plug of its length in bores of the bore: its volume is this times the bore's disc area times the bore. */
+    public static final float AIR_PELLET_LENGTHS = 1.5f;
+    /** Litres of metal in one nugget (1 Qu, 16 mB): how many pellets of a bore it is worth. */
+    public static final float AIR_NUGGET_LITRES = 0.016f;
+    /** Placeholder [OPEN]. Hit damage per joule the pellet carries, and the fastest one leaves, in blocks per tick (a vanilla bow's arrow: 3). */
+    public static final float AIR_DAMAGE_PER_J = 0.5f, AIR_SPEED_MAX = 4.5f, AIR_BOW_ARROW_SPEED = 3f;
+    /** Placeholder [OPEN]. The reference pellet metal's density (iron, kg per litre) the baked velocity figure reads. */
+    public static final float AIR_REF_DENSITY = 7.87f;
+    /** Placeholder [OPEN]. The shot's inaccuracy at a barrel as long as {@link #AIR_LENGTH_HALF}; a longer barrel shoots truer. */
+    public static final float AIR_SPREAD = 1.5f;
+    /** Placeholder [OPEN]. Ticks between a shot and the next click, and the loudness of the release against a bow's. */
+    public static final int AIR_SHOT_COOLDOWN = 6;
+    public static final float AIR_VOLUME = 0.25f;
+
+    // --- the electric gun (ElectricGunSpec); every figure a placeholder [OPEN] ----------------------------
+
+    /** Joules a coil stage adds, and per amp of rating a rail takes in a shot. */
+    public static final float EGUN_STAGE_J = 120f, EGUN_RAIL_J_PER_AMP = 6f;
+    /** Joules an arc channel of the reference bore costs to strike, and the vaporisation energy per kilogram of metal. */
+    public static final float EGUN_ARC_J = 60f, EGUN_VAPOR_J_PER_KG = 6000f;
+    /** Amps a barrel carries per litre of conductor per unit of the metal's ampacity. */
+    public static final float EGUN_AMPS_PER_LS = 100f;
+    /** Seconds a shot's current pulse lasts: the energy over the volts over this is the current. */
+    public static final float EGUN_PULSE_S = 1f;
+    /** Joules of energy one volt of one amp-tick of a cell's charge is worth. */
+    public static final float EGUN_J_PER_VAMPTICK = 1f;
+    /** Barrel length and bore at which the push is half kept and a wide bore wastes half. */
+    public static final float EGUN_LENGTH_HALF = 0.25f, EGUN_BORE_HALF = 8f;
+    /** Coil: metres of barrel a stage needs, the share a stage the barrel cannot fit still adds, and the best efficiency. */
+    public static final float EGUN_STAGE_SPACING_M = 0.12f, EGUN_STAGE_WASTE = 0.2f, EGUN_COIL_EFF = 0.5f;
+    /** Rail and plasma efficiencies. */
+    public static final float EGUN_RAIL_EFF = 0.6f, EGUN_PLASMA_EFF = 0.4f;
+    /** A slug's length in bores, litres in a nugget, the damage a joule does, and the fastest a slug goes (blocks per tick). */
+    public static final float EGUN_SLUG_LENGTHS = 1.5f, EGUN_NUGGET_LITRES = 0.016f, EGUN_DAMAGE_PER_J = 0.04f, EGUN_SPEED_MAX = 6f;
+    /** A plasma bolt: damage per joule delivered, range in blocks, and the ticks it sets a target alight. */
+    public static final float EGUN_PLASMA_DAMAGE_PER_J = 0.06f, EGUN_PLASMA_RANGE = 14f;
+    public static final int EGUN_PLASMA_BURN_TICKS = 80;
+    /** Cooldown after a shot, ticks, and the extra per share of the gun's heat; heat falls by this share each second. */
+    public static final int EGUN_COOLDOWN = 12;
+    public static final float EGUN_HEAT_PER_SHOT = 0.25f, EGUN_HEAT_COOLING_PER_S = 0.15f, EGUN_HEAT_COOLDOWN_TICKS = 40f;
+    /** Current over rating at which the conductor fuses and the gun is wrecked; damage to the wielder from a shock, and per excess of overvoltage. */
+    public static final float EGUN_FUSE_RATIO = 2f, EGUN_SHOCK = 2f, EGUN_SHOCK_PER_EXCESS = 4f;
+    public static final float EGUN_VOLUME = 0.6f;
+    /** The cell voltage the Blueprint Table's load figure assumes. */
+    public static final float EGUN_REF_VOLTS = 6f;
+    /** Placeholder [OPEN]. The fewest and most a wielder's strength scales the cocking time by. */
+    public static final float AIR_PULL_MIN = 0.5f, AIR_PULL_MAX = 3f;
     /** What the vanilla item of a crystal (a diamond pick) is made of when converted: this metal, the crystal set in it. */
     public static final net.minecraft.resources.ResourceLocation CRYSTAL_BODY =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("feedback", "steel");
     /** Millibuckets in a cell of a shaped part: one ingot of stock. A part's size is counted in cells, its stock in volume. */
     public static final int CELL_MB = 144;
+    /** The smallest stock there is: a nugget, a ninth of a cell (one Qu of metal). A part's stock is rounded up to it. */
+    public static final int NUGGET_MB = 16;
     /** Studs on a converted crystal armour piece: it was eight diamonds, now four set in steel. */
     public static final int CONVERT_STUDS = 4;
     /** Share of its hardness (and wear) a plated armour plate takes from a sound coat: a skin, not a stud. */
@@ -468,6 +544,24 @@ public final class ModularTuning {
     public static final int ENCHANT_PER_LEVEL = 8, ENCHANT_MAX_LEVEL = 3;
     /** Flame a handle burns the wielder at when its material has no flame temperature of its own, Tu. */
     public static final float ENCHANT_BURN_FALLBACK_TU = 500f;
+    /** Placeholder [OPEN]. The spread of an as-built axis around its aim, as a share of the axis's range: a clean forging, a hand-laid part, and a forging far off its work. */
+    public static final float AXIS_ERROR_GOOD = 0.04f, AXIS_ERROR_LAID = 0.04f, AXIS_ERROR_POOR = 0.25f;
+    /** Placeholder [OPEN]. How far the work ratio may stray from 1 before the spread is the poor one, and the spread each flaw adds (share of range). */
+    public static final float AXIS_ERROR_RATIO_SPAN = 0.5f, AXIS_ERROR_PER_FLAW = 0.02f;
+    /** Placeholder [OPEN]. The most an armour piece's cover reaches: a tall, wide plate covers more than the canonical one, to this share. */
+    public static final float ARMOUR_COVER_MAX = 1.3f;
+    /** Placeholder [OPEN]. A {@code length} axis (cm): metres of reach per unit beyond its default, and the share of that the centre of mass moves. */
+    public static final float AXIS_LENGTH_M_PER_UNIT = 0.01f, AXIS_LENGTH_CENTRE_SHARE = 0.5f;
+    /** Placeholder [OPEN]. A {@code width} axis scales strike by the square root of its ratio, kept within these. */
+    public static final float AXIS_WIDTH_STRIKE_MIN = 0.8f, AXIS_WIDTH_STRIKE_MAX = 1.25f;
+    /** Placeholder [OPEN]. The most pierce damage one piece turns aside, as a share. */
+    public static final float PIERCE_RESIST_MAX = 0.6f;
+    /** Placeholder [OPEN]. How much of the whole pierce resistance each worn slot carries: chest, legs, head, feet (they sum to 1). */
+    public static final float PIERCE_WEIGHT_CHEST = 0.4f, PIERCE_WEIGHT_LEGS = 0.3f, PIERCE_WEIGHT_HEAD = 0.2f, PIERCE_WEIGHT_FEET = 0.1f;
+    /** Placeholder [OPEN]. Heat damage a second per point of fire conduction summed over the worn pieces, while the wearer burns or stands in lava. */
+    public static final float FIRE_SOAK_PER_CONDUCT = 0.5f;
+    /** Placeholder [OPEN]. Ticks between a burning wearer's armour soaking heat in (and hurting). */
+    public static final int FIRE_SOAK_INTERVAL = 20;
 
     /** Pressure vessel: half the block's side in cm, the cube's volume in mB, and the wall (cm) the reference density is quoted at. */
     public static final float TANK_HALF_CM = 50f, TANK_CUBE_MB = 1000f, TANK_REF_WALL_CM = 5f;

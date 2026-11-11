@@ -151,9 +151,6 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         }
         var cas = located(materials, slots.get(CASE));
         var bullet = located(materials, slots.get(PROJECTILE));
-        // No charge seats a dry round: a case and a slug are a small jar, charged later on a wire
-        // (mechanics 6.6). The press does not know which was meant, only what it was given.
-        boolean dry = slots.get(CHARGE).isEmpty() && slots.get(CHARGE_B).isEmpty();
         if (cas.isEmpty() || bullet.isEmpty() || !fits(CASE, slots.get(CASE), materials)
                 || !fits(PROJECTILE, slots.get(PROJECTILE), materials)
                 || (!slots.get(CHARGE).isEmpty() && !fits(CHARGE, slots.get(CHARGE), materials))
@@ -196,9 +193,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         // A core sits inside a bullet's jacket; shot has none.
         var core = shot || slots.get(CORE).isEmpty() ? java.util.Optional.<net.minecraft.resources.ResourceLocation>empty()
                 : java.util.Optional.of(located(materials, slots.get(CORE)).get().id());
-        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core, vial, seed,
-                dry && level != null
-                ? java.util.Optional.of(new Cartridge.Stored(0, level.getGameTime())) : java.util.Optional.empty());
+        Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core, vial, seed);
         if (cartridge.load(materials).isEmpty()) {
             player.displayClientMessage(Component.translatable("message.feedback.press.no_blend"), true);
             return;
@@ -213,7 +208,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         slots.get(PAYLOAD).shrink(1);
         slots.set(OUTPUT, round);
         setChanged();
-        player.displayClientMessage(Component.translatable(dry ? "message.feedback.press.seated_dry" : "message.feedback.press.seated"), true);
+        player.displayClientMessage(Component.translatable("message.feedback.press.seated"), true);
     }
 
     // --- Container -----------------------------------------------------------------------------

@@ -77,6 +77,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private Button printButton;
     private Button shingleButton;
     private final BenchFan fan = new BenchFan();
+    private final AxisPanel axis;
     private float partial;
 
     private List<ToolTableShaping.Option> options = List.of();
@@ -95,6 +96,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     // Dragging the fan.
     private boolean panning;
 
+    private BlueprintChecklistPanel checklist;
     private Button apart;
     private AbstractWidget typePicker;
     private final float[] bars = new float[3], against = new float[3];
@@ -109,8 +111,10 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         inventoryLabelX = ToolTableMenu.INV_X;
         inventoryLabelY = ToolTableMenu.INV_Y - 11;
         forge = st.has(Station.Panel.FORGE) ? new ForgePanel(this) : null;
+        checklist = new BlueprintChecklistPanel(skin, menu);
         shingle = st.has(Station.Panel.FORGE) ? new ShinglePanel(this) : null;
         blueprint = st.dishes() ? new PrepBlueprintPanel(menu, skin) : null;
+        axis = new AxisPanel(this, skin);
     }
 
     // What the panels may ask of the bench.
@@ -177,6 +181,11 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, id);
     }
 
+    /** Whether a work panel has the bench (the axis strip stays out of its way). */
+    boolean panelBusy() {
+        return busy() || drafting();
+    }
+
     private boolean busy() {
         return forge != null && forge.busy() || shingle != null && shingle.busy();
     }
@@ -214,6 +223,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             }, true, null));
             typePicker.visible = false;
         }
+        axis.init(this::addRenderableWidget);
         if (blueprint != null) {
             printButton = addRenderableWidget(blueprint.printButton(leftPos, topPos));
             printButton.visible = false;
@@ -268,6 +278,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             readKey = Integer.MIN_VALUE;
         }
         read();
+        axis.tick();
         if (forge != null)
             forge.tick();
         if (shingle != null)
@@ -354,7 +365,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                 if (!ToolTableShaping.takes(menu.station(), o, stuff.get()))
                     continue;
                 BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.SHAPE, partIcon(o, stuff.get()), o.label(), "", ToolTableMenu.BTN_PICK + i, 0, i);
-                n.faint = have < o.cells() * io.github.soundgoodizerfan.feedback.modular.ModularTuning.CELL_MB;
+                n.faint = have < o.stockMb(1f);
                 n.forged = o.forged();
                 shapes.add(n);
             }
@@ -561,9 +572,16 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private void shape(BenchFan.Node n) {
         var level = level();
         ToolTableShaping.Option o = options.get(n.index);
-        var stock = ToolTableShaping.check(menu.station(), o, menu.stock(), ClientMaterials.on(level), level);
+        var stock = ToolTableShaping.check(menu.station(), o, menu.stock(), ClientMaterials.on(level), level,
+                n.index == menu.picked() ? menu.aimScale(o) : 1f);
         if (stock.isEmpty()) {
             reject(Component.translatable("gui.feedback.tool_table.status.cold"));
+            return;
+        }
+        // A part with axes to aim is picked first, so the strip shows; a second click makes it.
+        if (!ToolTableShaping.aimable(o).isEmpty() && menu.picked() != n.index) {
+            press(n.action);
+            skin.cue(GuiSkin.Cue.STAGE, stockKind(), 1f);
             return;
         }
         if (o.forged()) {
@@ -607,7 +625,11 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return true;
         if (drafting())
             return blueprint.mouseClicked(mx, my, button) || super.mouseClicked(mx, my, button);
+        if (checklist.click(mx, my, button))
+            return true;
         if (forge != null && forge.click(mx, my, button) || shingle != null && shingle.click(mx, my, button))
+            return true;
+        if (axis.click(mx, my, button))
             return true;
         Slot over = hoveredSlot;
         if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 0) {
@@ -640,6 +662,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
         if (drafting())
             return settled() && blueprint.mouseDragged(mx, my, button, dx, dy) || super.mouseDragged(mx, my, button, dx, dy);
+        if (axis.drag(mx, my))
+            return true;
         if (panning && settled()) {
             fan.pan(dx, dy);
             return true;
@@ -650,6 +674,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     @Override
     public boolean mouseReleased(double mx, double my, int button) {
         panning = false;
+        axis.release();
         if (drafting())
             blueprint.mouseReleased(mx, my, button);
         return super.mouseReleased(mx, my, button);
@@ -719,6 +744,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             GuiStyle.ring(g, sx, sy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
         BenchFan.Node hover = fan.at(mouseX, mouseY, cx, cy);
         fan.draw(g, skin, font, x, y, VW, VH, cx, cy, sx, sy, mouseX, mouseY, shake, busy() ? 0.2f : 1f);
+        axis.draw(g, font);
 
         if (menu.trim()) {
             // The three inputs share one plaque, joined by plus signs; the result stays on the right.
@@ -917,6 +943,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         }
         if (busy())
             return;
+        axis.tooltip(g, font, mouseX, mouseY);
         BenchFan.Node n = fan.over();
         if (n != null && (n.kind == BenchFan.Kind.SHAPE || n.kind == BenchFan.Kind.BUILD) && inCanvas(mouseX, mouseY)) {
             List<net.minecraft.util.FormattedCharSequence> lines = new ArrayList<>();
@@ -953,6 +980,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             g.pose().popPose();
             return;
         }
+        checklist.draw(g, font, leftPos, topPos, imageWidth, width);
         g.pose().pushPose();
         g.pose().translate(0, 0, 400);
         if (forge != null && forge.busy())

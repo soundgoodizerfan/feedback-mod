@@ -152,7 +152,7 @@ public final class ModularBake {
         if (m == null || m.xpStore().isEmpty())
             return Optional.empty();
         ModularType.Role role = type.roles().get(p.role());
-        int cells = role.variant(p).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        float cells = role.cells(p) * role.volumeScale(p);
         Material.XpCapacity x = m.xpStore().get();
         XpStore empty = XpStore.empty(Math.max(1, Math.round(cells * x.capacitance())), x.topLevel());
         return Optional.of(held == null ? empty : empty.with(held.points()));
@@ -160,7 +160,7 @@ public final class ModularBake {
 
     /**
      * Whether {@code material} can fill {@code roleKey} of a {@code type} and still bake: a battery's plates must state a
-     * {@code secondary_cell} and its case must insulate, a machine's winding must conduct and its housing state a conductivity, a vessel's body must hold experience, a charge's filler must be a chemical propellant. Other families take any material their role accepts.
+     * {@code secondary_cell} and its case must insulate, a machine's winding must conduct and its housing state a conductivity, a vessel's body must hold experience, a charge's filler must be a chemical propellant, a spring gun's barrel, piston and spring must be metal (the spring with a yield strength). Other families take any material their role accepts.
      */
     public static boolean suits(ModularType type, String roleKey, Material material) {
         if (material.traits().contains(Material.Trait.ASSEMBLY))
@@ -183,9 +183,15 @@ public final class ModularBake {
             case BLOCK -> BlockFigures.suits(type, roleKey, material);
             case PRESSURE -> engineMetal(material) && material.mechanical().yieldStrength().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
-            // A coilgun's winding is a conductor that holds a field and has a quench point: the rest cannot wind a gun.
-            case GUN -> !roleKey.equals("W") || io.github.soundgoodizerfan.feedback.weapon.GunSpec.windable(material);
-            case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().filter(p -> p.drive() != Material.Propellant.Drive.COIL).isPresent();
+            // a spring gun's barrel, piston and spring are metal (the spring states a yield strength); its receiver takes any material
+            // an electric gun's barrel must conduct; its receiver and grip take any material
+            case ELECTRIC_GUN -> !type.roles().get(roleKey).name().equals(ElectricGunSpec.BARREL) || material.ampacity().isPresent();
+            case AIR_GUN -> {
+                String name = type.roles().get(roleKey).name();
+                yield name.equals(SpringGunSpec.RECEIVER) || (engineMetal(material)
+                        && (!name.equals(SpringGunSpec.SPRING) || material.mechanical().yieldStrength().isPresent()));
+            }
+            case CHARGE -> wear || !io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, roleKey) || material.propellant().isPresent();
             default -> true;
         };
     }
@@ -207,7 +213,7 @@ public final class ModularBake {
         if (pm == null || cm == null || pm.electrical().secondaryCell().isEmpty() || cm.electrical().insulation().isEmpty())
             return Optional.empty();
         ModularType.Role role = type.roles().get(plates.role());
-        int stock = role.variant(plates).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        int stock = Math.max(1, Math.round(role.cells(plates) * role.volumeScale(plates)));
         int perCell = role.variant(plates).map(v -> v.params().get("ingots_per_cell")).map(Math::round).orElse(FTuning.BATTERY_INGOTS_PER_CELL);
         int cells = Math.max(1, stock / perCell);
         Material.SecondaryCell sc = pm.electrical().secondaryCell().get();
@@ -288,8 +294,8 @@ public final class ModularBake {
                 return Optional.empty();
         }
         int cylinders = Math.round(param(type, pistons, "cylinders", 4f));
-        int bore = Math.round(type.roles().get(ENGINE_PISTONS).dim(pistons, "bore"));
-        int stroke = Math.round(type.roles().get(ENGINE_CRANK).dim(crank, "stroke"));
+        int bore = Math.round(type.roles().get(ENGINE_PISTONS).axis(pistons, "bore"));
+        int stroke = Math.round(type.roles().get(ENGINE_CRANK).axis(crank, "stroke"));
         var compression = io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign.Compression.values()[
                 Math.max(0, Math.min(2, Math.round(param(type, head, "compression", 1f))))];
         float torque = param(type, block, "torque", 1f) * param(type, head, "torque", 1f);
@@ -327,7 +333,7 @@ public final class ModularBake {
         Material m = materials.get(shell.material());
         if (m == null || !suits(type, TANK_SHELL, m))
             return Optional.empty();
-        float wall = type.roles().get(TANK_SHELL).dim(shell, "wall");
+        float wall = type.roles().get(TANK_SHELL).axis(shell, "wall");
         float inner = Math.max(1f, ModularTuning.TANK_HALF_CM - wall);
         float rating = param(type, shell, "rating", 1f);
         float fill = param(type, shell, "fill", 1f);
@@ -364,14 +370,14 @@ public final class ModularBake {
         }
         Material bm = materials.get(blades.material());
         int count = Math.round(param(type, hub, "blades", 3f));
-        int diameter = Math.round(type.roles().get(PROP_BLADES).dim(blades, "diameter"));
+        int diameter = Math.round(type.roles().get(PROP_BLADES).axis(blades, "diameter"));
         int pitch = Math.round(param(type, blades, "pitch", 1f));
         float mass = param(type, hub, "mass", 1f) * massBlend(design, type, materials, bm, PROP_HUB, PROP_BLADES);
         return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign(count, diameter, pitch, blades.material(), mass));
     }
 
     /**
-     * The gearbox a design makes. The gear set's variant is the gear count and its dims {@code g1} to {@code g6} the ratios (in
+     * The gearbox a design makes. The gear set's variant is the gear count and its axes {@code g1} to {@code g6} the ratios (in
      * steps of 0.05, the grain of a transmission); the gear set's metal is the box's, which sets how fast a shift at speed wears it;
      * the synchronisers and the case each multiply the wear ({@code wear}) and the weight ({@code mass}), the other parts' metals
      * weighing it too. Empty if a part is missing or is not a weighed metal.
@@ -390,7 +396,7 @@ public final class ModularBake {
         int count = Math.round(param(type, gears, "gears", 4f));
         java.util.List<Integer> steps = new java.util.ArrayList<>();
         for (int g = 1; g <= count; g++)
-            steps.add(Math.round(role.dim(gears, "g" + g) * io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.PER_UNIT));
+            steps.add(Math.round(role.axis(gears, "g" + g) * io.github.soundgoodizerfan.feedback.vehicle.transmission.TransmissionDesign.PER_UNIT));
         float wear = param(type, synchro, "wear", 1f) * param(type, box, "wear", 1f);
         float mass = param(type, synchro, "mass", 1f) * param(type, box, "mass", 1f)
                 * massBlend(design, type, materials, materials.get(gears.material()), GEAR_SET, GEAR_SYNCHRO, GEAR_CASE);
@@ -398,7 +404,7 @@ public final class ModularBake {
     }
 
     /** The role letters of the dynamotor's four parts. */
-    public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H", MACHINE_BEARING = "B";
+    public static final String MACHINE_FRAME = "F", MACHINE_WINDING = "W", MACHINE_CORE = "C", MACHINE_HOUSING = "H", MACHINE_BEARING = "B", MACHINE_COOLING = "K";
 
     /**
      * What a dynamotor design is, read by the placed block.
@@ -510,8 +516,8 @@ public final class ModularBake {
                 power = m.separation().reflectivity().orElse(0.2f) / k.get("optic");
             // A bored part (a cylinder, a nozzle) works as well as its bore is cut to the size the upgrade wants: uncut or overbored, it still
             // works, only worse. The cut comes off the part (a drill, per Fu), never a gate.
-            if (k.containsKey("bore_target") && role.dims().containsKey("bore")) {
-                float want = k.get("bore_target"), cut = p.dim("bore", role.dims().get("bore").def());
+            if (k.containsKey("bore_target") && role.axes().containsKey("bore")) {
+                float want = k.get("bore_target"), cut = p.axis("bore", role.axes().get("bore").def());
                 float closeness = Math.max(0f, 1f - Math.abs(cut - want) / want);
                 power *= ModularTuning.BORE_FLOOR + (1f - ModularTuning.BORE_FLOOR) * closeness;
             }
@@ -550,7 +556,7 @@ public final class ModularBake {
     }
 
     private static int stockCells(ModularType.Role role, Part part) {
-        return role.variant(part).map(ModularType.Variant::cells).filter(c -> c > 0).orElse(role.part().map(ModularType.Shaping::cells).orElse(1));
+        return Math.max(1, Math.round(role.cells(part) * role.volumeScale(part)));
     }
 
     /** The name of the shape {@code part} was made in, the standard shape's base name when it has no variant. */
@@ -604,9 +610,15 @@ public final class ModularBake {
         float amps = Math.min(su / vpr, wm.ampacity().get() * wireCells * FTuning.WINDING_AMPS_PER_AMPACITY);
         float drop = wm.electrical().drop().orElse(0f) * wireCells * FTuning.WINDING_BLOCKS_PER_CELL;
         float leak = hm.thermal().conductivity().get().workPerTickPerTu() * area * FTuning.MACHINE_SHED_PER_CONDUCTIVITY;
+        // A cooling addon (plate fins, or pipe for a water jacket) sheds more: its material's conductivity over its volume.
+        Part cooling = design.part(MACHINE_COOLING);
+        Material km = cooling == null ? null : materials.get(cooling.material());
+        if (km != null && km.thermal().conductivity().isPresent())
+            leak += km.thermal().conductivity().get().workPerTickPerTu() * type.roles().get(MACHINE_COOLING).volume(cooling)
+                    * ModularTuning.COOLING_SHED_PER_LS;
         float service = hm.thermal().serviceTemperature().map(Tu::value).orElse(FTuning.MACHINE_SERVICE_TU);
         return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOf(vpr * FTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
-                cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, shapeName(type.roles().get(MACHINE_HOUSING), housing).equals("jacketed")));
+                cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, cooling != null && cooling.form().equals("pipe")));
     }
 
     public static int enchantability(Material m) {
@@ -699,22 +711,54 @@ public final class ModularBake {
                         ModularTuning.DRAW_MIN_TICKS, ModularTuning.DRAW_MAX_TICKS));
                 f.put(Fig.JOINT, string > 0 ? drive / (ModularTuning.STRING_SHARE * string) : 0f);
             }
+            case AIR_GUN -> {
+                Optional<SpringGunSpec> spec = SpringGunSpec.of(design, type, materials);
+                if (spec.isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                SpringGunSpec air = spec.get();
+                f.put(Fig.MASS, total);
+                f.put(Fig.SPRING_ENERGY, air.energy() * worn);
+                f.put(Fig.AIR_EFFICIENCY, air.efficiency());
+                f.put(Fig.VELOCITY, air.shot(ModularTuning.AIR_REF_DENSITY, 1f - worn).speed() / ModularTuning.AIR_BOW_ARROW_SPEED);
+                f.put(Fig.DRAW, air.cockTicks());
+                f.put(Fig.JOINT, air.load(0f));
+            }
+            case ELECTRIC_GUN -> {
+                Optional<ElectricGunSpec> spec = ElectricGunSpec.of(design, type, materials);
+                if (spec.isEmpty())
+                    return Optional.empty();
+                float total = 0;
+                for (Part p : design.parts())
+                    total += mass(type.roles().get(p.role()), p, by.get(p.role()));
+                ElectricGunSpec egun = spec.get();
+                f.put(Fig.MASS, total);
+                f.put(Fig.SHOT_ENERGY, egun.energyIn() * worn);
+                f.put(Fig.VELOCITY, egun.shot(ModularTuning.AIR_REF_DENSITY, 1f).speed() / ModularTuning.AIR_BOW_ARROW_SPEED);
+                f.put(Fig.JOINT, egun.load(ModularTuning.EGUN_REF_VOLTS));
+            }
             case ARMOUR -> {
                 Part plate = wearPart;
                 float share = comp / (comp + ModularTuning.ARMOUR_HALF_COMPETENCE);
-                float cover = Math.min(1f, plate.count() / (float) type.canonicalCounts().getOrDefault(type.wearRole(), plate.count()));
+                ModularType.Role plateRole = type.roles().get(type.wearRole());
+                float canonical = type.canonicalCounts().getOrDefault(type.wearRole(), plate.count());
+                float cover = clamp(plateRole.cells(plate) * plateRole.volumeScale(plate) / Math.max(1f, canonical), 0f, ModularTuning.ARMOUR_COVER_MAX);
                 float points = type.armourMax() * share * type.roles().get(type.wearRole()).factor(plate.form()) * cover;
                 float total = 0;
                 for (Part p : design.parts()) {
                     ModularType.Role r = type.roles().get(p.role());
                     total += mass(r, p, by.get(p.role()));
-                    if (r.name().equals("lining")) {
+                    if (r.name().equals("underlayer")) {
                         float c = competence(by.get(p.role()));
                         points += type.armourMax() * ModularTuning.LINING_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
                     }
                     suitFitting(f, type, r, p, by.get(p.role()));
                 }
                 f.put(Fig.MASS, total);
+                f.put(Fig.PIERCE_RESIST, clamp(share * cover * param(plateRole, plate, "pierce"), 0f, ModularTuning.PIERCE_RESIST_MAX));
+                f.put(Fig.FIRE_CONDUCT, edge.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) * plateRole.volume(plate));
                 f.put(Fig.ARMOUR, points * worn);
                 f.put(Fig.ARMOUR_TOUGHNESS, ModularTuning.TOUGHNESS_MAX * Math.max(0f,
                         (share - ModularTuning.TOUGHNESS_FROM_SHARE) / (1 - ModularTuning.TOUGHNESS_FROM_SHARE)));
@@ -733,6 +777,8 @@ public final class ModularBake {
                 for (Part p : design.parts()) {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                     held *= param(type.roles().get(p.role()), p, "capacity_mult");
+                    // An addon role may state its own multiple (a boss is a weak spot, a strap carries the weight).
+                    held *= type.roles().get(p.role()).params().getOrDefault("capacity_mult", 1f);
                 }
                 f.put(Fig.MASS, total);
                 f.put(Fig.CAPACITY, (ModularTuning.SHIELD_BASE_CAPACITY + comp * worn) * held);
@@ -909,7 +955,7 @@ public final class ModularBake {
             if (io.github.soundgoodizerfan.feedback.weapon.Blast.isFiller(type, p.role()))
                 filler.add(new io.github.soundgoodizerfan.feedback.weapon.Cartridge.Charge(p.material(), p.count()));
         Optional<io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend> blend =
-                io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend.of(materials, filler).filter(b -> !b.coil());
+                io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend.of(materials, filler);
         if (read.isEmpty() || blend.isEmpty() || blend.get().total() > FTuning.DEMO_FILLER_MAX)
             return Optional.empty();
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
@@ -949,7 +995,7 @@ public final class ModularBake {
             ModularFigures held = ModularNest.figures(part);
             return held == null ? 0f : held.get(Fig.MASS);
         }
-        return role.litres() * part.count() * m.density().muPerMb() * role.factor(part.form()) * role.kept(part);
+        return role.volume(part) * m.density().muPerMb() * role.factor(part.form()) * role.kept(part);
     }
 
     /**
@@ -1056,9 +1102,9 @@ public final class ModularBake {
         f.put(Fig.JOINT, joint(design, type, by, struck, reachLength, rodLength, heads));
     }
 
-    /** The strength a joint can lean on in {@code m}: a binding counts for its share of its own strength, any other part for all of it. */
+    /** The strength a joint can lean on in {@code m}: a binding or an edge guard counts for its share of its own strength, any other part for all of it. */
     private static float jointStrength(ModularType.Role r, Part p, Material m) {
-        if (r.name().equals("binding"))
+        if (r.name().equals("binding") || r.name().equals("edge_guard"))
             return (m.kind().filter(k -> k == Material.Kind.METAL).isPresent()
                     ? ModularTuning.PINNED_SHARE : ModularTuning.WRAPPED_SHARE) * strength(m) * param(r, p, "joint_mult");
         return strength(m);
@@ -1073,8 +1119,8 @@ public final class ModularBake {
         float binding = 0;
         for (Part p : design.parts()) {
             ModularType.Role r = type.roles().get(p.role());
-            if (r.name().equals("binding"))
-                binding = jointStrength(r, p, by.get(p.role()));
+            if (r.name().equals("binding") || r.name().equals("edge_guard"))
+                binding += jointStrength(r, p, by.get(p.role()));
             else if (r.rod() || heads.contains(p.role()))
                 weakest = Math.min(weakest, strength(by.get(p.role())));
         }

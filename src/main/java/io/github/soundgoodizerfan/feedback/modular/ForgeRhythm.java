@@ -64,12 +64,6 @@ public final class ForgeRhythm {
     /** Share of the notes lost, below which the part has no flaw, one, two; beyond is three. */
     public static final float[] FLAW_AT = {0.12f, 0.30f, 0.55f};
     public static final int MAX_FLAW = 3;
-    /**
-     * The key on a part's {@code dims} for the work ratio the forge left ({@link #work}). The ratio is kept
-     * between these two: a bar nobody hit is still a bar (thick, but not unbounded), and a part
-     * hammered past twice what it asked is scrap thinner than the model can say anything about.
-     */
-    public static final String WORK = "work";
     /** Clean blows in a row that earn one tempo step, and the share of a landed blow each step adds. [OPEN] */
     public static final int TEMPO_STREAK = 3;
     public static final float TEMPO_BONUS = 0.08f;

@@ -13,9 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:backpack_shell",
-        "shape": [
-          "PPP"
-        ],
+        "cells": 3,
         "stock": [
           "leather",
           "*_carpet",
@@ -24,9 +22,7 @@
         "variants": [
           {
             "name": "pouch",
-            "shape": [
-              "P"
-            ],
+            "cells": 1,
             "params": {
               "slots": 9,
               "points": 1
@@ -34,11 +30,7 @@
           },
           {
             "name": "pack",
-            "shape": [
-              "PPP",
-              "PPP",
-              "PPP"
-            ],
+            "cells": 9,
             "params": {
               "slots": 27,
               "points": 4

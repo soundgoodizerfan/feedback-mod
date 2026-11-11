@@ -14,9 +14,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:vial_body",
-        "shape": [
-          "V"
-        ],
+        "cells": 1,
         "stock": [
           "gem",
           "shard",
@@ -26,17 +24,11 @@
         "variants": [
           {
             "name": "flask",
-            "shape": [
-              "VVV"
-            ]
+            "cells": 3
           },
           {
             "name": "carboy",
-            "shape": [
-              "VVV",
-              "VVV",
-              "VVV"
-            ]
+            "cells": 9
           }
         ]
       }

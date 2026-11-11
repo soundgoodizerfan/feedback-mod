@@ -18,11 +18,7 @@
       },
       "part": {
         "item": "feedback:chestplate_plate",
-        "shape": [
-          "P P",
-          "PPP",
-          "PPP"
-        ],
+        "cells": 8,
         "stock": [
           "ingot",
           "block",
@@ -35,28 +31,15 @@
         "variants": [
           {
             "name": "brigandine",
-            "shape": [
-              "P P",
-              "PPP",
-              "PP"
-            ],
-            "trait": "studded",
-            "params": {
-              "per_stud": 1,
-              "max": 3,
-              "wear": 1
-            }
+            "cells": 7
           },
           {
             "name": "breastplate",
-            "shape": [
-              "PPP",
-              "PPP",
-              "PPP"
-            ],
+            "cells": 9,
             "trait": "rigid",
             "params": {
-              "absorb_mult": 0.7
+              "absorb_mult": 0.7,
+              "pierce": 1.2
             }
           },
           {
@@ -65,14 +48,90 @@
             "trait": "mail",
             "params": {
               "slash_mult": 0.75,
-              "blunt_mult": 1.3
+              "blunt_mult": 1.3,
+              "pierce": 0.6
+            }
+          },
+          {
+            "name": "scale",
+            "rhythm": "tt.t.tt.t.tt",
+            "mass": 0.9,
+            "section": 0.8,
+            "params": {
+              "pierce": 0.8
+            }
+          },
+          {
+            "name": "lamellar",
+            "rhythm": "ttt.ttt.ttt.",
+            "mass": 1.0,
+            "section": 0.9,
+            "params": {
+              "pierce": 0.9
+            }
+          },
+          {
+            "name": "segmented",
+            "rhythm": "h.t.h.t.h.t.",
+            "mass": 1.15,
+            "section": 1.1,
+            "params": {
+              "pierce": 1.1
             }
           }
         ]
+      },
+      "axes": {
+        "width": {
+          "min": 30,
+          "max": 60,
+          "unit": "cm",
+          "default": 42,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "narrow",
+              "max": 36
+            },
+            {
+              "name": "normal",
+              "max": 48
+            },
+            {
+              "name": "wide"
+            }
+          ]
+        },
+        "torso_length": {
+          "min": 40,
+          "max": 80,
+          "unit": "cm",
+          "default": 56,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 48
+            },
+            {
+              "name": "normal",
+              "max": 64
+            },
+            {
+              "name": "long",
+              "trait": "cramped",
+              "params": {
+                "sneak_mult": 0.8
+              }
+            }
+          ]
+        }
       }
     },
     "L": {
-      "name": "lining",
+      "name": "underlayer",
       "forms": [
         "*"
       ],
@@ -91,7 +150,13 @@
       ],
       "litres": 0.01,
       "bulk": 2,
-      "set": true
+      "set": true,
+      "trait": "studded",
+      "params": {
+        "per_stud": 1,
+        "max": 3,
+        "wear": 1
+      }
     },
     "S": {
       "name": "servo",
@@ -102,9 +167,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:machine_winding",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "wire"
         ],
@@ -115,24 +178,15 @@
           },
           {
             "name": "fine",
-            "shape": [
-              "WW"
-            ]
+            "cells": 2
           },
           {
             "name": "dense",
-            "shape": [
-              "WW",
-              "WW"
-            ]
+            "cells": 4
           },
           {
             "name": "heavy_dense",
-            "shape": [
-              "WWW",
-              "WWW",
-              "WW"
-            ]
+            "cells": 8
           }
         ]
       }
@@ -162,6 +216,47 @@
       "litres": 0.03,
       "layer": 9,
       "after": true
+    },
+    "C": {
+      "name": "collar",
+      "forms": [
+        "ingot",
+        "plate",
+        "chain",
+        "leather",
+        "fibre"
+      ],
+      "litres": 0.02,
+      "bulk": 1,
+      "trait": "collar",
+      "params": {
+        "stiff_share": 0.5,
+        "flex_share": 0.2
+      }
+    },
+    "D": {
+      "name": "pauldron",
+      "forms": [
+        "ingot",
+        "plate",
+        "chain",
+        "leather"
+      ],
+      "litres": 0.03,
+      "bulk": 2,
+      "trait": "pauldron",
+      "params": {
+        "overhead_mult": 0.7,
+        "falling_mult": 0.6
+      }
+    },
+    "U": {
+      "name": "underlayer",
+      "forms": [
+        "chain"
+      ],
+      "litres": 0.02,
+      "layer": 1
     }
   },
   "patterns": [
@@ -197,5 +292,52 @@
   "vanilla": {
     "chestplate": "ingot",
     "chainmail_chestplate": "chain"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "lorica_segmentata",
+        "is": {
+          "variant": "segmented"
+        }
+      },
+      {
+        "name": "lamellar_cuirass",
+        "is": {
+          "variant": "lamellar"
+        }
+      },
+      {
+        "name": "scale_hauberk",
+        "is": {
+          "variant": "scale"
+        }
+      },
+      {
+        "name": "hauberk",
+        "is": {
+          "variant": "hauberk"
+        }
+      },
+      {
+        "name": "coat_of_plates",
+        "is": {
+          "variant": "brigandine",
+          "underlayer": "fitted"
+        }
+      },
+      {
+        "name": "brigandine",
+        "is": {
+          "variant": "brigandine"
+        }
+      },
+      {
+        "name": "cuirass",
+        "is": {
+          "variant": "breastplate"
+        }
+      }
+    ]
   }
 }

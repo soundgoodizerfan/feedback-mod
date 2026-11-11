@@ -8,6 +8,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ShieldModel;
@@ -53,14 +55,21 @@ public final class ShieldRenderer extends BlockEntityWithoutLevelRenderer {
         }
     }
 
-    /** Vanilla's plate is 12 by 22; a face variant scales it. */
-    private static float[] size(String variant) {
-        return switch (variant) {
-            case "buckler" -> new float[]{0.75f, 0.6f};
+    /** Vanilla's plate is 12 by 22; a face variant gives it its outline and the face's {@code face_size} axis scales it. */
+    private static float[] size(ModularDesign design, ModularDesign.Part face) {
+        if (face == null)
+            return new float[]{1f, 1f};
+        float[] shape = switch (face.variant()) {
             case "kite" -> new float[]{0.9f, 1.15f};
-            case "tower" -> new float[]{1.25f, 1.25f};
+            case "heater" -> new float[]{1f, 1.1f};
+            case "rectangular" -> new float[]{0.95f, 1.2f};
             default -> new float[]{1f, 1f};
         };
+        ModularType type = ModularTypes.known().get(design.type());
+        ModularType.Role role = type == null ? null : type.roles().get("F");
+        ModularType.Axis axis = role == null ? null : role.axes().get("face_size");
+        float scale = axis == null ? 1f : Math.max(0.6f, Math.min(1.6f, axis.clamp(face.axis("face_size", axis.def())) / axis.def()));
+        return new float[]{shape[0] * scale, shape[1] * scale};
     }
 
     /** A cube of the rim frame, drawn from the handle's plain region of the sheet. */
@@ -87,7 +96,7 @@ public final class ShieldRenderer extends BlockEntityWithoutLevelRenderer {
         int faceColour = face == null ? 0xFFFFFFFF : 0xFF000000 | MaterialColors.of(face.material());
         int rimColour = rim == null ? faceColour : 0xFF000000 | MaterialColors.of(rim.material());
         int gripColour = grip == null ? faceColour : 0xFF000000 | MaterialColors.of(grip.material());
-        float[] size = size(face == null ? "" : face.variant());
+        float[] size = size(design, face);
         float w = 12 * size[0], h = 22 * size[1];
         float t = rim != null && "flanged".equals(rim.variant()) ? 1.5f : 1f;
 

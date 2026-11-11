@@ -84,7 +84,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
      * role k), {@code SWAP + role * 256 + s} puts the stack in menu slot s on a tool's role, {@code TYPE + n} chooses dish type n.
      */
     public static final int BTN_APART = 3, BTN_MACHINE = 4, BTN_BREAK = 5, BTN_MAKE = 6, BTN_DESELECT = 7, BTN_TAB = 8, BTN_TYPE = 50, BTN_PICK = 100, BTN_CUT = 10000,
-            BTN_FIT = 20000, BTN_SHAPE = 30000, BTN_OFF = 40000, BTN_SWAP = 50000;
+            BTN_FIT = 20000, BTN_SHAPE = 30000, BTN_OFF = 40000, BTN_SWAP = 50000, BTN_AXIS = 58000, BTN_AXIS_SET = 60000;
+    /**
+     * Aim buttons for the picked shape's part axes ({@link ToolTableShaping#aimable}, at most {@link #MAX_AIM}):
+     * {@code AXIS + 2a} lowers axis a by its grain, {@code AXIS + 2a + 1} raises it; {@code AXIS_SET + 1000a + n} sets it to
+     * its minimum plus n grains (a drag). Clamped to the axis's range on the server.
+     */
+    public static final int MAX_AIM = 4;
 
     /** The bench: wide, a fan above and the inventory below; the tool slots in a column on the right. */
     public static final int W = 360, H = 262, INV_X = 99, INV_Y = 180;
@@ -111,6 +117,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private final DataSlot planShown = DataSlot.standalone();
     /** The heat a Hearth beside the table holds the stock at, in Tu (0 for none): synced so the screen's heat clock agrees with the server's. */
     private final DataSlot holdTu = DataSlot.standalone();
+    /** The aimed value of each axis of the picked shape's part, times ten: server-set, synced for the screen's strip and preview. */
+    private final DataSlot[] aim = new DataSlot[MAX_AIM];
+    /** Server side: the shape the aim was last reset for, so a new pick starts every axis at its default. */
+    private int aimFor = -1;
     /** Which table this is: the Tool Table's menu with a type filter, and at the Gun Table a slot for a round ({@link #gunTable}), at the Prep Table a knife for the hammer. */
     private final ToolTableAssembly.Kind kind;
     private final Station station;
@@ -218,6 +228,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         addDataSlot(tabs.slot());
         addDataSlot(planShown);
         addDataSlot(holdTu);
+        for (int i = 0; i < MAX_AIM; i++) {
+            aim[i] = DataSlot.standalone();
+            addDataSlot(aim[i]);
+        }
         if (!player.level().isClientSide)
             output.setItem(0, preview(player.level()));
     }
@@ -609,6 +623,67 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return p >= 0 && p < options.size() ? Optional.of(options.get(p)) : Optional.empty();
     }
 
+    // --- aiming the part's axes --------------------------------------------------------------------
+
+    /** The aimed value of axis {@code i} of the picked shape's part ({@link ToolTableShaping#aimable} order). */
+    public float aim(int i) {
+        return aim[i].get() / 10f;
+    }
+
+    /** The aimed values of {@code option}'s part by axis name. */
+    private Map<String, Float> aimed(ToolTableShaping.Option option) {
+        Map<String, Float> out = new java.util.HashMap<>();
+        // Only the shape picked has an aim; any other is made to its defaults, so a stray index cannot borrow it.
+        if (!option(player.level()).filter(option::equals).isPresent())
+            return out;
+        List<Map.Entry<String, ModularType.Axis>> axes = ToolTableShaping.aimable(option);
+        for (int i = 0; i < Math.min(MAX_AIM, axes.size()); i++)
+            out.put(axes.get(i).getKey(), aim(i));
+        return out;
+    }
+
+    /** What the aimed axes make of {@code option}'s stock: the volume scale. */
+    public float aimScale(ToolTableShaping.Option option) {
+        return ToolTableShaping.roleOf(option).map(r -> r.volumeScaleOf(aimed(option))).orElse(1f);
+    }
+
+    /** A new pick starts every axis at its default (server). */
+    private void syncAim(Level level) {
+        if (level.isClientSide || aimFor == picked())
+            return;
+        aimFor = picked();
+        List<Map.Entry<String, ModularType.Axis>> axes = option(level).map(ToolTableShaping::aimable).orElse(List.of());
+        for (int i = 0; i < MAX_AIM; i++)
+            aim[i].set(i < axes.size() ? Math.round(axes.get(i).getValue().def() * 10f) : 0);
+    }
+
+    private void aimClick(Level level, int id) {
+        Optional<ToolTableShaping.Option> option = option(level);
+        if (option.isEmpty() || mode.get() != MODE_PART || forging >= 0)
+            return;
+        List<Map.Entry<String, ModularType.Axis>> axes = ToolTableShaping.aimable(option.get());
+        int a;
+        float value;
+        if (id >= BTN_AXIS_SET) {
+            a = (id - BTN_AXIS_SET) / 1000;
+            if (a >= axes.size() || a >= MAX_AIM)
+                return;
+            value = axes.get(a).getValue().min() + (id - BTN_AXIS_SET) % 1000 * axes.get(a).getValue().grain();
+        } else {
+            a = (id - BTN_AXIS) / 2;
+            if (a >= axes.size() || a >= MAX_AIM)
+                return;
+            value = aim(a) + ((id - BTN_AXIS) % 2 == 1 ? 1 : -1) * axes.get(a).getValue().grain();
+        }
+        aim[a].set(Math.round(axes.get(a).getValue().clamp(value) * 10f));
+    }
+
+    /** The as-built axes a part made now gets: the aim plus symmetric noise ({@link ToolTableShaping#spread}), seeded by the game time and the player. */
+    private Map<String, Float> built(Level level, ToolTableShaping.Option option, float workRatio, int flaw) {
+        net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(level.getGameTime() * 31L + player.getUUID().hashCode());
+        return ToolTableShaping.asBuilt(option, aimed(option), ToolTableShaping.spread(option, workRatio, flaw), random);
+    }
+
     // --- breaking stock down ---------------------------------------------------------------------
 
     /** What a big piece of stock in the centre breaks into (empty when it is no bigger than an ingot): smaller items of the same stuff. */
@@ -662,6 +737,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** What taking the output would give, from the centre: empty if no hammer or nothing valid. */
     public ItemStack preview(Level level) {
+        syncAim(level);
         Centre c = centre(level);
         if (c == Centre.TEMPLATE)
             return smithed(level);
@@ -684,7 +760,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (materials.isEmpty() || types.isEmpty())
             return ItemStack.EMPTY;
         return switch (c) {
-            case STOCK -> option(level).map(o -> ToolTableShaping.make(station, o, stock(), materials, level)).orElse(ItemStack.EMPTY);
+            case STOCK -> option(level).map(o -> ToolTableShaping.make(station, o, stock(), materials, level, aimScale(o), built(level, o, 1f, 0))).orElse(ItemStack.EMPTY);
             case TOOL -> dish ? ItemStack.EMPTY : reworked(level).map(Reworked::out).orElse(ItemStack.EMPTY);
             default -> ItemStack.EMPTY;
         };
@@ -711,7 +787,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** Whether the centre is a part some blueprint-needing type is built on (the crossbow's prod), so the plan slot is wanted. */
     private boolean needsPlan(Level level) {
-        if (dish)
+        // a blueprint is optional for all forging (it gives credit, never gates), so the slot is always there
+        if (!blueprintTab())
             return true;
         ItemStack c = centreStack();
         // a finished item that needs a plan can be measured onto paper put in the plan slot
@@ -799,7 +876,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             case MODE_PART -> {
                 Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
                 Optional<ToolTableShaping.Option> option = option(level);
-                Optional<ToolTableShaping.Stock> stock = option.flatMap(o -> ToolTableShaping.check(station, o, stock(), materials, level));
+                Optional<ToolTableShaping.Stock> stock = option.flatMap(o -> ToolTableShaping.check(station, o, stock(), materials, level, aimScale(o)));
                 if (stock.isPresent() && !option.get().forged() && BuiltInRegistries.ITEM.get(option.get().shaping().item()) instanceof ModularPartItem)
                     spend(ToolTableBlockEntity.TOOL, stock.get(), server);
                 else if (option.isPresent())
@@ -961,10 +1038,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
         if (o.forged() || !(BuiltInRegistries.ITEM.get(o.shaping().item()) instanceof ModularPartItem))
             return;
-        Optional<ToolTableShaping.Stock> stock = ToolTableShaping.check(station, o, side(), materials, level);
+        Optional<ToolTableShaping.Stock> stock = ToolTableShaping.check(station, o, side(), materials, level, index == picked() ? aimScale(o) : 1f);
         if (stock.isEmpty())
             return;
-        Optional<ItemStack> part = ToolTableShaping.part(o, stock.get(), 0, level);
+        Optional<ItemStack> part = ToolTableShaping.part(o, stock.get(), 0, 1f, index == picked() ? built(level, o, 1f, 0) : Map.of(), level);
         if (part.isEmpty() || !attaches(part.get(), parts(), materials, assemblyTypes(level)))
             return;
         spend(ToolTableBlockEntity.STOCK, stock.get(), server);
@@ -1143,6 +1220,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
             if (!trim())
                 server.getInventory().placeItemBackInInventory(table.removeItemNoUpdate(ToolTableBlockEntity.STOCK + 1));
             table.setChanged();
+        } else if (id >= BTN_AXIS) {
+            aimClick(level, id);
         } else if (id >= BTN_SWAP) {
             swap(server, (id - BTN_SWAP) / 256, (id - BTN_SWAP) % 256);
         } else if (id >= BTN_OFF) {
@@ -1179,6 +1258,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             server.getInventory().placeItemBackInInventory(made);
         } else
             return false;
+        syncAim(level);
         refresh(true);
         return true;
     }
@@ -1347,10 +1427,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
             }
             // The seasoning joins the design as its finish part, carrying its state and any cut, plus how it was poured.
             ModularDesign.Part base = ToolTableAssembly.part(type.afterRole(), what.get(), seasoning, 1);
-            java.util.Map<String, Float> dims = new java.util.HashMap<>(base.dims());
-            dims.put("pour", strength);
+            java.util.Map<String, Float> state = new java.util.HashMap<>(base.measures().state());
+            state.put("pour", strength);
             List<ModularDesign.Part> parts = new ArrayList<>(design.parts());
-            parts.add(new ModularDesign.Part(base.role(), base.material(), base.form(), base.count(), base.kind(), base.variant(), base.flaw(), dims));
+            parts.add(new ModularDesign.Part(base.role(), base.material(), base.form(), base.count(), base.kind(), base.variant(), base.flaw(), base.measures().withState(state)));
             ItemStack done = work().copy();
             if (!ModularStacks.assemble(done, new ModularDesign(design.type(), parts, design.edge()), materials, ModularTypes.on(level)))
                 return false;
@@ -1475,7 +1555,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private void complete(ServerPlayer server, ToolTableShaping.Option option, ToolTableShaping.Stock stock,
                           ForgeRhythm.Result result, ForgeRhythm.Work work, int hammerPoints) {
         Level level = server.level();
-        Optional<ItemStack> part = ToolTableShaping.part(option, stock, result.flaw(), work.ratio(), level);
+        Optional<ItemStack> part = ToolTableShaping.part(option, stock, result.flaw(), work.ratio(), built(level, option, work.ratio(), result.flaw()), level);
         if (part.isEmpty())
             return;
         spend(ToolTableBlockEntity.TOOL, stock, server);
@@ -1635,7 +1715,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
         if (mode.get() != MODE_PART || !hasHammer() || index < 0 || index >= options.size() || !options.get(index).forged())
             return Optional.empty();
-        return ToolTableShaping.check(station, options.get(index), stock(), ClientMaterials.on(level), level);
+        return ToolTableShaping.check(station, options.get(index), stock(), ClientMaterials.on(level), level, index == picked() ? aimScale(options.get(index)) : 1f);
     }
 
     /**

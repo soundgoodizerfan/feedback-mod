@@ -13,12 +13,6 @@
     },
     "plate": {
       "kind": "arc"
-    },
-    "bolt": {
-      "kind": "cycle_charge"
-    },
-    "slide": {
-      "kind": "cycle_charge"
     }
   },
   "mirror": {

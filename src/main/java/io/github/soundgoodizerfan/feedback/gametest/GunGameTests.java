@@ -68,18 +68,13 @@ public class GunGameTests {
     }
 
     public static ModularDesign.Part part(String role, String material, String form, int count, String kind, String variant,
-                                          Map<String, Float> dims) {
-        return new ModularDesign.Part(role, Feedback.id(material), form, count, kind, variant, 0, dims);
+                                          Map<String, Float> axes) {
+        return new ModularDesign.Part(role, Feedback.id(material), form, count, kind, variant, 0, io.github.soundgoodizerfan.feedback.process.Measures.ofAxes(axes));
     }
 
     /** The barrel as the lathe left it: a bore, an outside and a length. */
     public static ModularDesign barrel(ModularDesign d, String material, float bore, float wall, float length) {
         return with(d, part("B", material, "ingot", 1, "gun_barrel", "", Map.of("bore", bore, "outer", bore + 2 * wall, "length", length)));
-    }
-
-    /** {@code d} wound as a coil gun: two blocks of redstone on the chamber's parts. */
-    public static ModularDesign coil(ModularDesign d) {
-        return with(d, part("W", "redstone", "block", 2, "", "", Map.of()));
     }
 
     public static GunSpec spec(ModularDesign d) {

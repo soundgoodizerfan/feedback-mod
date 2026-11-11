@@ -135,8 +135,8 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         ModularType.Role role = type.roles().get(letter);
         if (part == null || role == null)
             return new float[3];
-        float metres = role.dim(part, BarrelGeometry.LENGTH);
-        float outerMm = role.dim(part, BarrelGeometry.OUTER), boreMm = role.dim(part, BarrelGeometry.BORE);
+        float metres = role.axis(part, BarrelGeometry.LENGTH);
+        float outerMm = role.axis(part, BarrelGeometry.OUTER), boreMm = role.axis(part, BarrelGeometry.BORE);
         float length = snap(Math.max(1.5f, Math.min(metres * 20f, 16f)), 0.25f);
         float r = snap(Math.max(0.5f, Math.min(0.25f + outerMm * 0.025f, 1.25f)), 0.125f);
         float bore = snap(Math.max(0.125f, Math.min(boreMm * 0.02f, r - 0.125f)), 0.125f);

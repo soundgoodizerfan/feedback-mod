@@ -17,7 +17,7 @@ P is a Wrought Iron Plate, S is a [Shaft](Shaft.md) and I is a Wrought Iron Ingo
 | Slot | Takes |
 | --- | --- |
 | **Case** | a metal case, or a [paper case](#paper-cases) |
-| **Charge** | loose powder (gunpowder, blaze powder, redstone dust) or a [Mixture](Mixer.md#using-it) from the Mixer. Leave empty for a jar round |
+| **Charge** | loose powder (gunpowder, blaze powder) or a [Mixture](Mixer.md#using-it) from the Mixer |
 | **+ Charge** | a second powder or Mixture, to make a blend |
 | **Bullet** | a metal or polymer bullet of any [shape](Ammunition.md#bullet-shapes), or a **nugget** or other [shot](Ammunition.md#shot-shells) to make a shell |
 | **core** (beside the bullet) | optional: a nugget of a second metal, set inside the bullet's jacket: see [Jacket and core](Ammunition.md#jacket-and-core) |
@@ -34,8 +34,6 @@ Press **Seat** to make one round.
 | --- | --- | --- |
 | powder | bullet | an ordinary cartridge |
 | powder | nugget | a **shot shell**, for smoothbore barrels |
-| redstone | iron bullet | a coilgun round |
-| nothing | iron bullet | a **jar round**: *"Seated dry: a jar round. Charge it on a wire."* See [Charger](Charger.md) |
 
 ## Paper cases
 
@@ -59,5 +57,4 @@ That line is about the **case**. Whether your **gun** can take it is a separate 
 
 - *"Needs a case and a bullet."*: something is missing, or something is in the wrong slot.
 - *"A case takes at most N charge."* (N is the most for that bore): take some powder out.
-- *"That charge will not seat: a coil's drive cannot be blended with powder."*: you've mixed redstone with gunpowder or blaze powder.
 - *"Take the round out first."*: empty the output slot.

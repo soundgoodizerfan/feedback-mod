@@ -18,10 +18,7 @@
       },
       "part": {
         "item": "feedback:boots_plate",
-        "shape": [
-          "P P",
-          "P P"
-        ],
+        "cells": 4,
         "stock": [
           "ingot",
           "block",
@@ -33,12 +30,11 @@
         ],
         "variants": [
           {
+            "name": "plain_boots"
+          },
+          {
             "name": "sabatons",
-            "shape": [
-              "PP",
-              "PP",
-              "PP"
-            ],
+            "cells": 6,
             "trait": "trample",
             "params": {
               "min_fall": 3,
@@ -48,23 +44,70 @@
             }
           },
           {
-            "name": "riding_boots",
-            "shape": [
-              "P P",
-              "P"
-            ],
-            "trait": "spurs",
-            "params": {
-              "boost_ticks": 60,
-              "level": 1,
-              "cooldown_ticks": 200
-            }
+            "name": "wrapped_boot",
+            "rhythm": "t.t..t.t..tt",
+            "mass": 0.7,
+            "section": 0.7
           }
-        ]
+        ],
+        "base": "plain_boots"
+      },
+      "axes": {
+        "shaft": {
+          "min": 6,
+          "max": 40,
+          "unit": "cm",
+          "default": 14,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "ankle",
+              "max": 12
+            },
+            {
+              "name": "normal",
+              "max": 24
+            },
+            {
+              "name": "high",
+              "trait": "shaft_seal",
+              "params": {
+                "water_mult": 0.9
+              }
+            }
+          ]
+        },
+        "sole": {
+          "min": 4,
+          "max": 30,
+          "unit": "mm",
+          "default": 10,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "thin",
+              "max": 7
+            },
+            {
+              "name": "normal",
+              "max": 16
+            },
+            {
+              "name": "thick",
+              "trait": "cushion_sole",
+              "params": {
+                "fall_mult": 0.6,
+                "stealth": 0.15
+              }
+            }
+          ]
+        }
       }
     },
     "L": {
-      "name": "lining",
+      "name": "underlayer",
       "forms": [
         "*"
       ],
@@ -83,7 +126,13 @@
       ],
       "litres": 0.01,
       "bulk": 2,
-      "set": true
+      "set": true,
+      "trait": "studded",
+      "params": {
+        "per_stud": 1,
+        "max": 3,
+        "wear": 1
+      }
     },
     "S": {
       "name": "servo",
@@ -94,9 +143,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:machine_winding",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "wire"
         ],
@@ -107,24 +154,15 @@
           },
           {
             "name": "fine",
-            "shape": [
-              "WW"
-            ]
+            "cells": 2
           },
           {
             "name": "dense",
-            "shape": [
-              "WW",
-              "WW"
-            ]
+            "cells": 4
           },
           {
             "name": "heavy_dense",
-            "shape": [
-              "WWW",
-              "WWW",
-              "WW"
-            ]
+            "cells": 8
           }
         ]
       }
@@ -145,6 +183,45 @@
       "litres": 0.03,
       "layer": 9,
       "after": true
+    },
+    "E": {
+      "name": "spurs",
+      "forms": [
+        "ingot",
+        "nugget",
+        "gem"
+      ],
+      "litres": 0.01,
+      "bulk": 2,
+      "trait": "spurs",
+      "params": {
+        "boost_ticks": 60,
+        "level": 1,
+        "cooldown_ticks": 200
+      }
+    },
+    "H": {
+      "name": "hobnails",
+      "forms": [
+        "nugget",
+        "shard",
+        "ingot"
+      ],
+      "litres": 0.01,
+      "bulk": 4,
+      "trait": "hobnails",
+      "params": {
+        "grip_mult": 0.3,
+        "visibility_mult": 1.15
+      }
+    },
+    "U": {
+      "name": "underlayer",
+      "forms": [
+        "chain"
+      ],
+      "litres": 0.02,
+      "layer": 1
     }
   },
   "patterns": [
@@ -180,5 +257,22 @@
   "vanilla": {
     "boots": "ingot",
     "chainmail_boots": "chain"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "sabatons",
+        "is": {
+          "variant": "sabatons"
+        }
+      },
+      {
+        "name": "riding_boots",
+        "is": {
+          "variant": "plain_boots",
+          "spurs": "fitted"
+        }
+      }
+    ]
   }
 }

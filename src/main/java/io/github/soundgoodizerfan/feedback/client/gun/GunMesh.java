@@ -20,7 +20,7 @@ import net.minecraft.world.inventory.InventoryMenu;
  *
  * <p>Texture density is 2 texels per pixel everywhere, so every part shares one texel size (the
  * half-pixel grid Scorched Guns' 32 px sheets use); boxes sit on a quarter-pixel grid. A face longer
- * than a tile (16 px) stretches, which is why the long-part tiles (brushed, grain, coil) only vary
+ * than a tile (16 px) stretches, which is why the long-part tiles (brushed, grain) only vary
  * across the stretch direction. On side and top faces u runs along the bore (z).
  */
 public final class GunMesh {

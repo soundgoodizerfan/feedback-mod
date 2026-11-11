@@ -1,0 +1,123 @@
+{
+  "family": "air_gun",
+  "blueprint": true,
+  "wear_litres": 0.4,
+  "wear_role": "B",
+  "primary": "S",
+  "roles": {
+    "B": {
+      "name": "barrel",
+      "forms": [
+        "spring_gun_barrel"
+      ],
+      "litres": 0.1,
+      "layer": 0,
+      "axes": {
+        "barrel_length": {
+          "min": 0.1,
+          "max": 0.8,
+          "unit": "m",
+          "default": 0.3,
+          "step": 0.01,
+          "scales": true
+        },
+        "bore": {
+          "min": 4,
+          "max": 16,
+          "unit": "mm",
+          "default": 8,
+          "step": 0.5
+        }
+      },
+      "part": {
+        "item": "feedback:spring_gun_barrel",
+        "cells": 1,
+        "stock": [
+          "rod",
+          "turned_rod",
+          "ingot"
+        ],
+        "base": "air_standard",
+        "variants": [
+          {
+            "name": "air_standard",
+            "params": {
+              "bore": 8,
+              "barrel_length": 0.3
+            }
+          },
+          {
+            "name": "air_pellet",
+            "cells": 1,
+            "params": {
+              "bore": 5,
+              "barrel_length": 0.3
+            }
+          },
+          {
+            "name": "air_slug",
+            "cells": 2,
+            "params": {
+              "bore": 12,
+              "barrel_length": 0.3
+            }
+          }
+        ]
+      }
+    },
+    "S": {
+      "name": "receiver",
+      "forms": [
+        "spring_gun_receiver"
+      ],
+      "litres": 0.1,
+      "layer": 1,
+      "part": {
+        "item": "feedback:spring_gun_receiver",
+        "cells": 2,
+        "stock": [
+          "ingot",
+          "plate",
+          "bone",
+          "*_planks"
+        ]
+      }
+    },
+    "P": {
+      "name": "piston",
+      "forms": [
+        "rod",
+        "ingot"
+      ],
+      "litres": 0.01,
+      "layer": 2
+    },
+    "W": {
+      "name": "spring",
+      "forms": [
+        "wire",
+        "rod"
+      ],
+      "litres": 0.05,
+      "layer": 3
+    }
+  },
+  "patterns": [
+    [
+      "BSPW"
+    ]
+  ],
+  "ranges": {
+    "W": [
+      1,
+      6
+    ]
+  },
+  "defaults": {
+    "B": "feedback:wrought_iron",
+    "S": "feedback:wood",
+    "P": "feedback:wrought_iron",
+    "W": "feedback:steel"
+  },
+  "school": "weapons"
+}

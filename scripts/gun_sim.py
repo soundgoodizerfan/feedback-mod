@@ -4,8 +4,8 @@
 Reads FTuning.java constants and data/feedback/material/*.json live, so editing either is
 picked up on the next run. Override a constant without editing: --set GUN_DAMAGE_PER_WORK=0.02.
 
-Port of: GunSpec.bake (CHAMBER branch), Cartridge.Blend, GunHazard.assess, GunShots hit damage.
-Not covered: coil / spring / steam launchers, options (fittings), wear, traits, perks, armour.
+Port of: GunSpec.bake, Cartridge.Blend, GunHazard.assess, GunShots hit damage.
+Not covered: options (fittings), wear, traits, perks, armour.
 Keep in step with GunSpec.bake by hand; the Java is the truth.
 
   gun_sim.py                         default sweep (calibre x barrel material x length)
@@ -80,32 +80,6 @@ def bake(T, barrel, bore, outer, length, bullet, charge, shape="bullet", loose=0
     return dict(work=work, speed=exit_ms / 20, damage=work * T["GUN_DAMAGE_PER_WORK"] * s[1], peak=peak, rating=rating,
                 hazard=hazard, mass=gun_mu, bullet=bullet_mu, kick=kick, vented=peak > rating,
                 hardness=bl["hardness"] * s[2])
-
-
-def alt_launcher(T, kind, bore, length, metal, bullet="lead", charge=None, coils=1, fill=1.0, winding="copper"):
-    """Coil / spring / steam work and damage (GunSpec.bake branches). metal = spring stock, chest or winding."""
-    scale = (bore / T["GUN_CHARGE_REF_BORE_MM"]) ** T["GUN_CASE_ROOM_EXPONENT"]
-    m = mat(metal)
-    if kind == "spring":
-        stroke = min(T["GUN_SPRING_STROKE_MAX"], length / T["GUN_BARREL_MEDIUM_M"])
-        w = T["GUN_SPRING_WORK_PER_ST2"] * m["mechanical"]["yield_strength"] ** 2 * coils * stroke
-        w = w * T["GUN_SPRING_WORK_MAX"] / (w + T["GUN_SPRING_WORK_MAX"])
-    elif kind == "steam":
-        peak = T["GUN_STEAM_FULL_PU"] * fill
-        rating = m["mechanical"]["yield_strength"] * T["GUN_STEAM_RATING_PER_ST"]
-        area = math.pi / 4 * (bore / 1000) ** 2
-        w = min(peak, rating) * T["GUN_PRESSURE_FILL"] * area * length * T["GUN_WORK_PER_PU_M3"] * T["GUN_STEAM_WORK_FRACTION"]
-        bud = T["GUN_WORK_PER_NOMINAL_CHARGE"] * T["GUN_STEAM_WORK_FRACTION"] * min(peak, rating) / T["GUN_PROPELLANT_PEAK_PU"] * scale
-        w = w * bud / (w + bud)
-    else:  # coil: m is the winding; slug assumed magnetic
-        charge = charge or T["GUN_CHARGE_NOMINAL"]
-        drive = charge / (T["GUN_CHARGE_NOMINAL"] * scale)
-        peak = 3 * drive
-        wm = mat(winding)
-        rating = wm["mechanical"]["yield_strength"] * wm["ampacity"]
-        held = min(1.0, rating / peak) if peak else 0
-        w = charge / scale * T["GUN_COIL_WORK_PER_DUST"] * (length / T["GUN_BARREL_MEDIUM_M"]) * held
-    return w, w * T["GUN_DAMAGE_PER_WORK"]
 
 
 HDR = f"{'barrel':<15}{'bore':>5}{'out':>5}{'len':>5} {'bullet':<10}{'chg':>4}{'work':>8}{'b/t':>6}{'dmg':>7}{'hp(2/h)':>8}{'peak':>6}{'rate':>7}{'haz':>6}{'gunMu':>7}{'kick':>6}"

@@ -80,15 +80,6 @@ public final class GunCondition {
                 + worn / (1 + io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.levels(gun)));
     }
 
-    /**
-     * Whether a coil's winding is above its quench temperature: the superconductor has reverted
-     * and carries nothing until it has cooled (the redstone torch's failure mode, spec 3.7). A
-     * physical impossibility, so a hard gate with a cause; a chamber has no such limit.
-     */
-    public static boolean quenched(ItemStack gun, Level level, GunSpec.Load load) {
-        return load.coil() && temperature(gun, level).value() >= load.ignitionTu();
-    }
-
     /** A word for how hot the barrel is. A live reading is an instrument's to give; this is what a hand can tell. */
     public static String feel(float heat) {
         return heat < FEEL_EDGES[0] ? "cool" : heat < FEEL_EDGES[1] ? "warm" : heat < FEEL_EDGES[2] ? "hot" : "smoking";

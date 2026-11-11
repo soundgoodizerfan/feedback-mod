@@ -13,7 +13,7 @@
       ],
       "litres": 0.125,
       "layer": 0,
-      "dims": {
+      "axes": {
         "g1": {
           "min": 0.5,
           "max": 5,
@@ -71,10 +71,7 @@
       },
       "part": {
         "item": "feedback:gear_set",
-        "shape": [
-          "GG",
-          "GG"
-        ],
+        "cells": 4,
         "stock": [
           "ingot"
         ],
@@ -82,19 +79,14 @@
         "variants": [
           {
             "name": "two_speed",
-            "shape": [
-              "GG"
-            ],
+            "cells": 2,
             "params": {
               "gears": 2
             }
           },
           {
             "name": "three_speed",
-            "shape": [
-              "GG",
-              "G"
-            ],
+            "cells": 3,
             "params": {
               "gears": 3
             }
@@ -107,20 +99,14 @@
           },
           {
             "name": "five_speed",
-            "shape": [
-              "GGG",
-              "GG"
-            ],
+            "cells": 5,
             "params": {
               "gears": 5
             }
           },
           {
             "name": "six_speed",
-            "shape": [
-              "GGG",
-              "GGG"
-            ],
+            "cells": 6,
             "params": {
               "gears": 6
             }
@@ -137,9 +123,7 @@
       "layer": 1,
       "part": {
         "item": "feedback:synchro_ring",
-        "shape": [
-          "S"
-        ],
+        "cells": 1,
         "stock": [
           "plate"
         ],
@@ -154,9 +138,7 @@
           },
           {
             "name": "synchromesh",
-            "shape": [
-              "SS"
-            ],
+            "cells": 2,
             "params": {
               "wear": 0.6,
               "mass": 1.1
@@ -174,10 +156,7 @@
       "layer": 2,
       "part": {
         "item": "feedback:gearbox_case",
-        "shape": [
-          "HH",
-          "H"
-        ],
+        "cells": 3,
         "stock": [
           "plate"
         ],
@@ -192,10 +171,7 @@
           },
           {
             "name": "splash_case",
-            "shape": [
-              "HH",
-              "HH"
-            ],
+            "cells": 4,
             "params": {
               "wear": 0.75,
               "mass": 1.0
@@ -203,10 +179,7 @@
           },
           {
             "name": "pressure_case",
-            "shape": [
-              "HHH",
-              "HH"
-            ],
+            "cells": 5,
             "params": {
               "wear": 0.5,
               "mass": 1.2

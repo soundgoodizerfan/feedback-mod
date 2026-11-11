@@ -76,7 +76,7 @@ public final class ModularConvert {
         for (ModularType t : ModularTypes.known().values())
             for (ModularType.Role r : t.roles().values())
                 if (r.part().isPresent() && r.part().get().item().equals(id))
-                    return Math.max(1, (int) r.part().get().shape().stream().flatMapToInt(String::chars).filter(c -> c != ' ').count());
+                    return Math.max(1, (int) Math.ceil(r.part().get().cells()));
         return 1;
     }
 

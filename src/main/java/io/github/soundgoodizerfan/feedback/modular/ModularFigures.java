@@ -92,8 +92,6 @@ public record ModularFigures(List<Float> values, int step) {
         SPREAD,
         /** Camera kick per shot, degrees. */
         KICK,
-        /** {@code GunSpec.Launcher} ordinal: what throws the projectile. */
-        LAUNCHER,
         /** How loud a shot is against an open muzzle. */
         REPORT,
         /** Heat a shot leaves in the gun against an open muzzle's. */
@@ -184,7 +182,20 @@ public record ModularFigures(List<Float> values, int step) {
         /** How strongly each of those upgrades works, from the material its attachment is cut in (0.25 to 1.5), in the same order. */
         SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4,
         /** A suit module's draw multiplier from its wiring: heavy conductor runs it cooler (below 1), thin wire wastes more (above 1). 0 where no module is held. */
-        SUIT_WIRING;
+        SUIT_WIRING,
+        // --- an armour piece's, from the plate's axes ---
+        /** 0 to {@code PIERCE_RESIST_MAX}: the share of pierce (projectile) damage the piece turns aside; worn pieces add by slot weight. */
+        PIERCE_RESIST,
+        /** The plate material's thermal conductivity times the plate's volume: how readily it carries fire's heat to the wearer. 0 for cloth and leather. */
+        FIRE_CONDUCT,
+        // --- a spring gun's (family AIR_GUN) ---
+        /** Joules the cocked spring stores, before any set. */
+        SPRING_ENERGY,
+        /** 0 to 1: the share of the spring's energy that reaches the pellet, from the barrel's length and bore. */
+        AIR_EFFICIENCY,
+        // --- an electric gun's (family ELECTRIC_GUN) ---
+        /** Joules a shot takes from the battery at full draw. */
+        SHOT_ENERGY;
 
         /** Most attachments one module carries. */
         public static final int ATTACHMENTS = 4;

@@ -1,7 +1,0 @@
-{
-  "from": "rod",
-  "to": "main_spring",
-  "operation": "turn",
-  "base": 5,
-  "slope": 1
-}

@@ -37,10 +37,12 @@ final class DisarmShot {
         float yaw = (float) (Mth.atan2(-d.x, d.z) * Mth.RAD_TO_DEG), pitch = (float) -(Mth.atan2(d.y, Math.hypot(d.x, d.z)) * Mth.RAD_TO_DEG);
         if (!GunShots.trigger(p.serverLevel(), p, gun, yaw, pitch, System.currentTimeMillis(), true, InteractionHand.MAIN_HAND))
             return false;
-        ItemStack dropped = t.getMainHandItem().copy();
-        t.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-        t.spawnAtLocation(dropped);
-        Disorder.note(p, t, Disorder.Kind.STRIPPED);
+        if (!io.github.soundgoodizerfan.feedback.modular.trait.Vambrace.resistsDisarm(t)) {
+            ItemStack dropped = t.getMainHandItem().copy();
+            t.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            t.spawnAtLocation(dropped);
+            Disorder.note(p, t, Disorder.Kind.STRIPPED);
+        }
         stagger(p, t, GunFu.lastImpulse(p) * GunFuTuning.MUZZLE_JOULES_PER_IMPULSE);
         p.serverLevel().sendParticles(ParticleTypes.CRIT, hand.x, hand.y, hand.z, 14, 0.2, 0.2, 0.2, 0.4);
         p.serverLevel().sendParticles(ParticleTypes.ELECTRIC_SPARK, hand.x, hand.y, hand.z, 10, 0.2, 0.2, 0.2, 0.5);

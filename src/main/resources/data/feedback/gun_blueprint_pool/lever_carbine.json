@@ -15,12 +15,14 @@
       "form": "turned_rod",
       "count": 1,
       "kind": "gun_barrel",
-      "dims": {
-        "bore": 9,
-        "outer": 15,
-        "length": 0.35
-      },
-      "variant": "rifled"
+      "variant": "rifled",
+      "measures": {
+        "axes": {
+          "bore": 9,
+          "outer": 15,
+          "length": 0.35
+        }
+      }
     },
     {
       "role": "K",

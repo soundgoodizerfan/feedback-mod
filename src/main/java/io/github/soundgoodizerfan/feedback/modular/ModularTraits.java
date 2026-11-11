@@ -61,7 +61,6 @@ public final class ModularTraits {
         // armour (worn; one line each)
         register("open_face", new io.github.soundgoodizerfan.feedback.modular.trait.OpenFace());
         register("closed_visor", new io.github.soundgoodizerfan.feedback.modular.trait.ClosedVisor());
-        register("neck_guard", new io.github.soundgoodizerfan.feedback.modular.trait.NeckGuard());
         register("studded", new io.github.soundgoodizerfan.feedback.modular.trait.Studded());
         register("rigid", new io.github.soundgoodizerfan.feedback.modular.trait.Rigid());
         register("mail", new io.github.soundgoodizerfan.feedback.modular.trait.Mail());
@@ -84,8 +83,7 @@ public final class ModularTraits {
         register("lunge", new io.github.soundgoodizerfan.feedback.modular.trait.Lunge());
         register("trident", new io.github.soundgoodizerfan.feedback.modular.trait.TridentThrow());
         register("smash", new io.github.soundgoodizerfan.feedback.modular.trait.SmashAttack());
-        register("spring_strike", new io.github.soundgoodizerfan.feedback.modular.trait.SpringStrike());
-        register("spring_throw", new io.github.soundgoodizerfan.feedback.modular.trait.SpringThrow());
+        register("spring", new io.github.soundgoodizerfan.feedback.modular.trait.Spring());
         register("harpoon", new io.github.soundgoodizerfan.feedback.modular.trait.Harpoon());
         register("fork", new io.github.soundgoodizerfan.feedback.modular.trait.Fork());
         register("snap_shot", new io.github.soundgoodizerfan.feedback.modular.trait.Handling());
@@ -114,12 +112,25 @@ public final class ModularTraits {
         register("gun_buffer", new io.github.soundgoodizerfan.feedback.modular.trait.GunBuffer());
         register("gun_reticle", new io.github.soundgoodizerfan.feedback.modular.trait.GunReticle());
         register("gun_sear", new io.github.soundgoodizerfan.feedback.modular.trait.GunSear());
-        register("gun_valve", new io.github.soundgoodizerfan.feedback.modular.trait.GunValve());
-        register("gun_lagging", new io.github.soundgoodizerfan.feedback.modular.trait.GunLagging());
         register("gun_braced", new io.github.soundgoodizerfan.feedback.modular.trait.GunBraced());
         register("open_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.GunOpenBolt());
         register("fan", new io.github.soundgoodizerfan.feedback.modular.trait.GunFan());
         register("belt_fed", new io.github.soundgoodizerfan.feedback.modular.trait.GunBeltFed());
+        register("cramped", new io.github.soundgoodizerfan.feedback.modular.trait.Cramped());
+        register("crown_lever", new io.github.soundgoodizerfan.feedback.modular.trait.CrownLever());
+        register("leg_drag", new io.github.soundgoodizerfan.feedback.modular.trait.LegDrag());
+        register("shaft_seal", new io.github.soundgoodizerfan.feedback.modular.trait.ShaftSeal());
+        register("cushion_sole", new io.github.soundgoodizerfan.feedback.modular.trait.CushionSole());
+        register("collar", new io.github.soundgoodizerfan.feedback.modular.trait.Collar());
+        register("pauldron", new io.github.soundgoodizerfan.feedback.modular.trait.Pauldron());
+        register("poleyn", new io.github.soundgoodizerfan.feedback.modular.trait.Poleyn());
+        register("vambrace", new io.github.soundgoodizerfan.feedback.modular.trait.Vambrace());
+        register("hobnails", new io.github.soundgoodizerfan.feedback.modular.trait.Hobnails());
+        register("steady", new io.github.soundgoodizerfan.feedback.modular.trait.Steady());
+        register("stabiliser", new io.github.soundgoodizerfan.feedback.modular.trait.Stabiliser());
+        register("lanyard", new io.github.soundgoodizerfan.feedback.modular.trait.Lanyard());
+        register("laminate", new io.github.soundgoodizerfan.feedback.modular.trait.Laminate());
+        register("boss", new io.github.soundgoodizerfan.feedback.modular.trait.Boss());
     }
 
     private static void register(String id, ModularTrait trait) {
@@ -162,6 +173,79 @@ public final class ModularTraits {
         return Optional.empty();
     }
 
+    /**
+     * The addon traits {@code stack} has: the trait of each filled role that names one ({@link ModularType.Role#trait}), in role order.
+     * An addon adds to what the item does and never replaces what its parts' variants give, so these run beside {@link #of}.
+     */
+    public static List<Active> addons(ItemStack stack) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type == null)
+            return List.of();
+        List<Active> out = new ArrayList<>(2);
+        for (String key : type.order()) {
+            ModularType.Role role = type.roles().get(key);
+            ModularDesign.Part part = role == null ? null : design.part(key);
+            if (part == null)
+                continue;
+            if (!role.trait().isEmpty()) {
+                Optional<String> id = firstId(role.trait());
+                if (id.isPresent())
+                    out.add(new Active(id.get(), REGISTRY.get(id.get()), new ModularTrait.Params(role.params())));
+            }
+        }
+        return out;
+    }
+
+    /**
+     * The traits the bands of {@code design}'s axes grant, in role order: where physics has no model of a range (a closed face opening is a
+     * closed visor, a long blade swings overhead), the band names the trait and its numbers ({@link ModularType.Band}).
+     */
+    public static List<Active> bands(ModularDesign design, ModularType type) {
+        List<Active> out = new ArrayList<>(2);
+        for (String key : type.order()) {
+            ModularType.Role role = type.roles().get(key);
+            ModularDesign.Part part = role == null ? null : design.part(key);
+            if (part == null)
+                continue;
+            // Only a role's own axes grant traits: a head set in a twin tool keeps its size but not the single tool's behaviour.
+            for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
+                ModularType.Band band = a.getValue().band(part.axis(a.getKey(), a.getValue().def()));
+                Optional<String> id = band == null ? Optional.empty() : firstId(band.trait());
+                if (id.isPresent())
+                    out.add(new Active(id.get(), REGISTRY.get(id.get()), new ModularTrait.Params(band.params())));
+            }
+        }
+        return out;
+    }
+
+    /** The traits that fire on {@code stack}'s hooks: the one its variants or type give, then its addons (each id once). */
+    public static List<Active> actives(ItemStack stack) {
+        List<Active> out = new ArrayList<>(2);
+        of(stack).ifPresent(out::add);
+        List<Active> more = new ArrayList<>(addons(stack));
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type != null)
+            more.addAll(bands(design, type));
+        for (Active a : more)
+            if (out.stream().noneMatch(o -> o.id().equals(a.id())))
+                out.add(a);
+        return out;
+    }
+
+    /** The litres of the filled roles of {@code stack} that name the trait {@code id}: how much of an addon is fitted. */
+    public static float addonVolume(ItemStack stack, String id) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        float litres = 0f;
+        if (type != null)
+            for (Map.Entry<String, ModularType.Role> e : type.roles().entrySet())
+                if (id.equals(e.getValue().trait()) && design.part(e.getKey()) != null)
+                    litres += e.getValue().volume(design.part(e.getKey()));
+        return litres;
+    }
+
     /** The trait {@code stack} has, if it is a modular item and its variant or type names a known one. */
     public static Optional<Active> of(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
@@ -175,6 +259,9 @@ public final class ModularTraits {
             String id = firstId(variant.get().trait()).get();
             return Optional.of(new Active(id, REGISTRY.get(id), new ModularTrait.Params(variant.get().params())));
         }
+        List<Active> banded = bands(design, type);
+        if (!banded.isEmpty())
+            return Optional.of(banded.get(0));
         if (!type.trait().isEmpty() && REGISTRY.containsKey(type.trait()))
             return Optional.of(new Active(type.trait(), REGISTRY.get(type.trait()), new ModularTrait.Params(type.traitParams())));
         return Optional.empty();
@@ -278,7 +365,12 @@ public final class ModularTraits {
     // --- item hooks, forwarded by the item classes ---------------------------------------------
 
     public static InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand, ItemStack stack) {
-        return of(stack).map(a -> a.trait().use(level, player, hand, stack, a.params())).orElse(InteractionResultHolder.pass(stack));
+        for (Active a : actives(stack)) {
+            InteractionResultHolder<ItemStack> result = a.trait().use(level, player, hand, stack, a.params());
+            if (result.getResult() != net.minecraft.world.InteractionResult.PASS)
+                return result;
+        }
+        return InteractionResultHolder.pass(stack);
     }
 
     public static int useDuration(ItemStack stack) {
@@ -315,13 +407,23 @@ public final class ModularTraits {
             ItemStack piece = entity.getItemBySlot(slot);
             if (!(piece.getItem() instanceof ModularArmor))
                 continue;
-            Optional<Active> a = of(piece);
-            if (a.isEmpty())
-                continue;
-            String id = idOf(a.get().trait());
-            if (id != null && out.stream().noneMatch(w -> w.id().equals(id)))
-                out.add(new Worn(id, a.get().trait(), a.get().params(), piece, slot));
+            for (Active a : actives(piece)) {
+                String id = idOf(a.trait());
+                if (id != null && out.stream().noneMatch(w -> w.id().equals(id)))
+                    out.add(new Worn(id, a.trait(), a.params(), piece, slot));
+            }
         }
+        // A glove is worn in the Curios hands slot; its addons (a vambrace) count with the armour, after it.
+        if (entity instanceof Player player)
+            top.theillusivec4.curios.api.CuriosApi.getCuriosInventory(player)
+                    .flatMap(inv -> inv.findFirstCurio(s -> s.getItem() instanceof ModularGlove)).ifPresent(found -> {
+                        ItemStack glove = found.stack();
+                        for (Active a : actives(glove)) {
+                            String id = idOf(a.trait());
+                            if (id != null && out.stream().noneMatch(w -> w.id().equals(id)))
+                                out.add(new Worn(id, a.trait(), a.params(), glove, EquipmentSlot.MAINHAND));
+                        }
+                    });
         return out;
     }
 
@@ -344,17 +446,26 @@ public final class ModularTraits {
                 && event.getSource().getDirectEntity() == attacker) {
             ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
             ModularStacks.struck(weapon, event.getAmount());
-            of(weapon).ifPresent(a -> a.trait().onAttack(event, attacker, weapon, a.params()));
+            actives(weapon).forEach(a -> a.trait().onAttack(event, attacker, weapon, a.params()));
         }
     }
 
-    @SubscribeEvent
+    /** After the attacker's own traits have raised the blow, so a worn trait that cuts a bonus sees it. */
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW)
     public static void onWornHurt(LivingIncomingDamageEvent event) {
         LivingEntity wearer = event.getEntity();
         if (wearer.level().isClientSide)
             return;
         for (Worn w : worn(wearer))
             w.trait().onWornHurt(event, wearer, w.piece(), w.params());
+    }
+
+    @SubscribeEvent
+    public static void onWornCrit(net.neoforged.neoforge.event.entity.player.CriticalHitEvent event) {
+        if (!(event.getTarget() instanceof LivingEntity wearer) || wearer.level().isClientSide)
+            return;
+        for (Worn w : worn(wearer))
+            w.trait().onWornCrit(event, wearer, w.piece(), w.params());
     }
 
     @SubscribeEvent
@@ -413,20 +524,20 @@ public final class ModularTraits {
         if (player.level().isClientSide || event.getAction() != net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.LeftClickBlock.Action.START)
             return;
         ItemStack weapon = player.getMainHandItem();
-        of(weapon).ifPresent(a -> a.trait().onGroundHit(event, player, weapon, a.params()));
+        actives(weapon).forEach(a -> a.trait().onGroundHit(event, player, weapon, a.params()));
     }
 
     @SubscribeEvent
     public static void onDeath(LivingDeathEvent event) {
         if (event.getSource().getEntity() instanceof LivingEntity attacker && !attacker.level().isClientSide) {
             ItemStack weapon = StrikeSource.weapon(attacker, event.getSource());
-            of(weapon).ifPresent(a -> a.trait().onKill(event, attacker, weapon, a.params()));
+            actives(weapon).forEach(a -> a.trait().onKill(event, attacker, weapon, a.params()));
         }
     }
 
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
         ItemStack weapon = event.getPlayer().getMainHandItem();
-        of(weapon).ifPresent(a -> a.trait().onBlockBreak(event, weapon, a.params()));
+        actives(weapon).forEach(a -> a.trait().onBlockBreak(event, weapon, a.params()));
     }
 }

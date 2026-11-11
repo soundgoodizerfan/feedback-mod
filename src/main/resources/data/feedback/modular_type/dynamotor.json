@@ -14,9 +14,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:machine_frame",
-        "shape": [
-          "FF"
-        ],
+        "cells": 2,
         "stock": [
           "plate"
         ],
@@ -27,18 +25,11 @@
           },
           {
             "name": "medium",
-            "shape": [
-              "FF",
-              "FF"
-            ]
+            "cells": 4
           },
           {
             "name": "large",
-            "shape": [
-              "FFF",
-              "FFF",
-              "FF"
-            ]
+            "cells": 8
           }
         ]
       }
@@ -52,9 +43,7 @@
       "layer": 1,
       "part": {
         "item": "feedback:machine_winding",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "wire"
         ],
@@ -65,24 +54,15 @@
           },
           {
             "name": "fine",
-            "shape": [
-              "WW"
-            ]
+            "cells": 2
           },
           {
             "name": "dense",
-            "shape": [
-              "WW",
-              "WW"
-            ]
+            "cells": 4
           },
           {
             "name": "heavy_dense",
-            "shape": [
-              "WWW",
-              "WWW",
-              "WW"
-            ]
+            "cells": 8
           }
         ]
       }
@@ -104,25 +84,9 @@
       "layer": 3,
       "part": {
         "item": "feedback:machine_housing",
-        "shape": [
-          "HH",
-          "H"
-        ],
+        "cells": 3,
         "stock": [
           "plate"
-        ],
-        "base": "finned",
-        "variants": [
-          {
-            "name": "finned"
-          },
-          {
-            "name": "jacketed",
-            "shape": [
-              "HH",
-              "HH"
-            ]
-          }
         ]
       }
     },
@@ -135,9 +99,7 @@
       "layer": 4,
       "part": {
         "item": "feedback:machine_bearing",
-        "shape": [
-          "B"
-        ],
+        "cells": 1,
         "stock": [
           "nugget",
           "ingot"
@@ -153,9 +115,7 @@
           },
           {
             "name": "ball_bearing",
-            "shape": [
-              "BB"
-            ],
+            "cells": 2,
             "params": {
               "su_mult": 1.2,
               "friction": 0.01
@@ -163,10 +123,7 @@
           },
           {
             "name": "roller_bearing",
-            "shape": [
-              "BB",
-              "B "
-            ],
+            "cells": 3,
             "params": {
               "su_mult": 1.45,
               "friction": 0.02
@@ -174,6 +131,15 @@
           }
         ]
       }
+    },
+    "K": {
+      "name": "cooling",
+      "forms": [
+        "plate",
+        "pipe"
+      ],
+      "litres": 0.02,
+      "bulk": 2
     }
   },
   "patterns": [
@@ -190,7 +156,10 @@
   },
   "board": {
     "layout": {
-      "B": [2, 0.5]
+      "B": [
+        2,
+        0.5
+      ]
     }
   }
 }

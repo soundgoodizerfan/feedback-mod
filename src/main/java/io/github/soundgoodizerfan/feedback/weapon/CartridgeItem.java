@@ -33,9 +33,6 @@ public class CartridgeItem extends Item {
             tooltip.add(Component.translatable("cartridge.feedback.shot", round.pellets()).withStyle(ChatFormatting.GRAY));
         var materials = context.level() == null ? java.util.Map.<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material>of()
                 : ClientMaterials.on(context.level());
-        // A jar round's drive is its volts, which are state, not spec: client/ChargeTooltip says them.
-        if (round.charged())
-            return;
         var load = round.load(materials);
         var rating = round.caseRating(materials);
         if (load.isEmpty() || rating.isEmpty()) {
@@ -50,10 +47,9 @@ public class CartridgeItem extends Item {
                 charge.append(" + ");
             charge.append(Component.translatable("cartridge.feedback.part", c.count(), name(c.material())));
         }
-        boolean coil = load.get().coil();
-        tooltip.add(Component.translatable(coil ? "cartridge.feedback.drive" : "cartridge.feedback.charge", charge,
+        tooltip.add(Component.translatable("cartridge.feedback.charge", charge,
                 String.format("%.1f", load.get().peakPressure()), String.format("%.1f", rating.get().value()))
-                .withStyle(!coil && load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
+                .withStyle(load.get().peakPressure() > rating.get().value() ? ChatFormatting.RED : ChatFormatting.GRAY));
         round.seed().ifPresent(sd -> tooltip.add(Component.translatable("cartridge.feedback.seed",
                 net.minecraft.core.registries.BuiltInRegistries.ITEM.get(sd).getDescription()).withStyle(ChatFormatting.GRAY)));
         round.vial().ifPresent(v -> v.effect().ifPresent(e -> tooltip.add(Component.translatable("cartridge.feedback.vial",

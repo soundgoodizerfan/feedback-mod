@@ -13,11 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:shield_face",
-        "shape": [
-          "FF",
-          "FF",
-          "FF"
-        ],
+        "cells": 6,
         "stock": [
           "*_planks",
           "plate",
@@ -27,26 +23,8 @@
         ],
         "variants": [
           {
-            "name": "buckler",
-            "shape": [
-              "FF",
-              "FF"
-            ],
-            "trait": "parry",
-            "params": {
-              "parry_ticks": 4,
-              "cone": 110,
-              "capacity_mult": 0.65,
-              "knock": 0.8
-            }
-          },
-          {
             "name": "kite",
-            "shape": [
-              "FF",
-              "FF",
-              "F "
-            ],
+            "cells": 5,
             "trait": "deflect",
             "params": {
               "melee_mult": 0.75,
@@ -54,26 +32,61 @@
             }
           },
           {
-            "name": "tower",
-            "shape": [
-              "FFF",
-              "FFF",
-              "FFF"
-            ],
-            "trait": "bulwark",
+            "name": "heater",
+            "cells": 5,
+            "adjective": true
+          },
+          {
+            "name": "rectangular",
+            "cells": 8,
             "params": {
-              "capacity_mult": 1.5,
-              "wear_mult": 1.5,
-              "slow": 0.25,
-              "range": 2.5,
-              "bash_damage": 2,
-              "bash_knock": 1.4,
-              "bash_wear": 1,
-              "bash_exhaust": 1.5,
-              "bash_cooldown": 80
-            }
+              "capacity_mult": 1.2
+            },
+            "adjective": true
           }
         ]
+      },
+      "axes": {
+        "face_size": {
+          "min": 30,
+          "max": 110,
+          "unit": "cm",
+          "default": 55,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "small",
+              "max": 42,
+              "trait": "parry",
+              "params": {
+                "parry_ticks": 4,
+                "cone": 110,
+                "capacity_mult": 0.65,
+                "knock": 0.8
+              }
+            },
+            {
+              "name": "normal",
+              "max": 75
+            },
+            {
+              "name": "large",
+              "trait": "bulwark",
+              "params": {
+                "capacity_mult": 1.5,
+                "wear_mult": 1.5,
+                "slow": 0.25,
+                "range": 2.5,
+                "bash_damage": 2,
+                "bash_knock": 1.4,
+                "bash_wear": 1,
+                "bash_exhaust": 1.5,
+                "bash_cooldown": 80
+              }
+            }
+          ]
+        }
       }
     },
     "R": {
@@ -85,9 +98,7 @@
       "layer": 1,
       "part": {
         "item": "feedback:shield_rim",
-        "shape": [
-          "R"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "block",
@@ -98,19 +109,14 @@
         "variants": [
           {
             "name": "banded",
-            "shape": [
-              "RR"
-            ],
+            "cells": 2,
             "params": {
               "capacity_mult": 1.15
             }
           },
           {
             "name": "flanged",
-            "shape": [
-              "RR",
-              "R "
-            ],
+            "cells": 3,
             "params": {
               "capacity_mult": 1.3
             }
@@ -129,6 +135,32 @@
       ],
       "litres": 0.03,
       "layer": 2
+    },
+    "O": {
+      "name": "boss",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.04,
+      "bulk": 1,
+      "trait": "boss",
+      "params": {
+        "bash": 3,
+        "shove": 0.5,
+        "capacity_mult": 0.9
+      }
+    },
+    "A": {
+      "name": "strap",
+      "forms": [
+        "string",
+        "wire"
+      ],
+      "litres": 0.01,
+      "bulk": 2,
+      "params": {
+        "capacity_mult": 1.1
+      }
     }
   },
   "patterns": [
@@ -149,5 +181,28 @@
   },
   "vanilla": {
     "shield": "planks"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "tower_shield",
+        "is": {
+          "face_size": "large",
+          "variant": "rectangular"
+        }
+      },
+      {
+        "name": "kite_shield",
+        "is": {
+          "variant": "kite"
+        }
+      },
+      {
+        "name": "buckler",
+        "is": {
+          "face_size": "small"
+        }
+      }
+    ]
   }
 }

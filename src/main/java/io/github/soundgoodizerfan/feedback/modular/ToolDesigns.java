@@ -127,7 +127,7 @@ public final class ToolDesigns {
                 Material.Located l = new Material.Located(id, m, form);
                 boolean fits = shape != null
                         ? ModularType.fits(shape.shaping().stock(), form) && role.traits().stream().allMatch(m.traits()::contains)
-                                && shape.cells() * ModularTuning.CELL_MB % io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form) == 0
+                                && shape.stockMb(1f) % io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form) == 0
                         : role.accepts(l);
                 if (fits && (best == null || io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)
                         < io.github.soundgoodizerfan.feedback.registry.FormItems.volume(best.form())))
@@ -220,7 +220,7 @@ public final class ToolDesigns {
                     : role.striker() ? ModularHeads.kindOf(part, role) : role.part().get().item().getPath();
             BuiltInRegistries.ITEM.getOptional(ResourceLocation.fromNamespaceAndPath(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID, kind)).ifPresent(item -> {
                 ItemStack stack = new ItemStack(item);
-                stack.set(FDataComponents.MADE_OF.get(), new MadeOf(part.material(), part.form(), part.count(), part.variant(), part.flaw(), part.dims()));
+                stack.set(FDataComponents.MADE_OF.get(), new MadeOf(part.material(), part.form(), part.count(), part.variant(), part.flaw(), part.measures()));
                 out.add(stack);
             });
         } else if (material != null) {

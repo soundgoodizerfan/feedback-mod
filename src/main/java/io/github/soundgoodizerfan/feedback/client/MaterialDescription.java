@@ -78,11 +78,8 @@ final class MaterialDescription {
         m.electrical().insulation().ifPresent(b -> row(out, 5, "insulation", b.name()));
         m.corrosionResistance().ifPresent(v -> row(out, 5, "corrosion", percent(v)));
         m.propellant().ifPresent(p -> {
-            row(out, 5, "propellant", Component.translatable(p.drive() == Material.Propellant.Drive.COIL
-                    ? "screen.feedback.probe.coil" : "screen.feedback.probe.powder").getString());
+            row(out, 5, "propellant", Component.translatable("screen.feedback.probe.powder").getString());
             row(out, 5, "peak", num(p.peakPressure().value()) + " Pu");
-            if (p.drive() == Material.Propellant.Drive.COIL)
-                return;
             row(out, 5, "burn_rate", num(p.burnRate()));
             row(out, 5, "cook_off", num(p.ignitionTemperature().value()) + " Tu");
             row(out, 5, "oxygen", Component.translatable(p.oxygenBalance() > 0 ? "screen.feedback.probe.spare"

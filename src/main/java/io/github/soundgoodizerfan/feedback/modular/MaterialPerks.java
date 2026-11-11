@@ -70,7 +70,7 @@ public final class MaterialPerks {
     public record Attunement(String kind, int level, Material material) {}
 
     /**
-     * The attunements a tool's parts carry ({@code attuned.*} in a part's dims, {@link Attunements}), each resolved through the
+     * The attunements a tool's parts carry ({@code attuned.*} in a part's measures, {@link Attunements}), each resolved through the
      * effect's entry for <em>that part's role</em> (its mirror entry when the level is negative) -- never by what the
      * whole tool is called. A role the effect has no entry for does nothing. The level is the magnitude; the side is already in the kind.
      */
@@ -85,7 +85,7 @@ public final class MaterialPerks {
             Material m = MaterialTable.get().materials().get(part.material());
             if (role == null || m == null)
                 continue;
-            for (Map.Entry<String, Float> e : part.dims().entrySet()) {
+            for (Map.Entry<String, Float> e : part.measures().attuned().entrySet()) {
                 Attunements.Effect effect = Attunements.byKey(e.getKey());
                 Attunements.Behaviour b = effect == null ? null : effect.on(role.name(), e.getValue() < 0f);
                 if (b != null && !b.kind().isEmpty())

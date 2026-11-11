@@ -10,8 +10,10 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
+import io.github.soundgoodizerfan.feedback.process.Measures;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -131,7 +133,7 @@ public final class ToolTableAssembly {
                 if (drawn == null)
                     continue;
             }
-            ModularDesign design = type.blueprint() ? withDrawnDims(drawn, best.design, type) : best.design;
+            ModularDesign design = type.blueprint() ? withDrawnAxes(drawn, best.design, type) : best.design;
             // A coat rolled onto the wearing plate (roll cladding) rides onto the tool, where ModularBake reads it.
             io.github.soundgoodizerfan.feedback.process.Plating coat = null;
             for (int i = 0; i < used.size(); i++)
@@ -145,6 +147,7 @@ public final class ToolTableAssembly {
             });
             if (tool.isEmpty())
                 continue;
+            credit(tool.get(), plan, e.getKey(), design);
             String[] role = new String[slots.size()];
             for (int i = 0; i < used.size(); i++)
                 role[used.get(i)] = best.roles[i];
@@ -155,9 +158,9 @@ public final class ToolTableAssembly {
 
     /**
      * Whether {@code made} is the thing {@code drawn} shows: the same parts, role for role, in the same material and shape and number.
-     * Ground-in figures (dims, flaw) are measured on the part and left to the bake; the drawing predicts them.
+     * Ground-in figures (axes, flaw) are measured on the part and left to the bake; the drawing predicts them.
      */
-    private static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
+    static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
         // a held component (a circuit, a cell) is what the builder brings: the sheet does not pin it
         if (drawn.parts().size() != made.parts().stream().filter(p -> p.sub().isEmpty()).count())
             return false;
@@ -171,22 +174,44 @@ public final class ToolTableAssembly {
     }
 
     /**
+     * Writes the credit of the first sheet in {@code plan} that {@code design} is drawn to onto {@code item}, whoever made it. A sheet of
+     * another type, or one the parts depart from, gives nothing. A blueprint is optional: it gates no type, it only gives credit.
+     */
+    private static void credit(ItemStack item, ItemStack plan, ResourceLocation type, ModularDesign design) {
+        for (ItemStack sheet : ModularBlueprints.sheets(plan)) {
+            ModularDesign drawn = ModularStacks.design(sheet);
+            BlueprintCredit credit = BlueprintCredit.of(sheet);
+            if (credit != null && drawn.type().equals(type) && drawnTo(drawn, design)) {
+                item.set(FModular.CREDIT.get(), credit.onItem(drawn));
+                return;
+            }
+        }
+    }
+
+    /** Drops the credit {@code stack} carries if {@code design} no longer shows the parts it was drawn with. */
+    static void keepCredit(ItemStack stack, ModularDesign design) {
+        BlueprintCredit credit = BlueprintCredit.of(stack);
+        if (credit != null && credit.drawn().filter(d -> drawnTo(d, design)).isEmpty())
+            stack.remove(FModular.CREDIT.get());
+    }
+
+    /**
      * {@code made} with the as-built measures the drawing chose, for the roles that declare any (an engine's bore and stroke):
      * a measure the blueprint sets is the part's own, which no machine has cut.
      */
-    private static ModularDesign withDrawnDims(ModularDesign drawn, ModularDesign made, ModularType type) {
+    private static ModularDesign withDrawnAxes(ModularDesign drawn, ModularDesign made, ModularType type) {
         ModularDesign out = made;
         for (Part want : drawn.parts()) {
             ModularType.Role role = type.roles().get(want.role());
             Part got = made.part(want.role());
-            if (role == null || role.dims().isEmpty() || got == null || want.dims().isEmpty())
+            if (role == null || role.axes().isEmpty() || got == null || want.measures().axes().isEmpty())
                 continue;
-            var dims = new java.util.HashMap<>(got.dims());
-            want.dims().forEach((k, v) -> {
-                if (role.dims().containsKey(k))
-                    dims.put(k, v);
+            var axes = new java.util.HashMap<>(got.measures().axes());
+            want.measures().axes().forEach((k, v) -> {
+                if (role.axes().containsKey(k))
+                    axes.put(k, v);
             });
-            out = out.withPart(new Part(got.role(), got.material(), got.form(), got.count(), got.kind(), got.variant(), got.flaw(), dims));
+            out = out.withPart(got.withMeasures(got.measures().withAxes(axes)));
         }
         return out;
     }
@@ -260,28 +285,28 @@ public final class ToolTableAssembly {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
         // A pot serving is food already baked: its figures come off the stack, not a material block.
         if (made == null && what.material().traits().contains(Material.Trait.BROTH))
-            return new Part(role, what.id(), what.form(), count, "", "", 0, DishBake.servingDims(stack));
+            return new Part(role, what.id(), what.form(), count, "", "", 0, Measures.ofState(DishBake.servingState(stack)));
         if (made == null && what.material().food().isPresent())
-            return new Part(role, what.id(), what.form(), count, "", stack.getOrDefault(FDataComponents.FOOD_SHAPE.get(), ""), 0, foodDims(stack, what));
+            return new Part(role, what.id(), what.form(), count, "", stack.getOrDefault(FDataComponents.FOOD_SHAPE.get(), ""), 0, Measures.ofState(foodStateMap(stack, what)));
         if (made != null && !(stack.getItem() instanceof ModularPartItem)) // raw stock the enchanting table stamped
-            return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.dims());
+            return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.measures());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells(),
-                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.dims())
+                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.measures())
                 : new Part(role, what.id(), what.form(), count);
     }
 
     /** A food's state plus what the Prep Table did to it: its cut level and evenness grade. */
-    private static java.util.Map<String, Float> foodDims(ItemStack stack, Material.Located what) {
-        java.util.Map<String, Float> dims = DishBake.dimsOf(foodState(stack, what));
+    private static java.util.Map<String, Float> foodStateMap(ItemStack stack, Material.Located what) {
+        java.util.Map<String, Float> state = DishBake.stateOf(foodState(stack, what));
         io.github.soundgoodizerfan.feedback.process.FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         if (cut != null) {
-            dims.put("cut", (float) cut.level());
-            dims.put("evenness", (float) cut.grade());
+            state.put("cut", (float) cut.level());
+            state.put("evenness", (float) cut.grade());
         }
         io.github.soundgoodizerfan.feedback.process.FoodKnead knead = stack.get(FDataComponents.FOOD_KNEAD.get());
         if (knead != null)
-            dims.put(DishBake.KNEAD, (float) knead.grade());
-        return dims;
+            state.put(DishBake.KNEAD, (float) knead.grade());
+        return state;
     }
 
     /** A food stack's state as it is stored (infer has no level to settle it by), else its material's own: the dish bakes from it. */
@@ -347,8 +372,9 @@ public final class ToolTableAssembly {
         // The fullest assembly of a form is the form with every optional part on, so the limits are checked on that, not on each combination.
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             ModularType t = e.getValue();
-            // A gun carries more optional parts than its table has slots, by design: it takes a pick of them, so only its base form must fit.
-            int extras = t.family() == ModularType.Family.GUN || t.family() == ModularType.Family.SUIT_MODULE ? 0 : t.extras().size();
+            // Optional parts are fitted one at a time to a finished item (ModularRework add), so they never have to share the table's slots
+            // at assembly: only the laid roles of a form must fit, as for a gun.
+            int extras = 0;
             for (Map<String, Integer> form : t.forms()) {
                 if (form.size() + extras > slots(t))
                     out.add(e.getKey() + " has up to " + (form.size() + extras) + " roles in " + form + (extras > 0 ? " and every optional part" : "") + ", more than the " + slots(t) + " slots of its table");

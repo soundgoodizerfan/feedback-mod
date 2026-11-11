@@ -41,9 +41,7 @@ A grip carries no load, so it doesn't have to be a strong metal. The lathe also 
 
 A plastic or rubber ingot turns into a grip as well, with the friction of its material (synthetic rubber 1.2, polyethylene 0.3).
 
-Leather, wool, paper and honey can't be turned into a grip, but they can **wrap** one (see [Assembling](#assembling)).
-
-The turned grip is a blank. A gun takes it as a **Gun Grip**, shaped at the Gun Table (a grind) in one of four shapes, each multiplying the friction the hand gets (so less kick, see the table under Wrapping the grip):
+The turned grip is a blank. A gun takes it as a **Gun Grip**, shaped at the Gun Table (a grind) in one of four shapes, each multiplying the friction the hand gets (so less kick, see the table under Grip friction):
 
 | Grip | Cells | Friction |
 | --- | --- | --- |
@@ -90,31 +88,28 @@ Put the gun's **blueprint** and its parts on a [Gun Table](Gun_Table.md), in any
 
 | Part | Role |
 | --- | --- |
-| Gun Barrel | always; its variant is the launcher: smoothbore, rifled, coil, spring tube or steam tube ([Guns](Guns.md#barrels-and-launchers)); a **second** barrel only on a break action |
+| Gun Barrel | always; its variant is smoothbore or rifled ([Guns](Guns.md#barrels)); a **second** barrel only on a break action |
 | Receiver | always; its variant is the frame: handgun, long gun or machine gun (both need a stock) |
 | Slide **or** Bolt | the action; its variant says which: self-loading or automatic (slide); bolt, lever, pump, break, self-loading or automatic (bolt) |
 | Trigger Group, Gun Grip | always; a grip is wood unless you choose another material; its variant is straight, pistol grip, finger-groove or palm-swell |
 | Cylinder, Magazine Tube, Belt Feed or Box Feed | optional: the feed (none means a box magazine on a slide; a bolt or lever with none loads one round by hand, and a Box Feed gives it a box magazine; a break action holds its barrels) |
 | Sight | optional: a reflex sight (see-through glass, with a lit dot if illuminated) or a scope (aimed, the zoom shows inside its round lens with a reticle; the view outside the lens stays normal) (none is iron sights) |
 | A fitting part | each fitting on the gun, one to a slot |
-| Blocks of Redstone, Main Spring or Steam Chest | the barrel's launcher part, required: two Blocks of Redstone wind a coil barrel, a spring tube takes a main spring, a steam tube a steam chest |
-| A fibrous or sticky organic or polymer | wraps the grip |
 
 **Each part's material is on the part.** A receiver can be a metal or a polymer (a plastic frame): it holds the action, and on a gun without a slide it also holds the breech, so it limits the chamber (see [The chamber](#the-chamber)). The barrel's metal and wall decide the chamber's strength. The rest add their own weight. A double's second barrel has its own metal and bore; two rounds in fires the first barrel, one round fires the second.
 
-### Wrapping the grip
+### Grip friction
 
-Add any **fibrous or sticky** organic or polymer to the assembly (leather, wool, paper, honey, synthetic rubber) and it **wraps the grip**. Your hand holds the wrap, so the wrap's grip friction replaces the grip's. Kick goes down as friction goes up:
+Your hand holds the grip, so the grip's material sets how much friction it gets. Kick goes down as friction goes up:
 
 | Grip surface | Friction |
 | --- | --- |
-| Honey | 1.5 |
-| Leather, iron, steel | 0.6 |
-| Bone, copper, wool | 0.5 |
+| Iron, steel | 0.6 |
+| Bone, copper | 0.5 |
 | Wood, bamboo, brass | 0.4 |
 | Bronze | 0.3 |
 
-Kick scales with 0.6 ÷ friction, so a bronze grip kicks twice as hard as a leather-wrapped one, and a honey wrap kicks at 40%. The grip's shape multiplies the friction on top.
+Kick scales with 0.6 ÷ friction, so a bronze grip kicks twice as hard as a steel one. The grip's shape multiplies the friction on top.
 
 ## Fittings
 
@@ -128,8 +123,6 @@ Optional parts change what a gun does. They are tip-like parts, machined like an
 | **Barrel Shroud** | Fins: the barrel sheds heat **1.8×** as fast. |
 
 A suppressor, a brake and an eddy sleeve all go on the muzzle, so a gun has one of them.
-
-Some parts fit only some guns, and their blueprint tooltip carries an **only** line: the winding takes only coilguns, the main spring only spring guns, and the steam chest, steam valve and steam lagging only steam guns.
 
 ### Fittings made of the stuff itself
 

@@ -148,7 +148,7 @@ public class Dipping {
         int flaw = Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + (int) Math.ceil(over / FTuning.DIP_FLAW_TU));
         if (flaw > made.flaw())
             stack.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(),
-                    made.variant(), flaw, made.dims()));
+                    made.variant(), flaw, made.measures()));
     }
 
     /**

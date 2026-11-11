@@ -207,7 +207,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             return;
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
         BlockPos at = worldPosition;
-        Optional<Cartridge.Blend> blend = Cartridge.Blend.of(materials, filler).filter(b -> !b.coil());
+        Optional<Cartridge.Blend> blend = Cartridge.Blend.of(materials, filler);
         Material cased = casing == null ? null : materials.get(casing);
         float power = made != null ? made.power() : blend.map(b -> Blast.power(b, cased)).orElse(0f);
         // A tamped charge blasts narrower but still goes off if it would have.

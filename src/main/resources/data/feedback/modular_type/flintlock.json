@@ -14,9 +14,7 @@
       "layer": 1,
       "part": {
         "item": "feedback:receiver",
-        "shape": [
-          "R"
-        ],
+        "cells": 1,
         "stock": [
           "ingot"
         ],
@@ -28,9 +26,7 @@
           },
           {
             "name": "long_gun",
-            "shape": [
-              "RR"
-            ],
+            "cells": 2,
             "trait": "gun_braced",
             "params": {
               "kick_mult": 0.7,
@@ -47,7 +43,7 @@
       ],
       "litres": 0.3,
       "layer": 0,
-      "dims": {
+      "axes": {
         "bore": {
           "min": 5,
           "max": 20,
@@ -69,9 +65,7 @@
       },
       "part": {
         "item": "feedback:gun_barrel",
-        "shape": [
-          "B"
-        ],
+        "cells": 1,
         "stock": [
           "turned_rod",
           "rod",
@@ -100,9 +94,7 @@
       "layer": 3,
       "part": {
         "item": "feedback:trigger_group",
-        "shape": [
-          "T"
-        ],
+        "cells": 1,
         "stock": [
           "drilled_plate",
           "plate"
@@ -127,9 +119,7 @@
       "layer": 2,
       "part": {
         "item": "feedback:bolt",
-        "shape": [
-          "K"
-        ],
+        "cells": 1,
         "stock": [
           "rod",
           "ingot"

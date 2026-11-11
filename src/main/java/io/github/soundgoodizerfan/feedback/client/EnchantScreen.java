@@ -204,12 +204,12 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
 
     private boolean owned(Attunements.Effect e) {
         MadeOf m = made();
-        return m != null && m.dims().containsKey(e.key());
+        return m != null && m.measures().attuned().containsKey(e.key());
     }
 
     private int held() {
         MadeOf m = made();
-        return m == null ? 0 : (int) m.dims().keySet().stream().filter(k -> k.startsWith(Attunements.PREFIX)).count();
+        return m == null ? 0 : m.measures().attuned().size();
     }
 
     private Material.Attuning attuning() {

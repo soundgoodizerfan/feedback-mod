@@ -7,33 +7,56 @@
   "roles": {
     "C": {
       "name": "container",
-      "forms": ["raw", "cooked"],
-      "traits": ["kneadable"],
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "kneadable"
+      ],
       "litres": 0.5,
       "layer": 0
     },
     "E": {
       "name": "enrichment",
-      "forms": ["raw", "cooked"],
-      "traits": ["enriching"],
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "enriching"
+      ],
       "litres": 0.1,
       "layer": 2
     },
     "G": {
       "name": "enrichment",
-      "forms": ["raw", "cooked"],
-      "traits": ["enriching"],
+      "forms": [
+        "raw",
+        "cooked"
+      ],
+      "traits": [
+        "enriching"
+      ],
       "litres": 0.1,
       "layer": 3,
       "alt": "E"
     }
   },
   "patterns": [
-    ["CEG"]
+    [
+      "CEG"
+    ]
   ],
   "ranges": {
-    "E": [0, 1],
-    "G": [0, 1]
+    "E": [
+      0,
+      1
+    ],
+    "G": [
+      0,
+      1
+    ]
   },
   "defaults": {
     "C": "feedback:dough"
@@ -41,13 +64,23 @@
   "shapes": [
     {
       "item": "feedback:dough",
-      "shape": ["D"],
-      "stock": ["raw"],
-      "traits": ["kneadable"],
+      "cells": 1,
+      "stock": [
+        "raw"
+      ],
+      "traits": [
+        "kneadable"
+      ],
       "base": "loaf",
       "variants": [
-        { "name": "flat", "shape": ["D "] },
-        { "name": "roll", "shape": [" D"] }
+        {
+          "name": "flat",
+          "cells": 1
+        },
+        {
+          "name": "roll",
+          "cells": 1
+        }
       ]
     }
   ]

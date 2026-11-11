@@ -19,7 +19,6 @@ import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
-import io.github.soundgoodizerfan.feedback.weapon.GunSteam;
 import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
@@ -299,11 +298,11 @@ public final class GunClient {
     }
 
     /**
-     * The part of a gun's figures that only its design, its next round and its steam decide: the base bake, the load and the
+     * The part of a gun's figures that only its design, and its next round decide: the base bake, the load and the
      * trait list. Redone only when one of those changes; heat, wear and haste are applied on top each frame.
      */
     private record Baked(GunSpec design, java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials,
-                         io.github.soundgoodizerfan.feedback.weapon.Cartridge round, boolean lastRound, float steam, boolean hot,
+                         io.github.soundgoodizerfan.feedback.weapon.Cartridge round, boolean lastRound,
                          java.util.Optional<GunFigures> base, java.util.Optional<GunSpec.Load> load, List<ModularTraits.Active> traits) {
     }
 
@@ -314,21 +313,19 @@ public final class GunClient {
         if (design == null || GunHazard.isSpent(gun))
             return null;
         var materials = ClientMaterials.on(mc.level);
-        var next = GunAmmo.next(gun).map(r -> r.at(mc.level.getGameTime()));
+        var next = GunAmmo.next(gun);
         if (next.isEmpty())
             return null;
         int hand = gun == player.getOffhandItem() ? 1 : 0;
         boolean last = GunAmmo.count(gun) == 1;
-        float steam = GunSteam.stored(gun);
-        boolean hot = GunSpec.slugHot(materials, next.get(), GunCondition.temperature(gun, mc.level).value());
         Baked b = baked[hand];
-        if (b == null || b.design != design || b.materials != materials || b.lastRound != last || b.steam != steam || b.hot != hot || !b.round.equals(next.get())) {
+        if (b == null || b.design != design || b.materials != materials || b.lastRound != last || !b.round.equals(next.get())) {
             var r = next.get();
-            b = new Baked(design, materials, r, last, steam, hot, design.firing(GunAmmo.count(gun)).bake(materials, r, steam, hot),
-                    design.loadOf(materials, r), ModularTraits.allOf(gun));
+            b = new Baked(design, materials, r, last, design.firing(GunAmmo.count(gun)).bake(materials, r),
+                    r.load(materials), ModularTraits.allOf(gun));
             baked[hand] = b;
         }
-        if (b.base.isPresent() && b.load.isPresent() && !GunCondition.quenched(gun, mc.level, b.load.get())) {
+        if (b.base.isPresent() && b.load.isPresent()) {
             var aimed = ModularTraits.gunAimed(player, gun, GunCondition.effective(b.base.get(), gun, mc.level, b.load.get().ignitionTu()), b.traits);
             if (GunItem.dualWielding(player))
                 aimed = aimed.oneHanded();

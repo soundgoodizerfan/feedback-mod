@@ -14,9 +14,7 @@
       "layer": 1,
       "part": {
         "item": "feedback:receiver",
-        "shape": [
-          "R"
-        ],
+        "cells": 1,
         "stock": [
           "ingot"
         ],
@@ -28,15 +26,11 @@
           },
           {
             "name": "long_gun",
-            "shape": [
-              "RR"
-            ]
+            "cells": 2
           },
           {
             "name": "machine_gun",
-            "shape": [
-              "RRR"
-            ],
+            "cells": 3,
             "trait": "open_bolt",
             "params": {
               "first_shot_spread": 2.0
@@ -52,7 +46,7 @@
       ],
       "litres": 0.3,
       "layer": 0,
-      "dims": {
+      "axes": {
         "bore": {
           "min": 5,
           "max": 20,
@@ -74,9 +68,7 @@
       },
       "part": {
         "item": "feedback:gun_barrel",
-        "shape": [
-          "B"
-        ],
+        "cells": 1,
         "stock": [
           "turned_rod"
         ],
@@ -87,8 +79,7 @@
             "params": {
               "bore": 9,
               "outer": 14,
-              "length": 0.2,
-              "launcher": 0
+              "length": 0.2
             }
           },
           {
@@ -97,46 +88,10 @@
               "bore": 9,
               "outer": 14,
               "length": 0.2,
-              "launcher": 0,
               "spread_mult": 0.6
             },
-            "shape": [
-              "BB"
-            ],
+            "cells": 2,
             "trait": "gun_rifling"
-          },
-          {
-            "name": "coil_barrel",
-            "params": {
-              "bore": 12,
-              "outer": 20,
-              "length": 0.45,
-              "launcher": 1
-            },
-            "shape": [
-              "BB"
-            ]
-          },
-          {
-            "name": "spring_tube",
-            "params": {
-              "bore": 12,
-              "outer": 16,
-              "length": 0.3,
-              "launcher": 2
-            }
-          },
-          {
-            "name": "steam_tube",
-            "params": {
-              "bore": 12,
-              "outer": 20,
-              "length": 0.3,
-              "launcher": 3
-            },
-            "shape": [
-              "BB"
-            ]
           }
         ]
       }
@@ -149,7 +104,7 @@
       "litres": 0.3,
       "layer": 0,
       "alt": "B",
-      "dims": {
+      "axes": {
         "bore": {
           "min": 5,
           "max": 20,
@@ -171,9 +126,7 @@
       },
       "part": {
         "item": "feedback:gun_barrel",
-        "shape": [
-          "D"
-        ],
+        "cells": 1,
         "stock": [
           "turned_rod"
         ],
@@ -184,8 +137,7 @@
             "params": {
               "bore": 9,
               "outer": 14,
-              "length": 0.2,
-              "launcher": 0
+              "length": 0.2
             },
             "trait": "double_barrel"
           },
@@ -195,12 +147,9 @@
               "bore": 9,
               "outer": 14,
               "length": 0.2,
-              "launcher": 0,
               "spread_mult": 0.6
             },
-            "shape": [
-              "DD"
-            ],
+            "cells": 2,
             "trait": "gun_rifling,double_barrel"
           }
         ]
@@ -215,9 +164,7 @@
       "layer": 2,
       "part": {
         "item": "feedback:slide",
-        "shape": [
-          "A"
-        ],
+        "cells": 1,
         "stock": [
           "plate"
         ],
@@ -232,9 +179,7 @@
           },
           {
             "name": "automatic",
-            "shape": [
-              "AA"
-            ],
+            "cells": 2,
             "trait": "blowback,select_fire,closed_bolt",
             "params": {
               "pressure_limit": 1.2
@@ -252,9 +197,7 @@
       "layer": 2,
       "part": {
         "item": "feedback:bolt",
-        "shape": [
-          "K"
-        ],
+        "cells": 1,
         "stock": [
           "rod"
         ],
@@ -270,9 +213,7 @@
           },
           {
             "name": "lever",
-            "shape": [
-              "KK"
-            ],
+            "cells": 2,
             "trait": "lockup,hammer,manual_cycle,closed_bolt",
             "params": {
               "rating_mult": 0.75
@@ -280,17 +221,12 @@
           },
           {
             "name": "pump",
-            "shape": [
-              "K",
-              "K"
-            ],
+            "cells": 2,
             "trait": "hammer,manual_cycle,closed_bolt"
           },
           {
             "name": "break",
-            "shape": [
-              "KKK"
-            ],
+            "cells": 3,
             "trait": "lockup,hammer,manual_cycle",
             "params": {
               "rating_mult": 0.6
@@ -298,19 +234,12 @@
           },
           {
             "name": "self_loading",
-            "shape": [
-              "K",
-              "K",
-              "K"
-            ],
+            "cells": 3,
             "trait": "gas_operated,closed_bolt"
           },
           {
             "name": "automatic",
-            "shape": [
-              "KK",
-              "KK"
-            ],
+            "cells": 4,
             "trait": "gas_operated,select_fire,closed_bolt"
           }
         ]
@@ -325,9 +254,7 @@
       "layer": 3,
       "part": {
         "item": "feedback:trigger_group",
-        "shape": [
-          "T"
-        ],
+        "cells": 1,
         "stock": [
           "drilled_plate"
         ],
@@ -343,9 +270,7 @@
       "layer": 4,
       "part": {
         "item": "feedback:gun_grip",
-        "shape": [
-          "G"
-        ],
+        "cells": 1,
         "stock": [
           "grip"
         ],
@@ -359,29 +284,21 @@
           },
           {
             "name": "pistol_grip",
-            "shape": [
-              "G",
-              "G"
-            ],
+            "cells": 2,
             "params": {
               "friction_mult": 1.1
             }
           },
           {
             "name": "finger_groove",
-            "shape": [
-              "GG"
-            ],
+            "cells": 2,
             "params": {
               "friction_mult": 1.2
             }
           },
           {
             "name": "palm_swell",
-            "shape": [
-              "GG",
-              "GG"
-            ],
+            "cells": 4,
             "params": {
               "friction_mult": 1.4
             }
@@ -398,9 +315,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:cylinder",
-        "shape": [
-          "F"
-        ],
+        "cells": 1,
         "stock": [
           "ground_ingot"
         ],
@@ -428,9 +343,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:magazine_tube",
-        "shape": [
-          "E"
-        ],
+        "cells": 1,
         "stock": [
           "rod"
         ],
@@ -446,9 +359,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:belt_feed",
-        "shape": [
-          "Y"
-        ],
+        "cells": 1,
         "stock": [
           "plate"
         ],
@@ -473,9 +384,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:box_feed",
-        "shape": [
-          "b"
-        ],
+        "cells": 1,
         "stock": [
           "plate"
         ],
@@ -491,9 +400,7 @@
       "layer": 6,
       "part": {
         "item": "feedback:sight",
-        "shape": [
-          "S"
-        ],
+        "cells": 1,
         "stock": [
           "plate"
         ],
@@ -504,9 +411,7 @@
           },
           {
             "name": "scope",
-            "shape": [
-              "SS"
-            ]
+            "cells": 2
           }
         ]
       }
@@ -520,9 +425,7 @@
       "layer": 7,
       "part": {
         "item": "feedback:suppressor",
-        "shape": [
-          "M"
-        ],
+        "cells": 1,
         "stock": [
           "cylinder"
         ],
@@ -538,9 +441,7 @@
       "layer": 7,
       "part": {
         "item": "feedback:muzzle_brake",
-        "shape": [
-          "N"
-        ],
+        "cells": 1,
         "stock": [
           "magazine_tube"
         ],
@@ -556,9 +457,7 @@
       "layer": 7,
       "part": {
         "item": "feedback:eddy_sleeve",
-        "shape": [
-          "Q"
-        ],
+        "cells": 1,
         "stock": [
           "magazine_tube"
         ],
@@ -574,9 +473,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:thermal_sleeve",
-        "shape": [
-          "Z"
-        ],
+        "cells": 1,
         "stock": [
           "magazine_tube"
         ],
@@ -592,9 +489,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:counterweight",
-        "shape": [
-          "C"
-        ],
+        "cells": 1,
         "stock": [
           "ingot"
         ],
@@ -610,9 +505,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:bipod",
-        "shape": [
-          "I"
-        ],
+        "cells": 1,
         "stock": [
           "rod"
         ],
@@ -628,9 +521,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:bayonet",
-        "shape": [
-          "I"
-        ],
+        "cells": 1,
         "stock": [
           "rod"
         ],
@@ -646,9 +537,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:selector_switch",
-        "shape": [
-          "L"
-        ],
+        "cells": 1,
         "stock": [
           "nugget"
         ],
@@ -670,9 +559,7 @@
         "traits": [
           "sculk"
         ],
-        "shape": [
-          "J"
-        ],
+        "cells": 1,
         "stock": [
           "plate"
         ],
@@ -688,9 +575,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:resonance_weight",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot"
         ],
@@ -705,9 +590,7 @@
           },
           {
             "name": "thread_middle",
-            "shape": [
-              "PP"
-            ],
+            "cells": 2,
             "trait": "resonance",
             "params": {
               "tuned_ms": 450.0
@@ -715,9 +598,7 @@
           },
           {
             "name": "thread_muzzle",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "trait": "resonance",
             "params": {
               "tuned_ms": 800.0
@@ -735,9 +616,7 @@
       "layer": 8,
       "part": {
         "item": "feedback:relief_vent",
-        "shape": [
-          "V"
-        ],
+        "cells": 1,
         "stock": [
           "nugget"
         ],
@@ -753,105 +632,11 @@
       "layer": 9,
       "part": {
         "item": "feedback:barrel_shroud",
-        "shape": [
-          "H"
-        ],
+        "cells": 1,
         "stock": [
           "drilled_plate"
         ],
         "variants": []
-      }
-    },
-    "W": {
-      "name": "winding",
-      "forms": [
-        "block",
-        "wire"
-      ],
-      "litres": 0.1,
-      "layer": 10,
-      "bulk": 2
-    },
-    "X": {
-      "name": "wrap",
-      "forms": [
-        "*"
-      ],
-      "any_traits": [
-        "fibrous",
-        "sticky"
-      ],
-      "litres": 0.02,
-      "layer": 11
-    },
-    "U": {
-      "name": "main_spring",
-      "forms": [
-        "main_spring"
-      ],
-      "litres": 0.05,
-      "layer": 9,
-      "part": {
-        "item": "feedback:main_spring",
-        "shape": [
-          "U"
-        ],
-        "stock": [
-          "rod"
-        ],
-        "base": "light_spring",
-        "variants": [
-          {
-            "name": "light_spring",
-            "params": {
-              "coils": 1.0
-            }
-          },
-          {
-            "name": "heavy_spring",
-            "shape": [
-              "UU"
-            ],
-            "params": {
-              "coils": 2.0
-            }
-          }
-        ]
-      }
-    },
-    "O": {
-      "name": "steam_chest",
-      "forms": [
-        "steam_chest"
-      ],
-      "litres": 0.1,
-      "layer": 9,
-      "part": {
-        "item": "feedback:steam_chest",
-        "shape": [
-          "O"
-        ],
-        "stock": [
-          "plate"
-        ],
-        "base": "small_chest",
-        "variants": [
-          {
-            "name": "small_chest",
-            "params": {
-              "capacity_mb": 400.0
-            }
-          },
-          {
-            "name": "large_chest",
-            "shape": [
-              "OO"
-            ],
-            "params": {
-              "capacity_mb": 1000.0
-            }
-          }
-        ]
       }
     },
     "c": {
@@ -863,9 +648,7 @@
       "layer": 12,
       "part": {
         "item": "feedback:obturator",
-        "shape": [
-          "c"
-        ],
+        "cells": 1,
         "stock": [
           "leather",
           "raw"
@@ -884,9 +667,7 @@
           },
           {
             "name": "cup_seal",
-            "shape": [
-              "cc"
-            ],
+            "cells": 2,
             "trait": "gun_obturator",
             "params": {
               "soft_limit": 1.0,
@@ -898,10 +679,7 @@
           },
           {
             "name": "double_ring",
-            "shape": [
-              "cc",
-              "c "
-            ],
+            "cells": 3,
             "trait": "gun_obturator",
             "params": {
               "soft_limit": 1.0,
@@ -930,9 +708,7 @@
         "traits": [
           "sticky"
         ],
-        "shape": [
-          "d"
-        ],
+        "cells": 1,
         "stock": [
           "raw"
         ],
@@ -954,9 +730,7 @@
         "traits": [
           "luminous"
         ],
-        "shape": [
-          "e"
-        ],
+        "cells": 1,
         "stock": [
           "dust",
           "block"
@@ -972,9 +746,7 @@
           },
           {
             "name": "ring_reticle",
-            "shape": [
-              "ee"
-            ],
+            "cells": 2,
             "trait": "gun_reticle",
             "params": {
               "dark_at": 11.0,
@@ -983,10 +755,7 @@
           },
           {
             "name": "cross_reticle",
-            "shape": [
-              "ee",
-              "e "
-            ],
+            "cells": 3,
             "trait": "gun_reticle",
             "params": {
               "dark_at": 4.0,
@@ -1006,66 +775,9 @@
       "layer": 12,
       "part": {
         "item": "feedback:magnetic_sear",
-        "shape": [
-          "f"
-        ],
+        "cells": 1,
         "stock": [
           "nugget"
-        ],
-        "variants": []
-      }
-    },
-    "g": {
-      "name": "steam_valve",
-      "forms": [
-        "steam_valve"
-      ],
-      "litres": 0.05,
-      "layer": 12,
-      "part": {
-        "item": "feedback:steam_valve",
-        "shape": [
-          "g"
-        ],
-        "stock": [
-          "nugget"
-        ],
-        "base": "metered_valve",
-        "variants": [
-          {
-            "name": "metered_valve",
-            "trait": "gun_valve",
-            "params": {
-              "steam_mult": 0.6,
-              "cycle_mult": 1.25
-            }
-          },
-          {
-            "name": "dump_valve",
-            "trait": "gun_valve",
-            "params": {
-              "steam_mult": 1.5,
-              "cycle_mult": 0.8
-            }
-          }
-        ]
-      }
-    },
-    "h": {
-      "name": "steam_lagging",
-      "forms": [
-        "steam_lagging"
-      ],
-      "litres": 0.05,
-      "layer": 9,
-      "part": {
-        "item": "feedback:steam_lagging",
-        "shape": [
-          "h"
-        ],
-        "stock": [
-          "plate",
-          "leather"
         ],
         "variants": []
       }
@@ -1079,9 +791,7 @@
       "layer": 4,
       "part": {
         "item": "feedback:gun_stock",
-        "shape": [
-          "ii"
-        ],
+        "cells": 2,
         "stock": [
           "plate",
           "*_planks"
@@ -1098,9 +808,7 @@
           },
           {
             "name": "skeleton",
-            "shape": [
-              "i"
-            ],
+            "cells": 1,
             "trait": "gun_braced",
             "params": {
               "kick_mult": 0.8,
@@ -1109,9 +817,7 @@
           },
           {
             "name": "folding",
-            "shape": [
-              "i"
-            ],
+            "cells": 1,
             "trait": "gun_braced",
             "params": {
               "kick_mult": 0.85,
@@ -1161,62 +867,6 @@
   },
   "names": {
     "designations": [
-      {
-        "name": "lightning_lance",
-        "is": {
-          "variant": "long_gun",
-          "finish": "coil",
-          "barrel": "long",
-          "sight": "scope"
-        }
-      },
-      {
-        "name": "gauss_rifle",
-        "is": {
-          "variant": "long_gun",
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "arc_chaingun",
-        "is": {
-          "variant": "machine_gun",
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "rotary_driver",
-        "is": {
-          "variant": "handgun",
-          "finish": "coil",
-          "feed": "cylinder"
-        }
-      },
-      {
-        "name": "sparkler",
-        "is": {
-          "variant": "handgun",
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "coilgun",
-        "is": {
-          "finish": "coil"
-        }
-      },
-      {
-        "name": "spring_gun",
-        "is": {
-          "finish": "spring"
-        }
-      },
-      {
-        "name": "steam_gun",
-        "is": {
-          "finish": "steam"
-        }
-      },
       {
         "name": "derringer",
         "is": {
@@ -1425,49 +1075,25 @@
         3,
         1
       ],
-      "X": [
-        4,
-        1
-      ],
-      "W": [
-        0,
-        2
-      ],
-      "U": [
-        1,
-        2
-      ],
-      "O": [
-        2,
-        2
-      ],
-      "g": [
-        3,
-        2
-      ],
-      "h": [
-        4,
-        2
-      ],
       "c": [
         0,
-        3
+        2
       ],
       "V": [
         1,
-        3
+        2
       ],
       "H": [
         2,
-        3
+        2
       ],
       "Z": [
         3,
-        3
+        2
       ],
       "J": [
         4,
-        3
+        2
       ],
       "C": [
         0,
@@ -1526,30 +1152,6 @@
       [
         "a",
         "B"
-      ],
-      [
-        "X",
-        "G"
-      ],
-      [
-        "W",
-        "B"
-      ],
-      [
-        "U",
-        "B"
-      ],
-      [
-        "O",
-        "B"
-      ],
-      [
-        "g",
-        "O"
-      ],
-      [
-        "h",
-        "O"
       ],
       [
         "c",

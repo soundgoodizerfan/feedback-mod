@@ -14,9 +14,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:belt_band",
-        "shape": [
-          "PPP"
-        ],
+        "cells": 3,
         "stock": [
           "leather",
           "plate"
@@ -24,19 +22,14 @@
         "variants": [
           {
             "name": "textured",
-            "shape": [
-              "PPP",
-              "PPP"
-            ],
+            "cells": 6,
             "params": {
               "grip": 1.25
             }
           },
           {
             "name": "link",
-            "shape": [
-              "PPPP"
-            ],
+            "cells": 4,
             "params": {
               "grip": 0.85,
               "heat": 1.6

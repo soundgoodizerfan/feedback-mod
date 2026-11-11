@@ -155,13 +155,6 @@ final class GunDraw {
                 m.box(-0.6875f, y - length * 0.8f, z, 0.6875f, y - length * 0.2f, z + 0.5f, Tile.GRAIN);
             default -> { }
         }
-        if (v.has("X")) {
-            m.part(v, "X");
-            for (int i = 0; i < 3; i++) {
-                float yy = y - 0.75f - i * (length - 1.25f) / 2f;
-                m.box(-0.75f, yy - 0.25f, f - 0.0625f, 0.75f, yy, z + 0.0625f, Tile.RUBBER);
-            }
-        }
         if (well && (v.boxMagazine() || p.magDrop() > 0) && !p.magOut()) {
             float ext = v.magLength();
             m.push();
@@ -466,10 +459,6 @@ final class GunDraw {
         }
         if (v.has("J"))
             m.part(v, "J").rod(0, 0, r + 0.25f, start - len * 0.3f, start - len * 0.65f, Tile.PANEL);
-        if (v.has("W")) {
-            float stop = start - Math.min(len - 0.5f, 5f);
-            m.part(v, "W").rings(0, 0, r + 0.375f, start - 0.25f, stop, 5, 0.5f, Tile.COIL);
-        }
         if (v.has("Q"))
             m.part(v, "Q").rod(0, 0, r + 0.25f, end, end + Math.min(2.5f, len * 0.4f), Tile.BRUSHED);
         if (v.has("P")) {
@@ -512,7 +501,7 @@ final class GunDraw {
         m.box(-b, -b, z - 0.0625f, b, b, z, Tile.BORE);
     }
 
-    /** Hung under the barrel: a tube magazine, a spring gun's spring, a counterweight, a bipod, a bayonet. */
+    /** Hung under the barrel: a tube magazine, a counterweight, a bipod, a bayonet. */
     private static void underBarrel(GunMesh m, GunView v) {
         float start = breech(v), end = front(v), len = start - end, under = barrelsBottom(v);
         float y = under - 0.375f;
@@ -522,11 +511,6 @@ final class GunDraw {
             m.rod(0, y, 0.375f, start, stop, Tile.METAL);
             m.rod(0, y, 0.4375f, stop, stop - 0.25f, Tile.KNURL);
             y -= 0.75f;
-        }
-        if (v.has("U")) {
-            float rr = v.variant("U").equals("heavy_spring") ? 0.625f : 0.5f;
-            m.part(v, "U").rod(0, y - rr + 0.375f, rr, start, start - Math.min(len * 0.6f + 1f, 6f), Tile.COIL);
-            y -= 2 * rr;
         }
         if (v.has("C"))
             m.part(v, "C").box(-0.5f, y - 0.75f, end + 0.25f, 0.5f, y + 0.375f, end + 2f, Tile.METAL);
@@ -631,7 +615,7 @@ final class GunDraw {
         }
     }
 
-    /** On the sides: a selector, a steam chest with its valve and lagging, a hydraulic buffer. */
+    /** On the sides: a selector, a hydraulic buffer. */
     private static void sides(GunMesh m, GunView v) {
         float hw = v.halfWidth();
         float at = switch (v.type()) {
@@ -644,27 +628,6 @@ final class GunDraw {
             m.part(v, "L").box(-hw - 0.125f, base - 0.125f, at - 0.375f, -hw, base + 0.125f, at + 0.375f, Tile.KNURL);
         if (v.has("d"))
             m.part(v, "d").rod(-hw - 0.25f, base + 0.5f, 0.25f, at + 0.5f, at + 2f, Tile.BRUSHED);
-        if (v.has("O")) {
-            boolean large = v.variant("O").equals("large_chest");
-            float rr = large ? 1f : 0.75f, len = large ? 6f : 4f, x = -hw - rr;
-            float z0 = v.type() == GunLayout.Type.HANDGUN ? -1f : -0.5f;
-            m.part(v, "O");
-            m.rod(x, 0, rr, z0, z0 - len, Tile.METAL);
-            m.rod(x, 0, rr + 0.0625f, z0, z0 - 0.25f, Tile.PANEL);
-            m.rod(x, 0, rr + 0.0625f, z0 - len + 0.25f, z0 - len, Tile.PANEL);
-            m.box(x + rr * 0.5f, -0.25f, z0 - 0.25f, -hw, 0.25f, z0 + 0.25f, Tile.METAL); // feed pipe
-            if (v.has("h"))
-                m.part(v, "h").rings(x, 0, rr + 0.0625f, z0 - 0.5f, z0 - len + 0.5f, (int) (len / 0.75f), 0.375f, Tile.RUBBER);
-            if (v.has("g")) {
-                float zc = GunView.snap(z0 - len * 0.5f, 0.25f);
-                m.part(v, "g");
-                m.box(x - 0.125f, rr, zc - 0.125f, x + 0.125f, rr + 0.5f, zc + 0.125f, Tile.METAL);
-                if (v.variant("g").equals("dump_valve"))
-                    m.box(x - 0.125f, rr + 0.5f, zc - 0.125f, x + 0.125f, rr + 0.625f, zc + 1f, Tile.KNURL);
-                else
-                    m.box(x - 0.375f, rr + 0.5f, zc - 0.375f, x + 0.375f, rr + 0.625f, zc + 0.375f, Tile.KNURL);
-            }
-        }
     }
 
     private static int darken(int argb) {

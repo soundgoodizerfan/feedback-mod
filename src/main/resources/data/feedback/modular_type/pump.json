@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "diameter": {
           "min": 10,
           "max": 60,
@@ -24,10 +24,7 @@
       },
       "part": {
         "item": "feedback:pump_impeller",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "plate"
         ],
@@ -35,10 +32,7 @@
         "variants": [
           {
             "name": "impeller_centrifugal",
-            "shape": [
-              "SSS",
-              "SSS"
-            ],
+            "cells": 6,
             "params": {
               "flow": 1.0,
               "lift": 1.0
@@ -46,11 +40,7 @@
           },
           {
             "name": "impeller_axial",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "flow": 1.6,
               "lift": 0.5
@@ -58,11 +48,7 @@
           },
           {
             "name": "impeller_screw",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "flow": 0.7,
               "lift": 1.6
