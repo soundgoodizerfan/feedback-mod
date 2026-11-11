@@ -48,6 +48,18 @@ public class BootstrapToolRecipe extends CustomRecipe {
     private static final ShapedRecipe GLOVE = shaped(Map.of('L', Ingredient.of(net.neoforged.neoforge.common.Tags.Items.LEATHERS)),
             Items.LEATHER, "L L", "LLL");
 
+    /** A cobblestone head on two sticks: the first hand hammer, a hafted tool whose one face is a hammer's. */
+    private static final ShapedRecipe HAMMER = shaped(Map.of('S', Ingredient.of(Items.COBBLESTONE), 'T', STICK), Items.COBBLESTONE,
+            "SSS", "STS", " T ");
+
+    private static ItemStack hammer() {
+        Map<ResourceLocation, ModularType> types = ModularTypes.known();
+        Map<ResourceLocation, Material> materials = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.materialsNow();
+        return ToolDesigns.starter(io.github.soundgoodizerfan.feedback.Feedback.id("hand_hammer"), types, materials)
+                .flatMap(d -> ModularStacks.blank(d.type()).filter(s -> ModularStacks.assemble(s, d, materials, types)))
+                .orElse(ItemStack.EMPTY);
+    }
+
     private static void add(Ingredient head, ItemLike pickaxe, ItemLike axe, ItemLike shovel) {
         Map<Character, Ingredient> key = Map.of('X', head, '#', STICK, 'B', BINDING);
         RECIPES.add(shaped(key, pickaxe, "XXX", " #B", " # "));
@@ -65,13 +77,15 @@ public class BootstrapToolRecipe extends CustomRecipe {
 
     @Override
     public boolean matches(CraftingInput input, Level level) {
-        return GLOVE.matches(input, level) || RECIPES.stream().anyMatch(r -> r.matches(input, level));
+        return GLOVE.matches(input, level) || HAMMER.matches(input, level) || RECIPES.stream().anyMatch(r -> r.matches(input, level));
     }
 
     @Override
     public ItemStack assemble(CraftingInput input, HolderLookup.Provider registries) {
         if (GLOVE.matches(input, null))
             return glove();
+        if (HAMMER.matches(input, null))
+            return hammer();
         for (ShapedRecipe r : RECIPES)
             if (r.matches(input, null))
                 return ModularConvert.convert(r.assemble(input, registries), 0L, false);

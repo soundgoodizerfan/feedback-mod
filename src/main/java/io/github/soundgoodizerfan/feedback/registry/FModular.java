@@ -101,18 +101,8 @@ public final class FModular {
             .map(id -> ITEMS.registerItem(id, io.github.soundgoodizerfan.feedback.modular.ModularPartItem::new))
             .toList();
 
-    public static final DeferredItem<ModularItem> PICKAXE = ITEMS.register("pickaxe",
-            () -> new ModularItem(ModularStacks.properties()));
 
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularAxe> AXE = ITEMS.register("axe",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularAxe(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShovel> SHOVEL = ITEMS.register("shovel",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularShovel(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHoe> HOE = ITEMS.register("hoe",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHoe(ModularStacks.properties()));
 
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSword> SWORD = ITEMS.register("sword",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularSword(ModularStacks.properties()));
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularShield> SHIELD = ITEMS.register("shield",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularShield(ModularStacks.properties()));
 
@@ -155,17 +145,9 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> BREAD = ITEMS.register("bread",
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
 
-    /** The hand tools (family {@code hand}): the Tool Table's hammer and the Prep Table's knife. Item id and type id are one. */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_HAMMER = ITEMS.register("hand_hammer",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> HAND_KNIFE = ITEMS.register("hand_knife",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
-    /** A file: handle and a toothed head; the Engineering Table's {@code feedback:file} ability. */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> FILE = ITEMS.register("file",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
-    /** A screwdriver: handle and a bit; the Engineering Table's {@code feedback:driver} ability. */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHandTool> SCREWDRIVER = ITEMS.register("screwdriver",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHandTool(ModularStacks.properties()));
+    /** Every tool held by a haft (pick, axe, shovel, hoe, sword, spear, maul, sickle, cleaver, hammer, knife, file, screwdriver): one item, whose faces decide what it does. Item id and type id are one. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHafted> HAFTED_TOOL = ITEMS.register("hafted_tool",
+            () -> new io.github.soundgoodizerfan.feedback.modular.ModularHafted(ModularStacks.properties()));
     /** The pan tool: right-click flips the piece under the cursor. */
     public static final DeferredItem<ModularItem> SPATULA = ITEMS.register("spatula",
             () -> new ModularItem(ModularStacks.properties()));
@@ -370,16 +352,6 @@ public final class FModular {
             () -> new io.github.soundgoodizerfan.feedback.modular.BlueprintBookItem(new Item.Properties().stacksTo(1)
                     .component(net.minecraft.core.component.DataComponents.BUNDLE_CONTENTS, net.minecraft.world.item.component.BundleContents.EMPTY)));
 
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> TWIN = ITEMS.register("twin",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularItem> CLEAVER = ITEMS.register("cleaver",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularItem(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSpear> SPEAR = ITEMS.register("spear",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularSpear(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularMaul> MAUL = ITEMS.register("maul",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularMaul(ModularStacks.properties()));
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularSickle> SICKLE = ITEMS.register("sickle",
-            () -> new io.github.soundgoodizerfan.feedback.modular.ModularSickle(ModularStacks.properties()));
 
     /** The crystal vial that holds experience (progression roadmap L2); its store is the {@code XP_STORE} component. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.XpContainerItem> XP_CONTAINER = ITEMS.register("xp_container",

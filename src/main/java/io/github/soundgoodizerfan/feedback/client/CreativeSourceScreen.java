@@ -18,14 +18,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * A creative source's settings: a power switch and a text box per figure (any number; the
- * server clamps it to the figure's range). An instrument panel ({@link GuiSkin#PANEL}), like {@link MirrorScreen}. Every figure is
+ * server clamps it to the figure's range). An instrument panel ({@link GuiSkin#CONSOLE}), like {@link MirrorScreen}. Every figure is
  * read from the block's {@link CreativeSource#params()}, so one screen serves heat, rotation and
  * electricity, and the next energy type's source needs no screen of its own.
  */
 public class CreativeSourceScreen extends Screen {
 
     private static final int W = 190, ROW = 20;
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.CONSOLE;
 
     private final BlockPos pos;
     private final Opening opening = new Opening(SKIN);

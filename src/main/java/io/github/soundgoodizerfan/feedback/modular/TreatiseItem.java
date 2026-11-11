@@ -39,7 +39,7 @@ public class TreatiseItem extends Item {
         tooltip.add(Component.translatable("tooltip.feedback.treatise").withStyle(ChatFormatting.GRAY));
         // what it lets you draw: every type of its volume, by name
         for (var e : ModularTypes.known().entrySet())
-            if (school == School.of(e.getValue().school()) && volume == School.volumeOf(e.getValue().school()))
+            if (!e.getValue().face() && school == School.of(e.getValue().school()) && volume == School.volumeOf(e.getValue().school()))
                 tooltip.add(Component.literal("- ").append(Component.translatable("item." + e.getKey().getNamespace() + "." + e.getKey().getPath()))
                         .withStyle(ChatFormatting.DARK_AQUA));
     }

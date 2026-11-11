@@ -33,7 +33,7 @@ import net.minecraft.world.item.ItemStack;
  */
 final class FittingScreen extends Screen {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.ENAMEL;
     private static final int PW = 240, PH = 236, PLAY = 0, SNAP = 1, DONE = 2;
     private static final int SNAP_TICKS = 16, DONE_TICKS = 90, CELL_W = 42, CELL_H = 38, SHAKE_TICKS = 14, DROP_TICKS = 9;
     /** Screen-local colours: the tray, the bay's axis and the sparks are the subject of this screen, not the skin's. */

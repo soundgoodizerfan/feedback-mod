@@ -153,8 +153,7 @@ public final class SwingClips {
         var design = ModularStacks.design(stack);
         if (design == null || ModularStacks.broken(stack))
             return false;
-        ModularType type = ModularTypes.known().get(design.type());
-        return type != null && type.family() == ModularType.Family.SPEAR;
+        return io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack) == ModularType.Family.SPEAR;
     }
 
     private static Paced layer(AbstractClientPlayer player) {

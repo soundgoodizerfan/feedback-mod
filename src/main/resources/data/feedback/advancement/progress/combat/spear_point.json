@@ -2,7 +2,7 @@
   "parent": "feedback:progress/combat_root",
   "display": {
     "icon": {
-      "id": "feedback:spear"
+      "id": "feedback:hafted_tool"
     },
     "title": {
       "translate": "advancement.feedback.progress.combat.spear_point.title"

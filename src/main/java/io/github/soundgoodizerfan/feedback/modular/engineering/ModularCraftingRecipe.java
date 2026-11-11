@@ -52,7 +52,7 @@ public class ModularCraftingRecipe extends CustomRecipe {
                 slots.add(input.getItem(i).copyWithCount(1));
         if (slots.isEmpty())
             return Optional.empty();
-        return ModularAssembly.infer(slots, ItemStack.EMPTY, MaterialIngredient.materialsNow(), simple(), t -> true, ModularFit.Start.NONE)
+        return ModularAssembly.infer(slots, ItemStack.EMPTY, MaterialIngredient.materialsNow(), simple(), t -> t.school().isEmpty(), ModularFit.Start.NONE)
                 .map(ModularAssembly.Match::tool);
     }
 

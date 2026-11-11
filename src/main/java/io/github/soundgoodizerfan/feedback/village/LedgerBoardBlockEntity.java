@@ -101,14 +101,15 @@ public class LedgerBoardBlockEntity extends BlockEntity {
         int worst = -1;
         for (Contract c : Contracts.open(worldPosition, today, tier)) {
             int[] st = state(c.id());
-            if (st[0] >= c.count() || !design.type().equals(c.order().type()))
+            ModularDesign ordered = io.github.soundgoodizerfan.feedback.modular.ModularFaces.forOrder(design, c.order().type());
+            if (st[0] >= c.count() || ordered == null)
                 continue;
             asked = true;
-            CommissionJudge.Result r = CommissionJudge.judge(c.order(), figures, design, MaterialTable.get().materials());
+            CommissionJudge.Result r = CommissionJudge.judge(c.order(), figures, ordered, MaterialTable.get().materials());
             worst = Math.max(worst, r.grade().ordinal());
             if (r.grade().ordinal() < c.min().ordinal())
                 continue;
-            String bin = DishProfile.is(item) ? c.order().type() + "|" + DishProfile.bin(figures) : VillageEconomy.binKey(c.order().type(), design);
+            String bin = DishProfile.is(item) ? c.order().type() + "|" + DishProfile.bin(figures) : VillageEconomy.binKey(c.order().type(), ordered);
             Ledger b = bins.on(today);
             int paid = Math.round(c.order().pay() * r.grade().payFactor() * b.payKept(bin, today));
             bins = b.delivered(0, bin, today);

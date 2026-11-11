@@ -33,17 +33,22 @@ public final class ToolAbilities {
     private ToolAbilities() {
     }
 
+    /** The ability a face of head kind {@code kind} gives the tool it is on, or null for a kind that is no bench tool's. */
+    @Nullable
+    public static ItemAbility forFace(String kind) {
+        return switch (kind) {
+            case "head_blank" -> HAMMER;
+            case "file_head" -> FILE;
+            case "driver_bit" -> DRIVER;
+            default -> null;
+        };
+    }
+
     /** The ability a modular hand tool has by its type, or null for any other stack. */
     @Nullable
     public static ItemAbility of(ItemStack stack) {
-        if (stack.is(FModular.HAND_HAMMER.get()))
-            return HAMMER;
         if (stack.is(FModular.SAWBLADE.get()))
             return SAW;
-        if (stack.is(FModular.FILE.get()))
-            return FILE;
-        if (stack.is(FModular.SCREWDRIVER.get()))
-            return DRIVER;
         return null;
     }
 

@@ -37,7 +37,7 @@ public class CreeperSacItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack sac = player.getItemInHand(hand);
         ItemStack other = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
-        if (!other.is(FModular.HAND_KNIFE.get()))
+        if (!io.github.soundgoodizerfan.feedback.modular.ModularFaces.has(other, "knife_blade"))
             return InteractionResultHolder.pass(sac);
         int count = (int) (charge(sac) / FTuning.CREEPER_CHARGE_PER_ITEM);
         if (count <= 0) {

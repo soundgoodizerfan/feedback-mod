@@ -63,7 +63,7 @@ public final class HandToolCrafting {
             return;
 
         ItemStack held = toolIn(event.getInventory());
-        if (!(held.getItem() instanceof HandToolItem tool))
+        if (!(held.getItem() instanceof HandTool tool))
             return;
         // Every swing costs food, harder swings more. Before the clang throttle: that is per tick,
         // and every craft is a swing.
@@ -104,7 +104,7 @@ public final class HandToolCrafting {
         ItemStack found = ItemStack.EMPTY;
         for (int i = 0; i < grid.getContainerSize(); i++) {
             ItemStack stack = grid.getItem(i);
-            if (stack.getItem() instanceof HandToolItem) {
+            if (stack.getItem() instanceof HandTool) {
                 if (!found.isEmpty())
                     return ItemStack.EMPTY;
                 found = stack;

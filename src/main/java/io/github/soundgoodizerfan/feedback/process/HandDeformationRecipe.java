@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.process;
 
 import java.lang.ref.WeakReference;
 
-import io.github.soundgoodizerfan.feedback.item.HandToolItem;
+import io.github.soundgoodizerfan.feedback.item.HandTool;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 
 import net.minecraft.core.HolderLookup;
@@ -125,7 +125,7 @@ public class HandDeformationRecipe extends CustomRecipe {
             if (stack.isEmpty())
                 continue;
 
-            if (stack.getItem() instanceof HandToolItem) {
+            if (stack.getItem() instanceof HandTool) {
                 if (!tool.isEmpty())
                     return null;    // two tools is not two blows
                 tool = stack;
@@ -150,7 +150,7 @@ public class HandDeformationRecipe extends CustomRecipe {
         // Any hand tool, not only the hammer. A tool that does not strike declares 0 St and is
         // refused below the material's hardness floor a line later, so there is no list anywhere of
         // which tools deform -- the strength and the declared operation are the whole answer.
-        HandToolItem handTool = (HandToolItem) tool.getItem();
+        HandTool handTool = (HandTool) tool.getItem();
         // A crafting grid has nowhere to put what the work drives out (a bloom's slag): that is the anvil's shingling, not a swing in a grid.
         var entry = DeformationTable.get().find(workpiece, handTool.getOperation());
         if (entry.isPresent() && !entry.get().byproduct().isEmpty())

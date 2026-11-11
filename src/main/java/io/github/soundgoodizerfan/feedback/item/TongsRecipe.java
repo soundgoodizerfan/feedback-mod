@@ -67,7 +67,7 @@ public class TongsRecipe extends CustomRecipe {
             if (stack.isEmpty())
                 continue;
             // A hand tool that strikes is the hammer the arms are drawn out with; it is not part of the tongs.
-            if (stack.getItem() instanceof HandToolItem tool && tool.getStrength(stack).value() > 0f) {
+            if (stack.getItem() instanceof HandTool tool && tool.getStrength(stack).value() > 0f) {
                 if (hammer)
                     return null;
                 hammer = true;

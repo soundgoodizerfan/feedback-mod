@@ -644,8 +644,9 @@ public final class ModularBake {
     }
 
     /** As {@link #bake(ModularDesign, ModularType, Map, int)}, for an item carrying {@code coat} (or none). */
-    public static Optional<ModularFigures> bake(ModularDesign design, ModularType type,
+    public static Optional<ModularFigures> bake(ModularDesign design, ModularType planned,
                                                 Map<ResourceLocation, Material> materials, int step, Plating coat) {
+        ModularType type = ModularFaces.view(planned, design);
         Map<String, Material> by = new java.util.HashMap<>();
         for (Part p : design.parts()) {
             Material m = materials.get(p.material());
@@ -787,6 +788,11 @@ public final class ModularBake {
                 f.put(Fig.CAPACITY, (ModularTuning.SHIELD_BASE_CAPACITY + comp * worn) * held);
             }
             case HAND -> {
+                // A face of the hafted plan swings and digs as any other, and a hammer face also lands the hand's blow.
+                if (!type.strikers().isEmpty()) {
+                    melee(design, type, by, zone, f, worn);
+                    break;
+                }
                 float total = 0;
                 for (Part p : design.parts())
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
@@ -1022,7 +1028,8 @@ public final class ModularBake {
      */
     private static void melee(ModularDesign design, ModularType type, Map<String, Material> by, Zone zone,
                               Map<Fig, Float> f, float worn) {
-        List<String> heads = type.strikers().isEmpty() ? List.of(type.wearRole()) : type.strikers();
+        boolean faced = !type.strikers().isEmpty();
+        List<String> heads = !faced ? List.of(type.wearRole()) : type.strikers().stream().filter(r -> design.part(r) != null).toList();
         float rodLength = 0;
         for (Part p : design.parts()) {
             ModularType.Role r = type.roles().get(p.role());
@@ -1074,29 +1081,45 @@ public final class ModularBake {
             float impact = 0.5f * (mass + ModularTuning.ROD_STRIKE_SHARE * rodMass) * tip * tip;
             float bite = bite(z.bite(), design.edge());
             float strike = type.strike();
-            if (heads.size() > 1 && head != null)
-                strike = ModularHeads.of(ModularHeads.kindOf(head, type.roles().get(role))).map(ModularHeads::strike).orElse(1f);
+            Optional<ModularHeads> kind = faced && head != null ? ModularHeads.of(ModularHeads.kindOf(head, type.roles().get(role))) : Optional.empty();
+            if (faced && head != null)
+                strike = kind.map(ModularHeads::strike).orElse(1f);
             if (head != null)
                 strike *= type.roles().get(role).strike(head);
-            float damage = 1 + ModularTuning.DAMAGE_K * strike * bite * (float) Math.sqrt(impact) * worn;
-            float dig = ModularTuning.DIG_K * bite * (float) Math.sqrt(impact) * worn;
+            boolean spent = faced && ModularFaces.spent(head);
+            float damage = spent ? 1f : 1 + ModularTuning.DAMAGE_K * strike * bite * (float) Math.sqrt(impact) * worn;
+            float dig = spent ? 0f : ModularTuning.DIG_K * bite * (float) Math.sqrt(impact) * worn;
             wear += z.wear();
-            if (i > 0) {
+            if (i == 2) {
+                f.put(Fig.DIG_SPEED_THIRD, dig);
+                f.put(Fig.HARDNESS_THIRD, z.hardness());
+                f.put(Fig.EDGE_TOUGHNESS_THIRD, z.toughness());
+            } else if (i > 0) {
                 f.put(Fig.DIG_SPEED_OFF, dig);
                 f.put(Fig.HARDNESS_OFF, z.hardness());
                 f.put(Fig.EDGE_TOUGHNESS_OFF, z.toughness());
             } else {
                 f.put(Fig.DIG_SPEED, dig);
             }
-            if (damage > bestDamage) {
+            if (faced) {
+                // Each face lasts as long as its own edge and stock do; the bar follows the most worn one (ModularFaces#wear).
+                float litres = i == 0 ? type.wearLitres() : kind.map(ModularHeads::wearLitres).orElse(type.wearLitres());
+                f.put(i == 0 ? Fig.DURABILITY : i == 1 ? Fig.DURABILITY_B : Fig.DURABILITY_C,
+                        (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * z.wear() * litres)));
+                // A hammer face lands the hand's blow (what a hand-forging recipe and a machine head ask of the tool).
+                if (kind.map(h -> h.combat() == ModularType.Family.HAND && h.strike() > 0f).orElse(false) && !spent)
+                    f.put(Fig.STRIKE_ST, Math.max(f.get(Fig.STRIKE_ST), FTuning.HAND_ST_PER_MU_COMPETENCE * total * z.wear() * worn * strike));
+            }
+            if (!spent && damage > bestDamage) {
                 bestDamage = damage;
                 f.put(Fig.IMPACT, impact);
                 f.put(Fig.BITE, bite);
                 f.put(Fig.DAMAGE, damage);
             }
         }
-        if (heads.size() > 1)
-            f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * wear * type.wearLitres())));
+        if (bestDamage < 0) {
+            f.put(Fig.DAMAGE, 1f);
+        }
         f.put(Fig.MASS, total);
         f.put(Fig.BALANCE, feltTotal > 0 && reachLength > 0 ? Math.min(1f, moment / (feltTotal * reachLength)) : 0f);
         f.put(Fig.SWING, swing);

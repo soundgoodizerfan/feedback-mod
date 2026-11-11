@@ -48,7 +48,7 @@ import net.minecraft.world.item.ItemStack;
  *
  * @see HandToolCrafting for the noise, which is a separate problem from the tool
  */
-public abstract class HandToolItem extends Item {
+public abstract class HandToolItem extends Item implements HandTool {
 
     protected HandToolItem(Properties properties) {
         super(properties);
@@ -65,12 +65,15 @@ public abstract class HandToolItem extends Item {
      * @param stack the tool, which may carry how hard it is being swung ({@link HandSwing})
      * @return {@code 0} for a tool that does not strike, which then lands nothing on any material
      */
+    @Override
     public abstract St getStrength(ItemStack stack);
 
     /** How this tool delivers its strength -- a blow or a draw. See {@link Operation}. */
+    @Override
     public abstract Operation getOperation();
 
     /** The noise one application makes. Played by {@link HandToolCrafting}, once per craft. */
+    @Override
     public abstract SoundEvent getWorkSound();
 
     /**

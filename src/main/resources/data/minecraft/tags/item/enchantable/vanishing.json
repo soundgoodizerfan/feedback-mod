@@ -1,22 +1,12 @@
 {
   "values": [
-    "feedback:axe",
     "feedback:boots",
     "feedback:bow",
     "feedback:chestplate",
-    "feedback:cleaver",
     "feedback:crossbow",
     "feedback:helmet",
-    "feedback:hoe",
     "feedback:leggings",
-    "feedback:maul",
-    "feedback:twin",
-    "feedback:pickaxe",
-    "feedback:spear",
     "feedback:shears",
-    "feedback:shield",
-    "feedback:shovel",
-    "feedback:sickle",
-    "feedback:sword"
+    "feedback:shield"
   ]
 }

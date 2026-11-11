@@ -86,7 +86,13 @@ public final class EngineeringRework {
 
     private static ModularType typeOf(ItemStack item, Level level) {
         ModularDesign design = ModularStacks.design(item);
-        return design == null ? null : EngineeringAssembly.types(level).get(design.type());
+        ModularType type = design == null ? null : EngineeringAssembly.types(level).get(design.type());
+        // A hafted build holding a gated face is gated by that face's school.
+        if (type != null && type.family() == ModularType.Family.HAFTED) {
+            String school = io.github.soundgoodizerfan.feedback.modular.ModularFaces.school(design, type);
+            return school.isEmpty() ? type : type.withGate(school);
+        }
+        return type;
     }
 
     private static float salvage(ServerPlayer server) {

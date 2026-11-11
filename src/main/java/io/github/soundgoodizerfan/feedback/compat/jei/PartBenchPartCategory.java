@@ -94,7 +94,7 @@ public class PartBenchPartCategory implements IRecipeCategory<PartBenchShaping.O
                         });
         });
         builder.addInputSlot(1, 14).setStandardSlotBackground().addItemStacks(stock);
-        builder.addInputSlot(1, 34).setStandardSlotBackground().addItemStack(new ItemStack(FModular.HAND_HAMMER.get()));
+        builder.addInputSlot(1, 34).setStandardSlotBackground().addItemStack(new ItemStack(FModular.HAFTED_TOOL.get()));
         builder.addOutputSlot(143, 62).setOutputSlotBackground().addItemStacks(parts);
     }
 

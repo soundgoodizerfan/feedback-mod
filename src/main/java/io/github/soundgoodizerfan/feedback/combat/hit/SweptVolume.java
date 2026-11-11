@@ -47,9 +47,8 @@ public final class SweptVolume {
         var figures = ModularStacks.figures(weapon);
         if (design == null || figures == null || ModularStacks.broken(weapon))
             return Optional.empty();
-        ModularType type = ModularTypes.known().get(design.type());
-        if (type == null || type.family() != ModularType.Family.BLADE && type.family() != ModularType.Family.MACE
-                && type.family() != ModularType.Family.SPEAR)
+        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(weapon);
+        if (family != ModularType.Family.BLADE && family != ModularType.Family.MACE && family != ModularType.Family.SPEAR)
             return Optional.empty();
         return Optional.of(ModularTuning.SWEEP_HALF_WIDTH_MIN
                 + ModularTuning.SWEEP_HALF_WIDTH_BALANCE * Math.max(0f, Math.min(1f, figures.get(Fig.BALANCE))));

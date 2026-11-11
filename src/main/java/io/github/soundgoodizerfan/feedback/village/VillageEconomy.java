@@ -245,7 +245,8 @@ public final class VillageEconomy {
         ItemStack item = menu.delivered();
         ModularDesign design = ModularStacks.design(item);
         ModularFigures figures = DishProfile.read(item, v.level());
-        if (design == null || figures == null || !design.type().equals(order.type())) {
+        design = io.github.soundgoodizerfan.feedback.modular.ModularFaces.forOrder(design, order.type());
+        if (design == null || figures == null) {
             send(p, menu, view(p, v).withResult(VillagerView.WRONG, -1, false, 0));
             return;
         }
@@ -348,10 +349,11 @@ public final class VillageEconomy {
             boolean asked = false;
             for (int i = 0; i < orders.size(); i++) {
                 Order order = orders.get(i);
-                if (ledger.done(i) || !design.type().equals(order.type()))
+                ModularDesign ordered = io.github.soundgoodizerfan.feedback.modular.ModularFaces.forOrder(design, order.type());
+                if (ledger.done(i) || ordered == null)
                     continue;
                 asked = true;
-                CommissionJudge.Result r = CommissionJudge.judge(order, figures, design, MaterialTable.get().materials());
+                CommissionJudge.Result r = CommissionJudge.judge(order, figures, ordered, MaterialTable.get().materials());
                 if (r.grade() == CommissionJudge.Grade.REJECTED
                         || (Guilds.isGuildOrder(v, i) && r.grade().ordinal() < CommissionJudge.Grade.GOOD.ordinal()))
                     continue;

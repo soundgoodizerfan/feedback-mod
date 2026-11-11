@@ -25,7 +25,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     private final ProgramEditor editor;
 
     public ProgrammerScreen(ProgrammerMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title, GuiSkin.PANEL);
+        super(menu, playerInventory, title, GuiSkin.CONSOLE);
         editor = new ProgramEditor(new ProgramEditor.Source() {
             @Override
             public BlockPos pos() {
@@ -41,7 +41,7 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
             public ItemStack medium() {
                 return menu.getSlot(0).getItem();
             }
-        }, GuiSkin.PANEL);
+        }, GuiSkin.CONSOLE);
     }
 
     @Override
@@ -86,10 +86,10 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     protected void renderBg(GuiGraphics graphics, float partialTick, int mx, int my) {
         editor.render(graphics, mx, my, partialTick);
         // The strip is the instrument panel's plate, its edge screws pushed off the window's corners.
-        GuiSkin.PANEL.panel(graphics, -4, -4, width + 8, STRIP_H + 4);
+        GuiSkin.CONSOLE.panel(graphics, -4, -4, width + 8, STRIP_H + 4);
         for (var slot : menu.slots)
-            GuiSkin.PANEL.slot(graphics, slot.x, slot.y);
-        graphics.drawString(font, title, ProgrammerMenu.HOTBAR_X + 9 * 18 + 12, 10, GuiSkin.PANEL.dim(), false);
+            GuiSkin.CONSOLE.slot(graphics, slot.x, slot.y);
+        graphics.drawString(font, title, ProgrammerMenu.HOTBAR_X + 9 * 18 + 12, 10, GuiSkin.CONSOLE.dim(), false);
     }
 
     @Override

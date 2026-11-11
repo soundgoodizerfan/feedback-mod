@@ -62,7 +62,7 @@ public class SkillTreeScreen extends Screen {
     /** The loadout's orb pitch across a row. */
     private static final int EQUIP_CELL = 80;
     private static final double MIN_ZOOM = 0.3, MAX_ZOOM = 2.5, ZOOM_STEP = 1.15;
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.ENAMEL;
 
     private enum State { OWNED, BUYABLE, SHORT, LOCKED }
 

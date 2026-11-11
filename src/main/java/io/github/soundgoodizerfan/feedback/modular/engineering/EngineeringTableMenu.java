@@ -273,8 +273,11 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
         if (field.isEmpty()) {
             var types = EngineeringAssembly.types(level);
             var found = ModularAssembly.infer(in.grid(), table.getItem(EngineeringTableBlockEntity.BLUEPRINT), ClientMaterials.on(level), types);
-            if (found.isPresent() && types.get(found.get().type()) != null)
-                field = types.get(found.get().type()).school();
+            if (found.isPresent() && types.get(found.get().type()) != null) {
+                var t = types.get(found.get().type());
+                field = t.family() == io.github.soundgoodizerfan.feedback.modular.ModularType.Family.HAFTED
+                        ? io.github.soundgoodizerfan.feedback.modular.ModularFaces.school(ModularStacks.design(found.get().tool()), t) : t.school();
+            }
         }
         School s = School.of(field);
         return s == null ? 0 : (s.ordinal() + 1) * 8 + Math.min(School.volumeOf(field), s.volumes());

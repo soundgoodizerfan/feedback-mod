@@ -137,7 +137,7 @@ public class EngineeringCategory implements IRecipeCategory<EngineeringCategory.
     static List<Card> generated(Map<ResourceLocation, ModularType> types) {
         List<Card> out = new ArrayList<>();
         types.forEach((id, type) -> {
-            if (!type.blueprint() || type.family() == ModularType.Family.DISH || type.patterns().isEmpty())
+            if (type.face() || !type.blueprint() || type.family() == ModularType.Family.DISH || type.patterns().isEmpty())
                 return;
             List<EngineeringRecipe.Tool> tools = new ArrayList<>();
             for (String t : type.tools())

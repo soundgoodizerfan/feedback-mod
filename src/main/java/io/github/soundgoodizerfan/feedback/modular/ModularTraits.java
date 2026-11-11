@@ -208,8 +208,8 @@ public final class ModularTraits {
             ModularDesign.Part part = role == null ? null : design.part(key);
             if (part == null)
                 continue;
-            // Only a role's own axes grant traits: a head set in a twin tool keeps its size but not the single tool's behaviour.
-            for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
+            // A role's own axes grant traits, and a face's are its head kind's.
+            for (Map.Entry<String, ModularType.Axis> a : role.axesFor(part).entrySet()) {
                 ModularType.Band band = a.getValue().band(part.axis(a.getKey(), a.getValue().def()));
                 Optional<String> id = band == null ? Optional.empty() : firstId(band.trait());
                 if (id.isPresent())
@@ -254,6 +254,7 @@ public final class ModularTraits {
         ModularType type = ModularTypes.known().get(design.type());
         if (type == null)
             return Optional.empty();
+        type = ModularFaces.view(type, design);
         Optional<ModularType.Variant> variant = traitVariant(design, type);
         if (variant.isPresent()) {
             String id = firstId(variant.get().trait()).get();

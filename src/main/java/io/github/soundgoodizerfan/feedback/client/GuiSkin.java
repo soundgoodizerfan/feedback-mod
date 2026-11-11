@@ -263,53 +263,86 @@ public enum GuiSkin {
     },
 
     /**
-     * An early instrument panel: black crinkle-finish steel, cream engraving, chrome bezels, amber
-     * lamps. Push-buttons sit in chrome; the primary one is an amber lamp. The panel powers up --
-     * drops into its mounting and its lamps come on with a flicker -- and goes dark to close.
+     * Atomic-age laboratory enamel: a dusty sage hammered-enamel cabinet face, never white, stencilled in dark ink. Cut corners, a cream
+     * and rust double stripe across the top between a starburst and a cream pilot lamp that breathes, chrome rivets at the foot, a
+     * printed scale ruler along the bottom edge. Buttons are putty push-plates; the primary one is rust enamel. The calm light sibling
+     * of {@link #CONSOLE}. Fills and a fixed-seed dimple table, so nothing crawls but the lamp.
      */
-    PANEL(0xFFEDE6D0, 0xFF8E968C, 0xFFFFB347, 0xFFFF4A3A, 0xFF121514, 0x70D8DCD8, 0xFF343A38) {
-        private static final int FACE = 0xFF232826, EDGE = 0xFF0A0C0B, CHROME = 0xFF8A908C;
-        private static final float[] CRINKLE = crinkle();
+    ENAMEL(0xFF18211B, 0xFF3F4C43, 0xFF9A3A12, 0xFFA81C1C, 0xFF7F8B7C, 0xFF3B463E, 0xFFA7B1A1) {
+        private static final int FACE = 0xFF97A392, EDGE = 0xFF27302A, CREAM = 0xFFCFC9A8, RUST = 0xFFA8481A, CHROME = 0xFFC2C8BE;
+        private static final float[] DIMPLE = dimples();
 
-        private static float[] crinkle() {
-            Random r = new Random(0xC41C);
-            float[] out = new float[2 * 420];
+        private static float[] dimples() {
+            Random r = new Random(0xE4A3);
+            float[] out = new float[2 * 260];
             for (int i = 0; i < out.length; i++)
                 out[i] = r.nextFloat();
             return out;
         }
 
-        private static void screw(GuiGraphics g, int x, int y) {
+        private static void star(GuiGraphics g, int cx, int cy, int c) {
+            g.fill(cx - 3, cy, cx + 4, cy + 1, c);
+            g.fill(cx, cy - 3, cx + 1, cy + 4, c);
+            for (int k = 1; k <= 2; k++) {
+                g.fill(cx - k, cy - k, cx - k + 1, cy - k + 1, c);
+                g.fill(cx + k, cy - k, cx + k + 1, cy - k + 1, c);
+                g.fill(cx - k, cy + k, cx - k + 1, cy + k + 1, c);
+                g.fill(cx + k, cy + k, cx + k + 1, cy + k + 1, c);
+            }
+        }
+
+        private static void rivet(GuiGraphics g, int x, int y) {
             g.fill(x + 1, y, x + 4, y + 5, CHROME);
             g.fill(x, y + 1, x + 5, y + 4, CHROME);
-            g.fill(x + 1, y + 1, x + 2, y + 2, 0xFFD8DCD8);
-            g.fill(x + 1, y + 2, x + 4, y + 3, 0xFF3A3E3C); // the slot
+            g.fill(x + 1, y + 1, x + 2, y + 2, 0xFFF2F4EE);
+            g.fill(x + 3, y + 3, x + 4, y + 4, 0xFF69706A);
+        }
+
+        /** A rectangle with its four corner pixels cut. */
+        private static void cut(GuiGraphics g, int x, int y, int w, int h, int c) {
+            g.fill(x + 2, y, x + w - 2, y + h, c);
+            g.fill(x, y + 2, x + w, y + h - 2, c);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, c);
         }
 
         @Override
         public void panel(GuiGraphics g, int x, int y, int w, int h) {
-            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
-            g.fill(x, y, x + w, y + h, EDGE);
-            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, FACE);
-            g.fillGradient(x + 1, y + 1, x + w - 1, y + Math.min(h - 1, 36), 0x14FFFFFF, 0x00FFFFFF);
-            for (int i = 0; i < CRINKLE.length; i += 2) {
-                int sx = x + 2 + (int) (CRINKLE[i] * (w - 4)), sy = y + 2 + (int) (CRINKLE[i + 1] * (h - 4));
-                g.fill(sx, sy, sx + 1, sy + 1, (i & 2) == 0 ? 0x0CFFFFFF : 0x22000000);
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x50000000);
+            cut(g, x, y, w, h, EDGE);
+            cut(g, x + 1, y + 1, w - 2, h - 2, FACE);
+            g.fillGradient(x + 2, y + 2, x + w - 2, y + Math.min(h - 2, 40), 0x18FFFFFF, 0x00FFFFFF);
+            for (int i = 0; i < DIMPLE.length; i += 2) {
+                int sx = x + 3 + (int) (DIMPLE[i] * (w - 7)), sy = y + 3 + (int) (DIMPLE[i + 1] * (h - 7));
+                g.fill(sx, sy, sx + 2, sy + 1, (i & 2) == 0 ? 0x16FFFFFF : 0x14000000);
             }
-            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x28FFFFFF);
-            g.fill(x + 1, y + h - 2, x + w - 1, y + h - 1, 0x60000000);
-            g.renderOutline(x + 3, y + 3, w - 6, h - 6, 0x60D8DCD8);
-            screw(g, x + 4, y + 4);
-            screw(g, x + w - 9, y + 4);
-            screw(g, x + 4, y + h - 9);
-            screw(g, x + w - 9, y + h - 9);
+            // the double stripe, between its ornaments
+            g.fill(x + 14, y + 3, x + w - 14, y + 4, CREAM);
+            g.fill(x + 14, y + 5, x + w - 14, y + 7, RUST);
+            star(g, x + 8, y + 5, RUST);
+            // pilot lamp
+            float breath = ClientSettings.reduceMotion() ? 0.8f : 0.5f + 0.5f * net.minecraft.util.Mth.sin(GuiStyle.time() * 0.08f);
+            int lx = x + w - 9, ly = y + 5;
+            g.fill(lx - 3, ly - 2, lx + 4, ly + 3, 0xFF39423B);
+            g.fill(lx - 2, ly - 3, lx + 3, ly + 4, 0xFF39423B);
+            g.fill(lx - 1, ly - 1, lx + 2, ly + 2, lerp(0xFF7A6A3A, 0xFFF4E2A6, breath));
+            g.renderOutline(lx - 4, ly - 4, 9, 9, (int) (breath * 0x28) << 24 | 0xF4E2A6);
+            // the scale ruler printed along the foot
+            for (int i = 12; i < w - 12; i += 4) {
+                int len = ((i - 12) / 4) % 5 == 0 ? 3 : 2;
+                g.fill(x + i, y + h - 3 - len, x + i + 1, y + h - 3, 0x50141C17);
+            }
+            rivet(g, x + 4, y + h - 9);
+            rivet(g, x + w - 9, y + h - 9);
+            g.fill(x + 2, y + 1, x + w - 2, y + 2, 0x30FFFFFF);
         }
 
         @Override
         public void slot(GuiGraphics g, int x, int y) {
-            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF121514);
-            g.fill(x - 1, y + 16, x + 17, y + 17, 0x40D8DCD8);
-            g.fill(x + 16, y - 1, x + 17, y + 17, 0x40D8DCD8);
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0xFF5E6A5C);
+            g.fill(x - 1, y - 1, x + 17, y, 0xFF3C463E);
+            g.fill(x - 1, y - 1, x, y + 17, 0xFF3C463E);
+            g.fill(x - 1, y + 16, x + 17, y + 17, 0x60FFFFFF);
+            g.fill(x + 16, y - 1, x + 17, y + 17, 0x60FFFFFF);
         }
 
         @Override
@@ -317,28 +350,26 @@ public enum GuiSkin {
                     boolean primary) {
             int top, bottom, text;
             if (!active) {
-                top = 0xFF262A28;
-                bottom = 0xFF1E2220;
-                text = 0xFF5A605C;
+                top = 0xFF8A9486;
+                bottom = 0xFF7E887B;
+                text = 0xFF5E695F;
             } else if (primary) {
-                top = lerp(0xFF6A4614, 0xFFC08028, glow);
-                bottom = lerp(0xFF4A3010, 0xFF8A5A1A, glow);
-                text = 0xFFFFE6B0;
+                top = lerp(0xFFB4501C, 0xFFCC6A2E, glow);
+                bottom = lerp(0xFF8A3A10, 0xFFA04C1C, glow);
+                text = 0xFFF6E6C4;
             } else {
-                top = lerp(0xFF343A38, 0xFF46504C, glow);
-                bottom = lerp(0xFF202422, 0xFF2C3230, glow);
-                text = lerp(dim(), ink(), glow);
+                top = lerp(0xFFBEC6B2, 0xFFD2D8C6, glow);
+                bottom = lerp(0xFFA2AC97, 0xFFB4BEA8, glow);
+                text = ink();
             }
             if (down) {
-                top = lerp(top, 0xFF000000, 0.3f);
-                bottom = lerp(bottom, 0xFF000000, 0.3f);
+                top = lerp(top, 0xFF000000, 0.2f);
+                bottom = lerp(bottom, 0xFF000000, 0.2f);
             }
-            g.fill(x, y, x + w, y + h, CHROME); // the bezel
-            g.fill(x, y, x + w, y + 1, 0xFFD8DCD8);
-            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, EDGE);
-            g.fillGradient(x + 2, y + 2, x + w - 2, y + h - 2, top, bottom);
-            if (primary && active && glow > 0) // the lamp's light on the panel round it
-                g.renderOutline(x - 1, y - 1, w + 2, h + 2, (int) (glow * 0x70) << 24 | 0xFFB347);
+            cut(g, x, y, w, h, EDGE);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, top, bottom);
+            if (!down)
+                g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x40FFFFFF);
             var font = Minecraft.getInstance().font;
             int o = down ? 1 : 0;
             g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
@@ -358,23 +389,108 @@ public enum GuiSkin {
         public SoundEvent close() {
             return FSounds.UI_TOGGLE.get();
         }
+    },
 
-        @Override
-        public void beginReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
-            g.pose().pushPose();
-            g.pose().translate(0, -(1 - t) * 10, 0);
+    /**
+     * The same atomic-age laboratory after dark: a charcoal-teal enamel console with brass corner brackets and rails, a row of
+     * indicator lamps along the foot (one breathing, the rest steady), and a slow glint of light drifting across the glass. Buttons are
+     * brass-bezelled; the primary one is a lit amber lamp. Cream ink. The machine-room sibling of {@link #ENAMEL}.
+     */
+    CONSOLE(0xFFE8DEC0, 0xFF8EA098, 0xFFFFB84A, 0xFFFF5A3C, 0xFF0C1719, 0xFF7A6330, 0xFF2A3C3F) {
+        private static final int FACE = 0xFF1B2A2D, EDGE = 0xFF080F11, BRASS = 0xFFB08A3C, BRASS_LO = 0xFF6E5624;
+
+        private static void bracket(GuiGraphics g, int x, int y, int sx, int sy) {
+            // an L of brass, 8 long, 2 thick, opening away from the corner (sx, sy are +1 or -1)
+            int x0 = sx > 0 ? x : x - 8, y0 = sy > 0 ? y : y - 8;
+            g.fill(x0, sy > 0 ? y : y - 2, x0 + 8, sy > 0 ? y + 2 : y, BRASS);
+            g.fill(sx > 0 ? x : x - 2, y0, sx > 0 ? x + 2 : x, y0 + 8, BRASS);
         }
 
         @Override
-        public void endReveal(GuiGraphics g, int x, int y, int w, int h, float t) {
-            if (t < 1) {
-                // Dark until powered; the lamps catch with a flicker on the way up.
-                float dark = 1 - t;
-                if (t > 0.55f && t < 0.7f)
-                    dark += 0.35f;
-                g.fill(x, y, x + w, y + h, (int) (Math.min(1, dark) * 0xE0) << 24);
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fill(x + 3, y + 4, x + w + 3, y + h + 4, 0x60000000);
+            g.fill(x, y, x + w, y + h, EDGE);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, FACE);
+            g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, 0x14FFFFFF, 0x20000000);
+            // brass rails top and bottom, brackets in the corners
+            g.fill(x + 12, y + 3, x + w - 12, y + 4, BRASS);
+            g.fill(x + 12, y + 4, x + w - 12, y + 5, BRASS_LO);
+            bracket(g, x + 3, y + 3, 1, 1);
+            bracket(g, x + w - 3, y + 3, -1, 1);
+            bracket(g, x + 3, y + h - 3, 1, -1);
+            bracket(g, x + w - 3, y + h - 3, -1, -1);
+            // the glint, a soft diagonal band drifting across the glass
+            float t = ClientSettings.reduceMotion() ? 0.35f : (GuiStyle.time() % 260f) / 260f;
+            int centre = (int) (-40 + t * (w + 80));
+            for (int j = 2; j < h - 2; j += 2) {
+                int a = x + centre + (int) (j * 0.7f), b = a + 14;
+                int l = Math.max(x + 1, a), r = Math.min(x + w - 1, b);
+                if (r > l)
+                    g.fill(l, y + j, r, y + Math.min(j + 2, h - 1), 0x0A9EE8E0);
             }
-            g.pose().popPose();
+            // indicator lamps along the foot
+            float breath = ClientSettings.reduceMotion() ? 0.8f : 0.5f + 0.5f * net.minecraft.util.Mth.sin(GuiStyle.time() * 0.1f);
+            for (int i = 0; i < 5; i++) {
+                int lx = x + 14 + i * 7, ly = y + h - 7;
+                int c = i == 2 ? lerp(0xFF6A4A18, 0xFFFFB84A, breath) : i == 0 ? 0xFFC8923A : 0xFF3A4A44;
+                g.fill(lx - 1, ly - 1, lx + 4, ly + 4, EDGE);
+                g.fill(lx, ly, lx + 3, ly + 3, c);
+            }
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x20FFFFFF);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, BRASS_LO);
+            g.fill(x, y, x + 16, y + 16, 0xFF0A1416);
+            g.fill(x - 1, y - 1, x + 17, y, BRASS);
+            g.fill(x - 1, y - 1, x, y + 17, BRASS);
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int top, bottom, text;
+            if (!active) {
+                top = 0xFF1A2628;
+                bottom = 0xFF141E20;
+                text = 0xFF526058;
+            } else if (primary) {
+                top = lerp(0xFF8E5E16, 0xFFD08C26, glow);
+                bottom = lerp(0xFF62400E, 0xFF9A6618, glow);
+                text = 0xFFFFEFC8;
+            } else {
+                top = lerp(0xFF2E4448, 0xFF3C565A, glow);
+                bottom = lerp(0xFF1E2E31, 0xFF2A3E42, glow);
+                text = lerp(dim(), ink(), glow);
+            }
+            if (down) {
+                top = lerp(top, 0xFF000000, 0.3f);
+                bottom = lerp(bottom, 0xFF000000, 0.3f);
+            }
+            g.fill(x, y, x + w, y + h, active ? BRASS : BRASS_LO);
+            g.fill(x + 1, y + 1, x + w - 1, y + h - 1, EDGE);
+            g.fillGradient(x + 2, y + 2, x + w - 2, y + h - 2, top, bottom);
+            if (primary && active && glow > 0)
+                g.renderOutline(x - 1, y - 1, w + 2, h + 2, (int) (glow * 0x70) << 24 | 0xFFB84A);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return FSounds.UI_DETENT.get();
+        }
+
+        @Override
+        public SoundEvent open() {
+            return FSounds.UI_TOGGLE.get();
+        }
+
+        @Override
+        public SoundEvent close() {
+            return FSounds.UI_TOGGLE.get();
         }
     },
 
@@ -1484,6 +1600,15 @@ public enum GuiSkin {
      * An unselected one sits back, two pixels lower and darker, and the panel's border runs under it. Draw it after the panel.
      */
     public void folderTab(GuiGraphics g, int x, int y, int w, int h, boolean selected, float glow) {
+        folderTab(g, x, y, w, h, selected, glow, null);
+    }
+
+    /**
+     * As above; {@code host} is the real panel's rectangle (x, y, w, h) when the caller knows it. The selected tab's flush patch is then the
+     * host panel's own face, drawn at its true size and lifted so its border falls above the patch, so textured faces (crinkle, courses,
+     * grain) match instead of being rescaled into the tab's small rectangle.
+     */
+    public void folderTab(GuiGraphics g, int x, int y, int w, int h, boolean selected, float glow, int[] host) {
         if (selected) {
             // The tab itself, with its own frame and rails, standing above the panel.
             g.enableScissor(x, y, x + w, y + h);
@@ -1491,7 +1616,10 @@ public enum GuiSkin {
             g.disableScissor();
             // Below it, only the plate's face (inset past the rails) runs over the panel's top border, so the tab and the panel are one piece.
             g.enableScissor(x + 6, y + h, x + w - 6, y + h + FLUSH);
-            panel(g, x, y, w, h + 14);
+            if (host != null)
+                panel(g, host[0], host[1] - FLUSH, host[2], host[3]);
+            else
+                panel(g, x, y, w, h + 14);
             g.disableScissor();
             return;
         }
@@ -1593,7 +1721,7 @@ public enum GuiSkin {
                 case FINISH -> SoundEvents.ANVIL_USE;
                 case ABORT -> FSounds.UI_HATCH_CLOSE.get();
             };
-            case PANEL -> switch (cue) {
+            case ENAMEL, CONSOLE -> switch (cue) {
                 case SEAT -> FSounds.UI_DETENT.get();
                 case REJECT -> SoundEvents.DISPENSER_FAIL;
                 case STAGE -> FSounds.UI_TOGGLE.get();

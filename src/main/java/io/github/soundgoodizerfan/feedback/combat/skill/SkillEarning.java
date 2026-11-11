@@ -189,9 +189,7 @@ public final class SkillEarning {
 
     /** The baked family of a modular stack, or null for anything else. */
     public static ModularType.Family family(ItemStack stack) {
-        var design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
-        return type == null ? null : type.family();
+        return io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack);
     }
 
     /** The attacker's uuid, or the damage type's name when nothing struck. */

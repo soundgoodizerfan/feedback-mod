@@ -52,14 +52,14 @@ public final class ToolDesigns {
     /** The types a blueprint can be drawn of: every one with a way to be made (a gun too, since 2026-10-21; a dish not, dish spec 5). */
     public static List<ResourceLocation> drawable(Map<ResourceLocation, ModularType> types) {
         return types.entrySet().stream()
-                .filter(e -> !e.getValue().patterns().isEmpty() && e.getValue().family() != ModularType.Family.DISH)
+                .filter(e -> !e.getValue().face() && !e.getValue().patterns().isEmpty() && e.getValue().family() != ModularType.Family.DISH)
                 .map(Map.Entry::getKey).toList();
     }
 
     /** The dish types a cooking blueprint can be drawn of: the Prep Table's Blueprint tab draws these, and only these. */
     public static List<ResourceLocation> drawableDishes(Map<ResourceLocation, ModularType> types) {
         return types.entrySet().stream()
-                .filter(e -> !e.getValue().patterns().isEmpty() && e.getValue().family() == ModularType.Family.DISH)
+                .filter(e -> !e.getValue().face() && !e.getValue().patterns().isEmpty() && e.getValue().family() == ModularType.Family.DISH)
                 .map(Map.Entry::getKey).toList();
     }
 
@@ -222,7 +222,11 @@ public final class ToolDesigns {
      */
     public static Optional<ModularDesign> starter(ResourceLocation id, Map<ResourceLocation, ModularType> types, Map<ResourceLocation, Material> materials) {
         ModularType type = types.get(id);
-        return type == null || type.patterns().isEmpty() ? Optional.empty() : plain(id, types, counts(type, 0, Set.of()), true, materials);
+        if (type == null || type.patterns().isEmpty())
+            return Optional.empty();
+        Optional<ModularDesign> built = plain(id, types, counts(type, 0, Set.of()), true, materials);
+        // A face definition's starter is a haft with that face on it.
+        return type.face() ? built.map(d -> ModularFaces.toPlan(d, type)) : built;
     }
 
     /**
@@ -403,7 +407,7 @@ public final class ToolDesigns {
     private static List<String> checkConsistency(Map<ResourceLocation, ModularType> types, Map<ResourceLocation, Material> materials) {
         List<String> out = new ArrayList<>();
         // A dish is not drawn on paper but is still held to the same round trip.
-        for (ResourceLocation id : types.keySet().stream().filter(k -> !types.get(k).patterns().isEmpty()).toList()) {
+        for (ResourceLocation id : types.keySet().stream().filter(k -> !types.get(k).face() && !types.get(k).patterns().isEmpty()).toList()) {
             ModularType type = types.get(id);
             // A type whose defaults do not cover its first form just has no starter (it is not handed out bare).
             starter(id, types, materials).filter(d -> make(d, types, materials).isEmpty()).ifPresent(d ->

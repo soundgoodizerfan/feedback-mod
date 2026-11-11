@@ -44,7 +44,8 @@ public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends Abs
         if (tabs.size() < 2)
             return null;
         topPos = Math.max(topPos + FolderTabs.HEIGHT / 2, FolderTabs.HEIGHT);
-        return addRenderableWidget(new FolderTabs(skin, leftPos + 10, topPos - FolderTabs.HEIGHT, tabs, selected, select));
+        return addRenderableWidget(new FolderTabs(skin, leftPos + 10, topPos - FolderTabs.HEIGHT, tabs, selected, select)
+                .host(leftPos, topPos, imageWidth, imageHeight));
     }
 
     protected boolean settled() {

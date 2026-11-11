@@ -291,9 +291,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FModular.LARGE_BOILER.get(), Component.translatable("feedback.jei.info.large_boiler"));
         registration.addIngredientInfo(FItems.ARC_ELECTRODE.get(), Component.translatable("feedback.jei.info.arc_electrode"));
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
-        registration.addIngredientInfo(FModular.HAND_HAMMER.get(), Component.translatable("feedback.jei.info.hand_hammer"));
-        registration.addIngredientInfo(FModular.FILE.get(), Component.translatable("feedback.jei.info.file"));
-        registration.addIngredientInfo(FModular.SCREWDRIVER.get(), Component.translatable("feedback.jei.info.screwdriver"));
+        registration.addIngredientInfo(FModular.HAFTED_TOOL.get(), Component.translatable("feedback.jei.info.hafted_tool"));
         registration.addIngredientInfo(FItems.SKILLET.get(), Component.translatable("feedback.jei.info.skillet"));
         registration.addIngredientInfo(FItems.REFRIGERATION_UNIT.get(), Component.translatable("feedback.jei.info.refrigeration_unit"));
         registration.addIngredientInfo(FItems.CRYOCOOLER.get(), Component.translatable("feedback.jei.info.cryocooler"));
@@ -495,7 +493,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(GunOptionCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
         registration.addRecipeCatalysts(DeformationCategory.TYPE,
                 FItems.MECHANICAL_HAMMER.get(), FItems.WIRE_DRAWER.get(),
-                FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAND_HAMMER.get());
+                FItems.ROLLING_MILL.get(), FItems.MECHANICAL_PRESS.get(), FModular.HAFTED_TOOL.get());
         registration.addRecipeCatalysts(RemovalCategory.TYPE,
                 FItems.DRILL_PRESS.get(), FItems.LATHE.get(), FItems.GRINDING_WHEEL.get(), FItems.DIAMOND_GRINDING_WHEEL.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.INGOT_MOLD.get(), FItems.BULLET_MOLD.get(), FItems.BALL_MOLD.get(), FItems.TUBE_MOLD.get(),
@@ -742,6 +740,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
         List<PartBenchToolCategory.Card> tools = new ArrayList<>();
         types.forEach((id, type) -> {
+            if (type.face())
+                return;
             for (int i = 0; i < type.baseForms().size(); i++)
                 tools.add(new PartBenchToolCategory.Card(id, i));
         });

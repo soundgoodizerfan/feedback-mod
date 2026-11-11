@@ -68,7 +68,7 @@ final class CodeRecipeExamples {
 
     static List<RecipeHolder<CraftingRecipe>> examples(Map<ResourceLocation, Material> materials) {
         List<RecipeHolder<CraftingRecipe>> out = new ArrayList<>();
-        ItemStack hammer = new ItemStack(FModular.HAND_HAMMER.get());
+        ItemStack hammer = new ItemStack(FModular.HAFTED_TOOL.get());
 
         // Tongs: two rods, a grip and the hammer; the rods cycle, the grip is the first one loaded.
         var rods = stocks(materials, "rod");
@@ -205,7 +205,7 @@ final class CodeRecipeExamples {
     private static void modular(Map<ResourceLocation, Material> materials, List<RecipeHolder<CraftingRecipe>> out) {
         var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
         types.forEach((id, type) -> {
-            if (type.blueprint() || type.family() == io.github.soundgoodizerfan.feedback.modular.ModularType.Family.DISH || type.patterns().isEmpty())
+            if (type.face() || type.blueprint() || type.family() == io.github.soundgoodizerfan.feedback.modular.ModularType.Family.DISH || type.patterns().isEmpty())
                 return;
             var counts = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.counts(type, 0, java.util.Set.of());
             List<List<ItemStack>> in = new ArrayList<>();

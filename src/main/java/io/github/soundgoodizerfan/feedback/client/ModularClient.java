@@ -46,7 +46,7 @@ public final class ModularClient {
 
     @SubscribeEvent
     public static void registerExtensions(net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent event) {
-        event.registerItem(new SpearClient.Extension(), FModular.SPEAR.get());
+        event.registerItem(new SpearClient.Extension(), FModular.HAFTED_TOOL.get());
         event.registerItem(new ShieldRenderer.Extension(), FModular.SHIELD.get());
         event.registerItem(new GearModels.Extension(), FModular.HELMET.get(), FModular.CHESTPLATE.get(), FModular.LEGGINGS.get(), FModular.BOOTS.get());
         event.registerItem(new io.github.soundgoodizerfan.feedback.client.gun.GunRenderer.Extension(),
@@ -60,8 +60,25 @@ public final class ModularClient {
      */
     @SubscribeEvent
     public static void registerProperties(net.neoforged.fml.event.lifecycle.FMLClientSetupEvent event) {
-        event.enqueueWork(() -> FModular.items().forEach(item -> net.minecraft.client.renderer.item.ItemProperties.register(
-                item, Feedback.id("variant"), (stack, level, entity, seed) -> variant(stack))));
+        event.enqueueWork(() -> {
+            FModular.items().forEach(item -> net.minecraft.client.renderer.item.ItemProperties.register(
+                    item, Feedback.id("variant"), (stack, level, entity, seed) -> variant(stack)));
+            // The hafted tool is drawn as its front face's tool: 1 plus the place of the face's head kind in ModularFaces.KINDS.
+            net.minecraft.client.renderer.item.ItemProperties.register(FModular.HAFTED_TOOL.get(), Feedback.id("face"),
+                    (stack, level, entity, seed) -> face(stack));
+        });
+    }
+
+    private static float face(ItemStack stack) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        if (type == null || type.family() != ModularType.Family.HAFTED)
+            return 0;
+        for (ModularDesign.Part part : io.github.soundgoodizerfan.feedback.modular.ModularFaces.faces(design))
+            if (!io.github.soundgoodizerfan.feedback.modular.ModularFaces.spent(part))
+                return 1 + io.github.soundgoodizerfan.feedback.modular.ModularFaces.KINDS.indexOf(
+                        io.github.soundgoodizerfan.feedback.modular.ModularHeads.kindOf(part, type.roles().get(part.role())));
+        return 0;
     }
 
     private static float variant(ItemStack stack) {
@@ -74,7 +91,10 @@ public final class ModularClient {
         ModularDesign.Part part = design.part(role);
         if (part == null || part.variant().isEmpty())
             return 0;
-        List<ModularType.Variant> variants = type.roles().get(role).part().map(ModularType.Shaping::variants).orElse(List.of());
+        List<ModularType.Variant> variants = type.family() == ModularType.Family.HAFTED
+                ? io.github.soundgoodizerfan.feedback.modular.ModularHeads.of(io.github.soundgoodizerfan.feedback.modular.ModularHeads.kindOf(part, type.roles().get(role)))
+                        .map(h -> h.shaping().variants()).orElse(List.of())
+                : type.roles().get(role).part().map(ModularType.Shaping::variants).orElse(List.of());
         for (int i = 0; i < variants.size(); i++)
             if (variants.get(i).name().equals(part.variant()))
                 return i + 1;

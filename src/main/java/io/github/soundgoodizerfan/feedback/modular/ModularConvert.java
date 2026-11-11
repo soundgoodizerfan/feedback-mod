@@ -82,7 +82,7 @@ public final class ModularConvert {
 
     private static Map.Entry<ResourceLocation, ModularType> typeFor(Material.Located located) {
         for (Map.Entry<ResourceLocation, ModularType> e : ModularTypes.known().entrySet())
-            if (e.getValue().vanilla().containsKey(located.form()) && BuiltInRegistries.ITEM.containsKey(e.getKey()))
+            if (e.getValue().vanilla().containsKey(located.form()) && (e.getValue().face() || BuiltInRegistries.ITEM.containsKey(e.getKey())))
                 return e;
         return null;
     }
@@ -159,12 +159,23 @@ public final class ModularConvert {
                 return vanilla;
             parts.add(ToolDesigns.part(role, l.get(), shape, c.getValue()));
         }
-        ItemStack out = new ItemStack(BuiltInRegistries.ITEM.get(hit.getKey()), vanilla.getCount());
+        ResourceLocation target = hit.getKey();
+        if (type.face()) {
+            // A face definition builds nothing itself: the vanilla tool is a haft with that face on it, each part in the plan's own letter.
+            target = ModularFaces.PLAN;
+            List<Part> mapped = new ArrayList<>();
+            for (Part p : parts) {
+                ModularType.Role r = type.roles().get(p.role());
+                mapped.add(new Part(ModularFaces.haftRole(r), p.material(), p.form(), p.count(), p.kind(), p.variant(), p.flaw(), p.measures()));
+            }
+            parts = mapped;
+        }
+        ItemStack out = new ItemStack(BuiltInRegistries.ITEM.get(target), vanilla.getCount());
         out.applyComponents(vanilla.getComponentsPatch());
         out.remove(net.minecraft.core.component.DataComponents.MAX_DAMAGE);
         float worn = vanilla.isDamageableItem() ? vanilla.getDamageValue() / (float) vanilla.getMaxDamage() : 0f;
         out.remove(net.minecraft.core.component.DataComponents.DAMAGE);
-        if (!ModularStacks.assemble(out, new ModularDesign(hit.getKey(), parts, Edge.STANDARD), materials, ModularTypes.known()))
+        if (!ModularStacks.assemble(out, new ModularDesign(target, parts, Edge.STANDARD), materials, ModularTypes.known()))
             return vanilla;
         out.setDamageValue(Math.min(out.getMaxDamage() - 1, Math.round(worn * out.getMaxDamage())));
         ModularStacks.refresh(out);

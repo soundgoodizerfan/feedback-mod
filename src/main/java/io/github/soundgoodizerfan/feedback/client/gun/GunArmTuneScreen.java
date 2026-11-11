@@ -28,7 +28,7 @@ import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
  */
 public final class GunArmTuneScreen extends Screen {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.ENAMEL;
     private static final String[] NAMES = {"x px", "y px", "z px", "yaw", "pitch", "roll"};
     private float yaw = 200f, pitch = 15f, zoom = 1f;
 

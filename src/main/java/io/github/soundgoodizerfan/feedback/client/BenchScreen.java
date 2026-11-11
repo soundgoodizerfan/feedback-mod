@@ -785,12 +785,6 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
                 if (!menu.centreStack().isEmpty())
                     drift(g, x, y, w, h, t, 6, 0xFFFFFF, true, 2, 2, 70);
             }
-            case PANEL -> {
-                float breath = 0.5f + 0.5f * Mth.sin(t * 0.12f);
-                int bucket = (int) (t / 3) * 0x9E3779B1;
-                int a = (bucket >>> 24) < 3 ? 0x20 : 0x60 + (int) (breath * 0x70);
-                g.fill(x + w - 8, y + 5, x + w - 5, y + 8, a << 24 | 0xFFB030);
-            }
             default -> { }
         }
     }

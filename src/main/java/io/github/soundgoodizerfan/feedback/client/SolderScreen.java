@@ -35,7 +35,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 public class SolderScreen extends Screen {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.ENAMEL;
     private static final Component HINT = Component.translatable("gui.feedback.solder.hint");
     /** Pad looks: untouched copper, dull (cold), shiny (wet), scorched. */
     private static final int[] LOOK = {0xFFB87333, 0xFF6E6A66, 0xFFE8EEF2, 0xFF3A2418};

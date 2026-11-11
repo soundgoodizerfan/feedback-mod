@@ -1,4 +1,6 @@
 {
+  "face": true,
+  "actions": [],
   "school": "weapons:1",
   "parent": "feedback:axe",
   "strike": 2.0,

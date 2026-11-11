@@ -150,8 +150,10 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         }
         // A type of a school is drawn only by someone holding that school's treatise (in the inventory, a binder, or a shelf beside the table).
         ModularType drawn = ModularTypes.get().types().get(design.type());
-        School school = drawn == null ? null : School.of(drawn.school());
-        int volume = drawn == null ? 1 : School.volumeOf(drawn.school());
+        // A hafted build holding a gated face (a spear's head) is gated by that face's school.
+        String gate = drawn == null ? "" : drawn.family() == ModularType.Family.HAFTED ? ModularFaces.school(design, drawn) : drawn.school();
+        School school = School.of(gate);
+        int volume = School.volumeOf(gate);
         if (school != null && !Treatises.has(player, access, school, volume)) {
             send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable(school.itemKey(volume))));
             return;

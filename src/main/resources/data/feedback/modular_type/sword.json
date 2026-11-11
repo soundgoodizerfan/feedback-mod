@@ -1,4 +1,6 @@
 {
+  "face": true,
+  "actions": [],
   "family": "blade",
   "minigame": "feedback:fitting",
   "strike": 1.0,

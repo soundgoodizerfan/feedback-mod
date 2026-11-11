@@ -1,4 +1,6 @@
 {
+  "face": true,
+  "actions": [],
   "family": "dig",
   "strike": 0.75,
   "wear_litres": 0.375,

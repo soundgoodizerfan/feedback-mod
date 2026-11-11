@@ -48,7 +48,7 @@ public class ModularHandTool extends HandToolItem implements Modular {
 
     /** The St of an ordinary blow ({@link HandSwing#BLOW}) this stack lands: 0 for a tool that does not strike, an empty stack or a broken one. */
     public static float blow(ItemStack stack) {
-        if (!(stack.getItem() instanceof ModularHandTool) || ModularStacks.broken(stack))
+        if (!isHand(stack) || ModularStacks.broken(stack))
             return 0f;
         ModularFigures f = ModularStacks.figures(stack);
         return f == null ? 0f : f.get(Fig.STRIKE_ST);
@@ -56,11 +56,18 @@ public class ModularHandTool extends HandToolItem implements Modular {
 
     /** Whether this is a hand tool whose type strikes (the hammer): by what the type is, not whether this one is broken. */
     public static boolean strikes(ItemStack stack) {
+        if (stack.getItem() instanceof ModularHafted)
+            return ModularFaces.handStrikes(stack);
         if (!(stack.getItem() instanceof ModularHandTool))
             return false;
         ModularDesign design = ModularStacks.design(stack);
         ModularType type = ModularTypes.known().get(design != null ? design.type() : net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()));
         return type != null && type.strike() > 0;
+    }
+
+    /** Whether {@code stack} is a hand tool of this mod: a handle-less saw, or a hafted tool with a bench tool's face. */
+    public static boolean isHand(ItemStack stack) {
+        return stack.getItem() instanceof ModularHandTool || stack.getItem() instanceof ModularHafted && ModularFaces.hand(stack);
     }
 
     /** The swing chosen by sneak-scroll ({@link HandSwing}); an ordinary blow if none was. */

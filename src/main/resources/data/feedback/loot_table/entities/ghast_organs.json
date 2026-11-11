@@ -27,7 +27,7 @@
           "predicate": {
             "equipment": {
               "mainhand": {
-                "items": "feedback:hand_knife"
+                "items": "feedback:hafted_tool"
               }
             }
           }

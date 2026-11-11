@@ -1,0 +1,482 @@
+{
+  "family": "hafted",
+  "strike": 1.0,
+  "wear_litres": 0.375,
+  "wear_role": "H",
+  "primary": "H",
+  "mines": [],
+  "roles": {
+    "H": {
+      "name": "head",
+      "forms": [
+        "pickaxe_head",
+        "axe_head",
+        "shovel_head",
+        "hoe_head",
+        "maul_head",
+        "sickle_head",
+        "cleaver_head",
+        "sword_blade",
+        "spear_head",
+        "head_blank",
+        "knife_blade",
+        "file_head",
+        "driver_bit"
+      ],
+      "stock": [
+        "ingot",
+        "block",
+        "gem",
+        "*_planks",
+        "cobble",
+        "bone"
+      ],
+      "litres": 0.125,
+      "at": 0.08,
+      "rides": true,
+      "layer": 0
+    },
+    "S": {
+      "name": "handle",
+      "forms": [
+        "stick",
+        "rod",
+        "bone",
+        "leather",
+        "grip"
+      ],
+      "litres": 0.05,
+      "length": 0.35,
+      "layer": 1
+    },
+    "G": {
+      "name": "guard",
+      "forms": [
+        "sword_guard"
+      ],
+      "litres": 0.03,
+      "at": 0.15,
+      "layer": 2,
+      "part": {
+        "item": "feedback:sword_guard",
+        "cells": 1,
+        "stock": [
+          "ingot",
+          "block",
+          "plate",
+          "*_planks",
+          "bone",
+          "gem"
+        ],
+        "variants": [
+          {
+            "name": "crossguard",
+            "cells": 3,
+            "trait": "blocking",
+            "params": {
+              "block_mult": 0.5,
+              "wear": 1
+            }
+          },
+          {
+            "name": "knuckle",
+            "rhythm": "t.t.h.t.t.h.",
+            "centre": -0.03,
+            "mass": 0.8
+          }
+        ]
+      }
+    },
+    "Q": {
+      "name": "sword_pommel",
+      "forms": [
+        "sword_pommel"
+      ],
+      "litres": 0.03,
+      "at": -0.08,
+      "layer": 3,
+      "part": {
+        "item": "feedback:sword_pommel",
+        "cells": 1,
+        "stock": [
+          "nugget",
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ],
+        "variants": [
+          {
+            "name": "wheel",
+            "cells": 2,
+            "centre": -0.03
+          },
+          {
+            "name": "counterweight",
+            "cells": 3,
+            "centre": -0.06
+          }
+        ]
+      }
+    },
+    "P": {
+      "name": "pommel",
+      "forms": [
+        "tool_pommel"
+      ],
+      "litres": 0.03,
+      "at": -0.08,
+      "layer": 4,
+      "part": {
+        "item": "feedback:tool_pommel",
+        "cells": 1,
+        "stock": [
+          "nugget",
+          "ingot",
+          "gem",
+          "*_planks",
+          "cobble",
+          "bone"
+        ],
+        "base": "knob",
+        "variants": [
+          {
+            "name": "knob"
+          },
+          {
+            "name": "ball",
+            "cells": 2,
+            "centre": -0.03
+          },
+          {
+            "name": "counterweight",
+            "cells": 3,
+            "centre": -0.07
+          }
+        ]
+      }
+    },
+    "J": {
+      "name": "second_head",
+      "forms": [
+        "pickaxe_head",
+        "axe_head",
+        "shovel_head",
+        "hoe_head",
+        "maul_head",
+        "sickle_head",
+        "cleaver_head",
+        "sword_blade",
+        "spear_head",
+        "head_blank",
+        "knife_blade",
+        "file_head",
+        "driver_bit"
+      ],
+      "stock": [
+        "ingot",
+        "block",
+        "gem",
+        "*_planks",
+        "cobble",
+        "bone"
+      ],
+      "litres": 0.125,
+      "at": 0.08,
+      "rides": true,
+      "layer": 5
+    },
+    "K": {
+      "name": "third_head",
+      "forms": [
+        "pickaxe_head",
+        "axe_head",
+        "shovel_head",
+        "hoe_head",
+        "maul_head",
+        "sickle_head",
+        "cleaver_head",
+        "sword_blade",
+        "spear_head",
+        "head_blank",
+        "knife_blade",
+        "file_head",
+        "driver_bit"
+      ],
+      "stock": [
+        "ingot",
+        "block",
+        "gem",
+        "*_planks",
+        "cobble",
+        "bone"
+      ],
+      "litres": 0.125,
+      "at": 0.08,
+      "rides": true,
+      "layer": 6
+    },
+    "B": {
+      "name": "binding",
+      "forms": [
+        "tool_binding"
+      ],
+      "litres": 0.01,
+      "at": 0.3,
+      "part": {
+        "item": "feedback:tool_binding",
+        "cells": 1,
+        "stock": [
+          "leather",
+          "wire",
+          "string"
+        ],
+        "variants": [
+          {
+            "name": "wrapped",
+            "cells": 2,
+            "params": {
+              "joint_mult": 1.3
+            }
+          },
+          {
+            "name": "double",
+            "cells": 3,
+            "params": {
+              "joint_mult": 1.6
+            }
+          }
+        ]
+      }
+    },
+    "T": {
+      "name": "tip",
+      "forms": [
+        "tool_tip"
+      ],
+      "litres": 0.01,
+      "at": 0.08,
+      "rides": true,
+      "set": true,
+      "part": {
+        "item": "feedback:tool_tip",
+        "cells": 1,
+        "stock": [
+          "gem",
+          "shard",
+          "nugget"
+        ],
+        "variants": [
+          {
+            "name": "needle",
+            "cells": 2,
+            "section": 0.75
+          },
+          {
+            "name": "capped",
+            "cells": 3,
+            "section": 1.35
+          }
+        ]
+      }
+    },
+    "R": {
+      "name": "spring",
+      "forms": [
+        "wire",
+        "rod"
+      ],
+      "litres": 0.025,
+      "bulk": 4,
+      "trait": "spring",
+      "params": {
+        "reset": 30,
+        "rating": 12,
+        "throw_rating": 6
+      }
+    },
+    "Y": {
+      "name": "lanyard",
+      "forms": [
+        "chain"
+      ],
+      "litres": 0.02,
+      "bulk": 2,
+      "trait": "lanyard",
+      "params": {
+        "speed_mult": 0.9,
+        "rope": 10,
+        "pull": 0.3,
+        "return": 0.1
+      }
+    },
+    "Z": {
+      "name": "edge_guard",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.03,
+      "bulk": 1
+    }
+  },
+  "patterns": [
+    [
+      "H",
+      "S"
+    ],
+    [
+      "HSJ"
+    ],
+    [
+      "HSJ",
+      " K"
+    ]
+  ],
+  "ranges": {
+    "S": [
+      1,
+      4
+    ]
+  },
+  "defaults": {
+    "H": "feedback:wrought_iron",
+    "S": "feedback:wood"
+  },
+  "vanilla": {},
+  "names": {
+    "combos": {
+      "hoe_head+pickaxe_head": "mattock",
+      "axe_head+hoe_head": "pulaski",
+      "axe_head+head_blank": "hammer_axe",
+      "axe_head+axe_head": "double_axe",
+      "pickaxe_head+pickaxe_head": "double_pick"
+    },
+    "designations": [
+      {
+        "name": "heavy_pick",
+        "is": {
+          "face": "pickaxe_head",
+          "head_size": "large"
+        }
+      },
+      {
+        "name": "hatchet",
+        "is": {
+          "face": "axe_head",
+          "head_size": "small"
+        }
+      },
+      {
+        "name": "felling_axe",
+        "is": {
+          "face": "axe_head",
+          "head_size": "large"
+        }
+      },
+      {
+        "name": "sledgehammer",
+        "is": {
+          "face": "maul_head",
+          "head_size": "large"
+        }
+      },
+      {
+        "name": "scythe",
+        "is": {
+          "face": "sickle_head",
+          "edge_length": "long"
+        }
+      },
+      {
+        "name": "javelin",
+        "is": {
+          "face": "spear_head",
+          "head_size": "small"
+        }
+      },
+      {
+        "name": "rapier",
+        "is": {
+          "length": "long",
+          "thickness": "thin",
+          "variant": "tapered",
+          "face": "sword_blade"
+        }
+      },
+      {
+        "name": "katana",
+        "is": {
+          "variant": "curved",
+          "length": "normal|long",
+          "width": "narrow",
+          "face": "sword_blade"
+        }
+      },
+      {
+        "name": "cutlass",
+        "is": {
+          "variant": "curved",
+          "length": "short|normal",
+          "face": "sword_blade"
+        }
+      },
+      {
+        "name": "machete",
+        "is": {
+          "variant": "serrated|leaf",
+          "width": "wide",
+          "face": "sword_blade"
+        }
+      },
+      {
+        "name": "claymore",
+        "is": {
+          "length": "long",
+          "width": "wide",
+          "face": "sword_blade"
+        }
+      },
+      {
+        "name": "dagger",
+        "is": {
+          "length": "short",
+          "face": "sword_blade"
+        }
+      }
+    ]
+  },
+  "board": {
+    "layout": {
+      "T": [
+        1,
+        0
+      ],
+      "P": [
+        0,
+        3
+      ],
+      "G": [
+        1,
+        1
+      ],
+      "Q": [
+        0,
+        4
+      ],
+      "J": [
+        1,
+        -1
+      ],
+      "K": [
+        2,
+        -1
+      ]
+    }
+  },
+  "fasteners": {
+    "count": 0,
+    "floor": 1
+  },
+  "minigame": "feedback:fitting"
+}

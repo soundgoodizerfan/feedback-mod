@@ -42,6 +42,13 @@ public final class FolderTabs extends AbstractWidget {
     private final int[] edge;
     private final float[] glow;
     private long last;
+    private int[] host;
+
+    /** The panel this strip stands on (x, y, w, h), so the selected tab's patch can reuse its true face. Returns this. */
+    public FolderTabs host(int x, int y, int w, int h) {
+        host = new int[]{x, y, w, h};
+        return this;
+    }
 
     /** The strip's left end is at {@code x}; its top at {@code y} (the panel's top edge less {@link #HEIGHT}). */
     public FolderTabs(GuiSkin skin, int x, int y, List<Def> tabs, IntSupplier selected, IntConsumer select) {
@@ -81,7 +88,7 @@ public final class FolderTabs extends AbstractWidget {
                     continue;
                 glow[i] += ((i == over && i != picked && tabs.get(i).enabled() ? 1f : 0f) - glow[i]) * Math.min(1f, dt * 12f);
                 int x = getX() + edge[i], w = edge[i + 1] - edge[i] + (i == 0 ? 0 : 1);
-                skin.folderTab(g, x, getY(), w, HEIGHT, i == picked, glow[i]);
+                skin.folderTab(g, x, getY(), w, HEIGHT, i == picked, glow[i], host);
                 int tx = x + 8, ty = getY() + (i == picked ? 3 : 5);
                 if (!tabs.get(i).icon().isEmpty()) {
                     g.renderItem(tabs.get(i).icon(), tx - 2, ty - 4);

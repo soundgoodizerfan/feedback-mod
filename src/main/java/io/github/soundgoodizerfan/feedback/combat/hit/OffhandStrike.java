@@ -60,9 +60,8 @@ public final class OffhandStrike {
         var design = ModularStacks.design(stack);
         if (design == null || ModularStacks.broken(stack))
             return false;
-        ModularType type = ModularTypes.known().get(design.type());
-        return type != null && (type.family() == ModularType.Family.BLADE || type.family() == ModularType.Family.MACE
-                || type.family() == ModularType.Family.SPEAR);
+        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack);
+        return family == ModularType.Family.BLADE || family == ModularType.Family.MACE || family == ModularType.Family.SPEAR;
     }
 
     /** A fist strikes: in barehanded mode either hand punches, whatever it holds. */

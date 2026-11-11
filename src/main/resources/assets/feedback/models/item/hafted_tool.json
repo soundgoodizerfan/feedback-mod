@@ -1,0 +1,164 @@
+{
+  "parent": "item/handheld",
+  "textures": {
+    "layer0": "feedback:item/modular/pickaxe_0",
+    "layer1": "feedback:item/modular/pickaxe_1"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "feedback:face": 1
+      },
+      "model": "feedback:item/pickaxe"
+    },
+    {
+      "predicate": {
+        "feedback:face": 1,
+        "feedback:variant": 2
+      },
+      "model": "feedback:item/pickaxe_prospector"
+    },
+    {
+      "predicate": {
+        "feedback:face": 1,
+        "feedback:variant": 3
+      },
+      "model": "feedback:item/pickaxe_miner"
+    },
+    {
+      "predicate": {
+        "feedback:face": 1,
+        "feedback:variant": 4
+      },
+      "model": "feedback:item/pickaxe"
+    },
+    {
+      "predicate": {
+        "feedback:face": 2
+      },
+      "model": "feedback:item/axe"
+    },
+    {
+      "predicate": {
+        "feedback:face": 3
+      },
+      "model": "feedback:item/shovel"
+    },
+    {
+      "predicate": {
+        "feedback:face": 4
+      },
+      "model": "feedback:item/hoe"
+    },
+    {
+      "predicate": {
+        "feedback:face": 5
+      },
+      "model": "feedback:item/maul"
+    },
+    {
+      "predicate": {
+        "feedback:face": 5,
+        "feedback:variant": 3
+      },
+      "model": "feedback:item/maul_mace"
+    },
+    {
+      "predicate": {
+        "feedback:face": 6
+      },
+      "model": "feedback:item/sickle"
+    },
+    {
+      "predicate": {
+        "feedback:face": 7
+      },
+      "model": "feedback:item/cleaver"
+    },
+    {
+      "predicate": {
+        "feedback:face": 8
+      },
+      "model": "feedback:item/sword"
+    },
+    {
+      "predicate": {
+        "feedback:face": 8,
+        "feedback:variant": 2
+      },
+      "model": "feedback:item/sword_dagger"
+    },
+    {
+      "predicate": {
+        "feedback:face": 8,
+        "feedback:variant": 3
+      },
+      "model": "feedback:item/sword"
+    },
+    {
+      "predicate": {
+        "feedback:face": 8,
+        "feedback:variant": 5
+      },
+      "model": "feedback:item/sword_katana"
+    },
+    {
+      "predicate": {
+        "feedback:face": 8,
+        "feedback:variant": 6
+      },
+      "model": "feedback:item/sword_machete"
+    },
+    {
+      "predicate": {
+        "feedback:face": 9
+      },
+      "model": "feedback:item/spear"
+    },
+    {
+      "predicate": {
+        "feedback:face": 9,
+        "feedback:variant": 1
+      },
+      "model": "feedback:item/spear_trident"
+    },
+    {
+      "predicate": {
+        "feedback:face": 9,
+        "feedback:variant": 2
+      },
+      "model": "feedback:item/spear"
+    },
+    {
+      "predicate": {
+        "feedback:face": 9,
+        "feedback:variant": 4
+      },
+      "model": "feedback:item/spear_trident"
+    },
+    {
+      "predicate": {
+        "feedback:face": 10
+      },
+      "model": "feedback:item/hand_hammer"
+    },
+    {
+      "predicate": {
+        "feedback:face": 11
+      },
+      "model": "feedback:item/hand_knife"
+    },
+    {
+      "predicate": {
+        "feedback:face": 12
+      },
+      "model": "feedback:item/file"
+    },
+    {
+      "predicate": {
+        "feedback:face": 13
+      },
+      "model": "feedback:item/screwdriver"
+    }
+  ]
+}

@@ -22,7 +22,7 @@ import net.minecraft.world.inventory.Slot;
  */
 public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.CONSOLE;
     /** Status text box (relative to the panel): under the arrow, right of the grid. */
     private static final int STATUS_X = 92, STATUS_Y = 62, STATUS_W = 116;
 

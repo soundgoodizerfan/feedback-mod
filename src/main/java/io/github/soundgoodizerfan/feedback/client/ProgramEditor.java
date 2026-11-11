@@ -268,7 +268,7 @@ final class ProgramEditor {
     ProgramEditor(Source src, GuiSkin skin) {
         this.src = src;
         this.skin = skin;
-        if (skin == GuiSkin.PANEL) {
+        if (skin == GuiSkin.CONSOLE) {
             COLOR_BACKGROUND = 0xFF15191E;
             COLOR_GRID_MINOR = 0xFF1C2228;
             COLOR_GRID_MAJOR = 0xFF28303A;

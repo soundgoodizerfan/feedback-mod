@@ -29,7 +29,7 @@ final class BlueprintRig {
 
     static boolean has(ModularType.Family family) {
         return switch (family) {
-            case DIG, BLADE, BOW, SHIELD, CELL -> true;
+            case DIG, BLADE, HAFTED, BOW, SHIELD, CELL -> true;
             default -> false;
         };
     }
@@ -50,7 +50,7 @@ final class BlueprintRig {
         g.enableScissor(x, y, x + w, y + h);
         g.fill(x, y + h - 7, x + w, y + h - 6, alpha(skin.ink(), 0x50)); // the bench top
         switch (in.family()) {
-            case DIG -> dig(g, skin, in, x, y, w, h, time, still);
+            case DIG, HAFTED -> dig(g, skin, in, x, y, w, h, time, still);
             case BLADE -> blade(g, skin, in, x, y, w, h, time, still);
             case BOW -> bow(g, skin, in, x, y, w, h, time, still);
             case SHIELD -> shield(g, skin, in, x, y, w, h, time, still);

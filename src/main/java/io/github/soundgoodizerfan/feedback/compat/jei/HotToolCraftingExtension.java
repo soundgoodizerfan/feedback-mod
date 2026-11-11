@@ -25,7 +25,7 @@ public class HotToolCraftingExtension implements ICraftingCategoryExtension<HotT
     public void setRecipe(RecipeHolder<HotToolRecipe> holder, IRecipeLayoutBuilder builder, ICraftingGridHelper grid, IFocusGroup focuses) {
         HotToolRecipe recipe = holder.value();
         List<List<ItemStack>> inputs = new ArrayList<>();
-        inputs.add(List.of(new ItemStack(FModular.HAND_HAMMER.get())));
+        inputs.add(List.of(new ItemStack(FModular.HAFTED_TOOL.get())));
         ItemStack piece = new ItemStack(BuiltInRegistries.ITEM.get(recipe.piece()));
         for (int i = 0; i < recipe.count(); i++)
             inputs.add(List.of(piece));

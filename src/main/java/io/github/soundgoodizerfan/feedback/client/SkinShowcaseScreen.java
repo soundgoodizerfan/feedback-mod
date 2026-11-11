@@ -92,7 +92,7 @@ public final class SkinShowcaseScreen extends Screen {
                 new FolderTabs.Def(Component.literal("Folder"), new ItemStack(Items.PAPER), true),
                 new FolderTabs.Def(Component.literal("Tabs")),
                 new FolderTabs.Def(Component.literal("Locked"), ItemStack.EMPTY, false)),
-                () -> folder, i -> folder = i));
+                () -> folder, i -> folder = i).host(left(), top(), W, H));
 
         // cues
         int cx = x, cy = y + 150;

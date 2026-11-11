@@ -51,6 +51,8 @@ public final class BuildNames {
                     facts.put(a.getKey(), band.name());
             }
             facts.put("variant", plate.variant());
+            if (role.striker())
+                facts.put("face", ModularHeads.kindOf(plate, role));
         }
         for (ModularDesign.Part p : design.parts()) {
             ModularType.Role r = type.roles().get(p.role());

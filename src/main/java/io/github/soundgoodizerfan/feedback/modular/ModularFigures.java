@@ -73,6 +73,13 @@ public record ModularFigures(List<Float> values, int step) {
         DIG_SPEED_OFF,
         HARDNESS_OFF,
         EDGE_TOUGHNESS_OFF,
+        /** The hafted plan's third face: its dig speed, edge hardness and edge toughness. */
+        DIG_SPEED_THIRD,
+        HARDNESS_THIRD,
+        EDGE_TOUGHNESS_THIRD,
+        /** The hafted plan's second and third faces' own durability, as {@link #DURABILITY} is the front face's. */
+        DURABILITY_B,
+        DURABILITY_C,
         // --- a gun's (family GUN), baked at the reference load; a pick leaves them at zero as a gun leaves the pick's ---
         /** {@code Pu}: what the charge makes in the case. */
         PEAK_PRESSURE,

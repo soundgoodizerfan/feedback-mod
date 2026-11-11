@@ -78,7 +78,16 @@ public final class ModularStacks {
 
     /** Whether the stack is spent: one point from its limit, where it stops. */
     public static boolean broken(ItemStack stack) {
+        // A hafted tool is spent only when every face is: the bar shows its most worn face, which may be one of several that still work.
+        ModularDesign d = design(stack);
+        if (d != null && ModularFaces.hafted(d))
+            return ModularFaces.allSpent(d);
         return stack.isDamageableItem() && stack.getDamageValue() >= stack.getMaxDamage() - 1;
+    }
+
+    /** What a hit of {@code amount} points costs after any ward soaks part of it. */
+    public static int soak(ItemStack stack, int amount) {
+        return WardKinds.soak(stack, amount);
     }
 
     /** How worn it is, 0 new to 1 spent. */
@@ -102,9 +111,10 @@ public final class ModularStacks {
      */
     public static boolean assemble(ItemStack stack, ModularDesign design, Map<ResourceLocation, Material> materials,
                                    Map<ResourceLocation, ModularType> types) {
-        ModularType type = types.get(design.type());
-        if (type == null)
+        ModularType base = types.get(design.type());
+        if (base == null)
             return false;
+        ModularType type = ModularFaces.view(base, design);
         int step = stepOf(stack);
         Optional<ModularFigures> baked = ModularBake.bake(design, type, materials, step, stack.get(FDataComponents.PLATING.get()));
         if (baked.isEmpty())
@@ -307,7 +317,8 @@ public final class ModularStacks {
     private static void write(ItemStack stack, ModularDesign design, ModularType type, ModularFigures f, boolean broken) {
         ItemAttributeModifiers.Builder attrs = ItemAttributeModifiers.builder();
         EquipmentSlotGroup group = EquipmentSlotGroup.bySlot(type.slot().equipment());
-        switch (type.family()) {
+        // A hafted tool whose front face is a bench tool still swings and hits as a tool does.
+        switch (type.family() == ModularType.Family.HAND && !type.strikers().isEmpty() ? ModularType.Family.DIG : type.family()) {
             case DIG, BLADE, MACE, SPEAR -> {
                 float damage = broken ? 1f : f.get(Fig.DAMAGE);
                 float speed = broken ? 4f : f.get(Fig.ATTACK_SPEED);
@@ -340,7 +351,7 @@ public final class ModularStacks {
 
     /** What it digs: the class gates its edge fails, then the tags it mines at its figure. */
     private static Tool tool(ModularDesign design, ModularType type, ModularFigures f) {
-        if (type.family() == ModularType.Family.BLADE)
+        if (type.family() == ModularType.Family.BLADE && type.strikers().isEmpty())
             return net.minecraft.world.item.SwordItem.createToolProperties();
         if (type.family() == ModularType.Family.SHEARS)
             return net.minecraft.world.item.ShearsItem.createToolProperties();
@@ -376,6 +387,11 @@ public final class ModularStacks {
         if (hardness < ModularTuning.STONE_CLASS_HARDNESS)
             rules.add(Tool.Rule.deniesDrops(blocks("minecraft:needs_stone_tool")));
         speed.forEach((tag, v) -> rules.add(Tool.Rule.minesAndDrops(TagKey.create(Registries.BLOCK, tag), v)));
+        // A blade face cuts webs and bamboo as a sword does, whatever else the tool has on its other faces.
+        if (heads.stream().anyMatch(h -> h.combat() == ModularType.Family.BLADE && !h.mines().isEmpty() || h.combat() == ModularType.Family.BLADE))
+            rules.addAll(net.minecraft.world.item.SwordItem.createToolProperties().rules());
+        if (speed.isEmpty() && rules.stream().noneMatch(r -> r.speed().isPresent()))
+            return heads.stream().anyMatch(h -> h.combat() == ModularType.Family.BLADE) ? new Tool(rules, 1f, 1) : null;
         return new Tool(rules, 1f, 1);
     }
 
@@ -383,12 +399,13 @@ public final class ModularStacks {
     private static List<ModularHeads> heads(ModularDesign design, ModularType type) {
         List<String> strikers = type.strikers();
         if (strikers.isEmpty())
-            return type.mines().isEmpty() ? List.of() : List.of(new ModularHeads(type.mines(), type.strike(), 0, null));
+            return type.mines().isEmpty() ? List.of() : List.of(new ModularHeads(type.mines(), type.strike(), 0, null, type.family(), type.wearLitres(), type.actions(), null, type.school(), type.trait(), type.traitParams()));
         List<ModularHeads> out = new ArrayList<>();
         for (String role : strikers) {
             Part p = design.part(role);
             if (p != null)
-                ModularHeads.of(ModularHeads.kindOf(p, type.roles().get(role))).ifPresent(out::add);
+                ModularHeads.of(ModularHeads.kindOf(p, type.roles().get(role))).ifPresent(h -> out.add(ModularFaces.spent(p)
+                        ? new ModularHeads(List.of(), h.strike(), h.cells(), h.shaping(), h.combat(), h.wearLitres(), List.of(), h.role(), h.school(), h.trait(), h.traitParams()) : h));
         }
         return out;
     }
@@ -397,6 +414,12 @@ public final class ModularStacks {
     private static float headFigure(ModularFigures f, int index, Fig fig) {
         if (index == 0)
             return f.get(fig);
+        if (index == 2)
+            return f.get(switch (fig) {
+                case DIG_SPEED -> Fig.DIG_SPEED_THIRD;
+                case HARDNESS -> Fig.HARDNESS_THIRD;
+                default -> Fig.EDGE_TOUGHNESS_THIRD;
+            });
         return f.get(switch (fig) {
             case DIG_SPEED -> Fig.DIG_SPEED_OFF;
             case HARDNESS -> Fig.HARDNESS_OFF;
@@ -596,6 +619,8 @@ public final class ModularStacks {
         if (d == null)
             return typeName;
         ModularType type = ModularTypes.known().get(d.type());
+        if (type != null && type.family() == ModularType.Family.HAFTED)
+            return haftedName(d, type, typeName);
         Part main = d.part(type != null ? type.primary() : d.parts().get(0).role());
         if (main == null)
             return typeName;
@@ -616,6 +641,33 @@ public final class ModularStacks {
                         Component.translatable("material." + p.material().getNamespace() + "." + p.material().getPath()), material, typeName);
         }
         return Component.translatable("item.feedback.modular_name", material, typeName);
+    }
+
+    /**
+     * A hafted tool is named by what it does (spec 3): the player's own name is the blueprint's, else a designation whose rule holds of the front
+     * face (a hatchet, a claymore), else its material and the front face's noun; two or more faces are named by the pair ({@link #twinName}).
+     */
+    private static Component haftedName(ModularDesign d, ModularType base, Component typeName) {
+        List<Part> faces = ModularFaces.faces(d);
+        if (faces.isEmpty())
+            return typeName;
+        ModularType type = ModularFaces.view(base, d);
+        Part front = faces.get(0);
+        Component noun = Component.translatable("modular.feedback.head." + ModularHeads.kindOf(front, base.roles().get(front.role())));
+        if (faces.size() == 1) {
+            Optional<Component> built = BuildNames.of(d, type, noun);
+            if (built.isPresent())
+                return built.get();
+        } else
+            noun = twinName(d, type, noun);
+        Component material = Component.translatable("material." + front.material().getNamespace() + "." + front.material().getPath());
+        for (Part p : d.parts()) {
+            ModularType.Role r = type.roles().get(p.role());
+            if (r != null && r.set())
+                return Component.translatable("item.feedback.modular_name." + r.name(),
+                        Component.translatable("material." + p.material().getNamespace() + "." + p.material().getPath()), material, noun);
+        }
+        return Component.translatable("item.feedback.modular_name", material, noun);
     }
 
     /** A twin-headed tool by its pair of heads: the pair's own name if the type gives one (a mattock), else "Pick-Axe". */

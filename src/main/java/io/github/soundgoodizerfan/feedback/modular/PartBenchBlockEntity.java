@@ -47,7 +47,7 @@ public abstract class PartBenchBlockEntity extends BlockEntity implements Contai
 
     /** Whether {@code stack} is something the Prep Table's tool slot takes: a hand knife. */
     public static boolean isKnife(ItemStack stack) {
-        return stack.getItem() instanceof ModularHandTool && !ModularHandTool.strikes(stack) && !isSaw(stack);
+        return ModularFaces.has(stack, "knife_blade");
     }
 
     /** Whether {@code stack} is something the stonecutter's tool slot takes: a sawblade. */

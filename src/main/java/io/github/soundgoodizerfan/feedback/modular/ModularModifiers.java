@@ -118,6 +118,8 @@ public final class ModularModifiers {
 
     /** Adjectives, then the trait; the shape stays off an item (see below). {@code type} may be null (unknown to this pack). */
     public static List<Modifier> of(ModularDesign design, @Nullable ModularType type, ModularFigures f) {
+        if (type != null)
+            type = ModularFaces.view(type, design);
         List<Modifier> out = new ArrayList<>(adjectives(design, type, f));
         if (type == null || type.family() == ModularType.Family.DISH)
             return out;
@@ -233,7 +235,7 @@ public final class ModularModifiers {
 
     private static boolean isMelee(ModularType type) {
         return switch (type.family()) {
-            case DIG, BLADE, MACE, SPEAR -> true;
+            case DIG, BLADE, MACE, SPEAR, HAFTED -> true;
             default -> false;
         };
     }

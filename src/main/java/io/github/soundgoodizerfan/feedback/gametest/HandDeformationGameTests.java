@@ -42,7 +42,7 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FModular.HAND_HAMMER.get());
+        ItemStack hammer = new ItemStack(FModular.HAFTED_TOOL.get());
         io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
         ItemStack workpiece = new ItemStack(Items.COPPER_INGOT);
 
@@ -77,7 +77,7 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FModular.HAND_HAMMER.get());
+        ItemStack hammer = new ItemStack(FModular.HAFTED_TOOL.get());
         io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
         ItemStack workpiece = new ItemStack(Items.COPPER_INGOT);
 
@@ -106,7 +106,7 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FModular.HAND_HAMMER.get());
+        ItemStack hammer = new ItemStack(FModular.HAFTED_TOOL.get());
         io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
         ItemStack ingotA = new ItemStack(Items.COPPER_INGOT);
         ItemStack ingotB = new ItemStack(Items.COPPER_INGOT);

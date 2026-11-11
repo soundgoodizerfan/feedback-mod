@@ -490,7 +490,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
 
     /** Whether {@code stack} is what the tool slot takes: a knife at the Prep Table, an axe at the woodworking table, a saw at the stonecutter, a hand hammer elsewhere. */
     public boolean workTool(ItemStack stack) {
-        return !station.usesTool() ? false : dish ? PartBenchBlockEntity.isKnife(stack) : station == Station.WOODWORKING ? stack.is(net.minecraft.tags.ItemTags.AXES)
+        return !station.usesTool() ? false : dish ? PartBenchBlockEntity.isKnife(stack) : station == Station.WOODWORKING ? stack.is(net.minecraft.tags.ItemTags.AXES) || stack.canPerformAction(net.neoforged.neoforge.common.ItemAbilities.AXE_DIG)
                 : station == Station.STONECUTTING ? PartBenchBlockEntity.isSaw(stack) : PartBenchBlockEntity.isHammer(stack);
     }
 

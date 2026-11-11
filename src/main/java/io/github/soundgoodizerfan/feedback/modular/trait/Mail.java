@@ -25,12 +25,7 @@ public final class Mail implements ModularTrait {
         if (!(event.getSource().getDirectEntity() instanceof LivingEntity attacker))
             return;
         ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.StrikeSource.weapon(attacker, event.getSource());
-        ModularType.Family family = null;
-        var design = ModularStacks.design(weapon);
-        if (design != null) {
-            ModularType type = ModularTypes.known().get(design.type());
-            family = type == null ? null : type.family();
-        }
+        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(weapon);
         if (family == ModularType.Family.MACE || (family == null && weapon.is(ItemTags.MACE_ENCHANTABLE)))
             event.setAmount(event.getAmount() * params.get("blunt_mult", 1.3f));
         else if (family == ModularType.Family.BLADE || (family == null && (weapon.is(ItemTags.SWORDS) || weapon.is(ItemTags.AXES))))

@@ -99,7 +99,7 @@ public class HotToolRecipe extends CustomRecipe {
             ItemStack stack = input.getItem(i);
             if (stack.isEmpty())
                 continue;
-            if (stack.getItem() instanceof HandToolItem tool && tool.getStrength(stack).value() > 0f) {
+            if (stack.getItem() instanceof HandTool tool && tool.getStrength(stack).value() > 0f) {
                 if (hammer)
                     return false;
                 hammer = true;

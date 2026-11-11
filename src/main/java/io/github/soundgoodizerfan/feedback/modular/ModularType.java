@@ -64,6 +64,11 @@ import net.minecraft.world.entity.EquipmentSlot;
  * @param fitOrder    role letters that seat first, in this order, in the fitting game, before the order derived from the roles' geometry
  *                    ({@link io.github.soundgoodizerfan.feedback.modular.engineering.FittingOrder}); an optional fallback for a type the
  *                    derivation orders badly (a gun's receiver before its barrel). Empty for none.
+ * @param actions     for a face definition (a type with no patterns whose wearing part is a head kind): what the face does to a block it is
+ *                    used on, by name ({@code strip}, {@code scrape}, {@code wax_off}, {@code till}, {@code flatten}, {@code shear}); the
+ *                    hafted plan's item merges every live face's. Empty for none.
+ * @param face        this type defines a face (a head kind: how its part is shaped, what it digs, its wear, its combat family) of the hafted
+ *                    plan and is never an item, a blueprint or an assembly of its own ({@code "face": true}).
  * @param tools       ids of the item abilities ({@code feedback:hammer}) an assembly at the Engineering Table wears a point of; default none.
  * @param ranges      for a raw-stock role whose size is the player's to choose, the fewest and most items it takes
  *                    ({@code [min, max]}; a minimum of 0 makes the role optional): a pattern then names the role once
@@ -82,7 +87,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                           Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges,
                           List<Shaping> shapes, boolean bakes, Board board, String school,
                           io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need fasteners, List<String> tools,
-                          String minigame, List<String> fitOrder) {
+                          String minigame, List<String> fitOrder, List<String> actions, boolean face) {
 
     /**
      * How the Blueprint Table lays a type out beyond its patterns. All optional: a type with none is drawn from its patterns alone.
@@ -145,6 +150,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     /** Which physics bakes it. */
     public enum Family implements StringRepresentable {
         DIG, BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, ARMOUR, SHEARS,
+        /** The hafted plan: a haft with one to three faces (heads, blades, points). Its bake and combat class are those of its front face ({@link ModularFaces#view}); it is never a family a bake or a combat check sees. */
+        HAFTED,
         /** A gun: its roles and blueprint gate are the core's, its bake is {@code GunDesign.bake} (spec 8). It has no patterns. */
         GUN,
         /** A placed explosive: its bake is {@code Blast} on its filler and casing. It has no wear and no tool figures. */
@@ -308,6 +315,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
         public boolean rod() {
             return length > 0;
+        }
+
+        /** This striking role as it is for a face of the kind whose own role is {@code def}: that kind's litres and place on the haft. */
+        public Role withFace(Role def) {
+            return new Role(name, forms, traits, def.litres, length, def.at, def.rides, factor, layer, part, stock, set, axes, alt, bulk,
+                    after, seal, anyTraits, trait, params);
         }
 
         /**
@@ -476,6 +489,23 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         }
     }
 
+    /**
+     * This type as one build sees it: the family, mines, strike and wear of the build's front face, and the roles in {@code roles}
+     * ({@link ModularFaces#view}). Everything else is the type's own.
+     */
+    public ModularType with(Family family, List<Mine> mines, float strike, float wearLitres, Map<String, Role> roles, String trait,
+                            Map<String, Float> traitParams) {
+        return new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
+                blueprint, names, trait, traitParams, ranges, shapes, bakes, board, school, fasteners, tools, minigame, fitOrder, actions, face);
+    }
+
+    /** This type with {@code school} as its gate and, if it has one, as a complex type: the plan as a build of gated faces sees it. */
+    public ModularType withGate(String school) {
+        return new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
+                blueprint || !school.isEmpty(), names, trait, traitParams, ranges, shapes, bakes, board, school, fasteners, tools, minigame,
+                fitOrder, actions, face);
+    }
+
     private static final Codec<List<String>> ROW = Codec.STRING.listOf();
 
     public static final Codec<ModularType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -506,15 +536,19 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                     Codec.mapPair(Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()),
                             Codec.mapPair(Board.CODEC.optionalFieldOf("board", Board.NONE),
                                     Codec.mapPair(Codec.STRING.optionalFieldOf("minigame", ""),
-                                            Codec.STRING.listOf().optionalFieldOf("fit_order", List.of())))))
+                                            Codec.mapPair(Codec.STRING.listOf().optionalFieldOf("fit_order", List.of()),
+                                                    Codec.mapPair(Codec.STRING.listOf().optionalFieldOf("actions", List.of()),
+                                                            Codec.BOOL.optionalFieldOf("face", false)))))))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.traitParams(), com.mojang.datafixers.util.Pair.of(t.shapes(),
-                            com.mojang.datafixers.util.Pair.of(t.board(), com.mojang.datafixers.util.Pair.of(t.minigame(), t.fitOrder())))))
+                            com.mojang.datafixers.util.Pair.of(t.board(), com.mojang.datafixers.util.Pair.of(t.minigame(),
+                                    com.mojang.datafixers.util.Pair.of(t.fitOrder(), com.mojang.datafixers.util.Pair.of(t.actions(), t.face())))))))
     ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
                        gate, namesNeeds, traitBakes, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
             roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), namesNeeds.getFirst(), traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond().getFirst(), tail.getSecond().getSecond().getFirst(), traitBakes.getSecond().getSecond(),
             namesNeeds.getSecond().getFirst().orElse(gate.getFirst() ? io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need.DEFAULT
                     : new io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need(0, 1)), namesNeeds.getSecond().getSecond(),
-            tail.getSecond().getSecond().getSecond().getFirst(), tail.getSecond().getSecond().getSecond().getSecond())));
+            tail.getSecond().getSecond().getSecond().getFirst(), tail.getSecond().getSecond().getSecond().getSecond().getFirst(),
+            tail.getSecond().getSecond().getSecond().getSecond().getSecond().getFirst(), tail.getSecond().getSecond().getSecond().getSecond().getSecond().getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
@@ -701,7 +735,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     /** Whether it has an edge to grind: a melee head or a blade, as opposed to a bow, a shield or armour. */
     public boolean edged() {
         return switch (family) {
-            case DIG, BLADE, MACE, SPEAR, SHEARS -> true;
+            case DIG, BLADE, MACE, SPEAR, SHEARS, HAFTED -> true;
             default -> false;
         };
     }

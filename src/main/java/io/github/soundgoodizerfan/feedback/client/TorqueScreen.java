@@ -33,7 +33,7 @@ import net.minecraft.world.item.ItemStack;
  */
 final class TorqueScreen extends Screen {
 
-    private static final GuiSkin SKIN = GuiSkin.PANEL;
+    private static final GuiSkin SKIN = GuiSkin.ENAMEL;
     private static final int PW = 220, PH = 236, READY = 0, WIND = 1, SETTLE = 2, DONE = 3;
     private static final int SETTLE_TICKS = 26, DONE_TICKS = 80;
     private static final int SINK = 24, SHANK = 32, HEAD_H = 10, HEAD_R = 15, HOLE_W = 9, HOLE_DEPTH = 46;

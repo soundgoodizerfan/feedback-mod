@@ -1,4 +1,6 @@
 {
+  "face": true,
+  "actions": ["strip", "scrape", "wax_off"],
   "family": "dig",
   "strike": 1.6,
   "wear_litres": 0.375,

@@ -1,4 +1,6 @@
 {
+  "face": true,
+  "actions": ["flatten"],
   "family": "dig",
   "strike": 0.8,
   "wear_litres": 0.375,

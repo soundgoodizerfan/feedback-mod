@@ -140,7 +140,7 @@ public final class ModularAssembly {
         List<ModularDesign> sheets = ModularBlueprints.designs(plan);
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
             ModularType type = e.getValue();
-            if (!may.test(type))
+            if (type.face() || !may.test(type))
                 continue;
             Best best = new Best();
             for (ModularType.Assembly a : type.assemblies(used.size()))
@@ -148,6 +148,15 @@ public final class ModularAssembly {
             if (best.design == null)
                 continue;
             ModularDesign design = best.design;
+            if (type.family() == ModularType.Family.HAFTED) {
+                // A haft-less build is a bench tool's head (a machine takes it), nothing else; a gated face makes the build gated and complex.
+                if (design.part("S") == null && !ModularFaces.faces(design).stream().allMatch(p -> ModularFaces.kind(p, type)
+                        .filter(h -> h.combat() == ModularType.Family.HAND).isPresent()))
+                    continue;
+                String school = ModularFaces.school(design, type);
+                if (!school.isEmpty() && !may.test(type.withGate(school)))
+                    continue;
+            }
             ModularFit.Result judged = ModularFit.judge(sheets.stream().filter(d -> d.type().equals(e.getKey())).toList(), design, type, materials);
             ModularFit.Fit fit = ModularFit.fit(judged, start == null ? ModularFit.Start.NONE : start);
             // A coat rolled onto the wearing plate (roll cladding) rides onto the tool, where ModularBake reads it.
@@ -253,7 +262,7 @@ public final class ModularAssembly {
         ItemStack stack = slots.get(used.get(i));
         for (int r = 0; r < letters.size(); r++) {
             ModularType.Role role = type.roles().get(letters.get(r));
-            if (taken[r] || role == null || !fits(role, what.get(i), stack, counts.get(letters.get(r))))
+            if (taken[r] || role == null || !fits(role, what.get(i), stack, counts.get(letters.get(r))) || !faceOrder(letters.get(r), chosen, i))
                 continue;
             taken[r] = true;
             chosen[i] = letters.get(r);
@@ -282,6 +291,22 @@ public final class ModularAssembly {
                 && role.part().get().variant(made.variant()).isEmpty())
             return false;
         return stack.getCount() == wanted;
+    }
+
+    /**
+     * Whether seating role {@code letter} at item {@code i} keeps the faces of a hafted build in the grid's reading order: the first face
+     * item takes the front mount, the next the back, the next the top, whichever faces they are.
+     */
+    private static boolean faceOrder(String letter, String[] chosen, int i) {
+        int rank = ModularFaces.LETTERS.indexOf(letter);
+        if (rank < 0)
+            return true;
+        for (int k = 0; k < i; k++) {
+            int before = chosen[k] == null ? -1 : ModularFaces.LETTERS.indexOf(chosen[k]);
+            if (before > rank)
+                return false;
+        }
+        return true;
     }
 
     /** The part a role gets from {@code stack}: a shaped part by what it was shaped from, raw stock as it lies. */
@@ -343,7 +368,7 @@ public final class ModularAssembly {
         List<ResourceLocation> out = new ArrayList<>();
         for (Map.Entry<ResourceLocation, ModularType> e : types.entrySet()) {
             ModularType type = e.getValue();
-            if (type.patterns().isEmpty())
+            if (type.face() || type.patterns().isEmpty())
                 continue;
             if (reaches(new ArrayList<>(type.roles().values().stream().filter(r -> !r.after()).toList()), what, 0))
                 out.add(e.getKey());
@@ -373,7 +398,7 @@ public final class ModularAssembly {
      */
     public static List<String> audit(Map<ResourceLocation, ModularType> types) {
         List<String> out = new ArrayList<>();
-        List<Map.Entry<ResourceLocation, ModularType>> list = new ArrayList<>(types.entrySet());
+        List<Map.Entry<ResourceLocation, ModularType>> list = new ArrayList<>(types.entrySet().stream().filter(e -> !e.getValue().face()).toList());
         // The fullest assembly of a form is the form with every optional part on, so the limits are checked on that, not on each combination.
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             ModularType t = e.getValue();
