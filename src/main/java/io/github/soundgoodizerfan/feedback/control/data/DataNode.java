@@ -154,6 +154,8 @@ public interface DataNode {
         BlockEntity be = level.getBlockEntity(ref.pos());
         if (be == null)
             return null;
+        if (ref.isVoxel())
+            return be instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell ? cell.nodeFor(ref.voxel()) : null;
         if (ref.side() == null)
             return be instanceof DataNode node ? node : null;
         if (be instanceof Fittable fittable && fittable.getSidedFitting(ref.side()) instanceof DataNode node)

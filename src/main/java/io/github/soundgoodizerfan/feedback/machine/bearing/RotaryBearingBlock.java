@@ -63,6 +63,9 @@ public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotat
 
     /** The turning face: where the assembled body sits. */
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    /** What a micro bearing voxel does: 0 turns at the shaft's speed; 1 steers; 2, 3 and 4 are a roll, pitch and yaw control surface. */
+    public static final net.minecraft.world.level.block.state.properties.IntegerProperty ROLE =
+            net.minecraft.world.level.block.state.properties.IntegerProperty.create("role", 0, 4);
 
     private static final VoxelShape[] SHAPES = new VoxelShape[6];
 
@@ -74,7 +77,7 @@ public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotat
 
     public RotaryBearingBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.UP).setValue(ROLE, 0));
     }
 
     /**
@@ -93,7 +96,7 @@ public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotat
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING);
+        builder.add(FACING, ROLE);
     }
 
     /** On the face clicked, pointing away from it: a face add-on to the block it was put against. */

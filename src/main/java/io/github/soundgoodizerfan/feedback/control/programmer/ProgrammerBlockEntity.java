@@ -193,12 +193,10 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         if (ref == null || level == null)
             return node;
         if (trusted.contains(ref)) {
-            // A framed target is checked where it stood when linked; if nothing stands there now
-            // (the vehicle was lifted), there is nothing to check it against and it is kept.
-            BlockPos at = ref.linkedAt();
-            if (!level.isLoaded(at) || ref.framed() && level.getBlockEntity(at) == null)
+            // A target in an unloaded chunk is kept as sent: there is nothing to check it against.
+            if (!level.isLoaded(ref.pos()))
                 return node;
-            ProgramNode linked = resolveLink(node, new DataNodeRef(at, ref.side()), ref);
+            ProgramNode linked = resolveLink(node, ref, ref);
             if (linked != null)
                 return linked;
         }

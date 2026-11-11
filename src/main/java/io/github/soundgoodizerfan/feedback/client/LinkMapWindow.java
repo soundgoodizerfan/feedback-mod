@@ -54,7 +54,7 @@ final class LinkMapWindow extends DesktopWindow {
         for (ProgramNode node : ctx.running().nodes()) {
             DataNodeRef ref = ref(node);
             if (ref != null) {
-                BlockPos p = ref.linkedAt();
+                BlockPos p = ref.pos();
                 far = Math.max(far, Math.max(Math.abs(p.getX() - origin.getX()), Math.abs(p.getZ() - origin.getZ())));
             } else if (node instanceof SensorNode || node instanceof ActuatorNode) {
                 unlinked++;
@@ -67,7 +67,7 @@ final class LinkMapWindow extends DesktopWindow {
             DataNodeRef ref = ref(node);
             if (ref == null)
                 continue;
-            BlockPos p = ref.linkedAt();
+            BlockPos p = ref.pos();
             int x = cx + Math.round((p.getX() - origin.getX()) * scale), y = cy + Math.round((p.getZ() - origin.getZ()) * scale);
             boolean loaded = level != null && level.isLoaded(p);
             int colour = loaded ? skin.ink() : skin.dim();

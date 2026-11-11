@@ -110,7 +110,26 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     private final float[] levels = new float[VOXELS];
 
     public void setLevel(int index, float level) {
-        levels[index] = level;
+        levels[index] = Math.clamp(level, -1f, 1f);
+    }
+
+    /** A driven hinge's brake level, 0 to 1, by voxel index. */
+    private final float[] brakes = new float[VOXELS];
+
+    public void setBrake(int index, float level) {
+        brakes[index] = Math.clamp(level, 0f, 1f);
+    }
+
+    private final VoxelNode[] nodes = new VoxelNode[VOXELS];
+
+    /** The voxel as a part a card can set, or null if it is not one. */
+    @Nullable
+    public VoxelNode nodeFor(int index) {
+        if (index < 0 || index >= VOXELS || !VoxelNode.settable(voxels[index]))
+            return null;
+        if (nodes[index] == null)
+            nodes[index] = new VoxelNode(this, index);
+        return nodes[index];
     }
 
     /** Micro bearings among the voxels that have a body assembled, by voxel index. */
@@ -391,7 +410,8 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             BlockState voxel = cell.voxels[e.getIntKey()];
             MicroRotor rotor = cell.rotors[e.getIntKey()];
             boolean hinge = e.getValue().kind() == Joint.Kind.HINGE;
-            if (voxel == null || (hinge && rotor == null) || !(voxel.getBlock() instanceof JointPart) || e.getValue().gone(server)) {
+            boolean driven = hinge && VoxelNode.role(voxel == null ? cell.get(e.getIntKey()) : voxel) == 0;
+            if (voxel == null || (driven && rotor == null) || !(voxel.getBlock() instanceof JointPart) || e.getValue().gone(server)) {
                 e.getValue().letGo();
                 MicroBearings.unclear(server, e.getValue());
                 it.remove();
@@ -400,8 +420,9 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             }
             Direction f = voxel.getValue(RotaryBearingBlock.FACING);
             rebuild |= e.getValue().tick(server, pos, cell.faceCentre(e.getIntKey(), f), f,
-                    hinge ? rotor.getRpm().value() : cell.levels[e.getIntKey()]);
-            if (hinge && rotor.getNetwork() != null) {
+                    driven ? rotor.getRpm().value() : cell.levels[e.getIntKey()]);
+            e.getValue().setBrake(cell.brakes[e.getIntKey()]);
+            if (driven && rotor.getNetwork() != null) {
                 float road = e.getValue().takeRoadSu(f.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1, 1);
                 if (road != 0)
                     rotor.getNetwork().driveExternally(new io.github.soundgoodizerfan.feedback.core.unit.Su(road),

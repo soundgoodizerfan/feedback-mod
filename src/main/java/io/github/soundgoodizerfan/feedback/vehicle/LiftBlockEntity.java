@@ -156,8 +156,14 @@ public class LiftBlockEntity extends BlockEntity {
         // Cells and bearings moved into the body's plot by one shift; each joint they hold keeps its child
         // (a joint rides in its block's data) and is made anew against the body, so its way back follows.
         BlockPos delta = made.getPlot().getCenterBlock().subtract(start);
+        Map<BlockPos, BlockPos> moves = new HashMap<>();
+        for (BlockPos p : blocks)
+            moves.put(p.immutable(), p.offset(delta));
         for (BlockPos p : blocks) {
             var moved = level.getBlockEntity(p.offset(delta));
+            // A controller among them: its cards keep naming the same parts at their new positions.
+            if (moved instanceof io.github.soundgoodizerfan.feedback.control.controller.ControllerHost host)
+                host.core().retarget(moves);
             if (moved instanceof MicroCellBlockEntity cell)
                 cell.moved(delta);
             else if (moved instanceof RotaryBearingBlockEntity bearing)
@@ -254,9 +260,16 @@ public class LiftBlockEntity extends BlockEntity {
         if (plans.isEmpty())
             return "limit";
         letGo(level);
+        Map<BlockPos, BlockPos> back = new HashMap<>();
+        for (Lowering plan : plans)
+            for (BlockPos p : plan.blocks)
+                back.put(p.immutable(), plan.transform.apply(p));
         for (Lowering plan : plans) {
             plan.frames.forEach(f -> f.disassemble(level));
             SubLevelAssemblyHelper.moveBlocks(level, plan.transform, plan.blocks);
+            for (BlockPos p : plan.blocks)
+                if (level.getBlockEntity(plan.transform.apply(p)) instanceof io.github.soundgoodizerfan.feedback.control.controller.ControllerHost host)
+                    host.core().retarget(back);
             plan.body.getPlot().destroyAllBlocks(); // the cells
             ServerSubLevelContainer.getContainer(level).removeSubLevel(plan.body, SubLevelRemovalReason.REMOVED);
         }

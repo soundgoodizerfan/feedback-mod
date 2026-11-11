@@ -303,7 +303,7 @@ public class ControllerCore implements Container, Fittable {
 
     private float readSensor(SensorNode sensor) {
         DataNodeRef ref = sensor.target() == null || level() == null ? null
-                : FrameBlockEntity.located(level(), sensor.target(), host.getBlockPos());
+                : sensor.target();
         if (level() == null || ref == null)
             return 0f;
         DataNode node = DataNode.resolveOrNull(level(), ref);
@@ -334,9 +334,6 @@ public class ControllerCore implements Container, Fittable {
     private void writeActuator(@Nullable DataNodeRef ref, int channel, Object value) {
         if (level() == null || ref == null)
             return;
-        ref = FrameBlockEntity.located(level(), ref, host.getBlockPos());
-        if (ref == null)
-            return;
         DataNode target = DataNode.resolve(level(), ref).orElse(null);
         if (value instanceof Boolean pulse && channel > 0 && target instanceof io.github.soundgoodizerfan.feedback.control.Steppable stepper) {
             stepper.pulse(channel, pulse);
@@ -349,7 +346,7 @@ public class ControllerCore implements Container, Fittable {
                 boolean was = sw.isEngaged();
                 sw.setEngaged(on);
                 if (was != on)
-                    events.accept(on ? "switch_on" : "switch_off", level().getBlockState(ref.linkedAt()).getBlock().getDescriptionId());
+                    events.accept(on ? "switch_on" : "switch_off", level().getBlockState(ref.pos()).getBlock().getDescriptionId());
             } else if (target instanceof Analog analog)
                 analog.setLevel(channel, on ? 1 : 0);
         }
@@ -464,6 +461,34 @@ public class ControllerCore implements Container, Fittable {
         }
         variables.clear();
         variables.putAll(kept);
+    }
+
+    /**
+     * The Lift carried blocks to new positions: every card target at a position in {@code moves} follows
+     * it, so a controller riding in a vehicle keeps naming the same parts after it is lifted or lowered.
+     */
+    public void retarget(Map<net.minecraft.core.BlockPos, net.minecraft.core.BlockPos> moves) {
+        ProgramGraph graph = card.get(FDataComponents.PROGRAM_GRAPH);
+        if (graph == null)
+            return;
+        List<io.github.soundgoodizerfan.feedback.control.program.ProgramNode> out = new ArrayList<>();
+        boolean changed = false;
+        for (var n : graph.nodes()) {
+            if (n instanceof io.github.soundgoodizerfan.feedback.control.program.SensorNode s && s.target() != null && moves.containsKey(s.target().pos())) {
+                n = new io.github.soundgoodizerfan.feedback.control.program.SensorNode(s.id(),
+                        new DataNodeRef(moves.get(s.target().pos()), s.target().side(), s.target().voxel()), s.quantity(), s.channel());
+                changed = true;
+            } else if (n instanceof io.github.soundgoodizerfan.feedback.control.program.ActuatorNode a && a.target() != null && moves.containsKey(a.target().pos())) {
+                n = new io.github.soundgoodizerfan.feedback.control.program.ActuatorNode(a.id(), a.input(),
+                        new DataNodeRef(moves.get(a.target().pos()), a.target().side(), a.target().voxel()), a.channel());
+                changed = true;
+            }
+            out.add(n);
+        }
+        if (changed) {
+            card.set(FDataComponents.PROGRAM_GRAPH, graph.withNodes(out));
+            cardChanged();
+        }
     }
 
     /** Saves, and forgets the cached graph so a new card is evaluated on its first turning tick. */

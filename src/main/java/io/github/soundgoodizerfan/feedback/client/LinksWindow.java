@@ -65,7 +65,7 @@ final class LinksWindow extends DesktopWindow {
             String where = "unlinked";
             var level = Minecraft.getInstance().level;
             if (ref != null && level != null) {
-                var pos = ref.linkedAt();
+                var pos = ref.pos();
                 where = level.getBlockState(pos).getBlock().getName().getString() + " " + pos.getX() + "," + pos.getY() + "," + pos.getZ();
             }
             ui.text(4, y, kind, skin.dim());

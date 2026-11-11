@@ -60,6 +60,11 @@ public class DataConnectorItem extends Item {
 
     private static DataNode resolve(Level level, UseOnContext context) {
         BlockEntity be = level.getBlockEntity(context.getClickedPos());
+        // A micro cell: the voxel clicked, if it is a joint a card can set.
+        if (be instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell) {
+            int i = cell.pick(context.getClickLocation(), context.getClickedFace());
+            return i < 0 ? null : cell.nodeFor(i);
+        }
         if (be instanceof DataNode node)
             return node;
 

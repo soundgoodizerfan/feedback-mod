@@ -127,6 +127,7 @@ public final class Joint {
     private double holdAngle = Double.NaN;
     /** Angle (deg) the body had turned against its parent when the live constraint was made: the servo's zero. */
     private float zeroTurn;
+    private float angleLevel;
     /** A piston's level, -1 to 1 of its travel, from the card; a slider ignores it. */
     private float pistonLevel;
     /** The live constraint as a Generic one, to move its motor; null for the other kinds. */
@@ -182,7 +183,7 @@ public final class Joint {
         Joint j = new Joint(made.getUniqueId(),
                 BlockPos.containing(made.logicalPose().transformPositionInverse(homeWorld)), home);
         j.kind = kind;
-        j.variant = Math.clamp(variant, 0, 2);
+        j.variant = Math.clamp(variant, 0, kind == Kind.HINGE ? 4 : 2);
         if (kind == Kind.PISTON)
             j.travel = FTuning.PISTON_TRAVEL;
         made.logicalPose().transformPositionInverse(toWorld(parent, localAnchor, true), j.plotAnchor);
@@ -272,7 +273,9 @@ public final class Joint {
      * moved and the run should be rebuilt to count it.
      */
     public boolean tick(ServerLevel level, BlockPos bearingPos, Vector3d localAnchor, Direction facing, float command) {
-        float rpm = kind == Kind.HINGE ? command : 0;
+        // A hinge's role: 0 turns at the shaft's speed; 1 steers and 2 to 4 are control surfaces, held at an angle by a level.
+        float rpm = kind == Kind.HINGE && variant == 0 ? command : 0;
+        angleLevel = kind == Kind.HINGE && variant > 0 ? Math.clamp(command, -1f, 1f) : 0;
         pistonLevel = kind == Kind.PISTON ? Math.clamp(command, -1f, 1f) : 0;
         int stalled = stalledTicks;
         if (stalled > 0) {
@@ -385,6 +388,14 @@ public final class Joint {
             }
             case HINGE -> {
                 double inertia = bodyInertia > 0 ? bodyInertia : FTuning.ROTARY_BEARING_MIN_INERTIA;
+                if (variant > 0) {
+                    // Steering and control surfaces: a position servo to the level, its force the driver's arm.
+                    double rate = FTuning.STEER_SERVO_RATE, max = variant == 1 ? FTuning.STEER_MAX_ANGLE : FTuning.SURFACE_MAX_ANGLE;
+                    joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, angleLevel * max, rate * rate * inertia,
+                            2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * inertia, true,
+                            FTuning.STEER_ARM_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
+                    return;
+                }
                 double w = relativeSpin(s, p, facing);
                 if (targetRadPerS == 0 && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
                     // At rest and asked for nothing: hold the angle it settled at, so an unbalanced arm does not creep.
@@ -470,7 +481,7 @@ public final class Joint {
      */
     private void drive(SubLevelPhysicsSystem physics, double dt) {
         ServerSubLevel s = level == null ? null : held(level);
-        if (kind != Kind.HINGE || s == null || s.isRemoved() || joint == null || !joint.isValid())
+        if (kind != Kind.HINGE || variant != 0 || s == null || s.isRemoved() || joint == null || !joint.isValid())
             return;
         ServerSubLevel p = parent == null ? null
                 : ServerSubLevelContainer.getContainer(level).getSubLevel(parent) instanceof ServerSubLevel ps && !ps.isRemoved() ? ps : null;
@@ -616,7 +627,7 @@ public final class Joint {
         Joint j = new Joint(tag.getUUID("Body"), BlockPos.of(tag.getLong("HomeFrom")), BlockPos.of(tag.getLong("HomeTo")));
         if (tag.contains("Kind"))
             j.kind = Kind.valueOf(tag.getString("Kind"));
-        j.variant = Math.clamp(tag.getInt("Variant"), 0, 2);
+        j.variant = Math.clamp(tag.getInt("Variant"), 0, 4);
         j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
         if (j.kind == Kind.PISTON)
             j.travel = FTuning.PISTON_TRAVEL;

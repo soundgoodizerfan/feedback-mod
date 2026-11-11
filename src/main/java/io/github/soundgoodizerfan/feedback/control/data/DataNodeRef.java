@@ -27,43 +27,37 @@ import org.jetbrains.annotations.Nullable;
  * sided and a holder can carry several at once (up to six sensor fittings on one crucible); see
  * {@code TODO.md} for what else was and wasn't taken from that read.
  */
-public record DataNodeRef(BlockPos pos, @Nullable Direction side, @Nullable BlockPos frame) implements Comparable<DataNodeRef> {
+public record DataNodeRef(BlockPos pos, @Nullable Direction side, int voxel) implements Comparable<DataNodeRef> {
 
     private static final String POS = "Pos";
     private static final String SIDE = "Side";
-    private static final String FRAME = "Frame";
+    private static final String VOXEL = "Voxel";
 
     public DataNodeRef(BlockPos pos, @Nullable Direction side) {
-        this(pos, side, null);
+        this(pos, side, -1);
     }
 
     /**
-     * A part of a vehicle is named as an offset from the vehicle's frame block, since the two are
-     * lifted together (vehicles spec §5): then {@link #pos} is that offset and {@code frame} is where
-     * the frame stood when the link was made -- only a hint for the Programmer's checks, never
-     * trusted at run time, when the controller finds its own frame. Null for everything else.
+     * A micro-block voxel is named by its cell's position and its index in the cell ({@code voxel}, 0
+     * to 63); -1 for every other node. The position is where the block stands now, in the world or
+     * in a vehicle's plot; the Lift rewrites the references it moves ({@code ControllerCore#moved}).
      */
-    public boolean framed() {
-        return frame != null;
-    }
-
-    /** Where the target stood when linked: {@link #pos} itself unless {@link #framed}. */
-    public BlockPos linkedAt() {
-        return frame == null ? pos : frame.offset(pos);
+    public boolean isVoxel() {
+        return voxel >= 0;
     }
 
     /** For a printed Punch Card's stored program -- persisted the same way an NBT tag would be. */
     public static final Codec<DataNodeRef> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             BlockPos.CODEC.fieldOf("pos").forGetter(DataNodeRef::pos),
             Direction.CODEC.optionalFieldOf("side").forGetter(ref -> Optional.ofNullable(ref.side())),
-            BlockPos.CODEC.optionalFieldOf("frame").forGetter(ref -> Optional.ofNullable(ref.frame()))
-    ).apply(instance, (pos, side, frame) -> new DataNodeRef(pos, side.orElse(null), frame.orElse(null))));
+            Codec.INT.optionalFieldOf("voxel", -1).forGetter(DataNodeRef::voxel)
+    ).apply(instance, (pos, side, voxel) -> new DataNodeRef(pos, side.orElse(null), voxel)));
 
     public static final StreamCodec<io.netty.buffer.ByteBuf, DataNodeRef> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC, DataNodeRef::pos,
             ByteBufCodecs.optional(Direction.STREAM_CODEC), ref -> Optional.ofNullable(ref.side()),
-            ByteBufCodecs.optional(BlockPos.STREAM_CODEC), ref -> Optional.ofNullable(ref.frame()),
-            (pos, side, frame) -> new DataNodeRef(pos, side.orElse(null), frame.orElse(null)));
+            ByteBufCodecs.VAR_INT, ref -> ref.voxel() + 1,
+            (pos, side, voxel) -> new DataNodeRef(pos, side.orElse(null), voxel - 1));
 
     /**
      * An arbitrary but consistent order -- not meaning, just enough that a link between A and B
@@ -74,6 +68,8 @@ public record DataNodeRef(BlockPos pos, @Nullable Direction side, @Nullable Bloc
         int byPos = Long.compare(pos.asLong(), other.pos.asLong());
         if (byPos != 0)
             return byPos;
+        if (voxel != other.voxel)
+            return Integer.compare(voxel, other.voxel);
         int mine = side == null ? -1 : side.get3DDataValue();
         int theirs = other.side == null ? -1 : other.side.get3DDataValue();
         return Integer.compare(mine, theirs);
@@ -83,14 +79,14 @@ public record DataNodeRef(BlockPos pos, @Nullable Direction side, @Nullable Bloc
         CompoundTag tag = new CompoundTag();
         tag.putLong(POS, pos.asLong());
         tag.putInt(SIDE, side == null ? -1 : side.get3DDataValue());
-        if (frame != null)
-            tag.putLong(FRAME, frame.asLong());
+        if (voxel >= 0)
+            tag.putInt(VOXEL, voxel);
         return tag;
     }
 
     public static DataNodeRef fromTag(CompoundTag tag) {
         int side = tag.getInt(SIDE);
         return new DataNodeRef(BlockPos.of(tag.getLong(POS)), side < 0 ? null : Direction.from3DDataValue(side),
-                tag.contains(FRAME) ? BlockPos.of(tag.getLong(FRAME)) : null);
+                tag.contains(VOXEL) ? tag.getInt(VOXEL) : -1);
     }
 }

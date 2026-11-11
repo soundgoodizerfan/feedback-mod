@@ -998,7 +998,7 @@ final class ProgramEditor {
         var level = Minecraft.getInstance().level;
         if (node.target() == null || level == null)
             return new String[0];
-        var be = level.getBlockEntity(node.target().linkedAt());
+        var be = level.getBlockEntity(node.target().pos());
         return be instanceof Analog analog ? analog.channelKeys()
                 : be instanceof io.github.soundgoodizerfan.feedback.control.Steppable stepper ? stepper.channelKeys() : new String[0];
     }

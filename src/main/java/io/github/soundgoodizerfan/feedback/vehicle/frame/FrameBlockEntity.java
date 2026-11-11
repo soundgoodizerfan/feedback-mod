@@ -784,12 +784,10 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * with a frame within {@link FTuning#CARD_FRAME_REACH} blocks; else unchanged.
      */
     public static DataNodeRef framed(Level level, DataNodeRef ref) {
-        if (ref.framed() || !(level.getBlockEntity(ref.pos()) instanceof VehiclePart))
-            return ref;
         FrameBlockEntity frame = nearest(level, ref.pos());
-        if (frame == null || frame.worldPosition.distSqr(ref.pos()) > (double) FTuning.CARD_FRAME_REACH * FTuning.CARD_FRAME_REACH)
+        if (frame == null)
             return ref;
-        return new DataNodeRef(ref.pos().subtract(frame.worldPosition), ref.side(), frame.worldPosition);
+        return ref;
     }
 
     /**
@@ -798,10 +796,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      */
     @Nullable
     public static DataNodeRef located(Level level, DataNodeRef ref, BlockPos from) {
-        if (!ref.framed())
-            return ref;
-        FrameBlockEntity frame = nearest(level, from);
-        return frame == null ? null : new DataNodeRef(frame.worldPosition.offset(ref.pos()), ref.side());
+        return ref;
     }
 
     /** Every loaded frame on {@code level}. Server thread only. */

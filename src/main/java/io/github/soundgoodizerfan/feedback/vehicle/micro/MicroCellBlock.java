@@ -247,11 +247,17 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
         if (i < 0 || cell.get(i) == null || !(cell.get(i).getBlock() instanceof JointPart))
             return InteractionResult.PASS;
         // Sneaking on an unassembled joint cycles its named choice (cone, spring) instead.
-        if (player.isShiftKeyDown() && cell.get(i).getBlock() instanceof JointBlock && cell.bearing(i) == null) {
+        boolean cyclable = cell.get(i).getBlock() instanceof JointBlock
+                || cell.get(i).getBlock() instanceof RotaryBearingBlock && !(cell.get(i).getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.bearing.RingGearBlock);
+        if (player.isShiftKeyDown() && cyclable && cell.bearing(i) == null) {
             if (!level.isClientSide) {
-                cell.set(i, JointBlock.cycled(cell.get(i)));
+                BlockState next = cell.get(i).getBlock() instanceof JointBlock ? JointBlock.cycled(cell.get(i))
+                        : cell.get(i).setValue(RotaryBearingBlock.ROLE, (cell.get(i).getValue(RotaryBearingBlock.ROLE) + 1) % 5);
+                cell.set(i, next);
                 cell.commit();
-                player.displayClientMessage(Component.translatable("message.feedback.joint.variant", cell.get(i).getValue(JointBlock.VARIANT)), true);
+                player.displayClientMessage(next.getBlock() instanceof JointBlock
+                        ? Component.translatable("message.feedback.joint.variant", next.getValue(JointBlock.VARIANT))
+                        : Component.translatable("message.feedback.joint.role." + next.getValue(RotaryBearingBlock.ROLE)), true);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
