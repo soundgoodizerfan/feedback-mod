@@ -183,7 +183,15 @@ final class TorqueScreen extends Screen {
             hold = DONE_TICKS;
             doneAt = Util.getMillis();
             int star = star();
-            GuiSkin.play(star >= 3 ? SoundEvents.UI_TOAST_CHALLENGE_COMPLETE : SoundEvents.ANVIL_LAND, star >= 3 ? 1f : 0.8f, 0.7f);
+            if (star >= 3) {
+                // The forge's own fanfare and gold bursts for a win, its failure sting for a stripped or loose finish.
+                GuiSkin.play(io.github.soundgoodizerfan.feedback.registry.FSounds.FORGE_FANFARE.get(), 1f);
+                for (int wave = 0; wave < 3; wave++)
+                    specks.burst(bx, plateTop, 24, 2.2f + wave * 1.2f, 3.4f, 0xFFD84A, 34, 2);
+            } else if (star <= 1)
+                GuiSkin.play(io.github.soundgoodizerfan.feedback.registry.FSounds.FORGE_FAILURE.get(), 1f);
+            else
+                GuiSkin.play(SoundEvents.ANVIL_LAND, 0.8f, 0.7f);
         } else {
             phase = SETTLE;
             settle = SETTLE_TICKS;
