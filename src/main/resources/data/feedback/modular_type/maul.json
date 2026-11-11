@@ -11,6 +11,10 @@
     {
       "tag": "minecraft:mineable/axe",
       "factor": 0.8
+    },
+    {
+      "tag": "minecraft:mineable/pickaxe",
+      "factor": 0.5
     }
   ],
   "roles": {

@@ -22,10 +22,16 @@ public final class Mail implements ModularTrait {
 
     @Override
     public void onWornHurt(LivingIncomingDamageEvent event, LivingEntity wearer, ItemStack piece, Params params) {
+        boolean bolt = event.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE);
+        // A point finds the rings: an arrow or bolt through mail, or a spear's thrust, opens a wound that bleeds.
+        if (bolt)
+            Billhook.open(wearer, params.get("pierce_bleed_seconds", 4f), params.get("pierce_bleed_damage", 1f));
         if (!(event.getSource().getDirectEntity() instanceof LivingEntity attacker))
             return;
         ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.StrikeSource.weapon(attacker, event.getSource());
         ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(weapon);
+        if (family == ModularType.Family.SPEAR)
+            Billhook.open(wearer, params.get("pierce_bleed_seconds", 4f), params.get("pierce_bleed_damage", 1f));
         if (family == ModularType.Family.MACE || (family == null && weapon.is(ItemTags.MACE_ENCHANTABLE)))
             event.setAmount(event.getAmount() * params.get("blunt_mult", 1.3f));
         else if (family == ModularType.Family.BLADE || (family == null && (weapon.is(ItemTags.SWORDS) || weapon.is(ItemTags.AXES))))

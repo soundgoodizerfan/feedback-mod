@@ -82,6 +82,11 @@ public class ModularShield extends net.minecraft.world.item.ShieldItem implement
 
     @Override
     public void onUseTick(Level level, LivingEntity user, ItemStack stack, int remaining) {
+        // A raised shield is carried at arm's length: what it weighs over the light ones slows the bearer (mass on the arm, not a stat).
+        ModularFigures f = ModularStacks.figures(stack);
+        if (!level.isClientSide && f != null)
+            io.github.soundgoodizerfan.feedback.modular.trait.Burden.apply(user, Math.max(0f, Math.min(ModularTuning.SHIELD_SLOW_MAX,
+                    (f.get(ModularFigures.Fig.MASS) - ModularTuning.SHIELD_SLOW_FREE_MASS) * ModularTuning.SHIELD_SLOW_PER_MASS)));
         ModularTraits.onUseTick(level, user, stack, remaining);
     }
 }

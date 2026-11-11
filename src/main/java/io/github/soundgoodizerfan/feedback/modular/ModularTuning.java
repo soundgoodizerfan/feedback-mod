@@ -162,6 +162,11 @@ public final class ModularTuning {
     public static final int CELL_MB = 144;
     /** The smallest stock there is: a nugget, a ninth of a cell (one Qu of metal). A part's stock is rounded up to it. */
     public static final int NUGGET_MB = 16;
+    /** A raised shield slows its bearer by this share per Mu of mass above {@link #SHIELD_SLOW_FREE_MASS}, to at most {@link #SHIELD_SLOW_MAX}. */
+    public static final float SHIELD_SLOW_PER_MASS = 0.016f;
+    /** The mass (Mu) a raised shield can have before it slows anyone: a light buckler is carried without notice. */
+    public static final float SHIELD_SLOW_FREE_MASS = 6f;
+    public static final float SHIELD_SLOW_MAX = 0.35f;
     /** Filing: strokes a file takes before it wears one point (hand tools may always wear). */
     public static final int FILE_STROKES_PER_WEAR = 5;
     /** The share of swarf's volume lost when it melts back at the crucible (oxide and drag-out). */
