@@ -11,7 +11,8 @@ At the [Smithing Table](Smithing_Table.md), the Dynamotor takes four parts:
 | **Machine Frame** (plate) | small, medium or large | The most torque the machine carries: 2, 16 or 64 Su. Also how much heat it holds and how large a wall it sheds heat through. |
 | **Machine Winding** (wire) | coarse, fine, dense or heavy-dense | The volts per RPM, and with the wire's material the current it carries. |
 | **Core** (an ingot) | any metal ingot | The core's loss: the share of the power through it that turns to heat. Iron and steel are tuned for it, and a [Rare-Earth Magnet](Rare_Earth_Magnet.md) wastes far less. |
-| **Machine Housing** (plate) | finned or jacketed | How well it sheds heat to the air, and whether it takes a water jacket. |
+| **Machine Housing** (plate) | one shape | How well it sheds heat to the air: the more heat-conducting its metal, the better. |
+| **Cooling** (optional, two plates) | plate or pipe | An addon fitted to the finished machine. A plate is fins, and sheds more heat to the air, more the better its metal conducts. A pipe is a water jacket. |
 
 A bigger frame, winding or housing variant takes more cells of its stock. Every part takes the material it is made of, and the tooltip of the finished machine shows its **volts per RPM** and its **rated amps**.
 
@@ -65,7 +66,7 @@ A motor turning a generator wound differently is a **motor-generator set**, the 
 
 The winding (amps squared times the wire's resistance) and the core (a share of the power through it) both give off heat. The housing sheds it to the air, better the more heat-conducting its metal, over the frame's wall area.
 
-A **jacketed** housing has a tank of **2,000 mB**. Right-click it with a water bucket, or any container of water, to fill it; nothing drains back out. While it holds water and the machine is above room temperature, it sheds heat twice as fast and uses water slowly.
+A machine with a **pipe cooling** addon (a water jacket) has a tank of **2,000 mB**. Right-click it with a water bucket, or any container of water, to fill it; nothing drains back out. While it holds water and the machine is above room temperature, it sheds heat twice as fast and uses water slowly.
 
 Misuse heats the machine more and wears it:
 

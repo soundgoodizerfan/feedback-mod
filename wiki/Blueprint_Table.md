@@ -77,3 +77,11 @@ Repairs and swaps never need one.
 A blueprint comes from the Print button, a copy, a villager or a chest, or from taking an item apart at a bench with blank paper in the blueprint slot, which writes a blueprint of its design.
 
 Operators can make a blueprint of the item in their hand with `/feedback blueprint`; it works on any modular item that is not itself a blueprint.
+
+## Naming, credit and the checklist
+
+The table has a **title** field: what you type goes on the printed blueprint, with a credit, **Designed by** your name (the table writes it, you cannot sign someone else's). Both show on the blueprint's tooltip. A copy keeps them. A thing made to the drawing carries the title and the credit in its tooltip, whoever makes it; if it departs from the drawing, the credit goes. The item's name is still whatever it is by its parts.
+
+A blueprint is never required. Any bench takes one in its blueprint slot for anything, and it gates nothing; it gives the credit and a **checklist**. Right-click a blueprint to open a recipe card listing its parts, materials, shapes and axis values. At a bench, the checklist sits beside the slots and ticks as you place the parts. It lists a missing material and never refuses to work without it.
+
+A part with **axes** (a chestplate's width, a sword blade's length) shows steppers on the drawing for the target value of each.
