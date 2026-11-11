@@ -12,6 +12,7 @@ Vehicles in Feedback are built the way you'd build a car in a garage: on a lift,
 | **Chassis Frame** | The block a welded frame is built around. |
 | **Welder** | Places points, joins them with tubes, lays plates between them, and welds points to blocks. |
 | **Pivot Setter** | Turns a point into a hinge, a steered hinge, a control surface, a ball joint or a locked joint. |
+| **Micro Core** | Starts a micro-block build: see [Micro-blocks](#micro-blocks). |
 | **[Engine](Engine.md)** | Power. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
 | **[Transmission](Transmission.md)** | Gears and a clutch. Drawn at the Blueprint Table, built at the [Smithing Table](Smithing_Table.md). |
 | **[Thruster](Thruster.md)** | Pushes the whole body along its facing; burns liquid fuel. |
@@ -35,6 +36,14 @@ A lift that's part of a vehicle itself can't lift anything.
 ### Carrying a creation
 
 Right-click any creation with a **Lift item** and the whole thing goes *into the item*, with every block and everything in every chest: *"Picked up (N blocks)."* Clicking any part of a vehicle -- a swinging arm included -- takes the whole vehicle. Two vehicles welded frame to frame can't be carried as one: cut the joint first. The tooltip shows how big it is. Right-click the ground to set it back down on a new lift, already held. If anything is in the way you'll get *"No room to put it down here,"* and nothing is placed.
+
+## Micro-blocks
+
+*Work in progress: the first step of replacing the frame below, and not yet played.* Use a **Micro Core** on a block and a **micro cell** appears where a block would go, holding one voxel of stone: a voxel is a quarter of a block on a side, so a cell holds up to 64. **Hold any plain block** (anything without its own menu or machinery) and **right-click** the build: the voxel in front of the face you hit becomes that block, in the next cell over if you hit an edge. **Sneak-right-click** takes the voxel you hit out, and gives its block back. It costs one block a voxel, or nothing in creative. Each voxel draws as its block's own model at a quarter of the size, and a cell weighs its voxels by what they're made of. Whether a micro build lifts on a [Lift](#the-lift) like any other is the first thing to try. A body collides at half-block resolution for now, though you walk on and see the exact voxels; breaking a cell gives its blocks back.
+
+**Micro shafts.** A [Shaft](Shaft.md), Bearing, [Flywheel](Flywheel.md), [Cog](Cogs.md) or Gearbox can be a voxel too (no machines, engines or chests): it lies along the face you click, joins the voxels it touches end to end, and only a **Rotation Adapter** (a shaft between two small cogs) joins it to full-size rotation: its back takes a full-size shaft, and the four little shafts on its front, which points where you look as you place it, drive the middle four voxels of the micro cell face in front of it at the same speed. A micro cog takes the axis of the micro shaft you click it onto, as a full-size cog does. Micro cogs mesh by the same rules as full-size [Cogs](Cogs.md), at a quarter of the size.
+
+**Rotary Bearing and Ring Gear.** Put a **Rotary Bearing** on the face of a shaft end, gearbox or cog and build in front of it. **Right-click it with an empty hand** and what is built there (full blocks and micro cells) turns with the shaft as one piece; right-click again to put it back as blocks where it started. A **Ring Gear** works the same, but its centre is hollow: nothing behind it drives it, and a Small Cog beside it in its plane (or a Large Cog diagonally) turns it instead. Gearbox and Rotation Adapter shafts now visibly turn. Both also work as micro voxels: a micro bearing turns the voxels joined to its front face (the rest of their cell stays), and putting back lands them at the nearest quarter turn. A bearing also works on something that moves, a car or the arm of another bearing: the part it turns pushes back on what carries it. Put back the outermost arm first. Micro builds now collide voxel by voxel, so several spinning arms fit in one block as long as their voxels never meet. A quarter shaft is nearly weightless and drags a quarter of a full one.
 
 ## Building a frame
 
@@ -130,6 +139,16 @@ Look at a point and right-click:
 - If the point is part of a Welder selection you built by **clicking points one by one**, whatever you do to it happens to every point in the selection (a box selection doesn't do this).
 
 Use hinges and ball joints that **spin free** to make things like suspension arms. Weld the inner end to a block, set it to a hinge, and the arm swings. When the vehicle is lifted, each piece of the frame between free hinges or ball joints becomes its own moving part, hanging on its joints; a piece welded straight to a block moves with the vehicle.
+
+### Stator and rotor
+
+A hinge or ball can have a **rotor**, a second point that is the moving side:
+
+1. Place a point and set it to a hinge or ball with the Pivot Setter. It is the **stator**, and it belongs to the body the bearing sits on.
+2. With the stator still selected, use **Place points** again. The new point becomes the **rotor**, exactly **one grid step** (1/16 block) from the stator along the axis your click leans toward. It is drawn dark orange.
+3. Connect tubes and plates to the **rotor**. Everything attached to it is the moving part; everything attached to the stator stays with the body.
+
+The line from stator to rotor is a hinge's axis, so there is no axis to guess. The two sides share no point, and the stator-rotor link joins nothing by itself. Turning the stator back to a plain point, a locked joint or a slider removes the rotor link. Hubs, steering, differentials and drive lines still use the one-point bearings above for now.
 
 If you change bearings on a vehicle that's already lifted, lower it back to blocks and lift it again to be sure the new layout takes.
 

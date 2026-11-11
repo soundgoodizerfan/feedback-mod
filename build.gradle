@@ -159,6 +159,9 @@ dependencies {
         exclude group: "dev.engine-room.flywheel"
         exclude group: "com.tterrag.registrate"
     }
+    // Sable's Rapier backend, compile-only: the micro cells' voxel colliders write into its scene
+    // (vehicle/micro/MicroColliders). Sable ships it at runtime; it is not part of Sable's API.
+    compileOnly("dev.ryanhcode.sable:sable-sable_rapier-${minecraft_version}:${sable_version}") { transitive = false }
 }
 
 // neoforge.mods.toml needs the version numbers that only gradle.properties knows.

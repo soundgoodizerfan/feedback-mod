@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.shaft;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
+import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -41,7 +41,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * puzzle (philosophy 3, "keep the shaft, skip the fluid dynamics"), so the block exists and the
  * simulation inside it does not.
  */
-public class ShaftBlock extends RotatedPillarBlock implements EntityBlock, Rotatable {
+public class ShaftBlock extends RotatedPillarBlock implements EntityBlock, MicroRotation {
 
     /** Cap on how far an extend click will scan, so a very long line cannot stall the server. */
     private static final int MAX_EXTEND_SCAN = 64;

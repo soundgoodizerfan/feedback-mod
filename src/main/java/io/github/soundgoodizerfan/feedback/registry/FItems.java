@@ -34,6 +34,9 @@ public class FItems {
     public static final DeferredItem<BlockItem> SMALL_COG = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_COG);
     public static final DeferredItem<BlockItem> LARGE_COG = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_COG);
     public static final DeferredItem<BlockItem> GEARBOX = ITEMS.registerSimpleBlockItem(FBlocks.GEARBOX);
+    public static final DeferredItem<BlockItem> ROTATION_ADAPTER = ITEMS.registerSimpleBlockItem(FBlocks.ROTATION_ADAPTER);
+    public static final DeferredItem<BlockItem> ROTARY_BEARING = ITEMS.registerSimpleBlockItem(FBlocks.ROTARY_BEARING);
+    public static final DeferredItem<BlockItem> RING_GEAR = ITEMS.registerSimpleBlockItem(FBlocks.RING_GEAR);
     public static final DeferredItem<BlockItem> CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.CAMPFIRE);
     public static final DeferredItem<BlockItem> SOUL_CAMPFIRE = ITEMS.registerSimpleBlockItem(FBlocks.SOUL_CAMPFIRE);
 

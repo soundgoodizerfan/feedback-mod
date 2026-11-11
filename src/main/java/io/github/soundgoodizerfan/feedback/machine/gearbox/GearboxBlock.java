@@ -2,13 +2,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.gearbox;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
+import io.github.soundgoodizerfan.feedback.core.unit.Drag;
+import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -33,10 +41,20 @@ import net.minecraft.world.level.block.state.BlockState;
  * Getting direction right is therefore a placement problem, which is the intent. The gearbox has
  * no setting on it, per philosophy §3, and the player who needs the other direction adds a cog.
  */
-public class GearboxBlock extends Block implements EntityBlock, Rotatable {
+public class GearboxBlock extends Block implements EntityBlock, MicroRotation {
 
     public GearboxBlock(Properties properties) {
         super(properties);
+    }
+
+    @Override
+    public Drag getDragSuPerRpm() {
+        return FTuning.GEARBOX_DRAG_SU_PER_RPM;
+    }
+
+    @Override
+    public Inertia getInertia() {
+        return FTuning.GEARBOX_INERTIA;
     }
 
     /**
@@ -56,6 +74,18 @@ public class GearboxBlock extends Block implements EntityBlock, Rotatable {
     @Override
     public float shaftSignTowards(BlockState state, Direction face) {
         return face.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1;
+    }
+
+    /** Drawn by {@code client/SpinningParts}: the housing stands, the shafts turn. */
+    @Override
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide ? (l, p, s, be) -> ((io.github.soundgoodizerfan.feedback.core.rotation.RotationNode) be).tickClient() : null;
     }
 
     @Nullable

@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.rotation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
@@ -66,9 +68,9 @@ public class RotationNetwork {
     public final long id;
 
     /** Nodes that drive the network. Their capacity is read live in {@link #recalculate}, like load. */
-    private final Set<RotationNode> sources = new HashSet<>();
+    private final Set<RotationMember> sources = new HashSet<>();
     /** Every node on the network. */
-    private final Set<RotationNode> members = new HashSet<>();
+    private final Set<RotationMember> members = new HashSet<>();
 
     private float capacitySu;
     /** Demand that does not depend on speed: machines doing work. */
@@ -121,7 +123,7 @@ public class RotationNetwork {
         this.id = id;
     }
 
-    public void add(RotationNode node) {
+    public void add(RotationMember node) {
         if (!members.add(node))
             return;
         if (node.isSource())
@@ -129,7 +131,7 @@ public class RotationNetwork {
         recalculate();
     }
 
-    public void remove(RotationNode node) {
+    public void remove(RotationMember node) {
         if (!members.remove(node))
             return;
         sources.remove(node);
@@ -349,7 +351,7 @@ public class RotationNetwork {
         if (!pushed && effectiveTarget == 0 && Math.abs(currentRpm) < FTuning.STOPPED_RPM_THRESHOLD.value())
             currentRpm = 0;
 
-        for (RotationNode member : members)
+        for (RotationMember member : members)
             member.onNetworkSpeedChanged();
     }
 
@@ -395,7 +397,7 @@ public class RotationNetwork {
         // Complain at the sources. They are where a person would put their hand to feel a machine
         // labouring, there are far fewer of them than members, and it points at the half of the
         // problem the player can actually do something about.
-        for (RotationNode source : sources) {
+        for (RotationMember source : sources) {
             BlockPos pos = source.getBlockPos();
             server.sendParticles(ParticleTypes.SMOKE,
                     pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5,
@@ -417,11 +419,11 @@ public class RotationNetwork {
         float newInertia = 0;
 
         dropStale(sources);
-        for (RotationNode source : sources)
+        for (RotationMember source : sources)
             newCapacity += source.getCapacitySu().value();
 
         dropStale(members);
-        for (RotationNode member : members) {
+        for (RotationMember member : members) {
             // Friction and mass are referred to the network's own shaft through the square of the
             // gear ratio, which is the standard result and not a fudge: a geared-up branch turns
             // faster, so its bearings eat more and its mass is harder to accelerate, both by the
@@ -447,19 +449,19 @@ public class RotationNetwork {
         capacitySu = newCapacity;
         staticLoadSu = newStaticLoad;
         dragSuPerRpm = newDrag;
-        for (RotationNode member : members)
+        for (RotationMember member : members)
             member.onNetworkChanged(new Su(capacitySu), getLoadSu());
     }
 
     /**
-     * Drop entries whose block entity is no longer the one at its position. A chunk reload
-     * replaces block entities, and a stale key would keep the old object alive with its Su
-     * counted forever.
+     * Drop entries no longer live: a block entity no longer the one at its position (a chunk reload
+     * replaces block entities), a rotor no longer in its cell. A stale key would keep the old object
+     * alive with its Su counted forever.
      */
-    private void dropStale(Set<RotationNode> ledger) {
-        for (Iterator<RotationNode> it = ledger.iterator(); it.hasNext(); ) {
-            RotationNode node = it.next();
-            if (node.getLevel() == null || node.getLevel().getBlockEntity(node.getBlockPos()) != node)
+    private void dropStale(Set<RotationMember> ledger) {
+        for (Iterator<RotationMember> it = ledger.iterator(); it.hasNext(); ) {
+            RotationMember node = it.next();
+            if (!node.isLive())
                 it.remove();
         }
     }
@@ -503,5 +505,10 @@ public class RotationNetwork {
 
     public int size() {
         return members.size();
+    }
+
+    /** A copy of the members, for a caller about to change them (a rebuild after a cut). */
+    public List<RotationMember> members() {
+        return new ArrayList<>(members);
     }
 }

@@ -4,15 +4,18 @@ package io.github.soundgoodizerfan.feedback.vehicle.frame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * What the gizmo does on the server: moves the Welder's selection, or extrudes it, a whole number
@@ -48,7 +51,8 @@ public final class FrameEdit {
     /**
      * Every selected point moves by {@code d}, and every mirror image of one by the image of
      * {@code d}; a point on a plane, or an image that is itself selected, moves with the selection.
-     * All or nothing: refused if any lands out of range or on a point that is not moving.
+     * All or nothing: refused if any lands out of range, on a point that is not moving, or on
+     * another that is moving (a selection and its image crossing a plane).
      */
     private static boolean move(Frame frame, List<Integer> selected, int[] d) {
         Map<Integer, Frame.Vertex> to = new LinkedHashMap<>();
@@ -62,8 +66,9 @@ public final class FrameEdit {
                     to.put(m, shifted(frame.vertices().get(m), md));
             }
         }
+        Set<Frame.Vertex> landing = new HashSet<>();
         for (Map.Entry<Integer, Frame.Vertex> e : to.entrySet()) {
-            if (!e.getValue().inRange())
+            if (!e.getValue().inRange() || !landing.add(e.getValue()))
                 return false;
             int there = frame.idAt(e.getValue());
             if (there >= 0 && !to.containsKey(there))
@@ -78,19 +83,19 @@ public final class FrameEdit {
      * block if one is held); where two selected points are joined, their copies are too, in the
      * same tube. The copies become the selection, so the next pull carries on from them.
      */
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     private static List<Integer> extrude(Player player, Frame frame, WelderSelected chosen, int[] d) {
         Map<Integer, Integer> copy = new HashMap<>();
-        for (int v : chosen.vertices()) {
-            Frame.Vertex at = shifted(frame.vertices().get(v), d);
-            if (!at.inRange())
+        for (int v : chosen.vertices())
+            if (!shifted(frame.vertices().get(v), d).inRange())
                 return null;
-        }
         for (int v : chosen.vertices())
             copy.put(v, frame.add(shifted(frame.vertices().get(v), d)));
         List<long[]> joined = new ArrayList<>();
         for (int v : chosen.vertices()) {
-            WelderItem.connect(frame, v, copy.get(v), player);
+            // connect toggles: a copy that landed on a point already joined to its original keeps that edge.
+            if (!frame.hasEdge(v, copy.get(v)))
+                WelderItem.connect(frame, v, copy.get(v), player);
             joined.add(new long[]{v, copy.get(v)});
         }
         for (long key : List.copyOf(frame.edgeKeys())) {

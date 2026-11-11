@@ -33,6 +33,8 @@ import io.github.soundgoodizerfan.feedback.machine.cog.CogBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.drillpress.DrillPressBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.gearbox.GearboxBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.adapter.RotationAdapterBlockEntity;
+import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.grindingwheel.GrindingWheelBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.lathe.LatheBlockEntity;
@@ -80,6 +82,16 @@ public class FBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GearboxBlockEntity>> GEARBOX =
             BLOCK_ENTITIES.register("gearbox", () -> BlockEntityType.Builder
                     .of(GearboxBlockEntity::new, FBlocks.GEARBOX.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RotationAdapterBlockEntity>> ROTATION_ADAPTER =
+            BLOCK_ENTITIES.register("rotation_adapter", () -> BlockEntityType.Builder
+                    .of(RotationAdapterBlockEntity::new, FBlocks.ROTATION_ADAPTER.get())
+                    .build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RotaryBearingBlockEntity>> ROTARY_BEARING =
+            BLOCK_ENTITIES.register("rotary_bearing", () -> BlockEntityType.Builder
+                    .of(RotaryBearingBlockEntity::new, FBlocks.ROTARY_BEARING.get(), FBlocks.RING_GEAR.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandCrankBlockEntity>> HAND_CRANK =

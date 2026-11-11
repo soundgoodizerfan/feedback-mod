@@ -4,8 +4,10 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.PivotItem;
@@ -16,6 +18,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +55,7 @@ public final class BuildToolHud {
         int count;
         if (held.getItem() instanceof WelderItem) {
             WelderMode mode = held.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT);
-            key = "hud.feedback.welder." + mode.name().toLowerCase(java.util.Locale.ROOT);
+            key = "hud.feedback.welder." + mode.name().toLowerCase(Locale.ROOT);
             count = switch (mode) {
                 case POINT -> 4;
                 case SELECT -> 3;
@@ -86,13 +89,12 @@ public final class BuildToolHud {
             var spin = aim.be().spin();
             // On a coupled chain: the chain's figures. Welded to something turning but no tube yet: that
             // block's speed -- the weld is the connection, the tube only carries it on.
-            net.minecraft.core.BlockPos weld = aim.be().frame().anchors().get(v);
-            var node = weld == null ? null
-                    : mc.level.getBlockEntity(aim.be().getBlockPos().offset(weld)) instanceof io.github.soundgoodizerfan.feedback.core.rotation.RotationNode n ? n : null;
+            BlockPos weld = aim.be().frame().anchors().get(v);
+            RotationNode node = weld != null && mc.level.getBlockEntity(aim.be().getBlockPos().offset(weld)) instanceof RotationNode n ? n : null;
             point.add(spin.onChain(v)
-                    ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · %.2f Su", spin.rpm(v), spin.su(v)))
+                    ? Component.literal(String.format(Locale.ROOT, "Network: connected · %.1f RPM · %.2f Su", spin.rpm(v), spin.su(v)))
                     : node != null
-                    ? Component.literal(String.format(java.util.Locale.ROOT, "Network: connected · %.1f RPM · no tube yet", node.getRpm().value()))
+                    ? Component.literal(String.format(Locale.ROOT, "Network: connected · %.1f RPM · no tube yet", node.getRpm().value()))
                     : Component.literal("Network: not connected"));
         }
 
@@ -130,7 +132,11 @@ public final class BuildToolHud {
         parts.add(frame.anchors().containsKey(v) ? "welded" : "not welded");
         Frame.Pivot pivot = frame.pivots().get(v);
         if (pivot != null)
-            parts.add(pivot.kind().name().toLowerCase(java.util.Locale.ROOT) + (pivot.drives() ? ", carries rotation" : ", spins free"));
+            parts.add(pivot.kind().name().toLowerCase(Locale.ROOT) + (pivot.drives() ? ", carries rotation" : ", spins free"));
+        if (frame.rotors().containsKey(v))
+            parts.add("stator, rotor is the next point");
+        if (frame.rotors().containsValue(v))
+            parts.add("rotor, the moving side of a bearing");
         Frame.Tire tire = frame.tires().get(v);
         if (tire != null)
             parts.add("tire: " + BuiltInRegistries.BLOCK.get(tire.material()).getName().getString()

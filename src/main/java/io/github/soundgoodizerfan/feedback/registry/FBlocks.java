@@ -33,6 +33,9 @@ import io.github.soundgoodizerfan.feedback.machine.damper.DamperBlock;
 import io.github.soundgoodizerfan.feedback.machine.firebox.FireboxBlock;
 import io.github.soundgoodizerfan.feedback.machine.cog.CogBlock;
 import io.github.soundgoodizerfan.feedback.machine.gearbox.GearboxBlock;
+import io.github.soundgoodizerfan.feedback.machine.adapter.RotationAdapterBlock;
+import io.github.soundgoodizerfan.feedback.machine.bearing.RingGearBlock;
+import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
 import io.github.soundgoodizerfan.feedback.machine.grindingwheel.GrindingWheelBlock;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlock;
 import io.github.soundgoodizerfan.feedback.machine.drillpress.DrillPressBlock;
@@ -111,7 +114,7 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
                     .noOcclusion(),
-                    1, 5, 4,
+                    CogBlock.SMALL, 8, 4,
                     FTuning.SMALL_COG_DRAG_SU_PER_RPM, FTuning.SMALL_COG_INERTIA));
 
     public static final DeferredBlock<CogBlock> LARGE_COG = BLOCKS.register("large_cog",
@@ -120,11 +123,36 @@ public class FBlocks {
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
                     .noOcclusion(),
-                    2, 8, 4,
+                    // Outline clamped to the block; the model draws the disc wider.
+                    CogBlock.LARGE, 8, 4,
                     FTuning.LARGE_COG_DRAG_SU_PER_RPM, FTuning.LARGE_COG_INERTIA));
 
     public static final DeferredBlock<GearboxBlock> GEARBOX = BLOCKS.register("gearbox",
             () -> new GearboxBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()));
+
+    /** The joint between full-size rotation and micro-block rotation; see {@code RotationAdapterBlock}. */
+    public static final DeferredBlock<RotationAdapterBlock> ROTATION_ADAPTER = BLOCKS.register("rotation_adapter",
+            () -> new RotationAdapterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()));
+
+    /** A face add-on that turns what is in front of it as a Sable body; see {@code RotaryBearingBlock}. */
+    public static final DeferredBlock<RotaryBearingBlock> ROTARY_BEARING = BLOCKS.register("rotary_bearing",
+            () -> new RotaryBearingBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(3.0f)
+                    .sound(SoundType.COPPER)
+                    .noOcclusion()));
+
+    /** The same, driven at its rim by a cog: hollow; see {@code RingGearBlock}. */
+    public static final DeferredBlock<RingGearBlock> RING_GEAR = BLOCKS.register("ring_gear",
+            () -> new RingGearBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(3.0f)
                     .sound(SoundType.COPPER)

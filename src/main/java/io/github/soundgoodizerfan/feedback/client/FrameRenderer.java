@@ -4,42 +4,54 @@ package io.github.soundgoodizerfan.feedback.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import dev.ryanhcode.sable.api.sublevel.SubLevelContainer;
+import dev.ryanhcode.sable.companion.SableCompanion;
+import dev.ryanhcode.sable.sublevel.ClientSubLevel;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.Frame;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderMode;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderCorner;
+import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelected;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
-import net.minecraft.world.item.ItemStack;
-import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
-import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
+import org.joml.Vector3d;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Draws a welded chassis: plates, tubes and tires in their material's block texture, the frame's edges as
- * lines, plates as
- * one-plate-thick slabs, and -- only while a Welder is held -- each vertex as a 1/16 cube filling its grid cell, the
- * selected one cyan, a carried one red, one chosen for a plate green, a bearing larger and
- * coloured by kind (also while a Pivot Setter is held). Welds to the base always show: a bead at
- * the point and a rod to the block's face. Placeholder look, like all the
+ * lines, plates as one-plate-thick slabs, and -- only while a Welder is held -- each vertex as a 1/16 cube
+ * filling its grid cell, the selected ones cyan, one chosen for a plate green, a bearing larger and
+ * coloured by kind, a bearing's rotor dark orange (also while a Pivot Setter is held). Welds to the base
+ * always show: a bead at the point and a rod to the block's face. Placeholder look, like all the
  * art; the textured shapes take the entity shader's light from their normals so the shape reads.
  */
 public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
@@ -48,6 +60,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
     private static final float MARK = 1f / 16;
     /** Weld bead and rod: dark, slightly warm steel. */
     private static final int WELD = 0x6b625a;
+    private static final Logger LOG = LoggerFactory.getLogger("feedback.render");
 
     public FrameRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -56,71 +69,38 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
     public void render(FrameBlockEntity be, float partialTick, PoseStack poseStack, MultiBufferSource buffers,
                        int light, int overlay) {
         Frame frame = be.frame();
-        Matrix4f m = poseStack.last().pose();
-        Groups groups = new Groups(be, poseStack, partialTick);
+        ChassisCellRenderer.seen(be);
+        Groups groups = new Groups(be, poseStack);
 
         // Plates, tubes and tires wear their material's block texture, wrapped round the shape; the
         // atlas type is asked for first, as asking for another RenderType ends the previous builder.
         VertexConsumer tex = buffers.getBuffer(RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS));
-        for (Frame.Plate p : frame.plates()) {
-            PoseStack.Pose pose = groups.plate(p).last();
-            TextureAtlasSprite sprite = sprite(p.materialState());
-            Vec3 a = frame.pos(p.a()), b = frame.pos(p.b()), c = frame.pos(p.c());
-            Vec3 n = frame.cross(p).normalize();
-            // A slab one plate-thickness through, centred on the plate's plane.
-            Vec3 h = n.scale(Frame.PLATE_THICKNESS / 2.0);
-            Vec3 a1 = a.add(h), b1 = b.add(h), c1 = c.add(h), a0 = a.subtract(h), b0 = b.subtract(h), c0 = c.subtract(h);
-            Vec3 mid = a.add(b).add(c).scale(1 / 3.0);
-            plateFace(tex, pose, sprite, light, n, a1, b1, c1);
-            plateFace(tex, pose, sprite, light, n.scale(-1), a0, c0, b0);
-            for (Vec3[] e : new Vec3[][]{{a0, b0, b1, a1}, {b0, c0, c1, b1}, {c0, a0, a1, c1}}) {
-                Vec3 out = e[1].subtract(e[0]).cross(n).normalize();
-                if (out.dot(e[0].add(e[1]).scale(0.5).subtract(mid)) < 0)
-                    out = out.scale(-1);
-                double len = Math.min(1, e[1].subtract(e[0]).length());
-                texQuad(tex, pose, light, out, e[0], sprite, 0, 0, e[1], sprite, len, 0, e[2], sprite, len, Frame.PLATE_THICKNESS, e[3], sprite, 0, Frame.PLATE_THICKNESS);
-            }
-        }
+        // A group whose body has cells on the client is drawn by those cells (ChassisCellRenderer), in
+        // its own body's space: only the base and the groups with no body there are drawn here.
+        for (Frame.Plate p : frame.plates())
+            if (!groups.cellDrawn(groups.plateGroup.get(p)))
+                drawPlate(tex, groups.plate(p).last(), frame, p, light);
 
         // A tube the drive chain turns, turns: the spin comes from the server (FrameSpin), since it
         // is computed and never a body's. A square section shows it.
         double time = be.getLevel() == null ? 0 : be.getLevel().getGameTime() + partialTick;
         for (Map.Entry<Long, Frame.Tube> t : frame.tubes().entrySet())
-            texRod(tex, groups.edge(t.getKey()).last(), sprite(t.getValue().materialState()), light,
-                    frame.pos(Frame.edgeA(t.getKey())), frame.pos(Frame.edgeB(t.getKey())), t.getValue().diameter() / 2,
-                    be.spin().tube(t.getKey(), time), 0);
+            if (!groups.cellDrawn(groups.edgeGroup.get(t.getKey())))
+                drawTube(tex, groups.edge(t.getKey()).last(), frame, t.getKey(), t.getValue(), be.spin().tube(t.getKey(), time), light);
 
-        // A tire: a ring about its hub's axle, turning at the hub's spin. Each segment shows its own
-        // slice of the texture, so the turning can be seen without a marked segment.
-        for (Map.Entry<Integer, Frame.Tire> t : frame.tires().entrySet()) {
-            Frame.Pivot hub = frame.pivots().get(t.getKey());
-            if (hub == null)
-                continue;
-            PoseStack.Pose pose = groups.vertex(t.getKey()).last();
-            Vec3 c = frame.pos(t.getKey()), a = hub.axis().normalize();
-            Vec3 u = (Math.abs(a.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(a).normalize();
-            Vec3 v = a.cross(u);
-            double r = t.getValue().radius(), tread = r / 2;
-            TextureAtlasSprite sprite = sprite(t.getValue().materialState());
-            int sides = 16;
-            double turn = be.spin().hub(t.getKey(), time);
-            for (int i = 0; i < sides; i++) {
-                double p = 2 * Math.PI * i / sides + turn, q = 2 * Math.PI * (i + 1) / sides + turn;
-                Vec3 from = c.add(u.scale(Math.cos(p) * r)).add(v.scale(Math.sin(p) * r));
-                Vec3 to = c.add(u.scale(Math.cos(q) * r)).add(v.scale(Math.sin(q) * r));
-                texRod(tex, pose, sprite, light, from, to, tread / 2, 0, i / (double) sides);
-            }
-        }
+        for (Map.Entry<Integer, Frame.Tire> t : frame.tires().entrySet())
+            if (!groups.cellDrawn(groups.vertexGroup.get(t.getKey())))
+                drawTire(tex, groups.vertex(t.getKey()).last(), frame, t.getKey(), t.getValue(), be.spin().hub(t.getKey(), time), light);
 
         VertexConsumer quads = buffers.getBuffer(RenderType.debugQuads());
         // Welds to the base are physical, so always drawn: a bead at the point and a short rod to
         // the nearest face of the block it is welded to (docs/specs/feedback_vehicles_spec.md section 4).
-        for (Map.Entry<Integer, net.minecraft.core.BlockPos> w : frame.anchors().entrySet()) {
+        for (Map.Entry<Integer, BlockPos> w : frame.anchors().entrySet()) {
             if (!frame.vertices().containsKey(w.getKey()))
                 continue;
-            m = groups.vertex(w.getKey()).last().pose();
+            Matrix4f m = groups.vertex(w.getKey()).last().pose();
             Vec3 at = frame.pos(w.getKey());
-            net.minecraft.core.BlockPos off = w.getValue();
+            BlockPos off = w.getValue();
             Vec3 face = new Vec3(Math.clamp(at.x, off.getX(), off.getX() + 1), Math.clamp(at.y, off.getY(), off.getY() + 1),
                     Math.clamp(at.z, off.getZ(), off.getZ() + 1));
             if (face.distanceToSqr(at) > 1e-6)
@@ -144,35 +124,29 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             return;
         // The point under the crosshair, if welded: a plain box round the block it is welded to.
         WelderItem.Aim aim = WelderItem.aim(be.getLevel(), player);
-        if (aim != null && aim.be() == be) {
-            int looked = WelderItem.pick(frame, Vec3.atLowerCornerOf(be.getBlockPos()), aim.eye(), aim.look(),
-                    player.blockInteractionRange());
-            net.minecraft.core.BlockPos to = looked < 0 ? null : frame.anchors().get(looked);
-            if (to != null)
-                net.minecraft.client.renderer.LevelRenderer.renderLineBox(poseStack, buffers.getBuffer(RenderType.lines()),
-                        new net.minecraft.world.phys.AABB(to).inflate(0.002), 0.3f, 0.5f, 1f, 1f);
-        }
+        Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
+        int looked = aim != null && aim.be() == be
+                ? WelderItem.pick(frame, origin, aim.eye(), aim.look(), player.blockInteractionRange()) : -1;
+        BlockPos weldedTo = looked < 0 ? null : frame.anchors().get(looked);
+        if (weldedTo != null)
+            LevelRenderer.renderLineBox(poseStack, lines, new AABB(weldedTo).inflate(0.002), 0.3f, 0.5f, 1f, 1f);
         WelderSelection sel = welder == null ? null : welder.get(FVehicles.WELDER_SELECTION.get());
         int held = sel != null && sel.frame().equals(be.getBlockPos()) ? sel.vertex() : -1;
         WelderPicks picks = welder == null ? null : welder.get(FVehicles.WELDER_PICKS.get());
         WelderSelected chosen = welder == null ? null : WelderItem.selected(welder, be);
-        java.util.Set<Integer> selected = chosen == null ? java.util.Set.of() : new java.util.HashSet<>(chosen.vertices());
+        Set<Integer> selected = chosen == null ? Set.of() : new HashSet<>(chosen.vertices());
         WelderMode mode = welder == null ? null : welder.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT);
-        Vec3 origin = Vec3.atLowerCornerOf(be.getBlockPos());
-        int looked = aim != null && aim.be() == be
-                ? WelderItem.pick(frame, origin, aim.eye(), aim.look(), player.blockInteractionRange()) : -1;
 
         // The gizmo's drag, as it will land: the selection moved (or its copies, extruding).
         FrameGizmo.Arrow drag = FrameGizmo.dragging(be.getBlockPos());
         Vec3 shift = drag == null ? Vec3.ZERO : drag.dir().scale(drag.sign() * FrameGizmo.steps() / (double) Frame.GRID);
 
-        VertexConsumer lines2 = buffers.getBuffer(RenderType.lines());
         // Mirror planes through the middle of the frame block, as wide as the frame.
         if (frame.mirror() != 0)
-            mirrorPlanes(lines2, poseStack, frame);
+            mirrorPlanes(lines, poseStack, frame);
         // Alignment: every point sharing two coordinates with the point looked at, or with where
         // the dragged selection is going, joined to it by a line in its axis's colour.
-        java.util.List<Frame.Vertex> refs = new java.util.ArrayList<>();
+        List<Frame.Vertex> refs = new ArrayList<>();
         if (looked >= 0)
             refs.add(frame.vertices().get(looked));
         if (drag != null)
@@ -184,7 +158,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                 if (same != 2)
                     continue;
                 float cr = r.x() != o.x() ? 1f : 0.2f, cg = r.y() != o.y() ? 1f : 0.2f, cb = r.z() != o.z() ? 1f : 0.2f;
-                line(lines2, poseStack, r.local(), o.local(), cr, cg, cb);
+                line(lines, poseStack, r.local(), o.local(), cr, cg, cb);
             }
         // Select mode's box, from the first corner to where the second would go.
         WelderCorner corner = welder == null ? null : welder.get(FVehicles.WELDER_CORNER.get());
@@ -192,14 +166,14 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             Frame.Vertex to = Frame.Vertex.snap(WelderItem.target(be.getLevel(), player, frame, origin, aim.eye(), aim.look(),
                     player.blockInteractionRange(), chosen != null ? chosen.last() : -1).subtract(origin));
             double g = Frame.GRID;
-            net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(
+            AABB box = new AABB(
                     Math.min(corner.x(), to.x()) / g, Math.min(corner.y(), to.y()) / g, Math.min(corner.z(), to.z()) / g,
                     (Math.max(corner.x(), to.x()) + 1) / g, (Math.max(corner.y(), to.y()) + 1) / g, (Math.max(corner.z(), to.z()) + 1) / g);
-            net.minecraft.client.renderer.LevelRenderer.renderLineBox(poseStack, lines2, box, 0.4f, 1f, 1f, 1f);
+            LevelRenderer.renderLineBox(poseStack, lines, box, 0.4f, 1f, 1f, 1f);
         }
         if (drag != null && mode == WelderMode.EXTRUDE)
             for (int v : selected)
-                line(lines2, poseStack, frame.pos(v), frame.pos(v).add(shift), 1f, 1f, 1f);
+                line(lines, poseStack, frame.pos(v), frame.pos(v).add(shift), 1f, 1f, 1f);
 
         // Asking for another RenderType ends the previous builder, so the lines above are finished
         // with: take the quad buffer afresh rather than reuse the stale one.
@@ -220,11 +194,13 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
                     case SLIDER -> { r = 0.2f; g = 1f; bl = 0.8f; }       // slider (a spring): teal
                     default -> { r = 0.8f; g = 0.8f; bl = 0.8f; }         // locked: grey
                 }
+            boolean rotor = frame.rotors().containsValue(e.getKey());
+            if (rotor) { r = 0.9f; g = 0.35f; bl = 0f; }                  // a bearing's rotor: dark orange
             if (isHeld || isSelected) { r = 0.2f; g = 0.9f; bl = 1f; }    // selected: cyan, over everything
             else if (picked) { r = 0.3f; g = 1f; bl = 0.3f; }             // chosen for a plate: green
             // One 1/16 cell, exactly: the point fills its grid cell, nothing more. A bearing is drawn
             // larger so it reads from across the chassis.
-            cube(marks, groups.vertex(e.getKey()).last().pose(), p, MARK / 2 * (isHeld || isSelected || picked ? 1.15f : pivot != null || welded ? 1.6f : 1f), r, g, bl);
+            cube(marks, groups.vertex(e.getKey()).last().pose(), p, MARK / 2 * (isHeld || isSelected || picked ? 1.15f : pivot != null || welded || rotor ? 1.6f : 1f), r, g, bl);
             if (isSelected && drag != null)                               // where it will land
                 cube(marks, groups.vertex(e.getKey()).last().pose(), p.add(shift), MARK / 2, 1f, 1f, 1f);
         }
@@ -256,43 +232,73 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
      * Where each group of an assembled frame is drawn. A group lifted into a body of its own
      * (spec section 4, <em>cells, again</em>) moves with that body, so its plates are drawn
      * through it: frame point {@code p} sits at {@code origin + p} in that body's plot, which its
-     * pose takes into the world, which this frame's body's pose takes back into this block's plot.
-     * Everything else is drawn where the frame is.
+     * render pose takes into the world, which this frame's body's render pose takes back into this
+     * block's plot. Everything else is drawn where the frame is.
      */
     private static final class Groups {
+        /** The game tick the diagnostic last logged, so the frames of one tick log once. */
+        private static long lastLog;
+
         private final PoseStack here;
         private final Map<Integer, PoseStack> byGroup = new HashMap<>();
+        private final Map<Integer, Integer> vertexGroup = new HashMap<>();
         private final Map<Frame.Plate, Integer> plateGroup = new HashMap<>();
         private final Map<Long, Integer> edgeGroup = new HashMap<>();
-        private final FrameBlockEntity be;
+        /** The groups whose body is on the client and has cells: their cells draw them. */
+        private final Set<Integer> cellGroups = new HashSet<>();
 
-        Groups(FrameBlockEntity be, PoseStack here, float partialTick) {
-            this.be = be;
+        boolean cellDrawn(Integer group) {
+            return group != null && cellGroups.contains(group);
+        }
+
+        Groups(FrameBlockEntity be, PoseStack here) {
             this.here = here;
             if (be.groupBodies().isEmpty() || be.getLevel() == null)
                 return;
-            var container = dev.ryanhcode.sable.api.sublevel.SubLevelContainer.getContainer(be.getLevel());
-            var own = dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.getContaining(be);
-            if (container == null || !(own instanceof dev.ryanhcode.sable.sublevel.ClientSubLevel mine))
+            var container = SubLevelContainer.getContainer(be.getLevel());
+            var own = SableCompanion.INSTANCE.getContaining(be);
+            if (container == null || !(own instanceof ClientSubLevel mine))
                 return;
+            for (FrameAssembly.Part part : be.cut()) {
+                part.vertices().forEach(v -> vertexGroup.putIfAbsent(v, part.id()));
+                part.plates().forEach(p -> plateGroup.put(p, part.id()));
+                part.edges().forEach(e -> edgeGroup.putIfAbsent(e, part.id()));
+            }
+            long now = be.getLevel().getGameTime();
+            boolean log = now % 100 == 0 && now != lastLog;
+            if (log)
+                lastLog = now;
             Matrix4d back = mine.renderPose().bakeIntoMatrix(new Matrix4d()).invert();
+            BlockPos pos = be.getBlockPos();
             be.groupBodies().forEach((group, body) -> {
-                if (!(container.getSubLevel(body.body()) instanceof dev.ryanhcode.sable.sublevel.ClientSubLevel theirs))
+                if (!(container.getSubLevel(body.body()) instanceof ClientSubLevel theirs)) {
+                    // Not on the client (yet, or any more): this group is drawn with the frame, not where its body is.
+                    if (log)
+                        LOG.info("[feedback] render group {} body={} is not on the client", group, body.body());
                     return;
-                var pos = be.getBlockPos();
+                }
+                if (!body.cells().isEmpty())
+                    cellGroups.add(group);
                 Matrix4d rel = new Matrix4d().translation(-pos.getX(), -pos.getY(), -pos.getZ()).mul(back)
                         .mul(theirs.renderPose().bakeIntoMatrix(new Matrix4d()))
                         .translate(body.origin().getX(), body.origin().getY(), body.origin().getZ());
+                if (log) {
+                    LOG.info("[feedback] render group {} origin={} body={} theirs={} mine={} rel={}", group, body.origin(), body.body(),
+                            theirs.renderPose().position(), mine.renderPose().position(), rel.getTranslation(new Vector3d()));
+                    // The same rotor point as the server's "rotorWorld", through the render pose of the body that holds it.
+                    be.frame().rotors().values().stream().filter(r -> group.equals(vertexGroup.get(r))).findFirst().ifPresent(r -> {
+                        Vec3 lp = be.frame().pos(r);
+                        Vector3d plot = new Vector3d(lp.x + body.origin().getX(), lp.y + body.origin().getY(), lp.z + body.origin().getZ());
+                        LOG.info("[feedback] rotorWorld(render)={} frameBlockWorld(render)={}", theirs.renderPose().transformPosition(plot),
+                                mine.renderPose().transformPosition(new Vector3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)));
+                    });
+                }
                 Matrix4f f = new Matrix4f(rel);
                 PoseStack ps = new PoseStack();
                 ps.last().pose().set(here.last().pose()).mul(f);
                 ps.last().normal().set(here.last().normal()).mul(new Matrix3f(f));
                 byGroup.put(group, ps);
             });
-            for (FrameAssembly.Part part : be.cut()) {
-                part.plates().forEach(p -> plateGroup.put(p, part.id()));
-                part.edges().forEach(e -> edgeGroup.putIfAbsent(e, part.id()));
-            }
         }
 
         PoseStack plate(Frame.Plate p) {
@@ -304,11 +310,57 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
         }
 
         PoseStack vertex(int v) {
-            return byGroup.isEmpty() ? here : of(be.groupOf(v));
+            return of(vertexGroup.get(v));
         }
 
         private PoseStack of(Integer group) {
             return group == null ? here : byGroup.getOrDefault(group, here);
+        }
+    }
+
+    /** A plate: a slab one plate-thickness through, centred on its plane, in its material's texture. */
+    static void drawPlate(VertexConsumer tex, PoseStack.Pose pose, Frame frame, Frame.Plate p, int light) {
+        TextureAtlasSprite sprite = sprite(p.materialState());
+        Vec3 a = frame.pos(p.a()), b = frame.pos(p.b()), c = frame.pos(p.c());
+        Vec3 n = frame.cross(p).normalize();
+        Vec3 h = n.scale(Frame.PLATE_THICKNESS / 2.0);
+        Vec3 a1 = a.add(h), b1 = b.add(h), c1 = c.add(h), a0 = a.subtract(h), b0 = b.subtract(h), c0 = c.subtract(h);
+        Vec3 mid = a.add(b).add(c).scale(1 / 3.0);
+        plateFace(tex, pose, sprite, light, n, a1, b1, c1);
+        plateFace(tex, pose, sprite, light, n.scale(-1), a0, c0, b0);
+        for (Vec3[] e : new Vec3[][]{{a0, b0, b1, a1}, {b0, c0, c1, b1}, {c0, a0, a1, c1}}) {
+            Vec3 out = e[1].subtract(e[0]).cross(n).normalize();
+            if (out.dot(e[0].add(e[1]).scale(0.5).subtract(mid)) < 0)
+                out = out.scale(-1);
+            double len = Math.min(1, e[1].subtract(e[0]).length());
+            texQuad(tex, pose, light, out, e[0], sprite, 0, 0, e[1], sprite, len, 0, e[2], sprite, len, Frame.PLATE_THICKNESS, e[3], sprite, 0, Frame.PLATE_THICKNESS);
+        }
+    }
+
+    /** A tube, turned {@code spin} radians about its own axis. */
+    static void drawTube(VertexConsumer tex, PoseStack.Pose pose, Frame frame, long key, Frame.Tube tube, double spin, int light) {
+        texRod(tex, pose, sprite(tube.materialState()), light, frame.pos(Frame.edgeA(key)), frame.pos(Frame.edgeB(key)),
+                tube.diameter() / 2, spin, 0);
+    }
+
+    /**
+     * A tire: a ring about its hub's axle, turned {@code turn} radians. Each segment shows its own
+     * slice of the texture, so the turning can be seen without a marked segment.
+     */
+    static void drawTire(VertexConsumer tex, PoseStack.Pose pose, Frame frame, int hubVertex, Frame.Tire tire, double turn, int light) {
+        Frame.Pivot hub = frame.pivots().get(hubVertex);
+        if (hub == null)
+            return;
+        Vec3 c = frame.pos(hubVertex), a = hub.axis().normalize();
+        Vec3 u = perp(a), v = a.cross(u);
+        double r = tire.radius(), tread = r / 2;
+        TextureAtlasSprite sprite = sprite(tire.materialState());
+        int sides = 16;
+        for (int i = 0; i < sides; i++) {
+            double p = 2 * Math.PI * i / sides + turn, q = 2 * Math.PI * (i + 1) / sides + turn;
+            Vec3 from = c.add(u.scale(Math.cos(p) * r)).add(v.scale(Math.sin(p) * r));
+            Vec3 to = c.add(u.scale(Math.cos(q) * r)).add(v.scale(Math.sin(q) * r));
+            texRod(tex, pose, sprite, light, from, to, tread / 2, 0, i / (double) sides);
         }
     }
 
@@ -317,12 +369,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
      * {@code rgb}, turned {@code angle} radians about its own axis.
      */
     private static void rod(VertexConsumer quads, Matrix4f m, Vec3 a, Vec3 b, double half, int rgb, double angle) {
-        Vec3 d = b.subtract(a).normalize();
-        Vec3 u0 = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
-        Vec3 v0 = d.cross(u0);
-        double c = Math.cos(angle), sn = Math.sin(angle);
-        Vec3 u = u0.scale(c).add(v0.scale(sn)), v = v0.scale(c).subtract(u0.scale(sn));
-        Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
+        Vec3[] ring = ring(b.subtract(a).normalize(), half, angle);
         for (int i = 0; i < 4; i++) {
             Vec3 p = ring[i], q = ring[(i + 1) % 4];
             float shade = (float) (0.55 + 0.45 * Math.abs(p.add(q).normalize().dot(LIGHT)));
@@ -332,6 +379,19 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
             quad(quads, m, a.add(p), b.add(q), b.add(p), r, g, bl);
             quad(quads, m, a.add(p), a.add(q), b.add(q), r, g, bl);
         }
+    }
+
+    /** A unit vector perpendicular to {@code d}: the way a rod's or a ring's section is laid out. */
+    private static Vec3 perp(Vec3 d) {
+        return (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize();
+    }
+
+    /** The four corners of a square section {@code half} across a rod along {@code d}, turned {@code angle} radians about it. */
+    private static Vec3[] ring(Vec3 d, double half, double angle) {
+        Vec3 u0 = perp(d).scale(half), v0 = d.cross(u0);
+        double c = Math.cos(angle), s = Math.sin(angle);
+        Vec3 u = u0.scale(c).add(v0.scale(s)), v = v0.scale(c).subtract(u0.scale(s));
+        return new Vec3[]{u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
     }
 
     private static TextureAtlasSprite sprite(BlockState state) {
@@ -383,11 +443,7 @@ public class FrameRenderer implements BlockEntityRenderer<FrameBlockEntity> {
      */
     private static void texRod(VertexConsumer c, PoseStack.Pose pose, TextureAtlasSprite s, int light, Vec3 a, Vec3 b, double half, double angle, double phase) {
         Vec3 d = b.subtract(a).normalize();
-        Vec3 u0 = (Math.abs(d.y) < 0.9 ? new Vec3(0, 1, 0) : new Vec3(1, 0, 0)).cross(d).normalize().scale(half);
-        Vec3 v0 = d.cross(u0);
-        double cs = Math.cos(angle), sn = Math.sin(angle);
-        Vec3 u = u0.scale(cs).add(v0.scale(sn)), v = v0.scale(cs).subtract(u0.scale(sn));
-        Vec3[] ring = {u.add(v), u.subtract(v), u.scale(-1).subtract(v), v.subtract(u)};
+        Vec3[] ring = ring(d, half, angle);
         double length = b.subtract(a).length(), across = Math.min(1, 2 * half * Math.sqrt(2));
         int pieces = Math.max(1, (int) Math.ceil(length));
         for (int k = 0; k < pieces; k++) {

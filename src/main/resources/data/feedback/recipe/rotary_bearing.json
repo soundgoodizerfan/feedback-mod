@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "P": {
+      "item": "minecraft:smooth_stone_slab"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "P",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:rotary_bearing"
+  }
+}
