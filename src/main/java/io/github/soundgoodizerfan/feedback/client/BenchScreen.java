@@ -316,6 +316,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
             case STOCK -> stockNodes(list);
             case PART -> partNodes(list);
             case TOOL -> toolNodes(list);
+            case FILE -> fileNodes(list);
             default -> { }
         }
         fan.set(list, recentre, VW / 2, VH / 2);
@@ -414,6 +415,21 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         }
     }
 
+    /** A made part in the centre: one node per axis a file can work, showing its value; a click is one stroke. */
+    private void fileNodes(List<BenchFan.Node> out) {
+        var axes = menu.fileAxes(level());
+        ItemStack part = menu.centreStack().copyWithCount(1);
+        for (int i = 0; i < axes.size(); i++) {
+            var a = axes.get(i);
+            float value = io.github.soundgoodizerfan.feedback.modular.Filing.value(menu.centreStack(), a);
+            Component label = Component.translatable("gui.feedback.bench.file.axis", Component.translatable("modular.feedback.axis." + a.getKey()),
+                    String.format("%.1f %s", value, a.getValue().unit()));
+            BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.FILE, part, label, "", PartBenchMenu.BTN_FILE + i, 0, i);
+            n.faint = value <= a.getValue().min() + 1e-4f;
+            out.add(n);
+        }
+    }
+
     /** A finished dish in the centre (Prep Table): the finish is its one node. */
     private void toolNodes(List<BenchFan.Node> out) {
         if (st.dishes())
@@ -464,6 +480,12 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         }
         if (n.kind == BenchFan.Kind.PREP) {
             prepare(n);
+            return;
+        }
+        if (n.kind == BenchFan.Kind.FILE) {
+            // Filing needs a file in the inventory, not the bench's tool slot: the server says if there is none.
+            press(n.action);
+            skin.cue(GuiSkin.Cue.STAGE, stockKind(), 1.2f);
             return;
         }
         if (!menu.hasHammer()) {

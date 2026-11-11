@@ -162,6 +162,12 @@ public final class ModularTuning {
     public static final int CELL_MB = 144;
     /** The smallest stock there is: a nugget, a ninth of a cell (one Qu of metal). A part's stock is rounded up to it. */
     public static final int NUGGET_MB = 16;
+    /** Filing: strokes a file takes before it wears one point (hand tools may always wear). */
+    public static final int FILE_STROKES_PER_WEAR = 5;
+    /** The share of swarf's volume lost when it melts back at the crucible (oxide and drag-out). */
+    public static final float SWARF_REMELT_LOSS = 0.10f;
+    /** The share of a whole part's volume lost when it melts back at the crucible: less than filings, which have more surface. */
+    public static final float PART_REMELT_LOSS = 0.05f;
     /** Studs on a converted crystal armour piece: it was eight diamonds, now four set in steel. */
     public static final int CONVERT_STUDS = 4;
     /** Share of its hardness (and wear) a plated armour plate takes from a sound coat: a skin, not a stud. */

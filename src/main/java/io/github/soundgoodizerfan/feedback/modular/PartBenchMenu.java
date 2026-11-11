@@ -73,14 +73,14 @@ public class PartBenchMenu extends AbstractContainerMenu {
     /** What the bench is doing, set from the centre: stock shapes, a dish being assembled, a dish being finished ({@link #MODE_PREPARE}, both at the Prep Table), a smithing template. */
     public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_PREPARE = 2, MODE_SMITH = 4;
     /** What the centre slot holds; {@code PART} and {@code TOOL} are a dish's container and the dish itself, at the Prep Table only. */
-    public enum Centre { EMPTY, STOCK, PART, TOOL, TEMPLATE, BLOOM }
+    public enum Centre { EMPTY, STOCK, PART, TOOL, TEMPLATE, BLOOM, FILE }
     /**
      * Button ids. {@code PICK + n} chooses shape n, {@code CUT + n} cut n, {@code FIT + s} fits what lies in menu slot s (at the Prep Table),
      * {@code SHAPE + n} shapes option n from the stock slot and fits it, {@code OFF + k} takes off fitted food k,
      * {@code TYPE + n} chooses dish type n.
      */
     public static final int BTN_MACHINE = 4, BTN_BREAK = 5, BTN_MAKE = 6, BTN_DESELECT = 7, BTN_TAB = 8, BTN_TYPE = 50, BTN_PICK = 100, BTN_CUT = 10000,
-            BTN_FIT = 20000, BTN_SHAPE = 30000, BTN_OFF = 40000, BTN_AXIS = 58000, BTN_AXIS_SET = 60000;
+            BTN_FIT = 20000, BTN_SHAPE = 30000, BTN_OFF = 40000, BTN_AXIS = 58000, BTN_AXIS_SET = 60000, BTN_FILE = 90000;
     /**
      * Aim buttons for the picked shape's part axes ({@link PartBenchShaping#aimable}, at most {@link #MAX_AIM}):
      * {@code AXIS + 2a} lowers axis a by its grain, {@code AXIS + 2a + 1} raises it; {@code AXIS_SET + 1000a + n} sets it to
@@ -396,6 +396,9 @@ public class PartBenchMenu extends AbstractContainerMenu {
         // A flatbread is its own container: it opens the picker like a bowl does.
         if (dish && Material.find(ClientMaterials.on(level), c.getItem()).map(l -> l.material().traits().contains(Material.Trait.WRAPPER)).orElse(false))
             return Centre.PART;
+        // A made part with axes is filed down, not shaped: one stroke of a file takes a grain off one of them.
+        if (!dish && !Filing.axes(c, types(level)).isEmpty())
+            return Centre.FILE;
         return Centre.STOCK;
     }
 
@@ -958,6 +961,43 @@ public class PartBenchMenu extends AbstractContainerMenu {
         refresh(true);
     }
 
+    /** The axes of the part in the centre that a file can work (empty unless the centre is a part to file). */
+    public List<Map.Entry<String, ModularType.Axis>> fileAxes(Level level) {
+        return Filing.axes(centreStack(), types(level));
+    }
+
+    /** One stroke of a file from the player's inventory on axis {@code index} of the part in the centre; the swarf goes to the player. */
+    private void file(ServerPlayer server, int index) {
+        Level level = server.level();
+        if (centre(level) != Centre.FILE)
+            return;
+        ItemStack file = ItemStack.EMPTY;
+        List<ItemStack> held = new ArrayList<>(server.getInventory().items);
+        held.addAll(server.getInventory().offhand);
+        for (ItemStack s : held)
+            if (!s.isEmpty() && io.github.soundgoodizerfan.feedback.modular.engineering.ToolAbilities.can(s, io.github.soundgoodizerfan.feedback.modular.engineering.ToolAbilities.FILE)
+                    && !ModularStacks.broken(s)) {
+                file = s;
+                break;
+            }
+        if (file.isEmpty()) {
+            server.displayClientMessage(Component.translatable("gui.feedback.bench.file.no_file"), true);
+            return;
+        }
+        Filing.Stroke stroke = Filing.stroke(centreStack(), index, types(level), ClientMaterials.on(level));
+        if (!stroke.ok()) {
+            server.displayClientMessage(Component.translatable("gui.feedback.bench.file." + stroke.refusal()), true);
+            return;
+        }
+        table.setItem(PartBenchBlockEntity.TOOL, stroke.part());
+        if (!stroke.swarf().isEmpty())
+            server.getInventory().placeItemBackInInventory(stroke.swarf());
+        if (stroke.wear())
+            io.github.soundgoodizerfan.feedback.modular.engineering.ToolAbilities.wear(file, 1);
+        level.playSound(null, pos, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.35f, 1.6f);
+        table.setChanged();
+    }
+
     /** Take off: a fitted food (index into {@link #assembly}) goes back to the player. */
     private void takeOff(ServerPlayer server, int k) {
         Level level = server.level();
@@ -986,6 +1026,8 @@ public class PartBenchMenu extends AbstractContainerMenu {
             if (!trim())
                 server.getInventory().placeItemBackInInventory(table.removeItemNoUpdate(PartBenchBlockEntity.STOCK + 1));
             table.setChanged();
+        } else if (id >= BTN_FILE) {
+            file(server, id - BTN_FILE);
         } else if (id >= BTN_AXIS) {
             aimClick(level, id);
         } else if (id >= BTN_OFF) {

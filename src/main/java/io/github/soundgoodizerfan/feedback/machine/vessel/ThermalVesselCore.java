@@ -465,7 +465,14 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             // spills its own mix in proportion to make room, so the metal that corrects the ratio always gets in.
             // A metal dust melting in air above its oxidation point loses a share to oxide.
             float burnt = io.github.soundgoodizerfan.feedback.process.DustHazard.burnOff(first, temperature, airlessRun());
-            FluidStack result = process.resultFluid().copyWithAmount(Math.round(process.resultFluid().getAmount() * (1f - burnt)));
+            int poured = process.resultFluid().getAmount();
+            // A whole made part pours the volume it holds (its cells of stock scaled by its axes), less what a remelt loses.
+            if (first.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
+                    && first.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()))
+                poured = Math.round(io.github.soundgoodizerfan.feedback.modular.Filing.volumeMb(first, level == null
+                        ? java.util.Map.of() : io.github.soundgoodizerfan.feedback.modular.ModularTypes.on(level))
+                        * (1f - io.github.soundgoodizerfan.feedback.modular.ModularTuning.PART_REMELT_LOSS));
+            FluidStack result = process.resultFluid().copyWithAmount(Math.round(poured * (1f - burnt)));
             int overflow = alloy.amount() + result.getAmount() - tank.getCapacity();
             if (overflow > 0 && alloy.resolve().isEmpty())
                 alloy.remove(Math.min(overflow, alloy.amount()));

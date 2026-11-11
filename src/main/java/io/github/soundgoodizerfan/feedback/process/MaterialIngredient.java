@@ -114,6 +114,9 @@ public record MaterialIngredient(Optional<String> form, Optional<TagKey<Item>> t
             return false;
         if (tag.isPresent() && !stack.is(tag.get()))
             return false;
+        // A shaped part is one item for every material and is told by its MadeOf, so it is located from the stack.
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+            return Material.find(materialsNow(), stack).filter(this::accepts).isPresent();
         return locate(stack.getItem()).filter(this::accepts).isPresent();
     }
 

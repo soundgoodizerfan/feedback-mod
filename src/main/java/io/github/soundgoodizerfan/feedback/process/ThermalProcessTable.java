@@ -206,11 +206,30 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                 out.add(new ThermalProcess(List.of(Ingredient.of(item)),
                         melt.get(), melt.get(), new Tu(Float.MAX_VALUE), meltHold(form), new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
                         new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
-                        new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)),
+                        new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), melted(form)),
                         false));
             }
+            // A whole made part melts back too: the vessel takes the volume the part holds (ThermalVesselCore) less PART_REMELT_LOSS.
+            List<String> partForms = material.items(id).keySet().stream()
+                    .filter(f -> io.github.soundgoodizerfan.feedback.registry.FormItems.types().get(f) != null
+                            && io.github.soundgoodizerfan.feedback.registry.FormItems.types().get(f).part()).toList();
+            if (!partForms.isEmpty())
+                out.add(new ThermalProcess(List.of(
+                        new MaterialIngredient(Optional.empty(), Optional.empty(), Optional.empty(), Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY,
+                                Optional.of(id), partForms).toVanilla()),
+                        melt.get(), melt.get(), new Tu(Float.MAX_VALUE), meltHold("ingot"), new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
+                        new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
+                        new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), Math.round(FormType.DEFAULT_MB
+                                * (1f - io.github.soundgoodizerfan.feedback.modular.ModularTuning.PART_REMELT_LOSS))),
+                        false));
         });
         return out;
+    }
+
+    /** The mB one item of {@code form} pours when melted: its volume, less the share swarf loses to oxide. */
+    private static int melted(String form) {
+        int mb = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form);
+        return form.equals("swarf") ? Math.round(mb * (1f - io.github.soundgoodizerfan.feedback.modular.ModularTuning.SWARF_REMELT_LOSS)) : mb;
     }
 
     /**

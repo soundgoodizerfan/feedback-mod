@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 final class BenchFan {
 
     /** What a node does when it is clicked. */
-    enum Kind { SHAPE, CUT, BREAK, FITTED, HELD, BUILD, PREP, HUB }
+    enum Kind { SHAPE, CUT, BREAK, FITTED, HELD, BUILD, PREP, HUB, FILE }
 
     /**
      * One node. {@code group} picks the ring it lies on; {@code action} is the menu button it presses (or the screen's own code for
