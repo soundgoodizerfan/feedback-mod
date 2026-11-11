@@ -1201,7 +1201,7 @@ final class BlueprintBoard {
         float v = c.isEmpty() ? dim.def() : axisValue(role, name, ToolDesigns.part(role, c.get(), shapeOf(role), 1));
         String unit = dim.unit().isEmpty() ? "" : " " + (I18n.exists("modular.feedback.unit." + dim.unit())
                 ? I18n.get("modular.feedback.unit." + dim.unit()) : dim.unit());
-        return I18n.get("modular.feedback.dim." + name) + ": " + (dim.grain() < 1f ? String.format(java.util.Locale.ROOT, "%.2f", v) : String.valueOf(Math.round(v))) + unit;
+        return I18n.get("modular.feedback.axis." + name) + ": " + (dim.grain() < 1f ? String.format(java.util.Locale.ROOT, "%.2f", v) : String.valueOf(Math.round(v))) + unit;
     }
 
     private static final int SEARCH_H = 14;

@@ -30,7 +30,10 @@
         ],
         "variants": [
           {
-            "name": "greaves",
+            "name": "plain_leggings"
+          },
+          {
+            "name": "articulated",
             "rhythm": "t.h.t.h.t.h.",
             "trait": "push_through",
             "params": {
@@ -42,19 +45,75 @@
             }
           },
           {
-            "name": "cuisses",
-            "rhythm": "h.h.t.t.h.h.",
-            "trait": "braced",
+            "name": "mail_chausses",
+            "rhythm": "tttt.tttt.tt",
+            "trait": "mail",
             "params": {
-              "knock_mult": 0.6,
-              "swim_slow": 0.15
+              "slash_mult": 0.8,
+              "blunt_mult": 1.25
             }
+          },
+          {
+            "name": "quilted",
+            "rhythm": "t.t.t.tt.t.t",
+            "mass": 0.8,
+            "section": 0.8
           }
-        ]
+        ],
+        "base": "plain_leggings"
+      },
+      "axes": {
+        "length": {
+          "min": 40,
+          "max": 90,
+          "unit": "cm",
+          "default": 66,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 52
+            },
+            {
+              "name": "normal",
+              "max": 74
+            },
+            {
+              "name": "long",
+              "trait": "leg_drag",
+              "params": {
+                "sprint_exhaust": 0.01,
+                "water_mult": 0.85
+              }
+            }
+          ]
+        },
+        "width": {
+          "min": 14,
+          "max": 30,
+          "unit": "cm",
+          "default": 20,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "slim",
+              "max": 17
+            },
+            {
+              "name": "normal",
+              "max": 24
+            },
+            {
+              "name": "wide"
+            }
+          ]
+        }
       }
     },
     "L": {
-      "name": "lining",
+      "name": "underlayer",
       "forms": [
         "*"
       ],
@@ -130,6 +189,22 @@
       "litres": 0.03,
       "layer": 9,
       "after": true
+    },
+    "K": {
+      "name": "poleyn",
+      "forms": [
+        "ingot",
+        "plate",
+        "chain",
+        "leather"
+      ],
+      "litres": 0.03,
+      "bulk": 2,
+      "trait": "poleyn",
+      "params": {
+        "fall_mult": 0.75,
+        "stagger_mult": 0.5
+      }
     }
   },
   "patterns": [
@@ -165,5 +240,34 @@
   "vanilla": {
     "leggings": "ingot",
     "chainmail_leggings": "chain"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "chausses",
+        "is": {
+          "variant": "mail_chausses"
+        }
+      },
+      {
+        "name": "quilted_chausses",
+        "is": {
+          "variant": "quilted"
+        }
+      },
+      {
+        "name": "greaves",
+        "is": {
+          "variant": "articulated"
+        }
+      },
+      {
+        "name": "cuisses",
+        "is": {
+          "variant": "plain_leggings",
+          "length": "short"
+        }
+      }
+    ]
   }
 }

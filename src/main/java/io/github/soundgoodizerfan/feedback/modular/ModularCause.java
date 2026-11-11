@@ -37,7 +37,8 @@ public final class ModularCause {
             boolean named = switch (fig) {
                 case HARDNESS, EDGE_TOUGHNESS, BITE, DURABILITY, ARMOUR_TOUGHNESS, CAPACITY -> wearing || (fig == Fig.DURABILITY && role.striker());
                 case HARDNESS_OFF, EDGE_TOUGHNESS_OFF, DIG_SPEED_OFF -> role.striker() && !p.role().equals(type.wearRole());
-                case ARMOUR -> type.family() == ModularType.Family.GLOVE ? p.role().equals(ModularGlove.PLATE) : wearing || role.name().equals("lining");
+                case ARMOUR -> type.family() == ModularType.Family.GLOVE ? p.role().equals(ModularGlove.PLATE) : wearing || role.name().equals("underlayer");
+                case PIERCE_RESIST, FIRE_CONDUCT -> p.role().equals(type.wearRole());
                 case KNOCKBACK_RESISTANCE, CORROSION -> p.role().equals(type.wearRole());
                 case ENCHANTABILITY -> p.role().equals(type.primary());
                 case REACH -> role.rod();

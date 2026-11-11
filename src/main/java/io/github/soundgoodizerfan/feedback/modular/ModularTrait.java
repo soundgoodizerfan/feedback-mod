@@ -86,6 +86,10 @@ public interface ModularTrait {
     default void onWornHurt(LivingIncomingDamageEvent event, LivingEntity wearer, ItemStack piece, Params params) {
     }
 
+    /** The wearer is hit by a critical blow (before its damage is worked out): the multiplier may be changed through the event. */
+    default void onWornCrit(net.neoforged.neoforge.event.entity.player.CriticalHitEvent event, LivingEntity wearer, ItemStack piece, Params params) {
+    }
+
     /** The wearer lands from a fall. */
     default void onWornFall(LivingFallEvent event, LivingEntity wearer, ItemStack piece, Params params) {
     }

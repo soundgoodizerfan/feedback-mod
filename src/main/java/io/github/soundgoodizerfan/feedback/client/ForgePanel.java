@@ -128,7 +128,8 @@ final class ForgePanel implements WorkPanel {
         var level = host.level();
         if (phase != Phase.NONE || !host.menu().hasHammer())
             return false;
-        var stock = ToolTableShaping.check(host.menu().station(), option, host.menu().stock(), ClientMaterials.on(level), level);
+        var stock = ToolTableShaping.check(host.menu().station(), option, host.menu().stock(), ClientMaterials.on(level), level,
+                index == host.menu().picked() ? host.menu().aimScale(option) : 1f);
         if (stock.isEmpty() || !ForgeRhythm.workable(stock.get().what().material(), stock.get().coldest(), host.menu().hold())
                 || !ForgeRhythm.movable(option.variant().rhythm(), host.menu().strikes(), stock.get().what().material()))
             return false;

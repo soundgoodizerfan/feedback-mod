@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Braced (spec 8.4): supported fire. A shoulder stock or a heavy frame takes the kick into the body when the
  * shooter is crouched and still: kick falls by {@code kick_mult} and spread by {@code spread_mult}. Named
- * {@code gun_braced} because armour's cuisses already hold {@code braced}.
+ * {@code gun_braced} because armour's long leg guards already hold {@code braced}.
  */
 public class GunBraced implements ModularTrait {
 

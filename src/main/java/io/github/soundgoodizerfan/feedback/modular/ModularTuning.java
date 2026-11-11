@@ -482,4 +482,18 @@ public final class ModularTuning {
     public static final int ENCHANT_PER_LEVEL = 8, ENCHANT_MAX_LEVEL = 3;
     /** Flame a handle burns the wielder at when its material has no flame temperature of its own, Tu. */
     public static final float ENCHANT_BURN_FALLBACK_TU = 500f;
+    /** Placeholder [OPEN]. The spread of an as-built axis around its aim, as a share of the axis's range: a clean forging, a hand-laid part, and a forging far off its work. */
+    public static final float AXIS_ERROR_GOOD = 0.04f, AXIS_ERROR_LAID = 0.04f, AXIS_ERROR_POOR = 0.25f;
+    /** Placeholder [OPEN]. How far the work ratio may stray from 1 before the spread is the poor one, and the spread each flaw adds (share of range). */
+    public static final float AXIS_ERROR_RATIO_SPAN = 0.5f, AXIS_ERROR_PER_FLAW = 0.02f;
+    /** Placeholder [OPEN]. The most an armour piece's cover reaches: a tall, wide plate covers more than the canonical one, to this share. */
+    public static final float ARMOUR_COVER_MAX = 1.3f;
+    /** Placeholder [OPEN]. The most pierce damage one piece turns aside, as a share. */
+    public static final float PIERCE_RESIST_MAX = 0.6f;
+    /** Placeholder [OPEN]. How much of the whole pierce resistance each worn slot carries: chest, legs, head, feet (they sum to 1). */
+    public static final float PIERCE_WEIGHT_CHEST = 0.4f, PIERCE_WEIGHT_LEGS = 0.3f, PIERCE_WEIGHT_HEAD = 0.2f, PIERCE_WEIGHT_FEET = 0.1f;
+    /** Placeholder [OPEN]. Heat damage a second per point of fire conduction summed over the worn pieces, while the wearer burns or stands in lava. */
+    public static final float FIRE_SOAK_PER_CONDUCT = 0.5f;
+    /** Placeholder [OPEN]. Ticks between a burning wearer's armour soaking heat in (and hurting). */
+    public static final int FIRE_SOAK_INTERVAL = 20;
 }

@@ -45,6 +45,13 @@ public final class FModular {
                     .networkSynchronized(ModularDesign.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list()))
                     .build());
 
+    /** A blueprint's title and designer; an item made to a blueprint carries it too (see {@code BlueprintCredit}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.modular.BlueprintCredit>> CREDIT =
+            COMPONENTS.register("blueprint_credit", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.modular.BlueprintCredit>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.STREAM_CODEC)
+                    .build());
+
     /** What that design makes, baked once and again at each step of wear. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ModularFigures>> FIGURES =
             COMPONENTS.register("modular_figures", () -> DataComponentType.<ModularFigures>builder()

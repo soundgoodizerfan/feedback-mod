@@ -182,7 +182,12 @@ public record ModularFigures(List<Float> values, int step) {
         /** How strongly each of those upgrades works, from the material its attachment is cut in (0.25 to 1.5), in the same order. */
         SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4,
         /** A suit module's draw multiplier from its wiring: heavy conductor runs it cooler (below 1), thin wire wastes more (above 1). 0 where no module is held. */
-        SUIT_WIRING;
+        SUIT_WIRING,
+        // --- an armour piece's, from the plate's axes ---
+        /** 0 to {@code PIERCE_RESIST_MAX}: the share of pierce (projectile) damage the piece turns aside; worn pieces add by slot weight. */
+        PIERCE_RESIST,
+        /** The plate material's thermal conductivity times the plate's volume: how readily it carries fire's heat to the wearer. 0 for cloth and leather. */
+        FIRE_CONDUCT;
 
         /** Most attachments one module carries. */
         public static final int ATTACHMENTS = 4;

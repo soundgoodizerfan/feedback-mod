@@ -67,6 +67,22 @@
           }
         ]
       }
+    },
+    "V": {
+      "name": "vambrace",
+      "forms": [
+        "ingot",
+        "plate",
+        "leather"
+      ],
+      "litres": 0.05,
+      "bulk": 2,
+      "trait": "vambrace",
+      "params": {
+        "parry_mult": 0.6,
+        "stagger_mult": 0.5,
+        "light_damage": 4
+      }
     }
   },
   "patterns": [

@@ -38,6 +38,18 @@ public class ModularBlueprintItem extends Item {
         return design == null ? java.util.Optional.empty() : java.util.Optional.of(new Preview(design));
     }
 
+    /** Using a blueprint opens its recipe card: what to make, read off the design the sheet carries. */
+    @Override
+    public net.minecraft.world.InteractionResultHolder<ItemStack> use(net.minecraft.world.level.Level level, net.minecraft.world.entity.player.Player player,
+                                                                       net.minecraft.world.InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (ModularStacks.design(stack) == null)
+            return net.minecraft.world.InteractionResultHolder.pass(stack);
+        if (level.isClientSide)
+            io.github.soundgoodizerfan.feedback.client.BlueprintCardScreen.open(stack);
+        return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+    }
+
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         ModularDesign design = ModularStacks.design(stack);
@@ -45,6 +57,11 @@ public class ModularBlueprintItem extends Item {
             return;
         tooltip.add(Component.translatable("item." + design.type().getNamespace() + "." + design.type().getPath())
                 .withStyle(ChatFormatting.WHITE));
+        BlueprintCredit credit = BlueprintCredit.of(stack);
+        if (credit != null && credit.titleLine() != null)
+            tooltip.add(credit.titleLine());
+        if (credit != null)
+            tooltip.add(credit.line());
         ModularType type = ModularTypes.known().get(design.type());
         if (type != null)
             tooltip.add(ModularTooltip.parts(design, type).withStyle(ChatFormatting.GRAY));

@@ -111,6 +111,7 @@ public final class ModularStacks {
             return false;
         stack.set(FModular.DESIGN.get(), design);
         stack.set(FModular.FIGURES.get(), baked.get());
+        ToolTableAssembly.keepCredit(stack, design);
         // A gun's wear is its bore's (GunCondition), not a bar of uses; a head's is TOOL_CONDITION, worn by the machine.
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
@@ -584,6 +585,11 @@ public final class ModularStacks {
         Part main = d.part(type != null ? type.primary() : d.parts().get(0).role());
         if (main == null)
             return typeName;
+        if (type != null && type.family() == ModularType.Family.ARMOUR) {
+            Optional<Component> built = ArmourNames.of(d, type, typeName);
+            if (built.isPresent())
+                return built.get();
+        }
         if (!main.variant().isEmpty() && type != null && type.strikers().isEmpty())
             typeName = Component.translatable("modular.feedback.archetype." + main.variant());
         Component material = Component.translatable("material." + main.material().getNamespace() + "." + main.material().getPath());

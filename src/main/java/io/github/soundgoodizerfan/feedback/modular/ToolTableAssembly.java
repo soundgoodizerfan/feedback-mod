@@ -13,6 +13,7 @@ import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Measures;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -146,6 +147,7 @@ public final class ToolTableAssembly {
             });
             if (tool.isEmpty())
                 continue;
+            credit(tool.get(), plan, e.getKey(), design);
             String[] role = new String[slots.size()];
             for (int i = 0; i < used.size(); i++)
                 role[used.get(i)] = best.roles[i];
@@ -158,7 +160,7 @@ public final class ToolTableAssembly {
      * Whether {@code made} is the thing {@code drawn} shows: the same parts, role for role, in the same material and shape and number.
      * Ground-in figures (axes, flaw) are measured on the part and left to the bake; the drawing predicts them.
      */
-    private static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
+    static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
         // a held component (a circuit, a cell) is what the builder brings: the sheet does not pin it
         if (drawn.parts().size() != made.parts().stream().filter(p -> p.sub().isEmpty()).count())
             return false;
@@ -169,6 +171,28 @@ public final class ToolTableAssembly {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Writes the credit of the first sheet in {@code plan} that {@code design} is drawn to onto {@code item}, whoever made it. A sheet of
+     * another type, or one the parts depart from, gives nothing. A blueprint is optional: it gates no type, it only gives credit.
+     */
+    private static void credit(ItemStack item, ItemStack plan, ResourceLocation type, ModularDesign design) {
+        for (ItemStack sheet : ModularBlueprints.sheets(plan)) {
+            ModularDesign drawn = ModularStacks.design(sheet);
+            BlueprintCredit credit = BlueprintCredit.of(sheet);
+            if (credit != null && drawn.type().equals(type) && drawnTo(drawn, design)) {
+                item.set(FModular.CREDIT.get(), credit.onItem(drawn));
+                return;
+            }
+        }
+    }
+
+    /** Drops the credit {@code stack} carries if {@code design} no longer shows the parts it was drawn with. */
+    static void keepCredit(ItemStack stack, ModularDesign design) {
+        BlueprintCredit credit = BlueprintCredit.of(stack);
+        if (credit != null && credit.drawn().filter(d -> drawnTo(d, design)).isEmpty())
+            stack.remove(FModular.CREDIT.get());
     }
 
     /**

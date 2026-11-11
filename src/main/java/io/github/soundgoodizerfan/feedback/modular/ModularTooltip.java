@@ -40,9 +40,14 @@ public final class ModularTooltip {
             tooltip.add(Component.translatable("tooltip.feedback.modular.undesigned").withStyle(ChatFormatting.GRAY));
             return;
         }
+        BlueprintCredit credit = BlueprintCredit.of(stack);
+        if (credit != null && credit.titleLine() != null)
+            tooltip.add(credit.titleLine());
         ModularType type = ModularTypes.known().get(design.type());
         if (type != null)
             contents(design, type).forEach(c -> tooltip.add(c.withStyle(ChatFormatting.GRAY)));
+        if (credit != null)
+            tooltip.add(credit.line());
         ModularFigures f = ModularStacks.figures(stack);
         if (f == null)
             return;

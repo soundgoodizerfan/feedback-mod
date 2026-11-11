@@ -298,8 +298,12 @@ public final class ModularModifiers {
             case "reaping" -> new Object[]{n(p(v, "wear", 1))};
             case "open_face" -> new Object[]{n(p(v, "projectile_mult", 1.3f))};
             case "closed_visor" -> new Object[]{n(p(v, "projectile_mult", 0.6f)), n(p(v, "visibility_mult", 1.5f))};
-            case "neck_guard" -> new Object[]{n(p(v, "behind_mult", 0.8f)), n(p(v, "back_angle", 120))};
             case "studded" -> new Object[]{n(p(v, "per_stud", 1)), n(p(v, "max", 3)), n(p(v, "wear", 1))};
+            case "cramped" -> new Object[]{n(p(v, "sneak_mult", 0.7f) * 100)};
+            case "crown_lever" -> new Object[]{n(p(v, "knock_mult", 1.3f) * 100)};
+            case "leg_drag" -> new Object[]{n(p(v, "sprint_exhaust", 0.01f)), n(p(v, "water_mult", 0.85f) * 100)};
+            case "shaft_seal" -> new Object[]{n(p(v, "water_mult", 0.9f) * 100)};
+            case "cushion_sole" -> new Object[]{n(p(v, "fall_mult", 0.8f) * 100)};
             case "rigid" -> new Object[]{n(p(v, "absorb_mult", 0.7f))};
             case "mail" -> new Object[]{n(p(v, "slash_mult", 0.75f)), n(p(v, "blunt_mult", 1.3f))};
             case "push_through" -> new Object[]{n(p(v, "max", 0.8f) * 100), n(p(v, "exhaustion", 0.3f)), n(p(v, "wear", 1)),
@@ -314,6 +318,11 @@ public final class ModularModifiers {
             case "belt_fed" -> new Object[]{n(p(v, "reload_mult", 2f))};
             case "trample" -> new Object[]{n(p(v, "min_fall", 3)), n(p(v, "radius", 1.5f)), n(p(v, "weight", 40)),
                     n(p(v, "wear", 1))};
+            case "collar" -> new Object[]{n(p(v, "stiff_share", 0.5f) * 100), n(p(v, "flex_share", 0.2f) * 100)};
+            case "pauldron" -> new Object[]{n((1 - p(v, "overhead_mult", 0.7f)) * 100), n((1 - p(v, "falling_mult", 0.6f)) * 100)};
+            case "poleyn" -> new Object[]{n((1 - p(v, "fall_mult", 0.75f)) * 100), n((1 - p(v, "stagger_mult", 0.5f)) * 100)};
+            case "vambrace" -> new Object[]{n(p(v, "light_damage", 4)), n((1 - p(v, "parry_mult", 0.6f)) * 100), n((1 - p(v, "stagger_mult", 0.5f)) * 100)};
+            case "hobnails" -> new Object[]{n(p(v, "grip_mult", 0.3f) * 100), n((p(v, "visibility_mult", 1.15f) - 1) * 100)};
             case "spurs" -> new Object[]{n(p(v, "boost_ticks", 60) / 20), n(p(v, "level", 1)), n(p(v, "cooldown_ticks", 200) / 20)};
             default -> new Object[0];
         };

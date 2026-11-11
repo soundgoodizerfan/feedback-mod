@@ -30,36 +30,90 @@
         ],
         "variants": [
           {
-            "name": "open_helm",
-            "cells": 4,
-            "trait": "open_face",
-            "params": {
-              "projectile_mult": 1.3
-            }
+            "name": "round"
           },
           {
-            "name": "great_helm",
-            "cells": 7,
-            "trait": "closed_visor",
-            "params": {
-              "projectile_mult": 0.6,
-              "visibility_mult": 1.5
-            }
+            "name": "conical",
+            "rhythm": "t.t.t.t.hh..",
+            "mass": 0.9,
+            "section": 1.1
           },
           {
-            "name": "sallet",
-            "cells": 6,
-            "trait": "neck_guard",
-            "params": {
-              "behind_mult": 0.8,
-              "back_angle": 120
-            }
+            "name": "ridged",
+            "rhythm": "h.t.h.t.h.t.",
+            "mass": 1.1,
+            "section": 1.2
+          },
+          {
+            "name": "tailed",
+            "cells": 6
+          },
+          {
+            "name": "pointed_face",
+            "rhythm": "h.t.t.h.t.t.",
+            "mass": 1.05,
+            "section": 1.15
           }
-        ]
+        ],
+        "base": "round"
+      },
+      "axes": {
+        "face_opening": {
+          "min": 0,
+          "max": 14,
+          "unit": "cm",
+          "default": 7,
+          "step": 0.5,
+          "scales": false,
+          "bands": [
+            {
+              "name": "closed",
+              "max": 2,
+              "trait": "closed_visor",
+              "params": {}
+            },
+            {
+              "name": "normal",
+              "max": 9
+            },
+            {
+              "name": "open",
+              "trait": "open_face",
+              "params": {
+                "projectile_mult": 1.3
+              }
+            }
+          ]
+        },
+        "crown": {
+          "min": 6,
+          "max": 24,
+          "unit": "cm",
+          "default": 14,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "low",
+              "max": 10
+            },
+            {
+              "name": "normal",
+              "max": 18
+            },
+            {
+              "name": "tall",
+              "trait": "crown_lever",
+              "params": {
+                "knock_mult": 1.25
+              }
+            }
+          ]
+        }
       }
     },
     "L": {
-      "name": "lining",
+      "name": "underlayer",
       "forms": [
         "*"
       ],
@@ -144,6 +198,23 @@
       "litres": 0.03,
       "layer": 9,
       "after": true
+    },
+    "C": {
+      "name": "collar",
+      "forms": [
+        "ingot",
+        "plate",
+        "chain",
+        "leather",
+        "fibre"
+      ],
+      "litres": 0.02,
+      "bulk": 1,
+      "trait": "collar",
+      "params": {
+        "stiff_share": 0.5,
+        "flex_share": 0.2
+      }
     }
   },
   "patterns": [
@@ -179,5 +250,39 @@
   "vanilla": {
     "helmet": "ingot",
     "chainmail_helmet": "chain"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "bascinet",
+        "is": {
+          "variant": "pointed_face"
+        }
+      },
+      {
+        "name": "sallet",
+        "is": {
+          "variant": "tailed"
+        }
+      },
+      {
+        "name": "morion",
+        "is": {
+          "variant": "ridged"
+        }
+      },
+      {
+        "name": "spangenhelm",
+        "is": {
+          "variant": "conical"
+        }
+      },
+      {
+        "name": "great_helm",
+        "is": {
+          "face_opening": "closed"
+        }
+      }
+    ]
   }
 }

@@ -13,12 +13,13 @@ def traits(v):
 for f in sorted((R / "data/feedback/modular_type").glob("*.json")):
     d = json.loads(f.read_text()); n = f.stem
     for des in d.get("names", {}).get("designations", []):
-        want(f"gun.feedback.designation.{des['name']}", f"{n} designation")
+        prefix = "armour" if d.get("family") == "armour" else "gun"
+        want(f"{prefix}.feedback.designation.{des['name']}", f"{n} designation")
     for rid, role in d.get("roles", {}).items():
         want(f"modular.feedback.role.{role['name']}", f"{n} role {rid}")
         want(f"modular.feedback.role.{role['name']}.tip", f"{n} role {rid}")
-        for dim in role.get("dims", {}):
-            want(f"modular.feedback.dim.{dim}", f"{n} role {rid} dim")
+        for dim in role.get("axes", {}):
+            want(f"modular.feedback.axis.{dim}", f"{n} role {rid} axis")
         part = role.get("part") or {}
         for v in part.get("variants", []):
             want(f"modular.feedback.variant.{v['name']}", f"{n} variant")

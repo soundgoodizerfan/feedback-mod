@@ -57,7 +57,7 @@ public final class ShieldHeat {
     private ShieldHeat() {
     }
 
-    private static float thermalMass(ModularFigures f) {
+    static float thermalMass(ModularFigures f) {
         return Math.max(1f, f.get(ModularFigures.Fig.MASS) * FTuning.SHIELD_THERMAL_MASS_PER_MU);
     }
 
@@ -67,7 +67,7 @@ public final class ShieldHeat {
         return f == null ? FTuning.ITEM_COOLING_TU_PER_TICK : new TuRate(FTuning.SHIELD_COOLING_WORK_PER_TICK / thermalMass(f));
     }
 
-    private static void stamp(ItemStack shield, float tu, Level level) {
+    static void stamp(ItemStack shield, float tu, Level level) {
         shield.set(FDataComponents.TEMPERATURE.get(), tu);
         shield.set(FDataComponents.HEATED_AT.get(), level.getGameTime());
     }
@@ -115,7 +115,7 @@ public final class ShieldHeat {
     }
 
     /** {@code from} drawn towards {@code source} for {@code ticks}, never past it. */
-    private static float approach(float from, float source, float mass, int ticks) {
+    static float approach(float from, float source, float mass, int ticks) {
         if (source <= from)
             return from;
         float k = FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() / mass;

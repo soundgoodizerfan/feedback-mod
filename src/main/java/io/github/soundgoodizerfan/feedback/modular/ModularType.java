@@ -166,6 +166,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         PROPELLER,
         /** A suit upgrade module ({@code suit_module}): casing, wiring and a core cut in the shape that names what it does. Made at the Tool Table, then held whole in an armour piece's upgrade role ({@link ModularNest}); its bake is {@link ModularBake#suitModule}. No wear bar of its own. */
         SUIT_MODULE,
+        /** A spring-piston air gun ({@code spring_gun}): cocked by hand, it throws a metal pellet with a spring's stored energy. Not a {@link #GUN}: nothing in it ignites powder. Its bake is {@link SpringGunSpec}. */
+        AIR_GUN,
         MACHINE;
 
         /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). A circuit is held too, as form {@code circuit}, though it is no modular family. */
@@ -402,6 +404,20 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             for (Map.Entry<String, Axis> a : axes.entrySet())
                 if (a.getValue().scales() && a.getValue().def() > 0f)
                     scale *= a.getValue().clamp(made.axis(a.getKey(), a.getValue().def())) / a.getValue().def();
+            return scale;
+        }
+
+        /** The axes in a fixed order (by name): the order a bench's axis buttons and synced targets index them. */
+        public List<Map.Entry<String, Axis>> sortedAxes() {
+            return axes.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList();
+        }
+
+        /** As {@link #volumeScale}, for bare axis values by name (a bench's aim, before any part exists); a name left out reads the default. */
+        public float volumeScaleOf(Map<String, Float> values) {
+            float scale = 1f;
+            for (Map.Entry<String, Axis> a : axes.entrySet())
+                if (a.getValue().scales() && a.getValue().def() > 0f)
+                    scale *= a.getValue().clamp(values.getOrDefault(a.getKey(), a.getValue().def())) / a.getValue().def();
             return scale;
         }
 

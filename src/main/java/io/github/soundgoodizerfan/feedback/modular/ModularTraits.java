@@ -61,7 +61,6 @@ public final class ModularTraits {
         // armour (worn; one line each)
         register("open_face", new io.github.soundgoodizerfan.feedback.modular.trait.OpenFace());
         register("closed_visor", new io.github.soundgoodizerfan.feedback.modular.trait.ClosedVisor());
-        register("neck_guard", new io.github.soundgoodizerfan.feedback.modular.trait.NeckGuard());
         register("studded", new io.github.soundgoodizerfan.feedback.modular.trait.Studded());
         register("rigid", new io.github.soundgoodizerfan.feedback.modular.trait.Rigid());
         register("mail", new io.github.soundgoodizerfan.feedback.modular.trait.Mail());
@@ -117,6 +116,16 @@ public final class ModularTraits {
         register("open_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.GunOpenBolt());
         register("fan", new io.github.soundgoodizerfan.feedback.modular.trait.GunFan());
         register("belt_fed", new io.github.soundgoodizerfan.feedback.modular.trait.GunBeltFed());
+        register("cramped", new io.github.soundgoodizerfan.feedback.modular.trait.Cramped());
+        register("crown_lever", new io.github.soundgoodizerfan.feedback.modular.trait.CrownLever());
+        register("leg_drag", new io.github.soundgoodizerfan.feedback.modular.trait.LegDrag());
+        register("shaft_seal", new io.github.soundgoodizerfan.feedback.modular.trait.ShaftSeal());
+        register("cushion_sole", new io.github.soundgoodizerfan.feedback.modular.trait.CushionSole());
+        register("collar", new io.github.soundgoodizerfan.feedback.modular.trait.Collar());
+        register("pauldron", new io.github.soundgoodizerfan.feedback.modular.trait.Pauldron());
+        register("poleyn", new io.github.soundgoodizerfan.feedback.modular.trait.Poleyn());
+        register("vambrace", new io.github.soundgoodizerfan.feedback.modular.trait.Vambrace());
+        register("hobnails", new io.github.soundgoodizerfan.feedback.modular.trait.Hobnails());
     }
 
     private static void register(String id, ModularTrait trait) {
@@ -376,6 +385,17 @@ public final class ModularTraits {
                     out.add(new Worn(id, a.trait(), a.params(), piece, slot));
             }
         }
+        // A glove is worn in the Curios hands slot; its addons (a vambrace) count with the armour, after it.
+        if (entity instanceof Player player)
+            top.theillusivec4.curios.api.CuriosApi.getCuriosInventory(player)
+                    .flatMap(inv -> inv.findFirstCurio(s -> s.getItem() instanceof ModularGlove)).ifPresent(found -> {
+                        ItemStack glove = found.stack();
+                        for (Active a : actives(glove)) {
+                            String id = idOf(a.trait());
+                            if (id != null && out.stream().noneMatch(w -> w.id().equals(id)))
+                                out.add(new Worn(id, a.trait(), a.params(), glove, EquipmentSlot.MAINHAND));
+                        }
+                    });
         return out;
     }
 
@@ -402,13 +422,22 @@ public final class ModularTraits {
         }
     }
 
-    @SubscribeEvent
+    /** After the attacker's own traits have raised the blow, so a worn trait that cuts a bonus sees it. */
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOW)
     public static void onWornHurt(LivingIncomingDamageEvent event) {
         LivingEntity wearer = event.getEntity();
         if (wearer.level().isClientSide)
             return;
         for (Worn w : worn(wearer))
             w.trait().onWornHurt(event, wearer, w.piece(), w.params());
+    }
+
+    @SubscribeEvent
+    public static void onWornCrit(net.neoforged.neoforge.event.entity.player.CriticalHitEvent event) {
+        if (!(event.getTarget() instanceof LivingEntity wearer) || wearer.level().isClientSide)
+            return;
+        for (Worn w : worn(wearer))
+            w.trait().onWornCrit(event, wearer, w.piece(), w.params());
     }
 
     @SubscribeEvent

@@ -656,19 +656,23 @@ public final class ModularBake {
             case ARMOUR -> {
                 Part plate = wearPart;
                 float share = comp / (comp + ModularTuning.ARMOUR_HALF_COMPETENCE);
-                float cover = Math.min(1f, plate.count() / (float) type.canonicalCounts().getOrDefault(type.wearRole(), plate.count()));
+                ModularType.Role plateRole = type.roles().get(type.wearRole());
+                float canonical = type.canonicalCounts().getOrDefault(type.wearRole(), plate.count());
+                float cover = clamp(plateRole.cells(plate) * plateRole.volumeScale(plate) / Math.max(1f, canonical), 0f, ModularTuning.ARMOUR_COVER_MAX);
                 float points = type.armourMax() * share * type.roles().get(type.wearRole()).factor(plate.form()) * cover;
                 float total = 0;
                 for (Part p : design.parts()) {
                     ModularType.Role r = type.roles().get(p.role());
                     total += mass(r, p, by.get(p.role()));
-                    if (r.name().equals("lining")) {
+                    if (r.name().equals("underlayer")) {
                         float c = competence(by.get(p.role()));
                         points += type.armourMax() * ModularTuning.LINING_SHARE * c / (c + ModularTuning.ARMOUR_HALF_COMPETENCE);
                     }
                     suitFitting(f, type, r, p, by.get(p.role()));
                 }
                 f.put(Fig.MASS, total);
+                f.put(Fig.PIERCE_RESIST, clamp(share * cover * param(plateRole, plate, "pierce"), 0f, ModularTuning.PIERCE_RESIST_MAX));
+                f.put(Fig.FIRE_CONDUCT, edge.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) * plateRole.volume(plate));
                 f.put(Fig.ARMOUR, points * worn);
                 f.put(Fig.ARMOUR_TOUGHNESS, ModularTuning.TOUGHNESS_MAX * Math.max(0f,
                         (share - ModularTuning.TOUGHNESS_FROM_SHARE) / (1 - ModularTuning.TOUGHNESS_FROM_SHARE)));
