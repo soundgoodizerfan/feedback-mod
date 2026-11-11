@@ -35,6 +35,8 @@ import io.github.soundgoodizerfan.feedback.machine.cog.CogBlock;
 import io.github.soundgoodizerfan.feedback.machine.gearbox.GearboxBlock;
 import io.github.soundgoodizerfan.feedback.machine.adapter.RotationAdapterBlock;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RingGearBlock;
+import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
+import io.github.soundgoodizerfan.feedback.machine.bearing.JointBlock;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
 import io.github.soundgoodizerfan.feedback.machine.grindingwheel.GrindingWheelBlock;
 import io.github.soundgoodizerfan.feedback.machine.crank.HandCrankBlock;
@@ -149,6 +151,20 @@ public class FBlocks {
                     .strength(3.0f)
                     .sound(SoundType.COPPER)
                     .noOcclusion()));
+
+    /** Joints for micro builds (vehicles v2 spec): a ball inside a cone, a rigid lock, a spring slider, a servo piston. */
+    public static final DeferredBlock<JointBlock> BALL_JOINT = BLOCKS.register("ball_joint",
+            () -> new JointBlock(Joint.Kind.BALL, jointProperties()));
+    public static final DeferredBlock<JointBlock> LOCKED_JOINT = BLOCKS.register("locked_joint",
+            () -> new JointBlock(Joint.Kind.LOCKED, jointProperties()));
+    public static final DeferredBlock<JointBlock> SLIDER_JOINT = BLOCKS.register("slider_joint",
+            () -> new JointBlock(Joint.Kind.SLIDER, jointProperties()));
+    public static final DeferredBlock<JointBlock> PISTON_JOINT = BLOCKS.register("piston_joint",
+            () -> new JointBlock(Joint.Kind.PISTON, jointProperties()));
+
+    private static BlockBehaviour.Properties jointProperties() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.COPPER).noOcclusion();
+    }
 
     /** The same, driven at its rim by a cog: hollow; see {@code RingGearBlock}. */
     public static final DeferredBlock<RingGearBlock> RING_GEAR = BLOCKS.register("ring_gear",

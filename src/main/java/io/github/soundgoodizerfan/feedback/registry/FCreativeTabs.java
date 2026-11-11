@@ -90,6 +90,10 @@ public class FCreativeTabs {
                         output.accept(FItems.ROTATION_ADAPTER.get());
                         output.accept(FItems.ROTARY_BEARING.get());
                         output.accept(FItems.RING_GEAR.get());
+                        output.accept(FItems.BALL_JOINT.get());
+                        output.accept(FItems.LOCKED_JOINT.get());
+                        output.accept(FItems.SLIDER_JOINT.get());
+                        output.accept(FItems.PISTON_JOINT.get());
                         output.accept(FItems.CRANK_LINKAGE.get());
                         output.accept(FItems.MECHANICAL_HAMMER.get());
                         output.accept(FItems.WIRE_DRAWER.get());

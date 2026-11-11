@@ -24,6 +24,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
+import io.github.soundgoodizerfan.feedback.machine.bearing.JointPart;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerLevel;
@@ -105,6 +106,13 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     private long hinge;
     /** The voxel collider is to be written on the next server tick (after a load). */
     private boolean colliderDue = true;
+    /** A piston voxel's commanded level, -1 to 1 of its travel, by voxel index; set by a card or a test, not saved. */
+    private final float[] levels = new float[VOXELS];
+
+    public void setLevel(int index, float level) {
+        levels[index] = level;
+    }
+
     /** Micro bearings among the voxels that have a body assembled, by voxel index. */
     private final Int2ObjectOpenHashMap<Joint> bearings = new Int2ObjectOpenHashMap<>();
     /** Set by chunk unload, so setRemoved does not take an unload for the cell being broken. */
@@ -369,7 +377,8 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             var e = it.next();
             BlockState voxel = cell.voxels[e.getIntKey()];
             MicroRotor rotor = cell.rotors[e.getIntKey()];
-            if (voxel == null || rotor == null || !(voxel.getBlock() instanceof RotaryBearingBlock) || e.getValue().gone(server)) {
+            boolean hinge = e.getValue().kind() == Joint.Kind.HINGE;
+            if (voxel == null || (hinge && rotor == null) || !(voxel.getBlock() instanceof JointPart) || e.getValue().gone(server)) {
                 e.getValue().letGo();
                 MicroBearings.unclear(server, e.getValue());
                 it.remove();
@@ -377,7 +386,8 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
                 continue;
             }
             Direction f = voxel.getValue(RotaryBearingBlock.FACING);
-            rebuild |= e.getValue().tick(server, pos, cell.faceCentre(e.getIntKey(), f), f, rotor.getRpm().value());
+            rebuild |= e.getValue().tick(server, pos, cell.faceCentre(e.getIntKey(), f), f,
+                    hinge ? rotor.getRpm().value() : cell.levels[e.getIntKey()]);
         }
         if (rebuild) {
             cell.setChanged();

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "B": {
+      "item": "feedback:rotary_bearing"
+    }
+  },
+  "pattern": [
+    "I I",
+    " B ",
+    "I I"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:ball_joint"
+  }
+}

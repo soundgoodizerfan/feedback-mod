@@ -59,7 +59,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * it back as blocks. Create's mechanical bearing in behaviour; no code taken. Also a micro voxel
  * ({@code MicroRotation}): then it turns voxels ({@code vehicle/micro/MicroBearings}).
  */
-public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotation {
+public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotation, JointPart {
 
     /** The turning face: where the assembled body sits. */
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
@@ -105,6 +105,11 @@ public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotat
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES[state.getValue(FACING).ordinal()];
+    }
+
+    @Override
+    public Joint.Kind kind() {
+        return Joint.Kind.HINGE;
     }
 
     @Override

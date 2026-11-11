@@ -28,6 +28,8 @@ import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
+import io.github.soundgoodizerfan.feedback.machine.bearing.JointBlock;
+import io.github.soundgoodizerfan.feedback.machine.bearing.JointPart;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -90,6 +92,8 @@ public final class MicroBearings {
         // From a body too: Sable starts the new body at its parent's pose and speed.
         ServerSubLevel parent = Joint.parentOf(level, cellPos);
         Direction f = cell.get(index).getValue(RotaryBearingBlock.FACING);
+        Joint.Kind kind = ((JointPart) cell.get(index).getBlock()).kind();
+        int variant = cell.get(index).hasProperty(JointBlock.VARIANT) ? cell.get(index).getValue(JointBlock.VARIANT) : 1;
         BlockPos b = voxel(cellPos, index), front = b.relative(f), host = b.relative(f.getOpposite());
         if (at(level, front) == null)
             return "empty";
@@ -175,7 +179,7 @@ public final class MicroBearings {
                 w.setClear(w.clear() | c.clear());
                 w.setHinge(c.hinge() & w.filled());
             }
-        Joint joint = Joint.of(made, faceCentre(b, f), f, cells.get(0), parent);
+        Joint joint = Joint.of(kind, variant, made, faceCentre(b, f), f, cells.get(0), parent);
         for (var e : statorClear.entrySet())
             if (level.getBlockEntity(e.getKey()) instanceof MicroCellBlockEntity stator) {
                 stator.setClear(stator.clear() | e.getValue());
@@ -211,8 +215,11 @@ public final class MicroBearings {
         Direction f = cell.get(index).getValue(RotaryBearingBlock.FACING);
         Direction.Axis axis = f.getAxis();
         float sign = f.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : -1;
-        // The body's angle about the axis's positive direction, to the nearest quarter turn.
-        int k = Math.floorMod(Math.round(sign * joint.turned(s, Joint.parentOf(level, cell.getBlockPos()), f) / 90f), 4);
+        // The body's angle about the axis's positive direction, to the nearest quarter turn; any other
+        // joint can have turned about any axis, so its whole rotation is snapped to the nearest of the 24.
+        boolean hinge = joint.kind() == Joint.Kind.HINGE;
+        int k = hinge ? Math.floorMod(Math.round(sign * joint.turned(s, Joint.parentOf(level, cell.getBlockPos()), f) / 90f), 4) : 0;
+        int[][] snapped = hinge ? null : snap(s, Joint.parentOf(level, cell.getBlockPos()));
         BlockPos b = voxel(cell.getBlockPos(), index);
         BlockPos offset = joint.homeTo().subtract(joint.homeFrom());
         Map<BlockPos, BlockState> moves = new LinkedHashMap<>();
@@ -221,7 +228,8 @@ public final class MicroBearings {
             if (level.getBlockEntity(p) instanceof MicroCellBlockEntity inBody)
                 for (int i = 0; i < MicroCellBlockEntity.VOXELS; i++)
                     if (inBody.get(i) != null)
-                        moves.put(turn(voxel(p.offset(offset), i), b, axis, k), turn(inBody.get(i), axis, k));
+                        moves.put(hinge ? turn(voxel(p.offset(offset), i), b, axis, k) : turn(voxel(p.offset(offset), i), b, snapped),
+                                hinge ? turn(inBody.get(i), axis, k) : turn(inBody.get(i), snapped));
         for (BlockPos v : moves.keySet()) {
             BlockPos c = MicroPlacer.cellOf(v.getX(), v.getY(), v.getZ());
             BlockState there = level.getBlockState(c);
@@ -257,6 +265,61 @@ public final class MicroBearings {
 
     /** What a world cell carries besides its voxels, kept across its being made anew. */
     private record Carried(it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<Joint> bearings, int clear, long hinge) {
+    }
+
+    /**
+     * The turn of body {@code s} against {@code parent} (null: the world) as the nearest of the 24
+     * cube rotations: a signed permutation matrix, row i the axis and sign that world axis i comes from.
+     * A body assembled from rest sits at its parent's pose, so the relative turn is the whole turn.
+     */
+    static int[][] snap(ServerSubLevel s, @Nullable ServerSubLevel parent) {
+        org.joml.Quaterniond rel = new org.joml.Quaterniond(s.logicalPose().orientation());
+        if (parent != null)
+            rel = new org.joml.Quaterniond(parent.logicalPose().orientation()).conjugate().mul(rel);
+        org.joml.Matrix3d r = new org.joml.Matrix3d().set(rel);
+        double[][] a = {{r.m00, r.m10, r.m20}, {r.m01, r.m11, r.m21}, {r.m02, r.m12, r.m22}};
+        int[][] m = new int[3][3];
+        boolean[] used = new boolean[3];
+        for (int i = 0; i < 3; i++) {
+            int best = -1;
+            for (int j = 0; j < 3; j++)
+                if (!used[j] && (best < 0 || Math.abs(a[i][j]) > Math.abs(a[i][best])))
+                    best = j;
+            used[best] = true;
+            m[i][best] = a[i][best] < 0 ? -1 : 1;
+        }
+        // A reflection is not a turn: flip one row's sign to make the determinant +1.
+        int det = m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+                + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]);
+        if (det < 0)
+            for (int j = 0; j < 3; j++)
+                m[2][j] = -m[2][j];
+        return m;
+    }
+
+    /** Voxel {@code v} turned about the centre of voxel {@code b} by the rotation {@code m} (rows from {@link #snap}). */
+    static BlockPos turn(BlockPos v, BlockPos b, int[][] m) {
+        int x = 2 * (v.getX() - b.getX()), y = 2 * (v.getY() - b.getY()), z = 2 * (v.getZ() - b.getZ());
+        int nx = m[0][0] * x + m[0][1] * y + m[0][2] * z, ny = m[1][0] * x + m[1][1] * y + m[1][2] * z, nz = m[2][0] * x + m[2][1] * y + m[2][2] * z;
+        return new BlockPos(b.getX() + nx / 2, b.getY() + ny / 2, b.getZ() + nz / 2);
+    }
+
+    /** {@code state} turned by {@code m}: its axis and Direction properties. */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    static BlockState turn(BlockState state, int[][] m) {
+        for (Property<?> property : state.getProperties()) {
+            Object value = state.getValue(property);
+            Direction d = value instanceof Direction dir ? dir : value instanceof Direction.Axis a ? Direction.get(Direction.AxisDirection.POSITIVE, a) : null;
+            if (d == null)
+                continue;
+            int x = d.getStepX(), y = d.getStepY(), z = d.getStepZ();
+            Direction to = Direction.fromDelta(m[0][0] * x + m[0][1] * y + m[0][2] * z, m[1][0] * x + m[1][1] * y + m[1][2] * z,
+                    m[2][0] * x + m[2][1] * y + m[2][2] * z);
+            Object turned = to == null ? null : value instanceof Direction ? to : to.getAxis();
+            if (turned != null && property.getPossibleValues().contains(turned))
+                state = state.setValue((Property) property, (Comparable) turned);
+        }
+        return state;
     }
 
     /** Voxel {@code v} turned {@code k} quarter turns about {@code axis} through the centre of voxel {@code b}, right-handed. */

@@ -41,6 +41,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.phys.BlockHitResult;
+import io.github.soundgoodizerfan.feedback.machine.bearing.JointBlock;
+import io.github.soundgoodizerfan.feedback.machine.bearing.JointPart;
 import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -242,8 +244,17 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
         if (!(level.getBlockEntity(pos) instanceof MicroCellBlockEntity cell))
             return InteractionResult.PASS;
         int i = cell.pick(hit.getLocation(), hit.getDirection());
-        if (i < 0 || cell.get(i) == null || !(cell.get(i).getBlock() instanceof RotaryBearingBlock))
+        if (i < 0 || cell.get(i) == null || !(cell.get(i).getBlock() instanceof JointPart))
             return InteractionResult.PASS;
+        // Sneaking on an unassembled joint cycles its named choice (cone, spring) instead.
+        if (player.isShiftKeyDown() && cell.get(i).getBlock() instanceof JointBlock && cell.bearing(i) == null) {
+            if (!level.isClientSide) {
+                cell.set(i, JointBlock.cycled(cell.get(i)));
+                cell.commit();
+                player.displayClientMessage(Component.translatable("message.feedback.joint.variant", cell.get(i).getValue(JointBlock.VARIANT)), true);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (level instanceof ServerLevel server)
             player.displayClientMessage(Component.translatable("message.feedback.rotary_bearing." + MicroBearings.toggle(server, pos, i)), true);
         return InteractionResult.sidedSuccess(level.isClientSide);

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "item": "feedback:wrought_iron_plate"
+    },
+    "B": {
+      "item": "feedback:rotary_bearing"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "S",
+    "B",
+    "I"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:piston_joint"
+  }
+}

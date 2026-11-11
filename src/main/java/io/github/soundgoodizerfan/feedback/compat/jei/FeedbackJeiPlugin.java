@@ -224,6 +224,10 @@ public class FeedbackJeiPlugin implements IModPlugin {
             if (made != null && made.food().isPresent())
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
+        registration.addIngredientInfo(FItems.BALL_JOINT.get(), Component.translatable("feedback.jei.info.ball_joint"));
+        registration.addIngredientInfo(FItems.LOCKED_JOINT.get(), Component.translatable("feedback.jei.info.locked_joint"));
+        registration.addIngredientInfo(FItems.SLIDER_JOINT.get(), Component.translatable("feedback.jei.info.slider_joint"));
+        registration.addIngredientInfo(FItems.PISTON_JOINT.get(), Component.translatable("feedback.jei.info.piston_joint"));
         registration.addIngredientInfo(FItems.PUDDLING_FURNACE.get(), Component.translatable("feedback.jei.info.puddling_furnace"));
         registration.addIngredientInfo(FItems.IRON_BLOOM.get(), Component.translatable("feedback.jei.info.iron_bloom"));
         registration.addIngredientInfo(FItems.BLOOMERY_SLAG.get(), Component.translatable("feedback.jei.info.bloomery_slag"));
