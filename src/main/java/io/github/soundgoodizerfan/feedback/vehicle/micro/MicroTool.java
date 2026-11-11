@@ -28,7 +28,8 @@ public final class MicroTool {
     public enum Mode { SINGLE, LINE, BOX, MIRROR }
 
     public static final int MAX_PLANES = 3;
-    private static final String MODE = "MicroMode", CORNER = "MicroCorner", HAS_CORNER = "MicroHasCorner", PLANES = "MicroPlanes";
+    private static final String MODE = "MicroMode", CORNER = "MicroCorner", HAS_CORNER = "MicroHasCorner", PLANES = "MicroPlanes",
+            TAKE_CORNER = "MicroTakeCorner", HAS_TAKE_CORNER = "MicroHasTakeCorner";
 
     private MicroTool() {
     }
@@ -51,6 +52,7 @@ public final class MicroTool {
         Mode next = Mode.values()[(mode(core).ordinal() + 1) % Mode.values().length];
         t.putInt(MODE, next.ordinal());
         t.remove(HAS_CORNER);
+        t.remove(HAS_TAKE_CORNER);
         save(core, t);
         return next;
     }
@@ -68,6 +70,24 @@ public final class MicroTool {
         else {
             t.putBoolean(HAS_CORNER, true);
             t.putLong(CORNER, corner.asLong());
+        }
+        save(core, t);
+    }
+
+    /** The corner marked by the first mining click of a line or box removal; kept apart from the placing corner. */
+    @org.jetbrains.annotations.Nullable
+    public static BlockPos takeCorner(ItemStack core) {
+        CompoundTag t = tag(core);
+        return t.getBoolean(HAS_TAKE_CORNER) ? BlockPos.of(t.getLong(TAKE_CORNER)) : null;
+    }
+
+    public static void setTakeCorner(ItemStack core, @org.jetbrains.annotations.Nullable BlockPos corner) {
+        CompoundTag t = tag(core);
+        if (corner == null)
+            t.remove(HAS_TAKE_CORNER);
+        else {
+            t.putBoolean(HAS_TAKE_CORNER, true);
+            t.putLong(TAKE_CORNER, corner.asLong());
         }
         save(core, t);
     }

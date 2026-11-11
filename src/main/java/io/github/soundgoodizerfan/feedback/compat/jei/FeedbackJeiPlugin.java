@@ -225,6 +225,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.food_form"));
         }
         registration.addIngredientInfo(FItems.MICRO_WEDGE.get(), Component.translatable("feedback.jei.info.micro_wedge"));
+        registration.addIngredientInfo(FItems.TIRE_RUBBER.get(), Component.translatable("feedback.jei.info.tire_rubber"));
         registration.addIngredientInfo(FItems.BALL_JOINT.get(), Component.translatable("feedback.jei.info.ball_joint"));
         registration.addIngredientInfo(FItems.LOCKED_JOINT.get(), Component.translatable("feedback.jei.info.locked_joint"));
         registration.addIngredientInfo(FItems.SLIDER_JOINT.get(), Component.translatable("feedback.jei.info.slider_joint"));

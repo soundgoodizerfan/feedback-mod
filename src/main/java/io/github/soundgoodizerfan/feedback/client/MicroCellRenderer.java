@@ -85,6 +85,16 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
         BlockColors colors = Minecraft.getInstance().getBlockColors();
         RandomSource random = RandomSource.create();
         float s = 1f / N;
+        // With a Data Connector in hand, the voxels a card can set are outlined in the cell's own space, so they ride the body.
+        var player = Minecraft.getInstance().player;
+        if (player != null && player.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.item.DataConnectorItem) {
+            VertexConsumer lines = buffers.getBuffer(RenderType.lines());
+            for (int i = 0; i < MicroCellBlockEntity.VOXELS; i++)
+                if (io.github.soundgoodizerfan.feedback.vehicle.micro.VoxelNode.settable(cell.get(i))) {
+                    float x = (i & 3) * s, y = (i >> 2 & 3) * s, z = (i >> 4) * s;
+                    net.minecraft.client.renderer.LevelRenderer.renderLineBox(poseStack, lines, x, y, z, x + s, y + s, z + s, 0.4f, 0.8f, 1f, 1f);
+                }
+        }
         for (int z = 0; z < N; z++)
             for (int y = 0; y < N; y++)
                 for (int x = 0; x < N; x++) {

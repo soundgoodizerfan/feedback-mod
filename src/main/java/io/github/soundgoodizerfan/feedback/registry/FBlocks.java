@@ -171,6 +171,11 @@ public class FBlocks {
             () -> new io.github.soundgoodizerfan.feedback.vehicle.micro.MicroWedgeBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE).strength(2.0f).sound(SoundType.STONE).noOcclusion()));
 
+    /** Tire stock made of synthetic rubber: a block whose micro voxels make a wheel's tread; see {@code MicroWheels}. */
+    public static final DeferredBlock<net.minecraft.world.level.block.Block> TIRE_RUBBER = BLOCKS.register("tire_rubber",
+            () -> new net.minecraft.world.level.block.Block(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BLACK).strength(1.0f).sound(SoundType.WOOL)));
+
     /** The same, driven at its rim by a cog: hollow; see {@code RingGearBlock}. */
     public static final DeferredBlock<RingGearBlock> RING_GEAR = BLOCKS.register("ring_gear",
             () -> new RingGearBlock(BlockBehaviour.Properties.of()

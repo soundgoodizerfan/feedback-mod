@@ -179,6 +179,12 @@ public final class FTuning {
     public static final float JOINT_STALL_WEAR_PER_TICK = 0.0005f;
     /** Placeholder. Physics steps a drive must sit at its cap without turning the arm before that counts as a stall (about 5 s). */
     public static final int JOINT_STALL_GRACE_STEPS = 300;
+    /** Placeholder. Game ticks a ball, slider or piston must sit forced against its stop before that counts as misuse (5 s). */
+    public static final int JOINT_STRAIN_GRACE_TICKS = 100;
+    /** Placeholder. Condition lost per game tick of forced strain past the grace (a stalled hinge loses about the same per tick). */
+    public static final float JOINT_STRAIN_WEAR_PER_TICK = 0.0015f;
+    /** Placeholder. Brake pad condition lost per physics step the drive pushes against a held brake past the grace. */
+    public static final float BRAKE_PAD_WEAR_PER_STEP = 0.0005f;
     public static final float JOINT_CONDITION_FLOOR = 0.3f;
     /** Placeholder. Half the swing of a ball joint's cone in radians: narrow, stock, wide. */
     public static final float[] BALL_CONE_RAD = {(float) Math.toRadians(20), (float) Math.toRadians(45), (float) Math.toRadians(90)};

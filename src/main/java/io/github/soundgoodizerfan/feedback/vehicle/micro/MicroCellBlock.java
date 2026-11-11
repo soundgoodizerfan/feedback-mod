@@ -244,6 +244,30 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
         return level.getBlockEntity(pos) instanceof MicroCellBlockEntity cell ? cell.light() : 0;
     }
 
+    /** A new full-size Bearing in hand on an assembled joint voxel fits it: the joint and its brake pad are as built. */
+    @Override
+    protected net.minecraft.world.ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                                                  net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(io.github.soundgoodizerfan.feedback.registry.FItems.BEARING.get()) || !(level.getBlockEntity(pos) instanceof MicroCellBlockEntity cell))
+            return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        int i = cell.pick(hit.getLocation(), hit.getDirection());
+        var joint = i < 0 ? null : cell.bearing(i);
+        if (joint == null)
+            return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        if (!level.isClientSide) {
+            if (joint.condition() >= 1 && joint.pad() >= 1) {
+                player.displayClientMessage(Component.translatable("message.feedback.joint.as_built"), true);
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(false);
+            }
+            joint.repair();
+            cell.setChanged();
+            if (!player.getAbilities().instabuild)
+                stack.shrink(1);
+            player.displayClientMessage(Component.translatable("message.feedback.joint.repaired"), true);
+        }
+        return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+
     /** An empty hand on a micro bearing voxel assembles or puts back what it turns ({@link MicroBearings}). */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
@@ -252,6 +276,13 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
         int i = cell.pick(hit.getLocation(), hit.getDirection());
         if (i < 0 || cell.get(i) == null || !(cell.get(i).getBlock() instanceof JointPart))
             return InteractionResult.PASS;
+        // Sneaking on an assembled joint reads its condition and brake pad instead of putting it back.
+        if (player.isShiftKeyDown() && cell.bearing(i) != null) {
+            if (!level.isClientSide)
+                player.displayClientMessage(Component.translatable("message.feedback.joint.condition",
+                        Math.round(cell.bearing(i).condition() * 100), Math.round(cell.bearing(i).pad() * 100)), true);
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         // Sneaking on an unassembled joint cycles its named choice (cone, spring) instead.
         boolean cyclable = cell.get(i).getBlock() instanceof JointBlock
                 || cell.get(i).getBlock() instanceof RotaryBearingBlock && !(cell.get(i).getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.bearing.RingGearBlock);

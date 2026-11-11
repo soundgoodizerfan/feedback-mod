@@ -120,6 +120,13 @@ public final class Joint {
     private volatile double carried;
     /** Brake level 0 to 1, from a card; the road's torque on the wheel summed over physics steps, kpg x block^2 / s. */
     private volatile float brake;
+    /** 1 as built, falling to the floor when the drive pushes against a held brake past the grace; it scales the brake's grip. */
+    private volatile float pad = 1;
+    private final java.util.concurrent.atomic.AtomicInteger padWorn = new java.util.concurrent.atomic.AtomicInteger();
+    /** Game ticks a ball, slider or piston has been forced against its stop; game thread only. */
+    private int strainRun;
+    /** How the body sat against its parent when the constraint was made, in the parent's frame (ball swing zero). */
+    private final Quaterniond relative0 = new Quaterniond();
     private double roadImpulse;
     /** Physics steps the hinge's torque sat at its cap with no relative turning, summed for the game tick. */
     private final java.util.concurrent.atomic.AtomicInteger stalledTicks = new java.util.concurrent.atomic.AtomicInteger();
@@ -244,6 +251,17 @@ public final class Joint {
         return condition;
     }
 
+    /** The brake pad's condition, 1 to the floor. */
+    public float pad() {
+        return pad;
+    }
+
+    /** A new bearing fitted: the joint and its pad are as built. */
+    public void repair() {
+        condition = 1;
+        pad = 1;
+    }
+
     public BlockPos homeFrom() {
         return homeFrom;
     }
@@ -279,6 +297,9 @@ public final class Joint {
         float rpm = kind == Kind.HINGE && variant == 0 ? command : 0;
         angleLevel = kind == Kind.HINGE && variant > 0 ? Math.clamp(command, -1f, 1f) : 0;
         pistonLevel = kind == Kind.PISTON ? Math.clamp(command, -1f, 1f) : 0;
+        int worn = padWorn.getAndSet(0);
+        if (worn > 0)
+            pad = Math.max(FTuning.JOINT_CONDITION_FLOOR, pad - worn * FTuning.BRAKE_PAD_WEAR_PER_STEP);
         int stalled = stalledTicks.getAndSet(0);
         if (stalled > 0) {
             condition = Math.max(FTuning.JOINT_CONDITION_FLOOR, condition - stalled * FTuning.JOINT_STALL_WEAR_PER_TICK);
@@ -323,7 +344,7 @@ public final class Joint {
         double housing = p == null ? 0 : inertiaAbout(p, localAnchor, localAxis);
         driveInertia = housing > 0 ? child * housing / (child + housing) : child;
         parentInertia = p == null ? 0 : spinInertia(p, localAxis);
-        servo(s, p, facing);
+        servo(s, p, facing, localAnchor);
         if (kind == Kind.HINGE && ticks % 20 == 0)
             scanWheel(level, s);
         if (++ticks % LOG_EVERY == 0)
@@ -343,6 +364,7 @@ public final class Joint {
         Quaterniond twist = new Quaterniond().rotationTo(1, 0, 0, facing.getStepX(), facing.getStepY(), facing.getStepZ());
         Quaterniond twistChild = new Quaterniond(relative).conjugate().mul(twist);
         generic = null;
+        relative0.set(relative);
         switch (kind) {
             case HINGE -> joint = pipeline.addConstraint(p, s,
                     new RotaryConstraintConfiguration(localAnchor, anchor, normal(facing), new Vector3d(plotAxis)));
@@ -371,10 +393,24 @@ public final class Joint {
      * scale with the moving mass (inertia for a turn), so a heavy arm is held as firmly as a light one.
      * The motor is Sable's PD motor and stays set in between.
      */
-    private void servo(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing) {
+    private void servo(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing, Vector3d localAnchor) {
         if (joint == null || !joint.isValid())
             return;
+        // Wear by misuse only: forced against the stop, or a piston that cannot reach its level, for longer than a working load lasts.
+        if (strained(s, p, facing, localAnchor)) {
+            if (++strainRun > FTuning.JOINT_STRAIN_GRACE_TICKS)
+                condition = Math.max(FTuning.JOINT_CONDITION_FLOOR, condition - FTuning.JOINT_STRAIN_WEAR_PER_TICK);
+        } else
+            strainRun = 0;
         switch (kind) {
+            case BALL -> {
+                if (generic != null) {
+                    // A worn ball lets the cone open: slack, never a sudden loss.
+                    float cone = FTuning.BALL_CONE_RAD[variant] * (2 - condition);
+                    generic.setLimit(ConstraintJointAxis.ANGULAR_Y, -cone, cone);
+                    generic.setLimit(ConstraintJointAxis.ANGULAR_Z, -cone, cone);
+                }
+            }
             case SLIDER, PISTON -> {
                 double mb = s.getMassTracker().getMass(), ma = p == null ? 0 : p.getMassTracker().getMass();
                 double reduced = ma <= 0 ? mb : mb <= 0 ? 0 : ma * mb / (ma + mb);
@@ -384,7 +420,8 @@ public final class Joint {
                 double omega = 2 * Math.PI * hz;
                 double target = kind == Kind.PISTON ? pistonLevel * travel : 0;
                 double limit = kind == Kind.PISTON ? FTuning.ROTARY_BEARING_MAX_TORQUE * condition : 0;
-                generic.setMotor(ConstraintJointAxis.LINEAR_X, target, reduced * omega * omega,
+                // A worn spring is a softer one.
+                generic.setMotor(ConstraintJointAxis.LINEAR_X, target, reduced * omega * omega * (kind == Kind.SLIDER ? condition : 1),
                         2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, kind == Kind.PISTON, limit);
             }
             case HINGE -> {
@@ -413,6 +450,37 @@ public final class Joint {
                 }
             }
             default -> {
+            }
+        }
+    }
+
+    /**
+     * True when a ball, slider or piston is being forced: a ball at the edge of its cone, a slider
+     * bottomed against either stop, a piston more than a third of its travel from the level it was asked for.
+     */
+    private boolean strained(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing, Vector3d localAnchor) {
+        switch (kind) {
+            case BALL -> {
+                if (generic == null)
+                    return false;
+                Quaterniond now = new Quaterniond(p == null ? new Quaterniond() : new Quaterniond(p.logicalPose().orientation())).conjugate()
+                        .mul(s.logicalPose().orientation());
+                Quaterniond turn = now.mul(new Quaterniond(relative0).conjugate());
+                Vector3d x = turn.transform(new Vector3d(1, 0, 0));
+                double swing = Math.acos(Math.clamp(x.x, -1.0, 1.0));
+                return swing >= 0.97 * FTuning.BALL_CONE_RAD[variant] * (2 - condition);
+            }
+            case SLIDER, PISTON -> {
+                Vector3d axis = toWorld(p, normal(facing), false);
+                Vector3d child = s.logicalPose().transformPosition(new Vector3d(plotAnchor), new Vector3d());
+                Vector3d mount = p == null ? new Vector3d(localAnchor) : p.logicalPose().transformPosition(new Vector3d(localAnchor), new Vector3d());
+                double offset = child.sub(mount).dot(axis);
+                if (kind == Kind.SLIDER)
+                    return Math.abs(offset) >= travel - 0.02;
+                return Math.abs(offset - pistonLevel * travel) > travel / 3;
+            }
+            default -> {
+                return false;
             }
         }
     }
@@ -496,7 +564,7 @@ public final class Joint {
         MicroWheels.Shape wh = wheel;
         if (wh != null) {
             Vector3d centre = s.logicalPose().transformPosition(new Vector3d(plotAnchor), new Vector3d());
-            double road = MicroWheels.step(level, s, vehicle, centre, axis, wh, carried, brake, dt);
+            double road = MicroWheels.step(level, s, vehicle, centre, axis, wh, carried, brake * pad, dt);
             if (road != 0)
                 synchronized (this) {
                     roadImpulse += road * dt;
@@ -516,9 +584,14 @@ public final class Joint {
         double cap = FTuning.ROTARY_BEARING_MAX_TORQUE * condition * dt;
         // Wear by misuse only: a drive pinned at its cap while the arm does not turn (a stalled drive).
         // Starting a heavy arm, or a drive held by its brake, sits at the cap too: only a stall that goes on past the grace is misuse.
-        if (Math.abs(impulse) >= cap && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S && brake <= 0) {
-            if (++stallRun > FTuning.JOINT_STALL_GRACE_STEPS)
-                stalledTicks.incrementAndGet();
+        if (Math.abs(impulse) >= cap && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
+            // The drive pushing against a held brake wears the pad; the same push with no brake wears the joint.
+            if (++stallRun > FTuning.JOINT_STALL_GRACE_STEPS) {
+                if (brake > 0)
+                    padWorn.incrementAndGet();
+                else
+                    stalledTicks.incrementAndGet();
+            }
         } else
             stallRun = 0;
         impulse = Math.max(-cap, Math.min(cap, impulse));
@@ -613,6 +686,7 @@ public final class Joint {
         tag.putString("Kind", kind.name());
         tag.putInt("Variant", variant);
         tag.putFloat("Condition", condition);
+        tag.putFloat("Pad", pad);
         put(tag, "Anchor", plotAnchor);
         put(tag, "Axis", plotAxis);
         put(tag, "Ref", plotRef);
@@ -634,6 +708,7 @@ public final class Joint {
             j.kind = parseKind(tag.getString("Kind"));
         j.variant = Math.clamp(tag.getInt("Variant"), 0, 4);
         j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
+        j.pad = tag.contains("Pad") ? tag.getFloat("Pad") : 1;
         if (j.kind == Kind.PISTON)
             j.travel = FTuning.PISTON_TRAVEL;
         get(tag, "Anchor", j.plotAnchor);

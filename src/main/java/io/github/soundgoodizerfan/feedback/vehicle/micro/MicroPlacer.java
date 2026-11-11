@@ -248,7 +248,42 @@ public final class MicroPlacer {
         // Playtest 2026-11-02: one click was seen to take two voxels; the tick shows a held repeat from a double break.
         org.slf4j.LoggerFactory.getLogger("feedback.micro").info("[feedback] micro break cell={} voxel={} tick={} creative={}",
                 cell, voxel, player.level().getGameTime(), player.isCreative());
-        return remove(player, cell.getX() * N + (voxel & 3), cell.getY() * N + (voxel >> 2 & 3), cell.getZ() * N + (voxel >> 4));
+        BlockPos at = new BlockPos(cell.getX() * N + (voxel & 3), cell.getY() * N + (voxel >> 2 & 3), cell.getZ() * N + (voxel >> 4));
+        // A Micro Core in the other hand shapes the mining as it shapes the placing: a line or box between two clicks, mirrored.
+        ItemStack core = player.getOffhandItem().getItem() instanceof MicroCoreItem ? player.getOffhandItem()
+                : player.getMainHandItem().getItem() instanceof MicroCoreItem ? player.getMainHandItem() : ItemStack.EMPTY;
+        if (core.isEmpty())
+            return remove(player, at.getX(), at.getY(), at.getZ());
+        return takeWithTool(player, core, at);
+    }
+
+    private static boolean takeWithTool(Player player, ItemStack core, BlockPos at) {
+        var mode = MicroTool.mode(core);
+        java.util.Set<BlockPos> span;
+        if (mode == MicroTool.Mode.LINE || mode == MicroTool.Mode.BOX) {
+            BlockPos corner = MicroTool.takeCorner(core);
+            if (corner == null) {
+                MicroTool.setTakeCorner(core, at);
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.corner"), true);
+                return true;
+            }
+            MicroTool.setTakeCorner(core, null);
+            long size = (long) (Math.abs(at.getX() - corner.getX()) + 1) * (Math.abs(at.getY() - corner.getY()) + 1)
+                    * (Math.abs(at.getZ() - corner.getZ()) + 1);
+            if (mode == MicroTool.Mode.BOX && size > MAX_SPAN || size > MAX_SPAN * 4L) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.too_big", MAX_SPAN), true);
+                return false;
+            }
+            span = MicroTool.span(mode, corner, at);
+        } else
+            span = java.util.Set.of(at);
+        java.util.Map<BlockPos, BlockState> voxels = new java.util.LinkedHashMap<>();
+        for (BlockPos p : span)
+            voxels.put(p, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+        boolean any = false;
+        for (BlockPos p : MicroTool.mirrored(voxels, MicroTool.planes(core)).keySet())
+            any |= remove(player, p.getX(), p.getY(), p.getZ());
+        return any;
     }
 
     /** The voxel of {@code cell} the player's look is on; failing that, the one nearest its middle; -1 if it is empty. */

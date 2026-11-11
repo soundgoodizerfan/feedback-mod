@@ -36,7 +36,7 @@ public final class VoxelNode implements DataNode, Analog, io.github.soundgoodize
     }
 
     /** True if the voxel is a part a card can set: a piston, or a Rotary Bearing (not a ring gear). */
-    static boolean settable(@Nullable BlockState state) {
+    public static boolean settable(@Nullable BlockState state) {
         if (state != null && state.getBlock() instanceof io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlock)
             return true;
         if (state == null || !(state.getBlock() instanceof JointPart part))

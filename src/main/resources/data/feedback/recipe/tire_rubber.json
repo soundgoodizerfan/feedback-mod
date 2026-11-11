@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "R": { "item": "feedback:synthetic_rubber_ingot" } },
+  "pattern": ["RR", "RR"],
+  "result": { "count": 1, "id": "feedback:tire_rubber" }
+}

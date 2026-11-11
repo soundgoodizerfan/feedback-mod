@@ -56,7 +56,7 @@ public final class MicroWheels {
     }
 
     /** What a scan of a body finds: the tread radius (blocks) and grip (mean friction of the tire voxels). */
-    public record Shape(double radius, double friction) {
+    public record Shape(double radius, double friction, double rolling) {
     }
 
     /**
@@ -65,7 +65,7 @@ public final class MicroWheels {
      */
     @Nullable
     public static Shape scan(ServerLevel level, ServerSubLevel body, Vector3d anchor, Vector3d axis) {
-        double far = 0, friction = 0;
+        double far = 0, friction = 0, rolling = 0;
         int n = 0;
         var box = body.getPlot().getBoundingBox();
         Vector3d a = new Vector3d(axis).normalize(), d = new Vector3d();
@@ -81,10 +81,31 @@ public final class MicroWheels {
                 // Distance from the axle line, and half a voxel more for the tread's outer face.
                 far = Math.max(far, Math.sqrt(Math.max(0, d.lengthSquared() - along * along)) + 0.125);
                 friction += PhysicsBlockPropertyHelper.getFriction(v);
+                rolling += deformation(v.getBlock().defaultDestroyTime(), PhysicsBlockPropertyHelper.getFriction(v));
                 n++;
             }
         }
-        return n == 0 ? null : new Shape(far, friction / n);
+        return n == 0 ? null : new Shape(far, friction / n, rolling / n);
+    }
+
+    /**
+     * One side's rolling resistance: {@code ROLLING_SOFT / (1 + hardness / ROLLING_HARDNESS)}, and next to
+     * nothing on a slicker surface than {@code ROLLING_SLICK} (ice wastes none).
+     */
+    private static double deformation(double hardness, double friction) {
+        double r = FTuning.ROLLING_SOFT / (1 + Math.max(0, hardness) / FTuning.ROLLING_HARDNESS);
+        return friction < FTuning.ROLLING_SLICK ? r * friction / FTuning.ROLLING_SLICK : r;
+    }
+
+    /** What the ground gives under the tread: its own deformation, more if it falls (sand) or slows a walker (soul sand). */
+    private static double groundRolling(BlockState ground) {
+        double r = deformation(ground.getBlock().defaultDestroyTime(), PhysicsBlockPropertyHelper.getFriction(ground));
+        if (ground.getBlock() instanceof net.minecraft.world.level.block.Fallable)
+            r += FTuning.ROLLING_LOOSE;
+        float speed = ground.getBlock().getSpeedFactor();
+        if (speed > 0 && speed < 1)
+            r += FTuning.ROLLING_SINK * (1 / speed - 1);
+        return r;
     }
 
     /** Offroad's floor under grip, so a slick block still holds a little. */
@@ -177,7 +198,7 @@ public final class MicroWheels {
         // Rolling resistance: the tread flexing as it rolls, never more than stops it this step.
         if (treadLength > 1e-9) {
             double rolling = v.dot(roll);
-            double resist = Math.min((FTuning.ROLLING_SOFT + FTuning.ROLLING_UNKNOWN_GROUND) * load * dt, share * Math.abs(rolling));
+            double resist = Math.min((shape.rolling() + groundRolling(ground)) * load * dt, share * Math.abs(rolling));
             friction.fma(-Math.signum(rolling) * resist, roll);
         }
         Vector3d impulse = new Vector3d(normal).mul(load * dt).add(friction);
