@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import io.github.soundgoodizerfan.feedback.modular.BuildNames;
 import io.github.soundgoodizerfan.feedback.modular.Edge;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.ModularBake;
@@ -798,8 +799,12 @@ final class BlueprintBoard {
         designation = design.flatMap(d -> t != null && t.family() == ModularType.Family.GUN
                         ? GunSpec.of(d, t, ClientMaterials.get()).flatMap(spec -> GunDesignation.of(t, spec,
                                 ModularTraits.allOf(d, t).stream().map(ModularTraits.Active::id).collect(java.util.stream.Collectors.toSet())))
-                        : Optional.empty())
-                .<Component>map(n -> Component.translatable("gun.feedback.designation." + n)).orElse(Component.empty());
+                                .<Component>map(n -> Component.translatable("gun.feedback.designation." + n))
+                        // Any other type with named builds (armour, blades, shields, bows, the electric gun): the first rule that holds.
+                        : t != null && BuildNames.names(t)
+                        ? BuildNames.designation(d, t).<Component>map(n -> Component.translatable("armour.feedback.designation." + n.name()))
+                        : Optional.<Component>empty())
+                .orElse(Component.empty());
         measureLinks();
         figures = design.flatMap(d -> ToolDesigns.predict(d, ModularTypes.known(), ClientMaterials.get()));
         uses = design.map(d -> usesOf(d)).orElse(List.of());

@@ -88,3 +88,5 @@ The table has a **title** field: what you type goes on the printed blueprint, wi
 A blueprint is never required. Any bench takes one in its blueprint slot for anything, and it gates nothing; it gives the credit and a **checklist**. Right-click a blueprint to open a recipe card listing its parts, materials, shapes and axis values. At a bench, the checklist sits beside the slots and ticks as you place the parts. It lists a missing material and never refuses to work without it.
 
 A part with **axes** (a chestplate's width, a sword blade's length) shows steppers on the drawing for the target value of each.
+
+The real-world name of the build you are drawing shows beside the type's name: a gun is named by its action and barrel, and armour, blades, shields, bows and electric guns by their shape and the ranges their axes sit in (a cuirass, a rapier, a tower shield, a railgun). A build with no recognised name shows none here; the item itself still gets a name from its size, shape and material.
