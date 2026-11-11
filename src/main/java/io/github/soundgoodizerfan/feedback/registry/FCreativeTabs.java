@@ -83,7 +83,6 @@ public class FCreativeTabs {
                         output.accept(FItems.CAMPFIRE.get());
                         output.accept(FItems.SOUL_CAMPFIRE.get());
                         output.accept(FItems.BEARING.get());
-                        output.accept(FItems.FLYWHEEL.get());
                         output.accept(FItems.SMALL_COG.get());
                         output.accept(FItems.LARGE_COG.get());
                         output.accept(FItems.GEARBOX.get());
@@ -297,8 +296,6 @@ public class FCreativeTabs {
                         output.accept(FItems.CONVERTER_TAP.get());
                         output.accept(FItems.HEATSINK.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
-                        output.accept(FItems.BOILER.get());
-                        output.accept(FItems.LARGE_BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());
                         output.accept(FItems.STEAM_TURBINE.get());
                         output.accept(FItems.CONDENSER.get());

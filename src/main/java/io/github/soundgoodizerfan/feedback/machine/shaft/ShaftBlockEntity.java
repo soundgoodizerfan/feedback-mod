@@ -11,6 +11,8 @@ import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 
@@ -36,6 +38,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class ShaftBlockEntity extends RotationNode implements Wearing {
 
     private float condition = 1f;
+    /** A flywheel built from a disc design carries its baked inertia, drag and rim speed; a plain shaft, bearing or creative copy has none and runs on the block's figures. */
+    private final FigureStore figures = new FigureStore();
 
     public ShaftBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.SHAFT.get(), pos, state);
@@ -46,14 +50,14 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
     @Override
     public Drag getDragSuPerRpm() {
         return getBlockState().getBlock() instanceof ShaftBlock shaft
-                ? shaft.getDragSuPerRpm()
+                ? new Drag(figures.get("Drag", shaft.getDragSuPerRpm().suPerRpm()))
                 : FTuning.SHAFT_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
         return getBlockState().getBlock() instanceof ShaftBlock shaft
-                ? new Inertia(shaft.getInertia().suTicksPerRpm() * condition)
+                ? new Inertia(figures.get("Inertia", shaft.getInertia().suTicksPerRpm()) * condition)
                 : FTuning.SHAFT_INERTIA;
     }
 
@@ -64,10 +68,14 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
     }
 
     public void tickServer() {
-        Material metal = MaterialTable.get().materials().get(Feedback.id("cast_iron"));
-        if (metal == null)
-            return;
-        float over = Math.abs(getRpm().value()) / rimLimitRpm(metal) - 1f;
+        float rim = figures.get("RimRpm", 0f);
+        if (rim <= 0f) {
+            Material metal = MaterialTable.get().materials().get(Feedback.id("cast_iron"));
+            if (metal == null)
+                return;
+            rim = rimLimitRpm(metal);
+        }
+        float over = Math.abs(getRpm().value()) / rim - 1f;
         if (over > 0f && condition > FTuning.FLYWHEEL_CONDITION_FLOOR) {
             condition = Math.max(FTuning.FLYWHEEL_CONDITION_FLOOR, condition - FTuning.FLYWHEEL_WEAR_PER_OVER * over);
             setChanged();
@@ -88,24 +96,28 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.putFloat("Condition", condition);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 
     @Override
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
         condition = input.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
     }
 
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
+        figures.collect(components);
         if (condition < 1f)
             components.set(FDataComponents.TOOL_CONDITION.get(), condition);
     }

@@ -6,14 +6,31 @@ Turns heat into **steam**. Sits over a fire like a [Crucible](Crucible.md) does.
 
 A boiler can take its heat from a [Fission Reactor](Fission_Reactor.md) through a [Heat Exchanger](Heat_Exchanger.md).
 
-## Crafting
+## Designing and building
 
-```
-P   P
-P P P
-```
+A boiler is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Boiler*, or *Large Boiler*, in the type row) and print it on paper; drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Boiler Shell** (the **Large Boiler Shell** for the large one), with three choices:
 
-P is a [Steel Plate](Mechanical_Hammer.md).
+| Choice | What it sets |
+| --- | --- |
+| **Shape** | Flat, fire tube or water tube. See [Shapes](#shapes). |
+| **Wall** | Thickness from 1 to 20 cm. A thicker wall holds more pressure. |
+| **Metal** | The plate it is made from. A stronger metal holds more. It must be a metal with a measured yield strength. |
+
+At the [Smithing Table](Smithing_Table.md), put the blueprint in the blueprint slot and shape the shell from plate of the metal you chose. The boiler comes out with the shape, wall and metal you drew, and the blueprint is kept.
+
+The shell sets the pressure the boiler **risks letting go at** (its danger line) and the pressure it **gives way at**. Its seams weep, and a relief valve opens, at pressures that scale with the danger line, so a stronger shell holds steam at a higher pressure before venting.
+
+### Shapes
+
+| Shape | Pressure it carries | Stock |
+| --- | --- | --- |
+| Flat | 0.35 of a fire tube's rating | least |
+| Fire tube | standard | standard |
+| Water tube | 1.4 times a fire tube's rating | most |
+
+### Addon
+
+**Hoop bands** (rod) are an optional extra part. Bands round the shell raise the danger line.
 
 ## Using it
 
@@ -37,7 +54,9 @@ A [Steam Engine](Steam_Engine.md) placed **touching** the boiler draws steam fro
 
 ## Pressure
 
-A boiler holds pressure in Pu:
+A boiler holds pressure in Pu. The figures below are for a shell whose danger line is 5 Pu; a stronger or weaker shell moves the weeping and bursting lines with it.
+
+
 
 - **Steam it's holding:** 1 Pu for every 1000 mB, so a full steam tank is **4 Pu**.
 - **Heat with nowhere to go:** while the steam tank is **full**, the fire keeps pushing and every Tu the boiler climbs past 120 adds **0.004 Pu**.
@@ -47,11 +66,11 @@ A boiler sending its steam somewhere spends its heat boiling water and sits near
 | Pressure | What happens |
 | --- | --- |
 | up to 3.5 Pu | nothing |
-| above 3.5 Pu | **Weeping**: the seams leak steam (6 mB a tick for every Pu over), hiss, and **scald** anyone within about 1.5 blocks for 1 heart |
-| above 5 Pu | each tick there's a chance it **bursts**, climbing the further over it is |
-| 7 Pu | it **bursts** |
+| above 3.5 Pu (70% of the danger line) | **Weeping**: the seams leak steam (6 mB a tick for every Pu over), hiss, and **scald** anyone within about 1.5 blocks for 1 heart |
+| above the danger line (5 Pu) | each tick there's a chance it **bursts**, climbing the further over it is |
+| at the pressure the shell gives way at (7 Pu) | it **bursts** |
 
-A shut boiler on a fire at 870 Tu or hotter reaches 7 Pu. That's any coal or charcoal fire, or lava. Even a log fire gets it well into the danger zone.
+A shut boiler on a fire at 870 Tu or hotter reaches 7 Pu, the give-way point of a shell with a 5 Pu line. That's any coal or charcoal fire, or lava. Even a log fire gets it well into the danger zone.
 
 A burst is an explosion that wrecks blocks around it and scalds everyone within 4 blocks for 4 hearts. Steam gets in under gloves; only Fire Resistance helps. See [Hazards](Hazards.md#steam).
 
@@ -63,13 +82,7 @@ A boiler that's merely full and idle sits at 4 Pu and weeps a little. That's har
 
 A **Large Boiler** is ten Boilers in one block: ten times the mass, tanks of 40000 mB of water and 40000 mB of steam, and **100 mB of steam a tick** at full output, enough for a [Steam Turbine](Steam_Turbine.md). It stands on ten times the fire, so it wants a hotter, bigger fire than one Boiler. It builds pressure and bursts like a Boiler if its line is shut under a real fire.
 
-```
-B B B
-B P B
-B B B
-```
-
-B is a Boiler and P is a [Steel Plate](Mechanical_Hammer.md).
+It is built the same way, from a Large Boiler Shell and its own blueprint.
 
 ## Notes
 

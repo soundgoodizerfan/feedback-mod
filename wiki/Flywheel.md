@@ -1,16 +1,34 @@
 # Flywheel
 
-A [shaft](Shaft.md) with a heavy cast-iron rim. It stores momentum, so a line with one on it **rides through bumps in load** and **coasts for longer**.
+A [shaft](Shaft.md) with a heavy disc, built from a blueprint. It stores momentum, so a line with one on it **rides through bumps in load** and **coasts for longer**.
 
-## Crafting
+## Designing and building
 
-```
-C C C
-C H C
-C C C
-```
+A flywheel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Flywheel* in the type row) and print it on paper; drawing it takes a Mechanical [Treatise](Treatise.md). It has one part, the **Flywheel Disc**, with four choices:
 
-C is Cast Iron and H is a [Shaft](Shaft.md).
+| Choice | What it sets |
+| --- | --- |
+| **Shape** | Spoked, solid or rimmed. See [Shapes](#shapes). |
+| **Radius** | 30 to 100 cm. Momentum rises with the fourth power of the radius, but a bigger disc strains at fewer RPM. |
+| **Thickness** | 5 to 30 cm. A thicker disc holds more momentum. |
+| **Metal** | Plate or ingot of a metal with a measured weight and yield strength. A dense metal gives more momentum; a strong, light metal lets the disc spin faster. |
+
+At the [Smithing Table](Smithing_Table.md), put the Flywheel Blueprint in the blueprint slot and shape the disc from plate or ingot of the metal you chose. The Flywheel comes out with the design you drew, and the blueprint is kept.
+
+### Shapes
+
+| Shape | Momentum | Rim speed | Stock |
+| --- | --- | --- | --- |
+| Spoked | 0.6 of solid | 0.8 of solid | least |
+| Solid | standard | standard | standard |
+| Rimmed | 1.3 times solid | 0.9 of solid | most |
+
+### Addons
+
+| Addon | Stock | What it does |
+| --- | --- | --- |
+| **Rim bands** | rod | Bands round the rim let the disc spin faster before it strains. |
+| **Bearing** | nugget | Cuts the disc's drag by 30%. |
 
 ## Using it
 
@@ -18,7 +36,7 @@ Place it in a shaft line like any shaft.
 
 ## What it does
 
-A flywheel is as heavy as a [Water Wheel](Water_Wheel.md), about two hundred plain shafts' worth. Heavy things change speed slowly, in both directions:
+A flywheel is far heavier than a plain shaft, and the radius, thickness, shape and metal you drew set how much. Heavy things change speed slowly, in both directions:
 
 - **Smoother.** A [Mechanical Hammer](Mechanical_Hammer.md)'s blows, a press's strokes, a [Pump](Pump.md) cutting in: the line barely notices them.
 - **Slower to start.** It takes longer to come up to speed, especially on a lightly powered line.
@@ -26,9 +44,9 @@ A flywheel is as heavy as a [Water Wheel](Water_Wheel.md), about two hundred pla
 
 ## What it costs
 
-Its bearing drags at **0.2 Su per RPM**, twice a plain shaft's. That's the price of the momentum, paid every turn.
+Its bearing drags, more for a bigger disc, and that is the price of the momentum, paid every turn. A bearing addon cuts it. The tooltip shows the drag in Su per RPM.
 
-A flywheel that spins past the speed its rim can take strains and loses condition. It never bursts.
+A flywheel that spins past the **rim speed** its own metal and shape allow strains and loses condition, down to a floor. It never bursts. The tooltip shows the RPM it strains past.
 
 ## When to use one
 

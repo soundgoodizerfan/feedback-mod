@@ -31,7 +31,6 @@ public class FItems {
 
     public static final DeferredItem<BlockItem> SHAFT = ITEMS.registerSimpleBlockItem(FBlocks.SHAFT);
     public static final DeferredItem<BlockItem> BEARING = ITEMS.registerSimpleBlockItem(FBlocks.BEARING);
-    public static final DeferredItem<BlockItem> FLYWHEEL = ITEMS.registerSimpleBlockItem(FBlocks.FLYWHEEL);
     public static final DeferredItem<BlockItem> SMALL_COG = ITEMS.registerSimpleBlockItem(FBlocks.SMALL_COG);
     public static final DeferredItem<BlockItem> LARGE_COG = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_COG);
     public static final DeferredItem<BlockItem> GEARBOX = ITEMS.registerSimpleBlockItem(FBlocks.GEARBOX);
@@ -364,8 +363,6 @@ public class FItems {
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(FBlocks.BELLOWS);
     public static final DeferredItem<BlockItem> BIMETALLIC_STRIP = ITEMS.registerSimpleBlockItem(FBlocks.BIMETALLIC_STRIP);
 
-    public static final DeferredItem<BlockItem> BOILER = ITEMS.registerSimpleBlockItem(FBlocks.BOILER);
-    public static final DeferredItem<BlockItem> LARGE_BOILER = ITEMS.registerSimpleBlockItem(FBlocks.LARGE_BOILER);
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_ENGINE);
     public static final DeferredItem<BlockItem> STEAM_TURBINE = ITEMS.registerSimpleBlockItem(FBlocks.STEAM_TURBINE);
     public static final DeferredItem<BlockItem> CONDENSER = ITEMS.registerSimpleBlockItem(FBlocks.CONDENSER);
