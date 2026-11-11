@@ -320,6 +320,12 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     }
 
     /** True if a micro bearing here holds a body. */
+    /** A Lift carried this cell by {@code delta} blocks: every joint it holds follows. */
+    public void moved(BlockPos delta) {
+        for (Joint joint : bearings.values())
+            joint.shift(delta);
+    }
+
     public boolean holdsBearing() {
         return !bearings.isEmpty();
     }

@@ -127,7 +127,8 @@ public final class Joint {
     /** The front face's centre in the body's plot, the axis there, and a direction across it there. */
     private final Vector3d plotAnchor = new Vector3d(), plotAxis = new Vector3d(), plotRef = new Vector3d();
     /** A block of the body in its plot, and where it stood in the world: the way back. */
-    private final BlockPos homeFrom, homeTo;
+    private final BlockPos homeFrom;
+    private BlockPos homeTo;
     /** The body's moment of inertia about the axis, kpg x block^2; read when the joint is made. */
     private double bodyInertia;
     @Nullable
@@ -206,6 +207,20 @@ public final class Joint {
                 return true;
         }
         return false;
+    }
+
+    /** The body this joint holds, by Sable's id. */
+    public UUID bodyId() {
+        return body;
+    }
+
+    /**
+     * The parent moved by {@code delta} blocks inside its space (a Lift carried it into a body's plot):
+     * the way back and the cleared cells follow it.
+     */
+    public void shift(BlockPos delta) {
+        homeTo = homeTo.offset(delta);
+        cleared.replaceAll(p -> p.offset(delta));
     }
 
     public Kind kind() {

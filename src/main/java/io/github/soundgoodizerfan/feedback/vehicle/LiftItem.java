@@ -85,6 +85,11 @@ public class LiftItem extends BlockItem {
             return;
         }
         ServerSubLevel body = roots.isEmpty() ? clicked : roots.get(0);
+        // What hangs on joints goes back into the body as blocks first, or it would be left floating.
+        if (Superobject.unwind(level, body) != null) {
+            player.displayClientMessage(Component.translatable("message.feedback.lift.blocked"), true);
+            return;
+        }
         for (FrameBlockEntity f : FrameBlockEntity.loadedOn(level))
             if (f.frame().locked() && SableCompanion.INSTANCE.getContaining(f) == body) {
                 player.displayClientMessage(Component.translatable("message.feedback.lift.locked"), true);

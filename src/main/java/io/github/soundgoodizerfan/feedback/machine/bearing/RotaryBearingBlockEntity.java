@@ -79,8 +79,20 @@ public class RotaryBearingBlockEntity extends RotationNode {
         return getBlockState().getValue(RotaryBearingBlock.FACING);
     }
 
+    /** The hold on its body, or null. */
+    @Nullable
+    public Joint joint() {
+        return bearing;
+    }
+
+    /** A Lift carried this bearing's parent by {@code delta} blocks. */
+    public void moved(BlockPos delta) {
+        if (bearing != null)
+            bearing.shift(delta);
+    }
+
     /** Assembles, or puts back. Returns the message key. */
-    String toggle(ServerLevel level) {
+    public String toggle(ServerLevel level) {
         return bearing == null ? assemble(level) : disassemble(level);
     }
 

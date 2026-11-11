@@ -13,7 +13,9 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.phys.Vec3;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
+import io.github.soundgoodizerfan.feedback.machine.bearing.RotaryBearingBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameAssembly;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.FrameBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -55,6 +57,8 @@ public class LiftBlockEntity extends BlockEntity {
     private int blockedCells;
     /** Bearings of the last lift with nothing on their far side. Not saved. */
     private int lonelyBearings;
+    /** Closed joint loops in the last lift: reported, never refused. Not saved. */
+    private int jointLoops;
     /** The body held, by Sable's id for it; null when the lift is bare. */
     @Nullable
     private UUID body;
@@ -77,6 +81,10 @@ public class LiftBlockEntity extends BlockEntity {
 
     public int lonelyBearings() {
         return lonelyBearings;
+    }
+
+    public int jointLoops() {
+        return jointLoops;
     }
 
     public boolean holding() {
@@ -145,6 +153,17 @@ public class LiftBlockEntity extends BlockEntity {
                 blockedCells += frame.blockedCells();
             }
         ServerSubLevel made = SubLevelAssemblyHelper.assembleBlocks(level, start, blocks, BoundingBox3i.from(blocks));
+        // Cells and bearings moved into the body's plot by one shift; each joint they hold keeps its child
+        // (a joint rides in its block's data) and is made anew against the body, so its way back follows.
+        BlockPos delta = made.getPlot().getCenterBlock().subtract(start);
+        for (BlockPos p : blocks) {
+            var moved = level.getBlockEntity(p.offset(delta));
+            if (moved instanceof MicroCellBlockEntity cell)
+                cell.moved(delta);
+            else if (moved instanceof RotaryBearingBlockEntity bearing)
+                bearing.moved(delta);
+        }
+        jointLoops = Superobject.loops(level, Superobject.of(level, made));
         body = made.getUniqueId();
         HOLDING.put(body, this);
         made.logicalPose().transformPositionInverse(top(), anchor);
@@ -217,6 +236,10 @@ public class LiftBlockEntity extends BlockEntity {
             return "limit";
         // The whole vehicle comes down, not only the body the lift holds: every frame joined to it
         // and every swinging part (Superobject). Each body lands where it stands, on its own grid.
+        // Bodies hung on joints go back first, outermost first, each at the nearest quarter turn.
+        String unwound = Superobject.unwind(level, held);
+        if (unwound != null)
+            return "blocked";
         List<ServerSubLevel> roots = Superobject.roots(level, Superobject.of(level, held));
         List<Lowering> plans = new ArrayList<>();
         for (ServerSubLevel s : roots) {
