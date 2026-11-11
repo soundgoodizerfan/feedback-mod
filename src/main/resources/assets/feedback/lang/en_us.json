@@ -7188,6 +7188,7 @@
   "modular.feedback.band.high": "High",
   "modular.feedback.band.thin": "Thin",
   "modular.feedback.band.thick": "Thick",
+  "modular.feedback.axis.thickness": "Thickness",
   "modular.feedback.axis.thickness.tip": "How thick the part is. A thick one resists chipping and weighs more; a thin one bites deeper and is quicker.",
   "modular.feedback.axis.head_size": "Head size",
   "modular.feedback.axis.head_size.tip": "How big the head is. A big head weighs more, so it hits harder and swings slower; a small one is quick to swing and to throw.",
