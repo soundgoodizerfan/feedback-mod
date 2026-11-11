@@ -34,6 +34,7 @@ final class MinigameScreens {
     static {
         register(EngineeringMinigames.TORQUE, TorqueScreen::new);
         register(EngineeringMinigames.FITTING, FittingScreen::new);
+        register(EngineeringMinigames.NOTES, NotesScreen::new);
     }
 
     private MinigameScreens() {

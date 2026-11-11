@@ -37,6 +37,11 @@ public class TreatiseItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.feedback.treatise").withStyle(ChatFormatting.GRAY));
+        // How well its specimen was read: good notes help whoever assembles with the volume held (never a gate).
+        Float notes = stack.get(io.github.soundgoodizerfan.feedback.registry.FModular.NOTES.get());
+        if (notes != null)
+            tooltip.add(Component.translatable("tooltip.feedback.treatise_notes." + (notes < 0.3f ? 0 : notes < 0.55f ? 1 : notes < 0.78f ? 2 : notes < 0.92f ? 3 : 4))
+                    .withStyle(ChatFormatting.DARK_GREEN));
         // what it lets you draw: every type of its volume, by name
         for (var e : ModularTypes.known().entrySet())
             if (!e.getValue().face() && school == School.of(e.getValue().school()) && volume == School.volumeOf(e.getValue().school()))

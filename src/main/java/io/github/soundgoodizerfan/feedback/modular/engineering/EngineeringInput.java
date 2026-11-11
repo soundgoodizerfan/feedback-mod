@@ -17,8 +17,14 @@ import net.minecraft.world.item.crafting.RecipeInput;
  * @param known the school-volume mask ({@link io.github.soundgoodizerfan.feedback.modular.Treatises#mask(net.minecraft.world.entity.player.Player, net.minecraft.world.inventory.ContainerLevelAccess)})
  *              the maker already holds elsewhere (inventory, a shelf beside the table); the binder is added to it by the recipe.
  */
-public record EngineeringInput(List<ItemStack> grid, List<ItemStack> tools, List<ItemStack> fasteners, ItemStack binder, int known)
+public record EngineeringInput(List<ItemStack> grid, List<ItemStack> tools, List<ItemStack> fasteners, ItemStack binder, int known,
+                               java.util.Map<String, Float> notes)
         implements RecipeInput {
+
+    /** An input with no notes held (a plain view, a machine's): no treatise adds to the fit. */
+    public EngineeringInput(List<ItemStack> grid, List<ItemStack> tools, List<ItemStack> fasteners, ItemStack binder, int known) {
+        this(grid, tools, fasteners, binder, known, java.util.Map.of());
+    }
 
     public static final int GRID = 9, TOOLS = 4, FASTENERS = 3;
 

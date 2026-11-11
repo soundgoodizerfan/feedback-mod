@@ -297,7 +297,8 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
     private EngineeringInput input() {
         return new EngineeringInput(range(EngineeringTableBlockEntity.GRID, 9), range(EngineeringTableBlockEntity.TOOLS, 4),
                 range(EngineeringTableBlockEntity.FASTENERS, 3), table.getItem(EngineeringTableBlockEntity.BINDER),
-                Treatises.mask(player, ContainerLevelAccess.create(player.level(), pos)));
+                Treatises.mask(player, ContainerLevelAccess.create(player.level(), pos)),
+                Treatises.notes(player, ContainerLevelAccess.create(player.level(), pos), table.getItem(EngineeringTableBlockEntity.BINDER)));
     }
 
     /** Recomputes the Crafting tab's output (server side). */
@@ -348,6 +349,16 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
         long elapsed = server.level().getGameTime() - gameStart;
         gameId = "";
         float score = elapsed < EngineeringMinigames.minTicks(id, gameRounds) ? 0f : Math.max(0, Math.min(100, percent)) / 100f;
+        if (EngineeringMinigames.NOTES.toString().equals(id)) {
+            // The learning game: the volume is written with notes as good as the reading, whatever the score (never a gate).
+            if (tabs.get() == TAB_TREATISE && EngineeringRework.learnRounds(table, server) == rounds) {
+                EngineeringRework.Outcome out = EngineeringRework.learn(table, server, score, true);
+                note.set(out.note());
+                noteVolume.set(out.volume());
+                broadcastChanges();
+            }
+            return;
+        }
         EngineeringAssembly.Plan done = EngineeringAssembly.plan(server.level(), input(), table.getItem(EngineeringTableBlockEntity.BLUEPRINT), score);
         if (tabs.get() != TAB_CRAFT || !done.playsGame() || !id.equals(done.minigame()) || done.rounds() != rounds) {
             refresh();
@@ -394,7 +405,7 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
             case BTN_REPAIR -> tab == TAB_REPAIR ? EngineeringRework.repair(table, server, ModularRework.Mode.MEND) : null;
             case BTN_SWAP -> tab == TAB_REPAIR ? EngineeringRework.repair(table, server, ModularRework.Mode.SWAP) : null;
             case BTN_APART -> tab == TAB_REPAIR ? EngineeringRework.takeApart(table, server) : null;
-            case BTN_LEARN -> tab == TAB_TREATISE ? EngineeringRework.learn(table, server) : null;
+            case BTN_LEARN -> tab == TAB_TREATISE ? learnClicked(server) : null;
             default -> null;
         };
         if (out == null)
@@ -403,6 +414,26 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
         noteVolume.set(out.volume());
         broadcastChanges();
         return true;
+    }
+
+    /**
+     * Learn: blank paper copies a blueprint at once; a Blank Treatise opens the learning game ({@link EngineeringMinigames#NOTES}) and the
+     * volume is written when its result arrives ({@link #finishMinigame}), with notes as good as the play.
+     */
+    private EngineeringRework.Outcome learnClicked(ServerPlayer server) {
+        if (!table.getItem(EngineeringTableBlockEntity.BLANK).is(io.github.soundgoodizerfan.feedback.registry.FModular.BLANK_TREATISE.get()))
+            return EngineeringRework.learn(table, server);
+        int rounds = EngineeringRework.learnRounds(table, server);
+        if (rounds < 0)
+            return EngineeringRework.Outcome.of(-rounds);
+        long now = server.level().getGameTime();
+        if (!gameId.isEmpty() && now - gameStart < 20)
+            return EngineeringRework.Outcome.of(0);
+        gameId = EngineeringMinigames.NOTES.toString();
+        gameRounds = rounds;
+        gameStart = now;
+        PacketDistributor.sendToPlayer(server, new MinigameOpenPayload(containerId, gameId, gameRounds, 1, ""));
+        return EngineeringRework.Outcome.of(0);
     }
 
     /** The school volumes held where this table looks: the maker's inventory and the shelves beside it, and the binder slot. */

@@ -194,6 +194,10 @@ public final class EngineeringAssembly {
                     ? new Plan(SCHOOL, ItemStack.EMPTY, Plan.NONE.take()) : Plan.NONE;
         ResourceLocation id = found.get().type();
         ModularType type = types.get(id);
+        // Knowledge makes the maker better at using it: good notes of the volume that gates the build add start levels (never a gate).
+        String gate = type.family() == ModularType.Family.HAFTED ? io.github.soundgoodizerfan.feedback.modular.ModularFaces.school(ModularStacks.design(found.get().tool()), type) : type.school();
+        io.github.soundgoodizerfan.feedback.modular.School gated = io.github.soundgoodizerfan.feedback.modular.School.of(gate);
+        int notesLevels = gated == null ? 0 : Math.round(input.notes().getOrDefault(Treatises.key(gated, io.github.soundgoodizerfan.feedback.modular.School.volumeOf(gate)), 0f) * ModularTuning.NOTES_MAX_LEVELS);
         Fasteners.Supply supply = Fasteners.supply(input.fasteners(), type.fasteners());
         if (!supply.complete())
             return new Plan(NO_FASTENERS, ItemStack.EMPTY, Plan.NONE.take());
@@ -228,7 +232,7 @@ public final class EngineeringAssembly {
         }
         // The same parts again, now with what the maker brought, restricted to the type found: the fit and head start are written on the item.
         Optional<ModularAssembly.Match> made = ModularAssembly.infer(grid, blueprint, materials, Map.of(id, type), t -> true,
-                new ModularFit.Start(floor ? Math.min(0, supply.levels()) : supply.levels(), rounds > 0 ? score : -1f));
+                new ModularFit.Start(floor ? Math.min(0, supply.levels()) : supply.levels() + notesLevels, rounds > 0 ? score : -1f));
         if (made.isEmpty())
             return Plan.NONE;
         List<Integer> toWear = new ArrayList<>();

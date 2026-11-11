@@ -22,12 +22,15 @@ public final class EngineeringMinigames {
     /** Seat the assembly's parts in the order they physically go; a wrong click is a mis-seat that costs score. */
     public static final ResourceLocation FITTING = Feedback.id("fitting");
 
+    /** Read a specimen's parts with calipers onto a notebook page; its score is the quality of the notes. */
+    public static final ResourceLocation NOTES = Feedback.id("notes");
+
     private EngineeringMinigames() {
     }
 
     /** Whether {@code id} names a game the table can play. */
     public static boolean known(String id) {
-        return TORQUE.toString().equals(id) || FITTING.toString().equals(id);
+        return TORQUE.toString().equals(id) || FITTING.toString().equals(id) || NOTES.toString().equals(id);
     }
 
     /**
@@ -42,6 +45,8 @@ public final class EngineeringMinigames {
 
     /** The rounds an assembly spending {@code fasteners} fasteners and made of {@code pieces} grid parts plays; 0 when the game has nothing to do. */
     public static int rounds(String id, int fasteners, int pieces) {
+        if (NOTES.toString().equals(id))
+            return Math.max(0, Math.min(pieces, ModularTuning.NOTES_MAX_PARTS));
         if (FITTING.toString().equals(id))
             return pieces >= 2 ? Math.min(pieces, ModularTuning.FIT_MAX_PIECES) : 0;
         if (TORQUE.toString().equals(id))
@@ -51,6 +56,8 @@ public final class EngineeringMinigames {
 
     /** The fewest ticks an honest play of {@code rounds} rounds takes; a result sent sooner is scored as nothing. */
     public static long minTicks(String id, int rounds) {
+        if (NOTES.toString().equals(id))
+            return (long) rounds * ModularTuning.NOTES_MIN_READ_TICKS;
         if (FITTING.toString().equals(id))
             return (long) rounds * ModularTuning.FIT_MIN_SEAT_TICKS;
         return (long) rounds * ModularTuning.TORQUE_MIN_PULL_TICKS;

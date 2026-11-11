@@ -56,6 +56,49 @@ public final class Treatises {
         return access.evaluate((level, pos) -> shelved(level, pos, school, volume)).orElse(false);
     }
 
+    /** The quality of a held treatise's notes, 0 to 1, a stack with none counting for half (a found or bought volume): the best of the matching ones. */
+    private static float quality(ItemStack stack, School school, int volume) {
+        float best = 0f;
+        if (stack.getItem() instanceof TreatiseItem t && t.school() == school && t.volume() == volume)
+            best = stack.getOrDefault(FModular.NOTES.get(), 0.5f);
+        else if (stack.getItem() instanceof TreatiseBinderItem) {
+            BundleContents contents = stack.get(DataComponents.BUNDLE_CONTENTS);
+            if (contents != null)
+                for (ItemStack s : contents.items())
+                    best = Math.max(best, quality(s, school, volume));
+        }
+        return best;
+    }
+
+    /** The key a school's volume has among the notes: {@code weapons:2}. */
+    public static String key(School school, int volume) {
+        return school.name().toLowerCase(java.util.Locale.ROOT) + ":" + volume;
+    }
+
+    /** The notes quality of every volume the maker holds (inventory, binder slot, shelves beside the table), by {@link #key}: the best of each. */
+    public static java.util.Map<String, Float> notes(Player player, ContainerLevelAccess access, ItemStack binderSlot) {
+        java.util.Map<String, Float> out = new java.util.HashMap<>();
+        java.util.List<ItemStack> held = new java.util.ArrayList<>(player.getInventory().items);
+        held.addAll(player.getInventory().offhand);
+        held.add(binderSlot);
+        access.execute((level, pos) -> {
+            for (Direction d : Direction.values())
+                if (level.getBlockEntity(pos.relative(d)) instanceof TreatiseShelfBlockEntity shelf)
+                    for (int i = 0; i < shelf.getContainerSize(); i++)
+                        held.add(shelf.getItem(i));
+        });
+        for (School school : School.values())
+            for (int v = 1; v <= school.volumes(); v++) {
+                float best = -1f;
+                for (ItemStack s : held)
+                    if (holds(s, school, v))
+                        best = Math.max(best, quality(s, school, v));
+                if (best >= 0f)
+                    out.put(key(school, v), best);
+            }
+        return out;
+    }
+
     /** Whether a shelf touching {@code pos} holds the volume. */
     private static boolean shelved(Level level, BlockPos pos, School school, int volume) {
         for (Direction d : Direction.values()) {

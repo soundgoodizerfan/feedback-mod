@@ -253,6 +253,32 @@ public final class EngineeringRework {
      * player. A volume needs the specimen's type to have a school; a copy of a drawing needs no treatise.
      */
     public static Outcome learn(Container table, ServerPlayer server) {
+        return learn(table, server, 0.5f, false);
+    }
+
+    /**
+     * Whether a Blank Treatise with a specimen beside it is ready to be learned from: the rounds the learning game plays (the specimen's
+     * distinct parts), or the reason it is not (a negative note code, {@code -note}). Blank paper is not played: it is copied at once.
+     */
+    public static int learnRounds(Container table, ServerPlayer server) {
+        Level level = server.level();
+        ItemStack blank = table.getItem(EngineeringTableBlockEntity.BLANK);
+        ItemStack specimen = table.getItem(EngineeringTableBlockEntity.SPECIMEN);
+        if (!blank.is(FModular.BLANK_TREATISE.get()))
+            return -NO_BLANK;
+        ModularType type = typeOf(specimen, level);
+        if (type == null)
+            return -NO_SPECIMEN;
+        if (School.of(type.school()) == null)
+            return -NO_SCHOOL;
+        int tool = hammer(table);
+        if (tool != 0)
+            return -tool;
+        return Math.min(io.github.soundgoodizerfan.feedback.modular.ModularTuning.NOTES_MAX_PARTS, Math.max(1, ModularStacks.design(specimen).parts().size()));
+    }
+
+    /** Learns the specimen's volume with notes of {@code quality}; {@code played} says the learning game ran (it needs no further check). */
+    public static Outcome learn(Container table, ServerPlayer server, float quality, boolean played) {
         Level level = server.level();
         ItemStack blank = table.getItem(EngineeringTableBlockEntity.BLANK);
         ItemStack specimen = table.getItem(EngineeringTableBlockEntity.SPECIMEN);
@@ -272,7 +298,7 @@ public final class EngineeringRework {
             return Outcome.of(tool);
         int volume = School.volumeOf(type.school());
         List<ItemStack> parts = ModularRework.dismantle(specimen, ClientMaterials.on(level), EngineeringAssembly.types(level), salvage(server));
-        table.setItem(EngineeringTableBlockEntity.BLANK, TreatiseGame.onLearn(server, school, volume, specimen));
+        table.setItem(EngineeringTableBlockEntity.BLANK, TreatiseGame.onLearn(server, school, volume, specimen, quality));
         table.setItem(EngineeringTableBlockEntity.SPECIMEN, ItemStack.EMPTY);
         parts.forEach(p -> server.getInventory().placeItemBackInInventory(p));
         wear(table);

@@ -59,6 +59,11 @@ public final class FModular {
                     .networkSynchronized(io.github.soundgoodizerfan.feedback.modular.ModularFit.Fit.STREAM_CODEC)
                     .build());
 
+    /** The quality of a treatise's notes, 0 to 1, from how well its specimen was read; it adds start levels to what is assembled with the volume held. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> NOTES =
+            COMPONENTS.register("treatise_notes", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.floatRange(0f, 1f)).networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT).build());
+
     /** What an instrument read off the item and stamped on it: key to the figure as it was then ({@code Measured}). */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.Map<String, Float>>> MEASURED =
             COMPONENTS.register("measured", () -> DataComponentType.<java.util.Map<String, Float>>builder()

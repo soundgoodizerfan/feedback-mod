@@ -20,6 +20,13 @@ public final class TreatiseGame {
 
     /** What the blank treatise becomes when {@code player} takes {@code specimen} apart to learn volume {@code volume} of {@code school}. */
     public static ItemStack onLearn(ServerPlayer player, School school, int volume, ItemStack specimen) {
-        return Treatises.of(school, volume);
+        return onLearn(player, school, volume, specimen, 0.5f);
+    }
+
+    /** As above, the notes as good as {@code quality} (0 to 1) says: how well the specimen was read in the learning game. */
+    public static ItemStack onLearn(ServerPlayer player, School school, int volume, ItemStack specimen, float quality) {
+        ItemStack out = Treatises.of(school, volume);
+        out.set(io.github.soundgoodizerfan.feedback.registry.FModular.NOTES.get(), Math.max(0f, Math.min(1f, quality)));
+        return out;
     }
 }

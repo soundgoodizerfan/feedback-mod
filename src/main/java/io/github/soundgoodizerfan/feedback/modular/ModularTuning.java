@@ -167,6 +167,10 @@ public final class ModularTuning {
     /** The mass (Mu) a raised shield can have before it slows anyone: a light buckler is carried without notice. */
     public static final float SHIELD_SLOW_FREE_MASS = 6f;
     public static final float SHIELD_SLOW_MAX = 0.35f;
+    /** The learning game: parts read per specimen at most, the fewest ticks an honest reading takes, and the start levels perfect notes give. */
+    public static final int NOTES_MAX_PARTS = 6;
+    public static final int NOTES_MIN_READ_TICKS = 16;
+    public static final float NOTES_MAX_LEVELS = 2f;
     /** Filing: strokes a file takes before it wears one point (hand tools may always wear). */
     public static final int FILE_STROKES_PER_WEAR = 5;
     /** The share of swarf's volume lost when it melts back at the crucible (oxide and drag-out). */
