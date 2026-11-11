@@ -7,7 +7,10 @@ import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
+import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -17,6 +20,10 @@ import io.github.soundgoodizerfan.feedback.process.Canning;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.Containers;
 import net.minecraft.world.ContainerHelper;
@@ -57,6 +64,15 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
     private static final String TEMPERATURE = "Temperature";
 
     private float amount;
+    /** What the shell was built to: the room inside (mB), and the pressures (Pu) it risks and gives way at. Baked by {@code ModularBake#tank}. */
+    private float volume = FTuning.PRESSURE_VESSEL_VOLUME.value();
+    private float danger = FTuning.PRESSURE_VESSEL_DANGER_PU.value();
+    private float critical = FTuning.PRESSURE_VESSEL_CRITICAL_PU.value();
+    /** mB a relief valve vents a tick near the danger line; 0 with none. */
+    private float relief;
+    /** The design it was built from, kept so the broken block drops the same item. */
+    private ModularDesign design;
+    private ModularFigures figures;
     /** One temperature for everything inside, relaxing toward the fire or the boiling point, whichever is lower. */
     private float temperature = FTuning.AMBIENT_TU.value();
     private final NonNullList<ItemStack> jars = NonNullList.withSize(FTuning.CANNING_SLOTS, ItemStack.EMPTY);
@@ -73,7 +89,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
 
     @Override
     public Pu getPressure() {
-        return new Pu(amount / FTuning.PRESSURE_VESSEL_VOLUME.value());
+        return new Pu(amount / volume);
     }
 
     public void tickServer() {
@@ -85,6 +101,12 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
             setChanged();
         }
 
+        // A relief valve opens near the danger line and lets air out faster than a pump usually puts it in.
+        if (relief > 0 && amount > 0 && getPressure().value() > danger * FTuning.RELIEF_OPENS_AT) {
+            amount = Math.max(0, amount - relief);
+            setChanged();
+        }
+
         canningTick();
 
         // Read from PneumaticCraft: Repressurized's MachineAirHandler#addAir (GPL-3.0) -- risk
@@ -93,8 +115,8 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         // GregTech-boiler precedent, both landing on Feedback's own equipment rather than staying
         // an open item -- see FTuning#PRESSURE_VESSEL_DANGER_PU. The ladder itself is shared with
         // the boiler: see PressureBurst.
-        if (PressureBurst.fails(getPressure(), FTuning.PRESSURE_VESSEL_DANGER_PU,
-                FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random)) {
+        if (PressureBurst.fails(getPressure(), new Pu(danger),
+                new Pu(critical), level.random)) {
             amount = 0;
             setChanged();
             Level level = this.level;
@@ -204,10 +226,52 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
 
     // --- persistence --------------------------------------------------------------------------
 
+    /** The shell's figures, as the item carries them ({@code FDataComponents.PRESSURE_VESSEL}) and the block saves them. */
+    private CompoundTag writeFigures(CompoundTag tag) {
+        tag.putFloat("Volume", volume);
+        tag.putFloat("Danger", danger);
+        tag.putFloat("Critical", critical);
+        tag.putFloat("Relief", relief);
+        return tag;
+    }
+
+    private void readFigures(CompoundTag tag) {
+        volume = tag.contains("Volume") ? Math.max(1f, tag.getFloat("Volume")) : volume;
+        danger = tag.contains("Danger") ? tag.getFloat("Danger") : danger;
+        critical = tag.contains("Critical") ? tag.getFloat("Critical") : critical;
+        relief = tag.contains("Relief") ? tag.getFloat("Relief") : relief;
+    }
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        CompoundTag state = input.get(FDataComponents.PRESSURE_VESSEL.get());
+        if (state != null)
+            readFigures(state);
+        design = input.get(FModular.DESIGN.get());
+        figures = input.get(FModular.FIGURES.get());
+    }
+
+    @Override
+    protected void collectImplicitComponents(DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        components.set(FDataComponents.PRESSURE_VESSEL.get(), writeFigures(new CompoundTag()));
+        if (design != null)
+            components.set(FModular.DESIGN.get(), design);
+        if (figures != null)
+            components.set(FModular.FIGURES.get(), figures);
+    }
+
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat(AMOUNT, amount);
+        writeFigures(tag);
+        RegistryOps<Tag> ops = registries.createSerializationContext(NbtOps.INSTANCE);
+        if (design != null)
+            ModularDesign.CODEC.encodeStart(ops, design).result().ifPresent(t -> tag.put("Design", t));
+        if (figures != null)
+            ModularFigures.CODEC.encodeStart(ops, figures).result().ifPresent(t -> tag.put("Figures", t));
         tag.putFloat(TEMPERATURE, temperature);
         ContainerHelper.saveAllItems(tag, jars, registries);
     }
@@ -216,6 +280,10 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         amount = tag.getFloat(AMOUNT);
+        readFigures(tag);
+        RegistryOps<Tag> ops = registries.createSerializationContext(NbtOps.INSTANCE);
+        design = tag.contains("Design") ? ModularDesign.CODEC.parse(ops, tag.get("Design")).result().orElse(null) : null;
+        figures = tag.contains("Figures") ? ModularFigures.CODEC.parse(ops, tag.get("Figures")).result().orElse(null) : null;
         temperature = tag.contains(TEMPERATURE) ? tag.getFloat(TEMPERATURE) : FTuning.AMBIENT_TU.value();
         jars.clear();
         ContainerHelper.loadAllItems(tag, jars, registries);

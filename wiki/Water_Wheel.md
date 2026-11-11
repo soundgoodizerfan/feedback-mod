@@ -2,29 +2,50 @@
 
 Free, continuous [rotation](Rotation.md) from flowing water. It's the first source that can actually run machines.
 
-## Crafting
+## Building it
 
-```
-P P P
-P S P
-P P P
-```
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the type row); the diameter and bucket count are set there, along with the wheel type and addons. It needs a blueprint but no treatise. It has one part, the **Wheel Rim**, with four choices:
 
-P is any Planks and S is a [Shaft](Shaft.md).
+| Choice | What it sets |
+| --- | --- |
+| **Wheel type** | Paddle wheel, slatted or bucket wheel. See [Wheel types](#wheel-types). |
+| **Diameter** | From 100 to 400 cm, in steps of 20; the default is 200. A bigger wheel catches more water and makes more Su, but turns slower for the same flow. |
+| **Buckets** | From 4 to 16; the default is 8. More buckets take more of the flow's push and make more Su. |
+| **Wood** | The planks the rim is made from. A heavier wood gives the rim more momentum. |
+
+A 200 cm wheel with 8 buckets makes 256 Su and turns 4 RPM for each flowing side.
+
+Shape the rim from planks at the [Woodworking Table](Woodworking_Table.md), then put it together at the bench with the Water Wheel Blueprint in the blueprint slot. The Water Wheel comes out with the design, and the blueprint is kept. Its tooltip shows the Su it makes, the RPM per flowing side and its momentum. Breaking the block gives the same wheel back.
+
+## Wheel types
+
+Each type is cut from a different number of stock cells. The slatted wheel is the standard the figures on this page describe.
+
+| Type | Power | Speed for the same flow | Stock |
+| --- | --- | --- | --- |
+| Paddle wheel | 70% | 140% | least |
+| Slatted | 100% | 100% | between |
+| Bucket wheel | 150% | 70% | most |
+
+## Addons
+
+An addon is an optional extra part made from raw stock, added when you assemble the wheel or by reworking a finished one. The wheel works without it.
+
+- **Rim ring** (plate): adds momentum by the metal's density, so a denser metal adds more. The wheel is slower to spin up.
 
 ## Using it
 
 Place it with **flowing water** against it. Its axle runs along the face you place it on, and shafts connect at either end of the axle.
 
-**Speed depends on how many sides have moving water** against them: **4 RPM per side**, up to 16 RPM with all four. The two axle ends don't count. It needs to be **flowing** water: still source blocks don't push it.
+**Speed depends on how many sides have moving water** against them: the RPM per flowing side on the tooltip, times up to four sides. The two axle ends don't count. It needs to be **flowing** water: still source blocks don't push it.
 
 Where you put it matters. A wheel set into a running stream with water on several faces is worth much more than one dipped in a trickle.
 
 ## How much it can drive
 
-A water wheel is strong: **256 Su**. It can carry **three [Mechanical Hammers](Mechanical_Hammer.md)** (80 each), but not four. Put more wheels on the same line to carry more.
+A water wheel is strong: the Su on its tooltip. A 200 cm, 8-bucket wheel can carry **three [Mechanical Hammers](Mechanical_Hammer.md)** (80 each), but not four. A bigger wheel with more buckets carries more; so do more wheels on the same line.
 
-It's heavy, so a network with a water wheel on it is slow to spin up (about two seconds) but steady once it's going, and it coasts a long way when disconnected. A [Flywheel](Flywheel.md) is the same weight.
+It's heavy, so a network with a water wheel on it is slow to spin up but steady once it's going, and it coasts a long way when disconnected. A bigger wheel of a heavier wood has more momentum.
 
 ## Notes
 

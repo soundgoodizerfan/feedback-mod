@@ -530,4 +530,38 @@ public final class ModularTuning {
     public static final float FIRE_SOAK_PER_CONDUCT = 0.5f;
     /** Placeholder [OPEN]. Ticks between a burning wearer's armour soaking heat in (and hurting). */
     public static final int FIRE_SOAK_INTERVAL = 20;
+
+    /** Pressure vessel: half the block's side in cm, the cube's volume in mB, and the wall (cm) the reference density is quoted at. */
+    public static final float TANK_HALF_CM = 50f, TANK_CUBE_MB = 1000f, TANK_REF_WALL_CM = 5f;
+    /**
+     * Pu a shell holds per unit of yield strength times wall over inner radius, for a cylinder. Fitted so a 5 cm iron cylinder
+     * danger line lands on the old fixed vessel's 5 Pu.
+     */
+    public static final float TANK_PU_PER_STRESS = 9f;
+    /** The critical pressure over the danger one: the old vessel's 7 over 5. */
+    public static final float TANK_CRITICAL_OVER_DANGER = 1.4f;
+
+    /** Heat exchanger: the tube area (percent of the wall) the fixed block's conductance was quoted at. */
+    public static final float EXCHANGER_REF_AREA = 50f;
+    /** Gas tank: cubes of gas a bottle holds, and mB of gas per Pu per cube (the old 16000 mB at 1500 mB per Pu). */
+    public static final float GAS_TANK_ROOMS = 16f, GAS_TANK_MB_PER_ROOM_PU = 1.5f;
+    /** Water wheel: the diameter (cm) and bucket count the fixed wheel stands for, its Su, RPM per flowing face and inertia, and the density the inertia is quoted at (wood, Mu per mB). */
+    public static final float WHEEL_REF_CM = 200f, WHEEL_REF_BUCKETS = 8f, WHEEL_CAPACITY_SU = 256f, WHEEL_RPM_PER_FLOW = 4f,
+            WHEEL_INERTIA = 400f, WHEEL_REF_DENSITY = 0.6f;
+
+    /** Thermal store: the wall (cm) the fixed block stands for, its heat mass and leak, and the brick density and conductivity they were quoted at. */
+    public static final float STORE_REF_CM = 20f, STORE_MASS = 1800f, STORE_LEAK = 0.05f, STORE_REF_DENSITY = 1.9f, STORE_REF_CONDUCTIVITY = 0.000175f;
+    /** Leyden jar: the plate area (percent) and glass wall (mm) the fixed jar stands for, and its capacitance, leak per tick and burst amps. */
+    public static final float JAR_REF_AREA = 50f, JAR_REF_WALL_MM = 4f, JAR_CAPACITANCE = 10f, JAR_LEAK = 0.002f, JAR_BURST_AMPS = 8f;
+
+    /** Pressure shell addons: how much the bands raise the danger line at best, and the share of the room a relief valve vents per tick. */
+    public static final float TANK_BANDS_GAIN = 0.6f, TANK_RELIEF_PER_ROOM = 0.004f;
+    /** Heat exchanger fins: the share of a fin metal's conductivity that counts. */
+    public static final float FIN_SHARE = 0.6f;
+    /** Water wheel rim ring: inertia per unit of ring density. */
+    public static final float RING_INERTIA = 120f;
+    /** Thermal store: the salt fill's heat mass at the reference density, and the least a lagging can cut the leak to. */
+    public static final float STORE_SALT_MASS = 900f, STORE_SALT_DENSITY = 2.16f, STORE_LAG_FLOOR = 0.2f;
+    /** Leyden jar: the current the foil's ampacity is quoted at, and the share of leak an outer sleeve keeps. */
+    public static final float JAR_REF_AMPACITY = 8f, JAR_SLEEVE_LEAK = 0.5f;
 }

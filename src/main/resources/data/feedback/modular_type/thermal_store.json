@@ -1,0 +1,86 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "store_core",
+      "forms": [
+        "store_core"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "axes": {
+        "wall": {
+          "min": 10,
+          "max": 40,
+          "unit": "cm",
+          "default": 20,
+          "step": 2
+        }
+      },
+      "part": {
+        "item": "feedback:store_core",
+        "cells": 6,
+        "stock": [
+          "brick"
+        ],
+        "base": "store_walled",
+        "variants": [
+          {
+            "name": "store_slab",
+            "cells": 4,
+            "params": {
+              "leak": 1.3,
+              "mass": 0.8
+            }
+          },
+          {
+            "name": "store_walled",
+            "params": {
+              "leak": 1.0,
+              "mass": 1.0
+            }
+          },
+          {
+            "name": "store_tower",
+            "cells": 8,
+            "params": {
+              "leak": 0.7,
+              "mass": 1.3
+            }
+          }
+        ]
+      }
+    },
+    "I": {
+      "name": "lagging",
+      "forms": [
+        "*_carpet"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 2
+    },
+    "F": {
+      "name": "salt_fill",
+      "forms": [
+        "raw"
+      ],
+      "litres": 0.02,
+      "layer": 2,
+      "bulk": 4
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:brick"
+  }
+}

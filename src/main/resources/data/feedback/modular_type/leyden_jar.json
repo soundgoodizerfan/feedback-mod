@@ -1,0 +1,93 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "jar_glass",
+      "forms": [
+        "jar_glass"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "axes": {
+        "area": {
+          "min": 20,
+          "max": 100,
+          "unit": "%",
+          "default": 50,
+          "step": 5
+        },
+        "wall": {
+          "min": 2,
+          "max": 10,
+          "unit": "mm",
+          "default": 4,
+          "step": 1
+        }
+      },
+      "part": {
+        "item": "feedback:jar_glass",
+        "cells": 6,
+        "stock": [
+          "ingot"
+        ],
+        "base": "jar_lined",
+        "variants": [
+          {
+            "name": "jar_flat",
+            "cells": 4,
+            "params": {
+              "area": 0.7,
+              "leak": 0.5
+            }
+          },
+          {
+            "name": "jar_lined",
+            "params": {
+              "area": 1.0,
+              "leak": 1.0
+            }
+          },
+          {
+            "name": "jar_rolled",
+            "cells": 8,
+            "params": {
+              "area": 1.5,
+              "leak": 1.5
+            }
+          }
+        ]
+      }
+    },
+    "F": {
+      "name": "foil",
+      "forms": [
+        "foil"
+      ],
+      "litres": 0.01,
+      "layer": 1,
+      "bulk": 2
+    },
+    "W": {
+      "name": "outer_sleeve",
+      "forms": [
+        "tubing"
+      ],
+      "litres": 0.02,
+      "layer": 2,
+      "bulk": 1
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:glass"
+  }
+}

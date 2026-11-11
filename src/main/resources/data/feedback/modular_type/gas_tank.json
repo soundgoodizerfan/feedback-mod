@@ -1,0 +1,93 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "tank_shell",
+      "forms": [
+        "tank_shell"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "axes": {
+        "wall": {
+          "min": 1,
+          "max": 20,
+          "unit": "cm",
+          "default": 5,
+          "step": 1
+        }
+      },
+      "part": {
+        "item": "feedback:tank_shell",
+        "cells": 6,
+        "stock": [
+          "plate"
+        ],
+        "base": "tank_cylinder",
+        "variants": [
+          {
+            "name": "tank_box",
+            "params": {
+              "rating": 0.35,
+              "fill": 1.0
+            }
+          },
+          {
+            "name": "tank_cylinder",
+            "params": {
+              "rating": 1.0,
+              "fill": 0.8
+            }
+          },
+          {
+            "name": "tank_sphere",
+            "params": {
+              "rating": 2.0,
+              "fill": 0.52
+            }
+          },
+          {
+            "name": "tank_capsule",
+            "cells": 8,
+            "params": {
+              "rating": 1.4,
+              "fill": 0.7
+            }
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "reinforcing_bands",
+      "forms": [
+        "rod"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 4
+    },
+    "V": {
+      "name": "relief_valve",
+      "forms": [
+        "nugget"
+      ],
+      "litres": 0.01,
+      "layer": 2,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:steel"
+  },
+  "school": "chemical"
+}

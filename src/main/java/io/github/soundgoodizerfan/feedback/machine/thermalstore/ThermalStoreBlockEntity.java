@@ -12,6 +12,9 @@ import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -31,6 +34,20 @@ public class ThermalStoreBlockEntity extends BlockEntity implements ThermalBody,
     private float temperature = FTuning.AMBIENT_TU.value();
     private final Catchup offline = new Catchup();
 
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
     public ThermalStoreBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.THERMAL_STORE.get(), pos, state);
     }
@@ -47,12 +64,12 @@ public class ThermalStoreBlockEntity extends BlockEntity implements ThermalBody,
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.THERMAL_STORE_MASS;
+        return new ThermalMass(figures.get("Mass", FTuning.THERMAL_STORE_MASS.workPerTu()));
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.THERMAL_STORE_LEAK;
+        return new Conductance(figures.get("Leak", FTuning.THERMAL_STORE_LEAK.workPerTickPerTu()));
     }
 
     @Override
@@ -76,12 +93,14 @@ public class ThermalStoreBlockEntity extends BlockEntity implements ThermalBody,
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat("Temperature", temperature);
+        figures.save(tag, registries);
         offline.save(tag, level);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         offline.load(tag);
     }

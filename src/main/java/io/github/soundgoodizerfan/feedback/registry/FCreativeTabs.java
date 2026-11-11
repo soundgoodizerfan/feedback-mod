@@ -79,8 +79,6 @@ public class FCreativeTabs {
                         output.accept(FItems.SMALL_COG.get());
                         output.accept(FItems.LARGE_COG.get());
                         output.accept(FItems.GEARBOX.get());
-                        output.accept(FItems.HAND_CRANK.get());
-                        output.accept(FItems.WATER_WHEEL.get());
                         output.accept(FItems.CRANK_LINKAGE.get());
                         output.accept(FItems.MECHANICAL_HAMMER.get());
                         output.accept(FItems.WIRE_DRAWER.get());
@@ -253,11 +251,8 @@ public class FCreativeTabs {
                                 output.accept(post);
                             }
                         });
-                        output.accept(FItems.GALVANIC_CELL.get());
                         output.accept(FItems.GALVANIC_CELL_PACK.get());
                         output.accept(FItems.ELECTROSTATIC_GENERATOR.get());
-                        output.accept(FItems.ELECTROMAGNET.get());
-                        output.accept(FItems.LAMP.get());
                         output.accept(FItems.COPPER_COIL.get());
                         output.accept(FItems.IRON_COIL.get());
                         output.accept(FItems.INDUCTION_COIL.get());
@@ -283,7 +278,6 @@ public class FCreativeTabs {
                         output.accept(FItems.RELAY.get());
                         output.accept(FItems.GALENA.get());
                         output.accept(FItems.PYRITE.get());
-                        output.accept(FItems.LEYDEN_JAR.get());
                         output.accept(FItems.HYDROMETER.get());
                         output.accept(FItems.JAR_BATON.get());
                         output.accept(FItems.ELECTROLYTIC_CELL.get());
@@ -294,19 +288,14 @@ public class FCreativeTabs {
                         output.accept(FItems.CONVERTER.get());
                         output.accept(FItems.CONVERTER_TAP.get());
                         output.accept(FItems.HEATSINK.get());
-                        output.accept(FItems.THERMAL_STORE.get());
                         output.accept(FItems.BIMETALLIC_STRIP.get());
                         output.accept(FItems.BOILER.get());
                         output.accept(FItems.LARGE_BOILER.get());
                         output.accept(FItems.STEAM_ENGINE.get());
                         output.accept(FItems.STEAM_TURBINE.get());
                         output.accept(FItems.CONDENSER.get());
-                        output.accept(FItems.PUMP.get());
-                        output.accept(FItems.BURNER.get());
                         output.accept(FItems.HUSK_SAND.get());
                         output.accept(FItems.VACUUM_DRYER.get());
-                        output.accept(FItems.COMPRESSOR.get());
-                        output.accept(FItems.GAS_TANK.get());
                         output.accept(FItems.TUBE.get());
                         output.accept(FItems.LINED_TUBE.get());
                         output.accept(FItems.WIDE_TUBE.get());
@@ -473,8 +462,6 @@ public class FCreativeTabs {
                         output.accept(FItems.KILN.get());
                         output.accept(FItems.ANNEALING_FURNACE.get());
                         output.accept(FItems.PUDDLING_FURNACE.get());
-                        output.accept(FItems.HEAT_EXCHANGER.get());
-                        output.accept(FItems.PRESSURE_VESSEL.get());
                         output.accept(FItems.INGOT_MOLD.get());
                         output.accept(FItems.TEMPERATURE_SENSOR.get());
                         output.accept(FItems.GALVANOMETER.get());

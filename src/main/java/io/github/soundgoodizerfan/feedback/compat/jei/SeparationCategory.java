@@ -49,7 +49,7 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
     private final IDrawable icon;
 
     public SeparationCategory(IGuiHelper guiHelper) {
-        this.icon = guiHelper.createDrawableItemStack(new ItemStack(FItems.ELECTROMAGNET.get()));
+        this.icon = guiHelper.createDrawableItemStack(new ItemStack(io.github.soundgoodizerfan.feedback.registry.FModular.ELECTROMAGNET.get()));
     }
 
     public static List<Card> cards(Map<ResourceLocation, Material> materials) {

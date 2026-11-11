@@ -2,15 +2,19 @@
 
 Moves fluid from its back to its front while its shaft turns. Any fluid: water, steam, molten metal, another mod's oil.
 
-## Crafting
+## Building it
 
-```
-S S S
-T H T
-S S S
-```
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Pump* in the type row); the diameter is set there, along with the impeller shape and addon. It needs a blueprint but no treatise. Shape a **Pump Impeller** from plate at a bench (the [Smithing Table](Smithing_Table.md) for metal), then put it together at the bench with the Pump Blueprint in the blueprint slot; the pump comes out with the design, and the blueprint is kept.
 
-S is a [Steel Ingot](Steel.md), T is Copper Tubing (two [Copper Plates](Mechanical_Hammer.md) stacked make two) and H is a [Shaft](Shaft.md).
+The impeller has one measure, the **diameter**, from 10 to 60 cm (30 by default). A bigger impeller moves more fluid and loads the shaft more. Its **shape** trades flow against lift:
+
+| Impeller | Flow | Lift |
+| --- | --- | --- |
+| Centrifugal | standard | standard |
+| Axial | 1.6 times | half |
+| Screw | 0.7 times | 1.6 times |
+
+**Addon.** A **volute** (plate) is an optional casing that adds 15% to the flow, for a little more load.
 
 ## Placing
 
@@ -20,11 +24,11 @@ The shaft can't share the fluid's direction, so it goes in **across** it: from a
 
 ## How much it moves
 
-**0.5 mB per tick for every RPM.** It's a flat load of **8 Su**, however much it's moving.
+**0.5 mB per tick for every RPM** and a flat load of **8 Su**, however much it's moving, for a standard 30 cm impeller. The figures scale with the impeller: its tooltip shows them.
 
 | Shaft | Moves |
 | --- | --- |
-| [Water Wheel](Water_Wheel.md), one side of flow (4 RPM) | 2 mB/t |
+| [Water Wheel](Water_Wheel.md), default wheel, one side of flow (4 RPM) | 2 mB/t |
 | [Steam Engine](Steam_Engine.md) (16 RPM) | 8 mB/t |
 | 20 RPM | 10 mB/t, enough to keep a [Boiler](Boiler.md) fed for one engine |
 | [Hand Crank](Hand_Crank.md) (32 RPM) | 16 mB/t |
@@ -38,5 +42,5 @@ If there's nowhere for the fluid to go in front, it doesn't pump.
 
 ## Notes
 
-- It doesn't care what's above it. Lifting fluid ten blocks up costs the same as moving it sideways.
+- Pumping **up** adds a lift load on top of the flat load: 6 Su with a standard impeller, more with an axial one, less with a screw. Level and downward cost nothing extra.
 - It has no switch. Put a [Clutch](Clutch.md) on its shaft.

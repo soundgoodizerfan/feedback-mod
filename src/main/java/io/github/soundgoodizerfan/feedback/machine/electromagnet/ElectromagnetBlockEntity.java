@@ -21,6 +21,9 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.process.OreLadder;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -68,6 +71,20 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     private static int magneticGeneration = -1;
     private static Set<Item> magneticItems = Set.of();
 
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
     public ElectromagnetBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ELECTROMAGNET.get(), pos, state);
     }
@@ -81,7 +98,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
 
     @Override
     public float wantedAmps() {
-        return FTuning.ELECTROMAGNET_AMPS;
+        return figures.get("Amps", FTuning.ELECTROMAGNET_AMPS);
     }
 
     @Override
@@ -117,7 +134,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             return;
         sinceLastPull = 0;
 
-        double range = FTuning.ELECTROMAGNET_RANGE * field;
+        double range = figures.get("Range", FTuning.ELECTROMAGNET_RANGE) * field;
         Vec3 centre = Vec3.atCenterOf(worldPosition);
         AABB reach = new AABB(worldPosition).inflate(range);
         for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, reach)) {
@@ -132,7 +149,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             if (toward.lengthSqr() < 0.25 || toward.length() > range)
                 continue;
             item.setDeltaMovement(item.getDeltaMovement()
-                    .add(toward.normalize().scale(FTuning.ELECTROMAGNET_PULL * field)));
+                    .add(toward.normalize().scale(figures.get("Pull", FTuning.ELECTROMAGNET_PULL) * field)));
             item.hasImpulse = true;
         }
     }
@@ -251,6 +268,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.putFloat("Temperature", temperature);
         tag.putFloat("Condition", condition);
     }
@@ -258,6 +276,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         if (tag.contains("Temperature"))
             temperature = tag.getFloat("Temperature");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;

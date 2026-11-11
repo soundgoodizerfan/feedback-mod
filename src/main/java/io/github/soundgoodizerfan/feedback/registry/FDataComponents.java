@@ -96,6 +96,20 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
 
+    /** The named figures a modular block was baked to (a heat exchanger's conductance, a water wheel's capacity), carried by the item and the block alike. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> BLOCK_FIGURES =
+            COMPONENTS.register("block_figures", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
+                    .persistent(net.minecraft.nbt.CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
+    /** A pressure vessel's baked figures (room, danger and critical pressure, weight), carried by the item and the block alike. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> PRESSURE_VESSEL =
+            COMPONENTS.register("pressure_vessel", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()
+                    .persistent(net.minecraft.nbt.CompoundTag.CODEC)
+                    .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
+                    .build());
+
     /** A battery's physical state (charge, water, acid, condition, cell figures), carried by the item and the block alike. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.nbt.CompoundTag>> BATTERY =
             COMPONENTS.register("battery", () -> DataComponentType.<net.minecraft.nbt.CompoundTag>builder()

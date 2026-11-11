@@ -1546,6 +1546,9 @@ public final class FTuning {
      */
     public static final Mb PRESSURE_VESSEL_LEAK_PER_TICK = new Mb(1f);
 
+    /** Invented. A relief valve opens above this share of a shell's danger line. */
+    public static final float RELIEF_OPENS_AT = 0.9f;
+
     /** Invented. Jars a Pressure Vessel holds (food spec 8, Canning). */
     public static final int CANNING_SLOTS = 4;
 

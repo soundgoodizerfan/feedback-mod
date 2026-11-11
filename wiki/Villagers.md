@@ -129,7 +129,7 @@ Some professions sell a **blueprint**, one per day each, at a high price. A line
 | Farmer | wrap recipe card | 8 | 3 | 10 |
 | Butcher | skewer recipe card | 6 | 2 | 10 |
 
-Four professions also sell a **treatise**, one per day, at a high trade level; see [Treatise](Treatise.md#obtaining).
+Six professions also sell a **treatise**, one per day, at a high trade level; see [Treatise](Treatise.md#obtaining).
 
 | Profession | Treatise | Price (emeralds) | Level | Standing |
 | --- | --- | --- | --- | --- |
@@ -137,6 +137,8 @@ Four professions also sell a **treatise**, one per day, at a high trade level; s
 | Toolsmith | Mechanical Treatise | 32 | 4 | 10 |
 | Cartographer | Aerospace Treatise | 40 | 5 | 10 |
 | Librarian | Robotics Treatise | 40 | 5 | 10 |
+| Cleric | Chemical Treatise | 32 | 4 | 10 |
+| Mason | Materials Treatise | 32 | 4 | 10 |
 
 Blueprints for tools and armor carry the type's default design. Gun blueprints carry that gun's design. A recipe card carries a dish layout: open it to read the layout and the predicted figures.
 

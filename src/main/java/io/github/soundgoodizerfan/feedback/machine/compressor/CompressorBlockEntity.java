@@ -18,6 +18,9 @@ import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.pipe.PipeBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -81,13 +84,27 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
     private float owed;
     private float condition = 1f;
 
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
     public CompressorBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.COMPRESSOR.get(), pos, state);
     }
 
     @Override
     public Su getLoadSu() {
-        return FTuning.COMPRESSOR_LOAD_SU;
+        return new Su(figures.get("Load", FTuning.COMPRESSOR_LOAD_SU.value()));
     }
 
     public float condition() {
@@ -97,7 +114,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
     public void tickServer() {
         if (level == null)
             return;
-        owed += Math.abs(getRpm().value()) * FTuning.COMPRESSOR_MB_PER_RPM * condition;
+        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", FTuning.COMPRESSOR_MB_PER_RPM) * condition;
         int amount = (int) owed;
         if (amount <= 0)
             return;
@@ -118,7 +135,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
         } else if (back == null || offered.isEmpty() || !FluidNetwork.isGas(offered))
             return;
         IFluidHandler source = fromAir ? airSource : back;
-        FluidStack hot = FluidHeat.stamp(offered, FluidHeat.of(offered).value() + FTuning.COMPRESSOR_HEAT_TU);
+        FluidStack hot = FluidHeat.stamp(offered, FluidHeat.of(offered).value() + figures.get("Heat", FTuning.COMPRESSOR_HEAT_TU));
 
         BlockPos front = worldPosition.relative(out);
         int fits;
@@ -196,6 +213,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.putFloat("Condition", condition);
         tag.putBoolean("AirIntake", hasIntake());
     }
@@ -203,6 +221,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         upgrades.clear();
         if (tag.getBoolean("AirIntake"))

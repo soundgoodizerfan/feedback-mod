@@ -153,7 +153,7 @@ P
 
 G is a Glass Pane, T is a Copper Tubing and P is a [Copper Plate](Mechanical_Hammer.md).
 
-**Right-click** a Boiler, a Pressure Vessel, a [Pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) to read its pressure in Pu on the action bar. It only reads; it cannot vent or relieve anything. It reads in steps of **0.5 Pu**. The danger line is 5 Pu, critical is 7 and a boiler starts to seep at 3.5, so you can see the danger line coming without the exact figure. A circuit can narrow the step ([below](#fitting-a-circuit)).
+**Right-click** a Boiler, a Pressure Vessel, a [Pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) to read its pressure in Pu on the action bar. It only reads; it cannot vent or relieve anything. It reads in steps of **0.5 Pu**. A boiler's danger line is 5 Pu, its critical pressure 7, and it starts to seep at 3.5, so you can see the danger line coming without the exact figure. A circuit can narrow the step ([below](#fitting-a-circuit)).
 
 ## Electroscope
 

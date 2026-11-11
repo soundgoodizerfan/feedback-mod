@@ -1,0 +1,78 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "magnet_core",
+      "forms": [
+        "magnet_core"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "axes": {
+        "turns": {
+          "min": 50,
+          "max": 150,
+          "unit": "%",
+          "default": 100,
+          "step": 10
+        }
+      },
+      "part": {
+        "item": "feedback:magnet_core",
+        "cells": 6,
+        "stock": [
+          "ingot"
+        ],
+        "base": "core_bar",
+        "variants": [
+          {
+            "name": "core_bar",
+            "cells": 6,
+            "params": {
+              "pull": 1.0,
+              "range": 1.0
+            }
+          },
+          {
+            "name": "core_horseshoe",
+            "cells": 8,
+            "params": {
+              "pull": 1.4,
+              "range": 0.7
+            }
+          },
+          {
+            "name": "core_pot",
+            "cells": 8,
+            "params": {
+              "pull": 1.8,
+              "range": 0.5
+            }
+          }
+        ]
+      }
+    },
+    "Y": {
+      "name": "yoke",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:iron"
+  }
+}

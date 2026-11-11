@@ -8,11 +8,23 @@
           "type": "minecraft:item",
           "name": "feedback:galvanic_cell",
           "functions": [
-            { "function": "minecraft:copy_components", "source": "block_entity", "include": [ "feedback:anode_remaining" ] }
+            {
+              "function": "minecraft:copy_components",
+              "source": "block_entity",
+              "include": [
+                "feedback:block_figures",
+                "feedback:design",
+                "feedback:figures"
+              ]
+            }
           ]
         }
       ],
-      "conditions": [ { "condition": "minecraft:survives_explosion" } ]
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ]
     }
   ]
 }

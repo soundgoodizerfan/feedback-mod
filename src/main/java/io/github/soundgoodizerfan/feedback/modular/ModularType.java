@@ -168,6 +168,10 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         SUIT_MODULE,
         /** A spring-piston air gun ({@code spring_gun}): cocked by hand, it throws a metal pellet with a spring's stored energy. Not a {@link #GUN}: nothing in it ignites powder. Its bake is {@link SpringGunSpec}. */
         AIR_GUN,
+        /** A pressure vessel ({@code pressure_vessel}): a shell whose wall, shape and metal set the pressure it holds and the room inside; its bake is the {@link ModularBake#tank} spec the placed block runs on. */
+        PRESSURE,
+        /** A fixed block made from parts (heat exchanger, gas tank, water wheel): its bake is {@link BlockFigures}, the named figures the placed block's {@link FigureStore} hands back. */
+        BLOCK,
         MACHINE;
 
         /** The form a finished item of this family takes when held in another item's role, or empty if it cannot be held ({@link ModularNest}). A circuit is held too, as form {@code circuit}, though it is no modular family. */

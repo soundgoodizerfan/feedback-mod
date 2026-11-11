@@ -8,6 +8,9 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -33,6 +36,20 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
 
     private float condition = 1f;
 
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
     public LampBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.LAMP.get(), pos, state);
     }
@@ -44,7 +61,7 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
 
     @Override
     public float wantedAmps() {
-        return getBlockState().getValue(LampBlock.GLOW) == LampBlock.Glow.BURNT ? 0f : FTuning.LAMP_RATED_AMPS;
+        return getBlockState().getValue(LampBlock.GLOW) == LampBlock.Glow.BURNT ? 0f : figures.get("Amps", FTuning.LAMP_RATED_AMPS);
     }
 
     @Override
@@ -62,7 +79,7 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
         if (now == LampBlock.Glow.BURNT)
             return;
 
-        if (volts >= FTuning.LAMP_RATED_VOLTS * FTuning.LAMP_BURNOUT_VOLT_FACTOR) {
+        if (volts >= FTuning.LAMP_RATED_VOLTS * figures.get("Burnout", FTuning.LAMP_BURNOUT_VOLT_FACTOR)) {
             setGlow(state, LampBlock.Glow.BURNT);
             return;
         }
@@ -106,12 +123,14 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.putFloat("Condition", condition);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 }

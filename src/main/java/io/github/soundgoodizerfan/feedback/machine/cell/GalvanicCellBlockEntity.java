@@ -7,6 +7,9 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.BlockPos;
@@ -35,6 +38,8 @@ public class GalvanicCellBlockEntity extends ElectricNode {
     private int figuresGeneration = -1;
     private float volts;
     private float anode = 1f;
+
+    private final FigureStore figures = new FigureStore();
 
     public GalvanicCellBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.GALVANIC_CELL.get(), pos, state);
@@ -68,7 +73,7 @@ public class GalvanicCellBlockEntity extends ElectricNode {
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
         if (amps > 0f && anode > 0f) {
-            anode = Math.max(0f, anode - amps / FTuning.GALVANIC_ANODE_AMP_TICKS);
+            anode = Math.max(0f, anode - amps / figures.get("AnodeTicks", FTuning.GALVANIC_ANODE_AMP_TICKS));
             setChanged();
         }
     }
@@ -89,30 +94,34 @@ public class GalvanicCellBlockEntity extends ElectricNode {
 
     @Override
     public float sourceAmps() {
-        return FTuning.GALVANIC_CELL_AMPS;
+        return figures.get("Amps", FTuning.GALVANIC_CELL_AMPS);
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.putFloat("Anode", anode);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         anode = tag.contains("Anode") ? tag.getFloat("Anode") : 1f;
     }
 
     @Override
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get()), input.get(io.github.soundgoodizerfan.feedback.registry.FModular.FIGURES.get()));
         anode = input.getOrDefault(FDataComponents.ANODE_REMAINING.get(), 1f);
     }
 
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
+        figures.collect(components);
         if (anode < 1f)
             components.set(FDataComponents.ANODE_REMAINING.get(), anode);
     }

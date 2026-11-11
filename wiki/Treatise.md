@@ -10,14 +10,16 @@ A treatise is a book on one **school** of engineering. Holding it lets the [Blue
 | Mechanical Treatise | engine, transmission |
 | Aerospace Treatise | propeller |
 | Robotics Treatise | suit module |
+| Chemical Treatise | pressure vessel, heat exchanger, gas tank, gas compressor |
+| Materials Treatise | no types |
 
-Types outside every school (tools, armor, dynamotor, battery, belt and the rest) need no treatise. A school is a subject of its own: one treatise opens nothing in another.
+Types outside every school (tools, armor, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) need no treatise. A school is a subject of its own: one treatise opens nothing in another.
 
 ## Obtaining
 
 - **Write one.** Craft a **Blank Treatise**, put it in the blueprint slot of a bench, and take a gun, crossbow, engine, gearbox, propeller or suit module apart there. The item goes in and the Blank Treatise becomes a treatise of that item's school.
 - **Find one.** A treatise turns up, rarely, in dungeon, mineshaft, desert temple, stronghold and bastion chests.
-- **Buy one.** Weaponsmiths sell the Weapons Treatise, toolsmiths the Mechanical, cartographers the Aerospace and librarians the Robotics, at a high trade level. See [Villagers](Villagers.md#blueprints).
+- **Buy one.** Weaponsmiths sell the Weapons Treatise, toolsmiths the Mechanical, cartographers the Aerospace, librarians the Robotics, clerics the Chemical and masons the Materials, at a high trade level. See [Villagers](Villagers.md#blueprints).
 
 ### Blank Treatise
 

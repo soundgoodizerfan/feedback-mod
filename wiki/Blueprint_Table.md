@@ -1,6 +1,6 @@
 # Blueprint Table
 
-A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md), and so are machines and their parts (engines, gearboxes, propellers, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
+A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, for the [Gun Table](Gun_Table.md), and so are machines and their parts (engines, gearboxes, propellers, pressure vessels, heat exchangers, gas tanks, gas compressors, water wheels, thermal stores, Leyden jars, pumps, fluid burners, electromagnets, galvanic cells, lamps, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
 
 ## Crafting
 
@@ -62,14 +62,17 @@ A type that belongs to a **school** is drawn here only while you hold that schoo
 | Mechanical | engine, transmission |
 | Aerospace | propeller |
 | Robotics | suit module |
+| Chemical | pressure vessel, heat exchanger, gas tank, gas compressor |
+| Materials | none |
 
-Every other type (tools, armor, backpack, bedroll, dynamotor, battery, belt and the rest) needs no treatise.
+Every other type (tools, armor, backpack, bedroll, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) needs no treatise.
 
 ## What a blueprint is for
 
 Mostly it's a drawing to look at. Some things **need** one to be built.
 
 - A [suit module](Exosuit.md#learning-a-module), an [engine](Engine.md), a [transmission](Transmission.md) and a [propeller](Propeller.md) are built only with their blueprint in the bench's blueprint slot. A blueprint can sit in a [Blueprint Book](Blueprint_Book.md).
+- A [Water Wheel](Water_Wheel.md), [Thermal Store](Thermal_Store.md), [Leyden Jar](Leyden_Jar.md), [Pump](Pump.md), [Fluid Burner](Fluid_Burner.md), [Electromagnet](Electromagnet.md), [Galvanic Cell](Galvanic_Cell.md) and [Glowstone Lamp](Lamp.md) are built only with their blueprint in the bench's blueprint slot, and the dimension (diameter, bore, turns, size, gauge, wall, area, buckets) is set here on the drawing. The [Pressure Vessel](Pressure_Vessel.md), [Heat Exchanger](Heat_Exchanger.md), [Gas Tank](Gas_Tank.md) and [Gas Compressor](Gas_Compressor.md) need a blueprint too, and the Chemical treatise to draw it. The [Hand Crank](Hand_Crank.md) needs neither.
 - The [crossbow](Tools_and_Weapons.md#crossbow-blueprint), the only tool with a mechanism whose parts must fit each other: put a Crossbow Blueprint in the crafting grid with the parts. The blueprint must show the same parts as the ones you put in, role for role: same material, same part and same count. Ground-in qualities (measured figures, flaws) need not match. A blueprint of a different design does not work.
 
 Repairs and swaps never need one.

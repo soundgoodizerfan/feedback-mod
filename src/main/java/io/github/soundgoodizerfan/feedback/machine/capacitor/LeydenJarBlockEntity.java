@@ -6,6 +6,9 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -43,12 +46,30 @@ public class LeydenJarBlockEntity extends ElectricNode {
     private float charge;
     private boolean supplying;
 
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
+    private float capacitance() {
+        return figures.get("Capacitance", FTuning.LEYDEN_JAR_CAPACITANCE);
+    }
+
     public LeydenJarBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.LEYDEN_JAR.get(), pos, state);
     }
 
     public float getStoredVolts() {
-        return charge / FTuning.LEYDEN_JAR_CAPACITANCE;
+        return charge / capacitance();
     }
 
     /**
@@ -56,7 +77,7 @@ public class LeydenJarBlockEntity extends ElectricNode {
      * {@code capVolts}. A hand is a tiny source, so what it adds is small and what it can reach is capped low.
      */
     public void inject(float amount, float capVolts) {
-        charge = Math.min(charge + amount, capVolts * FTuning.LEYDEN_JAR_CAPACITANCE);
+        charge = Math.min(charge + amount, capVolts * capacitance());
         setChanged();
     }
 
@@ -91,7 +112,7 @@ public class LeydenJarBlockEntity extends ElectricNode {
 
     @Override
     public float sourceAmps() {
-        return supplying && charge > 0 ? FTuning.LEYDEN_JAR_BURST_AMPS : 0;
+        return supplying && charge > 0 ? figures.get("BurstAmps", FTuning.LEYDEN_JAR_BURST_AMPS) : 0;
     }
 
     /** Charges only while what it sees is above what it holds; a full jar asks for nothing. */
@@ -109,8 +130,8 @@ public class LeydenJarBlockEntity extends ElectricNode {
         charge += supplying ? -getAmps() : getAmps();
         // Only while a source is on the line: a pulse that has ended must not read as a line at 0 V and empty the jar before it takes over.
         if (!supplying && getVolts() > 0f)
-            charge = Math.min(charge, getVolts() * FTuning.LEYDEN_JAR_CAPACITANCE);
-        charge = Math.max(0, charge * (1 - FTuning.LEYDEN_JAR_LEAK_PER_TICK));
+            charge = Math.min(charge, getVolts() * capacitance());
+        charge = Math.max(0, charge * (1 - figures.get("Leak", FTuning.LEYDEN_JAR_LEAK_PER_TICK)));
         if (charge != before)
             setChanged();
 
@@ -129,12 +150,14 @@ public class LeydenJarBlockEntity extends ElectricNode {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putFloat(CHARGE, charge);
+        figures.save(tag, registries);
         tag.putBoolean(SUPPLYING, supplying);
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
         charge = tag.getFloat(CHARGE);
         supplying = tag.getBoolean(SUPPLYING);
     }

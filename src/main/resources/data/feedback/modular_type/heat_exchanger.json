@@ -1,0 +1,82 @@
+{
+  "family": "block",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "exchanger_core",
+      "forms": [
+        "exchanger_core"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "axes": {
+        "area": {
+          "min": 20,
+          "max": 100,
+          "unit": "%",
+          "default": 50,
+          "step": 5
+        }
+      },
+      "part": {
+        "item": "feedback:exchanger_core",
+        "cells": 6,
+        "stock": [
+          "plate"
+        ],
+        "base": "tubes_plain",
+        "variants": [
+          {
+            "name": "tubes_plain",
+            "params": {
+              "fin": 1.0
+            }
+          },
+          {
+            "name": "tubes_finned",
+            "cells": 7,
+            "params": {
+              "fin": 1.6
+            }
+          },
+          {
+            "name": "tubes_coiled",
+            "cells": 8,
+            "params": {
+              "fin": 1.3
+            }
+          },
+          {
+            "name": "plate_frame",
+            "cells": 10,
+            "params": {
+              "fin": 2.0
+            }
+          }
+        ]
+      }
+    },
+    "F": {
+      "name": "fin_stack",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.02,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:copper"
+  },
+  "school": "chemical"
+}

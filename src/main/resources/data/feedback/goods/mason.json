@@ -24,6 +24,14 @@
       "item": "minecraft:quartz",
       "price": 4,
       "count": 2
+    },
+    {
+      "level": 4,
+      "item": "feedback:treatise_materials",
+      "price": 32,
+      "count": 1,
+      "standing": 10,
+      "stock": 1
     }
   ]
 }

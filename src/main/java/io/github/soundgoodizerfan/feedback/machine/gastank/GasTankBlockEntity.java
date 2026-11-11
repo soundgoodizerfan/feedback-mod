@@ -10,6 +10,9 @@ import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -27,6 +30,39 @@ import net.neoforged.neoforge.fluids.FluidStack;
 public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
 
     private final HeatedTank gas = new HeatedTank(FTuning.GAS_TANK_MB, this::setChanged);
+
+
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+        onFigures();
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
+    /** A built tank holds the room its shell was baked with, not the fixed 16000 mB. */
+    private void onFigures() {
+        gas.setCapacity(Math.round(figures.get("Capacity", FTuning.GAS_TANK_MB)));
+    }
+
+    private float mbPerPu() {
+        return figures.get("MbPerPu", FTuning.GAS_TANK_MB_PER_PU);
+    }
+
+    private Pu danger() {
+        return new Pu(figures.get("Danger", FTuning.PRESSURE_VESSEL_DANGER_PU.value()));
+    }
+
+    private Pu critical() {
+        return new Pu(figures.get("Critical", FTuning.PRESSURE_VESSEL_CRITICAL_PU.value()));
+    }
 
     public GasTankBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.GAS_TANK.get(), pos, state);
@@ -64,7 +100,7 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
 
             @Override
             public int fill(FluidStack resource, FluidAction action) {
-                int room = (int) (FTuning.PRESSURE_VESSEL_DANGER_PU.value() * 0.8f * FTuning.GAS_TANK_MB_PER_PU) - gas.getFluidAmount();
+                int room = (int) (danger().value() * 0.8f * mbPerPu()) - gas.getFluidAmount();
                 return room <= 0 ? 0 : gas.fill(resource.copyWithAmount(Math.min(room, resource.getAmount())), action);
             }
 
@@ -86,14 +122,17 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
 
     @Override
     public Pu getPressure() {
-        return new Pu(gas.getFluidAmount() / FTuning.GAS_TANK_MB_PER_PU);
+        return new Pu(gas.getFluidAmount() / mbPerPu());
     }
 
     public void tickServer() {
         if (level == null || gas.isEmpty())
             return;
         gas.relax(AmbientTable.at(level));
-        if (PressureBurst.fails(getPressure(), FTuning.PRESSURE_VESSEL_DANGER_PU, FTuning.PRESSURE_VESSEL_CRITICAL_PU,
+        float relief = figures.get("Relief", 0f);
+        if (relief > 0 && getPressure().value() > danger().value() * FTuning.RELIEF_OPENS_AT)
+            gas.drain(Math.round(relief), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        if (PressureBurst.fails(getPressure(), danger(), critical(),
                 level.random)) {
             gas.setFluid(FluidStack.EMPTY);
             PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
@@ -103,12 +142,15 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
         tag.put("Gas", gas.writeToNBT(registries, new CompoundTag()));
     }
 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
+        onFigures();
         if (tag.contains("Gas"))
             gas.readFromNBT(registries, tag.getCompound("Gas"));
     }

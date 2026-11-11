@@ -3,6 +3,10 @@
 package io.github.soundgoodizerfan.feedback.machine.heatexchanger;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -35,6 +39,33 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class HeatExchangerBlockEntity extends BlockEntity {
 
+
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
+    @Override
+    protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
+        figures.save(tag, registries);
+    }
+
+    @Override
+    protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
+        figures.load(tag, registries);
+    }
+
     public HeatExchangerBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.HEAT_EXCHANGER.get(), pos, state);
     }
@@ -50,6 +81,6 @@ public class HeatExchangerBlockEntity extends BlockEntity {
         if (!(level.getBlockEntity(worldPosition.relative(axis.getOpposite())) instanceof ThermalBody b))
             return;
 
-        Heat.exchange(a, b, FTuning.HEAT_EXCHANGER_CONDUCTANCE);
+        Heat.exchange(a, b, new Conductance(figures.get("Conductance", FTuning.HEAT_EXCHANGER_CONDUCTANCE.workPerTickPerTu())));
     }
 }
