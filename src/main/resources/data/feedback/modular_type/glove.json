@@ -18,7 +18,11 @@
           "leather",
           "*_carpet"
         ]
-      }
+      },
+      "offers": [
+        "wrist",
+        "back"
+      ]
     },
     "L": {
       "name": "lining",
@@ -82,7 +86,8 @@
         "parry_mult": 0.6,
         "stagger_mult": 0.5,
         "light_damage": 4
-      }
+      },
+      "mount": "wrist"
     }
   },
   "patterns": [

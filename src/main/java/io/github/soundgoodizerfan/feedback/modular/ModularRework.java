@@ -133,6 +133,9 @@ public final class ModularRework {
             List<Part> parts = new ArrayList<>(design.parts());
             parts.add(ModularAssembly.part(key, what, stock.get(0), shaped ? 1 : role.bulk()));
             parts.sort(Comparator.comparingInt(p -> type.order().indexOf(p.role())));
+            // An addon sits on a mount some part of the item offers (a suppressor on a muzzle, a sight on a rail), else there is nowhere to fit it.
+            if (!type.mounted(key, parts))
+                return Optional.empty();
             return ModularStacks.assemble(out, new ModularDesign(design.type(), parts, design.edge()), materials, types)
                     ? Optional.of(out) : Optional.empty();
         }

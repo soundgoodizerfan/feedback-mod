@@ -1,7 +1,10 @@
 {
   "family": "armour",
   "minigame": "feedback:fitting",
-  "fit_order": ["L", "U"],
+  "fit_order": [
+    "L",
+    "U"
+  ],
   "slot": "legs",
   "armour_max": 6,
   "wear_litres": 0.28,
@@ -112,7 +115,14 @@
             }
           ]
         }
-      }
+      },
+      "offers": [
+        "plate",
+        "neck",
+        "shoulder",
+        "knee",
+        "foot"
+      ]
     },
     "L": {
       "name": "underlayer",
@@ -173,7 +183,8 @@
             "cells": 8
           }
         ]
-      }
+      },
+      "mount": "plate"
     },
     "G": {
       "name": "gauge",
@@ -181,7 +192,8 @@
         "lens"
       ],
       "litres": 0.005,
-      "layer": 6
+      "layer": 6,
+      "mount": "plate"
     },
     "M": {
       "name": "upgrade",
@@ -190,7 +202,8 @@
       ],
       "litres": 0.03,
       "layer": 9,
-      "after": true
+      "after": true,
+      "mount": "plate"
     },
     "K": {
       "name": "poleyn",
@@ -206,7 +219,8 @@
       "params": {
         "fall_mult": 0.75,
         "stagger_mult": 0.5
-      }
+      },
+      "mount": "knee"
     },
     "U": {
       "name": "underlayer",

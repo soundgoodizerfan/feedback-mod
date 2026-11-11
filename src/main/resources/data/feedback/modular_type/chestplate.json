@@ -1,7 +1,10 @@
 {
   "family": "armour",
   "minigame": "feedback:fitting",
-  "fit_order": ["L", "U"],
+  "fit_order": [
+    "L",
+    "U"
+  ],
   "slot": "chest",
   "armour_max": 8,
   "wear_litres": 0.3,
@@ -130,7 +133,14 @@
             }
           ]
         }
-      }
+      },
+      "offers": [
+        "plate",
+        "neck",
+        "shoulder",
+        "knee",
+        "foot"
+      ]
     },
     "L": {
       "name": "underlayer",
@@ -191,7 +201,8 @@
             "cells": 8
           }
         ]
-      }
+      },
+      "mount": "plate"
     },
     "G": {
       "name": "gauge",
@@ -199,7 +210,8 @@
         "lens"
       ],
       "litres": 0.005,
-      "layer": 6
+      "layer": 6,
+      "mount": "plate"
     },
     "B": {
       "name": "battery_bay",
@@ -208,7 +220,8 @@
       ],
       "litres": 0.05,
       "layer": 8,
-      "bulk": 2
+      "bulk": 2,
+      "mount": "plate"
     },
     "M": {
       "name": "upgrade",
@@ -217,7 +230,8 @@
       ],
       "litres": 0.03,
       "layer": 9,
-      "after": true
+      "after": true,
+      "mount": "plate"
     },
     "C": {
       "name": "collar",
@@ -234,7 +248,8 @@
       "params": {
         "stiff_share": 0.5,
         "flex_share": 0.2
-      }
+      },
+      "mount": "neck"
     },
     "D": {
       "name": "pauldron",
@@ -250,7 +265,8 @@
       "params": {
         "overhead_mult": 0.7,
         "falling_mult": 0.6
-      }
+      },
+      "mount": "shoulder"
     },
     "U": {
       "name": "underlayer",

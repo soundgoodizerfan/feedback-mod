@@ -43,7 +43,11 @@
             }
           }
         ]
-      }
+      },
+      "offers": [
+        "limb",
+        "riser"
+      ]
     },
     "W": {
       "name": "string",
@@ -64,7 +68,10 @@
         "*_planks"
       ],
       "litres": 0.05,
-      "layer": 2
+      "layer": 2,
+      "offers": [
+        "grip"
+      ]
     },
     "L": {
       "name": "lock",
@@ -73,7 +80,10 @@
         "trigger_group"
       ],
       "litres": 0.04,
-      "layer": 3
+      "layer": 3,
+      "offers": [
+        "lock"
+      ]
     },
     "M": {
       "name": "magazine",
@@ -88,7 +98,8 @@
         "draw_mult": 1.3,
         "damage_mult": 0.85,
         "spread_mult": 5
-      }
+      },
+      "mount": "lock"
     },
     "B": {
       "name": "binding",
@@ -121,7 +132,8 @@
             }
           }
         ]
-      }
+      },
+      "mount": "riser"
     },
     "E": {
       "name": "rest",
@@ -133,7 +145,8 @@
       "trait": "steady",
       "params": {
         "spread_mult": 0.8
-      }
+      },
+      "mount": "riser"
     },
     "X": {
       "name": "stabiliser",
@@ -146,7 +159,8 @@
       "params": {
         "spread_mult": 0.85,
         "draw_mult": 1.2
-      }
+      },
+      "mount": "riser"
     }
   },
   "patterns": [

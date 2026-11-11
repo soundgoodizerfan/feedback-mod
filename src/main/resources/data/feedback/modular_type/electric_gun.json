@@ -47,7 +47,11 @@
             }
           }
         ]
-      }
+      },
+      "offers": [
+        "rail",
+        "receiver"
+      ]
     },
     "B": {
       "name": "barrel",
@@ -123,7 +127,12 @@
             }
           }
         ]
-      }
+      },
+      "offers": [
+        "muzzle",
+        "barrel",
+        "rail"
+      ]
     },
     "T": {
       "name": "trigger",
@@ -229,7 +238,8 @@
             }
           }
         ]
-      }
+      },
+      "mount": "receiver"
     },
     "S": {
       "name": "sight",
@@ -254,7 +264,8 @@
             "cells": 2
           }
         ]
-      }
+      },
+      "mount": "rail"
     },
     "e": {
       "name": "lit_reticle",
@@ -305,7 +316,8 @@
           }
         ],
         "base": "dot_reticle"
-      }
+      },
+      "mount": "rail"
     },
     "M": {
       "name": "suppressor",
@@ -321,7 +333,8 @@
           "cylinder"
         ],
         "variants": []
-      }
+      },
+      "mount": "muzzle"
     },
     "N": {
       "name": "muzzle_brake",
@@ -337,7 +350,8 @@
           "magazine_tube"
         ],
         "variants": []
-      }
+      },
+      "mount": "muzzle"
     },
     "Q": {
       "name": "eddy_sleeve",
@@ -353,7 +367,8 @@
           "magazine_tube"
         ],
         "variants": []
-      }
+      },
+      "mount": "barrel"
     },
     "Z": {
       "name": "thermal_sleeve",
@@ -369,7 +384,8 @@
           "magazine_tube"
         ],
         "variants": []
-      }
+      },
+      "mount": "barrel"
     },
     "C": {
       "name": "counterweight",
@@ -385,7 +401,8 @@
           "ingot"
         ],
         "variants": []
-      }
+      },
+      "mount": "receiver"
     },
     "I": {
       "name": "bipod",
@@ -401,7 +418,8 @@
           "rod"
         ],
         "variants": []
-      }
+      },
+      "mount": "rail"
     },
     "a": {
       "name": "bayonet",
@@ -417,7 +435,8 @@
           "rod"
         ],
         "variants": []
-      }
+      },
+      "mount": "muzzle"
     },
     "H": {
       "name": "shroud",
@@ -433,7 +452,8 @@
           "drilled_plate"
         ],
         "variants": []
-      }
+      },
+      "mount": "barrel"
     },
     "P": {
       "name": "resonance",
@@ -474,7 +494,8 @@
             }
           }
         ]
-      }
+      },
+      "mount": "barrel"
     }
   },
   "patterns": [

@@ -88,7 +88,11 @@
             }
           ]
         }
-      }
+      },
+      "offers": [
+        "face",
+        "rim"
+      ]
     },
     "R": {
       "name": "rim",
@@ -123,7 +127,10 @@
             }
           }
         ]
-      }
+      },
+      "offers": [
+        "rim"
+      ]
     },
     "G": {
       "name": "grip",
@@ -135,7 +142,10 @@
         "grip"
       ],
       "litres": 0.03,
-      "layer": 2
+      "layer": 2,
+      "offers": [
+        "grip"
+      ]
     },
     "O": {
       "name": "boss",
@@ -149,7 +159,8 @@
         "bash": 3,
         "shove": 0.5,
         "capacity_mult": 0.9
-      }
+      },
+      "mount": "face"
     },
     "A": {
       "name": "strap",
@@ -161,7 +172,8 @@
       "bulk": 2,
       "params": {
         "capacity_mult": 1.1
-      }
+      },
+      "mount": "grip"
     }
   },
   "patterns": [

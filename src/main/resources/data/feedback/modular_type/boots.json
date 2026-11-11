@@ -1,7 +1,10 @@
 {
   "family": "armour",
   "minigame": "feedback:fitting",
-  "fit_order": ["L", "U"],
+  "fit_order": [
+    "L",
+    "U"
+  ],
   "slot": "feet",
   "armour_max": 3,
   "wear_litres": 0.24,
@@ -106,7 +109,14 @@
             }
           ]
         }
-      }
+      },
+      "offers": [
+        "plate",
+        "neck",
+        "shoulder",
+        "knee",
+        "foot"
+      ]
     },
     "L": {
       "name": "underlayer",
@@ -167,7 +177,8 @@
             "cells": 8
           }
         ]
-      }
+      },
+      "mount": "plate"
     },
     "G": {
       "name": "gauge",
@@ -175,7 +186,8 @@
         "lens"
       ],
       "litres": 0.005,
-      "layer": 6
+      "layer": 6,
+      "mount": "plate"
     },
     "M": {
       "name": "upgrade",
@@ -184,7 +196,8 @@
       ],
       "litres": 0.03,
       "layer": 9,
-      "after": true
+      "after": true,
+      "mount": "plate"
     },
     "E": {
       "name": "spurs",
@@ -200,7 +213,8 @@
         "boost_ticks": 60,
         "level": 1,
         "cooldown_ticks": 200
-      }
+      },
+      "mount": "foot"
     },
     "H": {
       "name": "hobnails",
@@ -215,7 +229,8 @@
       "params": {
         "grip_mult": 0.3,
         "visibility_mult": 1.15
-      }
+      },
+      "mount": "foot"
     },
     "U": {
       "name": "underlayer",

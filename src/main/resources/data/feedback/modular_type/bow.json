@@ -79,7 +79,11 @@
             }
           ]
         }
-      }
+      },
+      "offers": [
+        "limb",
+        "riser"
+      ]
     },
     "W": {
       "name": "string",
@@ -122,7 +126,8 @@
             }
           }
         ]
-      }
+      },
+      "mount": "riser"
     },
     "E": {
       "name": "rest",
@@ -134,7 +139,8 @@
       "trait": "steady",
       "params": {
         "spread_mult": 0.8
-      }
+      },
+      "mount": "riser"
     },
     "X": {
       "name": "stabiliser",
@@ -147,7 +153,8 @@
       "params": {
         "spread_mult": 0.85,
         "draw_mult": 1.2
-      }
+      },
+      "mount": "riser"
     },
     "H": {
       "name": "laminate",
@@ -161,7 +168,8 @@
         "velocity_mult": 1.12,
         "draw_mult": 1.1,
         "wet_mult": 0.85
-      }
+      },
+      "mount": "limb"
     }
   },
   "patterns": [

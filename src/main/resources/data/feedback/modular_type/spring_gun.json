@@ -63,7 +63,11 @@
             }
           }
         ]
-      }
+      },
+      "offers": [
+        "muzzle",
+        "barrel"
+      ]
     },
     "S": {
       "name": "receiver",
@@ -81,7 +85,11 @@
           "bone",
           "*_planks"
         ]
-      }
+      },
+      "offers": [
+        "rail",
+        "receiver"
+      ]
     },
     "P": {
       "name": "piston",

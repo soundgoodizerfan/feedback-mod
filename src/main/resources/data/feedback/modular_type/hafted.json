@@ -34,7 +34,10 @@
       "litres": 0.125,
       "at": 0.08,
       "rides": true,
-      "layer": 0
+      "layer": 0,
+      "offers": [
+        "face"
+      ]
     },
     "S": {
       "name": "handle",
@@ -47,7 +50,12 @@
       ],
       "litres": 0.05,
       "length": 0.35,
-      "layer": 1
+      "layer": 1,
+      "offers": [
+        "grip",
+        "butt",
+        "head"
+      ]
     },
     "G": {
       "name": "guard",
@@ -85,7 +93,8 @@
             "mass": 0.8
           }
         ]
-      }
+      },
+      "mount": "grip"
     },
     "Q": {
       "name": "sword_pommel",
@@ -118,7 +127,8 @@
             "centre": -0.06
           }
         ]
-      }
+      },
+      "mount": "butt"
     },
     "P": {
       "name": "pommel",
@@ -155,7 +165,8 @@
             "centre": -0.07
           }
         ]
-      }
+      },
+      "mount": "butt"
     },
     "J": {
       "name": "second_head",
@@ -185,7 +196,10 @@
       "litres": 0.125,
       "at": 0.08,
       "rides": true,
-      "layer": 5
+      "layer": 5,
+      "offers": [
+        "face"
+      ]
     },
     "K": {
       "name": "third_head",
@@ -215,7 +229,10 @@
       "litres": 0.125,
       "at": 0.08,
       "rides": true,
-      "layer": 6
+      "layer": 6,
+      "offers": [
+        "face"
+      ]
     },
     "B": {
       "name": "binding",
@@ -248,7 +265,8 @@
             }
           }
         ]
-      }
+      },
+      "mount": "head"
     },
     "T": {
       "name": "tip",
@@ -279,7 +297,8 @@
             "section": 1.35
           }
         ]
-      }
+      },
+      "mount": "face"
     },
     "R": {
       "name": "spring",
@@ -294,7 +313,8 @@
         "reset": 30,
         "rating": 12,
         "throw_rating": 6
-      }
+      },
+      "mount": "head"
     },
     "Y": {
       "name": "lanyard",
@@ -309,7 +329,8 @@
         "rope": 10,
         "pull": 0.3,
         "return": 0.1
-      }
+      },
+      "mount": "butt"
     },
     "Z": {
       "name": "edge_guard",
@@ -317,7 +338,8 @@
         "plate"
       ],
       "litres": 0.03,
-      "bulk": 1
+      "bulk": 1,
+      "mount": "head"
     }
   },
   "patterns": [

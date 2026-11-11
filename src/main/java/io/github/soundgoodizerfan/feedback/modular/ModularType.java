@@ -281,11 +281,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param trait  an addon's signature behaviour, by trait id ({@link ModularTraits}): it works when the role is filled, on top of
      *               whatever trait the part variants give the item (studs bite, a spring stores a blow). Empty for none.
      * @param params numbers that trait reads, by name.
+     * @param mount  for an addon: the kind of mount it sits on ({@code muzzle}, {@code rail}, {@code grip}, {@code limb}); the Fit tab refuses it on an item
+     *               no part of which offers one. Empty for a part that needs none (its place is its own).
+     * @param offers the mount kinds this part gives the addons fitted to it.
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
                        List<String> stock, boolean set, Map<String, Axis> axes, String alt, int bulk, boolean after, int seal,
-                       List<Material.Trait> anyTraits, String trait, Map<String, Float> params) {
+                       List<Material.Trait> anyTraits, String trait, Map<String, Float> params, String mount, List<String> offers) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -305,13 +308,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.INT.optionalFieldOf("bulk", 1).forGetter(Role::bulk),
                 // A group holds sixteen fields, so these two share one.
                 Codec.mapPair(Codec.mapPair(Codec.BOOL.optionalFieldOf("after", false), Codec.INT.optionalFieldOf("seal", 0)),
-                        Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of())))
+                        Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.mapPair(
+                                Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of()),
+                                Codec.mapPair(Codec.STRING.optionalFieldOf("mount", ""), Codec.STRING.listOf().optionalFieldOf("offers", List.of())))))
                         .forGetter(r -> com.mojang.datafixers.util.Pair.of(com.mojang.datafixers.util.Pair.of(r.after(), r.seal()),
-                                com.mojang.datafixers.util.Pair.of(r.trait(), r.params())))
+                                com.mojang.datafixers.util.Pair.of(r.trait(), com.mojang.datafixers.util.Pair.of(r.params(),
+                                        com.mojang.datafixers.util.Pair.of(r.mount(), r.offers())))))
         ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts, bulk, flags) ->
                 new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts.getFirst(), bulk,
                         flags.getFirst().getFirst(), flags.getFirst().getSecond(), alts.getSecond(),
-                        flags.getSecond().getFirst(), flags.getSecond().getSecond())));
+                        flags.getSecond().getFirst(), flags.getSecond().getSecond().getFirst(),
+                        flags.getSecond().getSecond().getSecond().getFirst(), flags.getSecond().getSecond().getSecond().getSecond())));
 
         public boolean rod() {
             return length > 0;
@@ -320,7 +327,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** This striking role as it is for a face of the kind whose own role is {@code def}: that kind's litres and place on the haft. */
         public Role withFace(Role def) {
             return new Role(name, forms, traits, def.litres, length, def.at, def.rides, factor, layer, part, stock, set, axes, alt, bulk,
-                    after, seal, anyTraits, trait, params);
+                    after, seal, anyTraits, trait, params, mount, offers);
         }
 
         /**
@@ -504,6 +511,19 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         return new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
                 blueprint || !school.isEmpty(), names, trait, traitParams, ranges, shapes, bakes, board, school, fasteners, tools, minigame,
                 fitOrder, actions, face);
+    }
+
+    /** Whether the part of role {@code key} has a mount to sit on among the parts {@code held}: it needs none, or some held part offers its kind. */
+    public boolean mounted(String key, java.util.Collection<ModularDesign.Part> held) {
+        Role role = roles.get(key);
+        if (role == null || role.mount().isEmpty())
+            return true;
+        for (ModularDesign.Part p : held) {
+            Role other = roles.get(p.role());
+            if (other != null && !p.role().equals(key) && other.offers().contains(role.mount()))
+                return true;
+        }
+        return false;
     }
 
     private static final Codec<List<String>> ROW = Codec.STRING.listOf();
