@@ -41,7 +41,34 @@
         "base": "jar_lined",
         "variants": [
           {
-            "name": "jar_lined"
+            "name": "jar_flat",
+            "shape": [
+              "SS",
+              "SS"
+            ],
+            "params": {
+              "area": 0.7,
+              "leak": 0.5
+            }
+          },
+          {
+            "name": "jar_lined",
+            "params": {
+              "area": 1.0,
+              "leak": 1.0
+            }
+          },
+          {
+            "name": "jar_rolled",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "area": 1.5,
+              "leak": 1.5
+            }
           }
         ]
       }

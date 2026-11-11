@@ -8,13 +8,24 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Heat Exchanger* in t
 
 | Choice | What it sets |
 | --- | --- |
-| **Tubes** | Plain tubes, or finned tubes that carry 1.6 times as much heat. |
+| **Tubes** | Plain, finned, coiled, or plate and frame. See [Tube types](#tube-types). |
 | **Tube area** | From 20 to 100 percent of the wall, in steps of 5; the default is 50. More area carries more heat. |
 | **Metal** | The plate the tubes are made from. A metal that conducts heat well carries more. It must be a metal with a stated conductivity. |
 
 How fast it carries heat is the tube metal's conductivity times the tube area. Copper tubes at the default area carry what a plain copper exchanger does.
 
 At the [Smithing Table](Smithing_Table.md), put the Heat Exchanger Blueprint in the blueprint slot and shape the core from plate of the metal you chose. The Heat Exchanger comes out with the design, and the blueprint is kept. Its tooltip shows how fast it carries heat ("Carries heat at"). Breaking the block gives the same exchanger back.
+
+## Tube types
+
+Each type is cut from a different number of stock cells, and the ones that carry more need more of them.
+
+| Tubes | Heat carried compared with plain |
+| --- | --- |
+| Plain | the same |
+| Coiled | 1.3 times as much |
+| Finned | 1.6 times as much |
+| Plate and frame | 2.0 times as much |
 
 ## Addons
 

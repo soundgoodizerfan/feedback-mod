@@ -96,8 +96,8 @@ public final class BlockFigures {
             case "water_wheel" -> {
                 float d = role.dim(part, "diameter") / ModularTuning.WHEEL_REF_CM;
                 float buckets = role.dim(part, "buckets") / ModularTuning.WHEEL_REF_BUCKETS;
-                out.putFloat("Power", ModularTuning.WHEEL_CAPACITY_SU * d * buckets);
-                out.putFloat("RpmPerFlow", ModularTuning.WHEEL_RPM_PER_FLOW / d);
+                out.putFloat("Power", ModularTuning.WHEEL_CAPACITY_SU * d * buckets * ModularBake.param(type, part, "power", 1f));
+                out.putFloat("RpmPerFlow", ModularTuning.WHEEL_RPM_PER_FLOW / d * ModularBake.param(type, part, "rpm", 1f));
 float inertia = ModularTuning.WHEEL_INERTIA * d * d * d * (float) m.density().muPerMb() / ModularTuning.WHEEL_REF_DENSITY;
                 // a ring (an addon) of dense metal round the rim: more momentum, and slower to spin up
                 Part ring = design.part("R");
@@ -109,8 +109,8 @@ float inertia = ModularTuning.WHEEL_INERTIA * d * d * d * (float) m.density().mu
             // A thicker wall has more to heat (mass) and loses less (leak); the wall's own conductivity sets the loss.
             case "thermal_store" -> {
                 float wall = role.dim(part, "wall") / ModularTuning.STORE_REF_CM;
-float mass = ModularTuning.STORE_MASS * wall * (float) m.density().muPerMb() / ModularTuning.STORE_REF_DENSITY;
-                float leak = ModularTuning.STORE_LEAK / wall * m.thermal().conductivity().get().workPerTickPerTu() / ModularTuning.STORE_REF_CONDUCTIVITY;
+float mass = ModularBake.param(type, part, "mass", 1f) * ModularTuning.STORE_MASS * wall * (float) m.density().muPerMb() / ModularTuning.STORE_REF_DENSITY;
+                float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.STORE_LEAK / wall * m.thermal().conductivity().get().workPerTickPerTu() / ModularTuning.STORE_REF_CONDUCTIVITY;
                 // a salt fill (an addon) is more stuff to heat; a lagging (an addon) is a poor conductor round the outside
                 Part salt = design.part("F"), lag = design.part("I");
                 Material sm = salt == null ? null : materials.get(salt.material()), lm = lag == null ? null : materials.get(lag.material());
@@ -124,10 +124,10 @@ float mass = ModularTuning.STORE_MASS * wall * (float) m.density().muPerMb() / M
             }
             // Charge held is plate area over glass thickness; thin glass leaks it away much faster (as the square).
             case "leyden_jar" -> {
-                float area = role.dim(part, "area") / ModularTuning.JAR_REF_AREA;
+                float area = role.dim(part, "area") / ModularTuning.JAR_REF_AREA * ModularBake.param(type, part, "area", 1f);
                 float thin = ModularTuning.JAR_REF_WALL_MM / role.dim(part, "wall");
                 out.putFloat("Capacitance", ModularTuning.JAR_CAPACITANCE * area * thin);
-float leak = ModularTuning.JAR_LEAK * thin * thin;
+float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK * thin * thin;
                 float burst = ModularTuning.JAR_BURST_AMPS * area;
                 // foil (an addon) carries the discharge, as much as its ampacity allows; an outer sleeve (an addon) is a second insulator
                 Part foil = design.part("F"), sleeve = design.part("W");

@@ -4,10 +4,11 @@ A glass jar lined with copper foil that **stores a charge and gives it back as a
 
 ## Designing and building
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Leyden Jar* in the type row); it needs no treatise. It has one part, the **Jar Glass**, with three choices:
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Leyden Jar* in the type row); it needs no treatise. It has one part, the **Jar Glass**, with four choices:
 
 | Choice | What it sets |
 | --- | --- |
+| **Jar type** | Flat plate, lined or rolled. See [Jar types](#jar-types). |
 | **Plate area** | From 20 to 100 percent, in steps of 5; the default is 50. More area stores more charge and bursts at more amps. |
 | **Glass wall** | From 2 to 10 mm; the default is 4. Thinner glass stores more but leaks as the square: half the thickness leaks four times as fast. |
 | **Glass** | The material of the wall. It must insulate. |
@@ -22,6 +23,16 @@ Put it on a line with a source. It switches between two jobs on its own:
 - **Discharging.** When the supply goes (the pulse ends, the cell is cut off), the jar becomes a source itself and gives back up to its burst amps (**8 A** at the default area) at whatever voltage it holds.
 
 A jar at the default area and wall holds **10 amp-ticks per volt**. One Electrostatic Generator pulse (1 A for 20 ticks) fills it to the generator's 1.5 V with a little to spare.
+
+## Jar types
+
+Each type is cut from a different number of stock cells. The lined jar is the standard the figures on this page describe.
+
+| Type | Plate area | Leak | Stock |
+| --- | --- | --- | --- |
+| Flat plate | 70% | half | least |
+| Lined | 100% | standard | between |
+| Rolled | 150% | 150% | most |
 
 ## Addons
 

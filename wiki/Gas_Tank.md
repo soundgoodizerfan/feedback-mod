@@ -4,7 +4,7 @@ A big pressure shell for gas, built from a blueprint. It is where a compressed l
 
 ## Designing and building
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Gas Tank* in the type row); drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Tank Shell**, with the same three choices as the [Pressure Vessel](Pressure_Vessel.md#designing-and-building): shape (box, cylinder or sphere), wall thickness from 1 to 20 cm, and the metal, which must have a measured yield strength. The shell is the vessel's, many times the size: it holds 16 cubes of gas at the pressure one such cube would, so the same wall carries the same line.
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Gas Tank* in the type row); drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Tank Shell**, with the same three choices as the [Pressure Vessel](Pressure_Vessel.md#designing-and-building): shape (box, cylinder, capsule or sphere, with the same trade of strength against room as the [Pressure Vessel's shapes](Pressure_Vessel.md#shapes)), wall thickness from 1 to 20 cm, and the metal, which must have a measured yield strength. The shell is the vessel's, many times the size: it holds 16 cubes of gas at the pressure one such cube would, so the same wall carries the same line.
 
 At the [Smithing Table](Smithing_Table.md), put the Gas Tank Blueprint in the blueprint slot and shape the shell from plate of the metal you chose. The Gas Tank comes out with the design, and the blueprint is kept. Its tooltip shows what it holds, the mB it takes for each Pu, the pressure it risks letting go over and the pressure it gives way at. Breaking the block gives the same tank back.
 

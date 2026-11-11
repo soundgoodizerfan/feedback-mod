@@ -8,13 +8,24 @@ The vessel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.
 
 | Choice | What it sets |
 | --- | --- |
-| **Shape** | Box, cylinder or sphere. A sphere carries the most pressure and leaves the least room inside; a box carries the least and leaves the most. A cylinder sits between. |
+| **Shape** | Box, cylinder, capsule or sphere. A sphere carries the most pressure and leaves the least room inside; a box carries the least and leaves the most. See [Shapes](#shapes). |
 | **Wall** | Thickness from 1 to 20 cm. A thicker wall holds more pressure and leaves less room. |
 | **Metal** | The plate it is made from. A stronger metal holds more. It must be a metal with a measured yield strength. |
 
 The sheet shows three figures: **Room inside** in mB, **Risks letting go over** in Pu, and **Gives way at** in Pu.
 
 At the [Smithing Table](Smithing_Table.md), put the Pressure Vessel Blueprint in the blueprint slot and shape the shell from plate of the metal you chose. The Pressure Vessel comes out with the shape, wall and metal you drew, and the blueprint is kept. Its tooltip shows the room and the danger line.
+
+## Shapes
+
+Each shape is cut from a different number of stock cells, and the stronger ones need more of them.
+
+| Shape | Pressure it carries | Room inside |
+| --- | --- | --- |
+| Box | least | most |
+| Cylinder | between box and capsule | second most |
+| Capsule | between cylinder and sphere | less than a cylinder |
+| Sphere | most | least |
 
 ## Using it
 

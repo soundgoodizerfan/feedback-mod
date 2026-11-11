@@ -4,10 +4,11 @@ Free, continuous [rotation](Rotation.md) from flowing water. It's the first sour
 
 ## Designing and building
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the type row); drawing it takes a Mechanical [Treatise](Treatise.md). It has one part, the **Wheel Rim**, with three choices:
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the type row); drawing it takes a Mechanical [Treatise](Treatise.md). It has one part, the **Wheel Rim**, with four choices:
 
 | Choice | What it sets |
 | --- | --- |
+| **Wheel type** | Paddle wheel, slatted or bucket wheel. See [Wheel types](#wheel-types). |
 | **Diameter** | From 100 to 400 cm, in steps of 20; the default is 200. A bigger wheel catches more water and makes more Su, but turns slower for the same flow. |
 | **Buckets** | From 4 to 16; the default is 8. More buckets take more of the flow's push and make more Su. |
 | **Wood** | The planks the rim is made from. A heavier wood gives the rim more momentum. |
@@ -15,6 +16,16 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Water Wheel* in the 
 A 200 cm wheel with 8 buckets makes 256 Su and turns 4 RPM for each flowing side.
 
 At the [Woodworking Table](Woodworking_Table.md), put the Water Wheel Blueprint in the blueprint slot and shape the rim from planks. The Water Wheel comes out with the design, and the blueprint is kept. Its tooltip shows the Su it makes, the RPM per flowing side and its momentum. Breaking the block gives the same wheel back.
+
+## Wheel types
+
+Each type is cut from a different number of stock cells. The slatted wheel is the standard the figures on this page describe.
+
+| Type | Power | Speed for the same flow | Stock |
+| --- | --- | --- | --- |
+| Paddle wheel | 70% | 140% | least |
+| Slatted | 100% | 100% | between |
+| Bucket wheel | 150% | 70% | most |
 
 ## Addons
 

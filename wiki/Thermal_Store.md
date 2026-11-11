@@ -4,14 +4,25 @@ A tank of salt in a ceramic wall that holds heat. A fire, [Heating Coil](Heating
 
 ## Designing and building
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thermal Store* in the type row); it needs no treatise. It has one part, the **Store Core**, with two choices:
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Thermal Store* in the type row); it needs no treatise. It has one part, the **Store Core**, with three choices:
 
 | Choice | What it sets |
 | --- | --- |
+| **Store type** | Slab, walled or tower. See [Store types](#store-types). |
 | **Wall** | Thickness from 10 to 40 cm, in steps of 2; the default is 20. A thicker wall has more heat mass, so it charges slowly, and it leaks less. |
 | **Material** | The brick the wall is made from. Its conductivity sets the leak: ceramic keeps heat and metal gives it away. It must have a stated conductivity. |
 
 Shape the core from brick at the [Stonecutter](Stonecutter.md) with the Thermal Store Blueprint in the blueprint slot. The Thermal Store comes out with the design, and the blueprint is kept. Its tooltip shows its heat mass and how much it loses. Breaking the block gives the same store back.
+
+## Store types
+
+Each type is cut from a different number of stock cells. The walled store is the standard the wall figures above describe.
+
+| Type | Heat loss | Heat mass | Stock |
+| --- | --- | --- | --- |
+| Slab | 30% more | 80% | least |
+| Walled | standard | 100% | between |
+| Tower | 30% less | 130% | most |
 
 ## Addons
 

@@ -41,7 +41,34 @@
         "base": "wheel_slatted",
         "variants": [
           {
-            "name": "wheel_slatted"
+            "name": "wheel_paddle",
+            "shape": [
+              "SS",
+              "SS"
+            ],
+            "params": {
+              "power": 0.7,
+              "rpm": 1.4
+            }
+          },
+          {
+            "name": "wheel_slatted",
+            "params": {
+              "power": 1.0,
+              "rpm": 1.0
+            }
+          },
+          {
+            "name": "wheel_bucket",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "power": 1.5,
+              "rpm": 0.7
+            }
           }
         ]
       }

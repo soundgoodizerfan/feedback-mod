@@ -53,6 +53,18 @@
               "rating": 2.0,
               "fill": 0.52
             }
+          },
+          {
+            "name": "tank_capsule",
+            "shape": [
+              "SSS",
+              "SSS",
+              "SS"
+            ],
+            "params": {
+              "rating": 1.4,
+              "fill": 0.7
+            }
           }
         ]
       }
