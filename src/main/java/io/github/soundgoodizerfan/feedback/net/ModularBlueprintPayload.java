@@ -35,7 +35,7 @@ public record ModularBlueprintPayload(ModularDesign design, java.util.List<Modul
         context.enqueueWork(() -> {
             if (context.player().containerMenu instanceof BlueprintTableMenu menu)
                 menu.print(payload.design(), payload.variants(), payload.title(), context.player());
-            else if (context.player().containerMenu instanceof io.github.soundgoodizerfan.feedback.modular.ToolTableMenu bench)
+            else if (context.player().containerMenu instanceof io.github.soundgoodizerfan.feedback.modular.PartBenchMenu bench)
                 bench.printBlueprint(payload.design(), payload.variants(), context.player());
         });
     }

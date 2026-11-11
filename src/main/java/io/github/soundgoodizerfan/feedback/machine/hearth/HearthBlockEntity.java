@@ -14,7 +14,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.modular.Station;
 import io.github.soundgoodizerfan.feedback.modular.StationBlock;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -134,12 +134,12 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
         if (materials.isEmpty())
             return;
         for (Direction side : Direction.Plane.HORIZONTAL)
-            if (level.getBlockEntity(worldPosition.relative(side)) instanceof ToolTableBlockEntity table
+            if (level.getBlockEntity(worldPosition.relative(side)) instanceof PartBenchBlockEntity table
                     && table.getBlockState().getBlock() instanceof StationBlock b && b.station == Station.ANVIL) {
                 // The centre slot (TOOL) is the stock the anvil forges; the side stock cells are the rest.
-                reheat(table.getItem(ToolTableBlockEntity.TOOL), materials);
-                for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
-                    reheat(table.getItem(ToolTableBlockEntity.STOCK + i), materials);
+                reheat(table.getItem(PartBenchBlockEntity.TOOL), materials);
+                for (int i = 0; i < PartBenchBlockEntity.STOCK_SLOTS; i++)
+                    reheat(table.getItem(PartBenchBlockEntity.STOCK + i), materials);
             }
     }
 

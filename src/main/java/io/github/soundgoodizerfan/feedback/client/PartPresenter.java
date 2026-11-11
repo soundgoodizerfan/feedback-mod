@@ -7,7 +7,7 @@ import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -55,7 +55,7 @@ final class PartPresenter {
      * What a shape is, and for a variant how it differs from the standard one (spec 4.2): the label, then the part's text, the
      * variant's and the trait lines, each from lang. One list for every table that offers shapes.
      */
-    static List<Component> describe(ToolTableShaping.Option o) {
+    static List<Component> describe(PartBenchShaping.Option o) {
         List<Component> lines = new ArrayList<>();
         lines.add(o.label());
         String part = "modular.feedback.desc.part." + o.shaping().item().getPath();

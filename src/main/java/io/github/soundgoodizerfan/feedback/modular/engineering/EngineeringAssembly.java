@@ -14,7 +14,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
+import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
 import io.github.soundgoodizerfan.feedback.modular.Treatises;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -188,9 +188,9 @@ public final class EngineeringAssembly {
         Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
         Map<ResourceLocation, ModularType> types = types(level);
         int mask = input.known() | Treatises.mask(input.binder());
-        Optional<ToolTableAssembly.Match> found = ToolTableAssembly.infer(grid, blueprint, materials, types, Treatises.assembles(mask), null);
+        Optional<ModularAssembly.Match> found = ModularAssembly.infer(grid, blueprint, materials, types, Treatises.assembles(mask), null);
         if (found.isEmpty())
-            return ToolTableAssembly.infer(grid, blueprint, materials, types).isPresent()
+            return ModularAssembly.infer(grid, blueprint, materials, types).isPresent()
                     ? new Plan(SCHOOL, ItemStack.EMPTY, Plan.NONE.take()) : Plan.NONE;
         ResourceLocation id = found.get().type();
         ModularType type = types.get(id);
@@ -227,7 +227,7 @@ public final class EngineeringAssembly {
             slot[t] = found1;
         }
         // The same parts again, now with what the maker brought, restricted to the type found: the fit and head start are written on the item.
-        Optional<ToolTableAssembly.Match> made = ToolTableAssembly.infer(grid, blueprint, materials, Map.of(id, type), t -> true,
+        Optional<ModularAssembly.Match> made = ModularAssembly.infer(grid, blueprint, materials, Map.of(id, type), t -> true,
                 new ModularFit.Start(floor ? Math.min(0, supply.levels()) : supply.levels(), rounds > 0 ? score : -1f));
         if (made.isEmpty())
             return Plan.NONE;

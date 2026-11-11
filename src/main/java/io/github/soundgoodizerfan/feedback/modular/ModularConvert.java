@@ -135,14 +135,14 @@ public final class ModularConvert {
             ResourceLocation material = r.set() ? located.id()
                     : role.equals(type.primary()) ? (set ? ModularTuning.CRYSTAL_BODY : located.id()) : type.defaults().getOrDefault(located.form() + ":" + role, type.defaults().get(role));
             // A default keyed "<vanilla form>:<role>" (a mace's breeze-rod handle) beats the role's own. A variant named for the vanilla form (a trident, a mace) is the shape that form was; else the standard.
-            ToolTableShaping.Option shape = ToolDesigns.shapes(r, types).stream()
+            PartBenchShaping.Option shape = ToolDesigns.shapes(r, types).stream()
                     .filter(o -> o.variant().name().equals(located.form())).findFirst().orElse(ToolDesigns.standard(r, types));
             Material m = material == null ? null : materials.get(material);
             if (m == null)
                 return vanilla;
-            ToolTableShaping.Option base = shape;
+            PartBenchShaping.Option base = shape;
             if (roll && shape != null && role.equals(type.primary())) {
-                List<ToolTableShaping.Option> family = ToolDesigns.shapes(r, types).stream()
+                List<PartBenchShaping.Option> family = ToolDesigns.shapes(r, types).stream()
                         .filter(o -> o.shaping().item().equals(base.shaping().item())).toList();
                 if (!family.isEmpty())
                     shape = family.get(dice.nextInt(family.size()));

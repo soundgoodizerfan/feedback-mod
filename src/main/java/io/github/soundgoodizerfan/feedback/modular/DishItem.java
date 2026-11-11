@@ -82,7 +82,7 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
         ModularType type = design == null ? null : ModularTypes.known().get(design.type());
         Part finish = type == null || type.afterRole() == null ? null : design.part(type.afterRole());
         if (finish != null)
-            tooltip.add(ToolTableMenu.pourName(finish.state("pour", FTuning.POUR_AUTOMATION)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(PartBenchMenu.pourName(finish.state("pour", FTuning.POUR_AUTOMATION)).withStyle(ChatFormatting.GRAY));
         DishFigures figures = stack.get(FDataComponents.DISH_FIGURES.get());
         if (figures == null)
             return;

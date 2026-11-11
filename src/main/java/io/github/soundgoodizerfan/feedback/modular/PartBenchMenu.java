@@ -50,14 +50,14 @@ import net.minecraft.world.level.Level;
  * parts only; assembly, repair, part swap, attachment fitting and take-apart are the Engineering Table's.
  *
  * <ul>
- *   <li><b>Stock</b> in the centre ({@link Centre#STOCK}) -- the shapes it can become ({@link ToolTableShaping}), the
+ *   <li><b>Stock</b> in the centre ({@link Centre#STOCK}) -- the shapes it can become ({@link PartBenchShaping}), the
  *       cuts the vanilla stonecutter or the saw make of it, and "break down" into smaller stock. A shape spends only
- *       the volume it needs and the rest comes back as smaller items ({@link ToolTableShaping#change}). A forged shape
+ *       the volume it needs and the rest comes back as smaller items ({@link PartBenchShaping#change}). A forged shape
  *       is played in the screen ({@link #beginForge}, {@link #finishForge}).</li>
  *   <li>At the Prep Table a <b>container</b> in the centre ({@link Centre#PART}) -- everything that can be added to it
  *       ({@link #adds}); a node fits a food from the inventory ({@link #BTN_FIT}) or shapes one from the stock slot
  *       ({@link #BTN_SHAPE}). Fitted foods sit in the assembly slots and come off again ({@link #BTN_OFF}); the moment they
- *       make a dish it is the centre ({@link ToolTableAssembly}).</li>
+ *       make a dish it is the centre ({@link ModularAssembly}).</li>
  *   <li>At the Prep Table a <b>dish</b> in the centre ({@link Centre#TOOL}) -- its finish is poured on.</li>
  * </ul>
  *
@@ -65,11 +65,11 @@ import net.minecraft.world.level.Level;
  * crafting grid does; taking it spends what made it, and a point of the hammer's durability
  * (hand-tool wear, the accepted exception). No hammer in the hammer slot, no work.
  */
-public class ToolTableMenu extends AbstractContainerMenu {
+public class PartBenchMenu extends AbstractContainerMenu {
 
-    /** Menu slot numbers; the table's own container is {@link ToolTableBlockEntity}'s numbering. */
-    public static final int OUT = 0, HAMMER = 1, ASM = 2, STOCK = ASM + ToolTableAssembly.DISH_SLOTS,
-            TOOL = STOCK + ToolTableBlockEntity.STOCK_SLOTS, PLAN = TOOL + 1, EXTRA = PLAN + 1;
+    /** Menu slot numbers; the table's own container is {@link PartBenchBlockEntity}'s numbering. */
+    public static final int OUT = 0, HAMMER = 1, ASM = 2, STOCK = ASM + ModularAssembly.DISH_SLOTS,
+            TOOL = STOCK + PartBenchBlockEntity.STOCK_SLOTS, PLAN = TOOL + 1, EXTRA = PLAN + 1;
     /** What the bench is doing, set from the centre: stock shapes, a dish being assembled, a dish being finished ({@link #MODE_PREPARE}, both at the Prep Table), a smithing template. */
     public static final int MODE_PART = 0, MODE_ASSEMBLE = 1, MODE_PREPARE = 2, MODE_SMITH = 4;
     /** What the centre slot holds; {@code PART} and {@code TOOL} are a dish's container and the dish itself, at the Prep Table only. */
@@ -82,7 +82,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     public static final int BTN_MACHINE = 4, BTN_BREAK = 5, BTN_MAKE = 6, BTN_DESELECT = 7, BTN_TAB = 8, BTN_TYPE = 50, BTN_PICK = 100, BTN_CUT = 10000,
             BTN_FIT = 20000, BTN_SHAPE = 30000, BTN_OFF = 40000, BTN_AXIS = 58000, BTN_AXIS_SET = 60000;
     /**
-     * Aim buttons for the picked shape's part axes ({@link ToolTableShaping#aimable}, at most {@link #MAX_AIM}):
+     * Aim buttons for the picked shape's part axes ({@link PartBenchShaping#aimable}, at most {@link #MAX_AIM}):
      * {@code AXIS + 2a} lowers axis a by its grain, {@code AXIS + 2a + 1} raises it; {@code AXIS_SET + 1000a + n} sets it to
      * its minimum plus n grains (a drag). Clamped to the axis's range on the server.
      */
@@ -116,7 +116,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** Server side: the shape the aim was last reset for, so a new pick starts every axis at its default. */
     private int aimFor = -1;
     /** Which table this is: the part benches' menu with a type filter, at the Prep Table the dish types and a knife for the hammer. */
-    private final ToolTableAssembly.Kind kind;
+    private final ModularAssembly.Kind kind;
     private final Station station;
     private final boolean dish;
     /** The shape being forged, or -1: set when the player begins a pattern, so a finish names the same one. */
@@ -132,17 +132,17 @@ public class ToolTableMenu extends AbstractContainerMenu {
     private net.minecraft.world.item.Item centreWas = net.minecraft.world.item.Items.AIR;
 
     /** Any of the benches: the Prep Table's and the part-making stations' menus are this class with their {@code kind}. */
-    protected ToolTableMenu(net.minecraft.world.inventory.MenuType<?> type, ToolTableAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos) {
+    protected PartBenchMenu(net.minecraft.world.inventory.MenuType<?> type, ModularAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos) {
         this(type, kind, id, inventory, table, pos, Station.TOOL);
     }
 
     /** A part-making bench ({@link StationMenu}): the Tool Table's menu with {@code station} filtering the stock. */
-    protected ToolTableMenu(net.minecraft.world.inventory.MenuType<?> type, ToolTableAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos,
+    protected PartBenchMenu(net.minecraft.world.inventory.MenuType<?> type, ModularAssembly.Kind kind, int id, Inventory inventory, Container table, BlockPos pos,
                             Station station) {
         super(type, id);
         this.station = station;
         this.kind = kind;
-        this.dish = kind == ToolTableAssembly.Kind.DISH;
+        this.dish = kind == ModularAssembly.Kind.DISH;
         this.tabs = new MenuTabs(BTN_TAB, tabList().size());
         pick.set(-1);
         this.player = inventory.player;
@@ -167,22 +167,22 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 taken();
             }
         });
-        addSlot(new TableSlot(ToolTableBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> station.usesTool() && !trim() && !blueprintTab(), 1, this::workTool));
+        addSlot(new TableSlot(PartBenchBlockEntity.HAMMER, HAMMER_X, HAMMER_Y, () -> station.usesTool() && !trim() && !blueprintTab(), 1, this::workTool));
         // The fitted foods of a dish: nodes on the fan, not slots on the screen.
-        for (int i = 0; i < ToolTableAssembly.DISH_SLOTS; i++)
-            addSlot(new TableSlot(ToolTableBlockEntity.ASSEMBLY + i, -1000, -1000, () -> false, 1, s -> true));
-        for (int i = 0; i < ToolTableBlockEntity.STOCK_SLOTS; i++)
-            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + i, i == 0 ? STOCK_X : -1000, STOCK_Y, i == 0 ? () -> !trim() && !cutTab() && !blueprintTab() : () -> false, 64, s -> true));
+        for (int i = 0; i < ModularAssembly.DISH_SLOTS; i++)
+            addSlot(new TableSlot(PartBenchBlockEntity.ASSEMBLY + i, -1000, -1000, () -> false, 1, s -> true));
+        for (int i = 0; i < PartBenchBlockEntity.STOCK_SLOTS; i++)
+            addSlot(new TableSlot(PartBenchBlockEntity.STOCK + i, i == 0 ? STOCK_X : -1000, STOCK_Y, i == 0 ? () -> !trim() && !cutTab() && !blueprintTab() : () -> false, 64, s -> true));
         // The centre: stock, a part, a tool, or at the Prep Table a food or a dish.
-        addSlot(new TableSlot(ToolTableBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim() && !blueprintTab(), 64, s -> true));
+        addSlot(new TableSlot(PartBenchBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim() && !blueprintTab(), 64, s -> true));
         // The seasoning slot, at the Prep Table only: what a finish pours onto the dish.
-        addSlot(new TableSlot(ToolTableBlockEntity.PLAN, PLAN_X, PLAN_Y, () -> dish && !trim() && !blueprintTab(), 1,
+        addSlot(new TableSlot(PartBenchBlockEntity.PLAN, PLAN_X, PLAN_Y, () -> dish && !trim() && !blueprintTab(), 1,
                 s -> dish && isSeasoning(player.level(), s)));
         if (station.smiths()) {
             // The vanilla smithing table, on the Trim tab: template, base and addition in a row (the same containers the centre and stock slot use).
-            addSlot(new TableSlot(ToolTableBlockEntity.TOOL, TRIM_X, CENTRE_Y, this::trim, 64, s -> true));
-            addSlot(new TableSlot(ToolTableBlockEntity.STOCK, TRIM_X + TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
-            addSlot(new TableSlot(ToolTableBlockEntity.STOCK + 1, TRIM_X + 2 * TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
+            addSlot(new TableSlot(PartBenchBlockEntity.TOOL, TRIM_X, CENTRE_Y, this::trim, 64, s -> true));
+            addSlot(new TableSlot(PartBenchBlockEntity.STOCK, TRIM_X + TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
+            addSlot(new TableSlot(PartBenchBlockEntity.STOCK + 1, TRIM_X + 2 * TRIM_GAP, CENTRE_Y, this::trim, 64, s -> true));
         }
         if (dish) {
             // The Blueprint tab's paper, kept in the menu (it goes back to the player when the bench closes), at the bench's lower right.
@@ -324,7 +324,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return mode.get();
     }
 
-    /** Which shape of the list is chosen, as an index into {@link ToolTableShaping#options}, or -1 (also while a cut is chosen). */
+    /** Which shape of the list is chosen, as an index into {@link PartBenchShaping#options}, or -1 (also while a cut is chosen). */
     public int picked() {
         return pick.get() >= BTN_CUT ? -1 : pick.get();
     }
@@ -335,12 +335,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
     }
 
     public ItemStack hammer() {
-        return table.getItem(ToolTableBlockEntity.HAMMER);
+        return table.getItem(PartBenchBlockEntity.HAMMER);
     }
 
     /** The centre slot's stack. */
     public ItemStack centreStack() {
-        return table.getItem(ToolTableBlockEntity.TOOL);
+        return table.getItem(PartBenchBlockEntity.TOOL);
     }
 
     /** The finished dish in the centre, else empty. */
@@ -350,12 +350,12 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** The fitted foods: the assembly slots, empty ones included. */
     public List<ItemStack> assembly() {
-        return range(ToolTableBlockEntity.ASSEMBLY, ToolTableAssembly.DISH_SLOTS);
+        return range(PartBenchBlockEntity.ASSEMBLY, ModularAssembly.DISH_SLOTS);
     }
 
     /** The container index of fitted food {@code i}. */
     private static int asmIndex(int i) {
-        return ToolTableBlockEntity.ASSEMBLY + i;
+        return PartBenchBlockEntity.ASSEMBLY + i;
     }
 
     /** What is put together at the centre: the container there and every food fitted to it. */
@@ -386,7 +386,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (c.isEmpty())
             return Centre.EMPTY;
         // Only the Prep Table works on a container or a dish; at the part benches a part or a tool is not stock to shape and nothing is done with it.
-        if (dish && ModularStacks.design(c) != null && !c.is(FModular.BLUEPRINT.get()) && ToolTableAssembly.kindOf(c) == kind)
+        if (dish && ModularStacks.design(c) != null && !c.is(FModular.BLUEPRINT.get()) && ModularAssembly.kindOf(c) == kind)
             return Centre.TOOL;
         if (dish && c.getItem() instanceof ModularPartItem && c.has(FDataComponents.MADE_OF.get()))
             return Centre.PART;
@@ -443,7 +443,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     private net.minecraft.world.item.crafting.SmithingRecipeInput smithInput() {
         return new net.minecraft.world.item.crafting.SmithingRecipeInput(centreStack(),
-                table.getItem(ToolTableBlockEntity.STOCK), table.getItem(ToolTableBlockEntity.STOCK + 1));
+                table.getItem(PartBenchBlockEntity.STOCK), table.getItem(PartBenchBlockEntity.STOCK + 1));
     }
 
     /** What vanilla's smithing recipes make of the template in the centre with the base and addition in the stock slots, or empty. */
@@ -487,13 +487,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** Whether {@code stack} is what the tool slot takes: a knife at the Prep Table, an axe at the woodworking table, a saw at the stonecutter, a hand hammer elsewhere. */
     public boolean workTool(ItemStack stack) {
-        return !station.usesTool() ? false : dish ? ToolTableBlockEntity.isKnife(stack) : station == Station.WOODWORKING ? stack.is(net.minecraft.tags.ItemTags.AXES)
-                : station == Station.STONECUTTING ? ToolTableBlockEntity.isSaw(stack) : ToolTableBlockEntity.isHammer(stack);
+        return !station.usesTool() ? false : dish ? PartBenchBlockEntity.isKnife(stack) : station == Station.WOODWORKING ? stack.is(net.minecraft.tags.ItemTags.AXES)
+                : station == Station.STONECUTTING ? PartBenchBlockEntity.isSaw(stack) : PartBenchBlockEntity.isHammer(stack);
     }
 
     /** The types this table's shapes come from: dishes at the Prep Table, every other type (guns included) at the part benches. */
     public Map<ResourceLocation, ModularType> types(Level level) {
-        return ToolTableAssembly.ofKind(ModularTypes.on(level), kind);
+        return ModularAssembly.ofKind(ModularTypes.on(level), kind);
     }
 
     /** The types whose parts the shapes list makes: this table's own (the dish's containers are shaped at the Prep Table). */
@@ -533,7 +533,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** The stock slot beside the centre: what a part is shaped from to be fitted to a dish container. */
     public List<ItemStack> side() {
-        return range(ToolTableBlockEntity.STOCK, 1);
+        return range(PartBenchBlockEntity.STOCK, 1);
     }
 
     private List<ItemStack> range(int from, int n) {
@@ -553,34 +553,34 @@ public class ToolTableMenu extends AbstractContainerMenu {
     }
 
     /** The shape chosen, if the choice is on the list. */
-    public Optional<ToolTableShaping.Option> option(Level level) {
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
+    public Optional<PartBenchShaping.Option> option(Level level) {
+        List<PartBenchShaping.Option> options = PartBenchShaping.options(shapes(level));
         int p = picked();
         return p >= 0 && p < options.size() ? Optional.of(options.get(p)) : Optional.empty();
     }
 
     // --- aiming the part's axes --------------------------------------------------------------------
 
-    /** The aimed value of axis {@code i} of the picked shape's part ({@link ToolTableShaping#aimable} order). */
+    /** The aimed value of axis {@code i} of the picked shape's part ({@link PartBenchShaping#aimable} order). */
     public float aim(int i) {
         return aim[i].get() / 10f;
     }
 
     /** The aimed values of {@code option}'s part by axis name. */
-    private Map<String, Float> aimed(ToolTableShaping.Option option) {
+    private Map<String, Float> aimed(PartBenchShaping.Option option) {
         Map<String, Float> out = new java.util.HashMap<>();
         // Only the shape picked has an aim; any other is made to its defaults, so a stray index cannot borrow it.
         if (!option(player.level()).filter(option::equals).isPresent())
             return out;
-        List<Map.Entry<String, ModularType.Axis>> axes = ToolTableShaping.aimable(option);
+        List<Map.Entry<String, ModularType.Axis>> axes = PartBenchShaping.aimable(option);
         for (int i = 0; i < Math.min(MAX_AIM, axes.size()); i++)
             out.put(axes.get(i).getKey(), aim(i));
         return out;
     }
 
     /** What the aimed axes make of {@code option}'s stock: the volume scale. */
-    public float aimScale(ToolTableShaping.Option option) {
-        return ToolTableShaping.roleOf(option).map(r -> r.volumeScaleOf(aimed(option))).orElse(1f);
+    public float aimScale(PartBenchShaping.Option option) {
+        return PartBenchShaping.roleOf(option).map(r -> r.volumeScaleOf(aimed(option))).orElse(1f);
     }
 
     /** A new pick starts every axis at its default (server). */
@@ -588,16 +588,16 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (level.isClientSide || aimFor == picked())
             return;
         aimFor = picked();
-        List<Map.Entry<String, ModularType.Axis>> axes = option(level).map(ToolTableShaping::aimable).orElse(List.of());
+        List<Map.Entry<String, ModularType.Axis>> axes = option(level).map(PartBenchShaping::aimable).orElse(List.of());
         for (int i = 0; i < MAX_AIM; i++)
             aim[i].set(i < axes.size() ? Math.round(axes.get(i).getValue().def() * 10f) : 0);
     }
 
     private void aimClick(Level level, int id) {
-        Optional<ToolTableShaping.Option> option = option(level);
+        Optional<PartBenchShaping.Option> option = option(level);
         if (option.isEmpty() || mode.get() != MODE_PART || forging >= 0)
             return;
-        List<Map.Entry<String, ModularType.Axis>> axes = ToolTableShaping.aimable(option.get());
+        List<Map.Entry<String, ModularType.Axis>> axes = PartBenchShaping.aimable(option.get());
         int a;
         float value;
         if (id >= BTN_AXIS_SET) {
@@ -614,10 +614,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         aim[a].set(Math.round(axes.get(a).getValue().clamp(value) * 10f));
     }
 
-    /** The as-built axes a part made now gets: the aim plus symmetric noise ({@link ToolTableShaping#spread}), seeded by the game time and the player. */
-    private Map<String, Float> built(Level level, ToolTableShaping.Option option, float workRatio, int flaw) {
+    /** The as-built axes a part made now gets: the aim plus symmetric noise ({@link PartBenchShaping#spread}), seeded by the game time and the player. */
+    private Map<String, Float> built(Level level, PartBenchShaping.Option option, float workRatio, int flaw) {
         net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(level.getGameTime() * 31L + player.getUUID().hashCode());
-        return ToolTableShaping.asBuilt(option, aimed(option), ToolTableShaping.spread(option, workRatio, flaw), random);
+        return PartBenchShaping.asBuilt(option, aimed(option), PartBenchShaping.spread(option, workRatio, flaw), random);
     }
 
     // --- breaking stock down ---------------------------------------------------------------------
@@ -627,7 +627,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Optional<Material.Located> what = stuff(level);
         if (what.isEmpty() || mode.get() != MODE_PART || cutTab())
             return List.of();
-        return ToolTableShaping.change(what.get(), FormItems.volume(what.get().form()));
+        return PartBenchShaping.change(what.get(), FormItems.volume(what.get().form()));
     }
 
     private void breakDown(ServerPlayer server) {
@@ -638,7 +638,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         ItemStack s = centreStack();
         float heat = ItemHeat.get(s, server.level()).value();
         s.shrink(1);
-        table.setItem(ToolTableBlockEntity.TOOL, s.isEmpty() ? ItemStack.EMPTY : s);
+        table.setItem(PartBenchBlockEntity.TOOL, s.isEmpty() ? ItemStack.EMPTY : s);
         for (ItemStack b : back)
             server.getInventory().placeItemBackInInventory(warmed(b, what, heat, server.level()));
         server.level().playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 0.7f, 1.1f);
@@ -654,9 +654,9 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /**
      * Spend what a shape takes of the stock in container slot {@code slot}: whole items, the part of the last one that the
-     * shape does not need coming back as smaller items ({@link ToolTableShaping#change}) to the player.
+     * shape does not need coming back as smaller items ({@link PartBenchShaping#change}) to the player.
      */
-    private void spend(int slot, ToolTableShaping.Stock stock, ServerPlayer server) {
+    private void spend(int slot, PartBenchShaping.Stock stock, ServerPlayer server) {
         ItemStack s = table.getItem(slot);
         int volume = FormItems.volume(stock.what().form());
         int n = Math.min(s.getCount(), (stock.spent() + volume - 1) / volume);
@@ -665,7 +665,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         s.shrink(n);
         table.setItem(slot, s.isEmpty() ? ItemStack.EMPTY : s);
         if (left > 0)
-            for (ItemStack b : ToolTableShaping.change(stock.what(), left))
+            for (ItemStack b : PartBenchShaping.change(stock.what(), left))
                 server.getInventory().placeItemBackInInventory(warmed(b, stock.what(), stock.coldest(), server.level()));
     }
 
@@ -696,7 +696,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         if (materials.isEmpty() || types.isEmpty())
             return ItemStack.EMPTY;
         return switch (c) {
-            case STOCK -> option(level).map(o -> ToolTableShaping.make(station, o, stock(), materials, level, aimScale(o), built(level, o, 1f, 0))).orElse(ItemStack.EMPTY);
+            case STOCK -> option(level).map(o -> PartBenchShaping.make(station, o, stock(), materials, level, aimScale(o), built(level, o, 1f, 0))).orElse(ItemStack.EMPTY);
             default -> ItemStack.EMPTY;
         };
     }
@@ -735,9 +735,9 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return;
         Level level = server.level();
         if (smithing()) {
-            table.removeItem(ToolTableBlockEntity.TOOL, 1);
-            table.removeItem(ToolTableBlockEntity.STOCK, 1);
-            table.removeItem(ToolTableBlockEntity.STOCK + 1, 1);
+            table.removeItem(PartBenchBlockEntity.TOOL, 1);
+            table.removeItem(PartBenchBlockEntity.STOCK, 1);
+            table.removeItem(PartBenchBlockEntity.STOCK + 1, 1);
             level.playSound(null, pos, SoundEvents.SMITHING_TABLE_USE, SoundSource.BLOCKS, 1f, 1f);
             refresh(true);
             return;
@@ -754,7 +754,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             // The stonecutter's saw is worn by the stock, so it is read before the stock goes.
             if (station == Station.STONECUTTING && saw.isEmpty())
                 wearHammer();
-            table.removeItem(ToolTableBlockEntity.TOOL, saw.map(c -> c.inputs(in)).orElse(1));
+            table.removeItem(PartBenchBlockEntity.TOOL, saw.map(c -> c.inputs(in)).orElse(1));
             if (saw.isPresent()) {
                 // The last log's spare planks come back to the player, and the axe takes its point of wear.
                 int left = saw.get().leftover(in);
@@ -769,13 +769,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
         switch (mode.get()) {
             case MODE_PART -> {
                 Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
-                Optional<ToolTableShaping.Option> option = option(level);
-                Optional<ToolTableShaping.Stock> stock = option.flatMap(o -> ToolTableShaping.check(station, o, stock(), materials, level, aimScale(o)));
+                Optional<PartBenchShaping.Option> option = option(level);
+                Optional<PartBenchShaping.Stock> stock = option.flatMap(o -> PartBenchShaping.check(station, o, stock(), materials, level, aimScale(o)));
                 if (stock.isPresent() && !option.get().forged() && BuiltInRegistries.ITEM.get(option.get().shaping().item()) instanceof ModularPartItem)
-                    spend(ToolTableBlockEntity.TOOL, stock.get(), server);
+                    spend(PartBenchBlockEntity.TOOL, stock.get(), server);
                 else if (option.isPresent())
                     // A food reshaped: the whole pile goes into the new shape.
-                    table.setItem(ToolTableBlockEntity.TOOL, ItemStack.EMPTY);
+                    table.setItem(PartBenchBlockEntity.TOOL, ItemStack.EMPTY);
             }
             default -> { }
         }
@@ -845,13 +845,13 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 out.add(new Add(Add.Source.HELD, held, s, ""));
         }
         // Everything else that could attach: each shaped part some reachable type has a role for, once.
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
+        List<PartBenchShaping.Option> options = PartBenchShaping.options(shapes(level));
         java.util.Set<net.minecraft.world.item.Item> seen = new java.util.HashSet<>();
         ItemStack side = side().get(0);
         Optional<Material.Located> sideStuff = side.isEmpty() ? Optional.empty() : Material.find(materials, side);
         MadeOf first = centreStack().get(FDataComponents.MADE_OF.get());
         for (int i = 0; i < options.size(); i++) {
-            ToolTableShaping.Option o = options.get(i);
+            PartBenchShaping.Option o = options.get(i);
             net.minecraft.world.item.Item item = BuiltInRegistries.ITEM.get(o.shaping().item());
             if (!(item instanceof ModularPartItem) || !o.variant().name().isEmpty() || !seen.add(item))
                 continue;
@@ -868,7 +868,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
                                     Map<ResourceLocation, ModularType> types) {
         List<ItemStack> all = new ArrayList<>(cur);
         all.add(stack);
-        return !ToolTableAssembly.candidates(all, materials, types).isEmpty();
+        return !ModularAssembly.candidates(all, materials, types).isEmpty();
     }
 
     /** How many pieces fitting {@code stack} takes: one part, or what the roles it could fill ask of raw stock. */
@@ -881,7 +881,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
         List<ItemStack> all = new ArrayList<>(cur);
         all.add(stack);
         int want = Integer.MAX_VALUE;
-        for (ResourceLocation id : ToolTableAssembly.candidates(all, materials, types)) {
+        for (ResourceLocation id : ModularAssembly.candidates(all, materials, types)) {
             ModularType type = types.get(id);
             for (Map.Entry<String, ModularType.Role> e : type.roles().entrySet()) {
                 ModularType.Role r = e.getValue();
@@ -918,20 +918,20 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** Shape option {@code index} from the stock slot and fit the part. */
     private void shapeFit(ServerPlayer server, int index) {
         Level level = server.level();
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
+        List<PartBenchShaping.Option> options = PartBenchShaping.options(shapes(level));
         if (centre(level) != Centre.PART || index < 0 || index >= options.size() || !hasHammer() || firstFree() < 0)
             return;
-        ToolTableShaping.Option o = options.get(index);
+        PartBenchShaping.Option o = options.get(index);
         Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
         if (o.forged() || !(BuiltInRegistries.ITEM.get(o.shaping().item()) instanceof ModularPartItem))
             return;
-        Optional<ToolTableShaping.Stock> stock = ToolTableShaping.check(station, o, side(), materials, level, index == picked() ? aimScale(o) : 1f);
+        Optional<PartBenchShaping.Stock> stock = PartBenchShaping.check(station, o, side(), materials, level, index == picked() ? aimScale(o) : 1f);
         if (stock.isEmpty())
             return;
-        Optional<ItemStack> part = ToolTableShaping.part(o, stock.get(), 0, 1f, index == picked() ? built(level, o, 1f, 0) : Map.of(), level);
+        Optional<ItemStack> part = PartBenchShaping.part(o, stock.get(), 0, 1f, index == picked() ? built(level, o, 1f, 0) : Map.of(), level);
         if (part.isEmpty() || !attaches(part.get(), parts(), materials, assemblyTypes(level)))
             return;
-        spend(ToolTableBlockEntity.STOCK, stock.get(), server);
+        spend(PartBenchBlockEntity.STOCK, stock.get(), server);
         table.setItem(asmIndex(firstFree()), part.get());
         wearHammer();
         assembled(server);
@@ -948,10 +948,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** The centre and what is fitted to it make a dish: it becomes the centre. */
     private void assembled(ServerPlayer server) {
         Level level = server.level();
-        Optional<ToolTableAssembly.Match> match = ToolTableAssembly.infer(parts(), ItemStack.EMPTY, ClientMaterials.on(level), assemblyTypes(level));
+        Optional<ModularAssembly.Match> match = ModularAssembly.infer(parts(), ItemStack.EMPTY, ClientMaterials.on(level), assemblyTypes(level));
         if (match.isPresent()) {
-            clear(ToolTableBlockEntity.ASSEMBLY, ToolTableAssembly.DISH_SLOTS);
-            table.setItem(ToolTableBlockEntity.TOOL, match.get().tool());
+            clear(PartBenchBlockEntity.ASSEMBLY, ModularAssembly.DISH_SLOTS);
+            table.setItem(PartBenchBlockEntity.TOOL, match.get().tool());
             level.playSound(null, pos, SoundEvents.ANVIL_USE, SoundSource.BLOCKS, 0.4f, 1.4f);
             wearHammer();
         }
@@ -984,7 +984,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             pick.set(-1);
             forging = -1;
             if (!trim())
-                server.getInventory().placeItemBackInInventory(table.removeItemNoUpdate(ToolTableBlockEntity.STOCK + 1));
+                server.getInventory().placeItemBackInInventory(table.removeItemNoUpdate(PartBenchBlockEntity.STOCK + 1));
             table.setChanged();
         } else if (id >= BTN_AXIS) {
             aimClick(level, id);
@@ -1029,17 +1029,17 @@ public class ToolTableMenu extends AbstractContainerMenu {
 
     /** The food or the finished dish in the work slot (the tool slot at the Prep Table). */
     public ItemStack work() {
-        return table.getItem(ToolTableBlockEntity.TOOL);
+        return table.getItem(PartBenchBlockEntity.TOOL);
     }
 
     /** The seasoning in the seasoning slot (the plan slot at the Prep Table). */
     public ItemStack season() {
-        return table.getItem(ToolTableBlockEntity.PLAN);
+        return table.getItem(PartBenchBlockEntity.PLAN);
     }
 
     /** Whether {@code stack} is a finished dish: a dish-family item with a design. */
     public static boolean isDish(ItemStack stack) {
-        return ModularStacks.design(stack) != null && ToolTableAssembly.kindOf(stack) == ToolTableAssembly.Kind.DISH;
+        return ModularStacks.design(stack) != null && ModularAssembly.kindOf(stack) == ModularAssembly.Kind.DISH;
     }
 
     /** Whether {@code stack} is a seasoning (poured or sprinkled, not cut), by its material's trait. */
@@ -1117,7 +1117,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             }
             Cooking.apply(done, entry, Cooking.state(done, entry));
             said = cut.level() == 0 ? Component.translatable("prep.feedback.cut.whole") : cutName(cut);
-            table.setItem(ToolTableBlockEntity.TOOL, done);
+            table.setItem(PartBenchBlockEntity.TOOL, done);
         } else if (kind == 2) {
             // The press samples (0..100, one per KNEAD_STEP_TICKS) cannot outnumber the ticks that have passed.
             Optional<Cooking.Entry> entry = Cooking.find(level, work());
@@ -1126,7 +1126,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             int grade = Kneading.grade(entry.get().food(), marks);
             ItemStack done = work().copy();
             done.set(FDataComponents.FOOD_KNEAD.get(), new FoodKnead(grade));
-            table.setItem(ToolTableBlockEntity.TOOL, done);
+            table.setItem(PartBenchBlockEntity.TOOL, done);
             said = Component.translatable("prep.feedback.knead." + grade);
         } else {
             ItemStack seasoning = season();
@@ -1154,7 +1154,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
                 strength = PrepWork.strength(PrepWork.poured(heldTicks, PrepWork.flow(what.get().material())));
             }
             // The seasoning joins the design as its finish part, carrying its state and any cut, plus how it was poured.
-            ModularDesign.Part base = ToolTableAssembly.part(type.afterRole(), what.get(), seasoning, 1);
+            ModularDesign.Part base = ModularAssembly.part(type.afterRole(), what.get(), seasoning, 1);
             java.util.Map<String, Float> state = new java.util.HashMap<>(base.measures().state());
             state.put("pour", strength);
             List<ModularDesign.Part> parts = new ArrayList<>(design.parts());
@@ -1162,8 +1162,8 @@ public class ToolTableMenu extends AbstractContainerMenu {
             ItemStack done = work().copy();
             if (!ModularStacks.assemble(done, new ModularDesign(design.type(), parts, design.edge()), materials, ModularTypes.on(level)))
                 return false;
-            table.setItem(ToolTableBlockEntity.PLAN, ItemStack.EMPTY);
-            table.setItem(ToolTableBlockEntity.TOOL, done);
+            table.setItem(PartBenchBlockEntity.PLAN, ItemStack.EMPTY);
+            table.setItem(PartBenchBlockEntity.TOOL, done);
             said = pourName(strength);
         }
         io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(server, said, 60);
@@ -1192,7 +1192,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
      */
     public void beginForge(ServerPlayer server, int index) {
         Level level = server.level();
-        Optional<ToolTableShaping.Stock> stock = forgeable(level, index);
+        Optional<PartBenchShaping.Stock> stock = forgeable(level, index);
         if (stock.isEmpty())
             return;
         Material material = stock.get().what().material();
@@ -1219,10 +1219,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         int begun = forging;
         forging = -1;
         Level level = server.level();
-        Optional<ToolTableShaping.Stock> stock = forgeable(level, index);
+        Optional<PartBenchShaping.Stock> stock = forgeable(level, index);
         if (session == null || begun != index || stock.isEmpty())
             return;
-        ToolTableShaping.Option option = optionAt(level, index);
+        PartBenchShaping.Option option = optionAt(level, index);
         Material material = stock.get().what().material();
         int step = ForgeRhythm.step(material);
         if (level.getGameTime() - session.started() < ForgeRhythm.end(option.variant().rhythm(), step) - 10)
@@ -1251,10 +1251,10 @@ public class ToolTableMenu extends AbstractContainerMenu {
         Level level = server.level();
         int index = pick.get();
         MechanicalHammerBlockEntity machine = machineBeside();
-        Optional<ToolTableShaping.Stock> stock = forgeable(level, index);
+        Optional<PartBenchShaping.Stock> stock = forgeable(level, index);
         if (machine == null || stock.isEmpty())
             return;
-        ToolTableShaping.Option option = optionAt(level, index);
+        PartBenchShaping.Option option = optionAt(level, index);
         Material material = stock.get().what().material();
         String rhythm = option.variant().rhythm();
         ForgeRhythm.Strikes strikes = strikes();
@@ -1280,14 +1280,14 @@ public class ToolTableMenu extends AbstractContainerMenu {
     }
 
     /** Make the part the playing earned and hand it over; {@code hammerPoints} come off the hand hammer. */
-    private void complete(ServerPlayer server, ToolTableShaping.Option option, ToolTableShaping.Stock stock,
+    private void complete(ServerPlayer server, PartBenchShaping.Option option, PartBenchShaping.Stock stock,
                           ForgeRhythm.Result result, ForgeRhythm.Work work, int hammerPoints) {
         Level level = server.level();
-        Optional<ItemStack> part = ToolTableShaping.part(option, stock, result.flaw(), work.ratio(), built(level, option, work.ratio(), result.flaw()), level);
+        Optional<ItemStack> part = PartBenchShaping.part(option, stock, result.flaw(), work.ratio(), built(level, option, work.ratio(), result.flaw()), level);
         if (part.isEmpty())
             return;
-        spend(ToolTableBlockEntity.TOOL, stock, server);
-        ItemStack made = ToolTableShaping.finished(option, stock, part.get(), ClientMaterials.on(level), level);
+        spend(PartBenchBlockEntity.TOOL, stock, server);
+        ItemStack made = PartBenchShaping.finished(option, stock, part.get(), ClientMaterials.on(level), level);
         server.getInventory().placeItemBackInInventory(made);
         if (hammerPoints > 0)
             wearHammer(hammerPoints);
@@ -1398,7 +1398,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             given.add(new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.BLOOMERY_SLAG.get(), slag));
         bloom.shrink(1);
         if (bloom.isEmpty())
-            table.setItem(ToolTableBlockEntity.TOOL, main);
+            table.setItem(PartBenchBlockEntity.TOOL, main);
         else if (!main.isEmpty())
             given.add(main);
         for (ItemStack s : given)
@@ -1434,16 +1434,16 @@ public class ToolTableMenu extends AbstractContainerMenu {
         return new ForgeRhythm.Strikes(st, st);
     }
 
-    private ToolTableShaping.Option optionAt(Level level, int index) {
-        return ToolTableShaping.options(shapes(level)).get(index);
+    private PartBenchShaping.Option optionAt(Level level, int index) {
+        return PartBenchShaping.options(shapes(level)).get(index);
     }
 
     /** The stock, if shape {@code index} is a forged one and there is a hammer and exactly its stock. */
-    private Optional<ToolTableShaping.Stock> forgeable(Level level, int index) {
-        List<ToolTableShaping.Option> options = ToolTableShaping.options(shapes(level));
+    private Optional<PartBenchShaping.Stock> forgeable(Level level, int index) {
+        List<PartBenchShaping.Option> options = PartBenchShaping.options(shapes(level));
         if (mode.get() != MODE_PART || !hasHammer() || index < 0 || index >= options.size() || !options.get(index).forged())
             return Optional.empty();
-        return ToolTableShaping.check(station, options.get(index), stock(), ClientMaterials.on(level), level, index == picked() ? aimScale(options.get(index)) : 1f);
+        return PartBenchShaping.check(station, options.get(index), stock(), ClientMaterials.on(level), level, index == picked() ? aimScale(options.get(index)) : 1f);
     }
 
     /**
@@ -1493,7 +1493,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
     /** Stock of one item at slightly different heats is blended to one heat when it meets in the stock slot, so it stacks. */
     @Override
     public void clicked(int slotId, int button, net.minecraft.world.inventory.ClickType type, Player player) {
-        if (slotId >= STOCK && slotId < STOCK + ToolTableBlockEntity.STOCK_SLOTS)
+        if (slotId >= STOCK && slotId < STOCK + PartBenchBlockEntity.STOCK_SLOTS)
             ItemHeat.blend(getCarried(), slots.get(slotId).getItem(), player.level());
         super.clicked(slotId, button, type, player);
     }
@@ -1505,7 +1505,7 @@ public class ToolTableMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         ItemStack held = slot.getItem();
         if (index >= inv())
-            ItemHeat.blend(held, table.getItem(ToolTableBlockEntity.STOCK), player.level());
+            ItemHeat.blend(held, table.getItem(PartBenchBlockEntity.STOCK), player.level());
         ItemStack moved = held.copy();
         if (index == OUT) {
             if (!moveItemStackTo(held, inv(), slots.size(), true))

@@ -52,7 +52,7 @@ public final class BlueprintChecklist {
             Optional<Material.Located> located = Material.find(materials, s);
             if (located.isEmpty())
                 continue;
-            Part p = ToolTableAssembly.part(want.role(), located.get(), s, s.getCount());
+            Part p = ModularAssembly.part(want.role(), located.get(), s, s.getCount());
             if (p.sub().isEmpty() && p.material().equals(want.material()) && p.kind().equals(want.kind()) && p.count() == want.count())
                 return true;
         }

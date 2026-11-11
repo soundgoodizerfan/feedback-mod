@@ -6,7 +6,7 @@ import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * What the player did at a Prep Table minigame: the cut's mark positions (0..1000), the knead's press samples (0..100) or the pour's held ticks. The menu
  * recomputes the class from these and refuses a result that came faster than it could be played
- * ({@link ToolTableMenu#finishPrepare}); no grade ever comes from the client.
+ * ({@link PartBenchMenu#finishPrepare}); no grade ever comes from the client.
  */
 public record PrepareFinishPayload(int container, int kind, List<Integer> marks, int heldTicks) implements CustomPacketPayload {
 
@@ -38,7 +38,7 @@ public record PrepareFinishPayload(int container, int kind, List<Integer> marks,
 
     public static void handle(PrepareFinishPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof ToolTableMenu menu
+            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof PartBenchMenu menu
                     && menu.containerId == payload.container())
                 menu.finishPrepare(player, payload.kind(), payload.marks(), payload.heldTicks());
         });

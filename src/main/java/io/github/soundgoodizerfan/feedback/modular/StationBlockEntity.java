@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 
 /** What a part-making bench holds: the Tool Table's contents, under the name of the block it sits in. */
-public class StationBlockEntity extends ToolTableBlockEntity {
+public class StationBlockEntity extends PartBenchBlockEntity {
 
     public StationBlockEntity(BlockPos pos, BlockState state) {
         super(FModular.STATION_ENTITY.get(), pos, state, SIZE);

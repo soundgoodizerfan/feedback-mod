@@ -9,7 +9,7 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.PrepWork;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -73,7 +73,7 @@ public class PrepCutScreen extends Screen {
     }
 
     /** Open over the Prep Table's screen and tell the server the cut has begun. */
-    static void open(Screen parent, ToolTableMenu menu) {
+    static void open(Screen parent, PartBenchMenu menu) {
         var level = Minecraft.getInstance().level;
         ItemStack food = menu.work().copyWithCount(1);
         Optional<Material.Located> what = Material.find(ClientMaterials.on(level), food);
@@ -286,7 +286,7 @@ public class PrepCutScreen extends Screen {
         g.drawString(font, title, px + 12, py + 9, SKIN.ink(), false);
         if (cut != wordFor) {
             wordFor = cut;
-            word = cut.level() == 0 ? Component.translatable("prep.feedback.cut.whole") : ToolTableMenu.cutName(cut);
+            word = cut.level() == 0 ? Component.translatable("prep.feedback.cut.whole") : PartBenchMenu.cutName(cut);
         }
         if (phase != JUDGE)
             g.drawString(font, word, px + PW - 12 - font.width(word), py + 9,

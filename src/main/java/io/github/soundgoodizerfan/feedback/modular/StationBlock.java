@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
  * Where parts of one kind of stock are made: the smithing table, the woodworking table and the stonecutter. The Tool Table's
  * code with a {@link Station} filter on the stock. See {@link StationMenu}.
  */
-public class StationBlock extends ToolTableBlock {
+public class StationBlock extends PartBenchBlock {
 
     public static final MapCodec<StationBlock> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             propertiesCodec(), Station.CODEC.fieldOf("station").forGetter(b -> b.station)).apply(i, StationBlock::new));

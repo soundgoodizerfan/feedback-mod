@@ -210,7 +210,7 @@ final class CodeRecipeExamples {
             var counts = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.counts(type, 0, java.util.Set.of());
             List<List<ItemStack>> in = new ArrayList<>();
             for (Map.Entry<String, Integer> r : counts.entrySet()) {
-                List<ItemStack> choices = ToolTableToolCategory.stacks(type.roles().get(r.getKey()), 1, materials);
+                List<ItemStack> choices = PartBenchToolCategory.stacks(type.roles().get(r.getKey()), 1, materials);
                 if (choices.isEmpty())
                     return;
                 for (int i = 0; i < r.getValue(); i++)

@@ -11,8 +11,8 @@ import io.github.soundgoodizerfan.feedback.modular.MenuTabs;
 import io.github.soundgoodizerfan.feedback.modular.ModularRework;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.School;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.modular.TreatiseBinderItem;
 import io.github.soundgoodizerfan.feedback.modular.TreatiseItem;
 import io.github.soundgoodizerfan.feedback.modular.Treatises;
@@ -109,7 +109,7 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
         super(FMenus.ENGINEERING_TABLE.get(), id);
         this.player = inventory.player;
         this.pos = pos;
-        this.table = new ToolTableMenu.Watched(backing, () -> {
+        this.table = new PartBenchMenu.Watched(backing, () -> {
             if (!player.level().isClientSide)
                 refresh();
         });
@@ -272,7 +272,7 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
         }
         if (field.isEmpty()) {
             var types = EngineeringAssembly.types(level);
-            var found = ToolTableAssembly.infer(in.grid(), table.getItem(EngineeringTableBlockEntity.BLUEPRINT), ClientMaterials.on(level), types);
+            var found = ModularAssembly.infer(in.grid(), table.getItem(EngineeringTableBlockEntity.BLUEPRINT), ClientMaterials.on(level), types);
             if (found.isPresent() && types.get(found.get().type()) != null)
                 field = types.get(found.get().type()).school();
         }
@@ -471,6 +471,6 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
 
     @Override
     public boolean stillValid(Player p) {
-        return !(table instanceof ToolTableMenu.Watched) || table.stillValid(p);
+        return !(table instanceof PartBenchMenu.Watched) || table.stillValid(p);
     }
 }

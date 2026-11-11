@@ -90,7 +90,7 @@ public final class Treatises {
     }
 
     /**
-     * The school gate for assembly as a predicate over types, for {@link ToolTableAssembly#infer}: the types whose school's volume bit is
+     * The school gate for assembly as a predicate over types, for {@link ModularAssembly#infer}: the types whose school's volume bit is
      * in {@code mask}, plus every type with no school. A bench ORs the masks of every place it looks (inventory and shelf by
      * {@link #mask(Player, ContainerLevelAccess)}, its binder slot by {@link #mask(ItemStack)}).
      */

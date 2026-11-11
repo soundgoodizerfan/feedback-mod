@@ -6,7 +6,7 @@ import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.Shingling;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -17,7 +17,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
  * The inputs of a shingling, as samples: tick from the start, kind (0 light, 1 heavy, 2 turn) and where on the billet face in thousandths.
- * The menu replays them through {@link Shingling} against the bloom's own heat and the hammer's own blows ({@link ToolTableMenu#finishShingle}).
+ * The menu replays them through {@link Shingling} against the bloom's own heat and the hammer's own blows ({@link PartBenchMenu#finishShingle}).
  */
 public record ShingleFinishPayload(int container, List<Integer> ticks, List<Integer> kinds, List<Integer> xs, List<Integer> ys) implements CustomPacketPayload {
 
@@ -38,7 +38,7 @@ public record ShingleFinishPayload(int container, List<Integer> ticks, List<Inte
 
     public static void handle(ShingleFinishPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof ToolTableMenu menu
+            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof PartBenchMenu menu
                     && menu.containerId == payload.container())
                 menu.finishShingle(player, Shingling.events(payload.ticks(), payload.kinds(), payload.xs(), payload.ys()));
         });

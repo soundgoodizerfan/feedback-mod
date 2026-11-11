@@ -9,8 +9,8 @@ import java.util.Map;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +23,7 @@ import net.minecraft.util.Mth;
  * The aim strip at the bench: when the shape picked makes a part whose role declares axes, one row per axis (its name, a
  * minus/plus stepper reading the aimed value in its unit, the band word the value falls in), the stock the aim costs, and
  * a preview of the plate in its material whose proportions follow the aim and which can be dragged. Every change is a
- * menu button ({@link ToolTableMenu#BTN_AXIS}, {@link ToolTableMenu#BTN_AXIS_SET}); the server holds the aim and the
+ * menu button ({@link PartBenchMenu#BTN_AXIS}, {@link PartBenchMenu#BTN_AXIS_SET}); the server holds the aim and the
  * screen only reads it back, so nothing here is trusted. Strings are rebuilt only when the aim or the pick changes.
  */
 final class AxisPanel {
@@ -32,12 +32,12 @@ final class AxisPanel {
 
     private final BenchScreen host;
     private final GuiSkin skin;
-    private final AbstractWidget[] steppers = new AbstractWidget[ToolTableMenu.MAX_AIM];
+    private final AbstractWidget[] steppers = new AbstractWidget[PartBenchMenu.MAX_AIM];
     private List<Map.Entry<String, ModularType.Axis>> axes = List.of();
-    private ToolTableShaping.Option option;
+    private PartBenchShaping.Option option;
     private int pick = -2, generation = -1;
-    private final int[] raw = new int[ToolTableMenu.MAX_AIM];
-    private final String[] labels = new String[ToolTableMenu.MAX_AIM], values = new String[ToolTableMenu.MAX_AIM], bands = new String[ToolTableMenu.MAX_AIM];
+    private final int[] raw = new int[PartBenchMenu.MAX_AIM];
+    private final String[] labels = new String[PartBenchMenu.MAX_AIM], values = new String[PartBenchMenu.MAX_AIM], bands = new String[PartBenchMenu.MAX_AIM];
     private String cost = "";
     private int rgb = 0xC0C0C0;
     private boolean dragging;
@@ -54,7 +54,7 @@ final class AxisPanel {
         for (int i = 0; i < steppers.length; i++) {
             int a = i;
             steppers[i] = GuiStyle.stepper(skin, 0, 0, STEP_W, 12, "-", "+", () -> values[a] == null ? "" : values[a],
-                    d -> host.press(ToolTableMenu.BTN_AXIS + 2 * a + (d > 0 ? 1 : 0)), false, null);
+                    d -> host.press(PartBenchMenu.BTN_AXIS + 2 * a + (d > 0 ? 1 : 0)), false, null);
             steppers[i].visible = false;
             add.accept(steppers[i]);
         }
@@ -80,16 +80,16 @@ final class AxisPanel {
     /** Re-reads the pick and the aim; call every tick. */
     void tick() {
         var level = host.level();
-        ToolTableMenu menu = host.menu();
-        boolean on = level != null && menu.mode() == ToolTableMenu.MODE_PART && !menu.cutTab();
+        PartBenchMenu menu = host.menu();
+        boolean on = level != null && menu.mode() == PartBenchMenu.MODE_PART && !menu.cutTab();
         int p = on ? menu.picked() : -1;
         if (p != pick || generation != ModularTypes.generation()) {
             pick = p;
             generation = ModularTypes.generation();
             option = on ? menu.option(level).orElse(null) : null;
-            axes = option == null ? List.of() : ToolTableShaping.aimable(option);
-            if (axes.size() > ToolTableMenu.MAX_AIM)
-                axes = axes.subList(0, ToolTableMenu.MAX_AIM);
+            axes = option == null ? List.of() : PartBenchShaping.aimable(option);
+            if (axes.size() > PartBenchMenu.MAX_AIM)
+                axes = axes.subList(0, PartBenchMenu.MAX_AIM);
             for (int i = 0; i < axes.size(); i++) {
                 labels[i] = I18n.get("modular.feedback.axis." + axes.get(i).getKey());
                 raw[i] = Integer.MIN_VALUE;
@@ -215,7 +215,7 @@ final class AxisPanel {
             int n = Mth.clamp(startN[a] + Math.round((float) (delta / pxPerGrain)), 0, Math.min(top, 999));
             if (n != lastN[a]) {
                 lastN[a] = n;
-                host.press(ToolTableMenu.BTN_AXIS_SET + 1000 * a + n);
+                host.press(PartBenchMenu.BTN_AXIS_SET + 1000 * a + n);
             }
         }
         return true;

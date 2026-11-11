@@ -87,14 +87,14 @@ public final class ModularBlueprints {
         if (attachments.isEmpty())
             return Optional.empty();
         String pickedRole = attachments.get(random.nextInt(attachments.size()));
-        List<ToolTableShaping.Option> options = ToolDesigns.shapes(type.roles().get(pickedRole), types).stream().filter(o -> !o.variant().name().isEmpty()).toList();
+        List<PartBenchShaping.Option> options = ToolDesigns.shapes(type.roles().get(pickedRole), types).stream().filter(o -> !o.variant().name().isEmpty()).toList();
         if (options.isEmpty())
             return Optional.empty();
-        ToolTableShaping.Option upgrade = options.get(random.nextInt(options.size()));
+        PartBenchShaping.Option upgrade = options.get(random.nextInt(options.size()));
         List<ModularDesign.Part> parts = new ArrayList<>();
         for (String role : type.order()) {
             ModularType.Role r = type.roles().get(role);
-            ToolTableShaping.Option shape = role.equals(pickedRole) ? upgrade : ToolDesigns.standard(r, types);
+            PartBenchShaping.Option shape = role.equals(pickedRole) ? upgrade : ToolDesigns.standard(r, types);
             if (!(role.equals(pickedRole) || role.equals("H") || role.equals("W")) || shape == null)
                 continue;
             ResourceLocation metal = Feedback.id(role.equals("W") ? "copper" : "wrought_iron");

@@ -17,7 +17,7 @@ import net.minecraft.util.StringRepresentable;
  * material's kind and never its name, so a pack's own wood or stone is handled the same: metal is smithed, anything
  * organic (wood, bone, leather, fibre) is worked at the woodworking table, and the stonecutter takes any cold stock, organic
  * included, so it does all the woodworking table does as well as stone, ceramic, glass and crystal. {@link #TOOL} and {@link #PREP} take any stock; the
- * Prep Table has no block of its own keyed on this enum, it is what {@link #of(ToolTableMenu)} names for its
+ * Prep Table has no block of its own keyed on this enum, it is what {@link #of(PartBenchMenu)} names for its
  * menu (which keeps {@link #TOOL} as its stock filter). Every part of every modular type, a gun's included, is shaped at the bench
  * for its stock's material. The anvil takes the smithing table's metal and also forges it (plays the
  * forging pattern); the smithing table makes the unforged shapes only, as the stonecutter does the woodworking table's work and more.
@@ -62,7 +62,7 @@ public enum Station implements StringRepresentable {
     }
 
     /** The descriptor for a menu: the Prep Table runs on a {@link #TOOL} menu, so the menu's flag names it. */
-    public static Station of(ToolTableMenu menu) {
+    public static Station of(PartBenchMenu menu) {
         return menu.dishTable() ? PREP : menu.station();
     }
 

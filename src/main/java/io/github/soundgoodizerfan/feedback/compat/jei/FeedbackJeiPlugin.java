@@ -202,8 +202,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
                 new GunBlueprintPoolCategory(registration.getJeiHelpers().getGuiHelper()),
                 new SolderingCategory(registration.getJeiHelpers().getGuiHelper()),
                 new CircuitChainCategory(registration.getJeiHelpers().getGuiHelper()),
-                new ToolTableToolCategory(registration.getJeiHelpers().getGuiHelper()),
-                new ToolTablePartCategory(registration.getJeiHelpers().getGuiHelper()),
+                new PartBenchToolCategory(registration.getJeiHelpers().getGuiHelper()),
+                new PartBenchPartCategory(registration.getJeiHelpers().getGuiHelper()),
                 new EngineeringCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
@@ -529,8 +529,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
         registration.addRecipeCatalysts(EngineeringCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
-        registration.addRecipeCatalysts(ToolTableToolCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
-        registration.addRecipeCatalysts(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.ANVIL_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.WOODWORKING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER_ITEM.get());
+        registration.addRecipeCatalysts(PartBenchToolCategory.TYPE, net.minecraft.world.item.Items.CRAFTING_TABLE, io.github.soundgoodizerfan.feedback.registry.FModular.ENGINEERING_TABLE_ITEM.get());
+        registration.addRecipeCatalysts(PartBenchPartCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FModular.SMITHING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.ANVIL_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.WOODWORKING_TABLE_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FModular.STONECUTTER_ITEM.get());
     }
 
     @Override
@@ -740,14 +740,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
         if (runtime == null)
             return;
         var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
-        List<ToolTableToolCategory.Card> tools = new ArrayList<>();
+        List<PartBenchToolCategory.Card> tools = new ArrayList<>();
         types.forEach((id, type) -> {
             for (int i = 0; i < type.baseForms().size(); i++)
-                tools.add(new ToolTableToolCategory.Card(id, i));
+                tools.add(new PartBenchToolCategory.Card(id, i));
         });
-        show(ToolTableToolCategory.TYPE, tools);
+        show(PartBenchToolCategory.TYPE, tools);
         show(EngineeringCategory.TYPE, EngineeringCategory.generated(types));
-        show(ToolTablePartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.ToolTableShaping.options(types));
+        show(PartBenchPartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.PartBenchShaping.options(types));
     }
 
     private static void publishThermal() {

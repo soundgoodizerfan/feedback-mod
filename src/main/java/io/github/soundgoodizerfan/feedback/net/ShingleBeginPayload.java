@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -12,7 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** The player began shingling the bloom in the centre of the bench they have open; the menu notes when and how hot it is ({@link ToolTableMenu#beginShingle}). */
+/** The player began shingling the bloom in the centre of the bench they have open; the menu notes when and how hot it is ({@link PartBenchMenu#beginShingle}). */
 public record ShingleBeginPayload(int container) implements CustomPacketPayload {
 
     public static final Type<ShingleBeginPayload> TYPE = new Type<>(Feedback.id("shingle_begin"));
@@ -27,7 +27,7 @@ public record ShingleBeginPayload(int container) implements CustomPacketPayload 
 
     public static void handle(ShingleBeginPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof ToolTableMenu menu
+            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof PartBenchMenu menu
                     && menu.containerId == payload.container())
                 menu.beginShingle(player);
         });

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,16 +18,16 @@ import net.neoforged.neoforge.network.PacketDistributor;
  */
 final class PrepBlueprintPanel implements BlueprintBoard.Host {
 
-    private final ToolTableMenu menu;
+    private final PartBenchMenu menu;
     private final GuiSkin skin;
     private final BlueprintBoard board;
     private long stampAt;
 
-    PrepBlueprintPanel(ToolTableMenu menu, GuiSkin skin) {
+    PrepBlueprintPanel(PartBenchMenu menu, GuiSkin skin) {
         this.menu = menu;
         this.skin = skin;
         board = new BlueprintBoard(this, skin);
-        board.resize(ToolTableMenu.W, ToolTableMenu.BOARD_H);
+        board.resize(PartBenchMenu.W, PartBenchMenu.BOARD_H);
     }
 
     boolean active() {
@@ -46,7 +46,7 @@ final class PrepBlueprintPanel implements BlueprintBoard.Host {
                 PacketDistributor.sendToServer(new ModularBlueprintPayload(drawing.get(), board.pinnedDesigns()));
             } else
                 skin.cue(GuiSkin.Cue.REJECT);
-        }, left + ToolTableMenu.PAPER_X + 20, top + ToolTableMenu.PAPER_Y, 38, 16);
+        }, left + PartBenchMenu.PAPER_X + 20, top + PartBenchMenu.PAPER_Y, 38, 16);
     }
 
     void tick() {

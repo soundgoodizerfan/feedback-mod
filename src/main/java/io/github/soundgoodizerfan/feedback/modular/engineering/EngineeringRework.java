@@ -19,7 +19,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.School;
 import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.modular.Treatises;
 import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -107,7 +107,7 @@ public final class EngineeringRework {
         ModularType type = typeOf(item, level);
         if (type == null)
             return Outcome.of(NOT_MODULAR);
-        if (ToolTableMenu.isDish(item))
+        if (PartBenchMenu.isDish(item))
             return Outcome.of(DISH);
         int tool = hammer(table);
         if (tool != 0)
@@ -166,7 +166,7 @@ public final class EngineeringRework {
         ModularType type = typeOf(item, level);
         if (type == null)
             return Outcome.of(NOT_MODULAR);
-        if (ToolTableMenu.isDish(item))
+        if (PartBenchMenu.isDish(item))
             return Outcome.of(DISH);
         int tool = hammer(table);
         if (tool != 0)
@@ -192,7 +192,7 @@ public final class EngineeringRework {
         ModularType type = typeOf(item, level);
         if (type == null)
             return Outcome.of(NOT_MODULAR);
-        if (ToolTableMenu.isDish(item))
+        if (PartBenchMenu.isDish(item))
             return Outcome.of(DISH);
         List<List<ItemStack>> groups = new ArrayList<>();
         List<Integer> slots = new ArrayList<>();

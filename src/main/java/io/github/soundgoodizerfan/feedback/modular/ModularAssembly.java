@@ -41,9 +41,9 @@ import net.minecraft.world.item.ItemStack;
  * its slot count is fixed by the type, which is the part not taken: the type here follows the parts. Complex types ({@code blueprint: true})
  * assemble only at the Engineering Table; {@link #audit} checks their laid roles fit its {@link #GRID_SLOTS}.
  */
-public final class ToolTableAssembly {
+public final class ModularAssembly {
 
-    private ToolTableAssembly() {
+    private ModularAssembly() {
     }
 
     /** The Prep Table's slots for a dish's foods. All alike: any role may sit in any. */

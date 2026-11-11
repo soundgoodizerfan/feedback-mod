@@ -56,7 +56,7 @@ public class FoodTooltip {
                                 "perk.feedback." + c.substring(5) + ".gloss")));
             var cut = event.getItemStack().get(FDataComponents.FOOD_CUT.get());
             if (cut != null)
-                event.getToolTip().add(io.github.soundgoodizerfan.feedback.modular.ToolTableMenu.cutName(cut)
+                event.getToolTip().add(io.github.soundgoodizerfan.feedback.modular.PartBenchMenu.cutName(cut)
                         .withStyle(cut.ragged() ? ChatFormatting.GOLD : ChatFormatting.GRAY));
             var knead = event.getItemStack().get(FDataComponents.FOOD_KNEAD.get());
             if (knead != null)

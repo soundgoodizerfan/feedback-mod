@@ -8,8 +8,8 @@ import java.util.Locale;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.net.ForgeBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -99,7 +99,7 @@ final class ForgePanel implements WorkPanel {
 
     // The forging screen.
     private Phase phase = Phase.NONE;
-    private ToolTableShaping.Option chosen;
+    private PartBenchShaping.Option chosen;
     private int chosenIndex;
     private Material material;
     private int step;
@@ -124,18 +124,18 @@ final class ForgePanel implements WorkPanel {
 
 
     /** Begin the pattern of shape {@code index} on the stock in the centre, if the stock, the hammer and the heat allow it. */
-    boolean start(ToolTableShaping.Option option, int index) {
+    boolean start(PartBenchShaping.Option option, int index) {
         var level = host.level();
         if (phase != Phase.NONE || !host.menu().hasHammer())
             return false;
-        var stock = ToolTableShaping.check(host.menu().station(), option, host.menu().stock(), ClientMaterials.on(level), level,
+        var stock = PartBenchShaping.check(host.menu().station(), option, host.menu().stock(), ClientMaterials.on(level), level,
                 index == host.menu().picked() ? host.menu().aimScale(option) : 1f);
         if (stock.isEmpty() || !ForgeRhythm.workable(stock.get().what().material(), stock.get().coldest(), host.menu().hold())
                 || !ForgeRhythm.movable(option.variant().rhythm(), host.menu().strikes(), stock.get().what().material()))
             return false;
         if (host.menu().machine()) {
-            host.press(ToolTableMenu.BTN_PICK + index);
-            host.press(ToolTableMenu.BTN_MACHINE);
+            host.press(PartBenchMenu.BTN_PICK + index);
+            host.press(PartBenchMenu.BTN_MACHINE);
             return true;
         }
         chosen = option;
@@ -150,7 +150,7 @@ final class ForgePanel implements WorkPanel {
         int cap = me == null ? 0 : io.github.soundgoodizerfan.feedback.combat.skill.Skills.forgeTempoCap(me);
         tempo = cap == 0 ? null : new ForgeRhythm.Tempo(cap, io.github.soundgoodizerfan.feedback.combat.skill.Skills.forgeSteady(me));
         phase = Phase.PLAY;
-        host.press(ToolTableMenu.BTN_PICK + index);
+        host.press(PartBenchMenu.BTN_PICK + index);
         PacketDistributor.sendToServer(new ForgeBeginPayload(host.menu().containerId, chosenIndex));
         return true;
     }

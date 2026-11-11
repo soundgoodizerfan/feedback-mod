@@ -45,9 +45,9 @@ import net.minecraft.world.level.Level;
  *       flaws it earns are on the part. Any other comes out as soon as the stock is in.</li>
  * </ul>
  */
-public final class ToolTableShaping {
+public final class PartBenchShaping {
 
-    private ToolTableShaping() {
+    private PartBenchShaping() {
     }
 
     /** One entry in the shape list: a shape of a part of some type. */
@@ -324,7 +324,7 @@ public final class ToolTableShaping {
                 type.roles().get(type.primary()).part().map(ModularType.Shaping::item).orElse(null)))
             return part;
         ModularDesign design = new ModularDesign(option.type(),
-                List.of(ToolTableAssembly.part(type.primary(), stock.what(), part, 1)), Edge.STANDARD);
+                List.of(ModularAssembly.part(type.primary(), stock.what(), part, 1)), Edge.STANDARD);
         ItemStack tool = ModularStacks.blank(option.type()).orElse(ItemStack.EMPTY);
         if (tool.isEmpty())
             return part;

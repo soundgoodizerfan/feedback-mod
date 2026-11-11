@@ -9,7 +9,7 @@ import java.util.Locale;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -38,9 +38,9 @@ import net.minecraft.world.item.ItemStack;
  * material rides on the stack, so the stock slot cycles through everything the part can be made of,
  * in the number of cells the shape has, and the part slot cycles beside it.
  */
-public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.Option> {
+public class PartBenchPartCategory implements IRecipeCategory<PartBenchShaping.Option> {
 
-    static final RecipeType<ToolTableShaping.Option> TYPE = RecipeType.create("feedback", "tool_table_part", ToolTableShaping.Option.class);
+    static final RecipeType<PartBenchShaping.Option> TYPE = RecipeType.create("feedback", "tool_table_part", PartBenchShaping.Option.class);
 
     private static final int WIDTH = 168, HEIGHT = 84;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
@@ -48,12 +48,12 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
 
     private final IDrawable icon;
 
-    public ToolTablePartCategory(IGuiHelper guiHelper) {
+    public PartBenchPartCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(FModular.SMITHING_TABLE_ITEM.get()));
     }
 
     @Override
-    public RecipeType<ToolTableShaping.Option> getRecipeType() {
+    public RecipeType<PartBenchShaping.Option> getRecipeType() {
         return TYPE;
     }
 
@@ -78,10 +78,10 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, ToolTableShaping.Option option, IFocusGroup focuses) {
+    public void setRecipe(IRecipeLayoutBuilder builder, PartBenchShaping.Option option, IFocusGroup focuses) {
         List<ItemStack> stock = new ArrayList<>(), parts = new ArrayList<>();
         ClientMaterials.get().forEach((id, m) -> {
-            // Same trait gate as ToolTableShaping.check: a food shape takes only dough (kneadable).
+            // Same trait gate as PartBenchShaping.check: a food shape takes only dough (kneadable).
             if (m.traits().containsAll(option.shaping().traits()))
                 m.items(id).entrySet().stream()
                         .filter(e -> ModularType.fits(option.shaping().stock(), e.getKey()))
@@ -99,7 +99,7 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
     }
 
     @Override
-    public void draw(ToolTableShaping.Option option, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
+    public void draw(PartBenchShaping.Option option, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
         Font font = Minecraft.getInstance().font;
         graphics.drawString(font, option.label().getString().toUpperCase(Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         graphics.fill(1, 11, WIDTH - 1, 12, 0x40000000);

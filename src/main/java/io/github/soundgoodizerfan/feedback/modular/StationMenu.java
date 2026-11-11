@@ -10,10 +10,10 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * The part-making benches' menu: {@link ToolTableMenu} on the Parts tab (shaping, forging, cuts; assembly and rework are the Engineering
+ * The part-making benches' menu: {@link PartBenchMenu} on the Parts tab (shaping, forging, cuts; assembly and rework are the Engineering
  * Table's), with its {@link Station} filtering the stock. The stonecutter adds the vanilla cut as a second tab.
  */
-public class StationMenu extends ToolTableMenu {
+public class StationMenu extends PartBenchMenu {
 
     /** Client-side open: the position comes in the open packet, and the block there says which bench it is. */
     public StationMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
@@ -21,12 +21,12 @@ public class StationMenu extends ToolTableMenu {
     }
 
     private StationMenu(int id, Inventory inventory, BlockPos pos) {
-        super(FMenus.STATION.get(), ToolTableAssembly.Kind.TOOL, id, inventory, new SimpleContainer(ToolTableBlockEntity.SIZE), pos,
+        super(FMenus.STATION.get(), ModularAssembly.Kind.TOOL, id, inventory, new SimpleContainer(PartBenchBlockEntity.SIZE), pos,
                 inventory.player.level().getBlockState(pos).getBlock() instanceof StationBlock b ? b.station : Station.TOOL);
     }
 
     /** Server-side open. */
     public StationMenu(int id, Inventory inventory, StationBlockEntity table, Station station) {
-        super(FMenus.STATION.get(), ToolTableAssembly.Kind.TOOL, id, inventory, table, table.getBlockPos(), station);
+        super(FMenus.STATION.get(), ModularAssembly.Kind.TOOL, id, inventory, table, table.getBlockPos(), station);
     }
 }

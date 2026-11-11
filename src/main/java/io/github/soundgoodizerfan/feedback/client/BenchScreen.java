@@ -10,8 +10,8 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.Station;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
@@ -50,14 +50,14 @@ import net.minecraft.world.item.ItemStack;
  * a smithing template in the centre  Centre.TEMPLATE, mode MODE_SMITH          nothing: base and addition go in the stock slots
  * </pre>
  *
- * <p>The player never picks a mode: {@code ToolTableMenu} derives it from the centre on the server and syncs it. The server decides everything
+ * <p>The player never picks a mode: {@code PartBenchMenu} derives it from the centre on the server and syncs it. The server decides everything
  * (the screen sends button ids and the forging blows); the lists above are computed on both sides from the same menu and are rebuilt
  * only when the contents change. Volume is millibuckets in the menu and shown as ingots here. Numbers never show: bars do.
  *
  * <p>Nothing covers the bench: work happens around the stock ({@link ForgePanel}), motion lives on the objects (the stock settles and glows,
  * a rejected placement shakes the fan, a made part arcs to its slot), and every action has a {@link GuiSkin.Cue} and a visual twin.
  */
-public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
+public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
 
     /** The fan's canvas, relative to the panel; the centre slot sits at its middle. */
     static final int VX = 8, VY = 16, VW = 304, VH = 156;
@@ -75,7 +75,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private final AxisPanel axis;
     private float partial;
 
-    private List<ToolTableShaping.Option> options = List.of();
+    private List<PartBenchShaping.Option> options = List.of();
     private int optionsGeneration = -1;
     private int readKey = Integer.MIN_VALUE;
     private ItemStack seated = ItemStack.EMPTY;
@@ -92,15 +92,15 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private AbstractWidget typePicker;
     private final float[] bars = new float[3], against = new float[3];
 
-    public BenchScreen(ToolTableMenu menu, Inventory inventory, Component title) {
+    public BenchScreen(PartBenchMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.valueOf(Station.of(menu).skin()));
         st = Station.of(menu);
-        imageWidth = ToolTableMenu.W;
-        imageHeight = ToolTableMenu.H;
+        imageWidth = PartBenchMenu.W;
+        imageHeight = PartBenchMenu.H;
         titleLabelX = 10;
         titleLabelY = 5;
-        inventoryLabelX = ToolTableMenu.INV_X;
-        inventoryLabelY = ToolTableMenu.INV_Y - 11;
+        inventoryLabelX = PartBenchMenu.INV_X;
+        inventoryLabelY = PartBenchMenu.INV_Y - 11;
         forge = st.has(Station.Panel.FORGE) ? new ForgePanel(this) : null;
         shingle = st.has(Station.Panel.FORGE) ? new ShinglePanel(this) : null;
         blueprint = st.dishes() ? new PrepBlueprintPanel(menu, skin) : null;
@@ -108,7 +108,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     }
 
     // What the panels may ask of the bench.
-    ToolTableMenu menu() {
+    PartBenchMenu menu() {
         return menu;
     }
 
@@ -153,7 +153,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private Slot centreSlot() {
         if (centre == null)
             for (Slot s : menu.slots)
-                if (s.getContainerSlot() == io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity.TOOL) {
+                if (s.getContainerSlot() == io.github.soundgoodizerfan.feedback.modular.PartBenchBlockEntity.TOOL) {
                     centre = s;
                     break;
                 }
@@ -191,7 +191,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         super.init();
         // The station's folder tabs (data on Station), stood above the panel; none for a station with a single job.
         folderTabs(st.tabs().stream().map(t -> new FolderTabs.Def(Component.translatable(t.key()))).toList(), menu::tab,
-                i -> press(ToolTableMenu.BTN_TAB + i));
+                i -> press(PartBenchMenu.BTN_TAB + i));
         shingleButton = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.bench.shingle"),
                 b -> {
                     if (shingle != null && shingle.start())
@@ -203,7 +203,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         if (st.dishes()) {
             typePicker = addRenderableWidget(GuiStyle.stepper(skin, leftPos + VX + 4, topPos + VY + 4, 120, 14, "<", ">", this::typeName, d -> {
                 int n = Math.max(1, menu.dishTypes(level()).size());
-                press(ToolTableMenu.BTN_TYPE + Math.floorMod(menu.typePicked(level()) + d, n));
+                press(PartBenchMenu.BTN_TYPE + Math.floorMod(menu.typePicked(level()) + d, n));
             }, true, null));
             typePicker.visible = false;
         }
@@ -229,8 +229,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             int i = s.getContainerSlot();
             if (i < 9 || i > 35)
                 continue;
-            s.x = away ? -1000 : ToolTableMenu.INV_X + (i - 9) % 9 * 18;
-            s.y = away ? -1000 : ToolTableMenu.INV_Y + (i - 9) / 9 * 18;
+            s.x = away ? -1000 : PartBenchMenu.INV_X + (i - 9) % 9 * 18;
+            s.y = away ? -1000 : PartBenchMenu.INV_Y + (i - 9) / 9 * 18;
         }
     }
 
@@ -243,7 +243,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     /** The centre slot rides the fan's middle as it is panned and zoomed (kept inside the canvas so it stays reachable). */
     private void followFan() {
         for (net.minecraft.world.inventory.Slot s : menu.slots) {
-            if (s.getContainerSlot() != io.github.soundgoodizerfan.feedback.modular.ToolTableBlockEntity.TOOL)
+            if (s.getContainerSlot() != io.github.soundgoodizerfan.feedback.modular.PartBenchBlockEntity.TOOL)
                 continue;
             s.x = Mth.clamp(fan.originX(cx()) - leftPos - 8, VX, VX + VW - 16);
             s.y = Mth.clamp(fan.originY(cy()) - topPos - 8, VY, VY + VH - 16);
@@ -257,7 +257,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         if (level() == null)
             return;
         if (optionsGeneration != ModularTypes.generation()) {
-            options = ToolTableShaping.options(menu.shapes(level()));
+            options = PartBenchShaping.options(menu.shapes(level()));
             optionsGeneration = ModularTypes.generation();
             readKey = Integer.MIN_VALUE;
         }
@@ -277,10 +277,10 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
                 typePicker.visible = false;
             return;
         }
-        shingleButton.visible = menu.centre(level()) == ToolTableMenu.Centre.BLOOM && !busy();
+        shingleButton.visible = menu.centre(level()) == PartBenchMenu.Centre.BLOOM && !busy();
         shingleButton.active = menu.hasHammer();
         if (typePicker != null)
-            typePicker.visible = menu.mode() == ToolTableMenu.MODE_ASSEMBLE && !busy();
+            typePicker.visible = menu.mode() == PartBenchMenu.MODE_ASSEMBLE && !busy();
     }
 
     /** Rebuild the fan when what it is made from has changed, and give the placement its seat. */
@@ -312,7 +312,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         var level = level();
         List<BenchFan.Node> list = new ArrayList<>();
         // The Cut and Saw tabs work stock only; a dish container in the centre waits for the Parts tab.
-        switch (menu.cutTab() && menu.centre(level) != ToolTableMenu.Centre.STOCK ? ToolTableMenu.Centre.EMPTY : menu.centre(level)) {
+        switch (menu.cutTab() && menu.centre(level) != PartBenchMenu.Centre.STOCK ? PartBenchMenu.Centre.EMPTY : menu.centre(level)) {
             case STOCK -> stockNodes(list);
             case PART -> partNodes(list);
             case TOOL -> toolNodes(list);
@@ -323,7 +323,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     }
 
     /** The shape's icon, drawn as the stock in the centre would make it: the part item carries what it is made of, so it is tinted. */
-    private static ItemStack partIcon(ToolTableShaping.Option o, Material.Located stuff) {
+    private static ItemStack partIcon(PartBenchShaping.Option o, Material.Located stuff) {
         ItemStack icon = new ItemStack(BuiltInRegistries.ITEM.get(o.shaping().item()));
         if (icon.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
             icon.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
@@ -339,10 +339,10 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             // Forged shapes lie among the laid ones: their darker rim says which they are. Like parts sit side by side on the wheel.
             List<BenchFan.Node> shapes = new ArrayList<>();
             for (int i = 0; i < options.size(); i++) {
-                ToolTableShaping.Option o = options.get(i);
-                if (!ToolTableShaping.takes(menu.station(), o, stuff.get()))
+                PartBenchShaping.Option o = options.get(i);
+                if (!PartBenchShaping.takes(menu.station(), o, stuff.get()))
                     continue;
-                BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.SHAPE, partIcon(o, stuff.get()), o.label(), "", ToolTableMenu.BTN_PICK + i, 0, i);
+                BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.SHAPE, partIcon(o, stuff.get()), o.label(), "", PartBenchMenu.BTN_PICK + i, 0, i);
                 n.faint = have < o.stockMb(1f);
                 n.forged = o.forged();
                 shapes.add(n);
@@ -353,7 +353,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         List<ItemStack> cuts = menu.cuts(level);
         List<BenchFan.Node> cutNodes = new ArrayList<>();
         for (int k = 0; k < cuts.size(); k++)
-            cutNodes.add(new BenchFan.Node(BenchFan.Kind.CUT, cuts.get(k), cuts.get(k).getHoverName(), "", ToolTableMenu.BTN_CUT + k, 2, k));
+            cutNodes.add(new BenchFan.Node(BenchFan.Kind.CUT, cuts.get(k), cuts.get(k).getHoverName(), "", PartBenchMenu.BTN_CUT + k, 2, k));
         if (cutNodes.size() > HUB_AT) {
             BenchFan.Node hub = new BenchFan.Node(BenchFan.Kind.HUB, cuts.get(0), Component.translatable("gui.feedback.bench.cuts"), "", 0, 2, -1);
             hub.kids = cutNodes;
@@ -362,7 +362,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             out.addAll(cutNodes);
         List<ItemStack> broken = menu.breakdown(level);
         if (!broken.isEmpty())
-            out.add(new BenchFan.Node(BenchFan.Kind.BREAK, broken.get(0).copyWithCount(1), Component.translatable("gui.feedback.bench.break"), "", ToolTableMenu.BTN_BREAK, 3, 0));
+            out.add(new BenchFan.Node(BenchFan.Kind.BREAK, broken.get(0).copyWithCount(1), Component.translatable("gui.feedback.bench.break"), "", PartBenchMenu.BTN_BREAK, 3, 0));
         if (st.dishes())
             prepNodes(out, false);
     }
@@ -400,14 +400,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
     private void partNodes(List<BenchFan.Node> out) {
         var level = level();
         var materials = ClientMaterials.on(level);
-        for (ToolTableMenu.Add a : menu.adds(level)) {
+        for (PartBenchMenu.Add a : menu.adds(level)) {
             switch (a.source()) {
-                case FITTED -> out.add(new BenchFan.Node(BenchFan.Kind.FITTED, a.icon(), a.icon().getHoverName(), "", ToolTableMenu.BTN_OFF + a.index(), 0, a.index()));
-                case HELD -> out.add(new BenchFan.Node(BenchFan.Kind.HELD, a.icon().copyWithCount(1), a.icon().getHoverName(), "", ToolTableMenu.BTN_FIT + a.index(), 1, a.index()));
+                case FITTED -> out.add(new BenchFan.Node(BenchFan.Kind.FITTED, a.icon(), a.icon().getHoverName(), "", PartBenchMenu.BTN_OFF + a.index(), 0, a.index()));
+                case HELD -> out.add(new BenchFan.Node(BenchFan.Kind.HELD, a.icon().copyWithCount(1), a.icon().getHoverName(), "", PartBenchMenu.BTN_FIT + a.index(), 1, a.index()));
                 case SHAPE -> {
-                    ToolTableShaping.Option o = options.get(a.index());
-                    BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.BUILD, a.icon(), o.label(), "", ToolTableMenu.BTN_SHAPE + a.index(), 2, a.index());
-                    n.faint = ToolTableShaping.check(menu.station(), o, menu.side(), materials, level).isEmpty();
+                    PartBenchShaping.Option o = options.get(a.index());
+                    BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.BUILD, a.icon(), o.label(), "", PartBenchMenu.BTN_SHAPE + a.index(), 2, a.index());
+                    n.faint = PartBenchShaping.check(menu.station(), o, menu.side(), materials, level).isEmpty();
                     out.add(n);
                 }
             }
@@ -473,14 +473,14 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         }
         if (n.faint) {
             reject(n.kind == BenchFan.Kind.BUILD ? Component.translatable("gui.feedback.bench.stock_slot")
-                    : Component.translatable("gui.feedback.bench.short", ((ToolTableShaping.Option) options.get(n.index)).cells()));
+                    : Component.translatable("gui.feedback.bench.short", ((PartBenchShaping.Option) options.get(n.index)).cells()));
             return;
         }
         switch (n.kind) {
             case SHAPE -> shape(n);
             case CUT -> {
                 press(n.action);
-                press(ToolTableMenu.BTN_MAKE);
+                press(PartBenchMenu.BTN_MAKE);
                 arc(n.icon);
                 skin.cue(GuiSkin.Cue.FINISH, stockKind(), 1f);
             }
@@ -502,15 +502,15 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
     private void shape(BenchFan.Node n) {
         var level = level();
-        ToolTableShaping.Option o = options.get(n.index);
-        var stock = ToolTableShaping.check(menu.station(), o, menu.stock(), ClientMaterials.on(level), level,
+        PartBenchShaping.Option o = options.get(n.index);
+        var stock = PartBenchShaping.check(menu.station(), o, menu.stock(), ClientMaterials.on(level), level,
                 n.index == menu.picked() ? menu.aimScale(o) : 1f);
         if (stock.isEmpty()) {
             reject(Component.translatable("gui.feedback.tool_table.status.cold"));
             return;
         }
         // A part with axes to aim is picked first, so the strip shows; a second click makes it.
-        if (!ToolTableShaping.aimable(o).isEmpty() && menu.picked() != n.index) {
+        if (!PartBenchShaping.aimable(o).isEmpty() && menu.picked() != n.index) {
             press(n.action);
             skin.cue(GuiSkin.Cue.STAGE, stockKind(), 1f);
             return;
@@ -523,7 +523,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return;
         }
         press(n.action);
-        press(ToolTableMenu.BTN_MAKE);
+        press(PartBenchMenu.BTN_MAKE);
         arc(n.icon);
         skin.cue(GuiSkin.Cue.FINISH, stockKind(), 1f);
     }
@@ -573,7 +573,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 1 && !busy()) {
             for (BenchFan.Node n : fan.nodes())
                 n.selected = false;
-            press(ToolTableMenu.BTN_DESELECT);
+            press(PartBenchMenu.BTN_DESELECT);
             return true;
         }
         return super.mouseClicked(mx, my, button);
@@ -644,7 +644,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             Slot paper = menu.getSlot(menu.inv() - 1);
             skin.slot(g, leftPos + paper.x, topPos + paper.y);
             for (int c = 0; c < 9; c++)
-                skin.slot(g, leftPos + ToolTableMenu.INV_X + c * 18, topPos + ToolTableMenu.INV_Y + 58);
+                skin.slot(g, leftPos + PartBenchMenu.INV_X + c * 18, topPos + PartBenchMenu.INV_Y + 58);
             return;
         }
         int x = leftPos + VX, y = topPos + VY;
@@ -676,18 +676,18 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
 
         if (menu.trim()) {
             // The three inputs share one plaque, joined by plus signs; the result stays on the right.
-            int px = leftPos + ToolTableMenu.TRIM_X - 12, py = topPos + ToolTableMenu.CENTRE_Y - 12;
-            skin.plaque(g, px, py, 2 * ToolTableMenu.TRIM_GAP + 16 + 24, 40);
+            int px = leftPos + PartBenchMenu.TRIM_X - 12, py = topPos + PartBenchMenu.CENTRE_Y - 12;
+            skin.plaque(g, px, py, 2 * PartBenchMenu.TRIM_GAP + 16 + 24, 40);
             for (int k = 0; k < 2; k++) {
-                int mx = leftPos + ToolTableMenu.TRIM_X + k * ToolTableMenu.TRIM_GAP + 8 + ToolTableMenu.TRIM_GAP / 2;
-                g.drawString(font, "+", mx - font.width("+") / 2, topPos + ToolTableMenu.CENTRE_Y + 4, skin.dim(), false);
+                int mx = leftPos + PartBenchMenu.TRIM_X + k * PartBenchMenu.TRIM_GAP + 8 + PartBenchMenu.TRIM_GAP / 2;
+                g.drawString(font, "+", mx - font.width("+") / 2, topPos + PartBenchMenu.CENTRE_Y + 4, skin.dim(), false);
             }
         }
         for (int i = 0; i < menu.inv(); i++) {
             Slot s = menu.getSlot(i);
             if (!s.isActive())
                 continue;
-            if (i == ToolTableMenu.OUT) {
+            if (i == PartBenchMenu.OUT) {
                 skin.plaque(g, leftPos + s.x - 5, topPos + s.y - 5, 26, 26);
                 if (s.hasItem()) {
                     float pulse = 0.5f + 0.5f * Mth.sin(net.minecraft.Util.getMillis() / 260f);
@@ -697,7 +697,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             }
             skin.slot(g, leftPos + s.x, topPos + s.y);
         }
-        inventory(g, ToolTableMenu.INV_X, ToolTableMenu.INV_Y);
+        inventory(g, PartBenchMenu.INV_X, PartBenchMenu.INV_Y);
         ghost(g);
     }
 
@@ -706,7 +706,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         BenchFan.Node n = busy() ? null : fan.over();
         if (n == null || n.icon.isEmpty() || (n.kind != BenchFan.Kind.SHAPE && n.kind != BenchFan.Kind.CUT && n.kind != BenchFan.Kind.BUILD))
             return;
-        Slot out = menu.getSlot(ToolTableMenu.OUT);
+        Slot out = menu.getSlot(PartBenchMenu.OUT);
         if (out.hasItem())
             return;
         int ox = leftPos + out.x, oy = topPos + out.y;
@@ -729,7 +729,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         boolean compare = other.isPresent() && !other.get().id().equals(stuff.get().id());
         if (compare)
             PartPresenter.glyphs(other.get().material(), against);
-        int bx = leftPos + ToolTableMenu.OUT_X - 6, by = topPos + ToolTableMenu.OUT_Y + 24;
+        int bx = leftPos + PartBenchMenu.OUT_X - 6, by = topPos + PartBenchMenu.OUT_Y + 24;
         int[] tint = {skin.ink(), skin.accent(), skin.dim()};
         for (int i = 0; i < 3; i++) {
             int yy = by + i * 10;
@@ -797,17 +797,17 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         g.pose().translate(0, 0, 300);
         g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
-        caption(g, Component.translatable(st.toolLabel()), ToolTableMenu.HAMMER_X, ToolTableMenu.HAMMER_Y, menu.getSlot(ToolTableMenu.HAMMER).isActive());
-        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.stock" : "gui.feedback.tool_table.stock"), ToolTableMenu.STOCK_X, ToolTableMenu.STOCK_Y, menu.getSlot(ToolTableMenu.STOCK).isActive());
-        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), ToolTableMenu.PLAN_X, ToolTableMenu.PLAN_Y,
-                menu.getSlot(ToolTableMenu.PLAN).isActive());
+        caption(g, Component.translatable(st.toolLabel()), PartBenchMenu.HAMMER_X, PartBenchMenu.HAMMER_Y, menu.getSlot(PartBenchMenu.HAMMER).isActive());
+        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.stock" : "gui.feedback.tool_table.stock"), PartBenchMenu.STOCK_X, PartBenchMenu.STOCK_Y, menu.getSlot(PartBenchMenu.STOCK).isActive());
+        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), PartBenchMenu.PLAN_X, PartBenchMenu.PLAN_Y,
+                menu.getSlot(PartBenchMenu.PLAN).isActive());
         if (menu.trim()) {
             // Vanilla smithing, plainly: template, base and addition in a row, labelled; the result is the slot on the right.
-            caption(g, Component.translatable("gui.feedback.bench.template"), ToolTableMenu.TRIM_X, ToolTableMenu.CENTRE_Y, true);
-            caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), ToolTableMenu.TRIM_X + ToolTableMenu.TRIM_GAP, ToolTableMenu.CENTRE_Y, true);
-            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), ToolTableMenu.TRIM_X + 2 * ToolTableMenu.TRIM_GAP, ToolTableMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.bench.template"), PartBenchMenu.TRIM_X, PartBenchMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), PartBenchMenu.TRIM_X + PartBenchMenu.TRIM_GAP, PartBenchMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), PartBenchMenu.TRIM_X + 2 * PartBenchMenu.TRIM_GAP, PartBenchMenu.CENTRE_Y, true);
         }
-        caption(g, Component.translatable("gui.feedback.tool_table.result"), ToolTableMenu.OUT_X, ToolTableMenu.OUT_Y, true);
+        caption(g, Component.translatable("gui.feedback.tool_table.result"), PartBenchMenu.OUT_X, PartBenchMenu.OUT_Y, true);
         // The one line: what the pointer is on, or what to do next.
         Component line = line();
         int ly = VY + VH - 11;
@@ -880,8 +880,8 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
             return;
         }
         Slot s = hoveredSlot;
-        if (s != null && s.isActive() && !s.hasItem() && s.index >= ToolTableMenu.HAMMER && s.index < menu.inv()) {
-            String key = s.index == ToolTableMenu.HAMMER ? st.tip("hammer") : s.index == ToolTableMenu.TOOL ? st.tip("centre") : s.index == ToolTableMenu.PLAN ? st.tip("plan")
+        if (s != null && s.isActive() && !s.hasItem() && s.index >= PartBenchMenu.HAMMER && s.index < menu.inv()) {
+            String key = s.index == PartBenchMenu.HAMMER ? st.tip("hammer") : s.index == PartBenchMenu.TOOL ? st.tip("centre") : s.index == PartBenchMenu.PLAN ? st.tip("plan")
                     : st.tip("stock");
             g.renderTooltip(font, font.split(Component.translatable("gui.feedback.tool_table.tip." + key), 190), mouseX, mouseY);
             return;
@@ -913,7 +913,7 @@ public class BenchScreen extends SkinnedScreen<ToolTableMenu> {
         float age = GuiStyle.time() - arcAt;
         if (!arcIcon.isEmpty() && age >= 0 && age < 9 && !ClientSettings.reduceMotion()) {
             float f = GuiStyle.easeOut(age / 9f);
-            float x0 = slotCx() - 8, y0 = slotCy() - 8, x1 = leftPos + ToolTableMenu.OUT_X, y1 = topPos + ToolTableMenu.OUT_Y;
+            float x0 = slotCx() - 8, y0 = slotCy() - 8, x1 = leftPos + PartBenchMenu.OUT_X, y1 = topPos + PartBenchMenu.OUT_Y;
             g.renderItem(arcIcon, Math.round(Mth.lerp(f, x0, x1)), Math.round(Mth.lerp(f, y0, y1) - Mth.sin(f * Mth.PI) * 26));
         }
         g.pose().popPose();

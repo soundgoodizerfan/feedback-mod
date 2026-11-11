@@ -20,7 +20,7 @@ The Crafting tab holds:
 
 - a **3 by 3 grid** and an output slot,
 - a **blueprint** slot (a blueprint or a [Blueprint Book](Blueprint_Book.md)),
-- the four **hand tool** slots,
+- three **fixings** slots (labelled "Fixings"; screws, machine bolts and rivets go here, see [Fasteners](Fasteners.md)),
 - three **fastener** slots,
 - a **binder** slot for a [Treatise Binder](Treatise_Binder_and_Shelf.md).
 

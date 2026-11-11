@@ -592,7 +592,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
     /**
      * How a part is shaped from stock (step 1 of the parts pass): the stock laid in {@code shape}
-     * at the Tool Table with a hand hammer ({@link ToolTableShaping}). One registered item
+     * at the Tool Table with a hand hammer ({@link PartBenchShaping}). One registered item
      * per part, the material on the stack ({@link io.github.soundgoodizerfan.feedback.process.MadeOf}).
      *
      * @param item  the part's item.

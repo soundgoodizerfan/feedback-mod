@@ -12,7 +12,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
 
 /** The Prep Table's contents: the Tool Table's, with a knife where the hammer is. */
-public class PrepTableBlockEntity extends ToolTableBlockEntity {
+public class PrepTableBlockEntity extends PartBenchBlockEntity {
 
     public PrepTableBlockEntity(BlockPos pos, BlockState state) {
         super(FModular.PREP_TABLE_ENTITY.get(), pos, state, SIZE);

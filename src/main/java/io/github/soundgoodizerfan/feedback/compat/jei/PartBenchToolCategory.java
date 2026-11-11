@@ -10,7 +10,7 @@ import java.util.Map;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -43,7 +43,7 @@ import net.minecraft.world.item.ItemStack;
  * Built from the client's copy of the {@link ModularType}s and the material table, so a pack's own
  * type or material shows with no edit, and no item is named (philosophy 11).
  */
-public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCategory.Card> {
+public class PartBenchToolCategory implements IRecipeCategory<PartBenchToolCategory.Card> {
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "tool_table_tool", Card.class);
 
@@ -62,7 +62,7 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
 
     private final IDrawable icon;
 
-    public ToolTableToolCategory(IGuiHelper guiHelper) {
+    public PartBenchToolCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(net.minecraft.world.item.Items.CRAFTING_TABLE));
     }
 
@@ -120,7 +120,7 @@ public class ToolTableToolCategory implements IRecipeCategory<ToolTableToolCateg
     static List<ItemStack> stacks(ModularType.Role role, int count, Map<ResourceLocation, Material> materials) {
         List<ItemStack> out = new ArrayList<>();
         if (ToolDesigns.shaped(role)) {
-            for (ToolTableShaping.Option o : ToolDesigns.shapes(role, ModularTypes.known()))
+            for (PartBenchShaping.Option o : ToolDesigns.shapes(role, ModularTypes.known()))
                 if (o.variant().name().isEmpty())
                     for (Material.Located l : ToolDesigns.materials(role, o, materials)) {
                         ItemStack part = new ItemStack(BuiltInRegistries.ITEM.get(o.shaping().item()));

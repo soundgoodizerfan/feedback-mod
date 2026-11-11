@@ -12,7 +12,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.PrepWork;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload;
@@ -99,7 +99,7 @@ public class PrepPourScreen extends Screen {
     }
 
     /** Open over the Prep Table's screen and tell the server the pour has begun. */
-    static void open(Screen parent, ToolTableMenu menu) {
+    static void open(Screen parent, PartBenchMenu menu) {
         var level = Minecraft.getInstance().level;
         ItemStack seasoning = menu.season().copyWithCount(1);
         ModularDesign design = ModularStacks.design(menu.work());
@@ -388,7 +388,7 @@ public class PrepPourScreen extends Screen {
             int cls = PrepWork.pourClass(strength);
             if (cls != wordClass) {
                 wordClass = cls;
-                word = ToolTableMenu.pourName(strength);
+                word = PartBenchMenu.pourName(strength);
             }
             g.drawString(font, word, px + PW - 12 - font.width(word), py + 9, SKIN.accent(), false);
         }

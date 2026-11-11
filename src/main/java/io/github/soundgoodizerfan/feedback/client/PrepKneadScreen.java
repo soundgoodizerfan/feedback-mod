@@ -9,7 +9,7 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.Kneading;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -97,7 +97,7 @@ public class PrepKneadScreen extends Screen {
     }
 
     /** Open over the Prep Table's screen and tell the server the knead has begun. */
-    static void open(Screen parent, ToolTableMenu menu) {
+    static void open(Screen parent, PartBenchMenu menu) {
         var level = Minecraft.getInstance().level;
         Optional<Material.Located> what = Material.find(ClientMaterials.on(level), menu.work());
         if (what.isEmpty() || what.get().material().food().isEmpty())

@@ -112,7 +112,7 @@ public final class ModularStacks {
         stack.set(FModular.DESIGN.get(), design);
         baked = Optional.of(ModularFit.adjust(baked.get(), ModularFit.of(stack)));
         stack.set(FModular.FIGURES.get(), baked.get());
-        ToolTableAssembly.keepCredit(stack, design, type, materials);
+        ModularAssembly.keepCredit(stack, design, type, materials);
         // A gun's wear is its bore's (GunCondition), not a bar of uses; a head's is TOOL_CONDITION, worn by the machine.
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH

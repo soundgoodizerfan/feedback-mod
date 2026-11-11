@@ -17,7 +17,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularHeads;
 import io.github.soundgoodizerfan.feedback.modular.ModularPartItem;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.Station;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import net.minecraft.core.registries.BuiltInRegistries;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
@@ -113,7 +113,7 @@ public final class FCommands {
     /** Standard-shape part names: the part item's path (spear_head), and its short form (spear) where it ends in _head. */
     private static List<String> partNames() {
         List<String> out = new ArrayList<>();
-        for (var o : ToolTableShaping.options(ModularTypes.known())) {
+        for (var o : PartBenchShaping.options(ModularTypes.known())) {
             if (!o.variant().name().isEmpty() || !(BuiltInRegistries.ITEM.get(o.shaping().item()) instanceof ModularPartItem))
                 continue;
             String path = o.shaping().item().getPath();
@@ -131,16 +131,16 @@ public final class FCommands {
         ResourceLocation id = ResourceLocationArgument.getId(c, "material");
         Material m = MaterialTable.get().materials().get(id);
         var level = c.getSource().getLevel();
-        for (var o : ToolTableShaping.options(ModularTypes.on(level))) {
+        for (var o : PartBenchShaping.options(ModularTypes.on(level))) {
             String path = o.shaping().item().getPath();
             if (!o.variant().name().isEmpty() || !(path.equals(name) || path.equals(name + "_head")))
                 continue;
             for (String form : o.shaping().stock()) {
                 if (m == null || form.contains("*") || m.item(id, form).isEmpty()
-                        || !ToolTableShaping.takes(Station.TOOL, o, new Material.Located(id, m, form)))
+                        || !PartBenchShaping.takes(Station.TOOL, o, new Material.Located(id, m, form)))
                     continue;
-                var stock = new ToolTableShaping.Stock(new Material.Located(id, m, form), o.cells(), o.stockMb(1f), 0f, 0);
-                ItemStack part = ToolTableShaping.part(o, stock, 0, level).orElseThrow(NO_MATERIAL::create);
+                var stock = new PartBenchShaping.Stock(new Material.Located(id, m, form), o.cells(), o.stockMb(1f), 0f, 0);
+                ItemStack part = PartBenchShaping.part(o, stock, 0, level).orElseThrow(NO_MATERIAL::create);
                 GunAmmo.give(player, part);
                 c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.part", part.getHoverName()), false);
                 return 1;

@@ -111,7 +111,7 @@ public final class ModularRework {
                 else
                     out.remove(FDataComponents.PLATING.get());
             }
-            return ModularStacks.assemble(out, design.withPart(ToolTableAssembly.part(r.getKey(), what, stock.get(0), part.count())), materials, types)
+            return ModularStacks.assemble(out, design.withPart(ModularAssembly.part(r.getKey(), what, stock.get(0), part.count())), materials, types)
                     ? Optional.of(out) : Optional.empty();
         }
         // Add: an optional part (a tip, a binding, a gun's fitting or sight, an armour piece's lining or studs), as many pieces as
@@ -131,7 +131,7 @@ public final class ModularRework {
             if (shaped != (stock.get(0).getItem() instanceof ModularPartItem))
                 continue;
             List<Part> parts = new ArrayList<>(design.parts());
-            parts.add(ToolTableAssembly.part(key, what, stock.get(0), shaped ? 1 : role.bulk()));
+            parts.add(ModularAssembly.part(key, what, stock.get(0), shaped ? 1 : role.bulk()));
             parts.sort(Comparator.comparingInt(p -> type.order().indexOf(p.role())));
             return ModularStacks.assemble(out, new ModularDesign(design.type(), parts, design.edge()), materials, types)
                     ? Optional.of(out) : Optional.empty();

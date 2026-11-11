@@ -97,7 +97,7 @@ public class BootstrapToolRecipe extends CustomRecipe {
             return ItemStack.EMPTY;
         ResourceLocation leather = ResourceLocation.fromNamespaceAndPath("feedback", "leather");
         ModularType.Role role = type.roles().get(type.primary());
-        ToolTableShaping.Option shape = ToolDesigns.standard(role, types);
+        PartBenchShaping.Option shape = ToolDesigns.standard(role, types);
         Optional<Material.Located> located = ToolDesigns.located(role, shape, leather, materials);
         if (located.isEmpty())
             return ItemStack.EMPTY;

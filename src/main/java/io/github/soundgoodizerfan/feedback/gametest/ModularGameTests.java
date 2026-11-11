@@ -11,8 +11,8 @@ import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularRework;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
@@ -48,10 +48,10 @@ public class ModularGameTests {
             else
                 slots.add(s.copy());
         }
-        while (slots.size() < ToolTableAssembly.GRID_SLOTS)
+        while (slots.size() < ModularAssembly.GRID_SLOTS)
             slots.add(ItemStack.EMPTY);
-        return ToolTableAssembly.infer(slots, ItemStack.EMPTY, ClientMaterials.on(helper.getLevel()), ModularTypes.on(helper.getLevel()))
-                .map(ToolTableAssembly.Match::tool).orElseGet(() -> {
+        return ModularAssembly.infer(slots, ItemStack.EMPTY, ClientMaterials.on(helper.getLevel()), ModularTypes.on(helper.getLevel()))
+                .map(ModularAssembly.Match::tool).orElseGet(() -> {
                     helper.fail("the slots should have made a modular item");
                     return ItemStack.EMPTY;
                 });
@@ -89,9 +89,9 @@ public class ModularGameTests {
     @GameTest(template = "empty")
     public static void tableShapesAPart(GameTestHelper helper) {
         ItemStack i = new ItemStack(Items.IRON_INGOT, 1);
-        var option = ToolTableShaping.options(ModularTypes.on(helper.getLevel())).stream()
+        var option = PartBenchShaping.options(ModularTypes.on(helper.getLevel())).stream()
                 .filter(o -> o.shaping().item().getPath().equals("pickaxe_head") && o.variant().name().isEmpty()).findFirst().orElseThrow();
-        ItemStack head = ToolTableShaping.make(option, List.of(i, i, i), ClientMaterials.on(helper.getLevel()), helper.getLevel());
+        ItemStack head = PartBenchShaping.make(option, List.of(i, i, i), ClientMaterials.on(helper.getLevel()), helper.getLevel());
         var made = head.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
         helper.assertTrue(head.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
                 && made != null && made.cells() == 3, "the part should be a three-cell head, got " + head);

@@ -32,13 +32,13 @@ import net.minecraft.world.item.ItemStack;
  * A design is makeable <b>if the Tool Table would accept the parts it names</b>. {@link #make} does
  * not re-state the table's rules: it turns the design into the stacks a player would put in the six
  * slots ({@link #stacks}), packs them into slots by capacity ({@link #layout}), and asks
- * {@link ToolTableAssembly#infer}. What comes back is the tool, so the blueprint's prediction, the
+ * {@link ModularAssembly#infer}. What comes back is the tool, so the blueprint's prediction, the
  * table's output and {@code /feedback build} are one computation.
  *
  * <h2>What a drawing is</h2>
  * A type, one of its {@link ModularType#forms forms} (which roles, how many of each), any of its
  * {@link ModularType#extras extras} switched on, and for each role a material and, for a shaped
- * part, a shape ({@link ToolTableShaping.Option}: the standard, a laid variant, a forged one; a
+ * part, a shape ({@link PartBenchShaping.Option}: the standard, a laid variant, a forged one; a
  * twin's head also picks which kind of head). Heat and flaws are not part of a drawing: a blueprint
  * is paper, and flaws are what forging adds.
  */
@@ -106,10 +106,10 @@ public final class ToolDesigns {
      * Every shape a role's part can be made in, in the order of the Tool Table's own list: a plain
      * shaped role has its part's, a twin's head has every kind of head's. Empty for raw stock.
      */
-    public static List<ToolTableShaping.Option> shapes(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
+    public static List<PartBenchShaping.Option> shapes(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
         if (!shaped(role))
             return List.of();
-        return ToolTableShaping.options(types).stream().filter(o -> role.striker()
+        return PartBenchShaping.options(types).stream().filter(o -> role.striker()
                 ? role.forms().contains(o.shaping().item().getPath()) : role.part().get().item().equals(o.shaping().item())).toList();
     }
 
@@ -118,7 +118,7 @@ public final class ToolDesigns {
      * that the role takes: the form of a stock item for a shaped part (the part is made from it), of
      * the item itself for raw stock.
      */
-    public static List<Material.Located> materials(ModularType.Role role, ToolTableShaping.Option shape, Map<ResourceLocation, Material> materials) {
+    public static List<Material.Located> materials(ModularType.Role role, PartBenchShaping.Option shape, Map<ResourceLocation, Material> materials) {
         Cache cache = CACHE.get();
         if (cache == null)
             return scanMaterials(role, shape, materials);
@@ -131,10 +131,10 @@ public final class ToolDesigns {
 
     private static final class Cache {
         final Map<ModularType.Role, Map<String, List<Material.Located>>> materials = new java.util.IdentityHashMap<>();
-        final Map<ModularType.Role, java.util.Optional<ToolTableShaping.Option>> standard = new java.util.IdentityHashMap<>();
+        final Map<ModularType.Role, java.util.Optional<PartBenchShaping.Option>> standard = new java.util.IdentityHashMap<>();
     }
 
-    private static List<Material.Located> scanMaterials(ModularType.Role role, ToolTableShaping.Option shape, Map<ResourceLocation, Material> materials) {
+    private static List<Material.Located> scanMaterials(ModularType.Role role, PartBenchShaping.Option shape, Map<ResourceLocation, Material> materials) {
         List<Material.Located> out = new ArrayList<>();
         materials.forEach((id, m) -> {
             // The smallest piece that fits: ingots before a block, which only fills a shape that is a whole number of blocks.
@@ -155,21 +155,21 @@ public final class ToolDesigns {
         return out;
     }
 
-    /** As {@link #materials(ModularType.Role, ToolTableShaping.Option, Map)}, keeping only materials the type can bake with in role {@code roleKey} ({@link ModularBake#suits}). */
-    public static List<Material.Located> materials(ModularType type, String roleKey, ToolTableShaping.Option shape, Map<ResourceLocation, Material> materials) {
+    /** As {@link #materials(ModularType.Role, PartBenchShaping.Option, Map)}, keeping only materials the type can bake with in role {@code roleKey} ({@link ModularBake#suits}). */
+    public static List<Material.Located> materials(ModularType type, String roleKey, PartBenchShaping.Option shape, Map<ResourceLocation, Material> materials) {
         return materials(type.roles().get(roleKey), shape, materials).stream().filter(l -> ModularBake.suits(type, roleKey, l.material())).toList();
     }
 
     // --- parts and designs ----------------------------------------------------------------------
 
     /** The part a role gets from {@code material}: shaped in {@code shape} (flawless), or raw stock {@code count} of it. */
-    public static Part part(String role, Material.Located material, ToolTableShaping.Option shape, int count) {
+    public static Part part(String role, Material.Located material, PartBenchShaping.Option shape, int count) {
         return shape == null ? new Part(role, material.id(), material.form(), count)
                 : new Part(role, material.id(), material.form(), shape.cells(), shape.shaping().item().getPath(), shape.variant().name(), 0);
     }
 
     /** {@code material} as {@code role} takes it with {@code shape}, if it can be drawn so. */
-    public static Optional<Material.Located> located(ModularType.Role role, ToolTableShaping.Option shape, ResourceLocation material,
+    public static Optional<Material.Located> located(ModularType.Role role, PartBenchShaping.Option shape, ResourceLocation material,
                                                      Map<ResourceLocation, Material> materials) {
         return materials(role, shape, materials).stream().filter(l -> l.id().equals(material)).findFirst();
     }
@@ -180,14 +180,14 @@ public final class ToolDesigns {
     }
 
     /** The standard shape of a role (a twin's head: its first kind, as the role lists them), or null for raw stock. */
-    public static ToolTableShaping.Option standard(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
+    public static PartBenchShaping.Option standard(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
         Cache cache = CACHE.get();
         if (cache == null)
             return findStandard(role, types);
         return cache.standard.computeIfAbsent(role, r -> java.util.Optional.ofNullable(findStandard(role, types))).orElse(null);
     }
 
-    private static ToolTableShaping.Option findStandard(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
+    private static PartBenchShaping.Option findStandard(ModularType.Role role, Map<ResourceLocation, ModularType> types) {
         return shapes(role, types).stream().filter(o -> o.variant().name().isEmpty())
                 .min(Comparator.comparingInt(o -> role.striker() && !o.shaping().item().getPath().equals(role.forms().get(0)) ? 1 : 0))
                 .orElse(null);
@@ -203,7 +203,7 @@ public final class ToolDesigns {
         List<Part> parts = new ArrayList<>();
         for (Map.Entry<String, Integer> r : counts.entrySet()) {
             ModularType.Role role = type.roles().get(r.getKey());
-            ToolTableShaping.Option shape = role == null ? null : standard(role, types);
+            PartBenchShaping.Option shape = role == null ? null : standard(role, types);
             if (role == null || (shaped(role) && shape == null))
                 return Optional.empty();
             List<Material.Located> choices = materials(role, shape, materials);
@@ -238,7 +238,7 @@ public final class ToolDesigns {
         List<Part> parts = new ArrayList<>();
         for (Map.Entry<String, Integer> r : counts(type, 0, Set.of()).entrySet()) {
             ModularType.Role role = type.roles().get(r.getKey());
-            ToolTableShaping.Option shape = role == null ? null : standard(role, types);
+            PartBenchShaping.Option shape = role == null ? null : standard(role, types);
             if (role == null || (shaped(role) && shape == null))
                 return Optional.empty();
             List<Material.Located> choices = materials(type, r.getKey(), shape, materials);
@@ -300,12 +300,12 @@ public final class ToolDesigns {
 
     /** {@code stacks} in the Engineering Table's nine grid slots, largest first, or empty if they do not fit. */
     public static Optional<List<ItemStack>> layout(List<ItemStack> stacks) {
-        return layout(stacks, ToolTableAssembly.GRID_SLOTS);
+        return layout(stacks, ModularAssembly.GRID_SLOTS);
     }
 
     /** {@code stacks} in the {@code n} slots of a table, largest first, or empty if they do not fit. */
     public static Optional<List<ItemStack>> layout(List<ItemStack> stacks, int n) {
-        if (stacks.size() > n || stacks.stream().anyMatch(s -> s.getCount() > ToolTableAssembly.CAPACITY))
+        if (stacks.size() > n || stacks.stream().anyMatch(s -> s.getCount() > ModularAssembly.CAPACITY))
             return Optional.empty();
         ItemStack[] slots = new ItemStack[n];
         List<ItemStack> sorted = new ArrayList<>(stacks);
@@ -325,7 +325,7 @@ public final class ToolDesigns {
      * them: the design is put on the table and read back. No blueprint is given: a sheet gates nothing, and the
      * parts of a drawing fit it as drawn.
      */
-    public static Optional<ToolTableAssembly.Match> make(ModularDesign design, Map<ResourceLocation, ModularType> types,
+    public static Optional<ModularAssembly.Match> make(ModularDesign design, Map<ResourceLocation, ModularType> types,
                                                          Map<ResourceLocation, Material> materials) {
         ModularType type = types.get(design.type());
         if (type == null)
@@ -334,9 +334,9 @@ public final class ToolDesigns {
         // a drawing has no components, so an upgrade that needs one is baked as if a middling one were fitted
         ModularBake.drawing(true);
         try {
-            return layout(stacks(design, type, materials), ToolTableAssembly.GRID_SLOTS)
-                    .flatMap(slots -> ToolTableAssembly.infer(slots, drawn, materials,
-                            ToolTableAssembly.ofKind(types, ToolTableAssembly.kindOf(type))))
+            return layout(stacks(design, type, materials), ModularAssembly.GRID_SLOTS)
+                    .flatMap(slots -> ModularAssembly.infer(slots, drawn, materials,
+                            ModularAssembly.ofKind(types, ModularAssembly.kindOf(type))))
                     .filter(m -> m.type().equals(design.type()));
         } finally {
             ModularBake.drawing(false);

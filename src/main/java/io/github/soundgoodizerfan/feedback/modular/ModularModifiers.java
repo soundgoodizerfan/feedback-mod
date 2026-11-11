@@ -164,7 +164,7 @@ public final class ModularModifiers {
      * What a Tool Table option gives: for a standard part, the trait of the first type that uses
      * the part (the spear head shows the charge); for a variant, as {@link #forVariant}.
      */
-    public static List<Modifier> forPart(ToolTableShaping.Option o) {
+    public static List<Modifier> forPart(PartBenchShaping.Option o) {
         ModularType type = ModularTypes.known().get(o.type());
         if (type == null)
             return List.of();

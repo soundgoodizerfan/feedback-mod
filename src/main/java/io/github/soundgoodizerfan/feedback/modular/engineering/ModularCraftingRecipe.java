@@ -11,7 +11,7 @@ import java.util.TreeMap;
 import io.github.soundgoodizerfan.feedback.modular.ModularFit;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
+import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
 import io.github.soundgoodizerfan.feedback.process.MaterialIngredient;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 
@@ -52,8 +52,8 @@ public class ModularCraftingRecipe extends CustomRecipe {
                 slots.add(input.getItem(i).copyWithCount(1));
         if (slots.isEmpty())
             return Optional.empty();
-        return ToolTableAssembly.infer(slots, ItemStack.EMPTY, MaterialIngredient.materialsNow(), simple(), t -> true, ModularFit.Start.NONE)
-                .map(ToolTableAssembly.Match::tool);
+        return ModularAssembly.infer(slots, ItemStack.EMPTY, MaterialIngredient.materialsNow(), simple(), t -> true, ModularFit.Start.NONE)
+                .map(ModularAssembly.Match::tool);
     }
 
     @Override

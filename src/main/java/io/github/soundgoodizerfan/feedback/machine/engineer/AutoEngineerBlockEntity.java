@@ -17,7 +17,7 @@ import io.github.soundgoodizerfan.feedback.item.RecordedAssembly;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.modular.ModularFit;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableAssembly;
+import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
 import io.github.soundgoodizerfan.feedback.modular.engineering.AssemblyRecording;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringAssembly;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringInput;
@@ -236,7 +236,7 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
         List<ItemStack> candidates = new ArrayList<>();
         Map<ResourceLocation, ModularType> types = EngineeringAssembly.types(server);
         for (Map.Entry<ResourceLocation, ModularType> t : types.entrySet())
-            ToolTableAssembly.infer(grid, ItemStack.EMPTY, materials, Map.of(t.getKey(), t.getValue()), AutoEngineerBlockEntity::plainBench, new ModularFit.Start(0, -1f))
+            ModularAssembly.infer(grid, ItemStack.EMPTY, materials, Map.of(t.getKey(), t.getValue()), AutoEngineerBlockEntity::plainBench, new ModularFit.Start(0, -1f))
                     .ifPresent(m -> candidates.add(m.tool()));
         if (candidates.isEmpty()) {
             for (int i = 0; i < BAY; i++)

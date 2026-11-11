@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * Where dishes are made: the Tool Table with the dish filter and a knife slot where the hammer is
  *. See {@link PrepTableMenu}.
  */
-public class PrepTableBlock extends ToolTableBlock {
+public class PrepTableBlock extends PartBenchBlock {
 
     public static final MapCodec<PrepTableBlock> CODEC = simpleCodec(PrepTableBlock::new);
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 /**
  * The blows struck, in ticks from the start of the pattern ({@link ForgeBeginPayload}), for the
  * Tool Table the player has open. The menu judges them against the pattern and the stock's own heat,
- * makes the part with the flaws the playing earned and hands it over ({@link ToolTableMenu#finishForge}):
+ * makes the part with the flaws the playing earned and hands it over ({@link PartBenchMenu#finishForge}):
  * it checks the table is still stocked, the hammer is in, and the result did not come faster than
  * the pattern runs. One that sends perfect hits is not caught -- the part is its own player's to
  * spoil, and nothing is lost to anyone else.
@@ -41,7 +41,7 @@ public record ForgeFinishPayload(int container, int option, List<Integer> ticks,
 
     public static void handle(ForgeFinishPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof ToolTableMenu menu
+            if (context.player() instanceof ServerPlayer player && player.containerMenu instanceof PartBenchMenu menu
                     && menu.containerId == payload.container())
                 menu.finishForge(player, payload.option(), ForgeRhythm.hits(payload.ticks(), payload.heavy()));
         });

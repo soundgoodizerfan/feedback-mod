@@ -27,7 +27,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
-import io.github.soundgoodizerfan.feedback.modular.ToolTableShaping;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
@@ -576,7 +576,7 @@ final class BlueprintBoard {
         sizes.putAll(opened.get().sizes());
         edge = design.edge();
         design.parts().forEach(p -> {
-            List<ToolTableShaping.Option> options = shapes(p.role());
+            List<PartBenchShaping.Option> options = shapes(p.role());
             for (int i = 0; i < options.size(); i++)
                 if (options.get(i).variant().name().equals(p.variant())
                         && (p.kind().isEmpty() || options.get(i).shaping().item().getPath().equals(p.kind())))
@@ -587,9 +587,9 @@ final class BlueprintBoard {
     }
 
     /** Per role: its shapes, worked out once (the list walks every type, and every node asks several times a frame). */
-    private final Map<String, List<ToolTableShaping.Option>> shapeLists = new HashMap<>();
+    private final Map<String, List<PartBenchShaping.Option>> shapeLists = new HashMap<>();
 
-    private List<ToolTableShaping.Option> shapes(String role) {
+    private List<PartBenchShaping.Option> shapes(String role) {
         ModularType t = current();
         return t == null ? List.of() : shapeLists.computeIfAbsent(role, r -> ToolDesigns.shapes(t.roles().get(r), ModularTypes.known()));
     }
@@ -599,12 +599,12 @@ final class BlueprintBoard {
         return n == 0 ? 0 : Math.floorMod(shape.getOrDefault(role, 0), n);
     }
 
-    private ToolTableShaping.Option shapeAt(String role, int index) {
-        List<ToolTableShaping.Option> s = shapes(role);
+    private PartBenchShaping.Option shapeAt(String role, int index) {
+        List<PartBenchShaping.Option> s = shapes(role);
         return s.isEmpty() ? null : s.get(Math.floorMod(index, s.size()));
     }
 
-    private ToolTableShaping.Option shapeOf(String role) {
+    private PartBenchShaping.Option shapeOf(String role) {
         return shapeAt(role, shape.getOrDefault(role, 0));
     }
 
@@ -764,7 +764,7 @@ final class BlueprintBoard {
         if (t == null || role == null || t.roles().get(role) == null)
             return List.of();
         ModularType.Role r = t.roles().get(role);
-        ToolTableShaping.Option o = shapeOf(role);
+        PartBenchShaping.Option o = shapeOf(role);
         return r.axes().entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .filter(e -> e.getValue().when().isEmpty()
                         || (o != null && o.variant().params().getOrDefault(e.getValue().when(), 0f) >= e.getValue().atLeast()))
@@ -1455,7 +1455,7 @@ final class BlueprintBoard {
                     shape.put(role, pick);
                     // A long or machine gun frame takes a stock, so fit one as the frame is picked.
                     ModularType gt = current();
-                    ToolTableShaping.Option o = shapeAt(role, pick);
+                    PartBenchShaping.Option o = shapeAt(role, pick);
                     if (gt != null && gt.family() == ModularType.Family.GUN && role.equals("R") && o != null
                             && !o.variant().name().equals("handgun") && gt.optionals().contains("i"))
                         extras.add("i");
@@ -2036,7 +2036,7 @@ final class BlueprintBoard {
                         on ? skin.accent() : i == hoverSwatch ? skin.ink() : alpha(skin.ink(), 0x40));
             }
         skin.scrollbar(g, x + call.w() - 4, sy, rows * SWATCH_PITCH, total, rows, swatchScroll);
-        List<ToolTableShaping.Option> options = shapes(role);
+        List<PartBenchShaping.Option> options = shapes(role);
         if (options.size() > 1) {
             int per = (call.w() - 8) / THUMB_PITCH, ty = shapesTop(role), cur = shapeIndex(role);
             int rgb = now.map(l -> MaterialColors.of(l.id())).orElse(0x808080);
@@ -2044,7 +2044,7 @@ final class BlueprintBoard {
                 int px = sx + i % per * THUMB_PITCH, py = ty + i / per * THUMB_PITCH;
                 skin.plaque(g, px, py, THUMB, THUMB);
                 skin.row(g, px, py, THUMB, THUMB, i == cur, i == hoverShape);
-                ToolTableShaping.Option o = options.get(i);
+                PartBenchShaping.Option o = options.get(i);
                 // The thumbnail is the size: one square a cell of stock, gridRows as even as they go.
                 int n = Math.max(1, o.cells());
                 int perRow = n <= 3 ? n : (int) Math.ceil(Math.sqrt(n)), gridRows = (n + perRow - 1) / perRow;
