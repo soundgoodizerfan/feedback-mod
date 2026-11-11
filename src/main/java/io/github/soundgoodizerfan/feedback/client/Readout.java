@@ -249,25 +249,6 @@ public final class Readout {
         return banded(adjective("feedback.workpiece.nearly_there"), 75, Float.POSITIVE_INFINITY, "% of the work");
     }
 
-    /**
-     * How charged a jar round is (mechanics 6.6), as a word or, with an electroscope, a figure.
-     * The words are against the drive a coil is built for, because that is the question the
-     * player is asking of a round: will this push, or is it flat.
-     */
-    public static Component chargeReading(float volts) {
-        if (instrumented(Quantity.VOLTAGE))
-            return reading(Quantity.VOLTAGE, "feedback.readout.volts", figure(Quantity.VOLTAGE, volts));
-        float v = FTuning.GUN_COIL_NOMINAL_VOLTS;
-        float drive = volts / v;
-        if (drive <= 0.05f)
-            return banded(adjective("feedback.readout.charge.flat"), 0, 0.05f * v, "V");
-        if (drive < 0.5f)
-            return banded(adjective("feedback.readout.charge.weak"), 0.05f * v, 0.5f * v, "V");
-        if (drive < 1.25f)
-            return banded(adjective("feedback.readout.charge.charged"), 0.5f * v, 1.25f * v, "V");
-        return banded(adjective("feedback.readout.charge.crackling"), 1.25f * v, Float.POSITIVE_INFINITY, "V");
-    }
-
     /** A figure with one decimal place, and without one when it would read ".0". */
     public static String number(float value) {
         return value == Math.rint(value)

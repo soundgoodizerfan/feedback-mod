@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "area": {
           "min": 20,
           "max": 100,
@@ -31,10 +31,7 @@
       },
       "part": {
         "item": "feedback:jar_glass",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "ingot"
         ],
@@ -42,10 +39,7 @@
         "variants": [
           {
             "name": "jar_flat",
-            "shape": [
-              "SS",
-              "SS"
-            ],
+            "cells": 4,
             "params": {
               "area": 0.7,
               "leak": 0.5
@@ -60,11 +54,7 @@
           },
           {
             "name": "jar_rolled",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "area": 1.5,
               "leak": 1.5

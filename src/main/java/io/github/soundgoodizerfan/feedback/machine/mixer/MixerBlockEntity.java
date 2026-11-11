@@ -167,7 +167,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         return !stack.isEmpty() && Material.find(materials, stack.getItem()).isPresent();
     }
 
-    /** Pours one item in; false if the drum is full or the load would be a coil's drive mixed with a gas. */
+    /** Pours one item in; false if the drum is full or the item is no material. */
     public boolean pour(ItemStack stack) {
         var materials = MaterialTable.get().materials();
         var found = Material.find(materials, stack.getItem());
@@ -183,10 +183,6 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
             next.set(at, new Cartridge.Charge(id, next.get(at).count() + 1));
         else
             next.add(new Cartridge.Charge(id, 1));
-        // Only a drum of nothing but propellants is a charge, and only that can be refused (a coil's drive with a gas).
-        boolean allPropellant = next.stream().allMatch(c -> materials.get(c.material()) != null && materials.get(c.material()).propellant().isPresent());
-        if (allPropellant && Cartridge.Blend.of(materials, next).isEmpty())
-            return false;
         // Fresh powder on top of a blend is unmixed: the old turns spread over the larger load.
         turns *= load() / (load() + 1);
         contents.clear();

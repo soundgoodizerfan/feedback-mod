@@ -11,7 +11,7 @@ import io.github.soundgoodizerfan.feedback.weapon.MagazineItem;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlock;
 import io.github.soundgoodizerfan.feedback.weapon.ReloadingPressBlockEntity;
-import io.github.soundgoodizerfan.feedback.weapon.GunItem;
+import io.github.soundgoodizerfan.feedback.weapon.FirearmItem;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.BlockItem;
@@ -63,20 +63,6 @@ public class FWeapons {
     /** Bore erosion: 0 as built, rising with use and with heat. Condition is 1 - wear, floored. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> GUN_WEAR =
             COMPONENTS.register("gun_wear", () -> DataComponentType.<Float>builder()
-                    .persistent(com.mojang.serialization.Codec.FLOAT)
-                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
-                    .build());
-
-    /** mB of steam in a steam gun's chest ({@link io.github.soundgoodizerfan.feedback.weapon.GunSteam}). */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> GUN_STEAM =
-            COMPONENTS.register("gun_steam", () -> DataComponentType.<Float>builder()
-                    .persistent(com.mojang.serialization.Codec.FLOAT)
-                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
-                    .build());
-
-    /** Temperature (Tu) of the steam in a steam gun's chest. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> GUN_STEAM_TU =
-            COMPONENTS.register("gun_steam_tu", () -> DataComponentType.<Float>builder()
                     .persistent(com.mojang.serialization.Codec.FLOAT)
                     .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
                     .build());
@@ -170,10 +156,10 @@ public class FWeapons {
                     .of(io.github.soundgoodizerfan.feedback.machine.mixer.MixerBlockEntity::new, MIXER.get()).build(null));
 
     /** A gun: a modular item of the gun type, its parts and figures the core's (modular spec 8.3). */
-    public static final DeferredItem<GunItem> GUN = ITEMS.register("gun", () -> new GunItem(new Item.Properties()));
+    public static final DeferredItem<FirearmItem> GUN = ITEMS.register("gun", () -> new FirearmItem(new Item.Properties()));
 
     /** A flintlock: the gun type that needs no blueprint, made at the Tool Table from forged parts. */
-    public static final DeferredItem<GunItem> FLINTLOCK = ITEMS.register("flintlock", () -> new GunItem(new Item.Properties()));
+    public static final DeferredItem<FirearmItem> FLINTLOCK = ITEMS.register("flintlock", () -> new FirearmItem(new Item.Properties()));
 
     private FWeapons() {
     }

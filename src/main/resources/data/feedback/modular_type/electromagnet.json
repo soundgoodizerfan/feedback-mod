@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "turns": {
           "min": 50,
           "max": 150,
@@ -24,10 +24,7 @@
       },
       "part": {
         "item": "feedback:magnet_core",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "ingot"
         ],
@@ -35,10 +32,7 @@
         "variants": [
           {
             "name": "core_bar",
-            "shape": [
-              "SSS",
-              "SSS"
-            ],
+            "cells": 6,
             "params": {
               "pull": 1.0,
               "range": 1.0
@@ -46,11 +40,7 @@
           },
           {
             "name": "core_horseshoe",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "pull": 1.4,
               "range": 0.7
@@ -58,10 +48,7 @@
           },
           {
             "name": "core_pot",
-            "shape": [
-              "SSSS",
-              "SSSS"
-            ],
+            "cells": 8,
             "params": {
               "pull": 1.8,
               "range": 0.5

@@ -1,0 +1,22 @@
+{
+  "type": "feedback:bootstrap_specimen",
+  "category": "equipment",
+  "modular_type": "feedback:boiler",
+  "material": "feedback:iron",
+  "pattern": [
+    "III",
+    "ICI",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    }
+  }
+}

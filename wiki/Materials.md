@@ -49,7 +49,7 @@ What the columns mean in play:
 - **Density** (kg per liter, water is 1) decides how heavy things are: bullets, guns, engines and vehicle plates. Dense bullets keep their energy.
 - **Strength** decides how much pressure a gun chamber or a cartridge case holds, and how fast an engine can rev. A 9 mm chamber with a 3 mm wall holds 1.33 × strength in Pu. See [Gun Parts](Gun_Parts.md#the-chamber).
 - **Melting point** is where a crucible melts it, and where a [Fuse](Fuse.md) wire or a pair of [tongs](Hazards.md#tongs) gives out.
-- **Magnetic** metals are pulled by the [Electromagnet](Electromagnet.md) and work as [coilgun](Coilgun.md) slugs.
+- **Magnetic** metals are pulled by the [Electromagnet](Electromagnet.md).
 
 Electrical figures (how much current a wire of each metal carries, its voltage loss, and its electrode potential) are on the [Fuse](Fuse.md) and [Electrolytic Cell](Electrolytic_Cell.md#voltage-picks-the-metal) pages.
 
@@ -62,9 +62,7 @@ Not everything is metal. A few others matter for parts and protection:
 | Wood | 0.5 | 0.4 | 150 Tu | grips turned from a stick |
 | Bamboo | 1 | 0.4 | 150 Tu | grips turned from a stalk |
 | Bone | 3 | 0.5 | 200 Tu | grips turned from a bone |
-| Leather | 0.3 | 0.6 | 100 Tu | gloves; wrapping a grip |
-| Wool, Paper | | 0.5 | | wrapping a grip |
-| Honey | | 1.5 | | wrapping a grip: the grippiest there is |
+| Leather | 0.3 | | 100 Tu | gloves |
 | Diamond | 100 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
 | Heavy Core | 9 | | | dense as osmium, sintered from osmium powder: see [Heavy Core](Heavy_Core.md) |
 | Silicon, glasses, graphite, polymers | | | | sections below |

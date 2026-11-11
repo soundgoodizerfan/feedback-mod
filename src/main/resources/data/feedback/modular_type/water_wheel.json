@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "diameter": {
           "min": 100,
           "max": 400,
@@ -31,10 +31,7 @@
       },
       "part": {
         "item": "feedback:wheel_rim",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "*_planks"
         ],
@@ -42,10 +39,7 @@
         "variants": [
           {
             "name": "wheel_paddle",
-            "shape": [
-              "SS",
-              "SS"
-            ],
+            "cells": 4,
             "params": {
               "power": 0.7,
               "rpm": 1.4
@@ -60,11 +54,7 @@
           },
           {
             "name": "wheel_bucket",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "power": 1.5,
               "rpm": 0.7

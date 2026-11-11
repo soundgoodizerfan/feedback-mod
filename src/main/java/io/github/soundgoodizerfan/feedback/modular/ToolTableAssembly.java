@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.modular;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +11,10 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
+import io.github.soundgoodizerfan.feedback.process.Measures;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -55,7 +58,7 @@ public final class ToolTableAssembly {
 
     /** Slots the table that makes {@code type} has: guns are made at the Gun Table, which has more. */
     public static int slots(ModularType type) {
-        return type.family() == ModularType.Family.GUN ? GUN_SLOTS : SLOTS;
+        return type.family() == ModularType.Family.GUN || type.family() == ModularType.Family.ELECTRIC_GUN ? GUN_SLOTS : SLOTS;
     }
 
     /** Which table makes a type: guns at the Gun Table, dishes at the Prep Table, everything else at the Tool Table. */
@@ -63,7 +66,7 @@ public final class ToolTableAssembly {
 
     public static Kind kindOf(ModularType type) {
         return switch (type.family()) {
-            case GUN -> type.blueprint() ? Kind.GUN : Kind.TOOL;
+            case GUN, ELECTRIC_GUN -> type.blueprint() ? Kind.GUN : Kind.TOOL;
             case DISH -> Kind.DISH;
             default -> Kind.TOOL;
         };
@@ -131,7 +134,7 @@ public final class ToolTableAssembly {
                 if (drawn == null)
                     continue;
             }
-            ModularDesign design = type.blueprint() ? withDrawnDims(drawn, best.design, type) : best.design;
+            ModularDesign design = type.blueprint() ? withDrawnAxes(drawn, best.design, type) : best.design;
             // A coat rolled onto the wearing plate (roll cladding) rides onto the tool, where ModularBake reads it.
             io.github.soundgoodizerfan.feedback.process.Plating coat = null;
             for (int i = 0; i < used.size(); i++)
@@ -145,6 +148,7 @@ public final class ToolTableAssembly {
             });
             if (tool.isEmpty())
                 continue;
+            credit(tool.get(), plan, e.getKey(), design);
             String[] role = new String[slots.size()];
             for (int i = 0; i < used.size(); i++)
                 role[used.get(i)] = best.roles[i];
@@ -155,9 +159,9 @@ public final class ToolTableAssembly {
 
     /**
      * Whether {@code made} is the thing {@code drawn} shows: the same parts, role for role, in the same material and shape and number.
-     * Ground-in figures (dims, flaw) are measured on the part and left to the bake; the drawing predicts them.
+     * Ground-in figures (axes, flaw) are measured on the part and left to the bake; the drawing predicts them.
      */
-    private static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
+    static boolean drawnTo(ModularDesign drawn, ModularDesign made) {
         // a held component (a circuit, a cell) is what the builder brings: the sheet does not pin it
         if (drawn.parts().size() != made.parts().stream().filter(p -> p.sub().isEmpty()).count())
             return false;
@@ -171,22 +175,44 @@ public final class ToolTableAssembly {
     }
 
     /**
+     * Writes the credit of the first sheet in {@code plan} that {@code design} is drawn to onto {@code item}, whoever made it. A sheet of
+     * another type, or one the parts depart from, gives nothing. A blueprint is optional: it gates no type, it only gives credit.
+     */
+    private static void credit(ItemStack item, ItemStack plan, ResourceLocation type, ModularDesign design) {
+        for (ItemStack sheet : ModularBlueprints.sheets(plan)) {
+            ModularDesign drawn = ModularStacks.design(sheet);
+            BlueprintCredit credit = BlueprintCredit.of(sheet);
+            if (credit != null && drawn.type().equals(type) && drawnTo(drawn, design)) {
+                item.set(FModular.CREDIT.get(), credit.onItem(drawn));
+                return;
+            }
+        }
+    }
+
+    /** Drops the credit {@code stack} carries if {@code design} no longer shows the parts it was drawn with. */
+    static void keepCredit(ItemStack stack, ModularDesign design) {
+        BlueprintCredit credit = BlueprintCredit.of(stack);
+        if (credit != null && credit.drawn().filter(d -> drawnTo(d, design)).isEmpty())
+            stack.remove(FModular.CREDIT.get());
+    }
+
+    /**
      * {@code made} with the as-built measures the drawing chose, for the roles that declare any (an engine's bore and stroke):
      * a measure the blueprint sets is the part's own, which no machine has cut.
      */
-    private static ModularDesign withDrawnDims(ModularDesign drawn, ModularDesign made, ModularType type) {
+    private static ModularDesign withDrawnAxes(ModularDesign drawn, ModularDesign made, ModularType type) {
         ModularDesign out = made;
         for (Part want : drawn.parts()) {
             ModularType.Role role = type.roles().get(want.role());
             Part got = made.part(want.role());
-            if (role == null || role.dims().isEmpty() || got == null || want.dims().isEmpty())
+            if (role == null || role.axes().isEmpty() || got == null || want.measures().axes().isEmpty())
                 continue;
-            var dims = new java.util.HashMap<>(got.dims());
-            want.dims().forEach((k, v) -> {
-                if (role.dims().containsKey(k))
-                    dims.put(k, v);
+            var axes = new java.util.HashMap<>(got.measures().axes());
+            want.measures().axes().forEach((k, v) -> {
+                if (role.axes().containsKey(k))
+                    axes.put(k, v);
             });
-            out = out.withPart(new Part(got.role(), got.material(), got.form(), got.count(), got.kind(), got.variant(), got.flaw(), dims));
+            out = out.withPart(got.withMeasures(got.measures().withAxes(axes)));
         }
         return out;
     }
@@ -260,28 +286,28 @@ public final class ToolTableAssembly {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
         // A pot serving is food already baked: its figures come off the stack, not a material block.
         if (made == null && what.material().traits().contains(Material.Trait.BROTH))
-            return new Part(role, what.id(), what.form(), count, "", "", 0, DishBake.servingDims(stack));
+            return new Part(role, what.id(), what.form(), count, "", "", 0, Measures.ofState(DishBake.servingState(stack)));
         if (made == null && what.material().food().isPresent())
-            return new Part(role, what.id(), what.form(), count, "", stack.getOrDefault(FDataComponents.FOOD_SHAPE.get(), ""), 0, foodDims(stack, what));
+            return new Part(role, what.id(), what.form(), count, "", stack.getOrDefault(FDataComponents.FOOD_SHAPE.get(), ""), 0, Measures.ofState(foodStateMap(stack, what)));
         if (made != null && !(stack.getItem() instanceof ModularPartItem)) // raw stock the enchanting table stamped
-            return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.dims());
+            return new Part(role, what.id(), what.form(), count, "", made.variant(), made.flaw(), made.measures());
         return made != null ? new Part(role, made.material(), made.stock(), made.cells(),
-                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.dims())
+                BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath(), made.variant(), made.flaw(), made.measures())
                 : new Part(role, what.id(), what.form(), count);
     }
 
     /** A food's state plus what the Prep Table did to it: its cut level and evenness grade. */
-    private static java.util.Map<String, Float> foodDims(ItemStack stack, Material.Located what) {
-        java.util.Map<String, Float> dims = DishBake.dimsOf(foodState(stack, what));
+    private static java.util.Map<String, Float> foodStateMap(ItemStack stack, Material.Located what) {
+        java.util.Map<String, Float> state = DishBake.stateOf(foodState(stack, what));
         io.github.soundgoodizerfan.feedback.process.FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         if (cut != null) {
-            dims.put("cut", (float) cut.level());
-            dims.put("evenness", (float) cut.grade());
+            state.put("cut", (float) cut.level());
+            state.put("evenness", (float) cut.grade());
         }
         io.github.soundgoodizerfan.feedback.process.FoodKnead knead = stack.get(FDataComponents.FOOD_KNEAD.get());
         if (knead != null)
-            dims.put(DishBake.KNEAD, (float) knead.grade());
-        return dims;
+            state.put(DishBake.KNEAD, (float) knead.grade());
+        return state;
     }
 
     /** A food stack's state as it is stored (infer has no level to settle it by), else its material's own: the dish bakes from it. */
@@ -347,8 +373,9 @@ public final class ToolTableAssembly {
         // The fullest assembly of a form is the form with every optional part on, so the limits are checked on that, not on each combination.
         for (Map.Entry<ResourceLocation, ModularType> e : list) {
             ModularType t = e.getValue();
-            // A gun carries more optional parts than its table has slots, by design: it takes a pick of them, so only its base form must fit.
-            int extras = t.family() == ModularType.Family.GUN || t.family() == ModularType.Family.SUIT_MODULE ? 0 : t.extras().size();
+            // Optional parts are fitted one at a time to a finished item (ModularRework add), so they never have to share the table's slots
+            // at assembly: only the laid roles of a form must fit, as for a gun.
+            int extras = 0;
             for (Map<String, Integer> form : t.forms()) {
                 if (form.size() + extras > slots(t))
                     out.add(e.getKey() + " has up to " + (form.size() + extras) + " roles in " + form + (extras > 0 ? " and every optional part" : "") + ", more than the " + slots(t) + " slots of its table");
@@ -401,37 +428,57 @@ public final class ToolTableAssembly {
 
     /** The first pair of assemblies, one of each type, that the same parts could fill. */
     private static Optional<String> clash(ModularType a, ModularType b) {
-        for (int size = 1; size <= slots(a); size++) {
-            List<ModularType.Assembly> ys = b.assemblies(size);
-            for (ModularType.Assembly x : a.assemblies(size))
-                for (ModularType.Assembly y : ys)
-                    if (confusable(a, x.counts(), b, y.counts()))
-                        return Optional.of(x.counts() + " against " + y.counts());
-        }
+        // Role pairs are judged once per type pair, and two assemblies whose sorted counts differ can never be paired, so most are skipped cheaply.
+        Map<String, Boolean> meets = new HashMap<>();
+        // Optional parts are fitted on afterwards and a gun has dozens of them (millions of subsets), so the audit judges the required parts alone.
+        Map<List<Integer>, List<Map<String, Integer>>> bySig = new HashMap<>();
+        for (ModularType.Assembly y : b.assembliesUpTo(0))
+            bySig.computeIfAbsent(signature(y.counts()), k -> new ArrayList<>()).add(y.counts());
+        for (ModularType.Assembly x : a.assembliesUpTo(0))
+            for (Map<String, Integer> y : bySig.getOrDefault(signature(x.counts()), List.of()))
+                if (confusable(a, x.counts(), b, y, meets))
+                    return Optional.of(x.counts() + " against " + y);
         return Optional.empty();
     }
 
-    /** Whether some pairing of the two maps' roles matches counts and has overlapping accepts everywhere. */
-    private static boolean confusable(ModularType a, Map<String, Integer> x, ModularType b, Map<String, Integer> y) {
-        return pair(a, new ArrayList<>(x.entrySet()), b, new LinkedHashMap<>(y), 0);
+    /** Whether some pairing of the two maps' roles matches counts and has overlapping accepts everywhere (a perfect matching, found by augmenting paths). */
+    private static boolean confusable(ModularType a, Map<String, Integer> x, ModularType b, Map<String, Integer> y, Map<String, Boolean> meets) {
+        List<Map.Entry<String, Integer>> mine = new ArrayList<>(x.entrySet());
+        List<Map.Entry<String, Integer>> theirs = new ArrayList<>(y.entrySet());
+        if (mine.size() > theirs.size())
+            return false;
+        int[] taken = new int[theirs.size()];
+        java.util.Arrays.fill(taken, -1);
+        for (int i = 0; i < mine.size(); i++)
+            if (!augment(a, mine, b, theirs, i, new boolean[theirs.size()], taken, meets))
+                return false;
+        return true;
     }
 
-    private static boolean pair(ModularType a, List<Map.Entry<String, Integer>> mine, ModularType b, Map<String, Integer> theirs, int i) {
-        if (i == mine.size())
-            return true;
+    /** The counts of an assembly, sorted: a pairing must match counts, so unequal signatures cannot pair. */
+    private static List<Integer> signature(Map<String, Integer> counts) {
+        return counts.values().stream().sorted().toList();
+    }
+
+    private static boolean augment(ModularType a, List<Map.Entry<String, Integer>> mine, ModularType b, List<Map.Entry<String, Integer>> theirs,
+                                   int i, boolean[] seen, int[] taken, Map<String, Boolean> meets) {
         ModularType.Role left = a.roles().get(mine.get(i).getKey());
-        for (Map.Entry<String, Integer> t : new ArrayList<>(theirs.entrySet())) {
+        for (int k = 0; k < theirs.size(); k++) {
+            if (seen[k])
+                continue;
+            Map.Entry<String, Integer> t = theirs.get(k);
             ModularType.Role right = b.roles().get(t.getKey());
             // Two dishes' food roles that need different traits (a starchy base, a broth base) never take one item.
             boolean apart = a.family() == ModularType.Family.DISH && b.family() == ModularType.Family.DISH && left != null && right != null
                     && !left.seen().isEmpty() && !right.seen().isEmpty() && java.util.Collections.disjoint(left.seen(), right.seen());
-            if (left == null || right == null || apart || !t.getValue().equals(mine.get(i).getValue()) || !overlap(left, right))
+            if (left == null || right == null || apart || !t.getValue().equals(mine.get(i).getValue())
+                    || !meets.computeIfAbsent(mine.get(i).getKey() + "|" + t.getKey(), key -> overlap(left, right)))
                 continue;
-            theirs.remove(t.getKey());
-            boolean ok = pair(a, mine, b, theirs, i + 1);
-            theirs.put(t.getKey(), t.getValue());
-            if (ok)
+            seen[k] = true;
+            if (taken[k] < 0 || augment(a, mine, b, theirs, taken[k], seen, taken, meets)) {
+                taken[k] = i;
                 return true;
+            }
         }
         return false;
     }

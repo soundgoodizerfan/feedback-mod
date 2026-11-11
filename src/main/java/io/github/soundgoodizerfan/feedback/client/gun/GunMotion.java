@@ -256,7 +256,7 @@ public final class GunMotion {
             aimPos += aimVel * d;
         }
 
-        boolean holding = player.getMainHandItem().getItem() instanceof GunItem || player.getOffhandItem().getItem() instanceof GunItem;
+        boolean holding = GunLike.is(player.getMainHandItem().getItem()) || GunLike.is(player.getOffhandItem().getItem());
         // Taking up a gun again (picked up after being knocked away) starts its motion from rest.
         if (holding && !hadGun) {
             aimPos = aimVel = sprint = 0;
@@ -310,7 +310,7 @@ public final class GunMotion {
             return;
         }
         ItemStack stack = event.getItemStack();
-        if (mc.player == null || !(stack.getItem() instanceof GunItem))
+        if (mc.player == null || !GunLike.is(stack.getItem()))
             return;
         event.setCanceled(true);
         boolean main = event.getHand() == InteractionHand.MAIN_HAND;

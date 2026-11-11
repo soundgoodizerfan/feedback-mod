@@ -114,25 +114,25 @@ public final class GearModels {
     private static List<String> wears(EquipmentSlot slot, String variant) {
         return switch (slot) {
             case HEAD -> switch (variant) {
-                case "open_helm" -> List.of("crest");
-                case "great_helm" -> List.of("visor", "brim");
-                case "sallet" -> List.of("neck", "brim");
+                case "conical", "ridged" -> List.of("crest");
+                case "pointed_face" -> List.of("visor", "brim");
+                case "tailed" -> List.of("neck", "brim");
                 default -> List.of("brow");
             };
             case CHEST -> switch (variant) {
                 case "brigandine" -> List.of("collar");
                 case "breastplate" -> List.of("ridge", "pauldron_r", "pauldron_l");
-                case "hauberk" -> List.of("collar", "skirt");
+                case "hauberk", "scale", "lamellar" -> List.of("collar", "skirt");
+                case "segmented" -> List.of("ridge", "pauldron_r", "pauldron_l");
                 default -> List.of("collar");
             };
             case LEGS -> switch (variant) {
-                case "greaves" -> List.of("knee_r", "knee_l");
-                case "cuisses" -> List.of("thigh_r", "thigh_l");
+                case "articulated" -> List.of("knee_r", "knee_l");
+                case "mail_chausses" -> List.of("thigh_r", "thigh_l");
                 default -> List.of();
             };
             case FEET -> switch (variant) {
                 case "sabatons" -> List.of("toe_r", "toe_l");
-                case "riding_boots" -> List.of("cuff_r", "cuff_l", "spur_r", "spur_l");
                 default -> List.of();
             };
             default -> List.of();

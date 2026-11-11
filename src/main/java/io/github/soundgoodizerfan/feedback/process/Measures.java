@@ -1,0 +1,119 @@
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
+package io.github.soundgoodizerfan.feedback.process;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+
+/**
+ * What a made part carries beyond its material and shape: four unrelated things that used to share one
+ * grab-bag map ({@code dims}), kept apart because each has its own reader and its own rule.
+ *
+ * @param axes     as-built measures of the part, by the names its role declares
+ *                 ({@link io.github.soundgoodizerfan.feedback.modular.ModularType.Axis}): a barrel's bore, outside and
+ *                 length. The item stores the as-built value only; the aim lives in a blueprint's drawn design.
+ *                 Empty for a part whose role declares none, and a name left out reads the axis's default.
+ * @param work     the work its forging delivered over the work the pattern asked
+ *                 ({@code ForgeRhythm}): short is thick and heavy, overrun thin and light. 1 for a part not forged by hand.
+ * @param attuned  the attuned (enchant) effects on it, by {@code Attunements.Effect#key}, the level as the value
+ *                 (negative when it took on the mirror side).
+ * @param state    live state of a food or workpiece part (a dish part's doneness, ingredient shares, cut; a bloom's scale
+ *                 loss), by the names the system that wrote it defines. Not a measure of the part's geometry.
+ */
+public record Measures(Map<String, Float> axes, float work, Map<String, Float> attuned, Map<String, Float> state) {
+
+    public static final Measures NONE = new Measures(Map.of(), 1f, Map.of(), Map.of());
+
+    public Measures {
+        axes = Map.copyOf(axes);
+        attuned = Map.copyOf(attuned);
+        state = Map.copyOf(state);
+    }
+
+    public static Measures ofAxes(Map<String, Float> axes) {
+        return new Measures(axes, 1f, Map.of(), Map.of());
+    }
+
+    public static Measures ofState(Map<String, Float> state) {
+        return new Measures(Map.of(), 1f, Map.of(), state);
+    }
+
+    /** True when nothing is set: the part is exactly as its drawing and material say. */
+    public boolean isNone() {
+        return axes.isEmpty() && work == 1f && attuned.isEmpty() && state.isEmpty();
+    }
+
+    /** The as-built axis {@code name}, else {@code fallback}. */
+    public float axis(String name, float fallback) {
+        return axes.getOrDefault(name, fallback);
+    }
+
+    /** The state entry {@code name}, else {@code fallback}. */
+    public float state(String name, float fallback) {
+        return state.getOrDefault(name, fallback);
+    }
+
+    public Measures withAxis(String name, float value) {
+        return new Measures(with(axes, name, value), work, attuned, state);
+    }
+
+    public Measures withAxes(Map<String, Float> axes) {
+        return new Measures(axes, work, attuned, state);
+    }
+
+    public Measures withWork(float work) {
+        return new Measures(axes, work, attuned, state);
+    }
+
+    public Measures withAttuned(String key, float level) {
+        return new Measures(axes, work, with(attuned, key, level), state);
+    }
+
+    public Measures withAttuned(Map<String, Float> attuned) {
+        return new Measures(axes, work, attuned, state);
+    }
+
+    public Measures withState(String name, float value) {
+        return new Measures(axes, work, attuned, with(state, name, value));
+    }
+
+    public Measures withState(Map<String, Float> state) {
+        return new Measures(axes, work, attuned, state);
+    }
+
+    public Measures withoutAttuned() {
+        return new Measures(axes, work, Map.of(), state);
+    }
+
+    private static Map<String, Float> with(Map<String, Float> in, String key, float value) {
+        Map<String, Float> out = new HashMap<>(in);
+        out.put(key, value);
+        return out;
+    }
+
+    private static final Codec<Map<String, Float>> FLOATS = Codec.unboundedMap(Codec.STRING, Codec.FLOAT);
+    private static final StreamCodec<ByteBuf, Map<String, Float>> FLOATS_STREAM =
+            ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.FLOAT);
+
+    public static final Codec<Measures> CODEC = RecordCodecBuilder.create(i -> i.group(
+            FLOATS.optionalFieldOf("axes", Map.of()).forGetter(Measures::axes),
+            Codec.FLOAT.optionalFieldOf("work", 1f).forGetter(Measures::work),
+            FLOATS.optionalFieldOf("attuned", Map.of()).forGetter(Measures::attuned),
+            FLOATS.optionalFieldOf("state", Map.of()).forGetter(Measures::state)
+    ).apply(i, Measures::new));
+
+    public static final StreamCodec<ByteBuf, Measures> STREAM_CODEC = StreamCodec.composite(
+            FLOATS_STREAM, Measures::axes,
+            ByteBufCodecs.FLOAT, Measures::work,
+            FLOATS_STREAM, Measures::attuned,
+            FLOATS_STREAM, Measures::state,
+            Measures::new);
+}

@@ -55,6 +55,10 @@ public final class GunHud {
         int slide = slider.offset(gun.getItem(), 140) * (left ? -1 : 1);
         if (!(gun.getItem() instanceof GunItem))
             return;
+        if (gun.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularElectricGun) {
+            electricCard(g, mc, gun, left, slide);
+            return;
+        }
         GunSpec design = GunSpec.of(gun).orElse(null);
         if (design == null)
             return;
@@ -63,7 +67,7 @@ public final class GunHud {
 
         int loaded = GunAmmo.count(gun);
         var materials = ClientMaterials.on(mc.level);
-        boolean over = GunAmmo.next(gun).flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r.at(mc.level.getGameTime())))
+        boolean over = GunAmmo.next(gun).flatMap(r -> design.firing(GunAmmo.count(gun)).bake(materials, r))
                 .map(f -> f.overpressure() > 1).orElse(false);
         int colour = GunHazard.isSpent(gun) || loaded == 0 ? SKIN.warn() : over ? 0xFFFF8A3C : SKIN.ink();
 
@@ -89,14 +93,11 @@ public final class GunHud {
                     spare += s.getCount();
             }
         }
-        Component reserve = design.launcher() == GunSpec.Launcher.STEAM
-                ? Component.translatable("hud.feedback.gun.steam", Math.round(io.github.soundgoodizerfan.feedback.weapon.GunSteam.stored(gun)),
-                        Math.round(design.steamCapacityMb()))
-                : Component.translatable("hud.feedback.gun.reserve", spare);
+        Component reserve = Component.translatable("hud.feedback.gun.reserve", spare);
         FireMode mode = GunItem.mode(gun);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + mode.getSerializedName());
         // A hand can tell warm from hot; the figure is a thermometer's to give (philosophy 8).
-        float ignition = GunAmmo.next(gun).flatMap(r -> design.loadOf(materials, r)).map(l -> l.ignitionTu())
+        float ignition = GunAmmo.next(gun).flatMap(r -> r.load(materials)).map(l -> l.ignitionTu())
                 .orElse(FTuning.GUN_PROPELLANT_IGNITION_TU);
         float heat = GunCondition.heatFraction(gun, mc.level, ignition);
         Component barrel = Component.translatable("hud.feedback.gun.barrel",
@@ -104,6 +105,28 @@ public final class GunHud {
         String state = GunHazard.isSpent(gun) ? "spent" : GunClient.reloading() ? "reloading"
                 : noMagazine ? "no_magazine" : loaded == 0 ? "empty" : null;
 
+        draw(g, font, left, slide, edge, y, count, colour, reserve, state, barrel, heat, modeText);
+    }
+
+    /** An electric gun's card: the cell's charge where a firearm shows its rounds, the slugs chambered, the barrel's heat and the mode. */
+    private static void electricCard(GuiGraphics g, Minecraft mc, ItemStack gun, boolean left, int slide) {
+        Font font = mc.font;
+        int edge = left ? 12 : g.guiWidth() - 12, y = g.guiHeight() - 80;
+        float charge = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chargeFraction(gun);
+        Component count = Component.literal(charge < 0f ? "--" : Math.round(charge * 100f) + "%");
+        int colour = charge <= 0f ? SKIN.warn() : SKIN.ink();
+        Component reserve = Component.translatable("hud.feedback.gun.slugs",
+                io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.slugsLeft(gun));
+        float heat = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.heatFraction(gun, mc.level.getGameTime());
+        Component barrel = Component.translatable("hud.feedback.gun.barrel",
+                Component.translatable("hud.feedback.gun.heat." + GunCondition.feel(heat)));
+        Component modeText = Component.translatable("hud.feedback.gun.mode." + GunItem.mode(gun).getSerializedName());
+        String state = charge < 0f ? "no_cell" : charge <= 0f ? "flat" : null;
+        draw(g, font, left, slide, edge, y, count, colour, reserve, state, barrel, heat, modeText);
+    }
+
+    private static void draw(GuiGraphics g, Font font, boolean left, int slide, int edge, int y, Component count, int colour,
+                             Component reserve, String state, Component barrel, float heat, Component modeText) {
         int w = Math.max(2 * font.width(count), Math.max(font.width(reserve), Math.max(font.width(modeText), font.width(barrel))));
         if (state != null)
             w = Math.max(w, font.width(Component.translatable("hud.feedback.gun." + state)));

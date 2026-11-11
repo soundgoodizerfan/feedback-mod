@@ -31,9 +31,6 @@ public class FCapabilities {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         // Every side, no filtering. A hammer has one anvil and it faces the room; which side a
         // hopper approaches from is not a fact the machine has any way to care about.
-        // A steam gun's chest takes steam from a boiler by the same bucket rule a tank does.
-        event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ctx) -> io.github.soundgoodizerfan.feedback.weapon.GunSteam.handler(stack),
-                io.github.soundgoodizerfan.feedback.registry.FWeapons.GUN.get());
         event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ctx) -> new net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack(
                 FDataComponents.BUCKET_CONTENT, stack, io.github.soundgoodizerfan.feedback.item.CopperBucketItem.CAPACITY_MB),
                 FItems.COPPER_BUCKET.get());

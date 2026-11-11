@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "wall": {
           "min": 1,
           "max": 20,
@@ -24,10 +24,7 @@
       },
       "part": {
         "item": "feedback:vessel_shell",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "plate"
         ],
@@ -56,11 +53,7 @@
           },
           {
             "name": "tank_capsule",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "rating": 1.4,
               "fill": 0.7
@@ -96,5 +89,5 @@
   "defaults": {
     "S": "feedback:steel"
   },
-  "school": "chemical"
+  "school": "chemical:1"
 }

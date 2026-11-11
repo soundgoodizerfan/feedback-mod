@@ -18,6 +18,10 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  */
 public final class Backstab implements ModularTrait {
 
+    /** The target of the last blow that was multiplied above 1 and by how much, so a worn collar can cut the bonus ({@link Collar}). */
+    static LivingEntity lastTarget;
+    static float lastMult;
+
     @Override
     public void onAttack(LivingIncomingDamageEvent event, LivingEntity attacker, ItemStack weapon, Params params) {
         LivingEntity target = event.getEntity();
@@ -32,5 +36,7 @@ public final class Backstab implements ModularTrait {
                 mult *= params.get("sneak_mult", 1.3f);
         }
         event.setAmount(event.getAmount() * mult);
+        lastTarget = mult > 1f ? target : null;
+        lastMult = mult;
     }
 }

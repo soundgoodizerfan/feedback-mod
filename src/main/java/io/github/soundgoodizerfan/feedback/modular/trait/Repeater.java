@@ -19,7 +19,10 @@ public final class Repeater implements ModularTrait {
 
     @Override
     public void onLoaded(ServerPlayer player, ItemStack weapon, Params params) {
-        ModularCrossbow.chamber(weapon, player, Math.max(0, Math.round(params.get("bolts", 3f)) - 1));
+        // The magazine's volume sets how many bolts it holds; a role that states its own count ("bolts") overrides.
+        float bolts = params.get("bolts", io.github.soundgoodizerfan.feedback.modular.ModularTraits.addonVolume(weapon, "repeater")
+                / io.github.soundgoodizerfan.feedback.modular.ModularTuning.MAGAZINE_LITRES_PER_BOLT);
+        ModularCrossbow.chamber(weapon, player, Math.max(0, Math.round(bolts) - 1));
     }
 
     @Override

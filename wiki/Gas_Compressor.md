@@ -4,7 +4,7 @@ Squeezes gas into a [pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) past the point 
 
 ## Designing and building
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Gas Compressor* in the type row); drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Compressor Rotor**, shaped from plate at the [Smithing Table](Smithing_Table.md) with the blueprint in the blueprint slot. The compressor comes out with the design, and the blueprint is kept.
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Gas Compressor* in the type row); drawing it takes Chemical Treatise II ([Treatise](Treatise.md)). It has one part, the **Compressor Rotor**, shaped from plate at the [Smithing Table](Smithing_Table.md) with the blueprint in the blueprint slot. The compressor comes out with the design, and the blueprint is kept.
 
 The rotor has one measure, the **diameter**, set at the Blueprint Table, from 20 to 80 cm (40 by default). A bigger rotor moves more and loads the shaft more. Its **shape** trades flow, heat and load:
 

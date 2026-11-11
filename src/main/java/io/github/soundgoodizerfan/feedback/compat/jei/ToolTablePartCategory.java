@@ -85,9 +85,9 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
             if (m.traits().containsAll(option.shaping().traits()))
                 m.items(id).entrySet().stream()
                         .filter(e -> ModularType.fits(option.shaping().stock(), e.getKey()))
-                        .filter(e -> option.cells() * ModularTuning.CELL_MB % FormItems.volume(e.getKey()) == 0)
+                        .filter(e -> option.stockMb(1f) % FormItems.volume(e.getKey()) == 0)
                         .findFirst().ifPresent(e -> {
-                            stock.add(new ItemStack(e.getValue(), option.cells() * ModularTuning.CELL_MB / FormItems.volume(e.getKey())));
+                            stock.add(new ItemStack(e.getValue(), option.stockMb(1f) / FormItems.volume(e.getKey())));
                             ItemStack part = new ItemStack(BuiltInRegistries.ITEM.get(option.shaping().item()));
                             part.set(FDataComponents.MADE_OF.get(), new MadeOf(id, e.getKey(), option.cells(), option.variant().name()));
                             parts.add(part);
@@ -109,14 +109,14 @@ public class ToolTablePartCategory implements IRecipeCategory<ToolTableShaping.O
             graphics.drawWordWrap(font, Component.translatable("feedback.jei.tool_table_part.forged"), 1, 56, WIDTH - 50, LABEL_COLOUR);
             return;
         }
-        List<String> shape = option.variant().name().isEmpty() ? option.shaping().shape() : option.variant().shape();
-        for (int y = 0; y < shape.size(); y++)
-            for (int x = 0; x < shape.get(y).length(); x++)
-                if (shape.get(y).charAt(x) != ' ') {
-                    int px = 112 + x * CELL;
-                    int py = 16 + y * CELL;
-                    graphics.fill(px, py, px + CELL - 1, py + CELL - 1, 0x30000000);
-                }
+        // The part's size: one square a cell of stock, rows as even as they go.
+        int n = Math.max(1, option.cells());
+        int perRow = n <= 3 ? n : (int) Math.ceil(Math.sqrt(n));
+        for (int i = 0; i < n; i++) {
+            int px = 112 + i % perRow * CELL;
+            int py = 16 + i / perRow * CELL;
+            graphics.fill(px, py, px + CELL - 1, py + CELL - 1, 0x30000000);
+        }
         graphics.drawWordWrap(font, Component.translatable("feedback.jei.tool_table_part.note"), 1, 56, WIDTH - 50, LABEL_COLOUR);
     }
 }

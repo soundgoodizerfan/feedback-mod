@@ -8,7 +8,7 @@ A boiler can take its heat from a [Fission Reactor](Fission_Reactor.md) through 
 
 ## Designing and building
 
-A boiler is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Boiler*, or *Large Boiler*, in the type row) and print it on paper; drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Boiler Shell** (the **Large Boiler Shell** for the large one), with three choices:
+A boiler is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Boiler*, or *Large Boiler*, in the type row) and print it on paper; drawing it takes Chemical Treatise I ([Treatise](Treatise.md)). It has one part, the **Boiler Shell** (the **Large Boiler Shell** for the large one), with three choices:
 
 | Choice | What it sets |
 | --- | --- |

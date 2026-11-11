@@ -119,24 +119,24 @@ public class Machining extends SimpleJsonResourceReloadListener {
      */
     public ItemStack stamp(ItemStack stack) {
         MadeOf made = stack.get(FDataComponents.MADE_OF.get());
-        if (made != null && part(stack).isPresent() && made.dims().isEmpty())
+        if (made != null && part(stack).isPresent() && made.measures().axes().isEmpty())
             stack.set(FDataComponents.MADE_OF.get(), withGeometry(made, BarrelGeometry.STOCK));
         return stack;
     }
 
-    /** The barrel's real shape on its part: the three measures the barrel role declares as {@code dims}. */
+    /** The barrel's real shape on its part: the three measures the barrel role declares as {@code axes}. */
     public static MadeOf withGeometry(MadeOf made, BarrelGeometry g) {
-        return made.withDim(BarrelGeometry.BORE, g.boreMm()).withDim(BarrelGeometry.OUTER, g.outerMm())
-                .withDim(BarrelGeometry.LENGTH, g.lengthM());
+        return made.withAxis(BarrelGeometry.BORE, g.boreMm()).withAxis(BarrelGeometry.OUTER, g.outerMm())
+                .withAxis(BarrelGeometry.LENGTH, g.lengthM());
     }
 
     /** The barrel's real shape on its part: what a machine left on it, else fresh from the drill. */
     public static BarrelGeometry geometry(MadeOf made) {
-        if (made == null || made.dims().isEmpty())
+        if (made == null || made.measures().axes().isEmpty())
             return BarrelGeometry.STOCK;
-        return new BarrelGeometry(made.dims().getOrDefault(BarrelGeometry.BORE, BarrelGeometry.STOCK.boreMm()),
-                made.dims().getOrDefault(BarrelGeometry.OUTER, BarrelGeometry.STOCK.outerMm()),
-                made.dims().getOrDefault(BarrelGeometry.LENGTH, BarrelGeometry.STOCK.lengthM()));
+        return new BarrelGeometry(made.measures().axes().getOrDefault(BarrelGeometry.BORE, BarrelGeometry.STOCK.boreMm()),
+                made.measures().axes().getOrDefault(BarrelGeometry.OUTER, BarrelGeometry.STOCK.outerMm()),
+                made.measures().axes().getOrDefault(BarrelGeometry.LENGTH, BarrelGeometry.STOCK.lengthM()));
     }
 
     /**

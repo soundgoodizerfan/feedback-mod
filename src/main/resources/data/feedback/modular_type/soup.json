@@ -13,10 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:ceramic_bowl",
-        "shape": [
-          "C C",
-          " C "
-        ],
+        "cells": 3,
         "stock": [
           "brick",
           "ball",

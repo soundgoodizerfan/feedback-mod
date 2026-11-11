@@ -129,9 +129,9 @@ public class EnchantMenu extends AbstractContainerMenu {
         if (made == null || m == null)
             return false;
         Attunements.Effect e = Attunements.get().effects().get(effect);
-        if (e != null && made.dims().containsKey(e.key()))
+        if (e != null && made.measures().attuned().containsKey(e.key()))
             return false;
-        return made.dims().keySet().stream().filter(k -> k.startsWith(Attunements.PREFIX)).count() >= EnchantGame.capacity(m);
+        return made.measures().attuned().size() >= EnchantGame.capacity(m);
     }
 
     /** The Creative XP source beside the table that can pay a session, or null. */
@@ -204,7 +204,7 @@ public class EnchantMenu extends AbstractContainerMenu {
     public void study(ServerPlayer server, ResourceLocation effect) {
         Attunements.Effect e = Attunements.get().effects().get(effect);
         MadeOf made = part().get(FDataComponents.MADE_OF.get());
-        if (e == null || made == null || !made.dims().containsKey(e.key())) {
+        if (e == null || made == null || !made.measures().attuned().containsKey(e.key())) {
             say(server, "nothing_to_study");
             return;
         }
@@ -258,7 +258,7 @@ public class EnchantMenu extends AbstractContainerMenu {
         if (made == null) // raw stock: the stamp carries the attunement, the item still says what it is
             made = new MadeOf(located().id(), located().form(), 1);
         stack.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(), made.variant(),
-                Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + verdict.flaw()), made.withDim(e.key(), verdict.level()).dims()));
+                Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + verdict.flaw()), made.measures().withAttuned(e.key(), verdict.level())));
         broadcastChanges();
         say(server, verdict.flaw() > 0 ? "flawed" : "clean");
         // A clean attempt at an effect you did not know teaches it: discovery ends in knowing.

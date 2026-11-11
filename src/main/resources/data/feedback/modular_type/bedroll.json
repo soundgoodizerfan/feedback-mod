@@ -13,9 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:bedroll_sheet",
-        "shape": [
-          "PP"
-        ],
+        "cells": 2,
         "stock": [
           "leather",
           "*_carpet"

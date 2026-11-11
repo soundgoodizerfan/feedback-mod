@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "area": {
           "min": 20,
           "max": 100,
@@ -24,10 +24,7 @@
       },
       "part": {
         "item": "feedback:exchanger_core",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "plate"
         ],
@@ -41,33 +38,21 @@
           },
           {
             "name": "tubes_finned",
-            "shape": [
-              "SSS",
-              "SSS",
-              "S"
-            ],
+            "cells": 7,
             "params": {
               "fin": 1.6
             }
           },
           {
             "name": "tubes_coiled",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "fin": 1.3
             }
           },
           {
             "name": "plate_frame",
-            "shape": [
-              "SSSS",
-              "SSSS",
-              "SS"
-            ],
+            "cells": 10,
             "params": {
               "fin": 2.0
             }
@@ -93,5 +78,5 @@
   "defaults": {
     "S": "feedback:copper"
   },
-  "school": "chemical"
+  "school": "chemical:2"
 }

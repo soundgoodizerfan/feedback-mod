@@ -27,7 +27,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 public final class Attunements extends SimpleJsonResourceReloadListener {
 
     public static final String DIRECTORY = "attunement";
-    /** The key an attuned effect has in a part's {@code dims}: {@code attuned.<path of the effect id>}, the level as its value (negative when it took on the mirror side). */
+    /** The key an attuned effect has in a part's {@code measures.attuned}: {@code attuned.<path of the effect id>}, the level as its value (negative when it took on the mirror side). */
     public static final String PREFIX = "attuned.";
 
     /**
@@ -124,7 +124,7 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
      */
     public static int flawShift(ModularDesign.Part part, String roleName) {
         int shift = 0;
-        for (Map.Entry<String, Float> e : part.dims().entrySet()) {
+        for (Map.Entry<String, Float> e : part.measures().attuned().entrySet()) {
             Effect effect = byKey(e.getKey());
             Behaviour b = effect == null ? null : effect.on(roleName, e.getValue() < 0f);
             if (b != null)
@@ -146,16 +146,14 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
             return;
         }
         io.github.soundgoodizerfan.feedback.process.MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
-        if (made == null || made.dims().keySet().stream().noneMatch(k -> k.startsWith(PREFIX)))
+        if (made == null || made.measures().attuned().isEmpty())
             return;
         io.github.soundgoodizerfan.feedback.process.Material m =
                 io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(level).get(made.material());
         if (m == null || tu.value() <= m.attuning().temperature().value())
             return;
-        Map<String, Float> kept = new java.util.HashMap<>(made.dims());
-        kept.keySet().removeIf(k -> k.startsWith(PREFIX));
         stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new io.github.soundgoodizerfan.feedback.process.MadeOf(
-                made.material(), made.stock(), made.cells(), made.variant(), made.flaw(), kept));
+                made.material(), made.stock(), made.cells(), made.variant(), made.flaw(), made.measures().withoutAttuned()));
     }
 
     /** The same erasure for an assembled tool: each part stamped past its own material's attuning point loses its attunements, and the tool is rebaked. */
@@ -165,14 +163,12 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
                 io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(level);
         ModularDesign out = design;
         for (ModularDesign.Part p : design.parts()) {
-            if (p.dims().keySet().stream().noneMatch(k -> k.startsWith(PREFIX)))
+            if (p.measures().attuned().isEmpty())
                 continue;
             io.github.soundgoodizerfan.feedback.process.Material m = materials.get(p.material());
             if (m == null || tu.value() <= m.attuning().temperature().value())
                 continue;
-            Map<String, Float> kept = new java.util.HashMap<>(p.dims());
-            kept.keySet().removeIf(k -> k.startsWith(PREFIX));
-            out = out.withPart(new ModularDesign.Part(p.role(), p.material(), p.form(), p.count(), p.kind(), p.variant(), p.flaw(), kept));
+            out = out.withPart(p.withMeasures(p.measures().withoutAttuned()));
         }
         if (out != design)
             ModularStacks.assemble(stack, out, materials, ModularTypes.get().types());

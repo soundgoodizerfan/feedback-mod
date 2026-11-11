@@ -52,7 +52,7 @@ public final class GunStance {
     static boolean begin(RenderLivingEvent.Pre<?, ?> event) {
         active = false;
         LivingEntity e = event.getEntity();
-        if (!(e instanceof Player) || !(e.getMainHandItem().getItem() instanceof GunItem) || e.isPassenger()
+        if (!(e instanceof Player) || !io.github.soundgoodizerfan.feedback.client.gun.GunLike.is(e.getMainHandItem().getItem()) || e.isPassenger()
                 || e.getPose() != Pose.STANDING && e.getPose() != Pose.CROUCHING
                 || !GunRenderer.longGun(e.getMainHandItem()) || !(event.getRenderer().getModel() instanceof HumanoidModel<?> model))
             return false;

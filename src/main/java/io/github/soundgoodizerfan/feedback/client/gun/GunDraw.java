@@ -25,15 +25,24 @@ final class GunDraw {
 
     static void draw(GunMesh m, GunView v, GunMotion.Parts p) {
         switch (v.type()) {
-            case HANDGUN -> handgun(m, v, p);
+            case HANDGUN -> {
+                if (v.electric())
+                    electricHandgun(m, v, p);
+                else
+                    handgun(m, v, p);
+            }
             case LONG_GUN -> longGun(m, v, p);
             case MACHINE_GUN -> machineGun(m, v, p);
         }
+        if (v.electric())
+            cellBay(m, v);
         // A break action's barrels and everything on them tip about the hinge under the breech.
         m.push();
         breakTurn(m, v, p);
         m.glowAt(v.glow()); // a hot barrel lights itself; its colour is already drawn toward the glow (GunView)
         barrels(m, v);
+        if (v.electric())
+            electricBarrel(m, v);
         muzzle(m, v);
         m.glowAt(0);
         underBarrel(m, v);
@@ -66,6 +75,76 @@ final class GunDraw {
 
     /** The cylinder on a long or machine gun: axis height, z span and radius, shared with the receiver's window. */
     private static final float CYL_Y = -0.25f, CYL_Z0 = -0.25f, CYL_Z1 = 1.75f, CYL_R = 0.875f;
+
+    /** An electric pistol: a plain frame the barrel screws into, a grip, a guard and a trigger; no slide, no hammer, no magazine. */
+    private static void electricHandgun(GunMesh m, GunView v, GunMotion.Parts p) {
+        m.part(v, "R");
+        m.box(-0.75f, -1.75f, -3.5f, 0.75f, 1.0f, 1.25f, Tile.PANEL);
+        m.box(-0.5f, 1.0f, -3.0f, 0.5f, 1.25f, 0.75f, Tile.BRUSHED); // top rail
+        grip(m, v, p, -1.75f, 1.25f, 3.25f, -28f, 1.75f, false);
+        trigger(m, v, -1.75f, -2.75f, -0.25f);
+        stock(m, v, 1.5f, -1f, 1f);
+    }
+
+    /** Where the cell bay sits along the receiver, front and back (z), and its half height. */
+    private static float[] bayZ(GunView v) {
+        return switch (v.type()) {
+            case HANDGUN -> new float[]{-2.5f, 0.75f};
+            case LONG_GUN -> new float[]{0.5f, 4.5f};
+            case MACHINE_GUN -> new float[]{1.5f, 7f};
+        };
+    }
+
+    /**
+     * The battery's bay, on the gun's left side where a powder gun has no port: a housing in the receiver's material and, if a battery is
+     * loaded, a pack behind a glass window with a row of lamps that fill with its charge.
+     */
+    private static void cellBay(GunMesh m, GunView v) {
+        float hw = v.halfWidth(), z0 = bayZ(v)[0], z1 = bayZ(v)[1];
+        float y0 = v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.75f, y1 = y0 + (v.type() == GunLayout.Type.MACHINE_GUN ? 2f : 1.75f);
+        m.part(v, "R");
+        m.box(-hw - 1.0f, y0, z0, -hw, y1, z1, Tile.PANEL);
+        if (v.cell() < 0f) {
+            m.box(-hw - 1.0625f, y0 + 0.25f, z0 + 0.25f, -hw - 1.0f, y1 - 0.25f, z1 - 0.25f, Tile.BORE); // an empty bay is a dark slot
+            return;
+        }
+        m.colour(0xFF3A4048).box(-hw - 1.0625f, y0 + 0.25f, z0 + 0.25f, -hw - 1.0f, y1 - 0.25f, z1 - 0.25f, Tile.GLASS);
+        // A lamp for each quarter of the charge: green while it is well filled, amber then red as it runs down.
+        int lit = Math.round(v.cell() * 4f);
+        int colour = v.cell() > 0.5f ? 0xFF40FF60 : v.cell() > 0.2f ? 0xFFFFB030 : 0xFFFF4030;
+        float step = (z1 - z0 - 0.5f) / 4f;
+        for (int i = 0; i < 4; i++) {
+            float a = z0 + 0.25f + i * step;
+            if (i < lit)
+                m.colour(colour).glow(-hw - 1.125f, y1 - 0.75f, a, -hw - 1.0625f, y1 - 0.375f, a + step - 0.125f, Tile.LAMP);
+            else
+                m.colour(0xFF202428).box(-hw - 1.125f, y1 - 0.75f, a, -hw - 1.0625f, y1 - 0.375f, a + step - 0.125f, Tile.LAMP);
+        }
+    }
+
+    /** The barrel's own mechanism: coil windings by stage, two rails and a bridge, or a glass arc channel with a flared emitter. */
+    private static void electricBarrel(GunMesh m, GunView v) {
+        float start = breech(v), end = front(v), r = v.r();
+        String kind = v.variant("B");
+        m.part(v, "B");
+        if (kind.startsWith("rail")) {
+            float gap = r + 0.375f;
+            m.box(-gap - 0.375f, -0.5f, end, -gap, 0.5f, start - 0.25f, Tile.BRUSHED);
+            m.box(gap, -0.5f, end, gap + 0.375f, 0.5f, start - 0.25f, Tile.BRUSHED);
+            m.box(-gap - 0.375f, -0.625f, start - 0.5f, gap + 0.375f, -0.375f, start - 0.25f, Tile.METAL); // the breech bridge
+        } else if (kind.startsWith("plasma")) {
+            m.colour(0xFF9FD8FF).rod(0, 0, r + 0.125f, start - 0.5f, end + 0.5f, Tile.GLASS);
+            m.colour(0xFF9FD8FF).glow(-r - 0.375f, -r - 0.375f, end, r + 0.375f, r + 0.375f, end + 0.5f, Tile.LAMP);
+        } else {
+            // One winding for each stage, spread along the barrel.
+            int turns = Math.max(1, Math.min(v.stages(), 8));
+            float span = Math.max(1f, start - end - 1f);
+            for (int i = 0; i < turns; i++) {
+                float a = start - 0.5f - (turns == 1 ? span / 2f : i * span / (turns - 1f)) ;
+                m.rod(0, 0, r + 0.375f, a, a - 0.5f, Tile.COIL);
+            }
+        }
+    }
 
     private static void handgun(GunMesh m, GunView v, GunMotion.Parts p) {
 
@@ -154,13 +233,6 @@ final class GunDraw {
             case "palm_swell" -> // A bulge behind, filling the palm.
                 m.box(-0.6875f, y - length * 0.8f, z, 0.6875f, y - length * 0.2f, z + 0.5f, Tile.GRAIN);
             default -> { }
-        }
-        if (v.has("X")) {
-            m.part(v, "X");
-            for (int i = 0; i < 3; i++) {
-                float yy = y - 0.75f - i * (length - 1.25f) / 2f;
-                m.box(-0.75f, yy - 0.25f, f - 0.0625f, 0.75f, yy, z + 0.0625f, Tile.RUBBER);
-            }
         }
         if (well && (v.boxMagazine() || p.magDrop() > 0) && !p.magOut()) {
             float ext = v.magLength();
@@ -466,10 +538,6 @@ final class GunDraw {
         }
         if (v.has("J"))
             m.part(v, "J").rod(0, 0, r + 0.25f, start - len * 0.3f, start - len * 0.65f, Tile.PANEL);
-        if (v.has("W")) {
-            float stop = start - Math.min(len - 0.5f, 5f);
-            m.part(v, "W").rings(0, 0, r + 0.375f, start - 0.25f, stop, 5, 0.5f, Tile.COIL);
-        }
         if (v.has("Q"))
             m.part(v, "Q").rod(0, 0, r + 0.25f, end, end + Math.min(2.5f, len * 0.4f), Tile.BRUSHED);
         if (v.has("P")) {
@@ -512,7 +580,7 @@ final class GunDraw {
         m.box(-b, -b, z - 0.0625f, b, b, z, Tile.BORE);
     }
 
-    /** Hung under the barrel: a tube magazine, a spring gun's spring, a counterweight, a bipod, a bayonet. */
+    /** Hung under the barrel: a tube magazine, a counterweight, a bipod, a bayonet. */
     private static void underBarrel(GunMesh m, GunView v) {
         float start = breech(v), end = front(v), len = start - end, under = barrelsBottom(v);
         float y = under - 0.375f;
@@ -522,11 +590,6 @@ final class GunDraw {
             m.rod(0, y, 0.375f, start, stop, Tile.METAL);
             m.rod(0, y, 0.4375f, stop, stop - 0.25f, Tile.KNURL);
             y -= 0.75f;
-        }
-        if (v.has("U")) {
-            float rr = v.variant("U").equals("heavy_spring") ? 0.625f : 0.5f;
-            m.part(v, "U").rod(0, y - rr + 0.375f, rr, start, start - Math.min(len * 0.6f + 1f, 6f), Tile.COIL);
-            y -= 2 * rr;
         }
         if (v.has("C"))
             m.part(v, "C").box(-0.5f, y - 0.75f, end + 0.25f, 0.5f, y + 0.375f, end + 2f, Tile.METAL);
@@ -631,7 +694,7 @@ final class GunDraw {
         }
     }
 
-    /** On the sides: a selector, a steam chest with its valve and lagging, a hydraulic buffer. */
+    /** On the sides: a selector, a hydraulic buffer. */
     private static void sides(GunMesh m, GunView v) {
         float hw = v.halfWidth();
         float at = switch (v.type()) {
@@ -644,27 +707,6 @@ final class GunDraw {
             m.part(v, "L").box(-hw - 0.125f, base - 0.125f, at - 0.375f, -hw, base + 0.125f, at + 0.375f, Tile.KNURL);
         if (v.has("d"))
             m.part(v, "d").rod(-hw - 0.25f, base + 0.5f, 0.25f, at + 0.5f, at + 2f, Tile.BRUSHED);
-        if (v.has("O")) {
-            boolean large = v.variant("O").equals("large_chest");
-            float rr = large ? 1f : 0.75f, len = large ? 6f : 4f, x = -hw - rr;
-            float z0 = v.type() == GunLayout.Type.HANDGUN ? -1f : -0.5f;
-            m.part(v, "O");
-            m.rod(x, 0, rr, z0, z0 - len, Tile.METAL);
-            m.rod(x, 0, rr + 0.0625f, z0, z0 - 0.25f, Tile.PANEL);
-            m.rod(x, 0, rr + 0.0625f, z0 - len + 0.25f, z0 - len, Tile.PANEL);
-            m.box(x + rr * 0.5f, -0.25f, z0 - 0.25f, -hw, 0.25f, z0 + 0.25f, Tile.METAL); // feed pipe
-            if (v.has("h"))
-                m.part(v, "h").rings(x, 0, rr + 0.0625f, z0 - 0.5f, z0 - len + 0.5f, (int) (len / 0.75f), 0.375f, Tile.RUBBER);
-            if (v.has("g")) {
-                float zc = GunView.snap(z0 - len * 0.5f, 0.25f);
-                m.part(v, "g");
-                m.box(x - 0.125f, rr, zc - 0.125f, x + 0.125f, rr + 0.5f, zc + 0.125f, Tile.METAL);
-                if (v.variant("g").equals("dump_valve"))
-                    m.box(x - 0.125f, rr + 0.5f, zc - 0.125f, x + 0.125f, rr + 0.625f, zc + 1f, Tile.KNURL);
-                else
-                    m.box(x - 0.375f, rr + 0.5f, zc - 0.375f, x + 0.375f, rr + 0.625f, zc + 0.375f, Tile.KNURL);
-            }
-        }
     }
 
     private static int darken(int argb) {

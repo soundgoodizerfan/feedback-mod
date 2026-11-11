@@ -16,10 +16,10 @@
       "layer": 0,
       "part": {
         "item": "feedback:saw_blade",
-        "shape": [
-          "BB"
-        ],
-        "stock": ["plate"]
+        "cells": 2,
+        "stock": [
+          "plate"
+        ]
       }
     },
     "T": {
@@ -33,9 +33,7 @@
       "set": true,
       "part": {
         "item": "feedback:tool_tip",
-        "shape": [
-          "T"
-        ],
+        "cells": 1,
         "stock": [
           "gem",
           "shard",
@@ -44,17 +42,12 @@
         "variants": [
           {
             "name": "needle",
-            "shape": [
-              "TT"
-            ],
+            "cells": 2,
             "section": 0.75
           },
           {
             "name": "capped",
-            "shape": [
-              "TT",
-              "T "
-            ],
+            "cells": 3,
             "section": 1.35
           }
         ]

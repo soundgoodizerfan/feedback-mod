@@ -15,10 +15,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:crank_arm",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "rod",
           "stick"
@@ -27,10 +24,7 @@
         "variants": [
           {
             "name": "crank_short",
-            "shape": [
-              "SS",
-              "SS"
-            ],
+            "cells": 4,
             "params": {
               "lever": 0.7,
               "rpm": 1.4
@@ -38,10 +32,7 @@
           },
           {
             "name": "crank_straight",
-            "shape": [
-              "SSS",
-              "SSS"
-            ],
+            "cells": 6,
             "params": {
               "lever": 1.0,
               "rpm": 1.0
@@ -49,11 +40,7 @@
           },
           {
             "name": "crank_long",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "lever": 1.4,
               "rpm": 0.75
@@ -61,11 +48,7 @@
           },
           {
             "name": "crank_offset",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "lever": 1.3,
               "rpm": 0.9

@@ -31,8 +31,16 @@ public final class RangedDispatch {
     /** True for the length of a hushed bow's release, on the server thread only. */
     private static boolean hush;
 
+    /** The product of {@code name} over the traits the weapon has (its archetype and its addons); {@code fallback} when none names it. */
     private static float param(ItemStack weapon, String name, float fallback) {
-        return ModularTraits.of(weapon).map(a -> a.params().get(name, fallback)).orElse(fallback);
+        float product = 1f;
+        boolean any = false;
+        for (ModularTraits.Active a : ModularTraits.actives(weapon))
+            if (a.params().values().containsKey(name)) {
+                product *= a.params().get(name, 1f);
+                any = true;
+            }
+        return any ? product : fallback;
     }
 
     /** The multiple of the baked draw (or load) time this weapon's archetype takes. */
@@ -76,13 +84,13 @@ public final class RangedDispatch {
 
     /** The projectile a weapon made, with its archetype's say in it; the projectile itself. */
     public static AbstractArrow arrow(AbstractArrow arrow, ItemStack weapon) {
-        ModularTraits.of(weapon).ifPresent(a -> a.trait().onArrow(arrow, weapon, a.params()));
+        ModularTraits.actives(weapon).forEach(a -> a.trait().onArrow(arrow, weapon, a.params()));
         return arrow;
     }
 
     /** A crossbow was loaded: a trait may load more. */
     public static void loaded(ServerPlayer player, ItemStack weapon) {
-        ModularTraits.of(weapon).ifPresent(a -> a.trait().onLoaded(player, weapon, a.params()));
+        ModularTraits.actives(weapon).forEach(a -> a.trait().onLoaded(player, weapon, a.params()));
     }
 
     /** What a shield's face can take of one blow now, before any archetype's multiple: the baked figure, softened by its heat. */
@@ -96,7 +104,7 @@ public final class RangedDispatch {
         if (event.getSource().getDirectEntity() instanceof AbstractArrow arrow && !arrow.level().isClientSide) {
             ItemStack weapon = arrow.getWeaponItem();
             if (weapon != null)
-                ModularTraits.of(weapon).ifPresent(a -> a.trait().onArrowHit(event, arrow, weapon, a.params()));
+                ModularTraits.actives(weapon).forEach(a -> a.trait().onArrowHit(event, arrow, weapon, a.params()));
         }
     }
 
@@ -107,7 +115,7 @@ public final class RangedDispatch {
         if (blocker.level().isClientSide)
             return;
         ItemStack shield = blocker.getUseItem();
-        ModularTraits.of(shield).ifPresent(a -> a.trait().onShieldBlock(event, blocker, shield, a.params()));
+        ModularTraits.actives(shield).forEach(a -> a.trait().onShieldBlock(event, blocker, shield, a.params()));
     }
 
     @SubscribeEvent

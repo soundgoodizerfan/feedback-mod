@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "bore": {
           "min": 4,
           "max": 20,
@@ -24,10 +24,7 @@
       },
       "part": {
         "item": "feedback:burner_nozzle",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "plate"
         ],
@@ -35,10 +32,7 @@
         "variants": [
           {
             "name": "nozzle_ring",
-            "shape": [
-              "SSS",
-              "SSS"
-            ],
+            "cells": 6,
             "params": {
               "burn": 1.0,
               "flame": 1.0
@@ -46,11 +40,7 @@
           },
           {
             "name": "nozzle_jet",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "burn": 1.5,
               "flame": 1.08
@@ -58,10 +48,7 @@
           },
           {
             "name": "nozzle_wick",
-            "shape": [
-              "SS",
-              "SS"
-            ],
+            "cells": 4,
             "params": {
               "burn": 0.6,
               "flame": 0.92

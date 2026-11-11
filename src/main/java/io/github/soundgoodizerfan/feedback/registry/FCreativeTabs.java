@@ -59,16 +59,7 @@ public class FCreativeTabs {
                         ItemStack shell = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
                         shell.set(FWeapons.CARTRIDGE.get(), io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceShot(18));
                         output.accept(shell);
-                        ItemStack slug = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
-                        slug.set(FWeapons.CARTRIDGE.get(), io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceCoil(9));
-                        output.accept(slug);
-                        ItemStack coilMag = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
-                        coilMag.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
-                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_STANDARD,
-                                        io.github.soundgoodizerfan.feedback.weapon.Cartridge.referenceCoil(9))));
-                        output.accept(coilMag);
                         output.accept(FVehicles.LIFT_ITEM.get());
-                        output.accept(FVehicles.THRUSTER_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_CLOTH_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_RUBBER_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_PLATE_ITEM.get());

@@ -40,6 +40,11 @@ public final class Kicking {
     private Kicking() {
     }
 
+    /** Staggers {@code target}, for less time if it wears poleyns. */
+    private static void stagger(LivingEntity target, int ticks, double slow) {
+        CombatTicker.stagger(target, Math.round(ticks * io.github.soundgoodizerfan.feedback.modular.trait.Poleyn.staggerMult(target)), slow);
+    }
+
     /** Whether {@code player} may kick now: has the {@code kick} skill (bought, or granted by gear), is free to act, so not mid-parry, mid-roll, staggered or on cooldown, and not holding someone. */
     public static boolean canKick(Player player) {
         return Skills.unlocked(player, "kick") && CombatState.of(player).ready() && !player.isPassenger() && !player.isSpectator() && !player.isSleeping()
@@ -90,21 +95,21 @@ public final class Kicking {
         target.knockback(knock, -dir.x, -dir.z);
         target.hurtMarked = true;
         if (guard)
-            CombatTicker.stagger(target, Math.max(KickTuning.GUARD_STAGGER_MIN, ParryTuning.staggerTicks(impact, mass)), ParryTuning.STAGGER_SLOW);
+            stagger(target, Math.max(KickTuning.GUARD_STAGGER_MIN, ParryTuning.staggerTicks(impact, mass)), ParryTuning.STAGGER_SLOW);
         else if (ParryTuning.rawStaggerTicks(impact, mass) >= KickTuning.STAGGER_MIN_RAW)
-            CombatTicker.stagger(target, ParryTuning.staggerTicks(impact, mass), ParryTuning.STAGGER_SLOW);
+            stagger(target, ParryTuning.staggerTicks(impact, mass), ParryTuning.STAGGER_SLOW);
         Rearms.on(player, Rearm.STAGGER);
         boolean smash = Skills.unlocked(player, "wall_smash") && intoWall(target, dir);
         if (smash) {
             // The wall is the second hit; the armour the target carries goes into it with the body.
             float slam = impact + BodyMass.armour(target) * KickTuning.WALL_JOULES_PER_ARMOUR_MU;
             float bonus = Math.max(0f, 1 + Skills.modifier(player, Figure.KICK_WALL_BONUS));
-            CombatTicker.stagger(target, Math.round(ParryTuning.staggerTicks(slam, mass) * bonus), ParryTuning.STAGGER_SLOW);
+            stagger(target, Math.round(ParryTuning.staggerTicks(slam, mass) * bonus), ParryTuning.STAGGER_SLOW);
             CombatCues.everyone(player, FSounds.FEEL_HEAVY.get(), FeelTuning.HEAVY_VOLUME, 0.8f);
         }
         // Breach Kick: kick what is already broken. A target mid-stagger is put down; a steady one only shoves.
         if (broken && Skills.unlocked(player, "breach_kick")) {
-            CombatTicker.stagger(target, KickTuning.DOWN_TICKS, KickTuning.DOWN_SLOW);
+            stagger(target, KickTuning.DOWN_TICKS, KickTuning.DOWN_SLOW);
             target.setDeltaMovement(target.getDeltaMovement().add(0, KickTuning.DOWN_POP, 0));
             target.hurtMarked = true;
         }

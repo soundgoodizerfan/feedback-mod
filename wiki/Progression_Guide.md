@@ -78,5 +78,5 @@ These paths run in parallel with the ones above.
 
 - **Food and survival:** [Crops](Crops.md) and the [Food](Food.md) chain from foraging to cooking in a [Skillet](Skillet.md) or [Stockpot](Stockpot.md), then preserving with a [Drying Rack](Drying_Rack.md), [Ice Box](Ice_Box.md) and [Cold Room](Cold_Room.md). [Brewing Stand](Brewing_Stand.md) potions need a brew map.
 - **Trading:** [Villagers](Villagers.md) take commissions for tools, weapons and armor.
-- **Fighting:** [Combat](Combat.md) is timing and stamina first. Assembled gear, then [Guns](Guns.md) built at the [Gun Table](Gun_Table.md), then the [Coilgun](Coilgun.md) and the [Grapple](Grapple.md) widen what you carry.
+- **Fighting:** [Combat](Combat.md) is timing and stamina first. Assembled gear, then [Guns](Guns.md) built at the [Gun Table](Gun_Table.md), then the [Grapple](Grapple.md) widens what you carry.
 - **Experience and radiation:** the [Enchanting Table](Enchanting_Table.md) and [Experience](Experience.md) store and spend XP, and [Radiation](Radiation.md) is a hazard you learn to measure and shield against.

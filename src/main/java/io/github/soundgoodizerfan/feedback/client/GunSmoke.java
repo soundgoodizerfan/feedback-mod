@@ -42,7 +42,7 @@ public final class GunSmoke {
             var gun = player.getMainHandItem();
             if (!(gun.getItem() instanceof GunItem))
                 continue;
-            float ignition = GunAmmo.next(gun).flatMap(r -> io.github.soundgoodizerfan.feedback.weapon.GunSpec.of(gun).flatMap(d -> d.loadOf(materials, r)))
+            float ignition = GunAmmo.next(gun).flatMap(r -> r.load(materials))
                     .map(l -> l.ignitionTu())
                     .orElse(FTuning.GUN_PROPELLANT_IGNITION_TU);
             float heat = GunCondition.heatFraction(gun, mc.level, ignition);

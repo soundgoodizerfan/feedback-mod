@@ -23,6 +23,10 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
 
     private final BlueprintBoard board;
     private long stampAt;
+    private net.minecraft.client.gui.components.EditBox titleBox;
+    /** What the title field holds, kept across a resize. */
+    private String title = "";
+    private ItemStack titledPaper = ItemStack.EMPTY;
 
     @Override
     public int schools() {
@@ -43,12 +47,21 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
         super.init();
         board.origin(leftPos, topPos);
         board.build();
+        titleBox = new net.minecraft.client.gui.components.EditBox(font, leftPos + BlueprintTableMenu.TITLE_X + 3, topPos + BlueprintTableMenu.TITLE_Y + 3,
+                BlueprintTableMenu.TITLE_W - 6, 9, Component.translatable("gui.feedback.blueprint_table.title"));
+        titleBox.setBordered(false);
+        titleBox.setMaxLength(io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.MAX_TITLE);
+        titleBox.setTextColor(skin.ink());
+        titleBox.setHint(Component.translatable("gui.feedback.blueprint_table.title").withColor(skin.dim()));
+        titleBox.setValue(title);
+        titleBox.setResponder(t -> title = t);
+        addRenderableWidget(titleBox);
         addRenderableWidget(GuiStyle.button(skin, Component.translatable("gui.feedback.blueprint_table.print"), b -> {
             var drawing = board.drawing();
             if (drawing.isPresent() && menu.getSlot(0).hasItem()) {
                 skin.cue(GuiSkin.Cue.FINISH); // the stamp
                 stampAt = System.currentTimeMillis();
-                PacketDistributor.sendToServer(new ModularBlueprintPayload(drawing.get(), board.pinnedDesigns()));
+                PacketDistributor.sendToServer(new ModularBlueprintPayload(drawing.get(), board.pinnedDesigns(), title));
             } else
                 skin.cue(GuiSkin.Cue.REJECT);
         }, leftPos + BlueprintTableMenu.PAPER_X + 20, topPos + BlueprintTableMenu.PAPER_Y, 38, 16));
@@ -81,7 +94,15 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
     protected void containerTick() {
         super.containerTick();
         board.applySample(menu.sample(0));
-        board.openPaper(menu.getSlot(0).getItem());
+        ItemStack paper = menu.getSlot(0).getItem();
+        board.openPaper(paper);
+        // a blueprint put in brings its title into the field to be edited
+        if (!ItemStack.isSameItemSameComponents(paper, titledPaper)) {
+            titledPaper = paper.copy();
+            var credit = io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.of(paper);
+            if (credit != null && titleBox != null)
+                titleBox.setValue(credit.title());
+        }
     }
 
     @Override
@@ -93,6 +114,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
             skin.slot(g, leftPos + BlueprintTableMenu.HOTBAR_X + i * 18, topPos + BlueprintTableMenu.HOTBAR_Y);
         if (board.hasSelection())
             skin.slot(g, leftPos + BlueprintTableMenu.SAMPLE_X, topPos + BlueprintTableMenu.SAMPLE_Y);
+        skin.inset(g, leftPos + BlueprintTableMenu.TITLE_X, topPos + BlueprintTableMenu.TITLE_Y, BlueprintTableMenu.TITLE_W, 15);
         board.origin(leftPos, topPos);
         board.drawBoard(g, mouseX, mouseY, partialTick);
     }

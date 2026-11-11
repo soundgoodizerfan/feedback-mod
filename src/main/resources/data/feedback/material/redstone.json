@@ -26,9 +26,6 @@
     "ore": "feedback:redstone_ore",
     "deepslate_ore": "feedback:deepslate_redstone_ore"
   },
-  "coil": {
-    "field_pressure": 3
-  },
   "food": {
     "moisture": 0,
     "compounds": {

@@ -30,7 +30,70 @@ Click a fitted lining or studs in the fan to take them off; the piece stays whol
 
 ### Studs
 
-**Studs** are gems, shards or nuggets set into the plate (brigandine; diamond studs in steel plate). Each stud covers a tenth of the piece, up to half, and that share takes the stud's hardness, toughness and wear. Four diamond studs in a steel chestplate lift it from steel's 6.7 points to about 7.2 and keep steel's toughness, where a whole diamond plate is 7.5 points and glass. Studs add a little mass and nothing else. Armor takes no tip: a plate has no edge.
+**Studs** are gems, shards or nuggets set into the plate (on any plate; diamond studs in steel plate). Each stud covers a tenth of the piece, up to half, and that share takes the stud's hardness, toughness and wear. Four diamond studs in a steel chestplate lift it from steel's 6.7 points to about 7.2 and keep steel's toughness, where a whole diamond plate is 7.5 points and glass. Studs add a little mass and nothing else. Armor takes no tip: a plate has no edge.
+
+## Axes, aiming and names
+
+Each plate has **axes**: continuous measures you aim at the bench before you make it. A chestplate has **width** and **torso length**, a helmet **face opening** and **crown height**, leggings **length** and **width**, boots **shaft height** and **sole thickness**. Pick the plate's shape in the fan, then use the strip that appears (minus and plus, or drag the plate preview) to set each axis, and click the shape again to make it. More material means more cover and more weight, and more stock. How well the work goes sets how close the made part is to what you aimed at: over or under by chance, never exactly, and a poor forging misses by more.
+
+A word for the range an axis sits in (narrow, wide, short, long, closed, open, thin, thick...) is a **band**. Some bands carry a trait: a long torso is cramped to crouch in, a tall crown is a lever for blows to the head, long leggings tire a sprint and drag in water, a high boot shaft keeps water and powder snow out, a thick sole cuts fall damage, a closed face is a closed visor and an open one sees well.
+
+### Names
+
+A finished piece is named by rule from its plate's shape, the bands its axes sit in and the fittings on it. A band is a range, written here as "up to" its top figure; the last band of an axis is "over" the one before. A name gives no bonus: the piece does what its parts, bands and shapes do. A build that fits no row is named by its size, shape and material: size words for the bands that are not normal, then the shape and material, then the type, as in "Long Scale Iron Chestplate". A name never repeats a word its rule already needs: Cuisses are not "Short Cuisses". A set stud goes in front ("Gold-studded Iron Cuirass").
+
+| Piece | Name | What gives it |
+| --- | --- | --- |
+| Chestplate | **Lorica Segmentata** | the segmented shape |
+| | **Lamellar Cuirass** | the lamellar shape |
+| | **Scale Hauberk** | the scale shape |
+| | **Hauberk** | the hauberk shape |
+| | **Coat of Plates** | the brigandine shape with an underlayer fitted |
+| | **Brigandine** | the brigandine shape |
+| | **Cuirass** | the breastplate shape |
+| Helmet | **Bascinet** | the pointed-faced dome |
+| | **Sallet** | the tailed dome |
+| | **Morion** | the ridged dome |
+| | **Spangenhelm** | the conical dome |
+| | **Great Helm** | a closed face (up to 2 cm) on any dome |
+| Leggings | **Chausses** | the mail chausses shape |
+| | **Quilted Chausses** | the quilted shape |
+| | **Greaves** | the articulated shape |
+| | **Cuisses** | the plain shape, short (up to 52 cm) |
+| Boots | **Sabatons** | the sabatons shape |
+| | **Riding Boots** | the plain shape with spurs fitted |
+
+Helmets go in the order of the rows, so a closed face on a pointed, tailed, ridged or conical dome is named for the dome. Any build that fits no row, such as a round dome, a wrapped boot or plain leggings that are not short, is named by size, shape and material ("Round Iron Helmet", "Long Plain Iron Leggings").
+
+The bands that make the size words:
+
+| Piece | Axis | Bands |
+| --- | --- | --- |
+| Chestplate | Width | narrow up to 36 cm, normal up to 48 cm, wide over 48 cm |
+| | Torso length | short up to 48 cm, normal up to 64 cm, long over 64 cm |
+| Helmet | Face opening | closed up to 2 cm, normal up to 9 cm, open over 9 cm |
+| | Crown | low up to 10 cm, normal up to 18 cm, tall over 18 cm |
+| Leggings | Length | short up to 52 cm, normal up to 74 cm, long over 74 cm |
+| | Width | slim up to 17 cm, normal up to 24 cm, wide over 24 cm |
+| Boots | Shaft | ankle up to 12 cm, normal up to 24 cm, high over 24 cm |
+| | Sole | thin up to 7 mm, normal up to 16 mm, thick over 16 mm |
+
+Plates are **forged** in one of the rhythm patterns or laid from stock. Chestplate shapes: brigandine, breastplate, hauberk, scale, lamellar, segmented. Helmet domes: round, conical, ridged, tailed, pointed-faced. Leggings: plain, articulated, mail chausses, quilted. Boots: plain, sabatons, wrapped. Plate and mail guard differently: a plate turns more of an arrow than mail does, and metal armor **conducts heat**: while you burn or stand in lava it heats through the metal and hurts you more than leather would.
+
+### More fittings
+
+One stack at a time from the same fan as the lining and studs:
+
+| Fitting | On | Does |
+| --- | --- | --- |
+| underlayer | all | A softer layer under the plate: a little extra protection. |
+| studs | all | Bite whoever strikes you in melee, whatever plate they are set in. |
+| collar | helmet, chestplate | Cuts the extra damage of a critical hit or a backstab. Stiff plate cuts more than flexible mail or cloth. |
+| pauldron | chestplate | Cuts overhead blows and falling blocks. |
+| poleyn | leggings | Cuts fall damage and the stagger from a kick or leg sweep. |
+| vambrace | gloves | A forearm that parries light blows when your main hand is empty, and cannot be disarmed. |
+| spurs | boots | Spur your mount. |
+| hobnails | boots | Grip on ice, at the cost of louder steps. |
 
 ## What it gives
 
@@ -42,18 +105,17 @@ Click a fitted lining or studs in the fan to take them off; the piece stays whol
 
 The piece is drawn on the vanilla armor shape, **tinted by the plate**, so you can see at a glance what someone is wearing. Each plate variant adds its own pieces to the silhouette:
 
-| Piece | Variant | Added shape |
+| Piece | Shape | Added shape |
 | --- | --- | --- |
-| Helmet | open helm | crest |
-| Helmet | great helm | visor and brim |
-| Helmet | sallet | neck guard and brim |
+| Helmet | conical, ridged | crest |
+| Helmet | pointed-faced | visor and brim |
+| Helmet | tailed | neck guard and brim |
 | Chestplate | brigandine | collar |
-| Chestplate | breastplate | ridge and pauldrons |
-| Chestplate | hauberk | collar and mail skirt |
-| Leggings | greaves | knee guards |
-| Leggings | cuisses | thigh plates |
+| Chestplate | breastplate, segmented | ridge and pauldrons |
+| Chestplate | hauberk, scale, lamellar | collar and skirt |
+| Leggings | articulated | knee guards |
+| Leggings | mail chausses | thigh plates |
 | Boots | sabatons | toe caps |
-| Boots | riding boots | cuffs and spurs |
 
 [Studs](#studs) on a helmet or chestplate show on the piece in the color of their own material.
 

@@ -1,0 +1,79 @@
+{
+  "family": "block",
+  "school": "aerospace:2",
+  "slot": "mainhand",
+  "wear_litres": 0.5,
+  "wear_role": "S",
+  "primary": "S",
+  "blueprint": true,
+  "roles": {
+    "S": {
+      "name": "thruster_nozzle",
+      "forms": [
+        "thruster_nozzle"
+      ],
+      "litres": 0.5,
+      "layer": 0,
+      "axes": {
+        "bore": {
+          "min": 8,
+          "max": 40,
+          "unit": "mm",
+          "default": 20,
+          "step": 2
+        }
+      },
+      "part": {
+        "item": "feedback:thruster_nozzle",
+        "cells": 6,
+        "stock": [
+          "plate"
+        ],
+        "base": "nozzle_bell",
+        "variants": [
+          {
+            "name": "nozzle_bell",
+            "cells": 6,
+            "params": {
+              "thrust": 1.0,
+              "burn": 1.0
+            }
+          },
+          {
+            "name": "nozzle_cone",
+            "cells": 8,
+            "params": {
+              "thrust": 1.3,
+              "burn": 1.5
+            }
+          },
+          {
+            "name": "nozzle_throat",
+            "cells": 4,
+            "params": {
+              "thrust": 0.7,
+              "burn": 0.5
+            }
+          }
+        ]
+      }
+    },
+    "J": {
+      "name": "regen_jacket",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.01,
+      "layer": 1,
+      "bulk": 2
+    }
+  },
+  "patterns": [
+    [
+      "S"
+    ]
+  ],
+  "defaults": {
+    "S": "feedback:iron"
+  }
+}

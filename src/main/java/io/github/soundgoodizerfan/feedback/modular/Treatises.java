@@ -22,7 +22,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.LootModifier;
 
 /**
- * Who may draw what. A type with a {@link School} is drawn at the Blueprint Table only by someone who holds that school's treatise: loose
+ * Who may draw what. A type with a {@link School} is drawn at the Blueprint Table only by someone who holds that volume of the school's treatise: loose
  * in the inventory, inside a {@link TreatiseBinderItem} in the inventory, or in a {@link TreatiseShelfBlockEntity} beside the table. Nothing
  * is spent. Building to a blueprint is the blueprint's own gate.
  */
@@ -31,49 +31,50 @@ public final class Treatises {
     private Treatises() {
     }
 
-    /** Whether {@code stack} is, or is a binder holding, a treatise of {@code school}. */
-    public static boolean holds(ItemStack stack, School school) {
+    /** Whether {@code stack} is, or is a binder holding, volume {@code volume} of {@code school}'s treatise. */
+    public static boolean holds(ItemStack stack, School school, int volume) {
         if (stack.getItem() instanceof TreatiseItem t)
-            return t.school() == school;
+            return t.school() == school && t.volume() == volume;
         if (stack.getItem() instanceof TreatiseBinderItem) {
             BundleContents contents = stack.get(DataComponents.BUNDLE_CONTENTS);
             if (contents != null)
                 for (ItemStack s : contents.items())
-                    if (s.getItem() instanceof TreatiseItem t && t.school() == school)
+                    if (s.getItem() instanceof TreatiseItem t && t.school() == school && t.volume() == volume)
                         return true;
         }
         return false;
     }
 
-    /** Whether {@code player} can draw {@code school}'s types at the table {@code access} names. */
-    public static boolean has(Player player, ContainerLevelAccess access, School school) {
+    /** Whether {@code player} can draw the types of {@code school}'s volume {@code volume} at the table {@code access} names. */
+    public static boolean has(Player player, ContainerLevelAccess access, School school, int volume) {
         for (ItemStack s : player.getInventory().items)
-            if (holds(s, school))
+            if (holds(s, school, volume))
                 return true;
         for (ItemStack s : player.getInventory().offhand)
-            if (holds(s, school))
+            if (holds(s, school, volume))
                 return true;
-        return access.evaluate((level, pos) -> shelved(level, pos, school)).orElse(false);
+        return access.evaluate((level, pos) -> shelved(level, pos, school, volume)).orElse(false);
     }
 
-    /** Whether a shelf touching {@code pos} holds the treatise. */
-    private static boolean shelved(Level level, BlockPos pos, School school) {
+    /** Whether a shelf touching {@code pos} holds the volume. */
+    private static boolean shelved(Level level, BlockPos pos, School school, int volume) {
         for (Direction d : Direction.values()) {
             BlockEntity be = level.getBlockEntity(pos.relative(d));
             if (be instanceof TreatiseShelfBlockEntity shelf)
                 for (int i = 0; i < shelf.getContainerSize(); i++)
-                    if (holds(shelf.getItem(i), school))
+                    if (holds(shelf.getItem(i), school, volume))
                         return true;
         }
         return false;
     }
 
-    /** The schools {@code player} holds a treatise of at the table {@code access} names, one bit per {@link School#ordinal}. */
+    /** The volumes {@code player} holds at the table {@code access} names, one bit per school and volume ({@link School#bit}). */
     public static int mask(Player player, ContainerLevelAccess access) {
         int mask = 0;
         for (School school : School.values())
-            if (has(player, access, school))
-                mask |= 1 << school.ordinal();
+            for (int v = 1; v <= school.volumes(); v++)
+                if (has(player, access, school, v))
+                    mask |= 1 << school.bit(v);
         return mask;
     }
 
@@ -82,18 +83,18 @@ public final class Treatises {
         return mask(player, ContainerLevelAccess.NULL);
     }
 
-    /** Whether {@code mask} lets a player draw {@code type}: it has no school, or its school's bit is set. */
+    /** Whether {@code mask} lets a player draw {@code type}: it has no school, or its school's volume bit is set. */
     public static boolean draws(int mask, ModularType type) {
         School school = School.of(type.school());
-        return school == null || (mask & (1 << school.ordinal())) != 0;
+        return school == null || (mask & (1 << school.bit(School.volumeOf(type.school())))) != 0;
     }
 
-    /** The treatise item of {@code school}. */
-    public static ItemStack of(School school) {
-        return new ItemStack(FModular.TREATISES.get(school).get());
+    /** Volume {@code volume} of {@code school}'s treatise. */
+    public static ItemStack of(School school, int volume) {
+        return new ItemStack(FModular.TREATISES.get(school).get(Math.max(1, Math.min(volume, school.volumes())) - 1).get());
     }
 
-    /** Adds a treatise of a random school to a chest's loot; the chest tables and the chance are the modifier's conditions. */
+    /** Adds a treatise (a random volume) of a random school to a chest's loot; the chest tables and the chance are the modifier's conditions. */
     public static class Loot extends LootModifier {
 
         public static final MapCodec<Loot> CODEC = RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, Loot::new));
@@ -105,7 +106,8 @@ public final class Treatises {
         @Override
         protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> loot, LootContext context) {
             School[] all = School.values();
-            loot.add(of(all[context.getRandom().nextInt(all.length)]));
+            School school = all[context.getRandom().nextInt(all.length)];
+            loot.add(of(school, 1 + context.getRandom().nextInt(school.volumes())));
             return loot;
         }
 

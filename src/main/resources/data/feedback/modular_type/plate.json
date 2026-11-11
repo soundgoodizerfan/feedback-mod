@@ -13,9 +13,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:ceramic_plate",
-        "shape": [
-          "CC"
-        ],
+        "cells": 2,
         "stock": [
           "brick",
           "ball",

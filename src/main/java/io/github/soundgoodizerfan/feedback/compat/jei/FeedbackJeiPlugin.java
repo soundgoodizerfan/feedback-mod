@@ -127,6 +127,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.class, new BootstrapGloveExtension());
         registration.getCraftingCategory().addExtension(
+                io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.class, new BootstrapSpecimenExtension());
+        registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe.class, new GrappleUpgradeCraftingExtension());
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.machine.bearing.SliderSpringRecipe.class, new SliderSpringCraftingExtension());
@@ -246,6 +248,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BLANK_TREATISE.get(), Component.translatable("feedback.jei.info.blank_treatise"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT_BOOK.get(), Component.translatable("feedback.jei.info.blueprint_book"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.SUIT_MODULE.get(), Component.translatable("feedback.jei.info.suit_module"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.SPRING_GUN.get(), Component.translatable("feedback.jei.info.spring_gun"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.ELECTRIC_GUN.get(), Component.translatable("feedback.jei.info.electric_gun"));
         registration.addIngredientInfo(FItems.GRAPPLE.get(), Component.translatable("feedback.jei.info.grapple"));
         registration.addIngredientInfo(FItems.GRAPPLE_WINCH.get(), Component.translatable("feedback.jei.info.grapple_winch"));
         registration.addIngredientInfo(FItems.ARC_HEARTH.get(), Component.translatable("feedback.jei.info.arc_hearth"));
@@ -391,6 +395,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.DISENCHANT_STONE.get(), "disenchant_stone");
         info(registration, FItems.CRYSTAL_HOLDER.get(), "crystal_holder");
         info(registration, FModular.BURNER.get(), "burner");
+        info(registration, FModular.THRUSTER.get(), "thruster");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BREAKER.get().asItem(), "breaker");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BELLOWS.get().asItem(), "bellows");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.BIMETALLIC_STRIP.get().asItem(), "bimetallic_strip");

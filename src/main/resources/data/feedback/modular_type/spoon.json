@@ -16,9 +16,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:spoon_bowl",
-        "shape": [
-          "B"
-        ],
+        "cells": 1,
         "stock": [
           "plate",
           "*_planks",

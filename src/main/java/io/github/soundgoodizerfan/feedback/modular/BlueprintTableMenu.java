@@ -30,7 +30,9 @@ import net.minecraft.world.item.ItemStack;
  */
 public class BlueprintTableMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 294, PAPER_Y = 278, HOTBAR_X = 8, HOTBAR_Y = 278, W = 360, H = 300;
+    public static final int PAPER_X = 294, PAPER_Y = 278, HOTBAR_X = 8, HOTBAR_Y = 278, W = 360, H = 322;
+    /** The title field's place on the panel (the screen builds it). */
+    public static final int TITLE_X = 8, TITLE_Y = 301, TITLE_W = 344;
     /** Sample slots: one, for the part selected on the sheet. */
     public static final int ROLE_SLOTS = 1;
     /** Most pinned drafts a printed blueprint keeps beside its own design. */
@@ -46,7 +48,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     private final Container samples = new SimpleContainer(ROLE_SLOTS);
     /** A blueprint to copy from; kept when copied. */
     private final Container source = new SimpleContainer(1);
-    /** The schools whose treatise the player holds here (bits of {@link School#ordinal}), kept by the server and synced, so the screen can leave out what cannot be drawn. */
+    /** The treatise volumes the player holds here (bits of {@link School#bit}), kept by the server and synced, so the screen can leave out what cannot be drawn. */
     private final net.minecraft.world.inventory.DataSlot schools = net.minecraft.world.inventory.DataSlot.standalone();
     private final Player player;
     /** Which role rows the screen draws a material for; the other sample slots are inactive. Client side only. */
@@ -141,7 +143,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     }
 
     /** The screen's Print: bake {@code design} here, where the tables are trusted, and write it onto the paper. */
-    public void print(ModularDesign design, List<ModularDesign> variants, Player player) {
+    public void print(ModularDesign design, List<ModularDesign> variants, String title, Player player) {
         if (paper.getItem(0).isEmpty()) {
             send(player, Component.translatable("message.feedback.blueprint_table.no_paper"));
             return;
@@ -149,11 +151,12 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         // A type of a school is drawn only by someone holding that school's treatise (in the inventory, a binder, or a shelf beside the table).
         ModularType drawn = ModularTypes.get().types().get(design.type());
         School school = drawn == null ? null : School.of(drawn.school());
-        if (school != null && !Treatises.has(player, access, school)) {
-            send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable("school.feedback." + school.id())));
+        int volume = drawn == null ? 1 : School.volumeOf(drawn.school());
+        if (school != null && !Treatises.has(player, access, school, volume)) {
+            send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable(school.itemKey(volume))));
             return;
         }
-        if (write(paper, design, variants, player))
+        if (write(paper, design, variants, title, player))
             broadcastChanges();
     }
 
@@ -163,6 +166,11 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
      * through here too, so the two cannot disagree about what a sheet holds.
      */
     public static boolean write(Container paper, ModularDesign design, List<ModularDesign> variants, Player player) {
+        return write(paper, design, variants, "", player);
+    }
+
+    /** As above, titled {@code title}; the credit's name is the printing player's, taken here and never from the client. */
+    public static boolean write(Container paper, ModularDesign design, List<ModularDesign> variants, String title, Player player) {
         if (paper.getItem(0).isEmpty()) {
             send(player, Component.translatable("message.feedback.blueprint_table.no_paper"));
             return false;
@@ -175,6 +183,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
         ItemStack blueprint = new ItemStack(FModular.BLUEPRINT.get());
         blueprint.set(FModular.DESIGN.get(), design);
         blueprint.set(FModular.FIGURES.get(), figures.get());
+        blueprint.set(FModular.CREDIT.get(), new BlueprintCredit(BlueprintCredit.clean(title), player.getGameProfile().getName(), java.util.Optional.empty()));
         // Pinned drafts ride on the paper when they are of the same type and make something here too.
         List<ModularDesign> kept = variants.stream().limit(MAX_VARIANTS).filter(v -> v.type().equals(design.type())
                 && ToolDesigns.predict(v, ModularTypes.get().types(), MaterialTable.get().materials()).isPresent()).toList();

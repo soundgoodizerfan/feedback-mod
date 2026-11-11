@@ -1,0 +1,624 @@
+{
+  "family": "electric_gun",
+  "blueprint": true,
+  "wear_litres": 0.4,
+  "wear_role": "B",
+  "primary": "R",
+  "roles": {
+    "R": {
+      "name": "receiver",
+      "forms": [
+        "receiver"
+      ],
+      "litres": 0.3,
+      "layer": 1,
+      "part": {
+        "item": "feedback:receiver",
+        "cells": 1,
+        "stock": [
+          "ingot",
+          "plate",
+          "bone",
+          "*_planks"
+        ],
+        "base": "handgun",
+        "variants": [
+          {
+            "name": "handgun",
+            "params": {
+              "max_cells": 2,
+              "heat_mult": 1.0
+            }
+          },
+          {
+            "name": "long_gun",
+            "cells": 2,
+            "params": {
+              "max_cells": 4,
+              "heat_mult": 0.8
+            }
+          },
+          {
+            "name": "machine_gun",
+            "cells": 3,
+            "params": {
+              "max_cells": 8,
+              "heat_mult": 0.6
+            }
+          }
+        ]
+      }
+    },
+    "B": {
+      "name": "barrel",
+      "forms": [
+        "electric_gun_barrel"
+      ],
+      "litres": 0.1,
+      "layer": 0,
+      "axes": {
+        "barrel_length": {
+          "min": 0.1,
+          "max": 1.2,
+          "unit": "m",
+          "default": 0.4,
+          "step": 0.01,
+          "scales": true
+        },
+        "bore": {
+          "min": 4,
+          "max": 20,
+          "unit": "mm",
+          "default": 8,
+          "step": 0.5
+        },
+        "stages": {
+          "min": 1,
+          "max": 8,
+          "unit": "",
+          "default": 2,
+          "step": 1,
+          "when": "coil",
+          "at_least": 1,
+          "bands": [
+            {
+              "name": "few",
+              "max": 3
+            },
+            {
+              "name": "many"
+            }
+          ]
+        }
+      },
+      "part": {
+        "item": "feedback:electric_gun_barrel",
+        "cells": 2,
+        "stock": [
+          "rod",
+          "turned_rod",
+          "ingot",
+          "wire"
+        ],
+        "base": "coil_barrel",
+        "variants": [
+          {
+            "name": "coil_barrel",
+            "params": {
+              "coil": 1
+            }
+          },
+          {
+            "name": "rail_barrel",
+            "cells": 3,
+            "params": {
+              "rail": 1
+            }
+          },
+          {
+            "name": "plasma_barrel",
+            "cells": 2,
+            "params": {
+              "plasma": 1
+            }
+          }
+        ]
+      }
+    },
+    "T": {
+      "name": "trigger",
+      "forms": [
+        "trigger_group"
+      ],
+      "litres": 0.03,
+      "layer": 3,
+      "part": {
+        "item": "feedback:trigger_group",
+        "cells": 1,
+        "stock": [
+          "drilled_plate"
+        ],
+        "variants": []
+      }
+    },
+    "G": {
+      "name": "grip",
+      "forms": [
+        "gun_grip"
+      ],
+      "litres": 0.12,
+      "layer": 4,
+      "part": {
+        "item": "feedback:gun_grip",
+        "cells": 1,
+        "stock": [
+          "grip"
+        ],
+        "base": "straight",
+        "variants": [
+          {
+            "name": "straight",
+            "params": {
+              "friction_mult": 1.0
+            }
+          },
+          {
+            "name": "pistol_grip",
+            "cells": 2,
+            "params": {
+              "friction_mult": 1.1
+            }
+          },
+          {
+            "name": "finger_groove",
+            "cells": 2,
+            "params": {
+              "friction_mult": 1.2
+            }
+          },
+          {
+            "name": "palm_swell",
+            "cells": 4,
+            "params": {
+              "friction_mult": 1.4
+            }
+          }
+        ]
+      }
+    },
+    "i": {
+      "name": "stock",
+      "forms": [
+        "gun_stock"
+      ],
+      "litres": 0.15,
+      "layer": 4,
+      "part": {
+        "item": "feedback:gun_stock",
+        "cells": 2,
+        "stock": [
+          "plate",
+          "*_planks"
+        ],
+        "base": "fixed",
+        "variants": [
+          {
+            "name": "fixed",
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.7,
+              "spread_mult": 0.6
+            }
+          },
+          {
+            "name": "skeleton",
+            "cells": 1,
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.8,
+              "spread_mult": 0.75
+            }
+          },
+          {
+            "name": "folding",
+            "cells": 1,
+            "trait": "gun_braced",
+            "params": {
+              "kick_mult": 0.85,
+              "spread_mult": 0.85
+            }
+          }
+        ]
+      }
+    },
+    "S": {
+      "name": "sight",
+      "forms": [
+        "sight"
+      ],
+      "litres": 0.05,
+      "layer": 6,
+      "part": {
+        "item": "feedback:sight",
+        "cells": 1,
+        "stock": [
+          "plate"
+        ],
+        "base": "reflex",
+        "variants": [
+          {
+            "name": "reflex"
+          },
+          {
+            "name": "scope",
+            "cells": 2
+          }
+        ]
+      }
+    },
+    "e": {
+      "name": "lit_reticle",
+      "forms": [
+        "lit_reticle"
+      ],
+      "traits": [
+        "luminous"
+      ],
+      "litres": 0.05,
+      "layer": 6,
+      "part": {
+        "item": "feedback:lit_reticle",
+        "traits": [
+          "luminous"
+        ],
+        "cells": 1,
+        "stock": [
+          "dust",
+          "block"
+        ],
+        "variants": [
+          {
+            "name": "dot_reticle",
+            "trait": "gun_reticle",
+            "params": {
+              "dark_at": 7.0,
+              "spread_cut": 0.2
+            }
+          },
+          {
+            "name": "ring_reticle",
+            "cells": 2,
+            "trait": "gun_reticle",
+            "params": {
+              "dark_at": 11.0,
+              "spread_cut": 0.12
+            }
+          },
+          {
+            "name": "cross_reticle",
+            "cells": 3,
+            "trait": "gun_reticle",
+            "params": {
+              "dark_at": 4.0,
+              "spread_cut": 0.3
+            }
+          }
+        ],
+        "base": "dot_reticle"
+      }
+    },
+    "M": {
+      "name": "suppressor",
+      "forms": [
+        "suppressor"
+      ],
+      "litres": 0.05,
+      "layer": 7,
+      "part": {
+        "item": "feedback:suppressor",
+        "cells": 1,
+        "stock": [
+          "cylinder"
+        ],
+        "variants": []
+      }
+    },
+    "N": {
+      "name": "muzzle_brake",
+      "forms": [
+        "muzzle_brake"
+      ],
+      "litres": 0.05,
+      "layer": 7,
+      "part": {
+        "item": "feedback:muzzle_brake",
+        "cells": 1,
+        "stock": [
+          "magazine_tube"
+        ],
+        "variants": []
+      }
+    },
+    "Q": {
+      "name": "eddy_sleeve",
+      "forms": [
+        "eddy_sleeve"
+      ],
+      "litres": 0.05,
+      "layer": 7,
+      "part": {
+        "item": "feedback:eddy_sleeve",
+        "cells": 1,
+        "stock": [
+          "magazine_tube"
+        ],
+        "variants": []
+      }
+    },
+    "Z": {
+      "name": "thermal_sleeve",
+      "forms": [
+        "thermal_sleeve"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:thermal_sleeve",
+        "cells": 1,
+        "stock": [
+          "magazine_tube"
+        ],
+        "variants": []
+      }
+    },
+    "C": {
+      "name": "counterweight",
+      "forms": [
+        "counterweight"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:counterweight",
+        "cells": 1,
+        "stock": [
+          "ingot"
+        ],
+        "variants": []
+      }
+    },
+    "I": {
+      "name": "bipod",
+      "forms": [
+        "bipod"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:bipod",
+        "cells": 1,
+        "stock": [
+          "rod"
+        ],
+        "variants": []
+      }
+    },
+    "a": {
+      "name": "bayonet",
+      "forms": [
+        "bayonet"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:bayonet",
+        "cells": 1,
+        "stock": [
+          "rod"
+        ],
+        "variants": []
+      }
+    },
+    "H": {
+      "name": "shroud",
+      "forms": [
+        "barrel_shroud"
+      ],
+      "litres": 0.05,
+      "layer": 9,
+      "part": {
+        "item": "feedback:barrel_shroud",
+        "cells": 1,
+        "stock": [
+          "drilled_plate"
+        ],
+        "variants": []
+      }
+    },
+    "P": {
+      "name": "resonance",
+      "forms": [
+        "resonance_weight"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:resonance_weight",
+        "cells": 1,
+        "stock": [
+          "ingot"
+        ],
+        "base": "thread_middle",
+        "variants": [
+          {
+            "name": "thread_breech",
+            "trait": "resonance",
+            "params": {
+              "tuned_ms": 250.0
+            }
+          },
+          {
+            "name": "thread_middle",
+            "cells": 2,
+            "trait": "resonance",
+            "params": {
+              "tuned_ms": 450.0
+            }
+          },
+          {
+            "name": "thread_muzzle",
+            "cells": 3,
+            "trait": "resonance",
+            "params": {
+              "tuned_ms": 800.0
+            }
+          }
+        ]
+      }
+    }
+  },
+  "patterns": [
+    [
+      "RBTG"
+    ]
+  ],
+  "defaults": {
+    "R": "feedback:wood",
+    "B": "feedback:copper",
+    "T": "feedback:steel",
+    "G": "feedback:wood",
+    "i": "feedback:wood"
+  },
+  "names": {
+    "designations": [
+      {
+        "name": "gauss_rifle",
+        "is": {
+          "variant": "coil_barrel",
+          "stages": "many"
+        }
+      },
+      {
+        "name": "coilgun",
+        "is": {
+          "variant": "coil_barrel"
+        }
+      },
+      {
+        "name": "railgun",
+        "is": {
+          "variant": "rail_barrel"
+        }
+      },
+      {
+        "name": "plasma_gun",
+        "is": {
+          "variant": "plasma_barrel"
+        }
+      }
+    ]
+  },
+  "board": {
+    "layout": {
+      "S": [
+        3,
+        -1
+      ],
+      "e": [
+        4,
+        -1
+      ],
+      "Q": [
+        0,
+        1
+      ],
+      "M": [
+        1,
+        1
+      ],
+      "N": [
+        2,
+        1
+      ],
+      "a": [
+        3,
+        1
+      ],
+      "H": [
+        2,
+        2
+      ],
+      "Z": [
+        3,
+        2
+      ],
+      "C": [
+        0,
+        -2
+      ],
+      "I": [
+        1,
+        -2
+      ],
+      "P": [
+        4,
+        -2
+      ],
+      "i": [
+        5,
+        1
+      ]
+    },
+    "joins": [
+      [
+        "S",
+        "R"
+      ],
+      [
+        "e",
+        "S"
+      ],
+      [
+        "M",
+        "B"
+      ],
+      [
+        "N",
+        "B"
+      ],
+      [
+        "Q",
+        "B"
+      ],
+      [
+        "a",
+        "B"
+      ],
+      [
+        "H",
+        "B"
+      ],
+      [
+        "Z",
+        "B"
+      ],
+      [
+        "C",
+        "R"
+      ],
+      [
+        "I",
+        "B"
+      ],
+      [
+        "P",
+        "B"
+      ],
+      [
+        "i",
+        "R"
+      ]
+    ]
+  },
+  "school": "weapons:3"
+}

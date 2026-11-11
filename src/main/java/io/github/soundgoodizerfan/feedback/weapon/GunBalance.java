@@ -72,7 +72,7 @@ public final class GunBalance {
                 continue;
             float mu = option.get().metalMb() * fm.density().muPerMb();
             float ahead = switch (option.get().slot()) {
-                case "muzzle", "lug", "shroud", "lagging", "sleeve", "bipod" -> 1f;
+                case "muzzle", "lug", "shroud", "sleeve", "bipod" -> 1f;
                 case "buffer" -> 0f;
                 default -> 0.5f;
             };

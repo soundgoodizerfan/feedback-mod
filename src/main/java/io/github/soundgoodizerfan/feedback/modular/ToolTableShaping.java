@@ -55,12 +55,23 @@ public final class ToolTableShaping {
 
         /** Whether it is played on the anvil rather than made as soon as the stock is in. */
         public boolean forged() {
-            return variant.shape().isEmpty() && !variant.rhythm().isEmpty();
+            return variant.cells() <= 0f && !variant.rhythm().isEmpty();
         }
 
-        /** Items of stock it takes: its own cells if laid, the standard shape's if forged. */
-        public int cells() {
+        /** Its size in cells of stock at default axes: its own if made at its own size, the standard shape's if forged. */
+        public float size() {
             return forged() || variant.name().isEmpty() ? shaping.cells() : variant.cells();
+        }
+
+        /** Whole cells of stock it takes at default axes, rounded up: what a part item records and a tooltip counts. */
+        public int cells() {
+            return (int) Math.ceil(size());
+        }
+
+        /** Millibuckets of stock it takes when its axes scale its volume by {@code scale}, up to the next nugget (the smallest stock there is). */
+        public int stockMb(float scale) {
+            int nuggets = (int) Math.ceil(size() * scale * ModularTuning.CELL_MB / ModularTuning.NUGGET_MB - 1e-3f);
+            return Math.max(1, nuggets) * ModularTuning.NUGGET_MB;
         }
 
         /** The name the list shows: the part, and the shape if it is not the standard one. */
@@ -123,12 +134,7 @@ public final class ToolTableShaping {
     }
 
     /** What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. */
-    public record Stock(Material.Located what, int cells, float coldest, int mb) {
-
-        /** Millibuckets the shape spends. */
-        public int spent() {
-            return cells * ModularTuning.CELL_MB;
-        }
+    public record Stock(Material.Located what, int cells, int spent, float coldest, int mb) {
 
         /** Millibuckets of the pile the shape leaves. */
         public int left() {
@@ -147,12 +153,62 @@ public final class ToolTableShaping {
 
     /** As {@link #check(Option, List, Map, Level)}, at a bench that takes only the stock it works ({@link Station}). */
     public static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
-        return check(station, option, contents, materials, level, false);
+        return check(station, option, contents, materials, level, false, 1f);
+    }
+
+    /** As above, for a part aimed at axes that scale its volume by {@code scale} ({@link ModularType.Role#volumeScaleOf}). */
+    public static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
+                                        float scale) {
+        return check(station, option, contents, materials, level, false, scale);
+    }
+
+    /** The role of {@code option}'s type whose part is the one this option makes, if it has one. */
+    public static Optional<ModularType.Role> roleOf(Option option) {
+        ModularType type = ModularTypes.known().get(option.type());
+        if (type == null)
+            return Optional.empty();
+        return type.roles().values().stream()
+                .filter(r -> r.part().filter(s -> s.item().equals(option.shaping().item())).isPresent()).findFirst();
+    }
+
+    /** The axes the bench lets the player aim for {@code option}'s part, in the order the menu indexes them; empty for a part that declares none. */
+    public static List<Map.Entry<String, ModularType.Axis>> aimable(Option option) {
+        return roleOf(option).map(ModularType.Role::sortedAxes).orElse(List.of());
+    }
+
+    /**
+     * The spread of an as-built axis around its aim, as a share of the axis's range: a laid part's flat
+     * {@link ModularTuning#AXIS_ERROR_LAID}; a forged one's from {@link ModularTuning#AXIS_ERROR_GOOD} at a work ratio of 1
+     * to {@link ModularTuning#AXIS_ERROR_POOR} as the ratio strays {@link ModularTuning#AXIS_ERROR_RATIO_SPAN}, and each flaw adds more.
+     */
+    public static float spread(Option option, float workRatio, int flaw) {
+        if (!option.forged())
+            return ModularTuning.AXIS_ERROR_LAID;
+        float off = Math.min(1f, Math.abs(workRatio - 1f) / ModularTuning.AXIS_ERROR_RATIO_SPAN);
+        return ModularTuning.AXIS_ERROR_GOOD + (ModularTuning.AXIS_ERROR_POOR - ModularTuning.AXIS_ERROR_GOOD) * off
+                + flaw * ModularTuning.AXIS_ERROR_PER_FLAW;
+    }
+
+    /**
+     * What the part is built to: each axis the role declares, its aim (default if unaimed) plus symmetric noise of
+     * {@code spread} of the range, never exactly zero, clamped to the axis. Axes the role does not declare are dropped.
+     */
+    public static Map<String, Float> asBuilt(Option option, Map<String, Float> aim, float spread, net.minecraft.util.RandomSource random) {
+        Map<String, Float> out = new java.util.HashMap<>();
+        for (Map.Entry<String, ModularType.Axis> a : aimable(option)) {
+            ModularType.Axis ax = a.getValue();
+            float noise = (random.nextFloat() * 2f - 1f) * spread * (ax.max() - ax.min());
+            float floor = ax.grain() * 0.25f;
+            if (Math.abs(noise) < floor)
+                noise = noise < 0f || (noise == 0f && random.nextBoolean()) ? -floor : floor;
+            out.put(a.getKey(), ax.clamp(aim.getOrDefault(a.getKey(), ax.def()) + noise));
+        }
+        return out;
     }
 
     /** As above; {@code exact} refuses a pile bigger than the shape (a food shape reshapes the whole pile). */
     private static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
-                                         boolean exact) {
+                                         boolean exact, float scale) {
         if (option.forged() && !station.forges())
             return Optional.empty();
         Material.Located what = null;
@@ -170,13 +226,13 @@ public final class ToolTableShaping {
             mb += s.getCount() * FormItems.volume(l.get().form());
             coldest = Math.min(coldest, ItemHeat.get(s, level).value());
         }
-        int need = option.cells() * ModularTuning.CELL_MB;
+        int need = option.stockMb(scale);
         if (what == null || !takes(station, option, what) || (exact ? mb != need : mb < need))
             return Optional.empty();
         Material m = what.material();
         if (m.minTemperature().value() > 0 && (coldest < m.minTemperature().value() || coldest > m.maxTemperature().value()))
             return Optional.empty();
-        return Optional.of(new Stock(what, option.cells(), coldest, mb));
+        return Optional.of(new Stock(what, option.cells(), need, coldest, mb));
     }
 
     /** The part {@code stock} makes in {@code option}, with {@code flaw} flaws, at the stock's heat; empty if the part item is gone. */
@@ -190,10 +246,19 @@ public final class ToolTableShaping {
      * Exactly 1 leaves nothing on it, so a part made without a forge is the drawing.
      */
     public static Optional<ItemStack> part(Option option, Stock stock, int flaw, float work, Level level) {
+        return part(option, stock, flaw, work, Map.of(), level);
+    }
+
+    /** As above, with the as-built {@code axes} ({@link #asBuilt}) on the part. */
+    public static Optional<ItemStack> part(Option option, Stock stock, int flaw, float work, Map<String, Float> axes, Level level) {
         return BuiltInRegistries.ITEM.getOptional(option.shaping().item()).map(item -> {
             ItemStack out = new ItemStack(item);
             MadeOf made = new MadeOf(stock.what().id(), stock.what().form(), stock.cells(), option.variant().name(), flaw);
-            out.set(FDataComponents.MADE_OF.get(), work == 1f ? made : made.withDim(ForgeRhythm.WORK, work));
+            if (work != 1f)
+                made = made.withMeasures(made.measures().withWork(work));
+            if (!axes.isEmpty())
+                made = made.withMeasures(made.measures().withAxes(axes));
+            out.set(FDataComponents.MADE_OF.get(), made);
             if (stock.coldest() > 0 && stock.what().material().minTemperature().value() > 0)
                 ItemHeat.set(out, new Tu(stock.coldest()), level);
             return out;
@@ -205,7 +270,7 @@ public final class ToolTableShaping {
      * (its {@code FoodState}, knead, heat) carry over -- dough rolled thin is the same dough, not a fresh one.
      */
     private static ItemStack food(Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
-        if (check(Station.TOOL, option, contents, materials, level, true).isEmpty())
+        if (check(Station.TOOL, option, contents, materials, level, true, 1f).isEmpty())
             return ItemStack.EMPTY;
         // shortcut: the first piece's state stands for the pile; pieces of differing age would want the worst kept.
         ItemStack first = contents.stream().filter(s -> !s.isEmpty()).findFirst().orElseThrow();
@@ -226,11 +291,17 @@ public final class ToolTableShaping {
     }
 
     public static ItemStack make(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level) {
+        return make(station, option, contents, materials, level, 1f, Map.of());
+    }
+
+    /** As above, for a part aimed at axes: stock for {@code scale}, the part carrying the as-built {@code axes}. */
+    public static ItemStack make(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
+                                 float scale, Map<String, Float> axes) {
         if (option.forged())
             return ItemStack.EMPTY;
         if (!(BuiltInRegistries.ITEM.get(option.shaping().item()) instanceof ModularPartItem))
             return food(option, contents, materials, level);
-        return check(station, option, contents, materials, level).flatMap(s -> part(option, s, 0, level).map(p -> {
+        return check(station, option, contents, materials, level, scale).flatMap(s -> part(option, s, 0, 1f, axes, level).map(p -> {
                     // A coat rolled onto the plate (roll cladding) rides onto the part.
                     contents.stream().map(c -> c.get(FDataComponents.PLATING.get())).filter(java.util.Objects::nonNull).findFirst()
                             .ifPresent(c -> p.set(FDataComponents.PLATING.get(), c));

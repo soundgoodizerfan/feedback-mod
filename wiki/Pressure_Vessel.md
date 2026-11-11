@@ -4,7 +4,7 @@ A sealed tank, built from a blueprint, that you pump air into with a [Powered Be
 
 ## Designing and building
 
-The vessel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Pressure Vessel* in the type row) and print it on paper; drawing it takes a Chemical [Treatise](Treatise.md). It has one part, the **Vessel Shell**, with three choices:
+The vessel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Pressure Vessel* in the type row) and print it on paper; drawing it takes Chemical Treatise I ([Treatise](Treatise.md)). It has one part, the **Vessel Shell**, with three choices:
 
 | Choice | What it sets |
 | --- | --- |

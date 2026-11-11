@@ -1,0 +1,22 @@
+{
+  "type": "feedback:bootstrap_specimen",
+  "category": "equipment",
+  "modular_type": "feedback:pressure_vessel",
+  "material": "feedback:iron",
+  "pattern": [
+    "III",
+    "IBI",
+    "IGI"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    },
+    "G": {
+      "item": "minecraft:iron_nugget"
+    }
+  }
+}

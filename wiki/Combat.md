@@ -58,6 +58,8 @@ A bar under the crosshair shows the window and the recovery.
 - **Kite shield:** on **G**, returns arrows and bolts the way you look. Melee still lands. Raising it alone returns nothing.
 - **Tower and plain shields:** block as before and don't parry.
 
+These are builds, not separate items: a shield face's size is an axis, and a small face is a buckler, a large rectangular one a tower shield, a kite-shaped one a kite shield (see [Names](Tools_and_Weapons.md#names)). A small face parries, a large one is a bulwark; the shape (round, kite, heater, rectangular) is the rest. A kite-shaped face turns projectiles back whatever its size.
+
 ## Casts and stamina
 
 Many [skills](Skills.md#techniques-keys-and-stamina) are **casts**: techniques you slot into one of five cast slots on the skill screen and fire with that slot's key, or with the radial (**C**: tap to fire the selected one, hold to pick). Held casts end when you let go of the key.

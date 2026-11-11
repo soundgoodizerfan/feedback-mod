@@ -4,7 +4,7 @@ A [shaft](Shaft.md) with a heavy disc, built from a blueprint. It stores momentu
 
 ## Designing and building
 
-A flywheel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Flywheel* in the type row) and print it on paper; drawing it takes a Mechanical [Treatise](Treatise.md). It has one part, the **Flywheel Disc**, with four choices:
+A flywheel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Flywheel* in the type row) and print it on paper; drawing it takes Mechanical Treatise I ([Treatise](Treatise.md)). It has one part, the **Flywheel Disc**, with four choices:
 
 | Choice | What it sets |
 | --- | --- |

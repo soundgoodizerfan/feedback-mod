@@ -129,16 +129,21 @@ Some professions sell a **blueprint**, one per day each, at a high price. A line
 | Farmer | wrap recipe card | 8 | 3 | 10 |
 | Butcher | skewer recipe card | 6 | 2 | 10 |
 
-Six professions also sell a **treatise**, one per day, at a high trade level; see [Treatise](Treatise.md#obtaining).
+Six professions also sell **treatises**, one of each volume per day, at a high trade level; see [Treatise](Treatise.md#obtaining).
 
 | Profession | Treatise | Price (emeralds) | Level | Standing |
 | --- | --- | --- | --- | --- |
-| Weaponsmith | Weapons Treatise | 32 | 4 | 10 |
-| Toolsmith | Mechanical Treatise | 32 | 4 | 10 |
-| Cartographer | Aerospace Treatise | 40 | 5 | 10 |
-| Librarian | Robotics Treatise | 40 | 5 | 10 |
-| Cleric | Chemical Treatise | 32 | 4 | 10 |
-| Mason | Materials Treatise | 32 | 4 | 10 |
+| Weaponsmith | Weapons Treatise I: Blades and Heads | 32 | 4 | 10 |
+| Weaponsmith | Weapons Treatise II: Firearms | 40 | 5 | 10 |
+| Weaponsmith | Weapons Treatise III: Electric Guns | 48 | 5 | 10 |
+| Toolsmith | Mechanical Treatise I: Engines and Flywheels | 32 | 4 | 10 |
+| Toolsmith | Mechanical Treatise II: Transmission | 40 | 5 | 10 |
+| Cartographer | Aerospace Treatise I: Propellers | 40 | 5 | 10 |
+| Cartographer | Aerospace Treatise II: Thrusters | 40 | 5 | 10 |
+| Librarian | Robotics Treatise I: Suit Modules | 40 | 5 | 10 |
+| Cleric | Chemical Treatise I: Pressure Vessels | 32 | 4 | 10 |
+| Cleric | Chemical Treatise II: Heat and Compression | 40 | 5 | 10 |
+| Mason | Materials Treatise I: Machine-Shop Consumables | 32 | 4 | 10 |
 
 Blueprints for tools and armor carry the type's default design. Gun blueprints carry that gun's design. A recipe card carries a dish layout: open it to read the layout and the predicted figures.
 

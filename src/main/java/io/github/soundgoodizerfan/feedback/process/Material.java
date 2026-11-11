@@ -90,7 +90,6 @@ import net.minecraft.world.item.Item;
  * @param radioactivity  the dose rate one ingot's volume of it gives at point blank, in Ru (absent: none).
  *                       Read by {@code Radiation} for every item, block and modular part made of it.
  * @param combustion     see {@link Combustion}: what burning it does, in a fire and in a chamber.
- * @param coil           see {@link Coil}: what it does as a coil gun's charge. Not combustion.
  * @param perks          what a part of it does to a blow, by perk and level -- see {@link Perk}. Empty
  *                       for most. Qualitative only: a figure (lead's density) is a stat, never a perk.
  * @param color          RGB it is drawn in, written {@code "#rrggbb"}. Absent means nobody chose one:
@@ -122,7 +121,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        Molten molten, Separation separation, Optional<Float> ampacity,
                        Optional<Float> corrosionResistance, Optional<Combustion> combustion,
                        Electrical electrical, Map<ResourceLocation, Float> composition,
-                       Optional<Integer> enchantability, Optional<Coil> coil, Optional<Integer> color,
+                       Optional<Integer> enchantability, Optional<Integer> color,
                        Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                        Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst,
                        Optional<Potion> potion, Optional<XpCapacity> xpStore,
@@ -437,29 +436,21 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * What a material does as a gun's charge: not stored, read off {@link Combustion}'s chamber or
-     * off {@link Coil} by {@link #propellant()}, so every gun system reads one view and none of
-     * them knows which block it came from.
+     * What a material does as a gun's charge: not stored, read off {@link Combustion}'s chamber by
+     * {@link #propellant()}, so every gun system reads one view and none of them knows which block it came from.
      *
      * @param ignitionTemperature a round left chambered in a barrel this hot goes off by itself
      *                     (cook-off, {@code docs/specs/feedback_guns_spec.md} 3.4): the material's oxidation
-     *                     temperature. A coil has none (the winding's quench is its metal's service temperature).
-     * @param drive        a gas pressing a bullet, or a field pulling a slug.
+     *                     temperature.
      */
-    public record Propellant(Pu peakPressure, float burnRate, Tu ignitionTemperature, float oxygenBalance, Drive drive) {
-
-        /** What the propellant does work through: a gas, or a field. */
-        public enum Drive { CHEMICAL, COIL }
+    public record Propellant(Pu peakPressure, float burnRate, Tu ignitionTemperature, float oxygenBalance) {
     }
 
-    /** This material as a gun's charge, if it is one: its combustion's chamber, or its coil. */
+    /** This material as a gun's charge, if it is one: its combustion's chamber. */
     public Optional<Propellant> propellant() {
-        if (coil.isPresent())
-            return Optional.of(new Propellant(coil.get().fieldPressure(), 1f, new Tu(Float.MAX_VALUE), 0f,
-                    Propellant.Drive.COIL));
         return combustion.flatMap(c -> c.chamber().map(ch -> new Propellant(ch.peakPressure(), ch.burnRate(),
                 thermal.oxidationTemperature().orElse(new Tu(FTuning.GUN_PROPELLANT_IGNITION_TU)),
-                c.oxygenBalance(), Propellant.Drive.CHEMICAL)));
+                c.oxygenBalance())));
     }
 
     /**
@@ -517,19 +508,6 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(Pu::new).fieldOf("peak_pressure").forGetter(Chamber::peakPressure),
                 Codec.floatRange(0.01f, 1000f).fieldOf("burn_rate").forGetter(Chamber::burnRate)
         ).apply(instance, Chamber::new));
-    }
-
-    /**
-     * A coil gun's charge: a field pulling a slug, not a gas pushing one. Not combustion, so it
-     * lives apart from it. The winding's own limits (rating, quench) are read off its metal's
-     * ampacity, yield strength and service temperature, never off this.
-     *
-     * @param fieldPressure the magnetic pressure a nominal charge makes (it is a pressure).
-     */
-    public record Coil(Pu fieldPressure) {
-        static final Codec<Coil> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Units.codec(Pu::new).fieldOf("field_pressure").forGetter(Coil::fieldPressure)
-        ).apply(instance, Coil::new));
     }
 
     /**
@@ -637,12 +615,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
             Combustion.CODEC.optionalFieldOf("combustion").forGetter(Material::combustion),
             // Sixteen is RecordCodecBuilder's ceiling, so the last keys ride as one group. The
             // JSON is unchanged: they stay plain top-level keys.
-            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.coil(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor(), m.neutron()))
+            Tail.CODEC.forGetter(m -> new Tail(m.electrical(), m.composition(), m.enchantability(), m.color(), m.perks(), m.attunement(), m.food(), m.bears(), m.radioactivity(), m.catalyst(), m.potion(), m.xpStore(), m.luminance(), m.phosphor(), m.neutron()))
     ).apply(instance, (hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical,
                        molten, separation, ampacity, corrosion, combustion, tail) -> new Material(
             hardness, min, max, forms, exclude, density, kind, traits, thermal, mechanical, molten,
             separation, ampacity, corrosion, combustion, tail.electrical(), tail.composition(),
-            tail.enchantability(), tail.coil(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron())));
+            tail.enchantability(), tail.color(), tail.perks(), tail.attunement(), tail.food(), tail.bears(), tail.radioactivity(), tail.catalyst(), tail.potion(), tail.xpStore(), tail.luminance(), tail.phosphor(), tail.neutron())));
 
     /**
      * The keys that did not fit the codec's sixteen.
@@ -654,7 +632,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                      . Absent reads as poor.
      */
     private record Tail(Electrical electrical, Map<ResourceLocation, Float> composition, Optional<Integer> enchantability,
-                        Optional<Coil> coil, Optional<Integer> color,
+                        Optional<Integer> color,
                         Map<Perk, Integer> perks, Optional<Attuning> attunement, Optional<Food> food,
                         Map<ResourceLocation, Float> bears, Optional<Ru> radioactivity, Optional<Catalyst> catalyst, Optional<Potion> potion, Optional<XpCapacity> xpStore,
                         Optional<Integer> luminance, boolean phosphor, Optional<Neutron> neutron) {
@@ -662,7 +640,6 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Electrical.CODEC.optionalFieldOf("electrical", Electrical.NONE).forGetter(Tail::electrical),
                 Codec.unboundedMap(ResourceLocation.CODEC, Codec.FLOAT).optionalFieldOf("composition", Map.of()).forGetter(Tail::composition),
                 Codec.INT.optionalFieldOf("enchantability").forGetter(Tail::enchantability),
-                Coil.CODEC.optionalFieldOf("coil").forGetter(Tail::coil),
                 HEX.optionalFieldOf("color").forGetter(Tail::color),
                 Codec.unboundedMap(Perk.CODEC, Codec.intRange(1, 5)).optionalFieldOf("perks", Map.of()).forGetter(Tail::perks),
                 Attuning.CODEC.optionalFieldOf("attuning").forGetter(Tail::attunement),

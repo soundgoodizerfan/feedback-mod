@@ -205,7 +205,7 @@ public final class GunPreview {
         PoseStack pose = g.pose();
         pose.pushPose();
         pose.translate(cx, cy, z);
-        if (type != null && type.family() == ModularType.Family.GUN) {
+        if (type != null && (type.family() == ModularType.Family.GUN || type.family() == ModularType.Family.ELECTRIC_GUN)) {
             GunView view = GunView.of(stack);
             float front = -(view.muzzle() + view.muzzleReach()), back = view.rear();
             float top = view.top() + (view.has("S") ? 1.75f : 0.5f), bottom = view.bottom();

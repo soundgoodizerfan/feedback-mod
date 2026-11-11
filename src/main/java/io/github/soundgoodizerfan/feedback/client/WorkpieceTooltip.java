@@ -58,7 +58,7 @@ public class WorkpieceTooltip {
 
     private static boolean isBarrel(ItemStack stack) {
         var made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
-        return made != null && made.dims().containsKey(io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry.BORE);
+        return made != null && made.measures().axes().containsKey(io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry.BORE);
     }
 
     /** A machined barrel's shape as a figure, or null when it is no barrel or no instrument reads length (the calipers' to give, philosophy 8). Shared with {@link ItemInfoHud}. */

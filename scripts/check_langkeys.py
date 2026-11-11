@@ -13,16 +13,25 @@ def traits(v):
 for f in sorted((R / "data/feedback/modular_type").glob("*.json")):
     d = json.loads(f.read_text()); n = f.stem
     for des in d.get("names", {}).get("designations", []):
-        want(f"gun.feedback.designation.{des['name']}", f"{n} designation")
+        prefix = "gun" if d.get("family") == "gun" else "armour"  # every non-gun type names its builds under armour.*
+        want(f"{prefix}.feedback.designation.{des['name']}", f"{n} designation")
     for rid, role in d.get("roles", {}).items():
         want(f"modular.feedback.role.{role['name']}", f"{n} role {rid}")
         want(f"modular.feedback.role.{role['name']}.tip", f"{n} role {rid}")
-        for dim in role.get("dims", {}):
-            want(f"modular.feedback.dim.{dim}", f"{n} role {rid} dim")
+        for dim, ax in role.get("axes", {}).items():
+            want(f"modular.feedback.axis.{dim}", f"{n} role {rid} axis")
+            if ax.get("bands"):  # a banded axis is a plate-style measure the bench explains
+                want(f"modular.feedback.axis.{dim}.tip", f"{n} role {rid} axis")
+            for b in ax.get("bands", []):
+                want(f"modular.feedback.band.{b['name']}", f"{n} axis {dim} band")
+                for t in traits(b):
+                    want(f"modular.feedback.desc.trait.{t}", f"{n} axis {dim} band {b['name']}")
         part = role.get("part") or {}
         for v in part.get("variants", []):
             want(f"modular.feedback.variant.{v['name']}", f"{n} variant")
             want(f"modular.feedback.desc.variant.{v['name']}", f"{n} variant")
+            if rid == d.get("wear_role") and d.get("names", {}).get("designations") and d.get("family") not in ("gun", "flintlock", "spring_gun"):  # named in an automatic build name
+                want(f"modular.feedback.archetype.{v['name']}", f"{n} variant")
             for t in traits(v):
                 want(f"modular.feedback.desc.trait.{t}", f"{n} variant {v['name']}")
 for f in sorted((R / "data/feedback/gun_option").glob("*.json")):

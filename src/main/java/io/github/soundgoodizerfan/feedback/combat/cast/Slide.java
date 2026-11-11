@@ -69,7 +69,7 @@ final class Slide {
             e.hurt(p.damageSources().playerAttack(p), 2f);
             e.push(0, 0.25, 0);
             e.hurtMarked = true;
-            if (stagger(p, e, joules))
+            if (stagger(p, e, joules * io.github.soundgoodizerfan.feedback.modular.trait.Poleyn.staggerMult(e)))
                 Disorder.note(p, e, Disorder.Kind.TRIPPED);
             lv.sendParticles(ParticleTypes.CRIT, e.getX(), e.getY() + 0.3, e.getZ(), 8, 0.2, 0.1, 0.2, 0.2);
             CastFx.sound(lv, e.position(), SoundEvents.PLAYER_ATTACK_KNOCKBACK, 0.9f, 0.9f);

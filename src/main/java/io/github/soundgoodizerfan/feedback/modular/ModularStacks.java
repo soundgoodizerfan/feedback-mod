@@ -19,6 +19,7 @@ import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.process.DishFigures;
 import io.github.soundgoodizerfan.feedback.process.FoodState;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.process.Measures;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
@@ -110,6 +111,7 @@ public final class ModularStacks {
             return false;
         stack.set(FModular.DESIGN.get(), design);
         stack.set(FModular.FIGURES.get(), baked.get());
+        ToolTableAssembly.keepCredit(stack, design);
         // A gun's wear is its bore's (GunCondition), not a bar of uses; a head's is TOOL_CONDITION, worn by the machine.
         if (type.family() != ModularType.Family.GUN && type.family() != ModularType.Family.CHARGE
                 && type.family() != ModularType.Family.HEAD && type.family() != ModularType.Family.DISH
@@ -221,10 +223,10 @@ public final class ModularStacks {
             if (m == null || m.food().isEmpty())
                 continue;
             FoodState s = DishBake.stateOf(p, m.food().get());
-            Map<String, Float> dims = new java.util.HashMap<>(p.dims());
-            dims.putAll(DishBake.dimsOf(new FoodState(1f, s.moisture() * dry, s.pathogen() * kept, s.toxin(), Math.max(s.charred(), after.charred()),
+            Map<String, Float> state = new java.util.HashMap<>(p.measures().state());
+            state.putAll(DishBake.stateOf(new FoodState(1f, s.moisture() * dry, s.pathogen() * kept, s.toxin(), Math.max(s.charred(), after.charred()),
                     s.rot(), 0L, s.envTu(), s.smoke(), s.salt())));
-            cooked = cooked.withPart(new Part(p.role(), p.material(), p.form(), p.count(), p.kind(), p.variant(), p.flaw(), dims));
+            cooked = cooked.withPart(new Part(p.role(), p.material(), p.form(), p.count(), p.kind(), p.variant(), p.flaw(), p.measures().withState(state)));
         }
         stack.remove(FDataComponents.FOOD_STATE.get());
         assemble(stack, cooked, materials, ModularTypes.get().types());
@@ -472,7 +474,7 @@ public final class ModularStacks {
         if (wear == null || over <= 0f)
             return piece;
         int flaw = Math.max(wear.flaw(), Math.min(ForgeRhythm.MAX_FLAW, (int) Math.ceil(over / FTuning.HOT_DIP_FLAW_PER_QU)));
-        float work = wear.dim(ForgeRhythm.WORK, 1f);
+        float work = wear.measures().work();
         if (over > FTuning.HOT_DIP_DISSOLVE_ABOVE_QU)
             work += FTuning.HOT_DIP_DISSOLVE_WORK;
         if (work >= FTuning.HOT_DIP_SCRAP_WORK) {
@@ -480,10 +482,9 @@ public final class ModularStacks {
             return new ItemStack(io.github.soundgoodizerfan.feedback.process.Failure.item(
                     m == null ? Material.Kind.METAL : m.kind().orElse(Material.Kind.METAL)));
         }
-        Map<String, Float> dims = new java.util.HashMap<>(wear.dims());
-        dims.put(ForgeRhythm.WORK, work);
+        Measures measured = wear.measures().withWork(work);
         piece.set(FModular.DESIGN.get(), d.withPart(new Part(wear.role(), wear.material(), wear.form(), wear.count(),
-                wear.kind(), wear.variant(), flaw, dims)));
+                wear.kind(), wear.variant(), flaw, measured)));
         rebake(piece);
         return piece;
     }
@@ -597,6 +598,11 @@ public final class ModularStacks {
         Part main = d.part(type != null ? type.primary() : d.parts().get(0).role());
         if (main == null)
             return typeName;
+        if (type != null && BuildNames.names(type)) {
+            Optional<Component> built = BuildNames.of(d, type, typeName);
+            if (built.isPresent())
+                return built.get();
+        }
         if (!main.variant().isEmpty() && type != null && type.strikers().isEmpty())
             typeName = Component.translatable("modular.feedback.archetype." + main.variant());
         Component material = Component.translatable("material." + main.material().getNamespace() + "." + main.material().getPath());

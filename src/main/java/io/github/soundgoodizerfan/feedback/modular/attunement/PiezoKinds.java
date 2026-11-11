@@ -45,8 +45,6 @@ public final class PiezoKinds {
     /** Damage over which a soak plate cuts the blow, the share of the excess cut per level, and its ceiling. [OPEN] until played */
     private static final float SOAK_ABOVE = 6f, SOAK_CUT_PER_LEVEL = 0.25f, SOAK_CUT_MAX = 0.75f;
 
-    /** Volts per joule of muzzle energy per level that a shot puts into a charged round in the pack (a hand-sized source). [OPEN] until played */
-    private static final float CYCLE_VOLTS_PER_JOULE = 0.002f;
     /** Muzzle energy below and above which a shot reads as glancing or heavy on the gauge. [OPEN] until played */
     private static final float SHOT_GLANCING = 200f, SHOT_HEAVY = 1500f;
 
@@ -54,31 +52,14 @@ public final class PiezoKinds {
     }
 
     /**
-     * A shot of a gun with a piezo bolt or slide: {@code cycle_charge} puts charge into the first charged jar round
-     * in the shooter's pack, to the same low cap a hand pulse reaches; {@code cycle_gauge} reports the shot's muzzle
-     * energy in words, and in a figure when the shooter carries an instrument for it.
+     * A shot of a gun with a piezo bolt or slide: {@code cycle_gauge} reports the shot's muzzle energy in words, and in
+     * a figure when the shooter carries an instrument for it.
      */
     public static void fired(Player shooter, ItemStack gun, io.github.soundgoodizerfan.feedback.weapon.GunFigures f) {
-        int charge = 0, gauge = 0;
-        for (MaterialPerks.Attunement a : MaterialPerks.attunements(gun)) {
-            if (a.kind().equals("cycle_charge"))
-                charge += a.level();
-            else if (a.kind().equals("cycle_gauge"))
+        int gauge = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(gun))
+            if (a.kind().equals("cycle_gauge"))
                 gauge += a.level();
-        }
-        if (charge > 0) {
-            var inv = shooter.getInventory();
-            for (int i = 0; i < inv.getContainerSize(); i++) {
-                var round = inv.getItem(i).get(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get());
-                if (round == null || !round.charged())
-                    continue;
-                long now = shooter.level().getGameTime();
-                var at = round.at(now);
-                float volts = Math.min(JAR_CAP_VOLTS, at.volts() + f.muzzleEnergy() * charge * CYCLE_VOLTS_PER_JOULE);
-                inv.getItem(i).set(io.github.soundgoodizerfan.feedback.registry.FWeapons.CARTRIDGE.get(), at.withVolts(volts, now));
-                break;
-            }
-        }
         if (gauge > 0) {
             float e = f.muzzleEnergy();
             Component word = Component.translatable(e < SHOT_GLANCING ? "feedback.piezo.glancing"

@@ -13,7 +13,7 @@
       ],
       "litres": 0.5,
       "layer": 0,
-      "dims": {
+      "axes": {
         "anode": {
           "min": 20,
           "max": 100,
@@ -24,10 +24,7 @@
       },
       "part": {
         "item": "feedback:cell_anode",
-        "shape": [
-          "SSS",
-          "SSS"
-        ],
+        "cells": 6,
         "stock": [
           "ingot"
         ],
@@ -35,10 +32,7 @@
         "variants": [
           {
             "name": "anode_rod",
-            "shape": [
-              "SSS",
-              "SSS"
-            ],
+            "cells": 6,
             "params": {
               "amps": 1.0,
               "life": 1.0
@@ -46,10 +40,7 @@
           },
           {
             "name": "anode_plate",
-            "shape": [
-              "SS",
-              "SS"
-            ],
+            "cells": 4,
             "params": {
               "amps": 1.6,
               "life": 0.7
@@ -57,11 +48,7 @@
           },
           {
             "name": "anode_block",
-            "shape": [
-              "SSS",
-              "SSS",
-              "SS"
-            ],
+            "cells": 8,
             "params": {
               "amps": 0.8,
               "life": 1.9

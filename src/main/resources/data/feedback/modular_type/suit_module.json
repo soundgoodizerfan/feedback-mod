@@ -14,9 +14,7 @@
       "layer": 0,
       "part": {
         "item": "feedback:module_casing",
-        "shape": [
-          "PP"
-        ],
+        "cells": 2,
         "stock": [
           "plate"
         ]
@@ -31,9 +29,7 @@
       "layer": 1,
       "part": {
         "item": "feedback:module_wiring",
-        "shape": [
-          "W"
-        ],
+        "cells": 1,
         "stock": [
           "wire"
         ],
@@ -44,16 +40,11 @@
           },
           {
             "name": "fine",
-            "shape": [
-              "WW"
-            ]
+            "cells": 2
           },
           {
             "name": "dense",
-            "shape": [
-              "WW",
-              "WW"
-            ]
+            "cells": 4
           }
         ]
       }
@@ -67,9 +58,7 @@
       "layer": 2,
       "part": {
         "item": "feedback:module_optic",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "plate",
@@ -78,9 +67,7 @@
         "variants": [
           {
             "name": "rangefinder",
-            "shape": [
-              "PP"
-            ],
+            "cells": 2,
             "params": {
               "module": 2.0,
               "optic": 0.6
@@ -88,9 +75,7 @@
           },
           {
             "name": "long_lens",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 5.0,
               "optic": 0.6
@@ -98,9 +83,7 @@
           },
           {
             "name": "glare_filter",
-            "shape": [
-              "PP"
-            ],
+            "cells": 2,
             "params": {
               "module": 4.0,
               "optic": 0.6
@@ -108,10 +91,7 @@
           },
           {
             "name": "scan_ping",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 34.0,
               "optic": 0.5,
@@ -130,9 +110,7 @@
       "layer": 3,
       "part": {
         "item": "feedback:module_filter",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "plate",
@@ -141,9 +119,7 @@
         "variants": [
           {
             "name": "rebreather",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 1.0,
               "competence": 4.0
@@ -151,9 +127,7 @@
           },
           {
             "name": "respirator",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 3.0,
               "competence": 4.0
@@ -171,9 +145,7 @@
       "layer": 4,
       "part": {
         "item": "feedback:module_thermal",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "plate",
@@ -182,10 +154,7 @@
         "variants": [
           {
             "name": "heat_sink",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 8.0,
               "thermal": 0.08
@@ -193,10 +162,7 @@
           },
           {
             "name": "coolant_loop",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 9.0,
               "thermal": 0.08,
@@ -205,10 +171,7 @@
           },
           {
             "name": "thermal_lining",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 15.0,
               "thermal": 0.08
@@ -216,10 +179,7 @@
           },
           {
             "name": "heat_shield",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 26.0,
               "thermal": 0.08
@@ -227,10 +187,7 @@
           },
           {
             "name": "fire_curtain",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 17.0,
               "thermal": 0.08
@@ -238,10 +195,7 @@
           },
           {
             "name": "cloak_field",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 31.0,
               "thermal": 0.08,
@@ -260,9 +214,7 @@
       "layer": 5,
       "part": {
         "item": "feedback:module_plating",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "plate",
@@ -271,10 +223,7 @@
         "variants": [
           {
             "name": "reactive_plating",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 12.0,
               "competence": 4.0
@@ -282,10 +231,7 @@
           },
           {
             "name": "blast_shell",
-            "shape": [
-              "PPP",
-              "PPP"
-            ],
+            "cells": 6,
             "params": {
               "module": 13.0,
               "competence": 4.0
@@ -293,10 +239,7 @@
           },
           {
             "name": "crash_liner",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 6.0,
               "competence": 4.0
@@ -304,10 +247,7 @@
           },
           {
             "name": "thorn_array",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 14.0,
               "electric": 0.6
@@ -315,10 +255,7 @@
           },
           {
             "name": "mag_anchor",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 25.0,
               "competence": 4.0
@@ -326,9 +263,7 @@
           },
           {
             "name": "stabiliser",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 24.0,
               "competence": 4.0
@@ -336,10 +271,7 @@
           },
           {
             "name": "load_frame",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 23.0,
               "competence": 4.0
@@ -357,9 +289,7 @@
       "layer": 6,
       "part": {
         "item": "feedback:module_actuator",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "plate",
@@ -368,10 +298,7 @@
         "variants": [
           {
             "name": "strider_pistons",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 18.0,
               "electric": 0.6,
@@ -381,9 +308,7 @@
           },
           {
             "name": "step_assist",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 19.0,
               "competence": 4.0,
@@ -393,9 +318,7 @@
           },
           {
             "name": "jump_coil",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 27.0,
               "electric": 0.6,
@@ -405,10 +328,7 @@
           },
           {
             "name": "landing_gear",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 28.0,
               "competence": 4.0,
@@ -417,10 +337,7 @@
           },
           {
             "name": "shock_absorbers",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 21.0,
               "competence": 4.0,
@@ -429,10 +346,7 @@
           },
           {
             "name": "stomp_actuator",
-            "shape": [
-              "PPP",
-              "PPP"
-            ],
+            "cells": 6,
             "params": {
               "module": 30.0,
               "competence": 4.0,
@@ -442,9 +356,7 @@
           },
           {
             "name": "grip_pads",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 22.0,
               "competence": 4.0,
@@ -453,9 +365,7 @@
           },
           {
             "name": "swim_fins",
-            "shape": [
-              "PPP"
-            ],
+            "cells": 3,
             "params": {
               "module": 20.0,
               "competence": 4.0,
@@ -464,10 +374,7 @@
           },
           {
             "name": "shock_ram",
-            "shape": [
-              "PPP",
-              "PPP"
-            ],
+            "cells": 6,
             "params": {
               "module": 33.0,
               "competence": 4.0,
@@ -477,7 +384,7 @@
           }
         ]
       },
-      "dims": {
+      "axes": {
         "bore": {
           "min": 0,
           "max": 40,
@@ -496,9 +403,7 @@
       "layer": 7,
       "part": {
         "item": "feedback:module_thruster",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "plate",
@@ -507,10 +412,7 @@
         "variants": [
           {
             "name": "rocket_spur",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 29.0,
               "electric": 0.6,
@@ -519,11 +421,7 @@
           },
           {
             "name": "jet_pack",
-            "shape": [
-              "PPP",
-              "PPP",
-              "PP"
-            ],
+            "cells": 8,
             "params": {
               "module": 32.0,
               "electric": 0.6,
@@ -534,7 +432,7 @@
           }
         ]
       },
-      "dims": {
+      "axes": {
         "bore": {
           "min": 0,
           "max": 40,
@@ -553,9 +451,7 @@
       "layer": 8,
       "part": {
         "item": "feedback:module_coil",
-        "shape": [
-          "P"
-        ],
+        "cells": 1,
         "stock": [
           "ingot",
           "plate",
@@ -564,10 +460,7 @@
         "variants": [
           {
             "name": "efficiency_bus",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 10.0,
               "electric": 0.6,
@@ -576,10 +469,7 @@
           },
           {
             "name": "autodoc",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 11.0,
               "electric": 0.6,
@@ -589,9 +479,7 @@
           },
           {
             "name": "reflex_link",
-            "shape": [
-              "PP"
-            ],
+            "cells": 2,
             "params": {
               "module": 7.0,
               "electric": 0.6,
@@ -600,10 +488,7 @@
           },
           {
             "name": "magnet_pickup",
-            "shape": [
-              "PP",
-              "PP"
-            ],
+            "cells": 4,
             "params": {
               "module": 16.0,
               "electric": 0.6,
@@ -612,10 +497,7 @@
           },
           {
             "name": "emp_coil",
-            "shape": [
-              "PPP",
-              "PP"
-            ],
+            "cells": 5,
             "params": {
               "module": 35.0,
               "electric": 0.6,
@@ -659,5 +541,5 @@
   ],
   "defaults": {},
   "blueprint": true,
-  "school": "robotics"
+  "school": "robotics:1"
 }

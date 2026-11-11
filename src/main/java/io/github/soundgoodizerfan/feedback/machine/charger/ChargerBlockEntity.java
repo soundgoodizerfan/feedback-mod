@@ -17,25 +17,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A clip on a wire that charges what carries our power: jar rounds ({@code docs/specs/feedback_guns_spec.md}, the coil's electric
- * drive; mechanics 6.6) and batteries as items (a suit's cell). It is a sink: while a round in it holds less than the line, it asks
- * for {@link FTuning#GUN_CHARGER_AMPS}, and what it is delivered raises the stack's volts by amps
- * over the stack's capacitance -- a stack of sixteen fills sixteen times slower than one -- up to
- * the voltage it sees and never past it.
+ * A clip on a wire that charges a battery as an item (a suit's cell). It is a sink: while the battery in it holds less
+ * than the line, it asks for its own charge current, and what it is delivered raises its charge up to the voltage it sees
+ * and never past it.
  *
  * <h2>Why it has no rating and never wears</h2>
- * It is a terminal, not a machine doing work. A line above a coil's nominal is not refused and
- * does nothing to the clip: it charges the rounds harder, and the consequence arrives where the
- * work is done, as field pressure against the winding's rating when the round is fired. That is
- * the overpressure rule a chamber already has, so a hand-cranked fine dynamo is a hot load and
- * the gun's spec sheet is what says how hot is too hot.
- *
- * <p>It does not discharge into the line: a round holding more than the line simply stops
- * charging. Rounds keep leaking while they sit here, as anywhere.
- *
- * <p>A battery stack charges as a placed battery does (same figures, {@link BatteryStack}): it asks for its own charge current while
- * the line is above its terminal, loses the charge efficiency as heat it does not model here, and wears if the line is over its case's
- * band. Only a single battery goes in (a stack of them is refused).
+ * It is a terminal, not a machine doing work. A battery stack charges as a placed battery does (same figures,
+ * {@link BatteryStack}): it asks for its own charge current while the line is above its terminal, loses the charge
+ * efficiency as heat it does not model here, and wears if the line is over its case's band. Only a single battery goes in
+ * (a stack of them is refused).
  */
 public class ChargerBlockEntity extends ElectricNode {
 
@@ -52,20 +42,12 @@ public class ChargerBlockEntity extends ElectricNode {
         return Role.SINK;
     }
 
-    /** The jar round held, as it is now; empty when it holds none. */
-    private java.util.Optional<Cartridge> round() {
-        Cartridge c = rounds.get(FWeapons.CARTRIDGE.get());
-        return c == null || !c.charged() || level == null ? java.util.Optional.empty()
-                : java.util.Optional.of(c.at(level.getGameTime()));
-    }
-
     @Override
     public float wantedAmps() {
         CompoundTag battery = BatteryStack.state(rounds);
         if (battery != null)
             return BatteryStack.wantedAmps(battery, getVolts());
-        return round().filter(c -> getVolts() > c.volts() + FTuning.LEYDEN_JAR_SWITCH_VOLTS).isPresent()
-                ? FTuning.GUN_CHARGER_AMPS : 0;
+        return 0;
     }
 
     public void tickServer() {
@@ -79,22 +61,16 @@ public class ChargerBlockEntity extends ElectricNode {
             setChanged();
             return;
         }
-        round().ifPresent(c -> {
-            float volts = Math.min(getVolts(), c.volts() + getAmps() / (FTuning.GUN_ROUND_CAPACITANCE * rounds.getCount()));
-            rounds.set(FWeapons.CARTRIDGE.get(), c.withVolts(Math.max(c.volts(), volts), level.getGameTime()));
-            setChanged();
-        });
     }
 
     public ItemStack getRounds() {
         return rounds;
     }
 
-    /** Takes jar rounds, the whole stack, or one battery; anything else is refused. Returns what is left in hand. */
+    /** Takes one battery; anything else is refused. Returns what is left in hand. */
     public ItemStack insert(ItemStack stack) {
-        Cartridge c = stack.get(FWeapons.CARTRIDGE.get());
         boolean battery = BatteryStack.is(stack) && stack.getCount() == 1;
-        if (!rounds.isEmpty() || !battery && (c == null || !c.charged()))
+        if (!rounds.isEmpty() || !battery)
             return stack;
         rounds = stack.copy();
         setChanged();

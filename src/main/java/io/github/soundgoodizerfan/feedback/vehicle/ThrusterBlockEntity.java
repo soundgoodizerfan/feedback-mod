@@ -11,8 +11,11 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.modular.FigureStore;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.FuelBlend;
 
@@ -46,6 +49,25 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
     private float owed;
     /** Share of a reference fuel's thrust this tick; read by the physics step, written by the server tick. */
     private volatile float power;
+    /** The nozzle it was built with; a thruster placed with no figures runs on the fixed constants. */
+    private final FigureStore figures = new FigureStore();
+
+    @Override
+    protected void applyImplicitComponents(DataComponentInput input) {
+        super.applyImplicitComponents(input);
+        figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+    }
+
+    @Override
+    protected void collectImplicitComponents(net.minecraft.core.component.DataComponentMap.Builder components) {
+        super.collectImplicitComponents(components);
+        figures.collect(components);
+    }
+
+    /** Force at the block for a reference fuel: the constant, times the nozzle's {@code Force}. */
+    private float force() {
+        return FTuning.THRUSTER_FORCE * figures.get("Force", 1f);
+    }
 
     public ThrusterBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.THRUSTER_ENTITY.get(), pos, state);
@@ -70,7 +92,7 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
      * switch is on, since the gauge is read before a flight.
      */
     public float potentialThrust() {
-        return fuel.isEmpty() ? 0f : FTuning.THRUSTER_FORCE * fuel.flame() / FTuning.ENGINE_REFERENCE_FLAME_TU;
+        return fuel.isEmpty() ? 0f : force() * fuel.flame() / FTuning.ENGINE_REFERENCE_FLAME_TU;
     }
 
     public float power() {
@@ -97,7 +119,7 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
         float oxidised = hasAir(server) ? 1f : Math.min(1f, fuel.oxygen());
         float factor = flame / FTuning.ENGINE_REFERENCE_FLAME_TU;
         power = factor * oxidised;
-        owed += FTuning.THRUSTER_FUEL_MB_PER_TICK / factor;
+        owed += figures.get("Burn", FTuning.THRUSTER_FUEL_MB_PER_TICK) / factor;
         int drawn = (int) owed;
         owed -= drawn;
         if (drawn > 0)
@@ -119,7 +141,7 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
         Direction thrust = getBlockState().getValue(ThrusterBlock.FACING);
         Vector3d at = new Vector3d(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
         Vector3d impulse = new Vector3d(thrust.getStepX(), thrust.getStepY(), thrust.getStepZ())
-                .mul(FTuning.THRUSTER_FORCE * p * timeStep);
+                .mul(force() * p * timeStep);
         ForceTotal one = new ForceTotal();
         one.applyImpulseAtPoint(subLevel.getMassTracker(), at, impulse);
 
@@ -133,6 +155,7 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
         CompoundTag fuelTag = new CompoundTag();
         fuel.save(fuelTag);
         tag.put("Fuel", fuelTag);
+        figures.save(tag, registries);
     }
 
     @Override
@@ -141,5 +164,6 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
         running = tag.getBoolean("Running");
         if (tag.contains("Fuel"))
             fuel.load(tag.getCompound("Fuel"));
+        figures.load(tag, registries);
     }
 }

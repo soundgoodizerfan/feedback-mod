@@ -15,8 +15,6 @@ A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shap
 | **Shovel head** | `X_X / _X_` |
 | **Hoe head** | `XX` |
 | **Sword blade** | `X / X` |
-| **Sword blade, claymore** | `XX / X_ / X_` | four ingots: a long, heavy two-hander that hits hard |
-| **Sword blade, dagger** | `X_ / _X` | two ingots on a diagonal: short and quick, hits light |
 | **Pickaxe head, heavy** | `XXX / _X_` | four ingots: a heavier head that mines a three-by-three |
 | **Axe head, bearded** | `XXX / X__` | four ingots: a heavier head that hits a little harder |
 | **Cleaver head** | `XX / XX` |
@@ -51,7 +49,7 @@ Put one part in the center of a bench (the [Smithing Table](Smithing_Table.md), 
 | **Shield** | six faces, a rim part (a grip makes it five faces) |
 | **Shears** | two blades (a pivot is optional) |
 | **Twin-headed tool** | two heads of any kind (pick, axe, shovel, hoe), each its own material, one handle, binding: digs what both heads dig. A pick and an axe make a **mattock**, two axes a double-bit axe. A second head slows the swing and weakens the blow, because the handle carries both |
-| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one |
+| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one. Drawing a cleaver, maul or spear at the Blueprint Table takes Weapons Treatise I ([Treatise](Treatise.md)) |
 | **Pike** | head, three handles, binding: reaches further |
 | **Maul** | head, two handles, binding: splits wood and staggers what it hits |
 | **Sickle** | head, grip, binding: cutting a crop or a leaf takes its neighbors too |
@@ -128,21 +126,54 @@ Some variants are not laid out in cells but **forged**, at the [Anvil](Anvil.md#
 
 The stock cools as you play. Notes struck while it is too cold (or still too hot) are dead and count against you. A sloppy run never ruins the part, but it leaves **flaws**: each one takes a share of the edge's toughness and durability (a ruined part starts at half), and the part reads "rough", "flawed" or "ruined" on its tooltip. A clean run leaves none, though even a good player is sometimes a hair off.
 
-**What you can forge:** a sword blade becomes a **rapier** (very long and thin, much the quickest swing, a point that hits light), a **cutlass** (light and quick, hits fairly), a **katana** (thin and long, hits well) or a **machete** (broad, slow and the hardest hitter). An axe head becomes a **hatchet** or a **felling axe**. A pickaxe head becomes a **prospector's** pick (long and sharp, chips easily) or a **miner's** pick (thick and tough). Each has its own rhythm, and the item is named for it ("Iron Rapier"). All of them start from the same ingots as the standard head. A thin blade is ground down, so a rapier is lighter than a machete and swings far quicker.
+**What you can forge:** a sword blade is forged **curved**, **tapered**, **serrated**, **fullered** or **leaf**-shaped; the plain blade is straight. A blade, a head or a limb also has **axes**: length, width and thickness of a blade, head size and edge length of a head, face size of a shield, limb length of a bow. Aim them at the bench before you make the part (see [Armor](Armor.md#axes-aiming-and-names) for how aiming works). More length reaches further, a wider blade hits harder, a thicker one resists chipping and a thinner one bites, and all of it is more stock and more weight. The range an axis sits in is a **band**, and a band can carry a signature: a **short** blade is a stabber (strike from behind), a **long** one a chopper (a heavy overhead blow), a **small** axe head is thrown, a **large** one fells trees, a large pickaxe head quarries, a large maul slams.
+
+### Names
+
+A finished tool or weapon is named by rule from its blade, head, face or limb: its shape and the bands its axes sit in. A band is a range, written here as "up to" its top figure; the last band of an axis is "over" the one before. A name gives no bonus: the perks come only from the parts, the bands and the shapes. A build that fits no row is named by its size, shape and material: size words for the bands that are not normal, then the shape and material, then the type, as in "Wide Serrated Iron Sword". A name never repeats a word its rule already needs: a Dagger is not a "Short Dagger". A hard tip or stud set into the part goes in front ("Iron-tipped Steel Sword").
+
+**Swords.** The first row that fits is the name.
+
+| Name | What gives it |
+| --- | --- |
+| **Rapier** | a tapered blade, long (over 105 cm) and thin (up to 3.5 mm) |
+| **Katana** | a curved blade, normal or long (over 65 cm) and narrow (up to 3 cm) |
+| **Cutlass** | a curved blade, short or normal (up to 105 cm) |
+| **Machete** | a serrated or leaf blade, wide (over 5.5 cm) |
+| **Claymore** | any blade, long (over 105 cm) and wide (over 5.5 cm) |
+| **Dagger** | any blade, short (up to 65 cm) |
+
+**Other tools and weapons.** One rule each.
+
+| Type | Name | What gives it |
+| --- | --- | --- |
+| Axe | **Hatchet** | a small head (up to 10.5 cm) |
+| | **Felling Axe** | a large head (over 17.5 cm) |
+| Pickaxe | **Heavy Pick** | a large head (over 17.5 cm) |
+| Maul | **Sledgehammer** | a large head (over 17.5 cm) |
+| Spear | **Javelin** | a small head (up to 9 cm) |
+| Sickle | **Scythe** | a long edge (over 31.25 cm) |
+| Shield | **Tower Shield** | a large face (over 75 cm) of the rectangular shape |
+| | **Kite Shield** | the kite shape, at any face size |
+| | **Buckler** | a small face (up to 42 cm) of any other shape |
+| Bow | **Shortbow** | short limbs (up to 85 cm) |
+| | **Longbow** | long limbs (over 135 cm) |
+
+A large face of the round or heater shape is not a tower shield; it is named by its size and shape. What the shield names do in a fight is under [Shields](Combat.md#shields).
 
 ### How each one fights
 
 - **Pike.** Left click is a jab: long reach, but it cannot hit anything closer than 2 blocks. Hold right click to lower it into a charge: you keep sprinting while it is held out, and it tires and lowers as the charge runs out. While you and a target close at 4.6 blocks a second or faster, each thing in front of you at 2 to 4.5 blocks is struck once for damage that grows with your closing speed, the pike's strike and the weight of its head. From 5.1 blocks a second it knocks them back, and early in the charge it pulls riders off their mounts. The charge tires in three stages (full, then no dismount, then damage only), and a weakly bound pike tires sooner. A fast hit wears the pike more. A pike cannot crit, and Strength and Weakness do not change a charge.
-- **Rapier.** Keep hitting the same target without pause and each hit hurts more; getting hit or switching target resets it.
-- **Katana.** Wait before the first cut to land a heavy bleeding strike.
-- **Machete.** Great against the unarmored and for clearing brush, poor against armor.
-- **Claymore.** Wait for a full swing and it hits everything around your target; mash it and it is weak.
-- **Dagger.** Strike from behind or at unaware mobs, especially while sneaking; face to face it is worse than a plain blade.
-- **Cutlass.** A kill readies your next swing and speeds you up, and fighting a crowd hits harder.
+- **Tapered blade.** Keep hitting the same target without pause and each hit hurts more; getting hit or switching target resets it.
+- **Curved blade.** Wait before the first cut to land a heavy bleeding strike.
+- **Serrated blade.** Great against the unarmored and for clearing brush, poor against armor.
+- **Long blade.** Wait for a full swing and it hits everything around your target; mash it and it is weak.
+- **Short blade.** Strike from behind or at unaware mobs, especially while sneaking; face to face it is worse than a plain blade.
+- **Leaf blade.** A kill readies your next swing and speeds you up, and fighting a crowd hits harder.
 - **Prospector's pick.** Right click to ping: ore within 12 blocks glows through the stone for 6 seconds. It is slow to recharge (10 seconds) and wears the pick, so ping and then dig.
 - **Miner's pick.** Mine one ore and the connected ore of the same kind comes with it, up to 8 more, at a small extra wear each. It will not spend the pick's last point. Sneak to mine a single block.
-- **Felling axe.** Break a log and the whole connected tree comes down, up to 24 logs. Each log costs extra durability, and sneaking breaks one log only.
-- **Hatchet.** Hold right click to wind up, release to throw. It hits harder the farther it flies (up to 2.5 times), costs 2 durability per throw and lands as an item to pick up.
+- **Large axe head (a felling axe).** Break a log and the whole connected tree comes down, up to 24 logs. Each log costs extra durability, and sneaking breaks one log only.
+- **Small axe head (a hatchet).** Hold right click to wind up, release to throw. It hits harder the farther it flies (up to 2.5 times), costs 2 durability per throw and lands as an item to pick up.
 - **Bearded axe.** Hitting a raised shield disables it for 8 seconds and pulls the target toward you. Against a target with no shield it deals 10% less damage.
 
 ### Fighting with them
@@ -151,7 +182,7 @@ Melee weapons hit everything in their swept volume, can [parry](Combat.md#parry)
 
 ### Reading what sets a tool apart
 
-Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Quarry, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as rapier or claymore. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The bench shows a part's trait when you hover it in the list, before you make it.
+Every modular tool names what sets it apart on one line under its parts. They come from three sources. Words the hand can feel come from the figures: head-heavy, light in the hand, heavy, light, keen, blunt, brittle, soft, loose-jointed. The trait comes from the part's shape or the tool's type: Flurry, Opening cut, Hack, Overhead, Quarry, Backstab, Flourish, Timber, Throw, Hook, Sounding, Vein, Charge. The shape is the variant the main part was made in, such as tapered or curved. **Hold Shift to read each in full:** a word says which figure decides it, where the line is and which part it comes from; a trait says what it does and what it costs; a shape says how it differs from the standard part. The bench shows a part's trait when you hover it in the list, before you make it.
 
 Messages like the Flurry count, a forged part's quality and a Blueprint Table's print status appear as small cards at the bottom right, above your ammo counter if you hold a gun. They fade after a few seconds, and at most three show at once.
 
@@ -180,3 +211,21 @@ A shield is drawn as a vanilla-style shield sized by its face: a buckler is smal
 
 **Shields get hot.** Every blow a shield stops leaves heat in its face, more for a light face than a heavy one, and the heat stacks until the shield has rested (it cools by itself, even in a chest). Fire and lava warm the face towards their own temperature and no further. A hot face is felt: a shield too hot to hold hurts the hand, unless its grip or its face is wood, leather or another thing that does not carry heat, or you wear gloves. Near the temperature its material softens at, the shield holds less of each blow, and past it every blow wears it twice as hard. It never breaks all at once. A metal face takes heat slowly and softens late; a wooden one warms fast but burns its holder less. Shift on the shield's tooltip says where the line is.
 
+## Fittings
+
+Beyond the parts of the pattern, a finished tool takes optional **fittings**, one stack at a time at a bench (the way a tip or lining is fitted):
+
+| Fitting | On | Does |
+| --- | --- | --- |
+| binding | sword, hand hammer, hand knife, bow, crossbow, and the tools that already had one | Lashing where head meets handle: takes some of the shock. |
+| pommel | axe, maul, spear, pickaxe | A knob, ball or counterweight at the butt that moves the weight toward your hand. |
+| tip | maul, hand hammer, and the tools that already had one | A hard piece set in the head. |
+| spring | maul, spear, sword | Wire or rod of metal. Right click cocks it, the next blow lets it go for extra damage; a sword's release also lunges you forward; on a spear it lets the head be thrown from the spring. Stored energy is its volume times its stiffness; a spring worked past what its head can take takes a permanent set and finally snaps. |
+| lanyard | sword, axe, maul, spear | A chain to the hand. Thrown, it reels what it hits and pulls the weapon weakly back at a cost in throw speed; held, a disarming shot cannot strip it. |
+| edge guard | axe, spear, pickaxe, shovel | A plate strip down the haft that stiffens it, at a cost in mass. |
+| magazine | crossbow | A box of plate or plank: its volume sets how many bolts a load takes, scattered, slower to load. |
+| rest | bow, crossbow | A padded rest: steadier aim. |
+| stabiliser | bow, crossbow | A counter-mass slug: steadier, slower to raise. |
+| laminate | bow | Horn on the limbs: more energy for the length, weaker in rain or water. |
+| boss | shield | A plate dome: a turned blow bashes and shoves the attacker, at a cost in mass and a weak spot. |
+| strap | shield | String or wire carrying the weight: the face holds a little more. |

@@ -42,7 +42,7 @@ final class PartPresenter {
             return;
         }
         var spec = io.github.soundgoodizerfan.feedback.weapon.GunSpec.of(gun);
-        var f = spec.flatMap(g -> g.bake(materials, cartridge.at(level.getGameTime())));
+        var f = spec.flatMap(g -> g.bake(materials, cartridge));
         if (f.isEmpty()) {
             out.add(Component.translatable("screen.feedback.gun_table.no_fit").withStyle(net.minecraft.ChatFormatting.RED));
             return;

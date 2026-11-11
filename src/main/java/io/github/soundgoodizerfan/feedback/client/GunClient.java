@@ -19,11 +19,11 @@ import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
-import io.github.soundgoodizerfan.feedback.weapon.GunSteam;
 import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
+import io.github.soundgoodizerfan.feedback.weapon.GunMechanism;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import io.github.soundgoodizerfan.feedback.weapon.GunSound;
 import net.minecraft.client.KeyMapping;
@@ -161,9 +161,9 @@ public final class GunClient {
     public static void onFov(ComputeFovModifierEvent event) {
         var held = event.getPlayer().getMainHandItem();
         // A scope zooms inside its lens (GunLens), not the whole screen.
-        if (aim > 0 && held.getItem() instanceof GunItem && !io.github.soundgoodizerfan.feedback.client.gun.GunLens.hasScope(held)
-                && GunSpec.of(held).orElse(null) != null) {
-            float zoom = GunSpec.of(held).orElse(null).sight().fov();
+        if (aim > 0 && held.getItem() instanceof GunItem gun && !io.github.soundgoodizerfan.feedback.client.gun.GunLens.hasScope(held)
+                && gun.mechanism().built(held)) {
+            float zoom = gun.mechanism().sightZoom(held);
             event.setNewFovModifier(event.getNewFovModifier() * Mth.lerp(aim, 1f, zoom));
         }
     }
@@ -172,11 +172,11 @@ public final class GunClient {
     @SubscribeEvent
     public static void onTurn(net.neoforged.neoforge.client.event.CalculatePlayerTurnEvent event) {
         var mc = Minecraft.getInstance();
-        if (aim <= 0 || mc.player == null || !(mc.player.getMainHandItem().getItem() instanceof GunItem))
+        if (aim <= 0 || mc.player == null || !(mc.player.getMainHandItem().getItem() instanceof GunItem gun))
             return;
-        var spec = GunSpec.of(mc.player.getMainHandItem()).orElse(null);
-        if (spec != null)
-            event.setMouseSensitivity(event.getMouseSensitivity() * Mth.lerp(aim, 1f, spec.sight().fov()));
+        var held = mc.player.getMainHandItem();
+        if (gun.mechanism().built(held))
+            event.setMouseSensitivity(event.getMouseSensitivity() * Mth.lerp(aim, 1f, gun.mechanism().sightZoom(held)));
     }
 
     @SubscribeEvent
@@ -192,13 +192,16 @@ public final class GunClient {
         var held = player.getMainHandItem();
         var offItem = player.getOffhandItem();
         boolean holding = held.getItem() instanceof GunItem;
+        // The firearm's design (reload, fan, sight read it); an electric gun has none, and is built if its own mechanism says so.
         GunSpec design = holding ? GunSpec.of(held).orElse(null) : null;
         GunSpec offDesign = offItem.getItem() instanceof GunItem ? GunSpec.of(offItem).orElse(null) : null;
-        boolean offFires = GunItem.offHandFires(player) && offDesign != null;
+        boolean built = holding && ((GunItem) held.getItem()).mechanism().built(held);
+        boolean offBuilt = offItem.getItem() instanceof GunItem og && og.mechanism().built(offItem);
+        boolean offFires = GunItem.offHandFires(player) && offBuilt;
         boolean ready = mc.screen == null && mc.mouseHandler.isMouseGrabbed() && !player.isSpectator();
         // Barehanded mode: the fire buttons swing the guns and nothing fires; leaving it makes them guns again.
         boolean stance = ready && BareMode.clientOn;
-        boolean canAct = holding && design != null && ready && !stance;
+        boolean canAct = built && ready && !stance;
         boolean offCanAct = offFires && ready && !stance;
         // A nose-heavy gun sinks the view while it is held: a recoil the hand fights without a shot being fired.
         if (canAct && !player.isSpectator() && !player.isPassenger()) {
@@ -209,19 +212,19 @@ public final class GunClient {
             }
         }
         if (stance) {
-            if (holding && design != null && mc.options.keyAttack.isDown())
+            if (built && mc.options.keyAttack.isDown())
                 mainSwingMs = bludgeon(player, held, false, mainSwingMs, now);
             if (offFires && mc.options.keyUse.isDown())
                 offSwingMs = bludgeon(player, offItem, true, offSwingMs, now);
         }
         // What the next round does in each gun: the client predicts from the same record the server fires.
-        GunFigures figures = figuresOf(mc, player, held, design);
-        GunFigures offFigures = offFires ? figuresOf(mc, player, offItem, offDesign) : null;
+        GunFigures figures = built ? figuresOf(mc, player, held, 0) : null;
+        GunFigures offFigures = offFires ? figuresOf(mc, player, offItem, 1) : null;
 
         // Aiming eases toward the use key at the sight's own pace, and back out faster. With a pistol
         // on the use key in the off hand, the key is that pistol's and nothing is aimed.
         boolean wantsAim = canAct && mc.options.keyUse.isDown() && !reloading() && !offFires;
-        float step = design == null ? 1f : dt / (float) design.sight().raiseMs();
+        float step = !built ? 1f : dt / (float) Math.max(1, ((GunItem) held.getItem()).mechanism().raiseMs(held));
         aim = Mth.clamp(aim + (wantsAim ? step : -step * 1.5f), 0f, 1f);
         if (wantsAim != aimSent) {
             aimSent = wantsAim;
@@ -231,7 +234,7 @@ public final class GunClient {
         // R is held, not tapped: the server reloads while it is down and stops when it comes up, both guns if there are two.
         while (RELOAD.consumeClick()) {
         }
-        boolean offGunHeld = offDesign != null;
+        boolean offGunHeld = offBuilt;
         boolean reloadDown = (canAct || (offGunHeld && ready)) && RELOAD.isDown();
         if (reloadDown && !reloadWasDown) {
             // The estimate is every held gun's own reload, back to back: the server runs the emptiest first.
@@ -298,43 +301,10 @@ public final class GunClient {
         return now + GunBludgeon.cooldownTicks(f) * 50L;
     }
 
-    /**
-     * The part of a gun's figures that only its design, its next round and its steam decide: the base bake, the load and the
-     * trait list. Redone only when one of those changes; heat, wear and haste are applied on top each frame.
-     */
-    private record Baked(GunSpec design, java.util.Map<net.minecraft.resources.ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials,
-                         io.github.soundgoodizerfan.feedback.weapon.Cartridge round, boolean lastRound, float steam, boolean hot,
-                         java.util.Optional<GunFigures> base, java.util.Optional<GunSpec.Load> load, List<ModularTraits.Active> traits) {
-    }
-
-    private static final Baked[] baked = new Baked[2];
-
-    /** What the next round does in {@code gun} as it is now, or null when it cannot fire. */
-    private static GunFigures figuresOf(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunSpec design) {
-        if (design == null || GunHazard.isSpent(gun))
-            return null;
-        var materials = ClientMaterials.on(mc.level);
-        var next = GunAmmo.next(gun).map(r -> r.at(mc.level.getGameTime()));
-        if (next.isEmpty())
-            return null;
-        int hand = gun == player.getOffhandItem() ? 1 : 0;
-        boolean last = GunAmmo.count(gun) == 1;
-        float steam = GunSteam.stored(gun);
-        boolean hot = GunSpec.slugHot(materials, next.get(), GunCondition.temperature(gun, mc.level).value());
-        Baked b = baked[hand];
-        if (b == null || b.design != design || b.materials != materials || b.lastRound != last || b.steam != steam || b.hot != hot || !b.round.equals(next.get())) {
-            var r = next.get();
-            b = new Baked(design, materials, r, last, steam, hot, design.firing(GunAmmo.count(gun)).bake(materials, r, steam, hot),
-                    design.loadOf(materials, r), ModularTraits.allOf(gun));
-            baked[hand] = b;
-        }
-        if (b.base.isPresent() && b.load.isPresent() && !GunCondition.quenched(gun, mc.level, b.load.get())) {
-            var aimed = ModularTraits.gunAimed(player, gun, GunCondition.effective(b.base.get(), gun, mc.level, b.load.get().ignitionTu()), b.traits);
-            if (GunItem.dualWielding(player))
-                aimed = aimed.oneHanded();
-            return aimed.withCycle(1f / io.github.soundgoodizerfan.feedback.core.Haste.rate(player));
-        }
-        return null;
+    /** What the next shot does in {@code gun} as it is now, or null when it cannot fire: the gun's own mechanism predicts it. */
+    private static GunFigures figuresOf(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, int hand) {
+        GunMechanism mechanism = GunItem.mechanismOf(gun);
+        return mechanism == null ? null : mechanism.predict(player, gun, mc.level, ClientMaterials.on(mc.level), hand);
     }
 
     /** One hand's trigger: its own fire rhythm, burst and button edge, so two guns do not share a cycle. */
@@ -410,11 +380,12 @@ public final class GunClient {
         io.github.soundgoodizerfan.feedback.client.gun.GunMotion.reloadStop();
         io.github.soundgoodizerfan.feedback.client.gun.GunMotion.shot(off, f.cycleMs(), f.kickDeg());
 
-        for (GunSound.Layer layer : GunSound.layers(f, player.getRandom()))
+        GunMechanism mechanism = GunItem.mechanismOf(gun);
+        for (GunSound.Layer layer : mechanism != null ? mechanism.sound(gun, f, player.getRandom()) : GunSound.layers(f, player.getRandom()))
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), layer.event(),
                     SoundSource.PLAYERS, layer.volume(), layer.pitch(), false);
         Vec3 muzzle = player.getEyePosition().add(player.getLookAngle().scale(0.6));
-        mc.level.addParticle(f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
+        mc.level.addParticle(mechanism != null ? mechanism.muzzleParticle(gun, f) : f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
         // A hot barrel smokes between shots as well as at them: the thing a hand and an eye can see.
         float heat = GunCondition.heatFraction(gun, mc.level, FTuning.GUN_PROPELLANT_IGNITION_TU);
         for (int i = 0; i < (int) (heat * 4); i++)
