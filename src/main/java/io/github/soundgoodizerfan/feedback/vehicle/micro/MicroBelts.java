@@ -34,7 +34,7 @@ public final class MicroBelts {
     public record End(BlockPos pos, int index) {
     }
 
-    private record Pending(GlobalPos cell, int index) {
+    public record Pending(GlobalPos cell, int index) {
     }
 
     private static final Map<UUID, Pending> PENDING = new HashMap<>();
@@ -42,10 +42,24 @@ public final class MicroBelts {
     private MicroBelts() {
     }
 
+    /** The pulley voxel this player selected, forgotten as it is read: a pulley block's click takes it to link to. */
+    public static Pending takePending(Player player) {
+        return PENDING.remove(player.getUUID());
+    }
+
     /** A Belt item used on pulley voxel {@code index} of {@code cell}: the first click selects, the second links. */
     public static void select(Player player, MicroCellBlockEntity cell, int index) {
         Level level = cell.getLevel();
         GlobalPos here = GlobalPos.of(level.dimension(), cell.getBlockPos());
+        // A pulley block selected first: this voxel is its other end.
+        GlobalPos block = io.github.soundgoodizerfan.feedback.machine.pulley.BeltLinkManager.get().takePending(player);
+        if (block != null) {
+            boolean ok = block.dimension() == level.dimension() && level.isLoaded(block.pos())
+                    && level.getBlockEntity(block.pos()) instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity pulley
+                    && pulley.linkMicro(cell, index);
+            player.displayClientMessage(Component.translatable(ok ? "feedback.belt.linked" : "feedback.belt.failed"), true);
+            return;
+        }
         Pending first = PENDING.remove(player.getUUID());
         if (first == null || first.cell().equals(here) && first.index() == index) {
             PENDING.put(player.getUUID(), new Pending(here, index));
@@ -80,15 +94,32 @@ public final class MicroBelts {
         MicroRotor own = cell.rotor(index);
         if (far == null || own == null || !level.isLoaded(far.pos()))
             return;
-        if (!(level.getBlockEntity(far.pos()) instanceof MicroCellBlockEntity other) || !pulley(other, far.index())) {
-            cell.unlinkBelt(index);
-            return;
+        float theirRpm, theirRadius;
+        RotationNetwork yours;
+        if (far.index() == -1) {
+            // The far end is a pulley block: full size, its radius whole against this voxel's quarter.
+            if (!(level.getBlockEntity(far.pos()) instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity block)
+                    || !index2(block, cell.getBlockPos(), index)) {
+                cell.unlinkBelt(index);
+                return;
+            }
+            yours = block.getNetwork();
+            theirRpm = block.getRpm().value();
+            theirRadius = block.getRadius();
+        } else {
+            if (!(level.getBlockEntity(far.pos()) instanceof MicroCellBlockEntity other) || !pulley(other, far.index())) {
+                cell.unlinkBelt(index);
+                return;
+            }
+            MicroRotor theirs = other.rotor(far.index());
+            yours = theirs == null ? null : theirs.getNetwork();
+            theirRpm = theirs == null ? 0 : theirs.getRpm().value();
+            theirRadius = radius(other, far.index());
         }
-        MicroRotor theirs = other.rotor(far.index());
-        RotationNetwork mine = own.getNetwork(), yours = theirs == null ? null : theirs.getNetwork();
+        RotationNetwork mine = own.getNetwork();
         if (mine == null || yours == null || mine == yours || own.getRatio() == 0 || mine.getCapacitySu().value() > 0)
             return;
-        float desired = theirs.getRpm().value() * radius(other, far.index()) / radius(cell, index) / own.getRatio();
+        float desired = theirRpm * theirRadius / radius(cell, index) / own.getRatio();
         float demand = mine.getLoadSu().value();
         float condition = cell.beltCondition(index);
         float capacity = FTuning.BELT_CAPACITY_SU.value() * condition;
@@ -101,7 +132,13 @@ public final class MicroBelts {
         yours.loadByBelt(new Su(carried));
     }
 
-    private static int radius(MicroCellBlockEntity cell, int index) {
-        return cell.get(index).getBlock() instanceof PulleyBlock p ? p.getRadius() : 1;
+    /** The block pulley still names this voxel as its partner. */
+    private static boolean index2(io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity block, BlockPos cell, int index) {
+        return cell.equals(block.getBeltPartner()) && block.getBeltVoxel() == index;
+    }
+
+    /** A pulley voxel's radius in block pulley units: a quarter of its block's. */
+    private static float radius(MicroCellBlockEntity cell, int index) {
+        return cell.get(index).getBlock() instanceof PulleyBlock p ? p.getRadius() / (float) MicroCellBlockEntity.N : 1;
     }
 }

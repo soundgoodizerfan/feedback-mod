@@ -118,10 +118,13 @@ public class LiftBlockEntity extends BlockEntity {
             // A controller among them: its cards keep naming the same parts at their new positions.
             if (moved instanceof io.github.soundgoodizerfan.feedback.control.controller.ControllerHost host)
                 host.core().retarget(moves);
-            if (moved instanceof MicroCellBlockEntity cell)
+            if (moved instanceof MicroCellBlockEntity cell) {
                 cell.moved(delta);
-            else if (moved instanceof RotaryBearingBlockEntity bearing)
+                cell.retarget(moves);
+            } else if (moved instanceof RotaryBearingBlockEntity bearing)
                 bearing.moved(delta);
+            else if (moved instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity pulley)
+                pulley.retarget(moves);
         }
         jointLoops = Superobject.loops(level, Superobject.of(level, made));
         body = made.getUniqueId();
@@ -220,9 +223,16 @@ public class LiftBlockEntity extends BlockEntity {
                 back.put(p.immutable(), plan.transform.apply(p));
         for (Lowering plan : plans) {
             SubLevelAssemblyHelper.moveBlocks(level, plan.transform, plan.blocks);
-            for (BlockPos p : plan.blocks)
-                if (level.getBlockEntity(plan.transform.apply(p)) instanceof io.github.soundgoodizerfan.feedback.control.controller.ControllerHost host)
+            for (BlockPos p : plan.blocks) {
+                var put = level.getBlockEntity(plan.transform.apply(p));
+                if (put instanceof io.github.soundgoodizerfan.feedback.control.controller.ControllerHost host)
                     host.core().retarget(back);
+                // Belts follow what went back with them, too.
+                if (put instanceof MicroCellBlockEntity cell)
+                    cell.retarget(back);
+                else if (put instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity pulley)
+                    pulley.retarget(back);
+            }
             plan.body.getPlot().destroyAllBlocks(); // the cells
             ServerSubLevelContainer.getContainer(level).removeSubLevel(plan.body, SubLevelRemovalReason.REMOVED);
         }

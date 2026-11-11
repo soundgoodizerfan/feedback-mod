@@ -236,7 +236,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         return belts.get(index);
     }
 
-    void setBelt(int index, MicroBelts.End far) {
+    public void setBelt(int index, MicroBelts.End far) {
         belts.put(index, far);
         beltWear[index] = 1;
         syncSpin();
@@ -252,12 +252,19 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     }
 
     /** Drops the belt at voxel {@code index} from both ends; the far end only if it is loaded. */
-    void unlinkBelt(int index) {
+    public void unlinkBelt(int index) {
         MicroBelts.End far = belts.remove(index);
         beltWear[index] = 0;
         if (far == null)
             return;
         syncSpin();
+        if (far.index() == -1) {
+            // The far end is a pulley block: it forgets this voxel.
+            if (level != null && level.isLoaded(far.pos()) && level.getBlockEntity(far.pos()) instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity block
+                    && worldPosition.equals(block.getBeltPartner()) && block.getBeltVoxel() == index)
+                block.unlinkBelt();
+            return;
+        }
         if (level != null && level.isLoaded(far.pos()) && level.getBlockEntity(far.pos()) instanceof MicroCellBlockEntity other) {
             MicroBelts.End back = other.belts.get(far.index());
             if (back != null && back.pos().equals(worldPosition) && back.index() == index) {
@@ -499,9 +506,33 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     public void moved(BlockPos delta) {
         for (Joint joint : bearings.values())
             joint.shift(delta);
-        // The partners moved with it (a belt links two pulleys of one body): their addresses follow.
-        for (var e : belts.int2ObjectEntrySet())
-            e.setValue(new MicroBelts.End(e.getValue().pos().offset(delta), e.getValue().index()));
+    }
+
+    /**
+     * Blocks moved ({@code moves}, old position to new; this cell among them, now at {@code worldPosition}): each belt's far end follows if it
+     * moved too, and a pulley block that did not is told this cell's new address.
+     */
+    public void retarget(java.util.Map<BlockPos, BlockPos> moves) {
+        for (var e : belts.int2ObjectEntrySet()) {
+            MicroBelts.End far = e.getValue();
+            BlockPos moved = moves.get(far.pos());
+            if (moved != null)
+                e.setValue(new MicroBelts.End(moved, far.index()));
+            else if (far.index() == -1 && level != null && level.isLoaded(far.pos())
+                    && level.getBlockEntity(far.pos()) instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity block
+                    && block.getBeltVoxel() == e.getIntKey())
+                block.followedTo(worldPosition);
+        }
+        setChanged();
+    }
+
+    /** The block pulley at the far end of voxel {@code index}'s belt moved to {@code pos}. */
+    public void farMovedTo(int index, BlockPos pos) {
+        MicroBelts.End far = belts.get(index);
+        if (far != null) {
+            belts.put(index, new MicroBelts.End(pos, far.index()));
+            syncSpin();
+        }
     }
 
     public boolean holdsBearing() {
@@ -752,7 +783,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
             CompoundTag one = new CompoundTag();
             one.putByte("I", (byte) e.getIntKey());
             one.putLong("P", e.getValue().pos().asLong());
-            one.putByte("J", (byte) e.getValue().index());
+            one.putInt("J", e.getValue().index());
             one.putFloat("C", beltCondition(e.getIntKey()));
             strapped.add(one);
         }
@@ -823,7 +854,7 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
         for (int k = 0; k < strapped.size(); k++) {
             CompoundTag one = strapped.getCompound(k);
             int i = one.getByte("I") & (VOXELS - 1);
-            belts.put(i, new MicroBelts.End(BlockPos.of(one.getLong("P")), one.getByte("J") & (VOXELS - 1)));
+            belts.put(i, new MicroBelts.End(BlockPos.of(one.getLong("P")), one.getInt("J")));
             beltWear[i] = one.getFloat("C");
         }
         ListTag worn = tag.getList("Worn", Tag.TAG_COMPOUND);

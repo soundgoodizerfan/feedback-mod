@@ -58,6 +58,8 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
 
     @Nullable
     private BlockPos beltPartner;
+    /** -1: the partner is the pulley block at {@link #beltPartner}; else the pulley voxel of that index in the micro cell there. */
+    private int beltVoxel = -1;
 
     private float condition = 1f;
 
@@ -77,6 +79,55 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         return beltPartner;
     }
 
+    public int getBeltVoxel() {
+        return beltVoxel;
+    }
+
+    /** This pulley's partner block moved to {@code pos} (a Lift carried it): the belt keeps it. */
+    public void followedTo(BlockPos pos) {
+        beltPartner = pos;
+        sync();
+    }
+
+    /**
+     * Blocks moved ({@code moves}, old to new; this pulley among them, now at its position): the partner's address follows if it moved too,
+     * and a partner that did not is told this pulley's new one.
+     */
+    public void retarget(java.util.Map<BlockPos, BlockPos> moves) {
+        if (beltPartner == null || level == null)
+            return;
+        BlockPos moved = moves.get(beltPartner);
+        if (moved != null) {
+            beltPartner = moved;
+        } else if (level.isLoaded(beltPartner)) {
+            if (beltVoxel >= 0 && level.getBlockEntity(beltPartner) instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell)
+                cell.farMovedTo(beltVoxel, worldPosition);
+            else if (level.getBlockEntity(beltPartner) instanceof PulleyBlockEntity other)
+                other.followedTo(worldPosition);
+        }
+        sync();
+    }
+
+    /** Links this pulley to pulley voxel {@code index} of {@code cell}, symmetrically, dropping either one's previous belt. */
+    public boolean linkMicro(io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell, int index) {
+        if (level == null || cell.getLevel() != level || cell.get(index) == null
+                || !(cell.get(index).getBlock() instanceof PulleyBlock))
+            return false;
+        var sub = dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.getContaining(level, cell.getBlockPos());
+        net.minecraft.world.phys.Vec3 there = net.minecraft.world.phys.Vec3.atCenterOf(cell.getBlockPos());
+        if (sub != null)
+            there = sub.logicalPose().transformPosition(there);
+        if (there.distanceTo(net.minecraft.world.phys.Vec3.atCenterOf(worldPosition)) > FTuning.BELT_MAX_LENGTH)
+            return false;
+        unlinkBelt();
+        cell.unlinkBelt(index);
+        beltPartner = cell.getBlockPos();
+        beltVoxel = index;
+        cell.setBelt(index, new io.github.soundgoodizerfan.feedback.vehicle.micro.MicroBelts.End(worldPosition, -1));
+        sync();
+        return true;
+    }
+
     /**
      * Links this pulley to {@code other}, symmetrically, dropping either one's previous belt.
      * Refuses itself, and anything further than {@link FTuning#BELT_MAX_LENGTH}.
@@ -88,7 +139,9 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         unlinkBelt();
         other.unlinkBelt();
         beltPartner = other.getBlockPos();
+        beltVoxel = -1;
         other.beltPartner = this.getBlockPos();
+        other.beltVoxel = -1;
         sync();
         other.sync();
         return true;
@@ -98,6 +151,17 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
     public void unlinkBelt() {
         if (beltPartner == null || level == null)
             return;
+        if (beltVoxel >= 0) {
+            if (level.isLoaded(beltPartner) && level.getBlockEntity(beltPartner) instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell) {
+                var far = cell.belt(beltVoxel);
+                if (far != null && far.index() == -1 && far.pos().equals(worldPosition))
+                    cell.unlinkBelt(beltVoxel);
+            }
+            beltPartner = null;
+            beltVoxel = -1;
+            sync();
+            return;
+        }
         if (level.isLoaded(beltPartner) && level.getBlockEntity(beltPartner) instanceof PulleyBlockEntity partner
                 && worldPosition.equals(partner.beltPartner)) {
             partner.beltPartner = null;
@@ -134,14 +198,32 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         // An unloaded partner is not a missing one: keep the belt, just do nothing this tick.
         if (!level.isLoaded(beltPartner))
             return;
-        if (!(level.getBlockEntity(beltPartner) instanceof PulleyBlockEntity partner)) {
+        RotationNetwork theirs;
+        float partnerRpm, partnerRadius;
+        if (beltVoxel >= 0) {
+            // The other end is a pulley voxel: a quarter the size, so its radius counts a quarter.
+            if (!(level.getBlockEntity(beltPartner) instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell)
+                    || cell.rotor(beltVoxel) == null || !(cell.get(beltVoxel).getBlock() instanceof PulleyBlock pb)) {
+                beltPartner = null;
+                beltVoxel = -1;
+                sync();
+                return;
+            }
+            var rotor = cell.rotor(beltVoxel);
+            theirs = rotor.getNetwork();
+            partnerRpm = rotor.getRpm().value();
+            partnerRadius = pb.getRadius() / (float) io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity.N;
+        } else if (level.getBlockEntity(beltPartner) instanceof PulleyBlockEntity partner) {
+            theirs = partner.getNetwork();
+            partnerRpm = partner.getRpm().value();
+            partnerRadius = partner.getRadius();
+        } else {
             beltPartner = null;
             sync();
             return;
         }
 
         RotationNetwork own = getNetwork();
-        RotationNetwork theirs = partner.getNetwork();
         if (own == null || theirs == null || own == theirs || getRatio() == 0)
             return;
 
@@ -151,7 +233,7 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
 
         // Partner's own speed (its gear ratio included), across the diameters, then back to this
         // network's reference through this pulley's ratio -- sign carried throughout.
-        float desired = partner.getRpm().value() * partner.getRadius() / getRadius() / getRatio();
+        float desired = partnerRpm * partnerRadius / getRadius() / getRatio();
 
         float demand = own.getLoadSu().value();
         float capacity = FTuning.BELT_CAPACITY_SU.value() * condition;
@@ -197,6 +279,7 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
         super.saveAdditional(tag, registries);
         if (beltPartner != null)
             tag.putLong("BeltPartner", beltPartner.asLong());
+        tag.putInt("BeltVoxel", beltVoxel);
         tag.putFloat("Condition", condition);
     }
 
@@ -204,6 +287,7 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         beltPartner = tag.contains("BeltPartner") ? BlockPos.of(tag.getLong("BeltPartner")) : null;
+        beltVoxel = tag.contains("BeltVoxel") ? tag.getInt("BeltVoxel") : -1;
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 }

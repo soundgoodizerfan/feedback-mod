@@ -39,22 +39,32 @@ public class PulleyRenderer extends RotatingRenderer<PulleyBlockEntity> {
 
         BlockPos partner = pulley.getBeltPartner();
         BlockPos here = pulley.getBlockPos();
-        if (partner == null || here.asLong() > partner.asLong()
+        boolean toVoxel = pulley.getBeltVoxel() >= 0;
+        if (partner == null || !toVoxel && here.asLong() > partner.asLong()
                 || !(pulley.getBlockState().getBlock() instanceof PulleyBlock block))
             return;
 
         Vec3 axis = Vec3.atLowerCornerOf(Direction.get(Direction.AxisDirection.POSITIVE,
                 block.getRotationAxis(pulley.getBlockState())).getNormal());
-        Vec3 delta = Vec3.atLowerCornerOf(partner.subtract(here));
+        Vec3 delta;
+        var level = pulley.getLevel();
+        if (level == null)
+            return;
+        // Through the world, so a pulley in a body and one outside it (or one in another body) still meet.
+        Vec3 ownWorld = BeltGeometry.toWorld(level, here, Vec3.atCenterOf(here));
+        Vec3 theirWorld = toVoxel ? BeltGeometry.voxelWorld(level, partner, pulley.getBeltVoxel())
+                : BeltGeometry.toWorld(level, partner, Vec3.atCenterOf(partner));
+        delta = BeltGeometry.direction(level, here, theirWorld.subtract(ownWorld));
         Vec3 across = axis.cross(delta);
         if (across.lengthSqr() < 1e-6)
             return;   // partner along the axle: no plane for a belt to run in
         across = across.normalize();
         Vec3 centre = new Vec3(0.5, 0.5, 0.5);
         double ownRadius = pulley.getRadius() / 16.0;
-        double theirRadius = pulley.getLevel() != null
-                && pulley.getLevel().getBlockEntity(partner) instanceof PulleyBlockEntity other
-                ? other.getRadius() / 16.0 : ownRadius;
+        double theirRadius = toVoxel
+                ? (level.getBlockEntity(partner) instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell && cell.get(pulley.getBeltVoxel()) != null
+                        && cell.get(pulley.getBeltVoxel()).getBlock() instanceof PulleyBlock micro ? micro.getRadius() / 16.0 / 4 : ownRadius / 4)
+                : level.getBlockEntity(partner) instanceof PulleyBlockEntity other ? other.getRadius() / 16.0 : ownRadius;
 
         VertexConsumer consumer = buffers.getBuffer(RenderType.entitySolid(BELT));
         for (int sign = -1; sign <= 1; sign += 2) {

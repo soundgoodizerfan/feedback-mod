@@ -30,9 +30,24 @@ public final class BeltLinkManager {
     private BeltLinkManager() {
     }
 
+    /** The pulley this player selected, forgotten as it is read: a pulley voxel's click ({@code MicroBelts}) takes it to link to. */
+    public GlobalPos takePending(Player player) {
+        return pending.remove(player.getUUID());
+    }
+
     /** Called server-side when a player right-clicks a pulley with a Belt in hand. */
     public void onPulleyInteract(Player player, Level level, PulleyBlockEntity pulley) {
         UUID id = player.getUUID();
+        // A pulley voxel selected first: this one is its other end.
+        var micro = io.github.soundgoodizerfan.feedback.vehicle.micro.MicroBelts.takePending(player);
+        if (micro != null) {
+            boolean ok = micro.cell().dimension() == level.dimension() && level.isLoaded(micro.cell().pos())
+                    && level.getBlockEntity(micro.cell().pos()) instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell
+                    && pulley.linkMicro(cell, micro.index());
+            player.displayClientMessage(Component.translatable(ok ? "feedback.belt.linked" : "feedback.belt.failed"), true);
+            return;
+        }
+
         GlobalPos previous = pending.remove(id);
         GlobalPos here = GlobalPos.of(level.dimension(), pulley.getBlockPos());
 

@@ -89,7 +89,8 @@ public class MicroCellRenderer implements BlockEntityRenderer<MicroCellBlockEnti
         // A belt: two lines from this pulley to the midpoint between the pulleys; the far end draws the other half.
         for (int i = 0; i < MicroCellBlockEntity.VOXELS; i++) {
             var far = cell.belt(i);
-            if (far == null)
+            // A belt to a pulley block is drawn by that block's renderer, through the world.
+            if (far == null || far.index() == -1)
                 continue;
             float ax = (i & 3) * s + s / 2, ay = (i >> 2 & 3) * s + s / 2, az = (i >> 4) * s + s / 2;
             int j = far.index();
