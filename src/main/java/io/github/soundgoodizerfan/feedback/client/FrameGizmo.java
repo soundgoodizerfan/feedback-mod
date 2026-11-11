@@ -81,7 +81,12 @@ public final class FrameGizmo {
         WelderMode mode = stack.getOrDefault(FVehicles.WELDER_MODE.get(), WelderMode.POINT);
         if (mode != WelderMode.POINT && mode != WelderMode.SELECT && mode != WelderMode.EXTRUDE)
             return null;
-        return WelderItem.selected(stack, be);
+        WelderSelected chosen = WelderItem.selected(stack, be);
+        // A hinge or ball waiting for its rotor: no arrows, so the next click places the rotor.
+        if (chosen != null && mode == WelderMode.POINT && chosen.vertices().size() == 1
+                && WelderItem.bareBearing(be.frame(), chosen.last()))
+            return null;
+        return chosen;
     }
 
     /** The selection's middle, in frame-local blocks. */
@@ -101,16 +106,16 @@ public final class FrameGizmo {
             for (int sign = -1; sign <= 1; sign += 2) {
                 Arrow a = new Arrow(axis, sign);
                 Vec3 p = centre.add(a.dir().scale(FROM)), q = centre.add(a.dir().scale(TO));
-                double[] tu = closest(eye, look, p, q);
-                if (tu != null && tu[0] > 0 && tu[0] < bestT && tu[2] <= PICK) {
+                double[] td = closest(eye, look, p, q);
+                if (td != null && td[0] > 0 && td[0] < bestT && td[1] <= PICK) {
                     best = a;
-                    bestT = tu[0];
+                    bestT = td[0];
                 }
             }
         return best;
     }
 
-    /** Ray {@code eye + t look} against segment {@code p-q}: {t along the ray, u along the segment 0-1, distance}. */
+    /** Ray {@code eye + t look} against segment {@code p-q}: {t along the ray, distance}. */
     @Nullable
     private static double[] closest(Vec3 eye, Vec3 look, Vec3 p, Vec3 q) {
         Vec3 d = q.subtract(p);
@@ -125,12 +130,12 @@ public final class FrameGizmo {
         Vec3 onSeg = p.add(a.scale(s));
         double t = onSeg.subtract(eye).dot(look);
         double dist = eye.add(look.scale(t)).distanceTo(onSeg);
-        return new double[]{t, s / len, dist};
+        return new double[]{t, dist};
     }
 
     /** Where along the axis through {@code centre} the look passes nearest, in blocks; NaN looking straight down it. */
     private static double along(Vec3 centre, Arrow a, Vec3 eye, Vec3 look) {
-        Vec3 dir = new Vec3(a.axis == 0 ? 1 : 0, a.axis == 1 ? 1 : 0, a.axis == 2 ? 1 : 0);
+        Vec3 dir = new Arrow(a.axis(), 1).dir();
         double b = dir.dot(look), denom = 1 - b * b;
         if (denom < 1e-3)
             return Double.NaN;

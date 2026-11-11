@@ -67,6 +67,8 @@ public class FClientSetup {
         event.registerBlockEntityRenderer(FBlockEntities.OVERSPEED_TRIP.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.STEAM_ENGINE.get(), RotatingRenderer::new);
         event.registerBlockEntityRenderer(FBlockEntities.PUMP.get(), RotatingRenderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.GEARBOX.get(), SpinningParts.Renderer::new);
+        event.registerBlockEntityRenderer(FBlockEntities.ROTATION_ADAPTER.get(), SpinningParts.Renderer::new);
 
         event.registerBlockEntityRenderer(FBlockEntities.PULLEY.get(), PulleyRenderer::new);
 

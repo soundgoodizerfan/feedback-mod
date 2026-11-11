@@ -52,7 +52,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Derived in design from Create's {@code KineticBlockEntity} (MIT), but much smaller: Create's
  * also carries a behaviour framework, goggle tooltips, sound scapes and a rendering bridge.
  */
-public abstract class RotationNode extends BlockEntity {
+public abstract class RotationNode extends BlockEntity implements RotationMember {
 
     /**
      * This node's speed as a multiple of the network's. 1 for a plain shaft; gearing makes it
@@ -155,6 +155,11 @@ public abstract class RotationNode extends BlockEntity {
 
     public void setNetwork(@Nullable RotationNetwork network) {
         this.network = network;
+    }
+
+    @Override
+    public boolean isLive() {
+        return level != null && level.getBlockEntity(worldPosition) == this;
     }
 
     public boolean isOverstressed() {

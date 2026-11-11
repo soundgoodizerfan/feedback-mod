@@ -43,6 +43,9 @@ import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderItem;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderMode;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderPicks;
 import io.github.soundgoodizerfan.feedback.vehicle.frame.WelderSelection;
+import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlock;
+import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
+import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCoreItem;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.Item;
@@ -126,6 +129,30 @@ public class FVehicles {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChassisCellBlockEntity>> CHASSIS_CELL_ENTITY =
             BLOCK_ENTITIES.register("chassis_cell",
                     () -> BlockEntityType.Builder.of(ChassisCellBlockEntity::new, CHASSIS_CELL.get()).build(null));
+
+    // --- Micro-blocks (docs/feedback_micro_spec.md) ---------------------------------------------
+
+    /**
+     * A full-size block holding up to 64 quarter-block voxels. Broken by hand, it gives them back
+     * (its loot table is the entity's contents). Dynamic shape for the same reason as the chassis
+     * cell: the voxels' shape is per position.
+     */
+    public static final DeferredBlock<MicroCellBlock> MICRO_CELL = BLOCKS.register("micro_cell",
+            () -> new MicroCellBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(1.0f)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()
+                    .dynamicShape()
+                    .isValidSpawn((s, l, p, e) -> false)));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MicroCellBlockEntity>> MICRO_CELL_ENTITY =
+            BLOCK_ENTITIES.register("micro_cell",
+                    () -> BlockEntityType.Builder.of(MicroCellBlockEntity::new, MICRO_CELL.get()).build(null));
+
+    /** Starts a build: a micro cell with one voxel of stone in it. Every voxel after is a block held against the build. */
+    public static final DeferredItem<MicroCoreItem> MICRO_CORE = ITEMS.register("micro_core",
+            () -> new MicroCoreItem(new Item.Properties()));
 
     /** The vertex a Welder is holding; synced so the client can highlight it. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<WelderSelection>> WELDER_SELECTION =

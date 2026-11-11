@@ -254,21 +254,46 @@ public class RotationGameTests {
         });
     }
 
-    /** Meshed cogs refer speed by their teeth: a small cog on a large one halves it and reverses it. */
+    /**
+     * Meshed cogs refer speed by their teeth: a small cog on a large one halves it and reverses it.
+     * The large one sits diagonally in the small one's plane, the small against its rim (Create's rule).
+     */
     @GameTest(template = "empty", timeoutTicks = 120)
     public static void cogsReferSpeedThroughTheirRatio(GameTestHelper helper) {
         BlockPos at = new BlockPos(0, 2, 0);
         HandCrankBlockEntity crank = crankRun(helper, at, 0);
         helper.setBlock(at.east(), alongX(FBlocks.SMALL_COG.get()));
-        helper.setBlock(at.east().above(), alongX(FBlocks.LARGE_COG.get()));
-        helper.setBlock(at.east(2).above(), alongX(FBlocks.SHAFT.get()));
-        RotationNode output = node(helper, at.east(2).above());
+        helper.setBlock(at.east().above().south(), alongX(FBlocks.LARGE_COG.get()));
+        helper.setBlock(at.east(2).above().south(), alongX(FBlocks.SHAFT.get()));
+        RotationNode output = node(helper, at.east(2).above().south());
         each(helper, crank::turn);
         helper.runAtTickTime(100, () -> {
             helper.assertTrue(output.getNetwork() == crank.getNetwork(), "cogs join one run");
             helper.assertTrue(Math.abs(output.getRatio() + 0.5f) < 1e-4, "1 tooth on 2 is -0.5, got " + output.getRatio());
             helper.assertTrue(Math.abs(output.getRpm().value() + CRANK_RPM / 2) < 1e-3,
                     "the output turns at half the crank's speed, reversed; got " + output.getRpm().value());
+            done(helper);
+        });
+    }
+
+    /**
+     * Two large cogs at right angles, one step along each one's axis, mesh as a bevel pair at 1:1,
+     * the sign from the offset: B one east (along A's X) and one down (along B's Y) turns at -1.
+     */
+    @GameTest(template = "empty", timeoutTicks = 120)
+    public static void largeCogsMeshAtRightAngles(GameTestHelper helper) {
+        BlockPos at = new BlockPos(0, 2, 0);
+        HandCrankBlockEntity crank = crankRun(helper, at, 0);
+        helper.setBlock(at.east(), alongX(FBlocks.LARGE_COG.get()));
+        helper.setBlock(at.east(2).below(), FBlocks.LARGE_COG.get().defaultBlockState()
+                .setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y));
+        RotationNode bevel = node(helper, at.east(2).below());
+        each(helper, crank::turn);
+        helper.runAtTickTime(40, () -> {
+            helper.assertTrue(bevel.getNetwork() == crank.getNetwork(), "the right-angle pair joins the run");
+            float driver = node(helper, at.east()).getRatio();
+            helper.assertTrue(Math.abs(driver) > 0.5f && Math.abs(bevel.getRatio() + driver) < 1e-4,
+                    "offset +1 along A, -1 along B turns B at -1 times A, got " + bevel.getRatio() + " against " + driver);
             done(helper);
         });
     }

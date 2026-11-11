@@ -24,15 +24,16 @@ P is any Planks and C is a Small Cog.
 
 ## How cogs work
 
-A cog sits on a shaft line and turns with it. Place two cogs **side by side, flat in the same plane**, and their teeth mesh. Meshed cogs turn in **opposite directions**:
+A cog sits on a shaft line and turns with it. A Large Cog is drawn wider than its block, but it still takes only one block. Two cogs mesh where their teeth reach, as in Create:
 
-| Driving | Driven | Result |
-| --- | --- | --- |
-| Small | Small | Same speed, reversed |
-| Large | Small | **Twice** as fast, half the force |
-| Small | Large | **Half** as fast, twice the force |
+| Driving | Driven | Where | Result |
+| --- | --- | --- | --- |
+| Small | Small | Side by side, flat in the same plane | Same speed, reversed |
+| Large | Small | **Diagonal** in the same plane, the small one on the large one's rim | **Twice** as fast, reversed, half the force |
+| Small | Large | Diagonal in the same plane | **Half** as fast, reversed, twice the force |
+| Large | Large | **At right angles**: one block along each cog's axis, diagonally | Same speed, turned through 90° |
 
-Two cogs stacked end to end on the same shaft don't mesh. They just turn together.
+Two Large Cogs side by side in one plane don't mesh, and neither do a Small and a Large Cog side by side. Two cogs stacked end to end on the same shaft don't mesh either; they just turn together. Gearing that loops back on itself and disagrees jams the line.
 
 When placed, a cog takes the axis of whatever you placed it against. **Sneak** while placing to point it along the face you clicked instead.
 

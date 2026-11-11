@@ -25,6 +25,7 @@ import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import io.github.soundgoodizerfan.feedback.vehicle.VehiclePart;
 import io.github.soundgoodizerfan.feedback.vehicle.drive.Drivetrain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -33,17 +34,25 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
+import dev.ryanhcode.sable.api.physics.PhysicsPipeline;
+import dev.ryanhcode.sable.api.physics.PhysicsPipelineBody;
+import dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
-import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle;
 import dev.ryanhcode.sable.api.physics.constraint.PhysicsConstraintHandle;
 import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintConfiguration;
+import dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle;
+import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
+import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -51,14 +60,19 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaterniond;
 import org.joml.Vector3d;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 /**
  * Holds one welded {@link Frame}, measured from this block, and -- once assembled -- what became of
@@ -71,7 +85,7 @@ import java.util.UUID;
  * {@link FTuning#STEER_MAX_ANGLE}; channel 1 the brake, 0 to 1, read by the {@link Drivetrain}
  * at every hub with a brake.
  */
-public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, DataNode, Analog, io.github.soundgoodizerfan.feedback.vehicle.VehiclePart {
+public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevelActor, DataNode, Analog, VehiclePart {
 
     private final Frame frame = new Frame();
     /** True once the frame has been cut into cells and lifted; see {@link FrameAssembly#cut}. */
@@ -126,14 +140,21 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     private final List<Steered> steered = new ArrayList<>();
 
     /** A slider's joint, with the bodies it joins and the band its spring was set to. */
-    private record Sprung(dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle handle, Mount a, Mount b, int band,
+    private record Sprung(GenericConstraintHandle handle, Mount a, Mount b, int band,
                           int vertex, Vector3d va, Vector3d vb, Vector3d axis, double travel, int[] strain) {
     }
 
     private final List<Sprung> sprung = new ArrayList<>();
 
+    /** A free stator-rotor bearing's joint, the body it swings and where, for its friction ({@link #damp}). */
+    private record Damped(PhysicsConstraintHandle handle, Mount moving, Mount other, Vector3d at, Vector3d atOther, Vector3d axis, boolean ball, Vector3d rotorPlot) {
+    }
+
+    private final List<Damped> damped = new ArrayList<>();
+
     /** Frames loaded on the server, by id, so a joint can find its other end. Server thread only. */
     private static final Map<UUID, FrameBlockEntity> LOADED = new HashMap<>();
+    private static final Logger LOG = LoggerFactory.getLogger("feedback.joint");
 
     public FrameBlockEntity(BlockPos pos, BlockState state) {
         super(FVehicles.FRAME_ENTITY.get(), pos, state);
@@ -145,9 +166,9 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
 
     /** Outline and collision: the frame's in-block voxels. Rebuilt lazily after any change. */
     @Nullable
-    private net.minecraft.world.phys.shapes.VoxelShape shape;
+    private VoxelShape shape;
 
-    public net.minecraft.world.phys.shapes.VoxelShape shape() {
+    public VoxelShape shape() {
         if (shape == null)
             shape = FrameShape.of(frame);
         return shape;
@@ -283,23 +304,31 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * at the pivot's point, the point in each body's own plot. Joints are made at rest -- each
      * plot is the frame as built, so a pivot is at the same frame point in both and a hinge's axis
      * the same plot axis -- and remade only when the bearings or bodies change, or Sable drops one.
-     * Two groups in one body (both welded) need nothing.
+     * Two groups in one body (both welded) need nothing. A hinge or ball with a rotor is
+     * {@link #pair paired} instead.
      */
     private void pivots(ServerLevel level, ServerSubLevel own) {
         StringBuilder sig = new StringBuilder();
-        new java.util.TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.steers()).append(p.differential()).append(p.band()).append(p.axis()).append(';'));
-        new java.util.TreeMap<>(frame.anchors()).forEach((v, off) -> sig.append(v).append('@').append(off.toShortString())
+        new TreeMap<>(frame.pivots()).forEach((v, p) -> sig.append(v).append(':').append(p.kind()).append(p.drives()).append(p.steers()).append(p.differential()).append(p.band()).append(p.axis()).append(';'));
+        new TreeMap<>(frame.rotors()).forEach((s, r) -> sig.append(s).append('>').append(r).append(';'));
+        new TreeMap<>(frame.anchors()).forEach((v, off) -> sig.append(v).append('@').append(off.toShortString())
                 .append(level.getBlockState(worldPosition.offset(off)).isAir() ? '-' : '+').append(';'));
-        new java.util.TreeMap<>(groupBodies).forEach((g, b) -> sig.append('g').append(g).append(b.body()).append(';'));
+        new TreeMap<>(groupBodies).forEach((g, b) -> sig.append('g').append(g).append(b.body()).append(';'));
         boolean live = pivotHandles.stream().allMatch(PhysicsConstraintHandle::isValid)
                 && anchorHandles.stream().allMatch(PhysicsConstraintHandle::isValid);
         if (live && sig.toString().equals(pivotSignature))
             return;
         dropPivots();
-        var pipeline = dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem.get(level).getPipeline();
+        var pipeline = SubLevelPhysicsSystem.get(level).getPipeline();
         Mount base = new Mount(own, worldPosition);
         for (Map.Entry<Integer, Frame.Pivot> e : frame.pivots().entrySet()) {
             Frame.Pivot pivot = e.getValue();
+            Integer rotor = frame.rotors().get(e.getKey());
+            if (rotor != null) {
+                if (!pair(level, pipeline, own, e.getKey(), rotor, pivot))
+                    return;
+                continue;
+            }
             Mount first = null;
             for (FrameAssembly.Part part : cut()) {
                 if (!part.vertices().contains(e.getKey()))
@@ -309,11 +338,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                     return;
                 if (first == null)
                     first = m;
-                else if (m.body() != first.body()) {
-                    // The chassis side first, so a steering angle means the same at every kingpin.
-                    boolean swap = m.body() == own;
-                    pivotHandles.add(join(pipeline, swap ? m : first, swap ? first : m, e.getKey(), pivot));
-                }
+                else if (m.body() != first.body())
+                    pivotHandles.add(joinChassisFirst(pipeline, own, first, m, e.getKey(), pivot));
             }
             BlockPos off = frame.anchors().get(e.getKey());
             if (off == null || level.getBlockState(worldPosition.offset(off)).isAir())
@@ -328,19 +354,88 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         pivotSignature = sig.toString();
     }
 
-    private PhysicsConstraintHandle join(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline, Mount a, Mount b,
-                                         int vertex, Frame.Pivot pivot) {
+    /**
+     * The joint of a hinge or ball with a rotor: between the body of the stator's side and the body
+     * of the rotor's, at the stator, along the line from stator to rotor. The two sides share no
+     * point. A stator with no solid on it but a weld is the base itself. False only when a body is
+     * not ready, as with the other joints; true and nothing made when nothing hangs on the rotor or
+     * both sides are one body.
+     */
+    private boolean pair(ServerLevel level, PhysicsPipeline pipeline, ServerSubLevel own,
+                         int stator, int rotor, Frame.Pivot pivot) {
+        Mount near = null, far = null;
+        for (FrameAssembly.Part part : cut()) {
+            if (part.vertices().contains(stator) || part.vertices().contains(rotor)) {
+                // A group that has a body but whose body is not there yet (a world still loading) is
+                // not the base: wait for it, or the joint is never made and the arm falls.
+                GroupBody gb = groupBodies.get(part.id());
+                if (gb != null && !(ServerSubLevelContainer.getContainer(level).getSubLevel(gb.body()) instanceof ServerSubLevel live && !live.isRemoved())) {
+                    why(level, stator, rotor, "body of group " + part.id() + " not loaded yet");
+                    return false;
+                }
+                Mount m = mountOfGroup(level, part.id());
+                if (m == null)
+                    return false;
+                if (part.vertices().contains(rotor))
+                    far = m;
+                else
+                    near = m;
+            }
+        }
+        if (far == null) {
+            why(level, stator, rotor, "nothing hangs on the rotor (no part holds it); parts " + cut().stream().map(p -> p.id() + "" + p.vertices()).toList());
+            return true;
+        }
+        if (near == null) {
+            BlockPos off = frame.anchors().get(stator);
+            if (off == null || level.getBlockState(worldPosition.offset(off)).isAir()) {
+                why(level, stator, rotor, "stator side has no part and no weld to a block");
+                return true;
+            }
+            near = new Mount(own, worldPosition);
+        }
+        if (near.body() == far.body()) {
+            why(level, stator, rotor, "both sides are one body (the rotor side has no body of its own)");
+            return true;
+        }
+        Frame.Pivot joint = new Frame.Pivot(pivot.kind(), frame.linkAxis(stator), false, false, Frame.Pivot.NO_DIFFERENTIAL, pivot.band());
+        PhysicsConstraintHandle h = joinChassisFirst(pipeline, own, near, far, stator, joint);
+        // The two sides of one bearing never collide with each other, as in Create Simulated and
+        // Valkyrien Skies: the arm and the body it hangs from meet at the bearing by design.
+        h.setContactsEnabled(false);
+        pivotHandles.add(h);
+        Vec3 axis = joint.axis();
+        damped.add(new Damped(h, far, near, plot(stator, far.origin()), plot(stator, near.origin()),
+                new Vector3d(axis.x, axis.y, axis.z), pivot.kind() == FrameJoint.Kind.BALL, plot(rotor, far.origin())));
+        return true;
+    }
+
+    /** Says, about once a second, why a stator-rotor bearing has no joint (diagnostic, 2026-10-29). */
+    private static void why(ServerLevel level, int stator, int rotor, String reason) {
+        if (level.getGameTime() % 40 == 0)
+            LOG.info("[feedback] no joint for stator {} rotor {}: {}", stator, rotor, reason);
+    }
+
+    /**
+     * {@link #join} with the body this block is in first, if it is one of the two: the chassis side
+     * first, so a steering angle means the same at every kingpin.
+     */
+    private PhysicsConstraintHandle joinChassisFirst(PhysicsPipeline pipeline, ServerSubLevel own, Mount a, Mount b,
+                                                     int vertex, Frame.Pivot pivot) {
+        boolean swap = b.body() == own;
+        return join(pipeline, swap ? b : a, swap ? a : b, vertex, pivot);
+    }
+
+    private PhysicsConstraintHandle join(PhysicsPipeline pipeline, Mount a, Mount b, int vertex, Frame.Pivot pivot) {
         Vec3 axis = pivot.axis();
-        Vec3 local = frame.pos(vertex);
-        Vec3 pa = local.add(Vec3.atLowerCornerOf(a.origin())), pb = local.add(Vec3.atLowerCornerOf(b.origin()));
-        Vector3d va = new Vector3d(pa.x, pa.y, pa.z), vb = new Vector3d(pb.x, pb.y, pb.z);
+        Vector3d va = plot(vertex, a.origin()), vb = plot(vertex, b.origin());
         Vector3d n = new Vector3d(axis.x, axis.y, axis.z).normalize();
         // A ball that carries rotation is a universal joint: it swings, but does not twist about
         // the shaft -- the spin is the drive's, computed, so the bodies must not take it up.
         Quaterniond twist = new Quaterniond().rotationTo(1, 0, 0, n.x, n.y, n.z);
-        var locked = new java.util.HashSet<>(java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR));
+        var locked = new HashSet<>(Set.of(ConstraintJointAxis.LINEAR));
         if (pivot.drives())
-            locked.add(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_X);
+            locked.add(ConstraintJointAxis.ANGULAR_X);
         PhysicsConstraintHandle h = switch (pivot.kind()) {
             case WELD, LOCKED -> pipeline.addConstraint(a.body(), b.body(), new FixedConstraintConfiguration(va, vb, new Quaterniond()));
             case BALL -> pipeline.addConstraint(a.body(), b.body(), new GenericConstraintConfiguration(va, vb,
@@ -348,19 +443,19 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             case HINGE -> pipeline.addConstraint(a.body(), b.body(), new RotaryConstraintConfiguration(va, vb, n, new Vector3d(n)));
             // One linear axis free, along the pivot's: the frame's x is turned onto it, everything else held.
             case SLIDER -> pipeline.addConstraint(a.body(), b.body(), new GenericConstraintConfiguration(va, vb,
-                    twist, new Quaterniond(twist), java.util.EnumSet.of(
-                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_Y,
-                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_Z,
-                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_X,
-                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_Y,
-                    dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.ANGULAR_Z)));
+                    twist, new Quaterniond(twist), EnumSet.of(
+                    ConstraintJointAxis.LINEAR_Y,
+                    ConstraintJointAxis.LINEAR_Z,
+                    ConstraintJointAxis.ANGULAR_X,
+                    ConstraintJointAxis.ANGULAR_Y,
+                    ConstraintJointAxis.ANGULAR_Z)));
         };
         // The two sides collide: their cells are cleared round the bearing (FrameAssembly), so an
         // arm swung into the chassis stops rather than passing through (playtest 2026-10-16).
         h.setContactsEnabled(true);
-        if (pivot.kind() == FrameJoint.Kind.SLIDER && h instanceof dev.ryanhcode.sable.api.physics.constraint.GenericConstraintHandle g) {
+        if (pivot.kind() == FrameJoint.Kind.SLIDER && h instanceof GenericConstraintHandle g) {
             double travel = springTravel(vertex);
-            g.setLimit(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, -travel, travel);
+            g.setLimit(ConstraintJointAxis.LINEAR_X, -travel, travel);
             sprung.add(new Sprung(g, a, b, pivot.band(), vertex, va, vb, n, travel, new int[1]));
         }
         if (pivot.steers() && pivot.kind() == FrameJoint.Kind.HINGE)
@@ -393,9 +488,58 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 arm = (FTuning.STEER_ARM_SU.value() + drivetrain.assistSu()) / Units.SU_PER_KPG_TORQUE;
         for (Steered s : steered)
             if (s.handle().isValid())
-                s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.RotaryConstraintHandle.DEFAULT_AXIS,
+                s.handle().setMotor(RotaryConstraintHandle.DEFAULT_AXIS,
                         steer * FTuning.STEER_MAX_ANGLE, rate * rate * s.inertia(),
                         2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * s.inertia(), true, arm);
+    }
+
+    /**
+     * A free bearing is not frictionless: the swinging body loses {@link FTuning#BEARING_DAMPING_RATE}
+     * of its turning rate each second, so an arm let go settles instead of swinging for ever (playtest
+     * 2026-10-29). Sable's own PD motor with no stiffness, its damping scaled by the swinging body's
+     * inertia about the bearing, which is how Create Simulated's unpowered swivel bearing does it (MIT).
+     * Refreshed every tick because the masses settle after the joint is made.
+     */
+    private void damp() {
+        for (Damped d : damped) {
+            if (!d.handle().isValid())
+                continue;
+            double inertia = inertiaAbout(d.moving(), d.at(), d.axis());
+            if (level != null && level.getGameTime() % 40 == 0)
+                debugJoint(d, inertia);
+            if (inertia <= 0)
+                continue;
+            double c = FTuning.BEARING_DAMPING_RATE * inertia;
+            if (d.ball() && d.handle() instanceof GenericConstraintHandle g)
+                for (var axis : new ConstraintJointAxis[]{
+                        ConstraintJointAxis.ANGULAR_X,
+                        ConstraintJointAxis.ANGULAR_Y,
+                        ConstraintJointAxis.ANGULAR_Z})
+                    g.setMotor(axis, 0, 0, c, false, 0);
+            else
+                d.handle().setMotor(RotaryConstraintHandle.DEFAULT_AXIS, 0, 0, c, false, 0);
+        }
+    }
+
+    /**
+     * Diagnostic (2026-10-29): a whirling arm. How heavy each side is, how fast the arm turns, how far
+     * apart the joint's two anchors are in the world (they should coincide), and where the physics puts
+     * the rotor and this frame block, to set beside where the render does (client log "rotorWorld(render)").
+     */
+    private void debugJoint(Damped d, double inertia) {
+        ServerSubLevel near = d.other().body(), far = d.moving().body();
+        Vector3d wa = near.logicalPose().transformPosition(new Vector3d(d.atOther()));
+        Vector3d wb = far.logicalPose().transformPosition(new Vector3d(d.at()));
+        Vector3d lin = new Vector3d(), ang = new Vector3d();
+        d.handle().getJointImpulses(lin, ang);
+        LOG.info("[feedback] joint {} massNear={} massFar={} inertiaFar={} angVelFar={} anchorGap={} impulseLin={} impulseAng={}",
+                d.ball() ? "ball" : "hinge", near.getMassTracker().getMass(), far.getMassTracker().getMass(), inertia,
+                RigidBodyHandle.of(far).getAngularVelocity(new Vector3d()).length(), wa.distance(wb), lin.length(), ang.length());
+        // This block's own body, not the stator side's: they differ when the stator side is a group of its own.
+        Mount base = own();
+        LOG.info("[feedback] rotorWorld={} anchorWorld={} frameBlockWorld={}", far.logicalPose().transformPosition(new Vector3d(d.rotorPlot())), wa,
+                base == null ? null : base.body().logicalPose().transformPosition(
+                        new Vector3d(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5)));
     }
 
     /**
@@ -433,7 +577,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             if (ma <= 0 || mb <= 0)
                 continue;
             double reduced = ma * mb / (ma + mb), omega = 2 * Math.PI * FTuning.SUSPENSION_HZ[s.band()];
-            s.handle().setMotor(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR_X, 0,
+            s.handle().setMotor(ConstraintJointAxis.LINEAR_X, 0,
                     reduced * omega * omega, 2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, false, 0);
             // Held against a stop under more than its material's yield load it is overloaded; long enough
             // and it snaps, and the point is a loose ball until the player sets it right again. The load is
@@ -505,7 +649,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     }
 
     @Override
-    public net.minecraft.world.level.Level getNodeLevel() {
+    public Level getNodeLevel() {
         return level;
     }
 
@@ -532,6 +676,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         anchorHandles.clear();
         steered.clear();
         sprung.clear();
+        damped.clear();
         pivotSignature = "";
     }
 
@@ -552,17 +697,12 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 + pivotHandles.stream().filter(PhysicsConstraintHandle::isValid).count());
     }
 
-    /** How many bearing-welds hold a group of its own to this block's body right now, for tests. */
-    public int liveAnchors() {
-        return (int) anchorHandles.stream().filter(PhysicsConstraintHandle::isValid).count();
-    }
-
     /**
      * The frame a chassis cell at {@code pos} belongs to, if one is loaded on this level: cells are
      * hidden blocks that know nothing, so the frame is asked. For the debug helmet's card.
      */
     @Nullable
-    public static FrameBlockEntity owning(net.minecraft.world.level.Level level, BlockPos pos) {
+    public static FrameBlockEntity owning(Level level, BlockPos pos) {
         for (FrameBlockEntity be : LOADED.values()) {
             if (be.level != level || be.isRemoved())
                 continue;
@@ -593,9 +733,43 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         return out;
     }
 
+    /**
+     * What the render and the physics each think of every group body, for {@code /feedback framedebug}:
+     * the body, its plot origin, its pose, and whether a physics cell really stands in the plot where
+     * each vertex says it should (the render draws a vertex at {@code origin + its position}).
+     */
+    public List<String> debugReport(ServerLevel level) {
+        List<String> out = new ArrayList<>();
+        out.add("frame " + id + " at " + worldPosition + " assembled=" + assembled + " groups=" + cut().size()
+                + " bodies=" + groupBodies.size() + " rotors=" + frame.rotors());
+        var container = ServerSubLevelContainer.getContainer(level);
+        for (FrameAssembly.Part part : cut()) {
+            GroupBody g = groupBodies.get(part.id());
+            if (g == null) {
+                out.add("group " + part.id() + ": rigid with the base, vertices " + part.vertices() + ", solids " + part.solids());
+                continue;
+            }
+            var sub = container == null ? null : container.getSubLevel(g.body());
+            int real = 0;
+            for (BlockPos rel : g.cells())
+                if (level.getBlockState(g.origin().offset(rel)).is(FVehicles.CHASSIS_CELL.get()))
+                    real++;
+            out.add(String.format("group %d body %s origin %s %s cells %d listed, %d standing, solids %d", part.id(), g.body(), g.origin(),
+                    sub instanceof ServerSubLevel s ? "pose " + s.logicalPose().position() + " centre " + s.getPlot().getCenterBlock() : "BODY MISSING",
+                    g.cells().size(), real, part.solids()));
+            for (int v : part.vertices()) {
+                Vec3 p = frame.pos(v);
+                boolean there = level.getBlockState(g.origin().offset(BlockPos.containing(p))).is(FVehicles.CHASSIS_CELL.get());
+                out.add(String.format("  vertex %d local (%.2f, %.2f, %.2f) world %s cellAtVertex=%s", v, p.x, p.y, p.z,
+                        worldPos(level, v), there));
+            }
+        }
+        return out;
+    }
+
     /** The loaded frame on {@code level} nearest {@code pos}: a vehicle's own, wherever it stands. Server thread only. */
     @Nullable
-    public static FrameBlockEntity nearest(net.minecraft.world.level.Level level, BlockPos pos) {
+    public static FrameBlockEntity nearest(Level level, BlockPos pos) {
         FrameBlockEntity best = null;
         for (FrameBlockEntity f : loadedOn(level))
             if (best == null || f.worldPosition.distSqr(pos) < best.worldPosition.distSqr(pos))
@@ -607,8 +781,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * {@code ref} as an offset from the frame of the vehicle it sits in, if it is a vehicle part
      * with a frame within {@link FTuning#CARD_FRAME_REACH} blocks; else unchanged.
      */
-    public static DataNodeRef framed(net.minecraft.world.level.Level level, DataNodeRef ref) {
-        if (ref.framed() || !(level.getBlockEntity(ref.pos()) instanceof io.github.soundgoodizerfan.feedback.vehicle.VehiclePart))
+    public static DataNodeRef framed(Level level, DataNodeRef ref) {
+        if (ref.framed() || !(level.getBlockEntity(ref.pos()) instanceof VehiclePart))
             return ref;
         FrameBlockEntity frame = nearest(level, ref.pos());
         if (frame == null || frame.worldPosition.distSqr(ref.pos()) > (double) FTuning.CARD_FRAME_REACH * FTuning.CARD_FRAME_REACH)
@@ -621,7 +795,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * the controller running the card, which rides in the same vehicle. Null if there is no frame.
      */
     @Nullable
-    public static DataNodeRef located(net.minecraft.world.level.Level level, DataNodeRef ref, BlockPos from) {
+    public static DataNodeRef located(Level level, DataNodeRef ref, BlockPos from) {
         if (!ref.framed())
             return ref;
         FrameBlockEntity frame = nearest(level, from);
@@ -629,7 +803,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
     }
 
     /** Every loaded frame on {@code level}. Server thread only. */
-    public static List<FrameBlockEntity> loadedOn(net.minecraft.world.level.Level level) {
+    public static List<FrameBlockEntity> loadedOn(Level level) {
         return LOADED.values().stream().filter(f -> f.level == level && !f.isRemoved()).toList();
     }
 
@@ -701,7 +875,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         return here || there;
     }
 
-    private boolean drop(java.util.function.Predicate<FrameJoint> which) {
+    private boolean drop(Predicate<FrameJoint> which) {
         boolean any = false;
         for (var it = joints.iterator(); it.hasNext(); ) {
             FrameJoint j = it.next();
@@ -782,11 +956,8 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             if (level.getBlockEntity(at) instanceof ChassisCellBlockEntity cell && (cell.frame() == null || cell.frame().equals(id)))
                 level.setBlock(at, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
         }
-        baseCells.clear();
-        for (GroupBody g : groupBodies.values())
-            FrameAssembly.destroy(level, g);
-        groupBodies.clear();
-        dropPivots();
+        groupBodies.values().forEach(g -> FrameAssembly.destroy(level, g));
+        clearCells();
     }
 
     /** The drivetrain, for tests and the debug helmet. */
@@ -806,7 +977,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      * vertex was cut away. Runs every tick because a body can come and go (assembly, unloading)
      * without telling this frame; an existing live handle costs one check.
      */
-    static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, FrameBlockEntity be) {
+    static void serverTick(Level level, BlockPos pos, BlockState state, FrameBlockEntity be) {
         LOADED.putIfAbsent(be.id, be); // a frame moved into a body's plot is not always given onLoad
         if (be.assembled && level instanceof ServerLevel server
                 && SableCompanion.INSTANCE.getContaining(be) instanceof ServerSubLevel body) {
@@ -816,6 +987,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
             be.pivots(server, body);
             be.steer();
             be.spring();
+            be.damp();
         }
         // Unlifted too: a drive line on the bench couples, turns and reads like one on the road --
         // only the tires need a body under them (physicsTick).
@@ -863,29 +1035,28 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
      */
     private static PhysicsConstraintHandle constrain(ServerSubLevel a, FrameBlockEntity fa, int va,
                                                      ServerSubLevel b, FrameBlockEntity fb, int vb, FrameJoint j) {
-        return constrain(dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem.get(fa.level).getPipeline(),
-                a, plot(fa, va), new Quaterniond(a.logicalPose().orientation()),
-                b, plot(fb, vb), new Quaterniond(b.logicalPose().orientation()),
+        return constrain(SubLevelPhysicsSystem.get(fa.level).getPipeline(),
+                a, fa.plot(va, fa.worldPosition), new Quaterniond(a.logicalPose().orientation()),
+                b, fb.plot(vb, fb.worldPosition), new Quaterniond(b.logicalPose().orientation()),
                 new Quaterniond(a.logicalPose().orientation()), j.kind(), j.axis());
     }
 
     /**
      * The Sable constraint for one joint between two frames' bodies, anchors in each body's plot.
-     * {@code pa}/{@code pb} are the pivot in each
-     * one's own space and {@code qa}/{@code qb} how each is turned now; {@code frame} is how the
-     * plot is turned in the world, to carry a hinge's axis -- given in plot space -- into each
-     * body's own.
+     * {@code pa}/{@code pb} are the pivot in each one's own space and {@code qa}/{@code qb} how each
+     * is turned now; {@code frame} is how the plot is turned in the world, to carry a hinge's axis --
+     * given in plot space -- into each body's own.
      */
-    static PhysicsConstraintHandle constrain(dev.ryanhcode.sable.api.physics.PhysicsPipeline pipeline,
-                                             dev.ryanhcode.sable.api.physics.PhysicsPipelineBody a, Vector3d pa, Quaterniond qa,
-                                             dev.ryanhcode.sable.api.physics.PhysicsPipelineBody b, Vector3d pb, Quaterniond qb,
+    static PhysicsConstraintHandle constrain(PhysicsPipeline pipeline,
+                                             PhysicsPipelineBody a, Vector3d pa, Quaterniond qa,
+                                             PhysicsPipelineBody b, Vector3d pb, Quaterniond qb,
                                              Quaterniond frame, FrameJoint.Kind kind, Vec3 axis) {
         return switch (kind) {
             case WELD, LOCKED, SLIDER -> pipeline.addConstraint(a, b, new FixedConstraintConfiguration(pa, pb,
                     new Quaterniond(qa).conjugate().mul(qb)));
             case BALL -> pipeline.addConstraint(a, b, new GenericConstraintConfiguration(pa, pb,
                     new Quaterniond(qa).conjugate(), new Quaterniond(qb).conjugate(),
-                    java.util.Set.of(dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis.LINEAR)));
+                    Set.of(ConstraintJointAxis.LINEAR)));
             case HINGE -> {
                 Vector3d world = frame.transform(new Vector3d(axis.x, axis.y, axis.z));
                 Vector3d na = new Quaterniond(qa).conjugate().transform(new Vector3d(world));
@@ -901,9 +1072,10 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         return body == null ? new Quaterniond() : new Quaterniond(body.logicalPose().orientation());
     }
 
-    private static Vector3d plot(FrameBlockEntity be, int vertex) {
-        Vec3 p = be.frame.pos(vertex).add(Vec3.atLowerCornerOf(be.worldPosition));
-        return new Vector3d(p.x, p.y, p.z);
+    /** Frame point {@code vertex} in a plot where this block's position falls at {@code origin}. */
+    private Vector3d plot(int vertex, BlockPos origin) {
+        Vec3 p = frame.pos(vertex);
+        return new Vector3d(p.x + origin.getX(), p.y + origin.getY(), p.z + origin.getZ());
     }
 
     /**
@@ -949,8 +1121,7 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
         super.loadAdditional(tag, registries);
         frame.load(tag.getCompound("Frame"));
         shape = null;
-        // A save from before boxes had "Cells" and no flag; a frame that had cells was assembled.
-        assembled = tag.getBoolean("Assembled") || tag.getLongArray("Cells").length > 0;
+        assembled = tag.getBoolean("Assembled");
         baseCells.clear();
         for (long l : tag.getLongArray("BaseCells"))
             baseCells.add(BlockPos.of(l));
@@ -962,16 +1133,13 @@ public class FrameBlockEntity extends BlockEntity implements BlockEntitySubLevel
                 cells.add(BlockPos.of(l));
             groupBodies.put(g.getInt("Group"), new GroupBody(g.getUUID("Body"), BlockPos.of(g.getLong("Origin")), cells));
         }
-        // An assembled frame saved before cells (its plates were boxes) gets its cells, all rigid
-        // with the body it is in, on its first tick.
-        cellsStale = assembled && !tag.contains("BaseCells");
         cut = null;
         drivetrainStale = true;
         if (tag.hasUUID("Id"))
             id = tag.getUUID("Id");
         joints.clear();
         for (Tag t : tag.getList("Joints", Tag.TAG_COMPOUND))
-            joints.add(FrameJoint.load((net.minecraft.nbt.CompoundTag) t));
+            joints.add(FrameJoint.load((CompoundTag) t));
         steer = tag.getFloat("Steer");
         brake = tag.getFloat("Brake");
     }

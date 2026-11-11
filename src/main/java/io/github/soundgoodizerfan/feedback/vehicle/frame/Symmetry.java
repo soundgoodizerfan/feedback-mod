@@ -92,6 +92,12 @@ public final class Symmetry {
             frame.setAnchor(m, off == null ? null : img.apply(off));
             Frame.Pivot p = frame.pivots().get(v);
             frame.setPivot(m, p == null ? null : p.withAxis(img.apply(p.axis())));
+            Integer rotor = frame.rotors().get(v);
+            if (rotor != null) {
+                int mr = img.of(frame, rotor, true);
+                if (mr >= 0 && mr != rotor && mr != m)
+                    frame.setRotor(m, mr);
+            }
             Frame.Tire t = frame.tires().get(v);
             if (t != null)
                 frame.setTire(m, t);
@@ -119,15 +125,14 @@ public final class Symmetry {
         Frame.Tube tube = frame.tube(a, b);
         for (Image img : images(frame)) {
             int ma = img.of(frame, a, true), mb = img.of(frame, b, true);
-            if (ma < 0 || mb < 0 || ma == mb || (Math.min(ma, mb) == Math.min(a, b) && Math.max(ma, mb) == Math.max(a, b)))
+            if (ma < 0 || mb < 0 || ma == mb || Frame.edgeKey(ma, mb) == Frame.edgeKey(a, b))
                 continue;
             if (frame.hasEdge(a, b) != frame.hasEdge(ma, mb))
                 frame.toggleEdge(ma, mb);
-            Frame.Tube had = frame.tube(ma, mb);
-            if (tube == null) {
-                if (had != null)
-                    frame.removeTube(ma, mb);
-            } else if (frame.hasEdge(ma, mb)) {
+            if (tube == null)
+                frame.removeTube(ma, mb);
+            else if (frame.hasEdge(ma, mb)) {
+                Frame.Tube had = frame.tube(ma, mb);
                 if (had == null || !had.material().equals(tube.material())) {
                     frame.setTube(ma, mb, tube.material());
                     made++;
@@ -144,7 +149,7 @@ public final class Symmetry {
     /** Makes each image of triangle {@code a-b-c} match it: plated in the same block, or not. Returns plates newly made. */
     public static int copyPlate(Frame frame, int a, int b, int c) {
         int made = 0;
-        Frame.Plate plate = frame.hasPlate(a, b, c) ? frame.plate(a, b, c) : null;
+        Frame.Plate plate = frame.plate(a, b, c);
         for (Image img : images(frame)) {
             int ma = img.of(frame, a, plate != null), mb = img.of(frame, b, plate != null), mc = img.of(frame, c, plate != null);
             if (ma < 0 || mb < 0 || mc < 0 || ma == mb || mb == mc || ma == mc)
@@ -156,12 +161,10 @@ public final class Symmetry {
             for (int[] e : new int[][]{{ma, mb}, {mb, mc}, {ma, mc}})
                 if (!frame.hasEdge(e[0], e[1]))
                     frame.toggleEdge(e[0], e[1]);
-            Frame.Plate had = frame.hasPlate(ma, mb, mc) ? frame.plate(ma, mb, mc) : null;
-            if (had == null || !had.material().equals(plate.material())) {
-                frame.removePlate(ma, mb, mc);
+            Frame.Plate had = frame.plate(ma, mb, mc);
+            if (had == null || !had.material().equals(plate.material()))
                 if (frame.addPlate(ma, mb, mc, plate.material()) && had == null)
                     made++;
-            }
         }
         return made;
     }
@@ -170,8 +173,7 @@ public final class Symmetry {
     public static void copySplit(Frame frame, int a, int b) {
         for (Image img : images(frame)) {
             int ma = img.of(frame, a, false), mb = img.of(frame, b, false);
-            if (ma >= 0 && mb >= 0 && frame.hasEdge(ma, mb)
-                    && !(Math.min(ma, mb) == Math.min(a, b) && Math.max(ma, mb) == Math.max(a, b)))
+            if (ma >= 0 && mb >= 0 && frame.hasEdge(ma, mb) && Frame.edgeKey(ma, mb) != Frame.edgeKey(a, b))
                 frame.split(ma, mb);
         }
     }

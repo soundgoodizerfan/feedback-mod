@@ -650,6 +650,15 @@ interface; Feedback's wings are frame plates), linear lift and drag, levitite. S
 stall, rudder or keel code, so the stall angle from thickness, the flat-plate post-stall collapse
 and any water surfaces are Feedback's own. No code copied (`vehicle/drive/Wings`).
 
+**Rotary Bearing and Ring Gear (2026-11-02), same repository.** *Taken, design only:* the swivel
+bearing's drive -- a `Rotary` joint whose motor is a position servo chasing a target angle advanced
+by the input speed each tick, gains scaled by the turned body's inertia about the axis, contacts
+off between the two sides, and the target reset from the bodies' orientations when the joint is
+remade. *Not taken:* its config figures, its link block and its plate-on-a-sub-level assembly;
+Feedback assembles what is in front of the bearing as the Lift does. No code copied
+(`machine/bearing/RotaryBearingBlockEntity`). Create's mechanical bearing (MIT) for the use:
+assemble, turn, put back.
+
 ## SummerCraft (engine sounds, 2026-10-20)
 
 The author's own mod (`../summercraft`). Its twelve engine recordings (inline-4, V6, V8, four

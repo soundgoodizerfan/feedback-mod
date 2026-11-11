@@ -21,6 +21,7 @@ package io.github.soundgoodizerfan.feedback.core.rotation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -61,6 +62,33 @@ public interface Rotatable {
      * meshing reverses.
      */
     default float meshRatioTowards(BlockState state, Direction face, BlockState other) {
+        return 0;
+    }
+
+    /**
+     * Relative tooth count of this block's teeth, or 0 for a block with none. Cogs and a ring gear
+     * answer; meshing asks this rather than what block the neighbour is.
+     */
+    default int teeth(BlockState state) {
+        return 0;
+    }
+
+    /**
+     * Whether this block can mesh with a neighbour standing diagonally (an edge diagonal: one step
+     * along two axes). The propagator scans those twelve positions only for a block that says yes,
+     * so a shaft or a machine pays nothing for them.
+     */
+    default boolean meshesDiagonally(BlockState state) {
+        return false;
+    }
+
+    /**
+     * Gear ratio, neighbour's speed over this block's, when this block's teeth mesh with
+     * {@code other} at the edge-diagonal {@code offset}, or 0 when they do not. Speeds are turns
+     * about each block's positive axis direction; see {@code docs/feedback_micro_spec.md}, <em>Cog
+     * meshing</em>.
+     */
+    default float meshRatioAt(BlockState state, Vec3i offset, BlockState other) {
         return 0;
     }
 }

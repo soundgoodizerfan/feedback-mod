@@ -1,0 +1,40 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "housing": "feedback:block/device_gearbox_sides",
+    "shaft": "feedback:block/log_mulberry_inner",
+    "particle": "feedback:block/device_gearbox_sides"
+  },
+  "elements": [
+    { "from": [2, 2, 2], "to": [14, 14, 14],
+      "faces": {
+        "north": { "texture": "#housing" }, "south": { "texture": "#housing" },
+        "west":  { "texture": "#housing" }, "east":  { "texture": "#housing" },
+        "up":    { "texture": "#housing" }, "down":  { "texture": "#housing" } } },
+    { "from": [6, 0, 6], "to": [10, 2, 10],
+      "faces": {
+        "down":  { "texture": "#shaft" },
+        "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" },
+        "west":  { "texture": "#shaft" }, "east":  { "texture": "#shaft" } } },
+    { "from": [5.5, 14, 5.5], "to": [6.5, 16, 6.5],
+      "faces": {
+        "up":    { "texture": "#shaft" },
+        "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" },
+        "west":  { "texture": "#shaft" }, "east":  { "texture": "#shaft" } } },
+    { "from": [9.5, 14, 5.5], "to": [10.5, 16, 6.5],
+      "faces": {
+        "up":    { "texture": "#shaft" },
+        "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" },
+        "west":  { "texture": "#shaft" }, "east":  { "texture": "#shaft" } } },
+    { "from": [5.5, 14, 9.5], "to": [6.5, 16, 10.5],
+      "faces": {
+        "up":    { "texture": "#shaft" },
+        "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" },
+        "west":  { "texture": "#shaft" }, "east":  { "texture": "#shaft" } } },
+    { "from": [9.5, 14, 9.5], "to": [10.5, 16, 10.5],
+      "faces": {
+        "up":    { "texture": "#shaft" },
+        "north": { "texture": "#shaft" }, "south": { "texture": "#shaft" },
+        "west":  { "texture": "#shaft" }, "east":  { "texture": "#shaft" } } }
+  ]
+}

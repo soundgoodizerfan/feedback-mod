@@ -19,6 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.cog;
 
+import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
@@ -27,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -39,6 +41,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -55,30 +58,30 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  *
  * <h2>Two sizes, and what meshing means</h2>
  * A cog is bolted to a shaft, so it couples along its own axis exactly as a shaft does. Set two
- * cogs side by side in the same plane and their teeth <em>mesh</em> instead: they drive each
- * other, in opposite directions, at the ratio of their sizes. Small to small is 1:1 reversed;
- * large to small doubles the speed; small to large halves it.
- *
- * <h2>Where this deliberately differs from Create</h2>
- * Create requires a large cog and a small one to be placed <em>diagonally</em>, because its large
- * cog is visibly bigger than one block and its teeth reach the corner. Ours mesh face to face,
- * for as long as all the art is placeholder: every block here is a one-metre cube, so a diagonal
- * rule would be one the player cannot see and therefore cannot learn. Revisit when the cogs have
- * real models -- the propagator would need to scan diagonal neighbours, which is the only part of
- * this that is engine work rather than content.
+ * cogs where their teeth reach and they <em>mesh</em> instead: they drive each other at the ratio
+ * of their sizes. Which positions reach is Create's rule (user decision 2026-11-02, "make them like
+ * Create"): small to small face to face in one plane; small to large diagonally in one plane, the
+ * small against the large one's rim; and two large cogs at right angles, diagonally, as a bevel
+ * pair. The large cog is drawn wider than its block (its model reaches into the neighbours) so the
+ * rule can be seen; it still occupies one block. Positions and signs: {@code
+ * docs/feedback_micro_spec.md}, <em>Cog meshing</em>. This replaced a face-to-face-only rule that
+ * suited placeholder cubes and stopped once the large cog was drawn at its size.
  * <p>
  * The two sizes and their ratios are Create's, taken deliberately. Their code is MIT and the
  * rotation layer is openly Create-inspired; this mod's originality is in overrun and
  * instrumentation, not in inventing a third cog. <b>Their assets are not MIT</b> -- see
  * THIRD-PARTY-LICENSES.md.
  */
-public class CogBlock extends RotatedPillarBlock implements EntityBlock, Rotatable {
+public class CogBlock extends RotatedPillarBlock implements EntityBlock, MicroRotation {
 
     /**
      * Relative tooth count. Only the ratio between two cogs is ever used, so these are sizes
      * rather than counts -- there is no number of teeth modelled anywhere.
      */
     private final int teeth;
+
+    /** The two sizes' teeth: a large cog is twice a small one, Create's proportion. */
+    public static final int SMALL = 1, LARGE = 2;
 
     private final Drag dragSuPerRpm;
     private final Inertia inertia;
@@ -99,9 +102,11 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, Rotatab
         float far = 8 + half;
         float low = 8 - radius;
         float high = 8 + radius;
-        this.shapeX = box(near, low, low, far, high, high);
-        this.shapeY = box(low, near, low, high, far, high);
-        this.shapeZ = box(low, low, near, high, high, far);
+        // The disc (clamped to the block by the radius given) and the hub through the block: a large
+        // cog's drawn disc reaches into its neighbours, its shape stays in its own block.
+        this.shapeX = Shapes.or(box(near, low, low, far, high, high), box(0, 6, 6, 16, 10, 10));
+        this.shapeY = Shapes.or(box(low, near, low, high, far, high), box(6, 0, 6, 10, 16, 10));
+        this.shapeZ = Shapes.or(box(low, low, near, high, high, far), box(6, 6, 0, 10, 10, 16));
     }
 
     public int getTeeth() {
@@ -134,13 +139,17 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, Rotatab
      */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return getStateForPlacement(context, context.getLevel()
+                .getBlockState(context.getClickedPos().relative(context.getClickedFace().getOpposite())));
+    }
+
+    /** The rule above, with {@code against} given: the world's block full size, the clicked voxel as a micro-block. */
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context, @Nullable BlockState against) {
         Direction face = context.getClickedFace();
-        if (context.getPlayer() == null || !context.getPlayer().isShiftKeyDown()) {
-            BlockState against = context.getLevel()
-                    .getBlockState(context.getClickedPos().relative(face.getOpposite()));
-            if (against.getBlock() instanceof Rotatable rotatable)
-                return defaultBlockState().setValue(AXIS, rotatable.getRotationAxis(against));
-        }
+        if ((context.getPlayer() == null || !context.getPlayer().isShiftKeyDown())
+                && against != null && against.getBlock() instanceof Rotatable rotatable)
+            return defaultBlockState().setValue(AXIS, rotatable.getRotationAxis(against));
         return defaultBlockState().setValue(AXIS, face.getAxis());
     }
 
@@ -155,18 +164,69 @@ public class CogBlock extends RotatedPillarBlock implements EntityBlock, Rotatab
     }
 
     /**
-     * Teeth engage only with another cog lying in the same plane and set beside it. In line along
-     * the axis is not meshing: that is two cogs bolted to one shaft, which the shaft coupling
-     * above already handles and which turn as one.
+     * Face to face, only two small cogs in one plane mesh (1:1, reversed): a large cog's rim reaches
+     * past the next block, so face to face it would pass through its neighbour instead. In line along
+     * the axis is not meshing: that is two cogs bolted to one shaft, which the shaft coupling above
+     * already handles and which turn as one. Create's rule, see the micro spec's <em>Cog meshing</em>.
      */
     @Override
     public float meshRatioTowards(BlockState state, Direction face, BlockState other) {
-        if (!(other.getBlock() instanceof CogBlock otherCog))
+        return faceMesh(teeth, state.getValue(AXIS), face, other);
+    }
+
+    @Override
+    public int teeth(BlockState state) {
+        return teeth;
+    }
+
+    /** The teeth of {@code other}, 0 if it has none. */
+    private static int teethOf(BlockState other) {
+        return other.getBlock() instanceof Rotatable r ? r.teeth(other) : 0;
+    }
+
+    /**
+     * The face rule for any toothed block (a cog, a ring gear) with {@code teeth} on {@code axis}:
+     * only two small ones in one plane, 1:1 reversed.
+     */
+    public static float faceMesh(int teeth, Direction.Axis axis, Direction face, BlockState other) {
+        if (teeth != SMALL || teethOf(other) != SMALL)
             return 0;
-        Direction.Axis axis = state.getValue(AXIS);
-        if (axis != other.getValue(AXIS) || face.getAxis() == axis)
+        if (axis != ((Rotatable) other.getBlock()).getRotationAxis(other) || face.getAxis() == axis)
             return 0;
-        return -(float) teeth / otherCog.teeth;
+        return -1;
+    }
+
+    @Override
+    public boolean meshesDiagonally(BlockState state) {
+        return true;
+    }
+
+    /**
+     * Diagonally, two pairings mesh (Create's, see the micro spec's <em>Cog meshing</em>): a small and
+     * a large cog on one axis, diagonal in their plane, the small against the large one's rim, at the
+     * teeth ratio reversed; and two large cogs at right angles, one step along each one's axis and
+     * none along the third -- a bevel pair, whose contact point at the shared corner makes the
+     * neighbour's speed this one's times (offset along the neighbour's axis) over (offset along this
+     * one's axis).
+     */
+    @Override
+    public float meshRatioAt(BlockState state, Vec3i offset, BlockState other) {
+        return diagonalMesh(teeth, state.getValue(AXIS), offset, other);
+    }
+
+    /** The diagonal rules for any toothed block with {@code teeth} on {@code axis}; see above. */
+    public static float diagonalMesh(int teeth, Direction.Axis axis, Vec3i offset, BlockState other) {
+        int otherTeeth = teethOf(other);
+        if (otherTeeth == 0)
+            return 0;
+        Direction.Axis otherAxis = ((Rotatable) other.getBlock()).getRotationAxis(other);
+        int along = axis.choose(offset.getX(), offset.getY(), offset.getZ());
+        if (axis == otherAxis)
+            return along == 0 && teeth != otherTeeth ? -(float) teeth / otherTeeth : 0;
+        int alongOther = otherAxis.choose(offset.getX(), offset.getY(), offset.getZ());
+        if (teeth != LARGE || otherTeeth != LARGE || along == 0 || alongOther == 0)
+            return 0;
+        return (float) alongOther / along;
     }
 
     /** Drawn by the visual rather than the chunk mesh, so it can turn. See {@code ShaftBlock}. */

@@ -30,11 +30,13 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -44,7 +46,9 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -55,9 +59,12 @@ import java.util.Map;
  *
  * <ul>
  *   <li><b>Point</b>: use on nothing places a point at the block face you are looking at, or in
- *       mid air at the distance of the point you hold, in its own 1/16 cell. Use on a point selects
- *       it; again on the selected one picks it up, and the next use puts it down (its edges and
- *       plates follow). Use on the middle of an edge splits it with a carried point.</li>
+ *       mid air at the distance of the point last chosen, in its own 1/16 cell, and chooses it. Use
+ *       on a point chooses it, or lets it go again; on the middle of an edge, splits the edge there.
+ *       The gizmo ({@link FrameEdit}) moves what is chosen. A hinge or ball with no rotor yet is the
+ *       exception: the next use, on it or in the air, puts its rotor one cell on toward the look.</li>
+ *   <li><b>Select</b> chooses every point inside a box of two corners; <b>Extrude</b> pulls a copy
+ *       of the chosen points out along a gizmo arrow, joined to them.</li>
  *   <li><b>Connect</b>: use on a point, then another, toggles the edge between them; with a block
  *       in the off hand a new edge is a tube of it (spec section 4a), and use on an edge with a
  *       block makes it thicker. With a point selected, use on a point of <em>another</em> frame
@@ -103,11 +110,16 @@ public class WelderItem extends Item {
      * Near a frame, every click is the tool's.
      */
     @Override
-    public net.minecraft.world.InteractionResult onItemUseFirst(ItemStack stack, net.minecraft.world.item.context.UseOnContext context) {
+    public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
+        return claim(this, context);
+    }
+
+    /** {@link #onItemUseFirst} for this tool and the {@link PivotItem}: {@code tool}'s use, if a frame is near. */
+    static InteractionResult claim(Item tool, UseOnContext context) {
         Player player = context.getPlayer();
-        if (player == null || WelderItem.aim(context.getLevel(), player) == null)
-            return net.minecraft.world.InteractionResult.PASS;
-        return use(context.getLevel(), player, context.getHand()).getResult();
+        if (player == null || aim(context.getLevel(), player) == null)
+            return InteractionResult.PASS;
+        return tool.use(context.getLevel(), player, context.getHand()).getResult();
     }
 
     @Override
@@ -160,6 +172,10 @@ public class WelderItem extends Item {
         WelderSelected chosen = selected(stack, be);
 
         int hit = pick(frame, origin, eye, look, reach);
+        // Playtest 2026-11-02: a second bearing's rotor click only moved the point.
+        org.slf4j.LoggerFactory.getLogger("feedback.welder").info("[feedback] welder use mode={} sneak={} hit={} hitBare={} chosen={} chosenBare={} pivot(chosen)={}",
+                mode, player.isShiftKeyDown(), hit, hit >= 0 && bareBearing(frame, hit), chosen == null ? null : chosen.vertices(),
+                chosen != null && bareBearing(frame, chosen.last()), chosen == null ? null : frame.pivots().get(chosen.last()));
 
         if (player.isShiftKeyDown()) {
             // Let go of everything held; removing is its own mode.
@@ -246,6 +262,17 @@ public class WelderItem extends Item {
                     be.changed();
                 }
             }
+        } else if (mode == WelderMode.POINT && hit >= 0 && bareBearing(frame, hit)) {
+            // A click on a hinge or ball with no rotor yet, selected or not: its rotor goes one step on,
+            // the way you are looking. (Selected-only left the click to the selection toggle whenever the
+            // point was not the one selected: playtest 2026-10-29.)
+            Frame.Vertex s = frame.vertices().get(hit);
+            int rotor = placeRotor(player, frame, hit, new Frame.Vertex(s.x() + (int) Math.round(look.x * 8),
+                    s.y() + (int) Math.round(look.y * 8), s.z() + (int) Math.round(look.z * 8)));
+            if (rotor < 0)
+                return InteractionResultHolder.consume(stack);
+            chosen = new WelderSelected(at, List.of(rotor), true);
+            be.changed();
         } else if (hit >= 0) {
             // Point, Select, Extrude: a click on a point takes it into the selection, or out.
             chosen = chosen == null ? new WelderSelected(at, List.of(hit), true) : chosen.toggled(hit);
@@ -283,11 +310,22 @@ public class WelderItem extends Item {
                     player.displayClientMessage(Component.translatable("message.feedback.welder.out_of_range"), true);
                     return InteractionResultHolder.consume(stack);
                 }
-                int placed = frame.add(v);
-                bearOnShaft(level, player, be, placed, eye, look, reach);
-                Symmetry.copyPoint(frame, placed);
-                chosen = new WelderSelected(at, List.of(placed), true);
-                be.changed();
+                int stator = chosen != null ? chosen.last() : -1;
+                if (bareBearing(frame, stator)) {
+                    // The held point is a hinge or ball with nothing on its far side yet: this point is
+                    // its rotor, exactly one grid step off along the axis the click leans toward.
+                    int rotor = placeRotor(player, frame, stator, v);
+                    if (rotor < 0)
+                        return InteractionResultHolder.consume(stack);
+                    chosen = new WelderSelected(at, List.of(rotor), true);
+                    be.changed();
+                } else {
+                    int placed = frame.add(v);
+                    bearOnShaft(level, player, be, placed, eye, look, reach);
+                    Symmetry.copyPoint(frame, placed);
+                    chosen = new WelderSelected(at, List.of(placed), true);
+                    be.changed();
+                }
             }
         }
 
@@ -314,6 +352,44 @@ public class WelderItem extends Item {
 
     private static boolean between(int v, int a, int b) {
         return v >= Math.min(a, b) && v <= Math.max(a, b);
+    }
+
+    /** Whether {@code v} is a hinge or ball that has no rotor yet and is not itself some bearing's rotor. */
+    public static boolean bareBearing(Frame frame, int v) {
+        Frame.Pivot p = frame.pivots().get(v);
+        return p != null && (p.kind() == FrameJoint.Kind.HINGE || p.kind() == FrameJoint.Kind.BALL)
+                && !frame.rotors().containsKey(v) && !frame.rotors().containsValue(v);
+    }
+
+    /**
+     * Adds the rotor of {@code stator}, and the mirror images of both: the point one grid step from
+     * it, along whichever axis the aimed point {@code aim} is furthest along, on the side it lies.
+     * Returns its id, or -1, and says why, if the aim is on the stator itself, the step is out of
+     * range or the point is taken.
+     */
+    static int placeRotor(Player player, Frame frame, int stator, Frame.Vertex aim) {
+        Frame.Vertex s = frame.vertices().get(stator);
+        int[] d = {aim.x() - s.x(), aim.y() - s.y(), aim.z() - s.z()};
+        int axis = Math.abs(d[0]) >= Math.abs(d[1]) && Math.abs(d[0]) >= Math.abs(d[2]) ? 0 : Math.abs(d[1]) >= Math.abs(d[2]) ? 1 : 2;
+        if (d[axis] == 0) {
+            player.displayClientMessage(Component.translatable("message.feedback.welder.cannot_move"), true);
+            return -1;
+        }
+        int step = d[axis] > 0 ? 1 : -1;
+        Frame.Vertex at = new Frame.Vertex(s.x() + (axis == 0 ? step : 0), s.y() + (axis == 1 ? step : 0), s.z() + (axis == 2 ? step : 0));
+        if (!at.inRange()) {
+            player.displayClientMessage(Component.translatable("message.feedback.welder.out_of_range"), true);
+            return -1;
+        }
+        if (frame.idAt(at) >= 0) {
+            player.displayClientMessage(Component.translatable("message.feedback.welder.cannot_move"), true);
+            return -1;
+        }
+        int rotor = frame.add(at);
+        frame.setRotor(stator, rotor);
+        Symmetry.copyPoint(frame, rotor);
+        Symmetry.copyPoint(frame, stator);
+        return rotor;
     }
 
     /** Whether the look meets the frame block itself before anything else. */
@@ -421,15 +497,12 @@ public class WelderItem extends Item {
      * round trip. An existing bearing is never overwritten.
      */
     static void connect(Frame frame, int a, int b, Player player) {
-        if (a == b || !frame.toggleEdge(a, b))
+        if (!frame.toggleEdge(a, b))
             return;
-        if (frame.hasEdge(a, b)) {
-            carryOn(frame, a, b);
-            carryOn(frame, b, a);
-        }
+        carryOn(frame, a, b);
+        carryOn(frame, b, a);
         ItemStack off = player.getOffhandItem();
-        if (frame.hasEdge(a, b) && off.getItem() instanceof BlockItem block
-                && frame.setTube(a, b, BuiltInRegistries.BLOCK.getKey(block.getBlock()))
+        if (off.getItem() instanceof BlockItem block && frame.setTube(a, b, BuiltInRegistries.BLOCK.getKey(block.getBlock()))
                 && !player.getAbilities().instabuild)
             off.shrink(1);
     }
@@ -512,7 +585,7 @@ public class WelderItem extends Item {
     static void say(Player player, @Nullable FrameJoint j) {
         if (j == null)
             return;
-        Component what = Component.translatable("message.feedback.joint." + j.kind().name().toLowerCase(java.util.Locale.ROOT),
+        Component what = Component.translatable("message.feedback.joint." + j.kind().name().toLowerCase(Locale.ROOT),
                 String.format("(%.2f, %.2f, %.2f)", j.axis().x, j.axis().y, j.axis().z));
         player.displayClientMessage(j.kind().bearing()
                 ? Component.translatable(j.drives() ? "message.feedback.joint.drives" : "message.feedback.joint.free", what)
@@ -547,27 +620,15 @@ public class WelderItem extends Item {
      */
     @Nullable
     public static Aim aim(Level level, Player player) {
-        Vec3 eye = player.getEyePosition();
-        Vec3 look = player.getViewVector(1f);
         Aim best = null;
         double bestDist = Double.MAX_VALUE;
-
-        FrameBlockEntity world = nearestFrame(level, BlockPos.containing(eye));
-        if (world != null) {
-            best = new Aim(world, eye, look);
-            bestDist = Vec3.atCenterOf(world.getBlockPos()).distanceToSqr(eye);
-        }
-        BoundingBox3d around = new BoundingBox3d(player.getBoundingBox().inflate(SEARCH));
-        for (SubLevelAccess body : SableCompanion.INSTANCE.getAllIntersecting(level, around)) {
-            Pose3dc pose = body.logicalPose();
-            Vec3 localEye = pose.transformPositionInverse(eye);
-            Vector3d l = pose.transformNormalInverse(new Vector3d(look.x, look.y, look.z), new Vector3d());
-            FrameBlockEntity inBody = nearestFrame(level, BlockPos.containing(localEye));
-            if (inBody == null)
+        for (Ray ray : rays(level, player)) {
+            FrameBlockEntity be = nearestFrame(level, BlockPos.containing(ray.eye()));
+            if (be == null)
                 continue;
-            double d = Vec3.atCenterOf(inBody.getBlockPos()).distanceToSqr(localEye);
+            double d = Vec3.atCenterOf(be.getBlockPos()).distanceToSqr(ray.eye());
             if (d < bestDist) {
-                best = new Aim(inBody, localEye, new Vec3(l.x, l.y, l.z).normalize());
+                best = new Aim(be, ray.eye(), ray.look());
                 bestDist = d;
             }
         }
@@ -576,18 +637,28 @@ public class WelderItem extends Item {
 
     /** Every frame near the player, each with the look ray in its own space. */
     private static List<Aim> aims(Level level, Player player) {
+        List<Aim> out = new ArrayList<>();
+        for (Ray ray : rays(level, player))
+            for (FrameBlockEntity be : frames(level, BlockPos.containing(ray.eye())))
+                out.add(new Aim(be, ray.eye(), ray.look()));
+        return out;
+    }
+
+    /** The player's eye and look in one space: the world's, or a Sable body's own. */
+    private record Ray(Vec3 eye, Vec3 look) {
+    }
+
+    /** The look ray in the world's space, then in the own space of each Sable body near the player. */
+    private static List<Ray> rays(Level level, Player player) {
         Vec3 eye = player.getEyePosition();
         Vec3 look = player.getViewVector(1f);
-        List<Aim> out = new ArrayList<>();
-        for (FrameBlockEntity be : frames(level, BlockPos.containing(eye)))
-            out.add(new Aim(be, eye, look));
+        List<Ray> out = new ArrayList<>();
+        out.add(new Ray(eye, look));
         BoundingBox3d around = new BoundingBox3d(player.getBoundingBox().inflate(SEARCH));
         for (SubLevelAccess body : SableCompanion.INSTANCE.getAllIntersecting(level, around)) {
             Pose3dc pose = body.logicalPose();
-            Vec3 localEye = pose.transformPositionInverse(eye);
             Vector3d l = pose.transformNormalInverse(new Vector3d(look.x, look.y, look.z), new Vector3d());
-            for (FrameBlockEntity be : frames(level, BlockPos.containing(localEye)))
-                out.add(new Aim(be, localEye, new Vec3(l.x, l.y, l.z).normalize()));
+            out.add(new Ray(pose.transformPositionInverse(eye), new Vec3(l.x, l.y, l.z).normalize()));
         }
         return out;
     }
@@ -693,17 +764,6 @@ public class WelderItem extends Item {
 
     @Nullable
     private static FrameBlockEntity nearestFrame(Level level, BlockPos around) {
-        FrameBlockEntity best = null;
-        double bestDist = Double.MAX_VALUE;
-        for (BlockPos pos : BlockPos.betweenClosed(around.offset(-SEARCH, -SEARCH, -SEARCH), around.offset(SEARCH, SEARCH, SEARCH))) {
-            if (level.getBlockEntity(pos) instanceof FrameBlockEntity be) {
-                double d = pos.distSqr(around);
-                if (d < bestDist) {
-                    best = be;
-                    bestDist = d;
-                }
-            }
-        }
-        return best;
+        return frames(level, around).stream().min(Comparator.comparingDouble(be -> be.getBlockPos().distSqr(around))).orElse(null);
     }
 }

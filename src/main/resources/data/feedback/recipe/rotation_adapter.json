@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "feedback:small_cog"
+    },
+    "S": {
+      "item": "feedback:shaft"
+    }
+  },
+  "pattern": [
+    "CSC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:rotation_adapter"
+  }
+}

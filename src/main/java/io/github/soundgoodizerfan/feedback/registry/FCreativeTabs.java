@@ -78,6 +78,7 @@ public class FCreativeTabs {
                         output.accept(FVehicles.FLIGHT_SENSOR_ITEM.get());
                         output.accept(FVehicles.WELDER.get());
                         output.accept(FVehicles.PIVOT_SETTER.get());
+                        output.accept(FVehicles.MICRO_CORE.get());
                         output.accept(FVehicles.SEAT_ITEM.get());
                         output.accept(FItems.SHAFT.get());
                         output.accept(FItems.CAMPFIRE.get());
@@ -87,6 +88,9 @@ public class FCreativeTabs {
                         output.accept(FItems.SMALL_COG.get());
                         output.accept(FItems.LARGE_COG.get());
                         output.accept(FItems.GEARBOX.get());
+                        output.accept(FItems.ROTATION_ADAPTER.get());
+                        output.accept(FItems.ROTARY_BEARING.get());
+                        output.accept(FItems.RING_GEAR.get());
                         output.accept(FItems.HAND_CRANK.get());
                         output.accept(FItems.WATER_WHEEL.get());
                         output.accept(FItems.CRANK_LINKAGE.get());

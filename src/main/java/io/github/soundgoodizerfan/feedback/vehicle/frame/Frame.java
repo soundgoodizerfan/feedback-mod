@@ -28,6 +28,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -169,8 +170,7 @@ public final class Frame {
      * {@code padCondition} is the lining's condition, 1 new, worn only by a skidding hold or a
      * stall on the pads, and it scales what the pad holds.
      */
-    public record Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension,
-                       float padCondition) {
+    public record Tire(ResourceLocation material, int size, @Nullable ResourceLocation brake, int suspension, float padCondition) {
         /** Stock suspension: index into {@link io.github.soundgoodizerfan.feedback.core.FTuning#SUSPENSION_HZ}. */
         public static final int STOCK = 1;
 
@@ -178,12 +178,12 @@ public final class Frame {
             this(material, size, null, STOCK, 1f);
         }
 
-        public Tire(ResourceLocation material, int size, @org.jetbrains.annotations.Nullable ResourceLocation brake, int suspension) {
+        public Tire(ResourceLocation material, int size, @Nullable ResourceLocation brake, int suspension) {
             this(material, size, brake, suspension, 1f);
         }
 
         /** A new lining starts at full condition. */
-        public Tire withBrake(@org.jetbrains.annotations.Nullable ResourceLocation brake) {
+        public Tire withBrake(@Nullable ResourceLocation brake) {
             return new Tire(material, size, brake, suspension, 1f);
         }
 
@@ -195,7 +195,7 @@ public final class Frame {
             return new Tire(material, size, brake, suspension, padCondition);
         }
 
-        @org.jetbrains.annotations.Nullable
+        @Nullable
         public BlockState brakeState() {
             return brake == null ? null : BuiltInRegistries.BLOCK.get(brake).defaultBlockState();
         }
@@ -227,6 +227,14 @@ public final class Frame {
      * itself stays one.
      */
     private final Map<Integer, Pivot> pivots = new HashMap<>();
+    /**
+     * A hinge or ball's rotor, by its stator point (author, 2026-10-29). The stator is a point of
+     * the body the bearing sits on; the rotor is the point exactly one grid step from it that
+     * everything hanging off the bearing is connected to. The two share no edge or plate, so the
+     * bodies on either side share no point, and the line from stator to rotor is a hinge's axis.
+     * A bearing with no rotor is the old single-point kind, still used by hubs and drive lines.
+     */
+    private final Map<Integer, Integer> rotors = new HashMap<>();
     /**
      * Points welded to a block of the vehicle's base, as that block's offset from the frame block --
      * the two are lifted together, so the offset holds. Nothing else attaches the frame to its body
@@ -291,9 +299,11 @@ public final class Frame {
         if (vertices.remove(id) == null)
             return;
         pivots.remove(id);
+        rotors.remove(id);
+        rotors.values().removeIf(r -> r == id);
         anchors.remove(id);
         tires.remove(id);
-        edges.removeIf(key -> (int) (key >>> 32) == id || (int) (long) key == id);
+        edges.removeIf(key -> edgeA(key) == id || edgeB(key) == id);
         tubes.keySet().retainAll(edges);
         plates.values().removeIf(p -> p.a == id || p.b == id || p.c == id);
     }
@@ -355,7 +365,7 @@ public final class Frame {
     }
 
     /** Sets vertex {@code id} to be a bearing, or back to a plain point with {@code null}. */
-    public void setPivot(int id, @org.jetbrains.annotations.Nullable Pivot pivot) {
+    public void setPivot(int id, @Nullable Pivot pivot) {
         if (!vertices.containsKey(id))
             return;
         if (pivot == null)
@@ -364,6 +374,34 @@ public final class Frame {
             pivots.put(id, pivot);
         if (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers())
             tires.remove(id);
+        if (pivot == null || (pivot.kind() != FrameJoint.Kind.HINGE && pivot.kind() != FrameJoint.Kind.BALL))
+            rotors.remove(id);
+    }
+
+    /** Stator point to rotor point of every hinge or ball that has one. */
+    public Map<Integer, Integer> rotors() {
+        return rotors;
+    }
+
+    /**
+     * Pairs {@code stator}, which must already be a hinge or ball, with {@code rotor}, which must be
+     * a different point that is no other bearing's rotor and not a bearing's stator. The pivot's axis
+     * becomes the line from one to the other. False, and nothing changed, if it cannot be.
+     */
+    public boolean setRotor(int stator, int rotor) {
+        Pivot p = pivots.get(stator);
+        if (p == null || (p.kind() != FrameJoint.Kind.HINGE && p.kind() != FrameJoint.Kind.BALL)
+                || stator == rotor || !vertices.containsKey(rotor) || rotors.containsKey(rotor)
+                || rotors.containsValue(rotor) && !java.util.Objects.equals(rotors.get(stator), rotor))
+            return false;
+        rotors.put(stator, rotor);
+        pivots.put(stator, p.withAxis(linkAxis(stator)));
+        return true;
+    }
+
+    /** The unit line from stator {@code stator} to its rotor: a hinge's axis. Call only with a rotor set. */
+    public Vec3 linkAxis(int stator) {
+        return pos(rotors.get(stator)).subtract(pos(stator)).normalize();
     }
 
     // --- tires ------------------------------------------------------------------------------
@@ -373,9 +411,9 @@ public final class Frame {
     }
 
     /** Makes hinge point {@code id} a hub, or takes its tire off with {@code null}. Refused on any other point, a kingpin included. */
-    public boolean setTire(int id, @org.jetbrains.annotations.Nullable Tire tire) {
+    public boolean setTire(int id, @Nullable Tire tire) {
         Pivot pivot = pivots.get(id);
-        if (tire != null && (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers()))
+        if (tire != null && (pivot == null || pivot.kind() != FrameJoint.Kind.HINGE || pivot.steers() || rotors.containsKey(id)))
             return false;
         if (tire == null)
             tires.remove(id);
@@ -391,7 +429,7 @@ public final class Frame {
     }
 
     /** Welds vertex {@code id} to the block at {@code offset} from the frame block, or unwelds it with {@code null}. */
-    public void setAnchor(int id, @org.jetbrains.annotations.Nullable BlockPos offset) {
+    public void setAnchor(int id, @Nullable BlockPos offset) {
         if (!vertices.containsKey(id))
             return;
         if (offset == null)
@@ -451,7 +489,7 @@ public final class Frame {
         return tubes;
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     public Tube tube(int a, int b) {
         return tubes.get(edgeKey(a, b));
     }
@@ -499,10 +537,6 @@ public final class Frame {
         return plates.values();
     }
 
-    public boolean hasPlate(int a, int b, int c) {
-        return plates.containsKey(triKey(a, b, c));
-    }
-
     /** Lays a plate on a closed triangle. Refused if any edge is missing. */
     public boolean addPlate(int a, int b, int c, ResourceLocation material) {
         if (!hasEdge(a, b) || !hasEdge(b, c) || !hasEdge(a, c))
@@ -511,7 +545,7 @@ public final class Frame {
         return true;
     }
 
-    @org.jetbrains.annotations.Nullable
+    @Nullable
     public Plate plate(int a, int b, int c) {
         return plates.get(triKey(a, b, c));
     }
@@ -724,6 +758,14 @@ public final class Frame {
             pv.add(e);
         });
         tag.put("Pivots", pv);
+        ListTag ro = new ListTag();
+        rotors.forEach((stator, rotor) -> {
+            CompoundTag e = new CompoundTag();
+            e.putInt("Stator", stator);
+            e.putInt("Rotor", rotor);
+            ro.add(e);
+        });
+        tag.put("Rotors", ro);
         ListTag an = new ListTag();
         anchors.forEach((id, off) -> {
             CompoundTag e = new CompoundTag();
@@ -755,6 +797,7 @@ public final class Frame {
         plates.clear();
         tubes.clear();
         pivots.clear();
+        rotors.clear();
         anchors.clear();
         tires.clear();
         mirror = tag.getInt("Mirror") & 7;
@@ -794,6 +837,8 @@ public final class Frame {
                         e.getBoolean("Drives"), kind == FrameJoint.Kind.HINGE && e.getBoolean("Steers"), Math.clamp(e.getInt("Differential"), 0, 3),
                         e.contains("Band") ? Math.clamp(e.getInt("Band"), 0, 2) : Tire.STOCK));
         }
+        for (Tag t : tag.getList("Rotors", Tag.TAG_COMPOUND))
+            setRotor(((CompoundTag) t).getInt("Stator"), ((CompoundTag) t).getInt("Rotor"));
         for (Tag t : tag.getList("Anchors", Tag.TAG_COMPOUND)) {
             CompoundTag e = (CompoundTag) t;
             int[] o = e.getIntArray("Offset");
