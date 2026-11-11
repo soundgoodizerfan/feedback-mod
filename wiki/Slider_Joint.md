@@ -25,6 +25,10 @@ It works only as a [micro-block](Micro_Core.md). Placed as a full-size block it 
 
 The body rests where the spring holds it. A load pushes it back along the axis and the spring pushes it out again. A soft spring squats further and bounces slowly; a stiff one holds the body higher and tighter.
 
+## Wear
+
+A slider held bottomed out for 5 seconds or more wears the joint. See [Wear](Vehicles.md#wear).
+
 ## See also
 
 - [Piston Joint](Piston_Joint.md): slides to a level a card sets instead of by a spring.

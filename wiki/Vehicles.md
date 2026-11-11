@@ -70,15 +70,20 @@ A [Data Connector](Data_Connector.md) picks a single joint voxel, so a [Controll
 
 ## Wheels
 
-A [Rotary Bearing](Rotary_Bearing.md) with role 0 whose turned body contains **tire stock** is a wheel. Black wool is tire stock. The voxels of the tire have no collision; the wheel finds the ground with a ray from the axle.
+A [Rotary Bearing](Rotary_Bearing.md) with role 0 whose turned body contains **tire stock** is a wheel. Black wool and [Tire Rubber](Tire_Rubber.md) are tire stock. The voxels of the tire have no collision; the wheel finds the ground with a ray from the axle.
 
 - **Radius.** The wheel's radius is the distance from the axle to the farthest tire voxel.
-- **Springing.** The tire is a spring and a damper: the body squats on it and rebounds.- **Grip.** The tire pushes the vehicle as hard as the tire's friction against the ground's allows. A wheel pushed past its grip slips.
-- **Brake and rolling resistance.** A card brakes the wheel through the bearing's **Brake** channel. A soft tire rolling on soft ground costs speed.
+- **Springing.** The tire is a spring and a damper: the body squats on it and rebounds.
+- **Grip.** The tire pushes the vehicle as hard as the tire's friction against the ground's allows. A wheel pushed past its grip slips.
+- **Brake and rolling resistance.** A card brakes the wheel through the bearing's **Brake** channel. Rolling costs speed: a soft tire and loose or sinking ground roll harder, and ice wastes none.
 - **Drive.** The road's torque on the wheel loads the shaft, or helps it turn when the vehicle rolls downhill. All driven wheels on one shaft run at the same speed; there is no differential.
 - **Walls.** Rays around the rim keep the wheel out of walls, steps and other vehicles.
 
-Brake pads do not wear.
+## Wear
+
+A ball joint at the edge of its cone, a slider bottomed out or a piston that cannot reach its level wears its joint when it is forced against that stop for 5 seconds or more. A drive that pushes against a held brake wears the brake pad, which lowers the brake's grip. A worn joint loses condition down to a floor of 30%.
+
+**Sneak-click** an assembled joint voxel to read *"Joint X%, brake pad Y%"*. Clicking it with a full-size [Bearing](Bearing.md) renews both.
 
 ## Wings
 

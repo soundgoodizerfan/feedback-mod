@@ -23,6 +23,10 @@ It works only as a [micro-block](Micro_Core.md). Placed as a full-size block it 
 
 The body swings freely inside the cone and is stopped at its edge. Put back the outermost body first when joints are chained. A [Lift](Vehicles.md#the-lift) carries the swung body with the vehicle and keeps its angle.
 
+## Wear
+
+A body forced against the edge of the cone for 5 seconds or more wears the joint. See [Wear](Vehicles.md#wear).
+
 ## See also
 
 - [Vehicles](Vehicles.md#joints): the other joints.

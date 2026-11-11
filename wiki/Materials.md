@@ -237,7 +237,7 @@ Every polymer has an **insulation band**, shown in the table: how high a voltage
 
 ### Polymer grips
 
-A polymer grip on a tool or gun raises how securely it is held, by its friction. Rubber's is highest of the polymers.
+A polymer grip on a tool or gun raises how securely it is held, by its friction. Rubber's is highest of the polymers. Pressed into [Tire Rubber](Tire_Rubber.md), it makes the tread of a wheel.
 
 ## Ore minerals
 

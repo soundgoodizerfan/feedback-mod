@@ -17,6 +17,10 @@ Hold it and right-click a [micro cell](Micro_Core.md) as you would any block. Th
 
 Each of the four steps is 1/16 of a block. What you see is what collides and what the outline shows: the same four steps. The wedge has a single look.
 
+## Wedge mode
+
+Set a [Micro Core](Micro_Core.md) in your other hand to **Wedge** mode and the whole block in your main hand goes in as a ramp of itself. It takes the block's texture, weight and cost, and mining it gives that block's drop. Rotation parts and joints cannot be cut to a wedge.
+
 ## See also
 
 - [Vehicles](Vehicles.md#building-with-micro-blocks): lifting a micro build.

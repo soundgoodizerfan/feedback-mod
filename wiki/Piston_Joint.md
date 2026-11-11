@@ -23,7 +23,7 @@ It works only as a [micro-block](Micro_Core.md). Placed as a full-size block it 
 
 ## How it works
 
-The piston holds the level the card sets against a load. It wears only if a load forces it past that level.
+The piston holds the level the card sets against a load. It wears the joint if a load keeps it from reaching the level for 5 seconds or more. See [Wear](Vehicles.md#wear).
 
 ## See also
 

@@ -36,19 +36,22 @@ Hold a second Micro Core in your **other hand** and it sets how the block in you
 | Single | Places one voxel. |
 | Line | Click a start, then an end: a line of voxels joins them. |
 | Box | Click one corner, then the other: the box between them fills. At most 4096 voxels in one go. |
+| Wedge | The whole block in your main hand is placed as a ramp of itself; see [Micro Wedge](Micro_Wedge.md#wedge-mode). |
 | Mirror | Use the core on a face of the build to set a mirror plane through it; use it on the same plane again to remove it. Up to 3 planes. |
 
 With mirror planes set, every voxel you place is copied across each plane, with its facing flipped.
 
+Line and box modes also work for mining. With the core in your other hand, the first mining click marks a corner and the second removes the span between. Mirror planes remove the mirrored voxels too.
+
 ## Micro rotation
 
-A [Shaft](Shaft.md), [Bearing](Bearing.md), [Cog](Cogs.md), Gearbox, [Clutch](Clutch.md#micro-clutch), [Rotary Bearing](Rotary_Bearing.md) or [Ring Gear](Ring_Gear.md) can be a voxel too. A micro shaft lies along the face you click and joins the voxels it touches end to end. A micro cog takes the axis of the micro shaft you click it onto. Micro cogs mesh by the same rules as full-size [Cogs](Cogs.md), at a quarter of the size. The [Flywheel](Flywheel.md) stays full size.
+A [Shaft](Shaft.md), [Bearing](Bearing.md), [Cog](Cogs.md), Gearbox, [Clutch](Clutch.md#micro-clutch), [Rotary Bearing](Rotary_Bearing.md) or [Ring Gear](Ring_Gear.md) can be a voxel too. A micro shaft lies along the face you click and joins the voxels it touches end to end. A micro cog takes the axis of the micro shaft you click it onto. Micro cogs mesh by the same rules as full-size [Cogs](Cogs.md), at a quarter of the size. A [Flywheel](Flywheel.md) is a voxel too.
 
 Only a [Rotation Adapter](Rotation_Adapter.md) joins micro rotation to full-size rotation.
 
 ## Joints and ramps
 
-The [Ball Joint](Ball_Joint.md), [Locked Joint](Locked_Joint.md), [Slider Joint](Slider_Joint.md), [Piston Joint](Piston_Joint.md), Rotary Bearing and Ring Gear are used with an empty hand once placed as voxels; see [Vehicles](Vehicles.md#joints). The [Micro Wedge](Micro_Wedge.md) is a four-step ramp voxel.
+The [Ball Joint](Ball_Joint.md), [Locked Joint](Locked_Joint.md), [Slider Joint](Slider_Joint.md), [Piston Joint](Piston_Joint.md), Rotary Bearing and Ring Gear are used with an empty hand once placed as voxels; see [Vehicles](Vehicles.md#joints). The [Micro Wedge](Micro_Wedge.md) is a four-step ramp voxel, and Wedge mode cuts any plain block to one.
 
 ## See also
 
