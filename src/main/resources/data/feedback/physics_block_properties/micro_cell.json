@@ -8,145 +8,289 @@
       "sable:mass": 0.002
     },
     "load=1": {
-      "sable:mass": 0.00252
+      "sable:mass": 0.002244924
     },
     "load=2": {
-      "sable:mass": 0.003175
+      "sable:mass": 0.002519842
     },
     "load=3": {
-      "sable:mass": 0.004
+      "sable:mass": 0.002828427
     },
     "load=4": {
-      "sable:mass": 0.00504
+      "sable:mass": 0.003174802
     },
     "load=5": {
-      "sable:mass": 0.00635
+      "sable:mass": 0.003563595
     },
     "load=6": {
-      "sable:mass": 0.008
+      "sable:mass": 0.004
     },
     "load=7": {
-      "sable:mass": 0.010079
+      "sable:mass": 0.004489848
     },
     "load=8": {
-      "sable:mass": 0.012699
+      "sable:mass": 0.005039684
     },
     "load=9": {
-      "sable:mass": 0.016
+      "sable:mass": 0.005656854
     },
     "load=10": {
-      "sable:mass": 0.020159
+      "sable:mass": 0.006349604
     },
     "load=11": {
-      "sable:mass": 0.025398
+      "sable:mass": 0.00712719
     },
     "load=12": {
-      "sable:mass": 0.032
+      "sable:mass": 0.008
     },
     "load=13": {
-      "sable:mass": 0.040317
+      "sable:mass": 0.008979696
     },
     "load=14": {
-      "sable:mass": 0.050797
+      "sable:mass": 0.010079368
     },
     "load=15": {
-      "sable:mass": 0.064
+      "sable:mass": 0.011313708
     },
     "load=16": {
-      "sable:mass": 0.080635
+      "sable:mass": 0.012699208
     },
     "load=17": {
-      "sable:mass": 0.101594
+      "sable:mass": 0.014254379
     },
     "load=18": {
-      "sable:mass": 0.128
+      "sable:mass": 0.016
     },
     "load=19": {
-      "sable:mass": 0.16127
+      "sable:mass": 0.017959393
     },
     "load=20": {
-      "sable:mass": 0.203187
+      "sable:mass": 0.020158737
     },
     "load=21": {
-      "sable:mass": 0.256
+      "sable:mass": 0.022627417
     },
     "load=22": {
-      "sable:mass": 0.32254
+      "sable:mass": 0.025398417
     },
     "load=23": {
-      "sable:mass": 0.406375
+      "sable:mass": 0.028508759
     },
     "load=24": {
-      "sable:mass": 0.512
+      "sable:mass": 0.032
     },
     "load=25": {
-      "sable:mass": 0.64508
+      "sable:mass": 0.035918786
     },
     "load=26": {
-      "sable:mass": 0.812749
+      "sable:mass": 0.040317474
     },
     "load=27": {
-      "sable:mass": 1.024
+      "sable:mass": 0.045254834
     },
     "load=28": {
-      "sable:mass": 1.290159
+      "sable:mass": 0.050796834
     },
     "load=29": {
-      "sable:mass": 1.625499
+      "sable:mass": 0.057017518
     },
     "load=30": {
-      "sable:mass": 2.048
+      "sable:mass": 0.064
     },
     "load=31": {
-      "sable:mass": 2.580318
+      "sable:mass": 0.071837571
     },
     "load=32": {
-      "sable:mass": 3.250997
+      "sable:mass": 0.080634947
     },
     "load=33": {
-      "sable:mass": 4.096
+      "sable:mass": 0.090509668
     },
     "load=34": {
-      "sable:mass": 5.160637
+      "sable:mass": 0.101593667
     },
     "load=35": {
-      "sable:mass": 6.501995
+      "sable:mass": 0.114035036
     },
     "load=36": {
-      "sable:mass": 8.192
+      "sable:mass": 0.128
     },
     "load=37": {
-      "sable:mass": 10.321273
+      "sable:mass": 0.143675142
     },
     "load=38": {
-      "sable:mass": 13.003989
+      "sable:mass": 0.161269894
     },
     "load=39": {
-      "sable:mass": 16.384
+      "sable:mass": 0.181019336
     },
     "load=40": {
-      "sable:mass": 20.642546
+      "sable:mass": 0.203187335
     },
     "load=41": {
-      "sable:mass": 26.007979
+      "sable:mass": 0.228070072
     },
     "load=42": {
-      "sable:mass": 32.768
+      "sable:mass": 0.256
     },
     "load=43": {
-      "sable:mass": 41.285093
+      "sable:mass": 0.287350284
     },
     "load=44": {
-      "sable:mass": 52.015958
+      "sable:mass": 0.322539789
     },
     "load=45": {
-      "sable:mass": 65.536
+      "sable:mass": 0.362038672
     },
     "load=46": {
-      "sable:mass": 82.570186
+      "sable:mass": 0.406374669
     },
     "load=47": {
-      "sable:mass": 104.031915
+      "sable:mass": 0.456140144
+    },
+    "load=48": {
+      "sable:mass": 0.512
+    },
+    "load=49": {
+      "sable:mass": 0.574700569
+    },
+    "load=50": {
+      "sable:mass": 0.645079578
+    },
+    "load=51": {
+      "sable:mass": 0.724077344
+    },
+    "load=52": {
+      "sable:mass": 0.812749339
+    },
+    "load=53": {
+      "sable:mass": 0.912280287
+    },
+    "load=54": {
+      "sable:mass": 1.024
+    },
+    "load=55": {
+      "sable:mass": 1.149401137
+    },
+    "load=56": {
+      "sable:mass": 1.290159155
+    },
+    "load=57": {
+      "sable:mass": 1.448154688
+    },
+    "load=58": {
+      "sable:mass": 1.625498677
+    },
+    "load=59": {
+      "sable:mass": 1.824560575
+    },
+    "load=60": {
+      "sable:mass": 2.048
+    },
+    "load=61": {
+      "sable:mass": 2.298802275
+    },
+    "load=62": {
+      "sable:mass": 2.58031831
+    },
+    "load=63": {
+      "sable:mass": 2.896309376
+    },
+    "load=64": {
+      "sable:mass": 3.250997354
+    },
+    "load=65": {
+      "sable:mass": 3.64912115
+    },
+    "load=66": {
+      "sable:mass": 4.096
+    },
+    "load=67": {
+      "sable:mass": 4.59760455
+    },
+    "load=68": {
+      "sable:mass": 5.16063662
+    },
+    "load=69": {
+      "sable:mass": 5.792618751
+    },
+    "load=70": {
+      "sable:mass": 6.501994709
+    },
+    "load=71": {
+      "sable:mass": 7.298242299
+    },
+    "load=72": {
+      "sable:mass": 8.192
+    },
+    "load=73": {
+      "sable:mass": 9.1952091
+    },
+    "load=74": {
+      "sable:mass": 10.321273241
+    },
+    "load=75": {
+      "sable:mass": 11.585237503
+    },
+    "load=76": {
+      "sable:mass": 13.003989418
+    },
+    "load=77": {
+      "sable:mass": 14.596484598
+    },
+    "load=78": {
+      "sable:mass": 16.384
+    },
+    "load=79": {
+      "sable:mass": 18.3904182
+    },
+    "load=80": {
+      "sable:mass": 20.642546481
+    },
+    "load=81": {
+      "sable:mass": 23.170475006
+    },
+    "load=82": {
+      "sable:mass": 26.007978835
+    },
+    "load=83": {
+      "sable:mass": 29.192969196
+    },
+    "load=84": {
+      "sable:mass": 32.768
+    },
+    "load=85": {
+      "sable:mass": 36.780836399
+    },
+    "load=86": {
+      "sable:mass": 41.285092963
+    },
+    "load=87": {
+      "sable:mass": 46.340950012
+    },
+    "load=88": {
+      "sable:mass": 52.015957671
+    },
+    "load=89": {
+      "sable:mass": 58.385938392
+    },
+    "load=90": {
+      "sable:mass": 65.536
+    },
+    "load=91": {
+      "sable:mass": 73.561672798
+    },
+    "load=92": {
+      "sable:mass": 82.570185926
+    },
+    "load=93": {
+      "sable:mass": 92.681900024
+    },
+    "load=94": {
+      "sable:mass": 104.031915342
+    },
+    "load=95": {
+      "sable:mass": 116.771876784
     }
   }
 }

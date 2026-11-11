@@ -89,9 +89,9 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
      * gives a state with an empty collision shape no mass, so a cleared mask falls back to the cell's own.
      */
     public static final IntegerProperty OCTANTS = IntegerProperty.create("octants", 1, 255);
-    public static final int LOADS = 48;
+    public static final int LOADS = 96;
     public static final IntegerProperty LOAD = IntegerProperty.create("load", 0, LOADS - 1);
-    /** Sable mass at {@code load=0}, kpg; each step up is the cube root of two times it. */
+    /** Sable mass at {@code load=0}, kpg; each step up is the sixth root of two times it. */
     public static final double MASS_AT_ZERO = 0.002;
 
     /** Vanilla's name for a drop a block fills in itself (a shulker box's contents). */
@@ -121,12 +121,12 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
 
     /** The Sable mass {@code load} stands for, kpg; keep in step with the properties table. */
     public static double massOf(int load) {
-        return MASS_AT_ZERO * Math.pow(2, load / 3.0);
+        return MASS_AT_ZERO * Math.pow(2, load / 6.0);
     }
 
     /** The load whose mass is nearest {@code kpg}, by ratio. */
     public static int loadFor(double kpg) {
-        int k = (int) Math.round(3 * Math.log(Math.max(kpg, 1e-9) / MASS_AT_ZERO) / Math.log(2));
+        int k = (int) Math.round(6 * Math.log(Math.max(kpg, 1e-9) / MASS_AT_ZERO) / Math.log(2));
         return Math.clamp(k, 0, LOADS - 1);
     }
 
