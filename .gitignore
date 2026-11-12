@@ -44,3 +44,6 @@ build-and-deploy.sh
 build-and-deploy-offline.sh
 /handoff
 AGENTS.md
+
+# Pixel-art sources (not published)
+art/
