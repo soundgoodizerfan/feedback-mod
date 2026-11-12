@@ -35,7 +35,7 @@ Each face **wears on its own**. Mining wears the face that dug the block, a blow
 
 ## Names
 
-A hafted tool is named after what it does: a hatchet, a felling axe, a heavy pick, a claymore, a javelin, a scythe, a sledgehammer by the face and its size. A **mattock** is a pick with a hoe face, a **pulaski** an axe with a hoe face, a **hammer axe** an axe with a hammer face; other pairs are named by the two faces ("Pick-Axe"). You can rename a tool on a blueprint.
+A hafted tool is named after what it does: a hatchet, a felling axe, a heavy pick, a claymore, a javelin, a scythe, a sledgehammer by the face and its size. A **mattock** is a pick with a hoe face, a **pulaski** an axe with a hoe face, a **hammer axe** an axe with a hammer face; a **halberd** an axe with a spear head, a **lucerne hammer** a hammer with a spear head, a **bec de corbin** a pick with a spear head, a **pick hammer** a pick with a hammer; other pairs are named by the two faces ("Pick-Axe"). You can rename a tool on a blueprint.
 
 ## Treatises
 

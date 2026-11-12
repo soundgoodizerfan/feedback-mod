@@ -346,7 +346,12 @@
       "axe_head+hoe_head": "pulaski",
       "axe_head+head_blank": "hammer_axe",
       "axe_head+axe_head": "double_axe",
-      "pickaxe_head+pickaxe_head": "double_pick"
+      "pickaxe_head+pickaxe_head": "double_pick",
+      "axe_head+maul_head": "hammer_axe",
+      "axe_head+spear_head": "halberd",
+      "maul_head+spear_head": "lucerne_hammer",
+      "pickaxe_head+spear_head": "bec_de_corbin",
+      "maul_head+pickaxe_head": "pick_hammer"
     },
     "designations": [
       {
