@@ -45,6 +45,8 @@ Put in the ingredients and hold the temperature inside the band. For example, a 
 
 Ores, raw metal and ingots melt into the crucible's **tank** once they're hot enough. Fill an [Ingot Mold or Bullet Mold](Casting.md) by right-clicking the crucible with it, or set the crucible above a [Casting Basin](Casting_Basin.md) to pour into molds there. Melt two metals in the right proportions and you get an alloy. See [Casting and Alloys](Casting.md).
 
+Scrap, swarf and a whole made part melt back too. Swarf pours nine tenths of its volume (a part of metal filed down at a bench sheds it, and so do the [Lathe](Lathe.md) and other cutting machines); a whole made part pours nineteen twentieths of the metal it holds, a filed part less.
+
 The tank holds **1296 mB**, nine ingots' worth (144 mB an ingot). If it's full, extra metal that melts is lost. Molten metal held past its boiling point boils off with a poisonous fume ([Arc Furnace](Arc_Furnace.md#hazards)). A melt will not pour into a tank holding crude oil or a gas.
 
 ## Building around it

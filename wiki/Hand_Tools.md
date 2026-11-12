@@ -2,7 +2,7 @@
 
 The hand tools are the ones you carry and use yourself: a hammer for shaping metal, a file and a screwdriver for the work at the [Engineering Table](Engineering_Table.md), a wrench for turning blocks, a crowbar for prying fittings off, and the knife, spatula, spoon and tasting spoon for food, and the saw for stone. Most are hot-hammered from heated metal in a crafting grid, or have their metal blade shaped at a bench and assembled with a handle. Each has its own page.
 
-- [Hammer](Hammer.md): shapes plates and stock by hand, and is the tool the others are hammered with. Made in a crafting grid from cobblestone and a stick, or a better head shaped at a bench and put on a handle.
+- [Hammer](Hammer.md): shapes plates and stock by hand, and is the tool the others are hammered with. Made in a crafting grid from cobblestone and a stick, or a better head shaped at a bench and put on a haft. The hammer, the knife, the file and the screwdriver are all [hafted tools](Hafted_Tool.md): a haft with a face of that kind.
 - [File](#file) and [Screwdriver](#screwdriver): the tools of the Engineering Table's file and driver work. Each is a head on a handle.
 - [Hand Knife](Prep_Table.md): cuts food and dough on the Prep Table. Made by shaping its blade hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), then putting it together with a handle in a crafting grid.
 - [Mortar](Mortar.md): an ingredient of the [Brewing Stand](Brewing_Stand.md), whose bowl crushes plants. Made from a stick and stone in a crafting grid.
@@ -16,9 +16,9 @@ The hand tools are the ones you carry and use yourself: a hammer for shaping met
 
 ## File
 
-A **File** is a toothed bar on a handle. Shape a **File Head** from a plate or an ingot at a bench (the [Smithing Table](Smithing_Table.md) for metal), then put it with a handle (a stick, a rod or bone) in a crafting grid. The head alone is a file too. The head's material sets how long the file lasts.
+A **File** is a toothed bar on a handle. Shape a **File Head** from a plate or an ingot at a bench (the [Smithing Table](Smithing_Table.md) for metal), then put it with a haft (a stick, a rod or bone) in a crafting grid; it is a [hafted tool](Hafted_Tool.md) whose face is a file head. The head alone is a file too. The head's material sets how long the file lasts.
 
-Put a file in a tool slot of the [Engineering Table](Engineering_Table.md). Recipes that ask for a file (the [Calipers](Instruments.md#calipers), a [Lathe Tool Bit](Lathe.md), a [Saw Head](Power_Cutter.md)) wear it a point.
+A file also works parts at a bench: carried in your inventory, it takes a grain off an axis of a made part at the [Smithing Table](Smithing_Table.md#filing) and every other part bench. Put a file in a tool slot of the [Engineering Table](Engineering_Table.md). Recipes that ask for a file (the [Calipers](Instruments.md#calipers), a [Lathe Tool Bit](Lathe.md), a [Saw Head](Power_Cutter.md)) wear it a point.
 
 ## Screwdriver
 

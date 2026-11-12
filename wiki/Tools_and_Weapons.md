@@ -39,26 +39,15 @@ The Crafting Table assembles the tools below except the crossbow. The Engineerin
 
 | Item | Parts |
 | --- | --- |
-| **Pickaxe** | head, two handles, binding |
-| **Axe** | head, two handles, binding |
-| **Shovel** | head, two handles, binding |
-| **Hoe** | head, two handles, binding |
-| **Sword** | blade, guard, grip |
-| **Mace** | a [heavy core](Heavy_Core.md) (or a block of metal), two rods, binding |
-| **Trident** | tines, two shafts, binding |
+| **Hafted tool** (pickaxe, axe, shovel, hoe, sword, mace, trident, cleaver, pike, maul, sickle, hammer, knife, file, screwdriver) | one to three faces on a haft of one to four sticks: see [Hafted Tool](Hafted_Tool.md). A cleaver, maul or spear face needs Weapons Treatise I ([Treatise](Treatise.md)) |
 | **Bow** | three limbs, three lengths of string |
 | **Crossbow** | a prod (two cells), string, three stock, a lock: a mechanism, put together at the Engineering Table only (below) |
 | **Shield** | six faces, a rim part (a grip makes it five faces) |
 | **Shears** | two blades (a pivot is optional) |
-| **Twin-headed tool** | two heads of any kind (pick, axe, shovel, hoe), each its own material, one handle, binding: digs what both heads dig. A pick and an axe make a **mattock**, two axes a double-bit axe. A second head slows the swing and weakens the blow, because the handle carries both |
-| **Cleaver** | head, grip, binding: a short, heavy axe that bites deeper than a full one. Drawing a cleaver, maul or spear at the Blueprint Table, and assembling one at the Engineering Table, takes Weapons Treatise I ([Treatise](Treatise.md)) |
-| **Pike** | head, three handles, binding: reaches further |
-| **Maul** | head, two handles, binding: splits wood and staggers what it hits |
-| **Sickle** | head, grip, binding: cutting a crop or a leaf takes its neighbors too |
 
 You can add:
 
-- Every headed tool needs a **binding** (leather, string or wire) where head meets handle, and a sword needs a **guard** instead; nothing assembles without one. A sword, a pickaxe or a twin tool may add a **pommel**, a weight behind the hand: the knob is light, the ball heavier and the counterweight heaviest. A heavier pommel behind the hand brings the head round faster.
+- A hafted tool may add a **binding** (leather, string or wire) where head meets haft for a stronger joint, a **guard**, a **pommel**, a weight behind the hand: the knob is light, the ball heavier and the counterweight heaviest. A heavier pommel behind the hand brings the head round faster.
 - A **tip** part, below.
 - Armor and shields can take a **grip** or **lining**.
 

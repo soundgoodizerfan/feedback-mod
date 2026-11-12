@@ -18,6 +18,10 @@ P P
 
 B is a Bronze Plate and P is any plank.
 
+## Filing
+
+A made part with dimensions (a gun barrel's bore, a head's size) can be filed down at any part bench: put the part in the middle slot, carry a [file](Hand_Tools.md#file), and click a dimension. Each stroke takes one grain off that dimension and sheds the metal that came off as **swarf** of the same metal, into your inventory; the file wears a point every fifth stroke. A part cannot be filed up: a part below its smallest size is melted down instead. Swarf melts back in a vessel at nine tenths of its volume and a whole part at nineteen twentieths.
+
 ## What Feedback does
 
 The Smithing Table is where **metal parts** are shaped, with a [Hammer](Hammer.md) in the hammer slot. Stock must be metal: a material of kind metal, or any material with a hot-working window. Forged variants (the ones played as a rhythm) are made at the [Anvil](Anvil.md); a [Hearth](Hearth.md) beside the Anvil keeps the stock hot. The block breaks fastest with an axe.

@@ -62,6 +62,14 @@ R is a Stick and I is a Wrought Iron Ingot.
 
 Carry it anywhere in your inventory. Every modular item's tooltip gains a line like *"Balance scale: 3.4 Mu"*. Mass matters because a heavier head hits harder and swings slower, and because a head that is too heavy for its handle works the joint loose.
 
+### Stamping a reading
+
+The balance scale, the calipers and the [draw gauge](#draw-gauge) also stamp a reading on a made item: hold the instrument in one hand and the item in the other and use it. The balance scale stamps the item's mass and balance, the calipers each part's dimensions and the fit, the draw gauge a bow's draw and launch figures. A stamp is a past reading: it stays when the item wears. A stamped figure reads exact on the tooltip; a figure only a carried instrument reads (the mass, with the balance scale in your pocket) shows as a range as wide as the fit left it uncertain, narrower for an item built to a blueprint.
+
+## Draw Gauge
+
+A spring balance with a hook, made from a string, a stick and wrought iron plates. Held with a bow, a crossbow, a spring or a spring gun in the other hand it stamps the weapon's draw time, launch speed and stored energy.
+
 ## Scratch File Set
 
 Tells you how hard an edge or a plate is, by which file bites it.
