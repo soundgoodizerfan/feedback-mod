@@ -71,7 +71,7 @@ public final class ModularReadings {
     /** The parts {@code fig} comes from on this item, or null when it is not down to any. */
     private static Component cause(ItemStack stack, ModularFigures.Fig fig) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return null;
         List<ModularDesign.Part> parts = ModularCause.of(fig, design, type, ClientMaterials.get());

@@ -77,7 +77,7 @@ public final class MaterialPerks {
     public static java.util.List<Attunement> attunements(ItemStack stack) {
         java.util.List<Attunement> out = new java.util.ArrayList<>();
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return out;
         for (ModularDesign.Part part : design.parts()) {

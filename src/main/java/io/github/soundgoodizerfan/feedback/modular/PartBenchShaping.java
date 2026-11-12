@@ -117,7 +117,7 @@ public final class PartBenchShaping {
 
     /** A vial body of a material that holds no experience bakes into nothing, so the bench does not offer it. */
     private static boolean holdsExperience(Option option, Material.Located what) {
-        ModularType type = ModularTypes.known().get(option.type());
+        ModularType type = ModularTypes.known(option.type());
         if (type != null && type.family() == ModularType.Family.CELL)
             return what.material().electrical().secondaryCell().isPresent();
         if (type != null && type.family() == ModularType.Family.BELT)
@@ -164,7 +164,7 @@ public final class PartBenchShaping {
 
     /** The role of {@code option}'s type whose part is the one this option makes, if it has one. */
     public static Optional<ModularType.Role> roleOf(Option option) {
-        ModularType type = ModularTypes.known().get(option.type());
+        ModularType type = ModularTypes.known(option.type());
         if (type == null)
             return Optional.empty();
         return type.roles().values().stream()

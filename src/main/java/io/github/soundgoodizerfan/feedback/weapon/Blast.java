@@ -58,7 +58,7 @@ public final class Blast {
     /** A charge item read as the placed block reads its contents. Empty for an item that is not a charge. */
     public static java.util.Optional<Packed> packed(net.minecraft.world.item.ItemStack made) {
         var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(made);
-        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().get(design.type());
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(design.type());
         if (type == null)
             return java.util.Optional.empty();
         return read(design, type, io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());

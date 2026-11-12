@@ -66,7 +66,7 @@ public final class DishProfile {
     /** Whether this stack is a dish. */
     public static boolean is(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         return type != null && type.family() == ModularType.Family.DISH;
     }
 
@@ -98,7 +98,7 @@ public final class DishProfile {
 
     /** Volume shares by what each food part is, and the cuisine each votes for. A pot serving counts by its ingredients' shares where it carries them. */
     private static void composition(ModularDesign design, Map<Fig, Float> out) {
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         float meat = 0, sea = 0, plant = 0, starch = 0, total = 0;
         float[] votes = new float[CUISINES.length];
         for (Part p : design.parts()) {

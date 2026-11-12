@@ -148,7 +148,7 @@ public final class HaftedModel {
         @Override
         public BakedModel resolve(BakedModel model, ItemStack stack, ClientLevel level, LivingEntity entity, int seed) {
             ModularDesign design = ModularStacks.design(stack);
-            ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+            ModularType type = design == null ? null : ModularTypes.known(design.type());
             if (type != null) {
                 var cached = byDesign.computeIfAbsent(design, d -> {
                     List<HaftedLayers.Placement> icon = HaftedLayers.of(d, type, known);

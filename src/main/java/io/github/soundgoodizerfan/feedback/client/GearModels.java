@@ -190,7 +190,7 @@ public final class GearModels {
         private void fit(ModularDesign design, ModularDesign.Part plate, EquipmentSlot slot) {
             for (ModelPart p : new ModelPart[]{head, body, rightLeg, leftLeg})
                 p.xScale = p.yScale = p.zScale = 1f;
-            var type = design == null ? null : ModularTypes.known().get(design.type());
+            var type = design == null ? null : ModularTypes.known(design.type());
             var role = type == null ? null : type.roles().get("P");
             if (plate == null || role == null)
                 return;

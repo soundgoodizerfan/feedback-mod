@@ -29,7 +29,7 @@ public final class VillageHints {
 
     public static List<Component> of(Order order) {
         List<Component> out = new ArrayList<>();
-        ModularType type = ModularTypes.known().get(order.type());
+        ModularType type = ModularTypes.known(order.type());
         if (type == null)
             return out;
         if (type.family() == ModularType.Family.DISH) {

@@ -62,7 +62,7 @@ public final class PrepWork {
         /** The edge of the knife in hand: its blade's variant, else plain. */
         public static Edge of(net.minecraft.world.item.ItemStack knife) {
             var design = ModularStacks.design(knife);
-            var type = design == null ? null : ModularTypes.known().get(design.type());
+            var type = design == null ? null : ModularTypes.known(design.type());
             var blade = type == null ? null : design.part(type.primary());
             return blade == null ? PLAIN : type.roles().get(type.primary()).variant(blade)
                     .map(v -> new Edge(v.params().getOrDefault("grain", 1f), v.params().getOrDefault("slide", 1f))).orElse(PLAIN);

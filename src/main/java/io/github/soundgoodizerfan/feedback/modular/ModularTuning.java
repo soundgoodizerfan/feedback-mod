@@ -657,6 +657,20 @@ public final class ModularTuning {
     public static final float TORQUE_STRIP = 0.12f;
     /** Torque minigame: ticks of holding to wind the gauge from empty to full (about two seconds). */
     public static final int TORQUE_WIND_TICKS = 42;
+    /** Rivet (upset) minigame: the most strikes one assembly plays (one per rivet spent). */
+    public static final int UPSET_MAX_STRIKES = 8;
+    /** Rivet minigame: half the band width for a quality-0 rivet, and what each quality level adds. */
+    public static final float UPSET_BAND_BASE = 0.05f, UPSET_BAND_PER_QUALITY = 0.012f;
+    /** Rivet minigame: band width multiplier for the softest and the hardest metal. */
+    public static final float UPSET_SOFT_MULT = 1.4f, UPSET_HARD_MULT = 0.7f;
+    /** Rivet minigame: how much further up the gauge the band sits for the hardest metal. */
+    public static final float UPSET_HARD_SHIFT = 0.12f;
+    /** Rivet minigame: how far past the band the head splits (share of the gauge). */
+    public static final float UPSET_SPLIT = 0.12f;
+    /** Rivet minigame: ticks of holding to raise the hammer from empty to full. */
+    public static final int UPSET_WIND_TICKS = 34;
+    /** Rivet minigame: the fewest ticks one strike can honestly take. */
+    public static final int UPSET_MIN_STRIKE_TICKS = 12;
     /** Torque minigame: the fewest ticks one pull can honestly take; a result sent sooner than pulls times this scores nothing. */
     public static final int TORQUE_MIN_PULL_TICKS = 14;
 

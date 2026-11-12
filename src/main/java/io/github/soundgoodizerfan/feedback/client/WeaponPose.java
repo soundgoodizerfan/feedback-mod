@@ -140,7 +140,7 @@ public final class WeaponPose {
         var design = ModularStacks.design(held);
         if (design == null || ModularStacks.broken(held))
             return null;
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         if (type == null)
             return null;
         String pose = switch (type.family()) {

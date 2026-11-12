@@ -179,7 +179,7 @@ public final class ModularTraits {
      */
     public static List<Active> addons(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return List.of();
         List<Active> out = new ArrayList<>(2);
@@ -225,7 +225,7 @@ public final class ModularTraits {
         of(stack).ifPresent(out::add);
         List<Active> more = new ArrayList<>(addons(stack));
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type != null)
             more.addAll(bands(design, type));
         for (Active a : more)
@@ -237,7 +237,7 @@ public final class ModularTraits {
     /** The litres of the filled roles of {@code stack} that name the trait {@code id}: how much of an addon is fitted. */
     public static float addonVolume(ItemStack stack, String id) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         float litres = 0f;
         if (type != null)
             for (Map.Entry<String, ModularType.Role> e : type.roles().entrySet())
@@ -251,7 +251,7 @@ public final class ModularTraits {
         ModularDesign design = ModularStacks.design(stack);
         if (design == null)
             return Optional.empty();
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         if (type == null)
             return Optional.empty();
         type = ModularFaces.view(type, design);
@@ -276,7 +276,7 @@ public final class ModularTraits {
      */
     public static List<Active> allOf(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         return type == null ? List.of() : allOf(design, type);
     }
 

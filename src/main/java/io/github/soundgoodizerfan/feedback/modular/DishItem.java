@@ -40,7 +40,7 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
         if (stack.has(net.minecraft.core.component.DataComponents.ITEM_NAME))
             return super.getName(stack);
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return super.getName(stack);
         Component container = Component.translatable("modular.feedback.container.default");
@@ -79,7 +79,7 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
         super.appendHoverText(stack, context, tooltip, flag);
         // How the finish was poured; the spoilage and the live-organism lines are the food tooltip's.
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         Part finish = type == null || type.afterRole() == null ? null : design.part(type.afterRole());
         if (finish != null)
             tooltip.add(PartBenchMenu.pourName(finish.state("pour", FTuning.POUR_AUTOMATION)).withStyle(ChatFormatting.GRAY));

@@ -284,7 +284,7 @@ public final class VillageEconomy {
     static String binKey(ResourceLocation type, ModularDesign design) {
         String kind = "";
         if (design != null) {
-            ModularType t = ModularTypes.known().get(type);
+            ModularType t = ModularTypes.known(type);
             ModularDesign.Part part = t == null ? null : design.part(t.primary());
             Material m = part == null ? null : MaterialTable.get().materials().get(part.material());
             if (m != null)

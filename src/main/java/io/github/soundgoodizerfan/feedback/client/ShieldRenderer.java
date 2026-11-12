@@ -65,7 +65,7 @@ public final class ShieldRenderer extends BlockEntityWithoutLevelRenderer {
             case "rectangular" -> new float[]{0.95f, 1.2f};
             default -> new float[]{1f, 1f};
         };
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         ModularType.Role role = type == null ? null : type.roles().get("F");
         ModularType.Axis axis = role == null ? null : role.axes().get("face_size");
         float scale = axis == null ? 1f : Math.max(0.6f, Math.min(1.6f, axis.clamp(face.axis("face_size", axis.def())) / axis.def()));

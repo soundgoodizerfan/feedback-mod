@@ -260,7 +260,7 @@ final class BlueprintBoard {
         schoolsSeen = host.schools();
         shapeLists.clear();
         types = (host.foodOnly() ? ToolDesigns.drawableDishes(ModularTypes.known()) : ToolDesigns.drawable(ModularTypes.known())).stream()
-                .filter(id -> io.github.soundgoodizerfan.feedback.modular.Treatises.draws(schoolsSeen, ModularTypes.known().get(id))).toList();
+                .filter(id -> io.github.soundgoodizerfan.feedback.modular.Treatises.draws(schoolsSeen, ModularTypes.known(id))).toList();
         typeIcons.clear();
         for (ResourceLocation id : types)
             typeIcons.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));
@@ -336,7 +336,7 @@ final class BlueprintBoard {
     }
 
     private ModularType current() {
-        return types.isEmpty() ? null : ModularTypes.known().get(types.get(type));
+        return types.isEmpty() ? null : ModularTypes.known(types.get(type));
     }
 
     private boolean edged() {
@@ -585,7 +585,7 @@ final class BlueprintBoard {
     /** Open a blueprint: its type, form and extras, and each part's shape and material where it is a choice. */
     private void open(ModularDesign design) {
         int index = types.indexOf(design.type());
-        ModularType t = index < 0 ? null : ModularTypes.known().get(design.type());
+        ModularType t = index < 0 ? null : ModularTypes.known(design.type());
         Optional<ToolDesigns.Opened> opened = t == null ? Optional.empty() : ToolDesigns.open(design, t);
         if (opened.isEmpty())
             return;
@@ -760,7 +760,7 @@ final class BlueprintBoard {
 
     /** Which heading a type is listed under: 0 tools, 1 weapons, 2 wearables, 3 technology, 4 food. */
     private static int categoryOf(ResourceLocation id) {
-        ModularType t = ModularTypes.known().get(id);
+        ModularType t = ModularTypes.known(id);
         if (t == null)
             return 0;
         return switch (t.family()) {

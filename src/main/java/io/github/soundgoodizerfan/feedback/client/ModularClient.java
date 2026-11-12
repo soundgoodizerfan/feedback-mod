@@ -71,7 +71,7 @@ public final class ModularClient {
 
     private static float face(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null || type.family() != ModularType.Family.HAFTED)
             return 0;
         for (ModularDesign.Part part : io.github.soundgoodizerfan.feedback.modular.ModularFaces.faces(design))
@@ -84,7 +84,7 @@ public final class ModularClient {
     private static float variant(ItemStack stack) {
         ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
                 ? ModularStacks.design(stack) : null;
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return 0;
         String role = type.order().get(0);
@@ -104,7 +104,7 @@ public final class ModularClient {
     private static int tint(ItemStack stack, int layer) {
         ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
                 ? ModularStacks.design(stack) : null; // a blueprint carries a design and is paper, not parts
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return 0xFFFFFFFF;
         List<String> order = type.order();

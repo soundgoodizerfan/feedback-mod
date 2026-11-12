@@ -39,7 +39,7 @@ public final class Wielding {
         var design = ModularStacks.design(stack);
         if (design == null || ModularStacks.broken(stack))
             return false;
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         if (type == null)
             return false;
         return switch (type.family()) {

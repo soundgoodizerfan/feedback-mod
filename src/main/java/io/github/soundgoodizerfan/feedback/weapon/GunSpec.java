@@ -160,7 +160,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 CACHE.clear();
                 cachedFor = generation;
             }
-            return CACHE.computeIfAbsent(design, d -> of(d, ModularTypes.known().get(d.type()), MaterialTable.get().materials()));
+            return CACHE.computeIfAbsent(design, d -> of(d, ModularTypes.known(d.type()), MaterialTable.get().materials()));
         }
     }
 

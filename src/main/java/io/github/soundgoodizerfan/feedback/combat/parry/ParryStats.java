@@ -85,7 +85,7 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
         var figures = ModularStacks.figures(stack);
         if (design == null || figures == null || ModularStacks.broken(stack))
             return Optional.empty();
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         if (type == null)
             return Optional.empty();
         // An axe face is dig-family but parries as a blade.

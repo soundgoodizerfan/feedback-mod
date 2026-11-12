@@ -121,7 +121,7 @@ public final class ModularFaces {
         ModularDesign d = ModularStacks.design(stack);
         if (d == null)
             return null;
-        ModularType type = ModularTypes.known().get(d.type());
+        ModularType type = ModularTypes.known(d.type());
         if (type == null)
             return null;
         if (type.family() != ModularType.Family.HAFTED)
@@ -141,7 +141,7 @@ public final class ModularFaces {
     public static Set<String> actions(ItemStack stack) {
         Set<String> out = new LinkedHashSet<>();
         ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         if (type == null || type.family() != ModularType.Family.HAFTED)
             return out;
         for (Part p : faces(d))
@@ -163,7 +163,7 @@ public final class ModularFaces {
     /** The live faces of {@code stack}'s kinds, front first (empty for an item that is not hafted). */
     private static List<ModularHeads> liveKinds(ItemStack stack) {
         ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         if (type == null || type.family() != ModularType.Family.HAFTED)
             return List.of();
         List<ModularHeads> out = new ArrayList<>(3);
@@ -176,7 +176,7 @@ public final class ModularFaces {
     /** Whether a live face of {@code stack} is the head kind {@code kind} ({@code sickle_head}). */
     public static boolean has(ItemStack stack, String kind) {
         ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         if (type == null || type.family() != ModularType.Family.HAFTED)
             return false;
         for (Part p : faces(d))
@@ -213,7 +213,7 @@ public final class ModularFaces {
     /** The Engineering Table's tool abilities a live face gives: a hammer face is the hammer, a file head the file, a driver bit the driver. */
     public static boolean toolAbility(ItemStack stack, net.neoforged.neoforge.common.ItemAbility ability) {
         ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         if (type == null || type.family() != ModularType.Family.HAFTED)
             return false;
         for (Part p : faces(d)) {
@@ -261,8 +261,8 @@ public final class ModularFaces {
             return null;
         if (!hafted(design))
             return design.type().equals(orderType) ? design : null;
-        ModularType def = ModularTypes.known().get(orderType);
-        ModularType plan = ModularTypes.known().get(PLAN);
+        ModularType def = ModularTypes.known(orderType);
+        ModularType plan = ModularTypes.known(PLAN);
         if (def == null || !def.face() || plan == null)
             return null;
         ModularType.Role wear = def.roles().get(def.wearRole());
@@ -336,7 +336,7 @@ public final class ModularFaces {
     /** Names the face the next durability point lands on: the first live face that digs {@code state}, else the front one. */
     public static void use(ItemStack stack, BlockState state) {
         ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         int chosen = 0;
         if (type != null && type.family() == ModularType.Family.HAFTED && state != null) {
             List<Part> faces = faces(d);

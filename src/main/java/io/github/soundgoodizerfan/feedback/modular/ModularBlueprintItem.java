@@ -32,7 +32,7 @@ public class ModularBlueprintItem extends Item {
     @Override
     public Component getName(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         return type != null && type.family() == ModularType.Family.DISH ? Component.translatable("item.feedback.recipe") : super.getName(stack);
     }
 
@@ -63,7 +63,7 @@ public class ModularBlueprintItem extends Item {
         ModularDesign design = ModularStacks.design(stack);
         if (design == null)
             return;
-        ModularType named = ModularTypes.known().get(design.type());
+        ModularType named = ModularTypes.known(design.type());
         Component typeName = Component.translatable("item." + design.type().getNamespace() + "." + design.type().getPath());
         tooltip.add((named != null && named.family() == ModularType.Family.HAFTED ? ModularStacks.haftedName(design, named, typeName) : typeName)
                 .copy().withStyle(ChatFormatting.WHITE));
@@ -72,7 +72,7 @@ public class ModularBlueprintItem extends Item {
             tooltip.add(credit.titleLine());
         if (credit != null)
             tooltip.add(credit.line());
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         if (type != null)
             tooltip.add(ModularTooltip.parts(design, type).withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.feedback.modular.edge." + design.edge().getSerializedName())

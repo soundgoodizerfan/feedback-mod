@@ -98,7 +98,7 @@ public final class Cooking {
         if (figures == null)
             return find(level, stack);
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         return type != null && type.bakes() && stack.has(FDataComponents.FOOD_STATE.get()) ? Optional.of(dishEntry(figures)) : Optional.empty();
     }
 

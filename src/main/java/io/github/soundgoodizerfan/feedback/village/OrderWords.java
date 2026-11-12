@@ -36,7 +36,7 @@ public final class OrderWords {
 
     /** "blade: bronze" or "blade: any metal": the part by the type's own name, then the material or its class. */
     public static Component ask(ResourceLocation type, Order.Ask a) {
-        var t = ModularTypes.known().get(type);
+        var t = ModularTypes.known(type);
         var role = t == null ? null : t.roles().get(a.role());
         Component what = a.material() != null
                 ? Component.translatable("material." + a.material().getNamespace() + "." + a.material().getPath())

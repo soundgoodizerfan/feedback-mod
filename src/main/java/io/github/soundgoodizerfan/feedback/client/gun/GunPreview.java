@@ -193,7 +193,7 @@ public final class GunPreview {
         if (stack.isEmpty())
             return;
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type != null && type.family() == ModularType.Family.ARMOUR && dress(stack, type)) {
             // The vanilla call scales its translate vector by the entity scale, so depth goes in the pose (it adds 50 itself).
             g.pose().pushPose();

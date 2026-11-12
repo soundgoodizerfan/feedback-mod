@@ -77,7 +77,7 @@ public final class ModularModifiers {
         ModularFigures f = ModularStacks.figures(stack);
         if (design == null || f == null)
             return List.of();
-        ModularType type = ModularTypes.known().get(design.type());
+        ModularType type = ModularTypes.known(design.type());
         List<Modifier> out = of(design, type, f);
         if (type == null || type.family() != ModularType.Family.DISH)
             return out;
@@ -167,7 +167,7 @@ public final class ModularModifiers {
      * the part (the spear head shows the charge); for a variant, as {@link #forVariant}.
      */
     public static List<Modifier> forPart(PartBenchShaping.Option o) {
-        ModularType type = ModularTypes.known().get(o.type());
+        ModularType type = ModularTypes.known(o.type());
         if (type == null)
             return List.of();
         if (o.variant().name().isEmpty() && !o.shaping().base().isEmpty())

@@ -19,6 +19,9 @@ public final class EngineeringMinigames {
     /** Hold to wind a gauge and release inside the green band, one pull per fastener spent. */
     public static final ResourceLocation TORQUE = Feedback.id("torque");
 
+    /** Hold to raise a hammer and let go at the force that upsets a rivet's head tight, one strike per rivet spent. */
+    public static final ResourceLocation UPSET = Feedback.id("upset");
+
     /** Seat the assembly's parts in the order they physically go; a wrong click is a mis-seat that costs score. */
     public static final ResourceLocation FITTING = Feedback.id("fitting");
 
@@ -30,7 +33,7 @@ public final class EngineeringMinigames {
 
     /** Whether {@code id} names a game the table can play. */
     public static boolean known(String id) {
-        return TORQUE.toString().equals(id) || FITTING.toString().equals(id) || NOTES.toString().equals(id);
+        return TORQUE.toString().equals(id) || UPSET.toString().equals(id) || FITTING.toString().equals(id) || NOTES.toString().equals(id);
     }
 
     /**
@@ -40,7 +43,14 @@ public final class EngineeringMinigames {
     public static String forType(io.github.soundgoodizerfan.feedback.modular.ModularType type, int fasteners) {
         if (known(type.minigame()))
             return type.minigame();
-        return fasteners > 0 ? TORQUE.toString() : "";
+        if (fasteners <= 0)
+            return "";
+        return rivetsOnly(type.fasteners()) ? UPSET.toString() : TORQUE.toString();
+    }
+
+    /** Whether {@code need} takes rivets and nothing else: a rivet is hammered, not torqued. */
+    public static boolean rivetsOnly(Fasteners.Need need) {
+        return need.forms().equals(java.util.List.of("rivet"));
     }
 
     /** The rounds an assembly spending {@code fasteners} fasteners and made of {@code pieces} grid parts plays; 0 when the game has nothing to do. */
@@ -49,6 +59,8 @@ public final class EngineeringMinigames {
             return Math.max(0, Math.min(pieces, ModularTuning.NOTES_MAX_PARTS));
         if (FITTING.toString().equals(id))
             return pieces >= 2 ? Math.min(pieces, ModularTuning.FIT_MAX_PIECES) : 0;
+        if (UPSET.toString().equals(id))
+            return Math.min(fasteners, ModularTuning.UPSET_MAX_STRIKES);
         if (TORQUE.toString().equals(id))
             return Math.min(fasteners, ModularTuning.TORQUE_MAX_PULLS);
         return 0;
@@ -60,6 +72,8 @@ public final class EngineeringMinigames {
             return (long) rounds * ModularTuning.NOTES_MIN_READ_TICKS;
         if (FITTING.toString().equals(id))
             return (long) rounds * ModularTuning.FIT_MIN_SEAT_TICKS;
+        if (UPSET.toString().equals(id))
+            return (long) rounds * ModularTuning.UPSET_MIN_STRIKE_TICKS;
         return (long) rounds * ModularTuning.TORQUE_MIN_PULL_TICKS;
     }
 }

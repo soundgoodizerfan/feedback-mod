@@ -52,7 +52,7 @@ public class ModularGlove extends ModularItem implements Insulator {
     /** The numbers the plate's variant names in the type file (claws: the bleed a barehanded hit opens); empty for a standard plate. */
     public static java.util.Map<String, Float> plateParams(ItemStack stack) {
         ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         ModularDesign.Part plate = d == null ? null : d.part(PLATE);
         if (type == null || plate == null)
             return java.util.Map.of();

@@ -76,7 +76,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
 
     static GunView of(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         Map<String, Integer> colours = new HashMap<>();
         Map<String, String> variants = new HashMap<>();
         MagazineSize mag = stack.get(FWeapons.MAGAZINE_SIZE.get());

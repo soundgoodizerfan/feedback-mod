@@ -75,7 +75,7 @@ public final class ShieldHeat {
     /** The material of the part in {@code role} of a designed shield, or null. */
     private static ResourceLocation partMaterial(ItemStack shield, boolean grip) {
         ModularDesign design = ModularStacks.design(shield);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return null;
         ModularDesign.Part part = grip ? design.part("G") : null;

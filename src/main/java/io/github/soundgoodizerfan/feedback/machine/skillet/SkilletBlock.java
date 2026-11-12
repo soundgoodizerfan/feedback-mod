@@ -88,7 +88,7 @@ public class SkilletBlock extends BaseEntityBlock {
     /** The named figure of the spatula blade's shape, else {@code fallback}. */
     private static float bladeParam(ItemStack spatula, String name, float fallback) {
         var design = ModularStacks.design(spatula);
-        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().get(design.type());
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(design.type());
         var blade = type == null ? null : design.part(type.primary());
         return blade == null ? fallback : type.roles().get(type.primary()).variant(blade)
                 .map(v -> v.params().getOrDefault(name, fallback)).orElse(fallback);

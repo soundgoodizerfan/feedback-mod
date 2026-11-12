@@ -42,7 +42,7 @@ public record WeaponProfile(float burst, float tempo, float precision, float ste
         if (hand.getItem() instanceof GunItem)
             return NONE;
         var design = ModularStacks.design(hand);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         boolean strikes = type != null && switch (type.family()) {
             case BLADE, MACE, SPEAR, DIG -> true;
             default -> false;
@@ -71,7 +71,7 @@ public record WeaponProfile(float burst, float tempo, float precision, float ste
         if (gun != null)
             return gun(gun);
         var design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return NONE;
         return switch (type.family()) {

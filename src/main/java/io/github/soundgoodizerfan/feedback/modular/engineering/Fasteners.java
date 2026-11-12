@@ -25,17 +25,31 @@ public final class Fasteners {
     /** The forms that are fasteners. */
     public static final Set<String> FORMS = Set.of("screw", "machine_bolt", "rivet");
 
-    /** What an assembly asks of its fasteners: how many are spent, and the quality it is built for. Defaults: two, quality 1. */
-    public record Need(int count, int floor) {
+    /**
+     * What an assembly asks of its fasteners: how many are spent, the quality it is built for, and the forms that will do (empty
+     * means any). Defaults: two, quality 1, any form.
+     */
+    public record Need(int count, int floor, java.util.List<String> forms) {
 
         public static final Need DEFAULT = new Need(2, 1);
 
         public static final Codec<Need> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.intRange(0, 64).optionalFieldOf("count", 2).forGetter(Need::count),
-                Codec.intRange(1, 5).optionalFieldOf("floor", 1).forGetter(Need::floor)).apply(i, Need::new));
+                Codec.intRange(1, 5).optionalFieldOf("floor", 1).forGetter(Need::floor),
+                Codec.STRING.listOf().optionalFieldOf("forms", java.util.List.of()).forGetter(Need::forms)).apply(i, Need::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, Need> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT, Need::count, ByteBufCodecs.VAR_INT, Need::floor, Need::new);
+                ByteBufCodecs.VAR_INT, Need::count, ByteBufCodecs.VAR_INT, Need::floor,
+                ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), Need::forms, Need::new);
+
+        public Need(int count, int floor) {
+            this(count, floor, java.util.List.of());
+        }
+
+        /** Whether a fastener of {@code form} will do. */
+        public boolean accepts(String form) {
+            return forms.isEmpty() || forms.contains(form);
+        }
     }
 
     private Fasteners() {
@@ -47,10 +61,17 @@ public final class Fasteners {
 
     /** The quality (1 to 5) of {@code stack} as a fastener, or 0 when it is not one (not a fastener form, or its material makes none). */
     public static int quality(ItemStack stack) {
+        return quality(stack, DEFAULT_ANY);
+    }
+
+    private static final Need DEFAULT_ANY = new Need(0, 1);
+
+    /** As {@link #quality(ItemStack)}, but 0 when the stack's form is not one {@code need} accepts. */
+    public static int quality(ItemStack stack, Need need) {
         if (stack.isEmpty())
             return 0;
         return MaterialIngredient.locate(stack.getItem())
-                .filter(l -> isFastenerForm(l.form()))
+                .filter(l -> isFastenerForm(l.form()) && need.accepts(l.form()))
                 .flatMap(l -> l.material().fastener())
                 .orElse(0);
     }
@@ -68,7 +89,7 @@ public final class Fasteners {
     public static Supply supply(java.util.List<ItemStack> stacks, Need need) {
         java.util.List<int[]> pool = new java.util.ArrayList<>(); // {quality, stack index}
         for (int i = 0; i < stacks.size(); i++) {
-            int q = quality(stacks.get(i));
+            int q = quality(stacks.get(i), need);
             if (q > 0)
                 pool.add(new int[] {q, i});
         }

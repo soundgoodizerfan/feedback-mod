@@ -67,7 +67,7 @@ public final class Measured {
                         out.put(fig.name().toLowerCase(java.util.Locale.ROOT), f.get(fig));
             }
             case CALIPERS -> {
-                ModularType type = ModularTypes.known().get(design.type());
+                ModularType type = ModularTypes.known(design.type());
                 for (Part p : design.parts()) {
                     ModularType.Role role = type == null ? null : type.roles().get(p.role());
                     if (role == null)

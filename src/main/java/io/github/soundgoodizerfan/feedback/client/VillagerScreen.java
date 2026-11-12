@@ -316,7 +316,7 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
 
     /** "blade: bronze" or "blade: any metal": the part by the type's own name for it, then the material or its class. */
     private static Component ask(OrderView o, Order.Ask a) {
-        var type = ModularTypes.known().get(o.type());
+        var type = ModularTypes.known(o.type());
         var role = type == null ? null : type.roles().get(a.role());
         Component what = a.material() != null
                 ? Component.translatable("material." + a.material().getNamespace() + "." + a.material().getPath())
@@ -355,7 +355,7 @@ public class VillagerScreen extends SkinnedScreen<VillagerMenu> {
             var o = order < v.orders().size() ? v.orders().get(order) : null;
             int i = v.fig() - Fig.values().length;
             if (o != null && i < o.asks().size()) {
-                var type = ModularTypes.known().get(o.type());
+                var type = ModularTypes.known(o.type());
                 var role = type == null ? null : type.roles().get(o.asks().get(i).role());
                 said = Component.empty().append(said).append(" ").append(Component.translatable("village.feedback.complaint.part",
                         role == null ? o.asks().get(i).role() : role.name()));

@@ -206,7 +206,7 @@ public class ModularElectricGun extends GunItem {
 
     static Optional<ElectricGunSpec> spec(ItemStack gun) {
         ModularDesign design = ModularStacks.design(gun);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         return type == null ? Optional.empty() : ElectricGunSpec.of(design, type, MaterialTable.get().materials());
     }
 

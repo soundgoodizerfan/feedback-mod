@@ -61,7 +61,7 @@ public class ModularHandTool extends HandToolItem implements Modular {
         if (!(stack.getItem() instanceof ModularHandTool))
             return false;
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = ModularTypes.known().get(design != null ? design.type() : net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()));
+        ModularType type = ModularTypes.known(design != null ? design.type() : net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()));
         return type != null && type.strike() > 0;
     }
 

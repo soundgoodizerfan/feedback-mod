@@ -221,7 +221,7 @@ public final class SpearCharge implements ModularTrait {
     /** The charge's damage for a relative speed (blocks a second): the formula in the class javadoc. */
     private static float damage(ItemStack weapon, float speed, Params params) {
         ModularDesign design = ModularStacks.design(weapon);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         ModularFigures figures = ModularStacks.figures(weapon);
         float strike = type == null ? 1f : type.strike();
         float mass = figures == null ? params.get("ref_mass", 2f) : figures.get(Fig.MASS);

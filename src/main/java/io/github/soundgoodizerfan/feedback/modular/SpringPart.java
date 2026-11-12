@@ -28,7 +28,7 @@ public record SpringPart(float volume, float stiffness, Map<String, Float> param
     /** The spring on {@code stack}, if its design fills a role that names the spring trait. */
     public static Optional<SpringPart> of(ItemStack stack) {
         ModularDesign design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return Optional.empty();
         for (Map.Entry<String, ModularType.Role> e : type.roles().entrySet()) {

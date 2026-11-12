@@ -66,7 +66,7 @@ public final class ModularAssembly {
     /** The table {@code stack} is made at: the one that makes its type. */
     public static Kind kindOf(ItemStack stack) {
         ModularDesign d = ModularStacks.design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         return type == null ? Kind.TOOL : kindOf(type);
     }
 

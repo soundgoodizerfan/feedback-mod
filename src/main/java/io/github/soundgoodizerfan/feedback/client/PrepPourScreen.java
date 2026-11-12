@@ -103,7 +103,7 @@ public class PrepPourScreen extends Screen {
         var level = Minecraft.getInstance().level;
         ItemStack seasoning = menu.season().copyWithCount(1);
         ModularDesign design = ModularStacks.design(menu.work());
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         Optional<Material.Located> what = Material.find(ClientMaterials.on(level), seasoning);
         if (what.isEmpty() || type == null)
             return;

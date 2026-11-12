@@ -50,7 +50,7 @@ public final class OrderGen {
     }
 
     private static boolean dish(ResourceLocation type) {
-        ModularType t = ModularTypes.known().get(type);
+        ModularType t = ModularTypes.known(type);
         return t != null && t.family() == ModularType.Family.DISH;
     }
 
@@ -60,7 +60,7 @@ public final class OrderGen {
      * materials come before hard ones as the villager rises.
      */
     private static Order tool(CommissionProfile.Entry e, int level, RandomSource rnd) {
-        ModularType type = ModularTypes.known().get(e.type());
+        ModularType type = ModularTypes.known(e.type());
         List<String> roles = new ArrayList<>(type.roles().keySet());
         roles.removeIf(r -> choices(type, r, level).isEmpty());
         boolean primary = roles.remove(type.primary());

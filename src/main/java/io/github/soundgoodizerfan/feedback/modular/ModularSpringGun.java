@@ -111,7 +111,7 @@ public class ModularSpringGun extends Item implements Modular {
 
     private static Optional<SpringGunSpec> spec(ItemStack gun) {
         ModularDesign design = ModularStacks.design(gun);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         return type == null ? Optional.empty() : SpringGunSpec.of(design, type, MaterialTable.get().materials());
     }
 

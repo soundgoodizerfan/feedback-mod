@@ -118,7 +118,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
     /** Take the filler and casing a charge item was made with: what it was designed as is what is packed. */
     public void pack(ItemStack made) {
         var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(made);
-        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().get(design.type());
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(design.type());
         if (type == null)
             return;
         filler.clear();

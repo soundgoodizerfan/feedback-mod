@@ -60,7 +60,7 @@ public final class DamageClass {
         if (hand.getItem() instanceof GunItem)
             return Kind.BLUNT;
         var design = ModularStacks.design(hand);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return null;
         return switch (type.family()) {

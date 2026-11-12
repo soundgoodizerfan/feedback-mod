@@ -136,7 +136,8 @@ public final class EngineeringAssembly {
             EngineeringRecipe recipe = holder.value();
             EngineeringRecipe.Attempt attempt = recipe.attempt(input);
             if (attempt.ok()) {
-                String game = recipe.minigame().filter(EngineeringMinigames::known).orElse("");
+                String game = recipe.minigame().filter(EngineeringMinigames::known)
+                        .orElse(recipe.fasteners().count() > 0 && EngineeringMinigames.rivetsOnly(recipe.fasteners()) ? EngineeringMinigames.UPSET.toString() : "");
                 int pieces = input.gridStacks().size();
                 int rounds = blueprint.isEmpty() && !floor ? EngineeringMinigames.rounds(game, recipe.fasteners().count(), pieces) : 0;
                 int quality = Math.max(1, Math.min(5, attempt.fasteners().levels() + recipe.fasteners().floor()));

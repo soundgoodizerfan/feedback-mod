@@ -253,7 +253,7 @@ public final class ModularStacks {
     /** Whether the stack is a modular item whose wearing part is a metal: it conducts, so it can be plated. */
     public static boolean platable(ItemStack stack) {
         ModularDesign d = design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         Part wear = type == null ? null : d.part(type.wearRole());
         Material m = wear == null ? null : MaterialTable.get().materials().get(wear.material());
         return m != null && m.kind().filter(k -> k == Material.Kind.METAL).isPresent();
@@ -440,7 +440,7 @@ public final class ModularStacks {
     public static float volumeMb(ItemStack stack) {
         ModularFigures f = figures(stack);
         ModularDesign d = design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         Part wear = type == null ? null : d.part(type.wearRole());
         Material m = wear == null ? null : MaterialTable.get().materials().get(wear.material());
         return f == null || m == null || m.density().muPerMb() <= 0f ? 0f : f.get(Fig.MASS) / m.density().muPerMb();
@@ -493,7 +493,7 @@ public final class ModularStacks {
      */
     public static ItemStack overrun(ItemStack piece, float over) {
         ModularDesign d = design(piece);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         Part wear = type == null ? null : d.part(type.wearRole());
         if (wear == null || over <= 0f)
             return piece;
@@ -529,7 +529,7 @@ public final class ModularStacks {
         ModularDesign d = design(stack);
         if (f == null || d == null)
             return 0;
-        ModularType type = ModularTypes.known().get(d.type());
+        ModularType type = ModularTypes.known(d.type());
         int extra = 0;
         float strain = state.getDestroySpeed(level, pos) * ModularTuning.CHIP_STRAIN_PER_HARDNESS * d.edge().chip();
         List<ModularHeads> heads = type == null ? List.of() : heads(d, type);
@@ -570,7 +570,7 @@ public final class ModularStacks {
     /** Whether the stack has an edge to grind: a melee head or a blade. */
     public static boolean edged(ItemStack stack) {
         ModularDesign d = design(stack);
-        ModularType type = d == null ? null : ModularTypes.known().get(d.type());
+        ModularType type = d == null ? null : ModularTypes.known(d.type());
         return type != null && type.edged();
     }
 
@@ -618,7 +618,7 @@ public final class ModularStacks {
         ModularDesign d = design(stack);
         if (d == null)
             return typeName;
-        ModularType type = ModularTypes.known().get(d.type());
+        ModularType type = ModularTypes.known(d.type());
         if (type != null && type.family() == ModularType.Family.HAFTED)
             return haftedName(d, type, typeName);
         Part main = d.part(type != null ? type.primary() : d.parts().get(0).role());
