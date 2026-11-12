@@ -96,40 +96,6 @@
       },
       "mount": "grip"
     },
-    "Q": {
-      "name": "sword_pommel",
-      "forms": [
-        "sword_pommel"
-      ],
-      "litres": 0.03,
-      "at": -0.08,
-      "layer": 3,
-      "part": {
-        "item": "feedback:sword_pommel",
-        "cells": 1,
-        "stock": [
-          "nugget",
-          "ingot",
-          "gem",
-          "*_planks",
-          "cobble",
-          "bone"
-        ],
-        "variants": [
-          {
-            "name": "wheel",
-            "cells": 2,
-            "centre": -0.03
-          },
-          {
-            "name": "counterweight",
-            "cells": 3,
-            "centre": -0.06
-          }
-        ]
-      },
-      "mount": "butt"
-    },
     "P": {
       "name": "pommel",
       "forms": [
@@ -156,6 +122,11 @@
           },
           {
             "name": "ball",
+            "cells": 2,
+            "centre": -0.03
+          },
+          {
+            "name": "wheel",
             "cells": 2,
             "centre": -0.03
           },

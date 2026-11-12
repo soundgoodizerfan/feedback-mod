@@ -235,7 +235,7 @@ public final class ModularFaces {
             case "binding" -> "B";
             case "tip" -> "T";
             case "guard" -> "G";
-            case "pommel" -> r.part().filter(s -> s.item().getPath().equals("sword_pommel")).isPresent() ? "Q" : "P";
+            case "pommel" -> "P";
             case "spring" -> "R";
             case "lanyard" -> "Y";
             default -> "Z";

@@ -242,13 +242,13 @@
     "P": {
       "name": "pommel",
       "forms": [
-        "sword_pommel"
+        "tool_pommel"
       ],
       "litres": 0.03,
       "at": -0.08,
       "layer": 3,
       "part": {
-        "item": "feedback:sword_pommel",
+        "item": "feedback:tool_pommel",
         "cells": 1,
         "stock": [
           "nugget",
@@ -258,7 +258,16 @@
           "cobble",
           "bone"
         ],
+        "base": "knob",
         "variants": [
+          {
+            "name": "knob"
+          },
+          {
+            "name": "ball",
+            "cells": 2,
+            "centre": -0.03
+          },
           {
             "name": "wheel",
             "cells": 2,
@@ -267,7 +276,7 @@
           {
             "name": "counterweight",
             "cells": 3,
-            "centre": -0.06
+            "centre": -0.07
           }
         ]
       }

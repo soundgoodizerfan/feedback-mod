@@ -117,6 +117,15 @@ public final class HaftedModel {
             }
 
             @Override
+            public int lum(String file, int x, int y) {
+                var c = sprite(file).contents();
+                if (c.isTransparent(0, x, y))
+                    return -1;
+                int abgr = c.getOriginalImage().getPixelRGBA(x, y);
+                return (abgr & 0xFF) + (abgr >> 8 & 0xFF) + (abgr >> 16 & 0xFF);
+            }
+
+            @Override
             public int[] bounds(String file) {
                 return bounds.computeIfAbsent(file, f -> {
                     var c = sprite(f).contents();
@@ -149,145 +158,42 @@ public final class HaftedModel {
             return base.getOverrides().resolve(base, stack, level, entity, seed);
         }
 
-        /** Canvas texels the flattened grid reaches past the 16x16 canvas on every side: room for a full-length tool. */
-        private static final int PAD = 16, GRID = HaftedLayers.SIZE + 2 * PAD;
+        private static final int PAD = HaftedLayers.PAD, GRID = HaftedLayers.GRID;
 
         private BakedModel bake(List<HaftedLayers.Placement> layers, ModularType type) {
             SimpleBakedModel.Builder out = new SimpleBakedModel.Builder(false, false, false, base.getTransforms(), ItemOverrides.EMPTY);
             List<String> order = type.order();
-            // Flatten first: each canvas texel belongs to the topmost layer drawing it, so no two faces ever share a plane (stacked
-            // 1-texel slabs z-fight wherever layers overlap) and two heads merge into one outline.
+            // The flattened tool is HaftedLayers' (the offline sheet draws the same list): one texel per canvas position.
+            List<HaftedLayers.Texel> texels = HaftedLayers.flatten(layers, known);
             int n = GRID;
-            int[] owner = new int[n * n];
-            java.util.Arrays.fill(owner, -1);
-            HaftedLayers.Placement tip = null;
-            for (int i = 0; i < layers.size(); i++) {
-                HaftedLayers.Placement p = layers.get(i);
-                if (p.role().equals("T")) {
-                    tip = p;
-                    continue;
-                }
-                var c = sprite(p.file()).contents();
-                for (int sy = 0; sy < c.height(); sy++)
-                    for (int sx = 0; sx < c.width(); sx++) {
-                        int x = sx + p.dx() + PAD, y = sy + p.dy() + PAD;
-                        if (x >= 0 && x < n && y >= 0 && y < n && p.keeps(x - PAD, y - PAD) && !c.isTransparent(0, sx, sy))
-                            owner[x + y * n] = i;
-                    }
-            }
-            boolean[] tipped = tip == null ? null : tipMask(layers, owner, tip);
-            boolean overlay = tip != null && known.has(tip.file());
+            boolean[] filled = new boolean[n * n];
+            for (HaftedLayers.Texel t : texels)
+                filled[t.x() + PAD + (t.y() + PAD) * n] = true;
             List<BlockElement> elements = new ArrayList<>();
-            for (int y = 0; y < n; y++)
-                for (int x = 0; x < n; x++) {
-                    int i = owner[x + y * n];
-                    if (i < 0)
-                        continue;
-                    HaftedLayers.Placement p = layers.get(i);
-                    int tint = Math.max(0, order.indexOf(p.role()));
-                    String file = p.file();
-                    int cx = x - PAD, cy = y - PAD, ux = cx - p.dx(), uy = cy - p.dy();
-                    if (tipped != null && tipped[x + y * n]) {
-                        // The tip is the head's own texel in the tip's material, or the tip overlay's texel at this canvas spot where it has one.
-                        tint = Math.max(0, order.indexOf("T"));
-                        if (overlay && cx >= 0 && cx < HaftedLayers.SIZE && cy >= 0 && cy < HaftedLayers.SIZE
-                                && !sprite(tip.file()).contents().isTransparent(0, cx, cy)) {
-                            file = tip.file();
-                            ux = cx;
-                            uy = cy;
-                        } else if (rim(owner, x + y * n)) {
-                            // On the silhouette: the outline shade (the head sprite's darkest texel) in the tip's material, so the tip is outlined.
-                            int[] dark = darkest(file);
-                            ux = dark[0];
-                            uy = dark[1];
-                        }
-                    }
-                    String tex = Feedback.id("item/hafted/" + file).toString();
-                    // UV of this texel in its own sprite, pulled in a hair so nearest sampling never picks up the neighbour.
-                    float u0 = ux + 0.01f, v0 = uy + 0.01f, u1 = u0 + 0.98f, v1 = v0 + 0.98f;
-                    Map<net.minecraft.core.Direction, BlockElementFace> faces = new java.util.EnumMap<>(net.minecraft.core.Direction.class);
-                    faces.put(net.minecraft.core.Direction.SOUTH, new BlockElementFace(null, tint, tex, new BlockFaceUV(new float[] {u0, v0, u1, v1}, 0)));
-                    faces.put(net.minecraft.core.Direction.NORTH, new BlockElementFace(null, tint, tex, new BlockFaceUV(new float[] {u1, v0, u0, v1}, 0)));
-                    BlockFaceUV edge = new BlockFaceUV(new float[] {u0, v0, u1, v1}, 0);
-                    if (x == 0 || owner[x - 1 + y * n] < 0)
-                        faces.put(net.minecraft.core.Direction.WEST, new BlockElementFace(null, tint, tex, edge));
-                    if (x == n - 1 || owner[x + 1 + y * n] < 0)
-                        faces.put(net.minecraft.core.Direction.EAST, new BlockElementFace(null, tint, tex, edge));
-                    if (y == 0 || owner[x + (y - 1) * n] < 0)
-                        faces.put(net.minecraft.core.Direction.UP, new BlockElementFace(null, tint, tex, edge));
-                    if (y == n - 1 || owner[x + (y + 1) * n] < 0)
-                        faces.put(net.minecraft.core.Direction.DOWN, new BlockElementFace(null, tint, tex, edge));
-                    elements.add(new BlockElement(new Vector3f(cx, 15 - cy, 7.5f), new Vector3f(cx + 1, 16 - cy, 8.5f), faces, null, true));
-                }
+            for (HaftedLayers.Texel t : texels) {
+                int x = t.x() + PAD, y = t.y() + PAD, cx = t.x(), cy = t.y();
+                int tint = Math.max(0, order.indexOf(t.role()));
+                String tex = Feedback.id("item/hafted/" + t.file()).toString();
+                // UV of this texel in its own sprite, pulled in a hair so nearest sampling never picks up the neighbour.
+                float u0 = t.ux() + 0.01f, v0 = t.uy() + 0.01f, u1 = u0 + 0.98f, v1 = v0 + 0.98f;
+                Map<net.minecraft.core.Direction, BlockElementFace> faces = new java.util.EnumMap<>(net.minecraft.core.Direction.class);
+                faces.put(net.minecraft.core.Direction.SOUTH, new BlockElementFace(null, tint, tex, new BlockFaceUV(new float[] {u0, v0, u1, v1}, 0)));
+                faces.put(net.minecraft.core.Direction.NORTH, new BlockElementFace(null, tint, tex, new BlockFaceUV(new float[] {u1, v0, u0, v1}, 0)));
+                BlockFaceUV edge = new BlockFaceUV(new float[] {u0, v0, u1, v1}, 0);
+                if (x == 0 || !filled[x - 1 + y * n])
+                    faces.put(net.minecraft.core.Direction.WEST, new BlockElementFace(null, tint, tex, edge));
+                if (x == n - 1 || !filled[x + 1 + y * n])
+                    faces.put(net.minecraft.core.Direction.EAST, new BlockElementFace(null, tint, tex, edge));
+                if (y == 0 || !filled[x + (y - 1) * n])
+                    faces.put(net.minecraft.core.Direction.UP, new BlockElementFace(null, tint, tex, edge));
+                if (y == n - 1 || !filled[x + (y + 1) * n])
+                    faces.put(net.minecraft.core.Direction.DOWN, new BlockElementFace(null, tint, tex, edge));
+                elements.add(new BlockElement(new Vector3f(cx, 15 - cy, 7.5f), new Vector3f(cx + 1, 16 - cy, 8.5f), faces, null, true));
+            }
             for (BakedQuad q : UnbakedGeometryHelper.bakeElements(elements, m -> sprite(m.texture().getPath().substring("item/hafted/".length())),
                     BlockModelRotation.X0_Y0))
                 out.addUnculledFace(q);
             return out.particle(sprite(layers.get(0).file())).build();
         }
-
-        /**
-         * The canvas texels the tip covers: the front head's own texels farthest from the socket, in a band as deep as the tip's variant
-         * asks (a needle is the very point, a cap runs further back). Being picked from the head's texels, it cannot miss the head.
-         */
-        private static boolean[] tipMask(List<HaftedLayers.Placement> layers, int[] owner, HaftedLayers.Placement tip) {
-            int n = GRID;
-            String frontRole = null;
-            int sx = HaftedLayers.SOCKET_X + PAD, sy = HaftedLayers.SOCKET_Y + PAD;
-            for (HaftedLayers.Placement p : layers) {
-                if (frontRole == null && p.file().startsWith("head_"))
-                    frontRole = p.role();
-                if (p.file().startsWith("handle_")) {
-                    // The last haft layer drawn is the topmost step: the socket is its head end.
-                    sx = HaftedLayers.SOCKET_X + p.dx() + PAD;
-                    sy = HaftedLayers.SOCKET_Y + p.dy() + PAD;
-                }
-            }
-            boolean[] out = new boolean[n * n];
-            if (frontRole == null)
-                return out;
-            float[] dist = new float[n * n];
-            float far = -1;
-            for (int k = 0; k < n * n; k++) {
-                if (owner[k] < 0 || !layers.get(owner[k]).role().equals(frontRole))
-                    continue;
-                dist[k] = (float) Math.hypot(k % n - sx, k / n - sy);
-                far = Math.max(far, dist[k]);
-            }
-            float depth = tip.file().endsWith("_needle") ? TIP_NEEDLE : tip.file().endsWith("_capped") ? TIP_CAPPED : TIP_PLAIN;
-            for (int k = 0; k < n * n; k++)
-                out[k] = owner[k] >= 0 && layers.get(owner[k]).role().equals(frontRole) && dist[k] >= far - depth;
-            return out;
-        }
-
-        /** Whether texel {@code k} is on the silhouette's outline (a side neighbour empty or off the canvas). */
-        private static boolean rim(int[] owner, int k) {
-            int n = GRID, x = k % n, y = k / n;
-            return x == 0 || y == 0 || x == n - 1 || y == n - 1
-                    || owner[k - 1] < 0 || owner[k + 1] < 0 || owner[k - n] < 0 || owner[k + n] < 0;
-        }
-
-        private final Map<String, int[]> darkest = new HashMap<>();
-
-        /** The darkest opaque texel of a sprite, {@code {x, y}}: the outline shade in this grey ramp. */
-        private int[] darkest(String file) {
-            return darkest.computeIfAbsent(file, f -> {
-                var img = sprite(f).contents().getOriginalImage();
-                int[] best = {0, 0};
-                int low = Integer.MAX_VALUE;
-                for (int y = 0; y < img.getHeight(); y++)
-                    for (int x = 0; x < img.getWidth(); x++) {
-                        int abgr = img.getPixelRGBA(x, y);
-                        int lum = (abgr & 0xFF) + (abgr >> 8 & 0xFF) + (abgr >> 16 & 0xFF);
-                        if ((abgr >>> 24) > 0 && lum < low) {
-                            low = lum;
-                            best = new int[] {x, y};
-                        }
-                    }
-                return best;
-            });
-        }
-
-        /** How far back from the head's farthest texel each tip runs, in texels: tuned by eye. */
-        private static final float TIP_NEEDLE = 1.5f, TIP_PLAIN = 2.5f, TIP_CAPPED = 3.5f;
     }
 }

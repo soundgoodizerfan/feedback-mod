@@ -24,7 +24,7 @@ A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shap
 | **Trident tines** | `_X_ / X_X` |
 | **Tip** | one cell: a gem, shard or nugget |
 | **Binding** | one cell: leather, string or wire. Polymer strings (Polypropylene, Polyethylene, PVC, PTFE, Synthetic Rubber, Bitumen and Soul Resin String) bind too |
-| **Sword guard**, **sword pommel**, **shield rim** | one cell each |
+| **Sword guard**, **shield rim** | one cell each |
 | **Crossbow prod** | two cells: sticks, rods or bone |
 
 Every piece must be the same stock. **Stock** is ingots, gems, planks, cobblestone or bone (tines take ingots, gems or shards). Anything of a material that fits works, so a head can be iron, bronze, gold, diamond, stone, a plank or a bone.
@@ -47,7 +47,7 @@ The Crafting Table assembles the tools below except the crossbow. The Engineerin
 
 You can add:
 
-- A hafted tool may add a **binding** (leather, string or wire) where head meets haft for a stronger joint, a **guard**, a **pommel**, a weight behind the hand: the knob is light, the ball heavier and the counterweight heaviest. A heavier pommel behind the hand brings the head round faster.
+- A hafted tool may add a **binding** (leather, string or wire) where head meets haft for a stronger joint, a **guard**, a **pommel**, a weight behind the hand: the knob is light, the ball and the wheel heavier and the counterweight heaviest. A heavier pommel behind the hand brings the head round faster.
 - A **tip** part, below.
 - Armor and shields can take a **grip** or **lining**.
 
@@ -209,7 +209,7 @@ Beyond the parts of the pattern, a finished tool takes optional **fittings**, pu
 | Fitting | On | Does |
 | --- | --- | --- |
 | binding | sword, hand hammer, hand knife, bow, crossbow, and the tools that already had one | Lashing where head meets handle: takes some of the shock. |
-| pommel | axe, maul, spear, pickaxe | A knob, ball or counterweight at the butt that moves the weight toward your hand. |
+| pommel | axe, maul, spear, pickaxe, sword | A knob, ball, wheel or counterweight at the butt that moves the weight toward your hand. |
 | tip | maul, hand hammer, and the tools that already had one | A hard piece set in the head. |
 | spring | maul, spear, sword | Wire or rod of metal. Right click cocks it, the next blow lets it go for extra damage; a sword's release also lunges you forward; on a spear it lets the head be thrown from the spring. Stored energy is its volume times its stiffness; a spring worked past what its head can take takes a permanent set and finally snaps. |
 | lanyard | sword, axe, maul, spear | A chain to the hand. Thrown, it reels what it hits and pulls the weapon weakly back at a cost in throw speed; held, a disarming shot cannot strip it. |
