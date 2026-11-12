@@ -74,7 +74,8 @@ public final class HaftedLayers {
         for (int j = 1; j <= steps; j++)
             out.add(new Placement("handle_" + form + "_ext", "S", j, -j));
         // Parts at the butt stay; parts at the socket ride up the haft.
-        part(out, sprites, design, "Z", "edge_guard", steps);
+        String front = frontKind(design, type);
+        part(out, sprites, design, "Z", "edge_guard", steps, front);
         part(out, sprites, design, "Y", "lanyard", 0);
         part(out, sprites, design, "R", "spring", 0);
         part(out, sprites, design, "P", "pommel", 0);
@@ -103,28 +104,58 @@ public final class HaftedLayers {
         }
         if (!any)
             return List.of();
-        tip(out, sprites, design, steps, tipX, tipY);
+        tip(out, sprites, design, steps, tipX, tipY, front);
         return List.copyOf(out);
     }
 
     /** A part's layer: its variant's file if there is one, else the plain file, else nothing. {@code lift} steps up the haft ride it with the socket. */
     private static void part(List<Placement> out, Sprites sprites, ModularDesign design, String role, String name, int lift) {
+        part(out, sprites, design, role, name, lift, null);
+    }
+
+    /** As above, but a part that depends on the head ({@code kind}, a file kind name) looks for its kind's file first: {@code name_kind_variant}, {@code name_kind}. */
+    private static void part(List<Placement> out, Sprites sprites, ModularDesign design, String role, String name, int lift, String kind) {
         Part p = design.part(role);
         if (p == null)
             return;
-        String variant = p.variant().isEmpty() ? name : name + "_" + p.variant();
-        String file = sprites.has(variant) ? variant : sprites.has(name) ? name : null;
+        String file = fileFor(sprites, name, p.variant(), kind);
         if (file != null)
             out.add(new Placement(file, role, lift, -lift));
     }
 
+    private static String fileFor(Sprites sprites, String name, String variant, String kind) {
+        List<String> tries = new ArrayList<>();
+        if (kind != null) {
+            if (!variant.isEmpty())
+                tries.add(name + "_" + kind + "_" + variant);
+            tries.add(name + "_" + kind);
+        }
+        if (!variant.isEmpty())
+            tries.add(name + "_" + variant);
+        tries.add(name);
+        for (String t : tries)
+            if (sprites.has(t))
+                return t;
+        return null;
+    }
+
+    /** The file kind of the front head, the one parts that depend on the head follow; null if it has no layer files. */
+    private static String frontKind(ModularDesign design, ModularType type) {
+        for (String letter : ModularFaces.LETTERS) {
+            Part face = design.part(letter);
+            ModularType.Role role = type.roles().get(letter);
+            if (face != null && role != null)
+                return kindFile(ModularHeads.kindOf(face, role)).orElse(null);
+        }
+        return null;
+    }
+
     /** The tip: its variant's file (else plain) at the socket, moved out by the head's lengthening if it still fits the canvas, else as far as it does. */
-    private static void tip(List<Placement> out, Sprites sprites, ModularDesign design, int steps, int tipX, int tipY) {
+    private static void tip(List<Placement> out, Sprites sprites, ModularDesign design, int steps, int tipX, int tipY, String kind) {
         Part p = design.part("T");
         if (p == null)
             return;
-        String variant = p.variant().isEmpty() ? "tip" : "tip_" + p.variant();
-        String file = sprites.has(variant) ? variant : sprites.has("tip") ? "tip" : null;
+        String file = fileFor(sprites, "tip", p.variant(), kind);
         if (file == null)
             return;
         for (int back = 0; back <= Math.abs(tipX); back++) {
