@@ -195,11 +195,15 @@ public final class GunPreview {
         ModularDesign design = ModularStacks.design(stack);
         ModularType type = design == null ? null : ModularTypes.known().get(design.type());
         if (type != null && type.family() == ModularType.Family.ARMOUR && dress(stack, type)) {
+            // The vanilla call scales its translate vector by the entity scale, so depth goes in the pose (it adds 50 itself).
+            g.pose().pushPose();
+            g.pose().translate(0f, 0f, z - 50f);
             net.minecraft.client.gui.screens.inventory.InventoryScreen.renderEntityInInventory(g, cx, cy + size * 0.45f, size * 0.5f,
-                    new org.joml.Vector3f(0f, 0f, z - 50f), new org.joml.Quaternionf().rotationZ((float) Math.PI)
+                    new org.joml.Vector3f(0f, 0f, 0f), new org.joml.Quaternionf().rotationZ((float) Math.PI)
                             .rotateY((float) Math.toRadians(yaw - 90f)).rotateX((float) Math.toRadians(-pitch)),
                     null, mannequin);
             g.flush();
+            g.pose().popPose();
             return;
         }
         PoseStack pose = g.pose();

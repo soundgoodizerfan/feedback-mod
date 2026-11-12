@@ -446,7 +446,7 @@ public class ThrownWeapon extends AbstractArrow {
         ItemStack stack = getPickupItemStackOrigin();
         BlockState state = level().getBlockState(result.getBlockPos());
         int wear = ModularStacks.misuse(stack, level(), state, result.getBlockPos());
-        if (wear > 0)
+        if (wear > 0 && !(getOwner() instanceof LivingEntity thrower && thrower.hasInfiniteMaterials()))
             stack.setDamageValue(stack.getDamageValue() + ModularStacks.cap(stack, wear));
     }
 

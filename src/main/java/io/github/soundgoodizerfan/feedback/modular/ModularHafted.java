@@ -121,6 +121,9 @@ public class ModularHafted extends MaceItem implements Modular, HandTool {
     /** Each face wears on its own: the point lands on the face being used, and the bar follows the most worn one. */
     @Override
     public <T extends LivingEntity> int damageItem(ItemStack stack, int amount, @Nullable T entity, Consumer<Item> onBroken) {
+        // Vanilla asks the item before it checks for creative, and wear here is written into the stack.
+        if (entity != null && entity.hasInfiniteMaterials())
+            return 0;
         return ModularFaces.wear(stack, amount);
     }
 

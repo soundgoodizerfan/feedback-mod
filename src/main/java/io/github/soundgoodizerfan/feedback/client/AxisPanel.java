@@ -28,6 +28,8 @@ import net.minecraft.util.Mth;
  */
 final class AxisPanel {
 
+    /** Above the fan's top orb layer ({@code BenchFan}: layer times 250). */
+    private static final float LAYER = 900f;
     private static final int W = 200, ROW = 14, PREV_W = 92, LABEL_W = 62, STEP_X = 64, STEP_W = 86, BAND_X = 154;
 
     private final BenchScreen host;
@@ -63,6 +65,23 @@ final class AxisPanel {
 
     boolean visible() {
         return !axes.isEmpty();
+    }
+
+    /** Whether the pointer is on the strip or its plate preview, which sit over the fan. */
+    boolean covers(double mx, double my) {
+        if (axes.isEmpty() || host.panelBusy())
+            return false;
+        return mx >= x0() && mx < x0() + W + 4 + PREV_W && my >= y0() && my < y0() + height();
+    }
+
+    /** The steppers, drawn by hand on the raised layer {@link #draw} uses, so no fan node lies over them. */
+    void renderSteppers(GuiGraphics g, int mx, int my, float partial) {
+        g.pose().pushPose();
+        g.pose().translate(0, 0, LAYER);
+        for (AbstractWidget w : steppers)
+            if (w.visible)
+                w.render(g, mx, my, partial);
+        g.pose().popPose();
     }
 
     private int height() {
@@ -131,6 +150,8 @@ final class AxisPanel {
     void draw(GuiGraphics g, Font font) {
         if (axes.isEmpty() || host.panelBusy())
             return;
+        g.pose().pushPose();
+        g.pose().translate(0, 0, LAYER);
         int x = x0(), y = y0(), h = height();
         skin.plaque(g, x, y, W, h);
         for (int i = 0; i < axes.size(); i++) {
@@ -148,6 +169,7 @@ final class AxisPanel {
         // The default size, ghosted, so the aim reads against it; then the plate as aimed.
         box(g, cx, cy, iw, ih, frac(v, v.def()), hz == null ? 0.6f : frac(hz, hz.def()), 0x60000000 | skin.dim() & 0xFFFFFF, false);
         box(g, cx, cy, iw, ih, frac(v, raw[0] / 10f), hz == null ? 0.6f : frac(hz, raw[1] / 10f), 0xFF000000 | rgb, true);
+        g.pose().popPose();
     }
 
     private static float frac(ModularType.Axis a, float value) {

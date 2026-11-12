@@ -207,7 +207,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
             }, true, null));
             typePicker.visible = false;
         }
-        axis.init(this::addRenderableWidget);
+        axis.init(this::addWidget);
         if (blueprint != null) {
             printButton = addRenderableWidget(blueprint.printButton(leftPos, topPos));
             printButton.visible = false;
@@ -582,6 +582,10 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
             return true;
         if (axis.click(mx, my, button))
             return true;
+        if (axis.covers(mx, my) && super.mouseClicked(mx, my, button))
+            return true;
+        if (axis.covers(mx, my))
+            return true;
         Slot over = hoveredSlot;
         if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 0) {
             BenchFan.Node n = fan.at(mx, my, cx(), cy());
@@ -693,7 +697,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         if (seatAge >= 0 && seatAge < 9 && !ClientSettings.reduceMotion())
             GuiStyle.ring(g, sx, sy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
         BenchFan.Node hover = fan.at(mouseX, mouseY, cx, cy);
-        fan.draw(g, skin, font, x, y, VW, VH, cx, cy, sx, sy, mouseX, mouseY, shake, busy() ? 0.2f : 1f);
+        fan.draw(g, skin, font, x, y, VW, VH, cx, cy, sx, sy, axis.covers(mouseX, mouseY) ? -9999 : mouseX, mouseY, shake, busy() ? 0.2f : 1f);
         axis.draw(g, font);
 
         if (menu.trim()) {
@@ -919,6 +923,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
             g.pose().popPose();
             return;
         }
+        axis.renderSteppers(g, mouseX, mouseY, partialTick);
         g.pose().pushPose();
         g.pose().translate(0, 0, 400);
         if (forge != null && forge.busy())

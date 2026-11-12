@@ -100,6 +100,8 @@ public final class HaftedModel {
         private final Map<String, int[]> bounds = new HashMap<>();
         private final Map<List<HaftedLayers.Placement>, BakedModel> built = new HashMap<>();
         private final Map<List<BakedModel>, BakedModel> bySize = new HashMap<>();
+        // The finished model per design, so a hotbar of tools costs one hash lookup each per frame, not a re-plan and re-flatten. Empty = no layer files, use the whole-tool fallback.
+        private final Map<ModularDesign, java.util.Optional<BakedModel>> byDesign = new HashMap<>();
 
         Resolver(BakedModel base) {
             this.base = base;
@@ -148,12 +150,16 @@ public final class HaftedModel {
             ModularDesign design = ModularStacks.design(stack);
             ModularType type = design == null ? null : ModularTypes.known().get(design.type());
             if (type != null) {
-                List<HaftedLayers.Placement> icon = HaftedLayers.of(design, type, known);
-                if (!icon.isEmpty()) {
+                var cached = byDesign.computeIfAbsent(design, d -> {
+                    List<HaftedLayers.Placement> icon = HaftedLayers.of(d, type, known);
+                    if (icon.isEmpty())
+                        return java.util.Optional.empty();
                     BakedModel slot = built.computeIfAbsent(icon, l -> bake(l, type));
-                    BakedModel held = built.computeIfAbsent(HaftedLayers.full(design, type, known), l -> bake(l, type));
-                    return slot == held ? slot : bySize.computeIfAbsent(List.of(slot, held), k -> new BySize(slot, held));
-                }
+                    BakedModel held = built.computeIfAbsent(HaftedLayers.full(d, type, known), l -> bake(l, type));
+                    return java.util.Optional.of(slot == held ? slot : bySize.computeIfAbsent(List.of(slot, held), k -> new BySize(slot, held)));
+                });
+                if (cached.isPresent())
+                    return cached.get();
             }
             return base.getOverrides().resolve(base, stack, level, entity, seed);
         }

@@ -234,9 +234,14 @@ public final class HaftedLayers {
         part(out, sprites, plan, "Y", "lanyard", 0);
         part(out, sprites, plan, "R", "spring", 0);
         part(out, sprites, plan, "P", "pommel", 0);
-        part(out, sprites, plan, "G", "guard", steps);
+        // A blade is drawn along the haft, so its base lies where the guard crosses: the guard goes over it. Across-haft heads sit over the guard.
+        boolean guardOver = ALONG.contains(plan.frontKind());
+        if (!guardOver)
+            part(out, sprites, plan, "G", "guard", steps);
         part(out, sprites, plan, "B", "binding", steps);
         out.addAll(heads);
+        if (guardOver)
+            part(out, sprites, plan, "G", "guard", steps);
         if (!any)
             return List.of();
         if (plan.parts().containsKey("Z"))
