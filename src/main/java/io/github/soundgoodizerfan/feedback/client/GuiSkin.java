@@ -315,6 +315,12 @@ public enum GuiSkin {
                 int sx = x + 3 + (int) (DIMPLE[i] * (w - 7)), sy = y + 3 + (int) (DIMPLE[i + 1] * (h - 7));
                 g.fill(sx, sy, sx + 2, sy + 1, (i & 2) == 0 ? 0x16FFFFFF : 0x14000000);
             }
+            if (!inTab)
+                ornaments(g, x, y, w, h);
+            g.fill(x + 2, y + 1, x + w - 2, y + 2, 0x30FFFFFF);
+        }
+
+        private void ornaments(GuiGraphics g, int x, int y, int w, int h) {
             // the double stripe, between its ornaments
             g.fill(x + 14, y + 3, x + w - 14, y + 4, CREAM);
             g.fill(x + 14, y + 5, x + w - 14, y + 7, RUST);
@@ -333,7 +339,6 @@ public enum GuiSkin {
             }
             rivet(g, x + 4, y + h - 9);
             rivet(g, x + w - 9, y + h - 9);
-            g.fill(x + 2, y + 1, x + w - 2, y + 2, 0x30FFFFFF);
         }
 
         @Override
@@ -412,6 +417,12 @@ public enum GuiSkin {
             g.fill(x, y, x + w, y + h, EDGE);
             g.fill(x + 1, y + 1, x + w - 1, y + h - 1, FACE);
             g.fillGradient(x + 1, y + 1, x + w - 1, y + h - 1, 0x14FFFFFF, 0x20000000);
+            if (!inTab)
+                ornaments(g, x, y, w, h);
+            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x20FFFFFF);
+        }
+
+        private void ornaments(GuiGraphics g, int x, int y, int w, int h) {
             // brass rails top and bottom, brackets in the corners
             g.fill(x + 12, y + 3, x + w - 12, y + 4, BRASS);
             g.fill(x + 12, y + 4, x + w - 12, y + 5, BRASS_LO);
@@ -419,14 +430,14 @@ public enum GuiSkin {
             bracket(g, x + w - 3, y + 3, -1, 1);
             bracket(g, x + 3, y + h - 3, 1, -1);
             bracket(g, x + w - 3, y + h - 3, -1, -1);
-            // the glint, a soft diagonal band drifting across the glass
-            float t = ClientSettings.reduceMotion() ? 0.35f : (GuiStyle.time() % 260f) / 260f;
+            // the glint, a soft diagonal band: a quick pass every few seconds, nothing in between
+            float t = ClientSettings.reduceMotion() ? 2f : (GuiStyle.time() % 100f) / 24f;
             int centre = (int) (-40 + t * (w + 80));
-            for (int j = 2; j < h - 2; j += 2) {
+            for (int j = 2; t <= 1f && j < h - 2; j += 2) {
                 int a = x + centre + (int) (j * 0.7f), b = a + 14;
                 int l = Math.max(x + 1, a), r = Math.min(x + w - 1, b);
                 if (r > l)
-                    g.fill(l, y + j, r, y + Math.min(j + 2, h - 1), 0x0A9EE8E0);
+                    g.fill(l, y + j, r, y + Math.min(j + 2, h - 1), 0x149EE8E0);
             }
             // indicator lamps along the foot
             float breath = ClientSettings.reduceMotion() ? 0.8f : 0.5f + 0.5f * net.minecraft.util.Mth.sin(GuiStyle.time() * 0.1f);
@@ -436,7 +447,6 @@ public enum GuiSkin {
                 g.fill(lx - 1, ly - 1, lx + 4, ly + 4, EDGE);
                 g.fill(lx, ly, lx + 3, ly + 3, c);
             }
-            g.fill(x + 1, y + 1, x + w - 1, y + 2, 0x20FFFFFF);
         }
 
         @Override
@@ -1609,6 +1619,18 @@ public enum GuiSkin {
      * grain) match instead of being rescaled into the tab's small rectangle.
      */
     public void folderTab(GuiGraphics g, int x, int y, int w, int h, boolean selected, float glow, int[] host) {
+        inTab = true;
+        try {
+            folderTabFace(g, x, y, w, h, selected, glow, host);
+        } finally {
+            inTab = false;
+        }
+    }
+
+    /** True while a folder tab borrows {@link #panel}: a skin leaves out ornaments that belong to a whole window (stripes, lamps, brackets). */
+    static boolean inTab;
+
+    private void folderTabFace(GuiGraphics g, int x, int y, int w, int h, boolean selected, float glow, int[] host) {
         if (selected) {
             // The tab itself, with its own frame and rails, standing above the panel.
             g.enableScissor(x, y, x + w, y + h);

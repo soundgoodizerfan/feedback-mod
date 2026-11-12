@@ -29,6 +29,14 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
 
     /** Blocks per model pixel: a gun is drawn at item scale in first person, a little larger in third, as Scorched Guns' display transforms do. */
     static final float FIRST_PERSON_SCALE = 1f / 16f;
+    /** A handgun is drawn this much smaller in first person than a long gun, so it does not fill the view. */
+    private static final float HANDGUN_FIRST_PERSON_SHRINK = 0.85f;
+
+    /** Blocks per model pixel for this gun held in first person. */
+    static float firstPersonScale(GunView view) {
+        return view.type() == io.github.soundgoodizerfan.feedback.weapon.GunLayout.Type.HANDGUN
+                ? FIRST_PERSON_SCALE * HANDGUN_FIRST_PERSON_SHRINK : FIRST_PERSON_SCALE;
+    }
     private static final float THIRD_PERSON_SCALE = 1.3f / 16f;
 
     /**
@@ -43,7 +51,8 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
     /** The aimed eye point ({@link GunView#eye}) from the hand's pivot in first person, blocks. */
     static float[] firstPersonEye(GunView view, float side) {
         float[] grip = firstPersonGrip(view), at = view.hand(), eye = view.eye();
-        return new float[]{(grip[0] * side + eye[0] - at[0]) / 16f, (grip[1] + eye[1] - at[1]) / 16f, (grip[2] + eye[2] - at[2]) / 16f};
+        float k = firstPersonScale(view);
+        return new float[]{grip[0] * side / 16f + (eye[0] - at[0]) * k, grip[1] / 16f + (eye[1] - at[1]) * k, grip[2] / 16f + (eye[2] - at[2]) * k};
     }
 
     /** Draw a gun held in first person from the hand's pivot: placed by its grip, kicked and tilted by {@link GunMotion}. */
@@ -57,7 +66,8 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         if (player != null && io.github.soundgoodizerfan.feedback.client.ClientSettings.gunArms())
             GunArms.draw(pose, buffers, light, view, side, player.getOffhandItem().isEmpty() && player.getMainHandItem() == stack);
         pose.translate(grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
-        pose.scale(FIRST_PERSON_SCALE, FIRST_PERSON_SCALE, FIRST_PERSON_SCALE);
+        float k = firstPersonScale(view);
+        pose.scale(k, k, k);
         pose.translate(-at[0], -at[1], -at[2]);
         GunMotion.item(pose, view, hand, now);
         var mesh = new GunMesh(pose, outputs(buffers, stack), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);

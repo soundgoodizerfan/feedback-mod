@@ -59,16 +59,46 @@ public final class HaftedLayers {
         return Optional.ofNullable(KIND_FILE.get(form));
     }
 
-    /** The layers of {@code design}, bottom to top; empty when it cannot be drawn in layers. */
+    /** Where the whole tool sits on the canvas: up and right of the corner, as vanilla's tools do, so nothing is clipped at the edge. */
+    public static final int ORIGIN_X = 2, ORIGIN_Y = -2;
+
+    /**
+     * How far off the haft's line a head's body sits, in texels, by head kind: vanilla seats its axe, pick and hoe heads with the body on the
+     * upper-left side of the haft and the haft entering at the head's lower right. Applied to the front head (negated for a mirrored second
+     * head) and to the tip riding it; the same for every variant of the kind.
+     */
+    private static final Map<String, int[]> SEAT = Map.of("axe", new int[] {-1, -1}, "pickaxe", new int[] {-1, -1}, "hoe", new int[] {-1, -1});
+
+    /** The layers of {@code design}, bottom to top; empty when it cannot be drawn in layers. A haft too long for the canvas is drawn as long as fits. */
     public static List<Placement> of(ModularDesign design, ModularType type, Sprites sprites) {
+        Part haft = design.part("S");
+        if (haft == null)
+            return List.of();
+        int sticks = Math.max(1, Math.min(4, haft.count()));
+        List<Placement> last = List.of();
+        for (int steps = STEPS_PER_STICK * (sticks - 1); steps >= 0; steps--) {
+            last = shifted(place(design, type, sprites, steps));
+            if (last.isEmpty() || fits(sprites, last))
+                return last;
+        }
+        return last;
+    }
+
+    /** The layers moved to where the tool sits on the canvas. */
+    private static List<Placement> shifted(List<Placement> layers) {
+        List<Placement> out = new ArrayList<>(layers.size());
+        for (Placement p : layers)
+            out.add(new Placement(p.file(), p.role(), p.dx() + ORIGIN_X, p.dy() + ORIGIN_Y));
+        return List.copyOf(out);
+    }
+
+    private static List<Placement> place(ModularDesign design, ModularType type, Sprites sprites, int steps) {
         Part haft = design.part("S");
         if (haft == null)
             return List.of();
         String form = haft.form().isEmpty() ? "stick" : haft.form();
         if (!sprites.has("handle_" + form + "_base") || !sprites.has("handle_" + form + "_ext"))
             return List.of();
-        int sticks = Math.max(1, Math.min(4, haft.count()));
-        int steps = STEPS_PER_STICK * (sticks - 1);
         List<Placement> out = new ArrayList<>();
         out.add(new Placement("handle_" + form + "_base", "S", 0, 0));
         for (int j = 1; j <= steps; j++)
@@ -97,8 +127,9 @@ public final class HaftedLayers {
                 continue;
             if (!any) {
                 // The tip rides the front head's far end: out by the slices that end took.
-                tipX = c;
-                tipY = ALONG.contains(kind.get()) ? -c : c;
+                int[] seat = SEAT.getOrDefault(kind.get(), new int[] {0, 0});
+                tipX = c + seat[0];
+                tipY = (ALONG.contains(kind.get()) ? -c : c) + seat[1];
             }
             any = true;
         }
@@ -177,15 +208,17 @@ public final class HaftedLayers {
             return -1;
         String r = mirrored ? "_r" : "";
         int dirX = 1, dirY = ALONG.contains(kind) ? -1 : 1;
+        int[] seat = SEAT.getOrDefault(kind, new int[] {0, 0});
+        int sx = mirrored ? -seat[0] : seat[0], sy = mirrored ? -seat[1] : seat[1];
         for (int k = edgeSteps(face, role); k >= 0; k--) {
             // The back end steps out by half the extra slices, the front by the rest; the slices fill between.
             int a = (k + 1) / 2, c = k / 2;
             List<Placement> cut = new ArrayList<>();
-            cut.add(new Placement(use + "_back" + r, face.role(), steps - a * dirX, -steps - a * dirY));
+            cut.add(new Placement(use + "_back" + r, face.role(), steps - a * dirX + sx, -steps - a * dirY + sy));
             for (int j = -a; j <= c; j++)
-                cut.add(new Placement(use + "_mid" + r, face.role(), steps + j * dirX, -steps + j * dirY));
-            cut.add(new Placement(use + "_front" + r, face.role(), steps + c * dirX, -steps + c * dirY));
-            if (k == 0 || fits(sprites, cut)) {
+                cut.add(new Placement(use + "_mid" + r, face.role(), steps + j * dirX + sx, -steps + j * dirY + sy));
+            cut.add(new Placement(use + "_front" + r, face.role(), steps + c * dirX + sx, -steps + c * dirY + sy));
+            if (k == 0 || fits(sprites, shifted(cut))) {
                 out.addAll(cut);
                 return c;
             }

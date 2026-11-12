@@ -23,11 +23,19 @@ public final class ClientSettings {
             .comment("Draw your arms on a gun held in first person.")
             .define("gunArms", true);
 
+    private static final ModConfigSpec.BooleanValue GAIN_WISP = B
+            .comment("A killing blow that earns skill points sends one small wisp in the tree's colour from the fallen creature to you. Applies at once, no restart.")
+            .define("gainWisp", true);
+
     public static final ModConfigSpec SPEC = B.build();
 
     /** True when the player asked for less motion. False before the config has loaded. */
     public static boolean reduceMotion() {
         return SPEC.isLoaded() && REDUCE_MOTION.get();
+    }
+
+    public static boolean gainWisp() {
+        return !SPEC.isLoaded() || GAIN_WISP.get();
     }
 
     public static boolean gunArms() {

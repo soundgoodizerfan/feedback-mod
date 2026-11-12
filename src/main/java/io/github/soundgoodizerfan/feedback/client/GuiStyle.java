@@ -364,8 +364,8 @@ public final class GuiStyle {
             var font = Minecraft.getInstance().font;
             int room = width - 2 * ARROW - 4;
             String shown = font.width(v) <= room ? v : font.plainSubstrByWidth(v, room - font.width("...")) + "...";
-            g.drawCenteredString(font, shown, getX() + width / 2, getY() + (height - 8) / 2 + 1,
-                    flash.colour(0, v, skin.ink(), skin.accent()));
+            g.drawString(font, shown, getX() + (width - font.width(shown)) / 2, getY() + (height - 8) / 2 + 1,
+                    flash.colour(0, v, skin.ink(), skin.accent()), skin == GuiSkin.VANILLA);
         }
 
         private void press(int dir) {

@@ -10,7 +10,6 @@ import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
 
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -22,7 +21,6 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import org.joml.Vector3f;
 
 /**
  * Where skill points are earned (plan 2.7): each tree's pool by doing its own physical act, every award
@@ -78,7 +76,25 @@ public final class SkillEarning {
         String target = event.getEntity().getStringUUID();
         // The weapon of the hand that struck; in barehanded mode either hand is a fist whatever it holds.
         ItemStack weapon = BareMode.on(player) ? ItemStack.EMPTY : StrikeSource.weapon(player, source);
+        SkillPools before = SkillPools.of(player);
         hit(player, event.getEntity(), weapon, event.getNewDamage());
+        if (event.getEntity().isDeadOrDying())
+            wisp(player, event.getEntity(), before);
+    }
+
+    /** A kill that paid: one wisp in the colour of the tree that gained most, sent to the killer alone. */
+    private static void wisp(ServerPlayer player, LivingEntity target, SkillPools before) {
+        SkillPools after = SkillPools.of(player);
+        String best = null;
+        int most = 0;
+        for (var e : after.points().entrySet())
+            if (e.getValue() - before.points(e.getKey()) > most) {
+                most = e.getValue() - before.points(e.getKey());
+                best = e.getKey();
+            }
+        if (best != null)
+            net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(player, new io.github.soundgoodizerfan.feedback.net.SkillWispPayload(
+                    TreeHue.of(best), target.getX(), target.getY() + target.getBbHeight() / 2, target.getZ()));
     }
 
     /** Per player: the game tick of their last landed blow, so a quick follow-up reads as a chain. */
@@ -203,16 +219,12 @@ public final class SkillEarning {
         pay(player, tree, SkillPools.of(player).awarded(tree, key, base, player.level().getGameTime()));
     }
 
-    /** Stores {@code next}; when it holds more points in {@code tree} than before, a chime sounds for the player and sparks in the tree's colour fly off them. */
+    /** Stores {@code next}; when it holds more points in {@code tree} than before, a chime sounds for the player (the client's HUD shows the gain, and a kill sends a wisp). */
     private static void pay(ServerPlayer player, String tree, SkillPools next) {
         boolean gained = next.points(tree) > SkillPools.of(player).points(tree);
         SkillPools.set(player, next);
         if (!gained || !(player.level() instanceof ServerLevel level))
             return;
-        int rgb = TreeHue.of(tree);
-        var color = new Vector3f((rgb >> 16 & 255) / 255f, (rgb >> 8 & 255) / 255f, (rgb & 255) / 255f);
-        level.sendParticles(new DustParticleOptions(color, 1f), player.getX(), player.getY() + 1.0, player.getZ(),
-                SkillTuning.GAIN_SPARKS, 0.3, 0.5, 0.3, 0.08);
         // Each tree rings at its own pitch; only the earner hears it.
         player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.35f, 0.8f + Math.floorMod(tree.hashCode(), 8) * 0.08f);
     }

@@ -121,6 +121,7 @@ public class FClientSetup {
         RollReadyHud.register(event);
         OffhandHud.register(event);
         CastHud.register(event);
+        SkillGainHud.register(event);
         SuitHud.register(event);
         ThermalOverlay.register(event);
         StoredHud.register(event);

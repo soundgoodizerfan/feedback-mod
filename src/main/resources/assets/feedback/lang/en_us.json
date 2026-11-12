@@ -1423,6 +1423,8 @@
   "feedback.configuration.title": "Feedback settings",
   "feedback.configuration.reduceMotion": "Reduce motion",
   "feedback.configuration.reduceMotion.tooltip": "Drops screen shake, shutters and idle life; keeps sounds and the stage lamp.",
+  "feedback.configuration.gainWisp": "Skill kill wisp",
+  "feedback.configuration.gainWisp.tooltip": "A killing blow that earns skill points sends one small wisp in the tree's colour from the fallen creature to you. Applies at once.",
   "feedback.configuration.itemInfoHud": "Held item info HUD",
   "feedback.configuration.itemInfoHud.tooltip": "Show the instrument readout for held items. The key also toggles it.",
   "key.feedback.item_info_hud": "Held item info HUD",
