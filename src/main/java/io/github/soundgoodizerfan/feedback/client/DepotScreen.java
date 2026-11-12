@@ -39,6 +39,6 @@ public class DepotScreen extends SkinnedScreen<DepotMenu> {
         Component status = menu.linked()
                 ? Component.translatable("gui.feedback.depot.linked", menu.onTheRoad())
                 : Component.translatable("gui.feedback.depot.unlinked");
-        g.drawString(font, status, 8, DepotMenu.IN_Y + 20, menu.linked() ? skin.ink() : skin.warn(), false);
+        g.drawWordWrap(font, status, 8, DepotMenu.IN_Y + 20, 160, menu.linked() ? skin.ink() : skin.warn());
     }
 }

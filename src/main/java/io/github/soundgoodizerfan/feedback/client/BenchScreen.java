@@ -60,7 +60,7 @@ import net.minecraft.world.item.ItemStack;
 public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
 
     /** The fan's canvas, relative to the panel; the centre slot sits at its middle. */
-    static final int VX = 8, VY = 16, VW = 304, VH = 156;
+    static final int VX = 8, VY = 16, VW = 304, VH = 150;
     /** Shapes in a group before they fold into hubs by part. */
     private static final int HUB_AT = 10;
 
@@ -840,7 +840,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         if (!shown)
             return;
         g.pose().pushPose();
-        g.pose().translate(slotX + 8, slotY - 8, 0);
+        g.pose().translate(slotX + 8, slotY - 10, 0);
         g.pose().scale(0.8f, 0.8f, 1f);
         g.drawString(font, text, -font.width(text) / 2, 0, skin.dim(), false);
         g.pose().popPose();

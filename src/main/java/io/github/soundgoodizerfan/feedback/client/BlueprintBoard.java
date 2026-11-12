@@ -113,6 +113,8 @@ final class BlueprintBoard {
     private int width = MIN_W, height = DEFAULT_H;
     private int drawerSlots = 12;
     private int panelY = 144, panelH = PANEL_H;
+    /** Nothing picked and no fault to read out: the part and figure panels have nothing to say, so the canvas takes their room. */
+    private boolean panelsHidden;
     private Layout.Rect canvas = new Layout.Rect(8, 24, 344, 116), call = new Layout.Rect(8, 144, 204, 128), res = new Layout.Rect(216, 144, 136, 128);
     private Layout.Rect searchBtn = new Layout.Rect(228, 4, 16, 16), rigBtn = new Layout.Rect(244, 4, 32, 16),
             pinsArea = new Layout.Rect(278, 4, 48, 16), pinBtn = new Layout.Rect(326, 4, 26, 16);
@@ -323,10 +325,10 @@ final class BlueprintBoard {
         drawerSlots = Math.max(MIN_DRAWER, Math.min(Math.max(12, types.size()), (rigBtn.x() - DRAWER_X - 4 - 16) / DRAWER_PITCH));
         searchBtn = new Layout.Rect(DRAWER_X + drawerSlots * DRAWER_PITCH + 4, bar.y(), 16, BAR_H);
         Layout.Rect body = all.inset(MARGIN, 24, MARGIN, 4);
-        panelH = PANEL_H;
-        Layout.Rect panels = body.bottom(panelH);
+        Layout.Rect panels = body.bottom(PANEL_H);
         panelY = panels.y();
-        canvas = body.beforeBottom(panelH + GAP);
+        panelH = panelsHidden ? 0 : PANEL_H;
+        canvas = panelsHidden ? body : body.beforeBottom(PANEL_H + GAP);
         int callW = 204 + Math.max(0, panels.w() - (204 + GAP + 136)) / 2;
         call = panels.left(callW);
         res = panels.afterLeft(callW + GAP);
@@ -2027,11 +2029,19 @@ final class BlueprintBoard {
         if (t == null)
             return;
         String role = sel();
+        boolean hide = role == null && (figures.isPresent() || faults.isEmpty());
+        if (hide != panelsHidden) {
+            panelsHidden = hide;
+            arrange();
+            build();
+        }
         updateHover(mouseX, mouseY);
         drawDrawer(g);
         drawCanvas(g, mouseX, mouseY);
-        drawParts(g, role);
-        drawFigures(g);
+        if (!panelsHidden) {
+            drawParts(g, role);
+            drawFigures(g);
+        }
         for (AbstractWidget widget : widgets)
             if (widget.visible)
                 widget.render(g, mouseX, mouseY, partialTick);
@@ -2247,7 +2257,7 @@ final class BlueprintBoard {
         int x = ox + call.x(), y = oy + panelY;
         skin.inset(g, x, y, call.w(), panelH);
         if (role == null) {
-            fit(g, I18n.get("gui.feedback.blueprint_table.pick_part"), x + 5, y + 4, call.w() - 10, skin.dim());
+            g.drawWordWrap(font, Component.translatable("gui.feedback.blueprint_table.pick_part"), x + 5, y + 4, call.w() - 10, skin.dim());
             return;
         }
         ModularType t = current();

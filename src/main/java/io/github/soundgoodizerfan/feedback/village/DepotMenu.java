@@ -19,7 +19,7 @@ import net.neoforged.neoforge.items.SlotItemHandler;
 /** A Depot's container: the outgoing shelf (goods for the next convoy), the incoming shelf (what arrived, take only), and the inventory. */
 public class DepotMenu extends AbstractContainerMenu {
 
-    public static final int OUT_Y = 20, IN_Y = 56, INV_Y = 90;
+    public static final int OUT_Y = 30, IN_Y = 66, INV_Y = 120;
 
     private final BlockPos pos;
     private final DepotBlockEntity depot;

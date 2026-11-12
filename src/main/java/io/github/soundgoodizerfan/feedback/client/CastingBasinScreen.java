@@ -23,7 +23,7 @@ public class CastingBasinScreen extends SkinnedScreen<CastingBasinMenu> {
     public CastingBasinScreen(CastingBasinMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.STONE);
         imageWidth = 176;
-        imageHeight = 190;
+        imageHeight = 198;
         inventoryLabelY = CastingBasinMenu.INVENTORY_Y - 11;
     }
 

@@ -91,7 +91,7 @@ public class CounterScreen extends SkinnedScreen<CounterMenu> {
             g.drawString(font, Component.translatable("gui.feedback.counter.till"), 8, CounterMenu.TILL_LABEL_Y, skin.dim(), false);
             g.drawString(font, Component.translatable("gui.feedback.counter.returns"), 8, CounterMenu.RETURN_LABEL_Y, skin.dim(), false);
         } else {
-            g.drawString(font, Component.translatable("gui.feedback.counter.hint"), 8, CounterMenu.PRICE_BTN_Y + 12, skin.dim(), false);
+            g.drawWordWrap(font, Component.translatable("gui.feedback.counter.hint"), 8, CounterMenu.PRICE_BTN_Y + 12, 160, skin.dim());
         }
     }
 

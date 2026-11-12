@@ -87,7 +87,7 @@ public class CounterMenu extends AbstractContainerMenu {
                     }
                 });
         }
-        invY = mode == KEEPER ? 134 : 68;
+        invY = mode == KEEPER ? 134 : 96;
         for (int row = 0; row < 3; row++)
             for (int col = 0; col < 9; col++)
                 addSlot(new Slot(inv, 9 + row * 9 + col, 8 + col * 18, invY + row * 18));

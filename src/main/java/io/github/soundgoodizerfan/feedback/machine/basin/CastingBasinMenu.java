@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
 public class CastingBasinMenu extends AbstractContainerMenu {
 
     public static final int SLOT_X = 80, SLOT_Y = 18, SLOT_STEP = 22;
-    public static final int INVENTORY_X = 8, INVENTORY_Y = 108;
+    public static final int INVENTORY_X = 8, INVENTORY_Y = 116;
 
     private final Container container;
     private final ContainerData data;
