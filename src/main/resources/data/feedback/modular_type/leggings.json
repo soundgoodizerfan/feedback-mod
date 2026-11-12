@@ -274,6 +274,50 @@
   "names": {
     "designations": [
       {
+        "name": "stirrup_hose",
+        "is": {
+          "width": "slim",
+          "length": "long",
+          "poleyn": "fitted"
+        }
+      },
+      {
+        "name": "short_shorts",
+        "is": {
+          "width": "slim",
+          "length": "short"
+        }
+      },
+      {
+        "name": "pantaloons",
+        "is": {
+          "width": "wide",
+          "length": "long"
+        }
+      },
+      {
+        "name": "kilt",
+        "is": {
+          "variant": "quilted",
+          "length": "short",
+          "width": "wide"
+        }
+      },
+      {
+        "name": "poleyned_cuisses",
+        "is": {
+          "variant": "plain_leggings",
+          "poleyn": "fitted"
+        }
+      },
+      {
+        "name": "leg_harness",
+        "is": {
+          "variant": "articulated",
+          "poleyn": "fitted"
+        }
+      },
+      {
         "name": "chausses",
         "is": {
           "variant": "mail_chausses"

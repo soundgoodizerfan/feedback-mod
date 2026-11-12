@@ -928,6 +928,13 @@
         }
       },
       {
+        "name": "pepperbox",
+        "is": {
+          "variant": "handgun",
+          "feed": "barrels"
+        }
+      },
+      {
         "name": "shot_revolver",
         "is": {
           "variant": "handgun",
@@ -950,6 +957,15 @@
           "variant": "handgun",
           "feed": "cylinder",
           "calibre": "calibre_magnum"
+        }
+      },
+      {
+        "name": "zip_gun",
+        "is": {
+          "variant": "handgun",
+          "feed": "single",
+          "finish": "smooth",
+          "calibre": "calibre_rimfire"
         }
       },
       {
@@ -994,6 +1010,19 @@
         ]
       },
       {
+        "name": "coach_gun",
+        "is": {
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide",
+          "action": "break",
+          "barrel": "medium|long"
+        },
+        "traits": [
+          "double_barrel"
+        ]
+      },
+      {
         "name": "double_shotgun",
         "is": {
           "variant": "long_gun",
@@ -1005,12 +1034,50 @@
         ]
       },
       {
+        "name": "riot_shotgun",
+        "is": {
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide",
+          "action": "pump",
+          "barrel": "short"
+        }
+      },
+      {
         "name": "pump_shotgun",
         "is": {
           "variant": "long_gun",
           "finish": "smooth",
           "gauge": "wide",
           "action": "pump"
+        }
+      },
+      {
+        "name": "punt_gun",
+        "is": {
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide",
+          "barrel": "long",
+          "feed": "single"
+        }
+      },
+      {
+        "name": "combat_shotgun",
+        "is": {
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide",
+          "action": "self_loading|automatic"
+        }
+      },
+      {
+        "name": "lever_shotgun",
+        "is": {
+          "variant": "long_gun",
+          "finish": "smooth",
+          "gauge": "wide",
+          "action": "lever"
         }
       },
       {
@@ -1037,6 +1104,20 @@
         }
       },
       {
+        "name": "heavy_machine_gun",
+        "is": {
+          "variant": "machine_gun",
+          "calibre": "calibre_magnum"
+        }
+      },
+      {
+        "name": "squad_automatic_weapon",
+        "is": {
+          "variant": "machine_gun",
+          "calibre": "calibre_intermediate"
+        }
+      },
+      {
         "name": "general_purpose_machine_gun",
         "is": {
           "variant": "machine_gun"
@@ -1046,10 +1127,28 @@
         ]
       },
       {
+        "name": "gatling_gun",
+        "is": {
+          "variant": "machine_gun",
+          "feed": "barrels"
+        }
+      },
+      {
         "name": "light_machine_gun",
         "is": {
           "variant": "machine_gun"
         }
+      },
+      {
+        "name": "personal_defense_weapon",
+        "is": {
+          "variant": "long_gun",
+          "calibre": "calibre_pistol",
+          "barrel": "short"
+        },
+        "traits": [
+          "select_fire"
+        ]
       },
       {
         "name": "submachine_gun",
@@ -1072,6 +1171,16 @@
         ]
       },
       {
+        "name": "anti_materiel_rifle",
+        "is": {
+          "variant": "long_gun",
+          "calibre": "calibre_magnum",
+          "barrel": "long",
+          "sight": "scope",
+          "feed": "single"
+        }
+      },
+      {
         "name": "sniper_rifle",
         "is": {
           "variant": "long_gun",
@@ -1087,6 +1196,14 @@
           "barrel": "medium",
           "sight": "scope",
           "action": "bolt|self_loading"
+        }
+      },
+      {
+        "name": "battle_rifle",
+        "is": {
+          "variant": "long_gun",
+          "calibre": "calibre_magnum",
+          "action": "self_loading"
         }
       },
       {
@@ -1108,6 +1225,25 @@
         "is": {
           "variant": "long_gun",
           "action": "bolt"
+        }
+      },
+      {
+        "name": "double_rifle",
+        "is": {
+          "variant": "long_gun",
+          "finish": "rifled",
+          "action": "break"
+        },
+        "traits": [
+          "double_barrel"
+        ]
+      },
+      {
+        "name": "elephant_gun",
+        "is": {
+          "variant": "long_gun",
+          "calibre": "calibre_magnum",
+          "action": "break|bolt"
         }
       },
       {

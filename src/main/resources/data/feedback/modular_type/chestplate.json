@@ -321,6 +321,73 @@
   "names": {
     "designations": [
       {
+        "name": "tabard",
+        "is": {
+          "width": "wide",
+          "torso_length": "short"
+        }
+      },
+      {
+        "name": "officers_greatcoat",
+        "is": {
+          "torso_length": "long",
+          "width": "normal|wide",
+          "pauldron": "fitted"
+        }
+      },
+      {
+        "name": "trench_coat",
+        "is": {
+          "torso_length": "long",
+          "width": "normal|wide",
+          "collar": "fitted"
+        }
+      },
+      {
+        "name": "studded_jerkin",
+        "is": {
+          "width": "narrow",
+          "torso_length": "short",
+          "studs": "fitted"
+        }
+      },
+      {
+        "name": "arming_hauberk",
+        "is": {
+          "variant": "hauberk",
+          "underlayer": "fitted"
+        }
+      },
+      {
+        "name": "gorget_cuirass",
+        "is": {
+          "variant": "breastplate",
+          "collar": "fitted"
+        }
+      },
+      {
+        "name": "o_yoroi",
+        "is": {
+          "variant": "lamellar",
+          "pauldron": "fitted"
+        }
+      },
+      {
+        "name": "plate_harness",
+        "is": {
+          "variant": "breastplate",
+          "collar": "fitted",
+          "pauldron": "fitted"
+        }
+      },
+      {
+        "name": "power_armour",
+        "is": {
+          "servo": "fitted",
+          "battery_bay": "fitted"
+        }
+      },
+      {
         "name": "lorica_segmentata",
         "is": {
           "variant": "segmented"

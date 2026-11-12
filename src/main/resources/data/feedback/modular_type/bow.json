@@ -193,6 +193,35 @@
   "names": {
     "designations": [
       {
+        "name": "warbow",
+        "is": {
+          "limb_length": "long",
+          "laminate": "fitted"
+        }
+      },
+      {
+        "name": "horse_bow",
+        "is": {
+          "variant": "recurve",
+          "limb_length": "short"
+        }
+      },
+      {
+        "name": "yumi",
+        "is": {
+          "variant": "recurve",
+          "limb_length": "long",
+          "laminate": "fitted"
+        }
+      },
+      {
+        "name": "olympic_bow",
+        "is": {
+          "stabiliser": "fitted",
+          "rest": "fitted"
+        }
+      },
+      {
         "name": "shortbow",
         "is": {
           "limb_length": "short"

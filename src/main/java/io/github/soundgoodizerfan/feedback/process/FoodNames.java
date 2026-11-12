@@ -231,7 +231,12 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
     private static Optional<Designation> single(ItemStack stack, Cooking.Entry entry, FoodState state) {
         FoodCut cut = stack.get(FDataComponents.FOOD_CUT.get());
         int level = cut == null ? 0 : cut.level();
-        Map<String, String> facts = Map.of("doneness", Cooking.doneness(entry, state).name().toLowerCase(java.util.Locale.ROOT));
+        // Salt and smoke past half a coat are facts a rule may test (biltong, cured meat, pickles).
+        Map<String, String> facts = new java.util.HashMap<>(Map.of("doneness", Cooking.doneness(entry, state).name().toLowerCase(java.util.Locale.ROOT)));
+        if (state.salt() >= 0.5f)
+            facts.put("salted", "yes");
+        if (state.smoke() >= 0.5f)
+            facts.put("smoked", "yes");
         List<String> have = names(entry.traits());
         for (Designation r : INSTANCE.rules)
             if (!dish(r) && level >= r.cut() && r.holds(facts, have))

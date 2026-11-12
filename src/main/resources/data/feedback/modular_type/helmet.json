@@ -286,6 +286,58 @@
   "names": {
     "designations": [
       {
+        "name": "cervelliere",
+        "is": {
+          "variant": "round",
+          "face_opening": "open",
+          "crown": "low",
+          "underlayer": "fitted"
+        }
+      },
+      {
+        "name": "chapel_de_fer",
+        "is": {
+          "variant": "round",
+          "face_opening": "open",
+          "crown": "normal"
+        }
+      },
+      {
+        "name": "wizard_hat",
+        "is": {
+          "variant": "conical",
+          "face_opening": "open",
+          "crown": "tall"
+        }
+      },
+      {
+        "name": "crusader_helm",
+        "is": {
+          "face_opening": "closed",
+          "crown": "tall"
+        }
+      },
+      {
+        "name": "frog_mouth_helm",
+        "is": {
+          "face_opening": "closed",
+          "crown": "low"
+        }
+      },
+      {
+        "name": "armet",
+        "is": {
+          "face_opening": "closed",
+          "collar": "fitted"
+        }
+      },
+      {
+        "name": "hud_helm",
+        "is": {
+          "sensor_head": "fitted"
+        }
+      },
+      {
         "name": "bascinet",
         "is": {
           "variant": "pointed_face"

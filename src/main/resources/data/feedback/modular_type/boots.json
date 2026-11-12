@@ -284,6 +284,56 @@
   "names": {
     "designations": [
       {
+        "name": "spurred_sabatons",
+        "is": {
+          "variant": "sabatons",
+          "spurs": "fitted"
+        }
+      },
+      {
+        "name": "ballet_slippers",
+        "is": {
+          "variant": "wrapped_boot",
+          "shaft": "ankle",
+          "sole": "thin"
+        }
+      },
+      {
+        "name": "clogs",
+        "is": {
+          "shaft": "ankle",
+          "sole": "thick"
+        }
+      },
+      {
+        "name": "hobnail_boots",
+        "is": {
+          "hobnails": "fitted"
+        }
+      },
+      {
+        "name": "jackboots",
+        "is": {
+          "shaft": "high",
+          "hobnails": "fitted"
+        }
+      },
+      {
+        "name": "cowboy_boots",
+        "is": {
+          "variant": "plain_boots",
+          "spurs": "fitted",
+          "shaft": "high"
+        }
+      },
+      {
+        "name": "seven_league_boots",
+        "is": {
+          "servo": "fitted",
+          "shaft": "high"
+        }
+      },
+      {
         "name": "sabatons",
         "is": {
           "variant": "sabatons"

@@ -1,0 +1,1 @@
+{"name": "porridge", "is": {"container": "ceramic_bowl"}, "roles": {"base": ["starchy"]}, "without": ["tuber", "noodle"]}

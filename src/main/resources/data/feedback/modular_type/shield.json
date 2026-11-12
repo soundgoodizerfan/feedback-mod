@@ -202,6 +202,43 @@
   "names": {
     "designations": [
       {
+        "name": "swashbuckler",
+        "is": {
+          "face_size": "small",
+          "boss": "fitted",
+          "rim": "fitted"
+        }
+      },
+      {
+        "name": "targe",
+        "is": {
+          "face_size": "normal",
+          "boss": "fitted"
+        }
+      },
+      {
+        "name": "knights_shield",
+        "is": {
+          "variant": "heater",
+          "rim": "fitted"
+        }
+      },
+      {
+        "name": "norman_shield",
+        "is": {
+          "variant": "kite",
+          "boss": "fitted"
+        }
+      },
+      {
+        "name": "siege_shield",
+        "is": {
+          "face_size": "large",
+          "variant": "rectangular",
+          "boss": "fitted"
+        }
+      },
+      {
         "name": "tower_shield",
         "is": {
           "face_size": "large",

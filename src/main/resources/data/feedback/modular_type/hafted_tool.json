@@ -351,9 +351,237 @@
       "axe_head+spear_head": "halberd",
       "maul_head+spear_head": "lucerne_hammer",
       "pickaxe_head+spear_head": "bec_de_corbin",
-      "maul_head+pickaxe_head": "pick_hammer"
+      "maul_head+pickaxe_head": "pick_hammer",
+      "axe_head+shovel_head": "survival_tool",
+      "pickaxe_head+shovel_head": "pioneer_tool",
+      "axe_head+sickle_head": "brush_axe",
+      "spear_head+sword_blade": "partisan",
+      "sword_blade+sword_blade": "double_blade",
+      "spear_head+spear_head": "double_spear",
+      "maul_head+maul_head": "double_maul",
+      "sickle_head+sickle_head": "double_sickle",
+      "sickle_head+spear_head": "war_scythe",
+      "axe_head+sword_blade": "swordaxe"
     },
     "designations": [
+      {
+        "name": "garden_rake",
+        "is": {
+          "face": "hoe_head",
+          "variant": "rake"
+        }
+      },
+      {
+        "name": "coal_scoop",
+        "is": {
+          "face": "shovel_head",
+          "variant": "scoop"
+        }
+      },
+      {
+        "name": "entrenching_tool",
+        "is": {
+          "face": "shovel_head",
+          "variant": "trench"
+        }
+      },
+      {
+        "name": "kama",
+        "is": {
+          "face": "sickle_head",
+          "variant": "kama"
+        }
+      },
+      {
+        "name": "dwarven_pick",
+        "is": {
+          "face": "pickaxe_head",
+          "variant": "miner",
+          "head_size": "large"
+        }
+      },
+      {
+        "name": "pilum",
+        "is": {
+          "face": "spear_head",
+          "head_size": "small",
+          "edge_length": "short",
+          "tip": "fitted"
+        }
+      },
+      {
+        "name": "boar_spear",
+        "is": {
+          "face": "spear_head",
+          "head_size": "normal",
+          "guard": "fitted"
+        }
+      },
+      {
+        "name": "lance",
+        "is": {
+          "face": "spear_head",
+          "edge_length": "long",
+          "guard": "fitted"
+        }
+      },
+      {
+        "name": "great_mace",
+        "is": {
+          "face": "maul_head",
+          "variant": "mace",
+          "head_size": "large"
+        }
+      },
+      {
+        "name": "holy_water_sprinkler",
+        "is": {
+          "face": "maul_head",
+          "variant": "mace",
+          "tip": "fitted",
+          "head_size": "small"
+        }
+      },
+      {
+        "name": "battle_axe",
+        "is": {
+          "face": "axe_head",
+          "head_size": "normal",
+          "guard": "fitted"
+        }
+      },
+      {
+        "name": "tomahawk",
+        "is": {
+          "face": "axe_head",
+          "head_size": "small",
+          "edge_length": "short",
+          "binding": "fitted"
+        }
+      },
+      {
+        "name": "broadaxe",
+        "is": {
+          "face": "axe_head",
+          "head_size": "large",
+          "edge_length": "normal"
+        }
+      },
+      {
+        "name": "dane_axe",
+        "is": {
+          "face": "axe_head",
+          "head_size": "large",
+          "edge_length": "long"
+        }
+      },
+      {
+        "name": "headsmans_axe",
+        "is": {
+          "face": "axe_head",
+          "head_size": "large",
+          "edge_length": "long",
+          "binding": "fitted"
+        }
+      },
+      {
+        "name": "bardiche",
+        "is": {
+          "face": "axe_head",
+          "variant": "bardiche"
+        }
+      },
+      {
+        "name": "main_gauche",
+        "is": {
+          "face": "sword_blade",
+          "variant": "tapered",
+          "length": "short",
+          "guard": "fitted"
+        }
+      },
+      {
+        "name": "foil",
+        "is": {
+          "face": "sword_blade",
+          "variant": "tapered",
+          "length": "long",
+          "thickness": "thin",
+          "width": "narrow"
+        }
+      },
+      {
+        "name": "scimitar",
+        "is": {
+          "face": "sword_blade",
+          "variant": "curved",
+          "length": "normal",
+          "width": "wide"
+        }
+      },
+      {
+        "name": "nodachi",
+        "is": {
+          "face": "sword_blade",
+          "variant": "curved",
+          "length": "long",
+          "width": "narrow"
+        }
+      },
+      {
+        "name": "wakizashi",
+        "is": {
+          "face": "sword_blade",
+          "variant": "curved",
+          "length": "short",
+          "width": "narrow"
+        }
+      },
+      {
+        "name": "tanto",
+        "is": {
+          "face": "sword_blade",
+          "variant": "tapered",
+          "length": "short",
+          "thickness": "thick"
+        }
+      },
+      {
+        "name": "bowie_knife",
+        "is": {
+          "face": "sword_blade",
+          "length": "short",
+          "width": "wide"
+        }
+      },
+      {
+        "name": "kris",
+        "is": {
+          "face": "sword_blade",
+          "variant": "serrated",
+          "length": "short",
+          "width": "narrow"
+        }
+      },
+      {
+        "name": "executioners_sword",
+        "is": {
+          "face": "sword_blade",
+          "variant": "fullered",
+          "length": "long",
+          "width": "wide",
+          "thickness": "thick"
+        }
+      },
+      {
+        "name": "flamberge",
+        "is": {
+          "face": "sword_blade",
+          "variant": "serrated",
+          "length": "long",
+          "width": "wide"
+        }
+      },
       {
         "name": "morning_star",
         "is": {
