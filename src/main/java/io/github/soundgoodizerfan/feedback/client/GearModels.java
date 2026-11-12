@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,8 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -28,6 +31,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -169,6 +173,7 @@ public final class GearModels {
             ModularDesign design = ModularStacks.design(stack);
             ModularDesign.Part plate = design == null ? null : design.part("P"), studPart = design == null ? null : design.part("T");
             on = wears(slot, plate == null ? "" : plate.variant());
+            fit(design, plate, slot);
             var materials = ClientMaterials.get();
             plateMaterial = plate == null ? null : materials.get(plate.material());
             plateColour = plate == null ? 0xFFB4B4B8 : 0xFF000000 | MaterialColors.of(plate.material());
@@ -176,6 +181,68 @@ public final class GearModels {
             studs = studPart != null && (slot == EquipmentSlot.HEAD || slot == EquipmentSlot.CHEST)
                     ? 0xFF000000 | MaterialColors.of(studPart.material()) : -1;
             calls = 0;
+        }
+
+        /**
+         * The plate's drawn axes shape the worn piece: a taller crown, a wider chest, a longer leg stretch the host part
+         * (its extras ride along), and a closed face opening or a high boot shaft adds the visor or the cuff.
+         */
+        private void fit(ModularDesign design, ModularDesign.Part plate, EquipmentSlot slot) {
+            for (ModelPart p : new ModelPart[]{head, body, rightLeg, leftLeg})
+                p.xScale = p.yScale = p.zScale = 1f;
+            var type = design == null ? null : ModularTypes.known().get(design.type());
+            var role = type == null ? null : type.roles().get("P");
+            if (plate == null || role == null)
+                return;
+            switch (slot) {
+                case HEAD -> {
+                    head.yScale = scale(role, plate, "crown");
+                    String band = band(role, plate, "face_opening");
+                    List<String> shown = new ArrayList<>(on);
+                    if (band.equals("closed"))
+                        shown.add("visor");
+                    else if (band.equals("open"))
+                        shown.removeAll(List.of("visor", "brim"));
+                    on = shown;
+                }
+                case CHEST -> {
+                    body.xScale = scale(role, plate, "width");
+                    body.yScale = scale(role, plate, "torso_length");
+                }
+                case LEGS -> {
+                    float w = scale(role, plate, "width");
+                    for (ModelPart leg : new ModelPart[]{rightLeg, leftLeg}) {
+                        leg.xScale = leg.zScale = w;
+                        leg.yScale = scale(role, plate, "length");
+                    }
+                }
+                case FEET -> {
+                    if (!band(role, plate, "shaft").equals("ankle")) {
+                        List<String> shown = new ArrayList<>(on);
+                        shown.addAll(List.of("cuff_r", "cuff_l"));
+                        on = shown;
+                    }
+                }
+                default -> {
+                }
+            }
+        }
+
+        private static float axisValue(ModularType.Role role, ModularDesign.Part plate, String name) {
+            ModularType.Axis a = role.axes().get(name);
+            return a == null ? 0f : plate.measures().axes().getOrDefault(name, a.def());
+        }
+
+        /** 1 at the axis's default, a little over or under at its ends. */
+        private static float scale(ModularType.Role role, ModularDesign.Part plate, String name) {
+            ModularType.Axis a = role.axes().get(name);
+            return a == null || a.def() <= 0f ? 1f : Mth.clamp(1f + 0.5f * (axisValue(role, plate, name) - a.def()) / a.def(), 0.85f, 1.25f);
+        }
+
+        private static String band(ModularType.Role role, ModularDesign.Part plate, String name) {
+            ModularType.Axis a = role.axes().get(name);
+            ModularType.Band b = a == null ? null : a.band(axisValue(role, plate, name));
+            return b == null ? "" : b.name();
         }
 
         private static final String[] STUDS = {"studs_head", "studs_body", "studs_body2"};

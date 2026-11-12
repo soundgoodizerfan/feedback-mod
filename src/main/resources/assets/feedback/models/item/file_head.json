@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/modular/file_0"
+    "layer0": "feedback:item/part/file_head"
   }
 }

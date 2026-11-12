@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/modular/sword_2"
+    "layer0": "feedback:item/part/sword_guard"
   }
 }

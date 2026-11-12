@@ -733,40 +733,8 @@ MIT notice (Silent Gear): (The MIT License) Copyright (c) 2018 SilentChaos512. P
 
 | Feedback file (`modular/`) | Source (`<type>/<file>`) |
 | --- | --- |
-| `axe_0` | `axe/main_generic_hc` |
-| `axe_1` | `axe/rod_generic_hc` |
-| `hoe_0` | `hoe/main_generic_hc` |
-| `hoe_1` | `pickaxe/rod_generic_hc` |
-| `maul_0` | `hammer/main_generic_hc` |
-| `maul_1` | `hammer/rod_generic_hc` |
-| `maul_mace_0` | `mace/main_generic_hc` |
-| `maul_mace_1` | `mace/rod_generic_hc` |
-| `pickaxe_0` | `pickaxe/main_generic_hc` |
-| `pickaxe_1` | `pickaxe/rod_generic_hc` |
-| `pickaxe_miner_0` | `mattock/main_generic_hc` |
-| `pickaxe_miner_1` | `mattock/rod_generic_hc` |
-| `pickaxe_prospector_0` | `prospector_hammer/main_generic_hc` |
-| `pickaxe_prospector_1` | `prospector_hammer/rod_generic_hc` |
-| `shears_0` | `shears/main_generic_hc` |
-| `shears_1` | `shears/rod_generic_hc` |
-| `shovel_0` | `shovel/main_generic_hc` |
-| `shovel_1` | `shovel/rod_generic_hc` |
-| `sickle_0` | `sickle/main_generic_hc` |
-| `sickle_1` | `sickle/rod_generic_hc` |
-| `spear_0` | `spear/main_generic_hc` |
-| `spear_1` | `spear/rod_generic_hc` |
-| `spear_trident_0` | `trident/main_generic_hc` |
-| `spear_trident_1` | `trident/rod_generic_hc` |
-| `sword_0` | `sword/main_generic_hc` |
-| `sword_1` | `sword/rod_generic_hc` |
-| `sword_2` | `sword/guard_generic_hc` |
-| `sword_3` | `sword/binding_generic` |
-| `sword_dagger_0` | `dagger/main_generic_hc` |
-| `sword_dagger_1` | `knife/rod_generic_hc` |
-| `sword_katana_0` | `katana/main_generic_hc` |
-| `sword_katana_1` | `katana/rod_generic_hc` |
-| `sword_machete_0` | `machete/main_generic_hc` |
-| `sword_machete_1` | `machete/rod_generic_hc` |
+| `shears_0` | `shears/main_generic_hc` (redrawn: blades and loops one layer) |
+| `shears_1` | `shears/rod_generic_hc` (redrawn: pivot only) |
 
 ### Exception: cleannrooster/forg-cleannrooster-assets (MIT)
 

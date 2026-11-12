@@ -119,11 +119,11 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
             }
             case EngineeringTableMenu.TAB_FIT -> {
                 label(g, "item", EngineeringTableMenu.FIT_ITEM_X, EngineeringTableMenu.FIT_ITEM_Y - 12);
-                label(g, "attachments", EngineeringTableMenu.ATTACH_X, EngineeringTableMenu.ATTACH_Y - 12);
+                gridLabel(g, "attachments", EngineeringTableMenu.ATTACH_X);
             }
             case EngineeringTableMenu.TAB_REPAIR -> {
                 label(g, "item", EngineeringTableMenu.REPAIR_ITEM_X, EngineeringTableMenu.REPAIR_ITEM_Y - 12);
-                label(g, "stock", EngineeringTableMenu.STOCK_X, EngineeringTableMenu.STOCK_Y - 12);
+                gridLabel(g, "stock", EngineeringTableMenu.STOCK_X);
             }
             default -> {
                 label(g, "binder", EngineeringTableMenu.BINDER_TREATISE_X, EngineeringTableMenu.TREATISE_Y - 12);
@@ -158,6 +158,12 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
         return Component.translatable("gui.feedback.engineering.note." + names[n]);
     }
 
+    /** A 4x4 grid's caption: right-aligned to the grid's edge, so it clears the title that fills the row above the grid's left end. */
+    private void gridLabel(GuiGraphics g, String key, int gridX) {
+        Component t = Component.translatable("gui.feedback.engineering.label." + key);
+        g.drawString(font, t, gridX + 4 * 18 - 6 - font.width(t), EngineeringTableMenu.ATTACH_Y - 9, skin.dim(), false);
+    }
+
     private void label(GuiGraphics g, String key, int x, int y) {
         g.drawString(font, Component.translatable("gui.feedback.engineering.label." + key), x, y, skin.dim(), false);
     }
@@ -183,8 +189,9 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
     @Override
     protected void renderTooltip(GuiGraphics g, int mx, int my) {
         if (menu.getCarried().isEmpty() && hoveredSlot != null && hoveredSlot.isActive() && !hoveredSlot.hasItem()
-                && "gui.feedback.engineering.tip.tool".equals(emptyTip(hoveredSlot.index))) {
-            g.renderTooltip(font, Component.translatable("gui.feedback.engineering.tip.tool"), mx, my);
+                && ("gui.feedback.engineering.tip.tool".equals(emptyTip(hoveredSlot.index))
+                        || "gui.feedback.engineering.tip.blank".equals(emptyTip(hoveredSlot.index)))) {
+            g.renderTooltip(font, Component.translatable(emptyTip(hoveredSlot.index)), mx, my);
             return;
         }
         if (menu.getCarried().isEmpty() && menu.tab() == EngineeringTableMenu.TAB_CRAFT) {
@@ -215,6 +222,8 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
             return "gui.feedback.engineering.tip.blueprint";
         if (c == EngineeringTableBlockEntity.BINDER)
             return "gui.feedback.engineering.tip.binder";
+        if (c == EngineeringTableBlockEntity.BLANK)
+            return "gui.feedback.engineering.tip.blank";
         return null;
     }
 }
