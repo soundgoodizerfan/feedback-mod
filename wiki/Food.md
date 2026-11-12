@@ -84,23 +84,9 @@ A food has one fixed name. Slicing, drying or mashing it does not exist, and bre
 
 Foods and dishes are named from what they are and what was done to them. Hunger, saturation, hazards and buffs come from the food's state; the name is how you call the thing.
 
-One food, by what was done to it:
-
-- **Fries:** a root vegetable (potato) cut at the [Prep Table](Prep_Table.md) and cooked through.
-- **Potato Chips:** the same, cut and then dried out.
-- **Croutons:** a starchy food that is not a tuber (bread), cut and then dried or charred.
+Every name a food or a dish can earn (fries, chips, croutons, kebab, ramen, pizza, biltong and the rest) is listed under [Food](Designations.md#food) on the Designations page.
 
 Stale, spoiled, burnt and chunky (a ragged cut) put a word in front of any name: "Stale Fries", "Burnt Croutons". Spoiled wins over stale, then burnt, then chunky. A cleanly worked food earns a word too, when nothing worse applies: a dough's knead (glossy, crumbly, tough), a runny finish poured cleanly to the line ("Silky"), and an evenly cut food ("Hand-cut Carrot"). A cooked potato mashed in a bowl is Mashed Potatoes.
-
-A dish, by its parts. A dish's parts vote for a cuisine through their materials (tomato leans Italian and Mexican, soy and ginger East Asian, potato and cabbage Eastern European, noodles Italian and East Asian, rice East Asian and Mexican). A tie lets every leading cuisine try its names in order. A name then fills in the part names:
-
-- **Italian:** Pasta e (main), Pasta al (side, a sharp vegetable such as tomato), Pizza (a flatbread wrap with a sharp side such as tomato).
-- **East Asian:** Stir-fried (main) Noodles, (main) Rice Bowl, (main) Dumplings in a flatbread wrap, Ramen (a bowl of broth and noodles).
-- **Mexican:** Arroz con (main), (main) Burrito in a flatbread wrap, (main) Taco in a wrap with a sharp side.
-- **Eastern European:** (potato) Pierogi in a wrap, Hunter's (main) with a mushroom, (root) Stew with a protein main and a beet or turnip.
-- **No cuisine:** (main) Kebab (a protein main on a skewer); (main) Skewer (a vegetable main on a skewer); Noodle Soup (broth and noodles in a bowl); Mushroom Soup (broth and a mushroom in a bowl); Baked Potato (a whole tuber, cooked); Jerky (a protein, dried); Noodles with (main); Mashed Potatoes (a minced tuber in a bowl); Salsa (a minced sharp vegetable in a bowl).
-
-A soup carries no list of what went into the pot, so it is not named from its ingredients.
 
 ## Bread
 

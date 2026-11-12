@@ -73,66 +73,7 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 
 ### Names
 
-The **name** on the tooltip, and beside the type name in the Blueprint Table, is read by rule from the frame, action, feed, barrel finish, gauge and traits. A bore of **14 mm or wider** is a *wide* gauge; narrower is *narrow*. A gun is named by its frame; the first row that fits is the name:
-
-| Frame | Name | What gives it |
-| --- | --- | --- |
-| Handgun | **Derringer** | two barrels |
-| | **Big Iron** | a cylinder and a barrel of the maximum length, 80 cm (named with its material, "Steel Big Iron"; firing one earns a hidden advancement of the same name) |
-| **Long-Ass Gun** | no cylinder, and a barrel of the maximum length, 80 cm (firing one earns the hidden advancement "A Gun, of the Long-Ass Variety") |
-| | **Shot revolver** | a cylinder, smoothbore, wide gauge |
-| | **Shot pistol** | smoothbore, wide gauge |
-| | **Magnum revolver** | a cylinder, magnum calibre |
-| | **Revolver** | a cylinder |
-| | **Machine pistol** | select fire |
-| | **Hand cannon** | magnum calibre |
-| | **Pistol** | anything else |
-| Long gun | **Sawn-off** | smoothbore, wide gauge, short barrel, two barrels |
-| | **Double shotgun** | smoothbore, wide gauge, two barrels |
-| | **Pump shotgun** | smoothbore, wide gauge, pump action |
-| | **Shotgun** | smoothbore, wide gauge |
-| | **Musket** | smoothbore, narrow gauge |
-| | **Slug gun** | rifled, wide gauge |
-| | **Submachine gun** | rifled, select fire, bore up to 10 mm |
-| | **Assault rifle** | rifled, select fire, bore from 11 mm (firing one with a pistol grip earns the hidden advancement "This is Very Illegal") |
-| | **Sniper rifle** | rifled, long barrel, a scope, a bolt or self-loading action |
-| | **Marksman rifle** | rifled, medium barrel, a scope, a bolt or self-loading action |
-| | **Carbine** | rifled, short barrel |
-| | **Lever-action rifle** | rifled, lever action |
-| | **Bolt-action rifle** | rifled, bolt action |
-| | **Rifle** | rifled, anything else |
-| Machine gun | **General-purpose machine gun** | a belt feed |
-| | **Light machine gun** | anything else |
-
-A [flintlock](#flintlock) is a flintlock pistol or musket. A name changes nothing in play.
-
-### Bore
-
-Bore is any whole number from 5 to 20 mm, and the [Reloading Press](Reloading_Press.md) steps through the same range. The barrel's *real* length, bore and wall are what the drill, lathe and cutoff wheel left on it ([Gun Parts](Gun_Parts.md)), and how loosely the round sits is in the figures.
-
-### Actions and feeds
-
-| Action | Fires | Hand time added to every shot |
-| --- | --- | --- |
-| **Break** | Semi | 150 ms |
-| **Lever** | Semi | 450 ms |
-| **Pump** | Semi | 550 ms |
-| **Bolt** | Semi | 800 ms |
-| **Flintlock** | Semi | 2200 ms |
-| **Self-loading** | Semi | none |
-| **Automatic** | Auto, Burst, Semi | none |
-
-The hand time is for a gun of ordinary weight. A heavier gun takes longer to work, a lighter one a little less.
-
-Only an automatic can be held down. **Burst** fires three rounds, then forces a pause. A feed has to suit its action, or the parts make no gun: a cylinder needs a hammer (lever, pump, break or flintlock; a self-loading or automatic action has none, so none is drawn on the gun and no cylinder fits), a tube a lever, pump or self-loading action, a belt an automatic one. A second barrel needs a break action. With no feed part a gun takes a **box magazine** (a break action holds its barrels); a [flintlock](#flintlock) takes one round at a time.
-
-| Feed | Holds | Reloads |
-| --- | --- | --- |
-| **Barrels** (break action) | one per barrel | a round at a time |
-| **Cylinder** | 6 | a round at a time |
-| **Tube**, under the barrel | 4 / 6 / 8 for a short / medium / long barrel | a round at a time |
-| **Box magazine** | whatever [Magazine](Magazine.md) you load: 6 to 50 | swapped whole |
-| **Belt** | an Ammo Belt: 100 | swapped whole, twice as slowly |
+The **name** on the tooltip, and beside the type name in the Blueprint Table, is read by rule from the frame, action, feed, barrel finish, gauge and traits. A name gives no bonus. The full list, and what gives each name, is under [Guns](Designations.md#guns) on the Designations page.
 
 ## Controls
 
