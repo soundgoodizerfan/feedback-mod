@@ -60,11 +60,12 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
      * @param shape     for a type rule: the shape the container part was laid in ({@code flat}); empty is any
      * @param adds      for a type rule: traits each of which some part other than the container carries (an enriching one)
      * @param lacks     for a type rule: traits no part other than the container may carry
+     * @param mainForm  for a dish rule: the form the main part must be in ({@code rod}); empty is any
      */
     public record Rule(String name, List<Material.Trait> traits, List<Material.Trait> without, int cut, List<String> doneness, int model,
                        Optional<String> container, List<Material.Trait> main, List<Material.Trait> base, List<Material.Trait> side,
                        Optional<Material.Trait> cuisine, List<String> args,
-                       Optional<String> type, Optional<String> shape, List<Material.Trait> adds, List<Material.Trait> lacks) {
+                       Optional<String> type, Optional<String> shape, List<Material.Trait> adds, List<Material.Trait> lacks, Optional<String> mainForm) {
         static final Codec<Rule> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.STRING.fieldOf("name").forGetter(Rule::name),
                 Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Rule::traits),
@@ -79,10 +80,14 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
                 Material.Trait.CODEC.optionalFieldOf("cuisine").forGetter(Rule::cuisine),
                 Codec.STRING.listOf().optionalFieldOf("args", List.of()).forGetter(Rule::args),
                 Codec.STRING.optionalFieldOf("type").forGetter(Rule::type),
-                Codec.STRING.optionalFieldOf("shape").forGetter(Rule::shape),
+                // A group holds sixteen fields, so these two share one.
+                Codec.mapPair(Codec.STRING.optionalFieldOf("shape"), Codec.STRING.optionalFieldOf("main_form"))
+                        .forGetter(r -> com.mojang.datafixers.util.Pair.of(r.shape(), r.mainForm())),
                 Material.Trait.CODEC.listOf().optionalFieldOf("adds", List.of()).forGetter(Rule::adds),
                 Material.Trait.CODEC.listOf().optionalFieldOf("lacks", List.of()).forGetter(Rule::lacks)
-        ).apply(i, Rule::new));
+        ).apply(i, (name, traits, without, cut, doneness, model, container, main, base, side, cuisine, args, type, shapeForm, adds, lacks) ->
+                new Rule(name, traits, without, cut, doneness, model, container, main, base, side, cuisine, args, type,
+                        shapeForm.getFirst(), adds, lacks, shapeForm.getSecond())));
 
         boolean dish() {
             return container.isPresent() || type.isPresent();
@@ -148,7 +153,7 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
     private record Named(Rule rule, Component name, boolean ragged, int knead, String grade) {
     }
 
-    private record Piece(List<Material.Trait> traits, Component name, int cut, boolean ragged) {
+    private record Piece(List<Material.Trait> traits, Component name, int cut, boolean ragged, String form) {
     }
 
     /** Least share of a pot an ingredient needs to count toward its serving's name. */
@@ -219,7 +224,7 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
             }
             roles.computeIfAbsent(role.name(), k -> new ArrayList<>()).add(new Piece(traits,
                     pieceName, Math.round(p.state("cut", 0f)),
-                    p.state("cut", 0f) > 0f && Math.round(p.state("evenness", 0f)) == FoodCut.RAGGED));
+                    p.state("cut", 0f) > 0f && Math.round(p.state("evenness", 0f)) == FoodCut.RAGGED, p.form()));
         }
         int best = votes.values().stream().max(Integer::compare).orElse(0);
         java.util.Set<Material.Trait> top = new java.util.HashSet<>();
@@ -248,7 +253,9 @@ public final class FoodNames extends SimpleJsonResourceReloadListener {
                 List<Piece> have = roles.getOrDefault(n.getKey(), List.of());
                 if (n.getValue().isEmpty() && !r.args().contains(n.getKey()))
                     continue;
-                Piece hit = have.stream().filter(pc -> Rule.has(pc.traits(), n.getValue(), r.without())).findFirst().orElse(null);
+                boolean main = n.getKey().equals("main");
+                Piece hit = have.stream().filter(pc -> Rule.has(pc.traits(), n.getValue(), r.without())
+                        && (!main || r.mainForm().isEmpty() || r.mainForm().get().equals(pc.form()))).findFirst().orElse(null);
                 if (hit == null) {
                     ok = false;
                     break;

@@ -1,1 +1,1 @@
-{"name": "hot_dog", "type": "hot_dog", "args": ["main"]}
+{"name": "hot_dog", "type": "wrap", "main": ["protein"], "main_form": "rod", "args": ["main"]}
