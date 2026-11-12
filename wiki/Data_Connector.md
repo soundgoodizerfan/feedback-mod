@@ -15,7 +15,7 @@ For sensors attached to a face, click **the face the sensor is on**.
 
 ## Modes
 
-The connector has three modes. Sneak and scroll with it in your main hand to change mode; the bar message names the mode. Changing mode drops a half-made selection.
+The connector has three modes. Sneak and scroll with it in your main hand to change mode; a strip under the crosshair lists the modes with the current one lit. Changing mode drops a half-made selection.
 
 | Mode | Use on a node |
 | --- | --- |
@@ -27,7 +27,7 @@ A cut wire is not refunded.
 
 ## Linking nodes
 
-An [Electric Controller](Electric_Controller.md) or [Computer](Electric_Controller.md#computer) reads a sensor only through a path of linked nodes. Right-click the first node, then right-click the second: the two are linked. A chain of links works as a path, so a sensor can reach a Computer through other linked nodes.
+An [Electric Controller](Electric_Controller.md) or [Computer](Electric_Controller.md#computer) reads a sensor only through a path of linked nodes. Right-click the first node, then right-click the second: the two are linked. After the first click a chip left of the crosshair says *"Linking from"* and the node's name until the link is made, fails or is cancelled. A chain of links works as a path, so a sensor can reach a Computer through other linked nodes.
 
 While you hold the connector in your main hand after selecting the first node, a wire stretches from that node to wherever you aim. It is blue while it hangs in the air, turns green when it snaps to a node under your crosshair, and turns red when the distance is longer than the longest wire reaches.
 

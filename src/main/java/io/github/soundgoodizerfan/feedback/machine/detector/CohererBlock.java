@@ -36,8 +36,8 @@ public class CohererBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof CohererBlockEntity coherer) {
             boolean welded = coherer.isEngaged();
-            player.displayClientMessage(Component.translatable(!welded ? "feedback.coherer.loose"
-                    : coherer.tap() ? "feedback.coherer.tapped" : "feedback.coherer.stuck"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable(!welded ? "feedback.coherer.loose"
+                    : coherer.tap() ? "feedback.coherer.tapped" : "feedback.coherer.stuck"));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

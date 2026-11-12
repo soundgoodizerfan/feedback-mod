@@ -1656,6 +1656,26 @@ public enum GuiSkin {
     /** How many rows under a selected folder tab the panel's own top border is covered by the tab's face. */
     private static final int FLUSH = 9;
 
+    /**
+     * A small tab standing on a {@link #plaque} whose top edge is at {@code y + h}: the selected one is the plaque's own plate and runs one
+     * pixel down over its rim, so tab and box are one piece; the others sit back in the well. Draw the plaque first. For tabs a few dozen
+     * pixels wide inside a panel, where {@link #folderTab}'s whole-panel face is too heavy.
+     */
+    public void plaqueTab(GuiGraphics g, int x, int y, int w, int h, boolean selected, boolean hovered) {
+        int rim = lerp(trim, 0xFFFFFFFF, 0.2f);
+        if (selected) {
+            g.fill(x, y, x + w, y + h + 1, plate);
+            g.fill(x, y, x + w, y + 1, rim);
+            g.fill(x, y, x + 1, y + h + 1, rim);
+            g.fill(x + w - 1, y, x + w, y + h + 1, rim);
+            return;
+        }
+        g.fill(x, y + 2, x + w, y + h, well);
+        g.renderOutline(x, y + 2, w, h - 2, trim);
+        if (hovered)
+            g.fill(x + 1, y + 3, x + w - 1, y + h - 1, 0x20FFFFFF);
+    }
+
     /** One tab of a strip. The selected one is a plate with an underline; the rest sit in the well. */
     void tab(GuiGraphics g, int x, int y, int w, int h, Component label, boolean selected, boolean active, float glow) {
         if (selected) {

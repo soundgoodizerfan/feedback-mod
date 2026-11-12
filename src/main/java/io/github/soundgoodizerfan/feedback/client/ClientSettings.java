@@ -27,7 +27,26 @@ public final class ClientSettings {
             .comment("A killing blow that earns skill points sends one small wisp in the tree's colour from the fallen creature to you. Applies at once, no restart.")
             .define("gainWisp", true);
 
+    /** How big the crosshair HUD ({@link AimHud}) draws: its dial, needle, mode strip and link chip. */
+    public enum AimSize {
+        SMALL(1f), MEDIUM(1.5f), LARGE(2f);
+
+        final float scale;
+
+        AimSize(float scale) {
+            this.scale = scale;
+        }
+    }
+
+    private static final ModConfigSpec.EnumValue<AimSize> AIM_SIZE = B
+            .comment("Size of the readings, needles, mode strips and link chips drawn by the crosshair.")
+            .defineEnum("aimHudSize", AimSize.SMALL);
+
     public static final ModConfigSpec SPEC = B.build();
+
+    public static float aimScale() {
+        return SPEC.isLoaded() ? AIM_SIZE.get().scale : 1f;
+    }
 
     /** True when the player asked for less motion. False before the config has loaded. */
     public static boolean reduceMotion() {

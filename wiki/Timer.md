@@ -13,7 +13,7 @@ P is a [Copper Plate](Mechanical_Hammer.md), C is a [Small Cog](Cogs.md) and R i
 
 ## Using it
 
-- **Sneak-right-click** to choose how long a wind lasts: **2, 5, 10 or 20 seconds**.
+- **Sneak-right-click** to choose how long a wind lasts: **2, 5, 10 or 20 seconds**. A strip under the crosshair lists them with the current one lit.
 - **Right-click** to wind it and start it. Everything switchable **touching** it turns **on**.
 - When it runs out it ticks, and everything touching it turns **off**.
 - Right-click while it's running to stop it early.

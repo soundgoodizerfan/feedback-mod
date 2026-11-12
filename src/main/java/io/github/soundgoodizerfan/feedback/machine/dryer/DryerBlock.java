@@ -78,8 +78,8 @@ public class DryerBlock extends Block implements EntityBlock, Rotatable {
                 if (!player.getInventory().add(out))
                     player.drop(out, false);
             } else {
-                player.displayClientMessage(Component.translatable("feedback.dryer.readout", Math.round(dryer.getTemperature().value()),
-                        String.format("%.2f", dryer.getPressure().value()), Math.round(dryer.progress() * 100f)), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.dryer.readout", Math.round(dryer.getTemperature().value()),
+                        String.format("%.2f", dryer.getPressure().value()), Math.round(dryer.progress() * 100f)));
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

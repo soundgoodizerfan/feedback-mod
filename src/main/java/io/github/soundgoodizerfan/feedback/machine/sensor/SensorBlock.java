@@ -52,7 +52,7 @@ public class SensorBlock extends Block implements EntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof SensorBlockEntity sensor)
-            player.displayClientMessage(Component.translatable("feedback.sensor.reads", Math.round(sensor.read(0) * 100)), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.sensor.reads", Math.round(sensor.read(0) * 100)));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

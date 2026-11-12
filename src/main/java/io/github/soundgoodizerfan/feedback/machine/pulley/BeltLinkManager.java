@@ -44,6 +44,7 @@ public final class BeltLinkManager {
             boolean ok = micro.cell().dimension() == level.dimension() && level.isLoaded(micro.cell().pos())
                     && level.getBlockEntity(micro.cell().pos()) instanceof io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity cell
                     && pulley.linkMicro(cell, micro.index());
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.linkDone(player);
             player.displayClientMessage(Component.translatable(ok ? "feedback.belt.linked" : "feedback.belt.failed"), true);
             return;
         }
@@ -53,7 +54,7 @@ public final class BeltLinkManager {
 
         if (previous == null || previous.equals(here)) {
             pending.put(id, here);
-            player.displayClientMessage(Component.translatable("feedback.belt.selected"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.linkFrom(player, pulley.getBlockPos(), level.getBlockState(pulley.getBlockPos()).getBlock().getName());
             return;
         }
 
@@ -61,6 +62,7 @@ public final class BeltLinkManager {
         boolean linked = previous.dimension() == level.dimension() && level.isLoaded(previous.pos())
                 && level.getBlockEntity(previous.pos()) instanceof PulleyBlockEntity from
                 && from.linkBelt(pulley);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.linkDone(player);
         player.displayClientMessage(Component.translatable(
                 linked ? "feedback.belt.linked" : "feedback.belt.failed"), true);
     }

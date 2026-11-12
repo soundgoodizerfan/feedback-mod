@@ -30,7 +30,7 @@ A A A
 
 1. Wire the line you step **from** to the converter.
 2. Set a **Converter Tap** against the converter and wire the line you step **to** to the tap.
-3. **Right-click the converter with an empty hand** to cycle its ratio: *divide by 4*, *divide by 16*, *multiply by 4*.
+3. **Right-click the converter with an empty hand** to cycle its ratio (a strip under the crosshair lists the options with the current one lit): *divide by 4*, *divide by 16*, *multiply by 4*.
 
 The two lines never share a run: the converter is a load on the first, and the tap is a source on the second. A tap with no converter beside it supplies nothing.
 

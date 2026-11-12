@@ -1,0 +1,8 @@
+{
+  "values": [
+    "feedback:galvanometer",
+    "feedback:electroscope",
+    "feedback:pressure_gauge",
+    "feedback:hydrometer"
+  ]
+}

@@ -38,7 +38,8 @@ public class ConverterBlock extends Block implements EntityBlock {
             return InteractionResult.SUCCESS;
         Ratio next = state.getValue(RATIO).next();
         level.setBlock(pos, state.setValue(RATIO, next), Block.UPDATE_ALL);
-        player.displayClientMessage(Component.translatable("message.feedback.converter_ratio", Component.translatable("converter.feedback.ratio." + next.getSerializedName())), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, state.getBlock().getName(), io.github.soundgoodizerfan.feedback.net.AimPayloads.keys("converter.feedback.ratio.", "div4", "div16", "mul4"),
+                next.ordinal(), Component.empty());
         return InteractionResult.CONSUME;
     }
 

@@ -48,7 +48,7 @@ public class WellheadBlock extends Block implements EntityBlock, Rotatable {
             if (!level.isClientSide) {
                 if (!player.isShiftKeyDown())
                     well.cycleChoke();
-                player.displayClientMessage(well.describe(), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, well.describe());
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

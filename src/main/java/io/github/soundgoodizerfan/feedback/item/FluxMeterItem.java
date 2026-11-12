@@ -45,8 +45,9 @@ public class FluxMeterItem extends Item implements Instrument {
             return InteractionResult.PASS;
         if (!context.getLevel().isClientSide && context.getPlayer() != null) {
             Instrument self = Instruments.fitted(stack, this);
-            context.getPlayer().displayClientMessage(Instruments.signed(self, Component.translatable("feedback.flux.reading",
-                    Instruments.format(core.power(), self.resolution(Quantity.FLUX)))), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(context.getPlayer(), context.getClickedPos(), self, Component.translatable("feedback.flux.reading",
+                    Instruments.format(core.power(), self.resolution(Quantity.FLUX))), Quantity.FLUX,
+                    Instruments.quantise(core.power(), self.resolution(Quantity.FLUX)));
         }
         return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
     }

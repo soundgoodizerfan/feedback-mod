@@ -96,20 +96,19 @@ public class ThermometerItem extends Item implements Instrument {
             if (!level.isClientSide) {
                 float rate = io.github.soundgoodizerfan.feedback.process.CropClimate.rate(level, pos, level.getBlockState(pos));
                 float shown = Instruments.quantise(io.github.soundgoodizerfan.feedback.process.CropClimate.weather(level, pos), self.resolution(Quantity.TEMPERATURE));
-                player.displayClientMessage(Instruments.signed(self, Component.translatable("feedback.readout.crop", Math.round(shown),
-                        Component.translatable("feedback.readout.crop." + (rate <= 0f ? "halted" : rate < 0.5f ? "poor" : rate < 1f ? "fair" : "thriving")))), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, pos, self, Component.translatable("feedback.readout.crop", Math.round(shown),
+                        Component.translatable("feedback.readout.crop." + (rate <= 0f ? "halted" : rate < 0.5f ? "poor" : rate < 1f ? "fair" : "thriving"))),
+                        Quantity.TEMPERATURE, shown);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        if (!level.isClientSide)
-            player.displayClientMessage(read(Instruments.fitted(stack, this), body), true);
+        if (!level.isClientSide) {
+            Instrument self = Instruments.fitted(stack, this);
+            float shown = Instruments.quantise(body.getTemperature().value(), self.resolution(Quantity.TEMPERATURE));
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, Component.translatable("feedback.readout.tu", Math.round(shown)),
+                    Quantity.TEMPERATURE, shown);
+        }
         return InteractionResult.sidedSuccess(level.isClientSide);
-    }
-
-    private static Component read(Instrument self, ThermalBody body) {
-        float shown = Instruments.quantise(body.getTemperature().value(), self.resolution(Quantity.TEMPERATURE));
-        return Instruments.signed(self,
-                Component.translatable("feedback.readout.tu", Math.round(shown)));
     }
 }

@@ -34,7 +34,17 @@ public final class GunHud {
     /** The count, flashing as it changes: a shot, a round loaded. */
     private static final GuiStyle.Flash FLASH = new GuiStyle.Flash(1), FLASH_OFF = new GuiStyle.Flash(1);
 
+    /** A shot gone wrong (a flash in the pan, a cook-off, a chain fire), said on the card in place of its state line. */
+    private static Component cue = Component.empty();
+    private static long cueBorn, cueUntil;
+
     private GunHud() {
+    }
+
+    public static void cue(Component text, int ticks) {
+        cue = text;
+        cueBorn = net.minecraft.Util.getMillis();
+        cueUntil = cueBorn + ticks * 50L;
     }
 
     static void register(RegisterGuiLayersEvent event) {
@@ -130,6 +140,8 @@ public final class GunHud {
         int w = Math.max(2 * font.width(count), Math.max(font.width(reserve), Math.max(font.width(modeText), font.width(barrel))));
         if (state != null)
             w = Math.max(w, font.width(Component.translatable("hud.feedback.gun." + state)));
+        if (cueUntil > net.minecraft.Util.getMillis())
+            w = Math.max(w, font.width(cue));
         g.pose().pushPose();
         g.pose().translate(slide, 0, 0);
         if (left)
@@ -142,7 +154,14 @@ public final class GunHud {
         g.drawString(font, count, left ? 0 : -font.width(count), 0, colour, false);
         g.pose().popPose();
         g.drawString(font, reserve, x(edge, font.width(reserve), left), y + 20, SKIN.dim(), false);
-        if (state != null) {
+        long now = net.minecraft.Util.getMillis(), cueLeft = cueUntil - now;
+        if (cueLeft > 0) {
+            // Blinks for its first half second, holds, then fades over its last third of a second.
+            boolean dark = now - cueBorn < 500 && (now - cueBorn) / 100 % 2 == 1;
+            int alpha = Math.round(Math.min(1f, cueLeft / 300f) * 255);
+            if (alpha > 8 && !dark)
+                g.drawString(font, cue, x(edge, font.width(cue), left), y + 31, alpha << 24 | SKIN.warn() & 0xFFFFFF, false);
+        } else if (state != null) {
             Component c = Component.translatable("hud.feedback.gun." + state);
             g.drawString(font, c, x(edge, font.width(c), left), y + 31, SKIN.accent(), false);
         }

@@ -30,9 +30,9 @@ import net.minecraft.world.item.ItemStack;
  */
 public class BlueprintTableMenu extends AbstractContainerMenu {
 
-    public static final int PAPER_X = 294, PAPER_Y = 278, HOTBAR_X = 8, HOTBAR_Y = 278, W = 360, H = 322;
+    public static final int PAPER_X = 294, PAPER_Y = 294, HOTBAR_X = 8, HOTBAR_Y = 294, W = 360, H = 338;
     /** The title field's place on the panel (the screen builds it). */
-    public static final int TITLE_X = 8, TITLE_Y = 301, TITLE_W = 344;
+    public static final int TITLE_X = 8, TITLE_Y = 317, TITLE_W = 344;
     /** Sample slots: one, for the part selected on the sheet. */
     public static final int ROLE_SLOTS = 1;
     /** Most pinned drafts a printed blueprint keeps beside its own design. */
@@ -41,8 +41,8 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     public static final int BTN_CLEAR = 1;
     /** Button: copy the blueprint in the source slot onto the blank paper. */
     public static final int BTN_COPY = 2;
-    public static final int SOURCE_X = 240, SOURCE_Y = 278;
-    public static final int SAMPLE_X = 186, SAMPLE_Y = 278, SAMPLE_STEP = 0;
+    public static final int SOURCE_X = 240, SOURCE_Y = 294;
+    public static final int SAMPLE_X = 186, SAMPLE_Y = 294, SAMPLE_STEP = 0;
 
     private final Container paper = new SimpleContainer(1);
     private final Container samples = new SimpleContainer(ROLE_SLOTS);
@@ -138,8 +138,7 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
     }
 
     static void send(Player player, Component text) {
-        if (player instanceof net.minecraft.server.level.ServerPlayer sp)
-            io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(sp, text, 50);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, text);
     }
 
     /** The screen's Print: bake {@code design} here, where the tables are trusted, and write it onto the paper. */

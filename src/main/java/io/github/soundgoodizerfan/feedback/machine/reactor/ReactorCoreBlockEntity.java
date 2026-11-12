@@ -23,7 +23,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -428,13 +427,6 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
                     s.stamp(FTuning.REACTOR_SLAG_RU, server.getGameTime());
             }
         }
-    }
-
-    /** What the player reads with an empty hand. */
-    public Component describe() {
-        return Component.translatable("message.feedback.reactor_core", Math.round(power * 100f), Math.round(temperature), fuel.size(),
-                formed ? Component.translatable("message.feedback.reactor_core.sealed")
-                        : Component.translatable("message.feedback.reactor_core.holes", flaws.size()));
     }
 
     @Override

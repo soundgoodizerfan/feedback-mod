@@ -72,9 +72,10 @@ public class TunedEyeItem extends Item {
         else {
             BlockPos d = end.pos().subtract(player.blockPosition());
             Direction way = Direction.getNearest(d.getX(), 0, d.getZ());
-            player.displayClientMessage(Component.translatable("message.feedback.tuned_eye.bearing",
+            // The eye leans to the nearest of the four ways, no finer: the needle points that way in the world.
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.bearing(player, true, way.toYRot(), 0, Component.translatable("message.feedback.tuned_eye.bearing",
                     (int) Math.sqrt(player.blockPosition().distSqr(end.pos())), Component.translatable("direction.feedback." + way.getName()),
-                    d.getY()), true);
+                    d.getY()), 100);
         }
         return InteractionResultHolder.success(stack);
     }

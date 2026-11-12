@@ -49,9 +49,9 @@ public class CryocoolerBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof CryocoolerBlockEntity head) {
             head.cycleStage();
-            player.displayClientMessage(Component.translatable("message.feedback.cryocooler_stage",
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.cryocooler_stage",
                     Component.translatable("feedback.cryocooler.stage." + head.stage().name().toLowerCase(java.util.Locale.ROOT)),
-                    Math.round(head.stage().tu().value())), true);
+                    Math.round(head.stage().tu().value())));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

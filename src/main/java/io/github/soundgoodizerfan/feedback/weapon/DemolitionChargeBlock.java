@@ -84,7 +84,7 @@ public class DemolitionChargeBlock extends BaseEntityBlock {
                                                                     BlockHitResult hit) {
         if (level.getBlockEntity(pos) instanceof DemolitionChargeBlockEntity charge) {
             if (!level.isClientSide)
-                player.displayClientMessage(charge.describe(), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, charge.describe());
             return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide);
         }
         return net.minecraft.world.InteractionResult.PASS;

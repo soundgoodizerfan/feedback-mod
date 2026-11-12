@@ -8,7 +8,7 @@ Lead + [Rotary Bearing](Rotary_Bearing.md), shapeless.
 
 ## Using it
 
-1. Click a joint voxel that has nothing in front of its front face.
+1. Click a joint voxel that has nothing in front of its front face. A chip left of the crosshair says *"Linking from"* and the joint's name until the link is made, fails or is cancelled.
 2. Click a voxel of another lifted body within 1.5 blocks of that face.
 
 That body is held to the joint, as a body assembled from the blocks in front of it would be. Nothing is made and nothing is used up.

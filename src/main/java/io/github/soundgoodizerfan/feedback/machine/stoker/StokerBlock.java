@@ -66,7 +66,8 @@ public class StokerBlock extends Block implements EntityBlock, Rotatable {
         if (!level.isClientSide) {
             int next = state.getValue(DRUM) % 3 + 1;
             level.setBlock(pos, state.setValue(DRUM, next), 3);
-            player.displayClientMessage(Component.translatable("feedback.stoker.drum", next), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, state.getBlock().getName(), java.util.List.of(Component.literal("1"), Component.literal("2"), Component.literal("3")),
+                    next - 1, Component.translatable("feedback.stoker.drum", next));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

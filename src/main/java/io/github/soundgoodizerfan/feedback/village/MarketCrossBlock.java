@@ -41,7 +41,7 @@ public class MarketCrossBlock extends Block implements EntityBlock {
             Component line = !cross.active() ? Component.translatable("village.feedback.cross.inactive")
                     : until == 0 ? Component.translatable("village.feedback.cross.today")
                     : Component.translatable("village.feedback.cross.in", until);
-            player.displayClientMessage(line, true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, line);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

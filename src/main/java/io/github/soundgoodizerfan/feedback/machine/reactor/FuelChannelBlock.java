@@ -50,10 +50,10 @@ public class FuelChannelBlock extends Block implements EntityBlock {
                 if (channel.hasRod() && player.isShiftKeyDown())
                     Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, channel.take());
                 else
-                    player.displayClientMessage(channel.hasRod()
+                    io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, channel.hasRod()
                             ? Component.translatable("message.feedback.fuel_channel.rod", Math.round(channel.burn() * 100f),
                                     Math.round(channel.condition() * 100f))
-                            : Component.translatable("message.feedback.fuel_channel.empty"), true);
+                            : Component.translatable("message.feedback.fuel_channel.empty"));
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

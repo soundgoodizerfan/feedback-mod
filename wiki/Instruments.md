@@ -31,6 +31,22 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 
 The [Phosphor Screen](Phosphor_Screen.md) is a block with its own sealing and burn-in rules and has its own page. The [Instrument Bag](#instrument-bag) holds instruments in one slot.
 
+## The reading card
+
+An instrument you use with a right-click (Thermometer, Pyrometer, Calipers, Galvanometer, Electroscope, Pressure Gauge, Flux Meter, Hydrometer, XP Meter) takes one reading and shows it on a **card to the right of the crosshair**: the instrument's name, the figure, and a half-round dial with a needle. The dial picks its own scale (1, 2 or 5 times a power of ten) to fit the figure; a fraction reads 0 to 100%. A needle past full scale turns the warning color.
+
+The card stays while you keep aiming at the block or creature you read, and fades when you look away. A reading is taken once: click again for a fresh one.
+
+Many blocks answer a right-click with a report of their own (a pressure vessel, drying rack, stockpot, tube junction, tray, reboiler, dryer, gas tank, counter, sensor and others). Those reports show on the same card, titled with the block's name, and are held while you look at the block.
+
+A setting you change by clicking (a converter ratio, a differential mode, a drum size, a timer wind) shows as a **strip under the crosshair** that lists every option with the current one lit, plus a line saying what it does.
+
+A tool that links two things (the Data Connector, the Belt, the Joint Link) shows a chip left of the crosshair, *"Linking from"* and the first block's name, from the first click until the link is made, fails or is cancelled.
+
+A refusal or result inside an open screen (the Mixer, a part bench filing, the enchanting table, the Blueprint Table, the Programmer, the Reloading Press) shows on a strip just under the screen's panel. On the Computer it appears as a desktop toast.
+
+The card takes the look of the tool in your hand (brass and wood, forge iron, lab enamel, console, mystic). The **aimHudSize** option in `feedback-client.toml` sets the size of the crosshair elements: small, medium or large.
+
 ## Calipers
 
 Turns "kind of flattened" into an exact number, and tells you exactly how worn a machine is.
@@ -92,7 +108,7 @@ P P P
 
 P is an Iron Plate, S is String and I is an Iron Ingot.
 
-**Right-click** it holding a tool or armor piece made at a bench. The action bar shows the edge's toughness, to the nearest 5. A twin-headed tool reports both heads. An armor piece reports its armor toughness. Anything else says *"Nothing here to test."* The pendulum does not mark or wear the piece.
+**Right-click** it holding a tool or armor piece made at a bench. The card shows the edge's toughness, to the nearest 5. A twin-headed tool reports both heads. An armor piece reports its armor toughness. Anything else says *"Nothing here to test."* The pendulum does not mark or wear the piece.
 
 ## Strike Post
 
@@ -106,7 +122,7 @@ L
 
 P is an Iron Plate and L is any log.
 
-**Swing at it** (left-click, or a [Better Combat](Combat.md#better-combat-required) swing) with a weapon or tool made at a bench. The action bar shows the joules the blow carries and the damage it deals, both to the nearest half. A tool that is not made at a bench says *"Nothing here to test."* The post does not mark or wear the tool.
+**Swing at it** (left-click, or a [Better Combat](Combat.md#better-combat-required) swing) with a weapon or tool made at a bench. The card shows the joules the blow carries and the damage it deals, both to the nearest half. A tool that is not made at a bench says *"Nothing here to test."* The post does not mark or wear the tool.
 
 ## Test Strip
 
@@ -161,7 +177,7 @@ P
 
 G is a Glass Pane, T is a Copper Tubing and P is a [Copper Plate](Mechanical_Hammer.md).
 
-**Right-click** a Boiler, a Pressure Vessel, a [Pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) to read its pressure in Pu on the action bar. It only reads; it cannot vent or relieve anything. It reads in steps of **0.5 Pu**. A boiler's danger line is 5 Pu, its critical pressure 7, and it starts to seep at 3.5, so you can see the danger line coming without the exact figure. A circuit can narrow the step ([below](#fitting-a-circuit)).
+**Right-click** a Boiler, a Pressure Vessel, a [Pipe](Pipe.md) or a [Gas Tank](Gas_Tank.md) to read its pressure in Pu on the card. It only reads; it cannot vent or relieve anything. It reads in steps of **0.5 Pu**. A boiler's danger line is 5 Pu, its critical pressure 7, and it starts to seep at 3.5, so you can see the danger line coming without the exact figure. A circuit can narrow the step ([below](#fitting-a-circuit)).
 
 ## Electroscope
 
@@ -174,7 +190,7 @@ F
 G
 ```
 
-- **Right-click** any electrical block (cable, cell, generator, magnet) to get a voltage reading on your action bar, like *"Electroscope: 1.0 V"*.
+- **Right-click** any electrical block (cable, cell, generator, magnet) to get a voltage reading on the card, like *1.0 V*.
 - **Carry it anywhere in your inventory** and Jade's tooltip on electrical blocks shows volts as well as *Live/Dead*.
 
 It shows voltage only, in steps of **0.5 V**, so a cell's 1.1 V reads as 1.0 V and small differences along a cable do not show. It tells you a line is live and roughly how strongly; for current, use a [Galvanometer](#galvanometer).
@@ -193,7 +209,7 @@ N G N
 
 W is [Copper Wire](Wire_Drawer.md), N is a Wrought Iron Nugget and G is a Glass Pane.
 
-- **Right-click** any electrical block to read the current on your action bar, e.g. *"Galvanometer: 1.00 A"*, in steps of **0.25 A**.
+- **Right-click** any electrical block to read the current on the card, e.g. *1.00 A*, in steps of **0.25 A**.
 - On a **machine**, it shows what the machine is getting next to what it wants, e.g. *"0.50 of 1.00 A"*: the quickest way to tell a starved machine from one that is simply weak.
 - **Carry it anywhere in your inventory** and Jade's tooltip on electrical blocks gains an amps line.
 
@@ -216,7 +232,7 @@ P G P
 
 W is [Copper Wire](Wire_Drawer.md), P is a Glass Pane and G is a Glass Bottle.
 
-- **Right-click** a battery to read its charge on your action bar, in steps of **5%**.
+- **Right-click** a battery to read its charge on the card, in steps of **5%**.
 - **Carry it in your inventory** (or an [Instrument Bag](#instrument-bag)) and a battery's Jade tooltip gains a charge figure.
 
 ## Current Sensor
@@ -330,7 +346,7 @@ A thin cut sees fine detail and not far. A thick cut sees far and coarsely. Pick
 
 A block that reads how its vehicle is flying and hands the figure to a [Controller](Controller.md), so an autopilot is only cards.
 
-Place it on the vehicle. Its front is the way it faces; pitch and roll are measured about that. **Right-click** steps what it reads:
+Place it on the vehicle. Its front is the way it faces; pitch and roll are measured about that. **Right-click** steps what it reads; a strip under the crosshair lists the readings with the current one lit:
 
 | Reading | What it is |
 | --- | --- |

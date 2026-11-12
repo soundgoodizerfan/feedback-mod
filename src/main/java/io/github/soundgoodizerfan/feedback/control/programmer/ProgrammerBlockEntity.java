@@ -140,12 +140,12 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         if (level == null || level.isClientSide || !stillValid(player))
             return;
         if (isPrinted()) {
-            player.displayClientMessage(Component.translatable("feedback.programmer.already_printed"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.already_printed"));
             return;
         }
         Optional<String> error = graph.findEditError(ControllerLimits.MAX);
         if (error.isPresent()) {
-            player.displayClientMessage(Component.translatable("feedback.programmer.error." + error.get()), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.error." + error.get()));
             return;
         }
 
@@ -159,7 +159,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         // A replaced sensor can change a wire's type or quantity; the rebuilt graph must still be drawable.
         Optional<String> rebuiltError = rebuilt.findEditError(ControllerLimits.MAX);
         if (rebuiltError.isPresent()) {
-            player.displayClientMessage(Component.translatable("feedback.programmer.error." + rebuiltError.get()), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.error." + rebuiltError.get()));
             return;
         }
         working = rebuilt;
@@ -167,7 +167,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         long dropped = graph.nodes().stream().filter(n -> targetOf(n) != null).count()
                 - working.nodes().stream().filter(n -> targetOf(n) != null).count();
         if (dropped > 0)
-            player.displayClientMessage(Component.translatable("feedback.programmer.links_dropped", dropped), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.links_dropped", dropped));
         positions.clear();
         newPositions.forEach((id, pos) -> {
             if (working.find(id).isPresent())
@@ -279,7 +279,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         if (level == null || level.isClientSide || !stillValid(player) || card.isEmpty())
             return;
         if (!card.is(io.github.soundgoodizerfan.feedback.registry.FTags.SOFT_CARDS)) {
-            player.displayClientMessage(Component.translatable("feedback.programmer.already_printed"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.already_printed"));
             return;
         }
         ProgramGraph printed = card.getOrDefault(FDataComponents.PROGRAM_GRAPH, ProgramGraph.EMPTY);
@@ -291,7 +291,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
         card.remove(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE);
         setChanged();
         level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-        player.displayClientMessage(Component.translatable("feedback.programmer.erased"), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.erased"));
     }
 
     private void print(Player player) {
@@ -299,18 +299,18 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             // card is ItemStack.EMPTY here -- the shared vanilla singleton. card.set(...) below
             // mutates whatever stack `card` refers to, so skipping this check would corrupt that
             // singleton's component map for every empty stack in the game, not just this one.
-            player.displayClientMessage(Component.translatable("feedback.programmer.no_card"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.no_card"));
             return;
         }
         Optional<String> error = working.findError(ControllerLimits.MAX);
         if (error.isPresent()) {
-            player.displayClientMessage(Component.translatable("feedback.programmer.error." + error.get()), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.error." + error.get()));
             return;
         }
         card.set(FDataComponents.PROGRAM_GRAPH, working);
         // Blank cards stack; a card holding a program is one of a kind (author, 2026-10-11).
         card.set(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE, 1);
-        player.displayClientMessage(Component.translatable("feedback.programmer.printed"), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.printed"));
     }
 
     // --- Container (one Punch Card slot) ---------------------------------------------------

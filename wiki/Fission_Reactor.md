@@ -24,7 +24,7 @@ The reactor is a hollow cube **7 blocks on a side**. The core sits in the **midd
 - **Things that count as shell.** A [Heat Exchanger](Heat_Exchanger.md), a [Boiler](Boiler.md) or any other block with a temperature, and a [Scram Trip](Scram_Trip.md), can stand in a face in place of a wall block. Put a heat exchanger in the lid beside the core, with a boiler on its far side.
 - **The lattice.** The **5 by 5 by 5 space** inside the cube under the core is where the fuel goes. Fill it with [Fuel Channels](#fuel-channel), [Control Rod Assemblies](Control_Rod.md) and [Graphite Moderators](#graphite-moderator). Everything else in it does nothing, except that other blocks of moderating material count as moderator.
 
-The core checks its shell about once a second. Right-click the core with an empty hand for a one-line status: its power, temperature, number of live fuel cells and whether the shell is sealed or has holes. A core with holes in its shell still runs, but it smokes. Jade lists the flaws, up to eight wall positions.
+The core checks its shell about once a second. Jade shows the core's power, temperature, number of live fuel cells and whether the shell is sealed or has holes. A core with holes in its shell still runs, but it smokes. Jade lists the flaws, up to eight wall positions.
 
 ## Fuel Channel
 
@@ -121,4 +121,4 @@ Dropping the control rods in ends the chain, but a shut-down core is not cold.
 
 - A [Controller](Controller.md) can switch a control rod assembly: engaged is all the way in, off is all the way out.
 - A **Flux Meter** used on the core reads its neutron flux as a fraction of full power.
-- Read the core with an empty hand, or with Jade: power, multiplication, live fuel cells and their condition, decay heat, vessel pressure, rod positions and shell flaws are all shown.
+- Read the core with Jade: power, multiplication, live fuel cells and their condition, decay heat, vessel pressure, rod positions and shell flaws are all shown.

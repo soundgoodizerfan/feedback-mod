@@ -61,7 +61,7 @@ public class DerrickBaseBlock extends Block implements EntityBlock, Rotatable {
                     if (!taken.isEmpty())
                         player.getInventory().placeItemBackInInventory(taken);
                 } else {
-                    player.displayClientMessage(base.describe(), true);
+                    io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, base.describe());
                 }
             }
             return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide);

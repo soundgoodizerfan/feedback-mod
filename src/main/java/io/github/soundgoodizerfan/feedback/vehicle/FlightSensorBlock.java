@@ -64,11 +64,11 @@ public class FlightSensorBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof FlightSensorBlockEntity sensor) {
             if (player.isShiftKeyDown()) {
-                player.displayClientMessage(sensor.readValue(), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, sensor.readValue());
             } else {
                 sensor.nextMode();
-                player.displayClientMessage(Component.translatable("message.feedback.flight_sensor.mode",
-                        Component.translatable("feedback.flight_sensor." + sensor.mode().getSerializedName())), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, state.getBlock().getName(), io.github.soundgoodizerfan.feedback.net.AimPayloads.keys("feedback.flight_sensor.", "altitude", "airspeed", "pitch", "roll"),
+                        sensor.mode().ordinal(), Component.empty());
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

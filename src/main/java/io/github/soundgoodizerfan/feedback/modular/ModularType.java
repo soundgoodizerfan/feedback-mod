@@ -335,7 +335,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
          * (a barrel variant names its bore), else the role's default. Clamped to the role's range.
          */
         public float axis(ModularDesign.Part made, String name) {
-            Axis d = axes.get(name);
+            Axis d = axesFor(made).get(name);
             if (d == null)
                 return made.axis(name, 0f);
             float nominal = variant(made).map(v -> v.params().get(name)).orElse(d.def());

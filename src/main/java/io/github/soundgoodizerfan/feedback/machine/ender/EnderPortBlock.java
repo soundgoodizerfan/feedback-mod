@@ -47,10 +47,10 @@ public class EnderPortBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof EnderPortBlockEntity port)
-            player.displayClientMessage(Component.translatable("message.feedback.ender_port", port.teleportantMb(),
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.ender_port", port.teleportantMb(),
                     port.anchored() ? Component.translatable("message.feedback.ender_port.anchored")
                             : Component.translatable("message.feedback.ender_port.free"),
-                    port.partnerState()), true);
+                    port.partnerState()));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

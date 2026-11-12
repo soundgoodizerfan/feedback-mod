@@ -27,8 +27,8 @@ P is any Planks and S is a [Shaft](Shaft.md).
 ## Linking
 
 1. Put a pulley on each shaft line. A pulley sits on a shaft like a [cog](Cogs.md).
-2. Hold the **Belt** and right-click the first pulley: *"Pulley selected."*
-3. Right-click the second pulley: *"Belt fitted."*
+2. Hold the **Belt** and right-click the first pulley. A chip left of the crosshair says *"Linking from"* and the pulley's name, and a dashed line runs from that pulley to where you aim.
+3. Right-click the second pulley: the belt is fitted and the chip goes away.
 
 The belt item isn't used up. Linking a pulley to a new partner replaces its old belt. Pulleys can be up to **16 blocks** apart; further and you'll get *"Could not fit a belt there."*
 

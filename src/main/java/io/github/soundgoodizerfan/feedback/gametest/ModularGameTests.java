@@ -85,6 +85,28 @@ public class ModularGameTests {
         return craft(helper, List.of(h, s, s, binding(helper)));
     }
 
+    /** The blueprint board's tree layout gives every part of every type its own cell, so no two nodes can overlap. */
+    @GameTest(template = "empty")
+    public static void boardLayoutNeverOverlaps(GameTestHelper helper) {
+        ModularTypes.on(helper.getLevel()).forEach((id, type) -> {
+            List<String> roles = new ArrayList<>(type.roles().keySet());
+            List<int[]> edges = new ArrayList<>();
+            for (List<String> j : type.board().joins())
+                if (j.size() == 2 && roles.contains(j.get(0)) && roles.contains(j.get(1)))
+                    edges.add(new int[]{roles.indexOf(j.get(0)), roles.indexOf(j.get(1))});
+            int n = roles.size();
+            int[] hint = new int[n];
+            java.util.Arrays.fill(hint, -1);
+            float[] seed = new float[n];
+            for (int i = 0; i < n; i++)
+                seed[i] = i;
+            float gap = io.github.soundgoodizerfan.feedback.modular.BoardTree.minSeparation(
+                    io.github.soundgoodizerfan.feedback.modular.BoardTree.place(n, edges, hint, seed, seed));
+            helper.assertTrue(n < 2 || gap >= 0.999f, id + " board nodes overlap, separation " + gap);
+        });
+        helper.succeed();
+    }
+
     /** Three ingots at the table, with the pickaxe head's shape chosen, are a pickaxe head of three cells. */
     @GameTest(template = "empty")
     public static void tableShapesAPart(GameTestHelper helper) {

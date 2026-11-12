@@ -76,7 +76,7 @@ public class DryingRackBlock extends BaseEntityBlock {
             ItemStack one = held.copyWithCount(1);
             if (rack.add(one) && !player.getAbilities().instabuild)
                 held.shrink(1);
-            player.displayClientMessage(Component.translatable("feedback.rack.status", rack.count(), FTuning.RACK_SLOTS), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.rack.status", rack.count(), FTuning.RACK_SLOTS));
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -87,7 +87,7 @@ public class DryingRackBlock extends BaseEntityBlock {
             ItemStack out = rack.take();
             if (!out.isEmpty() && !player.getInventory().add(out))
                 player.drop(out, false);
-            player.displayClientMessage(Component.translatable("feedback.rack.status", rack.count(), FTuning.RACK_SLOTS), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.rack.status", rack.count(), FTuning.RACK_SLOTS));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

@@ -98,7 +98,7 @@ public class CalipersItem extends Item implements Instrument {
             return InteractionResult.PASS;
 
         if (!level.isClientSide)
-            player.displayClientMessage(read(machine), true);
+            read(player, context.getClickedPos(), machine);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -111,14 +111,15 @@ public class CalipersItem extends Item implements Instrument {
      * know -- and that is the general rule §8 states: <em>a reading is passive when taking it is
      * free, and an action when taking it costs something.</em>
      */
-    private Component read(Wearing machine) {
-        if (machine.isRunning())
-            return Component.translatable("feedback.readout.condition.running")
-                    .withStyle(ChatFormatting.RED);
+    private void read(Player player, net.minecraft.core.BlockPos pos, Wearing machine) {
+        if (machine.isRunning()) {
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.read(player, pos, this, Component.translatable("feedback.readout.condition.running").withStyle(ChatFormatting.RED));
+            return;
+        }
 
         float shown = Instruments.quantise(machine.getCondition(), resolution(Quantity.CONDITION));
-        return Instruments.signed(this,
-                Component.translatable("feedback.readout.condition.figure", Math.round(shown * 100)));
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, pos, this, Component.translatable("feedback.readout.condition.figure", Math.round(shown * 100)),
+                Quantity.CONDITION, shown);
     }
 
     @Override

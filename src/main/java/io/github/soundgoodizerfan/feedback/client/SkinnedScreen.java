@@ -65,8 +65,47 @@ public abstract class SkinnedScreen<M extends AbstractContainerMenu> extends Abs
         }
         opening.render(g, width, height, leftPos, topPos, imageWidth, imageHeight,
                 () -> super.render(g, mouseX, mouseY, partialTick));
+        drawStatus(g);
         if (settled())
             renderTooltip(g, mouseX, mouseY);
+    }
+
+    private Component status = Component.empty();
+    private long statusUntil;
+    private static final int STATUS_MS = 4000;
+
+    /**
+     * A server's word about the open screen (a refusal, a result), said on a strip just under the panel in the screen's skin:
+     * vanilla's action bar draws under the screen's dimming, where it is hard to read. Any other screen, or none, gets the
+     * HUD readout stack.
+     */
+    public static void status(Component text) {
+        if (net.minecraft.client.Minecraft.getInstance().screen instanceof SkinnedScreen<?> s)
+            s.say(text);
+        else
+            HudReadouts.add(text, 60, 0);
+    }
+
+    protected void say(Component text) {
+        status = text;
+        statusUntil = net.minecraft.Util.getMillis() + STATUS_MS;
+    }
+
+    private void drawStatus(GuiGraphics g) {
+        long left = statusUntil - net.minecraft.Util.getMillis();
+        if (left <= 0)
+            return;
+        int w = Math.min(imageWidth, font.width(status) + 12), x = leftPos + (imageWidth - w) / 2, y = topPos + imageHeight + 4;
+        g.pose().pushPose();
+        g.pose().translate(0, 0, 300);
+        g.setColor(1, 1, 1, Math.min(1f, left / 300f));
+        com.mojang.blaze3d.systems.RenderSystem.enableBlend();
+        skin.plaque(g, x, y, w, 15);
+        Component shown = font.width(status) <= w - 12 ? status
+                : Component.literal(font.plainSubstrByWidth(status.getString(), w - 12 - font.width("...")) + "...");
+        g.drawString(font, shown, x + 6, y + 4, skin.ink(), false);
+        g.setColor(1, 1, 1, 1);
+        g.pose().popPose();
     }
 
     /** The dimming is drawn in {@link #render}, faded in with the reveal; this draws only the panel. */

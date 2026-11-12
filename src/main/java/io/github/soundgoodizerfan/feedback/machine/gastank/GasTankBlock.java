@@ -28,9 +28,9 @@ public class GasTankBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof GasTankBlockEntity tank)
-            player.displayClientMessage(tank.getGas().isEmpty() ? Component.translatable("message.feedback.gas_tank.empty")
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, tank.getGas().isEmpty() ? Component.translatable("message.feedback.gas_tank.empty")
                     : Component.translatable("message.feedback.gas_tank", tank.getGas().getFluid().getHoverName(),
-                            tank.getGas().getFluidAmount(), Math.round(tank.getPressure().value() * 10f) / 10f), true);
+                            tank.getGas().getFluidAmount(), Math.round(tank.getPressure().value() * 10f) / 10f));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

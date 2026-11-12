@@ -20,4 +20,4 @@ Each unit draws more current the more the room leaks, from a quarter of the base
 
 ## Finding leaks
 
-Right-click a unit with an empty hand. Particles puff at each leaking spot, and the action bar shows the room size and the number of openings. With Jade, the unit also shows the room's blocks of air, openings, temperature, leak and whether it has a compressor stage.
+Right-click a unit with an empty hand. Particles puff at each leaking spot, and the reading card shows the room size and the number of openings. With Jade, the unit also shows the room's blocks of air, openings, temperature, leak and whether it has a compressor stage.

@@ -66,7 +66,6 @@ public final class DataLinkManager {
         if (previous == null || previous.equals(node.getNodeRef())) {
             pending.put(id, new Pending(level.dimension(), node.getNodeRef()));
             tell(player, io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.of(node.getNodeRef()));
-            player.displayClientMessage(Component.translatable("feedback.data_connector.selected"), true);
             return;
         }
 
@@ -116,6 +115,11 @@ public final class DataLinkManager {
     private static void tell(Player player, io.github.soundgoodizerfan.feedback.net.DataSelectionPayload payload) {
         if (player instanceof net.minecraft.server.level.ServerPlayer sp)
             net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(sp, payload);
+        // The chip by the crosshair; DataSelection already stretches the wire, so no line here.
+        if (payload.none())
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.linkDone(player);
+        else
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.linkFrom(player, null, player.level().getBlockState(payload.pos()).getBlock().getName());
     }
 
     /**

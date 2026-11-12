@@ -50,11 +50,12 @@ public class HydrometerItem extends Item implements Instrument {
             return InteractionResult.PASS;
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
-            Component line = battery.ready()
-                    ? Instruments.signed(self, Component.translatable("feedback.battery.charge",
-                    Instruments.format(battery.stateOfCharge() * 100f, self.resolution(Quantity.CHARGE) * 100f)))
-                    : Component.translatable("feedback.battery.dry");
-            player.displayClientMessage(line, true);
+            if (battery.ready())
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, Component.translatable("feedback.battery.charge",
+                        Instruments.format(battery.stateOfCharge() * 100f, self.resolution(Quantity.CHARGE) * 100f)), Quantity.CHARGE,
+                        Instruments.quantise(battery.stateOfCharge(), self.resolution(Quantity.CHARGE)));
+            else
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.read(player, context.getClickedPos(), self, Component.translatable("feedback.battery.dry"));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

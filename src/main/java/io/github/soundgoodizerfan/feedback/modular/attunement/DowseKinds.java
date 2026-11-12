@@ -10,7 +10,6 @@ import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -44,7 +43,8 @@ public final class DowseKinds {
     private static final float DENSE_MIN = 8f;
     /** Prefix of the armour face of a needle kind: read only from a helmet or chestplate part, a worn instrument. */
     private static final String WORN = "worn_";
-    private static final String[] ARROWS = {"↑", "↗", "→", "↘", "↓", "↙", "←", "↖"};
+    /** A reading outlives the next one by half a second, so the needle holds steady between them. */
+    private static final int NEEDLE_TICKS = INTERVAL_TICKS + 10;
 
     private static final Map<String, Predicate<Material>> PROPERTIES = Map.of(
             "magnetic", m -> m.separation().magnetic(),
@@ -89,7 +89,7 @@ public final class DowseKinds {
         Player player = event.getEntity();
         if (player.level().isClientSide || player.tickCount % INTERVAL_TICKS != 0)
             return;
-        // Held needle first, then a helmet, then a chestplate; the first that reads owns the action bar.
+        // Held needle first, then a helmet, then a chestplate; the first that reads owns the needle.
         if (!read(player, player.getMainHandItem(), false) && !read(player, player.getItemBySlot(EquipmentSlot.HEAD), true))
             read(player, player.getItemBySlot(EquipmentSlot.CHEST), true);
     }
@@ -104,23 +104,23 @@ public final class DowseKinds {
                 continue;
             if (property.equals("magnetic") && a.material().separation().curieTemperature()
                     .map(c -> ItemHeat.get(stack, player.level()).value() > c.value()).orElse(false)) {
-                player.displayClientMessage(Component.translatable("feedback.dowse.dead"), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.bearing(player, false, 0, 0, Component.translatable("feedback.dowse.dead"), NEEDLE_TICKS);
                 return true;
             }
             BlockPos near = nearest(player, property);
             if (near == null) {
-                player.displayClientMessage(Component.translatable("feedback.dowse.none"), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.bearing(player, false, 0, 0, Component.translatable("feedback.dowse.none"), NEEDLE_TICKS);
                 return true;
             }
             double dx = near.getX() + 0.5 - player.getX(), dz = near.getZ() + 0.5 - player.getZ();
             // Bearing from the way the holder faces: yaw 0 is south (+z), and the arrow's up is straight ahead.
-            double bearing = Math.toDegrees(Math.atan2(-dx, dz)) - player.getYRot();
+            // World bearing in Minecraft's yaw; the client turns it against the holder's facing and snaps it to an eighth.
+            double bearing = Math.toDegrees(Math.atan2(-dx, dz));
             if (a.kind().contains("away_"))
                 bearing += 180;
-            int arrow = Math.floorMod(Math.round(Mth.wrapDegrees((float) -bearing) / 45f), 8);
             // Directly over or under it, there is nothing to lean toward.
             boolean here = dx * dx + dz * dz < 1.5;
-            player.displayClientMessage(Component.translatable("feedback.dowse.needle", here ? "·" : ARROWS[arrow]), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.bearing(player, !here, (float) bearing, 45, here ? Component.translatable("feedback.dowse.here") : Component.empty(), NEEDLE_TICKS);
             return true;
         }
         return false;

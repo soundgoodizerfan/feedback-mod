@@ -575,4 +575,10 @@ public class ComputerScreen extends SkinnedScreen<ComputerMenu> implements Compu
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
     }
+
+    /** The desktop has its own notices: a server's word about the Computer is a toast in the work area. */
+    @Override
+    protected void say(Component text) {
+        toast(text);
+    }
 }

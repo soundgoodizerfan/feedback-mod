@@ -159,7 +159,8 @@ public class DifferentialBlock extends Block implements EntityBlock, MicroRotati
     private static void cycle(Level level, BlockPos pos, BlockState state, Player player) {
         BlockState next = state.setValue(MODE, (state.getValue(MODE) + 1) % 3);
         level.setBlock(pos, next, Block.UPDATE_ALL);
-        player.displayClientMessage(Component.translatable("message.feedback.differential.mode." + next.getValue(MODE)), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, state.getBlock().getName(), io.github.soundgoodizerfan.feedback.net.AimPayloads.keys("message.feedback.differential.short.", "0", "1", "2"),
+                next.getValue(MODE), Component.translatable("message.feedback.differential.mode." + next.getValue(MODE)));
     }
 
     @Nullable

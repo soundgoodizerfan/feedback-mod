@@ -296,8 +296,9 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
                         (cell.get(i).getValue(io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock.MODE) + 1) % 3);
                 cell.set(i, next);
                 cell.commit();
-                player.displayClientMessage(Component.translatable("message.feedback.differential.mode."
-                        + next.getValue(io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock.MODE)), true);
+                int mode = next.getValue(io.github.soundgoodizerfan.feedback.machine.differential.DifferentialBlock.MODE);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, next.getBlock().getName(), io.github.soundgoodizerfan.feedback.net.AimPayloads.keys("message.feedback.differential.short.", "0", "1", "2"),
+                        mode, Component.translatable("message.feedback.differential.mode." + mode));
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -319,9 +320,12 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
                         : cell.get(i).setValue(RotaryBearingBlock.ROLE, (cell.get(i).getValue(RotaryBearingBlock.ROLE) + 1) % 5);
                 cell.set(i, next);
                 cell.commit();
-                player.displayClientMessage(next.getBlock() instanceof JointBlock
-                        ? Component.translatable("message.feedback.joint.variant", next.getValue(JointBlock.VARIANT))
-                        : Component.translatable("message.feedback.joint.role." + next.getValue(RotaryBearingBlock.ROLE)), true);
+                if (next.getBlock() instanceof JointBlock)
+                    io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, next.getBlock().getName(), java.util.List.of(Component.literal("1"), Component.literal("2"), Component.literal("3")),
+                            next.getValue(JointBlock.VARIANT), Component.empty());
+                else
+                    io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, next.getBlock().getName(), io.github.soundgoodizerfan.feedback.net.AimPayloads.keys("message.feedback.joint.role.short.", "0", "1", "2", "3", "4"),
+                            next.getValue(RotaryBearingBlock.ROLE), Component.translatable("message.feedback.joint.role." + next.getValue(RotaryBearingBlock.ROLE)));
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

@@ -68,8 +68,8 @@ public class SpentFuelPoolBlock extends Block implements EntityBlock {
             if (player.isShiftKeyDown() && pool.count() > 0)
                 Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, pool.take());
             else
-                player.displayClientMessage(Component.translatable("message.feedback.spent_fuel_pool", pool.count(), pool.water().getFluidAmount(),
-                        Math.round(pool.getTemperature().value())), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.spent_fuel_pool", pool.count(), pool.water().getFluidAmount(),
+                        Math.round(pool.getTemperature().value())));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

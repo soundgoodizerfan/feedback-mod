@@ -113,12 +113,12 @@ public class TubeStationBlock extends Block implements EntityBlock {
         var rules = Component.empty();
         for (var b : st.rules())
             rules.append(Component.translatable("tube.feedback.band." + b.key())).append(" ");
-        player.displayClientMessage(Component.translatable("message.feedback.station",
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, st.getBlockPos(), Component.translatable("message.feedback.station",
                 st.address().map(c -> Component.translatable("color.minecraft." + c.getName())).orElse(none),
                 st.stock(TubeStationBlockEntity.CARRIERS), st.stock(TubeStationBlockEntity.PODS),
                 st.rules().isEmpty() ? none : rules,
                 st.matchAddress().map(c -> Component.translatable("color.minecraft." + c.getName())).orElse(none),
-                st.rejectAddress().map(c -> Component.translatable("color.minecraft." + c.getName())).orElse(none)), true);
+                st.rejectAddress().map(c -> Component.translatable("color.minecraft." + c.getName())).orElse(none)));
     }
 
     @Override

@@ -217,6 +217,7 @@
           "plate",
           "*_planks",
           "bone",
+          "cobble",
           "gem"
         ],
         "variants": [
@@ -381,7 +382,10 @@
   "defaults": {
     "B": "feedback:wrought_iron",
     "S": "feedback:wood",
-    "G": "feedback:wrought_iron"
+    "G": "feedback:wrought_iron",
+    "P": "feedback:wrought_iron",
+    "sword:G": "feedback:same",
+    "sword:P": "feedback:same"
   },
   "vanilla": {
     "sword": "ingot"

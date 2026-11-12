@@ -50,8 +50,11 @@ public class TimerBlockEntity extends BlockEntity {
         setting = (setting + 1) % FTuning.TIMER_SETTINGS.size();
         setChanged();
         int ticks = FTuning.TIMER_SETTINGS.get(setting);
-        player.displayClientMessage(Component.translatable("feedback.timer.setting",
-                String.format("%.0f", ticks / 20f)), true);
+        java.util.List<Component> options = new java.util.ArrayList<>();
+        for (int t : FTuning.TIMER_SETTINGS)
+            options.add(Component.literal(String.format("%.0f s", t / 20f)));
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, getBlockState().getBlock().getName(), options, setting,
+                Component.translatable("feedback.timer.setting", String.format("%.0f", ticks / 20f)));
     }
 
     private void start() {

@@ -61,7 +61,7 @@ public class PivotMastBlock extends Block implements EntityBlock, Rotatable {
                 player.drop(out, false);
             mast.refresh();
         } else {
-            player.displayClientMessage(mast.report(), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, mast.report());
         }
         return InteractionResult.CONSUME;
     }

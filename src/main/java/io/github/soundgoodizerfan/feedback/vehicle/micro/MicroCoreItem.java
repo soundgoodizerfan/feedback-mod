@@ -53,8 +53,7 @@ public class MicroCoreItem extends Item {
                                                                                            net.minecraft.world.InteractionHand hand) {
         net.minecraft.world.item.ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown() && !level.isClientSide)
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-                    "message.feedback.micro.mode." + MicroTool.cycle(stack).name().toLowerCase(java.util.Locale.ROOT)), true);
+            showMode(player, stack, MicroTool.cycle(stack));
         return player.isShiftKeyDown() ? net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide)
                 : super.use(level, player, hand);
     }
@@ -65,8 +64,7 @@ public class MicroCoreItem extends Item {
         Player player = context.getPlayer();
         if (player != null && player.isShiftKeyDown()) {
             if (!level.isClientSide)
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.micro.mode."
-                        + MicroTool.cycle(context.getItemInHand()).name().toLowerCase(java.util.Locale.ROOT)), true);
+                showMode(player, context.getItemInHand(), MicroTool.cycle(context.getItemInHand()));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         // In mirror mode a click on a build sets a plane through the face clicked, or takes it away.
@@ -117,5 +115,13 @@ public class MicroCoreItem extends Item {
     /** The voxel along one axis that {@code local}, in blocks from the cell's corner, falls in. */
     private static int voxelOf(double local) {
         return Mth.clamp((int) Math.floor(local * N), 0, N - 1);
+    }
+
+    /** The build modes as a strip, the new one lit, with what it does beneath. */
+    private static void showMode(Player player, net.minecraft.world.item.ItemStack stack, MicroTool.Mode mode) {
+        String name = mode.name().toLowerCase(java.util.Locale.ROOT);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, stack.getHoverName(),
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.keys("message.feedback.micro.mode.short.", "single", "line", "box", "mirror", "wedge"),
+                mode.ordinal(), net.minecraft.network.chat.Component.translatable("message.feedback.micro.mode." + name));
     }
 }

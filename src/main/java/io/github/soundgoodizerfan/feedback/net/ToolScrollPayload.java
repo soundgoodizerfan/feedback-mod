@@ -38,9 +38,9 @@ public record ToolScrollPayload(int direction) implements CustomPacketPayload {
                 var swing = io.github.soundgoodizerfan.feedback.modular.ModularHandTool.swing(stack)
                         .step(Integer.signum(payload.direction()), player);
                 stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.HAND_SWING, swing);
-                player.displayClientMessage(Component.translatable("message.feedback.hand_swing",
-                        Component.translatable("tooltip.feedback.hand_swing." + swing.name().toLowerCase(java.util.Locale.ROOT)),
-                        io.github.soundgoodizerfan.feedback.core.unit.Units.figure(io.github.soundgoodizerfan.feedback.modular.ModularHandTool.of(stack, swing))), true);
+                AimPayloads.modes(player, stack.getHoverName(), AimPayloads.keys("tooltip.feedback.hand_swing.", "tap", "blow", "heavy", "mighty"),
+                        swing.ordinal(), Component.translatable("message.feedback.hand_swing.figure",
+                                io.github.soundgoodizerfan.feedback.core.unit.Units.figure(io.github.soundgoodizerfan.feedback.modular.ModularHandTool.of(stack, swing))));
                 return;
             }
             if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.DataConnectorItem) {
@@ -50,8 +50,9 @@ public record ToolScrollPayload(int direction) implements CustomPacketPayload {
                 stack.set(comp, mode);
                 // A half-made link means something else in the new mode.
                 io.github.soundgoodizerfan.feedback.control.data.DataLinkManager.get().clear(player);
-                player.displayClientMessage(Component.translatable("feedback.data_connector.mode",
-                        Component.translatable("feedback.data_connector.mode." + mode.name().toLowerCase(java.util.Locale.ROOT))), true);
+                AimPayloads.linkDone(player);
+                AimPayloads.modes(player, stack.getHoverName(), AimPayloads.keys("feedback.data_connector.mode.", "link", "unlink", "clear"),
+                        mode.ordinal(), Component.empty());
                 return;
             }
         });

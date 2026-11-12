@@ -478,7 +478,7 @@ final class ProgramEditor {
         graph = graph.withNodes(nodes);
     }
 
-    private void setStatus(Component message) {
+    void setStatus(Component message) {
         status = message;
         statusUntil = Util.getMillis() + 4000;
     }

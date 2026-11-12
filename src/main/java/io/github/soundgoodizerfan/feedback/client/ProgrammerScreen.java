@@ -131,4 +131,10 @@ public class ProgrammerScreen extends SkinnedScreen<ProgrammerMenu> {
     public boolean charTyped(char codePoint, int modifiers) {
         return closing() || editor.charTyped(codePoint, modifiers) || super.charTyped(codePoint, modifiers);
     }
+
+    /** The whole window is the panel, so a status goes on the editor's own status line rather than a strip under it. */
+    @Override
+    protected void say(Component text) {
+        editor.setStatus(text);
+    }
 }

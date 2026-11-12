@@ -398,12 +398,12 @@ public final class Weakness {
         ItemStack piece = t.getItemBySlot(slot);
         float[] a = pieceArmour(piece, slot);
         if (piece.isEmpty() || a[0] + a[1] <= 0f) {
-            p.displayClientMessage(Component.translatable("message.feedback.soft_spot.bare", Component.translatable("slot.feedback." + slot.getName())), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.cue(p, io.github.soundgoodizerfan.feedback.net.AimPayloads.CROSSHAIR, Component.translatable("message.feedback.soft_spot.bare", Component.translatable("slot.feedback." + slot.getName())), 30);
             return false;
         }
         SPOT.put(p.getUUID(), new Object[] {t.getUUID(), Math.min(SPOT_CAP, (a[0] + a[1]) * SPOT_PER_POINT), p.level().getGameTime() + ARMED_TICKS,
                 slot == EquipmentSlot.HEAD ? 0 : slot == EquipmentSlot.CHEST ? 1 : slot == EquipmentSlot.LEGS ? 2 : 3});
-        p.displayClientMessage(Component.translatable("message.feedback.soft_spot", Component.translatable("slot.feedback." + slot.getName()), piece.getHoverName()), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.cue(p, io.github.soundgoodizerfan.feedback.net.AimPayloads.CROSSHAIR, Component.translatable("message.feedback.soft_spot", Component.translatable("slot.feedback." + slot.getName()), piece.getHoverName()), 30);
         p.serverLevel().playSound(null, p.getX(), p.getEyeY(), p.getZ(), SoundEvents.CHAIN_HIT, SoundSource.PLAYERS, 0.8f, 1.5f);
         push(p);
         return true;

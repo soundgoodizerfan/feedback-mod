@@ -31,6 +31,7 @@ public class DataLinkFrame {
             return;
 
         DataSelection.queueWire(mc, event.getPartialTick().getGameTimeDeltaPartialTick(true));
+        AimHud.queueLinkLine(mc, event.getPartialTick().getGameTimeDeltaPartialTick(true));
         PoseStack stack = event.getPoseStack();
         stack.pushPose();
         Vec3 camera = event.getCamera().getPosition();

@@ -57,17 +57,19 @@ public final class MicroBelts {
             boolean ok = block.dimension() == level.dimension() && level.isLoaded(block.pos())
                     && level.getBlockEntity(block.pos()) instanceof io.github.soundgoodizerfan.feedback.machine.pulley.PulleyBlockEntity pulley
                     && pulley.linkMicro(cell, index);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.linkDone(player);
             player.displayClientMessage(Component.translatable(ok ? "feedback.belt.linked" : "feedback.belt.failed"), true);
             return;
         }
         Pending first = PENDING.remove(player.getUUID());
         if (first == null || first.cell().equals(here) && first.index() == index) {
             PENDING.put(player.getUUID(), new Pending(here, index));
-            player.displayClientMessage(Component.translatable("feedback.belt.selected"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.linkFrom(player, null, cell.get(index).getBlock().getName()); // a voxel's cell sits in its body's plot: no line
             return;
         }
         boolean ok = first.cell().dimension() == level.dimension() && level.isLoaded(first.cell().pos())
                 && level.getBlockEntity(first.cell().pos()) instanceof MicroCellBlockEntity a && link(a, first.index(), cell, index);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.linkDone(player);
         player.displayClientMessage(Component.translatable(ok ? "feedback.belt.linked" : "feedback.belt.failed"), true);
     }
 

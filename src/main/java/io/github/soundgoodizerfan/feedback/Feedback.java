@@ -158,6 +158,7 @@ public class Feedback {
     }
 
     private static void registerPayloads(RegisterPayloadHandlersEvent event) {
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.register(event.registrar("3"));
         event.registrar("3")
                 .playToClient(io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.DataSelectionPayload.STREAM_CODEC,

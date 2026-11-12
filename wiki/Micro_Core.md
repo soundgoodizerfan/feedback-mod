@@ -25,11 +25,11 @@ Blocks place the way they do full size: a log lies along its axis, a stair takes
 
 ### Cost
 
-A voxel costs a 64th of a block. A block in your hand pays for 64 voxels. Removed voxels refill that credit, and every 64 give a whole block back. The action bar shows *"N voxels left of the last block."* Creative costs nothing.
+A voxel costs a 64th of a block. A block in your hand pays for 64 voxels. Removed voxels refill that credit, and every 64 give a whole block back. A message shows *"N voxels left of the last block."* Creative costs nothing.
 
 ## Building tools
 
-Hold a second Micro Core in your **other hand** and it sets how the block in your main hand is placed. **Sneak-use** the core, on a block or in the air, to cycle the mode; the message names it.
+Hold a second Micro Core in your **other hand** and it sets how the block in your main hand is placed. **Sneak-use** the core, on a block or in the air, to cycle the mode; a strip under the crosshair lists every mode with the current one lit, and a line says what it does.
 
 | Mode | What a click does |
 | --- | --- |
@@ -51,7 +51,7 @@ Only a [Rotation Adapter](Rotation_Adapter.md) joins micro rotation to full-size
 
 ## Joints and ramps
 
-The [Ball Joint](Ball_Joint.md), [Locked Joint](Locked_Joint.md), [Slider Joint](Slider_Joint.md), [Piston Joint](Piston_Joint.md), Rotary Bearing and Ring Gear are used with an empty hand once placed as voxels; see [Vehicles](Vehicles.md#joints). The [Micro Wedge](Micro_Wedge.md) is a four-step ramp voxel, and Wedge mode cuts any plain block to one.
+The [Ball Joint](Ball_Joint.md), [Locked Joint](Locked_Joint.md), [Slider Joint](Slider_Joint.md), [Piston Joint](Piston_Joint.md), Rotary Bearing and Ring Gear are used with an empty hand once placed as voxels. Clicking a joint voxel to choose its joint, or a bearing voxel to choose its role, shows a strip under the crosshair with every option and the current one lit; see [Vehicles](Vehicles.md#joints). The [Micro Wedge](Micro_Wedge.md) is a four-step ramp voxel, and Wedge mode cuts any plain block to one.
 
 ## See also
 

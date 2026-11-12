@@ -51,7 +51,7 @@ public record ProgrammerActionPayload(BlockPos pos, int action, ProgramGraph gra
                     menu.getProgrammer().erase(player);
             } else if (payload.action() == SAVE_FUNCTION) {
                 if (payload.graph().nodes().isEmpty() || payload.graph().findEditError(ControllerLimits.MAX).isPresent()) {
-                    player.displayClientMessage(Component.translatable("feedback.programmer.function_bad"), true);
+                    io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.function_bad"));
                     return;
                 }
                 for (InteractionHand hand : InteractionHand.values()) {
@@ -59,11 +59,11 @@ public record ProgrammerActionPayload(BlockPos pos, int action, ProgramGraph gra
                     if (held.is(FItems.FUNCTION_CARD.get())
                             && held.getOrDefault(FDataComponents.PROGRAM_GRAPH, ProgramGraph.EMPTY).nodes().isEmpty()) {
                         held.set(FDataComponents.PROGRAM_GRAPH, payload.graph());
-                        player.displayClientMessage(Component.translatable("feedback.programmer.function_saved"), true);
+                        io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.function_saved"));
                         return;
                     }
                 }
-                player.displayClientMessage(Component.translatable("feedback.programmer.function_no_card"), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.programmer.function_no_card"));
             }
         });
     }

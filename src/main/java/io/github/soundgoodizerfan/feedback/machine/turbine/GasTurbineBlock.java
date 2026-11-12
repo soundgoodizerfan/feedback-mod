@@ -69,9 +69,9 @@ public class GasTurbineBlock extends Block implements EntityBlock, Rotatable {
             if (player.isShiftKeyDown() && turbine.hasBlades())
                 player.getInventory().placeItemBackInInventory(turbine.takeBlades());
             else
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.turbine",
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, net.minecraft.network.chat.Component.translatable("message.feedback.turbine",
                         Math.round(turbine.spool() * 100f), turbine.hasBlades() ? Math.round(turbine.bladeCondition() * 100f) : 0,
-                        Math.round(turbine.flooded())), true);
+                        Math.round(turbine.flooded())));
         }
         return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide);
     }

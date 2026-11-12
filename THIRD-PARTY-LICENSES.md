@@ -63,6 +63,15 @@ from Create may be used in this project, ever.**
 Reference checkout lives outside this repository at `../Create-reference`
 (branch `mc1.21.1/dev`). It is reference material, not a dependency.
 
+The crosshair HUD (`client/AimHud`, 2026-11-11, read at commit `4148fd8`) takes its design from
+Create's Engineer's Goggles overlay (`GoggleOverlayRenderer`): a GUI layer that checks the
+crosshair's target each frame, a card offset from the crosshair's centre and clamped in view, and a
+short slide in when it appears. **Rejected:** building the card from the client's block entity
+every frame (a reading here is one click composed on the server, held while aimed), the goggles'
+item gate, the tooltip-box look (a dial is drawn instead), the per-frame list and colour
+allocation, and the value-settings screen's mouse warp. Create draws no line to the cursor while
+linking, so the link line has no source. Nothing copied.
+
 ```
 MIT License
 

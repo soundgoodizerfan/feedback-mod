@@ -57,8 +57,8 @@ public class PyrometerItem extends Item implements Instrument {
         if (hit.getType() == HitResult.Type.BLOCK && level.getBlockEntity(hit.getBlockPos()) instanceof ThermalBody body) {
             Instrument self = Instruments.fitted(stack, this);
             float shown = Instruments.quantise(body.getTemperature().value(), self.resolution(Quantity.TEMPERATURE));
-            player.displayClientMessage(Instruments.signed(self,
-                    Component.translatable("feedback.readout.tu", Math.round(shown))), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, hit.getBlockPos(), self, Component.translatable("feedback.readout.tu", Math.round(shown)),
+                    Quantity.TEMPERATURE, shown);
             return InteractionResultHolder.success(stack);
         }
         return InteractionResultHolder.pass(stack);

@@ -131,7 +131,7 @@ public class MixerMenu extends AbstractContainerMenu {
         if (id != DRAW || !(player.level().getBlockEntity(pos) instanceof MixerBlockEntity mixer))
             return false;
         if (!mixer.drawToOutput())
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable(mixer.frozen() ? "message.feedback.mixer.frozen" : "message.feedback.mixer.draw_blocked"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, net.minecraft.network.chat.Component.translatable(mixer.frozen() ? "message.feedback.mixer.frozen" : "message.feedback.mixer.draw_blocked"));
         return true;
     }
 

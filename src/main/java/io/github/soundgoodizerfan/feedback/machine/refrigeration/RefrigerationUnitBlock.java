@@ -46,7 +46,7 @@ public class RefrigerationUnitBlock extends Block implements EntityBlock {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof RefrigerationUnitBlockEntity unit && level instanceof ServerLevel server) {
             for (BlockPos at : unit.roomOpeningAt())
                 server.sendParticles(ParticleTypes.CLOUD, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, 3, 0.2, 0.2, 0.2, 0.01);
-            player.displayClientMessage(Component.translatable("message.feedback.cold_room", unit.roomVolume(), unit.roomOpenings()), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.cold_room", unit.roomVolume(), unit.roomOpenings()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

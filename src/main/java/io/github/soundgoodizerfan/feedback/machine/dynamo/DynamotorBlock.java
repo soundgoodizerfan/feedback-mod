@@ -88,7 +88,8 @@ public class DynamotorBlock extends Block implements EntityBlock {
             level.setBlockAndUpdate(pos, state.setValue(MODE, next));
             // The role changed (source or sink), so the run it was in is resolved again.
             ElectricPropagator.rebuildFrom(level, pos);
-            player.displayClientMessage(Component.translatable("feedback.dynamotor.mode." + next.getSerializedName()), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, state.getBlock().getName(), io.github.soundgoodizerfan.feedback.net.AimPayloads.keys("feedback.dynamotor.short.", "generator", "motor"),
+                    next.ordinal(), Component.translatable("feedback.dynamotor.mode." + next.getSerializedName()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

@@ -51,10 +51,10 @@ public class XpMeterItem extends Item implements Instrument {
     }
 
     private Component store(Instrument self, float level, float points, float ceiling) {
-        return Instruments.signed(self, Component.translatable("feedback.xp.store",
+        return Component.translatable("feedback.xp.store",
                 Instruments.format(level, self.resolution(Quantity.XP_LEVEL)),
                 Instruments.format(points, self.resolution(Quantity.EXPERIENCE)),
-                Instruments.format(ceiling, self.resolution(Quantity.EXPERIENCE))));
+                Instruments.format(ceiling, self.resolution(Quantity.EXPERIENCE)));
     }
 
     @Override
@@ -66,18 +66,17 @@ public class XpMeterItem extends Item implements Instrument {
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
             XpNetwork net = node.network();
-            Component line;
             if (node.xpStore() != null) {
-                XpStore s = node.xpStore();
-                line = store(self, s.level(), s.points(), s.maxPoints());
+                XpStore st = node.xpStore();
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, store(self, st.level(), st.points(), st.maxPoints()), Quantity.XP_LEVEL,
+                        Instruments.quantise(st.level(), self.resolution(Quantity.XP_LEVEL)));
             } else if (net != null) {
-                line = Instruments.signed(self, Component.translatable("feedback.xp.run",
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, Component.translatable("feedback.xp.run",
                         Instruments.format(net.level(), self.resolution(Quantity.XP_LEVEL)),
                         Instruments.format(net.points(), self.resolution(Quantity.EXPERIENCE)),
-                        net.flow(), net.lastLeak()));
+                        net.flow(), net.lastLeak()), Quantity.XP_LEVEL, Instruments.quantise(net.level(), self.resolution(Quantity.XP_LEVEL)));
             } else
-                line = Component.translatable("feedback.xp.none");
-            player.displayClientMessage(line, true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.read(player, context.getClickedPos(), self, Component.translatable("feedback.xp.none"));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -88,8 +87,10 @@ public class XpMeterItem extends Item implements Instrument {
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
             XpStore held = XpItems.store(player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND));
-            player.displayClientMessage(held != null ? store(self, held.level(), held.points(), held.maxPoints())
-                    : store(self, player.experienceLevel + player.experienceProgress, player.totalExperience, player.totalExperience), true);
+            float lvl = held != null ? held.level() : player.experienceLevel + player.experienceProgress;
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, self, held != null ? store(self, held.level(), held.points(), held.maxPoints())
+                    : store(self, lvl, player.totalExperience, player.totalExperience), Quantity.XP_LEVEL,
+                    Instruments.quantise(lvl, self.resolution(Quantity.XP_LEVEL)));
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
@@ -100,13 +101,14 @@ public class XpMeterItem extends Item implements Instrument {
             return InteractionResult.SUCCESS;
         Instrument self = Instruments.fitted(stack, this);
         if (target instanceof Villager villager) {
-            player.displayClientMessage(Instruments.signed(self, Component.translatable("feedback.xp.villager",
-                    villager.getVillagerData().getLevel(), villager.getVillagerXp())), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.read(player, villager, self, Component.translatable("feedback.xp.villager",
+                    villager.getVillagerData().getLevel(), villager.getVillagerXp()));
             return InteractionResult.CONSUME;
         }
         if (target instanceof Player other) {
-            player.displayClientMessage(store(self, other.experienceLevel + other.experienceProgress, other.totalExperience,
-                    other.totalExperience), true);
+            float lvl = other.experienceLevel + other.experienceProgress;
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, other, self, store(self, lvl, other.totalExperience, other.totalExperience), Quantity.XP_LEVEL,
+                    Instruments.quantise(lvl, self.resolution(Quantity.XP_LEVEL)));
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;

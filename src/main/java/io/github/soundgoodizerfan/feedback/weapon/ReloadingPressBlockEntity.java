@@ -146,7 +146,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
             return;
         var materials = MaterialTable.get().materials();
         if (!slots.get(OUTPUT).isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.feedback.press.output_full"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("message.feedback.press.output_full"));
             return;
         }
         var cas = located(materials, slots.get(CASE));
@@ -157,7 +157,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
                 || (!slots.get(CHARGE_B).isEmpty() && !fits(CHARGE_B, slots.get(CHARGE_B), materials))
                 || (!slots.get(CORE).isEmpty() && !fits(CORE, slots.get(CORE), materials))
                 || (!slots.get(PAYLOAD).isEmpty() && !fits(PAYLOAD, slots.get(PAYLOAD), materials))) {
-            player.displayClientMessage(Component.translatable("message.feedback.press.missing"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("message.feedback.press.missing"));
             return;
         }
         // Two charge slots are the blend: what is in each is seated as is, in the ratio it is in.
@@ -180,7 +180,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         }
         int n = charges.stream().mapToInt(Cartridge.Charge::count).sum();
         if (n > Cartridge.maxCharge(boreMm)) {
-            player.displayClientMessage(Component.translatable("message.feedback.press.too_much", Cartridge.maxCharge(boreMm)), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("message.feedback.press.too_much", Cartridge.maxCharge(boreMm)));
             return;
         }
         var vial = java.util.Optional.ofNullable(slots.get(PAYLOAD).get(FDataComponents.POTION_STATE.get()));
@@ -195,7 +195,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
                 : java.util.Optional.of(located(materials, slots.get(CORE)).get().id());
         Cartridge cartridge = new Cartridge(boreMm, cas.get().id(), charges, bullet.get().id(), payload, shot, shape, core, vial, seed);
         if (cartridge.load(materials).isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.feedback.press.no_blend"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("message.feedback.press.no_blend"));
             return;
         }
         ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
@@ -208,7 +208,7 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         slots.get(PAYLOAD).shrink(1);
         slots.set(OUTPUT, round);
         setChanged();
-        player.displayClientMessage(Component.translatable("message.feedback.press.seated"), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("message.feedback.press.seated"));
     }
 
     // --- Container -----------------------------------------------------------------------------

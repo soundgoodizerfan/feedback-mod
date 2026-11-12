@@ -42,8 +42,8 @@ public class ReboilerBlock extends Block implements EntityBlock {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof ReboilerBlockEntity reboiler) {
             if (!player.isShiftKeyDown())
                 reboiler.cycleReflux();
-            player.displayClientMessage(Component.translatable("message.feedback.reboiler.reflux",
-                    Component.translatable("message.feedback.reboiler.reflux." + reboiler.reflux().name().toLowerCase())), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.reboiler.reflux",
+                    Component.translatable("message.feedback.reboiler.reflux." + reboiler.reflux().name().toLowerCase())));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

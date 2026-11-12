@@ -37,6 +37,9 @@ public final class ModularConvert {
     private ModularConvert() {
     }
 
+    /** A {@code defaults} value meaning "the vanilla item's own material" (a sword's guard and pommel are cut from the same metal as its blade). */
+    public static final ResourceLocation SAME = ResourceLocation.fromNamespaceAndPath("feedback", "same");
+
     private static int cachedGeneration = -1;
     private static final Map<Item, Optional<Material.Located>> LOCATED = new HashMap<>();
 
@@ -126,6 +129,10 @@ public final class ModularConvert {
         java.util.Set<String> extras = new java.util.LinkedHashSet<>();
         if (set)
             type.extras().stream().filter(k -> type.roles().get(k).set()).forEach(extras::add);
+        type.defaults().forEach((k, v) -> {
+            if (v.equals(SAME) && k.startsWith(located.form() + ":"))
+                extras.add(k.substring(k.indexOf(':') + 1));
+        });
         Map<String, Integer> counts = new java.util.LinkedHashMap<>(ToolDesigns.counts(type, 0, extras));
         if (set && type.family() == ModularType.Family.ARMOUR)
             type.order().stream().filter(k -> type.roles().get(k).set()).forEach(k -> counts.put(k, ModularTuning.CONVERT_STUDS));
@@ -137,11 +144,15 @@ public final class ModularConvert {
             // A default keyed "<vanilla form>:<role>" (a mace's breeze-rod handle) beats the role's own. A variant named for the vanilla form (a trident, a mace) is the shape that form was; else the standard.
             PartBenchShaping.Option shape = ToolDesigns.shapes(r, types).stream()
                     .filter(o -> o.variant().name().equals(located.form())).findFirst().orElse(ToolDesigns.standard(r, types));
+            // A role that follows the vanilla material is rolled like the primary one, and falls back to its own default if the stock does not take it.
+            boolean same = SAME.equals(material);
+            if (same)
+                material = set ? ModularTuning.CRYSTAL_BODY : located.id();
             Material m = material == null ? null : materials.get(material);
             if (m == null)
                 return vanilla;
             PartBenchShaping.Option base = shape;
-            if (roll && shape != null && role.equals(type.primary())) {
+            if (roll && shape != null && (same || role.equals(type.primary()))) {
                 List<PartBenchShaping.Option> family = ToolDesigns.shapes(r, types).stream()
                         .filter(o -> o.shaping().item().equals(base.shaping().item())).toList();
                 if (!family.isEmpty())
@@ -155,6 +166,8 @@ public final class ModularConvert {
                 shape = base;
                 l = ToolDesigns.located(r, shape, material, materials);
             }
+            if (l.isEmpty() && same && type.defaults().get(role) != null)
+                l = ToolDesigns.located(r, shape, type.defaults().get(role), materials);
             if (l.isEmpty())
                 return vanilla;
             parts.add(ToolDesigns.part(role, l.get(), shape, c.getValue()));

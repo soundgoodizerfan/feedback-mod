@@ -46,7 +46,7 @@ public class MagmaHeadBlock extends Block implements EntityBlock, Rotatable {
             if (!level.isClientSide) {
                 if (player.isShiftKeyDown() && head.hasBit())
                     Block.popResource(level, pos.above(), head.takeBit());
-                player.displayClientMessage(head.describe(), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, head.describe());
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

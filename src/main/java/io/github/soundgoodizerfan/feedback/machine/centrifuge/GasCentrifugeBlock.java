@@ -95,8 +95,8 @@ public class GasCentrifugeBlock extends Block implements EntityBlock, Rotatable 
                 for (ItemStack s : out)
                     Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, s);
             else
-                player.displayClientMessage(Component.translatable("message.feedback.gas_centrifuge", centrifuge.feed(), centrifuge.acidMb(),
-                        Math.round(centrifuge.progress() * 100f / io.github.soundgoodizerfan.feedback.core.FTuning.CENTRIFUGE_BATCH_TICKS)), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.gas_centrifuge", centrifuge.feed(), centrifuge.acidMb(),
+                        Math.round(centrifuge.progress() * 100f / io.github.soundgoodizerfan.feedback.core.FTuning.CENTRIFUGE_BATCH_TICKS)));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

@@ -158,6 +158,7 @@ While you hold a gun, the bottom-right corner shows:
 - **Spare** rounds of the right size you're carrying, loose or in magazines.
 - **Barrel**: *cool*, *warm*, *hot* or ***SMOKING***.
 - Your **fire mode**.
+- A flash in the pan, a cook-off or a chain fire blinks on the ammo card.
 - *RELOADING*, *EMPTY*, *NO MAGAZINE* or *SPENT* when one of those applies.
 
 ## Reading the tooltip

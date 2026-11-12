@@ -59,8 +59,8 @@ public class ControlAssemblyBlock extends Block implements EntityBlock {
                     Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, rods.unload());
                 else {
                     rods.cycleTarget();
-                    player.displayClientMessage(Component.translatable("message.feedback.control_assembly",
-                            rods.position(), ControlAssemblyBlockEntity.IN, rods.target()), true);
+                    io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.control_assembly",
+                            rods.position(), ControlAssemblyBlockEntity.IN, rods.target()));
                 }
             }
             return InteractionResult.sidedSuccess(level.isClientSide);

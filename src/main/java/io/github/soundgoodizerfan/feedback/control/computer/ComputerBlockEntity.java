@@ -155,7 +155,7 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
                 write(drive, i);
                 return;
             }
-        player.displayClientMessage(Component.translatable("gui.feedback.computer.no_blank"), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("gui.feedback.computer.no_blank"));
     }
 
     /** Copies the program in bay {@code source} onto the blank soft medium in bay {@code target}: the Files app's drag, with the Library disk in. */
@@ -165,7 +165,7 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
         if (blank(bays.getItem(target)))
             write(source, target);
         else
-            player.displayClientMessage(Component.translatable("gui.feedback.computer.no_blank_there", String.valueOf((char) ('A' + target))), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("gui.feedback.computer.no_blank_there", String.valueOf((char) ('A' + target))));
     }
 
     /** Wipes the program from the medium in bay {@code drive}, leaving it blank to be written again. */
@@ -278,8 +278,8 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
             return;
         var refusal = core.refusalFor(bays.getItem(drive));
         if (refusal.isPresent()) {
-            player.displayClientMessage(Component.translatable("feedback.controller.card_refused",
-                    Component.translatable("feedback.programmer.error." + refusal.get())), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("feedback.controller.card_refused",
+                    Component.translatable("feedback.programmer.error." + refusal.get())));
             log("refused", "feedback.programmer.error." + refusal.get());
             return;
         }

@@ -77,7 +77,7 @@ public class CounterBlock extends Block implements EntityBlock {
             counter.keeper(player.getUUID());
             open(sp, counter, CounterMenu.KEEPER, "feedback.counter.keeper");
         } else {
-            player.displayClientMessage(counter.report(), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, counter.report());
         }
         return InteractionResult.CONSUME;
     }

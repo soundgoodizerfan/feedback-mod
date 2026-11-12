@@ -42,7 +42,7 @@ public class OscilloscopeBlock extends BaseEntityBlock {
         if (!(level.getBlockEntity(pos) instanceof OscilloscopeBlockEntity scope))
             return InteractionResult.PASS;
         if (!level.isClientSide)
-            player.displayClientMessage(scope.trace(), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, scope.trace());
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

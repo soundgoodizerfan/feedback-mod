@@ -51,7 +51,7 @@ public class TestRigBlock extends Block {
         if (kind != Kind.PENDULUM)
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         if (!level.isClientSide)
-            report(player, stack);
+            report(player, pos, stack);
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -59,7 +59,7 @@ public class TestRigBlock extends Block {
     @Override
     protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
         if (kind == Kind.POST && !level.isClientSide)
-            report(player, player.getMainHandItem());
+            report(player, pos, player.getMainHandItem());
     }
 
     /**
@@ -72,10 +72,10 @@ public class TestRigBlock extends Block {
         if (player.pick(player.blockInteractionRange(), 1f, false) instanceof BlockHitResult hit
                 && hit.getType() == net.minecraft.world.phys.HitResult.Type.BLOCK
                 && player.level().getBlockState(hit.getBlockPos()).getBlock() instanceof TestRigBlock rig && rig.kind == Kind.POST)
-            rig.report(player, player.getMainHandItem());
+            rig.report(player, hit.getBlockPos(), player.getMainHandItem());
     }
 
-    private void report(Player player, ItemStack held) {
+    private void report(Player player, BlockPos pos, ItemStack held) {
         ModularFigures f = ModularStacks.figures(held);
         Component line;
         if (f == null) {
@@ -98,6 +98,6 @@ public class TestRigBlock extends Block {
                     : Component.translatable("feedback.rig.post", Instruments.format(joules, ModularTuning.POST_JOULE_STEP),
                             Instruments.format(damage, ModularTuning.POST_DAMAGE_STEP));
         }
-        player.displayClientMessage(line, true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, line);
     }
 }

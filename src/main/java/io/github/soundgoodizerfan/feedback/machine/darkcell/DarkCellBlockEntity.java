@@ -412,7 +412,7 @@ public class DarkCellBlockEntity extends BlockEntity {
             return false;
         shield = Math.min(maxShield(), Math.max(0, shield) + hardness * FTuning.DARKCELL_REPAIR_PER_HARDNESS);
         setChanged();
-        player.displayClientMessage(report(), true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, getBlockPos(), report());
         return true;
     }
 

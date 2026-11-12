@@ -1,0 +1,8 @@
+{
+  "values": [
+    "feedback:flux_meter",
+    "feedback:data_connector",
+    "feedback:micro_core",
+    "feedback:joint_link"
+  ]
+}

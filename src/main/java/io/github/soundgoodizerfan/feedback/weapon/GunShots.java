@@ -387,7 +387,7 @@ public final class GunShots {
         if (cookOff) {
             float hp = GunHazard.cookOffHp(round.charge(), noise);
             if (shooter instanceof Player player)
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.cue(player, io.github.soundgoodizerfan.feedback.net.AimPayloads.GUN, net.minecraft.network.chat.Component.translatable("message.feedback.gun.cook_off"), 50);
             shooter.hurt(level.damageSources().explosion(null, null), hp);
         }
         chainFire(level, shooter, gun, design, noise);
@@ -436,7 +436,7 @@ public final class GunShots {
             }
             gun.set(FWeapons.GUN_DAMAGE.get(), GunHazard.damage(gun) + FTuning.GUN_CHAIN_FIRE_GUN_DAMAGE);
             if (shooter instanceof Player player)
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.chain_fire"), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.cue(player, io.github.soundgoodizerfan.feedback.net.AimPayloads.GUN, net.minecraft.network.chat.Component.translatable("message.feedback.gun.chain_fire"), 50);
             level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(),
                     net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE.value(), net.minecraft.sounds.SoundSource.PLAYERS, 0.4f, 1.8f);
             shooter.hurt(level.damageSources().explosion(null, null), GunHazard.cookOffHp(ahead.charge(), noise));

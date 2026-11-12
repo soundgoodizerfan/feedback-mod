@@ -20,7 +20,7 @@ Set kill-method blocks in the wall so they touch the inside. They work together;
 
 | Block | Harms | Does nothing to |
 | --- | --- | --- |
-| Fall Plate | anything that takes fall damage; empty hand steps the height | mobs immune to falls |
+| Fall Plate | anything that takes fall damage; empty hand steps the height, shown on a strip under the crosshair | mobs immune to falls |
 | Fire Plate | anything that burns, as hot as the heat pointed at it | mobs immune to fire |
 | Crush Head | everything, with the strength of a seated [Hammer](Hammer.md) turned by a shaft | |
 | Fume Port | mobs that breathe, with the toxicity of the gas piped in | undead and non-breathers |

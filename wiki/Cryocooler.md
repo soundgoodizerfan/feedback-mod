@@ -16,7 +16,7 @@ S is a Steel Plate, N is a [Condenser](Condenser.md) and R is a [Refrigeration U
 
 1. Place it against a Reactor. It chills the block it was placed against.
 2. Run a medium-voltage line to it. It draws **6 A**; with no power it holds nothing and the reactor warms back up.
-3. **Right-click with an empty hand** to cycle its stage. The action bar names the stage and its temperature.
+3. **Right-click with an empty hand** to cycle its stage. The card names the stage and its temperature.
 
 | Stage | The reactor settles near | Does |
 | --- | --- | --- |

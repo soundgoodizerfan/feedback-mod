@@ -22,7 +22,7 @@ P is a [Steel Plate](Mechanical_Hammer.md).
 4. **Pack a bed** if the reaction needs a catalyst: right-click with the catalyst (see [Catalysts](#catalysts)). It takes one item, and only if a reaction names it.
 5. **Take the product.** The **two output tanks** (2000 mB each) push themselves out of any side into whatever accepts them; a reaction with two fluid products fills one tank with each: a pipe, a column, a tank. A solid product pops out on top.
 
-**Right-click with an empty hand** to read it: its temperature, its pressure and the bed's activity. **Sneak-right-click with an empty hand** to take back everything in the hopper and the bed.
+**Right-click with an empty hand** to read it on the reading card: its temperature, its pressure and the bed's activity. **Sneak-right-click with an empty hand** to take back everything in the hopper and the bed.
 
 ## How a reaction runs
 

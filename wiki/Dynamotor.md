@@ -39,7 +39,7 @@ An optional **bearing** sets how much torque the rotor carries and how much fric
 
 Place it **against the end of a shaft**. That face, the shaft face, is where it reads or drives the shaft. Any other face connects to [cable](Copper_Cable.md). A [Wrench](Wrench.md) turns its facing.
 
-**Sneak-right-click with an empty hand** to switch between generator and motor.
+**Sneak-right-click with an empty hand** to switch between generator and motor; a strip under the crosshair lists both with the current one lit.
 
 It drops as the item it was built as, with its condition, temperature and water.
 

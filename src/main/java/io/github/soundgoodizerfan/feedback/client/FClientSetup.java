@@ -115,6 +115,7 @@ public class FClientSetup {
     public static void registerGuiLayers(net.neoforged.neoforge.client.event.RegisterGuiLayersEvent event) {
         GunHud.register(event);
         HudReadouts.register(event);
+        AimHud.register(event);
         ItemInfoHud.register(event);
         FeelClient.register(event);
         ParryHud.register(event);

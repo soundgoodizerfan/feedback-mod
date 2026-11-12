@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
+import io.github.soundgoodizerfan.feedback.modular.BoardTree;
 import io.github.soundgoodizerfan.feedback.modular.BuildNames;
 import io.github.soundgoodizerfan.feedback.modular.Edge;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
@@ -94,7 +95,7 @@ final class BlueprintBoard {
     }
 
     /** The smallest the board is laid out at (a host with more room passes it through {@link #resize}), and the height it starts at. */
-    static final int MIN_W = 360, MIN_H = 232, DEFAULT_H = 276;
+    static final int MIN_W = 360, MIN_H = 248, DEFAULT_H = 292;
 
     private final Host host;
     private final GuiSkin skin;
@@ -107,7 +108,7 @@ final class BlueprintBoard {
 
 
     // geometry, relative to the board's top-left; worked out from the board's size by layout()
-    private static final int MARGIN = 8, GAP = 4, BAR_H = 16, PANEL_H = 128, DRAWER_X = 8, DRAWER_PITCH = 18, MIN_DRAWER = 4;
+    private static final int MARGIN = 8, GAP = 4, BAR_H = 16, PANEL_H = 144, DRAWER_X = 8, DRAWER_PITCH = 18, MIN_DRAWER = 4;
     /** The board's size now. */
     private int width = MIN_W, height = DEFAULT_H;
     private int drawerSlots = 12;
@@ -797,7 +798,7 @@ final class BlueprintBoard {
                 return Optional.empty();
             ModularDesign.Part made = ToolDesigns.part(role, c.get(), shapeAt(role, si), counts.get(role));
             Map<String, Float> axes = new HashMap<>();
-            for (String name : t.roles().get(role).axes().keySet())
+            for (String name : t.roles().get(role).axesFor(made).keySet())
                 axes.put(name, axisValue(role, name, made));
             parts.add(axes.isEmpty() ? made : made.withMeasures(made.measures().withAxes(axes)));
         }
@@ -811,7 +812,10 @@ final class BlueprintBoard {
             return List.of();
         ModularType.Role r = t.roles().get(role);
         PartBenchShaping.Option o = shapeOf(role);
-        return r.axes().entrySet().stream().sorted(Map.Entry.comparingByKey())
+        // A hafted face carries the axes of the head kind drawn (edge length, head size), not the plan role's own.
+        Map<String, ModularType.Axis> axes = o == null ? r.axes()
+                : r.axesFor(new ModularDesign.Part(role, null, "", 1, o.shaping().item().getPath(), o.variant().name(), 0));
+        return axes.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .filter(e -> e.getValue().when().isEmpty()
                         || (o != null && o.variant().params().getOrDefault(e.getValue().when(), 0f) >= e.getValue().atLeast()))
                 .toList();
@@ -1037,6 +1041,7 @@ final class BlueprintBoard {
             if (j.size() == 2 && (!attach || parents.containsKey(j.get(0)))) // a part the pattern lays is joined by the pattern, not by a line across it
                 link(ls, j.get(0), j.get(1));
         links = List.copyOf(ls);
+        nodes = tidy(nodes, links, parents);
         boundsX0 = boundsY0 = Float.MAX_VALUE;
         boundsX1 = boundsY1 = -Float.MAX_VALUE;
         for (Node n : nodes) {
@@ -1047,6 +1052,55 @@ final class BlueprintBoard {
         }
         if (nodes.isEmpty())
             boundsX0 = boundsY0 = boundsX1 = boundsY1 = 0;
+    }
+
+    /**
+     * Re-seat every node on the tree grid ({@link BoardTree}) so none can overlap: the links are the tree's edges, and an empty slot
+     * hangs off the part it fits (the board's parent) or else the nearest drawn part. The seed places only decide left from right.
+     */
+    private static List<Node> tidy(List<Node> in, List<Link> links, Map<String, String> parents) {
+        int n = in.size();
+        if (n == 0)
+            return in;
+        float[] sx = new float[n], sy = new float[n];
+        int[] hint = new int[n];
+        List<int[]> edges = new ArrayList<>();
+        for (Link l : links)
+            edges.add(new int[]{l.a, l.b});
+        for (int i = 0; i < n; i++) {
+            Node a = in.get(i);
+            sx[i] = a.x;
+            sy[i] = a.y;
+            hint[i] = -1;
+        }
+        for (int i = 0; i < n; i++) {
+            Node a = in.get(i);
+            if (!a.ghost)
+                continue;
+            String parent = parents.get(a.role);
+            float best = Float.MAX_VALUE;
+            for (int j = 0; j < n; j++) {
+                Node b = in.get(j);
+                if (b.ghost)
+                    continue;
+                if (b.role.equals(parent)) {
+                    hint[i] = j;
+                    break;
+                }
+                float d = (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+                if (d < best) {
+                    best = d;
+                    hint[i] = j;
+                }
+            }
+        }
+        float[][] at = BoardTree.place(n, edges, hint, sx, sy);
+        List<Node> out = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            Node a = in.get(i);
+            out.add(new Node(a.key, a.role, a.ghost, at[i][0], at[i][1], a.icon, a.faint));
+        }
+        return List.copyOf(out);
     }
 
     /** Where an attachment sits, in canvas units: on a ring round its parent, on one side of the row, its slot fixed by its place among its siblings. */
@@ -1277,7 +1331,15 @@ final class BlueprintBoard {
         if (n < 2)
             return 0;
         int rows = mostVariants(role) > thumbsPerRow() ? THUMB_PITCH : 0;
-        return (kindRow(role) ? THUMB_PITCH : 0) + THUMB + 4 + rows;
+        return (kindRow(role) ? TAB_H + 3 : 0) + THUMB + 4 + rows;
+    }
+
+    /** Height of a head-kind tab standing on the variant box. */
+    private static final int TAB_H = 20;
+
+    /** Where the variant thumbnails start: under the kind tabs and the box's top rim when there are kinds to choose. */
+    private int variantsTop(String role) {
+        return shapesTop(role) + (kindRow(role) ? TAB_H + 3 : 0);
     }
 
     private int shapesTop(String role) {
@@ -1796,8 +1858,8 @@ final class BlueprintBoard {
             int n = shapes(role).size();
             if (n > 1) {
                 int ty = shapesTop(role), per = thumbsPerRow();
-                int vy = ty + (kindRow(role) ? THUMB_PITCH : 0);
-                if (kindRow(role) && in(mx, my, sx, ty, per * THUMB_PITCH, THUMB_PITCH)) {
+                int vy = variantsTop(role);
+                if (kindRow(role) && in(mx, my, sx, ty, per * THUMB_PITCH, TAB_H)) {
                     int i = kindScroll + (mx - sx) / THUMB_PITCH;
                     hoverKind = i < kinds(role).size() ? i : -1;
                 } else if (in(mx, my, sx, vy, per * THUMB_PITCH, shapesHeight(role) - (vy - ty))) {
@@ -2115,40 +2177,84 @@ final class BlueprintBoard {
         if (options.size() > 1) {
             int per = thumbsPerRow(), ty = shapesTop(role), cur = shapeIndex(role);
             int rgb = now.map(l -> MaterialColors.of(l.id())).orElse(0x808080);
-            int vy = ty;
+            int vy = variantsTop(role);
             if (kindRow(role)) {
                 List<net.minecraft.resources.ResourceLocation> ks = kinds(role);
                 int sel = kindIndex(role);
-                // Keep the drawn kind in view, then draw a tile per kind: the silhouette of its standard shape.
+                // Keep the drawn kind in view; its variants sit in a box the kind tabs stand on, the drawn kind's tab joined to it.
                 if (sel < kindScroll)
                     kindScroll = sel;
                 else if (sel >= kindScroll + per)
                     kindScroll = sel - per + 1;
                 kindScroll = Mth.clamp(kindScroll, 0, Math.max(0, ks.size() - per));
+                int rowsShown = Math.min(2, (variants(role).size() + per - 1) / per);
+                skin.plaque(g, sx - 2, ty + TAB_H, per * THUMB_PITCH + 2, 3 + Math.max(1, rowsShown) * THUMB_PITCH);
                 for (int i = 0; i < per && kindScroll + i < ks.size(); i++) {
                     int k = kindScroll + i, px = sx + i * THUMB_PITCH;
-                    skin.plaque(g, px, ty, THUMB, THUMB);
-                    skin.row(g, px, ty, THUMB, THUMB, k == sel, k == hoverKind);
-                    for (PartBenchShaping.Option o : options)
-                        if (o.shaping().item().equals(ks.get(k))) {
-                            thumb(g, o, px, ty, rgb);
-                            break;
-                        }
+                    skin.plaqueTab(g, px, ty, THUMB, TAB_H, k == sel, k == hoverKind);
+                    if (!headIcon(g, ks.get(k), "", px + THUMB / 2, ty + TAB_H / 2 + (k == sel ? 0 : 1), rgb))
+                        for (PartBenchShaping.Option o : options)
+                            if (o.shaping().item().equals(ks.get(k))) {
+                                thumb(g, o, px, ty - 1, rgb);
+                                break;
+                            }
                 }
                 if (kindScroll > 0)
-                    g.drawString(font, "<", sx - 3, ty + 7, skin.dim(), false);
+                    g.drawString(font, "<", sx - 3, ty + 6, skin.dim(), false);
                 if (kindScroll + per < ks.size())
-                    g.drawString(font, ">", sx + per * THUMB_PITCH - 3, ty + 7, skin.dim(), false);
-                vy = ty + THUMB_PITCH;
+                    g.drawString(font, ">", sx + per * THUMB_PITCH - 3, ty + 6, skin.dim(), false);
             }
             List<Integer> vs = variants(role);
             for (int j = 0; j < vs.size() && j < per * 2; j++) {
                 int i = vs.get(j), px = sx + j % per * THUMB_PITCH, py = vy + j / per * THUMB_PITCH;
                 skin.plaque(g, px, py, THUMB, THUMB);
                 skin.row(g, px, py, THUMB, THUMB, i == cur, i == hoverShape);
-                thumb(g, options.get(i), px, py, rgb);
+                PartBenchShaping.Option vo = options.get(i);
+                if (!kindRow(role) || !headIcon(g, vo.shaping().item(), vo.variant().name(), px + THUMB / 2, py + THUMB / 2, rgb))
+                    thumb(g, vo, px, py, rgb);
             }
         }
+    }
+
+    /**
+     * A head kind's own layer sprites (the variant's if it has files, else the standard head), tinted by the material and centred on
+     * (cx, cy), as the tool draws it; false when the kind has no layer files, so the caller falls back to the cell thumbnail.
+     */
+    private boolean headIcon(GuiGraphics g, net.minecraft.resources.ResourceLocation kind, String variant, int cx, int cy, int rgb) {
+        Optional<String> file = io.github.soundgoodizerfan.feedback.modular.HaftedLayers.kindFile(kind.getPath());
+        if (file.isEmpty())
+            return false;
+        var atlas = net.minecraft.client.Minecraft.getInstance().getModelManager().getAtlas(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS);
+        List<net.minecraft.client.renderer.texture.TextureAtlasSprite> cuts = new ArrayList<>(3);
+        for (String stem : variant.isEmpty() ? List.of(file.get()) : List.of(file.get() + "_" + variant, file.get())) {
+            for (String cut : List.of("_back", "_mid", "_front")) {
+                var sp = atlas.getSprite(io.github.soundgoodizerfan.feedback.Feedback.id("item/hafted/head_" + stem + cut));
+                if (!sp.contents().name().equals(net.minecraft.client.renderer.texture.MissingTextureAtlasSprite.getLocation()))
+                    cuts.add(sp);
+            }
+            if (!cuts.isEmpty())
+                break;
+        }
+        if (cuts.isEmpty())
+            return false;
+        int x0 = 16, y0 = 16, x1 = -1, y1 = -1;
+        for (var sp : cuts)
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++)
+                    if (!sp.contents().isTransparent(0, x, y)) {
+                        x0 = Math.min(x0, x);
+                        y0 = Math.min(y0, y);
+                        x1 = Math.max(x1, x);
+                        y1 = Math.max(y1, y);
+                    }
+        if (x1 < 0)
+            return false;
+        int ox = cx - (x0 + x1 + 1) / 2, oy = cy - (y0 + y1 + 1) / 2;
+        g.setColor((rgb >> 16 & 255) / 255f, (rgb >> 8 & 255) / 255f, (rgb & 255) / 255f, 1f);
+        for (var sp : cuts)
+            g.blit(ox, oy, 0, 16, 16, sp);
+        g.setColor(1f, 1f, 1f, 1f);
+        return true;
     }
 
     /** A shape's thumbnail: one square a cell of stock, as even a grid as it goes, and a mark if it is forged. */

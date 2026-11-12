@@ -15,7 +15,7 @@ C is a Small Cog, G is a [Gearbox](Cogs.md#gearbox) and S is a [Shaft](Shaft.md)
 
 Place it against the shaft that drives it: the input is the face you placed it against. The two axles come out on either side, across the way you look. It works as a full-size block and as a voxel of a [micro build](Micro_Core.md).
 
-**Sneak-click** it to change the mode. A message names the mode.
+**Sneak-click** it to change the mode. A strip under the crosshair lists open, limited slip and locked with the current one lit.
 
 | Mode | The axles |
 | --- | --- |

@@ -371,7 +371,7 @@ public final class GunClient {
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 0.8f, 1.2f, false);
             Vec3 pan = player.getEyePosition().add(player.getLookAngle().scale(0.5));
             mc.level.addParticle(ParticleTypes.SMOKE, pan.x, pan.y, pan.z, 0, 0.02, 0);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.feedback.gun.flash_pan"), true);
+            GunHud.cue(net.minecraft.network.chat.Component.translatable("message.feedback.gun.flash_pan"), 40);
             io.github.soundgoodizerfan.feedback.client.gun.GunMotion.shot(off, f.cycleMs(), 0.5f);
             return;
         }

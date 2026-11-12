@@ -75,7 +75,7 @@ public class JunctionBlock extends TubeBlock {
                             : Component.translatable("color.minecraft." + colour.getName()),
                     d.get3DDataValue() == j.returnFace() ? "*" : "")).append(" ");
         }
-        player.displayClientMessage(out, true);
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, j.getBlockPos(), out);
     }
 
     @Nullable

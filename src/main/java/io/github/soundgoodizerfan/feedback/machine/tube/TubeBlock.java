@@ -138,8 +138,8 @@ public class TubeBlock extends Block implements EntityBlock {
                                                BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof TubeBlockEntity tube && tube.network() != null) {
             var net = tube.network();
-            player.displayClientMessage(Component.translatable("message.feedback.tube.run", net.members.size(),
-                    net.ledger.getFluidAmount(), net.volume(), Math.round(net.pressure().value() * 10f) / 10f), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.tube.run", net.members.size(),
+                    net.ledger.getFluidAmount(), net.volume(), Math.round(net.pressure().value() * 10f) / 10f));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

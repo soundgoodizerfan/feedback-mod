@@ -140,8 +140,8 @@ public class StockpotBlock extends BaseEntityBlock {
                 player.displayClientMessage(Component.translatable("feedback.stockpot.empty"), true);
             else {
                 String doneness = pot.charred() >= 0.5f ? "charred" : pot.cook() >= 1f ? "done" : "raw";
-                player.displayClientMessage(Component.translatable("feedback.stockpot.status", pot.servings(),
-                        Component.translatable("tooltip.feedback.food." + doneness)), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.stockpot.status", pot.servings(),
+                        Component.translatable("tooltip.feedback.food." + doneness)));
             }
         }
         return InteractionResult.CONSUME;

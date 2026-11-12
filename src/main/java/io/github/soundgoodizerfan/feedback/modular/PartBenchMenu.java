@@ -89,13 +89,13 @@ public class PartBenchMenu extends AbstractContainerMenu {
     public static final int MAX_AIM = 4;
 
     /** The bench: wide, a fan above and the inventory below; the tool slots in a column on the right. */
-    public static final int W = 360, H = 262, INV_X = 99, INV_Y = 180;
+    public static final int W = 360, H = 272, INV_X = 99, INV_Y = 180;
     /** The slot the work sits in, at the middle of the fan's canvas (item position). */
     public static final int CENTRE_X = 152, CENTRE_Y = 86;
     public static final int HAMMER_X = 326, HAMMER_Y = 20, STOCK_X = 326, STOCK_Y = 50, STOCK1_Y = 70, PLAN_X = 326, PLAN_Y = 96,
             OUT_X = 326, OUT_Y = 152, TRIM_X = 108, TRIM_GAP = 44;
     /** The Blueprint tab's paper slot and the height its board gets: the board fills the bench above the hotbar's row. */
-    public static final int PAPER_X = 294, PAPER_Y = INV_Y + 58, BOARD_H = INV_Y + 58;
+    public static final int PAPER_X = 294, PAPER_Y = INV_Y + 72, BOARD_H = INV_Y + 68;
 
     private final Container table;
     private final SimpleContainer output = new SimpleContainer(1);
@@ -981,12 +981,12 @@ public class PartBenchMenu extends AbstractContainerMenu {
                 break;
             }
         if (file.isEmpty()) {
-            server.displayClientMessage(Component.translatable("gui.feedback.bench.file.no_file"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(server, Component.translatable("gui.feedback.bench.file.no_file"));
             return;
         }
         Filing.Stroke stroke = Filing.stroke(centreStack(), index, types(level), ClientMaterials.on(level));
         if (!stroke.ok()) {
-            server.displayClientMessage(Component.translatable("gui.feedback.bench.file." + stroke.refusal()), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(server, Component.translatable("gui.feedback.bench.file." + stroke.refusal()));
             return;
         }
         table.setItem(PartBenchBlockEntity.TOOL, stroke.part());

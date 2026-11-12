@@ -46,9 +46,9 @@ public class PressureVesselBlock extends Block implements EntityBlock {
                 ItemStack out = vessel.takeJar();
                 if (!player.getInventory().add(out))
                     player.drop(out, false);
-                player.displayClientMessage(status(vessel), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, status(vessel));
             } else
-                player.displayClientMessage(Units.figure(vessel.getPressure()), true);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Units.figure(vessel.getPressure()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -61,7 +61,7 @@ public class PressureVesselBlock extends Block implements EntityBlock {
         if (!level.isClientSide) {
             if (vessel.addJar(held.copyWithCount(1)) && !player.getAbilities().instabuild)
                 held.shrink(1);
-            player.displayClientMessage(status(vessel), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, status(vessel));
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }

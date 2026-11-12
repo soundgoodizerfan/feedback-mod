@@ -24,7 +24,7 @@ Every landed blow pays the pool of the weapon's strongest suit (the words on its
 
 **Repeats pay less.** Each award is 60% of the previous one from the same target (or attacker), and one repeat is forgotten every 10 seconds. A dummy stops paying; a fresh enemy pays in full. Aid, hazard and meal payouts stop entirely once about two recent ones for the same ally, hazard or food are unforgotten, so standing in a hazard or repeating one food earns nothing. Both hands share the same record for a target, so striking one dummy with two weapons does not pay twice over.
 
-**Sparks and a chime.** Each payout plays a soft chime that only you hear, pitched differently for each tree, and throws a burst of dust sparks off you that nearby players see. The sparks take the tree's color: Anchor blue, Brute red, Chaos pink, Observation teal, Onslaught orange, Proficiency yellow, Veil violet. A payout of zero (a fully diminished repeat) gives neither.
+**A chime and a card.** Each payout plays a soft chime that only you hear, pitched differently for each tree, and raises a small card above your hotbar in the tree's color: the tree's name, the points gained since it appeared, your total, and a bar of how close you are to the cheapest skill in that tree you do not own yet. The card leaves a few seconds after the last payout. The colors: Anchor blue, Brute red, Chaos pink, Observation teal, Onslaught orange, Proficiency yellow, Veil violet. A killing blow that paid also sends one small wisp in that color from the fallen creature to you; only you see it, and the "Skill kill wisp" client setting turns it off at once (Reduce motion also hides it). A payout of zero (a fully diminished repeat) gives nothing.
 
 ## Techniques, keys and stamina
 

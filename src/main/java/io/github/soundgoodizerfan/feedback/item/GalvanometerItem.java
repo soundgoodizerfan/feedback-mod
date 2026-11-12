@@ -60,8 +60,11 @@ public class GalvanometerItem extends Item implements Instrument {
         if (player == null || !(level.getBlockEntity(context.getClickedPos()) instanceof ElectricNode node))
             return InteractionResult.PASS;
 
-        if (!level.isClientSide)
-            player.displayClientMessage(read(Instruments.fitted(stack, this), node), true);
+        if (!level.isClientSide) {
+            Instrument self = Instruments.fitted(stack, this);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, read(self, node), Quantity.CURRENT,
+                    Instruments.quantise(node.getAmps(), self.resolution(Quantity.CURRENT)));
+        }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
@@ -69,10 +72,9 @@ public class GalvanometerItem extends Item implements Instrument {
         float delivered = Instruments.quantise(node.getAmps(), self.resolution(Quantity.CURRENT));
         if (node.role() == ElectricMember.Role.SINK) {
             float wanted = Instruments.quantise(node.getWantedAmps(), self.resolution(Quantity.CURRENT));
-            return Instruments.signed(self, Component.translatable("feedback.readout.amps.of",
-                    format(delivered), format(wanted)));
+            return Component.translatable("feedback.readout.amps.of", format(delivered), format(wanted));
         }
-        return Instruments.signed(self, Component.translatable("feedback.readout.amps", format(delivered)));
+        return Component.translatable("feedback.readout.amps", format(delivered));
     }
 
     private static String format(float amps) {

@@ -35,9 +35,9 @@ public class TrayBlock extends Block implements EntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
                                                BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof TrayBlockEntity tray)
-            player.displayClientMessage(Component.translatable("message.feedback.tray", Math.round(tray.condition() * 100f),
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.tray", Math.round(tray.condition() * 100f),
                     tray.getDraw().getFluid().isEmpty() ? Component.translatable("message.feedback.tray.empty")
-                            : tray.getDraw().getFluid().getHoverName()), true);
+                            : tray.getDraw().getFluid().getHoverName()));
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

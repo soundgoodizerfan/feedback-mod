@@ -64,13 +64,13 @@ public class WhiskerBlock extends Block implements EntityBlock {
             if (!player.getInventory().add(out))
                 player.drop(out, false);
         } else if (!whisker.hasCrystal()) {
-            player.displayClientMessage(Component.translatable("feedback.whisker.no_crystal"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.whisker.no_crystal"));
         } else {
             whisker.step();
             // Scalars are fine inside a minigame: the band is the true figure plus a little noise, so a spot is judged by sampling it again.
             float heard = whisker.sensitivity() + (level.random.nextFloat() - 0.5f) * whisker.bandSpread();
             String band = whisker.spotFused() ? "burnt" : heard < 0.1f ? "dead" : heard < 0.4f ? "faint" : heard < 0.7f ? "clear" : "sharp";
-            player.displayClientMessage(Component.translatable("feedback.whisker." + band), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.whisker." + band));
         }
         return InteractionResult.CONSUME;
     }

@@ -55,12 +55,13 @@ public final class MicroLinks {
                 return;
             }
             PENDING.put(player.getUUID(), new Pending(here, index));
-            player.displayClientMessage(Component.translatable("message.feedback.link.selected"), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.linkFrom(player, null, state.getBlock().getName());
             return;
         }
         String result = first.cell().dimension() == level.dimension() && level.isLoaded(first.cell().pos())
                 && level.getBlockEntity(first.cell().pos()) instanceof MicroCellBlockEntity joint
                 ? link(level, joint, first.index(), cell, index) : "failed";
+        io.github.soundgoodizerfan.feedback.net.AimPayloads.linkDone(player);
         player.displayClientMessage(Component.translatable("message.feedback.link." + result), true);
     }
 

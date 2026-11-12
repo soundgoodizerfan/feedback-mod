@@ -55,9 +55,9 @@ public class ReactorBlock extends Block implements EntityBlock {
                 player.getInventory().placeItemBackInInventory(reactor.takeBed());
             }
             else
-                player.displayClientMessage(Component.translatable("message.feedback.reactor",
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.reactor",
                         Math.round(reactor.getTemperature().value()), Math.round(reactor.getPressure().value()),
-                        reactor.hasBed() ? Math.round(reactor.activity() * 100f) : 0), true);
+                        reactor.hasBed() ? Math.round(reactor.activity() * 100f) : 0));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

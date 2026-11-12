@@ -62,8 +62,8 @@ public class ElectroscopeItem extends Item implements Instrument {
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
             float shown = Instruments.quantise(node.getVolts(), self.resolution(Quantity.VOLTAGE));
-            player.displayClientMessage(Instruments.signed(self, Component.translatable("feedback.readout.volts",
-                    String.format(java.util.Locale.ROOT, "%.2f", shown))), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, Component.translatable("feedback.readout.volts",
+                    String.format(java.util.Locale.ROOT, "%.2f", shown)), Quantity.VOLTAGE, shown);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

@@ -45,7 +45,7 @@ public class DarkCellBlock extends Block implements EntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof DarkCellBlockEntity cell)
-            player.displayClientMessage(cell.report(), true);
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, cell.report());
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

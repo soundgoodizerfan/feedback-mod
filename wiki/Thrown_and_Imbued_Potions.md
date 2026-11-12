@@ -23,7 +23,7 @@ Where a potion is not listed here, thrown it gives its drunk effect to every bod
 | Springheel | Every body in reach is launched upward once, and the next landing lets only 25% of the fall damage through. |
 | Steady hand, fine palate, assay | Players only. |
 
-Fine palate or assay thrown over dropped laced food reveals it to the thrower on the action bar: fine palate says the food tastes laced, assay names the potion. See [Brewing Stand](Brewing_Stand.md#lacing-food).
+Fine palate or assay thrown over dropped laced food reveals it to the thrower on a message: fine palate says the food tastes laced, assay names the potion. See [Brewing Stand](Brewing_Stand.md#lacing-food).
 
 ## Imbuing
 
