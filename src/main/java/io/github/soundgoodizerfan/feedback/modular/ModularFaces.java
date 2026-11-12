@@ -290,6 +290,47 @@ public final class ModularFaces {
         return null;
     }
 
+    /**
+     * Mending a hafted tool: stock of a face's own material puts that face's life back, a cell of it giving back its share of the
+     * part's cells. The most worn face that takes the stock is the one mended; a face that was spent works again once it has life.
+     * Empty when nothing is worn or no face is made of the stock.
+     */
+    public static Optional<ItemStack> mend(ItemStack tool, List<ItemStack> stock, io.github.soundgoodizerfan.feedback.process.Material.Located what,
+                                           ModularType type) {
+        ModularDesign d = ModularStacks.design(tool);
+        if (d == null)
+            return Optional.empty();
+        Part best = null;
+        float bestWorn = 0f;
+        for (Part p : faces(d)) {
+            ModularType.Role role = type.roles().get(p.role());
+            float worn = p.measures().state(WORN, 0f);
+            if (role != null && p.material().equals(what.id()) && role.acceptsStock(what) && worn > bestWorn) {
+                best = p;
+                bestWorn = worn;
+            }
+        }
+        if (best == null)
+            return Optional.empty();
+        float cells = 0;
+        for (ItemStack o : stock)
+            cells += o.getCount() * (float) io.github.soundgoodizerfan.feedback.registry.FormItems.volume(what.form()) / ModularTuning.CELL_MB;
+        float back = cells / Math.max(1, best.count());
+        float worn = Math.max(0f, bestWorn - back);
+        Measures m = best.measures().withState(WORN, worn).withState(SPENT, 0f);
+        ItemStack out = tool.copy();
+        out.setCount(1);
+        ModularDesign next = d.withPart(new Part(best.role(), best.material(), best.form(), best.count(), best.kind(), best.variant(), best.flaw(), m));
+        out.set(FModular.DESIGN.get(), next);
+        float worst = 0f;
+        for (Part p : faces(next))
+            worst = Math.max(worst, spent(p) ? 1f : p.measures().state(WORN, 0f));
+        int max = Math.max(1, out.getMaxDamage());
+        out.setDamageValue(allSpent(next) ? max - 1 : Math.min(max - 2, Math.round(worst * max)));
+        ModularStacks.rebake(out);
+        return Optional.of(out);
+    }
+
     // --- wear, face by face ---------------------------------------------------------------------
 
     /** Names the face the next durability point lands on: the first live face that digs {@code state}, else the front one. */

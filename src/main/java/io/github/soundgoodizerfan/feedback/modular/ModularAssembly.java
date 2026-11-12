@@ -149,10 +149,7 @@ public final class ModularAssembly {
                 continue;
             ModularDesign design = best.design;
             if (type.family() == ModularType.Family.HAFTED) {
-                // A haft-less build is a bench tool's head (a machine takes it), nothing else; a gated face makes the build gated and complex.
-                if (design.part("S") == null && !ModularFaces.faces(design).stream().allMatch(p -> ModularFaces.kind(p, type)
-                        .filter(h -> h.combat() == ModularType.Family.HAND).isPresent()))
-                    continue;
+                // A gated face makes the build gated and complex.
                 String school = ModularFaces.school(design, type);
                 if (!school.isEmpty() && !may.test(type.withGate(school)))
                     continue;
@@ -262,7 +259,7 @@ public final class ModularAssembly {
         ItemStack stack = slots.get(used.get(i));
         for (int r = 0; r < letters.size(); r++) {
             ModularType.Role role = type.roles().get(letters.get(r));
-            if (taken[r] || role == null || !fits(role, what.get(i), stack, counts.get(letters.get(r))) || !faceOrder(letters.get(r), chosen, i))
+            if (taken[r] || role == null || !fits(role, what.get(i), stack, counts.get(letters.get(r))) || (type.family() == ModularType.Family.HAFTED && !faceOrder(letters.get(r), chosen, i)))
                 continue;
             taken[r] = true;
             chosen[i] = letters.get(r);

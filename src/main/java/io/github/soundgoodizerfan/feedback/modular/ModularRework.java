@@ -77,8 +77,14 @@ public final class ModularRework {
         ItemStack out = tool.copy();
         out.setCount(1);
         Part wearing = design.part(type.wearRole());
+        // A hafted tool mends face by face: stock of a face's own material puts that face's life back.
+        if (mode.mend && type.family() == ModularType.Family.HAFTED) {
+            Optional<ItemStack> mended = ModularFaces.mend(tool, stock, what, type);
+            if (mended.isPresent())
+                return mended;
+        }
         // Repair: the stuff the wearing part is made of puts its share of the durability back.
-        if (mode.mend && wearing != null && wearing.material().equals(what.id()) && type.roles().get(type.wearRole()).acceptsStock(what)) {
+        if (mode.mend && type.family() != ModularType.Family.HAFTED && wearing != null && wearing.material().equals(what.id()) && type.roles().get(type.wearRole()).acceptsStock(what)) {
             if (tool.getDamageValue() == 0)
                 return Optional.empty();
             int share = tool.getMaxDamage() / Math.max(1, wearing.count());

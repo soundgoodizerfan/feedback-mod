@@ -42,8 +42,7 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FModular.HAFTED_TOOL.get());
-        io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
+        ItemStack hammer = hammer(level);
         ItemStack workpiece = new ItemStack(Items.COPPER_INGOT);
 
         for (int blow = 1; blow <= 4; blow++) {
@@ -77,8 +76,7 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FModular.HAFTED_TOOL.get());
-        io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
+        ItemStack hammer = hammer(level);
         ItemStack workpiece = new ItemStack(Items.COPPER_INGOT);
 
         for (int blow = 1; blow <= 7; blow++) {
@@ -106,8 +104,7 @@ public class HandDeformationGameTests {
         Level level = helper.getLevel();
         HandDeformationRecipe recipe = new HandDeformationRecipe(CraftingBookCategory.MISC);
 
-        ItemStack hammer = new ItemStack(FModular.HAFTED_TOOL.get());
-        io.github.soundgoodizerfan.feedback.modular.ModularStacks.tick(hammer, level);
+        ItemStack hammer = hammer(level);
         ItemStack ingotA = new ItemStack(Items.COPPER_INGOT);
         ItemStack ingotB = new ItemStack(Items.COPPER_INGOT);
 
@@ -115,5 +112,15 @@ public class HandDeformationGameTests {
         helper.assertTrue(!recipe.matches(input, level),
                 "a hammer with two workpieces should not offer a craft");
         helper.succeed();
+    }
+
+    /** The starter hand hammer: a hafted tool whose one face is a hammer head. */
+    private static ItemStack hammer(Level level) {
+        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.on(level);
+        var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(level);
+        return io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(io.github.soundgoodizerfan.feedback.Feedback.id("hand_hammer"), types, materials)
+                .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.ModularStacks.blank(d.type())
+                        .filter(st -> io.github.soundgoodizerfan.feedback.modular.ModularStacks.assemble(st, d, materials, types)))
+                .orElse(ItemStack.EMPTY);
     }
 }

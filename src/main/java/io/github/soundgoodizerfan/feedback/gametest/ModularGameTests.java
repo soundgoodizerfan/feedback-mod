@@ -138,7 +138,8 @@ public class ModularGameTests {
     @GameTest(template = "empty")
     public static void mendingAndBreaking(GameTestHelper helper) {
         ItemStack pick = pickaxe(helper, Items.IRON_INGOT);
-        pick.setDamageValue(pick.getMaxDamage() - 1);
+        // A hafted tool is broken when every face is spent: wear the one face right out.
+        io.github.soundgoodizerfan.feedback.modular.ModularFaces.wear(pick, pick.getMaxDamage() * 2);
         helper.assertTrue(ModularStacks.broken(pick), "one point from the limit is broken");
         helper.assertTrue(ModularStacks.cap(pick, 5) == 0, "a broken item takes no further damage");
         ItemStack ingot = new ItemStack(Items.IRON_INGOT);
