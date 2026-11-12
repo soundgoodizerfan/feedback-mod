@@ -65,13 +65,18 @@ public final class GuiShot {
     private enum Phase { TITLE, WORLD, IDLE, OPEN, SETTLE, ACTIONS, VARIANT, VARWAIT, RESCALE, CAPTURE, CLOSE, DEAD }
 
     /** One picture to take: which tab (a menu button to click first, or -1) and the file suffix it gets. */
-    private record Variant(String suffix, int button) {
+    private record Variant(String suffix, int button, boolean scroll) {
+        Variant(String suffix, int button) {
+            this(suffix, button, false);
+        }
     }
 
     private static Phase phase = Phase.TITLE;
     private static int ticks, mark, shotStart, activity;
     private static boolean opened, readyWritten;
-    private static int nextAction, variantIndex, scaleIndex, originalScale = -1;
+    private static int nextAction, variantIndex, scaleIndex, originalScale = -1, answerMark, pagesWithOverlaps;
+    private static boolean clientTried;
+    private static final java.util.Set<String> SEEN = new java.util.HashSet<>();
     private static final Deque<Map<String, String>> QUEUE = new ArrayDeque<>();
     private static Map<String, String> shot;
     private static File request;
@@ -201,6 +206,8 @@ public final class GuiShot {
                 Variant v = variants.get(variantIndex);
                 if (v.button() >= 0 && mc.screen instanceof AbstractContainerScreen<?> s)
                     mc.gameMode.handleInventoryButtonClick(s.getMenu().containerId, v.button());
+                if (v.scroll() && mc.screen != null)
+                    mc.screen.mouseScrolled(mc.getWindow().getGuiScaledWidth() / 2.0, mc.getWindow().getGuiScaledHeight() / 2.0, 0, -1);
                 mark = ticks;
                 phase = Phase.VARWAIT;
             }
@@ -282,6 +289,23 @@ public final class GuiShot {
     /** The next shot of the request, or the answer when there are no more. */
     private static void next(Minecraft mc) {
         shot = QUEUE.poll();
+        if (shot != null && shot.containsKey("jei") && shot.get("jei").endsWith("*")) {
+            // jei=feedback:* (or just *): one shot per recipe category of that namespace, in the order JEI lists them.
+            String ns = shot.get("jei").replace("*", "").replace(":", "");
+            Map<String, String> template = shot;
+            List<Map<String, String>> expanded = new ArrayList<>();
+            for (String uid : io.github.soundgoodizerfan.feedback.compat.jei.JeiShots.categories(ns)) {
+                Map<String, String> one = new LinkedHashMap<>(template);
+                one.put("jei", uid);
+                one.put("out", template.get("out") + "_" + uid.replace(':', '_'));
+                expanded.add(one);
+            }
+            if (expanded.isEmpty())
+                answer.add("FAILED " + shot.get("jei") + ": JEI has no such categories (is it up?)");
+            for (int i = expanded.size() - 1; i >= 0; i--)
+                QUEUE.addFirst(expanded.get(i));
+            shot = QUEUE.poll();
+        }
         if (shot == null) {
             if (originalScale >= 0) {
                 mc.options.guiScale().set(originalScale);
@@ -298,6 +322,9 @@ public final class GuiShot {
             return;
         }
         opened = false;
+        clientTried = false;
+        SEEN.clear();
+        pagesWithOverlaps = 0;
         shotStart = ticks;
         phase = Phase.OPEN;
         mark = ticks;
@@ -311,6 +338,12 @@ public final class GuiShot {
 
     /** Server side: run the commands, put the block in front of the player and use it, so the real menu opens and syncs. */
     private static void open(Minecraft mc) {
+        if (!opened && shot.containsKey("jei")) {
+            opened = true;
+            if (!io.github.soundgoodizerfan.feedback.compat.jei.JeiShots.open(shot.get("jei")))
+                fail(mc, "JEI has no category " + shot.get("jei"));
+            return;
+        }
         if (!opened) {
             opened = true;
             var server = mc.getSingleplayerServer();
@@ -333,8 +366,13 @@ public final class GuiShot {
         if (mc.screen != null && ticks - mark > 3) {
             phase = Phase.SETTLE;
             mark = ticks;
+        } else if (!clientTried && mc.screen == null && !shot.containsKey("jei") && ticks - mark > 30) {
+            // Some blocks open their screen from the client side of the use; a real click does what a player does, on both sides.
+            clientTried = true;
+            var pos = mc.player.blockPosition().relative(mc.player.getDirection(), 2);
+            mc.gameMode.useItemOn(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND, new BlockHitResult(Vec3.atCenterOf(pos), Direction.UP, pos, false));
         } else if (ticks - mark > 20 * 8)
-            fail(mc, "the block did not open a screen");
+            fail(mc, shot.containsKey("jei") ? "the recipes screen did not open" : "the block did not open a screen");
     }
 
     private static void buildActions(Minecraft mc) {
@@ -364,6 +402,14 @@ public final class GuiShot {
     /** One picture, or one per tab: {@code tabs=auto} asks the open menu for its {@code BTN_TAB} and {@code TABS}; {@code N} or {@code N:base} says them. */
     private static void buildVariants(Minecraft mc) {
         variants = new ArrayList<>();
+        if (shot.containsKey("jei")) {
+            // One picture per page of the category's recipes, scrolling the recipe area; the end is when a page comes round again.
+            String pages = shot.getOrDefault("pages", "6");
+            int n = pages.equals("all") ? 400 : Integer.parseInt(pages);
+            for (int i = 0; i < n; i++)
+                variants.add(new Variant("_p" + i, -1, i > 0));
+            return;
+        }
         String tabs = shot.getOrDefault("tabs", "");
         int count = 0, base = 0;
         if (tabs.equals("auto") && mc.screen instanceof AbstractContainerScreen<?> s) {
@@ -400,14 +446,30 @@ public final class GuiShot {
             String stem = shot.get("out") + variants.get(variantIndex).suffix() + "_s" + scale;
             File png = new File(stem + ".png"), txt = new File(stem + ".txt");
             png.getParentFile().mkdirs();
-            var image = Screenshot.takeScreenshot(mc.getMainRenderTarget());
-            image.writeToFile(png);
-            image.close();
             List<String> lines = new ArrayList<>(mc.screen == null ? List.of("no screen open") : GuiCheck.report(mc, mc.screen, -1, -1));
             lines.add(0, "gui scale " + scale + " (" + mc.getWindow().getGuiScaledWidth() + "x" + mc.getWindow().getGuiScaledHeight() + " GUI pixels)");
-            Files.write(txt.toPath(), lines, StandardCharsets.UTF_8);
-            answer.add("screenshot: " + png.getPath());
-            lines.stream().filter(l -> !l.startsWith("string:")).forEach(answer::add);
+            boolean jei = shot.containsKey("jei"), overlaps = lines.stream().anyMatch(l -> l.startsWith("overlap:"));
+            // A recipes screen scrolled past its last page comes round to the first: the same strings again mean the category is done.
+            String signature = lines.stream().filter(l -> l.startsWith("string:")).collect(java.util.stream.Collectors.joining("\n"));
+            boolean repeat = jei && !SEEN.add(scale + signature);
+            if (repeat) {
+                variantIndex = variants.size();
+                phase = Phase.CLOSE;
+                mark = ticks;
+                answer.add(shot.get("jei") + ": " + SEEN.size() / scales().size() + " pages, " + pagesWithOverlaps + " with overlaps");
+                return;
+            }
+            if (overlaps)
+                pagesWithOverlaps++;
+            // png=overlaps keeps only the pictures that have an overlap in them, for a sweep over many pages.
+            if (!"overlaps".equals(shot.get("png")) || overlaps) {
+                var image = Screenshot.takeScreenshot(mc.getMainRenderTarget());
+                image.writeToFile(png);
+                image.close();
+                Files.write(txt.toPath(), lines, StandardCharsets.UTF_8);
+                answer.add("screenshot: " + png.getPath());
+                lines.stream().filter(l -> !l.startsWith("string:")).forEach(answer::add);
+            }
             if (++scaleIndex < scales().size()) {
                 phase = Phase.RESCALE;
                 return;
@@ -416,6 +478,8 @@ public final class GuiShot {
                 phase = Phase.VARIANT;
                 return;
             }
+            if (shot.containsKey("jei"))
+                answer.add(shot.get("jei") + ": " + SEEN.size() / scales().size() + " pages, " + pagesWithOverlaps + " with overlaps");
             phase = Phase.CLOSE;
             mark = ticks;
         } catch (Exception e) {

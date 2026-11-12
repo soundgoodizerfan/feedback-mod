@@ -91,6 +91,12 @@ public class FeedbackJeiPlugin implements IModPlugin {
     @Nullable
     private static IJeiRuntime runtime;
 
+    /** The live JEI runtime, or null before JEI has started (for the GUI shot tool, {@code client/GuiShot}). */
+    @Nullable
+    static IJeiRuntime runtime() {
+        return runtime;
+    }
+
     /** The item stack JEI's ingredient list or bookmark overlay has under the mouse, or empty: lets the stand screen preview what hovering it would add. */
     public static net.minecraft.world.item.ItemStack hoveredStack() {
         if (runtime == null)
