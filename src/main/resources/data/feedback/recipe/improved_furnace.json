@@ -25,6 +25,7 @@
   ],
   "fasteners": {
     "count": 3,
-    "floor": 2
+    "floor": 2,
+    "forms": ["rivet"]
   }
 }

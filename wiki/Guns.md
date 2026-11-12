@@ -82,8 +82,10 @@ The **name** on the tooltip, and beside the type name in the Blueprint Table, is
 | **Long-Ass Gun** | no cylinder, and a barrel of the maximum length, 80 cm (firing one earns the hidden advancement "A Gun, of the Long-Ass Variety") |
 | | **Shot revolver** | a cylinder, smoothbore, wide gauge |
 | | **Shot pistol** | smoothbore, wide gauge |
+| | **Magnum revolver** | a cylinder, magnum calibre |
 | | **Revolver** | a cylinder |
 | | **Machine pistol** | select fire |
+| | **Hand cannon** | magnum calibre |
 | | **Pistol** | anything else |
 | Long gun | **Sawn-off** | smoothbore, wide gauge, short barrel, two barrels |
 | | **Double shotgun** | smoothbore, wide gauge, two barrels |
@@ -94,7 +96,10 @@ The **name** on the tooltip, and beside the type name in the Blueprint Table, is
 | | **Submachine gun** | rifled, select fire, bore up to 10 mm |
 | | **Assault rifle** | rifled, select fire, bore from 11 mm (firing one with a pistol grip earns the hidden advancement "This is Very Illegal") |
 | | **Sniper rifle** | rifled, long barrel, a scope, a bolt or self-loading action |
+| | **Marksman rifle** | rifled, medium barrel, a scope, a bolt or self-loading action |
 | | **Carbine** | rifled, short barrel |
+| | **Lever-action rifle** | rifled, lever action |
+| | **Bolt-action rifle** | rifled, bolt action |
 | | **Rifle** | rifled, anything else |
 | Machine gun | **General-purpose machine gun** | a belt feed |
 | | **Light machine gun** | anything else |

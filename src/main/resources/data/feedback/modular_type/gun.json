@@ -945,6 +945,14 @@
         }
       },
       {
+        "name": "magnum_revolver",
+        "is": {
+          "variant": "handgun",
+          "feed": "cylinder",
+          "calibre": "calibre_magnum"
+        }
+      },
+      {
         "name": "revolver",
         "is": {
           "variant": "handgun",
@@ -959,6 +967,13 @@
         "traits": [
           "select_fire"
         ]
+      },
+      {
+        "name": "hand_cannon",
+        "is": {
+          "variant": "handgun",
+          "calibre": "calibre_magnum"
+        }
       },
       {
         "name": "pistol",
@@ -1066,10 +1081,33 @@
         }
       },
       {
+        "name": "marksman_rifle",
+        "is": {
+          "variant": "long_gun",
+          "barrel": "medium",
+          "sight": "scope",
+          "action": "bolt|self_loading"
+        }
+      },
+      {
         "name": "carbine",
         "is": {
           "variant": "long_gun",
           "barrel": "short"
+        }
+      },
+      {
+        "name": "lever_action_rifle",
+        "is": {
+          "variant": "long_gun",
+          "action": "lever"
+        }
+      },
+      {
+        "name": "bolt_action_rifle",
+        "is": {
+          "variant": "long_gun",
+          "action": "bolt"
         }
       },
       {

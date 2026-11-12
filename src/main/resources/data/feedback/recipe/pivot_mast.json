@@ -31,6 +31,7 @@
   ],
   "fasteners": {
     "count": 3,
-    "floor": 1
+    "floor": 1,
+    "forms": ["machine_bolt"]
   }
 }

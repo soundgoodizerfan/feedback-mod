@@ -26,6 +26,7 @@
   ],
   "fasteners": {
     "count": 2,
-    "floor": 1
+    "floor": 1,
+    "forms": ["screw"]
   }
 }

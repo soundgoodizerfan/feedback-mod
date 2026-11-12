@@ -591,6 +591,15 @@
         }
       },
       {
+        "name": "gladius",
+        "is": {
+          "face": "sword_blade",
+          "variant": "leaf",
+          "length": "short|normal",
+          "width": "normal"
+        }
+      },
+      {
         "name": "dagger",
         "is": {
           "length": "short",

@@ -132,6 +132,7 @@ A finished tool or weapon is named by rule from its blade, head, face or limb: i
 | **Cutlass** | a curved blade, short or normal (up to 105 cm) |
 | **Machete** | a serrated or leaf blade, wide (over 5.5 cm) |
 | **Claymore** | any blade, long (over 105 cm) and wide (over 5.5 cm) |
+| **Gladius** | a leaf blade, short or normal (up to 105 cm), normal width (up to 5.5 cm) |
 | **Dagger** | any blade, short (up to 65 cm) |
 | **Falchion** | a curved blade, wide (over 5.5 cm) |
 | **Sabre** | a curved blade, normal or long (over 65 cm), normal or wide (over 3 cm) |

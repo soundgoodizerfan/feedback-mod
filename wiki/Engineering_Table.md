@@ -55,6 +55,7 @@ Each page lists its own grid. The [Auto Engineer](Auto_Engineer.md) is crafted f
 Taking an assembled item can start a hand-work game. The item is only made when you finish it, and no result refuses the craft: a poor play makes a worse start, never nothing.
 
 - **Torque.** Played for a type that spends fasteners, once per fastener. Hold the mouse to wind the gauge (about two seconds to the top) and let go inside the **green band**. Letting go short leaves the fastener loose; holding past the band strips the thread. A better fastener widens the band.
+- **Rivet.** Played when the work takes rivets only, once per rivet. Hold the mouse to raise the hammer and let go to strike. A strike in the **green band** sets a tight domed head; lighter leaves the head loose, harder flattens it, and harder still splits it. Soft metal (lead, copper) forgives a wide band at a light blow; hard metal (steel, titanium) wants a harder blow in a narrower band. A better fastener widens the band.
 - **Fitting.** Played for swords, spears, shields, bows, dynamotors and armor. The bench plays a sequence of tool strokes (file, tap, turn, press), each lit on its tool with a sound; repeat it by clicking the tools or pressing 1 to 4. Harder stock makes a longer sequence, tougher stock slows the strokes down and forgives a slip. A wrong stroke ends the fitting where you got to; how far you got sets how well the assembly starts. It never stops you finishing.
 
 Press Esc to back out; the craft stays offered. A **blueprint** in the blueprint slot skips the game and counts as a small bonus.
@@ -66,7 +67,7 @@ Two figures are set when an item is assembled here, and both only fall short of 
 - **Fit** is how well the joints are made: a looser fit weakens the joints, and for a gun widens the spread.
 - **Head start** is the durability the item starts with.
 
-Three things move them. The **fasteners** (a complex type spends them): quality above the type's floor helps, below it hurts. The **hand work** (the better the torque or fitting game, the better the start). And the **fit to the drawing**.
+Three things move them. The **fasteners** (a complex type spends them): quality above the type's floor helps, below it hurts. The **hand work** (the better the torque, rivet or fitting game, the better the start). And the **fit to the drawing**.
 
 A [blueprint](Blueprint_Table.md#what-a-blueprint-is-for) is a drawn fit. Parts of a material inside the drawn properties fit clean; any other material still builds, and the item is marked **off the drawing**. Each part also has **axes** (a bore, a length). Hand-fitted parts may be off their mate by 20% of the axis range before the joint takes a fit flaw; parts built to a blueprint may be off the drawing by 5%. Past that the item takes a flaw: looser joints and, for a gun, a wider spread. Nothing is refused.
 
