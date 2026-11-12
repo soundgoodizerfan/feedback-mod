@@ -12,6 +12,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.logging.LogUtils;
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularHeads;
 import io.github.soundgoodizerfan.feedback.modular.ModularPartItem;
@@ -63,6 +65,9 @@ public final class FCommands {
     private static final SimpleCommandExceptionType NO_MATERIAL =
             new SimpleCommandExceptionType(Component.translatable("commands.feedback.no_material"));
 
+    private static final SimpleCommandExceptionType NO_BATTERY =
+            new SimpleCommandExceptionType(Component.translatable("commands.feedback.no_battery"));
+
     private FCommands() {
     }
 
@@ -74,6 +79,7 @@ public final class FCommands {
     static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("feedback").requires(s -> s.hasPermission(2))
                 .then(Commands.literal("blueprint").executes(FCommands::blueprintOf))
+                .then(Commands.literal("charge").executes(FCommands::charge))
                 .then(Commands.literal("build").executes(FCommands::build)
                         .then(Commands.literal("parts").executes(FCommands::parts)))
                 .then(Commands.literal("part")
@@ -108,6 +114,27 @@ public final class FCommands {
                                         Arrays.stream(MagazineSize.values()).map(MagazineSize::getSerializedName), b))
                                 .then(Commands.argument("bore", IntegerArgumentType.integer(GunSpec.MIN_BORE_MM, GunSpec.MAX_BORE_MM))
                                         .executes(FCommands::magazine)))));
+    }
+
+    /**
+     * Testing: fills the held battery, or the cell in a held electric gun, to what it can hold now (capacity times
+     * condition, cold and water shares), so nothing is overcharged and no cell wears.
+     */
+    private static int charge(CommandContext<CommandSourceStack> c) throws CommandSyntaxException {
+        ServerPlayer player = c.getSource().getPlayerOrException();
+        ItemStack held = player.getMainHandItem();
+        boolean gun = !BatteryStack.is(held);
+        ItemStack battery = gun ? io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.cell(held) : held;
+        net.minecraft.nbt.CompoundTag state = BatteryStack.state(battery);
+        if (state == null)
+            throw NO_BATTERY.create();
+        net.minecraft.nbt.CompoundTag next = state.copy();
+        next.putFloat("Charge", BatteryStack.effectiveCapacity(next));
+        battery.set(FDataComponents.BATTERY.get(), next);
+        if (gun)
+            io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.setCell(held, battery);
+        c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.charged"), true);
+        return 1;
     }
 
     /** Standard-shape part names: the part item's path (spear_head), and its short form (spear) where it ends in _head. */
