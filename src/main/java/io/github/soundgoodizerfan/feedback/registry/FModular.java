@@ -160,6 +160,13 @@ public final class FModular {
     /** Every tool held by a haft (pick, axe, shovel, hoe, sword, spear, maul, sickle, cleaver, hammer, knife, file, screwdriver): one item, whose faces decide what it does. Item id and type id are one. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.ModularHafted> HAFTED_TOOL = ITEMS.register("hafted_tool",
             () -> new io.github.soundgoodizerfan.feedback.modular.ModularHafted(ModularStacks.properties()));
+    /** Vanilla's axe, hoe and shovel use code, registered so the registry freezes and used only by {@code ModularHafted.useOn}; never held, never listed. */
+    public static final DeferredItem<Item> AXE_DELEGATE = ITEMS.register("axe_delegate",
+            () -> new net.minecraft.world.item.AxeItem(io.github.soundgoodizerfan.feedback.modular.ModularTier.INSTANCE, new Item.Properties()));
+    public static final DeferredItem<Item> HOE_DELEGATE = ITEMS.register("hoe_delegate",
+            () -> new net.minecraft.world.item.HoeItem(io.github.soundgoodizerfan.feedback.modular.ModularTier.INSTANCE, new Item.Properties()));
+    public static final DeferredItem<Item> SHOVEL_DELEGATE = ITEMS.register("shovel_delegate",
+            () -> new net.minecraft.world.item.ShovelItem(io.github.soundgoodizerfan.feedback.modular.ModularTier.INSTANCE, new Item.Properties()));
     /** The pan tool: right-click flips the piece under the cursor. */
     public static final DeferredItem<ModularItem> SPATULA = ITEMS.register("spatula",
             () -> new ModularItem(ModularStacks.properties()));
@@ -443,6 +450,7 @@ public final class FModular {
     /** Every item this registers but the parts, which mean nothing without a material: for the creative tab and the tint. */
     public static java.util.List<Item> items() {
         return ITEMS.getEntries().stream().<Item>map(DeferredHolder::get)
-                .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)).toList();
+                .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+                        && i != AXE_DELEGATE.get() && i != HOE_DELEGATE.get() && i != SHOVEL_DELEGATE.get()).toList();
     }
 }

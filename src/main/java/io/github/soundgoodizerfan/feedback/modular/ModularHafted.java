@@ -67,10 +67,18 @@ public class ModularHafted extends MaceItem implements Modular, HandTool {
     /** Ticks of slow per joule of impact on a blow that does not smash (a maul head of another shape). */
     private static final float STAGGER_TICKS_PER_JOULE = 2f;
 
-    /** Vanilla's own use code for what a face does to a block; they are never registered or held. */
-    private static final Item AXE = new AxeItem(ModularTier.INSTANCE, new Item.Properties());
-    private static final Item HOE = new HoeItem(ModularTier.INSTANCE, new Item.Properties());
-    private static final Item SHOVEL = new ShovelItem(ModularTier.INSTANCE, new Item.Properties());
+    /** Vanilla's own use code for what a face does to a block, in three registered but hidden items that nobody holds ({@code FModular.items} leaves them out). */
+    public static Item axe() {
+        return io.github.soundgoodizerfan.feedback.registry.FModular.AXE_DELEGATE.get();
+    }
+
+    public static Item hoe() {
+        return io.github.soundgoodizerfan.feedback.registry.FModular.HOE_DELEGATE.get();
+    }
+
+    public static Item shovel() {
+        return io.github.soundgoodizerfan.feedback.registry.FModular.SHOVEL_DELEGATE.get();
+    }
 
     public ModularHafted(Properties properties) {
         super(properties);
@@ -159,19 +167,19 @@ public class ModularHafted extends MaceItem implements Modular, HandTool {
         if (acts.isEmpty())
             return InteractionResult.PASS;
         if (acts.contains("strip") || acts.contains("scrape") || acts.contains("wax_off")) {
-            InteractionResult r = AXE.useOn(context);
+            InteractionResult r = axe().useOn(context);
             if (r.consumesAction())
                 return r;
         }
         if (acts.contains("till")) {
-            InteractionResult r = HOE.useOn(context);
+            InteractionResult r = hoe().useOn(context);
             if (r.consumesAction()) {
                 kama(context, r);
                 return r;
             }
         }
         if (acts.contains("flatten")) {
-            InteractionResult r = SHOVEL.useOn(context);
+            InteractionResult r = shovel().useOn(context);
             if (r.consumesAction())
                 return r;
         }
@@ -188,7 +196,7 @@ public class ModularHafted extends MaceItem implements Modular, HandTool {
             for (BlockPos spot : io.github.soundgoodizerfan.feedback.modular.trait.Kama.extra(context, a.params())) {
                 if (ModularStacks.broken(stack))
                     break;
-                HOE.useOn(new UseOnContext(context.getLevel(), player, context.getHand(), stack,
+                hoe().useOn(new UseOnContext(context.getLevel(), player, context.getHand(), stack,
                         new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(spot),
                                 net.minecraft.core.Direction.UP, spot, false)));
             }
