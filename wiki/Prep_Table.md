@@ -2,7 +2,7 @@
 
 Where a **dish** is put together from a container and foods. It takes a **knife** in the slot where a forging bench takes a hammer, and it is where the containers are made. It is the one bench screen with a knife: what is in the center decides what the fan offers (shapes for a food or dough, foods that fit a container, and cut, knead or finish).
 
-The screen has two tabs, **Prep** and **Blueprint**. Everything below belongs to the Prep tab unless it says otherwise; see [Blueprint tab](#blueprint-tab).
+The screen has two tabs, **Prep** and **Recipe**. Everything below belongs to the Prep tab unless it says otherwise; see [Recipe tab](#recipe-tab).
 
 ## Crafting
 
@@ -36,7 +36,7 @@ Cooked and raw foods both go in; a food goes in as it is, with whatever you have
 
 The table names the dish ("Making: ...") for the type you picked; a container of another type makes nothing. A wrap's container is a food, not a shaped part: put a baked **Flatbread** in a slot (it counts as food for the dish, so a raw flatbread dough feeds almost nothing). A plate is the big meal you cannot eat in a hurry; a skewer is a bite you can eat mid-fight. Every dish needs a main food. It is named from what is in it: *Beef and Potato Bowl with Honey*, *Beef and Carrot Plate*, *Beef Skewer*.
 
-**Hot dog.** Put a starchy food such as Bread in the center as the container and fit a meat **Rod** (the [Rod](Food.md#meat-blocks-and-rods) form of beef, pork, mutton, chicken, rabbit or a fish) as its main. It is named for the meat: *Beef Hot Dog*, *Pork Hot Dog*. Making one earns the advancement *Dog Days*.
+**Hot dog.** A hot dog is a name, not a separate dish: a **Wrap** with a meat **Rod** (the [Rod](Food.md#meat-blocks-and-rods) form of beef, pork, mutton, chicken, rabbit or a fish) as its main is called a *Beef Hot Dog*, *Pork Hot Dog* and so on, for the meat.
 
 **Pies.** A pie is formed, then cooked, then eaten. Put **Pastry Dough** (a dough and an egg, two from the bench) in as the container, a vegetable or fruit filling, optionally a meat and a second pastry as a lid, and form it at the Prep Table. It comes out raw: it feeds little and carries whatever was live in the filling. Set the whole pie in a heated vessel (a hearth, an oven) and it bakes through, killing the load and filling out the meal. Left on, it dries and then chars like any food. Sugar in the Prepare tab sweetens it. Named from its filling: *Pumpkin Pie*.
 
@@ -76,9 +76,11 @@ The table's screen is fired brick with pale calcite trim.
 
 When you let go of the pour the result is already decided, but you are not told yet. The dish is covered and music plays for how it went (a bright tune for a clean pour, a steady one for a shaky one, a sad one for a failed one), so you can hear it before you see it. Then the cover lifts, with a fanfare for a good pour or a failed one. Click or press Esc to skip the music. Kneading ends the same way, with the dough resting under a cloth, and so does the cut: on Done the board is covered with a cloth while the music of how even the cut was plays (a bright tune for even, a steady one for mixed, a sad one for ragged), then the cloth lifts with the fanfare and the pieces wobble apart.
 
-### Blueprint tab
+### Recipe tab
 
-The Blueprint tab shows a drafting board like the [Blueprint Table](Blueprint_Table.md#using-it), for dishes only. No treatise is needed. Draw a dish, then put paper in the paper slot at the bench's lower right and press **Print** to get a blueprint of it. A printed blueprint put back in the paper slot reopens on the board.
+The Recipe tab is where you write a **recipe**, a list of steps from top to bottom. The first step is the container; pick which kind of dish with the chips along the top. Each step after it is an ingredient (base, main or side) or a finish. Click the arrows on a step to change its material, and click its option chips to choose how it is prepared: **cut** (whole, chop, mince), **work** (plain, light, firm) and **cook** (raw, rare, medium, well, charred); right-click a chip to step it back. Add a step with the **+** buttons under the list, and remove one with its **x**. No treatise is needed.
+
+A recipe is named from what is in it. Type in the name box to name it yourself instead. Put paper in the paper slot at the bench's lower right and press **Write** to get a **Recipe**; a written recipe put back in the paper slot reopens in the tab. Right-click a recipe to read it as a card. A recipe is never required to make a dish.
 
 ### Honey on a skewer
 

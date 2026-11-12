@@ -145,10 +145,6 @@ public final class FModular {
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> WRAP = ITEMS.register("wrap",
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
 
-    /** A dish of a bread and a meat rod laid on it: named for the meat. */
-    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> HOT_DOG = ITEMS.register("hot_dog",
-            () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
-
     /** A dish of a pastry shell, a filling and an optional lid, formed raw and baked whole (modular foods spec, pies). */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.DishItem> PIE = ITEMS.register("pie",
             () -> new io.github.soundgoodizerfan.feedback.modular.DishItem(new Item.Properties().stacksTo(1)));
@@ -356,6 +352,9 @@ public final class FModular {
 
     /** Paper that becomes a school's treatise when a specimen of that school is taken apart onto it. */
     public static final DeferredItem<Item> BLANK_TREATISE = ITEMS.registerSimpleItem("blank_treatise", new Item.Properties().stacksTo(1));
+    /** Every volume of every treatise at once, later ones included: operator tab only. */
+    public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.CreativeTreatiseItem> CREATIVE_TREATISE = ITEMS.register("creative_treatise",
+            () -> new io.github.soundgoodizerfan.feedback.modular.CreativeTreatiseItem(new Item.Properties().stacksTo(1)));
     /** A binder of treatises that works like a bundle. */
     public static final DeferredItem<io.github.soundgoodizerfan.feedback.modular.TreatiseBinderItem> TREATISE_BINDER = ITEMS.register("treatise_binder",
             () -> new io.github.soundgoodizerfan.feedback.modular.TreatiseBinderItem(new Item.Properties().stacksTo(1)

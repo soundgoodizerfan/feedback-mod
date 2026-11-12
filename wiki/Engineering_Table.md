@@ -14,14 +14,14 @@ C is Gray Concrete, T is a Crafting Table and S is a Steel Plate. Mine it with a
 
 ## Using it
 
-The screen has four tabs: **Crafting**, **Fit**, **Repair** and **Treatise**. A row of **hand tool** slots (four) sits under every tab. A hand tool is a [Hammer](Hammer.md), a [Sawblade](Sawblade.md), a [File](Hand_Tools.md#file) or a [Screwdriver](Hand_Tools.md#screwdriver). Each act that calls for a tool wears it a point; a broken tool stays in its slot and blocks the act until it is mended.
+The screen has four tabs: **Crafting**, **Fit**, **Repair** and **Treatise**. A **popout** beside the table holds four **hand tool** slots and three **fixings** slots, and stays on every tab. A hand tool is a [Hammer](Hammer.md), a [Sawblade](Sawblade.md), a [File](Hand_Tools.md#file) or a [Screwdriver](Hand_Tools.md#screwdriver). Each act that calls for a tool wears it a point; a broken tool stays in its slot and blocks the act until it is mended.
+
+The popout's fixings slots take screws, machine bolts and rivets (see [Fasteners](Fasteners.md)).
 
 The Crafting tab holds:
 
 - a **3 by 3 grid** and an output slot,
 - a **blueprint** slot (a blueprint or a [Blueprint Book](Blueprint_Book.md)),
-- three **fixings** slots (labelled "Fixings"; screws, machine bolts and rivets go here, see [Fasteners](Fasteners.md)),
-- three **fastener** slots,
 - a **binder** slot for a [Treatise Binder](Treatise_Binder_and_Shelf.md).
 
 A line under the grid says whether the craft is ready, or why not: a treatise is missing (it names the volume), no tool for it, a tool is broken, or no fasteners. Empty tool, fastener, blueprint and binder slots show a tooltip saying what goes in.
@@ -55,7 +55,7 @@ Each page lists its own grid. The [Auto Engineer](Auto_Engineer.md) is crafted f
 Taking an assembled item can start a hand-work game. The item is only made when you finish it, and no result refuses the craft: a poor play makes a worse start, never nothing.
 
 - **Torque.** Played for a type that spends fasteners, once per fastener. Hold the mouse to wind the gauge (about two seconds to the top) and let go inside the **green band**. Letting go short leaves the fastener loose; holding past the band strips the thread. A better fastener widens the band.
-- **Fitting.** Played for swords, spears, shields, bows, dynamotors and armor. The parts of the assembly sit on an exploded axis; click them in the order they go together. What sits inside or under another part goes first. A wrong click rattles back and costs score; nothing locks.
+- **Fitting.** Played for swords, spears, shields, bows, dynamotors and armor. The bench plays a sequence of tool strokes (file, tap, turn, press), each lit on its tool with a sound; repeat it by clicking the tools or pressing 1 to 4. Harder stock makes a longer sequence, tougher stock slows the strokes down and forgives a slip. A wrong stroke ends the fitting where you got to; how far you got sets how well the assembly starts. It never stops you finishing.
 
 Press Esc to back out; the craft stays offered. A **blueprint** in the blueprint slot skips the game and counts as a small bonus.
 

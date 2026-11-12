@@ -4,7 +4,7 @@ A hammer you swing yourself, in a crafting grid, or seat in a machine as its str
 
 ## Head shapes
 
-The head is a **head blank**, shaped as a standard head (four cells of stock), a **Broad-Faced Head** (six cells, heavy, so a harder blow) or a **Narrow-Faced Head** (two cells, concentrates the blow). The head can only carry as much of a swing as its material allows, so a broad head lets a soft material carry more of a blow.
+The head is a **hammer head**, shaped as a standard head (four cells of stock), a **Broad-Faced Head** (six cells, heavy, so a harder blow) or a **Narrow-Faced Head** (two cells, concentrates the blow). The head can only carry as much of a swing as its material allows, so a broad head lets a soft material carry more of a blow.
 
 ## Crafting
 
@@ -18,7 +18,7 @@ S is Cobblestone and T is a Stick. This gives the first hammer: a stone head on 
 
 ## Making a better one
 
-Shape a **Head Blank** (ingots, blocks, gems, planks or cobblestone) at a bench ([Smithing Table](Smithing_Table.md) for metal, [Stonecutter](Stonecutter.md) for stone, [Woodworking Table](Woodworking_Table.md) for wood), then put it with a handle (stick, rod or bone) in a crafting grid. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
+Shape a **Hammer Head** (ingots, blocks, gems, planks or cobblestone) at a bench ([Smithing Table](Smithing_Table.md) for metal, [Stonecutter](Stonecutter.md) for stone, [Woodworking Table](Woodworking_Table.md) for wood), then put it with a handle (stick, rod or bone) in a crafting grid. The head's material sets two things. **How well it carries a swing:** a stone or iron head lands every swing in full, but a light or soft head (bone, copper) lands only a share of it, and the hammer's tooltip shows the St you actually get. **How long it lasts:** about 260 swings for stone and 330 for iron. An iron head is **not** a harder swing: your arm sets the blow, and steel stays out of reach by hand.
 
 ## Using it
 

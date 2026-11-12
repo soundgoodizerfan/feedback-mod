@@ -144,6 +144,19 @@ public class FeedbackJeiPlugin implements IModPlugin {
      * A cut, a board and a circuit are data components, so without this every cut of probe and
      * crystal plate, and every board, would collapse into one JEI entry.
      */
+    /** The Engineering Table's tools and fixings popout sits outside the panel; JEI's lists keep off it. */
+    @Override
+    public void registerGuiHandlers(mezz.jei.api.registration.IGuiHandlerRegistration registration) {
+        registration.addGuiContainerHandler(io.github.soundgoodizerfan.feedback.client.EngineeringTableScreen.class,
+                new mezz.jei.api.gui.handlers.IGuiContainerHandler<io.github.soundgoodizerfan.feedback.client.EngineeringTableScreen>() {
+                    @Override
+                    public java.util.List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(io.github.soundgoodizerfan.feedback.client.EngineeringTableScreen screen) {
+                        return java.util.List.of(new net.minecraft.client.renderer.Rect2i(screen.getGuiLeft() + io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu.W - 4,
+                                screen.getGuiTop() + 14, io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu.POP_W + 4, 170));
+                    }
+                });
+    }
+
     @Override
     public void registerItemSubtypes(mezz.jei.api.registration.ISubtypeRegistration registration) {
         mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter<ItemStack> cut = new mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter<>() {
@@ -237,6 +250,11 @@ public class FeedbackJeiPlugin implements IModPlugin {
             if (io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.isFastenerForm(form.form()))
                 registration.addIngredientInfo(form.item().get(), Component.translatable("feedback.jei.info.fastener"));
         }
+        registration.addIngredientInfo(FItems.HOPPER.get(), Component.translatable("feedback.jei.info.hopper"));
+        registration.addIngredientInfo(java.util.List.of(new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.PISTON), new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.STICKY_PISTON)), mezz.jei.api.constants.VanillaTypes.ITEM_STACK, Component.translatable("feedback.jei.info.piston"));
+        registration.addIngredientInfo(FItems.NOTE_BLOCK.get(), Component.translatable("feedback.jei.info.note_block"));
+        registration.addIngredientInfo(FItems.DROPPER.get(), Component.translatable("feedback.jei.info.dropper"));
+        registration.addIngredientInfo(FItems.DISPENSER.get(), Component.translatable("feedback.jei.info.dispenser"));
         registration.addIngredientInfo(FItems.MICRO_WEDGE.get(), Component.translatable("feedback.jei.info.micro_wedge"));
         registration.addIngredientInfo(FItems.LARGE_RING_GEAR.get(), Component.translatable("feedback.jei.info.large_ring_gear"));
         registration.addIngredientInfo(FItems.JOINT_LINK.get(), Component.translatable("feedback.jei.info.joint_link"));

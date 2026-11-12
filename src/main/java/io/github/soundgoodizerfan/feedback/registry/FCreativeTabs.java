@@ -70,6 +70,11 @@ public class FCreativeTabs {
                         output.accept(FItems.SHAFT.get());
                         output.accept(FItems.CAMPFIRE.get());
                         output.accept(FItems.SOUL_CAMPFIRE.get());
+                        output.accept(FItems.HOPPER.get());
+                        output.accept(FItems.DROPPER.get());
+                        output.accept(FItems.NOTE_BLOCK.get());
+                        FItems.NOISEMAKERS.values().forEach(m -> output.accept(m.get()));
+                        output.accept(FItems.DISPENSER.get());
                         output.accept(FItems.BEARING.get());
                         output.accept(FItems.SMALL_COG.get());
                         output.accept(FItems.LARGE_COG.get());
@@ -506,6 +511,7 @@ public class FCreativeTabs {
     private static void buildOperatorTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.OP_BLOCKS) {
             event.accept(FItems.DEBUG_HELMET.get());
+            event.accept(FModular.CREATIVE_TREATISE.get());
             event.accept(FItems.CREATIVE_CONTROLLER.get());
             event.accept(FItems.CREATIVE_FLUID.get());
             event.accept(FItems.CREATIVE_AIR.get());

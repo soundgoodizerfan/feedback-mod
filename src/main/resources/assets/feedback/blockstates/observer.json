@@ -1,26 +1,26 @@
 {
   "variants": {
     "facing=north": {
-      "model": "feedback:block/tell_tale"
+      "model": "feedback:block/observer"
     },
     "facing=east": {
-      "model": "feedback:block/tell_tale",
+      "model": "feedback:block/observer",
       "y": 90
     },
     "facing=south": {
-      "model": "feedback:block/tell_tale",
+      "model": "feedback:block/observer",
       "y": 180
     },
     "facing=west": {
-      "model": "feedback:block/tell_tale",
+      "model": "feedback:block/observer",
       "y": 270
     },
     "facing=up": {
-      "model": "feedback:block/tell_tale",
+      "model": "feedback:block/observer",
       "x": 270
     },
     "facing=down": {
-      "model": "feedback:block/tell_tale",
+      "model": "feedback:block/observer",
       "x": 90
     }
   }

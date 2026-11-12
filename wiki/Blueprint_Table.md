@@ -16,7 +16,8 @@ P is Paper and T is a Crafting Table.
 Right-click it to open the board. The item is drawn as a **diagram**: each part is a box placed where it sits in the finished piece. Drag to pan and use the wheel to zoom.
 
 - **Pick a type** (pickaxe, chestplate, bow...) from the row of icons across the top. The wheel scrolls the row, and the search button opens the full list under headings (Tools, Weapons, Wearables, Technology; the demolition charge sits under Technology) with a search box.
-- **Click a part** to select it. Its panel has a **search box** (it matches a material's name, its kind and its traits), **material swatches** for every material, and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does. A material the part cannot be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) is dimmed with an x and cannot be picked; its tooltip reads *Does not fit this part.*
+- **Click a part** to select it; click bare canvas to let go of it. Until a part is selected the part panel shows only a hint and the figure bars are hidden. The selected part's panel has a **search box** (it matches a material's name, its kind and its traits), **material swatches** for the materials that fit the part (with only one that fits, the swatches and the search box are hidden), and **shape thumbnails**: the standard shape or a variant (a rapier blade, a hatchet head). Hover a shape to read what it does. A material the part cannot be made from (a [Battery](Battery.md)'s plates need a metal whose plates take a charge, such as lead) is not listed.
+- **Required parts.** A type cannot be printed until every part it cannot be made without is drawn (a gun needs a receiver, a barrel, a trigger and a grip; a hafted tool needs a haft, except a hammer head, which a machine takes on its own). The list beside the figures names what is missing.
 - **Paint a part** by carrying a material item on the cursor and clicking the part. A **sample** item in the sample slot sets the selected part's material once.
 - **Dashed + slots** are optional parts the type could take (a tip, a binding, a guard...). Click one to add the part, and use the corner mark on a part to take it off again. Which parts a type can take, and how long its handle is, follow from what you have drawn.
 - Set the **edge**, on a tool that has one.
@@ -54,7 +55,7 @@ The [Prep Table](Prep_Table.md#blueprint-tab) has a Blueprint tab with a board f
 
 ## Schools
 
-A type that belongs to a **school** is drawn here only while you hold the right numbered volume of that school's [treatise](Treatise.md); each volume is a subject of its own. Press **Print** without it and the table says which volume the type takes. A volume's types are left out of the type row and list while you do not hold it, and the treatise's tooltip lists what it opens. A treatise counts as held when it lies loose in your inventory, sits inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or sits in a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table. It is kept, never used up.
+Some **parts** and **shapes** belong to a school too (the servos of a powered suit need Robotics Treatise I): they are offered only while you hold the volume. A type that belongs to a **school** is drawn here only while you hold the right numbered volume of that school's [treatise](Treatise.md); each volume is a subject of its own. Press **Print** without it and the table says which volume the type takes. A volume's types are left out of the type row and list while you do not hold it, and the treatise's tooltip lists what it opens. A treatise counts as held when it lies loose in your inventory, sits inside a [Treatise Binder](Treatise_Binder_and_Shelf.md) in your inventory, or sits in a [Treatise Shelf](Treatise_Binder_and_Shelf.md) touching the table. It is kept, never used up.
 
 | Volume | Types |
 | --- | --- |
@@ -90,7 +91,7 @@ Operators can make a blueprint of the item in their hand with `/feedback bluepri
 
 The table has a **title** field: what you type goes on the printed blueprint, with a credit, **Designed by** your name (the table writes it, you cannot sign someone else's). Both show on the blueprint's tooltip. A copy keeps them. A thing made to the drawing carries the title and the credit in its tooltip, whoever makes it; if it departs from the drawing, the credit goes. The item's name is still whatever it is by its parts.
 
-A blueprint is never required and gates nothing; it gives the credit and a **recipe card**. Right-click a blueprint to open the card listing its parts, materials, shapes and axis values. It lists a missing material and never refuses to work without it.
+A blueprint is never required and gates nothing; it gives the credit and a **recipe card**. Right-click a blueprint to open the card (it grows with the window, lists the parts in columns and scrolls when there are many) listing its parts, materials, shapes and axis values. It lists a missing material and never refuses to work without it.
 
 A part with **axes** (a chestplate's width, a sword blade's length) shows steppers on the drawing for the target value of each.
 

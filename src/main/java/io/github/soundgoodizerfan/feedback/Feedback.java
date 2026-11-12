@@ -62,6 +62,7 @@ public class Feedback {
         io.github.soundgoodizerfan.feedback.registry.FCrops.init();
         FBlocks.register(modBus);
         modBus.addListener(io.github.soundgoodizerfan.feedback.worldgen.VanillaVesselSwap::onExtendPoi);
+        modBus.addListener(io.github.soundgoodizerfan.feedback.worldgen.VanillaVesselSwap::onAddBlocks);
         FItems.register(modBus);
         FVehicles.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FLogistics.register(modBus);
@@ -92,6 +93,7 @@ public class Feedback {
                     net.neoforged.neoforge.client.gui.ConfigurationScreen::new);
 
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.machine.piston.PneumaticPistons::onPistonPre);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.process.CropClimate::onGrow);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onEntityJoin);

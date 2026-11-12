@@ -42,7 +42,13 @@ public final class VanillaVesselSwap {
             Map.entry(Blocks.ANVIL, FModular.ANVIL.get()),
             Map.entry(Blocks.CHIPPED_ANVIL, FModular.ANVIL.get()),
             Map.entry(Blocks.DAMAGED_ANVIL, FModular.ANVIL.get()),
-            Map.entry(Blocks.REDSTONE_LAMP, FBlocks.LAMP.get()));
+            Map.entry(Blocks.REDSTONE_LAMP, FBlocks.LAMP.get()),
+            Map.entry(Blocks.HOPPER, FBlocks.HOPPER.get()),
+            Map.entry(Blocks.DROPPER, FBlocks.DROPPER.get()),
+            Map.entry(Blocks.NOTE_BLOCK, FBlocks.NOTE_BLOCK.get()),
+            Map.entry(Blocks.DISPENSER, FBlocks.DISPENSER.get()),
+            Map.entry(Blocks.OBSERVER, io.github.soundgoodizerfan.feedback.registry.FAutomation.SENSORS.get(
+                    io.github.soundgoodizerfan.feedback.machine.sensor.SensorKind.OBSERVER).get()));
 
     /** A vanilla job site's block states live in its point-of-interest type; ours join it, so a villager still claims the swapped block (toolsmith, mason, armorer, butcher, cleric). */
     public static void onExtendPoi(net.neoforged.neoforge.common.world.poi.ExtendPoiTypesEvent event) {
@@ -51,6 +57,12 @@ public final class VanillaVesselSwap {
         event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.ARMORER, FBlocks.BLAST_FURNACE.get());
         event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.BUTCHER, FBlocks.SMOKER.get());
         event.addBlockToPoi(net.minecraft.world.entity.ai.village.poi.PoiTypes.CLERIC, FBlocks.BREWING_STAND.get());
+    }
+
+    /** Our dropper and dispenser keep vanilla's block entities. */
+    public static void onAddBlocks(net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent event) {
+        event.modify(net.minecraft.world.level.block.entity.BlockEntityType.DROPPER, FBlocks.DROPPER.get());
+        event.modify(net.minecraft.world.level.block.entity.BlockEntityType.DISPENSER, FBlocks.DISPENSER.get());
     }
 
     private record Pending(ServerLevel level, BlockPos pos) {}
@@ -100,9 +112,9 @@ public final class VanillaVesselSwap {
             var swapped = ours.defaultBlockState();
             if (swapped.hasProperty(ThermalVesselBlock.FACING) && state.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
                 swapped = swapped.setValue(ThermalVesselBlock.FACING, state.getValue(BlockStateProperties.HORIZONTAL_FACING));
-            if (swapped.getBlock() instanceof net.minecraft.world.level.block.CampfireBlock)
-                for (var prop : state.getProperties())
-                    swapped = copy(swapped, state, prop);
+            // Every property the two blocks share carries over (a campfire's lit and waterlogged, an observer's or piston's facing).
+            for (var prop : state.getProperties())
+                swapped = copy(swapped, state, prop);
             p.level().setBlock(p.pos(), swapped, Block.UPDATE_ALL);
         }
     }

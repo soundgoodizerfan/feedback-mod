@@ -65,6 +65,6 @@ public class SensorBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return level.isClientSide || kind != SensorKind.TELLTALE ? null : (l, p, s, be) -> ((SensorBlockEntity) be).tickServer();
+        return level.isClientSide || kind != SensorKind.OBSERVER ? null : (l, p, s, be) -> ((SensorBlockEntity) be).tickServer();
     }
 }

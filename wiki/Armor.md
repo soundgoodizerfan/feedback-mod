@@ -34,7 +34,7 @@ To take a lining or studs off, take the piece apart on the Repair tab and fit th
 
 ## Axes, aiming and names
 
-Each plate has **axes**: continuous measures you aim at the bench before you make it. A chestplate has **width** and **torso length**, a helmet **face opening** and **crown height**, leggings **length** and **width**, boots **shaft height** and **sole thickness**. Pick the plate's shape in the fan, then use the strip that appears (minus and plus, or drag the plate preview) to set each axis, and click the shape again to make it. More material means more cover and more weight, and more stock. How well the work goes sets how close the made part is to what you aimed at: over or under by chance, never exactly, and a poor forging misses by more.
+Each plate has **axes**: continuous measures you aim at the bench before you make it. A chestplate has **width** and **torso length**, a helmet **face opening** and **crown height**, leggings **length** and **width**, boots **shaft height** and **sole thickness**. The axes also shape the piece you wear: a taller crown, a wider chest, longer legs stretch it, a closed face opening shows a visor, and a boot with a high shaft shows a cuff. Pick the plate's shape in the fan, then use the strip that appears (minus and plus, or drag the plate preview) to set each axis, and click the shape again to make it. More material means more cover and more weight, and more stock. How well the work goes sets how close the made part is to what you aimed at: over or under by chance, never exactly, and a poor forging misses by more.
 
 A word for the range an axis sits in (narrow, wide, short, long, closed, open, thin, thick...) is a **band**. Some bands carry a trait: a long torso is cramped to crouch in, a tall crown is a lever for blows to the head, long leggings tire a sprint and drag in water, a high boot shaft keeps water and powder snow out, a thick sole cuts fall damage, a closed face is a closed visor and an open one sees well.
 
@@ -51,17 +51,29 @@ A finished piece is named by rule from its plate's shape, the bands its axes sit
 | | **Coat of Plates** | the brigandine shape with an underlayer fitted |
 | | **Brigandine** | the brigandine shape |
 | | **Cuirass** | the breastplate shape |
+| | **Jerkin** | narrow (up to 36 cm) and short (up to 48 cm) |
+| | **Greatcoat** | long (over 64 cm), normal or wide (over 36 cm) |
+| | **Broad Cuirass** | wide (over 48 cm), normal torso length |
 | Helmet | **Bascinet** | the pointed-faced dome |
 | | **Sallet** | the tailed dome |
 | | **Morion** | the ridged dome |
 | | **Spangenhelm** | the conical dome |
 | | **Great Helm** | a closed face (up to 2 cm) on any dome |
+| | **Kettle Hat** | the round dome, low (up to 10 cm) crown, open face (over 9 cm) |
+| | **Pot Helm** | the round dome, low crown, normal face opening |
 | Leggings | **Chausses** | the mail chausses shape |
 | | **Quilted Chausses** | the quilted shape |
 | | **Greaves** | the articulated shape |
 | | **Cuisses** | the plain shape, short (up to 52 cm) |
+| | **Hose** | slim (up to 17 cm) and long (over 74 cm) |
+| | **Breeches** | wide (over 24 cm) and short |
+| | **Tights** | slim and normal in length |
 | Boots | **Sabatons** | the sabatons shape |
 | | **Riding Boots** | the plain shape with spurs fitted |
+| | **Moccasins** | an ankle shaft (up to 12 cm) and a thin sole (up to 7 mm) |
+| | **Hiking Boots** | a normal shaft and a thick sole (over 16 mm) |
+| | **Thigh Boots** | a high shaft (over 24 cm) and a normal sole |
+| | **Waders** | a high shaft and a thick sole |
 
 Helmets go in the order of the rows, so a closed face on a pointed, tailed, ridged or conical dome is named for the dome. Any build that fits no row, such as a round dome, a wrapped boot or plain leggings that are not short, is named by size, shape and material ("Round Iron Helmet", "Long Plain Iron Leggings").
 

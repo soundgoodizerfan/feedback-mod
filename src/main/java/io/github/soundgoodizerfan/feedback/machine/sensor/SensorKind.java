@@ -77,7 +77,7 @@ public enum SensorKind {
         }
     },
     /** A change in the face block's state: high for a short time after it, and a tick late. The observer's role. */
-    TELLTALE("tell_tale") {
+    OBSERVER("observer") {
         @Override
         public float read(Level level, BlockPos pos, Direction face, SensorBlockEntity self) {
             return self != null && self.pulse() > 0 ? 1f : 0f;

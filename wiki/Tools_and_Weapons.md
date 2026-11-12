@@ -133,22 +133,41 @@ A finished tool or weapon is named by rule from its blade, head, face or limb: i
 | **Machete** | a serrated or leaf blade, wide (over 5.5 cm) |
 | **Claymore** | any blade, long (over 105 cm) and wide (over 5.5 cm) |
 | **Dagger** | any blade, short (up to 65 cm) |
+| **Falchion** | a curved blade, wide (over 5.5 cm) |
+| **Sabre** | a curved blade, normal or long (over 65 cm), normal or wide (over 3 cm) |
+| **Longsword** | any blade, long (over 105 cm) and normal in width (3 to 5.5 cm) |
+| **Arming Sword** | a blade of normal length (65 to 105 cm) and width, with a guard |
+
+Before these, the first row that fits among the sharper cases: a **Switchblade** (a short blade with a spring), a **Kunai** (a short tapered blade on a lanyard), a **Zweihander** (a long, wide, thick blade over 6.5 mm), a **Stiletto** (a short, thin blade) and an **Estoc** (a long tapered blade that is not thin).
 
 **Other tools and weapons.** One rule each.
 
 | Type | Name | What gives it |
 | --- | --- | --- |
-| Axe | **Hatchet** | a small head (up to 10.5 cm) |
+| Axe | **Throwing Axe** | a small head (up to 10.5 cm) on a lanyard |
+| | **Bearded Axe** | the bearded shape |
+| | **Hatchet** | a small head (up to 10.5 cm) |
 | | **Felling Axe** | a large head (over 17.5 cm) |
-| Pickaxe | **Heavy Pick** | a large head (over 17.5 cm) |
-| Maul | **Sledgehammer** | a large head (over 17.5 cm) |
-| Spear | **Javelin** | a small head (up to 9 cm) |
-| Sickle | **Scythe** | a long edge (over 31.25 cm) |
+| Pickaxe | **War Pick**, **Prospector's Pick**, **Miner's Pick** | the shape of that name |
+| | **Heavy Pick** | a large head (over 17.5 cm) |
+| Maul | **Morning Star** | the mace shape with a tip |
+| | **Piston Hammer** | any maul head with a spring |
+| | **Warhammer**, **Mace** | the shape of that name |
+| | **Sledgehammer** | a large head (over 17.5 cm) |
+| Spear | **Spring Lance** | any spear head with a spring |
+| | **Trident**, **Harpoon**, **Pitchfork** | the shape of that name |
+| | **Pike** | a large head |
+| | **Javelin** | a small head (up to 9 cm) |
+| Sickle | **Billhook**, **Reaping Hook** | the shape of that name |
+| | **Scythe** | a long edge (over 31.25 cm) |
 | Shield | **Tower Shield** | a large face (over 75 cm) of the rectangular shape |
 | | **Kite Shield** | the kite shape, at any face size |
 | | **Buckler** | a small face (up to 42 cm) of any other shape |
+| | **Heater Shield** | the heater shape at a normal face size |
 | Bow | **Shortbow** | short limbs (up to 85 cm) |
 | | **Longbow** | long limbs (over 135 cm) |
+| | **Composite Bow** | the recurve shape, normal or long limbs |
+| | **Hunting Bow** | the hunting shape, normal limbs |
 
 A large face of the round or heater shape is not a tower shield; it is named by its size and shape. What the shield names do in a fight is under [Shields](Combat.md#shields).
 

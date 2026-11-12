@@ -29,7 +29,7 @@ A [Refractory Lining](Refractory_Lining.md) makes a small crucible behave more l
 
 ## Using it
 
-- **Right-click with an item** to drop one in. Shift shows the same. A bucket or other fluid container is poured into the crucible's tank as far as it has room, and the empty bucket comes back (water here is what a dirt dip turns into clay). The small crucible holds **two** items and the large one **six**.
+- **Right-click with an item** to drop one in. Shift shows the same. A bucket or other fluid container is poured into the crucible's tank as far as it has room, and the empty bucket comes back (water here is what a dirt dip turns into clay, and what sets concrete powder into concrete). The small crucible holds **two** items and the large one **six**.
 - **Right-click with an empty hand** to open its screen. The small crucible has two item slots and the large one has six, in rows of three, beside a heat gauge and a tank gauge. Inputs and finished products share the slots: a product lands in a free slot.
 - The **heat gauge** is banded in the same ten bands as the glow of a Thermal Vessel; hover it to read the temperature in Tu.
 - The **tank gauge** is filled in the melt's color; hover it to see the fluid and its amount in ingots. Molds fill from the tank, not from the screen.

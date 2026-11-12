@@ -1,0 +1,19 @@
+{
+  "inputs": [],
+  "min_temperature": 0,
+  "optimal_temperature": 0,
+  "required_tpu": -1,
+  "dip": {
+    "fluid": {
+      "fluid": "minecraft:water",
+      "amount": 250
+    },
+    "input": {
+      "item": "minecraft:yellow_concrete_powder"
+    },
+    "result": {
+      "id": "minecraft:yellow_concrete",
+      "count": 1
+    }
+  }
+}

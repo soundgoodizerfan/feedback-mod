@@ -151,7 +151,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
                 stack.shrink(1);
             give(player, back);
             return true;
-        } else if (stack.getItem() instanceof BlockItem bi && bi.getBlock() instanceof SensorBlock sb && sb.kind() != SensorKind.TELLTALE) {
+        } else if (stack.getItem() instanceof BlockItem bi && bi.getBlock() instanceof SensorBlock sb && sb.kind() != SensorKind.OBSERVER) {
             back = sensor;
             sensor = one;
         } else {

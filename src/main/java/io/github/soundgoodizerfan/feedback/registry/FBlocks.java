@@ -412,6 +412,24 @@ public class FBlocks {
                     .sound(SoundType.METAL)
                     .noOcclusion()));
 
+    /** The note block, built from a noisemaker part (vanilla's is swapped for it, VanillaVesselSwap). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.note.FeedbackNoteBlock> NOTE_BLOCK = BLOCKS.register("note_block",
+            () -> new io.github.soundgoodizerfan.feedback.machine.note.FeedbackNoteBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.NOTE_BLOCK)));
+
+    /** The dropper and dispenser, driven by a spring a signal releases (vanilla's are swapped for them, VanillaVesselSwap). */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.dropper.SpringDropperBlock> DROPPER = BLOCKS.register("dropper",
+            () -> new io.github.soundgoodizerfan.feedback.machine.dropper.SpringDropperBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.DROPPER)));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.dropper.SpringDispenserBlock> DISPENSER = BLOCKS.register("dispenser",
+            () -> new io.github.soundgoodizerfan.feedback.machine.dropper.SpringDispenserBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.DISPENSER)));
+
+    /** The hopper with no inventory (vanilla's is swapped for it, VanillaVesselSwap): it carries one item from above to the block it faces and holds nothing. */
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.hopper.FeedbackHopperBlock> HOPPER = BLOCKS.register("hopper",
+            () -> new io.github.soundgoodizerfan.feedback.machine.hopper.FeedbackHopperBlock(
+                    BlockBehaviour.Properties.ofFullCopy(net.minecraft.world.level.block.Blocks.HOPPER)));
+
     /** The campfire (vanilla's is swapped for it, VanillaVesselSwap): food on it warms through the thermal system. The vanilla campfire item (hidden from JEI) still places the vanilla block, which swaps. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock> CAMPFIRE = BLOCKS.register("campfire",
             () -> new io.github.soundgoodizerfan.feedback.machine.campfire.FeedbackCampfireBlock(false,
