@@ -39,7 +39,9 @@ A **band** is a range an axis sits in. Armor and weapon parts have axes you aim 
 |  | Head size | small up to 10.5 cm, normal up to 17.5 cm, large over 17.5 cm |
 | Hoe head | Edge length | short up to 12 cm, normal up to 20 cm, long over 20 cm |
 |  | Head size | small up to 10.5 cm, normal up to 17.5 cm, large over 17.5 cm |
-| Electric gun | Stages | few up to 3, many over 3 |
+| Electric gun | Barrel length | short up to 0.25 m, normal up to 0.6 m, long over 0.6 m |
+|  | Bore | narrow up to 8 mm, normal up to 14 mm, wide over 14 mm |
+|  | Stages | few up to 3, many over 3 |
 
 ## Armor
 
@@ -288,12 +290,31 @@ A gun is named by its frame. A bore of **14 mm or wider** is a *wide* gauge; nar
 
 ### Electric guns
 
+A gun is named by its barrel kind, then by size: a short barrel is a pistol if the bore is narrow and a carbine if not, a long barrel with a sight fitted is a sniper rifle, and a wide bore is a cannon.
+
 | Name | What gives it |
 | --- | --- |
-| **Gauss Rifle** | the coil shape, stages many |
-| **Coilgun** | the coil shape |
-| **Railgun** | the rail shape |
-| **Plasma Gun** | the plasma shape |
+| **Gauss Cannon** | a coil barrel, bore wide, stages many |
+| **Gauss Sniper Rifle** | a coil barrel, stages many, barrel length long, a sight fitted |
+| **Gauss Carbine** | a coil barrel, stages many, barrel length short |
+| **Coil Cannon** | a coil barrel, bore wide |
+| **Coil Sniper Rifle** | a coil barrel, barrel length long, a sight fitted |
+| **Coil Marksman Rifle** | a coil barrel, barrel length long |
+| **Coil Pistol** | a coil barrel, barrel length short, bore narrow |
+| **Coil Carbine** | a coil barrel, barrel length short |
+| **Rail Cannon** | a rail barrel, bore wide |
+| **Rail Sniper Rifle** | a rail barrel, barrel length long, a sight fitted |
+| **Rail Marksman Rifle** | a rail barrel, barrel length long |
+| **Rail Pistol** | a rail barrel, barrel length short, bore narrow |
+| **Rail Carbine** | a rail barrel, barrel length short |
+| **Plasma Cannon** | a plasma barrel, bore wide |
+| **Plasma Rifle** | a plasma barrel, barrel length long |
+| **Plasma Pistol** | a plasma barrel, barrel length short, bore narrow |
+| **Plasma Carbine** | a plasma barrel, barrel length short |
+| **Gauss Rifle** | a coil barrel, stages many |
+| **Coilgun** | a coil barrel |
+| **Railgun** | a rail barrel |
+| **Plasma Gun** | a plasma barrel |
 
 ## Food
 

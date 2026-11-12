@@ -1,6 +1,11 @@
 {
   "family": "electric_gun",
-  "required": ["R", "B", "T", "G"],
+  "required": [
+    "R",
+    "B",
+    "T",
+    "G"
+  ],
   "blueprint": true,
   "wear_litres": 0.4,
   "wear_role": "B",
@@ -68,14 +73,40 @@
           "unit": "m",
           "default": 0.4,
           "step": 0.01,
-          "scales": true
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 0.25
+            },
+            {
+              "name": "normal",
+              "max": 0.6
+            },
+            {
+              "name": "long"
+            }
+          ]
         },
         "bore": {
           "min": 6.25,
           "max": 18.75,
           "unit": "mm",
           "default": 9.375,
-          "step": 3.125
+          "step": 3.125,
+          "bands": [
+            {
+              "name": "narrow",
+              "max": 8
+            },
+            {
+              "name": "normal",
+              "max": 14
+            },
+            {
+              "name": "wide"
+            }
+          ]
         },
         "stages": {
           "min": 1,
@@ -513,6 +544,134 @@
   },
   "names": {
     "designations": [
+      {
+        "name": "gauss_cannon",
+        "is": {
+          "variant": "coil_barrel",
+          "bore": "wide",
+          "stages": "many"
+        }
+      },
+      {
+        "name": "gauss_sniper_rifle",
+        "is": {
+          "variant": "coil_barrel",
+          "stages": "many",
+          "barrel_length": "long",
+          "sight": "fitted"
+        }
+      },
+      {
+        "name": "gauss_carbine",
+        "is": {
+          "variant": "coil_barrel",
+          "stages": "many",
+          "barrel_length": "short"
+        }
+      },
+      {
+        "name": "coil_cannon",
+        "is": {
+          "variant": "coil_barrel",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "coil_sniper_rifle",
+        "is": {
+          "variant": "coil_barrel",
+          "barrel_length": "long",
+          "sight": "fitted"
+        }
+      },
+      {
+        "name": "coil_marksman_rifle",
+        "is": {
+          "variant": "coil_barrel",
+          "barrel_length": "long"
+        }
+      },
+      {
+        "name": "coil_pistol",
+        "is": {
+          "variant": "coil_barrel",
+          "barrel_length": "short",
+          "bore": "narrow"
+        }
+      },
+      {
+        "name": "coil_carbine",
+        "is": {
+          "variant": "coil_barrel",
+          "barrel_length": "short"
+        }
+      },
+      {
+        "name": "rail_cannon",
+        "is": {
+          "variant": "rail_barrel",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "rail_sniper_rifle",
+        "is": {
+          "variant": "rail_barrel",
+          "barrel_length": "long",
+          "sight": "fitted"
+        }
+      },
+      {
+        "name": "rail_marksman_rifle",
+        "is": {
+          "variant": "rail_barrel",
+          "barrel_length": "long"
+        }
+      },
+      {
+        "name": "rail_pistol",
+        "is": {
+          "variant": "rail_barrel",
+          "barrel_length": "short",
+          "bore": "narrow"
+        }
+      },
+      {
+        "name": "rail_carbine",
+        "is": {
+          "variant": "rail_barrel",
+          "barrel_length": "short"
+        }
+      },
+      {
+        "name": "plasma_cannon",
+        "is": {
+          "variant": "plasma_barrel",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "plasma_rifle",
+        "is": {
+          "variant": "plasma_barrel",
+          "barrel_length": "long"
+        }
+      },
+      {
+        "name": "plasma_pistol",
+        "is": {
+          "variant": "plasma_barrel",
+          "barrel_length": "short",
+          "bore": "narrow"
+        }
+      },
+      {
+        "name": "plasma_carbine",
+        "is": {
+          "variant": "plasma_barrel",
+          "barrel_length": "short"
+        }
+      },
       {
         "name": "gauss_rifle",
         "is": {

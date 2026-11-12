@@ -23,7 +23,7 @@ Shaped and assembled like a [gun](Gun_Parts.md), out of the same parts, minus ev
 
 ### Names
 
-A built gun is named by rule from its barrel kind and, for a coil, its stages: Gauss Rifle, Coilgun, Railgun or Plasma Gun. A name gives no bonus: the perks come only from the parts. What gives each is under [Electric guns](Designations.md#electric-guns).
+A built gun is named by rule from its barrel kind and, for a coil, its stages: a pistol, carbine, rifle, sniper rifle or cannon of the barrel kind (Coil Pistol, Rail Carbine, Plasma Cannon), down to a plain Coilgun, Railgun or Plasma Gun. A name gives no bonus: the perks come only from the parts. What gives each is under [Electric guns](Designations.md#electric-guns).
 
 ### Attachments
 
