@@ -290,14 +290,12 @@ A gun is named by its frame. A bore of **14 mm or wider** is a *wide* gauge; nar
 
 ### Electric guns
 
-A gun is named by its barrel kind and its receiver, then by size and fittings. A handgun receiver makes a pistol (a hand cannon on a wide bore). A long gun receiver makes a carbine on a short barrel, a rifle otherwise, a marksman rifle on a long barrel, a sniper rifle on a long barrel with a sight fitted, and a cannon on a wide bore. A machine gun receiver makes a machine gun, light with a bipod and heavy with a thermal sleeve or a wide bore. A coil barrel with many stages is a Gauss. A coil or rail barrel with an eddy sleeve is a disruptor. A short, wide plasma barrel with a shroud is a plasmacaster.
+A gun is named by its barrel kind and its receiver, then by size and fittings. A handgun receiver makes a pistol (a hand cannon on a wide bore). A long gun receiver makes a carbine on a short barrel, a rifle otherwise, a marksman rifle on a long barrel, a sniper rifle on a long barrel with a sight fitted, and a cannon on a wide bore. A machine gun receiver makes a machine gun, light with a bipod and heavy with a thermal sleeve or a wide bore. A coil barrel with many stages is a Gauss. A short, wide plasma barrel with a shroud is a plasmacaster.
 
 | Name | What gives it |
 | --- | --- |
 | **Heavy Plasma Cannon** | a plasma barrel, bore wide, a bipod fitted, a counterweight fitted |
 | **Plasmacaster** | a plasma barrel, barrel length short, bore wide, a shroud fitted |
-| **Coil Disruptor** | a coil barrel, an eddy sleeve fitted |
-| **Rail Disruptor** | a rail barrel, an eddy sleeve fitted |
 | **Heavy Coil Machine Gun** | a coil barrel, a machine gun receiver, a thermal sleeve fitted; or a coil barrel, a machine gun receiver, bore wide |
 | **Light Coil Machine Gun** | a coil barrel, a machine gun receiver, a bipod fitted |
 | **Coil Machine Gun** | a coil barrel, a machine gun receiver |

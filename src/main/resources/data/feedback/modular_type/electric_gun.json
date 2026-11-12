@@ -567,20 +567,6 @@
         }
       },
       {
-        "name": "coil_disruptor",
-        "is": {
-          "variant": "coil_barrel",
-          "eddy_sleeve": "fitted"
-        }
-      },
-      {
-        "name": "rail_disruptor",
-        "is": {
-          "variant": "rail_barrel",
-          "eddy_sleeve": "fitted"
-        }
-      },
-      {
         "name": "heavy_coil_machine_gun",
         "is": {
           "variant": "coil_barrel",
