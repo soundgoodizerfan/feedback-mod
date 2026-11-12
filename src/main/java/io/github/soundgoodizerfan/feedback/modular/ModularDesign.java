@@ -24,8 +24,16 @@ import io.github.soundgoodizerfan.feedback.process.Measures;
  * @param type  the {@link ModularType} id, which is also the item's registry path.
  * @param parts one per role the pattern filled, in the type's role order.
  * @param edge  how the edge was last ground.
+ * @param colour a cosmetic RGB the drawing was given (a pulse gun's beam), carried from the blueprint onto the built item; blue by default.
  */
-public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) {
+public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge, int colour) {
+
+    /** The colour a design has until one is chosen: a blue beam. */
+    public static final int DEFAULT_COLOUR = 0x3F7FFF;
+
+    public ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) {
+        this(type, parts, edge, DEFAULT_COLOUR);
+    }
 
     /**
      * One role filled.
@@ -140,13 +148,15 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
     public static final Codec<ModularDesign> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("type").forGetter(ModularDesign::type),
             Part.CODEC.listOf().fieldOf("parts").forGetter(ModularDesign::parts),
-            Edge.CODEC.optionalFieldOf("edge", Edge.STANDARD).forGetter(ModularDesign::edge)
+            Edge.CODEC.optionalFieldOf("edge", Edge.STANDARD).forGetter(ModularDesign::edge),
+            Codec.INT.optionalFieldOf("colour", DEFAULT_COLOUR).forGetter(ModularDesign::colour)
     ).apply(instance, ModularDesign::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, ModularDesign> STREAM_CODEC = StreamCodec.composite(
             ResourceLocation.STREAM_CODEC, ModularDesign::type,
             Part.STREAM_CODEC.apply(ByteBufCodecs.list()), ModularDesign::parts,
             ByteBufCodecs.idMapper(i -> Edge.values()[i], Edge::ordinal), ModularDesign::edge,
+            ByteBufCodecs.VAR_INT, ModularDesign::colour,
             ModularDesign::new);
 
     /** The part in {@code role}, or null. */
@@ -158,11 +168,21 @@ public record ModularDesign(ResourceLocation type, List<Part> parts, Edge edge) 
     }
 
     public ModularDesign withEdge(Edge edge) {
-        return new ModularDesign(type, parts, edge);
+        return new ModularDesign(type, parts, edge, colour);
+    }
+
+    /** This design with {@code colour} (an RGB, the high bits ignored). */
+    public ModularDesign withColour(int colour) {
+        return new ModularDesign(type, parts, edge, colour & 0xFFFFFF);
+    }
+
+    /** This design with {@code replacement} parts and everything else kept: its edge and its colour. */
+    public ModularDesign withParts(List<Part> replacement) {
+        return new ModularDesign(type, replacement, edge, colour);
     }
 
     public ModularDesign withPart(Part replacement) {
         return new ModularDesign(type, parts.stream()
-                .map(p -> p.role().equals(replacement.role()) ? replacement : p).toList(), edge);
+                .map(p -> p.role().equals(replacement.role()) ? replacement : p).toList(), edge, colour);
     }
 }

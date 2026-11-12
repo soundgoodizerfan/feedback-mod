@@ -184,8 +184,8 @@ public final class ModularBake {
             case PRESSURE -> engineMetal(material) && material.mechanical().yieldStrength().isPresent();
             case PROPELLER -> engineMetal(material) && (!roleKey.equals(PROP_BLADES) || material.mechanical().yieldStrength().isPresent());
             // a spring gun's barrel, piston and spring are metal (the spring states a yield strength); its receiver takes any material
-            // an electric gun's barrel must conduct; its receiver and grip take any material
-            case ELECTRIC_GUN -> !type.roles().get(roleKey).name().equals(ElectricGunSpec.BARREL) || material.ampacity().isPresent();
+            // a pulse gun's seat must conduct (its conductor sets the ceiling of a pulse); its barrel, receiver and grip take any material
+            case ELECTRIC_GUN -> !type.roles().get(roleKey).name().equals(ElectricGunSpec.SEAT) || material.ampacity().isPresent();
             case AIR_GUN -> {
                 String name = type.roles().get(roleKey).name();
                 yield name.equals(SpringGunSpec.RECEIVER) || (engineMetal(material)
@@ -748,11 +748,9 @@ public final class ModularBake {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 ElectricGunSpec egun = spec.get();
                 f.put(Fig.MASS, total);
-                f.put(Fig.SHOT_ENERGY, egun.energyIn() * worn);
-                f.put(Fig.VELOCITY, egun.shot(ModularTuning.AIR_REF_DENSITY, 1f).speed() / ModularTuning.AIR_BOW_ARROW_SPEED);
-                f.put(Fig.JOINT, egun.load(ModularTuning.EGUN_REF_VOLTS));
-                // The shared gun figures at the reference slug and a full draw: what the gun pipeline reads (cycle, kick, sound, the HUD).
-                f.putAll(egun.figures(ModularTuning.AIR_REF_DENSITY, 1f, total, 0f, 1f, 1f).figs());
+                f.put(Fig.SHOT_ENERGY, egun.pulseJ() * egun.seatMult() * worn);
+                // The shared gun figures at an ordinary pulse: what the gun pipeline reads (cycle, kick, sound, the HUD).
+                f.putAll(egun.figures(egun.pulseJ() * egun.seatMult(), total, egun.cycleTicks(false), 0f, 1f).figs());
                 f.put(Fig.MASS, total);
             }
             case ARMOUR -> {

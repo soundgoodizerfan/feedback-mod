@@ -62,6 +62,14 @@ public final class BuildNames {
             ModularType.Role r = type.roles().get(p.role());
             if (r != null && !p.role().equals(type.wearRole()))
                 facts.put(r.name(), FITTED);
+            // A pulse gun's seat is named by its variant, its power tier by the band of its tier axis.
+            if (r != null && r.name().equals(ElectricGunSpec.SEAT)) {
+                facts.put("seat", r.variant(p).map(ModularType.Variant::name).orElse(""));
+                ModularType.Axis tier = r.axes().get("tier");
+                ModularType.Band band = tier == null ? null : tier.band(p.axis("tier", tier.def()));
+                if (band != null)
+                    facts.put("tier", band.name());
+            }
         }
         return facts;
     }
@@ -98,6 +106,10 @@ public final class BuildNames {
                 if (band != null && !band.name().equals("normal") && !dropped.contains(band.name()))
                     out.append(Component.translatable("modular.feedback.band." + band.name())).append(" ");
             }
+        // A pulse gun's Light and Heavy power tiers are size words too; Standard says nothing.
+        String tierWord = BuildNames.facts(design, type).get("tier");
+        if (tierWord != null && !tierWord.equals("standard") && !dropped.contains(tierWord))
+            out.append(Component.translatable("modular.feedback.band." + tierWord)).append(" ");
         // A shape that is an adjective stands beside the type's name; one that names the whole thing (a pitchfork) stands for it.
         boolean adjective = type.family() == ModularType.Family.ARMOUR || role != null && role.variant(plate).map(ModularType.Variant::adjective).orElse(false);
         Component shape = null;

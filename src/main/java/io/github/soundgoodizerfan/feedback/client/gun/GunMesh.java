@@ -80,7 +80,7 @@ public final class GunMesh {
     boolean layered;
     /** Each role's layer, inner to outer: receiver, barrels, moving parts, sleeves, under-barrel, muzzle, furniture, sights. */
     private static final java.util.Map<String, Integer> LAYERS = layers("R", "B", "D", "K", "F", "A", "H", "J", "Z", "P", "Q",
-            "I", "E", "C", "a", "V", "N", "M", "G", "i", "T", "L", "d", "b", "Y", "S", "e");
+            "I", "E", "C", "a", "V", "N", "M", "G", "i", "T", "L", "d", "b", "Y", "S", "e", "s", "g", "h", "p", "l", "z", "u");
     /** The layer of a fixed colour (magazines, lamps, glass): over every part. */
     private static final int COLOUR_LAYER = LAYERS.size();
     /** Levels in a layer: one for each box a role draws, the rest share the last. */

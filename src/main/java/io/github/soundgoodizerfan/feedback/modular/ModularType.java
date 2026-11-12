@@ -209,7 +209,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         SUIT_MODULE,
         /** A spring-piston air gun ({@code spring_gun}): cocked by hand, it throws a metal pellet with a spring's stored energy. Not a {@link #GUN}: nothing in it ignites powder. Its bake is {@link SpringGunSpec}. */
         AIR_GUN,
-        /** An electric gun ({@code electric_gun}): a coil, rail or plasma barrel fed from a swappable battery in the item. Not a {@link #GUN}: nothing in it ignites powder. Its bake is {@link ElectricGunSpec}. */
+        /** A pulse gun ({@code electric_gun}): a pulse barrel and a battery seat fed from a swappable battery in the item (or worn, for a tethered seat). Not a {@link #GUN}: nothing in it ignites powder. Its bake is {@link ElectricGunSpec}. */
         ELECTRIC_GUN,
         /** A pressure vessel ({@code pressure_vessel}): a shell whose wall, shape and metal set the pressure it holds and the room inside; its bake is the {@link ModularBake#tank} spec the placed block runs on. */
         PRESSURE,

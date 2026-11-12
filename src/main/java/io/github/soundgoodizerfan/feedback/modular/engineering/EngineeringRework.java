@@ -319,7 +319,7 @@ public final class EngineeringRework {
             return Outcome.of(tool);
         Level level = server.level();
         ModularDesign design = ModularStacks.design(specimen);
-        ModularDesign pinned = new ModularDesign(design.type(), design.parts().stream().filter(p -> p.sub().isEmpty()).toList(), design.edge());
+        ModularDesign pinned = design.withParts(design.parts().stream().filter(p -> p.sub().isEmpty()).toList());
         var figures = ToolDesigns.predict(pinned, EngineeringAssembly.types(level), ClientMaterials.on(level));
         List<ItemStack> parts = ModularRework.dismantle(specimen, ClientMaterials.on(level), EngineeringAssembly.types(level), salvage(server));
         table.setItem(EngineeringTableBlockEntity.BLANK, ModularBlueprints.sheet(pinned, figures.orElse(null)));

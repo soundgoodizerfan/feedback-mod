@@ -27,6 +27,16 @@ public record GunReloadPayload(boolean held) implements CustomPacketPayload {
 
     public static void handle(GunReloadPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
+            var player = context.player();
+            // A pump charge works the gun in hand with the reload key; there is nothing to reload.
+            for (var hand : net.minecraft.world.InteractionHand.values()) {
+                var stack = player.getItemInHand(hand);
+                if (payload.held() && stack.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem gun
+                        && gun.mechanism().reloadKeyWorks(stack) && player.level() instanceof net.minecraft.server.level.ServerLevel level) {
+                    gun.mechanism().reloadKey(level, player, stack);
+                    return;
+                }
+            }
             if (payload.held())
                 GunShots.reloadStart(context.player(), System.currentTimeMillis());
             else

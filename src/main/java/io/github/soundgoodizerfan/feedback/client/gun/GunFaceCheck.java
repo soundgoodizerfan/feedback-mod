@@ -38,7 +38,7 @@ public final class GunFaceCheck {
 
     /** Optional roles a gun may fit (the receiver R is always there). */
     private static final String[] OPTIONAL = {"A", "K", "G", "T", "i", "S", "e", "F", "D", "H", "Z", "J", "Q", "P", "V",
-            "N", "M", "E", "C", "I", "a", "L", "d", "b", "Y"};
+            "N", "M", "E", "C", "I", "a", "L", "d", "b", "Y", "s", "g", "h", "p", "l", "z", "u"};
 
     private record Base(String name, GunLayout.Type type, String action, boolean slide, boolean electric) {
     }
@@ -62,7 +62,7 @@ public final class GunFaceCheck {
             "i", new String[]{"fixed", "skeleton", "folding"},
             "S", new String[]{"reflex", "scope"},
             "P", new String[]{"thread_breech", "thread_middle", "thread_muzzle"},
-            "B", new String[]{"coil", "rail", "plasma"});
+            "s", new String[]{"cylinder", "flux_cycler", "capacitor_bank", "burst_bank", "flywheel", "recoil_dynamo", "backpack_tether"});
 
     private static final float[][] BARRELS = {{2f, 0.5f, 0.25f}, {6f, 0.75f, 0.375f}, {14f, 1.25f, 0.5f}};
 
@@ -130,7 +130,7 @@ public final class GunFaceCheck {
             colours.put(r, 0xFF909090);
         float len2 = fitted.contains("D") ? barrel[0] * 0.8f : 0, r2 = fitted.contains("D") ? 0.5f : 0;
         return new GunView(base.type(), base.action(), base.slide(), barrel[0], barrel[1], barrel[2], len2, r2, colours,
-                variants, Map.of(), Map.of(), 0, mag, 5, base.electric(), base.electric() ? 4 : 0, base.electric() ? 0.6f : -1f);
+                variants, Map.of(), Map.of(), 0, mag, 5, base.electric(), base.electric() ? GunView.Pulse.REST : null, base.electric() ? 0.6f : -1f);
     }
 
     /** Draws one gun and returns its problems, each as "role tile / role tile at plane". */

@@ -83,10 +83,9 @@ public final class ModularCause {
                 // a spring gun's: the spring stores it, the barrel and bore hand it on, the receiver is what the spring is rated against
                 case SPRING_ENERGY -> role.name().equals(SpringGunSpec.SPRING);
                 case AIR_EFFICIENCY -> role.name().equals(SpringGunSpec.BARREL);
-                case SHOT_ENERGY -> role.name().equals(ElectricGunSpec.BARREL);
+                case SHOT_ENERGY -> role.name().equals(ElectricGunSpec.SEAT);
                 case JOINT, DRAW, VELOCITY -> air
                         ? (fig == Fig.JOINT ? role.name().equals(SpringGunSpec.RECEIVER) || role.name().equals(SpringGunSpec.SPRING)
-                        || (type.family() == ModularType.Family.ELECTRIC_GUN && role.name().equals(ElectricGunSpec.BARREL))
                         : fig == Fig.DRAW ? role.name().equals(SpringGunSpec.SPRING)
                         : !role.name().equals(SpringGunSpec.RECEIVER))
                         : bow

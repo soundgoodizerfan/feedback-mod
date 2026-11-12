@@ -104,7 +104,7 @@ Walking into one shocks you twice a second; right-clicking one shocks you once. 
 
 A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while it lasts, and warms any metal held in your hands.
 
-**Armor doesn't help**; a chestplate isn't insulation. Insulating gloves stop anything below 24 V.
+**Armor doesn't help**; a chestplate isn't insulation. Insulating gloves stop anything below 24 V. They also stop the arc of an [electric gun](Electric_Gun.md#misuse-and-hazards) fired in water or rain, as long as the gun's battery is within what they stop.
 
 Right-clicking a bare live wire with a [Galvanometer](Instruments.md#galvanometer) or [Electroscope](Instruments.md#electroscope) is still a hand on the wire, and it still shocks you.
 

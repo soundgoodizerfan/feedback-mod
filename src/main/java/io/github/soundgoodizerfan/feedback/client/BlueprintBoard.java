@@ -103,6 +103,9 @@ final class BlueprintBoard {
     /** Where the board's top-left is on the screen; set by the host before it draws or forwards input. */
     private int ox, oy;
     private final List<AbstractWidget> widgets = new ArrayList<>();
+    /** The drawing's cosmetic colour (a pulse gun's beam), set by the picker, printed with the design. */
+    private int colour = ModularDesign.DEFAULT_COLOUR;
+    private ColourPicker picker;
     /** Each widget's place relative to the board's top-left, so a move of the board (a window dragged or scrolled) moves them. */
     private final List<int[]> widgetAt = new ArrayList<>();
 
@@ -577,6 +580,7 @@ final class BlueprintBoard {
         shape.clear();
         matId.clear();
         axisVals.clear();
+        colour = ModularDesign.DEFAULT_COLOUR;
         clearLists();
         flashes.clear();
         drawerScroll = Mth.clamp(type - drawerSlots / 2, 0, Math.max(0, types.size() - drawerSlots));
@@ -594,6 +598,7 @@ final class BlueprintBoard {
         extras.addAll(opened.get().extras());
         sizes.putAll(opened.get().sizes());
         edge = design.edge();
+        colour = design.colour();
         design.parts().forEach(p -> {
             List<PartBenchShaping.Option> options = shapes(p.role());
             for (int i = 0; i < options.size(); i++)
@@ -818,7 +823,7 @@ final class BlueprintBoard {
                 axes.put(name, axisValue(role, name, made));
             parts.add(axes.isEmpty() ? made : made.withMeasures(made.measures().withAxes(axes)));
         }
-        return Optional.of(new ModularDesign(types.get(type), parts, edged() ? edge : Edge.STANDARD));
+        return Optional.of(new ModularDesign(types.get(type), parts, edged() ? edge : Edge.STANDARD, colour));
     }
 
     /** The scalars of {@code role} the sheet shows now: those whose {@code when} the shape in use meets, in name order. */
@@ -921,6 +926,19 @@ final class BlueprintBoard {
         if (ModularBake.needsHaft(design.get(), t)) {
             out.add(new Fault(List.of("S"), Component.translatable("gui.feedback.blueprint_table.needs_haft")));
             return out;
+        }
+        if (t.family() == ModularType.Family.ELECTRIC_GUN) {
+            // A big seat on a handgun frame, or a hold or pump charge on a seat that fires more than one shot a pull.
+            String why = io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.fault(design.get(), t);
+            if (why != null) {
+                List<String> parts = new ArrayList<>(List.of("s"));
+                parts.add(why.equals("pulse_seat_frame") ? "R" : "h");
+                if (why.equals("pulse_charge_seat"))
+                    parts.add("p");
+                parts.removeIf(r -> design.get().part(r) == null);
+                out.add(new Fault(parts, Component.translatable("message.feedback.blueprint_table.fault." + why)));
+                return out;
+            }
         }
         if (t.family() == ModularType.Family.GUN) {
             List<GunSpec.Fault> found = GunSpec.faults(design.get(), t, ClientMaterials.get());
@@ -1384,6 +1402,7 @@ final class BlueprintBoard {
         widgets.clear();
         widgetAt.clear();
         searchBox = null;
+        picker = null;
         ModularType t = current();
         widgetAdd(GuiStyle.button(skin, Component.literal("..."), b -> typePopup.open(
                 typeEntries(),
@@ -1412,6 +1431,10 @@ final class BlueprintBoard {
             skin.cue(GuiSkin.Cue.SEAT, null, 1.1f);
             build();
         }, ox + pinBtn.x(), oy + pinBtn.y(), pinBtn.w(), pinBtn.h()));
+        // A pulse gun's beam colour: a swatch and a hex entry at the canvas's top right.
+        if (t != null && t.family() == ModularType.Family.ELECTRIC_GUN)
+            picker = widgetAdd(new ColourPicker(skin, font, ox + canvas.x() + canvas.w() - 82, oy + canvas.y() + 4, 78,
+                    Component.translatable("gui.feedback.blueprint_table.beam_colour"), () -> colour, v -> colour = v));
         String role = t == null ? null : sel();
         host.sampleWanted(role != null);
         if (role == null)
@@ -1547,6 +1570,10 @@ final class BlueprintBoard {
     }
 
     boolean keyPressed(int key, int scan, int modifiers) {
+        if (!typePopup.active() && picker != null && picker.typing() && key != org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
+            picker.keyPressed(key, scan, modifiers);
+            return true;
+        }
         if (!typePopup.active() && searchBox != null && searchBox.isFocused() && key != org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
             searchBox.keyPressed(key, scan, modifiers);
             return true;
@@ -1555,12 +1582,16 @@ final class BlueprintBoard {
     }
 
     boolean charTyped(char c, int modifiers) {
+        if (!typePopup.active() && picker != null && picker.typing())
+            return picker.charTyped(c, modifiers);
         if (!typePopup.active() && searchBox != null && searchBox.isFocused())
             return searchBox.charTyped(c, modifiers);
         return typePopup.charTyped(c, modifiers);
     }
 
     boolean mouseClicked(double mx, double my, int button) {
+        if (picker != null && !picker.isMouseOver(mx, my))
+            picker.blur();
         if (typePopup.mouseClicked(mx, my, button))
             return true;
         if (preview.click(mx, my, button)) // also keeps the click from dropping what the cursor carries
@@ -1860,7 +1891,7 @@ final class BlueprintBoard {
 
     /** What would be printed: the drawing, if it can be made, and the pinned drafts of the same type. */
     Optional<ModularDesign> drawing() {
-        return baked.isPresent() && figures.isPresent() ? baked : Optional.empty();
+        return baked.isPresent() && figures.isPresent() ? baked.map(d -> d.withColour(colour)) : Optional.empty();
     }
 
     List<ModularDesign> pinnedDesigns() {

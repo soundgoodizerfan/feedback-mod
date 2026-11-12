@@ -116,43 +116,81 @@ public final class ModularTuning {
     public static final int AIR_SHOT_COOLDOWN = 6;
     public static final float AIR_VOLUME = 0.25f;
 
-    // --- the electric gun (ElectricGunSpec); every figure a placeholder [OPEN] ----------------------------
+    // --- the pulse gun (ElectricGunSpec); every figure a placeholder [OPEN] -------------------------------
 
-    /** Joules a coil stage adds, and per amp of rating a rail takes in a shot. */
-    public static final float EGUN_STAGE_J = 120f, EGUN_RAIL_J_PER_AMP = 6f;
-    /** Joules an arc channel of the reference bore costs to strike, and the vaporisation energy per kilogram of metal. */
-    public static final float EGUN_ARC_J = 60f, EGUN_VAPOR_J_PER_KG = 6000f;
-    /** Amps a barrel carries per litre of conductor per unit of the metal's ampacity. */
-    public static final float EGUN_AMPS_PER_LS = 100f;
-    /** Seconds a shot's current pulse lasts: the energy over the volts over this is the current. */
-    public static final float EGUN_PULSE_S = 1f;
-    /** Joules of energy one volt of one amp-tick of a cell's charge is worth. */
-    public static final float EGUN_J_PER_VAMPTICK = 1f;
-    /** Barrel length and bore at which the push is half kept and a wide bore wastes half. */
-    public static final float EGUN_LENGTH_HALF = 0.25f, EGUN_BORE_HALF = 8f;
-    /** Coil: metres of barrel a stage needs, the share a stage the barrel cannot fit still adds, and the best efficiency. */
-    public static final float EGUN_STAGE_SPACING_M = 0.12f, EGUN_STAGE_WASTE = 0.2f, EGUN_COIL_EFF = 0.5f;
-    /** Rail and plasma efficiencies. */
-    public static final float EGUN_RAIL_EFF = 0.6f, EGUN_PLASMA_EFF = 0.4f;
-    /** A slug's length in bores, litres in a nugget, the damage a joule does, and the fastest a slug goes (blocks per tick). */
-    public static final float EGUN_SLUG_LENGTHS = 1.5f, EGUN_NUGGET_LITRES = 0.016f, EGUN_DAMAGE_PER_J = 0.04f, EGUN_SPEED_MAX = 6f;
-    /** A plasma bolt: damage per joule delivered, range in blocks, and the ticks it sets a target alight. */
-    public static final float EGUN_PLASMA_DAMAGE_PER_J = 0.06f, EGUN_PLASMA_RANGE = 14f;
-    /** A plasma bolt is a fast round that loses this share of its speed each tick (so it reaches about {@code EGUN_PLASMA_RANGE} blocks and hits weaker with distance). */
-    public static final float EGUN_PLASMA_DRAG = 0.3f;
-    /** Degrees of a shot's cone for each unit of the old arrow inaccuracy an electric gun's length and fittings gave. */
-    public static final float EGUN_SPREAD_DEG_PER_UNIT = 0.5f;
-    public static final int EGUN_PLASMA_BURN_TICKS = 80;
-    /** Cooldown after a shot, ticks, and the extra per share of the gun's heat; heat falls by this share each second. */
-    public static final int EGUN_COOLDOWN = 12;
-    public static final float EGUN_HEAT_PER_SHOT = 0.25f, EGUN_HEAT_COOLING_PER_S = 0.15f, EGUN_HEAT_COOLDOWN_TICKS = 40f;
-    /** Current over rating at which the conductor fuses and the gun is wrecked; damage to the wielder from a shock, and per excess of overvoltage. */
-    public static final float EGUN_FUSE_RATIO = 2f, EGUN_SHOCK = 2f, EGUN_SHOCK_PER_EXCESS = 4f;
-    public static final float EGUN_VOLUME = 0.6f;
-    /** Share of a conductor slug's speed an eddy sleeve of full strength takes off. */
-    public static final float EGUN_EDDY_BRAKE = 0.3f;
-    /** The cell voltage the Blueprint Table's load figure assumes. */
+    /** Joules a seat of ampacity 1 (copper) can expel in one pulse at most: the ceiling the three power tiers are fractions of. */
+    public static final float EGUN_SEAT_CEIL_J = 400f;
+    /** The share of that ceiling Light, Standard and Heavy take. */
+    public static final float[] EGUN_TIER_FRACTION = {0.4f, 0.7f, 1.0f};
+    /** Share of a pulse a barrel of ampacity 1 takes out of it (and turns to heat), and the most any barrel takes. */
+    public static final float EGUN_BARREL_LOSS_PER_AMPACITY = 0.3f, EGUN_BARREL_LOSS_MAX = 0.8f;
+    /** Extra heat per shot a conductive barrel leaves, per unit of the share it takes out of the pulse. */
+    public static final float EGUN_BARREL_HEAT_PER_LOSS = 2f;
+    /** How far the bore's width moves a pulse's damage (and its cone) across the bore axis's range: narrow is below 1, wide above. */
+    public static final float EGUN_BORE_SPAN = 0.4f;
+    /** Damage a joule of pulse does, and the joules one volt of one amp-tick of a cell's charge is worth. */
+    public static final float EGUN_DAMAGE_PER_J = 0.03f, EGUN_J_PER_VAMPTICK = 0.5f;
+    /** The cell voltage a seat's refill rate is measured against, and the one the Blueprint Table assumes. */
     public static final float EGUN_REF_VOLTS = 6f;
+    /** Cutoff range in blocks: a base, and per metre of barrel; each power tier above Light adds this share. */
+    public static final float EGUN_RANGE_BASE = 30f, EGUN_RANGE_PER_M = 100f, EGUN_RANGE_PER_TIER = 0.15f;
+    /** Mobs a pulse goes through beyond the first, per power tier step (Light 1, Standard 2, Heavy 3 is {@code tier * this}). */
+    public static final int EGUN_PIERCE_PER_TIER = 1;
+    /** Degrees of cone a pulse has before a stock, a bore or a scope change it. */
+    public static final float EGUN_SPREAD_BASE_DEG = 0.5f;
+
+    /** Cylinder: chambers, and the refill in chambers a second at copper, two cells, the reference volts and a Standard pulse. */
+    public static final int EGUN_CHAMBERS = 6;
+    public static final float EGUN_CYL_REFILL_PER_S = 0.6f;
+    /** Capacitor bank: seconds to recharge at Light, Standard and Heavy with a two-cell battery (more cells take longer); the shot is this many times a tier's pulse; each dielectric band adds this share to what it holds. */
+    public static final float[] EGUN_BANK_RECHARGE_S = {8f, 12f, 16f};
+    public static final float EGUN_BANK_MULT = 3f, EGUN_BANK_DIELECTRIC_STEP = 0.15f;
+    /** Burst bank: ticks between the three shots of a burst. */
+    public static final int EGUN_BURST_GAP_TICKS = 2;
+    /** Flywheel: ticks of a held trigger to full spin (at the reference density), ticks to spin down, and the spin the first shot waits for. */
+    public static final int EGUN_FLY_UP_TICKS = 20, EGUN_FLY_DECAY_TICKS = 30;
+    public static final float EGUN_FLY_FIRST_SPIN = 0.6f;
+    /** Flywheel: the density a wheel spins up at the reference rate; denser stores more and spins up slower. */
+    public static final float EGUN_FLY_REF_DENSITY = 7.87f;
+    /** Recoil dynamo: the share of a pulse's energy returned to the cells. */
+    public static final float EGUN_DYNAMO_RETURN = 0.10f;
+
+    /** Ticks between shots: a cylinder's floor, a flux cycler, dynamo or tether, a flywheel at full spin, a capacitor bank. */
+    public static final int EGUN_COOLDOWN = 8, EGUN_FLUX_CYCLE = 4, EGUN_FLY_CYCLE = 3, EGUN_BANK_CYCLE = 10;
+
+    /** Heat a Standard pulse leaves, falls by this share each second; the fraction of normal rate a throttle never goes below. */
+    public static final float EGUN_HEAT_PER_SHOT = 0.08f, EGUN_HEAT_COOLING_PER_S = 0.15f, EGUN_THROTTLE_FLOOR = 0.4f;
+    /** Damage to the wielder from a shot fired at the heat limit, and from a shock. */
+    public static final float EGUN_OVERHEAT_BURN = 2f, EGUN_SHOCK = 2f, EGUN_SHOCK_PER_EXCESS = 4f;
+    /** Forced vent: lockout ticks at the limit exactly and when run a whole shot's heat over; the heat left after the vent. */
+    public static final int EGUN_VENT_LOCK_MIN_TICKS = 30, EGUN_VENT_LOCK_MAX_TICKS = 80;
+    public static final float EGUN_VENT_RESET_HEAT = 0.3f;
+    /** Dead-man cutoff: the heat the barrel must cool below before fire resumes. */
+    public static final float EGUN_CUTOFF_RESUME = 0.6f;
+    /** Steam cloud: lifetime in ticks, ticks a body must stay in it before it scalds, the damage of a scald, and the cloud's half-width in blocks. */
+    public static final int EGUN_STEAM_TICKS = 60, EGUN_STEAM_SCALD_TICKS = 20;
+    public static final float EGUN_STEAM_DAMAGE = 3f, EGUN_STEAM_RADIUS = 1.2f;
+
+    /** Hold charge: ticks to full, the extra power and the extra mobs pierced at full. */
+    public static final int EGUN_HOLD_MAX_TICKS = 10, EGUN_HOLD_PIERCE = 2;
+    public static final float EGUN_HOLD_POWER = 0.5f;
+    /** Pump charge: pumps that are safe, the extra power and heat of each, and the damage to the wielder of one too many. */
+    public static final int EGUN_PUMP_MAX = 3;
+    public static final float EGUN_PUMP_POWER = 0.25f, EGUN_PUMP_HEAT = 0.1f, EGUN_PUMP_BURST_DAMAGE = 6f;
+    /** Beam splitter: the energy of all the beams together against one pulse, and the cone's degrees per beam. */
+    public static final float EGUN_SPLIT_TOTAL = 1.5f, EGUN_SPLIT_DEG_PER_BEAM = 1.2f;
+    /** Arc fork: the reach of an arc from one target to the next, and the share of the pulse an arc carries. */
+    public static final float EGUN_FORK_RANGE = 6f, EGUN_FORK_SHARE = 0.6f;
+    /** A wet wielder's arc fork reaches this far for everything wet, with this share of the pulse. */
+    public static final float EGUN_WET_FORK_RANGE = 8f, EGUN_WET_FORK_SHARE = 0.5f;
+    /** Shock: the extra share of the hit a wet or metal-armoured target takes, and the ticks of stagger per joule. */
+    public static final float EGUN_SHOCK_BONUS = 0.5f, EGUN_STAGGER_TICKS_PER_J = 0.05f;
+    /** Scope zoom charge: ticks of aiming to full, the extra cutoff range and the share the cone closes at full. */
+    public static final int EGUN_ZOOM_TICKS = 40;
+    public static final float EGUN_ZOOM_RANGE = 0.5f, EGUN_ZOOM_TIGHT = 0.5f;
+    /** A cylinder pulse redirected by a coin hits this many times as hard. */
+    public static final float EGUN_COIN_CYLINDER = 1.5f;
+    public static final float EGUN_VOLUME = 0.6f;
     /** Placeholder [OPEN]. The fewest and most a wielder's strength scales the cocking time by. */
     public static final float AIR_PULL_MIN = 0.5f, AIR_PULL_MAX = 3f;
     /** What the vanilla item of a crystal (a diamond pick) is made of when converted: this metal, the crystal set in it. */

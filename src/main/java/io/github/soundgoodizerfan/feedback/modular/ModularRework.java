@@ -142,7 +142,7 @@ public final class ModularRework {
             // An addon sits on a mount some part of the item offers (a suppressor on a muzzle, a sight on a rail), else there is nowhere to fit it.
             if (!type.mounted(key, parts))
                 return Optional.empty();
-            return ModularStacks.assemble(out, new ModularDesign(design.type(), parts, design.edge()), materials, types)
+            return ModularStacks.assemble(out, design.withParts(parts), materials, types)
                     ? Optional.of(out) : Optional.empty();
         }
         return Optional.empty();

@@ -35,8 +35,11 @@ final class GunDraw {
             case LONG_GUN -> longGun(m, v, p);
             case MACHINE_GUN -> machineGun(m, v, p);
         }
-        if (v.electric())
+        if (v.electric()) {
             cellBay(m, v);
+            seat(m, v);
+            instruments(m, v);
+        }
         // A break action's barrels and everything on them tip about the hinge under the breech.
         m.push();
         breakTurn(m, v, p);
@@ -123,27 +126,181 @@ final class GunDraw {
         }
     }
 
-    /** The barrel's own mechanism: coil windings by stage, two rails and a bridge, or a glass arc channel with a flared emitter. */
+    /** Where the seat sits on the right of the receiver: front and back (z), the centre height and the half height. */
+    private static float[] seatBox(GunView v) {
+        float[] z = bayZ(v);
+        float y0 = v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.75f, hy = v.type() == GunLayout.Type.MACHINE_GUN ? 1f : 0.875f;
+        return new float[]{z[0], z[1], y0 + hy, hy};
+    }
+
+    /** A colour from the beam's toward a hot orange as the barrel heats. */
+    private static int heated(int beam, float heat) {
+        int r = (beam >> 16) & 255, g = (beam >> 8) & 255, b = beam & 255;
+        float t = Math.min(1f, heat);
+        return 0xFF000000 | Math.round(r + (255 - r) * t) << 16 | Math.round(g + (110 - g) * t) << 8 | Math.round(b + (30 - b) * t);
+    }
+
+    /** The pulse barrel: the bore's tube and, at the muzzle, an emitter lamp in the beam's colour that goes toward orange as the barrel heats. */
     private static void electricBarrel(GunMesh m, GunView v) {
-        float start = breech(v), end = front(v), r = v.r();
-        String kind = v.variant("B");
+        float end = front(v), r = v.r();
+        var pulse = v.pulse() == null ? GunView.Pulse.REST : v.pulse();
         m.part(v, "B");
-        if (kind.startsWith("rail")) {
-            float gap = r + 0.375f;
-            m.box(-gap - 0.375f, -0.5f, end, -gap, 0.5f, start - 0.25f, Tile.BRUSHED);
-            m.box(gap, -0.5f, end, gap + 0.375f, 0.5f, start - 0.25f, Tile.BRUSHED);
-            m.box(-gap - 0.375f, -0.625f, start - 0.5f, gap + 0.375f, -0.375f, start - 0.25f, Tile.METAL); // the breech bridge
-        } else if (kind.startsWith("plasma")) {
-            m.colour(0xFF9FD8FF).rod(0, 0, r + 0.125f, start - 0.5f, end + 0.5f, Tile.GLASS);
-            m.colour(0xFF9FD8FF).glow(-r - 0.375f, -r - 0.375f, end, r + 0.375f, r + 0.375f, end + 0.5f, Tile.LAMP);
-        } else {
-            // One winding for each stage, spread along the barrel.
-            int turns = Math.max(1, Math.min(v.stages(), 8));
-            float span = Math.max(1f, start - end - 1f);
-            for (int i = 0; i < turns; i++) {
-                float a = start - 0.5f - (turns == 1 ? span / 2f : i * span / (turns - 1f)) ;
-                m.rod(0, 0, r + 0.375f, a, a - 0.5f, Tile.COIL);
+        m.rod(0, 0, r + 0.125f, breech(v) - 0.5f, end + 0.75f, Tile.BRUSHED);
+        m.colour(heated(0xFF000000 | pulse.beam(), pulse.heat())).glow(-r - 0.25f, -r - 0.25f, end, r + 0.25f, r + 0.25f, end + 0.5f, Tile.LAMP);
+    }
+
+    /**
+     * The seat on the receiver's right, each variant with its own look: a cylinder's drum of six chambers (lit where charged, turning one
+     * place a shot), a flux cycler's fins, a bank's plates with a charge scale, a burst bank's three tubes, a flywheel's disc turning with
+     * its spin, a dynamo's coil, a tether's socket and cable.
+     */
+    private static void seat(GunMesh m, GunView v) {
+        if (!v.has("s"))
+            return;
+        var pulse = v.pulse() == null ? GunView.Pulse.REST : v.pulse();
+        float[] b = seatBox(v);
+        float hw = v.halfWidth(), sx = hw + 1.25f, zc = (b[0] + b[1]) / 2f, yc = b[2], span = b[1] - b[0];
+        switch (v.variant("s")) {
+            case "flywheel" -> {
+                m.part(v, "s");
+                m.push();
+                m.turnY(90f, sx, zc);
+                float r = Math.min(1.75f, span / 2f - 0.25f);
+                m.rod(sx, yc, r, zc - 0.25f, zc + 0.25f, Tile.BRUSHED);
+                m.rod(sx, yc, 0.375f, zc - 0.5f, zc + 0.5f, Tile.METAL);
+                m.push();
+                m.turnZ(pulse.angle(), sx, yc);
+                for (int i = 0; i < 4; i++) {
+                    float a = (float) Math.toRadians(90 * i);
+                    float lx = sx + (r - 0.5f) * (float) Math.cos(a), ly = yc + (r - 0.5f) * (float) Math.sin(a);
+                    m.colour(0xFFE0E0E8).glow(lx - 0.25f, ly - 0.25f, zc + 0.25f, lx + 0.25f, ly + 0.25f, zc + 0.375f, Tile.LAMP);
+                }
+                m.pop();
+                m.pop();
             }
+            case "flux_cycler" -> {
+                m.part(v, "s");
+                int fins = Math.max(3, (int) (span / 0.75f));
+                for (int i = 0; i < fins; i++) {
+                    float z = b[0] + 0.25f + i * (span - 0.5f) / fins;
+                    m.box(hw, yc - 0.75f, z, hw + 1.75f, yc + 0.75f, z + 0.25f, Tile.BRUSHED);
+                }
+                m.box(hw, yc - 0.75f, b[0], hw + 0.5f, yc + 0.75f, b[1], Tile.PANEL);
+            }
+            case "capacitor_bank", "burst_bank" -> {
+                boolean three = v.variant("s").equals("burst_bank");
+                m.part(v, "s");
+                m.box(hw, yc - 0.875f, b[0] + 0.25f, hw + 1.5f, yc + 0.875f, b[1] - 0.25f, Tile.PANEL);
+                if (three)
+                    for (int i = 0; i < 3; i++)
+                        m.rod(hw + 1.75f, yc - 0.5f + 0.5f * i, 0.25f, b[0] + 0.5f, b[1] - 0.5f, Tile.METAL);
+                else
+                    m.rod(hw + 1.75f, yc, 0.625f, b[0] + 0.5f, b[1] - 0.5f, Tile.METAL);
+                // The charge, a lamp for each of six steps along the bank.
+                float step = (span - 1f) / 6f;
+                for (int i = 0; i < 6; i++) {
+                    float z = b[0] + 0.5f + i * step;
+                    if (i < Math.round(pulse.lit()))
+                        m.colour(0xFF40C8FF).glow(hw + 1.5f, yc + 0.5f, z, hw + 1.625f, yc + 0.8f, z + step - 0.125f, Tile.LAMP);
+                    else
+                        m.colour(0xFF202428).box(hw + 1.5f, yc + 0.5f, z, hw + 1.625f, yc + 0.8f, z + step - 0.125f, Tile.LAMP);
+                }
+            }
+            case "recoil_dynamo" -> {
+                m.part(v, "s");
+                m.box(hw, yc - 0.75f, b[0] + 0.25f, hw + 0.5f, yc + 0.75f, b[1] - 0.25f, Tile.PANEL);
+                m.rod(hw + 1.25f, yc, 0.75f, b[0] + 0.5f, b[1] - 0.5f, Tile.METAL);
+                m.rings(hw + 1.25f, yc, 0.875f, b[0] + 0.5f, b[1] - 0.5f, 4, 0.25f, Tile.COIL);
+            }
+            case "backpack_tether" -> {
+                m.part(v, "s");
+                m.box(hw, yc - 0.5f, b[1] - 1.5f, hw + 1f, yc + 0.5f, b[1] - 0.25f, Tile.PANEL);
+                m.rod(hw + 0.5f, yc, 0.25f, b[1] - 0.25f, b[1] + 2.5f, Tile.KNURL);
+            }
+            default -> {
+                // Cylinder: a drum of six chambers turned about a sideways axis, the charged ones lit.
+                m.part(v, "s");
+                m.push();
+                m.turnY(90f, sx, zc);
+                float r = Math.min(1.5f, span / 2f - 0.25f);
+                m.rod(sx, yc, r, zc - 0.5f, zc + 0.5f, Tile.BRUSHED);
+                m.push();
+                m.turnZ(pulse.angle(), sx, yc);
+                for (int i = 0; i < 6; i++) {
+                    float a = (float) Math.toRadians(60 * i);
+                    float lx = sx + (r - 0.5f) * (float) Math.cos(a), ly = yc + (r - 0.5f) * (float) Math.sin(a);
+                    if (i < Math.round(pulse.lit()))
+                        m.colour(0xFF40FF60).glow(lx - 0.25f, ly - 0.25f, zc + 0.5f, lx + 0.25f, ly + 0.25f, zc + 0.625f, Tile.LAMP);
+                    else
+                        m.colour(0xFF202428).box(lx - 0.25f, ly - 0.25f, zc + 0.5f, lx + 0.25f, ly + 0.25f, zc + 0.625f, Tile.LAMP);
+                }
+                m.pop();
+                m.pop();
+            }
+        }
+    }
+
+    /**
+     * The dials and fittings a pulse gun carries: the heat governor's knob, vent or lamp, the heat gauge's dial with a needle that swings
+     * with the barrel's heat, the hold-charge lever, the pump's slider, the beam lens (prongs for a splitter, a pair of tines for a fork)
+     * and the zoom charge's coil.
+     */
+    private static void instruments(GunMesh m, GunView v) {
+        var pulse = v.pulse() == null ? GunView.Pulse.REST : v.pulse();
+        float hw = v.halfWidth(), z0 = bayZ(v)[0], z1 = bayZ(v)[1];
+        float y1 = (v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.75f) + (v.type() == GunLayout.Type.MACHINE_GUN ? 2f : 1.75f);
+        if (v.has("g")) {
+            m.part(v, "g");
+            switch (v.variant("g")) {
+                case "forced_vent" -> {
+                    for (int i = 0; i < 3; i++)
+                        m.box(-hw - 0.75f, y1 + 0.125f + 0.25f * i, z0 + 0.25f, -hw - 0.0625f, y1 + 0.25f + 0.25f * i, z0 + 1.5f, Tile.BORE);
+                }
+                case "dead_man_cutoff" -> m.colour(0xFFFF4030).glow(-hw - 0.75f, y1 + 0.125f, z0 + 0.25f, -hw - 0.0625f, y1 + 0.625f, z0 + 1f, Tile.LAMP);
+                default -> m.rod(-hw - 0.5f, y1 + 0.5f, 0.375f, z0 + 0.25f, z0 + 1f, Tile.KNURL);
+            }
+        }
+        if (v.has("u")) {
+            m.part(v, "u");
+            float zc = z1 - 1.25f, yc = y1 + 0.875f;
+            m.push();
+            m.turnY(-90f, -hw - 0.5f, zc);
+            m.rod(-hw - 0.5f, yc, 0.875f, zc - 0.25f, zc + 0.125f, Tile.PANEL);
+            m.push();
+            m.turnZ(-120f + 240f * Math.min(1f, pulse.heat()), -hw - 0.5f, yc);
+            m.colour(0xFFFF4030).glow(-hw - 0.5f - 0.0625f, yc, zc + 0.125f, -hw - 0.5f + 0.0625f, yc + 0.75f, zc + 0.25f, Tile.LAMP);
+            m.pop();
+            m.pop();
+        }
+        if (v.has("h")) {
+            m.part(v, "h");
+            m.box(hw, y1 - 0.5f, z1 - 1.5f, hw + 0.5f, y1 + 0.5f, z1 - 0.5f, Tile.KNURL);
+        }
+        float end = front(v);
+        if (v.has("p")) {
+            m.part(v, "p");
+            m.rod(0, -v.r() - 0.625f, 0.375f, end + 1f, end + 4f, Tile.KNURL);
+        }
+        if (v.has("l")) {
+            m.part(v, "l");
+            float r = v.r();
+            if (v.variant("l").equals("arc_fork")) {
+                m.box(-r - 0.75f, -0.25f, end - 1f, -r - 0.25f, 0.25f, end + 0.5f, Tile.METAL);
+                m.box(r + 0.25f, -0.25f, end - 1f, r + 0.75f, 0.25f, end + 0.5f, Tile.METAL);
+                m.colour(0xFF9FD8FF).glow(-r - 0.75f, -0.25f, end - 1.125f, -r - 0.25f, 0.25f, end - 1f, Tile.LAMP);
+                m.colour(0xFF9FD8FF).glow(r + 0.25f, -0.25f, end - 1.125f, r + 0.75f, 0.25f, end - 1f, Tile.LAMP);
+            } else {
+                m.rod(0, 0, r + 0.5f, end - 0.75f, end, Tile.METAL);
+                for (int i = 0; i < 3; i++) {
+                    float a = (float) Math.toRadians(120 * i + 90);
+                    m.colour(0xFF9FD8FF).glow((float) Math.cos(a) * (r + 0.25f) - 0.125f, (float) Math.sin(a) * (r + 0.25f) - 0.125f, end - 0.875f,
+                            (float) Math.cos(a) * (r + 0.25f) + 0.125f, (float) Math.sin(a) * (r + 0.25f) + 0.125f, end - 0.75f, Tile.LAMP);
+                }
+            }
+        }
+        if (v.has("z")) {
+            m.part(v, "z");
+            m.rod(0, v.top() + 0.75f, 0.375f, z0 + 1f, z0 + 2.5f, Tile.COIL);
         }
     }
 

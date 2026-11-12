@@ -1202,7 +1202,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
             List<ModularDesign.Part> parts = new ArrayList<>(design.parts());
             parts.add(new ModularDesign.Part(base.role(), base.material(), base.form(), base.count(), base.kind(), base.variant(), base.flaw(), base.measures().withState(state)));
             ItemStack done = work().copy();
-            if (!ModularStacks.assemble(done, new ModularDesign(design.type(), parts, design.edge()), materials, ModularTypes.on(level)))
+            if (!ModularStacks.assemble(done, design.withParts(parts), materials, ModularTypes.on(level)))
                 return false;
             table.setItem(PartBenchBlockEntity.PLAN, ItemStack.EMPTY);
             table.setItem(PartBenchBlockEntity.TOOL, done);

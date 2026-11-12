@@ -6,33 +6,30 @@ import java.util.Map;
 import java.util.Optional;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
-import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.weapon.FireMode;
+import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 
 /**
- * The physics of an electric gun, read from its design: a barrel of one of three kinds hands a charge from a swappable battery to a
- * slug (coil, rail) or to a vaporised nugget (plasma). Nothing ignites, and nothing here is a dial: what a shot takes from the cell and
- * what it gives back are fixed by the build, bounded by the cell's charge and the receiver's rating.
+ * The physics of a pulse gun, read from its design. A shot is a pulse of electrical energy, not a solid: the <b>seat</b> (its variant is
+ * the heat cycle, its conductor the ceiling on a pulse, its power tier a fraction of that ceiling) shapes the pulse and draws it from the
+ * battery, and the <b>barrel</b> hands it on: a conductive barrel takes part of the pulse out and turns it to heat, so a barrel is chosen for
+ * low conductivity. Nothing here is a dial: every choice is a part, a variant or one of three tiers.
  *
- * <ul>
- *   <li><b>Coil:</b> {@code stages} windings along the bore each add {@code EGUN_STAGE_J}; stages past what the barrel's length can fit
- *       are mostly wasted (switching losses). The slug must be magnetic ({@code separation.magnetic}).</li>
- *   <li><b>Rail:</b> the rails take what their conductor is rated for; the slug is any conductor. Longer rails keep the push.</li>
- *   <li><b>Plasma:</b> an arc channel vaporises a conductor nugget: the vaporisation energy of its mass is the floor, and what comes
- *       out is a short ray, not a slug.</li>
- * </ul>
- *
- * @param kind       which barrel.
+ * @param seat       the heat cycle.
+ * @param tier       the power tier, 1 (Light) to 3 (Heavy).
  * @param boreMm     the bore, millimetres.
  * @param lengthM    the barrel's length, metres.
- * @param stages     coil stages (1 for the others).
- * @param energyIn   joules a shot takes from the cell at full draw.
- * @param ampsRating amps the barrel's conductor carries before it wears.
+ * @param barrelLoss share of a pulse the barrel's conductor takes out of it.
+ * @param seatAmp    the seat's conductor (ampacity), the ceiling on what a pulse holds.
+ * @param seatDensity the seat's density: a flywheel's wheel.
+ * @param dielectric the seat's insulation band index: what a bank's plates hold.
  * @param band       the voltage band the receiver's insulation holds off.
  * @param barrelMass kilograms of the barrel.
  * @param maxCells   the most cells of battery the receiver's type takes.
@@ -40,41 +37,81 @@ import io.github.soundgoodizerfan.feedback.process.Material;
  * @param report     multiple of how loud a shot is (a suppressor cuts it, a brake raises it).
  * @param heatGain   multiple of the heat a shot leaves, from fittings.
  * @param shed       multiple of how fast the gun sheds heat (a shroud, a thermal sleeve).
- * @param eddy       share of a conductor slug's energy an eddy sleeve drains.
  * @param spreadMult multiple of the shot's spread (a stock, a bipod).
  * @param darkAt     light level at or below which a lit reticle helps (0 for none), and by how much it cuts spread.
+ * @param governor   the heat governor fitted.
+ * @param holdCharge whether a hold-charge trigger is fitted.
+ * @param pump       whether a pump charge is fitted.
+ * @param beams      beams of a beam splitter (0 for none).
+ * @param fork       whether an arc fork is fitted.
+ * @param zoom       whether a scope zoom charge is fitted.
+ * @param gauge      whether a heat gauge is fitted.
+ * @param sight      whether a sight is fitted.
  */
-public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages, float energyIn, float ampsRating, VoltageBand band,
-                              float barrelMass, int maxCells, float heatMult, float report, float heatGain, float shed, float eddy,
-                              float spreadMult, float darkAt, float darkCut) {
+public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, float barrelLoss, float seatAmp, float seatDensity,
+                              int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
+                              float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
+                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight) {
 
-    public enum Kind {
-        COIL, RAIL, PLASMA
+    /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
+    public enum Seat {
+        CYLINDER("cylinder", true, false, FireMode.SEMI),
+        FLUX_CYCLER("flux_cycler", false, false, FireMode.AUTO, FireMode.SEMI),
+        CAPACITOR_BANK("capacitor_bank", true, true, FireMode.SEMI),
+        BURST_BANK("burst_bank", true, true, FireMode.BURST, FireMode.SEMI),
+        FLYWHEEL("flywheel", false, true, FireMode.AUTO, FireMode.SEMI),
+        RECOIL_DYNAMO("recoil_dynamo", false, false, FireMode.AUTO, FireMode.SEMI, FireMode.BURST),
+        BACKPACK_TETHER("backpack_tether", false, false, FireMode.AUTO, FireMode.SEMI, FireMode.BURST);
+
+        private final String id;
+        private final boolean single, big;
+        private final FireMode[] modes;
+
+        Seat(String id, boolean single, boolean big, FireMode... modes) {
+            this.id = id;
+            this.single = single;
+            this.big = big;
+            this.modes = modes;
+        }
+
+        /** Whether the seat fires one shot a pull (the cylinder, the banks): the only seats a hold-charge trigger or a pump charge suit. */
+        public boolean single() {
+            return single;
+        }
+
+        /** Whether the seat needs a long gun or machine gun frame. */
+        public boolean big() {
+            return big;
+        }
+
+        public FireMode[] modes() {
+            return modes;
+        }
+
+        public static Seat of(String name) {
+            for (Seat s : values())
+                if (s.id.equals(name))
+                    return s;
+            return CYLINDER;
+        }
     }
 
-    public static final String BARREL = "barrel", RECEIVER = "receiver";
-
-    /**
-     * What one shot is.
-     *
-     * @param speed  blocks per tick at the muzzle (0 for a plasma ray).
-     * @param joules energy delivered.
-     * @param damage the hit at the muzzle.
-     * @param mass   the slug's kilograms (the vaporised nugget's for a plasma shot).
-     */
-    public record Shot(float speed, float joules, float damage, float mass) {
+    public enum Governor {
+        NONE, THROTTLE, VENT, CUTOFF
     }
 
-    /** The spec of {@code design}, or empty if it lacks a barrel or a receiver or a material is unknown. */
+    public static final String BARREL = "barrel", RECEIVER = "receiver", SEAT = "seat";
+
+    /** The spec of {@code design}, or empty if it lacks a barrel, receiver, trigger or seat, a material is unknown, or the build is refused ({@link #fault}). */
     public static Optional<ElectricGunSpec> of(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
-        Kind kind = Kind.COIL;
-        float bore = 0, length = 0, amps = 0, mass = 0;
-        int stages = 1;
+        float bore = 0, length = 0, loss = 0, mass = 0, seatAmp = 0, seatDensity = 0;
+        int tier = 2, dielectric = 0, maxCells = 2, beams = 0;
+        Seat seat = null;
         VoltageBand band = VoltageBand.LV;
         boolean barrel = false, receiver = false, trigger = false;
-        float conductivity = 0;
-        int maxCells = 2;
-        float heatMult = 1f, report = 1f, heatGain = 1f, shed = 1f, eddy = 0f, spreadMult = 1f, darkAt = 0f, darkCut = 0f;
+        float heatMult = 1f, report = 1f, heatGain = 1f, shed = 1f, spreadMult = 1f, darkAt = 0f, darkCut = 0f;
+        Governor governor = Governor.NONE;
+        boolean hold = false, pump = false, fork = false, zoom = false, gauge = false, sight = false;
         for (ModularDesign.Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             Material m = materials.get(p.material());
@@ -82,14 +119,9 @@ public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages
                 return Optional.empty();
             switch (role.name()) {
                 case BARREL -> {
-                    String name = role.variant(p).map(ModularType.Variant::name).orElse("coil_barrel");
-                    kind = name.startsWith("rail") ? Kind.RAIL : name.startsWith("plasma") ? Kind.PLASMA : Kind.COIL;
                     bore = role.axis(p, "bore");
                     length = role.axis(p, "barrel_length");
-                    if (kind == Kind.COIL)
-                        stages = Math.max(1, Math.round(role.axis(p, "stages")));
-                    conductivity = m.ampacity().orElse(0f);
-                    amps = conductivity * role.volume(p) * ModularTuning.EGUN_AMPS_PER_LS;
+                    loss = Mth.clamp(m.ampacity().orElse(0f) * ModularTuning.EGUN_BARREL_LOSS_PER_AMPACITY, 0f, ModularTuning.EGUN_BARREL_LOSS_MAX);
                     mass = ModularBake.mass(role, p, m);
                     barrel = true;
                 }
@@ -101,6 +133,33 @@ public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages
                     receiver = true;
                 }
                 case "trigger" -> trigger = true;
+                case SEAT -> {
+                    seat = Seat.of(role.variant(p).map(ModularType.Variant::name).orElse("cylinder"));
+                    tier = Mth.clamp(Math.round(role.axis(p, "tier")), 1, 3);
+                    seatAmp = m.ampacity().orElse(0f);
+                    seatDensity = m.density().muPerMb();
+                    dielectric = m.electrical().insulation().orElse(VoltageBand.LV).ordinal();
+                }
+                case "heat_governor" -> governor = switch (role.variant(p).map(ModularType.Variant::name).orElse("fire_rate_throttle")) {
+                    case "forced_vent" -> Governor.VENT;
+                    case "dead_man_cutoff" -> Governor.CUTOFF;
+                    default -> Governor.THROTTLE;
+                };
+                case "hold_charge" -> hold = true;
+                case "pump_charge" -> pump = true;
+                case "beam_lens" -> {
+                    String v = role.variant(p).map(ModularType.Variant::name).orElse("beam_splitter");
+                    if (v.equals("arc_fork"))
+                        fork = true;
+                    else
+                        beams = Mth.clamp(Math.round(role.axis(p, "beams")), 3, 7);
+                }
+                case "zoom_charge" -> zoom = true;
+                case "heat_gauge" -> gauge = true;
+                case "sight" -> {
+                    sight = true;
+                    spreadMult *= role.variant(p).map(x -> x.params().getOrDefault("spread_mult", 1f)).orElse(1f);
+                }
                 default -> {
                     // A stock's variant steadies the aim; a lit reticle cuts spread in the dark.
                     var v = role.variant(p);
@@ -119,100 +178,163 @@ public record ElectricGunSpec(Kind kind, float boreMm, float lengthM, int stages
                 report *= o.blast();
                 heatGain *= o.heat();
                 shed *= o.shed();
-                eddy += o.eddy();
                 spreadMult *= o.params().getOrDefault("spread_mult", 1f);
             }
         }
-        if (!barrel || !receiver || !trigger || bore <= 0 || length <= 0 || conductivity <= 0)
+        if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
-        float in = switch (kind) {
-            case COIL -> stages * ModularTuning.EGUN_STAGE_J;
-            case RAIL -> amps * ModularTuning.EGUN_RAIL_J_PER_AMP;
-            case PLASMA -> ModularTuning.EGUN_ARC_J * (bore / ModularTuning.EGUN_BORE_HALF) * (bore / ModularTuning.EGUN_BORE_HALF);
-        };
-        return Optional.of(new ElectricGunSpec(kind, bore, length, stages, in, amps, band, mass, maxCells, heatMult, report, heatGain,
-                shed, eddy, spreadMult, darkAt, darkCut));
-    }
-
-    /** Share of the energy taken that reaches the projectile. */
-    public float efficiency() {
-        float len = lengthM / (lengthM + ModularTuning.EGUN_LENGTH_HALF);
-        float wide = boreMm / ModularTuning.EGUN_BORE_HALF;
-        float bore = 1f / (1f + wide * wide);
-        return switch (kind) {
-            case COIL -> {
-                // Stages the barrel can fit work; the rest cost switching losses and add little.
-                float fit = Math.max(1f, lengthM / ModularTuning.EGUN_STAGE_SPACING_M);
-                float useful = Math.min(stages, fit) + ModularTuning.EGUN_STAGE_WASTE * Math.max(0f, stages - fit);
-                yield ModularTuning.EGUN_COIL_EFF * (useful / stages) * len * bore;
-            }
-            case RAIL -> ModularTuning.EGUN_RAIL_EFF * len * bore;
-            case PLASMA -> ModularTuning.EGUN_PLASMA_EFF;
-        };
-    }
-
-    /** Litres of metal in one slug of this bore. */
-    public float slugLitres() {
-        float r = boreMm / 2f;
-        return ModularTuning.EGUN_SLUG_LENGTHS * (float) Math.PI * r * r * boreMm * 1e-6f;
-    }
-
-    /** How many slugs one nugget is worth; a plasma shot takes the whole nugget. */
-    public int perNugget() {
-        return kind == Kind.PLASMA ? 1 : Math.max(1, (int) (ModularTuning.EGUN_NUGGET_LITRES / slugLitres()));
-    }
-
-    /** Joules a shot needs at least: a plasma bolt's vaporisation floor for a nugget of {@code density} kg per litre. */
-    public float floorJ(float density) {
-        return kind == Kind.PLASMA ? ModularTuning.EGUN_NUGGET_LITRES * density * ModularTuning.EGUN_VAPOR_J_PER_KG : 0f;
-    }
-
-    /** The shot of a slug (or nugget) of {@code density} kilograms per litre when the cell gave {@code fraction} of the full draw. */
-    public Shot shot(float density, float fraction) {
-        float out = energyIn * Math.max(0f, fraction) * efficiency();
-        if (kind == Kind.PLASMA) {
-            float mass = ModularTuning.EGUN_NUGGET_LITRES * density;
-            float joules = Math.max(0f, out - floorJ(density));
-            return new Shot(0f, joules, joules * ModularTuning.EGUN_PLASMA_DAMAGE_PER_J, mass);
-        }
-        float mass = slugLitres() * density;
-        float speed = (float) Math.sqrt(2f * out / Math.max(1e-6f, mass)) / 20f;
-        speed = Math.min(speed, ModularTuning.EGUN_SPEED_MAX);
-        float joules = 0.5f * mass * (speed * 20f) * (speed * 20f);
-        return new Shot(speed, joules, joules * ModularTuning.EGUN_DAMAGE_PER_J, mass);
+        ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight);
+        return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 
     /**
-     * The shot as the gun pipeline reads it ({@link GunFigures}), for a slug of {@code density} when the cell gave {@code fraction}
-     * of the full draw. The muzzle energy is the work that gives the same hit as the shot's damage, so the tuning of what a shot
-     * hurts stays in {@code EGUN_DAMAGE_PER_J}.
-     *
-     * @param gunKg     the gun's mass.
-     * @param heat      the gun's heat now, 0 to 1: it lengthens the cycle.
-     * @param speedMult what an eddy sleeve and the archetype do to the slug's speed (energy follows its square).
-     * @param spreadMult what a lit reticle and the like do to the cone.
+     * Why the design is refused, as the tail of {@code message.feedback.blueprint_table.fault.<reason>}, or null: a big seat needs a long gun
+     * or machine gun frame; a hold-charge trigger and a pump charge need a seat that fires one shot a pull.
      */
-    public GunFigures figures(float density, float fraction, float gunKg, float heat, float speedMult, float spreadMult) {
-        Shot s = shot(density, fraction);
-        boolean plasma = kind == Kind.PLASMA;
-        float speed = (plasma ? ModularTuning.EGUN_PLASMA_RANGE * ModularTuning.EGUN_PLASMA_DRAG : s.speed()) * speedMult;
-        float energy = s.damage() / FTuning.GUN_DAMAGE_PER_WORK * speedMult * speedMult;
-        float impulse = s.mass() * speed * 20f;
-        int cycleMs = Math.round((ModularTuning.EGUN_COOLDOWN + heat * ModularTuning.EGUN_HEAT_COOLDOWN_TICKS) * 50f);
-        float inaccuracy = ModularTuning.AIR_SPREAD * ModularTuning.EGUN_LENGTH_HALF / Math.max(0.05f, lengthM) * this.spreadMult;
-        float spread = Math.max(FTuning.GUN_SPREAD_FLOOR_DEG, ModularTuning.EGUN_SPREAD_DEG_PER_UNIT * inaccuracy * spreadMult);
+    public static String fault(ModularDesign design, ModularType type) {
+        String frame = "", seat = "";
+        boolean charge = false;
+        for (ModularDesign.Part p : design.parts()) {
+            ModularType.Role role = type.roles().get(p.role());
+            if (role == null)
+                continue;
+            switch (role.name()) {
+                case RECEIVER -> frame = role.variant(p).map(ModularType.Variant::name).orElse("handgun");
+                case SEAT -> seat = role.variant(p).map(ModularType.Variant::name).orElse("cylinder");
+                case "hold_charge", "pump_charge" -> charge = true;
+                default -> {
+                }
+            }
+        }
+        Seat s = Seat.of(seat);
+        if (s.big() && frame.equals("handgun"))
+            return "pulse_seat_frame";
+        if (charge && !s.single())
+            return "pulse_charge_seat";
+        return null;
+    }
+
+    // --- the pulse ---------------------------------------------------------------------------
+
+    /** The hard ceiling on the joules one pulse holds: the seat's conductor. */
+    public float ceilJ() {
+        return ModularTuning.EGUN_SEAT_CEIL_J * Mth.clamp(seatAmp, 0.1f, 3f);
+    }
+
+    /** The share of the ceiling this tier takes. */
+    public float tierFraction() {
+        return ModularTuning.EGUN_TIER_FRACTION[tier - 1];
+    }
+
+    /** Joules one ordinary pulse holds, before the barrel. */
+    public float pulseJ() {
+        return ceilJ() * tierFraction();
+    }
+
+    /** How the seat shapes its pulse against an ordinary one: a bank holds a lot, a flywheel by its density. */
+    public float seatMult() {
+        return switch (seat) {
+            case CAPACITOR_BANK -> ModularTuning.EGUN_BANK_MULT * (1f + ModularTuning.EGUN_BANK_DIELECTRIC_STEP * dielectric);
+            case BURST_BANK -> ModularTuning.EGUN_BANK_MULT * (1f + ModularTuning.EGUN_BANK_DIELECTRIC_STEP * dielectric) / FTuning.GUN_BURST_ROUNDS;
+            case FLYWHEEL -> Mth.clamp(0.6f + 0.4f * seatDensity / ModularTuning.EGUN_FLY_REF_DENSITY, 0.6f, 1.6f);
+            default -> 1f;
+        };
+    }
+
+    /** The bore's width against its range, 0 narrow to 1 wide. */
+    private float boreShare() {
+        return Mth.clamp((boreMm - 6.25f) / 12.5f, 0f, 1f);
+    }
+
+    /** What the bore does to a pulse's damage (and its cone): 1 - span/2 narrow to 1 + span/2 wide. */
+    public float boreFactor() {
+        return 1f - ModularTuning.EGUN_BORE_SPAN / 2f + ModularTuning.EGUN_BORE_SPAN * boreShare();
+    }
+
+    /** Joules of {@code drawn} that leave the barrel: the barrel's conductor takes its share out as heat. */
+    public float delivered(float drawn) {
+        return drawn * (1f - barrelLoss) * boreFactor();
+    }
+
+    /** The hit of a pulse that left the barrel with {@code joules}. */
+    public float damage(float joules) {
+        return joules * ModularTuning.EGUN_DAMAGE_PER_J;
+    }
+
+    /** Blocks a pulse holds its full damage out to, at zoom charge {@code zoomShare} (0 to 1): then nothing. */
+    public float cutoff(float zoomShare) {
+        float r = (ModularTuning.EGUN_RANGE_BASE + ModularTuning.EGUN_RANGE_PER_M * lengthM) * (1f + ModularTuning.EGUN_RANGE_PER_TIER * (tier - 1));
+        return r * (1f + (zoom ? ModularTuning.EGUN_ZOOM_RANGE * zoomShare : 0f));
+    }
+
+    /** Mobs a pulse goes through beyond the first, at hold charge {@code holdShare} (0 to 1); a capacitor bank goes through every mob. */
+    public int pierce(float holdShare) {
+        if (seat == Seat.CAPACITOR_BANK)
+            return Integer.MAX_VALUE;
+        return tier * ModularTuning.EGUN_PIERCE_PER_TIER + (holdCharge ? Math.round(ModularTuning.EGUN_HOLD_PIERCE * holdShare) : 0);
+    }
+
+    /** Heat a pulse of {@code power} (1 for an ordinary one) leaves: its tier, the barrel's conductor and the fittings. */
+    public float heatPerShot(float power) {
+        return ModularTuning.EGUN_HEAT_PER_SHOT * (tierFraction() / ModularTuning.EGUN_TIER_FRACTION[1]) * power
+                * (1f + barrelLoss * ModularTuning.EGUN_BARREL_HEAT_PER_LOSS) * heatGain * heatMult;
+    }
+
+    /** The cone of a pulse before a stance and a scope: the barrel's length and bore, the fittings. */
+    public float coneDeg(float zoomShare) {
+        return Math.max(FTuning.GUN_SPREAD_FLOOR_DEG, ModularTuning.EGUN_SPREAD_BASE_DEG * 0.4f / Math.max(0.1f, lengthM) * spreadMult * boreFactor()
+                * (1f - (zoom ? ModularTuning.EGUN_ZOOM_TIGHT * zoomShare : 0f)));
+    }
+
+    /** Chambers a second a cylinder refills at, from the seated battery's cells and volts, the chamber's conductor and the tier. */
+    public float refillPerSecond(float volts, int cells) {
+        float battery = Math.max(0.25f, cells / 2f) * Math.min(1.5f, volts / ModularTuning.EGUN_REF_VOLTS);
+        return ModularTuning.EGUN_CYL_REFILL_PER_S * Mth.clamp(seatAmp, 0.3f, 2f) * battery * (ModularTuning.EGUN_TIER_FRACTION[1] / tierFraction());
+    }
+
+    /** Ticks a capacitor bank or a burst bank takes to recharge: the tier's base, longer for a bigger battery. */
+    public int bankRechargeTicks(int cells) {
+        return Math.round(ModularTuning.EGUN_BANK_RECHARGE_S[tier - 1] * 20f * Math.max(1, cells) / 2f);
+    }
+
+    /** Ticks of a held trigger a flywheel takes to spin up: a denser wheel takes longer. */
+    public float spinUpTicks() {
+        return ModularTuning.EGUN_FLY_UP_TICKS * Mth.clamp(seatDensity / ModularTuning.EGUN_FLY_REF_DENSITY, 0.5f, 2f);
+    }
+
+    /** Ticks between shots with nothing slowing it: the seat's cycle ({@code burst}: inside a burst bank's burst). */
+    public int cycleTicks(boolean burst) {
+        return switch (seat) {
+            case CYLINDER -> ModularTuning.EGUN_COOLDOWN;
+            case CAPACITOR_BANK -> ModularTuning.EGUN_BANK_CYCLE;
+            case BURST_BANK -> burst ? ModularTuning.EGUN_BURST_GAP_TICKS : ModularTuning.EGUN_BANK_CYCLE / 2;
+            case FLYWHEEL -> ModularTuning.EGUN_FLY_CYCLE;
+            default -> ModularTuning.EGUN_FLUX_CYCLE;
+        };
+    }
+
+    /** The recoil figure of a pulse of {@code joules}: what kick and hand strain read. */
+    public static float impulse(float joules) {
+        return 0.15f * (float) Math.sqrt(Math.max(0f, joules));
+    }
+
+    /**
+     * The shot as the gun pipeline reads it ({@link GunFigures}): the muzzle energy is the work that gives the hit of a pulse, so what a
+     * shot hurts stays in {@code EGUN_DAMAGE_PER_J}. A pulse has no projectile, so its speed only says it is instant.
+     *
+     * @param joules    drawn from the battery for the shot.
+     * @param gunKg     the gun's mass.
+     * @param cycleTicks ticks to the next shot.
+     * @param spreadMult what a stance, a lit reticle and the like do to the cone.
+     */
+    public GunFigures figures(float joules, float gunKg, int cycleTicks, float zoomShare, float spreadMult) {
+        float hit = damage(delivered(joules));
+        float energy = hit / FTuning.GUN_DAMAGE_PER_WORK;
+        float impulse = impulse(joules);
+        float spread = coneDeg(zoomShare) * spreadMult;
         float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (FTuning.GUN_KICK_REFERENCE_MU / Math.max(0.05f, gunKg));
-        return new GunFigures(new Pu(0f), new Pu(0f), speed, energy, new Mu(s.mass()), new Mu(gunKg), impulse, cycleMs, spread, kick,
+        return new GunFigures(new Pu(0f), new Pu(0f), 10f, energy, new Mu(0.001f), new Mu(gunKg), impulse, cycleTicks * 50, spread, kick,
                 report, heatGain * heatMult, shed);
-    }
-
-    /** The current a shot pulls from a cell at {@code volts}: the energy over the volts and the pulse length. */
-    public float amps(float volts) {
-        return energyIn / Math.max(0.1f, volts * ModularTuning.EGUN_PULSE_S);
-    }
-
-    /** The current over what the barrel's conductor is rated for: above 1 each shot wears it, far above it fuses. */
-    public float load(float volts) {
-        return ampsRating > 0f ? amps(volts) / ampsRating : 0f;
     }
 }

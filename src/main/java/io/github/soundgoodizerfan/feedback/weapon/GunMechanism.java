@@ -22,8 +22,8 @@ import io.github.soundgoodizerfan.feedback.process.Material;
  * else about a gun is shared and lives outside the mechanism: the client's input (fire, hold, mode, aim, reload key), the HUD frame,
  * the cycle gate, the swept bullet and its hits, the kick and strain, the pose and the look.
  *
- * <p>The three families are the firearm (a powder charge in a case, {@code FirearmMechanism}), the electric gun (a cell and a metal
- * slug, {@code ElectricMechanism}) and the gas gun (a spring or a compressed gas; not built as a gun item yet).
+ * <p>The three families are the firearm (a powder charge in a case, {@code FirearmMechanism}), the pulse gun (a cell and a pulse
+ * seat, {@code ElectricMechanism}) and the gas gun (a spring or a compressed gas; not built as a gun item yet).
  */
 public interface GunMechanism {
 
@@ -66,4 +66,27 @@ public interface GunMechanism {
 
     /** What shows at the muzzle. */
     SimpleParticleType muzzleParticle(ItemStack gun, GunFigures figures);
+
+    /** Whether the gun reads how long the trigger is held (a flywheel's spin, a hold charge): the client then tells the server when it goes down and comes up. */
+    default boolean tracksTrigger(ItemStack gun) {
+        return false;
+    }
+
+    /** Whether a pull is made on the release of the trigger (a hold charge: the shot is what was built while it was down). */
+    default boolean fireOnRelease(ItemStack gun) {
+        return false;
+    }
+
+    /** Whether the reload key works the gun (a pump charge) instead of reloading it. */
+    default boolean reloadKeyWorks(ItemStack gun) {
+        return false;
+    }
+
+    /** The reload key pressed on a gun that {@link #reloadKeyWorks}. */
+    default void reloadKey(ServerLevel level, Player player, ItemStack gun) {
+    }
+
+    /** The sight went up or came down on the gun (a scope zoom charge builds while it is up). */
+    default void aimChanged(ItemStack gun, boolean aiming, long gameTime) {
+    }
 }

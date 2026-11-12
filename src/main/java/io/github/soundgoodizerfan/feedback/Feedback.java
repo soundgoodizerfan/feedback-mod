@@ -295,6 +295,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunReloadPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunReloadPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunReloadPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunModePayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunModePayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunModePayload::handle)

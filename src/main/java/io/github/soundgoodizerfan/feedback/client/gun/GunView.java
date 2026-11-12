@@ -45,15 +45,32 @@ import net.minecraft.world.item.ItemStack;
  * @param woods    each wooden part's own bark, a low-contrast copy of its log's side ({@link GunWood})
  * @param glow     the barrel's glow as a block light level (0 cold): {@code Incandescence} of the gun's heat
  * @param rounds   rounds held, chamber included
- * @param electric whether it is an electric gun: its barrel is a coil, rails or an arc channel and it carries a cell bay
- * @param stages   a coil barrel's stages (0 for the other barrels)
+ * @param electric whether it is a pulse gun: a pulse barrel and a seat, and it carries a cell bay
+ * @param pulse    a pulse gun's seat as it is now (null for any other gun)
  * @param cell     the battery's state of charge, 0 to 1, or -1 with no battery loaded
  */
 record GunView(GunLayout.Type type, String action, boolean slide, float len, float r, float bore, float len2, float r2,
                Map<String, Integer> colours, Map<String, String> variants, Map<String, Surface> surfaces, Map<String, ResourceLocation> woods, int glow,
-               MagazineSize mag, int rounds, boolean electric, int stages, float cell) {
+               MagazineSize mag, int rounds, boolean electric, Pulse pulse, float cell) {
 
     private static final int BARE = 0xFFB4B4B8;
+
+    /**
+     * A pulse gun's seat as it looks now.
+     *
+     * @param angle the drum's or wheel's turn, degrees
+     * @param lit   chambers of a cylinder lit, or a bank's charge in chambers (0 to 6)
+     * @param heat  the barrel's heat, 0 to 1
+     * @param beam  the beam colour the drawing was given, an RGB
+     */
+    record Pulse(float angle, float lit, float heat, int beam) {
+        static final Pulse REST = new Pulse(0f, 6f, 0f, 0x3F7FFF);
+    }
+
+    /** This view with the seat shown as {@code p}: a preview animates the drum and the wheel this way. */
+    GunView with(Pulse p) {
+        return new GunView(type, action, slide, len, r, bore, len2, r2, colours, variants, surfaces, woods, glow, mag, rounds, electric, p, cell);
+    }
 
     /** What a part's material looks like on the surface, which picks its tile: grain only on wood, brushing only on metal. */
     public enum Surface {
@@ -86,7 +103,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             for (String k : new String[]{"R", "B", "A", "T", "G"})
                 colours.put(k, BARE);
             return new GunView(GunLayout.Type.HANDGUN, "self_loading", true, 4f, 0.625f, 0.25f, 0, 0, colours, variants,
-                    Map.of(), Map.of(), 0, mag, rounds, false, 0, -1f);
+                    Map.of(), Map.of(), 0, mag, rounds, false, null, -1f);
         }
         Map<String, Surface> surfaces = new HashMap<>();
         Map<String, ResourceLocation> woods = new HashMap<>();
@@ -115,23 +132,29 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         }
         GunLayout.Type kind = GunLayout.Type.of(variants.getOrDefault("R", ""));
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularElectricGun) {
-            // An electric gun has no action and no slide: a frame, a cell bay, and a barrel that is a coil, rails or an arc channel.
+            // A pulse gun has no action and no slide: a frame, a cell bay, a seat, and a pulse barrel.
             ModularType.Role role = type.roles().get("B");
             ModularDesign.Part barrelPart = design.part("B");
             float[] eb = new float[3];
-            int stages = 0;
             if (role != null && barrelPart != null) {
                 float metres = role.axis(barrelPart, "barrel_length"), boreMm = role.axis(barrelPart, "bore");
                 eb[0] = snap(Math.max(1.5f, Math.min(metres * 20f, 16f)), 0.25f);
                 eb[1] = snap(Math.max(0.75f, Math.min(0.5f + boreMm * 0.04f, 1.5f)), 0.125f);
                 eb[2] = snap(Math.max(0.125f, Math.min(boreMm * 0.04f, eb[1] - 0.125f)), 0.125f);
-                if (variants.getOrDefault("B", "").startsWith("coil"))
-                    stages = Math.max(1, Math.round(role.axis(barrelPart, "stages")));
             }
             net.minecraft.world.item.ItemStack battery = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.cell(stack);
             var state = battery.isEmpty() ? null : io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.state(battery);
             float soc = state == null ? -1f : io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.stateOfCharge(state);
-            return new GunView(kind, "none", false, eb[0], eb[1], eb[2], 0, 0, colours, variants, surfaces, woods, 0, null, 0, true, stages, soc);
+            long game = level == null ? 0L : level.getGameTime();
+            float spin = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.spinShown(stack, game);
+            float angle = variants.getOrDefault("s", "").equals("flywheel") ? (System.currentTimeMillis() % 100_000L) * 0.36f * spin * 3f
+                    : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chamberIndex(stack) * 60f;
+            float lit = variants.getOrDefault("s", "").equals("cylinder")
+                    ? io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chambersShown(stack, game)
+                    : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.bankShown(stack, game) * 6f;
+            Pulse pulse = new Pulse(angle % 360f, lit, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.heatFraction(stack, game),
+                    design.colour());
+            return new GunView(kind, "none", false, eb[0], eb[1], eb[2], 0, 0, colours, variants, surfaces, woods, 0, null, 0, true, pulse, soc);
         }
         boolean slide = colours.containsKey("A");
         String action = slide ? variants.getOrDefault("A", "self_loading")
@@ -143,7 +166,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             b[2] = Math.min(b[2], b[1] - 0.125f);
         }
         float[] d = barrel(type, "D", design.part("D"));
-        return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, surfaces, woods, glow, mag, rounds, false, 0, -1f);
+        return new GunView(kind, action, slide, b[0], b[1], b[2], d[0], d[1], colours, variants, surfaces, woods, glow, mag, rounds, false, null, -1f);
     }
 
     /**

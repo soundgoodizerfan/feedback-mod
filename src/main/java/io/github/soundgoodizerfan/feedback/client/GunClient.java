@@ -228,6 +228,8 @@ public final class GunClient {
         aim = Mth.clamp(aim + (wantsAim ? step : -step * 1.5f), 0f, 1f);
         if (wantsAim != aimSent) {
             aimSent = wantsAim;
+            if (built && held.getItem() instanceof GunItem aimed)
+                aimed.mechanism().aimChanged(held, wantsAim, mc.level.getGameTime());
             PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.AimPayload(wantsAim));
         }
 
@@ -236,7 +238,12 @@ public final class GunClient {
         }
         boolean offGunHeld = offBuilt;
         boolean reloadDown = (canAct || (offGunHeld && ready)) && RELOAD.isDown();
-        if (reloadDown && !reloadWasDown) {
+        // A pump charge works the gun with the reload key; there is nothing to reload.
+        boolean pumping = canAct && ((GunItem) held.getItem()).mechanism().reloadKeyWorks(held);
+        if (pumping) {
+            if (reloadDown && !reloadWasDown)
+                PacketDistributor.sendToServer(new GunReloadPayload(true));
+        } else if (reloadDown && !reloadWasDown) {
             // The estimate is every held gun's own reload, back to back: the server runs the emptiest first.
             long took = 0;
             for (var pair : new Object[][]{{held, design}, {offItem, offDesign}}) {
@@ -312,6 +319,8 @@ public final class GunClient {
         long nextShotMs;
         boolean wasDown;
         int burstLeft;
+        /** A shot has left since the button went down: a flywheel's single shot is one a press. */
+        boolean spent;
     }
 
     private static final Trigger MAIN = new Trigger(), OFF = new Trigger();
@@ -321,21 +330,36 @@ public final class GunClient {
                              Trigger t, boolean active, boolean down, boolean fanning, boolean off, long now) {
         FireMode mode = GunItem.mode(gun);
         boolean pressed = down && !t.wasDown;
+        boolean released = !down && t.wasDown;
+        // A gun that reads how long the trigger is held (a flywheel's spin, a hold charge) tells the server when it goes down and comes up.
+        GunMechanism mech = GunItem.mechanismOf(gun);
+        boolean onRelease = mech != null && active && mech.fireOnRelease(gun);
+        if (mech != null && mech.tracksTrigger(gun) && (pressed || released)) {
+            PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload(down, off));
+            io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.setHeld(gun, down, mc.level.getGameTime());
+        }
         t.wasDown = down;
-        if (pressed && mode == FireMode.BURST && figures != null)
+        if (pressed && mode == FireMode.BURST && figures != null && !onRelease)
             t.burstLeft = FTuning.GUN_BURST_ROUNDS;
         if (!active)
             t.burstLeft = 0;
-        boolean wants = switch (mode) {
+        if (pressed)
+            t.spent = false;
+        // A flywheel's single shot waits for the wheel to spin up: it fires once while the trigger is held.
+        boolean waits = mech != null && mech.tracksTrigger(gun) && !onRelease;
+        boolean wants = onRelease ? released : switch (mode) {
             case AUTO -> down;
-            case SEMI -> pressed || (fanning && down);
+            case SEMI -> waits ? down && !t.spent : pressed || (fanning && down);
             case BURST -> t.burstLeft > 0;
         };
         if (!wants)
             return;
         if (figures == null) {
+            // A flywheel still spinning up is not a click.
+            if (mech != null && mech.tracksTrigger(gun) && !onRelease && down)
+                return;
             // Empty, or the wrong bore: a click, not a shot, and not a click every frame.
-            if (pressed || mode == FireMode.AUTO) {
+            if (pressed || released && onRelease || mode == FireMode.AUTO) {
                 if (now >= t.nextShotMs) {
                     mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.DISPENSER_FAIL,
                             SoundSource.PLAYERS, 0.5f, 1.6f, false);
@@ -350,6 +374,7 @@ public final class GunClient {
             t.nextShotMs = now;
         if (now >= t.nextShotMs) {
             shoot(mc, player, gun, figures, off, now);
+            t.spent = true;
             if (mode == FireMode.BURST)
                 t.burstLeft--;
             // Keep the gun's rhythm, but never squeeze the gap below three quarters of a

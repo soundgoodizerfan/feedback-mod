@@ -95,4 +95,6 @@ A blueprint is never required and gates nothing; it gives the credit and a **rec
 
 A part with **axes** (a chestplate's width, a sword blade's length) shows steppers on the drawing for the target value of each.
 
-The real-world name of the build you are drawing shows beside the type's name: a gun is named by its action and barrel, and armour, blades, shields, bows and electric guns by their shape and the ranges their axes sit in (a cuirass, a rapier, a tower shield, a railgun). A build with no recognised name shows none here; the item itself still gets a name from its size, shape and material.
+An [electric gun](Electric_Gun.md) drawing also has a **beam color**: a swatch and a hex entry (`#RRGGBB`) at the top right of the canvas. The color is saved on the printed blueprint and carried onto a gun built to it. A drawing that cannot be built, such as a capacitor bank on a handgun frame, shows the reason beside the parts at fault.
+
+The real-world name of the build you are drawing shows beside the type's name: a gun is named by its action and barrel, and armour, blades, shields, bows and electric guns by their shape and the ranges their axes sit in (a cuirass, a rapier, a tower shield, a Railcannon). A build with no recognised name shows none here; the item itself still gets a name from its size, shape and material.

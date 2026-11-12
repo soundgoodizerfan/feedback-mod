@@ -63,6 +63,8 @@ public class ModularBackpack extends ModularItem {
     public static final String FRAME = "F", HOLSTER = "H", LOOPS = "B", LASHING = "R", BANDOLIER = "A", PANEL = "P", BELT = "W", PAD = "C";
     /** More fittings: hard liner, fire patch, oiled coat, warm liner, quick-release buckle, lamp bracket. */
     public static final String LINER = "L", PATCH = "X", COAT = "O", WARM = "I", BUCKLE = "Q", LAMP = "K";
+    /** The battery fitting: one slot that takes only a battery, which a tethered pulse gun draws from. */
+    public static final String BAY = "V";
     /** Roles that carry load, and so are down to the carry rating. */
     public static final List<String> CARRY_ROLES = List.of(STRAP, FRAME, PANEL, BELT);
     /** The store roles in the order their slots sit in the extra row, each with how many slots it adds. */
@@ -74,6 +76,7 @@ public class ModularBackpack extends ModularItem {
         STORES.put(LASHING, 1);
         STORES.put(BANDOLIER, 3);
         STORES.put(LAMP, 1);
+        STORES.put(BAY, 1);
         STORE_ROLES = List.copyOf(STORES.keySet());
     }
 
@@ -113,7 +116,7 @@ public class ModularBackpack extends ModularItem {
         int at = 0;
         for (int k = 0; k < STORE_ROLES.size(); k++)
             if (d.part(STORE_ROLES.get(k)) != null)
-                for (int i = 0; i < STORES.get(STORE_ROLES.get(k)); i++)
+                for (int i = 0; i < STORES.get(STORE_ROLES.get(k)) && at < row.length; i++)
                     row[at++] = k + 1;
         return at == 0 ? new int[0] : row;
     }
@@ -129,6 +132,7 @@ public class ModularBackpack extends ModularItem {
             case LOOPS -> stack.has(DataComponents.POTION_CONTENTS) || stack.getCapability(Capabilities.FluidHandler.ITEM) != null;
             case LASHING -> stack.getItem() instanceof ModularBedroll;
             case LAMP -> stack.getItem() instanceof net.minecraft.world.item.BlockItem b && b.getBlock() instanceof net.minecraft.world.level.block.LanternBlock;
+            case BAY -> io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.is(stack);
             default -> stack.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.CartridgeItem
                     || stack.is(net.minecraft.tags.ItemTags.ARROWS);
         };
@@ -247,6 +251,31 @@ public class ModularBackpack extends ModularItem {
     public static boolean fitted(ItemStack bag, String role) {
         ModularDesign d = ModularStacks.design(bag);
         return d != null && d.part(role) != null;
+    }
+
+    /** The battery in {@code bag}'s battery fitting, or empty. */
+    public static ItemStack battery(ItemStack bag) {
+        int at = storeIndex(bag, BAY);
+        List<ItemStack> held = bag.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).stream().toList();
+        return at >= 0 && at < held.size() && io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.is(held.get(at)) ? held.get(at) : ItemStack.EMPTY;
+    }
+
+    /** Puts {@code battery} (what a draw left of it) back in {@code bag}'s battery fitting. */
+    public static void setBattery(ItemStack bag, ItemStack battery) {
+        int at = storeIndex(bag, BAY);
+        if (at < 0)
+            return;
+        java.util.ArrayList<ItemStack> held = new java.util.ArrayList<>(bag.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).stream().toList());
+        while (held.size() <= at)
+            held.add(ItemStack.EMPTY);
+        held.set(at, battery.copy());
+        bag.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(held));
+    }
+
+    /** The worn pack's battery fitting's pack stack (so the cell in it can be written back), or empty with no pack or no fitting. */
+    public static ItemStack wornWithBattery(Player player) {
+        SlotResult r = worn(player);
+        return r != null && !battery(r.stack()).isEmpty() ? r.stack() : ItemStack.EMPTY;
     }
 
     /** Index in the container list of the first slot of store {@code role}, or -1: fixed rows first, then the store's place in the extra row. */

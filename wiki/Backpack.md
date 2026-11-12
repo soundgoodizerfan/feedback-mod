@@ -43,6 +43,7 @@ A finished pack takes **fittings**: fit them on the [Fit tab](Engineering_Table.
 | Bandolier | 2 leather bundles | 1 | Three store slots for rounds and arrows. |
 | Bedroll lashing | 2 sticks | 1 | One store slot that takes only a [Bedroll](Bedroll.md). |
 | Lamp bracket | 1 rod | 1 | One store slot that takes only a lantern; a lantern in it lights the area around you. |
+| Battery fitting | 2 plates | 1 | One store slot that takes only a [battery](Battery.md). A tethered [electric gun](Electric_Gun.md) draws from it. |
 | Crafting pad | 2 planks | 2 | Press **N** on firm ground to open a 3x3 crafting grid. Heavy. |
 | Hard liner | 2 plates | 1 | The strap wears half as fast under an overload. |
 | Fire patch | 1 plate | 1 | A burning wearer's cloth shell scorches and wears without one; with it, not. |
@@ -52,4 +53,4 @@ A finished pack takes **fittings**: fit them on the [Fit tab](Engineering_Table.
 
 ## Store slots
 
-A pack with a holster, loops, lashing, bandolier or lamp bracket has one extra row below its slots: holster 1, loops 3, lashing 1, bandolier 3, lamp bracket 1. Each store slot sits on a tinted pad that shows what it takes, and refuses anything else. What is in the stores counts toward the load.
+A pack with a holster, loops, lashing, bandolier, lamp bracket or battery fitting has one extra row below its slots: holster 1, loops 3, lashing 1, bandolier 3, lamp bracket 1, battery fitting 1. Each store slot sits on a tinted pad that shows what it takes, and refuses anything else. What is in the stores counts toward the load.

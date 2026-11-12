@@ -211,6 +211,14 @@ public final class GunPreview {
         pose.translate(cx, cy, z);
         if (type != null && (type.family() == ModularType.Family.GUN || type.family() == ModularType.Family.ELECTRIC_GUN)) {
             GunView view = GunView.of(stack);
+            if (view.pulse() != null) {
+                // The table's rig shows the seat working: the cylinder indexes a chamber about twice a second and refills, the flywheel spins.
+                double t = System.currentTimeMillis() / 1000.0;
+                boolean wheel = view.variant("s").equals("flywheel");
+                float step = (float) (t * 1.6), eased = (int) step + (float) Math.min(1.0, (step - (int) step) * 4.0);
+                view = view.with(new GunView.Pulse(wheel ? (float) (t * 540.0 % 360.0) : eased * 60f % 360f,
+                        wheel ? 6f : (float) (3.0 + 3.0 * Math.sin(t * 1.6)), 0.5f + 0.5f * (float) Math.sin(t), view.pulse().beam()));
+            }
             float front = -(view.muzzle() + view.muzzleReach()), back = view.rear();
             float top = view.top() + (view.has("S") ? 1.75f : 0.5f), bottom = view.bottom();
             // Fit the longest turn of the gun inside the box.

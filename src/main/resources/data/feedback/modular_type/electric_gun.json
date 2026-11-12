@@ -4,7 +4,8 @@
     "R",
     "B",
     "T",
-    "G"
+    "G",
+    "s"
   ],
   "blueprint": true,
   "wear_litres": 0.4,
@@ -107,28 +108,6 @@
               "name": "wide"
             }
           ]
-        },
-        "stages": {
-          "min": 1,
-          "max": 8,
-          "unit": "",
-          "default": 2,
-          "step": 1,
-          "when": "coil",
-          "at_least": 1,
-          "bands": [
-            {
-              "name": "few",
-              "max": 2
-            },
-            {
-              "name": "several",
-              "max": 5
-            },
-            {
-              "name": "many"
-            }
-          ]
         }
       },
       "part": {
@@ -140,29 +119,7 @@
           "ingot",
           "wire"
         ],
-        "base": "coil_barrel",
-        "variants": [
-          {
-            "name": "coil_barrel",
-            "params": {
-              "coil": 1
-            }
-          },
-          {
-            "name": "rail_barrel",
-            "cells": 3,
-            "params": {
-              "rail": 1
-            }
-          },
-          {
-            "name": "plasma_barrel",
-            "cells": 2,
-            "params": {
-              "plasma": 1
-            }
-          }
-        ]
+        "variants": []
       },
       "offers": [
         "muzzle",
@@ -389,23 +346,6 @@
       },
       "mount": "muzzle"
     },
-    "Q": {
-      "name": "eddy_sleeve",
-      "forms": [
-        "eddy_sleeve"
-      ],
-      "litres": 0.05,
-      "layer": 7,
-      "part": {
-        "item": "feedback:eddy_sleeve",
-        "cells": 1,
-        "stock": [
-          "magazine_tube"
-        ],
-        "variants": []
-      },
-      "mount": "barrel"
-    },
     "Z": {
       "name": "thermal_sleeve",
       "forms": [
@@ -532,11 +472,263 @@
         ]
       },
       "mount": "barrel"
+    },
+    "g": {
+      "name": "heat_governor",
+      "forms": [
+        "heat_governor"
+      ],
+      "litres": 0.05,
+      "layer": 8,
+      "part": {
+        "item": "feedback:heat_governor",
+        "cells": 1,
+        "stock": [
+          "plate",
+          "rod"
+        ],
+        "variants": [
+          {
+            "name": "fire_rate_throttle"
+          },
+          {
+            "name": "forced_vent",
+            "cells": 2
+          },
+          {
+            "name": "dead_man_cutoff"
+          }
+        ],
+        "base": "fire_rate_throttle"
+      },
+      "mount": "receiver"
+    },
+    "h": {
+      "name": "hold_charge",
+      "forms": [
+        "hold_trigger"
+      ],
+      "litres": 0.03,
+      "layer": 3,
+      "part": {
+        "item": "feedback:hold_trigger",
+        "cells": 1,
+        "stock": [
+          "drilled_plate"
+        ],
+        "variants": []
+      },
+      "mount": "receiver"
+    },
+    "p": {
+      "name": "pump_charge",
+      "forms": [
+        "pump_charge"
+      ],
+      "litres": 0.04,
+      "layer": 4,
+      "part": {
+        "item": "feedback:pump_charge",
+        "cells": 1,
+        "stock": [
+          "rod"
+        ],
+        "variants": []
+      },
+      "mount": "receiver"
+    },
+    "l": {
+      "name": "beam_lens",
+      "forms": [
+        "beam_lens"
+      ],
+      "litres": 0.05,
+      "layer": 7,
+      "part": {
+        "item": "feedback:beam_lens",
+        "cells": 1,
+        "stock": [
+          "plate",
+          "rod"
+        ],
+        "variants": [
+          {
+            "name": "beam_splitter",
+            "cells": 2,
+            "params": {
+              "splitter": 1
+            }
+          },
+          {
+            "name": "arc_fork",
+            "cells": 2,
+            "params": {
+              "fork": 1
+            }
+          }
+        ],
+        "base": "beam_splitter"
+      },
+      "axes": {
+        "beams": {
+          "min": 3,
+          "max": 7,
+          "unit": "",
+          "default": 3,
+          "step": 2,
+          "when": "splitter",
+          "at_least": 1,
+          "bands": [
+            {
+              "name": "triple",
+              "max": 3
+            },
+            {
+              "name": "quintuple",
+              "max": 5
+            },
+            {
+              "name": "septuple"
+            }
+          ]
+        }
+      },
+      "mount": "muzzle"
+    },
+    "z": {
+      "name": "zoom_charge",
+      "forms": [
+        "zoom_coil"
+      ],
+      "litres": 0.05,
+      "layer": 6,
+      "part": {
+        "item": "feedback:zoom_coil",
+        "cells": 1,
+        "stock": [
+          "wire",
+          "rod"
+        ],
+        "variants": []
+      },
+      "mount": "rail"
+    },
+    "s": {
+      "name": "seat",
+      "forms": [
+        "pulse_seat"
+      ],
+      "litres": 0.15,
+      "layer": 2,
+      "part": {
+        "item": "feedback:pulse_seat",
+        "cells": 2,
+        "stock": [
+          "ingot",
+          "plate",
+          "rod"
+        ],
+        "variants": [
+          {
+            "name": "cylinder",
+            "cells": 3,
+            "params": {
+              "flux": 0
+            }
+          },
+          {
+            "name": "flux_cycler",
+            "cells": 2,
+            "params": {
+              "flux": 1
+            }
+          },
+          {
+            "name": "capacitor_bank",
+            "cells": 4,
+            "params": {
+              "bank": 1,
+              "big": 1
+            }
+          },
+          {
+            "name": "burst_bank",
+            "cells": 4,
+            "params": {
+              "bank": 1,
+              "big": 1,
+              "burst": 1
+            }
+          },
+          {
+            "name": "flywheel",
+            "cells": 3,
+            "params": {
+              "wheel": 1,
+              "big": 1
+            }
+          },
+          {
+            "name": "recoil_dynamo",
+            "cells": 2,
+            "params": {
+              "dynamo": 1
+            }
+          },
+          {
+            "name": "backpack_tether",
+            "cells": 1,
+            "params": {
+              "tether": 1
+            }
+          }
+        ],
+        "base": "cylinder"
+      },
+      "axes": {
+        "tier": {
+          "min": 1,
+          "max": 3,
+          "unit": "",
+          "default": 2,
+          "step": 1,
+          "bands": [
+            {
+              "name": "light",
+              "max": 1.5
+            },
+            {
+              "name": "standard",
+              "max": 2.5
+            },
+            {
+              "name": "heavy"
+            }
+          ]
+        }
+      }
+    },
+    "u": {
+      "name": "heat_gauge",
+      "forms": [
+        "heat_gauge"
+      ],
+      "litres": 0.05,
+      "layer": 12,
+      "part": {
+        "item": "feedback:heat_gauge",
+        "cells": 1,
+        "stock": [
+          "plate"
+        ],
+        "variants": []
+      },
+      "mount": "receiver"
     }
   },
   "patterns": [
     [
-      "RBTG"
+      "RBTGs"
     ]
   ],
   "defaults": {
@@ -544,347 +736,107 @@
     "B": "feedback:copper",
     "T": "feedback:steel",
     "G": "feedback:wood",
-    "i": "feedback:wood"
+    "i": "feedback:wood",
+    "s": "feedback:copper"
   },
   "names": {
     "designations": [
       {
-        "name": "heavy_plasma_cannon",
+        "name": "rotary_slinger",
         "is": {
-          "variant": "plasma_barrel",
-          "bore": "wide",
-          "bipod": "fitted",
-          "counterweight": "fitted"
+          "seat": "cylinder"
         }
       },
       {
-        "name": "plasmacaster",
+        "name": "railcannon",
         "is": {
-          "variant": "plasma_barrel",
-          "barrel_length": "short",
-          "bore": "wide",
-          "shroud": "fitted"
+          "seat": "capacitor_bank"
         }
       },
       {
-        "name": "heavy_coil_machine_gun",
+        "name": "triplet",
         "is": {
-          "variant": "coil_barrel",
-          "frame": "machine_gun",
-          "thermal_sleeve": "fitted"
+          "seat": "burst_bank"
         }
       },
       {
-        "name": "heavy_coil_machine_gun",
+        "name": "spinner",
         "is": {
-          "variant": "coil_barrel",
-          "frame": "machine_gun",
-          "bore": "wide"
+          "seat": "flywheel"
         }
       },
       {
-        "name": "light_coil_machine_gun",
+        "name": "flux_cycler",
         "is": {
-          "variant": "coil_barrel",
-          "frame": "machine_gun",
-          "bipod": "fitted"
+          "seat": "flux_cycler"
         }
       },
       {
-        "name": "coil_machine_gun",
+        "name": "pulse_hand_cannon",
         "is": {
-          "variant": "coil_barrel",
-          "frame": "machine_gun"
-        }
-      },
-      {
-        "name": "coil_hand_cannon",
-        "is": {
-          "variant": "coil_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "handgun",
           "bore": "wide"
         }
       },
       {
-        "name": "coil_pistol",
+        "name": "pulse_pistol",
         "is": {
-          "variant": "coil_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "handgun"
         }
       },
       {
-        "name": "gauss_cannon",
+        "name": "pulse_cannon",
         "is": {
-          "variant": "coil_barrel",
-          "frame": "long_gun",
-          "stages": "many",
-          "bore": "wide"
-        }
-      },
-      {
-        "name": "gauss_sniper_rifle",
-        "is": {
-          "variant": "coil_barrel",
-          "frame": "long_gun",
-          "stages": "many",
-          "barrel_length": "long",
-          "sight": "fitted"
-        }
-      },
-      {
-        "name": "gauss_marksman_rifle",
-        "is": {
-          "variant": "coil_barrel",
-          "frame": "long_gun",
-          "stages": "many",
-          "barrel_length": "long"
-        }
-      },
-      {
-        "name": "gauss_carbine",
-        "is": {
-          "variant": "coil_barrel",
-          "frame": "long_gun",
-          "stages": "many",
-          "barrel_length": "short"
-        }
-      },
-      {
-        "name": "gauss_rifle",
-        "is": {
-          "variant": "coil_barrel",
-          "frame": "long_gun",
-          "stages": "many"
-        }
-      },
-      {
-        "name": "coil_cannon",
-        "is": {
-          "variant": "coil_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "long_gun",
           "bore": "wide"
         }
       },
       {
-        "name": "coil_sniper_rifle",
+        "name": "pulse_sniper_rifle",
         "is": {
-          "variant": "coil_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "long_gun",
           "barrel_length": "long",
           "sight": "fitted"
         }
       },
       {
-        "name": "coil_marksman_rifle",
+        "name": "pulse_marksman_rifle",
         "is": {
-          "variant": "coil_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "long_gun",
           "barrel_length": "long"
         }
       },
       {
-        "name": "coil_carbine",
+        "name": "pulse_carbine",
         "is": {
-          "variant": "coil_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "long_gun",
           "barrel_length": "short"
         }
       },
       {
-        "name": "coil_rifle",
+        "name": "pulse_rifle",
         "is": {
-          "variant": "coil_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "long_gun"
         }
       },
       {
-        "name": "heavy_rail_machine_gun",
+        "name": "pulse_machine_gun",
         "is": {
-          "variant": "rail_barrel",
-          "frame": "machine_gun",
-          "thermal_sleeve": "fitted"
-        }
-      },
-      {
-        "name": "heavy_rail_machine_gun",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "machine_gun",
-          "bore": "wide"
-        }
-      },
-      {
-        "name": "light_rail_machine_gun",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "machine_gun",
-          "bipod": "fitted"
-        }
-      },
-      {
-        "name": "rail_machine_gun",
-        "is": {
-          "variant": "rail_barrel",
+          "seat": "recoil_dynamo|backpack_tether",
           "frame": "machine_gun"
         }
       },
       {
-        "name": "rail_hand_cannon",
+        "name": "pulse_gun",
         "is": {
-          "variant": "rail_barrel",
-          "frame": "handgun",
-          "bore": "wide"
-        }
-      },
-      {
-        "name": "rail_pistol",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "handgun"
-        }
-      },
-      {
-        "name": "rail_cannon",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "long_gun",
-          "bore": "wide"
-        }
-      },
-      {
-        "name": "rail_sniper_rifle",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "long_gun",
-          "barrel_length": "long",
-          "sight": "fitted"
-        }
-      },
-      {
-        "name": "rail_marksman_rifle",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "long_gun",
-          "barrel_length": "long"
-        }
-      },
-      {
-        "name": "rail_carbine",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "long_gun",
-          "barrel_length": "short"
-        }
-      },
-      {
-        "name": "rail_rifle",
-        "is": {
-          "variant": "rail_barrel",
-          "frame": "long_gun"
-        }
-      },
-      {
-        "name": "heavy_plasma_machine_gun",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "machine_gun",
-          "thermal_sleeve": "fitted"
-        }
-      },
-      {
-        "name": "heavy_plasma_machine_gun",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "machine_gun",
-          "bore": "wide"
-        }
-      },
-      {
-        "name": "light_plasma_machine_gun",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "machine_gun",
-          "bipod": "fitted"
-        }
-      },
-      {
-        "name": "plasma_machine_gun",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "machine_gun"
-        }
-      },
-      {
-        "name": "plasma_hand_cannon",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "handgun",
-          "bore": "wide"
-        }
-      },
-      {
-        "name": "plasma_pistol",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "handgun"
-        }
-      },
-      {
-        "name": "plasma_cannon",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "long_gun",
-          "bore": "wide"
-        }
-      },
-      {
-        "name": "plasma_sniper_rifle",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "long_gun",
-          "barrel_length": "long",
-          "sight": "fitted"
-        }
-      },
-      {
-        "name": "plasma_marksman_rifle",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "long_gun",
-          "barrel_length": "long"
-        }
-      },
-      {
-        "name": "plasma_carbine",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "long_gun",
-          "barrel_length": "short"
-        }
-      },
-      {
-        "name": "plasma_rifle",
-        "is": {
-          "variant": "plasma_barrel",
-          "frame": "long_gun"
-        }
-      },
-      {
-        "name": "coilgun",
-        "is": {
-          "variant": "coil_barrel"
-        }
-      },
-      {
-        "name": "railgun",
-        "is": {
-          "variant": "rail_barrel"
-        }
-      },
-      {
-        "name": "plasma_gun",
-        "is": {
-          "variant": "plasma_barrel"
+          "seat": "recoil_dynamo|backpack_tether"
         }
       }
     ]
@@ -898,10 +850,6 @@
       "e": [
         4,
         -1
-      ],
-      "Q": [
-        0,
-        1
       ],
       "M": [
         1,
@@ -938,6 +886,30 @@
       "i": [
         5,
         1
+      ],
+      "l": [
+        0,
+        1
+      ],
+      "g": [
+        4,
+        2
+      ],
+      "h": [
+        5,
+        2
+      ],
+      "p": [
+        5,
+        -2
+      ],
+      "z": [
+        5,
+        -1
+      ],
+      "u": [
+        2,
+        -2
       ]
     },
     "joins": [
@@ -955,10 +927,6 @@
       ],
       [
         "N",
-        "B"
-      ],
-      [
-        "Q",
         "B"
       ],
       [
@@ -987,6 +955,30 @@
       ],
       [
         "i",
+        "R"
+      ],
+      [
+        "l",
+        "B"
+      ],
+      [
+        "g",
+        "R"
+      ],
+      [
+        "h",
+        "R"
+      ],
+      [
+        "p",
+        "R"
+      ],
+      [
+        "z",
+        "S"
+      ],
+      [
+        "u",
         "R"
       ]
     ]

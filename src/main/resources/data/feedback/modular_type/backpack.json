@@ -1,6 +1,9 @@
 {
   "family": "backpack",
-  "required": ["S", "T"],
+  "required": [
+    "S",
+    "T"
+  ],
   "wear_litres": 2.0,
   "wear_role": "T",
   "primary": "S",
@@ -177,6 +180,15 @@
       "litres": 0.01,
       "layer": 15,
       "bulk": 1
+    },
+    "V": {
+      "name": "battery_fitting",
+      "forms": [
+        "plate"
+      ],
+      "litres": 0.04,
+      "layer": 16,
+      "bulk": 2
     }
   },
   "patterns": [

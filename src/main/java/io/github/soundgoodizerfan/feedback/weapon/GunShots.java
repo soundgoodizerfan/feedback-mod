@@ -744,6 +744,11 @@ public final class GunShots {
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
+        report(level, shooter, f, gun, muzzle);
+    }
+
+    /** What a shot sounds and shows at the muzzle: its sound (the shooter's own client already played it), the vibration, the flash or smoke. */
+    public static void report(ServerLevel level, LivingEntity shooter, GunFigures f, ItemStack gun, Vec3 muzzle) {
         GunMechanism mechanism = GunItem.mechanismOf(gun);
         for (GunSound.Layer layer : mechanism != null ? mechanism.sound(gun, f, level.random) : GunSound.layers(f, level.random))
             level.playSound(shooter instanceof Player player && !hearSelf ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
@@ -900,6 +905,16 @@ public final class GunShots {
 
     public static boolean inBullet() {
         return inBullet;
+    }
+
+    /** Runs {@code hurt} as a bullet's hit: damage listeners see {@link #inBullet} true while it does (a pulse's hit is one). */
+    public static void asBullet(Runnable hurt) {
+        inBullet = true;
+        try {
+            hurt.run();
+        } finally {
+            inBullet = false;
+        }
     }
 
     /**

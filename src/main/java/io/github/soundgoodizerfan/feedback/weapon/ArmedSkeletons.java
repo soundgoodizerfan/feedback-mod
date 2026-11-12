@@ -71,10 +71,18 @@ public final class ArmedSkeletons {
     public static void onEntityJoin(EntityJoinLevelEvent event) {
         if (event.getLevel().isClientSide || !(event.getEntity() instanceof AbstractSkeleton skeleton))
             return;
-        if (!event.loadedFromDisk() && GunSpec.of(skeleton.getMainHandItem()).isEmpty() && skeleton.getRandom().nextFloat() < (skeleton instanceof WitherSkeleton ? FTuning.WITHER_SKELETON_GUN_CHANCE : FTuning.SKELETON_GUN_CHANCE))
-            equip(skeleton, GunBlueprintPool.get().drawEarly(skeleton.getRandom()));
+        if (!event.loadedFromDisk() && !(skeleton.getMainHandItem().getItem() instanceof GunItem) && GunSpec.of(skeleton.getMainHandItem()).isEmpty()
+                && skeleton.getRandom().nextFloat() < (skeleton instanceof WitherSkeleton ? FTuning.WITHER_SKELETON_GUN_CHANCE : FTuning.SKELETON_GUN_CHANCE)) {
+            // A wither skeleton carries a weak pulse pistol; a skeleton keeps its powder gun.
+            if (skeleton instanceof WitherSkeleton)
+                equipPulse(skeleton);
+            else
+                equip(skeleton, GunBlueprintPool.get().drawEarly(skeleton.getRandom()));
+        }
         if (GunSpec.of(skeleton.getMainHandItem()).isPresent())
             skeleton.goalSelector.addGoal(3, new RangedGunGoal(skeleton));
+        else if (skeleton.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularElectricGun)
+            skeleton.goalSelector.addGoal(3, new PulseGunGoal(skeleton));
     }
 
     /** Arm {@code skeleton} with {@code entry} (no chance roll): the spawn event and {@code /feedback summon gunskeleton} share this. */
@@ -95,6 +103,26 @@ public final class ArmedSkeletons {
             // More than 1 is vanilla's "always, and undamaged": the gun comes off at the condition it died in.
             skeleton.setDropChance(EquipmentSlot.MAINHAND, 2f);
             skeleton.setData(FWeapons.SPARES, new Spares(List.of(GunAmmo.loose(round).copyWithCount(FTuning.SKELETON_GUN_SPARE))));
+            return true;
+        }).orElse(false);
+    }
+
+    /**
+     * Arm {@code skeleton} with a weak pulse pistol: the electric gun's own starter design (a handgun with a cylinder seat) at the Light
+     * tier. Its cell counts as always charged ({@code ElectricMechanism#triggerMob}), so it carries nothing to spend.
+     */
+    public static boolean equipPulse(AbstractSkeleton skeleton) {
+        var types = ModularTypes.get().types();
+        var materials = MaterialTable.get().materials();
+        var id = io.github.soundgoodizerfan.feedback.Feedback.id("electric_gun");
+        return ToolDesigns.starter(id, types, materials).map(design -> {
+            var seat = design.part("s");
+            var light = seat == null ? design : design.withPart(seat.withMeasures(seat.measures().withAxis("tier", 1f)));
+            ItemStack gun = ToolDesigns.build(light, types, materials).orElse(ItemStack.EMPTY);
+            if (gun.isEmpty())
+                return false;
+            skeleton.setItemSlot(EquipmentSlot.MAINHAND, gun);
+            skeleton.setDropChance(EquipmentSlot.MAINHAND, 2f);
             return true;
         }).orElse(false);
     }

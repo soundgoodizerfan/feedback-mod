@@ -26,6 +26,11 @@ public record AimPayload(boolean aiming) implements CustomPacketPayload {
 
     public static void handle(AimPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer player) {
+                var held = player.getMainHandItem();
+                if (held.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem gun)
+                    gun.mechanism().aimChanged(held, payload.aiming(), player.level().getGameTime());
+            }
             if (context.player() instanceof ServerPlayer player)
                 PacketDistributor.sendToPlayersTrackingEntity(player, new AimPlayPayload(player.getId(), payload.aiming()));
         });

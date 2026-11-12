@@ -148,6 +148,13 @@ public final class ModularAssembly {
             if (best.design == null)
                 continue;
             ModularDesign design = best.design;
+            // A drawing the parts are made to hands its colour (a pulse gun's beam) to what is built from them.
+            for (ModularDesign drawn : sheets)
+                if (drawn.type().equals(e.getKey()) && ModularFit.drawnTo(drawn, design, type, materials)) {
+                    design = design.withColour(drawn.colour());
+                    break;
+                }
+            final ModularDesign built = design;
             if (type.family() == ModularType.Family.HAFTED) {
                 // A gated face makes the build gated and complex.
                 String school = ModularFaces.school(design, type);
@@ -166,14 +173,14 @@ public final class ModularAssembly {
                 if (carried != null)
                     stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.PLATING.get(), carried);
                 stack.set(FModular.FIT.get(), fit);
-                return ModularStacks.assemble(stack, design, materials, types);
+                return ModularStacks.assemble(stack, built, materials, types);
             });
             if (tool.isEmpty())
                 continue;
             credit(tool.get(), plan, e.getKey(), design, type, materials);
             if (start != null) {
                 ModularFit.start(tool.get(), fit);
-                ModularStacks.assemble(tool.get(), design, materials, types);
+                ModularStacks.assemble(tool.get(), built, materials, types);
             }
             String[] role = new String[slots.size()];
             for (int i = 0; i < used.size(); i++)

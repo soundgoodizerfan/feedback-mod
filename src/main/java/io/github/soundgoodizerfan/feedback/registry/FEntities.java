@@ -39,6 +39,12 @@ public final class FEntities {
                     io.github.soundgoodizerfan.feedback.weapon.GrenadeEntity::new, MobCategory.MISC).sized(0.25f, 0.25f)
                     .clientTrackingRange(4).updateInterval(10).build("grenade"));
 
+    /** The steam a pulse gun's forced vent lets go; see {@code weapon/SteamCloud}. */
+    public static final DeferredHolder<EntityType<?>, EntityType<io.github.soundgoodizerfan.feedback.weapon.SteamCloud>> STEAM_CLOUD =
+            ENTITIES.register("steam_cloud", () -> EntityType.Builder.<io.github.soundgoodizerfan.feedback.weapon.SteamCloud>of(
+                    io.github.soundgoodizerfan.feedback.weapon.SteamCloud::new, MobCategory.MISC).sized(1.6f, 1.2f)
+                    .clientTrackingRange(8).updateInterval(5).build("steam_cloud"));
+
     private FEntities() {
     }
 
