@@ -28,6 +28,14 @@ public class ModularBlueprintItem extends Item {
         super(properties);
     }
 
+    /** A blueprint that holds food is a recipe, in every word the player reads. */
+    @Override
+    public Component getName(ItemStack stack) {
+        ModularDesign design = ModularStacks.design(stack);
+        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        return type != null && type.family() == ModularType.Family.DISH ? Component.translatable("item.feedback.recipe") : super.getName(stack);
+    }
+
     /** What the tooltip draws turning: the design, as it would look built. */
     public record Preview(ModularDesign design) implements net.minecraft.world.inventory.tooltip.TooltipComponent {
     }

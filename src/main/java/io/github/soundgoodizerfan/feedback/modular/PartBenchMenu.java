@@ -1585,7 +1585,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
      * The Blueprint tab's Print: bake {@code design}, a dish type only (this bench draws food and nothing else), and write it onto the paper in
      * the tab's slot. Food needs no treatise. The server checks everything: the tab is open, the type is a dish, the design bakes.
      */
-    public void printBlueprint(ModularDesign design, List<ModularDesign> variants, Player player) {
+    public void printBlueprint(ModularDesign design, List<ModularDesign> variants, String title, Player player) {
         if (!blueprintTab())
             return;
         ModularType drawn = ModularTypes.get().types().get(design.type());
@@ -1593,7 +1593,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
             BlueprintTableMenu.send(player, Component.translatable("message.feedback.blueprint_table.cannot_print"));
             return;
         }
-        if (BlueprintTableMenu.write(paper, design, variants, player))
+        if (BlueprintTableMenu.write(paper, design, variants, title, player))
             broadcastChanges();
     }
 

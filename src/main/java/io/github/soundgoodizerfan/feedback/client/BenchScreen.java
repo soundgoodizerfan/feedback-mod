@@ -68,7 +68,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
     private final ForgePanel forge;
     private final ShinglePanel shingle;
     /** The Prep Table's Blueprint tab (null at the other benches). */
-    private final PrepBlueprintPanel blueprint;
+    private final RecipePanel blueprint;
     private Button printButton;
     private Button shingleButton;
     private final BenchFan fan = new BenchFan();
@@ -103,7 +103,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         inventoryLabelY = PartBenchMenu.INV_Y - 11;
         forge = st.has(Station.Panel.FORGE) ? new ForgePanel(this) : null;
         shingle = st.has(Station.Panel.FORGE) ? new ShinglePanel(this) : null;
-        blueprint = st.dishes() ? new PrepBlueprintPanel(menu, skin) : null;
+        blueprint = st.dishes() ? new RecipePanel(menu, skin) : null;
         axis = new AxisPanel(this, skin);
     }
 

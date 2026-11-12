@@ -36,7 +36,7 @@ public record ModularBlueprintPayload(ModularDesign design, java.util.List<Modul
             if (context.player().containerMenu instanceof BlueprintTableMenu menu)
                 menu.print(payload.design(), payload.variants(), payload.title(), context.player());
             else if (context.player().containerMenu instanceof io.github.soundgoodizerfan.feedback.modular.PartBenchMenu bench)
-                bench.printBlueprint(payload.design(), payload.variants(), context.player());
+                bench.printBlueprint(payload.design(), payload.variants(), payload.title(), context.player());
         });
     }
 }
