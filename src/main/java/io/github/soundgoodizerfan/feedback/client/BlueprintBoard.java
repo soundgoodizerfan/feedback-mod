@@ -222,13 +222,13 @@ final class BlueprintBoard {
     private float zoom = 1;
     private boolean panning;
     private final io.github.soundgoodizerfan.feedback.client.gun.GunPreview preview = new io.github.soundgoodizerfan.feedback.client.gun.GunPreview();
-    private int drawerScroll, swatchScroll, figScroll;
+    private int drawerScroll, swatchScroll, figScroll, kindScroll;
     private final Map<String, Long> flashes = new HashMap<>();
     private long stampAt;
     private final List<Pin> pins = new ArrayList<>();
 
     // --- hover, set every frame in renderBg ------------------------------------------------------
-    private int hoverLink = -1, hoverNode = -1, hoverSwatch = -1, hoverShape = -1, hoverFig = -1, hoverChip = -1, hoverDrawer = -1, hoverFault = -1;
+    private int hoverLink = -1, hoverNode = -1, hoverSwatch = -1, hoverShape = -1, hoverKind = -1, hoverFig = -1, hoverChip = -1, hoverDrawer = -1, hoverFault = -1;
     private boolean hoverCorner;
     /** The would-be drawing under a swatch, a shape or a carried material, as its parts and its figures. */
     private String ghostRole;
@@ -604,6 +604,43 @@ final class BlueprintBoard {
         return s.isEmpty() ? null : s.get(Math.floorMod(index, s.size()));
     }
 
+    /** The kinds of part a role's shapes are of (an axe head, a pickaxe head...), in shape order; one entry means no kind to choose. */
+    private List<net.minecraft.resources.ResourceLocation> kinds(String role) {
+        return kindLists.computeIfAbsent(role, r -> shapes(r).stream().map(o -> o.shaping().item()).distinct().toList());
+    }
+
+    private final Map<String, List<net.minecraft.resources.ResourceLocation>> kindLists = new HashMap<>();
+
+    private boolean kindRow(String role) {
+        return kinds(role).size() > 1;
+    }
+
+    /** The kind the drawn shape is of. */
+    private int kindIndex(String role) {
+        List<PartBenchShaping.Option> all = shapes(role);
+        return all.isEmpty() ? 0 : Math.max(0, kinds(role).indexOf(all.get(shapeIndex(role)).shaping().item()));
+    }
+
+    /** The shapes (indices into {@link #shapes}) the variant rows show: those of the drawn kind, or all when there is no kind to choose. */
+    private List<Integer> variants(String role) {
+        List<PartBenchShaping.Option> all = shapes(role);
+        List<Integer> out = new ArrayList<>();
+        net.minecraft.resources.ResourceLocation kind = kindRow(role) ? kinds(role).get(kindIndex(role)) : null;
+        for (int i = 0; i < all.size(); i++)
+            if (kind == null || all.get(i).shaping().item().equals(kind))
+                out.add(i);
+        return out;
+    }
+
+    private int mostVariants(String role) {
+        return kindRow(role) ? shapes(role).stream().collect(java.util.stream.Collectors.groupingBy(o -> o.shaping().item(), java.util.stream.Collectors.counting()))
+                .values().stream().mapToInt(Long::intValue).max().orElse(1) : shapes(role).size();
+    }
+
+    private int thumbsPerRow() {
+        return Math.max(1, (call.w() - 8) / THUMB_PITCH);
+    }
+
     private PartBenchShaping.Option shapeOf(String role) {
         return shapeAt(role, shape.getOrDefault(role, 0));
     }
@@ -629,6 +666,7 @@ final class BlueprintBoard {
     private void clearLists() {
         dirty();
         shapeLists.clear();
+        kindLists.clear();
         materialLists.clear();
         swatchLists.clear();
         fitSets.clear();
@@ -1228,7 +1266,10 @@ final class BlueprintBoard {
 
     private int shapesHeight(String role) {
         int n = role == null ? 0 : shapes(role).size();
-        return n < 2 ? 0 : THUMB + 4 + (n > (call.w() - 8) / THUMB_PITCH ? THUMB_PITCH : 0);
+        if (n < 2)
+            return 0;
+        int rows = mostVariants(role) > thumbsPerRow() ? THUMB_PITCH : 0;
+        return (kindRow(role) ? THUMB_PITCH : 0) + THUMB + 4 + rows;
     }
 
     private int shapesTop(String role) {
@@ -1448,18 +1489,20 @@ final class BlueprintBoard {
                     return true;
                 }
             }
+            if (button == 0 && hoverKind >= 0 && role != null) {
+                net.minecraft.resources.ResourceLocation kind = kinds(role).get(hoverKind);
+                List<PartBenchShaping.Option> all = shapes(role);
+                String keep = shapeOf(role) == null ? "" : shapeOf(role).variant().name();
+                int pick = -1;
+                for (int i = 0; i < all.size(); i++)
+                    if (all.get(i).shaping().item().equals(kind) && (pick < 0 || all.get(i).variant().name().equals(keep) && !all.get(pick).variant().name().equals(keep)))
+                        pick = i;
+                if (pick >= 0)
+                    pickShape(role, pick);
+                return true;
+            }
             if (button == 0 && hoverShape >= 0 && role != null) {
-                int pick = hoverShape;
-                GuiSkin.play(skin.click(), 1f);
-                change(() -> {
-                    shape.put(role, pick);
-                    // A long or machine gun frame takes a stock, so fit one as the frame is picked.
-                    ModularType gt = current();
-                    PartBenchShaping.Option o = shapeAt(role, pick);
-                    if (gt != null && gt.family() == ModularType.Family.GUN && role.equals("R") && o != null
-                            && !o.variant().name().equals("handgun") && gt.optionals().contains("i"))
-                        extras.add("i");
-                });
+                pickShape(role, hoverShape);
                 return true;
             }
             if (overCanvas(mx, my)) {
@@ -1542,6 +1585,20 @@ final class BlueprintBoard {
         return was;
     }
 
+    /** Draws shape {@code pick} for {@code role}. */
+    private void pickShape(String role, int pick) {
+        GuiSkin.play(skin.click(), 1f);
+        change(() -> {
+            shape.put(role, pick);
+            // A long or machine gun frame takes a stock, so fit one as the frame is picked.
+            ModularType gt = current();
+            PartBenchShaping.Option o = shapeAt(role, pick);
+            if (gt != null && gt.family() == ModularType.Family.GUN && role.equals("R") && o != null
+                    && !o.variant().name().equals("handgun") && gt.optionals().contains("i"))
+                extras.add("i");
+        });
+    }
+
     boolean mouseScrolled(double mx, double my, double scrollY) {
         if (typePopup.mouseScrolled(scrollY) || preview.scroll(mx, my, scrollY))
             return true;
@@ -1562,6 +1619,10 @@ final class BlueprintBoard {
             return true;
         }
         String role = sel();
+        if (role != null && kindRow(role) && in(mx, my, ox + call.x() + 4, shapesTop(role), thumbsPerRow() * THUMB_PITCH, THUMB_PITCH)) {
+            kindScroll = Mth.clamp(kindScroll + dir, 0, Math.max(0, kinds(role).size() - thumbsPerRow()));
+            return true;
+        }
         if (role != null && axesOf(role).size() > MAX_AXIS_ROWS
                 && in(mx, my, ox + call.x(), oy + panelY + 15 + 15 * rowsAboveAxes(role), call.w(), 15 * MAX_AXIS_ROWS)) {
             axisScroll = Mth.clamp(axisScroll + dir, 0, axesOf(role).size() - MAX_AXIS_ROWS);
@@ -1683,7 +1744,7 @@ final class BlueprintBoard {
 
     /** Which things the pointer is over; set once per frame, read by the drawing and the tooltips. */
     private void updateHover(int mx, int my) {
-        hoverNode = hoverSwatch = hoverShape = hoverFig = hoverChip = hoverDrawer = hoverFault = hoverLink = -1;
+        hoverNode = hoverSwatch = hoverShape = hoverKind = hoverFig = hoverChip = hoverDrawer = hoverFault = hoverLink = -1;
         hoverCorner = false;
         if (current() == null)
             return;
@@ -1726,10 +1787,15 @@ final class BlueprintBoard {
             }
             int n = shapes(role).size();
             if (n > 1) {
-                int ty = shapesTop(role), per = (call.w() - 8) / THUMB_PITCH;
-                if (in(mx, my, sx, ty, per * THUMB_PITCH, shapesHeight(role))) {
-                    int i = (my - ty) / THUMB_PITCH * per + (mx - sx) / THUMB_PITCH;
-                    hoverShape = i < n ? i : -1;
+                int ty = shapesTop(role), per = thumbsPerRow();
+                int vy = ty + (kindRow(role) ? THUMB_PITCH : 0);
+                if (kindRow(role) && in(mx, my, sx, ty, per * THUMB_PITCH, THUMB_PITCH)) {
+                    int i = kindScroll + (mx - sx) / THUMB_PITCH;
+                    hoverKind = i < kinds(role).size() ? i : -1;
+                } else if (in(mx, my, sx, vy, per * THUMB_PITCH, shapesHeight(role) - (vy - ty))) {
+                    List<Integer> vs = variants(role);
+                    int i = (my - vy) / THUMB_PITCH * per + (mx - sx) / THUMB_PITCH;
+                    hoverShape = i < vs.size() && i < per * 2 ? vs.get(i) : -1;
                 }
             }
         }
@@ -2038,24 +2104,54 @@ final class BlueprintBoard {
         skin.scrollbar(g, x + call.w() - 4, sy, rows * SWATCH_PITCH, total, rows, swatchScroll);
         List<PartBenchShaping.Option> options = shapes(role);
         if (options.size() > 1) {
-            int per = (call.w() - 8) / THUMB_PITCH, ty = shapesTop(role), cur = shapeIndex(role);
+            int per = thumbsPerRow(), ty = shapesTop(role), cur = shapeIndex(role);
             int rgb = now.map(l -> MaterialColors.of(l.id())).orElse(0x808080);
-            for (int i = 0; i < options.size() && i < per * 2; i++) {
-                int px = sx + i % per * THUMB_PITCH, py = ty + i / per * THUMB_PITCH;
+            int vy = ty;
+            if (kindRow(role)) {
+                List<net.minecraft.resources.ResourceLocation> ks = kinds(role);
+                int sel = kindIndex(role);
+                // Keep the drawn kind in view, then draw a tile per kind: the silhouette of its standard shape.
+                if (sel < kindScroll)
+                    kindScroll = sel;
+                else if (sel >= kindScroll + per)
+                    kindScroll = sel - per + 1;
+                kindScroll = Mth.clamp(kindScroll, 0, Math.max(0, ks.size() - per));
+                for (int i = 0; i < per && kindScroll + i < ks.size(); i++) {
+                    int k = kindScroll + i, px = sx + i * THUMB_PITCH;
+                    skin.plaque(g, px, ty, THUMB, THUMB);
+                    skin.row(g, px, ty, THUMB, THUMB, k == sel, k == hoverKind);
+                    for (PartBenchShaping.Option o : options)
+                        if (o.shaping().item().equals(ks.get(k))) {
+                            thumb(g, o, px, ty, rgb);
+                            break;
+                        }
+                }
+                if (kindScroll > 0)
+                    g.drawString(font, "<", sx - 3, ty + 7, skin.dim(), false);
+                if (kindScroll + per < ks.size())
+                    g.drawString(font, ">", sx + per * THUMB_PITCH - 3, ty + 7, skin.dim(), false);
+                vy = ty + THUMB_PITCH;
+            }
+            List<Integer> vs = variants(role);
+            for (int j = 0; j < vs.size() && j < per * 2; j++) {
+                int i = vs.get(j), px = sx + j % per * THUMB_PITCH, py = vy + j / per * THUMB_PITCH;
                 skin.plaque(g, px, py, THUMB, THUMB);
                 skin.row(g, px, py, THUMB, THUMB, i == cur, i == hoverShape);
-                PartBenchShaping.Option o = options.get(i);
-                // The thumbnail is the size: one square a cell of stock, gridRows as even as they go.
-                int n = Math.max(1, o.cells());
-                int perRow = n <= 3 ? n : (int) Math.ceil(Math.sqrt(n)), gridRows = (n + perRow - 1) / perRow;
-                int cell = Math.max(1, Math.min(3, (THUMB - 4) / Math.max(perRow, gridRows)));
-                int ox = px + (THUMB - perRow * cell) / 2, oy = py + (THUMB - gridRows * cell) / 2;
-                for (int c = 0; c < n; c++)
-                    g.fill(ox + c % perRow * cell, oy + c / perRow * cell, ox + (c % perRow + 1) * cell, oy + (c / perRow + 1) * cell, 0xFF000000 | rgb);
-                if (o.forged())
-                    g.fill(px + THUMB - 5, py + 2, px + THUMB - 2, py + 5, skin.accent());
+                thumb(g, options.get(i), px, py, rgb);
             }
         }
+    }
+
+    /** A shape's thumbnail: one square a cell of stock, as even a grid as it goes, and a mark if it is forged. */
+    private void thumb(GuiGraphics g, PartBenchShaping.Option o, int px, int py, int rgb) {
+        int n = Math.max(1, o.cells());
+        int perRow = n <= 3 ? n : (int) Math.ceil(Math.sqrt(n)), gridRows = (n + perRow - 1) / perRow;
+        int cell = Math.max(1, Math.min(3, (THUMB - 4) / Math.max(perRow, gridRows)));
+        int ox = px + (THUMB - perRow * cell) / 2, oy = py + (THUMB - gridRows * cell) / 2;
+        for (int c = 0; c < n; c++)
+            g.fill(ox + c % perRow * cell, oy + c / perRow * cell, ox + (c % perRow + 1) * cell, oy + (c / perRow + 1) * cell, 0xFF000000 | rgb);
+        if (o.forged())
+            g.fill(px + THUMB - 5, py + 2, px + THUMB - 2, py + 5, skin.accent());
     }
 
     /** What a figure is; a family with its own line (key {@code .tip.<family>}) reads that instead of the generic tip. */
@@ -2282,6 +2378,10 @@ final class BlueprintBoard {
             Material.Located l = swatches(sel()).get(hoverSwatch);
             return usable(sel(), l) ? List.of(materialLabel(l))
                     : List.of(materialLabel(l), Component.translatable("gui.feedback.blueprint_table.unfit").withStyle(net.minecraft.ChatFormatting.RED));
+        }
+        if (hoverKind >= 0 && sel() != null) {
+            net.minecraft.resources.ResourceLocation k = kinds(sel()).get(hoverKind);
+            return List.of(Component.translatable("item." + k.getNamespace() + "." + k.getPath()));
         }
         if (hoverShape >= 0 && sel() != null)
             return PartPresenter.describe(shapes(sel()).get(hoverShape));
