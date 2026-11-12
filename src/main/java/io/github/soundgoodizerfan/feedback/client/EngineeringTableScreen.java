@@ -76,6 +76,8 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
 
     @Override
     protected void renderBg(GuiGraphics g, float partial, int mx, int my) {
+        // The popout first, so the panel covers its seam: hand tools and fixings, a desk's drawer rather than more of the grid.
+        skin.panel(g, leftPos + imageWidth - 4, topPos + 14, EngineeringTableMenu.POP_W + 4, 170);
         skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
         for (Slot s : menu.slots)
             if (s.index < EngineeringTableMenu.INV && s.isActive())
@@ -105,12 +107,12 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
         g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
         g.drawString(font, head, imageWidth - 10 - font.width(head), titleLabelY, skin.dim(), false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
-        label(g, "tools", EngineeringTableMenu.TOOL_X, EngineeringTableMenu.TOOL_Y - 12);
+        popLabel(g, "tools", EngineeringTableMenu.TOOL_Y - 11);
+        popLabel(g, "fasteners", EngineeringTableMenu.FASTENER_Y - 11);
         if (tab != EngineeringTableMenu.TAB_CRAFT)
             noteLine(g);
         switch (tab) {
             case EngineeringTableMenu.TAB_CRAFT -> {
-                label(g, "fasteners", EngineeringTableMenu.FASTENER_X, EngineeringTableMenu.FASTENER_Y - 12);
                 Component t = Component.translatable("gui.feedback.engineering.treatises");
                 g.drawString(font, t, EngineeringTableMenu.BINDER_X + 16 - font.width(t), EngineeringTableMenu.BINDER_Y - 12, skin.dim(), false);
                 Component s = statusText();
@@ -138,13 +140,13 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
         Component t = noteText();
         if (t.getString().isEmpty())
             return;
-        int x = EngineeringTableMenu.TOOL_X + 4 * 18 + 6, w = imageWidth - 10 - x;
+        int x = 10, w = imageWidth - 20;
         String text = font.plainSubstrByWidth(t.getString(), w, false).equals(t.getString()) ? t.getString()
                 : font.plainSubstrByWidth(t.getString(), w - font.width("...")) + "...";
         int ok = menu.note();
         boolean good = ok == EngineeringRework.REPAIRED || ok == EngineeringRework.SWAPPED || ok == EngineeringRework.TAKEN_APART
                 || ok == EngineeringRework.FITTED || ok == EngineeringRework.WRITTEN;
-        g.drawString(font, text, x, EngineeringTableMenu.TOOL_Y + 5, (good ? skin.accent() : skin.warn()) | 0xFF000000, false);
+        g.drawString(font, text, x, 97, (good ? skin.accent() : skin.warn()) | 0xFF000000, false);
     }
 
     private Component noteText() {
@@ -161,7 +163,24 @@ public class EngineeringTableScreen extends SkinnedScreen<EngineeringTableMenu> 
     /** A 4x4 grid's caption: right-aligned to the grid's edge, so it clears the title that fills the row above the grid's left end. */
     private void gridLabel(GuiGraphics g, String key, int gridX) {
         Component t = Component.translatable("gui.feedback.engineering.label." + key);
-        g.drawString(font, t, gridX + 4 * 18 - 6 - font.width(t), EngineeringTableMenu.ATTACH_Y - 9, skin.dim(), false);
+        g.drawString(font, t, gridX + 4 * 18 + 4 - font.width(t), EngineeringTableMenu.ATTACH_Y - 9, skin.dim(), false);
+    }
+
+    /** A caption for a popout slot group, small enough for the popout's width. */
+    private void popLabel(GuiGraphics g, String key, int y) {
+        Component t = Component.translatable("gui.feedback.engineering.label." + key);
+        g.pose().pushPose();
+        g.pose().translate(EngineeringTableMenu.TOOL_X - 2, y, 0);
+        g.pose().scale(0.8f, 0.8f, 1f);
+        g.drawString(font, t, 0, 0, skin.dim(), false);
+        g.pose().popPose();
+    }
+
+    /** The popout is part of the table: a click on it is not a click outside. */
+    @Override
+    protected boolean hasClickedOutside(double mx, double my, int left, int top, int button) {
+        boolean inPopout = mx >= left + imageWidth && mx < left + imageWidth + EngineeringTableMenu.POP_W && my >= top + 14 && my < top + 184;
+        return !inPopout && super.hasClickedOutside(mx, my, left, top, button);
     }
 
     private void label(GuiGraphics g, String key, int x, int y) {

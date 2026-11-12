@@ -8,6 +8,7 @@ import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableBlockEntity;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu;
 import io.github.soundgoodizerfan.feedback.modular.engineering.FittingOrder;
+import io.github.soundgoodizerfan.feedback.modular.engineering.FittingSequence;
 import io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload;
 import io.github.soundgoodizerfan.feedback.process.MaterialIngredient;
 
@@ -22,46 +23,37 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * The Engineering Table's fitting game: the assembly's real parts lie on a tray, each drawn as its own item, and the player seats them one
- * by one on an exploded axis below. What sits inside or under another goes first ({@link FittingOrder}, derived from the parts' roles, never
- * written per recipe). A right click slides the part along to its socket, drops it in with a click, a chime that climbs with the build
- * and sparks in its material's colour; a wrong click is a mis-seat: the part jolts, rattles back and the score drops. It never locks, so
- * the assembly can always be finished. When the last part seats the exploded axis closes up, the parts snap together in a flash and the
- * finished item rises in their place, with a stamped grade and stars. ONE result goes out ({@link MinigameScreens#report}) the moment the
- * last part seats; the closing flourish never delays it. Esc before then sends nothing and the craft stays offered. Reduce motion snaps
- * the slides and stills the bobbing, shaking and rise; sounds stay.
+ * The Engineering Table's fitting game, a Simon Says of tool strokes: the bench plays a sequence of strokes (file, tap, turn, press), each lit
+ * on its tool with a sound, and the player repeats it by clicking the tools or pressing 1 to 4. What the parts are made of drives the play
+ * ({@link FittingSequence}: harder stock, a longer sequence; tougher stock, slower strokes and a forgiven slip). A wrong stroke ends the play
+ * there and the score is how far it got; it only sets the assembly's start quality and never gates. ONE result goes out
+ * ({@link MinigameScreens#report}) when the play ends; Esc before then sends nothing and the craft stays offered. Reduce motion stills the
+ * bobbing and the rise; sounds stay.
  */
 final class FittingScreen extends Screen {
 
     private static final GuiSkin SKIN = GuiSkin.ENAMEL;
-    private static final int PW = 240, PH = 236, PLAY = 0, SNAP = 1, DONE = 2;
-    private static final int SNAP_TICKS = 16, DONE_TICKS = 90, CELL_W = 42, CELL_H = 38, SHAKE_TICKS = 14, DROP_TICKS = 9;
-    /** Screen-local colours: the tray, the bay's axis and the sparks are the subject of this screen, not the skin's. */
-    private static final int TRAY = 0xFF2B2E33, TRAY_EDGE = 0xFF15171A, AXIS = 0xFF6E747C, BAND = 0xFF4FBF5A, STRIP = 0xFFC2452F,
-            SPARK = 0xFFFFC04A;
+    private static final int PW = 240, PH = 200, WATCH = 0, REPEAT = 1, DONE = 2, BTN = 44, GAP = 8;
+    private static final int[] TINT = {0xC2452F, 0x4FBF5A, 0x4F8FDF, 0xFFC04A};
+    private static final net.minecraft.sounds.SoundEvent[] SOUND = {SoundEvents.GRINDSTONE_USE, SoundEvents.ANVIL_PLACE,
+            SoundEvents.UI_BUTTON_CLICK.value(), SoundEvents.PISTON_CONTRACT};
+    private static final float[] PITCH = {1.6f, 1.3f, 1.0f, 0.7f};
 
     private final Opening opening = new Opening(SKIN);
     private final Screen parent;
-    private final int containerId, n;
-    private final int[] rank, slot;
-    private final ItemStack[] stacks;
-    private final Component[] names;
-    private final int[] rgb;
-    private final float[] x, y, px, py;
-    private final int[] bay, shake, drop, slips;
+    private final int containerId, n, length, stepTicks, slack;
+    private final int[] seq;
+    private final ItemStack made;
     private final Specks specks = new Specks(96);
     private final Component title = Component.translatable("gui.feedback.fitting.title");
-    private final Component[] pops = {Component.translatable("gui.feedback.fitting.pop.0"), Component.translatable("gui.feedback.fitting.pop.1")};
+    private final Component[] strokeNames = new Component[FittingSequence.STROKES];
     private final Component[] results = new Component[FittingOrder.GRADES];
-    private final ItemStack made;
     private List<FormattedCharSequence> hint = List.of();
-    private Component countText = Component.empty();
-    private int px0, py0, sx0, sy0, ticks, phase = PLAY, seated, misses, hover = -1, snap, hold, flash, popKind = -1, popAge;
+    private int px0, py0, ticks, phase = WATCH, shown = -1, clock, reached, slips, lit = -1, litAge, wrong = -1, wrongAge, hold, flash;
     private int mouseX, mouseY;
     private long doneAt;
-    private float finalScore, partial, popX;
+    private float finalScore, partial;
     private boolean sent;
-    private final int[] trayCell;
 
     FittingScreen(Screen parent, EngineeringTableMenu menu, MinigameOpenPayload session) {
         super(Component.translatable("gui.feedback.fitting.title"));
@@ -69,53 +61,32 @@ final class FittingScreen extends Screen {
         this.containerId = session.container();
         int[][] rows = FittingOrder.decode(session.data());
         this.n = rows.length;
-        this.rank = new int[n];
-        this.slot = new int[n];
-        this.stacks = new ItemStack[n];
-        this.names = new Component[n];
-        this.rgb = new int[n];
-        this.x = new float[n];
-        this.y = new float[n];
-        this.px = new float[n];
-        this.py = new float[n];
-        this.bay = new int[n];
-        this.shake = new int[n];
-        this.drop = new int[n];
-        this.slips = new int[n];
-        this.trayCell = new int[n];
-        for (int i = 0; i < n; i++) {
-            slot[i] = rows[i][0];
-            rank[i] = rows[i][1];
-            ItemStack s = menu.getSlot(EngineeringTableMenu.slot(EngineeringTableBlockEntity.GRID + slot[i])).getItem();
-            stacks[i] = s.copyWithCount(1);
-            names[i] = stacks[i].getHoverName();
-            var found = stacks[i].isEmpty() ? java.util.Optional.<io.github.soundgoodizerfan.feedback.process.Material.Located>empty()
-                    : MaterialIngredient.locate(stacks[i].getItem());
-            rgb[i] = found.isPresent() ? MaterialColors.of(found.get().id()) : 0xB8BEC6;
-            bay[i] = -1;
+        float hardness = 0f, toughness = 0f;
+        int found = 0;
+        for (int[] row : rows) {
+            ItemStack s = menu.getSlot(EngineeringTableMenu.slot(EngineeringTableBlockEntity.GRID + row[0])).getItem();
+            var located = s.isEmpty() ? java.util.Optional.<io.github.soundgoodizerfan.feedback.process.Material.Located>empty()
+                    : MaterialIngredient.locate(s.getItem());
+            if (located.isPresent()) {
+                var m = located.get().material();
+                hardness += m.hardness().value();
+                toughness += m.mechanical().toughness().map(t -> t.value()).orElse(m.hardness().value());
+                found++;
+            }
         }
-        // The tray order is a shuffle seeded by the table, so the parts never lie in the order they go.
-        int seed = containerId * 31 + n;
-        int[] perm = new int[n];
-        for (int i = 0; i < n; i++)
-            perm[i] = i;
-        for (int i = n - 1; i > 0; i--) {
-            seed = seed * 1103515245 + 12345;
-            int j = ((seed >>> 16) & 0x7FFF) % (i + 1);
-            int t = perm[i];
-            perm[i] = perm[j];
-            perm[j] = t;
+        if (found > 0) {
+            hardness /= found;
+            toughness /= found;
         }
-        for (int c = 0; c < n; c++)
-            trayCell[perm[c]] = c;
+        this.length = FittingSequence.length(n, hardness);
+        this.stepTicks = FittingSequence.stepTicks(toughness);
+        this.slack = FittingSequence.slack(toughness);
+        this.seq = FittingSequence.strokes(containerId * 31L + n * 7L + (long) (hardness * 10f), length);
         this.made = menu.getSlot(EngineeringTableMenu.OUT).getItem().copy();
+        for (int i = 0; i < FittingSequence.STROKES; i++)
+            strokeNames[i] = Component.translatable("gui.feedback.fitting.stroke." + i);
         for (int i = 0; i < FittingOrder.GRADES; i++)
             results[i] = Component.translatable("gui.feedback.fitting.result." + i);
-        countText();
-    }
-
-    private void countText() {
-        countText = Component.translatable("gui.feedback.fitting.count", seated, n);
     }
 
     @Override
@@ -123,13 +94,8 @@ final class FittingScreen extends Screen {
         opening.start();
         px0 = (width - PW) / 2;
         py0 = Math.max(0, (height - PH) / 2);
-        sx0 = px0 + 8;
-        sy0 = py0 + 24;
         hint = font.split(Component.translatable("gui.feedback.fitting.hint"), PW - 24);
-        for (int i = 0; i < n; i++) {
-            x[i] = px[i] = trayX(i);
-            y[i] = py[i] = trayY(i) - 30;
-        }
+        clock = -stepTicks * 2; // a beat before the first stroke
     }
 
     @Override
@@ -137,155 +103,112 @@ final class FittingScreen extends Screen {
         return false;
     }
 
-    private int cols() {
-        return Math.min(n, 5);
+    private int btnX(int k) {
+        int total = FittingSequence.STROKES * BTN + (FittingSequence.STROKES - 1) * GAP;
+        return px0 + (PW - total) / 2 + k * (BTN + GAP);
     }
 
-    private float trayX(int i) {
-        int c = trayCell[i], cols = cols();
-        int inRow = Math.min(cols, n - (c / cols) * cols);
-        return sx0 + 112 + ((c % cols) - (inRow - 1) / 2f) * CELL_W;
+    private int btnY() {
+        return py0 + 100;
     }
 
-    private float trayY(int i) {
-        return sy0 + 24 + (trayCell[i] / cols()) * CELL_H;
+    private int strokeAt(double mx, double my) {
+        for (int k = 0; k < FittingSequence.STROKES; k++)
+            if (mx >= btnX(k) && mx < btnX(k) + BTN && my >= btnY() && my < btnY() + BTN)
+                return k;
+        return -1;
     }
 
-    private float expl() {
-        return phase == PLAY ? 1f : Math.max(0.42f, 1f - 0.58f * Math.min(1f, snap / (float) SNAP_TICKS));
+    /** One stroke lit on its tool, with its sound and a spray of sparks. */
+    private void strike(int k, boolean good) {
+        lit = k;
+        litAge = 0;
+        GuiSkin.play(SOUND[k], PITCH[k] + (good ? 0.05f * Math.min(reached, 8) : 0f), 0.7f);
+        specks.burst(btnX(k) + BTN / 2f, btnY() + 6, good ? 8 : 4, 1.8f, 2.2f, TINT[k] | 0xFF000000, 18, 2);
     }
 
-    private float bayX(int k) {
-        float spacing = Math.min(28f, 190f / Math.max(1, n));
-        return sx0 + 112 + (k - (n - 1) / 2f) * spacing * expl();
-    }
-
-    private float bayY() {
-        return sy0 + 120;
-    }
-
-    private int pieceAt(double mx, double my) {
-        int best = -1;
-        for (int i = 0; i < n; i++) {
-            if (bay[i] >= 0)
-                continue;
-            if (Math.abs(mx - x[i]) <= 18 && Math.abs(my - y[i]) <= 18)
-                best = i;
+    private void press(int k) {
+        if (phase != REPEAT || !opening.settled())
+            return;
+        if (seq[reached] == k) {
+            strike(k, true);
+            reached++;
+            if (reached >= length)
+                finish();
+        } else {
+            wrong = k;
+            wrongAge = 0;
+            GuiSkin.play(SoundEvents.IRON_TRAPDOOR_OPEN, 0.55f, 0.6f);
+            GuiSkin.play(SoundEvents.CHAIN_HIT, 0.7f, 0.8f);
+            if (slips++ >= slack)
+                finish();
         }
-        return best;
     }
 
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
-        if (phase != PLAY) {
-            if (phase == DONE)
-                hold = 0;
+        if (phase == DONE) {
+            hold = 0;
             return true;
         }
-        if (!opening.settled() || button != 0)
-            return true;
-        int i = pieceAt(mx, my);
-        if (i < 0)
-            return true;
-        boolean[] done = new boolean[n];
-        for (int k = 0; k < n; k++)
-            done[k] = bay[k] >= 0;
-        if (FittingOrder.fits(rank, done, i))
-            seat(i);
-        else
-            misseat(i);
+        if (button == 0) {
+            int k = strokeAt(mx, my);
+            if (k >= 0)
+                press(k);
+        }
         return true;
     }
 
-    private void seat(int i) {
-        bay[i] = seated++;
-        drop[i] = DROP_TICKS;
-        float progress = seated / (float) n;
-        GuiSkin.play(SoundEvents.LEVER_CLICK, 1.2f + 0.3f * progress, 0.9f);
-        GuiSkin.play(SoundEvents.ANVIL_PLACE, 1.7f, 0.25f);
-        GuiSkin.play(SoundEvents.AMETHYST_BLOCK_CHIME, 0.8f + 0.7f * progress, 0.5f);
-        specks.burst(bayX(bay[i]), bayY() + 8, 9, 1.6f, 2.0f, rgb[i], 22, 2);
-        specks.burst(bayX(bay[i]), bayY() + 8, 4, 1.2f, 1.4f, SPARK, 14, 1);
-        popKind = 0;
-        popAge = 0;
-        popX = bayX(bay[i]);
-        countText();
-        if (seated >= n)
-            finish();
+    @Override
+    public boolean keyPressed(int key, int scan, int modifiers) {
+        if (opening.closing())
+            return true;
+        if (key >= org.lwjgl.glfw.GLFW.GLFW_KEY_1 && key <= org.lwjgl.glfw.GLFW.GLFW_KEY_4) {
+            press(key - org.lwjgl.glfw.GLFW.GLFW_KEY_1);
+            return true;
+        }
+        return super.keyPressed(key, scan, modifiers);
     }
 
-    private void misseat(int i) {
-        misses++;
-        slips[i]++;
-        shake[i] = SHAKE_TICKS;
-        GuiSkin.play(SoundEvents.IRON_TRAPDOOR_OPEN, 0.55f, 0.6f);
-        GuiSkin.play(SoundEvents.CHAIN_HIT, 0.7f, 0.8f);
-        GuiSkin.play(SoundEvents.ANVIL_LAND, 0.5f, 0.2f);
-        specks.burst(x[i], y[i] + 8, 6, 1.5f, 1.2f, 0x8A8F96, 16, 2);
-        popKind = 1;
-        popAge = 0;
-        popX = x[i];
-    }
-
-    /** The last part is seated: send the one result, then close the axis up and let the finished item rise. */
+    /** The play ends: send the one result and show the grade. */
     private void finish() {
-        finalScore = FittingOrder.score(n, misses);
+        finalScore = FittingSequence.score(reached, length);
         if (!sent) {
             sent = true;
             MinigameScreens.report(containerId, finalScore);
         }
-        phase = SNAP;
-        snap = 0;
+        phase = DONE;
+        hold = 90;
+        doneAt = Util.getMillis();
+        flash = 12;
+        int star = FittingOrder.grade(finalScore);
+        specks.burst(px0 + PW / 2f, py0 + 70, 22, 2.6f, 3.2f, 0xFFF0A0, 30, 2);
+        if (star >= 3) {
+            GuiSkin.play(io.github.soundgoodizerfan.feedback.registry.FSounds.FORGE_FANFARE.get(), 1f);
+        } else if (star <= 1)
+            GuiSkin.play(io.github.soundgoodizerfan.feedback.registry.FSounds.FORGE_FAILURE.get(), 1f);
+        else
+            GuiSkin.play(SoundEvents.ANVIL_LAND, 0.8f, 0.7f);
     }
 
     @Override
     public void tick() {
         ticks++;
-        popAge++;
-        boolean still = ClientSettings.reduceMotion();
-        int over = phase == PLAY && opening.settled() ? pieceAt(mouseX, mouseY) : -1;
-        if (over != hover) {
-            hover = over;
-            if (over >= 0)
-                GuiSkin.play(SoundEvents.CHAIN_STEP, 1.8f, 0.12f);
-        }
-        float follow = still ? 1f : 0.38f;
-        for (int i = 0; i < n; i++) {
-            px[i] = x[i];
-            py[i] = y[i];
-            float tx, ty;
-            if (bay[i] >= 0) {
-                tx = bayX(bay[i]);
-                ty = bayY();
-            } else {
-                tx = trayX(i);
-                ty = trayY(i) + (still || i == hover ? 0f : Mth.sin((ticks + i * 9) * 0.11f) * 1.2f) - (i == hover ? 3f : 0f);
-            }
-            x[i] += (tx - x[i]) * follow;
-            y[i] += (ty - y[i]) * follow;
-            if (shake[i] > 0)
-                shake[i]--;
-            if (drop[i] > 0)
-                drop[i]--;
-        }
-        if (phase == SNAP) {
-            if (++snap >= SNAP_TICKS) {
-                phase = DONE;
-                hold = DONE_TICKS;
-                doneAt = Util.getMillis();
-                flash = 12;
-                int star = FittingOrder.grade(finalScore);
-                specks.burst(sx0 + 112, bayY(), 22, 2.6f, 3.2f, 0xFFF0A0, 30, 2);
-                GuiSkin.play(SoundEvents.ANVIL_PLACE, 1.4f, 0.5f);
-                if (star >= 3) {
-                    // The forge's own fanfare and gold bursts for a win, its failure sting for a poor assembly.
-                    GuiSkin.play(io.github.soundgoodizerfan.feedback.registry.FSounds.FORGE_FANFARE.get(), 1f);
-                    for (int wave = 0; wave < 3; wave++)
-                        specks.burst(sx0 + 112, bayY(), 24, 2.2f + wave * 1.2f, 3.4f, 0xFFD84A, 34, 2);
-                } else if (star <= 1)
-                    GuiSkin.play(io.github.soundgoodizerfan.feedback.registry.FSounds.FORGE_FAILURE.get(), 1f);
-                else
-                    GuiSkin.play(SoundEvents.ANVIL_LAND, 0.8f, 0.7f);
+        if (litAge < 100)
+            litAge++;
+        if (wrongAge < 100)
+            wrongAge++;
+        if (phase == WATCH && opening.settled()) {
+            clock++;
+            if (clock >= 0) {
+                int step = clock / stepTicks;
+                if (step >= length) {
+                    phase = REPEAT;
+                    lit = -1;
+                } else if (clock % stepTicks == 0 && step != shown) {
+                    shown = step;
+                    strike(seq[step], false);
+                }
             }
         } else if (phase == DONE) {
             if (flash > 0)
@@ -299,11 +222,6 @@ final class FittingScreen extends Screen {
     @Override
     public void onClose() {
         opening.close();
-    }
-
-    @Override
-    public boolean keyPressed(int key, int scan, int modifiers) {
-        return opening.closing() || super.keyPressed(key, scan, modifiers);
     }
 
     @Override
@@ -329,40 +247,39 @@ final class FittingScreen extends Screen {
     private void paint(GuiGraphics g) {
         SKIN.panel(g, px0, py0, PW, PH);
         g.drawString(font, title, px0 + 12, py0 + 9, SKIN.ink(), false);
-        // One mark per part, filled when it is seated, tinted by how many slips it cost.
-        for (int i = 0; i < n; i++) {
-            int mx = px0 + PW - 12 - (n - i) * 11 + 3;
-            int seatedHere = rankSeated(i);
-            int col = seatedHere < 0 ? 0xFF2A2D32 : seatedHere == 0 ? BAND : seatedHere == 1 ? SPARK : STRIP;
-            g.fill(mx - 1, py0 + 8, mx + 8, py0 + 17, 0xFF000000);
-            g.fill(mx, py0 + 9, mx + 7, py0 + 16, col);
+        // One pip per stroke of the sequence: lit as the bench plays it, filled as the player repeats it.
+        int pipW = Math.min(14, (PW - 24) / Math.max(1, length));
+        int pipX = px0 + (PW - pipW * length) / 2;
+        for (int i = 0; i < length; i++) {
+            boolean done = phase == WATCH ? i <= shown : i < reached;
+            int col = done ? (0xFF000000 | TINT[seq[i]]) : 0xFF2A2D32;
+            if (phase == DONE && i >= reached)
+                col = 0xFF6A2A22;
+            g.fill(pipX + i * pipW, py0 + 26, pipX + i * pipW + pipW - 2, py0 + 34, 0xFF000000);
+            g.fill(pipX + i * pipW + 1, py0 + 27, pipX + i * pipW + pipW - 3, py0 + 33, col);
         }
-        SKIN.inset(g, sx0, sy0, PW - 16, 152);
-        tray(g);
-        bayAxis(g);
-        // Parts: seated ones under, the tray ones over them, the hovered one last.
-        if (phase != DONE) {
-            for (int pass = 0; pass < 2; pass++)
-                for (int i = 0; i < n; i++)
-                    if ((bay[i] >= 0) == (pass == 0) && i != hover)
-                        piece(g, i);
-            if (hover >= 0)
-                piece(g, hover);
-        } else {
-            finished(g);
-        }
+        // The work: the finished item on the bench, bobbing while the bench plays.
+        ItemStack show = made;
+        float bob = phase == WATCH && !ClientSettings.reduceMotion() ? Mth.sin((ticks + partial) * 0.2f) * 2f : 0f;
+        g.pose().pushPose();
+        g.pose().translate(px0 + PW / 2f - 24, py0 + 46 + bob, 0f);
+        g.pose().scale(3f, 3f, 1f);
+        g.renderItem(show, 0, 0);
+        g.pose().popPose();
+        for (int k = 0; k < FittingSequence.STROKES; k++)
+            tool(g, k);
         specks.draw(g, partial);
-        popup(g);
         if (flash > 0)
-            g.fill(sx0 + 1, sy0 + 1, sx0 + PW - 17, sy0 + 151, ((int) (flash / 12f * 150f) << 24) | 0xFFFFFF);
-        int hy = py0 + 182;
+            g.fill(px0 + 1, py0 + 1, px0 + PW - 1, py0 + PH - 1, ((int) (flash / 12f * 150f) << 24) | 0xFFFFFF);
+        int hy = py0 + 152;
         if (phase == DONE) {
             long age = Util.getMillis() - doneAt;
             int star = FittingOrder.grade(finalScore);
-            GuiStyle.stamp(g, results[star], px0 + PW / 2f - 20, sy0 + 36, age, star >= 3 ? 0x5BC25B : star >= 2 ? 0xE0B040 : 0xD05040);
-            stars(g, px0 + PW / 2 - 24, hy + 4, star + 1);
+            GuiStyle.stamp(g, results[star], px0 + PW / 2f - 20, py0 + 70, age, star >= 3 ? 0x5BC25B : star >= 2 ? 0xE0B040 : 0xD05040);
+            stars(g, px0 + PW / 2 - 24, hy + 8, star + 1);
         } else {
-            g.drawString(font, countText, px0 + 12, hy, SKIN.dim(), false);
+            Component state = Component.translatable(phase == WATCH ? "gui.feedback.fitting.watch" : "gui.feedback.fitting.repeat", reached, length);
+            g.drawString(font, state, px0 + 12, hy, SKIN.ink(), false);
             hy += 12;
             for (var l : hint) {
                 g.drawString(font, l, px0 + 12, hy, SKIN.dim(), false);
@@ -371,111 +288,42 @@ final class FittingScreen extends Screen {
         }
     }
 
-    /** 0 slips for a seated piece with none, else its count; -1 while it is still on the tray. */
-    private int rankSeated(int mark) {
-        for (int i = 0; i < n; i++)
-            if (bay[i] == mark)
-                return slips[i];
-        return -1;
+    /** One tool button: lit in its colour while it strikes, red when it was the wrong one, its name and key beneath. */
+    private void tool(GuiGraphics g, int k) {
+        int x = btnX(k), y = btnY();
+        boolean hover = phase == REPEAT && strokeAt(mouseX, mouseY) == k;
+        boolean on = lit == k && litAge < 6;
+        boolean bad = wrong == k && wrongAge < 10;
+        g.fill(x, y, x + BTN, y + BTN, 0xFF15171A);
+        int fill = bad ? 0xFFC2452F : on ? 0xFF000000 | TINT[k] : hover ? 0xFF3A3E44 : 0xFF2B2E33;
+        g.fill(x + 2, y + 2, x + BTN - 2, y + BTN - 2, fill);
+        glyph(g, k, x + BTN / 2, y + BTN / 2 - 4, on || bad ? 0xFF15171A : 0xFFC2C8D0);
+        Component name = strokeNames[k];
+        g.drawString(font, name, x + (BTN - font.width(name)) / 2, y + BTN - 11, on || bad ? 0xFF15171A : SKIN.dim(), false);
+        g.drawString(font, Integer.toString(k + 1), x + 4, y + 4, on || bad ? 0xFF15171A : SKIN.dim(), false);
     }
 
-    /** The tray the loose parts lie on: a dark pad with a lip, and a pedestal under each part. */
-    private void tray(GuiGraphics g) {
-        int rows = (n + 4) / 5;
-        int x0 = sx0 + 6, x1 = sx0 + PW - 16 - 6, y0 = sy0 + 6, y1 = sy0 + 12 + rows * CELL_H;
-        g.fill(x0, y0, x1, y1, TRAY_EDGE);
-        g.fill(x0 + 1, y0 + 1, x1 - 1, y1 - 1, TRAY);
-        g.fill(x0 + 1, y0 + 1, x1 - 1, y0 + 3, 0x30FFFFFF);
-        for (int i = 0; i < n; i++) {
-            if (bay[i] >= 0)
-                continue;
-            int cx = Math.round(trayX(i)), cy = Math.round(trayY(i));
-            g.fill(cx - 17, cy + 14, cx + 17, cy + 17, 0x60000000);
-            g.fill(cx - 15, cy + 12, cx + 15, cy + 14, 0x30FFFFFF);
+    /** A small pictogram of the stroke: file (diagonal teeth), tap (a dot over a bar), turn (an open ring with a tick), press (a down arrow). */
+    private static void glyph(GuiGraphics g, int k, int cx, int cy, int c) {
+        switch (k) {
+            case 0 -> {
+                for (int i = -8; i <= 8; i += 3)
+                    g.fill(cx + i, cy + i / 3, cx + i + 2, cy + i / 3 + 5, c);
+            }
+            case 1 -> {
+                g.fill(cx - 2, cy - 8, cx + 3, cy - 3, c);
+                g.fill(cx - 8, cy + 2, cx + 9, cy + 4, c);
+            }
+            case 2 -> {
+                GuiStyle.ring(g, cx, cy, 7, 2, c);
+                g.fill(cx + 3, cy - 9, cx + 9, cy - 7, c);
+            }
+            default -> {
+                g.fill(cx - 1, cy - 8, cx + 2, cy + 2, c);
+                g.fill(cx - 5, cy + 2, cx + 6, cy + 4, c);
+                g.fill(cx - 3, cy + 4, cx + 4, cy + 6, c);
+            }
         }
-    }
-
-    /** The exploded axis the parts seat on: a dashed line through a row of empty sockets, the next one lit softly. */
-    private void bayAxis(GuiGraphics g) {
-        int by = Math.round(bayY()) + 8;
-        float ex = expl();
-        int left = Math.round(bayX(0)) - 16, right = Math.round(bayX(n - 1)) + 16;
-        for (int xx = left; xx < right; xx += 6)
-            g.fill(xx, by + 17, Math.min(right, xx + 3), by + 18, AXIS);
-        if (phase == DONE)
-            return;
-        for (int k = 0; k < n; k++) {
-            int cx = Math.round(bayX(k));
-            int col = k == seated && phase == PLAY ? 0x90FFFFFF : 0x38FFFFFF;
-            g.fill(cx - 13, by - 12, cx + 13, by - 11, col);
-            g.fill(cx - 13, by + 14, cx + 13, by + 15, col);
-            g.fill(cx - 13, by - 11, cx - 12, by + 14, col);
-            g.fill(cx + 12, by - 11, cx + 13, by + 14, col);
-        }
-    }
-
-    /** One part as its own item: lerped between ticks, scaled 2x on the tray and 1.5x seated, jolting after a mis-seat. */
-    private void piece(GuiGraphics g, int i) {
-        boolean in = bay[i] >= 0;
-        float cx = Mth.lerp(partial, px[i], x[i]), cy = Mth.lerp(partial, py[i], y[i]);
-        float scale = in ? 1.5f : 2f;
-        if (!in && i == hover)
-            scale = 2.25f;
-        if (shake[i] > 0 && !ClientSettings.reduceMotion())
-            cx += Mth.sin((SHAKE_TICKS - shake[i] + partial) * 2.6f) * 4f * shake[i] / SHAKE_TICKS;
-        if (drop[i] > 0 && !ClientSettings.reduceMotion()) {
-            float d = (drop[i] - partial) / DROP_TICKS;
-            cy -= Mth.sin(Mth.clamp(d, 0f, 1f) * Mth.PI) * 7f;
-        }
-        float half = 8f * scale;
-        if (!in && i == hover)
-            outline(g, cx, cy, half + 3, rgb[i], 0xC0);
-        else if (shake[i] > 0)
-            outline(g, cx, cy, half + 3, STRIP & 0xFFFFFF, 0xC0 * shake[i] / SHAKE_TICKS);
-        g.pose().pushPose();
-        g.pose().translate(cx - half, cy - half, 0f);
-        g.pose().scale(scale, scale, 1f);
-        g.renderItem(stacks[i], 0, 0);
-        g.pose().popPose();
-        if (!in && i == hover) {
-            Component nm = names[i];
-            g.drawString(font, nm, Math.round(sx0 + 112 - font.width(nm) / 2f), sy0 + 134, SKIN.ink(), false);
-        }
-    }
-
-    private static void outline(GuiGraphics g, float cx, float cy, float r, int rgb, int alpha) {
-        int a = Math.max(0, Math.min(255, alpha)) << 24 | (rgb & 0xFFFFFF);
-        int x0 = Math.round(cx - r), y0 = Math.round(cy - r), x1 = Math.round(cx + r), y1 = Math.round(cy + r);
-        g.fill(x0, y0, x1, y0 + 1, a);
-        g.fill(x0, y1 - 1, x1, y1, a);
-        g.fill(x0, y0, x0 + 1, y1, a);
-        g.fill(x1 - 1, y0, x1, y1, a);
-    }
-
-    /** While the axis closes the seated parts draw as they are; once snapped, the finished item rises in their place. */
-    private void finished(GuiGraphics g) {
-        long age = Util.getMillis() - doneAt;
-        float rise = ClientSettings.reduceMotion() ? 1f : Mth.clamp(age / 260f, 0f, 1f);
-        float scale = 1.5f + 1.5f * (1f - (1f - rise) * (1f - rise));
-        float half = 8f * scale;
-        ItemStack show = made.isEmpty() ? stacks[0] : made;
-        g.pose().pushPose();
-        g.pose().translate(sx0 + 112 - half, bayY() - half - 2, 0f);
-        g.pose().scale(scale, scale, 1f);
-        g.renderItem(show, 0, 0);
-        g.pose().popPose();
-    }
-
-    /** The word for the last click, floating up from where it happened and fading. */
-    private void popup(GuiGraphics g) {
-        if (popKind < 0 || popAge > 36)
-            return;
-        int a = Math.min(255, 360 - popAge * 10);
-        if (a <= 0)
-            return;
-        int rise = ClientSettings.reduceMotion() ? 0 : Math.min(12, popAge);
-        Component w = pops[popKind];
-        g.drawString(font, w, Math.round(popX - font.width(w) / 2f), Math.round(bayY()) - 26 - rise, (a << 24) | (popKind == 0 ? BAND : STRIP), false);
     }
 
     /** Five diamonds, lit by the final grade (one to five). */

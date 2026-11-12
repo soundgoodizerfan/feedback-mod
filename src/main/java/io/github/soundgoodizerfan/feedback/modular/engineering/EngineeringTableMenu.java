@@ -67,13 +67,15 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
 
     /** The panel's size; slot positions are pixels in it, and the screen draws a socket at each live slot. */
     public static final int W = 216, H = 210;
+    /** The width of the popout beside the panel that holds the hand tools and the fixings. */
+    public static final int POP_W = 62;
     /**
-     * The layout. Crafting: grid top-left, arrow, output at the right; the blueprint bottom-left, a row of four hand tools, a row of three
-     * fasteners, the binder bottom-right. Fit: the item, then the 4x4 attachment grid. Repair: the item, then the part-stock grid.
+     * The layout. Crafting: grid top-left, arrow, output at the right; the blueprint bottom-left, the binder bottom-right. The four hand
+     * tools and three fasteners sit in a popout column beside the panel, on every tab ({@link #POP_W}). Fit: the item, then the 4x4 attachment grid. Repair: the item, then the part-stock grid.
      * Treatise: binder, blank treatise, specimen in a row.
      */
-    public static final int OUT_X = 146, OUT_Y = 37, GRID_X = 30, GRID_Y = 18, BLUEPRINT_X = 8, BLUEPRINT_Y = 92, TOOL_X = 34, TOOL_Y = 92,
-            FASTENER_X = 116, FASTENER_Y = 92, BINDER_X = 192, BINDER_Y = 92, FIT_ITEM_X = 30, FIT_ITEM_Y = 36, ATTACH_X = 90, ATTACH_Y = 18,
+    public static final int OUT_X = 146, OUT_Y = 37, GRID_X = 30, GRID_Y = 18, BLUEPRINT_X = 8, BLUEPRINT_Y = 92, TOOL_X = W + 12, TOOL_Y = 30,
+            FASTENER_X = W + 12, FASTENER_Y = 124, BINDER_X = 192, BINDER_Y = 92, FIT_ITEM_X = 30, FIT_ITEM_Y = 36, ATTACH_X = 90, ATTACH_Y = 18,
             REPAIR_ITEM_X = 10, REPAIR_ITEM_Y = 36, STOCK_X = 98, STOCK_Y = 18, BINDER_TREATISE_X = 40, BLANK_X = 88, SPECIMEN_X = 136,
             TREATISE_Y = 44, INV_X = 27, INV_Y = 126;
 
@@ -140,9 +142,9 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
                 add(c++, GRID_X + col * 18, GRID_Y + r * 18, 1 << TAB_CRAFT, 64, s -> true);
         add(EngineeringTableBlockEntity.BLUEPRINT, BLUEPRINT_X, BLUEPRINT_Y, 1 << TAB_CRAFT, 1, EngineeringTableMenu::isBlueprint);
         for (int i = 0; i < 4; i++)
-            add(EngineeringTableBlockEntity.TOOLS + i, TOOL_X + i * 18, TOOL_Y, ALL_TABS, 1, ToolAbilities::isTool);
+            add(EngineeringTableBlockEntity.TOOLS + i, TOOL_X, TOOL_Y + i * 18, ALL_TABS, 1, ToolAbilities::isTool);
         for (int i = 0; i < 3; i++)
-            add(EngineeringTableBlockEntity.FASTENERS + i, FASTENER_X + i * 18, FASTENER_Y, 1 << TAB_CRAFT, 64, Fasteners::is);
+            add(EngineeringTableBlockEntity.FASTENERS + i, FASTENER_X, FASTENER_Y + i * 18, ALL_TABS, 64, Fasteners::is);
         add(EngineeringTableBlockEntity.BINDER, BINDER_X, BINDER_Y, 1 << TAB_CRAFT, 1, EngineeringTableMenu::isBinder);
         add(EngineeringTableBlockEntity.FIT_ITEM, FIT_ITEM_X, FIT_ITEM_Y, 1 << TAB_FIT, 1, EngineeringTableMenu::isModular);
         for (int i = 0; i < 16; i++)
