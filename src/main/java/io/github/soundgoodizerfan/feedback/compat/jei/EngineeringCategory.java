@@ -130,7 +130,8 @@ public class EngineeringCategory implements IRecipeCategory<EngineeringCategory.
                     cells.set(i++, in);
         }
         return new Card(id, false, cells, recipe.getResultItem(null), recipe.tools(), recipe.fasteners(), recipe.school(),
-                recipe.minigame().orElse(""));
+                recipe.minigame().orElse(recipe.fasteners().count() > 0 && EngineeringMinigames.rivetsOnly(recipe.fasteners())
+                        ? EngineeringMinigames.UPSET.toString() : ""));
     }
 
     /** The cards of every complex type with a build, from the client's copy of the types. */
@@ -203,10 +204,15 @@ public class EngineeringCategory implements IRecipeCategory<EngineeringCategory.
         }
         y = TOOLS_Y + ROW * MAX_TOOLS;
         if (card.need().count() > 0) {
-            List<ItemStack> fasteners = fastenerStacks(card.need().floor());
+            List<ItemStack> fasteners = fastenerStacks(card.need().floor(), card.need().forms());
             builder.addSlot(RecipeIngredientRole.INPUT, 1, y).setStandardSlotBackground().addItemStacks(fasteners)
-                    .addRichTooltipCallback((view, tooltip) -> tooltip.add(Component.translatable("feedback.jei.engineering.fastener_tip",
-                            card.need().count(), card.need().floor())));
+                    .addRichTooltipCallback((view, tooltip) -> {
+                        tooltip.add(Component.translatable("feedback.jei.engineering.fastener_tip",
+                            card.need().count(), card.need().floor()));
+                        if (!card.need().forms().isEmpty())
+                            tooltip.add(Component.translatable("feedback.jei.engineering.fastener_forms", String.join(", ",
+                                    card.need().forms().stream().map(f -> f.replace('_', ' ')).toList())));
+                    });
         }
     }
 
@@ -228,7 +234,7 @@ public class EngineeringCategory implements IRecipeCategory<EngineeringCategory.
     }
 
     /** Every fastener form of every material whose fastener quality reaches {@code floor}, best last. */
-    static List<ItemStack> fastenerStacks(int floor) {
+    static List<ItemStack> fastenerStacks(int floor, List<String> forms) {
         List<ItemStack> out = new ArrayList<>();
         int[] q = {0};
         for (int quality = floor; quality <= 5; quality++) {
@@ -237,6 +243,7 @@ public class EngineeringCategory implements IRecipeCategory<EngineeringCategory.
                 if (material.fastener().filter(v -> v == q[0]).isEmpty())
                     return;
                 for (String form : new java.util.TreeSet<>(Fasteners.FORMS))
+                    if (forms.isEmpty() || forms.contains(form))
                     material.item(id, form).ifPresent(item -> out.add(new ItemStack(item)));
             });
         }

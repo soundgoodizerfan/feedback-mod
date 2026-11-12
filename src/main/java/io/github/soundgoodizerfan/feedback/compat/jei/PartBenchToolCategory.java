@@ -98,7 +98,7 @@ public class PartBenchToolCategory implements IRecipeCategory<PartBenchToolCateg
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, Card card, IFocusGroup focuses) {
-        ModularType type = ModularTypes.known().get(card.type());
+        ModularType type = ModularTypes.known(card.type());
         if (type == null)
             return;
         Map<ResourceLocation, Material> materials = ClientMaterials.get();
@@ -136,7 +136,7 @@ public class PartBenchToolCategory implements IRecipeCategory<PartBenchToolCateg
 
     @Override
     public void draw(Card card, IRecipeSlotsView slots, GuiGraphics graphics, double mouseX, double mouseY) {
-        ModularType type = ModularTypes.known().get(card.type());
+        ModularType type = ModularTypes.known(card.type());
         if (type == null)
             return;
         Font font = Minecraft.getInstance().font;

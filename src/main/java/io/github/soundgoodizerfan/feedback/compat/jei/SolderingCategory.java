@@ -137,8 +137,7 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String key, String value) {
-        graphics.drawString(font, Component.translatable(key), 24, y, LABEL_COLOUR, false);
-        graphics.drawString(font, value, 96, y, VALUE_COLOUR, false);
+        CardText.row(graphics, font, WIDTH, 24, y, Component.translatable(key), value, LABEL_COLOUR, VALUE_COLOUR);
     }
 
     private static String tu(float value) {

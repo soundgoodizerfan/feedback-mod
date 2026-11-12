@@ -60,7 +60,7 @@ public final class GuiShot {
 
     private static final Map<String, String> CONFIG = parse(System.getenv("FEEDBACK_GUISHOT"), ";");
     private static final String WORLD = "guishot_reuse";
-    private static final int SHOT_TIMEOUT = 20 * 60;
+    private static final int SHOT_TIMEOUT = 20 * 60, JEI_SHOT_TIMEOUT = 20 * 900;
 
     private enum Phase { TITLE, WORLD, IDLE, OPEN, SETTLE, ACTIONS, VARIANT, VARWAIT, RESCALE, CAPTURE, CLOSE, DEAD }
 
@@ -241,7 +241,7 @@ public final class GuiShot {
             default -> {
             }
         }
-        if (phase.ordinal() >= Phase.OPEN.ordinal() && phase != Phase.CLOSE && phase != Phase.DEAD && ticks - shotStart > SHOT_TIMEOUT)
+        if (phase.ordinal() >= Phase.OPEN.ordinal() && phase != Phase.CLOSE && phase != Phase.DEAD && ticks - shotStart > (shot != null && shot.containsKey("jei") ? JEI_SHOT_TIMEOUT : SHOT_TIMEOUT))
             fail(mc, "timed out in " + phase);
     }
 

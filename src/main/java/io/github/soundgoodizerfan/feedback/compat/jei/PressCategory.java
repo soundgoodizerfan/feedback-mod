@@ -42,7 +42,7 @@ public class PressCategory implements IRecipeCategory<PressCategory.Card> {
                        float peakPressure, float burnRate) {
     }
 
-    private static final int WIDTH = 168, HEIGHT = 74;
+    private static final int WIDTH = 168, HEIGHT = 78;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -97,12 +97,12 @@ public class PressCategory implements IRecipeCategory<PressCategory.Card> {
         graphics.fill(1, 11, WIDTH - 1, 12, 0x40000000);
         row(graphics, font, 18, "feedback.jei.press.peak", Readout.number(card.peakPressure()) + " Pu");
         row(graphics, font, 30, "feedback.jei.press.burn", Readout.number(card.burnRate()) + " per m");
-        row(graphics, font, 42, "feedback.jei.press.charge", FTuning.GUN_CHARGE_NOMINAL + " nominal, " + FTuning.GUN_CHARGE_MAX + " most at " + Math.round(FTuning.GUN_CHARGE_REF_BORE_MM) + " mm (more in a wider case)");
-        graphics.drawString(font, Component.translatable("feedback.jei.press.note"), 24, 58, LABEL_COLOUR, false);
+        row(graphics, font, 42, "feedback.jei.press.charge", FTuning.GUN_CHARGE_NOMINAL + " nominal, " + FTuning.GUN_CHARGE_MAX + " most");
+        graphics.drawString(font, "at " + Math.round(FTuning.GUN_CHARGE_REF_BORE_MM) + " mm (more in a wider case)", 24, 51, LABEL_COLOUR, false);
+        graphics.drawString(font, Component.translatable("feedback.jei.press.note"), 24, 62, LABEL_COLOUR, false);
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String key, String value) {
-        graphics.drawString(font, Component.translatable(key), 24, y, LABEL_COLOUR, false);
-        graphics.drawString(font, value, 84, y, VALUE_COLOUR, false);
+        CardText.row(graphics, font, WIDTH, 24, y, Component.translatable(key), value, LABEL_COLOUR, VALUE_COLOUR);
     }
 }

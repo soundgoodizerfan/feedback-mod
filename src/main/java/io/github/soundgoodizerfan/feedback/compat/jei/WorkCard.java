@@ -75,8 +75,7 @@ final class WorkCard {
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value) {
-        graphics.drawString(font, Component.translatable(labelKey), LABEL_X, y, LABEL_COLOUR, false);
-        graphics.drawString(font, value, VALUE_X, y, VALUE_COLOUR, false);
+        CardText.row(graphics, font, WIDTH, LABEL_X, y, Component.translatable(labelKey), value, LABEL_COLOUR, VALUE_COLOUR, false);
     }
 
     private static String quantity(ItemStack stack) {

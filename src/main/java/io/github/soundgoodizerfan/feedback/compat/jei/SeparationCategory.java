@@ -44,7 +44,7 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "separation", Card.class);
 
-    private static final int WIDTH = 168, HEIGHT = 126, ROW = 11;
+    private static final int WIDTH = 168, HEIGHT = 160, ROW = 11;
 
     private final IDrawable icon;
 
@@ -92,9 +92,11 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
         builder.addInputSlot(WIDTH - 19, 1).setStandardSlotBackground().addItemStacks(items.stream().map(ItemStack::new).toList());
     }
 
+    /** Lines the last row used: a row whose value will not sit beside its label puts it on a second line. */
+    private static int lastLines = 1;
+
     private static void row(GuiGraphics graphics, Font font, int y, String labelKey, String value) {
-        graphics.drawString(font, Component.translatable(labelKey), 1, y, 0xFF7A7A7A, false);
-        graphics.drawString(font, value, 84, y, 0xFF262626, false);
+        lastLines = CardText.row(graphics, font, WIDTH, 1, y, Component.translatable(labelKey), value, 0xFF7A7A7A, 0xFF262626);
     }
 
     @Override
@@ -107,17 +109,17 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
         int y = 28;
         row(graphics, font, y, "feedback.jei.separation.magnet", Component.translatable(m.separation().magnetic()
                 ? "feedback.jei.separation.pulled" : "feedback.jei.separation.ignored").getString());
-        y += ROW;
+        y += ROW * lastLines;
         if (m.separation().magnetic() && m.separation().curieTemperature().isPresent()) {
             row(graphics, font, y, "feedback.jei.separation.curie", Readout.number(m.separation().curieTemperature().get().value()) + " Tu");
-            y += ROW;
+            y += ROW * lastLines;
         }
         if (m.separation().reflectivity().isPresent()) {
             row(graphics, font, y, "feedback.jei.separation.reflectivity", Readout.number(m.separation().reflectivity().get()));
-            y += ROW;
+            y += ROW * lastLines;
         }
         row(graphics, font, y, "feedback.jei.separation.density", Readout.number(m.density().muPerMb()) + " Mu/mB");
-        y += ROW;
+        y += ROW * lastLines;
         io.github.soundgoodizerfan.feedback.logistics.sort.Reading r = io.github.soundgoodizerfan.feedback.logistics.sort.SortReader.of(m);
         StringBuilder bands = new StringBuilder();
         for (io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty p : new io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty[]{
@@ -127,13 +129,13 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
         row(graphics, font, y, "feedback.jei.separation.sorts_as", bands.toString());
         // An ore: what each separator reports to the concentrate per pass, from its contrast with its host rock.
         if (m.item(card.id(), "concentrate").isPresent()) {
-            y += ROW;
+            y += ROW * lastLines;
             var materials = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.materialsNow();
             var gangue = io.github.soundgoodizerfan.feedback.process.OreLadder.gangueOf(m, materials);
             ResourceLocation host = m.separation().gangue().orElse(io.github.soundgoodizerfan.feedback.process.OreLadder.DEFAULT_GANGUE);
             row(graphics, font, y, "feedback.jei.separation.gangue", Component.translatable("material." + host.getNamespace() + "." + host.getPath()).getString());
             for (var mode : io.github.soundgoodizerfan.feedback.process.OreLadder.Mode.values()) {
-                y += ROW;
+                y += ROW * lastLines;
                 float dust = gangue.map(g -> io.github.soundgoodizerfan.feedback.process.OreLadder.share(mode, m, g, "dust")).orElse(0f);
                 float crushed = gangue.map(g -> io.github.soundgoodizerfan.feedback.process.OreLadder.share(mode, m, g, "crushed")).orElse(0f);
                 row(graphics, font, y, "feedback.jei.separation.ore." + mode.key(), dust <= 0f
