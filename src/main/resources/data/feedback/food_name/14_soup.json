@@ -1,1 +1,1 @@
-{"name": "soup_veg", "container": "ceramic_bowl", "base": ["broth", "vegetal"], "args": ["base"]}
+{"name": "soup_veg", "is": {"container": "ceramic_bowl"}, "roles": {"base": ["broth", "vegetal"]}, "args": ["base"]}

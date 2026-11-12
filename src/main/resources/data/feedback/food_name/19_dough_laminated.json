@@ -1,1 +1,1 @@
-{"name": "laminated_bread", "type": "bread", "shape": "laminated", "adds": ["fat"]}
+{"name": "laminated_bread", "is": {"type": "bread", "shape": "laminated"}, "adds": ["fat"]}

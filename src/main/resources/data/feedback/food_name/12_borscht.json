@@ -1,1 +1,1 @@
-{"name": "borscht", "container": "ceramic_bowl", "cuisine": "eastern_european", "base": ["broth", "root"], "args": ["base"]}
+{"name": "borscht", "is": {"container": "ceramic_bowl"}, "roles": {"base": ["broth", "root"]}, "cuisine": "eastern_european", "args": ["base"]}

@@ -66,9 +66,7 @@ public final class BuildNames {
     public static Optional<ModularType.Designation> designation(ModularDesign design, ModularType type) {
         Map<String, String> facts = facts(design, type);
         for (ModularType.Designation d : type.names().designations()) {
-            boolean ok = true;
-            for (Map.Entry<String, String> e : d.is().entrySet())
-                ok &= java.util.Arrays.asList(e.getValue().split("\\|")).contains(facts.getOrDefault(e.getKey(), ""));
+            boolean ok = d.isHolds(facts);
             if (ok)
                 return Optional.of(d);
         }

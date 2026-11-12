@@ -133,13 +133,37 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param traits trait ids the build must have.
      * @param without trait ids it must not have.
      */
-    public record Designation(String name, Map<String, String> is, List<String> traits, List<String> without) {
-        static final Codec<Designation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public record Designation(String name, Map<String, String> is, List<String> traits, List<String> without,
+                              int cut, Map<String, List<String>> roles, List<String> adds, List<String> lacks,
+                              Optional<String> cuisine, List<String> args, int model) {
+        public static final Codec<Designation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Designation::name),
                 Codec.unboundedMap(Codec.STRING, Codec.STRING).optionalFieldOf("is", Map.of()).forGetter(Designation::is),
                 Codec.STRING.listOf().optionalFieldOf("traits", List.of()).forGetter(Designation::traits),
-                Codec.STRING.listOf().optionalFieldOf("without", List.of()).forGetter(Designation::without)
+                Codec.STRING.listOf().optionalFieldOf("without", List.of()).forGetter(Designation::without),
+                // Food: the least cut; traits each named part carries (without applies to each part); traits some other part adds or none has;
+                // the cuisine the parts vote for; the roles whose material names fill the name's %s slots; a sprite of its own (0 none).
+                Codec.INT.optionalFieldOf("cut", 0).forGetter(Designation::cut),
+                Codec.unboundedMap(Codec.STRING, Codec.STRING.listOf()).optionalFieldOf("roles", Map.of()).forGetter(Designation::roles),
+                Codec.STRING.listOf().optionalFieldOf("adds", List.of()).forGetter(Designation::adds),
+                Codec.STRING.listOf().optionalFieldOf("lacks", List.of()).forGetter(Designation::lacks),
+                Codec.STRING.optionalFieldOf("cuisine").forGetter(Designation::cuisine),
+                Codec.STRING.listOf().optionalFieldOf("args", List.of()).forGetter(Designation::args),
+                Codec.INT.optionalFieldOf("model", 0).forGetter(Designation::model)
         ).apply(instance, Designation::new));
+
+        /** Whether every {@code is} condition holds of the facts (a value may list alternatives with {@code |}). */
+        public boolean isHolds(Map<String, String> facts) {
+            for (Map.Entry<String, String> e : is.entrySet())
+                if (!java.util.Arrays.asList(e.getValue().split("\\|")).contains(facts.getOrDefault(e.getKey(), "")))
+                    return false;
+            return true;
+        }
+
+        /** {@link #isHolds}, and the build or food carries every trait of {@code traits} and none of {@code without}. */
+        public boolean holds(Map<String, String> facts, java.util.Collection<String> have) {
+            return have.containsAll(traits) && without.stream().noneMatch(have::contains) && isHolds(facts);
+        }
     }
 
     /** For a twin-headed type: the names of the pairs of heads that have one. */

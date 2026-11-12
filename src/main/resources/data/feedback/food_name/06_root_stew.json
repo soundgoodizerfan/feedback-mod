@@ -1,1 +1,1 @@
-{"name": "root_stew", "container": "ceramic_bowl", "cuisine": "eastern_european", "main": ["protein"], "side": ["root"], "args": ["side"]}
+{"name": "root_stew", "is": {"container": "ceramic_bowl"}, "roles": {"main": ["protein"], "side": ["root"]}, "cuisine": "eastern_european", "args": ["side"]}

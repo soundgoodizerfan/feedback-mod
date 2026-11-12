@@ -1,1 +1,1 @@
-{"name": "pasta_e", "container": "ceramic_bowl", "cuisine": "italian", "base": ["noodle"], "main": ["protein"], "args": ["main"]}
+{"name": "pasta_e", "is": {"container": "ceramic_bowl"}, "roles": {"main": ["protein"], "base": ["noodle"]}, "cuisine": "italian", "args": ["main"]}

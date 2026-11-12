@@ -32,7 +32,7 @@ public final class GunDesignation {
 
     public static Optional<String> of(ItemStack stack, GunSpec spec) {
         var design = ModularStacks.design(stack);
-        ModularType type = design == null ? null : ModularTypes.known().get(design.type());
+        ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return Optional.empty();
         Set<String> traits = ModularTraits.allOf(stack).stream().map(ModularTraits.Active::id).collect(Collectors.toSet());
@@ -56,9 +56,7 @@ public final class GunDesignation {
                 "finish", traits.contains("gun_rifling") ? "rifled" : "smooth",
                 "gauge", bore >= WIDE_BORE_MM ? "wide" : "narrow");
         for (ModularType.Designation d : type.names().designations()) {
-            boolean ok = d.traits().stream().allMatch(traits::contains) && d.without().stream().noneMatch(traits::contains);
-            for (Map.Entry<String, String> e : d.is().entrySet())
-                ok &= java.util.Arrays.asList(e.getValue().split("\\|")).contains(facts.getOrDefault(e.getKey(), ""));
+            boolean ok = d.holds(facts, traits);
             if (ok)
                 return Optional.of(d.name());
         }

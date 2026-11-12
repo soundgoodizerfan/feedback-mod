@@ -1,1 +1,1 @@
-{ "name": "fries", "traits": ["tuber"], "cut": 1, "doneness": ["done"], "model": 1 }
+{"name": "fries", "is": {"doneness": "done"}, "traits": ["tuber"], "cut": 1, "model": 1}

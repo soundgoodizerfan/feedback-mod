@@ -1,1 +1,1 @@
-{"name": "taco", "container": "flatbread", "cuisine": "mexican", "main": ["protein"], "side": ["acidic"], "args": ["main"]}
+{"name": "taco", "is": {"container": "flatbread"}, "roles": {"main": ["protein"], "side": ["acidic"]}, "cuisine": "mexican", "args": ["main"]}

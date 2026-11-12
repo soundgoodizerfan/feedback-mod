@@ -1,1 +1,1 @@
-{ "name": "salsa", "container": "ceramic_bowl", "side": ["acidic"], "cut": 2, "model": 2 }
+{"name": "salsa", "is": {"container": "ceramic_bowl"}, "roles": {"side": ["acidic"]}, "cut": 2, "model": 2}

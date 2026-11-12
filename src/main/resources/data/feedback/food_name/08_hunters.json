@@ -1,1 +1,1 @@
-{"name": "hunters", "container": "ceramic_bowl", "cuisine": "eastern_european", "main": ["protein"], "side": ["fungal"], "args": ["main"]}
+{"name": "hunters", "is": {"container": "ceramic_bowl"}, "roles": {"main": ["protein"], "side": ["fungal"]}, "cuisine": "eastern_european", "args": ["main"]}

@@ -1,1 +1,1 @@
-{"name": "arroz_con", "without": ["noodle"], "container": "ceramic_bowl", "cuisine": "mexican", "base": ["starchy"], "main": ["protein"], "args": ["main"]}
+{"name": "arroz_con", "is": {"container": "ceramic_bowl"}, "roles": {"main": ["protein"], "base": ["starchy"]}, "without": ["noodle"], "cuisine": "mexican", "args": ["main"]}

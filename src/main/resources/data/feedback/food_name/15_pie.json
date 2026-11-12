@@ -1,1 +1,1 @@
-{"name": "pie", "container": "pastry", "args": ["main"]}
+{"name": "pie", "is": {"container": "pastry"}, "args": ["main"]}

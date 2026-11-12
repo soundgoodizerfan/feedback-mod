@@ -1,1 +1,1 @@
-{ "name": "lean_bread", "traits": ["kneadable"], "doneness": ["done"] }
+{"name": "lean_bread", "is": {"doneness": "done"}, "traits": ["kneadable"]}

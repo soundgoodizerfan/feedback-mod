@@ -1,1 +1,1 @@
-{"name": "pierogi", "container": "flatbread", "cuisine": "eastern_european", "base": ["tuber"], "args": ["base"]}
+{"name": "pierogi", "is": {"container": "flatbread"}, "roles": {"base": ["tuber"]}, "cuisine": "eastern_european", "args": ["base"]}

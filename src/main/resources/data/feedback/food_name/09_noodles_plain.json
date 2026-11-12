@@ -1,1 +1,1 @@
-{"name": "noodles_with", "container": "ceramic_bowl", "base": ["noodle"], "main": ["protein"], "args": ["main"]}
+{"name": "noodles_with", "is": {"container": "ceramic_bowl"}, "roles": {"main": ["protein"], "base": ["noodle"]}, "args": ["main"]}

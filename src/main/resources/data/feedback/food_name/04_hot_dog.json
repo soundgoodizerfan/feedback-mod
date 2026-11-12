@@ -1,1 +1,1 @@
-{"name": "hot_dog", "type": "wrap", "main": ["protein"], "main_form": "rod", "args": ["main"]}
+{"name": "hot_dog", "is": {"type": "wrap", "main_form": "rod"}, "roles": {"main": ["protein"]}, "args": ["main"]}
