@@ -1112,3 +1112,5 @@ Worn armour look (2026-11-09): `textures/models/armor/modular_layer_1.png` and `
 
 - `textures/block/engineering_table_top.png` (Engineering Table top): unmodified copy of `blocks/device_workbench_top.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley). Placeholder art; the sides reuse `metal_steel_block.png`.
 - `textures/block/auto_engineer_side.png`, `textures/block/auto_engineer_top.png` (Auto Engineer): unmodified copies of `blocks/device_gearbox_sides.png` and `blocks/device_gearbox_ends.png` from malcolmriley/unused-textures (CC BY 4.0, Malcolm Riley). Placeholder art; the bottom reuses `metal_steel_block.png`.
+
+- `textures/item/hafted/handle_*` and the vanilla-shaped `head_*` layers (haft, pickaxe, axe, shovel, hoe, sword and maul heads and their mirrored sets): derived from Minecraft's own `stick`, `bone`, `iron_pickaxe`, `iron_axe`, `iron_shovel`, `iron_hoe`, `iron_sword` and `mace` item textures (greyscaled, cut into layers); Minecraft assets are reused as the author allows. The remaining hafted layers are original art.
