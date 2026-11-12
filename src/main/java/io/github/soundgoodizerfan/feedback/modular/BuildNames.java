@@ -39,7 +39,7 @@ public final class BuildNames {
         return !type.names().designations().isEmpty() || wear != null && wear.axes().values().stream().anyMatch(a -> !a.bands().isEmpty());
     }
 
-    /** The facts a designation rule reads: the plate's axis bands, its variant, and the roles filled. */
+    /** The facts a designation rule reads: the plate's axis bands, its variant, the frame it is built into, and the roles filled. */
     public static Map<String, String> facts(ModularDesign design, ModularType type) {
         Map<String, String> facts = new LinkedHashMap<>();
         ModularDesign.Part plate = design.part(type.wearRole());
@@ -54,6 +54,10 @@ public final class BuildNames {
             if (role.striker())
                 facts.put("face", ModularHeads.kindOf(plate, role));
         }
+        // The body the wearing part is built into (an electric gun's receiver) gives the build's frame.
+        ModularDesign.Part body = design.part(type.primary());
+        if (body != null && !type.primary().equals(type.wearRole()) && !body.variant().isEmpty())
+            facts.put("frame", body.variant());
         for (ModularDesign.Part p : design.parts()) {
             ModularType.Role r = type.roles().get(p.role());
             if (r != null && !p.role().equals(type.wearRole()))

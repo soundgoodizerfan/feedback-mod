@@ -41,7 +41,7 @@ A **band** is a range an axis sits in. Armor and weapon parts have axes you aim 
 |  | Head size | small up to 10.5 cm, normal up to 17.5 cm, large over 17.5 cm |
 | Electric gun | Barrel length | short up to 0.25 m, normal up to 0.6 m, long over 0.6 m |
 |  | Bore | narrow up to 8 mm, normal up to 14 mm, wide over 14 mm |
-|  | Stages | few up to 3, many over 3 |
+|  | Stages | few up to 2, several up to 5, many over 5 |
 
 ## Armor
 
@@ -290,28 +290,49 @@ A gun is named by its frame. A bore of **14 mm or wider** is a *wide* gauge; nar
 
 ### Electric guns
 
-A gun is named by its barrel kind, then by size: a short barrel is a pistol if the bore is narrow and a carbine if not, a long barrel with a sight fitted is a sniper rifle, and a wide bore is a cannon.
+A gun is named by its barrel kind and its receiver, then by size and fittings. A handgun receiver makes a pistol (a hand cannon on a wide bore). A long gun receiver makes a carbine on a short barrel, a rifle otherwise, a marksman rifle on a long barrel, a sniper rifle on a long barrel with a sight fitted, and a cannon on a wide bore. A machine gun receiver makes a machine gun, light with a bipod and heavy with a thermal sleeve or a wide bore. A coil barrel with many stages is a Gauss. A coil or rail barrel with an eddy sleeve is a disruptor. A short, wide plasma barrel with a shroud is a plasmacaster.
 
 | Name | What gives it |
 | --- | --- |
-| **Gauss Cannon** | a coil barrel, bore wide, stages many |
-| **Gauss Sniper Rifle** | a coil barrel, stages many, barrel length long, a sight fitted |
-| **Gauss Carbine** | a coil barrel, stages many, barrel length short |
-| **Coil Cannon** | a coil barrel, bore wide |
-| **Coil Sniper Rifle** | a coil barrel, barrel length long, a sight fitted |
-| **Coil Marksman Rifle** | a coil barrel, barrel length long |
-| **Coil Pistol** | a coil barrel, barrel length short, bore narrow |
-| **Coil Carbine** | a coil barrel, barrel length short |
-| **Rail Cannon** | a rail barrel, bore wide |
-| **Rail Sniper Rifle** | a rail barrel, barrel length long, a sight fitted |
-| **Rail Marksman Rifle** | a rail barrel, barrel length long |
-| **Rail Pistol** | a rail barrel, barrel length short, bore narrow |
-| **Rail Carbine** | a rail barrel, barrel length short |
-| **Plasma Cannon** | a plasma barrel, bore wide |
-| **Plasma Rifle** | a plasma barrel, barrel length long |
-| **Plasma Pistol** | a plasma barrel, barrel length short, bore narrow |
-| **Plasma Carbine** | a plasma barrel, barrel length short |
-| **Gauss Rifle** | a coil barrel, stages many |
+| **Heavy Plasma Cannon** | a plasma barrel, bore wide, a bipod fitted, a counterweight fitted |
+| **Plasmacaster** | a plasma barrel, barrel length short, bore wide, a shroud fitted |
+| **Coil Disruptor** | a coil barrel, an eddy sleeve fitted |
+| **Rail Disruptor** | a rail barrel, an eddy sleeve fitted |
+| **Heavy Coil Machine Gun** | a coil barrel, a machine gun receiver, a thermal sleeve fitted; or a coil barrel, a machine gun receiver, bore wide |
+| **Light Coil Machine Gun** | a coil barrel, a machine gun receiver, a bipod fitted |
+| **Coil Machine Gun** | a coil barrel, a machine gun receiver |
+| **Coil Hand Cannon** | a coil barrel, a handgun receiver, bore wide |
+| **Coil Pistol** | a coil barrel, a handgun receiver |
+| **Gauss Cannon** | a coil barrel, a long gun receiver, stages many, bore wide |
+| **Gauss Sniper Rifle** | a coil barrel, a long gun receiver, stages many, barrel length long, a sight fitted |
+| **Gauss Marksman Rifle** | a coil barrel, a long gun receiver, stages many, barrel length long |
+| **Gauss Carbine** | a coil barrel, a long gun receiver, stages many, barrel length short |
+| **Gauss Rifle** | a coil barrel, a long gun receiver, stages many |
+| **Coil Cannon** | a coil barrel, a long gun receiver, bore wide |
+| **Coil Sniper Rifle** | a coil barrel, a long gun receiver, barrel length long, a sight fitted |
+| **Coil Marksman Rifle** | a coil barrel, a long gun receiver, barrel length long |
+| **Coil Carbine** | a coil barrel, a long gun receiver, barrel length short |
+| **Coil Rifle** | a coil barrel, a long gun receiver |
+| **Heavy Rail Machine Gun** | a rail barrel, a machine gun receiver, a thermal sleeve fitted; or a rail barrel, a machine gun receiver, bore wide |
+| **Light Rail Machine Gun** | a rail barrel, a machine gun receiver, a bipod fitted |
+| **Rail Machine Gun** | a rail barrel, a machine gun receiver |
+| **Rail Hand Cannon** | a rail barrel, a handgun receiver, bore wide |
+| **Rail Pistol** | a rail barrel, a handgun receiver |
+| **Rail Cannon** | a rail barrel, a long gun receiver, bore wide |
+| **Rail Sniper Rifle** | a rail barrel, a long gun receiver, barrel length long, a sight fitted |
+| **Rail Marksman Rifle** | a rail barrel, a long gun receiver, barrel length long |
+| **Rail Carbine** | a rail barrel, a long gun receiver, barrel length short |
+| **Rail Rifle** | a rail barrel, a long gun receiver |
+| **Heavy Plasma Machine Gun** | a plasma barrel, a machine gun receiver, a thermal sleeve fitted; or a plasma barrel, a machine gun receiver, bore wide |
+| **Light Plasma Machine Gun** | a plasma barrel, a machine gun receiver, a bipod fitted |
+| **Plasma Machine Gun** | a plasma barrel, a machine gun receiver |
+| **Plasma Hand Cannon** | a plasma barrel, a handgun receiver, bore wide |
+| **Plasma Pistol** | a plasma barrel, a handgun receiver |
+| **Plasma Cannon** | a plasma barrel, a long gun receiver, bore wide |
+| **Plasma Sniper Rifle** | a plasma barrel, a long gun receiver, barrel length long, a sight fitted |
+| **Plasma Marksman Rifle** | a plasma barrel, a long gun receiver, barrel length long |
+| **Plasma Carbine** | a plasma barrel, a long gun receiver, barrel length short |
+| **Plasma Rifle** | a plasma barrel, a long gun receiver |
 | **Coilgun** | a coil barrel |
 | **Railgun** | a rail barrel |
 | **Plasma Gun** | a plasma barrel |

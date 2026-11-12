@@ -119,7 +119,11 @@
           "bands": [
             {
               "name": "few",
-              "max": 3
+              "max": 2
+            },
+            {
+              "name": "several",
+              "max": 5
             },
             {
               "name": "many"
@@ -545,34 +549,133 @@
   "names": {
     "designations": [
       {
+        "name": "heavy_plasma_cannon",
+        "is": {
+          "variant": "plasma_barrel",
+          "bore": "wide",
+          "bipod": "fitted",
+          "counterweight": "fitted"
+        }
+      },
+      {
+        "name": "plasmacaster",
+        "is": {
+          "variant": "plasma_barrel",
+          "barrel_length": "short",
+          "bore": "wide",
+          "shroud": "fitted"
+        }
+      },
+      {
+        "name": "coil_disruptor",
+        "is": {
+          "variant": "coil_barrel",
+          "eddy_sleeve": "fitted"
+        }
+      },
+      {
+        "name": "rail_disruptor",
+        "is": {
+          "variant": "rail_barrel",
+          "eddy_sleeve": "fitted"
+        }
+      },
+      {
+        "name": "heavy_coil_machine_gun",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "machine_gun",
+          "thermal_sleeve": "fitted"
+        }
+      },
+      {
+        "name": "heavy_coil_machine_gun",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "machine_gun",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "light_coil_machine_gun",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "machine_gun",
+          "bipod": "fitted"
+        }
+      },
+      {
+        "name": "coil_machine_gun",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "machine_gun"
+        }
+      },
+      {
+        "name": "coil_hand_cannon",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "handgun",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "coil_pistol",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "handgun"
+        }
+      },
+      {
         "name": "gauss_cannon",
         "is": {
           "variant": "coil_barrel",
-          "bore": "wide",
-          "stages": "many"
+          "frame": "long_gun",
+          "stages": "many",
+          "bore": "wide"
         }
       },
       {
         "name": "gauss_sniper_rifle",
         "is": {
           "variant": "coil_barrel",
+          "frame": "long_gun",
           "stages": "many",
           "barrel_length": "long",
           "sight": "fitted"
         }
       },
       {
+        "name": "gauss_marksman_rifle",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "long_gun",
+          "stages": "many",
+          "barrel_length": "long"
+        }
+      },
+      {
         "name": "gauss_carbine",
         "is": {
           "variant": "coil_barrel",
+          "frame": "long_gun",
           "stages": "many",
           "barrel_length": "short"
+        }
+      },
+      {
+        "name": "gauss_rifle",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "long_gun",
+          "stages": "many"
         }
       },
       {
         "name": "coil_cannon",
         "is": {
           "variant": "coil_barrel",
+          "frame": "long_gun",
           "bore": "wide"
         }
       },
@@ -580,6 +683,7 @@
         "name": "coil_sniper_rifle",
         "is": {
           "variant": "coil_barrel",
+          "frame": "long_gun",
           "barrel_length": "long",
           "sight": "fitted"
         }
@@ -588,28 +692,76 @@
         "name": "coil_marksman_rifle",
         "is": {
           "variant": "coil_barrel",
+          "frame": "long_gun",
           "barrel_length": "long"
-        }
-      },
-      {
-        "name": "coil_pistol",
-        "is": {
-          "variant": "coil_barrel",
-          "barrel_length": "short",
-          "bore": "narrow"
         }
       },
       {
         "name": "coil_carbine",
         "is": {
           "variant": "coil_barrel",
+          "frame": "long_gun",
           "barrel_length": "short"
+        }
+      },
+      {
+        "name": "coil_rifle",
+        "is": {
+          "variant": "coil_barrel",
+          "frame": "long_gun"
+        }
+      },
+      {
+        "name": "heavy_rail_machine_gun",
+        "is": {
+          "variant": "rail_barrel",
+          "frame": "machine_gun",
+          "thermal_sleeve": "fitted"
+        }
+      },
+      {
+        "name": "heavy_rail_machine_gun",
+        "is": {
+          "variant": "rail_barrel",
+          "frame": "machine_gun",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "light_rail_machine_gun",
+        "is": {
+          "variant": "rail_barrel",
+          "frame": "machine_gun",
+          "bipod": "fitted"
+        }
+      },
+      {
+        "name": "rail_machine_gun",
+        "is": {
+          "variant": "rail_barrel",
+          "frame": "machine_gun"
+        }
+      },
+      {
+        "name": "rail_hand_cannon",
+        "is": {
+          "variant": "rail_barrel",
+          "frame": "handgun",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "rail_pistol",
+        "is": {
+          "variant": "rail_barrel",
+          "frame": "handgun"
         }
       },
       {
         "name": "rail_cannon",
         "is": {
           "variant": "rail_barrel",
+          "frame": "long_gun",
           "bore": "wide"
         }
       },
@@ -617,6 +769,7 @@
         "name": "rail_sniper_rifle",
         "is": {
           "variant": "rail_barrel",
+          "frame": "long_gun",
           "barrel_length": "long",
           "sight": "fitted"
         }
@@ -625,58 +778,109 @@
         "name": "rail_marksman_rifle",
         "is": {
           "variant": "rail_barrel",
+          "frame": "long_gun",
           "barrel_length": "long"
-        }
-      },
-      {
-        "name": "rail_pistol",
-        "is": {
-          "variant": "rail_barrel",
-          "barrel_length": "short",
-          "bore": "narrow"
         }
       },
       {
         "name": "rail_carbine",
         "is": {
           "variant": "rail_barrel",
+          "frame": "long_gun",
           "barrel_length": "short"
         }
       },
       {
-        "name": "plasma_cannon",
+        "name": "rail_rifle",
+        "is": {
+          "variant": "rail_barrel",
+          "frame": "long_gun"
+        }
+      },
+      {
+        "name": "heavy_plasma_machine_gun",
         "is": {
           "variant": "plasma_barrel",
+          "frame": "machine_gun",
+          "thermal_sleeve": "fitted"
+        }
+      },
+      {
+        "name": "heavy_plasma_machine_gun",
+        "is": {
+          "variant": "plasma_barrel",
+          "frame": "machine_gun",
           "bore": "wide"
         }
       },
       {
-        "name": "plasma_rifle",
+        "name": "light_plasma_machine_gun",
         "is": {
           "variant": "plasma_barrel",
-          "barrel_length": "long"
+          "frame": "machine_gun",
+          "bipod": "fitted"
+        }
+      },
+      {
+        "name": "plasma_machine_gun",
+        "is": {
+          "variant": "plasma_barrel",
+          "frame": "machine_gun"
+        }
+      },
+      {
+        "name": "plasma_hand_cannon",
+        "is": {
+          "variant": "plasma_barrel",
+          "frame": "handgun",
+          "bore": "wide"
         }
       },
       {
         "name": "plasma_pistol",
         "is": {
           "variant": "plasma_barrel",
-          "barrel_length": "short",
-          "bore": "narrow"
+          "frame": "handgun"
+        }
+      },
+      {
+        "name": "plasma_cannon",
+        "is": {
+          "variant": "plasma_barrel",
+          "frame": "long_gun",
+          "bore": "wide"
+        }
+      },
+      {
+        "name": "plasma_sniper_rifle",
+        "is": {
+          "variant": "plasma_barrel",
+          "frame": "long_gun",
+          "barrel_length": "long",
+          "sight": "fitted"
+        }
+      },
+      {
+        "name": "plasma_marksman_rifle",
+        "is": {
+          "variant": "plasma_barrel",
+          "frame": "long_gun",
+          "barrel_length": "long"
         }
       },
       {
         "name": "plasma_carbine",
         "is": {
           "variant": "plasma_barrel",
+          "frame": "long_gun",
           "barrel_length": "short"
         }
       },
       {
-        "name": "gauss_rifle",
+        "name": "plasma_rifle",
         "is": {
-          "variant": "coil_barrel",
-          "stages": "many"
+          "variant": "plasma_barrel",
+          "frame": "long_gun"
         }
       },
       {
