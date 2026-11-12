@@ -1108,7 +1108,7 @@ public final class ModularBake {
                         (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * z.wear() * litres)));
                 // A hammer face lands the hand's blow (what a hand-forging recipe and a machine head ask of the tool).
                 if (kind.map(h -> h.combat() == ModularType.Family.HAND && h.strike() > 0f).orElse(false) && !spent)
-                    f.put(Fig.STRIKE_ST, Math.max(f.get(Fig.STRIKE_ST), FTuning.HAND_ST_PER_MU_COMPETENCE * total * z.wear() * worn * strike));
+                    f.put(Fig.STRIKE_ST, Math.max(f.getOrDefault(Fig.STRIKE_ST, 0f), FTuning.HAND_ST_PER_MU_COMPETENCE * total * z.wear() * worn * strike));
             }
             if (!spent && damage > bestDamage) {
                 bestDamage = damage;
