@@ -24,6 +24,7 @@ final class GunDraw {
     }
 
     static void draw(GunMesh m, GunView v, GunMotion.Parts p) {
+        m.layered = true; // parts nest and share planes: each role draws a hair larger than the one inside it
         switch (v.type()) {
             case HANDGUN -> {
                 if (v.electric())

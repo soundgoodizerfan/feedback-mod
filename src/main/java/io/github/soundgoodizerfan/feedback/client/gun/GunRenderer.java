@@ -66,13 +66,17 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         pose.popPose();
     }
 
-    /** A consumer per texture: the gun sheet on the block atlas, or a wood image. */
+    /**
+     * A consumer per texture: the gun sheet on the block atlas, or a wood image. Back faces are culled
+     * ({@code entityCutout}): boxes touch and nest, and without culling every hidden face and every pair of faces
+     * turned toward each other in one plane z-fights. {@link GunMesh} winds each face to face out.
+     */
     static java.util.function.Function<net.minecraft.resources.ResourceLocation, com.mojang.blaze3d.vertex.VertexConsumer> outputs(
             MultiBufferSource buffers, ItemStack stack) {
         boolean foil = stack.hasFoil();
         return image -> image == GunMesh.GLASS ? buffers.getBuffer(RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS))
                 : ItemRenderer.getFoilBufferDirect(buffers,
-                        RenderType.entityCutoutNoCull(image == null ? InventoryMenu.BLOCK_ATLAS : image), true, foil);
+                        RenderType.entityCutout(image == null ? InventoryMenu.BLOCK_ATLAS : image), true, foil);
     }
 
     /** The grip in third person: in the fist, a touch forward. */

@@ -66,6 +66,59 @@ public final class GunMesh {
     private boolean glassNow;
     /** First person, aimed: the scope's lens and eyepiece plate are drawn. */
     boolean sighted;
+    /**
+     * Whether boxes are layered ({@link GunDraw} turns it on; worn plates leave it off): each box is drawn a hair
+     * toward the eye by its level, its role's layer ({@link #LAYERS}, inner parts first) times {@link #PER_LAYER}
+     * plus the boxes already drawn in that role (up to {@code PER_LAYER - 1}, so later detail is in front). Parts
+     * touch and nest and many measures land on one plane (every sleeve on a barrel sits at its radius plus a
+     * quarter); two faces turned the same way in one plane z-fight, and the level settles which is in front. It is
+     * a depth bias, not a change of shape: under a perspective projection every vertex is scaled toward the eye
+     * (the origin of render space), which leaves where it lands on screen exactly where it was; under an
+     * orthographic one (the GUI) it moves along +z, which is toward the viewer there. Boxes of one level that
+     * only touched still only touch, as growing them would not. {@link GunFaceCheck} lists faces left on one level.
+     */
+    boolean layered;
+    /** Each role's layer, inner to outer: receiver, barrels, moving parts, sleeves, under-barrel, muzzle, furniture, sights. */
+    private static final java.util.Map<String, Integer> LAYERS = layers("R", "B", "D", "K", "F", "A", "H", "J", "Z", "P", "Q",
+            "I", "E", "C", "a", "V", "N", "M", "G", "i", "T", "L", "d", "b", "Y", "S", "e");
+    /** The layer of a fixed colour (magazines, lamps, glass): over every part. */
+    private static final int COLOUR_LAYER = LAYERS.size();
+    /** Levels in a layer: one for each box a role draws, the rest share the last. */
+    static final int PER_LAYER = 32;
+    /**
+     * A level's bias. Perspective: the share of the distance to the eye (1e-5 separates faces in a 24-bit depth
+     * buffer out to about eight blocks with vanilla's near plane; a layer, 32 levels, past 200; the most is under
+     * 1%). Orthographic: model pixels along +z, through the pose's scale (the GUI's depth buffer resolves about a
+     * thousandth of a GUI unit; a layer is a 64th of a pixel).
+     */
+    private static final float PERSPECTIVE_STEP = 1e-5f, ORTHO_STEP_PX = 1f / 2048f;
+    private int layer;
+    /** The level key being drawn (a role, or {@code #} for every fixed colour) and the boxes drawn so far under each. */
+    private String layerKey = "";
+    private final java.util.Map<String, Integer> drawn = new java.util.HashMap<>();
+    /** The level the current box draws at. */
+    private int level;
+    /** Whether the projection is orthographic (the GUI), read once when the mesh is made; null offline (no bias). */
+    private final Boolean ortho;
+    private final org.joml.Vector3f scratch = new org.joml.Vector3f();
+
+    private static java.util.Map<String, Integer> layers(String... roles) {
+        java.util.Map<String, Integer> m = new java.util.HashMap<>();
+        for (int i = 0; i < roles.length; i++)
+            m.put(roles[i], i);
+        return java.util.Map.copyOf(m);
+    }
+
+    /** Dev check ({@link GunFaceCheck}): told every face of every box as drawn, or null. */
+    Probe probe;
+    /** The role being drawn, for the probe's report; a fixed colour shows as its hex. */
+    private String role = "";
+    private int boxes;
+
+    /** Receives each face of each box in model space after the pose: the box's index and level, its role and tile, its normal and four corners. */
+    interface Probe {
+        void face(int box, int level, String role, Tile tile, float[] normal, float[][] corners);
+    }
 
     GunMesh(PoseStack pose, java.util.function.Function<net.minecraft.resources.ResourceLocation, VertexConsumer> buffers,
             int light, int overlay) {
@@ -84,6 +137,7 @@ public final class GunMesh {
         this.baseLight = light;
         this.overlay = overlay;
         this.sprite = sprite;
+        this.ortho = sprite == null ? null : com.mojang.blaze3d.systems.RenderSystem.getProjectionMatrix().m23() == 0f;
     }
 
     /** Texels this mesh draws a model pixel with: worn armour wants vanilla's one a pixel. */
@@ -97,6 +151,9 @@ public final class GunMesh {
         this.colour = argb;
         this.surface = GunView.Surface.METAL;
         this.image = null;
+        this.role = String.format("#%08X", argb);
+        layer = COLOUR_LAYER;
+        layerKey = "#";
         return this;
     }
 
@@ -105,6 +162,9 @@ public final class GunMesh {
         this.colour = v.colour(role);
         this.surface = v.surface(role);
         this.image = v.wood(role);
+        this.role = role;
+        layer = LAYERS.getOrDefault(role, 0);
+        layerKey = role;
         return this;
     }
 
@@ -201,7 +261,7 @@ public final class GunMesh {
         PoseStack.Pose p = pose.last();
         float[][] c = {{x0, y0, 0, 0}, {x1, y0, 1, 0}, {x1, y1, 1, 1}, {x0, y1, 0, 1}};
         for (float[] k : c)
-            out.addVertex(p, k[0], k[1], z).setColor(0xFFFFFFFF).setUv(k[2], k[3]).setOverlay(overlay).setLight(0xF000F0).setNormal(p, 0, 0, 1);
+            vertex(p, k[0], k[1], z).setColor(0xFFFFFFFF).setUv(k[2], k[3]).setOverlay(overlay).setLight(0xF000F0).setNormal(p, 0, 0, 1);
     }
 
     /** A box that ignores the world's light: lamps and reticles. */
@@ -254,7 +314,10 @@ public final class GunMesh {
         if (t == Tile.LAMP)
             argb = colour;
         seed = seed * 31 + 7;
+        level = layered ? layer * PER_LAYER + Math.min(drawn.merge(layerKey, 1, Integer::sum) - 1, PER_LAYER - 1) : 0;
         PoseStack.Pose p = pose.last();
+        if (probe != null)
+            probe(p, t, x0, y0, z0, x1, y1, z1);
         // Each face lists its corners counter-clockwise seen from outside (a x b = normal), so culling keeps it.
         face(p, t, argb, lit, 1, 0, 0, x1, y0, z0, x1, y1, z0, x1, y1, z1, x1, y0, z1);
         face(p, t, argb, lit, -1, 0, 0, x0, y0, z0, x0, y0, z1, x0, y1, z1, x0, y1, z0);
@@ -262,6 +325,27 @@ public final class GunMesh {
         face(p, t, argb, lit, 0, -1, 0, x0, y0, z0, x1, y0, z0, x1, y0, z1, x0, y0, z1);
         face(p, t, argb, lit, 0, 0, 1, x0, y0, z1, x1, y0, z1, x1, y1, z1, x0, y1, z1);
         face(p, t, argb, lit, 0, 0, -1, x0, y0, z0, x0, y1, z0, x1, y1, z0, x1, y0, z0);
+    }
+
+    /** Tells the probe the box's six faces, transformed by the pose. */
+    private void probe(PoseStack.Pose p, Tile t, float x0, float y0, float z0, float x1, float y1, float z1) {
+        int id = boxes++;
+        float[][][] faces = {
+                {{1, 0, 0}, {x1, y0, z0}, {x1, y1, z0}, {x1, y1, z1}, {x1, y0, z1}},
+                {{-1, 0, 0}, {x0, y0, z0}, {x0, y0, z1}, {x0, y1, z1}, {x0, y1, z0}},
+                {{0, 1, 0}, {x0, y1, z0}, {x0, y1, z1}, {x1, y1, z1}, {x1, y1, z0}},
+                {{0, -1, 0}, {x0, y0, z0}, {x1, y0, z0}, {x1, y0, z1}, {x0, y0, z1}},
+                {{0, 0, 1}, {x0, y0, z1}, {x1, y0, z1}, {x1, y1, z1}, {x0, y1, z1}},
+                {{0, 0, -1}, {x0, y0, z0}, {x0, y1, z0}, {x1, y1, z0}, {x1, y0, z0}}};
+        for (float[][] f : faces) {
+            org.joml.Vector3f n = p.normal().transform(new org.joml.Vector3f(f[0][0], f[0][1], f[0][2])).normalize();
+            float[][] c = new float[4][];
+            for (int i = 0; i < 4; i++) {
+                org.joml.Vector3f v = p.pose().transformPosition(new org.joml.Vector3f(f[i + 1][0], f[i + 1][1], f[i + 1][2]));
+                c[i] = new float[]{v.x, v.y, v.z};
+            }
+            probe.face(id, level, role, t, new float[]{n.x, n.y, n.z}, c);
+        }
     }
 
     /**
@@ -316,9 +400,24 @@ public final class GunMesh {
                         u = sprite.getU(u);
                         v = sprite.getV(v);
                     }
-                    out.addVertex(p, x, y, z).setColor(cellArgb).setUv(u, v).setOverlay(overlay).setLight(lit).setNormal(p, nx, ny, nz);
+                    vertex(p, x, y, z).setColor(cellArgb).setUv(u, v).setOverlay(overlay).setLight(lit).setNormal(p, nx, ny, nz);
                 }
             }
+    }
+
+    /** Starts a vertex at a model point, moved toward the eye by the box's level ({@link #layered}). */
+    private VertexConsumer vertex(PoseStack.Pose p, float x, float y, float z) {
+        org.joml.Vector3f v = p.pose().transformPosition(x, y, z, scratch);
+        if (level > 0 && ortho != null) {
+            if (ortho) {
+                // A model pixel along z is this long in GUI units.
+                float zLen = new org.joml.Vector3f(p.pose().m20(), p.pose().m21(), p.pose().m22()).length();
+                v.z += level * ORTHO_STEP_PX * zLen;
+            } else {
+                v.mul(1f - level * PERSPECTIVE_STEP);
+            }
+        }
+        return out.addVertex(v.x, v.y, v.z);
     }
 
     /** A whole image's coordinate (0 to 1) at {@code into} of a face {@code span} long: 2 texels a pixel of its 16, stretched past that. */
