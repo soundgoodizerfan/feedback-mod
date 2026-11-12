@@ -755,6 +755,14 @@ final class BlueprintBoard {
         };
     }
 
+    /** The drawing's title: the type's name, or for the hafted plan what the drawn build is called (a pulaski, a steel hatchet). */
+    private Component titleBlock(int type) {
+        ModularType t = current();
+        if (t != null && t.family() == ModularType.Family.HAFTED && baked != null && baked.isPresent())
+            return ModularStacks.haftedName(baked.get(), t, typeName(type));
+        return typeName(type);
+    }
+
     private Component typeName(int i) {
         ResourceLocation id = types.get(Math.floorMod(i, types.size()));
         return Component.translatable("item." + id.getNamespace() + "." + id.getPath());
@@ -1920,9 +1928,10 @@ final class BlueprintBoard {
             fit(g, text, a[0] - w / 2 + 3, a[1] + 6, w - 6, skin.warn());
         }
         // the type's name as the drawing's title block, and the qualities as stamped chips
-        g.drawString(font, typeName(type), x0 + 5, y0 + 4, skin.ink(), false);
+        Component title = titleBlock(type);
+        g.drawString(font, title, x0 + 5, y0 + 4, skin.ink(), false);
         if (!designation.getString().isEmpty())
-            g.drawString(font, designation, x0 + 5 + font.width(typeName(type)) + 6, y0 + 4, skin.accent(), false);
+            g.drawString(font, designation, x0 + 5 + font.width(title) + 6, y0 + 4, skin.accent(), false);
         int cx = x0 + 4, cy = y0 + canvas.h() - 13;
         for (int i = 0; i < chipText.size(); i++) {
             int w = font.width(chipText.get(i)) + 6;

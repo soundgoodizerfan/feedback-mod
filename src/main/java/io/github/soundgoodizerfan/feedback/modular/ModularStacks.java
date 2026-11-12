@@ -647,7 +647,7 @@ public final class ModularStacks {
      * A hafted tool is named by what it does (spec 3): the player's own name is the blueprint's, else a designation whose rule holds of the front
      * face (a hatchet, a claymore), else its material and the front face's noun; two or more faces are named by the pair ({@link #twinName}).
      */
-    private static Component haftedName(ModularDesign d, ModularType base, Component typeName) {
+    public static Component haftedName(ModularDesign d, ModularType base, Component typeName) {
         List<Part> faces = ModularFaces.faces(d);
         if (faces.isEmpty())
             return typeName;
