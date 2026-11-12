@@ -82,18 +82,28 @@ public final class HaftedLayers {
         part(out, sprites, design, "G", "guard", steps);
         part(out, sprites, design, "B", "binding", steps);
         boolean any = false;
+        int tipX = 0, tipY = 0;
         for (String letter : ModularFaces.LETTERS) {
             Part face = design.part(letter);
             ModularType.Role role = type.roles().get(letter);
             if (face == null || role == null)
                 continue;
             Optional<String> kind = kindFile(ModularHeads.kindOf(face, role));
-            if (kind.isPresent())
-                any |= head(out, sprites, face, role, kind.get(), steps, !letter.equals("H"));
+            if (kind.isEmpty())
+                continue;
+            int c = head(out, sprites, face, role, kind.get(), steps, !letter.equals("H"));
+            if (c < 0)
+                continue;
+            if (!any) {
+                // The tip rides the front head's far end: out by the slices that end took.
+                tipX = c;
+                tipY = ALONG.contains(kind.get()) ? -c : c;
+            }
+            any = true;
         }
         if (!any)
             return List.of();
-        part(out, sprites, design, "T", "tip", steps);
+        tip(out, sprites, design, steps, tipX, tipY);
         return List.copyOf(out);
     }
 
@@ -108,13 +118,32 @@ public final class HaftedLayers {
             out.add(new Placement(file, role, lift, -lift));
     }
 
-    /** A head in its three cuts, lengthened by its edge axis as far as the canvas allows; false if its files are missing. */
-    private static boolean head(List<Placement> out, Sprites sprites, Part face, ModularType.Role role, String kind, int steps, boolean mirrored) {
+    /** The tip: its variant's file (else plain) at the socket, moved out by the head's lengthening if it still fits the canvas, else as far as it does. */
+    private static void tip(List<Placement> out, Sprites sprites, ModularDesign design, int steps, int tipX, int tipY) {
+        Part p = design.part("T");
+        if (p == null)
+            return;
+        String variant = p.variant().isEmpty() ? "tip" : "tip_" + p.variant();
+        String file = sprites.has(variant) ? variant : sprites.has("tip") ? "tip" : null;
+        if (file == null)
+            return;
+        for (int back = 0; back <= Math.abs(tipX); back++) {
+            int x = tipX - Integer.signum(tipX) * back, y = tipY - Integer.signum(tipY) * back;
+            Placement at = new Placement(file, "T", steps + x, -steps + y);
+            if (fits(sprites, List.of(at)) || back == Math.abs(tipX)) {
+                out.add(at);
+                return;
+            }
+        }
+    }
+
+    /** A head in its three cuts, lengthened by its edge axis as far as the canvas allows: the slices its far end moved out by, or -1 if its files are missing. */
+    private static int head(List<Placement> out, Sprites sprites, Part face, ModularType.Role role, String kind, int steps, boolean mirrored) {
         String stem = "head_" + kind;
         String named = face.variant().isEmpty() ? null : stem + "_" + face.variant();
         String use = named != null && cuts(sprites, named, mirrored) ? named : cuts(sprites, stem, mirrored) ? stem : null;
         if (use == null)
-            return false;
+            return -1;
         String r = mirrored ? "_r" : "";
         int dirX = 1, dirY = ALONG.contains(kind) ? -1 : 1;
         for (int k = edgeSteps(face, role); k >= 0; k--) {
@@ -127,10 +156,10 @@ public final class HaftedLayers {
             cut.add(new Placement(use + "_front" + r, face.role(), steps + c * dirX, -steps + c * dirY));
             if (k == 0 || fits(sprites, cut)) {
                 out.addAll(cut);
-                return true;
+                return c;
             }
         }
-        return true;
+        return 0;
     }
 
     private static boolean cuts(Sprites sprites, String stem, boolean mirrored) {
