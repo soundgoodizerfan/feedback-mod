@@ -91,6 +91,9 @@ public final class GuiCheck {
     static List<String> report(Minecraft mc, Screen screen, int mx, int my) {
         Recording g = new Recording(mc);
         screen.render(g, mx, my, 0f);
+        // A string parked off the window (a screen hides a label that way) is not on screen, so it overlaps nothing.
+        float w = mc.getWindow().getGuiScaledWidth(), h = mc.getWindow().getGuiScaledHeight();
+        g.boxes.removeIf(b -> b.x1() < 0 || b.y1() < 0 || b.x0() > w || b.y0() > h);
         List<String> found = overlaps(g.boxes, 0, 0);
         List<String> out = new ArrayList<>();
         out.add(screen.getClass().getSimpleName() + ": " + g.boxes.size() + " strings, " + found.size() + " overlaps");
