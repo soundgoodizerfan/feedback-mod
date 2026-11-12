@@ -1,5 +1,6 @@
 {
   "family": "pressure",
+  "required": ["S"],
   "slot": "mainhand",
   "wear_litres": 0.5,
   "wear_role": "S",

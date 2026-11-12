@@ -21,7 +21,8 @@
       "name": "main",
       "forms": [
         "raw",
-        "cooked"
+        "cooked",
+        "rod"
       ],
       "traits": [
         "protein"

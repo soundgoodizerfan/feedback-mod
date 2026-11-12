@@ -78,6 +78,18 @@ public final class BoardTree {
             bandRows = Math.max(bandRows, put(r, col, 0, band, kids, width, out));
             col += width[r];
         }
+        // The node section is wider than tall: a layout taller than it is wide is laid on its side, filling across first.
+        float w = 0, h = 0;
+        for (float[] p : out) {
+            w = Math.max(w, p[0]);
+            h = Math.max(h, p[1] * CELL_W / CELL_H);
+        }
+        if (h > w)
+            for (float[] p : out) {
+                float x = p[0];
+                p[0] = p[1] * CELL_W / CELL_H;
+                p[1] = x * CELL_H / CELL_W;
+            }
         return out;
     }
 

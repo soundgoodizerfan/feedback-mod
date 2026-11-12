@@ -1,5 +1,6 @@
 {
   "family": "backpack",
+  "required": ["S", "T"],
   "wear_litres": 2.0,
   "wear_role": "T",
   "primary": "S",

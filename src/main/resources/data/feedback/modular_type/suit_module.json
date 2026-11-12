@@ -1,5 +1,6 @@
 {
   "family": "suit_module",
+  "required": ["H", "W"],
   "slot": "mainhand",
   "wear_litres": 0.05,
   "wear_role": "H",

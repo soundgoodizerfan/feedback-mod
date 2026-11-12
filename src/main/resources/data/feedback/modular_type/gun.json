@@ -1,5 +1,6 @@
 {
   "family": "gun",
+  "required": ["R", "B", "T", "G"],
   "blueprint": true,
   "slot": "mainhand",
   "wear_role": "B",
@@ -52,10 +53,11 @@
       "layer": 0,
       "axes": {
         "bore": {
-          "min": 5,
-          "max": 20,
+          "min": 6.25,
+          "max": 18.75,
+          "step": 3.125,
           "unit": "mm",
-          "default": 9
+          "default": 9.375
         },
         "outer": {
           "min": 5,
@@ -115,10 +117,11 @@
       "alt": "B",
       "axes": {
         "bore": {
-          "min": 5,
-          "max": 20,
+          "min": 6.25,
+          "max": 18.75,
+          "step": 3.125,
           "unit": "mm",
-          "default": 9
+          "default": 9.375
         },
         "outer": {
           "min": 5,

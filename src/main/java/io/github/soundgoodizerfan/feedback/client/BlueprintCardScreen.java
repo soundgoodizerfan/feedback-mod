@@ -23,14 +23,14 @@ import net.minecraft.world.item.ItemStack;
  */
 public class BlueprintCardScreen extends Screen {
 
-    private static final int W = 220, MAX_ROWS = 14;
+    private static final int COL_W = 150, ROW_H = 11;
     private static final GuiSkin SKIN = GuiSkin.BLUEPRINT;
 
     private final Opening opening = new Opening(SKIN);
     private final Component heading;
     private final Component credit;
     private final List<BlueprintChecklist.Row> rows;
-    private final int h;
+    private int w, h, cols, visibleRows, scroll;
 
     private BlueprintCardScreen(ItemStack sheet, ModularDesign design) {
         super(Component.translatable("screen.feedback.blueprint_card"));
@@ -39,7 +39,6 @@ public class BlueprintCardScreen extends Screen {
         heading = c != null && c.titleLine() != null ? c.titleLine() : typeName;
         credit = c == null ? null : c.line();
         rows = BlueprintChecklist.rows(design, List.of(), ClientMaterials.get(), ModularTypes.known());
-        h = 62 + Math.min(rows.size(), MAX_ROWS) * 11;
     }
 
     /** Opens the card of {@code sheet} if it holds a design. */
@@ -49,8 +48,19 @@ public class BlueprintCardScreen extends Screen {
             Minecraft.getInstance().setScreen(new BlueprintCardScreen(sheet, design));
     }
 
+    /** Sized to the window: wide enough for as many columns of entries as fit, up to the whole list, and as tall as the list needs. */
+    private void size() {
+        int innerMax = Math.max(COL_W, Math.min(width - 40, 560)) - 16;
+        cols = Math.max(1, Math.min(innerMax / COL_W, Math.max(1, (rows.size() + 5) / 6)));
+        int needRows = (rows.size() + cols - 1) / cols;
+        visibleRows = Math.max(3, Math.min(needRows, (height - 90) / ROW_H));
+        w = cols * COL_W + 16 + 6;
+        h = 62 + visibleRows * ROW_H;
+        scroll = Math.max(0, Math.min(scroll, Math.max(0, needRows - visibleRows)));
+    }
+
     private int left() {
-        return (width - W) / 2;
+        return (width - w) / 2;
     }
 
     private int top() {
@@ -59,8 +69,9 @@ public class BlueprintCardScreen extends Screen {
 
     @Override
     protected void init() {
+        size();
         opening.start();
-        addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.done"), b -> onClose(), left() + W / 2 - 30, top() + h - 22, 60, 14));
+        addRenderableWidget(GuiStyle.button(SKIN, Component.translatable("gui.done"), b -> onClose(), left() + w / 2 - 30, top() + h - 22, 60, 14));
     }
 
     @Override
@@ -70,19 +81,32 @@ public class BlueprintCardScreen extends Screen {
             return;
         }
         int x = left(), y = top();
-        opening.render(g, width, height, x, y, W, h, () -> {
-            SKIN.panel(g, x, y, W, h);
-            g.drawString(font, heading, x + (W - font.width(heading)) / 2, y + 10, SKIN.ink(), false);
+        opening.render(g, width, height, x, y, w, h, () -> {
+            SKIN.panel(g, x, y, w, h);
+            g.drawString(font, heading, x + (w - font.width(heading)) / 2, y + 10, SKIN.ink(), false);
             if (credit != null)
-                g.drawString(font, credit, x + (W - font.width(credit)) / 2, y + 21, SKIN.dim(), false);
-            SKIN.inset(g, x + 8, y + 34, W - 16, h - 60);
-            int shown = Math.min(rows.size(), MAX_ROWS);
-            for (int i = 0; i < shown; i++)
-                g.drawString(font, font.plainSubstrByWidth(Component.literal("- ").append(rows.get(i).text()).getString(), W - 28), x + 13, y + 39 + i * 11, SKIN.ink(), false);
-            if (rows.size() > shown)
-                g.drawString(font, "...", x + 13, y + 39 + shown * 11, SKIN.dim(), false);
+                g.drawString(font, credit, x + (w - font.width(credit)) / 2, y + 21, SKIN.dim(), false);
+            SKIN.inset(g, x + 8, y + 34, w - 16, h - 60);
+            int total = (rows.size() + cols - 1) / cols;
+            for (int r = 0; r < visibleRows; r++)
+                for (int c = 0; c < cols; c++) {
+                    int i = (scroll + r) * cols + c;
+                    if (i >= rows.size())
+                        break;
+                    g.drawString(font, font.plainSubstrByWidth(Component.literal("- ").append(rows.get(i).text()).getString(), COL_W - 6),
+                            x + 13 + c * COL_W, y + 39 + r * ROW_H, SKIN.ink(), false);
+                }
+            if (total > visibleRows)
+                SKIN.scrollbar(g, x + w - 12, y + 36, visibleRows * ROW_H + 4, total, visibleRows, scroll);
             super.render(g, mouseX, mouseY, partialTick);
         });
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+        int total = (rows.size() + cols - 1) / cols;
+        scroll = Math.max(0, Math.min(scroll - (int) Math.signum(scrollY), Math.max(0, total - visibleRows)));
+        return true;
     }
 
     /** The dimming is the opening's. */

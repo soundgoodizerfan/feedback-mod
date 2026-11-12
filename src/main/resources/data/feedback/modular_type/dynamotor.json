@@ -1,5 +1,6 @@
 {
   "family": "machine",
+  "required": ["F", "W", "C", "H"],
   "minigame": "feedback:fitting",
   "slot": "mainhand",
   "wear_litres": 0.125,

@@ -157,6 +157,18 @@ public class BlueprintTableMenu extends AbstractContainerMenu {
             send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable(school.itemKey(volume))));
             return;
         }
+        // An addon whose role asks for a volume (servos on armour: robotics) is refused the same way.
+        if (drawn != null)
+            for (ModularDesign.Part part : design.parts()) {
+                ModularType.Role role = drawn.roles().get(part.role());
+                String needs = role == null ? "" : !role.school().isEmpty() ? role.school()
+                        : role.variant(part).map(ModularType.Variant::school).orElse("");
+                School roleSchool = School.of(needs);
+                if (roleSchool != null && !Treatises.has(player, access, roleSchool, School.volumeOf(needs))) {
+                    send(player, Component.translatable("message.feedback.blueprint_table.no_treatise", Component.translatable(roleSchool.itemKey(School.volumeOf(needs)))));
+                    return;
+                }
+            }
         if (write(paper, design, variants, title, player))
             broadcastChanges();
     }

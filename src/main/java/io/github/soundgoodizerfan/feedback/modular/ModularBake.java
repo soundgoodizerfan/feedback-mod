@@ -643,6 +643,16 @@ public final class ModularBake {
         return bake(design, type, materials, step, null);
     }
 
+    /**
+     * A hafted tool with no haft: only a hammer head stands alone (the head a machine takes); any other head with no
+     * haft is a required part missing, not a tool.
+     */
+    public static boolean needsHaft(ModularDesign design, ModularType planned) {
+        return planned.family() == ModularType.Family.HAFTED && design.part("S") == null
+                && design.parts().stream().anyMatch(p -> (p.role().equals("H") || p.role().equals("J") || p.role().equals("K"))
+                        && !p.kind().equals("head_blank"));
+    }
+
     /** As {@link #bake(ModularDesign, ModularType, Map, int)}, for an item carrying {@code coat} (or none). */
     public static Optional<ModularFigures> bake(ModularDesign design, ModularType planned,
                                                 Map<ResourceLocation, Material> materials, int step, Plating coat) {
@@ -656,6 +666,8 @@ public final class ModularBake {
         }
         if (type.family() == ModularType.Family.DISH)
             return dish(design, type, materials, step);
+        if (needsHaft(design, planned) || !planned.missing(design.parts().stream().map(Part::role).toList()).isEmpty())
+            return Optional.empty();
         Part wearPart = design.part(type.wearRole());
         if (wearPart == null)
             return Optional.empty();

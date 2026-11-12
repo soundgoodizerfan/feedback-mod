@@ -87,7 +87,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                           Naming names, String trait, Map<String, Float> traitParams, Map<String, List<Integer>> ranges,
                           List<Shaping> shapes, boolean bakes, Board board, String school,
                           io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need fasteners, List<String> tools,
-                          String minigame, List<String> fitOrder, List<String> actions, boolean face) {
+                          String minigame, List<String> fitOrder, List<String> actions, boolean face, List<String> required) {
 
     /**
      * How the Blueprint Table lays a type out beyond its patterns. All optional: a type with none is drawn from its patterns alone.
@@ -284,11 +284,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param mount  for an addon: the kind of mount it sits on ({@code muzzle}, {@code rail}, {@code grip}, {@code limb}); the Fit tab refuses it on an item
      *               no part of which offers one. Empty for a part that needs none (its place is its own).
      * @param offers the mount kinds this part gives the addons fitted to it.
+     * @param school for an addon: the treatise volume ({@code robotics:1}, as a type's) the table must hold before it offers this role; empty for none.
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
                        List<String> stock, boolean set, Map<String, Axis> axes, String alt, int bulk, boolean after, int seal,
-                       List<Material.Trait> anyTraits, String trait, Map<String, Float> params, String mount, List<String> offers) {
+                       List<Material.Trait> anyTraits, String trait, Map<String, Float> params, String mount, List<String> offers, String school) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -310,15 +311,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.mapPair(Codec.mapPair(Codec.BOOL.optionalFieldOf("after", false), Codec.INT.optionalFieldOf("seal", 0)),
                         Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.mapPair(
                                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of()),
-                                Codec.mapPair(Codec.STRING.optionalFieldOf("mount", ""), Codec.STRING.listOf().optionalFieldOf("offers", List.of())))))
+                                Codec.mapPair(Codec.STRING.optionalFieldOf("mount", ""), Codec.mapPair(Codec.STRING.listOf().optionalFieldOf("offers", List.of()),
+                                        Codec.STRING.optionalFieldOf("school", ""))))))
                         .forGetter(r -> com.mojang.datafixers.util.Pair.of(com.mojang.datafixers.util.Pair.of(r.after(), r.seal()),
                                 com.mojang.datafixers.util.Pair.of(r.trait(), com.mojang.datafixers.util.Pair.of(r.params(),
-                                        com.mojang.datafixers.util.Pair.of(r.mount(), r.offers())))))
+                                        com.mojang.datafixers.util.Pair.of(r.mount(), com.mojang.datafixers.util.Pair.of(r.offers(), r.school()))))))
         ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts, bulk, flags) ->
                 new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts.getFirst(), bulk,
                         flags.getFirst().getFirst(), flags.getFirst().getSecond(), alts.getSecond(),
                         flags.getSecond().getFirst(), flags.getSecond().getSecond().getFirst(),
-                        flags.getSecond().getSecond().getSecond().getFirst(), flags.getSecond().getSecond().getSecond().getSecond())));
+                        flags.getSecond().getSecond().getSecond().getFirst(), flags.getSecond().getSecond().getSecond().getSecond().getFirst(),
+                        flags.getSecond().getSecond().getSecond().getSecond().getSecond())));
 
         public boolean rod() {
             return length > 0;
@@ -327,7 +330,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** This striking role as it is for a face of the kind whose own role is {@code def}: that kind's litres and place on the haft. */
         public Role withFace(Role def) {
             return new Role(name, forms, traits, def.litres, length, def.at, def.rides, factor, layer, part, stock, set, axes, alt, bulk,
-                    after, seal, anyTraits, trait, params, mount, offers);
+                    after, seal, anyTraits, trait, params, mount, offers, school);
         }
 
         /**
@@ -339,7 +342,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             if (d == null)
                 return made.axis(name, 0f);
             float nominal = variant(made).map(v -> v.params().get(name)).orElse(d.def());
-            return d.clamp(made.axis(name, nominal));
+            return d.snap(made.axis(name, nominal));
         }
 
         public boolean accepts(Material.Located l) {
@@ -503,14 +506,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     public ModularType with(Family family, List<Mine> mines, float strike, float wearLitres, Map<String, Role> roles, String trait,
                             Map<String, Float> traitParams) {
         return new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
-                blueprint, names, trait, traitParams, ranges, shapes, bakes, board, school, fasteners, tools, minigame, fitOrder, actions, face);
+                blueprint, names, trait, traitParams, ranges, shapes, bakes, board, school, fasteners, tools, minigame, fitOrder, actions, face, required);
     }
 
     /** This type with {@code school} as its gate and, if it has one, as a complex type: the plan as a build of gated faces sees it. */
     public ModularType withGate(String school) {
         return new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
                 blueprint || !school.isEmpty(), names, trait, traitParams, ranges, shapes, bakes, board, school, fasteners, tools, minigame,
-                fitOrder, actions, face);
+                fitOrder, actions, face, required);
     }
 
     /** Whether the part of role {@code key} has a mount to sit on among the parts {@code held}: it needs none, or some held part offers its kind. */
@@ -550,8 +553,10 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                             Codec.STRING.listOf().optionalFieldOf("tools", List.of())))
                     .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.names(), com.mojang.datafixers.util.Pair.of(java.util.Optional.of(t.fasteners()), t.tools()))),
             Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""),
-                    Codec.mapPair(Codec.BOOL.optionalFieldOf("bakes", false), Codec.STRING.optionalFieldOf("school", "")))
-                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.trait(), com.mojang.datafixers.util.Pair.of(t.bakes(), t.school()))),
+                    Codec.mapPair(Codec.BOOL.optionalFieldOf("bakes", false), Codec.mapPair(Codec.STRING.optionalFieldOf("school", ""),
+                            Codec.STRING.listOf().optionalFieldOf("required", List.of()))))
+                    .forGetter(t -> com.mojang.datafixers.util.Pair.of(t.trait(), com.mojang.datafixers.util.Pair.of(t.bakes(),
+                            com.mojang.datafixers.util.Pair.of(t.school(), t.required())))),
             Codec.mapPair(Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("trait_params", Map.of()),
                     Codec.mapPair(Shaping.CODEC.listOf().optionalFieldOf("shapes", List.of()),
                             Codec.mapPair(Board.CODEC.optionalFieldOf("board", Board.NONE),
@@ -564,11 +569,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                                     com.mojang.datafixers.util.Pair.of(t.fitOrder(), com.mojang.datafixers.util.Pair.of(t.actions(), t.face())))))))
     ).apply(instance, (family, slot, mines, strike, wearLitres, wearRole, primary, roles, patterns, defaults, vanilla, armourMax,
                        gate, namesNeeds, traitBakes, tail) -> new ModularType(family, slot, mines, strike, wearLitres, wearRole, primary,
-            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), namesNeeds.getFirst(), traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond().getFirst(), tail.getSecond().getSecond().getFirst(), traitBakes.getSecond().getSecond(),
+            roles, patterns, defaults, vanilla, armourMax, gate.getFirst(), namesNeeds.getFirst(), traitBakes.getFirst(), tail.getFirst(), gate.getSecond(), tail.getSecond().getFirst(), traitBakes.getSecond().getFirst(), tail.getSecond().getSecond().getFirst(), traitBakes.getSecond().getSecond().getFirst(),
             namesNeeds.getSecond().getFirst().orElse(gate.getFirst() ? io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need.DEFAULT
                     : new io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners.Need(0, 1)), namesNeeds.getSecond().getSecond(),
             tail.getSecond().getSecond().getSecond().getFirst(), tail.getSecond().getSecond().getSecond().getSecond().getFirst(),
-            tail.getSecond().getSecond().getSecond().getSecond().getSecond().getFirst(), tail.getSecond().getSecond().getSecond().getSecond().getSecond().getSecond())));
+            tail.getSecond().getSecond().getSecond().getSecond().getSecond().getFirst(), tail.getSecond().getSecond().getSecond().getSecond().getSecond().getSecond(),
+            traitBakes.getSecond().getSecond().getSecond())));
 
     public static final StreamCodec<net.minecraft.network.RegistryFriendlyByteBuf, ModularType> STREAM_CODEC =
             ByteBufCodecs.fromCodecWithRegistries(CODEC);
@@ -625,6 +631,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         public float clamp(float v) {
             return Math.min(max, Math.max(min, v));
         }
+
+        /** {@code v} clamped and, for an axis with a {@code step}, snapped to it from {@code min} (a bore lands on a whole eighth of a texel). */
+        public float snap(float v) {
+            float c = clamp(v);
+            return step > 0 ? clamp(min + Math.round((c - min) / step) * step) : c;
+        }
     }
 
     /**
@@ -674,7 +686,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** Every shape the part is made in from stock of its own size: the standard one first, then the variants that have a size. */
         public List<Variant> laid() {
             List<Variant> out = new ArrayList<>();
-            out.add(new Variant("", cells, 0f, 1f, "", 1f, 0f, 1f, "", Map.of(), false));
+            out.add(new Variant("", cells, 0f, 1f, "", 1f, 0f, 1f, "", Map.of(), false, ""));
             variants.stream().filter(v -> v.cells() > 0f).forEach(out::add);
             return out;
         }
@@ -717,12 +729,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param params  numbers the trait reads, by name, so tuning it is data.
      * @param adjective whether the shape is a word beside the type's own in a build's automatic name ({@link BuildNames}: "curved iron
      *                sword") rather than a name for the whole thing ("iron pitchfork"). Armour variants always are.
+     * @param school  the treatise volume ({@code robotics:1}, as a type's) the table must hold before it offers this variant; empty for none.
      * @param rhythm  for a variant forged rather than laid: the pattern played on the anvil, one
      *                character per step ({@code t} a tap, {@code h} a heavy blow, {@code .} a rest).
      *                A forged variant has no shape, since it is made from a standard part.
      */
     public record Variant(String name, float cells, float reach, float section, String rhythm, float strike,
-                          float centre, float mass, String trait, Map<String, Float> params, boolean adjective) {
+                          float centre, float mass, String trait, Map<String, Float> params, boolean adjective, String school) {
         static final Codec<Variant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Variant::name),
                 Codec.FLOAT.optionalFieldOf("cells", 0f).forGetter(Variant::cells),
@@ -734,7 +747,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.FLOAT.optionalFieldOf("mass", 1f).forGetter(Variant::mass),
                 Codec.STRING.optionalFieldOf("trait", "").forGetter(Variant::trait),
                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of()).forGetter(Variant::params),
-                Codec.BOOL.optionalFieldOf("adjective", false).forGetter(Variant::adjective)
+                Codec.BOOL.optionalFieldOf("adjective", false).forGetter(Variant::adjective),
+                Codec.STRING.optionalFieldOf("school", "").forGetter(Variant::school)
         ).apply(instance, Variant::new));
 
     }
@@ -857,6 +871,11 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     /** Whether the role is raw stock whose size the player chooses. */
     public boolean ranged(String role) {
         return ranges.containsKey(role);
+    }
+
+    /** The required roles {@code held} lacks, in the type's order. */
+    public List<String> missing(java.util.Collection<String> held) {
+        return required.stream().filter(r -> !held.contains(r)).toList();
     }
 
     /** The parts the sheet can add or take off: the {@link #extras}, and each ranged role that may be none. */

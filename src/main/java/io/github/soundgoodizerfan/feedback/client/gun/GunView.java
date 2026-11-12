@@ -124,7 +124,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 float metres = role.axis(barrelPart, "barrel_length"), boreMm = role.axis(barrelPart, "bore");
                 eb[0] = snap(Math.max(1.5f, Math.min(metres * 20f, 16f)), 0.25f);
                 eb[1] = snap(Math.max(0.75f, Math.min(0.5f + boreMm * 0.04f, 1.5f)), 0.125f);
-                eb[2] = snap(Math.max(0.125f, Math.min(boreMm * 0.02f, eb[1] - 0.125f)), 0.125f);
+                eb[2] = snap(Math.max(0.125f, Math.min(boreMm * 0.04f, eb[1] - 0.125f)), 0.125f);
                 if (variants.getOrDefault("B", "").startsWith("coil"))
                     stages = Math.max(1, Math.round(role.axis(barrelPart, "stages")));
             }
@@ -161,7 +161,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         float outerMm = role.axis(part, BarrelGeometry.OUTER), boreMm = role.axis(part, BarrelGeometry.BORE);
         float length = snap(Math.max(1.5f, Math.min(metres * 20f, 16f)), 0.25f);
         float r = snap(Math.max(0.5f, Math.min(0.25f + outerMm * 0.025f, 1.25f)), 0.125f);
-        float bore = snap(Math.max(0.125f, Math.min(boreMm * 0.02f, r - 0.125f)), 0.125f);
+        float bore = snap(Math.max(0.125f, Math.min(boreMm * 0.04f, r - 0.125f)), 0.125f);
         return new float[]{length, r, bore};
     }
 

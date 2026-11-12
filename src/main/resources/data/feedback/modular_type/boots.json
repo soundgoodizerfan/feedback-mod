@@ -1,5 +1,8 @@
 {
   "family": "armour",
+  "required": [
+    "P"
+  ],
   "minigame": "feedback:fitting",
   "fit_order": [
     "L",
@@ -148,6 +151,7 @@
     },
     "S": {
       "name": "servo",
+      "school": "robotics:1",
       "forms": [
         "machine_winding"
       ],
@@ -182,6 +186,7 @@
     },
     "G": {
       "name": "gauge",
+      "school": "robotics:1",
       "forms": [
         "lens"
       ],
@@ -191,6 +196,7 @@
     },
     "M": {
       "name": "upgrade",
+      "school": "robotics:1",
       "forms": [
         "suit_module"
       ],
@@ -288,6 +294,34 @@
         "is": {
           "variant": "plain_boots",
           "spurs": "fitted"
+        }
+      },
+      {
+        "name": "moccasins",
+        "is": {
+          "shaft": "ankle",
+          "sole": "thin"
+        }
+      },
+      {
+        "name": "hiking_boots",
+        "is": {
+          "shaft": "normal",
+          "sole": "thick"
+        }
+      },
+      {
+        "name": "thigh_boots",
+        "is": {
+          "shaft": "high",
+          "sole": "normal"
+        }
+      },
+      {
+        "name": "waders",
+        "is": {
+          "shaft": "high",
+          "sole": "thick"
         }
       }
     ]

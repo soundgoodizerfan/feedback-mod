@@ -1,5 +1,6 @@
 {
   "family": "belt",
+  "required": ["B"],
   "slot": "mainhand",
   "wear_litres": 0.25,
   "wear_role": "B",

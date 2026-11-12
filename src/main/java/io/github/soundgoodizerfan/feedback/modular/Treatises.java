@@ -33,6 +33,8 @@ public final class Treatises {
 
     /** Whether {@code stack} is, or is a binder holding, volume {@code volume} of {@code school}'s treatise. */
     public static boolean holds(ItemStack stack, School school, int volume) {
+        if (stack.getItem() instanceof CreativeTreatiseItem)
+            return true;
         if (stack.getItem() instanceof TreatiseItem t)
             return t.school() == school && t.volume() == volume;
         if (stack.getItem() instanceof TreatiseBinderItem) {

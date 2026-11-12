@@ -1,5 +1,6 @@
 {
   "family": "engine",
+  "required": ["K", "P", "C", "H"],
   "slot": "mainhand",
   "wear_litres": 0.25,
   "wear_role": "P",

@@ -350,6 +350,163 @@
     },
     "designations": [
       {
+        "name": "morning_star",
+        "is": {
+          "face": "maul_head",
+          "variant": "mace",
+          "tip": "fitted"
+        }
+      },
+      {
+        "name": "piston_hammer",
+        "is": {
+          "face": "maul_head",
+          "spring": "fitted"
+        }
+      },
+      {
+        "name": "spring_lance",
+        "is": {
+          "face": "spear_head",
+          "spring": "fitted"
+        }
+      },
+      {
+        "name": "switchblade",
+        "is": {
+          "face": "sword_blade",
+          "spring": "fitted",
+          "length": "short"
+        }
+      },
+      {
+        "name": "kunai",
+        "is": {
+          "face": "sword_blade",
+          "variant": "tapered",
+          "length": "short",
+          "lanyard": "fitted"
+        }
+      },
+      {
+        "name": "throwing_axe",
+        "is": {
+          "face": "axe_head",
+          "head_size": "small",
+          "lanyard": "fitted"
+        }
+      },
+      {
+        "name": "zweihander",
+        "is": {
+          "face": "sword_blade",
+          "length": "long",
+          "width": "wide",
+          "thickness": "thick"
+        }
+      },
+      {
+        "name": "stiletto",
+        "is": {
+          "face": "sword_blade",
+          "length": "short",
+          "thickness": "thin"
+        }
+      },
+      {
+        "name": "estoc",
+        "is": {
+          "face": "sword_blade",
+          "variant": "tapered",
+          "length": "long",
+          "thickness": "normal|thick"
+        }
+      },
+      {
+        "name": "war_pick",
+        "is": {
+          "face": "pickaxe_head",
+          "variant": "war_pick"
+        }
+      },
+      {
+        "name": "prospectors_pick",
+        "is": {
+          "face": "pickaxe_head",
+          "variant": "prospector"
+        }
+      },
+      {
+        "name": "miners_pick",
+        "is": {
+          "face": "pickaxe_head",
+          "variant": "miner"
+        }
+      },
+      {
+        "name": "bearded_axe",
+        "is": {
+          "face": "axe_head",
+          "variant": "bearded"
+        }
+      },
+      {
+        "name": "warhammer",
+        "is": {
+          "face": "maul_head",
+          "variant": "war_hammer"
+        }
+      },
+      {
+        "name": "mace",
+        "is": {
+          "face": "maul_head",
+          "variant": "mace"
+        }
+      },
+      {
+        "name": "trident",
+        "is": {
+          "face": "spear_head",
+          "variant": "trident"
+        }
+      },
+      {
+        "name": "harpoon",
+        "is": {
+          "face": "spear_head",
+          "variant": "harpoon"
+        }
+      },
+      {
+        "name": "pitchfork",
+        "is": {
+          "face": "spear_head",
+          "variant": "pitchfork"
+        }
+      },
+      {
+        "name": "pike",
+        "is": {
+          "face": "spear_head",
+          "head_size": "large"
+        }
+      },
+      {
+        "name": "billhook",
+        "is": {
+          "face": "sickle_head",
+          "variant": "billhook"
+        }
+      },
+      {
+        "name": "reaping_hook",
+        "is": {
+          "face": "sickle_head",
+          "variant": "reaping_hook"
+        }
+      },
+      {
         "name": "heavy_pick",
         "is": {
           "face": "pickaxe_head",
@@ -438,6 +595,40 @@
         "is": {
           "length": "short",
           "face": "sword_blade"
+        }
+      },
+      {
+        "name": "falchion",
+        "is": {
+          "face": "sword_blade",
+          "variant": "curved",
+          "width": "wide"
+        }
+      },
+      {
+        "name": "sabre",
+        "is": {
+          "face": "sword_blade",
+          "variant": "curved",
+          "length": "normal|long",
+          "width": "normal|wide"
+        }
+      },
+      {
+        "name": "longsword",
+        "is": {
+          "face": "sword_blade",
+          "length": "long",
+          "width": "normal"
+        }
+      },
+      {
+        "name": "arming_sword",
+        "is": {
+          "face": "sword_blade",
+          "length": "normal",
+          "width": "normal",
+          "guard": "fitted"
         }
       }
     ]

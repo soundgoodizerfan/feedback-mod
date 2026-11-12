@@ -1,5 +1,8 @@
 {
   "family": "armour",
+  "required": [
+    "P"
+  ],
   "minigame": "feedback:fitting",
   "fit_order": [
     "L",
@@ -154,6 +157,7 @@
     },
     "S": {
       "name": "servo",
+      "school": "robotics:1",
       "forms": [
         "machine_winding"
       ],
@@ -188,6 +192,7 @@
     },
     "G": {
       "name": "gauge",
+      "school": "robotics:1",
       "forms": [
         "lens"
       ],
@@ -197,6 +202,7 @@
     },
     "M": {
       "name": "upgrade",
+      "school": "robotics:1",
       "forms": [
         "suit_module"
       ],
@@ -290,6 +296,27 @@
         "is": {
           "variant": "plain_leggings",
           "length": "short"
+        }
+      },
+      {
+        "name": "hose",
+        "is": {
+          "width": "slim",
+          "length": "long"
+        }
+      },
+      {
+        "name": "breeches",
+        "is": {
+          "width": "wide",
+          "length": "short"
+        }
+      },
+      {
+        "name": "tights",
+        "is": {
+          "width": "slim",
+          "length": "normal"
         }
       }
     ]

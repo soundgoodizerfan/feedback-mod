@@ -42,10 +42,26 @@ public class TreatiseItem extends Item {
         if (notes != null)
             tooltip.add(Component.translatable("tooltip.feedback.treatise_notes." + (notes < 0.3f ? 0 : notes < 0.55f ? 1 : notes < 0.78f ? 2 : notes < 0.92f ? 3 : 4))
                     .withStyle(ChatFormatting.DARK_GREEN));
-        // what it lets you draw: every type of its volume, by name
-        for (var e : ModularTypes.known().entrySet())
-            if (!e.getValue().face() && school == School.of(e.getValue().school()) && volume == School.volumeOf(e.getValue().school()))
-                tooltip.add(Component.literal("- ").append(Component.translatable("item." + e.getKey().getNamespace() + "." + e.getKey().getPath()))
+        // What it lets you draw, read from the loaded type data: every type of its volume (a hafted head kind is a type too), and each
+        // addon role that names the volume (a servo on armour), never a list kept here.
+        for (var e : ModularTypes.known().entrySet()) {
+            ModularType type = e.getValue();
+            String path = e.getKey().getPath();
+            if (school == School.of(type.school()) && volume == School.volumeOf(type.school()))
+                tooltip.add(Component.literal("- ").append(Component.translatableWithFallback("item." + e.getKey().getNamespace() + "." + path, path.replace('_', ' ')))
                         .withStyle(ChatFormatting.DARK_AQUA));
+            for (ModularType.Role role : type.roles().values()) {
+                if (role.part().isPresent())
+                    for (ModularType.Variant v : role.part().get().variants())
+                        if (!v.school().isEmpty() && school == School.of(v.school()) && volume == School.volumeOf(v.school()))
+                            tooltip.add(Component.literal("- ").append(Component.translatableWithFallback("modular.feedback.archetype." + v.name(), v.name().replace('_', ' ')))
+                                    .append(Component.literal(" (")).append(Component.translatableWithFallback("item." + e.getKey().getNamespace() + "." + path, path.replace('_', ' ')))
+                                    .append(Component.literal(")")).withStyle(ChatFormatting.DARK_AQUA));
+                if (!role.school().isEmpty() && school == School.of(role.school()) && volume == School.volumeOf(role.school()))
+                    tooltip.add(Component.literal("- ").append(Component.translatableWithFallback("modular.feedback.role." + role.name(), role.name()))
+                            .append(Component.literal(" (")).append(Component.translatableWithFallback("item." + e.getKey().getNamespace() + "." + path, path.replace('_', ' ')))
+                            .append(Component.literal(")")).withStyle(ChatFormatting.DARK_AQUA));
+            }
+        }
     }
 }

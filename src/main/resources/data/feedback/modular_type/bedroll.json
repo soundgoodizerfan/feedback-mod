@@ -1,5 +1,6 @@
 {
   "family": "bedroll",
+  "required": ["C", "F", "S"],
   "wear_litres": 0.5,
   "wear_role": "S",
   "primary": "C",

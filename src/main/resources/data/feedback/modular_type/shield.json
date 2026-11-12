@@ -1,5 +1,9 @@
 {
   "family": "shield",
+  "required": [
+    "F",
+    "R"
+  ],
   "minigame": "feedback:fitting",
   "wear_litres": 2.9,
   "wear_role": "F",
@@ -214,6 +218,13 @@
         "name": "buckler",
         "is": {
           "face_size": "small"
+        }
+      },
+      {
+        "name": "heater_shield",
+        "is": {
+          "variant": "heater",
+          "face_size": "normal"
         }
       }
     ]

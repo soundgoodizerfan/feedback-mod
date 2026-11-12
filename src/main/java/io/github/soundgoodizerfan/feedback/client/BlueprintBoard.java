@@ -256,6 +256,7 @@ final class BlueprintBoard {
     /** The drawable types the player may draw: those with no school, and those of a school whose treatise is held. */
     private void cutTypes() {
         schoolsSeen = host.schools();
+        shapeLists.clear();
         types = (host.foodOnly() ? ToolDesigns.drawableDishes(ModularTypes.known()) : ToolDesigns.drawable(ModularTypes.known())).stream()
                 .filter(id -> io.github.soundgoodizerfan.feedback.modular.Treatises.draws(schoolsSeen, ModularTypes.known().get(id))).toList();
         typeIcons.clear();
@@ -368,11 +369,12 @@ final class BlueprintBoard {
         choiceCache.clear();
     }
 
-    /** The selected part: the one picked if it is still drawn, else the first. */
+    /** The selected part: the one picked if it is still drawn; the only one when there is one; else none. */
     private String sel() {
         List<String> rows = rows();
+        // With several parts and none picked, nothing is selected: the part panel and the stat sheet step aside.
         if (selected == null || !rows.contains(selected))
-            selected = rows.isEmpty() ? null : rows.get(0);
+            selected = rows.size() == 1 ? rows.get(0) : null;
         return selected;
     }
 
@@ -471,7 +473,21 @@ final class BlueprintBoard {
 
     private List<String> allKeys() {
         derive();
-        return keys;
+        return keys.stream().filter(k -> roleHeld(roleOf(k))).toList();
+    }
+
+    /** Whether the volume {@code gate} names ({@code robotics:1}) is held; an empty gate is always met. */
+    private boolean schoolHeld(String gate) {
+        io.github.soundgoodizerfan.feedback.modular.School school = io.github.soundgoodizerfan.feedback.modular.School.of(gate);
+        return school == null || (schoolsSeen & (1 << school.bit(io.github.soundgoodizerfan.feedback.modular.School.volumeOf(gate)))) != 0;
+    }
+
+    /** Whether the treatise volume a role asks for ({@link ModularType.Role#school}) is held; a role with none is always offered. */
+    private boolean roleHeld(String role) {
+        ModularType t = current();
+        ModularType.Role r = t == null ? null : t.roles().get(role);
+        io.github.soundgoodizerfan.feedback.modular.School school = r == null ? null : io.github.soundgoodizerfan.feedback.modular.School.of(r.school());
+        return school == null || (schoolsSeen & (1 << school.bit(io.github.soundgoodizerfan.feedback.modular.School.volumeOf(r.school())))) != 0;
     }
 
     /** The parts that can be added now. */
@@ -592,7 +608,8 @@ final class BlueprintBoard {
 
     private List<PartBenchShaping.Option> shapes(String role) {
         ModularType t = current();
-        return t == null ? List.of() : shapeLists.computeIfAbsent(role, r -> ToolDesigns.shapes(t.roles().get(r), ModularTypes.known()));
+        return t == null ? List.of() : shapeLists.computeIfAbsent(role, r -> ToolDesigns.shapes(t.roles().get(r), ModularTypes.known()).stream()
+                .filter(o -> schoolHeld(o.variant().school())).toList());
     }
 
     private int shapeIndex(String role) {
@@ -681,7 +698,7 @@ final class BlueprintBoard {
                 || l.material().traits().stream().anyMatch(tr -> tr.getSerializedName().contains(q));
     }
 
-    /** What the part panel lists: every material, the ones that fit the part first, then the rest, narrowed by the search. */
+    /** What the part panel lists: the materials that fit the part, narrowed by the search. */
     private List<Material.Located> swatches(String role) {
         List<Material.Located> fit = materials(role);
         String key = role + "|" + shapeIndex(role);
@@ -690,19 +707,16 @@ final class BlueprintBoard {
             fit.forEach(l -> ids.add(l.id()));
             fitSets.put(k, ids);
             List<Material.Located> out = new ArrayList<>(fit);
-            List<Material.Located> rest = new ArrayList<>();
-            ClientMaterials.get().forEach((id, m) -> {
-                if (!ids.contains(id) && !m.items(id).isEmpty())
-                    rest.add(new Material.Located(id, m, m.items(id).keySet().iterator().next()));
-            });
-            rest.sort(java.util.Comparator.<Material.Located>comparingInt(l -> l.material().kind().map(Enum::ordinal).orElse(99))
-                    .thenComparing(l -> l.id().toString()));
-            out.addAll(rest);
             return List.copyOf(out.stream().filter(this::matches).toList());
         });
     }
 
-    /** Whether the part takes {@code l}; the rest of the swatches are shown struck out. */
+    /** Whether the part has one material to take, so there is nothing to pick. */
+    private boolean onlyOne(String role) {
+        return materials(role).size() <= 1;
+    }
+
+    /** Whether the part takes {@code l}. */
     private boolean usable(String role, Material.Located l) {
         swatches(role);
         Set<ResourceLocation> ids = fitSets.get(role + "|" + shapeIndex(role));
@@ -897,6 +911,15 @@ final class BlueprintBoard {
         }
         if (figures.isPresent())
             return out;
+        List<String> lacking = t.missing(design.get().parts().stream().map(ModularDesign.Part::role).toList());
+        if (!lacking.isEmpty()) {
+            out.add(new Fault(lacking, Component.translatable("gui.feedback.blueprint_table.missing_required")));
+            return out;
+        }
+        if (ModularBake.needsHaft(design.get(), t)) {
+            out.add(new Fault(List.of("S"), Component.translatable("gui.feedback.blueprint_table.needs_haft")));
+            return out;
+        }
         if (t.family() == ModularType.Family.GUN) {
             List<GunSpec.Fault> found = GunSpec.faults(design.get(), t, ClientMaterials.get());
             for (GunSpec.Fault f : found)
@@ -1440,6 +1463,7 @@ final class BlueprintBoard {
         searchBox.setTextColor(skin.ink());
         searchBox.setHint(Component.translatable("gui.feedback.popup.search").withColor(skin.dim()));
         searchBox.setValue(query);
+        searchBox.visible = !onlyOne(role);
         searchBox.setResponder(v -> {
             query = v;
             swatchLists.clear();
@@ -1648,8 +1672,11 @@ final class BlueprintBoard {
     boolean mouseReleased(double mx, double my, int button) {
         preview.release();
         // A click on bare canvas, not a drag, puts the fan away.
-        if (panning && !dragged && fanFor != null)
-            change(() -> fanFor = null);
+        if (panning && !dragged && (fanFor != null || selected != null))
+            change(() -> {
+                fanFor = null;
+                selected = null;
+            });
         boolean was = panning;
         panning = false;
         return was;
@@ -1748,6 +1775,85 @@ final class BlueprintBoard {
             });
         }
         lastPaper = paper.copy();
+    }
+
+    // --- steps: the Prep Table's recipe screen drives the board's model without drawing the board --------------
+
+    /** The types the board offers, and the one drawn. */
+    List<ResourceLocation> stepTypes() {
+        return types;
+    }
+
+    int stepType() {
+        return type;
+    }
+
+    void stepSetType(int index) {
+        change(() -> selectType(index));
+    }
+
+    /** The parts drawn now, in the type's order. */
+    List<String> stepRoles() {
+        return rows();
+    }
+
+    /** The option keys that can still be added, the ones that cannot go on with what is drawn included. */
+    List<String> stepAddable() {
+        Set<String> on = now();
+        return allKeys().stream().filter(k -> !on.contains(k)).filter(k -> feasibleWith(on, k)).toList();
+    }
+
+    private boolean feasibleWith(Set<String> on, String key) {
+        Set<String> t = new LinkedHashSet<>(on);
+        t.add(key);
+        return feasible(t);
+    }
+
+    void stepAdd(String key) {
+        change(() -> {
+            Set<String> on = now();
+            on.add(key);
+            set(on);
+        });
+    }
+
+    boolean stepRemovable(String role) {
+        String key = keyOf(role);
+        return key != null && removable(key);
+    }
+
+    void stepRemove(String role) {
+        String key = keyOf(role);
+        if (key != null && removable(key))
+            change(() -> {
+                Set<String> rest = now();
+                rest.remove(key);
+                set(rest);
+            });
+    }
+
+    Component stepRoleName(String role) {
+        return roleName(role);
+    }
+
+    Component stepKeyName(String key) {
+        return roleName(roleOf(key));
+    }
+
+    List<Material.Located> stepMaterials(String role) {
+        return materials(role);
+    }
+
+    Optional<Material.Located> stepChoice(String role) {
+        return choice(role);
+    }
+
+    void stepPaint(String role, Material.Located located) {
+        paint(role, located);
+    }
+
+    static Component stepMaterialName(Material.Located located) {
+        return materialLabel(located);
     }
 
     /** What would be printed: the drawing, if it can be made, and the pinned drafts of the same type. */
@@ -2140,12 +2246,16 @@ final class BlueprintBoard {
     private void drawParts(GuiGraphics g, String role) {
         int x = ox + call.x(), y = oy + panelY;
         skin.inset(g, x, y, call.w(), panelH);
-        if (role == null)
+        if (role == null) {
+            fit(g, I18n.get("gui.feedback.blueprint_table.pick_part"), x + 5, y + 4, call.w() - 10, skin.dim());
             return;
+        }
         ModularType t = current();
         List<Material.Located> mats = swatches(role);
         Optional<Material.Located> now = choice(role);
-        skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, call.w() - 8, SEARCH_H - 3);
+        boolean single = onlyOne(role);
+        if (!single)
+            skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, call.w() - 8, SEARCH_H - 3);
         if (axesOf(role).size() > MAX_AXIS_ROWS)
             skin.scrollbar(g, x + call.w() - 4, y + 15 + 15 * rowsAboveAxes(role), 15 * MAX_AXIS_ROWS, axesOf(role).size(), MAX_AXIS_ROWS, axisScroll);
         g.drawString(font, roleName(role), x + 5, y + 4, skin.ink(), false);
@@ -2155,7 +2265,7 @@ final class BlueprintBoard {
         int sx = x + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
         int total = (mats.size() + cols - 1) / cols;
         swatchScroll = Mth.clamp(swatchScroll, 0, Math.max(0, total - rows));
-        for (int r = 0; r < rows; r++)
+        for (int r = 0; r < (single ? 0 : rows); r++)
             for (int c = 0; c < cols; c++) {
                 int i = (swatchScroll + r) * cols + c;
                 if (i >= mats.size())
@@ -2172,7 +2282,8 @@ final class BlueprintBoard {
                 g.renderOutline(px - (on ? 1 : 0), py - (on ? 1 : 0), SWATCH + (on ? 2 : 0), SWATCH + (on ? 2 : 0),
                         on ? skin.accent() : i == hoverSwatch ? skin.ink() : alpha(skin.ink(), 0x40));
             }
-        skin.scrollbar(g, x + call.w() - 4, sy, rows * SWATCH_PITCH, total, rows, swatchScroll);
+        if (!single)
+            skin.scrollbar(g, x + call.w() - 4, sy, rows * SWATCH_PITCH, total, rows, swatchScroll);
         List<PartBenchShaping.Option> options = shapes(role);
         if (options.size() > 1) {
             int per = thumbsPerRow(), ty = shapesTop(role), cur = shapeIndex(role);
@@ -2301,6 +2412,8 @@ final class BlueprintBoard {
                 }
             return;
         }
+        if (sel() == null)
+            return;
         ModularFigures cur = figures.get();
         int rows = figRows();
         int top = y + 5 + rigH();

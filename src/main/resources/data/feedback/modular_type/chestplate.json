@@ -1,5 +1,8 @@
 {
   "family": "armour",
+  "required": [
+    "P"
+  ],
   "minigame": "feedback:fitting",
   "fit_order": [
     "L",
@@ -172,6 +175,7 @@
     },
     "S": {
       "name": "servo",
+      "school": "robotics:1",
       "forms": [
         "machine_winding"
       ],
@@ -206,6 +210,7 @@
     },
     "G": {
       "name": "gauge",
+      "school": "robotics:1",
       "forms": [
         "lens"
       ],
@@ -215,6 +220,7 @@
     },
     "B": {
       "name": "battery_bay",
+      "school": "robotics:1",
       "forms": [
         "plate"
       ],
@@ -225,6 +231,7 @@
     },
     "M": {
       "name": "upgrade",
+      "school": "robotics:1",
       "forms": [
         "suit_module"
       ],
@@ -354,6 +361,27 @@
         "name": "cuirass",
         "is": {
           "variant": "breastplate"
+        }
+      },
+      {
+        "name": "jerkin",
+        "is": {
+          "width": "narrow",
+          "torso_length": "short"
+        }
+      },
+      {
+        "name": "greatcoat",
+        "is": {
+          "torso_length": "long",
+          "width": "normal|wide"
+        }
+      },
+      {
+        "name": "broad_cuirass",
+        "is": {
+          "width": "wide",
+          "torso_length": "normal"
         }
       }
     ]

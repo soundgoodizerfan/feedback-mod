@@ -1,5 +1,6 @@
 {
   "family": "hand",
+  "required": ["B", "S"],
   "strike": 0.0,
   "wear_litres": 0.3,
   "wear_role": "B",

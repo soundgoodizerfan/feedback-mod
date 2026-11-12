@@ -1,5 +1,6 @@
 {
   "family": "vessel",
+  "required": ["V"],
   "slot": "mainhand",
   "wear_litres": 0.125,
   "wear_role": "V",

@@ -1,5 +1,6 @@
 {
   "family": "shears",
+  "required": ["B"],
   "strike": 0.3,
   "wear_litres": 0.36,
   "wear_role": "B",

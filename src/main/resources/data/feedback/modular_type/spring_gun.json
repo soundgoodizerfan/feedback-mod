@@ -1,5 +1,6 @@
 {
   "family": "air_gun",
+  "required": ["B", "S", "P", "W"],
   "blueprint": true,
   "wear_litres": 0.4,
   "wear_role": "B",
@@ -22,11 +23,11 @@
           "scales": true
         },
         "bore": {
-          "min": 4,
-          "max": 16,
+          "min": 3.125,
+          "max": 15.625,
           "unit": "mm",
-          "default": 8,
-          "step": 0.5
+          "default": 9.375,
+          "step": 3.125
         }
       },
       "part": {

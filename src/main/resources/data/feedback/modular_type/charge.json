@@ -1,6 +1,7 @@
 {
   "school": "chemical:3",
   "family": "charge",
+  "required": ["C", "F"],
   "slot": "mainhand",
   "wear_role": "C",
   "primary": "C",

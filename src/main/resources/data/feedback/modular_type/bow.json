@@ -1,5 +1,9 @@
 {
   "family": "bow",
+  "required": [
+    "L",
+    "W"
+  ],
   "minigame": "feedback:fitting",
   "wear_litres": 3.3,
   "wear_role": "L",
@@ -198,6 +202,20 @@
         "name": "longbow",
         "is": {
           "limb_length": "long"
+        }
+      },
+      {
+        "name": "composite_bow",
+        "is": {
+          "variant": "recurve",
+          "limb_length": "normal|long"
+        }
+      },
+      {
+        "name": "hunting_bow",
+        "is": {
+          "variant": "hunting",
+          "limb_length": "normal"
         }
       }
     ]
