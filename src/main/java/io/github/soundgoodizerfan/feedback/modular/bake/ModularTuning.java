@@ -210,6 +210,9 @@ public final class ModularTuning {
     /** Heat a Standard pulse leaves, falls by this share each second; the fraction of normal rate a throttle never goes below. */
     public static final float EGUN_HEAT_PER_SHOT = 0.08f, EGUN_HEAT_COOLING_PER_S = 0.15f, EGUN_THROTTLE_FLOOR = 0.4f;
     /** Damage to the wielder from a shot fired at the heat limit, and from a shock. */
+    /** Bore wear (share of condition) a misuse books: a dry fire, a spring set (plus per share of the way to the snap), a snap, a cell over the band (per band over), an overheated shot. */
+    public static final float GUN_WEAR_DRY_FIRE = 0.01f, GUN_WEAR_SPRING_SET = 0.02f, GUN_WEAR_SPRING_SET_SPAN = 0.05f, GUN_WEAR_SPRING_SNAP = 0.15f,
+            GUN_WEAR_OVER_BAND = 0.02f, GUN_WEAR_OVERHEAT = 0.03f;
     public static final float EGUN_OVERHEAT_BURN = 2f, EGUN_SHOCK = 2f, EGUN_SHOCK_PER_EXCESS = 4f;
     /** Forced vent: lockout ticks at the limit exactly and when run a whole shot's heat over; the heat left after the vent. */
     public static final int EGUN_VENT_LOCK_MIN_TICKS = 30, EGUN_VENT_LOCK_MAX_TICKS = 80;

@@ -32,6 +32,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularTooltip;
@@ -69,6 +70,7 @@ public class ModularSpringGun extends Item implements Modular {
         ModularTooltip.add(stack, tooltip);
         if (cocked(stack))
             tooltip.add(Component.translatable("tooltip.feedback.spring_gun.cocked").withStyle(ChatFormatting.GRAY));
+        GunCondition.wearLine(stack).ifPresent(tooltip::add);
         int left = pellets(stack);
         if (left > 0)
             tooltip.add(Component.translatable("tooltip.feedback.spring_gun.chambered", left).withStyle(ChatFormatting.GRAY));
@@ -174,7 +176,11 @@ public class ModularSpringGun extends Item implements Modular {
         if (spec == null)
             return;
         SpringSet.Outcome outcome = SpringSet.overload(stack, spec.load(SpringSet.set(stack)), user);
+        float ratio = spec.load(SpringSet.set(stack));
+        if (outcome == SpringSet.Outcome.SET)
+            GunCondition.misuse(stack, ModularTuning.GUN_WEAR_SPRING_SET + ModularTuning.GUN_WEAR_SPRING_SET_SPAN * Math.min(1f, (ratio - 1f) / 0.6f));
         if (outcome == SpringSet.Outcome.SNAP) {
+            GunCondition.misuse(stack, ModularTuning.GUN_WEAR_SPRING_SNAP);
             level.playSound(null, user.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 0.9f, 1.2f);
             return;
         }
@@ -212,6 +218,7 @@ public class ModularSpringGun extends Item implements Modular {
         if (metal == null || !materials.containsKey(metal)) {
             Optional<Map.Entry<ResourceLocation, ItemStack>> nugget = nugget(player, materials);
             if (nugget.isEmpty()) {
+                GunCondition.misuse(gun, ModularTuning.GUN_WEAR_DRY_FIRE); // released with nothing loaded
                 level.playSound(null, player.blockPosition(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, AIR_VOLUME, 1.6f);
                 player.getCooldowns().addCooldown(gun.getItem(), ModularTuning.AIR_SHOT_COOLDOWN);
                 return;

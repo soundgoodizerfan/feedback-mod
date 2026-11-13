@@ -94,7 +94,8 @@ public final class MendKinds {
             ExperienceOrb.award((ServerLevel) killer.level(), event.getEntity().position(), pay);
         if (weapon.isDamageableItem())
             weapon.setDamageValue(Math.min(weapon.getMaxDamage() - 1, weapon.getDamageValue() + level * TITHE_WEAR_PER_LEVEL));
-        else if (weapon.has(FWeapons.GUN_WEAR.get()))
+        else if (weapon.has(FWeapons.GUN_WEAR.get()) || weapon.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem
+                || weapon.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularSpringGun)
             weapon.set(FWeapons.GUN_WEAR.get(), GunCondition.wear(weapon) + level * TITHE_GUN_WEAR_PER_LEVEL);
     }
 }

@@ -79,6 +79,21 @@ public final class GunCondition {
                 + worn / (1 + io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.levels(gun)));
     }
 
+    /**
+     * Book wear a misuse caused on a gun that has no bore to wear by firing (a spring gun, a pulse gun): turned away by its
+     * Ward parts as {@link #afterShot} does, so soak, mend and tithe act on it. Ordinary shots never call this.
+     */
+    public static void misuse(ItemStack gun, float amount) {
+        gun.set(FWeapons.GUN_WEAR.get(), wear(gun)
+                + amount / (1 + io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.levels(gun)));
+    }
+
+    /** The condition line a worn gun's tooltip carries, if it is worn. */
+    public static java.util.Optional<net.minecraft.network.chat.Component> wearLine(ItemStack gun) {
+        return wear(gun) > 0 ? java.util.Optional.of(net.minecraft.network.chat.Component.translatable("gun.feedback.wear",
+                Math.round(100 - 100 * condition(gun))).withStyle(net.minecraft.ChatFormatting.YELLOW)) : java.util.Optional.empty();
+    }
+
     /** A word for how hot the barrel is. A live reading is an instrument's to give; this is what a hand can tell. */
     public static String feel(float heat) {
         return heat < FEEL_EDGES[0] ? "cool" : heat < FEEL_EDGES[1] ? "warm" : heat < FEEL_EDGES[2] ? "hot" : "smoking";

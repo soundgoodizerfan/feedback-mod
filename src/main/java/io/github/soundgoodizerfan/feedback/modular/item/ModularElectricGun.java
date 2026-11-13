@@ -30,6 +30,7 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.suit.ExoSuit;
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunMechanism;
 import io.github.soundgoodizerfan.feedback.weapon.PulseShot;
@@ -74,6 +75,7 @@ public class ModularElectricGun extends GunItem {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         ModularTooltip.add(stack, tooltip);
+        GunCondition.wearLine(stack).ifPresent(tooltip::add);
         ElectricGunSpec spec = specOf(stack);
         if (spec != null && spec.seat() == ElectricGunSpec.Seat.BACKPACK_TETHER) {
             tooltip.add(Component.translatable("tooltip.feedback.electric_gun.tether").withStyle(ChatFormatting.GRAY));
@@ -435,6 +437,7 @@ public class ModularElectricGun extends GunItem {
         if (excess > 0f) {
             player.hurt(player.damageSources().lightningBolt(), ModularTuning.EGUN_SHOCK_PER_EXCESS * excess);
             gun.hurtAndBreak(ModularStacks.cap(gun, 1 + (int) excess), player, slot);
+            GunCondition.misuse(gun, ModularTuning.GUN_WEAR_OVER_BAND * excess);
         }
         // Wet, the arc finds the wielder; only insulation stops it.
         if (player.isInWaterOrRain() && !PulseShot.insulated(player, band))
@@ -445,6 +448,7 @@ public class ModularElectricGun extends GunItem {
     public static void overheated(LivingEntity wielder, ItemStack gun, InteractionHand hand) {
         wielder.hurt(wielder.damageSources().onFire(), ModularTuning.EGUN_OVERHEAT_BURN);
         gun.hurtAndBreak(ModularStacks.cap(gun, 2), wielder, LivingEntity.getSlotForHand(hand));
+        GunCondition.misuse(gun, ModularTuning.GUN_WEAR_OVERHEAT);
         wielder.level().playSound(null, wielder.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_VENT.get(), SoundSource.PLAYERS, 0.7f, 1.2f);
     }
 }
