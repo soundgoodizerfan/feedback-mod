@@ -83,7 +83,7 @@ The **name** on the tooltip, and beside the type name in the Blueprint Table, is
 | Key | Action |
 | --- | --- |
 | Attack (left mouse) | Fire |
-| Use (right mouse), held | Aim down the sights |
+| Use (right mouse), held | Aim down the sights; the view keeps its walking bob and the sights move with it |
 | **R**, held | Reload |
 | **V** | Switch fire mode (only the modes the action has) |
 | **U** | Unload: takes the magazine and the chambered round out |
@@ -195,7 +195,7 @@ This is **gun-fu**, and the moves are learned in the [Brute skill tree](Skills.m
 
 - **Living targets:** flesh sprays blood, red for most mobs, green for slimes, purple for endermen. Skeletons throw bone dust. Metal-armored bodies and iron golems throw sparks and ring with a clang.
 - **The shooter hears a tick** on every hit on a living thing and a deeper tick on a kill.
-- **Blocks:** a bullet that strikes a block throws chips, dust and smoke, plus sparks on hard stone and metal. It leaves a **bullet hole** that fades after about 30 s on solid faces; its look follows the surface: a chip in stone or metal, a splinter in wood, a crack in glass, a dent in soft earth. Leaves and non-solid faces take none. A ricochet trails sparks.
+- **Blocks:** a bullet that strikes a block throws chips, dust and smoke, plus sparks on hard stone and metal. It leaves a **bullet hole** that fades after about 30 s on solid faces, small for a weak shot and larger for a strong one; its look follows the surface: a chip in stone or metal, a splinter in wood, a crack in glass, a dent in soft earth. Leaves and non-solid faces take none. A ricochet trails sparks.
 - **Muzzle:** every firearm shows a muzzle flash and smoke. A gun that works an action (bolt, lever, pump, self-loading, automatic) also ejects its spent case; break actions and flintlocks do not.
 - The client setting **bloodEffects** (in the mod's client config) turns off blood and bone dust; sparks and sounds stay.
 

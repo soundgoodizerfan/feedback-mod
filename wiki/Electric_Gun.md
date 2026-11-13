@@ -39,7 +39,7 @@ The capacitor bank, burst bank, core breech and flywheel need a **long gun or ma
 
 ### Heat governor
 
-Barrel heat warms and cools as a [gun's](Guns.md) does. With no governor fitted, a shot fired at the heat limit **burns you and wears the barrel**. A **Heat Governor** fits one of three, and only one fits:
+Barrel heat is the barrel's real temperature, in Tu, and it warms and cools as a [gun's](Guns.md#heat) does: the fittings (a shroud, a thermal sleeve) set how fast it sheds heat, and the limit is the barrel material's service temperature. With no governor fitted, a shot fired at the heat limit **burns you and wears the barrel**. A **Heat Governor** fits one of three, and only one fits:
 
 - **Fire-Rate Throttle:** the rate of fire falls smoothly as the barrel heats, to about 40% of normal near the limit, so the gun never reaches the limit that burns.
 - **Forced Vent:** at the limit the gun locks out, for between about 1.5 and 4 seconds depending on how far over it ran, and lets go a cloud of **steam** in front of the muzzle. The steam lives about 3 seconds and scalds any living thing that stays in it for about a second, you and your friends included.
@@ -50,10 +50,10 @@ Barrel heat warms and cools as a [gun's](Guns.md) does. With no governor fitted,
 The same fittings as a gun's, where they make sense: a **suppressor** (a quieter report, more heat), a **muzzle brake** (louder), a **bayonet**, a **bipod** (steadier), a **counterweight**, a **shroud** and a **thermal sleeve** (the gun sheds heat faster, so it recovers faster), and a **resonance weight**. The pulse gun's own:
 
 - **Hold-Charge Trigger** (seats that fire one shot a pull: cylinder, capacitor bank, burst bank, core breech): hold the attack button to build a stronger shot that goes through more bodies, then release; releasing early gives an ordinary shot.
-- **Pump Charge** (the same seats): press the pump key (default period) to pump: on a long gun the forend slides back and runs home (your support hand rides it), and the click sounds as it arrives; a hot core breech cannot be pumped until it is vented. Each of the first two pumps widens the spread and raises the power and heat of the next shot; with a beam splitter fitted each also adds beams, as buckshot adds pellets. The third pump sounds a tone: the next pull fires no pulse but a blast around the gun that deals 10 damage to everything within 4 blocks, and 10 to you. Further pumps do nothing, and any shot resets the pumps.
+- **Pump Charge** (the same seats): press the pump key (default period) to pump: on a long gun the forend slides back and runs home (your support hand rides it), and the click sounds as it arrives; a hot core breech cannot be pumped until it is vented. Each of the first two pumps widens the spread and raises the power and heat of the next shot; with a beam splitter fitted each also adds beams, as buckshot adds pellets. The third pump sounds a tone: the next pull fires no pulse but a blast around the gun that deals 1.5 times the total damage of the three-pump shot (a splitter's beams added) to everything within 4 blocks, and the same to you, capped at three quarters of your health. Further pumps do nothing, and any shot resets the pumps.
 - **Beam Lens:** a **beam splitter** turns one pulse into three to seven weaker beams in a spread, hardest up close; you choose the beam count, in steps of one, on the table. An **arc fork** carries the shock of a hit on to the nearest conductive body within reach, then to any body. The splitter and the fork share the muzzle, so a gun has one.
 - **Zoom Charge:** zoom builds while you aim and tightens the shot and lengthens its reach; it starts over after each shot.
-- **Heat Gauge:** a dial on the gun whose needle swings with the barrel's heat, and a finer heat bar with a scale on the HUD.
+- **Heat Gauge:** a dial on the gun whose needle swings with the barrel's heat, and a finer heat bar with a scale on the HUD. A fitted heat governor sits on the gun's right flank, clear of the gauge.
 
 The gun is drawn from its parts like a powder gun: the frame by receiver type, a **cell bay** on the left with a glass window and four lamps that fill with the battery's charge, and the seat on the right with its dials and lamps. The drum turns a place a shot with a lamp for each charged chamber, the flywheel spins, a bank shows its charge. An empty bay is a dark slot.
 
@@ -77,7 +77,7 @@ The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fi
 - It goes through glass and glass panes, but not tinted glass, and stops at any other block.
 - It hurts a limited number of bodies in a line (set by the tier and a hold charge); a capacitor bank's pulse hurts every one.
 - Armor resists it as it resists a bullet, except **metal armor**, which carries the shock: a body in metal armor, or a **wet** one, takes extra damage, and is staggered for a moment by the shot's energy.
-- A beam is drawn from the muzzle in the gun's color with sparks where it lands, and the muzzle glows brighter as the barrel heats. The build sets its look:
+- A beam is drawn from the muzzle in the gun's color with sparks where it lands, and a hole where it strikes a block that is small for a weak shot and larger for a strong one, and the muzzle glows brighter as the barrel heats. The build sets its look:
   - **Laser** (any other build): a thin hard beam, sparks and a scorch where it lands.
   - **Pulse** (a capacitor bank, a burst bank or a wide bore): a thick jittery beam that crackles.
   - **Arc** (an arc fork lens): a jagged branching bolt that chains between bodies and arcs to wet targets.
@@ -85,7 +85,7 @@ The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fi
 
 A coin flipped with [Coin flip](Skills.md) redirects a pulse without costing it any damage, and a **cylinder** pulse hits harder when redirected.
 
-Gun skills and casts that need firearm rounds (such as Overwatch and Snap Volley) do not fire it.
+Skills and casts that need a loaded gun (quick draw, walking fire, Overwatch, Snap Volley and the like) work with it, counting its charge as shots ready.
 
 ### HUD
 

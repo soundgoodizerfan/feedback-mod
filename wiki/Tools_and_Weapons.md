@@ -6,7 +6,7 @@ Armor works the same way: see [Armor](Armor.md).
 
 ## Making the parts
 
-A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shape it first at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hammer](Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fiber, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, with a [Sawblade](Sawblade.md)). Put stock in the cells first; the list then shows only the parts that stock can make. Fill the cells (the **cells** column below); the hammer, axe or saw loses a point. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
+A pickaxe is a **head** on a **handle** held with a **binding**, and the head is a part of its own. Shape it first at the bench for its stock: the [Smithing Table](Smithing_Table.md) (metal, with a [Hammer](Hammer.md)), the [Woodworking Table](Woodworking_Table.md) (wood, bone, leather, fiber, with an axe) or the [Stonecutter](Stonecutter.md) (stone, ceramic, glass, crystal, with a [Sawblade](Sawblade.md)). Put stock in the cells first; the list then shows only the parts that stock can make. Fill the cells (the **cells** column below); the hammer, axe or saw loses a point. What comes out is one `Pickaxe Head`, whatever it's made of; the material rides on the item.
 
 | Part | Cells (the shape is only a picture) |
 | --- | --- |
@@ -46,7 +46,7 @@ The Crafting Table assembles the tools below except the crossbow. The Engineerin
 
 You can add:
 
-- A hafted tool may add a **binding** (leather, string or wire) where head meets haft for a stronger joint (its **wraps** axis, 1 to 3, sets how many turns), a **guard**, a **pommel**, a weight behind the hand (its **weight** axis, 1 to 3: the light knob up to the heavy counterweight). A heavier pommel behind the hand brings the head round faster. A **tip**'s **thickness** is an axis too. The wrap on each of these is a fixed standard leather that is never picked ([Composed Parts](Composed_Parts.md)).
+- A hafted tool needs a **binding** (leather, string or wire) where head meets haft: a head alone, or a head and a handle, does not assemble. The binding's **wraps** axis (1 to 3) sets how many turns, for a stronger joint. It may also add a **guard**, a **pommel**, a weight behind the hand (its **weight** axis, 1 to 3: the light knob up to the heavy counterweight). A heavier pommel behind the hand brings the head round faster. A **tip**'s **thickness** is an axis too. The wrap on each of these is a fixed standard leather that is never picked ([Composed Parts](Composed_Parts.md)).
 - A **tip** part, below.
 - Armor and shields can take a **grip** or **lining**.
 
