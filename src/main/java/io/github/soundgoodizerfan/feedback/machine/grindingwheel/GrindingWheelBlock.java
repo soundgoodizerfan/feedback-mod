@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.grindingwheel;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -64,7 +64,7 @@ public class GrindingWheelBlock extends Block implements EntityBlock, Rotatable 
     /** The wheel's cutting rating: the grit material's own hardness, or the stone wheel's flat figure. */
     public St gritHardness() {
         Material m = grit == null ? null : MaterialTable.get().materials().get(grit);
-        return m == null ? FTuning.GRINDING_WHEEL_HARDNESS : m.hardness();
+        return m == null ? MachineTuning.GRINDING_WHEEL_HARDNESS : m.hardness();
     }
 
     @Override

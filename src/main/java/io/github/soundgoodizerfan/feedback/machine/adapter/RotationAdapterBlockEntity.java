@@ -19,7 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.adapter;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
@@ -37,12 +37,12 @@ public class RotationAdapterBlockEntity extends RotationNode {
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.ROTATION_ADAPTER_DRAG_SU_PER_RPM;
+        return ElectricMachineTuning.ROTATION_ADAPTER_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.ROTATION_ADAPTER_INERTIA;
+        return ElectricMachineTuning.ROTATION_ADAPTER_INERTIA;
     }
 
     /**

@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.fitting.FittingTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.fitting.upgrade.RefractoryLiningFitting;
@@ -42,22 +43,22 @@ public class FittingGameTests {
         lining.addUpgrade(new RefractoryLiningFitting());
         helper.assertTrue(!lining.canAdd(new RefractoryLiningFitting()), "but only one");
         helper.assertTrue(lining.getThermalMass().workPerTu()
-                        == plain.getThermalMass().workPerTu() + FTuning.REFRACTORY_LINING_MASS.workPerTu(),
+                        == plain.getThermalMass().workPerTu() + FittingTuning.REFRACTORY_LINING_MASS.workPerTu(),
                 "the lining adds exactly its mass");
 
-        Tu equilibrium = Heat.equilibrium(lining, FIRE, FTuning.AMBIENT_TU);
+        Tu equilibrium = Heat.equilibrium(lining, FIRE, ThermalTuning.AMBIENT_TU);
         helper.assertTrue(equilibrium.value() < FIRE.value(), "equilibrium is under the flame");
 
         for (int i = 0; i < 200; i++) {
-            Heat.tick(plain, FIRE, FTuning.AMBIENT_TU, true);
-            Heat.tick(lining, FIRE, FTuning.AMBIENT_TU, true);
+            Heat.tick(plain, FIRE, ThermalTuning.AMBIENT_TU, true);
+            Heat.tick(lining, FIRE, ThermalTuning.AMBIENT_TU, true);
         }
         helper.assertTrue(lining.getTemperature().value() < plain.getTemperature().value(),
                 "after the same ticks the lined crucible is cooler -- it climbs slower");
 
         for (int i = 0; i < TICKS; i++) {
-            Heat.tick(plain, FIRE, FTuning.AMBIENT_TU, true);
-            Heat.tick(lining, FIRE, FTuning.AMBIENT_TU, true);
+            Heat.tick(plain, FIRE, ThermalTuning.AMBIENT_TU, true);
+            Heat.tick(lining, FIRE, ThermalTuning.AMBIENT_TU, true);
             helper.assertTrue(lining.getTemperature().value() < FIRE.value(),
                     "the lined crucible never reaches the flame, tick " + i);
         }

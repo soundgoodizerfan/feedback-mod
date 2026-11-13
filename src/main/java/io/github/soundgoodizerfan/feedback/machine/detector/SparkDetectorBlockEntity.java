@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.detector;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 
@@ -54,7 +54,7 @@ public abstract class SparkDetectorBlockEntity extends ElectricNode
 
         @Override
         public int getListenerRadius() {
-            return FTuning.SPARK_RANGE_BLOCKS;
+            return ElectricTuning.SPARK_RANGE_BLOCKS;
         }
 
         @Override

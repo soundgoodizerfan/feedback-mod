@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.reactor;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Radiation;
 import io.github.soundgoodizerfan.feedback.core.hazard.RadiationEmitter;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -33,20 +33,20 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
- * Where spent rods go to cool. A freshly discharged rod keeps making decay heat ({@link FTuning#REACTOR_SPENT_HEAT} work a tick, falling
+ * Where spent rods go to cool. A freshly discharged rod keeps making decay heat ({@link ReactorTuning#REACTOR_SPENT_HEAT} work a tick, falling
  * over days); the pool is a body of water that takes it. Over the boiling point the water boils away and the pool needs topping up. A
  * pool left dry heats the rods until they slump into slag. Water over the rods also shields them: a dry pool is a source of dose.
  */
 public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody, RadiationEmitter {
 
-    private final NonNullList<ItemStack> rods = NonNullList.withSize(FTuning.REACTOR_POOL_SLOTS, ItemStack.EMPTY);
-    private final FluidTank water = new FluidTank(FTuning.REACTOR_POOL_TANK_MB, s -> s.is(FluidTags.WATER)) {
+    private final NonNullList<ItemStack> rods = NonNullList.withSize(ReactorTuning.REACTOR_POOL_SLOTS, ItemStack.EMPTY);
+    private final FluidTank water = new FluidTank(ReactorTuning.REACTOR_POOL_TANK_MB, s -> s.is(FluidTags.WATER)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
         }
     };
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float boilAcc;
 
     public SpentFuelPoolBlockEntity(BlockPos pos, BlockState state) {
@@ -65,7 +65,7 @@ public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.REACTOR_POOL_MASS;
+        return ReactorTuning.REACTOR_POOL_MASS;
     }
 
     public FluidTank water() {
@@ -117,7 +117,7 @@ public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody
         if (!tag.contains("Discharged"))
             return 0f;
         long age = Math.max(0L, now - tag.getLong("Discharged"));
-        return FTuning.REACTOR_SPENT_HEAT * (float) Math.exp(-age / FTuning.REACTOR_SPENT_TAU_TICKS);
+        return ReactorTuning.REACTOR_SPENT_HEAT * (float) Math.exp(-age / ReactorTuning.REACTOR_SPENT_TAU_TICKS);
     }
 
     public void tickServer() {
@@ -134,7 +134,7 @@ public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody
         // Over the boiling point the water boils off: the heat it takes with it is what holds the pool there.
         var cut = ThermalProcessTable.get().boiling(new FluidStack(Fluids.WATER, 1)).orElse(null);
         if (cut != null && water.getFluidAmount() > 0 && temperature > cut.boil().value()) {
-            boilAcc += (temperature - cut.boil().value()) * FTuning.REACTOR_POOL_MASS.workPerTu() / cut.latent();
+            boilAcc += (temperature - cut.boil().value()) * ReactorTuning.REACTOR_POOL_MASS.workPerTu() / cut.latent();
             int mb = Math.min((int) boilAcc, water.getFluidAmount());
             if (mb > 0) {
                 water.drain(mb, IFluidHandler.FluidAction.EXECUTE);
@@ -142,7 +142,7 @@ public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody
                 Heat.warm(this, -mb * cut.latent());
             }
         }
-        if (count() > 0 && water.isEmpty() && temperature > FTuning.REACTOR_POOL_MELT_TU)
+        if (count() > 0 && water.isEmpty() && temperature > ReactorTuning.REACTOR_POOL_MELT_TU)
             slump();
         setChanged();
     }
@@ -153,7 +153,7 @@ public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody
             return;
         level.setBlock(worldPosition, FBlocks.CORE_SLAG.get().defaultBlockState(), 3);
         if (level.getBlockEntity(worldPosition) instanceof CoreSlagBlockEntity slag)
-            slag.stamp(FTuning.REACTOR_SLAG_RU, level.getGameTime());
+            slag.stamp(ReactorTuning.REACTOR_SLAG_RU, level.getGameTime());
     }
 
     @Override
@@ -161,8 +161,8 @@ public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody
         float dry = 0f;
         for (ItemStack r : rods)
             if (!r.isEmpty())
-                dry += FTuning.REACTOR_POOL_DRY_RU;
-        return water.isEmpty() ? dry : dry * FTuning.REACTOR_POOL_WET_SHARE;
+                dry += ReactorTuning.REACTOR_POOL_DRY_RU;
+        return water.isEmpty() ? dry : dry * ReactorTuning.REACTOR_POOL_WET_SHARE;
     }
 
     @Override
@@ -179,6 +179,6 @@ public class SpentFuelPoolBlockEntity extends BlockEntity implements ThermalBody
         rods.clear();
         ContainerHelper.loadAllItems(tag, rods, registries);
         water.readFromNBT(registries, tag.getCompound("Water"));
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
     }
 }

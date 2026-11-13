@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
@@ -51,10 +53,10 @@ public class ElectricServerData implements IServerDataProvider<BlockAccessor> {
             data.putByte(BAT, (byte) (battery.isSupplying() ? 2 : battery.getAmps() > 0f ? 1 : 0));
             data.putFloat(BAT_SOC, battery.stateOfCharge());
             data.putFloat(BAT_WATER, battery.water() / io.github.soundgoodizerfan.feedback.core.FTuning.BATTERY_WATER_TANK_MB);
-            data.putBoolean(BAT_VENT, battery.isVenting() || battery.gas() >= io.github.soundgoodizerfan.feedback.core.FTuning.BATTERY_GAS_WEEP_MB);
+            data.putBoolean(BAT_VENT, battery.isVenting() || battery.gas() >= io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning.BATTERY_GAS_WEEP_MB);
             data.putFloat(BAT_COND, battery.getCondition());
             data.putBoolean(BAT_READY, battery.ready());
-            data.putBoolean(BAT_UNDER, !battery.isSupplying() && battery.getVolts() > 0f && battery.getVolts() <= battery.terminalVolts() + io.github.soundgoodizerfan.feedback.core.FTuning.BATTERY_SWITCH_VOLTS);
+            data.putBoolean(BAT_UNDER, !battery.isSupplying() && battery.getVolts() > 0f && battery.getVolts() <= battery.terminalVolts() + io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning.BATTERY_SWITCH_VOLTS);
             data.putFloat(BAT_NEED, battery.terminalVolts());
         }
     }

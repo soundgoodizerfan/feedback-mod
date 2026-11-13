@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.Codec;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.Locale;
@@ -26,7 +25,7 @@ import java.util.Locale;
  * @param ease      how readily it breaks a brittle block: the momentum it needs is divided by this.
  * @param glance    how readily it glances off a block: the angle it turns at is multiplied by this.
  * @param wear      bore erosion, against a round nose's 1.
- * @param pelletMm  shot: pellet diameter (0 reads {@link FTuning#GUN_SHOT_PELLET_MM}).
+ * @param pelletMm  shot: pellet diameter (0 reads {@link GunTuning#GUN_SHOT_PELLET_MM}).
  * @param maxPellets shot: most pellets a shell throws.
  * @param spread    shot: width of the pattern, against a buckshot's 1.
  */
@@ -37,7 +36,7 @@ public enum BulletShape implements StringRepresentable {
     POINTED("pointed_bullet", false, 0.65f, 0.9f, 1.4f, 1f, 0.8f, 1.2f, 0, 1, 1f),
     HOLLOW_POINT("hollow_point_bullet", false, 1f, 1.45f, 0.55f, 0.8f, 1f, 1f, 0, 1, 1f),
     BIRDSHOT("birdshot", true, 1f, 1f, 1f, 1f, 1f, 0.5f, 2.5f, 24, 1.2f),
-    BUCKSHOT("nugget", true, 1f, 1f, 1f, 1f, 1f, 0.8f, 0, FTuning.GUN_SHOT_MAX_PELLETS, 1f),
+    BUCKSHOT("nugget", true, 1f, 1f, 1f, 1f, 1f, 0.8f, 0, GunTuning.GUN_SHOT_MAX_PELLETS, 1f),
     LARGE_SHOT("large_shot", true, 1f, 1f, 1f, 1f, 1f, 1f, 12f, 6, 0.8f),
     FLECHETTE("flechette", true, 0.7f, 0.9f, 1.5f, 1f, 0.5f, 1.2f, 3.5f, 16, 0.5f);
 
@@ -76,7 +75,7 @@ public enum BulletShape implements StringRepresentable {
 
     /** Pellet diameter, mm; a bullet shape has none. */
     public float pelletMm() {
-        return pelletMm > 0 ? pelletMm : FTuning.GUN_SHOT_PELLET_MM;
+        return pelletMm > 0 ? pelletMm : GunTuning.GUN_SHOT_PELLET_MM;
     }
 
     /** The shape a projectile form is, or empty if the form is no projectile's. */

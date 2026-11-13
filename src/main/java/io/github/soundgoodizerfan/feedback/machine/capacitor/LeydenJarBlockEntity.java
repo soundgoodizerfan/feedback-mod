@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.capacitor;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>Charge, and why it is not a unit</h2>
  * The jar holds {@code charge} in amp-ticks -- current times time, what has flowed in -- and its
- * voltage is charge over {@link FTuning#LEYDEN_JAR_CAPACITANCE}. Like {@code Work}, it is an
+ * voltage is charge over {@link ElectricMachineTuning#LEYDEN_JAR_CAPACITANCE}. Like {@code Work}, it is an
  * internal quantity the jar keeps and nothing else reads, so it gets no type: a reading of it is a
  * voltage, which the instruments already speak.
  *
@@ -61,7 +61,7 @@ public class LeydenJarBlockEntity extends ElectricNode {
     }
 
     private float capacitance() {
-        return figures.get("Capacitance", FTuning.LEYDEN_JAR_CAPACITANCE);
+        return figures.get("Capacitance", ElectricMachineTuning.LEYDEN_JAR_CAPACITANCE);
     }
 
     public LeydenJarBlockEntity(BlockPos pos, BlockState state) {
@@ -93,7 +93,7 @@ public class LeydenJarBlockEntity extends ElectricNode {
     @Override
     public float touchVolts() {
         float held = getStoredVolts();
-        return held >= FTuning.SHOCK_MIN_VOLTS ? held : 0f;
+        return held >= ElectricMachineTuning.SHOCK_MIN_VOLTS ? held : 0f;
     }
 
     public boolean isSupplying() {
@@ -112,14 +112,14 @@ public class LeydenJarBlockEntity extends ElectricNode {
 
     @Override
     public float sourceAmps() {
-        return supplying && charge > 0 ? figures.get("BurstAmps", FTuning.LEYDEN_JAR_BURST_AMPS) : 0;
+        return supplying && charge > 0 ? figures.get("BurstAmps", ElectricMachineTuning.LEYDEN_JAR_BURST_AMPS) : 0;
     }
 
     /** Charges only while what it sees is above what it holds; a full jar asks for nothing. */
     @Override
     public float wantedAmps() {
-        return !supplying && getVolts() > getStoredVolts() + FTuning.LEYDEN_JAR_SWITCH_VOLTS
-                ? FTuning.LEYDEN_JAR_CHARGE_AMPS : 0;
+        return !supplying && getVolts() > getStoredVolts() + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS
+                ? ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS : 0;
     }
 
     public void tickServer() {
@@ -131,14 +131,14 @@ public class LeydenJarBlockEntity extends ElectricNode {
         // Only while a source is on the line: a pulse that has ended must not read as a line at 0 V and empty the jar before it takes over.
         if (!supplying && getVolts() > 0f)
             charge = Math.min(charge, getVolts() * capacitance());
-        charge = Math.max(0, charge * (1 - figures.get("Leak", FTuning.LEYDEN_JAR_LEAK_PER_TICK)));
+        charge = Math.max(0, charge * (1 - figures.get("Leak", ElectricMachineTuning.LEYDEN_JAR_LEAK_PER_TICK)));
         if (charge != before)
             setChanged();
 
         float held = getStoredVolts();
         boolean flip = supplying
-                ? held <= FTuning.LEYDEN_JAR_SWITCH_VOLTS || isBlocked()
-                : held > FTuning.LEYDEN_JAR_SWITCH_VOLTS && getVolts() <= held + FTuning.LEYDEN_JAR_SWITCH_VOLTS;
+                ? held <= ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS || isBlocked()
+                : held > ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS && getVolts() <= held + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS;
         if (flip) {
             supplying = !supplying;
             setChanged();

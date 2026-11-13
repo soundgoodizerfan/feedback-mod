@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.turbine;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
@@ -28,7 +29,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * material with a flame temperature, and its output follows {@code spool}: zero from cold, rising
  * while fuel burns, falling slowly when it does not (a long coast). It cannot start itself: spool
  * only climbs from rest while something else on the network is already turning it past {@link
- * FTuning#TURBINE_STARTER_RPM} (a starter motor, a hand crank), after which it sustains itself.
+ * PetrochemTuning#TURBINE_STARTER_RPM} (a starter motor, a hand crank), after which it sustains itself.
  * A hotter fuel gives more per mB.
  * The blades are an item stamped with a material; a flame hotter than its service temperature wears them
  * (condition falls to a floor, output with it). A flameout with fuel still coming floods the burner.
@@ -36,7 +37,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  */
 public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
 
-    private final HeatedTank fuel = new HeatedTank(FTuning.TURBINE_TANK_MB, this::setChanged);
+    private final HeatedTank fuel = new HeatedTank(PetrochemTuning.TURBINE_TANK_MB, this::setChanged);
     private float spool;
     private float owed;
     private float power;
@@ -103,12 +104,12 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
 
     @Override
     public Rpm getGeneratedRpm() {
-        return spool > 0f ? new Rpm(FTuning.TURBINE_RPM.value() * spool) : ZERO_RPM;
+        return spool > 0f ? new Rpm(PetrochemTuning.TURBINE_RPM.value() * spool) : ZERO_RPM;
     }
 
     @Override
     public Su getCapacitySu() {
-        return spool > 0f ? new Su(FTuning.TURBINE_SU.value() * spool * power * bladeCondition()) : NO_SU;
+        return spool > 0f ? new Su(PetrochemTuning.TURBINE_SU.value() * spool * power * bladeCondition()) : NO_SU;
     }
 
     public void tickServer() {
@@ -116,15 +117,15 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
             return;
         pull();
         float flame = fuel.isEmpty() ? 0f : flameOf(fuel.getFluid());
-        boolean sustained = spool >= FTuning.TURBINE_SELF_SUSTAIN || Math.abs(getRpm().value()) >= FTuning.TURBINE_STARTER_RPM;
+        boolean sustained = spool >= PetrochemTuning.TURBINE_SELF_SUSTAIN || Math.abs(getRpm().value()) >= PetrochemTuning.TURBINE_STARTER_RPM;
         // No blades is a physical impossibility, not a refusal: nothing for the gas to push.
         boolean burning = flame > 0f && hasBlades() && sustained && flooded <= 0f;
         float before = spool;
         if (flame > 0f && spool > 0f && !sustained) {
             // Flamed out with fuel still coming: it floods the burner, and unburnt gas is a vapour source.
-            flooded = Math.min(FTuning.TURBINE_FLOOD_CAP, flooded + FTuning.TURBINE_FLOOD_PER_TICK);
+            flooded = Math.min(PetrochemTuning.TURBINE_FLOOD_CAP, flooded + PetrochemTuning.TURBINE_FLOOD_PER_TICK);
         } else if (fuel.isEmpty()) {
-            flooded = Math.max(0f, flooded - FTuning.TURBINE_FLOOD_CLEAR_PER_TICK);
+            flooded = Math.max(0f, flooded - PetrochemTuning.TURBINE_FLOOD_CLEAR_PER_TICK);
         }
         if (flooded > 0f && level instanceof net.minecraft.server.level.ServerLevel server)
             io.github.soundgoodizerfan.feedback.core.hazard.Vapour.source(server, worldPosition, 1f, 20, 0, false);
@@ -136,30 +137,30 @@ public class GasTurbineBlockEntity extends RotationNode implements HeatedTanks {
             if (blade != null && hasBlades()) {
                 // Held against what the material takes at this speed and this heat; over it the blades wear.
                 float rpm = Math.abs(getRpm().value());
-                float stress = blade.density().muPerMb() * rpm * rpm * FTuning.TURBINE_STRESS_PER_DENSITY_RPM2;
+                float stress = blade.density().muPerMb() * rpm * rpm * PetrochemTuning.TURBINE_STRESS_PER_DENSITY_RPM2;
                 float yield = blade.mechanical().yieldStrength().map(st -> st.value()).orElse(0f) * derate;
                 if (stress > yield) {
                     blades.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TOOL_CONDITION.get(), Math.max(
-                            FTuning.TURBINE_BLADE_CONDITION_FLOOR, bladeCondition() - FTuning.TURBINE_BLADE_WEAR_PER_TICK
+                            PetrochemTuning.TURBINE_BLADE_CONDITION_FLOOR, bladeCondition() - PetrochemTuning.TURBINE_BLADE_WEAR_PER_TICK
                                     * (stress - yield) / Math.max(1f, stress)));
                     setChanged();
                 }
             }
             if (flame > service && hasBlades()) {
                 blades.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.TOOL_CONDITION.get(), Math.max(
-                        FTuning.TURBINE_BLADE_CONDITION_FLOOR, bladeCondition() - FTuning.TURBINE_BLADE_WEAR_PER_TICK
+                        PetrochemTuning.TURBINE_BLADE_CONDITION_FLOOR, bladeCondition() - PetrochemTuning.TURBINE_BLADE_WEAR_PER_TICK
                                 * (flame - service) / Math.max(1f, service)));
                 setChanged();
             }
             power = flame / FTuning.ENGINE_REFERENCE_FLAME_TU;
-            spool = Math.min(1f, spool + FTuning.TURBINE_SPOOL_UP_PER_TICK);
-            owed += FTuning.TURBINE_FUEL_MB_PER_TICK * Math.max(spool, 0.1f) / power;
+            spool = Math.min(1f, spool + PetrochemTuning.TURBINE_SPOOL_UP_PER_TICK);
+            owed += PetrochemTuning.TURBINE_FUEL_MB_PER_TICK * Math.max(spool, 0.1f) / power;
             int drawn = (int) owed;
             owed -= drawn;
             if (drawn > 0)
                 fuel.drain(drawn, IFluidHandler.FluidAction.EXECUTE);
         } else {
-            spool = Math.max(0f, spool - FTuning.TURBINE_COAST_PER_TICK);
+            spool = Math.max(0f, spool - PetrochemTuning.TURBINE_COAST_PER_TICK);
         }
         // A band, not a continuous figure: a source is only re-read on a rebuild, which must stay rare.
         if (Math.round(before * 10) != Math.round(spool * 10) || (before > 0f) != (spool > 0f))

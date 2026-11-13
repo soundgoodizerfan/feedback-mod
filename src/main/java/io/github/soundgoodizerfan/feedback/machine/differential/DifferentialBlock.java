@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.differential;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationMember;
@@ -43,7 +43,7 @@ import java.util.List;
  * ({@link RotationSplit}) so that the two axles' speeds average the input's, and the load decides how
  * the speed is shared. An open differential gives the speed to the axle that resists least (a wheel in
  * the air spins, the one with grip stands still); a limited-slip one lets the shares differ by no more than
- * {@link FTuning#DIFFERENTIAL_SLIP_LIMIT}; a locked one is a solid axle. Which of the three is the
+ * {@link MachineTuning#DIFFERENTIAL_SLIP_LIMIT}; a locked one is a solid axle. Which of the three is the
  * block's {@link #MODE}, cycled by a sneak-click: a named choice, not a dial.
  */
 public class DifferentialBlock extends Block implements EntityBlock, MicroRotation {
@@ -77,12 +77,12 @@ public class DifferentialBlock extends Block implements EntityBlock, MicroRotati
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.GEARBOX_DRAG_SU_PER_RPM;
+        return MachineTuning.GEARBOX_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.GEARBOX_INERTIA;
+        return MachineTuning.GEARBOX_INERTIA;
     }
 
     @Override
@@ -124,8 +124,8 @@ public class DifferentialBlock extends Block implements EntityBlock, MicroRotati
             // The axle that resists more gives up speed to the one that resists less.
             want = (lb - la) / (la + lb);
         if (mode == 1)
-            want = Math.max(-FTuning.DIFFERENTIAL_SLIP_LIMIT, Math.min(FTuning.DIFFERENTIAL_SLIP_LIMIT, want));
-        share += (want - share) * FTuning.DIFFERENTIAL_SHARE_RATE;
+            want = Math.max(-MachineTuning.DIFFERENTIAL_SLIP_LIMIT, Math.min(MachineTuning.DIFFERENTIAL_SLIP_LIMIT, want));
+        share += (want - share) * MachineTuning.DIFFERENTIAL_SHARE_RATE;
         float rpm = self.getRpm().value();
         List<RotationMember> outs = new ArrayList<>(2);
         float[] wants = new float[2];

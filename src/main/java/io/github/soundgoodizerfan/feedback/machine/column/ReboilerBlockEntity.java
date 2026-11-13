@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.column;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Vapour;
 import io.github.soundgoodizerfan.feedback.core.multiblock.Multiblocks;
 import io.github.soundgoodizerfan.feedback.core.multiblock.Part;
@@ -56,7 +57,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * rises with it, so every cut moves heavier: cut drift falls out of the profile, nothing is scripted.
  * The machine names no crude and no product: cuts are the phase-change rows that carry a {@code
  * light_share}, their boiling points and products come from those rows, and the feed's grade sets how
- * much each holds. Coke on the trays comes from running a tray over {@link FTuning#COLUMN_COKE_TU}.
+ * much each holds. Coke on the trays comes from running a tray over {@link PetrochemTuning#COLUMN_COKE_TU}.
  * shortcut: the grade's light fraction falls as lights are drawn off, but the heavy bottoms stay
  * liquid in the reboiler (cracking them to coke and gas is a reaction-table row, not built).
  * Reflux (none, partial, total; empty hand on the block) trades boil-up for sharper cuts.
@@ -66,8 +67,8 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
     /** The valve on the return line: how much of the condensed liquid is sent back down (spec 6.4). */
     public enum Reflux {
-        NONE(1f, 0f), PARTIAL(FTuning.REFLUX_PARTIAL_THROUGHPUT, FTuning.REFLUX_PARTIAL_SHARPEN),
-        TOTAL(FTuning.REFLUX_TOTAL_THROUGHPUT, FTuning.REFLUX_TOTAL_SHARPEN);
+        NONE(1f, 0f), PARTIAL(PetrochemTuning.REFLUX_PARTIAL_THROUGHPUT, PetrochemTuning.REFLUX_PARTIAL_SHARPEN),
+        TOTAL(PetrochemTuning.REFLUX_TOTAL_THROUGHPUT, PetrochemTuning.REFLUX_TOTAL_SHARPEN);
 
         public final float throughput, sharpen;
 
@@ -94,7 +95,7 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
     @Nullable
     private Structure structure;
-    private final HeatedTank feed = new HeatedTank(FTuning.REBOILER_FEED_TANK_MB, this::setChanged);
+    private final HeatedTank feed = new HeatedTank(PetrochemTuning.REBOILER_FEED_TANK_MB, this::setChanged);
     private final float[] owed = new float[8];
 
     /** What the reboiler's face shows a pipe: crude in, and steam to clear the trays; out only the spent bottoms. */
@@ -123,10 +124,10 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         public int fill(FluidStack resource, FluidAction action) {
             if (!resource.is(FTags.STEAM))
                 return feed.fill(resource, action);
-            if (temperature < FTuning.COLUMN_COKE_TU && action.execute() && structure != null)
+            if (temperature < PetrochemTuning.COLUMN_COKE_TU && action.execute() && structure != null)
                 for (Part p : structure.parts(ColumnStructure.TRAY))
                     if (p instanceof TrayBlockEntity tray)
-                        tray.decoke(resource.getAmount() * FTuning.COLUMN_DECOKE_PER_MB);
+                        tray.decoke(resource.getAmount() * PetrochemTuning.COLUMN_DECOKE_PER_MB);
             return resource.getAmount();
         }
 
@@ -143,7 +144,7 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
     /** Whether the feed has nothing left to boil (its light fraction is drawn off): the bottoms may then be drained, which is how a column is emptied of its pomace or heavy residue. */
     private boolean spent() {
-        return !feed.isEmpty() && CrudeGrade.of(feed.getFluid()).lightFraction() < FTuning.COLUMN_SPENT_LIGHTS;
+        return !feed.isEmpty() && CrudeGrade.of(feed.getFluid()).lightFraction() < PetrochemTuning.COLUMN_SPENT_LIGHTS;
     }
 
     public ReboilerBlockEntity(BlockPos pos, BlockState state) {
@@ -178,12 +179,12 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.REBOILER_MASS;
+        return PetrochemTuning.REBOILER_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.BOILER_LEAK;
+        return MachineTuning.BOILER_LEAK;
     }
 
     public void tickServer() {
@@ -248,14 +249,14 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
             PhaseChange cut = cuts.get(c);
             if (temperature < cut.boil().value() || lights <= 0f || feed.isEmpty())
                 continue;
-            float want = feed.getFluidAmount() * lights * cut.lightShare().get() * FTuning.COLUMN_BOIL_PER_TICK * reflux.throughput + owed[c];
+            float want = feed.getFluidAmount() * lights * cut.lightShare().get() * PetrochemTuning.COLUMN_BOIL_PER_TICK * reflux.throughput + owed[c];
             int boiled = Math.min((int) want, feed.getFluidAmount());
             owed[c] = want - (int) want;
             if (boiled <= 0)
                 continue;
             int before = feed.getFluidAmount();
             feed.drain(boiled, IFluidHandler.FluidAction.EXECUTE);
-            temperature -= boiled * cut.latent() / FTuning.REBOILER_MASS.workPerTu();
+            temperature -= boiled * cut.latent() / PetrochemTuning.REBOILER_MASS.workPerTu();
             int left = rise(trays, t, cut, boiled);
             if (left > 0)
                 overhead(server, trays, cut, left, temperature);
@@ -346,7 +347,7 @@ public class ReboilerBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         reflux = Reflux.values()[Math.floorMod(tag.getInt("Reflux"), Reflux.values().length)];
         if (tag.contains("Feed"))
             feed.readFromNBT(registries, tag.getCompound("Feed"));

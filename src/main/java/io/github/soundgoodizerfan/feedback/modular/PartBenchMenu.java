@@ -12,7 +12,6 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.CrankLinkageBlockEntity;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.FoodCut;
@@ -861,7 +860,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
         if (f == null || what.isEmpty() || f.get(ModularFigures.Fig.HARDNESS) <= 0)
             return 1;
         float ratio = what.get().material().hardness().value() / f.get(ModularFigures.Fig.HARDNESS);
-        return Math.max(1, Math.min(io.github.soundgoodizerfan.feedback.core.FTuning.SAW_MAX_WEAR, Math.round(ratio)));
+        return Math.max(1, Math.min(io.github.soundgoodizerfan.feedback.modular.ModularTuning.SAW_MAX_WEAR, Math.round(ratio)));
     }
 
     // --- adding to a dish container, taking one off -------------------------------------------------
@@ -1187,12 +1186,12 @@ public class PartBenchMenu extends AbstractContainerMenu {
         Level level = server.level();
         if (begun != kind || !preparable(level, kind) || work().getItem() != prepItem)
             return false;
-        long elapsed = level.getGameTime() - prepStart + FTuning.PREP_SLACK_TICKS;
+        long elapsed = level.getGameTime() - prepStart + ModularTuning.PREP_SLACK_TICKS;
         Component said;
         if (kind == 0) {
             ItemStack done = work().copy();
             Cooking.Entry entry = Cooking.find(level, work()).get();
-            if (!PrepWork.valid(marks) || (long) marks.size() * FTuning.CUT_TICKS_PER_MARK > elapsed)
+            if (!PrepWork.valid(marks) || (long) marks.size() * ModularTuning.CUT_TICKS_PER_MARK > elapsed)
                 return false;
             int[] landed = marks.stream().mapToInt(m -> PrepWork.land(m, entry.food(), PrepWork.Edge.of(hammer()))).toArray();
             FoodCut cut = PrepWork.cut(landed, landed.length);
@@ -1208,7 +1207,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
         } else if (kind == 2) {
             // The press samples (0..100, one per KNEAD_STEP_TICKS) cannot outnumber the ticks that have passed.
             Optional<Cooking.Entry> entry = Cooking.find(level, work());
-            if (entry.isEmpty() || !Kneading.valid(marks) || (long) (marks.size() * FTuning.KNEAD_STEP_TICKS * FTuning.KNEAD_TIME_SHARE) > elapsed)
+            if (entry.isEmpty() || !Kneading.valid(marks) || (long) (marks.size() * ModularTuning.KNEAD_STEP_TICKS * ModularTuning.KNEAD_TIME_SHARE) > elapsed)
                 return false;
             int grade = Kneading.grade(entry.get().food(), marks);
             ItemStack done = work().copy();
@@ -1228,15 +1227,15 @@ public class PartBenchMenu extends AbstractContainerMenu {
             int mode = PrepWork.mode(what.get().material());
             float strength;
             if (mode == PrepWork.PLACE) {
-                if (marks.isEmpty() || !PrepWork.validPlaced(marks) || (long) marks.size() * FTuning.CUT_TICKS_PER_MARK > elapsed)
+                if (marks.isEmpty() || !PrepWork.validPlaced(marks) || (long) marks.size() * ModularTuning.CUT_TICKS_PER_MARK > elapsed)
                     return false;
                 strength = PrepWork.placed(marks);
             } else if (mode == PrepWork.SHAKE) {
-                if (heldTicks <= 0 || heldTicks > FTuning.SHAKE_MAX_STROKES || (long) heldTicks * FTuning.SHAKE_TICKS_PER_STROKE > elapsed)
+                if (heldTicks <= 0 || heldTicks > ModularTuning.SHAKE_MAX_STROKES || (long) heldTicks * ModularTuning.SHAKE_TICKS_PER_STROKE > elapsed)
                     return false;
                 strength = PrepWork.shaken(heldTicks);
             } else {
-                if (heldTicks <= 0 || heldTicks > FTuning.POUR_MAX_TICKS || heldTicks > elapsed)
+                if (heldTicks <= 0 || heldTicks > ModularTuning.POUR_MAX_TICKS || heldTicks > elapsed)
                     return false;
                 strength = PrepWork.strength(PrepWork.poured(heldTicks, PrepWork.flow(what.get().material())));
             }
@@ -1459,9 +1458,9 @@ public class PartBenchMenu extends AbstractContainerMenu {
         Shingling clock = new Shingling(played);
         int hotTicks = 0;
         for (int t = 0; t <= end; t++)
-            if (clock.temperature(t) > FTuning.SHINGLE_SCALE_TU)
+            if (clock.temperature(t) > ModularTuning.SHINGLE_SCALE_TU)
                 hotTicks++;
-        boolean burnt = hotTicks >= FTuning.SHINGLE_BURN_TICKS || scale >= FTuning.SHINGLE_SCALE_LIMIT;
+        boolean burnt = hotTicks >= ModularTuning.SHINGLE_BURN_TICKS || scale >= ModularTuning.SHINGLE_SCALE_LIMIT;
         if (burnt) {
             main = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FItems.BURNT_IRON.get());
         } else if (result.done() && iron != null) {

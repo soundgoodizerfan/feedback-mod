@@ -3,6 +3,9 @@
 package io.github.soundgoodizerfan.feedback.machine.mixer;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
@@ -49,7 +52,7 @@ import java.util.Optional;
  * A drum of loose powders, turned by the shaft (guns spec 13.4b). The Reloading Press seats the
  * ratio it is given; this is what makes a ratio a blend.
  *
- * <p>Uniformity climbs with turns until {@link FTuning#MIXER_BLEND_TURNS}. Draw the batch early and
+ * <p>Uniformity climbs with turns until {@link MachineTuning#MIXER_BLEND_TURNS}. Draw the batch early and
  * only the uniform share of it is usable (lumps and dead pockets do not burn): {@link #draw} keeps
  * that share of every component and the rest is lost, so a failed batch consumes its inputs.
  *
@@ -89,7 +92,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
     /** Water in the drum, mB: the medium a turning drum washes ore in (gravity separation, {@link OreLadder}); not a mixture part. */
     private int water;
     /** Body temperature, Tu; primitive field wrapped at the accessor. */
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private final Catchup offline = new Catchup();
 
     public MixerBlockEntity(BlockPos pos, BlockState state) {
@@ -99,7 +102,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
 
     @Override
     public Su getLoadSu() {
-        return FTuning.MIXER_LOAD_SU;
+        return MachineTuning.MIXER_LOAD_SU;
     }
 
     @Override
@@ -114,12 +117,12 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.MIXER_MASS;
+        return MachineTuning.MIXER_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.MIXER_LEAK;
+        return MachineTuning.MIXER_LEAK;
     }
 
     /** What the load actually sits at: the drum's body plus friction heat. */
@@ -237,15 +240,15 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
 
     /** Whether the drum has turned past the blend point and is grinding the finished mix. */
     public boolean overmixed() {
-        return turns > FTuning.MIXER_BLEND_TURNS;
+        return turns > MachineTuning.MIXER_BLEND_TURNS;
     }
 
     /** Fraction of the load that is uniformly mixed now. */
     public float uniformity() {
-        if (turns <= FTuning.MIXER_BLEND_TURNS)
-            return turns / FTuning.MIXER_BLEND_TURNS;
-        float over = (turns - FTuning.MIXER_BLEND_TURNS) / FTuning.MIXER_SEGREGATE_TURNS;
-        return Math.max(FTuning.MIXER_UNIFORMITY_FLOOR, 1f - over * (1f - FTuning.MIXER_UNIFORMITY_FLOOR));
+        if (turns <= MachineTuning.MIXER_BLEND_TURNS)
+            return turns / MachineTuning.MIXER_BLEND_TURNS;
+        float over = (turns - MachineTuning.MIXER_BLEND_TURNS) / MachineTuning.MIXER_SEGREGATE_TURNS;
+        return Math.max(MachineTuning.MIXER_UNIFORMITY_FLOOR, 1f - over * (1f - MachineTuning.MIXER_UNIFORMITY_FLOOR));
     }
 
     public boolean isEmpty() {
@@ -347,12 +350,12 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         if (isEmpty())
             return;
         float rpm = Math.abs(getRpm().value());
-        if (rpm <= FTuning.STOPPED_RPM_THRESHOLD.value())
+        if (rpm <= RotationTuning.STOPPED_RPM_THRESHOLD.value())
             return;
-        float revs = rpm * FTuning.STROKES_PER_RPM_PER_TICK;
+        float revs = rpm * MachineTuning.STROKES_PER_RPM_PER_TICK;
         turns += revs;
-        if (turns > FTuning.MIXER_BLEND_TURNS)
-            heat += revs * FTuning.MIXER_FRICTION_TU;
+        if (turns > MachineTuning.MIXER_BLEND_TURNS)
+            heat += revs * MachineTuning.MIXER_FRICTION_TU;
         setChanged();
         Optional<Cartridge.Blend> blend = Cartridge.Blend.of(MaterialTable.get().materials(), contents);
         if (blend.isPresent() && trueTemperature().value() >= blend.get().ignitionTu())
@@ -365,7 +368,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
      * its tailings, spilling over the rim; the rest stays in the slot to go round again. Nothing is lost on a miss.
      */
     private void wash(ItemStack in, ServerLevel server) {
-        if (Math.abs(getRpm().value()) <= FTuning.STOPPED_RPM_THRESHOLD.value() || server.getGameTime() % OreLadder.WASH_INTERVAL_TICKS != 0)
+        if (Math.abs(getRpm().value()) <= RotationTuning.STOPPED_RPM_THRESHOLD.value() || server.getGameTime() % OreLadder.WASH_INTERVAL_TICKS != 0)
             return;
         OreLadder.attempt(in, OreLadder.Mode.GRAVITY, server.random).ifPresent(split -> {
             in.shrink(1);
@@ -542,7 +545,7 @@ public class MixerBlockEntity extends RotationNode implements MenuProvider, Ther
         water = tag.getInt("Water");
         turns = tag.getFloat("Turns");
         heat = tag.getFloat("Heat");
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         offline.load(tag);
     }
 }

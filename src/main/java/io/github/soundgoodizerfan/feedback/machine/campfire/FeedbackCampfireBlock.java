@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.campfire;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
@@ -43,7 +44,7 @@ public class FeedbackCampfireBlock extends CampfireBlock {
 
     /** The flame's temperature while lit. */
     public Tu flame() {
-        return soul ? FTuning.FIRE_TU_SOUL_CAMPFIRE : FTuning.FIRE_TU_CAMPFIRE;
+        return soul ? VesselTuning.FIRE_TU_SOUL_CAMPFIRE : FTuning.FIRE_TU_CAMPFIRE;
     }
 
     @Override

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.engineer;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -106,7 +106,7 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
 
     @Override
     public float wantedAmps() {
-        return working() ? FTuning.ENGINEER_AMPS : 0f;
+        return working() ? MachineTuning.ENGINEER_AMPS : 0f;
     }
 
     @Override
@@ -137,9 +137,9 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
             return;
         wait = 0;
         progress += rate * condition;
-        if (progress < FTuning.ENGINEER_TICKS_PER_ASSEMBLY)
+        if (progress < MachineTuning.ENGINEER_TICKS_PER_ASSEMBLY)
             return;
-        progress -= FTuning.ENGINEER_TICKS_PER_ASSEMBLY;
+        progress -= MachineTuning.ENGINEER_TICKS_PER_ASSEMBLY;
         dirty = false;
         blocked = false;
         work(server);
@@ -149,14 +149,14 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
 
     private void work(ServerLevel server) {
         if (over > 0f)
-            wear(over * FTuning.ENGINEER_OVERVOLT_WEAR_UNITS);
+            wear(over * MachineTuning.ENGINEER_OVERVOLT_WEAR_UNITS);
         Map<ResourceLocation, Material> materials = ClientMaterials.on(server);
         // Stock harder than the machine takes is spoiled, and the force goes into the machine.
         for (int i = 0; i < BAY; i++) {
             ItemStack s = bay.get(i);
             Optional<Material.Located> found = s.isEmpty() ? Optional.empty() : Material.find(materials, s);
-            if (found.isPresent() && found.get().material().hardness().value() > FTuning.ENGINEER_STOCK_HARDNESS) {
-                wear(found.get().material().hardness().value() / FTuning.ENGINEER_STOCK_HARDNESS);
+            if (found.isPresent() && found.get().material().hardness().value() > MachineTuning.ENGINEER_STOCK_HARDNESS) {
+                wear(found.get().material().hardness().value() / MachineTuning.ENGINEER_STOCK_HARDNESS);
                 scrap(server, i, found);
                 return;
             }
@@ -283,7 +283,7 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
         int items = in.getCount();
         if (found.isPresent()) {
             Optional<net.minecraft.world.item.Item> nugget = found.get().material().item(found.get().id(), "nugget");
-            int per = Math.round(FormItems.volume(found.get().form()) / (float) FormItems.volume("nugget") * FTuning.ENGINEER_SCRAP_YIELD);
+            int per = Math.round(FormItems.volume(found.get().form()) / (float) FormItems.volume("nugget") * MachineTuning.ENGINEER_SCRAP_YIELD);
             if (nugget.isPresent() && per > 0) {
                 items = Math.max(1, Math.min(in.getCount(), nugget.get().getDefaultMaxStackSize() / per));
                 nuggets = new ItemStack(nugget.get(), per * items);
@@ -322,7 +322,7 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
     /** Waits on a tool, a fastener or a full output; a full output wears the machine once per blocked episode, not per retry. */
     private void block(boolean fullOutput) {
         blocked = true;
-        progress = FTuning.ENGINEER_TICKS_PER_ASSEMBLY;
+        progress = MachineTuning.ENGINEER_TICKS_PER_ASSEMBLY;
         if (fullOutput && !wore) {
             wore = true;
             wear(1f);
@@ -330,7 +330,7 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
     }
 
     private void wear(float units) {
-        condition = Math.max(FTuning.ENGINEER_CONDITION_FLOOR, condition - units * FTuning.ENGINEER_WEAR_PER_MISUSE);
+        condition = Math.max(MachineTuning.ENGINEER_CONDITION_FLOOR, condition - units * MachineTuning.ENGINEER_WEAR_PER_MISUSE);
         setChanged();
         if (level != null && !level.isClientSide)
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -404,7 +404,7 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
         ItemStack held = bay.get(slot);
         if (stack.isEmpty() || !held.isEmpty() && !ItemStack.isSameItemSameComponents(held, stack))
             return stack;
-        int room = Math.min(FTuning.CUTTER_INPUT_LIMIT, stack.getMaxStackSize()) - held.getCount();
+        int room = Math.min(MachineTuning.CUTTER_INPUT_LIMIT, stack.getMaxStackSize()) - held.getCount();
         int moved = Math.min(room, stack.getCount());
         if (moved <= 0)
             return stack;

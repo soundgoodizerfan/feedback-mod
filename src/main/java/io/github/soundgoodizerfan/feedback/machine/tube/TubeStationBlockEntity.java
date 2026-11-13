@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.tube;
 
+import io.github.soundgoodizerfan.feedback.core.tube.TubeTuning;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.tube.Capsule;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Band;
 import io.github.soundgoodizerfan.feedback.logistics.sort.Detector;
@@ -165,7 +165,7 @@ public class TubeStationBlockEntity extends BlockEntity {
     }
 
     public int maxStages() {
-        return multiStage() ? FTuning.SORT_STATION_STAGES : 1;
+        return multiStage() ? TubeTuning.SORT_STATION_STAGES : 1;
     }
 
     public List<Band> rules() {
@@ -227,9 +227,9 @@ public class TubeStationBlockEntity extends BlockEntity {
     /** The load time of a stage: a weigher is slowest, so a line is as slow as its slowest stage, not as long as its count. */
     private int stageTicks(Band b) {
         return switch (detector(b.property())) {
-            case WEIGHER -> FTuning.SORT_STAGE_TICKS_WEIGHER;
-            case OPTICAL -> FTuning.SORT_STAGE_TICKS_OPTICAL;
-            default -> FTuning.SORT_STAGE_TICKS_MAGNETIC;
+            case WEIGHER -> TubeTuning.SORT_STAGE_TICKS_WEIGHER;
+            case OPTICAL -> TubeTuning.SORT_STAGE_TICKS_OPTICAL;
+            default -> TubeTuning.SORT_STAGE_TICKS_MAGNETIC;
         };
     }
 
@@ -294,12 +294,12 @@ public class TubeStationBlockEntity extends BlockEntity {
             any |= !slots[i].isEmpty();
             full &= !slots[i].isEmpty();
         }
-        if (!any || !(full || now - lastInsert >= FTuning.STATION_LOAD_IDLE_TICKS))
+        if (!any || !(full || now - lastInsert >= TubeTuning.STATION_LOAD_IDLE_TICKS))
             return;
         // Group the first unit's address: every buffered unit that reads the same goes in one capsule.
         Optional<DyeColor> to = Optional.empty();
         boolean first = true;
-        List<ItemStack> load = new ArrayList<>(FTuning.CARRIER_SLOTS);
+        List<ItemStack> load = new ArrayList<>(TubeTuning.CARRIER_SLOTS);
         for (int i = IN; i < OUT; i++) {
             if (slots[i].isEmpty())
                 continue;
@@ -321,7 +321,7 @@ public class TubeStationBlockEntity extends BlockEntity {
             for (int i = IN; i < OUT; i++)
                 if (load.contains(slots[i]))
                     slots[i] = ItemStack.EMPTY;
-            int slowest = FTuning.SORT_STAGE_TICKS_MAGNETIC;
+            int slowest = TubeTuning.SORT_STAGE_TICKS_MAGNETIC;
             for (Band b : rules)
                 slowest = Math.max(slowest, stageTicks(b));
             nextLoadAt = now + slowest;
@@ -357,7 +357,7 @@ public class TubeStationBlockEntity extends BlockEntity {
         if (!merge(slot, carrier, true).isEmpty())
             return false;
         merge(slot, carrier, false);
-        for (int i = 0; i < FTuning.CARRIER_SLOTS; i++)
+        for (int i = 0; i < TubeTuning.CARRIER_SLOTS; i++)
             slots[OUT + i] = load.get(i);
         if (c.rider != null && level instanceof net.minecraft.server.level.ServerLevel sl) {
             ServerPlayer p = sl.getServer().getPlayerList().getPlayer(c.rider);

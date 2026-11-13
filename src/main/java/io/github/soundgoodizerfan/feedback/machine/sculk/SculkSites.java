@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.sculk;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.xp.XpNetwork;
 import io.github.soundgoodizerfan.feedback.core.xp.XpNetworks;
 
@@ -68,7 +68,7 @@ public final class SculkSites {
         Sites s = PER_LEVEL.get(level);
         if (s == null || s.relays.size() < 2)
             return List.of();
-        double r2 = FTuning.RELAY_RANGE * FTuning.RELAY_RANGE;
+        double r2 = ElectricMachineTuning.RELAY_RANGE * ElectricMachineTuning.RELAY_RANGE;
         List<SculkRelayBlockEntity> out = new ArrayList<>(2);
         for (BlockPos p : s.relays)
             if (!p.equals(self) && p.distSqr(self) <= r2 && level.isLoaded(p)
@@ -87,7 +87,7 @@ public final class SculkSites {
         Sites s = PER_LEVEL.get(level);
         if (s == null || s.taps.isEmpty() || points <= 0)
             return 0;
-        double r2 = FTuning.TAP_RADIUS * FTuning.TAP_RADIUS;
+        double r2 = ElectricMachineTuning.TAP_RADIUS * ElectricMachineTuning.TAP_RADIUS;
         int left = points;
         for (BlockPos p : s.taps) {
             if (left <= 0)
@@ -110,7 +110,7 @@ public final class SculkSites {
         Sites s = PER_LEVEL.get(level);
         if (s == null || s.taps.isEmpty())
             return;
-        double r2 = FTuning.TAP_RADIUS * FTuning.TAP_RADIUS;
+        double r2 = ElectricMachineTuning.TAP_RADIUS * ElectricMachineTuning.TAP_RADIUS;
         int left = event.getDroppedExperience();
         for (BlockPos p : s.taps) {
             if (left <= 0)

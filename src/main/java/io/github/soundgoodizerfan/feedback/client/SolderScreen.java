@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.item.ItemTuning;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.SolderFinishPayload;
 import io.github.soundgoodizerfan.feedback.process.Board;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -181,7 +181,7 @@ public class SolderScreen extends Screen {
         for (int p = 0; p < pads; p++)
             if (dwell[p] > 0) {
                 ps.add(p);
-                ds.add(Math.min(dwell[p], FTuning.SOLDER_PAD_MAX_DWELL_TICKS));
+                ds.add(Math.min(dwell[p], ItemTuning.SOLDER_PAD_MAX_DWELL_TICKS));
                 os.add(offset[p]);
             }
         PacketDistributor.sendToServer(new SolderFinishPayload(ps, ds, os, held));

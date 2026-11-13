@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.gastank;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.fluid.FluidTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.fluid.FluidNetwork;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
@@ -29,7 +31,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  */
 public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
 
-    private final HeatedTank gas = new HeatedTank(FTuning.GAS_TANK_MB, this::setChanged);
+    private final HeatedTank gas = new HeatedTank(PetrochemTuning.GAS_TANK_MB, this::setChanged);
 
 
     private final FigureStore figures = new FigureStore();
@@ -49,19 +51,19 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
 
     /** A built tank holds the room its shell was baked with, not the fixed 16000 mB. */
     private void onFigures() {
-        gas.setCapacity(Math.round(figures.get("Capacity", FTuning.GAS_TANK_MB)));
+        gas.setCapacity(Math.round(figures.get("Capacity", PetrochemTuning.GAS_TANK_MB)));
     }
 
     private float mbPerPu() {
-        return figures.get("MbPerPu", FTuning.GAS_TANK_MB_PER_PU);
+        return figures.get("MbPerPu", PetrochemTuning.GAS_TANK_MB_PER_PU);
     }
 
     private Pu danger() {
-        return new Pu(figures.get("Danger", FTuning.PRESSURE_VESSEL_DANGER_PU.value()));
+        return new Pu(figures.get("Danger", FluidTuning.PRESSURE_VESSEL_DANGER_PU.value()));
     }
 
     private Pu critical() {
-        return new Pu(figures.get("Critical", FTuning.PRESSURE_VESSEL_CRITICAL_PU.value()));
+        return new Pu(figures.get("Critical", FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value()));
     }
 
     public GasTankBlockEntity(BlockPos pos, BlockState state) {
@@ -130,12 +132,12 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
             return;
         gas.relax(AmbientTable.at(level));
         float relief = figures.get("Relief", 0f);
-        if (relief > 0 && getPressure().value() > danger().value() * FTuning.RELIEF_OPENS_AT)
+        if (relief > 0 && getPressure().value() > danger().value() * PetrochemTuning.RELIEF_OPENS_AT)
             gas.drain(Math.round(relief), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         if (PressureBurst.fails(getPressure(), danger(), critical(),
                 level.random)) {
             gas.setFluid(FluidStack.EMPTY);
-            PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
+            PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER);
         }
     }
 

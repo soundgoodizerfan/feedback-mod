@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.item;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Grip;
 import io.github.soundgoodizerfan.feedback.core.hazard.Insulator;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -85,7 +86,7 @@ public class TongsItem extends Item implements Insulator {
         if (pan == null)
             return;
         pan.lift();
-        if (pan.panTu() > FTuning.CONTACT_PAIN_TU.value() && pan.panTu() <= handlesUpToTu(stack, level))
+        if (pan.panTu() > ThermalTuning.CONTACT_PAIN_TU.value() && pan.panTu() <= handlesUpToTu(stack, level))
             io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/heat/tongs");
         if ((getUseDuration(stack, user) - remaining) % 20 == 0 && pan.panTu() > handlesUpToTu(stack, level))
             HotContact.burn(player, new Tu(pan.panTu()));
@@ -95,7 +96,7 @@ public class TongsItem extends Item implements Insulator {
     public float handlesUpToTu(ItemStack stack, Level level) {
         Tongs tongs = stack.get(FDataComponents.TONGS.get());
         if (tongs == null)
-            return FTuning.CONTACT_PAIN_TU.value();
+            return ThermalTuning.CONTACT_PAIN_TU.value();
         float grip = Grip.safeUpTo(level, tongs.grip(), FTuning.TONGS_EXPOSURE);
         float arms = Grip.material(level, tongs.arms())
                 .flatMap(m -> m.thermal().meltingPoint())

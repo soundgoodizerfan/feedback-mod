@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.world.item.ItemStack;
@@ -104,12 +104,12 @@ public final class VanillaFallback {
                     float hold = recipe.getCookingTime();
                     int before = all.size();
                     if (recipe instanceof SmokingRecipe)
-                        all.add(new ThermalProcess(inputs, FTuning.AMBIENT_TU, FTuning.SMOKING_OPTIMAL_TU, FTuning.FOOD_MAX_TU, hold,
-                                new io.github.soundgoodizerfan.feedback.core.unit.TuRate(Float.MAX_VALUE), result, FTuning.FOOD_MAX_TU,
+                        all.add(new ThermalProcess(inputs, ThermalTuning.AMBIENT_TU, ProcessTuning.SMOKING_OPTIMAL_TU, ProcessTuning.FOOD_MAX_TU, hold,
+                                new io.github.soundgoodizerfan.feedback.core.unit.TuRate(Float.MAX_VALUE), result, ProcessTuning.FOOD_MAX_TU,
                                 ItemStack.EMPTY, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false));
                     else
-                        all.add(new ThermalProcess(inputs, FTuning.METAL_MIN_TU,
-                                recipe instanceof BlastingRecipe ? FTuning.BLASTING_OPTIMAL_TU : FTuning.SMELTING_OPTIMAL_TU,
+                        all.add(new ThermalProcess(inputs, ProcessTuning.METAL_MIN_TU,
+                                recipe instanceof BlastingRecipe ? ProcessTuning.BLASTING_OPTIMAL_TU : ProcessTuning.SMELTING_OPTIMAL_TU,
                                 new Tu(Float.MAX_VALUE), hold, new io.github.soundgoodizerfan.feedback.core.unit.TuRate(Float.MAX_VALUE),
                                 result, new Tu(Float.MAX_VALUE), ItemStack.EMPTY, net.neoforged.neoforge.fluids.FluidStack.EMPTY, false));
                     for (int row = before; row < all.size(); row++)

@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.shaft;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
@@ -54,13 +55,13 @@ public class ShaftBlock extends RotatedPillarBlock implements EntityBlock, Micro
     private final Inertia inertia;
 
     public ShaftBlock(Properties properties) {
-        this(properties, FTuning.SHAFT_DRAG_SU_PER_RPM, FTuning.SHAFT_INERTIA);
+        this(properties, MachineTuning.SHAFT_DRAG_SU_PER_RPM, RotationTuning.SHAFT_INERTIA);
     }
 
     /**
      * A Bearing is this same block with a lower drag -- see {@link
      * io.github.soundgoodizerfan.feedback.registry.FBlocks#BEARING} and {@code
-     * FTuning#BEARING_DRAG_SU_PER_RPM}. One class, two constants, the same shape {@link
+     * MachineTuning#BEARING_DRAG_SU_PER_RPM}. One class, two constants, the same shape {@link
      * io.github.soundgoodizerfan.feedback.machine.cog.CogBlock} already uses for its two sizes --
      * a physical upgrade you point at, not a shaft-wide multiplier.
      */

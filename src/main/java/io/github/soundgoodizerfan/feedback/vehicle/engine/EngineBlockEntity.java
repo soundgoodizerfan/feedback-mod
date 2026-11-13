@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.engine;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.control.Analog;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
@@ -141,7 +142,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     }
 
     private float opening() {
-        return FTuning.ENGINE_IDLE_FRACTION + (1 - FTuning.ENGINE_IDLE_FRACTION) * throttle;
+        return VehicleTuning.ENGINE_IDLE_FRACTION + (1 - VehicleTuning.ENGINE_IDLE_FRACTION) * throttle;
     }
 
     @Override
@@ -213,7 +214,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             boolean misfire = ignition > design.compression().misfireAbove;
             power = misfire ? 0f : factor;
             if (!misfire && ignition < design.compression().knockBelow) {
-                condition = Math.max(FTuning.ENGINE_CONDITION_FLOOR, condition - FTuning.ENGINE_KNOCK_WEAR_PER_TICK * opening());
+                condition = Math.max(VehicleTuning.ENGINE_CONDITION_FLOOR, condition - VehicleTuning.ENGINE_KNOCK_WEAR_PER_TICK * opening());
                 setChanged();
                 if (level.getGameTime() % 10 == 0)
                     level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ANVIL_HIT,

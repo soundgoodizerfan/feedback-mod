@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.registry;
 
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 
 import net.minecraft.core.registries.Registries;
@@ -49,7 +50,7 @@ public class FCreativeTabs {
                         output.accept(new ItemStack(FWeapons.MAGAZINE_ITEM.get()));
                         ItemStack loaded = new ItemStack(FWeapons.MAGAZINE_ITEM.get());
                         loaded.set(FWeapons.MAGAZINE.get(), new io.github.soundgoodizerfan.feedback.weapon.Magazine(
-                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.core.FTuning.GUN_MAGAZINE_STANDARD,
+                                java.util.Collections.nCopies(io.github.soundgoodizerfan.feedback.weapon.GunTuning.GUN_MAGAZINE_STANDARD,
                                         io.github.soundgoodizerfan.feedback.weapon.Cartridge.reference(9))));
                         output.accept(loaded);
                         ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());

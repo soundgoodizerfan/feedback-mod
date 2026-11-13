@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.hammer;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
 import io.github.soundgoodizerfan.feedback.machine.Headed;
@@ -57,7 +57,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
     private ItemStack workpiece = ItemStack.EMPTY;
 
     /**
-     * The seated head; its condition falls from 1 to {@link FTuning#HAMMER_CONDITION_FLOOR}.
+     * The seated head; its condition falls from 1 to {@link MachineTuning#HAMMER_CONDITION_FLOOR}.
      *
      * <h3>Why wear scales both figures and not just the ceiling</h3>
      * Scaling only the ceiling was the first version and it punished exactly one mistake:
@@ -114,7 +114,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         return taken;
     }
 
-    /** How sound the head is, 1 down to {@link FTuning#HAMMER_CONDITION_FLOOR}. */
+    /** How sound the head is, 1 down to {@link MachineTuning#HAMMER_CONDITION_FLOOR}. */
     @Override
     public float getCondition() {
         return head.condition();
@@ -147,7 +147,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
 
     @Override
     public St getStrength(Throw installed) {
-        float share = installed == Throw.SHORT ? FTuning.HAMMER_THROW_SHARE_SHORT : FTuning.HAMMER_THROW_SHARE_LONG;
+        float share = installed == Throw.SHORT ? MachineTuning.HAMMER_THROW_SHARE_SHORT : MachineTuning.HAMMER_THROW_SHARE_LONG;
         return new St(head.ceiling().value() * share);
     }
 
@@ -158,7 +158,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
 
     @Override
     public Su getLoadSu() {
-        return FTuning.HAMMER_LOAD_SU;
+        return MachineTuning.HAMMER_LOAD_SU;
     }
 
     @Override
@@ -238,7 +238,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
         // Sync only when the adjective would change. Wear happens on every wasted blow and the
         // readout has four states in the life of the machine; syncing per blow would be a packet
         // several times a second to say nothing new.
-        if (head.wear(stAbsorbed, FTuning.HAMMER_WEAR_PER_ST, FTuning.HAMMER_CONDITION_FLOOR))
+        if (head.wear(stAbsorbed, MachineTuning.HAMMER_WEAR_PER_ST, MachineTuning.HAMMER_CONDITION_FLOOR))
             sync();
     }
 

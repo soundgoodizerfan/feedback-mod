@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 
 import com.mojang.serialization.MapCodec;
@@ -45,10 +44,10 @@ public class ShockCapsuleBlock extends Block {
             return;
         float radius = explosion.radius();
         ItemStack out;
-        if (radius < FTuning.SHOCK_MIN_RADIUS)
+        if (radius < GunTuning.SHOCK_MIN_RADIUS)
             out = new ItemStack(FItems.SHOCK_CAPSULE.get());
-        else if (radius <= FTuning.SHOCK_MAX_RADIUS)
-            out = new ItemStack(FItems.DIAMOND_GRIT.get(), FTuning.SHOCK_GRIT);
+        else if (radius <= GunTuning.SHOCK_MAX_RADIUS)
+            out = new ItemStack(FItems.DIAMOND_GRIT.get(), GunTuning.SHOCK_GRIT);
         else
             out = new ItemStack(FItems.GRAPHITE.get());
         popResource(level, pos, out);

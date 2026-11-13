@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -234,7 +235,7 @@ final class ThermalCard {
             rows.add(new Row(t("feedback.jei.dip.vessel"), dipBand(d), VALUE_COLOUR));
             if (d.coat().isPresent())
                 rows.add(new Row(t("feedback.jei.dip.overrun",
-                        Readout.number(io.github.soundgoodizerfan.feedback.core.FTuning.PLATING_SPALLS_ABOVE_QU)), "", SPOIL_COLOUR));
+                        Readout.number(io.github.soundgoodizerfan.feedback.machine.MachineTuning.PLATING_SPALLS_ABOVE_QU)), "", SPOIL_COLOUR));
             return rows;
         }
         if (p.electrolysis().isPresent()) {

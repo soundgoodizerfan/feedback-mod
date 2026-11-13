@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.net;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -27,7 +27,7 @@ public record PrepareFinishPayload(int container, int kind, List<Integer> marks,
     public static final StreamCodec<RegistryFriendlyByteBuf, PrepareFinishPayload> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.VAR_INT, PrepareFinishPayload::container,
             ByteBufCodecs.VAR_INT, PrepareFinishPayload::kind,
-            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(Math.max(FTuning.CUT_MAX_MARKS, FTuning.KNEAD_MAX_SAMPLES))), PrepareFinishPayload::marks,
+            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(Math.max(ModularTuning.CUT_MAX_MARKS, ModularTuning.KNEAD_MAX_SAMPLES))), PrepareFinishPayload::marks,
             ByteBufCodecs.VAR_INT, PrepareFinishPayload::heldTicks,
             PrepareFinishPayload::new);
 

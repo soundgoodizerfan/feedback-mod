@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.Shingling;
 import io.github.soundgoodizerfan.feedback.net.ShingleBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.ShingleFinishPayload;
@@ -88,7 +88,7 @@ final class ShinglePanel implements WorkPanel {
             return;
         ticks++;
         // A slag dribble hisses while pockets are leaving; the pitch of the strike follows the heat.
-        boolean spent = model.result().remaining() == 0 || ticks >= FTuning.SHINGLE_MAX_TICKS
+        boolean spent = model.result().remaining() == 0 || ticks >= ModularTuning.SHINGLE_MAX_TICKS
                 || !model.workable(ticks) && ticks > 20;
         if (spent)
             finish();
@@ -211,7 +211,7 @@ final class ShinglePanel implements WorkPanel {
             var mc = net.minecraft.client.Minecraft.getInstance();
             int mx = (int) (mc.mouseHandler.xpos() * mc.getWindow().getGuiScaledWidth() / mc.getWindow().getScreenWidth());
             int my = (int) (mc.mouseHandler.ypos() * mc.getWindow().getGuiScaledHeight() / mc.getWindow().getScreenHeight());
-            int r = Math.round(FTuning.SHINGLE_FOOTPRINT * PX);
+            int r = Math.round(ModularTuning.SHINGLE_FOOTPRINT * PX);
             g.fill(mx - r, my - 1, mx + r, my, 0x60FFFFFF);
             g.fill(mx - 1, my - r, mx, my + r, 0x60FFFFFF);
             if (flash > 0)

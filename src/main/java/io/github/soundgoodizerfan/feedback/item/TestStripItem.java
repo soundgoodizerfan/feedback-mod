@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 
@@ -27,7 +26,7 @@ public class TestStripItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.TEST_STRIP_RESOLUTION_TOXIN;
+        return ItemTuning.TEST_STRIP_RESOLUTION_TOXIN;
     }
 
     @Override

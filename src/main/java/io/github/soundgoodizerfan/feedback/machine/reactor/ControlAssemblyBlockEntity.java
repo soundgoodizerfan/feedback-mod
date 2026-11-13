@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.machine.reactor;
 
 import io.github.soundgoodizerfan.feedback.control.Switchable;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -48,7 +47,7 @@ public class ControlAssemblyBlockEntity extends BlockEntity implements io.github
     public float strength() {
         if (strength < 0f)
             strength = absorber.isEmpty() ? 0f : Neutrons.of(absorber).map(n -> n.absorption()
-                    * Math.min(1f, absorber.getCount() / (float) FTuning.REACTOR_ABSORBER_FULL_BUNDLE)).orElse(0f);
+                    * Math.min(1f, absorber.getCount() / (float) ReactorTuning.REACTOR_ABSORBER_FULL_BUNDLE)).orElse(0f);
         return strength;
     }
 
@@ -62,7 +61,7 @@ public class ControlAssemblyBlockEntity extends BlockEntity implements io.github
             return false;
         if (!absorber.isEmpty() && !ItemStack.isSameItemSameComponents(absorber, stack))
             return false;
-        int room = FTuning.REACTOR_ABSORBER_FULL_BUNDLE - absorber.getCount();
+        int room = ReactorTuning.REACTOR_ABSORBER_FULL_BUNDLE - absorber.getCount();
         if (room <= 0)
             return false;
         int moved = Math.min(room, stack.getCount());
@@ -132,7 +131,7 @@ public class ControlAssemblyBlockEntity extends BlockEntity implements io.github
     }
 
     public void tickServer() {
-        if (position != target && level != null && level.getGameTime() % FTuning.REACTOR_ROD_STEP_TICKS == 0) {
+        if (position != target && level != null && level.getGameTime() % ReactorTuning.REACTOR_ROD_STEP_TICKS == 0) {
             position += Integer.signum(target - position);
             setChanged();
         }

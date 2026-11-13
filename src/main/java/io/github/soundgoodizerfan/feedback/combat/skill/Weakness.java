@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.skill;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Hazards;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -369,7 +369,7 @@ public final class Weakness {
         else if (rounds == 1)
             words.add("one round left");
         io.github.soundgoodizerfan.feedback.weapon.GunSpec.of(gun).ifPresent(spec -> {
-            if (GunCondition.temperature(gun, other.level()).value() > FTuning.WARM_TU.value() * 4)
+            if (GunCondition.temperature(gun, other.level()).value() > ThermalTuning.WARM_TU.value() * 4)
                 words.add("barrel hot");
         });
         return words;
@@ -515,7 +515,7 @@ public final class Weakness {
             }
             if (Skills.unlocked(p, "quench") && t.isInWaterOrRain()) {
                 ItemStack held = p.getMainHandItem();
-                float temp = ItemHeat.felt(held, p.level()).value() - FTuning.WARM_TU.value();
+                float temp = ItemHeat.felt(held, p.level()).value() - ThermalTuning.WARM_TU.value();
                 if (temp > 0f) {
                     mult += QUENCH * Math.min(1f, temp / QUENCH_REF_TU);
                     ItemHeat.drain(held, p.level(), QUENCH_COOL_TU);

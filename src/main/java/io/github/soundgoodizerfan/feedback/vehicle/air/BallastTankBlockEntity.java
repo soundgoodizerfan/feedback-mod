@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.air;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import org.joml.Vector3d;
 
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
@@ -9,7 +11,6 @@ import dev.ryanhcode.sable.api.physics.force.ForceTotal;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -33,7 +34,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  */
 public class BallastTankBlockEntity extends AnalogPartBlockEntity implements BlockEntitySubLevelActor {
 
-    private final FluidTank tank = new FluidTank(FTuning.BALLAST_TANK_MB) {
+    private final FluidTank tank = new FluidTank(VehicleTuning.BALLAST_TANK_MB) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -89,7 +90,7 @@ public class BallastTankBlockEntity extends AnalogPartBlockEntity implements Blo
         float open = opening();
         if (open <= 0f || tank.isEmpty() || !(level instanceof ServerLevel server))
             return;
-        owed += FTuning.BALLAST_DUMP_MB_PER_TICK * open;
+        owed += VehicleTuning.BALLAST_DUMP_MB_PER_TICK * open;
         int dump = (int) owed;
         if (dump <= 0)
             return;

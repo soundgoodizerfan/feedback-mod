@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -45,7 +44,7 @@ public final class GunCondition {
 
     /** 1 as built, falling with wear to a floor above zero. */
     public static float condition(ItemStack gun) {
-        return Math.max(FTuning.GUN_CONDITION_FLOOR, 1f - wear(gun));
+        return Math.max(GunTuning.GUN_CONDITION_FLOOR, 1f - wear(gun));
     }
 
     /** {@code base} as this gun is now: worn and hot. */
@@ -61,7 +60,7 @@ public final class GunCondition {
      * @param heat the barrel's heat fraction when it was fired.
      */
     public static void afterShot(ItemStack gun, GunFigures f, Level level, float heat, float boreWear) {
-        float t = temperature(gun, level).value() + f.muzzleEnergy() * FTuning.GUN_HEAT_PER_WORK * f.heatFactor()
+        float t = temperature(gun, level).value() + f.muzzleEnergy() * GunTuning.GUN_HEAT_PER_WORK * f.heatFactor()
                 * io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.gunShotHeat(gun)
                 / f.thermalMass().workPerTu();
         gun.set(FDataComponents.TEMPERATURE.get(), t);
@@ -72,9 +71,9 @@ public final class GunCondition {
         if (spec.isPresent()) {
             var rm = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(spec.get().parts().receiver());
             float service = rm == null ? Float.MAX_VALUE : rm.thermal().serviceTemperature().map(v -> v.value()).orElse(Float.MAX_VALUE);
-            soft = Math.max(0f, t - service) * FTuning.GUN_RECEIVER_SOFT_WEAR_PER_TU;
+            soft = Math.max(0f, t - service) * GunTuning.GUN_RECEIVER_SOFT_WEAR_PER_TU;
         }
-        float worn = soft + f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat));
+        float worn = soft + f.muzzleEnergy() * GunTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat));
         // An attuned Ward part turns wear away as it does on a tool: n levels leave 1/(n+1) of it.
         gun.set(FWeapons.GUN_WEAR.get(), wear(gun)
                 + worn / (1 + io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.levels(gun)));

@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.logistics.belt;
 
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 
 import org.jetbrains.annotations.Nullable;
@@ -226,9 +227,9 @@ public class BeltBlock extends Block implements EntityBlock, BeltPart {
         Direction f = state.getValue(FACING);
         Vec3 push = new Vec3(f.getStepX(), 0, f.getStepZ()).scale(speed * LogisticsTuning.BELT_RIDE_GAIN);
         entity.setDeltaMovement(entity.getDeltaMovement().add(push));
-        if (!level.isClientSide && entity instanceof LivingEntity living && level.getGameTime() % FTuning.CONTACT_INTERVAL_TICKS == 0) {
+        if (!level.isClientSide && entity instanceof LivingEntity living && level.getGameTime() % HazardTuning.CONTACT_INTERVAL_TICKS == 0) {
             float fire = HeatSource.at(level, pos).value();
-            if (fire >= FTuning.CONTACT_PAIN_TU.value())
+            if (fire >= ThermalTuning.CONTACT_PAIN_TU.value())
                 HotContact.burn(living, new Tu(fire));
         }
     }

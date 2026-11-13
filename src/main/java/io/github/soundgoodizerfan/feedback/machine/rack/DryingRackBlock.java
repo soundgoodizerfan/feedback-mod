@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.rack;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 
 import net.minecraft.core.BlockPos;
@@ -76,7 +76,7 @@ public class DryingRackBlock extends BaseEntityBlock {
             ItemStack one = held.copyWithCount(1);
             if (rack.add(one) && !player.getAbilities().instabuild)
                 held.shrink(1);
-            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.rack.status", rack.count(), FTuning.RACK_SLOTS));
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.rack.status", rack.count(), MachineTuning.RACK_SLOTS));
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -87,7 +87,7 @@ public class DryingRackBlock extends BaseEntityBlock {
             ItemStack out = rack.take();
             if (!out.isEmpty() && !player.getInventory().add(out))
                 player.drop(out, false);
-            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.rack.status", rack.count(), FTuning.RACK_SLOTS));
+            io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("feedback.rack.status", rack.count(), MachineTuning.RACK_SLOTS));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

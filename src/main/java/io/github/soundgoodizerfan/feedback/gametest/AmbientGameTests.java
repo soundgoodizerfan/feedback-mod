@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
@@ -22,7 +22,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 public class AmbientGameTests {
 
     private static final class Body implements ThermalBody {
-        private Tu temperature = FTuning.AMBIENT_TU;
+        private Tu temperature = ThermalTuning.AMBIENT_TU;
 
         @Override
         public Tu getTemperature() {
@@ -42,11 +42,11 @@ public class AmbientGameTests {
 
     @GameTest(template = "empty")
     public static void netherRoomIsWarmerAndOverworldIsTheDefault(GameTestHelper helper) {
-        helper.assertTrue(AmbientTable.of(Level.OVERWORLD.location()).equals(FTuning.AMBIENT_TU),
+        helper.assertTrue(AmbientTable.of(Level.OVERWORLD.location()).equals(ThermalTuning.AMBIENT_TU),
                 "overworld reads the default");
-        helper.assertTrue(AmbientTable.of(Level.NETHER.location()).value() > FTuning.AMBIENT_TU.value(),
+        helper.assertTrue(AmbientTable.of(Level.NETHER.location()).value() > ThermalTuning.AMBIENT_TU.value(),
                 "the nether is listed warmer than the default");
-        helper.assertTrue(AmbientTable.of(ResourceLocation.parse("nowhere:void")).equals(FTuning.AMBIENT_TU),
+        helper.assertTrue(AmbientTable.of(ResourceLocation.parse("nowhere:void")).equals(ThermalTuning.AMBIENT_TU),
                 "an unlisted dimension reads the default");
         helper.succeed();
     }

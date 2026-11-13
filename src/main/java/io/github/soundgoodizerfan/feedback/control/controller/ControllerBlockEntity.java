@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.controller;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -43,7 +43,7 @@ public class ControllerBlockEntity extends RotationNode implements ControllerHos
 
     @Override
     public Su getLoadSu() {
-        return FTuning.CONTROLLER_LOAD_SU;
+        return ControlTuning.CONTROLLER_LOAD_SU;
     }
 
     @Override

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 
 import net.minecraft.core.BlockPos;
@@ -75,10 +74,10 @@ public final class PressureBurst {
      */
     public static void weep(Level level, BlockPos pos) {
         hiss(level, pos);
-        scald(level, pos, FTuning.STEAM_SCALD_REACH, FTuning.STEAM_SCALD_DAMAGE);
+        scald(level, pos, HazardTuning.STEAM_SCALD_REACH, HazardTuning.STEAM_SCALD_DAMAGE);
         if (!level.isClientSide)
             for (net.minecraft.world.entity.player.Player p : level.getEntitiesOfClass(net.minecraft.world.entity.player.Player.class,
-                    new AABB(pos).inflate(FTuning.STEAM_SCALD_REACH)))
+                    new AABB(pos).inflate(HazardTuning.STEAM_SCALD_REACH)))
                 if (p.isAlive())
                     io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(p, "progress/hazard/steam");
     }
@@ -86,7 +85,7 @@ public final class PressureBurst {
     /** A burst: the blast, and the steam that goes with it reaching further than a seam's. */
     public static void burst(Level level, BlockPos pos, float power) {
         io.github.soundgoodizerfan.feedback.core.Awards.near(level, pos, "progress/joke/pressure_cooker");
-        scald(level, pos, FTuning.STEAM_BURST_REACH, FTuning.STEAM_BURST_DAMAGE);
+        scald(level, pos, HazardTuning.STEAM_BURST_REACH, HazardTuning.STEAM_BURST_DAMAGE);
         level.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, power,
                 Level.ExplosionInteraction.BLOCK);
     }

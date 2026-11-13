@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.steamengine;
 
-import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
+import io.github.soundgoodizerfan.feedback.registry.FTags;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
@@ -34,7 +35,7 @@ import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
  * puzzle-piece argument: this block cannot tell a coal-fired boiler from an electric one, on
  * purpose.
  * <p>
- * What it burns comes out as steam {@link FTuning#STEAM_ENGINE_EXHAUST_DROP_TU} cooler in an
+ * What it burns comes out as steam {@link VesselTuning#STEAM_ENGINE_EXHAUST_DROP_TU} cooler in an
  * exhaust tank that a neighbour may drain (a condenser pulls it; a second engine pulls it only
  * while it is still hot enough to work). A full exhaust vents to the air: the engine keeps running and the
  * water is simply lost, so condensing is a way to keep water, never a gate on running.
@@ -43,11 +44,11 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
 
     private final HeatedTank tank;
     private final HeatedTank exhaust;
-    /** 0 when not working, else 1 to {@link FTuning#STEAM_ENGINE_BANDS}: how hot the steam it runs on is. */
+    /** 0 when not working, else 1 to {@link VesselTuning#STEAM_ENGINE_BANDS}: how hot the steam it runs on is. */
     private int band;
 
     public SteamEngineBlockEntity(BlockPos pos, BlockState state) {
-        this(FBlockEntities.STEAM_ENGINE.get(), pos, state, FTuning.STEAM_ENGINE_TANK_MB);
+        this(FBlockEntities.STEAM_ENGINE.get(), pos, state, VesselTuning.STEAM_ENGINE_TANK_MB);
     }
 
     /** The Steam Turbine's way in: same machine, its own type and tank, figures through the hooks below. */
@@ -60,13 +61,13 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
 
     // --- the figures a steam rotation source is built from; the Steam Turbine overrides them ------
 
-    protected float minTu() { return FTuning.STEAM_ENGINE_MIN_TU; }
-    protected float bandTu() { return FTuning.STEAM_ENGINE_BAND_TU; }
-    protected int bands() { return FTuning.STEAM_ENGINE_BANDS; }
-    protected int mbPerTick() { return FTuning.STEAM_ENGINE_MB_PER_TICK; }
-    protected float exhaustDropTu() { return FTuning.STEAM_ENGINE_EXHAUST_DROP_TU; }
-    protected Rpm workingRpm() { return FTuning.STEAM_ENGINE_RPM; }
-    protected Su fullCapacity() { return FTuning.STEAM_ENGINE_CAPACITY_SU; }
+    protected float minTu() { return VesselTuning.STEAM_ENGINE_MIN_TU; }
+    protected float bandTu() { return VesselTuning.STEAM_ENGINE_BAND_TU; }
+    protected int bands() { return VesselTuning.STEAM_ENGINE_BANDS; }
+    protected int mbPerTick() { return VesselTuning.STEAM_ENGINE_MB_PER_TICK; }
+    protected float exhaustDropTu() { return VesselTuning.STEAM_ENGINE_EXHAUST_DROP_TU; }
+    protected Rpm workingRpm() { return VesselTuning.STEAM_ENGINE_RPM; }
+    protected Su fullCapacity() { return VesselTuning.STEAM_ENGINE_CAPACITY_SU; }
 
     @Override
     public java.util.List<HeatedTank> heatedTanks() {
@@ -142,7 +143,7 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
         return inertia();
     }
 
-    protected Inertia inertia() { return FTuning.STEAM_ENGINE_INERTIA; }
+    protected Inertia inertia() { return VesselTuning.STEAM_ENGINE_INERTIA; }
 
     // --- the tick ---------------------------------------------------------------------------
 
@@ -172,8 +173,8 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
     }
 
     /**
-     * Which output band the steam in the tank is hot enough for: the first at {@link FTuning#STEAM_ENGINE_MIN_TU},
-     * one more per {@link FTuning#STEAM_ENGINE_BAND_TU} hotter, up to {@link FTuning#STEAM_ENGINE_BANDS}. A starved
+     * Which output band the steam in the tank is hot enough for: the first at {@link VesselTuning#STEAM_ENGINE_MIN_TU},
+     * one more per {@link VesselTuning#STEAM_ENGINE_BAND_TU} hotter, up to {@link VesselTuning#STEAM_ENGINE_BANDS}. A starved
      * engine is visibly slow (user ruling, 2026-10-23), never a dial.
      */
     private int band() {
@@ -181,7 +182,7 @@ public class SteamEngineBlockEntity extends RotationNode implements io.github.so
         return Math.min(bands(), Math.max(1, b));
     }
 
-    /** Enough steam, and hot enough: below {@link FTuning#STEAM_ENGINE_MIN_TU} it has no work left in it. */
+    /** Enough steam, and hot enough: below {@link VesselTuning#STEAM_ENGINE_MIN_TU} it has no work left in it. */
     private boolean hasSteam() {
         return tank.getFluidAmount() >= mbPerTick()
                 && tank.temperature().value() >= minTu();

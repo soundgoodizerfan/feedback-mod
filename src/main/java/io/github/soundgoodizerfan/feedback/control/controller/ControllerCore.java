@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.controller;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,7 +22,6 @@ import io.github.soundgoodizerfan.feedback.control.program.ProgramNode;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramVariable;
 import io.github.soundgoodizerfan.feedback.control.program.SensorNode;
 import io.github.soundgoodizerfan.feedback.control.program.ValueType;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
@@ -359,8 +359,8 @@ public class ControllerCore implements Container, Fittable {
      * one delay length reads slightly wrong).
      */
     private static final class DelayHistory {
-        private final long[] times = new long[FTuning.DELAY_HISTORY_EVENTS];
-        private final float[] vals = new float[FTuning.DELAY_HISTORY_EVENTS];
+        private final long[] times = new long[ControlTuning.DELAY_HISTORY_EVENTS];
+        private final float[] vals = new float[ControlTuning.DELAY_HISTORY_EVENTS];
         private int head, count;
 
         private int at(int i) {
@@ -532,9 +532,9 @@ public class ControllerCore implements Container, Fittable {
     public boolean canAdd(UpgradeFitting upgrade) {
         long same = upgrades.stream().filter(u -> u.getClass() == upgrade.getClass()).count();
         if (upgrade instanceof MemoryDrumFitting)
-            return same < FTuning.MEMORY_DRUM_MAX;
+            return same < ControlTuning.MEMORY_DRUM_MAX;
         if (upgrade instanceof CardRackFitting)
-            return same < FTuning.CARD_RACK_MAX;
+            return same < ControlTuning.CARD_RACK_MAX;
         return upgrade instanceof EscapementFitting && same < 1;
     }
 
@@ -599,9 +599,9 @@ public class ControllerCore implements Container, Fittable {
             variables.put(entry.getString("N"), entry.contains("F") ? (Object) entry.getFloat("F") : (Object) entry.getBoolean("B"));
         }
         upgrades.clear();
-        for (int i = 0; i < Math.min(tag.getInt(DRUMS), FTuning.MEMORY_DRUM_MAX); i++)
+        for (int i = 0; i < Math.min(tag.getInt(DRUMS), ControlTuning.MEMORY_DRUM_MAX); i++)
             upgrades.add(new MemoryDrumFitting());
-        for (int i = 0; i < Math.min(tag.getInt(RACKS), FTuning.CARD_RACK_MAX); i++)
+        for (int i = 0; i < Math.min(tag.getInt(RACKS), ControlTuning.CARD_RACK_MAX); i++)
             upgrades.add(new CardRackFitting());
         if (tag.getBoolean(ESCAPEMENT))
             upgrades.add(new EscapementFitting());

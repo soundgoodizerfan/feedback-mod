@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.PrepWork;
 import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
@@ -50,7 +50,7 @@ public class PrepCutScreen extends Screen {
     private final Material.Food figures;
     private final int rgb;
     /** Where each stroke was aimed (what the server is sent) and where it landed, in placing order; {@code sorted} is the landed ones in line order. */
-    private final int[] aimed = new int[FTuning.CUT_MAX_MARKS], landed = new int[FTuning.CUT_MAX_MARKS], sorted = new int[FTuning.CUT_MAX_MARKS];
+    private final int[] aimed = new int[ModularTuning.CUT_MAX_MARKS], landed = new int[ModularTuning.CUT_MAX_MARKS], sorted = new int[ModularTuning.CUT_MAX_MARKS];
     private int count, stroke, flourish, phase, judge, ticks;
     private SimpleSoundInstance bgm;
     private FoodCut cut = new FoodCut(0, FoodCut.EVEN);
@@ -124,7 +124,7 @@ public class PrepCutScreen extends Screen {
             return true;
         if (!overBar(x, y))
             return true;
-        if (button == 0 && count < FTuning.CUT_MAX_MARKS) {
+        if (button == 0 && count < ModularTuning.CUT_MAX_MARKS) {
             aimed[count] = aim(x);
             landed[count] = PrepWork.land(aimed[count], figures, edge);
             count++;
@@ -335,7 +335,7 @@ public class PrepCutScreen extends Screen {
         int body = 0xFF000000 | rgb, edge = 0xFF000000 | lerp(rgb, 0, 0.45f), shine = 0xFF000000 | lerp(rgb, 0xFFFFFF, 0.35f);
         if (figures.fibre() > 0.05f) {
             int grain = (int) (figures.fibre() * 0x50) << 24 | 0xFFFFFF;
-            for (int l = FTuning.CUT_GRAIN; l < PrepWork.LINE; l += FTuning.CUT_GRAIN)
+            for (int l = ModularTuning.CUT_GRAIN; l < PrepWork.LINE; l += ModularTuning.CUT_GRAIN)
                 g.fill(at(l), barY + 2, at(l) + 1, barY + BAR_H - 2, grain);
         }
         for (int i = 0; i < pieces; i++) {
@@ -365,7 +365,7 @@ public class PrepCutScreen extends Screen {
     /** The knife at the pointer: dropping on a stroke, with a ghost tick where this stroke would land. */
     private void knife(GuiGraphics g) {
         int x = Mth.clamp(mouseX, barX, barX + BAR_W);
-        if (count < FTuning.CUT_MAX_MARKS)
+        if (count < ModularTuning.CUT_MAX_MARKS)
             g.fill(at(PrepWork.land(aim(x), figures, edge)), barY - 1, at(PrepWork.land(aim(x), figures, edge)) + 1, barY + BAR_H + 1, SKIN.dim());
         float p = stroke > 0 ? Mth.sin(Mth.PI * (1f - (stroke - partial) / STROKE)) : 0f;
         int tip = barY - 26 + Math.round(p * 28f);

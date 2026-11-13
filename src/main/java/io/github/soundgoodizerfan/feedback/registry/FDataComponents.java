@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.registry;
 
+import io.github.soundgoodizerfan.feedback.item.ItemTuning;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 import com.mojang.serialization.Codec;
 
@@ -214,7 +215,7 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.FLOAT)
                     .build());
 
-    /** The most condition a welded part can be mended to, 1 as built; each arc weld lowers it ({@code FTuning#WELDER_MAX_STEP}). */
+    /** The most condition a welded part can be mended to, 1 as built; each arc weld lowers it ({@code ItemTuning#WELDER_MAX_STEP}). */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MAX_CONDITION =
             COMPONENTS.register("max_condition", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)

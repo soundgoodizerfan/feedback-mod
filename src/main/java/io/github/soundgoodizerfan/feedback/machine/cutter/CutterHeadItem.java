@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cutter;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -44,7 +44,7 @@ public class CutterHeadItem extends Item {
     /** The hardest stock the head can take: its material's hardness. */
     public static float hardness(ItemStack head) {
         Material m = material(head);
-        return m == null ? FTuning.CUTTER_DEFAULT_HEAD_HARDNESS : m.hardness().value();
+        return m == null ? MachineTuning.CUTTER_DEFAULT_HEAD_HARDNESS : m.hardness().value();
     }
 
     @Override

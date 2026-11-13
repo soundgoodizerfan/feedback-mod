@@ -3,6 +3,8 @@
 package io.github.soundgoodizerfan.feedback.machine.battery;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -36,18 +38,18 @@ public final class BatteryStack {
     }
 
     private static float coldShare(CompoundTag t) {
-        float temperature = t.contains("Temperature") ? t.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
-        float room = FTuning.AMBIENT_TU.value();
+        float temperature = t.contains("Temperature") ? t.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
+        float room = ThermalTuning.AMBIENT_TU.value();
         if (temperature >= room)
             return 1f;
         float cold = t.contains("ColdFactor") ? t.getFloat("ColdFactor") : 0.5f;
-        return Mth.lerp(Mth.clamp((temperature - FTuning.BATTERY_DEEP_COLD_TU) / (room - FTuning.BATTERY_DEEP_COLD_TU), 0f, 1f), cold, 1f);
+        return Mth.lerp(Mth.clamp((temperature - ElectricMachineTuning.BATTERY_DEEP_COLD_TU) / (room - ElectricMachineTuning.BATTERY_DEEP_COLD_TU), 0f, 1f), cold, 1f);
     }
 
     private static float waterShare(CompoundTag t) {
-        float low = FTuning.BATTERY_WATER_LOW_SHARE * FTuning.BATTERY_WATER_TANK_MB;
+        float low = ElectricMachineTuning.BATTERY_WATER_LOW_SHARE * FTuning.BATTERY_WATER_TANK_MB;
         float water = t.getFloat("Water");
-        return water >= low ? 1f : Mth.lerp(water / low, FTuning.BATTERY_DRY_CAPACITY, 1f);
+        return water >= low ? 1f : Mth.lerp(water / low, ElectricMachineTuning.BATTERY_DRY_CAPACITY, 1f);
     }
 
     private static float condition(CompoundTag t) {
@@ -95,9 +97,9 @@ public final class BatteryStack {
 
     /** Amps a battery at this line asks for: it charges while the line is above its terminal, and a full one asks nothing (a stack has no vent). */
     public static float wantedAmps(CompoundTag t, float lineVolts) {
-        if (!ready(t) || full(t) || lineVolts <= terminalVolts(t) + FTuning.BATTERY_SWITCH_VOLTS)
+        if (!ready(t) || full(t) || lineVolts <= terminalVolts(t) + ElectricMachineTuning.BATTERY_SWITCH_VOLTS)
             return 0f;
-        return effectiveCapacity(t) / FTuning.BATTERY_CHARGE_TICKS;
+        return effectiveCapacity(t) / ElectricMachineTuning.BATTERY_CHARGE_TICKS;
     }
 
     /**
@@ -116,7 +118,7 @@ public final class BatteryStack {
         t.putFloat("Charge", Math.min(effectiveCapacity(t), charge(t) + amps * eff));
         float excess = ElectricRules.overVoltage(lineVolts, caseBand(t));
         if (excess > 0f)
-            t.putFloat("Condition", Math.max(FTuning.BATTERY_CONDITION_FLOOR, condition(t) - FTuning.BATTERY_OVERVOLT_WEAR * excess * ticks));
+            t.putFloat("Condition", Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition(t) - ElectricMachineTuning.BATTERY_OVERVOLT_WEAR * excess * ticks));
         return amps * lineVolts * (1f - eff);
     }
 

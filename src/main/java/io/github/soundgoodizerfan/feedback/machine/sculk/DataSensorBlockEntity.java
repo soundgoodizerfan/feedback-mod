@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.sculk;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.HashSet;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.control.ChannelSource;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -68,7 +68,7 @@ public class DataSensorBlockEntity extends BlockEntity
 
         @Override
         public int getListenerRadius() {
-            return FTuning.DATA_SENSOR_RADIUS;
+            return ElectricMachineTuning.DATA_SENSOR_RADIUS;
         }
 
         @Override
@@ -83,7 +83,7 @@ public class DataSensorBlockEntity extends BlockEntity
     }
 
     private boolean fresh() {
-        return level != null && level.getGameTime() - heardAt <= FTuning.DATA_SENSOR_HOLD_TICKS;
+        return level != null && level.getGameTime() - heardAt <= ElectricMachineTuning.DATA_SENSOR_HOLD_TICKS;
     }
 
     @Override

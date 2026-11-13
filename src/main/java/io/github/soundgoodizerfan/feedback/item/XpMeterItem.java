@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.xp.XpNetwork;
 import io.github.soundgoodizerfan.feedback.core.xp.XpNode;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
@@ -42,7 +41,7 @@ public class XpMeterItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return quantity == Quantity.XP_LEVEL ? FTuning.XP_METER_RESOLUTION_LEVEL : FTuning.XP_METER_RESOLUTION_POINTS;
+        return quantity == Quantity.XP_LEVEL ? ItemTuning.XP_METER_RESOLUTION_LEVEL : ItemTuning.XP_METER_RESOLUTION_POINTS;
     }
 
     @Override

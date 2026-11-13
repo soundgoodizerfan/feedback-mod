@@ -31,7 +31,7 @@ import net.minecraft.world.phys.Vec3;
 public class GrenadeEntity extends ThrowableItemProjectile {
 
     private boolean impact;
-    private int fuse = FTuning.DEMO_FUSE_TICKS;
+    private int fuse = GunTuning.DEMO_FUSE_TICKS;
 
     public GrenadeEntity(EntityType<? extends GrenadeEntity> type, Level level) {
         super(type, level);
@@ -103,6 +103,6 @@ public class GrenadeEntity extends ThrowableItemProjectile {
     public void readAdditionalSaveData(CompoundTag tag) {
         super.readAdditionalSaveData(tag);
         impact = tag.getBoolean("Impact");
-        fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : FTuning.DEMO_FUSE_TICKS;
+        fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : GunTuning.DEMO_FUSE_TICKS;
     }
 }

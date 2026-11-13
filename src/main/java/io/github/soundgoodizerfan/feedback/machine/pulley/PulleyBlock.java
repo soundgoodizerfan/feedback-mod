@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.pulley;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 
 import org.jetbrains.annotations.Nullable;
@@ -50,12 +51,12 @@ public class PulleyBlock extends RotatedPillarBlock implements EntityBlock, io.g
 
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.Drag getDragSuPerRpm() {
-        return io.github.soundgoodizerfan.feedback.core.FTuning.PULLEY_DRAG_SU_PER_RPM;
+        return io.github.soundgoodizerfan.feedback.machine.MachineTuning.PULLEY_DRAG_SU_PER_RPM;
     }
 
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.Inertia getInertia() {
-        return io.github.soundgoodizerfan.feedback.core.FTuning.PULLEY_INERTIA;
+        return io.github.soundgoodizerfan.feedback.machine.MachineTuning.PULLEY_INERTIA;
     }
 
     public int getRadius() {

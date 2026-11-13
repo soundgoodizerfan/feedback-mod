@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
@@ -21,7 +20,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 /**
  * Premature spatial transitions (ender spec 2): an undamped tunnelling-active fluid ({@link Material.Trait#SPATIAL}) that is let go
  * or held over its boiling point pushes whatever stands near it into the transition regime, the way chorus fruit does a
- * body, so items and creatures within {@link FTuning#SPATIAL_HOP_RADIUS} hop a short random distance. It gives no address,
+ * body, so items and creatures within {@link HazardTuning#SPATIAL_HOP_RADIUS} hop a short random distance. It gives no address,
  * only a nearby accessible state. Chance rises with the amount lost; a hop needs room (a spot with no collision), so an
  * entity in a sealed cell stays put. Callers are rate-limited (a reactor checks once a second).
  */
@@ -56,16 +55,16 @@ public final class SpatialHop {
     public static void hop(Level level, Vec3 at, int mb) {
         if (!(level instanceof ServerLevel server))
             return;
-        float chance = Math.min(1f, FTuning.SPATIAL_HOP_BASE_CHANCE
-                + (1f - FTuning.SPATIAL_HOP_BASE_CHANCE) * mb / FTuning.SPATIAL_HOP_MB_FOR_CERTAIN);
-        float r = FTuning.SPATIAL_HOP_RADIUS;
+        float chance = Math.min(1f, HazardTuning.SPATIAL_HOP_BASE_CHANCE
+                + (1f - HazardTuning.SPATIAL_HOP_BASE_CHANCE) * mb / HazardTuning.SPATIAL_HOP_MB_FOR_CERTAIN);
+        float r = HazardTuning.SPATIAL_HOP_RADIUS;
         for (Entity e : server.getEntitiesOfClass(Entity.class, new AABB(at, at).inflate(r),
                 x -> x instanceof LivingEntity || x instanceof ItemEntity)) {
             if (e.position().distanceTo(at) > r || level.random.nextFloat() >= chance)
                 continue;
             for (int tries = 0; tries < 8; tries++) {
                 double angle = level.random.nextDouble() * Math.PI * 2;
-                double d = FTuning.SPATIAL_HOP_MIN + level.random.nextDouble() * (FTuning.SPATIAL_HOP_MAX - FTuning.SPATIAL_HOP_MIN);
+                double d = HazardTuning.SPATIAL_HOP_MIN + level.random.nextDouble() * (HazardTuning.SPATIAL_HOP_MAX - HazardTuning.SPATIAL_HOP_MIN);
                 double dx = Math.cos(angle) * d, dy = level.random.nextInt(4) - 1, dz = Math.sin(angle) * d;
                 if (!level.noCollision(e, e.getBoundingBox().move(dx, dy, dz)))
                     continue;

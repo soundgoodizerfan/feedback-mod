@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.wiredrawer;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.ShopMachineBlockEntity;
@@ -24,8 +24,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * with this on the same input item.
  *
  * <h2>Draw speed is the block's one setting</h2>
- * Fast clears a higher hardness -- {@link FTuning#WIRE_DRAWER_ST_FAST} reaches steel, {@link
- * FTuning#WIRE_DRAWER_ST_SLOW} does not, a genuine hard gate rather than patience -- but risks the
+ * Fast clears a higher hardness -- {@link MachineTuning#WIRE_DRAWER_ST_FAST} reaches steel, {@link
+ * MachineTuning#WIRE_DRAWER_ST_SLOW} does not, a genuine hard gate rather than patience -- but risks the
  * wire snapping on each draw that lands. A draw that cannot move the metal (too hard for the
  * setting, nothing left to draw) is absorbed by the die and wears the machine, the Hammer's rule.
  * Slow is always safe and is what a plain copper draw actually wants.
@@ -44,7 +44,7 @@ public class WireDrawerBlockEntity extends ShopMachineBlockEntity {
 
     @Override
     public Su getLoadSu() {
-        return FTuning.WIRE_DRAWER_LOAD_SU;
+        return MachineTuning.WIRE_DRAWER_LOAD_SU;
     }
 
     public void tickServer() {
@@ -53,14 +53,14 @@ public class WireDrawerBlockEntity extends ShopMachineBlockEntity {
         boolean fast = isFastDraw();
         boolean changed = false;
         for (int due = strokesDue(); due > 0 && !workpiece.isEmpty(); due--) {
-            St strength = new St((fast ? FTuning.WIRE_DRAWER_ST_FAST : FTuning.WIRE_DRAWER_ST_SLOW).value() * condition);
+            St strength = new St((fast ? MachineTuning.WIRE_DRAWER_ST_FAST : MachineTuning.WIRE_DRAWER_ST_SLOW).value() * condition);
             Deforming.Blow blow = Deforming.apply(workpiece, strength, level, OPERATION);
             if (!blow.landed()) {
                 wear(strength.value());
                 continue;
             }
             // Only a draw that actually pulls metal through the die can snap it.
-            if (fast && level.random.nextFloat() < FTuning.WIRE_SNAP_CHANCE) {
+            if (fast && level.random.nextFloat() < MachineTuning.WIRE_SNAP_CHANCE) {
                 workpiece = ItemStack.EMPTY;
                 level.playSound(null, worldPosition, SoundEvents.TRIPWIRE_DETACH, SoundSource.BLOCKS, 0.6f, 0.7f);
             } else {

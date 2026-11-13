@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.bearing;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
@@ -52,7 +52,7 @@ public class SliderSpringRecipe extends CustomRecipe {
         if (material == null || material.mechanical().yieldStrength().isEmpty())
             return 1;
         float yield = material.mechanical().yieldStrength().get().value();
-        return yield < FTuning.SPRING_SOFT_BELOW_YIELD ? 0 : yield >= FTuning.SPRING_STIFF_FROM_YIELD ? 2 : 1;
+        return yield < MachineTuning.SPRING_SOFT_BELOW_YIELD ? 0 : yield >= MachineTuning.SPRING_STIFF_FROM_YIELD ? 2 : 1;
     }
 
     @Nullable

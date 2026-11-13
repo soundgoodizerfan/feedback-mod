@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
@@ -22,7 +21,7 @@ import net.minecraft.world.level.Level;
 /**
  * A carried tester for parts: point it at a placed {@link Testable} to be told how
  * it responds, or use it with a board in the other hand. Condition and response are read at
- * {@link FTuning#TESTER_RESOLUTION}, and the debug helmet reads the same at the truth tier.
+ * {@link ItemTuning#TESTER_RESOLUTION}, and the debug helmet reads the same at the truth tier.
  *
  * <h2>Yield, not a key</h2>
  * Nothing needs it: the whisker's hunt, the coherer's tap and the relay's late release all work
@@ -43,7 +42,7 @@ public class ComponentTesterItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.TESTER_RESOLUTION;
+        return ItemTuning.TESTER_RESOLUTION;
     }
 
     @Override

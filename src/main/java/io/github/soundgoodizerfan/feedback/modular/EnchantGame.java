@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.resources.ResourceLocation;
@@ -63,7 +63,7 @@ public final class EnchantGame {
 
     /** Ticks from a start at {@code temperature} until the part locks, capped at a session's length. */
     public static int lockTick(Material.Attuning p, float temperature) {
-        float rate = FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick();
+        float rate = ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick();
         return Math.min(ModularTuning.ENCHANT_MAX_TICKS, (int) Math.ceil(Math.max(0, temperature - p.lock().value()) / rate));
     }
 
@@ -78,7 +78,7 @@ public final class EnchantGame {
 
     /** Heat at tick {@code i} of a session started at {@code temperature}, Tu; a held session does not cool. */
     public static float heat(Material.Attuning p, float temperature, int i) {
-        return held(p, temperature) ? temperature : temperature - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * i;
+        return held(p, temperature) ? temperature : temperature - ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * i;
     }
 
     /** Whether the part has cooled to its lock by tick {@code i}: the session is over. Never for a held session. */

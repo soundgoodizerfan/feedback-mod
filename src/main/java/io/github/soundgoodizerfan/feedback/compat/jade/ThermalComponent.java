@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
 import io.github.soundgoodizerfan.feedback.control.bimetallic.BimetallicStripBlockEntity;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleBlockEntity;
 
@@ -109,7 +109,7 @@ public class ThermalComponent implements IBlockComponentProvider {
             // The trip point is stamped on the strip. It is the reason this strip and not another
             // one was crafted, so hiding it would hide the only thing that distinguishes them.
             tooltip.add(Component.translatable("feedback.spec.trip",
-                    Readout.number(FTuning.BIMETALLIC_TRIP_TU.value())).withStyle(ChatFormatting.DARK_GRAY));
+                    Readout.number(ControlTuning.BIMETALLIC_TRIP_TU.value())).withStyle(ChatFormatting.DARK_GRAY));
             tooltip.add(Component.translatable(strip.isTripped()
                             ? "feedback.readout.strip_open"
                             : "feedback.readout.strip_closed")

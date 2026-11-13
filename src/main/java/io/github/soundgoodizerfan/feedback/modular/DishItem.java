@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 import java.util.function.Consumer;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.process.DishFigures;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -82,7 +82,7 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
         ModularType type = design == null ? null : ModularTypes.known(design.type());
         Part finish = type == null || type.afterRole() == null ? null : design.part(type.afterRole());
         if (finish != null)
-            tooltip.add(PartBenchMenu.pourName(finish.state("pour", FTuning.POUR_AUTOMATION)).withStyle(ChatFormatting.GRAY));
+            tooltip.add(PartBenchMenu.pourName(finish.state("pour", ModularTuning.POUR_AUTOMATION)).withStyle(ChatFormatting.GRAY));
         DishFigures figures = stack.get(FDataComponents.DISH_FIGURES.get());
         if (figures == null)
             return;
@@ -106,13 +106,13 @@ public class DishItem extends ModularItem implements io.github.soundgoodizerfan.
 
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.TuRate coolingRate(ItemStack stack) {
-        return FTuning.ITEM_COOLING_TU_PER_TICK;
+        return ThermalTuning.ITEM_COOLING_TU_PER_TICK;
     }
 
     /** A container with a warming perk (blaze rod) holds what is on it warm, wherever it is, with nothing ticked. */
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.Tu holdsAt(ItemStack stack) {
-        return MaterialPerks.of(stack).containsKey(io.github.soundgoodizerfan.feedback.process.Material.Perk.WARMING) ? FTuning.WARMING_HOLD_TU : null;
+        return MaterialPerks.of(stack).containsKey(io.github.soundgoodizerfan.feedback.process.Material.Perk.WARMING) ? ModularTuning.WARMING_HOLD_TU : null;
     }
 
     @Override

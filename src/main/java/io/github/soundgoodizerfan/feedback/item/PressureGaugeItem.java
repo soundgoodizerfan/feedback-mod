@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
@@ -38,7 +37,7 @@ public class PressureGaugeItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.PRESSURE_GAUGE_RESOLUTION_PU.value();
+        return ItemTuning.PRESSURE_GAUGE_RESOLUTION_PU.value();
     }
 
     @Override

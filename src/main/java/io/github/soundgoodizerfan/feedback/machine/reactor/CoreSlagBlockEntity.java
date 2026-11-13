@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.reactor;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.RadiationEmitter;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -15,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 /** Slag from a breached core: a radiation source that decays slowly, worked out from the game time it was made (no ticking). */
 public class CoreSlagBlockEntity extends BlockEntity implements RadiationEmitter {
 
-    private float ru = FTuning.REACTOR_SLAG_RU;
+    private float ru = ReactorTuning.REACTOR_SLAG_RU;
     private long born = Long.MIN_VALUE;
 
     public CoreSlagBlockEntity(BlockPos pos, BlockState state) {
@@ -34,7 +33,7 @@ public class CoreSlagBlockEntity extends BlockEntity implements RadiationEmitter
             return 0f;
         if (born == Long.MIN_VALUE)
             born = level.getGameTime();
-        return ru * (float) Math.exp(-(level.getGameTime() - born) / (double) FTuning.REACTOR_SLAG_DECAY_TICKS);
+        return ru * (float) Math.exp(-(level.getGameTime() - born) / (double) ReactorTuning.REACTOR_SLAG_DECAY_TICKS);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class CoreSlagBlockEntity extends BlockEntity implements RadiationEmitter
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        ru = tag.contains("Ru") ? tag.getFloat("Ru") : FTuning.REACTOR_SLAG_RU;
+        ru = tag.contains("Ru") ? tag.getFloat("Ru") : ReactorTuning.REACTOR_SLAG_RU;
         born = tag.contains("Born") ? tag.getLong("Born") : Long.MIN_VALUE;
     }
 }

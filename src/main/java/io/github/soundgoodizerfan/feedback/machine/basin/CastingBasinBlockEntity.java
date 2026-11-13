@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.basin;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -46,7 +48,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * <h2>Two ways to hold a pour</h2>
  * With molds set, the melt fills them top to bottom -- the first to its capacity, then the next --
  * and each is an ordinary filled {@link MoldItem}, cooling by its own {@link ItemHeat}. With none,
- * the basin is an open pool that takes one block's worth ({@link FTuning#BASIN_POOL_MB}) and cools
+ * the basin is an open pool that takes one block's worth ({@link MachineTuning#BASIN_POOL_MB}) and cools
  * as a single heap.
  *
  * <h2>Nothing is delivered</h2>
@@ -64,8 +66,8 @@ public class CastingBasinBlockEntity extends BaseContainerBlockEntity {
     public static final int SLOTS = 4;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-    private final FluidTank pool = new FluidTank(FTuning.BASIN_POOL_MB);
-    private float poolTu = FTuning.AMBIENT_TU.value();
+    private final FluidTank pool = new FluidTank(MachineTuning.BASIN_POOL_MB);
+    private float poolTu = ThermalTuning.AMBIENT_TU.value();
 
     /** Pool amount and temperature, synced to an open menu. */
     private final ContainerData data = new ContainerData() {
@@ -94,7 +96,7 @@ public class CastingBasinBlockEntity extends BaseContainerBlockEntity {
         if (level == null)
             return;
         if (!pool.isEmpty()) {
-            poolTu += (AmbientTable.at(level).value() - poolTu) * FTuning.BASIN_COOL_PER_TICK;
+            poolTu += (AmbientTable.at(level).value() - poolTu) * MachineTuning.BASIN_COOL_PER_TICK;
             setChanged();
         }
         if (level.getBlockEntity(worldPosition.above()) instanceof MoltenVessel source)
@@ -106,7 +108,7 @@ public class CastingBasinBlockEntity extends BaseContainerBlockEntity {
 
     private void pourFrom(MoltenVessel source) {
         FluidTank tank = source.getTank();
-        FluidStack offered = tank.drain(FTuning.BASIN_POUR_MB_PER_TICK, IFluidHandler.FluidAction.SIMULATE);
+        FluidStack offered = tank.drain(MachineTuning.BASIN_POUR_MB_PER_TICK, IFluidHandler.FluidAction.SIMULATE);
         if (offered.isEmpty())
             return;
         int took = hasMolds() ? fillMolds(offered, source.getTemperature()) : fillPool(offered, source.getTemperature());
@@ -180,7 +182,7 @@ public class CastingBasinBlockEntity extends BaseContainerBlockEntity {
             give(player, casting.get().result().copy());
             out++;
         }
-        if (!hasMolds() && pool.getFluidAmount() >= FTuning.BASIN_POOL_MB) {
+        if (!hasMolds() && pool.getFluidAmount() >= MachineTuning.BASIN_POOL_MB) {
             Optional<Casting> casting = CastingTable.get().find(pool.getFluid(), Casting.INGOT_MOLD);
             if (casting.isPresent() && casting.get().isSolidAt(new Tu(poolTu))) {
                 give(player, blockOf(casting.get().result()));
@@ -282,6 +284,6 @@ public class CastingBasinBlockEntity extends BaseContainerBlockEntity {
         items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, items, registries);
         pool.readFromNBT(registries, tag.getCompound("Pool"));
-        poolTu = tag.contains("PoolTu") ? tag.getFloat("PoolTu") : FTuning.AMBIENT_TU.value();
+        poolTu = tag.contains("PoolTu") ? tag.getFloat("PoolTu") : ThermalTuning.AMBIENT_TU.value();
     }
 }

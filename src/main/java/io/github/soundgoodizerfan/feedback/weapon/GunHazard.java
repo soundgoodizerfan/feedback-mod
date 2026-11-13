@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -43,17 +42,17 @@ public final class GunHazard {
     public static Outcome assess(float peak, float chamberRating, float caseRating, float noise) {
         float gunRatio = peak / chamberRating;
         float hazard = Math.max(gunRatio, peak / caseRating);
-        float gunDamage = gunRatio > 1 ? (gunRatio - 1) * FTuning.GUN_OVERPRESSURE_DAMAGE_PER_RATIO * noise : 0;
-        float hp = hazard > FTuning.GUN_HAZARD_SHOOTER_ONSET
-                ? Math.min(FTuning.GUN_HAZARD_SHOOTER_MAX_HP,
-                        (hazard - FTuning.GUN_HAZARD_SHOOTER_ONSET) * FTuning.GUN_HAZARD_SHOOTER_HP_PER_RATIO * noise)
+        float gunDamage = gunRatio > 1 ? (gunRatio - 1) * GunTuning.GUN_OVERPRESSURE_DAMAGE_PER_RATIO * noise : 0;
+        float hp = hazard > GunTuning.GUN_HAZARD_SHOOTER_ONSET
+                ? Math.min(GunTuning.GUN_HAZARD_SHOOTER_MAX_HP,
+                        (hazard - GunTuning.GUN_HAZARD_SHOOTER_ONSET) * GunTuning.GUN_HAZARD_SHOOTER_HP_PER_RATIO * noise)
                 : 0;
         return new Outcome(hazard, gunDamage, hp);
     }
 
     /** hp a cooked-off round does to the one holding the gun: per nominal charge, capped, with the noise floor. */
     public static float cookOffHp(int charge, float noise) {
-        return Math.min(FTuning.GUN_COOKOFF_HP_MAX, FTuning.GUN_COOKOFF_HP * charge / FTuning.GUN_CHARGE_NOMINAL * noise);
+        return Math.min(GunTuning.GUN_COOKOFF_HP_MAX, GunTuning.GUN_COOKOFF_HP * charge / GunTuning.GUN_CHARGE_NOMINAL * noise);
     }
 
     public static float damage(ItemStack gun) {

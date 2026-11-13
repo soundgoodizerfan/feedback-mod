@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.registry;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
@@ -156,7 +158,7 @@ public class FWeapons {
     /**
      * A shot is a vibration (spec 11 step 4's owed "gunfire as a vibration"): sculk hears it, and a
      * warden. Three radii, because a game event's reach is fixed per type: an open or braked muzzle
-     * carries far, a suppressed one does not ({@code FTuning.GUN_QUIET_REPORT}).
+     * carries far, a suppressed one does not ({@code GunTuning.GUN_QUIET_REPORT}).
      */
     public static final DeferredRegister<net.minecraft.world.level.gameevent.GameEvent> GAME_EVENTS =
             DeferredRegister.create(Registries.GAME_EVENT, Feedback.MOD_ID);
@@ -166,10 +168,10 @@ public class FWeapons {
     public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
             net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_QUIET =
             GAME_EVENTS.register("gunshot_quiet", () -> new net.minecraft.world.level.gameevent.GameEvent(8));
-    /** An electrical arc ({@code core/electric/Sparks}); heard by the coherer and the cat's whisker. Radius is {@code FTuning.SPARK_RANGE_BLOCKS}. */
+    /** An electrical arc ({@code core/electric/Sparks}); heard by the coherer and the cat's whisker. Radius is {@code ElectricTuning.SPARK_RANGE_BLOCKS}. */
     public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
             net.minecraft.world.level.gameevent.GameEvent> SPARK =
-            GAME_EVENTS.register("spark", () -> new net.minecraft.world.level.gameevent.GameEvent(io.github.soundgoodizerfan.feedback.core.FTuning.SPARK_RANGE_BLOCKS));
+            GAME_EVENTS.register("spark", () -> new net.minecraft.world.level.gameevent.GameEvent(io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning.SPARK_RANGE_BLOCKS));
     /** A bare supersonic shot: blast and crack both full. */
     public static final net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.level.gameevent.GameEvent,
             net.minecraft.world.level.gameevent.GameEvent> GUNSHOT_THUNDEROUS =

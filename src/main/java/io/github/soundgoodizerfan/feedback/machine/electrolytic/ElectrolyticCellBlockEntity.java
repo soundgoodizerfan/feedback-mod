@@ -2,6 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.electrolytic;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -9,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.hazard.Corrosion;
@@ -53,13 +57,13 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * <h2>Voltage is a threshold, current is the rate</h2>
  * A process asks for "at least this voltage; this much current is how fast it
  * goes", never a bare Eu cost. So this sink does not run on {@link ElectricRules#rate}. Every amp
- * delivered moves {@link FTuning#QU_PER_AMP_TICK} of metal a tick, and the voltage it sees decides
+ * delivered moves {@link ElectricMachineTuning#QU_PER_AMP_TICK} of metal a tick, and the voltage it sees decides
  * only <em>which</em> metal: below a metal's deposition potential no amount of current plates it,
  * which is one of 6.5's genuine physical thresholds and so a hard gate in the §7 sense.
  *
  * <h2>The voltage selects the metal</h2>
  * The noblest metal in solution (highest {@code electrode_potential}) plates at
- * {@link FTuning#ELECTROLYSIS_OVERPOTENTIAL_VOLTS}; a less noble one needs that plus the gap. Brass
+ * {@link ElectricMachineTuning#ELECTROLYSIS_OVERPOTENTIAL_VOLTS}; a less noble one needs that plus the gap. Brass
  * dissolves as copper and zinc (its {@code composition}); zinc sits 1.1 V behind copper, so a
  * zinc-copper galvanic cell at 1.1 V plates copper out of brass and leaves the zinc in the water,
  * while a coarse dynamo at 1.5 V plates both. Which source refines is a property of the source,
@@ -69,11 +73,11 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  *
  * <h2>Overrun: the finished deposit is what gets spoiled</h2>
  * While the anode lasts it keeps the noble metal coming. Once it is gone the anode can only split
- * water, which needs {@link FTuning#ELECTROLYSIS_WATER_VOLTS}: below that the cell simply stops,
+ * water, which needs {@link ElectricMachineTuning#ELECTROLYSIS_WATER_VOLTS}: below that the cell simply stops,
  * and a low-voltage refinery is safe to forget. Above it the current strips what is left in the
  * water -- the noble metal first, then whatever was waiting behind it, which plates onto the
  * cathode the player has not yet taken. Purity is judged on the whole deposit when it comes off
- * ({@link FTuning#ELECTROLYTIC_PURE_FRACTION}), so a few minutes too long turns a cathode of copper
+ * ({@link ElectricMachineTuning#ELECTROLYTIC_PURE_FRACTION}), so a few minutes too long turns a cathode of copper
  * into copper scrap. The faster, hotter supply is also the one that punishes a late hand.
  *
  * <h2>The water remembers (philosophy 9)</h2>
@@ -95,7 +99,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
 
     private static final float EPS = 1e-5f;
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float condition = 1f;
     private boolean working;
 
@@ -120,7 +124,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     /** Set each tick before {@link #electrolyse}: the current this tick is over the piece's limit. */
     private boolean burning;
 
-    private final FluidTank water = new FluidTank(FTuning.ELECTROLYTIC_CELL_TANK_MB,
+    private final FluidTank water = new FluidTank(ElectricMachineTuning.ELECTROLYTIC_CELL_TANK_MB,
             stack -> stack.is(FluidTags.WATER) || Corrosion.corrosive(stack)) {
         @Override
         protected void onContentsChanged() {
@@ -143,7 +147,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     @Override
     public float wantedAmps() {
         boolean metal = !anode.isEmpty() || dissolvingLeft > EPS || !solution.isEmpty();
-        return conducts() && metal ? FTuning.ELECTROLYTIC_CELL_AMPS : 0f;
+        return conducts() && metal ? ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS : 0f;
     }
 
     @Override
@@ -155,26 +159,26 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
         burning = !work.isEmpty() && amps > burnAmps(work);
-        working = amps > 0f && conducts() && electrolyse(volts, amps * FTuning.QU_PER_AMP_TICK * condition);
+        working = amps > 0f && conducts() && electrolyse(volts, amps * ElectricMachineTuning.QU_PER_AMP_TICK * condition);
 
         float excess = ElectricRules.overVoltage(volts, ratedBand());
         if (excess > 0f) {
-            condition = Math.max(FTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR,
-                    condition - FTuning.ELECTROLYTIC_CELL_WEAR_PER_EXCESS * excess);
-            Heat.warm(this, FTuning.ELECTROLYTIC_CELL_HEAT_PER_EXCESS * excess);
+            condition = Math.max(ElectricMachineTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR,
+                    condition - ElectricMachineTuning.ELECTROLYTIC_CELL_WEAR_PER_EXCESS * excess);
+            Heat.warm(this, ElectricMachineTuning.ELECTROLYTIC_CELL_HEAT_PER_EXCESS * excess);
             // Over-drive cracks a hung probe's crystal too: condition lost, never refusal.
             if (work.getItem() instanceof MassProbeItem)
                 work.set(FDataComponents.PROBE_CONDITION.get(), Math.max(FTuning.MASS_PROBE_CONDITION_FLOOR,
-                        MassProbeItem.condition(work) - FTuning.MASS_PROBE_WEAR_PER_EXCESS * excess));
+                        MassProbeItem.condition(work) - ElectricMachineTuning.MASS_PROBE_WEAR_PER_EXCESS * excess));
             setChanged();
         }
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, ambient, ambient, false);
         // An acid or a base in a glass-and-wire cell bites it a little each second (core/hazard/Corrosion).
         if (level.getGameTime() % 20 == 0 && Corrosion.corrosive(water.getFluid())) {
-            float bite = Corrosion.wearPerSecond(FTuning.ELECTROLYSER_LINING);
+            float bite = Corrosion.wearPerSecond(HazardTuning.ELECTROLYSER_LINING);
             if (bite > 0f) {
-                condition = Math.max(FTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR, condition - bite);
+                condition = Math.max(ElectricMachineTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR, condition - bite);
                 setChanged();
             }
         }
@@ -200,7 +204,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     }
 
     private boolean conducts() {
-        return water.getFluidAmount() >= FTuning.ELECTROLYTIC_CELL_MIN_WATER_MB;
+        return water.getFluidAmount() >= ElectricMachineTuning.ELECTROLYTIC_CELL_MIN_WATER_MB;
     }
 
     // --- the chemistry ------------------------------------------------------------------------
@@ -210,13 +214,13 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
      * happened. Package-visible arithmetic, so a test can drive it with any voltage.
      */
     boolean electrolyse(float volts, float charge) {
-        if (volts < FTuning.ELECTROLYSIS_OVERPOTENTIAL_VOLTS || charge <= 0f)
+        if (volts < ElectricMachineTuning.ELECTROLYSIS_OVERPOTENTIAL_VOLTS || charge <= 0f)
             return false;
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
 
         // The anode: dissolve metal, else split water, else nothing can carry the charge.
         float carried = dissolve(materials, charge);
-        if (volts >= FTuning.ELECTROLYSIS_WATER_VOLTS)
+        if (volts >= ElectricMachineTuning.ELECTROLYSIS_WATER_VOLTS)
             carried = charge;
         if (carried <= EPS)
             return false;
@@ -234,7 +238,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         present.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
         for (Map.Entry<ResourceLocation, Float> s : present) {
             if (carried <= EPS
-                    || volts < FTuning.ELECTROLYSIS_OVERPOTENTIAL_VOLTS + (noblest - s.getValue()))
+                    || volts < ElectricMachineTuning.ELECTROLYSIS_OVERPOTENTIAL_VOLTS + (noblest - s.getValue()))
                 break;
             float plated = Math.min(carried, solution.get(s.getKey()));
             move(solution, work.isEmpty() ? deposit : coat, s.getKey(), plated);
@@ -332,7 +336,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         else
             size = quPerItem(Material.find(MaterialTable.get().materials(), piece.getItem())
                     .map(Material.Located::form).orElse("ingot")).value() / FTuning.QU_PER_INGOT.value();
-        return FTuning.PLATING_BURN_AMPS_PER_INGOT * (float) Math.pow(size, 2.0 / 3.0);
+        return ElectricMachineTuning.PLATING_BURN_AMPS_PER_INGOT * (float) Math.pow(size, 2.0 / 3.0);
     }
 
     /**
@@ -354,7 +358,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
 
     /**
      * Takes the hung piece out with whatever grew on it. A coat past
-     * {@link FTuning#PLATING_SPALLS_ABOVE_QU} is too thick to hold and flakes off as the piece
+     * {@link MachineTuning#PLATING_SPALLS_ABOVE_QU} is too thick to hold and flakes off as the piece
      * comes out -- the overrun, spoiling the finished coat -- leaving the piece bare and the metal
      * as nuggets, which hang as an anode again: the loss is time and current, as a scrap cathode's.
      */
@@ -379,7 +383,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
             ModularStacks.rebake(piece);
             return List.of(piece);
         }
-        if (total > FTuning.PLATING_SPALLS_ABOVE_QU) {
+        if (total > MachineTuning.PLATING_SPALLS_ABOVE_QU) {
             List<ItemStack> out = new ArrayList<>(List.of(piece));
             Material material = MaterialTable.get().materials().get(dominant);
             int nuggets = (int) Math.floor(total / quPerItem("nugget").value() + 1e-4f);
@@ -388,8 +392,8 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
             ModularStacks.rebake(piece);
             return out;
         }
-        Plating.Quality quality = burnt / total > FTuning.PLATING_BURNT_SHARE ? Plating.Quality.BURNT
-                : grown.get(dominant) / total < FTuning.ELECTROLYTIC_PURE_FRACTION ? Plating.Quality.MIXED
+        Plating.Quality quality = burnt / total > ElectricMachineTuning.PLATING_BURNT_SHARE ? Plating.Quality.BURNT
+                : grown.get(dominant) / total < ElectricMachineTuning.ELECTROLYTIC_PURE_FRACTION ? Plating.Quality.MIXED
                 : total < FTuning.PLATING_POROUS_BELOW_QU ? Plating.Quality.POROUS
                 : Plating.Quality.SOUND;
         piece.set(FDataComponents.PLATING.get(), new Plating(dominant, total, quality));
@@ -474,7 +478,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         Material material = dominant == null ? null : MaterialTable.get().materials().get(dominant);
         if (whole <= 0 || material == null)
             return List.of();
-        boolean pure = deposit.get(dominant) / total >= FTuning.ELECTROLYTIC_PURE_FRACTION;
+        boolean pure = deposit.get(dominant) / total >= ElectricMachineTuning.ELECTROLYTIC_PURE_FRACTION;
         Optional<Item> item = material.item(dominant, pure ? "ingot" : "scrap");
         if (item.isEmpty())
             return List.of();
@@ -580,12 +584,12 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.ELECTROLYTIC_CELL_MASS;
+        return ElectricMachineTuning.ELECTROLYTIC_CELL_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.ELECTROLYTIC_CELL_LEAK;
+        return ElectricMachineTuning.ELECTROLYTIC_CELL_LEAK;
     }
 
     // --- persistence --------------------------------------------------------------------------

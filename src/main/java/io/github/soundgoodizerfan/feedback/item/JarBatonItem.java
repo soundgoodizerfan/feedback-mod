@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -32,7 +32,7 @@ import net.minecraft.world.item.context.UseOnContext;
  * reuse: a capacitor empties.
  *
  * <h2>Misuse shocks the holder</h2>
- * Charge above {@link FTuning#BATON_RATING_VOLTS}, or swinging while standing in water, shocks
+ * Charge above {@link ItemTuning#BATON_RATING_VOLTS}, or swinging while standing in water, shocks
  * the holder by the same path; insulating gloves (checked by {@code Shock}) protect a player. A
  * baton used within its rating, dry, wears nothing.
  */
@@ -63,14 +63,14 @@ public class JarBatonItem extends Item {
         if (volts <= 0f || attacker.level().isClientSide)
             return false;
         stack.remove(FDataComponents.BATON_VOLTS.get());
-        if (volts > FTuning.BATON_RATING_VOLTS || attacker.isInWater())
+        if (volts > ItemTuning.BATON_RATING_VOLTS || attacker.isInWater())
             Shock.apply(attacker, volts);
         target.invulnerableTime = 0;   // the swing's own hit has just set it; the discharge is a second blow
         Shock.apply(target, volts);
         target.knockback(FTuning.FENCE_KNOCKBACK, attacker.getX() - target.getX(), attacker.getZ() - target.getZ());
         target.hurtMarked = true;
-        CombatTicker.stagger(target, Math.min(FTuning.BATON_STAGGER_MAX_TICKS,
-                Math.round(volts * FTuning.BATON_STAGGER_TICKS_PER_VOLT)), FTuning.BATON_STAGGER_SLOW);
+        CombatTicker.stagger(target, Math.min(ItemTuning.BATON_STAGGER_MAX_TICKS,
+                Math.round(volts * ItemTuning.BATON_STAGGER_TICKS_PER_VOLT)), ItemTuning.BATON_STAGGER_SLOW);
         if (target.level() instanceof ServerLevel server) {
             server.sendParticles(ParticleTypes.ELECTRIC_SPARK, target.getX(), target.getY() + target.getBbHeight() / 2,
                     target.getZ(), 10, 0.2, 0.3, 0.2, 0.1);

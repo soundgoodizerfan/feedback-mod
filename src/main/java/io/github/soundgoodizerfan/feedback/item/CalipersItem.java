@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
@@ -68,8 +67,8 @@ public class CalipersItem extends Item implements Instrument {
     @Override
     public float resolution(Quantity quantity) {
         return switch (quantity) {
-            case CONDITION -> FTuning.CALIPERS_RESOLUTION_CONDITION;
-            case LENGTH -> FTuning.CALIPERS_RESOLUTION_MM;
+            case CONDITION -> ItemTuning.CALIPERS_RESOLUTION_CONDITION;
+            case LENGTH -> ItemTuning.CALIPERS_RESOLUTION_MM;
             default -> 1f;   // Fu is whole numbers; there is nothing finer to resolve.
         };
     }

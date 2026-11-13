@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.xp;
 
+import io.github.soundgoodizerfan.feedback.core.xp.XpTuning;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.xp.XpNode;
 import io.github.soundgoodizerfan.feedback.modular.Attunements;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 
 /**
  * The grindstone's cousin for attunements: held to it, a part loses one attunement against the stone and gives back a
- * share of what the session cost ({@link FTuning#UNATTUNE_REFUND}) as XP, into an XP run beside the stone if it has room
+ * share of what the session cost ({@link XpTuning#UNATTUNE_REFUND}) as XP, into an XP run beside the stone if it has room
  * and as orbs if not. The part keeps its flaws. Not a free lunch: the refund is half the price, and the stone takes the
  * lowest-named attunement first, so choosing which one goes is not offered.
  */
@@ -59,7 +59,7 @@ public class DisenchantStoneBlock extends Block {
             player.setItemInHand(hand, one);
         else if (!player.getInventory().add(one))
             player.drop(one, false);
-        int refund = Math.max(1, Math.round(ModularTuning.ENCHANT_XP_COST.value() * FTuning.UNATTUNE_REFUND));
+        int refund = Math.max(1, Math.round(ModularTuning.ENCHANT_XP_COST.value() * XpTuning.UNATTUNE_REFUND));
         int left = refund;
         for (Direction d : Direction.values())
             if (left > 0 && level.getBlockEntity(pos.relative(d)) instanceof XpNode node && node.network() != null)

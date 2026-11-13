@@ -3,6 +3,9 @@
 package io.github.soundgoodizerfan.feedback.machine.stockpot;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.item.Meal;
@@ -58,7 +61,7 @@ import java.util.Optional;
  */
 public class StockpotBlockEntity extends BlockEntity {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float water, solid;
     // Sum of food mass x volume; over solid it is the mean mass of what is in, which sets how fast the batch cooks.
     private float massSum;
@@ -95,7 +98,7 @@ public class StockpotBlockEntity extends BlockEntity {
     }
 
     public int servings() {
-        return volume() <= 0f ? 0 : Math.max(1, Math.round(volume() / FTuning.POT_SERVING_MB));
+        return volume() <= 0f ? 0 : Math.max(1, Math.round(volume() / VesselTuning.POT_SERVING_MB));
     }
 
     public float cook() {
@@ -134,7 +137,7 @@ public class StockpotBlockEntity extends BlockEntity {
         if (now - skimTick < 5L || scum <= 0f)
             return false;
         skimTick = now;
-        scum = Math.max(0f, scum - FTuning.POT_SKIM_AMOUNT * scale);
+        scum = Math.max(0f, scum - VesselTuning.POT_SKIM_AMOUNT * scale);
         level.playSound(null, worldPosition, SoundEvents.SLIME_BLOCK_STEP, SoundSource.BLOCKS, 0.6f, 1.2f);
         changed();
         return true;
@@ -147,17 +150,17 @@ public class StockpotBlockEntity extends BlockEntity {
     /** The pot's swing per tick: the reference rate scaled by how well its material conducts against how dense it is. */
     public float relax() {
         if (relax == 0f)
-            relax = CookwareSwing.relax(material, FTuning.POT_RELAX_PER_TICK);
+            relax = CookwareSwing.relax(material, MachineTuning.POT_RELAX_PER_TICK);
         return relax;
     }
 
     public int items() {
-        return Math.round(solid / FTuning.POT_ITEM_MB);
+        return Math.round(solid / VesselTuning.POT_ITEM_MB);
     }
 
     /** Add water, up to what the pot takes; returns whether any went in. */
     public boolean addWater(float mb) {
-        if (water + mb > FTuning.POT_MAX_WATER_MB)
+        if (water + mb > VesselTuning.POT_MAX_WATER_MB)
             return false;
         // Water is not food: it dilutes but leaves the cook progress alone.
         mix(mb, true);
@@ -168,9 +171,9 @@ public class StockpotBlockEntity extends BlockEntity {
 
     /** Add one food to the mixture. Returns whether it fit. */
     public boolean addFood(ItemStack food, Cooking.Entry entry) {
-        if (items() >= FTuning.POT_MAX_ITEMS)
+        if (items() >= VesselTuning.POT_MAX_ITEMS)
             return false;
-        float vol = FTuning.POT_ITEM_MB;
+        float vol = VesselTuning.POT_ITEM_MB;
         FoodProperties held = food.has(DataComponents.FOOD) ? food.get(DataComponents.FOOD) : food.getItem().components().get(DataComponents.FOOD);
         FoodProperties done = entry.cooked().map(i -> i.components().get(DataComponents.FOOD)).orElse(held);
         if (held == null)
@@ -207,15 +210,15 @@ public class StockpotBlockEntity extends BlockEntity {
     public boolean addPinch(Cooking.Entry entry) {
         if (volume() <= 0f)
             return false;
-        saltMass += FTuning.POT_ITEM_MB;
-        entry.food().actives().forEach((name, strength) -> compoundMass.merge(name, strength * FTuning.POT_ITEM_MB, Float::sum));
+        saltMass += VesselTuning.POT_ITEM_MB;
+        entry.food().actives().forEach((name, strength) -> compoundMass.merge(name, strength * VesselTuning.POT_ITEM_MB, Float::sum));
         changed();
         return true;
     }
 
     /** Something at room temperature joins the pot: the heat is shared by mass, and over water the pot cannot be hotter than boiling. */
     private void mix(float mb, boolean isWater) {
-        float mass = FTuning.POT_EMPTY_MASS_MB + volume();
+        float mass = VesselTuning.POT_EMPTY_MASS_MB + volume();
         temperature = (temperature * mass + AmbientTable.at(level).value() * mb) / (mass + mb);
         if (isWater || water > 0f)
             temperature = Math.min(temperature, FTuning.POT_BOIL_TU.value());
@@ -241,17 +244,17 @@ public class StockpotBlockEntity extends BlockEntity {
         float v = volume();
         float scale = 1f - charred * (1f - FTuning.FOOD_CHARRED_SCALE);
         // An unmixed pot has let its solids settle: the first ladle of several is thin and what stays behind is richer. The last takes all.
-        float share = n == 1 ? 1f : (1f - FTuning.POT_SETTLE * (1f - mixed)) / n;
-        float nutrition = (rawNutrition + (cookedNutrition - rawNutrition) * cook) * FTuning.POT_STEW_BONUS * scale * share;
-        float saturation = (rawSaturation + (cookedSaturation - rawSaturation) * cook) * FTuning.POT_STEW_BONUS * scale * share;
+        float share = n == 1 ? 1f : (1f - VesselTuning.POT_SETTLE * (1f - mixed)) / n;
+        float nutrition = (rawNutrition + (cookedNutrition - rawNutrition) * cook) * VesselTuning.POT_STEW_BONUS * scale * share;
+        float saturation = (rawSaturation + (cookedSaturation - rawSaturation) * cook) * VesselTuning.POT_STEW_BONUS * scale * share;
         if (Math.round(nutrition) < 1 && saturation <= 0f)
             return ItemStack.EMPTY;
         // A salted pot tolerates more of both, as a salted food does.
         java.util.Map<String, Float> doses = new java.util.HashMap<>();
         compoundMass.forEach((name, mass) -> doses.put(name, mass / v));
         float toxin = toxinMass / v / Cooking.tolerance(Math.min(1f, saltMass / v), doses, "toxin");
-        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * FTuning.POT_SCUM_HAZARD) / Cooking.tolerance(Math.min(1f, saltMass / v), doses, "pathogen");
-        String dish = charred >= 0.5f ? "scorched" : solid / v < FTuning.POT_BROTH_SOLIDS ? "broth" : "stew";
+        float pathogen = (pathogenMass * (1f - cook) / v + (scum + folded) * VesselTuning.POT_SCUM_HAZARD) / Cooking.tolerance(Math.min(1f, saltMass / v), doses, "pathogen");
+        String dish = charred >= 0.5f ? "scorched" : solid / v < VesselTuning.POT_BROTH_SOLIDS ? "broth" : "stew";
         ItemStack meal = new ItemStack(FItems.MEAL.get());
         java.util.Map<String, Float> shares = new java.util.HashMap<>();
         float seen = 0f;
@@ -318,7 +321,7 @@ public class StockpotBlockEntity extends BlockEntity {
 
     /** The material the pot is made of, wrought iron if it was made of none; read by the induction stove. */
     public ResourceLocation vesselMaterial() {
-        return material == null ? FTuning.POT_MATERIAL : material;
+        return material == null ? VesselTuning.POT_MATERIAL : material;
     }
 
     public void tickServer() {
@@ -339,36 +342,36 @@ public class StockpotBlockEntity extends BlockEntity {
             return;
         }
         lastSleepTick = level.getGameTime();
-        temperature += (target - temperature) * relax() * FTuning.POT_EMPTY_MASS_MB / (FTuning.POT_EMPTY_MASS_MB + volume());
+        temperature += (target - temperature) * relax() * VesselTuning.POT_EMPTY_MASS_MB / (VesselTuning.POT_EMPTY_MASS_MB + volume());
         // Stirring keeps the bottom from scorching and mixes the pot; it lapses half a second after the last input.
         float stirNow = level.getGameTime() - stirTick <= 10L ? stir : 0f;
-        mixed = Mth.clamp(mixed + stirNow * FTuning.POT_MIX_PER_TICK - FTuning.POT_MIX_DECAY_PER_TICK, 0f, 1f);
-        if (water > 0f && fire > FTuning.POT_SCORCH_FIRE_TU.value())
-            charred = Mth.clamp(charred + (fire - FTuning.POT_SCORCH_FIRE_TU.value()) * FTuning.POT_SCORCH_PER_TU_TICK * (1f - mixed), 0f, 1f);
+        mixed = Mth.clamp(mixed + stirNow * VesselTuning.POT_MIX_PER_TICK - VesselTuning.POT_MIX_DECAY_PER_TICK, 0f, 1f);
+        if (water > 0f && fire > VesselTuning.POT_SCORCH_FIRE_TU.value())
+            charred = Mth.clamp(charred + (fire - VesselTuning.POT_SCORCH_FIRE_TU.value()) * VesselTuning.POT_SCORCH_PER_TU_TICK * (1f - mixed), 0f, 1f);
         // Raw load cooking off rises as scum; stirring it in before it is skimmed folds it into the body for good.
         if (temperature > FTuning.FOOD_COOK_TU.value() && cook < 1f && pathogenMass > 0f) {
             float speed = Math.min(1f, (temperature - FTuning.FOOD_COOK_TU.value())
                     / (FTuning.FOOD_COOK_FULL_TU.value() - FTuning.FOOD_COOK_TU.value()));
-            scum = Math.min(1f, scum + pathogenMass * (1f - cook) / volume() * speed * FTuning.POT_SCUM_YIELD);
+            scum = Math.min(1f, scum + pathogenMass * (1f - cook) / volume() * speed * VesselTuning.POT_SCUM_YIELD);
         }
-        float fold = Math.min(scum, stirNow * FTuning.POT_FOLD_PER_TICK);
+        float fold = Math.min(scum, stirNow * VesselTuning.POT_FOLD_PER_TICK);
         scum -= fold;
         folded += fold;
         if (water > 0f && fire > FTuning.POT_BOIL_TU.value()) {
-            float gone = Math.min(water, (fire - FTuning.POT_BOIL_TU.value()) * FTuning.POT_EVAPORATION_MB_PER_TU_TICK);
+            float gone = Math.min(water, (fire - FTuning.POT_BOIL_TU.value()) * VesselTuning.POT_EVAPORATION_MB_PER_TU_TICK);
             water -= gone;
             boiled += gone;
             // Sea water is the brine: only a pot by the sea leaves salt when it boils dry.
             if (water <= 0f) {
                 if (level.getBiome(worldPosition).is(BiomeTags.IS_OCEAN) || level.getBiome(worldPosition).is(BiomeTags.IS_BEACH))
-                    saltItems += boiled / FTuning.SALT_MB_PER_ITEM;
+                    saltItems += boiled / VesselTuning.SALT_MB_PER_ITEM;
                 boiled = 0f;
             }
         }
         if (temperature > FTuning.FOOD_COOK_TU.value() && cook < 1f) {
             float speed = Math.min(1f, (temperature - FTuning.FOOD_COOK_TU.value())
                     / (FTuning.FOOD_COOK_FULL_TU.value() - FTuning.FOOD_COOK_TU.value()));
-            cook = Math.min(1f, cook + speed * (1f + FTuning.POT_STIR_COOK_BONUS * mixed) / (FTuning.FOOD_COOK_TICKS * (solid > 0f ? massSum / solid : 1f)));
+            cook = Math.min(1f, cook + speed * (1f + VesselTuning.POT_STIR_COOK_BONUS * mixed) / (FTuning.FOOD_COOK_TICKS * (solid > 0f ? massSum / solid : 1f)));
         }
         if (temperature > FTuning.FOOD_CHAR_TU.value())
             charred = Mth.clamp(charred + (temperature - FTuning.FOOD_CHAR_TU.value()) * FTuning.FOOD_CHAR_PER_TU_TICK, 0f, 1f);
@@ -392,7 +395,7 @@ public class StockpotBlockEntity extends BlockEntity {
     // --- sync: quantised, only when it changes, at most every 10 ticks unless an act forces it ---
 
     private void refreshShown() {
-        shownWater = Math.round(Mth.clamp(water / FTuning.POT_MAX_WATER_MB, 0f, 1f) * 20f) / 20f;
+        shownWater = Math.round(Mth.clamp(water / VesselTuning.POT_MAX_WATER_MB, 0f, 1f) * 20f) / 20f;
         shownItems = items();
         shownCook = Math.round(cook * 20f) / 20f;
         shownCharred = Math.round(charred * 20f) / 20f;
@@ -551,7 +554,7 @@ public class StockpotBlockEntity extends BlockEntity {
         }
         material = tag.contains("Material") ? ResourceLocation.parse(tag.getString("Material")) : null;
         relax = 0f;
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         water = tag.getFloat("Water");
         solid = tag.getFloat("Solid");
         massSum = tag.getFloat("MassSum");

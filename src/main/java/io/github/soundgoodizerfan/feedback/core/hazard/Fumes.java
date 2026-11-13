@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 import net.minecraft.world.effect.MobEffectInstance;
@@ -28,15 +27,15 @@ public final class Fumes {
         return material.perks().getOrDefault(Material.Perk.TOXIC, 0);
     }
 
-    /** Dose everything living within {@link FTuning#FUME_RADIUS_BLOCKS} of {@code at}. Server side. */
+    /** Dose everything living within {@link HazardTuning#FUME_RADIUS_BLOCKS} of {@code at}. Server side. */
     public static void release(Level level, Vec3 at, int toxic) {
         if (toxic <= 0 || level.isClientSide)
             return;
-        float r = FTuning.FUME_RADIUS_BLOCKS;
+        float r = HazardTuning.FUME_RADIUS_BLOCKS;
         for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class, new AABB(at, at).inflate(r)))
             if (victim.position().distanceTo(at) <= r) {
                 float share = io.github.soundgoodizerfan.feedback.combat.skill.Skills.fumeShare(victim);
-                victim.addEffect(new MobEffectInstance(MobEffects.POISON, Math.round(FTuning.FUME_POISON_TICKS_PER_LEVEL * toxic * share)));
+                victim.addEffect(new MobEffectInstance(MobEffects.POISON, Math.round(HazardTuning.FUME_POISON_TICKS_PER_LEVEL * toxic * share)));
                 if (victim instanceof net.minecraft.server.level.ServerPlayer p)
                     io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.hazardHandled(p, "fume", 1f - share);
             }

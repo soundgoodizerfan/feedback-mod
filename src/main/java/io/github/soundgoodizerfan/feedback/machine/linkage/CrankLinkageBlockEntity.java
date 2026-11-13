@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.linkage;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
@@ -60,7 +61,7 @@ public class CrankLinkageBlockEntity extends RotationNode {
             return;
         }
 
-        strokeProgress += rpm * FTuning.STROKES_PER_RPM_PER_TICK;
+        strokeProgress += rpm * MachineTuning.STROKES_PER_RPM_PER_TICK;
         if (strokeProgress < 1)
             return;
 
@@ -96,7 +97,7 @@ public class CrankLinkageBlockEntity extends RotationNode {
         for (Direction from : Direction.values()) {
             if (level.getBlockEntity(machinePos.relative(from)) instanceof CrankLinkageBlockEntity linkage
                     && linkage.getFacing() == from.getOpposite()
-                    && Math.abs(linkage.getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value())
+                    && Math.abs(linkage.getRpm().value()) > RotationTuning.STOPPED_RPM_THRESHOLD.value())
                 return linkage;
         }
         return null;
@@ -132,12 +133,12 @@ public class CrankLinkageBlockEntity extends RotationNode {
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.SHAFT_DRAG_SU_PER_RPM;
+        return MachineTuning.SHAFT_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.SHAFT_INERTIA;
+        return RotationTuning.SHAFT_INERTIA;
     }
 
     @Override

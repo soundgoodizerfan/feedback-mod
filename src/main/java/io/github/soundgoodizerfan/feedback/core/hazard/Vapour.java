@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.geology.CrudeGrade;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -34,7 +33,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 /**
  * Flammable vapour (petrochemistry spec 4.2): an unsealed holder of liquid hotter than its flash point
  * (open vessel, seep, pool) adds to a per-block float in the air above it. Not fluid dynamics: every
- * step each cell hands {@link FTuning#VAPOUR_SPREAD} of itself evenly to the air blocks around it, then
+ * step each cell hands {@link HazardTuning#VAPOUR_SPREAD} of itself evenly to the air blocks around it, then
  * decays and is capped. Any ignition source ({@link HotIgnition#isSource}) in or beside a cell, or a
  * burning source, or last step's flame next door, burns it: a flash fire that walks the cloud one cell
  * a step, hurts what stands in it by concentration, then flashes back to the sources it touched.
@@ -114,7 +113,7 @@ public final class Vapour {
         s.block = block;
     }
 
-    /** Vapour concentration at {@code pos}, 0 to {@link FTuning#VAPOUR_CAP}. */
+    /** Vapour concentration at {@code pos}, 0 to {@link HazardTuning#VAPOUR_CAP}. */
     public static float at(ServerLevel level, BlockPos pos) {
         Field f = FIELDS.get(level);
         return f == null ? 0f : f.cloud.getOrDefault(pos.asLong(), 0f);
@@ -135,7 +134,7 @@ public final class Vapour {
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % FTuning.VAPOUR_INTERVAL_TICKS != 0)
+        if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % HazardTuning.VAPOUR_INTERVAL_TICKS != 0)
             return;
         Field f = FIELDS.get(level);
         if (f == null || (f.cloud.isEmpty() && f.sources.isEmpty()))
@@ -166,7 +165,7 @@ public final class Vapour {
                 if (level.getBlockState(cell).isAir() && BaseFireBlock.canBePlacedAt(level, cell, Direction.UP))
                     level.setBlockAndUpdate(cell, BaseFireBlock.getState(level, cell));
             } else if (level.getBlockState(cell).isAir()) {
-                f.cloud.merge(cell.asLong(), s.rate * FTuning.VAPOUR_EMIT, (a, b) -> Math.min(FTuning.VAPOUR_CAP, a + b));
+                f.cloud.merge(cell.asLong(), s.rate * HazardTuning.VAPOUR_EMIT, (a, b) -> Math.min(HazardTuning.VAPOUR_CAP, a + b));
             }
         }
 
@@ -182,8 +181,8 @@ public final class Vapour {
             float v = f.cloud.remove(c);
             level.sendParticles(ParticleTypes.FLAME, cell.getX() + 0.5, cell.getY() + 0.5, cell.getZ() + 0.5, 3, 0.25, 0.25, 0.25, 0.01);
             for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class, new AABB(cell))) {
-                victim.igniteForSeconds(FTuning.VAPOUR_FLASH_FIRE_SECONDS);
-                victim.hurt(Hazards.source(level, Hazards.HOT_CONTACT), FTuning.VAPOUR_FLASH_DAMAGE * v / FTuning.VAPOUR_CAP);
+                victim.igniteForSeconds(HazardTuning.VAPOUR_FLASH_FIRE_SECONDS);
+                victim.hurt(Hazards.source(level, Hazards.HOT_CONTACT), HazardTuning.VAPOUR_FLASH_DAMAGE * v / HazardTuning.VAPOUR_CAP);
             }
             if (level.getBlockState(cell).isAir() && BaseFireBlock.canBePlacedAt(level, cell, Direction.UP))
                 level.setBlockAndUpdate(cell, BaseFireBlock.getState(level, cell));
@@ -199,7 +198,7 @@ public final class Vapour {
 
         // spread, decay, cap
         Map<Long, Float> next = new HashMap<>();
-        float share = FTuning.VAPOUR_SPREAD / 6f;
+        float share = HazardTuning.VAPOUR_SPREAD / 6f;
         for (Map.Entry<Long, Float> e : f.cloud.entrySet()) {
             float v = e.getValue();
             BlockPos c = BlockPos.of(e.getKey());
@@ -213,8 +212,8 @@ public final class Vapour {
             }
             next.merge(e.getKey(), kept, Float::sum);
         }
-        next.replaceAll((k, v) -> Math.min(FTuning.VAPOUR_CAP, v * FTuning.VAPOUR_DECAY));
-        next.values().removeIf(v -> v < FTuning.VAPOUR_FLOOR);
+        next.replaceAll((k, v) -> Math.min(HazardTuning.VAPOUR_CAP, v * HazardTuning.VAPOUR_DECAY));
+        next.values().removeIf(v -> v < HazardTuning.VAPOUR_FLOOR);
         f.cloud.clear();
         f.cloud.putAll(next);
     }

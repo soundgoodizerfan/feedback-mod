@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.item.HandSwing;
@@ -33,7 +33,7 @@ import net.minecraft.world.level.Level;
  * A tool worked by hand, as a modular item: the hand hammer and the hand knife, and any later one (a
  * rolling pin, a whisk) that is a type file ({@code family: hand}) and one registry line. Its parts decide
  * what the old fixed items could not: the most St of an ordinary blow the head can carry is baked
- * from its mass and competence ({@code FTuning.HAND_ST_PER_MU_COMPETENCE}), and the wear bar from the head's
+ * from its mass and competence ({@code ModularTuning.HAND_ST_PER_MU_COMPETENCE}), and the wear bar from the head's
  * material, so a stone hammer is the first one, an iron one lasts longer and a soft or light head lands less.
  *
  * <p>A hand tool is a consumable by nature (philosophy 7's accepted exception), but a modular one is worn

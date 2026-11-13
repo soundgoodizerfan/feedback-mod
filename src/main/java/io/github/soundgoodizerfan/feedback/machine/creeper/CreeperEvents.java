@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.creeper;
 
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 
@@ -37,7 +37,7 @@ public final class CreeperEvents {
         if (stack.getItem() instanceof CreeperSacItem)
             return CreeperSacItem.charge(stack) * stack.getCount();
         if (stack.is(FItems.CREEPER_CHARGE.get()))
-            return stack.getCount() * FTuning.CREEPER_CHARGE_PER_ITEM;
+            return stack.getCount() * PetrochemTuning.CREEPER_CHARGE_PER_ITEM;
         return 0f;
     }
 
@@ -60,7 +60,7 @@ public final class CreeperEvents {
     public static void onBolt(EntityJoinLevelEvent event) {
         if (!(event.getEntity() instanceof LightningBolt bolt) || !(event.getLevel() instanceof ServerLevel level))
             return;
-        int r = FTuning.CREEPER_LIGHTNING_RADIUS;
+        int r = PetrochemTuning.CREEPER_LIGHTNING_RADIUS;
         BlockPos c = bolt.blockPosition();
         for (BlockPos p : BlockPos.betweenClosed(c.offset(-r, -r, -r), c.offset(r, r, r)))
             if (level.getBlockState(p).is(FBlocks.CREEPER_PEN.get()) && level.getBlockEntity(p) instanceof CreeperPenBlockEntity pen)

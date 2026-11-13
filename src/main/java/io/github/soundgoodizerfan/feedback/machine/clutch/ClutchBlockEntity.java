@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.clutch;
 
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.HashSet;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -78,12 +79,12 @@ public class ClutchBlockEntity extends RotationNode implements Switchable, DataN
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.SHAFT_DRAG_SU_PER_RPM;
+        return MachineTuning.SHAFT_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.SHAFT_INERTIA;
+        return RotationTuning.SHAFT_INERTIA;
     }
 
     // --- DataNode -----------------------------------------------------------------------------

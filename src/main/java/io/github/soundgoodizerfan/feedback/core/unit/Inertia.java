@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.unit;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+
 /**
  * Resistance to a change in speed: {@code Su x t / RPM}.
  *

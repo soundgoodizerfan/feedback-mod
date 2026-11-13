@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.Locale;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
@@ -120,9 +122,9 @@ public final class Readout {
      */
     public static Component speed(Rpm rpm) {
         float magnitude = Math.abs(rpm.value());
-        float stopped = FTuning.STOPPED_RPM_THRESHOLD.value();
-        float turning = FTuning.TURNING_RPM.value();
-        float fast = FTuning.SPINNING_FAST_RPM.value();
+        float stopped = RotationTuning.STOPPED_RPM_THRESHOLD.value();
+        float turning = ClientTuning.TURNING_RPM.value();
+        float fast = ClientTuning.SPINNING_FAST_RPM.value();
         if (magnitude < stopped)
             return banded(adjective("feedback.readout.stopped"), 0, stopped, "RPM");
         if (magnitude < turning)
@@ -146,9 +148,9 @@ public final class Readout {
         if (overstressed)
             return gloss(Component.translatable("feedback.readout.overloaded").withStyle(ChatFormatting.RED),
                     "feedback.gloss.overloaded");
-        if (capacitySu > 0 && loadSu > capacitySu * FTuning.STRAINING_LOAD_FRACTION)
+        if (capacitySu > 0 && loadSu > capacitySu * RotationTuning.STRAINING_LOAD_FRACTION)
             return gloss(Component.translatable("feedback.readout.straining").withStyle(ChatFormatting.GOLD),
-                    "feedback.gloss.straining", number(FTuning.STRAINING_LOAD_FRACTION * 100));
+                    "feedback.gloss.straining", number(RotationTuning.STRAINING_LOAD_FRACTION * 100));
         return null;
     }
 
@@ -168,13 +170,13 @@ public final class Readout {
      */
     public static Component temperature(Tu tu) {
         float bottom = 0;
-        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.size(); band++) {
-            float top = FTuning.HEAT_BAND_TOPS.get(band).value();
+        for (int band = 0; band < ThermalTuning.HEAT_BAND_TOPS.size(); band++) {
+            float top = ThermalTuning.HEAT_BAND_TOPS.get(band).value();
             if (tu.value() < top)
                 return banded(adjective("feedback.readout.heat." + band), bottom, top, "Tu");
             bottom = top;
         }
-        return banded(adjective("feedback.readout.heat.beyond"), FTuning.MAX_VISIBLE_TU.value(), Float.POSITIVE_INFINITY, "Tu");
+        return banded(adjective("feedback.readout.heat.beyond"), ThermalTuning.MAX_VISIBLE_TU.value(), Float.POSITIVE_INFINITY, "Tu");
     }
 
     /**
@@ -282,7 +284,7 @@ public final class Readout {
 
     /** The level an XP store stands at, in words (low / moderate / high), glossed on Shift; for the tooltip and any XP instrument. */
     public static Component xpLevel(io.github.soundgoodizerfan.feedback.core.xp.XpStore s) {
-        float lv = s.level(), low = FTuning.XP_LEVEL_LOW_BELOW, high = FTuning.XP_LEVEL_HIGH_FROM;
+        float lv = s.level(), low = ClientTuning.XP_LEVEL_LOW_BELOW, high = ClientTuning.XP_LEVEL_HIGH_FROM;
         if (lv < low)
             return banded(adjective("feedback.readout.xp_level.low"), 0, low, "levels");
         if (lv < high)
@@ -292,12 +294,12 @@ public final class Readout {
 
     /** How full an XP store is, in words (empty / part full / nearly full / full), glossed on Shift. */
     public static Component xpFill(io.github.soundgoodizerfan.feedback.core.xp.XpStore s) {
-        float nearly = FTuning.XP_FILL_NEARLY_FROM * 100;
+        float nearly = ClientTuning.XP_FILL_NEARLY_FROM * 100;
         if (s.points() == 0)
             return gloss(adjective("feedback.readout.xp_fill.empty"), "feedback.gloss.xp_empty");
         if (s.points() >= s.maxPoints())
             return gloss(adjective("feedback.readout.xp_fill.full"), "feedback.gloss.xp_full");
-        if (s.points() >= FTuning.XP_FILL_NEARLY_FROM * s.maxPoints())
+        if (s.points() >= ClientTuning.XP_FILL_NEARLY_FROM * s.maxPoints())
             return banded(adjective("feedback.readout.xp_fill.nearly"), nearly, Float.POSITIVE_INFINITY, "% of the ceiling");
         return banded(adjective("feedback.readout.xp_fill.part"), 0, nearly, "% of the ceiling");
     }

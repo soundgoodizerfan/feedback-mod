@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 public class GunBlowback implements ModularTrait {
 
     private static float excess(GunFigures f, Params p) {
-        float limit = p.get("pressure_limit", 1.2f) * FTuning.GUN_PROPELLANT_PEAK_PU;
+        float limit = p.get("pressure_limit", 1.2f) * GunTuning.GUN_PROPELLANT_PEAK_PU;
         return Math.max(1f, f.peakPressure().value() / limit);
     }
 
@@ -35,6 +35,6 @@ public class GunBlowback implements ModularTrait {
         float over = excess(f, p) - 1f;
         if (over > 0)
             gun.set(FWeapons.GUN_WEAR.get(), gun.getOrDefault(FWeapons.GUN_WEAR.get(), 0f)
-                    + f.muzzleEnergy() * FTuning.GUN_WEAR_PER_WORK * over * p.get("wear_mult", 2f));
+                    + f.muzzleEnergy() * GunTuning.GUN_WEAR_PER_WORK * over * p.get("wear_mult", 2f));
     }
 }

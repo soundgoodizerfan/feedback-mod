@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.gun;
 
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.ClientSettings;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.GunImpactPayload;
 import io.github.soundgoodizerfan.feedback.net.GunTracerPayload;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
@@ -152,7 +152,7 @@ public final class GunFx {
                 continue;
             }
             s.pos = s.pos.add(s.vel);
-            s.vel = s.vel.scale(1 - FTuning.GUN_DRAG_PER_TICK * s.drag).add(0, -FTuning.GUN_GRAVITY_PER_TICK, 0);
+            s.vel = s.vel.scale(1 - GunTuning.GUN_DRAG_PER_TICK * s.drag).add(0, -GunTuning.GUN_GRAVITY_PER_TICK, 0);
         }
         long now = mc.level.getGameTime();
         DECALS.removeIf(d -> now - d.born > DECAL_LIFE_TICKS);

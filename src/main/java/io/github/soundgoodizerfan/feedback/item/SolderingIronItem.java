@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Fumes;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
@@ -37,7 +36,7 @@ import net.minecraft.world.level.Level;
  *
  * <h2>How it works</h2>
  * Click a fire (any {@link HeatSource}) to heat it; the iron holds the heat by {@link ItemHeat} and
- * cools slowly ({@link FTuning#IRON_COOLING_TU_PER_TICK}). Right-click with a pasted board in the
+ * cools slowly ({@link ItemTuning#IRON_COOLING_TU_PER_TICK}). Right-click with a pasted board in the
  * other hand: a soldering screen opens (client, {@code SolderScreen}) and the server notes when and
  * how hot. The player drags the tip along the board's pad row; pace is the skill. The one packet at
  * the end carries the samples and the server replays them through {@link Soldering.Pass}, never
@@ -65,7 +64,7 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
 
     @Override
     public TuRate coolingRate(ItemStack stack) {
-        return FTuning.IRON_COOLING_TU_PER_TICK;
+        return ItemTuning.IRON_COOLING_TU_PER_TICK;
     }
 
     @Override
@@ -75,7 +74,7 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         if (player == null || !(level.getBlockEntity(context.getClickedPos()) instanceof HeatSource fire))
             return InteractionResult.PASS;
         if (!level.isClientSide) {
-            float reached = Math.min(FTuning.IRON_MAX_TU, fire.getFireTu().value());
+            float reached = Math.min(ItemTuning.IRON_MAX_TU, fire.getFireTu().value());
             if (reached > ItemHeat.get(stack, level).value())
                 ItemHeat.set(stack, new Tu(reached), level);
         }
@@ -129,7 +128,7 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         int last = -1;
         for (int i = 0; i < n; i++) {
             int pad = p.pads().get(i), d = p.dwell().get(i);
-            if (pad <= last || pad >= pads || d < 0 || d > FTuning.SOLDER_PAD_MAX_DWELL_TICKS)
+            if (pad <= last || pad >= pads || d < 0 || d > ItemTuning.SOLDER_PAD_MAX_DWELL_TICKS)
                 return;
             last = pad;
             total += d;
@@ -139,7 +138,7 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         Soldering.Pass pass = new Soldering.Pass(pads, session.startTu(), alloy.get(), Soldering.limit(data, materials));
         for (int i = 0; i < n; i++) {
             // Leaving with the button down is lingering on the last pad, capped.
-            int linger = p.held() && i == n - 1 ? FTuning.SOLDER_LEAVE_LINGER_TICKS : 0;
+            int linger = p.held() && i == n - 1 ? ItemTuning.SOLDER_LEAVE_LINGER_TICKS : 0;
             pass.touch(p.pads().get(i), p.dwell().get(i) + linger);
             if (p.offset().get(i) > io.github.soundgoodizerfan.feedback.combat.skill.Skills.solderTolerance(player, session.braced()) * 100f)
                 pass.bridge(p.pads().get(i));

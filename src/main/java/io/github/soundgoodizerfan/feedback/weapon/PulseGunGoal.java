@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.weapon;
 
 import java.util.EnumSet;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularElectricGun;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -16,7 +15,7 @@ import net.minecraft.world.entity.monster.AbstractSkeleton;
 /**
  * A skeleton using the pulse gun it holds: it shoots with line of sight inside the pulse's cutoff range, through
  * {@link GunShots#triggerMob}, and closes in until it has both. A pulse does not drop, so there is no aim correction; the aim error and the
- * wind-up are the powder-gun goal's ({@link FTuning#SKELETON_GUN_AIM_ERROR_DEG}, {@link FTuning#SKELETON_GUN_WINDUP_TICKS}).
+ * wind-up are the powder-gun goal's ({@link GunTuning#SKELETON_GUN_AIM_ERROR_DEG}, {@link GunTuning#SKELETON_GUN_WINDUP_TICKS}).
  */
 public final class PulseGunGoal extends Goal {
 
@@ -75,20 +74,20 @@ public final class PulseGunGoal extends Goal {
         var aim = target.getBoundingBox().getCenter();
         float yaw = (float) (Mth.atan2(aim.z - mob.getZ(), aim.x - mob.getX()) * 180 / Math.PI) - 90f;
         float pitch = (float) -(Mth.atan2(aim.y - mob.getEyeY(), Math.sqrt(mob.distanceToSqr(aim.x, mob.getY(), aim.z))) * 180 / Math.PI);
-        if (Math.abs(Mth.wrapDegrees(yaw - mob.getYHeadRot())) > FTuning.SKELETON_GUN_FACING_DEG) {
+        if (Math.abs(Mth.wrapDegrees(yaw - mob.getYHeadRot())) > GunTuning.SKELETON_GUN_FACING_DEG) {
             windupStart = -1;
             return;
         }
         if (windupStart < 0)
             windupStart = now;
-        if (now - windupStart < FTuning.SKELETON_GUN_WINDUP_TICKS)
+        if (now - windupStart < GunTuning.SKELETON_GUN_WINDUP_TICKS)
             return;
         windupStart = -1;
-        float err = FTuning.SKELETON_GUN_AIM_ERROR_DEG * Mth.sqrt(level.random.nextFloat());
+        float err = GunTuning.SKELETON_GUN_AIM_ERROR_DEG * Mth.sqrt(level.random.nextFloat());
         float theta = level.random.nextFloat() * Mth.TWO_PI;
         if (GunShots.triggerMob(level, mob, mob.getMainHandItem(), now, yaw + err * Mth.cos(theta), Mth.clamp(pitch + err * Mth.sin(theta), -90f, 90f))) {
             mob.swing(InteractionHand.MAIN_HAND);
-            nextShot = now + FTuning.SKELETON_GUN_MIN_INTERVAL_TICKS;
+            nextShot = now + GunTuning.SKELETON_GUN_MIN_INTERVAL_TICKS;
         }
     }
 }

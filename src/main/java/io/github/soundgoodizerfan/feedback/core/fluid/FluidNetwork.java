@@ -5,7 +5,6 @@ package io.github.soundgoodizerfan.feedback.core.fluid;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
@@ -29,7 +28,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  *
  * <h2>Flow</h2>
  * Pumps fill the run and draw from it through the pipes' ordinary handlers. The run itself only
- * pushes outward: each tick it offers up to {@link FTuning#PIPE_FLOW_MB_PER_TICK} to whatever
+ * pushes outward: each tick it offers up to {@link FluidTuning#PIPE_FLOW_MB_PER_TICK} to whatever
  * handler touches it, valves and tanks included. It never pulls from a neighbour.
  */
 public class FluidNetwork {
@@ -38,12 +37,12 @@ public class FluidNetwork {
     public final HeatedTank ledger;
     private boolean changed;
 
-    /** Liquid volume of the run; a gas may be compressed to {@link FTuning#PIPE_COMPRESSION_HEADROOM} times it. */
+    /** Liquid volume of the run; a gas may be compressed to {@link FluidTuning#PIPE_COMPRESSION_HEADROOM} times it. */
     private final int volume;
 
     FluidNetwork(int size) {
-        volume = size * FTuning.PIPE_VOLUME_MB;
-        ledger = new HeatedTank(volume * FTuning.PIPE_COMPRESSION_HEADROOM, () -> changed = true);
+        volume = size * FluidTuning.PIPE_VOLUME_MB;
+        ledger = new HeatedTank(volume * FluidTuning.PIPE_COMPRESSION_HEADROOM, () -> changed = true);
     }
 
     public static boolean isGas(FluidStack stack) {
@@ -57,7 +56,7 @@ public class FluidNetwork {
     /** Gas pressure: what is held over the run's volume. A liquid run reads zero (no thermal expansion yet). */
     public Pu pressure() {
         return new Pu(ledger.isEmpty() || !isGas(ledger.getFluid()) ? 0f
-                : (float) ledger.getFluidAmount() / volume * FTuning.PIPE_PU_PER_VOLUME);
+                : (float) ledger.getFluidAmount() / volume * FluidTuning.PIPE_PU_PER_VOLUME);
     }
 
     /**
@@ -77,8 +76,8 @@ public class FluidNetwork {
         if (hazard(level))
             return;
         int budget = isGas(ledger.getFluid())
-                ? Math.min(FTuning.PIPE_FLOW_MB_PER_TICK, Math.max(1, Math.round(pressure().value() * FTuning.PIPE_GAS_FLOW_PER_PU)))
-                : FTuning.PIPE_FLOW_MB_PER_TICK;
+                ? Math.min(FluidTuning.PIPE_FLOW_MB_PER_TICK, Math.max(1, Math.round(pressure().value() * FluidTuning.PIPE_GAS_FLOW_PER_PU)))
+                : FluidTuning.PIPE_FLOW_MB_PER_TICK;
         for (PipeBlockEntity pipe : members) {
             for (Direction d : Direction.values()) {
                 if (budget <= 0 || ledger.isEmpty())
@@ -101,11 +100,11 @@ public class FluidNetwork {
     /** A run held over the vessel danger line lets go the way a boiler does (spec 5.5): the lost fluid goes with it. True if it burst. */
     private boolean hazard(Level level) {
         if (level.getGameTime() % 10 != 0 || members.isEmpty()
-                || !PressureBurst.fails(pressure(), FTuning.PRESSURE_VESSEL_DANGER_PU, FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random))
+                || !PressureBurst.fails(pressure(), FluidTuning.PRESSURE_VESSEL_DANGER_PU, FluidTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random))
             return false;
         PipeBlockEntity weak = members.stream().skip(level.random.nextInt(members.size())).findFirst().get();
         ledger.setFluid(FluidStack.EMPTY);
-        PressureBurst.burst(level, weak.getBlockPos(), FTuning.PIPE_BURST_POWER);
+        PressureBurst.burst(level, weak.getBlockPos(), FluidTuning.PIPE_BURST_POWER);
         return true;
     }
 }

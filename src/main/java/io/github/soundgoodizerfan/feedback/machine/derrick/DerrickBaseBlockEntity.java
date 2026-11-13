@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.derrick;
 
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.multiblock.Multiblocks;
 import io.github.soundgoodizerfan.feedback.core.multiblock.Part;
 import io.github.soundgoodizerfan.feedback.core.multiblock.RoleRule;
@@ -118,7 +118,7 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
 
     @Override
     public Su getLoadSu() {
-        return bit.isEmpty() ? NO_SU : FTuning.DERRICK_LOAD_SU;
+        return bit.isEmpty() ? NO_SU : PetrochemTuning.DERRICK_LOAD_SU;
     }
 
     public boolean insertBit(ItemStack stack) {
@@ -154,7 +154,7 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
         }
         // No basin in the Nether means the magma below: bore down to its level.
         int target = basin != null ? Math.max(1, worldPosition.getY() - basin.centre().getY())
-                : server.dimension() == Level.NETHER ? Math.max(1, worldPosition.getY() - FTuning.MAGMA_LEVEL_Y) : Integer.MAX_VALUE;
+                : server.dimension() == Level.NETHER ? Math.max(1, worldPosition.getY() - PetrochemTuning.MAGMA_LEVEL_Y) : Integer.MAX_VALUE;
         if (bored >= target) {
             complete(server, casings);
             return;
@@ -168,7 +168,7 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
             status = Status.IDLE;
             return;
         }
-        if (bored >= casings.size() * FTuning.DERRICK_CASING_REACH) {
+        if (bored >= casings.size() * PetrochemTuning.DERRICK_CASING_REACH) {
             status = Status.NO_CASING;
             return;
         }
@@ -187,10 +187,10 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
             rockIndex = bored;
         }
 
-        float passes = rpm * FTuning.DERRICK_PASSES_PER_RPM;
-        float drive = FTuning.DERRICK_DRIVE_ST.value();
-        float absorbed = rpm > FTuning.DERRICK_RATED_RPM
-                ? (rpm - FTuning.DERRICK_RATED_RPM) * FTuning.DERRICK_OVERSPEED_ST_PER_RPM : 0f;
+        float passes = rpm * PetrochemTuning.DERRICK_PASSES_PER_RPM;
+        float drive = PetrochemTuning.DERRICK_DRIVE_ST.value();
+        float absorbed = rpm > PetrochemTuning.DERRICK_RATED_RPM
+                ? (rpm - PetrochemTuning.DERRICK_RATED_RPM) * PetrochemTuning.DERRICK_OVERSPEED_ST_PER_RPM : 0f;
         if (DerrickBitItem.hardness(bit) > rock) {
             status = Status.BORING;
             fu += drive / rock * passes * DerrickBitItem.condition(bit);
@@ -204,8 +204,8 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
         if (server.getGameTime() % 5 == 0)
             server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, rockState), worldPosition.getX() + 0.5,
                     worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, 3, 0.25, 0.1, 0.25, 0.05);
-        if (fu >= FTuning.DERRICK_FU_PER_BLOCK) {
-            fu -= FTuning.DERRICK_FU_PER_BLOCK;
+        if (fu >= PetrochemTuning.DERRICK_FU_PER_BLOCK) {
+            fu -= PetrochemTuning.DERRICK_FU_PER_BLOCK;
             bored++;
             setChanged();
         }
@@ -217,13 +217,13 @@ public class DerrickBaseBlockEntity extends RotationNode implements Part {
         var found = Material.find(MaterialTable.get().materials(), state.getBlock().asItem());
         if (found.isPresent())
             return found.get().material().hardness().value();
-        return Math.max(1f, state.getDestroySpeed(level, at) * FTuning.DERRICK_ROCK_HARDNESS_PER_DESTROY_TIME);
+        return Math.max(1f, state.getDestroySpeed(level, at) * PetrochemTuning.DERRICK_ROCK_HARDNESS_PER_DESTROY_TIME);
     }
 
     /** The bit takes the force that could not go into the rock (digest: wear only by misuse). */
     private void wearBit(float stAbsorbed) {
-        float condition = Math.max(FTuning.DERRICK_BIT_CONDITION_FLOOR,
-                DerrickBitItem.condition(bit) - stAbsorbed * FTuning.DERRICK_BIT_WEAR_PER_ST);
+        float condition = Math.max(PetrochemTuning.DERRICK_BIT_CONDITION_FLOOR,
+                DerrickBitItem.condition(bit) - stAbsorbed * PetrochemTuning.DERRICK_BIT_WEAR_PER_ST);
         bit.set(FDataComponents.TOOL_CONDITION.get(), condition);
         setChanged();
     }

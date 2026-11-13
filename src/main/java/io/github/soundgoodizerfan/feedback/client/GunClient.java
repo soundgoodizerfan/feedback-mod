@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.net.GunFirePayload;
 import io.github.soundgoodizerfan.feedback.net.GunModePayload;
 import io.github.soundgoodizerfan.feedback.net.GunReloadPayload;
@@ -67,7 +69,7 @@ import java.util.List;
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class GunClient {
 
-    /** One shot's kick: a pitch and yaw to land over {@link FTuning#GUN_KICK_MS}, and how much of it already has. */
+    /** One shot's kick: a pitch and yaw to land over {@link ClientTuning#GUN_KICK_MS}, and how much of it already has. */
     private static final class Kick {
         final long startMs;
         final float pitch, yaw;
@@ -387,7 +389,7 @@ public final class GunClient {
         }
         t.wasDown = down;
         if (pressed && mode == FireMode.BURST && figures != null && !onRelease)
-            t.burstLeft = FTuning.GUN_BURST_ROUNDS;
+            t.burstLeft = ModularTuning.GUN_BURST_ROUNDS;
         if (!active)
             t.burstLeft = 0;
         if (pressed)
@@ -440,7 +442,7 @@ public final class GunClient {
     private static void shoot(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunFigures f, boolean off, long now) {
         // A flintlock's priming sometimes flashes in the pan: a click and a puff, the charge stays loaded, and the pull still costs its cycle.
         if (GunSpec.of(gun).map(g -> g.layout().action() == io.github.soundgoodizerfan.feedback.weapon.GunLayout.Action.FLINTLOCK).orElse(false)
-                && player.getRandom().nextFloat() < FTuning.GUN_FLINT_MISFIRE) {
+                && player.getRandom().nextFloat() < ClientTuning.GUN_FLINT_MISFIRE) {
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PAN_FLASH.get(), SoundSource.PLAYERS, 0.8f, 1f, false);
             Vec3 pan = player.getEyePosition().add(player.getLookAngle().scale(0.5));
             mc.level.addParticle(ParticleTypes.SMOKE, pan.x, pan.y, pan.z, 0, 0.02, 0);
@@ -488,10 +490,10 @@ public final class GunClient {
 
     private static void kick(LocalPlayer player, float kickDeg, int cycleMs, long now) {
         // Recoil climbs over a streak and settles after a pause; aiming takes the edge off it.
-        streak = now - lastShotMs < cycleMs * 5L / 2 ? Math.min(streak + 1, FTuning.GUN_KICK_CLIMB_MAX) : 0;
+        streak = now - lastShotMs < cycleMs * 5L / 2 ? Math.min(streak + 1, ClientTuning.GUN_KICK_CLIMB_MAX) : 0;
         lastShotMs = now;
-        float climb = 1 + FTuning.GUN_KICK_CLIMB_PER_SHOT * streak;
-        float aimed = Mth.lerp(aim, 1f, FTuning.GUN_ADS_KICK);
+        float climb = 1 + ClientTuning.GUN_KICK_CLIMB_PER_SHOT * streak;
+        float aimed = Mth.lerp(aim, 1f, GunTuning.GUN_ADS_KICK);
         // The kick has a noise floor (philosophy 10): the amplitude is the gun's, the instance is not.
         float noise = 0.75f + player.getRandom().nextFloat() * 0.5f;
         float yawNoise = (player.getRandom().nextFloat() - 0.5f) * 0.6f;
@@ -503,7 +505,7 @@ public final class GunClient {
     private static void applyKicks(LocalPlayer player, long now) {
         for (Iterator<Kick> it = KICKS.iterator(); it.hasNext(); ) {
             Kick k = it.next();
-            float t = Mth.clamp((now - k.startMs) / (float) FTuning.GUN_KICK_MS, 0f, 1f);
+            float t = Mth.clamp((now - k.startMs) / (float) ClientTuning.GUN_KICK_MS, 0f, 1f);
             float eased = 1 - (1 - t) * (1 - t);
             float delta = eased - k.applied;
             k.applied = eased;

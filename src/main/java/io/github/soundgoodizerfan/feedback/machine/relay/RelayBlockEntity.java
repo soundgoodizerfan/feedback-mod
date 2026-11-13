@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.relay;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
@@ -26,14 +26,14 @@ import net.minecraft.world.level.block.state.BlockState;
  * does the work.
  *
  * <h2>Switching</h2>
- * Pulls in at field {@link FTuning#RELAY_PULL_IN_FIELD}, lets go below {@link FTuning#RELAY_DROP_OUT_FIELD}
+ * Pulls in at field {@link ElectricMachineTuning#RELAY_PULL_IN_FIELD}, lets go below {@link ElectricMachineTuning#RELAY_DROP_OUT_FIELD}
  * (a gap, so a sagging coil does not chatter). Opening under load arcs: condition falls by the current
  * broken (the breaker's rule) and a spark goes out for any listener. Wear only from that and from
- * carrying more than {@link FTuning#RELAY_CONTACT_AMPS}; closing, holding and idling cost nothing.
+ * carrying more than {@link ElectricMachineTuning#RELAY_CONTACT_AMPS}; closing, holding and idling cost nothing.
  *
  * <h2>Overrun</h2>
  * Worn contacts stick: each tick the field is below drop-out, release succeeds with probability
- * {@code condition}, so a pitted relay lets go late, and never refuses. Floor {@link FTuning#RELAY_CONDITION_FLOOR}.
+ * {@code condition}, so a pitted relay lets go late, and never refuses. Floor {@link ElectricMachineTuning#RELAY_CONDITION_FLOOR}.
  *
  * <h2>Sense and stop</h2>
  * Sense: the coil run's current, with the galvanometer fitting. Stop: cut the coil run.
@@ -70,15 +70,15 @@ public class RelayBlockEntity extends ElectricNode implements Wearing, io.github
         for (Direction face : Direction.values())
             if (level.getBlockEntity(worldPosition.relative(face)) instanceof ElectromagnetBlockEntity magnet)
                 field = Math.max(field, magnet.getFieldStrength());
-        if (!closed && field >= FTuning.RELAY_PULL_IN_FIELD)
+        if (!closed && field >= ElectricMachineTuning.RELAY_PULL_IN_FIELD)
             set(true);
-        else if (closed && field < FTuning.RELAY_DROP_OUT_FIELD && level.random.nextFloat() < condition)
+        else if (closed && field < ElectricMachineTuning.RELAY_DROP_OUT_FIELD && level.random.nextFloat() < condition)
             set(false);
     }
 
     private void set(boolean value) {
         if (!value && getAmps() > 0f) {
-            condition = Math.max(FTuning.RELAY_CONDITION_FLOOR, condition - FTuning.RELAY_ARC_WEAR_PER_AMP * getAmps());
+            condition = Math.max(ElectricMachineTuning.RELAY_CONDITION_FLOOR, condition - ElectricMachineTuning.RELAY_ARC_WEAR_PER_AMP * getAmps());
             Sparks.emit(level, worldPosition, getAmps());
         }
         closed = value;
@@ -90,9 +90,9 @@ public class RelayBlockEntity extends ElectricNode implements Wearing, io.github
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        if (closed && amps > FTuning.RELAY_CONTACT_AMPS)
-            condition = Math.max(FTuning.RELAY_CONDITION_FLOOR,
-                    condition - FTuning.RELAY_OVERLOAD_WEAR_PER_AMP * (amps - FTuning.RELAY_CONTACT_AMPS));
+        if (closed && amps > ElectricMachineTuning.RELAY_CONTACT_AMPS)
+            condition = Math.max(ElectricMachineTuning.RELAY_CONDITION_FLOOR,
+                    condition - ElectricMachineTuning.RELAY_OVERLOAD_WEAR_PER_AMP * (amps - ElectricMachineTuning.RELAY_CONTACT_AMPS));
     }
 
     @Override

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.compressor;
 
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
 import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
@@ -104,7 +104,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
 
     @Override
     public Su getLoadSu() {
-        return new Su(figures.get("Load", FTuning.COMPRESSOR_LOAD_SU.value()));
+        return new Su(figures.get("Load", PetrochemTuning.COMPRESSOR_LOAD_SU.value()));
     }
 
     public float condition() {
@@ -114,7 +114,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
     public void tickServer() {
         if (level == null)
             return;
-        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", FTuning.COMPRESSOR_MB_PER_RPM) * condition;
+        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", PetrochemTuning.COMPRESSOR_MB_PER_RPM) * condition;
         int amount = (int) owed;
         if (amount <= 0)
             return;
@@ -135,7 +135,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
         } else if (back == null || offered.isEmpty() || !FluidNetwork.isGas(offered))
             return;
         IFluidHandler source = fromAir ? airSource : back;
-        FluidStack hot = FluidHeat.stamp(offered, FluidHeat.of(offered).value() + figures.get("Heat", FTuning.COMPRESSOR_HEAT_TU));
+        FluidStack hot = FluidHeat.stamp(offered, FluidHeat.of(offered).value() + figures.get("Heat", PetrochemTuning.COMPRESSOR_HEAT_TU));
 
         BlockPos front = worldPosition.relative(out);
         int fits;
@@ -162,7 +162,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
                         FluidHeat.of(hot).value()), IFluidHandler.FluidAction.EXECUTE);
         }
         if (fits <= 0) {
-            condition = Math.max(FTuning.COMPRESSOR_CONDITION_FLOOR, condition - FTuning.COMPRESSOR_SURGE_WEAR_PER_TICK);
+            condition = Math.max(PetrochemTuning.COMPRESSOR_CONDITION_FLOOR, condition - PetrochemTuning.COMPRESSOR_SURGE_WEAR_PER_TICK);
             setChanged();
         }
     }

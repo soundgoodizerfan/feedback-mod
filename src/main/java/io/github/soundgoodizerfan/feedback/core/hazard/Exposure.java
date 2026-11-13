@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.core.hazard;
 
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
@@ -40,30 +39,30 @@ public final class Exposure {
 
     /** Wet raises it; dry leaves it. */
     public static float wet(boolean wet) {
-        return wet ? FTuning.FENCE_WET_FACTOR : 1f;
+        return wet ? HazardTuning.FENCE_WET_FACTOR : 1f;
     }
 
     /** Conductive armour slots raise it in proportion to their share of the four, insulating ones lower it. */
     public static float armour(int conductive, int insulating, int slots) {
         if (slots <= 0)
             return 1f;
-        return 1f + FTuning.FENCE_ARMOUR_GAIN * conductive / slots - FTuning.FENCE_ARMOUR_LOSS * insulating / slots;
+        return 1f + HazardTuning.FENCE_ARMOUR_GAIN * conductive / slots - HazardTuning.FENCE_ARMOUR_LOSS * insulating / slots;
     }
 
     /** Off the ground it is less; on a conductive floor more, an insulating floor less. */
     public static float ground(boolean onGround, Conduction floor) {
         if (!onGround)
-            return FTuning.FENCE_AIRBORNE_FACTOR;
+            return HazardTuning.FENCE_AIRBORNE_FACTOR;
         return switch (floor) {
-            case CONDUCTS -> FTuning.FENCE_GROUND_CONDUCTIVE;
-            case INSULATES -> FTuning.FENCE_GROUND_INSULATING;
+            case CONDUCTS -> HazardTuning.FENCE_GROUND_CONDUCTIVE;
+            case INSULATES -> HazardTuning.FENCE_GROUND_INSULATING;
             case NEUTRAL -> 1f;
         };
     }
 
-    /** The factors multiplied, held between nothing at all and {@link FTuning#FENCE_EXPOSURE_MAX}. */
+    /** The factors multiplied, held between nothing at all and {@link HazardTuning#FENCE_EXPOSURE_MAX}. */
     public static float clamp(float product) {
-        return Math.max(0f, Math.min(FTuning.FENCE_EXPOSURE_MAX, product));
+        return Math.max(0f, Math.min(HazardTuning.FENCE_EXPOSURE_MAX, product));
     }
 
     /**
@@ -73,7 +72,7 @@ public final class Exposure {
      */
     public static Conduction conduction(Material material) {
         return material.electrical().conductivity()
-                .map(c -> c >= FTuning.FENCE_CONDUCTIVE_MIN ? Conduction.CONDUCTS : Conduction.INSULATES)
+                .map(c -> c >= HazardTuning.FENCE_CONDUCTIVE_MIN ? Conduction.CONDUCTS : Conduction.INSULATES)
                 .orElseGet(() -> material.kind().map(k -> switch (k) {
                     case METAL -> Conduction.CONDUCTS;
                     case ORGANIC -> Conduction.INSULATES;

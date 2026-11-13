@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import java.util.Locale;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.FoodState;
@@ -78,7 +78,7 @@ public class FoodTooltip {
                     .withStyle(ChatFormatting.GRAY));
             if (Cooking.frozen(event.getItemStack(), level))
                 event.getToolTip().add(Component.translatable("tooltip.feedback.food.frozen").withStyle(ChatFormatting.AQUA));
-            if (now.smoke() > FTuning.SMOKE_SHOWN_AT)
+            if (now.smoke() > ClientTuning.SMOKE_SHOWN_AT)
                 event.getToolTip().add(Component.translatable("tooltip.feedback.food.smoked").withStyle(ChatFormatting.GRAY));
             if (now.salt() > 0f)
                 event.getToolTip().add(Component.translatable("tooltip.feedback.food.salted").withStyle(ChatFormatting.GRAY));

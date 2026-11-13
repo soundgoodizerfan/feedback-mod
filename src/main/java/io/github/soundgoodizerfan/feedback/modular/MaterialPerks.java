@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
 import java.util.EnumMap;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 import io.github.soundgoodizerfan.feedback.core.hazard.Protection;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -177,8 +177,8 @@ public final class MaterialPerks {
                     perks.get(Perk.TOXIC) * ModularTuning.PERK_TOXIC_TICKS_PER_LEVEL));
         if (perks.containsKey(Perk.RADIANT)) {
             target.addEffect(new MobEffectInstance(MobEffects.WITHER,
-                    perks.get(Perk.RADIANT) * FTuning.RADIANT_WITHER_TICKS_PER_LEVEL));
-            target.addEffect(new MobEffectInstance(MobEffects.GLOWING, FTuning.RADIANT_GLOW_TICKS));
+                    perks.get(Perk.RADIANT) * ModularTuning.RADIANT_WITHER_TICKS_PER_LEVEL));
+            target.addEffect(new MobEffectInstance(MobEffects.GLOWING, ModularTuning.RADIANT_GLOW_TICKS));
         }
         if (perks.containsKey(Perk.BOUNCE)) {
             target.push(0, perks.get(Perk.BOUNCE) * ModularTuning.PERK_BOUNCE_PER_LEVEL, 0);
@@ -216,7 +216,7 @@ public final class MaterialPerks {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide || player.tickCount % FTuning.CONTACT_INTERVAL_TICKS != 0
+        if (player.level().isClientSide || player.tickCount % HazardTuning.CONTACT_INTERVAL_TICKS != 0
                 || player.isCreative() || player.isSpectator())
             return;
         float safe = Protection.handlesUpToTu(player);

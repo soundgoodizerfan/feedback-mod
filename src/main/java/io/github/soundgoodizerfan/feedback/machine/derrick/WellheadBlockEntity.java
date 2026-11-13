@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.derrick;
 
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import javax.annotation.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
@@ -56,9 +56,9 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
 
     /** The discrete choke: how much it passes, and the surface pressure its gear is rated for. */
     public enum Choke {
-        SMALL(FTuning.WELLHEAD_SMALL_FLOW, FTuning.WELLHEAD_SMALL_DANGER_PU, FTuning.WELLHEAD_SMALL_CRITICAL_PU),
-        HALF(FTuning.WELLHEAD_HALF_FLOW, FTuning.WELLHEAD_HALF_DANGER_PU, FTuning.WELLHEAD_HALF_CRITICAL_PU),
-        OPEN(FTuning.WELLHEAD_OPEN_FLOW, FTuning.WELLHEAD_OPEN_DANGER_PU, FTuning.WELLHEAD_OPEN_CRITICAL_PU);
+        SMALL(PetrochemTuning.WELLHEAD_SMALL_FLOW, PetrochemTuning.WELLHEAD_SMALL_DANGER_PU, PetrochemTuning.WELLHEAD_SMALL_CRITICAL_PU),
+        HALF(PetrochemTuning.WELLHEAD_HALF_FLOW, PetrochemTuning.WELLHEAD_HALF_DANGER_PU, PetrochemTuning.WELLHEAD_HALF_CRITICAL_PU),
+        OPEN(PetrochemTuning.WELLHEAD_OPEN_FLOW, PetrochemTuning.WELLHEAD_OPEN_DANGER_PU, PetrochemTuning.WELLHEAD_OPEN_CRITICAL_PU);
 
         public final float flow;
         public final Pu danger, critical;
@@ -74,7 +74,7 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
         }
     }
 
-    private int depth = FTuning.WELLHEAD_DEFAULT_DEPTH;
+    private int depth = PetrochemTuning.WELLHEAD_DEFAULT_DEPTH;
     private Choke choke = Choke.SMALL;
     private float cone;
     private float owed;
@@ -115,7 +115,7 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
 
     private float head() {
         return depth * (basin == null ? CrudeGrade.DEFAULT.density() : basin.grade().density())
-                * FTuning.WELLHEAD_HEAD_PU_PER_BLOCK_DENSITY;
+                * PetrochemTuning.WELLHEAD_HEAD_PU_PER_BLOCK_DENSITY;
     }
 
     /** What the gauge reads: the reservoir's push over the column's weight, zero when it cannot reach the top. */
@@ -149,12 +149,12 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
         float density = basin.grade().density();
         if (p > head) {
             setLift(false, 0f);
-            rate = surface * FTuning.WELLHEAD_MB_PER_PU * choke.flow;
+            rate = surface * PetrochemTuning.WELLHEAD_MB_PER_PU * choke.flow;
         } else {
-            float height = (head - p) / (density * FTuning.WELLHEAD_HEAD_PU_PER_BLOCK_DENSITY);
-            setLift(true, FTuning.PUMP_LOAD_SU.value() + FTuning.PUMP_LIFT_SU_PER_BLOCK.value() * height);
-            float yield = Math.min(1f, Math.max(FTuning.WELLHEAD_FLOOR_MIN_YIELD, p / FTuning.WELLHEAD_FLOOR_PU));
-            rate = Math.abs(getRpm().value()) * FTuning.WELLHEAD_LIFT_MB_PER_RPM * yield;
+            float height = (head - p) / (density * PetrochemTuning.WELLHEAD_HEAD_PU_PER_BLOCK_DENSITY);
+            setLift(true, PetrochemTuning.PUMP_LOAD_SU.value() + PetrochemTuning.PUMP_LIFT_SU_PER_BLOCK.value() * height);
+            float yield = Math.min(1f, Math.max(PetrochemTuning.WELLHEAD_FLOOR_MIN_YIELD, p / PetrochemTuning.WELLHEAD_FLOOR_PU));
+            rate = Math.abs(getRpm().value()) * PetrochemTuning.WELLHEAD_LIFT_MB_PER_RPM * yield;
         }
 
         owed += rate;
@@ -163,11 +163,11 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
         int moved = amount > 0 ? push(server, amount) : 0;
         lastMoved = moved;
 
-        float sustainable = FTuning.WELLHEAD_SUSTAINABLE_MB_PER_PU * Math.max(p, FTuning.WELLHEAD_FLOOR_PU);
+        float sustainable = PetrochemTuning.WELLHEAD_SUSTAINABLE_MB_PER_PU * Math.max(p, PetrochemTuning.WELLHEAD_FLOOR_PU);
         if (moved > sustainable)
-            cone = Math.min(1f, cone + (moved - sustainable) / sustainable * FTuning.WELLHEAD_CONE_RISE);
+            cone = Math.min(1f, cone + (moved - sustainable) / sustainable * PetrochemTuning.WELLHEAD_CONE_RISE);
         else
-            cone = Math.max(0f, cone - FTuning.WELLHEAD_CONE_RECOVER);
+            cone = Math.max(0f, cone - PetrochemTuning.WELLHEAD_CONE_RECOVER);
     }
 
     /** The load follows the lift; the network only hears about it when it moves. */
@@ -201,7 +201,7 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
             int drawn = basin.draw(fits);
             if (drawn <= 0)
                 break;
-            int delivered = Math.max(1, Math.round(drawn * (1f - cone * FTuning.WELLHEAD_CONE_WASTE)));
+            int delivered = Math.max(1, Math.round(drawn * (1f - cone * PetrochemTuning.WELLHEAD_CONE_WASTE)));
             target.fill(offer.copyWithAmount(delivered), IFluidHandler.FluidAction.EXECUTE);
             moved += drawn;
         }
@@ -213,14 +213,14 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
         if (cone <= 0f)
             return g;
         return new CrudeGrade(g.density() * (1f + 0.1f * cone), Math.min(1f, g.sulfur() * (1f + cone)),
-                g.lightFraction() * (1f - cone * FTuning.WELLHEAD_CONE_STRIP));
+                g.lightFraction() * (1f - cone * PetrochemTuning.WELLHEAD_CONE_STRIP));
     }
 
     // --- hazard ----------------------------------------------------------------------------
 
     /** Warning, then the PressureBurst ladder. True if the well just blew out. */
     private boolean hazard(ServerLevel server, float surface) {
-        if (surface > choke.danger.value() * FTuning.WELLHEAD_WARN_FRACTION) {
+        if (surface > choke.danger.value() * PetrochemTuning.WELLHEAD_WARN_FRACTION) {
             if (server.getGameTime() % 4 == 0)
                 server.sendParticles(ParticleTypes.SQUID_INK, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0,
                         worldPosition.getZ() + 0.5, 8, 0.15, 0.3, 0.15, 0.25);
@@ -238,13 +238,13 @@ public class WellheadBlockEntity extends RotationNode implements PressureHolder 
     /** Wrecks the wellhead and vents crude over the ground; the hole stays and can be drilled again. */
     private void blowOut(ServerLevel server) {
         BlockPos pos = worldPosition;
-        int spill = basin == null ? 0 : basin.draw(FTuning.WELLHEAD_BLOWOUT_SPILL_MB);
-        server.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, FTuning.WELLHEAD_BLOWOUT_POWER,
+        int spill = basin == null ? 0 : basin.draw(PetrochemTuning.WELLHEAD_BLOWOUT_SPILL_MB);
+        server.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, PetrochemTuning.WELLHEAD_BLOWOUT_POWER,
                 Level.ExplosionInteraction.BLOCK);
         server.sendParticles(ParticleTypes.SQUID_INK, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 80, 0.4, 1.2,
                 0.4, 0.4);
         server.removeBlock(pos, false);
-        int reach = FTuning.WELLHEAD_BLOWOUT_REACH;
+        int reach = PetrochemTuning.WELLHEAD_BLOWOUT_REACH;
         for (int placed = 0, tries = 0; placed < spill / 1000 && tries < 60; tries++) {
             BlockPos at = pos.offset(server.random.nextIntBetweenInclusive(-reach, reach),
                     server.random.nextIntBetweenInclusive(-1, 1), server.random.nextIntBetweenInclusive(-reach, reach));

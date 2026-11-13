@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.controller;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -48,7 +48,7 @@ public class ElectricControllerBlockEntity extends ElectricNode implements Contr
 
     @Override
     public float wantedAmps() {
-        return FTuning.CONTROLLER_ELECTRIC_AMPS;
+        return ControlTuning.CONTROLLER_ELECTRIC_AMPS;
     }
 
     @Override

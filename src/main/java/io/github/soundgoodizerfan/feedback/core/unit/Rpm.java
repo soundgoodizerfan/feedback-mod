@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.unit;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+
 /**
  * Rotational speed, in revolutions per minute.
  *

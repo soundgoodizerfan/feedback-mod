@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cutter;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -63,7 +63,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
 
     @Override
     public float wantedAmps() {
-        return working() ? FTuning.CUTTER_AMPS : 0f;
+        return working() ? MachineTuning.CUTTER_AMPS : 0f;
     }
 
     @Override
@@ -88,9 +88,9 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
         if (!(level instanceof ServerLevel server) || !working() || rate <= 0f)
             return;
         progress += rate * head.condition();
-        if (progress < FTuning.CUTTER_TICKS_PER_CUT)
+        if (progress < MachineTuning.CUTTER_TICKS_PER_CUT)
             return;
-        progress -= FTuning.CUTTER_TICKS_PER_CUT;
+        progress -= MachineTuning.CUTTER_TICKS_PER_CUT;
         cut(server);
     }
 
@@ -98,7 +98,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
         if (!(head.get().getItem() instanceof CutterHeadItem headItem))
             return;
         if (over > 0f)
-            wear(over * FTuning.CUTTER_OVERVOLT_WEAR_UNITS);
+            wear(over * MachineTuning.CUTTER_OVERVOLT_WEAR_UNITS);
         Optional<Material.Located> found = Material.find(ClientMaterials.on(server), input);
         if (found.isEmpty()) {
             consume(1);
@@ -124,7 +124,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
             return; // waits for more stock: a log's cut needs a whole log
         if (!fitsOutput(chosen.result())) {
             wear(1f); // running against a full output is misuse
-            progress = FTuning.CUTTER_TICKS_PER_CUT; // retries next tick rather than spending a cycle
+            progress = MachineTuning.CUTTER_TICKS_PER_CUT; // retries next tick rather than spending a cycle
             return;
         }
         consume(chosen.inputs());
@@ -155,7 +155,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
 
     private void wear(float units) {
         setChanged();
-        if (head.wear(units, FTuning.CUTTER_WEAR_PER_MISUSE, FTuning.CUTTER_CONDITION_FLOOR))
+        if (head.wear(units, MachineTuning.CUTTER_WEAR_PER_MISUSE, MachineTuning.CUTTER_CONDITION_FLOOR))
             sync();
     }
 
@@ -210,7 +210,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
     public ItemStack insertInput(ItemStack stack, boolean simulate) {
         if (stack.isEmpty() || !input.isEmpty() && !ItemStack.isSameItemSameComponents(input, stack))
             return stack;
-        int room = Math.min(FTuning.CUTTER_INPUT_LIMIT, stack.getMaxStackSize()) - input.getCount();
+        int room = Math.min(MachineTuning.CUTTER_INPUT_LIMIT, stack.getMaxStackSize()) - input.getCount();
         int moved = Math.min(room, stack.getCount());
         if (moved <= 0)
             return stack;

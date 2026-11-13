@@ -7,7 +7,6 @@ import java.util.List;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 
 /**
@@ -54,7 +53,7 @@ public record FormType(List<Material.Kind> kinds, boolean block, boolean part, i
 
     /** Share of its authored hold a form-agnostic row asks of a form of this {@code grain}: {@code clamp(grain^k, floor, 1)}, never above 1. */
     public static float holdFactor(float grain) {
-        return Math.min(1f, Math.max(FTuning.FORM_HOLD_FLOOR, (float) Math.pow(grain, FTuning.FORM_HOLD_EXPONENT)));
+        return Math.min(1f, Math.max(ProcessTuning.FORM_HOLD_FLOOR, (float) Math.pow(grain, ProcessTuning.FORM_HOLD_EXPONENT)));
     }
 
     /** The form an item is and that form's grain; {@code form} is empty where the item is no material's. */

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Vapour;
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
@@ -78,7 +78,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
     private boolean ledgerOwned;
 
     /** Held as a primitive and wrapped at the accessor: a {@link Tu} field would outlive its method and could not be scalar-replaced. */
-    protected float temperature = FTuning.AMBIENT_TU.value();
+    protected float temperature = ThermalTuning.AMBIENT_TU.value();
     /** How fast it moved last tick. A process may care about that as well as how hot it got. */
     protected float lastDelta;
     private float temperatureLastTick = Float.NaN;
@@ -130,7 +130,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
 
     /** The tank's size, in mB. Read while the base is constructed, so it names a constant and no field. */
     protected int tankCapacity() {
-        return FTuning.VESSEL_TANK_CAPACITY_MB;
+        return VesselTuning.VESSEL_TANK_CAPACITY_MB;
     }
 
     /** Whether the tank takes this fluid at all (a boiler takes water); every fluid by default. */
@@ -145,7 +145,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
 
     /** What boiling {@code mB} of {@code cut} takes out of the vessel, in Tu. */
     protected float boilCost(PhaseChange cut, int mB) {
-        return mB * cut.latent() / FTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
+        return mB * cut.latent() / VesselTuning.VESSEL_BOIL_MASS_WORK_PER_TU;
     }
 
     /** How much smoke the vessel gives a cooking food (a smoker's); none by default. */
@@ -179,7 +179,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         if (level == null || slot < 0 || slot >= soakFrom.length)
             return new Tu(temperature);
         float dt = Math.max(0L, level.getGameTime() - soakAt[slot]);
-        return new Tu(temperature + (soakFrom[slot] - temperature) * (float) Math.exp(-FTuning.CRUCIBLE_SOAK_PER_TICK * dt));
+        return new Tu(temperature + (soakFrom[slot] - temperature) * (float) Math.exp(-VesselTuning.CRUCIBLE_SOAK_PER_TICK * dt));
     }
 
     /** Each held stack's name and what it is at now, for a readout. */
@@ -485,7 +485,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         else
             placeHot(process.result().copy());
 
-        bankedXp = Math.min(FTuning.VESSEL_XP_BANK_MAX, bankedXp
+        bankedXp = Math.min(VesselTuning.VESSEL_XP_BANK_MAX, bankedXp
                 + io.github.soundgoodizerfan.feedback.process.VanillaFallback.xpOf(process));
         setTpu(slot, 0f);
         sync();
@@ -567,7 +567,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
                 }
                 if (change.get().lightShare().isPresent() || temperature < change.get().boil().value())
                     continue;
-                float want = e.getValue() * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+                float want = e.getValue() * VesselTuning.VESSEL_BOIL_PER_TICK + boilOwed;
                 int amount = alloy.take(e.getKey(), Math.min(Math.max(1, boilAmount(change.get(), want)), vapourRoom()));
                 boilOwed = want - (int) want;
                 if (amount <= 0)
@@ -590,7 +590,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
                 continue;
             var grade = CrudeGrade.of(held);
             float light = cut.lightShare().isPresent() ? grade.lightFraction() : 1f;
-            float want = held.getAmount() * light * cut.lightShare().orElse(1f) * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+            float want = held.getAmount() * light * cut.lightShare().orElse(1f) * VesselTuning.VESSEL_BOIL_PER_TICK + boilOwed;
             int amount = Math.min(Math.min(boilAmount(cut, want), tank.getFluidAmount()), vapourRoom());
             boilOwed = want - (int) want;
             if (amount <= 0)
@@ -622,12 +622,12 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
         var boiling = material.thermal().boilingPoint();
         if (boiling.isEmpty() || temperature < boiling.get().value())
             return false;
-        float want = held * FTuning.VESSEL_BOIL_PER_TICK + boilOwed;
+        float want = held * VesselTuning.VESSEL_BOIL_PER_TICK + boilOwed;
         int amount = alloy.take(fluid, Math.max(1, (int) want));
         boilOwed = want - (int) want;
         if (amount <= 0)
             return false;
-        temperature -= amount * FTuning.METAL_BOIL_COOLING_TU_PER_MB;
+        temperature -= amount * VesselTuning.METAL_BOIL_COOLING_TU_PER_MB;
         refreshTank();
         server.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0,
                 worldPosition.getZ() + 0.5, 1, 0.15, 0.05, 0.15, 0.02);
@@ -732,7 +732,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
     }
 
     protected void loadCore(CompoundTag tag) {
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         currentTpu = tag.getFloat("CurrentTpu");
         bankedXp = tag.getFloat("BankedXp");
         List<ItemStack> held = processSlots();

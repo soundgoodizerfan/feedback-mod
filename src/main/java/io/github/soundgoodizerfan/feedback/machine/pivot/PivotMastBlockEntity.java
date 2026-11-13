@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.pivot;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.Collections;
 import java.util.Set;
 
@@ -9,7 +10,6 @@ import io.github.soundgoodizerfan.feedback.control.ChannelSource;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
@@ -52,8 +52,8 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  * the whole arm: it knows nothing about the job, so a cutting tip cuts green crop and a breaking tip keeps hitting what it has loosened.
  *
  * <h2>Load</h2>
- * A lever: {@link FTuning#PIVOT_BASE_SU} plus, per block of arm, {@link FTuning#PIVOT_SU_PER_BLOCK} and, with a head seated,
- * {@link FTuning#PIVOT_HEAD_SU_PER_BLOCK}. A long arm with a heavy head stalls a weak drive.
+ * A lever: {@link ElectricMachineTuning#PIVOT_BASE_SU} plus, per block of arm, {@link ElectricMachineTuning#PIVOT_SU_PER_BLOCK} and, with a head seated,
+ * {@link ElectricMachineTuning#PIVOT_HEAD_SU_PER_BLOCK}. A long arm with a heavy head stalls a weak drive.
  *
  * <h2>Wear</h2>
  * Only the seated head wears, and only from misuse: a breaking tip on a block it cannot break absorbs the difference, a cutting tip on
@@ -128,8 +128,8 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         int len = armLength();
         if (len == 0)
             return NO_SU;
-        float perBlock = FTuning.PIVOT_SU_PER_BLOCK + (head.isEmpty() ? 0f : FTuning.PIVOT_HEAD_SU_PER_BLOCK);
-        return new Su(FTuning.PIVOT_BASE_SU + len * perBlock);
+        float perBlock = ElectricMachineTuning.PIVOT_SU_PER_BLOCK + (head.isEmpty() ? 0f : ElectricMachineTuning.PIVOT_HEAD_SU_PER_BLOCK);
+        return new Su(ElectricMachineTuning.PIVOT_BASE_SU + len * perBlock);
     }
 
     // --- interaction --------------------------------------------------------------------------
@@ -229,7 +229,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
     private void trackArm() {
         float shaft = network == null ? visualAngle : network.getPhase() * ratio;
         if (!Float.isNaN(lastShaft))
-            armDeg = ((armDeg + (((shaft - lastShaft) % 360f + 540f) % 360f - 180f) * FTuning.PIVOT_GEAR) % 360f + 360f) % 360f;
+            armDeg = ((armDeg + (((shaft - lastShaft) % 360f + 540f) % 360f - 180f) * ElectricMachineTuning.PIVOT_GEAR) % 360f + 360f) % 360f;
         lastShaft = shaft;
     }
 
@@ -241,7 +241,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
 
     /** The arm's angle at a point partway through the tick, for drawing. */
     public float armAngle(float partialTick) {
-        return armDeg + (getVisualAngle(partialTick) - visualAngle) * FTuning.PIVOT_GEAR;
+        return armDeg + (getVisualAngle(partialTick) - visualAngle) * ElectricMachineTuning.PIVOT_GEAR;
     }
 
     /** The cell the arm tip stands over, `radius` blocks out at `degrees`. */
@@ -266,7 +266,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         if (!engaged || kind == null || len == 0 || delta == 0f || (kind.needsHead() && head.isEmpty()))
             return;
         int steps = Math.max(1, Math.min(4, (int) Math.ceil(Math.abs(Math.toRadians(delta)) * len)));
-        long[] done = new long[FTuning.PIVOT_CELLS_PER_TICK];
+        long[] done = new long[ElectricMachineTuning.PIVOT_CELLS_PER_TICK];
         int count = 0;
         for (int s = 1; s <= steps && count < done.length; s++) {
             double angle = now - delta + delta * s / steps;
@@ -299,7 +299,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
     }
 
     private void wear(float stAbsorbed) {
-        if (head.wear(stAbsorbed, FTuning.PIVOT_HEAD_WEAR_PER_ST, FTuning.PIVOT_HEAD_FLOOR))
+        if (head.wear(stAbsorbed, ElectricMachineTuning.PIVOT_HEAD_WEAR_PER_ST, ElectricMachineTuning.PIVOT_HEAD_FLOOR))
             refresh();
     }
 
@@ -307,7 +307,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         float ceiling = head.ceiling().value();
         BlockState state = sl.getBlockState(c);
         if (!state.isAir() && state.is(BlockTags.SWORD_EFFICIENT) && sl.getBlockEntity(c) == null) {
-            float need = Math.max(0f, state.getDestroySpeed(sl, c)) * FTuning.PIVOT_BREAK_ST_PER_HARDNESS;
+            float need = Math.max(0f, state.getDestroySpeed(sl, c)) * ElectricMachineTuning.PIVOT_BREAK_ST_PER_HARDNESS;
             if (ceiling >= need) {
                 sl.destroyBlock(c, true);
                 wear(need * 0.1f + 0.1f);
@@ -332,7 +332,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         float hardness = state.getDestroySpeed(sl, c);
         if (hardness < 0f)
             return;
-        float need = hardness * FTuning.PIVOT_BREAK_ST_PER_HARDNESS;
+        float need = hardness * ElectricMachineTuning.PIVOT_BREAK_ST_PER_HARDNESS;
         float ceiling = head.ceiling().value();
         if (ceiling >= need) {
             sl.destroyBlock(c, true);
@@ -387,9 +387,9 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         for (Entity e : sl.getEntities((Entity) null, new AABB(c), x -> x instanceof LivingEntity)) {
             if (e instanceof FakePlayer)
                 continue;
-            float damage = Math.min(FTuning.PIVOT_STRIKE_MAX_DAMAGE, ceiling * FTuning.PIVOT_STRIKE_DAMAGE_PER_ST);
+            float damage = Math.min(ElectricMachineTuning.PIVOT_STRIKE_MAX_DAMAGE, ceiling * ElectricMachineTuning.PIVOT_STRIKE_DAMAGE_PER_ST);
             if (damage > 0f && e.hurt(sl.damageSources().generic(), damage))
-                wear(damage / FTuning.PIVOT_STRIKE_DAMAGE_PER_ST * 0.1f);
+                wear(damage / ElectricMachineTuning.PIVOT_STRIKE_DAMAGE_PER_ST * 0.1f);
         }
     }
 

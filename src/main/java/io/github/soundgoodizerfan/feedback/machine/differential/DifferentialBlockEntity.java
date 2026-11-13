@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.differential;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
@@ -23,12 +23,12 @@ public class DifferentialBlockEntity extends RotationNode {
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.GEARBOX_DRAG_SU_PER_RPM;
+        return MachineTuning.GEARBOX_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.GEARBOX_INERTIA;
+        return MachineTuning.GEARBOX_INERTIA;
     }
 
     public void tickServer() {

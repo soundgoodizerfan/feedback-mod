@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
@@ -38,7 +37,7 @@ public class PyrometerItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.PYROMETER_RESOLUTION_TU.value();
+        return ItemTuning.PYROMETER_RESOLUTION_TU.value();
     }
 
     @Override
@@ -52,7 +51,7 @@ public class PyrometerItem extends Item implements Instrument {
         if (level.isClientSide)
             return InteractionResultHolder.success(stack);
         var from = player.getEyePosition();
-        var to = from.add(player.getLookAngle().scale(FTuning.PYROMETER_RANGE_BLOCKS));
+        var to = from.add(player.getLookAngle().scale(ItemTuning.PYROMETER_RANGE_BLOCKS));
         BlockHitResult hit = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
         if (hit.getType() == HitResult.Type.BLOCK && level.getBlockEntity(hit.getBlockPos()) instanceof ThermalBody body) {
             Instrument self = Instruments.fitted(stack, this);

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.net.PressPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -293,7 +293,7 @@ public class ReloadingPressScreen extends SkinnedScreen<ReloadingPressMenu> {
                 + String.format("%s %.2f   %s %.2f   %s %.2f",
                 Component.translatable("gui.feedback.reloading_press.row.drag").getString(), shapeRound.map(r -> r.drag(materials)).orElse(shape.drag()),
                 Component.translatable("gui.feedback.reloading_press.row.pierce").getString(),
-                shapeRound.map(r -> shape.pierce() * (r.sabot(materials) ? FTuning.GUN_SABOT_PIERCE : 1f)).orElse(shape.pierce()),
+                shapeRound.map(r -> shape.pierce() * (r.sabot(materials) ? GunTuning.GUN_SABOT_PIERCE : 1f)).orElse(shape.pierce()),
                 Component.translatable("gui.feedback.reloading_press.row.hurt").getString(), shape.damage());
         g.drawString(font, font.plainSubstrByWidth(shapeLine, SHEET_W - 12), SHEET_X + 6, sy + 22, skin.dim(), false);
 

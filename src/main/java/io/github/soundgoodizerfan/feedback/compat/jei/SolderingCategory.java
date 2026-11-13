@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
+import io.github.soundgoodizerfan.feedback.process.ProcessTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Board;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.Soldering;
@@ -77,7 +77,7 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
             Board pasted = new Board(Board.Trace.PRINTED, paste, substrate, Optional.of(e.getKey()), Board.Joint.NONE, List.of());
             // A board with a part mounted comes out of the same joint as a circuit.
             ItemStack circuit = Soldering.finish(board(pasted.mounted(new Board.Part(Board.Kind.RELAY, 1f))), materials,
-                    alloy.get().liquidus() + alloy.get().window() / 2f, FTuning.SOLDER_DWELL_TICKS);
+                    alloy.get().liquidus() + alloy.get().window() / 2f, ProcessTuning.SOLDER_DWELL_TICKS);
             out.add(new Card(ingot.get(), board(pasted), board(pasted.withJoint(Board.Joint.GOOD)), circuit,
                     alloy.get().liquidus(), alloy.get().window(), lowest));
         }
@@ -129,8 +129,8 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
         graphics.drawString(font, card.solder().getHoverName().getString().toUpperCase(java.util.Locale.ROOT), 1, 1, TITLE_COLOUR, false);
         row(graphics, font, 14, "feedback.jei.soldering.liquidus", tu(card.liquidus()));
         row(graphics, font, 26, "feedback.jei.soldering.window", tu(card.liquidus()) + " - " + tu(card.liquidus() + card.window()));
-        row(graphics, font, 38, "feedback.jei.soldering.dwell", FTuning.SOLDER_DWELL_TICKS + " t (" + FTuning.SOLDER_DWELL_TICKS / 20 + " s)");
-        row(graphics, font, 50, "feedback.jei.soldering.lift_printed", tu(FTuning.PRINTED_TRACE_LIMIT_TU));
+        row(graphics, font, 38, "feedback.jei.soldering.dwell", ProcessTuning.SOLDER_DWELL_TICKS + " t (" + ProcessTuning.SOLDER_DWELL_TICKS / 20 + " s)");
+        row(graphics, font, 50, "feedback.jei.soldering.lift_printed", tu(ProcessTuning.PRINTED_TRACE_LIMIT_TU));
         if (card.lowestSubstrateTu() < Float.MAX_VALUE)
             row(graphics, font, 62, "feedback.jei.soldering.lift_substrate", tu(card.lowestSubstrateTu()));
         graphics.drawString(font, Component.translatable("feedback.jei.soldering.note"), 1, HEIGHT - 10, LABEL_COLOUR, false);

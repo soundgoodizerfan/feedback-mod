@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.condenser.CondenserBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.steamengine.SteamEngineBlockEntity;
@@ -76,15 +78,15 @@ public class SteamGameTests {
         helper.setBlock(condenserAt, FBlocks.CONDENSER.get());
         SteamEngineBlockEntity engine = (SteamEngineBlockEntity) helper.getBlockEntity(engineAt);
         CondenserBlockEntity condenser = (CondenserBlockEntity) helper.getBlockEntity(condenserAt);
-        engine.getTank().fill(io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.stamp(new FluidStack(FFluids.STEAM.get(), FTuning.STEAM_ENGINE_TANK_MB), 150f), IFluidHandler.FluidAction.EXECUTE);
+        engine.getTank().fill(io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat.stamp(new FluidStack(FFluids.STEAM.get(), VesselTuning.STEAM_ENGINE_TANK_MB), 150f), IFluidHandler.FluidAction.EXECUTE);
 
         helper.runAtTickTime(60, () -> {
             int water = condenser.getWaterTank().getFluidAmount();
             float tu = condenser.getTemperature().value();
             helper.assertTrue(water > 0, "the exhaust came back as water");
             helper.assertTrue(engine.getTank().isEmpty(), "the engine burned its steam");
-            helper.assertTrue(tu > FTuning.AMBIENT_TU.value(), "condensing warmed the condenser, it is at " + tu);
-            helper.assertTrue(tu <= FTuning.BOILER_WORKING_TU.value() + 1e-3f, "but never past boiling, it is at " + tu);
+            helper.assertTrue(tu > ThermalTuning.AMBIENT_TU.value(), "condensing warmed the condenser, it is at " + tu);
+            helper.assertTrue(tu <= MachineTuning.BOILER_WORKING_TU.value() + 1e-3f, "but never past boiling, it is at " + tu);
             helper.succeed();
         });
     }

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.process.Casting;
 import io.github.soundgoodizerfan.feedback.process.CastingTable;

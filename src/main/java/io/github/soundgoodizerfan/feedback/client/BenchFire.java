@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.Incandescence;
 
 import net.minecraft.client.Minecraft;
@@ -34,7 +34,7 @@ final class BenchFire {
     /** The flame's base colour at {@code tu}, 0xRRGGBB: ember red below the faint-red band, the glow ramp above it, soul-fire blue past white. */
     static int colour(float tu) {
         float[] c = GlowColours.rgb(GlowColours.along(Incandescence.light(tu)));
-        float blue = Mth.clamp((tu - 1450f) / (FTuning.MAX_VISIBLE_TU.value() - 1450f), 0f, 1f);
+        float blue = Mth.clamp((tu - 1450f) / (ThermalTuning.MAX_VISIBLE_TU.value() - 1450f), 0f, 1f);
         int r = Math.round(Mth.lerp(blue, c[0], 0.2f) * 255f);
         int gr = Math.round(Mth.lerp(blue, c[1], 0.7f) * 255f);
         int b = Math.round(Mth.lerp(blue, c[2], 1f) * 255f);

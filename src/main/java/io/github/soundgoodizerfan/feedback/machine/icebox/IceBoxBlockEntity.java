@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.icebox;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Refrigerable;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -30,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A chest that is a small thermal volume (food spec 8). Ice put in it is spent as it melts, one
- * piece keeping the box at {@link FTuning#ICEBOX_COLD_TU} for {@link FTuning#ICEBOX_ICE_TICKS}; when
+ * piece keeping the box at {@link MachineTuning#ICEBOX_COLD_TU} for {@link VesselTuning#ICEBOX_ICE_TICKS}; when
  * none is left the air drifts back to the room's and what is inside spoils at the room's rate. Food
  * in it spoils at the box's temperature, not the room's: a drifting mass, where a binary "cold
  * shelf" would be a switch.
@@ -48,9 +50,9 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
     private static int coolantGeneration = -1;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
-    private float cold, boxTu = FTuning.AMBIENT_TU.value();
+    private float cold, boxTu = ThermalTuning.AMBIENT_TU.value();
     private long heldUntil;
-    private float heldTu = FTuning.ICEBOX_COLD_TU.value();
+    private float heldTu = MachineTuning.ICEBOX_COLD_TU.value();
 
     public IceBoxBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ICE_BOX.get(), pos, state);
@@ -72,7 +74,7 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
     @Override
     public void holdCold(Tu setpoint) {
         if (level != null) {
-            heldUntil = level.getGameTime() + FTuning.REFRIGERATION_LAPSE_TICKS;
+            heldUntil = level.getGameTime() + VesselTuning.REFRIGERATION_LAPSE_TICKS;
             heldTu = setpoint.value();
         }
     }
@@ -100,7 +102,7 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
             for (ItemStack stack : items)
                 if (!stack.isEmpty() && isCoolant(stack)) {
                     stack.shrink(1);
-                    cold += FTuning.ICEBOX_ICE_TICKS;
+                    cold += VesselTuning.ICEBOX_ICE_TICKS;
                     break;
                 }
         float room = AmbientTable.at(level).value();
@@ -108,10 +110,10 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
             if (!pumped)
                 cold -= 20f;
             // Ice holds the chilled figure; a pump holds its own set point (frozen when it has a compressor stage), the colder of the two if both.
-            float target = pumped ? (cold > 0f ? Math.min(heldTu, FTuning.ICEBOX_COLD_TU.value()) : heldTu) : FTuning.ICEBOX_COLD_TU.value();
+            float target = pumped ? (cold > 0f ? Math.min(heldTu, MachineTuning.ICEBOX_COLD_TU.value()) : heldTu) : MachineTuning.ICEBOX_COLD_TU.value();
             boxTu = Math.min(boxTu, room) + (target - Math.min(boxTu, room)) * 0.2f;
         } else
-            boxTu += (room - boxTu) * FTuning.ICEBOX_DRIFT_PER_SECOND;
+            boxTu += (room - boxTu) * VesselTuning.ICEBOX_DRIFT_PER_SECOND;
         for (ItemStack stack : items)
             if (!stack.isEmpty())
                 Cooking.settle(stack, level, boxTu);
@@ -157,6 +159,6 @@ public class IceBoxBlockEntity extends BaseContainerBlockEntity implements Refri
         items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
         ContainerHelper.loadAllItems(tag, items, registries);
         cold = tag.getFloat("Cold");
-        boxTu = tag.contains("BoxTu") ? tag.getFloat("BoxTu") : FTuning.AMBIENT_TU.value();
+        boxTu = tag.contains("BoxTu") ? tag.getFloat("BoxTu") : ThermalTuning.AMBIENT_TU.value();
     }
 }

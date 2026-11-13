@@ -5,7 +5,6 @@ package io.github.soundgoodizerfan.feedback.core.electric;
 import java.util.Arrays;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 /**
  * One connected run of wire, sources and sinks, and the arithmetic that says who gets what.
@@ -21,11 +20,11 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
  * <h2>What a tick does</h2>
  * <ol>
  *   <li><b>Who is supplying.</b> The highest nominal voltage among sources that are offering
- *       anything sets the run's voltage. Sources within {@link FTuning#DROOP_TOLERANCE} of it form
+ *       anything sets the run's voltage. Sources within {@link ElectricTuning#DROOP_TOLERANCE} of it form
  *       the <em>pool</em> (the run holds their mean, weighted by rating); a source further below is
  *       <em>blocked</em> and says so. Different bands do not blend (6.2).</li>
  *   <li><b>Shares.</b> Every reachable sink wants some current. If the pool can cover the total
- *       (up to {@link FTuning#SOURCE_OVERDRAW_LIMIT} times its rating) every sink gets what it
+ *       (up to {@link ElectricTuning#SOURCE_OVERDRAW_LIMIT} times its rating) every sink gets what it
  *       wants; if not, every sink gets the same fraction of what it wants. There is no
  *       nearest-first starvation, so a starved sink is starved visibly and in proportion.</li>
  *   <li><b>Sag.</b> The pool's voltage falls as it is drawn past its rating ({@link
@@ -110,11 +109,11 @@ public final class ElectricRun {
                 topVolts = Math.max(topVolts, v);
             }
         }
-        // Droop (grid spec 4.3): a source within FTuning.DROOP_TOLERANCE of the top voltage joins the pool, and the pool holds the
+        // Droop (grid spec 4.3): a source within ElectricTuning.DROOP_TOLERANCE of the top voltage joins the pool, and the pool holds the
         // mean of its members' volts weighted by rating, so near-equal sources share by rating and none takes everything.
         float capacity = 0, voltAmps = 0;
         for (int i = 0; i < n; i++) {
-            pooledNow[i] = active[i] && members[i].sourceVolts() >= topVolts * (1f - FTuning.DROOP_TOLERANCE);
+            pooledNow[i] = active[i] && members[i].sourceVolts() >= topVolts * (1f - ElectricTuning.DROOP_TOLERANCE);
             if (pooledNow[i]) {
                 capacity += members[i].sourceAmps();
                 voltAmps += members[i].sourceVolts() * members[i].sourceAmps();
@@ -133,7 +132,7 @@ public final class ElectricRun {
         for (int i = 0; i < n; i++)
             if (reached[i] && members[i].role() != ElectricMember.Role.SOURCE)
                 demand += members[i].wantedAmps();
-        float limit = capacity * FTuning.SOURCE_OVERDRAW_LIMIT;
+        float limit = capacity * ElectricTuning.SOURCE_OVERDRAW_LIMIT;
         float share = demand <= limit || demand <= 0 ? 1f : limit / demand;
 
         Arrays.fill(through, 0f);

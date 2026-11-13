@@ -53,9 +53,9 @@ public class ModularCharge extends ModularItem {
         if (!level.isClientSide) {
             var packed = Blast.packed(held);
             GrenadeEntity grenade = new GrenadeEntity(level, player, packed.map(Blast.Packed::impact).orElse(false),
-                    packed.map(Blast.Packed::fuseTicks).orElse(io.github.soundgoodizerfan.feedback.core.FTuning.DEMO_FUSE_TICKS));
+                    packed.map(Blast.Packed::fuseTicks).orElse(io.github.soundgoodizerfan.feedback.weapon.GunTuning.DEMO_FUSE_TICKS));
             grenade.setItem(held.copyWithCount(1));
-            grenade.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, io.github.soundgoodizerfan.feedback.core.FTuning.GRENADE_THROW_SPEED, 1f);
+            grenade.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, io.github.soundgoodizerfan.feedback.weapon.GunTuning.GRENADE_THROW_SPEED, 1f);
             level.addFreshEntity(grenade);
             level.playSound(null, player.getX(), player.getY(), player.getZ(), net.minecraft.sounds.SoundEvents.FLINTANDSTEEL_USE,
                     SoundSource.PLAYERS, 1f, 1f);

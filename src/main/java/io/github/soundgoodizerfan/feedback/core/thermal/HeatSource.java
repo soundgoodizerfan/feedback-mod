@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
-import net.minecraft.tags.FluidTags;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import net.minecraft.tags.FluidTags;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.core.BlockPos;
@@ -62,7 +62,7 @@ public interface HeatSource {
 
     /** Reach on the four sides next to the facing. A concentrated source (arc, plasma) returns 1. */
     default float sideShare() {
-        return FTuning.HEAT_SIDE_SHARE;
+        return ThermalTuning.HEAT_SIDE_SHARE;
     }
 
     /** Reach on the side behind the facing. Nothing by default. */
@@ -131,7 +131,7 @@ public interface HeatSource {
     /**
      * Called from a source's own server tick: pushes its heat into the space it reaches, the same blocks {@link #at} reads from the
      * other end (the block it points at, the four round that, the four beside the source, and the back if it has a share). Every
-     * {@link FTuning#HEAT_PUSH_INTERVAL} ticks, and only when hot:
+     * {@link ThermalTuning#HEAT_PUSH_INTERVAL} ticks, and only when hot:
      * <ul>
      *   <li>a block with an item handler warms the stacks inside toward that spot's heat ({@link FTuning#HEAT_PUSH_ITEM_GRIP} of the
      *       gap a tick), unless it is a {@link ThermalBody} (a vessel heats its own contents through {@link #at}) or in the
@@ -145,13 +145,13 @@ public interface HeatSource {
         Level level = self.getLevel();
         if (level == null || level.isClientSide)
             return;
-        long beat = Math.floorMod(level.getGameTime() + self.getBlockPos().asLong(), (long) FTuning.HEAT_PUSH_INTERVAL);
+        long beat = Math.floorMod(level.getGameTime() + self.getBlockPos().asLong(), (long) ThermalTuning.HEAT_PUSH_INTERVAL);
         if (beat != 0L)
             return;
         float fire = self.getFireTu().value();
-        if (fire <= FTuning.WARM_TU.value())
+        if (fire <= ThermalTuning.WARM_TU.value())
             return;
-        boolean scorch = (level.getGameTime() / FTuning.HEAT_PUSH_INTERVAL) % FTuning.HEAT_SCORCH_EVERY == 0;
+        boolean scorch = (level.getGameTime() / ThermalTuning.HEAT_PUSH_INTERVAL) % ThermalTuning.HEAT_SCORCH_EVERY == 0;
         float ambient = AmbientTable.at(level).value();
         Direction face = self.heatFacing();
         BlockPos at = self.getBlockPos(), front = at.relative(face);
@@ -169,7 +169,7 @@ public interface HeatSource {
 
     private static void reach(Level level, HeatSource source, BlockPos target, float share, float ambient, float fire, boolean scorch) {
         float tu = ambient + share * (fire - ambient);
-        if (tu <= FTuning.WARM_TU.value() || !source.heats(level, target))
+        if (tu <= ThermalTuning.WARM_TU.value() || !source.heats(level, target))
             return;
         BlockEntity be = level.getBlockEntity(target);
         if (be != null && !(be instanceof ThermalBody) && !be.getBlockState().is(FTags.NO_HEAT_PUSH)) {
@@ -185,7 +185,7 @@ public interface HeatSource {
         AABB space = new AABB(target);
         for (ItemEntity dropped : level.getEntitiesOfClass(ItemEntity.class, space))
             warm(dropped.getItem(), tu, level);
-        if (scorch && tu >= FTuning.CONTACT_PAIN_TU.value())
+        if (scorch && tu >= ThermalTuning.CONTACT_PAIN_TU.value())
             for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class, space))
                 HotContact.burn(victim, new Tu(tu));
     }
@@ -196,7 +196,7 @@ public interface HeatSource {
         float now = ItemHeat.get(stack, level).value();
         if (tu <= now)
             return false;
-        ItemHeat.set(stack, new Tu(now + FTuning.HEAT_PUSH_ITEM_GAIN * (tu - now)), level);
+        ItemHeat.set(stack, new Tu(now + ThermalTuning.HEAT_PUSH_ITEM_GAIN * (tu - now)), level);
         return true;
     }
 
@@ -220,9 +220,9 @@ public interface HeatSource {
             if (tu > best.tu())
                 best = new FireSpan(span.litTicks(), tu);
         }
-        if (level.getFluidState(pos.below()).is(FluidTags.LAVA) && FTuning.FIRE_TU_LAVA.value() > best.tu()) {
+        if (level.getFluidState(pos.below()).is(FluidTags.LAVA) && ThermalTuning.FIRE_TU_LAVA.value() > best.tu()) {
             io.github.soundgoodizerfan.feedback.core.Awards.near(level, pos, "progress/heat/lava_fire");
-            return new FireSpan(gap, FTuning.FIRE_TU_LAVA.value());
+            return new FireSpan(gap, ThermalTuning.FIRE_TU_LAVA.value());
         }
         return best;
     }
@@ -273,7 +273,7 @@ public interface HeatSource {
             best = Math.max(best, ambient.value() + share * (fire - ambient.value()));
         }
         if (level.getFluidState(pos.below()).is(FluidTags.LAVA))
-            best = Math.max(best, FTuning.FIRE_TU_LAVA.value());
+            best = Math.max(best, ThermalTuning.FIRE_TU_LAVA.value());
         return new Tu(best);
     }
 }

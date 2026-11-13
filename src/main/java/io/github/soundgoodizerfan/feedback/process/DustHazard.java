@@ -29,7 +29,7 @@ public final class DustHazard {
         return Math.max(0f, 1f / FormType.grainOf(stack) - 1f);
     }
 
-    /** The share (0 to {@link FTuning#DUST_BURNOFF_MAX}) of a melt of {@code stack} lost to oxide at {@code temperature} Tu. */
+    /** The share (0 to {@link ProcessTuning#DUST_BURNOFF_MAX}) of a melt of {@code stack} lost to oxide at {@code temperature} Tu. */
     public static float burnOff(ItemStack stack, float temperature, boolean airless) {
         float fineness = fineness(stack);
         if (airless || fineness <= 0f)
@@ -40,7 +40,7 @@ public final class DustHazard {
         var oxidises = located.get().material().thermal().oxidationTemperature();
         if (oxidises.isEmpty() || temperature <= oxidises.get().value())
             return 0f;
-        return Math.min(FTuning.DUST_BURNOFF_MAX, fineness * FTuning.DUST_BURNOFF_PER_FINENESS);
+        return Math.min(ProcessTuning.DUST_BURNOFF_MAX, fineness * ProcessTuning.DUST_BURNOFF_PER_FINENESS);
     }
 
     /**
@@ -66,6 +66,6 @@ public final class DustHazard {
         var located = MaterialIngredient.locate(stack.getItem());
         if (located.isEmpty())
             return 0;
-        return Math.round(Fumes.level(located.get().material()) * Math.min(1f, fineness * FTuning.DUST_FUME_PER_FINENESS));
+        return Math.round(Fumes.level(located.get().material()) * Math.min(1f, fineness * ProcessTuning.DUST_FUME_PER_FINENESS));
     }
 }

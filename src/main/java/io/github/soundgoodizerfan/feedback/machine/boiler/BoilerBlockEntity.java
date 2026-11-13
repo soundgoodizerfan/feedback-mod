@@ -2,12 +2,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.boiler;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.fluid.FluidTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.tags.FluidTags;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
@@ -50,7 +55,7 @@ import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
  * <p>
  * A {@link ThermalBody} heated from below exactly like a crucible -- see
  * {@link HeatSource#at} -- with a water tank and a steam tank. Above
- * the boiling point in the phase-change table (default {@link FTuning#BOILER_WORKING_TU}) it turns water into Steam, stamped at the boiler's own temperature, at a flat rate; below it, nothing
+ * the boiling point in the phase-change table (default {@link MachineTuning#BOILER_WORKING_TU}) it turns water into Steam, stamped at the boiler's own temperature, at a flat rate; below it, nothing
  * happens beyond ordinary heat loss. What burns under it is this block's problem alone; what
  * eventually spends the Steam is somebody else's.
  * <p>
@@ -64,7 +69,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
 
-    private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB,
+    private final HeatedTank steamTank = new HeatedTank(VesselTuning.BOILER_STEAM_TANK_MB,
             stack -> stack.is(FTags.STEAM), this::setChanged);
 
     private final FigureStore figures = new FigureStore();
@@ -78,8 +83,8 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     /** The tanks are as big as the design's scale says, once the design is known (placing, loading). */
     private void resize() {
-        tank.setCapacity(FTuning.BOILER_WATER_TANK_MB * scale());
-        steamTank.setCapacity(FTuning.BOILER_STEAM_TANK_MB * scale());
+        tank.setCapacity(VesselTuning.BOILER_WATER_TANK_MB * scale());
+        steamTank.setCapacity(VesselTuning.BOILER_STEAM_TANK_MB * scale());
     }
 
     @Override
@@ -89,12 +94,12 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     }
 
     private float dangerPu() {
-        return figures.get("Danger", FTuning.PRESSURE_VESSEL_DANGER_PU.value());
+        return figures.get("Danger", FluidTuning.PRESSURE_VESSEL_DANGER_PU.value());
     }
 
     /** The shell's danger line over the fixed one: a stronger shell lifts the pressure its valve and seams are set at with it. */
     private float shellScale() {
-        return dangerPu() / FTuning.PRESSURE_VESSEL_DANGER_PU.value();
+        return dangerPu() / FluidTuning.PRESSURE_VESSEL_DANGER_PU.value();
     }
 
     public BoilerBlockEntity(BlockPos pos, BlockState state) {
@@ -129,12 +134,12 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     @Override
     public ThermalMass getThermalMass() {
-        return new ThermalMass(FTuning.BOILER_MASS.workPerTu() * scale());
+        return new ThermalMass(VesselTuning.BOILER_MASS.workPerTu() * scale());
     }
 
     @Override
     public Conductance getLeak() {
-        return new Conductance(FTuning.BOILER_LEAK.workPerTickPerTu() * (float) Math.cbrt((double) scale() * scale()));
+        return new Conductance(MachineTuning.BOILER_LEAK.workPerTickPerTu() * (float) Math.cbrt((double) scale() * scale()));
     }
 
     public TuRate getHeatingRate() {
@@ -166,14 +171,14 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     /** The water's boiling point, from the phase-change table; the working temperature when none applies. */
     private float workingTu() {
         return ThermalProcessTable.get().boiling(tank.getFluid()).map(c -> c.boil().value())
-                .orElse(FTuning.BOILER_WORKING_TU.value());
+                .orElse(MachineTuning.BOILER_WORKING_TU.value());
     }
 
     // --- what a boiler is, beside the vessel core's boil-off -----------------------------------
 
     @Override
     protected int tankCapacity() {
-        return FTuning.BOILER_WATER_TANK_MB;
+        return VesselTuning.BOILER_WATER_TANK_MB;
     }
 
     @Override
@@ -184,15 +189,15 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     /** Only the heat above the boiling point can boil anything, and a boiler turns a fixed quantity a tick, not a share of its tank. */
     @Override
     protected int boilAmount(PhaseChange cut, float wanted) {
-        int affordable = (int) ((temperature - cut.boil().value()) * FTuning.BOILER_MASS.workPerTu() * scale() / cut.latent());
-        return Math.min(FTuning.BOILER_STEAM_PER_TICK_MB * scale(), affordable);
+        int affordable = (int) ((temperature - cut.boil().value()) * VesselTuning.BOILER_MASS.workPerTu() * scale() / cut.latent());
+        return Math.min(VesselTuning.BOILER_STEAM_PER_TICK_MB * scale(), affordable);
     }
 
     @Override
     protected float boilCost(PhaseChange cut, int mB) {
         // Water that comes in hot (condensate returned, a preheated line) needs less lifting to the boiling point: cold feed pays for the climb.
         float climb = Math.max(0f, cut.boil().value() - tank.temperature().value());
-        return mB * cut.latent() * (1f + climb * FTuning.FEED_SENSIBLE_PER_TU) / (FTuning.BOILER_MASS.workPerTu() * scale());
+        return mB * cut.latent() * (1f + climb * VesselTuning.FEED_SENSIBLE_PER_TU) / (VesselTuning.BOILER_MASS.workPerTu() * scale());
     }
 
     @Override
@@ -224,10 +229,10 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
      */
     @Override
     public Pu getPressure() {
-        float held = steamTank.getFluidAmount() / (FTuning.BOILER_STEAM_MB_PER_PU * scale());
-        boolean trapped = steamTank.getSpace() <= FTuning.BOILER_STEAM_PER_TICK_MB * scale();
+        float held = steamTank.getFluidAmount() / (VesselTuning.BOILER_STEAM_MB_PER_PU * scale());
+        boolean trapped = steamTank.getSpace() <= VesselTuning.BOILER_STEAM_PER_TICK_MB * scale();
         float over = trapped ? Math.max(0f, temperature - workingTu()) : 0f;
-        return new Pu(held + over * FTuning.BOILER_PU_PER_TU_OVER);
+        return new Pu(held + over * VesselTuning.BOILER_PU_PER_TU_OVER);
     }
 
     /**
@@ -248,20 +253,20 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
             // Venting un-traps a full tank, which drops the over-temperature term with it -- so
             // pressure is re-read: the seams only weep if the valve could not keep up.
             int vented = Math.min(steamTank.getFluidAmount(),
-                    Math.max(1, Math.round(relief * FTuning.BOILER_RELIEF_MB_PER_PU)));
+                    Math.max(1, Math.round(relief * VesselTuning.BOILER_RELIEF_MB_PER_PU)));
             steamTank.drain(vented, IFluidHandler.FluidAction.EXECUTE);
-            if (level.getGameTime() % FTuning.CONTACT_INTERVAL_TICKS == 0) {
+            if (level.getGameTime() % HazardTuning.CONTACT_INTERVAL_TICKS == 0) {
                 PressureBurst.weep(level, worldPosition);
             }
             pressure = getPressure();
         }
-        float over = pressure.value() - FTuning.BOILER_SEEP_PU.value() * shellScale();
+        float over = pressure.value() - VesselTuning.BOILER_SEEP_PU.value() * shellScale();
         if (over > 0f) {
             int lost = Math.min(steamTank.getFluidAmount(),
-                    Math.max(1, Math.round(over * FTuning.BOILER_SEEP_MB_PER_PU)));
+                    Math.max(1, Math.round(over * VesselTuning.BOILER_SEEP_MB_PER_PU)));
             steamTank.drain(lost, IFluidHandler.FluidAction.EXECUTE);
             weptAt = level.getGameTime();
-            if (level.getGameTime() % FTuning.CONTACT_INTERVAL_TICKS == 0) {
+            if (level.getGameTime() % HazardTuning.CONTACT_INTERVAL_TICKS == 0) {
                 PressureBurst.weep(level, worldPosition);
             }
         } else if (weptAt >= 0 && level.getGameTime() - weptAt <= BACK_OFF_TICKS) {
@@ -272,10 +277,10 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
             weptAt = -1;
         }
         if (PressureBurst.fails(pressure, new Pu(dangerPu()),
-                new Pu(figures.get("Critical", FTuning.PRESSURE_VESSEL_CRITICAL_PU.value())), level.random)) {
+                new Pu(figures.get("Critical", FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value())), level.random)) {
             steamTank.setFluid(FluidStack.EMPTY);
             tank.setFluid(FluidStack.EMPTY);
-            PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
+            PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER);
         }
     }
 
@@ -324,7 +329,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         super.loadAdditional(tag, registries);
         figures.load(tag, registries);
         resize();
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         if (tag.contains("WaterTank"))
             tank.readFromNBT(registries, tag.getCompound("WaterTank"));
         if (tag.contains("SteamTank"))

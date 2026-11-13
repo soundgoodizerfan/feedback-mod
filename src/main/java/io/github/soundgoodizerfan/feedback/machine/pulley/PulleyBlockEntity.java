@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.pulley;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetwork;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
@@ -177,12 +178,12 @@ public class PulleyBlockEntity extends RotationNode implements Wearing {
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.PULLEY_DRAG_SU_PER_RPM;
+        return MachineTuning.PULLEY_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return FTuning.PULLEY_INERTIA;
+        return MachineTuning.PULLEY_INERTIA;
     }
 
     @Override

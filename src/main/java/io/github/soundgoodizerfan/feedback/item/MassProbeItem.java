@@ -50,8 +50,8 @@ public class MassProbeItem extends Item implements Instrument {
         float condition = condition(probe);
         if (coat >= cut.range)
             return cut.range;
-        float sigma = cut.step * (FTuning.MASS_PROBE_NOISE_STEPS
-                + (1f - condition) / (1f - FTuning.MASS_PROBE_CONDITION_FLOOR) * FTuning.MASS_PROBE_CRACKED_NOISE_STEPS);
+        float sigma = cut.step * (ItemTuning.MASS_PROBE_NOISE_STEPS
+                + (1f - condition) / (1f - FTuning.MASS_PROBE_CONDITION_FLOOR) * ItemTuning.MASS_PROBE_CRACKED_NOISE_STEPS);
         float noisy = coat + (float) random.nextGaussian() * sigma;
         return Math.min(cut.range, Math.max(0f, Instruments.quantise(noisy, cut.step)));
     }

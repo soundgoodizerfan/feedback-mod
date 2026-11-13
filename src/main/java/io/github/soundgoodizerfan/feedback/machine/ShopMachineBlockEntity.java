@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.process.Removing;
@@ -95,12 +96,12 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wel
     }
 
     protected boolean isTurning() {
-        return Math.abs(getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value();
+        return Math.abs(getRpm().value()) > RotationTuning.STOPPED_RPM_THRESHOLD.value();
     }
 
     /** Passes made this tick, fraction included, for a continuous cut. Zero while stopped. */
     protected float passesDue() {
-        return isTurning() ? Math.abs(getRpm().value()) * FTuning.STROKES_PER_RPM_PER_TICK : 0f;
+        return isTurning() ? Math.abs(getRpm().value()) * MachineTuning.STROKES_PER_RPM_PER_TICK : 0f;
     }
 
     /** Whole strokes owed this tick, for a machine that acts in discrete strokes. */
@@ -122,8 +123,8 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wel
         if (level != null)
             io.github.soundgoodizerfan.feedback.core.Awards.near(level, worldPosition, "progress/joke/skill_issue");
         int before = FTuning.conditionBand(condition);
-        condition = Math.max(FTuning.SHOP_MACHINE_CONDITION_FLOOR,
-                condition - stAbsorbed * FTuning.SHOP_MACHINE_WEAR_PER_ST);
+        condition = Math.max(MachineTuning.SHOP_MACHINE_CONDITION_FLOOR,
+                condition - stAbsorbed * MachineTuning.SHOP_MACHINE_WEAR_PER_ST);
         setChanged();
         if (FTuning.conditionBand(condition) != before)
             sync();
@@ -132,7 +133,7 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wel
     /** A landed cut throws off a chip of its own material, some of the time. */
     protected void maybeDropSwarf(Removing.Cut cut) {
         if (level != null && !cut.swarf().isEmpty() && cut.delivered() > 0
-                && level.random.nextFloat() < FTuning.SWARF_DROP_CHANCE * cut.delivered())
+                && level.random.nextFloat() < MachineTuning.SWARF_DROP_CHANCE * cut.delivered())
             Block.popResource(level, worldPosition.above(), cut.swarf().copy());
     }
 

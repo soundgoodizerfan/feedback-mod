@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.potion;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
@@ -52,7 +52,7 @@ public final class Quench {
             ItemStack s = inv.getItem(i);
             if (s.isEmpty() || !ItemHeat.isHot(s, level))
                 continue;
-            TuRate rate = s.getItem() instanceof ItemHeat.Cooling c ? c.coolingRate(s) : FTuning.ITEM_COOLING_TU_PER_TICK;
+            TuRate rate = s.getItem() instanceof ItemHeat.Cooling c ? c.coolingRate(s) : ThermalTuning.ITEM_COOLING_TU_PER_TICK;
             ItemHeat.set(s, Heat.cooled(ItemHeat.get(s, level), PotionTuning.QUENCH_EVERY * (PotionTuning.QUENCH_COOL_MULT - 1f), rate, AmbientTable.at(level)), level);
         }
     }
@@ -89,7 +89,7 @@ public final class Quench {
             ItemStack s = item.getItem();
             if (s.isEmpty() || !ItemHeat.isHot(s, level))
                 continue;
-            TuRate rate = s.getItem() instanceof ItemHeat.Cooling c ? c.coolingRate(s) : FTuning.ITEM_COOLING_TU_PER_TICK;
+            TuRate rate = s.getItem() instanceof ItemHeat.Cooling c ? c.coolingRate(s) : ThermalTuning.ITEM_COOLING_TU_PER_TICK;
             ItemHeat.set(s, Heat.cooled(ItemHeat.get(s, level), PotionTuning.QUENCH_DOUSE_TICKS * (amplifier + 1), rate, AmbientTable.at(level)), level);
         }
         net.minecraft.core.BlockPos c = net.minecraft.core.BlockPos.containing(at);

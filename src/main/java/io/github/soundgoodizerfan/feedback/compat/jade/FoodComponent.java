@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
@@ -35,7 +35,7 @@ public class FoodComponent implements IBlockComponentProvider {
             tooltip.add(Readout.temperatureReading(new Tu(data.getFloat(FoodServerData.VESSEL))));
             int[] jars = data.getIntArray(FoodServerData.JARS);
             if (jars.length == 3) {
-                tooltip.add(Component.translatable("feedback.jade.canning.jars", jars[0] + jars[1], FTuning.CANNING_SLOTS)
+                tooltip.add(Component.translatable("feedback.jade.canning.jars", jars[0] + jars[1], PetrochemTuning.CANNING_SLOTS)
                         .withStyle(ChatFormatting.GRAY));
                 if (jars[0] > 0)
                     tooltip.add(Component.translatable("feedback.jade.canning.sealed", jars[0]).withStyle(ChatFormatting.GRAY));

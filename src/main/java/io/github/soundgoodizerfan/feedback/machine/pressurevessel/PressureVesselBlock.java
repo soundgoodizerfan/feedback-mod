@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.pressurevessel;
 
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -67,7 +67,7 @@ public class PressureVesselBlock extends Block implements EntityBlock {
     }
 
     private static Component status(PressureVesselBlockEntity vessel) {
-        return Component.translatable("feedback.canning.status", vessel.jarCount(), FTuning.CANNING_SLOTS);
+        return Component.translatable("feedback.canning.status", vessel.jarCount(), PetrochemTuning.CANNING_SLOTS);
     }
 
     @Override

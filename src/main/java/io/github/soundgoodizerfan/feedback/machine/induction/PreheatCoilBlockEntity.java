@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.induction;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A coil that heats one metal workpiece laid in it, quickly and cleanly, to a target the player sets on the block
- * ({@link FTuning#PREHEAT_TARGETS_TU}, a few steps up to {@link FTuning#INDUCTION_CEILING_TU}, the first of them off). It knows nothing of
+ * ({@link ElectricMachineTuning#PREHEAT_TARGETS_TU}, a few steps up to {@link ElectricMachineTuning#INDUCTION_CEILING_TU}, the first of them off). It knows nothing of
  * the piece's forging window: matching the target to the work is the player's. It heats the held stack's {@link ItemHeat} stamp while
  * powered and does nothing else: unpowered, the piece cools in the slot at the item's own rate. Only a metal couples to the field.
  */
@@ -29,7 +30,7 @@ public class PreheatCoilBlockEntity extends ElectricNode {
     /** Whether the held piece is a metal, which is what a field couples to. Looked up when laid in. */
     private boolean coupled;
     private boolean coupledKnown;
-    private int target = FTuning.PREHEAT_DEFAULT_TARGET;
+    private int target = ElectricMachineTuning.PREHEAT_DEFAULT_TARGET;
     private float power;
 
     public PreheatCoilBlockEntity(BlockPos pos, BlockState state) {
@@ -42,7 +43,7 @@ public class PreheatCoilBlockEntity extends ElectricNode {
 
     /** The temperature the coil heats a piece to, in Tu; 0 when it is switched off. */
     public float targetTu() {
-        return FTuning.PREHEAT_TARGETS_TU[target];
+        return ElectricMachineTuning.PREHEAT_TARGETS_TU[target];
     }
 
     /** The held piece's temperature now, or null with nothing laid in. */
@@ -63,7 +64,7 @@ public class PreheatCoilBlockEntity extends ElectricNode {
     }
 
     public void cycleTarget() {
-        target = (target + 1) % FTuning.PREHEAT_TARGETS_TU.length;
+        target = (target + 1) % ElectricMachineTuning.PREHEAT_TARGETS_TU.length;
         setChanged();
     }
 
@@ -104,7 +105,7 @@ public class PreheatCoilBlockEntity extends ElectricNode {
 
     @Override
     public float wantedAmps() {
-        return wantsHeat() ? FTuning.PREHEAT_AMPS : 0f;
+        return wantsHeat() ? ElectricMachineTuning.PREHEAT_AMPS : 0f;
     }
 
     @Override
@@ -115,14 +116,14 @@ public class PreheatCoilBlockEntity extends ElectricNode {
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        power = volts > 0f && amps > 0f ? Math.min(1f, volts * amps / (FTuning.ELECTRIC_MV_VOLTS * FTuning.PREHEAT_AMPS)) : 0f;
+        power = volts > 0f && amps > 0f ? Math.min(1f, volts * amps / (ElectricTuning.ELECTRIC_MV_VOLTS * ElectricMachineTuning.PREHEAT_AMPS)) : 0f;
     }
 
     public void tickServer() {
         if (level == null || power <= 0f || !wantsHeat())
             return;
         float now = ItemHeat.get(held, level).value();
-        ItemHeat.set(held, new Tu(Math.min(targetTu(), now + FTuning.PREHEAT_TU_PER_TICK.tuPerTick() * power)), level);
+        ItemHeat.set(held, new Tu(Math.min(targetTu(), now + ElectricMachineTuning.PREHEAT_TU_PER_TICK.tuPerTick() * power)), level);
         setChanged();
     }
 
@@ -138,7 +139,7 @@ public class PreheatCoilBlockEntity extends ElectricNode {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         held = tag.contains("Held") ? ItemStack.parseOptional(registries, tag.getCompound("Held")) : ItemStack.EMPTY;
-        target = tag.contains("Target") ? Math.floorMod(tag.getInt("Target"), FTuning.PREHEAT_TARGETS_TU.length) : FTuning.PREHEAT_DEFAULT_TARGET;
+        target = tag.contains("Target") ? Math.floorMod(tag.getInt("Target"), ElectricMachineTuning.PREHEAT_TARGETS_TU.length) : ElectricMachineTuning.PREHEAT_DEFAULT_TARGET;
         coupledKnown = false;
     }
 }

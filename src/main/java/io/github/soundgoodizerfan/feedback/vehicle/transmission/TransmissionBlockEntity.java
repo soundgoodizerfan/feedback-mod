@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.transmission;
 
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.control.Analog;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetworks;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
@@ -38,13 +38,13 @@ import java.util.Set;
  * propagator already walks both ways, so no network code knows a transmission exists.
  *
  * <p><b>Shifting at speed is misuse.</b> A change of gear while the input is turning faster than
- * {@link FTuning#TRANSMISSION_FREE_SHIFT_RPM} grinds the teeth: wear in proportion to the speed, by the
- * material's hardness. Worn below {@link FTuning#TRANSMISSION_POP_BELOW}, it jumps out of gear under
+ * {@link VehicleTuning#TRANSMISSION_FREE_SHIFT_RPM} grinds the teeth: wear in proportion to the speed, by the
+ * material's hardness. Worn below {@link VehicleTuning#TRANSMISSION_POP_BELOW}, it jumps out of gear under
  * load now and then, more often the worse it is. Correct use -- stopped, or in neutral -- costs nothing,
  * and nothing wears it for running.
  *
  * <p>An {@link Analog} part: channel 0 is the shifter, 0 to 1 over neutral, the forward gears and reverse;
- * channel 1 is the clutch pedal, 0 to 1. Pressed past {@link FTuning#TRANSMISSION_CLUTCH_PRESSED} it
+ * channel 1 is the clutch pedal, 0 to 1. Pressed past {@link VehicleTuning#TRANSMISSION_CLUTCH_PRESSED} it
  * parts the link, so the input coasts free of the output, and a shift made then does not grind: the
  * clutch is how a gear is changed at speed without misuse. Dropped, it couples again at once.
  */
@@ -114,10 +114,10 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         if (next == position)
             return;
         float rpm = inputRpm();
-        if (rpm > FTuning.TRANSMISSION_FREE_SHIFT_RPM && position != 0 && next != 0 && !clutchPressed()) {
+        if (rpm > VehicleTuning.TRANSMISSION_FREE_SHIFT_RPM && position != 0 && next != 0 && !clutchPressed()) {
             var material = MaterialTable.get().materials().get(design.material());
             if (material != null)
-                condition = Math.max(FTuning.TRANSMISSION_CONDITION_FLOOR, condition - rpm * design.wearPerRpm(material));
+                condition = Math.max(VehicleTuning.TRANSMISSION_CONDITION_FLOOR, condition - rpm * design.wearPerRpm(material));
             if (level != null)
                 level.playSound(null, worldPosition, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.3f, 0.5f);
         }
@@ -129,7 +129,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
     // --- the link -------------------------------------------------------------------------------
 
     private boolean clutchPressed() {
-        return clutch >= FTuning.TRANSMISSION_CLUTCH_PRESSED;
+        return clutch >= VehicleTuning.TRANSMISSION_CLUTCH_PRESSED;
     }
 
     private float ratio() {
@@ -161,9 +161,9 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         if (be.ratio() != be.published)
             be.publish();
         // A worn box jumps out of gear under load.
-        if (be.design != null && be.position != 0 && be.condition < FTuning.TRANSMISSION_POP_BELOW
-                && be.inputRpm() > FTuning.TRANSMISSION_FREE_SHIFT_RPM
-                && level.random.nextFloat() < (FTuning.TRANSMISSION_POP_BELOW - be.condition) * FTuning.TRANSMISSION_POP_RATE) {
+        if (be.design != null && be.position != 0 && be.condition < VehicleTuning.TRANSMISSION_POP_BELOW
+                && be.inputRpm() > VehicleTuning.TRANSMISSION_FREE_SHIFT_RPM
+                && level.random.nextFloat() < (VehicleTuning.TRANSMISSION_POP_BELOW - be.condition) * VehicleTuning.TRANSMISSION_POP_RATE) {
             level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.4f, 0.4f);
             be.position = 0;
             be.setChanged();

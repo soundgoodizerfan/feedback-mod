@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.darkcell;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
@@ -53,7 +53,7 @@ public class CrushHeadBlockEntity extends RotationNode implements KillMethod, He
     public void used(int killed, float mass) {
         float need = mass * 2f;
         float ceiling = head.ceiling().value();
-        head.wear(Math.max(0.5f, need - ceiling) * killed, FTuning.PIVOT_HEAD_WEAR_PER_ST, FTuning.PIVOT_HEAD_FLOOR);
+        head.wear(Math.max(0.5f, need - ceiling) * killed, ElectricMachineTuning.PIVOT_HEAD_WEAR_PER_ST, ElectricMachineTuning.PIVOT_HEAD_FLOOR);
         setChanged();
     }
 

@@ -2,8 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.core.fluid.FluidTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.HazardEvents;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
@@ -72,7 +76,7 @@ public class HazardGameTests {
             Body ticked = new Body(new Tu(900f));
             Body relaxed = new Body(new Tu(900f));
             Tu fire = new Tu(1200f);
-            Tu room = FTuning.AMBIENT_TU;
+            Tu room = ThermalTuning.AMBIENT_TU;
             for (int i = 0; i < 700; i++)
                 Heat.tick(ticked, fire, room, conducted);
             Heat.relax(relaxed, fire, room, conducted, 700);
@@ -91,14 +95,14 @@ public class HazardGameTests {
         CompoundTag tag = new CompoundTag();
         // A fresh test world is younger than 500 ticks, and a stamp before tick 0 reads as never saved.
         long gap = Math.min(500, now);
-        helper.assertTrue(gap >= FTuning.CATCHUP_MIN_TICKS, "the test world is old enough to have been away, got tick " + now);
+        helper.assertTrue(gap >= ThermalTuning.CATCHUP_MIN_TICKS, "the test world is old enough to have been away, got tick " + now);
         tag.putLong("SavedAt", now - gap);
         away.load(tag);
         helper.assertTrue(away.take(helper.getLevel()) == gap, "away for the whole gap");
         helper.assertTrue(away.take(helper.getLevel()) == 0, "and only told once");
 
         Catchup brief = new Catchup();
-        tag.putLong("SavedAt", now - (FTuning.CATCHUP_MIN_TICKS - 1));
+        tag.putLong("SavedAt", now - (ThermalTuning.CATCHUP_MIN_TICKS - 1));
         brief.load(tag);
         helper.assertTrue(brief.take(helper.getLevel()) == 0, "a flicker is not worth the arithmetic");
         helper.succeed();
@@ -110,20 +114,20 @@ public class HazardGameTests {
         BlockPos at = new BlockPos(1, 2, 1);
         helper.setBlock(at, FBlocks.BOILER.get());
         BoilerBlockEntity boiler = (BoilerBlockEntity) helper.getBlockEntity(at);
-        boiler.getSteamTank().fill(new FluidStack(FFluids.STEAM.get(), FTuning.BOILER_STEAM_TANK_MB),
+        boiler.getSteamTank().fill(new FluidStack(FFluids.STEAM.get(), VesselTuning.BOILER_STEAM_TANK_MB),
                 IFluidHandler.FluidAction.EXECUTE);
 
-        boiler.setTemperature(FTuning.BOILER_WORKING_TU);
-        helper.assertTrue(boiler.getPressure().value() < FTuning.PRESSURE_VESSEL_DANGER_PU.value(),
+        boiler.setTemperature(MachineTuning.BOILER_WORKING_TU);
+        helper.assertTrue(boiler.getPressure().value() < FluidTuning.PRESSURE_VESSEL_DANGER_PU.value(),
                 "full and merely at working temperature is not yet in danger: " + boiler.getPressure().value());
 
         boiler.setTemperature(new Tu(1000f));
-        helper.assertTrue(boiler.getPressure().value() > FTuning.PRESSURE_VESSEL_DANGER_PU.value(),
+        helper.assertTrue(boiler.getPressure().value() > FluidTuning.PRESSURE_VESSEL_DANGER_PU.value(),
                 "full and under a real fire is past the danger line: " + boiler.getPressure().value());
 
         // Open: a half-empty tank has an outlet, so heat is spent boiling and not paid as pressure.
-        boiler.getSteamTank().drain(FTuning.BOILER_STEAM_TANK_MB / 2, IFluidHandler.FluidAction.EXECUTE);
-        helper.assertTrue(boiler.getPressure().value() < FTuning.PRESSURE_VESSEL_DANGER_PU.value(),
+        boiler.getSteamTank().drain(VesselTuning.BOILER_STEAM_TANK_MB / 2, IFluidHandler.FluidAction.EXECUTE);
+        helper.assertTrue(boiler.getPressure().value() < FluidTuning.PRESSURE_VESSEL_DANGER_PU.value(),
                 "with room in the tank, the same heat is not pressure");
         helper.succeed();
     }
@@ -141,7 +145,7 @@ public class HazardGameTests {
         float wood = tongsItem.handlesUpToTu(ironWood, level);
         float copper = tongsItem.handlesUpToTu(copperBone, level);
         helper.assertTrue(bone > wood, "a better grip holds hotter: bone " + bone + " wood " + wood);
-        helper.assertTrue(wood > FTuning.CONTACT_BURN_TU.value(), "even wooden tongs hold what a bare hand cannot: " + wood);
+        helper.assertTrue(wood > HazardTuning.CONTACT_BURN_TU.value(), "even wooden tongs hold what a bare hand cannot: " + wood);
         helper.assertTrue(copper <= 1000f, "copper arms give out at copper's melt: " + copper);
 
         var wool = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(new io.github.soundgoodizerfan.feedback.modular.ModularDesign(

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlockEntity;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 
@@ -51,7 +51,7 @@ public class StockpotRenderer implements BlockEntityRenderer<StockpotBlockEntity
         TextureAtlasSprite flat = atlas.apply(WHITE);
         TextureAtlasSprite body = atlas.apply(BODY);
         VertexConsumer quads = buffers.getBuffer(RenderType.translucent());
-        int metal = MaterialColors.of(pot.shownMaterial() == null ? FTuning.POT_MATERIAL : pot.shownMaterial());
+        int metal = MaterialColors.of(pot.shownMaterial() == null ? VesselTuning.POT_MATERIAL : pot.shownMaterial());
         Matrix4f m = pose.last().pose();
 
         // Body: floor, four walls, two side handles.

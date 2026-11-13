@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.bellows;
 
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Reciprocating;
 import io.github.soundgoodizerfan.feedback.machine.linkage.StrengthPair;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Throw;
@@ -104,16 +104,16 @@ public class BellowsBlockEntity extends BlockEntity implements Reciprocating, St
      */
     @Override
     public Mb getStrength(Throw installed) {
-        return installed == Throw.LONG ? FTuning.BELLOWS_AIR_LONG : FTuning.BELLOWS_AIR_SHORT;
+        return installed == Throw.LONG ? VesselTuning.BELLOWS_AIR_LONG : VesselTuning.BELLOWS_AIR_SHORT;
     }
 
     @Override
     public Mb getMaxStrength() {
-        return FTuning.BELLOWS_MAX_AIR;
+        return VesselTuning.BELLOWS_MAX_AIR;
     }
 
     @Override
     public Su getLoadSu() {
-        return FTuning.BELLOWS_LOAD_SU;
+        return VesselTuning.BELLOWS_LOAD_SU;
     }
 }

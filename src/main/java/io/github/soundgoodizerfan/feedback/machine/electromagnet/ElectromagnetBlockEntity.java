@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.electromagnet;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -47,7 +48,7 @@ import net.minecraft.world.phys.Vec3;
  * <h2>Over-voltage goes into the machine</h2>
  * Volts past its rating are force that cannot go into the work, so they go into the magnet:
  * condition falls, and heat goes into its own {@link ThermalBody} through the same {@link
- * Heat#warm} a wire's overload uses. It degrades to {@link FTuning#ELECTROMAGNET_CONDITION_FLOOR}
+ * Heat#warm} a wire's overload uses. It degrades to {@link ElectricMachineTuning#ELECTROMAGNET_CONDITION_FLOOR}
  * and is never destroyed and never explodes; a worn magnet is evidence of one wiring mistake, and
  * how far it wore says how wrong and for how long. (No band above LV is built, so this is reached
  * only by a test or by a future source.)
@@ -61,7 +62,7 @@ import net.minecraft.world.phys.Vec3;
  */
 public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBody, Wearing {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float condition = 1f;
     private float field;
     private int sinceLastPull;
@@ -97,7 +98,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
 
     @Override
     public float wantedAmps() {
-        return figures.get("Amps", FTuning.ELECTROMAGNET_AMPS);
+        return figures.get("Amps", ElectricMachineTuning.ELECTROMAGNET_AMPS);
     }
 
     @Override
@@ -112,9 +113,9 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
 
         float excess = ElectricRules.overVoltage(volts, ratedBand());
         if (excess > 0f) {
-            condition = Math.max(FTuning.ELECTROMAGNET_CONDITION_FLOOR,
-                    condition - FTuning.ELECTROMAGNET_WEAR_PER_EXCESS * excess);
-            Heat.warm(this, FTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess);
+            condition = Math.max(ElectricMachineTuning.ELECTROMAGNET_CONDITION_FLOOR,
+                    condition - ElectricMachineTuning.ELECTROMAGNET_WEAR_PER_EXCESS * excess);
+            Heat.warm(this, ElectricMachineTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess);
             setChanged();
         }
         Tu ambient = AmbientTable.at(level);
@@ -129,11 +130,11 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     // --- what it does -------------------------------------------------------------------------
 
     public void tickServer() {
-        if (field <= 0f || level == null || ++sinceLastPull < FTuning.ELECTROMAGNET_PULL_INTERVAL_TICKS)
+        if (field <= 0f || level == null || ++sinceLastPull < ElectricMachineTuning.ELECTROMAGNET_PULL_INTERVAL_TICKS)
             return;
         sinceLastPull = 0;
 
-        double range = figures.get("Range", FTuning.ELECTROMAGNET_RANGE) * field;
+        double range = figures.get("Range", ElectricMachineTuning.ELECTROMAGNET_RANGE) * field;
         Vec3 centre = Vec3.atCenterOf(worldPosition);
         AABB reach = new AABB(worldPosition).inflate(range);
         for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, reach)) {
@@ -141,14 +142,14 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
             if (!blank && (!isMagnetic(item.getItem()) || aboveCurie(item.getItem())))
                 continue;
             Vec3 toward = centre.subtract(item.position());
-            if (blank && field >= FTuning.MAGNETISE_FIELD && toward.lengthSqr() < SEPARATE_REACH_SQ)
+            if (blank && field >= ElectricMachineTuning.MAGNETISE_FIELD && toward.lengthSqr() < SEPARATE_REACH_SQ)
                 magnetise(item);
             if (toward.lengthSqr() < SEPARATE_REACH_SQ && OreLadder.feed(item.getItem()).isPresent())
                 separate(item);
             if (toward.lengthSqr() < 0.25 || toward.length() > range)
                 continue;
             item.setDeltaMovement(item.getDeltaMovement()
-                    .add(toward.normalize().scale(figures.get("Pull", FTuning.ELECTROMAGNET_PULL) * field)));
+                    .add(toward.normalize().scale(figures.get("Pull", ElectricMachineTuning.ELECTROMAGNET_PULL) * field)));
             item.hasImpulse = true;
         }
     }
@@ -254,12 +255,12 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.ELECTROMAGNET_MASS;
+        return ElectricMachineTuning.ELECTROMAGNET_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.ELECTROMAGNET_LEAK;
+        return ElectricMachineTuning.ELECTROMAGNET_LEAK;
     }
 
     // --- persistence --------------------------------------------------------------------------

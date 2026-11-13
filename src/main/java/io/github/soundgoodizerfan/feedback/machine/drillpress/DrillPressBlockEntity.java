@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.drillpress;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.ShopMachineBlockEntity;
@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * own premise. Hand feed is the only route until a real second one is designed.
  * <p>
  * Overrun is the removal table's business: keep pushing on a drilled plate and its overrun entry
- * takes the rest of it to swarf. A bound, fast-fed bit -- see {@link FTuning#BIT_SNAP_CHANCE} --
+ * takes the rest of it to swarf. A bound, fast-fed bit -- see {@link MachineTuning#BIT_SNAP_CHANCE} --
  * costs the push; a push that cannot cut costs the machine (see {@code ShopMachineBlockEntity}).
  */
 public class DrillPressBlockEntity extends ShopMachineBlockEntity {
@@ -47,7 +47,7 @@ public class DrillPressBlockEntity extends ShopMachineBlockEntity {
 
     @Override
     public Su getLoadSu() {
-        return FTuning.DRILL_PRESS_LOAD_SU;
+        return MachineTuning.DRILL_PRESS_LOAD_SU;
     }
 
     /**
@@ -59,13 +59,13 @@ public class DrillPressBlockEntity extends ShopMachineBlockEntity {
             return;
 
         boolean fast = isFastFeed();
-        if (fast && level.random.nextFloat() < FTuning.BIT_SNAP_CHANCE) {
+        if (fast && level.random.nextFloat() < MachineTuning.BIT_SNAP_CHANCE) {
             level.playSound(null, worldPosition, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 0.2f, 0.5f);
             return;
         }
 
-        St driveForce = new St((fast ? FTuning.DRILL_PRESS_ST_FAST : FTuning.DRILL_PRESS_ST_SLOW).value() * condition);
-        Removing.Cut cut = Removing.apply(workpiece, driveForce, FTuning.DRILL_BIT_HARDNESS, Operation.DRILL,
+        St driveForce = new St((fast ? MachineTuning.DRILL_PRESS_ST_FAST : MachineTuning.DRILL_PRESS_ST_SLOW).value() * condition);
+        Removing.Cut cut = Removing.apply(workpiece, driveForce, MachineTuning.DRILL_BIT_HARDNESS, Operation.DRILL,
                 1f, carriedFu, level);
         carriedFu = cut.carried();
         if (!cut.landed()) {

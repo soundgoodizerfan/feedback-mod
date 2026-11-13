@@ -52,7 +52,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
     /** Ticks of fuse left, or -1 while unlit. */
     private int fuse = -1;
     /** Ticks the fuse burns once lit; a charge's fuse part sets it. An impact fuse has no burn of its own and uses the standard one when lit by hand. */
-    private int fuseLength = FTuning.DEMO_FUSE_TICKS;
+    private int fuseLength = GunTuning.DEMO_FUSE_TICKS;
     /** What the charge item this was made from reads as (casing shape, primer, payload), or null for a charge packed by hand. */
     private Blast.Packed made;
     /** Power change from whoever lit it (Salvage: a tamped charge blasts narrower). */
@@ -84,10 +84,10 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             if (fuse >= 0)
                 return Component.translatable("message.feedback.demolition.lit");
             made = null;
-            int room = FTuning.DEMO_FILLER_MAX - packed();
+            int room = GunTuning.DEMO_FILLER_MAX - packed();
             int taken = Math.min(room, stack.getCount());
             if (taken <= 0)
-                return Component.translatable("message.feedback.demolition.full", FTuning.DEMO_FILLER_MAX);
+                return Component.translatable("message.feedback.demolition.full", GunTuning.DEMO_FILLER_MAX);
             ResourceLocation id = found.get().id();
             int at = -1;
             for (int i = 0; i < filler.size(); i++)
@@ -124,7 +124,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         filler.clear();
         casing = null;
         this.made = Blast.packed(made).orElse(null);
-        fuseLength = this.made == null || this.made.impact() ? FTuning.DEMO_FUSE_TICKS : this.made.fuseTicks();
+        fuseLength = this.made == null || this.made.impact() ? GunTuning.DEMO_FUSE_TICKS : this.made.fuseTicks();
         for (var part : design.parts()) {
             if (part.role().equals(type.wearRole()))
                 casing = part.material();
@@ -159,7 +159,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
     public Component describe() {
         Component case_ = casing == null ? Component.translatable("message.feedback.demolition.bare")
                 : Component.translatable("message.feedback.demolition.casing", Component.translatable("material." + casing.getNamespace() + "." + casing.getPath()));
-        return Component.translatable("message.feedback.demolition.contents", packed(), FTuning.DEMO_FILLER_MAX, case_,
+        return Component.translatable("message.feedback.demolition.contents", packed(), GunTuning.DEMO_FILLER_MAX, case_,
                 Component.translatable(fuse >= 0 ? "message.feedback.demolition.fuse_lit" : "message.feedback.demolition.fuse_dark"));
     }
 
@@ -267,7 +267,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         }
         casing = tag.contains("Casing") ? ResourceLocation.parse(tag.getString("Casing")) : null;
         fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : -1;
-        fuseLength = tag.contains("FuseLength") ? tag.getInt("FuseLength") : FTuning.DEMO_FUSE_TICKS;
+        fuseLength = tag.contains("FuseLength") ? tag.getInt("FuseLength") : GunTuning.DEMO_FUSE_TICKS;
         made = tag.contains("MadePower") ? new Blast.Packed(tag.getFloat("MadePower"), tag.getBoolean("MadeFire"), null, fuseLength, false,
                 tag.getFloat("MadeFrag"), tag.getBoolean("MadeFlash")) : null;
         tamp = tag.getFloat("Tamp");

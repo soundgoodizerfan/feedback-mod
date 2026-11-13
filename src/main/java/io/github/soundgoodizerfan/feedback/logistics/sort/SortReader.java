@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.logistics.sort;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -107,7 +108,7 @@ public final class SortReader {
                     : r.friction() >= LogisticsTuning.FRICTION_GRIPPY_FROM ? Band.GRIPPY : Band.MID_GRIP;
             case KIND -> r.kind();
             case TEMPERATURE -> r.temperature() >= LogisticsTuning.TEMP_HOT_FROM ? Band.HOT
-                    : r.temperature() > io.github.soundgoodizerfan.feedback.core.FTuning.WARM_TU.value() ? Band.WARM : Band.COLD;
+                    : r.temperature() > io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.WARM_TU.value() ? Band.WARM : Band.COLD;
             case SIZE -> r.mass() < LogisticsTuning.SIZE_SMALL_BELOW ? Band.SMALL
                     : r.mass() >= LogisticsTuning.SIZE_LARGE_FROM ? Band.LARGE : Band.MID_SIZE;
         };

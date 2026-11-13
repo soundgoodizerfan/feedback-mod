@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import java.util.List;
 import java.util.function.Consumer;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.Weldable;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
@@ -37,15 +37,15 @@ import net.minecraft.world.level.Level;
  *
  * <h2>How it is used</h2>
  * Hold the welder with a modular item (tool, weapon, armour, gun, machine head) in the other hand and hold right click for
- * {@link FTuning#WELDER_USE_TICKS}; or right-click a placed {@link Weldable} machine (instant). A weld restores the part to its
- * maximum condition ({@link FDataComponents#MAX_CONDITION}) and then lowers that maximum by {@link FTuning#WELDER_MAX_STEP},
- * down to {@link FTuning#WELDER_MAX_FLOOR}: the part is mended to the new ceiling, never as good as new.
+ * {@link ItemTuning#WELDER_USE_TICKS}; or right-click a placed {@link Weldable} machine (instant). A weld restores the part to its
+ * maximum condition ({@link FDataComponents#MAX_CONDITION}) and then lowers that maximum by {@link ItemTuning#WELDER_MAX_STEP},
+ * down to {@link ItemTuning#WELDER_MAX_FLOOR}: the part is mended to the new ceiling, never as good as new.
  *
  * <h2>What it costs</h2>
  * One ingot of the part's wearing material from the pack (told by material and form, never item id), and
- * {@link FTuning#WELDER_CHARGE_PER_WELD} amp-ticks from the first charged battery item in the pack. The electrode is the wearing
- * part (hand tools may wear, digest): {@link FDataComponents#TOOL_CONDITION} falls by {@link FTuning#WELDER_ELECTRODE_WEAR} a weld
- * to {@link FTuning#WELDER_ELECTRODE_FLOOR} and the welder keeps working.
+ * {@link ItemTuning#WELDER_CHARGE_PER_WELD} amp-ticks from the first charged battery item in the pack. The electrode is the wearing
+ * part (hand tools may wear, digest): {@link FDataComponents#TOOL_CONDITION} falls by {@link ItemTuning#WELDER_ELECTRODE_WEAR} a weld
+ * to {@link ItemTuning#WELDER_ELECTRODE_FLOOR} and the welder keeps working.
  * <p>
  * shortcut: power only from a battery in the pack, no cable-side supply; upgrade when a welder should plug into a line.
  * Condition lives in three places by item: a gun's bore ({@code GUN_WEAR}), a head's {@code TOOL_CONDITION}, and a tool's or
@@ -147,7 +147,7 @@ public class ArcWelderItem extends Item {
 
     @Override
     public int getUseDuration(ItemStack stack, LivingEntity entity) {
-        return FTuning.WELDER_USE_TICKS;
+        return ItemTuning.WELDER_USE_TICKS;
     }
 
     @Override
@@ -166,7 +166,7 @@ public class ArcWelderItem extends Item {
             player.displayClientMessage(Component.translatable("message.feedback.arc_welder.no_power"), true);
             return;
         }
-        ResourceLocation want = job.filler() == null ? FTuning.WELDER_DEFAULT_FILLER : job.filler();
+        ResourceLocation want = job.filler() == null ? ItemTuning.WELDER_DEFAULT_FILLER : job.filler();
         ItemStack filler = fillerIngot(player, want);
         if (filler.isEmpty()) {
             player.displayClientMessage(Component.translatable("message.feedback.arc_welder.no_filler",
@@ -174,12 +174,12 @@ public class ArcWelderItem extends Item {
             return;
         }
         CompoundTag state = battery.get(FDataComponents.BATTERY.get()).copy();
-        state.putFloat("Charge", state.getFloat("Charge") - FTuning.WELDER_CHARGE_PER_WELD);
+        state.putFloat("Charge", state.getFloat("Charge") - ItemTuning.WELDER_CHARGE_PER_WELD);
         battery.set(FDataComponents.BATTERY.get(), state);
         filler.shrink(1);
-        job.apply().accept(Math.max(FTuning.WELDER_MAX_FLOOR, job.max() - FTuning.WELDER_MAX_STEP));
-        welder.set(FDataComponents.TOOL_CONDITION.get(), Math.max(FTuning.WELDER_ELECTRODE_FLOOR,
-                welder.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f) - FTuning.WELDER_ELECTRODE_WEAR));
+        job.apply().accept(Math.max(ItemTuning.WELDER_MAX_FLOOR, job.max() - ItemTuning.WELDER_MAX_STEP));
+        welder.set(FDataComponents.TOOL_CONDITION.get(), Math.max(ItemTuning.WELDER_ELECTRODE_FLOOR,
+                welder.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f) - ItemTuning.WELDER_ELECTRODE_WEAR));
         player.displayClientMessage(Component.translatable("message.feedback.arc_welder.done"), true);
     }
 
@@ -187,7 +187,7 @@ public class ArcWelderItem extends Item {
     private static ItemStack chargedBattery(Player player) {
         for (ItemStack s : player.getInventory().items) {
             CompoundTag state = s.get(FDataComponents.BATTERY.get());
-            if (state != null && state.getFloat("Charge") >= FTuning.WELDER_CHARGE_PER_WELD)
+            if (state != null && state.getFloat("Charge") >= ItemTuning.WELDER_CHARGE_PER_WELD)
                 return s;
         }
         return ItemStack.EMPTY;

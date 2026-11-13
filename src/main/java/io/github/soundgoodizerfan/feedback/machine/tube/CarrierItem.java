@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.tube;
 
+import io.github.soundgoodizerfan.feedback.core.tube.TubeTuning;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.logistics.sort.SortReader;
 
 import net.minecraft.core.NonNullList;
@@ -18,7 +18,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemContainerContents;
 
 /**
- * A capsule that rides a tube run: {@link FTuning#CARRIER_SLOTS} slots of cargo (the vanilla
+ * A capsule that rides a tube run: {@link TubeTuning#CARRIER_SLOTS} slots of cargo (the vanilla
  * container component) and an address, a named colour (the vanilla base-colour component). A pod is
  * the wide-bore kind, with a seat instead of slots. The address is a player-set mark read by
  * junctions; it is never an item id and never derived from the contents.
@@ -51,7 +51,7 @@ public class CarrierItem extends Item {
     }
 
     public static NonNullList<ItemStack> contents(ItemStack carrier) {
-        NonNullList<ItemStack> list = NonNullList.withSize(FTuning.CARRIER_SLOTS, ItemStack.EMPTY);
+        NonNullList<ItemStack> list = NonNullList.withSize(TubeTuning.CARRIER_SLOTS, ItemStack.EMPTY);
         carrier.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(list);
         return list;
     }
@@ -70,10 +70,10 @@ public class CarrierItem extends Item {
 
     /** Capsule mass: itself, its load, and a rider if it is a pod with one aboard. */
     public static float mass(ItemStack carrier, boolean rider) {
-        float m = carrier.getItem() instanceof CarrierItem c && c.kind == Kind.POD ? FTuning.POD_EMPTY_MU : FTuning.CARRIER_EMPTY_MU;
+        float m = carrier.getItem() instanceof CarrierItem c && c.kind == Kind.POD ? TubeTuning.POD_EMPTY_MU : TubeTuning.CARRIER_EMPTY_MU;
         for (ItemStack s : contents(carrier))
             m += stackMass(s);
-        return rider ? m + FTuning.POD_RIDER_MU : m;
+        return rider ? m + TubeTuning.POD_RIDER_MU : m;
     }
 
     @Override

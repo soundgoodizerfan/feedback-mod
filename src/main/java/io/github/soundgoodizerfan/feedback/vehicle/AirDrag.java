@@ -15,7 +15,6 @@ import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroCellBlockEntity;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -56,15 +55,15 @@ public final class AirDrag {
             for (BlockEntitySubLevelActor a : body.getPlot().getBlockEntityActors())
                 if (a instanceof MicroCellBlockEntity cell)
                     voxels += cell.voxelCount();
-            double drag = voxels == 0 ? FTuning.AIR_DRAG
-                    : FTuning.MICRO_AIR_DRAG * Math.pow(voxels, 2.0 / 3) / (MicroCellBlockEntity.N * MicroCellBlockEntity.N);
+            double drag = voxels == 0 ? VehicleTuning.AIR_DRAG
+                    : VehicleTuning.MICRO_AIR_DRAG * Math.pow(voxels, 2.0 / 3) / (MicroCellBlockEntity.N * MicroCellBlockEntity.N);
             if (density > 0)
                 force.applyLinearImpulse(new Vector3d(back).mul(
                         Math.min(drag * density * speed * speed * dt, mass * speed)));
             // shortcut: speed ceiling = BODY_MAX_STEP_BLOCKS / step, a tunnelling guard against walls, only
             // for bodies with a thruster (the ones that outrun it); upgrade to continuous collision if
             // other bodies need it.
-            double ceiling = FTuning.THRUSTER_MAX_STEP_BLOCKS / dt;
+            double ceiling = VehicleTuning.THRUSTER_MAX_STEP_BLOCKS / dt;
             if (speed > ceiling && hasThruster(body))
                 force.applyLinearImpulse(new Vector3d(back).mul((speed - ceiling) * mass));
             handle.applyForcesAndReset(force);

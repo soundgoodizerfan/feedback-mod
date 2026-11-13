@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -18,7 +17,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 /**
  * A hot piece lying on the ground sets fire to what it touches (philosophy 9 permits consequences anywhere; user
- * ruling, 2026-10-23): a dropped workpiece past {@link FTuning#HOT_IGNITE_TU} lights the air block it lies in when
+ * ruling, 2026-10-23): a dropped workpiece past {@link HazardTuning#HOT_IGNITE_TU} lights the air block it lies in when
  * a flammable block is next to it. Checked a few times a second on the heat stamp alone, so the overwhelming
  * majority of items (never heated) cost one component lookup. Not a lock: a hot piece in a hand, a chest or on
  * stone does nothing here.
@@ -38,12 +37,12 @@ public final class HotIgnition {
 
     @SubscribeEvent
     public static void onItemTick(EntityTickEvent.Post event) {
-        if (!(event.getEntity() instanceof ItemEntity item) || item.tickCount % FTuning.HOT_IGNITE_INTERVAL_TICKS != 0)
+        if (!(event.getEntity() instanceof ItemEntity item) || item.tickCount % HazardTuning.HOT_IGNITE_INTERVAL_TICKS != 0)
             return;
         Level level = item.level();
         if (level.isClientSide || item.isInWater() || !item.getItem().has(FDataComponents.TEMPERATURE.get()))
             return;
-        if (ItemHeat.get(item.getItem(), level).value() < FTuning.HOT_IGNITE_TU)
+        if (ItemHeat.get(item.getItem(), level).value() < HazardTuning.HOT_IGNITE_TU)
             return;
         BlockPos at = item.blockPosition();
         if (!level.getBlockState(at).isAir())

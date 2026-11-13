@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.flare;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class FlareBlockEntity extends BlockEntity {
 
-    private final HeatedTank gas = new HeatedTank(FTuning.FLARE_TANK_MB, this::setChanged);
+    private final HeatedTank gas = new HeatedTank(PetrochemTuning.FLARE_TANK_MB, this::setChanged);
 
     public FlareBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.FLARE.get(), pos, state);
@@ -36,7 +36,7 @@ public class FlareBlockEntity extends BlockEntity {
             return;
         boolean lit = !gas.isEmpty();
         if (lit)
-            gas.drain(FTuning.FLARE_MB_PER_TICK, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            gas.drain(PetrochemTuning.FLARE_MB_PER_TICK, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         BlockState state = getBlockState();
         if (state.getValue(FlareBlock.LIT) != lit)
             server.setBlock(worldPosition, state.setValue(FlareBlock.LIT, lit), 3);

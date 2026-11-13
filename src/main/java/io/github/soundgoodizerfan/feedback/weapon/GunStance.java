@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
@@ -21,15 +20,15 @@ public final class GunStance {
         float m = 1f;
         boolean aim = aimed && !sprinting && !airborne;
         if (aim)
-            m *= FTuning.GUN_ADS_SPREAD;
+            m *= GunTuning.GUN_ADS_SPREAD;
         if (sneaking)
-            m *= FTuning.GUN_STANCE_CROUCH;
-        if (speed > FTuning.GUN_MOVING_SPEED)
-            m *= FTuning.GUN_STANCE_MOVING;
+            m *= GunTuning.GUN_STANCE_CROUCH;
+        if (speed > GunTuning.GUN_MOVING_SPEED)
+            m *= GunTuning.GUN_STANCE_MOVING;
         if (sprinting)
-            m *= FTuning.GUN_STANCE_SPRINT;
+            m *= GunTuning.GUN_STANCE_SPRINT;
         if (airborne)
-            m *= FTuning.GUN_STANCE_AIRBORNE;
+            m *= GunTuning.GUN_STANCE_AIRBORNE;
         return m;
     }
 
@@ -39,11 +38,11 @@ public final class GunStance {
         float m = multiplier(aimed, shooter.isCrouching(), shooter.isSprinting(), !shooter.onGround(), speed);
         // A mob has no training: its hands shake the same standing still (never a perfect aim).
         if (!(shooter instanceof Player))
-            return m * FTuning.SKELETON_GUN_STANCE;
+            return m * GunTuning.SKELETON_GUN_STANCE;
         // Steady Walk: a share of the extra that walking adds is taken back.
         float steady = io.github.soundgoodizerfan.feedback.combat.skill.Skills.modifier(shooter, io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.STEADY_WALK);
-        if (steady > 0f && speed > FTuning.GUN_MOVING_SPEED)
-            m *= (1f + (FTuning.GUN_STANCE_MOVING - 1f) * (1f - Math.min(steady, 1f))) / FTuning.GUN_STANCE_MOVING;
+        if (steady > 0f && speed > GunTuning.GUN_MOVING_SPEED)
+            m *= (1f + (GunTuning.GUN_STANCE_MOVING - 1f) * (1f - Math.min(steady, 1f))) / GunTuning.GUN_STANCE_MOVING;
         m *= io.github.soundgoodizerfan.feedback.potion.SteadyHand.factor(shooter);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer sp)
             m *= io.github.soundgoodizerfan.feedback.combat.cast.QuickDraw.consume(sp);

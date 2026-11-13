@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.process;
 
 import com.mojang.serialization.Codec;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -28,10 +27,10 @@ public record FoodKnead(int grade) {
     /** What this class does to the baked loaf's hunger and saturation. */
     public float scale() {
         return switch (grade) {
-            case GLOSSY -> FTuning.KNEAD_GLOSSY_SCALE;
-            case GOOD -> FTuning.KNEAD_GOOD_SCALE;
-            case CRUMBLY -> FTuning.KNEAD_CRUMBLY_SCALE;
-            default -> FTuning.KNEAD_TOUGH_SCALE;
+            case GLOSSY -> ProcessTuning.KNEAD_GLOSSY_SCALE;
+            case GOOD -> ProcessTuning.KNEAD_GOOD_SCALE;
+            case CRUMBLY -> ProcessTuning.KNEAD_CRUMBLY_SCALE;
+            default -> ProcessTuning.KNEAD_TOUGH_SCALE;
         };
     }
 }

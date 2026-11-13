@@ -2,10 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.dip;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -57,7 +60,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  *
  * <h2>Plain water and lava: an unconditional heat change</h2>
  * No table, no recipe -- water snaps a held item to the dimension's ambient ({@link AmbientTable#at}), lava to {@link
- * FTuning#FIRE_TU_LAVA}, the same instant-on-contact model {@code Quenching} already uses for a
+ * ThermalTuning#FIRE_TU_LAVA}, the same instant-on-contact model {@code Quenching} already uses for a
  * dropped ingot in water. This is deliberately the first crude, hands-on way to *add* heat to
  * something without any machine at all -- philosophy 8's manual route, arriving somewhere it was
  * never installed (§5's own test): unreliable (no rate control, no holding at a temperature) and
@@ -65,7 +68,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  *
  * <h2>An item that cannot stand the bath is scorched</h2>
  * A made part or workpiece ({@code MadeOf}) dipped past its material's service temperature takes a
- * flaw for every {@link FTuning#DIP_FLAW_TU} of overshoot, up to the flaw cap (user ruling,
+ * flaw for every {@link VesselTuning#DIP_FLAW_TU} of overshoot, up to the flaw cap (user ruling,
  * 2026-10-23): worse the further past, never destroyed. Plain stacks with no {@code MadeOf} are
  * only made hot. Electroplating, the other reason this table exists, is not built -- only named as
  * the reason the table is shaped the way it is.
@@ -125,7 +128,7 @@ public class Dipping {
         if (state.is(FluidTags.WATER))
             tu = AmbientTable.at(level);
         else if (state.is(FluidTags.LAVA))
-            tu = FTuning.FIRE_TU_LAVA;
+            tu = ThermalTuning.FIRE_TU_LAVA;
         else
             return false;
 
@@ -145,7 +148,7 @@ public class Dipping {
         float over = bath.value() - m.thermal().serviceTemperature().get().value();
         if (over <= 0f)
             return;
-        int flaw = Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + (int) Math.ceil(over / FTuning.DIP_FLAW_TU));
+        int flaw = Math.min(ForgeRhythm.MAX_FLAW, made.flaw() + (int) Math.ceil(over / VesselTuning.DIP_FLAW_TU));
         if (flaw > made.flaw())
             stack.set(FDataComponents.MADE_OF.get(), new MadeOf(made.material(), made.stock(), made.cells(),
                     made.variant(), flaw, made.measures()));
@@ -153,19 +156,19 @@ public class Dipping {
 
     /**
      * One more dip lays {@code coat.thickness()} on the piece (a different metal replaces the old coat): short of
-     * {@link FTuning#PLATING_POROUS_BELOW_QU} it has not closed, past {@link FTuning#PLATING_SPALLS_ABOVE_QU} it is a
+     * {@link FTuning#PLATING_POROUS_BELOW_QU} it has not closed, past {@link MachineTuning#PLATING_SPALLS_ABOVE_QU} it is a
      * thick crusty coat that holds poorly, between is sound. 
      */
     private static ItemStack hotDip(ItemStack held, Dip.Coat coat) {
         ItemStack piece = held.copyWithCount(1);
         Plating old = piece.get(FDataComponents.PLATING.get());
         float total = coat.thickness() + (old != null && old.metal().equals(coat.metal()) ? old.thickness() : 0f);
-        Plating.Quality q = total > FTuning.PLATING_SPALLS_ABOVE_QU ? Plating.Quality.BURNT
+        Plating.Quality q = total > MachineTuning.PLATING_SPALLS_ABOVE_QU ? Plating.Quality.BURNT
                 : total < FTuning.PLATING_POROUS_BELOW_QU ? Plating.Quality.POROUS : Plating.Quality.SOUND;
         piece.set(FDataComponents.PLATING.get(), new Plating(coat.metal(), total, q));
         io.github.soundgoodizerfan.feedback.modular.ModularStacks.rebake(piece);
         // A dwell past what holds also eats the part: flaws first, then its mass, until it is scrap.
-        return io.github.soundgoodizerfan.feedback.modular.ModularStacks.overrun(piece, total - FTuning.PLATING_SPALLS_ABOVE_QU);
+        return io.github.soundgoodizerfan.feedback.modular.ModularStacks.overrun(piece, total - MachineTuning.PLATING_SPALLS_ABOVE_QU);
     }
 
     private static void dipInVessel(MoltenVessel vessel, ItemStack held,
@@ -173,7 +176,7 @@ public class Dipping {
         FluidTank tank = vessel.getTank();
         // A full dip or none: a tank with less than the entry's amount cannot coat or feed anything.
         FluidStack bath = tank.getFluid();
-        if (bath.getAmount() < FTuning.DIP_MB)
+        if (bath.getAmount() < VesselTuning.DIP_MB)
             return;
 
         Optional<Dip> maybe = ThermalProcessTable.get().findDip(bath, held, vessel.getTemperature());

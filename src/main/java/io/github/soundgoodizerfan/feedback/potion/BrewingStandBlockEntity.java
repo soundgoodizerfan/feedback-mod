@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.potion;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +70,7 @@ public class BrewingStandBlockEntity extends BlockEntity {
 
     private static final String BASE = "water";
 
-    private float temperature = io.github.soundgoodizerfan.feedback.core.FTuning.AMBIENT_TU.value();
+    private float temperature = io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.AMBIENT_TU.value();
     private final SimpleContainer slots = new SimpleContainer(SLOTS);
     private final Ingredient[] meta = new Ingredient[INGREDIENTS];
     /** Ingredient slots in the order they were added: the plotted path, front first. A slot leaves it when its segment is fully stirred in (and empties) or when the item is taken back out. */
@@ -594,7 +596,7 @@ public class BrewingStandBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : io.github.soundgoodizerfan.feedback.core.FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.AMBIENT_TU.value();
         water = tag.getInt("Water");
         consumed = tag.getInt("Consumed");
         queue.clear();

@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.crucible;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
@@ -102,12 +103,12 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
     /** Read off the block, so a bigger hearth is the same entity with more room. Used while the fields are built, so it names no field. */
     private int slotCount() {
-        return getBlockState().getBlock() instanceof CrucibleBlock block ? block.slots() : FTuning.CRUCIBLE_SLOTS;
+        return getBlockState().getBlock() instanceof CrucibleBlock block ? block.slots() : VesselTuning.CRUCIBLE_SLOTS;
     }
 
     @Override
     protected int tankCapacity() {
-        return getBlockState().getBlock() instanceof CrucibleBlock block ? block.tankMb() : FTuning.VESSEL_TANK_CAPACITY_MB;
+        return getBlockState().getBlock() instanceof CrucibleBlock block ? block.tankMb() : VesselTuning.VESSEL_TANK_CAPACITY_MB;
     }
 
     @Override
@@ -121,7 +122,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     public ThermalMass getThermalMass() {
         ThermalMass base = getBlockState().getBlock() instanceof CrucibleBlock crucible
                 ? crucible.getThermalMass()
-                : FTuning.CRUCIBLE_SMALL_MASS;
+                : VesselTuning.CRUCIBLE_SMALL_MASS;
         if (upgrades.isEmpty())
             return base;
         float mass = base.workPerTu();
@@ -132,9 +133,9 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
 
     @Override
     public Conductance getLeak() {
-        return new Conductance(FTuning.VESSEL_LEAK.workPerTickPerTu()
-                * (float) Math.pow(FTuning.INSULATION_LEAK_FACTOR, insulation) / wall
-                + dampers * FTuning.DAMPER_LEAK_BONUS.workPerTickPerTu());
+        return new Conductance(ThermalTuning.VESSEL_LEAK.workPerTickPerTu()
+                * (float) Math.pow(VesselTuning.INSULATION_LEAK_FACTOR, insulation) / wall
+                + dampers * VesselTuning.DAMPER_LEAK_BONUS.workPerTickPerTu());
     }
 
     public boolean isArcHearth() {
@@ -247,7 +248,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
     @Override
     public net.minecraft.world.inventory.AbstractContainerMenu createMenu(int id, net.minecraft.world.entity.player.Inventory inventory,
                                                                           net.minecraft.world.entity.player.Player player) {
-        return new CrucibleMenu(isArcHearth() ? FMenus.ARC_HEARTH.get() : contents.size() == FTuning.CRUCIBLE_SLOTS ? FMenus.CRUCIBLE.get() : FMenus.LARGE_CRUCIBLE.get(), id, inventory, this);
+        return new CrucibleMenu(isArcHearth() ? FMenus.ARC_HEARTH.get() : contents.size() == VesselTuning.CRUCIBLE_SLOTS ? FMenus.CRUCIBLE.get() : FMenus.LARGE_CRUCIBLE.get(), id, inventory, this);
     }
 
     // --- the tick ---------------------------------------------------------------------------
@@ -271,9 +272,9 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         measureDelta();
         if (isArcHearth()) {
             boolean lined = upgrades.stream().anyMatch(u -> u instanceof RefractoryLiningFitting);
-            float excess = temperature - (lined ? FTuning.ARC_HEARTH_LINED_TU : FTuning.ARC_HEARTH_UNLINED_TU);
+            float excess = temperature - (lined ? VesselTuning.ARC_HEARTH_LINED_TU : VesselTuning.ARC_HEARTH_UNLINED_TU);
             if (excess > 0f)
-                wall = Math.max(FTuning.ARC_HEARTH_CONDITION_FLOOR, wall - FTuning.ARC_HEARTH_WEAR_PER_TU_EXCESS * excess);
+                wall = Math.max(VesselTuning.ARC_HEARTH_CONDITION_FLOOR, wall - VesselTuning.ARC_HEARTH_WEAR_PER_TU_EXCESS * excess);
         }
 
         boilOff();
@@ -294,7 +295,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
         for (Direction face : Direction.values())
             if (level.getBlockState(worldPosition.relative(face)).is(FTags.INSULATION))
                 found++;
-        return Math.min(FTuning.INSULATION_MAX_BLOCKS, found);
+        return Math.min(VesselTuning.INSULATION_MAX_BLOCKS, found);
     }
 
     private int countOpenDampers() {
@@ -305,7 +306,7 @@ public class CrucibleBlockEntity extends io.github.soundgoodizerfan.feedback.mac
             if (level.getBlockEntity(worldPosition.relative(face)) instanceof DamperBlockEntity damper
                     && damper.isEngaged())
                 found++;
-        return Math.min(FTuning.DAMPER_MAX_BLOCKS, found);
+        return Math.min(VesselTuning.DAMPER_MAX_BLOCKS, found);
     }
 
     @Override

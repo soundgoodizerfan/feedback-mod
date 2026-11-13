@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.skillet;
 
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import com.mojang.serialization.MapCodec;
 
 import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
@@ -77,7 +78,7 @@ public class SkilletBlock extends BaseEntityBlock {
 
     /** One tick of a food of {@code mass} closing on a pan's heat: a thick piece's core lags longer. Shared with the campfire's grill. */
     public static float warm(float foodTu, float panTu, float mass) {
-        return foodTu + (panTu - foodTu) / (io.github.soundgoodizerfan.feedback.core.FTuning.SKILLET_LAG_TICKS * mass);
+        return foodTu + (panTu - foodTu) / (io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning.SKILLET_LAG_TICKS * mass);
     }
 
     /** The quarter of the pan the cursor is over. */

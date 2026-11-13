@@ -20,6 +20,7 @@
 package io.github.soundgoodizerfan.feedback.vehicle.micro;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationMember;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetwork;
@@ -37,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
  * One rotation voxel in a micro cell ({@code docs/dev/vehicle.md}): a member of a rotation network that is not a block entity. Held by its
  * {@link MicroCellBlockEntity}, one per voxel whose block is a {@link MicroRotation}; it generates
  * and demands nothing, and drags and weighs its full-size part scaled by
- * {@link FTuning#MICRO_ROTATION_DRAG_SCALE} and {@link FTuning#MICRO_ROTATION_INERTIA_SCALE}.
+ * {@link VehicleTuning#MICRO_ROTATION_DRAG_SCALE} and {@link VehicleTuning#MICRO_ROTATION_INERTIA_SCALE}.
  * Speed and angle mirror {@link RotationNode}'s: the network's, scaled by the ratio, on the server;
  * the last synced, extrapolated, on the client.
  */
@@ -129,14 +130,14 @@ public final class MicroRotor implements RotationMember {
 
     @Override
     public Drag getDragSuPerRpm() {
-        return new Drag(part().getDragSuPerRpm().suPerRpm() * FTuning.MICRO_ROTATION_DRAG_SCALE);
+        return new Drag(part().getDragSuPerRpm().suPerRpm() * VehicleTuning.MICRO_ROTATION_DRAG_SCALE);
     }
 
     @Override
     public Inertia getInertia() {
         var bearing = cell.bearing(index);
         // A turned body's inertia is the real body's: no micro scale on it.
-        return new Inertia(part().getInertia().suTicksPerRpm() * FTuning.MICRO_ROTATION_INERTIA_SCALE * condition
+        return new Inertia(part().getInertia().suTicksPerRpm() * VehicleTuning.MICRO_ROTATION_INERTIA_SCALE * condition
                 + (bearing == null ? 0 : bearing.runInertia()));
     }
 

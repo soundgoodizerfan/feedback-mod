@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.shaft;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -51,14 +53,14 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
     public Drag getDragSuPerRpm() {
         return getBlockState().getBlock() instanceof ShaftBlock shaft
                 ? new Drag(figures.get("Drag", shaft.getDragSuPerRpm().suPerRpm()))
-                : FTuning.SHAFT_DRAG_SU_PER_RPM;
+                : MachineTuning.SHAFT_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
         return getBlockState().getBlock() instanceof ShaftBlock shaft
                 ? new Inertia(figures.get("Inertia", shaft.getInertia().suTicksPerRpm()) * condition)
-                : FTuning.SHAFT_INERTIA;
+                : RotationTuning.SHAFT_INERTIA;
     }
 
     /** The rim speed, RPM, a flywheel of cast iron holds without strain. */
@@ -90,7 +92,7 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
     /** A turning flywheel is working and cannot be measured, like any machine (philosophy 10). */
     @Override
     public boolean isRunning() {
-        return Math.abs(getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value();
+        return Math.abs(getRpm().value()) > RotationTuning.STOPPED_RPM_THRESHOLD.value();
     }
 
     @Override

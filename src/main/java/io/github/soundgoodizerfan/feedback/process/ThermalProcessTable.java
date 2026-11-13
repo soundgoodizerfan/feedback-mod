@@ -14,7 +14,6 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
@@ -165,7 +164,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
             rungs.forEach((recovery, forms) -> out.add(new ThermalProcess(List.of(
                     new MaterialIngredient(Optional.empty(), Optional.empty(), Optional.empty(), Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY,
                             Optional.of(id), forms.size() == material.items(id).size() ? List.of() : List.copyOf(forms)).toVanilla()),
-                    melt, melt, new Tu(Float.MAX_VALUE), FTuning.MELT_HOLD_TPU, new TuRate(Float.MAX_VALUE), id.getPath().equals("silicate_slag") ? ItemStack.EMPTY : OreLadder.slag(recovery, material.items(id)),
+                    melt, melt, new Tu(Float.MAX_VALUE), ProcessTuning.MELT_HOLD_TPU, new TuRate(Float.MAX_VALUE), id.getPath().equals("silicate_slag") ? ItemStack.EMPTY : OreLadder.slag(recovery, material.items(id)),
                     new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
                     new net.neoforged.neoforge.fluids.FluidStack(fluid.get(),
                             Math.round(FormType.DEFAULT_MB * best.get().getValue() * OreLadder.ORE_CONTENT * recovery)),
@@ -233,7 +232,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     }
 
     /**
-     * The hold of a derived melt of one piece of {@code form}: {@link FTuning#MELT_HOLD_TPU} for an ingot's volume, in proportion to the
+     * The hold of a derived melt of one piece of {@code form}: {@link ProcessTuning#MELT_HOLD_TPU} for an ingot's volume, in proportion to the
      * piece's volume, shortened by the form's grain exactly as any form-agnostic row is ({@link FormType#holdFactor}): a block
      * takes nine ingots' time, a dust a fraction of one. At least one TPu, so a melt always takes a tick in the band.
      */
@@ -241,7 +240,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
         var type = io.github.soundgoodizerfan.feedback.registry.FormItems.types().get(form);
         float grain = type == null ? 1f : type.grain();
         float volume = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form) / (float) FormType.DEFAULT_MB;
-        return Math.max(1f, FTuning.MELT_HOLD_TPU * volume * FormType.holdFactor(grain));
+        return Math.max(1f, ProcessTuning.MELT_HOLD_TPU * volume * FormType.holdFactor(grain));
     }
 
     /** What the client's recipe browser is sent: the rows of {@link #entries()} and the phase rows. */

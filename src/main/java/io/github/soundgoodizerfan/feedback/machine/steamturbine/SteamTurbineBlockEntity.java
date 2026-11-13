@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.steamturbine;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -20,15 +21,15 @@ import net.minecraft.world.level.block.state.BlockState;
 public class SteamTurbineBlockEntity extends SteamEngineBlockEntity {
 
     public SteamTurbineBlockEntity(BlockPos pos, BlockState state) {
-        super(FBlockEntities.STEAM_TURBINE.get(), pos, state, FTuning.STEAM_TURBINE_TANK_MB);
+        super(FBlockEntities.STEAM_TURBINE.get(), pos, state, VesselTuning.STEAM_TURBINE_TANK_MB);
     }
 
-    @Override protected float minTu() { return FTuning.STEAM_TURBINE_MIN_TU; }
-    @Override protected float bandTu() { return FTuning.STEAM_TURBINE_BAND_TU; }
-    @Override protected int bands() { return FTuning.STEAM_TURBINE_BANDS; }
-    @Override protected int mbPerTick() { return FTuning.STEAM_TURBINE_MB_PER_TICK; }
-    @Override protected float exhaustDropTu() { return FTuning.STEAM_TURBINE_EXHAUST_DROP_TU; }
-    @Override protected Rpm workingRpm() { return FTuning.STEAM_TURBINE_RPM; }
-    @Override protected Su fullCapacity() { return FTuning.STEAM_TURBINE_CAPACITY_SU; }
-    @Override protected Inertia inertia() { return FTuning.STEAM_TURBINE_INERTIA; }
+    @Override protected float minTu() { return VesselTuning.STEAM_TURBINE_MIN_TU; }
+    @Override protected float bandTu() { return VesselTuning.STEAM_TURBINE_BAND_TU; }
+    @Override protected int bands() { return VesselTuning.STEAM_TURBINE_BANDS; }
+    @Override protected int mbPerTick() { return VesselTuning.STEAM_TURBINE_MB_PER_TICK; }
+    @Override protected float exhaustDropTu() { return VesselTuning.STEAM_TURBINE_EXHAUST_DROP_TU; }
+    @Override protected Rpm workingRpm() { return VesselTuning.STEAM_TURBINE_RPM; }
+    @Override protected Su fullCapacity() { return VesselTuning.STEAM_TURBINE_CAPACITY_SU; }
+    @Override protected Inertia inertia() { return VesselTuning.STEAM_TURBINE_INERTIA; }
 }

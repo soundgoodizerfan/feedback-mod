@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.column;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 /** The discrete tray a player chooses (spec 6.4): sharper cuts against flow against how fast it cokes. */
 public enum TrayType {
-    BUBBLE_CAP(FTuning.TRAY_BUBBLE_CAP_EFFICIENCY, FTuning.TRAY_BUBBLE_CAP_FLOW, FTuning.TRAY_BUBBLE_CAP_FOUL),
-    SIEVE(FTuning.TRAY_SIEVE_EFFICIENCY, FTuning.TRAY_SIEVE_FLOW, FTuning.TRAY_SIEVE_FOUL),
-    PACKED(FTuning.TRAY_PACKED_EFFICIENCY, FTuning.TRAY_PACKED_FLOW, FTuning.TRAY_PACKED_FOUL);
+    BUBBLE_CAP(PetrochemTuning.TRAY_BUBBLE_CAP_EFFICIENCY, PetrochemTuning.TRAY_BUBBLE_CAP_FLOW, PetrochemTuning.TRAY_BUBBLE_CAP_FOUL),
+    SIEVE(PetrochemTuning.TRAY_SIEVE_EFFICIENCY, PetrochemTuning.TRAY_SIEVE_FLOW, PetrochemTuning.TRAY_SIEVE_FOUL),
+    PACKED(PetrochemTuning.TRAY_PACKED_EFFICIENCY, PetrochemTuning.TRAY_PACKED_FLOW, PetrochemTuning.TRAY_PACKED_FOUL);
 
     /** Share of the vapour reaching the tray that a clean tray holds back. */
     public final float efficiency;

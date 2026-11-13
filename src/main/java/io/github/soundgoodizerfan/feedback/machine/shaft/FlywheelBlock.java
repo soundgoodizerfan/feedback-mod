@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.shaft;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.state.BlockState;
@@ -25,7 +25,7 @@ public class FlywheelBlock extends ShaftBlock {
     private static final VoxelShape Z = box(0, 0, 6, 16, 16, 10);
 
     public FlywheelBlock(Properties properties) {
-        super(properties, FTuning.FLYWHEEL_DRAG_SU_PER_RPM, FTuning.FLYWHEEL_INERTIA);
+        super(properties, MachineTuning.FLYWHEEL_DRAG_SU_PER_RPM, MachineTuning.FLYWHEEL_INERTIA);
     }
 
     @Override

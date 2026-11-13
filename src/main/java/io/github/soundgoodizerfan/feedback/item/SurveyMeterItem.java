@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
@@ -24,10 +23,10 @@ import java.util.Map;
 
 /**
  * The survey meter (mechanics §9.5): use it and it reports the ore around you within {@link
- * FTuning#SURVEY_RADIUS} blocks, by kind, with a bearing to where the most of each lies. Read-only,
+ * ItemTuning#SURVEY_RADIUS} blocks, by kind, with a bearing to where the most of each lies. Read-only,
  * powered by nothing, and no key: it unlocks no ore, it only saves digging blind.
  *
- * <p>It reads the count of ore blocks to a resolution of {@link FTuning#SURVEY_RESOLUTION}, with a
+ * <p>It reads the count of ore blocks to a resolution of {@link ItemTuning#SURVEY_RESOLUTION}, with a
  * wobble of up to half a step on each reading (the noise floor, philosophy 10): a lean vein under one
  * step reads as nothing some of the time, a fat one never reads the same twice. A finer meter would
  * only narrow both.
@@ -45,7 +44,7 @@ public class SurveyMeterItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.SURVEY_RESOLUTION;
+        return ItemTuning.SURVEY_RESOLUTION;
     }
 
     @Override
@@ -59,14 +58,14 @@ public class SurveyMeterItem extends Item implements Instrument {
         if (player.getCooldowns().isOnCooldown(this))
             return InteractionResultHolder.pass(stack);
         if (!level.isClientSide) {
-            player.getCooldowns().addCooldown(this, FTuning.SURVEY_COOLDOWN_TICKS);
+            player.getCooldowns().addCooldown(this, ItemTuning.SURVEY_COOLDOWN_TICKS);
             report(level, player);
         }
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 
     private void report(Level level, Player player) {
-        int r = FTuning.SURVEY_RADIUS;
+        int r = ItemTuning.SURVEY_RADIUS;
         BlockPos centre = player.blockPosition();
         // Per kind of ore (deepslate and stone are one kind): how many, and where their centre lies.
         Map<String, long[]> found = new HashMap<>();
@@ -93,7 +92,7 @@ public class SurveyMeterItem extends Item implements Instrument {
             for (var site : io.github.soundgoodizerfan.feedback.geology.BasinFeature.sitesNear(server.getSeed(),
                     level.dimension().location(), centre.getX(), centre.getZ())) {
                 int dx = site.centre().getX() - centre.getX(), dz = site.centre().getZ() - centre.getZ();
-                long n = Math.round((site.radius() + r - Math.hypot(dx, dz)) * FTuning.SURVEY_OIL_PER_BLOCK);
+                long n = Math.round((site.radius() + r - Math.hypot(dx, dz)) * ItemTuning.SURVEY_OIL_PER_BLOCK);
                 if (n > 0 && (best == null || n > best[0])) {
                     best = new long[]{n, dx * n, (site.centre().getY() - centre.getY()) * n, dz * n};
                     bestKey = site.basin().fluid().getPath().equals("soul_oil") ? "feedback.survey.soul_oil" : "feedback.survey.oil";
@@ -108,11 +107,11 @@ public class SurveyMeterItem extends Item implements Instrument {
                 .limit(4)
                 .map(e -> {
                     long[] s = e.getValue();
-                    float wobble = (level.random.nextFloat() - 0.5f) * FTuning.SURVEY_RESOLUTION;
-                    float reading = Instruments.quantise(s[0] + wobble, FTuning.SURVEY_RESOLUTION);
+                    float wobble = (level.random.nextFloat() - 0.5f) * ItemTuning.SURVEY_RESOLUTION;
+                    float reading = Instruments.quantise(s[0] + wobble, ItemTuning.SURVEY_RESOLUTION);
                     return reading <= 0 ? null : Component.translatable("feedback.survey.line",
                             Component.translatable(e.getKey()),
-                            Instruments.format(reading, FTuning.SURVEY_RESOLUTION), bearing(s));
+                            Instruments.format(reading, ItemTuning.SURVEY_RESOLUTION), bearing(s));
                 })
                 .filter(java.util.Objects::nonNull).toList();
         if (lines.isEmpty()) {

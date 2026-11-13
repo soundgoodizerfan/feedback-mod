@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.sculk;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.xp.Culture;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
@@ -76,9 +76,9 @@ public class CultureDishBlock extends Block implements EntityBlock {
         if (stack.is(ItemTags.HOES) && dish.culture().isRipe()) {
             if (!level.isClientSide) {
                 boolean bud = dish.harvest();
-                Block.popResource(level, pos.above(), new ItemStack(Items.SCULK, FTuning.CULTURE_HARVEST_BLOCKS));
-                Block.popResource(level, pos.above(), new ItemStack(Items.SCULK_VEIN, FTuning.CULTURE_HARVEST_VEINS));
-                Block.popResource(level, pos.above(), new ItemStack(Items.ECHO_SHARD, FTuning.CULTURE_HARVEST_SHARDS));
+                Block.popResource(level, pos.above(), new ItemStack(Items.SCULK, ElectricMachineTuning.CULTURE_HARVEST_BLOCKS));
+                Block.popResource(level, pos.above(), new ItemStack(Items.SCULK_VEIN, ElectricMachineTuning.CULTURE_HARVEST_VEINS));
+                Block.popResource(level, pos.above(), new ItemStack(Items.ECHO_SHARD, ElectricMachineTuning.CULTURE_HARVEST_SHARDS));
                 if (bud)
                     Block.popResource(level, pos.above(), new ItemStack(FItems.CULTURE_SEED.get()));
                 stack.hurtAndBreak(1, player, LivingEntity.getSlotForHand(hand));

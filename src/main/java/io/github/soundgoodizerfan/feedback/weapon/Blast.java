@@ -74,7 +74,7 @@ public final class Blast {
                                                   java.util.Map<net.minecraft.resources.ResourceLocation, Material> materials) {
         java.util.List<Cartridge.Charge> filler = new java.util.ArrayList<>();
         Material casing = null;
-        int ticks = FTuning.DEMO_FUSE_TICKS;
+        int ticks = GunTuning.DEMO_FUSE_TICKS;
         boolean impact = false, forceFire = false, flash = false;
         float confine = 1f, frag = 1f, burnAdd = 0f, payloadFrag = 0f;
         for (var part : design.parts()) {
@@ -86,14 +86,14 @@ public final class Blast {
                 confine = v.map(x -> x.params().getOrDefault("confine", 1f)).orElse(1f);
                 frag = v.map(x -> x.params().getOrDefault("frag", 1f)).orElse(1f);
             } else if (part.role().equals(FUSE_ROLE)) {
-                ticks = role == null ? ticks : Math.round(role.paramOf(part, "ticks", (float) FTuning.DEMO_FUSE_TICKS));
+                ticks = role == null ? ticks : Math.round(role.paramOf(part, "ticks", (float) GunTuning.DEMO_FUSE_TICKS));
                 impact = v.map(x -> x.params().getOrDefault("impact", 0f) > 0f).orElse(false);
             } else if (part.role().equals(PRIMER_ROLE)) {
                 burnAdd = v.map(x -> x.params().getOrDefault("burn_add", 0f)).orElse(0f);
                 forceFire = v.map(x -> x.params().getOrDefault("fire", 0f) > 0f).orElse(false);
             } else if (part.role().equals(PAYLOAD_ROLE)) {
                 if (m != null) {
-                    payloadFrag += m.hardness().value() * part.count() * FTuning.GRENADE_PAYLOAD_FRAG;
+                    payloadFrag += m.hardness().value() * part.count() * GunTuning.GRENADE_PAYLOAD_FRAG;
                     flash |= m.traits().contains(Material.Trait.LUMINOUS);
                 }
             } else
@@ -105,8 +105,8 @@ public final class Blast {
         int fuse = ticks;
         return Cartridge.Blend.of(materials, filler).map(b -> {
             Cartridge.Blend primed = new Cartridge.Blend(b.potential(), Math.min(1f, b.burned() + add), b.burnRate(), b.ignitionTu(), b.total());
-            float damage = Math.min(FTuning.GRENADE_FRAG_DAMAGE_MAX, (cased == null ? 0f
-                    : cased.hardness().value() * FTuning.GRENADE_FRAG_DAMAGE_PER_HARDNESS * f) + pf);
+            float damage = Math.min(GunTuning.GRENADE_FRAG_DAMAGE_MAX, (cased == null ? 0f
+                    : cased.hardness().value() * GunTuning.GRENADE_FRAG_DAMAGE_PER_HARDNESS * f) + pf);
             float power = Math.min(FTuning.DEMO_POWER_MAX, FTuning.DEMO_POWER_PER_SQRT
                     * (float) Math.sqrt(primed.potential() * primed.burned()) * confinement(cased, c));
             return new Packed(power, fireAlways || fire(primed), cased, fuse, hit, damage, flashed);
@@ -122,7 +122,7 @@ public final class Blast {
                                net.minecraft.world.phys.Vec3 at, float power, Packed p) {
         if (p.fragDamage() <= 0f && !p.flash())
             return;
-        float reach = Math.max(power * FTuning.GRENADE_FRAG_REACH_PER_POWER, p.flash() ? FTuning.GRENADE_FLASH_REACH : 0f);
+        float reach = Math.max(power * GunTuning.GRENADE_FRAG_REACH_PER_POWER, p.flash() ? GunTuning.GRENADE_FLASH_REACH : 0f);
         for (var body : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
                 new net.minecraft.world.phys.AABB(at, at).inflate(reach))) {
             float near = 1f - (float) Math.sqrt(body.distanceToSqr(at)) / reach;
@@ -132,7 +132,7 @@ public final class Blast {
                 body.hurt(level.damageSources().explosion(source, owner), p.fragDamage() * near);
             if (p.flash())
                 body.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.BLINDNESS,
-                        Math.round(FTuning.GRENADE_FLASH_TICKS * near)));
+                        Math.round(GunTuning.GRENADE_FLASH_TICKS * near)));
         }
     }
 }

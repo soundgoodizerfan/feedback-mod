@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.clutch;
 
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 
 import org.jetbrains.annotations.Nullable;
@@ -73,12 +75,12 @@ public class ClutchBlock extends Block implements EntityBlock, io.github.soundgo
 
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.Drag getDragSuPerRpm() {
-        return io.github.soundgoodizerfan.feedback.core.FTuning.SHAFT_DRAG_SU_PER_RPM;
+        return io.github.soundgoodizerfan.feedback.machine.MachineTuning.SHAFT_DRAG_SU_PER_RPM;
     }
 
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.Inertia getInertia() {
-        return io.github.soundgoodizerfan.feedback.core.FTuning.SHAFT_INERTIA;
+        return io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning.SHAFT_INERTIA;
     }
 
     @Override

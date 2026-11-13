@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -57,6 +58,6 @@ public record DishFigures(float hunger, float saturation, float eatSeconds, floa
 
     /** What a seal leaves of drying, migration and spill: open 1, covered half, sealed none. */
     public static float sealScale(int seal) {
-        return Math.max(0f, 1f - io.github.soundgoodizerfan.feedback.core.FTuning.SEAL_SCALE_PER_LEVEL * seal);
+        return Math.max(0f, 1f - io.github.soundgoodizerfan.feedback.process.ProcessTuning.SEAL_SCALE_PER_LEVEL * seal);
     }
 }

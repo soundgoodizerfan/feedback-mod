@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.centrifuge;
 
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 
 import org.jetbrains.annotations.Nullable;
@@ -96,7 +97,7 @@ public class GasCentrifugeBlock extends Block implements EntityBlock, Rotatable 
                     Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, s);
             else
                 io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, pos, Component.translatable("message.feedback.gas_centrifuge", centrifuge.feed(), centrifuge.acidMb(),
-                        Math.round(centrifuge.progress() * 100f / io.github.soundgoodizerfan.feedback.core.FTuning.CENTRIFUGE_BATCH_TICKS)));
+                        Math.round(centrifuge.progress() * 100f / io.github.soundgoodizerfan.feedback.machine.MachineTuning.CENTRIFUGE_BATCH_TICKS)));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

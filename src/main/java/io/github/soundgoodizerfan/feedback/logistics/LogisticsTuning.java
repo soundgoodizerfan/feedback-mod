@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.logistics;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+
 /**
  * Every figure the belts and the sorting reader read. All invented: nothing here has been played,
  * so each is safe to retune. Kept beside the code that uses it rather than in {@code FTuning}.

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.world.InteractionHand;
@@ -77,7 +77,7 @@ public final class GunShots {
         /** Power of the explosion where it stops, or 0 (explosive filler). */
         float blast;
         /** The projectile's material hardness: what decides a glance off a block and a way through armour. */
-        float hardness = FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS;
+        float hardness = GunTuning.GUN_DEFAULT_PROJECTILE_HARDNESS;
         final float massMu;
         /** Momentum of the round and gas at the muzzle, kg m/s: what Muzzle Stagger reads. */
         final float impulse;
@@ -121,7 +121,7 @@ public final class GunShots {
         boolean spend(float work) {
             float e = energy();
             float left = e - work;
-            if (left <= muzzleEnergy * FTuning.GUN_MIN_ENERGY_FRACTION)
+            if (left <= muzzleEnergy * GunTuning.GUN_MIN_ENERGY_FRACTION)
                 return false;
             velocity = velocity.scale(Math.sqrt(left / e));
             return true;
@@ -200,7 +200,7 @@ public final class GunShots {
         // Early by at most a quarter of a cycle, or the jitter allowance if that is less: a
         // client hacked to fire a little early gains only that, and an honest one never trips it.
         long cycleMs = io.github.soundgoodizerfan.feedback.core.Haste.time(figures.cycleMs(), shooter);
-        long tolerance = Math.min(FTuning.GUN_FIRE_TOLERANCE_MS, cycleMs / 4);
+        long tolerance = Math.min(GunTuning.GUN_FIRE_TOLERANCE_MS, cycleMs / 4);
         HandKey key = new HandKey(shooter.getUUID(), hand == InteractionHand.OFF_HAND);
         long earliest = NEXT_OK.getOrDefault(key, 0L);
         if (nowMs + tolerance < earliest)
@@ -359,7 +359,7 @@ public final class GunShots {
         // A flintlock's case is not rated: the barrel holds the pressure.
         float caseRating = design.layout().action() == GunLayout.Action.FLINTLOCK ? Float.MAX_VALUE
                 : round.caseRating(materials).map(p -> p.value()).orElse(Float.MAX_VALUE);
-        float noise = 1 + (level.random.nextFloat() * 2 - 1) * FTuning.GUN_HAZARD_NOISE;
+        float noise = 1 + (level.random.nextFloat() * 2 - 1) * GunTuning.GUN_HAZARD_NOISE;
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat, round.boreWear(materials));
@@ -446,7 +446,7 @@ public final class GunShots {
                 left.remove(chambered ? n - (j - 1) : n - j);
                 gun.set(FWeapons.MAGAZINE.get(), new Magazine(left));
             }
-            gun.set(FWeapons.GUN_DAMAGE.get(), GunHazard.damage(gun) + FTuning.GUN_CHAIN_FIRE_GUN_DAMAGE);
+            gun.set(FWeapons.GUN_DAMAGE.get(), GunHazard.damage(gun) + GunTuning.GUN_CHAIN_FIRE_GUN_DAMAGE);
             if (shooter instanceof Player player)
                 io.github.soundgoodizerfan.feedback.net.AimPayloads.cue(player, io.github.soundgoodizerfan.feedback.net.AimPayloads.GUN, net.minecraft.network.chat.Component.translatable("message.feedback.gun.chain_fire"), 50);
             level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(),
@@ -515,7 +515,7 @@ public final class GunShots {
      * whole time, so letting go early keeps the old one. Firing, or putting the gun away, ends it.
      */
     /**
-     * A gun in each hand is held out of the way of the other: a reload takes {@link FTuning#GUN_DUAL_RELOAD_MULT} times
+     * A gun in each hand is held out of the way of the other: a reload takes {@link GunTuning#GUN_DUAL_RELOAD_MULT} times
      * as long, less the share of the extra that {@link Figure#DUAL_RELOAD} (Twin Reload) takes off.
      */
     public static float reloadScale(Player player) {
@@ -523,7 +523,7 @@ public final class GunShots {
         if (!(player.getMainHandItem().getItem() instanceof GunItem && player.getOffhandItem().getItem() instanceof GunItem))
             return ready;
         float relief = Mth.clamp(Skills.modifier(player, Figure.DUAL_RELOAD), 0f, 1f);
-        return ready * (1f + (FTuning.GUN_DUAL_RELOAD_MULT - 1f) * (1f - relief));
+        return ready * (1f + (GunTuning.GUN_DUAL_RELOAD_MULT - 1f) * (1f - relief));
     }
 
     /** Whether a reload would put anything into {@code gun}: a round of its bore with room, or a fuller magazine than it has. */
@@ -592,7 +592,7 @@ public final class GunShots {
     private static long beatMs(Player player, ItemStack gun) {
         GunSpec spec = GunSpec.of(gun).orElse(null);
         // A tube is thumbed a round a beat; barrels or a single chamber are loaded and shut in one stroke.
-        long base = spec == null ? FTuning.GUN_RELOAD_ROUND_MS : spec.internalCapacity().isPresent()
+        long base = spec == null ? GunTuning.GUN_RELOAD_ROUND_MS : spec.internalCapacity().isPresent()
                 ? GunAmmo.roundMs(spec) * (spec.layout().feed() == GunLayout.Feed.TUBE ? 1 : Math.max(1, GunAmmo.loadable(player.getInventory(), gun, spec).size()))
                 : GunAmmo.reloadMs(gun);
         return scaled(player, base);
@@ -755,7 +755,7 @@ public final class GunShots {
     /** As above, as {@code pellets} pellets of shot sharing the projectile, each on its own line through the cone. */
     public static void fire(ServerLevel level, LivingEntity shooter, GunFigures f, float yaw, float pitch,
                             boolean tracer, boolean incendiary, int pellets) {
-        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
+        fire(level, shooter, f, yaw, pitch, tracer, incendiary, pellets, GunTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
     }
 
     /** As above, of a projectile of this hardness: what it glances off and what armour it goes through. */
@@ -825,8 +825,8 @@ public final class GunShots {
         for (GunSound.Layer layer : mechanism != null ? mechanism.sound(gun, f, level.random) : GunSound.layers(f, level.random))
             level.playSound(shooter instanceof Player player && !hearSelf ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
-        level.gameEvent(shooter, f.report() < FTuning.GUN_QUIET_REPORT * (shooter instanceof Player mp && Skills.unlocked(mp, "muffled_report") ? FTuning.GUN_MUFFLED_SHARE : 1f) ? FWeapons.GUNSHOT_QUIET
-                : f.report() >= FTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
+        level.gameEvent(shooter, f.report() < GunTuning.GUN_QUIET_REPORT * (shooter instanceof Player mp && Skills.unlocked(mp, "muffled_report") ? GunTuning.GUN_MUFFLED_SHARE : 1f) ? FWeapons.GUNSHOT_QUIET
+                : f.report() >= GunTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
         // The burning gas shows as smoke at the muzzle.
         level.sendParticles(mechanism != null ? mechanism.muzzleParticle(gun, f) : f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,
                 3, 0.02, 0.02, 0.02, 0.01);
@@ -934,12 +934,12 @@ public final class GunShots {
 
     /** Whether a blow of this momentum breaks a brittle block of this toughness. Pure. */
     public static boolean breaks(float toughness, float momentum) {
-        return !Float.isNaN(breakCost(toughness)) && momentum >= toughness * FTuning.GUN_BREAK_MOMENTUM_PER_TOUGHNESS;
+        return !Float.isNaN(breakCost(toughness)) && momentum >= toughness * GunTuning.GUN_BREAK_MOMENTUM_PER_TOUGHNESS;
     }
 
     /** Whether a bullet glances off: softer than the block, coming in shallow. Pure. */
     public static boolean glances(float bulletHardness, float blockHardness, float cosToNormal) {
-        return bulletHardness < blockHardness && cosToNormal < FTuning.GUN_RICOCHET_MAX_COS;
+        return bulletHardness < blockHardness && cosToNormal < GunTuning.GUN_RICOCHET_MAX_COS;
     }
 
     /**
@@ -965,8 +965,8 @@ public final class GunShots {
      * (spec 3.5: only things like glass). Pure, so a test and the step agree.
      */
     public static float breakCost(float toughness) {
-        return Float.isNaN(toughness) || toughness > FTuning.GUN_BREAK_TOUGHNESS_MAX
-                ? Float.NaN : toughness * FTuning.GUN_BREAK_WORK_PER_TOUGHNESS;
+        return Float.isNaN(toughness) || toughness > GunTuning.GUN_BREAK_TOUGHNESS_MAX
+                ? Float.NaN : toughness * GunTuning.GUN_BREAK_WORK_PER_TOUGHNESS;
     }
 
     /** A round has hit: the gun's traits hear where, on what, and with how much energy left. */
@@ -1035,7 +1035,7 @@ public final class GunShots {
      * @return whether it went off.
      */
     private static boolean detonate(ServerLevel level, Shot s, Vec3 at) {
-        if (s.blast < FTuning.DEMO_POWER_MIN || s.age < FTuning.DEMO_ROUND_ARM_TICKS)
+        if (s.blast < FTuning.DEMO_POWER_MIN || s.age < GunTuning.DEMO_ROUND_ARM_TICKS)
             return false;
         float power = s.blast;
         s.blast = 0;
@@ -1059,7 +1059,7 @@ public final class GunShots {
         if (s.flight.vial() != null && !s.vialSpent) {
             s.vialSpent = true;
             io.github.soundgoodizerfan.feedback.potion.PotionEffects.impact(level, s.shooter, s.shooter, at, s.flight.vial(),
-                    FTuning.GUN_VIAL_REACH_SCALE * io.github.soundgoodizerfan.feedback.potion.PotionTuning.throwReach());
+                    GunTuning.GUN_VIAL_REACH_SCALE * io.github.soundgoodizerfan.feedback.potion.PotionTuning.throwReach());
             level.sendParticles(ParticleTypes.SPLASH, at.x, at.y, at.z, 8, 0.2, 0.15, 0.2, 0.1);
         }
         var traits = s.flight.traits();
@@ -1078,7 +1078,7 @@ public final class GunShots {
         // A sticky lump glues what it hits where it stands.
         if (traits.contains(io.github.soundgoodizerfan.feedback.process.Material.Trait.STICKY) && target instanceof LivingEntity struck)
             struck.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
-                    FTuning.GUN_ANCHOR_TICKS, FTuning.GUN_ANCHOR_AMPLIFIER));
+                    GunTuning.GUN_ANCHOR_TICKS, GunTuning.GUN_ANCHOR_AMPLIFIER));
         // A seed that lands on a block it can grow in is planted there.
         if (s.flight.seed() != null && blockPos != null && face == net.minecraft.core.Direction.UP)
             plant(level, s, blockPos.above());
@@ -1098,7 +1098,7 @@ public final class GunShots {
         Integer hop = perks.get(io.github.soundgoodizerfan.feedback.process.Material.Perk.BLINK);
         if (hop != null)
             for (int i = 0; i < 8; i++) {
-                double reach = FTuning.GUN_HOP_BLOCKS_PER_LEVEL * hop;
+                double reach = GunTuning.GUN_HOP_BLOCKS_PER_LEVEL * hop;
                 if (struck.randomTeleport(struck.getX() + (level.random.nextDouble() - 0.5) * 2 * reach, struck.getY(),
                         struck.getZ() + (level.random.nextDouble() - 0.5) * 2 * reach, true))
                     break;
@@ -1119,11 +1119,11 @@ public final class GunShots {
         if (bounce == null)
             return;
         Vec3 eye = shooter.getEyePosition(), look = Vec3.directionFromRotation(pitch, yaw);
-        var wall = level.clip(new ClipContext(eye, eye.add(look.scale(FTuning.GUN_BOUNCE_REACH)), ClipContext.Block.COLLIDER,
+        var wall = level.clip(new ClipContext(eye, eye.add(look.scale(GunTuning.GUN_BOUNCE_REACH)), ClipContext.Block.COLLIDER,
                 ClipContext.Fluid.NONE, CollisionContext.empty()));
         if (wall.getType() == HitResult.Type.MISS)
             return;
-        shooter.setDeltaMovement(shooter.getDeltaMovement().add(look.scale(-FTuning.GUN_BOUNCE_LAUNCH * bounce)));
+        shooter.setDeltaMovement(shooter.getDeltaMovement().add(look.scale(-GunTuning.GUN_BOUNCE_LAUNCH * bounce)));
         shooter.hurtMarked = true;
         shooter.fallDistance = 0f;
     }
@@ -1134,7 +1134,7 @@ public final class GunShots {
         double dist = d.length();
         if (dist < 1.5)
             return;
-        body.setDeltaMovement(body.getDeltaMovement().add(d.normalize().scale(Math.min(FTuning.GUN_TETHER_PULL, dist * 0.15))).add(0, 0.2, 0));
+        body.setDeltaMovement(body.getDeltaMovement().add(d.normalize().scale(Math.min(GunTuning.GUN_TETHER_PULL, dist * 0.15))).add(0, 0.2, 0));
         body.hurtMarked = true;
         body.fallDistance = 0f;
     }
@@ -1170,7 +1170,7 @@ public final class GunShots {
 
     /** One tick's travel. @return whether the shot is still flying. */
     private static boolean step(ServerLevel level, Shot s) {
-        if (s.shooter.isRemoved() || ++s.age > FTuning.GUN_MAX_LIFE_TICKS)
+        if (s.shooter.isRemoved() || ++s.age > GunTuning.GUN_MAX_LIFE_TICKS)
             return false;
         if (s.bend != 0)
             s.velocity = io.github.soundgoodizerfan.feedback.modular.attunement.LodeKinds.bend(level, s.shooter, s.pos, s.velocity, s.bend);
@@ -1195,7 +1195,7 @@ public final class GunShots {
                 e -> e.isPickable() && !e.isSpectator() && e != s.shooter && !s.pierced.contains(e.getId()));
         if (hit != null) {
             Entity target = hit.getEntity();
-            float damage = s.energy() * FTuning.GUN_DAMAGE_PER_WORK * s.flight.damage();
+            float damage = s.energy() * GunTuning.GUN_DAMAGE_PER_WORK * s.flight.damage();
             // A payload that is hard on the undead or the sea's things hits them harder.
             if (target instanceof LivingEntity victim && !s.flight.perks().isEmpty())
                 damage += io.github.soundgoodizerfan.feedback.modular.MaterialPerks.bonus(s.flight.perks(), victim);
@@ -1229,7 +1229,7 @@ public final class GunShots {
             if (s.rubber && target instanceof LivingEntity struck)
                 RubberRounds.landed(s.shooter, struck);
             if (s.incendiary)
-                target.igniteForSeconds(FTuning.GUN_INCENDIARY_SECONDS);
+                target.igniteForSeconds(GunTuning.GUN_INCENDIARY_SECONDS);
             payloadHit(level, s, hit.getLocation(), target, null, null);
             if (s.incendiary && target instanceof net.minecraft.world.entity.monster.Creeper creeper)
                 creeper.ignite();
@@ -1240,7 +1240,7 @@ public final class GunShots {
                     target instanceof LivingEntity dead && dead.isDeadOrDying());
             if (detonate(level, s, hit.getLocation()))
                 return false;
-            if (damage <= health || !s.spend(health / (FTuning.GUN_DAMAGE_PER_WORK * s.flight.damage())))
+            if (damage <= health || !s.spend(health / (GunTuning.GUN_DAMAGE_PER_WORK * s.flight.damage())))
                 return false;
             s.pierced.add(target.getId());
             s.pos = hit.getLocation();
@@ -1263,8 +1263,8 @@ public final class GunShots {
             // A soft bullet meeting a harder face at a shallow angle glances off it, slower.
             Vec3 normal = Vec3.atLowerCornerOf(block.getDirection().getNormal());
             float cos = (float) Math.abs(s.velocity.normalize().dot(normal));
-            if (s.bounces < FTuning.GUN_RICOCHET_MAX && glances(s.hardness, hardnessOf(hitBlock), cos / s.flight.glance())
-                    && s.spend(s.energy() * (1 - FTuning.GUN_RICOCHET_KEEP))) {
+            if (s.bounces < GunTuning.GUN_RICOCHET_MAX && glances(s.hardness, hardnessOf(hitBlock), cos / s.flight.glance())
+                    && s.spend(s.energy() * (1 - GunTuning.GUN_RICOCHET_KEEP))) {
                 s.velocity = s.velocity.subtract(normal.scale(2 * s.velocity.dot(normal)));
                 s.pos = p.add(normal.scale(0.05));
                 s.bounces++;
@@ -1297,8 +1297,8 @@ public final class GunShots {
         // The streak is drawn by the clients from the shot's tracer message; no particles here.
         // Still flying: drag in the medium it ends the tick in, then gravity.
         boolean inFluid = !level.getFluidState(BlockPos.containing(to)).isEmpty();
-        float drag = inFluid && !s.keepsSpeedWet ? FTuning.GUN_FLUID_DRAG_PER_TICK : FTuning.GUN_DRAG_PER_TICK * s.flight.drag();
-        s.velocity = s.velocity.scale(1 - drag).add(0, -FTuning.GUN_GRAVITY_PER_TICK, 0);
+        float drag = inFluid && !s.keepsSpeedWet ? GunTuning.GUN_FLUID_DRAG_PER_TICK : GunTuning.GUN_DRAG_PER_TICK * s.flight.drag();
+        s.velocity = s.velocity.scale(1 - drag).add(0, -GunTuning.GUN_GRAVITY_PER_TICK, 0);
         whiz(level, s, from, to);
         s.pos = to;
         return true;

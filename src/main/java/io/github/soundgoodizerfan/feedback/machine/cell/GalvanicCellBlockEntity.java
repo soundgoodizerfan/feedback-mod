@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cell;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>It eats its anode</h2>
  * A real cell consumes its anode (user ruling, 2026-10-23). The current it supplies spends
- * {@link FTuning#GALVANIC_ANODE_AMP_TICKS} amp-ticks of a full anode, and a spent cell holds no
+ * {@link ElectricMachineTuning#GALVANIC_ANODE_AMP_TICKS} amp-ticks of a full anode, and a spent cell holds no
  * voltage. An ingot of the anode metal used on the block restores part of it, so the running cost is
  * a real item. The remaining anode travels with the mined block.
  */
@@ -73,7 +73,7 @@ public class GalvanicCellBlockEntity extends ElectricNode {
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
         if (amps > 0f && anode > 0f) {
-            anode = Math.max(0f, anode - amps / figures.get("AnodeTicks", FTuning.GALVANIC_ANODE_AMP_TICKS));
+            anode = Math.max(0f, anode - amps / figures.get("AnodeTicks", ElectricMachineTuning.GALVANIC_ANODE_AMP_TICKS));
             setChanged();
         }
     }
@@ -87,14 +87,14 @@ public class GalvanicCellBlockEntity extends ElectricNode {
     public boolean refill() {
         if (anode >= 1f)
             return false;
-        anode = Math.min(1f, anode + FTuning.GALVANIC_ANODE_PER_INGOT);
+        anode = Math.min(1f, anode + ElectricMachineTuning.GALVANIC_ANODE_PER_INGOT);
         setChanged();
         return true;
     }
 
     @Override
     public float sourceAmps() {
-        return figures.get("Amps", FTuning.GALVANIC_CELL_AMPS);
+        return figures.get("Amps", ElectricMachineTuning.GALVANIC_CELL_AMPS);
     }
 
     @Override

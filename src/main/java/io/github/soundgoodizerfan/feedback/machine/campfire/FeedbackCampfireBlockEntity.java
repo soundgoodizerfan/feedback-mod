@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.campfire;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
@@ -59,7 +60,7 @@ public class FeedbackCampfireBlockEntity extends CampfireBlockEntity implements 
     public Tu getFireTu() {
         if (!lit() || !(getBlockState().getBlock() instanceof FeedbackCampfireBlock b))
             return AmbientTable.at(level);
-        return buried && b.flame().value() > FTuning.FIRE_TU_BURIED_CAMPFIRE.value() ? FTuning.FIRE_TU_BURIED_CAMPFIRE : b.flame();
+        return buried && b.flame().value() > VesselTuning.FIRE_TU_BURIED_CAMPFIRE.value() ? VesselTuning.FIRE_TU_BURIED_CAMPFIRE : b.flame();
     }
 
     @Override

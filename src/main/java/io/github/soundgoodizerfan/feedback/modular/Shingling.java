@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SplittableRandom;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Deformation;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -17,7 +17,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
  * Pure model shared by the screen (which plays it) and the server (which replays the samples and decides).
  *
  * <p>The billet is a rectangle of {@link #LONG} by 1 in screen units, turned a quarter each {@link Kind#TURN}. A blow shifts each live
- * pocket within the {@link FTuning#SHINGLE_FOOTPRINT} away from the blow, the more the nearer, by the blow's landed work over the slag's
+ * pocket within the {@link ModularTuning#SHINGLE_FOOTPRINT} away from the blow, the more the nearer, by the blow's landed work over the slag's
  * viscosity, faster the hotter the slag; the flow is wider along the screen's x than y, so turning the piece changes which way is short.
  * What the material changes: the slag's viscosity and melting point (speed, and how long the pockets stay free), the bloom's hardness
  * against the hammer (work per blow), its density (the split limit) and its hot-working window (when the blow lands at all), the
@@ -48,7 +48,7 @@ public final class Shingling {
     public record Result(int pockets, int remaining, int leaked, int splits, boolean frozen) {
 
         public boolean done() {
-            return remaining <= Math.floor(pockets * FTuning.SHINGLE_DONE_SHARE);
+            return remaining <= Math.floor(pockets * ModularTuning.SHINGLE_DONE_SHARE);
         }
     }
 
@@ -60,7 +60,7 @@ public final class Shingling {
 
     public Shingling(Setup setup) {
         this.setup = setup;
-        int n = FTuning.SHINGLE_POCKETS_BASE + FTuning.SHINGLE_POCKETS_PER_SLAG * Math.max(0, Math.min(3, setup.slag()));
+        int n = ModularTuning.SHINGLE_POCKETS_BASE + ModularTuning.SHINGLE_POCKETS_PER_SLAG * Math.max(0, Math.min(3, setup.slag()));
         px = new float[n];
         py = new float[n];
         gone = new boolean[n];
@@ -98,7 +98,7 @@ public final class Shingling {
 
     /** The piece's heat at {@code tick}: it cools at the item rate down to what a hearth holds it at. */
     public float temperature(int tick) {
-        return Math.max(setup.temperature() - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * tick, Math.min(setup.temperature(), setup.hold()));
+        return Math.max(setup.temperature() - ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * tick, Math.min(setup.temperature(), setup.hold()));
     }
 
     /** Whether the slag can still move at {@code tick}. */
@@ -113,7 +113,7 @@ public final class Shingling {
 
     /** Applies one input; events must come in tick order. Returns the pockets it let out. */
     public int apply(Event e) {
-        if (e.tick() < last || e.tick() > FTuning.SHINGLE_MAX_TICKS)
+        if (e.tick() < last || e.tick() > ModularTuning.SHINGLE_MAX_TICKS)
             return 0;
         last = e.tick();
         if (e.kind() == Kind.TURN) {
@@ -133,14 +133,14 @@ public final class Shingling {
         int push = Deformation.landed(heavy ? setup.heavy() : setup.light(), new St(setup.hardness()));
         if (push <= 0)
             return 0;
-        if (heavy && push > setup.density() * FTuning.SHINGLE_SPLIT_PER_DENSITY)
+        if (heavy && push > setup.density() * ModularTuning.SHINGLE_SPLIT_PER_DENSITY)
             splits++;
         float cx = Math.max(0f, Math.min(1f, e.fx())) * sw, cy = Math.max(0f, Math.min(1f, e.fy())) * sh;
         float temp = temperature(e.tick());
-        float speed = runny(e.tick()) ? Math.max(0.25f, Math.min(1f, (temp - setup.slagMelt()) / FTuning.SHINGLE_FLUID_RANGE_TU)) : 0f;
+        float speed = runny(e.tick()) ? Math.max(0.25f, Math.min(1f, (temp - setup.slagMelt()) / ModularTuning.SHINGLE_FLUID_RANGE_TU)) : 0f;
         speed /= Math.max(0.5f, setup.slagViscosity() / 3f);
         int out = 0;
-        float r = FTuning.SHINGLE_FOOTPRINT;
+        float r = ModularTuning.SHINGLE_FOOTPRINT;
         for (int i = 0; i < px.length; i++) {
             if (gone[i])
                 continue;
@@ -152,7 +152,7 @@ public final class Shingling {
                 dy = 0f;
                 d = 1f;
             }
-            float shift = FTuning.SHINGLE_PUSH * push * speed * (1f - Math.min(d, r) / r) + 0.004f * push * speed;
+            float shift = ModularTuning.SHINGLE_PUSH * push * speed * (1f - Math.min(d, r) / r) + 0.004f * push * speed;
             px[i] += dx / d * shift;
             py[i] += dy / d * shift * 0.5f;
             if (px[i] < 0f || px[i] > sw || py[i] < 0f || py[i] > sh) {
@@ -179,12 +179,12 @@ public final class Shingling {
 
     /** The slag items a result drops: one for each few pockets let out, at least one if any. */
     public static int slagDropped(Result r) {
-        return r.leaked() == 0 ? 0 : (r.leaked() + FTuning.SHINGLE_LEAK_PER_SLAG - 1) / FTuning.SHINGLE_LEAK_PER_SLAG;
+        return r.leaked() == 0 ? 0 : (r.leaked() + ModularTuning.SHINGLE_LEAK_PER_SLAG - 1) / ModularTuning.SHINGLE_LEAK_PER_SLAG;
     }
 
     /** The slag grade a bloom returned unfinished carries: a grade for each few pockets still in it. */
     public static int slagLeft(Result r) {
-        return r.remaining() == 0 ? 0 : Math.min(3, (r.remaining() + FTuning.SHINGLE_POCKETS_PER_SLAG - 1) / FTuning.SHINGLE_POCKETS_PER_SLAG);
+        return r.remaining() == 0 ? 0 : Math.min(3, (r.remaining() + ModularTuning.SHINGLE_POCKETS_PER_SLAG - 1) / ModularTuning.SHINGLE_POCKETS_PER_SLAG);
     }
 
     /** Millibuckets of iron a result keeps: a ninth lost to each split. */

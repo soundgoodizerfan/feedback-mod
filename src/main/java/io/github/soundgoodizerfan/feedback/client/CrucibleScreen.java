@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.crucible.CrucibleMenu;
 
@@ -32,7 +32,7 @@ public class CrucibleScreen extends SkinnedScreen<CrucibleMenu> {
 
     private int band() {
         int tu = menu.temperatureTu();
-        return tu >= (int) FTuning.MAX_VISIBLE_TU.value() ? ThermalVesselScreen.BAND_COLORS.length - 1 : ThermalVesselScreen.firstBandAbove(tu);
+        return tu >= (int) ThermalTuning.MAX_VISIBLE_TU.value() ? ThermalVesselScreen.BAND_COLORS.length - 1 : ThermalVesselScreen.firstBandAbove(tu);
     }
 
     @Override

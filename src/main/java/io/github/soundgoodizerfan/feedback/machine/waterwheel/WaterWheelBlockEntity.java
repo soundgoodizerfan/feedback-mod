@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.waterwheel;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -75,7 +75,7 @@ public class WaterWheelBlockEntity extends RotationNode {
             return;
         if (--ticksUntilFlowCheck > 0)
             return;
-        ticksUntilFlowCheck = FTuning.WATER_WHEEL_FLOW_CHECK_INTERVAL;
+        ticksUntilFlowCheck = MachineTuning.WATER_WHEEL_FLOW_CHECK_INTERVAL;
 
         int previous = flowingSides;
         flowingSides = countFlowingSides();
@@ -102,16 +102,16 @@ public class WaterWheelBlockEntity extends RotationNode {
 
     @Override
     public Inertia getInertia() {
-        return new Inertia(figures.get("Inertia", FTuning.WATER_WHEEL_INERTIA.suTicksPerRpm()));
+        return new Inertia(figures.get("Inertia", MachineTuning.WATER_WHEEL_INERTIA.suTicksPerRpm()));
     }
 
     @Override
     public Rpm getGeneratedRpm() {
-        return new Rpm(flowingSides * figures.get("RpmPerFlow", FTuning.WATER_WHEEL_RPM_PER_FLOW.value()));
+        return new Rpm(flowingSides * figures.get("RpmPerFlow", MachineTuning.WATER_WHEEL_RPM_PER_FLOW.value()));
     }
 
     @Override
     public Su getCapacitySu() {
-        return new Su(figures.get("Power", FTuning.WATER_WHEEL_CAPACITY_SU.value()));
+        return new Su(figures.get("Power", MachineTuning.WATER_WHEEL_CAPACITY_SU.value()));
     }
 }

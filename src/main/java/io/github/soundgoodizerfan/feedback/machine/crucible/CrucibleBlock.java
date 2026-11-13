@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.crucible;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +37,7 @@ public class CrucibleBlock extends Block implements EntityBlock {
     private final int tankMb;
 
     public CrucibleBlock(Properties properties, ThermalMass thermalMass) {
-        this(properties, thermalMass, FTuning.CRUCIBLE_SLOTS, FTuning.VESSEL_TANK_CAPACITY_MB);
+        this(properties, thermalMass, VesselTuning.CRUCIBLE_SLOTS, VesselTuning.VESSEL_TANK_CAPACITY_MB);
     }
 
     /** A bigger hearth of the same vessel: more slots, a deeper tank. */

@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.micro;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.mixinterface.clip_overwrite.ClipContextExtension;
 import dev.ryanhcode.sable.physics.config.block_properties.PhysicsBlockPropertyHelper;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.SubLevel;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.vehicle.BodyPush;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -93,18 +94,18 @@ public final class MicroWheels {
      * nothing on a slicker surface than {@code ROLLING_SLICK} (ice wastes none).
      */
     private static double deformation(double hardness, double friction) {
-        double r = FTuning.ROLLING_SOFT / (1 + Math.max(0, hardness) / FTuning.ROLLING_HARDNESS);
-        return friction < FTuning.ROLLING_SLICK ? r * friction / FTuning.ROLLING_SLICK : r;
+        double r = VehicleTuning.ROLLING_SOFT / (1 + Math.max(0, hardness) / VehicleTuning.ROLLING_HARDNESS);
+        return friction < VehicleTuning.ROLLING_SLICK ? r * friction / VehicleTuning.ROLLING_SLICK : r;
     }
 
     /** What the ground gives under the tread: its own deformation, more if it falls (sand) or slows a walker (soul sand). */
     private static double groundRolling(BlockState ground) {
         double r = deformation(ground.getBlock().defaultDestroyTime(), PhysicsBlockPropertyHelper.getFriction(ground));
         if (ground.getBlock() instanceof net.minecraft.world.level.block.Fallable)
-            r += FTuning.ROLLING_LOOSE;
+            r += VehicleTuning.ROLLING_LOOSE;
         float speed = ground.getBlock().getSpeedFactor();
         if (speed > 0 && speed < 1)
-            r += FTuning.ROLLING_SINK * (1 / speed - 1);
+            r += VehicleTuning.ROLLING_SINK * (1 / speed - 1);
         return r;
     }
 
@@ -179,7 +180,7 @@ public final class MicroWheels {
         // The tread's own speed at the contact is the body's velocity there: spin and travel together.
         Vector3d slip = new Vector3d(v);
         slip.fma(-slip.dot(normal), normal);
-        Vector3d friction = new Vector3d(slip).mul(-share * FTuning.TIRE_SLIP_RESPONSE);
+        Vector3d friction = new Vector3d(slip).mul(-share * VehicleTuning.TIRE_SLIP_RESPONSE);
         Vector3d roll = axis.cross(lever, new Vector3d());
         double treadLength = roll.length();
         if (treadLength > 1e-9) {
@@ -188,7 +189,7 @@ public final class MicroWheels {
             // A brake holds the wheel against the road's turning of it, never more than stops it this step.
             double rolling = v.dot(roll);
             if (brake > 0) {
-                double hold = Math.min(brake * FTuning.BRAKE_CLAMP_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE / h * dt, share * Math.abs(rolling));
+                double hold = Math.min(brake * VehicleTuning.BRAKE_CLAMP_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE / h * dt, share * Math.abs(rolling));
                 friction.fma(-Math.signum(rolling) * hold, roll);
             }
         }

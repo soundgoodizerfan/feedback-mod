@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 
@@ -36,12 +35,12 @@ public final class Shock {
     public static float damage(float volts) {
         VoltageBand band = ElectricRules.bandOf(volts);
         return switch (band) {
-            case LV -> FTuning.BARE_WIRE_SHOCK_DAMAGE;
-            case MV -> FTuning.SHOCK_MV_DAMAGE;
-            case HV -> FTuning.SHOCK_HV_DAMAGE;
-            case UHV -> FTuning.SHOCK_UHV_DAMAGE;
-            case EHV -> FTuning.SHOCK_EHV_DAMAGE;
-            case TRUNK -> FTuning.SHOCK_TRUNK_DAMAGE;
+            case LV -> HazardTuning.BARE_WIRE_SHOCK_DAMAGE;
+            case MV -> HazardTuning.SHOCK_MV_DAMAGE;
+            case HV -> HazardTuning.SHOCK_HV_DAMAGE;
+            case UHV -> HazardTuning.SHOCK_UHV_DAMAGE;
+            case EHV -> HazardTuning.SHOCK_EHV_DAMAGE;
+            case TRUNK -> HazardTuning.SHOCK_TRUNK_DAMAGE;
         };
     }
 

@@ -14,7 +14,6 @@ import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -44,14 +43,14 @@ public final class GunBludgeon {
 
     /** Damage of a swing of a gun of this baked mass. */
     public static float damage(GunFigures f) {
-        return Math.min(FTuning.GUN_BLUDGEON_DAMAGE_MAX,
-                FTuning.GUN_BLUDGEON_DAMAGE_BASE + FTuning.GUN_BLUDGEON_DAMAGE_PER_MU * f.gunMass().value());
+        return Math.min(GunTuning.GUN_BLUDGEON_DAMAGE_MAX,
+                GunTuning.GUN_BLUDGEON_DAMAGE_BASE + GunTuning.GUN_BLUDGEON_DAMAGE_PER_MU * f.gunMass().value());
     }
 
     /** Ticks before the same hand can swing again: a heavy gun is slow to bring round. */
     public static int cooldownTicks(GunFigures f) {
-        return Mth.clamp(Math.round(FTuning.GUN_BLUDGEON_TICKS_PER_MU * f.gunMass().value()),
-                FTuning.GUN_BLUDGEON_TICKS_MIN, FTuning.GUN_BLUDGEON_TICKS_MAX);
+        return Mth.clamp(Math.round(GunTuning.GUN_BLUDGEON_TICKS_PER_MU * f.gunMass().value()),
+                GunTuning.GUN_BLUDGEON_TICKS_MIN, GunTuning.GUN_BLUDGEON_TICKS_MAX);
     }
 
     /**
@@ -65,7 +64,7 @@ public final class GunBludgeon {
         if (!Skills.unlocked(player, "gun_fu_chamber"))
             return;
         float raw = ParryTuning.rawStaggerTicks(damage * ParryTuning.JOULES_PER_DAMAGE, ParryTuning.standInMass(target));
-        if (raw < FTuning.GUN_BLUDGEON_STAGGER_MIN_TICKS || CombatState.of(target).phase() == CombatPhase.STAGGER)
+        if (raw < GunTuning.GUN_BLUDGEON_STAGGER_MIN_TICKS || CombatState.of(target).phase() == CombatPhase.STAGGER)
             return;
         CombatTicker.stagger(target, ParryTuning.staggerTicks(damage * ParryTuning.JOULES_PER_DAMAGE, ParryTuning.standInMass(target)),
                 ParryTuning.STAGGER_SLOW);
@@ -134,14 +133,14 @@ public final class GunBludgeon {
         if (now + 1 < next[i])
             return;
         int base = thrust ? Math.max(GunFuTuning.BAYONET_MIN_TICKS, Math.round(f.cycleMs() / 50f)) : cooldownTicks(f);
-        next[i] = now + Math.round(base * (spin ? FTuning.GUN_SPIN_COOLDOWN_MULT : 1f));
+        next[i] = now + Math.round(base * (spin ? GunTuning.GUN_SPIN_COOLDOWN_MULT : 1f));
 
         player.swing(hand, true);
         // Spin (skill unlock): a sneaking swing comes all the way round and takes every body within reach, not the nearest on a line.
         List<LivingEntity> targets = spin
-                ? player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(FTuning.GUN_SPIN_RADIUS),
+                ? player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(GunTuning.GUN_SPIN_RADIUS),
                         e -> e != player && e.isAlive() && !e.isSpectator() && !player.isAlliedTo(e))
-                : SweptVolume.targets(player, FTuning.GUN_BLUDGEON_HALF_WIDTH).stream().limit(1).toList();
+                : SweptVolume.targets(player, GunTuning.GUN_BLUDGEON_HALF_WIDTH).stream().limit(1).toList();
         var sound = SoundEvents.PLAYER_ATTACK_NODAMAGE;
         float pitch = 1f;
         for (LivingEntity target : targets) {
@@ -152,10 +151,10 @@ public final class GunBludgeon {
                 WHIPPED.put(player.getUUID(), new Whip(target.getUUID(), now + GunFuTuning.MUZZLE_TICKS));
             float yaw = player.getYRot() * Mth.DEG_TO_RAD;
             double dx = spin ? target.getX() - player.getX() : Mth.sin(yaw), dz = spin ? target.getZ() - player.getZ() : -Mth.cos(yaw);
-            target.knockback((FTuning.GUN_BLUDGEON_KNOCKBACK_BASE + FTuning.GUN_BLUDGEON_KNOCKBACK_PER_MU * f.gunMass().value())
+            target.knockback((GunTuning.GUN_BLUDGEON_KNOCKBACK_BASE + GunTuning.GUN_BLUDGEON_KNOCKBACK_PER_MU * f.gunMass().value())
                     * (Skills.unlocked(player, "gun_fu_heavy_butt") ? GunFuTuning.HEAVY_BUTT_KNOCK : 1f), dx, dz);
             sound = io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_BUTT.get();
-            pitch = f.gunMass().value() >= FTuning.GUN_BLUDGEON_HEAVY_MU ? 0.7f : 1.1f;
+            pitch = f.gunMass().value() >= GunTuning.GUN_BLUDGEON_HEAVY_MU ? 0.7f : 1.1f;
             freeShot(player, hand, gun, target, dmg);
         }
         player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, pitch);

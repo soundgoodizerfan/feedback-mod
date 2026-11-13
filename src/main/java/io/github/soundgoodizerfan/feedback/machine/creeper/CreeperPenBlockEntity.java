@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.creeper;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Protection;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -38,7 +40,7 @@ import net.minecraft.core.Holder;
  * A penned creeper's reserve (roadmap 6.6). The pen keeps no live entity: a charge, a stomach of two halves (an oxidiser
  * and a fuel, told apart by the feed material's {@code oxygen_balance}), and the game time it was last brought up to date.
  * It ticks once a second, and a pen that was unloaded catches up in one step on its first tick back: growth while the
- * stomach lasted, then time spent full. A reserve full for {@link FTuning#CREEPER_WARNING_TICKS} goes off, loaded or
+ * stomach lasted, then time spent full. A reserve full for {@link PetrochemTuning#CREEPER_WARNING_TICKS} goes off, loaded or
  * caught up, and a spark within range sets off any pen holding a charge. Shearing takes the whole reserve as a sac and
  * leaves the creeper empty, which cannot go off until it grows again, and it grows only while fed.
  */
@@ -73,12 +75,12 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
     }
 
     public float cap() {
-        return FTuning.CREEPER_CAP * (charged ? FTuning.CREEPER_CHARGED_CAP : 1f);
+        return PetrochemTuning.CREEPER_CAP * (charged ? PetrochemTuning.CREEPER_CHARGED_CAP : 1f);
     }
 
     /** Ticks of warning left before the blast, or -1 while the reserve is not full. */
     public int warningLeft() {
-        return fullFor <= 0 ? -1 : Math.max(0, FTuning.CREEPER_WARNING_TICKS - fullFor);
+        return fullFor <= 0 ? -1 : Math.max(0, PetrochemTuning.CREEPER_WARNING_TICKS - fullFor);
     }
 
     public float stomachOxidiser() {
@@ -130,12 +132,12 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
         boolean mix = combustion.chamber().isPresent();
         if (!mix && combustion.oxygenBalance() == 0f)
             return 0;
-        float each = mix ? FTuning.CREEPER_MIX_FEED : Math.abs(combustion.oxygenBalance());
+        float each = mix ? PetrochemTuning.CREEPER_MIX_FEED : Math.abs(combustion.oxygenBalance());
         boolean oxi = combustion.oxygenBalance() > 0f;
         int taken = 0;
         while (taken < stack.getCount()) {
-            boolean full = mix ? oxidiser >= FTuning.CREEPER_STOMACH || fuel >= FTuning.CREEPER_STOMACH
-                    : (oxi ? oxidiser : fuel) >= FTuning.CREEPER_STOMACH;
+            boolean full = mix ? oxidiser >= PetrochemTuning.CREEPER_STOMACH || fuel >= PetrochemTuning.CREEPER_STOMACH
+                    : (oxi ? oxidiser : fuel) >= PetrochemTuning.CREEPER_STOMACH;
             if (full)
                 break;
             if (mix) {
@@ -164,18 +166,18 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
         advance(level.getGameTime());
         if (!occupied)
             return;
-        if (charge < FTuning.CREEPER_SHEAR_MIN) {
+        if (charge < PetrochemTuning.CREEPER_SHEAR_MIN) {
             player.displayClientMessage(Component.translatable("message.feedback.creeper.nothing_to_shear"), true);
             return;
         }
         float fill = Math.min(1f, charge / cap());
-        float risk = FTuning.CREEPER_SHEAR_SHOCK * fill * fill;
+        float risk = PetrochemTuning.CREEPER_SHEAR_SHOCK * fill * fill;
         if (player.isShiftKeyDown())
-            risk *= FTuning.CREEPER_SHEAR_SNEAK;
-        if (Protection.handlesUpToTu(player) > FTuning.CONTACT_BURN_TU.value())
-            risk *= FTuning.CREEPER_SHEAR_PADDED;
+            risk *= PetrochemTuning.CREEPER_SHEAR_SNEAK;
+        if (Protection.handlesUpToTu(player) > HazardTuning.CONTACT_BURN_TU.value())
+            risk *= PetrochemTuning.CREEPER_SHEAR_PADDED;
         if (Skills.modifier(player, SkillTree.Figure.CHARGE_TAMP) != 0f)
-            risk *= FTuning.CREEPER_SHEAR_CAREFUL;
+            risk *= PetrochemTuning.CREEPER_SHEAR_CAREFUL;
         if (level.random.nextFloat() < risk) {
             detonate();
             return;
@@ -212,22 +214,22 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
             return;
         float cap = cap();
         float before = charge + oxidiser + fuel + fullFor;
-        float rate = FTuning.CREEPER_CAP / FTuning.CREEPER_FILL_TICKS;
+        float rate = PetrochemTuning.CREEPER_CAP / PetrochemTuning.CREEPER_FILL_TICKS;
         if (charge < cap && oxidiser > 0f && fuel > 0f) {
             float toCap = (cap - charge) / rate;
-            float feedTicks = Math.min(oxidiser, fuel) / (FTuning.CREEPER_FEED_PER_CHARGE * rate);
+            float feedTicks = Math.min(oxidiser, fuel) / (PetrochemTuning.CREEPER_FEED_PER_CHARGE * rate);
             float grew = Math.min(dt, Math.min(toCap, feedTicks));
             float units = grew * rate;
             charge = Math.min(cap, charge + units);
-            oxidiser = Math.max(0f, oxidiser - units * FTuning.CREEPER_FEED_PER_CHARGE);
-            fuel = Math.max(0f, fuel - units * FTuning.CREEPER_FEED_PER_CHARGE);
+            oxidiser = Math.max(0f, oxidiser - units * PetrochemTuning.CREEPER_FEED_PER_CHARGE);
+            fuel = Math.max(0f, fuel - units * PetrochemTuning.CREEPER_FEED_PER_CHARGE);
             dt -= (long) Math.ceil(grew);
         }
         if (charge >= cap - 1e-3f)
             fullFor += (int) Math.min(Integer.MAX_VALUE / 2, Math.max(0, dt));
         else
             fullFor = 0;
-        if (fullFor >= FTuning.CREEPER_WARNING_TICKS) {
+        if (fullFor >= PetrochemTuning.CREEPER_WARNING_TICKS) {
             detonate();
             return;
         }
@@ -282,12 +284,12 @@ public class CreeperPenBlockEntity extends BlockEntity implements GameEventListe
 
         @Override
         public int getListenerRadius() {
-            return FTuning.SPARK_RANGE_BLOCKS;
+            return ElectricTuning.SPARK_RANGE_BLOCKS;
         }
 
         @Override
         public boolean handleGameEvent(ServerLevel level, Holder<GameEvent> event, GameEvent.Context context, Vec3 origin) {
-            if (!event.is(FWeapons.SPARK.getId()) || isRemoved() || !occupied || charge < FTuning.CREEPER_SHEAR_MIN)
+            if (!event.is(FWeapons.SPARK.getId()) || isRemoved() || !occupied || charge < PetrochemTuning.CREEPER_SHEAR_MIN)
                 return false;
             detonate();
             return true;

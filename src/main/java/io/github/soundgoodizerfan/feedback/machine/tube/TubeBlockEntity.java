@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.tube;
 
+import io.github.soundgoodizerfan.feedback.core.tube.TubeTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
 import io.github.soundgoodizerfan.feedback.core.tube.Capsule;
 import io.github.soundgoodizerfan.feedback.core.tube.TubeNetwork;
@@ -139,28 +139,28 @@ public class TubeBlockEntity extends BlockEntity implements PressureHolder {
         boolean pod = isPod(c);
         if (network == null || (pod && !k.wide))
             return -1;
-        float max = k.wide ? FTuning.TUBE_WIDE_BORE_MAX_MU : FTuning.TUBE_BORE_MAX_MU;
+        float max = k.wide ? TubeTuning.TUBE_WIDE_BORE_MAX_MU : TubeTuning.TUBE_BORE_MAX_MU;
         float mass = CarrierItem.mass(c.stack, c.rider != null);
         if (mass > max)
             return -1;
         float p = network.pressure().value();
         float drive;
-        if (k == TubeBlock.Kind.EVACUATED && p <= FTuning.TUBE_EVAC_MAX_PU)
-            drive = FTuning.TUBE_EVAC_FACTOR;
-        else if (p < FTuning.TUBE_MIN_DRIVE_PU)
+        if (k == TubeBlock.Kind.EVACUATED && p <= TubeTuning.TUBE_EVAC_MAX_PU)
+            drive = TubeTuning.TUBE_EVAC_FACTOR;
+        else if (p < TubeTuning.TUBE_MIN_DRIVE_PU)
             return -1;
         else {
-            drive = Math.max(0.25f, Math.min(FTuning.TUBE_MAX_DRIVE_FACTOR, p / FTuning.TUBE_FULL_DRIVE_PU));
+            drive = Math.max(0.25f, Math.min(TubeTuning.TUBE_MAX_DRIVE_FACTOR, p / TubeTuning.TUBE_FULL_DRIVE_PU));
             if (k == TubeBlock.Kind.LINED || k == TubeBlock.Kind.EVACUATED)
-                drive *= FTuning.TUBE_LINER_FACTOR;
+                drive *= TubeTuning.TUBE_LINER_FACTOR;
         }
         if (c.stack.getItem() instanceof CarrierItem i && i.kind() == CarrierItem.Kind.MAGNETIC && ringed())
-            drive *= FTuning.TUBE_LINEAR_FACTOR;
-        float t = FTuning.TUBE_BASE_HOP_TICKS * (1f + mass / (max / 2f)) / drive;
+            drive *= TubeTuning.TUBE_LINEAR_FACTOR;
+        float t = TubeTuning.TUBE_BASE_HOP_TICKS * (1f + mass / (max / 2f)) / drive;
         if (corner)
-            t *= pod ? FTuning.POD_CORNER_FACTOR : FTuning.TUBE_CORNER_FACTOR;
+            t *= pod ? TubeTuning.POD_CORNER_FACTOR : TubeTuning.TUBE_CORNER_FACTOR;
         if (pod && exit.getAxis() == Direction.Axis.Y)
-            t *= FTuning.POD_DROP_FACTOR;
+            t *= TubeTuning.POD_DROP_FACTOR;
         return Math.max(1, Math.round(t));
     }
 
@@ -198,7 +198,7 @@ public class TubeBlockEntity extends BlockEntity implements PressureHolder {
             return false;
         Capsule c = new Capsule(carrier, from, now, now, rider);
         int hop = hopTicks(c, from.getOpposite(), false);
-        c.arriveAt = now + (hop < 0 ? FTuning.TUBE_STALL_RETRY_TICKS : hop);
+        c.arriveAt = now + (hop < 0 ? TubeTuning.TUBE_STALL_RETRY_TICKS : hop);
         c.wakeAt = c.arriveAt;
         capsule = c;
         setChanged();
@@ -227,8 +227,8 @@ public class TubeBlockEntity extends BlockEntity implements PressureHolder {
                 retry(c, now);
                 return;
             }
-            if (!nt.evacuated() || network.pressure().value() > FTuning.TUBE_EVAC_MAX_PU)
-                network.spendAir(FTuning.TUBE_AIR_PER_HOP_MB);
+            if (!nt.evacuated() || network.pressure().value() > TubeTuning.TUBE_EVAC_MAX_PU)
+                network.spendAir(TubeTuning.TUBE_AIR_PER_HOP_MB);
             c.from = out.getOpposite();
             c.enteredAt = now;
             c.arriveAt = now + hop;
@@ -246,7 +246,7 @@ public class TubeBlockEntity extends BlockEntity implements PressureHolder {
     }
 
     private void retry(Capsule c, long now) {
-        c.wakeAt = now + FTuning.TUBE_STALL_RETRY_TICKS;
+        c.wakeAt = now + TubeTuning.TUBE_STALL_RETRY_TICKS;
         if (network != null)
             network.schedule(this);
     }

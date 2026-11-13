@@ -30,7 +30,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.common.Tags;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Hazards;
 import io.github.soundgoodizerfan.feedback.core.hazard.Protection;
 import io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec;
@@ -103,7 +102,7 @@ public final class PulseShot {
         for (int guard = 0; guard < 12 && travelled < plan.cutoff() && left > 0; guard++) {
             Vec3 end = pos.add(dir.scale(plan.cutoff() - travelled));
             // A coin the shooter flipped: the beam turns on it, whole.
-            CoinShot.Result coin = CoinShot.resolve(level, shooter, pos, end, 0.001f, FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
+            CoinShot.Result coin = CoinShot.resolve(level, shooter, pos, end, 0.001f, GunTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
             if (coin != null) {
                 line(level, plan.colour(), pos, coin.point());
                 travelled += pos.distanceTo(coin.point());
@@ -162,7 +161,7 @@ public final class PulseShot {
         hurt(level, shooter, target, damage, joules, plan.volts());
         sparks(level, plan.colour(), at, 8);
         if (shooter instanceof Player player) {
-            ModularTraits.gunRoundLanded(level, player, gun, at, target, damage / FTuning.GUN_DAMAGE_PER_WORK);
+            ModularTraits.gunRoundLanded(level, player, gun, at, target, damage / GunTuning.GUN_DAMAGE_PER_WORK);
             GunFu.bulletHit(level, shooter, target, ElectricGunSpec.impulse(joules));
         }
         if (plan.fork() && target instanceof LivingEntity struck)
@@ -175,7 +174,7 @@ public final class PulseShot {
         boolean wet = target.isInWaterOrRain();
         float dealt = damage * (wet || metal ? 1f + ModularTuning.EGUN_SHOCK_BONUS : 1f);
         target.invulnerableTime = 0;
-        float through = metal || !(target instanceof LivingEntity l) ? 1f : GunShots.pierce(FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS, GunShots.armourHardness(l));
+        float through = metal || !(target instanceof LivingEntity l) ? 1f : GunShots.pierce(GunTuning.GUN_DEFAULT_PROJECTILE_HARDNESS, GunShots.armourHardness(l));
         float dealtThrough = dealt * through, dealtRest = dealt - dealtThrough;
         GunShots.asBullet(() -> {
             if (dealtThrough > 0f)

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.xp;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.nbt.CompoundTag;
 
@@ -59,7 +58,7 @@ public final class Culture {
 
     /** Starts a culture from a seed. */
     public void start() {
-        mass = FTuning.CULTURE_START_MASS;
+        mass = XpTuning.CULTURE_START_MASS;
         hungry = 0;
         airless = 0;
         ripe = 0;
@@ -101,7 +100,7 @@ public final class Culture {
         else
             airless += dt;
 
-        upkeepOwed += FTuning.CULTURE_UPKEEP_PER_TICK * mass * dt;
+        upkeepOwed += XpTuning.CULTURE_UPKEEP_PER_TICK * mass * dt;
         int want = (int) upkeepOwed;
         boolean fed = available >= Math.max(want, 1);
         int eaten = 0;
@@ -110,13 +109,13 @@ public final class Culture {
             upkeepOwed -= want;
             hungry = 0;
             if (mass < 1f && breathing) {
-                growthOwed = Math.min(growthOwed + FTuning.CULTURE_GROWTH_POINTS_PER_TICK * dt, 4f);
-                int room = (int) Math.ceil((1f - mass) * FTuning.CULTURE_POINTS_PER_MASS);
+                growthOwed = Math.min(growthOwed + XpTuning.CULTURE_GROWTH_POINTS_PER_TICK * dt, 4f);
+                int room = (int) Math.ceil((1f - mass) * XpTuning.CULTURE_POINTS_PER_MASS);
                 int grown = Math.min(Math.min((int) growthOwed, available - eaten), room);
                 if (grown > 0) {
                     growthOwed -= grown;
                     eaten += grown;
-                    mass = Math.min(1f, mass + grown / FTuning.CULTURE_POINTS_PER_MASS);
+                    mass = Math.min(1f, mass + grown / XpTuning.CULTURE_POINTS_PER_MASS);
                 }
             }
         } else {
@@ -125,10 +124,10 @@ public final class Culture {
         }
 
         float loss = 0f;
-        if (hungry >= FTuning.CULTURE_ATROPHY_TICKS)
-            loss += FTuning.CULTURE_ATROPHY_PER_TICK * dt;
-        if (airless >= FTuning.CULTURE_AIRLESS_GRACE_TICKS)
-            loss += FTuning.CULTURE_SUFFOCATE_PER_TICK * dt;
+        if (hungry >= XpTuning.CULTURE_ATROPHY_TICKS)
+            loss += XpTuning.CULTURE_ATROPHY_PER_TICK * dt;
+        if (airless >= XpTuning.CULTURE_AIRLESS_GRACE_TICKS)
+            loss += XpTuning.CULTURE_SUFFOCATE_PER_TICK * dt;
         if (loss > 0f)
             mass = Math.max(0f, mass - loss);
         if (!alive()) {
@@ -138,12 +137,12 @@ public final class Culture {
 
         if (isRipe()) {
             ripe += dt;
-            if (ripe >= FTuning.CULTURE_OVERRIPE_TICKS) {
-                leakOwed += Math.max(0, available - eaten) * FTuning.CULTURE_LEAK_PER_TICK * dt;
+            if (ripe >= XpTuning.CULTURE_OVERRIPE_TICKS) {
+                leakOwed += Math.max(0, available - eaten) * XpTuning.CULTURE_LEAK_PER_TICK * dt;
                 int lost = (int) leakOwed;
                 leakOwed -= lost;
                 leaked += lost;
-                if (!shrieked && ripe >= FTuning.CULTURE_OVERRIPE_TICKS + FTuning.CULTURE_SHRIEKER_DELAY_TICKS)
+                if (!shrieked && ripe >= XpTuning.CULTURE_OVERRIPE_TICKS + XpTuning.CULTURE_SHRIEKER_DELAY_TICKS)
                     shriekerDue = true;
             }
         } else {
@@ -155,12 +154,12 @@ public final class Culture {
 
     /** Whether a harvest now may bud a spare seed: a culture neglected in no way, not yet overripe. */
     public boolean canBud() {
-        return hungry == 0 && airless == 0 && ripe < FTuning.CULTURE_OVERRIPE_TICKS;
+        return hungry == 0 && airless == 0 && ripe < XpTuning.CULTURE_OVERRIPE_TICKS;
     }
 
     /** A harvest: the mass falls back to the harvest size and the ripe clock restarts. */
     public void harvested() {
-        mass = FTuning.CULTURE_HARVEST_MASS;
+        mass = XpTuning.CULTURE_HARVEST_MASS;
         shrieked = false;
         ripe = 0;
         leakOwed = 0;
@@ -170,15 +169,15 @@ public final class Culture {
     public Stage stage() {
         if (!alive())
             return Stage.EMPTY;
-        if (shrieked && ripe >= FTuning.CULTURE_OVERRIPE_TICKS)
+        if (shrieked && ripe >= XpTuning.CULTURE_OVERRIPE_TICKS)
             return Stage.SHRIEKING;
-        if (ripe >= FTuning.CULTURE_OVERRIPE_TICKS)
+        if (ripe >= XpTuning.CULTURE_OVERRIPE_TICKS)
             return Stage.CLOTTED;
         if (airless > 0)
             return Stage.SUFFOCATING;
-        if (hungry >= FTuning.CULTURE_ATROPHY_TICKS)
+        if (hungry >= XpTuning.CULTURE_ATROPHY_TICKS)
             return Stage.ATROPHYING;
-        if (hungry >= FTuning.CULTURE_DORMANT_TICKS)
+        if (hungry >= XpTuning.CULTURE_DORMANT_TICKS)
             return Stage.DORMANT;
         return isRipe() ? Stage.RIPE : Stage.GROWING;
     }

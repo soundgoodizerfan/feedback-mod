@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.mixer.MixerMenu;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -105,7 +106,7 @@ public class MixerScreen extends SkinnedScreen<MixerMenu> {
                     SHARE_W, 7);
         }
         int tu = menu.temperatureTu();
-        int band = tu >= (int) FTuning.MAX_VISIBLE_TU.value() ? ThermalVesselScreen.BAND_COLORS.length - 1 : ThermalVesselScreen.firstBandAbove(tu);
+        int band = tu >= (int) ThermalTuning.MAX_VISIBLE_TU.value() ? ThermalVesselScreen.BAND_COLORS.length - 1 : ThermalVesselScreen.firstBandAbove(tu);
         Gauge.of(() -> (band + 1f) / ThermalVesselScreen.BAND_COLORS.length).lead(() -> ThermalVesselScreen.BAND_COLORS[band])
                 .ticks(ThermalVesselScreen.BAND_COLORS.length).vertical()
                 .render(graphics, skin, leftPos + MixerMenu.HEAT_X, topPos + MixerMenu.TANK_Y, MixerMenu.HEAT_W, MixerMenu.TANK_H);

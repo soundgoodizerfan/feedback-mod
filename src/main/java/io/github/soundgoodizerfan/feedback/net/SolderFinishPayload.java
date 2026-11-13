@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.net;
 
+import io.github.soundgoodizerfan.feedback.process.ProcessTuning;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.item.SolderingIronItem;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -27,9 +27,9 @@ public record SolderFinishPayload(List<Integer> pads, List<Integer> dwell, List<
     public static final Type<SolderFinishPayload> TYPE = new Type<>(Feedback.id("solder_finish"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, SolderFinishPayload> STREAM_CODEC = StreamCodec.composite(
-            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(FTuning.SOLDER_MAX_PADS)), SolderFinishPayload::pads,
-            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(FTuning.SOLDER_MAX_PADS)), SolderFinishPayload::dwell,
-            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(FTuning.SOLDER_MAX_PADS)), SolderFinishPayload::offset,
+            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(ProcessTuning.SOLDER_MAX_PADS)), SolderFinishPayload::pads,
+            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(ProcessTuning.SOLDER_MAX_PADS)), SolderFinishPayload::dwell,
+            ByteBufCodecs.VAR_INT.apply(ByteBufCodecs.list(ProcessTuning.SOLDER_MAX_PADS)), SolderFinishPayload::offset,
             ByteBufCodecs.BOOL, SolderFinishPayload::held,
             SolderFinishPayload::new);
 

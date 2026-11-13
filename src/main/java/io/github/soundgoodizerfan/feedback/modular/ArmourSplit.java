@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.hazard.Hazards;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 
@@ -76,7 +77,7 @@ public final class ArmourSplit {
         boolean lava = wearer.isInLava();
         if (!lava && !wearer.isOnFire())
             return;
-        float source = (lava ? FTuning.FIRE_TU_LAVA : FTuning.FIRE_TU_CAMPFIRE).value();
+        float source = (lava ? ThermalTuning.FIRE_TU_LAVA : FTuning.FIRE_TU_CAMPFIRE).value();
         float conduct = 0f;
         for (EquipmentSlot slot : SLOTS) {
             ItemStack piece = wearer.getItemBySlot(slot);

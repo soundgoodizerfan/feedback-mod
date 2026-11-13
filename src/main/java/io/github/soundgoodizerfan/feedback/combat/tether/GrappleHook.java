@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.tether;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.item.GrappleItem;
 import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
@@ -459,7 +461,7 @@ public class GrappleHook extends Projectile {
                 Vec3 p = a.lerp(b, k / (double) steps);
                 BlockPos at = BlockPos.containing(p);
                 net.minecraft.world.level.block.state.BlockState state = level().getBlockState(at);
-                float heat = state.getFluidState().is(net.minecraft.tags.FluidTags.LAVA) ? io.github.soundgoodizerfan.feedback.core.FTuning.FIRE_TU_LAVA.value()
+                float heat = state.getFluidState().is(net.minecraft.tags.FluidTags.LAVA) ? io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.FIRE_TU_LAVA.value()
                         : state.is(net.minecraft.tags.BlockTags.FIRE) ? io.github.soundgoodizerfan.feedback.core.FTuning.FIRE_TU_CAMPFIRE.value() : 0f;
                 if (heat > oxidises) {
                     ((net.minecraft.server.level.ServerLevel) level()).sendParticles(net.minecraft.core.particles.ParticleTypes.SMOKE, p.x, p.y, p.z, 2, 0.05, 0.05, 0.05, 0.01);

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.gun;
 
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
@@ -360,7 +361,7 @@ public final class GunMotion {
         float lift = tilt * (view.has("F") ? 18f : 10f);
         if (p >= 0 && view.has("E")) {
             // Thumb a round in every beat of the reload.
-            int beat = io.github.soundgoodizerfan.feedback.core.FTuning.GUN_RELOAD_ROUND_MS;
+            int beat = io.github.soundgoodizerfan.feedback.weapon.GunTuning.GUN_RELOAD_ROUND_MS;
             float within = ((now - h.reloadStart) % beat) / (float) beat;
             lift += tilt * 4f * Mth.sin(within * Mth.PI);
         }

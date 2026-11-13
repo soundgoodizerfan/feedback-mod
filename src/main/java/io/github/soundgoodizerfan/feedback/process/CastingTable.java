@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
     public static final String DIRECTORY = "mold";
 
     /**
-     * @param quenched the pour sets only once it is cold ({@link io.github.soundgoodizerfan.feedback.core.FTuning#WARM_TU}), never at the
+     * @param quenched the pour sets only once it is cold ({@link io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning#WARM_TU}), never at the
      *                 melt's own freezing point: a spray shattered by water, which is how a melt becomes dust (atomising). Left to cool slowly
      *                 it is simply a long wait; douse it in the basin and it is dust at once.
      */
@@ -103,7 +104,7 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
                     if (result != null)
                         all.add(new Casting(new net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient(
                                 net.neoforged.neoforge.fluids.crafting.FluidIngredient.of(fluid.get()), FormType.DEFAULT_MB),
-                                shape.quenched() ? io.github.soundgoodizerfan.feedback.core.FTuning.WARM_TU : melt.get(), result, mold));
+                                shape.quenched() ? io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.WARM_TU : melt.get(), result, mold));
                 });
             });
             entries = List.copyOf(all);

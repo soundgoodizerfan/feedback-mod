@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +28,7 @@ public final class Protection {
         Level level = player.level();
         // Callused Hands (Proficiency): bare skin takes the scald band.
         float best = io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(player, "callused_hands")
-                ? FTuning.CONTACT_BURN_TU.value() : FTuning.CONTACT_PAIN_TU.value();
+                ? HazardTuning.CONTACT_BURN_TU.value() : ThermalTuning.CONTACT_PAIN_TU.value();
         // Smelter's blood (potion): a ceiling raise on bare skin only; a hotter piece still burns.
         if (player.hasEffect(io.github.soundgoodizerfan.feedback.registry.FEffects.SMELTERS_BLOOD))
             best += io.github.soundgoodizerfan.feedback.potion.PotionTuning.SMELTERS_BLOOD_TU;

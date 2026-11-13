@@ -157,8 +157,8 @@ public final class ModularReadings {
                 f.get(ModularFigures.Fig.CAPACITY) * io.github.soundgoodizerfan.feedback.modular.ShieldHeat.hold(level, stack)));
         var stands = io.github.soundgoodizerfan.feedback.modular.ShieldHeat.stands(level, stack);
         out.add(stands.isEmpty() ? hold : Readout.gloss(hold, "feedback.gloss.shield_soften",
-                Readout.number(io.github.soundgoodizerfan.feedback.core.FTuning.SHIELD_SOFTEN_ONSET * 100),
-                Readout.number(stands.get()), Readout.number(io.github.soundgoodizerfan.feedback.core.FTuning.SHIELD_SOFTEN_FLOOR * 100)));
+                Readout.number(io.github.soundgoodizerfan.feedback.modular.ModularTuning.SHIELD_SOFTEN_ONSET * 100),
+                Readout.number(stands.get()), Readout.number(io.github.soundgoodizerfan.feedback.modular.ModularTuning.SHIELD_SOFTEN_FLOOR * 100)));
     }
 
     /** What each modifier on this item means; a hint to hold Shift when there are any. */

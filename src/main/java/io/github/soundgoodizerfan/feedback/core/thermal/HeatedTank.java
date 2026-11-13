@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.geology.CrudeGrade;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -23,7 +22,7 @@ import java.util.function.Predicate;
  */
 public class HeatedTank extends FluidTank {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     /** Game time this tank was saved at, until the first {@link #relax} after a load spends it (-1 for none). */
     private long savedAt = -1L;
     private final Runnable onChange;
@@ -49,12 +48,12 @@ public class HeatedTank extends FluidTank {
             long now = gameTime();
             long gap = now < 0L ? 0L : now - savedAt;
             savedAt = -1L;
-            if (gap >= FTuning.CATCHUP_MIN_TICKS && !fluid.isEmpty())
+            if (gap >= ThermalTuning.CATCHUP_MIN_TICKS && !fluid.isEmpty())
                 temperature = toward.value() + (temperature - toward.value())
-                        * (float) Math.pow(1f - FTuning.FLUID_RELAX_PER_TICK, gap);
+                        * (float) Math.pow(1f - ThermalTuning.FLUID_RELAX_PER_TICK, gap);
         }
         if (!fluid.isEmpty())
-            temperature += (toward.value() - temperature) * FTuning.FLUID_RELAX_PER_TICK;
+            temperature += (toward.value() - temperature) * ThermalTuning.FLUID_RELAX_PER_TICK;
     }
 
     /** The server's game time, or -1 where there is no server (a remote client). */
@@ -122,7 +121,7 @@ public class HeatedTank extends FluidTank {
     @Override
     public FluidTank readFromNBT(HolderLookup.Provider registries, CompoundTag nbt) {
         super.readFromNBT(registries, nbt);
-        temperature = nbt.contains("FluidTu") ? nbt.getFloat("FluidTu") : FTuning.AMBIENT_TU.value();
+        temperature = nbt.contains("FluidTu") ? nbt.getFloat("FluidTu") : ThermalTuning.AMBIENT_TU.value();
         savedAt = nbt.contains("FluidAt") ? nbt.getLong("FluidAt") : -1L;
         return this;
     }

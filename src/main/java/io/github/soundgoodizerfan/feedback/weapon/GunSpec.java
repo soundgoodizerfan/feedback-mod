@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
@@ -71,18 +71,18 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * through its lens: the view closes to {@code 1 / (zoom * transmission)} of the field.
      */
     public record Sight(String name, float fov, int raiseMs) {
-        public static final Sight IRON = new Sight("IRON", FTuning.GUN_SIGHT_FOV_IRON, FTuning.GUN_SIGHT_MS_IRON);
-        public static final Sight REFLEX = new Sight("REFLEX", FTuning.GUN_SIGHT_FOV_REFLEX, FTuning.GUN_SIGHT_MS_REFLEX);
+        public static final Sight IRON = new Sight("IRON", GunTuning.GUN_SIGHT_FOV_IRON, GunTuning.GUN_SIGHT_MS_IRON);
+        public static final Sight REFLEX = new Sight("REFLEX", GunTuning.GUN_SIGHT_FOV_REFLEX, GunTuning.GUN_SIGHT_MS_REFLEX);
 
         /** A scope at {@code zoom} times, its lens passing {@code transmission} (0 to 1) of the light. */
         public static Sight scope(float zoom, float transmission) {
-            return new Sight("SCOPE", 1f / Math.max(1f, zoom * transmission), FTuning.GUN_SIGHT_MS_SCOPE);
+            return new Sight("SCOPE", 1f / Math.max(1f, zoom * transmission), GunTuning.GUN_SIGHT_MS_SCOPE);
         }
     }
 
     /** Barrel length, named so a designation can say "short" (read off the real length, never chosen). */
     public enum Band {
-        SHORT(FTuning.GUN_BARREL_SHORT_M), MEDIUM(FTuning.GUN_BARREL_MEDIUM_M), LONG(FTuning.GUN_BARREL_LONG_M);
+        SHORT(GunTuning.GUN_BARREL_SHORT_M), MEDIUM(GunTuning.GUN_BARREL_MEDIUM_M), LONG(GunTuning.GUN_BARREL_LONG_M);
 
         private final float metres;
 
@@ -364,11 +364,11 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         return switch (layout.feed()) {
             case SINGLE -> java.util.OptionalInt.of(1);
             case BARRELS -> java.util.OptionalInt.of(doubled() ? 2 : 1);
-            case CYLINDER -> java.util.OptionalInt.of(FTuning.GUN_CYLINDER_ROUNDS);
+            case CYLINDER -> java.util.OptionalInt.of(GunTuning.GUN_CYLINDER_ROUNDS);
             case TUBE -> java.util.OptionalInt.of(switch (barrelBand()) {
-                case SHORT -> FTuning.GUN_TUBE_ROUNDS_SHORT;
-                case MEDIUM -> FTuning.GUN_TUBE_ROUNDS_MEDIUM;
-                case LONG -> FTuning.GUN_TUBE_ROUNDS_LONG;
+                case SHORT -> GunTuning.GUN_TUBE_ROUNDS_SHORT;
+                case MEDIUM -> GunTuning.GUN_TUBE_ROUNDS_MEDIUM;
+                case LONG -> GunTuning.GUN_TUBE_ROUNDS_LONG;
             });
             case BOX, BELT -> java.util.OptionalInt.empty();
         };
@@ -407,8 +407,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      */
     public record Load(float peakPressure, float burnRatePerM, float ignitionTu, float charge) {
         /** Gunpowder at its nominal charge: the figures a gun's spec sheet is read against. */
-        public static final Load REFERENCE = new Load(FTuning.GUN_PROPELLANT_PEAK_PU, FTuning.GUN_PROPELLANT_BURN_RATE_PER_M,
-                FTuning.GUN_PROPELLANT_IGNITION_TU, FTuning.GUN_CHARGE_NOMINAL);
+        public static final Load REFERENCE = new Load(GunTuning.GUN_PROPELLANT_PEAK_PU, GunTuning.GUN_PROPELLANT_BURN_RATE_PER_M,
+                FTuning.GUN_PROPELLANT_IGNITION_TU, GunTuning.GUN_CHARGE_NOMINAL);
     }
 
     /** What a barrel tube of this shape weighs in {@code m}: outer and inner diameter, a little over its length; 1 m3 = 1000 mB. */
@@ -435,16 +435,16 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
 
     /** A grip's friction; one never measured holds like the reference. */
     private static float gripFriction(Material grip) {
-        return grip.mechanical().friction().orElse(FTuning.GUN_KICK_REFERENCE_FRICTION);
+        return grip.mechanical().friction().orElse(GunTuning.GUN_KICK_REFERENCE_FRICTION);
     }
 
     /** The feed's own part, in mB of metal; none for any other feed. */
     private float feedMb() {
         return switch (layout.feed()) {
-            case CYLINDER -> FTuning.GUN_CYLINDER_METAL_MB;
-            case TUBE -> FTuning.GUN_TUBE_METAL_MB;
-            case BELT -> FTuning.GUN_BELT_METAL_MB;
-            case BOX -> parts.feed().isPresent() ? FTuning.GUN_BOX_METAL_MB : 0f;
+            case CYLINDER -> GunTuning.GUN_CYLINDER_METAL_MB;
+            case TUBE -> GunTuning.GUN_TUBE_METAL_MB;
+            case BELT -> GunTuning.GUN_BELT_METAL_MB;
+            case BOX -> parts.feed().isPresent() ? GunTuning.GUN_BOX_METAL_MB : 0f;
             default -> 0f;
         };
     }
@@ -458,10 +458,10 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 || !buildable(slide) || !buildable(trigger) || !gripMaterial(grip) || !receiverMaterial(receiver) || !buildable(feed)
                 || !buildable(other))
             return Optional.empty();
-        float mu = FTuning.GUN_RECEIVER_METAL_MB * receiver.density().muPerMb()
-                + FTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()
-                + FTuning.GUN_TRIGGER_METAL_MB * trigger.density().muPerMb()
-                + FTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb()
+        float mu = GunTuning.GUN_RECEIVER_METAL_MB * receiver.density().muPerMb()
+                + GunTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()
+                + GunTuning.GUN_TRIGGER_METAL_MB * trigger.density().muPerMb()
+                + GunTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb()
                 + feedMb() * feed.density().muPerMb();
         if (doubled())
             mu += tubeMu(parts.second().get().built(), other);
@@ -474,7 +474,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             mu += GunOptions.find(fitted.getKey()).map(GunOption::metalMb).orElse(0f) * fm.density().muPerMb();
         }
         return Optional.of(new Frame(mu, gripFriction(grip) * parts.hold(), eddy,
-                parts.slid() ? Float.MAX_VALUE : receiver.mechanical().yieldStrength().map(y -> y.value() * FTuning.GUN_RECEIVER_RATING_PER_ST).orElse(Float.MAX_VALUE)));
+                parts.slid() ? Float.MAX_VALUE : receiver.mechanical().yieldStrength().map(y -> y.value() * GunTuning.GUN_RECEIVER_RATING_PER_ST).orElse(Float.MAX_VALUE)));
     }
 
     /** What the fitted options do to the bake, folded: every figure the gun owns and an option reaches. */
@@ -524,7 +524,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         // A built barrel takes what will chamber in the bore it really has, and how loose or tight
         // it sits is in the figures.
         float loose = boreMmReal() - round.boreMm();
-        if (Math.abs(loose) > FTuning.GUN_BORE_FIT_MM)
+        if (Math.abs(loose) > GunTuning.GUN_BORE_FIT_MM)
             return Optional.empty();
         Material metal = materials.get(material);
         Optional<Cartridge.Slug> bullet = round.slug(materials);
@@ -547,62 +547,62 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float rating = Math.min(m.mechanical().yieldStrength().get().value() * barrel.wallMm() / (boreMmReal() / 2f), frame.receiverRating());
         // A round squeezed into too tight a bore makes more pressure; one rattling in too loose a
         // bore leaks it past (below). Precision is never a gate: a sloppy barrel is a worse gun.
-        float peak = load.peakPressure() * (1 + Math.max(0, -loose) * FTuning.GUN_BORE_SQUEEZE_PER_MM);
+        float peak = load.peakPressure() * (1 + Math.max(0, -loose) * GunTuning.GUN_BORE_SQUEEZE_PER_MM);
         // A relief vent opens short of the rating: what the chamber sees never passes it, and the
         // charge's surplus goes out of the port and not into the gun or the hand.
         Effects fx = effects();
         if (fx.reliefAt() < Float.MAX_VALUE)
             peak = Math.min(peak, rating * fx.reliefAt());
-        double leak = Math.max(FTuning.GUN_BORE_LEAK_FLOOR, 1 - Math.max(0, loose) * FTuning.GUN_BORE_LEAK_PER_MM);
+        double leak = Math.max(GunTuning.GUN_BORE_LEAK_FLOOR, 1 - Math.max(0, loose) * GunTuning.GUN_BORE_LEAK_PER_MM);
 
         // Only the part of the charge burned by the muzzle does work: a slow powder wants a long barrel.
         double burned = Math.min(1.0, load.burnRatePerM() * barrelM);
         // A chamber past its rating vents rather than delivers: the push is the pressure it held.
-        double work = Math.min(peak, rating) * FTuning.GUN_PRESSURE_FILL * area * barrelM * burned * FTuning.GUN_WORK_PER_PU_M3;
+        double work = Math.min(peak, rating) * GunTuning.GUN_PRESSURE_FILL * area * barrelM * burned * GunTuning.GUN_WORK_PER_PU_M3;
         // The powder is the energy budget: a wider or longer barrel can use more of it but never makes more than
         // the charge holds, so a big gun is paid for in powder. A soft ceiling, so bore and length still matter.
-        double budget = FTuning.GUN_WORK_PER_NOMINAL_CHARGE * FTuning.GUN_BUDGET_HEADROOM * (load.peakPressure() / FTuning.GUN_PROPELLANT_PEAK_PU) * Cartridge.caseScale(boreMmReal());
+        double budget = GunTuning.GUN_WORK_PER_NOMINAL_CHARGE * GunTuning.GUN_BUDGET_HEADROOM * (load.peakPressure() / GunTuning.GUN_PROPELLANT_PEAK_PU) * Cartridge.caseScale(boreMmReal());
         work = budget <= 0 ? 0 : work * budget / (work + budget);
         work *= leak;
         work *= 1 - fx.bleed(); // a port leaks a little of every shot
 
         // 1 m3 is 1000 mB. A bullet is its own bore's area over a length of some bores.
         double roundM = (boreMmReal() - loose) / 1000.0;
-        double bulletMb = Math.PI / 4 * roundM * roundM * (roundM * FTuning.GUN_PROJECTILE_LENGTH_PER_BORE) * 1000;
+        double bulletMb = Math.PI / 4 * roundM * roundM * (roundM * GunTuning.GUN_PROJECTILE_LENGTH_PER_BORE) * 1000;
         float bulletMu = (float) (bulletMb * projectile.density());
         float exitMs = (float) Math.sqrt(2 * work / bulletMu);
         // An eddy sleeve drags the bullet after it has left the barrel, so the recoil is the exit
         // speed's and the muzzle figures are the slowed one's: a bullet that does not couple to the
         // field (not magnetic) is dragged only a little. The energy goes into the sleeve as heat.
-        float couple = projectile.magnetic() ? 1f : FTuning.GUN_EDDY_NONMAGNETIC_COUPLING;
-        float drained = Mth.clamp(frame.eddy() * couple, 0f, FTuning.GUN_EDDY_MAX_DRAIN);
+        float couple = projectile.magnetic() ? 1f : GunTuning.GUN_EDDY_NONMAGNETIC_COUPLING;
+        float drained = Mth.clamp(frame.eddy() * couple, 0f, GunTuning.GUN_EDDY_MAX_DRAIN);
         work *= 1 - drained;
         float speedMs = exitMs * (float) Math.sqrt(1 - drained);
 
         // A brake throws the gas sideways: most of its share of the recoil is gone.
-        float gas = FTuning.GUN_GAS_IMPULSE_FRACTION * (1 - fx.gasCut());
+        float gas = GunTuning.GUN_GAS_IMPULSE_FRACTION * (1 - fx.gasCut());
         float impulse = bulletMu * exitMs * (1 + gas);
 
         // Barrel tube in its metal, the rest in theirs.
         float gunMu = tubeMu(new BarrelGeometry(boreMmReal(), boreMmReal() + 2 * barrel.wallMm(), (float) barrelM), m) + frame.mu();
 
-        int cycleMs = Math.round(FTuning.GUN_CYCLE_BASE_MS + FTuning.GUN_CYCLE_MS_PER_IMPULSE * impulse)
-                + Math.round(layout.action().manualMs() * Mth.clamp((float) Math.sqrt(gunMu / FTuning.GUN_KICK_REFERENCE_MU), FTuning.GUN_MANUAL_MASS_MIN, FTuning.GUN_MANUAL_MASS_MAX));
-        float spread = Math.max(FTuning.GUN_SPREAD_FLOOR_DEG,
-                FTuning.GUN_SPREAD_AT_MEDIUM_DEG * FTuning.GUN_BARREL_MEDIUM_M / (float) barrelM)
-                + Math.max(0, loose) * FTuning.GUN_BORE_SPREAD_DEG_PER_MM;
+        int cycleMs = Math.round(GunTuning.GUN_CYCLE_BASE_MS + GunTuning.GUN_CYCLE_MS_PER_IMPULSE * impulse)
+                + Math.round(layout.action().manualMs() * Mth.clamp((float) Math.sqrt(gunMu / GunTuning.GUN_KICK_REFERENCE_MU), GunTuning.GUN_MANUAL_MASS_MIN, GunTuning.GUN_MANUAL_MASS_MAX));
+        float spread = Math.max(GunTuning.GUN_SPREAD_FLOOR_DEG,
+                GunTuning.GUN_SPREAD_AT_MEDIUM_DEG * GunTuning.GUN_BARREL_MEDIUM_M / (float) barrelM)
+                + Math.max(0, loose) * GunTuning.GUN_BORE_SPREAD_DEG_PER_MM;
         // Kick is recoil velocity, impulse over the gun's mass, and the grip's friction is how
         // much of it the hand lets through: a heavy gun with a grippy grip kicks least.
-        float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (FTuning.GUN_KICK_REFERENCE_MU / gunMu)
-                * (FTuning.GUN_KICK_REFERENCE_FRICTION / frame.gripFriction());
+        float kick = GunTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (GunTuning.GUN_KICK_REFERENCE_MU / gunMu)
+                * (GunTuning.GUN_KICK_REFERENCE_FRICTION / frame.gripFriction());
 
         // Blast is the gas's, and a muzzle device works on it; the crack is the round's speed, which no
         // fitting sets (guns spec 13.3), so a suppressed supersonic round is still loud. Only a sleeve that
         // slows the bullet below sound quiets it, and it pays for that in muzzle energy and heat.
         float blast = fx.blast();
-        float crack = Mth.clamp((speedMs / FTuning.SOUND_MS - (1 - FTuning.GUN_CRACK_RAMP)) / (2 * FTuning.GUN_CRACK_RAMP), 0f, 1f);
-        float report = (1 - FTuning.GUN_CRACK_SHARE) * blast + FTuning.GUN_CRACK_SHARE * crack;
-        float heatFactor = fx.heat() * (1 + drained * FTuning.GUN_EDDY_HEAT);
+        float crack = Mth.clamp((speedMs / GunTuning.SOUND_MS - (1 - GunTuning.GUN_CRACK_RAMP)) / (2 * GunTuning.GUN_CRACK_RAMP), 0f, 1f);
+        float report = (1 - GunTuning.GUN_CRACK_SHARE) * blast + GunTuning.GUN_CRACK_SHARE * crack;
+        float heatFactor = fx.heat() * (1 + drained * GunTuning.GUN_EDDY_HEAT);
         float leakFactor = fx.shed();
         return Optional.of(ModularTraits.gunBaked(new GunFigures(new Pu(peak), new Pu(rating), speedMs / 20f, (float) work,
                 new Mu(bulletMu), new Mu(gunMu), impulse, cycleMs, spread, kick, report, heatFactor, leakFactor), this));

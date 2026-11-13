@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import org.joml.Vector3d;
 
 import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
@@ -10,7 +11,6 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.FigureStore;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -104,7 +104,7 @@ public class ThrusterBlockEntity extends BlockEntity implements BlockEntitySubLe
         double y = worldPosition.getY();
         if (SableCompanion.INSTANCE.getContaining(this) instanceof ServerSubLevel body)
             y = body.logicalPose().transformPosition(Vec3.atCenterOf(worldPosition)).y;
-        return AirDensityTable.oxygen(level) && AirDensityTable.at(level, y) >= FTuning.THRUSTER_MIN_AIR_DENSITY && level.getFluidState(worldPosition).isEmpty();
+        return AirDensityTable.oxygen(level) && AirDensityTable.at(level, y) >= VehicleTuning.THRUSTER_MIN_AIR_DENSITY && level.getFluidState(worldPosition).isEmpty();
     }
 
     public void tickServer() {

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.ender;
 
+import io.github.soundgoodizerfan.feedback.core.tube.TubeTuning;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -9,7 +10,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.tube.CarrierItem;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -62,13 +62,13 @@ public class EnderPortBlockEntity extends BlockEntity {
     private UUID pair;
     private ItemStack in = ItemStack.EMPTY, out = ItemStack.EMPTY;
     private boolean anchored;
-    private float allowance = FTuning.PAIR_CAP_MU_PER_MIN;
+    private float allowance = TubeTuning.PAIR_CAP_MU_PER_MIN;
     private long allowanceAt;
     private boolean unloaded;
     /** Game time until which the link counts as running, because it just carried something: running dry inside this window destabilises it. */
     private long liveUntil;
 
-    private final FluidTank tank = new FluidTank(FTuning.PAIR_TANK_MB, fs -> fs.is(TELEPORTANT)) {
+    private final FluidTank tank = new FluidTank(TubeTuning.PAIR_TANK_MB, fs -> fs.is(TELEPORTANT)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -179,7 +179,7 @@ public class EnderPortBlockEntity extends BlockEntity {
 
     private float distanceTo(EnderPortBlockEntity p) {
         if (p.level != level)
-            return FTuning.PAIR_CROSS_DIMENSION_BLOCKS;
+            return TubeTuning.PAIR_CROSS_DIMENSION_BLOCKS;
         return (float) Math.sqrt(worldPosition.distSqr(p.worldPosition));
     }
 
@@ -208,17 +208,17 @@ public class EnderPortBlockEntity extends BlockEntity {
         if (other == null || !other.out.isEmpty() || other.sealed())
             return;
         float elapsed = now - allowanceAt;
-        allowance = Math.min(FTuning.PAIR_CAP_MU_PER_MIN, allowance + FTuning.PAIR_CAP_MU_PER_MIN * elapsed / 1200f);
+        allowance = Math.min(TubeTuning.PAIR_CAP_MU_PER_MIN, allowance + TubeTuning.PAIR_CAP_MU_PER_MIN * elapsed / 1200f);
         allowanceAt = now;
         float mass = CarrierItem.stackMass(in);
-        if (mass > FTuning.PAIR_CAP_MU_PER_MIN) {
+        if (mass > TubeTuning.PAIR_CAP_MU_PER_MIN) {
             // Over the cap for ever: handed back rather than held for ever.
             dropStack(in);
             in = ItemStack.EMPTY;
             setChanged();
             return;
         }
-        int cost = (int) Math.ceil(mass * FTuning.PAIR_TELEPORTANT_MB_PER_MU * (1f + distanceTo(other) / FTuning.PAIR_DISTANCE_SCALE));
+        int cost = (int) Math.ceil(mass * TubeTuning.PAIR_TELEPORTANT_MB_PER_MU * (1f + distanceTo(other) / TubeTuning.PAIR_DISTANCE_SCALE));
         if (allowance < mass)
             return;
         if (tank.getFluidAmount() < cost) {
@@ -228,7 +228,7 @@ public class EnderPortBlockEntity extends BlockEntity {
                 destabilise();
             return;
         }
-        liveUntil = now + FTuning.PAIR_LIVE_TICKS;
+        liveUntil = now + TubeTuning.PAIR_LIVE_TICKS;
         allowance -= mass;
         tank.drain(cost, IFluidHandler.FluidAction.EXECUTE);
         other.out = in;
@@ -242,7 +242,7 @@ public class EnderPortBlockEntity extends BlockEntity {
         liveUntil = 0L;
         in = ItemStack.EMPTY;
         setChanged();
-        io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.hop(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), FTuning.PAIR_DRY_HOP_MB);
+        io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.hop(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), TubeTuning.PAIR_DRY_HOP_MB);
     }
 
     /** The id this port is bonded under, or null. */
@@ -356,7 +356,7 @@ public class EnderPortBlockEntity extends BlockEntity {
         in = tag.contains("In") ? ItemStack.parse(registries, tag.getCompound("In")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
         out = tag.contains("Out") ? ItemStack.parse(registries, tag.getCompound("Out")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
         anchored = tag.getBoolean("Anchored");
-        allowance = tag.contains("Allowance") ? tag.getFloat("Allowance") : FTuning.PAIR_CAP_MU_PER_MIN;
+        allowance = tag.contains("Allowance") ? tag.getFloat("Allowance") : TubeTuning.PAIR_CAP_MU_PER_MIN;
         allowanceAt = tag.getLong("At");
         tank.readFromNBT(registries, tag.getCompound("Tank"));
     }

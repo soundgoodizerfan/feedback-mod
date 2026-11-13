@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
@@ -41,7 +41,7 @@ public final class HazardEvents {
     /** A hot stack in either hand, checked twice a second. */
     public static void onPlayerTick(PlayerTickEvent.Post event) {
         Player player = event.getEntity();
-        if (player.level().isClientSide || player.tickCount % FTuning.CONTACT_INTERVAL_TICKS != 0)
+        if (player.level().isClientSide || player.tickCount % HazardTuning.CONTACT_INTERVAL_TICKS != 0)
             return;
         if (player.isCreative() || player.isSpectator())
             return;
@@ -61,7 +61,7 @@ public final class HazardEvents {
             float limit = held.getItem() instanceof Handled h ? Math.max(safe, h.holdsUpToTu(held, player.level())) : safe;
             if (tu.value() > limit && HotContact.burn(player, tu))
                 warn(player, "hazard.feedback.hot_hand");
-            else if (tu.value() > FTuning.CONTACT_PAIN_TU.value() && tu.value() <= limit && Protection.insulatedFrom(player, tu.value()))
+            else if (tu.value() > ThermalTuning.CONTACT_PAIN_TU.value() && tu.value() <= limit && Protection.insulatedFrom(player, tu.value()))
                 io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/heat/tongs");
         }
     }

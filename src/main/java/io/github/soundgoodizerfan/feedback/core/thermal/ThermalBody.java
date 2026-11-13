@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -54,7 +53,7 @@ public interface ThermalBody {
      * is, and {@link Heat#equilibrium} has been adding the two together all along.
      */
     default Conductance getLeak() {
-        return FTuning.VESSEL_LEAK;
+        return ThermalTuning.VESSEL_LEAK;
     }
 
     /**

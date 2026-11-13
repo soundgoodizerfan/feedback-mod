@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Grip;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
@@ -35,7 +35,7 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
  * is its own ({@link #coolingRate}): a heavy face sheds slowly.
  *
  * <h2>Heat in</h2>
- * Blocked damage is the blow's Fu; {@code FTuning.SHIELD_WORK_PER_DAMAGE} turns a point of it into
+ * Blocked damage is the blow's Fu; {@code ModularTuning.SHIELD_WORK_PER_DAMAGE} turns a point of it into
  * Work and {@code SHIELD_HEAT_FRACTION} is the share that stays in the face. Over the thermal mass
  * (baked mass x {@code SHIELD_THERMAL_MASS_PER_MU}; no material file has a specific heat, and
  * adding one was declined) that is the rise, added to the present figure, so
@@ -58,13 +58,13 @@ public final class ShieldHeat {
     }
 
     static float thermalMass(ModularFigures f) {
-        return Math.max(1f, f.get(ModularFigures.Fig.MASS) * FTuning.SHIELD_THERMAL_MASS_PER_MU);
+        return Math.max(1f, f.get(ModularFigures.Fig.MASS) * ModularTuning.SHIELD_THERMAL_MASS_PER_MU);
     }
 
     /** Tu shed per tick: a fixed leak over the thermal mass, so a heavy face cools slowly. */
     public static TuRate coolingRate(ItemStack shield) {
         ModularFigures f = ModularStacks.figures(shield);
-        return f == null ? FTuning.ITEM_COOLING_TU_PER_TICK : new TuRate(FTuning.SHIELD_COOLING_WORK_PER_TICK / thermalMass(f));
+        return f == null ? ThermalTuning.ITEM_COOLING_TU_PER_TICK : new TuRate(ModularTuning.SHIELD_COOLING_WORK_PER_TICK / thermalMass(f));
     }
 
     static void stamp(ItemStack shield, float tu, Level level) {
@@ -98,10 +98,10 @@ public final class ShieldHeat {
         if (stands.isEmpty() || stands.get() <= ambient)
             return 1f;
         float frac = (ItemHeat.get(shield, level).value() - ambient) / (stands.get() - ambient);
-        if (frac <= FTuning.SHIELD_SOFTEN_ONSET)
+        if (frac <= ModularTuning.SHIELD_SOFTEN_ONSET)
             return 1f;
-        float t = Math.min(1f, (frac - FTuning.SHIELD_SOFTEN_ONSET) / (1f - FTuning.SHIELD_SOFTEN_ONSET));
-        return 1f + (FTuning.SHIELD_SOFTEN_FLOOR - 1f) * t;
+        float t = Math.min(1f, (frac - ModularTuning.SHIELD_SOFTEN_ONSET) / (1f - ModularTuning.SHIELD_SOFTEN_ONSET));
+        return 1f + (ModularTuning.SHIELD_SOFTEN_FLOOR - 1f) * t;
     }
 
     /**
@@ -111,14 +111,14 @@ public final class ShieldHeat {
      */
     public static float handlesUpToTu(Level level, ItemStack shield) {
         ResourceLocation id = partMaterial(shield, true);
-        return id == null ? FTuning.CONTACT_PAIN_TU.value() : Grip.safeUpTo(level, id, FTuning.SHIELD_GRIP_EXPOSURE);
+        return id == null ? ThermalTuning.CONTACT_PAIN_TU.value() : Grip.safeUpTo(level, id, ModularTuning.SHIELD_GRIP_EXPOSURE);
     }
 
     /** {@code from} drawn towards {@code source} for {@code ticks}, never past it. */
     static float approach(float from, float source, float mass, int ticks) {
         if (source <= from)
             return from;
-        float k = FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() / mass;
+        float k = ThermalTuning.FIRE_CONDUCTANCE.workPerTickPerTu() / mass;
         float keep = k >= 1f ? 0f : (float) Math.pow(1f - k, ticks);
         return source + (from - source) * keep;
     }
@@ -139,13 +139,13 @@ public final class ShieldHeat {
         Level level = blocker.level();
         float mass = thermalMass(ModularStacks.figures(shield));
         float now = ItemHeat.get(shield, level).value();
-        float t = now + event.getBlockedDamage() * FTuning.SHIELD_WORK_PER_DAMAGE * FTuning.SHIELD_HEAT_FRACTION / mass;
+        float t = now + event.getBlockedDamage() * ModularTuning.SHIELD_WORK_PER_DAMAGE * ModularTuning.SHIELD_HEAT_FRACTION / mass;
         float source = ShieldSources.get().tu(event.getDamageSource());
-        t = approach(t, source, mass, FTuning.SHIELD_FIRE_TICKS);
+        t = approach(t, source, mass, ModularTuning.SHIELD_FIRE_TICKS);
         // A whole coat that would not melt in the source keeps part of the heat out of the face.
         t = now + (t - now) * (1f - ModularStacks.coatShield(shield, source));
         if (stands(level, shield).map(s -> now > s).orElse(false))
-            event.setShieldDamage(event.shieldDamage() * FTuning.SHIELD_HOT_WEAR_MULT);
+            event.setShieldDamage(event.shieldDamage() * ModularTuning.SHIELD_HOT_WEAR_MULT);
         stamp(shield, t, level);
     }
 
@@ -165,7 +165,7 @@ public final class ShieldHeat {
             return;
         Level level = entity.level();
         float now = ItemHeat.get(shield, level).value();
-        float t = approach(now, source, thermalMass(ModularStacks.figures(shield)), FTuning.SHIELD_FIRE_TICKS);
+        float t = approach(now, source, thermalMass(ModularStacks.figures(shield)), ModularTuning.SHIELD_FIRE_TICKS);
         stamp(shield, now + (t - now) * (1f - ModularStacks.coatShield(shield, source)), level);
     }
 }

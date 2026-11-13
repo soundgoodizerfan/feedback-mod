@@ -3,6 +3,8 @@
 package io.github.soundgoodizerfan.feedback.machine.dynamo;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
@@ -64,11 +66,11 @@ import org.jetbrains.annotations.Nullable;
  * <h2>Heat and wear</h2>
  * The core's loss (a share of the power through it) and the winding's (amps squared times the conductor's drop over its
  * length) both go into the body as heat; the housing sheds it to air at its conductivity over the frame's wall area, and a
- * jacket with water in it, while the body is above ambient, sheds at {@link FTuning#JACKET_SHED_MULTIPLE} times that and
- * spends a millibucket every {@link FTuning#JACKET_TICKS_PER_MB} ticks. A draw over the rated current (a generator) or volts
+ * jacket with water in it, while the body is above ambient, sheds at {@link ElectricMachineTuning#JACKET_SHED_MULTIPLE} times that and
+ * spends a millibucket every {@link ElectricMachineTuning#JACKET_TICKS_PER_MB} ticks. A draw over the rated current (a generator) or volts
  * past the rated band (a motor) are force that cannot go into the work, so they go into the body as more heat and as lost
  * condition, and so does running past the housing's service temperature. Condition stops at
- * {@link FTuning#MACHINE_CONDITION_FLOOR}; it never refuses a line and is never destroyed.
+ * {@link ElectricMachineTuning#MACHINE_CONDITION_FLOOR}; it never refuses a line and is never destroyed.
  *
  * <h2>Why it is not a {@link RotationNode}</h2>
  * It is an {@link ElectricNode}, and a block entity can extend only one of the two. It couples to the shaft run on its facing
@@ -94,7 +96,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
     // State.
     private float condition = 1f;
     private float maxCondition = 1f;
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private int water;
     private int coolTicks;
     private boolean cooling;
@@ -187,17 +189,17 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
         float power = volts * amps;
         float excess = generator() ? (ratedAmps > 0f ? Math.max(0f, amps / ratedAmps - 1f) : 0f) : ElectricRules.overVoltage(volts, band);
         if (power > 0f)
-            Heat.warm(this, power * coreLoss + amps * amps * windingDrop + FTuning.MACHINE_HEAT_PER_EXCESS * power * excess);
-        float lost = FTuning.MACHINE_WEAR_PER_EXCESS * excess;
+            Heat.warm(this, power * coreLoss + amps * amps * windingDrop + ElectricMachineTuning.MACHINE_HEAT_PER_EXCESS * power * excess);
+        float lost = ElectricMachineTuning.MACHINE_WEAR_PER_EXCESS * excess;
         if (temperature > serviceTu)
-            lost += (temperature - serviceTu) * FTuning.MACHINE_HEAT_WEAR_PER_TU;
+            lost += (temperature - serviceTu) * ElectricMachineTuning.MACHINE_HEAT_WEAR_PER_TU;
         if (lost > 0f) {
-            condition = Math.max(FTuning.MACHINE_CONDITION_FLOOR, condition - lost);
+            condition = Math.max(ElectricMachineTuning.MACHINE_CONDITION_FLOOR, condition - lost);
             setChanged();
         }
         Tu ambient = AmbientTable.at(level);
         cooling = jacketed && water > 0 && temperature > ambient.value();
-        if (cooling && ++coolTicks >= FTuning.JACKET_TICKS_PER_MB) {
+        if (cooling && ++coolTicks >= ElectricMachineTuning.JACKET_TICKS_PER_MB) {
             coolTicks = 0;
             water--;
             setChanged();
@@ -288,7 +290,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
 
     @Override
     public Conductance getLeak() {
-        return new Conductance(leak * (cooling ? FTuning.JACKET_SHED_MULTIPLE : 1f));
+        return new Conductance(leak * (cooling ? ElectricMachineTuning.JACKET_SHED_MULTIPLE : 1f));
     }
 
     // --- the jacket -------------------------------------------------------------------------------
@@ -307,7 +309,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
 
         @Override
         public int getTankCapacity(int tank) {
-            return jacketed ? FTuning.JACKET_TANK_MB : 0;
+            return jacketed ? ElectricMachineTuning.JACKET_TANK_MB : 0;
         }
 
         @Override
@@ -319,7 +321,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
         public int fill(FluidStack resource, FluidAction action) {
             if (!jacketed || !resource.is(FluidTags.WATER))
                 return 0;
-            int take = Math.min(resource.getAmount(), FTuning.JACKET_TANK_MB - water);
+            int take = Math.min(resource.getAmount(), ElectricMachineTuning.JACKET_TANK_MB - water);
             if (take > 0 && action.execute()) {
                 water += take;
                 setChanged();
@@ -378,7 +380,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
         jacketed = tag.getBoolean("Jacketed");
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         maxCondition = tag.contains("MaxCondition") ? tag.getFloat("MaxCondition") : 1f;
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         water = Math.max(0, tag.getInt("Water"));
         coolTicks = tag.getInt("CoolTicks");
     }

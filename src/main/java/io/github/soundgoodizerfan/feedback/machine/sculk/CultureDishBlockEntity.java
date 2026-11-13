@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.sculk;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.xp.Culture;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -66,7 +66,7 @@ public class CultureDishBlockEntity extends SculkNodeBlockEntity {
 
     /** What a harvest does to a ripe culture; returns whether a spare seed budded. */
     public boolean harvest() {
-        boolean bud = culture.canBud() && level != null && level.random.nextFloat() < FTuning.CULTURE_SEED_CHANCE;
+        boolean bud = culture.canBud() && level != null && level.random.nextFloat() < ElectricMachineTuning.CULTURE_SEED_CHANCE;
         culture.harvested();
         reshape();
         changed();
@@ -134,7 +134,7 @@ public class CultureDishBlockEntity extends SculkNodeBlockEntity {
         if (level == null || !culture.alive() || (level.getGameTime() + worldPosition.hashCode()) % STEP != 0)
             return;
         pullAir();
-        float need = FTuning.CULTURE_AIR_MB_PER_TICK * STEP;
+        float need = ElectricMachineTuning.CULTURE_AIR_MB_PER_TICK * STEP;
         boolean breathing = air >= need;
         if (breathing)
             air -= need;
@@ -196,7 +196,7 @@ public class CultureDishBlockEntity extends SculkNodeBlockEntity {
      * buffer holds mB of pure oxygen, so a draw of air fills a fifth as much as the same draw of oxygen.
      */
     private void pullAir() {
-        float space = FTuning.CULTURE_AIR_BUFFER_MB - air;
+        float space = ElectricMachineTuning.CULTURE_AIR_BUFFER_MB - air;
         if (space <= 0)
             return;
         for (Direction face : Direction.values()) {

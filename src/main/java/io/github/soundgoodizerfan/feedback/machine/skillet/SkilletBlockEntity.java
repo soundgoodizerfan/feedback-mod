@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.skillet;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -87,7 +88,7 @@ public class SkilletBlockEntity extends BlockEntity {
     /** The pan's swing per tick: the reference rate scaled up by how well its material conducts and down by how dense it is. */
     public float relax() {
         if (relax == 0f)
-            relax = io.github.soundgoodizerfan.feedback.process.CookwareSwing.relax(material, FTuning.SKILLET_PAN_RELAX);
+            relax = io.github.soundgoodizerfan.feedback.process.CookwareSwing.relax(material, VesselTuning.SKILLET_PAN_RELAX);
         return relax;
     }
 

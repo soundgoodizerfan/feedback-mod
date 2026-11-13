@@ -13,7 +13,6 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 
@@ -38,7 +37,7 @@ import net.neoforged.neoforge.event.level.block.CropGrowEvent;
  * band it still grows, at {@code floor}). Bonemeal does not fire the event and is untouched.
  *
  * <p>The weather is the dimension's ambient ({@link AmbientTable}) shifted by the biome's own temperature, and warmed by a
- * heat source under the soil (a hearth under a planter): the soil passes on {@link FTuning#CROP_HEAT_SHARE} of the
+ * heat source under the soil (a hearth under a planter): the soil passes on {@link ProcessTuning#CROP_HEAT_SHARE} of the
  * fire's excess over the room. Light is a curve, not a step: a crop's growth rises from {@code floor} in the dark to full
  * at its {@code light}, by the brightness the place has right now (so sky light follows the time of day and the weather).
  */
@@ -92,10 +91,10 @@ public final class CropClimate extends SimpleJsonResourceReloadListener {
     /** The weather a plant at {@code pos} feels, Tu. */
     public static float weather(Level level, BlockPos pos) {
         float room = AmbientTable.at(level).value();
-        float outside = room + (level.getBiome(pos).value().getBaseTemperature() - 0.8f) * FTuning.CROP_TU_PER_CLIMATE;
+        float outside = room + (level.getBiome(pos).value().getBaseTemperature() - 0.8f) * ProcessTuning.CROP_TU_PER_CLIMATE;
         // The soil is the block under the crop; what warms it sits under that.
         float fire = HeatSource.at(level, pos.below()).value();
-        return fire > room ? outside + (fire - room) * FTuning.CROP_HEAT_SHARE : outside;
+        return fire > room ? outside + (fire - room) * ProcessTuning.CROP_HEAT_SHARE : outside;
     }
 
     /** 0..1: how often a random tick of this crop at {@code pos} may grow it; 1 for a block no line names. */

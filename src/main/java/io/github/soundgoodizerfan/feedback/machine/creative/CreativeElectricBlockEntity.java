@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.creative;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class CreativeElectricBlockEntity extends ElectricNode implements CreativeSource {
 
     private boolean on = true;
-    private float volts = FTuning.ELECTRIC_LV_VOLTS, amps = 4f;
+    private float volts = ElectricTuning.ELECTRIC_LV_VOLTS, amps = 4f;
 
     public CreativeElectricBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CREATIVE_ELECTRIC.get(), pos, state);
@@ -51,7 +51,7 @@ public class CreativeElectricBlockEntity extends ElectricNode implements Creativ
     @Override
     public List<Param> params() {
         return List.of(
-                new Param("volts", volts, FTuning.ELECTRIC_LV_VOLTS, 0f, 1000f),
+                new Param("volts", volts, ElectricTuning.ELECTRIC_LV_VOLTS, 0f, 1000f),
                 new Param("amps", amps, 1f, 0f, 10000f));
     }
 

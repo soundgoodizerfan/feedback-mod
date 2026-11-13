@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.fitting.sensor;
 
+import io.github.soundgoodizerfan.feedback.fitting.FittingTuning;
 import java.util.HashSet;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
@@ -63,7 +63,7 @@ public class TemperatureSensorFitting implements SensorFitting {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.TEMPERATURE_SENSOR_RESOLUTION_TU.value();
+        return FittingTuning.TEMPERATURE_SENSOR_RESOLUTION_TU.value();
     }
 
     @Override

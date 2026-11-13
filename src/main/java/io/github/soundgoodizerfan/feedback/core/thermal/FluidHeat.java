@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -23,7 +22,7 @@ public final class FluidHeat {
 
     /** The stamp on {@code stack}, or the default ambient if it has none. */
     public static Tu of(FluidStack stack) {
-        return new Tu(stack.getOrDefault(FDataComponents.FLUID_TEMPERATURE.get(), FTuning.AMBIENT_TU.value()));
+        return new Tu(stack.getOrDefault(FDataComponents.FLUID_TEMPERATURE.get(), ThermalTuning.AMBIENT_TU.value()));
     }
 
     /** {@code stack} stamped at {@code tu} (a copy; rounded to a whole Tu). */

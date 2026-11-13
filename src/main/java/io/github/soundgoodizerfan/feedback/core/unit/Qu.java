@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.unit;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+
 /**
  * Amount of substance. One Qu is the amount of metal in a nugget, one ninth of an ingot (user
  * ruling 2026-10-28), so an ingot is 9 Qu and a block 81; molten, 1 Qu of metal is 16 mB.

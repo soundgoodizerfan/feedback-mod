@@ -22,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.Haste;
 import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
 import io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Governor;
@@ -92,7 +91,7 @@ public final class ElectricMechanism implements GunMechanism {
                     return null;
             }
             case BURST_BANK -> {
-                if (ModularElectricGun.pips(gun, now, FTuning.GUN_BURST_ROUNDS) < 1)
+                if (ModularElectricGun.pips(gun, now, ModularTuning.GUN_BURST_ROUNDS) < 1)
                     return null;
             }
             case CORE_BREECH -> {
@@ -179,7 +178,7 @@ public final class ElectricMechanism implements GunMechanism {
         switch (spec.seat()) {
             case CYLINDER -> ModularElectricGun.setChambers(gun, ModularElectricGun.chambers(gun, now, spec, volts, cells) - 1f, now);
             case CAPACITOR_BANK -> ModularElectricGun.spendPip(gun, now, 1, spec.bankRechargeTicks(cells));
-            case BURST_BANK -> ModularElectricGun.spendPip(gun, now, FTuning.GUN_BURST_ROUNDS, spec.bankRechargeTicks(cells));
+            case BURST_BANK -> ModularElectricGun.spendPip(gun, now, ModularTuning.GUN_BURST_ROUNDS, spec.bankRechargeTicks(cells));
             case RECOIL_DYNAMO -> BatteryStack.charge(p.drawn(), p.joules() * ModularTuning.EGUN_DYNAMO_RETURN
                     / (volts * ModularTuning.EGUN_J_PER_VAMPTICK), volts);
             default -> {

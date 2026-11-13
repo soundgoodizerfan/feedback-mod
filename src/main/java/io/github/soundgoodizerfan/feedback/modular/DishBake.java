@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.DishFigures;
@@ -98,7 +99,7 @@ public final class DishBake {
     /** The state of a food that nothing has happened to: its material's own, cooked through if the item is the cooked form. */
     public static FoodState fresh(Material.Food food, String form) {
         boolean cooked = form.equals("cooked");
-        return new FoodState(cooked ? 1f : 0f, food.moisture(), cooked ? 0f : food.pathogen(), food.toxin(), 0f, 0f, 0L, FTuning.AMBIENT_TU.value(), 0f, 0f);
+        return new FoodState(cooked ? 1f : 0f, food.moisture(), cooked ? 0f : food.pathogen(), food.toxin(), 0f, 0f, 0L, ThermalTuning.AMBIENT_TU.value(), 0f, 0f);
     }
 
     /** A food part's cut (level, grade) and pour off its state; absent state is whole, and a finish nobody poured is the automation floor. */
@@ -137,7 +138,7 @@ public final class DishBake {
             float t = k * (m[hi] - m[lo]) / 2f;
             out[lo] += t;
             out[hi] -= t;
-            if (m[lo] < FTuning.DISH_DRY_MOISTURE && m[hi] > FTuning.DISH_SOGGY_MOISTURE)
+            if (m[lo] < ModularTuning.DISH_DRY_MOISTURE && m[hi] > ModularTuning.DISH_SOGGY_MOISTURE)
                 soaked[lo] = true;
         }
         return out;
@@ -159,7 +160,7 @@ public final class DishBake {
             if (m == null)
                 continue;
             if (m.traits().contains(Material.Trait.BROTH))
-                water[foods] = FTuning.SERVING_MOISTURE;
+                water[foods] = ModularTuning.SERVING_MOISTURE;
             else if (m.food().isPresent())
                 water[foods] = stateOf(p, m.food().get()).moisture();
             else
@@ -167,7 +168,7 @@ public final class DishBake {
             slot.put(p, foods++);
         }
         boolean[] soaked = new boolean[foods];
-        float[] migrated = migrate(water, foods, soaked, FTuning.MIGRATION * DishFigures.sealScale(seal));
+        float[] migrated = migrate(water, foods, soaked, ModularTuning.MIGRATION * DishFigures.sealScale(seal));
         float fill = 0, wetMoisture = -1, wetHunger = 0, wetSaturation = 0;
         float hunger = 0, saturation = 0, pathogen = 0, toxinMass = 0, charred = 0, fatMass = 0, fibreMass = 0, volume = 0;
         int foodParts = 0;
@@ -185,8 +186,8 @@ public final class DishBake {
                 float v = FTuning.DISH_PART_MB;
                 hunger += p.state(HUNGER, 0f);
                 saturation += p.state(SATURATION, 0f);
-                if (FTuning.SERVING_MOISTURE > wetMoisture) {
-                    wetMoisture = FTuning.SERVING_MOISTURE;
+                if (ModularTuning.SERVING_MOISTURE > wetMoisture) {
+                    wetMoisture = ModularTuning.SERVING_MOISTURE;
                     wetHunger = p.state(HUNGER, 0f);
                     wetSaturation = p.state(SATURATION, 0f);
                 }
@@ -199,7 +200,7 @@ public final class DishBake {
                     if (key.startsWith(COMPOUND))
                         compoundMass.merge(key.substring(COMPOUND.length()), strength * v, Float::sum);
                 });
-                moistureSum += FTuning.SERVING_MOISTURE * v;
+                moistureSum += ModularTuning.SERVING_MOISTURE * v;
                 volume += v;
                 continue;
             }
@@ -223,7 +224,7 @@ public final class DishBake {
             foodParts++;
             boolean ragged = cutLevel > 0 && Math.round(p.state(EVENNESS, 0f)) == FoodCut.RAGGED;
             // Part.role is the role's letter; the finish is the type's after role.
-            float pour = p.role().equals(type.afterRole()) ? p.state(POUR, FTuning.POUR_AUTOMATION) : 1f;
+            float pour = p.role().equals(type.afterRole()) ? p.state(POUR, ModularTuning.POUR_AUTOMATION) : 1f;
             // The same raw-to-done interpolation the pot makes, then the ladder's scale and what rot has taken.
             FoodProperties held = eaten(m, p.form()).orElse(null);
             FoodProperties done = eaten(m, "cooked").orElse(held);
@@ -238,7 +239,7 @@ public final class DishBake {
                 case DRIED -> soak ? 1f : FTuning.FOOD_DRIED_SCALE;
                 case CHARRED -> FTuning.FOOD_CHARRED_SCALE;
                 default -> 1f;
-            } * (soak ? FTuning.SOAK_SCALE : 1f) * kneaded(p, m);
+            } * (soak ? ModularTuning.SOAK_SCALE : 1f) * kneaded(p, m);
             float h = (held.nutrition() + (done.nutrition() - held.nutrition()) * s.cook()) * scale;
             float sat = (held.saturation() + (done.saturation() - held.saturation()) * s.cook()) * scale;
             hunger += h;
@@ -262,7 +263,7 @@ public final class DishBake {
             toxinMass += s.toxin() * v;
             fatMass += food.fat() * v;
             // Small pieces give up what is in them sooner: less fibre holding it back.
-            fibreMass += food.fibre() * Math.max(0f, 1f - FTuning.CUT_FIBRE_LOSS_PER_LEVEL * cutLevel) * v;
+            fibreMass += food.fibre() * Math.max(0f, 1f - ModularTuning.CUT_FIBRE_LOSS_PER_LEVEL * cutLevel) * v;
             food.actives().forEach((name, strength) -> compoundMass.merge(name, strength * pour * v, Float::sum));
             volume += v;
             if (p != container)
@@ -271,7 +272,7 @@ public final class DishBake {
         if (volume <= 0)
             return Optional.empty();
         // A bowl cannot hold a feast: the cap falls on hunger and saturation together, so a small bowl is a small meal.
-        float cap = litres * FTuning.DISH_HUNGER_PER_LITRE;
+        float cap = litres * ModularTuning.DISH_HUNGER_PER_LITRE;
         if (hunger > cap) {
             wetHunger *= cap / hunger;
             wetSaturation *= cap / hunger;
@@ -285,7 +286,7 @@ public final class DishBake {
         float pathogenTol = Cooking.tolerance(salt, compounds, "pathogen");
         float toxinTol = Cooking.tolerance(salt, compounds, "toxin");
         // A dish is served: cooked through, unstamped until first read (the lazy clock treats that as now). One that bakes is as raw as its rawest part.
-        FoodState state = new FoodState(type.bakes() ? rawest : 1f, moistureSum / volume, pathogen, toxinMass / volume, charred, rot, 0L, FTuning.AMBIENT_TU.value(), smokeSum / volume, salt);
+        FoodState state = new FoodState(type.bakes() ? rawest : 1f, moistureSum / volume, pathogen, toxinMass / volume, charred, rot, 0L, ThermalTuning.AMBIENT_TU.value(), smokeSum / volume, salt);
         return Optional.of(new Dish(hunger, saturation, pathogen / pathogenTol, toxinMass / volume / toxinTol, charred, fatMass / volume, fibreMass / volume, litres, compounds, state,
                 Math.max(0f, fill - litres * 1000f), wetHunger, wetSaturation, seal, foodParts == 0 ? 0f : cutSum / foodParts));
     }
@@ -299,7 +300,7 @@ public final class DishBake {
         DishFigures f = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DISH_FIGURES.get());
         if (f == null || !f.spilling())
             return;
-        float lost = Math.min(f.room(), f.spilled() + FTuning.SPILL_SHARE * f.room() * DishFigures.sealScale(f.seal()));
+        float lost = Math.min(f.room(), f.spilled() + ModularTuning.SPILL_SHARE * f.room() * DishFigures.sealScale(f.seal()));
         if (lost <= f.spilled())
             return;
         stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DISH_FIGURES.get(),

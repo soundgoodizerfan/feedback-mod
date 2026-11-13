@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
@@ -104,7 +104,7 @@ public final class ItemInfoHud {
         List<Component> list = new ArrayList<>();
         if (stack.has(FDataComponents.TEMPERATURE.get()) && Readout.instrumented(Quantity.TEMPERATURE)) {
             Tu tu = ItemHeat.get(stack, player.level());
-            if (tu.value() > FTuning.WARM_TU.value())
+            if (tu.value() > ThermalTuning.WARM_TU.value())
                 list.add(Readout.temperatureReading(tu));
         }
         // Each helper below returns null when no carried instrument covers its quantity.

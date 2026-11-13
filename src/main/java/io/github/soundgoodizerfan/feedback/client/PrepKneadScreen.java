@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.Kneading;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
@@ -72,8 +72,8 @@ public class PrepKneadScreen extends Screen {
     private final Kneading run;
     private final int rgb;
     private final float stick, follow, spring, damp;
-    /** One press sample per {@link FTuning#KNEAD_STEP_TICKS} ticks, the very ints the server is sent. */
-    private final int[] samples = new int[FTuning.KNEAD_MAX_SAMPLES];
+    /** One press sample per {@link ModularTuning#KNEAD_STEP_TICKS} ticks, the very ints the server is sent. */
+    private final int[] samples = new int[ModularTuning.KNEAD_MAX_SAMPLES];
     private int count, ticks, flourish, judge, phase, mouseX, mouseY, px, py, cx, cy, squeakGap, grade, wasTearing;
     private float depth, squash, squashV, partial;
     private boolean pressing, sent, tense;
@@ -198,11 +198,11 @@ public class PrepKneadScreen extends Screen {
             float ratio = run.tension() / run.tearAt();
             if (ratio > 0.6f)
                 tense = true;
-            else if (tense && run.tension() <= FTuning.KNEAD_RELAXED) {
+            else if (tense && run.tension() <= ModularTuning.KNEAD_RELAXED) {
                 tense = false;
                 GuiSkin.play(SoundEvents.AMETHYST_BLOCK_CHIME, 0.7f);
             }
-            done.active = count >= FTuning.KNEAD_MIN_SAMPLES;
+            done.active = count >= ModularTuning.KNEAD_MIN_SAMPLES;
             if (count >= samples.length)
                 lock();
         }
@@ -218,7 +218,7 @@ public class PrepKneadScreen extends Screen {
      * while the music of how it went plays; then the cloth lifts (or a click or Esc skips to it).
      */
     private void lock() {
-        if (sent || phase != PLAY || count < FTuning.KNEAD_MIN_SAMPLES)
+        if (sent || phase != PLAY || count < ModularTuning.KNEAD_MIN_SAMPLES)
             return;
         sent = true;
         pressing = false;
@@ -368,7 +368,7 @@ public class PrepKneadScreen extends Screen {
             g.fill(cx + sx + Math.round(CRUMBS[i][0] * r), cy + Math.round(CRUMBS[i][1] * h), cx + sx + Math.round(CRUMBS[i][0] * r) + 2,
                     cy + Math.round(CRUMBS[i][1] * h) + 1, 0xC0000000 | FLOUR);
         // Cracks: fine ones as it nears its limit, more as it is overworked.
-        int cracks = run.over() > 0f ? Math.min(CRACKS.length, 2 + (int) (run.over() / FTuning.KNEAD_TOUGH_OVER * 3f)) : tear > 0.8f ? 2 : 0;
+        int cracks = run.over() > 0f ? Math.min(CRACKS.length, 2 + (int) (run.over() / ModularTuning.KNEAD_TOUGH_OVER * 3f)) : tear > 0.8f ? 2 : 0;
         for (int i = 0; i < cracks; i++) {
             float[] c = CRACKS[i];
             int shade2 = i < 2 && run.over() <= 0f ? 0x80300A00 : 0xFF300A00;

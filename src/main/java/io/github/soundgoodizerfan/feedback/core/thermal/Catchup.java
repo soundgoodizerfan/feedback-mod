@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +20,7 @@ import net.minecraft.world.level.Level;
  *
  * <h2>How it works</h2>
  * A block records the game time it was saved at. On its first tick after a load it asks how long
- * it was away. If that was long enough to matter ({@link FTuning#CATCHUP_MIN_TICKS}) it is
+ * it was away. If that was long enough to matter ({@link ThermalTuning#CATCHUP_MIN_TICKS}) it is
  * advanced across the whole gap at once, in closed form: {@link Heat#relax} is the same
  * difference-driven law {@link Heat#tick} applies one tick at a time, solved for any number of
  * ticks, so a gap of a million ticks costs the same as a gap of twenty. Fuel burns for as much of
@@ -53,7 +52,7 @@ public final class Catchup {
 
     /**
      * How many ticks this block was away, once: asking again returns {@code 0}. {@code 0} too
-     * when it was not saved before or was away less than {@link FTuning#CATCHUP_MIN_TICKS}.
+     * when it was not saved before or was away less than {@link ThermalTuning#CATCHUP_MIN_TICKS}.
      */
     public long take(Level level) {
         long saved = savedAt;
@@ -61,7 +60,7 @@ public final class Catchup {
         if (saved < 0)
             return 0L;
         long gap = level.getGameTime() - saved;
-        return gap >= FTuning.CATCHUP_MIN_TICKS ? gap : 0L;
+        return gap >= ThermalTuning.CATCHUP_MIN_TICKS ? gap : 0L;
     }
 
     /**

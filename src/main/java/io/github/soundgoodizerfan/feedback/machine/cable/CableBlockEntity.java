@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cable;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
@@ -62,7 +64,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * <h2>Three stages, never a surprise</h2>
  * <ol>
- *   <li>The insulation layer burns off above {@link FTuning#WIRE_INSULATION_LIMIT_TU}, or when the
+ *   <li>The insulation layer burns off above {@link ElectricMachineTuning#WIRE_INSULATION_LIMIT_TU}, or when the
  *       wire sees a voltage above the band the insulation was made for. The conductor is
  *       untouched and still carries; it now shocks (see {@code CableBlock}) and arcs to a bare
  *       wire one air block away.</li>
@@ -81,7 +83,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     @Nullable
     private ResourceLocation material;
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float condition = 1f;
     /** The band its insulation holds off; null once burnt off, or if it never had any (a bare cable). */
     @Nullable
@@ -124,7 +126,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         // Absent means unmeasured, never zero: an unmeasured material is a wire
         // that carries nothing, which is a pack error that shows on the first current.
         float area = gauge().area();
-        baseRating = material.ampacity().orElse(0f) * FTuning.WIRE_AMPS_PER_AMPACITY * area;
+        baseRating = material.ampacity().orElse(0f) * ElectricMachineTuning.WIRE_AMPS_PER_AMPACITY * area;
         baseDrop = material.electrical().drop().orElse(0f) / area;
         quenchDrop = material.electrical().quenchDrop().map(d -> d / area).orElse(-1f);
         material.thermal().serviceTemperature().ifPresent(tu -> serviceTu = tu.value());
@@ -224,8 +226,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     public float touchVolts() {
         if (isFence())
             // A fence is bare by design and live whenever it holds a potential, load or none.
-            return getVolts() > 0f ? Math.max(getVolts(), FTuning.ELECTRIC_LV_VOLTS) : 0f;
-        return isShocking() ? Math.max(getVolts(), FTuning.ELECTRIC_LV_VOLTS) : 0f;
+            return getVolts() > 0f ? Math.max(getVolts(), ElectricTuning.ELECTRIC_LV_VOLTS) : 0f;
+        return isShocking() ? Math.max(getVolts(), ElectricTuning.ELECTRIC_LV_VOLTS) : 0f;
     }
 
     private boolean isFence() {
@@ -263,7 +265,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         if (insulation != null && ElectricRules.bandOf(volts).compareTo(insulation) > 0)
             burnOffInsulation();
         if (bare() && amps > 0f && level instanceof ServerLevel server
-                && server.getGameTime() % FTuning.ARC_SPARK_INTERVAL_TICKS == 0)
+                && server.getGameTime() % ElectricMachineTuning.ARC_SPARK_INTERVAL_TICKS == 0)
             sparkAcrossGaps(server);
     }
 
@@ -305,21 +307,21 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
             // A superconductor carries to its critical current with no drop; past it, it goes resistive and heats on what it still carries.
             if (!quenched && over > 0f)
                 setQuenched(true);
-            else if (quenched && over <= 0f && temperature <= ambient.value() + FTuning.WIRE_QUENCH_RECOVER_MARGIN_TU)
+            else if (quenched && over <= 0f && temperature <= ambient.value() + ElectricMachineTuning.WIRE_QUENCH_RECOVER_MARGIN_TU)
                 setQuenched(false);
             if (quenched)
-                Heat.warm(this, FTuning.WIRE_QUENCH_WORK_PER_AMP * amps);
+                Heat.warm(this, ElectricMachineTuning.WIRE_QUENCH_WORK_PER_AMP * amps);
         }
         if (over > 0f)
-            Heat.warm(this, FTuning.WIRE_OVERLOAD_WORK_PER_AMP * over);
+            Heat.warm(this, ElectricMachineTuning.WIRE_OVERLOAD_WORK_PER_AMP * over);
         Heat.tick(this, ambient, ambient, false);
 
-        if (insulation != null && temperature > FTuning.WIRE_INSULATION_LIMIT_TU.value())
+        if (insulation != null && temperature > ElectricMachineTuning.WIRE_INSULATION_LIMIT_TU.value())
             burnOffInsulation();
 
         figures();
         if (temperature > serviceTu) {
-            condition -= FTuning.WIRE_DEGRADE_PER_TICK * (temperature - serviceTu) / serviceTu;
+            condition -= ElectricMachineTuning.WIRE_DEGRADE_PER_TICK * (temperature - serviceTu) / serviceTu;
             setChanged();
             if (condition <= 0f)
                 burnOut();
@@ -368,12 +370,12 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.WIRE_MASS;
+        return ElectricMachineTuning.WIRE_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.WIRE_LEAK;
+        return ElectricMachineTuning.WIRE_LEAK;
     }
 
     // --- fitting ------------------------------------------------------------------------------

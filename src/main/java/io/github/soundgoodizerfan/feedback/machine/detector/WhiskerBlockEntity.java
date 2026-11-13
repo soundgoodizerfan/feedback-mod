@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.detector;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.process.Circuit;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -17,10 +18,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A wire probing a crystal for a rectifying spot. The crystal has {@link FTuning#WHISKER_SPOTS}
+ * A wire probing a crystal for a rectifying spot. The crystal has {@link ElectricMachineTuning#WHISKER_SPOTS}
  * spots; each answers sparks with a sensitivity of the crystal's own {@code electrical.rectifying}
  * times a random share fixed when it was seated. The whisker rests on one spot. A spark inside
- * {@code range x sensitivity} closes the line for {@link FTuning#WHISKER_HOLD_TICKS} ticks and then
+ * {@code range x sensitivity} closes the line for {@link ElectricMachineTuning#WHISKER_HOLD_TICKS} ticks and then
  * it opens again by itself: a momentary detector, where the coherer latches.
  *
  * <h2>The hunt</h2>
@@ -30,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * id: any material with {@code rectifying} works.
  *
  * <h2>Overrun</h2>
- * Current through the closed contact past {@link FTuning#WHISKER_FUSE_AMPS} fuses the spot the
+ * Current through the closed contact past {@link ElectricMachineTuning#WHISKER_FUSE_AMPS} fuses the spot the
  * whisker rests on: it hears nothing from then on, and the line opens. The other spots are
  * untouched; re-seating the crystal draws fresh ones. Wear only from that misuse.
  *
@@ -89,16 +90,16 @@ public class WhiskerBlockEntity extends SparkDetectorBlockEntity implements io.g
 
     /** The spread of the hunt band: the base, times the stage's noise if one is fitted. */
     public float bandSpread() {
-        return FTuning.WHISKER_BAND_SPREAD * (stage().live() ? stage().noise() : 1f);
+        return ElectricMachineTuning.WHISKER_BAND_SPREAD * (stage().live() ? stage().noise() : 1f);
     }
 
     private float reach() {
-        return 1f + (stage().live() ? FTuning.WHISKER_STAGE_GAIN * stage().elements() : 0f);
+        return 1f + (stage().live() ? ElectricMachineTuning.WHISKER_STAGE_GAIN * stage().elements() : 0f);
     }
 
     private int holdTicks() {
-        return stage().live() ? Math.max(2, Math.round(FTuning.WHISKER_HOLD_TICKS * (1f - FTuning.WHISKER_STAGE_SNAP * stage().speed())))
-                : FTuning.WHISKER_HOLD_TICKS;
+        return stage().live() ? Math.max(2, Math.round(ElectricMachineTuning.WHISKER_HOLD_TICKS * (1f - ElectricMachineTuning.WHISKER_STAGE_SNAP * stage().speed())))
+                : ElectricMachineTuning.WHISKER_HOLD_TICKS;
     }
 
     public boolean hasCrystal() {
@@ -123,7 +124,7 @@ public class WhiskerBlockEntity extends SparkDetectorBlockEntity implements io.g
     }
 
     public int step() {
-        spot = (spot + 1) % FTuning.WHISKER_SPOTS;
+        spot = (spot + 1) % ElectricMachineTuning.WHISKER_SPOTS;
         setChanged();
         return spot;
     }
@@ -162,7 +163,7 @@ public class WhiskerBlockEntity extends SparkDetectorBlockEntity implements io.g
     @Override
     protected void hear(double distance) {
         float s = sensitivity();
-        if (s < FTuning.WHISKER_MIN_SENSITIVITY || distance > FTuning.SPARK_RANGE_BLOCKS * s * reach())
+        if (s < ElectricMachineTuning.WHISKER_MIN_SENSITIVITY || distance > ElectricTuning.SPARK_RANGE_BLOCKS * s * reach())
             return;
         boolean was = hold > 0;
         hold = holdTicks();
@@ -190,13 +191,13 @@ public class WhiskerBlockEntity extends SparkDetectorBlockEntity implements io.g
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        if (hold > 0 && amps > FTuning.WHISKER_FUSE_AMPS) {
+        if (hold > 0 && amps > ElectricMachineTuning.WHISKER_FUSE_AMPS) {
             fused |= 1 << spot;
             setChanged();
             setClosed(false);
         }
         Circuit c = stage();
-        if (c.live() && hold > 0 && amps > c.ratingAmps() && level.random.nextFloat() < FTuning.CIRCUIT_FUSE_CHANCE) {
+        if (c.live() && hold > 0 && amps > c.ratingAmps() && level.random.nextFloat() < ElectricMachineTuning.CIRCUIT_FUSE_CHANCE) {
             stage.set(FDataComponents.CIRCUIT.get(), c.fused());
             setChanged();
         }

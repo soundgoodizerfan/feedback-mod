@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.crank;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -56,11 +57,11 @@ public class HandCrankBlockEntity extends RotationNode {
                 ? io.github.soundgoodizerfan.feedback.combat.skill.Skills.crankBeat(who) : 0;
         if (beat > 0)
             io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.cranked((net.minecraft.server.level.ServerPlayer) who, worldPosition);
-        turn(FTuning.HAND_CRANK_TICKS_PER_TURN + beat);
+        turn(MachineTuning.HAND_CRANK_TICKS_PER_TURN + beat);
     }
 
     public void turn() {
-        turn(FTuning.HAND_CRANK_TICKS_PER_TURN);
+        turn(MachineTuning.HAND_CRANK_TICKS_PER_TURN);
     }
 
     private void turn(int ticks) {
@@ -82,17 +83,17 @@ public class HandCrankBlockEntity extends RotationNode {
 
     @Override
     public Rpm getGeneratedRpm() {
-        return turningTicks > 0 ? new Rpm(figures.get("Rpm", FTuning.HAND_CRANK_RPM.value())) : ZERO_RPM;
+        return turningTicks > 0 ? new Rpm(figures.get("Rpm", MachineTuning.HAND_CRANK_RPM.value())) : ZERO_RPM;
     }
 
     @Override
     public Su getCapacitySu() {
-        return new Su(figures.get("Power", FTuning.HAND_CRANK_CAPACITY_SU.value()));
+        return new Su(figures.get("Power", MachineTuning.HAND_CRANK_CAPACITY_SU.value()));
     }
 
     @Override
     public Inertia getInertia() {
-        return new Inertia(figures.get("Inertia", FTuning.HAND_CRANK_INERTIA.suTicksPerRpm()));
+        return new Inertia(figures.get("Inertia", MachineTuning.HAND_CRANK_INERTIA.suTicksPerRpm()));
     }
 
     @Override

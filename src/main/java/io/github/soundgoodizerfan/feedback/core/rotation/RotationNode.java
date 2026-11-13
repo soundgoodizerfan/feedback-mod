@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.rotation;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
@@ -104,7 +103,7 @@ public abstract class RotationNode extends BlockEntity implements RotationMember
 
     /** How much this node resists a change in the network's speed. */
     public Inertia getInertia() {
-        return FTuning.SHAFT_INERTIA;
+        return RotationTuning.SHAFT_INERTIA;
     }
 
     public boolean isSource() {

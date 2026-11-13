@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.induction;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
@@ -24,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * An induction furnace coil around a crucible: a changing field heats the metal in the vessel directly, with no flame and no smoke,
- * up to {@link FTuning#INDUCTION_CEILING_TU}.
+ * up to {@link ElectricMachineTuning#INDUCTION_CEILING_TU}.
  *
  * <h2>A fire that is an electrical sink, and picky</h2>
  * It is a {@link HeatSource} facing the vessel, like the arc head, but {@link #heats} is true only while the crucible there holds
@@ -34,7 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class InductionCoilBlockEntity extends ElectricNode implements HeatSource {
 
-    private float fieldTu = FTuning.AMBIENT_TU.value();
+    private float fieldTu = ThermalTuning.AMBIENT_TU.value();
     private float power;
     private boolean charged;
     private long checkedAt = Long.MIN_VALUE;
@@ -52,7 +54,7 @@ public class InductionCoilBlockEntity extends ElectricNode implements HeatSource
 
     @Override
     public float wantedAmps() {
-        return charged ? FTuning.INDUCTION_COIL_AMPS : 0f;
+        return charged ? ElectricMachineTuning.INDUCTION_COIL_AMPS : 0f;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class InductionCoilBlockEntity extends ElectricNode implements HeatSource
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        float full = FTuning.ELECTRIC_MV_VOLTS * FTuning.INDUCTION_COIL_AMPS;
+        float full = ElectricTuning.ELECTRIC_MV_VOLTS * ElectricMachineTuning.INDUCTION_COIL_AMPS;
         power = volts > 0f && amps > 0f ? Math.min(1f, volts * amps / full) : 0f;
     }
 
@@ -89,13 +91,13 @@ public class InductionCoilBlockEntity extends ElectricNode implements HeatSource
             return;
         // The metal search walks the material table, so it is looked at a few times a second, not every tick.
         long now = level.getGameTime();
-        if (now - checkedAt >= FTuning.INDUCTION_CHARGE_CHECK_TICKS || now < checkedAt) {
+        if (now - checkedAt >= ElectricMachineTuning.INDUCTION_CHARGE_CHECK_TICKS || now < checkedAt) {
             checkedAt = now;
             charged = holdsMetal(level, worldPosition.relative(heatFacing()));
         }
         float ambient = AmbientTable.at(level).value();
-        float target = charged ? ambient + (FTuning.INDUCTION_CEILING_TU.value() - ambient) * power : ambient;
-        fieldTu = Math.max(ambient, fieldTu + (target - fieldTu) / FTuning.INDUCTION_COIL_MASS.workPerTu());
+        float target = charged ? ambient + (ElectricMachineTuning.INDUCTION_CEILING_TU.value() - ambient) * power : ambient;
+        fieldTu = Math.max(ambient, fieldTu + (target - fieldTu) / ElectricMachineTuning.INDUCTION_COIL_MASS.workPerTu());
     }
 
     // --- HeatSource ---------------------------------------------------------------------------
@@ -126,6 +128,6 @@ public class InductionCoilBlockEntity extends ElectricNode implements HeatSource
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        fieldTu = tag.contains("Field") ? tag.getFloat("Field") : FTuning.AMBIENT_TU.value();
+        fieldTu = tag.contains("Field") ? tag.getFloat("Field") : ThermalTuning.AMBIENT_TU.value();
     }
 }

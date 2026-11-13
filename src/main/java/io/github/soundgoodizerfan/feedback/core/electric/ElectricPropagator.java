@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -78,7 +77,7 @@ public final class ElectricPropagator {
         Set<BlockPos> covered = new HashSet<>();
         for (Direction face : Direction.values())
             // Two steps out too: a bare wire may have been arcing to one across the gap.
-            for (int step = 1; step <= 1 + FTuning.ARC_GAP_BLOCKS; step++) {
+            for (int step = 1; step <= 1 + ElectricTuning.ARC_GAP_BLOCKS; step++) {
                 BlockPos neighbour = pos.relative(face, step);
                 if (covered.contains(neighbour) || nodeAt(level, neighbour) == null)
                     continue;

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.server.level.ServerPlayer;
@@ -67,7 +66,7 @@ public final class HandToolCrafting {
             return;
         // Every swing costs food, harder swings more. Before the clang throttle: that is per tick,
         // and every craft is a swing.
-        player.causeFoodExhaustion(FTuning.HAND_SWING_EXHAUSTION_PER_ST * tool.getStrength(held).value());
+        player.causeFoodExhaustion(ItemTuning.HAND_SWING_EXHAUSTION_PER_ST * tool.getStrength(held).value());
 
         long now = level.getGameTime();
         Long heard = LAST_HEARD.get(player);

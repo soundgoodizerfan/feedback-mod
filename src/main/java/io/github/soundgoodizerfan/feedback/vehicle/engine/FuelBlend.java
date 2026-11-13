@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.engine;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
@@ -75,7 +75,7 @@ public final class FuelBlend implements IFluidHandler {
 
     @Override
     public int getTankCapacity(int tank) {
-        return FTuning.ENGINE_FUEL_TANK_MB;
+        return VehicleTuning.ENGINE_FUEL_TANK_MB;
     }
 
     @Override
@@ -85,7 +85,7 @@ public final class FuelBlend implements IFluidHandler {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        int amount = Math.min(resource.getAmount(), FTuning.ENGINE_FUEL_TANK_MB - Math.round(mb));
+        int amount = Math.min(resource.getAmount(), VehicleTuning.ENGINE_FUEL_TANK_MB - Math.round(mb));
         if (amount <= 0)
             return 0;
         if (action.execute()) {

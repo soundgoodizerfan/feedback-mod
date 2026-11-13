@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cog;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
@@ -30,13 +30,13 @@ public class CogBlockEntity extends RotationNode {
     public Drag getDragSuPerRpm() {
         return getBlockState().getBlock() instanceof CogBlock cog
                 ? cog.getDragSuPerRpm()
-                : FTuning.SMALL_COG_DRAG_SU_PER_RPM;
+                : MachineTuning.SMALL_COG_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
         return getBlockState().getBlock() instanceof CogBlock cog
                 ? cog.getInertia()
-                : FTuning.SMALL_COG_INERTIA;
+                : MachineTuning.SMALL_COG_INERTIA;
     }
 }

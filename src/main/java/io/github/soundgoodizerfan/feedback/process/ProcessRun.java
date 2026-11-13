@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import java.util.List;
 import java.util.function.ObjIntConsumer;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

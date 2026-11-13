@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.program;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -10,7 +11,6 @@ import java.util.Set;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -122,7 +122,7 @@ public record ProgramGraph(List<ProgramNode> nodes, List<ProgramVariable> variab
                     || node instanceof WriteNode w && !names.contains(w.variable()))
                 return Optional.of("unknown_variable");
             if (node instanceof DelayNode d) {
-                if (d.ticks() < FTuning.DELAY_TYPED_MIN_TICKS || d.ticks() > FTuning.DELAY_MAX_TICKS)
+                if (d.ticks() < ControlTuning.DELAY_TYPED_MIN_TICKS || d.ticks() > ControlTuning.DELAY_MAX_TICKS)
                     return Optional.of("bad_delay");
                 if (!d.named() && !limits.typedDelays())
                     return Optional.of("typed_delay_locked");

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.lamp;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
@@ -32,7 +32,7 @@ public class LampBlock extends Block implements EntityBlock {
 
         /** Block light of this step: a third and two thirds of the full step for dim and bright. */
         public int light() {
-            int full = FTuning.LAMP_FULL_LIGHT;
+            int full = ElectricMachineTuning.LAMP_FULL_LIGHT;
             return switch (this) {
                 case OFF, BURNT -> 0;
                 case DIM -> Math.max(1, full / 3);

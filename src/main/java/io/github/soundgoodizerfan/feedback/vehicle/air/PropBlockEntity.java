@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.air;
 
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
@@ -11,7 +12,6 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
@@ -87,14 +87,14 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
 
     /** Disc area factor from the blade count, against a three-blade prop. */
     private static float solidity(PropDesign d) {
-        return (float) Math.pow(d.blades() / 3f, FTuning.PROP_BLADE_EXPONENT);
+        return (float) Math.pow(d.blades() / 3f, VehicleTuning.PROP_BLADE_EXPONENT);
     }
 
     // --- the shaft ------------------------------------------------------------------------------
 
     /** The power coefficient: what the disc absorbs from the shaft, a share of its zero-airspeed thrust times where it quits. */
     private static float cp(PropDesign d) {
-        return FTuning.PROP_CP_PER_CT0_J0 * FTuning.PROP_CT0[d.pitch()] * FTuning.PROP_J0[d.pitch()] * solidity(d);
+        return VehicleTuning.PROP_CP_PER_CT0_J0 * VehicleTuning.PROP_CT0[d.pitch()] * VehicleTuning.PROP_J0[d.pitch()] * solidity(d);
     }
 
     /** Torque the disc takes from the shaft in N m at {@code n} turns a second and density {@code rho}: {@code Cp rho n^2 D^5 / 2 pi}. */
@@ -120,19 +120,19 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
             at = body.logicalPose().transformPosition(at);
         double y = at.y;
         boolean wet = level.getFluidState(BlockPos.containing(at)).is(FluidTags.WATER);
-        float rho = wet ? 1.225f * FTuning.WATER_OVER_AIR_DENSITY
-                : 2 * FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * 1000f * AirDensityTable.at(level, y);
+        float rho = wet ? 1.225f * VehicleTuning.WATER_OVER_AIR_DENSITY
+                : 2 * VehicleTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * 1000f * AirDensityTable.at(level, y);
         rhoKgM3 = rho;
         Material m = MaterialTable.get().materials().get(d.material());
-        float limit = wet ? FTuning.PROP_TIP_SPEED_WATER : FTuning.PROP_TIP_SPEED_CAP;
+        float limit = wet ? VehicleTuning.PROP_TIP_SPEED_WATER : VehicleTuning.PROP_TIP_SPEED_CAP;
         if (m != null && m.mechanical().yieldStrength().isPresent() && m.density().muPerMb() > 0f)
-            limit = Math.min(limit, FTuning.PROP_TIP_SPEED_PER_SQRT_SPECIFIC_YIELD
+            limit = Math.min(limit, VehicleTuning.PROP_TIP_SPEED_PER_SQRT_SPECIFIC_YIELD
                     * (float) Math.sqrt(m.mechanical().yieldStrength().get().value() / m.density().muPerMb()));
         tipLimit = limit;
         float n = Math.abs(turn) / 60f;
         float tip = (float) (Math.PI * d.diameter() * n);
-        if (tip > limit && condition > FTuning.PROP_CONDITION_FLOOR) {
-            condition = Math.max(FTuning.PROP_CONDITION_FLOOR, condition - FTuning.PROP_WEAR_PER_TICK * (tip / limit - 1f));
+        if (tip > limit && condition > VehicleTuning.PROP_CONDITION_FLOOR) {
+            condition = Math.max(VehicleTuning.PROP_CONDITION_FLOOR, condition - VehicleTuning.PROP_WEAR_PER_TICK * (tip / limit - 1f));
             setChanged();
         }
         float drag = Math.abs(turn) < 1f ? 0f : torqueNm(d, n, rho) / Math.abs(turn);
@@ -163,7 +163,7 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
         float n = Math.abs(turn) / 60f;
         double diameter = d.diameter();
         double j = airspeed / (n * diameter);
-        float ct0 = FTuning.PROP_CT0[d.pitch()], j0 = FTuning.PROP_J0[d.pitch()];
+        float ct0 = VehicleTuning.PROP_CT0[d.pitch()], j0 = VehicleTuning.PROP_J0[d.pitch()];
         double ct = ct0 * solidity(d) * Math.max(0, 1 - j / j0);
         double tip = Math.PI * diameter * n, limit = tipLimit;
         status = tip > limit ? 3 : ct <= 1e-4 ? 2 : 1;
@@ -171,7 +171,7 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
             ct *= limit / tip;
         double thrustKpg = ct * rho * n * n * Math.pow(diameter, 4) / 1000.0 * condition; // N -> kpg blocks / s^2
         if (sense < 0)
-            thrustKpg *= FTuning.PROP_REVERSE_EFFICIENCY;
+            thrustKpg *= VehicleTuning.PROP_REVERSE_EFFICIENCY;
         centre.set(worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5);
         pushed.set(dir).mul(sense * thrustKpg * dt);
         force.applyImpulseAtPoint(subLevel.getMassTracker(), centre, pushed);

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -230,7 +230,7 @@ public class EnchantMenu extends AbstractContainerMenu {
         }
         // The screen began from its own reading of the heat; Begin took a few ticks to arrive, so allow that much cooling.
         float temperature = Math.abs(start - session.temperature())
-                <= FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * ModularTuning.ENCHANT_TICK_SLACK ? start : session.temperature();
+                <= ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() * ModularTuning.ENCHANT_TICK_SLACK ? start : session.temperature();
         List<Integer> played = EnchantGame.bounded(samples);
         Sigil.Result result = Sigil.run(m.attuning(), temperature, Sigil.word(e), played);
         EnchantGame.Verdict verdict = EnchantGame.judge(e, EnchantGame.level(m), result.accuracy(), result.negative(), result.reached());

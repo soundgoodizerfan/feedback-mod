@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
@@ -57,7 +56,7 @@ public final class Heat {
         float temperature = body.getTemperature().value();
 
         float fromFire = conducted
-                ? contact * FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * (fireTu.value() - temperature)
+                ? contact * ThermalTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * (fireTu.value() - temperature)
                 : 0;
         float toRoom = body.getLeak().workPerTickPerTu()
                 * (temperature - ambient.value());
@@ -84,7 +83,7 @@ public final class Heat {
     public static void relax(ThermalBody body, Tu fireTu, Tu ambient, boolean conducted, long ticks) {
         if (ticks <= 0)
             return;
-        float fire = conducted ? FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() : 0f;
+        float fire = conducted ? ThermalTuning.FIRE_CONDUCTANCE.workPerTickPerTu() : 0f;
         float leak = body.getLeak().workPerTickPerTu();
         float total = fire + leak;
         if (total <= 0f)
@@ -136,9 +135,9 @@ public final class Heat {
     public static Tu equilibrium(ThermalBody body, Tu fireTu, Tu ambient) {
         // The two conductances are added, which is only a legal thing to write because they share
         // a dimension. Nothing said so until Conductance existed; now the types do.
-        return new Tu((FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * fireTu.value()
+        return new Tu((ThermalTuning.FIRE_CONDUCTANCE.workPerTickPerTu() * fireTu.value()
                 + body.getLeak().workPerTickPerTu() * ambient.value())
-                / (FTuning.FIRE_CONDUCTANCE.workPerTickPerTu() + body.getLeak().workPerTickPerTu()));
+                / (ThermalTuning.FIRE_CONDUCTANCE.workPerTickPerTu() + body.getLeak().workPerTickPerTu()));
     }
 
     /**

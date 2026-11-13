@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.overspeedtrip;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.machine.clutch.ClutchBlockEntity;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A centrifugal overspeed trip: a {@link ClutchBlockEntity} whose flyweights throw it open when
- * its own shaft turns faster than its fitted spring ({@link FTuning#OVERSPEED_TRIP_SPRINGS_RPM}).
+ * its own shaft turns faster than its fitted spring ({@link MachineTuning#OVERSPEED_TRIP_SPRINGS_RPM}).
  *
  * <h2>A safety cutoff, not regulation</h2>
  * It does not hold a speed and does not slow anything -- it is the bimetallic strip's bang-bang
@@ -34,7 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class OverspeedTripBlockEntity extends ClutchBlockEntity {
 
-    /** Index into {@link FTuning#OVERSPEED_TRIP_SPRINGS_RPM}: which spring is fitted. */
+    /** Index into {@link MachineTuning#OVERSPEED_TRIP_SPRINGS_RPM}: which spring is fitted. */
     private int spring;
 
     public OverspeedTripBlockEntity(BlockPos pos, BlockState state) {
@@ -42,12 +42,12 @@ public class OverspeedTripBlockEntity extends ClutchBlockEntity {
     }
 
     public float tripRpm() {
-        return FTuning.OVERSPEED_TRIP_SPRINGS_RPM[spring];
+        return MachineTuning.OVERSPEED_TRIP_SPRINGS_RPM[spring];
     }
 
     /** Swap to the next spring, light to heavy and round again; returns the new trip speed. */
     public float cycleSpring() {
-        spring = (spring + 1) % FTuning.OVERSPEED_TRIP_SPRINGS_RPM.length;
+        spring = (spring + 1) % MachineTuning.OVERSPEED_TRIP_SPRINGS_RPM.length;
         setChanged();
         return tripRpm();
     }
@@ -61,7 +61,7 @@ public class OverspeedTripBlockEntity extends ClutchBlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        spring = Math.max(0, Math.min(tag.getInt("Spring"), FTuning.OVERSPEED_TRIP_SPRINGS_RPM.length - 1));
+        spring = Math.max(0, Math.min(tag.getInt("Spring"), MachineTuning.OVERSPEED_TRIP_SPRINGS_RPM.length - 1));
     }
 
     /**

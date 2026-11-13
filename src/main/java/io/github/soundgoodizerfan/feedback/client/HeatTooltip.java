@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -46,7 +46,7 @@ public class HeatTooltip {
             return;
 
         Tu tu = ItemHeat.get(stack, level);
-        if (tu.value() <= FTuning.WARM_TU.value())
+        if (tu.value() <= ThermalTuning.WARM_TU.value())
             return;
 
         event.getToolTip().add(Readout.temperatureReading(tu));

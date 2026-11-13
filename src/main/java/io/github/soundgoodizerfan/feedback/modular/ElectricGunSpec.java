@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import java.util.Map;
 import java.util.Optional;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -244,7 +244,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
     public float seatMult() {
         return switch (seat) {
             case CAPACITOR_BANK -> ModularTuning.EGUN_BANK_MULT * (1f + ModularTuning.EGUN_BANK_DIELECTRIC_STEP * dielectric);
-            case BURST_BANK -> ModularTuning.EGUN_BANK_MULT * (1f + ModularTuning.EGUN_BANK_DIELECTRIC_STEP * dielectric) / FTuning.GUN_BURST_ROUNDS;
+            case BURST_BANK -> ModularTuning.EGUN_BANK_MULT * (1f + ModularTuning.EGUN_BANK_DIELECTRIC_STEP * dielectric) / ModularTuning.GUN_BURST_ROUNDS;
             case CORE_BREECH -> ModularTuning.EGUN_CORE_MULT;
             case FLYWHEEL -> Mth.clamp(0.6f + 0.4f * seatDensity / ModularTuning.EGUN_FLY_REF_DENSITY, 0.6f, 1.6f);
             default -> 1f;
@@ -292,7 +292,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
 
     /** The cone of a pulse before a stance and a scope: the barrel's length and bore, the fittings. */
     public float coneDeg(float zoomShare) {
-        return Math.max(FTuning.GUN_SPREAD_FLOOR_DEG, ModularTuning.EGUN_SPREAD_BASE_DEG * 0.4f / Math.max(0.1f, lengthM) * spreadMult * boreFactor()
+        return Math.max(GunTuning.GUN_SPREAD_FLOOR_DEG, ModularTuning.EGUN_SPREAD_BASE_DEG * 0.4f / Math.max(0.1f, lengthM) * spreadMult * boreFactor()
                 * (1f - (zoom ? ModularTuning.EGUN_ZOOM_TIGHT * zoomShare : 0f)));
     }
 
@@ -340,10 +340,10 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
      */
     public GunFigures figures(float joules, float gunKg, int cycleTicks, float zoomShare, float spreadMult) {
         float hit = damage(delivered(joules));
-        float energy = hit / FTuning.GUN_DAMAGE_PER_WORK;
+        float energy = hit / GunTuning.GUN_DAMAGE_PER_WORK;
         float impulse = impulse(joules);
         float spread = coneDeg(zoomShare) * spreadMult;
-        float kick = FTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (FTuning.GUN_KICK_REFERENCE_MU / Math.max(0.05f, gunKg));
+        float kick = GunTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (GunTuning.GUN_KICK_REFERENCE_MU / Math.max(0.05f, gunKg));
         return new GunFigures(new Pu(0f), new Pu(0f), 10f, energy, new Mu(0.001f), new Mu(gunKg), impulse, cycleTicks * 50, spread, kick,
                 report, heatGain * heatMult, shed);
     }

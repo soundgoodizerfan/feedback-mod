@@ -19,9 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import dev.ryanhcode.sable.api.block.BlockSubLevelCollisionShape;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
@@ -159,7 +159,7 @@ public class MicroGameTests {
         helper.assertTrue(Math.abs(MicroCellBlockEntity.voxelKpg(IRON) - density(Items.IRON_BLOCK) / 64) < 1e-6,
                 "a voxel of iron is a 64th of a block of iron, got " + MicroCellBlockEntity.voxelKpg(IRON));
         helper.assertTrue(Math.abs(MicroCellBlockEntity.voxelKpg(Blocks.SPONGE.defaultBlockState())
-                - FTuning.MICRO_FALLBACK_DENSITY.muPerMb() / 64) < 1e-6, "a block no material claims weighs the fallback");
+                - VehicleTuning.MICRO_FALLBACK_DENSITY.muPerMb() / 64) < 1e-6, "a block no material claims weighs the fallback");
         level.removeBlock(cell, false);
         helper.succeed();
     }

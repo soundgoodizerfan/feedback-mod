@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.press;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.HeadSlot;
@@ -70,7 +70,7 @@ public class MechanicalPressBlockEntity extends ShopMachineBlockEntity implement
         if (stAbsorbed <= 0)
             return;
         setChanged();
-        if (head.wear(stAbsorbed, FTuning.SHOP_MACHINE_WEAR_PER_ST, FTuning.SHOP_MACHINE_CONDITION_FLOOR))
+        if (head.wear(stAbsorbed, MachineTuning.SHOP_MACHINE_WEAR_PER_ST, MachineTuning.SHOP_MACHINE_CONDITION_FLOOR))
             sync();
     }
 
@@ -88,7 +88,7 @@ public class MechanicalPressBlockEntity extends ShopMachineBlockEntity implement
 
     @Override
     public Su getLoadSu() {
-        return FTuning.MECHANICAL_PRESS_LOAD_SU;
+        return MachineTuning.MECHANICAL_PRESS_LOAD_SU;
     }
 
     public void tickServer() {

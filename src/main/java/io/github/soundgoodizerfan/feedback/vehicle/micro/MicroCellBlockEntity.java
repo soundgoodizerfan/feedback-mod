@@ -19,8 +19,9 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.micro;
 
-import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
+import dev.ryanhcode.sable.api.block.BlockEntitySubLevelActor;
 import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
@@ -323,12 +324,12 @@ public class MicroCellBlockEntity extends BlockEntity implements BlockEntitySubL
     /**
      * What a voxel of {@code state} weighs, in Sable's unit: its block's material density over a
      * 64th of a block. The material table is the one source; a block no material claims weighs
-     * {@link FTuning#MICRO_FALLBACK_DENSITY}.
+     * {@link VehicleTuning#MICRO_FALLBACK_DENSITY}.
      */
     public static double voxelKpg(BlockState state) {
         var found = Material.find(MaterialTable.get().materials(), state.getBlock().asItem());
         float density = found.isPresent() && found.get().material().density().muPerMb() > 0
-                ? found.get().material().density().muPerMb() : FTuning.MICRO_FALLBACK_DENSITY.muPerMb();
+                ? found.get().material().density().muPerMb() : VehicleTuning.MICRO_FALLBACK_DENSITY.muPerMb();
         // A wedge is half a cube.
         return Units.kpg(new Mu(density * VOXEL_MB * (MicroWedgeBlock.is(state) ? 0.5f : 1f)));
     }

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
@@ -22,7 +21,7 @@ import net.minecraft.world.level.Level;
  *
  * <h2>Potential, coarsely, and never current</h2>
  * It reads potential at the block it is touched to, to {@link
- * FTuning#ELECTROSCOPE_RESOLUTION_VOLTS}. It can say that a line is live and roughly how hard; it
+ * ItemTuning#ELECTROSCOPE_RESOLUTION_VOLTS}. It can say that a line is live and roughly how hard; it
  * cannot say how much is flowing, because a charged leaf does not draw current. That is the whole
  * reason the galvanometer is a separate purchase: the electroscope is the instrument that
  * reveals ({@code philosophy 10}), the galvanometer the one that makes the reading useful.
@@ -44,7 +43,7 @@ public class ElectroscopeItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.ELECTROSCOPE_RESOLUTION_VOLTS;
+        return ItemTuning.ELECTROSCOPE_RESOLUTION_VOLTS;
     }
 
     @Override

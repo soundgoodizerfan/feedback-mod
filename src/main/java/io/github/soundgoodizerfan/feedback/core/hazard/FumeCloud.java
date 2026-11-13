@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.core.hazard;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
@@ -70,7 +69,7 @@ public final class FumeCloud {
     public static void release(Level level, Vec3 at, int toxic) {
         if (toxic <= 0 || !(level instanceof ServerLevel server))
             return;
-        long until = server.getGameTime() + (long) FTuning.FUME_CLOUD_TICKS_PER_LEVEL * toxic;
+        long until = server.getGameTime() + (long) HazardTuning.FUME_CLOUD_TICKS_PER_LEVEL * toxic;
         List<Cloud> clouds = CLOUDS.computeIfAbsent(server, l -> new ArrayList<>());
         for (Cloud c : clouds)
             if (c.at.distanceToSqr(at) <= 1.0) {
@@ -92,14 +91,14 @@ public final class FumeCloud {
 
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
-        if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % FTuning.FUME_CLOUD_INTERVAL_TICKS != 0)
+        if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % HazardTuning.FUME_CLOUD_INTERVAL_TICKS != 0)
             return;
         List<Cloud> clouds = CLOUDS.get(level);
         if (clouds == null)
             return;
         long now = level.getGameTime();
         clouds.removeIf(c -> c.until <= now);
-        float r = FTuning.FUME_RADIUS_BLOCKS;
+        float r = HazardTuning.FUME_RADIUS_BLOCKS;
         for (Cloud c : clouds) {
             level.sendParticles(ParticleTypes.SMOKE, c.at.x, c.at.y, c.at.z, 6, r * 0.4, r * 0.3, r * 0.4, 0.005);
             for (LivingEntity victim : level.getEntitiesOfClass(LivingEntity.class, new AABB(c.at, c.at).inflate(r)))
@@ -111,19 +110,19 @@ public final class FumeCloud {
     private static void dose(ServerLevel level, LivingEntity victim, int cloudLevel, long now) {
         CompoundTag data = victim.getPersistentData();
         float seconds = (now - data.getLong(AT)) / 20f;
-        float before = Math.max(0f, data.getFloat(EXPOSURE) - seconds * FTuning.FUME_CLOUD_DECAY_PER_SECOND);
-        float after = before + cloudLevel * FTuning.FUME_CLOUD_DOSE_PER_LEVEL * Skills.fumeShare(victim);
+        float before = Math.max(0f, data.getFloat(EXPOSURE) - seconds * HazardTuning.FUME_CLOUD_DECAY_PER_SECOND);
+        float after = before + cloudLevel * HazardTuning.FUME_CLOUD_DOSE_PER_LEVEL * Skills.fumeShare(victim);
         data.putFloat(EXPOSURE, after);
         data.putLong(AT, now);
-        if (after >= FTuning.FUME_CLOUD_NAUSEA)
+        if (after >= HazardTuning.FUME_CLOUD_NAUSEA)
             victim.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 160));
-        if (after >= FTuning.FUME_CLOUD_BLIND)
+        if (after >= HazardTuning.FUME_CLOUD_BLIND)
             victim.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100));
-        if (after >= FTuning.FUME_CLOUD_HURT && victim.getHealth() > FTuning.FUME_CLOUD_DAMAGE_FLOOR_HEALTH)
-            victim.hurt(level.damageSources().magic(), FTuning.FUME_CLOUD_DAMAGE);
+        if (after >= HazardTuning.FUME_CLOUD_HURT && victim.getHealth() > HazardTuning.FUME_CLOUD_DAMAGE_FLOOR_HEALTH)
+            victim.hurt(level.damageSources().magic(), HazardTuning.FUME_CLOUD_DAMAGE);
         if (victim instanceof ServerPlayer p) {
-            int step = after >= FTuning.FUME_CLOUD_HURT ? 3 : after >= FTuning.FUME_CLOUD_BLIND ? 2 : after >= FTuning.FUME_CLOUD_NAUSEA ? 1 : 0;
-            int was = before >= FTuning.FUME_CLOUD_HURT ? 3 : before >= FTuning.FUME_CLOUD_BLIND ? 2 : before >= FTuning.FUME_CLOUD_NAUSEA ? 1 : 0;
+            int step = after >= HazardTuning.FUME_CLOUD_HURT ? 3 : after >= HazardTuning.FUME_CLOUD_BLIND ? 2 : after >= HazardTuning.FUME_CLOUD_NAUSEA ? 1 : 0;
+            int was = before >= HazardTuning.FUME_CLOUD_HURT ? 3 : before >= HazardTuning.FUME_CLOUD_BLIND ? 2 : before >= HazardTuning.FUME_CLOUD_NAUSEA ? 1 : 0;
             if (step > was)
                 p.displayClientMessage(Component.translatable("feedback.fume_cloud." + step), true);
         }

@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.seat;
 
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.control.ChannelSource;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import it.unimi.dsi.fastutil.ints.Int2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -25,7 +25,7 @@ import java.util.Set;
  * The driver's side of a vehicle's controls ({@code docs/specs/feedback_vehicles_spec.md} section 5,
  * <em>Controls</em>): the whole keyboard, as readings. While someone sits here every key they press
  * is sent here instead of to the game, and each key held is a reading that ramps from 0 to 1 over
- * {@link FTuning#SEAT_RAMP_TICKS} and falls back the same way once let go -- tap for a little,
+ * {@link VehicleTuning#SEAT_RAMP_TICKS} and falls back the same way once let go -- tap for a little,
  * hold for full. A Sensor card on a controller reads one key ({@link ChannelSource}, the key's GLFW
  * code as the channel). The seat links to nothing and drives nothing: seat, then controller, then
  * parts, always.
@@ -57,7 +57,7 @@ public class DriverSeatBlockEntity extends BlockEntity implements DataNode, Chan
     static void serverTick(Level level, BlockPos pos, BlockState state, DriverSeatBlockEntity be) {
         if (be.driver() == null)
             be.held.clear();
-        float step = 1f / FTuning.SEAT_RAMP_TICKS;
+        float step = 1f / VehicleTuning.SEAT_RAMP_TICKS;
         for (int key : be.held)
             be.levels.put(key, Math.min(1, be.levels.get(key) + step));
         for (var it = be.levels.int2FloatEntrySet().iterator(); it.hasNext(); ) {

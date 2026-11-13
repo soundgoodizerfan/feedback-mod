@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.Codec;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -15,11 +14,11 @@ import net.minecraft.util.StringRepresentable;
  * them. A belt is a magazine too, for a belt feed. Placeholder counts.
  */
 public enum MagazineSize implements StringRepresentable {
-    SMALL("small", GunLayout.Feed.BOX, FTuning.GUN_MAGAZINE_SMALL),
-    STANDARD("standard", GunLayout.Feed.BOX, FTuning.GUN_MAGAZINE_STANDARD),
-    EXTENDED("extended", GunLayout.Feed.BOX, FTuning.GUN_MAGAZINE_EXTENDED),
-    DRUM("drum", GunLayout.Feed.BOX, FTuning.GUN_MAGAZINE_DRUM),
-    BELT("belt", GunLayout.Feed.BELT, FTuning.GUN_MAGAZINE_BELT);
+    SMALL("small", GunLayout.Feed.BOX, GunTuning.GUN_MAGAZINE_SMALL),
+    STANDARD("standard", GunLayout.Feed.BOX, GunTuning.GUN_MAGAZINE_STANDARD),
+    EXTENDED("extended", GunLayout.Feed.BOX, GunTuning.GUN_MAGAZINE_EXTENDED),
+    DRUM("drum", GunLayout.Feed.BOX, GunTuning.GUN_MAGAZINE_DRUM),
+    BELT("belt", GunLayout.Feed.BELT, GunTuning.GUN_MAGAZINE_BELT);
 
     public static final Codec<MagazineSize> CODEC = StringRepresentable.fromEnum(MagazineSize::values);
     public static final StreamCodec<ByteBuf, MagazineSize> STREAM_CODEC =

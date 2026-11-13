@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.item.Meal;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -52,16 +52,16 @@ public final class BuffEvents {
         boolean frozen = can != null && can.sealed();
         // A bite of food still frozen solid bites back.
         if (Cooking.frozen(eaten, player.level()))
-            player.hurt(player.level().damageSources().freeze(), FTuning.FROZEN_BITE_DAMAGE);
+            player.hurt(player.level().damageSources().freeze(), ProcessTuning.FROZEN_BITE_DAMAGE);
         Meal meal = eaten.get(FDataComponents.MEAL.get());
         io.github.soundgoodizerfan.feedback.potion.Lacing lace = eaten.get(FDataComponents.LACING.get());
         if (meal != null && lace != null) {
             // A potion laced in (spec 7): a hidden dose through the same path, slowed by fat and fibre; the whole dish counts as eaten.
             float absorb = Math.max(0f, (meal.fat() + meal.fibre()) * (1f + FoodPerk.get().tune(meal.compounds(), "absorb")));
-            schedule(player, player.level().getGameTime() + Math.round(absorb * FTuning.FOOD_BUFF_DELAY_TICKS), lace.effect(), lace.amplifier(), lace.duration());
+            schedule(player, player.level().getGameTime() + Math.round(absorb * ProcessTuning.FOOD_BUFF_DELAY_TICKS), lace.effect(), lace.amplifier(), lace.duration());
             run(player, player.level().getGameTime());
             if (lace.detectable(meal, player))
-                io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(player, net.minecraft.network.chat.Component.translatable("message.feedback.taste.off"), FTuning.BITE_HUD_TICKS);
+                io.github.soundgoodizerfan.feedback.net.HudReadoutPayload.send(player, net.minecraft.network.chat.Component.translatable("message.feedback.taste.off"), ProcessTuning.BITE_HUD_TICKS);
         }
         if (meal != null) {
             // Rotten food has nothing left in it to dose from (a dish carries its spoilage; a ladled serving carries none).
@@ -70,10 +70,10 @@ public final class BuffEvents {
                 return;
             dose(player, meal.compounds(), meal.fat() + meal.fibre(), 1f);
             // A warm meal comforts: it shakes off the cold and settles you.
-            if (io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(eaten, player.level()).value() > FTuning.WARM_TU.value()) {
+            if (io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(eaten, player.level()).value() > ThermalTuning.WARM_TU.value()) {
                 player.setTicksFrozen(0);
                 player.addEffect(new MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION,
-                        Math.round(FTuning.WARM_MEAL_REGEN_TICKS * (1f + FoodPerk.get().tune(meal.compounds(), "warm_regen")))));
+                        Math.round(ProcessTuning.WARM_MEAL_REGEN_TICKS * (1f + FoodPerk.get().tune(meal.compounds(), "warm_regen")))));
             }
             return;
         }
@@ -95,9 +95,9 @@ public final class BuffEvents {
         float stretch = 1f + Math.max(0f, Math.min(1f, FoodPerk.get().tune(compounds, "duration")));
         for (Map.Entry<String, Float> e : compounds.entrySet()) {
             float strength = e.getValue() * scale;
-            if (strength < FTuning.FOOD_BUFF_MIN_STRENGTH)
+            if (strength < ProcessTuning.FOOD_BUFF_MIN_STRENGTH)
                 continue;
-            int delay = Math.round(absorb * FTuning.FOOD_BUFF_DELAY_TICKS);
+            int delay = Math.round(absorb * ProcessTuning.FOOD_BUFF_DELAY_TICKS);
             if (e.getKey().startsWith(FoodPerk.PREFIX)) {
                 String perk = e.getKey().substring(FoodPerk.PREFIX.length());
                 if (FoodPerk.get().dosed(perk))
@@ -109,7 +109,7 @@ public final class BuffEvents {
                 continue;
             int duration = Math.round(strength * c.ticksPerStrength() * (1f + absorb) * stretch);
             schedule(player, now + delay, c.effect().get(), c.amplifier(), duration);
-            if (c.crash().isPresent() && absorb < FTuning.FOOD_BUFF_CRASH_ABSORB)
+            if (c.crash().isPresent() && absorb < ProcessTuning.FOOD_BUFF_CRASH_ABSORB)
                 schedule(player, now + delay + duration, c.crash().get().effect(), 0, c.crash().get().ticks());
         }
         run(player, now);

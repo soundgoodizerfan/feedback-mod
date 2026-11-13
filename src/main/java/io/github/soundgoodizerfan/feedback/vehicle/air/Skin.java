@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.air;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
+
 
 /** What a gas cell is wrapped in: how far it stretches before it weeps, and whether it burns with its gas. */
 public enum Skin {
-    CLOTH(FTuning.GAS_STRETCH_CLOTH, true),
-    RUBBER(FTuning.GAS_STRETCH_RUBBER, true),
-    PLATE(FTuning.GAS_STRETCH_PLATE, false);
+    CLOTH(VehicleTuning.GAS_STRETCH_CLOTH, true),
+    RUBBER(VehicleTuning.GAS_STRETCH_RUBBER, true),
+    PLATE(VehicleTuning.GAS_STRETCH_PLATE, false);
 
     /** Gas volume over the skin's rest volume past which it leaks. */
     public final float maxStretch;

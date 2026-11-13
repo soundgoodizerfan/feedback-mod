@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.breaker;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -34,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>Both its figures are its wire's metal</h2>
  * It is a cable's physics with a thin wire: over its rating the wire warms, and
  * when it passes its metal's melting point it is gone and the holder conducts nothing. The rating
- * is the metal's {@code ampacity} times {@link FTuning#FUSE_AMPS_PER_AMPACITY}; how long an
+ * is the metal's {@code ampacity} times {@link ElectricMachineTuning#FUSE_AMPS_PER_AMPACITY}; how long an
  * overload is tolerated is how far its melting point sits above the room. Tin melts at 232 Tu and
  * blows fast and low; copper carries more and blows slowly. Which fuse fits a line is read off the
  * material table, and nothing names a fuse.
@@ -46,7 +47,7 @@ public class FuseBlockEntity extends ElectricNode implements ThermalBody {
     /** The wire's metal, or null when there is none -- placed empty, or blown. */
     @Nullable
     private ResourceLocation wire;
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
 
     public FuseBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.FUSE.get(), pos, state);
@@ -69,7 +70,7 @@ public class FuseBlockEntity extends ElectricNode implements ThermalBody {
 
     public float getRatingAmps() {
         Material m = material();
-        return m == null ? 0f : m.ampacity().orElse(0f) * FTuning.FUSE_AMPS_PER_AMPACITY;
+        return m == null ? 0f : m.ampacity().orElse(0f) * ElectricMachineTuning.FUSE_AMPS_PER_AMPACITY;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class FuseBlockEntity extends ElectricNode implements ThermalBody {
         Tu ambient = AmbientTable.at(level);
         float over = amps - getRatingAmps();
         if (wire != null && over > 0f)
-            Heat.warm(this, FTuning.FUSE_OVERLOAD_WORK_PER_AMP * over);
+            Heat.warm(this, ElectricMachineTuning.FUSE_OVERLOAD_WORK_PER_AMP * over);
         Heat.tick(this, ambient, ambient, false);
 
         Material m = material();
@@ -137,12 +138,12 @@ public class FuseBlockEntity extends ElectricNode implements ThermalBody {
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.WIRE_MASS;
+        return ElectricMachineTuning.WIRE_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.WIRE_LEAK;
+        return ElectricMachineTuning.WIRE_LEAK;
     }
 
     @Override

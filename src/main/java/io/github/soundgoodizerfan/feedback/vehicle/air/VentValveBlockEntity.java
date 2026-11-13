@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.air;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 
 import net.minecraft.core.BlockPos;
@@ -56,7 +56,7 @@ public class VentValveBlockEntity extends AnalogPartBlockEntity {
         float open = opening();
         if (open <= 0f || !(level instanceof ServerLevel server))
             return;
-        owed += FTuning.VENT_MB_PER_TICK * open;
+        owed += VehicleTuning.VENT_MB_PER_TICK * open;
         int want = (int) owed;
         if (want <= 0)
             return;

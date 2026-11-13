@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.core.thermal;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -70,7 +69,7 @@ public final class ItemHeat {
 
     /** Stamp a stack as being at this temperature, now. */
     public static void set(ItemStack stack, Tu tu, Level level) {
-        if (tu.value() <= FTuning.WARM_TU.value()) {
+        if (tu.value() <= ThermalTuning.WARM_TU.value()) {
             clear(stack);
             return;
         }
@@ -95,7 +94,7 @@ public final class ItemHeat {
             return floor != null ? floor : AmbientTable.at(level);
         long at = stack.getOrDefault(FDataComponents.HEATED_AT.get(), level.getGameTime());
         float elapsed = Math.max(0, level.getGameTime() - at);
-        TuRate rate = stack.getItem() instanceof Cooling c ? c.coolingRate(stack) : FTuning.ITEM_COOLING_TU_PER_TICK;
+        TuRate rate = stack.getItem() instanceof Cooling c ? c.coolingRate(stack) : ThermalTuning.ITEM_COOLING_TU_PER_TICK;
         Tu cooled = Heat.cooled(new Tu(stamped), elapsed, rate, AmbientTable.at(level));
         return floor != null && floor.value() > cooled.value() ? floor : cooled;
     }
@@ -118,12 +117,12 @@ public final class ItemHeat {
     public static Tu feltNoBarrel(ItemStack stack, Level level) {
         Tu t = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.GunItem
                 ? io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.edgeTu(stack) : felt(stack, level);
-        return t != null && t.value() > FTuning.WARM_TU.value() ? t : null;
+        return t != null && t.value() > ThermalTuning.WARM_TU.value() ? t : null;
     }
 
     /** {@link #isHot} counting a Heat+ edge. */
     public static boolean isHotFelt(ItemStack stack, Level level) {
-        return felt(stack, level).value() > FTuning.WARM_TU.value();
+        return felt(stack, level).value() > ThermalTuning.WARM_TU.value();
     }
 
     /** A skill spends heat: only the real temperature falls (never below ambient); an attuned edge is not used up. */
@@ -135,7 +134,7 @@ public final class ItemHeat {
 
     public static boolean isHot(ItemStack stack, Level level) {
         return stack.has(FDataComponents.TEMPERATURE.get())
-                && get(stack, level).value() > FTuning.WARM_TU.value();
+                && get(stack, level).value() > ThermalTuning.WARM_TU.value();
     }
 
     /**
@@ -148,7 +147,7 @@ public final class ItemHeat {
      */
     public static void settle(ItemStack stack, Level level) {
         if (stack.has(FDataComponents.TEMPERATURE.get())
-                && get(stack, level).value() <= FTuning.WARM_TU.value())
+                && get(stack, level).value() <= ThermalTuning.WARM_TU.value())
             clear(stack);
     }
 

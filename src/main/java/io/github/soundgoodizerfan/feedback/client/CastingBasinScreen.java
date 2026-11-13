@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinMenu;
 
@@ -18,7 +18,7 @@ public class CastingBasinScreen extends SkinnedScreen<CastingBasinMenu> {
 
     private static final int GAUGE_X = 130, GAUGE_Y = 18, GAUGE_W = 10, GAUGE_H = 86;
 
-    private final Gauge pool = Gauge.of(() -> menu.poolMb() / (float) FTuning.BASIN_POOL_MB).ticks(9).vertical();
+    private final Gauge pool = Gauge.of(() -> menu.poolMb() / (float) MachineTuning.BASIN_POOL_MB).ticks(9).vertical();
 
     public CastingBasinScreen(CastingBasinMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, GuiSkin.STONE);

@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.electrostatic;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -48,10 +49,10 @@ public class ElectrostaticGeneratorBlockEntity extends ElectricNode {
 
     /** One turn of the handle. Turning again mid-pulse tops it up to the full length, not past it. */
     public void turn() {
-        pulseTicks = FTuning.ELECTROSTATIC_PULSE_TICKS;
+        pulseTicks = ElectricMachineTuning.ELECTROSTATIC_PULSE_TICKS;
         setChanged();
         if (level != null)
-            io.github.soundgoodizerfan.feedback.core.electric.Sparks.emit(level, worldPosition, FTuning.SPARK_MIN_AMPS);
+            io.github.soundgoodizerfan.feedback.core.electric.Sparks.emit(level, worldPosition, ElectricTuning.SPARK_MIN_AMPS);
         if (level != null)
             level.playSound(null, worldPosition, SoundEvents.COPPER_HIT, SoundSource.BLOCKS, 0.6f, 1.6f);
     }
@@ -67,12 +68,12 @@ public class ElectrostaticGeneratorBlockEntity extends ElectricNode {
 
     @Override
     public float sourceVolts() {
-        return pulseTicks > 0 ? FTuning.ELECTROSTATIC_VOLTS : 0f;
+        return pulseTicks > 0 ? ElectricMachineTuning.ELECTROSTATIC_VOLTS : 0f;
     }
 
     @Override
     public float sourceAmps() {
-        return pulseTicks > 0 ? FTuning.ELECTROSTATIC_AMPS : 0f;
+        return pulseTicks > 0 ? ElectricMachineTuning.ELECTROSTATIC_AMPS : 0f;
     }
 
     @Override

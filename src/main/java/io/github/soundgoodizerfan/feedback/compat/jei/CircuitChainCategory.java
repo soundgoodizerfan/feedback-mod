@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
+import io.github.soundgoodizerfan.feedback.process.ProcessTuning;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -9,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Board;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.Soldering;
@@ -80,7 +80,7 @@ public class CircuitChainCategory implements IRecipeCategory<CircuitChainCategor
         Board.Part part = new Board.Part(Board.Kind.COHERER, 1f);
         Board bare = new Board(Board.Trace.PRINTED, paste, substrate, Optional.empty(), Board.Joint.NONE, List.of());
         Board pasted = bare.mounted(part).pasted(solders.get(0));
-        ItemStack circuit = Soldering.finish(board(pasted), materials, alloy.liquidus() + alloy.window() / 2f, FTuning.SOLDER_DWELL_TICKS);
+        ItemStack circuit = Soldering.finish(board(pasted), materials, alloy.liquidus() + alloy.window() / 2f, ProcessTuning.SOLDER_DWELL_TICKS);
         List<ItemStack> ingots = new ArrayList<>();
         for (ResourceLocation s : solders)
             ingots.add(materials.get(s).stack(s, "ingot").get());

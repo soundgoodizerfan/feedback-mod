@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -148,7 +148,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     public int pellets() {
         if (!shot)
             return 1;
-        double boreVolume = Math.PI / 4 * boreMm * boreMm * boreMm * FTuning.GUN_PROJECTILE_LENGTH_PER_BORE;
+        double boreVolume = Math.PI / 4 * boreMm * boreMm * boreMm * GunTuning.GUN_PROJECTILE_LENGTH_PER_BORE;
         double pellet = Math.PI / 6 * Math.pow(shape.pelletMm(), 3);
         return Math.max(1, Math.min(shape.maxPellets(), (int) Math.round(boreVolume / pellet)));
     }
@@ -182,7 +182,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      */
     public static Cartridge reference(int boreMm) {
         return new Cartridge(boreMm, ResourceLocation.fromNamespaceAndPath("feedback", "brass"),
-                ResourceLocation.fromNamespaceAndPath("feedback", "gunpowder"), FTuning.GUN_CHARGE_NOMINAL,
+                ResourceLocation.fromNamespaceAndPath("feedback", "gunpowder"), GunTuning.GUN_CHARGE_NOMINAL,
                 ResourceLocation.fromNamespaceAndPath("feedback", "lead"));
     }
 
@@ -199,12 +199,12 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
      */
     /** How much room a case of this bore has, against the reference bore's: its area. */
     public static float caseScale(float boreMm) {
-        return (float) Math.pow(boreMm / FTuning.GUN_CHARGE_REF_BORE_MM, FTuning.GUN_CASE_ROOM_EXPONENT);
+        return (float) Math.pow(boreMm / GunTuning.GUN_CHARGE_REF_BORE_MM, GunTuning.GUN_CASE_ROOM_EXPONENT);
     }
 
     /** The most charge a case of this bore takes. */
     public static int maxCharge(int boreMm) {
-        return Math.max(1, Math.min(FTuning.GUN_CHARGE_CEILING, Math.round(FTuning.GUN_CHARGE_MAX * caseScale(boreMm))));
+        return Math.max(1, Math.min(FTuning.GUN_CHARGE_CEILING, Math.round(GunTuning.GUN_CHARGE_MAX * caseScale(boreMm))));
     }
 
     public Optional<GunSpec.Load> load(Map<ResourceLocation, Material> materials) {
@@ -237,7 +237,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
                 if (m == null || m.propellant().isEmpty())
                     return Optional.empty();
                 var p = m.propellant().get();
-                potential += c.count() * p.peakPressure().value() / FTuning.GUN_CHARGE_NOMINAL;
+                potential += c.count() * p.peakPressure().value() / GunTuning.GUN_CHARGE_NOMINAL;
                 burnWeighted += c.count() * p.burnRate();
                 balance += c.count() * p.oxygenBalance();
                 ignition = Math.min(ignition, p.ignitionTemperature().value());
@@ -245,20 +245,20 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
             }
             if (total <= 0)
                 return Optional.empty();
-            float burned = balance >= 0 ? 1f : Math.max(FTuning.GUN_FIZZLE_FLOOR, 1f + balance / total);
+            float burned = balance >= 0 ? 1f : Math.max(GunTuning.GUN_FIZZLE_FLOOR, 1f + balance / total);
             return Optional.of(new Blend(potential, burned, burnWeighted / total, ignition, total));
         }
     }
 
     /**
      * What the case itself holds: the chamber's hoop-stress rule with the case drawn to scale
-     * with its bore, so the bore cancels ({@link FTuning#GUN_CASE_WALL_PER_RADIUS}).
+     * with its bore, so the bore cancels ({@link GunTuning#GUN_CASE_WALL_PER_RADIUS}).
      */
     public Optional<Pu> caseRating(Map<ResourceLocation, Material> materials) {
         Material c = materials.get(caseMaterial);
         if (c == null || c.mechanical().yieldStrength().isEmpty())
             return Optional.empty();
-        return Optional.of(new Pu(c.mechanical().yieldStrength().get().value() * FTuning.GUN_CASE_WALL_PER_RADIUS));
+        return Optional.of(new Pu(c.mechanical().yieldStrength().get().value() * GunTuning.GUN_CASE_WALL_PER_RADIUS));
     }
 
     /** Whether the bullet carries a luminous payload: a tracer. By trait, never by item. */
@@ -275,7 +275,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
     public float blast(Map<ResourceLocation, Material> materials) {
         float power = payload.flatMap(p -> Blend.of(materials, List.of(new Charge(p, 1))))
                 .filter(b -> b.burned() >= 1f)
-                .map(b -> FTuning.DEMO_POWER_PER_SQRT * FTuning.DEMO_ROUND_SCALE * (float) Math.sqrt(b.potential()
+                .map(b -> FTuning.DEMO_POWER_PER_SQRT * GunTuning.DEMO_ROUND_SCALE * (float) Math.sqrt(b.potential()
                         * Math.pow(boreMm / 9.0, 3)))
                 .orElse(0f);
         return Math.min(FTuning.DEMO_POWER_MAX, power);
@@ -304,7 +304,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         Material heart = materials.get(core.get());
         if (heart == null)
             return Optional.empty();
-        float f = FTuning.GUN_CORE_FRACTION;
+        float f = GunTuning.GUN_CORE_FRACTION;
         return Optional.of(new Slug((float) (f * heart.density().muPerMb() + (1 - f) * jacket.density().muPerMb()),
                 heart.separation().magnetic(), heart.hardness().value()));
     }
@@ -325,13 +325,13 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
 
     /** The hardness armour and stone meet: the bullet's, scaled by its shape (and a sabot's core, a little over). */
     public float hardness(Map<ResourceLocation, Material> materials) {
-        float h = slug(materials).map(Slug::hardness).orElse(FTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
-        return h * shape.pierce() * (sabot(materials) ? FTuning.GUN_SABOT_PIERCE : 1f);
+        float h = slug(materials).map(Slug::hardness).orElse(GunTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
+        return h * shape.pierce() * (sabot(materials) ? GunTuning.GUN_SABOT_PIERCE : 1f);
     }
 
     /** Air drag against a round nose's: the shape's, and a sabot's is less. */
     public float drag(Map<ResourceLocation, Material> materials) {
-        return shape.drag() * (sabot(materials) ? FTuning.GUN_SABOT_DRAG : 1f);
+        return shape.drag() * (sabot(materials) ? GunTuning.GUN_SABOT_DRAG : 1f);
     }
 
     /**
@@ -343,7 +343,7 @@ public record Cartridge(int boreMm, ResourceLocation caseMaterial, List<Charge> 
         Material jacket = materials.get(projectile);
         Material heart = core.map(materials::get).orElse(null);
         if (jacket != null && heart != null && heart.hardness().value() > 0)
-            w *= Math.max(FTuning.GUN_JACKET_WEAR_FLOOR, Math.min(1f, jacket.hardness().value() / heart.hardness().value()));
+            w *= Math.max(GunTuning.GUN_JACKET_WEAR_FLOOR, Math.min(1f, jacket.hardness().value() / heart.hardness().value()));
         return w;
     }
 

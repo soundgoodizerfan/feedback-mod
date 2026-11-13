@@ -19,13 +19,14 @@
  */
 package io.github.soundgoodizerfan.feedback.vehicle.micro;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.machine.bearing.Joint;
 import io.github.soundgoodizerfan.feedback.machine.bearing.JointBlock;
@@ -109,7 +110,7 @@ public final class MicroBearings {
                 BlockPos n = v.relative(d);
                 if (n.equals(b) || n.equals(host) || moving.contains(n) || at(level, n) == null)
                     continue;
-                if (moving.size() >= FTuning.ROTARY_BEARING_MAX_VOXELS)
+                if (moving.size() >= VehicleTuning.ROTARY_BEARING_MAX_VOXELS)
                     return "too_big";
                 moving.add(n);
                 queue.add(n);

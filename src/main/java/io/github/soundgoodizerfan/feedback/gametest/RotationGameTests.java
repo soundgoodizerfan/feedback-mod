@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNetwork;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
@@ -42,7 +44,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public class RotationGameTests {
 
-    private static final float CRANK_RPM = FTuning.HAND_CRANK_RPM.value();
+    private static final float CRANK_RPM = MachineTuning.HAND_CRANK_RPM.value();
 
     /** A crank driving along X at {@code at}, then {@code shafts} shafts east of it. */
     static HandCrankBlockEntity crankRun(GameTestHelper helper, BlockPos at, int shafts) {
@@ -189,7 +191,7 @@ public class RotationGameTests {
             RotationNetwork net = bareShaft.getNetwork();
             if (net.getTargetRpm().value() == 0 && now > 1) {
                 float load = net.getStaticLoadSu().value() + net.getDragSuPerRpm().suPerRpm() * last[0];
-                float expected = Math.max(load, FTuning.MINIMUM_BRAKING_SU.value()) / net.getInertia().suTicksPerRpm();
+                float expected = Math.max(load, RotationTuning.MINIMUM_BRAKING_SU.value()) / net.getInertia().suTicksPerRpm();
                 helper.assertTrue(Math.abs(last[0] - now - expected) < 1e-3,
                         "coasting should lose " + expected + " RPM a tick, lost " + (last[0] - now));
                 checked[0]++;

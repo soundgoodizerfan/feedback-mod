@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
@@ -22,7 +21,7 @@ import net.minecraft.world.level.Level;
  *
  * <h2>What it reads, and what it cannot do</h2>
  * Current at the block it is put to, finely enough to tell a loaded line from an idle one and
- * coarsely enough to be a real instrument ({@link FTuning#GALVANOMETER_RESOLUTION_AMPS}). On a
+ * coarsely enough to be a real instrument ({@link ItemTuning#GALVANOMETER_RESOLUTION_AMPS}). On a
  * sink it also says what was wanted, so a starved sink reads as a figure against a figure -- the
  * visible failure of §6.2 -- without the instrument knowing why. It is an {@link Instrument}, which
  * has no way to act: nothing here changes the line.
@@ -45,7 +44,7 @@ public class GalvanometerItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.GALVANOMETER_RESOLUTION_AMPS;
+        return ItemTuning.GALVANOMETER_RESOLUTION_AMPS;
     }
 
     @Override

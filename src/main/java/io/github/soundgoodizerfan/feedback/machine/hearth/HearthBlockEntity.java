@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.hearth;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
@@ -43,7 +44,7 @@ import java.util.Optional;
  *
  * <h2>It reheats stock; it never makes a part hotter than itself</h2>
  * Each tick, every piece of stock in the cells of a Tool Table touching it moves
- * {@link FTuning#HEARTH_STOCK_GRIP} of the way to the pan's temperature, if the pan is hotter. That
+ * {@link ThermalTuning#HEARTH_STOCK_GRIP} of the way to the pan's temperature, if the pan is hotter. That
  * is the same law as the fire on a crucible, so a cold ingot is reheated quickly and one nearly
  * at the pan's heat barely at all, and it can never overshoot the pan. {@link ItemHeat} still does
  * the cooling (1.5 Tu/t, linear), so stock beside a pan settles a fixed 50 Tu under it, and a
@@ -56,10 +57,10 @@ import java.util.Optional;
  * Too hot is the player's to notice. Stock left in a pan hotter than its material's window is
  * refused by the table until it cools. Raw stock (not a shaped part) held above its material's
  * oxidation temperature scales: now and then one piece of the stack is lost, more often the further
- * over it sits ({@link FTuning#HEARTH_SCALE_RATE}).
+ * over it sits ({@link VesselTuning#HEARTH_SCALE_RATE}).
  *
  * <h2>What a pan does not do</h2>
- * Stock does not cool the pan (a few ingots against {@link FTuning#HEARTH_MASS} would not change
+ * Stock does not cool the pan (a few ingots against {@link VesselTuning#HEARTH_MASS} would not change
  * its temperature by a figure anyone could read), and stock is not reheated across a gap the chunk
  * was unloaded for; the pan itself is caught up ({@link Catchup}).
  * <p>
@@ -69,7 +70,7 @@ import java.util.Optional;
  */
 public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatSource {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private final Catchup offline = new Catchup();
 
     public HearthBlockEntity(BlockPos pos, BlockState state) {
@@ -88,12 +89,12 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.HEARTH_MASS;
+        return VesselTuning.HEARTH_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.HEARTH_LEAK;
+        return VesselTuning.HEARTH_LEAK;
     }
 
     /** How hot the pan is, as a flame a thing on it would be heated by (a hot plate under a crucible). */
@@ -113,19 +114,19 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
         Heat.tick(this, fireTu, ambient, fireTu.value() > ambient.value());
         setChanged();
 
-        if (temperature > FTuning.WARM_TU.value())
+        if (temperature > ThermalTuning.WARM_TU.value())
             reheatBeside();
     }
 
     /**
      * The heat a hot Hearth beside the Anvil at {@code table} holds its stock at: the pan's heat less the gap the item cooling keeps
-     * (cooling / {@link FTuning#HEARTH_STOCK_GRIP}), or 0 for none. The forge's heat clock reads this so a part on a kept-hot anvil does not run out of window.
+     * (cooling / {@link ThermalTuning#HEARTH_STOCK_GRIP}), or 0 for none. The forge's heat clock reads this so a part on a kept-hot anvil does not run out of window.
      */
     public static float holdBeside(Level level, BlockPos table) {
         float best = 0f;
         for (Direction side : Direction.Plane.HORIZONTAL)
-            if (level.getBlockEntity(table.relative(side)) instanceof HearthBlockEntity hearth && hearth.temperature > FTuning.WARM_TU.value())
-                best = Math.max(best, hearth.temperature - FTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() / FTuning.HEARTH_STOCK_GRIP);
+            if (level.getBlockEntity(table.relative(side)) instanceof HearthBlockEntity hearth && hearth.temperature > ThermalTuning.WARM_TU.value())
+                best = Math.max(best, hearth.temperature - ThermalTuning.ITEM_COOLING_TU_PER_TICK.tuPerTick() / ThermalTuning.HEARTH_STOCK_GRIP);
         return best;
     }
 
@@ -151,7 +152,7 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
             return;
         float now = ItemHeat.get(stock, level).value();
         if (temperature > now)
-            ItemHeat.set(stock, new Tu(now + FTuning.HEARTH_STOCK_GRIP * (temperature - now)), level);
+            ItemHeat.set(stock, new Tu(now + ThermalTuning.HEARTH_STOCK_GRIP * (temperature - now)), level);
         scale(stock, what.get().material());
     }
 
@@ -163,7 +164,7 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
         if (oxidises.isEmpty() || oxidises.get().value() <= 0f)
             return;
         float over = (ItemHeat.get(stock, level).value() - oxidises.get().value()) / oxidises.get().value();
-        if (over > 0f && level.random.nextFloat() < FTuning.HEARTH_SCALE_RATE * over)
+        if (over > 0f && level.random.nextFloat() < VesselTuning.HEARTH_SCALE_RATE * over)
             stock.shrink(1);
     }
 
@@ -177,7 +178,7 @@ public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatS
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         offline.load(tag);
     }
 }

@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.electrolyser;
 
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.hazard.Corrosion;
@@ -55,11 +57,11 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  */
 public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody {
 
-    private final FluidTank feed = new FluidTank(FTuning.ELECTROLYSER_FEED_MB,
+    private final FluidTank feed = new FluidTank(ElectricMachineTuning.ELECTROLYSER_FEED_MB,
             f -> ThermalProcessTable.get().electrolysisOf(f).isPresent());
-    private final FluidTank liquor = new FluidTank(FTuning.ELECTROLYSER_FEED_MB);
-    private final FluidTank anode = new FluidTank(FTuning.ELECTROLYSER_GAS_MB);
-    private final FluidTank cathode = new FluidTank(FTuning.ELECTROLYSER_GAS_MB);
+    private final FluidTank liquor = new FluidTank(ElectricMachineTuning.ELECTROLYSER_FEED_MB);
+    private final FluidTank anode = new FluidTank(ElectricMachineTuning.ELECTROLYSER_GAS_MB);
+    private final FluidTank cathode = new FluidTank(ElectricMachineTuning.ELECTROLYSER_GAS_MB);
     private final ItemStackHandler solute = new ItemStackHandler(1) {
         @Override
         public boolean isItemValid(int slot, ItemStack stack) {
@@ -96,7 +98,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
     private float residueOwed;
     private float unitsLeft;
     private float bathLoss;
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
 
     public ElectrolyserBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.ELECTROLYSER.get(), pos, state);
@@ -156,7 +158,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
 
     /** Whether the cell holds enough feed (or bath) for {@code row} to run. */
     private boolean fed(Electrolysis row) {
-        return feed.getFluidAmount() >= (row.solvent() ? FTuning.ELECTROLYSER_SOLVENT_MIN_MB : 1);
+        return feed.getFluidAmount() >= (row.solvent() ? ElectricMachineTuning.ELECTROLYSER_SOLVENT_MIN_MB : 1);
     }
 
     /** Whether a bath row still has solute, in the work already melted in or in the slot. */
@@ -183,7 +185,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
             return 0f;
         boolean hot = temperature >= row.get().minTemperature();
         // A cold cell takes current to warm up; a hot one only while it can store what it makes.
-        return !hot || roomFor(row.get()) > 0 ? FTuning.ELECTROLYSER_AMPS : 0f;
+        return !hot || roomFor(row.get()) > 0 ? ElectricMachineTuning.ELECTROLYSER_AMPS : 0f;
     }
 
     @Override
@@ -198,16 +200,16 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         }
         float excess = ElectricRules.overVoltage(volts, ratedBand());
         if (excess > 0f)
-            wear(FTuning.ELECTROLYSER_WEAR_PER_EXCESS * excess);
+            wear(ElectricMachineTuning.ELECTROLYSER_WEAR_PER_EXCESS * excess);
     }
 
     private void wear(float amount) {
-        condition = Math.max(FTuning.ELECTROLYSER_CONDITION_FLOOR, condition - amount);
+        condition = Math.max(ElectricMachineTuning.ELECTROLYSER_CONDITION_FLOOR, condition - amount);
         setChanged();
     }
 
     private void electrolyse(Electrolysis row, float amps) {
-        owed = Math.min(4f, owed + amps * FTuning.ELECTROLYSER_MB_PER_AMP_TICK * condition);
+        owed = Math.min(4f, owed + amps * ElectricMachineTuning.ELECTROLYSER_MB_PER_AMP_TICK * condition);
         int units = Math.min((int) owed, roomFor(row));
         if (row.item().isPresent()) {
             while (unitsLeft < units && row.takes(solute.getStackInSlot(0))) {
@@ -259,8 +261,8 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
 
     /** A bath with nothing dissolved in it: the bath itself breaks down, fumes escape, the cell wears. */
     private void anodeEffect() {
-        wear(FTuning.ELECTROLYSER_ANODE_EFFECT_WEAR);
-        bathLoss += FTuning.ELECTROLYSER_ANODE_EFFECT_BATH_MB;
+        wear(ElectricMachineTuning.ELECTROLYSER_ANODE_EFFECT_WEAR);
+        bathLoss += ElectricMachineTuning.ELECTROLYSER_ANODE_EFFECT_BATH_MB;
         int lost = (int) bathLoss;
         if (lost > 0) {
             bathLoss -= lost;
@@ -384,7 +386,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
             seep(cathode, movedCathode);
             if (Corrosion.corrosive(feed.getFluid()) || Corrosion.corrosive(liquor.getFluid())
                     || Corrosion.corrosive(anode.getFluid()) || Corrosion.corrosive(cathode.getFluid())) {
-                float bite = Corrosion.wearPerSecond(FTuning.ELECTROLYSER_LINING);
+                float bite = Corrosion.wearPerSecond(HazardTuning.ELECTROLYSER_LINING);
                 if (bite > 0f)
                     wear(bite);
             }
@@ -398,7 +400,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         int toxic = m == null ? 0 : Fumes.level(m);
         if (toxic <= 0)
             return;
-        tank.drain(FTuning.ELECTROLYSER_SEEP_MB, IFluidHandler.FluidAction.EXECUTE);
+        tank.drain(ElectricMachineTuning.ELECTROLYSER_SEEP_MB, IFluidHandler.FluidAction.EXECUTE);
         Fumes.release(level, Vec3.atCenterOf(worldPosition), toxic);
         setChanged();
     }
@@ -433,12 +435,12 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.ELECTROLYSER_MASS;
+        return ElectricMachineTuning.ELECTROLYSER_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.ELECTROLYSER_LEAK;
+        return ElectricMachineTuning.ELECTROLYSER_LEAK;
     }
 
     @Override
@@ -471,6 +473,6 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
         unitsLeft = tag.getFloat("UnitsLeft");
         residueOwed = tag.getFloat("ResidueOwed");
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
     }
 }

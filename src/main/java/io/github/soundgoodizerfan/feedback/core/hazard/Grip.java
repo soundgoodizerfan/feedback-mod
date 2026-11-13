@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -40,7 +40,7 @@ public final class Grip {
      */
     public static boolean insulates(Material material) {
         return material.thermal().conductivity()
-                .map(c -> c.workPerTickPerTu() < FTuning.GRIP_MAX_CONDUCTIVITY)
+                .map(c -> c.workPerTickPerTu() < HazardTuning.GRIP_MAX_CONDUCTIVITY)
                 .orElseGet(() -> material.kind().map(k -> k == Material.Kind.ORGANIC).orElse(false));
     }
 
@@ -56,7 +56,7 @@ public final class Grip {
      * material stands. A material that does not insulate, or has no figure, holds nothing back.
      */
     public static float safeUpTo(Level level, ResourceLocation id, float exposure) {
-        float floor = FTuning.CONTACT_PAIN_TU.value();
+        float floor = ThermalTuning.CONTACT_PAIN_TU.value();
         Optional<Material> material = material(level, id);
         if (material.isEmpty() || !insulates(material.get()))
             return floor;

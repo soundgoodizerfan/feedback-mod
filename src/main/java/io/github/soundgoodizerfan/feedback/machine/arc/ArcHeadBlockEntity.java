@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.arc;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -41,18 +43,18 @@ import net.minecraft.world.phys.AABB;
  * It is a {@link HeatSource} facing the vessel it was set against; the vessel reads its plasma through {@link HeatSource#at} like any
  * fire, so a crucible under it and an arc hearth under it are heated the same way. The plasma follows the power the line delivers
  * (a sag lowers it) and is capped by the weakest electrode: about 97% of its sublimation (or boiling) point, and never above
- * {@link FTuning#ARC_MAX_TU}. Fewer electrodes mean less power drawn and less delivered.
+ * {@link ElectricMachineTuning#ARC_MAX_TU}. Fewer electrodes mean less power drawn and less delivered.
  *
  * <h2>The electrode is what wears</h2>
- * Each electrode loses condition every tick the arc burns, by {@link FTuning#ELECTRODE_WEAR_PER_TICK_AT_LIMIT} times the fourth power of the
+ * Each electrode loses condition every tick the arc burns, by {@link ElectricMachineTuning#ELECTRODE_WEAR_PER_TICK_AT_LIMIT} times the fourth power of the
  * bath's share of that electrode's limit: nearly nothing at steel's heat, steeply more near its ceiling, so running the bath
- * hot and long is what eats them. Below {@link FTuning#ELECTRODE_SNAP_CONDITION} an electrode snaps: the stump drops into the bath
- * and the arc flashes. A bath above {@link FTuning#ARC_FLASH_TU} that holds metal now and then splashes and flashes by itself.
+ * hot and long is what eats them. Below {@link ElectricMachineTuning#ELECTRODE_SNAP_CONDITION} an electrode snaps: the stump drops into the bath
+ * and the arc flashes. A bath above {@link ElectricMachineTuning#ARC_FLASH_TU} that holds metal now and then splashes and flashes by itself.
  */
 public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wearing {
 
-    private final NonNullList<ItemStack> electrodes = NonNullList.withSize(FTuning.ARC_ELECTRODE_SLOTS, ItemStack.EMPTY);
-    private float arcTu = FTuning.AMBIENT_TU.value();
+    private final NonNullList<ItemStack> electrodes = NonNullList.withSize(MachineTuning.ARC_ELECTRODE_SLOTS, ItemStack.EMPTY);
+    private float arcTu = ThermalTuning.AMBIENT_TU.value();
     private float power;
     private boolean powered;
 
@@ -102,8 +104,8 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
         float ceiling = Float.MAX_VALUE;
         for (ItemStack held : electrodes)
             if (!held.isEmpty())
-                ceiling = Math.min(ceiling, ElectrodeItem.limitTu(held) * FTuning.ARC_PLASMA_OF_SUBLIMATION);
-        return Math.min(ceiling, FTuning.ARC_MAX_TU.value());
+                ceiling = Math.min(ceiling, ElectrodeItem.limitTu(held) * ElectricMachineTuning.ARC_PLASMA_OF_SUBLIMATION);
+        return Math.min(ceiling, ElectricMachineTuning.ARC_MAX_TU.value());
     }
 
     // --- sink -----------------------------------------------------------------------------------
@@ -115,7 +117,7 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
 
     @Override
     public float wantedAmps() {
-        return FTuning.ARC_AMPS * fitted() / FTuning.ARC_ELECTRODE_SLOTS;
+        return ElectricMachineTuning.ARC_AMPS * fitted() / MachineTuning.ARC_ELECTRODE_SLOTS;
     }
 
     @Override
@@ -128,7 +130,7 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
         super.onResolved(volts, amps, wanted, blocked);
         int n = fitted();
         powered = n > 0 && volts > 0f && amps > 0f;
-        float full = FTuning.ARC_FULL_WATTS * n / FTuning.ARC_ELECTRODE_SLOTS;
+        float full = ElectricMachineTuning.ARC_FULL_WATTS * n / MachineTuning.ARC_ELECTRODE_SLOTS;
         power = powered && full > 0f ? Math.min(1f, volts * amps / full) : 0f;
     }
 
@@ -144,7 +146,7 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
             powered = false;
         if (!powered)
             target = ambient.value();
-        arcTu += (target - arcTu) / FTuning.ARC_PLASMA_MASS.workPerTu();
+        arcTu += (target - arcTu) / ElectricMachineTuning.ARC_PLASMA_MASS.workPerTu();
         if (arcTu < ambient.value())
             arcTu = ambient.value();
 
@@ -152,7 +154,7 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
         if (powered && arcTu > ambient.value() + 50f) {
             float ref = bath.body != null ? bath.body.getTemperature().value() : arcTu;
             wearElectrodes(server, ref, bath);
-            if (bath.holdsMetal() && ref >= FTuning.ARC_FLASH_TU.value() && server.random.nextFloat() < FTuning.ARC_FLASH_CHANCE)
+            if (bath.holdsMetal() && ref >= ElectricMachineTuning.ARC_FLASH_TU.value() && server.random.nextFloat() < ElectricMachineTuning.ARC_FLASH_CHANCE)
                 flash(server, ref);
         }
     }
@@ -165,10 +167,10 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
                 continue;
             float limit = ElectrodeItem.limitTu(held);
             float share = limit > 0f ? Math.min(1.2f, ref / limit) : 1.2f;
-            float wear = FTuning.ELECTRODE_WEAR_PER_TICK_AT_LIMIT * share * share * share * share;
+            float wear = ElectricMachineTuning.ELECTRODE_WEAR_PER_TICK_AT_LIMIT * share * share * share * share;
             float condition = ElectrodeItem.condition(held) - wear;
             held.set(FDataComponents.TOOL_CONDITION.get(), Math.max(0f, condition));
-            if (condition <= FTuning.ELECTRODE_SNAP_CONDITION) {
+            if (condition <= ElectricMachineTuning.ELECTRODE_SNAP_CONDITION) {
                 electrodes.set(i, ItemStack.EMPTY);
                 dropIntoBath(server, held, bath);
                 snapped = true;
@@ -192,11 +194,11 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
     private void flash(ServerLevel server, float bathTu) {
         server.playSound(null, worldPosition, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.BLOCKS, 0.4f, 2f);
         server.sendParticles(ParticleTypes.FLASH, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5, worldPosition.getZ() + 0.5, 1, 0, 0, 0, 0);
-        float r = FTuning.ARC_FLASH_RADIUS;
+        float r = ElectricMachineTuning.ARC_FLASH_RADIUS;
         for (LivingEntity victim : server.getEntitiesOfClass(LivingEntity.class, new AABB(worldPosition).inflate(r))) {
             HotContact.burn(victim, new Tu(bathTu));
             if (victim.getItemBySlot(EquipmentSlot.HEAD).isEmpty())
-                victim.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, FTuning.ARC_FLASH_BLIND_TICKS));
+                victim.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, ElectricMachineTuning.ARC_FLASH_BLIND_TICKS));
         }
     }
 
@@ -222,7 +224,7 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
     /** A plasma is concentrated: it reaches every side of the face it is set to. */
     @Override
     public float sideShare() {
-        return FTuning.ARC_HEAD_SIDE_SHARE;
+        return ElectricMachineTuning.ARC_HEAD_SIDE_SHARE;
     }
 
     @Override
@@ -265,6 +267,6 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
         super.loadAdditional(tag, registries);
         electrodes.clear();
         ContainerHelper.loadAllItems(tag, electrodes, registries);
-        arcTu = tag.contains("Arc") ? tag.getFloat("Arc") : FTuning.AMBIENT_TU.value();
+        arcTu = tag.contains("Arc") ? tag.getFloat("Arc") : ThermalTuning.AMBIENT_TU.value();
     }
 }

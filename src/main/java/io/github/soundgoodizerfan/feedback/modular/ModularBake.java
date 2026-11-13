@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +12,6 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.combat.gear.GearTuning;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -456,7 +457,7 @@ public final class ModularBake {
      * @param frameSu    the frame's torque ceiling, Su.
      * @param voltsPerRpm the winding's, which is also the Su each amp costs the shaft.
      * @param ratedAmps  the current it carries: the frame's ceiling over the winding's figure, or the winding conductor's, whichever is less.
-     * @param band       the band it is built for: its volts per RPM at {@link FTuning#MACHINE_REFERENCE_RPM}.
+     * @param band       the band it is built for: its volts per RPM at {@link ModularTuning#MACHINE_REFERENCE_RPM}.
      * @param mass       thermal mass of the frame, Work per Tu.
      * @param leak       the housing's shed to air, Work per tick per Tu (a finned one).
      * @param serviceTu  the hottest the housing runs before the machine wears.
@@ -662,8 +663,8 @@ public final class ModularBake {
             friction *= balls.mechanical().friction().orElse(ModularTuning.BEARING_REF_FRICTION) / ModularTuning.BEARING_REF_FRICTION;
         int wireCells = stockCells(type.roles().get(MACHINE_WINDING), winding);
         float amps = Math.min(su / vpr, wm.ampacity().get() * wireCells * FTuning.WINDING_AMPS_PER_AMPACITY);
-        float drop = wm.electrical().drop().orElse(0f) * wireCells * FTuning.WINDING_BLOCKS_PER_CELL;
-        float leak = hm.thermal().conductivity().get().workPerTickPerTu() * area * FTuning.MACHINE_SHED_PER_CONDUCTIVITY;
+        float drop = wm.electrical().drop().orElse(0f) * wireCells * ModularTuning.WINDING_BLOCKS_PER_CELL;
+        float leak = hm.thermal().conductivity().get().workPerTickPerTu() * area * ModularTuning.MACHINE_SHED_PER_CONDUCTIVITY;
         // A cooling addon (plate fins, or pipe for a water jacket) sheds more: its material's conductivity over its volume.
         Part cooling = design.part(MACHINE_COOLING);
         Material km = cooling == null ? null : materials.get(cooling.material());
@@ -671,7 +672,7 @@ public final class ModularBake {
             leak += km.thermal().conductivity().get().workPerTickPerTu() * type.roles().get(MACHINE_COOLING).volume(cooling)
                     * ModularTuning.COOLING_SHED_PER_LS;
         float service = hm.thermal().serviceTemperature().map(Tu::value).orElse(FTuning.MACHINE_SERVICE_TU);
-        return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOf(vpr * FTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
+        return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOf(vpr * ModularTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
                 cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, cooling != null && cooling.form().equals("pipe")));
     }
 
@@ -880,7 +881,7 @@ public final class ModularBake {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 f.put(Fig.MASS, total);
                 // A heavier, harder, tougher head lands a harder blow; a worn one has lost some of it.
-                f.put(Fig.STRIKE_ST, FTuning.HAND_ST_PER_MU_COMPETENCE * total * zone.wear() * worn * type.strike()
+                f.put(Fig.STRIKE_ST, ModularTuning.HAND_ST_PER_MU_COMPETENCE * total * zone.wear() * worn * type.strike()
                         * type.roles().get(type.primary()).strike(design.part(type.primary())));
             }
             case GLOVE -> {
@@ -957,7 +958,7 @@ public final class ModularBake {
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 f.put(Fig.MASS, total);
                 // Heavier, harder and tougher lifts the ceiling; brittleness has already cost the competence its square.
-                f.put(Fig.STRIKE_ST, FTuning.HEAD_ST_PER_MU_COMPETENCE * total * zone.wear()
+                f.put(Fig.STRIKE_ST, ModularTuning.HEAD_ST_PER_MU_COMPETENCE * total * zone.wear()
                         * type.roles().get(type.wearRole()).strike(wearPart));
             }
             case SUIT_MODULE -> {
@@ -1048,7 +1049,7 @@ public final class ModularBake {
                 filler.add(new io.github.soundgoodizerfan.feedback.weapon.Cartridge.Charge(p.material(), p.count()));
         Optional<io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend> blend =
                 io.github.soundgoodizerfan.feedback.weapon.Cartridge.Blend.of(materials, filler);
-        if (read.isEmpty() || blend.isEmpty() || blend.get().total() > FTuning.DEMO_FILLER_MAX)
+        if (read.isEmpty() || blend.isEmpty() || blend.get().total() > GunTuning.DEMO_FILLER_MAX)
             return Optional.empty();
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
         f.put(Fig.BLAST, read.get().power());
@@ -1204,7 +1205,7 @@ public final class ModularBake {
                         (float) Math.max(1, Math.round(ModularTuning.DURABILITY_K * z.wear() * litres)));
                 // A hammer face lands the hand's blow (what a hand-forging recipe and a machine head ask of the tool).
                 if (kind.map(h -> h.combat() == ModularType.Family.HAND && h.strike() > 0f).orElse(false) && !spent)
-                    f.put(Fig.STRIKE_ST, Math.max(f.getOrDefault(Fig.STRIKE_ST, 0f), FTuning.HAND_ST_PER_MU_COMPETENCE * total * z.wear() * worn * strike));
+                    f.put(Fig.STRIKE_ST, Math.max(f.getOrDefault(Fig.STRIKE_ST, 0f), ModularTuning.HAND_ST_PER_MU_COMPETENCE * total * z.wear() * worn * strike));
             }
             if (!spent && damage > bestDamage) {
                 bestDamage = damage;

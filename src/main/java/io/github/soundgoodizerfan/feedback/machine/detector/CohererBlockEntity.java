@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.detector;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
 import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -21,8 +21,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * tap it is the detector's failure.
  *
  * <h2>Overrun</h2>
- * Current through the welded tube past {@link FTuning#COHERER_RATING_AMPS} sinters the grains
- * together: condition falls toward {@link FTuning#COHERER_CONDITION_FLOOR}, and a tap frees it
+ * Current through the welded tube past {@link ElectricMachineTuning#COHERER_RATING_AMPS} sinters the grains
+ * together: condition falls toward {@link ElectricMachineTuning#COHERER_CONDITION_FLOOR}, and a tap frees it
  * only with probability {@code condition}, so a sintered coherer needs more taps -- a slow, readable
  * path, never a refusal. Wear only from that misuse; weld and tap cost nothing.
  *
@@ -73,9 +73,9 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
     @Override
     public void onResolved(float volts, float amps, float wanted, boolean blocked) {
         super.onResolved(volts, amps, wanted, blocked);
-        if (welded && amps > FTuning.COHERER_RATING_AMPS)
-            condition = Math.max(FTuning.COHERER_CONDITION_FLOOR,
-                    condition - FTuning.COHERER_SINTER_PER_AMP * (amps - FTuning.COHERER_RATING_AMPS));
+        if (welded && amps > ElectricMachineTuning.COHERER_RATING_AMPS)
+            condition = Math.max(ElectricMachineTuning.COHERER_CONDITION_FLOOR,
+                    condition - ElectricMachineTuning.COHERER_SINTER_PER_AMP * (amps - ElectricMachineTuning.COHERER_RATING_AMPS));
     }
 
     @Override

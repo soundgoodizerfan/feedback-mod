@@ -118,4 +118,5 @@
  */
 package io.github.soundgoodizerfan.feedback.core.unit;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;

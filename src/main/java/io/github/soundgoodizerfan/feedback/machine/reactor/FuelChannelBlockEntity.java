@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.reactor;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Radiation;
 import io.github.soundgoodizerfan.feedback.core.hazard.RadiationEmitter;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -74,7 +73,7 @@ public class FuelChannelBlockEntity extends BlockEntity implements RadiationEmit
         if (n == null)
             return 0f;
         // A fast breeder rod breeds well only in a hard spectrum: moderator or flowing coolant beside it softens that away.
-        float breed = n.fast() ? FTuning.REACTOR_FAST_BREED_GAIN * spectrum : FTuning.REACTOR_BREED_GAIN;
+        float breed = n.fast() ? ReactorTuning.REACTOR_FAST_BREED_GAIN * spectrum : ReactorTuning.REACTOR_BREED_GAIN;
         return (n.fissile() + n.fertile() * burn * breed) * condition;
     }
 
@@ -119,7 +118,7 @@ public class FuelChannelBlockEntity extends BlockEntity implements RadiationEmit
         if (!live() || power <= 0f)
             return;
         float fertile = neutron().fertile();
-        burn += power * FTuning.REACTOR_BURN_PER_TICK / (1f + fertile);
+        burn += power * ReactorTuning.REACTOR_BURN_PER_TICK / (1f + fertile);
         if (burn >= 1f) {
             ItemStack spent = new ItemStack(FItems.SPENT_FUEL_ROD.get());
             if (level != null) {
@@ -138,7 +137,7 @@ public class FuelChannelBlockEntity extends BlockEntity implements RadiationEmit
     public void damage(float amount) {
         if (amount <= 0f || rod.isEmpty())
             return;
-        condition = Math.max(FTuning.REACTOR_FUEL_CONDITION_FLOOR, condition - amount);
+        condition = Math.max(ReactorTuning.REACTOR_FUEL_CONDITION_FLOOR, condition - amount);
         setChanged();
     }
 

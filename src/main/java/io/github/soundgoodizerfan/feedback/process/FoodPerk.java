@@ -14,7 +14,6 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -247,16 +246,16 @@ public class FoodPerk extends SimpleJsonResourceReloadListener {
         }
         float cold = trait(player, "freeze_relief");
         if (cold > 0f && player.getTicksFrozen() > 0)
-            player.setTicksFrozen(Math.max(0, player.getTicksFrozen() - Math.round(cold * FTuning.PERK_FREEZE_RELIEF_TICKS)));
+            player.setTicksFrozen(Math.max(0, player.getTicksFrozen() - Math.round(cold * ProcessTuning.PERK_FREEZE_RELIEF_TICKS)));
         float cool = trait(player, "cool_burn");
         if (cool > 0f && player.getRemainingFireTicks() > 0)
-            player.setRemainingFireTicks(Math.max(0, player.getRemainingFireTicks() - Math.round(cool * FTuning.PERK_COOL_BURN_TICKS)));
+            player.setRemainingFireTicks(Math.max(0, player.getRemainingFireTicks() - Math.round(cool * ProcessTuning.PERK_COOL_BURN_TICKS)));
         float heal = trait(player, "natural_regen");
-        if (heal > 0f && player.getFoodData().getFoodLevel() >= FTuning.PERK_FED_FOOD && player.getHealth() < player.getMaxHealth())
+        if (heal > 0f && player.getFoodData().getFoodLevel() >= ProcessTuning.PERK_FED_FOOD && player.getHealth() < player.getMaxHealth())
             player.heal(heal);
         float air = trait(player, "air");
         if (air > 0f && player.isUnderWater() && player.getAirSupply() < player.getMaxAirSupply())
-            player.setAirSupply(Math.min(player.getMaxAirSupply(), player.getAirSupply() + Math.round(air * FTuning.PERK_AIR_TICKS)));
+            player.setAirSupply(Math.min(player.getMaxAirSupply(), player.getAirSupply() + Math.round(air * ProcessTuning.PERK_AIR_TICKS)));
     }
 
     /** The named {@code tune} trait summed over the perks in a meal's active map, each at its blended strength. */
@@ -291,6 +290,6 @@ public class FoodPerk extends SimpleJsonResourceReloadListener {
             else if (def.kind().equals("purge"))
                 purge += def.factor() * e.getValue();
         }
-        return (1f + FTuning.SALT_TOLERANCE * salt * (1f + brine)) * (1f + purge);
+        return (1f + ProcessTuning.SALT_TOLERANCE * salt * (1f + brine)) * (1f + purge);
     }
 }

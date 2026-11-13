@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
@@ -19,7 +18,7 @@ import net.minecraft.world.level.Level;
 /**
  * Samples the acid of a battery: its density falls as the cells discharge, so the sample is the state of charge
  * ({@link Quantity#CHARGE}, a share of what the cells can hold). Use it on a battery. Read-only, to a step of
- * {@link FTuning#HYDROMETER_RESOLUTION} until a finer instrument narrows it.
+ * {@link ItemTuning#HYDROMETER_RESOLUTION} until a finer instrument narrows it.
  */
 public class HydrometerItem extends Item implements Instrument {
 
@@ -34,7 +33,7 @@ public class HydrometerItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.HYDROMETER_RESOLUTION;
+        return ItemTuning.HYDROMETER_RESOLUTION;
     }
 
     @Override

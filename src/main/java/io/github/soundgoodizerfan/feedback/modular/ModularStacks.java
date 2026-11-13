@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,6 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.item.Meal;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.process.Dip;
@@ -295,8 +295,8 @@ public final class ModularStacks {
      * had already earned.
      */
     private static void eatable(ItemStack stack, DishBake.Dish d) {
-        float seconds = (FTuning.DISH_EAT_BASE_SECONDS + FTuning.DISH_EAT_SECONDS_PER_LITRE * d.litres()) * (1f - FTuning.DISH_EAT_CUT_SCALE * d.cut())
-                * (MaterialPerks.of(stack).containsKey(Material.Perk.FEATHERLIGHT) ? FTuning.DISH_FEATHER_EAT_SCALE : 1f);
+        float seconds = (ModularTuning.DISH_EAT_BASE_SECONDS + ModularTuning.DISH_EAT_SECONDS_PER_LITRE * d.litres()) * (1f - ModularTuning.DISH_EAT_CUT_SCALE * d.cut())
+                * (MaterialPerks.of(stack).containsKey(Material.Perk.FEATHERLIGHT) ? ModularTuning.DISH_FEATHER_EAT_SCALE : 1f);
         // Spilling is remembered across a rebake: what was lost from the wettest part stays lost, up to what the overflow allows.
         DishFigures old = stack.get(FDataComponents.DISH_FIGURES.get());
         float room = Math.min(1f, d.overflow() / FTuning.DISH_PART_MB);
@@ -486,10 +486,10 @@ public final class ModularStacks {
     }
 
     /**
-     * A hot dip that overran: {@code over} Qu of coat past what holds. Each {@link FTuning#HOT_DIP_FLAW_PER_QU} of it is a
+     * A hot dip that overran: {@code over} Qu of coat past what holds. Each {@link ModularTuning#HOT_DIP_FLAW_PER_QU} of it is a
      * flaw on the wearing part (the intermetallic layer grows brittle: a share of toughness and, by it, durability, as
-     * forging flaws cost); past {@link FTuning#HOT_DIP_DISSOLVE_ABOVE_QU} the bath also eats the part, thinning it by
-     * {@link FTuning#HOT_DIP_DISSOLVE_WORK} a dip until it is scrap. Returns what is left to hand back, rebaked.
+     * forging flaws cost); past {@link ModularTuning#HOT_DIP_DISSOLVE_ABOVE_QU} the bath also eats the part, thinning it by
+     * {@link ModularTuning#HOT_DIP_DISSOLVE_WORK} a dip until it is scrap. Returns what is left to hand back, rebaked.
      */
     public static ItemStack overrun(ItemStack piece, float over) {
         ModularDesign d = design(piece);
@@ -497,11 +497,11 @@ public final class ModularStacks {
         Part wear = type == null ? null : d.part(type.wearRole());
         if (wear == null || over <= 0f)
             return piece;
-        int flaw = Math.max(wear.flaw(), Math.min(ForgeRhythm.MAX_FLAW, (int) Math.ceil(over / FTuning.HOT_DIP_FLAW_PER_QU)));
+        int flaw = Math.max(wear.flaw(), Math.min(ForgeRhythm.MAX_FLAW, (int) Math.ceil(over / ModularTuning.HOT_DIP_FLAW_PER_QU)));
         float work = wear.measures().work();
-        if (over > FTuning.HOT_DIP_DISSOLVE_ABOVE_QU)
-            work += FTuning.HOT_DIP_DISSOLVE_WORK;
-        if (work >= FTuning.HOT_DIP_SCRAP_WORK) {
+        if (over > ModularTuning.HOT_DIP_DISSOLVE_ABOVE_QU)
+            work += ModularTuning.HOT_DIP_DISSOLVE_WORK;
+        if (work >= ModularTuning.HOT_DIP_SCRAP_WORK) {
             Material m = MaterialTable.get().materials().get(wear.material());
             return new ItemStack(io.github.soundgoodizerfan.feedback.process.Failure.item(
                     m == null ? Material.Kind.METAL : m.kind().orElse(Material.Kind.METAL)));

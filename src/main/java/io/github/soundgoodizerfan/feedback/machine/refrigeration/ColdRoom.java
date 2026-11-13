@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.refrigeration;
 
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.Refrigerable;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -29,7 +29,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
  * The room a Refrigeration Unit faces: a bounded flood fill out from the unit through everything
  * that is not a wall, found by shape and never by block. Each wall face the fill meets leaks its
  * material's thermal conductivity; an opening (a cell that sees the sky, or the edge of the box)
- * leaks {@link FTuning#ROOM_OPENING_LEAK}. A gap never un-forms the room, it only raises the leak.
+ * leaks {@link PetrochemTuning#ROOM_OPENING_LEAK}. A gap never un-forms the room, it only raises the leak.
  * The fill is recomputed, never stored.
  *
  * <p>Taken from Firmalife's Climate Station (MIT, design only, no code): a bounded 6-direction flood
@@ -61,7 +61,7 @@ final class ColdRoom {
     }
 
     static Scan scan(Level level, BlockPos origin) {
-        int r = FTuning.ROOM_RADIUS;
+        int r = PetrochemTuning.ROOM_RADIUS;
         var materials = MaterialTable.get().materials();
         Map<Block, Float> leaks = new HashMap<>();
         LongOpenHashSet interior = new LongOpenHashSet(), seen = new LongOpenHashSet();
@@ -82,7 +82,7 @@ final class ColdRoom {
                     continue;
                 if (Math.abs(n.getX() - origin.getX()) > r || Math.abs(n.getY() - origin.getY()) > r || Math.abs(n.getZ() - origin.getZ()) > r) {
                     openings++;
-                    leak += FTuning.ROOM_OPENING_LEAK;
+                    leak += PetrochemTuning.ROOM_OPENING_LEAK;
                     if (openingAt.size() < 64)
                         openingAt.add(n);
                     continue;
@@ -90,7 +90,7 @@ final class ColdRoom {
                 // An unloaded neighbour is unknown air: counted as a gap, never as a seal.
                 if (!level.isLoaded(n)) {
                     openings++;
-                    leak += FTuning.ROOM_OPENING_LEAK;
+                    leak += PetrochemTuning.ROOM_OPENING_LEAK;
                     continue;
                 }
                 BlockState state = level.getBlockState(n);
@@ -98,7 +98,7 @@ final class ColdRoom {
                     if (!fromUnit)
                         leak += leaks.computeIfAbsent(state.getBlock(), b -> Material.find(materials, b.asItem())
                                 .flatMap(l -> l.material().thermal().conductivity()).map(Conductance::workPerTickPerTu)
-                                .orElse(FTuning.ROOM_WALL_DEFAULT_LEAK));
+                                .orElse(PetrochemTuning.ROOM_WALL_DEFAULT_LEAK));
                     if (state.hasBlockEntity()) {
                         BlockEntity be = level.getBlockEntity(n);
                         if (be instanceof RefrigerationUnitBlockEntity u && !units.contains(u))
@@ -112,7 +112,7 @@ final class ColdRoom {
                     continue;
                 if (level.canSeeSky(n)) {
                     openings++;
-                    leak += FTuning.ROOM_OPENING_LEAK;
+                    leak += PetrochemTuning.ROOM_OPENING_LEAK;
                     if (openingAt.size() < 64)
                         openingAt.add(n);
                     continue;

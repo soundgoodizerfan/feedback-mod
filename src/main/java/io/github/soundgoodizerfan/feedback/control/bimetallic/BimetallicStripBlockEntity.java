@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.bimetallic;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -72,7 +72,7 @@ public class BimetallicStripBlockEntity extends BlockEntity {
     }
 
     public Tu getTripPoint() {
-        return FTuning.BIMETALLIC_TRIP_TU;
+        return ControlTuning.BIMETALLIC_TRIP_TU;
     }
 
     /** The vessel it is clipped to, if any. */
@@ -99,7 +99,7 @@ public class BimetallicStripBlockEntity extends BlockEntity {
             return;
 
         boolean nowTripped =
-                watched.getTemperature().value() >= FTuning.BIMETALLIC_TRIP_TU.value();
+                watched.getTemperature().value() >= ControlTuning.BIMETALLIC_TRIP_TU.value();
         if (nowTripped == isTripped())
             return;
 

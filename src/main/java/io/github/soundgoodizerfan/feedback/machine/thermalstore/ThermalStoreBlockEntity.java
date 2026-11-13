@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.thermalstore;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
@@ -27,11 +28,11 @@ import net.minecraft.world.level.block.state.BlockState;
  * ({@link HeatSource#at} under it is the fire that charges it: a coil, an arc head, a heat exchanger or a firebox) and a fire to
  * what stands on it, so a Boiler set on top draws it down into steam for the turbine. It adds no rule of its own: the round trip
  * is whatever the fire's contact, the leak to air and the boiler's own losses leave, which is poor by construction. It cannot get
- * hotter than what charges it, and it cools toward ambient at {@link FTuning#THERMAL_STORE_LEAK}.
+ * hotter than what charges it, and it cools toward ambient at {@link VesselTuning#THERMAL_STORE_LEAK}.
  */
 public class ThermalStoreBlockEntity extends BlockEntity implements ThermalBody, HeatSource {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private final Catchup offline = new Catchup();
 
     private final FigureStore figures = new FigureStore();
@@ -64,12 +65,12 @@ public class ThermalStoreBlockEntity extends BlockEntity implements ThermalBody,
 
     @Override
     public ThermalMass getThermalMass() {
-        return new ThermalMass(figures.get("Mass", FTuning.THERMAL_STORE_MASS.workPerTu()));
+        return new ThermalMass(figures.get("Mass", VesselTuning.THERMAL_STORE_MASS.workPerTu()));
     }
 
     @Override
     public Conductance getLeak() {
-        return new Conductance(figures.get("Leak", FTuning.THERMAL_STORE_LEAK.workPerTickPerTu()));
+        return new Conductance(figures.get("Leak", VesselTuning.THERMAL_STORE_LEAK.workPerTickPerTu()));
     }
 
     @Override
@@ -101,7 +102,7 @@ public class ThermalStoreBlockEntity extends BlockEntity implements ThermalBody,
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         figures.load(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         offline.load(tag);
     }
 }

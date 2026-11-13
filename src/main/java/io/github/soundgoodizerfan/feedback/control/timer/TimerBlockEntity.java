@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.timer;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 public class TimerBlockEntity extends BlockEntity {
 
     /**
-     * Which wind is selected, as an index into {@link FTuning#TIMER_SETTINGS}.
+     * Which wind is selected, as an index into {@link ControlTuning#TIMER_SETTINGS}.
      * <p>
      * A short list of positions rather than a number of ticks, per philosophy 3 — a dial with 300
      * positions would be a spreadsheet. It matters less than usual here, because the thing this
@@ -47,18 +47,18 @@ public class TimerBlockEntity extends BlockEntity {
     }
 
     public void cycleSetting(Player player) {
-        setting = (setting + 1) % FTuning.TIMER_SETTINGS.size();
+        setting = (setting + 1) % ControlTuning.TIMER_SETTINGS.size();
         setChanged();
-        int ticks = FTuning.TIMER_SETTINGS.get(setting);
+        int ticks = ControlTuning.TIMER_SETTINGS.get(setting);
         java.util.List<Component> options = new java.util.ArrayList<>();
-        for (int t : FTuning.TIMER_SETTINGS)
+        for (int t : ControlTuning.TIMER_SETTINGS)
             options.add(Component.literal(String.format("%.0f s", t / 20f)));
         io.github.soundgoodizerfan.feedback.net.AimPayloads.modes(player, getBlockState().getBlock().getName(), options, setting,
                 Component.translatable("feedback.timer.setting", String.format("%.0f", ticks / 20f)));
     }
 
     private void start() {
-        ticksRemaining = FTuning.TIMER_SETTINGS.get(setting);
+        ticksRemaining = ControlTuning.TIMER_SETTINGS.get(setting);
         setRunning(true);
         switchAdjacent(true);
     }

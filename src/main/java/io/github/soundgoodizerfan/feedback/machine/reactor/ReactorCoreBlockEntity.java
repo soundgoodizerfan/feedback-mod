@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.reactor;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
 import io.github.soundgoodizerfan.feedback.core.hazard.RadiationEmitter;
@@ -50,7 +50,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, PressureHolder, RadiationEmitter {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float power;
     private float velocity;
     private float decayWork;
@@ -92,7 +92,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.FISSION_CORE_MASS;
+        return ReactorTuning.FISSION_CORE_MASS;
     }
 
     // --- readings --------------------------------------------------------------------------
@@ -150,13 +150,13 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
     /** Pressure the hot core holds: nothing under the onset, rising with temperature over it. */
     @Override
     public Pu getPressure() {
-        return new Pu(Math.max(0f, temperature - FTuning.REACTOR_PRESSURE_ONSET_TU) * FTuning.REACTOR_PU_PER_TU);
+        return new Pu(Math.max(0f, temperature - ReactorTuning.REACTOR_PRESSURE_ONSET_TU) * ReactorTuning.REACTOR_PU_PER_TU);
     }
 
     /** The dose a running core gives off at point blank: its power plus what its fuel holds is the rods' own business. */
     @Override
     public float radiationRu() {
-        return power * FTuning.REACTOR_RUNNING_RU;
+        return power * ReactorTuning.REACTOR_RUNNING_RU;
     }
 
     // --- the lattice -----------------------------------------------------------------------
@@ -174,7 +174,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
         starSeated = false;
         int bad = 0;
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        int r = FTuning.REACTOR_SHELL_RADIUS;
+        int r = ReactorTuning.REACTOR_SHELL_RADIUS;
         for (int dx = -r; dx <= r; dx++)
             for (int dy = -2 * r; dy <= 0; dy++)
                 for (int dz = -r; dz <= r; dz++) {
@@ -196,7 +196,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
                         continue;
                     if (state.getBlock() instanceof HeatExchangerBlock || level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.machine.boiler.BoilerBlockEntity)
                         continue;
-                    if (Neutrons.density(state) < FTuning.REACTOR_WALL_MIN_DENSITY) {
+                    if (Neutrons.density(state) < ReactorTuning.REACTOR_WALL_MIN_DENSITY) {
                         bad++;
                         if (flaws.size() < 8)
                             flaws.add("wall " + pos.getX() + " " + pos.getY() + " " + pos.getZ());
@@ -234,25 +234,25 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
                     continue;
                 if (level.getBlockEntity(n) instanceof FuelChannelBlockEntity other) {
                     if (other.live())
-                        k += FTuning.REACTOR_FUEL_NEIGHBOUR_GAIN;
+                        k += ReactorTuning.REACTOR_FUEL_NEIGHBOUR_GAIN;
                     continue;
                 }
                 if (ns.is(FBlocks.NEUTRON_REFLECTOR.get())) {
-                    k += FTuning.REACTOR_REFLECTOR_GAIN;
+                    k += ReactorTuning.REACTOR_REFLECTOR_GAIN;
                     continue;
                 }
                 if (flowing && ns.is(FBlocks.COOLANT_CHANNEL.get())) {
-                    k += FTuning.REACTOR_COOLANT_MODERATION;
+                    k += ReactorTuning.REACTOR_COOLANT_MODERATION;
                     slowed = true;
                     continue;
                 }
                 float slow = Neutrons.of(ns).map(m -> m.moderation()).orElse(0f);
                 if (slow > 0f)
                     slowed = true;
-                k += slow * FTuning.REACTOR_MODERATOR_GAIN;
+                k += slow * ReactorTuning.REACTOR_MODERATOR_GAIN;
             }
-            ch.spectrum(slowed ? FTuning.REACTOR_FAST_MODERATED_SHARE : 1f);
-            k += ch.fissile() + (starSeated ? FTuning.REACTOR_STAR_K : 0f);
+            ch.spectrum(slowed ? ReactorTuning.REACTOR_FAST_MODERATED_SHARE : 1f);
+            k += ch.fissile() + (starSeated ? ReactorTuning.REACTOR_STAR_K : 0f);
             sumBase += k;
             healthSum += ch.condition();
         }
@@ -293,7 +293,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
         if (power > 0.001f) {
             scan(server);
             scanIn = 20;
-            simulated = Math.min(gap, FTuning.REACTOR_OFFLINE_MAX_TICKS);
+            simulated = Math.min(gap, ReactorTuning.REACTOR_OFFLINE_MAX_TICKS);
             long from = server.getGameTime() - gap;
             for (long t = 0; t < simulated; t++) {
                 step(server, from + t, true);
@@ -303,7 +303,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
         }
         long rest = gap - simulated;
         if (rest > 0) {
-            float tau = FTuning.REACTOR_DECAY_TAU_TICKS;
+            float tau = ReactorTuning.REACTOR_DECAY_TAU_TICKS;
             float decayed = decayWork * (float) Math.exp(-rest / tau);
             Heat.warm(this, decayWork * tau * (1f - (float) Math.exp(-rest / tau)));
             Tu ambient = AmbientTable.at(server);
@@ -317,12 +317,12 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
     /** One tick of the chain reaction, the heat it makes, the coolant that takes it and the damage it does. {@code replay}: a tick of away-time, not a live one. */
     private void step(ServerLevel server, long now, boolean replay) {
         // SCRAM: a trip block in the shell over its temperature drops every rod, unpowered.
-        if (trips > 0 && temperature > FTuning.REACTOR_TRIP_TU && !scrammed) {
+        if (trips > 0 && temperature > ReactorTuning.REACTOR_TRIP_TU && !scrammed) {
             scrammed = true;
             for (ControlAssemblyBlockEntity ca : controls)
                 ca.scram();
         }
-        if (scrammed && temperature < FTuning.REACTOR_TRIP_TU - FTuning.REACTOR_TRIP_RESET_TU)
+        if (scrammed && temperature < ReactorTuning.REACTOR_TRIP_TU - ReactorTuning.REACTOR_TRIP_RESET_TU)
             scrammed = false;
 
         float absorbed = 0f;
@@ -330,36 +330,36 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
         for (int i = 0; i < controls.size(); i++) {
             ControlAssemblyBlockEntity ca = controls.get(i);
             absorbed += ca.strength() * ca.insertion()
-                    * (FTuning.REACTOR_ABSORB_ADJACENT_GAIN * controlFuel.get(i)[0] + FTuning.REACTOR_ABSORB_GLOBAL_GAIN * f);
+                    * (ReactorTuning.REACTOR_ABSORB_ADJACENT_GAIN * controlFuel.get(i)[0] + ReactorTuning.REACTOR_ABSORB_GLOBAL_GAIN * f);
         }
         meanK = f == 0 ? 0f : Math.max(0f, sumBase - absorbed) / f;
-        float cycle = Math.max(0f, Math.min(FTuning.REACTOR_POWER_CEILING,
-                (meanK - FTuning.REACTOR_K_CRITICAL) / (FTuning.REACTOR_K_FULL - FTuning.REACTOR_K_CRITICAL)));
-        float feedback = Math.max(0f, 1f - FTuning.REACTOR_TEMPERATURE_FEEDBACK
-                * Math.max(0f, temperature - FTuning.REACTOR_FEEDBACK_ONSET_TU - (starSeated ? FTuning.REACTOR_STAR_FEEDBACK_BONUS_TU : 0f)));
+        float cycle = Math.max(0f, Math.min(ReactorTuning.REACTOR_POWER_CEILING,
+                (meanK - ReactorTuning.REACTOR_K_CRITICAL) / (ReactorTuning.REACTOR_K_FULL - ReactorTuning.REACTOR_K_CRITICAL)));
+        float feedback = Math.max(0f, 1f - ReactorTuning.REACTOR_TEMPERATURE_FEEDBACK
+                * Math.max(0f, temperature - ReactorTuning.REACTOR_FEEDBACK_ONSET_TU - (starSeated ? ReactorTuning.REACTOR_STAR_FEEDBACK_BONUS_TU : 0f)));
         float target = cycle * feedback * health;
-        velocity = (velocity + (target - power) * FTuning.REACTOR_SPRING) * FTuning.REACTOR_DAMP;
-        power = Math.max(0f, Math.min(FTuning.REACTOR_POWER_CEILING, power + velocity));
+        velocity = (velocity + (target - power) * ReactorTuning.REACTOR_SPRING) * ReactorTuning.REACTOR_DAMP;
+        power = Math.max(0f, Math.min(ReactorTuning.REACTOR_POWER_CEILING, power + velocity));
         if (f == 0) {
             // A seated star keeps a core with no fuel at a low idle; without one the chain is simply out.
-            power = starSeated ? FTuning.REACTOR_STAR_IDLE_POWER : 0f;
+            power = starSeated ? ReactorTuning.REACTOR_STAR_IDLE_POWER : 0f;
             velocity = 0f;
         } else if (power < 0.0005f) {
             power = 0f;
             velocity = 0f;
         }
 
-        float cells = f + (f == 0 && starSeated ? FTuning.REACTOR_STAR_IDLE_CELLS : 0f);
-        float work = power * cells * FTuning.REACTOR_CELL_WORK;
-        decayWork = Math.max(decayWork * (1f - 1f / FTuning.REACTOR_DECAY_TAU_TICKS), FTuning.REACTOR_DECAY_SHARE * work);
+        float cells = f + (f == 0 && starSeated ? ReactorTuning.REACTOR_STAR_IDLE_CELLS : 0f);
+        float work = power * cells * ReactorTuning.REACTOR_CELL_WORK;
+        decayWork = Math.max(decayWork * (1f - 1f / ReactorTuning.REACTOR_DECAY_TAU_TICKS), ReactorTuning.REACTOR_DECAY_SHARE * work);
         Heat.warm(this, work + decayWork);
         coolant();
         Tu ambient = AmbientTable.at(server);
         Heat.tick(this, ambient, ambient, false);
 
         // Fuel damage: too hot, or far over power. Condition only falls; the rods never refuse to run.
-        float over = Math.max(0f, temperature - FTuning.REACTOR_FUEL_DAMAGE_TU) * FTuning.REACTOR_FUEL_DAMAGE_PER_TU
-                + Math.max(0f, power - FTuning.REACTOR_OVERPOWER) * FTuning.REACTOR_OVERPOWER_DAMAGE;
+        float over = Math.max(0f, temperature - ReactorTuning.REACTOR_FUEL_DAMAGE_TU) * ReactorTuning.REACTOR_FUEL_DAMAGE_PER_TU
+                + Math.max(0f, power - ReactorTuning.REACTOR_OVERPOWER) * ReactorTuning.REACTOR_OVERPOWER_DAMAGE;
         for (FuelChannelBlockEntity ch : fuel) {
             ch.advance(power);
             ch.damage(over);
@@ -387,7 +387,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
             coolantAcc = 0f;
             return;
         }
-        coolantAcc += Math.min(channels * FTuning.REACTOR_CHANNEL_MAX_WORK, channels * FTuning.REACTOR_CHANNEL_CONDUCT * over) / cut.latent();
+        coolantAcc += Math.min(channels * ReactorTuning.REACTOR_CHANNEL_MAX_WORK, channels * ReactorTuning.REACTOR_CHANNEL_CONDUCT * over) / cut.latent();
         int mb = (int) coolantAcc;
         if (mb <= 0)
             return;
@@ -400,31 +400,31 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
     /** Warning, then the burst ladder over the core's own pressure. */
     private void hazard(ServerLevel server, long now, boolean replay) {
         float p = getPressure().value();
-        if (!replay && p > FTuning.REACTOR_DANGER_PU.value() * FTuning.REACTOR_WARN_FRACTION && now % 20 == 0) {
+        if (!replay && p > ReactorTuning.REACTOR_DANGER_PU.value() * ReactorTuning.REACTOR_WARN_FRACTION && now % 20 == 0) {
             PressureBurst.hiss(server, worldPosition);
             server.sendParticles(ParticleTypes.CLOUD, worldPosition.getX() + 0.5, worldPosition.getY() + 1.0, worldPosition.getZ() + 0.5, 12, 0.3, 0.3, 0.3, 0.05);
         }
         if (now % 10 == 0
-                && PressureBurst.fails(new Pu(p), FTuning.REACTOR_DANGER_PU, FTuning.REACTOR_CRITICAL_PU, server.random))
+                && PressureBurst.fails(new Pu(p), ReactorTuning.REACTOR_DANGER_PU, ReactorTuning.REACTOR_CRITICAL_PU, server.random))
             breach(server);
     }
 
     /** The vessel lets go: a steam blast, then slag around the hole that stays radioactive. */
     private void breach(ServerLevel server) {
         BlockPos pos = worldPosition;
-        PressureBurst.burst(server, pos, FTuning.REACTOR_BURST_POWER);
+        PressureBurst.burst(server, pos, ReactorTuning.REACTOR_BURST_POWER);
         server.setBlock(pos, FBlocks.CORE_SLAG.get().defaultBlockState(), 3);
         if (server.getBlockEntity(pos) instanceof CoreSlagBlockEntity slag)
-            slag.stamp(FTuning.REACTOR_SLAG_RU, server.getGameTime());
-        int reach = FTuning.REACTOR_SLAG_REACH;
-        for (int i = 0; i < FTuning.REACTOR_SLAG_BLOCKS; i++) {
+            slag.stamp(ReactorTuning.REACTOR_SLAG_RU, server.getGameTime());
+        int reach = ReactorTuning.REACTOR_SLAG_REACH;
+        for (int i = 0; i < ReactorTuning.REACTOR_SLAG_BLOCKS; i++) {
             BlockPos at = pos.offset(server.random.nextIntBetweenInclusive(-reach, reach),
                     server.random.nextIntBetweenInclusive(-reach * 2, 0), server.random.nextIntBetweenInclusive(-reach, reach));
             BlockState here = server.getBlockState(at);
             if (here.isAir() || here.canBeReplaced()) {
                 server.setBlock(at, FBlocks.CORE_SLAG.get().defaultBlockState(), 3);
                 if (server.getBlockEntity(at) instanceof CoreSlagBlockEntity s)
-                    s.stamp(FTuning.REACTOR_SLAG_RU, server.getGameTime());
+                    s.stamp(ReactorTuning.REACTOR_SLAG_RU, server.getGameTime());
             }
         }
     }
@@ -443,7 +443,7 @@ public class ReactorCoreBlockEntity extends BlockEntity implements ThermalBody, 
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         power = tag.getFloat("Power");
         velocity = tag.getFloat("Velocity");
         decayWork = tag.getFloat("Decay");

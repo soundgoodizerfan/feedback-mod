@@ -13,7 +13,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +28,7 @@ import net.minecraft.world.level.Level;
  * Nether -- holding {@code {"temperature": <Tu>}}.
  *
  * <h2>Why a dimension and not a biome</h2>
- * The first version of {@link FTuning#AMBIENT_TU} said one figure everywhere, on the grounds that
+ * The first version of {@link ThermalTuning#AMBIENT_TU} said one figure everywhere, on the grounds that
  * a desert crucible two degrees hotter than a taiga one is a variable nobody can act on. That
  * argument was right about biomes and wrong about dimensions: siting the foundry in the Nether is
  * a decision the player can actually make, it costs something (the trip, the fuel, the ghasts),
@@ -38,12 +37,12 @@ import net.minecraft.world.level.Level;
  * never lets it pass the flame, because that is a property of the difference-driven model and
  * not of this table. The second answer to "closer to the ceiling" beside insulating at home.
  *
- * <h2>Nothing listed means {@link FTuning#AMBIENT_TU}</h2>
+ * <h2>Nothing listed means {@link ThermalTuning#AMBIENT_TU}</h2>
  * Keyed by dimension id and nothing else, so a modded dimension is a line of JSON and an
  * unlisted one is an ordinary room.
  *
  * <h2>The ceiling on a figure</h2>
- * An entry must not exceed {@link FTuning#WARM_TU}. A workpiece's heat component is cleared when
+ * An entry must not exceed {@link ThermalTuning#WARM_TU}. A workpiece's heat component is cleared when
  * it reads at or below that, and one whose room is warmer would never read cold: every ingot ever
  * heated there would carry a stamp forever and refuse to stack. Rejected at load, with the reason.
  *
@@ -54,7 +53,7 @@ public class AmbientTable extends SimpleJsonResourceReloadListener {
 
     public static final String DIRECTORY = "ambient_temperature";
 
-    private static final Codec<Float> ENTRY = Codec.floatRange(0f, FTuning.WARM_TU.value())
+    private static final Codec<Float> ENTRY = Codec.floatRange(0f, ThermalTuning.WARM_TU.value())
             .fieldOf("temperature").codec();
 
     private static final AmbientTable INSTANCE = new AmbientTable();
@@ -72,12 +71,12 @@ public class AmbientTable extends SimpleJsonResourceReloadListener {
 
     /** Ambient in this level's dimension. A null level -- a block entity not yet placed -- is the default. */
     public static Tu at(@Nullable Level level) {
-        return level == null ? FTuning.AMBIENT_TU : of(level.dimension().location());
+        return level == null ? ThermalTuning.AMBIENT_TU : of(level.dimension().location());
     }
 
     public static Tu of(ResourceLocation dimension) {
         Float found = INSTANCE.byDimension.get(dimension);
-        return found == null ? FTuning.AMBIENT_TU : new Tu(found);
+        return found == null ? ThermalTuning.AMBIENT_TU : new Tu(found);
     }
 
     @Override

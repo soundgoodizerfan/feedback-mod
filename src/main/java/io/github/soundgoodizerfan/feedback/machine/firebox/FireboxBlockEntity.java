@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.firebox;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
@@ -60,7 +61,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
 
     private int burnTicks;
     /** The flame temperature of the piece currently burning, quality roll already applied. */
-    private float burnTu = FTuning.AMBIENT_TU.value();
+    private float burnTu = ThermalTuning.AMBIENT_TU.value();
 
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
@@ -76,7 +77,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     /** One oxidiser piece (saltpetre, any item whose material has a positive oxygen balance), burned with an oxygen-poor fuel when no oxygen gas is on hand. */
     private ItemStack oxidiser = ItemStack.EMPTY;
     private final net.neoforged.neoforge.fluids.capability.templates.FluidTank oxygen =
-            new net.neoforged.neoforge.fluids.capability.templates.FluidTank(FTuning.FIREBOX_OXYGEN_TANK_MB,
+            new net.neoforged.neoforge.fluids.capability.templates.FluidTank(VesselTuning.FIREBOX_OXYGEN_TANK_MB,
                     s -> s.getFluid() == io.github.soundgoodizerfan.feedback.registry.FFluids.OXYGEN.get()) {
                 @Override
                 protected void onContentsChanged() {
@@ -158,7 +159,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
 
     @Override
     public void addAir(Mb amount) {
-        air = Math.min(FTuning.FIREBOX_MAX_AIR.value(), air + amount.value());
+        air = Math.min(VesselTuning.FIREBOX_MAX_AIR.value(), air + amount.value());
     }
 
     /** How much air is banked, for the debug helmet. Never shown to an uninstrumented player. */
@@ -170,12 +171,12 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
     public Tu getFireTu() {
         if (!isLit())
             return AmbientTable.at(level);
-        float blown = Mth.clamp(Math.max(draught / FTuning.FIREBOX_AIR_PER_TICK.value(),
-                burnOxygen * FTuning.FIREBOX_OXIDISER_DRAUGHT), 0f, 1f);
+        float blown = Mth.clamp(Math.max(draught / VesselTuning.FIREBOX_AIR_PER_TICK.value(),
+                burnOxygen * VesselTuning.FIREBOX_OXIDISER_DRAUGHT), 0f, 1f);
         // Air multiplies a fuel's own flame temperature rather than replacing it, so a cool fuel
         // blown hard is still a cool fire. Otherwise the bellows would silently make every fuel
         // equivalent and the fuel table would stop meaning anything.
-        return new Tu(burnTu * Mth.lerp(blown, 1f, FTuning.FULL_AIR_TEMPERATURE_FACTOR));
+        return new Tu(burnTu * Mth.lerp(blown, 1f, VesselTuning.FULL_AIR_TEMPERATURE_FACTOR));
     }
 
     @Override
@@ -250,7 +251,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         HeatSource.radiate(this);
         refresh();
 
-        draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK.value());
+        draught = Math.min(air, VesselTuning.FIREBOX_AIR_PER_TICK.value());
         air -= draught;
 
         if (burnTicks > 0) {
@@ -277,11 +278,11 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         Fuel burning = maybe.get();
         // An oxygen-poor fuel reaches its full flame only with an oxidiser: oxygen gas first, else a piece of saltpetre (a short, violent burn).
         if (burning.poor()) {
-            if (oxygen.getFluidAmount() >= FTuning.FIREBOX_OXYGEN_MB_PER_PIECE) {
-                oxygen.drain(FTuning.FIREBOX_OXYGEN_MB_PER_PIECE, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            if (oxygen.getFluidAmount() >= VesselTuning.FIREBOX_OXYGEN_MB_PER_PIECE) {
+                oxygen.drain(VesselTuning.FIREBOX_OXYGEN_MB_PER_PIECE, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
             } else if (!oxidiser.isEmpty()) {
                 oxidiser.shrink(1);
-                burning = new Fuel(Math.max(1, Math.round(burning.duration() * FTuning.NITRE_BURST_DURATION)), burning.temperature(), burning.spread(), true);
+                burning = new Fuel(Math.max(1, Math.round(burning.duration() * VesselTuning.NITRE_BURST_DURATION)), burning.temperature(), burning.spread(), true);
             } else
                 burning = burning.smouldering();
         }
@@ -327,7 +328,7 @@ public class FireboxBlockEntity extends BlockEntity implements HeatSource, Blown
         oxidiser = ItemStack.parseOptional(registries, tag.getCompound("Oxidiser"));
         oxygen.readFromNBT(registries, tag.getCompound("Oxygen"));
         burnTicks = tag.getInt("BurnTicks");
-        burnTu = tag.contains("BurnTu") ? tag.getFloat("BurnTu") : FTuning.AMBIENT_TU.value();
+        burnTu = tag.contains("BurnTu") ? tag.getFloat("BurnTu") : ThermalTuning.AMBIENT_TU.value();
         air = tag.getFloat("Air");
         offline.load(tag);
     }

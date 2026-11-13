@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cryocooler;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -30,7 +31,7 @@ public class CryocoolerBlockEntity extends ElectricNode implements HeatSource {
 
     /** The cold head's stages, deepest first. They name a temperature, never a product. */
     public enum Stage {
-        DEEP(FTuning.CRYOCOOLER_DEEP_TU), MID(FTuning.CRYOCOOLER_MID_TU), SHALLOW(FTuning.CRYOCOOLER_SHALLOW_TU);
+        DEEP(VesselTuning.CRYOCOOLER_DEEP_TU), MID(VesselTuning.CRYOCOOLER_MID_TU), SHALLOW(VesselTuning.CRYOCOOLER_SHALLOW_TU);
 
         private final Tu tu;
 
@@ -66,7 +67,7 @@ public class CryocoolerBlockEntity extends ElectricNode implements HeatSource {
 
     @Override
     public float wantedAmps() {
-        return FTuning.CRYOCOOLER_AMPS;
+        return VesselTuning.CRYOCOOLER_AMPS;
     }
 
     @Override
@@ -93,7 +94,7 @@ public class CryocoolerBlockEntity extends ElectricNode implements HeatSource {
 
     @Override
     public Tu getFireTu() {
-        return running ? stage.tu() : level == null ? FTuning.AMBIENT_TU : AmbientTable.at(level);
+        return running ? stage.tu() : level == null ? ThermalTuning.AMBIENT_TU : AmbientTable.at(level);
     }
 
     @Override

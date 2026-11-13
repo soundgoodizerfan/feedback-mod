@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 
@@ -11,7 +10,7 @@ import net.minecraft.world.item.Item;
 
 /**
  * The dosimeter: reads the dose the carrier's body has taken, in Ru x s, to the
- * nearest {@link FTuning#DOSIMETER_RESOLUTION}. Not the rate -- that is the Geiger counter's -- and
+ * nearest {@link ItemTuning#DOSIMETER_RESOLUTION}. Not the rate -- that is the Geiger counter's -- and
  * not the badge's own: it reads what got through the armour, which is the figure the body's three
  * illness steps are set against. It is passive; the figure shows on the hand card when held.
  */
@@ -28,7 +27,7 @@ public class DosimeterItem extends Item implements Instrument {
 
     @Override
     public float resolution(Quantity quantity) {
-        return FTuning.DOSIMETER_RESOLUTION;
+        return ItemTuning.DOSIMETER_RESOLUTION;
     }
 
     @Override

@@ -2,10 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.oven;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Fumes;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
@@ -36,9 +37,9 @@ import net.minecraft.world.phys.Vec3;
  * pasted boards.
  *
  * <h2>A batch is thermal mass</h2>
- * The oven is a {@link ThermalBody}; every board in it adds {@link FTuning#REFLOW_BOARD_MASS} to its
+ * The oven is a {@link ThermalBody}; every board in it adds {@link VesselTuning#REFLOW_BOARD_MASS} to its
  * mass, so a full cold batch drags the chamber down and a full hot one holds it up. Each board
- * follows the chamber with a lag of its own ({@link FTuning#REFLOW_BOARD_GRIP} of the gap per
+ * follows the chamber with a lag of its own ({@link VesselTuning#REFLOW_BOARD_GRIP} of the gap per
  * tick), so a board is never at the oven's Tu the instant it goes in. For each board the oven
  * tracks the peak Tu it reached and the ticks it spent at or above its solder's liquidus; both
  * are graded by {@link Soldering#finish} when the batch is taken out, which is when the joint is
@@ -56,12 +57,12 @@ import net.minecraft.world.phys.Vec3;
  */
 public class ReflowOvenBlockEntity extends BlockEntity implements ThermalBody {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private final Catchup offline = new Catchup();
-    private final ItemStack[] boards = new ItemStack[FTuning.REFLOW_SLOTS];
-    private final float[] boardTu = new float[FTuning.REFLOW_SLOTS];
-    private final float[] peak = new float[FTuning.REFLOW_SLOTS];
-    private final int[] dwell = new int[FTuning.REFLOW_SLOTS];
+    private final ItemStack[] boards = new ItemStack[VesselTuning.REFLOW_SLOTS];
+    private final float[] boardTu = new float[VesselTuning.REFLOW_SLOTS];
+    private final float[] peak = new float[VesselTuning.REFLOW_SLOTS];
+    private final int[] dwell = new int[VesselTuning.REFLOW_SLOTS];
 
     public ReflowOvenBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.REFLOW_OVEN.get(), pos, state);
@@ -88,12 +89,12 @@ public class ReflowOvenBlockEntity extends BlockEntity implements ThermalBody {
 
     @Override
     public ThermalMass getThermalMass() {
-        return new ThermalMass(FTuning.REFLOW_OVEN_MASS.workPerTu() + count() * FTuning.REFLOW_BOARD_MASS);
+        return new ThermalMass(VesselTuning.REFLOW_OVEN_MASS.workPerTu() + count() * VesselTuning.REFLOW_BOARD_MASS);
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.REFLOW_OVEN_LEAK;
+        return VesselTuning.REFLOW_OVEN_LEAK;
     }
 
     /** Put one pasted board in. False if there is no room or it has no solder to flow. */
@@ -146,7 +147,7 @@ public class ReflowOvenBlockEntity extends BlockEntity implements ThermalBody {
         for (int i = 0; i < boards.length; i++) {
             if (boards[i].isEmpty())
                 continue;
-            boardTu[i] += FTuning.REFLOW_BOARD_GRIP * (temperature - boardTu[i]);
+            boardTu[i] += VesselTuning.REFLOW_BOARD_GRIP * (temperature - boardTu[i]);
             peak[i] = Math.max(peak[i], boardTu[i]);
             Board held = boards[i].get(FDataComponents.BOARD.get());
             Optional<Material> solder = held == null ? Optional.empty() : held.solder().map(materials::get);
@@ -156,7 +157,7 @@ public class ReflowOvenBlockEntity extends BlockEntity implements ThermalBody {
                 toxic = Math.max(toxic, Fumes.level(solder.get()));
             }
         }
-        if (toxic > 0 && level.getGameTime() % FTuning.FUME_INTERVAL_TICKS == 0)
+        if (toxic > 0 && level.getGameTime() % VesselTuning.FUME_INTERVAL_TICKS == 0)
             Fumes.release(level, Vec3.atCenterOf(worldPosition), toxic);
     }
 
@@ -179,7 +180,7 @@ public class ReflowOvenBlockEntity extends BlockEntity implements ThermalBody {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         offline.load(tag);
         for (int i = 0; i < boards.length; i++) {
             CompoundTag slot = tag.getCompound("Slot" + i);

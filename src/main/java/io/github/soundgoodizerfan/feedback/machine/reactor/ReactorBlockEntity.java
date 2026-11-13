@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.reactor;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.fluid.FluidTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -51,7 +54,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * (a crude's sulfur, an over-temperature batch's coke), not per tick.
  * The bed's material (a {@code catalyst} block) sets its activity, sulfur tolerance, regeneration and sinter
  * temperatures; a bed whose item names none uses the {@code FTuning} figures.
- * shortcut: no concentration window beyond "enough of every input"; pressure is the gas held over {@link FTuning#REACTOR_GAS_MB_PER_PU}, there is no compressor yet.
+ * shortcut: no concentration window beyond "enough of every input"; pressure is the gas held over {@link ReactorTuning#REACTOR_GAS_MB_PER_PU}, there is no compressor yet.
  */
 public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore implements PressureHolder, HeatedTanks {
 
@@ -81,7 +84,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
 
         @Override
         public int getTankCapacity(int tank) {
-            return FTuning.REACTOR_TANK_MB;
+            return ReactorTuning.REACTOR_TANK_MB;
         }
 
         @Override
@@ -116,9 +119,9 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
     public ReactorBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.REACTOR.get(), pos, state);
         for (int i = 0; i < INPUT_TANKS; i++)
-            inputs[i] = new HeatedTank(FTuning.REACTOR_TANK_MB, this::setChanged);
+            inputs[i] = new HeatedTank(ReactorTuning.REACTOR_TANK_MB, this::setChanged);
         for (int i = 0; i < outputs.length; i++)
-            outputs[i] = new HeatedTank(FTuning.REACTOR_TANK_MB, this::setChanged);
+            outputs[i] = new HeatedTank(ReactorTuning.REACTOR_TANK_MB, this::setChanged);
     }
 
     public IFluidHandler getHandler() {
@@ -207,12 +210,12 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
 
     private float regenTu() {
         var c = catalyst();
-        return c == null ? FTuning.REACTOR_REGEN_TU : c.regenerationTemperature().value();
+        return c == null ? ReactorTuning.REACTOR_REGEN_TU : c.regenerationTemperature().value();
     }
 
     private float sinterTu() {
         var c = catalyst();
-        return c == null ? FTuning.REACTOR_SINTER_TU : c.sinterTemperature().value();
+        return c == null ? ReactorTuning.REACTOR_SINTER_TU : c.sinterTemperature().value();
     }
 
     private float loss(net.minecraft.core.component.DataComponentType<Float> type) {
@@ -236,7 +239,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         if (!hasBed())
             return;
         if (temperature > sinterTu())
-            addLoss(FDataComponents.BED_SINTER.get(), FTuning.REACTOR_SINTER_PER_TICK
+            addLoss(FDataComponents.BED_SINTER.get(), ReactorTuning.REACTOR_SINTER_PER_TICK
                     * (temperature - sinterTu()) / sinterTu());
         if (running != null || temperature < regenTu())
             return;
@@ -248,15 +251,15 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
             if (m == null || m.combustion().isEmpty())
                 continue;
             float balance = m.combustion().get().oxygenBalance();
-            int used = tank.drain((int) FTuning.REACTOR_REGEN_MB_PER_TICK, IFluidHandler.FluidAction.SIMULATE).getAmount();
+            int used = tank.drain((int) ReactorTuning.REACTOR_REGEN_MB_PER_TICK, IFluidHandler.FluidAction.SIMULATE).getAmount();
             if (balance > 0f && loss(FDataComponents.BED_COKE.get()) > 0f) {
                 tank.drain(used, IFluidHandler.FluidAction.EXECUTE);
-                addLoss(FDataComponents.BED_COKE.get(), -used * FTuning.REACTOR_COKE_CLEAR_PER_MB);
-                Heat.warm(this, used * FTuning.REACTOR_REGEN_HEAT_PER_MB);
+                addLoss(FDataComponents.BED_COKE.get(), -used * ReactorTuning.REACTOR_COKE_CLEAR_PER_MB);
+                Heat.warm(this, used * ReactorTuning.REACTOR_REGEN_HEAT_PER_MB);
             } else if (balance < 0f && tank.getFluid().getFluidType().getDensity() < 0
                     && loss(FDataComponents.BED_POISON.get()) > 0f) {
                 tank.drain(used, IFluidHandler.FluidAction.EXECUTE);
-                addLoss(FDataComponents.BED_POISON.get(), -used * FTuning.REACTOR_POISON_CLEAR_PER_MB);
+                addLoss(FDataComponents.BED_POISON.get(), -used * ReactorTuning.REACTOR_POISON_CLEAR_PER_MB);
             }
         }
     }
@@ -271,12 +274,12 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.REACTOR_MASS;
+        return ReactorTuning.REACTOR_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.BOILER_LEAK;
+        return MachineTuning.BOILER_LEAK;
     }
 
     /** Gas held over a fixed volume: a fluid whose type is lighter than air. */
@@ -286,7 +289,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         for (HeatedTank tank : inputs)
             if (!tank.isEmpty() && tank.getFluid().getFluidType().getDensity() < 0)
                 gas += tank.getFluidAmount();
-        return new Pu(gas / FTuning.REACTOR_GAS_MB_PER_PU);
+        return new Pu(gas / ReactorTuning.REACTOR_GAS_MB_PER_PU);
     }
 
     // --- the tick --------------------------------------------------------------------------
@@ -311,11 +314,11 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
             for (HeatedTank tank : heatedTanks())
                 if (io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.boiling(tank.getFluid(), temperature))
                     io.github.soundgoodizerfan.feedback.core.hazard.SpatialHop.hop(level, net.minecraft.world.phys.Vec3.atCenterOf(worldPosition), tank.getFluidAmount());
-        if (PressureBurst.fails(getPressure(), FTuning.PRESSURE_VESSEL_DANGER_PU, FTuning.PRESSURE_VESSEL_CRITICAL_PU,
+        if (PressureBurst.fails(getPressure(), FluidTuning.PRESSURE_VESSEL_DANGER_PU, FluidTuning.PRESSURE_VESSEL_CRITICAL_PU,
                 level.random)) {
             for (HeatedTank tank : heatedTanks())
                 tank.setFluid(FluidStack.EMPTY);
-            PressureBurst.burst(level, worldPosition, FTuning.BOILER_BURST_POWER);
+            PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER);
             return;
         }
         pushOutput();
@@ -328,7 +331,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
             IFluidHandler neighbour = level.getCapability(Capabilities.FluidHandler.BLOCK, worldPosition.relative(face), face.getOpposite());
             if (neighbour == null)
                 continue;
-            FluidStack offered = neighbour.drain(FTuning.REACTOR_PUSH_MB, IFluidHandler.FluidAction.SIMULATE);
+            FluidStack offered = neighbour.drain(ReactorTuning.REACTOR_PUSH_MB, IFluidHandler.FluidAction.SIMULATE);
             if (offered.isEmpty() || !isInput(offered))
                 continue;
             int fits = handler.fill(offered, IFluidHandler.FluidAction.SIMULATE);
@@ -413,9 +416,9 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
         for (ThermalProcess.Amount a : over ? r.overTu() : r.fluidOutputs())
             emit(FluidHeat.stamp(new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()), temperature));
         if (r.catalyst().isPresent()) {
-            addLoss(FDataComponents.BED_POISON.get(), sulfur[0] * FTuning.REACTOR_SULFUR_FOUL_PER_MB
+            addLoss(FDataComponents.BED_POISON.get(), sulfur[0] * ReactorTuning.REACTOR_SULFUR_FOUL_PER_MB
                     / (catalyst() == null ? 1f : Math.max(0.01f, catalyst().sulfurTolerance())));
-            addLoss(FDataComponents.BED_COKE.get(), over ? FTuning.REACTOR_COKE_FOUL_PER_BATCH : 0f);
+            addLoss(FDataComponents.BED_COKE.get(), over ? ReactorTuning.REACTOR_COKE_FOUL_PER_BATCH : 0f);
         }
         r.heat().ifPresent(w -> Heat.warm(this, w));
         progress = 0f;
@@ -439,7 +442,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
                         d.getOpposite());
                 if (target == null || target == handler)
                     continue;
-                int fits = target.fill(output.drain(FTuning.REACTOR_PUSH_MB, IFluidHandler.FluidAction.SIMULATE),
+                int fits = target.fill(output.drain(ReactorTuning.REACTOR_PUSH_MB, IFluidHandler.FluidAction.SIMULATE),
                         IFluidHandler.FluidAction.SIMULATE);
                 if (fits > 0)
                     target.fill(output.drain(fits, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);
@@ -468,7 +471,7 @@ public class ReactorBlockEntity extends io.github.soundgoodizerfan.feedback.mach
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         progress = tag.getFloat("Progress");
         for (int i = 0; i < INPUT_TANKS; i++)
             if (tag.contains("In" + i))

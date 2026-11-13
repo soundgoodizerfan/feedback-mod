@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.machine.cable;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * conducts, drops and is read exactly as cable is. What differs is the shape, that it is never
  * insulated, and what touching it does: whatever's box overlaps the post is shocked as {@link
  * Shock} says for the line's voltage, with the victim's {@code Exposure} scaling the figure,
- * pushed back, and the run billed {@link FTuning#FENCE_HIT_AMPS} for the tick. Touch only; it is
+ * pushed back, and the run billed {@link ElectricMachineTuning#FENCE_HIT_AMPS} for the tick. Touch only; it is
  * not a field. A fence taking hits is correct use, so it wears nothing.
  *
  * <h2>Collision and touch are different boxes</h2>
@@ -64,7 +65,7 @@ public class FenceBlock extends CableBlock {
                 Shapes.create(entity.getBoundingBox()), BooleanOp.AND))
             return;
         long now = level.getGameTime();
-        if (now - entity.getPersistentData().getLong(LAST_SHOCK) < FTuning.FENCE_SHOCK_COOLDOWN_TICKS)
+        if (now - entity.getPersistentData().getLong(LAST_SHOCK) < ElectricMachineTuning.FENCE_SHOCK_COOLDOWN_TICKS)
             return;
         float volts = fence.touchVolts();
         if (volts <= 0f)
@@ -72,7 +73,7 @@ public class FenceBlock extends CableBlock {
         entity.getPersistentData().putLong(LAST_SHOCK, now);
         if (!Shock.apply(entity, volts))
             return;
-        fence.draw(FTuning.FENCE_HIT_AMPS);
+        fence.draw(ElectricMachineTuning.FENCE_HIT_AMPS);
         if (entity instanceof LivingEntity living) {
             living.knockback(FTuning.FENCE_KNOCKBACK, pos.getX() + 0.5 - entity.getX(), pos.getZ() + 0.5 - entity.getZ());
             living.hurtMarked = true;   // a player's client is only told of a push if it is marked

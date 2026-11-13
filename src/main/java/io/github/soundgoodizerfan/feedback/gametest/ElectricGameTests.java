@@ -2,11 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRun;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -197,7 +200,7 @@ public class ElectricGameTests {
                 new int[][] {{1}, {0, 2, 3}, {1}, {1}});
         run.tick();
         // limit is 1 A x 2.0; demand 3 A; every sink gets 2/3 of what it wants.
-        float share = FTuning.SOURCE_OVERDRAW_LIMIT * 1f / 3f;
+        float share = ElectricTuning.SOURCE_OVERDRAW_LIMIT * 1f / 3f;
         helper.assertTrue(Math.abs(a.seenAmps - 2 * share) < EPS && Math.abs(b.seenAmps - 1 * share) < EPS,
                 "expected " + 2 * share + " and " + share + " A, got " + a.seenAmps + " and " + b.seenAmps);
         helper.assertTrue(Math.abs(a.seenAmps / a.seenWanted - b.seenAmps / b.seenWanted) < EPS,
@@ -212,7 +215,7 @@ public class ElectricGameTests {
         Fake source = Fake.source(1.5f, 1);
         Fake sink = Fake.sink(1.5f);
         line(source, sink).tick();
-        float expected = 1.5f * (1f - (1f - FTuning.SOURCE_SAG_FLOOR) * 0.5f / (FTuning.SOURCE_OVERDRAW_LIMIT - 1f));
+        float expected = 1.5f * (1f - (1f - ElectricTuning.SOURCE_SAG_FLOOR) * 0.5f / (ElectricTuning.SOURCE_OVERDRAW_LIMIT - 1f));
         helper.assertTrue(Math.abs(source.seenVolts - expected) < EPS,
                 "1.5x rated draw should hold " + expected + " V, held " + source.seenVolts);
         helper.assertTrue(Math.abs(sink.seenVolts - expected) < EPS, "the sink sees the sagged voltage");
@@ -220,9 +223,9 @@ public class ElectricGameTests {
         Fake hard = Fake.source(1.5f, 1);
         Fake hungry = Fake.sink(50);
         line(hard, hungry).tick();
-        helper.assertTrue(Math.abs(hard.seenVolts - 1.5f * FTuning.SOURCE_SAG_FLOOR) < EPS,
+        helper.assertTrue(Math.abs(hard.seenVolts - 1.5f * ElectricTuning.SOURCE_SAG_FLOOR) < EPS,
                 "a source drawn far past its rating holds the floor, not zero");
-        helper.assertTrue(Math.abs(hungry.seenAmps - FTuning.SOURCE_OVERDRAW_LIMIT) < EPS,
+        helper.assertTrue(Math.abs(hungry.seenAmps - ElectricTuning.SOURCE_OVERDRAW_LIMIT) < EPS,
                 "and supplies no more than its limit");
         helper.succeed();
     }
@@ -287,8 +290,8 @@ public class ElectricGameTests {
         BlockPos at = new BlockPos(1, 2, 1);
         CableBlockEntity wire = placeCable(helper, at);
         float rating = wire.getRatingAmps();
-        helper.assertTrue(Math.abs(rating - FTuning.WIRE_AMPS_PER_AMPACITY) < EPS,
-                "copper (ampacity 1) should be rated " + FTuning.WIRE_AMPS_PER_AMPACITY + " A, is " + rating);
+        helper.assertTrue(Math.abs(rating - ElectricMachineTuning.WIRE_AMPS_PER_AMPACITY) < EPS,
+                "copper (ampacity 1) should be rated " + ElectricMachineTuning.WIRE_AMPS_PER_AMPACITY + " A, is " + rating);
         float ambient = AmbientTable.at(helper.getLevel()).value();
         for (int i = 0; i < 2000; i++)
             wire.step(rating);
@@ -309,7 +312,7 @@ public class ElectricGameTests {
         CableBlockEntity wire = placeCable(helper, at);
         float ambient = AmbientTable.at(helper.getLevel()).value();
         float over = 1f;   // 1 A over, so the burn-off is not reached
-        float ceiling = ambient + FTuning.WIRE_OVERLOAD_WORK_PER_AMP * over / FTuning.WIRE_LEAK.workPerTickPerTu();
+        float ceiling = ambient + ElectricMachineTuning.WIRE_OVERLOAD_WORK_PER_AMP * over / ElectricMachineTuning.WIRE_LEAK.workPerTickPerTu();
         float highest = 0;
         for (int i = 0; i < 3000; i++) {
             wire.step(wire.getRatingAmps() + over);
@@ -319,7 +322,7 @@ public class ElectricGameTests {
         helper.assertTrue(highest <= ceiling + EPS, "must never exceed " + ceiling + ", reached " + highest);
         // The input lands before the tick's leak, so the discrete settle point sits one tick's
         // worth of input (input / mass) under the continuous ceiling.
-        float settles = ceiling - FTuning.WIRE_OVERLOAD_WORK_PER_AMP * over / FTuning.WIRE_MASS.workPerTu();
+        float settles = ceiling - ElectricMachineTuning.WIRE_OVERLOAD_WORK_PER_AMP * over / ElectricMachineTuning.WIRE_MASS.workPerTu();
         helper.assertTrue(Math.abs(highest - settles) < 0.05f, "and should settle on " + settles + ", reached " + highest);
         helper.assertTrue(wire.isInsulated() && wire.getCondition() == 1f, "a mild overload leaves insulation and conductor alone");
         helper.setBlock(at, Blocks.AIR.defaultBlockState());
@@ -428,11 +431,11 @@ public class ElectricGameTests {
             int before = wire.getRun().rebuilds();
             generator.turn();
             helper.runAfterDelay(3, () -> {
-                helper.assertTrue(Math.abs(wire.getVolts() - FTuning.ELECTROSTATIC_VOLTS) < 1e-3f,
+                helper.assertTrue(Math.abs(wire.getVolts() - ElectricMachineTuning.ELECTROSTATIC_VOLTS) < 1e-3f,
                         "pulsing: the line is at the generator's voltage, got " + wire.getVolts());
                 helper.assertTrue(cell.isBlocked(), "and the lower-voltage cell is blocked");
                 helper.assertTrue(wire.getRun().rebuilds() > before, "the supply changing re-routed the run");
-                helper.runAfterDelay(FTuning.ELECTROSTATIC_PULSE_TICKS + 3, () -> {
+                helper.runAfterDelay(ElectricMachineTuning.ELECTROSTATIC_PULSE_TICKS + 3, () -> {
                     helper.assertFalse(generator.isPulsing(), "the pulse ends");
                     helper.assertTrue(Math.abs(wire.getVolts() - 1.1f) < 1e-3f,
                             "and the line falls back to the cell, got " + wire.getVolts());
@@ -563,7 +566,7 @@ public class ElectricGameTests {
         ElectromagnetBlockEntity b = placeMagnet(helper, hub.south());
         ElectromagnetBlockEntity c = placeMagnet(helper, hub.above());
         helper.runAfterDelay(6, () -> {
-            float limit = FTuning.SOURCE_OVERDRAW_LIMIT * FTuning.GALVANIC_CELL_AMPS;
+            float limit = ElectricTuning.SOURCE_OVERDRAW_LIMIT * ElectricMachineTuning.GALVANIC_CELL_AMPS;
             float each = limit / 3f;
             for (ElectromagnetBlockEntity m : new ElectromagnetBlockEntity[] {a, b, c})
                 helper.assertTrue(Math.abs(m.getAmps() - each) < 1e-3f,
@@ -594,7 +597,7 @@ public class ElectricGameTests {
             placeMagnet(helper, magnet);
         float ambient = AmbientTable.at(helper.getLevel()).value();
         float over = 5f - wa.getRatingAmps();
-        float ceiling = ambient + FTuning.WIRE_OVERLOAD_WORK_PER_AMP * over / FTuning.WIRE_LEAK.workPerTickPerTu();
+        float ceiling = ambient + ElectricMachineTuning.WIRE_OVERLOAD_WORK_PER_AMP * over / ElectricMachineTuning.WIRE_LEAK.workPerTickPerTu();
         float[] peak = {0};
         helper.onEachTick(() -> peak[0] = Math.max(peak[0], Math.max(wa.getTemperature().value(), wc.getTemperature().value())));
         helper.runAfterDelay(500, () -> {
@@ -620,14 +623,14 @@ public class ElectricGameTests {
         BlockPos at = new BlockPos(1, 2, 1);
         ElectromagnetBlockEntity magnet = placeMagnet(helper, at);
         float ambient = AmbientTable.at(helper.getLevel()).value();
-        float excess = 6f / FTuning.ELECTRIC_LV_VOLTS - 1f;   // fed an MV-reference voltage
-        float ceiling = ambient + FTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess / FTuning.ELECTROMAGNET_LEAK.workPerTickPerTu();
+        float excess = 6f / ElectricTuning.ELECTRIC_LV_VOLTS - 1f;   // fed an MV-reference voltage
+        float ceiling = ambient + ElectricMachineTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess / ElectricMachineTuning.ELECTROMAGNET_LEAK.workPerTickPerTu();
         float peak = 0;
         for (int i = 0; i < 4000; i++) {
             magnet.onResolved(6f, 1f, 1f, false);
             peak = Math.max(peak, magnet.getTemperature().value());
         }
-        helper.assertTrue(magnet.getCondition() == FTuning.ELECTROMAGNET_CONDITION_FLOOR,
+        helper.assertTrue(magnet.getCondition() == ElectricMachineTuning.ELECTROMAGNET_CONDITION_FLOOR,
                 "worn to its floor and no further, condition is " + magnet.getCondition());
         helper.assertTrue(peak > ambient + 10f && peak <= ceiling + 1e-3f,
                 "heated, but not past " + ceiling + ": " + peak);
@@ -691,12 +694,12 @@ public class ElectricGameTests {
 
         RotationGameTests.each(helper, crank::turn);
         helper.runAtTickTime(110, () -> {
-            float rpm = FTuning.HAND_CRANK_RPM.value();
+            float rpm = MachineTuning.HAND_CRANK_RPM.value();
             helper.assertTrue(Math.abs(dynamo.getShaftRpm() - rpm) < 1e-3, "the dynamo is turned at the crank's speed, got " + dynamo.getShaftRpm());
             helper.assertTrue(Math.abs(dynamo.getVolts() - rpm * dynamo.getVoltsPerRpm()) < EPS,
                     "expected " + rpm * dynamo.getVoltsPerRpm() + " V, held " + dynamo.getVolts());
-            helper.assertTrue(Math.abs(magnet.getAmps() - FTuning.ELECTROMAGNET_AMPS) < EPS, "the magnet is delivered what it wants");
-            helper.assertTrue(Math.abs(dynamo.getShaftLoad().value() - FTuning.ELECTROMAGNET_AMPS * dynamo.getVoltsPerRpm()) < EPS,
+            helper.assertTrue(Math.abs(magnet.getAmps() - ElectricMachineTuning.ELECTROMAGNET_AMPS) < EPS, "the magnet is delivered what it wants");
+            helper.assertTrue(Math.abs(dynamo.getShaftLoad().value() - ElectricMachineTuning.ELECTROMAGNET_AMPS * dynamo.getVoltsPerRpm()) < EPS,
                     "the dynamo charges its shaft volts-per-RPM x amps, got " + dynamo.getShaftLoad().value());
             for (BlockPos p : BlockPos.betweenClosed(0, 2, 0, 4, 2, 0))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
@@ -760,8 +763,8 @@ public class ElectricGameTests {
             helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source; held " + jar.getStoredVolts() + " V, sees " + jar.getVolts() + " V, " + jar.getAmps() + " A");
             charged[0] = jar.getStoredVolts();
             // The jar charges at LEYDEN_JAR_CHARGE_AMPS for the length of the pulse, so it holds that much charge over its capacitance, never past the source.
-            float expected = FTuning.ELECTROSTATIC_PULSE_TICKS * FTuning.LEYDEN_JAR_CHARGE_AMPS / FTuning.LEYDEN_JAR_CAPACITANCE;
-            helper.assertTrue(charged[0] > 0.8f * expected && charged[0] <= FTuning.ELECTROSTATIC_VOLTS + EPS,
+            float expected = ElectricMachineTuning.ELECTROSTATIC_PULSE_TICKS * ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS / ElectricMachineTuning.LEYDEN_JAR_CAPACITANCE;
+            helper.assertTrue(charged[0] > 0.8f * expected && charged[0] <= ElectricMachineTuning.ELECTROSTATIC_VOLTS + EPS,
                     "the jar charged to about " + expected + " V and never past its source's voltage, held " + charged[0]);
             placeMagnet(helper, jarAt.east());
         });
@@ -784,7 +787,7 @@ public class ElectricGameTests {
     private static ElectrolyticCellBlockEntity brassCell(GameTestHelper helper, BlockPos at, int brass) {
         helper.setBlock(at, FBlocks.ELECTROLYTIC_CELL.get().defaultBlockState());
         ElectrolyticCellBlockEntity cell = (ElectrolyticCellBlockEntity) helper.getBlockEntity(at);
-        cell.getWater().fill(new FluidStack(Fluids.WATER, FTuning.ELECTROLYTIC_CELL_TANK_MB),
+        cell.getWater().fill(new FluidStack(Fluids.WATER, ElectricMachineTuning.ELECTROLYTIC_CELL_TANK_MB),
                 IFluidHandler.FluidAction.EXECUTE);
         cell.insertAnode(new ItemStack(FItems.BRASS_INGOT.get(), brass));
         return cell;
@@ -793,12 +796,12 @@ public class ElectricGameTests {
     /** Ticks until {@code ingots} ingots' worth of metal has gone through at the cell's own current. */
     private static int ticksFor(int ingots) {
         return Math.round(ingots * FTuning.QU_PER_INGOT.value()
-                / (FTuning.ELECTROLYTIC_CELL_AMPS * FTuning.QU_PER_AMP_TICK));
+                / (ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS * ElectricMachineTuning.QU_PER_AMP_TICK));
     }
 
     private static void run(ElectrolyticCellBlockEntity cell, float volts, int ticks) {
         for (int i = 0; i < ticks; i++)
-            cell.onResolved(volts, FTuning.ELECTROLYTIC_CELL_AMPS, FTuning.ELECTROLYTIC_CELL_AMPS, false);
+            cell.onResolved(volts, ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS, ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS, false);
     }
 
     /**
@@ -877,11 +880,11 @@ public class ElectricGameTests {
     private static List<ItemStack> plate(GameTestHelper helper, BlockPos at, float amps, float qu) {
         helper.setBlock(at, FBlocks.ELECTROLYTIC_CELL.get().defaultBlockState());
         ElectrolyticCellBlockEntity cell = (ElectrolyticCellBlockEntity) helper.getBlockEntity(at);
-        cell.getWater().fill(new FluidStack(Fluids.WATER, FTuning.ELECTROLYTIC_CELL_TANK_MB),
+        cell.getWater().fill(new FluidStack(Fluids.WATER, ElectricMachineTuning.ELECTROLYTIC_CELL_TANK_MB),
                 IFluidHandler.FluidAction.EXECUTE);
         cell.insertAnode(new ItemStack(Items.COPPER_INGOT));
         cell.hangWork(new ItemStack(Items.IRON_INGOT));
-        int ticks = Math.round(qu / (amps * FTuning.QU_PER_AMP_TICK));
+        int ticks = Math.round(qu / (amps * ElectricMachineTuning.QU_PER_AMP_TICK));
         for (int i = 0; i < ticks; i++)
             cell.onResolved(0.5f, amps, amps, false);
         return cell.takeWork();
@@ -907,8 +910,8 @@ public class ElectricGameTests {
         ThermalBody pot = (ThermalBody) helper.getBlockEntity(copperAt.above());
 
         helper.onEachTick(() -> {
-            copper.onResolved(9f, FTuning.COIL_AMPS, FTuning.COIL_AMPS, false);
-            iron.onResolved(9f, FTuning.COIL_AMPS, FTuning.COIL_AMPS, false);
+            copper.onResolved(9f, ElectricMachineTuning.COIL_AMPS, ElectricMachineTuning.COIL_AMPS, false);
+            iron.onResolved(9f, ElectricMachineTuning.COIL_AMPS, ElectricMachineTuning.COIL_AMPS, false);
         });
         helper.runAtTickTime(1200, () -> {
             float vessel = pot.getTemperature().value(), element = copper.getTemperature().value();
@@ -984,7 +987,7 @@ public class ElectricGameTests {
     /** Charging inside its means must not wear it, cook it or boil it dry. */
     private static void assertBatteryHealthy(GameTestHelper helper, io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity battery) {
         helper.assertTrue(battery.getCondition() > 0.999f, "condition held, now " + battery.getCondition());
-        helper.assertTrue(battery.getTemperature().value() < FTuning.BATTERY_HOT_TU, "case stayed under the hot line, now " + battery.getTemperature().value() + " Tu");
+        helper.assertTrue(battery.getTemperature().value() < ElectricMachineTuning.BATTERY_HOT_TU, "case stayed under the hot line, now " + battery.getTemperature().value() + " Tu");
         helper.assertTrue(battery.water() > FTuning.BATTERY_WATER_TANK_MB - 1f, "no water vented, now " + battery.water() + " mB");
         helper.assertTrue(battery.gas() < 0.5f, "no hydrogen released, now " + battery.gas() + " mB");
     }
@@ -1027,7 +1030,7 @@ public class ElectricGameTests {
     /** A line at the nominal band voltage (LV 1.5 V) sits under one cell's 2.1 V: it must not charge it, and says what happens. */
     @GameTest(template = "empty", timeoutTicks = 600)
     public static void batteryOnALowVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 1, 0.5f, FTuning.ELECTRIC_LV_VOLTS);
+        var battery = chargingBattery(helper, 1, 0.5f, ElectricTuning.ELECTRIC_LV_VOLTS);
         helper.runAtTickTime(300, () -> {
             helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
                     + ", terminal " + battery.terminalVolts() + " V");
@@ -1039,7 +1042,7 @@ public class ElectricGameTests {
     /** Three cells (6.3 V full) on a nominal MV line (6 V). */
     @GameTest(template = "empty", timeoutTicks = 600)
     public static void batteryOnAMediumVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 3, 0.5f, FTuning.ELECTRIC_MV_VOLTS);
+        var battery = chargingBattery(helper, 3, 0.5f, ElectricTuning.ELECTRIC_MV_VOLTS);
         helper.runAtTickTime(300, () -> {
             helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
                     + ", terminal " + battery.terminalVolts() + " V");

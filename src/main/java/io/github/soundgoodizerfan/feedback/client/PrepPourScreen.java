@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
@@ -66,7 +66,7 @@ public class PrepPourScreen extends Screen {
     /** Shake: sweeps made, where the shaker is, the sweep under way; grains lie where they fell. Place: the pieces laid, in 0..1000 marks. */
     private int strokes, shakerX, lastX = Integer.MIN_VALUE, dir, lastStroke = -99, grains;
     private float travel;
-    private final int[] grainX = new int[FTuning.SHAKE_MAX_STROKES * GRAINS_PER_STROKE], grainY = new int[FTuning.SHAKE_MAX_STROKES * GRAINS_PER_STROKE];
+    private final int[] grainX = new int[ModularTuning.SHAKE_MAX_STROKES * GRAINS_PER_STROKE], grainY = new int[ModularTuning.SHAKE_MAX_STROKES * GRAINS_PER_STROKE];
     private final java.util.List<Integer> pieces = new java.util.ArrayList<>();
     /** How thick it runs: 0 water to 4 honey, in decades of viscosity. */
     private final float thick;
@@ -152,7 +152,7 @@ public class PrepPourScreen extends Screen {
 
     /** How much of the dish the sauce covers now, as drawn: 1 is the whole surface; the held ticks so far plus the part of a tick under way. */
     private float coverage() {
-        return Math.min(1.15f, (PrepWork.poured(held, flow) + (pouring ? flow * partial : 0f)) / FTuning.POUR_FULL);
+        return Math.min(1.15f, (PrepWork.poured(held, flow) + (pouring ? flow * partial : 0f)) / ModularTuning.POUR_FULL);
     }
 
     @Override
@@ -180,7 +180,7 @@ public class PrepPourScreen extends Screen {
     /** Left-click lays a piece where it was aimed, right-click lifts the nearest. */
     private void place(double x, int button) {
         int reach = half[0], mark = Mth.clamp(Math.round((float) (x - (cx - reach)) / (2 * reach) * PrepWork.LINE), 0, PrepWork.LINE);
-        if (button == 0 && pieces.size() < FTuning.PLACE_MAX) {
+        if (button == 0 && pieces.size() < ModularTuning.PLACE_MAX) {
             pieces.add(mark);
             int at = pieceX(mark);
             specks.burst(at, foodY + 2, 4, 0.6f, 1.2f, rgb, 14, 2);
@@ -231,7 +231,7 @@ public class PrepPourScreen extends Screen {
         if (sign == dir)
             travel += Math.abs(dx);
         else {
-            if (travel >= SWEEP_PX && ticks - lastStroke >= FTuning.SHAKE_TICKS_PER_STROKE)
+            if (travel >= SWEEP_PX && ticks - lastStroke >= ModularTuning.SHAKE_TICKS_PER_STROKE)
                 stroke();
             dir = sign;
             travel = Math.abs(dx);
@@ -249,7 +249,7 @@ public class PrepPourScreen extends Screen {
         }
         specks.burst(shakerX, py + 56, 3, 0.3f, 0.8f, rgb, 18, 2);
         GuiSkin.play(SoundEvents.GRAVEL_STEP, 1.8f + r.nextFloat() * 0.3f);
-        if (strokes >= FTuning.SHAKE_MAX_STROKES)
+        if (strokes >= ModularTuning.SHAKE_MAX_STROKES)
             release();
     }
 
@@ -262,7 +262,7 @@ public class PrepPourScreen extends Screen {
 
     private void release() {
         pouring = false;
-        if (mode == PrepWork.POUR && held > 0 || mode == PrepWork.SHAKE && strokes >= FTuning.SHAKE_MAX_STROKES) {
+        if (mode == PrepWork.POUR && held > 0 || mode == PrepWork.SHAKE && strokes >= ModularTuning.SHAKE_MAX_STROKES) {
             done = true;
             lock();
         }
@@ -311,7 +311,7 @@ public class PrepPourScreen extends Screen {
         float lvl = PrepWork.poured(held, flow);
         if (mode == PrepWork.POUR && pouring && !sent) {
             held++;
-            if (held >= FTuning.POUR_MAX_TICKS)
+            if (held >= ModularTuning.POUR_MAX_TICKS)
                 release();
             if (thick < 1.5f) {
                 specks.burst(cx, foodY, 2, 1.8f, 2.6f, rgb, 14, 2);
@@ -320,7 +320,7 @@ public class PrepPourScreen extends Screen {
                 specks.burst(cx, foodY, 1, 0.5f, 0.9f, rgb, 22, 3);
                 slosh = Math.min(2f, slosh + 0.15f);
             }
-            if (lvl > FTuning.POUR_FULL) {
+            if (lvl > ModularTuning.POUR_FULL) {
                 // Over the rim: it runs down both sides of the container.
                 specks.spawn(cx - half[0], rimY + 2, -0.8f, 0.4f, rgb, 24, 3);
                 specks.spawn(cx + half[0], rimY + 2, 0.8f, 0.4f, rgb, 24, 3);
@@ -468,7 +468,7 @@ public class PrepPourScreen extends Screen {
         }
         // The marks to stop at: the extent the coat should reach, bracketed over the dish so it reads across the stream.
         if (mode == PrepWork.POUR) {
-            int mark = Math.round((float) FTuning.POUR_TARGET / FTuning.POUR_FULL * reach);
+            int mark = Math.round((float) ModularTuning.POUR_TARGET / ModularTuning.POUR_FULL * reach);
             for (int x = cx - mark; x < cx + mark; x += 4)
                 g.fill(x, foodY - 8, Math.min(x + 2, cx + mark), foodY - 7, SKIN.accent());
             g.fill(cx - mark, foodY - 8, cx - mark + 1, foodY + 14, SKIN.accent());
@@ -481,11 +481,11 @@ public class PrepPourScreen extends Screen {
             g.renderItem(food, shakerX - 8, py + 34 + (pouring ? Math.round(Mth.sin((ticks + partial) * 2.2f) * 2f) : 0));
         } else if (mode == PrepWork.PLACE) {
             // The rings are where an even laying puts the target number of pieces; the pointer ghosts where the next would land.
-            for (int k = 1; k <= FTuning.PLACE_TARGET; k++) {
-                int ring = pieceX(k * PrepWork.LINE / (FTuning.PLACE_TARGET + 1));
+            for (int k = 1; k <= ModularTuning.PLACE_TARGET; k++) {
+                int ring = pieceX(k * PrepWork.LINE / (ModularTuning.PLACE_TARGET + 1));
                 ring(g, ring, foodY + 5, SLICE_RX + 2, SLICE_RY + 2, SKIN.accent());
             }
-            if (!sent && phase == PLAY && pieces.size() < FTuning.PLACE_MAX && Math.abs(frameMx - cx) <= half[0] && Math.abs(frameMy - (foodY + 5)) <= 22)
+            if (!sent && phase == PLAY && pieces.size() < ModularTuning.PLACE_MAX && Math.abs(frameMx - cx) <= half[0] && Math.abs(frameMy - (foodY + 5)) <= 22)
                 disc(g, pieceX(Mth.clamp(Math.round((float) (frameMx - (cx - half[0])) / (2 * half[0]) * PrepWork.LINE), 0, PrepWork.LINE)),
                         foodY + 5, SLICE_RX, SLICE_RY, 0x60000000 | rgb, 0x60000000 | rgb, 0x30FFFFFF);
             int edge = 0xFF000000 | GuiSkin.lerp(fill, 0xFF000000, 0.5f), light = 0x80FFFFFF;

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.transmission;
 
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign;
@@ -23,7 +23,7 @@ import java.util.List;
  * 6): how many gears, and each one's ratio, in steps of 0.05 ({@link #PER_UNIT} per 1.0, stored as a
  * whole number so two designs compare equal). A ratio is input turns per output turn: 3.5 is a low
  * gear, 0.8 an overdrive. There is also neutral (nothing coupled) and a reverse the size of first.
- * Materials set how fast it wears when shifted at speed ({@link FTuning#TRANSMISSION_WEAR_PER_RPM}).
+ * Materials set how fast it wears when shifted at speed ({@link VehicleTuning#TRANSMISSION_WEAR_PER_RPM}).
  */
 public record TransmissionDesign(List<Integer> steps, ResourceLocation material, float wearMult, float massMult) {
 
@@ -82,12 +82,12 @@ public record TransmissionDesign(List<Integer> steps, ResourceLocation material,
 
     /** The block's weight: gears' metal times the material's density. */
     public Mu mass(Material m) {
-        return new Mu(FTuning.TRANSMISSION_METAL_PER_GEAR_MB * gears() * m.density().muPerMb() * massMult);
+        return new Mu(VehicleTuning.TRANSMISSION_METAL_PER_GEAR_MB * gears() * m.density().muPerMb() * massMult);
     }
 
     /** How much a shift at speed costs this material: softer wears faster, by the hardness the deformation table already holds. */
     public float wearPerRpm(Material m) {
-        return FTuning.TRANSMISSION_WEAR_PER_RPM / Math.max(1f, m.hardness().value()) * wearMult;
+        return VehicleTuning.TRANSMISSION_WEAR_PER_RPM / Math.max(1f, m.hardness().value()) * wearMult;
     }
 
     /** The spec sheet a screen and a tooltip show: free and exact, philosophy 8. */

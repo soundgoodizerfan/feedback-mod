@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.lathe;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.HashSet;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
@@ -99,7 +100,7 @@ public class LatheBlockEntity extends ShopMachineBlockEntity implements SensorFi
 
     @Override
     public Su getLoadSu() {
-        return FTuning.LATHE_LOAD_SU;
+        return MachineTuning.LATHE_LOAD_SU;
     }
 
     /**
@@ -120,8 +121,8 @@ public class LatheBlockEntity extends ShopMachineBlockEntity implements SensorFi
 
         // A blunt bit cuts less of every pass; it never stops clearing what its rating clears,
         // which would have turned wear into a hard gate on steel.
-        St driveForce = new St((isHeavyPass() ? FTuning.LATHE_ST_HEAVY : FTuning.LATHE_ST_LIGHT).value() * getCondition());
-        Removing.Cut cut = Removing.apply(workpiece, driveForce, FTuning.LATHE_BIT_HARDNESS, Operation.TURN,
+        St driveForce = new St((isHeavyPass() ? MachineTuning.LATHE_ST_HEAVY : MachineTuning.LATHE_ST_LIGHT).value() * getCondition());
+        Removing.Cut cut = Removing.apply(workpiece, driveForce, MachineTuning.LATHE_BIT_HARDNESS, Operation.TURN,
                 passes, carriedFu, level);
         carriedFu = cut.carried();
 
@@ -141,8 +142,8 @@ public class LatheBlockEntity extends ShopMachineBlockEntity implements SensorFi
         if (toolBit.isEmpty() || stAbsorbed <= 0)
             return;
         int before = FTuning.conditionBand(getCondition());
-        float condition = Math.max(FTuning.LATHE_BIT_CONDITION_FLOOR,
-                getCondition() - stAbsorbed * FTuning.LATHE_BIT_WEAR_PER_ST);
+        float condition = Math.max(MachineTuning.LATHE_BIT_CONDITION_FLOOR,
+                getCondition() - stAbsorbed * MachineTuning.LATHE_BIT_WEAR_PER_ST);
         toolBit.set(FDataComponents.TOOL_CONDITION.get(), condition);
         setChanged();
         if (FTuning.conditionBand(condition) != before)

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.creeper;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
@@ -20,7 +20,7 @@ import net.minecraft.world.level.Level;
 /**
  * The creeper sac, the explosive organ a shear takes from a penned creeper. It holds the charge the pen grew
  * ({@code FDataComponents.CREEPER_CHARGE}). A hand knife in the other hand cuts it into creeper charge, one item per
- * {@link FTuning#CREEPER_CHARGE_PER_ITEM} units; the remainder is lost.
+ * {@link PetrochemTuning#CREEPER_CHARGE_PER_ITEM} units; the remainder is lost.
  */
 public class CreeperSacItem extends Item {
 
@@ -39,7 +39,7 @@ public class CreeperSacItem extends Item {
         ItemStack other = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
         if (!io.github.soundgoodizerfan.feedback.modular.ModularFaces.has(other, "knife_blade"))
             return InteractionResultHolder.pass(sac);
-        int count = (int) (charge(sac) / FTuning.CREEPER_CHARGE_PER_ITEM);
+        int count = (int) (charge(sac) / PetrochemTuning.CREEPER_CHARGE_PER_ITEM);
         if (count <= 0) {
             if (!level.isClientSide)
                 player.displayClientMessage(Component.translatable("message.feedback.creeper.sac_empty"), true);
@@ -59,7 +59,7 @@ public class CreeperSacItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> lines, TooltipFlag flag) {
         float c = charge(stack);
-        String band = c <= 0f ? "empty" : c < FTuning.CREEPER_CAP * 0.25f ? "small" : c < FTuning.CREEPER_CAP * 0.75f ? "medium" : "large";
+        String band = c <= 0f ? "empty" : c < PetrochemTuning.CREEPER_CAP * 0.25f ? "small" : c < PetrochemTuning.CREEPER_CAP * 0.75f ? "medium" : "large";
         lines.add(Component.translatable("tooltip.feedback.creeper.sac." + band));
         lines.add(Component.translatable("tooltip.feedback.creeper.unstable"));
     }

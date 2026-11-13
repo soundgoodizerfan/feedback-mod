@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
@@ -78,7 +77,7 @@ public class RotationNetwork {
     private float staticLoadSu;
     /** Demand per RPM: friction. Costs nothing while stopped. */
     private float dragSuPerRpm;
-    private float inertia = FTuning.MINIMUM_INERTIA.suTicksPerRpm();
+    private float inertia = RotationTuning.MINIMUM_INERTIA.suTicksPerRpm();
 
     /** Speed the sources are asking for. Set by {@link RotationPropagator}. */
     private float targetRpm;
@@ -328,7 +327,7 @@ public class RotationNetwork {
         float capacity = totalCapacitySu();
         float staticLoad = totalStaticLoadSu();
         float drag = totalDragSuPerRpm();
-        float totalInertia = Math.max(inertia + externalInertia, FTuning.MINIMUM_INERTIA.suTicksPerRpm());
+        float totalInertia = Math.max(inertia + externalInertia, RotationTuning.MINIMUM_INERTIA.suTicksPerRpm());
         // An outside push (driveExternally) keeps the run live even at its target or at rest, so
         // the three shortcuts below that assume nothing but sources push -- settled, braking
         // floor, snap to zero -- stand down while there is one.
@@ -365,9 +364,9 @@ public class RotationNetwork {
         // The braking floor would fight a gentle outside push, so it only applies without one.
         float force = (speedingUp && !reversing)
                 ? Math.max(0, capacity - staticLoad)
-                : pushed ? liveLoad : Math.max(liveLoad, FTuning.MINIMUM_BRAKING_SU.value());
+                : pushed ? liveLoad : Math.max(liveLoad, RotationTuning.MINIMUM_BRAKING_SU.value());
 
-        float step = force / totalInertia * FTuning.INERTIA_RESPONSE;
+        float step = force / totalInertia * RotationTuning.INERTIA_RESPONSE;
 
         if (Math.abs(effectiveTarget - currentRpm) <= step)
             currentRpm = effectiveTarget;
@@ -377,10 +376,10 @@ public class RotationNetwork {
         // A push with the run, after the chase and unbounded by the target -- see driveExternally.
         // A push against it is already in staticLoad.
         if (assisted)
-            currentRpm += externalPushSu / totalInertia * FTuning.INERTIA_RESPONSE;
+            currentRpm += externalPushSu / totalInertia * RotationTuning.INERTIA_RESPONSE;
 
         // Not while pushed: a slow creep downhill would be zeroed every tick.
-        if (!pushed && effectiveTarget == 0 && Math.abs(currentRpm) < FTuning.STOPPED_RPM_THRESHOLD.value())
+        if (!pushed && effectiveTarget == 0 && Math.abs(currentRpm) < RotationTuning.STOPPED_RPM_THRESHOLD.value())
             currentRpm = 0;
 
         for (RotationMember member : members)
@@ -416,7 +415,7 @@ public class RotationNetwork {
 
         boolean overloaded = isOverstressed();
         boolean straining = !overloaded && totalCapacitySu() > 0
-                && liveLoadSu() > totalCapacitySu() * FTuning.STRAINING_LOAD_FRACTION;
+                && liveLoadSu() > totalCapacitySu() * RotationTuning.STRAINING_LOAD_FRACTION;
         if (!overloaded && !straining) {
             ticksUntilComplaint = 0;
             return;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.rectifier;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -11,8 +11,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A fast-charge fitting (roadmap E4): a SINK at MV that asks a small standing {@link FTuning#RECTIFIER_AMPS}. While it is
- * fed ({@link #isPowered}), a battery touching it charges in {@link FTuning#RECTIFIER_CHARGE_TICKS} instead of its usual
+ * A fast-charge fitting (roadmap E4): a SINK at MV that asks a small standing {@link ElectricMachineTuning#RECTIFIER_AMPS}. While it is
+ * fed ({@link #isPowered}), a battery touching it charges in {@link ElectricMachineTuning#RECTIFIER_CHARGE_TICKS} instead of its usual
  * time; the battery reads this, the rectifier changes nothing itself. Alone it does nothing but draw its standing amps.
  * It has no wear and no thermal body (shortcut: the standing draw is its whole loss; give it a body if a rectifier ever
  * has to overheat).
@@ -30,7 +30,7 @@ public class RectifierBlockEntity extends ElectricNode {
 
     @Override
     public float wantedAmps() {
-        return FTuning.RECTIFIER_AMPS;
+        return ElectricMachineTuning.RECTIFIER_AMPS;
     }
 
     @Override

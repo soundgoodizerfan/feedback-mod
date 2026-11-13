@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.rollingmill;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.machine.ShopMachineBlockEntity;
@@ -25,7 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A driven roller pair. Same shape as {@code MechanicalHammerBlockEntity}'s plate-making, through
- * {@link Operation#ROLL}: one pass of {@link FTuning#ROLLING_MILL_ST} per {@link #strokesDue}, the
+ * {@link Operation#ROLL}: one pass of {@link MachineTuning#ROLLING_MILL_ST} per {@link #strokesDue}, the
  * same {@link Deforming#apply} the Hammer and Wire Drawer already share. A pass that cannot move
  * the metal is absorbed by the rolls.
  * <p>
@@ -36,7 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <b>Roll cladding.</b> A plate laid in the second slot is a skin; the next stroke on a plate
  * workpiece bonds it on as a {@link Plating} coat of the skin's metal. Both must be past their anneal
  * point (a cold roll joins nothing: the mill holds off and hints); a skin rolled past
- * {@link FTuning#CLAD_OVERRUN_MELT_SHARE} of its melting point comes out burnt.
+ * {@link MachineTuning#CLAD_OVERRUN_MELT_SHARE} of its melting point comes out burnt.
  */
 public class RollingMillBlockEntity extends ShopMachineBlockEntity {
 
@@ -50,7 +50,7 @@ public class RollingMillBlockEntity extends ShopMachineBlockEntity {
 
     @Override
     public Su getLoadSu() {
-        return FTuning.ROLLING_MILL_LOAD_SU;
+        return MachineTuning.ROLLING_MILL_LOAD_SU;
     }
 
     public ItemStack getCladding() {
@@ -105,9 +105,9 @@ public class RollingMillBlockEntity extends ShopMachineBlockEntity {
             return false;
         }
         boolean overrun = skin.material().thermal().meltingPoint()
-                .filter(t -> skinTu >= t.value() * FTuning.CLAD_OVERRUN_MELT_SHARE).isPresent();
+                .filter(t -> skinTu >= t.value() * MachineTuning.CLAD_OVERRUN_MELT_SHARE).isPresent();
         ItemStack out = workpiece.copy();
-        out.set(FDataComponents.PLATING.get(), new Plating(skin.id(), FTuning.CLAD_SKIN_QU,
+        out.set(FDataComponents.PLATING.get(), new Plating(skin.id(), MachineTuning.CLAD_SKIN_QU,
                 overrun ? Plating.Quality.BURNT : Plating.Quality.SOUND));
         ItemHeat.set(out, new io.github.soundgoodizerfan.feedback.core.unit.Tu(Math.min(baseTu, skinTu)), level);
         workpiece = out;
@@ -136,7 +136,7 @@ public class RollingMillBlockEntity extends ShopMachineBlockEntity {
                 changed |= clad();
                 continue;
             }
-            St strength = new St(FTuning.ROLLING_MILL_ST.value() * condition);
+            St strength = new St(MachineTuning.ROLLING_MILL_ST.value() * condition);
             Deforming.Blow blow = Deforming.apply(workpiece, strength, level, OPERATION);
             if (!blow.landed()) {
                 wear(strength.value());

@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselMenu;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.client.Readout;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,7 +30,7 @@ import net.minecraft.world.item.ItemStack;
  * A continuously-filling bar is a number wearing a picture -- exactly what {@code Readout}
  * refuses to do anywhere else, and free precision this mod otherwise sells as an instrument (§8).
  * The fill steps through the same ten bands {@code Readout.temperature} already names in words,
- * using {@link FTuning#HEAT_BAND_TOPS}: what the player sees is the blacksmith's read of the
+ * using {@link ThermalTuning#HEAT_BAND_TOPS}: what the player sees is the blacksmith's read of the
  * glow, in a strip instead of a sentence, no finer than the free sense it stands in for.
  */
 public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
@@ -69,7 +69,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
     protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         skin.panel(graphics, leftPos, topPos, imageWidth, imageHeight);
         int gaugeTu = menu.getGaugeTu();
-        int band = gaugeTu >= (int) FTuning.MAX_VISIBLE_TU.value()
+        int band = gaugeTu >= (int) ThermalTuning.MAX_VISIBLE_TU.value()
                 ? BAND_COLORS.length - 1
                 : firstBandAbove(gaugeTu);
 
@@ -131,9 +131,9 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
     }
 
     static int firstBandAbove(int tu) {
-        for (int band = 0; band < FTuning.HEAT_BAND_TOPS.size(); band++)
-            if (tu < FTuning.HEAT_BAND_TOPS.get(band).value())
+        for (int band = 0; band < ThermalTuning.HEAT_BAND_TOPS.size(); band++)
+            if (tu < ThermalTuning.HEAT_BAND_TOPS.get(band).value())
                 return band;
-        return FTuning.HEAT_BAND_TOPS.size() - 1;
+        return ThermalTuning.HEAT_BAND_TOPS.size() - 1;
     }
 }

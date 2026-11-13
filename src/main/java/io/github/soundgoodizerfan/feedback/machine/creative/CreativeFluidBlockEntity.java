@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.creative;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.FluidHeat;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 
@@ -34,7 +34,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 public class CreativeFluidBlockEntity extends BlockEntity implements CreativeSource {
 
     private boolean on = true;
-    private float tu = FTuning.AMBIENT_TU.value();
+    private float tu = ThermalTuning.AMBIENT_TU.value();
     private float rate = 100f;
     private boolean sink;
     /** 0 pours the fluid a bucket set; n pours the nth registered gas, by name. */

@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -60,12 +59,12 @@ public final class GunAmmo {
 
     /** How long swapping a magazine takes this gun, in ms: the reload, and a belt makes it longer. */
     public static long reloadMs(ItemStack gun) {
-        return Math.round(FTuning.GUN_RELOAD_MS * io.github.soundgoodizerfan.feedback.modular.ModularTraits.gunReloadMult(gun));
+        return Math.round(GunTuning.GUN_RELOAD_MS * io.github.soundgoodizerfan.feedback.modular.ModularTraits.gunReloadMult(gun));
     }
 
     /** Ms to put one round into {@code design}'s own feed: a break action's barrels are fed together, anything else a round at a time. */
     public static long roundMs(GunSpec design) {
-        return design.layout().feed() == GunLayout.Feed.BARRELS ? FTuning.GUN_RELOAD_BARREL_ROUND_MS : FTuning.GUN_RELOAD_ROUND_MS;
+        return design.layout().feed() == GunLayout.Feed.BARRELS ? GunTuning.GUN_RELOAD_BARREL_ROUND_MS : GunTuning.GUN_RELOAD_ROUND_MS;
     }
 
     /** A magazine item's size band; one made before bands is standard. */

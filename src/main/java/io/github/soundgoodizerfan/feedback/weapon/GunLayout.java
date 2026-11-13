@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import net.minecraft.util.StringRepresentable;
 
 import java.util.List;
@@ -46,14 +45,14 @@ public record GunLayout(Type type, Action action, Feed feed) {
      * keeps firing while the trigger is held. A hammer action can take a revolver cylinder.
      */
     public enum Action implements StringRepresentable {
-        BREAK("break", true, FTuning.GUN_CYCLE_MANUAL_MS_BREAK, List.of(FireMode.SEMI)),
+        BREAK("break", true, GunTuning.GUN_CYCLE_MANUAL_MS_BREAK, List.of(FireMode.SEMI)),
         /** A flintlock: a hammer with a flint, a pan to prime and a muzzle-loaded round; slow to cock and prime again. */
-        FLINTLOCK("flintlock", true, FTuning.GUN_CYCLE_MANUAL_MS_FLINTLOCK, List.of(FireMode.SEMI)),
-        LEVER("lever", true, FTuning.GUN_CYCLE_MANUAL_MS_LEVER, List.of(FireMode.SEMI)),
-        BOLT("bolt", false, FTuning.GUN_CYCLE_MANUAL_MS_BOLT, List.of(FireMode.SEMI)),
-        PUMP("pump", true, FTuning.GUN_CYCLE_MANUAL_MS_PUMP, List.of(FireMode.SEMI)),
+        FLINTLOCK("flintlock", true, GunTuning.GUN_CYCLE_MANUAL_MS_FLINTLOCK, List.of(FireMode.SEMI)),
+        LEVER("lever", true, GunTuning.GUN_CYCLE_MANUAL_MS_LEVER, List.of(FireMode.SEMI)),
+        BOLT("bolt", false, GunTuning.GUN_CYCLE_MANUAL_MS_BOLT, List.of(FireMode.SEMI)),
+        PUMP("pump", true, GunTuning.GUN_CYCLE_MANUAL_MS_PUMP, List.of(FireMode.SEMI)),
         /** A hammer cocked by thumb between shots (a revolver's). */
-        SINGLE_ACTION("single_action", true, FTuning.GUN_CYCLE_MANUAL_MS_SINGLE_ACTION, List.of(FireMode.SEMI)),
+        SINGLE_ACTION("single_action", true, GunTuning.GUN_CYCLE_MANUAL_MS_SINGLE_ACTION, List.of(FireMode.SEMI)),
         /** A hammer cocked by the trigger pull (a revolver's): nothing to work between shots. */
         DOUBLE_ACTION("double_action", true, 0, List.of(FireMode.SEMI)),
         SELF_LOADING("self_loading", false, 0, List.of(FireMode.SEMI)),

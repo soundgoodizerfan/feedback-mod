@@ -13,7 +13,6 @@ import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.fitting.SensorFitting;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
@@ -124,9 +123,9 @@ public class FlightSensorBlockEntity extends BlockEntity implements SensorFittin
     @Override
     public float resolution(Quantity quantity) {
         return switch (quantity) {
-            case ALTITUDE -> FTuning.FLIGHT_ALTITUDE_RESOLUTION;
-            case AIRSPEED -> FTuning.FLIGHT_AIRSPEED_RESOLUTION;
-            default -> FTuning.FLIGHT_ATTITUDE_RESOLUTION;
+            case ALTITUDE -> VehicleTuning.FLIGHT_ALTITUDE_RESOLUTION;
+            case AIRSPEED -> VehicleTuning.FLIGHT_AIRSPEED_RESOLUTION;
+            default -> VehicleTuning.FLIGHT_ATTITUDE_RESOLUTION;
         };
     }
 

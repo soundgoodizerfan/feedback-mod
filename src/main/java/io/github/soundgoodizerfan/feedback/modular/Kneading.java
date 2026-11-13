@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.modular;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.FoodKnead;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
@@ -29,17 +28,17 @@ public final class Kneading {
         this.stick = Mth.clamp(food.moisture(), 0f, 1f);
         this.fat = food.fat();
         this.fibre = food.fibre();
-        this.tearAt = FTuning.KNEAD_TEAR * Mth.lerp(stick, FTuning.KNEAD_TEAR_DRY, FTuning.KNEAD_TEAR_WET);
+        this.tearAt = ModularTuning.KNEAD_TEAR * Mth.lerp(stick, ModularTuning.KNEAD_TEAR_DRY, ModularTuning.KNEAD_TEAR_WET);
     }
 
     /** One sample: the press, 0..100. */
     public void push(int sample) {
         float p = Mth.clamp(sample, 0, 100) / 100f;
         // Tense dough resists the work: only rested dough takes it.
-        float g = FTuning.KNEAD_GLUTEN * p * (1f - FTuning.KNEAD_STICKY * stick) * (1f - FTuning.KNEAD_FAT_GLUTEN * fat)
-                * Math.max(0f, 1f - FTuning.KNEAD_TENSE_RESIST * tension);
-        float up = FTuning.KNEAD_TENSION * p * p * (1f + FTuning.KNEAD_FIBRE_TENSION * fibre) * (1f - FTuning.KNEAD_FAT_TENSION * fat);
-        float down = FTuning.KNEAD_REST * (1f - p) * (1f - FTuning.KNEAD_FIBRE_REST * fibre);
+        float g = ModularTuning.KNEAD_GLUTEN * p * (1f - ModularTuning.KNEAD_STICKY * stick) * (1f - ModularTuning.KNEAD_FAT_GLUTEN * fat)
+                * Math.max(0f, 1f - ModularTuning.KNEAD_TENSE_RESIST * tension);
+        float up = ModularTuning.KNEAD_TENSION * p * p * (1f + ModularTuning.KNEAD_FIBRE_TENSION * fibre) * (1f - ModularTuning.KNEAD_FAT_TENSION * fat);
+        float down = ModularTuning.KNEAD_REST * (1f - p) * (1f - ModularTuning.KNEAD_FIBRE_REST * fibre);
         gluten = Math.min(1f, gluten + g);
         tension = Mth.clamp(tension + up - down, 0f, 2f);
         if (tension > tearAt)
@@ -72,16 +71,16 @@ public final class Kneading {
 
     /** The class this much work makes. */
     public int grade() {
-        if (over >= FTuning.KNEAD_TOUGH_OVER)
+        if (over >= ModularTuning.KNEAD_TOUGH_OVER)
             return FoodKnead.TOUGH;
-        if (gluten < FTuning.KNEAD_GOOD_AT)
+        if (gluten < ModularTuning.KNEAD_GOOD_AT)
             return FoodKnead.CRUMBLY;
-        return gluten >= FTuning.KNEAD_GLOSSY_AT && tension <= FTuning.KNEAD_RELAXED ? FoodKnead.GLOSSY : FoodKnead.GOOD;
+        return gluten >= ModularTuning.KNEAD_GLOSSY_AT && tension <= ModularTuning.KNEAD_RELAXED ? FoodKnead.GLOSSY : FoodKnead.GOOD;
     }
 
     /** Whether submitted samples are something the screen could have made. */
     public static boolean valid(List<Integer> samples) {
-        return samples.size() >= FTuning.KNEAD_MIN_SAMPLES && samples.size() <= FTuning.KNEAD_MAX_SAMPLES
+        return samples.size() >= ModularTuning.KNEAD_MIN_SAMPLES && samples.size() <= ModularTuning.KNEAD_MAX_SAMPLES
                 && samples.stream().allMatch(s -> s >= 0 && s <= 100);
     }
 

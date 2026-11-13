@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.dryer;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -49,7 +49,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class DryerBlockEntity extends RotationNode implements ThermalBody, PressureHolder {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float pressure;
     private final Catchup offline = new Catchup();
     private ItemStack input = ItemStack.EMPTY;
@@ -181,7 +181,7 @@ public class DryerBlockEntity extends RotationNode implements ThermalBody, Press
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         pressure = tag.getFloat("Pressure");
         ticks = tag.getInt("Ticks");
         scorch = tag.getFloat("Scorch");

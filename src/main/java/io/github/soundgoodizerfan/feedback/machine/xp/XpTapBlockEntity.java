@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.xp;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.xp.XpTuning;
 import io.github.soundgoodizerfan.feedback.machine.sculk.SculkNodeBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.vessel.ThermalVesselCore;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -45,7 +45,7 @@ public class XpTapBlockEntity extends SculkNodeBlockEntity {
             return;
         switch (tap.kind()) {
             case ORB -> {
-                double r = FTuning.ABSORBER_RADIUS;
+                double r = XpTuning.ABSORBER_RADIUS;
                 for (ExperienceOrb orb : server.getEntitiesOfClass(ExperienceOrb.class, new AABB(pos).inflate(r))) {
                     int value = orb.getValue();
                     int took = tap.take(value);
@@ -59,7 +59,7 @@ public class XpTapBlockEntity extends SculkNodeBlockEntity {
             case SMELTER -> {
                 for (Direction d : Direction.values())
                     if (level.getBlockEntity(pos.relative(d)) instanceof ThermalVesselCore vessel && vessel.bankedXp() > 0) {
-                        int room = tap.take(Math.min(FTuning.SMELTER_TAP_POINTS_PER_SECOND, vessel.bankedXp()));
+                        int room = tap.take(Math.min(XpTuning.SMELTER_TAP_POINTS_PER_SECOND, vessel.bankedXp()));
                         vessel.drainXp(room);
                     }
             }

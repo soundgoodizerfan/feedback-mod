@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.hazard;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 
 import net.minecraft.world.entity.LivingEntity;
@@ -21,9 +21,9 @@ public final class HotContact {
 
     public enum Band {
         NONE(0f, 0),
-        SCALD(FTuning.CONTACT_PAIN_DAMAGE, 0),
-        BURN(FTuning.CONTACT_BURN_DAMAGE, FTuning.CONTACT_BURN_IGNITE_SECONDS),
-        SEAR(FTuning.CONTACT_SEAR_DAMAGE, FTuning.CONTACT_SEAR_IGNITE_SECONDS);
+        SCALD(HazardTuning.CONTACT_PAIN_DAMAGE, 0),
+        BURN(HazardTuning.CONTACT_BURN_DAMAGE, HazardTuning.CONTACT_BURN_IGNITE_SECONDS),
+        SEAR(HazardTuning.CONTACT_SEAR_DAMAGE, HazardTuning.CONTACT_SEAR_IGNITE_SECONDS);
 
         public final float damage;
         public final int igniteSeconds;
@@ -39,11 +39,11 @@ public final class HotContact {
 
     public static Band band(Tu tu) {
         float t = tu.value();
-        if (t >= FTuning.CONTACT_SEAR_TU.value())
+        if (t >= HazardTuning.CONTACT_SEAR_TU.value())
             return Band.SEAR;
-        if (t >= FTuning.CONTACT_BURN_TU.value())
+        if (t >= HazardTuning.CONTACT_BURN_TU.value())
             return Band.BURN;
-        if (t >= FTuning.CONTACT_PAIN_TU.value())
+        if (t >= ThermalTuning.CONTACT_PAIN_TU.value())
             return Band.SCALD;
         return Band.NONE;
     }

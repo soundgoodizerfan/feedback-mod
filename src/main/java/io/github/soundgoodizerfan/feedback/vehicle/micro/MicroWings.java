@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.micro;
 
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import dev.ryanhcode.sable.api.physics.force.ForceTotal;
 import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.api.physics.mass.MassData;
@@ -10,7 +11,6 @@ import dev.ryanhcode.sable.companion.math.Pose3dc;
 import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import net.minecraft.core.BlockPos;
@@ -69,12 +69,12 @@ public final class MicroWings {
         this.cd0 = new double[n];
         for (int i = 0; i < n; i++) {
             double ratio = layers[i] / 4;
-            double r = Math.min(1, ratio / FTuning.WING_MAX_THIN);
-            double stall = FTuning.WING_STALL_MIN_RAD + (FTuning.WING_STALL_MAX_RAD - FTuning.WING_STALL_MIN_RAD) * r;
-            if (ratio > FTuning.WING_MAX_THIN)
-                stall += (FTuning.WING_STALL_THICK_RAD - FTuning.WING_STALL_MAX_RAD) * Math.min(1, (ratio - FTuning.WING_MAX_THIN) / (FTuning.WING_THICK_FULL - FTuning.WING_MAX_THIN));
+            double r = Math.min(1, ratio / VehicleTuning.WING_MAX_THIN);
+            double stall = VehicleTuning.WING_STALL_MIN_RAD + (VehicleTuning.WING_STALL_MAX_RAD - VehicleTuning.WING_STALL_MIN_RAD) * r;
+            if (ratio > VehicleTuning.WING_MAX_THIN)
+                stall += (VehicleTuning.WING_STALL_THICK_RAD - VehicleTuning.WING_STALL_MAX_RAD) * Math.min(1, (ratio - VehicleTuning.WING_MAX_THIN) / (VehicleTuning.WING_THICK_FULL - VehicleTuning.WING_MAX_THIN));
             sinStall[i] = Math.sin(stall);
-            cd0[i] = FTuning.WING_CD0 + FTuning.WING_CD_PER_LAYER * (layers[i] - 1);
+            cd0[i] = VehicleTuning.WING_CD0 + VehicleTuning.WING_CD_PER_LAYER * (layers[i] - 1);
         }
     }
 
@@ -108,9 +108,9 @@ public final class MicroWings {
                 if (voxels.contains(key(x - ax, y - ay, z - az)))
                     continue;
                 int layers = 1;
-                while (layers <= FTuning.WING_MAX_LAYERS && voxels.contains(key(x + ax * layers, y + ay * layers, z + az * layers)))
+                while (layers <= VehicleTuning.WING_MAX_LAYERS && voxels.contains(key(x + ax * layers, y + ay * layers, z + az * layers)))
                     layers++;
-                if (layers > FTuning.WING_MAX_LAYERS || layers >= bestLayers)
+                if (layers > VehicleTuning.WING_MAX_LAYERS || layers >= bestLayers)
                     continue;
                 // The four neighbours in the plane: at least two make it a piece of a sheet.
                 int around = 0;
@@ -197,7 +197,7 @@ public final class MicroWings {
             RigidBodyHandle handle = RigidBodyHandle.of(body);
             if (handle == null)
                 continue;
-            double halfRho = FTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * AirDensityTable.at(level, body.logicalPose().position().y());
+            double halfRho = VehicleTuning.AIR_HALF_DENSITY_KPG_PER_BLOCK3 * AirDensityTable.at(level, body.logicalPose().position().y());
             e.getValue().tick(body, handle, halfRho, dt);
         }
     }
@@ -212,7 +212,7 @@ public final class MicroWings {
         pose.transformNormalInverse(tmp, lin);
         handle.getAngularVelocity(tmp);
         pose.transformNormalInverse(tmp, ang);
-        double cap = mass.getMass() / n, k = FTuning.WING_LIFT_SLOPE, cdn = FTuning.WING_CD_NORMAL;
+        double cap = mass.getMass() / n, k = VehicleTuning.WING_LIFT_SLOPE, cdn = VehicleTuning.WING_CD_NORMAL;
         boolean any = false;
         for (int i = 0; i < n; i++) {
             double rx = cx[i] - com.x(), ry = cy[i] - com.y(), rz = cz[i] - com.z();

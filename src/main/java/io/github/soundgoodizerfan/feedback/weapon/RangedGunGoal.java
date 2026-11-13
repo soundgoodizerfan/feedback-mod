@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.Haste;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
@@ -24,8 +23,8 @@ import java.util.EnumSet;
  * sight inside the gun's effective range, which is worked out from the muzzle speed and the drop
  * ({@link #range}), aims high by the drop at the target's distance, and fires through
  * {@link GunShots#triggerMob}: the same swept shot, bake and cycle a player's gun has. Spread is the gun's
- * own times a mob's stance ({@link FTuning#SKELETON_GUN_STANCE}) plus a per-shot aim error
- * ({@link FTuning#SKELETON_GUN_AIM_ERROR_DEG}), never zero. When the gun is empty it
+ * own times a mob's stance ({@link GunTuning#SKELETON_GUN_STANCE}) plus a per-shot aim error
+ * ({@link GunTuning#SKELETON_GUN_AIM_ERROR_DEG}), never zero. When the gun is empty it
  * reloads from its spares a round a beat; with nothing in the gun and nothing spare the goal stops and
  * the vanilla goals take over (no reload loop). It sits ahead of the melee goal vanilla adds for a skeleton
  * that holds no bow.
@@ -83,21 +82,21 @@ public final class RangedGunGoal extends Goal {
     }
 
     /**
-     * How far a flat-fired round of these figures flies before it has dropped {@link FTuning#SKELETON_GUN_DROP_BLOCKS},
+     * How far a flat-fired round of these figures flies before it has dropped {@link GunTuning#SKELETON_GUN_DROP_BLOCKS},
      * stepped as {@code GunShots} steps a shot (drag, then gravity), or to the end of its life.
      */
     public static float range(GunFigures f) {
-        return trace(f, Float.MAX_VALUE, FTuning.SKELETON_GUN_DROP_BLOCKS)[0];
+        return trace(f, Float.MAX_VALUE, GunTuning.SKELETON_GUN_DROP_BLOCKS)[0];
     }
 
     /** {x, drop}: how far the round has flown when it first drops {@code maxDrop}, or reaches {@code maxX}, or ends its life. */
     private static float[] trace(GunFigures f, float maxX, float maxDrop) {
         double vx = f.muzzleSpeed(), vy = 0, x = 0, y = 0;
-        for (int t = 0; t < FTuning.GUN_MAX_LIFE_TICKS && x < maxX && -y < maxDrop; t++) {
+        for (int t = 0; t < GunTuning.GUN_MAX_LIFE_TICKS && x < maxX && -y < maxDrop; t++) {
             x += vx;
             y += vy;
-            vx *= 1 - FTuning.GUN_DRAG_PER_TICK;
-            vy = vy * (1 - FTuning.GUN_DRAG_PER_TICK) - FTuning.GUN_GRAVITY_PER_TICK;
+            vx *= 1 - GunTuning.GUN_DRAG_PER_TICK;
+            vy = vy * (1 - GunTuning.GUN_DRAG_PER_TICK) - GunTuning.GUN_GRAVITY_PER_TICK;
         }
         return new float[]{(float) x, (float) -y};
     }
@@ -145,7 +144,7 @@ public final class RangedGunGoal extends Goal {
         float yaw = (float) (Mth.atan2(aim.z - mob.getZ(), aim.x - mob.getX()) * 180 / Math.PI) - 90f;
         float pitch = (float) -(Mth.atan2(dy + drop, flat) * 180 / Math.PI);
         // Must be facing the shot before the wind-up counts; the body turns at the look control's pace.
-        if (Math.abs(Mth.wrapDegrees(yaw - mob.getYHeadRot())) > FTuning.SKELETON_GUN_FACING_DEG) {
+        if (Math.abs(Mth.wrapDegrees(yaw - mob.getYHeadRot())) > GunTuning.SKELETON_GUN_FACING_DEG) {
             windupStart = -1;
             return;
         }
@@ -157,16 +156,16 @@ public final class RangedGunGoal extends Goal {
             var muzzle = mob.getEyePosition().add(mob.getLookAngle().scale(0.8));
             level.sendParticles(ParticleTypes.CRIT, muzzle.x, muzzle.y - 0.2, muzzle.z, 2, 0.05, 0.05, 0.05, 0.02);
         }
-        if (now - windupStart < FTuning.SKELETON_GUN_WINDUP_TICKS)
+        if (now - windupStart < GunTuning.SKELETON_GUN_WINDUP_TICKS)
             return;
         windupStart = -1;
-        float err = FTuning.SKELETON_GUN_AIM_ERROR_DEG * Mth.sqrt(level.random.nextFloat());
+        float err = GunTuning.SKELETON_GUN_AIM_ERROR_DEG * Mth.sqrt(level.random.nextFloat());
         float theta = level.random.nextFloat() * Mth.TWO_PI;
         yaw += err * Mth.cos(theta);
         pitch = Mth.clamp(pitch + err * Mth.sin(theta), -90f, 90f);
         if (GunShots.triggerMob(level, mob, gun, now, yaw, pitch)) {
             mob.swing(InteractionHand.MAIN_HAND);
-            nextShot = now + FTuning.SKELETON_GUN_MIN_INTERVAL_TICKS;
+            nextShot = now + GunTuning.SKELETON_GUN_MIN_INTERVAL_TICKS;
         }
     }
 

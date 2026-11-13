@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
@@ -78,7 +77,7 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
     public GunFigures asPellet(int n) {
         return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy / n,
                 new Mu(projectileMass.value() / n), gunMass, impulse, cycleMs,
-                Math.max(spreadDeg, FTuning.GUN_SHOT_SPREAD_DEG), kickDeg, report, heatFactor, leakFactor);
+                Math.max(spreadDeg, GunTuning.GUN_SHOT_SPREAD_DEG), kickDeg, report, heatFactor, leakFactor);
     }
 
     public GunFigures withSpread(float multiplier) {
@@ -124,13 +123,13 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
 
     /** Whether a hand alone can hold this gun: light enough to carry at arm's length, soft enough to recoil against (guns spec 7.4). */
     public boolean oneHandable() {
-        return gunMass.value() <= FTuning.GUN_ONE_HAND_MAX_MU && recoilSpeed() <= FTuning.GUN_ONE_HAND_MAX_RECOIL_MS;
+        return gunMass.value() <= GunTuning.GUN_ONE_HAND_MAX_MU && recoilSpeed() <= GunTuning.GUN_ONE_HAND_MAX_RECOIL_MS;
     }
 
     /** Fired with one hand: spread and kick grow with how much of the hand's recoil limit the gun uses. */
     public GunFigures oneHanded() {
-        float load = Math.min(1f, recoilSpeed() / FTuning.GUN_ONE_HAND_MAX_RECOIL_MS);
-        return withSpread(1 + FTuning.GUN_ONE_HAND_SPREAD * load).withKick(1 + FTuning.GUN_ONE_HAND_KICK * load);
+        float load = Math.min(1f, recoilSpeed() / GunTuning.GUN_ONE_HAND_MAX_RECOIL_MS);
+        return withSpread(1 + GunTuning.GUN_ONE_HAND_SPREAD * load).withKick(1 + GunTuning.GUN_ONE_HAND_KICK * load);
     }
 
     public GunFigures withMass(float addedMu) {
@@ -140,25 +139,25 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
 
     /** Work to warm the gun's metal by one Tu: what a shot's heat is divided by. */
     public ThermalMass thermalMass() {
-        return new ThermalMass(Math.max(1f, gunMass.value() * FTuning.GUN_THERMAL_MASS_PER_MU));
+        return new ThermalMass(Math.max(1f, gunMass.value() * GunTuning.GUN_THERMAL_MASS_PER_MU));
     }
 
     /** Tu a hot barrel sheds per tick: the leak over the thermal mass, so heavy barrels cool slowly. */
     public TuRate coolingRate() {
-        return new TuRate(FTuning.GUN_COOLING_WORK_PER_TICK * leakFactor / thermalMass().workPerTu());
+        return new TuRate(GunTuning.GUN_COOLING_WORK_PER_TICK * leakFactor / thermalMass().workPerTu());
     }
 
     /**
      * This gun as it is now, not as it was built: a worn bore delivers less and sprays wider, a
      * hot barrel sprays wider. Pure, so the client predicts the same figures the server fires.
      *
-     * @param condition 1 as built, down to {@link FTuning#GUN_CONDITION_FLOOR}.
+     * @param condition 1 as built, down to {@link GunTuning#GUN_CONDITION_FLOOR}.
      * @param heat      the barrel's temperature as a fraction of the round's ignition temperature.
      */
     public GunFigures aged(float condition, float heat) {
-        float energy = muzzleEnergy * (1 - FTuning.GUN_WEAR_ENERGY_LOSS * (1 - condition) / (1 - FTuning.GUN_CONDITION_FLOOR));
+        float energy = muzzleEnergy * (1 - GunTuning.GUN_WEAR_ENERGY_LOSS * (1 - condition) / (1 - GunTuning.GUN_CONDITION_FLOOR));
         float speed = muzzleSpeed * (float) Math.sqrt(energy / muzzleEnergy);
-        float spread = spreadDeg / condition * (1 + FTuning.GUN_BLOOM_AT_IGNITION * Math.max(0f, heat));
+        float spread = spreadDeg / condition * (1 + GunTuning.GUN_BLOOM_AT_IGNITION * Math.max(0f, heat));
         return new GunFigures(peakPressure, chamberRating, speed, energy, projectileMass, gunMass, impulse,
                 cycleMs, spread, kickDeg, report, heatFactor, leakFactor);
     }

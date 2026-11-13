@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.darkcell;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.sculk.SculkSites;
 import io.github.soundgoodizerfan.feedback.registry.FAutomation;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -124,7 +124,7 @@ public class DarkCellBlockEntity extends BlockEntity {
         while (valid && !queue.isEmpty()) {
             BlockPos cur = queue.poll();
             interior.add(cur);
-            if (interior.size() > FTuning.DARKCELL_MAX_VOLUME) {
+            if (interior.size() > ElectricMachineTuning.DARKCELL_MAX_VOLUME) {
                 valid = false;
                 break;
             }
@@ -159,16 +159,16 @@ public class DarkCellBlockEntity extends BlockEntity {
             if (state.getBlock() instanceof KillMethodBlock)
                 methods.add(w);
         }
-        double max = wallHardness * FTuning.DARKCELL_SHIELD_PER_HARDNESS;
+        double max = wallHardness * ElectricMachineTuning.DARKCELL_SHIELD_PER_HARDNESS;
         shield = shield < 0 ? max : Math.min(shield, max);
     }
 
     private double maxShield() {
-        return wallHardness * FTuning.DARKCELL_SHIELD_PER_HARDNESS;
+        return wallHardness * ElectricMachineTuning.DARKCELL_SHIELD_PER_HARDNESS;
     }
 
     private float capacity() {
-        return volume * FTuning.DARKCELL_MASS_PER_BLOCK;
+        return volume * ElectricMachineTuning.DARKCELL_MASS_PER_BLOCK;
     }
 
     // --- the clock ----------------------------------------------------------------------------
@@ -186,7 +186,7 @@ public class DarkCellBlockEntity extends BlockEntity {
             if (!pushOut(sl))
                 setChanged();
         }
-        if (now % FTuning.DARKCELL_CYCLE_TICKS == 0 && valid && dark)
+        if (now % ElectricMachineTuning.DARKCELL_CYCLE_TICKS == 0 && valid && dark)
             cycle(sl);
     }
 
@@ -200,7 +200,7 @@ public class DarkCellBlockEntity extends BlockEntity {
         lastTime = now;
         if (!valid || !dark || dt <= 0)
             return;
-        spawnOwed += dt / FTuning.DARKCELL_SPAWN_TICKS_PER_100_BLOCKS * (volume / 100f);
+        spawnOwed += dt / ElectricMachineTuning.DARKCELL_SPAWN_TICKS_PER_100_BLOCKS * (volume / 100f);
         var candidates = spawnTypes(sl);
         float mass = popMass(sl);
         while (spawnOwed >= 1f && !candidates.isEmpty()) {
@@ -220,7 +220,7 @@ public class DarkCellBlockEntity extends BlockEntity {
             float attack = 0f;
             for (var e : population.entrySet())
                 attack += e.getValue() * MobFacts.of(sl, e.getKey()).attack();
-            shield -= attack * FTuning.DARKCELL_ATTACK_K * (pressure - 0.5f) * 2f * (dt / 20f);
+            shield -= attack * ElectricMachineTuning.DARKCELL_ATTACK_K * (pressure - 0.5f) * 2f * (dt / 20f);
             if (shield <= 0.0) {
                 shield = 0;
                 breach(sl);
@@ -247,7 +247,7 @@ public class DarkCellBlockEntity extends BlockEntity {
 
     /** At nothing left of the shield the stored mobs spawn into the room as real entities, as many as the room has space for, and the rest are lost. */
     private void breach(ServerLevel sl) {
-        int room = Math.min(FTuning.BREACH_MAX_MOBS, Math.round(volume / FTuning.BREACH_BLOCKS_PER_MOB));
+        int room = Math.min(ElectricMachineTuning.BREACH_MAX_MOBS, Math.round(volume / ElectricMachineTuning.BREACH_BLOCKS_PER_MOB));
         List<ResourceLocation> bag = new ArrayList<>();
         population.forEach((id, n) -> {
             for (int i = 0; i < n; i++)
@@ -292,7 +292,7 @@ public class DarkCellBlockEntity extends BlockEntity {
                 float dmg = method.damage(f);
                 if (have <= 0 || dmg <= 0f)
                     continue;
-                float share = Math.min(1f, dmg / Math.max(1f, f.health())) * FTuning.DARKCELL_THROUGHPUT;
+                float share = Math.min(1f, dmg / Math.max(1f, f.health())) * ElectricMachineTuning.DARKCELL_THROUGHPUT;
                 int k = (int) Math.floor(have * share);
                 if (sl.random.nextFloat() < have * share - k)
                     k++;
@@ -306,7 +306,7 @@ public class DarkCellBlockEntity extends BlockEntity {
                 killed += k;
                 mass += k * f.mass();
                 drops += process(sl, f, k, method.kind());
-                if (drops >= FTuning.DARKCELL_MAX_DROPS_PER_CYCLE)
+                if (drops >= ElectricMachineTuning.DARKCELL_MAX_DROPS_PER_CYCLE)
                     break;
             }
             if (killed > 0)
@@ -320,7 +320,7 @@ public class DarkCellBlockEntity extends BlockEntity {
     /** XP to a tap and loot to the output, for {@code kills} deaths by {@code kind}. Returns how many items were made. */
     private int process(ServerLevel sl, MobFacts f, int kills, KillKind kind) {
         if (f.lineage() && f.xp() > 0) {
-            float share = FTuning.MACHINE_XP_SHARE * kind.xpShare();
+            float share = ElectricMachineTuning.MACHINE_XP_SHARE * kind.xpShare();
             int points = Math.round(f.xp() * kills * share);
             SculkSites.capture(sl, worldPosition, points);
         }
@@ -410,7 +410,7 @@ public class DarkCellBlockEntity extends BlockEntity {
     public boolean repair(float hardness, Player player) {
         if (hardness <= 0f)
             return false;
-        shield = Math.min(maxShield(), Math.max(0, shield) + hardness * FTuning.DARKCELL_REPAIR_PER_HARDNESS);
+        shield = Math.min(maxShield(), Math.max(0, shield) + hardness * ElectricMachineTuning.DARKCELL_REPAIR_PER_HARDNESS);
         setChanged();
         io.github.soundgoodizerfan.feedback.net.AimPayloads.report(player, getBlockPos(), report());
         return true;

@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
 import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -22,7 +21,7 @@ import java.util.List;
 /**
  * A skeleton that sometimes spawns holding an early gun. The gun is
  * drawn from {@link GunBlueprintPool}, built by the Tool Table's own path ({@link ToolDesigns#build}), loaded
- * to its capacity and given {@link FTuning#SKELETON_GUN_SPARE} more rounds. Entity type is the only gate, as
+ * to its capacity and given {@link GunTuning#SKELETON_GUN_SPARE} more rounds. Entity type is the only gate, as
  * vanilla gates a bow; which guns qualify is {@link GunBlueprintPool#early}. Nothing is infinite: the rounds
  * are spent for real, and what is left drops with it.
  */
@@ -72,7 +71,7 @@ public final class ArmedSkeletons {
         if (event.getLevel().isClientSide || !(event.getEntity() instanceof AbstractSkeleton skeleton))
             return;
         if (!event.loadedFromDisk() && !(skeleton.getMainHandItem().getItem() instanceof GunItem) && GunSpec.of(skeleton.getMainHandItem()).isEmpty()
-                && skeleton.getRandom().nextFloat() < (skeleton instanceof WitherSkeleton ? FTuning.WITHER_SKELETON_GUN_CHANCE : FTuning.SKELETON_GUN_CHANCE)) {
+                && skeleton.getRandom().nextFloat() < (skeleton instanceof WitherSkeleton ? GunTuning.WITHER_SKELETON_GUN_CHANCE : GunTuning.SKELETON_GUN_CHANCE)) {
             // A wither skeleton carries a weak pulse pistol; a skeleton keeps its powder gun.
             if (skeleton instanceof WitherSkeleton)
                 equipPulse(skeleton);
@@ -102,7 +101,7 @@ public final class ArmedSkeletons {
             skeleton.setItemSlot(EquipmentSlot.MAINHAND, gun);
             // More than 1 is vanilla's "always, and undamaged": the gun comes off at the condition it died in.
             skeleton.setDropChance(EquipmentSlot.MAINHAND, 2f);
-            skeleton.setData(FWeapons.SPARES, new Spares(List.of(GunAmmo.loose(round).copyWithCount(FTuning.SKELETON_GUN_SPARE))));
+            skeleton.setData(FWeapons.SPARES, new Spares(List.of(GunAmmo.loose(round).copyWithCount(GunTuning.SKELETON_GUN_SPARE))));
             return true;
         }).orElse(false);
     }

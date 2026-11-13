@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
 import io.github.soundgoodizerfan.feedback.control.programmer.NodePos;
@@ -38,7 +39,6 @@ import io.github.soundgoodizerfan.feedback.control.program.ValueType;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramNode;
 import io.github.soundgoodizerfan.feedback.control.program.SensorNode;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
@@ -151,7 +151,7 @@ final class ProgramEditor {
                 case LESS -> new ComparatorNode(id, ComparatorNode.Compare.LESS, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
                 case LOGIC -> new LogicNode(id, LogicNode.Gate.AND, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
                 case MATH -> new MathNode(id, MathNode.Op.ADD, ProgramNode.UNWIRED, ProgramNode.UNWIRED, 0f);
-                case DELAY -> new DelayNode(id, ProgramNode.UNWIRED, ValueType.NUMBER, FTuning.DELAY_NAMED_TICKS[0]);
+                case DELAY -> new DelayNode(id, ProgramNode.UNWIRED, ValueType.NUMBER, ControlTuning.DELAY_NAMED_TICKS[0]);
                 case READ -> new ReadNode(id, variable);
                 case WRITE -> new WriteNode(id, variable, ProgramNode.UNWIRED, ProgramNode.UNWIRED);
                 case ACTUATOR -> new ActuatorNode(id, ProgramNode.UNWIRED, null);
@@ -334,7 +334,7 @@ final class ProgramEditor {
         saveFunctionButton = add(GuiStyle.button(skin, Component.translatable("feedback.programmer.save_function"),
                 b -> saveFunction(), 0, 0, 54, 16));
         nameBox = add(new EditBox(font, 0, 0, 62, 12, Component.empty()));
-        nameBox.setMaxLength(FTuning.VARIABLE_NAME_MAX);
+        nameBox.setMaxLength(ControlTuning.VARIABLE_NAME_MAX);
         nameBox.setValue(nameText);
         nameBox.setResponder(text -> nameText = text);
         typeButton = add(GuiStyle.button(skin, typeLabel(newType), b -> {
@@ -1017,7 +1017,7 @@ final class ProgramEditor {
     }
 
     private void cycleLength(DelayNode n) {
-        int[] named = FTuning.DELAY_NAMED_TICKS;
+        int[] named = ControlTuning.DELAY_NAMED_TICKS;
         int next = 0;
         for (int i = 0; i < named.length; i++)
             if (named[i] == n.ticks())
@@ -1187,7 +1187,7 @@ final class ProgramEditor {
         try {
             if (graph.find(literalNodeId).orElse(null) instanceof DelayNode d) {
                 int ticks = Integer.parseInt(literalBox.getValue().trim());
-                if (ticks < FTuning.DELAY_TYPED_MIN_TICKS || ticks > FTuning.DELAY_MAX_TICKS)
+                if (ticks < ControlTuning.DELAY_TYPED_MIN_TICKS || ticks > ControlTuning.DELAY_MAX_TICKS)
                     setError("bad_delay");
                 else if (ticks != d.ticks()) {
                     pushUndo();

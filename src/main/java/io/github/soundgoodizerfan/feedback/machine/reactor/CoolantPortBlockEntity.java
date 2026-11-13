@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.reactor;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
 
@@ -23,13 +22,13 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  */
 public class CoolantPortBlockEntity extends BlockEntity {
 
-    private final FluidTank water = new FluidTank(FTuning.REACTOR_PORT_TANK_MB, s -> s.is(FluidTags.WATER)) {
+    private final FluidTank water = new FluidTank(ReactorTuning.REACTOR_PORT_TANK_MB, s -> s.is(FluidTags.WATER)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
         }
     };
-    private final FluidTank steam = new FluidTank(FTuning.REACTOR_PORT_TANK_MB, s -> s.is(FTags.STEAM)) {
+    private final FluidTank steam = new FluidTank(ReactorTuning.REACTOR_PORT_TANK_MB, s -> s.is(FTags.STEAM)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -77,7 +76,7 @@ public class CoolantPortBlockEntity extends BlockEntity {
 
             @Override
             public int getTankCapacity(int tank) {
-                return FTuning.REACTOR_PORT_TANK_MB;
+                return ReactorTuning.REACTOR_PORT_TANK_MB;
             }
 
             @Override

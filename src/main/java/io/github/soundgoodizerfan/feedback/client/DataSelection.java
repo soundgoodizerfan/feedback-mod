@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.control.data.DataNode;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.fitting.Fittable;
 import io.github.soundgoodizerfan.feedback.item.DataConnectorItem;
 
@@ -74,7 +74,7 @@ public final class DataSelection {
                 snapped = true;
             }
         }
-        int colour = from.distanceTo(to) > FTuning.WIRE_RANGE_GOOD ? TOO_FAR : snapped ? SNAPPED : FREE;
+        int colour = from.distanceTo(to) > ControlTuning.WIRE_RANGE_GOOD ? TOO_FAR : snapped ? SNAPPED : FREE;
         final Vec3 a = from, b = to;
         final int c = colour;
         final boolean end = snapped;

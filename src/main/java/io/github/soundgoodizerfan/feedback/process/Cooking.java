@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
@@ -137,7 +138,7 @@ public final class Cooking {
     public static FoodState state(ItemStack stack, Entry entry) {
         FoodState state = stack.get(FDataComponents.FOOD_STATE.get());
         return state != null ? state
-                : new FoodState(0f, entry.food().moisture(), entry.food().pathogen(), entry.food().toxin(), 0f, 0f, 0L, FTuning.AMBIENT_TU.value(), 0f, 0f);
+                : new FoodState(0f, entry.food().moisture(), entry.food().pathogen(), entry.food().toxin(), 0f, 0f, 0L, ThermalTuning.AMBIENT_TU.value(), 0f, 0f);
     }
 
     /** The stack's cut, or whole. */
@@ -154,14 +155,14 @@ public final class Cooking {
     /** As {@link #cutHeat(ItemStack, Entry)} without the food's own mass. */
     public static float cutHeat(ItemStack stack) {
         DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
-        return (1f + FTuning.CUT_HEAT_PER_LEVEL * cutOf(stack).level()) * (dish == null ? 1f : DishFigures.sealScale(dish.seal()));
+        return (1f + ProcessTuning.CUT_HEAT_PER_LEVEL * cutOf(stack).level()) * (dish == null ? 1f : DishFigures.sealScale(dish.seal()));
     }
 
     /** A fresh state of this food, stamped now (quantised so stacks stamped within a minute still merge). */
     public static FoodState fresh(Entry entry, Level level) {
         FoodState s = state(ItemStack.EMPTY, entry);
         return new FoodState(s.cook(), s.moisture(), s.pathogen(), s.toxin(), 0f, 0f,
-                level.getGameTime() / FTuning.FOOD_STAMP_BUCKET * FTuning.FOOD_STAMP_BUCKET, AmbientTable.at(level).value(), 0f, 0f);
+                level.getGameTime() / ProcessTuning.FOOD_STAMP_BUCKET * ProcessTuning.FOOD_STAMP_BUCKET, AmbientTable.at(level).value(), 0f, 0f);
     }
 
     /**
@@ -176,22 +177,22 @@ public final class Cooking {
         long now = level.getGameTime();
         if (s.stamp() <= 0L || now <= s.stamp())
             return s.stamp() <= 0L ? new FoodState(s.cook(), s.moisture(), s.pathogen(), s.toxin(), s.charred(), s.rot(), now, envTu, s.smoke(), s.salt()) : s;
-        float temp = Mth.clamp((s.envTu() + envTu) * 0.5f / FTuning.AMBIENT_TU.value(), 0f, 1.5f);
+        float temp = Mth.clamp((s.envTu() + envTu) * 0.5f / ThermalTuning.AMBIENT_TU.value(), 0f, 1.5f);
         float wet = Mth.clamp(s.moisture() / Math.max(0.05f, entry.food().moisture()), 0f, 1f);
         // A cut food has more surface open to the air, so it spoils faster.
-        float cutRot = 1f + FTuning.CUT_ROT_PER_LEVEL * cutOf(stack).level();
+        float cutRot = 1f + ProcessTuning.CUT_ROT_PER_LEVEL * cutOf(stack).level();
         // The smoke coat wears off across the gap, so its shield is the mean of then and now; salt stays.
         long gap = now - s.stamp();
-        float smoke = Math.max(0f, s.smoke() - gap * FTuning.SMOKE_DECAY_PER_TICK);
-        float shield = (1f - FTuning.SMOKE_ROT_SHIELD * (s.smoke() + smoke) * 0.5f) * (1f - FTuning.SALT_ROT_SHIELD * s.salt());
+        float smoke = Math.max(0f, s.smoke() - gap * ProcessTuning.SMOKE_DECAY_PER_TICK);
+        float shield = (1f - ProcessTuning.SMOKE_ROT_SHIELD * (s.smoke() + smoke) * 0.5f) * (1f - ProcessTuning.SALT_ROT_SHIELD * s.salt());
         // A sealed container (a jar's lid) keeps the air out: nothing grows in it.
         DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
         float sealed = dish != null && dish.seal() >= 2 ? 0f : 1f;
-        float rot = Math.min(1f, s.rot() + gap / (FTuning.FOOD_ROT_TICKS * entry.food().shelf()) * temp * wet * cutRot * shield * sealed);
+        float rot = Math.min(1f, s.rot() + gap / (ProcessTuning.FOOD_ROT_TICKS * entry.food().shelf()) * temp * wet * cutRot * shield * sealed);
         // Only the rot gained across the gap adds pathogen: a floor at rot * share would put back what heat killed, every tick.
         float pathogen = Math.min(1f, s.pathogen() + (rot - s.rot()) * FTuning.FOOD_ROT_PATHOGEN);
-        float toxin = rot > FTuning.FOOD_ROT_TOXIC_AT
-                ? Math.max(s.toxin(), (rot - FTuning.FOOD_ROT_TOXIC_AT) / (1f - FTuning.FOOD_ROT_TOXIC_AT) * FTuning.FOOD_ROT_TOXIN)
+        float toxin = rot > ProcessTuning.FOOD_ROT_TOXIC_AT
+                ? Math.max(s.toxin(), (rot - ProcessTuning.FOOD_ROT_TOXIC_AT) / (1f - ProcessTuning.FOOD_ROT_TOXIC_AT) * ProcessTuning.FOOD_ROT_TOXIN)
                 : s.toxin();
         return new FoodState(s.cook(), s.moisture(), pathogen, toxin, s.charred(), rot, now, envTu, smoke, s.salt());
     }
@@ -206,18 +207,18 @@ public final class Cooking {
     }
 
     /**
-     * Frozen solid: its last surroundings were at or under {@link FTuning#FROZEN_AT} and it has sat
-     * no longer than {@link FTuning#FROZEN_THAW_TICKS} since it was last settled. Derived from the
+     * Frozen solid: its last surroundings were at or under {@link ProcessTuning#FROZEN_AT} and it has sat
+     * no longer than {@link ProcessTuning#FROZEN_THAW_TICKS} since it was last settled. Derived from the
      * stamp and the last surroundings it already carries, so it thaws lazily with nothing ticked.
      */
     public static boolean frozen(ItemStack stack, Level level) {
         FoodState s = stack.get(FDataComponents.FOOD_STATE.get());
-        return s != null && s.stamp() > 0L && s.envTu() <= FTuning.FROZEN_AT.value() && level.getGameTime() - s.stamp() < FTuning.FROZEN_THAW_TICKS;
+        return s != null && s.stamp() > 0L && s.envTu() <= ProcessTuning.FROZEN_AT.value() && level.getGameTime() - s.stamp() < ProcessTuning.FROZEN_THAW_TICKS;
     }
 
     /** 0 fresh, 1 going off, 2 rotten. */
     public static int spoilage(FoodState state) {
-        return state.rot() >= FTuning.FOOD_ROT_TOXIC_AT ? 2 : state.rot() >= FTuning.FOOD_ROT_GOING_OFF ? 1 : 0;
+        return state.rot() >= ProcessTuning.FOOD_ROT_TOXIC_AT ? 2 : state.rot() >= ProcessTuning.FOOD_ROT_GOING_OFF ? 1 : 0;
     }
 
     /** A piece lifted off the heat by {@code player}: done through and not yet charred is the sweet spot, and earns the advancement. */
@@ -234,7 +235,7 @@ public final class Cooking {
     public static Doneness doneness(Entry entry, FoodState state) {
         if (state.charred() >= 1f)
             return Doneness.CHARRED;
-        if (state.moisture() < entry.food().moisture() * FTuning.FOOD_DRIED_FRACTION)
+        if (state.moisture() < entry.food().moisture() * ProcessTuning.FOOD_DRIED_FRACTION)
             return Doneness.DRIED;
         return state.cook() < 1f ? Doneness.RAW : Doneness.DONE;
     }
@@ -263,14 +264,14 @@ public final class Cooking {
                     / (FTuning.FOOD_COOK_FULL_TU.value() - FTuning.FOOD_COOK_TU.value()));
             if (cook < 1f)
                 cook = Math.min(1f, cook + speed * cutHeat / FTuning.FOOD_COOK_TICKS);
-            pathogen *= 1f - speed * FTuning.FOOD_KILL_PER_TICK;
+            pathogen *= 1f - speed * ProcessTuning.FOOD_KILL_PER_TICK;
             // A ragged cut's thick middle stays underdone, so some of what was live in it survives the heat.
             if (cut.ragged())
                 pathogen = Math.max(pathogen, Math.min(entry.food().pathogen(), FTuning.CUT_RAGGED_PATHOGEN_FLOOR));
         }
         float moisture = before.moisture();
-        if (t > FTuning.FOOD_EVAPORATION_TU.value())
-            moisture = Math.max(0f, moisture - (t - FTuning.FOOD_EVAPORATION_TU.value()) * FTuning.FOOD_DRYING_PER_TU_TICK * cutHeat);
+        if (t > ProcessTuning.FOOD_EVAPORATION_TU.value())
+            moisture = Math.max(0f, moisture - (t - ProcessTuning.FOOD_EVAPORATION_TU.value()) * ProcessTuning.FOOD_DRYING_PER_TU_TICK * cutHeat);
         float charred = before.charred();
         if (t > entry.charTemperature().value())
             charred = Math.min(1f, charred + (t - entry.charTemperature().value()) * FTuning.FOOD_CHAR_PER_TU_TICK);
@@ -278,7 +279,7 @@ public final class Cooking {
         // Smoke coats food that is cooking and not yet burning; past char it is only soot.
         float smoke = before.smoke();
         if (vesselSmoke > 0f && t > FTuning.FOOD_COOK_TU.value() && t < entry.charTemperature().value())
-            smoke = Math.min(1f, smoke + vesselSmoke * FTuning.SMOKE_DEPOSIT_PER_TICK);
+            smoke = Math.min(1f, smoke + vesselSmoke * ProcessTuning.SMOKE_DEPOSIT_PER_TICK);
 
         FoodState after = new FoodState(cook, moisture, pathogen, before.toxin(), charred, before.rot(), level.getGameTime(), ambient, smoke, before.salt());
         boolean done = before.cook() < 1f && cook >= 1f && entry.cooked().isPresent() && stack.getItem() != entry.cooked().get();
@@ -312,7 +313,7 @@ public final class Cooking {
             case DRIED -> FTuning.FOOD_DRIED_SCALE;
             case CHARRED -> FTuning.FOOD_CHARRED_SCALE;
             default -> 1f;
-        } * (1f - state.rot() * FTuning.FOOD_ROT_NUTRITION_LOSS) * kneaded(stack, entry);
+        } * (1f - state.rot() * ProcessTuning.FOOD_ROT_NUTRITION_LOSS) * kneaded(stack, entry);
         stack.set(DataComponents.FOOD, new FoodProperties(Math.round(base.nutrition() * scale), base.saturation() * scale,
                 base.canAlwaysEat(), base.eatSeconds(), base.usingConvertsTo(), hazards(state.pathogen() / tolerance(state.salt(), entry.food().actives(), "pathogen"),
                         state.toxin() / tolerance(state.salt(), entry.food().actives(), "toxin"), state.charred())));
@@ -328,8 +329,8 @@ public final class Cooking {
         Map<String, Float> actives = meal == null ? Map.of() : meal.compounds();
         float pathogenTol = tolerance(state.salt(), actives, "pathogen");
         float toxinTol = tolerance(state.salt(), actives, "toxin");
-        float scale = (state.moisture() < dish.moisture() * FTuning.FOOD_DRIED_FRACTION ? FTuning.FOOD_DRIED_SCALE : 1f)
-                * (1f - state.rot() * FTuning.FOOD_ROT_NUTRITION_LOSS);
+        float scale = (state.moisture() < dish.moisture() * ProcessTuning.FOOD_DRIED_FRACTION ? FTuning.FOOD_DRIED_SCALE : 1f)
+                * (1f - state.rot() * ProcessTuning.FOOD_ROT_NUTRITION_LOSS);
         stack.set(DataComponents.FOOD, new FoodProperties(Math.max(1, Math.round(dish.hunger() * scale)), dish.saturation() * scale,
                 false, dish.eatSeconds(), Optional.empty(), hazards(state.pathogen() / pathogenTol, state.toxin() / toxinTol, state.charred())));
         if (meal != null)
@@ -347,7 +348,7 @@ public final class Cooking {
 
     /** What a food's hazard concentrations are divided by: salted food tolerates more. */
     public static float tolerance(float salt) {
-        return 1f + FTuning.SALT_TOLERANCE * salt;
+        return 1f + ProcessTuning.SALT_TOLERANCE * salt;
     }
 
     /** As {@link #tolerance(float)}, with the meal's perks: a purge or tolerance perk (garlic, kelp) moves it for that {@code hazard}. */
@@ -357,7 +358,7 @@ public final class Cooking {
 
     /** One food salted: its salt at 1 and the water the salt drew out gone. The item count is the caller's. */
     public static FoodState salted(FoodState s) {
-        return new FoodState(s.cook(), Math.max(0f, s.moisture() - FTuning.SALT_DRAW), s.pathogen(), s.toxin(), s.charred(), s.rot(),
+        return new FoodState(s.cook(), Math.max(0f, s.moisture() - ProcessTuning.SALT_DRAW), s.pathogen(), s.toxin(), s.charred(), s.rot(),
                 s.stamp(), s.envTu(), s.smoke(), 1f);
     }
 

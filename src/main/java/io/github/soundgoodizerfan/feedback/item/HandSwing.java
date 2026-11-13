@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.item;
 
-import com.mojang.serialization.Codec;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import com.mojang.serialization.Codec;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -24,11 +24,11 @@ import net.minecraft.world.entity.player.Player;
  * and that swing is hard enough for iron. Nothing else lets a hand forge iron.
  */
 public enum HandSwing {
-    TAP(FTuning.HAND_SWING_TAP_ST, false),
+    TAP(ItemTuning.HAND_SWING_TAP_ST, false),
     BLOW(FTuning.HAND_SWING_BLOW_ST, false),
-    HEAVY(FTuning.HAND_SWING_HEAVY_ST, false),
+    HEAVY(ItemTuning.HAND_SWING_HEAVY_ST, false),
     /** Only while the player has Strength; falls back to {@link #HEAVY} when it wears off. */
-    MIGHTY(FTuning.HAND_SWING_MIGHTY_ST, true);
+    MIGHTY(ItemTuning.HAND_SWING_MIGHTY_ST, true);
 
     public static final Codec<HandSwing> CODEC = Codec.INT.xmap(HandSwing::of, HandSwing::ordinal);
     public static final StreamCodec<ByteBuf, HandSwing> STREAM_CODEC =

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.derrick;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -60,7 +60,7 @@ public class MagmaHeadBlockEntity extends RotationNode {
 
     @Override
     public Su getLoadSu() {
-        return bit.isEmpty() ? new Su(0f) : FTuning.DERRICK_LOAD_SU;
+        return bit.isEmpty() ? new Su(0f) : PetrochemTuning.DERRICK_LOAD_SU;
     }
 
     public void tickServer() {
@@ -71,18 +71,18 @@ public class MagmaHeadBlockEntity extends RotationNode {
             return;
         fireTu = HeatSource.at(server, worldPosition).value();
         float rpm = Math.abs(getRpm().value());
-        if (rpm <= 0f || fireTu < FTuning.MAGMA_MIN_TU)
+        if (rpm <= 0f || fireTu < PetrochemTuning.MAGMA_MIN_TU)
             return;
-        float heat = Math.min(1f, (fireTu - FTuning.MAGMA_MIN_TU) / (FTuning.MAGMA_FULL_TU - FTuning.MAGMA_MIN_TU)) * 0.9f + 0.1f;
+        float heat = Math.min(1f, (fireTu - PetrochemTuning.MAGMA_MIN_TU) / (PetrochemTuning.MAGMA_FULL_TU - PetrochemTuning.MAGMA_MIN_TU)) * 0.9f + 0.1f;
         // Wear is for over-firing only: the heat the head needs to flow freely never wears a bit, a fire past it (an arc) wears one that cannot take it.
-        float service = Math.max(DerrickBitItem.serviceTemperature(bit), FTuning.MAGMA_FULL_TU);
+        float service = Math.max(DerrickBitItem.serviceTemperature(bit), PetrochemTuning.MAGMA_FULL_TU);
         if (fireTu > service) {
-            float condition = Math.max(FTuning.DERRICK_BIT_CONDITION_FLOOR,
-                    DerrickBitItem.condition(bit) - (fireTu - service) * FTuning.MAGMA_BIT_WEAR_PER_TU);
+            float condition = Math.max(PetrochemTuning.DERRICK_BIT_CONDITION_FLOOR,
+                    DerrickBitItem.condition(bit) - (fireTu - service) * PetrochemTuning.MAGMA_BIT_WEAR_PER_TU);
             bit.set(FDataComponents.TOOL_CONDITION.get(), condition);
             setChanged();
         }
-        owed += rpm * FTuning.MAGMA_MB_PER_RPM * heat * DerrickBitItem.condition(bit);
+        owed += rpm * PetrochemTuning.MAGMA_MB_PER_RPM * heat * DerrickBitItem.condition(bit);
         int amount = (int) owed;
         owed -= amount;
         if (amount > 0)
@@ -94,7 +94,7 @@ public class MagmaHeadBlockEntity extends RotationNode {
 
     private int push(ServerLevel server, int amount) {
         // A bit that takes more heat reaches the richer melt below the lean first layer; a poorer one only brings up the lean.
-        boolean rich = DerrickBitItem.serviceTemperature(bit) >= FTuning.MAGMA_RICH_BIT_SERVICE_TU;
+        boolean rich = DerrickBitItem.serviceTemperature(bit) >= PetrochemTuning.MAGMA_RICH_BIT_SERVICE_TU;
         FluidStack offer = new FluidStack((rich ? FFluids.MAGMA_MELT_RICH : FFluids.MAGMA_MELT).get(), amount);
         int moved = 0;
         for (Direction d : Direction.values()) {
@@ -109,7 +109,7 @@ public class MagmaHeadBlockEntity extends RotationNode {
 
     /** What the player reads on use: fire, speed and the bit. */
     public Component describe() {
-        String state = bit.isEmpty() ? "no_bit" : fireTu < FTuning.MAGMA_MIN_TU ? "cold" : Math.abs(getRpm().value()) <= 0f ? "idle"
+        String state = bit.isEmpty() ? "no_bit" : fireTu < PetrochemTuning.MAGMA_MIN_TU ? "cold" : Math.abs(getRpm().value()) <= 0f ? "idle"
                 : lastMoved > 0 ? "flowing" : "blocked";
         return Component.translatable("message.feedback.magma_head." + state, Math.round(fireTu),
                 bit.isEmpty() ? 0 : Math.round(DerrickBitItem.condition(bit) * 100f));

@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.machine.column;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.multiblock.Multiblocks;
 import io.github.soundgoodizerfan.feedback.core.multiblock.Part;
 import io.github.soundgoodizerfan.feedback.core.multiblock.RoleRule;
@@ -32,7 +31,7 @@ public class TrayBlockEntity extends BlockEntity implements Part {
 
     @Nullable
     private Structure structure;
-    private final HeatedTank draw = new HeatedTank(FTuning.TRAY_DRAW_TANK_MB, this::setChanged);
+    private final HeatedTank draw = new HeatedTank(PetrochemTuning.TRAY_DRAW_TANK_MB, this::setChanged);
     private float foul;
 
     public TrayBlockEntity(BlockPos pos, BlockState state) {
@@ -108,10 +107,10 @@ public class TrayBlockEntity extends BlockEntity implements Part {
 
     /** Over-temperature coats the tray, faster with a heavier feed; misuse wear only, never uptime. */
     public void coke(float tu, float heaviness) {
-        if (tu <= FTuning.COLUMN_COKE_TU)
+        if (tu <= PetrochemTuning.COLUMN_COKE_TU)
             return;
-        foul = Math.min(1f, foul + FTuning.COLUMN_FOUL_PER_TICK * type().foul * heaviness
-                * (tu - FTuning.COLUMN_COKE_TU) / FTuning.COLUMN_COKE_TU);
+        foul = Math.min(1f, foul + PetrochemTuning.COLUMN_FOUL_PER_TICK * type().foul * heaviness
+                * (tu - PetrochemTuning.COLUMN_COKE_TU) / PetrochemTuning.COLUMN_COKE_TU);
         setChanged();
     }
 
@@ -129,7 +128,7 @@ public class TrayBlockEntity extends BlockEntity implements Part {
                     d.getOpposite());
             if (target == null)
                 continue;
-            int fits = target.fill(draw.drain(FTuning.TRAY_DRAW_PUSH_MB, IFluidHandler.FluidAction.SIMULATE),
+            int fits = target.fill(draw.drain(PetrochemTuning.TRAY_DRAW_PUSH_MB, IFluidHandler.FluidAction.SIMULATE),
                     IFluidHandler.FluidAction.SIMULATE);
             if (fits > 0)
                 target.fill(draw.drain(fits, IFluidHandler.FluidAction.EXECUTE), IFluidHandler.FluidAction.EXECUTE);

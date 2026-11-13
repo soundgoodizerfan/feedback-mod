@@ -2,8 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.phosphor;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
@@ -44,7 +45,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>Overrun</h2>
  * Reheating a sealed envelope past its seal temperature turns the vacuum into pressure; past
- * {@link FTuning#ENVELOPE_DANGER_PU} the chance of letting go climbs each tick ({@link
+ * {@link ElectricMachineTuning#ENVELOPE_DANGER_PU} the chance of letting go climbs each tick ({@link
  * PressureBurst}, shared with the vessel and boiler) and at critical it is certain. Heat past the
  * glass's service temperature cracks it outright. Either shatters it: nothing is returned. The
  * second misuse is burn-in: a screen held at full glow accumulates burn that permanently lowers
@@ -57,7 +58,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBody, PressureHolder {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private final Catchup offline = new Catchup();
     private boolean sealed;
     private float sealTu;
@@ -81,12 +82,12 @@ public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBod
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.ENVELOPE_MASS;
+        return ElectricMachineTuning.ENVELOPE_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.ENVELOPE_LEAK;
+        return ElectricMachineTuning.ENVELOPE_LEAK;
     }
 
     public boolean isSealed() {
@@ -107,14 +108,14 @@ public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBod
     public Pu getPressure() {
         if (!sealed)
             return new Pu(0f);
-        float off = FTuning.ENVELOPE_ABSOLUTE_OFFSET;
-        return new Pu(((temperature + off) / (sealTu + off) - 1f) * FTuning.ENVELOPE_PU_PER_ATMOSPHERE);
+        float off = ElectricMachineTuning.ENVELOPE_ABSOLUTE_OFFSET;
+        return new Pu(((temperature + off) / (sealTu + off) - 1f) * ElectricMachineTuning.ENVELOPE_PU_PER_ATMOSPHERE);
     }
 
     /** An oscilloscope drives the screen at this level (0 to 3) for the next few ticks. */
     public void land(int level) {
         drive = Math.max(0, Math.min(3, level));
-        hold = FTuning.SCOPE_SAMPLE_TICKS + 2;
+        hold = ElectricMachineTuning.SCOPE_SAMPLE_TICKS + 2;
     }
 
     /** The brightest level burn-in still allows: 3 new, down to 0 dead. */
@@ -149,7 +150,7 @@ public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBod
         setChanged();
 
         if (temperature > serviceTu() && level.random.nextFloat() < 0.02f
-                || sealed && PressureBurst.fails(getPressure(), FTuning.ENVELOPE_DANGER_PU, FTuning.ENVELOPE_CRITICAL_PU, level.random)) {
+                || sealed && PressureBurst.fails(getPressure(), ElectricMachineTuning.ENVELOPE_DANGER_PU, ElectricMachineTuning.ENVELOPE_CRITICAL_PU, level.random)) {
             shatter();
             return;
         }
@@ -158,10 +159,10 @@ public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBod
             hold--;
         else
             drive = 0;
-        boolean vacuum = sealed && getPressure().value() <= FTuning.SCREEN_MIN_VACUUM_PU;
+        boolean vacuum = sealed && getPressure().value() <= ElectricMachineTuning.SCREEN_MIN_VACUUM_PU;
         int glow = vacuum ? Math.min(drive, ceiling()) : 0;
         if (glow == 3)
-            burn = Math.min(1f, burn + FTuning.SCREEN_BURN_PER_TICK);
+            burn = Math.min(1f, burn + ElectricMachineTuning.SCREEN_BURN_PER_TICK);
         if (glow != getBlockState().getValue(PhosphorScreenBlock.GLOW))
             level.setBlock(worldPosition, getBlockState().setValue(PhosphorScreenBlock.GLOW, glow), 3);
     }
@@ -179,7 +180,7 @@ public class PhosphorScreenBlockEntity extends BlockEntity implements ThermalBod
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         sealed = tag.getBoolean("Sealed");
         sealTu = tag.getFloat("SealTu");
         burn = tag.getFloat("Burn");

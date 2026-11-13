@@ -3,6 +3,10 @@
 package io.github.soundgoodizerfan.feedback.machine.pressurevessel;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.fluid.FluidTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
@@ -39,7 +43,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>Amount and volume, not a stored Pu</h2>
  * {@code amount} is air in {@link Mb}, the unit {@link Blown#addAir} takes, and
- * {@link FTuning#PRESSURE_VESSEL_VOLUME} is fixed per block. {@link #getPressure()} divides them
+ * {@link PetrochemTuning#PRESSURE_VESSEL_VOLUME} is fixed per block. {@link #getPressure()} divides them
  * on read, never stored -- the same discipline {@code ItemHeat} and {@code Heat.equilibrium}
  * already use for a derived figure, and directly {@code PressureTier}/{@code IAirHandler}'s own
  * shape (PneumaticCraft: Repressurized, GPL-3.0 -- see {@code THIRD-PARTY-LICENSES.md}).
@@ -65,17 +69,17 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
 
     private float amount;
     /** What the shell was built to: the room inside (mB), and the pressures (Pu) it risks and gives way at. Baked by {@code ModularBake#tank}. */
-    private float volume = FTuning.PRESSURE_VESSEL_VOLUME.value();
-    private float danger = FTuning.PRESSURE_VESSEL_DANGER_PU.value();
-    private float critical = FTuning.PRESSURE_VESSEL_CRITICAL_PU.value();
+    private float volume = PetrochemTuning.PRESSURE_VESSEL_VOLUME.value();
+    private float danger = FluidTuning.PRESSURE_VESSEL_DANGER_PU.value();
+    private float critical = FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value();
     /** mB a relief valve vents a tick near the danger line; 0 with none. */
     private float relief;
     /** The design it was built from, kept so the broken block drops the same item. */
     private ModularDesign design;
     private ModularFigures figures;
     /** One temperature for everything inside, relaxing toward the fire or the boiling point, whichever is lower. */
-    private float temperature = FTuning.AMBIENT_TU.value();
-    private final NonNullList<ItemStack> jars = NonNullList.withSize(FTuning.CANNING_SLOTS, ItemStack.EMPTY);
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
+    private final NonNullList<ItemStack> jars = NonNullList.withSize(PetrochemTuning.CANNING_SLOTS, ItemStack.EMPTY);
 
     public PressureVesselBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.PRESSURE_VESSEL.get(), pos, state);
@@ -97,12 +101,12 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
             return;
 
         if (amount > 0) {
-            amount = Math.max(0, amount - FTuning.PRESSURE_VESSEL_LEAK_PER_TICK.value());
+            amount = Math.max(0, amount - PetrochemTuning.PRESSURE_VESSEL_LEAK_PER_TICK.value());
             setChanged();
         }
 
         // A relief valve opens near the danger line and lets air out faster than a pump usually puts it in.
-        if (relief > 0 && amount > 0 && getPressure().value() > danger * FTuning.RELIEF_OPENS_AT) {
+        if (relief > 0 && amount > 0 && getPressure().value() > danger * PetrochemTuning.RELIEF_OPENS_AT) {
             amount = Math.max(0, amount - relief);
             setChanged();
         }
@@ -113,7 +117,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         // climbs linearly across the danger-to-critical band, and critical itself is certain
         // rather than merely likely. This is philosophy 7's Hazard tier, and philosophy 15's named
         // GregTech-boiler precedent, both landing on Feedback's own equipment rather than staying
-        // an open item -- see FTuning#PRESSURE_VESSEL_DANGER_PU. The ladder itself is shared with
+        // an open item -- see FluidTuning#PRESSURE_VESSEL_DANGER_PU. The ladder itself is shared with
         // the boiler: see PressureBurst.
         if (PressureBurst.fails(getPressure(), new Pu(danger),
                 new Pu(critical), level.random)) {
@@ -131,10 +135,10 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         if (empty && level.getGameTime() % 20 != 0)
             return;
         float target = Math.min(HeatSource.at(level, worldPosition).value(),
-                FTuning.POT_BOIL_TU.value() + FTuning.CANNING_BOIL_PER_PU * getPressure().value());
-        temperature += (target - temperature) * (empty ? 1f - (float) Math.pow(1f - FTuning.POT_RELAX_PER_TICK, 20) : FTuning.POT_RELAX_PER_TICK);
+                FTuning.POT_BOIL_TU.value() + PetrochemTuning.CANNING_BOIL_PER_PU * getPressure().value());
+        temperature += (target - temperature) * (empty ? 1f - (float) Math.pow(1f - MachineTuning.POT_RELAX_PER_TICK, 20) : MachineTuning.POT_RELAX_PER_TICK);
         // Per second, not per tick: nothing on an item is touched every tick.
-        if (level.getGameTime() % 20 != 0 || temperature < FTuning.CANNING_STERILISE_TU.value())
+        if (level.getGameTime() % 20 != 0 || temperature < PetrochemTuning.CANNING_STERILISE_TU.value())
             return;
         boolean changed = false;
         for (int i = 0; i < jars.size(); i++) {
@@ -142,10 +146,10 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
             if (can == null)
                 continue;
             if (!can.sealed()) {
-                float sterile = can.sterile() + 20f / FTuning.CANNING_STERILE_TICKS;
+                float sterile = can.sterile() + 20f / PetrochemTuning.CANNING_STERILE_TICKS;
                 can = sterile >= 1f ? Canning.seal(can, level) : new Canned(can.food(), sterile, false, can.mush());
             } else if (can.mush() < 1f) {
-                can = new Canned(can.food(), 1f, true, Math.min(1f, can.mush() + 20f / FTuning.CANNING_MUSH_TICKS));
+                can = new Canned(can.food(), 1f, true, Math.min(1f, can.mush() + 20f / PetrochemTuning.CANNING_MUSH_TICKS));
             } else
                 continue;
             jars.get(i).set(FDataComponents.CANNED.get(), can);
@@ -284,7 +288,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         RegistryOps<Tag> ops = registries.createSerializationContext(NbtOps.INSTANCE);
         design = tag.contains("Design") ? ModularDesign.CODEC.parse(ops, tag.get("Design")).result().orElse(null) : null;
         figures = tag.contains("Figures") ? ModularFigures.CODEC.parse(ops, tag.get("Figures")).result().orElse(null) : null;
-        temperature = tag.contains(TEMPERATURE) ? tag.getFloat(TEMPERATURE) : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains(TEMPERATURE) ? tag.getFloat(TEMPERATURE) : ThermalTuning.AMBIENT_TU.value();
         jars.clear();
         ContainerHelper.loadAllItems(tag, jars, registries);
     }

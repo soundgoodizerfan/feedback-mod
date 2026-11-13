@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 
@@ -16,19 +15,19 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 public enum VesselKind {
 
     /** No thermowell -- see {@link #IMPROVED_FURNACE} for why that moved rather than doubled up. */
-    FURNACE(FTuning.FURNACE_MASS, FTuning.FURNACE_LEAK, Float.MAX_VALUE, false, 0f),
-    SMOKER(FTuning.SMOKER_MASS, FTuning.SMOKER_LEAK, FTuning.SMOKER_CEILING_TU.value(), false, FTuning.SMOKER_SMOKE),
-    BLAST_FURNACE(FTuning.BLAST_FURNACE_MASS, FTuning.BLAST_FURNACE_LEAK, Float.MAX_VALUE, false, 0f),
-    /** See {@link FTuning#IMPROVED_FURNACE_MASS}. */
-    IMPROVED_FURNACE(FTuning.IMPROVED_FURNACE_MASS, FTuning.IMPROVED_FURNACE_LEAK, Float.MAX_VALUE, true, 0f),
-    /** See {@link FTuning#KILN_CEILING_TU} for why its ceiling, not its mass or leak, is the
+    FURNACE(VesselTuning.FURNACE_MASS, VesselTuning.FURNACE_LEAK, Float.MAX_VALUE, false, 0f),
+    SMOKER(VesselTuning.SMOKER_MASS, VesselTuning.SMOKER_LEAK, VesselTuning.SMOKER_CEILING_TU.value(), false, VesselTuning.SMOKER_SMOKE),
+    BLAST_FURNACE(VesselTuning.BLAST_FURNACE_MASS, VesselTuning.BLAST_FURNACE_LEAK, Float.MAX_VALUE, false, 0f),
+    /** See {@link VesselTuning#IMPROVED_FURNACE_MASS}. */
+    IMPROVED_FURNACE(VesselTuning.IMPROVED_FURNACE_MASS, VesselTuning.IMPROVED_FURNACE_LEAK, Float.MAX_VALUE, true, 0f),
+    /** See {@link VesselTuning#KILN_CEILING_TU} for why its ceiling, not its mass or leak, is the
      * whole of what keeps it a ceramics appliance rather than a cheap Blast Furnace. */
-    KILN(FTuning.KILN_MASS, FTuning.KILN_LEAK, FTuning.KILN_CEILING_TU.value(), false, 0f, true),
-    /** See {@link FTuning#ANNEALING_FURNACE_CEILING_TU}. */
-    ANNEALING_FURNACE(FTuning.ANNEALING_FURNACE_MASS, FTuning.ANNEALING_FURNACE_LEAK,
-            FTuning.ANNEALING_FURNACE_CEILING_TU.value(), false, 0f, true),
+    KILN(VesselTuning.KILN_MASS, VesselTuning.KILN_LEAK, VesselTuning.KILN_CEILING_TU.value(), false, 0f, true),
+    /** See {@link VesselTuning#ANNEALING_FURNACE_CEILING_TU}. */
+    ANNEALING_FURNACE(VesselTuning.ANNEALING_FURNACE_MASS, VesselTuning.ANNEALING_FURNACE_LEAK,
+            VesselTuning.ANNEALING_FURNACE_CEILING_TU.value(), false, 0f, true),
     /** A reverberatory hearth with a rabble turned by a shaft: a row that names a rabble band runs here and nowhere else. */
-    PUDDLING_FURNACE(FTuning.PUDDLING_FURNACE_MASS, FTuning.PUDDLING_FURNACE_LEAK, Float.MAX_VALUE, false, 0f, false, true);
+    PUDDLING_FURNACE(VesselTuning.PUDDLING_FURNACE_MASS, VesselTuning.PUDDLING_FURNACE_LEAK, Float.MAX_VALUE, false, 0f, false, true);
 
     private final ThermalMass mass;
     private final Conductance leak;

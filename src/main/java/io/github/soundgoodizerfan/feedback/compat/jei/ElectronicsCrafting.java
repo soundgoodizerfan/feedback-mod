@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
+import io.github.soundgoodizerfan.feedback.item.ItemTuning;
+import io.github.soundgoodizerfan.feedback.process.ProcessTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +20,6 @@ import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
@@ -171,7 +172,7 @@ public final class ElectronicsCrafting {
 
         // Instruments: each fittable one with a circuit (a quiet one, so the fitted result is not a dead stack).
         ItemStack circuit = new ItemStack(FItems.CIRCUIT.get());
-        circuit.set(FDataComponents.CIRCUIT.get(), new Circuit(1, 1f, FTuning.CIRCUIT_NOISE_FLOOR, Board.Joint.GOOD, 0f, 0f));
+        circuit.set(FDataComponents.CIRCUIT.get(), new Circuit(1, 1f, ProcessTuning.CIRCUIT_NOISE_FLOOR, Board.Joint.GOOD, 0f, 0f));
         for (var item : net.minecraft.core.registries.BuiltInRegistries.ITEM.getTagOrEmpty(FTags.CIRCUIT_FITTABLE)) {
             ItemStack fitted = new ItemStack(item.value());
             fitted.set(FDataComponents.CIRCUIT.get(), circuit.get(FDataComponents.CIRCUIT.get()));
@@ -236,7 +237,7 @@ public final class ElectronicsCrafting {
                 : !pastes.isEmpty() ? new Board(Board.Trace.PRINTED, pastes.get(0), substrate, Optional.empty(), Board.Joint.NONE, List.of()) : null;
         if (bare == null)
             return out;
-        // Mount: one part on an unpasted board (up to FTuning.CIRCUIT_MAX_PARTS of them, one per craft).
+        // Mount: one part on an unpasted board (up to ItemTuning.CIRCUIT_MAX_PARTS of them, one per craft).
         List<ItemStack> parts = new ArrayList<>(), mounted = new ArrayList<>();
         List<ItemStack> candidates = new ArrayList<>(List.of(new ItemStack(FItems.RELAY.get()), new ItemStack(FItems.COHERER.get()),
                 new ItemStack(FItems.GALENA.get()), new ItemStack(FItems.PYRITE.get())));

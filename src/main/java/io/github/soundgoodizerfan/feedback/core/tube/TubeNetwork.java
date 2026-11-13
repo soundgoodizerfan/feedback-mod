@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.tube;
 
+import io.github.soundgoodizerfan.feedback.core.fluid.FluidTuning;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.fluid.FluidNetwork;
 import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
@@ -45,8 +45,8 @@ public class TubeNetwork {
     private final Set<TubeBlockEntity> riders = new HashSet<>();
 
     TubeNetwork(int size) {
-        volume = size * FTuning.PIPE_VOLUME_MB;
-        ledger = new HeatedTank(volume * FTuning.PIPE_COMPRESSION_HEADROOM, () -> changed = true);
+        volume = size * FluidTuning.PIPE_VOLUME_MB;
+        ledger = new HeatedTank(volume * FluidTuning.PIPE_COMPRESSION_HEADROOM, () -> changed = true);
     }
 
     public int volume() {
@@ -55,7 +55,7 @@ public class TubeNetwork {
 
     public Pu pressure() {
         return new Pu(ledger.isEmpty() || !FluidNetwork.isGas(ledger.getFluid()) ? 0f
-                : (float) ledger.getFluidAmount() / volume * FTuning.PIPE_PU_PER_VOLUME);
+                : (float) ledger.getFluidAmount() / volume * FluidTuning.PIPE_PU_PER_VOLUME);
     }
 
     /** Takes gas up to one volume, or up to the headroom when {@code compressed}; a liquid is refused (a tube holds air). */
@@ -111,7 +111,7 @@ public class TubeNetwork {
     private void leak() {
         long evacuated = members.stream().filter(TubeBlockEntity::evacuated).count();
         if (evacuated > 0)
-            ledger.fill(new FluidStack(FFluids.AIR.get(), (int) (evacuated * FTuning.TUBE_EVAC_LEAK_MB_PER_SECOND)),
+            ledger.fill(new FluidStack(FFluids.AIR.get(), (int) (evacuated * TubeTuning.TUBE_EVAC_LEAK_MB_PER_SECOND)),
                     IFluidHandler.FluidAction.EXECUTE);
     }
 
@@ -121,7 +121,7 @@ public class TubeNetwork {
             vacuum = null;
             return;
         }
-        boolean holds = pressure().value() <= FTuning.TUBE_EVAC_MAX_PU;
+        boolean holds = pressure().value() <= TubeTuning.TUBE_EVAC_MAX_PU;
         boolean failed = Boolean.TRUE.equals(vacuum) && !holds;
         vacuum = holds;
         if (failed)
@@ -136,16 +136,16 @@ public class TubeNetwork {
                 continue;
             Capsule c = t.capsule();
             if (c != null) {
-                c.wakeAt = Math.max(c.wakeAt, now) + FTuning.TUBE_INRUSH_STALL_TICKS;
+                c.wakeAt = Math.max(c.wakeAt, now) + TubeTuning.TUBE_INRUSH_STALL_TICKS;
                 schedule(t);
             }
-            net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(t.getBlockPos()).inflate(FTuning.TUBE_INRUSH_REACH);
+            net.minecraft.world.phys.AABB box = new net.minecraft.world.phys.AABB(t.getBlockPos()).inflate(TubeTuning.TUBE_INRUSH_REACH);
             for (net.minecraft.world.entity.Entity e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, box))
                 if (hit.add(e)) {
                     net.minecraft.world.phys.Vec3 to = net.minecraft.world.phys.Vec3.atCenterOf(t.getBlockPos()).subtract(e.position());
-                    e.setDeltaMovement(e.getDeltaMovement().add(to.normalize().scale(FTuning.TUBE_INRUSH_PULL)));
+                    e.setDeltaMovement(e.getDeltaMovement().add(to.normalize().scale(TubeTuning.TUBE_INRUSH_PULL)));
                     e.hurtMarked = true;
-                    e.hurt(level.damageSources().flyIntoWall(), FTuning.TUBE_INRUSH_DAMAGE);
+                    e.hurt(level.damageSources().flyIntoWall(), TubeTuning.TUBE_INRUSH_DAMAGE);
                 }
         }
         ledger.fill(new FluidStack(FFluids.AIR.get(), Math.max(1, volume - ledger.getFluidAmount())), IFluidHandler.FluidAction.EXECUTE);
@@ -154,12 +154,12 @@ public class TubeNetwork {
     }
 
     private boolean hazard(Level level) {
-        if (!PressureBurst.fails(pressure(), FTuning.PRESSURE_VESSEL_DANGER_PU, FTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random))
+        if (!PressureBurst.fails(pressure(), FluidTuning.PRESSURE_VESSEL_DANGER_PU, FluidTuning.PRESSURE_VESSEL_CRITICAL_PU, level.random))
             return false;
         List<TubeBlockEntity> list = new ArrayList<>(members);
         TubeBlockEntity weak = list.get(level.random.nextInt(list.size()));
         ledger.setFluid(FluidStack.EMPTY);
-        PressureBurst.burst(level, weak.getBlockPos(), FTuning.PIPE_BURST_POWER);
+        PressureBurst.burst(level, weak.getBlockPos(), FluidTuning.PIPE_BURST_POWER);
         return true;
     }
 }

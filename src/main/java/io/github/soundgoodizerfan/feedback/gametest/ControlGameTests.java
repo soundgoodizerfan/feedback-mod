@@ -13,7 +13,6 @@ import io.github.soundgoodizerfan.feedback.control.program.LogicNode;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramEvaluator;
 import io.github.soundgoodizerfan.feedback.control.program.ProgramGraph;
 import io.github.soundgoodizerfan.feedback.control.program.SensorNode;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import net.minecraft.core.BlockPos;

@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.vessel;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
@@ -99,7 +99,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(TOTAL_SLOTS, ItemStack.EMPTY);
     /** What a boiling crude gives off (petrochemistry spec 3.4); a vessel with a melt in it never fills it. */
-    private final FluidTank vapourTank = new FluidTank(FTuning.VESSEL_TANK_CAPACITY_MB) {
+    private final FluidTank vapourTank = new FluidTank(VesselTuning.VESSEL_TANK_CAPACITY_MB) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -107,7 +107,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     };
     private int fuelTicksLeft;
     private int fuelDuration;
-    private float flameRollTu = FTuning.AMBIENT_TU.value();
+    private float flameRollTu = ThermalTuning.AMBIENT_TU.value();
 
     /** Banked by a bellows; see {@code FireboxBlockEntity} for why draught, not the bank itself,
      * sets the flame temperature. This vessel is its own fire, so it takes air directly rather
@@ -164,7 +164,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     /** A vessel with a rabble takes its shaft's turning off the network and works it against the charge. */
     @Override
     public io.github.soundgoodizerfan.feedback.core.unit.Su getLoadSu() {
-        return kind.rotates() ? FTuning.PUDDLING_FURNACE_LOAD_SU : NO_SU;
+        return kind.rotates() ? VesselTuning.PUDDLING_FURNACE_LOAD_SU : NO_SU;
     }
 
     @Override
@@ -178,8 +178,8 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
             return AmbientTable.at(level);
         // Air multiplies the fuel's own flame temperature rather than replacing it -- see
         // FireboxBlockEntity for why a cool fuel blown hard is still a cool fire.
-        float blown = Mth.clamp(draught / FTuning.FIREBOX_AIR_PER_TICK.value(), 0f, 1f);
-        return new Tu(flameRollTu * Mth.lerp(blown, 1f, FTuning.FULL_AIR_TEMPERATURE_FACTOR));
+        float blown = Mth.clamp(draught / VesselTuning.FIREBOX_AIR_PER_TICK.value(), 0f, 1f);
+        return new Tu(flameRollTu * Mth.lerp(blown, 1f, VesselTuning.FULL_AIR_TEMPERATURE_FACTOR));
     }
 
     /**
@@ -189,7 +189,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
      */
     @Override
     public void addAir(Mb amount) {
-        air = Math.min(FTuning.FIREBOX_MAX_AIR.value(), air + amount.value());
+        air = Math.min(VesselTuning.FIREBOX_MAX_AIR.value(), air + amount.value());
     }
 
     // --- the tick ---------------------------------------------------------------------------
@@ -240,7 +240,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
                 temperature = kind.ceilingTu();
         }
 
-        draught = Math.min(air, FTuning.FIREBOX_AIR_PER_TICK.value());
+        draught = Math.min(air, VesselTuning.FIREBOX_AIR_PER_TICK.value());
         air -= draught;
 
         if (fuelTicksLeft <= 0)
@@ -253,7 +253,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
         Heat.tick(this, fireTu, AmbientTable.at(level), lit);
         // A clamp, not a leak, on purpose: the smoker's low ceiling is the vessel's material limit
         // (philosophy §19, "built as one wall"), and heat past it is lost through a box that
-        // cannot hold more. See FTuning.SMOKER_CEILING_TU.
+        // cannot hold more. See VesselTuning.SMOKER_CEILING_TU.
         if (temperature > kind.ceilingTu())
             temperature = kind.ceilingTu();
         measureDelta();

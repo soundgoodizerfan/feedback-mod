@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cable;
 
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.Locale;
 
 import com.mojang.serialization.Codec;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import io.netty.buffer.ByteBuf;
 
@@ -23,10 +23,10 @@ import net.minecraft.util.StringRepresentable;
  * arms: round gauges are square, the bus bar is a flat bar wider than it is thick.
  */
 public enum CableGauge implements StringRepresentable {
-    THIN(FTuning.CABLE_GAUGE_THIN_AREA, 2, 2),
-    STANDARD(FTuning.CABLE_GAUGE_STANDARD_AREA, 3, 3),
-    HEAVY(FTuning.CABLE_GAUGE_HEAVY_AREA, 4, 4),
-    BUS(FTuning.CABLE_GAUGE_BUS_AREA, 6, 2);
+    THIN(ElectricMachineTuning.CABLE_GAUGE_THIN_AREA, 2, 2),
+    STANDARD(ElectricMachineTuning.CABLE_GAUGE_STANDARD_AREA, 3, 3),
+    HEAVY(ElectricMachineTuning.CABLE_GAUGE_HEAVY_AREA, 4, 4),
+    BUS(ElectricMachineTuning.CABLE_GAUGE_BUS_AREA, 6, 2);
 
     public static final Codec<CableGauge> CODEC = StringRepresentable.fromEnum(CableGauge::values);
     public static final StreamCodec<ByteBuf, CableGauge> STREAM_CODEC =
@@ -57,10 +57,10 @@ public enum CableGauge implements StringRepresentable {
     /** Cables one craft of this gauge yields. */
     public int yield() {
         return switch (this) {
-            case THIN -> FTuning.CABLE_GAUGE_THIN_YIELD;
-            case STANDARD -> FTuning.CABLE_GAUGE_STANDARD_YIELD;
-            case HEAVY -> FTuning.CABLE_GAUGE_HEAVY_YIELD;
-            case BUS -> FTuning.CABLE_GAUGE_BUS_YIELD;
+            case THIN -> ElectricMachineTuning.CABLE_GAUGE_THIN_YIELD;
+            case STANDARD -> ElectricMachineTuning.CABLE_GAUGE_STANDARD_YIELD;
+            case HEAVY -> ElectricMachineTuning.CABLE_GAUGE_HEAVY_YIELD;
+            case BUS -> ElectricMachineTuning.CABLE_GAUGE_BUS_YIELD;
         };
     }
 

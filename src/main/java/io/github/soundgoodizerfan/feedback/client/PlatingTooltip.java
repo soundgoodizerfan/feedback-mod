@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.item.FormItem;
@@ -47,8 +49,8 @@ public class PlatingTooltip {
         event.getToolTip().add(Readout.gloss(Component.translatable("plating.feedback." + quality,
                 Component.translatable("material." + plating.metal().getNamespace() + "." + plating.metal().getPath()))
                 .withStyle(ChatFormatting.GRAY), "feedback.gloss.plating." + quality,
-                Readout.number(FTuning.PLATING_POROUS_BELOW_QU), Readout.number(FTuning.PLATING_SPALLS_ABOVE_QU),
-                Readout.number(FTuning.ELECTROLYTIC_PURE_FRACTION * 100), Readout.number(FTuning.PLATING_BURNT_SHARE * 100)));
+                Readout.number(FTuning.PLATING_POROUS_BELOW_QU), Readout.number(MachineTuning.PLATING_SPALLS_ABOVE_QU),
+                Readout.number(ElectricMachineTuning.ELECTROLYTIC_PURE_FRACTION * 100), Readout.number(ElectricMachineTuning.PLATING_BURNT_SHARE * 100)));
         Component thickness = thickness(plating);
         if (thickness != null)
             event.getToolTip().add(thickness);

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.data;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -52,7 +52,7 @@ public final class DataWires {
     }
 
     public static int range(Grade grade) {
-        return grade == Grade.GOOD ? FTuning.WIRE_RANGE_GOOD : FTuning.WIRE_RANGE_POOR;
+        return grade == Grade.GOOD ? ControlTuning.WIRE_RANGE_GOOD : ControlTuning.WIRE_RANGE_POOR;
     }
 
     private static TagKey<Item> tag(Grade grade) {
@@ -179,8 +179,8 @@ public final class DataWires {
         }
         DataNode far = DataNode.resolveOrNull(level, other);
         int load = Math.max(node.getNodeLinks().size(), far == null ? 0 : far.getNodeLinks().size());
-        if (load > FTuning.WIRE_CRITICAL_LINKS) {
-            QUENCHED_UNTIL.put(k, now + FTuning.WIRE_QUENCH_TICKS);
+        if (load > ControlTuning.WIRE_CRITICAL_LINKS) {
+            QUENCHED_UNTIL.put(k, now + ControlTuning.WIRE_QUENCH_TICKS);
             return true;
         }
         return false;

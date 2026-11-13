@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.xp;
 
+import io.github.soundgoodizerfan.feedback.core.xp.XpTuning;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -69,7 +69,7 @@ public final class XpTaps {
 
     /** Pays {@code points} into Trade Taps within reach of {@code at}; whatever no run can hold is not paid at all. */
     public static void pay(ServerLevel level, net.minecraft.world.phys.Vec3 at, int points) {
-        feed(level, XpTapBlock.Kind.TRADE, at, FTuning.TRADE_TAP_RADIUS, points);
+        feed(level, XpTapBlock.Kind.TRADE, at, XpTuning.TRADE_TAP_RADIUS, points);
     }
 
     /** Ore (or anything that pays XP) broken near an Ore Tap: the run takes what it can hold, the rest drops as usual. */
@@ -78,7 +78,7 @@ public final class XpTaps {
         ServerLevel level = event.getLevel();
         if (event.getDroppedExperience() <= 0)
             return;
-        int took = feed(level, XpTapBlock.Kind.ORE, event.getPos().getCenter(), FTuning.ORE_TAP_RADIUS, event.getDroppedExperience());
+        int took = feed(level, XpTapBlock.Kind.ORE, event.getPos().getCenter(), XpTuning.ORE_TAP_RADIUS, event.getDroppedExperience());
         if (took > 0)
             event.setDroppedExperience(event.getDroppedExperience() - took);
     }
@@ -96,7 +96,7 @@ public final class XpTaps {
             List<ExperienceOrb> fresh = level.getEntitiesOfClass(ExperienceOrb.class, new AABB(villager.blockPosition()).inflate(2.5),
                     orb -> orb.tickCount <= 2);
             for (ExperienceOrb orb : fresh) {
-                int took = feed(level, XpTapBlock.Kind.TRADE, villager.position(), FTuning.TRADE_TAP_RADIUS, orb.getValue());
+                int took = feed(level, XpTapBlock.Kind.TRADE, villager.position(), XpTuning.TRADE_TAP_RADIUS, orb.getValue());
                 if (took <= 0)
                     continue;
                 orb.discard();

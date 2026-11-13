@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.burner;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatedTank;
@@ -36,7 +36,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  */
 public class BurnerBlockEntity extends BlockEntity implements HeatSource {
 
-    private final HeatedTank fuel = new HeatedTank(FTuning.BURNER_TANK_MB, this::setChanged);
+    private final HeatedTank fuel = new HeatedTank(VesselTuning.BURNER_TANK_MB, this::setChanged);
     private float owed;
     private float flameTu;
 
@@ -85,8 +85,8 @@ public class BurnerBlockEntity extends BlockEntity implements HeatSource {
             flameTu = 0f;
         } else {
             float blown = Mth.clamp(c.oxygenBalance(), 0f, 1f);
-            flameTu = c.flameTemperature().get().value() * Mth.lerp(blown, 1f, FTuning.FULL_AIR_TEMPERATURE_FACTOR) * figures.get("Flame", 1f);
-            owed += figures.get("Burn", FTuning.BURNER_MB_PER_TICK);
+            flameTu = c.flameTemperature().get().value() * Mth.lerp(blown, 1f, VesselTuning.FULL_AIR_TEMPERATURE_FACTOR) * figures.get("Flame", 1f);
+            owed += figures.get("Burn", VesselTuning.BURNER_MB_PER_TICK);
             int drawn = (int) owed;
             owed -= drawn;
             if (drawn > 0)

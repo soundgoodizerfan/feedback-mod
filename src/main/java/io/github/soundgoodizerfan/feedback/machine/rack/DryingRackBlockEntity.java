@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.rack;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.HeatSource;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
@@ -22,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A rack that dries food (food spec 8): moisture leaves slowly, faster in warmer air. A fire under it
- * warms the air up to {@link FTuning#RACK_MAX_AIR_TU}, the edge of cooking, never past: it dries, it
+ * warms the air up to {@link MachineTuning#RACK_MAX_AIR_TU}, the edge of cooking, never past: it dries, it
  * does not cook. Rain on an open rack stops the drying. Dry food keeps (rot runs with moisture), so a
  * rack is the patient answer to the ice box.
  *
@@ -30,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class DryingRackBlockEntity extends BlockEntity {
 
-    private final NonNullList<ItemStack> items = NonNullList.withSize(FTuning.RACK_SLOTS, ItemStack.EMPTY);
+    private final NonNullList<ItemStack> items = NonNullList.withSize(MachineTuning.RACK_SLOTS, ItemStack.EMPTY);
 
     public DryingRackBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.DRYING_RACK.get(), pos, state);
@@ -71,9 +72,9 @@ public class DryingRackBlockEntity extends BlockEntity {
         if (level == null || level.getGameTime() % 20 != 0 || count() == 0)
             return;
         float room = AmbientTable.at(level).value();
-        float air = Math.max(room, Math.min(HeatSource.at(level, worldPosition).value(), FTuning.RACK_MAX_AIR_TU.value()));
+        float air = Math.max(room, Math.min(HeatSource.at(level, worldPosition).value(), MachineTuning.RACK_MAX_AIR_TU.value()));
         boolean rain = level.isRainingAt(worldPosition.above());
-        float dry = rain ? 0f : FTuning.RACK_DRY_PER_TICK * 20f * Mth.clamp(air / FTuning.AMBIENT_TU.value(), 0f, 4f);
+        float dry = rain ? 0f : MachineTuning.RACK_DRY_PER_TICK * 20f * Mth.clamp(air / ThermalTuning.AMBIENT_TU.value(), 0f, 4f);
         for (ItemStack stack : items) {
             if (stack.isEmpty())
                 continue;

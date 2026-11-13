@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.crucible;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.registry.FMenus;
 
@@ -36,20 +37,20 @@ public class CrucibleMenu extends AbstractContainerMenu {
     private final int tankCapacity;
 
     public CrucibleMenu(int id, Inventory inventory) {
-        this(FMenus.CRUCIBLE.get(), id, inventory, new SimpleContainer(FTuning.CRUCIBLE_SLOTS), new SimpleContainerData(3),
-                FTuning.VESSEL_TANK_CAPACITY_MB);
+        this(FMenus.CRUCIBLE.get(), id, inventory, new SimpleContainer(VesselTuning.CRUCIBLE_SLOTS), new SimpleContainerData(3),
+                VesselTuning.VESSEL_TANK_CAPACITY_MB);
     }
 
-    /** The large crucible's menu: the same screen with {@link FTuning#CRUCIBLE_LARGE_SLOTS} slots. */
+    /** The large crucible's menu: the same screen with {@link VesselTuning#CRUCIBLE_LARGE_SLOTS} slots. */
     public static CrucibleMenu largeCrucible(int id, Inventory inventory) {
-        return new CrucibleMenu(FMenus.LARGE_CRUCIBLE.get(), id, inventory, new SimpleContainer(FTuning.CRUCIBLE_LARGE_SLOTS),
-                new SimpleContainerData(3), FTuning.VESSEL_TANK_CAPACITY_MB);
+        return new CrucibleMenu(FMenus.LARGE_CRUCIBLE.get(), id, inventory, new SimpleContainer(VesselTuning.CRUCIBLE_LARGE_SLOTS),
+                new SimpleContainerData(3), VesselTuning.VESSEL_TANK_CAPACITY_MB);
     }
 
     /** The arc hearth's menu: the same screen with more slots and a deeper tank. */
     public static CrucibleMenu arcHearth(int id, Inventory inventory) {
-        return new CrucibleMenu(FMenus.ARC_HEARTH.get(), id, inventory, new SimpleContainer(FTuning.ARC_CHARGE_SLOTS),
-                new SimpleContainerData(3), FTuning.ARC_TANK_MB);
+        return new CrucibleMenu(FMenus.ARC_HEARTH.get(), id, inventory, new SimpleContainer(MachineTuning.ARC_CHARGE_SLOTS),
+                new SimpleContainerData(3), VesselTuning.ARC_TANK_MB);
     }
 
     public CrucibleMenu(MenuType<?> type, int id, Inventory inventory, CrucibleBlockEntity crucible) {

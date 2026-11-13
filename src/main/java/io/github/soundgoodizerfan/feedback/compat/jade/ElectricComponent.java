@@ -3,9 +3,10 @@
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.Readout;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -108,7 +109,7 @@ public class ElectricComponent implements IBlockComponentProvider {
                         Readout.instrumented(Quantity.VOLTAGE) ? Readout.figure(Quantity.VOLTAGE, data.getFloat(ElectricServerData.BAT_NEED)) : "?"));
             if (data.getBoolean(ElectricServerData.BAT_VENT))
                 tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.weeping").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.weeping"));
-            else if (data.getFloat(ElectricServerData.BAT_WATER) < FTuning.BATTERY_WATER_LOW_SHARE)
+            else if (data.getFloat(ElectricServerData.BAT_WATER) < ElectricMachineTuning.BATTERY_WATER_LOW_SHARE)
                 tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.low_water").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.low_water"));
         }
         if (Readout.instrumented(Quantity.VOLTAGE))

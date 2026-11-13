@@ -2,7 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.coil;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;
@@ -29,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>Its own body, not a flame temperature</h2>
  * A firebox's fire has no mass (see {@link HeatSource}); an element does, and a small one. So the
  * element is a {@link ThermalBody}: each tick the current puts {@code volts x amps x}
- * {@link FTuning#COIL_WORK_PER_WATT_TICK} into it (Joule's law in this mod's units, the one
+ * {@link ElectricMachineTuning#COIL_WORK_PER_WATT_TICK} into it (Joule's law in this mod's units, the one
  * physical constant, as {@code QU_PER_AMP_TICK} is Faraday's), and it gives heat to the body above
  * by the same {@code FIRE_CONDUCTANCE x difference} the body takes from it in {@code Heat.tick} --
  * so what the vessel gains the element loses, and the element settles a little above its load. A
@@ -47,7 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSource, Wearing {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float condition = 1f;
     private boolean powered;
 
@@ -64,7 +65,7 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
 
     @Override
     public float wantedAmps() {
-        return FTuning.COIL_AMPS;
+        return ElectricMachineTuning.COIL_AMPS;
     }
 
     @Override
@@ -77,14 +78,14 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
         super.onResolved(volts, amps, wanted, blocked);
         powered = volts > 0f && amps > 0f;
         if (powered)
-            Heat.warm(this, volts * amps * FTuning.COIL_WORK_PER_WATT_TICK * condition);
+            Heat.warm(this, volts * amps * ElectricMachineTuning.COIL_WORK_PER_WATT_TICK * condition);
     }
 
     /** The hottest the element runs without wearing: its metal's service temperature. */
     public Tu serviceTemperature() {
         Material material = MaterialTable.get().materials().get(((CoilBlock) getBlockState().getBlock()).element);
-        return material == null ? FTuning.AMBIENT_TU
-                : material.thermal().serviceTemperature().orElse(FTuning.AMBIENT_TU);
+        return material == null ? ThermalTuning.AMBIENT_TU
+                : material.thermal().serviceTemperature().orElse(ThermalTuning.AMBIENT_TU);
     }
 
     public void tickServer() {
@@ -95,13 +96,13 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
         // What the body above takes in its own Heat.tick, under the same condition it applies.
         if (temperature > ambient.value()
                 && level.getBlockEntity(worldPosition.relative(heatFacing())) instanceof ThermalBody load)
-            Heat.warm(this, -FTuning.FIRE_CONDUCTANCE.workPerTickPerTu()
+            Heat.warm(this, -ThermalTuning.FIRE_CONDUCTANCE.workPerTickPerTu()
                     * (temperature - load.getTemperature().value()));
         Heat.tick(this, ambient, ambient, false);
 
         float excess = temperature - serviceTemperature().value();
         if (excess > 0f) {
-            condition = Math.max(FTuning.COIL_CONDITION_FLOOR, condition - FTuning.COIL_WEAR_PER_TU_EXCESS * excess);
+            condition = Math.max(ElectricMachineTuning.COIL_CONDITION_FLOOR, condition - ElectricMachineTuning.COIL_WEAR_PER_TU_EXCESS * excess);
             setChanged();
         }
     }
@@ -144,12 +145,12 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.COIL_MASS;
+        return ElectricMachineTuning.COIL_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.COIL_LEAK;
+        return ElectricMachineTuning.COIL_LEAK;
     }
 
     // --- persistence --------------------------------------------------------------------------

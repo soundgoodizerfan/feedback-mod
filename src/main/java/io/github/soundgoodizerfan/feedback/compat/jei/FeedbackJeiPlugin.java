@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
+import io.github.soundgoodizerfan.feedback.process.ProcessTuning;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.TuRate;
 import io.github.soundgoodizerfan.feedback.process.ClientDeformations;
@@ -78,7 +78,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * pooled ones are both wrapped as a {@link ThermalProcess} and published under one
  * {@link ThermalProcessCategory#TYPE}. See {@link #pooled} for how a pooled recipe is turned into
  * one without inventing figures nobody wrote down: it only ever carries the two universal floors
- * every vessel already enforces, {@link FTuning#METAL_MIN_TU} and {@link FTuning#FOOD_MAX_TU}.
+ * every vessel already enforces, {@link ProcessTuning#METAL_MIN_TU} and {@link ProcessTuning#FOOD_MAX_TU}.
  *
  * <h2>Vanilla's own categories are hidden here too</h2>
  * The Furnace, Smoker and Blast Furnace never touch a vanilla block class any more (§4f), so

@@ -36,8 +36,8 @@ public record Fuel(int duration, Tu temperature, float spread, boolean poor) {
     public Fuel smouldering() {
         if (!poor)
             return this;
-        return new Fuel(Math.max(1, Math.round(duration * io.github.soundgoodizerfan.feedback.core.FTuning.SMOULDER_DURATION)),
-                new Tu(temperature.value() * io.github.soundgoodizerfan.feedback.core.FTuning.SMOULDER_TEMPERATURE), spread, true);
+        return new Fuel(Math.max(1, Math.round(duration * io.github.soundgoodizerfan.feedback.process.ProcessTuning.SMOULDER_DURATION)),
+                new Tu(temperature.value() * io.github.soundgoodizerfan.feedback.process.ProcessTuning.SMOULDER_TEMPERATURE), spread, true);
     }
 
     /** What {@code stack} does in a fire fed only air: an oxygen-poor fuel smoulders. */

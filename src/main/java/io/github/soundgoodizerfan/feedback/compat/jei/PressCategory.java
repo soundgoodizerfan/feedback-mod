@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import io.github.soundgoodizerfan.feedback.client.Readout;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -80,12 +80,12 @@ public class PressCategory implements IRecipeCategory<PressCategory.Card> {
     public void setRecipe(IRecipeLayoutBuilder builder, Card card, IFocusGroup focuses) {
         builder.addInputSlot(1, 13).setStandardSlotBackground().addItemStacks(card.cases().stream().map(ItemStack::new).toList());
         builder.addInputSlot(1, 31).setStandardSlotBackground()
-                .addItemStacks(card.charge().stream().map(i -> new ItemStack(i, FTuning.GUN_CHARGE_NOMINAL)).toList());
+                .addItemStacks(card.charge().stream().map(i -> new ItemStack(i, GunTuning.GUN_CHARGE_NOMINAL)).toList());
         builder.addInputSlot(1, 49).setStandardSlotBackground().addItemStacks(card.bullets().stream().map(ItemStack::new).toList());
         ItemStack round = new ItemStack(FWeapons.CARTRIDGE_ITEM.get());
         Cartridge reference = Cartridge.reference(9);
         round.set(FWeapons.CARTRIDGE.get(), new Cartridge(9, reference.caseMaterial(), card.propellant(),
-                FTuning.GUN_CHARGE_NOMINAL, reference.projectile()));
+                GunTuning.GUN_CHARGE_NOMINAL, reference.projectile()));
         builder.addOutputSlot(143, 31).setOutputSlotBackground().addItemStack(round);
     }
 
@@ -97,8 +97,8 @@ public class PressCategory implements IRecipeCategory<PressCategory.Card> {
         graphics.fill(1, 11, WIDTH - 1, 12, 0x40000000);
         row(graphics, font, 18, "feedback.jei.press.peak", Readout.number(card.peakPressure()) + " Pu");
         row(graphics, font, 30, "feedback.jei.press.burn", Readout.number(card.burnRate()) + " per m");
-        row(graphics, font, 42, "feedback.jei.press.charge", FTuning.GUN_CHARGE_NOMINAL + " nominal, " + FTuning.GUN_CHARGE_MAX + " most");
-        graphics.drawString(font, "at " + Math.round(FTuning.GUN_CHARGE_REF_BORE_MM) + " mm (more in a wider case)", 24, 51, LABEL_COLOUR, false);
+        row(graphics, font, 42, "feedback.jei.press.charge", GunTuning.GUN_CHARGE_NOMINAL + " nominal, " + GunTuning.GUN_CHARGE_MAX + " most");
+        graphics.drawString(font, "at " + Math.round(GunTuning.GUN_CHARGE_REF_BORE_MM) + " mm (more in a wider case)", 24, 51, LABEL_COLOUR, false);
         graphics.drawString(font, Component.translatable("feedback.jei.press.note"), 24, 62, LABEL_COLOUR, false);
     }
 

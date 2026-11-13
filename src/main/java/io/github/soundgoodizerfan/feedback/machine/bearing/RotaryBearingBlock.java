@@ -19,7 +19,7 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.bearing;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.MicroRotation;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
 import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
@@ -117,13 +117,13 @@ public class RotaryBearingBlock extends Block implements EntityBlock, MicroRotat
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.ROTARY_BEARING_DRAG_SU_PER_RPM;
+        return MachineTuning.ROTARY_BEARING_DRAG_SU_PER_RPM;
     }
 
     /** The housing's own; an assembled body's inertia is added by the bearing's hold. */
     @Override
     public Inertia getInertia() {
-        return FTuning.ROTARY_BEARING_INERTIA;
+        return MachineTuning.ROTARY_BEARING_INERTIA;
     }
 
     @Override

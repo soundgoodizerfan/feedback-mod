@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.engine;
 
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.core.unit.Rpm;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -45,9 +45,9 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
      * Either way the engine runs worse; nothing is refused.
      */
     public enum Compression implements net.minecraft.util.StringRepresentable {
-        LOW(0f, FTuning.ENGINE_LOW_MISFIRE_ABOVE_TU),
-        MEDIUM(FTuning.ENGINE_MEDIUM_KNOCK_BELOW_TU, FTuning.ENGINE_MEDIUM_MISFIRE_ABOVE_TU),
-        HIGH(FTuning.ENGINE_HIGH_KNOCK_BELOW_TU, Float.MAX_VALUE);
+        LOW(0f, VehicleTuning.ENGINE_LOW_MISFIRE_ABOVE_TU),
+        MEDIUM(VehicleTuning.ENGINE_MEDIUM_KNOCK_BELOW_TU, VehicleTuning.ENGINE_MEDIUM_MISFIRE_ABOVE_TU),
+        HIGH(VehicleTuning.ENGINE_HIGH_KNOCK_BELOW_TU, Float.MAX_VALUE);
 
         public static final Codec<Compression> CODEC = net.minecraft.util.StringRepresentable.fromEnum(Compression::values);
         public static final StreamCodec<RegistryFriendlyByteBuf, Compression> STREAM_CODEC =
@@ -121,7 +121,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
     }
 
     public Su peakTorque() {
-        return new Su(FTuning.ENGINE_SU_PER_MB * displacementMb() * torqueMult);
+        return new Su(VehicleTuning.ENGINE_SU_PER_MB * displacementMb() * torqueMult);
     }
 
     /**
@@ -138,13 +138,13 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
         var yield = m.mechanical().yieldStrength();
         if (yield.isEmpty() || m.density().muPerMb() <= 0)
             return new Rpm(0f);
-        float pistonSpeed = FTuning.ENGINE_PISTON_SPEED_PER_SQRT_SPECIFIC_YIELD
+        float pistonSpeed = VehicleTuning.ENGINE_PISTON_SPEED_PER_SQRT_SPECIFIC_YIELD
                 * (float) Math.sqrt(yield.get().value() / m.density().muPerMb());
         return new Rpm(pistonSpeed / (2 * strokeMm / 1000f) * 60 * revMult);
     }
 
     public Rpm peakRpm(Material m) {
-        return new Rpm(FTuning.ENGINE_PEAK_FRACTION * redline(m).value());
+        return new Rpm(VehicleTuning.ENGINE_PEAK_FRACTION * redline(m).value());
     }
 
     /** Torque at {@code rpm}: SummerCraft's curve around the peak. */
@@ -158,7 +158,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
 
     /** The engine's own weight: its metal times the material's density. Zero for a material nobody has weighed. */
     public Mu mass(Material m) {
-        return new Mu(FTuning.ENGINE_METAL_PER_MB * displacementMb() * m.density().muPerMb() * massMult);
+        return new Mu(VehicleTuning.ENGINE_METAL_PER_MB * displacementMb() * m.density().muPerMb() * massMult);
     }
 
     /**

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.centrifuge;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -21,7 +21,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
  * Separates uranium by weight, shaft-driven. A batch of natural uranium ingots fluorinated in hydrofluoric acid is spun in a gas
- * cascade: one ingot comes out enriched, the rest depleted. Nothing happens under {@link FTuning#CENTRIFUGE_MIN_RPM}; above it the
+ * cascade: one ingot comes out enriched, the rest depleted. Nothing happens under {@link MachineTuning#CENTRIFUGE_MIN_RPM}; above it the
  * batch advances with the square of the speed (centripetal acceleration), so a faster shaft finishes sooner. The machine holds the
  * feed, the acid and both outputs; it knows only uranium by the material it is made of.
  */
@@ -35,7 +35,7 @@ public class GasCentrifugeBlockEntity extends RotationNode {
     private int enriched;
     private int depleted;
     private float progress;
-    private final FluidTank acid = new FluidTank(FTuning.CENTRIFUGE_HF_TANK_MB, s -> s.getFluid() == FFluids.HYDROFLUORIC_ACID.get()) {
+    private final FluidTank acid = new FluidTank(MachineTuning.CENTRIFUGE_HF_TANK_MB, s -> s.getFluid() == FFluids.HYDROFLUORIC_ACID.get()) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -48,7 +48,7 @@ public class GasCentrifugeBlockEntity extends RotationNode {
 
     @Override
     public Su getLoadSu() {
-        return FTuning.CENTRIFUGE_LOAD_SU;
+        return MachineTuning.CENTRIFUGE_LOAD_SU;
     }
 
     public IFluidHandler handler() {
@@ -104,9 +104,9 @@ public class GasCentrifugeBlockEntity extends RotationNode {
 
     /** Takes natural uranium ingots from the stack into the feed; true if any went in. */
     public boolean load(ItemStack stack) {
-        if (!BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(URANIUM) || feed >= 4 * FTuning.CENTRIFUGE_BATCH_INGOTS)
+        if (!BuiltInRegistries.ITEM.getKey(stack.getItem()).equals(URANIUM) || feed >= 4 * MachineTuning.CENTRIFUGE_BATCH_INGOTS)
             return false;
-        int moved = Math.min(stack.getCount(), 4 * FTuning.CENTRIFUGE_BATCH_INGOTS - feed);
+        int moved = Math.min(stack.getCount(), 4 * MachineTuning.CENTRIFUGE_BATCH_INGOTS - feed);
         feed += moved;
         stack.shrink(moved);
         setChanged();
@@ -128,17 +128,17 @@ public class GasCentrifugeBlockEntity extends RotationNode {
 
     public void tickServer() {
         float rpm = Math.abs(getRpm().value());
-        if (rpm < FTuning.CENTRIFUGE_MIN_RPM || feed < FTuning.CENTRIFUGE_BATCH_INGOTS || acid.getFluidAmount() < FTuning.CENTRIFUGE_HF_MB) {
+        if (rpm < MachineTuning.CENTRIFUGE_MIN_RPM || feed < MachineTuning.CENTRIFUGE_BATCH_INGOTS || acid.getFluidAmount() < MachineTuning.CENTRIFUGE_HF_MB) {
             return;
         }
-        float ratio = rpm / FTuning.CENTRIFUGE_MIN_RPM;
+        float ratio = rpm / MachineTuning.CENTRIFUGE_MIN_RPM;
         progress += ratio * ratio;
-        if (progress >= FTuning.CENTRIFUGE_BATCH_TICKS) {
+        if (progress >= MachineTuning.CENTRIFUGE_BATCH_TICKS) {
             progress = 0f;
-            feed -= FTuning.CENTRIFUGE_BATCH_INGOTS;
-            acid.drain(FTuning.CENTRIFUGE_HF_MB, IFluidHandler.FluidAction.EXECUTE);
+            feed -= MachineTuning.CENTRIFUGE_BATCH_INGOTS;
+            acid.drain(MachineTuning.CENTRIFUGE_HF_MB, IFluidHandler.FluidAction.EXECUTE);
             enriched += 1;
-            depleted += FTuning.CENTRIFUGE_BATCH_INGOTS - 1;
+            depleted += MachineTuning.CENTRIFUGE_BATCH_INGOTS - 1;
         }
         setChanged();
     }

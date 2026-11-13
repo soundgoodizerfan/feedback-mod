@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.pump;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -20,12 +20,12 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 /**
  * A flat Su load that moves fluid at a rate set by how fast it is turned: {@link
- * FTuning#PUMP_MB_PER_RPM} mB a tick per RPM, back face to front face. Any fluid -- it is a pump,
+ * PetrochemTuning#PUMP_MB_PER_RPM} mB a tick per RPM, back face to front face. Any fluid -- it is a pump,
  * not a sorter, and never asks what it is moving.
  *
  * <h2>What it pushes against: the block it lifts</h2>
  * Fluids have no pressure beyond the air-only {@code Pu}, but lift costs (user ruling, 2026-10-23): a pump
- * facing up pays {@link FTuning#PUMP_LIFT_SU_PER_BLOCK} on top of its flat load. It moves fluid one block,
+ * facing up pays {@link PetrochemTuning#PUMP_LIFT_SU_PER_BLOCK} on top of its flat load. It moves fluid one block,
  * so a column is a stack of pumps, each paying; level and down cost nothing extra.
  *
  * <h2>Where it draws from</h2>
@@ -72,14 +72,14 @@ public class PumpBlockEntity extends RotationNode {
     @Override
     public Su getLoadSu() {
         return getBlockState().getValue(PumpBlock.FACING) == Direction.UP
-                ? new Su(figures.get("Load", FTuning.PUMP_LOAD_SU.value()) + figures.get("Lift", FTuning.PUMP_LIFT_SU_PER_BLOCK.value()))
-                : new Su(figures.get("Load", FTuning.PUMP_LOAD_SU.value()));
+                ? new Su(figures.get("Load", PetrochemTuning.PUMP_LOAD_SU.value()) + figures.get("Lift", PetrochemTuning.PUMP_LIFT_SU_PER_BLOCK.value()))
+                : new Su(figures.get("Load", PetrochemTuning.PUMP_LOAD_SU.value()));
     }
 
     public void tickServer() {
         if (level == null)
             return;
-        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", FTuning.PUMP_MB_PER_RPM);
+        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", PetrochemTuning.PUMP_MB_PER_RPM);
         int amount = (int) owed;
         if (amount <= 0)
             return;

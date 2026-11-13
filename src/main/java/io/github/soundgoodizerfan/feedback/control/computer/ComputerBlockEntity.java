@@ -2,12 +2,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.computer;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import io.github.soundgoodizerfan.feedback.control.controller.ControllerCore;
 import io.github.soundgoodizerfan.feedback.control.controller.ControllerHost;
 import io.github.soundgoodizerfan.feedback.control.programmer.EmbeddedProgrammer;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerProvider;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -379,7 +379,7 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
 
     @Override
     public float wantedAmps() {
-        return FTuning.COMPUTER_AMPS;
+        return ControlTuning.COMPUTER_AMPS;
     }
 
     @Override

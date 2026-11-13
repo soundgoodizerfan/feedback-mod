@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -14,7 +17,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
 import io.github.soundgoodizerfan.feedback.core.unit.Density;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
@@ -232,7 +234,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS,
         /** Gives off light when hot enough to glow (every metal does; other materials opt in). */
         INCANDESCENT, FIBROUS, POROUS, STICKY,
-        /** An acid or a base: eats a vessel whose corrosion resistance is below {@code FTuning.CORROSIVE_BITE} (core/hazard/Corrosion). */
+        /** An acid or a base: eats a vessel whose corrosion resistance is below {@code HazardTuning.CORROSIVE_BITE} (core/hazard/Corrosion). */
         CORROSIVE,
         /** A joining alloy: its melting point is a joint's liquidus (basic electronics phase 3). */
         SOLDER,
@@ -337,7 +339,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *                             melt of it.
      * @param boilingPoint         where the liquid boils off (distillation).
      * @param coolingRate          how fast a loose workpiece of it cools, replacing
-     *                             {@code FTuning.ITEM_COOLING_TU_PER_TICK} per material once read
+     *                             {@code ThermalTuning.ITEM_COOLING_TU_PER_TICK} per material once read
      *                             (mechanics §2.2's open item).
      * @param conductivity         conductance of a one-block wall of it, on the scale where copper's
      *                             is {@code FTuning.HEAT_EXCHANGER_CONDUCTANCE}.
@@ -678,7 +680,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param moisture   fraction of the item that is water. Cooking drives it off; a food that has
      *                   lost much of it is dried.
      * @param pathogen   live-organism load a raw item carries, as a strength (the data is in Qu, up to
-     *                   {@link FTuning#FOOD_QU_PER_STRENGTH}). Heat kills a fraction of it each
+     *                   {@link ProcessTuning#FOOD_QU_PER_STRENGTH}). Heat kills a fraction of it each
      *                   tick, scaled by cooking speed ({@code Cooking.tick}).
      * @param toxin      stable-toxin load, a strength as {@code pathogen}. Heat does not touch it.
      * @param fat        0 to 1: slow absorption. With {@code fibre}, delays and stretches what its compounds do.
@@ -695,16 +697,16 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                        float fat, float fibre, Map<String, Float> compounds, Map<String, Float> perks, float shelf, float mass) {
         /**
          * An amount of an active in Qu on disk, a strength in memory: the one read site of
-         * {@link FTuning#FOOD_QU_PER_STRENGTH}. Over a full strength's worth is refused.
+         * {@link ProcessTuning#FOOD_QU_PER_STRENGTH}. Over a full strength's worth is refused.
          */
         private static final Codec<Float> QU_AS_STRENGTH = Units.codec(Qu::new)
-                .validate(q -> q.value() >= 0f && q.value() <= FTuning.FOOD_QU_PER_STRENGTH + 1e-6f
-                        ? DataResult.success(q) : DataResult.error(() -> "amount " + q.value() + " Qu is not within 0 to " + FTuning.FOOD_QU_PER_STRENGTH))
-                .xmap(q -> q.value() / FTuning.FOOD_QU_PER_STRENGTH, strength -> new Qu(strength * FTuning.FOOD_QU_PER_STRENGTH));
+                .validate(q -> q.value() >= 0f && q.value() <= ProcessTuning.FOOD_QU_PER_STRENGTH + 1e-6f
+                        ? DataResult.success(q) : DataResult.error(() -> "amount " + q.value() + " Qu is not within 0 to " + ProcessTuning.FOOD_QU_PER_STRENGTH))
+                .xmap(q -> q.value() / ProcessTuning.FOOD_QU_PER_STRENGTH, strength -> new Qu(strength * ProcessTuning.FOOD_QU_PER_STRENGTH));
 
         /** A strength (the held figure) as the Qu it stands for, for display. */
         public static Qu qu(float strength) {
-            return new Qu(strength * FTuning.FOOD_QU_PER_STRENGTH);
+            return new Qu(strength * ProcessTuning.FOOD_QU_PER_STRENGTH);
         }
 
         static final Codec<Food> CODEC = RecordCodecBuilder.create(instance -> instance.group(

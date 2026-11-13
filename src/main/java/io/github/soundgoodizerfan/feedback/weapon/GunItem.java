@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularItem;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
@@ -40,7 +41,7 @@ public abstract class GunItem extends ModularItem implements io.github.soundgood
     public io.github.soundgoodizerfan.feedback.core.unit.TuRate coolingRate(ItemStack stack) {
         GunFigures f = figures(stack);
         if (f == null)
-            return io.github.soundgoodizerfan.feedback.core.FTuning.ITEM_COOLING_TU_PER_TICK;
+            return io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.ITEM_COOLING_TU_PER_TICK;
         return new io.github.soundgoodizerfan.feedback.core.unit.TuRate(f.coolingRate().tuPerTick()
                 * io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.gunCooling(stack));
     }

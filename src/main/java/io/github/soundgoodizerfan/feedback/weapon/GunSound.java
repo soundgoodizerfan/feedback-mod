@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -32,7 +31,7 @@ public final class GunSound {
 
     /** 0 to 1: muzzle energy against what reads as full power. */
     public static float power(GunFigures f) {
-        return Mth.clamp(f.muzzleEnergy() / FTuning.GUN_SOUND_REFERENCE_WORK, 0f, 1f);
+        return Mth.clamp(f.muzzleEnergy() / GunTuning.GUN_SOUND_REFERENCE_WORK, 0f, 1f);
     }
 
     public static float pitch(GunFigures f, RandomSource random) {

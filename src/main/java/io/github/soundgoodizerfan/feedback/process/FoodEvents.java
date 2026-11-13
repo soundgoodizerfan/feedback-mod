@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.process;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.modular.DishBake;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -60,8 +59,8 @@ public final class FoodEvents {
             FoodState fresh = Cooking.fresh(entry, event.getLevel());
             if (stack.is(Tags.Items.EGGS)) {
                 // Disease in a flock follows crowding: a lone free-range bird lays near-clean, a pen does not.
-                int birds = Math.max(1, event.getLevel().getEntitiesOfClass(Chicken.class, item.getBoundingBox().inflate(FTuning.EGG_CROWD_RADIUS)).size());
-                float pathogen = Math.min(FTuning.EGG_CROWD_PATHOGEN_MAX, FTuning.EGG_FREE_RANGE_PATHOGEN + FTuning.EGG_CROWD_PATHOGEN * (birds - 1));
+                int birds = Math.max(1, event.getLevel().getEntitiesOfClass(Chicken.class, item.getBoundingBox().inflate(ProcessTuning.EGG_CROWD_RADIUS)).size());
+                float pathogen = Math.min(ProcessTuning.EGG_CROWD_PATHOGEN_MAX, ProcessTuning.EGG_FREE_RANGE_PATHOGEN + ProcessTuning.EGG_CROWD_PATHOGEN * (birds - 1));
                 fresh = new FoodState(fresh.cook(), fresh.moisture(), pathogen, fresh.toxin(), fresh.charred(), fresh.rot(), fresh.stamp(),
                         fresh.envTu(), fresh.smoke(), fresh.salt());
             }
@@ -165,12 +164,12 @@ public final class FoodEvents {
 
     /**
      * The bite (dish spec 5): sneak and use a food to take a nibble. It applies the food's hazard effects as they are now, at
-     * {@link FTuning#BITE_SHARE} of the chance and duration, and says which class they are in words. It eats nothing and never
+     * {@link ProcessTuning#BITE_SHARE} of the chance and duration, and says which class they are in words. It eats nothing and never
      * refuses; the item's own cooldown keeps it from being spammed, and it stands in for eating while sneaking.
      */
     /**
      * Sneak and tap: a nibble. Sneak and hold eats as usual. Vanilla starts eating on the press, so a release within
-     * {@link FTuning#BITE_TAP_TICKS} of starting is the tap ({@link #onTap}); when the player cannot eat now (full) there is
+     * {@link ProcessTuning#BITE_TAP_TICKS} of starting is the tap ({@link #onTap}); when the player cannot eat now (full) there is
      * no eating to start, so the press itself is the nibble.
      */
     @SubscribeEvent
@@ -189,7 +188,7 @@ public final class FoodEvents {
     public static void onTap(LivingEntityUseItemEvent.Stop event) {
         ItemStack stack = event.getItem();
         if (event.getEntity().level().isClientSide || !(event.getEntity() instanceof ServerPlayer player) || !player.isShiftKeyDown()
-                || !stack.has(DataComponents.FOOD) || stack.getUseDuration(player) - event.getDuration() > FTuning.BITE_TAP_TICKS)
+                || !stack.has(DataComponents.FOOD) || stack.getUseDuration(player) - event.getDuration() > ProcessTuning.BITE_TAP_TICKS)
             return;
         bite(player, stack);
     }
@@ -230,7 +229,7 @@ public final class FoodEvents {
         var level = player.level();
         if (player.getCooldowns().isOnCooldown(stack.getItem()))
             return;
-        player.getCooldowns().addCooldown(stack.getItem(), FTuning.BITE_COOLDOWN_TICKS);
+        player.getCooldowns().addCooldown(stack.getItem(), ProcessTuning.BITE_COOLDOWN_TICKS);
         if (stack.has(FDataComponents.CANNED.get()))
             Canning.settle(stack, level);
         boolean spoiled = false;
@@ -252,7 +251,7 @@ public final class FoodEvents {
             else if (hazard.equals("fine") && effect.getEffect().equals(MobEffects.CONFUSION))
                 hazard = "burnt";
             // The class above is read from the food as it is; hardiness only softens what lands.
-            float share = FTuning.BITE_SHARE * io.github.soundgoodizerfan.feedback.combat.skill.Skills.foodHazardShare(player);
+            float share = ProcessTuning.BITE_SHARE * io.github.soundgoodizerfan.feedback.combat.skill.Skills.foodHazardShare(player);
             if (level.random.nextFloat() < possible.probability() * share)
                 player.addEffect(new MobEffectInstance(effect.getEffect(), Math.max(1, Math.round(effect.getDuration() * share)), effect.getAmplifier()));
         }
@@ -263,6 +262,6 @@ public final class FoodEvents {
         if (lace != null && meal != null && lace.detectable(meal, player))
             said = said.copy().append(" ").append(lace.nearestClass().map(c ->
                     Component.translatable("message.feedback.bite.aftertaste", Component.translatable("compound.feedback." + c))).orElse(Component.empty()));
-        HudReadoutPayload.send(player, said, FTuning.BITE_HUD_TICKS);
+        HudReadoutPayload.send(player, said, ProcessTuning.BITE_HUD_TICKS);
     }
 }

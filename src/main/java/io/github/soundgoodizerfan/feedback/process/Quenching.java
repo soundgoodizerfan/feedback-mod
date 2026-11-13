@@ -5,7 +5,6 @@ package io.github.soundgoodizerfan.feedback.process;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -85,7 +84,7 @@ public class Quenching {
 
     /**
      * Quenching in a fluid that has no world block (soul oil): hot stock in hand on any tank holding it.
-     * The tank loses {@link FTuning#QUENCH_TANK_MB} of the oil to the dunk. Water stays a thrown item.
+     * The tank loses {@link ProcessTuning#QUENCH_TANK_MB} of the oil to the dunk. Water stays a thrown item.
      */
     @SubscribeEvent
     public static void onTankQuench(net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock event) {
@@ -99,7 +98,7 @@ public class Quenching {
         var held = tank.getFluidInTank(0);
         for (int i = 1; held.isEmpty() && i < tank.getTanks(); i++)
             held = tank.getFluidInTank(i);
-        if (held.getAmount() < FTuning.QUENCH_TANK_MB)
+        if (held.getAmount() < ProcessTuning.QUENCH_TANK_MB)
             return;
         var medium = net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(held.getFluid());
         Optional<ThermalProcess> row = ThermalProcessTable.get().findQuench(stack, medium);
@@ -111,7 +110,7 @@ public class Quenching {
         ItemStack out = tu >= row.get().minTemperature().value() ? row.get().result().copyWithCount(stack.getCount()) : stack.copy();
         if (out == stack || ItemStack.isSameItemSameComponents(out, stack))
             ItemHeat.clear(out);
-        var drain = new net.neoforged.neoforge.fluids.FluidStack(held.getFluid(), FTuning.QUENCH_TANK_MB);
+        var drain = new net.neoforged.neoforge.fluids.FluidStack(held.getFluid(), ProcessTuning.QUENCH_TANK_MB);
         tank.drain(drain, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
         event.getEntity().setItemInHand(event.getHand(), out);
         if (tu > AmbientTable.at(level).value() && level instanceof ServerLevel server)

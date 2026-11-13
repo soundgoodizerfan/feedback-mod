@@ -4,9 +4,16 @@ package io.github.soundgoodizerfan.feedback.modular;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 
+
 import io.github.soundgoodizerfan.feedback.core.unit.XPu;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.gameevent.GameEvent;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
+import io.github.soundgoodizerfan.feedback.core.unit.Qu;
+import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 
 /**
  * Every constant the modular bake and its wear read.
@@ -96,7 +103,7 @@ public final class ModularTuning {
     public static final float[] FRAME_CELLS = {2f, 4f, 8f},
             FRAME_SU = {FTuning.FRAME_SU_SMALL, FTuning.FRAME_SU_MEDIUM, FTuning.FRAME_SU_LARGE},
             FRAME_MASS = {FTuning.FRAME_MASS_SMALL.workPerTu(), FTuning.FRAME_MASS_MEDIUM.workPerTu(), FTuning.FRAME_MASS_LARGE.workPerTu()},
-            FRAME_AREA = {FTuning.FRAME_AREA_SMALL, FTuning.FRAME_AREA_MEDIUM, FTuning.FRAME_AREA_LARGE};
+            FRAME_AREA = {ModularTuning.FRAME_AREA_SMALL, ModularTuning.FRAME_AREA_MEDIUM, ModularTuning.FRAME_AREA_LARGE}; // float literals: inlined, safe before their declaration
     /** A winding's reference sizes in cells of wire (coarse, fine, dense, heavy dense) and the volts per RPM each gives. */
     public static final float[] WINDING_CELLS = {1f, 2f, 4f, 8f},
             WINDING_VPR = {FTuning.WINDING_VOLTS_PER_RPM_COARSE, FTuning.WINDING_VOLTS_PER_RPM_FINE, FTuning.WINDING_VOLTS_PER_RPM_DENSE,
@@ -778,4 +785,272 @@ public final class ModularTuning {
     public static final int FIT_MIN_SEAT_TICKS = 6;
     /** Fitting minigame: how much one mis-seat costs, in pieces: the score is pieces over pieces plus this times the mis-seats. */
     public static final float FIT_MISSEAT_WEIGHT = 1.5f;
+    /**
+     * Placeholder. St a machine head can land per Mu of head per unit of its edge competence (the square root of
+     * hardness times strength, less what brittleness costs it): St of a blow is the head's, never the
+     * machine's. An iron head of four ingots (about 3.9 Mu, competence about 6.9) comes to 24 St, the ceiling
+     * the Hammer and the Press had before heads existed.
+     */
+    public static final float HEAD_ST_PER_MU_COMPETENCE = 0.88f;
+
+    /**
+     * Placeholder. The most St of an ordinary blow ({@code HandSwing.BLOW}) a hand tool's head can carry, per Mu of
+     * tool times the head's competence. The arm sets the blow and the head only has to carry it
+     * ({@code ModularHandTool}: the head's figure is a share of the ordinary blow, capped at 1), so a better head
+     * never lifts a hand over the hard gate steel stands behind. Fitted so a cobblestone head of four cells on a
+     * stick (about 1.35 Mu, competence 5.5) comes to 3.75 St, a quarter over the 3 an ordinary blow asks, and a light
+     * or soft head (bone, copper) falls short of it and lands a smaller share of every swing.
+     */
+    public static final float HAND_ST_PER_MU_COMPETENCE = 0.5f;
+
+    /** Placeholder. The most points of wear one act at the stonecutter costs a saw: stock this many times harder than the saw's edge (or more) wears it this much. */
+    public static final int SAW_MAX_WEAR = 8;
+
+    /** Invented. A use released inside this many ticks is a tap (a skim); held longer it is a stir. */
+    public static final int SPOON_TAP_TICKS = 6;
+
+    /** Invented. The volume of the reference spoon (bowl and handle), mB: the spoon whose stir and skim figures are as written. A bigger bowl does proportionally more. */
+    public static final float SPOON_REF_BOWL_MB = 155f;
+
+    /** Invented. Ticks of stirring per point of spoon wear. */
+    public static final int POT_STIR_WEAR_TICKS = 100;
+
+    /** Invented. Share of a pot's excess heat that reaches the hand through a spoon handle, as {@link FTuning#TONGS_EXPOSURE} is for tongs. */
+    public static final float SPOON_EXPOSURE = 0.5f;
+
+    /** Invented. A dish on a warming container (blaze rod) is held at this heat, in Tu: warm, under the point a bare hand feels pain. */
+    public static final Tu WARMING_HOLD_TU = new Tu(70f);
+
+    /** Invented. A dish whose container has the featherlight perk (breeze rod) takes this share of the eating time. */
+    public static final float DISH_FEATHER_EAT_SCALE = 0.6f;
+
+    /**
+     * Invented. The adjectives a dish earns from its figures (dish spec 5): blended water over soggy or under dry, fat share
+     * over rich, hunger per litre of container over dense or under light, the strongest compound's concentration over bright
+     * or under bland. Each is glossed on Shift from the constant that decides it.
+     */
+    public static final float DISH_SOGGY_MOISTURE = 0.8f;
+
+    public static final float DISH_DRY_MOISTURE = 0.45f;
+
+    public static final float DISH_RICH_FAT = 0.25f;
+
+    public static final float DISH_DENSE_HUNGER_PER_LITRE = 16f;
+
+    public static final float DISH_LIGHT_HUNGER_PER_LITRE = 8f;
+
+    public static final float DISH_BRIGHT_COMPOUND = 0.25f;
+
+    public static final float DISH_BLAND_COMPOUND = 0.05f;
+
+    public static final float DISH_HUNGER_PER_LITRE = 20f;
+
+    public static final float DISH_EAT_BASE_SECONDS = 0.6f;
+
+    public static final float DISH_EAT_SECONDS_PER_LITRE = 3f;
+
+    /** Invented. How much shorter a dish takes to eat per level of cut on its food parts (sliced 1, minced 2): small pieces go down quicker. */
+    public static final float DISH_EAT_CUT_SCALE = 0.12f;
+
+    /** Invented. The water in a pot serving used as a soup's base (a ladle of broth or stew): wet, but not all water. */
+    public static final float SERVING_MOISTURE = 0.9f;
+
+    /**
+     * Invented. Moisture migration (dish spec 2.3): across each neighbouring pair of food parts this share of the gap in water
+     * moves from the wetter to the drier (conserved: the dish's blend does not change), times the container's seal scale. A
+     * part under {@link #DISH_DRY_MOISTURE} next to one over {@link #DISH_SOGGY_MOISTURE} is soaked and feeds {@link #SOAK_SCALE}
+     * of its hunger and saturation.
+     */
+    public static final float MIGRATION = 0.5f;
+
+    public static final float SOAK_SCALE = 0.85f;
+
+    public static final float SPILL_SHARE = 0.34f;
+
+    public static final float CUT_FIBRE_LOSS_PER_LEVEL = 0.25f;
+
+    public static final float CUT_EVEN_CV = 0.15f;
+
+    public static final float CUT_MIXED_CV = 0.4f;
+
+    /** Invented. The knife's feel: grain lines every this many line units, how hard fibre pulls a stroke to the nearest one (at fibre 1), and how far fat lets it slide on. */
+    public static final int CUT_GRAIN = 125;
+
+    public static final float CUT_GRAIN_PULL = 0.8f;
+
+    public static final float CUT_FAT_SLIDE = 60f;
+
+    /** Invented. The most cut marks a knife pass can place on a piece. */
+    public static final int CUT_MAX_MARKS = 6;
+
+    /** Invented. The mark count a minced cut uses. */
+    public static final int CUT_MINCED_MARKS = 4;
+
+    /** Invented. Ticks a mark may be placed no faster than (the server refuses a result sent quicker than that), and the slack for the begin packet's travel. */
+    public static final int CUT_TICKS_PER_MARK = 4;
+
+    public static final int PREP_SLACK_TICKS = 10;
+
+    /**
+     * Invented. The pour: a vessel fills to 1000 units and the line sits at {@link #POUR_TARGET}; a food of viscosity 1 (or
+     * none given) pours {@link #POUR_FLOW} units a tick, and each decade of viscosity slows it by {@link #POUR_DRAG}
+     * of that (honey, 10000, runs a quarter of the speed). Strength is poured over the line, kept between the floor and
+     * ceiling; within {@link FTuning#POUR_CLEAN} of the line is clean, within {@link #POUR_SHAKY} shaky. A finish nobody poured
+     * by hand counts as {@link #POUR_AUTOMATION} (sloppy, never a refusal). The hold is capped at {@link #POUR_MAX_TICKS}.
+     */
+    public static final int POUR_FULL = 1000, POUR_TARGET = 600;
+
+    public static final float POUR_FLOW = 24f;
+
+    public static final float POUR_DRAG = 0.75f;
+
+    public static final float POUR_SHAKY = 0.30f;
+
+    public static final float POUR_MIN = 0.3f, POUR_MAX = 2.0f;
+
+    public static final float POUR_AUTOMATION = 0.8f;
+
+    public static final int POUR_MAX_TICKS = 400;
+
+    /**
+     * Invented. The other two finishes, graded into the same strength as a pour so everything downstream is shared. A dry
+     * powder is shaken: each stroke of the shaker (a mouse sweep back and forth) puts {@link #SHAKE_UNITS} units on the
+     * dish, at most {@link #SHAKE_MAX_STROKES}, no faster than one per {@link #SHAKE_TICKS_PER_STROKE} ticks. Pieces are
+     * placed one by one: {@link #PLACE_TARGET} pieces is the line, at most {@link #PLACE_MAX}; their spacing is graded as
+     * a cut's is, and uneven pieces count for {@link #PLACE_MIXED_SHARE} / {@link #PLACE_RAGGED_SHARE} of their number
+     * (the flavour comes in lumps).
+     */
+    public static final int SHAKE_UNITS = 40, SHAKE_MAX_STROKES = 40, SHAKE_TICKS_PER_STROKE = 2;
+
+    public static final int PLACE_TARGET = 5, PLACE_MAX = 10;
+
+    public static final float PLACE_MIXED_SHARE = 0.85f, PLACE_RAGGED_SHARE = 0.65f;
+
+    /**
+     * Invented. The knead ({@code docs/specs/feedback_food_spec.md} 6): one sample every {@link #KNEAD_STEP_TICKS} ticks of how hard
+     * the dough is pressed, 0..100, at most {@link #KNEAD_MAX_SAMPLES} (the session length) and at least {@link #KNEAD_MIN_SAMPLES}.
+     * Per sample at full press: gluten builds {@link #KNEAD_GLUTEN} (less the more water {@link #KNEAD_STICKY} and fat
+     * {@link #KNEAD_FAT_GLUTEN} hold, and less the more tense the dough {@link #KNEAD_TENSE_RESIST}); tension builds
+     * {@link #KNEAD_TENSION} by the square of the press (more with fibre {@link #KNEAD_FIBRE_TENSION}, less with fat
+     * {@link #KNEAD_FAT_TENSION}) and rests away {@link #KNEAD_REST} by the slack of the press (slower with fibre
+     * {@link #KNEAD_FIBRE_REST}). Tension past the tear limit ({@link #KNEAD_TEAR} scaled by {@link #KNEAD_TEAR_DRY} to
+     * {@link #KNEAD_TEAR_WET} with moisture, so dry dough tears sooner) piles up overwork; {@link #KNEAD_TOUGH_OVER} of it is
+     * tough. Otherwise gluten under {@link #KNEAD_GOOD_AT} is crumbly, over {@link #KNEAD_GLOSSY_AT} with the dough rested
+     * back under {@link #KNEAD_RELAXED} is glossy, else good. The baked loaf's hunger and saturation scale by class; dough
+     * nobody kneaded bakes at {@link FTuning#KNEAD_UNKNEADED_SCALE}, the unskilled floor.
+     */
+    public static final int KNEAD_STEP_TICKS = 2, KNEAD_MAX_SAMPLES = 300, KNEAD_MIN_SAMPLES = 10;
+
+    public static final float KNEAD_GLUTEN = 0.02f, KNEAD_STICKY = 0.8f, KNEAD_FAT_GLUTEN = 0.5f, KNEAD_TENSE_RESIST = 0.6f;
+
+    public static final float KNEAD_TENSION = 0.024f, KNEAD_FIBRE_TENSION = 1.0f, KNEAD_FAT_TENSION = 0.5f;
+
+    public static final float KNEAD_REST = 0.03f, KNEAD_FIBRE_REST = 0.8f;
+
+    public static final float KNEAD_TEAR = 1.0f, KNEAD_TEAR_DRY = 0.6f, KNEAD_TEAR_WET = 1.4f, KNEAD_TOUGH_OVER = 0.5f;
+
+    public static final float KNEAD_GOOD_AT = 0.5f, KNEAD_GLOSSY_AT = 0.85f, KNEAD_RELAXED = 0.35f;
+
+    /** Invented. The share of the samples' ticks the server insists have passed (the rest is allowance for a lagging server), so a knead cannot be sent faster than it could be played. */
+    public static final float KNEAD_TIME_SHARE = 0.8f;
+
+    /**
+     * Invented. Shingling, the hand version of hammering a bloom into iron (docs/dev/modular.md, Shingling): a billet is a unit square
+     * holding a few slag pockets per slag grade; one blow shifts a pocket by its landed force over the slag's viscosity, no further than
+     * the footprint. A bloom is done when at most this share of its pockets is left; a heavy blow splits a bloom whose delivered work
+     * per blow tops its density times the split figure, and each split loses a ninth of the metal.
+     */
+    public static final int SHINGLE_POCKETS_BASE = 3, SHINGLE_POCKETS_PER_SLAG = 3;
+
+    public static final float SHINGLE_DONE_SHARE = 0.2f, SHINGLE_FOOTPRINT = 0.22f, SHINGLE_PUSH = 0.05f, SHINGLE_SPLIT_PER_DENSITY = 1.1f;
+
+    /** Invented. Ticks a session may run past its slag's cool-down, and the longest one (a hearth holds the heat; this is the cap). */
+    public static final int SHINGLE_MAX_TICKS = 600;
+
+    /** Invented. Tu above the slag's melting point over which the pockets run at full speed; closer to it they creep. */
+    public static final float SHINGLE_FLUID_RANGE_TU = 150f;
+
+    /** Invented. Pockets leaked for each bloomery slag dropped. */
+    public static final int SHINGLE_LEAK_PER_SLAG = 3;
+
+    /** Invented. A bloom held above this Tu scales away: this many ticks of it in one session burn it to burnt iron. */
+    public static final float SHINGLE_SCALE_TU = 1400f;
+
+    public static final int SHINGLE_BURN_TICKS = 120;
+
+    /** Invented. Each unfinished return costs this many sixteenths (nuggets) of the iron to scale; nine of them burn the bloom. */
+    public static final int SHINGLE_SCALE_LIMIT = 9;
+
+    /** Rounds in a burst. */
+    public static final int GUN_BURST_ROUNDS = 3;
+
+    /**
+     * Placeholder. Hot-dip overrun: a coat total past {@link MachineTuning#PLATING_SPALLS_ABOVE_QU} is dwell the part should not have had.
+     * Each this many Qu of overrun leaves the wear part one more forging flaw (a brittle intermetallic layer); past
+     * {@link #HOT_DIP_DISSOLVE_ABOVE_QU} of overrun every further dip also eats {@link #HOT_DIP_DISSOLVE_WORK} of the part's
+     * thickness (the {@code work} dimension, so it thins and lightens as an over-hammered part does) until it reaches
+     * {@link #HOT_DIP_SCRAP_WORK} and is scrap.
+     */
+    public static final float HOT_DIP_FLAW_PER_QU = 0.5f;
+
+    public static final float HOT_DIP_DISSOLVE_ABOVE_QU = 1.5f;
+
+    public static final float HOT_DIP_DISSOLVE_WORK = 0.4f;
+
+    public static final float HOT_DIP_SCRAP_WORK = 3f;
+
+    /**
+     * Placeholder. Wall area of the three frames, in blocks of housing: how much of a housing's conductivity each can shed
+     * through. A frame's heat grows with its throughput, so its area grows with it.
+     */
+    public static final float FRAME_AREA_SMALL = 1f, FRAME_AREA_MEDIUM = 5f, FRAME_AREA_LARGE = 12f;
+
+    /**
+     * Placeholder. Conductance of the housing to air, Work/tick per Tu, per block of wall area per unit of the housing
+     * material's {@code thermal.conductivity} (iron 0.02): a finned large iron frame sheds 10 Work a tick per Tu.
+     */
+    public static final float MACHINE_SHED_PER_CONDUCTIVITY = 42f;
+
+    /** Placeholder. Length of conductor, in blocks of cable (the unit of a material's {@code electrical.drop}), per cell of wire in a winding: its loss is amps squared x drop x this. */
+    public static final float WINDING_BLOCKS_PER_CELL = 0.5f;
+
+    /** Placeholder. The speed a machine's rated band is judged at: volts per RPM x this is the voltage it is built for. */
+    public static final float MACHINE_REFERENCE_RPM = 240f;
+
+    /** Invented. The share of a glove's exposure that is left when an insulating lining sits against the hand (a gauntlet's lining role). */
+    public static final float GLOVE_LINING_SHARE = 0.5f;
+
+    /**
+     * Invented. A shield as a thermal sink. A point of blocked damage
+     * is this much Work ({@code SHIELD_WORK_PER_DAMAGE}); this share of it stays in the face
+     * ({@code SHIELD_HEAT_FRACTION}); the face's thermal mass is its baked mass times
+     * {@code SHIELD_THERMAL_MASS_PER_MU} (the gun's figure, for the same lack of a specific heat);
+     * it sheds {@code SHIELD_COOLING_WORK_PER_TICK} of Work a tick over that mass, so a heavy face
+     * cools slowly. Tuned so a six-point blow warms a steel-faced shield a couple of Tu and a thin
+     * wooden one ten times that.
+     */
+    public static final float SHIELD_WORK_PER_DAMAGE = 40f, SHIELD_HEAT_FRACTION = 0.5f,
+            SHIELD_THERMAL_MASS_PER_MU = 12f, SHIELD_COOLING_WORK_PER_TICK = 9f;
+
+    /**
+     * Invented. Capacity holds in full up to this share of the way from the room to the face's
+     * softening point, falls linearly to {@code SHIELD_SOFTEN_FLOOR} of itself at it, and past it a
+     * blow wears the shield {@code SHIELD_HOT_WEAR_MULT} times as hard.
+     */
+    public static final float SHIELD_SOFTEN_ONSET = 0.5f, SHIELD_SOFTEN_FLOOR = 0.25f, SHIELD_HOT_WEAR_MULT = 2f;
+
+    /** Invented. Ticks a fire's contact draws a face towards its temperature per blow or fire tick (fire damage lands about every 10). */
+    public static final int SHIELD_FIRE_TICKS = 10;
+
+    /** Invented. The share of a shield face's excess over the room the hand feels through its strap ({@link FTuning#GLOVE_EXPOSURE}'s way of saying it). */
+    public static final float SHIELD_GRIP_EXPOSURE = 0.25f;
+
+    /**
+     * Invented. An insulating glove stops a shock up to this many volts and no further: HV's
+     * reference. Past it the glove is a thing that holds a charge, not one that stops it.
+     */
+    public static final float GLOVE_SHOCK_PROOF_VOLTS = ElectricTuning.ELECTRIC_HV_VOLTS;
+
+    /** Placeholder. Wither ticks a radiant strike gives per level, and glow ticks. */
+    public static final int RADIANT_WITHER_TICKS_PER_LEVEL = 60, RADIANT_GLOW_TICKS = 100;
 }

@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.item.BeltItem;
 import io.github.soundgoodizerfan.feedback.item.CalipersItem;
 import io.github.soundgoodizerfan.feedback.item.CurrentSensorItem;

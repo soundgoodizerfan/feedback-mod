@@ -5,7 +5,6 @@ package io.github.soundgoodizerfan.feedback.core.hazard;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
@@ -28,7 +27,7 @@ import net.minecraft.world.phys.AABB;
  * What a body takes from the stuff around it. The dose rate at a player is every
  * radioactive thing's figure ({@code radioactivity} in its material file, for one ingot's volume)
  * added up: what the player carries counts in full, a block or a dropped item within
- * {@link FTuning#RAD_REACH_BLOCKS} counts for {@code 1 / (1 + d^2)}. Armour then shields by how
+ * {@link HazardTuning#RAD_REACH_BLOCKS} counts for {@code 1 / (1 + d^2)}. Armour then shields by how
  * dense it is, read off the material and never its name -- so lead does well, iron nearly as well,
  * and a uranium helmet is its own problem.
  * <p>
@@ -79,7 +78,7 @@ public final class Radiation {
                     each += m.radioactivity().map(ru -> ru.value() * part.count() * FormItems.volume(part.form()) / 144f).orElse(0f);
             }
         if (Boolean.TRUE.equals(stack.get(FDataComponents.CONTAMINATED.get())))
-            each += FTuning.CONTAMINATED_DROP_RU;
+            each += HazardTuning.CONTAMINATED_DROP_RU;
         return each * stack.getCount();
     }
 
@@ -108,7 +107,7 @@ public final class Radiation {
 
     /** What a container lined with {@code lining} lets out, 0 to 1. */
     public static float containerShield(Material lining) {
-        return 1f / (1f + FTuning.RAD_CONTAINER_GAIN * lining.density().muPerMb() / 10f);
+        return 1f / (1f + HazardTuning.RAD_CONTAINER_GAIN * lining.density().muPerMb() / 10f);
     }
 
     /** What the blocks strictly between two cells let through, 0 to 1: each is worth its material's density, none for air or a block that is no material. */
@@ -124,7 +123,7 @@ public final class Radiation {
             if (!state.isAir())
                 thickness += density.getOrDefault(state.getBlock().asItem(), 0f);
         }
-        return 1f / (1f + FTuning.RAD_WALL_GAIN * thickness / 10f);
+        return 1f / (1f + HazardTuning.RAD_WALL_GAIN * thickness / 10f);
     }
 
     /**
@@ -145,7 +144,7 @@ public final class Radiation {
         if (table.isEmpty())
             return total;
         Map<Item, Float> density = densities(materials);
-        int r = FTuning.RAD_REACH_BLOCKS;
+        int r = HazardTuning.RAD_REACH_BLOCKS;
         BlockPos centre = player.blockPosition();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int dx = -r; dx <= r; dx++)
@@ -189,6 +188,6 @@ public final class Radiation {
             if (!worn.isEmpty())
                 density += Material.find(materials, worn).map(l -> l.material().density().muPerMb()).orElse(0f);
         }
-        return 1f / (1f + FTuning.RAD_SHIELD_GAIN * density / 4f / 10f);
+        return 1f / (1f + HazardTuning.RAD_SHIELD_GAIN * density / 4f / 10f);
     }
 }

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.control.program;
 
+import io.github.soundgoodizerfan.feedback.control.ControlTuning;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 /**
  * What a Controller with a given set of fitted upgrades can run: the card cap (Card Racks), the
@@ -18,11 +18,11 @@ public record ControllerLimits(int nodes, int variables, boolean typedDelays) {
     public static final ControllerLimits BASE = of(0, 0, false);
 
     /** A Controller with every upgrade fitted: the ceiling no card can pass. */
-    public static final ControllerLimits MAX = of(FTuning.MEMORY_DRUM_MAX, FTuning.CARD_RACK_MAX, true);
+    public static final ControllerLimits MAX = of(ControlTuning.MEMORY_DRUM_MAX, ControlTuning.CARD_RACK_MAX, true);
 
     public static ControllerLimits of(int drums, int racks, boolean escapement) {
-        return new ControllerLimits(FTuning.CONTROLLER_MAX_NODES + racks * FTuning.CARD_RACK_NODES,
-                FTuning.CONTROLLER_BASE_VARIABLES + drums * FTuning.MEMORY_DRUM_VARIABLES, escapement);
+        return new ControllerLimits(ControlTuning.CONTROLLER_MAX_NODES + racks * ControlTuning.CARD_RACK_NODES,
+                ControlTuning.CONTROLLER_BASE_VARIABLES + drums * ControlTuning.MEMORY_DRUM_VARIABLES, escapement);
     }
 
     /** Why {@code graph} does not fit these limits (a {@code feedback.programmer.error} key), or empty. */
@@ -38,11 +38,11 @@ public record ControllerLimits(int nodes, int variables, boolean typedDelays) {
 
     /** Fewest Card Racks a Controller needs to hold {@code graph}'s cards. */
     public static int racksNeeded(ProgramGraph graph) {
-        return Math.max(0, Math.ceilDiv(graph.nodes().size() - FTuning.CONTROLLER_MAX_NODES, FTuning.CARD_RACK_NODES));
+        return Math.max(0, Math.ceilDiv(graph.nodes().size() - ControlTuning.CONTROLLER_MAX_NODES, ControlTuning.CARD_RACK_NODES));
     }
 
     /** Fewest Memory Drums a Controller needs to hold {@code graph}'s variables. */
     public static int drumsNeeded(ProgramGraph graph) {
-        return Math.max(0, Math.ceilDiv(graph.variables().size() - FTuning.CONTROLLER_BASE_VARIABLES, FTuning.MEMORY_DRUM_VARIABLES));
+        return Math.max(0, Math.ceilDiv(graph.variables().size() - ControlTuning.CONTROLLER_BASE_VARIABLES, ControlTuning.MEMORY_DRUM_VARIABLES));
     }
 }

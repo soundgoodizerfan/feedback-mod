@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.condenser;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.Catchup;
 import io.github.soundgoodizerfan.feedback.core.thermal.FireSpan;
@@ -32,9 +34,9 @@ import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
  * back into this block's own body.
  *
  * <h2>Why it has a temperature at all</h2>
- * Condensing gives up exactly the {@link FTuning#BOILER_WORK_PER_MB_STEAM} the boiler paid, so
+ * Condensing gives up exactly the {@link PetrochemTuning#BOILER_WORK_PER_MB_STEAM} the boiler paid, so
  * every mB condensed warms this {@link ThermalBody}, and it condenses only while it is below
- * {@link FTuning#BOILER_WORKING_TU} -- a condenser at boiling point condenses nothing. Left to its
+ * {@link MachineTuning#BOILER_WORKING_TU} -- a condenser at boiling point condenses nothing. Left to its
  * own leak it settles at a trickle. Anything that takes heat out of a {@code ThermalBody} speeds it
  * up, and nothing here names one: a Heat Exchanger against a cold body works, and a Heat Exchanger
  * against the <em>boiler</em> hands the heat back to where it came from. Nobody wrote that loop.
@@ -46,13 +48,13 @@ import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 public class CondenserBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.core.thermal.HeatedTanks, ThermalBody,
         io.github.soundgoodizerfan.feedback.core.multiblock.Part {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
 
-    private final HeatedTank steamTank = new HeatedTank(FTuning.CONDENSER_TANK_MB,
+    private final HeatedTank steamTank = new HeatedTank(PetrochemTuning.CONDENSER_TANK_MB,
             stack -> stack.is(FTags.STEAM) || ThermalProcessTable.get().condensing(stack).isPresent(), this::setChanged);
-    private final HeatedTank waterTank = new HeatedTank(FTuning.CONDENSER_TANK_MB, this::setChanged);
+    private final HeatedTank waterTank = new HeatedTank(PetrochemTuning.CONDENSER_TANK_MB, this::setChanged);
 
     public CondenserBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CONDENSER.get(), pos, state);
@@ -83,12 +85,12 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.CONDENSER_MASS;
+        return PetrochemTuning.CONDENSER_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.CONDENSER_LEAK;
+        return PetrochemTuning.CONDENSER_LEAK;
     }
 
     public void tickServer() {
@@ -116,8 +118,8 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
             return;
         // Only the room left below boiling can take latent heat, and taking it spends that room.
         float boil = change.get().boil().value();
-        int affordable = (int) ((boil - temperature) * FTuning.CONDENSER_MASS.workPerTu() / change.get().latent());
-        int amount = Math.min(Math.min(FTuning.CONDENSER_MB_PER_TICK, affordable),
+        int affordable = (int) ((boil - temperature) * PetrochemTuning.CONDENSER_MASS.workPerTu() / change.get().latent());
+        int amount = Math.min(Math.min(PetrochemTuning.CONDENSER_MB_PER_TICK, affordable),
                 Math.min(steamTank.getFluidAmount(), waterTank.getSpace()));
         if (amount <= 0)
             return;
@@ -244,7 +246,7 @@ public class CondenserBlockEntity extends BlockEntity implements io.github.sound
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
         steamTank.readFromNBT(registries, tag.getCompound("SteamTank"));
         waterTank.readFromNBT(registries, tag.getCompound("WaterTank"));
         offline.load(tag);

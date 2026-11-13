@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.tube;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.tube.TubeTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
@@ -12,7 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * An electric sink asking {@link FTuning#LINEAR_MOTOR_AMPS} at MV. {@link #powered} is true while the
+ * An electric sink asking {@link TubeTuning#LINEAR_MOTOR_AMPS} at MV. {@link #powered} is true while the
  * run feeds it at least half of what it wants; tube blocks beside it read that when they time a hop.
  * Only a capsule with a magnetic plate answers to it (the same property again, spec 6.1).
  */
@@ -35,7 +35,7 @@ public class LinearMotorBlockEntity extends ElectricNode {
 
     @Override
     public float wantedAmps() {
-        return FTuning.LINEAR_MOTOR_AMPS;
+        return TubeTuning.LINEAR_MOTOR_AMPS;
     }
 
     @Override

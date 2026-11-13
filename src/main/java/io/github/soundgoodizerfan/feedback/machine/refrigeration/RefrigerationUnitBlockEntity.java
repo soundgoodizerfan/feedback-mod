@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.refrigeration;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -40,10 +42,10 @@ import net.minecraft.world.phys.AABB;
  */
 public class RefrigerationUnitBlockEntity extends ElectricNode implements ThermalBody {
 
-    private float temperature = FTuning.AMBIENT_TU.value();
+    private float temperature = ThermalTuning.AMBIENT_TU.value();
     private boolean running;
-    private float roomTu = FTuning.AMBIENT_TU.value();
-    private float needAmps = FTuning.REFRIGERATION_AMPS;
+    private float roomTu = ThermalTuning.AMBIENT_TU.value();
+    private float needAmps = PetrochemTuning.REFRIGERATION_AMPS;
     private ColdRoom.Scan scan;
     private long nextFill;
 
@@ -73,7 +75,7 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
             return;
         running = ElectricRules.rate(volts, amps, wanted, ratedBand()) > 0f;
         Tu ambient = AmbientTable.at(level);
-        Heat.tick(this, running ? FTuning.REFRIGERATION_HOT_TU : ambient, ambient, running);
+        Heat.tick(this, running ? PetrochemTuning.REFRIGERATION_HOT_TU : ambient, ambient, running);
         setChanged();
     }
 
@@ -94,7 +96,7 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
         room();
         // Last, so a box against the unit holds the pump's own set point, not the room's slower drift.
         if (running) {
-            Tu own = staged() ? FTuning.REFRIGERATION_FROZEN_TU : FTuning.ICEBOX_COLD_TU;
+            Tu own = staged() ? PetrochemTuning.REFRIGERATION_FROZEN_TU : MachineTuning.ICEBOX_COLD_TU;
             for (Direction side : Direction.values())
                 if (level.getBlockEntity(worldPosition.relative(side)) instanceof Refrigerable box)
                     box.holdCold(own);
@@ -106,11 +108,11 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
         float outside = AmbientTable.at(level).value();
         if (scan == null || now >= nextFill) {
             scan = ColdRoom.scan(level, worldPosition);
-            nextFill = now + FTuning.ROOM_FILL_TICKS + Math.floorMod(worldPosition.hashCode(), 20);
+            nextFill = now + PetrochemTuning.ROOM_FILL_TICKS + Math.floorMod(worldPosition.hashCode(), 20);
         }
         if (scan.volume() == 0) {
             roomTu = outside;
-            needAmps = FTuning.REFRIGERATION_AMPS;
+            needAmps = PetrochemTuning.REFRIGERATION_AMPS;
             return;
         }
         int pumping = running ? 1 : 0;
@@ -120,14 +122,14 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
                 pumping += u.running ? 1 : 0;
                 frozen |= u.staged();
             }
-        float set = (frozen ? FTuning.REFRIGERATION_FROZEN_TU : FTuning.ICEBOX_COLD_TU).value();
+        float set = (frozen ? PetrochemTuning.REFRIGERATION_FROZEN_TU : MachineTuning.ICEBOX_COLD_TU).value();
         float leak = Math.max(1e-6f, scan.leak());
         // A pump moves heat out, so it never warms a room that is already colder than its set point.
-        float target = pumping > 0 ? Math.min(outside, Math.max(set, outside - pumping * FTuning.ROOM_PULL / leak)) : outside;
-        roomTu += (target - roomTu) * FTuning.ROOM_DRIFT_PER_SECOND / (1f + scan.volume() / FTuning.ROOM_VOLUME_REF);
+        float target = pumping > 0 ? Math.min(outside, Math.max(set, outside - pumping * PetrochemTuning.ROOM_PULL / leak)) : outside;
+        roomTu += (target - roomTu) * PetrochemTuning.ROOM_DRIFT_PER_SECOND / (1f + scan.volume() / PetrochemTuning.ROOM_VOLUME_REF);
         // The draw follows the leak: what holding the room at its set point asks, shared among the units on it.
-        float share = leak * Math.max(0f, outside - set) / ((1 + scan.units().size()) * FTuning.ROOM_PULL);
-        needAmps = Math.min(FTuning.REFRIGERATION_AMPS * 4f, Math.max(FTuning.REFRIGERATION_AMPS * 0.25f, FTuning.REFRIGERATION_AMPS * share));
+        float share = leak * Math.max(0f, outside - set) / ((1 + scan.units().size()) * PetrochemTuning.ROOM_PULL);
+        needAmps = Math.min(PetrochemTuning.REFRIGERATION_AMPS * 4f, Math.max(PetrochemTuning.REFRIGERATION_AMPS * 0.25f, PetrochemTuning.REFRIGERATION_AMPS * share));
         if (Math.abs(roomTu - outside) < 0.5f)
             return;
         if (pumping > 0)
@@ -179,12 +181,12 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
 
     @Override
     public ThermalMass getThermalMass() {
-        return FTuning.REFRIGERATION_MASS;
+        return PetrochemTuning.REFRIGERATION_MASS;
     }
 
     @Override
     public Conductance getLeak() {
-        return FTuning.REFRIGERATION_LEAK;
+        return PetrochemTuning.REFRIGERATION_LEAK;
     }
 
     @Override
@@ -197,7 +199,7 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
-        roomTu = tag.contains("RoomTu") ? tag.getFloat("RoomTu") : FTuning.AMBIENT_TU.value();
+        temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : ThermalTuning.AMBIENT_TU.value();
+        roomTu = tag.contains("RoomTu") ? tag.getFloat("RoomTu") : ThermalTuning.AMBIENT_TU.value();
     }
 }

@@ -2,13 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.potion;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.List;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -61,7 +61,7 @@ public record PotionState(Optional<ResourceLocation> effect, int amplifier, int 
         long now = level.getGameTime();
         if (stamp <= 0L || now <= stamp)
             return potency;
-        float ambient = FTuning.AMBIENT_TU.value();
+        float ambient = ThermalTuning.AMBIENT_TU.value();
         float heat = Mth.clamp((envTu + AmbientTable.at(level).value()) * 0.5f / ambient, 0f, 3f);
         return potency * (float) Math.pow(0.5, (now - stamp) * heat / PotionTuning.HALF_LIFE_TICKS);
     }

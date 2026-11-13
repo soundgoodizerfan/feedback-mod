@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.creeper;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.column.PetrochemTuning;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 
 import net.minecraft.core.BlockPos;
@@ -22,15 +22,15 @@ public final class CreeperBlast {
     private CreeperBlast() {
     }
 
-    /** Explosion power of {@code units} of charge. Under {@link FTuning#CREEPER_POWER_MIN} it only smokes. */
+    /** Explosion power of {@code units} of charge. Under {@link PetrochemTuning#CREEPER_POWER_MIN} it only smokes. */
     public static float power(float units) {
-        return Math.min(FTuning.CREEPER_POWER_MAX, FTuning.CREEPER_POWER_PER_SQRT * (float) Math.sqrt(Math.max(0f, units)));
+        return Math.min(PetrochemTuning.CREEPER_POWER_MAX, PetrochemTuning.CREEPER_POWER_PER_SQRT * (float) Math.sqrt(Math.max(0f, units)));
     }
 
     /** Blow {@code units} of charge up at {@code at}; {@code charged} adds the electrical discharge. */
     public static void explode(ServerLevel level, Vec3 at, float units, boolean charged) {
         float power = power(units);
-        if (power < FTuning.CREEPER_POWER_MIN) {
+        if (power < PetrochemTuning.CREEPER_POWER_MIN) {
             level.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, at.x, at.y, at.z, 12, 0.3, 0.3, 0.3, 0.02);
             return;
         }
@@ -38,7 +38,7 @@ public final class CreeperBlast {
         if (charged) {
             double r = power * 2;
             for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(at.x - r, at.y - r, at.z - r, at.x + r, at.y + r, at.z + r)))
-                Shock.apply(e, FTuning.CREEPER_DISCHARGE_VOLTS);
+                Shock.apply(e, PetrochemTuning.CREEPER_DISCHARGE_VOLTS);
         }
     }
 

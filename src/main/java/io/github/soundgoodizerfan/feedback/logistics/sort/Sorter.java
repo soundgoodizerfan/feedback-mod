@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.logistics.sort;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -59,12 +59,12 @@ public final class Sorter {
             case DENSITY -> t = cutDistance(r.density(), margin, LogisticsTuning.DENSITY_LIGHT_BELOW, LogisticsTuning.DENSITY_HEAVY_FROM);
             case HARDNESS -> t = cutDistance(r.hardness(), margin, LogisticsTuning.HARDNESS_SOFT_BELOW, LogisticsTuning.HARDNESS_HARD_FROM);
             case FRICTION -> t = cutDistance(r.friction(), margin, LogisticsTuning.FRICTION_SLICK_BELOW, LogisticsTuning.FRICTION_GRIPPY_FROM);
-            case TEMPERATURE -> t = cutDistance(r.temperature(), margin, FTuning.WARM_TU.value(), LogisticsTuning.TEMP_HOT_FROM);
+            case TEMPERATURE -> t = cutDistance(r.temperature(), margin, ThermalTuning.WARM_TU.value(), LogisticsTuning.TEMP_HOT_FROM);
             case SIZE -> t = cutDistance(r.mass(), margin, LogisticsTuning.SIZE_SMALL_BELOW, LogisticsTuning.SIZE_LARGE_FROM);
             case KIND -> t = 1f; // a material's kind is not a measurement
         }
         boolean in = SortReader.bandOf(seen, p) == band;
-        if (p == SortProperty.MAGNETIC && d == Detector.MAGNET && r.temperature() > FTuning.WARM_TU.value())
+        if (p == SortProperty.MAGNETIC && d == Detector.MAGNET && r.temperature() > ThermalTuning.WARM_TU.value())
             t = Math.min(t, 1f); // a warm permanent magnet is no worse; its own Curie weakness is the warm-up margin
         if (t < 1f && roll(seed) < LogisticsTuning.NOISE_PEAK * (1f - t) * noise)
             in = !in;

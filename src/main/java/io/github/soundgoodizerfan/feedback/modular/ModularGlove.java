@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
-import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.hazard.Grip;
 import io.github.soundgoodizerfan.feedback.core.hazard.Insulator;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
@@ -118,7 +118,7 @@ public class ModularGlove extends ModularItem implements Insulator {
         ResourceLocation lining = material(stack, "L");
         if (lining == null || Grip.material(level, lining).filter(Grip::insulates).isEmpty())
             return alone;
-        return Math.max(alone, Grip.safeUpTo(level, lining, FTuning.GLOVE_EXPOSURE * FTuning.GLOVE_LINING_SHARE));
+        return Math.max(alone, Grip.safeUpTo(level, lining, FTuning.GLOVE_EXPOSURE * ModularTuning.GLOVE_LINING_SHARE));
     }
 
     /** Either layer stops a wire: the lining between the hand and the body counts as much as a cloth body. */
@@ -130,6 +130,6 @@ public class ModularGlove extends ModularItem implements Insulator {
         ResourceLocation lining = material(stack, "L");
         boolean insulates = Grip.material(level, body).filter(Grip::insulates).isPresent()
                 || lining != null && Grip.material(level, lining).filter(Grip::insulates).isPresent();
-        return insulates ? FTuning.GLOVE_SHOCK_PROOF_VOLTS : 0f;
+        return insulates ? ModularTuning.GLOVE_SHOCK_PROOF_VOLTS : 0f;
     }
 }

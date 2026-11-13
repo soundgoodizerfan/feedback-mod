@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.FoodCut;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
@@ -43,8 +43,8 @@ public final class PrepWork {
             last = to;
         }
         float cv = (float) Math.sqrt(spread / (n + 1)) / mean;
-        int level = n >= FTuning.CUT_MINCED_MARKS ? 2 : 1;
-        return new FoodCut(level, cv < FTuning.CUT_EVEN_CV ? FoodCut.EVEN : cv < FTuning.CUT_MIXED_CV ? FoodCut.MIXED : FoodCut.RAGGED);
+        int level = n >= ModularTuning.CUT_MINCED_MARKS ? 2 : 1;
+        return new FoodCut(level, cv < ModularTuning.CUT_EVEN_CV ? FoodCut.EVEN : cv < ModularTuning.CUT_MIXED_CV ? FoodCut.MIXED : FoodCut.RAGGED);
     }
 
     /**
@@ -78,21 +78,21 @@ public final class PrepWork {
 
     /** As {@link #land(int, Material.Food)} with the blade's {@link Edge}: a keen narrow blade skids less on fat, a long slicer follows the grain less. */
     public static int land(int clicked, Material.Food food, Edge edge) {
-        int grain = Math.round((float) clicked / FTuning.CUT_GRAIN) * FTuning.CUT_GRAIN;
-        float pull = Mth.clamp(food.fibre() * FTuning.CUT_GRAIN_PULL * edge.grain(), 0f, 0.9f);
-        float at = clicked + (grain - clicked) * pull + food.fat() * FTuning.CUT_FAT_SLIDE * edge.slide();
+        int grain = Math.round((float) clicked / ModularTuning.CUT_GRAIN) * ModularTuning.CUT_GRAIN;
+        float pull = Mth.clamp(food.fibre() * ModularTuning.CUT_GRAIN_PULL * edge.grain(), 0f, 0.9f);
+        float at = clicked + (grain - clicked) * pull + food.fat() * ModularTuning.CUT_FAT_SLIDE * edge.slide();
         return Mth.clamp(Math.round(at), 0, LINE);
     }
 
     /** Whether submitted marks are something the screen could have made. */
     public static boolean valid(List<Integer> marks) {
-        return marks.size() <= FTuning.CUT_MAX_MARKS && marks.stream().allMatch(m -> m >= 0 && m <= LINE);
+        return marks.size() <= ModularTuning.CUT_MAX_MARKS && marks.stream().allMatch(m -> m >= 0 && m <= LINE);
     }
 
     /** Units a pour of this viscosity (water 1; none given reads as water) puts in the vessel each tick. */
     public static float flow(Optional<Float> viscosity) {
         float v = Math.max(1f, viscosity.orElse(1f));
-        return FTuning.POUR_FLOW / (1f + FTuning.POUR_DRAG * (float) Math.log10(v));
+        return ModularTuning.POUR_FLOW / (1f + ModularTuning.POUR_DRAG * (float) Math.log10(v));
     }
 
     public static float flow(Material material) {
@@ -101,12 +101,12 @@ public final class PrepWork {
 
     /** Units in the vessel after {@code held} ticks of pouring. */
     public static float poured(int held, float flow) {
-        return Math.min(held, FTuning.POUR_MAX_TICKS) * flow;
+        return Math.min(held, ModularTuning.POUR_MAX_TICKS) * flow;
     }
 
     /** Poured over the line, kept inside the floor and ceiling: what multiplies the finish's compounds. */
     public static float strength(float poured) {
-        return Mth.clamp(poured / FTuning.POUR_TARGET, FTuning.POUR_MIN, FTuning.POUR_MAX);
+        return Mth.clamp(poured / ModularTuning.POUR_TARGET, ModularTuning.POUR_MIN, ModularTuning.POUR_MAX);
     }
 
     /** How a finish goes on, by what it is: runs (viscosity) is poured, whole pieces (vegetal) are placed, dry powder is shaken. */
@@ -120,12 +120,12 @@ public final class PrepWork {
 
     /** The strength of a shake of {@code strokes} sweeps. */
     public static float shaken(int strokes) {
-        return strength(Math.min(strokes, FTuning.SHAKE_MAX_STROKES) * (float) FTuning.SHAKE_UNITS);
+        return strength(Math.min(strokes, ModularTuning.SHAKE_MAX_STROKES) * (float) ModularTuning.SHAKE_UNITS);
     }
 
     /** Whether submitted placements are something the screen could have made. */
     public static boolean validPlaced(List<Integer> marks) {
-        return marks.size() <= FTuning.PLACE_MAX && marks.stream().allMatch(m -> m >= 0 && m <= LINE);
+        return marks.size() <= ModularTuning.PLACE_MAX && marks.stream().allMatch(m -> m >= 0 && m <= LINE);
     }
 
     /** The strength of pieces laid at {@code marks}: how many, discounted by how unevenly they lie. */
@@ -135,13 +135,13 @@ public final class PrepWork {
             return 0f;
         int[] at = marks.stream().mapToInt(Integer::intValue).toArray();
         int grade = cut(at, n).grade();
-        float share = grade == FoodCut.EVEN ? 1f : grade == FoodCut.MIXED ? FTuning.PLACE_MIXED_SHARE : FTuning.PLACE_RAGGED_SHARE;
-        return Mth.clamp(n * share / FTuning.PLACE_TARGET, FTuning.POUR_MIN, FTuning.POUR_MAX);
+        float share = grade == FoodCut.EVEN ? 1f : grade == FoodCut.MIXED ? ModularTuning.PLACE_MIXED_SHARE : ModularTuning.PLACE_RAGGED_SHARE;
+        return Mth.clamp(n * share / ModularTuning.PLACE_TARGET, ModularTuning.POUR_MIN, ModularTuning.POUR_MAX);
     }
 
     /** The class a strength falls in: clean or shaky near the line, else heavy or light by which side. */
     public static int pourClass(float strength) {
         float off = Math.abs(strength - 1f);
-        return off <= FTuning.POUR_CLEAN ? CLEAN : off <= FTuning.POUR_SHAKY ? SHAKY : strength > 1f ? HEAVY : LIGHT;
+        return off <= FTuning.POUR_CLEAN ? CLEAN : off <= ModularTuning.POUR_SHAKY ? SHAKY : strength > 1f ? HEAVY : LIGHT;
     }
 }

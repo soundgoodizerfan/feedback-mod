@@ -2,13 +2,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.registry;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
+import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.control.bimetallic.BimetallicStripBlock;
 import io.github.soundgoodizerfan.feedback.control.controller.ControllerBlock;
 import io.github.soundgoodizerfan.feedback.control.controller.CreativeControllerBlock;
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerBlock;
 import io.github.soundgoodizerfan.feedback.control.timer.TimerBlock;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.machine.bellows.BellowsBlock;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlock;
 import io.github.soundgoodizerfan.feedback.machine.cell.GalvanicCellBlock;
@@ -96,7 +99,7 @@ public class FBlocks {
                     .strength(2.5f)
                     .sound(SoundType.METAL)
                     .noOcclusion(),
-                    FTuning.BEARING_DRAG_SU_PER_RPM, FTuning.SHAFT_INERTIA));
+                    MachineTuning.BEARING_DRAG_SU_PER_RPM, RotationTuning.SHAFT_INERTIA));
 
     /** A shaft with a heavy rim: inertia, and the drag of carrying it. See {@code FlywheelBlock}. */
     public static final DeferredBlock<FlywheelBlock> FLYWHEEL = BLOCKS.register("flywheel",
@@ -117,7 +120,7 @@ public class FBlocks {
                     .sound(SoundType.WOOD)
                     .noOcclusion(),
                     CogBlock.SMALL, 8, 4,
-                    FTuning.SMALL_COG_DRAG_SU_PER_RPM, FTuning.SMALL_COG_INERTIA));
+                    MachineTuning.SMALL_COG_DRAG_SU_PER_RPM, MachineTuning.SMALL_COG_INERTIA));
 
     public static final DeferredBlock<CogBlock> LARGE_COG = BLOCKS.register("large_cog",
             () -> new CogBlock(BlockBehaviour.Properties.of()
@@ -127,7 +130,7 @@ public class FBlocks {
                     .noOcclusion(),
                     // Outline clamped to the block; the model draws the disc wider.
                     CogBlock.LARGE, 8, 4,
-                    FTuning.LARGE_COG_DRAG_SU_PER_RPM, FTuning.LARGE_COG_INERTIA));
+                    MachineTuning.LARGE_COG_DRAG_SU_PER_RPM, MachineTuning.LARGE_COG_INERTIA));
 
     public static final DeferredBlock<GearboxBlock> GEARBOX = BLOCKS.register("gearbox",
             () -> new GearboxBlock(BlockBehaviour.Properties.of()
@@ -493,7 +496,7 @@ public class FBlocks {
      * Everything the slice claims about the pair -- that the small one is twitchy and the large
      * one stubborn, that only the large one can satisfy carburizing's heating-rate limit, that a
      * twenty-tick-old reading is actionable on one and useless on the other -- falls out of that
-     * single number. See {@link io.github.soundgoodizerfan.feedback.core.FTuning#CRUCIBLE_SMALL_MASS}.
+     * single number. See {@link io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning#CRUCIBLE_SMALL_MASS}.
      */
     public static final DeferredBlock<CrucibleBlock> SMALL_CRUCIBLE = BLOCKS.register("small_crucible",
             () -> new CrucibleBlock(BlockBehaviour.Properties.of()
@@ -501,7 +504,7 @@ public class FBlocks {
                     .strength(3.5f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
-                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.CRUCIBLE_SMALL_MASS));
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), VesselTuning.CRUCIBLE_SMALL_MASS));
 
     public static final DeferredBlock<CrucibleBlock> LARGE_CRUCIBLE = BLOCKS.register("large_crucible",
             () -> new CrucibleBlock(BlockBehaviour.Properties.of()
@@ -509,8 +512,8 @@ public class FBlocks {
                     .strength(3.5f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
-                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.CRUCIBLE_LARGE_MASS,
-                    FTuning.CRUCIBLE_LARGE_SLOTS, FTuning.VESSEL_TANK_CAPACITY_MB));
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), MachineTuning.CRUCIBLE_LARGE_MASS,
+                    VesselTuning.CRUCIBLE_LARGE_SLOTS, VesselTuning.VESSEL_TANK_CAPACITY_MB));
 
     /** The arc furnace's hearth: a crucible with four times the mass, six charge slots and a 36-ingot tank. The arc head set on it is the fire. */
     public static final DeferredBlock<CrucibleBlock> ARC_HEARTH = BLOCKS.register("arc_hearth",
@@ -519,7 +522,7 @@ public class FBlocks {
                     .strength(4.0f)
                     .sound(SoundType.STONE)
                     .noOcclusion()
-                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), FTuning.ARC_HEARTH_MASS, FTuning.ARC_CHARGE_SLOTS, FTuning.ARC_TANK_MB));
+                    .lightLevel(s -> s.getValue(io.github.soundgoodizerfan.feedback.core.thermal.Incandescence.GLOW)), MachineTuning.ARC_HEARTH_MASS, MachineTuning.ARC_CHARGE_SLOTS, VesselTuning.ARC_TANK_MB));
 
     /** Electrodes lowered into the vessel it faces; an EHV sink and a fire. See {@code ArcHeadBlockEntity}. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.arc.ArcHeadBlock> ARC_HEAD = BLOCKS.register("arc_head",
@@ -767,13 +770,13 @@ public class FBlocks {
 
     /**
      * Cells in series come as a pre-built pack per band, never as a stack of any size (user ruling, 2026-10-23): this
-     * one is {@link FTuning#GALVANIC_PACK_CELLS} zinc-copper cells, 5.5 V, an MV source.
+     * one is {@link MachineTuning#GALVANIC_PACK_CELLS} zinc-copper cells, 5.5 V, an MV source.
      */
     public static final DeferredBlock<GalvanicCellBlock> GALVANIC_CELL_PACK = BLOCKS.register("galvanic_cell_pack",
             () -> new GalvanicCellBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE)
                     .strength(1.5f)
-                    .sound(SoundType.COPPER), Feedback.id("zinc"), Feedback.id("copper"), FTuning.GALVANIC_PACK_CELLS));
+                    .sound(SoundType.COPPER), Feedback.id("zinc"), Feedback.id("copper"), MachineTuning.GALVANIC_PACK_CELLS));
 
     /** The first electrical consumer. See {@code ElectromagnetBlockEntity}. */
     public static final DeferredBlock<ElectromagnetBlock> ELECTROMAGNET = BLOCKS.register("electromagnet",
@@ -1020,7 +1023,7 @@ public class FBlocks {
 
     /** The steel-tier upgrade to the plain Furnace's mediocrity -- steadier, lower-loss, and the
      * one appliance-family vessel that actually carries a thermowell. See {@code
-     * FTuning#IMPROVED_FURNACE_MASS}. */
+     * VesselTuning#IMPROVED_FURNACE_MASS}. */
     public static final DeferredBlock<ThermalVesselBlock> IMPROVED_FURNACE = BLOCKS.register("improved_furnace",
             () -> new ThermalVesselBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
@@ -1030,7 +1033,7 @@ public class FBlocks {
                     VesselKind.IMPROVED_FURNACE));
 
     /** Cheap, brick-built, and hard-gated well under steel's floor -- see {@code
-     * FTuning#KILN_CEILING_TU}. */
+     * VesselTuning#KILN_CEILING_TU}. */
     public static final DeferredBlock<ThermalVesselBlock> KILN = BLOCKS.register("kiln",
             () -> new ThermalVesselBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.TERRACOTTA_WHITE)
@@ -1040,7 +1043,7 @@ public class FBlocks {
                     VesselKind.KILN));
 
     /** A high-mass appliance route to a controlled slow cool -- see {@code
-     * FTuning#ANNEALING_FURNACE_CEILING_TU} for why it cannot instead ruin the batch. */
+     * VesselTuning#ANNEALING_FURNACE_CEILING_TU} for why it cannot instead ruin the batch. */
     public static final DeferredBlock<ThermalVesselBlock> ANNEALING_FURNACE = BLOCKS.register("annealing_furnace",
             () -> new ThermalVesselBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)

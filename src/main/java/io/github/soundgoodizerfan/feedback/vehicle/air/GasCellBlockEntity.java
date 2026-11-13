@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.vehicle.air;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,6 @@ import dev.ryanhcode.sable.api.physics.handle.RigidBodyHandle;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Units;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
 import io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable;
@@ -57,7 +58,7 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
 
     private static final int SLOW = 10;
 
-    private final FluidTank tank = new FluidTank(FTuning.GAS_CELL_MB, Gases::isGas) {
+    private final FluidTank tank = new FluidTank(VehicleTuning.GAS_CELL_MB, Gases::isGas) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -116,7 +117,7 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
 
     /** An arrow or a bullet through the skin. */
     public void puncture() {
-        hole += FTuning.GAS_HOLE_LEAK_MB_PER_TICK;
+        hole += VehicleTuning.GAS_HOLE_LEAK_MB_PER_TICK;
         setChanged();
     }
 
@@ -159,7 +160,7 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
         queue.add(worldPosition);
         seen.add(worldPosition);
         BlockPos lowest = worldPosition;
-        while (!queue.isEmpty() && found.size() < FTuning.GAS_GROUP_MAX_CELLS) {
+        while (!queue.isEmpty() && found.size() < VehicleTuning.GAS_GROUP_MAX_CELLS) {
             BlockPos p = queue.poll();
             found.add(p);
             if (p.asLong() < lowest.asLong())
@@ -219,9 +220,9 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
             if (c.tank.isEmpty())
                 continue;
             double d = Math.max(AirDensityTable.at(server, c.worldY()), 0.02);
-            float stretch = (float) (c.tank.getFluidAmount() / (FTuning.GAS_CELL_MB * d));
+            float stretch = (float) (c.tank.getFluidAmount() / (VehicleTuning.GAS_CELL_MB * d));
             float over = Math.max(0f, stretch - c.skin().maxStretch);
-            float lost = (c.hole + over * FTuning.GAS_LEAK_PER_STRETCH) * SLOW;
+            float lost = (c.hole + over * VehicleTuning.GAS_LEAK_PER_STRETCH) * SLOW;
             if (lost <= 0f)
                 continue;
             c.tank.drain(Math.max(1, Math.round(lost)), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
@@ -247,7 +248,7 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
                 }
         if (!burning)
             return;
-        float share = Math.max(FTuning.GAS_BURN_MIN_SHARE, burnTicks > 0 ? (float) SLOW / burnTicks : 1f);
+        float share = Math.max(VehicleTuning.GAS_BURN_MIN_SHARE, burnTicks > 0 ? (float) SLOW / burnTicks : 1f);
         boolean left = false;
         for (GasCellBlockEntity c : cells) {
             if (!c.tank.isEmpty()) {
@@ -259,10 +260,10 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
             Vec3 w = c.worldCentre();
             server.sendParticles(ParticleTypes.FLAME, w.x, w.y, w.z, 4, 0.4, 0.4, 0.4, 0.02);
             for (LivingEntity e : server.getEntitiesOfClass(LivingEntity.class, new AABB(w, w).inflate(1.6)))
-                e.igniteForSeconds(FTuning.GAS_BURN_ENTITY_SECONDS);
+                e.igniteForSeconds(VehicleTuning.GAS_BURN_ENTITY_SECONDS);
             for (Direction d : Direction.values()) {
                 BlockPos n = c.worldPosition.relative(d);
-                if (server.getBlockState(n).isAir() && server.random.nextFloat() < FTuning.GAS_BURN_IGNITE_CHANCE)
+                if (server.getBlockState(n).isAir() && server.random.nextFloat() < VehicleTuning.GAS_BURN_IGNITE_CHANCE)
                     server.setBlockAndUpdate(n, Blocks.FIRE.defaultBlockState());
             }
         }

@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.item.Meal;
@@ -94,22 +95,22 @@ public final class ModularModifiers {
         if (state == null || dish == null || meal == null)
             return List.of();
         List<Modifier> out = new ArrayList<>();
-        if (state.moisture() > FTuning.DISH_SOGGY_MOISTURE)
-            out.add(adjective("soggy", null, n(FTuning.DISH_SOGGY_MOISTURE)));
-        else if (state.moisture() < FTuning.DISH_DRY_MOISTURE)
-            out.add(adjective("dry", null, n(FTuning.DISH_DRY_MOISTURE)));
-        if (meal.fat() > FTuning.DISH_RICH_FAT)
-            out.add(adjective("rich", Fig.FAT, n(FTuning.DISH_RICH_FAT)));
+        if (state.moisture() > ModularTuning.DISH_SOGGY_MOISTURE)
+            out.add(adjective("soggy", null, n(ModularTuning.DISH_SOGGY_MOISTURE)));
+        else if (state.moisture() < ModularTuning.DISH_DRY_MOISTURE)
+            out.add(adjective("dry", null, n(ModularTuning.DISH_DRY_MOISTURE)));
+        if (meal.fat() > ModularTuning.DISH_RICH_FAT)
+            out.add(adjective("rich", Fig.FAT, n(ModularTuning.DISH_RICH_FAT)));
         float perLitre = f.get(Fig.LITRES) > 0 ? dish.hunger() / f.get(Fig.LITRES) : 0;
-        if (perLitre > FTuning.DISH_DENSE_HUNGER_PER_LITRE)
-            out.add(adjective("dense", Fig.HUNGER, n(FTuning.DISH_DENSE_HUNGER_PER_LITRE)));
-        else if (perLitre > 0 && perLitre < FTuning.DISH_LIGHT_HUNGER_PER_LITRE)
-            out.add(adjective("airy", Fig.HUNGER, n(FTuning.DISH_LIGHT_HUNGER_PER_LITRE)));
+        if (perLitre > ModularTuning.DISH_DENSE_HUNGER_PER_LITRE)
+            out.add(adjective("dense", Fig.HUNGER, n(ModularTuning.DISH_DENSE_HUNGER_PER_LITRE)));
+        else if (perLitre > 0 && perLitre < ModularTuning.DISH_LIGHT_HUNGER_PER_LITRE)
+            out.add(adjective("airy", Fig.HUNGER, n(ModularTuning.DISH_LIGHT_HUNGER_PER_LITRE)));
         float strongest = meal.compounds().values().stream().max(Float::compare).orElse(0f);
-        if (strongest > FTuning.DISH_BRIGHT_COMPOUND)
-            out.add(adjective("bright", null, n(FTuning.DISH_BRIGHT_COMPOUND)));
-        else if (strongest < FTuning.DISH_BLAND_COMPOUND)
-            out.add(adjective("bland", null, n(FTuning.DISH_BLAND_COMPOUND)));
+        if (strongest > ModularTuning.DISH_BRIGHT_COMPOUND)
+            out.add(adjective("bright", null, n(ModularTuning.DISH_BRIGHT_COMPOUND)));
+        else if (strongest < ModularTuning.DISH_BLAND_COMPOUND)
+            out.add(adjective("bland", null, n(ModularTuning.DISH_BLAND_COMPOUND)));
         // Toxin is not sensed (a strip or the bite finds it), so only the live load, which the tooltip already shows, makes it risky.
         if (state.pathogen() / Cooking.tolerance(state.salt(), meal.compounds(), "pathogen") > FTuning.FOOD_HAZARD_TOLERANCE)
             out.add(adjective("risky", Fig.PATHOGEN, n(FTuning.FOOD_HAZARD_TOLERANCE)));
@@ -312,7 +313,7 @@ public final class ModularModifiers {
             case "push_through" -> new Object[]{n(p(v, "max", 0.8f) * 100), n(p(v, "exhaustion", 0.3f)), n(p(v, "wear", 1)),
                     n(p(v, "cooldown_ticks", 30) / 20), n(p(v, "ref_mu", 200))};
             case "braced" -> new Object[]{n(p(v, "knock_mult", 0.6f)), n(p(v, "swim_slow", 0.15f) * 100)};
-            case "blowback" -> new Object[]{n(p(v, "pressure_limit", 1.2f) * FTuning.GUN_PROPELLANT_PEAK_PU), n(p(v, "wear_mult", 2f))};
+            case "blowback" -> new Object[]{n(p(v, "pressure_limit", 1.2f) * GunTuning.GUN_PROPELLANT_PEAK_PU), n(p(v, "wear_mult", 2f))};
             case "lockup" -> new Object[]{n(p(v, "rating_mult", 1f) * 100), n((1 - p(v, "spread_mult", 1f)) * 100)};
             case "gas_operated" -> new Object[]{n((1 - p(v, "cycle_mult", 0.9f)) * 100), n((p(v, "heat_mult", 1.15f) - 1) * 100), n(p(v, "mass", 0.15f))};
             case "gun_rifling" -> new Object[]{n(p(v, "spread_mult", 0.6f) * 100)};

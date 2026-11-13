@@ -281,7 +281,7 @@ public class ModularElectricGun extends GunItem {
             return hot(gun) ? 0f : 1f;
         if (spec == null || spec.seat() != ElectricGunSpec.Seat.CAPACITOR_BANK && spec.seat() != ElectricGunSpec.Seat.BURST_BANK)
             return 0f;
-        int full = spec.seat() == ElectricGunSpec.Seat.BURST_BANK ? io.github.soundgoodizerfan.feedback.core.FTuning.GUN_BURST_ROUNDS : 1;
+        int full = spec.seat() == ElectricGunSpec.Seat.BURST_BANK ? io.github.soundgoodizerfan.feedback.modular.ModularTuning.GUN_BURST_ROUNDS : 1;
         int have = pips(gun, now, full);
         if (have > 0)
             return have / (float) full;

@@ -5,7 +5,6 @@ package io.github.soundgoodizerfan.feedback.item;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Board;
 import io.github.soundgoodizerfan.feedback.process.Circuit;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -32,7 +31,7 @@ import net.minecraft.world.level.Level;
  * <li>a substrate and a dust of a {@code paste} material: a <b>printed</b> board;</li>
  * <li>a board with no solder and a solder ingot ({@code solder} trait): the board <b>pasted</b>;</li>
  * <li>a board with no solder and one part ({@link Circuit#part}: a rectifying crystal, a relay, a
- * coherer, a ringing plate): the part <b>mounted</b>, up to {@link FTuning#CIRCUIT_MAX_PARTS}.</li>
+ * coherer, a ringing plate): the part <b>mounted</b>, up to {@link ItemTuning#CIRCUIT_MAX_PARTS}.</li>
  * </ul>
  * Pasting spends the solder whether or not the joint will come out well; the joint is graded later,
  * by the iron or the oven.
@@ -86,7 +85,7 @@ public class BoardRecipe extends CustomRecipe {
         if (board != null && mount != null && substrate == null && paste == null && wire == null && solder == null) {
             // Mounting: a part goes on before the paste; a board has room for so many.
             Board b = board.get(FDataComponents.BOARD.get());
-            if (b.solder().isPresent() || b.parts().size() >= FTuning.CIRCUIT_MAX_PARTS)
+            if (b.solder().isPresent() || b.parts().size() >= ItemTuning.CIRCUIT_MAX_PARTS)
                 return Optional.empty();
             ItemStack out = board.copyWithCount(1);
             out.set(FDataComponents.BOARD.get(), b.mounted(mount));

@@ -19,6 +19,8 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.bearing;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import dev.ryanhcode.sable.api.physics.constraint.ConstraintJointAxis;
 import dev.ryanhcode.sable.api.physics.constraint.FixedConstraintConfiguration;
 import dev.ryanhcode.sable.api.physics.constraint.GenericConstraintConfiguration;
@@ -33,7 +35,6 @@ import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroWheels;
 
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +76,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
  * the equal and opposite one, so it turns back against the arm as a real bearing's housing does; with
  * {@code I} the two bodies' reduced inertia about the axis (the child's alone against the world) -- the exact solution of a first-order lag, so
  * it is stable at any rate and any step, never overshooting -- capped at
- * {@link FTuning#ROTARY_BEARING_MAX_TORQUE} so a jammed body cannot be wound up. The target is the
+ * {@link MachineTuning#ROTARY_BEARING_MAX_TORQUE} so a jammed body cannot be wound up. The target is the
  * run's speed straight from the network, nothing integrated.
  * <p>
  * The first version was a position servo chasing an angle the speed advanced each game tick
@@ -107,11 +108,11 @@ public final class Joint {
     private Kind kind = Kind.HINGE;
     /** A linkage: it ties a body that already existed to the joint's own, instead of holding one the joint made. Putting it back only lets it go. */
     private boolean linked;
-    /** The cone (ball) or spring band (slider) the player chose: an index into {@link FTuning#BALL_CONE_RAD} or {@link FTuning#SUSPENSION_HZ}. */
+    /** The cone (ball) or spring band (slider) the player chose: an index into {@link MachineTuning#BALL_CONE_RAD} or {@link FTuning#SUSPENSION_HZ}. */
     private int variant = 1;
     /** Reach either side of rest of a slider or piston, blocks. */
-    private float travel = FTuning.SPRING_TRAVEL;
-    /** 1 as built, falling to {@link FTuning#JOINT_CONDITION_FLOOR} by misuse only; it cuts the torque cap and the piston's force. */
+    private float travel = MachineTuning.SPRING_TRAVEL;
+    /** 1 as built, falling to {@link MachineTuning#JOINT_CONDITION_FLOOR} by misuse only; it cuts the torque cap and the piston's force. */
     private volatile float condition = 1;
     /** The wheel this hinge turns (tire voxels on its body), rescanned every few seconds on the game thread; null if none. */
     @Nullable
@@ -198,7 +199,7 @@ public final class Joint {
         j.kind = kind;
         j.variant = Math.clamp(variant, 0, kind == Kind.HINGE ? 4 : 2);
         if (kind == Kind.PISTON)
-            j.travel = FTuning.PISTON_TRAVEL;
+            j.travel = MachineTuning.PISTON_TRAVEL;
         made.logicalPose().transformPositionInverse(toWorld(parent, localAnchor, true), j.plotAnchor);
         made.logicalPose().transformNormalInverse(toWorld(parent, normal(facing), false), j.plotAxis);
         made.logicalPose().transformNormalInverse(toWorld(parent, across(facing), false), j.plotRef);
@@ -284,7 +285,7 @@ public final class Joint {
 
     /** The body's inertia counted on the run, in the network's unit. */
     public float runInertia() {
-        return (float) bodyInertia * FTuning.ROTARY_BEARING_INERTIA_PER_KPG_BLOCK2;
+        return (float) bodyInertia * MachineTuning.ROTARY_BEARING_INERTIA_PER_KPG_BLOCK2;
     }
 
     @Nullable
@@ -313,10 +314,10 @@ public final class Joint {
         gravityTorque = 0;
         int worn = padWorn.getAndSet(0);
         if (worn > 0)
-            pad = Math.max(FTuning.JOINT_CONDITION_FLOOR, pad - worn * FTuning.BRAKE_PAD_WEAR_PER_STEP);
+            pad = Math.max(MachineTuning.JOINT_CONDITION_FLOOR, pad - worn * MachineTuning.BRAKE_PAD_WEAR_PER_STEP);
         int stalled = stalledTicks.getAndSet(0);
         if (stalled > 0) {
-            condition = Math.max(FTuning.JOINT_CONDITION_FLOOR, condition - stalled * FTuning.JOINT_STALL_WEAR_PER_TICK);
+            condition = Math.max(MachineTuning.JOINT_CONDITION_FLOOR, condition - stalled * MachineTuning.JOINT_STALL_WEAR_PER_TICK);
         }
         ServerSubLevel s = held(level);
         if (s == null || s.isRemoved())
@@ -354,7 +355,7 @@ public final class Joint {
         }
         // In series: the parent turns back as the child turns on; against the world, the child alone.
         // The body's own inertia when Sable has weighed it: a floor above it would overshoot a one-voxel arm a hundredfold.
-        double child = bodyInertia > 0 ? bodyInertia : FTuning.ROTARY_BEARING_MIN_INERTIA;
+        double child = bodyInertia > 0 ? bodyInertia : MachineTuning.ROTARY_BEARING_MIN_INERTIA;
         double housing = p == null ? 0 : inertiaAbout(p, localAnchor, localAxis);
         driveInertia = housing > 0 ? child * housing / (child + housing) : child;
         parentInertia = p == null ? 0 : spinInertia(p, localAxis);
@@ -389,7 +390,7 @@ public final class Joint {
                 joint = pipeline.addConstraint(p, s, new GenericConstraintConfiguration(localAnchor, anchor,
                         new Quaterniond(), new Quaterniond(relative).conjugate(), Set.of(ConstraintJointAxis.LINEAR)));
                 generic = (GenericConstraintHandle) joint;
-                float cone = FTuning.BALL_CONE_RAD[variant];
+                float cone = MachineTuning.BALL_CONE_RAD[variant];
                 // Swing limited either side, twist free: a ball joint turns about its own shaft.
                 generic.setLimit(ConstraintJointAxis.ANGULAR_Y, -cone, cone);
                 generic.setLimit(ConstraintJointAxis.ANGULAR_Z, -cone, cone);
@@ -414,15 +415,15 @@ public final class Joint {
             return;
         // Wear by misuse only: forced against the stop, or a piston that cannot reach its level, for longer than a working load lasts.
         if (strained(s, p, facing, localAnchor)) {
-            if (++strainRun > FTuning.JOINT_STRAIN_GRACE_TICKS)
-                condition = Math.max(FTuning.JOINT_CONDITION_FLOOR, condition - FTuning.JOINT_STRAIN_WEAR_PER_TICK);
+            if (++strainRun > MachineTuning.JOINT_STRAIN_GRACE_TICKS)
+                condition = Math.max(MachineTuning.JOINT_CONDITION_FLOOR, condition - MachineTuning.JOINT_STRAIN_WEAR_PER_TICK);
         } else
             strainRun = 0;
         switch (kind) {
             case BALL -> {
                 if (generic != null) {
                     // A worn ball lets the cone open: slack, never a sudden loss.
-                    float cone = FTuning.BALL_CONE_RAD[variant] * (2 - condition);
+                    float cone = MachineTuning.BALL_CONE_RAD[variant] * (2 - condition);
                     generic.setLimit(ConstraintJointAxis.ANGULAR_Y, -cone, cone);
                     generic.setLimit(ConstraintJointAxis.ANGULAR_Z, -cone, cone);
                 }
@@ -432,36 +433,36 @@ public final class Joint {
                 double reduced = ma <= 0 ? mb : mb <= 0 ? 0 : ma * mb / (ma + mb);
                 if (reduced <= 0 || generic == null)
                     return;
-                double hz = kind == Kind.SLIDER ? FTuning.SUSPENSION_HZ[variant] : FTuning.PISTON_SERVO_RATE / (2 * Math.PI);
+                double hz = kind == Kind.SLIDER ? FTuning.SUSPENSION_HZ[variant] : MachineTuning.PISTON_SERVO_RATE / (2 * Math.PI);
                 double omega = 2 * Math.PI * hz;
                 double target = kind == Kind.PISTON ? pistonLevel * travel : 0;
-                double limit = kind == Kind.PISTON ? FTuning.ROTARY_BEARING_MAX_TORQUE * condition : 0;
+                double limit = kind == Kind.PISTON ? MachineTuning.ROTARY_BEARING_MAX_TORQUE * condition : 0;
                 generic.setMotor(ConstraintJointAxis.LINEAR_X, target, reduced * omega * omega,
                         2 * FTuning.TIRE_DAMPING_RATIO * omega * reduced, kind == Kind.PISTON, limit);
             }
             case HINGE -> {
-                double inertia = bodyInertia > 0 ? bodyInertia : FTuning.ROTARY_BEARING_MIN_INERTIA;
+                double inertia = bodyInertia > 0 ? bodyInertia : MachineTuning.ROTARY_BEARING_MIN_INERTIA;
                 if (variant > 0) {
                     // Steering and control surfaces: a position servo to the level, its force the driver's arm.
-                    double rate = FTuning.STEER_SERVO_RATE, max = variant == 1 ? FTuning.STEER_MAX_ANGLE : FTuning.SURFACE_MAX_ANGLE;
+                    double rate = MachineTuning.STEER_SERVO_RATE, max = variant == 1 ? MachineTuning.STEER_MAX_ANGLE : MachineTuning.SURFACE_MAX_ANGLE;
                     joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, angleLevel * max, rate * rate * inertia,
-                            2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * inertia, true,
-                            FTuning.STEER_ARM_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
+                            2 * MachineTuning.STEER_SERVO_DAMPING_RATIO * rate * inertia, true,
+                            MachineTuning.STEER_ARM_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
                     return;
                 }
                 double w = relativeSpin(s, p, facing);
-                if (targetRadPerS == 0 && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
+                if (targetRadPerS == 0 && Math.abs(w) < MachineTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
                     // At rest and asked for nothing: hold the angle it settled at, so an unbalanced arm does not creep.
                     if (Double.isNaN(holdAngle))
                         holdAngle = Math.toRadians(turned(s, p, facing) - zeroTurn);
-                    double rate = FTuning.JOINT_HOLD_RATE;
+                    double rate = MachineTuning.JOINT_HOLD_RATE;
                     joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, holdAngle, rate * rate * inertia,
-                            2 * FTuning.STEER_SERVO_DAMPING_RATIO * rate * inertia, true,
-                            FTuning.STEER_ARM_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
+                            2 * MachineTuning.STEER_SERVO_DAMPING_RATIO * rate * inertia, true,
+                            MachineTuning.STEER_ARM_SU.value() / io.github.soundgoodizerfan.feedback.core.unit.Units.SU_PER_KPG_TORQUE);
                 } else {
                     holdAngle = Double.NaN;
                     // A free bearing is not frictionless (BEARING_DAMPING_RATE): damping scaled by the arm's inertia.
-                    joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, 0, 0, FTuning.BEARING_DAMPING_RATE * inertia, false, 0);
+                    joint.setMotor(RotaryConstraintHandle.DEFAULT_AXIS, 0, 0, MachineTuning.BEARING_DAMPING_RATE * inertia, false, 0);
                 }
             }
             default -> {
@@ -483,7 +484,7 @@ public final class Joint {
                 Quaterniond turn = now.mul(new Quaterniond(relative0).conjugate());
                 Vector3d x = turn.transform(new Vector3d(1, 0, 0));
                 double swing = Math.acos(Math.clamp(x.x, -1.0, 1.0));
-                return swing >= 0.97 * FTuning.BALL_CONE_RAD[variant] * (2 - condition);
+                return swing >= 0.97 * MachineTuning.BALL_CONE_RAD[variant] * (2 - condition);
             }
             case SLIDER, PISTON -> {
                 Vector3d axis = toWorld(p, normal(facing), false);
@@ -539,7 +540,7 @@ public final class Joint {
      */
     private void gravityOn(ServerSubLevel s, @Nullable ServerSubLevel p, Direction facing) {
         var mass = s.getMassTracker();
-        if (mass.getCenterOfMass() == null || targetRadPerS == 0 && Math.abs(relativeSpin(s, p, facing)) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
+        if (mass.getCenterOfMass() == null || targetRadPerS == 0 && Math.abs(relativeSpin(s, p, facing)) < MachineTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
             gravityTorque = 0;
             return;
         }
@@ -614,21 +615,21 @@ public final class Joint {
         }
         double w = h.getAngularVelocity(new Vector3d()).dot(axis) - (hp == null ? 0 : hp.getAngularVelocity(new Vector3d()).dot(axis));
         // The step toward the target speed, ramped: no faster than the bearing's angular acceleration.
-        double step = (targetRadPerS - w) * (1 - Math.exp(-FTuning.ROTARY_BEARING_DRIVE_RATE * dt));
-        double ramp = FTuning.ROTARY_BEARING_MAX_ACCEL * dt;
+        double step = (targetRadPerS - w) * (1 - Math.exp(-MachineTuning.ROTARY_BEARING_DRIVE_RATE * dt));
+        double ramp = MachineTuning.ROTARY_BEARING_MAX_ACCEL * dt;
         double impulse = driveInertia * Math.max(-ramp, Math.min(ramp, step));
         // The reaction may spin the parent no faster than its own limit, so a light car is not thrown
         // over by its arm starting: the ground's friction and the car's weight hold a gentle twist.
         if (p != null && parentInertia > 0) {
-            double parentCap = parentInertia * FTuning.ROTARY_BEARING_MAX_PARENT_ACCEL * dt;
+            double parentCap = parentInertia * MachineTuning.ROTARY_BEARING_MAX_PARENT_ACCEL * dt;
             impulse = Math.max(-parentCap, Math.min(parentCap, impulse));
         }
-        double cap = FTuning.ROTARY_BEARING_MAX_TORQUE * condition * dt;
+        double cap = MachineTuning.ROTARY_BEARING_MAX_TORQUE * condition * dt;
         // Wear by misuse only: a drive pinned at its cap while the arm does not turn (a stalled drive).
         // Starting a heavy arm, or a drive held by its brake, sits at the cap too: only a stall that goes on past the grace is misuse.
-        if (Math.abs(impulse) >= cap && Math.abs(w) < FTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
+        if (Math.abs(impulse) >= cap && Math.abs(w) < MachineTuning.JOINT_HOLD_BELOW_RAD_PER_S) {
             // The drive pushing against a held brake wears the pad; the same push with no brake wears the joint.
-            if (++stallRun > FTuning.JOINT_STALL_GRACE_STEPS) {
+            if (++stallRun > MachineTuning.JOINT_STALL_GRACE_STEPS) {
                 if (brake > 0 && wheel != null)
                     padWorn.incrementAndGet();
                 else
@@ -754,7 +755,7 @@ public final class Joint {
         j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
         j.pad = tag.contains("Pad") ? tag.getFloat("Pad") : 1;
         if (j.kind == Kind.PISTON)
-            j.travel = FTuning.PISTON_TRAVEL;
+            j.travel = MachineTuning.PISTON_TRAVEL;
         get(tag, "Anchor", j.plotAnchor);
         get(tag, "Axis", j.plotAxis);
         get(tag, "Ref", j.plotRef);

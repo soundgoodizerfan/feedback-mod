@@ -19,13 +19,14 @@
  */
 package io.github.soundgoodizerfan.feedback.machine.bearing;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import dev.ryanhcode.sable.api.SubLevelAssemblyHelper;
 import dev.ryanhcode.sable.api.sublevel.ServerSubLevelContainer;
 import dev.ryanhcode.sable.companion.SableCompanion;
 import dev.ryanhcode.sable.companion.math.BoundingBox3i;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.storage.SubLevelRemovalReason;
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationPropagator;
 import io.github.soundgoodizerfan.feedback.core.unit.Drag;
@@ -65,12 +66,12 @@ public class RotaryBearingBlockEntity extends RotationNode {
 
     @Override
     public Drag getDragSuPerRpm() {
-        return FTuning.ROTARY_BEARING_DRAG_SU_PER_RPM;
+        return MachineTuning.ROTARY_BEARING_DRAG_SU_PER_RPM;
     }
 
     @Override
     public Inertia getInertia() {
-        return new Inertia(FTuning.ROTARY_BEARING_INERTIA.suTicksPerRpm() + (bearing == null ? 0 : bearing.runInertia()));
+        return new Inertia(MachineTuning.ROTARY_BEARING_INERTIA.suTicksPerRpm() + (bearing == null ? 0 : bearing.runInertia()));
     }
 
     /** True while it holds a body. */

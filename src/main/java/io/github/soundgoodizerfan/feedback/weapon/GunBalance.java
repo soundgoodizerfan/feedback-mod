@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
@@ -32,33 +31,33 @@ public final class GunBalance {
                 grip = materials.get(p.grip()), receiver = materials.get(p.receiver());
         if (barrel == null || slide == null || trigger == null || grip == null || receiver == null)
             return Optional.empty();
-        float front = GunSpec.tubeMu(spec.barrel(), barrel) * FTuning.GUN_BARREL_FRONT_SHARE;
-        float back = GunSpec.tubeMu(spec.barrel(), barrel) * (1 - FTuning.GUN_BARREL_FRONT_SHARE);
+        float front = GunSpec.tubeMu(spec.barrel(), barrel) * GunTuning.GUN_BARREL_FRONT_SHARE;
+        float back = GunSpec.tubeMu(spec.barrel(), barrel) * (1 - GunTuning.GUN_BARREL_FRONT_SHARE);
         if (p.second().isPresent()) {
             Material other = materials.get(p.second().get().material());
             if (other != null) {
                 float tube = GunSpec.tubeMu(p.second().get().built(), other);
-                front += tube * FTuning.GUN_BARREL_FRONT_SHARE;
-                back += tube * (1 - FTuning.GUN_BARREL_FRONT_SHARE);
+                front += tube * GunTuning.GUN_BARREL_FRONT_SHARE;
+                back += tube * (1 - GunTuning.GUN_BARREL_FRONT_SHARE);
             }
         }
-        float half = (FTuning.GUN_RECEIVER_METAL_MB * receiver.density().muPerMb() + FTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()) / 2;
+        float half = (GunTuning.GUN_RECEIVER_METAL_MB * receiver.density().muPerMb() + GunTuning.GUN_SLIDE_METAL_MB * slide.density().muPerMb()) / 2;
         front += half;
-        back += half + FTuning.GUN_TRIGGER_METAL_MB * trigger.density().muPerMb() + FTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb();
+        back += half + GunTuning.GUN_TRIGGER_METAL_MB * trigger.density().muPerMb() + GunTuning.GUN_GRIP_METAL_MB * grip.density().muPerMb();
         if (p.feed().isPresent()) {
             Material feed = materials.get(p.feed().get());
             if (feed != null) {
                 float mb = switch (spec.layout().feed()) {
-                    case CYLINDER -> FTuning.GUN_CYLINDER_METAL_MB;
-                    case TUBE -> FTuning.GUN_TUBE_METAL_MB;
-                    case BELT -> FTuning.GUN_BELT_METAL_MB;
-                    case BOX -> FTuning.GUN_BOX_METAL_MB;
+                    case CYLINDER -> GunTuning.GUN_CYLINDER_METAL_MB;
+                    case TUBE -> GunTuning.GUN_TUBE_METAL_MB;
+                    case BELT -> GunTuning.GUN_BELT_METAL_MB;
+                    case BOX -> GunTuning.GUN_BOX_METAL_MB;
                     default -> 0f;
                 };
                 float mu = mb * feed.density().muPerMb();
                 if (spec.layout().feed() == GunLayout.Feed.TUBE) {
-                    front += mu * FTuning.GUN_BARREL_FRONT_SHARE;
-                    back += mu * (1 - FTuning.GUN_BARREL_FRONT_SHARE);
+                    front += mu * GunTuning.GUN_BARREL_FRONT_SHARE;
+                    back += mu * (1 - GunTuning.GUN_BARREL_FRONT_SHARE);
                 } else {
                     front += mu / 2;
                     back += mu / 2;
@@ -80,7 +79,7 @@ public final class GunBalance {
             back += mu * (1 - ahead);
         }
         if (spec.has("gun_braced"))
-            back += FTuning.GUN_STOCK_BACK_MU;
+            back += GunTuning.GUN_STOCK_BACK_MU;
         return Optional.of(new float[] {front, back});
     }
 
@@ -90,7 +89,7 @@ public final class GunBalance {
         if (m.isEmpty())
             return 0f;
         float front = m.get()[0], back = Math.max(0.01f, m.get()[1]);
-        return Math.min(FTuning.GUN_NOSE_MAX, Math.max(0f, front / back - 1f));
+        return Math.min(GunTuning.GUN_NOSE_MAX, Math.max(0f, front / back - 1f));
     }
 
     /** The nose-heaviness {@code shooter} feels from {@code gun}: none while a bipod holds the muzzle up. */
@@ -110,11 +109,11 @@ public final class GunBalance {
     /** {@code f} with the spread and kick a nose-heavy gun adds. */
     public static GunFigures apply(Player shooter, ItemStack gun, GunFigures f) {
         float n = felt(shooter, gun);
-        return n <= 0f ? f : f.withSpread(1 + FTuning.GUN_NOSE_SPREAD * n).withKick(1 + FTuning.GUN_NOSE_KICK * n);
+        return n <= 0f ? f : f.withSpread(1 + GunTuning.GUN_NOSE_SPREAD * n).withKick(1 + GunTuning.GUN_NOSE_KICK * n);
     }
 
     /** Degrees per second the view sinks while the gun is held: the muzzle the hand must keep up. */
     public static float drift(Player holder, ItemStack gun) {
-        return felt(holder, gun) * FTuning.GUN_NOSE_DRIFT_DEG_PER_S;
+        return felt(holder, gun) * GunTuning.GUN_NOSE_DRIFT_DEG_PER_S;
     }
 }

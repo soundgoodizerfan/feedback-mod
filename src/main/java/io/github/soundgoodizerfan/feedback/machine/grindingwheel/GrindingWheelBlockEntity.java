@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.grindingwheel;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
@@ -18,7 +18,7 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * Same removal primitive as the Drill Press and the Lathe, with the wheel's own hardness rating
  * set above both of theirs -- the only route through a material like hardened tool steel, not a
- * finishing upgrade over them (see {@link FTuning#GRINDING_WHEEL_HARDNESS}).
+ * finishing upgrade over them (see {@link MachineTuning#GRINDING_WHEEL_HARDNESS}).
  *
  * <h2>The one real exception to wear-only-from-misuse</h2>
  * The Hammer and the Lathe's tool bit both wear <em>only</em> from misuse -- force or a cut the
@@ -49,12 +49,12 @@ public class GrindingWheelBlockEntity extends ShopMachineBlockEntity {
 
     @Override
     public Su getLoadSu() {
-        return FTuning.GRINDING_WHEEL_LOAD_SU;
+        return MachineTuning.GRINDING_WHEEL_LOAD_SU;
     }
 
     private St toolHardness() {
         float rating = getBlockState().getBlock() instanceof GrindingWheelBlock w
-                ? w.gritHardness().value() : FTuning.GRINDING_WHEEL_HARDNESS.value();
+                ? w.gritHardness().value() : MachineTuning.GRINDING_WHEEL_HARDNESS.value();
         return new St(rating * condition);
     }
 
@@ -66,7 +66,7 @@ public class GrindingWheelBlockEntity extends ShopMachineBlockEntity {
             return;
 
         boolean coarse = isCoarseGrit();
-        St driveForce = coarse ? FTuning.GRINDING_WHEEL_ST_COARSE : FTuning.GRINDING_WHEEL_ST_FINE;
+        St driveForce = coarse ? MachineTuning.GRINDING_WHEEL_ST_COARSE : MachineTuning.GRINDING_WHEEL_ST_FINE;
         Removing.Cut cut = Removing.apply(workpiece, driveForce, toolHardness(), Operation.GRIND,
                 passes, carriedFu, level);
         carriedFu = cut.carried();
@@ -75,13 +75,13 @@ public class GrindingWheelBlockEntity extends ShopMachineBlockEntity {
         float fu = cut.landed() ? cut.delivered() : driveForce.value() * passes;
         if (cut.landed()) {
             workpiece = cut.result();
-            float wearPerFu = coarse ? FTuning.GRINDING_WHEEL_WEAR_PER_FU_COARSE : FTuning.GRINDING_WHEEL_WEAR_PER_FU_FINE;
-            condition = Math.max(FTuning.GRINDING_WHEEL_CONDITION_FLOOR, condition - fu * wearPerFu);
+            float wearPerFu = coarse ? MachineTuning.GRINDING_WHEEL_WEAR_PER_FU_COARSE : MachineTuning.GRINDING_WHEEL_WEAR_PER_FU_FINE;
+            condition = Math.max(MachineTuning.GRINDING_WHEEL_CONDITION_FLOOR, condition - fu * wearPerFu);
             maybeDropSwarf(cut);
         }
 
         Tu heated = ItemHeat.get(workpiece, level);
-        ItemHeat.set(workpiece, new Tu(heated.value() + fu * FTuning.GRINDING_HEAT_PER_FU), level);
+        ItemHeat.set(workpiece, new Tu(heated.value() + fu * MachineTuning.GRINDING_HEAT_PER_FU), level);
         sync();
     }
 }

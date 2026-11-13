@@ -2,10 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.process;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -16,10 +16,10 @@ import net.minecraft.resources.ResourceLocation;
  *
  * <h2>Where the figures come from</h2>
  * The liquidus is the solder material's {@code melting_point}. The window above it, inside which a
- * joint is good, is {@link FTuning#SOLDER_WINDOW_NUMERATOR_TU} over its {@code molten.viscosity}:
+ * joint is good, is {@link ProcessTuning#SOLDER_WINDOW_NUMERATOR_TU} over its {@code molten.viscosity}:
  * a thinner melt wets better, so lead solder forgives more than lead-free. The limit past which a
  * trace lifts is the lowest {@code service_temperature} of the substrate and of the trace metal,
- * or {@link FTuning#PRINTED_TRACE_LIMIT_TU} for a printed trace. Nothing here names a material.
+ * or {@link ProcessTuning#PRINTED_TRACE_LIMIT_TU} for a printed trace. Nothing here names a material.
  */
 public final class Soldering {
 
@@ -38,7 +38,7 @@ public final class Soldering {
             return Optional.empty();
         float viscosity = material.molten().viscosity().orElse(4f);
         return Optional.of(new Alloy(material.thermal().meltingPoint().get().value(),
-                FTuning.SOLDER_WINDOW_NUMERATOR_TU / Math.max(0.1f, viscosity)));
+                ProcessTuning.SOLDER_WINDOW_NUMERATOR_TU / Math.max(0.1f, viscosity)));
     }
 
     /**
@@ -98,7 +98,7 @@ public final class Soldering {
 
     /** Pads in a row: one pair per mounted part, else two. */
     public static int pads(Board board) {
-        return Math.max(2, Math.min(FTuning.SOLDER_MAX_PADS, 2 * board.parts().size()));
+        return Math.max(2, Math.min(ProcessTuning.SOLDER_MAX_PADS, 2 * board.parts().size()));
     }
 
     /** The Tu past which this board's traces lift. */
@@ -108,7 +108,7 @@ public final class Soldering {
         if (substrate != null)
             limit = substrate.thermal().serviceTemperature().map(t -> t.value()).orElse(limit);
         if (board.trace() == Board.Trace.PRINTED)
-            return Math.min(limit, FTuning.PRINTED_TRACE_LIMIT_TU);
+            return Math.min(limit, ProcessTuning.PRINTED_TRACE_LIMIT_TU);
         Material trace = materials.get(board.traceMaterial());
         if (trace != null)
             limit = Math.min(limit, trace.thermal().serviceTemperature().map(t -> t.value()).orElse(limit));
@@ -120,7 +120,7 @@ public final class Soldering {
      * above the window the flux burnt (cold again); above the limit the trace lifted.
      */
     public static Outcome grade(float peakTu, int dwellTicks, Alloy alloy, float limit) {
-        return grade(peakTu, dwellTicks, FTuning.SOLDER_DWELL_TICKS, alloy, limit);
+        return grade(peakTu, dwellTicks, ProcessTuning.SOLDER_DWELL_TICKS, alloy, limit);
     }
 
     public static Outcome grade(float peakTu, int dwellTicks, int minDwell, Alloy alloy, float limit) {
@@ -133,8 +133,8 @@ public final class Soldering {
 
     /**
      * One drag along the pad row, the single rule the screen draws and the server
-     * judges. Each tick the tip sits on a pad the pad closes {@link FTuning#SOLDER_PAD_HEAT_FRACTION}
-     * of its gap to the iron and the iron gives up {@link FTuning#IRON_JOINT_DRAW_TU}, so a pace that
+     * judges. Each tick the tip sits on a pad the pad closes {@link ProcessTuning#SOLDER_PAD_HEAT_FRACTION}
+     * of its gap to the iron and the iron gives up {@link ProcessTuning#IRON_JOINT_DRAW_TU}, so a pace that
      * was right at the first pad is too fast at the last. Pure: resistance and instruments never enter.
      */
     public static final class Pass {
@@ -152,14 +152,14 @@ public final class Soldering {
             pad = new float[pads];
             dwell = new int[pads];
             bridged = new boolean[pads];
-            java.util.Arrays.fill(pad, FTuning.AMBIENT_TU.value());
+            java.util.Arrays.fill(pad, ThermalTuning.AMBIENT_TU.value());
         }
 
         /** The tip sat on pad {@code p} for {@code ticks}. */
         public void touch(int p, int ticks) {
             for (int i = 0; i < ticks; i++) {
-                pad[p] += (iron - pad[p]) * FTuning.SOLDER_PAD_HEAT_FRACTION;
-                iron = Math.max(0f, iron - FTuning.IRON_JOINT_DRAW_TU);
+                pad[p] += (iron - pad[p]) * ProcessTuning.SOLDER_PAD_HEAT_FRACTION;
+                iron = Math.max(0f, iron - ProcessTuning.IRON_JOINT_DRAW_TU);
             }
             dwell[p] += ticks;
         }
@@ -170,7 +170,7 @@ public final class Soldering {
         }
 
         public Outcome outcome(int p) {
-            return dwell[p] == 0 ? Outcome.COLD : grade(pad[p], dwell[p], FTuning.SOLDER_PAD_MIN_DWELL_TICKS, alloy, limit);
+            return dwell[p] == 0 ? Outcome.COLD : grade(pad[p], dwell[p], ProcessTuning.SOLDER_PAD_MIN_DWELL_TICKS, alloy, limit);
         }
 
         public float padTu(int p) {

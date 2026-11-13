@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.electric;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 
 /**
@@ -21,23 +20,23 @@ public final class ElectricRules {
     /** Reference volts of a band. Placeholder anchors, [OPEN] (6.3). */
     public static float bandVolts(VoltageBand band) {
         return switch (band) {
-            case LV -> FTuning.ELECTRIC_LV_VOLTS;
-            case MV -> FTuning.ELECTRIC_MV_VOLTS;
-            case HV -> FTuning.ELECTRIC_HV_VOLTS;
-            case UHV -> FTuning.ELECTRIC_UHV_VOLTS;
-            case EHV -> FTuning.ELECTRIC_EHV_VOLTS;
-            case TRUNK -> FTuning.ELECTRIC_TRUNK_VOLTS;
+            case LV -> ElectricTuning.ELECTRIC_LV_VOLTS;
+            case MV -> ElectricTuning.ELECTRIC_MV_VOLTS;
+            case HV -> ElectricTuning.ELECTRIC_HV_VOLTS;
+            case UHV -> ElectricTuning.ELECTRIC_UHV_VOLTS;
+            case EHV -> ElectricTuning.ELECTRIC_EHV_VOLTS;
+            case TRUNK -> ElectricTuning.ELECTRIC_TRUNK_VOLTS;
         };
     }
 
     /**
-     * The band a potential belongs to: the highest whose reference it reaches within {@link FTuning#BAND_REACH} (a little sag keeps a source in its band), LV below all. A cell at 1.1 V is LV; a
+     * The band a potential belongs to: the highest whose reference it reaches within {@link ElectricTuning#BAND_REACH} (a little sag keeps a source in its band), LV below all. A cell at 1.1 V is LV; a
      * 2 V battery cell is LV, a 12 V stack MV, 24 V HV (ruled 2026-11-03 for the battery).
      */
     public static VoltageBand bandOf(float volts) {
         VoltageBand found = VoltageBand.LV;
         for (VoltageBand band : VoltageBand.values())
-            if (volts >= bandVolts(band) * FTuning.BAND_REACH)
+            if (volts >= bandVolts(band) * ElectricTuning.BAND_REACH)
                 found = band;
         return found;
     }
@@ -45,14 +44,14 @@ public final class ElectricRules {
     /**
      * Fraction of its voltage a source holds when drawn at {@code loadRatio} times its rated
      * current. Full up to the rating, then a straight line down to
-     * {@link FTuning#SOURCE_SAG_FLOOR} at {@link FTuning#SOURCE_OVERDRAW_LIMIT}, never below.
+     * {@link ElectricTuning#SOURCE_SAG_FLOOR} at {@link ElectricTuning#SOURCE_OVERDRAW_LIMIT}, never below.
      * <b>[OPEN]</b> the curve (6.2): a source is never destroyed and never goes to zero volts.
      */
     public static float sagFactor(float loadRatio) {
         if (loadRatio <= 1f)
             return 1f;
-        float over = Math.min(loadRatio, FTuning.SOURCE_OVERDRAW_LIMIT) - 1f;
-        return 1f - (1f - FTuning.SOURCE_SAG_FLOOR) * over / (FTuning.SOURCE_OVERDRAW_LIMIT - 1f);
+        float over = Math.min(loadRatio, ElectricTuning.SOURCE_OVERDRAW_LIMIT) - 1f;
+        return 1f - (1f - ElectricTuning.SOURCE_SAG_FLOOR) * over / (ElectricTuning.SOURCE_OVERDRAW_LIMIT - 1f);
     }
 
     /**

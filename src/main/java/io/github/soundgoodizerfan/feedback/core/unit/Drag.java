@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.core.unit;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+
 /**
  * Bearing friction: the load a component adds per RPM it turns at, in {@code Su/RPM}.
  *

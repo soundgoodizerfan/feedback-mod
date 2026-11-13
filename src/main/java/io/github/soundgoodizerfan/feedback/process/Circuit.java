@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Testable;
@@ -40,7 +39,7 @@ import net.minecraft.world.level.Level;
  * Zero is a dead part.</li>
  * <li>{@code speed} (0-1): the fastest element's. A crystal is fast in proportion to its
  * {@code rectifying}; a relay's contacts and a coherer's grains are slow.</li>
- * <li>{@code noise} (0-1, never below {@link FTuning#CIRCUIT_NOISE_FLOOR}): the elements' own, the
+ * <li>{@code noise} (0-1, never below {@link ProcessTuning#CIRCUIT_NOISE_FLOOR}): the elements' own, the
  * trace route's, and a cold joint's, cut by a ringing clock plate in proportion to its
  * {@code piezo_coupling}. Lower is better; it multiplies the spread of whatever the circuit
  * conditions.</li>
@@ -84,7 +83,7 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
 
     /** What a fitted circuit does to an instrument's resolution step: 1 for none or dead, down to about half for a quiet one. */
     public float stepFactor() {
-        return live() ? 1f - FTuning.CIRCUIT_INSTRUMENT_GAIN * (1f - noise) : 1f;
+        return live() ? 1f - ProcessTuning.CIRCUIT_INSTRUMENT_GAIN * (1f - noise) : 1f;
     }
 
     public boolean live() {
@@ -116,7 +115,7 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         if (found == null)
             return null;
         float piezo = found.material().electrical().piezoCoupling().orElse(0f);
-        if (found.form().equals("crystal_plate") && piezo >= FTuning.CIRCUIT_CLOCK_MIN_PIEZO)
+        if (found.form().equals("crystal_plate") && piezo >= ProcessTuning.CIRCUIT_CLOCK_MIN_PIEZO)
             return new Board.Part(Board.Kind.CLOCK, piezo);
         float rectifying = found.material().electrical().rectifying().orElse(0f);
         return rectifying > 0f ? new Board.Part(Board.Kind.SWITCH, rectifying) : null;
@@ -127,7 +126,7 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         return assemble(board, joint, materials, 0);
     }
 
-    /** As above, with {@code defects} cold or bridged pads each adding {@link FTuning#CIRCUIT_DEFECT_NOISE}. */
+    /** As above, with {@code defects} cold or bridged pads each adding {@link ProcessTuning#CIRCUIT_DEFECT_NOISE}. */
     public static Circuit assemble(Board board, Board.Joint joint, Map<ResourceLocation, Material> materials, int defects) {
         int elements = 0;
         float speed = 0f, noise = 0f, steady = 0f;
@@ -135,18 +134,18 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
             switch (p.kind()) {
                 case SWITCH -> {
                     elements++;
-                    speed = Math.max(speed, FTuning.CIRCUIT_CRYSTAL_SPEED * p.figure());
-                    noise += FTuning.CIRCUIT_CRYSTAL_NOISE + (1f - p.figure()) * FTuning.CIRCUIT_CRYSTAL_POOR_NOISE;
+                    speed = Math.max(speed, ProcessTuning.CIRCUIT_CRYSTAL_SPEED * p.figure());
+                    noise += ProcessTuning.CIRCUIT_CRYSTAL_NOISE + (1f - p.figure()) * ProcessTuning.CIRCUIT_CRYSTAL_POOR_NOISE;
                 }
                 case RELAY -> {
                     elements++;
-                    speed = Math.max(speed, FTuning.CIRCUIT_RELAY_SPEED);
-                    noise += FTuning.CIRCUIT_RELAY_NOISE;
+                    speed = Math.max(speed, ProcessTuning.CIRCUIT_RELAY_SPEED);
+                    noise += ProcessTuning.CIRCUIT_RELAY_NOISE;
                 }
                 case COHERER -> {
                     elements++;
-                    speed = Math.max(speed, FTuning.CIRCUIT_COHERER_SPEED);
-                    noise += FTuning.CIRCUIT_COHERER_NOISE;
+                    speed = Math.max(speed, ProcessTuning.CIRCUIT_COHERER_SPEED);
+                    noise += ProcessTuning.CIRCUIT_COHERER_NOISE;
                 }
                 case CLOCK -> steady = Math.max(steady, p.figure());
             }
@@ -154,12 +153,12 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         if (elements == 0)
             return dead(joint);
         noise = noise / elements
-                + (board.trace() == Board.Trace.PRINTED ? FTuning.CIRCUIT_PRINTED_NOISE : FTuning.CIRCUIT_ETCHED_NOISE)
-                + (joint == Board.Joint.COLD ? FTuning.CIRCUIT_COLD_JOINT_NOISE : 0f)
-                + defects * FTuning.CIRCUIT_DEFECT_NOISE;
-        noise *= 1f - FTuning.CIRCUIT_CLOCK_STEADY * steady;
-        float rating = board.trace() == Board.Trace.PRINTED ? FTuning.PRINTED_RATING_AMPS : FTuning.ETCHED_RATING_AMPS;
-        return new Circuit(elements, speed, Math.max(FTuning.CIRCUIT_NOISE_FLOOR, Math.min(1f, noise)), joint,
+                + (board.trace() == Board.Trace.PRINTED ? ProcessTuning.CIRCUIT_PRINTED_NOISE : ProcessTuning.CIRCUIT_ETCHED_NOISE)
+                + (joint == Board.Joint.COLD ? ProcessTuning.CIRCUIT_COLD_JOINT_NOISE : 0f)
+                + defects * ProcessTuning.CIRCUIT_DEFECT_NOISE;
+        noise *= 1f - ProcessTuning.CIRCUIT_CLOCK_STEADY * steady;
+        float rating = board.trace() == Board.Trace.PRINTED ? ProcessTuning.PRINTED_RATING_AMPS : ProcessTuning.ETCHED_RATING_AMPS;
+        return new Circuit(elements, speed, Math.max(ProcessTuning.CIRCUIT_NOISE_FLOOR, Math.min(1f, noise)), joint,
                 Soldering.limit(board, materials), rating);
     }
 
