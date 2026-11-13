@@ -29,6 +29,10 @@ import net.minecraft.world.level.block.state.BlockState;
  * ({@code StoresEu}). It charges when its band or a higher one is fed to it and never from a lower one; a band over its own simply
  * fills it. What it holds is {@code charge}, in Eu, an internal quantity the jar keeps: a reading of it is how full it is.
  *
+ * <h2>Reserve</h2>
+ * Once it holds charge on a line at its band or lower the jar is a source marked {@code reserve}: beside a same-band generator it
+ * supplies only what generation cannot carry and charges from any surplus. Only a band over its own keeps it a sink.
+ *
  * <h2>One role at a time, and it changes</h2>
  * {@code ElectricMember} gives a node exactly one role, so the jar is a <em>sink</em> while its band (or more) is on its run,
  * charging at a fixed current until it is full, and a <em>source</em> once nothing on the run holds it up, offering its band at a
@@ -118,6 +122,16 @@ public class LeydenJarBlockEntity extends ElectricNode {
     }
 
     @Override
+    public boolean reserve() {
+        return supplying;
+    }
+
+    @Override
+    public float reserveWantedAmps() {
+        return charge < capacity() ? ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS : 0;
+    }
+
+    @Override
     public VoltageBand sourceBand() {
         return supplying ? band() : null;
     }
@@ -147,7 +161,7 @@ public class LeydenJarBlockEntity extends ElectricNode {
 
         boolean flip = supplying
                 ? charge <= ElectricMachineTuning.LEYDEN_JAR_EMPTY_EU || isBlocked()
-                : charge > ElectricMachineTuning.LEYDEN_JAR_EMPTY_EU && !ElectricRules.accepts(getBand(), getPacketEu(), band());
+                : charge > ElectricMachineTuning.LEYDEN_JAR_EMPTY_EU && !(getPacketEu() > 0f && getBand().compareTo(band()) > 0);
         if (flip) {
             supplying = !supplying;
             setChanged();

@@ -46,6 +46,19 @@ public interface ElectricMember {
     }
 
     /**
+     * SOURCE: a store (battery, jar). A reserve pools with a same-band generator only for the current generation cannot cover, and
+     * takes charge from the generation's surplus ({@link #reserveWantedAmps}); alone on its band it supplies as any source does.
+     */
+    default boolean reserve() {
+        return false;
+    }
+
+    /** SOURCE, reserve: amps of charge it would take from a surplus right now. Zero when full. */
+    default float reserveWantedAmps() {
+        return 0;
+    }
+
+    /**
      * SINK: amps it wants right now. Zero when switched off. A WIRE may also answer a transient
      * figure here (a fence taking a hit); the resolver counts it as load at that wire.
      */
@@ -96,7 +109,7 @@ public interface ElectricMember {
      * @param band    the run's band; it arrives unchanged along a wire. LV when nothing supplies.
      * @param eu      WIRE: Eu in a packet at this block. SINK: Eu in the packet it receives, after cable
      *                loss. SOURCE: Eu in the packet it sends. Zero when nothing arrives.
-     * @param amps    WIRE: packets per tick through this block. SINK: delivered. SOURCE: drawn.
+     * @param amps    WIRE: packets per tick through this block. SINK: delivered. SOURCE: drawn; negative for a reserve being charged.
      * @param wanted  SINK: current it asked for. Delivered below this is a starved sink.
      * @param blocked SOURCE only: it was active but on a run with a higher band, so it supplies
      *                nothing (mixed-band runs).

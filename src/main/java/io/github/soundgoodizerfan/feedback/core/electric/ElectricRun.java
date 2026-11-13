@@ -23,7 +23,9 @@ import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
  * <ol>
  *   <li><b>Who is supplying.</b> The highest band among sources that are offering anything sets
  *       the run's band. Sources of exactly that band form the <em>pool</em> and share by rating; a
- *       source of a lower band is <em>blocked</em> and says so. Different bands do not blend (6.2).</li>
+ *       source of a lower band is <em>blocked</em> and says so. Different bands do not blend (6.2). A
+ *       store ({@link ElectricMember#reserve}) in the pool is <em>reserve</em>: generation carries the load, the store
+ *       supplies only the shortfall and charges from any surplus.</li>
  *   <li><b>Shares.</b> Every reachable sink wants some current. If the pool can cover the total
  *       (up to {@link ElectricTuning#SOURCE_OVERDRAW_LIMIT} times its rating) every sink gets what it
  *       wants; if not, every sink gets the same fraction of what it wants. There is no
@@ -110,12 +112,17 @@ public final class ElectricRun {
                     top = band;
             }
         }
-        float capacity = 0;
+        float genCap = 0, resCap = 0;
         for (int i = 0; i < n; i++) {
             pooledNow[i] = active[i] && members[i].sourceBand() == top;
-            if (pooledNow[i])
-                capacity += members[i].sourceAmps();
+            if (pooledNow[i]) {
+                if (members[i].reserve())
+                    resCap += members[i].sourceAmps();
+                else
+                    genCap += members[i].sourceAmps();
+            }
         }
+        float capacity = genCap + resCap;
         VoltageBand runBand = top == null ? VoltageBand.LV : top;
         float rootEu = top == null ? 0f : ElectricRules.packetEu(top);
         if (!built || !Arrays.equals(pooledNow, pooled)) {
@@ -141,6 +148,18 @@ public final class ElectricRun {
         // Current accumulates from the leaves back toward the supply. `order` is breadth first,
         // so walking it backwards visits every child before its parent.
         float drawn = demand * share;
+        // Stores are reserve: generation carries the load first, a reserve covers only the shortfall, and a surplus charges it.
+        float resDrawn = genCap <= 0 ? drawn : Math.min(resCap, Math.max(0f, drawn - genCap));
+        float genDrawn = drawn - resDrawn;
+        float chargeShare = 0;
+        float chargeWant = 0;
+        if (genCap > 0 && resDrawn <= 0 && genDrawn < genCap) {
+            for (int i = 0; i < n; i++)
+                if (pooledNow[i] && members[i].reserve())
+                    chargeWant += members[i].reserveWantedAmps();
+            chargeShare = chargeWant <= 0 ? 0 : Math.min(1f, (genCap - genDrawn) / chargeWant);
+            genDrawn += chargeWant * chargeShare; // [OPEN] charge current is not routed through wire loss or counted on wires
+        }
         for (int k = order.length - 1; k >= 0; k--) {
             int i = order[k];
             if (parent[i] >= 0)
@@ -163,8 +182,11 @@ public final class ElectricRun {
             ElectricMember m = members[i];
             switch (m.role()) {
                 case SOURCE -> {
-                    if (pooledNow[i])
-                        m.onResolved(runBand, rootEu, drawn * m.sourceAmps() / capacity, 0f, false);
+                    if (pooledNow[i] && m.reserve()) {
+                        float taken = resDrawn > 0 ? resDrawn * m.sourceAmps() / resCap : -m.reserveWantedAmps() * chargeShare;
+                        m.onResolved(runBand, rootEu, taken, 0f, false);
+                    } else if (pooledNow[i])
+                        m.onResolved(runBand, rootEu, genDrawn * m.sourceAmps() / genCap, 0f, false);
                     else
                         m.onResolved(runBand, 0f, 0f, 0f, active[i]);
                 }

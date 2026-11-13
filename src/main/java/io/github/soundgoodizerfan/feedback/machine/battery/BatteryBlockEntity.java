@@ -193,6 +193,16 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     }
 
     @Override
+    public boolean reserve() {
+        return supplying;
+    }
+
+    @Override
+    public float reserveWantedAmps() {
+        return full() ? 0f : amps(rectified ? ElectricMachineTuning.RECTIFIER_CHARGE_TICKS : ElectricMachineTuning.BATTERY_CHARGE_TICKS);
+    }
+
+    @Override
     public VoltageBand sourceBand() {
         return supplying && ready() && charge > 0f ? caseBand : null;
     }
@@ -231,6 +241,11 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
                     condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition - ElectricMachineTuning.BATTERY_OVERDRAW_WEAR * over);
                     heat += ElectricMachineTuning.BATTERY_OVERDRAW_HEAT * over;
                 }
+                dirty = true;
+            } else if (amps < 0f) {
+                // Charged from a same-band generator's surplus (a reserve).
+                charge = Math.min(effectiveCapacity(), charge - amps * eu * chargeEfficiency);
+                heat -= amps * eu * (1f - chargeEfficiency);
                 dirty = true;
             }
         } else if (amps > 0f) {
@@ -292,7 +307,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         }
         boolean flip = supplying
                 ? charge <= 0f || !ready() || isBlocked()
-                : ready() && charge > 0f && !ElectricRules.accepts(getBand(), getPacketEu(), caseBand);
+                : ready() && charge > 0f && !(getPacketEu() > 0f && getBand().compareTo(caseBand) > 0);
         if (flip) {
             supplying = !supplying;
             setChanged();

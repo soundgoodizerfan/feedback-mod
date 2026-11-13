@@ -726,7 +726,7 @@ public class ElectricGameTests {
         float[] charged = {0};
 
         helper.runAtTickTime(2, generator::turn);
-        helper.runAtTickTime(12, () -> helper.assertFalse(jar.isSupplying(), "mid-pulse the jar is charging"));
+        helper.runAtTickTime(12, () -> helper.assertTrue(jar.getStoredEu() > 0f, "mid-pulse the jar is charging from the surplus"));
         helper.runAtTickTime(30, () -> {
             helper.assertFalse(generator.isPulsing(), "the pulse is over");
             helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source; held " + jar.getStoredEu() + ", sees " + jar.getPacketEu() + " Eu, " + jar.getAmps() + " A");
