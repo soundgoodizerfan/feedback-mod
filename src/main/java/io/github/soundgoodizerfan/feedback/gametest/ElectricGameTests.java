@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.gametest;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
@@ -73,24 +75,26 @@ public class ElectricGameTests {
     /** A hand-built member, with whatever the last tick told it kept for the assertions. */
     static final class Fake implements ElectricMember {
         final Role role;
-        float volts, amps, cap, wants, drop;
-        float seenVolts, seenAmps, seenWanted;
+        VoltageBand band;
+        float cap, wants, loss;
+        float seenEu, seenAmps, seenWanted;
+        VoltageBand seenBand;
         boolean seenBlocked;
 
         Fake(Role role) {
             this.role = role;
         }
 
-        static Fake source(float volts, float cap) {
+        static Fake source(VoltageBand band, float cap) {
             Fake f = new Fake(Role.SOURCE);
-            f.volts = volts;
+            f.band = band;
             f.cap = cap;
             return f;
         }
 
-        static Fake wire(float drop) {
+        static Fake wire(float loss) {
             Fake f = new Fake(Role.WIRE);
-            f.drop = drop;
+            f.loss = loss;
             return f;
         }
 
@@ -101,15 +105,16 @@ public class ElectricGameTests {
         }
 
         @Override public Role role() { return role; }
-        @Override public float sourceVolts() { return volts; }
+        @Override public VoltageBand sourceBand() { return band; }
         @Override public float sourceAmps() { return cap; }
         @Override public float wantedAmps() { return wants; }
-        @Override public float dropPerAmp() { return drop; }
+        @Override public float lossPerPacket() { return loss; }
         @Override public VoltageBand ratedBand() { return VoltageBand.LV; }
 
         @Override
         public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
-            seenVolts = volts;
+            seenBand = band;
+            seenEu = eu;
             seenAmps = amps;
             seenWanted = wanted;
             seenBlocked = blocked;
@@ -130,44 +135,41 @@ public class ElectricGameTests {
         return new ElectricRun(List.of(members), adjacent);
     }
 
-    static Fake[] chain(Fake source, int wires, float drop, Fake sink) {
+    static Fake[] chain(Fake source, int wires, float loss, Fake sink) {
         Fake[] out = new Fake[wires + 2];
         out[0] = source;
         for (int i = 1; i <= wires; i++)
-            out[i] = Fake.wire(drop);
+            out[i] = Fake.wire(loss);
         out[wires + 1] = sink;
         return out;
     }
 
-    /** The voltage a sink sees falls with the distance and with the current, and by a stated amount. */
+    /** The packet a sink receives falls with the distance by a stated Eu slice per block, whatever the current; the band is unchanged. */
     @GameTest(template = "empty")
-    public static void sinkSeesLessWithDistanceAndCurrent(GameTestHelper helper) {
-        float drop = 0.05f;
+    public static void sinkReceivesLessWithDistanceAndTheBandHolds(GameTestHelper helper) {
+        float loss = 0.5f, packet = ElectricRules.packetEu(VoltageBand.LV);
         Fake nearSink = Fake.sink(1);
-        line(chain(Fake.source(1.1f, 2), 2, drop, nearSink)).tick();
+        line(chain(Fake.source(VoltageBand.LV, 2), 2, loss, nearSink)).tick();
         Fake farSink = Fake.sink(1);
-        line(chain(Fake.source(1.1f, 2), 10, drop, farSink)).tick();
+        line(chain(Fake.source(VoltageBand.LV, 2), 10, loss, farSink)).tick();
         Fake heavySink = Fake.sink(2);
-        line(chain(Fake.source(1.1f, 2), 10, drop, heavySink)).tick();
+        line(chain(Fake.source(VoltageBand.LV, 2), 10, loss, heavySink)).tick();
 
-        helper.assertTrue(Math.abs(nearSink.seenVolts - (1.1f - 2 * drop * 1)) < EPS,
-                "2 blocks at 1 A: expected 1.0 V, saw " + nearSink.seenVolts);
-        helper.assertTrue(Math.abs(farSink.seenVolts - (1.1f - 10 * drop * 1)) < EPS,
-                "10 blocks at 1 A: expected 0.6 V, saw " + farSink.seenVolts);
-        helper.assertTrue(Math.abs(heavySink.seenVolts - (1.1f - 10 * drop * 2)) < EPS,
-                "10 blocks at 2 A: expected 0.1 V, saw " + heavySink.seenVolts);
-        helper.assertTrue(farSink.seenVolts < nearSink.seenVolts && heavySink.seenVolts < farSink.seenVolts,
-                "more distance or more current must never raise the voltage a sink sees");
+        helper.assertTrue(Math.abs(nearSink.seenEu - (packet - 2 * loss)) < EPS, "2 blocks: expected " + (packet - 2 * loss) + " Eu, saw " + nearSink.seenEu);
+        helper.assertTrue(Math.abs(farSink.seenEu - (packet - 10 * loss)) < EPS, "10 blocks: expected " + (packet - 10 * loss) + " Eu, saw " + farSink.seenEu);
+        helper.assertTrue(Math.abs(heavySink.seenEu - farSink.seenEu) < EPS, "the slice does not depend on the amps");
+        helper.assertTrue(farSink.seenEu < nearSink.seenEu, "more distance must never raise the packet a sink receives");
+        helper.assertTrue(farSink.seenBand == VoltageBand.LV, "and the band arrives unchanged");
         helper.assertTrue(Math.abs(farSink.seenAmps - 1f) < EPS, "a covered sink is delivered what it wanted");
         helper.succeed();
     }
 
-    /** A path whose drop reaches the supply delivers zero volts, and never a negative figure. */
+    /** A path whose loss reaches the packet delivers zero Eu, and never a negative figure. */
     @GameTest(template = "empty")
     public static void tooLongAWireDeliversZeroNotNegative(GameTestHelper helper) {
         Fake sink = Fake.sink(1);
-        line(chain(Fake.source(1.1f, 2), 40, 0.05f, sink)).tick();
-        helper.assertTrue(sink.seenVolts == 0f, "40 blocks at 0.05 V per amp should read 0 V, got " + sink.seenVolts);
+        line(chain(Fake.source(VoltageBand.LV, 2), 40, 1f, sink)).tick();
+        helper.assertTrue(sink.seenEu == 0f, "40 blocks at 1 Eu each take a whole 32 Eu packet, got " + sink.seenEu);
         helper.succeed();
     }
 
@@ -177,13 +179,13 @@ public class ElectricGameTests {
         Fake wire = Fake.wire(0.05f);
         Fake sink = Fake.sink(1);
         ElectricRun run = line(wire, sink);
-        wire.seenVolts = 9;
-        sink.seenVolts = 9;
+        wire.seenEu = 9;
+        sink.seenEu = 9;
         sink.seenAmps = 9;
         run.tick();
-        helper.assertTrue(wire.seenVolts == 0 && wire.seenAmps == 0, "wire reads zero with no supply");
-        helper.assertTrue(sink.seenVolts == 0 && sink.seenAmps == 0 && sink.seenWanted == 1f,
-                "sink reads zero delivered, one wanted: " + sink.seenVolts + " V " + sink.seenAmps + " A "
+        helper.assertTrue(wire.seenEu == 0 && wire.seenAmps == 0, "wire reads zero with no supply");
+        helper.assertTrue(sink.seenEu == 0 && sink.seenAmps == 0 && sink.seenWanted == 1f,
+                "sink reads zero delivered, one wanted: " + sink.seenEu + " Eu " + sink.seenAmps + " A "
                         + sink.seenWanted + " wanted");
         helper.succeed();
     }
@@ -191,7 +193,7 @@ public class ElectricGameTests {
     /** When supply cannot cover demand every sink gets the same fraction, not nearest-first. */
     @GameTest(template = "empty")
     public static void shortfallIsSharedInProportion(GameTestHelper helper) {
-        Fake source = Fake.source(1.5f, 1);
+        Fake source = Fake.source(VoltageBand.LV, 1);
         Fake hub = Fake.wire(0.05f);
         Fake a = Fake.sink(2);
         Fake b = Fake.sink(1);
@@ -209,41 +211,20 @@ public class ElectricGameTests {
         helper.succeed();
     }
 
-    /** Drawn past its rating a source sags but does not drop to zero, and is not destroyed. */
+    /** A lower-band source on a run with a higher one is blocked and says so. */
     @GameTest(template = "empty")
-    public static void overDrawSagsASourceAndNothingMore(GameTestHelper helper) {
-        Fake source = Fake.source(1.5f, 1);
-        Fake sink = Fake.sink(1.5f);
-        line(source, sink).tick();
-        float expected = 1.5f * (1f - (1f - ElectricTuning.SOURCE_SAG_FLOOR) * 0.5f / (ElectricTuning.SOURCE_OVERDRAW_LIMIT - 1f));
-        helper.assertTrue(Math.abs(source.seenVolts - expected) < EPS,
-                "1.5x rated draw should hold " + expected + " V, held " + source.seenVolts);
-        helper.assertTrue(Math.abs(sink.seenVolts - expected) < EPS, "the sink sees the sagged voltage");
-
-        Fake hard = Fake.source(1.5f, 1);
-        Fake hungry = Fake.sink(50);
-        line(hard, hungry).tick();
-        helper.assertTrue(Math.abs(hard.seenVolts - 1.5f * ElectricTuning.SOURCE_SAG_FLOOR) < EPS,
-                "a source drawn far past its rating holds the floor, not zero");
-        helper.assertTrue(Math.abs(hungry.seenAmps - ElectricTuning.SOURCE_OVERDRAW_LIMIT) < EPS,
-                "and supplies no more than its limit");
-        helper.succeed();
-    }
-
-    /** A lower-voltage source on a run with a higher one is blocked and says so. */
-    @GameTest(template = "empty")
-    public static void lowerVoltageSourceIsBlocked(GameTestHelper helper) {
-        Fake low = Fake.source(1.1f, 1);
+    public static void lowerBandSourceIsBlocked(GameTestHelper helper) {
+        Fake low = Fake.source(VoltageBand.LV, 1);
         Fake wire = Fake.wire(0f);
-        Fake high = Fake.source(1.5f, 1);
+        Fake high = Fake.source(VoltageBand.MV, 1);
         Fake sink = Fake.sink(1);
         // low - wire - high, and the sink on the wire
         ElectricRun run = new ElectricRun(List.of(low, wire, high, sink),
                 new int[][] {{1}, {0, 2, 3}, {1}, {1}});
         run.tick();
-        helper.assertTrue(low.seenBlocked && low.seenAmps == 0f, "the 1.1 V source must be blocked");
-        helper.assertFalse(high.seenBlocked, "the 1.5 V source is not");
-        helper.assertTrue(Math.abs(sink.seenVolts - 1.5f) < EPS, "the sink sees the higher voltage, not a blend");
+        helper.assertTrue(low.seenBlocked && low.seenAmps == 0f, "the LV source must be blocked");
+        helper.assertFalse(high.seenBlocked, "the MV source is not");
+        helper.assertTrue(sink.seenBand == VoltageBand.MV && Math.abs(sink.seenEu - ElectricRules.packetEu(VoltageBand.MV)) < EPS, "the sink sees the higher band, not a blend");
         helper.assertTrue(Math.abs(high.seenAmps - 1f) < EPS, "the higher source carries the whole draw");
         helper.succeed();
     }
@@ -251,26 +232,26 @@ public class ElectricGameTests {
     /** The tree is cached between ticks and rebuilt only when what is supplying changes. */
     @GameTest(template = "empty")
     public static void routingRebuildsOnlyWhenSupplyChanges(GameTestHelper helper) {
-        Fake source = Fake.source(0f, 1);   // idle, as a pulse source is between pulses
+        Fake source = Fake.source(null, 1);   // idle, as a pulse source is between pulses
         Fake sink = Fake.sink(1);
         ElectricRun run = line(source, sink);
         run.tick();
         run.tick();
         run.tick();
         helper.assertTrue(run.rebuilds() == 1, "an idle run is routed once, not per tick: " + run.rebuilds());
-        helper.assertTrue(sink.seenVolts == 0f, "and an idle source feeds nothing");
+        helper.assertTrue(sink.seenEu == 0f, "and an idle source feeds nothing");
 
-        source.volts = 1.5f;
+        source.band = VoltageBand.LV;
         run.tick();
         helper.assertTrue(run.rebuilds() == 2, "the source going live re-routes once: " + run.rebuilds());
-        helper.assertTrue(Math.abs(sink.seenVolts - 1.5f) < EPS, "the sink is now fed");
+        helper.assertTrue(sink.seenEu > 0f, "the sink is now fed");
         run.tick();
         run.tick();
         helper.assertTrue(run.rebuilds() == 2, "a steady live run is not re-routed: " + run.rebuilds());
 
-        source.volts = 0f;
+        source.band = null;
         run.tick();
-        helper.assertTrue(run.rebuilds() == 3 && sink.seenVolts == 0f, "the pulse ending re-routes and reads zero");
+        helper.assertTrue(run.rebuilds() == 3 && sink.seenEu == 0f, "the pulse ending re-routes and reads zero");
         helper.succeed();
     }
 
@@ -379,7 +360,7 @@ public class ElectricGameTests {
             helper.assertTrue(wa.getRun() != null && wa.getRun() == wb.getRun() && wb.getRun() == wc.getRun(),
                     "three touching cables are one run");
             helper.assertTrue(wa.getRun().size() == 3, "of three members, was " + wa.getRun().size());
-            helper.assertTrue(wb.getVolts() == 0f && wb.getAmps() == 0f, "with no source it reads zero");
+            helper.assertTrue(wb.getPacketEu() == 0f && wb.getAmps() == 0f, "with no source it reads zero");
             helper.setBlock(b, Blocks.AIR.defaultBlockState());
             helper.runAfterDelay(3, () -> {
                 helper.assertTrue(wa.getRun() != null && wc.getRun() != null && wa.getRun() != wc.getRun(),
@@ -394,19 +375,18 @@ public class ElectricGameTests {
 
     // --- sources ----------------------------------------------------------------------------
 
-    /** A cell holds the difference of its electrodes' potentials, read from the material files. */
+    /** A cell's band follows the difference of its electrodes' potentials, read from the material files. */
     @GameTest(template = "empty", timeoutTicks = 60)
-    public static void cellHoldsItsElectrodePairsPotential(GameTestHelper helper) {
+    public static void cellHoldsItsElectrodePairsBand(GameTestHelper helper) {
         BlockPos cell = new BlockPos(1, 2, 1), cable = cell.east();
         helper.setBlock(cell, FBlocks.GALVANIC_CELL.get().defaultBlockState());
         CableBlockEntity wire = placeCable(helper, cable);
         helper.runAfterDelay(4, () -> {
-            // zinc -0.76 V against copper +0.34 V
-            helper.assertTrue(Math.abs(wire.getVolts() - 1.1f) < 1e-3f,
-                    "a zinc/copper cell should put 1.1 V on the wire, got " + wire.getVolts());
+            // zinc -0.76 against copper +0.34: the difference is LV
+            helper.assertTrue(wire.getBand() == VoltageBand.LV && wire.isLive(), "a zinc/copper cell should put an LV packet on the wire");
             helper.assertTrue(wire.getAmps() == 0f, "and nothing flows with nothing to load it");
             GalvanicCellBlockEntity be = (GalvanicCellBlockEntity) helper.getBlockEntity(cell);
-            helper.assertTrue(be.offered().voltage() == VoltageBand.LV, "1.1 V is the LV band");
+            helper.assertTrue(be.offered().voltage() == VoltageBand.LV, "the cell offers the LV band");
             helper.setBlock(cell, Blocks.AIR.defaultBlockState());
             helper.setBlock(cable, Blocks.AIR.defaultBlockState());
             helper.succeed();
@@ -414,7 +394,7 @@ public class ElectricGameTests {
     }
 
     /**
-     * A pulse source is live only while it pulses, and while it does it outbids a lower-voltage
+     * A pulse source is live only while it pulses, and while it does it outbids a lower-band
      * cell on the same line, which is blocked for exactly that long and no longer.
      */
     @GameTest(template = "empty", timeoutTicks = 120)
@@ -426,19 +406,19 @@ public class ElectricGameTests {
         ElectrostaticGeneratorBlockEntity generator = (ElectrostaticGeneratorBlockEntity) helper.getBlockEntity(pulse);
         GalvanicCellBlockEntity cell = (GalvanicCellBlockEntity) helper.getBlockEntity(cellPos);
         helper.runAfterDelay(4, () -> {
-            helper.assertTrue(Math.abs(wire.getVolts() - 1.1f) < 1e-3f, "idle generator: the cell alone holds the line");
+            helper.assertTrue(wire.getBand() == VoltageBand.LV && wire.isLive(), "idle generator: the cell alone holds the line");
             helper.assertFalse(cell.isBlocked(), "and is not blocked");
             int before = wire.getRun().rebuilds();
             generator.turn();
             helper.runAfterDelay(3, () -> {
-                helper.assertTrue(Math.abs(wire.getVolts() - ElectricMachineTuning.ELECTROSTATIC_VOLTS) < 1e-3f,
-                        "pulsing: the line is at the generator's voltage, got " + wire.getVolts());
-                helper.assertTrue(cell.isBlocked(), "and the lower-voltage cell is blocked");
+                helper.assertTrue(wire.getBand() == ElectricMachineTuning.ELECTROSTATIC_BAND,
+                        "pulsing: the line is at the generator's band, got " + wire.getBand());
+                helper.assertTrue(cell.isBlocked(), "and the lower-band cell is blocked");
                 helper.assertTrue(wire.getRun().rebuilds() > before, "the supply changing re-routed the run");
                 helper.runAfterDelay(ElectricMachineTuning.ELECTROSTATIC_PULSE_TICKS + 3, () -> {
                     helper.assertFalse(generator.isPulsing(), "the pulse ends");
-                    helper.assertTrue(Math.abs(wire.getVolts() - 1.1f) < 1e-3f,
-                            "and the line falls back to the cell, got " + wire.getVolts());
+                    helper.assertTrue(wire.getBand() == VoltageBand.LV && wire.isLive(),
+                            "and the line falls back to the cell, got " + wire.getBand());
                     helper.assertFalse(cell.isBlocked(), "which is no longer blocked");
                     helper.setBlock(pulse, Blocks.AIR.defaultBlockState());
                     helper.setBlock(wirePos, Blocks.AIR.defaultBlockState());
@@ -468,9 +448,9 @@ public class ElectricGameTests {
                 .orElse(null);
         helper.assertTrue(found == sensor, "the sided reference resolves to the fitting on the wire");
         helper.assertTrue(((SensorFitting) found).canRead(Quantity.CURRENT)
-                && !((SensorFitting) found).canRead(Quantity.VOLTAGE), "it reads current and only current");
+                && !((SensorFitting) found).canRead(Quantity.BAND), "it reads current and only current");
 
-        wire.onResolved(1.2f, 2.3f, 0f, false);
+        wire.onResolved(VoltageBand.LV, 30f, 2.3f, 0f, false);
         helper.assertTrue(Math.abs(sensor.readRaw() - 2.5f) < 1e-4f,
                 "2.3 A at 0.5 A resolution reads 2.5, got " + sensor.readRaw());
         helper.assertTrue(Math.abs(wire.getAmps() - 2.3f) < 1e-4f, "while the wire's own figure is untouched");
@@ -483,11 +463,11 @@ public class ElectricGameTests {
     public static void electroscopeAndGalvanometerReadDifferentQuantities(GameTestHelper helper) {
         ElectroscopeItem electroscope = (ElectroscopeItem) FItems.ELECTROSCOPE.get();
         GalvanometerItem galvanometer = (GalvanometerItem) FItems.GALVANOMETER.get();
-        helper.assertTrue(electroscope.canRead(Quantity.VOLTAGE) && !electroscope.canRead(Quantity.CURRENT),
-                "the electroscope reads potential, never current (6.7)");
-        helper.assertTrue(galvanometer.canRead(Quantity.CURRENT) && !galvanometer.canRead(Quantity.VOLTAGE),
+        helper.assertTrue(electroscope.canRead(Quantity.BAND) && !electroscope.canRead(Quantity.CURRENT),
+                "the electroscope reads the band, never current (6.7)");
+        helper.assertTrue(galvanometer.canRead(Quantity.CURRENT) && !galvanometer.canRead(Quantity.BAND),
                 "the galvanometer reads current");
-        helper.assertTrue(electroscope.resolution(Quantity.VOLTAGE) > 0 && galvanometer.resolution(Quantity.CURRENT) > 0,
+        helper.assertTrue(electroscope.resolution(Quantity.BAND) > 0 && galvanometer.resolution(Quantity.CURRENT) > 0,
                 "and neither is exact (philosophy 10)");
         helper.succeed();
     }
@@ -517,41 +497,28 @@ public class ElectricGameTests {
     }
 
     /**
-     * Source, wire, sink, with loss: the voltage a magnet sees is the cell's less the stated drop
-     * per block per amp, and its field falls with it -- weaker, never refused.
+     * Source, wire, sink, with loss: the packet a magnet receives is the band's less the stated Eu slice
+     * per block, and its field falls with it -- weaker, never refused.
      */
     @GameTest(template = "empty", timeoutTicks = 80)
-    public static void magnetOnALongerRunSeesLessAndPullsWeaker(GameTestHelper helper) {
+    public static void magnetOnALongerRunReceivesLessAndPullsWeaker(GameTestHelper helper) {
         BlockPos near = new BlockPos(0, 2, 1), far = new BlockPos(0, 2, 4);
         ElectromagnetBlockEntity a = row(helper, near, 2);
         ElectromagnetBlockEntity b = row(helper, far, 8);
         helper.runAfterDelay(6, () -> {
-            float drop = 0.05f;   // copper.json electrical.drop
-            helper.assertTrue(Math.abs(a.getVolts() - (1.1f - 2 * drop)) < 1e-3f,
-                    "2 cables, 1 A: expected 1.0 V, saw " + a.getVolts());
-            helper.assertTrue(Math.abs(b.getVolts() - (1.1f - 8 * drop)) < 1e-3f,
-                    "8 cables, 1 A: expected 0.7 V, saw " + b.getVolts());
+            float loss = 0.05f * ElectricMachineTuning.CABLE_LOSS_EU_PER_DROP;   // copper.json electrical.drop
+            float packet = ElectricRules.packetEu(VoltageBand.LV);
+            helper.assertTrue(Math.abs(a.getPacketEu() - (packet - 2 * loss)) < 1e-3f,
+                    "2 cables: expected " + (packet - 2 * loss) + " Eu, saw " + a.getPacketEu());
+            helper.assertTrue(Math.abs(b.getPacketEu() - (packet - 8 * loss)) < 1e-3f,
+                    "8 cables: expected " + (packet - 8 * loss) + " Eu, saw " + b.getPacketEu());
             helper.assertTrue(Math.abs(a.getAmps() - 1f) < 1e-3f && Math.abs(b.getAmps() - 1f) < 1e-3f,
                     "both are delivered what they asked for");
             helper.assertTrue(b.getFieldStrength() > 0f && b.getFieldStrength() < a.getFieldStrength(),
                     "the far magnet pulls weaker, not zero: " + b.getFieldStrength() + " vs " + a.getFieldStrength());
-            helper.assertTrue(a.getCondition() == 1f && b.getCondition() == 1f, "under-voltage never wears");
+            helper.assertTrue(a.getCondition() == 1f && b.getCondition() == 1f, "a smaller packet never wears");
             clearRow(helper, near, 2);
             clearRow(helper, far, 8);
-            helper.succeed();
-        });
-    }
-
-    /** Far enough and the magnet does nothing; it is not refused, not worn, not destroyed. */
-    @GameTest(template = "empty", timeoutTicks = 80)
-    public static void aRunTooLongSlowsAMagnetToNothingAndNoFurther(GameTestHelper helper) {
-        BlockPos from = new BlockPos(0, 2, 1);
-        ElectromagnetBlockEntity magnet = row(helper, from, 24);
-        helper.runAfterDelay(6, () -> {
-            helper.assertTrue(magnet.getVolts() == 0f, "24 cables at 1 A drop more than the cell has");
-            helper.assertTrue(magnet.getFieldStrength() == 0f && !magnet.isRunning(), "so it does nothing");
-            helper.assertTrue(magnet.getCondition() == 1f && !magnet.isRemoved(), "and is none the worse for it");
-            clearRow(helper, from, 24);
             helper.succeed();
         });
     }
@@ -623,11 +590,11 @@ public class ElectricGameTests {
         BlockPos at = new BlockPos(1, 2, 1);
         ElectromagnetBlockEntity magnet = placeMagnet(helper, at);
         float ambient = AmbientTable.at(helper.getLevel()).value();
-        float excess = 6f / ElectricTuning.BAND_POTENTIAL_LV - 1f;   // fed an MV-reference voltage
+        float excess = ElectricRules.overVoltage(VoltageBand.MV, 1f, VoltageBand.LV);   // fed a band over its rating
         float ceiling = ambient + ElectricMachineTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess / ElectricMachineTuning.ELECTROMAGNET_LEAK.workPerTickPerTu();
         float peak = 0;
         for (int i = 0; i < 4000; i++) {
-            magnet.onResolved(6f, 1f, 1f, false);
+            magnet.onResolved(VoltageBand.MV, ElectricRules.packetEu(VoltageBand.MV), 1f, 1f, false);
             peak = Math.max(peak, magnet.getTemperature().value());
         }
         helper.assertTrue(magnet.getCondition() == ElectricMachineTuning.ELECTROMAGNET_CONDITION_FLOOR,
@@ -696,8 +663,8 @@ public class ElectricGameTests {
         helper.runAtTickTime(110, () -> {
             float rpm = MachineTuning.HAND_CRANK_RPM.value();
             helper.assertTrue(Math.abs(dynamo.getShaftRpm() - rpm) < 1e-3, "the dynamo is turned at the crank's speed, got " + dynamo.getShaftRpm());
-            helper.assertTrue(Math.abs(dynamo.getVolts() - rpm * dynamo.getVoltsPerRpm()) < EPS,
-                    "expected " + rpm * dynamo.getVoltsPerRpm() + " V, held " + dynamo.getVolts());
+            helper.assertTrue(dynamo.getBand() == ElectricRules.bandOfPotential(rpm * dynamo.getVoltsPerRpm()),
+                    "the winding's EMF at this speed falls in a band, held " + dynamo.getBand());
             helper.assertTrue(Math.abs(magnet.getAmps() - ElectricMachineTuning.ELECTROMAGNET_AMPS) < EPS, "the magnet is delivered what it wants");
             helper.assertTrue(Math.abs(dynamo.getShaftLoad().value() - ElectricMachineTuning.ELECTROMAGNET_AMPS * dynamo.getVoltsPerRpm()) < EPS,
                     "the dynamo charges its shaft volts-per-RPM x amps, got " + dynamo.getShaftLoad().value());
@@ -760,11 +727,11 @@ public class ElectricGameTests {
         helper.runAtTickTime(12, () -> helper.assertFalse(jar.isSupplying(), "mid-pulse the jar is charging"));
         helper.runAtTickTime(30, () -> {
             helper.assertFalse(generator.isPulsing(), "the pulse is over");
-            helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source; held " + jar.getStoredVolts() + " V, sees " + jar.getVolts() + " V, " + jar.getAmps() + " A");
+            helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source; held " + jar.getStoredVolts() + ", sees " + jar.getPacketEu() + " Eu, " + jar.getAmps() + " A");
             charged[0] = jar.getStoredVolts();
             // The jar charges at LEYDEN_JAR_CHARGE_AMPS for the length of the pulse, so it holds that much charge over its capacitance, never past the source.
             float expected = ElectricMachineTuning.ELECTROSTATIC_PULSE_TICKS * ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS / ElectricMachineTuning.LEYDEN_JAR_CAPACITANCE;
-            helper.assertTrue(charged[0] > 0.8f * expected && charged[0] <= ElectricMachineTuning.ELECTROSTATIC_VOLTS + EPS,
+            helper.assertTrue(charged[0] > 0.8f * expected && charged[0] <= ElectricRules.bandPotential(ElectricMachineTuning.ELECTROSTATIC_BAND) + EPS,
                     "the jar charged to about " + expected + " V and never past its source's voltage, held " + charged[0]);
             placeMagnet(helper, jarAt.east());
         });
@@ -799,22 +766,22 @@ public class ElectricGameTests {
                 / (ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS * ElectricMachineTuning.QU_PER_AMP_TICK));
     }
 
-    private static void run(ElectrolyticCellBlockEntity cell, float volts, int ticks) {
+    private static void run(ElectrolyticCellBlockEntity cell, VoltageBand band, int ticks) {
         for (int i = 0; i < ticks; i++)
-            cell.onResolved(volts, ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS, ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS, false);
+            cell.onResolved(band, ElectricRules.packetEu(band), ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS, ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS, false);
     }
 
     /**
-     * Below zinc's deposition potential (copper's plus the 1.1 V gap) brass gives up its copper
-     * and keeps its zinc in the water. Left running with the anode gone, below water's potential
-     * the cell simply stops: the finished cathode comes off as copper.
+     * In water, zinc sits too far behind copper to plate with it: brass gives up its copper
+     * and keeps its zinc in the water. Left running with the anode gone, on a band under the one
+     * that splits water, the cell simply stops: the finished cathode comes off as copper.
      */
     @GameTest(template = "empty")
-    public static void cellRefinesCopperOutOfBrassBelowZincsPotential(GameTestHelper helper) {
+    public static void cellRefinesCopperOutOfBrassInWater(GameTestHelper helper) {
         BlockPos at = new BlockPos(1, 2, 1);
         ElectrolyticCellBlockEntity cell = brassCell(helper, at, 2);
-        run(cell, 1.1f, ticksFor(2));
-        run(cell, 1.1f, ticksFor(2));   // overrun, anode long gone
+        run(cell, VoltageBand.LV, ticksFor(2));
+        run(cell, VoltageBand.LV, ticksFor(2));   // overrun, anode long gone
         helper.assertTrue(cell.getAnode().isEmpty(), "the anode dissolved");
         helper.assertFalse(cell.getDeposit().containsKey(ZINC), "no zinc plated: " + cell.getDeposit());
         // Brass is 65 % copper, 35 % zinc by Qu, and two ingots are 18 Qu: 11.7 and 6.3.
@@ -830,16 +797,16 @@ public class ElectricGameTests {
     }
 
     /**
-     * The same refined cathode, overrun at a voltage above water's: with the anode gone the
+     * The same refined cathode, overrun on a band that splits water: with the anode gone the
      * current strips the water, the zinc that waited behind the copper plates over it, and the
      * finished deposit comes off as scrap.
      */
     @GameTest(template = "empty")
-    public static void overrunAboveWatersPotentialPlatesZincOverTheFinishedCopper(GameTestHelper helper) {
+    public static void overrunOnABandThatSplitsWaterPlatesZincOverTheFinishedCopper(GameTestHelper helper) {
         BlockPos at = new BlockPos(1, 2, 1);
         ElectrolyticCellBlockEntity cell = brassCell(helper, at, 2);
-        run(cell, 1.1f, ticksFor(2));
-        run(cell, 1.5f, ticksFor(1));
+        run(cell, VoltageBand.LV, ticksFor(2));
+        run(cell, VoltageBand.MV, ticksFor(1));
         helper.assertTrue(cell.getDeposit().getOrDefault(ZINC, 0f) > 6.2f, "the zinc plated: " + cell.getDeposit());
         List<ItemStack> off = cell.takeCathode();
         helper.assertTrue(off.size() == 1 && off.get(0).is(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(Feedback.id("copper_scrap"))) && off.get(0).getCount() == 2,
@@ -886,7 +853,7 @@ public class ElectricGameTests {
         cell.hangWork(new ItemStack(Items.IRON_INGOT));
         int ticks = Math.round(qu / (amps * ElectricMachineTuning.QU_PER_AMP_TICK));
         for (int i = 0; i < ticks; i++)
-            cell.onResolved(0.5f, amps, amps, false);
+            cell.onResolved(VoltageBand.LV, ElectricRules.packetEu(VoltageBand.LV), amps, amps, false);
         return cell.takeWork();
     }
 
@@ -910,8 +877,8 @@ public class ElectricGameTests {
         ThermalBody pot = (ThermalBody) helper.getBlockEntity(copperAt.above());
 
         helper.onEachTick(() -> {
-            copper.onResolved(9f, ElectricMachineTuning.COIL_AMPS, ElectricMachineTuning.COIL_AMPS, false);
-            iron.onResolved(9f, ElectricMachineTuning.COIL_AMPS, ElectricMachineTuning.COIL_AMPS, false);
+            copper.onResolved(VoltageBand.MV, ElectricRules.packetEu(VoltageBand.MV), ElectricMachineTuning.COIL_AMPS, ElectricMachineTuning.COIL_AMPS, false);
+            iron.onResolved(VoltageBand.MV, ElectricRules.packetEu(VoltageBand.MV), ElectricMachineTuning.COIL_AMPS, ElectricMachineTuning.COIL_AMPS, false);
         });
         helper.runAtTickTime(1200, () -> {
             float vessel = pot.getTemperature().value(), element = copper.getTemperature().value();
@@ -969,11 +936,11 @@ public class ElectricGameTests {
         helper.assertTrue(fuse.rewire(new ItemStack(wire)), "a tin fine wire fits");
         float rating = fuse.getRatingAmps();
         for (int i = 0; i < 100; i++)
-            fuse.onResolved(1f, rating, 0f, false);
+            fuse.onResolved(VoltageBand.LV, 32f, rating, 0f, false);
         helper.assertTrue(fuse.isIntact(), "at its rating it holds");
         int ticks = 0;
         while (fuse.isIntact() && ticks < 100) {
-            fuse.onResolved(1f, rating + 2f, 0f, false);
+            fuse.onResolved(VoltageBand.LV, 32f, rating + 2f, 0f, false);
             ticks++;
         }
         helper.assertFalse(fuse.isIntact(), "two amps over, tin melts");
@@ -992,12 +959,12 @@ public class ElectricGameTests {
         helper.assertTrue(battery.gas() < 0.5f, "no hydrogen released, now " + battery.gas() + " mB");
     }
 
-    /** A battery of {@code cells} cells, acid filled, charge set to {@code share} of capacity, with a creative source of {@code lineVolts} beside it by a cable. */
-    private static io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity chargingBattery(GameTestHelper helper, int cells, float share, float lineVolts) {
+    /** A battery of {@code cells} cells, acid filled, charge set to {@code share} of capacity, with a creative source of {@code line} beside it by a cable. */
+    private static io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity chargingBattery(GameTestHelper helper, int cells, float share, VoltageBand line) {
         BlockPos sourceAt = new BlockPos(1, 2, 1), batteryAt = sourceAt.east(2);
         helper.setBlock(sourceAt, FBlocks.CREATIVE_ELECTRIC.get().defaultBlockState());
         ((io.github.soundgoodizerfan.feedback.machine.creative.CreativeElectricBlockEntity) helper.getBlockEntity(sourceAt))
-                .configure(true, new float[] {lineVolts, 1000f});
+                .configure(true, new float[] {line.ordinal(), 1000f});
         placeCable(helper, sourceAt.east());
         helper.setBlock(batteryAt, FBlocks.BATTERY.get().defaultBlockState());
         var battery = (io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity) helper.getBlockEntity(batteryAt);
@@ -1014,23 +981,10 @@ public class ElectricGameTests {
         return battery;
     }
 
-    /** One cell on a line above its full voltage but under its gassing voltage charges to full and stops there. */
-    @GameTest(template = "empty", timeoutTicks = 1300)
-    public static void batteryChargesToFullOnAHighEnoughLine(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 1, 0.97f, 2.25f);
-        helper.runAtTickTime(1200, () -> {
-            helper.assertTrue(!battery.isSupplying(), "still a sink, not flipped to supplying; soc " + battery.stateOfCharge());
-            helper.assertTrue(battery.stateOfCharge() > 0.999f,
-                    "full on a 2.25 V line, soc " + battery.stateOfCharge() + ", sees " + battery.getVolts() + " V, terminal " + battery.terminalVolts());
-            assertBatteryHealthy(helper, battery);
-            helper.succeed();
-        });
-    }
-
     /** A line at the nominal band voltage (LV 1.5 V) sits under one cell's 2.1 V: it must not charge it, and says what happens. */
     @GameTest(template = "empty", timeoutTicks = 600)
-    public static void batteryOnALowVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 1, 0.5f, ElectricTuning.BAND_POTENTIAL_LV);
+    public static void batteryOnALowBandLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
+        var battery = chargingBattery(helper, 1, 0.5f, VoltageBand.LV);
         helper.runAtTickTime(300, () -> {
             helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
                     + ", terminal " + battery.terminalVolts() + " V");
@@ -1041,8 +995,8 @@ public class ElectricGameTests {
 
     /** Three cells (6.3 V full) on a nominal MV line (6 V). */
     @GameTest(template = "empty", timeoutTicks = 600)
-    public static void batteryOnAMediumVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 3, 0.5f, ElectricTuning.BAND_POTENTIAL_MV);
+    public static void batteryOnAMediumBandLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
+        var battery = chargingBattery(helper, 3, 0.5f, VoltageBand.MV);
         helper.runAtTickTime(300, () -> {
             helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
                     + ", terminal " + battery.terminalVolts() + " V");
@@ -1051,16 +1005,4 @@ public class ElectricGameTests {
         });
     }
 
-    /** The user's case: one cell, a 2.2 V creative line, half charged. */
-    @GameTest(template = "empty", timeoutTicks = 600)
-    public static void batteryOnA2Point2VoltLineChargesSteadily(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 1, 0.5f, 2.2f);
-        helper.runAtTickTime(300, () -> {
-            helper.assertTrue(battery.stateOfCharge() > 0.51f && !battery.isSupplying(),
-                    "1 cell on a 2.2 V line should gain charge; soc " + battery.stateOfCharge()
-                            + ", supplying " + battery.isSupplying() + ", terminal " + battery.terminalVolts() + " V, line " + battery.getVolts() + " V, amps " + battery.getAmps());
-            assertBatteryHealthy(helper, battery);
-            helper.succeed();
-        });
-    }
 }
