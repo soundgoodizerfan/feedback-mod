@@ -21,9 +21,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
  * @param ended the shot is over: stop at (x, y, z)
  * @param argb  the streak's colour; alpha says how bright
  * @param drag  the flight's drag multiplier
+ * @param style 0 for a bullet, else an {@code EnergyStyle}: a blob that flies straight, no drag or gravity
  */
 public record GunTracerPayload(int id, boolean ended, double x, double y, double z, float vx, float vy, float vz,
-                               int argb, float drag) implements CustomPacketPayload {
+                               int argb, float drag, byte style) implements CustomPacketPayload {
 
     public static final Type<GunTracerPayload> TYPE = new Type<>(Feedback.id("gun_tracer"));
 
@@ -39,9 +40,10 @@ public record GunTracerPayload(int id, boolean ended, double x, double y, double
                 buf.writeFloat(p.vz);
                 buf.writeInt(p.argb);
                 buf.writeFloat(p.drag);
+                buf.writeByte(p.style);
             },
             buf -> new GunTracerPayload(ByteBufCodecs.VAR_INT.decode(buf), buf.readBoolean(), buf.readDouble(), buf.readDouble(),
-                    buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readFloat()));
+                    buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readInt(), buf.readFloat(), buf.readByte()));
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
@@ -49,8 +51,12 @@ public record GunTracerPayload(int id, boolean ended, double x, double y, double
     }
 
     public static void send(ServerLevel level, int id, boolean ended, Vec3 pos, Vec3 velocity, int argb, float drag) {
+        send(level, id, ended, pos, velocity, argb, drag, (byte) 0);
+    }
+
+    public static void send(ServerLevel level, int id, boolean ended, Vec3 pos, Vec3 velocity, int argb, float drag, byte style) {
         PacketDistributor.sendToPlayersNear(level, null, pos.x, pos.y, pos.z, 160,
-                new GunTracerPayload(id, ended, pos.x, pos.y, pos.z, (float) velocity.x, (float) velocity.y, (float) velocity.z, argb, drag));
+                new GunTracerPayload(id, ended, pos.x, pos.y, pos.z, (float) velocity.x, (float) velocity.y, (float) velocity.z, argb, drag, style));
     }
 
     public static void handle(GunTracerPayload payload, IPayloadContext context) {

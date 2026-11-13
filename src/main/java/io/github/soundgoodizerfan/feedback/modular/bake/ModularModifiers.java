@@ -53,7 +53,9 @@ public final class ModularModifiers {
     public enum Kind {
         ADJECTIVE("adjective", ChatFormatting.GRAY, ChatFormatting.DARK_GRAY),
         TRAIT("trait", ChatFormatting.GOLD, ChatFormatting.GRAY),
-        SHAPE("shape", ChatFormatting.YELLOW, ChatFormatting.GRAY);
+        SHAPE("shape", ChatFormatting.YELLOW, ChatFormatting.GRAY),
+        /** What a pulse gun does to its own wielder when used wrong: shown on the Blueprint Table before it is built. */
+        HAZARD("hazard", ChatFormatting.RED, ChatFormatting.GRAY);
 
         final String key;
         final ChatFormatting name, text;
@@ -132,6 +134,10 @@ public final class ModularModifiers {
         List<Modifier> out = new ArrayList<>(adjectives(design, type, f));
         if (type == null || type.family() == ModularType.Family.DISH)
             return out;
+        if (type.family() == ModularType.Family.ELECTRIC_GUN) {
+            hazards(design, type, out);
+            return out;
+        }
         // A gun has a trait for every mechanism its parts show (spec 8.4), not one signature: all of them, each once.
         if (type.family() == ModularType.Family.GUN) {
             for (ModularTraits.Active a : ModularTraits.allOf(design, type))
@@ -155,6 +161,25 @@ public final class ModularModifiers {
             if (out.stream().noneMatch(m -> m.kind() == Kind.TRAIT && m.id().equals(a.id())))
                 trait(a.id(), a.params().values()).ifPresent(out::add);
         return out;
+    }
+
+    /** A pulse gun's ways of hurting its wielder, read from the build: heat with no governor, a cell over the receiver's band, firing wet, a core that locks hot. */
+    private static void hazards(ModularDesign design, ModularType type, List<Modifier> out) {
+        var spec = io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.of(design, type,
+                io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
+        if (spec.isEmpty())
+            return;
+        var g = spec.get();
+        if (g.governor() == ElectricGunSpec.Governor.NONE)
+            hazard("overheat", out);
+        hazard("shock", out, g.band().name());
+        hazard("wet_arc", out);
+        if (g.seat() == ElectricGunSpec.Seat.CORE_BREECH)
+            hazard("hot_lock", out);
+    }
+
+    private static void hazard(String id, List<Modifier> out, Object... args) {
+        out.add(new Modifier(Kind.HAZARD, id, name(Kind.HAZARD, id), Component.translatable("modular.feedback.desc.hazard." + id, args), null));
     }
 
     /** The trait a part made in {@code v} gives (its own, else {@code type}'s), then the shape's name. */

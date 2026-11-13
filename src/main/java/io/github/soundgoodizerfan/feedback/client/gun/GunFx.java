@@ -7,9 +7,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.ClientSettings;
+import io.github.soundgoodizerfan.feedback.net.EnergyBeamPayload;
 import io.github.soundgoodizerfan.feedback.net.GunImpactPayload;
 import io.github.soundgoodizerfan.feedback.net.GunTracerPayload;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
+import io.github.soundgoodizerfan.feedback.weapon.EnergyStyle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -69,6 +71,8 @@ public final class GunFx {
         Vec3 end;
         int fade;
         int age;
+        /** 0 for a bullet, else an {@link EnergyStyle}: a blob that flies straight. */
+        byte style;
     }
 
     private static final Map<Integer, Streak> STREAKS = new HashMap<>();
@@ -94,6 +98,7 @@ public final class GunFx {
         s.vel = v;
         s.argb = p.argb();
         s.drag = p.drag();
+        s.style = p.style();
     }
 
     /** Muzzle's distance ahead of the eye, to its right and below it, in blocks: where a held gun's barrel ends. */
@@ -124,8 +129,12 @@ public final class GunFx {
 
     /** A point on the streak, pushed toward the muzzle while it is near where the bullet started. */
     private static Vec3 bent(Streak s, Vec3 p) {
-        double k = 1 - p.distanceTo(s.origin) / MUZZLE_BLEND_BLOCKS;
-        return k <= 0 ? p : p.add(s.off.scale(k));
+        return bend(s.origin, s.off, p);
+    }
+
+    private static Vec3 bend(Vec3 origin, Vec3 off, Vec3 p) {
+        double k = 1 - p.distanceTo(origin) / MUZZLE_BLEND_BLOCKS;
+        return k <= 0 ? p : p.add(off.scale(k));
     }
 
     @SubscribeEvent
@@ -134,6 +143,7 @@ public final class GunFx {
         if (mc.level == null) {
             STREAKS.clear();
             DECALS.clear();
+            BEAMS.clear();
             return;
         }
         if (mc.isPaused())
@@ -152,8 +162,13 @@ public final class GunFx {
                 continue;
             }
             s.pos = s.pos.add(s.vel);
+            if (s.style != 0) {
+                glow(mc.level, s.pos, s.argb & 0xFFFFFF, 0.5f);
+                continue;
+            }
             s.vel = s.vel.scale(1 - GunTuning.GUN_DRAG_PER_TICK * s.drag).add(0, -GunTuning.GUN_GRAVITY_PER_TICK, 0);
         }
+        BEAMS.removeIf(b -> ++b.age > b.life);
         long now = mc.level.getGameTime();
         DECALS.removeIf(d -> now - d.born > DECAL_LIFE_TICKS);
     }
@@ -161,12 +176,12 @@ public final class GunFx {
     // ---------------------------------------------------------------- decals
 
     /** Decal kinds, chosen by the server from the surface's own stuff: hard stone and metal, wood, glass, soft earth. */
-    public static final int DECAL_CHIP = 0, DECAL_SPLINTER = 1, DECAL_CRACK = 2, DECAL_DENT = 3;
+    public static final int DECAL_CHIP = 0, DECAL_SPLINTER = 1, DECAL_CRACK = 2, DECAL_DENT = 3, DECAL_SCORCH = 4;
     /** Sprite sizes in pixels; one pixel is a sixteenth of a block, as everywhere. */
-    private static final int[] DECAL_PX = {5, 6, 10, 6};
+    private static final int[] DECAL_PX = {5, 6, 10, 6, 8};
     private static final ResourceLocation[] DECAL_TEX = {
             Feedback.id("textures/misc/bullet_hole_chip.png"), Feedback.id("textures/misc/bullet_hole_splinter.png"),
-            Feedback.id("textures/misc/bullet_hole_crack.png"), Feedback.id("textures/misc/bullet_hole_dent.png")};
+            Feedback.id("textures/misc/bullet_hole_crack.png"), Feedback.id("textures/misc/bullet_hole_dent.png"), Feedback.id("textures/misc/bullet_hole_dent.png")};
     private static final int DECAL_LIFE_TICKS = 600, DECAL_FADE_TICKS = 120, DECAL_MAX = 96;
 
     private record Decal(Vec3 pos, Vec3 normal, int kind, float angle, long born) {
@@ -228,11 +243,230 @@ public final class GunFx {
                     level.addParticle(ParticleTypes.SMOKE, at.x, at.y, at.z, dir.x * 0.01, 0.025, dir.z * 0.01);
                 addDecal(level, at.add(dir.scale(0.004)), dir, p.decal());
             }
+
             case GunImpactPayload.RICOCHET -> sparks(level, at, dir, 9, 0.5, r);
             case GunImpactPayload.MUZZLE -> muzzle(level, at, dir, power, p.data() == 1, r);
+            case GunImpactPayload.ENERGY_BLOCK, GunImpactPayload.ENERGY_BODY -> energyImpact(level, at, dir, power, p.data() & 0xFFFFFF,
+                    (byte) (p.data() >>> 24), p.kind() == GunImpactPayload.ENERGY_BLOCK, r);
+            case GunImpactPayload.ENERGY_MUZZLE -> energyMuzzle(level, at, dir, power, p.data() & 0xFFFFFF, (byte) (p.data() >>> 24), r);
             default -> {
             }
         }
+    }
+
+    // ---------------------------------------------------------------- energy
+
+    private static ParticleOptions dust(int rgb, float size) {
+        return new net.minecraft.core.particles.DustParticleOptions(new Vector3f((rgb >> 16 & 255) / 255f, (rgb >> 8 & 255) / 255f, (rgb & 255) / 255f), size);
+    }
+
+    /** A mote of the shot's colour hanging where a blob was. */
+    private static void glow(Level level, Vec3 at, int rgb, float size) {
+        RandomSource r = level.random;
+        level.addParticle(dust(rgb, size), at.x + (r.nextDouble() - 0.5) * 0.12, at.y + (r.nextDouble() - 0.5) * 0.12, at.z + (r.nextDouble() - 0.5) * 0.12, 0, 0, 0);
+    }
+
+    /** Where an energy shot lands: a laser sparks and scorches, a blob splashes, a discharge crackles, a bolt forks short arcs. */
+    private static void energyImpact(Level level, Vec3 at, Vec3 dir, float power, int rgb, byte style, boolean block, RandomSource r) {
+        switch (style) {
+            case EnergyStyle.PLASMA -> {
+                for (int i = 0; i < 10 + (int) (power * 8); i++)
+                    spray(level, dust(rgb, 1.1f), at, dir, 0.12, 0.1, r);
+                for (int i = 0; i < 3; i++)
+                    spray(level, ParticleTypes.GLOW, at, dir, 0.05, 0.06, r);
+                level.addParticle(ParticleTypes.SMOKE, at.x, at.y, at.z, dir.x * 0.01, 0.03, dir.z * 0.01);
+            }
+            case EnergyStyle.PULSE -> {
+                sparks(level, at, dir, 10, 0.4, r);
+                for (int i = 0; i < 4; i++)
+                    spray(level, dust(rgb, 0.8f), at, dir, 0.15, 0.12, r);
+                addBolt(at, at.add(dir.scale(0.3)).add(randomUnit(r).scale(0.4)), EnergyStyle.ARC, rgb, 0.5f, r);
+            }
+            case EnergyStyle.ARC -> {
+                sparks(level, at, dir, 6, 0.35, r);
+                for (int i = 0; i < 3; i++)
+                    addBolt(at, at.add(dir.scale(0.2)).add(randomUnit(r).scale(0.6)), EnergyStyle.ARC, rgb, 0.5f, r);
+            }
+            default -> {
+                sparks(level, at, dir, 5, 0.3, r);
+                for (int i = 0; i < 3; i++)
+                    spray(level, dust(rgb, 0.7f), at, dir, 0.1, 0.06, r);
+            }
+        }
+        if (block)
+            addDecalIf(level, at, dir, style);
+    }
+
+    private static Vec3 randomUnit(RandomSource r) {
+        return new Vec3(r.nextDouble() - 0.5, r.nextDouble() - 0.5, r.nextDouble() - 0.5).normalize();
+    }
+
+    /** The muzzle of an energy gun: no fire and no smoke; the colour glints, a discharge sheds sparks, a bolt hops. */
+    private static void energyMuzzle(Level level, Vec3 at, Vec3 aim, float power, int rgb, byte style, RandomSource r) {
+        Minecraft mc = Minecraft.getInstance();
+        boolean own = mc.player != null && mc.options.getCameraType().isFirstPerson() && mc.player.getEyePosition().distanceToSqr(at) < 2.5 * 2.5;
+        int n = own ? 1 : 3 + (int) (power * 4);
+        for (int i = 0; i < n; i++)
+            spray(level, dust(rgb, 0.7f), at, aim, 0.12 + 0.12 * r.nextDouble(), 0.03, r);
+        switch (style) {
+            case EnergyStyle.PLASMA -> {
+                for (int i = 0; i < n; i++)
+                    spray(level, ParticleTypes.GLOW, at, aim, 0.08, 0.04, r);
+            }
+            case EnergyStyle.PULSE -> sparks(level, at, aim, own ? 1 : 5, 0.25, r);
+            case EnergyStyle.ARC -> {
+                for (int i = 0; i < (own ? 1 : 2); i++)
+                    addBolt(at, at.add(aim.scale(0.25)).add(randomUnit(r).scale(0.3)), EnergyStyle.ARC, rgb, 0.5f, r);
+            }
+            default -> sparks(level, at, aim, 1, 0.3, r);
+        }
+    }
+
+    // ---------------------------------------------------------------- beams
+
+    private static final class Beam {
+        Vec3 from, to, off = Vec3.ZERO;
+        byte style;
+        int rgb, age, life;
+        float width;
+        long seed;
+    }
+
+    private static final List<Beam> BEAMS = new ArrayList<>();
+    private static final int BEAM_MAX = 64;
+
+    public static void beam(EnergyBeamPayload p) {
+        Level level = Minecraft.getInstance().level;
+        if (level == null)
+            return;
+        Beam b = new Beam();
+        b.from = new Vec3(p.fx(), p.fy(), p.fz());
+        b.to = new Vec3(p.tx(), p.ty(), p.tz());
+        b.off = muzzleOffset(b.from, b.to.subtract(b.from));
+        b.style = p.style();
+        b.rgb = p.rgb();
+        b.width = p.width();
+        b.life = switch (p.style()) {
+            case EnergyStyle.ARC -> 5;
+            case EnergyStyle.PULSE -> 4;
+            default -> 3;
+        };
+        b.seed = level.random.nextLong();
+        if (BEAMS.size() >= BEAM_MAX)
+            BEAMS.remove(0);
+        BEAMS.add(b);
+        // A discharge crackles along its length: a few sparks and motes of its colour.
+        if (b.style == EnergyStyle.PULSE || b.style == EnergyStyle.ARC) {
+            RandomSource r = level.random;
+            Vec3 d = b.to.subtract(b.from);
+            int n = Mth.clamp((int) (d.length() / 2.5), 1, 10);
+            for (int i = 0; i < n; i++) {
+                Vec3 at = b.from.add(d.scale(r.nextDouble()));
+                level.addParticle(ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, (r.nextDouble() - 0.5) * 0.2, (r.nextDouble() - 0.5) * 0.2, (r.nextDouble() - 0.5) * 0.2);
+                glow(level, at, b.rgb, 0.6f);
+            }
+        }
+    }
+
+    /** A short bolt that lasts a few ticks, for where a shot lands or leaves. */
+    private static void addBolt(Vec3 from, Vec3 to, byte style, int rgb, float width, RandomSource r) {
+        Beam b = new Beam();
+        b.from = from;
+        b.to = to;
+        b.style = style;
+        b.rgb = rgb;
+        b.width = width;
+        b.life = 4;
+        b.seed = r.nextLong();
+        if (BEAMS.size() < BEAM_MAX)
+            BEAMS.add(b);
+    }
+
+    private static void addDecalIf(Level level, Vec3 at, Vec3 normal, byte style) {
+        // Only a laser and a blob leave a mark; a discharge or a bolt does not.
+        if (style == EnergyStyle.LASER || style == EnergyStyle.PLASMA)
+            addDecal(level, at.add(normal.scale(0.004)), normal, DECAL_SCORCH);
+    }
+
+    private static void drawBeams(Matrix4f m, MultiBufferSource.BufferSource buffers) {
+        if (BEAMS.isEmpty())
+            return;
+        VertexConsumer vc = buffers.getBuffer(RenderType.lightning());
+        for (Beam b : BEAMS) {
+            float a = 1f - b.age / (float) (b.life + 1);
+            float cr = (b.rgb >> 16 & 255) / 255f, cg = (b.rgb >> 8 & 255) / 255f, cb = (b.rgb & 255) / 255f;
+            Vec3 from = bend(b.from, b.off, b.from), to = b.to;
+            Vec3 axis = to.subtract(from);
+            double len = axis.length();
+            if (len < 1e-4)
+                continue;
+            Vec3 dir = axis.scale(1 / len);
+            switch (b.style) {
+                case EnergyStyle.ARC, EnergyStyle.PULSE -> {
+                    boolean arc = b.style == EnergyStyle.ARC;
+                    // Redrawn every tick from a new seed so the bolt flickers.
+                    RandomSource r = RandomSource.create(b.seed + b.age * 7919L);
+                    List<Vec3> path = bolt(from, to, dir, len, arc ? 0.22 : 0.05, r);
+                    float w = (arc ? 0.012f : 0.03f) * b.width;
+                    strip(m, vc, path, w * 3f, cr, cg, cb, a * 0.55f);
+                    strip(m, vc, path, w, 1f, 1f, 1f, a);
+                    if (arc)
+                        for (int i = 2; i < path.size() - 1; i += 3) {
+                            Vec3 side = randomUnit(r).scale(len * 0.08 + 0.3);
+                            Vec3 mid = path.get(i).add(side.scale(0.5)).add(randomUnit(r).scale(0.08)), tip = path.get(i).add(side);
+                            tube(m, vc, path.get(i), mid, w * 1.5f, cr, cg, cb, a * 0.8f);
+                            tube(m, vc, mid, tip, w, cr, cg, cb, a * 0.5f);
+                        }
+                }
+                default -> {
+                    float w = 0.014f * b.width;
+                    tube(m, vc, from, to, w * 2.5f, cr, cg, cb, a * 0.6f);
+                    tube(m, vc, from, to, w * 0.8f, 1f, 1f, 1f, a);
+                }
+            }
+        }
+        buffers.endBatch(RenderType.lightning());
+    }
+
+    /** A jagged path from {@code a} to {@code b}: a point every segment, pushed sideways by up to {@code amp}, held at both ends. */
+    private static List<Vec3> bolt(Vec3 a, Vec3 b, Vec3 dir, double len, double amp, RandomSource r) {
+        Vec3 u = Math.abs(dir.y) > 0.95 ? new Vec3(1, 0, 0) : dir.cross(new Vec3(0, 1, 0)).normalize();
+        Vec3 v = dir.cross(u).normalize();
+        int n = Mth.clamp((int) (len / 0.7), 2, 60);
+        List<Vec3> pts = new ArrayList<>(n + 1);
+        pts.add(a);
+        for (int i = 1; i < n; i++) {
+            double k = Math.sin(Math.PI * i / n), s = amp * k;
+            pts.add(a.lerp(b, i / (double) n).add(u.scale((r.nextDouble() - 0.5) * 2 * s)).add(v.scale((r.nextDouble() - 0.5) * 2 * s)));
+        }
+        pts.add(b);
+        return pts;
+    }
+
+    private static void strip(Matrix4f m, VertexConsumer vc, List<Vec3> path, float w, float r, float g, float bl, float a) {
+        for (int i = 0; i + 1 < path.size(); i++)
+            tube(m, vc, path.get(i), path.get(i + 1), w, r, g, bl, a);
+    }
+
+    private static void tube(Matrix4f m, VertexConsumer vc, Vec3 from, Vec3 to, float w, float r, float g, float b, float a) {
+        Vec3 axis = to.subtract(from);
+        if (axis.lengthSqr() < 1e-8)
+            return;
+        beam(m, vc, to, from, axis.normalize(), w, r, g, b, a, a);
+    }
+
+    /** A glowing blob: nested camera-facing squares, brightest at the heart, with a fading wake behind it. */
+    private static void blob(Matrix4f m, VertexConsumer vc, Vec3 at, Vec3 back, Vec3 right, Vec3 up, float cr, float cg, float cb, float a) {
+        float[] size = {0.34f, 0.22f, 0.12f}, alpha = {0.18f, 0.4f, 0.95f};
+        for (int i = 0; i < 3; i++) {
+            Vec3 x = right.scale(size[i]), y = up.scale(size[i]);
+            float rr = i == 2 ? 1f : cr, gg = i == 2 ? 1f : cg, bb = i == 2 ? 1f : cb, al = alpha[i] * a;
+            quadV(m, vc, at.subtract(x).subtract(y), rr, gg, bb, al);
+            quadV(m, vc, at.add(x).subtract(y), rr, gg, bb, al);
+            quadV(m, vc, at.add(x).add(y), rr, gg, bb, al);
+            quadV(m, vc, at.subtract(x).add(y), rr, gg, bb, al);
+        }
+        beam(m, vc, at, back, at.subtract(back).normalize(), 0.09f, cr, cg, cb, a * 0.6f, 0f);
     }
 
     private static void spray(Level level, ParticleOptions o, Vec3 at, Vec3 dir, double speed, double scatter, RandomSource r) {
@@ -287,7 +521,7 @@ public final class GunFx {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
             return;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || (STREAKS.isEmpty() && DECALS.isEmpty()))
+        if (mc.level == null || (STREAKS.isEmpty() && DECALS.isEmpty() && BEAMS.isEmpty()))
             return;
         Vec3 cam = event.getCamera().getPosition();
         float partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
@@ -296,16 +530,27 @@ public final class GunFx {
         pose.pushPose();
         pose.translate(-cam.x, -cam.y, -cam.z);
         drawDecals(mc, pose, buffers, partial);
-        drawStreaks(pose.last().pose(), buffers, cam, partial);
+        drawStreaks(pose.last().pose(), buffers, cam, partial, event.getCamera());
+        drawBeams(pose.last().pose(), buffers);
         pose.popPose();
     }
 
-    private static void drawStreaks(Matrix4f m, MultiBufferSource.BufferSource buffers, Vec3 cam, float partial) {
+    private static void drawStreaks(Matrix4f m, MultiBufferSource.BufferSource buffers, Vec3 cam, float partial, net.minecraft.client.Camera camera) {
         if (STREAKS.isEmpty())
             return;
         VertexConsumer vc = buffers.getBuffer(RenderType.lightning());
         for (Streak s : STREAKS.values()) {
             Vec3 head = s.prev.lerp(s.pos, s.end != null ? 1.0 : partial);
+            if (s.style != 0) {
+                Vector3f l = camera.getLeftVector(), u = camera.getUpVector();
+                Vec3 right = new Vec3(-l.x, -l.y, -l.z), up = new Vec3(u.x, u.y, u.z);
+                Vec3 back = head.subtract(s.vel == null ? Vec3.ZERO : s.vel.scale(2.5));
+                double near = Mth.clamp((head.distanceTo(cam) - 0.4) / 1.5, 0, 1);
+                if (s.fade <= STREAK_FADE_TICKS && near > 0)
+                    blob(m, vc, bent(s, head), bent(s, back), right, up, (s.argb >> 16 & 255) / 255f, (s.argb >> 8 & 255) / 255f, (s.argb & 255) / 255f,
+                            (float) near * (1 - s.fade / (float) (STREAK_FADE_TICKS + 1)));
+                continue;
+            }
             Vec3 dir = s.vel == null || s.vel.lengthSqr() < 1e-8 ? s.pos.subtract(s.prev) : s.vel;
             if (dir.lengthSqr() < 1e-8)
                 continue;
@@ -326,14 +571,14 @@ public final class GunFx {
             float a = (s.argb >>> 24) / 255f * (float) near;
             float cr = (s.argb >> 16 & 255) / 255f, cg = (s.argb >> 8 & 255) / 255f, cb = (s.argb & 255) / 255f;
             float width = 0.012f + a * 0.02f;
-            beam(m, vc, head, tail, dir, width, cr, cg, cb, a);
-            beam(m, vc, head, tail, dir, width * 0.4f, 1f, 1f, 0.95f, a * 0.9f);
+            beam(m, vc, head, tail, dir, width, cr, cg, cb, a, 0f);
+            beam(m, vc, head, tail, dir, width * 0.4f, 1f, 1f, 0.95f, a * 0.9f, 0f);
         }
         buffers.endBatch(RenderType.lightning());
     }
 
     /** A long square beam from head to tail: four faces, opaque at the head and clear at the tail. */
-    private static void beam(Matrix4f m, VertexConsumer vc, Vec3 head, Vec3 tail, Vec3 dir, float w, float r, float g, float b, float a) {
+    private static void beam(Matrix4f m, VertexConsumer vc, Vec3 head, Vec3 tail, Vec3 dir, float w, float r, float g, float b, float a, float aTail) {
         Vec3 u = Math.abs(dir.y) > 0.95 ? new Vec3(1, 0, 0) : dir.cross(new Vec3(0, 1, 0)).normalize();
         Vec3 v = dir.cross(u).normalize().scale(w);
         u = u.scale(w);
@@ -342,8 +587,8 @@ public final class GunFx {
             Vec3 c0 = ring[k], c1 = ring[(k + 1) % 4];
             quadV(m, vc, head.add(c0), r, g, b, a);
             quadV(m, vc, head.add(c1), r, g, b, a);
-            quadV(m, vc, tail.add(c1), r, g, b, 0f);
-            quadV(m, vc, tail.add(c0), r, g, b, 0f);
+            quadV(m, vc, tail.add(c1), r, g, b, aTail);
+            quadV(m, vc, tail.add(c0), r, g, b, aTail);
         }
     }
 
@@ -374,18 +619,18 @@ public final class GunFx {
                 Vec3 ru = u.scale(c).add(v.scale(s)), rv = v.scale(c).subtract(u.scale(s));
                 double h = DECAL_PX[kind] / 32.0;
                 int light = LevelRenderer.getLightColor(mc.level, BlockPos.containing(d.pos.add(n.scale(0.1))));
-                vertex(vc, p, d.pos.subtract(ru.scale(h)).subtract(rv.scale(h)), 0, 1, alpha, light, n);
-                vertex(vc, p, d.pos.add(ru.scale(h)).subtract(rv.scale(h)), 1, 1, alpha, light, n);
-                vertex(vc, p, d.pos.add(ru.scale(h)).add(rv.scale(h)), 1, 0, alpha, light, n);
-                vertex(vc, p, d.pos.subtract(ru.scale(h)).add(rv.scale(h)), 0, 0, alpha, light, n);
+                vertex(vc, p, d.pos.subtract(ru.scale(h)).subtract(rv.scale(h)), 0, 1, alpha, light, n, kind == DECAL_SCORCH ? 0.2f : 1f);
+                vertex(vc, p, d.pos.add(ru.scale(h)).subtract(rv.scale(h)), 1, 1, alpha, light, n, kind == DECAL_SCORCH ? 0.2f : 1f);
+                vertex(vc, p, d.pos.add(ru.scale(h)).add(rv.scale(h)), 1, 0, alpha, light, n, kind == DECAL_SCORCH ? 0.2f : 1f);
+                vertex(vc, p, d.pos.subtract(ru.scale(h)).add(rv.scale(h)), 0, 0, alpha, light, n, kind == DECAL_SCORCH ? 0.2f : 1f);
             }
             if (vc != null)
                 buffers.endBatch(RenderType.entityTranslucent(DECAL_TEX[kind]));
         }
     }
 
-    private static void vertex(VertexConsumer vc, PoseStack.Pose pose, Vec3 at, float u, float v, float alpha, int light, Vec3 n) {
-        vc.addVertex(pose, (float) at.x, (float) at.y, (float) at.z).setColor(1f, 1f, 1f, alpha).setUv(u, v)
+    private static void vertex(VertexConsumer vc, PoseStack.Pose pose, Vec3 at, float u, float v, float alpha, int light, Vec3 n, float g) {
+        vc.addVertex(pose, (float) at.x, (float) at.y, (float) at.z).setColor(g, g, g, alpha).setUv(u, v)
                 .setOverlay(OverlayTexture.NO_OVERLAY).setLight(light).setNormal(pose, (float) n.x, (float) n.y, (float) n.z);
     }
 }

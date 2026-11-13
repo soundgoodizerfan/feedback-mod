@@ -1492,7 +1492,144 @@ public enum GuiSkin {
                     g.fill(mid + gap + 3, cy, mid + gap + 8, cy + 3, AMBER);
             }
         }
+    },
+
+    /**
+     * A sleek console menu, for the combat skill chart: no frame, only dark glass. Panels are a translucent dark gradient with a hairline
+     * edge; buttons are round-ended pills, a faint white fill with a thin ring that brightens on hover, the primary one solid white with
+     * dark text. {@link #backdrop} lays a soft shaft of light from the top left and slow drifting specks of light over the view, as a
+     * console's home screen does. Cool white ink, a pale blue accent. Fixed-seed specks, nothing but fills.
+     */
+    GLASS(0xFFF2F3F6, 0xFF9496A2, 0xFFA9CBFF, 0xFFFF7A6B, 0xFF08090C, 0xFF3A3D48, 0xFF15171C) {
+        private static final float[] SPECK = specks();
+
+        private static float[] specks() {
+            Random r = new Random(0x5E17);
+            float[] out = new float[5 * 70];
+            for (int i = 0; i < out.length; i++)
+                out[i] = r.nextFloat();
+            return out;
+        }
+
+        /** A filled disc by scanlines. */
+        private static void disc(GuiGraphics g, int cx, int cy, int r, int argb) {
+            for (int dy = -r; dy <= r; dy++) {
+                int half = (int) Math.round(Math.sqrt(Math.max(0, r * r - dy * dy)));
+                g.fill(cx - half, cy + dy, cx + half + 1, cy + dy + 1, argb);
+            }
+        }
+
+        /** A pill: ends rounded by half its height. */
+        private static void pill(GuiGraphics g, int x, int y, int w, int h, int argb) {
+            int r = h / 2;
+            g.fill(x + r, y, x + w - r, y + h, argb);
+            for (int dy = 0; dy < h; dy++) {
+                float c = dy + 0.5f - h / 2f;
+                int inset = r - (int) Math.round(Math.sqrt(Math.max(0f, r * r - c * c)));
+                g.fill(x + inset, y + dy, x + r, y + dy + 1, argb);
+                g.fill(x + w - r, y + dy, x + w - inset, y + dy + 1, argb);
+            }
+        }
+
+        /** A pill's one-pixel ring. */
+        private static void ring(GuiGraphics g, int x, int y, int w, int h, int argb) {
+            int r = h / 2;
+            g.fill(x + r, y, x + w - r, y + 1, argb);
+            g.fill(x + r, y + h - 1, x + w - r, y + h, argb);
+            for (int dy = 0; dy < h; dy++) {
+                float c = dy + 0.5f - h / 2f;
+                int inset = r - (int) Math.round(Math.sqrt(Math.max(0f, r * r - c * c)));
+                g.fill(x + inset, y + dy, x + inset + 1, y + dy + 1, argb);
+                g.fill(x + w - inset - 1, y + dy, x + w - inset, y + dy + 1, argb);
+            }
+        }
+
+        @Override
+        public void panel(GuiGraphics g, int x, int y, int w, int h) {
+            g.fillGradient(x, y, x + w, y + h, 0xC4101216, 0xB0161920);
+            g.fill(x, y, x + w, y + 1, 0x26FFFFFF);
+            g.fill(x, y + h - 1, x + w, y + h, 0x26FFFFFF);
+        }
+
+        @Override
+        public void slot(GuiGraphics g, int x, int y) {
+            g.fill(x - 1, y - 1, x + 17, y + 17, 0x66000000);
+            ring(g, x - 1, y - 1, 18, 18, 0x50FFFFFF);
+        }
+
+        @Override
+        public void backdrop(GuiGraphics g, int x, int y, int w, int h, long ms) {
+            // a shaft of light from the top left, fading down and across
+            int bands = 28;
+            for (int i = 0; i < bands; i++) {
+                float k = 1f - i / (float) bands;
+                int top = y + i * h / bands, bot = y + (i + 1) * h / bands;
+                int reach = (int) (w * (0.12f + 0.38f * k));
+                int a = (int) (26 * k * k);
+                g.fillGradient(x, top, x + reach, bot, a << 24 | 0xFFEBD8, 0);
+            }
+            // drifting specks, slow and upward, some larger and softer
+            for (int i = 0; i < SPECK.length; i += 5) {
+                float speed = 0.004f + 0.012f * SPECK[i + 3];
+                float fy = ((SPECK[i + 1] - ms * speed / 1000f) % 1f + 1f) % 1f;
+                int sx = x + (int) (SPECK[i] * w + 6 * Math.sin(ms / 2600.0 + SPECK[i + 4] * 6.28)), sy = y + (int) (fy * h);
+                int r = SPECK[i + 2] > 0.9f ? 4 : SPECK[i + 2] > 0.6f ? 2 : 1;
+                float twinkle = 0.55f + 0.45f * (float) Math.sin(ms / 900.0 + SPECK[i + 4] * 12);
+                int a = (int) ((r > 1 ? 24 : 70) * twinkle);
+                int c = SPECK[i + 4] > 0.5f ? 0xFFD9A0 : 0xFFFFFF;
+                disc(g, sx, sy, r, a << 24 | c);
+            }
+        }
+
+        @Override
+        void button(GuiGraphics g, int x, int y, int w, int h, Component label, float glow, boolean down, boolean active,
+                    boolean primary) {
+            int fill, line, text;
+            if (!active) {
+                fill = 0x14FFFFFF;
+                line = 0x26FFFFFF;
+                text = 0xFF5A5C66;
+            } else if (primary) {
+                fill = lerpA(0xE0, 0xFF, glow) << 24 | 0xF2F3F6;
+                line = 0xFFFFFFFF;
+                text = 0xFF14161B;
+            } else {
+                fill = lerpA(0x22, 0x46, glow) << 24 | 0xFFFFFF;
+                line = lerpA(0x70, 0xFF, glow) << 24 | 0xFFFFFF;
+                text = lerp(dim(), ink(), glow);
+            }
+            if (down)
+                fill = lerp(fill, 0xFF000000, 0.2f);
+            pill(g, x, y, w, h, fill);
+            ring(g, x, y, w, h, line);
+            var font = Minecraft.getInstance().font;
+            int o = down ? 1 : 0;
+            g.drawString(font, label, x + (w - font.width(label)) / 2 + o, y + (h - 8) / 2 + o, text, false);
+        }
+
+        private static int lerpA(int a, int b, float t) {
+            return Math.round(a + (b - a) * t);
+        }
+
+        @Override
+        public SoundEvent click() {
+            return SoundEvents.UI_BUTTON_CLICK.value();
+        }
+
+        @Override
+        public SoundEvent open() {
+            return null;
+        }
+
+        @Override
+        public SoundEvent close() {
+            return null;
+        }
     };
+
+    /** Light laid over a view before its contents: nothing unless a skin has some. */
+    public void backdrop(GuiGraphics g, int x, int y, int w, int h, long ms) {
+    }
 
     private final int ink, dim, accent, warn, well, trim, plate;
 
@@ -1838,6 +1975,13 @@ public enum GuiSkin {
                 case START -> SoundEvents.BEACON_POWER_SELECT;
                 case FINISH -> SoundEvents.BEACON_ACTIVATE;
                 case ABORT -> SoundEvents.PISTON_CONTRACT;
+            };
+            case GLASS -> switch (cue) {
+                case SEAT -> SoundEvents.UI_BUTTON_CLICK.value();
+                case REJECT -> SoundEvents.NOTE_BLOCK_BASS.value();
+                case STAGE, START -> SoundEvents.AMETHYST_BLOCK_CHIME;
+                case FINISH -> SoundEvents.AMETHYST_CLUSTER_PLACE;
+                case ABORT -> SoundEvents.UI_BUTTON_CLICK.value();
             };
             case VANILLA -> cue == Cue.REJECT ? SoundEvents.DISPENSER_FAIL : click();
         };

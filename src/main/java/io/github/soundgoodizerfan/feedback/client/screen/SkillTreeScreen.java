@@ -67,7 +67,7 @@ public class SkillTreeScreen extends Screen {
     /** The loadout's orb pitch across a row. */
     private static final int EQUIP_CELL = 80;
     private static final double MIN_ZOOM = 0.3, MAX_ZOOM = 2.5, ZOOM_STEP = 1.15;
-    private static final GuiSkin SKIN = GuiSkin.ENAMEL;
+    private static final GuiSkin SKIN = GuiSkin.GLASS;
 
     private enum State { OWNED, BUYABLE, SHORT, LOCKED }
 
@@ -787,6 +787,7 @@ public class SkillTreeScreen extends Screen {
         SkillPools pl = pools();
         g.enableScissor(0, vy, width, vy + vh);
         g.fill(0, vy, width, vy + vh, 0x7005070C); // translucent: the world shows through
+        SKIN.backdrop(g, 0, vy, width, vh, now);
         ambience(g, vy, vh, now, mouseX, mouseY);
         if (equip)
             loadout(g, mouseX, mouseY, beat);

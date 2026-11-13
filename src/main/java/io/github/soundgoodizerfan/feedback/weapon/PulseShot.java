@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.joml.Vector3f;
 
-import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
+import io.github.soundgoodizerfan.feedback.net.EnergyBeamPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -62,8 +60,9 @@ public final class PulseShot {
      * @param cylinder whether a coin redirect adds to the pulse.
      * @param band     the cell's band: what the wielder's insulation is tested against.
      * @param spreadDeg the cone one beam leaves in.
+     * @param style    an {@link EnergyStyle}: how the beam is drawn.
      */
-    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, float spreadDeg, float widen) {
+    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, float spreadDeg, float widen, byte style) {
     }
 
     private PulseShot() {
@@ -104,7 +103,7 @@ public final class PulseShot {
             // A coin the shooter flipped: the beam turns on it, whole.
             CoinShot.Result coin = CoinShot.resolve(level, shooter, pos, end, 0.001f, GunTuning.GUN_DEFAULT_PROJECTILE_HARDNESS);
             if (coin != null) {
-                line(level, plan.colour(), pos, coin.point());
+                line(level, plan, pos, coin.point());
                 travelled += pos.distanceTo(coin.point());
                 pos = coin.point();
                 if (coin.direction() != null) {
@@ -134,7 +133,7 @@ public final class PulseShot {
                     break;
                 }
             }
-            line(level, plan.colour(), pos, stop);
+            line(level, plan, pos, stop);
             travelled += pos.distanceTo(stop);
             if (ended)
                 return;
@@ -142,7 +141,7 @@ public final class PulseShot {
                 return;
             BlockState state = level.getBlockState(block.getBlockPos());
             if (!passes(state)) {
-                sparks(level, plan.colour(), stop, 5);
+                GunImpacts.energyBlock(level, block.getBlockPos(), block.getDirection(), stop, 0.5f, plan.colour(), plan.style());
                 return;
             }
             pos = stop.add(dir.scale(0.02));
@@ -159,7 +158,7 @@ public final class PulseShot {
     private static void strike(ServerLevel level, LivingEntity shooter, ItemStack gun, Plan plan, Entity target, Vec3 at, float joules) {
         float damage = joules * ModularTuning.EGUN_DAMAGE_PER_J;
         hurt(level, shooter, target, damage, joules, plan.band());
-        sparks(level, plan.colour(), at, 8);
+        GunImpacts.energyBody(level, at, target.getBoundingBox().getCenter().subtract(at).add(0, 0.01, 0), 0.7f, plan.colour(), plan.style());
         if (shooter instanceof Player player) {
             ModularTraits.gunRoundLanded(level, player, gun, at, target, damage / GunTuning.GUN_DAMAGE_PER_WORK);
             GunFu.bulletHit(level, shooter, target, ElectricGunSpec.impulse(joules));
@@ -198,10 +197,10 @@ public final class PulseShot {
         if (to == null)
             return;
         Vec3 a = from.getBoundingBox().getCenter(), b = to.getBoundingBox().getCenter();
-        line(level, plan.colour(), a, b);
+        EnergyBeamPayload.send(level, EnergyStyle.ARC, plan.colour(), a, b, 0.8f);
         float damage = joules * ModularTuning.EGUN_DAMAGE_PER_J * ModularTuning.EGUN_FORK_SHARE;
         hurt(level, shooter, to, damage, joules * ModularTuning.EGUN_FORK_SHARE, plan.band());
-        sparks(level, plan.colour(), b, 6);
+        GunImpacts.energyBody(level, b, new Vec3(0, 1, 0), 0.5f, plan.colour(), EnergyStyle.ARC);
     }
 
     /** An arc fork fired in water or rain: everything wet within reach takes the shock, the wielder too unless insulated. */
@@ -211,7 +210,9 @@ public final class PulseShot {
                 e -> e.isAlive() && !e.isSpectator() && e.isInWaterOrRain())) {
             if (e == shooter && insulated(shooter, plan.band()))
                 continue;
-            sparks(level, plan.colour(), e.getBoundingBox().getCenter(), 6);
+            GunImpacts.energyBody(level, e.getBoundingBox().getCenter(), new Vec3(0, 1, 0), 0.5f, plan.colour(), EnergyStyle.ARC);
+            if (e != shooter)
+                EnergyBeamPayload.send(level, EnergyStyle.ARC, plan.colour(), shooter.getBoundingBox().getCenter(), e.getBoundingBox().getCenter(), 0.8f);
             hurt(level, shooter, e, joules * ModularTuning.EGUN_DAMAGE_PER_J, joules, plan.band());
         }
     }
@@ -245,25 +246,10 @@ public final class PulseShot {
 
     // --- the look ----------------------------------------------------------------------------
 
-    /** The beam: a line of coloured dust, never more than forty points however long. */
-    private static void line(ServerLevel level, int colour, Vec3 a, Vec3 b) {
-        double len = a.distanceTo(b);
-        if (len < 1e-3)
+    /** The beam, drawn by the clients in the gun's style; a splitter's beams are thin. */
+    private static void line(ServerLevel level, Plan plan, Vec3 a, Vec3 b) {
+        if (a.distanceToSqr(b) < 1e-6)
             return;
-        DustParticleOptions dust = dust(colour, 0.8f);
-        double step = Math.max(0.5, len / 40.0);
-        Vec3 d = b.subtract(a).normalize().scale(step);
-        Vec3 p = a;
-        for (double t = 0; t < len; t += step, p = p.add(d))
-            level.sendParticles(dust, p.x, p.y, p.z, 1, 0, 0, 0, 0);
-    }
-
-    private static void sparks(ServerLevel level, int colour, Vec3 at, int n) {
-        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, n, 0.15, 0.15, 0.15, 0.3);
-        level.sendParticles(dust(colour, 1.2f), at.x, at.y, at.z, n, 0.2, 0.2, 0.2, 0.05);
-    }
-
-    private static DustParticleOptions dust(int rgb, float size) {
-        return new DustParticleOptions(new Vector3f(((rgb >> 16) & 255) / 255f, ((rgb >> 8) & 255) / 255f, (rgb & 255) / 255f), size);
+        EnergyBeamPayload.send(level, plan.style(), plan.colour(), a, b, plan.beams() > 1 ? 0.5f : 1f);
     }
 }

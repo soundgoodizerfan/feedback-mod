@@ -205,16 +205,18 @@ public final class ElectricMechanism implements GunMechanism {
             float widen = 1f + ModularTuning.EGUN_PUMP_SPREAD * pumps;
             int beams = spec.beams() > 0 ? spec.beams() + Math.round(spec.beams() * ModularTuning.EGUN_PUMP_BEAMS * pumps) : 1;
             float cone = beams > 1 ? ModularTuning.EGUN_SPLIT_DEG_PER_BEAM * beams * widen : figures.spreadDeg() * widen;
-            HeatPellets.launch(level, shooter, spec.delivered(p.joules()), spec.cutoff(p.zoomShare()) * ModularTuning.EGUN_CORE_RANGE, beams, cone, yaw, pitch);
+            HeatPellets.launch(level, shooter, spec.delivered(p.joules()), spec.cutoff(p.zoomShare()) * ModularTuning.EGUN_CORE_RANGE, beams, cone, yaw, pitch, ModularElectricGun.colourOf(gun));
         } else {
             // Each pump widens the spread; a splitter also throws more beams, the way buckshot throws more pellets.
             float widen = 1f + ModularTuning.EGUN_PUMP_SPREAD * pumps;
             int beams = spec.beams() > 0 ? spec.beams() + Math.round(spec.beams() * ModularTuning.EGUN_PUMP_BEAMS * pumps) : 0;
             PulseShot.fire(level, shooter, gun, new PulseShot.Plan(spec.delivered(p.joules()), spec.cutoff(p.zoomShare()), spec.pierce(p.holdShare()),
-                    ModularElectricGun.colourOf(gun), beams, spec.fork(), spec.seat() == Seat.CYLINDER, band, figures.spreadDeg() * widen, widen), yaw, pitch);
+                    ModularElectricGun.colourOf(gun), beams, spec.fork(), spec.seat() == Seat.CYLINDER, band, figures.spreadDeg() * widen, widen, spec.style()), yaw, pitch);
         }
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         GunShots.report(level, shooter, figures, gun, muzzle);
+        io.github.soundgoodizerfan.feedback.weapon.GunImpacts.energyMuzzle(level, muzzle, Vec3.directionFromRotation(pitch, yaw), Math.min(1f, figures.report()),
+                ModularElectricGun.colourOf(gun), spec.style());
         // The muzzle glows brighter with the barrel's heat.
         level.sendParticles(ParticleTypes.GLOW, muzzle.x, muzzle.y, muzzle.z, 1 + Math.round(p.heatAfter() * 6f), 0.04, 0.04, 0.04, 0.01);
 
@@ -261,7 +263,7 @@ public final class ElectricMechanism implements GunMechanism {
         float joules = spec.pulseJ() * spec.seatMult();
         GunFigures figures = spec.figures(joules, spec.barrelMass(), spec.cycleTicks(false), 0f, 1f);
         PulseShot.fire(level, mob, gun, new PulseShot.Plan(spec.delivered(joules), spec.cutoff(0f), spec.pierce(0f), ModularElectricGun.colourOf(gun),
-                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_BAND, figures.spreadDeg(), 1f), yaw, pitch);
+                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_BAND, figures.spreadDeg(), 1f, spec.style()), yaw, pitch);
         GunShots.report(level, mob, figures, gun, mob.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4)));
         return true;
     }

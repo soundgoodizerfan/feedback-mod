@@ -26,7 +26,9 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record GunImpactPayload(byte kind, double x, double y, double z, float dx, float dy, float dz,
                                float power, int data, byte decal) implements CustomPacketPayload {
 
-    public static final byte FLESH = 0, BONE = 1, ARMOUR = 2, BLOCK = 3, RICOCHET = 4, MUZZLE = 5;
+    public static final byte FLESH = 0, BONE = 1, ARMOUR = 2, BLOCK = 3, RICOCHET = 4, MUZZLE = 5,
+            /** An energy shot on a block face, on a body, or at a muzzle: {@code data} is the RGB with the {@code EnergyStyle} in the top byte. */
+            ENERGY_BLOCK = 6, ENERGY_BODY = 7, ENERGY_MUZZLE = 8;
 
     public static final Type<GunImpactPayload> TYPE = new Type<>(Feedback.id("gun_impact"));
 

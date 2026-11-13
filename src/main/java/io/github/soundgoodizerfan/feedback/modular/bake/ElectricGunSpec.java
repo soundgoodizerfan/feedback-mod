@@ -253,6 +253,16 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         };
     }
 
+    /** The look of the shot: an arc fork is a bolt, a core breech a blob of heat, a bank or a wide bore a thick discharge, else a thin beam. */
+    public byte style() {
+        if (fork)
+            return io.github.soundgoodizerfan.feedback.weapon.EnergyStyle.ARC;
+        if (seat == Seat.CORE_BREECH)
+            return io.github.soundgoodizerfan.feedback.weapon.EnergyStyle.PLASMA;
+        return seat == Seat.CAPACITOR_BANK || seat == Seat.BURST_BANK || boreShare() > 0.5f
+                ? io.github.soundgoodizerfan.feedback.weapon.EnergyStyle.PULSE : io.github.soundgoodizerfan.feedback.weapon.EnergyStyle.LASER;
+    }
+
     /** The bore's width against its range, 0 narrow to 1 wide. */
     private float boreShare() {
         return Mth.clamp((boreMm - 6.25f) / 12.5f, 0f, 1f);

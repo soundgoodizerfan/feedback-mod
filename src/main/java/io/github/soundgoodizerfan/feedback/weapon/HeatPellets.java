@@ -14,7 +14,6 @@ import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import io.github.soundgoodizerfan.feedback.combat.parry.Parrying;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -48,8 +47,10 @@ public final class HeatPellets {
         float damage;
         int life;
         boolean returned;
+        final int id = NEXT_ID--, rgb;
 
-        Pellet(ServerLevel level, LivingEntity owner, Vec3 pos, Vec3 vel, float damage, int life) {
+        Pellet(ServerLevel level, LivingEntity owner, Vec3 pos, Vec3 vel, float damage, int life, int rgb) {
+            this.rgb = rgb;
             this.level = level;
             this.owner = owner;
             this.pos = pos;
@@ -60,6 +61,8 @@ public final class HeatPellets {
     }
 
     private static final List<Pellet> PELLETS = new ArrayList<>();
+    /** Ids for the clients' blobs: negative, so they never meet a bullet's. */
+    private static int NEXT_ID = -1;
 
     private HeatPellets() {
     }
@@ -68,7 +71,7 @@ public final class HeatPellets {
      * Throws {@code beams} pellets from {@code shooter}'s eye within a cone of {@code coneDeg}, sharing {@code joules}
      * between them (a splitter's share), each flying {@code range} blocks at most.
      */
-    public static void launch(ServerLevel level, LivingEntity shooter, float joules, float range, int beams, float coneDeg, float yaw, float pitch) {
+    public static void launch(ServerLevel level, LivingEntity shooter, float joules, float range, int beams, float coneDeg, float yaw, float pitch, int rgb) {
         int n = Math.max(1, beams);
         float each = n > 1 ? joules * ModularTuning.EGUN_SPLIT_TOTAL / n : joules;
         int life = Math.max(1, Math.round(range / ModularTuning.EGUN_CORE_SPEED));
@@ -76,8 +79,10 @@ public final class HeatPellets {
         for (int i = 0; i < n; i++) {
             float r = coneDeg * Mth.sqrt(level.random.nextFloat()), theta = level.random.nextFloat() * Mth.TWO_PI;
             Vec3 dir = Vec3.directionFromRotation(Mth.clamp(pitch + r * Mth.sin(theta), -90f, 90f), yaw + r * Mth.cos(theta));
-            PELLETS.add(new Pellet(level, shooter, eye.add(dir.scale(0.4)), dir.scale(ModularTuning.EGUN_CORE_SPEED),
-                    each * ModularTuning.EGUN_DAMAGE_PER_J, life));
+            Pellet s = new Pellet(level, shooter, eye.add(dir.scale(0.4)), dir.scale(ModularTuning.EGUN_CORE_SPEED),
+                    each * ModularTuning.EGUN_DAMAGE_PER_J, life, rgb);
+            PELLETS.add(s);
+            fly(s, false);
         }
         level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_FLAME.get(), SoundSource.PLAYERS, 1f, 0.9f + level.random.nextFloat() * 0.2f);
     }
@@ -108,6 +113,7 @@ public final class HeatPellets {
         s.vel = look.scale(ModularTuning.EGUN_CORE_SPEED * ParryTuning.FEEDBACKER_SPEED);
         s.damage *= ParryTuning.FEEDBACKER_SPEED;
         s.life = Math.max(s.life, 12);
+        fly(s, false);
         return true;
     }
 
@@ -123,7 +129,12 @@ public final class HeatPellets {
         for (LivingEntity owner : caught)
             if (bounceAll(owner) && owner.level() instanceof ServerLevel level)
                 Parrying.punchedOwn(level, owner, ModularTuning.EGUN_CORE_PELLET_MU, ModularTuning.EGUN_CORE_SPEED);
-        PELLETS.removeIf(HeatPellets::step);
+        PELLETS.removeIf(s -> {
+            if (!step(s))
+                return false;
+            fly(s, true);
+            return true;
+        });
     }
 
     @SubscribeEvent
@@ -134,6 +145,11 @@ public final class HeatPellets {
     private static boolean inWindow(LivingEntity e) {
         return e.hasData(FCombat.STATE) && CombatState.of(e).phase() == CombatPhase.PARRY_ACTIVE
                 && !CombatGear.granting(e, ParryTuning.PUNCH_PROJECTILES).isEmpty();
+    }
+
+    /** Tells the clients where a blob is and how it flies, or that it is spent. */
+    private static void fly(Pellet s, boolean ended) {
+        io.github.soundgoodizerfan.feedback.net.GunTracerPayload.send(s.level, s.id, ended, s.pos, s.vel, 0xFF000000 | s.rgb, 0f, EnergyStyle.PLASMA);
     }
 
     /** One tick of one pellet; true when it is spent. */
@@ -153,20 +169,21 @@ public final class HeatPellets {
                 best = e;
             }
         }
-        level.sendParticles(ParticleTypes.FLAME, from.x, from.y, from.z, 1, 0.02, 0.02, 0.02, 0);
         if (best != null) {
             if (!s.returned && best instanceof LivingEntity catcher
                     && Parrying.catchBullet(level, s.owner, catcher, ModularTuning.EGUN_CORE_PELLET_MU, (float) s.vel.length(), s.damage))
                 return true;
+            s.pos = end;
             best.invulnerableTime = 0;
             Entity target = best;
             GunShots.asBullet(() -> target.hurt(GunShots.attack(level, s.owner), s.damage));
             target.igniteForSeconds(3f);
-            level.sendParticles(ParticleTypes.LAVA, end.x, end.y, end.z, 3, 0.1, 0.1, 0.1, 0);
+            GunImpacts.energyBody(level, end, s.vel.normalize(), 1f, s.rgb, EnergyStyle.PLASMA);
             return true;
         }
         if (block.getType() != HitResult.Type.MISS) {
-            level.sendParticles(ParticleTypes.SMOKE, end.x, end.y, end.z, 4, 0.1, 0.1, 0.1, 0.02);
+            s.pos = end;
+            GunImpacts.energyBlock(level, block.getBlockPos(), block.getDirection(), end, 1f, s.rgb, EnergyStyle.PLASMA);
             return true;
         }
         s.pos = to;

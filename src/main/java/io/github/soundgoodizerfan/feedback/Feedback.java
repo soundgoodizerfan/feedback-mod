@@ -320,6 +320,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunImpactPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunImpactPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunImpactPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.EnergyBeamPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.EnergyBeamPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.EnergyBeamPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunTracerPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunTracerPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunTracerPayload::handle)

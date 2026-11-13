@@ -77,7 +77,11 @@ The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fi
 - It goes through glass and glass panes, but not tinted glass, and stops at any other block.
 - It hurts a limited number of bodies in a line (set by the tier and a hold charge); a capacitor bank's pulse hurts every one.
 - Armor resists it as it resists a bullet, except **metal armor**, which carries the shock: a body in metal armor, or a **wet** one, takes extra damage, and is staggered for a moment by the shot's energy.
-- A beam is drawn from the muzzle in the gun's color with sparks where it lands, and the muzzle glows brighter as the barrel heats.
+- A beam is drawn from the muzzle in the gun's color with sparks where it lands, and the muzzle glows brighter as the barrel heats. The build sets its look:
+  - **Laser** (any other build): a thin hard beam, sparks and a scorch where it lands.
+  - **Pulse** (a capacitor bank, a burst bank or a wide bore): a thick jittery beam that crackles.
+  - **Arc** (an arc fork lens): a jagged branching bolt that chains between bodies and arcs to wet targets.
+  - **Plasma** (a core breech): a slow glowing blob that splashes where it lands.
 
 A coin flipped with [Coin flip](Skills.md) redirects a pulse without costing it any damage, and a **cylinder** pulse hits harder when redirected.
 

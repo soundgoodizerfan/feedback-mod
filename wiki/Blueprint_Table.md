@@ -72,6 +72,8 @@ Some **parts** and **shapes** belong to a school too (the servos of a powered su
 | Chemical III | demolition charge |
 | Materials I | none |
 
+A pulse gun's drawing also lists the ways the build hurts its wielder, as red chips beside the usual ones: **Burns the hand** (no heat governor), **Shocks the wielder** (a cell above the receiver's band), **Arcs when wet**, and **Locks hot** (a core breech). See [Electric Gun](Electric_Gun.md#misuse-and-hazards).
+
 Every other type (tools, armor, backpack, bed, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) needs no treatise.
 
 ## What a blueprint is for

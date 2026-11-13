@@ -37,6 +37,8 @@ Each face **wears on its own**. Mining wears the face that dug the block, a blow
 
 A hafted tool is named after what it does, by the head and its size: a hatchet, a felling axe, a claymore, a javelin, a scythe. Two heads on one haft are named as a pair: a **mattock** is a pick with a hoe face, a **halberd** an axe with a spear head. Every name and what gives it is on [Designations](Designations.md#two-heads-on-one-haft). You can rename a tool on a blueprint.
 
+A hafted tool carries the [Suits line](Tools_and_Weapons.md#the-suits-line) of its front face, and its blows pay [skill](Skills.md) points by it.
+
 ## Treatises
 
 The faces of a maul, a cleaver and a spear need Weapons Treatise I ([Treatise](Treatise.md)). A tool with one of them is assembled at the Engineering Table, which checks the volume; the plain crafting table refuses it.

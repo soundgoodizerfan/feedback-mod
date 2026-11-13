@@ -8,6 +8,7 @@ import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularFaces;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
@@ -74,6 +75,7 @@ public record WeaponProfile(float burst, float tempo, float precision, float ste
         ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return NONE;
+        type = ModularFaces.view(type, design); // a hafted plan fights as its front face
         return switch (type.family()) {
             case BOW, CROSSBOW -> bow(f);
             case BLADE, MACE, SPEAR, DIG -> melee(f);

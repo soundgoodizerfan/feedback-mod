@@ -85,6 +85,8 @@ Put a modular item in the **Item** slot and stock in the **Part stock** slots. A
 
 On an [Engine](Engine.md), a swapped **spark plug** is a fresh one and clears the plug's wear; reworking any other part leaves the plug's wear as it is.
 
+The plain [Crafting Table](Crafting_Table.md) swaps a part too: lay one finished item of a type that needs no blueprint or treatise in the grid with replacement parts or stock, in any positions. The part of the same role is replaced (a role the item has empty takes the stock as an addition), the old part comes back in the grid (the wearing part short by its wear), and the item wears one point.
+
 Repairing and a like-for-like swap need no treatise. A dish is not taken apart.
 
 ## Treatise tab

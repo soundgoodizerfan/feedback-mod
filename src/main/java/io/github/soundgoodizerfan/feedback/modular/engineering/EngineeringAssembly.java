@@ -124,7 +124,7 @@ public final class EngineeringAssembly {
             return Plan.NONE;
         CraftingInput crafting = input.crafting();
         Optional<RecipeHolder<CraftingRecipe>> vanilla = level.getRecipeManager().getRecipeFor(RecipeType.CRAFTING, crafting, level);
-        if (vanilla.isPresent() && !(vanilla.get().value() instanceof ModularCraftingRecipe)) {
+        if (vanilla.isPresent() && !(vanilla.get().value() instanceof ModularCraftingRecipe || vanilla.get().value() instanceof ModularSwapRecipe)) {
             ItemStack out = vanilla.get().value().assemble(crafting, level.registryAccess());
             if (!out.isEmpty()) {
                 CraftingRecipe recipe = vanilla.get().value();

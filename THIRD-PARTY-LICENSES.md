@@ -569,6 +569,8 @@ an item wears (`GearHelper`); the tooltip showing a stat with the reason behind 
 here is derived from `material/*.json`); random **grades** and the `rarity` stat (luck is not a
 property); the hidden 0.1-2.0 **synergy** scalar (a continuous knob nobody can see).
 
+**Silent Gear, crafting-table part swap (2026-11-13).** *Taken:* design of `GearPartSwapRecipe`: one shapeless code recipe, one finished item plus replacement parts, the old part returned in the grid (`ModularSwapRecipe`). *Rejected:* per-type `maxPerItem`/`supportsPart` slot choice, the `destroy_swapped_parts` toggle, repair-kit and mod-kit items, item-id part and material lookups, the `REPAIR_EFFICIENCY` scalar, wear carried onto the removed head.
+
 **Tinkers' Construct (MIT, 1.20.1 only).** *Taken:* tool definitions as data listing parts and
 actions; **broken, not destroyed** (`tic_broken` -- an item stops one point short and acts as an
 empty hand); one sprite per part tinted by material (`ToolModel`, the technique and not its

@@ -26,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
  * audible: nothing here changes a hit. A body throws what it is made of (blood, bone dust, a golem's sparks), a block
  * what its surface is (chips, dust, a hole by its sound type), never an id.
  */
-final class GunImpacts {
+public final class GunImpacts {
 
     private GunImpacts() {
     }
@@ -71,6 +71,23 @@ final class GunImpacts {
     /** Flash, smoke and (for a gun that works its action) a case, at the muzzle. */
     static void muzzle(ServerLevel level, Vec3 muzzle, Vec3 aim, float report, boolean ejects) {
         GunImpactPayload.send(level, GunImpactPayload.MUZZLE, muzzle, aim, report, ejects ? 1 : 0, -1);
+    }
+
+    /** An energy shot on a block face: the clients dress it by {@code style}; a sturdy face keeps a scorch. */
+    public static void energyBlock(ServerLevel level, BlockPos at, Direction face, Vec3 p, float power, int rgb, byte style) {
+        BlockState state = level.getBlockState(at);
+        GunImpactPayload.send(level, GunImpactPayload.ENERGY_BLOCK, p, Vec3.atLowerCornerOf(face.getNormal()), power,
+                (rgb & 0xFFFFFF) | style << 24, decal(level, at, face, state) < 0 ? -1 : 4);
+    }
+
+    /** An energy shot on a body, travelling along {@code dir}. */
+    public static void energyBody(ServerLevel level, Vec3 at, Vec3 dir, float power, int rgb, byte style) {
+        GunImpactPayload.send(level, GunImpactPayload.ENERGY_BODY, at, dir, power, (rgb & 0xFFFFFF) | style << 24, -1);
+    }
+
+    /** An energy gun's muzzle (not its flash). */
+    public static void energyMuzzle(ServerLevel level, Vec3 muzzle, Vec3 aim, float power, int rgb, byte style) {
+        GunImpactPayload.send(level, GunImpactPayload.ENERGY_MUZZLE, muzzle, aim, power, (rgb & 0xFFFFFF) | style << 24, -1);
     }
 
     /** The hole a surface keeps, by its own character; none where nothing can sit (leaves, a part-face, a plant). */

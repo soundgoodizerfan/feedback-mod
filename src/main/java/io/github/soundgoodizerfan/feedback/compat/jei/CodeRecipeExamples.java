@@ -52,6 +52,7 @@ final class CodeRecipeExamples {
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.FoodMergeRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.JarFillRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
+        crafting.addExtension(io.github.soundgoodizerfan.feedback.modular.engineering.ModularSwapRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
         crafting.addExtension(io.github.soundgoodizerfan.feedback.process.HandDeformationRecipe.class, new ElectronicsCrafting.ExtensionOf<>(ext));
     }
 
@@ -220,7 +221,41 @@ final class CodeRecipeExamples {
                 return;
             io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.starter(id, types, materials)
                     .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.build(d, types, materials))
-                    .ifPresent(made -> out.add(holder("modular_" + id.getPath(), in, Math.min(3, in.size()), (in.size() + 2) / 3, List.of(made))));
+                    .ifPresent(made -> {
+                        out.add(holder("modular_" + id.getPath(), in, Math.min(3, in.size()), (in.size() + 2) / 3, List.of(made)));
+                        swap(id, type, made, materials, types, out);
+                    });
         });
+    }
+
+    /** The crafting table's part swap ({@code ModularSwapRecipe}): the type's starter build and stock of another material for its wearing part, giving the reworked item. */
+    private static void swap(ResourceLocation id, io.github.soundgoodizerfan.feedback.modular.type.ModularType type, ItemStack made, Map<ResourceLocation, Material> materials,
+                             Map<ResourceLocation, io.github.soundgoodizerfan.feedback.modular.type.ModularType> types, List<RecipeHolder<CraftingRecipe>> out) {
+        var design = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(made);
+        var role = type.roles().get(type.wearRole());
+        var old = design == null ? null : design.part(type.wearRole());
+        if (role == null || old == null || type.blueprint() || !type.school().isEmpty())
+            return;
+        for (ItemStack choice : PartBenchToolCategory.stacks(role, old.count(), materials)) {
+            var m = choice.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+            if (m != null ? m.material().equals(old.material()) : materials.get(old.material()) == null)
+                continue;
+            List<ItemStack> stock = new ArrayList<>();
+            if (m != null || choice.getCount() >= old.count())
+                stock.add(choice);
+            else
+                for (int i = 0; i < old.count(); i++)
+                    stock.add(choice.copyWithCount(1));
+            List<ItemStack> used = stock.stream().map(x -> x.copyWithCount(1)).toList();
+            var result = io.github.soundgoodizerfan.feedback.modular.item.ModularRework.rework(made, used, materials, types,
+                    io.github.soundgoodizerfan.feedback.modular.item.ModularRework.Mode.SWAP);
+            if (result.isEmpty() || used.size() > 8)
+                return;
+            List<List<ItemStack>> in = new ArrayList<>();
+            in.add(List.of(made));
+            used.forEach(u -> in.add(List.of(u)));
+            out.add(holder("modular_swap_" + id.getPath(), in, Math.min(3, in.size()), (in.size() + 2) / 3, List.of(result.get())));
+            return;
+        }
     }
 }

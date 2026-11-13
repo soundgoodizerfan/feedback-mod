@@ -79,6 +79,9 @@ public class FRecipes {
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe>>
             MODULAR_ASSEMBLY = SERIALIZERS.register("modular_assembly",
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe::new));
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.engineering.ModularSwapRecipe>>
+            MODULAR_SWAP = SERIALIZERS.register("modular_swap",
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.engineering.ModularSwapRecipe::new));
 
     /** A grid -> one prebaked specimen of a treatise-gated modular type, so taking it apart can write the treatise. */
     public static final DeferredHolder<RecipeSerializer<?>, io.github.soundgoodizerfan.feedback.modular.treatise.BootstrapSpecimenRecipe.Serializer>

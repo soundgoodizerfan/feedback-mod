@@ -151,7 +151,7 @@ Messages like the Flurry count, a forged part's quality and a Blueprint Table's 
 
 ### The Suits line
 
-Every gun, bow, crossbow, melee weapon and plated glove carries an aqua line on its tooltip, "Suits:", listing what it is good at: *heavy-hitting*, *quick*, *precise*, *quiet*. A word appears when the weapon scores 60% or more on that axis. All weapon kinds share one scale, so a slug gun and a maul can both be heavy-hitting.
+Every gun, bow, crossbow, melee weapon (a [hafted tool](Hafted_Tool.md) included, judged by its front face) and plated glove carries an aqua line on its tooltip, "Suits:", listing what it is good at: *heavy-hitting*, *quick*, *precise*, *quiet*. A word appears when the weapon scores 60% or more on that axis. All weapon kinds share one scale, so a slug gun and a maul can both be heavy-hitting.
 
 - **Heavy-hitting**: the joules a hit carries, on a scale from 20 to 1500 J.
 - **Quick**: hits a second, from half a hit to four.
