@@ -16,7 +16,7 @@ import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;
 
-import io.github.soundgoodizerfan.feedback.client.GlowColours;
+import io.github.soundgoodizerfan.feedback.client.render.GlowColours;
 import io.github.soundgoodizerfan.feedback.core.thermal.Incandescence;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;

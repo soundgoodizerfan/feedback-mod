@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.client.GuiSkin;
-import io.github.soundgoodizerfan.feedback.client.GuiStyle;
+import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
+import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

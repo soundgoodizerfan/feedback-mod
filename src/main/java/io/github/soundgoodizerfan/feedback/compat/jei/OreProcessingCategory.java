@@ -8,7 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.process.ClientThermalProcesses;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.OreLadder;

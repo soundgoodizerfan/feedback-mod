@@ -52,6 +52,6 @@ public record SuitSyncPayload(boolean worn, int available, int toggles, float ch
     }
 
     public static void handle(SuitSyncPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.SuitClient.apply(payload));
+        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.suit.SuitClient.apply(payload));
     }
 }

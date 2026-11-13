@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.machine.hammer.MechanicalHammerBlockEntity;
 import io.github.soundgoodizerfan.feedback.machine.linkage.Throw;
 

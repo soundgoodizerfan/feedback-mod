@@ -146,7 +146,7 @@ public final class ThermalTuning {
 
     /**
      * Where the free, qualitative temperature bands fall, in Tu -- each entry is the <em>top</em>
-     * of a band, and {@link io.github.soundgoodizerfan.feedback.client.Readout} names them in order.
+     * of a band, and {@link io.github.soundgoodizerfan.feedback.client.tooltip.Readout} names them in order.
      *
      * <h3>Why they read as colours, and why there are this many</h3>
      * These are the bands a blacksmith actually works to, and that is not decoration -- it is the

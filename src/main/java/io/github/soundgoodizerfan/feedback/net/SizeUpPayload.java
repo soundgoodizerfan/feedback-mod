@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.SizeUpHud;
+import io.github.soundgoodizerfan.feedback.client.hud.SizeUpHud;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

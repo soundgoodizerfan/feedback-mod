@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.worldgen.OreVein;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;

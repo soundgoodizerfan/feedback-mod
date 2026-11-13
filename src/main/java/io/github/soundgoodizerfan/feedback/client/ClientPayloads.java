@@ -3,6 +3,11 @@
 package io.github.soundgoodizerfan.feedback.client;
 
 import io.github.soundgoodizerfan.feedback.control.programmer.ProgrammerLinkedPayload;
+import io.github.soundgoodizerfan.feedback.client.bench.EngineeringTableScreen;
+import io.github.soundgoodizerfan.feedback.client.combat.CameraTurn;
+import io.github.soundgoodizerfan.feedback.client.desktop.ComputerScreen;
+import io.github.soundgoodizerfan.feedback.client.minigame.MinigameScreens;
+import io.github.soundgoodizerfan.feedback.client.screen.ProgrammerScreen;
 
 import net.minecraft.client.Minecraft;
 

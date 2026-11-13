@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.client.desktop;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.client.GuiSkin;
+import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

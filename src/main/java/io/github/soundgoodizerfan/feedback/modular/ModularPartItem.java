@@ -53,9 +53,9 @@ public class ModularPartItem extends Item {
         if (made != null)
             attuned(made, tooltip);
         if (made != null && made.measures().work() != 1f
-                && io.github.soundgoodizerfan.feedback.client.Readout.exact(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE))
+                && io.github.soundgoodizerfan.feedback.client.tooltip.Readout.exact(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE))
             tooltip.add(Component.translatable("tooltip.feedback.part.worked",
-                    io.github.soundgoodizerfan.feedback.client.Readout.figure(
+                    io.github.soundgoodizerfan.feedback.client.tooltip.Readout.figure(
                             io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE, made.measures().work() * 100f))
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
     }

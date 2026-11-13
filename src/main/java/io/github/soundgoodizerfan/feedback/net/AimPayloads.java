@@ -70,7 +70,7 @@ public final class AimPayloads {
         }
 
         static void handle(Reading r, IPayloadContext context) {
-            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.AimHud.reading(r.target, r.pos, r.entity, r.title,
+            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.hud.AimHud.reading(r.target, r.pos, r.entity, r.title,
                     r.lines, r.quantity, r.value, FREE_TICKS));
         }
     }
@@ -133,7 +133,7 @@ public final class AimPayloads {
         }
 
         static void handle(Bearing b, IPayloadContext context) {
-            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.AimHud.bearing(b.point, b.yaw, b.step, b.caption, b.ticks));
+            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.hud.AimHud.bearing(b.point, b.yaw, b.step, b.caption, b.ticks));
         }
     }
 
@@ -160,7 +160,7 @@ public final class AimPayloads {
         }
 
         static void handle(Modes m, IPayloadContext context) {
-            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.AimHud.modes(m.title, m.options, m.index, m.detail));
+            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.hud.AimHud.modes(m.title, m.options, m.index, m.detail));
         }
     }
 
@@ -197,7 +197,7 @@ public final class AimPayloads {
         }
 
         static void handle(Link l, IPayloadContext context) {
-            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.AimHud.link(l.none ? null : l.from, l.line ? l.pos : null));
+            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.hud.AimHud.link(l.none ? null : l.from, l.line ? l.pos : null));
         }
     }
 
@@ -233,9 +233,9 @@ public final class AimPayloads {
         static void handle(Cue c, IPayloadContext context) {
             context.enqueueWork(() -> {
                 if (c.where == GUN)
-                    io.github.soundgoodizerfan.feedback.client.GunHud.cue(c.text, c.ticks);
+                    io.github.soundgoodizerfan.feedback.client.gun.GunHud.cue(c.text, c.ticks);
                 else
-                    io.github.soundgoodizerfan.feedback.client.AimHud.cue(c.text, c.ticks);
+                    io.github.soundgoodizerfan.feedback.client.hud.AimHud.cue(c.text, c.ticks);
             });
         }
     }
@@ -259,7 +259,7 @@ public final class AimPayloads {
         }
 
         static void handle(ScreenStatus s, IPayloadContext context) {
-            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.SkinnedScreen.status(s.text));
+            context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.gui.SkinnedScreen.status(s.text));
         }
     }
 

@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.compat.jei;
 
 import java.util.Locale;
 
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.geology.Basin;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

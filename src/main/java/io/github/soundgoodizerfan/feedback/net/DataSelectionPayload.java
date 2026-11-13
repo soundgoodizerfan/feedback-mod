@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.DataSelection;
+import io.github.soundgoodizerfan.feedback.client.render.DataSelection;
 import io.github.soundgoodizerfan.feedback.control.data.DataNodeRef;
 
 import net.minecraft.core.BlockPos;

@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.compat.jade;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.core.hazard.Radiation;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shielded;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;

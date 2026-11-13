@@ -54,6 +54,6 @@ public record ThermalFeedPayload(List<Entry> entries) implements CustomPacketPay
     }
 
     public static void handle(ThermalFeedPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.ThermalView.apply(payload.entries()));
+        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.suit.ThermalView.apply(payload.entries()));
     }
 }

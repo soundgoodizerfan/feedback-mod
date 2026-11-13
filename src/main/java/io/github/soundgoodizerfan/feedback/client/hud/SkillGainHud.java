@@ -1,0 +1,139 @@
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
+package io.github.soundgoodizerfan.feedback.client.hud;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillPools;
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree;
+import io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees;
+import io.github.soundgoodizerfan.feedback.combat.skill.TreeHue;
+import io.github.soundgoodizerfan.feedback.client.ClientSettings;
+
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import org.joml.Vector3f;
+
+/**
+ * How a skill point gain shows: a faint tree-coloured glow around the crosshair that swells with the points and flares on a gain, fading a few seconds after the last one, nothing in the world per hit. The gain is read off the synced {@link SkillPools}, so no
+ * packet is needed for it. A kill that paid sends one wisp ({@code SkillWispPayload}) that drifts from the fallen to the
+ * player; {@link ClientSettings#gainWisp()} turns it off live.
+ */
+@EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
+public final class SkillGainHud {
+
+    private static final int SHOW_TICKS = 70, WISP_TICKS = 14, FADE_TICKS = 20, PULSE_TICKS = 6, GLOW_R = 8;
+
+    /** The last points seen per tree, to tell a gain from a purchase (points falling). */
+    private static final Map<String, Integer> SEEN = new HashMap<>();
+    /** The tree on show, and the ticks left on show. */
+    private static String tree;
+    private static int shownTicks;
+    private static float shownFill;
+
+    private record Wisp(Vec3 from, int rgb, int[] age) {
+    }
+
+    private static final List<Wisp> WISPS = new ArrayList<>();
+
+    private SkillGainHud() {
+    }
+
+    public static void register(RegisterGuiLayersEvent event) {
+        event.registerAboveAll(Feedback.id("skill_gain"), SkillGainHud::render);
+    }
+
+    /** A kill that paid {@code rgb}'s tree: one wisp from where the creature fell. */
+    public static void wisp(int rgb, double x, double y, double z) {
+        if (ClientSettings.gainWisp() && !ClientSettings.reduceMotion() && WISPS.size() < 8)
+            WISPS.add(new Wisp(new Vec3(x, y, z), rgb, new int[1]));
+    }
+
+    @SubscribeEvent
+    public static void onTick(ClientTickEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) {
+            SEEN.clear();
+            WISPS.clear();
+            tree = null;
+            return;
+        }
+        SkillPools pools = SkillPools.of(mc.player);
+        for (Map.Entry<String, Integer> e : pools.points().entrySet()) {
+            int before = SEEN.getOrDefault(e.getKey(), e.getValue()), now = e.getValue();
+            SEEN.put(e.getKey(), now);
+            if (now > before) {
+                tree = e.getKey();
+                shownTicks = SHOW_TICKS;
+            }
+        }
+        if (shownTicks > 0 && --shownTicks == 0)
+            tree = null;
+        tickWisps(mc);
+    }
+
+    private static void tickWisps(Minecraft mc) {
+        var it = WISPS.iterator();
+        while (it.hasNext()) {
+            Wisp w = it.next();
+            if (++w.age()[0] > WISP_TICKS) {
+                it.remove();
+                continue;
+            }
+            double t = w.age()[0] / (double) WISP_TICKS;
+            t = t * t * (3 - 2 * t); // eased: lingers, then drifts in
+            Vec3 to = mc.player.position().add(0, mc.player.getBbHeight() * 0.6, 0);
+            Vec3 at = w.from().lerp(to, t).add(0, Math.sin(t * Math.PI) * 0.4, 0);
+            int rgb = w.rgb();
+            var colour = new Vector3f((rgb >> 16 & 255) / 255f, (rgb >> 8 & 255) / 255f, (rgb & 255) / 255f);
+            mc.level.addParticle(new DustParticleOptions(colour, 0.6f), at.x, at.y, at.z, 0, 0, 0);
+        }
+    }
+
+    /** Points of {@code pool} over the price of the cheapest node of that tree not yet owned, 0..1; 1 when nothing is left to buy. */
+    private static float progress(SkillPools pools, String pool) {
+        int cheapest = Integer.MAX_VALUE;
+        for (SkillTree t : SkillTrees.get().trees())
+            if (t.pool().equals(pool))
+                for (SkillTree.Node n : t.nodes())
+                    if (!pools.has(t.tree(), n.id()))
+                        cheapest = Math.min(cheapest, n.cost());
+        return cheapest == Integer.MAX_VALUE || cheapest <= 0 ? 1f : Math.min(1f, pools.points(pool) / (float) cheapest);
+    }
+
+    private static void render(GuiGraphics g, DeltaTracker delta) {
+        Minecraft mc = Minecraft.getInstance();
+        if (tree == null || mc.player == null || mc.options.hideGui || mc.screen != null)
+            return;
+        float target = progress(SkillPools.of(mc.player), tree);
+        shownFill += (target - shownFill) * 0.2f; // the arc glides up to its value
+        float fade = Math.min(1f, shownTicks / (float) FADE_TICKS);
+        float pulse = ClientSettings.reduceMotion() ? 0f : Math.max(0, shownTicks - (SHOW_TICKS - PULSE_TICKS)) / (float) PULSE_TICKS;
+        int rgb = TreeHue.of(tree), cx = g.guiWidth() / 2, cy = g.guiHeight() / 2;
+        // soft disc of 2 px cells: it swells with the points and flares on a gain, faint at rest
+        double r = GLOW_R + 6 * shownFill + 3 * pulse;
+        float peak = fade * (0.12f + 0.12f * shownFill + 0.14f * pulse);
+        int n = (int) Math.ceil(r / 2);
+        for (int j = -n; j <= n; j++)
+            for (int i = -n; i <= n; i++) {
+                double d = Math.sqrt(i * i + j * j) * 2 / r;
+                if (d >= 1)
+                    continue;
+                int alpha = (int) (255 * peak * (1 - d) * (1 - d));
+                if (alpha > 0)
+                    g.fill(cx + i * 2 - 1, cy + j * 2 - 1, cx + i * 2 + 1, cy + j * 2 + 1, alpha << 24 | rgb);
+            }
+    }
+}

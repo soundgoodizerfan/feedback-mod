@@ -7,7 +7,7 @@ import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.locale.Language;
 
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 

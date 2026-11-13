@@ -24,6 +24,6 @@ public record AimPlayPayload(int entity, boolean aiming) implements CustomPacket
     }
 
     public static void handle(AimPlayPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.GunClient.setAimed(payload.entity(), payload.aiming()));
+        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.gun.GunClient.setAimed(payload.entity(), payload.aiming()));
     }
 }

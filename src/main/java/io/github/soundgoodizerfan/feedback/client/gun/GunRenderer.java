@@ -80,7 +80,7 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         pose.translate(-at[0], -at[1], -at[2]);
         GunMotion.item(pose, view, hand, now);
         var mesh = new GunMesh(pose, outputs(buffers, stack), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
-        mesh.sighted = hand == GunMotion.hand(false) && io.github.soundgoodizerfan.feedback.client.GunClient.aim() > 0.5f;
+        mesh.sighted = hand == GunMotion.hand(false) && io.github.soundgoodizerfan.feedback.client.gun.GunClient.aim() > 0.5f;
         GunDraw.draw(mesh, view, parts);
         if (io.github.soundgoodizerfan.feedback.weapon.GunItem.mechanismOf(stack) instanceof io.github.soundgoodizerfan.feedback.weapon.FirearmMechanism)
             GunFlash.draw(pose, buffers, view, hand, now);

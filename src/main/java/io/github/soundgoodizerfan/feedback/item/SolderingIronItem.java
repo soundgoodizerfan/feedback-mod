@@ -92,7 +92,7 @@ public class SolderingIronItem extends Item implements ItemHeat.Cooling {
         if (board == null || board.solder().isEmpty())
             return InteractionResultHolder.pass(iron);
         if (level.isClientSide) {
-            io.github.soundgoodizerfan.feedback.client.SolderScreen.open(board, ItemHeat.get(iron, level).value());
+            io.github.soundgoodizerfan.feedback.client.minigame.SolderScreen.open(board, ItemHeat.get(iron, level).value());
         } else {
             SESSIONS.put(player.getUUID(), new Session(level.getGameTime(), ItemHeat.get(iron, level).value(), hand, player.isShiftKeyDown()));
             Material solder = MaterialTable.get().materials().get(board.solder().get());

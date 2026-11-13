@@ -108,7 +108,7 @@ public final class GunPreview {
      * A tab on the panel's left edge ({@code panelLeft}) pops a blueprint-skinned drawer out to its left holding the
      * gun. {@code design} null, or no room beside the panel, draws nothing.
      */
-    public void draw(GuiGraphics g, io.github.soundgoodizerfan.feedback.client.GuiSkin skin, ModularDesign design, int panelLeft, int panelTop) {
+    public void draw(GuiGraphics g, io.github.soundgoodizerfan.feedback.client.gui.GuiSkin skin, ModularDesign design, int panelLeft, int panelTop) {
         int dw = Math.min(DRAWER_W, panelLeft - TAB_W);
         tw = bw = 0;
         if (design == null || dw < 60) {

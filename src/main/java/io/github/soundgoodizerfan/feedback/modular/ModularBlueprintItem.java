@@ -54,7 +54,7 @@ public class ModularBlueprintItem extends Item {
         if (ModularStacks.design(stack) == null)
             return net.minecraft.world.InteractionResultHolder.pass(stack);
         if (level.isClientSide)
-            io.github.soundgoodizerfan.feedback.client.BlueprintCardScreen.open(stack);
+            io.github.soundgoodizerfan.feedback.client.bench.BlueprintCardScreen.open(stack);
         return net.minecraft.world.InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
     }
 

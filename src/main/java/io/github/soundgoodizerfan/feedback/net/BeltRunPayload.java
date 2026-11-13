@@ -78,6 +78,6 @@ public record BeltRunPayload(long id, int facing, long[] shape, byte[] kinds, fl
     }
 
     public static void handle(BeltRunPayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.ClientBeltRuns.receive(payload));
+        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.render.ClientBeltRuns.receive(payload));
     }
 }

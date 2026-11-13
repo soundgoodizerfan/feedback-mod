@@ -54,7 +54,7 @@ ordering = "AFTER"
 side = "BOTH"
 
 # Better Combat (all rights reserved, by Zsolt Molnar; players install it, we never ship or copy it). We drive its
-# animation player and sounds from our own attack code (client/UpswingSwing), so it is needed where a player is drawn.
+# animation player and sounds from our own attack code (client/combat/UpswingSwing), so it is needed where a player is drawn.
 # Bug reports about Feedback go to Feedback, never to its author.
 [[dependencies.${mod_id}]]
 modId = "bettercombat"

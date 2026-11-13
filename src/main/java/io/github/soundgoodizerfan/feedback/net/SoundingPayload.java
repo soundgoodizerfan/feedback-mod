@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.net;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.SoundingOverlay;
+import io.github.soundgoodizerfan.feedback.client.hud.SoundingOverlay;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

@@ -5,7 +5,7 @@
       "name": "FEEDBACK_SPEAR",
       "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
       "parameters": {
-        "class": "io/github/soundgoodizerfan/feedback/client/SpearPose",
+        "class": "io/github/soundgoodizerfan/feedback/client/combat/SpearPose",
         "field": "PROXY"
       }
     },
@@ -14,7 +14,7 @@
       "name": "FEEDBACK_PARRY",
       "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
       "parameters": {
-        "class": "io/github/soundgoodizerfan/feedback/client/CombatPose",
+        "class": "io/github/soundgoodizerfan/feedback/client/combat/CombatPose",
         "field": "PARRY_PROXY"
       }
     },
@@ -23,7 +23,7 @@
       "name": "FEEDBACK_GUN_MAIN",
       "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
       "parameters": {
-        "class": "io/github/soundgoodizerfan/feedback/client/GunStance",
+        "class": "io/github/soundgoodizerfan/feedback/client/gun/GunStance",
         "field": "MAIN_PROXY"
       }
     },
@@ -32,7 +32,7 @@
       "name": "FEEDBACK_GUN_SUPPORT",
       "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
       "parameters": {
-        "class": "io/github/soundgoodizerfan/feedback/client/GunStance",
+        "class": "io/github/soundgoodizerfan/feedback/client/gun/GunStance",
         "field": "SUPPORT_PROXY"
       }
     }

@@ -8,7 +8,6 @@ import com.mojang.math.Axis;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.ClientSettings;
-import io.github.soundgoodizerfan.feedback.client.GunClient;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 import io.github.soundgoodizerfan.feedback.weapon.GunLayout;
 import io.github.soundgoodizerfan.feedback.weapon.MagazineSize;

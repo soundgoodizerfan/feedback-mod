@@ -1,0 +1,955 @@
+// Copyright (C) 2026 soundgoodizerfan
+// SPDX-License-Identifier: GPL-3.0-or-later
+package io.github.soundgoodizerfan.feedback.client.bench;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.Station;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
+import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.registry.FormItems;
+import io.github.soundgoodizerfan.feedback.client.ClientSettings;
+import io.github.soundgoodizerfan.feedback.client.gui.FolderTabs;
+import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
+import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
+import io.github.soundgoodizerfan.feedback.client.gui.SkinnedScreen;
+import io.github.soundgoodizerfan.feedback.client.minigame.PrepCutScreen;
+import io.github.soundgoodizerfan.feedback.client.minigame.PrepKneadScreen;
+import io.github.soundgoodizerfan.feedback.client.minigame.PrepPourScreen;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+
+/**
+ * The bench: the smithing table, the anvil, the woodworking table, the stonecutter and the Prep Table are this one screen, each a skin, a hand
+ * tool and a set of limits ({@link Station}). They make parts (and at the Prep Table dishes); putting a tool together, mending it, swapping
+ * a part and taking it apart are the Engineering Table's. {@code docs/gui/gui_bench.md} is the spec; this is the data flow it needs.
+ *
+ * <pre>
+ * What the player does               What the menu holds                       What the fan shows (nodes)
+ * ---------------------------------  ----------------------------------------  -----------------------------------------------
+ * stock in the centre slot           Centre.STOCK, mode MODE_PART              shapes the stock can become (affordable ones
+ *                                    pick = shape index / BTN_CUT + cut index   lit, the rest faint), cuts, break down, and at
+ *                                                                              the Prep Table cut/knead; click = make it
+ *                                                                              (instant: BTN_PICK then BTN_MAKE; forged: the
+ *                                                                              rhythm is played around the stock, ForgePanel)
+ * (Prep Table) a container in the   Centre.PART, mode MODE_ASSEMBLE           fitted foods (come off: BTN_OFF), then what the
+ * centre slot                        fitted foods in the assembly slots        player holds that attaches (BTN_FIT slot), then
+ *                                                                              foods that could attach and would be shaped from
+ *                                                                              the stock slot (BTN_SHAPE option); fitting the
+ *                                                                              last one makes the dish, which is the centre
+ * (Prep Table) a dish in the centre  Centre.TOOL, mode MODE_PREPARE            the finish node
+ * a smithing template in the centre  Centre.TEMPLATE, mode MODE_SMITH          nothing: base and addition go in the stock slots
+ * </pre>
+ *
+ * <p>The player never picks a mode: {@code PartBenchMenu} derives it from the centre on the server and syncs it. The server decides everything
+ * (the screen sends button ids and the forging blows); the lists above are computed on both sides from the same menu and are rebuilt
+ * only when the contents change. Volume is millibuckets in the menu and shown as ingots here. Numbers never show: bars do.
+ *
+ * <p>Nothing covers the bench: work happens around the stock ({@link ForgePanel}), motion lives on the objects (the stock settles and glows,
+ * a rejected placement shakes the fan, a made part arcs to its slot), and every action has a {@link GuiSkin.Cue} and a visual twin.
+ */
+public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
+
+    /** The fan's canvas, relative to the panel; the centre slot sits at its middle. */
+    static final int VX = 8, VY = 16, VW = 304, VH = 150;
+    /** Shapes in a group before they fold into hubs by part. */
+    private static final int HUB_AT = 10;
+
+    private final Station st;
+    private final ForgePanel forge;
+    private final ShinglePanel shingle;
+    /** The Prep Table's Blueprint tab (null at the other benches). */
+    private final RecipePanel blueprint;
+    private Button printButton;
+    private Button shingleButton;
+    private final BenchFan fan = new BenchFan();
+    private final AxisPanel axis;
+    private float partial;
+
+    private List<PartBenchShaping.Option> options = List.of();
+    private int optionsGeneration = -1;
+    private int readKey = Integer.MIN_VALUE;
+    private ItemStack seated = ItemStack.EMPTY;
+    private boolean recentre = true;
+
+    // Feel: when the last reject, seat and make happened, and what is arcing to the output slot.
+    private float shakeAt = Float.NEGATIVE_INFINITY, seatAt = Float.NEGATIVE_INFINITY, arcAt = Float.NEGATIVE_INFINITY, saidAt = Float.NEGATIVE_INFINITY;
+    private ItemStack arcIcon = ItemStack.EMPTY;
+    private Component said = Component.empty();
+
+    // Dragging the fan.
+    private boolean panning;
+
+    private AbstractWidget typePicker;
+    private final float[] bars = new float[3], against = new float[3];
+
+    public BenchScreen(PartBenchMenu menu, Inventory inventory, Component title) {
+        super(menu, inventory, title, GuiSkin.valueOf(Station.of(menu).skin()));
+        st = Station.of(menu);
+        imageWidth = PartBenchMenu.W;
+        imageHeight = PartBenchMenu.H;
+        titleLabelX = 10;
+        titleLabelY = 5;
+        inventoryLabelX = PartBenchMenu.INV_X;
+        inventoryLabelY = PartBenchMenu.INV_Y - 11;
+        forge = st.has(Station.Panel.FORGE) ? new ForgePanel(this) : null;
+        shingle = st.has(Station.Panel.FORGE) ? new ShinglePanel(this) : null;
+        blueprint = st.dishes() ? new RecipePanel(menu, skin) : null;
+        axis = new AxisPanel(this, skin);
+    }
+
+    // What the panels may ask of the bench.
+    PartBenchMenu menu() {
+        return menu;
+    }
+
+    Station station() {
+        return st;
+    }
+
+    int left() {
+        return leftPos;
+    }
+
+    int top() {
+        return topPos;
+    }
+
+    net.minecraft.client.gui.Font font() {
+        return font;
+    }
+
+    float partial() {
+        return partial;
+    }
+
+    /** The middle of the fan on the screen: where the stock lies. */
+    int cx() {
+        return leftPos + VX + VW / 2;
+    }
+
+    int cy() {
+        return topPos + VY + VH / 2;
+    }
+
+    /** Where the centre slot actually is (it follows the fan, clamped to the canvas): every animation that starts at the stock starts here. */
+    int slotCx() {
+        return leftPos + centreSlot().x + 8;
+    }
+
+    int slotCy() {
+        return topPos + centreSlot().y + 8;
+    }
+
+    private Slot centreSlot() {
+        if (centre == null)
+            for (Slot s : menu.slots)
+                if (s.getContainerSlot() == io.github.soundgoodizerfan.feedback.modular.PartBenchBlockEntity.TOOL) {
+                    centre = s;
+                    break;
+                }
+        return centre;
+    }
+
+    private Slot centre;
+
+    net.minecraft.world.level.Level level() {
+        return Minecraft.getInstance().level;
+    }
+
+    void press(int id) {
+        if (Minecraft.getInstance().gameMode != null)
+            Minecraft.getInstance().gameMode.handleInventoryButtonClick(menu.containerId, id);
+    }
+
+    /** Whether a work panel has the bench (the axis strip stays out of its way). */
+    boolean panelBusy() {
+        return busy() || drafting();
+    }
+
+    private boolean busy() {
+        return forge != null && forge.busy() || shingle != null && shingle.busy();
+    }
+
+    private Material.Kind stockKind() {
+        return level() == null ? null : menu.stuff(level()).flatMap(l -> l.material().kind()).orElse(null);
+    }
+
+    // --- set up ------------------------------------------------------------------------------
+
+    @Override
+    protected void init() {
+        super.init();
+        // The station's folder tabs (data on Station), stood above the panel; none for a station with a single job.
+        folderTabs(st.tabs().stream().map(t -> new FolderTabs.Def(Component.translatable(t.key()))).toList(), menu::tab,
+                i -> press(PartBenchMenu.BTN_TAB + i));
+        shingleButton = addRenderableWidget(GuiStyle.primary(skin, Component.translatable("gui.feedback.bench.shingle"),
+                b -> {
+                    if (shingle != null && shingle.start())
+                        skin.cue(GuiSkin.Cue.START, stockKind(), 1f);
+                    else
+                        reject(Component.translatable("gui.feedback.tool_table.status.cold"));
+                }, leftPos + VX + VW / 2 - 40, topPos + VY + VH - 40, 80, 16, skin::click));
+        shingleButton.visible = false;
+        if (st.dishes()) {
+            typePicker = addRenderableWidget(GuiStyle.stepper(skin, leftPos + VX + 4, topPos + VY + 4, 120, 14, "<", ">", this::typeName, d -> {
+                int n = Math.max(1, menu.dishTypes(level()).size());
+                press(PartBenchMenu.BTN_TYPE + Math.floorMod(menu.typePicked(level()) + d, n));
+            }, true, null));
+            typePicker.visible = false;
+        }
+        axis.init(this::addWidget);
+        if (blueprint != null) {
+            printButton = addRenderableWidget(blueprint.printButton(leftPos, topPos));
+            printButton.visible = false;
+        }
+        readKey = Integer.MIN_VALUE;
+    }
+
+    /** The Prep Table's Blueprint tab is open: the board has the bench, and the fan's controls and the main inventory are out of the way. */
+    private boolean drafting() {
+        return blueprint != null && blueprint.active();
+    }
+
+    /** Parks the main inventory's slots off screen while the board is up (the hotbar's row stays, under the board), and puts them back after. */
+    private void seatInventory() {
+        boolean away = drafting();
+        for (Slot s : menu.slots) {
+            if (!(s.container instanceof net.minecraft.world.entity.player.Inventory))
+                continue;
+            int i = s.getContainerSlot();
+            if (i < 9 || i > 35)
+                continue;
+            s.x = away ? -1000 : PartBenchMenu.INV_X + (i - 9) % 9 * 18;
+            s.y = away ? -1000 : PartBenchMenu.INV_Y + (i - 9) / 9 * 18;
+        }
+    }
+
+    private String typeName() {
+        var level = level();
+        List<ResourceLocation> types = level == null ? List.of() : menu.dishTypes(level);
+        return types.isEmpty() ? "" : PartPresenter.name(types.get(menu.typePicked(level))).getString();
+    }
+
+    /** The centre slot rides the fan's middle as it is panned and zoomed (kept inside the canvas so it stays reachable). */
+    private void followFan() {
+        for (net.minecraft.world.inventory.Slot s : menu.slots) {
+            if (s.getContainerSlot() != io.github.soundgoodizerfan.feedback.modular.PartBenchBlockEntity.TOOL)
+                continue;
+            s.x = Mth.clamp(fan.originX(cx()) - leftPos - 8, VX, VX + VW - 16);
+            s.y = Mth.clamp(fan.originY(cy()) - topPos - 8, VY, VY + VH - 16);
+            return;
+        }
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        if (level() == null)
+            return;
+        if (optionsGeneration != ModularTypes.generation()) {
+            options = PartBenchShaping.options(menu.shapes(level()));
+            optionsGeneration = ModularTypes.generation();
+            readKey = Integer.MIN_VALUE;
+        }
+        read();
+        axis.tick();
+        if (forge != null)
+            forge.tick();
+        if (shingle != null)
+            shingle.tick();
+        seatInventory();
+        if (printButton != null)
+            printButton.visible = drafting();
+        if (drafting()) {
+            blueprint.tick();
+            shingleButton.visible = false;
+            if (typePicker != null)
+                typePicker.visible = false;
+            return;
+        }
+        shingleButton.visible = menu.centre(level()) == PartBenchMenu.Centre.BLOOM && !busy();
+        shingleButton.active = menu.hasHammer();
+        if (typePicker != null)
+            typePicker.visible = menu.mode() == PartBenchMenu.MODE_ASSEMBLE && !busy();
+    }
+
+    /** Rebuild the fan when what it is made from has changed, and give the placement its seat. */
+    private void read() {
+        List<ItemStack> all = new ArrayList<>();
+        for (int i = 0; i < menu.slots.size(); i++)
+            all.add(menu.getSlot(i).getItem());
+        int key = java.util.Objects.hash(menu.mode(), menu.picked(), menu.cutPicked(), menu.typePicked(level()), menu.tab(), ItemStack.hashStackList(all),
+                ModularTypes.generation(), ClientMaterials.get().size());
+        if (key == readKey)
+            return;
+        readKey = key;
+        ItemStack centre = menu.centreStack();
+        boolean fresh = !ItemStack.isSameItem(centre, seated);
+        if (fresh) {
+            recentre = true;
+            if (!centre.isEmpty()) {
+                skin.cue(GuiSkin.Cue.SEAT, stockKind(), 1f);
+                seatAt = GuiStyle.time();
+            }
+        }
+        seated = centre.copy();
+        rebuild();
+    }
+
+    // --- the nodes -------------------------------------------------------------------------------
+
+    private void rebuild() {
+        var level = level();
+        List<BenchFan.Node> list = new ArrayList<>();
+        // The Cut and Saw tabs work stock only; a dish container in the centre waits for the Parts tab.
+        switch (menu.cutTab() && menu.centre(level) != PartBenchMenu.Centre.STOCK ? PartBenchMenu.Centre.EMPTY : menu.centre(level)) {
+            case STOCK -> stockNodes(list);
+            case PART -> partNodes(list);
+            case TOOL -> toolNodes(list);
+            case FILE -> fileNodes(list);
+            default -> { }
+        }
+        fan.set(list, recentre, VW / 2, VH / 2);
+        recentre = false;
+    }
+
+    /** The shape's icon, drawn as the stock in the centre would make it: the part item carries what it is made of, so it is tinted. */
+    private static ItemStack partIcon(PartBenchShaping.Option o, Material.Located stuff) {
+        ItemStack icon = new ItemStack(BuiltInRegistries.ITEM.get(o.shaping().item()));
+        if (icon.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+            icon.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
+                    new io.github.soundgoodizerfan.feedback.process.MadeOf(stuff.id(), stuff.form(), o.cells()));
+        return icon;
+    }
+
+    private void stockNodes(List<BenchFan.Node> out) {
+        var level = level();
+        Optional<Material.Located> stuff = menu.stuff(level);
+        if (stuff.isPresent() && !menu.cutTab()) {
+            int have = menu.centreStack().getCount() * FormItems.volume(stuff.get().form());
+            // Forged shapes lie among the laid ones: their darker rim says which they are. Like parts sit side by side on the wheel.
+            List<BenchFan.Node> shapes = new ArrayList<>();
+            for (int i = 0; i < options.size(); i++) {
+                PartBenchShaping.Option o = options.get(i);
+                if (!PartBenchShaping.takes(menu.station(), o, stuff.get()))
+                    continue;
+                BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.SHAPE, partIcon(o, stuff.get()), o.label(), "", PartBenchMenu.BTN_PICK + i, 0, i);
+                n.faint = have < o.stockMb(1f);
+                n.forged = o.forged();
+                shapes.add(n);
+            }
+            shapes.sort(java.util.Comparator.comparingInt(n -> wheelRank(options.get(n.index).type().getPath())));
+            out.addAll(hubbed(shapes, 0));
+        }
+        List<ItemStack> cuts = menu.cuts(level);
+        List<BenchFan.Node> cutNodes = new ArrayList<>();
+        for (int k = 0; k < cuts.size(); k++)
+            cutNodes.add(new BenchFan.Node(BenchFan.Kind.CUT, cuts.get(k), cuts.get(k).getHoverName(), "", PartBenchMenu.BTN_CUT + k, 2, k));
+        if (cutNodes.size() > HUB_AT) {
+            BenchFan.Node hub = new BenchFan.Node(BenchFan.Kind.HUB, cuts.get(0), Component.translatable("gui.feedback.bench.cuts"), "", 0, 2, -1);
+            hub.kids = cutNodes;
+            out.add(hub);
+        } else
+            out.addAll(cutNodes);
+        List<ItemStack> broken = menu.breakdown(level);
+        if (!broken.isEmpty())
+            out.add(new BenchFan.Node(BenchFan.Kind.BREAK, broken.get(0).copyWithCount(1), Component.translatable("gui.feedback.bench.break"), "", PartBenchMenu.BTN_BREAK, 3, 0));
+        if (st.dishes())
+            prepNodes(out, false);
+    }
+
+    /** The wheel's order for the types a bench makes shapes of: weapons, then tools, then armour head to foot, then the rest. */
+    private static final List<String> WHEEL = List.of("sword", "cleaver", "maul", "spear", "twin", "axe", "pickaxe", "shovel", "hoe", "sickle",
+            "shears", "hand_hammer", "hand_knife", "spoon", "sawblade", "file", "screwdriver", "bow", "crossbow", "flintlock", "shield", "helmet", "chestplate", "leggings", "boots", "glove");
+
+    private static int wheelRank(String type) {
+        int i = WHEEL.indexOf(type);
+        return i < 0 ? WHEEL.size() : i;
+    }
+
+    /** Fold a long group into hubs by part (a part with one shape stays a node); short groups stay flat. */
+    private static List<BenchFan.Node> hubbed(List<BenchFan.Node> nodes, int group) {
+        if (nodes.size() <= HUB_AT)
+            return nodes;
+        Map<ResourceLocation, List<BenchFan.Node>> byPart = new LinkedHashMap<>();
+        List<BenchFan.Node> out = new ArrayList<>();
+        for (BenchFan.Node n : nodes)
+            byPart.computeIfAbsent(BuiltInRegistries.ITEM.getKey(n.icon.getItem()), k -> new ArrayList<>()).add(n);
+        for (List<BenchFan.Node> members : byPart.values()) {
+            if (members.size() == 1) {
+                out.add(members.get(0));
+                continue;
+            }
+            BenchFan.Node hub = new BenchFan.Node(BenchFan.Kind.HUB, members.get(0).icon, Component.translatable(members.get(0).icon.getDescriptionId()), "", 0, group, -1);
+            hub.kids = members;
+            hub.forged = members.stream().allMatch(m -> m.forged);
+            out.add(hub);
+        }
+        return out;
+    }
+
+    private void partNodes(List<BenchFan.Node> out) {
+        var level = level();
+        var materials = ClientMaterials.on(level);
+        for (PartBenchMenu.Add a : menu.adds(level)) {
+            switch (a.source()) {
+                case FITTED -> out.add(new BenchFan.Node(BenchFan.Kind.FITTED, a.icon(), a.icon().getHoverName(), "", PartBenchMenu.BTN_OFF + a.index(), 0, a.index()));
+                case HELD -> out.add(new BenchFan.Node(BenchFan.Kind.HELD, a.icon().copyWithCount(1), a.icon().getHoverName(), "", PartBenchMenu.BTN_FIT + a.index(), 1, a.index()));
+                case SHAPE -> {
+                    PartBenchShaping.Option o = options.get(a.index());
+                    BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.BUILD, a.icon(), o.label(), "", PartBenchMenu.BTN_SHAPE + a.index(), 2, a.index());
+                    n.faint = PartBenchShaping.check(menu.station(), o, menu.side(), materials, level).isEmpty();
+                    out.add(n);
+                }
+            }
+        }
+    }
+
+    /** A made part in the centre: one node per axis a file can work, showing its value; a click is one stroke. */
+    private void fileNodes(List<BenchFan.Node> out) {
+        var axes = menu.fileAxes(level());
+        ItemStack part = menu.centreStack().copyWithCount(1);
+        for (int i = 0; i < axes.size(); i++) {
+            var a = axes.get(i);
+            float value = io.github.soundgoodizerfan.feedback.modular.Filing.value(menu.centreStack(), a);
+            Component label = Component.translatable("gui.feedback.bench.file.axis", Component.translatable("modular.feedback.axis." + a.getKey()),
+                    String.format("%.1f %s", value, a.getValue().unit()));
+            BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.FILE, part, label, "", PartBenchMenu.BTN_FILE + i, 0, i);
+            n.faint = value <= a.getValue().min() + 1e-4f;
+            out.add(n);
+        }
+    }
+
+    /** A finished dish in the centre (Prep Table): the finish is its one node. */
+    private void toolNodes(List<BenchFan.Node> out) {
+        if (st.dishes())
+            prepNodes(out, true);
+    }
+
+    /** The Prep Table's own work as nodes: cut and knead a food, finish a dish. */
+    private void prepNodes(List<BenchFan.Node> out, boolean dish) {
+        var level = level();
+        if (dish) {
+            BenchFan.Node f = new BenchFan.Node(BenchFan.Kind.PREP, ItemStack.EMPTY, Component.translatable("gui.feedback.prep_table.finish"), "~", 0, 2, 1);
+            f.faint = !menu.preparable(level, 1);
+            out.add(f);
+            return;
+        }
+        BenchFan.Node cut = new BenchFan.Node(BenchFan.Kind.PREP, ItemStack.EMPTY, Component.translatable("gui.feedback.prep_table.cut"), "/", 0, 2, 0);
+        cut.faint = !menu.preparable(level, 0);
+        out.add(cut);
+        BenchFan.Node knead = new BenchFan.Node(BenchFan.Kind.PREP, ItemStack.EMPTY, Component.translatable("gui.feedback.prep_table.knead"), "o", 0, 2, 2);
+        knead.faint = !menu.preparable(level, 2);
+        out.add(knead);
+    }
+
+    // --- acting on a node --------------------------------------------------------------------------
+
+    private void reject(Component why) {
+        skin.cue(GuiSkin.Cue.REJECT, stockKind(), 1f);
+        shakeAt = GuiStyle.time();
+        said = why;
+        saidAt = GuiStyle.time();
+    }
+
+    private void arc(ItemStack icon) {
+        arcIcon = icon.copyWithCount(1);
+        arcAt = GuiStyle.time();
+    }
+
+    private void act(BenchFan.Node n) {
+        var level = level();
+        if (n.kind == BenchFan.Kind.HUB) {
+            // A click pins a hub open (another click, or another hub, lets go); resting on it only shows its members.
+            boolean was = n.selected;
+            for (BenchFan.Node o : fan.nodes())
+                o.selected = false;
+            n.selected = !was;
+            GuiSkin.play(skin.click(), 1f);
+            return;
+        }
+        if (n.kind == BenchFan.Kind.PREP) {
+            prepare(n);
+            return;
+        }
+        if (n.kind == BenchFan.Kind.FILE) {
+            // Filing needs a file in the inventory, not the bench's tool slot: the server says if there is none.
+            press(n.action);
+            skin.cue(GuiSkin.Cue.STAGE, stockKind(), 1.2f);
+            return;
+        }
+        if (!menu.hasHammer()) {
+            reject(Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st == Station.STONECUTTING ? "gui.feedback.tool_table.status.no_saw" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
+                    : "gui.feedback.tool_table.status.no_hammer"));
+            return;
+        }
+        if (n.faint) {
+            reject(n.kind == BenchFan.Kind.BUILD ? Component.translatable("gui.feedback.bench.stock_slot")
+                    : Component.translatable("gui.feedback.bench.short", ((PartBenchShaping.Option) options.get(n.index)).cells()));
+            return;
+        }
+        switch (n.kind) {
+            case SHAPE -> shape(n);
+            case CUT -> {
+                press(n.action);
+                press(PartBenchMenu.BTN_MAKE);
+                arc(n.icon);
+                skin.cue(GuiSkin.Cue.FINISH, stockKind(), 1f);
+            }
+            case BREAK -> {
+                press(n.action);
+                skin.cue(GuiSkin.Cue.FINISH, stockKind(), 0.9f);
+            }
+            case FITTED -> {
+                press(n.action);
+                skin.cue(GuiSkin.Cue.ABORT, stockKind(), 1f);
+            }
+            default -> {
+                press(n.action);
+                skin.cue(GuiSkin.Cue.FINISH, stockKind(), 1.05f);
+                seatAt = GuiStyle.time();
+            }
+        }
+    }
+
+    private void shape(BenchFan.Node n) {
+        var level = level();
+        PartBenchShaping.Option o = options.get(n.index);
+        var stock = PartBenchShaping.check(menu.station(), o, menu.stock(), ClientMaterials.on(level), level,
+                n.index == menu.picked() ? menu.aimScale(o) : 1f);
+        if (stock.isEmpty()) {
+            reject(Component.translatable("gui.feedback.tool_table.status.cold"));
+            return;
+        }
+        // A part with axes to aim is picked first, so the strip shows; a second click makes it.
+        if (!PartBenchShaping.aimable(o).isEmpty() && menu.picked() != n.index) {
+            press(n.action);
+            skin.cue(GuiSkin.Cue.STAGE, stockKind(), 1f);
+            return;
+        }
+        if (o.forged()) {
+            if (forge == null || !forge.start(o, n.index))
+                reject(Component.translatable("gui.feedback.tool_table.status.cold"));
+            else
+                skin.cue(GuiSkin.Cue.START, stockKind(), 1f);
+            return;
+        }
+        press(n.action);
+        press(PartBenchMenu.BTN_MAKE);
+        arc(n.icon);
+        skin.cue(GuiSkin.Cue.FINISH, stockKind(), 1f);
+    }
+
+    /** Open the cut (0), the pour (1) or the knead (2) minigame over the bench. */
+    private void prepare(BenchFan.Node n) {
+        var level = level();
+        if (!settled() || n.faint || !menu.preparable(level, n.index)) {
+            reject(Component.translatable(n.index == 0 && !menu.hasHammer() ? "gui.feedback.prep_table.status.no_knife" : "gui.feedback.prep_table.status.bad_food"));
+            return;
+        }
+        skin.cue(GuiSkin.Cue.START, null, 1f);
+        if (n.index == 0)
+            PrepCutScreen.open(this, menu);
+        else if (n.index == 2)
+            PrepKneadScreen.open(this, menu);
+        else
+            PrepPourScreen.open(this, menu);
+    }
+
+    // --- input ---------------------------------------------------------------------------------------
+
+    private boolean inCanvas(double mx, double my) {
+        return mx >= leftPos + VX && mx < leftPos + VX + VW && my >= topPos + VY && my < topPos + VY + VH;
+    }
+
+    @Override
+    public boolean mouseClicked(double mx, double my, int button) {
+        if (!settled())
+            return true;
+        if (drafting())
+            return blueprint.mouseClicked(mx, my, button) || super.mouseClicked(mx, my, button);
+        if (forge != null && forge.click(mx, my, button) || shingle != null && shingle.click(mx, my, button))
+            return true;
+        if (axis.click(mx, my, button))
+            return true;
+        if (axis.covers(mx, my) && super.mouseClicked(mx, my, button))
+            return true;
+        if (axis.covers(mx, my))
+            return true;
+        Slot over = hoveredSlot;
+        if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 0) {
+            BenchFan.Node n = fan.at(mx, my, cx(), cy());
+            if (n != null)
+                act(n);
+            else
+                panning = true;
+            return true;
+        }
+        // A right click lets go of what is chosen: the shape, the pinned hub.
+        if (inCanvas(mx, my) && (over == null || !over.isActive()) && !isOverWidget(mx, my) && button == 1 && !busy()) {
+            for (BenchFan.Node n : fan.nodes())
+                n.selected = false;
+            press(PartBenchMenu.BTN_DESELECT);
+            return true;
+        }
+        return super.mouseClicked(mx, my, button);
+    }
+
+    private boolean isOverWidget(double mx, double my) {
+        for (var c : children())
+            if (c instanceof AbstractWidget w && w.visible && w.isMouseOver(mx, my))
+                return true;
+        return false;
+    }
+
+    @Override
+    public boolean mouseDragged(double mx, double my, int button, double dx, double dy) {
+        if (drafting())
+            return settled() && blueprint.mouseDragged(mx, my, button, dx, dy) || super.mouseDragged(mx, my, button, dx, dy);
+        if (axis.drag(mx, my))
+            return true;
+        if (panning && settled()) {
+            fan.pan(dx, dy);
+            return true;
+        }
+        return super.mouseDragged(mx, my, button, dx, dy);
+    }
+
+    @Override
+    public boolean mouseReleased(double mx, double my, int button) {
+        panning = false;
+        axis.release();
+        if (drafting())
+            blueprint.mouseReleased(mx, my, button);
+        return super.mouseReleased(mx, my, button);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mx, double my, double scrollX, double scrollY) {
+        if (drafting())
+            return settled() && blueprint.mouseScrolled(mx, my, scrollY) || super.mouseScrolled(mx, my, scrollX, scrollY);
+        if (settled() && !busy() && inCanvas(mx, my)) {
+            fan.zoomAbout(scrollY, mx, my, cx(), cy());
+            return true;
+        }
+        return super.mouseScrolled(mx, my, scrollX, scrollY);
+    }
+
+    @Override
+    public boolean keyPressed(int key, int scan, int modifiers) {
+        if (drafting())
+            return blueprint.keyPressed(key, scan, modifiers) || super.keyPressed(key, scan, modifiers);
+        if (settled() && (forge != null && forge.key(key, scan, modifiers) || shingle != null && shingle.key(key, scan, modifiers)))
+            return true;
+        return super.keyPressed(key, scan, modifiers);
+    }
+
+    @Override
+    public boolean charTyped(char c, int modifiers) {
+        return drafting() && blueprint.charTyped(c, modifiers) || super.charTyped(c, modifiers);
+    }
+
+    // --- drawing -------------------------------------------------------------------------------------
+
+    @Override
+    protected void renderBg(GuiGraphics g, float partialTick, int mouseX, int mouseY) {
+        partial = partialTick;
+        skin.panel(g, leftPos, topPos, imageWidth, imageHeight);
+        if (drafting()) {
+            blueprint.draw(g, leftPos, topPos, mouseX, mouseY, partialTick);
+            Slot paper = menu.getSlot(menu.inv() - 1);
+            skin.slot(g, leftPos + paper.x, topPos + paper.y);
+            for (int c = 0; c < 9; c++)
+                skin.slot(g, leftPos + PartBenchMenu.INV_X + c * 18, topPos + PartBenchMenu.INV_Y + 58);
+            return;
+        }
+        int x = leftPos + VX, y = topPos + VY;
+        float heat = menu.heat(level());
+        boolean fired = skin == GuiSkin.FORGE || skin == GuiSkin.ANVIL;
+        if (fired && !menu.trim())
+            BenchFire.halo(g, x, y, VW, VH, heat);
+        skin.inset(g, x, y, VW, VH);
+        g.enableScissor(x + 1, y + 1, x + VW - 1, y + VH - 1);
+        if (skin == GuiSkin.FORGE || skin == GuiSkin.ANVIL)
+            BenchFire.draw(g, x + 1, y + 1, VW - 2, VH - 2, menu.trim() ? 0f : heat);
+        else
+            idle(g, x + 1, y + 1, VW - 2, VH - 2);
+        g.disableScissor();
+        int cx = cx(), cy = cy(), sx = slotCx(), sy = slotCy();
+        int shake = GuiStyle.shake(shakeAt, 2);
+        // The pad the stock lies on: warm with its heat, and a ring that spreads when something is set down.
+        if (heat > 60f && !menu.trim())
+            for (int k = 3; k >= 1; k--)
+                GuiStyle.disc(g, sx + shake, sy, 10 + k * 4, (int) (0x22 * Mth.clamp(heat / 900f, 0.15f, 1f)) << 24 | BenchFire.colour(heat));
+        if (!menu.trim())
+            GuiStyle.ring(g, sx + shake, sy, 15, 1, 0x50000000 | skin.dim() & 0xFFFFFF);
+        float seatAge = GuiStyle.time() - seatAt;
+        if (seatAge >= 0 && seatAge < 9 && !ClientSettings.reduceMotion())
+            GuiStyle.ring(g, sx, sy, 14 + Math.round(GuiStyle.easeOut(seatAge / 9f) * 18), 2, (int) (0x90 * (1 - seatAge / 9f)) << 24 | skin.accent() & 0xFFFFFF);
+        BenchFan.Node hover = fan.at(mouseX, mouseY, cx, cy);
+        fan.draw(g, skin, font, x, y, VW, VH, cx, cy, sx, sy, axis.covers(mouseX, mouseY) ? -9999 : mouseX, mouseY, shake, busy() ? 0.2f : 1f);
+        axis.draw(g, font);
+
+        if (menu.trim()) {
+            // The three inputs share one plaque, joined by plus signs; the result stays on the right.
+            int px = leftPos + PartBenchMenu.TRIM_X - 12, py = topPos + PartBenchMenu.CENTRE_Y - 12;
+            skin.plaque(g, px, py, 2 * PartBenchMenu.TRIM_GAP + 16 + 24, 40);
+            for (int k = 0; k < 2; k++) {
+                int mx = leftPos + PartBenchMenu.TRIM_X + k * PartBenchMenu.TRIM_GAP + 8 + PartBenchMenu.TRIM_GAP / 2;
+                g.drawString(font, "+", mx - font.width("+") / 2, topPos + PartBenchMenu.CENTRE_Y + 4, skin.dim(), false);
+            }
+        }
+        for (int i = 0; i < menu.inv(); i++) {
+            Slot s = menu.getSlot(i);
+            if (!s.isActive())
+                continue;
+            if (i == PartBenchMenu.OUT) {
+                skin.plaque(g, leftPos + s.x - 5, topPos + s.y - 5, 26, 26);
+                if (s.hasItem()) {
+                    float pulse = 0.5f + 0.5f * Mth.sin(net.minecraft.Util.getMillis() / 260f);
+                    int a = 0x60 + (int) (pulse * 0x9F);
+                    g.renderOutline(leftPos + s.x - 2, topPos + s.y - 2, 20, 20, a << 24 | skin.accent() & 0xFFFFFF);
+                }
+            }
+            skin.slot(g, leftPos + s.x, topPos + s.y);
+        }
+        inventory(g, PartBenchMenu.INV_X, PartBenchMenu.INV_Y);
+        ghost(g);
+    }
+
+    /** What is under the pointer in the fan, shown where it would come out: a ghost of the part and a few bars, never numbers. */
+    private void ghost(GuiGraphics g) {
+        BenchFan.Node n = busy() ? null : fan.over();
+        if (n == null || n.icon.isEmpty() || (n.kind != BenchFan.Kind.SHAPE && n.kind != BenchFan.Kind.CUT && n.kind != BenchFan.Kind.BUILD))
+            return;
+        Slot out = menu.getSlot(PartBenchMenu.OUT);
+        if (out.hasItem())
+            return;
+        int ox = leftPos + out.x, oy = topPos + out.y;
+        g.renderItem(n.icon, ox, oy);
+        g.pose().pushPose();
+        g.pose().translate(0, 0, 250);
+        g.fill(ox, oy, ox + 16, oy + 16, 0x90000000 | 0x14100C);
+        g.pose().popPose();
+        if (n.kind != BenchFan.Kind.SHAPE && n.kind != BenchFan.Kind.BUILD)
+            return;
+        var level = level();
+        Optional<Material.Located> stuff = n.kind == BenchFan.Kind.SHAPE ? menu.stuff(level)
+                : Material.find(ClientMaterials.on(level), menu.side().get(0));
+        if (stuff.isEmpty())
+            return;
+        PartPresenter.glyphs(stuff.get().material(), bars);
+        // The alternative: the stock on the cursor, else the stock slot, if it is another material.
+        ItemStack alt = menu.getCarried().isEmpty() ? menu.side().get(0) : menu.getCarried();
+        Optional<Material.Located> other = alt.isEmpty() ? Optional.empty() : Material.find(ClientMaterials.on(level), alt);
+        boolean compare = other.isPresent() && !other.get().id().equals(stuff.get().id());
+        if (compare)
+            PartPresenter.glyphs(other.get().material(), against);
+        int bx = leftPos + PartBenchMenu.OUT_X - 6, by = topPos + PartBenchMenu.OUT_Y + 24;
+        int[] tint = {skin.ink(), skin.accent(), skin.dim()};
+        for (int i = 0; i < 3; i++) {
+            int yy = by + i * 10;
+            // the icon says what the bar is (hard, tough, heavy), so no text is needed
+            g.pose().pushPose();
+            g.pose().translate(bx, yy - 2, 0);
+            g.pose().scale(0.5f, 0.5f, 1f);
+            g.renderItem(BAR_ICONS[i], 0, 0);
+            g.pose().popPose();
+            skin.bar(g, bx + 11, yy, 32, 4, bars[i], -1f, 0xFF000000 | tint[i] & 0xFFFFFF);
+            if (compare) {
+                int mark = bx + 11 + Math.round(31 * against[i]);
+                g.fill(mark, yy - 1, mark + 1, yy + 6, 0xFFFFFFFF);
+            }
+        }
+    }
+
+    /** Hardness, toughness, weight: what the ghost's three bars are. */
+    private static final ItemStack[] BAR_ICONS = {new ItemStack(net.minecraft.world.item.Items.DIAMOND),
+            new ItemStack(net.minecraft.world.item.Items.SHIELD), new ItemStack(net.minecraft.world.item.Items.ANVIL)};
+
+    /** Each skin's quiet life behind the fan (the smithing table's is the fire): a few particles from a hash of their index, no state, no allocation. */
+    private void idle(GuiGraphics g, int x, int y, int w, int h) {
+        if (ClientSettings.reduceMotion())
+            return;
+        float t = GuiStyle.time();
+        switch (skin) {
+            case WOOD -> drift(g, x, y, w, h, t, 9, 0xEBD9AE, false, 5, 1, 120);
+            case STONE -> drift(g, x, y, w, h, t, 8, 0x9C9890, false, 0, 1, 130);
+            case BRICK -> {
+                if (!menu.centreStack().isEmpty())
+                    drift(g, x, y, w, h, t, 6, 0xFFFFFF, true, 2, 2, 70);
+            }
+            default -> { }
+        }
+    }
+
+    private static void drift(GuiGraphics g, int x, int y, int w, int h, float t, int n, int rgb, boolean rise, int sway, int size, int maxAlpha) {
+        for (int i = 0; i < n; i++) {
+            int s = (i + 1) * 0x9E3779B1;
+            s ^= s >>> 15;
+            int period = 50 + (s >>> 4 & 31);
+            float f = ((t + (s & 0xFF)) % period) / period;
+            int a = (int) (maxAlpha * Mth.sin(f * Mth.PI));
+            if (a < 8)
+                continue;
+            int px = x + (s >>> 8 & 0xFF) * w / 256 + Math.round(Mth.sin(f * 6.28f + i) * sway);
+            int py = y + Math.round((rise ? 1 - f : f) * h);
+            g.fill(px, py, px + size, py + size, a << 24 | rgb);
+        }
+    }
+
+    /** The slot captions and the one line of text, on a raised layer so nothing in the fan hides them. */
+    @Override
+    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+        if (drafting())
+            return;
+        g.pose().pushPose();
+        g.pose().translate(0, 0, 300);
+        g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
+        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
+        caption(g, Component.translatable(st.toolLabel()), PartBenchMenu.HAMMER_X, PartBenchMenu.HAMMER_Y, menu.getSlot(PartBenchMenu.HAMMER).isActive());
+        if (st.dishes())
+            caption(g, Component.translatable("gui.feedback.prep_table.stock"), PartBenchMenu.STOCK_X, PartBenchMenu.STOCK_Y, menu.getSlot(PartBenchMenu.STOCK).isActive());
+        // A composed part takes one stock per slot after the first (the centre's), each named for what it becomes.
+        for (int i = 0; i < PartBenchMenu.MAX_EXTRA_SLOTS && !st.dishes(); i++)
+            caption(g, Component.translatable("modular.feedback.slot." + menu.extraSlotName(minecraft.level, i)), PartBenchMenu.STOCK_X,
+                    PartBenchMenu.STOCK_Y + i * (PartBenchMenu.STOCK1_Y - PartBenchMenu.STOCK_Y), menu.getSlot(PartBenchMenu.STOCK + i).isActive());
+        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), PartBenchMenu.PLAN_X, PartBenchMenu.PLAN_Y,
+                menu.getSlot(PartBenchMenu.PLAN).isActive());
+        if (menu.trim()) {
+            // Vanilla smithing, plainly: template, base and addition in a row, labelled; the result is the slot on the right.
+            caption(g, Component.translatable("gui.feedback.bench.template"), PartBenchMenu.TRIM_X, PartBenchMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.1"), PartBenchMenu.TRIM_X + PartBenchMenu.TRIM_GAP, PartBenchMenu.CENTRE_Y, true);
+            caption(g, Component.translatable("gui.feedback.tool_table.smith.2"), PartBenchMenu.TRIM_X + 2 * PartBenchMenu.TRIM_GAP, PartBenchMenu.CENTRE_Y, true);
+        }
+        caption(g, Component.translatable("gui.feedback.tool_table.result"), PartBenchMenu.OUT_X, PartBenchMenu.OUT_Y, true);
+        // The one line: what the pointer is on, or what to do next.
+        Component line = line();
+        int ly = VY + VH - 11;
+        if (!line.getString().isEmpty())
+            g.drawString(font, line, VX + VW / 2 - font.width(line) / 2, ly, fan.over() != null ? skin.ink() : skin.dim(), false);
+        g.pose().popPose();
+    }
+
+    private void caption(GuiGraphics g, Component text, int slotX, int slotY, boolean shown) {
+        if (!shown)
+            return;
+        g.pose().pushPose();
+        g.pose().translate(slotX + 8, slotY - 10, 0);
+        g.pose().scale(0.8f, 0.8f, 1f);
+        g.drawString(font, text, -font.width(text) / 2, 0, skin.dim(), false);
+        g.pose().popPose();
+    }
+
+    private Component line() {
+        if (GuiStyle.time() - saidAt < 70)
+            return said;
+        BenchFan.Node n = busy() ? null : fan.over();
+        if (n != null) {
+            if (n.kind == BenchFan.Kind.SHAPE || n.kind == BenchFan.Kind.BUILD) {
+                int cells = options.get(n.index).cells();
+                return Component.empty().append(n.label).append(Component.literal("  " + cells)).append(Component.translatable("gui.feedback.bench.ingots"));
+            }
+            return n.label;
+        }
+        if (busy())
+            return Component.empty();
+        var level = level();
+        if (st.usesTool() && !menu.trim() && !menu.hasHammer())
+            return Component.translatable(st.saws() ? "gui.feedback.tool_table.status.no_axe" : st == Station.STONECUTTING ? "gui.feedback.tool_table.status.no_saw" : st.dishes() ? "gui.feedback.prep_table.status.no_hammer"
+                    : "gui.feedback.tool_table.status.no_hammer");
+        return switch (menu.centre(level)) {
+            case EMPTY -> Component.translatable(st.dishes() ? "gui.feedback.bench.put_dish" : "gui.feedback.bench.put");
+            case STOCK -> fan.isEmpty() ? Component.translatable("gui.feedback.tool_table.list.nothing") : Component.empty();
+            case PART -> fan.isEmpty() ? Component.translatable(menu.cutTab() ? "gui.feedback.bench.parts_tab" : "gui.feedback.bench.nothing_fits") : Component.empty();
+            case TOOL -> fan.isEmpty() && menu.cutTab() ? Component.translatable("gui.feedback.bench.parts_tab") : Component.empty();
+            case TEMPLATE -> Component.translatable("gui.feedback.tool_table.status.put_smith");
+            default -> Component.empty();
+        };
+    }
+
+    /** An empty slot says what it takes when the pointer rests on it; a shape under the pointer says what it is and how it differs from the standard one. */
+    @Override
+    protected void renderTooltip(GuiGraphics g, int mouseX, int mouseY) {
+        if (drafting()) {
+            if (blueprint.popupActive())
+                return;
+            super.renderTooltip(g, mouseX, mouseY);
+            if (hoveredSlot == null || !hoveredSlot.hasItem())
+                blueprint.tooltip(g, mouseX, mouseY);
+            return;
+        }
+        if (busy())
+            return;
+        axis.tooltip(g, font, mouseX, mouseY);
+        BenchFan.Node n = fan.over();
+        if (n != null && (n.kind == BenchFan.Kind.SHAPE || n.kind == BenchFan.Kind.BUILD) && inCanvas(mouseX, mouseY)) {
+            List<net.minecraft.util.FormattedCharSequence> lines = new ArrayList<>();
+            for (Component c : PartPresenter.describe(options.get(n.index)))
+                lines.addAll(font.split(c, 190));
+            // Orbs ride depth slabs up to ~950; lift the tip above the highest.
+            g.pose().pushPose();
+            g.pose().translate(0, 0, 1000);
+            g.renderTooltip(font, lines, mouseX, mouseY);
+            g.pose().popPose();
+            return;
+        }
+        Slot s = hoveredSlot;
+        if (s != null && s.isActive() && !s.hasItem() && s.index >= PartBenchMenu.HAMMER && s.index < menu.inv()) {
+            String key = s.index == PartBenchMenu.HAMMER ? st.tip("hammer") : s.index == PartBenchMenu.TOOL ? st.tip("centre") : s.index == PartBenchMenu.PLAN ? st.tip("plan")
+                    : st.tip("stock");
+            g.renderTooltip(font, font.split(Component.translatable("gui.feedback.tool_table.tip." + key), 190), mouseX, mouseY);
+            return;
+        }
+        super.renderTooltip(g, mouseX, mouseY);
+    }
+
+    @Override
+    public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+        followFan();
+        partial = partialTick;
+        super.render(g, mouseX, mouseY, partialTick);
+        if (!settled())
+            return;
+        if (drafting()) {
+            g.pose().pushPose();
+            g.pose().translate(0, 0, 400);
+            blueprint.overlay(g, mouseX, mouseY);
+            g.pose().popPose();
+            return;
+        }
+        axis.renderSteppers(g, mouseX, mouseY, partialTick);
+        g.pose().pushPose();
+        g.pose().translate(0, 0, 400);
+        if (forge != null && forge.busy())
+            forge.overlay(g);
+        if (shingle != null && shingle.busy())
+            shingle.overlay(g);
+        // A made part crosses from the stock to its slot on a short arc.
+        float age = GuiStyle.time() - arcAt;
+        if (!arcIcon.isEmpty() && age >= 0 && age < 9 && !ClientSettings.reduceMotion()) {
+            float f = GuiStyle.easeOut(age / 9f);
+            float x0 = slotCx() - 8, y0 = slotCy() - 8, x1 = leftPos + PartBenchMenu.OUT_X, y1 = topPos + PartBenchMenu.OUT_Y;
+            g.renderItem(arcIcon, Math.round(Mth.lerp(f, x0, x1)), Math.round(Mth.lerp(f, y0, y1) - Mth.sin(f * Mth.PI) * 26));
+        }
+        g.pose().popPose();
+    }
+}

@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client;
 
+import io.github.soundgoodizerfan.feedback.client.hud.AimHud;
+
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 /** Client-only settings (feedback-client.toml). Registered from {@code Feedback} on the client dist only. */

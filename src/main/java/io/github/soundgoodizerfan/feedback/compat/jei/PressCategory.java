@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.compat.jei;
 
 import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.Cartridge;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

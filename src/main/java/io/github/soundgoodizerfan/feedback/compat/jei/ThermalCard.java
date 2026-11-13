@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.process.Dip;
 import io.github.soundgoodizerfan.feedback.process.FormType;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcess;

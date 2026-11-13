@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.compat.jei;
 
 import java.util.Locale;
 
-import io.github.soundgoodizerfan.feedback.client.Readout;
+import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.process.Operation;
 

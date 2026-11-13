@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Simulate Feedback's chamber-gun bullet math (GunSpec.bake + GunShots damage) outside the game.
 
-Reads FTuning.java constants and data/feedback/material/*.json live, so editing either is
+Reads GunTuning.java constants and data/feedback/material/*.json live, so editing either is
 picked up on the next run. Override a constant without editing: --set GUN_DAMAGE_PER_WORK=0.02.
 
 Port of: GunSpec.bake, Cartridge.Blend, GunHazard.assess, GunShots hit damage.
@@ -16,7 +16,8 @@ import argparse, json, math, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-FT = ROOT / "src/main/java/io/github/soundgoodizerfan/feedback/core/FTuning.java"
+FT = ROOT / "src/main/java/io/github/soundgoodizerfan/feedback/weapon/GunTuning.java"
+FT_SHARED = ROOT / "src/main/java/io/github/soundgoodizerfan/feedback/core/FTuning.java"
 MATS = ROOT / "src/main/resources/data/feedback/material"
 
 # BulletShape: name -> (drag, damage, pierce, wear, pelletMm, maxPellets)
@@ -26,10 +27,10 @@ SHAPES = {"bullet": (1, 1, 1, 1, 0, 1), "round_ball": (1.35, 1, .85, 1.4, 0, 1),
 
 def load_tuning(overrides):
     t = {}
-    for m in re.finditer(r"\b(?:float|int|double)\s+([A-Z_0-9]+)\s*=\s*(-?[\d.]+(?:e-?\d+)?)f?\b", FT.read_text()):
+    for m in re.finditer(r"\b(?:float|int|double)\s+([A-Z_0-9]+)\s*=\s*(-?[\d.]+(?:e-?\d+)?)f?\b", (FT.read_text() + FT_SHARED.read_text())):
         t[m.group(1)] = float(m.group(2))
     # multi-declarations: "float A = 1f, B = 2f;" -> pick up the trailing names too
-    for m in re.finditer(r",\s*([A-Z_0-9]+)\s*=\s*(-?[\d.]+(?:e-?\d+)?)f?\b", FT.read_text()):
+    for m in re.finditer(r",\s*([A-Z_0-9]+)\s*=\s*(-?[\d.]+(?:e-?\d+)?)f?\b", (FT.read_text() + FT_SHARED.read_text())):
         t.setdefault(m.group(1), float(m.group(2)))
     for o in overrides:
         k, v = o.split("=")

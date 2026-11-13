@@ -153,10 +153,10 @@ public class FeedbackJeiPlugin implements IModPlugin {
     /** The Engineering Table's tools and fixings popout sits outside the panel; JEI's lists keep off it. */
     @Override
     public void registerGuiHandlers(mezz.jei.api.registration.IGuiHandlerRegistration registration) {
-        registration.addGuiContainerHandler(io.github.soundgoodizerfan.feedback.client.EngineeringTableScreen.class,
-                new mezz.jei.api.gui.handlers.IGuiContainerHandler<io.github.soundgoodizerfan.feedback.client.EngineeringTableScreen>() {
+        registration.addGuiContainerHandler(io.github.soundgoodizerfan.feedback.client.bench.EngineeringTableScreen.class,
+                new mezz.jei.api.gui.handlers.IGuiContainerHandler<io.github.soundgoodizerfan.feedback.client.bench.EngineeringTableScreen>() {
                     @Override
-                    public java.util.List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(io.github.soundgoodizerfan.feedback.client.EngineeringTableScreen screen) {
+                    public java.util.List<net.minecraft.client.renderer.Rect2i> getGuiExtraAreas(io.github.soundgoodizerfan.feedback.client.bench.EngineeringTableScreen screen) {
                         return java.util.List.of(new net.minecraft.client.renderer.Rect2i(screen.getGuiLeft() + io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu.W - 4,
                                 screen.getGuiTop() + 14, io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu.POP_W + 4, 170));
                     }

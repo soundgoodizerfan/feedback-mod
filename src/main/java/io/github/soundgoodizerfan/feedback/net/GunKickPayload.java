@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.GunClient;
+import io.github.soundgoodizerfan.feedback.client.gun.GunClient;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

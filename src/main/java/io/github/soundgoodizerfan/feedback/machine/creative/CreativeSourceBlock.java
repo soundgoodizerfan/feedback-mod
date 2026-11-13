@@ -32,7 +32,7 @@ public class CreativeSourceBlock extends Block implements EntityBlock {
         if (!player.canUseGameMasterBlocks())
             return InteractionResult.PASS;
         if (level.isClientSide)
-            io.github.soundgoodizerfan.feedback.client.CreativeSourceScreen.open(pos);
+            io.github.soundgoodizerfan.feedback.client.screen.CreativeSourceScreen.open(pos);
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 

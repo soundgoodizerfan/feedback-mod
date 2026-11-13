@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.combat.feel;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.client.FeelClient;
+import io.github.soundgoodizerfan.feedback.client.hud.FeelClient;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

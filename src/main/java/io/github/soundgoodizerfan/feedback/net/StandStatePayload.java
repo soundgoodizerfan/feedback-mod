@@ -113,6 +113,6 @@ public record StandStatePayload(BlockPos pos, float x, float y, float potency, f
     }
 
     public static void handle(StandStatePayload payload, IPayloadContext context) {
-        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.StandScreen.state(payload));
+        context.enqueueWork(() -> io.github.soundgoodizerfan.feedback.client.minigame.StandScreen.state(payload));
     }
 }
