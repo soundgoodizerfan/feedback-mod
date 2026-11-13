@@ -188,7 +188,7 @@ public final class Cooking {
         // A sealed container (a jar's lid) keeps the air out: nothing grows in it.
         DishFigures dish = stack.get(FDataComponents.DISH_FIGURES.get());
         float sealed = dish != null && dish.seal() >= 2 ? 0f : 1f;
-        float rot = Math.min(1f, s.rot() + gap / (ProcessTuning.FOOD_ROT_TICKS * entry.food().shelf()) * temp * wet * cutRot * shield * sealed);
+        float rot = Math.min(1f, s.rot() + gap / (ProcessTuning.FOOD_ROT_TICKS * entry.food().shelf()) * temp * wet * cutRot * shield * sealed * io.github.soundgoodizerfan.feedback.modular.attunement.FoodKinds.rotShare(stack));
         // Only the rot gained across the gap adds pathogen: a floor at rot * share would put back what heat killed, every tick.
         float pathogen = Math.min(1f, s.pathogen() + (rot - s.rot()) * FTuning.FOOD_ROT_PATHOGEN);
         float toxin = rot > ProcessTuning.FOOD_ROT_TOXIC_AT

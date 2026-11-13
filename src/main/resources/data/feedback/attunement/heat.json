@@ -62,6 +62,9 @@
     },
     "buckle": {
       "kind": "ignite_attacker"
+    },
+    "container": {
+      "kind": "burn_wielder"
     }
   },
   "mirror": {
@@ -120,6 +123,9 @@
       "kind": "insulate"
     },
     "buckle": {
+      "kind": "insulate"
+    },
+    "container": {
       "kind": "insulate"
     }
   },

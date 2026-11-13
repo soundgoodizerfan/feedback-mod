@@ -67,6 +67,9 @@
     "buckle": {
       "kind": "bane_ward",
       "flaw": 0
+    },
+    "container": {
+      "kind": "pest_ward"
     }
   },
   "mirror": {
@@ -135,6 +138,9 @@
     "buckle": {
       "kind": "kin_hide",
       "flaw": 0
+    },
+    "container": {
+      "kind": "pest_lure"
     }
   },
   "books": [

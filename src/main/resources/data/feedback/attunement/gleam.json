@@ -40,6 +40,9 @@
     },
     "buckle": {
       "kind": "worn_glow"
+    },
+    "container": {
+      "kind": "glow"
     }
   },
   "mirror": {
@@ -81,6 +84,9 @@
     },
     "buckle": {
       "kind": "worn_dim"
+    },
+    "container": {
+      "kind": "dim"
     }
   }
 }

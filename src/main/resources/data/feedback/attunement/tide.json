@@ -23,6 +23,9 @@
     },
     "shell": {
       "kind": "douse"
+    },
+    "container": {
+      "kind": "douse"
     }
   },
   "mirror": {
@@ -62,6 +65,10 @@
       "flaw": 1
     },
     "hard_liner": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "container": {
       "kind": "seal",
       "flaw": 1
     }

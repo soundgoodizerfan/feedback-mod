@@ -43,6 +43,9 @@
     },
     "buckle": {
       "kind": "worn_reserve"
+    },
+    "container": {
+      "kind": "nourish"
     }
   },
   "mirror": {
@@ -87,6 +90,9 @@
     },
     "buckle": {
       "kind": "worn_famine"
+    },
+    "container": {
+      "kind": "thin"
     }
   }
 }

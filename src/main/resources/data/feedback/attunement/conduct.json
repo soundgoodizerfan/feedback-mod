@@ -21,6 +21,9 @@
     },
     "foil": {
       "kind": "channel"
+    },
+    "container": {
+      "kind": "cure"
     }
   },
   "mirror": {

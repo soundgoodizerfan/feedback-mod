@@ -52,6 +52,9 @@
     },
     "buckle": {
       "kind": "worn_lure"
+    },
+    "container": {
+      "kind": "lure"
     }
   },
   "mirror": {
@@ -105,6 +108,9 @@
     },
     "buckle": {
       "kind": "worn_scare"
+    },
+    "container": {
+      "kind": "scare"
     }
   },
   "books": [
