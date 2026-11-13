@@ -402,10 +402,15 @@ public final class ModularTuning {
     /** {@code Mu} of carry per unit of strength: a frame's rods (they never wear), a hip belt's band, a padded panel's softness times the strap's rating. Invented. */
     public static final float PACK_FRAME_CARRY = 3f, PACK_BELT_CARRY = 5f, PACK_PANEL_GAIN = 0.25f;
     /** Share of max health a night in a bedroll of comfort 1 gives back, and the wear it takes. Invented. */
-    public static final float BEDROLL_HEAL = 0.5f;
-    public static final int BEDROLL_WEAR = 1;
+    public static final float BED_HEAL = 0.5f;
+    public static final int BED_WEAR = 1;
     /** Blocks around the sleeper that a hostile must be outside of, as for a bed. */
-    public static final int BEDROLL_SAFE_RADIUS = 8;
+    public static final int BED_SAFE_RADIUS = 8;
+
+    /** Invented. A bed's warmth: the conductivity (Conductance scale) at which a padding keeps half the heat in; and how much of a mattress's comfort a metre of frame lift adds (a cot lifts 0.6, a bedstead 1). */
+    public static final float BED_WARM_HALF_CONDUCTIVITY = 1e-4f, BED_LIFT_COMFORT = 0.25f;
+    /** Invented. The warmth at which a night in the bed also thaws powder-snow chill. */
+    public static final float BED_THAWS_AT = 0.6f;
     /** Seconds between the fallback weighings of a worn pack (equip, unequip and every change of contents weigh at once). */
     public static final int PACK_FALLBACK_TICKS = 200;
     /** Load multiplier of a soaked cloth shell without a coat, wear a second a bare cloth shell takes while its wearer burns, ticks of freeze a warm liner takes off each second, and the light a lantern in the bracket gives. Invented. */
@@ -810,6 +815,25 @@ public final class ModularTuning {
     /** Placeholder. The most points of wear one act at the stonecutter costs a saw: stock this many times harder than the saw's edge (or more) wears it this much. */
     public static final int SAW_MAX_WEAR = 8;
 
+    // --- construction options of hand tools and shears ----------------------------------------
+
+    /** Invented. Shears: how a blade pair's length moves the clip. Coarse work (wool, leaves) goes as length to this power (a bigger bite per snap); fine work (cobweb, vines) goes as length to minus this power (control). */
+    public static final float SHEARS_CLIP_EXPONENT = 0.5f;
+    /** Invented. Shears: blocks of interaction range per whole length over the default blade. */
+    public static final float SHEARS_REACH_PER_RATIO = 0.6f;
+    /** Invented. Shears: share of its life a pivot pair keeps with no pin through it. */
+    public static final float SHEARS_NO_PIN_HOLD = 0.4f;
+
+    /** Invented. Screwdriver: fastener levels a tip shape gains or loses against the fastener it is set in (cross on a screw, hex on a bolt) and what a shaft a whole length over the default adds (it reaches the seat square). */
+    public static final float DRIVER_SHAFT_LEVELS_PER_RATIO = 1.5f;
+    /** Invented. Screwdriver: wear a craft costs per whole length of shaft over the default (a long shaft twists and tires). */
+    public static final float DRIVER_SHAFT_WEAR_EXPONENT = 1.5f;
+
+    /** Invented. File: tool marks (0 smooth to 1 gouged) a coarse stroke leaves and a smooth one burnishes away; the marks at which a part reads one flaw worse. */
+    public static final float FILE_MARKS_FLAW_AT = 0.5f;
+
+    /** Invented. Spoon: bowl depth's effect on scooping (skim and taste) against stirring: scoop goes as depth to this power, stir as depth to minus it. */
+    public static final float SPOON_DEPTH_EXPONENT = 0.5f;
     /** Invented. A use released inside this many ticks is a tap (a skim); held longer it is a stir. */
     public static final int SPOON_TAP_TICKS = 6;
 

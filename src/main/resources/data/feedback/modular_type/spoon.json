@@ -1,6 +1,9 @@
 {
   "family": "hand",
-  "required": ["B", "S"],
+  "required": [
+    "B",
+    "S"
+  ],
   "strike": 0.0,
   "wear_litres": 0.3,
   "wear_role": "B",
@@ -22,7 +25,50 @@
           "plate",
           "*_planks",
           "bone"
+        ],
+        "base": "short_spoon",
+        "variants": [
+          {
+            "name": "short_spoon",
+            "params": {
+              "stir": 1,
+              "scoop": 1,
+              "reach": 1
+            }
+          },
+          {
+            "name": "ladle",
+            "cells": 1.5,
+            "params": {
+              "stir": 0.6,
+              "scoop": 1.4,
+              "reach": 1.6
+            }
+          }
         ]
+      },
+      "axes": {
+        "depth": {
+          "min": 1,
+          "max": 6,
+          "unit": "cm",
+          "default": 3,
+          "step": 0.5,
+          "scales": true,
+          "bands": [
+            {
+              "name": "shallow",
+              "max": 2
+            },
+            {
+              "name": "normal",
+              "max": 4
+            },
+            {
+              "name": "deep"
+            }
+          ]
+        }
       }
     },
     "S": {

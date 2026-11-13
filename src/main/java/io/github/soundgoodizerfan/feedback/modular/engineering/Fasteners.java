@@ -119,6 +119,11 @@ public final class Fasteners {
      */
     public record Supply(int have, int wanted, int levels, int[] take) {
 
+        /** This supply with its quality {@code by} levels better (negative: worse), as a tool's fit to the fastener moves it. */
+        public Supply shifted(int by) {
+            return by == 0 ? this : new Supply(have, wanted, levels + by, take);
+        }
+
         /** Whether every wanted fastener was found. */
         public boolean complete() {
             return have >= wanted;

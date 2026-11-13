@@ -323,11 +323,12 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FModular.SPATULA.get(), Component.translatable("feedback.jei.info.spatula"));
         registration.addIngredientInfo(FItems.TASTING_SPOON.get(), Component.translatable("feedback.jei.info.tasting_spoon"));
         registration.addIngredientInfo(FModular.SPOON.get(), Component.translatable("feedback.jei.info.spoon"));
+        registration.addIngredientInfo(FModular.SHEARS.get(), Component.translatable("feedback.jei.info.shears"));
         registration.addIngredientInfo(FItems.TONGS.get(), Component.translatable("feedback.jei.info.tongs"));
         registration.addIngredientInfo(FItems.WRENCH.get(), Component.translatable("feedback.jei.info.hot_tool"));
         registration.addIngredientInfo(FItems.CROWBAR.get(), Component.translatable("feedback.jei.info.hot_tool"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BACKPACK.get(), Component.translatable("feedback.jei.info.backpack"));
-        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BEDROLL.get(), Component.translatable("feedback.jei.info.bedroll"));
+        registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.BED.get(), Component.translatable("feedback.jei.info.bed"));
         registration.addIngredientInfo(io.github.soundgoodizerfan.feedback.registry.FModular.GLOVE.get(), Component.translatable("feedback.jei.info.gloves"));
         // Basic electronics: machines with no recipe, and the items an operation turns out.
         info(registration, FItems.COHERER.get(), "coherer");

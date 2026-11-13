@@ -11,7 +11,7 @@ import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
 import io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack;
-import io.github.soundgoodizerfan.feedback.modular.part.ModularBedroll;
+import io.github.soundgoodizerfan.feedback.modular.part.ModularBed;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
 
@@ -77,7 +77,8 @@ public final class ModularCause {
                 case SUIT_ATT_1, SUIT_ATT_2, SUIT_ATT_3, SUIT_ATT_4, SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4 ->
                         role.name().equals("upgrade") || role.name().startsWith("module_");
                 case SUIT_WIRING -> role.name().equals("wiring") || role.name().equals("upgrade");
-                case COMFORT -> p.role().equals(ModularBedroll.SHEET);
+                case CLIP, CLIP_FINE -> p.role().equals("B");
+                case COMFORT, WARMTH -> p.role().equals(ModularBed.MATTRESS) || p.role().equals(ModularBed.FRAME);
                 case FIST, SWING_DRAG -> p.role().equals(ModularGlove.PLATE);
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
                 case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();

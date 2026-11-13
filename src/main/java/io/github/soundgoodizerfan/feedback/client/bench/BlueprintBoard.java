@@ -818,7 +818,7 @@ public final class BlueprintBoard {
             return 0;
         return switch (t.family()) {
             case BLADE, MACE, SPEAR, BOW, CROSSBOW, SHIELD, GUN, AIR_GUN, ELECTRIC_GUN -> 1;
-            case ARMOUR, GLOVE, BACKPACK, BEDROLL -> 2;
+            case ARMOUR, GLOVE, BACKPACK, BED -> 2;
             case CELL, MACHINE, BELT, ENGINE, GEARBOX, PROPELLER, PRESSURE, BLOCK, HEAD, VESSEL, CHARGE -> 3;
             case DISH -> 4;
             default -> 0;
@@ -2646,8 +2646,9 @@ public final class BlueprintBoard {
                     Component.translatable("gui.feedback.blueprint_table.pack.points", Math.round(f.get(ModularFigures.Fig.POINTS))),
                     Component.translatable("gui.feedback.blueprint_table.pack.stores", Math.round(f.get(ModularFigures.Fig.STORES)))))
                     .orElse(List.of());
-            case BEDROLL -> ModularBake.bake(d, t, ClientMaterials.get(), 0).<List<Component>>map(f -> List.of(
-                    Component.translatable("gui.feedback.blueprint_table.bedroll.comfort", Math.round(100 * f.get(ModularFigures.Fig.COMFORT)))))
+            case BED -> ModularBake.bake(d, t, ClientMaterials.get(), 0).<List<Component>>map(f -> List.of(
+                    Component.translatable("gui.feedback.blueprint_table.bed.comfort", Math.round(100 * f.get(ModularFigures.Fig.COMFORT))),
+                    Component.translatable("gui.feedback.blueprint_table.bed.warmth", Math.round(100 * f.get(ModularFigures.Fig.WARMTH)))))
                     .orElse(List.of());
             default -> List.of();
         };

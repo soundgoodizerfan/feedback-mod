@@ -209,8 +209,8 @@ public final class EngineeringAssembly {
             if (r != null)
                 pieces++;
         int rounds = blueprint.isEmpty() && !floor ? EngineeringMinigames.rounds(game, supply.wanted(), pieces) : 0;
-        int quality = Math.max(1, Math.min(5, supply.levels() + type.fasteners().floor()));
         List<ItemStack> tools = input.tools();
+        int driver = -1;
         int[] slot = new int[type.tools().size()];
         boolean[] used = new boolean[tools.size()];
         for (int t = 0; t < slot.length; t++) {
@@ -230,15 +230,23 @@ public final class EngineeringAssembly {
                 return new Plan(broken >= 0 ? BROKEN_TOOL : NO_TOOL, ItemStack.EMPTY, Plan.NONE.take());
             used[found1] = true;
             slot[t] = found1;
+            if (ToolAbilities.DRIVER.equals(ability))
+                driver = found1;
         }
+        // The driver's tip and shaft move the fastener quality the build starts from and the game is played at.
+        Fasteners.Supply fitted = driver < 0 ? supply : supply.shifted(ToolAbilities.driverLevels(tools.get(driver), input.fasteners(), supply));
+        int quality = Math.max(1, Math.min(5, fitted.levels() + type.fasteners().floor()));
         // The same parts again, now with what the maker brought, restricted to the type found: the fit and head start are written on the item.
         Optional<ModularAssembly.Match> made = ModularAssembly.infer(grid, blueprint, materials, Map.of(id, type), t -> true,
-                new ModularFit.Start(floor ? Math.min(0, supply.levels()) : supply.levels() + notesLevels, rounds > 0 ? score : -1f));
+                new ModularFit.Start(floor ? Math.min(0, fitted.levels()) : fitted.levels() + notesLevels, rounds > 0 ? score : -1f));
         if (made.isEmpty())
             return Plan.NONE;
         List<Integer> toWear = new ArrayList<>();
         for (int s : slot)
             toWear.add(s);
+        if (driver >= 0)
+            for (int extra = ToolAbilities.driverWear(tools.get(driver), 1); extra > 1; extra--)
+                toWear.add(driver);
         String data = "";
         if (rounds > 0 && EngineeringMinigames.FITTING.toString().equals(game)) {
             String[] letters = made.get().role();

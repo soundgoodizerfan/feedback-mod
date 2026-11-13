@@ -22,7 +22,56 @@
         "stock": [
           "plate",
           "ingot"
+        ],
+        "base": "second_cut",
+        "variants": [
+          {
+            "name": "bastard_cut",
+            "adjective": true,
+            "params": {
+              "grains": 2,
+              "marks": 0.4
+            }
+          },
+          {
+            "name": "second_cut",
+            "params": {
+              "grains": 1,
+              "marks": 0.15
+            }
+          },
+          {
+            "name": "smooth_cut",
+            "adjective": true,
+            "params": {
+              "grains": 0.5,
+              "marks": -0.5
+            }
+          }
         ]
+      },
+      "axes": {
+        "length": {
+          "min": 10,
+          "max": 35,
+          "unit": "cm",
+          "default": 20,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 15
+            },
+            {
+              "name": "normal",
+              "max": 26
+            },
+            {
+              "name": "long"
+            }
+          ]
+        }
       }
     },
     "S": {

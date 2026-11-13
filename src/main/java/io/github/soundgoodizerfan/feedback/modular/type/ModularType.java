@@ -20,7 +20,7 @@ import io.github.soundgoodizerfan.feedback.modular.bake.ModularBake;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.modular.bake.SpringGunSpec;
 import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
-import io.github.soundgoodizerfan.feedback.modular.part.ModularBedroll;
+import io.github.soundgoodizerfan.feedback.modular.part.ModularBed;
 import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -199,8 +199,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         GLOVE,
         /** A pack worn on the back: the shell sets the slots, the strap sets the carry rating, the contents live on the stack. */
         BACKPACK,
-        /** A sleeping roll: sheet, fill and shell; its bake is the comfort the fill and sheet give ({@link ModularBedroll}). */
-        BEDROLL,
+        /** A sleeping roll: sheet, fill and shell; its bake is the comfort the fill and sheet give ({@link ModularBed}). */
+        BED,
         /** A vessel that holds experience ({@code xp_container}): its bake is the ceiling its material's {@code xp_store} gives per cell of stock, written as an {@code XpStore} on the stack. A material that states no {@code xp_store} bakes nothing. No wear and no tool figures. */
         VESSEL,
         /** A rechargeable cell stack ({@code battery}): plates whose material states {@code electrical.secondary_cell}, in a case whose material insulates. Its bake is the {@link ModularBake#cell} spec the placed block runs on. */

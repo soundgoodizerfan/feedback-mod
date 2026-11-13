@@ -305,7 +305,7 @@ public final class CurioRenderers {
                 roll = design.part(io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.LASHING) != null
                         && stack.getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER,
                                 net.minecraft.world.item.component.ItemContainerContents.EMPTY).stream()
-                                .anyMatch(s -> s.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularBedroll);
+                                .anyMatch(s -> s.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularBed);
             }
             int key = (slots <= 9 ? 0 : slots >= 27 ? 2 : 1) | mask << 2 | (roll ? 1 << 14 : 0);
             final int fm = mask;

@@ -24,10 +24,11 @@ import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
 import io.github.soundgoodizerfan.feedback.modular.attunement.Attunements;
 import io.github.soundgoodizerfan.feedback.modular.bench.Edge;
+import io.github.soundgoodizerfan.feedback.modular.bench.Filing;
 import io.github.soundgoodizerfan.feedback.modular.bench.ForgeRhythm;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
 import io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack;
-import io.github.soundgoodizerfan.feedback.modular.part.ModularBedroll;
+import io.github.soundgoodizerfan.feedback.modular.part.ModularBed;
 import io.github.soundgoodizerfan.feedback.modular.prep.DishBake;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularFaces;
@@ -791,7 +792,9 @@ public final class ModularBake {
                 type.roles().get(type.wearRole()).section(wearPart)
                 * (setPart == null ? 1f : type.roles().get(setPart.role()).section(setPart)),
                 // An attunement can cost the part toughness (keen) or buy it back (ward on a plate): flaws, as forging leaves them.
-                Math.max(0, Math.min(ForgeRhythm.MAX_FLAW, wearPart.flaw() + Attunements.flawShift(wearPart, type.roles().get(type.wearRole()).name()))));
+                Math.max(0, Math.min(ForgeRhythm.MAX_FLAW, wearPart.flaw() + Attunements.flawShift(wearPart, type.roles().get(type.wearRole()).name())
+                        // Coarse file marks left unpolished are stress risers: one flaw worse.
+                        + (wearPart.measures().state(Filing.MARKS, 0f) >= ModularTuning.FILE_MARKS_FLAW_AT ? 1 : 0))));
         Material coatMetal = coat == null ? null : materials.get(coat.metal());
         float hold = coatMetal == null ? 0f : coatHold(coat);
         // A coat on armour is a skin of its metal over the whole plate; on a tool the edge is ground
@@ -807,7 +810,11 @@ public final class ModularBake {
         f.put(Fig.HARDNESS, zone.hardness());
         f.put(Fig.EDGE_TOUGHNESS, zone.toughness());
         switch (type.family()) {
-            case DIG, BLADE, MACE, SPEAR, SHEARS -> melee(design, type, by, materials, zone, f, worn);
+            case DIG, BLADE, MACE, SPEAR -> melee(design, type, by, materials, zone, f, worn);
+            case SHEARS -> {
+                melee(design, type, by, materials, zone, f, worn);
+                shears(design, type, by, f, worn);
+            }
             case BOW, CROSSBOW -> {
                 float drive = 0;
                 float string = 0;
@@ -975,17 +982,27 @@ public final class ModularBake {
                     carry += strength(by.get(ModularBackpack.BELT)) * ModularTuning.PACK_BELT_CARRY * worn;
                 f.put(Fig.CARRY, carry);
             }
-            case BEDROLL -> {
+            case BED -> {
                 float total = 0;
                 for (Part p : design.parts())
                     total += mass(type.roles().get(p.role()), p, by.get(p.role()));
                 f.put(Fig.MASS, total);
-                // Softness of what you lie on and what fills it: the fill counts most.
-                // One part of three layers: the fill is its own slot, the sheet the part's main material.
-                Part roll = design.part(ModularBedroll.SHEET);
-                Material fill = roll == null ? null : slotMaterial(type.roles().get(ModularBedroll.SHEET), roll, "fill", materials);
-                Material sheet = by.get(ModularBedroll.SHEET);
-                f.put(Fig.COMFORT, worn * (0.7f * (fill == null ? 0f : soft(fill)) + 0.3f * (sheet == null ? 0f : soft(sheet))));
+                // Softness of what you lie on and of the padding under it (the padding counts most); the mattress's own thickness and the
+                // frame's lift off the ground raise it. Warmth is how little the padding passes the sleeper's heat, thicker the better.
+                Part mattress = design.part(ModularBed.MATTRESS);
+                ModularType.Role mattressRole = type.roles().get(ModularBed.MATTRESS);
+                Material padding = mattress == null ? null : slotMaterial(mattressRole, mattress, "padding", materials);
+                Material cover = by.get(ModularBed.MATTRESS);
+                float comfort = mattress == null ? 0f : mattressRole.paramOf(mattress, "comfort", 1f);
+                float thick = mattress == null ? 1f : mattressRole.paramOf(mattress, "thick", 1f);
+                Part frame = design.part(ModularBed.FRAME);
+                float lift = frame == null ? 0f : type.roles().get(ModularBed.FRAME).paramOf(frame, "lift", 1f);
+                float soft = 0.7f * (padding == null ? 0f : soft(padding)) + 0.3f * (cover == null ? 0f : soft(cover));
+                f.put(Fig.COMFORT, worn * soft * comfort * (1f + ModularTuning.BED_LIFT_COMFORT * lift));
+                float pass = padding == null ? ModularTuning.BED_WARM_HALF_CONDUCTIVITY * 10f
+                        : padding.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(ModularTuning.BED_WARM_HALF_CONDUCTIVITY * 10f);
+                float keeps = ModularTuning.BED_WARM_HALF_CONDUCTIVITY / (ModularTuning.BED_WARM_HALF_CONDUCTIVITY + pass);
+                f.put(Fig.WARMTH, clamp(worn * keeps * (float) Math.sqrt(thick) * (1f + ModularTuning.BED_LIFT_COMFORT * lift), 0f, 1f));
             }
             case HEAD -> {
                 float total = 0;
@@ -1157,6 +1174,28 @@ public final class ModularBake {
      * second head costs speed and impact with no figure written for it (spec 5.3), and the blow
      * that lands is the better of the two.
      */
+    /**
+     * Shears: the blade pair's shape sets how quickly and how big a snap is. A spring bow (one bent bar) snaps fast and bears little; a
+     * pivot scissor bears what its pin does, the weaker of pin and blade, and with no pin through it hardly at all. A longer blade takes a bigger
+     * bite of wool and leaves, reaches further, and loses the control that cobweb and vines want.
+     */
+    private static void shears(ModularDesign design, ModularType type, Map<String, Material> by, Map<Fig, Float> f, float worn) {
+        Part blade = design.part("B");
+        ModularType.Role role = type.roles().get("B");
+        float snap = role.paramOf(blade, "snap", 1f);
+        ModularType.Axis length = role.axesFor(blade).get("length");
+        float ratio = length == null || length.def() <= 0f ? 1f : role.axis(blade, "length") / length.def();
+        float hold = role.paramOf(blade, "hold", 1f);
+        if (role.paramOf(blade, "pivoted", 0f) > 0f) {
+            Material pin = by.get("P");
+            hold *= pin == null ? ModularTuning.SHEARS_NO_PIN_HOLD : Math.min(1f, strength(pin) / strength(by.get("B")));
+        }
+        f.put(Fig.DURABILITY, (float) Math.max(1, Math.round(f.get(Fig.DURABILITY) * hold)));
+        f.put(Fig.CLIP, worn * snap * (float) Math.pow(ratio, ModularTuning.SHEARS_CLIP_EXPONENT));
+        f.put(Fig.CLIP_FINE, worn * snap * (float) Math.pow(ratio, -ModularTuning.SHEARS_CLIP_EXPONENT));
+        f.put(Fig.REACH, Math.max(0f, (ratio - 1f) * ModularTuning.SHEARS_REACH_PER_RATIO));
+    }
+
     private static void melee(ModularDesign design, ModularType type, Map<String, Material> by, Map<ResourceLocation, Material> materials,
                               Zone zone, Map<Fig, Float> f, float worn) {
         boolean faced = !type.strikers().isEmpty();

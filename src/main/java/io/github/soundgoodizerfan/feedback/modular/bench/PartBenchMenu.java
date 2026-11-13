@@ -1038,7 +1038,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
             io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(server, Component.translatable("gui.feedback.bench.file.no_file"));
             return;
         }
-        Filing.Stroke stroke = Filing.stroke(centreStack(), index, types(level), ClientMaterials.on(level));
+        Filing.Stroke stroke = Filing.stroke(centreStack(), index, types(level), ClientMaterials.on(level), file);
         if (!stroke.ok()) {
             io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(server, Component.translatable("gui.feedback.bench.file." + stroke.refusal()));
             return;

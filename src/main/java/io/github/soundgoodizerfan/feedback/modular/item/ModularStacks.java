@@ -347,6 +347,10 @@ public final class ModularStacks {
                 if (!broken && f.get(Fig.REACH) > 0)
                     attrs.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(REACH_ID, f.get(Fig.REACH), AttributeModifier.Operation.ADD_VALUE), group);
             }
+            case SHEARS -> {
+                if (!broken && f.get(Fig.REACH) > 0)
+                    attrs.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(REACH_ID, f.get(Fig.REACH), AttributeModifier.Operation.ADD_VALUE), group);
+            }
             case ARMOUR -> {
                 ResourceLocation id = Feedback.id("modular_armour_" + type.slot().getSerializedName());
                 if (!broken) {
@@ -373,8 +377,17 @@ public final class ModularStacks {
     private static Tool tool(ModularDesign design, ModularType type, ModularFigures f) {
         if (type.family() == ModularType.Family.BLADE && type.strikers().isEmpty())
             return net.minecraft.world.item.SwordItem.createToolProperties();
-        if (type.family() == ModularType.Family.SHEARS)
-            return net.minecraft.world.item.ShearsItem.createToolProperties();
+        if (type.family() == ModularType.Family.SHEARS) {
+            // The vanilla rules' speeds, scaled by the pair: cobweb and vines (first and last rule) are fine work, wool and leaves coarse.
+            List<Tool.Rule> vanilla = net.minecraft.world.item.ShearsItem.createToolProperties().rules();
+            List<Tool.Rule> scaled = new ArrayList<>();
+            for (int i = 0; i < vanilla.size(); i++) {
+                Tool.Rule r = vanilla.get(i);
+                float k = f.get(i == 0 || i == vanilla.size() - 1 ? Fig.CLIP_FINE : Fig.CLIP);
+                scaled.add(new Tool.Rule(r.blocks(), r.speed().map(v -> v * k), r.correctForDrops()));
+            }
+            return new Tool(scaled, 1f, 1);
+        }
         List<ModularHeads> heads = heads(design, type);
         if (heads.isEmpty())
             return null;

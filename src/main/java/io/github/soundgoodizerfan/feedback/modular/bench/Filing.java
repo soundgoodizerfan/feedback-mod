@@ -78,9 +78,18 @@ public final class Filing {
         return made.cells() * ModularTuning.CELL_MB * scale;
     }
 
-    /** One stroke of a file on axis number {@code index} of the single part in {@code part}. */
+    /** State key: tool marks a coarse file left on the part, 0 smooth to 1 gouged; a smooth file burnishes them away, and enough of them is a flaw ({@link ModularTuning#FILE_MARKS_FLAW_AT}). */
+    public static final String MARKS = "marks";
+    /** State key: a grain of cut a slow file has built up but not yet taken. */
+    public static final String CUT = "cut";
+
+    /**
+     * One stroke of {@code file} on axis number {@code index} of the single part in {@code part}. The file's cut sets how many grains a stroke
+     * takes (a bastard two, a smooth file half a grain a stroke) and what it leaves behind or polishes off ({@link #MARKS}); a longer file takes
+     * more per stroke and wanders more.
+     */
     public static Stroke stroke(ItemStack part, int index, Map<ResourceLocation, ModularType> types,
-                                Map<ResourceLocation, Material> materials) {
+                                Map<ResourceLocation, Material> materials, ItemStack file) {
         List<Map.Entry<String, ModularType.Axis>> axes = axes(part, types);
         MadeOf made = part.get(FDataComponents.MADE_OF.get());
         if (made == null || index < 0 || index >= axes.size())
@@ -92,7 +101,15 @@ public final class Filing {
         if (now <= axis.getValue().min() + 1e-4f)
             return refuse(part, "at_minimum");
         ModularType.Role role = roleOf(part, types).orElseThrow();
-        float next = Math.max(axis.getValue().min(), now - axis.getValue().grain());
+        io.github.soundgoodizerfan.feedback.modular.engineering.ToolAbilities.Face cut =
+                io.github.soundgoodizerfan.feedback.modular.engineering.ToolAbilities.face(file, "file_head");
+        float reach = cut == null ? 1f : cut.ratio("length");
+        float grains = (cut == null ? 1f : cut.param("grains", 1f)) * reach;
+        float marksNow = made.measures().state(MARKS, 0f);
+        float marks = Math.max(0f, Math.min(1f, marksNow + (cut == null ? 0.15f : cut.param("marks", 0.15f) * (cut != null && cut.param("marks", 0f) > 0f ? reach : 1f))));
+        float owed = made.measures().state(CUT, 0f) + grains;
+        int whole = (int) owed;
+        float next = Math.max(axis.getValue().min(), now - whole * axis.getValue().grain());
         Map<String, Float> was = new HashMap<>(made.measures().axes());
         Map<String, Float> to = new HashMap<>(was);
         to.put(axis.getKey(), next);
@@ -101,16 +118,17 @@ public final class Filing {
                 : materials.get(made.material()).item(made.material(), "swarf") : Optional.empty();
         float held = made.measures().state(FILED_MB, 0f) + (swarf.isPresent() ? removed : 0f);
         int each = io.github.soundgoodizerfan.feedback.registry.FormItems.volume("swarf");
-        int whole = each > 0 && swarf.isPresent() ? (int) (held / each) : 0;
-        if (whole > 0)
-            held -= whole * each;
+        int items = each > 0 && swarf.isPresent() ? (int) (held / each) : 0;
+        if (items > 0)
+            held -= items * each;
         float strokes = made.measures().state(STROKES, 0f) + 1f;
         boolean wear = strokes % ModularTuning.FILE_STROKES_PER_WEAR == 0f;
         io.github.soundgoodizerfan.feedback.process.Measures m = made.measures().withAxes(to)
-                .withState(FILED_MB, swarf.isPresent() ? held : 0f).withState(STROKES, strokes);
+                .withState(FILED_MB, swarf.isPresent() ? held : 0f).withState(STROKES, strokes)
+                .withState(MARKS, marks).withState(CUT, owed - whole);
         ItemStack out = part.copy();
         out.set(FDataComponents.MADE_OF.get(), made.withMeasures(m));
-        return new Stroke(out, whole > 0 ? new ItemStack(swarf.get(), whole) : ItemStack.EMPTY, wear, "");
+        return new Stroke(out, items > 0 ? new ItemStack(swarf.get(), items) : ItemStack.EMPTY, wear, "");
     }
 
     private static Stroke refuse(ItemStack part, String why) {

@@ -1,31 +1,52 @@
 {
-  "family": "bedroll",
-  "required": ["C"],
+  "family": "bed",
+  "required": [
+    "C"
+  ],
   "wear_litres": 0.5,
   "wear_role": "C",
   "primary": "C",
   "roles": {
     "C": {
-      "name": "sheet",
+      "name": "mattress",
       "forms": [
-        "bedroll_sheet"
+        "bed_mattress"
       ],
       "litres": 0.1,
-      "layer": 0,
+      "layer": 1,
       "part": {
-        "item": "feedback:bedroll_sheet",
+        "item": "feedback:bed_mattress",
         "cells": 2,
         "stock": [
           "leather",
           "*_carpet"
         ],
+        "base": "bedroll",
+        "variants": [
+          {
+            "name": "bedroll",
+            "params": {
+              "comfort": 0.8,
+              "thick": 1
+            }
+          },
+          {
+            "name": "mattress",
+            "cells": 3,
+            "adjective": true,
+            "params": {
+              "comfort": 1.0,
+              "thick": 1.5
+            }
+          }
+        ],
         "slots": [
           {
-            "name": "sheet",
+            "name": "cover",
             "share": 2
           },
           {
-            "name": "fill",
+            "name": "padding",
             "forms": [
               "*"
             ],
@@ -41,15 +62,54 @@
           }
         ]
       }
+    },
+    "F": {
+      "name": "bed_frame",
+      "forms": [
+        "bed_frame"
+      ],
+      "litres": 0.1,
+      "layer": 0,
+      "part": {
+        "item": "feedback:bed_frame",
+        "cells": 4,
+        "stock": [
+          "*_planks",
+          "rod",
+          "ingot"
+        ],
+        "base": "bedstead",
+        "variants": [
+          {
+            "name": "bedstead",
+            "params": {
+              "lift": 1.0
+            }
+          },
+          {
+            "name": "cot",
+            "cells": 3,
+            "adjective": true,
+            "params": {
+              "lift": 0.6
+            }
+          }
+        ]
+      }
     }
   },
   "patterns": [
     [
       "C"
+    ],
+    [
+      "F",
+      "C"
     ]
   ],
   "defaults": {
-    "C": "feedback:wool"
+    "C": "feedback:wool",
+    "F": "feedback:wood"
   },
   "vanilla": {}
 }

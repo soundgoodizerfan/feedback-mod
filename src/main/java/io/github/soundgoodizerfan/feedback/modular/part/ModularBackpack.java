@@ -133,9 +133,9 @@ public class ModularBackpack extends ModularItem {
         if (kind == 0)
             return true;
         return switch (STORE_ROLES.get(kind - 1)) {
-            case HOLSTER -> stack.getMaxStackSize() == 1 && stack.isDamageableItem() && !(stack.getItem() instanceof ModularBedroll);
+            case HOLSTER -> stack.getMaxStackSize() == 1 && stack.isDamageableItem() && !(stack.getItem() instanceof ModularBed);
             case LOOPS -> stack.has(DataComponents.POTION_CONTENTS) || stack.getCapability(Capabilities.FluidHandler.ITEM) != null;
-            case LASHING -> stack.getItem() instanceof ModularBedroll;
+            case LASHING -> ModularBed.frameless(stack);
             case LAMP -> stack.getItem() instanceof net.minecraft.world.item.BlockItem b && b.getBlock() instanceof net.minecraft.world.level.block.LanternBlock;
             case BAY -> io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.is(stack);
             default -> stack.getItem() instanceof io.github.soundgoodizerfan.feedback.weapon.CartridgeItem
@@ -446,10 +446,10 @@ public class ModularBackpack extends ModularItem {
         ItemStack bag = r.stack();
         int at = storeIndex(bag, LASHING);
         List<ItemStack> held = new java.util.ArrayList<>(bag.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).stream().toList());
-        if (at < 0 || at >= held.size() || !(held.get(at).getItem() instanceof ModularBedroll))
+        if (at < 0 || at >= held.size() || !(held.get(at).getItem() instanceof ModularBed))
             return;
         ItemStack roll = held.get(at).copy();
-        if (ModularBedroll.rest(player, roll)) {
+        if (ModularBed.rest(player, roll)) {
             held.set(at, roll);
             bag.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(held));
         }

@@ -44,6 +44,65 @@ public final class ToolAbilities {
         };
     }
 
+    /** A live face of a hafted tool and its role: the figures its shape (variant) and axes give. */
+    public record Face(io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.Part part, io.github.soundgoodizerfan.feedback.modular.type.ModularType.Role role) {
+
+        /** A figure of the face's shape by name: its axis of that name, else its variant's param, else {@code fallback}. */
+        public float param(String name, float fallback) {
+            return role.paramOf(part, name, fallback);
+        }
+
+        /** The axis {@code name} as a multiple of its default; 1 when the face has no such axis. */
+        public float ratio(String name) {
+            var axis = role.axesFor(part).get(name);
+            return axis == null || axis.def() <= 0f ? 1f : role.axis(part, name) / axis.def();
+        }
+    }
+
+    /** The live face of head kind {@code kind} ({@code file_head}, {@code driver_bit}) on {@code tool}, or null when it has none. */
+    @Nullable
+    public static Face face(ItemStack tool, String kind) {
+        var design = ModularStacks.design(tool);
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known(design.type());
+        if (type == null || type.family() != io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.HAFTED)
+            return null;
+        for (var p : io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.faces(design)) {
+            var role = type.roles().get(p.role());
+            if (role != null && !io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.spent(p)
+                    && io.github.soundgoodizerfan.feedback.modular.type.ModularHeads.kindOf(p, role).equals(kind))
+                return new Face(p, role);
+        }
+        return null;
+    }
+
+    /**
+     * Fastener levels a screwdriver adds or costs a craft: the tip shape's figure for each form of fastener it drives (a cross tip centres in a
+     * screw and rounds a bolt's head; a hex tip is the other way about), averaged over the fasteners {@code supply} takes, and what its shaft's
+     * length adds (a long shaft reaches the seat square). 0 for a stack with no driver bit.
+     */
+    public static int driverLevels(ItemStack driver, List<ItemStack> fasteners, Fasteners.Supply supply) {
+        Face bit = face(driver, "driver_bit");
+        if (bit == null)
+            return 0;
+        float sum = 0f;
+        int n = 0;
+        for (int i = 0; i < supply.take().length && i < fasteners.size(); i++)
+            if (supply.take()[i] > 0) {
+                String form = io.github.soundgoodizerfan.feedback.process.MaterialIngredient.locate(fasteners.get(i).getItem()).map(l -> l.form()).orElse("");
+                sum += supply.take()[i] * bit.param(form, 0f);
+                n += supply.take()[i];
+            }
+        float shaft = (bit.ratio("shank") - 1f) * io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.DRIVER_SHAFT_LEVELS_PER_RATIO;
+        return Math.round((n == 0 ? 0f : sum / n) + shaft);
+    }
+
+    /** The wear points a craft costs {@code driver}, from the base {@code wear}: a long shaft twists and tires. */
+    public static int driverWear(ItemStack driver, int wear) {
+        Face bit = face(driver, "driver_bit");
+        return bit == null ? wear : Math.max(1, Math.round(wear * (float) Math.pow(bit.ratio("shank"),
+                io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.DRIVER_SHAFT_WEAR_EXPONENT)));
+    }
+
     /** The ability a modular hand tool has by its type, or null for any other stack. */
     @Nullable
     public static ItemAbility of(ItemStack stack) {

@@ -180,6 +180,7 @@ public class EngineeringRecipe implements Recipe<EngineeringInput> {
         int[] slot = new int[tools.size()], wear = new int[tools.size()];
         boolean[] used = new boolean[input.tools().size()];
         float shortfall = 0f, shortShare = 0f;
+        int driver = -1;
         for (int t = 0; t < tools.size(); t++) {
             Tool need = tools.get(t);
             ItemAbility ability = need.abilityOf();
@@ -200,6 +201,10 @@ public class EngineeringRecipe implements Recipe<EngineeringInput> {
             used[found] = true;
             slot[t] = found;
             wear[t] = need.wear();
+            if (ToolAbilities.DRIVER.equals(ability)) {
+                driver = found;
+                wear[t] = ToolAbilities.driverWear(input.tools().get(found), need.wear());
+            }
             if (need.hammerStrength() > 0f) {
                 float short_ = Math.max(0f, need.hammerStrength() - ModularHandTool.blow(input.tools().get(found)));
                 if (short_ > need.hammerStrength() * ModularTuning.HAMMER_SHORT_REFUSE)
@@ -211,6 +216,8 @@ public class EngineeringRecipe implements Recipe<EngineeringInput> {
             }
         }
         Fasteners.Supply supply = Fasteners.supply(input.fasteners(), need);
+        if (driver >= 0)
+            supply = supply.shifted(ToolAbilities.driverLevels(input.tools().get(driver), input.fasteners(), supply));
         if (!supply.complete())
             return new Attempt(Refusal.NO_FASTENERS, ItemStack.EMPTY, ModularFit.Start.NONE, slot, wear, supply, shortfall);
         int lost = Math.round(shortShare / ModularTuning.HAMMER_SHORT_REFUSE * ModularTuning.START_HAMMER_SHORT_LEVELS);

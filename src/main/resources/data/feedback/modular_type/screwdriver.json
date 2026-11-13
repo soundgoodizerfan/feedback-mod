@@ -22,7 +22,59 @@
         "stock": [
           "rod",
           "ingot"
+        ],
+        "base": "flat_tip",
+        "variants": [
+          {
+            "name": "flat_tip",
+            "params": {
+              "screw": 0,
+              "machine_bolt": -1,
+              "rivet": 0
+            }
+          },
+          {
+            "name": "cross_tip",
+            "adjective": true,
+            "params": {
+              "screw": 1,
+              "machine_bolt": -2,
+              "rivet": 0
+            }
+          },
+          {
+            "name": "hex_tip",
+            "adjective": true,
+            "params": {
+              "screw": -2,
+              "machine_bolt": 1,
+              "rivet": 0
+            }
+          }
         ]
+      },
+      "axes": {
+        "shank": {
+          "min": 3,
+          "max": 20,
+          "unit": "cm",
+          "default": 8,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 5
+            },
+            {
+              "name": "normal",
+              "max": 12
+            },
+            {
+              "name": "long"
+            }
+          ]
+        }
       }
     },
     "S": {

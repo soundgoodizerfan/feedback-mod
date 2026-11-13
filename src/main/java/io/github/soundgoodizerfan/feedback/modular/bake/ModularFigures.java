@@ -202,7 +202,15 @@ public record ModularFigures(List<Float> values, int step) {
         AIR_EFFICIENCY,
         // --- an electric gun's (family ELECTRIC_GUN) ---
         /** Joules a shot takes from the battery at full draw. */
-        SHOT_ENERGY;
+        SHOT_ENERGY,
+        // --- shears (family SHEARS) ---
+        /** The speed multiple of coarse clipping (wool, leaves): the blade pair's snap and the bite of its length. */
+        CLIP,
+        /** The speed multiple of fine clipping (cobweb, vines): the same snap, held back by a long blade's lack of control. */
+        CLIP_FINE,
+        // --- a bed's (family BED) ---
+        /** A bed's warmth: how well its padding keeps the sleeper's heat in, 0 to 1. */
+        WARMTH;
 
         /** Most attachments one module carries. */
         public static final int ATTACHMENTS = 4;

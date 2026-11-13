@@ -1,6 +1,8 @@
 {
   "family": "shears",
-  "required": ["B"],
+  "required": [
+    "B"
+  ],
   "strike": 0.3,
   "wear_litres": 0.36,
   "wear_role": "B",
@@ -9,13 +11,64 @@
     "B": {
       "name": "blade",
       "forms": [
-        "ingot",
-        "gem",
-        "bone"
+        "shears_blade"
       ],
       "litres": 0.125,
       "at": 0.1,
-      "layer": 0
+      "layer": 0,
+      "part": {
+        "item": "feedback:shears_blade",
+        "cells": 2,
+        "stock": [
+          "ingot",
+          "gem",
+          "bone"
+        ],
+        "base": "pivot_scissor",
+        "variants": [
+          {
+            "name": "pivot_scissor",
+            "params": {
+              "snap": 1.0,
+              "hold": 1.0,
+              "pivoted": 1
+            }
+          },
+          {
+            "name": "spring_bow",
+            "cells": 1.5,
+            "adjective": true,
+            "params": {
+              "snap": 1.5,
+              "hold": 0.5,
+              "pivoted": 0
+            }
+          }
+        ]
+      },
+      "axes": {
+        "length": {
+          "min": 6,
+          "max": 24,
+          "unit": "cm",
+          "default": 10,
+          "step": 1,
+          "scales": true,
+          "bands": [
+            {
+              "name": "short",
+              "max": 8
+            },
+            {
+              "name": "normal",
+              "max": 14
+            },
+            {
+              "name": "long"
+            }
+          ]
+        }
+      }
     },
     "P": {
       "name": "pivot",
@@ -31,16 +84,16 @@
   },
   "patterns": [
     [
-      " B",
-      "B "
+      "B"
     ],
     [
-      " B",
-      "PB"
+      "B",
+      "P"
     ]
   ],
   "defaults": {
-    "B": "feedback:wrought_iron"
+    "B": "feedback:wrought_iron",
+    "P": "feedback:iron"
   },
   "vanilla": {
     "shears": "ingot"

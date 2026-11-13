@@ -20,16 +20,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 /**
- * A sleeping roll: a sheet of cloth or leather, a fibrous fill and a shell. Used on firm ground at night (or in a storm) with nothing
- * hostile near, it skips to morning wherever you are and gives back health by its comfort, which the fill's and the sheet's softness
- * set. It does not set the respawn point, so beds stay worth building. Each night wears it a little. Carried on a pack's bedroll lashing.
+ * A bed: a mattress (a cover over fibrous padding in a shell) with an optional frame under it. Built with no frame it is a bedroll, light enough
+ * to carry on a pack's lashing. Used on firm ground at night (or in a storm) with nothing hostile near, it skips to morning wherever you are and
+ * gives back health by its comfort (the padding's and cover's softness, the mattress's thickness, the frame's lift off the ground), less in
+ * cold country by how little its padding keeps the heat in (its warmth). It does not set the respawn point, so a bed placed in the world stays
+ * worth building. Each night wears it a little.
  */
-public class ModularBedroll extends ModularItem {
+public class ModularBed extends ModularItem {
 
-    /** The sheet (shaped part), the fill and the shell roles' letters in the type file. */
-    public static final String SHEET = "C";
+    /** The mattress and the frame roles' letters in the type file; the mattress's slots are {@code cover}, {@code padding} and {@code shell}. */
+    public static final String MATTRESS = "C", FRAME = "F";
 
-    public ModularBedroll(Properties properties) {
+    /** Whether {@code stack} is a bed built with no frame: a bedroll, light enough to lash on a pack. */
+    public static boolean frameless(ItemStack stack) {
+        var design = ModularStacks.design(stack);
+        return stack.getItem() instanceof ModularBed && design != null && design.part(FRAME) == null;
+    }
+
+    public ModularBed(Properties properties) {
         super(properties);
     }
 
@@ -46,23 +54,28 @@ public class ModularBedroll extends ModularItem {
         if (!(player.level() instanceof ServerLevel server) || ModularStacks.broken(roll))
             return false;
         if (!player.onGround() || !server.dimensionType().natural() || !(server.isNight() || server.isThundering())) {
-            player.displayClientMessage(Component.translatable("message.feedback.bedroll.no_sleep"), true);
+            player.displayClientMessage(Component.translatable("message.feedback.bed.no_sleep"), true);
             return false;
         }
-        AABB near = player.getBoundingBox().inflate(ModularTuning.BEDROLL_SAFE_RADIUS, 5, ModularTuning.BEDROLL_SAFE_RADIUS);
+        AABB near = player.getBoundingBox().inflate(ModularTuning.BED_SAFE_RADIUS, 5, ModularTuning.BED_SAFE_RADIUS);
         if (!server.getEntitiesOfClass(Monster.class, near, m -> m.isPreventingPlayerRest(player)).isEmpty()) {
-            player.displayClientMessage(Component.translatable("message.feedback.bedroll.not_safe"), true);
+            player.displayClientMessage(Component.translatable("message.feedback.bed.not_safe"), true);
             return false;
         }
         ModularFigures f = ModularStacks.figures(roll);
-        player.heal(player.getMaxHealth() * ModularTuning.BEDROLL_HEAL * (f == null ? 0f : f.get(Fig.COMFORT)));
+        // Cold country takes back what the padding does not keep in.
+        boolean cold = server.getBiome(player.blockPosition()).value().coldEnoughToSnow(player.blockPosition());
+        float comfort = f == null ? 0f : f.get(Fig.COMFORT) * (cold ? f.get(Fig.WARMTH) : 1f);
+        player.heal(player.getMaxHealth() * ModularTuning.BED_HEAL * comfort);
+        if (f != null && f.get(Fig.WARMTH) >= ModularTuning.BED_THAWS_AT)
+            player.setTicksFrozen(0);
         player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
         // Morning: the next dawn, as a bed would bring it.
         long day = server.getDayTime();
         server.setDayTime(day + 24000L - day % 24000L);
-        roll.setDamageValue(Math.min(roll.getMaxDamage() - 1, roll.getDamageValue() + ModularTuning.BEDROLL_WEAR));
+        roll.setDamageValue(Math.min(roll.getMaxDamage() - 1, roll.getDamageValue() + ModularTuning.BED_WEAR));
         ModularStacks.refresh(roll);
-        player.displayClientMessage(Component.translatable("message.feedback.bedroll.slept"), true);
+        player.displayClientMessage(Component.translatable("message.feedback.bed.slept"), true);
         return true;
     }
 }
