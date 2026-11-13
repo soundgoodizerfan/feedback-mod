@@ -515,6 +515,8 @@ public final class ModularBake {
                     for (int i = 0; i < Fig.ATTACHMENTS; i++) {
                         f.put(Fig.att(i), held.get(Fig.att(i)));
                         f.put(Fig.pow(i), held.get(Fig.pow(i)));
+                        f.put(Fig.arg(i), held.get(Fig.arg(i)));
+                        f.put(Fig.sup(i), held.get(Fig.sup(i)));
                     }
                     f.put(Fig.SUIT_WIRING, held.get(Fig.SUIT_WIRING));
                 }
@@ -558,10 +560,12 @@ public final class ModularBake {
             ModularType.Role role = type.roles().get(p.role());
             if (!role.name().startsWith("module_") || by.get(p.role()) == null)
                 continue;
-            Optional<ModularType.Variant> v = role.variant(p);
-            if (v.isEmpty() || v.get().params().getOrDefault("module", 0f) <= 0f || n >= budget)
+            // An attachment's figures come off its role's params, which its variant's params override: a mechanism part (a lens, a spring)
+            // states its class on the role and is tuned by its axes; a part cut in a named shape states it on the variant.
+            Map<String, Float> k = new java.util.HashMap<>(role.params());
+            role.variant(p).ifPresent(v -> k.putAll(v.params()));
+            if (k.getOrDefault("module", 0f) <= 0f || n >= budget)
                 return Optional.empty();
-            Map<String, Float> k = v.get().params();
             float supported = 1f;
             for (String need : new String[] {"controller", "cell", "motor"})
                 if (k.containsKey("needs_" + need)) {
@@ -581,10 +585,16 @@ public final class ModularBake {
             else if (k.containsKey("competence"))
                 power = competence(m) / k.get("competence");
             else if (k.containsKey("optic")) {
-                // The glass reads: the lens set in the casing when there is one, else the part's own material.
+                // The glass reads: the lens set in the casing when there is one, else the part's own material. What it does not reflect it
+                // passes, so clarity is one minus its reflectivity (and what it turns back is the glare it keeps out).
                 Material lens = slotMaterial(role, p, "lens", materials);
-                power = (lens == null ? m : lens).separation().reflectivity().orElse(0.2f) / k.get("optic");
-            }
+                power = (1f - (lens == null ? m : lens).separation().reflectivity().orElse(0.2f)) / k.get("optic");
+            } else if (k.containsKey("porous")) {
+                // A bed of loose, open media: the lighter it packs, the more surface the air crosses.
+                Material media = slotMaterial(role, p, "media", materials);
+                power = k.get("porous") / Math.max(1e-3f, (media == null ? m : media).density().muPerMb());
+            } else if (k.containsKey("grip"))
+                power = m.mechanical().friction().orElse(0.5f) / k.get("grip");
             // A bored part (a cylinder, a nozzle) works as well as its bore is cut to the size the upgrade wants: uncut or overbored, it still
             // works, only worse. The cut comes off the part (a drill, per Fu), never a gate.
             if (k.containsKey("bore_target") && role.axes().containsKey("bore")) {
@@ -592,11 +602,15 @@ public final class ModularBake {
                 float closeness = Math.max(0f, 1f - Math.abs(cut - want) / want);
                 power *= ModularTuning.BORE_FLOOR + (1f - ModularTuning.BORE_FLOOR) * closeness;
             }
-            // A lens module's focal length picks what it is: short focus finds range, long focus reaches far (a rangefinder or a long lens).
             float module = k.get("module");
-            if (k.containsKey("module_long") && role.axesFor(p).containsKey("focal_length")
-                    && role.axis(p, "focal_length") > role.axesFor(p).get("focal_length").band(0f).max())
-                module = k.get("module_long");
+            // The part's tuned axis (a lens's focal length, a spring's stroke) as a share of its range: the suit reads what it trades.
+            String axis = io.github.soundgoodizerfan.feedback.suit.SuitModules.argAxis(Math.round(module));
+            ModularType.Axis tuned = axis.isEmpty() ? null : role.axesFor(p).get(axis);
+            if (tuned != null && tuned.max() > tuned.min())
+                out.put(Fig.arg(n), clamp((role.axis(p, axis) - tuned.min()) / (tuned.max() - tuned.min()), 0f, 1f));
+            int held = (supports.getOrDefault("controller", 0f) > 0f ? Fig.SUP_CONTROLLER : 0) | (supports.getOrDefault("cell", 0f) > 0f ? Fig.SUP_CELL : 0)
+                    | (supports.getOrDefault("motor", 0f) > 0f ? Fig.SUP_MOTOR : 0);
+            out.put(Fig.sup(n), (float) held);
             out.put(Fig.att(n), module);
             out.put(Fig.pow(n), clamp(power * supported, ModularTuning.SUIT_POWER_MIN, ModularTuning.SUIT_POWER_MAX));
             n++;

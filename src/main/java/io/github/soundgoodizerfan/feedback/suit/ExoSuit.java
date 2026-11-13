@@ -54,9 +54,9 @@ public final class ExoSuit {
             if (mod == null)
                 return this;
             float[] live = mod.clone();
-            for (int id = 1; id < live.length; id++) {
-                Ability a = SuitModules.ability(id);
-                if (a != null && !a.pulse() && !a.builtIn() && (on & a.bit()) == 0)
+            for (int id = 1; id < SuitModules.COUNT; id++) {
+                int gate = SuitModules.gates(id);
+                if (gate != 0 && (on & gate) == 0)
                     live[id] = 0f;
             }
             return new Rig(head, chest, legs, feet, driveChest, driveLegs, driveFeet, sense, lossChest, lossLegs, lossFeet, gauge, bay, available, live, wiring);
@@ -118,13 +118,20 @@ public final class ExoSuit {
                 mask |= Ability.NIGHT.bit() | Ability.THERMAL.bit();
         }
         float[] mod = null;
+        int[] sup = null;
         for (ItemStack s : List.of(head, chest, legs, feet)) {
             for (int i = 0; i < Fig.ATTACHMENTS; i++) {
                 int id = Math.round(fig(s, Fig.att(i)));
                 if (id > 0 && id < SuitModules.COUNT) {
-                    if (mod == null)
-                        mod = new float[SuitModules.COUNT];
-                    mod[id] = Math.max(mod[id], fig(s, Fig.pow(i)));
+                    if (mod == null) {
+                        mod = new float[SuitModules.SLOTS];
+                        sup = new int[SuitModules.COUNT];
+                    }
+                    float pow = fig(s, Fig.pow(i));
+                    if (pow > mod[id])
+                        mod[SuitModules.COUNT + id] = fig(s, Fig.arg(i));
+                    mod[id] = Math.max(mod[id], pow);
+                    sup[id] |= Math.round(fig(s, Fig.sup(i)));
                 }
             }
         }
@@ -138,11 +145,9 @@ public final class ExoSuit {
             }
         }
         if (bay && mod != null)
-            for (int id = 1; id < mod.length; id++) {
-                Ability given = SuitModules.ability(id);
-                if (given != null && mod[id] > 0f)
-                    mask |= given.bit();
-            }
+            for (int id = 1; id < SuitModules.COUNT; id++)
+                if (mod[id] > 0f)
+                    mask |= SuitModules.gives(id, sup[id]);
         return new Rig(head, chest, legs, feet, dc, dl, df, sense, loss(chest), loss(legs), loss(feet), anyGauge ? gauge : 0f, bay, mask, mod,
                 held == 0 ? 1f : wiring / held);
     }

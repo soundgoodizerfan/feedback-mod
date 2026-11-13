@@ -74,7 +74,8 @@ public final class ModularCause {
                 case SUIT_GAUGE -> role.name().equals("gauge");
                 case SUIT_SENSE -> role.name().equals("sensor_head");
                 case SUIT_BAY -> role.name().equals("battery_bay");
-                case SUIT_ATT_1, SUIT_ATT_2, SUIT_ATT_3, SUIT_ATT_4, SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4 ->
+                case SUIT_ATT_1, SUIT_ATT_2, SUIT_ATT_3, SUIT_ATT_4, SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4,
+                        SUIT_ARG_1, SUIT_ARG_2, SUIT_ARG_3, SUIT_ARG_4, SUIT_SUP_1, SUIT_SUP_2, SUIT_SUP_3, SUIT_SUP_4 ->
                         role.name().equals("upgrade") || role.name().startsWith("module_");
                 case SUIT_WIRING -> role.name().equals("wiring") || role.name().equals("upgrade");
                 case CLIP, CLIP_FINE -> p.role().equals("B");

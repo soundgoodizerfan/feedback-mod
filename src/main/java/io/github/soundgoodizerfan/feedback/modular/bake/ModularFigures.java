@@ -190,6 +190,10 @@ public record ModularFigures(List<Float> values, int step) {
         SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4,
         /** A suit module's draw multiplier from its wiring: heavy conductor runs it cooler (below 1), thin wire wastes more (above 1). 0 where no module is held. */
         SUIT_WIRING,
+        /** Where each attachment's tuned axis sits in its range, 0 to 1 (a lens's focal length, a spring's stroke), in attachment order; 0 for a part with none. */
+        SUIT_ARG_1, SUIT_ARG_2, SUIT_ARG_3, SUIT_ARG_4,
+        /** The support parts the module holds, as bits of {@code SUP_CONTROLLER}, {@code SUP_CELL}, {@code SUP_MOTOR}, in attachment order: what lets an attachment act. */
+        SUIT_SUP_1, SUIT_SUP_2, SUIT_SUP_3, SUIT_SUP_4,
         // --- an armour piece's, from the plate's axes ---
         /** 0 to {@code PIERCE_RESIST_MAX}: the share of pierce (projectile) damage the piece turns aside; worn pieces add by slot weight. */
         PIERCE_RESIST,
@@ -224,6 +228,19 @@ public record ModularFigures(List<Float> values, int step) {
         public static Fig pow(int i) {
             return values()[SUIT_POW_1.ordinal() + i];
         }
+
+        /** The tuned-axis figure of attachment {@code i}. */
+        public static Fig arg(int i) {
+            return values()[SUIT_ARG_1.ordinal() + i];
+        }
+
+        /** The held-support bits of attachment {@code i}. */
+        public static Fig sup(int i) {
+            return values()[SUIT_SUP_1.ordinal() + i];
+        }
+
+        /** Bits of {@link #sup}: a circuit, a power cell and a motor held in the module. */
+        public static final int SUP_CONTROLLER = 1, SUP_CELL = 2, SUP_MOTOR = 4;
     }
 
     public static final Codec<ModularFigures> CODEC = RecordCodecBuilder.create(instance -> instance.group(

@@ -205,7 +205,7 @@ public final class SuitServer {
             r.fxSig = sig;
         }
         r.powered = powered;
-        r.mods = powered ? rig.mod() : null;
+        r.mods = powered ? rig.mod() : SuitModules.passive(rig.mod());
         boolean nv = powered && (on & Ability.NIGHT.bit()) != 0;
         if (nv && p.tickCount % 20 == 0)
             p.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION, 260, 0, true, false, false));
@@ -222,8 +222,7 @@ public final class SuitServer {
 
     /** How strongly the module that gives {@code a} works (0.25 to 1.5), or 0 when none is fitted. */
     private static float power(ExoSuit.Rig rig, Ability a) {
-        int id = SuitModules.moduleOf(a);
-        return id > 0 && rig.mod() != null ? rig.mod()[id] : 0f;
+        return SuitModules.power(rig.mod(), a);
     }
 
     /** Fires a pulse ability if the suit is powered and it has cooled; the cost is drawn and a share of it heats the suit. */
@@ -303,7 +302,7 @@ public final class SuitServer {
                 AttributeModifier.Operation.ADD_VALUE);
         mod(p, Attributes.ARMOR_TOUGHNESS, TOUGH, plate ? SuitTuning.PLATING_TOUGHNESS : 0f, AttributeModifier.Operation.ADD_VALUE);
         r.carry = (str ? 1f + Math.min(SuitTuning.STRENGTH_CARRY_MAX, SuitTuning.STRENGTH_CARRY_PER_AMP * dc) : 1f) + (powered ? SuitModules.carry(rig.mod()) : 0f);
-        SuitModules.attributes(p, powered ? rig.mod() : null);
+        SuitModules.attributes(p, powered ? rig.mod() : SuitModules.passive(rig.mod()));
         r.plating = plate;
         r.jumpOn = jump;
     }

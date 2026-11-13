@@ -55,11 +55,60 @@ public final class SuitModules {
         return id > 0 && id < KEYS.length ? KEYS[id] : "";
     }
 
-    /** Size of a power array: ids are 1-based. */
+    /** Ids are 1-based; a module array holds each id's power at {@code [id]} and its tuned-axis share at {@code [COUNT + id]}. */
     public static final int COUNT = 36;
 
-    /** The wheel segment module {@code id} gives, or null for one with none. A switch module works only while its segment is on; a pulse module's segment fires it; the heat sink-like ones stay passive. */
-    public static Ability ability(int id) {
+    /** A module array's length: powers, then tuned-axis shares. */
+    static final int SLOTS = 2 * COUNT;
+
+    /** The tuned-axis share (0 to 1) of module {@code id}: where its part's axis sits in its range, 0 for a module with none. */
+    static float arg(float[] m, int id) {
+        return m == null ? 0f : m[COUNT + id];
+    }
+
+    /**
+     * The axis a mechanism part of class {@code id} is tuned by (the bake reads its share of range into the module's {@code arg}), or empty
+     * for a class with none. A class is the kind of mechanism (a lens, a spring), not a named upgrade: what it does follows from the figures.
+     */
+    public static String argAxis(int id) {
+        return switch (id) {
+            default -> "";
+        };
+    }
+
+    /** Bits of the wheel segments module {@code id} gives when it holds the supports {@code sup} ({@code Fig.SUP_*}): what a part can do is what it gets a segment for. */
+    static int gives(int id, int sup) {
+        Ability a = ability(id);
+        return a == null ? 0 : a.bit();
+    }
+
+    /** The switch segment that must be on for module {@code id} to work, 0 for one that is passive or only pulses. */
+    static int gates(int id) {
+        Ability a = ability(id);
+        return a == null || a.pulse() || a.builtIn() ? 0 : a.bit();
+    }
+
+    /** The module that sets how strongly {@code a} works (the first that gives it), or 0 for a built-in segment. */
+    static int moduleOf(Ability a) {
+        for (int id = 1; id < COUNT; id++)
+            if ((gives(id, 7) & a.bit()) != 0)
+                return id;
+        return 0;
+    }
+
+    /** How strongly {@code a} works in {@code m}, 0 when no fitted module gives it. */
+    static float power(float[] m, Ability a) {
+        int id = moduleOf(a);
+        return id > 0 && m != null ? m[id] : 0f;
+    }
+
+    /** {@code m} with every module that needs the suit's power zeroed: the springs and plates that are mechanical work unpowered. Null when none is left. */
+    static float[] passive(float[] m) {
+        return null;
+    }
+
+    /** The wheel segment of legacy module {@code id}, or null for one with none. A switch module works only while its segment is on; a pulse module's segment fires it; the heat sink-like ones stay passive. */
+    private static Ability ability(int id) {
         return switch (id) {
             case CLOAK_FIELD -> Ability.CLOAK;
             case JET_PACK -> Ability.JET;
@@ -77,14 +126,6 @@ public final class SuitModules {
             case THORN_ARRAY -> Ability.THORNS;
             default -> null;
         };
-    }
-
-    /** The module that gives {@code a}, or 0 for a built-in segment. */
-    public static int moduleOf(Ability a) {
-        for (int id = 1; id < COUNT; id++)
-            if (ability(id) == a)
-                return id;
-        return 0;
     }
 
     // --- placeholder figures, tuned in play (the suit's own file is SuitTuning; these are per-module and live beside their code) ---
