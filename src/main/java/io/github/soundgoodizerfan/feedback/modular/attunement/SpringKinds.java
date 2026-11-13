@@ -115,4 +115,26 @@ public final class SpringKinds {
         if ((int) ((used + 1) * share) > (int) (used * share))
             event.setDuration(event.getDuration() - 1);
     }
+
+    /** Upward speed per level of coil, per block fallen (rooted), and the most. [OPEN] until played */
+    private static final double COIL_UP_PER_LEVEL = 0.12, COIL_UP_MAX = 1.4;
+
+    /**
+     * Something lands on a machine whose housing has {@code coil}: the fall costs it nothing and the housing gives it back as a bounce, higher
+     * the further it fell and the more levels the coil has (a spring floor, the machine's own coil spring).
+     */
+    @SubscribeEvent
+    public static void onLand(net.neoforged.neoforge.event.entity.living.LivingFallEvent event) {
+        var e = event.getEntity();
+        if (e.level().isClientSide || event.getDistance() < 1f)
+            return;
+        var be = e.level().getBlockEntity(e.blockPosition().below());
+        int coil = be == null ? 0 : MachineAura.levelsOf(be).getOrDefault("coil", 0);
+        if (coil == 0)
+            return;
+        event.setDamageMultiplier(0f);
+        double up = Math.min(COIL_UP_MAX, COIL_UP_PER_LEVEL * coil * Math.sqrt(event.getDistance()));
+        e.setDeltaMovement(e.getDeltaMovement().x, up, e.getDeltaMovement().z);
+        e.hurtMarked = true;
+    }
 }

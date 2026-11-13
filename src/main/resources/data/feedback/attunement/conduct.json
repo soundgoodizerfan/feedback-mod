@@ -33,6 +33,21 @@
     },
     "second_barrel": {
       "kind": "grounded_round"
+    },
+    "housing": {
+      "kind": "shed"
+    },
+    "case": {
+      "kind": "shed"
+    },
+    "gearbox_case": {
+      "kind": "shed"
+    },
+    "outer_sleeve": {
+      "kind": "shed"
+    },
+    "yoke": {
+      "kind": "shed"
     }
   },
   "books": [

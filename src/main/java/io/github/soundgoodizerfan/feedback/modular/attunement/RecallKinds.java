@@ -156,4 +156,38 @@ public final class RecallKinds {
         if (level > 0)
             target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ANCHOR_TICKS * level, ANCHOR_SLOW, false, false));
     }
+
+    /** The head of a machine, when it is taken off {@code at} by a break or a blast: with {@code recall}, it goes to {@code to} instead of falling loose. */
+    private static void recall(net.minecraft.world.level.block.entity.BlockEntity at, net.minecraft.world.entity.player.Player to) {
+        if (!(at instanceof io.github.soundgoodizerfan.feedback.machine.Headed headed) || headed.getHead().isEmpty()
+                || TideKinds.level(headed.getHead().get(), "recall") == 0)
+            return;
+        ItemStack head = headed.getHead().take();
+        at.setChanged();
+        if (!to.getInventory().add(head))
+            to.drop(head, false);
+    }
+
+    /** A machine broken by hand gives its recalling head to the one who broke it. */
+    @SubscribeEvent(priority = net.neoforged.bus.api.EventPriority.LOWEST)
+    public static void onBreak(net.neoforged.neoforge.event.level.BlockEvent.BreakEvent event) {
+        if (!event.getLevel().isClientSide() && event.getLevel().getBlockEntity(event.getPos()) instanceof net.minecraft.world.level.block.entity.BlockEntity be)
+            recall(be, event.getPlayer());
+    }
+
+    /** A machine blown up gives its recalling head to the nearest player within reach. */
+    @SubscribeEvent
+    public static void onBlast(net.neoforged.neoforge.event.level.ExplosionEvent.Detonate event) {
+        if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level))
+            return;
+        for (var pos : event.getAffectedBlocks())
+            if (level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.machine.Headed) {
+                var near = level.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, RECALL_REACH, false);
+                if (near != null)
+                    recall(level.getBlockEntity(pos), near);
+            }
+    }
+
+    /** Blocks within which a blast hands a recalling head to a player. [OPEN] until played */
+    private static final double RECALL_REACH = 16.0;
 }

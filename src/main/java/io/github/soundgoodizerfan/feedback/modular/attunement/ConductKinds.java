@@ -183,4 +183,28 @@ public final class ConductKinds {
         if (event.getEntity() instanceof LivingEntity living && shed(living) >= SHED_TURNS_ASIDE)
             event.setCanceled(true);
     }
+
+    /** Blocks around a machine whose shedding housing takes a lightning strike to ground. [OPEN] until played */
+    private static final int GROUND_REACH = 6;
+
+    /**
+     * A bolt that comes down within a few blocks of a machine whose housing sheds is grounded by it: the bolt does no harm and sets no fire
+     * (it becomes visual only). The housing is the lightning rod.
+     */
+    @SubscribeEvent
+    public static void onBolt(net.neoforged.neoforge.event.entity.EntityJoinLevelEvent event) {
+        if (!(event.getEntity() instanceof net.minecraft.world.entity.LightningBolt bolt) || !(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level))
+            return;
+        var at = bolt.blockPosition();
+        for (int dx = -1; dx <= 1; dx++)
+            for (int dz = -1; dz <= 1; dz++) {
+                var chunk = level.getChunkSource().getChunkNow((at.getX() >> 4) + dx, (at.getZ() >> 4) + dz);
+                if (chunk != null)
+                    for (var be : chunk.getBlockEntities().values())
+                        if (be.getBlockPos().distSqr(at) <= GROUND_REACH * GROUND_REACH && MachineAura.levelsOf(be).getOrDefault("shed", 0) > 0) {
+                            bolt.setVisualOnly(true);
+                            return;
+                        }
+            }
+    }
 }

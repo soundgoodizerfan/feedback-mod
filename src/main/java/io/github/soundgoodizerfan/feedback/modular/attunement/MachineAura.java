@@ -135,6 +135,7 @@ public final class MachineAura {
         if (be instanceof Headed headed && !headed.getHead().isEmpty())
             mendHead(level, pos, headed.getHead().get());
         ReservoirKinds.absorb(level, be);
+        GrudgeKinds.aura(level, be, levels.getOrDefault("grudge", 0));
         if (!running(be))
             return;
         int lure = levels.getOrDefault("lure", 0), scare = levels.getOrDefault("scare", 0);

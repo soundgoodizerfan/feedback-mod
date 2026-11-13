@@ -67,6 +67,7 @@ public final class MachineKinds {
         shape("glow", "Amps", -0.15f);
         shape("dim", "Burnout", 0.15f);
         shape("draw", "Range", 0.2f);
+        shape("fling", "Range", 0.2f);
         shape("store", "Mass", 0.25f);
         shape("release", "Leak", 0.25f);
     }

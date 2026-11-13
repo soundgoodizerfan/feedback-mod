@@ -48,6 +48,9 @@
     },
     "second_barrel": {
       "kind": "fling_round"
+    },
+    "magnet_core": {
+      "kind": "fling"
     }
   },
   "books": [

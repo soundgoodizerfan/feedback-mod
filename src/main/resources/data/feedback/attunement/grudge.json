@@ -17,6 +17,33 @@
     "blade": {
       "kind": "grudge",
       "flaw": 1
+    },
+    "housing": {
+      "kind": "grudge"
+    },
+    "case": {
+      "kind": "grudge"
+    },
+    "volute": {
+      "kind": "grudge"
+    },
+    "engine_block": {
+      "kind": "grudge"
+    },
+    "vessel_shell": {
+      "kind": "grudge"
+    },
+    "boiler_shell": {
+      "kind": "grudge"
+    },
+    "tank_shell": {
+      "kind": "grudge"
+    },
+    "gearbox_case": {
+      "kind": "grudge"
+    },
+    "outer_sleeve": {
+      "kind": "grudge"
     }
   },
   "mirror": {
@@ -30,6 +57,33 @@
       "kind": "calm"
     },
     "blade": {
+      "kind": "calm"
+    },
+    "housing": {
+      "kind": "calm"
+    },
+    "case": {
+      "kind": "calm"
+    },
+    "volute": {
+      "kind": "calm"
+    },
+    "engine_block": {
+      "kind": "calm"
+    },
+    "vessel_shell": {
+      "kind": "calm"
+    },
+    "boiler_shell": {
+      "kind": "calm"
+    },
+    "tank_shell": {
+      "kind": "calm"
+    },
+    "gearbox_case": {
+      "kind": "calm"
+    },
+    "outer_sleeve": {
       "kind": "calm"
     }
   },

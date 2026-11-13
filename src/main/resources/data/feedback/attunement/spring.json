@@ -20,6 +20,18 @@
     },
     "store_core": {
       "kind": "store"
+    },
+    "housing": {
+      "kind": "coil"
+    },
+    "case": {
+      "kind": "coil"
+    },
+    "volute": {
+      "kind": "coil"
+    },
+    "gearbox_case": {
+      "kind": "coil"
     }
   },
   "mirror": {

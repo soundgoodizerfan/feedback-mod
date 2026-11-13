@@ -135,6 +135,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         sinceLastPull = 0;
 
         double range = figures.get("Range", ElectricMachineTuning.ELECTROMAGNET_RANGE) * field;
+        boolean flings = io.github.soundgoodizerfan.feedback.modular.attunement.MachineAura.levelsOf(this).getOrDefault("fling", 0) > 0;
         Vec3 centre = Vec3.atCenterOf(worldPosition);
         AABB reach = new AABB(worldPosition).inflate(range);
         for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, reach)) {
@@ -148,8 +149,9 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
                 separate(item);
             if (toward.lengthSqr() < 0.25 || toward.length() > range)
                 continue;
+            // A core attuned to fling is the same coupling reversed: it throws what it would draw.
             item.setDeltaMovement(item.getDeltaMovement()
-                    .add(toward.normalize().scale(figures.get("Pull", ElectricMachineTuning.ELECTROMAGNET_PULL) * field)));
+                    .add(toward.normalize().scale((flings ? -1 : 1) * figures.get("Pull", ElectricMachineTuning.ELECTROMAGNET_PULL) * field)));
             item.hasImpulse = true;
         }
     }
