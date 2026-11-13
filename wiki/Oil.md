@@ -89,5 +89,6 @@ Wisp gas:
 
 - Its ignition point is very high, so an [Engine](Engine.md#compression-fuel-and-knock) misfires on it at medium compression and below. A burner or turbine lights it without trouble.
 - A [Reactor](Reactor.md#the-reactions) with a [Cryocooler](Cryocooler.md) liquefies it, at -120 to -100 Tu, into **Liquid Wisp Gas**: 160 mB of gas makes 32 mB.
-- A ghast killed by a player drops a **Ghast Bladder**, and 1 or 2 more with a [Hand Knife](Prep_Table.md) in the main hand.
 - It is a gas: it can be held in a [Gas Tank](Gas_Tank.md) and pressurized, and it follows the pressure rules of any gas.
+
+A ghast killed by a player drops a **Ghast Bladder**, and 1 or 2 more with a [Hand Knife](Prep_Table.md) in the main hand. The bladder is the lightest gas-tight skin for a [Gas Cell](Gas_Cell.md); cloth coated in slime is the craftable alternative, heavier and slowly seeping.

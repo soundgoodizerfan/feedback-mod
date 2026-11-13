@@ -27,7 +27,7 @@ Air thins with height in the Overworld, so a cell lifts less the higher it climb
 
 ## Climbing, venting and ballast
 
-- A cell is wrapped in a skin that stretches as the air thins. A full cell that climbs past its skin's stretch limit **weeps gas** until a Vent Valve lets some out first. See [Gas Cell](Gas_Cell.md#stretch).
+- A cell is wrapped in a skin that stretches as the air thins. A full cell that climbs past its skin's stretch limit **weeps gas** until a Vent Valve lets some out first. The skins are cloth, rubberized, plate, ghast bladder (lightest, gas-tight) and coated cloth (heavier, slowly seeps gas). See [Gas Cell](Gas_Cell.md#stretch).
 - To come down, open a Vent Valve or fill a Ballast Tank. To rise, dump ballast.
 - Both open by hand with a right-click, or from a [Controller](Controller.md) card, so an autopilot can hold altitude.
 

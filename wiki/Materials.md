@@ -65,9 +65,13 @@ Not everything is metal. A few others matter for parts and protection:
 | Leather | 0.3 | | 100 Tu | gloves |
 | Diamond | 100 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
 | Heavy Core | 9 | | | dense as osmium, sintered from osmium powder: see [Heavy Core](Heavy_Core.md) |
+| Ghast Bladder | 0.1 | | | animal; the skin of a bladder [gas cell](Gas_Cell.md) |
+| Coated Cloth | 0.05 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
 | Silicon, glasses, graphite, polymers | | | | sections below |
 
 Every material also decides how well it **takes an enchantment** when it's the main part of a [tool or piece of armor](Tools_and_Weapons.md): gold is best, then leather, wood, iron and netherite, with stone worst.
+
+A material can carry a **permeability**: how fast a gas cell skinned in it lets gas through. A material without one is gas-tight. Ghast bladder has none; coated cloth seeps slowly.
 
 "Stands" is the temperature a grip or glove can bear against your hand. See [Hazards](Hazards.md).
 

@@ -13,6 +13,7 @@ Made from glass, a sculk block and wrought iron plates. Use a Culture Seed on an
 - **Upkeep.** A living culture eats a little XP all the time, more the bigger it is.
 - **Growth.** Below full mass it eats more, as fast as the run can supply, up to about ten minutes for a whole culture. Its store grows with it: a seed's store is a sliver, a full culture's is a sculk container's worth.
 - **Air.** The dish breathes any gas from a neighboring block that holds it (a [Gas Tank](Gas_Tank.md), a pipe, the front of a [Electrolyser](Electrolyser.md)), by its oxygen share: [pure oxygen](Chemicals.md#oxygen) at full rate, air at about a fifth as well. It draws a trickle a second; without breathable gas the culture goes pale. The dish's look shows empty, growing, ripe, or ailing (any starved, pale, clotted or shrieking stage).
+- **Relay organ.** A ripe culture that sits in the dark (light 3 or less at the dish), in ambient temperature between 10 and 30 Tu (so not in the Nether or the End), breathing and fed, grows a **Relay Organ** and eats extra XP while it does. The organ is ready after about 5 minutes. A hoe cut within about 3 minutes after that also gives the Relay Organ; left longer it overgrows and is spent, and only a cut clears it. While a condition fails an unformed organ slowly shrinks back. Jade shows the organ as forming, ready to cut or overgrown.
 - **Ripe.** A full culture is ripe. Use a hoe on a ripe dish to cut it: two sculk blocks, two sculk veins and an Echo Shard, and the culture falls back to a third of its size. A well-fed culture cut before it clots may also bud a spare Culture Seed. XP held above the smaller store spills out as orbs.
 
 ## Neglect
@@ -31,7 +32,7 @@ Made from a sculk catalyst. A node on the XP network that takes the XP of anythi
 
 ## Sculk Relay
 
-Made from a Relay Organ. Every relay within 24 blocks of another joins its run, with no wire between and no line of sight needed, in the same dimension.
+Made from any Relay Organ, a warden's or a grown one. Every relay within 24 blocks of another joins its run, with no wire between and no line of sight needed, in the same dimension.
 
 ## Data Sensor
 
