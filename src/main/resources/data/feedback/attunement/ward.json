@@ -145,13 +145,37 @@
     "magnetic_sear": {
       "kind": "soak"
     },
-    "class:working_face": {
+    "frame": {
       "kind": "soak"
     },
-    "class:housing": {
+    "machine_winding": {
       "kind": "soak"
     },
-    "class:mount": {
+    "core": {
+      "kind": "soak"
+    },
+    "housing": {
+      "kind": "soak"
+    },
+    "bearing": {
+      "kind": "soak"
+    },
+    "plates": {
+      "kind": "soak"
+    },
+    "case": {
+      "kind": "soak"
+    },
+    "engine_block": {
+      "kind": "soak"
+    },
+    "pistons": {
+      "kind": "soak"
+    },
+    "crankshaft": {
+      "kind": "soak"
+    },
+    "cylinder_head": {
       "kind": "soak"
     }
   },
