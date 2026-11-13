@@ -220,7 +220,9 @@ public final class ElectricMechanism implements GunMechanism {
         io.github.soundgoodizerfan.feedback.weapon.GunImpacts.energyMuzzle(level, muzzle, Vec3.directionFromRotation(pitch, yaw), Math.min(1f, figures.report()),
                 ModularElectricGun.colourOf(gun), spec.style());
         // The muzzle glows brighter with the barrel's heat.
-        level.sendParticles(ParticleTypes.GLOW, muzzle.x, muzzle.y, muzzle.z, 1 + Math.round(p.heatAfter() * 6f), 0.04, 0.04, 0.04, 0.01);
+        int tint = ModularElectricGun.colourOf(gun);
+        level.sendParticles(new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f((tint >> 16 & 255) / 255f, (tint >> 8 & 255) / 255f, (tint & 255) / 255f), 0.6f),
+                muzzle.x, muzzle.y, muzzle.z, 1 + Math.round(p.heatAfter() * 6f), 0.04, 0.04, 0.04, 0.01);
 
         // Heat, the pumps' share of it, and what the governor does with it.
         float heat = ModularElectricGun.heat(gun, level) + spec.heatPerShot(p.power()) + ModularTuning.EGUN_PUMP_HEAT * (spec.pump() ? ModularElectricGun.pumps(gun) : 0);

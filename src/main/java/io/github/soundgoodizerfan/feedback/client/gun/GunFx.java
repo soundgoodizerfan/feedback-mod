@@ -144,6 +144,7 @@ public final class GunFx {
             STREAKS.clear();
             DECALS.clear();
             BEAMS.clear();
+            SPARKS.clear();
             return;
         }
         if (mc.isPaused())
@@ -169,6 +170,14 @@ public final class GunFx {
             s.vel = s.vel.scale(1 - GunTuning.GUN_DRAG_PER_TICK * s.drag).add(0, -GunTuning.GUN_GRAVITY_PER_TICK, 0);
         }
         BEAMS.removeIf(b -> ++b.age > b.life);
+        for (Iterator<Spark> it = SPARKS.iterator(); it.hasNext(); ) {
+            Spark sp = it.next();
+            sp.prev = sp.pos;
+            sp.pos = sp.pos.add(sp.vel);
+            sp.vel = sp.vel.scale(0.85).add(0, -0.01, 0);
+            if (++sp.age > sp.life)
+                it.remove();
+        }
         long now = mc.level.getGameTime();
         DECALS.removeIf(d -> now - d.born > DECAL_LIFE_TICKS);
     }
@@ -274,22 +283,22 @@ public final class GunFx {
                 for (int i = 0; i < 10 + (int) (power * 8); i++)
                     spray(level, dust(rgb, 1.1f), at, dir, 0.12, 0.1, r);
                 for (int i = 0; i < 3; i++)
-                    spray(level, ParticleTypes.GLOW, at, dir, 0.05, 0.06, r);
+                    spray(level, dust(rgb, 0.5f), at, dir, 0.05, 0.06, r);
                 level.addParticle(ParticleTypes.SMOKE, at.x, at.y, at.z, dir.x * 0.01, 0.03, dir.z * 0.01);
             }
             case EnergyStyle.PULSE -> {
-                sparks(level, at, dir, 10, 0.4, r);
+                tintedSparks(at, dir, 10, 0.4, rgb, r);
                 for (int i = 0; i < 4; i++)
                     spray(level, dust(rgb, 0.8f), at, dir, 0.15, 0.12, r);
                 addBolt(at, at.add(dir.scale(0.3)).add(randomUnit(r).scale(0.4)), EnergyStyle.ARC, rgb, 0.5f, r);
             }
             case EnergyStyle.ARC -> {
-                sparks(level, at, dir, 6, 0.35, r);
+                tintedSparks(at, dir, 6, 0.35, rgb, r);
                 for (int i = 0; i < 3; i++)
                     addBolt(at, at.add(dir.scale(0.2)).add(randomUnit(r).scale(0.6)), EnergyStyle.ARC, rgb, 0.5f, r);
             }
             default -> {
-                sparks(level, at, dir, 5, 0.3, r);
+                tintedSparks(at, dir, 5, 0.3, rgb, r);
                 for (int i = 0; i < 3; i++)
                     spray(level, dust(rgb, 0.7f), at, dir, 0.1, 0.06, r);
             }
@@ -312,14 +321,14 @@ public final class GunFx {
         switch (style) {
             case EnergyStyle.PLASMA -> {
                 for (int i = 0; i < n; i++)
-                    spray(level, ParticleTypes.GLOW, at, aim, 0.08, 0.04, r);
+                    spray(level, dust(rgb, 0.5f), at, aim, 0.08, 0.04, r);
             }
-            case EnergyStyle.PULSE -> sparks(level, at, aim, own ? 1 : 5, 0.25, r);
+            case EnergyStyle.PULSE -> tintedSparks(at, aim, own ? 1 : 5, 0.25, rgb, r);
             case EnergyStyle.ARC -> {
                 for (int i = 0; i < (own ? 1 : 2); i++)
                     addBolt(at, at.add(aim.scale(0.25)).add(randomUnit(r).scale(0.3)), EnergyStyle.ARC, rgb, 0.5f, r);
             }
-            default -> sparks(level, at, aim, 1, 0.3, r);
+            default -> tintedSparks(at, aim, 1, 0.3, rgb, r);
         }
     }
 
@@ -363,7 +372,7 @@ public final class GunFx {
             int n = Mth.clamp((int) (d.length() / 2.5), 1, 10);
             for (int i = 0; i < n; i++) {
                 Vec3 at = b.from.add(d.scale(r.nextDouble()));
-                level.addParticle(ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, (r.nextDouble() - 0.5) * 0.2, (r.nextDouble() - 0.5) * 0.2, (r.nextDouble() - 0.5) * 0.2);
+                tintedSparks(at, Vec3.ZERO, 1, 0.1, b.rgb, r);
                 glow(level, at, b.rgb, 0.6f);
             }
         }
@@ -485,6 +494,46 @@ public final class GunFx {
         }
     }
 
+    // ---------------------------------------------------------------- tinted sparks
+
+    /** A spark of an energy shot, in the shot's own colour (a vanilla spark particle has one fixed colour). */
+    private static final class Spark {
+        Vec3 pos, prev, vel;
+        int rgb, age, life;
+    }
+
+    private static final List<Spark> SPARKS = new ArrayList<>();
+    private static final int SPARK_MAX = 256;
+
+    private static void tintedSparks(Vec3 at, Vec3 dir, int n, double speed, int rgb, RandomSource r) {
+        for (int i = 0; i < n; i++) {
+            if (SPARKS.size() >= SPARK_MAX)
+                SPARKS.remove(0);
+            Spark sp = new Spark();
+            double s = speed * (0.4 + r.nextDouble());
+            sp.pos = sp.prev = at;
+            sp.vel = new Vec3(dir.x * s + (r.nextDouble() - 0.5) * 0.3, dir.y * s + (r.nextDouble() - 0.5) * 0.3, dir.z * s + (r.nextDouble() - 0.5) * 0.3);
+            sp.rgb = rgb;
+            sp.life = 8 + r.nextInt(8);
+            SPARKS.add(sp);
+        }
+    }
+
+    private static void drawSparks(Matrix4f m, MultiBufferSource.BufferSource buffers, float partial) {
+        if (SPARKS.isEmpty())
+            return;
+        VertexConsumer vc = buffers.getBuffer(RenderType.lightning());
+        for (Spark sp : SPARKS) {
+            Vec3 head = sp.prev.lerp(sp.pos, partial), tail = head.subtract(sp.vel.scale(1.6));
+            Vec3 axis = head.subtract(tail);
+            if (axis.lengthSqr() < 1e-8)
+                continue;
+            float a = 1f - sp.age / (float) (sp.life + 1);
+            beam(m, vc, head, tail, axis.normalize(), 0.012f, (sp.rgb >> 16 & 255) / 255f, (sp.rgb >> 8 & 255) / 255f, (sp.rgb & 255) / 255f, a, 0f);
+        }
+        buffers.endBatch(RenderType.lightning());
+    }
+
     private static void muzzle(Level level, Vec3 at, Vec3 aim, float power, boolean eject, RandomSource r) {
         int n = 2 + (int) (power * 5);
         // Your own gun in first person draws its flash at its barrel (GunFlash); the puff of fire is for everyone else.
@@ -522,7 +571,7 @@ public final class GunFx {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES)
             return;
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level == null || (STREAKS.isEmpty() && DECALS.isEmpty() && BEAMS.isEmpty()))
+        if (mc.level == null || (STREAKS.isEmpty() && DECALS.isEmpty() && BEAMS.isEmpty() && SPARKS.isEmpty()))
             return;
         Vec3 cam = event.getCamera().getPosition();
         float partial = event.getPartialTick().getGameTimeDeltaPartialTick(false);
@@ -533,6 +582,7 @@ public final class GunFx {
         drawDecals(mc, pose, buffers, partial);
         drawStreaks(pose.last().pose(), buffers, cam, partial, event.getCamera());
         drawBeams(pose.last().pose(), buffers);
+        drawSparks(pose.last().pose(), buffers, partial);
         pose.popPose();
     }
 

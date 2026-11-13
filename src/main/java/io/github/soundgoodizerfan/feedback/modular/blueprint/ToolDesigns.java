@@ -381,7 +381,9 @@ public final class ToolDesigns {
             ModularDesign made = ModularStacks.design(m.tool());
             ModularType type = types.get(made.type());
             Edge edge = type.edged() ? design.edge() : Edge.STANDARD;
-            return edge == made.edge() || ModularStacks.assemble(m.tool(), made.withEdge(edge), materials, types)
+            // The edge and the beam colour it was drawn with, which the parts alone do not carry.
+            ModularDesign drawn = made.withEdge(edge).withColour(design.colour());
+            return drawn.equals(made) || ModularStacks.assemble(m.tool(), drawn, materials, types)
                     ? Optional.of(m.tool()) : Optional.empty();
         });
     }
