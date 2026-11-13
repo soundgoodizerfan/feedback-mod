@@ -39,17 +39,17 @@ public final class SuitModules {
     }
 
     public static final int CRASH_LINER = 6, REFLEX_LINK = 7,
-            HEAT_SINK = 8, COOLANT_LOOP = 9, EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
-            THERMAL_LINING = 15, MAGNET_PICKUP = 16, FIRE_CURTAIN = 17, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, HEAT_SHIELD = 26, ROCKET_SPUR = 29,
+            EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
+            MAGNET_PICKUP = 16, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, ROCKET_SPUR = 29,
             // modules that give the wheel a segment of its own (see ability)
-            CLOAK_FIELD = 31, JET_PACK = 32, EMP_COIL = 35;
+            JET_PACK = 32, EMP_COIL = 35;
     // mechanism classes: a part of one kind of mechanism, tuned by its axis, whatever the figures make of it
-    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39, FILTER = 40;
+    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39, FILTER = 40, THERMAL = 41;
     /** The variant name of each id, which is also its lang key suffix; index 0 is none. */
-    private static final String[] KEYS = {"", "", "", "", "", "", "crash_liner", "reflex_link", "heat_sink",
-            "coolant_loop", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "thermal_lining", "magnet_pickup", "fire_curtain",
-            "", "", "", "", "", "load_frame", "stabiliser", "mag_anchor", "heat_shield", "",
-            "", "rocket_spur", "", "cloak_field", "jet_pack", "", "", "emp_coil", "optic", "spring", "actuator", "tread", "filter"};
+    private static final String[] KEYS = {"", "", "", "", "", "", "crash_liner", "reflex_link", "",
+            "", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "", "magnet_pickup", "",
+            "", "", "", "", "", "load_frame", "stabiliser", "mag_anchor", "", "",
+            "", "rocket_spur", "", "", "jet_pack", "", "", "emp_coil", "optic", "spring", "actuator", "tread", "filter", "thermal"};
 
     /** The name key of upgrade {@code id} (translate {@code modular.feedback.variant.<key>}), or empty for none. */
     public static String key(int id) {
@@ -57,7 +57,7 @@ public final class SuitModules {
     }
 
     /** Ids are 1-based; a module array holds each id's power at {@code [id]} and its tuned-axis share at {@code [COUNT + id]}. */
-    public static final int COUNT = 41;
+    public static final int COUNT = 42;
 
     /** A module array's length: powers, then tuned-axis shares. */
     static final int SLOTS = 2 * COUNT;
@@ -77,6 +77,7 @@ public final class SuitModules {
             case SPRING, ACTUATOR -> "stroke";
             case TREAD -> "span";
             case FILTER -> "bed";
+            case THERMAL -> "thickness";
             default -> "";
         };
     }
@@ -87,6 +88,10 @@ public final class SuitModules {
             return Ability.STRIDE.bit() | Ability.SHOCK.bit();
         if (id == OPTIC)
             return Ability.LENS.bit() | ((sup & io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SUP_CONTROLLER) != 0 ? Ability.SCAN.bit() : 0);
+        // a pump on a held motor can vent the suit's heat; a held circuit lets the plate follow the ambient, a thermal mask
+        if (id == THERMAL)
+            return ((sup & io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SUP_MOTOR) != 0 ? Ability.VENT.bit() : 0)
+                    | ((sup & io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SUP_CONTROLLER) != 0 ? Ability.CLOAK.bit() : 0);
         Ability a = ability(id);
         return a == null ? 0 : a.bit();
     }
@@ -114,16 +119,25 @@ public final class SuitModules {
         int id = moduleOf(a);
         if (id == 0 || m == null)
             return 0f;
-        // a scan's flash reaches as far as the lens is long-focus
-        return a == Ability.SCAN ? m[id] * (SCAN_SHORT + SCAN_LONG * arg(m, id)) : m[id];
+        return switch (a) {
+            // a scan's flash reaches as far as the lens is long-focus
+            case SCAN -> m[id] * (SCAN_SHORT + SCAN_LONG * arg(m, id));
+            // thin fins vent best
+            case VENT -> m[id] * (1f - 0.5f * arg(m, id));
+            default -> m[id];
+        };
     }
 
     /** {@code m} with every module that needs the suit's power zeroed: the springs and plates that are mechanical work unpowered. Null when none is left. */
     static float[] passive(float[] m) {
-        if (m == null || m[SPRING] <= 0f && m[TREAD] <= 0f && m[FILTER] <= 0f)
+        if (m == null)
             return null;
-        float[] live = new float[SLOTS];
-        for (int id : new int[] {SPRING, TREAD, FILTER}) {
+        float[] live = null;
+        for (int id : new int[] {SPRING, TREAD, FILTER, THERMAL}) {
+            if (m[id] <= 0f)
+                continue;
+            if (live == null)
+                live = new float[SLOTS];
             live[id] = m[id];
             live[COUNT + id] = m[COUNT + id];
         }
@@ -133,12 +147,10 @@ public final class SuitModules {
     /** The wheel segment of legacy module {@code id}, or null for one with none. A switch module works only while its segment is on; a pulse module's segment fires it; the heat sink-like ones stay passive. */
     private static Ability ability(int id) {
         return switch (id) {
-            case CLOAK_FIELD -> Ability.CLOAK;
             case JET_PACK -> Ability.JET;
             case EMP_COIL -> Ability.EMP;
             case MAGNET_PICKUP -> Ability.MAGNET;
             case AUTODOC -> Ability.HEAL;
-            case COOLANT_LOOP -> Ability.VENT;
             case ROCKET_SPUR -> Ability.BURST;
             case THORN_ARRAY -> Ability.THORNS;
             default -> null;
@@ -149,9 +161,9 @@ public final class SuitModules {
     private static final float OXYGEN = 3f, ATTACK_SPEED = 0.2f, KB_PLATING = 0.6f, KB_ANCHOR = 0.5f,
             KB_STABILISER = 0.2f, STRIDE = 0.12f, STEP = 1f, WATER = 0.6f, FALL_CUT = 0.5f, EFFICIENCY = 0.7f, SNEAK = 0.5f, JUMP = 0.12f,
             SAFE_FALL = 5f, LOAD = 1f;
-    private static final float BLAST_CUT = 0.4f, FIRE_CUT = 0.5f, SHOT_CUT = 0.3f, BUS_SAVING = 0.3f, SINK_GAIN = 3f, LOOP_TU = 25f, LENS_GAIN = 0.5f,
+    private static final float BLAST_CUT = 0.4f, FIRE_CUT = 0.5f, LINING_MIN = 0.3f, SHOT_CUT = 0.3f, BUS_SAVING = 0.3f, SINK_GAIN = 3f, LENS_GAIN = 0.5f,
             SPUR_ACCEL = 0.8f, SPUR_TOP = 0.4f;
-    private static final float STRIDE_AMPS = 0.3f, SHIELD_AMPS = 0.8f, MAGNET_AMPS = 0.2f, FILTER_COST = 15f, LINING_COST = 5f, HEAL_COST = 80f,
+    private static final float STRIDE_AMPS = 0.3f, MAGNET_AMPS = 0.2f, FILTER_COST = 15f, LINING_COST = 5f, HEAL_COST = 80f,
             THORN_COST = 40f, STOMP_COST = 50f, THORN_DAMAGE = 2f, STOMP_PER_BLOCK = 0.5f, STOMP_MAX = 12f, MAGNET_BASE = 3f, MAGNET_PER = 3f;
     private static final int HEAL_TICKS = 40;
     /** A lens: the reach (blocks) a short-focus lens adds; the share of thermal range a long-focus lens adds; the share of its light a glass must turn back to keep glare out; a scan flash's reach at the short and long end of the focal length. */
@@ -170,14 +182,9 @@ public final class SuitModules {
 
     // --- physics of the plate and the bus (read whether or not the suit is powered) -----------------------
 
-    /** Multiplier on the rate the suit sheds heat. */
+    /** Multiplier on the rate the suit sheds heat: a thin conductor spreads its heat to the air. */
     static float cooling(float[] m) {
-        return 1f + SINK_GAIN * p(m, HEAT_SINK);
-    }
-
-    /** Tu added to the cut-out and resume temperatures. */
-    static float limitBonus(float[] m) {
-        return LOOP_TU * p(m, COOLANT_LOOP);
+        return 1f + SINK_GAIN * p(m, THERMAL) * (1f - arg(m, THERMAL));
     }
 
     /** Multiplier on everything the suit draws. */
@@ -255,16 +262,11 @@ public final class SuitModules {
             // a glass that turns light back keeps glare out: the less it passes, the more it rejects
             if (p(m, OPTIC) > 0f && 1f - p(m, OPTIC) >= GLARE_MIN)
                 draw += clear(pl, MobEffects.BLINDNESS, MobEffects.DARKNESS);
-            if (p(m, THERMAL_LINING) > 0f && pl.getTicksFrozen() > 0) {
+            // a thick plate keeps the cold off the skin, while the suit warms it
+            if (p(m, THERMAL) * arg(m, THERMAL) >= LINING_MIN && pl.getTicksFrozen() > 0) {
                 pl.setTicksFrozen(0);
                 draw += LINING_COST;
             }
-        }
-        float shield = p(m, HEAT_SHIELD);
-        if (shield > 0f && (pl.isOnFire() || pl.isInLava())) {
-            if (t % 10 == 0)
-                pl.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, true, false, false));
-            draw += SHIELD_AMPS * shield;
         }
         float magnet = p(m, MAGNET_PICKUP);
         if (magnet > 0f && t % 2 == 0) {
@@ -309,7 +311,7 @@ public final class SuitModules {
         if (src.is(DamageTypeTags.IS_EXPLOSION))
             k -= BLAST_CUT * m[BLAST_SHELL];
         if (src.is(DamageTypeTags.IS_FIRE))
-            k -= FIRE_CUT * m[FIRE_CURTAIN];
+            k -= FIRE_CUT * m[THERMAL] * arg(m, THERMAL);
         if (src.is(DamageTypeTags.IS_PROJECTILE))
             k -= SHOT_CUT * m[CRASH_LINER];
         if (k < 1f)

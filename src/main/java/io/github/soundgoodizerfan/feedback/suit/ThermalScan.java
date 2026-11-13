@@ -86,7 +86,7 @@ final class ThermalScan {
         }
         // 2. living things, by body-heat class
         for (Entity e : near) {
-            if (out.size() >= cap || e.distanceToSqr(p) > rr || !(e instanceof LivingEntity living) || living.isSpectator() || living.isInvisible() && !living.isCurrentlyGlowing())
+            if (out.size() >= cap || e.distanceToSqr(p) > rr || !(e instanceof LivingEntity living) || living.isSpectator() || living instanceof net.minecraft.world.entity.player.Player other && SuitServer.cloaked(other) || living.isInvisible() && !living.isCurrentlyGlowing())
                 continue;
             out.add(new Entry((float) e.getX(), (float) (e.getY() + e.getBbHeight() * 0.5), (float) e.getZ(), MobHeat.get().tu(e), ThermalFeedPayload.MOB,
                     Math.max(e.getBbWidth(), e.getBbHeight() * 0.6f), e.getId()));

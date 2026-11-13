@@ -55,9 +55,8 @@ public final class SuitTuning {
     public static final int THERMAL_SCAN_TICKS = 5, THERMAL_MAX_ENTRIES = 256;
 
     // --- module abilities ---------------------------------------------------------------------------
-    /** Cloak: amps a tick to hold the field, and ticks each refresh of the hidden invisibility lasts. */
+    /** Thermal mask: amps a tick to hold the plate at the ambient. */
     public static final float CLOAK_AMPS = 1.2f;
-    public static final int CLOAK_REFRESH = 10, CLOAK_TICKS = 40;
     /** Jet: amps a tick of thrust, vertical acceleration (blocks per tick squared) at full power, the climb it tops out at, and the hold it gives against a fall. */
     public static final float JET_AMPS = 2.5f, JET_ACCEL = 0.08f, JET_TOP = 0.45f;
     /** Pulses: Eu each costs, ticks before it can fire again, and its reach in blocks at full power. */

@@ -114,19 +114,6 @@ final class SuitPulses {
         }
     }
 
-    /** Held cloak: keeps a hidden, ambient invisibility on the wearer. */
-    static void cloak(ServerPlayer p) {
-        if (p.tickCount % SuitTuning.CLOAK_REFRESH == 0)
-            p.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, SuitTuning.CLOAK_TICKS, 0, true, false, false));
-    }
-
-    /** Takes off the invisibility the cloak lent, leaving a longer or visible one (a potion's) alone. */
-    static void dropCloak(ServerPlayer p) {
-        var inst = p.getEffect(MobEffects.INVISIBILITY);
-        if (inst != null && inst.isAmbient() && !inst.isVisible() && inst.getDuration() <= SuitTuning.CLOAK_TICKS)
-            p.removeEffect(MobEffects.INVISIBILITY);
-    }
-
     /** Held jet: lifts the wearer, thinned by the air, up to a climb rate. Returns the share of full thrust it gave (0 in no air). */
     static float jet(ServerPlayer p, float power, float density) {
         if (density <= 0.05f)

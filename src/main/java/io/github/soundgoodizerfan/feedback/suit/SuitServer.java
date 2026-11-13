@@ -71,6 +71,12 @@ public final class SuitServer {
         return r == null ? 1f : r.carry;
     }
 
+    /** Whether the wearer's thermal mask is on: they show to a thermal view at the ambient, not at their body heat. */
+    static boolean cloaked(net.minecraft.world.entity.player.Player player) {
+        Run r = RUNS.get(player.getUUID());
+        return r != null && r.cloak;
+    }
+
     /** The wearer's upgrade powers while the suit is powered, else null (index by {@link SuitModules} id). */
     static float[] mods(net.minecraft.world.entity.player.Player player) {
         Run r = RUNS.get(player.getUUID());
@@ -159,7 +165,6 @@ public final class SuitServer {
                 ThermalScan.scan(p, Math.min(SuitTuning.THERMAL_MAX_RANGE * SuitModules.lens(rig.mod()),
                         (SuitTuning.THERMAL_BASE_RANGE + SuitTuning.THERMAL_RANGE_PER_CELL * rig.sense()) * SuitModules.lens(rig.mod())));
             if ((on & Ability.CLOAK.bit()) != 0) {
-                SuitPulses.cloak(p);
                 drawn += SuitTuning.CLOAK_AMPS;
                 waste += SuitTuning.CLOAK_AMPS * rig.lossChest();
             }
@@ -174,10 +179,7 @@ public final class SuitServer {
             r.dash = false;
             r.jet = false;
         }
-        boolean cloak = powered && (on & Ability.CLOAK.bit()) != 0;
-        if (!cloak && r.cloak)
-            SuitPulses.dropCloak(p);
-        r.cloak = cloak;
+        r.cloak = powered && (on & Ability.CLOAK.bit()) != 0;
         r.pending += drawn;
         r.draw = drawn;
 
@@ -189,10 +191,10 @@ public final class SuitServer {
             r.coldMult = p.level().getBiome(p.blockPosition()).value().coldEnoughToSnow(p.blockPosition()) ? SuitTuning.COOL_COLD : 1f;
         float mult = p.isInWater() ? SuitTuning.COOL_WATER : p.isInWaterOrRain() ? SuitTuning.COOL_RAIN : r.coldMult;
         heat -= (heat - amb) * SuitTuning.COOL_RATE * mult * SuitModules.cooling(rig.mod());
-        float limit = SuitTuning.LIMIT_TU + SuitModules.limitBonus(rig.mod());
+        float limit = SuitTuning.LIMIT_TU;
         if (!r.cut && heat > limit)
             r.cut = true;
-        else if (r.cut && heat < SuitTuning.RESUME_TU + SuitModules.limitBonus(rig.mod()))
+        else if (r.cut && heat < SuitTuning.RESUME_TU)
             r.cut = false;
         r.heat = heat;
         // the wearer keeps asking for thrust while the servos are cut out: that, and nothing idle, wears the chestplate
