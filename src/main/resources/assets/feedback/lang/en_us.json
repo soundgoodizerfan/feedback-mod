@@ -1083,7 +1083,7 @@
   "tooltip.feedback.reach_probe.empty": "Right-click a machine to link it. Sneak-use in the air to forget it.",
   "tooltip.feedback.reach_probe.linked": "Linked: %s",
   "feedback.jei.info.reach_probe": "Right-click a machine that states its reach (a vessel, boiler, pressure vessel or flywheel) to link it. While you carry the probe, a recipe card in the browser sets that machine's reach beside each temperature, pressure and speed the recipe asks for. The figures are the machine's own spec, printed exactly; how finely you read what the recipe asks for is up to the best instrument you carry. Sneak-use in the air to forget the link.",
-  "feedback.jei.info.light_meter": "A photocell behind a pinhole. Right-click a block to read the light at its face, block light and sky light apart, in steps of one level. A needle pointed into a source far past its range, or knocked in a fall, reads off; set it against a lit lamp and it reads true again.",
+  "feedback.jei.info.light_meter": "A photocell behind a pinhole. Right-click a block to read the light at its face, block light and sky light apart, in steps of two levels. A needle pointed into a source far past its range, or knocked in a fall, reads off; set it against a lit lamp and it reads true again.",
   "item.feedback.copper_bucket": "Copper Bucket",
   "tooltip.feedback.copper_bucket.empty": "Empty. Use on a fluid source to fill it.",
   "tooltip.feedback.copper_bucket.holds": "%s, %s mB",
