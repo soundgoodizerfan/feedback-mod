@@ -344,13 +344,17 @@ public final class GunMotion {
         float[] at = view.hand();
         float a = Mth.clamp(aimPos, 0f, 1f);
         float s = (now - h.shotMs) / 1000f;
+        // The hand rides the recoil out and back in a fraction of the gun's cycle: a fast gun twitches, a slow one heaves. A pulse gun's
+        // own kick is small, so its hand still moves a readable amount (the view's kick is unchanged).
+        float d = Mth.clamp(h.cycleMs / 1000f * 0.9f, 0.1f, 0.32f);
         float k = 0;
-        if (s >= 0 && s < 0.32f)
-            k = s < 0.02f ? s / 0.02f : (float) Math.pow(1 - (s - 0.02f) / 0.3f, 3);
+        if (s >= 0 && s < d)
+            k = s < 0.02f ? s / 0.02f : (float) Math.pow(1 - (s - 0.02f) / (d - 0.02f), 3);
         float calm = ClientSettings.reduceMotion() ? 0.3f : 1f;
-        float scale = Mth.clamp(h.kickDeg, 0.5f, 10f) * (1 - 0.8f * a) * calm;
+        boolean pulse = view.pulse() != null;
+        float scale = Mth.clamp(h.kickDeg, pulse ? 3f : 0.5f, 10f) * (1 - 0.8f * a) * calm;
         float pitch = k * scale * 1.6f;
-        float back = k * Mth.clamp(h.kickDeg * 0.15f, 0.25f, 1.25f) * (1 - 0.7f * a) * calm;
+        float back = k * Mth.clamp(h.kickDeg * 0.15f, pulse ? 0.6f : 0.25f, 1.25f) * (1 - 0.7f * a) * calm;
         float twist = k * h.twist * scale * 0.4f;
 
         float p = reloadPhase(h, now);
