@@ -31,6 +31,18 @@
     },
     "second_barrel": {
       "kind": "bane"
+    },
+    "cutter_head": {
+      "kind": "bane"
+    },
+    "flywheel_disc": {
+      "kind": "bane"
+    },
+    "pistons": {
+      "kind": "bane"
+    },
+    "wheel_rim": {
+      "kind": "bane"
     }
   },
   "mirror": {
@@ -62,6 +74,18 @@
       "kind": "kin_calm"
     },
     "second_barrel": {
+      "kind": "kin_calm"
+    },
+    "cutter_head": {
+      "kind": "kin_calm"
+    },
+    "flywheel_disc": {
+      "kind": "kin_calm"
+    },
+    "pistons": {
+      "kind": "kin_calm"
+    },
+    "wheel_rim": {
       "kind": "kin_calm"
     }
   },

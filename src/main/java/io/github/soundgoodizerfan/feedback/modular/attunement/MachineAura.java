@@ -61,6 +61,9 @@ public final class MachineAura {
     private static final int CHUNKS = 2;
     /** Blocks an animal is drawn or driven from per level, and the most; blocks a hush reaches; blocks a ring is heard per level. */
     private static final double LURE_PER_LEVEL = 3, LURE_MAX = 12, HUSH_REACH = 8, RING_PER_LEVEL = 6;
+    /** Blocks around a machine whose creatures an aura reaches; damage a level of bane does each read. Placeholder. */
+    private static final double CREATURE_REACH = 3.0;
+    private static final float BANE_DAMAGE_PER_LEVEL = 1.5f;
     /** Crop radius cap. */
     private static final int CROP_MAX = 2;
 
@@ -100,7 +103,7 @@ public final class MachineAura {
             }
             for (BlockEntity be : seen.values()) {
                 Map<String, Integer> levels = levelsOf(be);
-                if (!levels.isEmpty())
+                if (!levels.isEmpty() || be instanceof Headed)
                     act(level, be, levels, period);
             }
         }
@@ -126,8 +129,35 @@ public final class MachineAura {
         int mend = levels.getOrDefault("mend", 0);
         if (mend > 0)
             mend(level, be, mend);
-        if (be instanceof Headed headed && !headed.getHead().isEmpty())
+        creatures(level, pos, levels);
+        if (be instanceof Headed headed && !headed.getHead().isEmpty()) {
             mendHead(level, pos, headed.getHead().get());
+            // A seated head's own kinds are read every time: it can be swapped without the machine being rebuilt.
+            Map<String, Integer> head = new HashMap<>();
+            for (MaterialPerks.Attunement a : MaterialPerks.attunements(headed.getHead().get()))
+                head.merge(a.kind(), a.level(), Integer::sum);
+            creatures(level, pos, head);
+        }
+    }
+
+    /**
+     * Where a machine part meets a creature standing near it: {@code bane} cuts undead and arthropods within a few blocks, {@code kin_calm} makes
+     * undead nearby lose interest, {@code mark} marks hostiles nearby (they glow and the next blow on one does extra).
+     */
+    private static void creatures(ServerLevel level, BlockPos pos, Map<String, Integer> levels) {
+        int bane = levels.getOrDefault("bane", 0), calm = levels.getOrDefault("kin_calm", 0), mark = levels.getOrDefault("mark", 0);
+        if (bane + calm + mark == 0)
+            return;
+        var box = new net.minecraft.world.phys.AABB(pos).inflate(CREATURE_REACH);
+        for (net.minecraft.world.entity.LivingEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, box, x -> x instanceof Enemy)) {
+            boolean quarry = e.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD) || e.getType().is(net.minecraft.tags.EntityTypeTags.ARTHROPOD);
+            if (bane > 0 && quarry)
+                e.hurt(level.damageSources().generic(), BANE_DAMAGE_PER_LEVEL * bane);
+            if (calm > 0 && e.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD) && e instanceof Mob m)
+                m.setTarget(null);
+            if (mark > 0)
+                MarkKinds.mark(e, mark);
+        }
     }
 
     private static void draw(ServerLevel level, BlockPos pos, int lure, int scare) {

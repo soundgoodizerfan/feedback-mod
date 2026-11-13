@@ -42,17 +42,21 @@ public final class MarkKinds {
     }
 
     public static void register() {
-        onStrike("mark", (event, a) -> {
-            LivingEntity victim = event.getEntity();
+        onStrike("mark", (event, a) -> mark(event.getEntity(), a.level()));
+    }
+
+    /** Marks {@code victim}: it glows, and the next blow on it, from anyone, does extra. A machine's marking face does this to what stands near it. */
+    public static void mark(LivingEntity victim, int level) {
+        {
             CompoundTag data = victim.getPersistentData();
             long now = victim.level().getGameTime();
             // Several marking parts on one blow add up; a fresh blow replaces an old mark.
             float have = data.getLong(SET) == now ? data.getFloat(BONUS) : 0f;
             data.putLong(UNTIL, now + MARK_TICKS);
             data.putLong(SET, now);
-            data.putFloat(BONUS, Math.min(MARK_BONUS_CAP, have + a.level() * MARK_BONUS_PER_LEVEL));
+            data.putFloat(BONUS, Math.min(MARK_BONUS_CAP, have + level * MARK_BONUS_PER_LEVEL));
             victim.addEffect(new MobEffectInstance(MobEffects.GLOWING, MARK_TICKS, 0, false, false));
-        });
+        }
     }
 
     /** The next blow on a marked target, from anyone, does extra and spends the mark. */

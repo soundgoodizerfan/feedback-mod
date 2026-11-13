@@ -23,6 +23,18 @@
     },
     "lit_reticle": {
       "kind": "mark"
+    },
+    "cutter_head": {
+      "kind": "mark"
+    },
+    "flywheel_disc": {
+      "kind": "mark"
+    },
+    "pistons": {
+      "kind": "mark"
+    },
+    "wheel_rim": {
+      "kind": "mark"
     }
   },
   "mirror": {
