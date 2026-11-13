@@ -189,6 +189,27 @@
     },
     "reinforcing_bands": {
       "kind": "soak"
+    },
+    "pump_impeller": {
+      "kind": "soak"
+    },
+    "volute": {
+      "kind": "soak"
+    },
+    "wheel_rim": {
+      "kind": "soak"
+    },
+    "rim_ring": {
+      "kind": "soak"
+    },
+    "flywheel_disc": {
+      "kind": "soak"
+    },
+    "rim_band": {
+      "kind": "soak"
+    },
+    "flywheel_bearing": {
+      "kind": "soak"
     }
   },
   "starter": true,

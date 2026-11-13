@@ -34,7 +34,10 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * makes with two water sources and a bucket. Lava does not renew, so a pump will not make it
  * from nothing; that is the fluid's own property, not a check on which fluid it is.
  */
-public class PumpBlockEntity extends RotationNode {
+public class PumpBlockEntity extends RotationNode implements io.github.soundgoodizerfan.feedback.machine.Figured {
+
+    /** Condition a pump loses per tick turning dry or against a closed line, per unit of speed share, and the least it wears to. Placeholder. */
+    private static final float MISUSE_WEAR_PER_TICK = 0.0004f, CONDITION_FLOOR = 0.4f;
 
     /** Fraction of an mB owed from earlier ticks, so a slow pump still moves something. */
     private float owed;
@@ -76,10 +79,28 @@ public class PumpBlockEntity extends RotationNode {
                 : new Su(figures.get("Load", PetrochemTuning.PUMP_LOAD_SU.value()));
     }
 
+    @Override
+    public FigureStore figureStore() {
+        return figures;
+    }
+
+    /** A worn impeller moves less per turn. */
+    private float condition() {
+        return figures.get("Condition", 1f);
+    }
+
+    /** Turning with nothing to move or nowhere to put it is misuse: the impeller cavitates or labours against the closed line. */
+    private void misuse() {
+        if (condition() > CONDITION_FLOOR && Math.abs(getRpm().value()) > io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning.STOPPED_RPM_THRESHOLD.value()) {
+            figures.put("Condition", Math.max(CONDITION_FLOOR, condition() - MISUSE_WEAR_PER_TICK * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(figures.design())));
+            setChanged();
+        }
+    }
+
     public void tickServer() {
         if (level == null)
             return;
-        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", PetrochemTuning.PUMP_MB_PER_RPM);
+        owed += Math.abs(getRpm().value()) * figures.get("MbPerRpm", PetrochemTuning.PUMP_MB_PER_RPM) * condition();
         int amount = (int) owed;
         if (amount <= 0)
             return;
@@ -88,8 +109,10 @@ public class PumpBlockEntity extends RotationNode {
         Direction out = getBlockState().getValue(PumpBlock.FACING);
         IFluidHandler target = level.getCapability(Capabilities.FluidHandler.BLOCK,
                 worldPosition.relative(out), out.getOpposite());
-        if (target == null)
+        if (target == null) {
+            misuse();
             return;
+        }
 
         BlockPos behind = worldPosition.relative(out.getOpposite());
         IFluidHandler source = level.getCapability(Capabilities.FluidHandler.BLOCK, behind, out);
@@ -99,10 +122,14 @@ public class PumpBlockEntity extends RotationNode {
             if (fits > 0)
                 target.fill(source.drain(offered.copyWithAmount(fits), IFluidHandler.FluidAction.EXECUTE),
                         IFluidHandler.FluidAction.EXECUTE);
+            else
+                misuse();
             return;
         }
         FluidState pool = level.getFluidState(behind);
         if (pool.isSource() && pool.canConvertToSource(level, behind))
             target.fill(new FluidStack(pool.getType(), amount), IFluidHandler.FluidAction.EXECUTE);
+        else
+            misuse();
     }
 }

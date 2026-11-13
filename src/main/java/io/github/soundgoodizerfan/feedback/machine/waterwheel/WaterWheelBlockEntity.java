@@ -24,7 +24,10 @@ import net.minecraft.world.level.material.FluidState;
  * Speed depends on how many sides are being driven, which makes siting the wheel a real
  * decision rather than a placement. Placeholder RPM -- the slice fixes Su, never speed.
  */
-public class WaterWheelBlockEntity extends RotationNode {
+public class WaterWheelBlockEntity extends RotationNode implements io.github.soundgoodizerfan.feedback.machine.Figured {
+
+    /** Condition a wheel loses per tick held still against moving water, and the least it wears to. Placeholder. */
+    private static final float STALL_WEAR_PER_TICK = 0.0002f, CONDITION_FLOOR = 0.4f;
 
 
     private final FigureStore figures = new FigureStore();
@@ -70,9 +73,24 @@ public class WaterWheelBlockEntity extends RotationNode {
         return flowingSides;
     }
 
+    @Override
+    public FigureStore figureStore() {
+        return figures;
+    }
+
+    private float condition() {
+        return figures.get("Condition", 1f);
+    }
+
     public void tickServer() {
         if (level == null)
             return;
+        // Water pressing on blades that cannot turn (an overloaded or locked axle) is force that cannot go into the work: it goes into the wheel.
+        if (flowingSides > 0 && condition() > CONDITION_FLOOR
+                && Math.abs(getRpm().value()) <= io.github.soundgoodizerfan.feedback.core.rotation.RotationTuning.STOPPED_RPM_THRESHOLD.value()) {
+            figures.put("Condition", Math.max(CONDITION_FLOOR, condition() - STALL_WEAR_PER_TICK * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(figures.design())));
+            setChanged();
+        }
         if (--ticksUntilFlowCheck > 0)
             return;
         ticksUntilFlowCheck = MachineTuning.WATER_WHEEL_FLOW_CHECK_INTERVAL;
@@ -107,7 +125,7 @@ public class WaterWheelBlockEntity extends RotationNode {
 
     @Override
     public Rpm getGeneratedRpm() {
-        return new Rpm(flowingSides * figures.get("RpmPerFlow", MachineTuning.WATER_WHEEL_RPM_PER_FLOW.value()));
+        return new Rpm(flowingSides * figures.get("RpmPerFlow", MachineTuning.WATER_WHEEL_RPM_PER_FLOW.value()) * condition());
     }
 
     @Override

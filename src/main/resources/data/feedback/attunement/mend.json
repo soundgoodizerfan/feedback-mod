@@ -187,6 +187,27 @@
     },
     "cylinder_head": {
       "kind": "mend"
+    },
+    "pump_impeller": {
+      "kind": "mend"
+    },
+    "volute": {
+      "kind": "mend"
+    },
+    "wheel_rim": {
+      "kind": "mend"
+    },
+    "rim_ring": {
+      "kind": "mend"
+    },
+    "flywheel_disc": {
+      "kind": "mend"
+    },
+    "rim_band": {
+      "kind": "mend"
+    },
+    "flywheel_bearing": {
+      "kind": "mend"
     }
   },
   "mirror": {

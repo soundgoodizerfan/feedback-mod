@@ -79,7 +79,7 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
         }
         float over = Math.abs(getRpm().value()) / rim - 1f;
         if (over > 0f && condition > FTuning.FLYWHEEL_CONDITION_FLOOR) {
-            condition = Math.max(FTuning.FLYWHEEL_CONDITION_FLOOR, condition - FTuning.FLYWHEEL_WEAR_PER_OVER * over);
+            condition = Math.max(FTuning.FLYWHEEL_CONDITION_FLOOR, condition - FTuning.FLYWHEEL_WEAR_PER_OVER * over * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(figures.design()));
             setChanged();
         }
     }
@@ -87,6 +87,12 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
     @Override
     public float getCondition() {
         return condition;
+    }
+
+    /** Closes {@code by} of the rim's strain (an attuned part's mend, {@code MachineAura}). */
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
     }
 
     /** A turning flywheel is working and cannot be measured, like any machine (philosophy 10). */
