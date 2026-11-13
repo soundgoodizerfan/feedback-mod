@@ -96,6 +96,21 @@ public final class ToolAbilities {
         return Math.round((n == 0 ? 0f : sum / n) + shaft);
     }
 
+    /**
+     * The pawl strength (0..1) of the ratchet fitted to {@code driver}, from its material's strength; 0 when it has no driver bit or no ratchet
+     * (a plain screwdriver is regripped every pull). The torque game takes it to hold torque between pulls and to slip under a hard pull.
+     */
+    public static float ratchet(ItemStack driver) {
+        var design = ModularStacks.design(driver);
+        var part = design == null || face(driver, "driver_bit") == null ? null : design.part("W");
+        var material = part == null ? null : io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(part.material());
+        if (material == null)
+            return 0f;
+        return Math.max(0.01f, io.github.soundgoodizerfan.feedback.combat.gear.GearTuning.saturate(
+                io.github.soundgoodizerfan.feedback.modular.bake.ModularBake.strength(material),
+                io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.RATCHET_STRENGTH_HALF));
+    }
+
     /** The wear points a craft costs {@code driver}, from the base {@code wear}: a long shaft twists and tires. */
     public static int driverWear(ItemStack driver, int wear) {
         Face bit = face(driver, "driver_bit");

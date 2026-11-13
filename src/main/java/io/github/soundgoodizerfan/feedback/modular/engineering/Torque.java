@@ -27,6 +27,17 @@ public final class Torque {
         return 0.56f + 0.18f * ((h & 0xFFFF) / 65535f);
     }
 
+    /** As {@link #centre(int, int)}, its drift between pulls cut by {@code steady} (0 none, 1 a fixed band): a ratchet holds the work still. */
+    public static float centre(int seed, int pull, float steady) {
+        float mid = 0.65f;
+        return mid + (centre(seed, pull) - mid) * (1f - steady);
+    }
+
+    /** The torque a pawl of {@code strength} (0..1) holds to: past it the pawl slips over a tooth and the pull stops climbing. */
+    public static float slip(float strength) {
+        return ModularTuning.RATCHET_SLIP_BASE + ModularTuning.RATCHET_SLIP_GAIN * Math.max(0f, Math.min(1f, strength));
+    }
+
     /** Half the width of the band for a fastener of {@code quality} (1 to 5). */
     public static float half(int quality) {
         return ModularTuning.TORQUE_BAND_BASE + ModularTuning.TORQUE_BAND_PER_QUALITY * Math.max(1, Math.min(5, quality));

@@ -58,6 +58,7 @@ final class TorqueScreen extends Screen {
     private Component pullText = Component.empty();
     private int px, py, bx, plateTop, sx0, sy0, ticks, phase = READY, pull, settle, hold, popGrade = -1, popAge, wasZone;
     private long doneAt;
+    private final float pawl;
     private float centre, half, stripEnd, torque, angle, angleV, sink, ghost = -1f, partial, finalScore, ratchet;
     private boolean sent, held;
     private int mouseX, mouseY;
@@ -69,6 +70,7 @@ final class TorqueScreen extends Screen {
         this.rounds = Math.max(1, Math.min(ModularTuning.TORQUE_MAX_PULLS, session.rounds()));
         this.quality = Mth.clamp(session.quality(), 1, 5);
         this.seed = containerId * 31 + rounds;
+        this.pawl = session.data().startsWith("ratchet=") ? Float.parseFloat(session.data().substring(8)) : 0f;
         this.scores = new float[rounds];
         this.rgb = fastenerColour(menu);
         for (int i = 0; i < 5; i++) {
@@ -91,10 +93,11 @@ final class TorqueScreen extends Screen {
     }
 
     private void newPull() {
-        centre = Torque.centre(seed, pull);
+        centre = pawl > 0f ? Torque.centre(seed, pull, ModularTuning.RATCHET_STEADY) : Torque.centre(seed, pull);
         half = Torque.half(quality);
         stripEnd = Torque.stripEnd(centre, half);
-        torque = 0f;
+        // A ratchet keeps part of the last pull's torque: no regrip, the pull starts wound, always short of the band.
+        torque = pawl > 0f && pull > 0 ? Math.min(centre - half - 0.02f, Math.max(0f, ghost) * ModularTuning.RATCHET_CARRY) : 0f;
         sink = 0f;
         angleV = 0f;
         wasZone = 0;
@@ -199,7 +202,7 @@ final class TorqueScreen extends Screen {
                 GuiSkin.play(SoundEvents.ANVIL_LAND, 0.8f, 0.7f);
         } else {
             phase = SETTLE;
-            settle = SETTLE_TICKS;
+            settle = pawl > 0f ? SETTLE_TICKS / 2 : SETTLE_TICKS;
         }
     }
 
@@ -217,6 +220,12 @@ final class TorqueScreen extends Screen {
         if (phase == WIND) {
             float before = torque;
             torque += 1f / ModularTuning.TORQUE_WIND_TICKS;
+            // A weak pawl slips over a tooth under a hard pull: the torque stops climbing and clicks.
+            if (pawl > 0f && torque > Torque.slip(pawl)) {
+                torque = Torque.slip(pawl);
+                if (ticks % 3 == 0)
+                    GuiSkin.play(SoundEvents.CHAIN_STEP, 1.6f, 0.5f);
+            }
             float seat = Math.max(0.1f, centre - half * 0.6f);
             sink = Math.min(SINK, SINK * torque / seat);
             // The head turns fast while the thread runs free and slower as it binds; in the strip zone it jerks.

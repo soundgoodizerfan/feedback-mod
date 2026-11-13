@@ -247,7 +247,9 @@ public final class EngineeringAssembly {
         if (driver >= 0)
             for (int extra = ToolAbilities.driverWear(tools.get(driver), 1); extra > 1; extra--)
                 toWear.add(driver);
-        String data = "";
+        // The torque game is told the screwdriver's ratchet (empty for none).
+        String data = driver >= 0 && EngineeringMinigames.TORQUE.toString().equals(game) && ToolAbilities.ratchet(tools.get(driver)) > 0f
+                ? "ratchet=" + ToolAbilities.ratchet(tools.get(driver)) : "";
         if (rounds > 0 && EngineeringMinigames.FITTING.toString().equals(game)) {
             String[] letters = made.get().role();
             List<Integer> slots = new ArrayList<>();

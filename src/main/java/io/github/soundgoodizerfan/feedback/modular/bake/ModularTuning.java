@@ -773,6 +773,12 @@ public final class ModularTuning {
     public static final float TORQUE_STRIP = 0.12f;
     /** Torque minigame: ticks of holding to wind the gauge from empty to full (about two seconds). */
     public static final int TORQUE_WIND_TICKS = 42;
+    /** Ratchet (a screwdriver's pawl): the pawl material's strength at which it holds half of what a perfect one would (the saturating curve's half point). */
+    public static final float RATCHET_STRENGTH_HALF = 4f;
+    /** Ratchet: the torque (share of the gauge) a pawl of no strength slips at, and what a perfect one adds; past it the pawl clicks over and the torque stops climbing. */
+    public static final float RATCHET_SLIP_BASE = 0.4f, RATCHET_SLIP_GAIN = 0.6f;
+    /** Ratchet: the share of the band's drift between pulls a ratchet takes out (the steadier band), and the share of the last pull's torque it keeps for the next (no regrip). */
+    public static final float RATCHET_STEADY = 0.6f, RATCHET_CARRY = 0.5f;
     /** Rivet (upset) minigame: the most strikes one assembly plays (one per rivet spent). */
     public static final int UPSET_MAX_STRIKES = 8;
     /** Rivet minigame: half the band width for a quality-0 rivet, and what each quality level adds. */

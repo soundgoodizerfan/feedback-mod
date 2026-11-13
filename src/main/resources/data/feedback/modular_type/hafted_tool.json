@@ -342,6 +342,16 @@
       "litres": 0.03,
       "bulk": 1,
       "mount": "head"
+    },
+    "W": {
+      "name": "ratchet",
+      "class": "mount",
+      "forms": [
+        "turned_rod"
+      ],
+      "litres": 0.02,
+      "bulk": 1,
+      "mount": "butt"
     }
   },
   "patterns": [
