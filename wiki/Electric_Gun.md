@@ -85,7 +85,7 @@ The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fi
   - **Arc** (an arc fork lens): a jagged branching bolt that chains between bodies and arcs to wet targets.
   - **Plasma** (a core breech): a slow glowing blob that splashes where it lands.
 
-A coin flipped with [Coin flip](Skills.md#observation) redirects a pulse without costing it any damage, the pulse holds in the struck coin for about a second with a ringing note before it goes on, and a **cylinder** pulse hits harder when redirected.
+A coin flipped with [Coin flip](Skills.md#observation) redirects a pulse without costing it any damage, the pulse holds in the struck coin for a blink with a ringing note before it goes on, and a **cylinder** pulse hits harder when redirected.
 
 Skills and casts that need a loaded gun (quick draw, walking fire, Overwatch, Snap Volley and the like) work with it, counting its charge as shots ready.
 

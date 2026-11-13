@@ -43,8 +43,8 @@ public final class GunFuTuning {
     /** Coin Flip: ticks the coin is in the air, its strike radius (blocks), launch speed and gravity (blocks per tick, per tick squared). */
     public static final int COIN_TICKS = 14;
     public static final double COIN_RADIUS = 0.6, COIN_UP = 0.5, COIN_GRAVITY = 0.07;
-    /** Ticks a shot holds at a struck coin (ringing) before it goes on to the next coin or target. */
-    public static final int COIN_HOLD_TICKS = 20;
+    /** Ticks a shot holds at a struck coin (ringing) before it goes on to the next coin or target: about the white flash of a parry (70 ms). */
+    public static final int COIN_HOLD_TICKS = 2;
     /** STAND-IN: mB of a coin (its mass is this times the material's density). */
     public static final float COIN_MB = 16f;
     /** Coin Flip: blocks from the struck coin within which a rebound may take a target (Round the Corner triples it). */
