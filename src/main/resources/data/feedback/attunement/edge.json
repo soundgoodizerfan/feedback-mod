@@ -19,6 +19,10 @@
     },
     "second_barrel": {
       "kind": "extra_damage"
+    },
+    "class:working_face": {
+      "kind": "extra_damage",
+      "flaw": 1
     }
   },
   "mirror": {

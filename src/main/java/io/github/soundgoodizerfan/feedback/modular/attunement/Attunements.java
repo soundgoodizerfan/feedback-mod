@@ -33,6 +33,10 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
     public static final String DIRECTORY = "attunement";
     /** The key an attuned effect has in a part's {@code measures.attuned}: {@code attuned.<path of the effect id>}, the level as its value (negative when it took on the mirror side). */
     public static final String PREFIX = "attuned.";
+    /** A row key naming a role class instead of a role: {@code class:working_face} acts on every role that declares that class ({@code ModularType.Role#cls}), tool or machine. */
+    public static final String CLASS_KEY = "class:";
+    /** The role classes: what a part does, whatever it is part of. Working face (blade, head, saw, impeller), housing (plate, lining, shell, casing), mount (grip, handle, shaft, bearing). */
+    public static final java.util.List<String> CLASSES = java.util.List.of("working_face", "housing", "mount");
 
     /**
      * What an effect does on one role.
@@ -84,6 +88,17 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
         public Behaviour on(String role, boolean negative) {
             return (negative ? mirror : roles).get(role);
         }
+
+        /** As {@link #on(String, boolean)}, a row for the role's own name winning, else the row for its class ({@code class:<cls>}); {@code cls} empty for none. */
+        public Behaviour on(String role, String cls, boolean negative) {
+            Behaviour b = on(role, negative);
+            return b != null || cls == null || cls.isEmpty() ? b : on(CLASS_KEY + cls, negative);
+        }
+
+        /** Whether the effect does anything (either side) on a role of this name and class. */
+        public boolean acts(String role, String cls) {
+            return on(role, cls, false) != null || on(role, cls, true) != null;
+        }
     }
 
     private static final Attunements INSTANCE = new Attunements();
@@ -126,11 +141,11 @@ public final class Attunements extends SimpleJsonResourceReloadListener {
      * Flaws the attunements on {@code part} add to it when baked in a role called {@code roleName}.
      * Read at bake, so attuning a part before it goes into a tool is what counts.
      */
-    public static int flawShift(ModularDesign.Part part, String roleName) {
+    public static int flawShift(ModularDesign.Part part, String roleName, String cls) {
         int shift = 0;
         for (Map.Entry<String, Float> e : part.measures().attuned().entrySet()) {
             Effect effect = byKey(e.getKey());
-            Behaviour b = effect == null ? null : effect.on(roleName, e.getValue() < 0f);
+            Behaviour b = effect == null ? null : effect.on(roleName, cls, e.getValue() < 0f);
             if (b != null)
                 shift += b.flaw() * Math.abs(Math.round(e.getValue()));
         }

@@ -174,13 +174,21 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
             // The "On a ...:" lead in the skin's gold, the description in white, so the two read apart.
             // "Anything": the roles cover every role of every non-gun type they appear in (a charge's casing is no tool part).
             // A type's roles are keyed by pattern letter; the row names them by role name.
+            // A row key `class:<c>` stands for every role declaring that class: it counts as covering them and prints as the class.
             java.util.Set<String> all = new java.util.HashSet<>();
-            ModularTypes.known().values().stream().filter(type -> type.family() != ModularType.Family.GUN
-                    && type.roles().values().stream().anyMatch(r -> names.contains(r.name())))
-                    .forEach(type -> type.roles().values().forEach(r -> all.add(r.name())));
-            java.util.List<String> missing = all.stream().filter(n -> !names.contains(n)).sorted().toList();
+            java.util.Set<String> covered = new java.util.HashSet<>(names);
+            ModularTypes.known().values().stream().filter(type -> type.family() != ModularType.Family.GUN)
+                    .forEach(type -> type.roles().values().forEach(r -> {
+                        boolean byClass = !r.cls().isEmpty() && names.contains(Attunements.CLASS_KEY + r.cls());
+                        if (byClass)
+                            covered.add(r.name());
+                        if (byClass || names.contains(r.name()))
+                            type.roles().values().forEach(o -> all.add(o.name()));
+                    }));
+            java.util.List<String> missing = all.stream().filter(n -> !covered.contains(n)).sorted().toList();
             java.util.function.Function<java.util.Collection<String>, String> joined = c -> c.stream()
-                    .map(n -> Component.translatable("modular.feedback.role." + n).getString())
+                    .map(n -> Component.translatable(n.startsWith(Attunements.CLASS_KEY)
+                            ? "modular.feedback.roleclass." + n.substring(Attunements.CLASS_KEY.length()) : "modular.feedback.role." + n).getString())
                     .collect(java.util.stream.Collectors.joining("/"));
             MutableComponent lead = missing.isEmpty() ? Component.translatable("gui.feedback.enchant.effect.any")
                     : missing.size() * 3 <= names.size() ? Component.translatable("gui.feedback.enchant.effect.but", joined.apply(missing))
@@ -191,14 +199,14 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
 
     /** Whether the part in the slot has a role the effect does nothing on; false when the part's roles are not known. */
     private boolean inert(Attunements.Effect e) {
-        java.util.Set<String> roles = menu.roles();
-        return !roles.isEmpty() && roles.stream().noneMatch(r -> e.on(r, false) != null || e.on(r, true) != null);
+        java.util.Map<String, String> roles = menu.roles();
+        return !roles.isEmpty() && roles.entrySet().stream().noneMatch(r -> e.acts(r.getKey(), r.getValue()));
     }
 
     /** What the effect does on this part, from the first role the part could fill that it acts on; null when nothing. */
     private Component behaviour(Attunements.Effect e) {
-        for (String role : menu.roles()) {
-            Attunements.Behaviour b = e.on(role, false);
+        for (var role : menu.roles().entrySet()) {
+            Attunements.Behaviour b = e.on(role.getKey(), role.getValue(), false);
             if (b != null)
                 return Component.translatable("tooltip.feedback.attuned.desc." + b.kind());
         }

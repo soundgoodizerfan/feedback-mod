@@ -9,6 +9,7 @@
   "roles": {
     "F": {
       "name": "frame",
+      "class": "mount",
       "forms": [
         "machine_frame"
       ],
@@ -44,6 +45,7 @@
     },
     "W": {
       "name": "machine_winding",
+      "class": "working_face",
       "forms": [
         "machine_winding"
       ],
@@ -79,6 +81,7 @@
     },
     "C": {
       "name": "core",
+      "class": "working_face",
       "forms": [
         "ingot"
       ],
@@ -87,6 +90,7 @@
     },
     "H": {
       "name": "housing",
+      "class": "housing",
       "forms": [
         "machine_housing"
       ],
@@ -102,6 +106,7 @@
     },
     "B": {
       "name": "bearing",
+      "class": "mount",
       "forms": [
         "machine_bearing"
       ],

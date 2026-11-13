@@ -792,7 +792,7 @@ public final class ModularBake {
                 type.roles().get(type.wearRole()).section(wearPart)
                 * (setPart == null ? 1f : type.roles().get(setPart.role()).section(setPart)),
                 // An attunement can cost the part toughness (keen) or buy it back (ward on a plate): flaws, as forging leaves them.
-                Math.max(0, Math.min(ForgeRhythm.MAX_FLAW, wearPart.flaw() + Attunements.flawShift(wearPart, type.roles().get(type.wearRole()).name())
+                Math.max(0, Math.min(ForgeRhythm.MAX_FLAW, wearPart.flaw() + Attunements.flawShift(wearPart, type.roles().get(type.wearRole()).name(), type.roles().get(type.wearRole()).cls())
                         // Coarse file marks left unpolished are stress risers: one flaw worse.
                         + (wearPart.measures().state(Filing.MARKS, 0f) >= ModularTuning.FILE_MARKS_FLAW_AT ? 1 : 0))));
         Material coatMetal = coat == null ? null : materials.get(coat.metal());

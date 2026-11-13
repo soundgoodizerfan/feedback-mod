@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "flywheel_disc",
+      "class": "working_face",
       "forms": [
         "flywheel_disc"
       ],
@@ -58,6 +59,7 @@
     },
     "B": {
       "name": "rim_band",
+      "class": "housing",
       "forms": [
         "rod"
       ],
@@ -67,6 +69,7 @@
     },
     "G": {
       "name": "flywheel_bearing",
+      "class": "mount",
       "forms": [
         "nugget"
       ],

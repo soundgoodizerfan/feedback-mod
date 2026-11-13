@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "store_core",
+      "class": "working_face",
       "forms": [
         "store_core"
       ],
@@ -70,6 +71,7 @@
     },
     "I": {
       "name": "lagging",
+      "class": "housing",
       "forms": [
         "*_carpet"
       ],

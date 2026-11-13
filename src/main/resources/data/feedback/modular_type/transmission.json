@@ -9,6 +9,7 @@
   "roles": {
     "G": {
       "name": "gear_set",
+      "class": "working_face",
       "forms": [
         "gear_set"
       ],
@@ -98,6 +99,7 @@
     },
     "S": {
       "name": "synchro",
+      "class": "working_face",
       "forms": [
         "synchro_ring"
       ],
@@ -142,6 +144,7 @@
     },
     "H": {
       "name": "gearbox_case",
+      "class": "housing",
       "forms": [
         "gearbox_case"
       ],

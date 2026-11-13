@@ -227,7 +227,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             boolean misfire = ignition > design.compression().misfireAbove;
             power = misfire ? 0f : factor;
             if (!misfire && ignition < design.compression().knockBelow) {
-                condition = Math.max(VehicleTuning.ENGINE_CONDITION_FLOOR, condition - VehicleTuning.ENGINE_KNOCK_WEAR_PER_TICK * opening());
+                condition = Math.max(VehicleTuning.ENGINE_CONDITION_FLOOR, condition - VehicleTuning.ENGINE_KNOCK_WEAR_PER_TICK * opening() * io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.wearShare(build));
                 setChanged();
                 if (level.getGameTime() % 10 == 0)
                     level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ANVIL_HIT,

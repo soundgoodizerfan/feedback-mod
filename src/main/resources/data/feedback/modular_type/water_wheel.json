@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "wheel_rim",
+      "class": "working_face",
       "forms": [
         "wheel_rim"
       ],
@@ -51,6 +52,7 @@
     },
     "R": {
       "name": "rim_ring",
+      "class": "mount",
       "forms": [
         "plate"
       ],

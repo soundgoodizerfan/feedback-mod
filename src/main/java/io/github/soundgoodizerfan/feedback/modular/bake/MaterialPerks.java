@@ -83,8 +83,12 @@ public final class MaterialPerks {
      * whole tool is called. A role the effect has no entry for does nothing. The level is the magnitude; the side is already in the kind.
      */
     public static java.util.List<Attunement> attunements(ItemStack stack) {
+        return attunements(ModularStacks.design(stack));
+    }
+
+    /** The same for a bare design: a placed machine keeps the design it was built from, not the stack. */
+    public static java.util.List<Attunement> attunements(ModularDesign design) {
         java.util.List<Attunement> out = new java.util.ArrayList<>();
-        ModularDesign design = ModularStacks.design(stack);
         ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
             return out;
@@ -95,7 +99,7 @@ public final class MaterialPerks {
                 continue;
             for (Map.Entry<String, Float> e : part.measures().attuned().entrySet()) {
                 Attunements.Effect effect = Attunements.byKey(e.getKey());
-                Attunements.Behaviour b = effect == null ? null : effect.on(role.name(), e.getValue() < 0f);
+                Attunements.Behaviour b = effect == null ? null : effect.on(role.name(), role.cls(), e.getValue() < 0f);
                 if (b != null && !b.kind().isEmpty())
                     out.add(new Attunement(b.kind(), Math.abs(Math.round(e.getValue())), m));
             }

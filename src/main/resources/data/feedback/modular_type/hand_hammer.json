@@ -9,6 +9,7 @@
   "roles": {
     "H": {
       "name": "head",
+      "class": "working_face",
       "forms": [
         "head_blank"
       ],
@@ -41,6 +42,7 @@
     },
     "S": {
       "name": "handle",
+      "class": "mount",
       "forms": [
         "stick",
         "rod",
@@ -52,6 +54,7 @@
     },
     "B": {
       "name": "binding",
+      "class": "mount",
       "forms": [
         "tool_binding"
       ],
@@ -89,6 +92,7 @@
     },
     "T": {
       "name": "tip",
+      "class": "working_face",
       "forms": [
         "tool_tip"
       ],

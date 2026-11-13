@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "boiler_shell",
+      "class": "housing",
       "forms": [
         "boiler_shell"
       ],
@@ -76,6 +77,7 @@
     },
     "B": {
       "name": "reinforcing_bands",
+      "class": "housing",
       "forms": [
         "rod"
       ],

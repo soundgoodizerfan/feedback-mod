@@ -41,6 +41,19 @@ public final class WardKinds {
         return n;
     }
 
+    /**
+     * The share of a machine's wear that gets through its soaking parts: {@code 1 / (levels + 1)}, the mean of {@link #soak}'s odds,
+     * for wear that is a fraction of condition and not whole points. {@code design} is what the machine was built from (null: none).
+     * Misuse still wears; this only turns some of it away.
+     */
+    public static float wearShare(io.github.soundgoodizerfan.feedback.modular.type.ModularDesign design) {
+        int n = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
+            if (a.kind().equals("soak"))
+                n += a.level();
+        return 1f / (n + 1);
+    }
+
     public static void register() {
     }
 }

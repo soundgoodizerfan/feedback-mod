@@ -73,6 +73,7 @@
     },
     "S": {
       "name": "handle",
+      "class": "mount",
       "forms": [
         "stick",
         "bone"

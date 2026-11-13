@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "crank_arm",
+      "class": "mount",
       "forms": [
         "crank_arm"
       ],
@@ -44,6 +45,7 @@
     },
     "G": {
       "name": "crank_flywheel",
+      "class": "working_face",
       "forms": [
         "plate"
       ],

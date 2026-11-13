@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "magnet_core",
+      "class": "working_face",
       "forms": [
         "magnet_core"
       ],
@@ -71,6 +72,7 @@
     },
     "Y": {
       "name": "yoke",
+      "class": "housing",
       "forms": [
         "plate"
       ],

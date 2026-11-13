@@ -10,6 +10,7 @@
   "roles": {
     "B": {
       "name": "blade",
+      "class": "working_face",
       "forms": [
         "shears_blade"
       ],
@@ -72,6 +73,7 @@
     },
     "P": {
       "name": "pivot",
+      "class": "mount",
       "forms": [
         "nugget",
         "rod",

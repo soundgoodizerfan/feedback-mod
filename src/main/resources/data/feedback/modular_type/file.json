@@ -9,6 +9,7 @@
   "roles": {
     "H": {
       "name": "head",
+      "class": "working_face",
       "forms": [
         "file_head"
       ],
@@ -76,6 +77,7 @@
     },
     "S": {
       "name": "handle",
+      "class": "mount",
       "forms": [
         "stick",
         "rod",

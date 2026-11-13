@@ -102,19 +102,19 @@ public class EnchantMenu extends AbstractContainerMenu {
         return part().isEmpty() ? null : Material.find(ClientMaterials.on(player.level()), part()).orElse(null);
     }
 
-    /** The names of the roles the part in the slot could fill in some tool; empty when it is not known or the slot is empty. */
-    public java.util.Set<String> roles() {
+    /** The names (and classes) of the roles the part in the slot could fill in some tool; empty when it is not known or the slot is empty. */
+    public java.util.Map<String, String> roles() {
         ItemStack stack = part();
         Material.Located l = located();
         String form = stack.getItem() instanceof ModularPartItem
                 ? net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()
                 : l == null ? null : l.form();
-        java.util.Set<String> out = new java.util.HashSet<>();
+        java.util.Map<String, String> out = new java.util.HashMap<>();
         if (form != null)
             for (ModularType t : ModularTypes.known().values())
                 t.roles().values().forEach(r -> {
                     if (r.forms().contains(form))
-                        out.add(r.name());
+                        out.put(r.name(), r.cls());
                 });
         return out;
     }

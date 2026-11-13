@@ -14,6 +14,7 @@
   "roles": {
     "P": {
       "name": "plate",
+      "class": "housing",
       "forms": [
         "chestplate_plate"
       ],
@@ -145,6 +146,7 @@
     },
     "L": {
       "name": "underlayer",
+      "class": "housing",
       "forms": [
         "*"
       ],
@@ -156,6 +158,7 @@
     },
     "T": {
       "name": "studs",
+      "class": "working_face",
       "forms": [
         "gem",
         "shard",
@@ -193,6 +196,7 @@
     },
     "B": {
       "name": "battery_bay",
+      "class": "housing",
       "school": "robotics:1",
       "forms": [
         "plate"
@@ -215,6 +219,7 @@
     },
     "C": {
       "name": "collar",
+      "class": "housing",
       "forms": [
         "ingot",
         "plate",
@@ -233,6 +238,7 @@
     },
     "D": {
       "name": "pauldron",
+      "class": "housing",
       "forms": [
         "ingot",
         "plate",
@@ -250,6 +256,7 @@
     },
     "U": {
       "name": "underlayer",
+      "class": "housing",
       "forms": [
         "chain"
       ],

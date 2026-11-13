@@ -8,6 +8,7 @@
   "roles": {
     "P": {
       "name": "prod",
+      "class": "working_face",
       "forms": [
         "crossbow_prod"
       ],
@@ -65,6 +66,7 @@
     },
     "W": {
       "name": "string",
+      "class": "working_face",
       "forms": [
         "string",
         "wire",
@@ -75,6 +77,7 @@
     },
     "S": {
       "name": "stock",
+      "class": "mount",
       "forms": [
         "stick",
         "rod",
@@ -117,6 +120,7 @@
     },
     "B": {
       "name": "binding",
+      "class": "mount",
       "forms": [
         "tool_binding"
       ],

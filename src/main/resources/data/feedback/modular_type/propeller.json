@@ -9,6 +9,7 @@
   "roles": {
     "H": {
       "name": "prop_hub",
+      "class": "mount",
       "forms": [
         "prop_hub"
       ],
@@ -44,6 +45,7 @@
     },
     "B": {
       "name": "prop_blades",
+      "class": "working_face",
       "forms": [
         "prop_blades"
       ],

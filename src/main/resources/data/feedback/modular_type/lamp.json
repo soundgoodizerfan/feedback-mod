@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "lamp_filament",
+      "class": "working_face",
       "forms": [
         "lamp_filament"
       ],

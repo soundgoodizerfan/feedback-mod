@@ -317,12 +317,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param mount  for an addon: the kind of mount it sits on ({@code muzzle}, {@code rail}, {@code grip}, {@code limb}); the Fit tab refuses it on an item
      *               no part of which offers one. Empty for a part that needs none (its place is its own).
      * @param offers the mount kinds this part gives the addons fitted to it.
+     * @param cls    the role class ({@link Attunements#CLASSES}): {@code working_face}, {@code housing} or {@code mount}, or empty for a role in none.
+     *               An attunement row keyed {@code class:<name>} acts on every role of that class, tool or machine.
      * @param school for an addon: the treatise volume ({@code robotics:1}, as a type's) the table must hold before it offers this role; empty for none.
      */
     public record Role(String name, List<String> forms, List<Material.Trait> traits, float litres, float length,
                        float at, boolean rides, Map<String, Float> factor, int layer, Optional<Shaping> part,
                        List<String> stock, boolean set, Map<String, Axis> axes, String alt, int bulk, boolean after, int seal,
-                       List<Material.Trait> anyTraits, String trait, Map<String, Float> params, String mount, List<String> offers, String school) {
+                       List<Material.Trait> anyTraits, String trait, Map<String, Float> params, String mount, List<String> offers, String school, String cls) {
         static final Codec<Role> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("name").forGetter(Role::name),
                 Codec.STRING.listOf().fieldOf("forms").forGetter(Role::forms),
@@ -345,16 +347,17 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                         Codec.mapPair(Codec.STRING.optionalFieldOf("trait", ""), Codec.mapPair(
                                 Codec.unboundedMap(Codec.STRING, Codec.FLOAT).optionalFieldOf("params", Map.of()),
                                 Codec.mapPair(Codec.STRING.optionalFieldOf("mount", ""), Codec.mapPair(Codec.STRING.listOf().optionalFieldOf("offers", List.of()),
-                                        Codec.STRING.optionalFieldOf("school", ""))))))
+                                        Codec.mapPair(Codec.STRING.optionalFieldOf("school", ""), Codec.STRING.optionalFieldOf("class", "")))))))
                         .forGetter(r -> com.mojang.datafixers.util.Pair.of(com.mojang.datafixers.util.Pair.of(r.after(), r.seal()),
                                 com.mojang.datafixers.util.Pair.of(r.trait(), com.mojang.datafixers.util.Pair.of(r.params(),
-                                        com.mojang.datafixers.util.Pair.of(r.mount(), com.mojang.datafixers.util.Pair.of(r.offers(), r.school()))))))
+                                        com.mojang.datafixers.util.Pair.of(r.mount(), com.mojang.datafixers.util.Pair.of(r.offers(), com.mojang.datafixers.util.Pair.of(r.school(), r.cls())))))))
         ).apply(instance, (name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts, bulk, flags) ->
                 new Role(name, forms, traits, litres, length, at, rides, factor, layer, part, stock, set, axes, alts.getFirst(), bulk,
                         flags.getFirst().getFirst(), flags.getFirst().getSecond(), alts.getSecond(),
                         flags.getSecond().getFirst(), flags.getSecond().getSecond().getFirst(),
                         flags.getSecond().getSecond().getSecond().getFirst(), flags.getSecond().getSecond().getSecond().getSecond().getFirst(),
-                        flags.getSecond().getSecond().getSecond().getSecond().getSecond())));
+                        flags.getSecond().getSecond().getSecond().getSecond().getSecond().getFirst(),
+                        flags.getSecond().getSecond().getSecond().getSecond().getSecond().getSecond())));
 
         public boolean rod() {
             return length > 0;
@@ -363,7 +366,7 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
         /** This striking role as it is for a face of the kind whose own role is {@code def}: that kind's litres and place on the haft. */
         public Role withFace(Role def) {
             return new Role(name, forms, traits, def.litres, length, def.at, def.rides, factor, layer, part, stock, set, axes, alt, bulk,
-                    after, seal, anyTraits, trait, params, mount, offers, school);
+                    after, seal, anyTraits, trait, params, mount, offers, school, cls);
         }
 
         /**

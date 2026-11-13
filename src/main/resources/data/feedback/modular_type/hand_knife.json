@@ -9,6 +9,7 @@
   "roles": {
     "B": {
       "name": "blade",
+      "class": "working_face",
       "forms": [
         "knife_blade"
       ],
@@ -74,6 +75,7 @@
     },
     "S": {
       "name": "handle",
+      "class": "mount",
       "forms": [
         "stick",
         "bone"
@@ -84,6 +86,7 @@
     },
     "N": {
       "name": "binding",
+      "class": "mount",
       "forms": [
         "tool_binding"
       ],

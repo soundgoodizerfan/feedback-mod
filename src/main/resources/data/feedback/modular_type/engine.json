@@ -9,6 +9,7 @@
   "roles": {
     "K": {
       "name": "engine_block",
+      "class": "housing",
       "forms": [
         "engine_block"
       ],
@@ -64,6 +65,7 @@
     },
     "P": {
       "name": "pistons",
+      "class": "working_face",
       "forms": [
         "piston_set"
       ],
@@ -106,6 +108,7 @@
     },
     "C": {
       "name": "crankshaft",
+      "class": "mount",
       "forms": [
         "crankshaft"
       ],
@@ -141,6 +144,7 @@
     },
     "H": {
       "name": "cylinder_head",
+      "class": "housing",
       "forms": [
         "cylinder_head"
       ],

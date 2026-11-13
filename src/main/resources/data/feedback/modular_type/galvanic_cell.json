@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "cell_anode",
+      "class": "working_face",
       "forms": [
         "cell_anode"
       ],
@@ -60,6 +61,7 @@
     },
     "C": {
       "name": "copper_cathode",
+      "class": "working_face",
       "forms": [
         "plate"
       ],

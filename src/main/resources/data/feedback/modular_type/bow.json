@@ -8,6 +8,7 @@
   "roles": {
     "L": {
       "name": "limbs",
+      "class": "working_face",
       "forms": [
         "bow_limbs"
       ],
@@ -89,6 +90,7 @@
     },
     "W": {
       "name": "string",
+      "class": "working_face",
       "forms": [
         "string",
         "wire",
@@ -99,6 +101,7 @@
     },
     "B": {
       "name": "binding",
+      "class": "mount",
       "forms": [
         "tool_binding"
       ],

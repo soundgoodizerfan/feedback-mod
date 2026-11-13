@@ -144,6 +144,15 @@
     },
     "magnetic_sear": {
       "kind": "soak"
+    },
+    "class:working_face": {
+      "kind": "soak"
+    },
+    "class:housing": {
+      "kind": "soak"
+    },
+    "class:mount": {
+      "kind": "soak"
     }
   },
   "starter": true,

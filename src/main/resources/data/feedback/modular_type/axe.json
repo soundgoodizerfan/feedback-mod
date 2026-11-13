@@ -18,6 +18,7 @@
   "roles": {
     "H": {
       "name": "head",
+      "class": "working_face",
       "forms": [
         "axe_head"
       ],
@@ -130,6 +131,7 @@
     },
     "S": {
       "name": "handle",
+      "class": "mount",
       "forms": [
         "stick",
         "rod",
@@ -141,6 +143,7 @@
     },
     "B": {
       "name": "binding",
+      "class": "mount",
       "forms": [
         "tool_binding"
       ],
@@ -178,6 +181,7 @@
     },
     "T": {
       "name": "tip",
+      "class": "working_face",
       "forms": [
         "tool_tip"
       ],
@@ -217,6 +221,7 @@
     },
     "P": {
       "name": "pommel",
+      "class": "mount",
       "forms": [
         "tool_pommel"
       ],
@@ -258,6 +263,7 @@
     },
     "Y": {
       "name": "lanyard",
+      "class": "mount",
       "forms": [
         "chain"
       ],

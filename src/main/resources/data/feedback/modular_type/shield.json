@@ -8,6 +8,7 @@
   "roles": {
     "F": {
       "name": "face",
+      "class": "working_face",
       "forms": [
         "shield_face"
       ],
@@ -108,6 +109,7 @@
     },
     "R": {
       "name": "rim",
+      "class": "housing",
       "forms": [
         "shield_rim"
       ],
@@ -150,6 +152,7 @@
     },
     "G": {
       "name": "grip",
+      "class": "mount",
       "forms": [
         "stick",
         "rod",
@@ -165,6 +168,7 @@
     },
     "O": {
       "name": "boss",
+      "class": "housing",
       "forms": [
         "plate"
       ],
@@ -180,6 +184,7 @@
     },
     "A": {
       "name": "strap",
+      "class": "mount",
       "forms": [
         "string",
         "wire"

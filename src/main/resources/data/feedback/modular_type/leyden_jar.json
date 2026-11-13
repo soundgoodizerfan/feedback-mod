@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "jar_glass",
+      "class": "housing",
       "forms": [
         "jar_glass"
       ],
@@ -77,6 +78,7 @@
     },
     "F": {
       "name": "foil",
+      "class": "working_face",
       "forms": [
         "foil"
       ],
@@ -86,6 +88,7 @@
     },
     "W": {
       "name": "outer_sleeve",
+      "class": "housing",
       "forms": [
         "tubing"
       ],

@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "compressor_rotor",
+      "class": "working_face",
       "forms": [
         "compressor_rotor"
       ],

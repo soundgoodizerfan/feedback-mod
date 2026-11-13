@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "exchanger_core",
+      "class": "working_face",
       "forms": [
         "exchanger_core"
       ],
@@ -74,6 +75,7 @@
     },
     "F": {
       "name": "fin_stack",
+      "class": "working_face",
       "forms": [
         "plate"
       ],

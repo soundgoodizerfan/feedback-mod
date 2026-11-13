@@ -9,6 +9,7 @@
   "roles": {
     "S": {
       "name": "pump_impeller",
+      "class": "working_face",
       "forms": [
         "pump_impeller"
       ],
@@ -71,6 +72,7 @@
     },
     "V": {
       "name": "volute",
+      "class": "housing",
       "forms": [
         "plate"
       ],

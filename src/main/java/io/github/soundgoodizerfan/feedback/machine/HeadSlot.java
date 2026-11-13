@@ -4,7 +4,10 @@ package io.github.soundgoodizerfan.feedback.machine;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.modular.attunement.EdgeKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.HolderLookup;
@@ -51,7 +54,7 @@ public final class HeadSlot {
 
     /** The most St a blow can carry now: the head's baked ceiling, less what wear has cost. Zero with no head. */
     public St ceiling() {
-        return new St(ModularHandTool.blow(head) * condition());
+        return new St(ModularHandTool.blow(head) * EdgeKinds.headBlow(head) * condition());
     }
 
     /**
@@ -63,7 +66,8 @@ public final class HeadSlot {
         if (head.isEmpty() || stAbsorbed <= 0)
             return false;
         int before = FTuning.conditionBand(condition());
-        head.set(FDataComponents.TOOL_CONDITION.get(), Math.max(floor, condition() - stAbsorbed * perSt));
+        // A soaking head turns some of the wear away, as it does on a tool.
+        head.set(FDataComponents.TOOL_CONDITION.get(), Math.max(floor, condition() - stAbsorbed * perSt * WardKinds.wearShare(ModularStacks.design(head))));
         return FTuning.conditionBand(condition()) != before;
     }
 

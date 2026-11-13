@@ -10,6 +10,7 @@
   "roles": {
     "S": {
       "name": "thruster_nozzle",
+      "class": "working_face",
       "forms": [
         "thruster_nozzle"
       ],
@@ -72,6 +73,7 @@
     },
     "J": {
       "name": "regen_jacket",
+      "class": "housing",
       "forms": [
         "plate"
       ],

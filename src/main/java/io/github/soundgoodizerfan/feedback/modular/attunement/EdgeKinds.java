@@ -36,7 +36,19 @@ public final class EdgeKinds {
     /** Ticks of slowness and weakness a padded blow leaves, per level. [OPEN] until played. */
     private static final int PAD_STAGGER_TICKS_PER_LEVEL = 40;
 
+    /** Share of its blow a machine head gains per level of {@code extra_damage} on it: a head that cuts deeper lands more work per stroke. Placeholder. */
+    private static final float HEAD_BLOW_PER_LEVEL = 0.25f;
+
     private EdgeKinds() {
+    }
+
+    /** The blow multiplier a machine head's {@code extra_damage} levels give, 1 for none. */
+    public static float headBlow(ItemStack head) {
+        int n = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(head))
+            if (a.kind().equals("extra_damage"))
+                n += a.level();
+        return 1f + n * HEAD_BLOW_PER_LEVEL;
     }
 
     public static void register() {
