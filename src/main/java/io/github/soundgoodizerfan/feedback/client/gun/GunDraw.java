@@ -505,7 +505,12 @@ final class GunDraw {
         float f = z - depth;
         // Runs up into the frame: the rake swings the grip's front edge down, which would leave a wedge of daylight.
         m.box(-0.625f, y - length, f, 0.625f, y + 0.75f, z, Tile.PANEL);
-        if (!straight)
+        if (v.has("Gw")) {
+            // The wrap: a sleeve over the hand's part of the grip, in its own material.
+            m.part(v, "Gw");
+            m.box(-0.6875f, y - length + 0.5f, f + 0.25f, 0.6875f, y - 0.5f, z - 0.25f, Tile.CHECKER);
+            m.part(v, "G");
+        } else if (!straight)
             m.box(-0.6875f, y - length + 0.5f, f + 0.25f, 0.6875f, y - 0.5f, z - 0.25f, Tile.CHECKER);
         switch (shape) {
             case "finger_groove" -> {

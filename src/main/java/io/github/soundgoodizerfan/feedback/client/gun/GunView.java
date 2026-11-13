@@ -142,6 +142,13 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 colours.put("J", 0xFF000000 | MaterialColors.of(sl.material()));
                 surfaces.put("J", Surface.of(materials.get(sl.material())));
             });
+        // A grip's wrap is a slot of the grip, drawn as the sleeve layer (letter Gw) in the wrap's own material.
+        ModularDesign.Part gripPart = design.part("G");
+        if (gripPart != null)
+            gripPart.measures().slot("wrap").ifPresent(sl -> {
+                colours.put("Gw", 0xFF000000 | MaterialColors.of(sl.material()));
+                surfaces.put("Gw", Surface.of(materials.get(sl.material())));
+            });
         GunLayout.Type kind = GunLayout.Type.of(variants.getOrDefault("R", ""));
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun) {
             // A pulse gun has no action and no slide: a frame, a cell bay, a seat, and a pulse barrel.
