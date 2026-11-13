@@ -130,6 +130,7 @@ public class MaterialStatsCategory implements IRecipeCategory<MaterialStatsCateg
         add(rows, "yield", mech.yieldStrength());
         number(rows, "friction", mech.friction());
         number(rows, "abrasiveness", mech.abrasiveness());
+        number(rows, "permeability", mech.permeability());
         if (mech.hardenable())
             rows.add(new String[] {"hardenable", Component.translatable("feedback.jei.material.yes").getString()});
         number(rows, "electrical_conductivity", m.electrical().conductivity());
