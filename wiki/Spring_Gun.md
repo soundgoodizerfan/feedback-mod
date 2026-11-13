@@ -19,7 +19,13 @@ Hold use to **cock** it; it takes longer with a stiffer spring and a weaker wiel
 
 ## Misuse
 
-A spring that stores more than its receiver can take is **overloaded**: each cocking gives it a permanent set (it stores less afterwards), and far past the rating it snaps, wrecking part of the gun and hurting your hand.
+Ordinary shots never wear the gun. Three kinds of misuse do, and the tooltip shows the total as **Bore wear**:
+
+- **Dry fire:** releasing the piston with no pellets or nugget to cut.
+- **Overloading:** a spring that stores more than its receiver can take is **overloaded**. Each cocking gives it a permanent set (it stores less afterwards) and wears the gun, more the closer the spring is to snapping.
+- **A snap:** far past the rating the spring snaps, wrecking part of the gun, hurting your hand and wearing the gun a great deal.
+
+A worn gun shoots slower and softer and spreads wider, as a worn [powder gun](Guns.md#wear) does. **Ward** on the gun's parts lets only part of each misuse through, **Mend** repairs the wear with your experience, and **Tithe** adds wear on kills; see [the gun table](Enchanting_Table.md#on-a-gun).
 
 ## Attunements
 

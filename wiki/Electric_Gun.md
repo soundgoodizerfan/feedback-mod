@@ -93,7 +93,7 @@ Holding the gun shows a card with the battery's charge in percent, what the seat
 
 ## Misuse and hazards
 
-Nothing wears from correct use. A battery whose case band is over the receiver's band shocks you and wears the receiver. Firing in water or rain arcs to you unless you are insulated (insulating gloves stop it; see [Hazards](Hazards.md#shock)); an arc fork fired in water shocks everything wet within reach, you included. A shot at the heat limit with no governor burns you and wears the barrel. The steam of a forced vent scalds you as it does anyone else.
+Ordinary shots never wear the gun; the tooltip shows misuse wear as **Bore wear**. A battery whose case band is over the receiver's band shocks you and wears the gun, more the further over it is. Firing in water or rain arcs to you unless you are insulated (insulating gloves stop it; see [Hazards](Hazards.md#shock)); an arc fork fired in water shocks everything wet within reach, you included. A shot at the heat limit with no governor burns you and wears the gun. The steam of a forced vent scalds you as it does anyone else. A worn gun delivers weaker pulses and spreads wider, as a worn [powder gun](Guns.md#wear) does; **Ward** slows the wear, **Mend** repairs it and **Tithe** adds wear on kills (see [the gun table](Enchanting_Table.md#on-a-gun)).
 
 ## Wither skeletons
 
