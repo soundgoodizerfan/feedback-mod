@@ -66,6 +66,8 @@ public final class GunShots {
         final float muzzleSpeed;
         final float muzzleEnergy;
         int age;
+        /** Ticks the shot still holds where it is, ringing in a struck coin, before it goes on. */
+        int hold;
         /** Entities this shot has already gone through, so it is not counted on one twice. */
         final java.util.Set<Integer> pierced = new java.util.HashSet<>();
         /** Players who have already heard this bullet go by. */
@@ -348,7 +350,7 @@ public final class GunShots {
         GunFigures figures = base.get().aged(GunCondition.condition(gun), GunFu.bloomHeat(shooter, heat));
         // Traits that read the shooter's hands and the dual-wield rule are a player's; a mob fires the bake as it stands.
         if (shooter instanceof Player player) {
-            figures = ModularTraits.gunAimed(player, gun, figures);
+            figures = GunFu.rolled(player, ModularTraits.gunAimed(player, gun, figures));
             if (GunItem.dualWielding(player))
                 figures = figures.oneHanded();
         }
@@ -407,12 +409,13 @@ public final class GunShots {
     }
 
     /**
-     * What a shot books once it has left a gun that is not a firearm (an electric gun): the recoil-vault impulse and the traits'
+     * What a shot books once it has left a gun that is not a firearm (an electric gun): the shot's impulse and the traits'
      * hearing, the view kick the shooter's own client has not already made, and the strain on the hand. A firearm books the same
      * inside {@link #shoot}.
      */
     public static void bookShot(ServerLevel level, LivingEntity shooter, ItemStack gun, GunFigures figures, float heat,
                                 InteractionHand hand, boolean aimed) {
+        figures = GunFu.rolled(shooter, figures);
         GunFu.shotFired(level, shooter, gun, figures, heat);
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server) {
             ModularTraits.gunFired(server, gun, figures);
@@ -825,7 +828,7 @@ public final class GunShots {
         for (GunSound.Layer layer : mechanism != null ? mechanism.sound(gun, f, level.random) : GunSound.layers(f, level.random))
             level.playSound(shooter instanceof Player player && !hearSelf ? player : null, muzzle.x, muzzle.y, muzzle.z, layer.event(), SoundSource.PLAYERS,
                     layer.volume(), layer.pitch());
-        level.gameEvent(shooter, f.report() < GunTuning.GUN_QUIET_REPORT * (shooter instanceof Player mp && Skills.unlocked(mp, "muffled_report") ? GunTuning.GUN_MUFFLED_SHARE : 1f) ? FWeapons.GUNSHOT_QUIET
+        level.gameEvent(shooter, f.report() < GunTuning.GUN_QUIET_REPORT ? FWeapons.GUNSHOT_QUIET
                 : f.report() >= GunTuning.GUN_THUNDEROUS_REPORT ? FWeapons.GUNSHOT_THUNDEROUS : FWeapons.GUNSHOT, muzzle);
         // The burning gas shows as smoke at the muzzle.
         level.sendParticles(mechanism != null ? mechanism.muzzleParticle(gun, f) : f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,
@@ -1172,6 +1175,11 @@ public final class GunShots {
     private static boolean step(ServerLevel level, Shot s) {
         if (s.shooter.isRemoved() || ++s.age > GunTuning.GUN_MAX_LIFE_TICKS)
             return false;
+        if (s.hold > 0) {
+            if (--s.hold == GunFuTuning.COIN_HOLD_TICKS / 2)
+                CoinShot.ring(level, s.pos);
+            return true;
+        }
         if (s.bend != 0)
             s.velocity = io.github.soundgoodizerfan.feedback.modular.attunement.LodeKinds.bend(level, s.shooter, s.pos, s.velocity, s.bend);
         Vec3 from = s.pos, to = from.add(s.velocity);
@@ -1180,6 +1188,8 @@ public final class GunShots {
         CoinShot.Result coin = CoinShot.resolve(level, s.shooter, from, to, s.massMu, s.hardness);
         if (coin != null) {
             s.pos = coin.point();
+            s.hold = GunFuTuning.COIN_HOLD_TICKS;
+            CoinShot.ring(level, s.pos);
             if (coin.direction() != null)
                 s.velocity = coin.direction().scale(s.velocity.length());
             return s.spend(s.energy() * (1 - coin.keep() * coin.keep()));

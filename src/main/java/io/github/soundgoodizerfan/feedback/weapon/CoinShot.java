@@ -50,7 +50,7 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class CoinShot {
 
-    private record Coin(UUID owner, Vec3 origin, long born, float hardness, float massMu, ItemStack stack) {
+    private record Coin(int id, int rgb, UUID owner, Vec3 origin, long born, float hardness, float massMu, ItemStack stack) {
         Vec3 at(long now) {
             long t = now - born;
             return origin.add(0, GunFuTuning.COIN_UP * t - 0.5 * GunFuTuning.COIN_GRAVITY * t * t, 0);
@@ -62,6 +62,7 @@ public final class CoinShot {
     }
 
     private static final Map<UUID, List<Coin>> COINS = new HashMap<>();
+    private static int NEXT_ID = 1;
 
     private CoinShot() {
     }
@@ -87,9 +88,10 @@ public final class CoinShot {
             Vec3 to = c.at(now).subtract(eye);
             if (to.length() > 3.5 || to.normalize().dot(look) < 0.3)
                 continue;
-            up.set(i, new Coin(c.owner(), c.at(now), now, c.hardness(), c.massMu(), c.stack()));
+            up.set(i, new Coin(c.id(), c.rgb(), c.owner(), c.at(now), now, c.hardness(), c.massMu(), c.stack()));
             ServerLevel level = p.serverLevel();
             Vec3 at = c.at(now);
+            io.github.soundgoodizerfan.feedback.net.CoinFlipPayload.send(level, c.id(), false, at, now, c.rgb());
             level.sendParticles(ParticleTypes.CRIT, at.x, at.y, at.z, 8, 0.1, 0.1, 0.1, 0.3);
             cue(level, at, net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL.value(), 1f, 1.8f);
         }
@@ -116,8 +118,11 @@ public final class CoinShot {
             Vec3 right = fwd.cross(new Vec3(0, 1, 0));
             // The second coin goes up beside the first and a little higher, so one can be shot into the other.
             Vec3 origin = p.getEyePosition().add(fwd.scale(0.6)).add(0, -0.3 + 0.3 * up.size(), 0).add(right.scale(0.35 * up.size()));
-            up.add(new Coin(p.getUUID(), origin, p.level().getGameTime(), m.hardness().value(),
-                    m.density().muPerMb() * GunFuTuning.COIN_MB, one));
+            int rgb = 0xFF000000 | io.github.soundgoodizerfan.feedback.modular.type.MaterialColors.of(found.get().id());
+            Coin made = new Coin(NEXT_ID++, rgb, p.getUUID(), origin, p.level().getGameTime(), m.hardness().value(),
+                    m.density().muPerMb() * GunFuTuning.COIN_MB, one);
+            up.add(made);
+            io.github.soundgoodizerfan.feedback.net.CoinFlipPayload.send(p.serverLevel(), made.id(), false, origin, made.born(), rgb);
             CombatCues.everyone(p, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, up.size() == 1 ? 1.9f : 2f);
             return true;
         }
@@ -139,6 +144,7 @@ public final class CoinShot {
             entry.getValue().removeIf(c -> {
                 if (now - c.born() > GunFuTuning.COIN_TICKS) {
                     GunAmmo.give(p, c.stack()); // not struck: it falls back into the hand
+                    io.github.soundgoodizerfan.feedback.net.CoinFlipPayload.send(level, c.id(), true, c.at(now), c.born(), c.rgb());
                     cue(level, c.at(now), net.minecraft.sounds.SoundEvents.NOTE_BLOCK_HAT.value(), 1f, 1.2f);
                     return true;
                 }
@@ -181,6 +187,7 @@ public final class CoinShot {
         if (c == null)
             return null;
         coins.remove(c);
+        io.github.soundgoodizerfan.feedback.net.CoinFlipPayload.send(level, c.id(), true, near, c.born(), c.rgb());
         if (coins.isEmpty())
             COINS.remove(shooter.getUUID());
         level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, c.stack()), near.x, near.y, near.z, 6, 0.05, 0.05, 0.05, 0.1);
@@ -205,6 +212,12 @@ public final class CoinShot {
             aimed = new Vec3(dir.x * cos - dir.z * sin, dir.y + 0.15, dir.x * sin + dir.z * cos).normalize();
         }
         return new Result(near, aimed, keep);
+    }
+
+    /** The ring a struck coin gives while the shot holds in it: a bright note that carries, and a lower one under it. */
+    public static void ring(ServerLevel level, Vec3 at) {
+        cue(level, at, net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL.value(), 1.4f, 1.5f);
+        cue(level, at, net.minecraft.sounds.SoundEvents.NOTE_BLOCK_CHIME.value(), 1f, 0.8f);
     }
 
     /** A diagnostic cue: each way a coin can end has its own sound, so a shot that does nothing can be told from one that nearly did. */

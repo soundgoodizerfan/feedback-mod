@@ -24,12 +24,8 @@ public final class GunFuTuning {
     /** Share of the bayonet's damage a level of edge adds (a level of its mirror takes). */
     public static final float BAYONET_EDGE_PER_LEVEL = 0.12f;
 
-    /** Recoil Vault: blocks per tick of push per (kg m/s of impulse per Mu of the shooter and gun). STAND-IN gain, real recoil is far too small to feel. */
-    public static final float VAULT_GAIN = 3f;
-    /** Recoil Vault: gun wear per kg m/s of impulse, times (1 + barrel heat) over condition. */
-    public static final float VAULT_WEAR_PER_IMPULSE = 0.0004f;
-    /** Recoil Vault: blocks within which a surface in front of the muzzle counts as braced against. */
-    public static final double VAULT_SURFACE = 1.5;
+    /** Roll with the kick: the shares of a shot's kick and spread a trained shooter keeps. STAND-INS. */
+    public static final float ROLL_KICK_KEEP = 0.65f, ROLL_SPREAD_KEEP = 0.85f;
 
     /** Braced Fire: the share of barrel heat bloom a braced shooter keeps. */
     public static final float BRACED_HEAT_KEEP = 0.4f;
@@ -37,17 +33,18 @@ public final class GunFuTuning {
     /** Hot Clear: the share of the way from the room to cook-off at which the barrel is hot enough to clear. */
     public static final float HOT_CLEAR_LINE = 0.6f;
 
-    /** Marked Rounds: blocks a close shot may be from, ticks the powder burn lasts, most stacks, and melee damage each stack adds. */
+    /** Powder burn: blocks a close shot may be from, and fire ticks it leaves on the target (4 s). */
     public static final double MARK_RANGE = 4.0;
-    public static final int MARK_TICKS = 200, MARK_MAX = 5;
-    public static final float MARK_DAMAGE = 1.5f;
+    public static final int POWDER_BURN_TICKS = 80;
 
     /** Searing Strike: Tu the held item gives up on a landed blow. */
     public static final float SEAR_COOL_TU = 60f;
 
     /** Coin Flip: ticks the coin is in the air, its strike radius (blocks), launch speed and gravity (blocks per tick, per tick squared). */
-    public static final int COIN_TICKS = 16;
-    public static final double COIN_RADIUS = 0.6, COIN_UP = 0.42, COIN_GRAVITY = 0.04;
+    public static final int COIN_TICKS = 14;
+    public static final double COIN_RADIUS = 0.6, COIN_UP = 0.5, COIN_GRAVITY = 0.07;
+    /** Ticks a shot holds at a struck coin (ringing) before it goes on to the next coin or target. */
+    public static final int COIN_HOLD_TICKS = 20;
     /** STAND-IN: mB of a coin (its mass is this times the material's density). */
     public static final float COIN_MB = 16f;
     /** Coin Flip: blocks from the struck coin within which a rebound may take a target (Round the Corner triples it). */

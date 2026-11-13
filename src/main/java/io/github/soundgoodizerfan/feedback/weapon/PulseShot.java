@@ -95,9 +95,13 @@ public final class PulseShot {
 
     private static void trace(ServerLevel level, LivingEntity shooter, ItemStack gun, Plan plan, Vec3 from, Vec3 dir, float joules,
                               Set<Integer> seen) {
+        trace(level, shooter, gun, plan, from, dir, joules, seen, 0, plan.pierce() == Integer.MAX_VALUE ? Integer.MAX_VALUE : plan.pierce() + 1);
+    }
+
+    /** The beam from {@code from}, having already gone {@code travelled} blocks with {@code left} bodies it may still go through. */
+    private static void trace(ServerLevel level, LivingEntity shooter, ItemStack gun, Plan plan, Vec3 from, Vec3 dir, float joules,
+                              Set<Integer> seen, double travelled, int left) {
         Vec3 pos = from;
-        double travelled = 0;
-        int left = plan.pierce() == Integer.MAX_VALUE ? Integer.MAX_VALUE : plan.pierce() + 1;
         for (int guard = 0; guard < 12 && travelled < plan.cutoff() && left > 0; guard++) {
             Vec3 end = pos.add(dir.scale(plan.cutoff() - travelled));
             // A coin the shooter flipped: the beam turns on it, whole.
@@ -111,7 +115,17 @@ public final class PulseShot {
                     if (plan.cylinder())
                         joules *= ModularTuning.EGUN_COIN_CYLINDER;
                 }
-                continue;
+                // The beam holds in the coin, ringing, then goes on from it.
+                CoinShot.ring(level, pos);
+                final Vec3 resume = pos, resumeDir = dir;
+                final float resumeJoules = joules;
+                final double went = travelled;
+                final int bodies = left;
+                io.github.soundgoodizerfan.feedback.core.Later.in(GunFuTuning.COIN_HOLD_TICKS, () -> {
+                    if (!shooter.isRemoved())
+                        trace(level, shooter, gun, plan, resume, resumeDir, resumeJoules, seen, went, bodies);
+                });
+                return;
             }
             BlockHitResult block = level.clip(new ClipContext(pos, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, CollisionContext.empty()));
             Vec3 stop = block.getType() == HitResult.Type.MISS ? end : block.getLocation();

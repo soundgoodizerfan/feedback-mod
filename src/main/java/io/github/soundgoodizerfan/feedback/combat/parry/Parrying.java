@@ -74,10 +74,10 @@ public final class Parrying {
             window = ParryTuning.FEEDBACKER_WINDOW + CombatGear.of(player).windowTicks();
             recovery = ParryTuning.FEEDBACKER_RECOVERY;
             hand = net.minecraft.world.InteractionHand.MAIN_HAND;
-            io.github.soundgoodizerfan.feedback.weapon.CoinShot.punch(player); // the punch can send a coin back up
             io.github.soundgoodizerfan.feedback.weapon.HeatPellets.punch(player); // or the wielder's own slow heat pellets
         } else
             return;
+        io.github.soundgoodizerfan.feedback.weapon.CoinShot.punch(player); // a parry sends the flipper's own coin back up
         CombatState.set(player, new CombatState(CombatPhase.PARRY_ACTIVE, window + pad, recovery, s.iFrames()));
         player.swing(hand, true);
         CombatCues.everyone(player, FSounds.PARRY_RAISE.get(), FeelTuning.RAISE_VOLUME, FeelTuning.RAISE_PITCH);
