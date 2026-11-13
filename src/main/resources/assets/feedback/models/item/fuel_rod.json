@@ -1,1 +1,1 @@
-{ "parent": "item/generated", "textures": { "layer0": "feedback:item/modular/grey/vanilla_copper_ingot" } }
+{ "parent": "item/generated", "textures": { "layer0": "feedback:item/fuel_rod" } }
