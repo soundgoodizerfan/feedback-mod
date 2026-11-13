@@ -10,11 +10,11 @@ Shaped and assembled like a [gun](Gun_Parts.md), out of the same receiver, trigg
 | --- | --- | --- |
 | **Receiver** | any material | Its **type** is the same three as a gun's, and each sets how big a battery it takes: a **handgun** frame up to 2 cells, a **long gun** 4, a **machine gun** 8 (the bigger frames also keep their heat better). Its material's insulation sets the band it holds off. |
 | **Pulse Barrel** | any material | Axes: barrel length and bore. A longer barrel holds the pulse's damage out further and shoots truer; a wide bore hits a little harder in a wider cone. A barrel that **conducts** takes energy out of the pulse and turns it to heat, so it hits weaker and heats the gun more; a poor conductor (glass, ceramic, bone, wood) gives the strongest pulse. |
-| **Pulse Seat** | a conductor | Required. Its shape is the gun's **heat cycle** (below); its conductor is the ceiling on how much energy one pulse can hold; its **power tier** takes Light, Standard or Heavy of that ceiling. |
+| **Pulse Seat** | a conductor, packed in a dielectric | Required. A frame of contact bars and a bank of capacitors. Its shape is the gun's **heat cycle** (below); its conductor is the ceiling on how much energy one pulse can hold; its dielectric sets what a capacitor bank or burst bank holds; its **power tier** takes Light, Standard or Heavy of that ceiling. |
 | **Trigger group** | as a gun's | Required. |
 | **Grip** | as a gun's | The same four shapes. |
 | **Stock** | as a gun's | Fixed, skeleton or folding: steadier aim. |
-| **Sight** | as a gun's | A reflex sight or a scope (a frame and a lens you choose, with a zoom axis from 1.5 to 6), and a lit reticle that cuts spread in the dark. |
+| **Sight** | as a gun's | A reflex sight or a scope (a frame and a lens you choose, with a zoom axis from 1.5 to 6), and a lit reticle (a speck of luminous mineral in a ring of iron) that cuts spread in the dark. |
 
 ### Power tier
 
@@ -29,7 +29,7 @@ The seat's shape is how the gun fires and cools. The **V** key cycles the fire m
 | **Cylinder** | Six small capacitors in a drum, each trickle-charging from the battery. A shot spends one and the drum turns a place; the wait for the next shot is a capacitor filling, faster with a stronger battery and a better conductor in the seat, slower at higher tiers. | semi |
 | **Flux Cycler** | Every shot draws from the battery with no capacitor to wait for, and the heat goes into the barrel, which limits how long you can hold fire. | auto, semi |
 | **Capacitor Bank** | Every cell discharges at once into one very large pulse that goes through **every** body in line, then recharges for a long time (about 8, 12 or 16 seconds by tier with a two-cell battery, longer with more cells). The insulation of the plates sets how much the bank holds. | semi |
-| **Core Breech** | One very large shot of slow heat: pellets that fly a few blocks (one big pellet, or a cone of them with a beam splitter), light what they hit and fall away at close range. The cores are then too hot to fire: press the reload key and your support hand slams the barrels open, the cores vent in a puff of steam, and the hand throws them shut. The gun is ready again once the whole 0.9 s motion has finished. A Feedbacker punch sends your own pellets back fast and hard. | semi |
+| **Core Breech** | One very large shot of slow heat: pellets that fly a few blocks (one big pellet, or a cone of them with a beam splitter), light what they hit and fall away at close range. The cores are then too hot to fire, so after every shot the gun vents itself: your support hand slams the barrels open, the cores vent in a puff of steam, and the hand throws them shut. The gun is ready again once the whole 0.9 s motion has finished. A Feedbacker punch sends your own pellets back fast and hard. | semi |
 | **Burst Bank** | A bank spent as three shots, then recharged. | burst, semi |
 | **Flywheel** | A wheel that spins up while you hold the trigger, so the first shot waits, and spins down quickly after you let go. A denser wheel holds more and spins up slower. The wheel turns on the gun and the report rises in pitch with its spin. | auto, semi |
 | **Recoil Dynamo** | A coil that returns a tenth of each shot's energy to the battery. | auto, semi, burst |
@@ -39,21 +39,23 @@ The capacitor bank, burst bank, core breech and flywheel need a **long gun or ma
 
 ### Heat governor
 
-Barrel heat is the barrel's real temperature, in Tu, and it warms and cools as a [gun's](Guns.md#heat) does: the fittings (a shroud, a thermal sleeve) set how fast it sheds heat, and the limit is the barrel material's service temperature. With no governor fitted, a shot fired at the heat limit **burns you and wears the barrel**. A **Heat Governor** fits one of three, and only one fits:
+Barrel heat is the barrel's real temperature, in Tu, and it warms and cools as a [gun's](Guns.md#heat) does: the fittings (a shroud, a thermal sleeve) set how fast it sheds heat, and the limit is the barrel material's service temperature. With no governor fitted, a shot fired at the heat limit **burns you and wears the barrel**. A **Heat Governor** is a bimetal strip or a thermistor bead pressed against the barrel, in a housing with a heating element and contacts, working a relay in the firing circuit. One of three fits, and only one:
 
 - **Fire-Rate Throttle:** the rate of fire falls smoothly as the barrel heats, to about 40% of normal near the limit, so the gun never reaches the limit that burns.
 - **Forced Vent:** at the limit the gun locks out, for between about 1.5 and 4 seconds depending on how far over it ran, and lets go a cloud of **steam** in front of the muzzle. The steam lives about 3 seconds and scalds any living thing that stays in it for about a second, you and your friends included.
-- **Dead-Man Cutoff:** stops the fire on barrel heat alone and lets it resume once the barrel has cooled.
+- **Dead-Man Cutoff:** stops the fire on barrel heat alone and lets it resume once the barrel has cooled. Its shape is chosen at the part bench.
+
+The governor's **element** is how fast it follows the barrel: a poor conductor of heat reads low, so a throttle slows late and a dead-man cutoff can let a shot through past the limit, which burns you.
 
 ### Fittings
 
 The same fittings as a gun's, where they make sense: a **suppressor** (a quieter report, more heat), a **muzzle brake** (louder), a **bayonet**, a **bipod** (steadier), a **counterweight**, a **shroud** and a **thermal sleeve** (the gun sheds heat faster, so it recovers faster), and a **resonance weight**. The pulse gun's own:
 
-- **Hold-Charge Trigger** (seats that fire one shot a pull: cylinder, capacitor bank, burst bank, core breech): hold the attack button to build a stronger shot that goes through more bodies, then release; releasing early gives an ordinary shot.
-- **Pump Charge** (the same seats): press the pump key (default period) to pump: on a long gun the forend slides back and runs home (your support hand rides it), and the click sounds as it arrives; a hot core breech cannot be pumped until it is vented. Each of the first two pumps widens the spread and raises the power and heat of the next shot; with a beam splitter fitted each also adds beams, as buckshot adds pellets. The third pump sounds a tone: the next pull fires no pulse but a blast around the gun that deals 1.5 times the total damage of the three-pump shot (a splitter's beams added) to everything within 4 blocks, and the same to you, capped at three quarters of your health. Further pumps do nothing, and any shot resets the pumps.
-- **Beam Lens:** a **beam splitter** turns one pulse into three to seven weaker beams in a spread, hardest up close; you choose the beam count, in steps of one, on the table. An **arc fork** carries the shock of a hit on to the nearest conductive body within reach, then to any body. The splitter and the fork share the muzzle, so a gun has one.
-- **Zoom Charge:** zoom builds while you aim and tightens the shot and lengthens its reach; it starts over after each shot.
-- **Heat Gauge:** a dial on the gun whose needle swings with the barrel's heat, and a finer heat bar with a scale on the HUD. A fitted heat governor sits on the gun's right flank, clear of the gauge.
+- **Hold-Charge Trigger** (a long-travel lever on a leaf spring; seats that fire one shot a pull: cylinder, capacitor bank, burst bank, core breech): hold the reload key to build a stronger shot that goes through more bodies, and release to fire; releasing early gives an ordinary shot.
+- **Pump Charge** (a pump lever on a ratchet turning a hand magneto winding; the same seats): press the reload key to pump: on a long gun the forend slides back and runs home (your support hand rides it), and the click sounds as it arrives; a hot core breech cannot be pumped until it has vented. Each of the first two pumps widens the spread and raises the power and heat of the next shot; with a beam splitter fitted each also adds beams, as buckshot adds pellets. The third pump sounds a tone: the next pull fires no pulse but a blast around the gun that deals 1.5 times the total damage of the three-pump shot (a splitter's beams added) to everything within 4 blocks, and the same to you, capped at three quarters of your health. The blast spends the barrel: it adds no steam or burn from the governor, and the barrel is left cool. Further pumps do nothing, and any shot resets the pumps.
+- **Beam Lens:** a housing round cut-glass facets or a pair of spark-gap electrodes. A **beam splitter** turns one pulse into three to seven weaker beams in a spread, hardest up close; you choose the beam count, in steps of one, on the table. An **arc fork** (the electrodes) carries the shock of a hit on to the nearest conductive body within reach, then to any body. The splitter and the fork share the muzzle, so a gun has one.
+- **Zoom Charge:** a solenoid, a winding of wire round an iron core. Zoom builds while you aim and tightens the shot and lengthens its reach; it starts over after each shot. A winding of a better conductor builds more of both; a poor one builds half.
+- **Heat Gauge:** a thermistor on the barrel feeding a moving-coil meter: a dial on the gun whose needle swings with the barrel's heat, and a finer heat bar with a scale on the HUD. A fitted heat governor sits on the gun's right flank, clear of the gauge.
 
 The gun is drawn from its parts like a powder gun: the frame by receiver type, a **cell bay** on the left with a glass window and four lamps that fill with the battery's charge, and the seat on the right with its dials and lamps. The drum turns a place a shot with a lamp for each charged chamber, the flywheel spins, a bank shows its charge. An empty bay is a dark slot.
 
@@ -63,13 +65,13 @@ A built gun is named after its seat and frame. A seat word replaces the class on
 
 ## Beam color
 
-At the Blueprint Table a pulse gun's drawing has a **beam color**: type a hex color (`#RRGGBB`) beside the swatch at the top right of the canvas. It is blue until you change it. It is saved on the blueprint and carried onto a gun built to that drawing, and it tints the beam, the sparks where it hits and the lamp at the muzzle.
+At the Blueprint Table a pulse gun's drawing has a **beam color**: type a hex color (`#RRGGBB`) beside the swatch at the top right of the canvas. It is blue until you change it. It is saved on the blueprint and carried onto a gun built to that drawing, and it tints the beam, the sparks and glow at the muzzle and where it hits, and the lamp at the muzzle. A gun made with `/feedback build` keeps the drawn color.
 
 ## Using it
 
 **Load a battery** (one that fits the receiver) by clicking the gun in your inventory with a [battery](Battery.md) on your cursor; click the gun with an empty cursor to take it out. The battery keeps its charge, so it goes back to a [Charger](Charger.md) as it is.
 
-The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fires, and holding it repeats where the seat allows; use (right mouse), held, aims down the sights. The view kicks and the hand strains on each shot as with a powder gun (see [Handling](Guns.md#handling)). A weak battery gives a weaker shot, never a refusal.
+The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fires, and holding it repeats where the seat allows; use (right mouse), held, aims down the sights. The view kicks and the hand strains on each shot as with a powder gun (see [Handling](Guns.md#handling)). The gun's hand rides each recoil out and back over a share of the gun's cycle: a fast gun twitches, a slow one heaves. A weak battery gives a weaker shot, never a refusal.
 
 ### What a shot does
 
@@ -83,7 +85,7 @@ The gun is held and fired like a [gun](Guns.md#controls): attack (left mouse) fi
   - **Arc** (an arc fork lens): a jagged branching bolt that chains between bodies and arcs to wet targets.
   - **Plasma** (a core breech): a slow glowing blob that splashes where it lands.
 
-A coin flipped with [Coin flip](Skills.md) redirects a pulse without costing it any damage, and a **cylinder** pulse hits harder when redirected.
+A coin flipped with [Coin flip](Skills.md#observation) redirects a pulse without costing it any damage, the pulse holds in the struck coin for about a second with a ringing note before it goes on, and a **cylinder** pulse hits harder when redirected.
 
 Skills and casts that need a loaded gun (quick draw, walking fire, Overwatch, Snap Volley and the like) work with it, counting its charge as shots ready.
 

@@ -56,11 +56,11 @@ Anchor: hold ground. Parries, bracing, taking blows without moving, and what you
 | Brace | 60 | Quick recovery | Cast: plant yourself for four seconds. Knockback cannot move you and you can barely walk, and every blow taken is held by your mass (armor counts) against the attacker's: the held share is not taken, it goes into the attacker as stagger, and the held weapon wears for it. Costs 20 stamina. *(once used, rearms on a timer.)* |
 | Plate up | 40 | Brace | Brace holds with your worn armor's toughness as well as its mass: each point adds to what holds a blow. |
 | Grit teeth | 50 | Brace | Cast: set your body for four seconds. Every blow lands lighter by a share read off the armor you wear: 15% bare, up to 55% in full plate. You are rooted, three tenths slower, while it lasts. Rearms on the clock. *(once used, rearms on a timer.)* |
-| Return fire | 60 | Tight redirect | A weapon parry in its window turns a bullet back at the shooter carrying the round's own energy, not a multiple. Price: the parry timing, and the blow wears the weapon. |
+| Return fire | 60 | Tight redirect | A weapon parry in its window turns an arrow or a thrown thing back along its way. A bullet is too fast to turn. Price: the parry timing, and the blow wears the weapon. |
 | Braced | 40 | Brace | Recoil is momentum. Opens the recoil techniques. |
 | Grab | 20 | Brace | Take hold of what is in front of you, bare-handed. The same skill as the Brute Grab node: owning either unlocks it, it is bought once with either tree's points, and the other node shows as owned. Human shield builds on it. |
 | Human shield | 60 | Grab | Cast: the body you hold takes every blow aimed at you for as long as you hold it. If it dies, so does the cover. Needs a hold (Grab). Costs 20 stamina. *(once used, rearms on a timer.)* |
-| Rebuke | 60 | Hard stagger | Cast: for three seconds every melee blow you take is struck back at the attacker for six tenths of what it dealt. You still take all of it. Costs 25 stamina. *(once used, rearms on a timer.)* |
+| Rebuke | 60 | Hard stagger | Counter-strike reflex. A melee blow that reaches you inside your parry window, one the parry did not catch, is answered at once with a short strike at the one who struck, using your swing. Costs 15 stamina. *(once used, rearms on a timer.)* |
 | Shield wall | 70 | Brace | Cast, with a shield or blocking item in hand: for three seconds anything that comes at you inside the cone in front is turned back and staggered once, by its mass and speed. Costs 25 stamina. *(once used, rearms on a timer.)* |
 | Phalanx | 50 | Shield wall | Allies standing behind you within three blocks are covered by Shield wall too. |
 | Pavise | 60 | Shield wall | Cast, crouched behind a shield: for four seconds every arrow, bolt and bullet that comes at you from the front is stopped, not turned. The shield wears for the force it stops; you cannot leave the spot. Costs 25 stamina. *(once used, rearms on a timer.)* |
@@ -76,7 +76,7 @@ Anchor: hold ground. Parries, bracing, taking blows without moving, and what you
 | Crank beat | 30 | Plant feet | Each click on a hand crank whose network carries a load keeps it turning 8 ticks longer, so a slow cadence holds the beat. Cranking a loaded crank pays a small trickle of Anchor points. |
 | Bench stance | 30 | Plant feet | Lift the soldering iron crouched and the tip may stray 0.2 of a pad pitch further before a joint bridges. |
 | Advance | 70 | Shield wall | Cast: for three seconds walk forward behind a held guard; everything in front is shoved back by the ratio of your mass to its, and the lighter ones are staggered. Needs a shield-type item. Costs 25 stamina. |
-| Reckoning | 70 | Riposte | Cast: the damage your parries took in the last ten seconds is banked, and this lets it go as one blow at what you face, staggering it by twice that. The harder you were hit, the harder it lands. Rearms when you stagger something. Costs 30 stamina. *(once used, rearms on staggering something.)* |
+| Reckoning | 70 | Riposte | Cast: the energy of the last blow you parried, within 5 seconds, goes back through your weapon as one strike at what you face, staggering it by twice that. It is scaled by that blow only: the harder it hit you, the harder it lands. Rearms when you stagger something. Costs 30 stamina. *(once used, rearms on staggering something.)* |
 | Reprisal | 70 | Riposte | Cast: for five seconds every parry you land is answered at once with a blow at whoever struck. Costs 25 stamina. *(once used, rearms on a timer.)* |
 
 ### Veil
@@ -85,28 +85,27 @@ Veil: act unseen. Rolls, shadow steps, smoke, wall kicks, weapon stealth (quiet 
 
 | Node | Cost | Needs | Does |
 | --- | --- | --- | --- |
-| Shadow step | 50 |  | Cast: vanish and step in behind the nearest thing in front of you, within nine blocks, on the side it is not facing. Needs room to stand there. Costs 25 stamina. |
+| Shadow step | 50 |  | Cast: a fast flanking sidestep of three or four blocks toward the blind side of the nearest thing in front of you, within nine blocks. A real dash on the ground: a wall stops it short, and a blow taken or a bump ends it. Costs 25 stamina. |
 | Tumble | 25 | Shadow step | Roll goes 1 block further |
 | Ambush | 50 | Shadow step | The first blow within three seconds of a Shadow step staggers its target, by the blow over its mass, tripled, whatever it was facing. The step is the opening; a dagger's backstab is a different thing (the weapon's own). |
 | Hush the kill | 50 | Ambush | A blow that kills an unaware creature, from a weapon with half its stealth or more, makes no vibration for sculk to hear. |
 | Dull edge | 30 | Hush the kill | A weapon with a soft, dull edge (hardness under 2.5) clanks less: its blows carry a fifth nearer to sculk sensors and wardens. |
 | Opening cut | 45 | Ambush | Claws on an unaware or back-turned creature open a bleed twice as deep. |
 | Pocket sand | 50 | Shadow step | Cast: throw a fistful of the ground at the eyes of a cone: loose sand blinds six seconds, dirt three, bare stone gives you nothing to throw. Targets lose you and flinch. Reads the block underfoot. Costs 15 stamina. |
-| Smoke step | 60 | Shadow step | Cast: roll out of a cloud left where you stood; for three seconds anything inside it loses you as a target, unless it is already at your elbow. Costs 25 stamina. |
+| Smoke step | 60 | Shadow step | Cast: the roll kicks up dust or snow from the ground you stand on, a small puff in that ground's own color. For two seconds anything inside it loses you as a target and is blinded, unless it is already at your elbow. Loose ground (sand, dirt, snow) throws more than stone. Costs 25 stamina. |
 | Hushed step | 30 | Shadow step | Your footsteps carry a quarter nearer to sculk sensors and wardens. Each listener that would have heard you and does not pays a small trickle of Veil points. |
 | Concealed carry | 40 | Hushed step | Creatures notice you from nearer while you hold a weapon that is quiet and light (stealth 60% or more, the Suits: quiet word), in proportion to how quiet it is. A held item above the burn line glows and is seen: no help from it. |
 | Muffled boots | 40 | Hushed step | Your footsteps carry a further 20% nearer. |
 | Soft hands | 30 | Hushed step | Breaking, placing, opening a container and pressing a button carry 30% nearer to sculk sensors and wardens. |
-| Muffled report | 40 | Soft hands | A gun whose report is under one and a half times the quiet band sends the quietest gunshot vibration, so a suppressed or low-report gun passes sculk unheard further out. |
 | Quiet drag | 30 | Soft hands | While soldering, the tip may stray 0.15 of a pad pitch further before a joint bridges. |
 | Long roll | 20 | Tumble | Roll goes 1 block further |
 | Slip past | 35 | Tumble | Roll invulnerability +2 ticks |
 | Snap shot | 40 | Tumble | After a roll that swallowed a blow, your next arrow leaves at full draw however briefly you drew. It fades after three seconds. |
 | Grit | 40 | Pocket sand | Rider: Pocket sand blinds two seconds longer, and crushed stone underfoot will do. |
-| Thick smoke | 40 | Smoke step | Rider: Smoke step's cloud is half again as wide and lasts five seconds. |
-| Vanish | 70 | Smoke step | Cast: invisible for about five seconds, less the more armor you wear (mass clanks); landing a blow gives you away. Reads worn armor mass. Costs 20 stamina. *(once used, rearms on a timer.)* |
+| Thick smoke | 40 | Smoke step | Rider: Smoke step kicks up a bigger cloud that lingers longer, most of all on loose ground. |
+| Vanish | 70 | Smoke step | Held cast: true invisibility while you keep still and the light is low. In the world it is an uncanny stealthiness that cannot be told from invisibility in the dark. Moving, light or a blow you land ends it. Costs 5 stamina to start and a little for every second held. |
 | Far roll | 25 | Long roll | Roll goes 1 block further |
-| Long shadow | 40 | Vanish | Rider: Vanish lasts three seconds longer. |
+| Long shadow | 40 | Vanish | Rider: Vanish also holds while you walk crouched. |
 | Light foot | 30 | Shadow step | Hands back a quarter of the movement-speed penalty your worn armor carries. Armor that slows you less gives less to return. |
 | Running start | 40 | Light foot | A straight sprint builds speed, up to a quarter faster after three seconds. A hard turn or a stop lets it go. |
 | Fleet | 60 | Running start | Cast: a burst of speed for two and a half seconds with a trail of dust. Sixty percent faster with no armor speed penalty; the more speed your worn armor costs, the less of the gain you keep, down to a fifth of it. Costs 20 stamina. *(once used, rearms on a landed blow.)* |
@@ -124,7 +123,7 @@ Brute: overpower. Weight: the bigger hit, the heavier body, the harder push. Pis
 | Grab | 20 |  | Take hold of what is in front of you, bare-handed. A worn glove improves it: a longer hold, and heavier targets. Throw, the grip nodes, Haymaker and Uppercut build on it. The same skill as the Anchor Grab node: owning either unlocks it, it is bought once with either tree's points, and the other node shows as owned. |
 | Shove | 50 | Grab | Cast, held: hands on a vehicle body. A body no heavier than you and your armor is held up in front of the camera; a heavier one is shoved or dragged along the ground at your mass times your speed, with an equal push back on you. See [Shove and carry](Vehicles.md#shove-and-carry). Costs stamina for work delivered. |
 | Momentum | 40 | Heavy butt | A melee blow lands up to 40% harder at a full sprint for an average body: speed times mass, with armor counting. A heavier body gains more, a light one less, and a standing swing gains nothing. |
-| Recoil vault | 60 | Momentum | A shot fired airborne or against a surface pushes you by the gun's impulse over your mass: a rifle launches you, a pocket pistol nudges. Price: a hot or worn gun wears faster when used as a thruster. |
+| Roll with the kick | 60 | Momentum | Shooting with a loose, giving body: every shot kicks the view and shoves the hand less and spreads less. Reads the gun's own kick and spread. |
 | Heavy lift | 40 | Shove | You can carry a body up to 1.5 times your weight before it must be shoved. |
 | Deadlift | 70 | Heavy lift | You can carry a body up to 2 times your weight. |
 | Pistol whip | 15 | Grab | In barehanded mode, attacking with a held gun swings it as a bludgeon. Damage and recovery follow the gun's mass. *(once used, rearms on a landed blow.)* |
@@ -201,12 +200,12 @@ Observation: read a creature, then turn its openings, worn armor, terrain and st
 | --- | --- | --- | --- |
 | Called shot | 70 | Size up | Cast: the round is aimed not at where the thing under your crosshair is but at where its motion puts it by the time the round arrives. Needs line of sight, forty blocks at most. Costs a round, its heat and 25 stamina. *(once used, rearms on a timer.)* |
 | Called draw | 45 | Called shot | Called shot works with a bow or crossbow: call the creature under your crosshair and the next arrow you loose flies at where it will be when it arrives. |
-| Quarry mark | 40 | Called shot | A bow or crossbow hit from 6 blocks or more away makes the target glow for as long as the arrow carried energy: a hard draw marks for seconds, a short one barely. Price: nothing within six blocks, and a dead target is not marked. |
+| Quarry mark | 40 | Called shot | A bow or crossbow hit from 6 blocks or more away wounds the target: it bleeds for as long as the arrow carried energy (a hard draw, seconds; a short one, barely) and leaves drops of blood on the ground only you can see, for half a minute. Price: nothing within six blocks, and a dead target is not marked. |
 | Disarm shot | 60 | Quarry mark | Cast: a round aimed at the weapon hand of whoever you face within twenty blocks; if it leaves the muzzle, what they held falls at their feet and they flinch by the round's impulse. Costs a round and 25 stamina. |
 | Close work | 30 | Called shot | Blows landing inside half your reach recharge the swing faster. Price: at the tip you get nothing. Excludes Far end. *(excludes Far end; respec to swap.)* |
 | Far end | 30 | Called shot | Blows landing out at the tip of your reach hit harder, more the more head-heavy the weapon. Price: up close you get nothing. Excludes Close work. *(excludes Close work; respec to swap.)* |
 | Tipping point | 50 | Far end | A blow from a precise weapon (precision 50% or more, the Suits: precise word) that lands at the tip of the reach goes past a quarter of the target's armor and does not knock it back. |
-| Coin flip | 60 | Called shot | Cast: toss a coin and shoot it. A harder coin than the round rebounds it to the nearest thing within 24 blocks that has a clear line from the coin, seen or not; a softer one is punched through. Heavy coins slow the round. Price: a stamped coin, 15 stamina, and it rearms when you land a blow, or after 30 s out of a fight. *(once used, rearms on a landed blow.)* |
+| Coin flip | 60 | Called shot | Cast: toss a coin and shoot it. A harder coin than the round rebounds it to the nearest thing within 24 blocks that has a clear line from the coin, seen or not; a softer one is punched through. Heavy coins slow the round. The coin is a spinning square of metal tinted by its material, thrown in a heavy arc; a shot that strikes it holds there for about a second with a ringing note before it goes on to the next coin or target. Any parry sends your coin back up. Price: a stamped coin, 15 stamina, and it rearms when you land a blow, or after 30 s out of a fight. *(once used, rearms on a landed blow.)* |
 | Dead eye | 70 | Called shot | Cast: for five seconds, your next shot leaves exact, with no spread, and its round counts as twice as hard against armor. Rearms when you land a blow. Costs 25 stamina. *(once used, rearms on a landed blow.)* |
 | Held draw | 40 | Dead eye | Holding a full draw for a second steadies the arrow: it leaves exactly down your look. Holding drains stamina, and past five seconds your hands shake and the steadiness is lost. |
 | Far sight | 50 | Dead eye | A hard-drawn arrow flies flat for its first second before it starts to drop, so a long shot needs no lead. Price: only a near-full draw, and it drops after the second. |
@@ -233,9 +232,9 @@ Observation: read a creature, then turn its openings, worn armor, terrain and st
 | Sharper eye | 60 | Fine eye | A second halving of every carried instrument's step. A reading never goes finer than the exact figure the world holds. |
 | Pattern | 40 | Case file | After 10 kills of a type, size up lasts twice as long and shows what the creature hits for. |
 | Herd read | 40 | Case file | Size up also reads creatures of the same kind within 6 blocks. |
-| Read the draw | 40 | Size up | A creature drawing a bow or crossbow, or a mob holding a gun with its eyes on someone, glows on your screen within 48 blocks while it does. Only you see it, and it needs no read. |
+| Read the draw | 40 | Size up | With a clear line of sight, a small spark flickers over a creature drawing a bow or crossbow, or a mob holding a gun with its eyes on someone, within 48 blocks, while it does. Nothing glows and nothing shows through a wall. It needs no read. |
 | Read the room | 45 | Herd read | Size up on a player also shows their gun in words: empty, one round left, barrel hot. |
-| Spoor | 50 | Case file | Cast: follow the last creature you read as a trail only you see, for 20 seconds, up to 64 blocks away. Costs 20 stamina. *(once used, rearms on a timer.)* |
+| Spoor | 50 | Case file | Cast: track by real signs. Footprints creatures set down, and blocks broken or placed, within 16 blocks over the last minute show as scuffs of the ground's own dust, for a minute. Only signs that were left show, and only while you were near enough to note them. Costs 20 stamina. *(once used, rearms on a timer.)* |
 
 ### Proficiency
 
@@ -245,15 +244,14 @@ Proficiency: survive. Healing, breath, heat, getting out of trouble. Pool `profi
 | --- | --- | --- | --- |
 | Field dressing | 25 |  | Held cast: stand still and hold the key to bind your wounds. Health comes back while you hold it, and stamina drains 25 a second, so a full bar buys about four hearts. Moving, taking damage, full health or an empty bar ends it: it is for between fights. Rearms on the clock. *(once used, rearms on a timer.)* |
 | Quarry breath | 45 | Field dressing | Killing at range with a bow or crossbow, 6 blocks or more away, gives stamina back by the arrow's energy. |
-| Blood up | 35 | Field dressing | Three empty-hand hits, each within three seconds of the last, with no damage taken between, heal one heart. Taking a hit breaks the run. Rearms on the clock. *(once used, rearms on a timer.)* |
+| Blood up | 35 | Field dressing | Warm muscles: three hits in a row, each within three seconds of the last, with no damage taken between, raise your stamina regain for eight seconds. It heals nothing. Taking a hit breaks the run. Rearms on the clock. *(once used, rearms on a timer.)* |
 | Second breath | 40 | Field dressing | Cast: a deep breath that refills stamina to sixty and pauses its regen, as a rest does. Worn armor presses on the chest: heavy plate breathes to about forty. Costs no stamina; rearms when you land a blow. *(once used, rearms on a landed blow.)* |
 | Hot clear | 50 | Field dressing | Sneak-reload with the barrel near cook-off ejects the chambered round unfired. Price: it only helps where cook-off is a danger. |
 | Last stand | 60 | Field dressing | Taking a hit that leaves you at 3 hearts or less makes the next roll that swallows a blow a free parry: the attacker is staggered and your riposte opens. Price: it takes a hit to arm, and it rearms only by the clock. *(once used, rearms on a timer.)* |
 | Quick hands | 25 | Second breath | Every timer rearm takes 0.75 seconds less |
 | Callused hands | 30 | Hot clear | Bare hands take the scald band: anything under 300 Tu can be held or touched unhurt. Burning and searing still hurt; gloves and tongs still do better. |
-| Shake off | 40 | Last stand | Cast: a hard full-body shake. If you are burning it beats the fire out; otherwise it clears the harmful effect with the most time left. One thing per cast. Rearms when you stagger something. *(once used, rearms on staggering something.)* |
+| Shake off | 40 | Last stand | Cast: a hard full-body shake that throws off what a body can shake: fire, dirt in the eyes, anything sticky on the limbs, a daze, a stun. Poison, wither and the like stay. Refused with nothing to shake. Rearms when you stagger something. *(once used, rearms on staggering something.)* |
 | Tend | 30 | Field dressing | Held cast: stand still within two blocks of a hurt ally and hold the key to bind their wounds. They mend as fast as Field dressing mends you, and stamina drains from you, 25 a second. Either of you moving, either taking damage, the ally at full health or an empty bar ends it. *(once used, rearms on a timer.)* |
-| Hand off | 35 | Tend | Cast: pass stamina to an ally within three blocks. You spend 30; 60% of it reaches them, the rest is lost in the handing over. *(once used, rearms on a timer.)* |
 | Fume ward | 35 | Hot clear | A fume dose (soldering, the reflow oven) gives 30% less poison. |
 | Slow dose | 40 | Fume ward | The radiation dose you carry clears half again as fast, so the illness steps (hunger, weakness and mining fatigue, wither) end sooner. |
 | Iron stomach | 45 | Fume ward | Eating or biting risky food (live organism, toxin, char) gives 40% less of its Hunger, Poison and Nausea. A bite still tells you which class the food is in. |
@@ -262,7 +260,7 @@ Proficiency: survive. Healing, breath, heat, getting out of trouble. Pool `profi
 | Break free | 40 | Shake off | Shake off first throws off any rope someone else has on you (a grab, a hooked weapon) and staggers whoever held it, by their mass. Your own grapple is left alone. |
 | Steady lungs | 40 | Quick hands | Every timer rearm takes 2 seconds less |
 | Cauterize | 60 | Callused hands | Cast: press a hot piece from either hand to the wound. A piece hot enough to burn heals three hearts, one hot enough to sear heals six, and you take that band's burn and catch fire. The piece comes away 200 Tu cooler. Needs something at least burning hot in hand. *(once used, rearms on a timer.)* |
-| Sear shut | 50 | Cauterize | A Cauterize with a piece hot enough to sear also clears the harmful effect with the most time left. Price: the sear's own burn and fire. |
+| Sear shut | 50 | Cauterize | A practised hand at Cauterize: the burn it pays is smaller, the piece loses less heat, and the next one comes sooner. |
 | Wind back | 50 | Adrenaline | A parry landed while your stamina is under 30 gives 15 back, without pausing regen. Price: you have to be low and still parry; rearms on the clock. *(once used, rearms on a timer.)* |
 
 ### Chaos
@@ -296,8 +294,8 @@ Chaos: leave targets with what you did to them, and let it spread; deny ground b
 | Pin down | 60 | Muzzle flash | Always on, with a gun: any round you fire that passes close to a living thing slows it hard for two seconds, hit or not. The crack of a near miss is what pins them; area denial from a gun that is not trying to hit. |
 | Overwatch | 60 | Pin down | Cast: hold a loaded gun on a lane for five seconds. Every living thing that crosses the aim cone within twenty blocks is pinned as by Pin down, with no shot fired. Each one caught costs 6 stamina; the watch ends if you move off the spot or put the gun away. Costs 25 stamina. *(once used, rearms on a timer.)* |
 | Suppressing fire | 65 | Overwatch | Held cast: hold the key and the gun fires a round every few ticks, each laid to one side or the other of your aim and sweeping back and forth across a cone that follows where you look, never on a target. Pin down slows whatever a round passes close to. Every round spends ammo and heats the barrel. Ends on an empty gun, an empty bar or letting go. Costs 20 stamina, then 6 a second while held. *(once used, rearms on a timer.)* |
-| Powder burn | 50 | Muzzle flash | A close shot leaves a powder burn on the target for ten seconds, up to five stacked; your next melee blow spends them as damage. Price: you have to get close, and the burn fades. |
-| Barbed shaft | 45 | Powder burn | A close bow or crossbow hit leaves a barb in the target for ten seconds; your next melee blow spends the barbs as damage, up to five. Twin of Marked rounds. Price: you have to get close, and the barbs work loose. |
+| Powder burn | 50 | Muzzle flash | A close shot sets the target alight for four seconds. Price: you have to get close, and water or fire resistance puts it out. |
+| Barbed shaft | 45 | Powder burn | A close bow or crossbow hit pins the target in place, slowing it hard until it breaks free after five seconds or you strike it. Price: you have to get close. |
 
 ## Respeccing
 
