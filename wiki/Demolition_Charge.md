@@ -32,7 +32,7 @@ Right-click in the air to throw it. The throw lights the fuse. A wick fuse lets 
 
 ## The blast
 
-Power rises with the square root of the powder's burned energy, so twice the powder is not twice the blast. A stronger casing metal holds the gas in longer and adds power. A powder-poor, fuel-rich blend burns short and throws fire instead. A charge too weak to blast only smokes.
+Power rises with the square root of the powder's burned energy, so twice the powder is not twice the blast. A stronger casing metal holds the gas in longer and adds power. A powder-poor, fuel-rich blend burns short and throws fire instead. A charge too weak to blast only smokes. A blast, placed or thrown, breaks blocks the way TNT does.
 
 Fragments hurt everything alive near the blast, more the harder the casing metal and payload and the closer it stands. A charge made from a design (placed or thrown) throws them; a charge packed by hand in the block does not.
 

@@ -18,11 +18,11 @@ Put the grapple in the crafting grid with the parts, in any arrangement. Each fi
 
 | Fitting | Parts | Effect |
 | --- | --- | --- |
-| Extra coil | 4 String | The line is 28 blocks long instead of 16 |
+| Extra coil | 4 string items (anything in string form whose material is at least as strong as wool) | The line is 28 blocks long instead of 16 |
 | Winch | 1 Grapple Winch | The reel runs twice as fast |
-| Barbed head | 2 Wrought Iron Rods | A lighter creature is reeled to you |
-| Second hook | 3 Wrought Iron Plates | A second line, thrown by using the grapple again with a line out |
-| Metal line | 4 wires of one metal (Iron Wire, Copper Wire, any metal's wire) | The line is made of that metal; the tooltip reads "Line: <material>" |
+| Barbed head | 2 rods of a material at least as strong as wrought iron | A lighter creature is reeled to you |
+| Second hook | 3 plates of a material at least as strong as wrought iron | A second line, thrown by using the grapple again with a line out |
+| Metal line | 4 plain wires of one metal (Iron Wire, Copper Wire, any metal's wire; fine wire does not count) | The line is made of that metal; the tooltip reads "Line: <material>" |
 
 A metal line can be fitted again with a different metal's wire. See [The line has a rating](#the-line-has-a-rating) for what the material changes.
 
