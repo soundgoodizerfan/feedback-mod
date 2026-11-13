@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
 import io.github.soundgoodizerfan.feedback.modular.type.Modular;
@@ -55,7 +56,7 @@ public final class SuitServer {
 
     /** One wearer's live state. */
     private static final class Run {
-        float heat, pending, draw, carry = 1f, coldMult = 1f, lastSpeed;
+        float heat, pending, draw, carry = 1f, coldMult = 1f, lastSpeed, owed;
         boolean cut, dash, hopped, powered, plating, jumpOn, nv, asked, jet, cloak;
         /** Ticks left before each pulse ability may fire again, by ability ordinal. */
         final int[] cool = new int[Ability.values().length];
@@ -169,7 +170,8 @@ public final class SuitServer {
                 waste += SuitTuning.CLOAK_AMPS * rig.lossChest();
             }
             if (r.jet && (on & Ability.JET.bit()) != 0) {
-                float thrust = SuitPulses.jet(p, power(rig, Ability.JET), Math.min(1f, AirDensityTable.at(p.level(), p.getY()) / SuitTuning.REF_AIR_DENSITY));
+                float thrust = SuitPulses.jet(p, power(rig, Ability.JET) * SuitModules.throat(rig.mod()) * burn(p, r, FTuning.THRUSTER_FUEL_MB_PER_TICK * SuitModules.throat(rig.mod())),
+                        Math.min(1f, AirDensityTable.at(p.level(), p.getY()) / SuitTuning.REF_AIR_DENSITY));
                 drawn += SuitTuning.JET_AMPS * thrust;
                 waste += SuitTuning.JET_AMPS * thrust * rig.lossChest();
             }
@@ -232,6 +234,13 @@ public final class SuitServer {
         float power = power(rig, a);
         if (!r.powered || power <= 0f || r.cool[a.ordinal()] > 0)
             return;
+        if (a == Ability.BURST) {
+            // the burst is a lump of fuel burned at once; with none, or no air to burn it in, nothing fires and nothing is spent
+            float flame = burn(p, r, SuitTuning.BURST_MB * SuitModules.throat(rig.mod()));
+            if (flame <= 0f)
+                return;
+            power *= flame * SuitModules.throat(rig.mod());
+        }
         float cost = SuitPulses.cost(a) * rig.wiring();
         if (a == Ability.VENT) {
             float amb = AmbientTable.at(p.level()).value();
@@ -246,6 +255,37 @@ public final class SuitServer {
         r.cool[a.ordinal()] = SuitPulses.cooldown(a);
         r.pending += cost;
         r.heat += cost * rig.lossChest() * SuitTuning.HEAT_PER_WASTE;
+    }
+
+    /**
+     * Burns {@code mb} of fuel for the thruster: drains it from the first fluid container the wearer carries whose fluid has a flame
+     * temperature (a bucket of whatever burns, no name asked), as a thruster block's chamber does. The oxidiser is the air, or the oxygen the
+     * fuel carries itself. Returns the flame's share of the reference flame (a hotter one pushes harder), 0 when nothing burned.
+     */
+    private static float burn(ServerPlayer p, Run r, float mb) {
+        boolean air = AirDensityTable.oxygen(p.level()) && AirDensityTable.at(p.level(), p.getY()) >= io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning.THRUSTER_MIN_AIR_DENSITY;
+        r.owed += mb;
+        for (ItemStack s : p.getInventory().items) {
+            var h = s.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.ITEM);
+            if (h == null || h.getTanks() == 0 || h.getFluidInTank(0).isEmpty())
+                continue;
+            var m = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()
+                    .get(net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(h.getFluidInTank(0).getFluid()));
+            var fire = m == null ? null : m.combustion().orElse(null);
+            float flame = fire == null ? 0f : fire.flameTemperature().map(t -> t.value()).orElse(0f);
+            if (flame <= 0f || !air && fire.oxygenBalance() <= 0f)
+                continue;
+            int want = (int) r.owed;
+            if (want > 0) {
+                int got = h.drain(want, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE).getAmount();
+                if (got <= 0)
+                    continue;
+                r.owed -= got;
+            }
+            return flame / FTuning.ENGINE_REFERENCE_FLAME_TU;
+        }
+        r.owed = 0f;
+        return 0f;
     }
 
     /** Held thrust: forward along the look, thinned by the air, with a short hop off the ground. Returns the amps it draws. */
@@ -263,8 +303,8 @@ public final class SuitServer {
             Vec3 look = p.getLookAngle();
             double hx = look.x, hz = look.z, hl = Math.hypot(hx, hz);
             if (hl > 1e-4) {
-                double accel = SuitTuning.DASH_ACCEL * Math.min(1f, drive / SuitTuning.DASH_REF_AMPS) * density * SuitModules.spurAccel(mod);
-                double top = SuitTuning.DASH_TOP_SPEED * density * SuitModules.spurTop(mod);
+                double accel = SuitTuning.DASH_ACCEL * Math.min(1f, drive / SuitTuning.DASH_REF_AMPS) * density;
+                double top = SuitTuning.DASH_TOP_SPEED * density;
                 double nx = v.x + hx / hl * accel, nz = v.z + hz / hl * accel, ns = Math.hypot(nx, nz);
                 if (ns > Math.max(top, speed)) {
                     double k = Math.max(top, speed) / ns;

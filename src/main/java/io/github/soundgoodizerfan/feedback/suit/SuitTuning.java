@@ -57,10 +57,10 @@ public final class SuitTuning {
     // --- module abilities ---------------------------------------------------------------------------
     /** Thermal mask: amps a tick to hold the plate at the ambient. */
     public static final float CLOAK_AMPS = 1.2f;
-    /** Jet: amps a tick of thrust, vertical acceleration (blocks per tick squared) at full power, the climb it tops out at, and the hold it gives against a fall. */
-    public static final float JET_AMPS = 2.5f, JET_ACCEL = 0.08f, JET_TOP = 0.45f;
+    /** Jet: amps a tick to work the valve (the thrust itself is fuel burned), vertical acceleration (blocks per tick squared) at full power, the climb it tops out at, and the hold it gives against a fall. */
+    public static final float JET_AMPS = 0.3f, JET_ACCEL = 0.08f, JET_TOP = 0.45f;
     /** Pulses: Eu each costs, ticks before it can fire again, and its reach in blocks at full power. */
-    public static final float SHOCK_COST = 160f, SCAN_COST = 90f, EMP_COST = 220f, HEAL_COST = 220f, VENT_COST = 40f, BURST_COST = 120f, THORNS_COST = 100f;
+    public static final float BURST_MB = 30f, SHOCK_COST = 160f, SCAN_COST = 90f, EMP_COST = 220f, HEAL_COST = 220f, VENT_COST = 40f, BURST_COST = 120f, THORNS_COST = 100f;
     public static final int SHOCK_COOLDOWN = 100, SCAN_COOLDOWN = 60, EMP_COOLDOWN = 200, HEAL_COOLDOWN = 400, VENT_COOLDOWN = 300, BURST_COOLDOWN = 120,
             THORNS_COOLDOWN = 160;
     /** Heal: health restored at full power. Vent: share of the suit's heat above ambient shed at full power. Burst: thrust along the look, and the lift. Thorns: reach and damage. */

@@ -587,6 +587,9 @@ public final class ModularBake {
                 power = m.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) / k.get("thermal");
             else if (k.containsKey("electric"))
                 power = m.ampacity().orElse(0f) / k.get("electric");
+            else if (k.containsKey("nozzle"))
+                // a nozzle holds the flame it is lit with: its melting point against the reference flame the thruster burns at
+                power = m.thermal().meltingPoint().map(t -> t.value()).orElse(0f) / k.get("nozzle");
             else if (k.containsKey("competence"))
                 power = competence(m) / k.get("competence");
             else if (k.containsKey("optic")) {

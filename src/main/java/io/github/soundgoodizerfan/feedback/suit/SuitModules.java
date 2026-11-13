@@ -40,16 +40,16 @@ public final class SuitModules {
 
     public static final int CRASH_LINER = 6, REFLEX_LINK = 7,
             EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
-            MAGNET_PICKUP = 16, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, ROCKET_SPUR = 29,
+            MAGNET_PICKUP = 16, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25,
             // modules that give the wheel a segment of its own (see ability)
-            JET_PACK = 32, EMP_COIL = 35;
+            EMP_COIL = 35;
     // mechanism classes: a part of one kind of mechanism, tuned by its axis, whatever the figures make of it
-    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39, FILTER = 40, THERMAL = 41;
+    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39, FILTER = 40, THERMAL = 41, THRUSTER = 42;
     /** The variant name of each id, which is also its lang key suffix; index 0 is none. */
     private static final String[] KEYS = {"", "", "", "", "", "", "crash_liner", "reflex_link", "",
             "", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "", "magnet_pickup", "",
             "", "", "", "", "", "load_frame", "stabiliser", "mag_anchor", "", "",
-            "", "rocket_spur", "", "", "jet_pack", "", "", "emp_coil", "optic", "spring", "actuator", "tread", "filter", "thermal"};
+            "", "", "", "", "", "", "", "emp_coil", "optic", "spring", "actuator", "tread", "filter", "thermal", "thruster"};
 
     /** The name key of upgrade {@code id} (translate {@code modular.feedback.variant.<key>}), or empty for none. */
     public static String key(int id) {
@@ -57,7 +57,7 @@ public final class SuitModules {
     }
 
     /** Ids are 1-based; a module array holds each id's power at {@code [id]} and its tuned-axis share at {@code [COUNT + id]}. */
-    public static final int COUNT = 42;
+    public static final int COUNT = 43;
 
     /** A module array's length: powers, then tuned-axis shares. */
     static final int SLOTS = 2 * COUNT;
@@ -78,6 +78,7 @@ public final class SuitModules {
             case TREAD -> "span";
             case FILTER -> "bed";
             case THERMAL -> "thickness";
+            case THRUSTER -> "bore";
             default -> "";
         };
     }
@@ -88,6 +89,9 @@ public final class SuitModules {
             return Ability.STRIDE.bit() | Ability.SHOCK.bit();
         if (id == OPTIC)
             return Ability.LENS.bit() | ((sup & io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SUP_CONTROLLER) != 0 ? Ability.SCAN.bit() : 0);
+        // a nozzle lifts by holding the jet key and fires a single lump of fuel from the wheel
+        if (id == THRUSTER)
+            return Ability.JET.bit() | Ability.BURST.bit();
         // a pump on a held motor can vent the suit's heat; a held circuit lets the plate follow the ambient, a thermal mask
         if (id == THERMAL)
             return ((sup & io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SUP_MOTOR) != 0 ? Ability.VENT.bit() : 0)
@@ -147,11 +151,9 @@ public final class SuitModules {
     /** The wheel segment of legacy module {@code id}, or null for one with none. A switch module works only while its segment is on; a pulse module's segment fires it; the heat sink-like ones stay passive. */
     private static Ability ability(int id) {
         return switch (id) {
-            case JET_PACK -> Ability.JET;
             case EMP_COIL -> Ability.EMP;
             case MAGNET_PICKUP -> Ability.MAGNET;
             case AUTODOC -> Ability.HEAL;
-            case ROCKET_SPUR -> Ability.BURST;
             case THORN_ARRAY -> Ability.THORNS;
             default -> null;
         };
@@ -161,8 +163,9 @@ public final class SuitModules {
     private static final float OXYGEN = 3f, ATTACK_SPEED = 0.2f, KB_PLATING = 0.6f, KB_ANCHOR = 0.5f,
             KB_STABILISER = 0.2f, STRIDE = 0.12f, STEP = 1f, WATER = 0.6f, FALL_CUT = 0.5f, EFFICIENCY = 0.7f, SNEAK = 0.5f, JUMP = 0.12f,
             SAFE_FALL = 5f, LOAD = 1f;
-    private static final float BLAST_CUT = 0.4f, FIRE_CUT = 0.5f, LINING_MIN = 0.3f, SHOT_CUT = 0.3f, BUS_SAVING = 0.3f, SINK_GAIN = 3f, LENS_GAIN = 0.5f,
-            SPUR_ACCEL = 0.8f, SPUR_TOP = 0.4f;
+    private static final float BLAST_CUT = 0.4f, FIRE_CUT = 0.5f, LINING_MIN = 0.3f, SHOT_CUT = 0.3f, BUS_SAVING = 0.3f, SINK_GAIN = 3f, LENS_GAIN = 0.5f;
+    /** Throat width against its widest, at the narrowest bore and at the middle one. */
+    private static final float THROAT_MIN = 0.4f, THROAT_MID = 0.7f;
     private static final float STRIDE_AMPS = 0.3f, MAGNET_AMPS = 0.2f, FILTER_COST = 15f, LINING_COST = 5f, HEAL_COST = 80f,
             THORN_COST = 40f, STOMP_COST = 50f, THORN_DAMAGE = 2f, STOMP_PER_BLOCK = 0.5f, STOMP_MAX = 12f, MAGNET_BASE = 3f, MAGNET_PER = 3f;
     private static final int HEAL_TICKS = 40;
@@ -202,12 +205,10 @@ public final class SuitModules {
         return LOAD * p(m, LOAD_FRAME);
     }
 
-    static float spurAccel(float[] m) {
-        return 1f + SPUR_ACCEL * p(m, ROCKET_SPUR);
-    }
-
-    static float spurTop(float[] m) {
-        return 1f + SPUR_TOP * p(m, ROCKET_SPUR);
+    /** A nozzle's push and the fuel it burns both go with its throat area, against the mid-range throat (as the thruster block's nozzle does). */
+    static float throat(float[] m) {
+        float s = THROAT_MIN + (1f - THROAT_MIN) * arg(m, THRUSTER);
+        return s * s / (THROAT_MID * THROAT_MID);
     }
 
     // --- attributes ------------------------------------------------------------------------------------------
