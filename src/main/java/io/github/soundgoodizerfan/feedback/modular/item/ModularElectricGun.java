@@ -2,6 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.item;
 
+import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
+import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -208,24 +211,31 @@ public class ModularElectricGun extends GunItem {
         CustomData.update(DataComponents.CUSTOM_DATA, gun, change);
     }
 
-    /** The gun's heat, 0 to 1, now: what the last shots left, cooled by the time since. */
-    public static float heat(ItemStack gun, long now, float shed) {
-        CompoundTag tag = tag(gun);
-        float seconds = Math.max(0L, now - tag.getLong(HEAT_AT)) / 20f;
-        return Math.max(0f, tag.getFloat(HEAT) - seconds * ModularTuning.EGUN_HEAT_COOLING_PER_S * shed);
+    /**
+     * The gun's heat as a fraction of its limit, now (0 cold; it can pass 1 on a shot at the limit). The barrel's real temperature,
+     * the same {@link ItemHeat} stamp a powder gun keeps: it cools at the gun's own rate ({@code GunItem.coolingRate}, from the
+     * fittings' shed), and anything that reads or drains a held item's heat acts on it.
+     */
+    public static float heat(ItemStack gun, net.minecraft.world.level.Level level) {
+        float ambient = AmbientTable.at(level).value();
+        return Math.max(0f, (ItemHeat.get(gun, level).value() - ambient) / (limitTu(gun) - ambient));
     }
 
-    public static void setHeat(ItemStack gun, float heat, long now) {
-        edit(gun, tag -> {
-            tag.putFloat(HEAT, Mth.clamp(heat, 0f, 1f));
-            tag.putLong(HEAT_AT, now);
-        });
-    }
-
-    /** The gun's heat now, 0 to 1 (what a HUD reads). */
-    public static float heatFraction(ItemStack gun, long now) {
+    /** The temperature the barrel's heat reads 1 at: its material's service temperature. */
+    private static float limitTu(ItemStack gun) {
         ElectricGunSpec spec = specOf(gun);
-        return spec == null ? 0f : heat(gun, now, spec.shed());
+        return spec == null ? ModularTuning.EGUN_LIMIT_TU : Math.max(spec.limitTu(), ModularTuning.EGUN_LIMIT_TU * 0.25f);
+    }
+
+    /** Stamps the barrel at {@code heat} of its limit. */
+    public static void setHeat(ItemStack gun, float heat, net.minecraft.world.level.Level level) {
+        float ambient = AmbientTable.at(level).value();
+        ItemHeat.set(gun, new Tu(ambient + Math.max(0f, heat) * (limitTu(gun) - ambient)), level);
+    }
+
+    /** The gun's heat now (what a HUD reads). */
+    public static float heatFraction(ItemStack gun, net.minecraft.world.level.Level level) {
+        return level == null ? 0f : heat(gun, level);
     }
 
     /** The share of the loaded cell's charge, 0 to 1, or -1 with no cell. */

@@ -208,7 +208,9 @@ public final class ModularTuning {
     public static final int EGUN_COOLDOWN = 8, EGUN_FLUX_CYCLE = 4, EGUN_FLY_CYCLE = 3, EGUN_BANK_CYCLE = 10, EGUN_CORE_CYCLE = 10;
 
     /** Heat a Standard pulse leaves, falls by this share each second; the fraction of normal rate a throttle never goes below. */
-    public static final float EGUN_HEAT_PER_SHOT = 0.08f, EGUN_HEAT_COOLING_PER_S = 0.15f, EGUN_THROTTLE_FLOOR = 0.4f;
+    /** The barrel temperature (Tu) an electric gun's heat reads 1: its limit, where a governor acts and an ungoverned shot burns. */
+    public static final float EGUN_LIMIT_TU = 200f;
+    public static final float EGUN_HEAT_PER_SHOT = 0.08f, EGUN_THROTTLE_FLOOR = 0.4f;
     /** Damage to the wielder from a shot fired at the heat limit, and from a shock. */
     /** Bore wear (share of condition) a misuse books: a dry fire, a spring set (plus per share of the way to the snap), a snap, a cell over the band (per band over), an overheated shot. */
     public static final float GUN_WEAR_DRY_FIRE = 0.01f, GUN_WEAR_SPRING_SET = 0.02f, GUN_WEAR_SPRING_SET_SPAN = 0.05f, GUN_WEAR_SPRING_SNAP = 0.15f,

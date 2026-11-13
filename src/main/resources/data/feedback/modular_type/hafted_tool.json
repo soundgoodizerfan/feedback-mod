@@ -357,17 +357,17 @@
   "patterns": [
     [
       "H",
-      "S"
-    ],
-    [
-      "H"
-    ],
-    [
-      "HSJ"
+      "S",
+      "B"
     ],
     [
       "HSJ",
-      " K"
+      "B"
+    ],
+    [
+      "HSJ",
+      " K",
+      "B"
     ]
   ],
   "ranges": {
@@ -378,7 +378,8 @@
   },
   "defaults": {
     "H": "feedback:wrought_iron",
-    "S": "feedback:wood"
+    "S": "feedback:wood",
+    "B": "feedback:leather"
   },
   "vanilla": {},
   "names": {

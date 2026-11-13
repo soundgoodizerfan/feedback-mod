@@ -156,6 +156,11 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
 
     @Override
     public boolean keyPressed(int key, int scan, int modifiers) {
+        // A key typed into the title field is the field's: it must not close the screen (the inventory key) or swap a hotbar slot.
+        if (titleBox != null && titleBox.isFocused() && key != org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
+            titleBox.keyPressed(key, scan, modifiers);
+            return true;
+        }
         return board.keyPressed(key, scan, modifiers) || super.keyPressed(key, scan, modifiers);
     }
 

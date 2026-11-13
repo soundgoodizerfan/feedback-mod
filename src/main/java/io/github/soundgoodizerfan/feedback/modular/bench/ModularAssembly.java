@@ -236,6 +236,9 @@ public final class ModularAssembly {
             BlueprintCredit credit = BlueprintCredit.of(sheet);
             if (credit != null && drawn.type().equals(type) && ModularFit.drawnTo(drawn, design, mt, materials)) {
                 item.set(FModular.CREDIT.get(), credit.onItem(drawn));
+                // The built thing takes the blueprint's name, whatever its type.
+                if (!credit.title().isEmpty())
+                    item.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME, titled(credit.title()));
                 return;
             }
         }
@@ -244,8 +247,16 @@ public final class ModularAssembly {
     /** Drops the credit {@code stack} carries if {@code design} no longer shows the parts it was drawn with. */
     public static void keepCredit(ItemStack stack, ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
         BlueprintCredit credit = BlueprintCredit.of(stack);
-        if (credit != null && credit.drawn().filter(d -> ModularFit.drawnTo(d, design, type, materials)).isEmpty())
+        if (credit != null && credit.drawn().filter(d -> ModularFit.drawnTo(d, design, type, materials)).isEmpty()) {
             stack.remove(FModular.CREDIT.get());
+            if (!credit.title().isEmpty() && titled(credit.title()).equals(stack.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME)))
+                stack.remove(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
+        }
+    }
+
+    /** A blueprint's title as an item name: plain, not the italic a renamed item gets. */
+    private static net.minecraft.network.chat.Component titled(String title) {
+        return net.minecraft.network.chat.Component.literal(title).withStyle(s -> s.withItalic(false));
     }
 
     /** The lowest-sorting assignment found so far. */

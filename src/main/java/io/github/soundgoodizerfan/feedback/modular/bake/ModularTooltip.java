@@ -46,8 +46,6 @@ public final class ModularTooltip {
             return;
         }
         BlueprintCredit credit = BlueprintCredit.of(stack);
-        if (credit != null && credit.titleLine() != null)
-            tooltip.add(credit.titleLine());
         ModularType type = ModularTypes.known(design.type());
         if (type != null)
             contents(design, type).forEach(c -> tooltip.add(c.withStyle(ChatFormatting.GRAY)));

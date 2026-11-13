@@ -139,7 +139,7 @@ public final class GunHud {
         boolean tether = spec != null && spec.seat() == io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Seat.BACKPACK_TETHER;
         float charge = tether ? tetherCharge(mc, spec) : io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.chargeFraction(gun);
         Component count = Component.literal(charge < 0f ? "--" : Math.round(charge * 100f) + "%");
-        float heat = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.heatFraction(gun, game);
+        float heat = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.heatFraction(gun, mc.level);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + GunItem.mode(gun).getSerializedName());
         String state = charge < 0f ? (tether ? "no_tether" : "no_cell") : charge <= 0f ? "flat" : null;
         int w = CARD_W, x0 = left ? edge : edge - w;

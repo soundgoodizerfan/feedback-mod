@@ -78,7 +78,7 @@ public final class ElectricMechanism implements GunMechanism {
         if (!BatteryStack.ready(drawn) || BatteryStack.charge(drawn) <= 0f)
             return null;
         int cells = Math.max(1, drawn.getInt("Cells"));
-        float heat = ModularElectricGun.heat(gun, now, spec.shed());
+        float heat = ModularElectricGun.heat(gun, shooter.level());
         float holdShare = spec.holdCharge() ? ModularElectricGun.holdShare(gun, now) : 0f;
         int pumps = spec.pump() ? ModularElectricGun.pumps(gun) : 0;
         float zoomShare = spec.zoom() ? ModularElectricGun.zoomShare(gun, now) : 0f;
@@ -163,7 +163,7 @@ public final class ElectricMechanism implements GunMechanism {
             ElectricGunSpec spec = ModularElectricGun.specOf(gun);
             // A dead-man cutoff that stopped the fire holds until the barrel has cooled.
             if (spec != null && spec.governor() == Governor.CUTOFF
-                    && ModularElectricGun.heat(gun, now, spec.shed()) + spec.heatPerShot(1f) > 1f)
+                    && ModularElectricGun.heat(gun, level) + spec.heatPerShot(1f) > 1f)
                 ModularElectricGun.setTripped(gun, true);
             return false;
         }
@@ -223,7 +223,7 @@ public final class ElectricMechanism implements GunMechanism {
         level.sendParticles(ParticleTypes.GLOW, muzzle.x, muzzle.y, muzzle.z, 1 + Math.round(p.heatAfter() * 6f), 0.04, 0.04, 0.04, 0.01);
 
         // Heat, the pumps' share of it, and what the governor does with it.
-        float heat = ModularElectricGun.heat(gun, now, spec.shed()) + spec.heatPerShot(p.power()) + ModularTuning.EGUN_PUMP_HEAT * (spec.pump() ? ModularElectricGun.pumps(gun) : 0);
+        float heat = ModularElectricGun.heat(gun, level) + spec.heatPerShot(p.power()) + ModularTuning.EGUN_PUMP_HEAT * (spec.pump() ? ModularElectricGun.pumps(gun) : 0);
         if (spec.pump())
             ModularElectricGun.setPumps(gun, 0);
         if (spec.seat() == Seat.CORE_BREECH)
@@ -245,7 +245,7 @@ public final class ElectricMechanism implements GunMechanism {
                     ModularElectricGun.overheated(shooter, gun, hand);
             }
         }
-        ModularElectricGun.setHeat(gun, heat, now);
+        ModularElectricGun.setHeat(gun, heat, level);
         GunShots.bookShot(level, shooter, gun, figures, Math.min(1f, heat), hand, aimed);
     }
 
@@ -373,7 +373,7 @@ public final class ElectricMechanism implements GunMechanism {
             VENTING.remove(player.getUUID());
             long now = level.getGameTime();
             ModularElectricGun.setHot(gun, false);
-            ModularElectricGun.setHeat(gun, ModularElectricGun.heat(gun, now, spec.shed()) * ModularTuning.EGUN_CORE_VENT_KEEP, now);
+            ModularElectricGun.setHeat(gun, ModularElectricGun.heat(gun, level) * ModularTuning.EGUN_CORE_VENT_KEEP, level);
         });
     }
 

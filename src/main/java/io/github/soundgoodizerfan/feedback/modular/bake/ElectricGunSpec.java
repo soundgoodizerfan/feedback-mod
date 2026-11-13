@@ -51,11 +51,12 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
  * @param sight      whether a sight is fitted.
  * @param sightFov   the field a scope closes the view to when aimed (its zoom axis through its lens); 1 for any other sight.
  * @param bank       levels of charge attuned on the seat: a seat that holds more charge sends a bigger pulse.
+ * @param limitTu    the barrel temperature (Tu) the gun's heat reads 1: the barrel material's service temperature, a constant for one that states none.
  */
 public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, float barrelLoss, float seatAmp, float seatDensity,
                               int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
                               float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
-                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank) {
+                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank, float limitTu) {
 
     /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
     public enum Seat {
@@ -119,6 +120,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         boolean hold = false, pump = false, fork = false, zoom = false, gauge = false, sight = false;
         float sightFov = 1f;
         int bank = 0;
+        float limitTu = ModularTuning.EGUN_LIMIT_TU;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
             if (a.kind().equals("pulse_bank"))
                 bank += a.level();
@@ -133,6 +135,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     length = role.axis(p, "barrel_length");
                     loss = Mth.clamp(m.ampacity().orElse(0f) * ModularTuning.EGUN_BARREL_LOSS_PER_AMPACITY, 0f, ModularTuning.EGUN_BARREL_LOSS_MAX);
                     mass = ModularBake.mass(role, p, m);
+                    limitTu = m.thermal().serviceTemperature().map(v -> v.value()).orElse(ModularTuning.EGUN_LIMIT_TU);
                     barrel = true;
                 }
                 case RECEIVER -> {
@@ -199,7 +202,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
         ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
-                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank);
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu);
         return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 

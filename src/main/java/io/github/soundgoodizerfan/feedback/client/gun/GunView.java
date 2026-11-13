@@ -170,7 +170,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             if (variants.containsKey("p"))
                 charge = Math.max(charge, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.pumps(stack)
                         / (float) io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.EGUN_PUMP_MAX);
-            Pulse pulse = new Pulse(angle % 360f, lit, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.heatFraction(stack, game),
+            Pulse pulse = new Pulse(angle % 360f, lit, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.heatFraction(stack, level),
                     design.colour(), charge, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.hot(stack));
             return new GunView(kind, "none", false, eb[0], eb[1], eb[2], 0, 0, colours, variants, surfaces, woods, 0, null, 0, true, pulse, soc);
         }
