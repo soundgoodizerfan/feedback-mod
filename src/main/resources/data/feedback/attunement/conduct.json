@@ -15,6 +15,12 @@
     },
     "second_barrel": {
       "kind": "charged_round"
+    },
+    "machine_winding": {
+      "kind": "channel"
+    },
+    "foil": {
+      "kind": "channel"
     }
   },
   "mirror": {

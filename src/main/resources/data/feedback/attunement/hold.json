@@ -13,6 +13,12 @@
     "binding": {
       "kind": "clamp",
       "flaw": 1
+    },
+    "flywheel_bearing": {
+      "kind": "clamp"
+    },
+    "frame": {
+      "kind": "clamp"
     }
   },
   "mirror": {
@@ -31,6 +37,9 @@
     "binding": {
       "kind": "slip",
       "flaw": -1
+    },
+    "frame": {
+      "kind": "slip"
     }
   },
   "starter": true,

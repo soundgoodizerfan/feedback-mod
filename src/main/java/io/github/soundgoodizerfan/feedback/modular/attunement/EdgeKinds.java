@@ -38,17 +38,22 @@ public final class EdgeKinds {
 
     /** Share of its blow a machine head gains per level of {@code extra_damage} on it: a head that cuts deeper lands more work per stroke. Placeholder. */
     private static final float HEAD_BLOW_PER_LEVEL = 0.25f;
+    /** Share of its blow a machine head loses per level of {@code pad}, and the least a padded head still lands. Placeholder. */
+    private static final float HEAD_PAD_PER_LEVEL = 0.2f, HEAD_PAD_FLOOR = 0.3f;
 
     private EdgeKinds() {
     }
 
     /** The blow multiplier a machine head's {@code extra_damage} levels give, 1 for none. */
     public static float headBlow(ItemStack head) {
-        int n = 0;
+        int n = 0, soft = 0;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(head))
             if (a.kind().equals("extra_damage"))
                 n += a.level();
-        return 1f + n * HEAD_BLOW_PER_LEVEL;
+            else if (a.kind().equals("pad"))
+                soft += a.level();
+        // A padded head spreads its force: a gentler stroke, never less than a share of the head's blow.
+        return Math.max(HEAD_PAD_FLOOR, (1f + n * HEAD_BLOW_PER_LEVEL) * (1f - soft * HEAD_PAD_PER_LEVEL));
     }
 
     public static void register() {

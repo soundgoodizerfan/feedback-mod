@@ -19,6 +19,12 @@
     },
     "second_barrel": {
       "kind": "extra_damage"
+    },
+    "pump_impeller": {
+      "kind": "extra_damage"
+    },
+    "compressor_rotor": {
+      "kind": "extra_damage"
     }
   },
   "mirror": {
@@ -46,6 +52,12 @@
       "kind": "pad"
     },
     "second_barrel": {
+      "kind": "pad"
+    },
+    "pump_impeller": {
+      "kind": "pad"
+    },
+    "compressor_rotor": {
       "kind": "pad"
     }
   },

@@ -35,6 +35,15 @@
     },
     "thermal_sleeve": {
       "kind": "vent_hot"
+    },
+    "compressor_rotor": {
+      "kind": "ignite_target"
+    },
+    "core": {
+      "kind": "ignite_target"
+    },
+    "machine_winding": {
+      "kind": "ignite_target"
     }
   },
   "mirror": {
@@ -64,6 +73,21 @@
     },
     "thermal_sleeve": {
       "kind": "vent_cold"
+    },
+    "compressor_rotor": {
+      "kind": "freeze"
+    },
+    "core": {
+      "kind": "freeze"
+    },
+    "machine_winding": {
+      "kind": "freeze"
+    },
+    "lagging": {
+      "kind": "insulate"
+    },
+    "housing": {
+      "kind": "insulate"
     }
   },
   "books": [

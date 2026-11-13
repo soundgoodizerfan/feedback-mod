@@ -21,6 +21,24 @@
     "lining": {
       "kind": "capacitor",
       "flaw": 1
+    },
+    "foil": {
+      "kind": "build"
+    },
+    "plates": {
+      "kind": "build"
+    },
+    "cell_anode": {
+      "kind": "build"
+    },
+    "jar_glass": {
+      "kind": "capacitor"
+    },
+    "outer_sleeve": {
+      "kind": "capacitor"
+    },
+    "case": {
+      "kind": "capacitor"
     }
   },
   "mirror": {

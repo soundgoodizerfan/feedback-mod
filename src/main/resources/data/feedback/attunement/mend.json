@@ -142,6 +142,18 @@
     },
     "magnetic_sear": {
       "kind": "mend"
+    },
+    "vessel_shell": {
+      "kind": "mend"
+    },
+    "boiler_shell": {
+      "kind": "mend"
+    },
+    "tank_shell": {
+      "kind": "mend"
+    },
+    "reinforcing_bands": {
+      "kind": "mend"
     }
   },
   "mirror": {
@@ -284,6 +296,18 @@
       "kind": "tithe"
     },
     "magnetic_sear": {
+      "kind": "tithe"
+    },
+    "vessel_shell": {
+      "kind": "tithe"
+    },
+    "boiler_shell": {
+      "kind": "tithe"
+    },
+    "tank_shell": {
+      "kind": "tithe"
+    },
+    "reinforcing_bands": {
       "kind": "tithe"
     }
   },

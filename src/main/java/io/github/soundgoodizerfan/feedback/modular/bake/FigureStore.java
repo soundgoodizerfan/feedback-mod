@@ -30,6 +30,16 @@ public final class FigureStore {
         return figs.contains(key) ? figs.getFloat(key) : fallback;
     }
 
+    /** The design the block was built from, or null. */
+    public ModularDesign design() {
+        return design;
+    }
+
+    /** Keeps a state figure ({@code Condition}) with the baked ones, so it rides the item and the block alike. */
+    public void put(String key, float value) {
+        figs.putFloat(key, value);
+    }
+
     /** Takes the figures an item carried (any may be null). */
     public void set(CompoundTag tag, ModularDesign design, ModularFigures figures) {
         this.figs = tag == null ? new CompoundTag() : tag.copy();

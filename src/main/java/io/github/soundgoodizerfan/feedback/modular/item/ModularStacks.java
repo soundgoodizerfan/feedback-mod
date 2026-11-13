@@ -165,7 +165,13 @@ public final class ModularStacks {
         if (type.family() == ModularType.Family.MACHINE)
             ModularBake.machine(design, type, materials).ifPresent(m -> machineState(stack, m));
         if (type.family() == ModularType.Family.BLOCK)
-            BlockFigures.of(design, type, materials).ifPresent(t -> stack.set(FDataComponents.BLOCK_FIGURES.get(), t));
+            BlockFigures.of(design, type, materials).ifPresent(t -> {
+                // A rebake keeps the wear a pressure shell has taken.
+                net.minecraft.nbt.CompoundTag old = stack.get(FDataComponents.BLOCK_FIGURES.get());
+                if (old != null && old.contains("Condition"))
+                    t.putFloat("Condition", old.getFloat("Condition"));
+                stack.set(FDataComponents.BLOCK_FIGURES.get(), t);
+            });
         if (type.family() == ModularType.Family.PRESSURE)
             ModularBake.tank(design, type, materials).ifPresent(v -> {
                 net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.PRESSURE_VESSEL.get(), new net.minecraft.nbt.CompoundTag()).copy();
@@ -192,6 +198,8 @@ public final class ModularStacks {
             });
         if (type.family() == ModularType.Family.DISH)
             DishBake.of(design, type, materials).ifPresent(d -> eatable(stack, d));
+        // What an attuned part does to a machine's figures (heat shed, flow, drag, charge held), after every bake above has written them.
+        io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.shape(stack, design);
         return true;
     }
 

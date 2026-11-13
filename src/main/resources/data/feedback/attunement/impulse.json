@@ -39,6 +39,12 @@
     },
     "second_barrel": {
       "kind": "shove"
+    },
+    "thruster_nozzle": {
+      "kind": "shove"
+    },
+    "wheel_rim": {
+      "kind": "shove"
     }
   },
   "mirror": {
@@ -71,6 +77,21 @@
     },
     "second_barrel": {
       "kind": "pull"
+    },
+    "pump_impeller": {
+      "kind": "pull"
+    },
+    "vessel_shell": {
+      "kind": "damp"
+    },
+    "boiler_shell": {
+      "kind": "damp"
+    },
+    "tank_shell": {
+      "kind": "damp"
+    },
+    "reinforcing_bands": {
+      "kind": "damp"
     }
   },
   "books": [

@@ -207,7 +207,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
         if (temperature > serviceTu)
             lost += (temperature - serviceTu) * ElectricMachineTuning.MACHINE_HEAT_WEAR_PER_TU;
         if (lost > 0f) {
-            condition = Math.max(ElectricMachineTuning.MACHINE_CONDITION_FLOOR, condition - lost * io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.wearShare(design));
+            condition = Math.max(ElectricMachineTuning.MACHINE_CONDITION_FLOOR, condition - lost * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(design));
             setChanged();
         }
         Tu ambient = AmbientTable.at(level);

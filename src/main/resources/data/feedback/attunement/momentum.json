@@ -29,6 +29,15 @@
     },
     "stock": {
       "kind": "run_gun"
+    },
+    "flywheel_disc": {
+      "kind": "momentum"
+    },
+    "crank_flywheel": {
+      "kind": "momentum"
+    },
+    "wheel_rim": {
+      "kind": "momentum"
     }
   },
   "mirror": {
@@ -59,6 +68,9 @@
     },
     "stock": {
       "kind": "brace_gun"
+    },
+    "flywheel_disc": {
+      "kind": "brace"
     }
   },
   "books": [

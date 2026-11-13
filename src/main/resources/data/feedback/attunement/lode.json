@@ -22,6 +22,9 @@
     },
     "second_barrel": {
       "kind": "draw_round"
+    },
+    "magnet_core": {
+      "kind": "draw"
     }
   },
   "mirror": {

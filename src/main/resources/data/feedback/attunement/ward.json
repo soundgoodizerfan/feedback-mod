@@ -177,6 +177,18 @@
     },
     "cylinder_head": {
       "kind": "soak"
+    },
+    "vessel_shell": {
+      "kind": "soak"
+    },
+    "boiler_shell": {
+      "kind": "soak"
+    },
+    "tank_shell": {
+      "kind": "soak"
+    },
+    "reinforcing_bands": {
+      "kind": "soak"
     }
   },
   "starter": true,

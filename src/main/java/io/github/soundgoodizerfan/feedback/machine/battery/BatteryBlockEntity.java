@@ -238,7 +238,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
                 float limit = amps(ElectricMachineTuning.BATTERY_DISCHARGE_TICKS);
                 float over = limit <= 0f ? 0f : amps / limit - 1f;
                 if (over > 0f) {
-                    condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition - ElectricMachineTuning.BATTERY_OVERDRAW_WEAR * over * io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.wearShare(design));
+                    condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition - ElectricMachineTuning.BATTERY_OVERDRAW_WEAR * over * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(design));
                     heat += ElectricMachineTuning.BATTERY_OVERDRAW_HEAT * over;
                 }
                 dirty = true;
@@ -269,7 +269,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         }
         float excess = ElectricRules.overVoltage(band, eu, caseBand);
         if (excess > 0f && !supplying && amps > 0f) {
-            condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition - ElectricMachineTuning.BATTERY_OVERVOLT_WEAR * excess * io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.wearShare(design));
+            condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition - ElectricMachineTuning.BATTERY_OVERVOLT_WEAR * excess * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(design));
             dirty = true;
         }
         if (heat > 0f)
@@ -278,7 +278,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         Heat.tick(this, ambient, ambient, false);
         if (temperature > ElectricMachineTuning.BATTERY_HOT_TU) {
             condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR,
-                    condition - (temperature - ElectricMachineTuning.BATTERY_HOT_TU) * ElectricMachineTuning.BATTERY_HEAT_WEAR_PER_TU * io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.wearShare(design));
+                    condition - (temperature - ElectricMachineTuning.BATTERY_HOT_TU) * ElectricMachineTuning.BATTERY_HEAT_WEAR_PER_TU * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(design));
             dirty = true;
         }
         if (dirty)

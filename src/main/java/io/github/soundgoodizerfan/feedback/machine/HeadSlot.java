@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.machine;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
 import io.github.soundgoodizerfan.feedback.modular.attunement.EdgeKinds;
-import io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -67,7 +67,7 @@ public final class HeadSlot {
             return false;
         int before = FTuning.conditionBand(condition());
         // A soaking head turns some of the wear away, as it does on a tool.
-        head.set(FDataComponents.TOOL_CONDITION.get(), Math.max(floor, condition() - stAbsorbed * perSt * WardKinds.wearShare(ModularStacks.design(head))));
+        head.set(FDataComponents.TOOL_CONDITION.get(), Math.max(floor, condition() - stAbsorbed * perSt * MachineKinds.wearShare(ModularStacks.design(head))));
         return FTuning.conditionBand(condition()) != before;
     }
 

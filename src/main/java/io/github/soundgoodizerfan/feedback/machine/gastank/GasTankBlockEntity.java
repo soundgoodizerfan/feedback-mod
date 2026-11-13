@@ -58,12 +58,17 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
         return figures.get("MbPerPu", PetrochemTuning.GAS_TANK_MB_PER_PU);
     }
 
+    /** How sound the shell is, 1 as built: it wears above its danger line, and a worn shell's lines are lower ({@code MachineKinds#vessel}). */
+    private float shellCondition() {
+        return figures.get("Condition", 1f);
+    }
+
     private Pu danger() {
-        return new Pu(figures.get("Danger", FluidTuning.PRESSURE_VESSEL_DANGER_PU.value()));
+        return new Pu(figures.get("Danger", FluidTuning.PRESSURE_VESSEL_DANGER_PU.value()) * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.lines(shellCondition()));
     }
 
     private Pu critical() {
-        return new Pu(figures.get("Critical", FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value()));
+        return new Pu(figures.get("Critical", FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value()) * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.lines(shellCondition()));
     }
 
     public GasTankBlockEntity(BlockPos pos, BlockState state) {
@@ -128,16 +133,28 @@ public class GasTankBlockEntity extends BlockEntity implements PressureHolder {
     }
 
     public void tickServer() {
-        if (level == null || gas.isEmpty())
+        if (level == null)
             return;
+        if (gas.isEmpty()) {
+            // An empty tank has nothing to wear it, and is where a mending shell is closed up.
+            if (shellCondition() < 1f) {
+                float healed = io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.vessel(level, worldPosition, figures.design(), shellCondition(), 0f, 1f, 2f);
+                if (healed != shellCondition())
+                    figures.put("Condition", healed);
+            }
+            return;
+        }
         gas.relax(AmbientTable.at(level));
         float relief = figures.get("Relief", 0f);
         if (relief > 0 && getPressure().value() > danger().value() * PetrochemTuning.RELIEF_OPENS_AT)
             gas.drain(Math.round(relief), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+        float worn = io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.vessel(level, worldPosition, figures.design(), shellCondition(), getPressure().value(), danger().value(), critical().value());
+        if (worn != shellCondition())
+            figures.put("Condition", worn);
         if (PressureBurst.fails(getPressure(), danger(), critical(),
                 level.random)) {
             gas.setFluid(FluidStack.EMPTY);
-            PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER);
+            PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.blastShare(figures.design()));
         }
     }
 

@@ -22,6 +22,9 @@
     },
     "second_barrel": {
       "kind": "stick"
+    },
+    "cleat": {
+      "kind": "stick"
     }
   },
   "mirror": {
@@ -44,6 +47,9 @@
       "kind": "slick"
     },
     "second_barrel": {
+      "kind": "slick"
+    },
+    "flywheel_disc": {
       "kind": "slick"
     }
   }

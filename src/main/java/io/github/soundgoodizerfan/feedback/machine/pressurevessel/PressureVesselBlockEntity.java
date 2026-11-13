@@ -74,6 +74,8 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
     private float critical = FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value();
     /** mB a relief valve vents a tick near the danger line; 0 with none. */
     private float relief;
+    /** How sound the shell is, 1 as built: it wears above the danger line and gives way at a lower pressure as it does ({@code MachineKinds#vessel}). */
+    private float condition = 1f;
     /** The design it was built from, kept so the broken block drops the same item. */
     private ModularDesign design;
     private ModularFigures figures;
@@ -113,19 +115,26 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
 
         canningTick();
 
+        float lines = io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.lines(condition);
+        float before = condition;
+        condition = io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.vessel(level, worldPosition, design, condition,
+                getPressure().value(), danger * lines, critical * lines);
+        if (condition != before)
+            setChanged();
+
         // Read from PneumaticCraft: Repressurized's MachineAirHandler#addAir (GPL-3.0) -- risk
         // climbs linearly across the danger-to-critical band, and critical itself is certain
         // rather than merely likely. This is philosophy 7's Hazard tier, and philosophy 15's named
         // GregTech-boiler precedent, both landing on Feedback's own equipment rather than staying
         // an open item -- see FluidTuning#PRESSURE_VESSEL_DANGER_PU. The ladder itself is shared with
         // the boiler: see PressureBurst.
-        if (PressureBurst.fails(getPressure(), new Pu(danger),
-                new Pu(critical), level.random)) {
+        if (PressureBurst.fails(getPressure(), new Pu(danger * lines),
+                new Pu(critical * lines), level.random)) {
             amount = 0;
             setChanged();
             Level level = this.level;
             level.explode(null, worldPosition.getX() + 0.5, worldPosition.getY() + 0.5,
-                    worldPosition.getZ() + 0.5, 2.0f, Level.ExplosionInteraction.BLOCK);
+                    worldPosition.getZ() + 0.5, 2.0f * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.blastShare(design), Level.ExplosionInteraction.BLOCK);
         }
     }
 
@@ -236,6 +245,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         tag.putFloat("Danger", danger);
         tag.putFloat("Critical", critical);
         tag.putFloat("Relief", relief);
+        tag.putFloat("Condition", condition);
         return tag;
     }
 
@@ -244,6 +254,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
         danger = tag.contains("Danger") ? tag.getFloat("Danger") : danger;
         critical = tag.contains("Critical") ? tag.getFloat("Critical") : critical;
         relief = tag.contains("Relief") ? tag.getFloat("Relief") : relief;
+        condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 
     @Override

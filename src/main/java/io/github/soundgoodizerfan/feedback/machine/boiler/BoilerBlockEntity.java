@@ -93,8 +93,17 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         figures.collect(components);
     }
 
+    /** How sound the shell is, 1 as built: it wears above its danger line, and a worn shell's lines are lower ({@code MachineKinds#vessel}). */
+    private float shellCondition() {
+        return figures.get("Condition", 1f);
+    }
+
     private float dangerPu() {
-        return figures.get("Danger", FluidTuning.PRESSURE_VESSEL_DANGER_PU.value());
+        return figures.get("Danger", FluidTuning.PRESSURE_VESSEL_DANGER_PU.value()) * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.lines(shellCondition());
+    }
+
+    private float criticalPu() {
+        return figures.get("Critical", FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value()) * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.lines(shellCondition());
     }
 
     /** The shell's danger line over the fixed one: a stronger shell lifts the pressure its valve and seams are set at with it. */
@@ -276,11 +285,13 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         } else if (weptAt >= 0) {
             weptAt = -1;
         }
-        if (PressureBurst.fails(pressure, new Pu(dangerPu()),
-                new Pu(figures.get("Critical", FluidTuning.PRESSURE_VESSEL_CRITICAL_PU.value())), level.random)) {
+        float worn = io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.vessel(level, worldPosition, figures.design(), shellCondition(), pressure.value(), dangerPu(), criticalPu());
+        if (worn != shellCondition())
+            figures.put("Condition", worn);
+        if (PressureBurst.fails(pressure, new Pu(dangerPu()), new Pu(criticalPu()), level.random)) {
             steamTank.setFluid(FluidStack.EMPTY);
             tank.setFluid(FluidStack.EMPTY);
-            PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER);
+            PressureBurst.burst(level, worldPosition, MachineTuning.BOILER_BURST_POWER * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.blastShare(figures.design()));
         }
     }
 

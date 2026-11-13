@@ -17,12 +17,18 @@
     "lining": {
       "kind": "coil",
       "flaw": 1
+    },
+    "store_core": {
+      "kind": "store"
     }
   },
   "mirror": {
     "string": {
       "kind": "release",
       "flaw": 1
+    },
+    "store_core": {
+      "kind": "release"
     }
   }
 }

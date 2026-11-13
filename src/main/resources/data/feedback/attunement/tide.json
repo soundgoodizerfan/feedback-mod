@@ -17,6 +17,9 @@
     },
     "second_barrel": {
       "kind": "wet_round"
+    },
+    "compressor_rotor": {
+      "kind": "douse"
     }
   },
   "mirror": {
@@ -41,6 +44,15 @@
     },
     "second_barrel": {
       "kind": "dry_round"
+    },
+    "pump_impeller": {
+      "kind": "affinity"
+    },
+    "jar_glass": {
+      "kind": "seal"
+    },
+    "outer_sleeve": {
+      "kind": "seal"
     }
   },
   "books": [

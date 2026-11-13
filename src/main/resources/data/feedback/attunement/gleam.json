@@ -19,6 +19,9 @@
     },
     "studs": {
       "kind": "worn_glow"
+    },
+    "lamp_filament": {
+      "kind": "glow"
     }
   },
   "mirror": {
@@ -39,6 +42,9 @@
     },
     "studs": {
       "kind": "worn_dim"
+    },
+    "lamp_filament": {
+      "kind": "dim"
     }
   }
 }
