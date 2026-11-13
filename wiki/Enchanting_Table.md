@@ -78,7 +78,7 @@ Each effect does something different on a different **role** (the part's place i
 | --- | --- | --- |
 | **Heat** | head or blade: sets what it strikes alight. Handle: burns *you*, as hot as the material burns. Plate: sets whoever hits you alight | **Cold**: head or blade stacks freezing on the target; lining turns fire damage away |
 | **Edge** | head or blade: cuts deeper (brittle). On the head of a [Mechanical Hammer](Mechanical_Hammer.md) or [Mechanical Press](Mechanical_Press.md): a harder blow | **Spread**: head or blade turns damage into stagger; plate deflects projectiles |
-| **Ward** | plate resists fracture; elsewhere, and on the parts of a motor, dynamo, battery or engine, turns away some of each use's wear | none |
+| **Ward** | plate resists fracture; elsewhere, and on hammer and press heads and the parts of a motor, dynamo, battery or engine, turns away some of each use's wear | none |
 | **Bane** | cuts deeper into undead and arthropods; on armor blunts their blows | **Kin**: undead struck lose interest, but hit harder; armor hides you from them |
 | **Hold** | handle clamps to the hand, so it can't be dropped | **Free**: lining makes crouching less slow; handle may slip but gives under force |
 | **Impulse** | head throws targets back; handle recoils on you; plate returns part of each blow | **Pull**: head draws targets in; plate soaks explosions and falls |
