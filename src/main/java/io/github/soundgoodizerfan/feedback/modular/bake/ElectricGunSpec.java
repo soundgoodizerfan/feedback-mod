@@ -52,14 +52,15 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
  * @param sight      whether a sight is fitted.
  * @param sightFov   the field a scope closes the view to when aimed (its zoom axis through its lens); 1 for any other sight.
  * @param bank       levels of charge attuned on the seat: a seat that holds more charge sends a bigger pulse.
- * @param limitTu    the barrel temperature (Tu) the gun's heat reads 1: the barrel material's service temperature (a constant for one that states none), no higher than where a hand is burned, so a light shot leaves a warm gun and the limit is a gun too hot to hold.
+ *  * @param limitTu    the barrel temperature (Tu) the governor holds the gun under (its heat reads 1): the lower of where a bare hand is burned and the barrel material's service temperature.
+ * @param serviceTu  the barrel material's service temperature (a constant for one that states none): past it a shot wears the gun.
  * @param sense      share of the barrel's true heat the governor's element passes on (its thermal conductivity); 1 for none fitted.
  * @param zoomGain   how strongly the zoom coil's field builds, from its winding's conductor; 1 for none fitted.
  */
 public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, float barrelLoss, float seatAmp, float seatDensity,
                               int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
                               float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
-                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank, float limitTu,
+                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank, float limitTu, float serviceTu,
                               float sense, float zoomGain) {
 
     /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
@@ -125,7 +126,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         float sightFov = 1f;
         int bank = 0;
         float sense = 1f, zoomGain = 1f;
-        float limitTu = ModularTuning.EGUN_LIMIT_TU;
+        float limitTu = ModularTuning.EGUN_LIMIT_TU, serviceTu = ModularTuning.EGUN_LIMIT_TU;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
             if (a.kind().equals("pulse_bank"))
                 bank += a.level();
@@ -140,7 +141,8 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     length = role.axis(p, "barrel_length");
                     loss = Mth.clamp(m.ampacity().orElse(0f) * ModularTuning.EGUN_BARREL_LOSS_PER_AMPACITY, 0f, ModularTuning.EGUN_BARREL_LOSS_MAX);
                     mass = ModularBake.mass(role, p, m);
-                    limitTu = Math.min(m.thermal().serviceTemperature().map(v -> v.value()).orElse(ModularTuning.EGUN_LIMIT_TU), io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning.CONTACT_BURN_TU.value());
+                    serviceTu = m.thermal().serviceTemperature().map(v -> v.value()).orElse(ModularTuning.EGUN_LIMIT_TU);
+                    limitTu = Math.min(serviceTu, io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning.CONTACT_BURN_TU.value());
                     barrel = true;
                 }
                 case RECEIVER -> {
@@ -221,7 +223,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
         ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
-                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu, sense, zoomGain);
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu, serviceTu, sense, zoomGain);
         return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 
@@ -323,8 +325,8 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         return tier * ModularTuning.EGUN_PIERCE_PER_TIER + (holdCharge ? Math.round(ModularTuning.EGUN_HOLD_PIERCE * holdShare) : 0);
     }
 
-    /** Heat a pulse of {@code power} (1 for an ordinary one) leaves: its tier, the barrel's conductor and the fittings. */
-    public float heatPerShot(float power) {
+    /** Tu a pulse of {@code power} (1 for an ordinary one) puts in the barrel: its tier, the barrel's conductor and the fittings; nothing of what the barrel can take. */
+    public float heatPerShot(float power) { // Tu
         return ModularTuning.EGUN_HEAT_PER_SHOT * (tierFraction() / ModularTuning.EGUN_TIER_FRACTION[1]) * power
                 * (1f + barrelLoss * ModularTuning.EGUN_BARREL_HEAT_PER_LOSS) * heatGain * heatMult;
     }

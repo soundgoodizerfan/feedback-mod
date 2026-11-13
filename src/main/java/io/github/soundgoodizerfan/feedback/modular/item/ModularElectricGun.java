@@ -221,6 +221,16 @@ public class ModularElectricGun extends GunItem {
         return Math.max(0f, (ItemHeat.get(gun, level).value() - ambient) / (limitTu(gun) - ambient));
     }
 
+    /** Tu one unit of heat (the governor's limit) is above ambient: what a Tu gain is divided by. */
+    public static float perHeat(ElectricGunSpec spec, net.minecraft.world.level.Level level) {
+        return Math.max(1f, Math.max(spec.limitTu(), ModularTuning.EGUN_LIMIT_TU * 0.25f) - AmbientTable.at(level).value());
+    }
+
+    /** Whether the barrel, at {@code heat} of the governor's limit, is past its material's service temperature: where a shot wears the gun. */
+    public static boolean pastService(ElectricGunSpec spec, float heat, net.minecraft.world.level.Level level) {
+        return heat > Math.max(1f, (spec.serviceTu() - AmbientTable.at(level).value()) / perHeat(spec, level));
+    }
+
     /** The temperature the barrel's heat reads 1 at: its material's service temperature. */
     private static float limitTu(ItemStack gun) {
         ElectricGunSpec spec = specOf(gun);

@@ -210,7 +210,8 @@ public final class ModularTuning {
     /** Heat a Standard pulse leaves, falls by this share each second; the fraction of normal rate a throttle never goes below. */
     /** The barrel temperature (Tu) an electric gun's heat reads 1: its limit, where a governor acts and an ungoverned shot burns. */
     public static final float EGUN_LIMIT_TU = 200f;
-    public static final float EGUN_HEAT_PER_SHOT = 0.08f, EGUN_THROTTLE_FLOOR = 0.4f;
+    /** Tu one ordinary pulse of a standard tier puts in the barrel, and one pump of the pump charge: set by the shot and the barrel's conductor, never by what the barrel can take. */
+    public static final float EGUN_HEAT_PER_SHOT = 14f, EGUN_THROTTLE_FLOOR = 0.4f;
     /** Damage to the wielder from a shot fired at the heat limit, and from a shock. */
     /** Bore wear (share of condition) a misuse books: a dry fire, a spring set (plus per share of the way to the snap), a snap, a cell over the band (per band over), an overheated shot. */
     public static final float GUN_WEAR_DRY_FIRE = 0.01f, GUN_WEAR_SPRING_SET = 0.02f, GUN_WEAR_SPRING_SET_SPAN = 0.05f, GUN_WEAR_SPRING_SNAP = 0.15f,
@@ -232,7 +233,7 @@ public final class ModularTuning {
     public static final int EGUN_PUMP_MAX = 3;
     /** Ticks from the pump key to its click: the forend's throw (client {@code GunMotion.jerk}, 0.55 of the stroke) lands about then. */
     public static final int EGUN_PUMP_SOUND_TICKS = 4;
-    public static final float EGUN_PUMP_POWER = 0.25f, EGUN_PUMP_HEAT = 0.1f, EGUN_PUMP_SPREAD = 0.5f, EGUN_PUMP_BEAMS = 0.6f,
+    public static final float EGUN_PUMP_POWER = 0.25f, EGUN_PUMP_HEAT = 18f, EGUN_PUMP_SPREAD = 0.5f, EGUN_PUMP_BEAMS = 0.6f,
             EGUN_PUMP_BLAST_RADIUS = 4f, EGUN_PUMP_BLAST_MULT = 1.5f, EGUN_PUMP_BLAST_SELF_CAP = 0.75f;
     /** Beam splitter: the energy of all the beams together against one pulse, and the cone's degrees per beam. */
     public static final float EGUN_SPLIT_TOTAL = 1.5f, EGUN_SPLIT_DEG_PER_BEAM = 1.2f;
