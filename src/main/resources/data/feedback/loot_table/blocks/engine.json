@@ -12,7 +12,9 @@
               "function": "minecraft:copy_components",
               "source": "block_entity",
               "include": [
-                "feedback:engine_design"
+                "feedback:engine_design",
+                "feedback:modular_design",
+                "feedback:plug_wear"
               ]
             }
           ]

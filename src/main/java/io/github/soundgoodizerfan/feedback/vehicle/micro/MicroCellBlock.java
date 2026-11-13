@@ -262,6 +262,25 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
                 return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
         }
+        // A block of tire stock in hand on an assembled hinge that turns a wheel fits a new tire (one block, whatever the wheel's size).
+        if (stack.getItem() instanceof net.minecraft.world.item.BlockItem tire && MicroWheels.isTire(tire.getBlock().defaultBlockState())
+                && level.getBlockEntity(pos) instanceof MicroCellBlockEntity wheeled) {
+            int p = wheeled.pick(hit.getLocation(), hit.getDirection());
+            var joint = p < 0 ? null : wheeled.bearing(p);
+            if (joint != null && joint.hasWheel()) {
+                if (!level.isClientSide) {
+                    boolean fresh = joint.tread() >= 1;
+                    if (!fresh) {
+                        joint.refit();
+                        wheeled.setChanged();
+                        if (!player.getAbilities().instabuild)
+                            stack.shrink(1);
+                    }
+                    player.displayClientMessage(Component.translatable(fresh ? "message.feedback.tire.as_built" : "message.feedback.tire.fitted"), true);
+                }
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
         if (!stack.is(io.github.soundgoodizerfan.feedback.registry.FItems.BEARING.get()) || !(level.getBlockEntity(pos) instanceof MicroCellBlockEntity cell))
             return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         int i = cell.pick(hit.getLocation(), hit.getDirection());
@@ -306,9 +325,12 @@ public class MicroCellBlock extends BaseEntityBlock implements BlockSubLevelColl
             return InteractionResult.PASS;
         // Sneaking on an assembled joint reads its condition and brake pad instead of putting it back.
         if (player.isShiftKeyDown() && cell.bearing(i) != null) {
-            if (!level.isClientSide)
-                player.displayClientMessage(Component.translatable("message.feedback.joint.condition",
-                        Math.round(cell.bearing(i).condition() * 100), Math.round(cell.bearing(i).pad() * 100)), true);
+            if (!level.isClientSide) {
+                var joint = cell.bearing(i);
+                player.displayClientMessage(joint.hasWheel()
+                        ? Component.translatable("message.feedback.joint.condition_wheel", Math.round(joint.condition() * 100), Math.round(joint.pad() * 100), Math.round(joint.tread() * 100))
+                        : Component.translatable("message.feedback.joint.condition", Math.round(joint.condition() * 100), Math.round(joint.pad() * 100)), true);
+            }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         // Sneaking on an unassembled joint cycles its named choice (cone, spring) instead.

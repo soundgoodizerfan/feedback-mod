@@ -35,6 +35,7 @@ import dev.ryanhcode.sable.neoforge.event.ForgeSablePrePhysicsTickEvent;
 import dev.ryanhcode.sable.sublevel.ServerSubLevel;
 import dev.ryanhcode.sable.sublevel.system.SubLevelPhysicsSystem;
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.vehicle.micro.MicroWheels;
 
 import org.jetbrains.annotations.Nullable;
@@ -127,6 +128,11 @@ public final class Joint {
     private long scanEdits = -1;
     /** 1 as built, falling to the floor when the drive pushes against a held brake past the grace; it scales the brake's grip. */
     private volatile float pad = 1;
+    /** 1 as built, falling to {@link VehicleTuning#TIRE_CONDITION_FLOOR} with distance rolled under load; it scales the tread's grip. Use wear: a vehicle's tires, not a machine's. */
+    private volatile float tread = 1;
+    private final java.util.concurrent.atomic.DoubleAdder treadWorn = new java.util.concurrent.atomic.DoubleAdder();
+    /** The last physics step's contact, from {@link MicroWheels#step}: load on the ground, slide speed. Physics thread only. */
+    private final double[] contact = new double[2];
     private final java.util.concurrent.atomic.AtomicInteger padWorn = new java.util.concurrent.atomic.AtomicInteger();
     /** Game ticks a ball, slider or piston has been forced against its stop; game thread only. */
     private int strainRun;
@@ -269,6 +275,21 @@ public final class Joint {
         return pad;
     }
 
+    /** The tire's condition, 1 to the floor; 1 when there is no wheel. */
+    public float tread() {
+        return tread;
+    }
+
+    /** True if this hinge turns a wheel (tire voxels on its body). */
+    public boolean hasWheel() {
+        return wheel != null;
+    }
+
+    /** A new tire fitted. */
+    public void refit() {
+        tread = 1;
+    }
+
     /** A new bearing fitted: the joint and its pad are as built. */
     public void repair() {
         condition = 1;
@@ -315,6 +336,9 @@ public final class Joint {
         int worn = padWorn.getAndSet(0);
         if (worn > 0)
             pad = Math.max(MachineTuning.JOINT_CONDITION_FLOOR, pad - worn * MachineTuning.BRAKE_PAD_WEAR_PER_STEP);
+        double rolled = treadWorn.sumThenReset();
+        if (rolled > 0)
+            tread = Math.max(VehicleTuning.TIRE_CONDITION_FLOOR, tread - (float) rolled);
         int stalled = stalledTicks.getAndSet(0);
         if (stalled > 0) {
             condition = Math.max(MachineTuning.JOINT_CONDITION_FLOOR, condition - stalled * MachineTuning.JOINT_STALL_WEAR_PER_TICK);
@@ -607,13 +631,16 @@ public final class Joint {
         MicroWheels.Shape wh = wheel;
         if (wh != null) {
             Vector3d centre = s.logicalPose().transformPosition(new Vector3d(plotAnchor), new Vector3d());
-            double road = MicroWheels.step(level, s, vehicle, centre, axis, wh, carried, brake * pad, dt);
+            double road = MicroWheels.step(level, s, vehicle, centre, axis, wh, carried, brake * pad, tread, contact, dt);
             if (road != 0)
                 synchronized (this) {
                     roadImpulse += road * dt;
                 }
         }
         double w = h.getAngularVelocity(new Vector3d()).dot(axis) - (hp == null ? 0 : hp.getAngularVelocity(new Vector3d()).dot(axis));
+        // Distance rolled on the ground wears the tread, softer rubber faster; sliding past the grip wears it more.
+        if (wh != null && contact[0] > 0)
+            treadWorn.add(dt * (Math.abs(w) * wh.radius() * VehicleTuning.TIRE_WEAR_PER_BLOCK * wh.softness() + contact[1] * VehicleTuning.TIRE_SKID_WEAR_PER_BLOCK));
         // The step toward the target speed, ramped: no faster than the bearing's angular acceleration.
         double step = (targetRadPerS - w) * (1 - Math.exp(-MachineTuning.ROTARY_BEARING_DRIVE_RATE * dt));
         double ramp = MachineTuning.ROTARY_BEARING_MAX_ACCEL * dt;
@@ -731,6 +758,7 @@ public final class Joint {
         tag.putInt("Variant", variant);
         tag.putFloat("Condition", condition);
         tag.putFloat("Pad", pad);
+        tag.putFloat("Tread", tread);
         put(tag, "Anchor", plotAnchor);
         put(tag, "Axis", plotAxis);
         put(tag, "Ref", plotRef);
@@ -754,6 +782,7 @@ public final class Joint {
         j.variant = Math.clamp(tag.getInt("Variant"), 0, 4);
         j.condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1;
         j.pad = tag.contains("Pad") ? tag.getFloat("Pad") : 1;
+        j.tread = tag.contains("Tread") ? tag.getFloat("Tread") : 1;
         if (j.kind == Kind.PISTON)
             j.travel = MachineTuning.PISTON_TRAVEL;
         get(tag, "Anchor", j.plotAnchor);

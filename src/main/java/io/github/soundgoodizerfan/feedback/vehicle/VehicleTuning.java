@@ -230,6 +230,29 @@ public final class VehicleTuning {
     /** Invented. Knock wears condition by this much a tick at full opening, down to a floor it never passes: degrades, never refuses. */
     public static final float ENGINE_KNOCK_WEAR_PER_TICK = 0.0002f, ENGINE_CONDITION_FLOOR = 0.2f;
 
+    /**
+     * Placeholder. Spark plug, wearing by running time in a vehicle (use wear, the vehicle exception). A plug of the reference
+     * metal ({@code PLUG_REFERENCE_MELT_TU}, steel) lasts {@code PLUG_LIFE_TICKS} running ticks; a metal that melts hotter lasts
+     * proportionally longer (spark erosion), within {@code PLUG_LIFE_RATIO} (least, most). A metal that carries heat away
+     * runs colder and fouls: fouling is its conductivity over {@code PLUG_REFERENCE_CONDUCTIVITY}, within {@code PLUG_FOUL_RATIO}.
+     */
+    public static final float PLUG_LIFE_TICKS = 24000f, PLUG_REFERENCE_MELT_TU = 1450f, PLUG_REFERENCE_CONDUCTIVITY = 0.0125f;
+    public static final float[] PLUG_LIFE_RATIO = {0.25f, 4f}, PLUG_FOUL_RATIO = {0.5f, 2f};
+
+    /**
+     * Placeholder. A worn plug misses: each running tick starts a stumble with chance {@code PLUG_MISS_CHANCE} x wear squared x
+     * fouling, and a stumble gives no torque for {@code PLUG_MISS_TICKS} ticks. It never stops the engine.
+     */
+    public static final float PLUG_MISS_CHANCE = 0.05f;
+    public static final int PLUG_MISS_TICKS = 4;
+
+    /**
+     * Placeholder. Tires wear by distance rolled under load: {@code TIRE_WEAR_PER_BLOCK} of condition a block at the softest
+     * tread, divided by {@code 1 + hardness / ROLLING_HARDNESS}; a tread slipping past its grip adds {@code TIRE_SKID_WEAR_PER_BLOCK}
+     * for each block it slides. Grip scales with condition and never below {@code TIRE_CONDITION_FLOOR}.
+     */
+    public static final float TIRE_WEAR_PER_BLOCK = 0.0001f, TIRE_SKID_WEAR_PER_BLOCK = 0.0005f, TIRE_CONDITION_FLOOR = 0.3f;
+
     /** Invented. Air drag on every body (kpg per block): force is this times relative air density times speed squared, so a thruster body's terminal speed is sqrt(thrust / this) (about 20 blocks/s for one reference thruster). Drivetrain frames drag by silhouette instead. */
     public static final float AIR_DRAG = 50f;
 

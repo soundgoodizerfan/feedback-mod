@@ -137,6 +137,10 @@ public final class ModularStacks {
         Optional<ModularFigures> baked = ModularBake.bake(design, type, materials, step, stack.get(FDataComponents.PLATING.get()));
         if (baked.isEmpty())
             return false;
+        // A swapped plug is a new one; the plug's wear stays while any other part is reworked.
+        ModularDesign before = design(stack);
+        if (type.family() == ModularType.Family.ENGINE && (before == null || !java.util.Objects.equals(before.part(ModularBake.ENGINE_PLUG), design.part(ModularBake.ENGINE_PLUG))))
+            stack.remove(io.github.soundgoodizerfan.feedback.registry.FVehicles.PLUG_WEAR.get());
         stack.set(FModular.DESIGN.get(), design);
         baked = Optional.of(ModularFit.adjust(baked.get(), ModularFit.of(stack)));
         stack.set(FModular.FIGURES.get(), baked.get());

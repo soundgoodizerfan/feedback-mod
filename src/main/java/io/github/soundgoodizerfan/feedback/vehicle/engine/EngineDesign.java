@@ -34,9 +34,11 @@ import net.minecraft.util.Mth;
  * @param torqueMult torque per litre against a plain engine (the layout, the head).
  * @param revMult    redline against a plain engine (the layout, the crank's build and metal).
  * @param massMult   weight against a plain engine (the layout, the metal of the block, crank and head).
+ * @param plugLife   running ticks the spark plug lasts, from its electrode metal's melting point.
+ * @param plugFoul   how readily the plug fouls as it wears (1 plain), from its metal's conductivity.
  */
 public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material, Compression compression,
-                           float torqueMult, float revMult, float massMult) {
+                           float torqueMult, float revMult, float massMult, float plugLife, float plugFoul) {
 
     /**
      * The compression ratio, a part choice (cylinder head and piston crown; petrochemistry spec 9.1).
@@ -72,7 +74,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
 
     /** A plain engine: the middle compression and no multipliers. */
     public EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLocation material) {
-        this(cylinders, boreMm, strokeMm, material, Compression.MEDIUM, 1f, 1f, 1f);
+        this(cylinders, boreMm, strokeMm, material, Compression.MEDIUM, 1f, 1f, 1f, VehicleTuning.PLUG_LIFE_TICKS, 1f);
     }
 
 
@@ -88,10 +90,12 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
             Compression.CODEC.optionalFieldOf("compression", Compression.MEDIUM).forGetter(EngineDesign::compression),
             Codec.FLOAT.optionalFieldOf("torque_mult", 1f).forGetter(EngineDesign::torqueMult),
             Codec.FLOAT.optionalFieldOf("rev_mult", 1f).forGetter(EngineDesign::revMult),
-            Codec.FLOAT.optionalFieldOf("mass_mult", 1f).forGetter(EngineDesign::massMult)
+            Codec.FLOAT.optionalFieldOf("mass_mult", 1f).forGetter(EngineDesign::massMult),
+            Codec.FLOAT.optionalFieldOf("plug_life", VehicleTuning.PLUG_LIFE_TICKS).forGetter(EngineDesign::plugLife),
+            Codec.FLOAT.optionalFieldOf("plug_foul", 1f).forGetter(EngineDesign::plugFoul)
     ).apply(i, EngineDesign::new));
 
-    /** Eight fields, two more than {@code StreamCodec.composite} takes. */
+    /** Ten fields, four more than {@code StreamCodec.composite} takes. */
     public static final StreamCodec<RegistryFriendlyByteBuf, EngineDesign> STREAM_CODEC = StreamCodec.of(
             (buf, e) -> {
                 ByteBufCodecs.VAR_INT.encode(buf, e.cylinders());
@@ -102,10 +106,12 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
                 buf.writeFloat(e.torqueMult());
                 buf.writeFloat(e.revMult());
                 buf.writeFloat(e.massMult());
+                buf.writeFloat(e.plugLife());
+                buf.writeFloat(e.plugFoul());
             },
             buf -> new EngineDesign(ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf), ByteBufCodecs.VAR_INT.decode(buf),
                     ResourceLocation.STREAM_CODEC.decode(buf), Compression.STREAM_CODEC.decode(buf),
-                    buf.readFloat(), buf.readFloat(), buf.readFloat()));
+                    buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat(), buf.readFloat()));
 
     /** The settings pulled back into range, so a design is always buildable. */
     public EngineDesign {

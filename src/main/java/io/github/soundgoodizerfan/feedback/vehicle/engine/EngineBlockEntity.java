@@ -88,6 +88,13 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     private final FuelBlend fuel = new FuelBlend(this::setChanged);
     /** Fraction of as-built power left: knock wears it, to a floor. */
     private float condition = 1f;
+    /** The plug's wear, 0 new to 1 spent; running in a vehicle wears it ({@link #wearPlug}). */
+    private float plugWear;
+    /** Ticks of a stumble left: a worn plug misses and gives no torque. */
+    private int missTicks;
+    /** The modular build this engine was made from, kept so it can be reworked at the Engineering Table after it is picked up. */
+    @Nullable
+    private io.github.soundgoodizerfan.feedback.modular.type.ModularDesign build;
     /** What the fuel gives this tick, as a share of a reference fuel; 0 when starved or misfiring. */
     private float power;
     private float fuelOwed;
@@ -116,6 +123,11 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         return condition;
     }
 
+    /** The spark plug's condition, 1 new falling with running time in a vehicle. */
+    public float plugCondition() {
+        return 1f - plugWear;
+    }
+
     @Nullable
     public EngineDesign design() {
         return design;
@@ -138,7 +150,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     @Override
     public Su getCapacitySu() {
         Material m = material();
-        return running && power > 0f && m != null ? new Su(design.torqueAt(new Rpm(Math.abs(getRpm().value())), m).value() * opening() * power * condition) : NO_SU;
+        return running && power > 0f && missTicks == 0 && m != null ? new Su(design.torqueAt(new Rpm(Math.abs(getRpm().value())), m).value() * opening() * power * condition) : NO_SU;
     }
 
     private float opening() {
@@ -192,6 +204,7 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
 
     static void serverTick(Level level, BlockPos pos, BlockState state, EngineBlockEntity be) {
         be.burn(level, pos);
+        be.wearPlug(level);
         be.followTorqueCurve();
         be.carryMass(level, pos);
     }
@@ -224,6 +237,24 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         // Starting or stopping burning changes the target speed, not only the curve.
         if ((before > 0f) != (power > 0f))
             RotationPropagator.rebuildFrom(level, pos);
+    }
+
+    /**
+     * Running in a vehicle wears the plug by time; on a stand the engine is a machine and wears only from misuse. A worn plug
+     * stumbles: some ticks give no torque ({@code PLUG_MISS_*}), never a stop. Only the torque is cut, so the run is not rebuilt.
+     */
+    private void wearPlug(Level level) {
+        if (missTicks > 0)
+            missTicks--;
+        if (!running || power <= 0f || design == null
+                || dev.ryanhcode.sable.companion.SableCompanion.INSTANCE.getContaining(this) == null)
+            return;
+        float before = plugWear;
+        plugWear = Math.min(1f, plugWear + 1f / Math.max(1f, design.plugLife()));
+        if ((int) (before * 100) != (int) (plugWear * 100))
+            setChanged();
+        if (missTicks == 0 && level.random.nextFloat() < VehicleTuning.PLUG_MISS_CHANCE * plugWear * plugWear * design.plugFoul())
+            missTicks = VehicleTuning.PLUG_MISS_TICKS;
     }
 
     private void followTorqueCurve() {
@@ -317,6 +348,8 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
         design = input.get(FVehicles.ENGINE_DESIGN.get());
+        build = input.get(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get());
+        plugWear = input.getOrDefault(FVehicles.PLUG_WEAR.get(), 0f);
     }
 
     @Override
@@ -324,6 +357,10 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         super.collectImplicitComponents(components);
         if (design != null)
             components.set(FVehicles.ENGINE_DESIGN.get(), design);
+        if (build != null)
+            components.set(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get(), build);
+        if (plugWear > 0f)
+            components.set(FVehicles.PLUG_WEAR.get(), plugWear);
     }
 
     @Override
@@ -331,6 +368,9 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         super.saveAdditional(tag, registries);
         if (design != null)
             EngineDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
+        if (build != null)
+            io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.encodeStart(NbtOps.INSTANCE, build).ifSuccess(t -> tag.put("Build", t));
+        tag.putFloat("PlugWear", plugWear);
         tag.putBoolean("Running", running);
         fittings.save(tag);
         tag.putFloat("Throttle", throttle);
@@ -344,6 +384,8 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? EngineDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
+        build = tag.contains("Build") ? io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Build")).result().orElse(null) : null;
+        plugWear = tag.getFloat("PlugWear");
         running = tag.getBoolean("Running");
         fittings.load(tag, this);
         throttle = tag.contains("Throttle") ? tag.getFloat("Throttle") : 0;

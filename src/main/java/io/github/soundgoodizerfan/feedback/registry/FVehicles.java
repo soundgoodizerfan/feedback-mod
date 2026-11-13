@@ -101,6 +101,13 @@ public class FVehicles {
                     .networkSynchronized(EngineDesign.STREAM_CODEC)
                     .build());
 
+    /** How far a placed Engine's spark plug is worn, 0 new to 1 spent; absent on a new engine. Kept on the item so picking an engine up is not a repair. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> PLUG_WEAR =
+            COMPONENTS.register("plug_wear", () -> DataComponentType.<Float>builder()
+                    .persistent(com.mojang.serialization.Codec.FLOAT)
+                    .networkSynchronized(net.minecraft.network.codec.ByteBufCodecs.FLOAT)
+                    .build());
+
     public static final DeferredBlock<EngineBlock> ENGINE = BLOCKS.register("engine",
             () -> new EngineBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f).sound(SoundType.METAL)));
 

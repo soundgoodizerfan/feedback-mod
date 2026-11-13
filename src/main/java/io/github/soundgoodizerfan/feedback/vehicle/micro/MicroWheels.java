@@ -56,8 +56,8 @@ public final class MicroWheels {
         return state.is(TIRE);
     }
 
-    /** What a scan of a body finds: the tread radius (blocks) and grip (mean friction of the tire voxels). */
-    public record Shape(double radius, double friction, double rolling) {
+    /** What a scan of a body finds: the tread radius (blocks), grip (mean friction of the tire voxels), rolling resistance, and softness (1 for the softest tread; a softer tire wears faster). */
+    public record Shape(double radius, double friction, double rolling, double softness) {
     }
 
     /**
@@ -66,7 +66,7 @@ public final class MicroWheels {
      */
     @Nullable
     public static Shape scan(ServerLevel level, ServerSubLevel body, Vector3d anchor, Vector3d axis) {
-        double far = 0, friction = 0, rolling = 0;
+        double far = 0, friction = 0, rolling = 0, soft = 0;
         int n = 0;
         var box = body.getPlot().getBoundingBox();
         Vector3d a = new Vector3d(axis).normalize(), d = new Vector3d();
@@ -83,10 +83,11 @@ public final class MicroWheels {
                 far = Math.max(far, Math.sqrt(Math.max(0, d.lengthSquared() - along * along)) + 0.125);
                 friction += PhysicsBlockPropertyHelper.getFriction(v);
                 rolling += deformation(v.getBlock().defaultDestroyTime(), PhysicsBlockPropertyHelper.getFriction(v));
+                soft += 1 / (1 + Math.max(0, v.getBlock().defaultDestroyTime()) / VehicleTuning.ROLLING_HARDNESS);
                 n++;
             }
         }
-        return n == 0 ? null : new Shape(far, friction / n, rolling / n);
+        return n == 0 ? null : new Shape(far, friction / n, rolling / n, soft / n);
     }
 
     /**
@@ -119,10 +120,13 @@ public final class MicroWheels {
      * ground's normal and grips it sideways and along. {@code centre} and {@code axis} are the hub and
      * the axle in the world; {@code carried} the mass this wheel bears; {@code mine} the bodies the rays
      * pass through (the vehicle's own). Returns the road's torque on the wheel about {@code axis}, in
-     * kpg x block^2 / s^2, for the rotation network to feel.
+     * kpg x block^2 / s^2, for the rotation network to feel. {@code tread} (1 new to the floor) scales the tread's grip;
+     * {@code out} is cleared and given the load on the ground (0 airborne) and the speed the tread slides at when it is held
+     * past its grip, which the caller wears the tire by (no allocation per step).
      */
     public static double step(ServerLevel level, ServerSubLevel wheel, Set<SubLevel> mine, Vector3d centre, Vector3d axis,
-                              Shape shape, double carried, double brake, double dt) {
+                              Shape shape, double carried, double brake, double tread, double[] out, double dt) {
+        out[0] = out[1] = 0;
         Vector3d down = new Vector3d(0, -1, 0);
         down.fma(-down.dot(axis), axis);
         if (down.lengthSquared() < 0.01)
@@ -175,7 +179,8 @@ public final class MicroWheels {
         double load = (carried * omegaN * omegaN * compression - damping) * bearing;
         if (load <= 0)
             return 0;
-        double grip = shape.friction() * fudge(PhysicsBlockPropertyHelper.getFriction(ground));
+        out[0] = load;
+        double grip = shape.friction() * fudge(PhysicsBlockPropertyHelper.getFriction(ground)) * Math.max(VehicleTuning.TIRE_CONDITION_FLOOR, tread);
 
         // The tread's own speed at the contact is the body's velocity there: spin and travel together.
         Vector3d slip = new Vector3d(v);
@@ -194,8 +199,10 @@ public final class MicroWheels {
             }
         }
         double cap = grip * load * dt;
-        if (friction.length() > cap)
+        if (friction.length() > cap) {
+            out[1] = slip.length();
             friction.normalize(cap);
+        }
         // Rolling resistance: the tread flexing as it rolls, never more than stops it this step.
         if (treadLength > 1e-9) {
             double rolling = v.dot(roll);

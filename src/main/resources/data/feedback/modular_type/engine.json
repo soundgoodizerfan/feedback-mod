@@ -1,6 +1,6 @@
 {
   "family": "engine",
-  "required": ["K", "P", "C", "H"],
+  "required": ["K", "P", "C", "H", "S"],
   "slot": "mainhand",
   "wear_litres": 0.25,
   "wear_role": "P",
@@ -172,19 +172,46 @@
           "step": 1
         }
       }
+    },
+    "S": {
+      "name": "spark_plug",
+      "forms": [
+        "spark_plug"
+      ],
+      "litres": 0.03125,
+      "layer": 4,
+      "part": {
+        "item": "feedback:spark_plug",
+        "cells": 1,
+        "stock": [
+          "ingot"
+        ],
+        "slots": [
+          {
+            "name": "electrode",
+            "share": 3
+          },
+          {
+            "name": "insulator",
+            "share": 1,
+            "standard": "feedback:ceramic"
+          }
+        ]
+      }
     }
   },
   "patterns": [
     [
-      "KP",
-      "CH"
+      "KPS",
+      "CH "
     ]
   ],
   "defaults": {
     "K": "feedback:steel",
     "P": "feedback:steel",
     "C": "feedback:steel",
-    "H": "feedback:steel"
+    "H": "feedback:steel",
+    "S": "feedback:steel"
   },
   "school": "mechanical:1"
 }

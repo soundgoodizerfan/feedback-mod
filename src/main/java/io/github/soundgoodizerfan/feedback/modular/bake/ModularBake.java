@@ -18,6 +18,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.process.Plating;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
@@ -231,7 +232,8 @@ public final class ModularBake {
             };
             case VESSEL -> !wear || material.xpStore().isPresent();
             case BELT -> !wear || (material.mechanical().friction().isPresent() && material.thermal().serviceTemperature().isPresent());
-            case ENGINE -> engineMetal(material) && (!(roleKey.equals(ENGINE_PISTONS) || roleKey.equals(ENGINE_CRANK)) || material.mechanical().yieldStrength().isPresent());
+            case ENGINE -> engineMetal(material) && (!(roleKey.equals(ENGINE_PISTONS) || roleKey.equals(ENGINE_CRANK)) || material.mechanical().yieldStrength().isPresent())
+                    && (!roleKey.equals(ENGINE_PLUG) || material.thermal().meltingPoint().isPresent());
             case GEARBOX -> engineMetal(material);
             // a module's wiring must conduct; its casing and core take any material their shapes accept
             case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
@@ -295,7 +297,7 @@ public final class ModularBake {
     }
 
     /** The role letters of the engine's four parts and the gearbox's three. */
-    public static final String ENGINE_BLOCK = "K", ENGINE_PISTONS = "P", ENGINE_CRANK = "C", ENGINE_HEAD = "H";
+    public static final String ENGINE_BLOCK = "K", ENGINE_PISTONS = "P", ENGINE_CRANK = "C", ENGINE_HEAD = "H", ENGINE_PLUG = "S";
     /** The role letters of the propeller's two parts. */
     public static final String PROP_HUB = "H", PROP_BLADES = "B";
     /** The role letter of the pressure vessel's shell. */
@@ -333,15 +335,15 @@ public final class ModularBake {
     /**
      * The engine a design makes. The pistons' variant is the cylinder count and their {@code bore} dim the bore; the crank's
      * {@code stroke} dim the stroke; the head's {@code compression} param (0 low, 1 medium, 2 high) the compression, with its
-     * own {@code torque}; the block's layout a {@code torque}, {@code rev} and {@code mass}; the crank's build a {@code rev}. The
+     * own {@code torque}; the plug's metal its life and fouling; the block's layout a {@code torque}, {@code rev} and {@code mass}; the crank's build a {@code rev}. The
      * pistons' metal is the engine's (it sets the rev limit); a crank of a weaker metal than the pistons caps the revs by the
      * square root of its specific strength against theirs, and the other parts' metals weigh the engine. Empty if a part is
      * missing or is not a weighed metal (the pistons and crank need a yield strength too).
      */
     public static Optional<io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign> engine(ModularDesign design, ModularType type,
                                                                                                      Map<ResourceLocation, Material> materials) {
-        Part block = design.part(ENGINE_BLOCK), pistons = design.part(ENGINE_PISTONS), crank = design.part(ENGINE_CRANK), head = design.part(ENGINE_HEAD);
-        if (block == null || pistons == null || crank == null || head == null)
+        Part block = design.part(ENGINE_BLOCK), pistons = design.part(ENGINE_PISTONS), crank = design.part(ENGINE_CRANK), head = design.part(ENGINE_HEAD), plug = design.part(ENGINE_PLUG);
+        if (block == null || pistons == null || crank == null || head == null || plug == null)
             return Optional.empty();
         Material pm = materials.get(pistons.material()), cm = materials.get(crank.material());
         for (Part p : design.parts()) {
@@ -361,8 +363,14 @@ public final class ModularBake {
         float cSpec = (float) Math.sqrt(cm.mechanical().yieldStrength().get().value() / cm.density().muPerMb());
         rev *= Math.min(1f, cSpec / pSpec);
         float mass = param(type, block, "mass", 1f) * massBlend(design, type, materials, pm, ENGINE_BLOCK, ENGINE_CRANK, ENGINE_HEAD);
+        // The plug's electrode metal: a higher melting point resists spark erosion (life), a conductive one runs cold and fouls.
+        Material em = materials.get(plug.material());
+        float life = Math.clamp(em.thermal().meltingPoint().get().value() / VehicleTuning.PLUG_REFERENCE_MELT_TU,
+                VehicleTuning.PLUG_LIFE_RATIO[0], VehicleTuning.PLUG_LIFE_RATIO[1]) * VehicleTuning.PLUG_LIFE_TICKS;
+        float foul = Math.clamp(em.thermal().conductivity().map(c -> c.workPerTickPerTu() / VehicleTuning.PLUG_REFERENCE_CONDUCTIVITY).orElse(1f),
+                VehicleTuning.PLUG_FOUL_RATIO[0], VehicleTuning.PLUG_FOUL_RATIO[1]);
         return Optional.of(new io.github.soundgoodizerfan.feedback.vehicle.engine.EngineDesign(cylinders, bore, stroke, pistons.material(),
-                compression, torque, rev, mass));
+                compression, torque, rev, mass, life, foul));
     }
 
     /**
