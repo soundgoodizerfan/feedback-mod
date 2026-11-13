@@ -304,6 +304,8 @@ public final class ElectricMachineTuning {
     public static final float LEYDEN_JAR_CAPACITY_PACKETS = 10f;
 
     public static final float LEYDEN_JAR_CHARGE_AMPS = 1f;
+    /** Placeholder. Blocks around a jar that its glass cracking over its band shocks. */
+    public static final float LEYDEN_JAR_CRACK_RADIUS = 3f;
 
     public static final float LEYDEN_JAR_BURST_AMPS = 8f;
 

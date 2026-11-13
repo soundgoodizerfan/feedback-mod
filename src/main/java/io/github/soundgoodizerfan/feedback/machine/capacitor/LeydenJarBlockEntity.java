@@ -40,8 +40,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * blocked, the resolver's own word for it), and an empty jar always waits as a sink. Role decides which neighbours conduct to it,
  * so a flip rebuilds its run -- an event, not a per-tick cost.
  * <p>
- * It gives back packets of its band until the Eu run out, the last of them fractional: a burst, not a battery. It never refuses and is
- * never destroyed.
+ * It gives back packets of its band until the Eu run out, the last of them fractional: a burst, not a battery. It never refuses. A band over its rating punctures the glass: the jar discharges at once as a shock at its band to
+ * anything within {@link ElectricMachineTuning#LEYDEN_JAR_CRACK_RADIUS} blocks and is destroyed (a cheap part may pop).
  */
 public class LeydenJarBlockEntity extends ElectricNode {
 
@@ -152,6 +152,15 @@ public class LeydenJarBlockEntity extends ElectricNode {
     public void tickServer() {
         if (level == null)
             return;
+        // Fed a band over what its glass is rated, the glass punctures: all it holds goes at once to whoever is near, and the jar is gone.
+        if (getPacketEu() > 0f && getBand().compareTo(band()) > 0) {
+            float held = charge;
+            for (net.minecraft.world.entity.LivingEntity near : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                    new net.minecraft.world.phys.AABB(worldPosition).inflate(ElectricMachineTuning.LEYDEN_JAR_CRACK_RADIUS)))
+                io.github.soundgoodizerfan.feedback.core.hazard.Shock.apply(near, band(), held);
+            level.destroyBlock(worldPosition, false);
+            return;
+        }
         // Last tick's resolution: packets delivered in as a sink, drawn out as a source.
         float before = charge;
         charge += (supplying ? -getAmps() : getAmps()) * getPacketEu();
