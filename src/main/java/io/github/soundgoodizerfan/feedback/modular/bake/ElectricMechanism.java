@@ -123,7 +123,7 @@ public final class ElectricMechanism implements GunMechanism {
                     return null;
             }
             case CUTOFF -> {
-                if (heat + gain > 1f || ModularElectricGun.tripped(gun) && heat > ModularTuning.EGUN_CUTOFF_RESUME)
+                if (heat * spec.sense() + gain > 1f || ModularElectricGun.tripped(gun) && heat > ModularTuning.EGUN_CUTOFF_RESUME)
                     return null;
             }
             default -> {
@@ -137,7 +137,7 @@ public final class ElectricMechanism implements GunMechanism {
         joules *= fraction;
         ModularFigures baked = ModularStacks.figures(gun);
         float gunKg = baked == null || baked.get(ModularFigures.Fig.MASS) <= 0f ? spec.barrelMass() : baked.get(ModularFigures.Fig.MASS);
-        float rate = spec.governor() == Governor.THROTTLE ? 1f - Mth.clamp(heat, 0f, 1f) * (1f - ModularTuning.EGUN_THROTTLE_FLOOR) : 1f;
+        float rate = spec.governor() == Governor.THROTTLE ? 1f - Mth.clamp(heat * spec.sense(), 0f, 1f) * (1f - ModularTuning.EGUN_THROTTLE_FLOOR) : 1f;
         int ticks = Math.max(1, Math.round(spec.cycleTicks(mode == FireMode.BURST) / rate));
         // A lit reticle helps where it is dark.
         float spreadMult = spec.darkAt() > 0f && shooter.level().getMaxLocalRawBrightness(shooter.blockPosition()) <= spec.darkAt()
@@ -249,7 +249,12 @@ public final class ElectricMechanism implements GunMechanism {
                     heat = ModularTuning.EGUN_VENT_RESET_HEAT;
                 }
             }
-            case CUTOFF -> ModularElectricGun.setTripped(gun, false);
+            case CUTOFF -> {
+                ModularElectricGun.setTripped(gun, false);
+                // An element that lagged the barrel let the shot through past the limit.
+                if (heat > 1f)
+                    ModularElectricGun.overheated(shooter, gun, hand);
+            }
             default -> {
                 if (heat > 1f)
                     ModularElectricGun.overheated(shooter, gun, hand);
@@ -294,7 +299,7 @@ public final class ElectricMechanism implements GunMechanism {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
         if (spec == null)
             return 1f;
-        return (spec.zoom() ? 1f / (1f + ModularTuning.EGUN_ZOOM_RANGE * ModularElectricGun.zoomShare(gun, lastNow)) : 1f) * spec.sightFov();
+        return (spec.zoom() ? 1f / (1f + ModularTuning.EGUN_ZOOM_RANGE * spec.zoomGain() * ModularElectricGun.zoomShare(gun, lastNow)) : 1f) * spec.sightFov();
     }
 
     @Override

@@ -245,6 +245,10 @@ public final class ModularTuning {
     /** Scope zoom charge: ticks of aiming to full, the extra cutoff range and the share the cone closes at full. */
     public static final int EGUN_ZOOM_TICKS = 40;
     public static final float EGUN_ZOOM_RANGE = 0.5f, EGUN_ZOOM_TIGHT = 0.5f;
+    /** Zoom coil: the winding ampacity at which its field is half built, and the bounds on the multiple of range and tightening it gives (copper 1). */
+    public static final float EGUN_ZOOM_AMP_HALF = 0.3f, EGUN_ZOOM_GAIN_MIN = 0.5f, EGUN_ZOOM_GAIN_MAX = 1.25f;
+    /** Governor element: the thermal conductance at which it reads half the barrel's heat, and the least it reads. */
+    public static final float EGUN_SENSE_HALF_K = 0.003f, EGUN_SENSE_MIN = 0.5f;
     /** A cylinder pulse redirected by a coin hits this many times as hard. */
     public static final float EGUN_COIN_CYLINDER = 1.5f;
     public static final float EGUN_VOLUME = 0.6f;

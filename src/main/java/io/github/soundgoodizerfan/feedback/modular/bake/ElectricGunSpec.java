@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.bake;
 
+import io.github.soundgoodizerfan.feedback.combat.gear.GearTuning;
 import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import java.util.Map;
 import java.util.Optional;
@@ -52,11 +53,14 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
  * @param sightFov   the field a scope closes the view to when aimed (its zoom axis through its lens); 1 for any other sight.
  * @param bank       levels of charge attuned on the seat: a seat that holds more charge sends a bigger pulse.
  * @param limitTu    the barrel temperature (Tu) the gun's heat reads 1: the barrel material's service temperature, a constant for one that states none.
+ * @param sense      share of the barrel's true heat the governor's element passes on (its thermal conductivity); 1 for none fitted.
+ * @param zoomGain   how strongly the zoom coil's field builds, from its winding's conductor; 1 for none fitted.
  */
 public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, float barrelLoss, float seatAmp, float seatDensity,
                               int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
                               float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
-                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank, float limitTu) {
+                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank, float limitTu,
+                              float sense, float zoomGain) {
 
     /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
     public enum Seat {
@@ -120,6 +124,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         boolean hold = false, pump = false, fork = false, zoom = false, gauge = false, sight = false;
         float sightFov = 1f;
         int bank = 0;
+        float sense = 1f, zoomGain = 1f;
         float limitTu = ModularTuning.EGUN_LIMIT_TU;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
             if (a.kind().equals("pulse_bank"))
@@ -151,13 +156,20 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     tier = Mth.clamp(Math.round(role.axis(p, "tier")), 1, 3);
                     seatAmp = m.ampacity().orElse(0f);
                     seatDensity = m.density().muPerMb();
-                    dielectric = m.electrical().insulation().orElse(VoltageBand.LV).ordinal();
+                    Material dm = ModularBake.slotMaterial(role, p, "dielectric", materials);
+                    dielectric = (dm == null ? m : dm).electrical().insulation().orElse(VoltageBand.LV).ordinal();
                 }
-                case "heat_governor" -> governor = switch (role.variant(p).map(ModularType.Variant::name).orElse("fire_rate_throttle")) {
-                    case "forced_vent" -> Governor.VENT;
-                    case "dead_man_cutoff" -> Governor.CUTOFF;
-                    default -> Governor.THROTTLE;
-                };
+                case "heat_governor" -> {
+                    governor = switch (role.variant(p).map(ModularType.Variant::name).orElse("fire_rate_throttle")) {
+                        case "forced_vent" -> Governor.VENT;
+                        case "dead_man_cutoff" -> Governor.CUTOFF;
+                        default -> Governor.THROTTLE;
+                    };
+                    // The element (a bimetal strip, a thermistor bead) follows the barrel as fast as it conducts heat.
+                    Material el = ModularBake.slotMaterial(role, p, "element", materials);
+                    float k = el == null ? 0f : el.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f);
+                    sense = Mth.clamp(GearTuning.saturate(k, ModularTuning.EGUN_SENSE_HALF_K), ModularTuning.EGUN_SENSE_MIN, 1f);
+                }
                 case "hold_charge" -> hold = true;
                 case "pump_charge" -> pump = true;
                 case "beam_lens" -> {
@@ -167,7 +179,14 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     else
                         beams = Mth.clamp(Math.round(role.axis(p, "beams")), 3, 7);
                 }
-                case "zoom_charge" -> zoom = true;
+                case "zoom_charge" -> {
+                    zoom = true;
+                    // The winding's conductor sets the field a turn builds.
+                    Material w = ModularBake.slotMaterial(role, p, "winding", materials);
+                    float amp = w == null ? 0f : w.ampacity().orElse(0f);
+                    zoomGain = Mth.clamp(GearTuning.saturate(amp, ModularTuning.EGUN_ZOOM_AMP_HALF) / GearTuning.saturate(1f, ModularTuning.EGUN_ZOOM_AMP_HALF),
+                            ModularTuning.EGUN_ZOOM_GAIN_MIN, ModularTuning.EGUN_ZOOM_GAIN_MAX);
+                }
                 case "heat_gauge" -> gauge = true;
                 case "sight" -> {
                     sight = true;
@@ -202,7 +221,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
         ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
-                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu);
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu, sense, zoomGain);
         return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 
@@ -294,7 +313,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
     /** Blocks a pulse holds its full damage out to, at zoom charge {@code zoomShare} (0 to 1): then nothing. */
     public float cutoff(float zoomShare) {
         float r = (ModularTuning.EGUN_RANGE_BASE + ModularTuning.EGUN_RANGE_PER_M * lengthM) * (1f + ModularTuning.EGUN_RANGE_PER_TIER * (tier - 1));
-        return r * (1f + (zoom ? ModularTuning.EGUN_ZOOM_RANGE * zoomShare : 0f));
+        return r * (1f + (zoom ? ModularTuning.EGUN_ZOOM_RANGE * zoomGain * zoomShare : 0f));
     }
 
     /** Mobs a pulse goes through beyond the first, at hold charge {@code holdShare} (0 to 1); a capacitor bank goes through every mob. */
@@ -313,7 +332,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
     /** The cone of a pulse before a stance and a scope: the barrel's length and bore, the fittings. */
     public float coneDeg(float zoomShare) {
         return Math.max(GunTuning.GUN_SPREAD_FLOOR_DEG, ModularTuning.EGUN_SPREAD_BASE_DEG * 0.4f / Math.max(0.1f, lengthM) * spreadMult * boreFactor()
-                * (1f - (zoom ? ModularTuning.EGUN_ZOOM_TIGHT * zoomShare : 0f)));
+                * (1f - (zoom ? ModularTuning.EGUN_ZOOM_TIGHT * zoomGain * zoomShare : 0f)));
     }
 
     /** Chambers a second a cylinder refills at, from the seated battery's cells and band, the chamber's conductor and the tier. */

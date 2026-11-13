@@ -363,7 +363,21 @@
             }
           }
         ],
-        "base": "dot_reticle"
+        "base": "dot_reticle",
+        "slots": [
+          {
+            "name": "mineral",
+            "share": 3
+          },
+          {
+            "name": "frame",
+            "share": 1,
+            "standard": "feedback:iron",
+            "forms": [
+              "plate"
+            ]
+          }
+        ]
       },
       "mount": "rail"
     },
@@ -558,7 +572,30 @@
             "name": "dead_man_cutoff"
           }
         ],
-        "base": "fire_rate_throttle"
+        "base": "fire_rate_throttle",
+        "slots": [
+          {
+            "name": "housing",
+            "share": 3
+          },
+          {
+            "name": "element",
+            "share": 1,
+            "forms": [
+              "plate",
+              "wire",
+              "rod"
+            ]
+          },
+          {
+            "name": "contacts",
+            "share": 1,
+            "standard": "feedback:copper",
+            "forms": [
+              "plate"
+            ]
+          }
+        ]
       },
       "mount": "receiver"
     },
@@ -575,7 +612,21 @@
         "stock": [
           "drilled_plate"
         ],
-        "variants": []
+        "variants": [],
+        "slots": [
+          {
+            "name": "lever",
+            "share": 3
+          },
+          {
+            "name": "spring",
+            "share": 1,
+            "standard": "feedback:steel",
+            "forms": [
+              "plate"
+            ]
+          }
+        ]
       },
       "mount": "receiver"
     },
@@ -592,7 +643,21 @@
         "stock": [
           "rod"
         ],
-        "variants": []
+        "variants": [],
+        "slots": [
+          {
+            "name": "lever",
+            "share": 3
+          },
+          {
+            "name": "winding",
+            "share": 1,
+            "standard": "feedback:copper",
+            "forms": [
+              "wire"
+            ]
+          }
+        ]
       },
       "mount": "receiver"
     },
@@ -676,13 +741,16 @@
         "variants": [],
         "slots": [
           {
-            "name": "core",
+            "name": "winding",
             "share": 3
           },
           {
-            "name": "surface",
+            "name": "core",
             "share": 1,
-            "standard": "feedback:iron"
+            "standard": "feedback:iron",
+            "forms": [
+              "rod"
+            ]
           }
         ]
       },
@@ -767,7 +835,17 @@
             }
           }
         ],
-        "base": "cylinder"
+        "base": "cylinder",
+        "slots": [
+          {
+            "name": "conductor",
+            "share": 3
+          },
+          {
+            "name": "dielectric",
+            "share": 1
+          }
+        ]
       },
       "axes": {
         "tier": {
@@ -808,13 +886,16 @@
         "variants": [],
         "slots": [
           {
-            "name": "core",
+            "name": "case",
             "share": 3
           },
           {
-            "name": "surface",
+            "name": "coil",
             "share": 1,
-            "standard": "feedback:iron"
+            "standard": "feedback:copper",
+            "forms": [
+              "wire"
+            ]
           }
         ]
       },
