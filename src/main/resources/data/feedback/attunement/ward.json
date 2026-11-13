@@ -213,6 +213,24 @@
     },
     "cutter_head": {
       "kind": "soak"
+    },
+    "compressor_rotor": {
+      "kind": "soak"
+    },
+    "exchanger_core": {
+      "kind": "soak"
+    },
+    "fin_stack": {
+      "kind": "soak"
+    },
+    "magnet_core": {
+      "kind": "soak"
+    },
+    "yoke": {
+      "kind": "soak"
+    },
+    "lamp_filament": {
+      "kind": "soak"
     }
   },
   "starter": true,

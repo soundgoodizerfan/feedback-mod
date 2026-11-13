@@ -37,10 +37,25 @@ import net.minecraft.world.level.block.state.BlockState;
  * to stand it between -- philosophy 3's "shafts and pipes are still real blocks... a genuine
  * spatial and budgetary puzzle" applied to a wall instead of a pipe.
  */
-public class HeatExchangerBlockEntity extends BlockEntity {
+public class HeatExchangerBlockEntity extends BlockEntity implements io.github.soundgoodizerfan.feedback.machine.Mendable {
 
 
     private final FigureStore figures = new FigureStore();
+
+    /** Tu between its two sides past which the wall takes thermal shock; condition lost per tick at one more such gap; the least it falls to. [OPEN] until played */
+    private static final float SHOCK_TU = 600f, SHOCK_WEAR_PER_TICK = 0.0004f, CONDITION_FLOOR = 0.5f;
+    private float condition = 1f;
+
+    @Override
+    public float mendableCondition() {
+        return condition;
+    }
+
+    @Override
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
+    }
 
     @Override
     protected void applyImplicitComponents(DataComponentInput input) {
@@ -58,12 +73,14 @@ public class HeatExchangerBlockEntity extends BlockEntity {
     protected void saveAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         figures.save(tag, registries);
+        tag.putFloat("Condition", condition);
     }
 
     @Override
     protected void loadAdditional(net.minecraft.nbt.CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         figures.load(tag, registries);
+        condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 
     public HeatExchangerBlockEntity(BlockPos pos, BlockState state) {
@@ -81,6 +98,13 @@ public class HeatExchangerBlockEntity extends BlockEntity {
         if (!(level.getBlockEntity(worldPosition.relative(axis.getOpposite())) instanceof ThermalBody b))
             return;
 
-        Heat.exchange(a, b, new Conductance(figures.get("Conductance", FTuning.HEAT_EXCHANGER_CONDUCTANCE.workPerTickPerTu())));
+        // Thermal shock is misuse: a wall between two bodies further apart than it can take cracks a little each tick (never below the floor),
+        // and a cracked wall passes less.
+        float gap = Math.abs(a.getTemperature().value() - b.getTemperature().value());
+        if (gap > SHOCK_TU && condition > CONDITION_FLOOR) {
+            condition = Math.max(CONDITION_FLOOR, condition - SHOCK_WEAR_PER_TICK * Math.min(2f, gap / SHOCK_TU - 1f) * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(this));
+            setChanged();
+        }
+        Heat.exchange(a, b, new Conductance(figures.get("Conductance", FTuning.HEAT_EXCHANGER_CONDUCTANCE.workPerTickPerTu()) * condition));
     }
 }

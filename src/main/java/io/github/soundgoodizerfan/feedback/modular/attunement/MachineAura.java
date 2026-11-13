@@ -235,6 +235,9 @@ public final class MachineAura {
             var store = f.figureStore();
             if (store.get("Condition", 1f) < 1f && MachineKinds.payMend(level, be.getBlockPos()))
                 store.put("Condition", Math.min(1f, store.get("Condition", 1f) + by));
+        } else if (be instanceof io.github.soundgoodizerfan.feedback.machine.Mendable m) {
+            if (m.mendableCondition() < 1f && MachineKinds.payMend(level, be.getBlockPos()))
+                m.mend(by);
         } else if (be instanceof io.github.soundgoodizerfan.feedback.machine.shaft.ShaftBlockEntity s && s.getCondition() < 1f && MachineKinds.payMend(level, be.getBlockPos()))
             s.mend(by);
         else if (be instanceof EngineBlockEntity e && e.condition() < 1f && MachineKinds.payMend(level, be.getBlockPos()))

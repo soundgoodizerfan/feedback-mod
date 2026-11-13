@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * {@link LampBlock.Glow#BURNT}, dark, wanting nothing. A cheap panel may pop (digest, 2026-11-03). Breaking
  * a burnt lamp drops the lamp item like any other; there is no repair.
  */
-public class LampBlockEntity extends ElectricNode implements Wearing {
+public class LampBlockEntity extends ElectricNode implements Wearing, io.github.soundgoodizerfan.feedback.machine.Mendable {
 
     private float condition = 1f;
 
@@ -85,7 +85,7 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
             return;
         }
         if (excess > 0f) {
-            condition = Math.max(ElectricMachineTuning.LAMP_CONDITION_FLOOR, condition - ElectricMachineTuning.LAMP_CONDITION_LOSS_PER_EXCESS * excess);
+            condition = Math.max(ElectricMachineTuning.LAMP_CONDITION_FLOOR, condition - ElectricMachineTuning.LAMP_CONDITION_LOSS_PER_EXCESS * excess * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(this));
             setChanged();
         }
         float fraction = ElectricRules.rate(eu, amps, wanted, ratedBand()) * condition;
@@ -107,6 +107,17 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
         while (step > 0 && fraction < at[step - 1] - ElectricMachineTuning.LAMP_HYSTERESIS)
             step--;
         return LampBlock.Glow.values()[step];
+    }
+
+    @Override
+    public float mendableCondition() {
+        return condition;
+    }
+
+    @Override
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
     }
 
     @Override

@@ -165,6 +165,12 @@ public final class MachineKinds {
         return 1f / (soak + 1) / (1f + SLIP_WEAR_PER_LEVEL * slip);
     }
 
+    /** The share of misuse wear a placed machine lets through, from the soak and slip of its parts. */
+    public static float wearShare(net.minecraft.world.level.block.entity.BlockEntity be) {
+        Map<String, Integer> l = MachineAura.levelsOf(be);
+        return 1f / (1 + l.getOrDefault("soak", 0)) / (1f + SLIP_WEAR_PER_LEVEL * l.getOrDefault("slip", 0));
+    }
+
     /** The share of a vessel's burst that gets through its damping shell. */
     public static float blastShare(ModularDesign design) {
         return 1f - Math.min(DAMP_CAP, level(design, "damp") * DAMP_PER_LEVEL);

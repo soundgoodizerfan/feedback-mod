@@ -38,7 +38,7 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
  * Run against a line that cannot take more and it surges: condition falls to a floor and never
  * lower. Wear comes only from that misuse, never from running correctly.
  */
-public class CompressorBlockEntity extends RotationNode implements Fittable {
+public class CompressorBlockEntity extends RotationNode implements Fittable, io.github.soundgoodizerfan.feedback.machine.Mendable {
 
     /** At most one {@link AirIntakeFitting}; stateless, so a flag is its whole persistence. */
     private final List<UpgradeFitting> upgrades = new ArrayList<>();
@@ -111,6 +111,17 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
         return condition;
     }
 
+    @Override
+    public float mendableCondition() {
+        return condition;
+    }
+
+    @Override
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
+    }
+
     public void tickServer() {
         if (level == null)
             return;
@@ -162,7 +173,7 @@ public class CompressorBlockEntity extends RotationNode implements Fittable {
                         FluidHeat.of(hot).value()), IFluidHandler.FluidAction.EXECUTE);
         }
         if (fits <= 0) {
-            condition = Math.max(PetrochemTuning.COMPRESSOR_CONDITION_FLOOR, condition - PetrochemTuning.COMPRESSOR_SURGE_WEAR_PER_TICK);
+            condition = Math.max(PetrochemTuning.COMPRESSOR_CONDITION_FLOOR, condition - PetrochemTuning.COMPRESSOR_SURGE_WEAR_PER_TICK * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(this));
             setChanged();
         }
     }

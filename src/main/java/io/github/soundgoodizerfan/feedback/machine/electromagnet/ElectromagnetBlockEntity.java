@@ -60,7 +60,7 @@ import net.minecraft.world.phys.Vec3;
  * material gets the same behaviour with no code. A workpiece hotter than its material's Curie point
  * is not pulled (it passes the magnet, as it passes the drum).
  */
-public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBody, Wearing {
+public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBody, Wearing, io.github.soundgoodizerfan.feedback.machine.Mendable {
 
     private float temperature = ThermalTuning.AMBIENT_TU.value();
     private float condition = 1f;
@@ -114,12 +114,23 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         float excess = ElectricRules.overVoltage(band, eu, ratedBand());
         if (excess > 0f) {
             condition = Math.max(ElectricMachineTuning.ELECTROMAGNET_CONDITION_FLOOR,
-                    condition - ElectricMachineTuning.ELECTROMAGNET_WEAR_PER_EXCESS * excess);
+                    condition - ElectricMachineTuning.ELECTROMAGNET_WEAR_PER_EXCESS * excess * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(this));
             Heat.warm(this, ElectricMachineTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess);
             setChanged();
         }
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, ambient, ambient, false);
+    }
+
+    @Override
+    public float mendableCondition() {
+        return condition;
+    }
+
+    @Override
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
     }
 
     /** 0 to 1: how hard it is pulling right now. Condition has already multiplied it. */

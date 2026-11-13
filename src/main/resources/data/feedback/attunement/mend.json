@@ -211,6 +211,24 @@
     },
     "cutter_head": {
       "kind": "mend"
+    },
+    "compressor_rotor": {
+      "kind": "mend"
+    },
+    "exchanger_core": {
+      "kind": "mend"
+    },
+    "fin_stack": {
+      "kind": "mend"
+    },
+    "magnet_core": {
+      "kind": "mend"
+    },
+    "yoke": {
+      "kind": "mend"
+    },
+    "lamp_filament": {
+      "kind": "mend"
     }
   },
   "mirror": {
