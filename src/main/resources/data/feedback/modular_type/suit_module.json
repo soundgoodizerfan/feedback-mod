@@ -100,7 +100,7 @@
         }
       },
       "params": {
-        "module": 36.0,
+        "module": 1.0,
         "optic": 1.0
       }
     },
@@ -138,7 +138,7 @@
         ]
       },
       "params": {
-        "module": 40.0,
+        "module": 5.0,
         "porous": 0.4
       },
       "axes": {
@@ -177,7 +177,7 @@
         ]
       },
       "params": {
-        "module": 41.0,
+        "module": 6.0,
         "thermal": 0.08
       },
       "axes": {
@@ -216,7 +216,7 @@
         ]
       },
       "params": {
-        "module": 43.0,
+        "module": 8.0,
         "competence": 4.0
       },
       "axes": {
@@ -280,7 +280,7 @@
         }
       },
       "params": {
-        "module": 38.0,
+        "module": 3.0,
         "electric": 0.6,
         "needs_motor": 1.0,
         "bore_target": 16.0
@@ -321,7 +321,7 @@
         }
       },
       "params": {
-        "module": 42.0,
+        "module": 7.0,
         "nozzle": 1300.0
       }
     },
@@ -339,56 +339,29 @@
           "ingot",
           "plate",
           "rod"
-        ],
-        "variants": [
-          {
-            "name": "efficiency_bus",
-            "cells": 4,
-            "params": {
-              "module": 10.0,
-              "electric": 0.6,
-              "needs_controller": 1.0
-            }
-          },
-          {
-            "name": "autodoc",
-            "cells": 5,
-            "params": {
-              "module": 11.0,
-              "electric": 0.6,
-              "needs_controller": 1.0,
-              "needs_cell": 1.0
-            }
-          },
-          {
-            "name": "reflex_link",
-            "cells": 2,
-            "params": {
-              "module": 7.0,
-              "electric": 0.6,
-              "needs_controller": 1.0
-            }
-          },
-          {
-            "name": "magnet_pickup",
-            "cells": 4,
-            "params": {
-              "module": 16.0,
-              "electric": 0.6,
-              "needs_motor": 1.0
-            }
-          },
-          {
-            "name": "emp_coil",
-            "cells": 5,
-            "params": {
-              "module": 35.0,
-              "electric": 0.6,
-              "needs_cell": 1.0,
-              "needs_controller": 1.0
-            }
-          }
         ]
+      },
+      "params": {
+        "module": 9.0,
+        "magnetic": 1.0
+      },
+      "axes": {
+        "core": {
+          "min": 2,
+          "max": 20,
+          "unit": "cm",
+          "default": 8,
+          "step": 2,
+          "bands": [
+            {
+              "name": "short_core",
+              "max": 8
+            },
+            {
+              "name": "long_core"
+            }
+          ]
+        }
       }
     },
     "S": {
@@ -408,7 +381,7 @@
         ]
       },
       "params": {
-        "module": 37.0,
+        "module": 2.0,
         "stiff": 5.0
       },
       "axes": {
@@ -447,7 +420,7 @@
         ]
       },
       "params": {
-        "module": 39.0,
+        "module": 4.0,
         "grip": 1.0
       },
       "axes": {
@@ -464,6 +437,45 @@
             },
             {
               "name": "wide"
+            }
+          ]
+        }
+      }
+    },
+    "D": {
+      "name": "module_dispenser",
+      "forms": [
+        "module_dispenser"
+      ],
+      "litres": 0.03,
+      "layer": 11,
+      "part": {
+        "item": "feedback:module_dispenser",
+        "cells": 1,
+        "stock": [
+          "ingot",
+          "plate",
+          "rod"
+        ]
+      },
+      "params": {
+        "module": 10.0,
+        "inert": 0.6
+      },
+      "axes": {
+        "dose": {
+          "min": 50,
+          "max": 500,
+          "unit": "mB",
+          "default": 250,
+          "step": 50,
+          "bands": [
+            {
+              "name": "small_dose",
+              "max": 150
+            },
+            {
+              "name": "large_dose"
             }
           ]
         }

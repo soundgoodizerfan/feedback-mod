@@ -538,7 +538,7 @@ public final class ModularBake {
     }
 
     /**
-     * What a suit module is: its attachments (each a part of one mechanism, cut in a variant that is the upgrade) and how hard each
+     * What a suit module is: its attachments (each a part of one mechanism class, tuned by its axis) and how hard each
      * works. A variant names the upgrade ({@code module} param) and the property of the attachment's material that makes it work,
      * with the figure that is full strength; the material's share of that figure is its power ({@code SUIT_POWER_MIN} to
      * {@code SUIT_POWER_MAX}). The wiring's conductor, over its cells, sets how much of the module's draw becomes waste and how many
@@ -587,6 +587,12 @@ public final class ModularBake {
                 power = m.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f) / k.get("thermal");
             else if (k.containsKey("electric"))
                 power = m.ampacity().orElse(0f) / k.get("electric");
+            else if (k.containsKey("magnetic"))
+                // an electromagnet's core: a ferromagnetic one carries the field, any other is a weak air-like core
+                power = m.separation().magnetic() ? 1f : ModularTuning.NONMAGNETIC_CORE;
+            else if (k.containsKey("inert"))
+                // a dispenser holds medicine against the metal: the better it resists corrosion, the cleaner the dose
+                power = m.corrosionResistance().orElse(0.2f) / k.get("inert");
             else if (k.containsKey("nozzle"))
                 // a nozzle holds the flame it is lit with: its melting point against the reference flame the thruster burns at
                 power = m.thermal().meltingPoint().map(t -> t.value()).orElse(0f) / k.get("nozzle");

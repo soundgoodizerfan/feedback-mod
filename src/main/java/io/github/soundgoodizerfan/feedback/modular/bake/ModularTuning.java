@@ -278,6 +278,8 @@ public final class ModularTuning {
     /** Strain an armour point of damage puts on a coat (a plate's damage is a quarter of the blow). */
     public static final float COAT_ARMOUR_STRAIN = 4f;
     /** Most a whole coat that does not melt cuts the heat a shield face takes in. */
+    /** Invented. The power of a suit electromagnet whose core is not magnetic. */
+    public static final float NONMAGNETIC_CORE = 0.3f;
     public static final float COAT_HEAT_SHIELD = 0.5f;
     /** Chance, per block mined, that a tool used wet gives up a point to rust, times the share of water it does not resist. */
     public static final float CORRODE_CHANCE = 0.05f;

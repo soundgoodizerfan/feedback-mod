@@ -75,11 +75,6 @@ final class SuitPulses {
                     e.addEffect(new MobEffectInstance(MobEffects.GLOWING, SuitTuning.SCAN_GLOW_TICKS, 0, true, false, false));
                 level.playSound(null, p.blockPosition(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 0.7f, 1.8f);
             }
-            case HEAL -> {
-                p.heal(SuitTuning.HEAL_AMOUNT * power);
-                level.sendParticles(net.minecraft.core.particles.ParticleTypes.HEART, p.getX(), p.getY() + 1.5, p.getZ(), 5, 0.3, 0.3, 0.3, 0);
-                level.playSound(null, p.blockPosition(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.5f, 1.6f);
-            }
             case BURST -> {
                 float density = Math.min(1f, io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.at(level, p.getY()) / SuitTuning.REF_AIR_DENSITY);
                 Vec3 look = p.getLookAngle();
@@ -104,6 +99,24 @@ final class SuitPulses {
                 level.playSound(null, p.blockPosition(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 0.5f, 2f);
             }
         }
+    }
+
+    /**
+     * Doses the wearer from a bottle of brewed potion in the pack, the effect drinking it would give (a dud or a flat one gives nothing and is
+     * kept), its length scaled by {@code scale}: the dispenser meters a dose, but a bottle is spent whole. Returns whether one was dosed.
+     */
+    static boolean dose(ServerPlayer p, float scale) {
+        for (net.minecraft.world.item.ItemStack s : p.getInventory().items) {
+            if (!io.github.soundgoodizerfan.feedback.potion.PotionItem.dose(p, s, scale))
+                continue;
+            s.shrink(1);
+            net.minecraft.world.item.ItemStack bottle = new net.minecraft.world.item.ItemStack(net.minecraft.world.item.Items.GLASS_BOTTLE);
+            if (!p.getInventory().add(bottle))
+                p.drop(bottle, false);
+            p.serverLevel().playSound(null, p.blockPosition(), SoundEvents.BOTTLE_EMPTY, SoundSource.PLAYERS, 0.8f, 1.4f);
+            return true;
+        }
+        return false;
     }
 
     /** Held jet: lifts the wearer, thinned by the air, up to a climb rate. Returns the share of full thrust it gave (0 in no air). */

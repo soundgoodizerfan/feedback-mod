@@ -176,7 +176,6 @@ public final class SuitServer {
                 waste += SuitTuning.JET_AMPS * thrust * rig.lossChest();
             }
             drawn += SuitModules.tick(p, rig.mod()) * rig.wiring();
-            drawn *= SuitModules.efficiency(rig.mod());
         } else {
             r.dash = false;
             r.jet = false;
@@ -234,7 +233,11 @@ public final class SuitServer {
         float power = power(rig, a);
         if (!r.powered || power <= 0f || r.cool[a.ordinal()] > 0)
             return;
-        if (a == Ability.BURST) {
+        if (a == Ability.HEAL) {
+            // the dispenser doses what the pack holds: no bottle, nothing fires and nothing is spent
+            if (!SuitPulses.dose(p, power * (0.4f + 1.2f * SuitModules.arg(rig.mod(), SuitModules.DISPENSER))))
+                return;
+        } else if (a == Ability.BURST) {
             // the burst is a lump of fuel burned at once; with none, or no air to burn it in, nothing fires and nothing is spent
             float flame = burn(p, r, SuitTuning.BURST_MB * SuitModules.throat(rig.mod()));
             if (flame <= 0f)
@@ -242,7 +245,9 @@ public final class SuitServer {
             power *= flame * SuitModules.throat(rig.mod());
         }
         float cost = SuitPulses.cost(a) * rig.wiring();
-        if (a == Ability.VENT) {
+        if (a == Ability.HEAL) {
+            // dosed above
+        } else if (a == Ability.VENT) {
             float amb = AmbientTable.at(p.level()).value();
             r.heat = amb + Math.max(0f, r.heat - amb) * (1f - Math.min(0.9f, SuitTuning.VENT_SHARE * power));
             if (r.cut && r.heat < SuitTuning.RESUME_TU)

@@ -79,6 +79,18 @@ public class PotionItem extends Item {
         return stack;
     }
 
+    /** Doses {@code entity} from {@code bottle} as drinking it would, its length scaled; false for anything that is not a live potion. The caller spends the bottle. */
+    public static boolean dose(LivingEntity entity, ItemStack bottle, float lengthScale) {
+        PotionState state = bottle.get(FDataComponents.POTION_STATE.get());
+        if (state == null || state.dud())
+            return false;
+        int amplifier = state.amplifierNow(entity.level());
+        if (amplifier < 0)
+            return false;
+        PotionEffects.consume(state.effect().get(), entity, amplifier, Math.max(1, Math.round(state.duration() * lengthScale)));
+        return true;
+    }
+
     private static void drink(PotionState state, Level level, LivingEntity entity) {
         if (state == null || state.dud()) {
             entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, PotionTuning.DUD_NAUSEA_TICKS));
