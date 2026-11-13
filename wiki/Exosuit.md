@@ -98,6 +98,8 @@ Blueprints come from:
 - Drawing it yourself at the Blueprint Table and printing it.
 - Measuring: take a module apart on the Treatise tab of the Engineering Table with blank paper in the blank slot, and the paper becomes a blueprint of that design.
 
+A module's casing, plating and wiring take [attunements](Enchanting_Table.md#on-a-suit-module) like armor.
+
 ## Weight and heat
 
 The suit's mass slows you like heavy armor; strength cancels the slowdown.

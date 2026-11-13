@@ -53,7 +53,7 @@ A finished pack takes **fittings**: fit them on the [Fit tab](Engineering_Table.
 
 ## Attunements
 
-A worn pack takes [attunements](Enchanting_Table.md#on-a-pack) on its parts, and counts with your armor for every effect that reads what you wear. The shell takes plate effects, the hard liner lining effects, and the strap, frame, hip belt and buckle the others. Hold on a mount changes how much you carry before you slow; Ward slows the wear from overloading and scorching; Slip on the shell keeps cloth dry; Tide on the shell puts out a burning wearer.
+A worn pack takes [attunements](Enchanting_Table.md#on-a-pack) on its parts, and counts with your armor for every effect that reads what you wear. The shell takes plate effects, the hard liner lining effects, and the strap, frame, hip belt and buckle the others. Hold on a mount changes how much you carry before you slow; Ward slows the wear from overloading and scorching; Slip on the shell keeps cloth dry; Tide on the shell puts out a burning wearer; Bloom spills seed and grows crops underfoot as you walk, and Reap harvests and replants them.
 
 ## Store slots
 

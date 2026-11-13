@@ -20,3 +20,7 @@ Hold use to **cock** it; it takes longer with a stiffer spring and a weaker wiel
 ## Misuse
 
 A spring that stores more than its receiver can take is **overloaded**: each cocking gives it a permanent set (it stores less afterwards), and far past the rating it snaps, wrecking part of the gun and hurting your hand.
+
+## Attunements
+
+The mainspring takes Spring (stores more energy) and its mirror Snap (cocked sooner); see [the gun table](Enchanting_Table.md#on-a-gun).

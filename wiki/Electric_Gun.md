@@ -98,3 +98,7 @@ Nothing wears from correct use. A battery whose case band is over the receiver's
 ## Wither skeletons
 
 A wither skeleton sometimes carries a weak pulse pistol (a cylinder seat at the Light tier) and fires it from a distance with a clear line. Plain skeletons keep their powder guns.
+
+## Attunements
+
+The seat takes Charge, which holds a bigger pulse; see [the gun table](Enchanting_Table.md#on-a-gun).

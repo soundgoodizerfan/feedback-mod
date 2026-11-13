@@ -45,6 +45,10 @@ Warmth is how little heat the padding lets through, thicker and lifted off the g
 - In a biome cold enough for snow, the health a night gives back is scaled by the bed's warmth.
 - A bed with a warmth of **60%** or more also clears the chill of powder snow when you wake.
 
+## Attunements
+
+The mattress and the frame take [attunements](Enchanting_Table.md#on-a-bed). A night's rest can heal more or less, feed or starve you, repair what you wear, give night vision, speed or resistance on waking, put out fire on you, or charge a battery beside the bed; a placed bed's frame can also act on animals, monsters and crops around it.
+
 ## On a pack
 
 Only a bed built with no frame goes on a pack's [bedroll lashing](Backpack.md#fittings). You can use it without taking it out: press the **Bed Down in Pack Bedroll** key (comma unless you set another).

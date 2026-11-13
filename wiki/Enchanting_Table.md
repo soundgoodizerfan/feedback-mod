@@ -187,10 +187,11 @@ A worn [Backpack](Backpack.md) reads attunements like armor. Its **shell** takes
 - **Slip** on the shell or liner keeps the pack from soaking in rain or water, even when it is cloth.
 - **Tide** on the shell puts out a burning wearer.
 - **Bait** and **Spook** on the pack draw animals toward you or keep them away.
+- **Bloom** on the pack: walking spills seed and grows crops underfoot every few blocks; **Reap** harvests and replants as you walk.
 
 ## On a food container
 
-A dish, soup, pie, bread, skewer or wrap takes an attunement on its container. It acts on the food inside.
+A dish, soup, pie, bread, skewer or wrap takes an attunement on its container. It acts on the food inside, and most effects act when the food is eaten.
 
 | Effect | + side | Mirror |
 | --- | --- | --- |
@@ -199,14 +200,31 @@ A dish, soup, pie, bread, skewer or wrap takes an attunement on its container. I
 | **Gleam** | light kills what grows, so the food rots slower; held, it carries a light | **Murk**: held, dims the light around you |
 | **Heat** | a hot container makes the food rot faster; held, it burns you | **Cold**: insulates, so the food rots slower |
 | **Tide** | held, puts out fire | **Slip**: seals the lid, so the food rots slower |
-| **Hunger** | the meal fills more food points when eaten | **Famine**: it fills fewer |
+| **Hunger** | the meal fills more food points | **Famine**: it fills fewer |
 | **Mend** | eaten, repairs the gear you wear | **Tithe**: eaten, pays out experience |
 | **Bait** | held, draws animals toward you | **Spook**: held, keeps animals away |
 | **Reservoir** | held, stores experience | none |
+| **Bloom** | eaten, you regenerate for a while | **Reap**: eaten, you grow hungry for a while |
+| **Cling** | eaten, it clings: more saturation | **Glaze**: less saturation |
+| **Echo** | eaten, the effects you have run longer | **Lag**: they run shorter |
+| **Edge** | eaten, you hit harder for a while | **Spread**: eaten, you take on a padding of absorption |
+| **Grudge** | eaten, you dig faster for a while | **Calm**: poison, nausea, weakness and hunger leave you |
+| **Lode** | eaten, items lying near are drawn to you | **Scatter**: they are flung away |
+| **Mark** | eaten, hostile creatures near glow | **Decoy**: hostile creatures near turn on you |
+| **Momentum** | eaten, you run faster for a while | **Stance**: you take less from blows for a while |
+| **Pack** | eaten, players near you are fed too | **Lone**: eaten with no other player near, it fills more food points |
+| **Piezo** | eaten, a battery or Leyden jar beside you is charged | none |
+| **Ring** | eaten, it rings out and wandering hostiles come to see | none |
+| **Spring** | eaten, you jump higher for a while | **Snap**: eaten, it throws you up |
+| **Wager** | eaten, it fills more food points half the time | none |
+| **Yield** | eaten, it sometimes fills more food points | none |
 
 ## On a vial or charge casing
 
 An [XP Container](Experience.md) vial and a Charge Casing take held effects: **Reservoir** stores experience, **Bait** and **Spook** draw animals or keep them away, **Gleam** and **Murk** carry or dim a light, **Tide** puts out fire, and **Heat** burns the hand that holds it.
+
+- **Charge** on a vial holds more experience, like a capacitor's plates around the same store.
+- On the casing round a [Demolition Charge](Demolition_Charge.md), **Charge** makes the blast give everything it reaches an electric shock, **Impulse** throws what the blast reaches away from it, **Pull** draws it in, and **Hold** keeps the gas in longer so the blast is stronger.
 
 ## On a gun
 
@@ -219,7 +237,39 @@ Every bullet that hits carries the attunements of the gun's parts, in the part's
 | **Trigger** | **Wager**: each shot is double damage or heals the target |
 | **Muzzle brake**, suppressor | **Ring** (the shot is heard; mirror **Hush**) |
 | **Grip**, stock | the handle effects above (**Impulse**, **Hold**, **Reservoir**, **Heat** burning you) |
+| **Bayonet** | **Edge**: the thrust cuts deeper; mirror **Spread**: it does less damage. **Ward**, **Mend** and **Tithe** as on any part |
+| **Mainspring** of a [Spring Gun](Spring_Gun.md) | **Spring**: the spring stores more energy for the same size; mirror **Snap**: it is cocked in less time |
+| **Seat** of an [Electric Gun](Electric_Gun.md) | **Charge**: the seat holds a bigger pulse |
 | **Any part** | **Ward** turns away part of the bore's wear (each level leaves one share in levels + 1); **Mend** drinks experience to close the bore's wear; its mirror **Tithe** pays experience per kill and wears the bore |
+
+## On a bed
+
+A [Bed](Bed.md) takes effects on its **mattress** and its **frame**. A placed bed and a bedroll both read them when you wake.
+
+| Effect | Mattress or frame | Mirror |
+| --- | --- | --- |
+| **Heat** | mattress: the bed keeps more heat in, for more warmth in cold country and frost that thaws sooner | **Cold**: less warmth, but waking puts out fire on you and leaves you fire resistant a while |
+| **Edge** | none | **Spread**: mattress is softer, so a night's rest heals more |
+| **Hold** | frame holds you snug, so a night's rest heals more | **Free**: the frame lets you slide about, so it heals less |
+| **Echo** | mattress: a night's rest heals more | none |
+| **Wager** | mattress: a night's rest heals double or nothing | none |
+| **Yield** | mattress: a night sometimes leaves the bed unworn | none |
+| **Hunger** | mattress: you wake with more food points | **Famine**: with fewer |
+| **Mend** | mattress: what you wear is repaired while you sleep | **Tithe**: waking drops experience for the wear the night took |
+| **Gleam** | mattress: you wake with night vision | none |
+| **Momentum** | mattress: you wake quicker on your feet for a while | **Stance**: you wake with resistance to blows for a while |
+| **Tide** | mattress: waking puts out fire on you and leaves you fire resistant a while | none |
+| **Piezo** | frame: your weight charges a battery or Leyden jar beside the bed when you wake | none |
+| **Lode** | frame: items lying near are drawn to you as you wake | **Scatter**: they are flung away |
+| **Impulse** | frame: waking throws you up off the bed | none |
+| **Spring** | mattress: whoever lands on the bed takes no fall damage and is thrown back up | none |
+| **Ward** | turns away some of the night's wear | none |
+
+The frame also acts on its surroundings like a machine's frame: **Bait** and **Spook**, **Bane** and **Kin**, **Mark**, **Ring** and **Hush**, **Bloom** and **Reap**, **Grudge** and **Calm**, **Ground** and **Dowse** (see [Around the machine](#around-the-machine)). Bait, Bane, Mark, Bloom and Grudge also work from the mattress.
+
+## On a suit module
+
+A suit module's **casing**, **plating** and **wiring** take the armor effects, read while the piece that carries the module is worn: Heat on the plating sets attackers alight, Bane blunts undead and arthropod blows, Pack and Lone turn blows away by allies near or absent, Hunger spares or drains your food, and the rest as listed for armor above. The module's casing and the [Exosuit](Exosuit.md) it sits in count with your armor for every effect that reads what you wear.
 
 ## The effect is on the part
 
