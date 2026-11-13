@@ -2,6 +2,8 @@
 
 A spinning bit over a workpiece. The shaft keeps the bit turning, but **nothing gets drilled until you push it**. It's hand-fed, one push per click.
 
+The first part cut on a drill press enters the [Machine Age](Ages.md) for you and any player nearby.
+
 ## Crafting
 
 ```

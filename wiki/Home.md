@@ -2,7 +2,7 @@
 
 **Feedback** is a tech-themed total conversion of Minecraft. Its core idea is that **machines don't know when the job is done**: a hammer keeps hammering after your plate is finished, a crucible keeps heating after your steel is ready, and whatever is being worked on keeps changing. Measuring, timing and controlling your machines so they stop at the right moment is the game.
 
-Around that idea the mod rebuilds the rest of Minecraft out of physical properties: every tool, weapon, shield, bow, piece of armor and gun is **assembled from parts**, and what it does comes from the materials; vehicles are real physics bodies you build; fighting has parries, rolls, kicks, grabs and a skill tree; and hot metal, steam and bare wire can hurt you. Nothing is keyed on an item's name, and nothing is locked behind a tier.
+Around that idea the mod rebuilds the rest of Minecraft out of physical properties: every tool, weapon, shield, bow, piece of armor and gun is **assembled from parts**, and what it does comes from the materials; vehicles are real physics bodies you build; fighting has parries, rolls, kicks, grabs and a skill tree; and hot metal, steam and bare wire can hurt you. Nothing is keyed on an item's name, and nothing is locked: the [ages](Ages.md) (Stone, Bronze, Iron, Steel, Machine, Alloy) name where you are, never what you may do.
 
 New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want to fight? See [Combat](Combat.md). Not sure what to build next? The [Progression Guide](Progression_Guide.md) walks the order of play.
 
@@ -30,6 +30,8 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 ## Guides
 
+- [Ages](Ages.md)
+- [Progression Guide](Progression_Guide.md)
 - [Ore Processing](Ore_Processing.md)
 - [Making Wrought Iron](Making_Wrought_Iron.md)
 - [Making Steel](Steel.md)
@@ -82,4 +84,4 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 - **What you need is always shown exactly; what you have costs an instrument.** JEI and tooltips give requirements as hard numbers. The state of your machine is words until you measure it.
 - **Machines only wear when misused.** A correctly built line never wears out. If something is worn, you did something specific to it. The exceptions are things that are consumed by nature: the [Hammer](Hammer.md), the [Grinding Wheel](Grinding_Wheel.md)'s grit and a [Fuse](Fuse.md) wire. And two things can be destroyed outright, only by a mistake left unfixed: overloaded [cable](Copper_Cable.md#overloading) and an over-pressured [boiler](Boiler.md#pressure).
 - **Rockets do not boost an elytra.** A firework rocket used while gliding does nothing and stays in your hand. Crossbows and dispensers fire rockets as vanilla does.
-- **Nothing is locked.** There are no tiers. If you can reach the temperature, strength or hardness, you can do it, even if it's unreliable at first.
+- **Nothing is locked.** [Ages](Ages.md) are named moments (your first tool or part of a new material); no recipe requires one. If you can reach the temperature, strength or hardness, you can do it, even if it's unreliable at first.

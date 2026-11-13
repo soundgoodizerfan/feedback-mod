@@ -2,6 +2,8 @@
 
 Spins a rod and cuts it continuously with a tool bit, for as long as it's turning. Rods become turned rods, and if you leave them they become swarf.
 
+The first part cut on a lathe enters the [Machine Age](Ages.md) for you and any player nearby.
+
 ## Crafting
 
 **Lathe:**

@@ -1,8 +1,8 @@
 # Progression Guide
 
-A loose order of play, from the first fire to oil and circuits. Each stage names what you do and the problem that sends you to the next. Nothing is locked: if you can reach the temperature, strength or hardness, you can skip ahead. The guide only says where the problems usually show up first.
+A loose order of play, from the first fire to oil and circuits. Each stage names what you do and the problem that sends you to the next. Nothing is locked: if you can reach the temperature, strength or hardness, you can skip ahead. The guide only says where the problems usually show up first. The [Ages](Ages.md) mark the spine: Stone, Bronze, Iron, Steel, Machine and Alloy, each entered by making your first tool or part of its material.
 
-Advancements are in three tabs: **Technology**, **Combat** and **Survival**. Technology follows the same stages as branches (heat, rotation, electricity, control, chemistry, food and the Nether, Deep Dark, radiation, ender and flight beyond). Each entry describes the wall you have hit, not the answer, and none of them unlocks anything. Every entry is visible except the jokes.
+Advancements are in three tabs: **Technology**, **Combat** and **Survival**. Technology runs along the ages, and each science's first study hangs on the age that provides its tools: Iron opens electricity, heat and blaze, and XP and sculk; Steel opens chemistry and ender; Machine opens radiation and flight; Alloy opens fission. After its age, the sciences can be taken in any order. Each entry describes the wall you have hit, not the answer, and none of them unlocks anything. Every entry is visible except the jokes.
 
 Side entries along the Technology branches mark things you find or survive on the way: tin, lead, brass, glass, quartz glass, firebrick and graphite in the heat branch; carrying hot things with tongs or gloves; a fuel-free fire such as lava; standing in boiler steam and backing a weeping boiler off before it lets go; carrying a dosimeter through radiation sickness; arriving in the Nether and the End; growing in a sealed dark void; recording what the Deep Dark's vibrations say; drying food on a rack and pulling a dish off at the right moment.
 
@@ -12,6 +12,8 @@ Hidden entries branch off for odd things you can do along the way: burst a boile
 
 ## 1. First fire, clay and copper
 
+This stage spans the Stone and Bronze Ages.
+
 You start with stone and wood tools and no fire you control. Build a [Campfire](Campfire.md), then a [Firebox](Firebox.md) or [Hearth](Hearth.md) whose temperature you can read, and fire clay into vessels. A [Crucible](Crucible.md) melts copper, tin and lead, and [Casting](Casting.md) turns the melt into ingots and parts in molds. Bronze and brass are alloys you pour yourself. Shape hot metal with the [Hammer](Hammer.md) at the [Smithing Table](Smithing_Table.md), and join parts with solder.
 
 Read: [Heat](Heat.md), [Metalworking](Metalworking.md), [Casting and Alloys](Casting.md), [Hand Tools](Hand_Tools.md), [Tools and Weapons](Tools_and_Weapons.md).
@@ -20,6 +22,8 @@ Read: [Heat](Heat.md), [Metalworking](Metalworking.md), [Casting and Alloys](Cas
 
 ## 2. Iron
 
+Your first wrought or cast iron tool or part enters the Iron Age, and electricity, heat and blaze, and XP and sculk open.
+
 Iron needs a hotter fire that also strips the oxygen from the ore. Feed the fire air with bellows by hand, then with a [Powered Bellows](Powered_Bellows.md). Wrap the chamber in [Insulation](Insulation.md), line it with [Refractory Lining](Refractory_Lining.md) and trim the draft with a [Damper](Damper.md). The [Furnaces](Furnaces.md) page covers the vessels that take the place of the vanilla furnace. Iron ore does not smelt to an ingot: it becomes a spongy bloom that you hammer clean into wrought iron ([Making Wrought Iron](Making_Wrought_Iron.md)), or melts to cast iron, and charcoal steel appears when the iron stays in a narrow temperature window.
 
 Read: [Furnaces](Furnaces.md), [Making Wrought Iron](Making_Wrought_Iron.md), [Ore Processing](Ore_Processing.md), [Making Steel](Steel.md), [Fuels](Fuels.md), [Materials](Materials.md).
@@ -27,6 +31,8 @@ Read: [Furnaces](Furnaces.md), [Making Wrought Iron](Making_Wrought_Iron.md), [O
 **The wall:** a tool of fresh steel is either brittle or soft. Look for how heat and cooling change the hardness of a finished part.
 
 ## 3. Treated steel and alloys
+
+Your first steel tool or part enters the Steel Age, and chemistry and ender open. Stainless steel, nickel, chromium, aluminum, titanium, tungsten and netherite belong to the Alloy Age.
 
 Quench and temper steel to the hardness a job needs. A hotter [kiln or furnace](Furnaces.md), a [Heat Exchanger](Heat_Exchanger.md) and a [Fluid Burner](Fluid_Burner.md) give finer control of heat. Alloys such as stainless steel and manganese steel, and hard carbides and cermet, are mixed and cast with the [Mixer](Mixer.md). A [Heating Coil](Heating_Coil.md) heats without fuel and smoke.
 
@@ -43,6 +49,8 @@ Read: [Rotation](Rotation.md), [Units](Units.md), [Transmission](Transmission.md
 **The wall:** hand-made parts are loose and rough. Look for machines that cut, press and draw metal to a size.
 
 ## 5. The machine shop
+
+The first part cut on a drill press, lathe or grinding wheel enters the Machine Age, and radiation and flight open.
 
 Shaft-driven machines shape metal more exactly than any hand. The [Mechanical Hammer](Mechanical_Hammer.md) and [Mechanical Press](Mechanical_Press.md) work hot metal, the [Rolling Mill](Rolling_Mill.md) makes plate, the [Wire Drawer](Wire_Drawer.md) makes fine wire, and the [Drill Press](Drill_Press.md), [Lathe](Lathe.md) and [Grinding Wheel](Grinding_Wheel.md) finish parts. Their output is the start of precise gun parts, pipes and cable, and of the [Engine](Engine.md).
 

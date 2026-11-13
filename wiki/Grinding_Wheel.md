@@ -2,6 +2,8 @@
 
 An abrasive stone wheel. It's the hardest cutter in the game, and the **only** machine that can shape **hardened steel**.
 
+The first part cut on a grinding wheel enters the [Machine Age](Ages.md) for you and any player nearby.
+
 ## Crafting
 
 ```
