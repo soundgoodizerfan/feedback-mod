@@ -50,7 +50,7 @@ See [Hazards](Hazards.md) for the general rules.
 
 - **Overcharge.** On a lead battery, a line well above its full strength, or charging past full, boils water off as hydrogen. Nickel-iron cells do not gas. Jade shows *Weeping gas*. A neighboring [Gas Tank](Gas_Tank.md) takes the hydrogen; otherwise a flame beside more than 40 mB of it blasts.
 - **Low water.** Jade shows *Low water*. Exposed plates cut capacity; top the water up.
-- **Wear.** **Ward** on a battery part slows all of the wear below ([Enchanting Table](Enchanting_Table.md#on-a-machine)).
+- **Wear.** **Ward** on the plates or case slows all of the wear below ([Enchanting Table](Enchanting_Table.md#on-a-machine)).
 - **Overdraw.** Drawing more than the limit heats the case and costs condition.
 - **Heat.** A case over 50 Tu costs condition. See [Heat](Heat.md).
 - **Too high a band.** A line above the case's insulation band costs condition.

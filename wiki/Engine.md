@@ -61,7 +61,7 @@ Compression is a **part of the design**, set by the compression axis of the cyli
 | High | never | 280 Tu |
 
 - **Misfire.** The fuel will not light. The engine makes **no power** and the fuel still goes through. Diesel (320 Tu) and heavy oil (330 Tu) misfire at low compression; ethylene and wisp gas misfire at medium.
-- **Knock.** The fuel lights before the spark. The engine still runs, but it **wears**: its condition falls (a clank sounds), down to a floor of 20% of its original power, and never lower. A worn engine is weaker in proportion. **Ward** on an engine part slows the wear ([Enchanting Table](Enchanting_Table.md#on-a-machine)). Naphtha (250 Tu) and soul oil (260 Tu) knock at high compression.
+- **Knock.** The fuel lights before the spark. The engine still runs, but it **wears**: its condition falls (a clank sounds), down to a floor of 20% of its original power, and never lower. A worn engine is weaker in proportion. **Ward** on the block, pistons, crankshaft or cylinder head slows the wear ([Enchanting Table](Enchanting_Table.md#on-a-machine)). Naphtha (250 Tu) and soul oil (260 Tu) knock at high compression.
 - **Medium** burns every liquid cut without trouble. Choose low or high only for a fuel the middle does not suit.
 
 A blend of two fuels has an ignition point between them, so a blend can sit inside a window neither fuel does.
