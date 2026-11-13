@@ -178,6 +178,36 @@ These act on the world near a running machine, every 2 seconds or so. A machine 
 
 Heads named here are the heads seated in a Mechanical Hammer, Mechanical Press, [Power Cutter](Power_Cutter.md) (a cutting head) or Pivot Mast. Which effects a given part takes is shown on its row in the effect list at the table.
 
+## On a pack
+
+A worn [Backpack](Backpack.md) reads attunements like armor. Its **shell** takes the plate effects, its **hard liner** the lining effects, and its **strap**, **frame**, **hip belt** and **quick-release buckle** the handle-style effects. Every effect that reads what you wear (Impulse, Bait, Dowse, Gleam and the rest) counts the pack too.
+
+- **Hold** on a mount: **Hold** carries more weight before the pack slows you; **Free** carries less, and the strap wears slower.
+- **Ward** on the mounts and liner turns away part of the wear from overload and scorching.
+- **Slip** on the shell or liner keeps the pack from soaking in rain or water, even when it is cloth.
+- **Tide** on the shell puts out a burning wearer.
+- **Bait** and **Spook** on the pack draw animals toward you or keep them away.
+
+## On a food container
+
+A dish, soup, pie, bread, skewer or wrap takes an attunement on its container. It acts on the food inside.
+
+| Effect | + side | Mirror |
+| --- | --- | --- |
+| **Bane** | keeps pests off, so the food rots slower | **Kin**: draws pests, so it rots faster |
+| **Conduct** | cures the food with a field, so it rots slower | none |
+| **Gleam** | light kills what grows, so the food rots slower; held, it carries a light | **Murk**: held, dims the light around you |
+| **Heat** | a hot container makes the food rot faster; held, it burns you | **Cold**: insulates, so the food rots slower |
+| **Tide** | held, puts out fire | **Slip**: seals the lid, so the food rots slower |
+| **Hunger** | the meal fills more food points when eaten | **Famine**: it fills fewer |
+| **Mend** | eaten, repairs the gear you wear | **Tithe**: eaten, pays out experience |
+| **Bait** | held, draws animals toward you | **Spook**: held, keeps animals away |
+| **Reservoir** | held, stores experience | none |
+
+## On a vial or charge casing
+
+An [XP Container](Experience.md) vial and a Charge Casing take held effects: **Reservoir** stores experience, **Bait** and **Spook** draw animals or keep them away, **Gleam** and **Murk** carry or dim a light, **Tide** puts out fire, and **Heat** burns the hand that holds it.
+
 ## On a gun
 
 Every bullet that hits carries the attunements of the gun's parts, in the part's role:

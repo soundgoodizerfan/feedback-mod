@@ -51,6 +51,10 @@ A finished pack takes **fittings**: fit them on the [Fit tab](Engineering_Table.
 | Warm liner | 3 carpets | 1 | Powder-snow chill leaves you faster. |
 | Quick-release buckle | 1 nugget | 1 | Its key (unbound until you set it) drops the pack at once, contents and all. |
 
+## Attunements
+
+A worn pack takes [attunements](Enchanting_Table.md#on-a-pack) on its parts, and counts with your armor for every effect that reads what you wear. The shell takes plate effects, the hard liner lining effects, and the strap, frame, hip belt and buckle the others. Hold on a mount changes how much you carry before you slow; Ward slows the wear from overloading and scorching; Slip on the shell keeps cloth dry; Tide on the shell puts out a burning wearer.
+
 ## Store slots
 
 A pack with a holster, loops, lashing, bandolier, lamp bracket or battery fitting has one extra row below its slots: holster 1, loops 3, lashing 1, bandolier 3, lamp bracket 1, battery fitting 1. Each store slot sits on a tinted pad that shows what it takes, and refuses anything else. What is in the stores counts toward the load.
