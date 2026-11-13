@@ -119,24 +119,45 @@
           "plate",
           "rod"
         ],
-        "variants": [
+        "slots": [
           {
-            "name": "rebreather",
-            "cells": 3,
-            "params": {
-              "module": 1.0,
-              "competence": 4.0
-            }
+            "name": "body",
+            "share": 3
           },
           {
-            "name": "respirator",
-            "cells": 3,
-            "params": {
-              "module": 3.0,
-              "competence": 4.0
-            }
+            "name": "media",
+            "forms": [
+              "lump",
+              "brick"
+            ],
+            "traits": [
+              "porous"
+            ],
+            "share": 1
           }
         ]
+      },
+      "params": {
+        "module": 40.0,
+        "porous": 0.4
+      },
+      "axes": {
+        "bed": {
+          "min": 1,
+          "max": 10,
+          "unit": "cm",
+          "default": 4,
+          "step": 1,
+          "bands": [
+            {
+              "name": "thin",
+              "max": 3
+            },
+            {
+              "name": "deep"
+            }
+          ]
+        }
       }
     },
     "T": {

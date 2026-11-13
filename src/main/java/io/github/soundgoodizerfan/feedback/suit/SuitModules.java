@@ -23,10 +23,11 @@ import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 /**
- * The suit's upgrade modules: thirty fittings, one per piece of armour, each an {@code upgrade} part cut in a shape that names it (the
- * {@code module} param of the part's variant, the ids below) in a material that sets how strongly it works ({@code Fig.SUIT_POWER}, 0.25
- * to 1.5). A module works only while the suit is powered and not cut out, except the two that are plain physics of the plate (the heat
- * sink and the coolant loop). Each reads {@code mod[id]}, its power, or 0 when not fitted; the array is null when none is.
+ * The suit's upgrade modules, one per piece of armour, each an {@code upgrade} part held whole. An attachment is either a part of one
+ * mechanism class (ids {@link #OPTIC} and up: a lens, spring, actuator, tread, filter), tuned by an axis whose share of range is
+ * {@link #arg} and read off its material, or one of the named shapes below (the {@code module} param of its variant) not yet converted.
+ * A module works only while the suit is powered and not cut out, except the plain physics of the plate and the springs, treads and
+ * filter beds ({@link #passive}). Each reads {@code mod[id]}, its power (0.25 to 1.5), or 0 when not fitted; the array is null when none is.
  *
  * <p>Attribute modules are transient modifiers set when the fit or power changes; per-tick ones run in {@link #tick}; damage and landing
  * ones are events here. Whatever they cost is Eu added to the battery's pending draw.
@@ -37,18 +38,18 @@ public final class SuitModules {
     private SuitModules() {
     }
 
-    public static final int REBREATHER = 1, RESPIRATOR = 3, CRASH_LINER = 6, REFLEX_LINK = 7,
+    public static final int CRASH_LINER = 6, REFLEX_LINK = 7,
             HEAT_SINK = 8, COOLANT_LOOP = 9, EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
             THERMAL_LINING = 15, MAGNET_PICKUP = 16, FIRE_CURTAIN = 17, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, HEAT_SHIELD = 26, ROCKET_SPUR = 29,
             // modules that give the wheel a segment of its own (see ability)
             CLOAK_FIELD = 31, JET_PACK = 32, EMP_COIL = 35;
     // mechanism classes: a part of one kind of mechanism, tuned by its axis, whatever the figures make of it
-    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39;
+    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39, FILTER = 40;
     /** The variant name of each id, which is also its lang key suffix; index 0 is none. */
-    private static final String[] KEYS = {"", "rebreather", "", "respirator", "", "", "crash_liner", "reflex_link", "heat_sink",
+    private static final String[] KEYS = {"", "", "", "", "", "", "crash_liner", "reflex_link", "heat_sink",
             "coolant_loop", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "thermal_lining", "magnet_pickup", "fire_curtain",
             "", "", "", "", "", "load_frame", "stabiliser", "mag_anchor", "heat_shield", "",
-            "", "rocket_spur", "", "cloak_field", "jet_pack", "", "", "emp_coil", "optic", "spring", "actuator", "tread"};
+            "", "rocket_spur", "", "cloak_field", "jet_pack", "", "", "emp_coil", "optic", "spring", "actuator", "tread", "filter"};
 
     /** The name key of upgrade {@code id} (translate {@code modular.feedback.variant.<key>}), or empty for none. */
     public static String key(int id) {
@@ -56,7 +57,7 @@ public final class SuitModules {
     }
 
     /** Ids are 1-based; a module array holds each id's power at {@code [id]} and its tuned-axis share at {@code [COUNT + id]}. */
-    public static final int COUNT = 40;
+    public static final int COUNT = 41;
 
     /** A module array's length: powers, then tuned-axis shares. */
     static final int SLOTS = 2 * COUNT;
@@ -75,6 +76,7 @@ public final class SuitModules {
             case OPTIC -> "focal_length";
             case SPRING, ACTUATOR -> "stroke";
             case TREAD -> "span";
+            case FILTER -> "bed";
             default -> "";
         };
     }
@@ -118,10 +120,10 @@ public final class SuitModules {
 
     /** {@code m} with every module that needs the suit's power zeroed: the springs and plates that are mechanical work unpowered. Null when none is left. */
     static float[] passive(float[] m) {
-        if (m == null || m[SPRING] <= 0f && m[TREAD] <= 0f)
+        if (m == null || m[SPRING] <= 0f && m[TREAD] <= 0f && m[FILTER] <= 0f)
             return null;
         float[] live = new float[SLOTS];
-        for (int id : new int[] {SPRING, TREAD}) {
+        for (int id : new int[] {SPRING, TREAD, FILTER}) {
             live[id] = m[id];
             live[COUNT + id] = m[COUNT + id];
         }
@@ -153,7 +155,7 @@ public final class SuitModules {
             THORN_COST = 40f, STOMP_COST = 50f, THORN_DAMAGE = 2f, STOMP_PER_BLOCK = 0.5f, STOMP_MAX = 12f, MAGNET_BASE = 3f, MAGNET_PER = 3f;
     private static final int HEAL_TICKS = 40;
     /** A lens: the reach (blocks) a short-focus lens adds; the share of thermal range a long-focus lens adds; the share of its light a glass must turn back to keep glare out; a scan flash's reach at the short and long end of the focal length. */
-    private static final float LENS_REACH_BLOCK = 1.5f, LENS_REACH_ENTITY = 1f, GLARE_MIN = 0.35f, SCAN_SHORT = 0.6f, SCAN_LONG = 0.8f;
+    private static final float LENS_REACH_BLOCK = 1.5f, LENS_REACH_ENTITY = 1f, GLARE_MIN = 0.35f, FILTER_MIN = 0.3f, SCAN_SHORT = 0.6f, SCAN_LONG = 0.8f;
 
     private static ResourceLocation id(String name) {
         return Feedback.id("suit_mod_" + name);
@@ -205,7 +207,8 @@ public final class SuitModules {
 
     /** Sets (or, for null, takes off) every attribute modifier the modules give. Called when the fit or the power changes. */
     static void attributes(ServerPlayer pl, float[] m) {
-        add(pl, Attributes.OXYGEN_BONUS, OXY, OXYGEN * p(m, REBREATHER), AttributeModifier.Operation.ADD_VALUE);
+        // A filter bed trades breath against scrubbing: a thin bed passes the air easily and the breath lasts, a deep one cleans it.
+        add(pl, Attributes.OXYGEN_BONUS, OXY, OXYGEN * p(m, FILTER) * (1f - arg(m, FILTER)), AttributeModifier.Operation.ADD_VALUE);
         float near = p(m, OPTIC) * (1f - arg(m, OPTIC));
         add(pl, Attributes.BLOCK_INTERACTION_RANGE, BR, LENS_REACH_BLOCK * near, AttributeModifier.Operation.ADD_VALUE);
         add(pl, Attributes.ENTITY_INTERACTION_RANGE, ER, LENS_REACH_ENTITY * near, AttributeModifier.Operation.ADD_VALUE);
@@ -247,7 +250,7 @@ public final class SuitModules {
                 draw += STRIDE_AMPS * stride;
         }
         if (t % 10 == 0) {
-            if (p(m, RESPIRATOR) > 0f)
+            if (p(m, FILTER) * arg(m, FILTER) >= FILTER_MIN)
                 draw += clear(pl, MobEffects.POISON, MobEffects.CONFUSION, MobEffects.HUNGER);
             // a glass that turns light back keeps glare out: the less it passes, the more it rejects
             if (p(m, OPTIC) > 0f && 1f - p(m, OPTIC) >= GLARE_MIN)

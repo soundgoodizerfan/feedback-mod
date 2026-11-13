@@ -80,7 +80,7 @@ public final class ModularBlueprints {
     }
 
     /**
-     * A plan sheet of a plain suit module with one random upgrade, drawn in common metals: what a chest holds. It is a sheet and nothing
+     * A plan sheet of a plain suit module with one random attachment, drawn in common metals: what a chest holds. It is a sheet and nothing
      * else; the parts, and any circuit or cell the upgrade needs, are still to be made. Empty if the tables cannot draw it.
      */
     public static Optional<ItemStack> randomModulePlan(RandomSource random) {
@@ -95,9 +95,10 @@ public final class ModularBlueprints {
             return Optional.empty();
         String pickedRole = attachments.get(random.nextInt(attachments.size()));
         List<PartBenchShaping.Option> options = ToolDesigns.shapes(type.roles().get(pickedRole), types).stream().filter(o -> !o.variant().name().isEmpty()).toList();
-        if (options.isEmpty())
+        // a mechanism part (a lens, a spring) has no named shapes: the standard one is the upgrade
+        PartBenchShaping.Option upgrade = options.isEmpty() ? ToolDesigns.standard(type.roles().get(pickedRole), types) : options.get(random.nextInt(options.size()));
+        if (upgrade == null)
             return Optional.empty();
-        PartBenchShaping.Option upgrade = options.get(random.nextInt(options.size()));
         List<ModularDesign.Part> parts = new ArrayList<>();
         for (String role : type.order()) {
             ModularType.Role r = type.roles().get(role);
