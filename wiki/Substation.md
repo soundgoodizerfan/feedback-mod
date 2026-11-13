@@ -14,4 +14,4 @@ On the trunk side of the line:
 
 Give each branch its own Breaker. A Controller with Current Sensor inputs opens the Breakers on the low-priority branches when the supply sags, and closes them when it recovers. Hold a band so the Breakers do not flap under load: see [Holding a band](Controller.md#holding-a-band).
 
-Open a Breaker only after the load is off if you can: opening under heavy current wears it and, at high voltage, throws an [arc flash](Breaker.md#arc-flash).
+Open a Breaker only after the load is off if you can: opening under heavy current wears it and, in a high band, throws an [arc flash](Breaker.md#arc-flash).

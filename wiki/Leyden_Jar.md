@@ -19,10 +19,10 @@ Shape the glass from a glass ingot at the [Stonecutter](Stonecutter.md), then as
 
 Put it on a line with a source. It switches between two jobs on its own:
 
-- **Charging.** While a higher voltage is on the line, the jar draws **1 A** and fills up.
-- **Discharging.** When the supply goes (the pulse ends, the cell is cut off), the jar becomes a source itself and gives back up to its burst amps (**8 A** at the default area) at whatever voltage it holds.
+- **Charging.** While the line is in a band above the charge the jar holds, the jar draws **1 A** and fills up.
+- **Discharging.** When the supply goes (the pulse ends, the cell is cut off), the jar becomes a source itself and gives back up to its burst amps (**8 A** at the default area) in whatever band its charge falls in.
 
-A jar at the default area and wall holds **10 amp-ticks per volt**. One Electrostatic Generator pulse (1 A for 20 ticks) fills it to the generator's 1.5 V with a little to spare.
+The jar's charge is counted in amp-ticks. One [Electrostatic Generator](Electrostatic_Generator.md) pulse (about 1 A for 20 ticks) fills a jar at the default area and wall into the LV band.
 
 ## Jar types
 
@@ -45,12 +45,12 @@ An addon is an optional extra part made from raw stock, added when you assemble 
 
 ## A burst, not a battery
 
-Its voltage **falls as it empties**, so anything running off it slows down as it goes: a strong start that tails off. It also **leaks** charge every tick, whether or not anything is connected: at the default wall about 0.2% a tick, which halves it in roughly 17 seconds.
+Its band **falls as it empties**, so anything running off it slows down as it goes: a strong start that tails off. It also **leaks** charge every tick, whether or not anything is connected: at the default wall about 0.2% a tick, which halves it in roughly 17 seconds.
 
 A jar smooths a pulse and carries you over a gap. For power that lasts, use a [Battery](Battery.md).
 
 ## Careful
 
-A jar charged to **6 V (MV) or more** shocks whoever touches it, walking into it or right-clicking it. See [Hazards](Hazards.md#shock). One charged from a Galvanic Cell or an Electrostatic Generator is never that high.
+A jar charged into the **MV** band or more shocks whoever touches it, walking into it or right-clicking it. See [Hazards](Hazards.md#shock). One charged from a Galvanic Cell or an Electrostatic Generator is never that high.
 
 See also: [Jar Baton](Jar_Baton.md), which draws a jar's charge and spends it on a melee hit.

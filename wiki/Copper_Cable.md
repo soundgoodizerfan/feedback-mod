@@ -32,24 +32,24 @@ You can bolt a [Current Sensor](Instruments.md#current-sensor) onto any face. If
 
 ## Bare cable arcs
 
-Bare cable (never insulated, or burnt) shocks, and it also **arcs across one block of air** to another bare cable in a straight line. The two lines become one while both are bare, with the usual results: the higher voltage wins, the lower side's machines wear from over-voltage. Sparks and a crackle show a gap that is carrying. Put a solid block in the gap, or insulate either cable, to end it.
+Bare cable (never insulated, or burnt) shocks, and it also **arcs across one block of air** to another bare cable in a straight line. The two lines become one while both are bare, with the usual results: the higher band wins, the lower side's machines wear from a band over their rating. Sparks and a crackle show a gap that is carrying. Put a solid block in the gap, or insulate either cable, to end it.
 
 ## How much it carries
 
 Copper figures, per gauge:
 
-| Gauge | Rating | Voltage lost per amp, per block |
+| Gauge | Rating | Eu lost from each packet, per block |
 | --- | --- | --- |
-| Thin | **1 A** | **0.2 V** |
-| Standard | **4 A** | **0.05 V** |
-| Heavy | **16 A** | **0.0125 V** |
-| Bus bar | **64 A** | **0.003125 V** |
+| Thin | **1 A** | **1.6** |
+| Standard | **4 A** | **0.4** |
+| Heavy | **16 A** | **0.1** |
+| Bus bar | **64 A** | **0.025** |
 
-Other metals scale these by their own ampacity and drop: a metal that carries half as much as copper has half the rating at every gauge.
+Other metals scale these by their own ampacity and loss: a metal that carries half as much as copper has half the rating at every gauge.
 
 Up to its rating a cable stays at room temperature forever and never wears out, no matter how long it runs. A standard copper cable's 4 A is four [Electromagnets](Electromagnet.md), or two [Heating Coils](Heating_Coil.md), but only a fraction of what a coarse [Dynamotor](Dynamotor.md) can deliver; heavy cable and bus bar are for that.
 
-Every block of cable also costs the line voltage, so long runs deliver less to the far end. See [Electricity](Electricity.md#how-a-line-behaves).
+Every block of cable also takes a slice off each packet, whatever the current, so long runs deliver a smaller packet to the far end; the band does not change. See [Electricity](Electricity.md#how-a-line-behaves).
 
 ## Overloading
 
@@ -63,8 +63,8 @@ Ask too much of a cable and it heats up. Look at it with Jade (with a [Thermomet
 | over 5.6 A | over 300 Tu | **the copper starts to degrade** |
 | 11.6 A | 600 Tu | degrades fast: gone in about 25 s |
 
-1. **The insulation burns off** above 100 Tu, or the moment the cable sees a voltage above its insulation's band (LV paper on a 6 V line, say). The cable still works exactly as before, but now it's **bare**, and touching bare cable while current is flowing will hurt you. See [Hazards](Hazards.md#shock).
-2. **The copper itself starts to suffer** above 300 Tu, copper's limit. The cable degrades, faster the hotter it is: it carries less before overheating, and it loses more voltage along the line. A damaged cable makes itself worse under the same load, so this gets away from you.
+1. **The insulation burns off** above 100 Tu, or the moment the cable carries a band above its insulation's band (LV paper on an MV line, say). The cable still works exactly as before, but it is **bare**, and touching bare cable while current is flowing will hurt you. See [Hazards](Hazards.md#shock).
+2. **The copper itself starts to suffer** above 300 Tu, copper's limit. The cable degrades, faster the hotter it is: it carries less before overheating, and it loses more of each packet along the line. A damaged cable makes itself worse under the same load, so this gets away from you.
 3. **It burns out.** A puff of smoke, a hiss, and the cable is gone. You don't get it back.
 
 Nothing on this list happens suddenly. You'll see it coming if you look.
@@ -73,7 +73,7 @@ Taking the load off lets the cable cool back down, but **damage doesn't heal**: 
 
 ## Superconducting cable
 
-Cable made from Redstone Superconductor Wire carries up to its **critical current** with no voltage drop. At standard gauge the critical current is **4 A** for the poor grade, **10 A** for fair and **25 A** for the best grade; other gauges scale like copper. Past it the cable **quenches**: it goes resistive, with a heavy voltage drop, and heats on what it carries. It recovers once it has cooled to near room temperature and carries no more than its rating. Left heating, it degrades and burns out like any wire ([Overloading](#overloading)). All figures are placeholders.
+Cable made from Redstone Superconductor Wire carries up to its **critical current** with no loss from the packet. At standard gauge the critical current is **4 A** for the poor grade, **10 A** for fair and **25 A** for the best grade; other gauges scale like copper. Past it the cable **quenches**: it goes resistive, with a heavy loss from every packet, and heats on what it carries. It recovers once it has cooled to near room temperature and carries no more than its rating. Left heating, it degrades and burns out like any wire ([Overloading](#overloading)). All figures are placeholders.
 
 ## Protecting it
 

@@ -22,7 +22,7 @@ Hold a blank Recipe Data Stick in your **off hand** while you take an Engineerin
 - **Right-click** empty-handed to take the output, and then the stick. **Sneak** and right-click empty-handed to take back the tools, fasteners and parts.
 - A **hopper** can fill the bay and the fastener stock, and empty the output. The tool slots are filled by hand.
 
-It is an [EHV](Electricity.md#volts-and-amps) sink, about **2.6 A at 384 V** while parts are in the bay. An assembly takes about 3 seconds.
+It is an [EHV](Electricity.md#bands-and-amps) sink, about **2.6 A** while parts are in the bay. An assembly takes about 3 seconds.
 
 ## How it assembles
 
@@ -36,4 +36,4 @@ Parts that do not match the recording are not refused. The machine picks one thi
 
 ## Wear
 
-A correct assembly never wears the machine. It wears from stock too hard for it, from a full output slot, from scrapping and from a supply over its voltage rating. A worn machine works slower and never stops. [Calipers](Instruments.md#calipers) read its condition while it is stopped.
+A correct assembly never wears the machine. It wears from stock too hard for it, from a full output slot, from scrapping and from a supply in a band above its rating. A worn machine works slower and never stops. [Calipers](Instruments.md#calipers) read its condition while it is stopped.

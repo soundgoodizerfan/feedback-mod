@@ -51,7 +51,7 @@ What the columns mean in play:
 - **Melting point** is where a crucible melts it, and where a [Fuse](Fuse.md) wire or a pair of [tongs](Hazards.md#tongs) gives out.
 - **Magnetic** metals are pulled by the [Electromagnet](Electromagnet.md).
 
-Electrical figures (how much current a wire of each metal carries, its voltage loss, and its electrode potential) are on the [Fuse](Fuse.md) and [Electrolytic Cell](Electrolytic_Cell.md#voltage-picks-the-metal) pages.
+Electrical behavior is on the pages that use it: how much current a wire of each metal carries and how much each packet loses along it ([Copper Cable](Copper_Cable.md#how-much-it-carries), [Fuse](Fuse.md)), and how noble a metal is as an electrode ([Electrolytic Cell](Electrolytic_Cell.md#the-liquid-picks-the-metal)).
 
 ## Other materials
 
@@ -73,7 +73,7 @@ Every material also decides how well it **takes an enchantment** when it's the m
 
 ## Nickel-iron
 
-A magnetic alloy of about half nickel and half iron, melting at 1480 Tu. Melt equal parts nickel and iron together in a [crucible](Crucible.md) and cast ingots like any alloy (a [Mixer](Mixer.md#alloying-with-heat) gives the molten alloy too) ([Casting and Alloys](Casting.md)). Its plates make the cells of a [nickel-iron battery](Battery.md): about 1.3 V a cell, filled with lye, with no gassing, good in the cold and a lower return than lead.
+A magnetic alloy of about half nickel and half iron, melting at 1480 Tu. Melt equal parts nickel and iron together in a [crucible](Crucible.md) and cast ingots like any alloy (a [Mixer](Mixer.md#alloying-with-heat) gives the molten alloy too) ([Casting and Alloys](Casting.md)). Its plates make the cells of a [nickel-iron battery](Battery.md): a lower strength per cell than lead, filled with lye, with no gassing, good in the cold and a lower return than lead.
 
 ## Graphite
 
@@ -147,7 +147,7 @@ The walls of the reactor shell must be dense: density 7 or more in the table abo
 
 ## Superconductor
 
-A late-game wire that carries current with no voltage drop up to a limit. It is made in four steps.
+A late-game wire that carries current with no loss from the packet up to a limit. It is made in four steps.
 
 1. **Purify.** Purify Redstone dust in a [Reactor](Reactor.md) with hydrochloric acid to get Purified Redstone.
 2. **Blend and calcine.** Blend 62 to 70% Purified Redstone with 28 to 36% chromium in the [Mixer](Mixer.md) for Superconductor Blend. Calcine it in a [Crucible](Crucible.md) or [Kiln zone](Kiln_Zone.md) at 780 to 920 Tu for Calcined Blend. Hotter ruins it into redstone dust.
@@ -231,7 +231,7 @@ Drilling gives a [Pipe](Pipe.md) of that polymer; a metal ingot drills into one 
 
 ### Polymer insulation
 
-Every polymer has an **insulation band**, shown in the table: how high a voltage it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that sees more voltage than its band loses its coat. The bands run LV, MV, HV, UHV, EHV, Trunk: polyethylene and rubber hold HV, which quartz glass and quartz beat, and PTFE holds Trunk, above any other insulator. PTFE is a powder made in the [Reactor](Reactor.md#the-reactions) ([Chemicals](Chemicals.md#fluorine-and-ptfe)) and sintered at 360 to 410 Tu into its *Insulation* form in any vessel that holds that heat; above 450 Tu the powder spoils into charred remains.
+Every polymer has an **insulation band**, shown in the table: how high a band it holds back. Put three of any polymer item (the *Insulation* form is the neat one) in a row under three [Copper Wire](Wire_Drawer.md) and the [cable](Copper_Cable.md) comes out insulated to that band. A cable that carries a band above its own loses its coat. The bands run LV, MV, HV, UHV, EHV, Trunk: polyethylene and rubber hold HV, which quartz glass and quartz beat, and PTFE holds Trunk, above any other insulator. PTFE is a powder made in the [Reactor](Reactor.md#the-reactions) ([Chemicals](Chemicals.md#fluorine-and-ptfe)) and sintered at 360 to 410 Tu into its *Insulation* form in any vessel that holds that heat; above 450 Tu the powder spoils into charred remains.
 
 ### Polymer grips
 

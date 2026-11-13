@@ -1,6 +1,6 @@
 # Solid-State Converter
 
-Steps a line's voltage up or down by a fixed ratio, with a Converter Tap on the other side. It changes voltage with no moving parts, at about 95 percent efficiency.
+Steps a line's band down one, down two or up one, with a Converter Tap on the other side. It changes band with no moving parts, at about 95 percent efficiency.
 
 ## Crafting
 
@@ -30,13 +30,13 @@ A A A
 
 1. Wire the line you step **from** to the converter.
 2. Set a **Converter Tap** against the converter and wire the line you step **to** to the tap.
-3. **Right-click the converter with an empty hand** to cycle its ratio (a strip under the crosshair lists the options with the current one lit): *divide by 4*, *divide by 16*, *multiply by 4*.
+3. **Right-click the converter with an empty hand** to cycle its step (a strip under the crosshair lists the options with the current one lit): *down one band*, *down two bands*, *up one band*. A step that would leave the list of bands (down from LV, up from Trunk) gives nothing.
 
 The two lines never share a run: the converter is a load on the first, and the tap is a source on the second. A tap with no converter beside it supplies nothing.
 
 ## How it works
 
-The converter passes a fixed amount of power, so a lower voltage out means more amps out, and a higher voltage out means fewer. Pushed past that, the output sags. A starved input line sags the output in proportion.
+The converter passes a fixed amount of power, so a lower band out means more amps out, and a higher band out means fewer. Asked for more than that, it gives no more. A starved input line shrinks the output in proportion.
 
 About 5 percent of the power is lost, and the loss is **heat in the converter block**. A hot converter loses condition, down to a floor, and a worn one wastes more of what passes. It never refuses a line and is never destroyed.
 
@@ -46,5 +46,5 @@ Set up to four aluminum **Heatsinks** against the converter. Each sheds heat to 
 
 ## See also
 
-- [Electricity](Electricity.md#changing-voltage) for the other way to change voltage, a motor-generator set.
+- [Electricity](Electricity.md#changing-band) for the other way to change band, a motor-generator set.
 - [Substation](Substation.md) for a converter as the head of a branch.

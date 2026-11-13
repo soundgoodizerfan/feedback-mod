@@ -41,7 +41,7 @@ Set the head against a [Crucible](Crucible.md) or an Arc Hearth, on top of it fo
 
 Jade on the head lists electrode slots 1, 2 and 3, each with its material and condition, or "empty".
 
-Run an [EHV](Electricity.md#volts-and-amps) line to it. With three electrodes it draws **42 A at 384 V**; with fewer it draws less. The arc follows the power it actually receives, so a sagging line lowers it. A [Breaker](Breaker.md) in the line switches it. See [Power](#power) for supplying it.
+Run an [EHV](Electricity.md#bands-and-amps) line to it. With three electrodes it draws **42 A** in the EHV band; with fewer it draws less. The arc follows the power it actually receives, so a long cable run or a starved line lowers it. A [Breaker](Breaker.md) in the line switches it. See [Power](#power) for supplying it.
 
 ### How hot
 
@@ -55,8 +55,8 @@ The hearth has a fluid face that takes **nitrogen** or **argon** and holds it un
 
 The arc needs EHV. A large [Dynamotor](Dynamotor.md) (frame size 8) on a winding of 4 or 8 turns, as a generator on a [Gas Turbine](Gas_Turbine.md) or a [Steam Turbine](Steam_Turbine.md), supplies it in survival:
 
-- **4 turns** (1.5 V per RPM) at 240 RPM gives 360 V, in the EHV band, at up to about 42 A.
-- **8 turns** (6 V per RPM) at 240 RPM gives 1,440 V, in the Trunk band, at about 10 A, which the frame's torque limits.
+- **4 turns** at 240 RPM makes the EHV band, at up to about 42 A.
+- **8 turns** at 240 RPM makes the Trunk band, at about 10 A, which the frame's torque limits.
 
 The cable must be insulated to the band: quartz holds EHV, and PTFE holds Trunk ([Copper Cable](Copper_Cable.md)).
 

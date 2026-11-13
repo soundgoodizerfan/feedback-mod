@@ -34,11 +34,11 @@ Connect it to a [Galvanic Cell](Galvanic_Cell.md) or an [Electrostatic Generator
 
 How hard and how far it pulls depends on how much power actually reaches it:
 
-A standard core (100 percent turns) is rated for **1.5 V at 1 A**; the rating's current follows the turns. Its strength is the share of that voltage it sees **times** the share of that current it gets, and at full strength it reaches **4 blocks**.
+A standard core (100 percent turns) is rated for the **LV** band at **1 A**; the rating's current follows the turns. Its strength is the share of an LV packet it receives **times** the share of that current it gets, and at full strength it reaches **4 blocks**.
 
-- **On an Electrostatic Generator pulse** (1.5 V) it pulls at full strength.
-- **On a single Galvanic Cell** (1.1 V) it works at about three-quarters strength, with a shorter reach.
-- **At the end of a long cable run**, or **sharing a source with other magnets**, it gets weaker still.
+- **On a single Galvanic Cell** (LV, 1 A) it pulls at full strength, with a short run of cable.
+- **On an Electrostatic Generator pulse** (HV) it pulls at full strength too, but the pulse is a band over its rating and wears it (see [Wear](#wear)).
+- **At the end of a long cable run**, which shrinks the packet, or **sharing a source with more magnets than the source can feed**, it gets weaker.
 
 It never refuses to run. A badly powered magnet is just a weak magnet, and running it underpowered does it no harm at all. If one seems sluggish, look at it with Jade: *"Starved"* means it isn't getting enough current. A [Galvanometer](Instruments.md#galvanometer) shows exactly how much it's getting compared with how much it wants (1 A).
 
@@ -46,7 +46,7 @@ A magnet doesn't pass power through to whatever is on its other side. Give each 
 
 ## Wear
 
-Running a magnet normally never wears it out, however long it runs. The only thing that hurts a magnet is feeding it **more voltage than it's built for** (1.5 V). That heats it up and permanently weakens it, faster the further over, down to half strength. It never breaks completely. A fine-wound [Dynamotor](Dynamotor.md) at a steam engine's speed makes 6 V, four times the magnet's rating, so keep magnets on LV.
+Running a magnet normally never wears it out, however long it runs. The only thing that hurts a magnet is feeding it **a band above LV**. That heats it up and permanently weakens it, faster the further over (each band over is four times the packet), down to half strength. It never breaks completely. A fine-wound [Dynamotor](Dynamotor.md) at a steam engine's speed makes MV, so keep magnets on LV.
 
 You can check a magnet's condition with [Calipers](Instruments.md#calipers), but only while it's switched off. You can't measure a magnet while it's pulling.
 

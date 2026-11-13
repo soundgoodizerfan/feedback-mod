@@ -8,7 +8,7 @@ Shaped and assembled like a [gun](Gun_Parts.md), out of the same receiver, trigg
 
 | Part | Takes | Does |
 | --- | --- | --- |
-| **Receiver** | any material | Its **type** is the same three as a gun's, and each sets how big a battery it takes: a **handgun** frame up to 2 cells, a **long gun** 4, a **machine gun** 8 (the bigger frames also keep their heat better). Its material's insulation sets the voltage band it holds off. |
+| **Receiver** | any material | Its **type** is the same three as a gun's, and each sets how big a battery it takes: a **handgun** frame up to 2 cells, a **long gun** 4, a **machine gun** 8 (the bigger frames also keep their heat better). Its material's insulation sets the band it holds off. |
 | **Pulse Barrel** | any material | Axes: barrel length and bore. A longer barrel holds the pulse's damage out further and shoots truer; a wide bore hits a little harder in a wider cone. A barrel that **conducts** takes energy out of the pulse and turns it to heat, so it hits weaker and heats the gun more; a poor conductor (glass, ceramic, bone, wood) gives the strongest pulse. |
 | **Pulse Seat** | a conductor | Required. Its shape is the gun's **heat cycle** (below); its conductor is the ceiling on how much energy one pulse can hold; its **power tier** takes Light, Standard or Heavy of that ceiling. |
 | **Trigger group** | as a gun's | Required. |
@@ -89,7 +89,7 @@ Holding the gun shows a card with the battery's charge in percent, what the seat
 
 ## Misuse and hazards
 
-Nothing wears from correct use. A battery whose voltage is over the receiver's band shocks you and wears the receiver. Firing in water or rain arcs to you unless you are insulated (insulating gloves stop it; see [Hazards](Hazards.md#shock)); an arc fork fired in water shocks everything wet within reach, you included. A shot at the heat limit with no governor burns you and wears the barrel. The steam of a forced vent scalds you as it does anyone else.
+Nothing wears from correct use. A battery whose band is over the receiver's band shocks you and wears the receiver. Firing in water or rain arcs to you unless you are insulated (insulating gloves stop it; see [Hazards](Hazards.md#shock)); an arc fork fired in water shocks everything wet within reach, you included. A shot at the heat limit with no governor burns you and wears the barrel. The steam of a forced vent scalds you as it does anyone else.
 
 ## Wither skeletons
 

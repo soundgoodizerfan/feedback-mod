@@ -34,9 +34,9 @@ Every figure in Feedback has a unit, and the same symbol is used on screens, too
 
 **Pu** is pressure: how full a sealed space is of air or steam. Pump more in over the same volume and the number climbs. The [Boiler](Boiler.md) and the [Pressure Vessel](Pressure_Vessel.md) each give the figures and what happens past the safe ones.
 
-## Electricity (V, A)
+## Electricity (Eu, A)
 
-**V** is voltage, how hard the current is pushed, and **A** is amps, how much flows. Voltage comes in bands: LV, MV, HV, UHV and EHV. See [Electricity](Electricity.md#volts-and-amps).
+**Eu** is the energy in one packet of electricity and **A** is amps, how many packets flow each tick. A line carries packets of one named band: LV, MV, HV, UHV, EHV or Trunk. See [Electricity](Electricity.md#bands-and-amps).
 
 ## Radiation (Ru)
 

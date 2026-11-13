@@ -25,7 +25,7 @@ While both halves of the stomach have food, the reserve grows toward a cap of 64
 
 ### Charged creeper
 
-Lightning striking within 3 blocks of a pen with a creeper makes it charged for good. A charged creeper holds twice the reserve, and its blast also shocks everything in reach with 400 V ([Shock](Hazards.md#shock)).
+Lightning striking within 3 blocks of a pen with a creeper makes it charged for good. A charged creeper holds twice the reserve, and its blast also shocks everything in reach at EHV ([Shock](Hazards.md#shock)).
 
 ## Misuse and hazards
 

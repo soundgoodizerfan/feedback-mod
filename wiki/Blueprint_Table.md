@@ -33,7 +33,7 @@ A gun's name (pistol, rifle, shotgun...), read from its parts, is shown beside t
 
 ### Figures
 
-The sheet shows the design's figures as **bars** (for a battery: cells, full voltage, capacity and the voltage band its case holds; for a backpack: slots, carry rating, mounting points left and store slots; for a [bedroll](Bedroll.md): comfort; for a belt: its grip on cargo and the hottest cargo it carries). Qualities and adjectives the design earns sit along the bottom edge.
+The sheet shows the design's figures as **bars** (for a battery: cells, the band it reaches when full, capacity and the band its case holds; for a backpack: slots, carry rating, mounting points left and store slots; for a [bedroll](Bedroll.md): comfort; for a belt: its grip on cargo and the hottest cargo it carries). Qualities and adjectives the design earns sit along the bottom edge.
 
 - A mark on each bar shows where the **first drawing** stood. An arrow shows which way the bar has moved since.
 - **Hold Shift** to read the exact figure. Hover the **mass** bar for what it counts: the tooltip is written for the kind of thing drawn (a gun, a belt, a backpack, a bedroll, a shield, a battery cell, a charge, a vessel, a machine part).

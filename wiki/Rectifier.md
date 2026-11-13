@@ -13,7 +13,7 @@ W is [Copper Wire](Wire_Drawer.md), X is a [Cat's Whisker Detector](Cats_Whisker
 
 ## Using it
 
-Place it touching a battery on any face and wire it to an MV (6 V) [electrical](Electricity.md) line like any other load. While the line feeds it, the battery next to it charges at the faster rate, whenever the battery itself is charging. It picks up a changed neighbor within about a second.
+Place it touching a battery on any face and wire it to an MV [electrical](Electricity.md) line like any other load. While the line feeds it, the battery next to it charges at the faster rate, whenever the battery itself is charging. It picks up a changed neighbor within about a second.
 
 It draws **0.25 A** at MV whether or not a battery is there, and does nothing on its own.
 

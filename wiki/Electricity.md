@@ -4,42 +4,33 @@ Electricity in Feedback is made from chemistry, static and shafts; carried on ca
 
 It is not the "universal" power of other tech mods. Your mechanical and thermal setups never need to be converted into electricity. Electricity is one option among several, good at some jobs and bad at others.
 
-## Volts and amps
+## Bands and amps
 
 Electricity has two numbers, and they're not interchangeable:
 
-- **Voltage (V)** is how hard it pushes. Some jobs need a minimum voltage before anything happens at all.
-- **Current (A)** is how much flows. For most jobs, current is how *fast* things happen.
+- **Band** is the size of the packets a line carries. Some jobs need a minimum band before anything happens at all.
+- **Current (A)** is how many packets flow each tick. For most jobs, current is how *fast* things happen.
 
-Voltage comes in six named bands:
+The band is named, never a number. There are six: **LV**, **MV**, **HV**, **UHV**, **EHV** and **Trunk**. A packet of LV holds **32 Eu** of energy, and every band up holds four times the band below: MV 128, HV 512, UHV 2,048, EHV 8,192, Trunk 32,768 Eu. The power a supply delivers each tick is **packet × amps**, in Eu per tick, so a 1 A cell on LV gives 32 Eu per tick and a 0.5 A pulse on HV gives 256: that is how to compare two supplies.
 
-| Band | Up to |
-| --- | --- |
-| **LV** | 1.5 V |
-| **MV** | 6 V |
-| **HV** | 24 V |
-| **UHV** | 96 V |
-| **EHV** | 384 V |
-| **Trunk** | 1,536 V and beyond |
+Each source makes one band (a [Dynamotor](Dynamotor.md) makes the band its shaft speed and winding reach). The [Arc Furnace](Arc_Furnace.md) runs on EHV. Only PTFE insulates Trunk.
 
-A voltage belongs to the highest band it comes within 90% of, so a 2 V battery cell is LV, 6 V and 12 V stacks are MV 24 V is HV and 96 V is UHV. The [Arc Furnace](Arc_Furnace.md) runs on EHV. Only PTFE insulates Trunk.
-
-Bands don't lock anything. A machine is *rated* for a band; feed it more and it wears and warms, feed it less and it runs slow.
+Bands don't lock anything. A machine is *rated* for a band; feed it a higher band and it wears and warms, feed it less and it runs slow.
 
 ## The pieces
 
 | Block / item | What it does |
 | --- | --- |
 | **Sources** | |
-| [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1.1 V, 1 A. |
-| [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 1.5 V, 1 A. |
-| [Dynamotor](Dynamotor.md) | Shaft in, electricity out, as a generator. Volts set by shaft speed and the winding's turns; 4 turns reaches EHV and 8 turns Trunk on a turbine. |
+| [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1 A in the LV band. |
+| [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 0.5 A in the HV band. |
+| [Dynamotor](Dynamotor.md) | Shaft in, electricity out, as a generator. The band is set by shaft speed and the winding's turns; 4 turns reaches EHV and 8 turns Trunk on a turbine. |
 | [Battery](Battery.md) | Lead-acid or nickel-iron cells that charge from a higher line and supply when it drops. |
 | [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
 | **Carrying and stopping** | |
 | [Copper Cable](Copper_Cable.md) | Carries 1, 4, 16 or 64 A, by gauge. |
 | [Breaker](Breaker.md) | A switch. Trips itself above the rating of its gauge. |
-| [Solid-State Converter](Converter.md) | Steps a line's voltage by a named ratio, with a Converter Tap. |
+| [Solid-State Converter](Converter.md) | Steps a line's band down one, down two or up one, with a Converter Tap. |
 | [Fuse Holder](Fuse.md) | Blows when the current is too high. |
 | [Redstone Coherer](Redstone_Coherer.md) | Closed by a nearby spark, opened by a tap. |
 | [Cat's Whisker Detector](Cats_Whisker_Detector.md) | Closes briefly on a nearby spark, if you found a good spot. |
@@ -55,7 +46,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | [Glowstone Lamp](Lamp.md) | Light in four steps, by how well it is fed. |
 | [Rectifier](Rectifier.md) | Makes a battery beside it charge about three times faster. |
 | **Measuring** | |
-| [Electroscope](Instruments.md#electroscope) | Voltage, roughly. |
+| [Electroscope](Instruments.md#electroscope) | The band of a live line. |
 | [Galvanometer](Instruments.md#galvanometer) | Current. |
 | [Hydrometer](Instruments.md#hydrometer) | A battery's charge. |
 | [Current Sensor](Instruments.md#current-sensor) | A galvanometer you bolt onto a cable so a [Controller](Controller.md) can read it. |
@@ -64,11 +55,11 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 
 Everything that touches is connected. Put a source, some cable and a magnet next to each other and they form one line. You don't need to configure anything.
 
-**The highest voltage wins.** If two different sources are on one line, the stronger one does all the supplying and the weaker one just sits there. Look at the weaker one with Jade and it says *"Outbid by a higher voltage."* Sources within 5 percent of the top voltage share the work by rating instead; sources further below are outbid. That's why several Galvanic Cells on one line add up, but a Galvanic Cell next to a turning Electrostatic Generator goes quiet until the pulse ends.
+**The highest band wins.** If sources of different bands are on one line, the line runs at the highest band that is supplying; only sources of that band do any supplying, and they share the work by rating. A source of a lower band just sits there: look at it with Jade and it says *"Outbid by a higher band."* That's why several Galvanic Cells on one line add up, but a Galvanic Cell next to a turning Electrostatic Generator goes quiet until the pulse ends.
 
-**Long lines lose voltage.** Every block of cable takes some voltage off, in proportion to the current through it: standard copper cable loses **0.05 V per amp per block**; thicker gauges lose less ([Copper Cable](Copper_Cable.md#how-much-it-carries)). At 1 A, twenty blocks of copper cost 1 V. That's most of a cell. Shorten the run, or send it at a higher voltage (a higher voltage carries the same power on less current, so it loses less).
+**Long lines lose energy.** Every block of cable takes a slice off every packet, whatever the current: standard copper cable loses **0.4 Eu** of each packet per block; thicker gauges lose less ([Copper Cable](Copper_Cable.md#how-much-it-carries)). The band arrives unchanged, but the packet is smaller, so a machine at the far end runs slower. Twenty blocks of standard copper take 8 Eu off a 32 Eu LV packet. Shorten the run, use a thicker gauge, or send it in a higher band: a bigger packet loses the same slice and keeps more of itself. Poor conductors, thin gauges and worn cable lose more.
 
-**Overloaded sources sag.** Every source has a rated current. Draw more and its voltage drops, in a straight line down to a quarter at **twice** its rating. It won't give more than twice its rating at all. No source is ever damaged by this.
+**Overdrawn sources cap out.** Every source has a rated current. A line can draw up to **twice** that rating; past it, every machine gets the same share of what it asked for. No source is ever damaged by this.
 
 **Starved machines share fairly.** If there isn't enough to go round, every machine gets the same share of what it wanted. The one closest to the source doesn't hog it all. Jade shows any machine that's short as *"Starved."*
 
@@ -78,35 +69,35 @@ Everything that touches is connected. Put a source, some cable and a magnet next
 
 ## Under and over
 
-- **Too little** voltage or current makes a machine **slow**, never stopped and never damaged. A magnet on half the voltage and half the current it wants pulls at a quarter strength.
-- **Too much** voltage goes into the machine as **heat and wear**, more the further over. It never explodes and never refuses to run.
-- A few jobs have a real minimum: the [Electrolytic Cell](Electrolytic_Cell.md) can't plate a metal below its voltage, however much current you give it.
+- **Too little** packet or current makes a machine **slow**, never stopped and never damaged. A magnet that gets half the packet it is rated for (a long cable run) and half the current it wants pulls at a quarter strength.
+- **Too high a band** goes into the machine as **heat and wear**, more the further over: each band over its rating is four times the packet. It never explodes and never refuses to run; cheap parts such as a lamp's panel burn out.
+- A few jobs have a real minimum: the [Electrolytic Cell](Electrolytic_Cell.md) plates a less noble metal only inside the window its liquid allows, however much current you give it.
 
-## Changing voltage
+## Changing band
 
-There's no transformer: Feedback's electricity is DC, and transformers need AC. Voltage changes with a **motor-generator set**: an [Dynamotor](Dynamotor.md) run as a motor, turning a shaft that turns another run as a generator with the **other** winding.
+There's no transformer: Feedback's electricity is DC, and transformers need AC. A band changes with a **motor-generator set**: a [Dynamotor](Dynamotor.md) run as a motor, turning a shaft that turns another run as a generator with the **other** winding.
 
-- **Many-turn motor → few-turn generator:** fewer volts, more amps. Send power a long way at MV, then step it down next to an LV machine.
-- **Few-turn motor → many-turn generator:** more volts, fewer amps.
+- **Many-turn motor → few-turn generator:** a lower band, more amps. Send power a long way in a high band, then step it down next to a machine that wants less.
+- **Few-turn motor → many-turn generator:** a higher band, fewer amps.
 
 The only loss is the friction of the shaft between them.
 
-A [Solid-State Converter](Converter.md) steps a line by a named ratio with no shaft, at about 95 percent efficiency. A [Substation](Substation.md) builds on one.
+A [Solid-State Converter](Converter.md) steps a line down one band, down two or up one with no shaft, at about 95 percent efficiency. A [Substation](Substation.md) builds on one.
 
 ## Reading a line
 
 You can always tell whether a line is working just by looking at it with Jade:
 
-- **Live**: there's voltage here.
+- **Live**: there's charge here.
 - **Dead**: nothing's reaching this block.
 - **Starved**: this machine is getting less than it wants.
-- **Outbid by a higher voltage**: this source is being overruled by a stronger one.
+- **Outbid by a higher band**: this source is being overruled by a source of a higher band.
 
-For actual numbers you need an instrument somewhere in your inventory: an [Electroscope](Instruments.md#electroscope) adds volts to the Jade tooltip, and a [Galvanometer](Instruments.md#galvanometer) adds amps. You can also right-click any electrical block with one for a direct reading.
+For actual numbers you need an instrument somewhere in your inventory: an [Electroscope](Instruments.md#electroscope) adds the band to the Jade tooltip, and a [Galvanometer](Instruments.md#galvanometer) adds amps. You can also right-click any electrical block with one for a direct reading.
 
 ## Things that will hurt you
 
 - **Overloaded cable** gets hot. Push it far enough and the insulation burns off, and then **bare cable carrying current shocks anyone touching it**. Keep pushing and the cable burns out completely. See [Copper Cable](Copper_Cable.md#overloading).
-- A **[Leyden Jar](Leyden_Jar.md)** charged to 6 V or more shocks you.
+- A **[Leyden Jar](Leyden_Jar.md)** charged to MV or more shocks you.
 
-Armor doesn't stop a shock; insulating gloves do, up to 24 V. See [Hazards](Hazards.md#shock).
+Armor doesn't stop a shock; insulating gloves do, up to HV. See [Hazards](Hazards.md#shock).

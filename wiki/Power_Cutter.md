@@ -36,7 +36,7 @@ T is a Tungsten Plate and C is Ceramic.
 
 ## Using it
 
-- It is an **EHV** sink: about **2.6 A at 384 V**. See [Electricity](Electricity.md).
+- It is an **EHV** sink: about **2.6 A**. See [Electricity](Electricity.md).
 - **Right-click** with a head or a data stick to seat it. **Right-click** empty-handed to take out the output, then the stick. **Sneak** and right-click to take the head.
 - It has one head slot and one stick slot. A hopper feeds it and empties it: stock goes in, cut pieces come out.
 - It idles with no head, no stock or no power.

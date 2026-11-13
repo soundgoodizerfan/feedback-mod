@@ -16,7 +16,7 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 | [Pyrometer](Optics.md#pyrometer) | Temperature of a vessel up to 24 blocks away | 10 Tu steps |
 | [Temperature Sensor](#temperature-sensor) | Temperature of a crucible or Improved Furnace, to a program | 10 Tu steps |
 | [Pressure Gauge](#pressure-gauge) | Pressure in a boiler, vessel, pipe or tank | 0.5 Pu steps |
-| [Electroscope](#electroscope) | Voltage | 0.5 V steps |
+| [Electroscope](#electroscope) | Band of a live line | Whole bands |
 | [Galvanometer](#galvanometer) | Current | 0.25 A steps |
 | [Hydrometer](#hydrometer) | Charge of a battery | 5% steps |
 | [Current Sensor](#current-sensor) | Current in a cable, to a program | 0.5 A steps |
@@ -190,13 +190,13 @@ F
 G
 ```
 
-- **Right-click** any electrical block (cable, cell, generator, magnet) to get a voltage reading on the card, like *1.0 V*.
-- **Carry it anywhere in your inventory** and Jade's tooltip on electrical blocks shows volts as well as *Live/Dead*.
+- **Right-click** any electrical block (cable, cell, generator, magnet) to get a band reading on the card, like *LV*. A dead line reads *No charge reaches it*.
+- **Carry it anywhere in your inventory** and Jade's tooltip on electrical blocks shows the band as well as *Live/Dead*.
 
-It shows voltage only, in steps of **0.5 V**, so a cell's 1.1 V reads as 1.0 V and small differences along a cable do not show. It tells you a line is live and roughly how strongly; for current, use a [Galvanometer](#galvanometer).
+It shows the band only, in whole bands, so the smaller packet at the far end of a long cable reads the same band as the source. It tells you a line is live and how big its packets are; for current, use a [Galvanometer](#galvanometer).
 
 - Touch it to an [Electrostatic Generator](Electrostatic_Generator.md) while someone turns the handle, and the leaves jump and fall again.
-- Compare the reading at a [Galvanic Cell](Galvanic_Cell.md) with the reading at the far end of a long cable. If they differ, the cable is costing you power.
+- Read two lines side by side to see which band each runs in, for example before wiring a machine to one of them.
 
 ## Galvanometer
 
@@ -217,7 +217,7 @@ Reading a live cable is free and safe while it is insulated, and nothing has to 
 
 - Find which cable on a busy line carries the most (and is about to overheat).
 - Check whether adding another [Galvanic Cell](Galvanic_Cell.md) helped.
-- Work out why a magnet is weak: low amps means not enough supply, while full amps on a weak magnet means the voltage is the problem (a long run). Check that with an [Electroscope](#electroscope).
+- Work out why a magnet is weak: low amps means not enough supply, while full amps on a weak magnet means the packets are too small (a long run, or a line in a lower band than the magnet is rated for). Check the band with an [Electroscope](#electroscope).
 
 A circuit can narrow the step ([below](#fitting-a-circuit)).
 

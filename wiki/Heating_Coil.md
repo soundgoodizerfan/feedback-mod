@@ -19,12 +19,13 @@ C is Ceramic and W is Fine Wire of the element metal:
 
 The coil can be rotated: it radiates away from the face you click when placing it, so a coil set on the floor heats the block above it. The block it faces gets its full heat, the blocks beside that face get less, and the block behind gets none ([Heat](Heat.md#heat-sources-have-a-facing)). Put the vessel in front and run [cable](Copper_Cable.md) to the coil. It asks for **2 A**. It has no switch; put a [Breaker](Breaker.md) in its line to turn it on and off by hand or with a [Controller](Controller.md).
 
-The power it turns into heat is **volts × amps**. So the coil is as hot as its supply:
+The coil is rated for LV. The power it turns into heat is the packet it receives times its amps, so it is as hot as its supply. At its 2 A:
 
-| Supply | Small crucible settles near |
+| Line | Small crucible settles near |
 | --- | --- |
-| [Dynamotor](Dynamotor.md), a winding of 2 turns, as a generator at a [Steam Engine](Steam_Engine.md)'s speed (6 V, 2 A) | 290 Tu |
-| The same machine on a [Hand Crank](Hand_Crank.md) (12 V) | 560 Tu |
+| LV (a [Galvanic Cell](Galvanic_Cell.md)) | 70 Tu |
+| MV (a [Dynamotor](Dynamotor.md) with a winding of 2 turns at a [Steam Engine](Steam_Engine.md)'s speed) | 210 Tu |
+| HV | 790 Tu |
 
 The element runs a little hotter than what it's heating, and heats its vessel the same way a fire does: fast while there's a big difference, slower as they get close.
 
