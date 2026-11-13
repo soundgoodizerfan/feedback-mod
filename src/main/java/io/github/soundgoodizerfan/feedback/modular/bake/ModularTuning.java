@@ -177,6 +177,8 @@ public final class ModularTuning {
     /** How far the bore's width moves a pulse's damage (and its cone) across the bore axis's range: narrow is below 1, wide above. */
     public static final float EGUN_BORE_SPAN = 0.4f;
     /** Damage a joule of pulse does, and the joules one Eu of a cell's charge is worth. */
+    /** A pulse's recoil impulse per hit damage to the 1.5: half of a powder round's (0.29). */
+    public static final float EGUN_RECOIL_PER_HIT = 0.145f;
     public static final float EGUN_DAMAGE_PER_J = 0.03f, EGUN_J_PER_EU = 0.5f;
     /** The cell voltage a seat's refill rate is measured against, and the one the Blueprint Table assumes. */
     public static final io.github.soundgoodizerfan.feedback.core.unit.VoltageBand EGUN_REF_BAND = io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.MV;

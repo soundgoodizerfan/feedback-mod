@@ -367,7 +367,16 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
 
     /** The recoil figure of a pulse of {@code joules}: what kick and hand strain read. */
     public static float impulse(float joules) {
-        return 0.15f * (float) Math.sqrt(Math.max(0f, joules));
+        return impulse(joules, Math.max(0f, joules) * ModularTuning.EGUN_DAMAGE_PER_J);
+    }
+
+    /**
+     * As above, for a pulse that drew {@code joules} and hits for {@code hit}: the larger of the figure the draw gives and half of what a
+     * powder round of that hit kicks with (a round's impulse runs about {@code 0.29 hit^1.5}), so a hard-hitting pulse is never a feather.
+     */
+    public static float impulse(float joules, float hit) {
+        float drawn = 0.15f * (float) Math.sqrt(Math.max(0f, joules));
+        return Math.max(drawn, ModularTuning.EGUN_RECOIL_PER_HIT * (float) Math.pow(Math.max(0f, hit), 1.5));
     }
 
     /**
@@ -382,7 +391,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
     public GunFigures figures(float joules, float gunKg, int cycleTicks, float zoomShare, float spreadMult) {
         float hit = damage(delivered(joules));
         float energy = hit / GunTuning.GUN_DAMAGE_PER_WORK;
-        float impulse = impulse(joules);
+        float impulse = impulse(joules, hit);
         float spread = coneDeg(zoomShare) * spreadMult;
         float kick = GunTuning.GUN_KICK_DEG_PER_IMPULSE * impulse * (GunTuning.GUN_KICK_REFERENCE_MU / Math.max(0.05f, gunKg));
         return new GunFigures(new Pu(0f), new Pu(0f), 10f, energy, new Mu(0.001f), new Mu(gunKg), impulse, cycleTicks * 50, spread, kick,
