@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/part/knife_blade"
+    "layer0": "feedback:item/part/shears_blade"
   }
 }
