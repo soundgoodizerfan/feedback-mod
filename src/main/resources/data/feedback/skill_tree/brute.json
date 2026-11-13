@@ -358,13 +358,13 @@
       }
     },
     {
-      "id": "recoil_vault",
+      "id": "roll_with_kick",
       "cost": 60,
       "requires": [
         "momentum"
       ],
       "effect": {
-        "unlock": "gun_fu_recoil_vault"
+        "unlock": "gun_fu_roll_with_kick"
       }
     },
     {

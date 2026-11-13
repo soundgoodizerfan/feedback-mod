@@ -3,7 +3,6 @@
 
 package io.github.soundgoodizerfan.feedback.combat.cast;
 
-import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -25,15 +24,14 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 
 /**
- * Proficiency's passive riders on blows: Blood Up (a clean run of empty-hand hits heals) and Breather (a kill with a
+ * Proficiency's passive riders on blows: Blood Up (warm muscles: a clean run of hits, none taken between, lifts stamina regain for a while; it heals nothing) and Breather (a kill with a
  * held weapon gives back stamina by the weapon's mass). They ride hits already happening, so no key.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 final class BloodUp {
 
-    /** STAND-IN: hits in the run, ticks a run may gap, health healed. */
+    /** STAND-IN: hits in the run, ticks a run may gap. */
     static final int RUN = 3, GAP = 60;
-    static final float HEAL = 2f;
     /** STAND-IN: stamina per Mu of weapon, and the bounds of one breather. */
     static final float PER_MU = 10f, MIN = 10f, MOST = 40f;
 
@@ -41,6 +39,20 @@ final class BloodUp {
     }
 
     private static final Map<UUID, Run> RUNS = new HashMap<>();
+    /** Game tick each fighter's warm muscles cool. */
+    private static final Map<UUID, Long> WARM = new HashMap<>();
+
+    /** The factor on stamina regain: warm muscles ({@link CastTuning#WARM_REGEN}) while they last, else 1. */
+    static float warmFactor(ServerPlayer p) {
+        Long until = WARM.get(p.getUUID());
+        if (until == null)
+            return 1f;
+        if (p.level().getGameTime() > until) {
+            WARM.remove(p.getUUID());
+            return 1f;
+        }
+        return CastTuning.WARM_REGEN;
+    }
 
     private BloodUp() {
     }
@@ -52,8 +64,7 @@ final class BloodUp {
         if (event.getEntity() instanceof ServerPlayer hurt)
             RUNS.remove(hurt.getUUID()); // a run is clean or it is nothing
         if (!(event.getSource().getEntity() instanceof ServerPlayer p) || event.getSource().getDirectEntity() != p
-                || !event.getSource().is(DamageTypes.PLAYER_ATTACK) || !BareMode.mainHand(p).isEmpty()
-                || !Skills.unlocked(p, "blood_up"))
+                || !event.getSource().is(DamageTypes.PLAYER_ATTACK) || !Skills.unlocked(p, "blood_up"))
             return;
         long now = p.level().getGameTime();
         Run r = RUNS.get(p.getUUID());
@@ -63,11 +74,11 @@ final class BloodUp {
             return;
         }
         RUNS.remove(p.getUUID());
-        p.heal(HEAL);
+        WARM.put(p.getUUID(), now + CastTuning.WARM_TICKS);
         Rearms.spend(p, "blood_up");
         Vec3 at = p.position().add(0, 1, 0);
-        p.serverLevel().sendParticles(ParticleTypes.HEART, at.x, at.y, at.z, 3, 0.4, 0.4, 0.4, 0);
-        CastFx.sound(p.serverLevel(), at, SoundEvents.PLAYER_LEVELUP, 0.4f, 1.6f);
+        p.serverLevel().sendParticles(ParticleTypes.CLOUD, at.x, at.y + 0.6, at.z, 6, 0.3, 0.3, 0.3, 0.02);
+        CastFx.sound(p.serverLevel(), at, SoundEvents.PLAYER_BREATH, 0.6f, 0.9f);
     }
 
     @SubscribeEvent

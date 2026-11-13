@@ -47,8 +47,8 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  * chamber), never a flat bonus.
  * <ul>
  * <li><b>Muzzle Stagger</b>: a point-blank shot just after a whip lands its impulse as stagger, over the target's mass.</li>
- * <li><b>Marked Rounds</b>: a close shot leaves a powder burn; the next melee blow spends it as damage.</li>
- * <li><b>Recoil Vault</b>: a shot fired airborne or against a surface pushes the shooter by impulse over their mass.</li>
+ * <li><b>Powder burn</b>: a close shot sets the target alight.</li>
+ * <li><b>Roll with the kick</b>: a trained shooter takes less kick and less spread from every shot.</li>
  * <li><b>Braced Fire</b>: shooting braced against terrain sheds most of the heat bloom of the spread.</li>
  * <li><b>Hot Clear</b>: sneak-reload ejects a chambered round unfired when the barrel nears cook-off.</li>
  * <li><b>Dodge Charge</b>: a roll that swallowed a blow clears the gun's cycle wait.</li>
@@ -57,11 +57,6 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class GunFu {
-
-    private record Mark(UUID shooter, int count, long until) {
-    }
-
-    private static final Map<UUID, Mark> MARKS = new HashMap<>();
 
     private GunFu() {
     }
@@ -96,24 +91,15 @@ public final class GunFu {
         return LAST_IMPULSE.getOrDefault(shooter.getUUID(), 0f);
     }
 
-    /** A shot has left the muzzle at {@code f}: Recoil Vault pushes the shooter, and the gun pays for it. */
+    /** A shot has left the muzzle at {@code f}: its impulse is remembered for casts that read the gun they just fired. */
     public static void shotFired(ServerLevel level, LivingEntity shooter, ItemStack gun, GunFigures f, float heat) {
         LAST_IMPULSE.put(shooter.getUUID(), f.impulse());
-        if (!(shooter instanceof Player p) || !Skills.unlocked(p, "gun_fu_recoil_vault"))
-            return;
-        Vec3 look = p.getLookAngle();
-        Vec3 eye = p.getEyePosition();
-        boolean surface = level.clip(new ClipContext(eye, eye.add(look.scale(GunFuTuning.VAULT_SURFACE)),
-                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, p)).getType() == HitResult.Type.BLOCK;
-        if (p.onGround() && !surface)
-            return;
-        double speed = f.impulse() / (BodyMass.of(p) + f.gunMass().value()) * GunFuTuning.VAULT_GAIN;
-        p.setDeltaMovement(p.getDeltaMovement().add(look.scale(-speed)));
-        p.hurtMarked = true;
-        p.fallDistance = 0f;
-        // Hot or worn, the gun pays more for being used as a thruster.
-        gun.set(FWeapons.GUN_WEAR.get(), GunCondition.wear(gun)
-                + f.impulse() * GunFuTuning.VAULT_WEAR_PER_IMPULSE * (1 + Math.max(0f, heat)) / GunCondition.condition(gun));
+    }
+
+    /** Roll with the kick: a trained shooter gives with the recoil, so every shot kicks the view and strains the hand less and spreads less. */
+    public static GunFigures rolled(LivingEntity shooter, GunFigures f) {
+        return shooter instanceof Player p && Skills.unlocked(p, "gun_fu_roll_with_kick")
+                ? f.withKick(GunFuTuning.ROLL_KICK_KEEP).withSpread(GunFuTuning.ROLL_SPREAD_KEEP) : f;
     }
 
     /** A bullet of {@code impulse} (kg m/s) from {@code shooter} has hurt {@code target}. */
@@ -128,34 +114,13 @@ public final class GunFu {
             Rearms.spend(p, "gun_fu_muzzle_stagger");
         }
         if (Skills.unlocked(p, "gun_fu_powder_burn") && p.distanceTo(living) <= GunFuTuning.MARK_RANGE) {
-            Mark old = MARKS.get(living.getUUID());
-            int n = old != null && old.shooter().equals(p.getUUID()) && level.getGameTime() <= old.until()
-                    ? Math.min(GunFuTuning.MARK_MAX, old.count() + 1) : 1;
-            MARKS.put(living.getUUID(), new Mark(p.getUUID(), n, level.getGameTime() + GunFuTuning.MARK_TICKS));
+            // Real burn: the muzzle flash sets the target alight (fire ticks, not a stored count), so water or fire resistance answers it.
+            if (living.getRemainingFireTicks() < GunFuTuning.POWDER_BURN_TICKS)
+                living.setRemainingFireTicks(GunFuTuning.POWDER_BURN_TICKS);
             io.github.soundgoodizerfan.feedback.combat.cast.Disorder.note(p, living, io.github.soundgoodizerfan.feedback.combat.cast.Disorder.Kind.POWDERED);
-            // The count is shown on the target: one puff of powder smoke a stack.
             level.sendParticles(ParticleTypes.SMOKE, living.getX(), living.getY() + living.getBbHeight() * 0.6, living.getZ(),
-                    n * 3, living.getBbWidth() * 0.3, 0.2, living.getBbWidth() * 0.3, 0.01);
+                    6, living.getBbWidth() * 0.3, 0.2, living.getBbWidth() * 0.3, 0.01);
         }
-    }
-
-    // --- on a blow ---------------------------------------------------------------------------------
-
-    /** The next melee blow on a marked target spends the powder burn as damage. */
-    @SubscribeEvent
-    public static void onIncoming(LivingIncomingDamageEvent event) {
-        DamageSource source = event.getSource();
-        if (!(source.getEntity() instanceof ServerPlayer p) || source.getDirectEntity() != p
-                || !source.is(DamageTypes.PLAYER_ATTACK) || GunShots.inBullet() || MARKS.isEmpty())
-            return;
-        Mark m = MARKS.get(event.getEntity().getUUID());
-        if (m == null || !m.shooter().equals(p.getUUID()))
-            return;
-        MARKS.remove(event.getEntity().getUUID());
-        if (p.level().getGameTime() > m.until())
-            return;
-        event.setAmount(event.getAmount() + m.count() * GunFuTuning.MARK_DAMAGE);
-        CombatCues.everyone(p, FSounds.FEEL_LIGHT.get(), FeelTuning.LIGHT_VOLUME, 0.8f);
     }
 
     /** Searing Strike: a held item above the burn line (a gun only through its Heat+ edge) sears what it lands on, and cools. */

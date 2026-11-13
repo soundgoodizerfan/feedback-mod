@@ -20,8 +20,8 @@ import net.minecraft.world.phys.Vec3;
  * piece's contact band (a burn heals less than a sear), and the skin pays it in {@link HotContact}: the band's own
  * damage and fire. The heat is spent too: the piece comes away {@link #SPENT} cooler. So it is the heal that works
  * mid-fight, priced in a forge you had to run and a fire you have to put out (fire resistance or Shake Off answers it).
- * Main hand first. Refused at full health or with nothing hot enough to burn. With Sear Shut, a sear also clears the
- * worst harmful effect, as {@link ShakeOff} does.
+ * Main hand first. Refused at full health or with nothing hot enough to burn. With Sear Shut the hand is practised: the
+ * burn it pays is smaller, the piece loses less heat, and the next one comes sooner ({@link CastTuning#SEAR_SHUT_REARM}).
  */
 final class Cauterize {
 
@@ -44,11 +44,10 @@ final class Cauterize {
             HotContact.Band band = HotContact.band(tu);
             if (band != HotContact.Band.BURN && band != HotContact.Band.SEAR)
                 continue;
-            HotContact.burn(p, tu);
+            boolean practised = Skills.unlocked(p, "sear_shut");
+            HotContact.burn(p, tu, practised ? CastTuning.SEAR_SHUT_BURN : 1f);
             p.heal(band == HotContact.Band.SEAR ? HEAL_SEAR : HEAL_BURN);
-            if (band == HotContact.Band.SEAR && Skills.unlocked(p, "sear_shut"))
-                ShakeOff.clearWorst(p); // Sear Shut: heat as medicine
-            ItemHeat.drain(stack, p.level(), SPENT);
+            ItemHeat.drain(stack, p.level(), practised ? SPENT * CastTuning.SEAR_SHUT_SPENT : SPENT);
             Vec3 at = p.position().add(0, 1, 0);
             p.serverLevel().sendParticles(ParticleTypes.LARGE_SMOKE, at.x, at.y, at.z, 12, 0.25, 0.3, 0.25, 0.02);
             p.serverLevel().sendParticles(ParticleTypes.LAVA, at.x, at.y, at.z, 4, 0.2, 0.2, 0.2, 0);

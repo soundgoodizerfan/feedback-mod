@@ -53,12 +53,17 @@ public final class HotContact {
      * Invulnerability frames are left alone: a hot hand is a recurring cost, not a burst.
      */
     public static boolean burn(LivingEntity victim, Tu tu) {
+        return burn(victim, tu, 1f);
+    }
+
+    /** {@link #burn(LivingEntity, Tu)} with the band's damage and fire scaled by {@code share} (a practised hand on the piece takes less). */
+    public static boolean burn(LivingEntity victim, Tu tu, float share) {
         Band band = band(tu);
         if (band == Band.NONE || victim.level().isClientSide)
             return false;
-        boolean hurt = victim.hurt(Hazards.source(victim.level(), Hazards.HOT_CONTACT), band.damage);
-        if (band.igniteSeconds > 0)
-            victim.igniteForSeconds(band.igniteSeconds);
+        boolean hurt = victim.hurt(Hazards.source(victim.level(), Hazards.HOT_CONTACT), band.damage * share);
+        if (band.igniteSeconds * share >= 1)
+            victim.igniteForSeconds(Math.round(band.igniteSeconds * share));
         if (hurt && victim instanceof net.minecraft.world.entity.player.Player player)
             io.github.soundgoodizerfan.feedback.core.Awards.give(player, "progress/joke/hot_take");
         return hurt;

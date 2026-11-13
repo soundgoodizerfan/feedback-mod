@@ -17,21 +17,15 @@ import net.minecraft.world.phys.Vec3;
 /**
  * Aid (Proficiency): the things you do for another player. Every one needs an ally (another {@link ServerPlayer}) in
  * reach and fails at no cost with none. Stamina is the only meter and it is yours: Tend drains it while the ally
- * mends, Hand off passes part of it on, Cut loose pays its cast cost. Each delivery pays a small trickle
+ * mends, Cut loose pays its cast cost. Each delivery pays a small trickle
  * into Proficiency ({@link SkillEarning#aided}), decaying per ally.
  */
 final class Aid {
 
     /** STAND-IN [OPEN]: Tend reach, blocks. */
     static final double TEND_REACH = 2.0;
-    /** STAND-IN [OPEN]: Hand off reach, blocks. */
-    static final double HAND_REACH = 3.0;
     /** STAND-IN [OPEN]: Cut loose reach, blocks. */
     static final double CUT_REACH = 5.0;
-    /** STAND-IN [OPEN]: stamina a Hand off spends. */
-    static final float HAND_COST = 30f;
-    /** STAND-IN [OPEN]: the share of a handed-off bar that arrives; the rest is lost in the handling. */
-    static final float HAND_KEPT = 0.6f;
     /** How far the feet may drift (squared, horizontal) before standing still is broken. */
     private static final double STILL = 0.3 * 0.3;
 
@@ -101,21 +95,6 @@ final class Aid {
 
     private static void tendStop(ServerPlayer p) {
         TENDING.remove(p.getUUID());
-    }
-
-    // ---- Hand off
-
-    /** Passes {@link #HAND_COST} of your stamina; {@link #HAND_KEPT} of it reaches the ally. */
-    static boolean handOff(ServerPlayer p) {
-        ServerPlayer a = ally(p, HAND_REACH, 0.5);
-        if (a == null || Stamina.get(a) >= Stamina.MAX)
-            return false;
-        Stamina.gain(a, HAND_COST * HAND_KEPT);
-        Vec3 from = p.position().add(0, 1, 0), to = a.position().add(0, 1, 0);
-        CastFx.line(p.serverLevel(), ParticleTypes.HAPPY_VILLAGER, from, to, 0.3);
-        CastFx.sound(p.serverLevel(), to, SoundEvents.ARMOR_EQUIP_GENERIC.value(), 1f, 1.4f);
-        SkillEarning.aided(p, a);
-        return true;
     }
 
     // ---- Cut loose

@@ -13,6 +13,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.cast.Stamina;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
+import io.github.soundgoodizerfan.feedback.modular.trait.Billhook;
 import io.github.soundgoodizerfan.feedback.weapon.GunFu;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 
@@ -39,9 +40,9 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  * reads the arrow's own speed, which is the draw: a hard-drawn bow carries more than a short one.
  * <ul>
  * <li>Observation, Far sight (twin of Dead eye): a hard-drawn arrow flies flat for its first second.</li>
- * <li>Observation, Quarry mark (twin of Called shot): a hit at range makes the target glow, longer for more energy.</li>
+ * <li>Observation, Quarry mark (twin of Called shot): a hit at range wounds the target, which bleeds for longer under more energy and leaves drops on the ground the shooter can follow.</li>
  * <li>Brute, Point-blank draw (twin of Muzzle stagger): a close hit staggers by the arrow's energy over the target's mass.</li>
- * <li>Chaos, Barbed shaft (twin of Marked rounds): a close hit leaves a barb; the next melee blow spends it.</li>
+ * <li>Chaos, Barbed shaft (twin of Powder burn): a close hit pins the target, slowing it until the pin works loose or the shooter strikes.</li>
  * <li>Anchor, Braced draw (twin of Braced fire): loosed braced against terrain, the arrow leaves exactly down the sight line.</li>
  * <li>Veil, Snap shot (twin of Dodge charge): after a roll that swallowed a blow, the next arrow leaves at full draw.</li>
  * <li>Proficiency, Quarry breath (twin of Hot clear): a kill at range gives stamina back by the arrow's energy.</li>
@@ -58,14 +59,26 @@ public final class BowCraft {
     private static final double FLAT_SPEED = 2.5;
     private static final int FLAT_TICKS = 20, SNAP_TICKS = 60;
     private static final double CLOSE = 4.0;
-    private static final int BARB_TICKS = 200, BARB_MAX = 5;
-    private static final float BARB_DAMAGE = 1.5f, BREATH_PER_JOULE = 0.2f, BREATH_MAX = 30f;
-    private static final int GLOW_PER_JOULE = 2, GLOW_MAX = 200;
+    /** Barbed shaft: ticks a pin holds and the slowness level it puts on (STAND-INS). */
+    private static final int PIN_TICKS = 100, PIN_SLOW = 2;
+    private static final float BREATH_PER_JOULE = 0.2f, BREATH_MAX = 30f;
+    /** Quarry mark: bleed seconds per joule (most {@code WOUND_MAX_SECONDS}), damage a second, ticks a drop stays, drops kept per trail, blocks apart (STAND-INS). */
+    private static final float WOUND_SECONDS_PER_JOULE = 0.1f, WOUND_MAX_SECONDS = 10f, WOUND_DAMAGE = 1f;
+    private static final int DROP_TICKS = 600, DROPS_MAX = 24;
+    private static final double DROP_APART = 1.0;
 
-    private record Barb(UUID shooter, int count, long until) {
+    private record Pin(UUID shooter, long until) {
     }
 
-    private static final Map<UUID, Barb> BARBS = new HashMap<>();
+    private static final Map<UUID, Pin> PINS = new HashMap<>();
+
+    /** A wounded quarry's trail: the shooter who follows it, and where it dropped blood and when. */
+    private record Trail(UUID shooter, java.util.ArrayDeque<Vec3> at, java.util.ArrayDeque<Long> when) {
+    }
+
+    private static final Map<UUID, Trail> TRAILS = new HashMap<>();
+    private static final net.minecraft.core.particles.DustParticleOptions BLOOD =
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.65f, 0.04f, 0.06f), 0.9f);
     private static final Map<UUID, Long> SNAP = new HashMap<>();
     private static final Set<AbstractArrow> FLAT = Collections.newSetFromMap(new WeakHashMap<>());
 
@@ -178,36 +191,78 @@ public final class BowCraft {
         // Observation pays for any projectile weapon's hit at range, the same as a gun's.
         if (dist >= SkillTuning.OBSERVE_RANGE)
             SkillEarning.award(p, SkillEarning.OBSERVATION, target.getStringUUID(), SkillTuning.GUN_HIT);
-        if (dist >= SkillTuning.OBSERVE_RANGE && Skills.unlocked(p, "quarry_mark") && !target.isDeadOrDying())
-            target.addEffect(new MobEffectInstance(MobEffects.GLOWING, Math.min(GLOW_MAX, Math.round(joules * GLOW_PER_JOULE))));
+        if (dist >= SkillTuning.OBSERVE_RANGE && Skills.unlocked(p, "quarry_mark") && !target.isDeadOrDying()) {
+            Billhook.open(target, Math.min(WOUND_MAX_SECONDS, joules * WOUND_SECONDS_PER_JOULE), WOUND_DAMAGE);
+            TRAILS.putIfAbsent(target.getUUID(), new Trail(p.getUUID(), new java.util.ArrayDeque<>(), new java.util.ArrayDeque<>()));
+        }
         if (dist <= CLOSE && !target.isDeadOrDying()) {
             if (Skills.unlocked(p, "point_blank_draw"))
                 CombatTicker.stagger(target, ParryTuning.staggerTicks(joules, ParryTuning.standInMass(target)),
                         ParryTuning.STAGGER_SLOW);
             if (Skills.unlocked(p, "barbed_shaft")) {
-                Barb old = BARBS.get(target.getUUID());
                 long now = p.level().getGameTime();
-                int n = old != null && old.shooter().equals(p.getUUID()) && now <= old.until()
-                        ? Math.min(BARB_MAX, old.count() + 1) : 1;
-                BARBS.put(target.getUUID(), new Barb(p.getUUID(), n, now + BARB_TICKS));
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, PIN_TICKS, PIN_SLOW));
+                PINS.put(target.getUUID(), new Pin(p.getUUID(), now + PIN_TICKS));
+                io.github.soundgoodizerfan.feedback.combat.cast.Disorder.note(p, target, io.github.soundgoodizerfan.feedback.combat.cast.Disorder.Kind.PINNED);
             }
         }
         if (dist >= SkillTuning.OBSERVE_RANGE && target.isDeadOrDying() && Skills.unlocked(p, "quarry_breath"))
             Stamina.gain(p, Math.min(BREATH_MAX, joules * BREATH_PER_JOULE));
     }
 
-    /** Barbed shaft: the next melee blow on a barbed target spends the barbs as damage. */
+    /** Barbed shaft: the shooter's own blow on a pinned target pulls the shaft out, and the slowness with it. */
     @SubscribeEvent
     public static void onIncoming(LivingIncomingDamageEvent event) {
         DamageSource source = event.getSource();
-        if (BARBS.isEmpty() || !(source.getEntity() instanceof ServerPlayer p) || source.getDirectEntity() != p
+        if (PINS.isEmpty() || !(source.getEntity() instanceof ServerPlayer p) || source.getDirectEntity() != p
                 || !source.is(DamageTypes.PLAYER_ATTACK) || GunShots.inBullet())
             return;
-        Barb b = BARBS.get(event.getEntity().getUUID());
-        if (b == null || !b.shooter().equals(p.getUUID()))
+        Pin pin = PINS.get(event.getEntity().getUUID());
+        if (pin == null || !pin.shooter().equals(p.getUUID()))
             return;
-        BARBS.remove(event.getEntity().getUUID());
-        if (p.level().getGameTime() <= b.until())
-            event.setAmount(event.getAmount() + b.count() * BARB_DAMAGE);
+        PINS.remove(event.getEntity().getUUID());
+        event.getEntity().removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+    }
+
+    /** Quarry mark: a bleeding quarry drops blood where it goes; the shooter sees the drops for half a minute. */
+    @SubscribeEvent
+    public static void onServerTick(net.neoforged.neoforge.event.tick.ServerTickEvent.Post event) {
+        long tick = event.getServer().getTickCount();
+        if (tick % 10 != 0)
+            return;
+        PINS.values().removeIf(pin -> event.getServer().overworld().getGameTime() > pin.until());
+        if (TRAILS.isEmpty())
+            return;
+        for (var it = TRAILS.entrySet().iterator(); it.hasNext(); ) {
+            var e = it.next();
+            Trail trail = e.getValue();
+            ServerPlayer shooter = event.getServer().getPlayerList().getPlayer(trail.shooter());
+            LivingEntity quarry = null;
+            if (shooter != null && shooter.serverLevel().getEntity(e.getKey()) instanceof LivingEntity q && q.isAlive())
+                quarry = q;
+            long now = shooter == null ? 0 : shooter.level().getGameTime();
+            while (!trail.when().isEmpty() && now - trail.when().peekFirst() > DROP_TICKS) {
+                trail.when().pollFirst();
+                trail.at().pollFirst();
+            }
+            if (shooter == null || quarry == null && trail.at().isEmpty()) {
+                it.remove();
+                continue;
+            }
+            if (quarry != null && Billhook.bleeding(quarry)) {
+                Vec3 here = quarry.position().add(0, 0.1, 0);
+                if (trail.at().isEmpty() || trail.at().peekLast().distanceTo(here) >= DROP_APART) {
+                    trail.at().addLast(here);
+                    trail.when().addLast(now);
+                    if (trail.at().size() > DROPS_MAX) {
+                        trail.at().pollFirst();
+                        trail.when().pollFirst();
+                    }
+                }
+            } else if (quarry != null && trail.at().isEmpty())
+                it.remove();
+            for (Vec3 d : trail.at())
+                shooter.serverLevel().sendParticles(shooter, BLOOD, true, d.x, d.y, d.z, 2, 0.12, 0.0, 0.12, 0);
+        }
     }
 }

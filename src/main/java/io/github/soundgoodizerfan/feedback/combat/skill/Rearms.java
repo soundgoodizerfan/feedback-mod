@@ -83,6 +83,16 @@ public final class Rearms {
                 }
     }
 
+    /** A timed rearm of {@code tech} that is running keeps only {@code share} of what it has left (a practised hand comes back sooner). */
+    public static void shorten(LivingEntity who, String tech, float share) {
+        Map<String, Spent> mine = SPENT.get(who.getUUID());
+        Spent s = mine == null ? null : mine.get(tech);
+        if (s == null || s.kind() != Rearm.TIME)
+            return;
+        long now = who.level().getGameTime();
+        mine.put(tech, new Spent(s.kind(), now + Math.round((s.until() - now) * share), s.at()));
+    }
+
     /** {@code who} dealt or took a blow: the fight clock for {@link #QUIET_TICKS}. */
     public static void fight(LivingEntity who) {
         FIGHT.put(who.getUUID(), who.level().getGameTime());

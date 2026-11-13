@@ -82,7 +82,6 @@ public final class Casts {
             new Cast("cauterize", 15, Cauterize::act),
             new Cast("shake_off", 20, ShakeOff::act),
             new Cast("tend", 0, Aid::tend, Aid.TEND),
-            new Cast("hand_off", Aid.HAND_COST, Aid::handOff),
             new Cast("cut_loose", 20, Aid::cutLoose),
             new Cast("grab", 0, false, Casts::grab),
             new Cast("coin_flip", 15, CoinShot::flip),
@@ -105,7 +104,7 @@ public final class Casts {
             new Cast("vault", 25, Vault::act),
             new Cast("slide", 15, Slide::act),
             new Cast("smoke_step", 25, SmokeStep::act),
-            new Cast("vanish", 20, Vanish::act),
+            new Cast("vanish", 5, false, Vanish::act, Vanish.HOLD),
             new Cast("pocket_sand", 15, PocketSand::act),
             new Cast("challenge", 15, Challenge::act),
             new Cast("advance", 25, Advance::act),
@@ -125,7 +124,7 @@ public final class Casts {
             new Cast("size_up", 15, io.github.soundgoodizerfan.feedback.combat.skill.Weakness::sizeUp),
             new Cast("exploit", 30, io.github.soundgoodizerfan.feedback.combat.skill.Weakness::exploit),
             new Cast("soft_spot", 25, io.github.soundgoodizerfan.feedback.combat.skill.Weakness::softSpot),
-            new Cast("spoor", 20, io.github.soundgoodizerfan.feedback.combat.skill.Weakness::spoor),
+            new Cast("spoor", 20, Spoor::act),
             new Cast("fleet", 20, Pace::act),
             new Cast("point_blank", 25, PointBlank::act),
             new Cast("snap_volley", 30, SnapVolley::act),
@@ -185,6 +184,8 @@ public final class Casts {
         Stamina.spend(p, c.cost());
         if (c.rearms() && !followUp)
             Rearms.spend(p, c.id()); // after the act, so a stagger it dealt does not rearm it at once
+        if (c.id().equals("cauterize") && Skills.unlocked(p, "sear_shut"))
+            Rearms.shorten(p, "cauterize", CastTuning.SEAR_SHUT_REARM);
         if (c.hold() != null) {
             if (h != null)
                 letGo(p); // one hold at a time

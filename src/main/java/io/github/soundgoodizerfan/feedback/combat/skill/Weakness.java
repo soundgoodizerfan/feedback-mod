@@ -66,16 +66,15 @@ import java.util.UUID;
  * <li>{@code conductor}: shock hurts a read creature that is wet or in heavy armour more.</li>
  * </ul>
  * Standing knowledge: {@code case_file} (+ per kill of the type), {@code pattern} (a known type is read twice as long and
- * shows what it hits for), {@code herd_read}, {@code read_the_room} (a read player's gun state) and {@code spoor} (cast:
- * follow a read creature that left sight). STAND-IN figures, to tune in play.
+ * shows what it hits for), {@code herd_read}, {@code read_the_room} (a read player's gun state) STAND-IN figures, to tune in play.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class Weakness {
 
     /** Thread the gap: ticks of stagger a fully precise weapon's soft spot blow adds ([OPEN]). */
     static final int THREAD_TICKS = 20;
-    static final int READ_TICKS = 300, ARMED_TICKS = 60, RECOVER_TICKS = 12, SPOOR_TICKS = 400, KNOWN_KILLS = 10;
-    static final double REACH = 24, HERD = 6, SPOOR_RANGE = 64;
+    static final int READ_TICKS = 300, ARMED_TICKS = 60, RECOVER_TICKS = 12, KNOWN_KILLS = 10;
+    static final double REACH = 24, HERD = 6, HUD_RANGE = 64;
     /** Shares added to a blow. */
     static final float GAP_PER_POINT = 0.03f, GAP_CAP = 0.4f, OPENING_CAP = 0.8f, EXPLOIT = 0.5f, FILE_PER_KILL = 0.01f, FILE_CAP = 0.2f,
             EDGE = 0.25f, EDGE_SHOVE = 0.5f, QUENCH = 0.4f, QUENCH_COOL_TU = 80f, QUENCH_REF_TU = 300f, SPOT_PER_POINT = 0.04f, SPOT_CAP = 0.5f,
@@ -96,8 +95,6 @@ public final class Weakness {
     private static final Map<UUID, Long> ARMED = new HashMap<>();
     private static final Map<UUID, Object[]> SPOT = new HashMap<>();
     private static final Map<UUID, Long> RECOVER = new HashMap<>();
-    private static final Map<UUID, UUID> LAST = new HashMap<>();
-    private static final Map<UUID, Object[]> SPOOR = new HashMap<>();
 
     private Weakness() {
     }
@@ -289,7 +286,6 @@ public final class Weakness {
     private static void read(ServerPlayer p, LivingEntity t) {
         int ticks = READ_TICKS * (Skills.unlocked(p, "pattern") && known(p, t) >= KNOWN_KILLS ? 2 : 1);
         READ.computeIfAbsent(p.getUUID(), k -> new HashMap<>()).put(t.getUUID(), p.level().getGameTime() + ticks);
-        LAST.put(p.getUUID(), t.getUUID());
     }
 
     /** Size up: read the creature under the crosshair (twenty-four blocks, in sight) and say what it gives away. */
@@ -333,7 +329,7 @@ public final class Weakness {
         if (mine != null) {
             mine.values().removeIf(u -> u <= now);
             for (UUID id : mine.keySet())
-                if (p.serverLevel().getEntity(id) instanceof LivingEntity t && t.isAlive() && t.distanceTo(p) <= SPOOR_RANGE)
+                if (p.serverLevel().getEntity(id) instanceof LivingEntity t && t.isAlive() && t.distanceTo(p) <= HUD_RANGE)
                     live.add(t);
         }
         if (live.isEmpty() && !SENT.remove(p.getUUID()))
@@ -409,35 +405,12 @@ public final class Weakness {
         return true;
     }
 
-    /** Spoor: follow the last creature read, even out of sight, as a trail only you can see for twenty seconds. */
-    public static boolean spoor(ServerPlayer p) {
-        UUID id = LAST.get(p.getUUID());
-        var found = id == null ? null : p.serverLevel().getEntity(id);
-        if (!(found instanceof LivingEntity t) || !t.isAlive() || t.distanceTo(p) > SPOOR_RANGE)
-            return false;
-        SPOOR.put(p.getUUID(), new Object[] {id, p.level().getGameTime() + SPOOR_TICKS});
-        p.serverLevel().playSound(null, p.getX(), p.getEyeY(), p.getZ(), SoundEvents.FOX_SNIFF, SoundSource.PLAYERS, 0.8f, 0.9f);
-        return true;
-    }
-
     @SubscribeEvent
     static void onTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer p))
             return;
         if (p.tickCount % 5 == 0 && (READ.containsKey(p.getUUID()) || SENT.contains(p.getUUID())))
             push(p);
-        if (SPOOR.isEmpty() || p.tickCount % 4 != 0)
-            return;
-        Object[] s = SPOOR.get(p.getUUID());
-        if (s == null)
-            return;
-        var found = p.serverLevel().getEntity((UUID) s[0]);
-        if (!(found instanceof LivingEntity t) || !t.isAlive() || p.level().getGameTime() > (Long) s[1]) {
-            SPOOR.remove(p.getUUID());
-            return;
-        }
-        p.serverLevel().sendParticles(p, ParticleTypes.GLOW, true, t.getX(), t.getY() + 0.2, t.getZ(), 3, 0.2, 0.1, 0.2, 0.01);
-        p.serverLevel().sendParticles(p, ParticleTypes.END_ROD, true, t.getX(), t.getY() + t.getBbHeight() + 0.5, t.getZ(), 1, 0, 0.3, 0, 0.02);
     }
 
     // --- riders ----------------------------------------------------------------------------------------

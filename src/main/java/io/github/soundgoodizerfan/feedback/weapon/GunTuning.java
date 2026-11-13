@@ -321,9 +321,6 @@ public final class GunTuning {
     /** A report below this is a quiet vibration, heard by sculk at a short range. */
     public static final float GUN_QUIET_REPORT = 0.5f;
 
-    /** Muffled report: the quiet band reaches this many times further up the report scale for a shooter who owns it ([OPEN]). */
-    public static final float GUN_MUFFLED_SHARE = 1.5f;
-
     /** Placeholder. A report at or above this is thunderous: sculk hears it from twice as far as a loud one. */
     public static final float GUN_THUNDEROUS_REPORT = 0.95f;
 

@@ -122,7 +122,7 @@ public final class Parrying {
             return false;
         ItemStack gauntlet = CombatGear.granting(defender, ParryTuning.PUNCH_PROJECTILES);
         if (gauntlet.isEmpty())
-            return returnFire(level, shooter, defender, massMu, speed, damage);
+            return false;
         if (!inCone(defender, shooter.position(), ParryTuning.FEEDBACKER_CONE_DEG))
             return false;
         CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
@@ -131,36 +131,6 @@ public final class Parrying {
         wear(defender, gauntlet, massMu, speed);
         GunShots.strike(level, defender, defender.getEyePosition(), shooter.getBoundingBox().getCenter(),
                 damage * ParryTuning.FEEDBACKER_SPEED);
-        return true;
-    }
-
-    /**
-     * Return Fire (skill {@code gun_fu_return_fire}): a weapon parry in its window turns a bullet back along the
-     * line to the shooter carrying the round's own energy, not a multiple (the gauntlet's punch is the multiple).
-     * The weapon takes the blow's impulse against its rating like any parry, and the redirect inaccuracy tunes the
-     * aim. Spent by nothing but the timing: the window is the price.
-     */
-    private static boolean returnFire(ServerLevel level, LivingEntity shooter, LivingEntity defender, float massMu,
-            float speed, float damage) {
-        Optional<ParryStats> stats = ParryStats.of(defender);
-        if (stats.isEmpty() || stats.get().bare() || !Skills.unlocked(defender, "gun_fu_return_fire")
-                || !inCone(defender, shooter.position(), stats.get().coneHalfDeg()))
-            return false;
-        CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
-        io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, GunShots.attack(level, shooter));
-        Rearms.on(defender, Rearm.PARRY);
-        float over = massMu * speed / (stats.get().mass() * ParryTuning.RATING_PER_MU);
-        int cost = ParryTuning.WEAR_CLEAN + (over > 1 ? (int) Math.ceil((over - 1) * ParryTuning.WEAR_PER_OVER) : 0);
-        stats.get().stack().hurtAndBreak(ModularStacks.cap(stats.get().stack(), cost), defender, LivingEntity.getSlotForHand(stats.get().hand()));
-        if (defender instanceof ServerPlayer p)
-            (over > 1 ? FeelTuning.HEAVY : FeelTuning.LIGHT).fire(p, p.getEyePosition().add(p.getLookAngle()));
-        Vec3 target = shooter.getBoundingBox().getCenter();
-        float deg = Math.max(0f, ParryTuning.REDIRECT_INACCURACY + Skills.modifier(defender,
-                io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure.REDIRECT_INACCURACY));
-        double off = defender.distanceTo(shooter) * Math.tan(Math.toRadians(deg)) * 0.5;
-        target = target.add((level.random.nextDouble() - 0.5) * off, (level.random.nextDouble() - 0.5) * off,
-                (level.random.nextDouble() - 0.5) * off);
-        GunShots.strike(level, defender, defender.getEyePosition(), target, damage);
         return true;
     }
 
@@ -394,7 +364,8 @@ public final class Parrying {
             (over > 1 ? FeelTuning.HEAVY : FeelTuning.LIGHT)
                     .fire(player, player.getEyePosition().add(player.getLookAngle()));
 
-        if (direct instanceof Projectile projectile) {
+        // Return fire: turning an arrow or a thrown thing back is trained; a deflecting shield does it by its shape. A bullet is too fast for any weapon.
+        if (direct instanceof Projectile projectile && (stats.projectilesOnly() || Skills.unlocked(defender, "gun_fu_return_fire"))) {
             turn(defender, projectile, Math.max(0.5f, (float) projectile.getDeltaMovement().length()) * stats.redirect());
         }
     }

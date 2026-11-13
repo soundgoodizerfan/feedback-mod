@@ -21,26 +21,24 @@ import net.minecraft.world.phys.Vec3;
 import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.ahead;
 import static io.github.soundgoodizerfan.feedback.combat.cast.Casts.stagger;
 
-/** Reckoning: parried damage banked, let go as one blow. */
+/** Reckoning: the energy of the last parried blow, sent back through the weapon as one strike scaled by that blow only. */
 final class Reckoning {
 
     private Reckoning() {
     }
 
-    /** The energy banked from parries, and when it last grew. */
+    /** The last parried blow's damage, and when it was parried (a new parry replaces it; nothing adds up). */
     private static final java.util.Map<java.util.UUID, float[]> BANK = new java.util.HashMap<>();
 
-    /** A parry landed on {@code p} for {@code amount}: bank it. */
+    /** A parry landed on {@code p} for {@code amount}: it is the blow Reckoning will send back. */
     static void bank(ServerPlayer p, float amount) {
         if (!Skills.unlocked(p, "reckoning"))
             return;
         long now = p.level().getGameTime();
         float[] bank = BANK.computeIfAbsent(p.getUUID(), k -> new float[]{0, now});
-        if (now - (long) bank[1] > 200)
-            bank[0] = 0;
-        bank[0] = Math.min(40f, bank[0] + amount);
+        bank[0] = Math.min(CastTuning.RECKON_MAX, amount);
         bank[1] = now;
-        // the banked blow is visible: sparks drawn into the weapon hand, the pitch climbing as it fills
+        // the blow is visible in the weapon: sparks drawn into the hand, the pitch climbing with its weight
         ServerLevel lv = p.serverLevel();
         Vec3 hand = p.getEyePosition().add(p.getLookAngle().scale(0.7)).add(0, -0.5, 0);
         CastFx.converge(p, hand, 1.2, 4, CastFx.dust(CastFx.GOLD, 1.0f));
@@ -48,15 +46,15 @@ final class Reckoning {
         CastFx.sound(lv, hand, SoundEvents.AMETHYST_BLOCK_CHIME, 1f, 0.8f + bank[0] * 0.03f);
     }
 
-    /** Reckoning: the damage your parries took in the last ten seconds, banked, is let go as one blow at what you face. */
+    /** Reckoning: the last parried blow goes back through the weapon as one strike at what you face. */
     static boolean act(ServerPlayer p) {
         float[] bank = BANK.get(p.getUUID());
-        if (bank == null || p.level().getGameTime() - (long) bank[1] > 200 || bank[0] <= 0)
+        if (bank == null || p.level().getGameTime() - (long) bank[1] > CastTuning.RECKON_TICKS || bank[0] <= 0)
             return false;
         LivingEntity t = ahead(p, 5, 0.6);
         if (t == null)
             return false;
-        float damage = bank[0] * 0.8f;
+        float damage = bank[0] * CastTuning.RECKON_SHARE;
         bank[0] = 0;
         t.invulnerableTime = 0;
         t.hurt(p.damageSources().playerAttack(p), damage);

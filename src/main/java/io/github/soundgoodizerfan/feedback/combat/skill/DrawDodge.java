@@ -20,8 +20,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
  * Advancement bookkeeping for Read the draw: a player who owns it and had a creature aim at them (the same test the
- * outline on their screen uses) for a moment, and was not hurt by that creature by the time it stopped, has read the
- * draw and got clear. The glow itself is client-only; this is the server-side witness.
+ * cue on their screen uses, with a clear line of sight) for a moment, and was not hurt by that creature by the time it stopped, has read the
+ * draw and got clear. The cue itself is client-only; this is the server-side witness.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 final class DrawDodge {
@@ -35,6 +35,8 @@ final class DrawDodge {
     }
 
     private static boolean aiming(LivingEntity e, ServerPlayer at) {
+        if (!at.hasLineOfSight(e))
+            return false;
         if (e.isUsingItem() && e.getUseItem().getItem() instanceof ProjectileWeaponItem)
             return e instanceof Mob m && m.getTarget() == at;
         return e instanceof Mob m && m.isAggressive() && m.getTarget() == at && e.getMainHandItem().getItem() instanceof GunItem;

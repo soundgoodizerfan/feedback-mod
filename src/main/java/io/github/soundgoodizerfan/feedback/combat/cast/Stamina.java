@@ -85,7 +85,7 @@ public final class Stamina {
         if (l.value() < MAX && p.level().getGameTime() - l.lastSpent() > io.github.soundgoodizerfan.feedback.potion.SecondWind.delay(p, DELAY_TICKS)) {
             float regen = (l.value() < LOW ? REGEN * Skills.lowStaminaRegen(p) : REGEN) * (1f + io.github.soundgoodizerfan.feedback.process.FoodPerk.trait(p, "stamina_regen"))
                     * io.github.soundgoodizerfan.feedback.potion.SecondWind.regenFactor(p)
-                    * io.github.soundgoodizerfan.feedback.potion.Ward.regenFactor(p);
+                    * io.github.soundgoodizerfan.feedback.potion.Ward.regenFactor(p) * BloodUp.warmFactor(p);
             float to = Math.min(MAX, l.value() + regen);
             p.causeFoodExhaustion((to - l.value()) * EXHAUSTION_PER_POINT);
             put(p, to, l.lastSpent());

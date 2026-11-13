@@ -69,8 +69,7 @@
       ],
       "effect": {
         "unlock": "vanish"
-      },
-      "rearm": "time"
+      }
     },
     {
       "id": "long_shadow",
@@ -276,16 +275,6 @@
       ],
       "effect": {
         "unlock": "dull_edge"
-      }
-    },
-    {
-      "id": "muffled_report",
-      "cost": 40,
-      "requires": [
-        "soft_hands"
-      ],
-      "effect": {
-        "unlock": "muffled_report"
       }
     },
     {
