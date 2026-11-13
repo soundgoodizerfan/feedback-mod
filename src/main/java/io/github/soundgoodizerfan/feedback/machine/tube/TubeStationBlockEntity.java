@@ -220,6 +220,7 @@ public class TubeStationBlockEntity extends BlockEntity {
             case MAGNETIC -> multiStage() ? Detector.ELECTROMAGNET : Detector.MAGNET;
             case REFLECTIVITY -> Detector.OPTICAL;
             case DENSITY, SIZE -> Detector.WEIGHER;
+            case KIND -> multiStage() ? Detector.ASSAY : Detector.PLAIN;
             default -> Detector.PLAIN;
         };
     }

@@ -127,6 +127,9 @@ public class SeparationCategory implements IRecipeCategory<SeparationCategory.Ca
                 io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.HARDNESS, io.github.soundgoodizerfan.feedback.logistics.sort.SortProperty.KIND})
             bands.append(bands.length() == 0 ? "" : ", ").append(Component.translatable("feedback.sort.band." + io.github.soundgoodizerfan.feedback.logistics.sort.SortReader.bandOf(r, p).key()).getString());
         row(graphics, font, y, "feedback.jei.separation.sorts_as", bands.toString());
+        y += ROW * lastLines;
+        row(graphics, font, y, "feedback.jei.separation.kind_test", Component.translatable(r.tell() >= 1f ? "feedback.jei.separation.kind_test.clear"
+                : r.tell() > 0.3f ? "feedback.jei.separation.kind_test.muddy" : "feedback.jei.separation.kind_test.fooled").getString());
         // An ore: what each separator reports to the concentrate per pass, from its contrast with its host rock.
         if (m.item(card.id(), "concentrate").isPresent()) {
             y += ROW * lastLines;

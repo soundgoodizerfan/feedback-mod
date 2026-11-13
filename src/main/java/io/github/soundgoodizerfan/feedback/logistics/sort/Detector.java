@@ -18,6 +18,8 @@ public enum Detector {
     WEIGHER(0.9f),
     /** A nozzle lifting light cargo; poorest cut. */
     JET(1.3f),
+    /** A spectrometer behind the spark and flame test of a multi-stage station: a kind test with the muddle narrowed. */
+    ASSAY(0.6f),
     /** A fine, hand-cut check (thermal read, kind): the baseline. */
     PLAIN(1.0f);
 

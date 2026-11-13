@@ -19,9 +19,10 @@ package io.github.soundgoodizerfan.feedback.logistics.sort;
  * @param unitMass     Mu of one item
  * @param brittle      a long drop breaks it
  * @param sticky       clings to a nozzle's air (a trait of the material)
+ * @param tell         0..1, how plainly a spark or flame test shows the kind: 1 is the textbook sample, less for alloys, coated pieces and look-alikes
  */
 public record Reading(boolean unknown, boolean magnetic, float curie, float reflectivity, float density, float hardness,
-                      float friction, Band kind, float temperature, float mass, float unitMass, boolean brittle, boolean sticky) {
+                      float friction, Band kind, float temperature, float mass, float unitMass, boolean brittle, boolean sticky, float tell) {
 
-    static final Reading UNKNOWN = new Reading(true, false, Float.MAX_VALUE, 0.5f, 1f, 1f, 0.5f, Band.OTHER, 0f, 1f, 1f, false, false);
+    static final Reading UNKNOWN = new Reading(true, false, Float.MAX_VALUE, 0.5f, 1f, 1f, 0.5f, Band.OTHER, 0f, 1f, 1f, false, false, 0f);
 }

@@ -37,6 +37,16 @@ public final class LogisticsTuning {
     /** Total mass (Mu) of the unit at or over this reads large. */
     public static final float SIZE_LARGE_FROM = 16f;
 
+    // --- kind test (grinder sparks, flame) ---
+    /** Placeholder. How plainly even a textbook sample shows its kind to the test: the rest is the noise floor (0.8 misreads about a tenth at plain noise). */
+    public static final float KIND_CLEAN_TELL = 0.8f;
+    /** Placeholder. Tell of an alloy's sparks (muddy). */
+    public static final float KIND_ALLOY_TELL = 0.4f;
+    /** Placeholder. Tell of a look-alike: a polymer or damp organic that will not char, a mineral that burns. */
+    public static final float KIND_LOOKALIKE_TELL = 0.25f;
+    /** Placeholder. Share of its tell a coated piece keeps (a coat hides the stock). */
+    public static final float KIND_COATED_TELL = 0.3f;
+
     // --- noise ---
     /** Half-width of the uncertain zone around a cut, as a share of the cut value, for a plain detector. */
     public static final float NOISE_MARGIN = 0.25f;

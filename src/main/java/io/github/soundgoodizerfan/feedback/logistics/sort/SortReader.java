@@ -12,6 +12,7 @@ import io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning;
 import io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
+import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,13 +33,13 @@ public final class SortReader {
     }
 
     private record Fixed(boolean unknown, boolean magnetic, float curie, float reflectivity, float density, float hardness,
-                         float friction, Band kind, float unitMass, boolean brittle, boolean sticky) {
+                         float friction, Band kind, float unitMass, boolean brittle, boolean sticky, float tell) {
     }
 
     private static final Map<Item, Fixed> CACHE = new HashMap<>();
     private static int generation = -1;
 
-    private static final Fixed NOTHING = new Fixed(true, false, Float.MAX_VALUE, 0.5f, 1f, 1f, 0.5f, Band.OTHER, 1f, false, false);
+    private static final Fixed NOTHING = new Fixed(true, false, Float.MAX_VALUE, 0.5f, 1f, 1f, 0.5f, Band.OTHER, 1f, false, false, 0f);
 
     /** Reads {@code stack} at the present moment (its carried heat is worked out against {@code level}). */
     public static Reading read(ItemStack stack, Level level) {
@@ -51,7 +52,8 @@ public final class SortReader {
                 ? fixed(stack) : CACHE.computeIfAbsent(stack.getItem(), i -> fixed(new ItemStack(i)));
         float temp = ItemHeat.get(stack, level).value();
         return new Reading(f.unknown, f.magnetic, f.curie, f.reflectivity, f.density, f.hardness, f.friction, f.kind, temp,
-                f.unitMass * stack.getCount(), f.unitMass, f.brittle, f.sticky);
+                f.unitMass * stack.getCount(), f.unitMass, f.brittle, f.sticky,
+                stack.has(FDataComponents.PLATING.get()) ? f.tell * LogisticsTuning.KIND_COATED_TELL : f.tell);
     }
 
     /** The reading a material gives at room temperature, for a table that lists materials rather than stacks. */
@@ -59,7 +61,7 @@ public final class SortReader {
         float hardness = m.hardness().value();
         return new Reading(false, m.separation().magnetic(), m.separation().curieTemperature().map(t -> t.value()).orElse(Float.MAX_VALUE),
                 m.separation().reflectivity().orElse(0.5f), m.density().muPerMb(), hardness, m.mechanical().friction().orElse(0.5f), kindBand(m),
-                0f, 1f, 1f, false, m.traits().contains(Material.Trait.STICKY));
+                0f, 1f, 1f, false, m.traits().contains(Material.Trait.STICKY), tell(m));
     }
 
     /** Mass in Mu of one item of {@code stack}'s kind. */
@@ -71,13 +73,29 @@ public final class SortReader {
         float mass = ModularBackpack.massOf(stack.getItem());
         Optional<Material.Located> found = Material.find(MaterialTable.get().materials(), stack);
         if (found.isEmpty())
-            return new Fixed(true, false, Float.MAX_VALUE, 0.5f, 1f, 1f, 0.5f, Band.OTHER, mass, false, false);
+            return new Fixed(true, false, Float.MAX_VALUE, 0.5f, 1f, 1f, 0.5f, Band.OTHER, mass, false, false, 0f);
         Material m = found.get().material();
         float hardness = m.hardness().value();
         boolean brittle = m.mechanical().toughness().map(t -> t.value() < LogisticsTuning.FRAGILE_TOUGHNESS_SHARE * hardness).orElse(false);
         return new Fixed(false, m.separation().magnetic(), m.separation().curieTemperature().map(t -> t.value()).orElse(Float.MAX_VALUE),
                 m.separation().reflectivity().orElse(0.5f), m.density().muPerMb(), hardness,
-                m.mechanical().friction().orElse(0.5f), kindBand(m), mass, brittle, m.traits().contains(Material.Trait.STICKY));
+                m.mechanical().friction().orElse(0.5f), kindBand(m), mass, brittle, m.traits().contains(Material.Trait.STICKY), tell(m));
+    }
+
+    /**
+     * How plainly a spark or flame test shows what this is (1 textbook). Metals show sparks, but a soft one gives none and an alloy
+     * muddies them; organics char in a flame, unless nothing burns off them; polymers melt and char like organics; minerals do neither,
+     * unless something in them burns (coal).
+     */
+    static float tell(Material m) {
+        boolean burns = m.combustion().isPresent() || m.traits().contains(Material.Trait.FLAMMABLE);
+        return switch (kindBand(m)) {
+            case METALLIC -> m.hardness().value() < LogisticsTuning.HARDNESS_SOFT_BELOW ? 0f
+                    : m.traits().contains(Material.Trait.ALLOY) ? LogisticsTuning.KIND_ALLOY_TELL : 1f;
+            case ORGANIC -> burns ? 1f : LogisticsTuning.KIND_LOOKALIKE_TELL;
+            case POLYMER -> LogisticsTuning.KIND_LOOKALIKE_TELL;
+            default -> burns ? LogisticsTuning.KIND_LOOKALIKE_TELL : 1f;
+        };
     }
 
     static Band kindBand(Material m) {

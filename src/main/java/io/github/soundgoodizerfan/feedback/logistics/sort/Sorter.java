@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
  * <p>
  * Weaknesses (one each, so a second detector covers the first): a magnet misses cargo over its
  * Curie temperature; an optical head reads glowing-hot cargo bright and, dirty, everything duller;
- * a weigher blurs on stacks (it weighs the pile, not the piece); a jet cuts poorly.
+ * a weigher blurs on stacks (it weighs the pile, not the piece); a jet cuts poorly; a kind test (grinder sparks for metal, a flame for organics) is fooled by alloys, coats and look-alikes.
  */
 public final class Sorter {
 
@@ -53,7 +53,7 @@ public final class Sorter {
                         v -= LogisticsTuning.DIRT_REFLECT_LOSS;
                 }
                 seen = new Reading(false, r.magnetic(), r.curie(), Math.max(0f, v), r.density(), r.hardness(), r.friction(), r.kind(),
-                        r.temperature(), r.mass(), r.unitMass(), r.brittle(), r.sticky());
+                        r.temperature(), r.mass(), r.unitMass(), r.brittle(), r.sticky(), r.tell());
                 t = cutDistance(v, margin, LogisticsTuning.REFLECT_DULL_BELOW, LogisticsTuning.REFLECT_BRIGHT_FROM);
             }
             case DENSITY -> t = cutDistance(r.density(), margin, LogisticsTuning.DENSITY_LIGHT_BELOW, LogisticsTuning.DENSITY_HEAVY_FROM);
@@ -61,7 +61,8 @@ public final class Sorter {
             case FRICTION -> t = cutDistance(r.friction(), margin, LogisticsTuning.FRICTION_SLICK_BELOW, LogisticsTuning.FRICTION_GRIPPY_FROM);
             case TEMPERATURE -> t = cutDistance(r.temperature(), margin, ThermalTuning.WARM_TU.value(), LogisticsTuning.TEMP_HOT_FROM);
             case SIZE -> t = cutDistance(r.mass(), margin, LogisticsTuning.SIZE_SMALL_BELOW, LogisticsTuning.SIZE_LARGE_FROM);
-            case KIND -> t = 1f; // a material's kind is not a measurement
+            // A spark or flame test on a sample, never a read of the kind: how plainly it shows is the piece's own (alloys, coats, look-alikes muddy it).
+            case KIND -> t = r.tell() * LogisticsTuning.KIND_CLEAN_TELL;
         }
         boolean in = SortReader.bandOf(seen, p) == band;
         if (p == SortProperty.MAGNETIC && d == Detector.MAGNET && r.temperature() > ThermalTuning.WARM_TU.value())
