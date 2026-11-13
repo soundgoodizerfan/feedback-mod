@@ -44,6 +44,18 @@ public class FDataComponents {
                     .build());
 
     /**
+     * How far an instrument has been knocked off true, per quantity it reads, in that quantity's own
+     * units: set only by misuse (pushed past its range, dropped), cleared by recalibrating against a
+     * known reference. Absent means true. Instruments do not stack, so history costs nothing.
+     */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.Map<io.github.soundgoodizerfan.feedback.instrument.Quantity, Float>>> DRIFT =
+            COMPONENTS.register("drift", () -> DataComponentType.<java.util.Map<io.github.soundgoodizerfan.feedback.instrument.Quantity, Float>>builder()
+                    .persistent(Codec.unboundedMap(io.github.soundgoodizerfan.feedback.instrument.Quantity.CODEC, Codec.FLOAT))
+                    .networkSynchronized(ByteBufCodecs.map(java.util.HashMap::new,
+                            io.github.soundgoodizerfan.feedback.instrument.Quantity.STREAM_CODEC, ByteBufCodecs.FLOAT))
+                    .build());
+
+    /**
      * A fluid stack's temperature in Tu: the stamp a tank, pipe or handler carries
      * with the fluid, so steam arrives as hot as it left. Absent reads as ambient. Not an energy
      * and not a quantity of heat: a state, like an item's.

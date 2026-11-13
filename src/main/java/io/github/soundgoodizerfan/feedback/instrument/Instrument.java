@@ -42,6 +42,21 @@ public interface Instrument {
      */
     float resolution(Quantity quantity);
 
+    /** The largest true figure this device survives reading; past it the reading strains the device (drift). Unlimited by default. */
+    default float limit(Quantity quantity) {
+        return Float.POSITIVE_INFINITY;
+    }
+
+    /** How far this device reads off true for the quantity, in its units: zero unless it has been misused. */
+    default float offset(Quantity quantity) {
+        return 0f;
+    }
+
+    /** What this device shows for a true figure: the offset added, then quantised to the step. */
+    default float shown(Quantity quantity, float truth) {
+        return Instruments.quantise(truth + offset(quantity), resolution(quantity));
+    }
+
     /** What to sign a reading with. Every figure the mod shows names the device that took it. */
     Component label();
 }

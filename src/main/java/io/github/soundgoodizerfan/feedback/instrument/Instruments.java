@@ -3,6 +3,7 @@
 package io.github.soundgoodizerfan.feedback.instrument;
 
 import io.github.soundgoodizerfan.feedback.item.InstrumentBagItem;
+import io.github.soundgoodizerfan.feedback.item.ItemTuning;
 import io.github.soundgoodizerfan.feedback.process.Circuit;
 
 import org.jetbrains.annotations.Nullable;
@@ -125,8 +126,94 @@ public final class Instruments {
     public static Instrument fitted(ItemStack stack, Instrument item) {
         if (Boolean.TRUE.equals(stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CALIBRATED.get())))
             return new Reference(item);
+        var drift = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DRIFT.get());
+        if (drift != null && !drift.isEmpty())
+            item = new Drifted(item, drift);
         Circuit circuit = Circuit.of(stack);
         return circuit.live() ? new Fitted(item, circuit.stepFactor()) : item;
+    }
+
+    /** The same device after misuse: reads off by the stored offset, signed the same. */
+    private record Drifted(Instrument base, java.util.Map<Quantity, Float> drift) implements Instrument {
+        @Override
+        public boolean canRead(Quantity quantity) {
+            return base.canRead(quantity);
+        }
+
+        @Override
+        public float resolution(Quantity quantity) {
+            return base.resolution(quantity);
+        }
+
+        @Override
+        public float limit(Quantity quantity) {
+            return base.limit(quantity);
+        }
+
+        @Override
+        public float offset(Quantity quantity) {
+            return drift.getOrDefault(quantity, 0f);
+        }
+
+        @Override
+        public Component label() {
+            return base.label();
+        }
+    }
+
+    /**
+     * Reads the true figure through this stack and strains it if the figure is past the device's
+     * limit: the offset grows (reads low) up to a cap. The only wear an instrument takes besides a
+     * knock; ordinary use never costs anything. Server side.
+     */
+    public static void strain(ItemStack stack, Instrument item, Quantity quantity, float truth) {
+        if (truth > item.limit(quantity))
+            nudge(stack, item, quantity, -ItemTuning.DRIFT_STEPS_PER_MISUSE);
+    }
+
+    /** Moves the stack's offset for a quantity by {@code steps} of the device's own step, within the cap. */
+    public static void nudge(ItemStack stack, Instrument item, Quantity quantity, float steps) {
+        float step = item.resolution(quantity);
+        if (step <= Instrument.TRUTH)
+            return;
+        var map = new java.util.HashMap<>(stack.getOrDefault(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DRIFT.get(), java.util.Map.<Quantity, Float>of()));
+        float cap = ItemTuning.DRIFT_CAP_STEPS * step;
+        map.put(quantity, Math.max(-cap, Math.min(cap, map.getOrDefault(quantity, 0f) + steps * step)));
+        stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DRIFT.get(), map);
+    }
+
+    /** Puts the stack back on true for a quantity: the player's act against a known reference. Server side. */
+    public static void recalibrate(ItemStack stack, Quantity quantity) {
+        var drift = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DRIFT.get());
+        if (drift == null || !drift.containsKey(quantity))
+            return;
+        var map = new java.util.HashMap<>(drift);
+        map.remove(quantity);
+        stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.DRIFT.get(), map.isEmpty() ? null : map);
+    }
+
+    /**
+     * A figure the world holds known, for the player to set an instrument against, or null. Temperature:
+     * a block whose material melts at or below ambient is melting where it stands, so it sits at that
+     * material's melting point (ice at 0 Tu). Pressure: a face open to the air is at atmosphere, 0 Pu.
+     */
+    @Nullable
+    public static Float reference(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos,
+            net.minecraft.core.Direction face, Quantity quantity) {
+        if (quantity == Quantity.PRESSURE)
+            return level.getBlockState(pos.relative(face)).isAir() ? 0f : null;
+        if (quantity != Quantity.TEMPERATURE)
+            return null;
+        var id = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
+        float ambient = io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning.AMBIENT_TU.value();
+        for (var material : io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().values()) {
+            if (!material.forms().containsValue(id))
+                continue;
+            var melts = material.thermal().meltingPoint();
+            if (melts.isPresent() && melts.get().value() <= ambient)
+                return melts.get().value();
+        }
+        return null;
     }
 
     /** A reference standard: the same device, calibrated against the village surveyor's gauges, reading the exact figure. */
@@ -149,6 +236,16 @@ public final class Instruments {
 
     private record Fitted(Instrument base, float factor) implements Instrument {
         @Override
+        public float offset(Quantity quantity) {
+            return base.offset(quantity);
+        }
+
+        @Override
+        public float limit(Quantity quantity) {
+            return base.limit(quantity);
+        }
+
+        @Override
         public boolean canRead(Quantity quantity) {
             return base.canRead(quantity);
         }
@@ -167,6 +264,16 @@ public final class Instruments {
     /** An instrument in a trained eye's hands: the same device and label, a finer step. */
     private record Keen(Instrument base, float factor) implements Instrument {
         @Override
+        public float offset(Quantity quantity) {
+            return base.offset(quantity);
+        }
+
+        @Override
+        public float limit(Quantity quantity) {
+            return base.limit(quantity);
+        }
+
+        @Override
         public boolean canRead(Quantity quantity) {
             return base.canRead(quantity);
         }
@@ -184,6 +291,16 @@ public final class Instruments {
 
     /** An instrument read through a lens: a finer step for the quantities the eye reads, the same device and label. */
     private record Lensed(Instrument base, float factor) implements Instrument {
+        @Override
+        public float offset(Quantity quantity) {
+            return base.offset(quantity);
+        }
+
+        @Override
+        public float limit(Quantity quantity) {
+            return base.limit(quantity);
+        }
+
         @Override
         public boolean canRead(Quantity quantity) {
             return base.canRead(quantity);

@@ -65,6 +65,18 @@ public final class ItemTuning {
      */
     public static final Pu PRESSURE_GAUGE_RESOLUTION_PU = new Pu(0.5f);
 
+    /** Invented: a thermometer's glass and foil survive to 600 Tu; dipped in hotter it strains and reads low afterwards. */
+    public static final float THERMOMETER_LIMIT_TU = 600f;
+
+    /** Invented: a gauge's spring survives to 8 Pu, a step above the critical line; past it the needle reads low. */
+    public static final float PRESSURE_GAUGE_LIMIT_PU = 8f;
+
+    /** Invented: one strain or one knock moves an instrument this many of its own steps; the offset stops at the cap. */
+    public static final float DRIFT_STEPS_PER_MISUSE = 1.5f, DRIFT_CAP_STEPS = 6f;
+
+    /** Invented: a fall of this many blocks knocks every instrument carried. */
+    public static final float DRIFT_FALL_BLOCKS = 4f;
+
     /** The XP meter's step for a level: whole levels, so a finer reading needs a fitted circuit. [OPEN] until played */
     public static final float XP_METER_RESOLUTION_LEVEL = 1f;
 

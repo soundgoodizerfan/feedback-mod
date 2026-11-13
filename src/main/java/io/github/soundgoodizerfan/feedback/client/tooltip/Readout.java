@@ -92,7 +92,8 @@ public final class Readout {
      */
     public static String figure(Quantity quantity, float value) {
         Instrument instrument = Instruments.reading(Minecraft.getInstance().player, quantity);
-        return Instruments.format(value, instrument == null ? Instrument.TRUTH : instrument.resolution(quantity));
+        return instrument == null ? Instruments.format(value, Instrument.TRUTH)
+                : Instruments.format(value + instrument.offset(quantity), instrument.resolution(quantity));
     }
 
     /**

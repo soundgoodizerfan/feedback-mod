@@ -53,9 +53,20 @@ public class PyrometerItem extends Item implements Instrument {
         var from = player.getEyePosition();
         var to = from.add(player.getLookAngle().scale(ItemTuning.PYROMETER_RANGE_BLOCKS));
         BlockHitResult hit = level.clip(new ClipContext(from, to, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+        if (hit.getType() == HitResult.Type.BLOCK) {
+            Float known = Instruments.reference(level, hit.getBlockPos(), hit.getDirection(), Quantity.TEMPERATURE);
+            if (known != null) {
+                Instruments.recalibrate(stack, Quantity.TEMPERATURE);
+                Instrument fresh = Instruments.fitted(stack, this);
+                float shown = fresh.shown(Quantity.TEMPERATURE, known);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, hit.getBlockPos(), fresh, Component.translatable("feedback.readout.tu", Math.round(shown)),
+                        Quantity.TEMPERATURE, shown);
+                return InteractionResultHolder.success(stack);
+            }
+        }
         if (hit.getType() == HitResult.Type.BLOCK && level.getBlockEntity(hit.getBlockPos()) instanceof ThermalBody body) {
             Instrument self = Instruments.fitted(stack, this);
-            float shown = Instruments.quantise(body.getTemperature().value(), self.resolution(Quantity.TEMPERATURE));
+            float shown = self.shown(Quantity.TEMPERATURE, body.getTemperature().value());
             io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, hit.getBlockPos(), self, Component.translatable("feedback.readout.tu", Math.round(shown)),
                     Quantity.TEMPERATURE, shown);
             return InteractionResultHolder.success(stack);

@@ -41,6 +41,11 @@ public class PressureGaugeItem extends Item implements Instrument {
     }
 
     @Override
+    public float limit(Quantity quantity) {
+        return ItemTuning.PRESSURE_GAUGE_LIMIT_PU;
+    }
+
+    @Override
     public Component label() {
         return Component.translatable("feedback.instrument.pressure_gauge");
     }
@@ -49,14 +54,30 @@ public class PressureGaugeItem extends Item implements Instrument {
     public InteractionResult onItemUseFirst(ItemStack stack, UseOnContext context) {
         Level level = context.getLevel();
         Player player = context.getPlayer();
-        if (player == null || !(level.getBlockEntity(context.getClickedPos()) instanceof PressureHolder holder))
+        if (player == null)
+            return InteractionResult.PASS;
+        Float known = level.getBlockEntity(context.getClickedPos()) instanceof PressureHolder ? null
+                : Instruments.reference(level, context.getClickedPos(), context.getClickedFace(), Quantity.PRESSURE);
+        if (known != null) {
+            if (!level.isClientSide) {
+                Instruments.recalibrate(stack, Quantity.PRESSURE);
+                Instrument fresh = Instruments.fitted(stack, this);
+                float shown = fresh.shown(Quantity.PRESSURE, known);
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), fresh, Component.translatable("feedback.unit.pu",
+                        Instruments.format(shown, fresh.resolution(Quantity.PRESSURE))), Quantity.PRESSURE, shown);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (!(level.getBlockEntity(context.getClickedPos()) instanceof PressureHolder holder))
             return InteractionResult.PASS;
 
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
+            float truth = holder.getPressure().value();
+            float shown = self.shown(Quantity.PRESSURE, truth);
             io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, Component.translatable("feedback.unit.pu",
-                    Instruments.format(holder.getPressure().value(), self.resolution(Quantity.PRESSURE))), Quantity.PRESSURE,
-                    Instruments.quantise(holder.getPressure().value(), self.resolution(Quantity.PRESSURE)));
+                    Instruments.format(shown, self.resolution(Quantity.PRESSURE))), Quantity.PRESSURE, shown);
+            Instruments.strain(stack, this, Quantity.PRESSURE, truth);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

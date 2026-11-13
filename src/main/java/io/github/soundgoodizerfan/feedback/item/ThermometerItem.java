@@ -71,6 +71,11 @@ public class ThermometerItem extends Item implements Instrument {
     }
 
     @Override
+    public float limit(Quantity quantity) {
+        return ItemTuning.THERMOMETER_LIMIT_TU;
+    }
+
+    @Override
     public Component label() {
         return Component.translatable("feedback.instrument.thermometer");
     }
@@ -89,12 +94,23 @@ public class ThermometerItem extends Item implements Instrument {
         if (!(level.getBlockEntity(context.getClickedPos()) instanceof ThermalBody body)) {
             // A plant has no heat of its own: what the probe reads is the weather it stands in and how that suits it.
             BlockPos pos = context.getClickedPos();
+            Float known = Instruments.reference(level, pos, context.getClickedFace(), Quantity.TEMPERATURE);
+            if (known != null) {
+                if (!level.isClientSide) {
+                    Instruments.recalibrate(stack, Quantity.TEMPERATURE);
+                    Instrument fresh = Instruments.fitted(stack, this);
+                    float shown = fresh.shown(Quantity.TEMPERATURE, known);
+                    io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, pos, fresh, Component.translatable("feedback.readout.tu", Math.round(shown)),
+                            Quantity.TEMPERATURE, shown);
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
             if (!io.github.soundgoodizerfan.feedback.process.CropClimate.covers(level.getBlockState(pos)))
                 return InteractionResult.PASS;
             Instrument self = Instruments.fitted(stack, this);
             if (!level.isClientSide) {
                 float rate = io.github.soundgoodizerfan.feedback.process.CropClimate.rate(level, pos, level.getBlockState(pos));
-                float shown = Instruments.quantise(io.github.soundgoodizerfan.feedback.process.CropClimate.weather(level, pos), self.resolution(Quantity.TEMPERATURE));
+                float shown = self.shown(Quantity.TEMPERATURE, io.github.soundgoodizerfan.feedback.process.CropClimate.weather(level, pos));
                 io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, pos, self, Component.translatable("feedback.readout.crop", Math.round(shown),
                         Component.translatable("feedback.readout.crop." + (rate <= 0f ? "halted" : rate < 0.5f ? "poor" : rate < 1f ? "fair" : "thriving"))),
                         Quantity.TEMPERATURE, shown);
@@ -104,7 +120,8 @@ public class ThermometerItem extends Item implements Instrument {
 
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
-            float shown = Instruments.quantise(body.getTemperature().value(), self.resolution(Quantity.TEMPERATURE));
+            float shown = self.shown(Quantity.TEMPERATURE, body.getTemperature().value());
+            Instruments.strain(stack, this, Quantity.TEMPERATURE, body.getTemperature().value());
             io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, Component.translatable("feedback.readout.tu", Math.round(shown)),
                     Quantity.TEMPERATURE, shown);
         }
