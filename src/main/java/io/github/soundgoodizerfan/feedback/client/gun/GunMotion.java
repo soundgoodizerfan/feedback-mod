@@ -438,7 +438,8 @@ public final class GunMotion {
      * Draws a held gun in first person ourselves, as Scorched Guns does (GPL-3.0, read at {@code master}
      * {@code d0daef8}; design taken, code written here): vanilla's draw is cancelled so the gun can
      * <ul>
-     * <li>leave vanilla's view bob on the hand, aimed or not, so the sights move with the view the shot is taken from;</li>
+     * <li>undo vanilla's view bob on the hand and put back only the share that suits the aim, so a
+     * sighted gun stays still while walking;</li>
      * <li>aim by moving the gun until its eye point ({@link GunView#eye}) is the camera, so the eye looks
      * down the sights and the receiver sits behind it;</li>
      * <li>then lag on turns, dip on landing, lower for a sprint, swing for a bludgeon.</li>
@@ -466,6 +467,7 @@ public final class GunMotion {
         GunView view = GunView.of(stack);
 
         pose.pushPose();
+        rebob(pose, pt, 1f - aimed);
         if (!main)
             pose.translate(0, -aimed, 0); // the other gun drops out of the way of the sights
         if (a > 0) {
@@ -511,5 +513,25 @@ public final class GunMotion {
 
     private static float ease(float x) {
         return x * x * (3 - 2 * x);
+    }
+
+    /**
+     * Take vanilla's view bob off the hand ({@code GameRenderer.bobView} applied it to the whole hand
+     * pass, in this order) and put back {@code keep} of it.
+     */
+    private static void rebob(PoseStack pose, float pt, float keep) {
+        var mc = Minecraft.getInstance();
+        if (!mc.options.bobView().get() || !(mc.getCameraEntity() instanceof net.minecraft.world.entity.player.Player p))
+            return;
+        float walked = -(p.walkDist + (p.walkDist - p.walkDistO) * pt);
+        float b = Mth.lerp(pt, p.oBob, p.bob);
+        float s = Mth.sin(walked * Mth.PI), c = Math.abs(Mth.cos(walked * Mth.PI)), c2 = Math.abs(Mth.cos(walked * Mth.PI - 0.2f));
+        pose.mulPose(Axis.XP.rotationDegrees(-c2 * b * 5f));
+        pose.mulPose(Axis.ZP.rotationDegrees(-s * b * 3f));
+        pose.translate(-s * b * 0.5f, c * b, 0);
+        b *= keep;
+        pose.translate(s * b * 0.5f, -c * b, 0);
+        pose.mulPose(Axis.ZP.rotationDegrees(s * b * 3f));
+        pose.mulPose(Axis.XP.rotationDegrees(c2 * b * 5f));
     }
 }
