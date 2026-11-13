@@ -25,6 +25,9 @@
     },
     "compressor_rotor": {
       "kind": "extra_damage"
+    },
+    "cutter_head": {
+      "kind": "extra_damage"
     }
   },
   "mirror": {
@@ -58,6 +61,9 @@
       "kind": "pad"
     },
     "compressor_rotor": {
+      "kind": "pad"
+    },
+    "cutter_head": {
       "kind": "pad"
     }
   },

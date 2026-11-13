@@ -103,7 +103,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
     public void tickServer() {
         if (!(level instanceof ServerLevel server) || !working() || rate <= 0f)
             return;
-        progress += rate * head.condition();
+        progress += rate * head.condition() * io.github.soundgoodizerfan.feedback.modular.attunement.EdgeKinds.headBlow(head.get());
         if (progress < MachineTuning.CUTTER_TICKS_PER_CUT)
             return;
         progress -= MachineTuning.CUTTER_TICKS_PER_CUT;

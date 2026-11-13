@@ -144,6 +144,18 @@ public final class MachineKinds {
         return WardKinds.wearShare(design) / (1f + SLIP_WEAR_PER_LEVEL * level(design, "slip"));
     }
 
+    /** The same for a seated head: a modular tool's design, or a cutting head's own stamp. */
+    public static float wearShare(ItemStack head) {
+        int soak = 0, slip = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(head)) {
+            if (a.kind().equals("soak"))
+                soak += a.level();
+            else if (a.kind().equals("slip"))
+                slip += a.level();
+        }
+        return 1f / (soak + 1) / (1f + SLIP_WEAR_PER_LEVEL * slip);
+    }
+
     /** The share of a vessel's burst that gets through its damping shell. */
     public static float blastShare(ModularDesign design) {
         return 1f - Math.min(DAMP_CAP, level(design, "damp") * DAMP_PER_LEVEL);

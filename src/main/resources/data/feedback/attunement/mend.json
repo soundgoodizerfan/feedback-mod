@@ -208,6 +208,9 @@
     },
     "flywheel_bearing": {
       "kind": "mend"
+    },
+    "cutter_head": {
+      "kind": "mend"
     }
   },
   "mirror": {

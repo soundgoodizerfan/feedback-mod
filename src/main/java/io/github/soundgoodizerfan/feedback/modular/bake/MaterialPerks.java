@@ -83,6 +83,21 @@ public final class MaterialPerks {
      * whole tool is called. A role the effect has no entry for does nothing. The level is the magnitude; the side is already in the kind.
      */
     public static java.util.List<Attunement> attunements(ItemStack stack) {
+        // A saw or plasma head is a single stamped part with attunements of its own, in the role of a working face.
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem) {
+            java.util.List<Attunement> out = new java.util.ArrayList<>();
+            io.github.soundgoodizerfan.feedback.process.MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+            Material m = made == null ? null : MaterialTable.get().materials().get(made.material());
+            if (m != null)
+                for (Map.Entry<String, Float> e : made.measures().attuned().entrySet()) {
+                    Attunements.Effect effect = Attunements.byKey(e.getKey());
+                    Attunements.Behaviour b = effect == null ? null
+                            : effect.on(io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.ROLE, "working_face", e.getValue() < 0f);
+                    if (b != null && !b.kind().isEmpty())
+                        out.add(new Attunement(b.kind(), Math.abs(Math.round(e.getValue())), m));
+                }
+            return out;
+        }
         return attunements(ModularStacks.design(stack));
     }
 

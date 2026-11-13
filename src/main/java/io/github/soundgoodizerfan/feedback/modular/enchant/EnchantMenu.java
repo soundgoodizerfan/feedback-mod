@@ -90,6 +90,8 @@ public class EnchantMenu extends AbstractContainerMenu {
      * bone) -- the parts that are not shaped but still sit in a tool.
      */
     private boolean takes(ItemStack stack) {
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem)
+            return stack.has(FDataComponents.MADE_OF.get());
         if (stack.getItem() instanceof ModularPartItem)
             return stack.has(FDataComponents.MADE_OF.get());
         return Material.find(ClientMaterials.on(player.level()), stack)
@@ -99,12 +101,20 @@ public class EnchantMenu extends AbstractContainerMenu {
     }
 
     private Material.Located located() {
+        // A saw or plasma head is one item for every material, told by its stamp like a shaped part.
+        if (part().getItem() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem) {
+            MadeOf made = part().get(FDataComponents.MADE_OF.get());
+            Material m = made == null ? null : ClientMaterials.on(player.level()).get(made.material());
+            return m == null ? null : new Material.Located(made.material(), m, "cutter_head");
+        }
         return part().isEmpty() ? null : Material.find(ClientMaterials.on(player.level()), part()).orElse(null);
     }
 
     /** The names (and classes) of the roles the part in the slot could fill in some tool; empty when it is not known or the slot is empty. */
     public java.util.Map<String, String> roles() {
         ItemStack stack = part();
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem)
+            return java.util.Map.of(io.github.soundgoodizerfan.feedback.machine.cutter.CutterHeadItem.ROLE, "working_face");
         Material.Located l = located();
         String form = stack.getItem() instanceof ModularPartItem
                 ? net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath()

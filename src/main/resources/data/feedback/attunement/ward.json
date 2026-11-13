@@ -210,6 +210,9 @@
     },
     "flywheel_bearing": {
       "kind": "soak"
+    },
+    "cutter_head": {
+      "kind": "soak"
     }
   },
   "starter": true,

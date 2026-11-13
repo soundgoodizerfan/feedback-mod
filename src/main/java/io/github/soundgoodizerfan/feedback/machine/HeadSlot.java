@@ -81,7 +81,7 @@ public final class HeadSlot {
             return false;
         int before = FTuning.conditionBand(condition());
         // A soaking head turns some of the wear away, as it does on a tool.
-        head.set(FDataComponents.TOOL_CONDITION.get(), Math.max(floor, condition() - stAbsorbed * perSt * MachineKinds.wearShare(ModularStacks.design(head))));
+        head.set(FDataComponents.TOOL_CONDITION.get(), Math.max(floor, condition() - stAbsorbed * perSt * MachineKinds.wearShare(head)));
         return FTuning.conditionBand(condition()) != before;
     }
 
