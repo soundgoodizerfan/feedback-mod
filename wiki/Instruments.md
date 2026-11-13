@@ -2,7 +2,7 @@
 
 Instruments turn the words a machine or item gives you ("glowing orange", "nearly there", "battered") into numbers. Most work from anywhere in your inventory: carry one and tooltips and Jade show exact figures instead of words. Some are used with a right-click on the thing to measure, and a few are bolted onto a block so a [Controller](Controller.md) can read them.
 
-Nothing is locked behind an instrument; they are how you do on purpose what you could do by luck. Every reading has a limit, shown in the last column. Sorted by what they measure: tools and materials, heat and pressure, electricity, other.
+Nothing is locked behind an instrument; they are how you do on purpose what you could do by luck. Every reading has a limit, shown in the last column. Sorted by what they measure: tools and materials, heat and pressure, electricity, other. A [Reach Probe](Reach_Probe.md) is not an instrument: it links a machine so recipe cards show its reach.
 
 | Name | What it detects | Quality |
 | --- | --- | --- |
@@ -18,6 +18,7 @@ Nothing is locked behind an instrument; they are how you do on purpose what you 
 | [Pressure Gauge](#pressure-gauge) | Pressure in a boiler, vessel, pipe or tank | 0.5 Pu steps |
 | [Electroscope](#electroscope) | Band of a live line | Whole bands |
 | [Galvanometer](#galvanometer) | Current | 0.25 A steps |
+| [Light Meter](Light_Meter.md) | Block and sky light at a face | 2 levels |
 | [Hydrometer](#hydrometer) | Charge of a battery | 5% steps |
 | [Current Sensor](#current-sensor) | Current in a cable, to a program | 0.5 A steps |
 | [Oscilloscope](#oscilloscope) | Current in a cable over time, on a screen | 0.25 A steps, 10 samples a second, pegs above 4 A |
@@ -212,6 +213,7 @@ W is [Copper Wire](Wire_Drawer.md), N is a Wrought Iron Nugget and G is a Glass 
 - **Right-click** any electrical block to read the current on the card, e.g. *1.00 A*, in steps of **0.25 A**.
 - On a **machine**, it shows what the machine is getting next to what it wants, e.g. *"0.50 of 1.00 A"*: the quickest way to tell a starved machine from one that is simply weak.
 - **Carry it anywhere in your inventory** and Jade's tooltip on electrical blocks gains an amps line.
+- Reading a line carrying more than **20 A** slams the needle and it drifts; see [Drift](#drift). Set against a dead line it reads zero again.
 
 Reading a live cable is free and safe while it is insulated, and nothing has to stop while you measure. Right-clicking **bare** live cable is a hand on the wire and shocks you.
 
@@ -369,12 +371,17 @@ Plain use never wears an instrument. Misuse knocks it off true, so it reads high
 
 - A Thermometer read on something hotter than 600 Tu reads low afterward.
 - A Pressure Gauge read on a holder above 8 Pu reads low afterward.
-- A fall of 4 blocks or more knocks every instrument you carry, high or low.
+- A [Galvanometer](#galvanometer) read on a line above 20 A reads off afterward.
+- A [Light Meter](Light_Meter.md) read at a face brighter than level 13 reads off afterward.
+- A fall of 4 blocks or more knocks every instrument you carry, high or low, including those in an [Instrument Bag](#instrument-bag).
+- Standing in heat above 600 Tu soaks every instrument you carry, in a bag too, so it reads high.
 
 A drifted instrument says **Reads off** on its tooltip; it does not say by how much. The offset stops growing after a few steps. Set it against a known reference to put it back on true:
 
 - **Thermometer**: right-click melting ice, or any block sitting at its own melting point. The [Pyrometer](Optics.md#pyrometer) does the same when aimed at one.
 - **Pressure Gauge**: right-click a block face that is open to air; it reads 0 Pu.
+- **Galvanometer**: right-click a dead line; it reads zero.
+- **Light Meter**: right-click a lamp or torch; it reads that light's own level.
 
 The reference reading shows on the card as usual. Each quantity is set on its own.
 

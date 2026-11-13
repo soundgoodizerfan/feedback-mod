@@ -43,7 +43,7 @@ A band turns **wet** when rain or a fluid falls on it, or when cargo that holds 
 - **Hot cargo wears the band.** Cargo hotter than the band's limit wears the cells it lies on. A worn band slips and slows the run but never stops it. Cool the cargo first with a [Belt Cooler](Belt_Modules.md#belt-cooler) or [Belt Fan](Belt_Modules.md#belt-fan), or use a link band.
 - **Heat above a belt** burns creatures riding it. A plain [Heating Coil](Heating_Coil.md) block set on a belt heats the cargo riding that cell.
 
-Hot cargo and hot sources are [hazards](Hazards.md) like any other.
+Hot cargo and hot sources are [hazards](Hazards.md) like any other. A belt keeps its built parts when broken. **Ward** on the band or cleats slows the wear from hot cargo; **Mend** closes it, paid in experience ([Enchanting Table](Enchanting_Table.md#on-a-machine)).
 
 ## Tips and automation
 

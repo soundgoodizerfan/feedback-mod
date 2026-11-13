@@ -25,3 +25,7 @@ A transmission also has a **clutch** input, channel 1 (the shifter is channel 0)
 ## Wear
 
 Shifting while the input shaft is turning fast grinds the teeth, in proportion to the speed, softer metals worse, and less with a synchromesh or a better-oiled case. A badly worn transmission jumps out of gear under load, more often the more worn it is. Stopping, going through neutral or pressing the clutch costs nothing, and running it never wears it.
+
+## Attunements
+
+A transmission keeps its built parts when broken, so their attunements act while it is placed. **Ward** on the gear set, synchro or case slows the shift grind; **Mend** closes the wear, paid in experience. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

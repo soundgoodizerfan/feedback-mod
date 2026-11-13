@@ -60,7 +60,7 @@ New here? Start with [Metalworking](Metalworking.md), then [Heat](Heat.md). Want
 
 **Electricity:** [Copper Cable](Copper_Cable.md) · [Galvanic Cell](Galvanic_Cell.md) · [Battery](Battery.md) · [Electrostatic Generator](Electrostatic_Generator.md) · [Dynamotor](Dynamotor.md) · [Leyden Jar](Leyden_Jar.md) · [Breaker](Breaker.md) · [Solid-State Converter](Converter.md) · [Substation](Substation.md) · [Rare-Earth Magnet](Rare_Earth_Magnet.md) · [Fuse](Fuse.md) · [Glowstone Lamp](Lamp.md) · [Rectifier](Rectifier.md) · [Redstone Coherer](Redstone_Coherer.md) · [Cat's Whisker Detector](Cats_Whisker_Detector.md) · [Relay](Relay.md) · [Trace Board](Trace_Board.md) · [Soldering Iron](Soldering_Iron.md) · [Reflow Oven](Reflow_Oven.md) · [Basic Electronic Circuit](Basic_Electronic_Circuit.md) · [Phosphor Screen](Phosphor_Screen.md) · [Electromagnet](Electromagnet.md) · [Electrolytic Cell](Electrolytic_Cell.md) · [Charger](Charger.md) · [Charging Gantry](Charging_Gantry.md) · [Refrigeration Unit](Refrigeration_Unit.md) · [Jar Baton](Jar_Baton.md) · [Electrified Fence](Electrified_Fence.md) · [Power Cutter](Power_Cutter.md)
 
-**Measuring:** [Instruments](Instruments.md) · [Phosphor Screen](Phosphor_Screen.md) · [Pyrometer](Optics.md#pyrometer)
+**Measuring:** [Instruments](Instruments.md) · [Light Meter](Light_Meter.md) · [Reach Probe](Reach_Probe.md) · [Phosphor Screen](Phosphor_Screen.md) · [Pyrometer](Optics.md#pyrometer)
 
 **Creepers:** [Creeper Pen](Creeper_Pen.md)
 

@@ -35,3 +35,5 @@ Thrust grows with the shaft's turns, the disc diameter, the blade count, the pit
 ## Misuse and hazards
 
 Blade tips faster than the metal survives lose thrust and **wear the blades**. The limit is lower in water (about 40 m/s) and near the speed of sound in air. Worn blades pull less. See [Hazards](Hazards.md).
+
+A propeller keeps its built parts when broken. **Ward** on the hub or blades slows the wear of blade tips over speed; **Mend** closes it, paid in experience ([Enchanting Table](Enchanting_Table.md#on-a-machine)).
