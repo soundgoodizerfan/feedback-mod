@@ -25,6 +25,30 @@
     "receiver": {
       "kind": "brass_return",
       "flaw": 1
+    },
+    "shell": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "hard_liner": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "strap": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "pack_frame": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "hip_belt": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "buckle": {
+      "kind": "rewind",
+      "flaw": 1
     }
   },
   "mirror": {

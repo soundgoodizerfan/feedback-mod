@@ -37,6 +37,24 @@
     },
     "compressor_rotor": {
       "kind": "ring"
+    },
+    "shell": {
+      "kind": "worn_ring"
+    },
+    "hard_liner": {
+      "kind": "worn_ring"
+    },
+    "strap": {
+      "kind": "worn_ring"
+    },
+    "pack_frame": {
+      "kind": "worn_ring"
+    },
+    "hip_belt": {
+      "kind": "worn_ring"
+    },
+    "buckle": {
+      "kind": "worn_ring"
     }
   },
   "mirror": {
@@ -75,6 +93,24 @@
     },
     "compressor_rotor": {
       "kind": "hush"
+    },
+    "shell": {
+      "kind": "worn_hush"
+    },
+    "hard_liner": {
+      "kind": "worn_hush"
+    },
+    "strap": {
+      "kind": "worn_hush"
+    },
+    "pack_frame": {
+      "kind": "worn_hush"
+    },
+    "hip_belt": {
+      "kind": "worn_hush"
+    },
+    "buckle": {
+      "kind": "worn_hush"
     }
   }
 }

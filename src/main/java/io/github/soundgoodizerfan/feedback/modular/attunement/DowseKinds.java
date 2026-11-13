@@ -91,7 +91,8 @@ public final class DowseKinds {
             return;
         // Held needle first, then a helmet, then a chestplate; the first that reads owns the needle.
         if (!read(player, player.getMainHandItem(), false) && !read(player, player.getItemBySlot(EquipmentSlot.HEAD), true))
-            read(player, player.getItemBySlot(EquipmentSlot.CHEST), true);
+            if (!read(player, player.getItemBySlot(EquipmentSlot.CHEST), true))
+                read(player, io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.wornStack(player), true);
     }
 
     /** Shows {@code stack}'s needle, if it has one of the right face (worn kinds only on worn stacks); true if it did. */

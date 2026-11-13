@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.modular.attunement.GearKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.TideKinds;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.process.FormType;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -98,6 +100,12 @@ public class ModularBackpack extends ModularItem {
     /** The worn pack, or null. */
     private static SlotResult worn(Player player) {
         return CuriosApi.getCuriosInventory(player).flatMap(inv -> inv.findFirstCurio(s -> s.getItem() instanceof ModularBackpack)).orElse(null);
+    }
+
+    /** The worn pack's stack, or empty. */
+    public static ItemStack wornStack(Player player) {
+        SlotResult r = worn(player);
+        return r == null ? ItemStack.EMPTY : r.stack();
     }
 
     private static int slots(ItemStack bag) {
@@ -325,11 +333,11 @@ public class ModularBackpack extends ModularItem {
             ItemStack bag = r.stack();
             ModularFigures f = ModularStacks.figures(bag);
             float load = load(bag);
-            boolean wet = player.isInWaterOrRain() && !fitted(bag, COAT) && shellIs(bag, Material.Trait.FIBROUS);
+            boolean wet = player.isInWaterOrRain() && !fitted(bag, COAT) && TideKinds.level(bag, "seal") == 0 && shellIs(bag, Material.Trait.FIBROUS);
             player.getPersistentData().putBoolean(WET, wet);
             if (wet)
                 load *= ModularTuning.PACK_WET_FACTOR;
-            over = f != null && load > f.get(Fig.CARRY) * io.github.soundgoodizerfan.feedback.suit.ExoSuit.carryFactor(player);
+            over = f != null && load > f.get(Fig.CARRY) * GearKinds.carryShare(bag) * io.github.soundgoodizerfan.feedback.suit.ExoSuit.carryFactor(player);
             if (over)
                 speed.addTransientModifier(new AttributeModifier(LOAD_ID, -ModularTuning.PACK_OVERLOAD_SLOW, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
             lit = fitted(bag, LAMP) && !stored(bag, LAMP).isEmpty();
@@ -410,18 +418,18 @@ public class ModularBackpack extends ModularItem {
         ItemStack bag = r.stack();
         boolean wear = over && (!fitted(bag, LINER) || player.tickCount % 40 == 0);
         if (player.isOnFire() && !fitted(bag, PATCH) && shellIs(bag, Material.Trait.FLAMMABLE)) {
-            bag.setDamageValue(Math.min(bag.getMaxDamage() - 1, bag.getDamageValue() + ModularTuning.PACK_SCORCH_WEAR));
+            bag.setDamageValue(Math.min(bag.getMaxDamage() - 1, bag.getDamageValue() + GearKinds.packWear(bag, ModularTuning.PACK_SCORCH_WEAR)));
             ModularStacks.refresh(bag);
             wear = true;
         }
         if (wear) {
             if (over)
-                bag.setDamageValue(Math.min(bag.getMaxDamage() - 1, bag.getDamageValue() + ModularTuning.PACK_OVERLOAD_WEAR));
+                bag.setDamageValue(Math.min(bag.getMaxDamage() - 1, bag.getDamageValue() + GearKinds.packWear(bag, ModularTuning.PACK_OVERLOAD_WEAR)));
             ModularStacks.refresh(bag);
         }
         if (player.getTicksFrozen() > 0 && fitted(bag, WARM))
             player.setTicksFrozen(Math.max(0, player.getTicksFrozen() - ModularTuning.PACK_THAW_TICKS));
-        if (wear || over || data.getBoolean(WET) != (player.isInWaterOrRain() && !fitted(bag, COAT) && shellIs(bag, Material.Trait.FIBROUS)))
+        if (wear || over || data.getBoolean(WET) != (player.isInWaterOrRain() && !fitted(bag, COAT) && TideKinds.level(bag, "seal") == 0 && shellIs(bag, Material.Trait.FIBROUS)))
             weigh(player);
         else if (player.tickCount % ModularTuning.PACK_FALLBACK_TICKS == 0)
             weigh(player);

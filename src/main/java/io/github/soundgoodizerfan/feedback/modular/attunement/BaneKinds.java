@@ -93,7 +93,7 @@ public final class BaneKinds {
 
     private static int kin(LivingEntity wearer) {
         int level = 0;
-        for (ItemStack worn : wearer.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(wearer))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn))
                 if (a.kind().equals("kin_hide"))
                     level += a.level();
@@ -117,7 +117,7 @@ public final class BaneKinds {
         if (!quarry(event.getSource().getEntity()))
             return;
         float share = 0f;
-        for (ItemStack worn : event.getEntity().getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(event.getEntity()))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn))
                 if (a.kind().equals("bane_ward"))
                     share += a.level() * WARD_PER_LEVEL;

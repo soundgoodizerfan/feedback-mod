@@ -44,7 +44,7 @@ public final class BaitKinds {
     /** The summed level of {@code kind} across the player's worn armour parts. Allocates; call gated. */
     public static int worn(LivingEntity wearer, String kind) {
         int n = 0;
-        for (ItemStack piece : wearer.getArmorSlots())
+        for (ItemStack piece : GearKinds.worn(wearer))
             if (!piece.isEmpty())
                 n += TideKinds.level(piece, kind);
         return n;

@@ -49,6 +49,30 @@
     "studs": {
       "kind": "taunt",
       "flaw": 2
+    },
+    "shell": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "hard_liner": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "strap": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "pack_frame": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "hip_belt": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "buckle": {
+      "kind": "taunt",
+      "flaw": 2
     }
   }
 }

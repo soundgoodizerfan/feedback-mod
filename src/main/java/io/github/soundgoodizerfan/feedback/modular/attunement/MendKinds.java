@@ -47,10 +47,12 @@ public final class MendKinds {
         Player player = event.getEntity();
         if (player.level().isClientSide || player.tickCount % INTERVAL_TICKS != 0)
             return;
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (slot.getType() == EquipmentSlot.Type.ANIMAL_ARMOR)
-                continue;
-            ItemStack stack = player.getItemBySlot(slot);
+        java.util.List<ItemStack> carried = new java.util.ArrayList<>();
+        for (EquipmentSlot slot : EquipmentSlot.values())
+            if (slot.getType() != EquipmentSlot.Type.ANIMAL_ARMOR)
+                carried.add(player.getItemBySlot(slot));
+        carried.add(io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.wornStack(player));
+        for (ItemStack stack : carried) {
             float boreWear = GunCondition.wear(stack);
             if ((!stack.isDamaged() && boreWear <= 0f) || (player.totalExperience <= 0 && ReservoirKinds.stored(stack) <= 0))
                 continue;

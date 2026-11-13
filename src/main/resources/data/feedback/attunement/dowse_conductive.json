@@ -28,6 +28,24 @@
     },
     "rim_ring": {
       "kind": "point_conductive"
+    },
+    "shell": {
+      "kind": "worn_point_conductive"
+    },
+    "hard_liner": {
+      "kind": "worn_point_conductive"
+    },
+    "strap": {
+      "kind": "worn_point_conductive"
+    },
+    "pack_frame": {
+      "kind": "worn_point_conductive"
+    },
+    "hip_belt": {
+      "kind": "worn_point_conductive"
+    },
+    "buckle": {
+      "kind": "worn_point_conductive"
     }
   },
   "mirror": {
@@ -57,6 +75,24 @@
     },
     "rim_ring": {
       "kind": "away_conductive"
+    },
+    "shell": {
+      "kind": "worn_away_conductive"
+    },
+    "hard_liner": {
+      "kind": "worn_away_conductive"
+    },
+    "strap": {
+      "kind": "worn_away_conductive"
+    },
+    "pack_frame": {
+      "kind": "worn_away_conductive"
+    },
+    "hip_belt": {
+      "kind": "worn_away_conductive"
+    },
+    "buckle": {
+      "kind": "worn_away_conductive"
     }
   }
 }

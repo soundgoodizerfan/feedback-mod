@@ -88,7 +88,7 @@ public final class MarkKinds {
                 || p.isCreative() || p.isSpectator())
             return;
         int level = 0;
-        for (ItemStack worn : p.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(p))
             if (!worn.isEmpty())
                 for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn))
                     if (a.kind().equals("taunt"))

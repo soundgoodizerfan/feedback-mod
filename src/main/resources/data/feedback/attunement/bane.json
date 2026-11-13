@@ -43,6 +43,30 @@
     },
     "wheel_rim": {
       "kind": "bane"
+    },
+    "shell": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "hard_liner": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "strap": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "pack_frame": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "hip_belt": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "buckle": {
+      "kind": "bane_ward",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -87,6 +111,30 @@
     },
     "wheel_rim": {
       "kind": "kin_calm"
+    },
+    "shell": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "hard_liner": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "strap": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "pack_frame": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "hip_belt": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "buckle": {
+      "kind": "kin_hide",
+      "flaw": 0
     }
   },
   "books": [

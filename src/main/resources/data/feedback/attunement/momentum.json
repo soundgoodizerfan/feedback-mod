@@ -71,6 +71,24 @@
     },
     "flywheel_disc": {
       "kind": "brace"
+    },
+    "shell": {
+      "kind": "worn_stance"
+    },
+    "hard_liner": {
+      "kind": "worn_stance"
+    },
+    "strap": {
+      "kind": "worn_stance"
+    },
+    "pack_frame": {
+      "kind": "worn_stance"
+    },
+    "hip_belt": {
+      "kind": "worn_stance"
+    },
+    "buckle": {
+      "kind": "worn_stance"
     }
   },
   "books": [

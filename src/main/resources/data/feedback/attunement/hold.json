@@ -19,6 +19,22 @@
     },
     "frame": {
       "kind": "clamp"
+    },
+    "strap": {
+      "kind": "clamp",
+      "flaw": 1
+    },
+    "pack_frame": {
+      "kind": "clamp",
+      "flaw": 1
+    },
+    "hip_belt": {
+      "kind": "clamp",
+      "flaw": 1
+    },
+    "buckle": {
+      "kind": "clamp",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -40,6 +56,22 @@
     },
     "frame": {
       "kind": "slip"
+    },
+    "strap": {
+      "kind": "slip",
+      "flaw": -1
+    },
+    "pack_frame": {
+      "kind": "slip",
+      "flaw": -1
+    },
+    "hip_belt": {
+      "kind": "slip",
+      "flaw": -1
+    },
+    "buckle": {
+      "kind": "slip",
+      "flaw": -1
     }
   },
   "starter": true,

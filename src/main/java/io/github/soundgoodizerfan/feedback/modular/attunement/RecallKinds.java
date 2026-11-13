@@ -56,7 +56,7 @@ public final class RecallKinds {
 
     private static int worn(net.minecraft.world.entity.player.Player player) {
         int n = 0;
-        for (ItemStack stack : player.getArmorSlots())
+        for (ItemStack stack : GearKinds.worn(player))
             if (!stack.isEmpty())
                 for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
                     if (a.kind().equals("rewind"))
@@ -103,7 +103,7 @@ public final class RecallKinds {
         player.fallDistance = 0f;
         trail.lastUse = now;
         trail.spots.clear();
-        for (ItemStack stack : player.getArmorSlots()) {
+        for (ItemStack stack : GearKinds.worn(player)) {
             if (stack.isEmpty())
                 continue;
             int level = 0;

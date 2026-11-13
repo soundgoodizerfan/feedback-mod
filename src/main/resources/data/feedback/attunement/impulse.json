@@ -45,6 +45,30 @@
     },
     "wheel_rim": {
       "kind": "shove"
+    },
+    "shell": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "hard_liner": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "strap": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "pack_frame": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "hip_belt": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "buckle": {
+      "kind": "reflect",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -92,6 +116,30 @@
     },
     "reinforcing_bands": {
       "kind": "damp"
+    },
+    "shell": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "hard_liner": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "strap": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "pack_frame": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "hip_belt": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "buckle": {
+      "kind": "damp",
+      "flaw": 0
     }
   },
   "books": [

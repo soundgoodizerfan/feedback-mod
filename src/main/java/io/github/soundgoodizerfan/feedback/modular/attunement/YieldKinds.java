@@ -44,7 +44,7 @@ public final class YieldKinds {
         if (player.level().isClientSide)
             return;
         int levels = 0;
-        for (ItemStack worn : player.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(player))
             if (!worn.isEmpty())
                 levels += level(worn, "scavenge");
         if (levels == 0)

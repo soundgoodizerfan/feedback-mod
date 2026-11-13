@@ -49,7 +49,7 @@ public final class WagerKinds {
         LivingEntity wearer = event.getEntity();
         if (wearer.level().isClientSide || event.getAmount() <= 0f)
             return;
-        for (ItemStack stack : wearer.getArmorSlots())
+        for (ItemStack stack : GearKinds.worn(wearer))
             if (TideKinds.level(stack, "gamble_ward") > 0) {
                 if (wearer.getRandom().nextFloat() < WIN_HIT)
                     event.setCanceled(true);

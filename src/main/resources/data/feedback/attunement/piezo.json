@@ -16,6 +16,24 @@
     },
     "pistons": {
       "kind": "pulse"
+    },
+    "shell": {
+      "kind": "arc"
+    },
+    "hard_liner": {
+      "kind": "arc"
+    },
+    "strap": {
+      "kind": "arc"
+    },
+    "pack_frame": {
+      "kind": "arc"
+    },
+    "hip_belt": {
+      "kind": "arc"
+    },
+    "buckle": {
+      "kind": "arc"
     }
   },
   "mirror": {
@@ -39,6 +57,24 @@
     },
     "pistons": {
       "kind": "sense"
+    },
+    "shell": {
+      "kind": "soak"
+    },
+    "hard_liner": {
+      "kind": "soak"
+    },
+    "strap": {
+      "kind": "soak"
+    },
+    "pack_frame": {
+      "kind": "soak"
+    },
+    "hip_belt": {
+      "kind": "soak"
+    },
+    "buckle": {
+      "kind": "soak"
     }
   }
 }

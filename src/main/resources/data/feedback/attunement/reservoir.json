@@ -43,9 +43,28 @@
     },
     "tank_shell": {
       "kind": "reserve"
+    },
+    "shell": {
+      "kind": "reserve"
+    },
+    "hard_liner": {
+      "kind": "reserve"
+    },
+    "strap": {
+      "kind": "reserve"
+    },
+    "pack_frame": {
+      "kind": "reserve"
+    },
+    "hip_belt": {
+      "kind": "reserve"
+    },
+    "buckle": {
+      "kind": "reserve"
     }
   },
   "books": [
     "minecraft:infinity"
-  ]
+  ],
+  "mirror": {}
 }

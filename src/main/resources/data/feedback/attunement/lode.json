@@ -25,6 +25,24 @@
     },
     "magnet_core": {
       "kind": "draw"
+    },
+    "shell": {
+      "kind": "worn_draw"
+    },
+    "hard_liner": {
+      "kind": "worn_draw"
+    },
+    "strap": {
+      "kind": "worn_draw"
+    },
+    "pack_frame": {
+      "kind": "worn_draw"
+    },
+    "hip_belt": {
+      "kind": "worn_draw"
+    },
+    "buckle": {
+      "kind": "worn_draw"
     }
   },
   "mirror": {
@@ -51,6 +69,24 @@
     },
     "magnet_core": {
       "kind": "fling"
+    },
+    "shell": {
+      "kind": "worn_fling"
+    },
+    "hard_liner": {
+      "kind": "worn_fling"
+    },
+    "strap": {
+      "kind": "worn_fling"
+    },
+    "pack_frame": {
+      "kind": "worn_fling"
+    },
+    "hip_belt": {
+      "kind": "worn_fling"
+    },
+    "buckle": {
+      "kind": "worn_fling"
     }
   },
   "books": [

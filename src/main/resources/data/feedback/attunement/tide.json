@@ -20,6 +20,9 @@
     },
     "compressor_rotor": {
       "kind": "douse"
+    },
+    "shell": {
+      "kind": "douse"
     }
   },
   "mirror": {
@@ -53,6 +56,14 @@
     },
     "outer_sleeve": {
       "kind": "seal"
+    },
+    "shell": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "hard_liner": {
+      "kind": "seal",
+      "flaw": 1
     }
   },
   "books": [

@@ -14,6 +14,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.Material.Perk;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.GearKinds;
 import io.github.soundgoodizerfan.feedback.modular.attunement.Attunements;
 import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import io.github.soundgoodizerfan.feedback.modular.combat.ThrownWeapon;
@@ -173,7 +174,7 @@ public final class MaterialPerks {
     public static void onWornHit(LivingIncomingDamageEvent event) {
         if (!(event.getSource().getEntity() instanceof LivingEntity attacker) || event.getEntity().level().isClientSide)
             return;
-        for (ItemStack worn : event.getEntity().getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(event.getEntity()))
             for (Attunement attunement : attunements(worn))
                 AttunementKinds.struck(attacker, attunement);
     }

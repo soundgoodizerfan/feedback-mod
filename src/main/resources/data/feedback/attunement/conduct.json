@@ -48,6 +48,30 @@
     },
     "yoke": {
       "kind": "shed"
+    },
+    "shell": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "hard_liner": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "strap": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "pack_frame": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "hip_belt": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "buckle": {
+      "kind": "shed",
+      "flaw": -1
     }
   },
   "books": [

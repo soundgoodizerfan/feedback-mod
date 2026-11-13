@@ -250,6 +250,24 @@
     },
     "cleat": {
       "kind": "mend"
+    },
+    "shell": {
+      "kind": "mend"
+    },
+    "hard_liner": {
+      "kind": "mend"
+    },
+    "strap": {
+      "kind": "mend"
+    },
+    "pack_frame": {
+      "kind": "mend"
+    },
+    "hip_belt": {
+      "kind": "mend"
+    },
+    "buckle": {
+      "kind": "mend"
     }
   },
   "mirror": {
@@ -404,6 +422,24 @@
       "kind": "tithe"
     },
     "reinforcing_bands": {
+      "kind": "tithe"
+    },
+    "shell": {
+      "kind": "tithe"
+    },
+    "hard_liner": {
+      "kind": "tithe"
+    },
+    "strap": {
+      "kind": "tithe"
+    },
+    "pack_frame": {
+      "kind": "tithe"
+    },
+    "hip_belt": {
+      "kind": "tithe"
+    },
+    "buckle": {
       "kind": "tithe"
     }
   },

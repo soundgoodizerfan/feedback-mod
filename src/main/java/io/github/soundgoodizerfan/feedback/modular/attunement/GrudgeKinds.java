@@ -94,7 +94,7 @@ public final class GrudgeKinds {
         if (TideKinds.level(held, "build") == 0)
             return;
         int grudge = TideKinds.level(held, "grudge"), calm = TideKinds.level(held, "calm");
-        for (ItemStack worn : wearer.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(wearer))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn)) {
                 if (a.kind().equals("grudge"))
                     grudge += a.level();

@@ -44,6 +44,30 @@
     },
     "outer_sleeve": {
       "kind": "grudge"
+    },
+    "shell": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "hard_liner": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "strap": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "pack_frame": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "hip_belt": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "buckle": {
+      "kind": "grudge",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -84,6 +108,24 @@
       "kind": "calm"
     },
     "outer_sleeve": {
+      "kind": "calm"
+    },
+    "shell": {
+      "kind": "calm"
+    },
+    "hard_liner": {
+      "kind": "calm"
+    },
+    "strap": {
+      "kind": "calm"
+    },
+    "pack_frame": {
+      "kind": "calm"
+    },
+    "hip_belt": {
+      "kind": "calm"
+    },
+    "buckle": {
       "kind": "calm"
     }
   },

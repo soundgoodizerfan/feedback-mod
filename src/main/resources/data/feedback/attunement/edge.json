@@ -65,6 +65,30 @@
     },
     "cutter_head": {
       "kind": "pad"
+    },
+    "shell": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "hard_liner": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "strap": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "pack_frame": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "hip_belt": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "buckle": {
+      "kind": "deflect",
+      "flaw": 1
     }
   },
   "starter": true,

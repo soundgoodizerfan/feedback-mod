@@ -133,7 +133,7 @@ public final class TideKinds {
         sync(player, Attributes.OXYGEN_BONUS, SEAL, level(player.getItemBySlot(EquipmentSlot.HEAD), "seal") * SEAL_PER_LEVEL);
         sync(player, Attributes.WATER_MOVEMENT_EFFICIENCY, STRIDE, level(player.getItemBySlot(EquipmentSlot.FEET), "stride") * STRIDE_PER_LEVEL);
         sync(player, Attributes.SUBMERGED_MINING_SPEED, AFFINITY, level(player.getMainHandItem(), "affinity") * AFFINITY_PER_LEVEL);
-        if (player.isOnFire() && level(player.getMainHandItem(), "douse") > 0)
+        if (player.isOnFire() && level(player.getMainHandItem(), "douse") + level(io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.wornStack(player), "douse") > 0)
             player.clearFire();
     }
 

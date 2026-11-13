@@ -252,6 +252,25 @@
     },
     "cleat": {
       "kind": "soak"
+    },
+    "shell": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "hard_liner": {
+      "kind": "soak"
+    },
+    "strap": {
+      "kind": "soak"
+    },
+    "pack_frame": {
+      "kind": "soak"
+    },
+    "hip_belt": {
+      "kind": "soak"
+    },
+    "buckle": {
+      "kind": "soak"
     }
   },
   "starter": true,
@@ -261,5 +280,6 @@
     "minecraft:blast_protection",
     "minecraft:fire_protection",
     "minecraft:feather_falling"
-  ]
+  ],
+  "mirror": {}
 }

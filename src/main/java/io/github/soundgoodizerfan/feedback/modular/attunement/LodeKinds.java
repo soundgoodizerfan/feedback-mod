@@ -103,7 +103,7 @@ public final class LodeKinds {
 
     private static int worn(LivingEntity wearer, String kind) {
         int n = 0;
-        for (ItemStack piece : wearer.getArmorSlots())
+        for (ItemStack piece : GearKinds.worn(wearer))
             n += live(piece, wearer.level(), kind);
         return n;
     }

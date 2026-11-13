@@ -22,6 +22,24 @@
     },
     "lamp_filament": {
       "kind": "glow"
+    },
+    "shell": {
+      "kind": "worn_glow"
+    },
+    "hard_liner": {
+      "kind": "worn_glow"
+    },
+    "strap": {
+      "kind": "worn_glow"
+    },
+    "pack_frame": {
+      "kind": "worn_glow"
+    },
+    "hip_belt": {
+      "kind": "worn_glow"
+    },
+    "buckle": {
+      "kind": "worn_glow"
     }
   },
   "mirror": {
@@ -45,6 +63,24 @@
     },
     "lamp_filament": {
       "kind": "dim"
+    },
+    "shell": {
+      "kind": "worn_dim"
+    },
+    "hard_liner": {
+      "kind": "worn_dim"
+    },
+    "strap": {
+      "kind": "worn_dim"
+    },
+    "pack_frame": {
+      "kind": "worn_dim"
+    },
+    "hip_belt": {
+      "kind": "worn_dim"
+    },
+    "buckle": {
+      "kind": "worn_dim"
     }
   }
 }

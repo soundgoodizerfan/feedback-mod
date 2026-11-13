@@ -34,6 +34,24 @@
     },
     "rim_ring": {
       "kind": "lure"
+    },
+    "shell": {
+      "kind": "worn_lure"
+    },
+    "hard_liner": {
+      "kind": "worn_lure"
+    },
+    "strap": {
+      "kind": "worn_lure"
+    },
+    "pack_frame": {
+      "kind": "worn_lure"
+    },
+    "hip_belt": {
+      "kind": "worn_lure"
+    },
+    "buckle": {
+      "kind": "worn_lure"
     }
   },
   "mirror": {
@@ -69,6 +87,24 @@
     },
     "rim_ring": {
       "kind": "scare"
+    },
+    "shell": {
+      "kind": "worn_scare"
+    },
+    "hard_liner": {
+      "kind": "worn_scare"
+    },
+    "strap": {
+      "kind": "worn_scare"
+    },
+    "pack_frame": {
+      "kind": "worn_scare"
+    },
+    "hip_belt": {
+      "kind": "worn_scare"
+    },
+    "buckle": {
+      "kind": "worn_scare"
     }
   },
   "books": [

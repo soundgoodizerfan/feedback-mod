@@ -19,6 +19,25 @@
     },
     "trigger": {
       "kind": "gamble"
+    },
+    "shell": {
+      "kind": "gamble_ward"
+    },
+    "hard_liner": {
+      "kind": "gamble_ward"
+    },
+    "strap": {
+      "kind": "gamble_ward"
+    },
+    "pack_frame": {
+      "kind": "gamble_ward"
+    },
+    "hip_belt": {
+      "kind": "gamble_ward"
+    },
+    "buckle": {
+      "kind": "gamble_ward"
     }
-  }
+  },
+  "mirror": {}
 }

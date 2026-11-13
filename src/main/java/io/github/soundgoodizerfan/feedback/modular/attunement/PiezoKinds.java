@@ -126,10 +126,7 @@ public final class PiezoKinds {
         LivingEntity wearer = event.getEntity();
         if (wearer.level().isClientSide || event.getAmount() <= 0f || event.getSource().is(DamageTypeTags.BYPASSES_INVULNERABILITY))
             return;
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            if (!slot.isArmor())
-                continue;
-            ItemStack worn = wearer.getItemBySlot(slot);
+        for (ItemStack worn : GearKinds.worn(wearer)) {
             if (worn.isEmpty())
                 continue;
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn)) {
@@ -148,7 +145,7 @@ public final class PiezoKinds {
                     float cut = (event.getAmount() - SOAK_ABOVE) * Math.min(SOAK_CUT_MAX, SOAK_CUT_PER_LEVEL * a.level());
                     event.setAmount(event.getAmount() - cut);
                     // Worn only by the spike it took, a point per started 2 absorbed, never to destruction.
-                    worn.hurtAndBreak(ModularStacks.cap(worn, (int) Math.ceil(cut / 2f)), wearer, slot);
+                    worn.hurtAndBreak(ModularStacks.cap(worn, (int) Math.ceil(cut / 2f)), wearer, EquipmentSlot.CHEST);
                 }
             }
         }

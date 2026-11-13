@@ -44,6 +44,24 @@
     },
     "machine_winding": {
       "kind": "ignite_target"
+    },
+    "shell": {
+      "kind": "ignite_attacker"
+    },
+    "hard_liner": {
+      "kind": "ignite_attacker"
+    },
+    "strap": {
+      "kind": "ignite_attacker"
+    },
+    "pack_frame": {
+      "kind": "ignite_attacker"
+    },
+    "hip_belt": {
+      "kind": "ignite_attacker"
+    },
+    "buckle": {
+      "kind": "ignite_attacker"
     }
   },
   "mirror": {
@@ -87,6 +105,21 @@
       "kind": "insulate"
     },
     "housing": {
+      "kind": "insulate"
+    },
+    "hard_liner": {
+      "kind": "insulate"
+    },
+    "strap": {
+      "kind": "insulate"
+    },
+    "pack_frame": {
+      "kind": "insulate"
+    },
+    "hip_belt": {
+      "kind": "insulate"
+    },
+    "buckle": {
       "kind": "insulate"
     }
   },

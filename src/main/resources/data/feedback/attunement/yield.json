@@ -31,6 +31,30 @@
     },
     "second_barrel": {
       "kind": "fortune"
+    },
+    "shell": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "hard_liner": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "strap": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "pack_frame": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "hip_belt": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "buckle": {
+      "kind": "scavenge",
+      "flaw": 0
     }
   },
   "mirror": {

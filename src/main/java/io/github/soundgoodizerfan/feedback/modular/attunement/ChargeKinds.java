@@ -65,7 +65,7 @@ public final class ChargeKinds {
         float n = TideKinds.level(weapon, "build");
         if (n == 0)
             return 0;
-        for (ItemStack worn : wearer.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(wearer))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn))
                 if (a.kind().equals("capacitor"))
                     n += a.level() * a.material().ampacity().orElse(0f);

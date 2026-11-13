@@ -25,6 +25,24 @@
     },
     "second_barrel": {
       "kind": "feed"
+    },
+    "shell": {
+      "kind": "worn_reserve"
+    },
+    "hard_liner": {
+      "kind": "worn_reserve"
+    },
+    "strap": {
+      "kind": "worn_reserve"
+    },
+    "pack_frame": {
+      "kind": "worn_reserve"
+    },
+    "hip_belt": {
+      "kind": "worn_reserve"
+    },
+    "buckle": {
+      "kind": "worn_reserve"
     }
   },
   "mirror": {
@@ -51,6 +69,24 @@
     },
     "second_barrel": {
       "kind": "drain"
+    },
+    "shell": {
+      "kind": "worn_famine"
+    },
+    "hard_liner": {
+      "kind": "worn_famine"
+    },
+    "strap": {
+      "kind": "worn_famine"
+    },
+    "pack_frame": {
+      "kind": "worn_famine"
+    },
+    "hip_belt": {
+      "kind": "worn_famine"
+    },
+    "buckle": {
+      "kind": "worn_famine"
     }
   }
 }

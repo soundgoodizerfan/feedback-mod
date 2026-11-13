@@ -107,6 +107,16 @@ public final class HeatKinds {
             if (slot.getType() != EquipmentSlot.Type.HUMANOID_ARMOR)
                 continue;
             ItemStack worn = event.getEntity().getItemBySlot(slot);
+            kept *= insulateKept(worn);
+        }
+        if (event.getEntity() instanceof net.minecraft.world.entity.player.Player p)
+            kept *= insulateKept(io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.wornStack(p));
+        event.setAmount(event.getAmount() * Math.max(kept, 1f - INSULATE_MAX));
+    }
+
+    private static float insulateKept(ItemStack worn) {
+        float kept = 1f;
+        {
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn)) {
                 if (!a.kind().equals("insulate"))
                     continue;
@@ -115,7 +125,7 @@ public final class HeatKinds {
                 kept *= 1f - INSULATE_PER_LEVEL * a.level() * INSULATE_HALF_CONDUCTIVITY / (INSULATE_HALF_CONDUCTIVITY + k);
             }
         }
-        event.setAmount(event.getAmount() * Math.max(kept, 1f - INSULATE_MAX));
+        return kept;
     }
 
     /** A kill made with a Heat+ edge in hand (a blade or a gun barrel) is the advancement. */

@@ -74,7 +74,7 @@ public final class EdgeKinds {
         if (!event.getSource().is(DamageTypeTags.IS_PROJECTILE))
             return;
         float share = 0f;
-        for (ItemStack worn : event.getEntity().getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(event.getEntity()))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn))
                 if (a.kind().equals("deflect"))
                     share += a.level() * a.material().hardness().value() * DEFLECT_PER_HARDNESS;

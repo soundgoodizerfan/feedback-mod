@@ -104,7 +104,7 @@ public final class EchoKinds {
 
     private static int worn(LivingEntity wearer, String kind) {
         int n = 0;
-        for (ItemStack stack : wearer.getArmorSlots())
+        for (ItemStack stack : GearKinds.worn(wearer))
             n += TideKinds.level(stack, kind);
         return n;
     }
@@ -114,7 +114,7 @@ public final class EchoKinds {
         LivingEntity wearer = event.getEntity();
         if (replaying || wearer.level().isClientSide || event.getAmount() <= 0f)
             return;
-        for (ItemStack stack : wearer.getArmorSlots()) {
+        for (ItemStack stack : GearKinds.worn(wearer)) {
             if (stack.isEmpty())
                 continue;
             int level = 0;

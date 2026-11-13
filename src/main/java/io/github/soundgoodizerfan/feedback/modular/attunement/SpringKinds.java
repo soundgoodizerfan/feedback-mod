@@ -48,6 +48,7 @@ public final class SpringKinds {
             if (wear && level > 0)
                 stack.setDamageValue(Math.min(stack.getMaxDamage() - 1, stack.getDamageValue() + level * COIL_WEAR_PER_LEVEL));
         }
+        total += level(io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.wornStack(player), "coil");
         return total;
     }
 

@@ -32,6 +32,30 @@
     },
     "gearbox_case": {
       "kind": "coil"
+    },
+    "shell": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "hard_liner": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "strap": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "pack_frame": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "hip_belt": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "buckle": {
+      "kind": "coil",
+      "flaw": 1
     }
   },
   "mirror": {

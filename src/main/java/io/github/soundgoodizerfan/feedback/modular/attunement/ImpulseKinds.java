@@ -124,7 +124,7 @@ public final class ImpulseKinds {
             return;
         LivingEntity wearer = event.getEntity();
         float share = 0f;
-        for (ItemStack worn : wearer.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(wearer))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn))
                 if (a.kind().equals("reflect"))
                     share += a.level() * REFLECT_PER_LEVEL;
@@ -137,7 +137,7 @@ public final class ImpulseKinds {
         if (!event.getSource().is(DamageTypeTags.IS_EXPLOSION) && !event.getSource().is(DamageTypeTags.IS_FALL))
             return;
         float share = 0f;
-        for (ItemStack worn : event.getEntity().getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(event.getEntity()))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn))
                 if (a.kind().equals("damp"))
                     share += a.level() * DAMP_PER_LEVEL;

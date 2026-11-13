@@ -111,7 +111,7 @@ public final class PackKinds {
         if (wearer.level().isClientSide)
             return;
         int pack = 0, lone = 0;
-        for (ItemStack worn : wearer.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(wearer))
             for (MaterialPerks.Attunement a : MaterialPerks.attunements(worn)) {
                 if (a.kind().equals("pack_guard"))
                     pack += a.level();

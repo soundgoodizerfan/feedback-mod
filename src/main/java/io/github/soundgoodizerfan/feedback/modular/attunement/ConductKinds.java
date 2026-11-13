@@ -159,7 +159,7 @@ public final class ConductKinds {
 
     private static int shed(LivingEntity entity) {
         int n = 0;
-        for (ItemStack worn : entity.getArmorSlots())
+        for (ItemStack worn : GearKinds.worn(entity))
             n += TideKinds.level(worn, "shed");
         return n;
     }

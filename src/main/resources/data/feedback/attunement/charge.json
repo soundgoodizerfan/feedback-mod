@@ -39,6 +39,30 @@
     },
     "case": {
       "kind": "capacitor"
+    },
+    "shell": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "hard_liner": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "strap": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "pack_frame": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "hip_belt": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "buckle": {
+      "kind": "capacitor",
+      "flaw": 1
     }
   },
   "mirror": {

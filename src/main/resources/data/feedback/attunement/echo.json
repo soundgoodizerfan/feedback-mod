@@ -22,6 +22,24 @@
     },
     "second_barrel": {
       "kind": "echo_blow"
+    },
+    "shell": {
+      "kind": "echo_wear"
+    },
+    "hard_liner": {
+      "kind": "echo_wear"
+    },
+    "strap": {
+      "kind": "echo_wear"
+    },
+    "pack_frame": {
+      "kind": "echo_wear"
+    },
+    "hip_belt": {
+      "kind": "echo_wear"
+    },
+    "buckle": {
+      "kind": "echo_wear"
     }
   },
   "mirror": {
@@ -45,6 +63,24 @@
     },
     "second_barrel": {
       "kind": "lag_blow"
+    },
+    "shell": {
+      "kind": "lag_hit"
+    },
+    "hard_liner": {
+      "kind": "lag_hit"
+    },
+    "strap": {
+      "kind": "lag_hit"
+    },
+    "pack_frame": {
+      "kind": "lag_hit"
+    },
+    "hip_belt": {
+      "kind": "lag_hit"
+    },
+    "buckle": {
+      "kind": "lag_hit"
     }
   }
 }

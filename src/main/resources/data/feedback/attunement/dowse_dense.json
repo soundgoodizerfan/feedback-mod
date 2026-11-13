@@ -28,6 +28,24 @@
     },
     "rim_ring": {
       "kind": "point_dense"
+    },
+    "shell": {
+      "kind": "worn_point_dense"
+    },
+    "hard_liner": {
+      "kind": "worn_point_dense"
+    },
+    "strap": {
+      "kind": "worn_point_dense"
+    },
+    "pack_frame": {
+      "kind": "worn_point_dense"
+    },
+    "hip_belt": {
+      "kind": "worn_point_dense"
+    },
+    "buckle": {
+      "kind": "worn_point_dense"
     }
   },
   "mirror": {
@@ -57,6 +75,24 @@
     },
     "rim_ring": {
       "kind": "away_dense"
+    },
+    "shell": {
+      "kind": "worn_away_dense"
+    },
+    "hard_liner": {
+      "kind": "worn_away_dense"
+    },
+    "strap": {
+      "kind": "worn_away_dense"
+    },
+    "pack_frame": {
+      "kind": "worn_away_dense"
+    },
+    "hip_belt": {
+      "kind": "worn_away_dense"
+    },
+    "buckle": {
+      "kind": "worn_away_dense"
     }
   }
 }
