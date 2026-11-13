@@ -59,3 +59,7 @@ See [Hazards](Hazards.md) for the general rules.
 A charged battery with a case rated MV or more shocks whoever touches it; see [Hazards](Hazards.md#shock).
 
 An [Arc Welder](Arc_Welder.md) draws its charge from a Battery in your inventory. A [Charger](Charger.md) takes one Battery item, and the chestplate of an [Exosuit](Exosuit.md) holds the Battery that runs the suit; a [Charging Gantry](Charging_Gantry.md) charges it while worn.
+
+## Attunements
+
+**Mend** on the plates or case closes the wear. **Charge** on the plates or case holds more charge, and a seated **Piezo** head or knocking engine beside the battery tops it up a little per stroke. The case also takes **Ground**, **Spring**, **Reservoir** and **Grudge**. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

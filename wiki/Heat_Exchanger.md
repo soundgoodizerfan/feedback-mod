@@ -47,3 +47,7 @@ There's no power, no switch and no direction to set. Heat always runs downhill. 
 - **Gentle cooling**: bleed heat out of a vessel into a cooler neighbor instead of opening a [Damper](Damper.md).
 - Cooling through an exchanger counts as cooling for processes like tempering.
 - **Cooling a [Condenser](Condenser.md)**: a condenser only works below boiling. An exchanger between it and the boiler hands the steam's heat back to the boiler.
+
+## Attunements
+
+A heat exchanger whose two sides stand far apart in temperature cracks its wall: thermal shock wears the core and fins. **Ward** on either slows it and **Mend** closes it, paid in experience from the nearest player within 6 blocks. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

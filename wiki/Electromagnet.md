@@ -54,3 +54,7 @@ You can check a magnet's condition with [Calipers](Instruments.md#calipers), but
 
 - Put the magnet a block or two above a hopper line, and dropped iron will gather over the hopper.
 - A magnet doesn't care whether something is hot, so it'll happily pull a glowing steel ingot too.
+
+## Attunements
+
+**Lode** on the magnet core reaches further, **Scatter** throws the magnetic items it would draw; **Ward** and **Mend** handle its overload wear, and the yoke takes **Ground**. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

@@ -45,3 +45,7 @@ Set it over a heat source, and set a Boiler on top of it. The store warms toward
 - Only part of the heat comes back out, so the round trip from fuel or power to steam is poor.
 
 A coil charging a store from spare electricity and a Boiler drawing it down at night is the use. See [Heat](Heat.md) for how heat moves between touching blocks.
+
+## Attunements
+
+**Spring** on the store core makes the wall hold more heat, **Snap** makes it give its heat up sooner, and **Cold** on the lagging sheds less of it. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

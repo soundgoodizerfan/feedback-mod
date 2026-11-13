@@ -79,3 +79,7 @@ Misuse heats the machine more and wears it:
 - A fine winding on a steam engine makes MV, enough to charge an MV-rated [Battery](Battery.md) through a [Charger](Charger.md).
 - A heavy-dense winding on a turbine makes EHV and powers an [Arc Furnace](Arc_Furnace.md#power).
 - A motor starts a [Gas Turbine](Gas_Turbine.md) spinning.
+
+## Attunements
+
+**Mend** on the frame, winding, core, housing or bearing closes the wear. **Heat** on the winding or core runs it hotter and loses more of its power as heat, **Cold** the reverse; **Conduct** on the winding loses less to resistance. **Hold** on the frame carries more torque, **Slip** less. Mounts take **Bait**, **Dowse**; the housing takes **Ground**, **Spring**, **Reservoir** and **Grudge**. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

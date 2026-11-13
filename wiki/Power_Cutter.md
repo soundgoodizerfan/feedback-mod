@@ -65,3 +65,7 @@ A correct cut wears nothing. A head wears from misuse only:
 - a supply over the EHV rating.
 
 A worn head cuts slower and never stops. See [Hazards](Hazards.md).
+
+## Attunements
+
+A cutting head takes **Ward** and **Mend** against its misuse wear, **Edge** to cut faster and **Spread** to cut slower, and **Bane**, **Kin** or **Mark** on the creatures around the saw. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

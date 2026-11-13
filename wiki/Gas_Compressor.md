@@ -43,3 +43,7 @@ Use the item on a compressor to fit it (one per compressor); a [Crowbar](Crowbar
 If the front can take nothing more, the compressor **surges**: its condition falls, down to a floor of 20%, and it moves proportionally less. Only this wears it. Running into a line with room never does. Back off, or open the line to a [Gas Tank](Gas_Tank.md) or a consumer.
 
 Read the line with a [Pressure Gauge](Instruments.md#pressure-gauge).
+
+## Attunements
+
+**Edge** on the rotor moves more per turn and takes more to turn; **Spread** the reverse. **Heat** runs the rotor hotter, **Cold** and **Tide** cooler. **Ward** and **Mend** handle surge wear. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

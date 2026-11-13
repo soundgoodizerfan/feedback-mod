@@ -27,3 +27,7 @@ An addon is an optional extra part made from raw stock, added when you assemble 
 ## It can burst
 
 Over the danger line on its tooltip the tank can burst, the chance climbing as the pressure does. At the critical pressure it is certain. The gas is lost with it, in an explosion. The only way to reach that line is to compress more in than you draw off. Burning the gas off or using it keeps the pressure down.
+
+## Attunements
+
+Wear only builds while the pressure is past the danger line, faster the nearer the critical line. A worn shell bursts at a lower pressure: one worn to its floor lets go at 60% of its rated pressure. **Ward** on the tank shell or its bands slows the wear; **Mend** closes it, paid in experience from a reserve housing or the nearest player within 6 blocks; **Tithe** pays out experience orbs for the wear instead. **Pull** on the shell or bands blunts a burst; **Reservoir**, **Grudge** and **Calm** on the shell hold experience or take a blast. Details and the rest of the effects are on the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

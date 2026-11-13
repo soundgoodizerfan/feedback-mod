@@ -84,3 +84,7 @@ Breaking an engine keeps its design (compression included) and the wear of its s
 
 - Want speed? Short stroke, light strong metal. Want pulling power? Big bore, lots of cylinders.
 - Engine speed is easily fast enough to trip an [Overspeed Trip](Overspeed_Trip.md) if you gear it up, so put one inline to protect anything delicate.
+
+## Attunements
+
+**Mend** on the block, pistons, crankshaft or cylinder head closes the knock wear. **Piezo** or **Gauge** on the pistons charges a jar or battery beside the engine, or tells you each knock in words, at the knock beat. The block takes **Reservoir** and **Grudge**; the pistons also take **Bane**, **Kin**, **Mark**, **Ring** and **Hush**. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

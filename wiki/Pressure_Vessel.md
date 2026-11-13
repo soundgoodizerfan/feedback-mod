@@ -57,3 +57,7 @@ Set the vessel on a [Firebox](Firebox.md) (or lava) and it can sterilize jars of
 Nothing draws the stored air back out, and no instrument reads its pressure. It's mostly a demonstration that equipment can be pushed past its limits, and a reason to put a [Valve](Valve.md) or [Clutch](Clutch.md) on a bellows line.
 
 With Jade, the vessel shows its inside temperature (read as a thermometer would), how many jars it holds, how many are sealed or gone mushy, and how far the slowest jar is from sealing (in words; the exact percentage only at the truth tier). A jar not yet sealed says *Partly sterilized* in its tooltip once heating has begun.
+
+## Attunements
+
+Wear only builds while the pressure is past the danger line, faster the nearer the critical line. A worn shell bursts at a lower pressure: one worn to its floor lets go at 60% of its rated pressure. **Ward** on the shell or its bands slows the wear; **Mend** closes it, paid in experience from a reserve housing or the nearest player within 6 blocks; **Tithe** pays out experience orbs for the wear instead. **Pull** on the shell or bands blunts a burst; **Reservoir**, **Grudge** and **Calm** on the shell hold experience or take a blast. Details and the rest of the effects are on the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

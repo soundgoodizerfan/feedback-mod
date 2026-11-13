@@ -44,3 +44,7 @@ If there's nowhere for the fluid to go in front, it doesn't pump.
 
 - Pumping **up** adds a lift load on top of the flat load: 6 Su with a standard impeller, more with an axial one, less with a screw. Level and downward cost nothing extra.
 - It has no switch. Put a [Clutch](Clutch.md) on its shaft.
+
+## Attunements
+
+**Ward** and **Mend** on the impeller or volute handle the wear a pump takes from running dry or against a closed line; a worn pump moves less. **Edge** makes the impeller move more per turn and take more to turn, **Spread** the reverse; **Pull** lifts higher, **Slip** drives through liquid with less load. **Bloom** or **Reap** on the impeller tends crops beside it, and **Ring** or **Hush** on it makes or silences vibrations. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

@@ -35,3 +35,7 @@ Cermet Powder, Tungsten Carbide Powder and Osmium Powder from the [Mixer](Mixer.
 ## Press or hammer?
 
 The hammer is cheap, gentle and adjustable, but needs a linkage and attention. The press is expensive and blunt, but simple to drive. Pick the press when you want force without building a gear train; pick the hammer when you need a light touch.
+
+## Attunements
+
+A seated head takes **Mend**, **Echo**, **Lag**, **Wager**, **Pack**, **Lone**, **Piezo**, **Gauge**, **Hunger**, **Famine** and **Recall** as well, which change each stroke or act on the crew around the machine. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

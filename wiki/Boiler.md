@@ -89,3 +89,7 @@ The **scale** axis (1 to 10) says how many plain boilers the one block is. Mass,
 
 - Remember to refill the water, or close the loop with a [Condenser](Condenser.md) and [Pump](Pump.md).
 - A [Pressure Gauge](Instruments.md#pressure-gauge) reads the pressure. Without one, watch for the hiss.
+
+## Attunements
+
+Wear only builds while the pressure is past the danger line, faster the nearer the critical line. A worn shell bursts at a lower pressure: one worn to its floor lets go at 60% of its rated pressure. **Ward** on the boiler shell or its bands slows the wear; **Mend** closes it, paid in experience from a reserve housing or the nearest player within 6 blocks; **Tithe** pays out experience orbs for the wear instead. **Pull** on the shell or bands blunts a burst; **Reservoir**, **Grudge** and **Calm** on the shell hold experience or take a blast. Details and the rest of the effects are on the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

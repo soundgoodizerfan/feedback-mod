@@ -39,3 +39,7 @@ It's heavy, so a network with a water wheel on it is slow to spin up but steady 
 ## Notes
 
 - Its speed wanders with the water, which is why a [Timer](Timer.md) run off a water wheel doesn't always give the same result twice.
+
+## Attunements
+
+**Ward** and **Mend** on the rim or rim ring handle the wear a wheel takes when held still in flowing water; a worn wheel turns less. **Impulse** on the rim pushes harder from the flow, **Momentum** carries more momentum, and **Bloom**, **Reap**, **Bane**, **Kin**, **Mark** and **Dowse** work on the land and creatures around it. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

@@ -58,3 +58,7 @@ A jar smooths a pulse and carries you over a gap. For power that lasts, use a [B
 A jar rated **MV** or more and holding charge shocks whoever touches it, walking into it or right-clicking it. See [Hazards](Hazards.md#shock).
 
 See also: [Jar Baton](Jar_Baton.md), which draws a jar's charge and spends it on a melee hit.
+
+## Attunements
+
+**Charge** on the glass or sleeve, and **Conduct** on the foil, hold more charge or carry a harder discharge; **Slip** on the glass or sleeve leaks less. A hammer or press head with **Piezo** beside the jar charges it a little per stroke. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

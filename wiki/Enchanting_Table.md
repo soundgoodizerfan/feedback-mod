@@ -110,10 +110,72 @@ Some effects need the material to be right: **Heat** on a handle is only as hot 
 
 ## On a machine
 
-A machine's parts are attuned at the table like a tool's, and a built machine's tooltip lists them. Each part has a place in the machine: a **working face** (what does the work, such as a hammer head), a **housing** or a **mount**.
+A machine's parts are attuned at the table like a tool's, and a built machine's tooltip lists them. Each part has a place in the machine: a **working face** (what does the work: a head, rotor, impeller, winding), a **housing** (shells, cases, linings) or a **mount** (frames, bearings, shafts). The table lists an effect on a part only where the machine does something with it.
 
-- **Ward** slows the wear that misuse causes. It acts on a [Mechanical Hammer](Mechanical_Hammer.md) or [Mechanical Press](Mechanical_Press.md) head, on the frame, winding, core, housing and bearing of a [Dynamotor](Dynamotor.md), on the plates and case of a [Battery](Battery.md), and on the block, pistons, crankshaft and cylinder head of an [Engine](Engine.md) that knocks. Boilers, pressure vessels and gas tanks take none. About 1 in (levels + 1) of the wear gets through: one level halves it, two levels leave a third.
-- **Edge** on the head of a Mechanical Hammer or Mechanical Press raises the blow by 25% for each level.
+### Wear and repair
+
+- **Ward** slows the wear that misuse causes, on every part named on the machine's page. About 1 in (levels + 1) of the wear gets through: one level halves it, two levels leave a third. It turns away the wear of a [Pressure Vessel](Pressure_Vessel.md), [Boiler](Boiler.md) or [Gas Tank](Gas_Tank.md) held past its danger line, of a [Pump](Pump.md) running dry or against a closed line, of a [Water Wheel](Water_Wheel.md) held still in flowing water, of a [Flywheel](Flywheel.md) past its rim speed, of a [Mechanical Hammer](Mechanical_Hammer.md) or [Mechanical Press](Mechanical_Press.md) stroke that achieves nothing, and the overload, knock, surge and thermal-shock wear of a [Dynamotor](Dynamotor.md), [Battery](Battery.md), [Engine](Engine.md), [Gas Compressor](Gas_Compressor.md), [Heat Exchanger](Heat_Exchanger.md), [Electromagnet](Electromagnet.md) and [Lamp](Lamp.md).
+- **Mend** closes a machine's wear on any part Ward takes. Each step costs 1 experience point, about every 2 seconds, paid first from a reserve housing on the machine (see Reservoir below), then from the nearest player within 6 blocks who has experience. With nobody near and no reserve, the machine stays worn.
+- **Tithe** (Mend's mirror) on a vessel, boiler or tank shell or its reinforcing bands pays out experience orbs for the wear the shell takes.
+- A worn pressure vessel, boiler or gas tank shell bursts at a lower pressure: a shell worn to its floor lets go at 60% of its rated pressure. Shell wear only accrues above the danger line.
+- **Slip** (Hold's mirror) on a frame turns some misuse wear into slipping, at the price of torque.
+
+### Working parts
+
+| Effect | In a machine | Parts |
+| --- | --- | --- |
+| **Edge** | The face moves more per turn and takes more to turn; a saw or plasma head cuts faster; a hammer or press head hits 25% harder per level | Pump Impeller, Compressor Rotor, Cutting Head, hammer and press heads |
+| **Spread** | The same reversed: less per turn, less to turn, a gentler stroke, a slower cut | the same parts |
+| **Heat** | The face runs hotter and loses more of its power as heat | Compressor Rotor, Core, Machine Winding |
+| **Cold** | The face runs colder and loses less as heat; a lagging or housing sheds less of its heat | the same, plus Lagging and Housing |
+| **Charge** | A battery, jar or galvanic cell holds more charge | Plates, Case, Foil, Jar Glass, Outer Sleeve, Cell Anode |
+| **Conduct** | A winding loses less to resistance; a jar's foil carries a harder discharge | Machine Winding, Foil |
+| **Impulse** | A nozzle or water wheel pushes harder: more thrust, more push from the flow | Thruster Nozzle, Wheel Rim |
+| **Pull** | A pump lifts higher; on a vessel, boiler or tank shell a burst blows less hard | Pump Impeller; Vessel Shell, Boiler Shell, Tank Shell, Reinforcing Bands |
+| **Momentum** | A flywheel or water wheel carries more momentum | Flywheel Disc, Crank Flywheel, Wheel Rim |
+| **Stance** | A flywheel's rim holds to a higher speed before it lets go | Flywheel Disc |
+| **Hold** | A flywheel bearing holds its rim to a higher speed; a frame carries more torque | Flywheel Bearing, Frame |
+| **Glaze** | A flywheel drags less in the air and on its bearings | Flywheel Disc |
+| **Tide** | A compressor rotor runs cooler | Compressor Rotor |
+| **Slip** | A pump drives through liquid with less load; a jar leaks less charge | Pump Impeller; Jar Glass, Outer Sleeve |
+| **Gleam** | A lamp filament gives its light on less current | Lamp Filament |
+| **Murk** | The filament runs cooler and burns out later | Lamp Filament |
+| **Lode** | An electromagnet's core reaches further | Magnet Core |
+| **Scatter** | The core throws the magnetic items it would draw, and reaches further | Magnet Core |
+| **Spring** | A thermal store's wall holds more heat | Store Core |
+| **Snap** | The wall gives its heat up sooner | Store Core |
+| **Echo** | Each stroke of a hammer or press repeats a beat later at a share of its strength | hammer and press heads |
+| **Lag** | Each stroke lands one stroke late; a stroke held too long is lost | the same heads |
+| **Wager** | Each stroke is double or does nothing | the same heads |
+| **Pack** / **Lone** | A stroke hits harder for each other attuned machine within a few blocks (Pack) or when none stands near (Lone) | the same heads |
+| **Piezo** | Each stroke of a seated head, and each knock beat of an engine, charges a Leyden jar or battery beside the machine a little | the same heads, Pistons |
+| **Gauge** | Tells whoever stands near, in words, how hard each stroke landed | the same heads, Pistons |
+| **Yield** | A pivot mast head with Fortune doubles the loot of the blocks it breaks, one with Intact breaks them out whole | [Pivot Mast](Pivot_Mast.md) head |
+| **Recall** | A seated head goes to whoever breaks the machine, or the nearest player when it is blown up, instead of falling loose | hammer, press and mast heads |
+| **Hunger** | A working machine feeds the saturation of players within a few blocks | seated heads |
+| **Famine** | A working machine takes strength from players within a few blocks and weakens hostile mobs there | seated heads |
+
+### Around the machine
+
+These act on the world near a running machine, every 2 seconds or so. A machine that wears acts only while it runs; Mend, Reservoir and Grudge work either way.
+
+| Effect | In a machine | Parts |
+| --- | --- | --- |
+| **Bait** / **Spook** | Animals nearby walk toward the machine (Bait) or keep away (Spook) | Frame, Bearing, Crankshaft, Flywheel Bearing, Crank Arm, Rim Ring |
+| **Bloom** / **Reap** | Crops beside the machine take a bone-meal step (Bloom), or ripe ones are harvested and replanted (Reap) | Pump Impeller, Wheel Rim |
+| **Bane** | Undead and arthropods within a few blocks are cut | Cutting Head, Flywheel Disc, Pistons, Wheel Rim |
+| **Kin** | Undead within a few blocks lose interest | the same parts |
+| **Mark** | Hostile mobs within a few blocks are marked | the same parts |
+| **Ring** | A vibration every few seconds that sculk and wandering hostile mobs notice | Flywheel Disc, Pistons, Pump Impeller, Compressor Rotor |
+| **Hush** | Silences the vibrations made near the machine | the same parts |
+| **Dowse** | The machine's Jade tooltip carries the needle, in compass words, toward (or away from, with Shun) the nearest magnetic, dense, conductive or flammable block | Frame, Bearing, Crankshaft, Flywheel Bearing, Crank Arm, Rim Ring |
+| **Ground** | A lightning strike within a few blocks of the machine is grounded: no harm, no fire | Housing, Case, Gearbox Case, Outer Sleeve, Yoke |
+| **Spring** | Whatever falls onto the machine takes no fall damage and is thrown back up, higher the further it fell | Housing, Case, Volute, Gearbox Case |
+| **Reservoir** | Holds experience points: orbs drifting near are drawn in, Tithe fills it first, and Mend draws on it before any player | Housing, Case, Volute, Engine Block, vessel, boiler and tank shells |
+| **Grudge** | A blast that would break the housing is taken, with a chance per level, and the damage kept, then given back to the nearest hostile creature within a few blocks | Housing, Case, Volute, Engine Block, the three shells, Gearbox Case, Outer Sleeve |
+| **Calm** | The same blast is taken and shed | the same parts |
+
+Heads named here are the heads seated in a Mechanical Hammer, Mechanical Press, [Power Cutter](Power_Cutter.md) (a cutting head) or Pivot Mast. Which effects a given part takes is shown on its row in the effect list at the table.
 
 ## On a gun
 

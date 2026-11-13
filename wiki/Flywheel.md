@@ -58,3 +58,7 @@ A micro flywheel's rim holds **4 times** the full-size speed before it strains. 
 - A [Controller](Controller.md) that flips a clutch fast and makes the speed jump around.
 
 Not on a line you need to stop precisely.
+
+## Attunements
+
+**Ward** and **Mend** on the disc, rim band or bearing handle the wear of running past the rim speed. **Hold** on the bearing, and **Stance** on the disc, raise the speed the rim holds to; **Momentum** on the disc carries more momentum, **Glaze** drags less. **Bane**, **Kin**, **Mark**, **Ring**, **Hush**, **Bait** and **Dowse** act on the world around it. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

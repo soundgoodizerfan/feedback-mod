@@ -40,6 +40,10 @@ The arm turns slowly. A longer arm and a heavier head ask more of the drive, and
 
 A tip knows nothing about what it works on. A Cutting tip cuts green crop as readily as ripe, so switch the drive with a [Ripeness Probe](Sensors.md): seat it as the sensing head, link the mast to a Controller, and stop the arm while the crop is unripe. A Breaking tip on a block too hard for the head does not break it and wears the head by the difference. A Striking tip hurts anything living, a player included.
 
+## Attunements
+
+A seated head takes **Yield**: **Fortune** doubles the loot of the blocks the arm breaks, **Intact** breaks them out whole. It also takes **Mend**, **Recall**, **Hunger** and **Famine** like a hammer head. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.
+
 ## See also
 
 - [Sensors](Sensors.md), [Controller](Controller.md), [Rotation](Rotation.md)

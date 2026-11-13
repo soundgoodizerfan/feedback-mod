@@ -23,3 +23,7 @@ It glows in four steps by how well it is fed: dark, **dim**, **bright** and **fu
 - **Twice its rated packet or more** (more with a tougher filament or a ballast), which an HV line or higher delivers unless the cable takes most of it, burns the panel out at once. A burnt lamp is dark, draws nothing and stays dark; break it and place another by hand.
 
 See [Electricity](Electricity.md#under-and-over) for how machines take too much or too little.
+
+## Attunements
+
+**Gleam** on the filament gives its light on less current; **Murk** runs it cooler so it burns out later. **Ward** and **Mend** handle overvoltage wear. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

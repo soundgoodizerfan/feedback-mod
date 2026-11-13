@@ -98,3 +98,7 @@ A head attuned with **Ward** takes only part of that wear, and one with **Edge**
 - A [Clutch](Clutch.md) between the source and the linkage lets you stop the hammer without stopping everything else.
 - A [Timer](Timer.md) or a [Controller](Controller.md) can stop it for you. That's the first real automation problem in the mod.
 - A hot ingot is cooling from the moment it leaves the fire, so keep the hammer close to the crucible.
+
+## Attunements
+
+Beyond Ward and Edge above, a seated head takes **Mend** (it closes the head's wear), **Echo**, **Lag**, **Wager**, **Pack**, **Lone**, **Piezo**, **Gauge**, **Hunger**, **Famine** and **Recall**, which change each stroke or act on the crew around the machine. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.
