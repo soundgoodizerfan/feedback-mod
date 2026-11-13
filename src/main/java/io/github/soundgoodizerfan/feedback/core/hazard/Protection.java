@@ -47,14 +47,24 @@ public final class Protection {
         return false;
     }
 
-    /** The highest voltage of a bare conductor this player is insulated from, or {@code 0}. */
-    public static float shockProofVolts(Player player) {
+    /** The highest band of a bare conductor this player is insulated from, or null if none. */
+    @org.jetbrains.annotations.Nullable
+    public static io.github.soundgoodizerfan.feedback.core.unit.VoltageBand shockProofBand(Player player) {
         Level level = player.level();
-        float best = 0f;
+        io.github.soundgoodizerfan.feedback.core.unit.VoltageBand best = null;
         for (ItemStack stack : carried(player))
-            if (stack.getItem() instanceof Insulator in)
-                best = Math.max(best, in.shockProofVolts(stack, level));
+            if (stack.getItem() instanceof Insulator in) {
+                var band = in.shockProofBand(stack, level);
+                if (band != null && (best == null || band.compareTo(best) > 0))
+                    best = band;
+            }
         return best;
+    }
+
+    /** Whether a glove this player holds or wears is rated to {@code band} or above. */
+    public static boolean shockProof(Player player, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band) {
+        var rated = shockProofBand(player);
+        return rated != null && rated.compareTo(band) >= 0;
     }
 
     private static java.util.List<ItemStack> carried(Player player) {

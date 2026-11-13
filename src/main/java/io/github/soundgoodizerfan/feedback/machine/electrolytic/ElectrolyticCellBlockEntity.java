@@ -57,7 +57,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * <h2>Voltage is a threshold, current is the rate</h2>
  * A process asks for "at least this voltage; this much current is how fast it
  * goes", never a bare Eu cost. So this sink does not run on {@link ElectricRules#rate}. Every amp
- * delivered moves {@link ElectricMachineTuning#QU_PER_AMP_TICK} of metal a tick, and the voltage it sees decides
+ * delivered moves {@link ElectricMachineTuning#QU_PER_PACKET} of metal a tick, and the voltage it sees decides
  * only <em>which</em> metal: below a metal's deposition potential no amount of current plates it,
  * which is one of 6.5's genuine physical thresholds and so a hard gate in the §7 sense.
  *
@@ -157,7 +157,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
         super.onResolved(band, eu, amps, wanted, blocked);
         burning = !work.isEmpty() && amps > burnAmps(work);
-        working = amps > 0f && conducts() && electrolyse(eu > 0f && band.compareTo(ElectricMachineTuning.ELECTROLYSIS_WATER_BAND) >= 0, amps * ElectricMachineTuning.QU_PER_AMP_TICK * condition);
+        working = amps > 0f && conducts() && electrolyse(eu > 0f && band.compareTo(ElectricMachineTuning.ELECTROLYSIS_WATER_BAND) >= 0, amps * ElectricMachineTuning.QU_PER_PACKET * condition);
 
         float excess = ElectricRules.overVoltage(band, eu, ratedBand());
         if (excess > 0f) {

@@ -7,6 +7,7 @@ import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import java.util.ArrayList;
 import java.util.List;
@@ -647,11 +648,11 @@ public class ElectricGameTests {
 
     /**
      * A crank turning a shaft into a dynamotor run as a generator (the default figures: small frame, coarse winding),
-     * and a magnet on it: it holds the shaft's RPM times its winding's volts-per-RPM, the magnet is delivered current, and the
-     * same figure times that current is charged to the shaft.
+     * and a magnet on it: it holds the winding's band, the magnet is delivered current, and the Eu a tick drawn, over what a shaft at
+     * that speed carries per Su, is charged to the shaft.
      */
     @GameTest(template = "empty", timeoutTicks = 140)
-    public static void dynamoVoltsFollowTheShaftAndDrawLoadsIt(GameTestHelper helper) {
+    public static void dynamoHoldsItsBandAndDrawLoadsTheShaft(GameTestHelper helper) {
         BlockPos at = new BlockPos(0, 2, 0);
         HandCrankBlockEntity crank = RotationGameTests.crankRun(helper, at, 2);
         helper.setBlock(at.east(3), FBlocks.DYNAMOTOR.get().defaultBlockState()
@@ -663,11 +664,12 @@ public class ElectricGameTests {
         helper.runAtTickTime(110, () -> {
             float rpm = MachineTuning.HAND_CRANK_RPM.value();
             helper.assertTrue(Math.abs(dynamo.getShaftRpm() - rpm) < 1e-3, "the dynamo is turned at the crank's speed, got " + dynamo.getShaftRpm());
-            helper.assertTrue(dynamo.getBand() == ElectricRules.bandOfPotential(rpm * dynamo.getVoltsPerRpm()),
-                    "the winding's EMF at this speed falls in a band, held " + dynamo.getBand());
+            helper.assertTrue(dynamo.getBand() == ModularTuning.WINDING_BAND[0],
+                    "the winding sets the band, held " + dynamo.getBand());
             helper.assertTrue(Math.abs(magnet.getAmps() - ElectricMachineTuning.ELECTROMAGNET_AMPS) < EPS, "the magnet is delivered what it wants");
-            helper.assertTrue(Math.abs(dynamo.getShaftLoad().value() - ElectricMachineTuning.ELECTROMAGNET_AMPS * dynamo.getVoltsPerRpm()) < EPS,
-                    "the dynamo charges its shaft volts-per-RPM x amps, got " + dynamo.getShaftLoad().value());
+            float expected = ElectricMachineTuning.ELECTROMAGNET_AMPS * ElectricRules.packetEu(dynamo.getBand()) / (ElectricTuning.EU_PER_SU_RPM * rpm);
+            helper.assertTrue(Math.abs(dynamo.getShaftLoad().value() - expected) < 1e-3,
+                    "the dynamo loads its shaft with the Eu drawn over what the shaft carries, got " + dynamo.getShaftLoad().value() + ", wanted " + expected);
             for (BlockPos p : BlockPos.betweenClosed(0, 2, 0, 4, 2, 0))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             RotationGameTests.done(helper);
@@ -676,8 +678,8 @@ public class ElectricGameTests {
 
     /**
      * A crank turns a generator, a cable carries its current to a machine run as a motor, and the motor turns a shaft of its
-     * own: the shaft spins, never past the motor's no-load speed (the voltage it sees over the winding figure), and the
-     * motor's torque is that same figure times its current.
+     * own: the shaft spins, never past the motor's no-load speed (its rated speed at the packet it sees), and the
+     * motor's torque is its Su per amp times its current.
      */
     @GameTest(template = "empty", timeoutTicks = 160)
     public static void motorTurnsAShaftFromTheLine(GameTestHelper helper) {
@@ -698,8 +700,8 @@ public class ElectricGameTests {
             float rpm = motor.getShaftRpm();
             helper.assertTrue(rpm > 0, "the motor turns its shaft");
             helper.assertTrue(rpm <= motor.noLoadRpm() + EPS, "never past no-load speed " + motor.noLoadRpm() + ", got " + rpm);
-            helper.assertTrue(Math.abs(motor.getShaftTorque().value() - motor.getAmps() * motor.getVoltsPerRpm() * motor.getCondition()) < EPS,
-                    "torque is volts-per-RPM x amps x condition, got " + motor.getShaftTorque().value() + " at " + motor.getAmps() + " A, condition " + motor.getCondition());
+            helper.assertTrue(Math.abs(motor.getShaftTorque().value() - motor.getAmps() * motor.getSuPerAmp() * motor.getCondition()) < EPS,
+                    "torque is Su-per-amp x amps x condition, got " + motor.getShaftTorque().value() + " at " + motor.getAmps() + " A, condition " + motor.getCondition());
             for (BlockPos p : BlockPos.betweenClosed(0, 2, 1, 4, 4, 1))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             RotationGameTests.done(helper);
@@ -727,19 +729,20 @@ public class ElectricGameTests {
         helper.runAtTickTime(12, () -> helper.assertFalse(jar.isSupplying(), "mid-pulse the jar is charging"));
         helper.runAtTickTime(30, () -> {
             helper.assertFalse(generator.isPulsing(), "the pulse is over");
-            helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source; held " + jar.getStoredVolts() + ", sees " + jar.getPacketEu() + " Eu, " + jar.getAmps() + " A");
-            charged[0] = jar.getStoredVolts();
-            // The jar charges at LEYDEN_JAR_CHARGE_AMPS for the length of the pulse, so it holds that much charge over its capacitance, never past the source.
-            float expected = ElectricMachineTuning.ELECTROSTATIC_PULSE_TICKS * ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS / ElectricMachineTuning.LEYDEN_JAR_CAPACITANCE;
-            helper.assertTrue(charged[0] > 0.8f * expected && charged[0] <= ElectricRules.bandPotential(ElectricMachineTuning.ELECTROSTATIC_BAND) + EPS,
-                    "the jar charged to about " + expected + " V and never past its source's voltage, held " + charged[0]);
+            helper.assertTrue(jar.isSupplying(), "with the pulse gone the jar is the source; held " + jar.getStoredEu() + ", sees " + jar.getPacketEu() + " Eu, " + jar.getAmps() + " A");
+            charged[0] = jar.getStoredEu();
+            // The jar charges at LEYDEN_JAR_CHARGE_AMPS packets for the length of the pulse, never past what it holds.
+            float expected = Math.min(jar.capacity(), ElectricMachineTuning.ELECTROSTATIC_PULSE_TICKS * ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS
+                    * ElectricRules.packetEu(ElectricMachineTuning.ELECTROSTATIC_BAND));
+            helper.assertTrue(charged[0] > 0.7f * expected && charged[0] <= jar.capacity() + EPS,
+                    "the jar charged to about " + expected + " Eu and never past its capacity, held " + charged[0]);
             placeMagnet(helper, jarAt.east());
         });
         helper.runAtTickTime(40, () -> {
             ElectromagnetBlockEntity magnet = (ElectromagnetBlockEntity) helper.getBlockEntity(jarAt.east());
             helper.assertTrue(magnet.getAmps() > 0.5f && magnet.getFieldStrength() > 0f,
                     "the magnet runs on the jar, delivered " + magnet.getAmps() + " A");
-            helper.assertTrue(jar.getStoredVolts() < charged[0], "and the jar empties as it does");
+            helper.assertTrue(jar.getStoredEu() < charged[0], "and the jar empties as it does");
             for (BlockPos p : BlockPos.betweenClosed(generatorAt, jarAt.east()))
                 helper.setBlock(p, Blocks.AIR.defaultBlockState());
             helper.succeed();
@@ -763,7 +766,7 @@ public class ElectricGameTests {
     /** Ticks until {@code ingots} ingots' worth of metal has gone through at the cell's own current. */
     private static int ticksFor(int ingots) {
         return Math.round(ingots * FTuning.QU_PER_INGOT.value()
-                / (ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS * ElectricMachineTuning.QU_PER_AMP_TICK));
+                / (ElectricMachineTuning.ELECTROLYTIC_CELL_AMPS * ElectricMachineTuning.QU_PER_PACKET));
     }
 
     private static void run(ElectrolyticCellBlockEntity cell, VoltageBand band, int ticks) {
@@ -851,7 +854,7 @@ public class ElectricGameTests {
                 IFluidHandler.FluidAction.EXECUTE);
         cell.insertAnode(new ItemStack(Items.COPPER_INGOT));
         cell.hangWork(new ItemStack(Items.IRON_INGOT));
-        int ticks = Math.round(qu / (amps * ElectricMachineTuning.QU_PER_AMP_TICK));
+        int ticks = Math.round(qu / (amps * ElectricMachineTuning.QU_PER_PACKET));
         for (int i = 0; i < ticks; i++)
             cell.onResolved(VoltageBand.LV, ElectricRules.packetEu(VoltageBand.LV), amps, amps, false);
         return cell.takeWork();
@@ -981,25 +984,23 @@ public class ElectricGameTests {
         return battery;
     }
 
-    /** A line at the nominal band voltage (LV 1.5 V) sits under one cell's 2.1 V: it must not charge it, and says what happens. */
+    /** A battery rated MV on an LV line: a band under its rating adds no charge and costs no condition. */
     @GameTest(template = "empty", timeoutTicks = 600)
-    public static void batteryOnALowBandLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
+    public static void batteryOnALineBelowItsBandDoesNotCharge(GameTestHelper helper) {
         var battery = chargingBattery(helper, 1, 0.5f, VoltageBand.LV);
         helper.runAtTickTime(300, () -> {
-            helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
-                    + ", terminal " + battery.terminalVolts() + " V");
+            helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a band under the rating adds no charge; soc " + battery.stateOfCharge());
             helper.assertTrue(battery.getCondition() > 0.999f, "and costs no condition, now " + battery.getCondition());
             helper.succeed();
         });
     }
 
-    /** Three cells (6.3 V full) on a nominal MV line (6 V). */
+    /** A battery rated MV on an MV line charges, and wears nothing doing it. */
     @GameTest(template = "empty", timeoutTicks = 600)
-    public static void batteryOnAMediumBandLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
+    public static void batteryOnALineAtItsBandCharges(GameTestHelper helper) {
         var battery = chargingBattery(helper, 3, 0.5f, VoltageBand.MV);
         helper.runAtTickTime(300, () -> {
-            helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
-                    + ", terminal " + battery.terminalVolts() + " V");
+            helper.assertTrue(battery.stateOfCharge() > 0.5001f, "its own band charges it; soc " + battery.stateOfCharge());
             helper.assertTrue(battery.getCondition() > 0.999f, "and costs no condition, now " + battery.getCondition());
             helper.succeed();
         });

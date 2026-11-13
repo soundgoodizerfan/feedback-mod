@@ -266,7 +266,7 @@ public final class FTuning {
 
     /**
      * Placeholder. Torque ceiling of the three frames, in Su: what the shaft can carry through the machine at full
-     * load. The large frame at {@link ModularTuning#MACHINE_REFERENCE_RPM} is about 15 kW (1 Su x 1 RPM is 1 W).
+     * load. The large frame at a gas turbine's 240 RPM is about 15 kW (1 Su x 1 RPM is 1 W).
      */
     public static final float FRAME_SU_SMALL = 2f, FRAME_SU_MEDIUM = 16f, FRAME_SU_LARGE = 64f;
 
@@ -275,19 +275,9 @@ public final class FTuning {
             FRAME_MASS_LARGE = new ThermalMass(60f);
 
     /**
-     * Placeholder. The four windings' volts per RPM, which is also the Su each amp costs the shaft (the dynamo's old rule),
-     * four times each: coarse and fine are what the old fixed windings were (a steam engine's
-     * {@link VesselTuning#STEAM_ENGINE_RPM} makes {@link ElectricTuning#BAND_POTENTIAL_LV} on coarse and {@link ElectricTuning#BAND_POTENTIAL_MV} on fine); dense is
-     * 360 V (EHV) at a gas turbine's 240 RPM, heavy-dense 1,440 V (Trunk).
-     */
-    public static final float WINDING_VOLTS_PER_RPM_COARSE = ElectricTuning.BAND_POTENTIAL_LV / 16f,
-            WINDING_VOLTS_PER_RPM_FINE = ElectricTuning.BAND_POTENTIAL_MV / 16f, WINDING_VOLTS_PER_RPM_DENSE = 1.5f,
-            WINDING_VOLTS_PER_RPM_HEAVY_DENSE = 6f;
-
-    /**
      * Placeholder. Amps a winding carries per unit of its conductor's {@code ampacity} (copper 1) per cell of wire in the
      * winding part: a dense winding is four cells, so copper reaches 44 A, past what a large frame lets through at
-     * 1.5 V per RPM (64 / 1.5 = 42.7 A).
+     * the heavy winding's torque per amp.
      */
     public static final float WINDING_AMPS_PER_AMPACITY = 11f;
 
@@ -299,12 +289,11 @@ public final class FTuning {
 
     /**
      * Placeholders, the lead-acid battery (roadmap E4, tier-by-tier spec in docs/dev/machine.md). A cell holds
-     * {@code BATTERY_INGOTS_PER_CELL} ingots of plate and {@code ampTicksPerIngot} of its material per ingot; a
+     * {@code BATTERY_INGOTS_PER_CELL} ingots of plate and {@code euPerIngot} of its material per ingot; a
      * full battery may be emptied in {@code BATTERY_DISCHARGE_TICKS} (max current is capacity over that) and an
      * empty one fills in {@code BATTERY_CHARGE_TICKS} (charge current likewise). {@code BATTERY_CHARGE_EFFICIENCY}
      * is the share of charged work kept; the rest heats the case. The acid fills at {@code BATTERY_ACID_MB_PER_CELL};
-     * the water tank is vented by overcharge. {@code BATTERY_GASSING_FACTOR} is the share over a full cell's volts at
-     * which charging electrolyses water. Self-discharge is the share lost a day, caught up lazily.
+     * the water tank is vented by overcharge (a band over the case's). Self-discharge is the share lost a day, caught up lazily.
      */
     public static final int BATTERY_INGOTS_PER_CELL = 2;
 

@@ -88,11 +88,20 @@ public final class ElectricMachineTuning {
     public static final float GALVANIC_CELL_AMPS = 1f;
 
     /**
-     * Placeholder (user ruling, 2026-10-23: a cell eats its anode). Amp-ticks a full anode lasts: 24000 is 20 minutes
-     * at the cell's full {@link #GALVANIC_CELL_AMPS}. An ingot of the anode metal fed to the cell restores
+     * Placeholder (user ruling, 2026-10-23: a cell eats its anode). Eu a full anode delivers: 768000 is 20 minutes
+     * of the cell's full {@link #GALVANIC_CELL_AMPS} at the bottom band. An ingot of the anode metal fed to the cell restores
      * {@link #GALVANIC_ANODE_PER_INGOT} of a full anode.
      */
-    public static final float GALVANIC_ANODE_AMP_TICKS = 24000f, GALVANIC_ANODE_PER_INGOT = 0.5f;
+    public static final float GALVANIC_ANODE_EU = 768000f, GALVANIC_ANODE_PER_INGOT = 0.5f;
+
+    /**
+     * Placeholder. The cell's chemistry (its electrode pair, in series) gives a potential that is never shown or carried: the line sees
+     * only the band it falls in, the highest band whose floor, in the electrode figures' own volts, it reaches. LV below all.
+     */
+    public static final float[] GALVANIC_BAND_FLOOR = {0f, 5.4f, 21.6f, 86.4f, 345.6f, 1382.4f};
+
+    /** Placeholder. Work an electrolyser's body warms per Eu it takes in. */
+    public static final float ELECTROLYSER_HEAT_PER_EU = 0.05f;
 
     /**
      * Placeholder. An electrostatic machine's pulse: band, amps and how many ticks one turn of
@@ -166,7 +175,7 @@ public final class ElectricMachineTuning {
      * takes 600 t (30 s); a galvanic cell's single amp takes 4800 t (4 min). Was 1/480 when an
      * ingot was 10 Qu; scaled by 9/10 for the nugget definition so those times stand.
      */
-    public static final float QU_PER_AMP_TICK = 0.001875f;
+    public static final float QU_PER_PACKET = 0.001875f;
 
     public static final float ELECTROLYTIC_CELL_AMPS = 8f;
 
@@ -210,7 +219,7 @@ public final class ElectricMachineTuning {
 
     /**
      * Placeholder. The heating coil. The current it asks for, and Joule's law in
-     * this mod's units: Work per volt-amp per tick (no type, as Faraday's {@link #QU_PER_AMP_TICK}
+     * this mod's units: Work per volt-amp per tick (no type, as Faraday's {@link #QU_PER_PACKET}
      * has none). Chosen so a fine dynamo at a steam engine's speed (6 V at 2 A) holds a small
      * vessel near 290 Tu -- just under a copper element's limit -- and a hand-cranked one near
      * 560 Tu, past copper's and iron's both. Not yet a smelter: that is power a later source owes.
@@ -285,14 +294,13 @@ public final class ElectricMachineTuning {
     public static final int JACKET_TICKS_PER_MB = 20;
 
     /**
-     * Placeholder. The Leyden jar. Capacitance in amp-ticks per volt: one
-     * electrostatic pulse (1 A for 20 ticks) puts 20 amp-ticks in, which fills it to its source's
-     * 1.5 V with a little to spare. It charges at a cell's current, so a generator or cell is not
-     * overdrawn by filling it, and gives back up to {@code BURST_AMPS}. It loses
-     * {@code LEAK_PER_TICK} of its charge a tick (half in about 17 s). {@code SWITCH_VOLTS} is the
-     * margin it flips role on, so a jar sitting at its supply's voltage does not chatter.
+     * Placeholder. The Leyden jar. It holds {@code CAPACITY_PACKETS} packets of its band in Eu (one electrostatic pulse, 0.5 A for
+     * 20 ticks, is exactly ten packets, so one turn of the handle fills the reference jar). It charges at {@code CHARGE_AMPS}
+     * packets a tick, so a generator or cell is not overdrawn by filling it, and gives back up to {@code BURST_AMPS}. It loses
+     * {@code LEAK_PER_TICK} of its charge a tick (half in about 17 s). {@code EMPTY_EU} is the charge under which it reads empty.
+     * {@code BAND} is the band of a jar not built from a design (a creative copy): the glass of a built one sets its own.
      */
-    public static final float LEYDEN_JAR_CAPACITANCE = 10f;
+    public static final float LEYDEN_JAR_CAPACITY_PACKETS = 10f;
 
     public static final float LEYDEN_JAR_CHARGE_AMPS = 1f;
 
@@ -300,24 +308,18 @@ public final class ElectricMachineTuning {
 
     public static final float LEYDEN_JAR_LEAK_PER_TICK = 0.002f;
 
-    public static final float LEYDEN_JAR_SWITCH_VOLTS = 0.01f;
+    public static final float LEYDEN_JAR_EMPTY_EU = 0.5f;
+
+    public static final VoltageBand LEYDEN_JAR_BAND = VoltageBand.HV;
 
     public static final float BATTERY_DISCHARGE_TICKS = 6000f, BATTERY_CHARGE_TICKS = 3000f;
 
-    public static final float BATTERY_SWITCH_VOLTS = 0.05f;
-
-    /** Volts per cell over the terminal at which a battery asks its full charge current; under it the ask tapers to nothing, so a weak line settles instead of sagging under the terminal. */
-    public static final float BATTERY_TAPER_VOLTS_PER_CELL = 0.15f;
-
-    /** Share of the gap to its target a battery's charge ask closes each tick; small enough that a long cable's sag cannot make it ring. */
-    public static final float BATTERY_ASK_SMOOTHING = 0.1f;
-
     public static final float BATTERY_SELF_DISCHARGE_PER_DAY = 0.01f;
 
-    public static final float BATTERY_GASSING_FACTOR = 1.1f, BATTERY_TRICKLE_SHARE = 0.05f;
+    public static final float BATTERY_TRICKLE_SHARE = 0.05f;
 
-    /** mB of water electrolysed and of hydrogen released per amp-tick that goes into a full cell. */
-    public static final float BATTERY_VENT_WATER_PER_AMP_TICK = 0.5f, BATTERY_VENT_GAS_PER_AMP_TICK = 0.5f;
+    /** mB of water electrolysed and of hydrogen released per packet that goes into a full cell. */
+    public static final float BATTERY_VENT_WATER_PER_PACKET = 0.5f, BATTERY_VENT_GAS_PER_PACKET = 0.5f;
 
     /** Water below this share of the tank exposes plates: capacity falls linearly to {@code BATTERY_DRY_CAPACITY} when empty. */
     public static final float BATTERY_WATER_LOW_SHARE = 0.2f, BATTERY_DRY_CAPACITY = 0.4f;
@@ -421,8 +423,8 @@ public final class ElectricMachineTuning {
     /** Invented. A pivot head never wears below this condition. */
     public static final float PIVOT_HEAD_FLOOR = 0.15f;
 
-    /** Invented. Volts at or above which a bare touch is a shock to be reckoned with: MV. */
-    public static final float SHOCK_MIN_VOLTS = ElectricTuning.BAND_POTENTIAL_MV;
+    /** Invented. The lowest band at which a charged store's bare terminals are a shock to be reckoned with. */
+    public static final VoltageBand SHOCK_MIN_BAND = VoltageBand.MV;
 
     /**
      * Invented, grid spec 4.1. Arc flash: a Breaker opening under load at {@link #BREAKER_FLASH_MIN_BAND} or more burns whatever
@@ -536,7 +538,7 @@ public final class ElectricMachineTuning {
     public static final float CULTURE_AIR_MB_PER_TICK = 0.1f;
 
     /** Invented. The electrolyser: amps it asks for, mB of feed split per tick per amp at full condition (8 A splits 0.4 mB a tick), its feed and electrode tanks (mB), and what over-voltage costs it. */
-    public static final float ELECTROLYSER_AMPS = 8f, ELECTROLYSER_MB_PER_AMP_TICK = 0.05f,
+    public static final float ELECTROLYSER_AMPS = 8f, ELECTROLYSER_MB_PER_PACKET = 0.05f,
             ELECTROLYSER_CONDITION_FLOOR = 0.2f, ELECTROLYSER_WEAR_PER_EXCESS = 0.00005f;
 
     public static final int ELECTROLYSER_FEED_MB = 2000, ELECTROLYSER_GAS_MB = 2000;

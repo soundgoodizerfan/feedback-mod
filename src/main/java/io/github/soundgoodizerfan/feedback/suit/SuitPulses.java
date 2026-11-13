@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * What the module abilities do in the world. A pulse is one act with a cost in amp-ticks, a cooldown and a reach that grows with the
+ * What the module abilities do in the world. A pulse is one act with a cost in Eu, a cooldown and a reach that grows with the
  * module's power (its core's material); the cloak and the jet are worked every tick by {@link SuitServer}. Every figure is in {@link SuitTuning}.
  */
 final class SuitPulses {
@@ -39,7 +39,7 @@ final class SuitPulses {
         };
     }
 
-    /** Amp-ticks {@code a} costs to fire. */
+    /** Eu {@code a} costs to fire. */
     static float cost(Ability a) {
         return switch (a) {
             case SHOCK -> SuitTuning.SHOCK_COST;

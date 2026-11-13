@@ -83,14 +83,6 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
     }
 
     /**
-     * What an electrochemical device (battery, jar, charger) sees here as a potential; see {@link ElectricRules#seenPotential}.
-     * Never shown to a player.
-     */
-    public float seenPotential() {
-        return ElectricRules.seenPotential(band, seenEu);
-    }
-
-    /**
      * The band a bare hand would meet on this block, or null where a casing or insulation covers it,
      * which is almost everywhere. A conductor whose insulation has gone, and a vessel
      * whose terminals are exposed, say what they hold. {@code Shock} turns it into a hurt, and a

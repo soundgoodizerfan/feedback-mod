@@ -43,7 +43,7 @@ import net.minecraft.world.level.Level;
  *
  * <h2>What it costs</h2>
  * One ingot of the part's wearing material from the pack (told by material and form, never item id), and
- * {@link ItemTuning#WELDER_CHARGE_PER_WELD} amp-ticks from the first charged battery item in the pack. The electrode is the wearing
+ * {@link ItemTuning#WELDER_CHARGE_PER_WELD} Eu from the first charged battery item in the pack. The electrode is the wearing
  * part (hand tools may wear, digest): {@link FDataComponents#TOOL_CONDITION} falls by {@link ItemTuning#WELDER_ELECTRODE_WEAR} a weld
  * to {@link ItemTuning#WELDER_ELECTRODE_FLOOR} and the welder keeps working.
  * <p>

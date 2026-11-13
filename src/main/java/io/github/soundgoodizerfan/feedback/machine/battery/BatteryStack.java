@@ -18,10 +18,10 @@ import net.minecraft.world.item.ItemStack;
 /**
  * A battery as a carried stack: the same physical state {@link BatteryBlockEntity} saves, read and written through the
  * {@link FDataComponents#BATTERY} component, with the same figures. It is what a Charger fills and what a suit draws from. Never ticks:
- * every figure is a function of the saved state, so a battery in a pocket costs nothing.
+ * every figure is a function of the saved state, so a battery in a pocket costs nothing. Charge is stored in Eu; the battery is rated
+ * the band of its case.
  *
- * <p>The formulas copy the block entity's (capacity times condition, cold and water shares; the volts cliff near empty). A change to
- * one is a change to both.
+ * <p>The formulas copy the block entity's (capacity times condition, cold and water shares). A change to one is a change to both.
  */
 public final class BatteryStack {
 
@@ -56,11 +56,21 @@ public final class BatteryStack {
         return t.contains("Condition") ? t.getFloat("Condition") : 1f;
     }
 
-    /** Amp-ticks the cells can hold right now. */
-    public static float effectiveCapacity(CompoundTag t) {
+    private static int cells(CompoundTag t) {
+        return Math.max(1, t.getInt("Cells"));
+    }
+
+    /** Eu one cell can hold right now: its Eu of plate times condition, cold and water. */
+    private static float cellCapacity(CompoundTag t) {
         return t.getFloat("Capacity") * condition(t) * coldShare(t) * waterShare(t);
     }
 
+    /** Eu the cells can hold right now. */
+    public static float effectiveCapacity(CompoundTag t) {
+        return cells(t) * cellCapacity(t);
+    }
+
+    /** Eu stored. */
     public static float charge(CompoundTag t) {
         return t.getFloat("Charge");
     }
@@ -71,60 +81,56 @@ public final class BatteryStack {
         return eff <= 0f ? 0f : Mth.clamp(charge(t) / eff, 0f, 1f);
     }
 
-    /** Terminal volts of the whole stack. */
-    public static float terminalVolts(CompoundTag t) {
-        float soc = stateOfCharge(t);
-        float full = t.contains("VoltsFull") ? t.getFloat("VoltsFull") : 2.1f;
-        float low = t.contains("VoltsLow") ? t.getFloat("VoltsLow") : 1.95f;
-        float empty = t.contains("VoltsEmpty") ? t.getFloat("VoltsEmpty") : 1.6f;
-        float cell = soc > 0.1f ? Mth.lerp((soc - 0.1f) / 0.9f, low, full) : Mth.lerp(soc / 0.1f, empty, low);
-        return Math.max(1, t.getInt("Cells")) * cell;
-    }
-
     /** Filled with its electrolyte: without it nothing happens. */
     public static boolean ready(CompoundTag t) {
-        return t.getFloat("Acid") >= Math.max(1, t.getInt("Cells")) * FTuning.BATTERY_ACID_MB_PER_CELL - 0.5f;
+        return t.getFloat("Acid") >= cells(t) * FTuning.BATTERY_ACID_MB_PER_CELL - 0.5f;
     }
 
     public static boolean full(CompoundTag t) {
         return charge(t) >= effectiveCapacity(t) - 1e-3f;
     }
 
-    /** The highest voltage the case holds off, as a band. */
+    /** The band the battery is rated: the case's. */
     public static VoltageBand caseBand(CompoundTag t) {
         return VoltageBand.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(t.getString("CaseBand"))).result().orElse(VoltageBand.LV);
     }
 
-    /** Amps a battery at this line asks for: it charges while the line is above its terminal, and a full one asks nothing (a stack has no vent). */
-    public static float wantedAmps(CompoundTag t, float lineVolts) {
-        if (!ready(t) || full(t) || lineVolts <= terminalVolts(t) + ElectricMachineTuning.BATTERY_SWITCH_VOLTS)
+    /** Packets a tick a battery at this line asks for: it charges when fed its band or above, and a full one asks nothing (a stack has no vent). */
+    public static float wantedAmps(CompoundTag t, VoltageBand fed, float packetEu) {
+        if (!ready(t) || full(t) || !ElectricRules.accepts(fed, packetEu, caseBand(t)))
             return 0f;
-        return effectiveCapacity(t) / ElectricMachineTuning.BATTERY_CHARGE_TICKS;
+        return cellCapacity(t) / ElectricMachineTuning.BATTERY_CHARGE_TICKS / ElectricRules.packetEu(caseBand(t));
     }
 
     /**
-     * Adds a tick of charge. Returns heat as amps times volts lost to the charge efficiency, which a carrier may dump into a wearer;
-     * a line over the case's band wears the cells, as it does in a placed battery.
+     * Adds a tick of charge: {@code amps} packets of {@code packetEu} at band {@code fed}. Returns the Eu lost to the charge efficiency as heat,
+     * which a carrier may dump into a wearer; a band over the case's wears the cells, as it does in a placed battery.
      */
-    public static float charge(CompoundTag t, float amps, float lineVolts) {
-        return charge(t, amps, lineVolts, 1);
+    public static float charge(CompoundTag t, float amps, VoltageBand fed, float packetEu) {
+        return charge(t, amps, fed, packetEu, 1);
     }
 
-    /** As {@link #charge(CompoundTag, float, float)} for {@code ticks} ticks' worth of current added at once; the over-voltage wear is each tick's. */
-    public static float charge(CompoundTag t, float amps, float lineVolts, int ticks) {
+    /** As {@link #charge(CompoundTag, float, VoltageBand, float)} for {@code ticks} ticks' worth of current added at once; the over-band wear is each tick's. */
+    public static float charge(CompoundTag t, float amps, VoltageBand fed, float packetEu, int ticks) {
         if (amps <= 0f)
             return 0f;
         float eff = t.contains("ChargeEfficiency") ? t.getFloat("ChargeEfficiency") : FTuning.BATTERY_CHARGE_EFFICIENCY;
-        t.putFloat("Charge", Math.min(effectiveCapacity(t), charge(t) + amps * eff));
-        float excess = ElectricRules.overPotential(lineVolts, caseBand(t));
+        float in = amps * packetEu;
+        t.putFloat("Charge", Math.min(effectiveCapacity(t), charge(t) + in * eff));
+        float excess = ElectricRules.overBand(fed, caseBand(t));
         if (excess > 0f)
             t.putFloat("Condition", Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition(t) - ElectricMachineTuning.BATTERY_OVERVOLT_WEAR * excess * ticks));
-        return amps * lineVolts * (1f - eff);
+        return in * (1f - eff);
     }
 
-    /** Takes {@code ampTicks} out; returns how much was actually there. */
-    public static float draw(CompoundTag t, float ampTicks) {
-        float took = Math.min(charge(t), Math.max(0f, ampTicks));
+    /** Puts {@code eu} straight into the cells (a gun's recoil dynamo), held to what they can hold. */
+    public static void store(CompoundTag t, float eu) {
+        t.putFloat("Charge", Math.min(effectiveCapacity(t), charge(t) + Math.max(0f, eu)));
+    }
+
+    /** Takes {@code eu} out; returns how much was actually there. */
+    public static float draw(CompoundTag t, float eu) {
+        float took = Math.min(charge(t), Math.max(0f, eu));
         t.putFloat("Charge", charge(t) - took);
         return took;
     }

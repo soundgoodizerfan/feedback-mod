@@ -130,9 +130,10 @@ public final class ItemInfoHud {
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.DosimeterItem && Readout.instrumented(Quantity.DOSE))
             list.add(Readout.reading(Quantity.DOSE, "feedback.readout.dose", Readout.figure(Quantity.DOSE,
                     player.getData(io.github.soundgoodizerfan.feedback.registry.FCombat.RADIATION_DOSE))));
-        float baton = stack.getOrDefault(FDataComponents.BATON_VOLTS.get(), 0f);
+        float baton = stack.getOrDefault(FDataComponents.BATON_EU.get(), 0f);
         if (baton > 0f && Readout.instrumented(Quantity.BAND))
-            list.add(Readout.reading(Quantity.BAND, "feedback.readout.band", Component.translatable(ElectricRules.bandOfPotential(baton).key())));
+            list.add(Readout.reading(Quantity.BAND, "feedback.readout.band", Component.translatable(
+                    stack.getOrDefault(FDataComponents.BATON_BAND.get(), io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.LV).key())));
         // Wear on a head, bit or probe crystal: a figure only at the truth tier (calipers read machines, not stock).
         Float wear = stack.has(FDataComponents.PROBE_CONDITION.get()) ? Float.valueOf(MassProbeItem.condition(stack))
                 : stack.get(FDataComponents.TOOL_CONDITION.get());

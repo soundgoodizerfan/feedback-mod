@@ -35,8 +35,9 @@ public final class ChargeKinds {
     private static final float SAFE_PER_LEVEL = 8f;
     /** Extra damage a release makes per point of charge. [OPEN] until played */
     private static final float DAMAGE_PER_CHARGE = 0.5f;
-    /** Volts the arc of an overcharged blow carries (MV: it hurts). [OPEN] until played */
-    private static final float ARC_VOLTS = 240f;
+    /** Band of the arc of an overcharged blow, and its Eu in packets of that band. [OPEN] until played */
+    private static final io.github.soundgoodizerfan.feedback.core.unit.VoltageBand ARC_BAND = io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.UHV;
+    private static final float ARC_PACKETS = 1f;
     /** Charge a level of bleed drains per blow. [OPEN] until played */
     private static final float BLEED_PER_LEVEL = 2f;
 
@@ -87,7 +88,7 @@ public final class ChargeKinds {
             float held = stored(weapon), limit = 2 * SAFE_PER_LEVEL * capacity;
             if (held > SAFE_PER_LEVEL * capacity && TideKinds.level(weapon, "bleed") == 0
                     && !ConductKinds.insulated(weapon))
-                Shock.apply(wielder, ARC_VOLTS);
+                Shock.apply(wielder, ARC_BAND, ARC_PACKETS * io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.packetEu(ARC_BAND));
             weapon.set(FDataComponents.CHARGE_STORED.get(), Math.min(limit, held + BUILD_PER_BLOW * a.level()));
         });
         AttunementKinds.onStrike("bleed", (event, a) -> {

@@ -56,7 +56,7 @@ public final class ElectricMechanism implements GunMechanism {
     }
 
     /** The next shot, worked out and not yet spent. */
-    private record Prepared(ElectricGunSpec spec, ModularElectricGun.Source source, CompoundTag drawn, float volts, float joules,
+    private record Prepared(ElectricGunSpec spec, ModularElectricGun.Source source, CompoundTag drawn, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, float joules,
                             float holdShare, float zoomShare, float power, float heatAfter, GunFigures figures) {
     }
 
@@ -73,8 +73,8 @@ public final class ElectricMechanism implements GunMechanism {
         if (source.battery().isEmpty())
             return null;
         CompoundTag drawn = BatteryStack.state(source.battery()).copy();
-        float volts = BatteryStack.terminalVolts(drawn);
-        if (!BatteryStack.ready(drawn) || BatteryStack.charge(drawn) <= 0f || volts <= 0f)
+        io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band = BatteryStack.caseBand(drawn);
+        if (!BatteryStack.ready(drawn) || BatteryStack.charge(drawn) <= 0f)
             return null;
         int cells = Math.max(1, drawn.getInt("Cells"));
         float heat = ModularElectricGun.heat(gun, now, spec.shed());
@@ -86,7 +86,7 @@ public final class ElectricMechanism implements GunMechanism {
         float spin = 1f;
         switch (spec.seat()) {
             case CYLINDER -> {
-                if (ModularElectricGun.chambers(gun, now, spec, volts, cells) < 1f)
+                if (ModularElectricGun.chambers(gun, now, spec, band, cells) < 1f)
                     return null;
             }
             case CAPACITOR_BANK -> {
@@ -124,8 +124,8 @@ public final class ElectricMechanism implements GunMechanism {
             }
         }
         float joules = spec.pulseJ() * spec.seatMult() * power * spin;
-        // The draw: the energy over the volts; a weak cell gives the share it has.
-        float needed = joules / (volts * ModularTuning.EGUN_J_PER_VAMPTICK);
+        // The draw: the pulse's energy in Eu; a weak cell gives the share it has.
+        float needed = joules / ModularTuning.EGUN_J_PER_EU;
         float took = BatteryStack.draw(drawn, needed);
         float fraction = needed <= 0f ? 0f : took / needed;
         joules *= fraction;
@@ -143,7 +143,7 @@ public final class ElectricMechanism implements GunMechanism {
                 figures = figures.oneHanded();
         }
         figures = figures.withCycle(1f / Haste.rate(shooter));
-        return new Prepared(spec, source, drawn, volts, joules, holdShare, zoomShare, power, Math.min(1.5f, heat + gain), figures);
+        return new Prepared(spec, source, drawn, band, joules, holdShare, zoomShare, power, Math.min(1.5f, heat + gain), figures);
     }
 
     @Override
@@ -176,20 +176,19 @@ public final class ElectricMechanism implements GunMechanism {
                              boolean aimed, InteractionHand hand) {
         ElectricGunSpec spec = p.spec();
         // The seat.
-        float volts = p.volts();
+        io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band = p.band();
         int cells = Math.max(1, p.drawn().getInt("Cells"));
         switch (spec.seat()) {
-            case CYLINDER -> ModularElectricGun.setChambers(gun, ModularElectricGun.chambers(gun, now, spec, volts, cells) - 1f, now);
+            case CYLINDER -> ModularElectricGun.setChambers(gun, ModularElectricGun.chambers(gun, now, spec, band, cells) - 1f, now);
             case CAPACITOR_BANK -> ModularElectricGun.spendPip(gun, now, 1, spec.bankRechargeTicks(cells));
             case BURST_BANK -> ModularElectricGun.spendPip(gun, now, ModularTuning.GUN_BURST_ROUNDS, spec.bankRechargeTicks(cells));
-            case RECOIL_DYNAMO -> BatteryStack.charge(p.drawn(), p.joules() * ModularTuning.EGUN_DYNAMO_RETURN
-                    / (volts * ModularTuning.EGUN_J_PER_VAMPTICK), volts);
+            case RECOIL_DYNAMO -> BatteryStack.store(p.drawn(), p.joules() * ModularTuning.EGUN_DYNAMO_RETURN / ModularTuning.EGUN_J_PER_EU);
             default -> {
             }
         }
         p.source().write().accept(rewritten(p.source().battery(), p.drawn()));
         if (shooter instanceof net.minecraft.server.level.ServerPlayer server)
-            ModularElectricGun.mistakes(server, gun, spec, volts, hand);
+            ModularElectricGun.mistakes(server, gun, spec, band, hand);
         if (spec.holdCharge())
             ModularElectricGun.clearHold(gun, now);
         if (spec.zoom())
@@ -212,7 +211,7 @@ public final class ElectricMechanism implements GunMechanism {
             float widen = 1f + ModularTuning.EGUN_PUMP_SPREAD * pumps;
             int beams = spec.beams() > 0 ? spec.beams() + Math.round(spec.beams() * ModularTuning.EGUN_PUMP_BEAMS * pumps) : 0;
             PulseShot.fire(level, shooter, gun, new PulseShot.Plan(spec.delivered(p.joules()), spec.cutoff(p.zoomShare()), spec.pierce(p.holdShare()),
-                    ModularElectricGun.colourOf(gun), beams, spec.fork(), spec.seat() == Seat.CYLINDER, volts, figures.spreadDeg() * widen, widen), yaw, pitch);
+                    ModularElectricGun.colourOf(gun), beams, spec.fork(), spec.seat() == Seat.CYLINDER, band, figures.spreadDeg() * widen, widen), yaw, pitch);
         }
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         GunShots.report(level, shooter, figures, gun, muzzle);
@@ -262,7 +261,7 @@ public final class ElectricMechanism implements GunMechanism {
         float joules = spec.pulseJ() * spec.seatMult();
         GunFigures figures = spec.figures(joules, spec.barrelMass(), spec.cycleTicks(false), 0f, 1f);
         PulseShot.fire(level, mob, gun, new PulseShot.Plan(spec.delivered(joules), spec.cutoff(0f), spec.pierce(0f), ModularElectricGun.colourOf(gun),
-                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_VOLTS, figures.spreadDeg(), 1f), yaw, pitch);
+                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_BAND, figures.spreadDeg(), 1f), yaw, pitch);
         GunShots.report(level, mob, figures, gun, mob.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4)));
         return true;
     }

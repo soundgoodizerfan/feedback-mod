@@ -20,28 +20,24 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Holds charge at a voltage and gives it back in a burst, and leaks. The storage
+ * Holds charge in Eu at a rated band and gives it back in a burst, and leaks. The storage
  * that makes a pulse usable: an electrostatic machine's twenty ticks go into the jar, and come out
  * as long as something draws on it.
  *
- * <h2>Charge, and why it is not a unit</h2>
- * The jar holds {@code charge} in amp-ticks -- current times time, what has flowed in -- and its
- * voltage is charge over {@link ElectricMachineTuning#LEYDEN_JAR_CAPACITANCE}. Like {@code Work}, it is an
- * internal quantity the jar keeps and nothing else reads, so it gets no type: a reading of it is a
- * voltage, which the instruments already speak.
+ * <h2>Rated a band, storing Eu</h2>
+ * The jar's glass sets the band it is rated, and its plate area over wall thickness the packets' worth of Eu it holds
+ * ({@code StoresEu}). It charges when its band or a higher one is fed to it and never from a lower one; a band over its own simply
+ * fills it. What it holds is {@code charge}, in Eu, an internal quantity the jar keeps: a reading of it is how full it is.
  *
  * <h2>One role at a time, and it changes</h2>
- * {@code ElectricMember} gives a node exactly one role, so the jar is a <em>sink</em> while a
- * higher voltage is on its run, charging at a fixed current up to that voltage, and a
- * <em>source</em> once nothing on the run holds it up, offering its own voltage at a large
- * current. It flips when the supply goes (as a sink it sees no more than it holds) or when it is
- * outbid (as a source it is blocked, the resolver's own word for it), and an empty jar always
- * waits as a sink. Role decides which neighbours conduct to it, so a flip rebuilds its run -- an
- * event, not a per-tick cost.
+ * {@code ElectricMember} gives a node exactly one role, so the jar is a <em>sink</em> while its band (or more) is on its run,
+ * charging at a fixed current until it is full, and a <em>source</em> once nothing on the run holds it up, offering its band at a
+ * large current. It flips when the supply goes (as a sink it sees no packet at its band) or when it is outbid (as a source it is
+ * blocked, the resolver's own word for it), and an empty jar always waits as a sink. Role decides which neighbours conduct to it,
+ * so a flip rebuilds its run -- an event, not a per-tick cost.
  * <p>
- * The voltage falls as it empties, so whatever runs on it slows as it goes, by the same
- * {@code ElectricRules.rate} as a long wire: a burst, not a battery. It never refuses and is never
- * destroyed.
+ * It gives back packets of its band until the Eu run out, the last of them fractional: a burst, not a battery. It never refuses and is
+ * never destroyed.
  */
 public class LeydenJarBlockEntity extends ElectricNode {
 
@@ -64,40 +60,52 @@ public class LeydenJarBlockEntity extends ElectricNode {
         figures.collect(components);
     }
 
-    private float capacitance() {
-        return figures.get("Capacitance", ElectricMachineTuning.LEYDEN_JAR_CAPACITANCE);
+    /** The band the jar is rated. */
+    public VoltageBand band() {
+        VoltageBand[] all = VoltageBand.values();
+        return all[Math.max(0, Math.min(all.length - 1, Math.round(figures.get("Band", ElectricMachineTuning.LEYDEN_JAR_BAND.ordinal()))))];
+    }
+
+    /** Eu the jar holds when full. */
+    public float capacity() {
+        return figures.get("StoresEu", ElectricMachineTuning.LEYDEN_JAR_CAPACITY_PACKETS * ElectricRules.packetEu(band()));
     }
 
     public LeydenJarBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.LEYDEN_JAR.get(), pos, state);
     }
 
-    public float getStoredVolts() {
-        return charge / capacitance();
+    /** Eu held. */
+    public float getStoredEu() {
+        return charge;
+    }
+
+    /** How full it is, 0 to 1. */
+    public float fill() {
+        return Math.min(1f, charge / capacity());
     }
 
     /**
-     * A pulse put in by hand (a piezo part's blow): {@code amount} amp-ticks of charge, never taking the jar past
-     * {@code capVolts}. A hand is a tiny source, so what it adds is small and what it can reach is capped low.
+     * A pulse put in by hand (a piezo part's blow): {@code eu} of charge, never taking the jar past {@code capShare} of what it holds.
+     * A hand is a tiny source, so what it adds is small and what it can reach is capped low.
      */
-    public void inject(float amount, float capVolts) {
-        charge = Math.min(charge + amount, capVolts * capacitance());
+    public void inject(float eu, float capShare) {
+        charge = Math.max(charge, Math.min(charge + eu, capShare * capacity()));
         setChanged();
     }
 
-    /** Empties the jar and returns the volts it held. */
+    /** Empties the jar and returns the Eu it held. */
     public float drain() {
-        float held = getStoredVolts();
+        float held = charge;
         charge = 0;
         setChanged();
         return held;
     }
 
-    /** A charged jar's terminals are bare: once it holds MV or more, touching it is a shock. */
+    /** A charged jar's terminals are bare: once it is rated MV or more, touching it is a shock. */
     @Override
     public VoltageBand touchBand() {
-        float held = getStoredVolts();
-        return held >= ElectricMachineTuning.SHOCK_MIN_VOLTS ? ElectricRules.bandOfPotential(held) : null;
+        return charge > ElectricMachineTuning.LEYDEN_JAR_EMPTY_EU && band().compareTo(ElectricMachineTuning.SHOCK_MIN_BAND) >= 0 ? band() : null;
     }
 
     public boolean isSupplying() {
@@ -111,38 +119,35 @@ public class LeydenJarBlockEntity extends ElectricNode {
 
     @Override
     public VoltageBand sourceBand() {
-        return supplying ? ElectricRules.bandOfPotential(getStoredVolts()) : null;
+        return supplying ? band() : null;
     }
 
     @Override
     public float sourceAmps() {
-        return supplying && charge > 0 ? figures.get("BurstAmps", ElectricMachineTuning.LEYDEN_JAR_BURST_AMPS) : 0;
+        return supplying && charge > 0 ? Math.min(figures.get("BurstAmps", ElectricMachineTuning.LEYDEN_JAR_BURST_AMPS),
+                charge / ElectricRules.packetEu(band())) : 0;
     }
 
-    /** Charges only while what it sees is above what it holds; a full jar asks for nothing. */
+    /** Charges only while its band or more is fed to it; a full jar asks for nothing. */
     @Override
     public float wantedAmps() {
-        return !supplying && seenPotential() > getStoredVolts() + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS
+        return !supplying && charge < capacity() && ElectricRules.accepts(getBand(), getPacketEu(), band())
                 ? ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS : 0;
     }
 
     public void tickServer() {
         if (level == null)
             return;
-        // Last tick's resolution: amps delivered in as a sink, drawn out as a source.
+        // Last tick's resolution: packets delivered in as a sink, drawn out as a source.
         float before = charge;
-        charge += supplying ? -getAmps() : getAmps();
-        // Only while a source is on the line: a pulse that has ended must not read as a line at 0 V and empty the jar before it takes over.
-        if (!supplying && seenPotential() > 0f)
-            charge = Math.min(charge, seenPotential() * capacitance());
-        charge = Math.max(0, charge * (1 - figures.get("Leak", ElectricMachineTuning.LEYDEN_JAR_LEAK_PER_TICK)));
+        charge += (supplying ? -getAmps() : getAmps()) * getPacketEu();
+        charge = Math.max(0, Math.min(charge, capacity()) * (1 - figures.get("Leak", ElectricMachineTuning.LEYDEN_JAR_LEAK_PER_TICK)));
         if (charge != before)
             setChanged();
 
-        float held = getStoredVolts();
         boolean flip = supplying
-                ? held <= ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS || isBlocked()
-                : held > ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS && seenPotential() <= held + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS;
+                ? charge <= ElectricMachineTuning.LEYDEN_JAR_EMPTY_EU || isBlocked()
+                : charge > ElectricMachineTuning.LEYDEN_JAR_EMPTY_EU && !ElectricRules.accepts(getBand(), getPacketEu(), band());
         if (flip) {
             supplying = !supplying;
             setChanged();

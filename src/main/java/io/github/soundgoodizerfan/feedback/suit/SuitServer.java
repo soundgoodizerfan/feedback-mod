@@ -77,11 +77,11 @@ public final class SuitServer {
         return r == null ? null : r.mods;
     }
 
-    /** Adds amp-ticks to the battery's pending draw (an event's cost). */
-    static void charge(net.minecraft.world.entity.player.Player player, float ampTicks) {
+    /** Adds Eu to the battery's pending draw (an event's cost). */
+    static void charge(net.minecraft.world.entity.player.Player player, float eu) {
         Run r = RUNS.get(player.getUUID());
         if (r != null)
-            r.pending += ampTicks;
+            r.pending += eu;
     }
 
     private static Run run(ServerPlayer p, ExoSuit.Rig rig) {

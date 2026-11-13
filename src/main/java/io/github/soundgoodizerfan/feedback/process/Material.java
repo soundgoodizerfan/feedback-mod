@@ -574,22 +574,18 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     /**
      * Plate figures of a secondary (rechargeable) cell, per cell. A chemistry is one more material file with this block.
      *
-     * @param voltsFull        terminal volts of a full cell.
-     * @param voltsLow         terminal volts at the knee, ten per cent charge: the flat part of the curve ends here.
-     * @param voltsEmpty       terminal volts of an empty cell, the foot of the cliff.
-     * @param ampTicksPerIngot charge one ingot of plate holds per cell, in amp-ticks.
+     * @param emptyShare       the share of its rated current a cell still gives when empty: it holds full to the knee, ten per cent charge, then falls to this (the cliff).
+     * @param euPerIngot       charge one ingot of plate holds per cell, in Eu.
      * @param coldFactor       the share of capacity left at the coldest ambient; 1 at room temperature.
      * @param electrolyte      the fluid tag (id) the cell is filled with: sulfuric acid for lead, lye for an alkaline cell.
      * @param chargeEfficiency the share of charged work kept; the rest heats the case.
      * @param gassing          whether overcharge electrolyses water into hydrogen; false for a cell that shrugs it off.
      */
-    public record SecondaryCell(float voltsFull, float voltsLow, float voltsEmpty, float ampTicksPerIngot, float coldFactor,
+    public record SecondaryCell(float emptyShare, float euPerIngot, float coldFactor,
                                 ResourceLocation electrolyte, float chargeEfficiency, boolean gassing) {
         static final Codec<SecondaryCell> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.FLOAT.fieldOf("volts_full").forGetter(SecondaryCell::voltsFull),
-                Codec.FLOAT.fieldOf("volts_low").forGetter(SecondaryCell::voltsLow),
-                Codec.FLOAT.fieldOf("volts_empty").forGetter(SecondaryCell::voltsEmpty),
-                Codec.FLOAT.fieldOf("amp_ticks_per_ingot").forGetter(SecondaryCell::ampTicksPerIngot),
+                Codec.FLOAT.optionalFieldOf("empty_share", 1f).forGetter(SecondaryCell::emptyShare),
+                Codec.FLOAT.fieldOf("eu_per_ingot").forGetter(SecondaryCell::euPerIngot),
                 Codec.FLOAT.optionalFieldOf("cold_factor", 1f).forGetter(SecondaryCell::coldFactor),
                 ResourceLocation.CODEC.optionalFieldOf("electrolyte", ResourceLocation.fromNamespaceAndPath("feedback", "battery_acid")).forGetter(SecondaryCell::electrolyte),
                 Codec.FLOAT.optionalFieldOf("charge_efficiency", FTuning.BATTERY_CHARGE_EFFICIENCY).forGetter(SecondaryCell::chargeEfficiency),

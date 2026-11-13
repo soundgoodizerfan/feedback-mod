@@ -15,10 +15,9 @@ import net.minecraft.world.entity.player.Player;
  * What a bare, live conductor does to whatever touches it.
  *
  * <h2>Bands again</h2>
- * Damage follows the voltage's {@link VoltageBand}, never the volts: a band is a rating a player
- * can read off a source and it is the vocabulary electrical hazards share with
- * everything else. The bottom band keeps the figure the bare wire always had, so this widens that
- * rule instead of adding a second one.
+ * Damage follows the shock's {@link VoltageBand} and its Eu: the band sets the figure of one packet (the bottom band keeps the
+ * figure the bare wire always had) and the Eu in the discharge, in packets, scales it between a floor and a ceiling. A glove is
+ * rated to a band and stops a shock of that band or below.
  *
  * <h2>Resistance is still not modelled</h2>
  * The wire's current does not enter. A shock is a property of a conductor being <em>exposed</em>
@@ -32,10 +31,7 @@ public final class Shock {
     private Shock() {
     }
 
-    public static float damage(float volts) {
-        return damage(ElectricRules.bandOfPotential(volts));
-    }
-
+    /** Base damage of a shock of {@code band}: the figure of one whole packet. */
     public static float damage(VoltageBand band) {
         return switch (band) {
             case LV -> HazardTuning.BARE_WIRE_SHOCK_DAMAGE;
@@ -47,19 +43,25 @@ public final class Shock {
         };
     }
 
-    /** Shock {@code victim} as a live conductor of {@code band} would; null is no shock. Returns whether it hurt. */
-    public static boolean apply(Entity victim, @org.jetbrains.annotations.Nullable VoltageBand band) {
-        return band != null && apply(victim, ElectricRules.bandPotential(band));
+    /** Damage of a discharge of {@code eu} at {@code band}: the band's figure times the packets' worth of Eu in it, held between the tuning's floor and ceiling. */
+    public static float damage(VoltageBand band, float eu) {
+        float packets = eu / ElectricRules.packetEu(band);
+        return damage(band) * Math.max(HazardTuning.SHOCK_MIN_PACKETS, Math.min(HazardTuning.SHOCK_MAX_PACKETS, packets));
     }
 
-    /** Shock {@code victim} as a discharge of {@code volts} (an electrochemical or static potential, never shown) would. Returns whether it hurt. */
-    public static boolean apply(Entity victim, float volts) {
-        if (victim.level().isClientSide || volts <= 0f)
+    /** Shock {@code victim} as a bare, live conductor of {@code band} would (one packet); null is no shock. Returns whether it hurt. */
+    public static boolean apply(Entity victim, @org.jetbrains.annotations.Nullable VoltageBand band) {
+        return band != null && apply(victim, band, ElectricRules.packetEu(band));
+    }
+
+    /** Shock {@code victim} as a discharge of {@code eu} at {@code band} (a jar, a creeper's charge, an arc) would. A glove rated to the band stops it. Returns whether it hurt. */
+    public static boolean apply(Entity victim, VoltageBand band, float eu) {
+        if (victim.level().isClientSide || eu <= 0f)
             return false;
-        if (victim instanceof Player player && Protection.shockProofVolts(player) >= volts)
+        if (victim instanceof Player player && Protection.shockProof(player, band))
             return false;
-        // Exposure scales the figure for any victim; a dry bare thing on stone reads 1.0, the old damage.
-        return victim.hurt(Hazards.source(victim.level(), Hazards.SHOCK), damage(volts) * Exposure.of(victim)
+        // Exposure scales the figure for any victim; a dry bare thing on stone reads 1.0.
+        return victim.hurt(Hazards.source(victim.level(), Hazards.SHOCK), damage(band, eu) * Exposure.of(victim)
                 * (victim instanceof LivingEntity body ? Ward.passes(body, Ward.Hazard.SHOCK) : 1f));
     }
 }

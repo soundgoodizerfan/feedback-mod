@@ -104,10 +104,14 @@ public final class ModularTuning {
             FRAME_SU = {FTuning.FRAME_SU_SMALL, FTuning.FRAME_SU_MEDIUM, FTuning.FRAME_SU_LARGE},
             FRAME_MASS = {FTuning.FRAME_MASS_SMALL.workPerTu(), FTuning.FRAME_MASS_MEDIUM.workPerTu(), FTuning.FRAME_MASS_LARGE.workPerTu()},
             FRAME_AREA = {ModularTuning.FRAME_AREA_SMALL, ModularTuning.FRAME_AREA_MEDIUM, ModularTuning.FRAME_AREA_LARGE}; // float literals: inlined, safe before their declaration
-    /** A winding's reference sizes in cells of wire (coarse, fine, dense, heavy dense) and the volts per RPM each gives. */
-    public static final float[] WINDING_CELLS = {1f, 2f, 4f, 8f},
-            WINDING_VPR = {FTuning.WINDING_VOLTS_PER_RPM_COARSE, FTuning.WINDING_VOLTS_PER_RPM_FINE, FTuning.WINDING_VOLTS_PER_RPM_DENSE,
-                    FTuning.WINDING_VOLTS_PER_RPM_HEAVY_DENSE};
+    /**
+     * Placeholder. A winding's reference sizes in cells of wire (coarse, fine, dense, heavy dense), the band each puts on a line and the
+     * RPM each is built for (a steam engine's 16 for the two light ones, a gas turbine's 240 for the two heavy). Nothing is rated Trunk.
+     */
+    public static final float[] WINDING_CELLS = {1f, 2f, 4f, 8f}, WINDING_RATED_RPM = {16f, 16f, 240f, 240f};
+    public static final io.github.soundgoodizerfan.feedback.core.unit.VoltageBand[] WINDING_BAND = {
+            io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.LV, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.MV,
+            io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.UHV, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.EHV};
     /** An engine head's torque at the lowest compression, and what each step of compression adds (0.95 low, 1.08 high). */
     public static final float ENGINE_HEAD_TORQUE_LOW = 0.95f, ENGINE_HEAD_TORQUE_PER_COMPRESSION = 0.065f;
     /** A propeller hub weighs this much more per blade beyond the reference count. */
@@ -172,10 +176,10 @@ public final class ModularTuning {
     public static final float EGUN_BARREL_HEAT_PER_LOSS = 2f;
     /** How far the bore's width moves a pulse's damage (and its cone) across the bore axis's range: narrow is below 1, wide above. */
     public static final float EGUN_BORE_SPAN = 0.4f;
-    /** Damage a joule of pulse does, and the joules one volt of one amp-tick of a cell's charge is worth. */
-    public static final float EGUN_DAMAGE_PER_J = 0.03f, EGUN_J_PER_VAMPTICK = 0.5f;
+    /** Damage a joule of pulse does, and the joules one Eu of a cell's charge is worth. */
+    public static final float EGUN_DAMAGE_PER_J = 0.03f, EGUN_J_PER_EU = 0.5f;
     /** The cell voltage a seat's refill rate is measured against, and the one the Blueprint Table assumes. */
-    public static final float EGUN_REF_VOLTS = 6f;
+    public static final io.github.soundgoodizerfan.feedback.core.unit.VoltageBand EGUN_REF_BAND = io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.MV;
     /** Cutoff range in blocks: a base, and per metre of barrel; each power tier above Light adds this share. */
     public static final float EGUN_RANGE_BASE = 30f, EGUN_RANGE_PER_M = 100f, EGUN_RANGE_PER_TIER = 0.15f;
     /** Mobs a pulse goes through beyond the first, per power tier step (Light 1, Standard 2, Heavy 3 is {@code tier * this}). */
@@ -355,7 +359,7 @@ public final class ModularTuning {
     public static final float WIRING_WORST = 1.3f, WIRING_BEST = 0.7f, WIRING_HALF_AMPS = 12f;
     /** Amps of wiring (ampacity times cells) per attachment a module can feed, at least one. */
     public static final float WIRING_AMPS_PER_ATTACHMENT = 8f;
-    /** A suit module's support parts: the share of an upgrade's strength a worthless one still gives, and the capacity (amp-ticks) and rating (amps) at which a cell or motor is half as good as it gets; placeholders. */
+    /** A suit module's support parts: the share of an upgrade's strength a worthless one still gives, and the capacity (Eu) and rating (amps) at which a cell or motor is half as good as it gets; placeholders. */
     public static final float SUPPORT_FLOOR = 0.5f, SUPPORT_CELL_HALF = 2000f, SUPPORT_MOTOR_HALF = 20f;
     /** The share of its strength an upgrade whose bore is cut far from the size it wants still has. */
     public static final float BORE_FLOOR = 0.5f;
@@ -710,7 +714,7 @@ public final class ModularTuning {
     /** Thermal store: the wall (cm) the fixed block stands for, its heat mass and leak, and the brick density and conductivity they were quoted at. */
     public static final float STORE_REF_CM = 20f, STORE_MASS = 1800f, STORE_LEAK = 0.05f, STORE_REF_DENSITY = 1.9f, STORE_REF_CONDUCTIVITY = 0.000175f;
     /** Leyden jar: the plate area (percent) and glass wall (mm) the fixed jar stands for, and its capacitance, leak per tick and burst amps. */
-    public static final float JAR_REF_AREA = 50f, JAR_REF_WALL_MM = 4f, JAR_CAPACITANCE = 10f, JAR_LEAK = 0.002f, JAR_BURST_AMPS = 8f;
+    public static final float JAR_REF_AREA = 50f, JAR_REF_WALL_MM = 4f, JAR_CAPACITY_PACKETS = 10f, JAR_LEAK = 0.002f, JAR_BURST_AMPS = 8f;
 
     /** Pressure shell addons: how much the bands raise the danger line at best, and the share of the room a relief valve vents per tick. */
     public static final float TANK_BANDS_GAIN = 0.6f, TANK_RELIEF_PER_ROOM = 0.004f;
@@ -1014,9 +1018,6 @@ public final class ModularTuning {
     /** Placeholder. Length of conductor, in blocks of cable (the unit of a material's {@code electrical.drop}), per cell of wire in a winding: its loss is amps squared x drop x this. */
     public static final float WINDING_BLOCKS_PER_CELL = 0.5f;
 
-    /** Placeholder. The speed a machine's rated band is judged at: volts per RPM x this is the voltage it is built for. */
-    public static final float MACHINE_REFERENCE_RPM = 240f;
-
     /** Invented. The share of a glove's exposure that is left when an insulating lining sits against the hand (a gauntlet's lining role). */
     public static final float GLOVE_LINING_SHARE = 0.5f;
 
@@ -1044,12 +1045,6 @@ public final class ModularTuning {
 
     /** Invented. The share of a shield face's excess over the room the hand feels through its strap ({@link FTuning#GLOVE_EXPOSURE}'s way of saying it). */
     public static final float SHIELD_GRIP_EXPOSURE = 0.25f;
-
-    /**
-     * Invented. An insulating glove stops a shock up to this many volts and no further: HV's
-     * reference. Past it the glove is a thing that holds a charge, not one that stops it.
-     */
-    public static final float GLOVE_SHOCK_PROOF_VOLTS = ElectricTuning.BAND_POTENTIAL_HV;
 
     /** Placeholder. Wither ticks a radiant strike gives per level, and glow ticks. */
     public static final int RADIANT_WITHER_TICKS_PER_LEVEL = 60, RADIANT_GLOW_TICKS = 100;

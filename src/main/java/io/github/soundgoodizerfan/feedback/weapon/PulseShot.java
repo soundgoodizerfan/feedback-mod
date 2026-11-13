@@ -60,10 +60,10 @@ public final class PulseShot {
      * @param widen    what a pump charge multiplies the splitter cone by (1 for none; a plain beam's spread arrives already widened).
      * @param fork     whether an arc fork carries the shock on.
      * @param cylinder whether a coin redirect adds to the pulse.
-     * @param volts    the cell's volts: what the wielder's insulation is tested against.
+     * @param band     the cell's band: what the wielder's insulation is tested against.
      * @param spreadDeg the cone one beam leaves in.
      */
-    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, float volts, float spreadDeg, float widen) {
+    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, float spreadDeg, float widen) {
     }
 
     private PulseShot() {
@@ -158,7 +158,7 @@ public final class PulseShot {
 
     private static void strike(ServerLevel level, LivingEntity shooter, ItemStack gun, Plan plan, Entity target, Vec3 at, float joules) {
         float damage = joules * ModularTuning.EGUN_DAMAGE_PER_J;
-        hurt(level, shooter, target, damage, joules, plan.volts());
+        hurt(level, shooter, target, damage, joules, plan.band());
         sparks(level, plan.colour(), at, 8);
         if (shooter instanceof Player player) {
             ModularTraits.gunRoundLanded(level, player, gun, at, target, damage / GunTuning.GUN_DAMAGE_PER_WORK);
@@ -169,7 +169,7 @@ public final class PulseShot {
     }
 
     /** One body's hit: a wet or metal-armoured target takes the shock bonus (and the armour no longer resists), then the stagger. */
-    private static void hurt(ServerLevel level, LivingEntity shooter, Entity target, float damage, float joules, float volts) {
+    private static void hurt(ServerLevel level, LivingEntity shooter, Entity target, float damage, float joules, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band) {
         boolean metal = target instanceof LivingEntity l && conductive(l);
         boolean wet = target.isInWaterOrRain();
         float dealt = damage * (wet || metal ? 1f + ModularTuning.EGUN_SHOCK_BONUS : 1f);
@@ -200,7 +200,7 @@ public final class PulseShot {
         Vec3 a = from.getBoundingBox().getCenter(), b = to.getBoundingBox().getCenter();
         line(level, plan.colour(), a, b);
         float damage = joules * ModularTuning.EGUN_DAMAGE_PER_J * ModularTuning.EGUN_FORK_SHARE;
-        hurt(level, shooter, to, damage, joules * ModularTuning.EGUN_FORK_SHARE, plan.volts());
+        hurt(level, shooter, to, damage, joules * ModularTuning.EGUN_FORK_SHARE, plan.band());
         sparks(level, plan.colour(), b, 6);
     }
 
@@ -209,16 +209,16 @@ public final class PulseShot {
         float joules = plan.joules() * ModularTuning.EGUN_WET_FORK_SHARE;
         for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, shooter.getBoundingBox().inflate(ModularTuning.EGUN_WET_FORK_RANGE),
                 e -> e.isAlive() && !e.isSpectator() && e.isInWaterOrRain())) {
-            if (e == shooter && insulated(shooter, plan.volts()))
+            if (e == shooter && insulated(shooter, plan.band()))
                 continue;
             sparks(level, plan.colour(), e.getBoundingBox().getCenter(), 6);
-            hurt(level, shooter, e, joules * ModularTuning.EGUN_DAMAGE_PER_J, joules, plan.volts());
+            hurt(level, shooter, e, joules * ModularTuning.EGUN_DAMAGE_PER_J, joules, plan.band());
         }
     }
 
-    /** Whether {@code who} is insulated from a cell of {@code volts}: the existing rule, insulating gloves held or worn. */
-    public static boolean insulated(LivingEntity who, float volts) {
-        return who instanceof Player player && Protection.shockProofVolts(player) >= volts;
+    /** Whether {@code who} is insulated from a cell of {@code band}: the existing rule, gloves rated to the band held or worn. */
+    public static boolean insulated(LivingEntity who, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band) {
+        return who instanceof Player player && Protection.shockProof(player, band);
     }
 
     /** Whether a body is armoured in metal: a worn piece whose material (or, for a modular piece, any part's) conducts. */

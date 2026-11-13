@@ -18,7 +18,7 @@ import net.minecraft.world.phys.AABB;
 
 /**
  * Charges the battery in the bay of the suit whoever stands in it is wearing. It is a sink like the {@code Charger}: it asks for the
- * battery's own charge current while the line is above the battery's terminal volts, and the battery takes it exactly as a placed one does
+ * battery's own charge current while the line is at the battery's band or above, and the battery takes it exactly as a placed one does
  * ({@link BatteryStack}), wearing if the line is over its case's band. It never discharges into the line, and it has no say over the suit.
  *
  * <p>The wearer is looked for twice a second, and the charge is written onto the chestplate every ten ticks rather than every tick, so the
@@ -61,7 +61,7 @@ public class GantryBlockEntity extends ElectricNode {
             float before = wanted;
             Player p = occupant();
             CompoundTag t = p == null ? null : BatteryStack.state(ExoSuit.battery(p.getItemBySlot(EquipmentSlot.CHEST)));
-            wanted = t == null ? 0f : BatteryStack.wantedAmps(t, seenPotential());
+            wanted = t == null ? 0f : BatteryStack.wantedAmps(t, getBand(), getPacketEu());
             if (wanted != before)
                 setChanged();
         }
@@ -75,7 +75,7 @@ public class GantryBlockEntity extends ElectricNode {
                 CompoundTag t = BatteryStack.state(bat);
                 if (t != null) {
                     CompoundTag next = t.copy();
-                    BatteryStack.charge(next, owed, seenPotential(), WRITE_TICKS);
+                    BatteryStack.charge(next, owed, getBand(), getPacketEu(), WRITE_TICKS);
                     ItemStack copy = bat.copy();
                     copy.set(FDataComponents.BATTERY.get(), next);
                     ExoSuit.setBattery(chest, copy);

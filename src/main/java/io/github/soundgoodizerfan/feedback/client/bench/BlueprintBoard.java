@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.bench;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -2626,7 +2627,9 @@ public final class BlueprintBoard {
             case CELL -> ModularBake.cell(d, t, ClientMaterials.get()).map(BlueprintBoard::cellLines).orElse(List.of());
             case MACHINE -> ModularBake.machine(d, t, ClientMaterials.get()).map(BlueprintBoard::machineLines).orElse(List.of());
             case BLOCK -> io.github.soundgoodizerfan.feedback.modular.bake.BlockFigures.of(d, t, ClientMaterials.get()).<List<Component>>map(tag -> tag.getAllKeys().stream()
-                    .<Component>map(k -> Component.translatable("figure.feedback.block." + k, String.format(java.util.Locale.ROOT, "%.3g", tag.getFloat(k))))
+                    .<Component>map(k -> k.equals("Band")
+                            ? Component.translatable("figure.feedback.block.Band", Component.translatable(VoltageBand.values()[(int) tag.getFloat(k)].key()))
+                            : Component.translatable("figure.feedback.block." + k, String.format(java.util.Locale.ROOT, "%.3g", tag.getFloat(k))))
                     .toList()).orElse(List.of());
             case PRESSURE -> ModularBake.tank(d, t, ClientMaterials.get()).<List<Component>>map(v -> List.of(
                     Component.translatable("gui.feedback.blueprint_table.tank.room", Math.round(v.volumeMb())),
@@ -2658,10 +2661,8 @@ public final class BlueprintBoard {
 
     private static List<Component> cellLines(ModularBake.CellSpec c) {
         return List.of(Component.translatable("gui.feedback.blueprint_table.cell.cells", c.cells()),
-                Component.translatable("gui.feedback.blueprint_table.cell.band", Component.translatable(
-                        io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.bandOfPotential(c.cells() * c.plates().voltsFull()).key())),
-                Component.translatable("gui.feedback.blueprint_table.cell.capacity", Math.round(c.capacity())),
-                Component.translatable("gui.feedback.blueprint_table.cell.case", Component.translatable(c.caseBand().key())));
+                Component.translatable("gui.feedback.blueprint_table.cell.band", Component.translatable(c.caseBand().key())),
+                Component.translatable("gui.feedback.blueprint_table.cell.capacity", Math.round(c.cells() * c.capacity())));
     }
 
 

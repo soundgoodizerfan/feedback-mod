@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
  * The motor and the dynamo, one machine run either way: a Tool Table build of a frame, a winding, a core and a
  * housing, placed as this block. {@link #FACING} is the shaft face, toward the shaft it was placed against. {@link #MODE} is
  * the one setting it offers, flipped by a sneaking empty hand (the Wire Drawer's convention for a discrete setting): a
- * generator turns the shaft into volts, a motor turns volts into the shaft. It drops as the item it was built as, with its
+ * generator turns the shaft into Eu, a motor turns Eu into the shaft. It drops as the item it was built as, with its
  * condition, temperature and jacket water. See {@link DynamotorBlockEntity}.
  */
 public class DynamotorBlock extends Block implements EntityBlock {

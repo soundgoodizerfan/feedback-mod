@@ -3,6 +3,9 @@
 package io.github.soundgoodizerfan.feedback.modular.bake;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.Map;
 import java.util.Optional;
 
@@ -136,7 +139,10 @@ float mass = ModularBake.param(type, part, "mass", 1f) * ModularTuning.STORE_MAS
             case "leyden_jar" -> {
                 float area = role.axis(part, "area") / ModularTuning.JAR_REF_AREA * ModularBake.param(type, part, "area", 1f);
                 float thin = ModularTuning.JAR_REF_WALL_MM / role.axis(part, "wall");
-                out.putFloat("Capacitance", ModularTuning.JAR_CAPACITANCE * area * thin);
+                // The glass sets the band the jar is rated: it charges when fed that band, and holds its packets' worth of Eu.
+                VoltageBand band = m.electrical().insulation().orElse(ElectricMachineTuning.LEYDEN_JAR_BAND);
+                out.putFloat("Band", band.ordinal());
+                out.putFloat("StoresEu", ModularTuning.JAR_CAPACITY_PACKETS * area * thin * ElectricRules.packetEu(band));
 float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK * thin * thin;
                 float burst = ModularTuning.JAR_BURST_AMPS * area;
                 // foil (an addon) carries the discharge, as much as its ampacity allows; an outer sleeve (an addon) is a second insulator
@@ -196,7 +202,7 @@ float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK 
             case "galvanic_cell" -> {
                 float a = role.axis(part, "anode") / 50f, amps = ModularBake.param(type, part, "amps", 1f) * a * (design.part("C") == null ? 1f : 1.25f);
                 out.putFloat("Amps", amps);
-                out.putFloat("AnodeTicks", 24000f * a * ModularBake.param(type, part, "life", 1f) / Math.max(0.1f, ModularBake.param(type, part, "amps", 1f) * a));
+                out.putFloat("AnodeEu", 768000f * a * ModularBake.param(type, part, "life", 1f) / Math.max(0.1f, ModularBake.param(type, part, "amps", 1f) * a));
             }
             // Filament: a thicker one draws more and lasts; the shape trades draw against toughness; a ballast (an addon) lets it ride a little overvoltage.
             case "lamp" -> {

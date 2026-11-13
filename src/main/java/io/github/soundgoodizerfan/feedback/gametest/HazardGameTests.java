@@ -157,9 +157,9 @@ public class HazardGameTests {
         float glove = gauntlet.handlesUpToTu(wool, level);
         helper.assertTrue(glove > wood,
                 "wool-lined gloves hold a lit furnace: " + glove);
-        helper.assertTrue(gauntlet.shockProofVolts(wool, level) > 0f,
-                "dry wool insulates a conductor");
-        helper.assertTrue(tongsItem.shockProofVolts(ironBone, level) == 0f, "tongs are no use against a wire");
+        helper.assertTrue(gauntlet.shockProofBand(wool, level) == io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.LV,
+                "dry wool insulates a conductor, rated the bottom band");
+        helper.assertTrue(tongsItem.shockProofBand(ironBone, level) == null, "tongs are no use against a wire");
         helper.succeed();
     }
 

@@ -35,10 +35,8 @@
     "drop": 0.65,
     "electrode_potential": -0.13,
     "secondary_cell": {
-      "volts_full": 2.1,
-      "volts_low": 1.95,
-      "volts_empty": 1.6,
-      "amp_ticks_per_ingot": 24000,
+      "empty_share": 0.8,
+      "eu_per_ingot": 48000,
       "cold_factor": 0.5
     }
   },

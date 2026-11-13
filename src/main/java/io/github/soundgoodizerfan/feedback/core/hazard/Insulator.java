@@ -24,10 +24,11 @@ public interface Insulator {
     float handlesUpToTu(ItemStack stack, Level level);
 
     /**
-     * The highest voltage of a bare conductor this stops, or {@code 0} when it stops none. Tongs
-     * hold a piece away from the hand and are no use against a wire; a dry glove is.
+     * The highest band of a bare conductor this stops, or null when it stops none. Tongs hold a piece away from the hand and are no
+     * use against a wire; a dry glove is, as far as its material is rated.
      */
-    default float shockProofVolts(ItemStack stack, Level level) {
-        return 0f;
+    @org.jetbrains.annotations.Nullable
+    default io.github.soundgoodizerfan.feedback.core.unit.VoltageBand shockProofBand(ItemStack stack, Level level) {
+        return null;
     }
 }

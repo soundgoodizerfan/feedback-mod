@@ -298,6 +298,7 @@ public final class PetrochemTuning {
     /** Blocks around a lightning bolt in which a pen is struck. */
     public static final int CREEPER_LIGHTNING_RADIUS = 3;
 
-    /** Volts a charged creeper's blast discharges into everything inside its blast radius. */
-    public static final float CREEPER_DISCHARGE_VOLTS = 400f;
+    /** The band, and the packets' worth of Eu, a charged creeper's blast discharges into everything inside its blast radius. */
+    public static final io.github.soundgoodizerfan.feedback.core.unit.VoltageBand CREEPER_DISCHARGE_BAND = io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.EHV;
+    public static final float CREEPER_DISCHARGE_PACKETS = 1f;
 }

@@ -16,13 +16,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A clip on a wire that charges a battery as an item (a suit's cell). It is a sink: while the battery in it holds less
- * than the line, it asks for its own charge current, and what it is delivered raises its charge up to the voltage it sees
- * and never past it.
+ * A clip on a wire that charges a battery as an item (a suit's cell). It is a sink: while the battery in it is not full and is
+ * fed its own band or a higher one, it asks for its own charge current, and what it is delivered raises its charge, in Eu, until
+ * the battery is full. A lower band charges nothing.
  *
  * <h2>Why it has no rating and never wears</h2>
  * It is a terminal, not a machine doing work. A battery stack charges as a placed battery does (same figures,
- * {@link BatteryStack}): it asks for its own charge current while the line is above its terminal, loses the charge
+ * {@link BatteryStack}): it asks for its own charge current while the line is at its band or above, loses the charge
  * efficiency as heat it does not model here, and wears if the line is over its case's band. Only a single battery goes in
  * (a stack of them is refused).
  */
@@ -45,7 +45,7 @@ public class ChargerBlockEntity extends ElectricNode {
     public float wantedAmps() {
         CompoundTag battery = BatteryStack.state(rounds);
         if (battery != null)
-            return BatteryStack.wantedAmps(battery, seenPotential());
+            return BatteryStack.wantedAmps(battery, getBand(), getPacketEu());
         return 0;
     }
 
@@ -55,7 +55,7 @@ public class ChargerBlockEntity extends ElectricNode {
         CompoundTag battery = BatteryStack.state(rounds);
         if (battery != null) {
             CompoundTag next = battery.copy();
-            BatteryStack.charge(next, getAmps(), seenPotential());
+            BatteryStack.charge(next, getAmps(), getBand(), getPacketEu());
             rounds.set(FDataComponents.BATTERY.get(), next);
             setChanged();
             return;

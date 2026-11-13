@@ -115,11 +115,11 @@ public final class ItemTuning {
 
     // --- the jar baton (wiki/Jar_Baton.md) -------------------------------------------------------
 
-    /** Placeholder. Volts a baton's jar is rated for; charge above this, or a wet holder, shocks the holder. */
-    public static final float BATON_RATING_VOLTS = ElectricTuning.BAND_POTENTIAL_HV;
+    /** Placeholder. The band a baton's handle is rated for; a jar of a higher band, or a wet holder, shocks the holder. */
+    public static final io.github.soundgoodizerfan.feedback.core.unit.VoltageBand BATON_RATING_BAND = io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.HV;
 
-    /** Placeholder. Stagger ticks per volt discharged, capped at {@link #BATON_STAGGER_MAX_TICKS}. */
-    public static final float BATON_STAGGER_TICKS_PER_VOLT = 2f;
+    /** Placeholder. Stagger ticks per packet's worth of Eu discharged, capped at {@link #BATON_STAGGER_MAX_TICKS}. */
+    public static final float BATON_STAGGER_TICKS_PER_PACKET = 5f;
 
     public static final int BATON_STAGGER_MAX_TICKS = 60;
 
@@ -150,7 +150,7 @@ public final class ItemTuning {
     /** Placeholder. A Geiger counter: clicks per second with nothing near, and per Ru; the resolution it prints to. */
     public static final float GEIGER_BACKGROUND_CPS = 0.4f, GEIGER_CPS_PER_RU = 2f, GEIGER_RESOLUTION = 0.1f;
 
-    /** Placeholder. Charge one weld of the hand arc welder draws from a battery, in amp-ticks (about 50 A for the 40 ticks of the hold). */
+    /** Placeholder. Charge one weld of the hand arc welder draws from a battery, in Eu (about the 40 ticks of the hold). */
     public static final float WELDER_CHARGE_PER_WELD = 2000f;
 
     /** Placeholder. Ticks the player holds the welder on a modular item in the other hand for one weld. */

@@ -21,26 +21,26 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 /**
  * The runtime kinds of the Piezo effect. A poled part is
  * piezoelectric. {@code pulse} on a head or blade: striking a Leyden jar with it pushes a small charge in,
- * by hand and at a tiny rate (manual production stays possible), and no further than {@link #JAR_CAP_VOLTS}.
+ * by hand and at a tiny rate (manual production stays possible), and no further than {@link #JAR_CAP_SHARE} of what the jar holds.
  * A blow on anything else makes a pulse with nowhere to go and is lost. {@code sense} (the mirror): the part
  * reports how hard a landed blow was instead of making power, in words -- a sensor for the player's own use that
  * controls nothing and needs no wiring yet.
  * Armour face (roster 6b), on a worn plate: {@code arc} -- the blow a conductive plate takes arcs onto whatever
- * struck it through {@link Shock}, volts rising with the hit (the wearer is never shocked; an insulating plate
+ * struck it through {@link Shock}, its band rising with the hit (the wearer is never shocked; an insulating plate
  * arcs nothing); {@code soak} (the mirror) -- the plate takes the spike of a big hit and wears for it.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class PiezoKinds {
 
-    /** Charge (amp-ticks) one strike puts in, per level. A jar's volts are charge over its capacitance. [OPEN] until played */
-    private static final float PULSE_PER_LEVEL = 0.5f;
-    /** The most a hand can raise a jar to, volts. [OPEN] until played */
-    private static final float JAR_CAP_VOLTS = 5f;
+    /** Share of a jar's capacity one strike puts in, per level. [OPEN] until played */
+    private static final float PULSE_SHARE_PER_LEVEL = 0.002f;
+    /** The most a hand can fill a jar to, as a share of its capacity. [OPEN] until played */
+    private static final float JAR_CAP_SHARE = 0.2f;
     /** Damage below and above which a landed blow reads as glancing or heavy. [OPEN] until played */
     private static final float GLANCING = 3f, HEAVY = 8f;
 
-    /** Volts an arc carries per point of damage taken, per level; Shock turns the volts into a band. [OPEN] until played */
-    private static final float ARC_VOLTS_PER_DAMAGE = 1f;
+    /** Points of damage taken (times level) at which an arc steps up a band: MV, HV, UHV; under the first it is LV. One packet of Eu rides it. [OPEN] until played */
+    private static final float[] ARC_BAND_STEP_DAMAGE = {5f, 20f, 80f};
     /** Damage over which a soak plate cuts the blow, the share of the excess cut per level, and its ceiling. [OPEN] until played */
     private static final float SOAK_ABOVE = 6f, SOAK_CUT_PER_LEVEL = 0.25f, SOAK_CUT_MAX = 0.75f;
 
@@ -87,7 +87,7 @@ public final class PiezoKinds {
         ItemStack stack = event.getItemStack();
         int level = TideKinds.level(stack, "pulse");
         if (level > 0 && event.getLevel().getBlockEntity(event.getPos()) instanceof LeydenJarBlockEntity jar)
-            jar.inject(PULSE_PER_LEVEL * level, JAR_CAP_VOLTS);
+            jar.inject(PULSE_SHARE_PER_LEVEL * level * jar.capacity(), JAR_CAP_SHARE);
     }
 
     @SubscribeEvent
@@ -105,7 +105,14 @@ public final class PiezoKinds {
                 if (a.kind().equals("arc")) {
                     if (event.getSource().getEntity() instanceof LivingEntity attacker && attacker != wearer
                             && a.material().electrical().conductivity().isPresent())
-                        Shock.apply(attacker, event.getAmount() * a.level() * ARC_VOLTS_PER_DAMAGE);
+                    {
+                        float hit = event.getAmount() * a.level();
+                        io.github.soundgoodizerfan.feedback.core.unit.VoltageBand arc = io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.LV;
+                        for (int i = 0; i < ARC_BAND_STEP_DAMAGE.length; i++)
+                            if (hit >= ARC_BAND_STEP_DAMAGE[i])
+                                arc = io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.values()[i + 1];
+                        Shock.apply(attacker, arc);
+                    }
                 } else if (a.kind().equals("soak") && event.getAmount() > SOAK_ABOVE) {
                     float cut = (event.getAmount() - SOAK_ABOVE) * Math.min(SOAK_CUT_MAX, SOAK_CUT_PER_LEVEL * a.level());
                     event.setAmount(event.getAmount() - cut);

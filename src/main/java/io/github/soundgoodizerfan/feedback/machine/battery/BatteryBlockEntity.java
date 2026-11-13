@@ -49,8 +49,9 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A lead-acid battery: {@code cells} secondary cells in series, built at the Tool Table (roadmap E4). It charges from any
- * line above its terminal voltage and supplies when the line drops, holding a flat voltage until nearly empty.
+ * A lead-acid battery: {@code cells} secondary cells in series, built at the Tool Table (roadmap E4), rated the band of its case.
+ * It charges when its band or a higher one is fed to it (a lower band never charges it, and it supplies instead) and supplies its
+ * band when nothing at its band or above is on the line, holding its full current until nearly empty. It stores Eu.
  *
  * <h2>One role at a time, like the Leyden Jar</h2>
  * A sink while charging, a source while supplying; a flip rebuilds its run ({@code ElectricPropagator.rebuildFrom}), an
@@ -59,11 +60,11 @@ import org.jetbrains.annotations.NotNull;
  * once or twice a second and only while there is gas.
  *
  * <h2>What the figures are</h2>
- * {@code capacity} is one cell's amp-ticks (series cells add volts, not capacity). The plates' volts, knee and capacity per
+ * {@code capacity} is one cell's Eu (series cells add to the energy held, not to the current rated). The plates' empty share and Eu per
  * ingot are the plate material's {@code electrical.secondary_cell}, copied into the block at build; the case's insulation
- * band is the highest voltage it holds off. Capacity falls with condition, with cold (body temperature below ambient) and
+ * band is the band the battery is rated. Capacity falls with condition, with cold (body temperature below ambient) and
  * with exposed plates (low water). Misuse only: overcharge vents water and releases hydrogen, overdraw heats the case and
- * costs condition, heat over {@link ElectricMachineTuning#BATTERY_HOT_TU} costs condition, volts over the case's band cost condition.
+ * costs condition, heat over {@link ElectricMachineTuning#BATTERY_HOT_TU} costs condition, a band over the case's costs condition.
  */
 public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Weldable {
 
@@ -71,8 +72,8 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     public static final ResourceLocation ACID = ResourceLocation.fromNamespaceAndPath(io.github.soundgoodizerfan.feedback.Feedback.MOD_ID, "battery_acid");
 
     private int cells = 1;
-    private float capacity = 24000f * FTuning.BATTERY_INGOTS_PER_CELL;
-    private float voltsFull = 2.1f, voltsLow = 1.95f, voltsEmpty = 1.6f, coldFactor = 0.5f;
+    private float capacity = 48000f * FTuning.BATTERY_INGOTS_PER_CELL;
+    private float emptyShare = 0.8f, coldFactor = 0.5f;
     private float chargeEfficiency = FTuning.BATTERY_CHARGE_EFFICIENCY;
     private boolean gassing = true;
     private TagKey<Fluid> electrolyte = TagKey.create(net.minecraft.core.registries.Registries.FLUID, ACID);
@@ -88,8 +89,6 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     private float gas;
     private float temperature = ThermalTuning.AMBIENT_TU.value();
     private boolean supplying;
-    /** The charge current asked while the line is weak, eased toward what the line's headroom allows. */
-    private float askAmps;
     private boolean venting;
     private long lastTime = -1;
 
@@ -116,9 +115,19 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         return water >= low ? 1f : Mth.lerp(water / low, ElectricMachineTuning.BATTERY_DRY_CAPACITY, 1f);
     }
 
-    /** What the cells can hold right now, in amp-ticks. */
-    public float effectiveCapacity() {
+    /** Eu one cell can hold right now. */
+    private float cellCapacity() {
         return capacity * condition * coldShare() * waterShare();
+    }
+
+    /** Eu the cells can hold right now. */
+    public float effectiveCapacity() {
+        return cells * cellCapacity();
+    }
+
+    /** Packets a tick the cells carry over {@code ticks} ticks, whatever their number: one cell's Eu over the packet. */
+    private float amps(float ticks) {
+        return cellCapacity() / ticks / ElectricRules.packetEu(caseBand);
     }
 
     /** State of charge, 0 to 1 of what it can hold now. */
@@ -127,11 +136,10 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         return eff <= 0f ? 0f : Mth.clamp(charge / eff, 0f, 1f);
     }
 
-    /** Terminal volts of the whole stack: flat near nominal, then the cliff. */
-    public float terminalVolts() {
+    /** The share of its rated current the cells still give: all of it down to the knee, then the cliff to the empty share. */
+    private float cliff() {
         float soc = stateOfCharge();
-        float cell = soc > 0.1f ? Mth.lerp((soc - 0.1f) / 0.9f, voltsLow, voltsFull) : Mth.lerp(soc / 0.1f, voltsEmpty, voltsLow);
-        return cells * cell;
+        return soc > 0.1f ? 1f : Mth.lerp(soc / 0.1f, emptyShare, 1f);
     }
 
     /** Acid filled to the cells' need: without it nothing happens. */
@@ -181,32 +189,30 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
 
     @Override
     public VoltageBand touchBand() {
-        float held = terminalVolts();
-        return held >= ElectricMachineTuning.SHOCK_MIN_VOLTS && charge > 0f ? ElectricRules.bandOfPotential(held) : null;
+        return caseBand.compareTo(ElectricMachineTuning.SHOCK_MIN_BAND) >= 0 && charge > 0f ? caseBand : null;
     }
 
     @Override
     public VoltageBand sourceBand() {
-        return supplying && ready() && charge > 0f ? ElectricRules.bandOfPotential(terminalVolts()) : null;
+        return supplying && ready() && charge > 0f ? caseBand : null;
     }
 
     @Override
     public float sourceAmps() {
-        return supplying && ready() && charge > 0f ? effectiveCapacity() / ElectricMachineTuning.BATTERY_DISCHARGE_TICKS : 0f;
+        return supplying && ready() && charge > 0f ? Math.min(amps(ElectricMachineTuning.BATTERY_DISCHARGE_TICKS) * cliff(), charge / ElectricRules.packetEu(caseBand)) : 0f;
     }
 
-    /** Charges while the line is above the terminal; a full cell asks only a trickle, and only when the line is over its gassing voltage. */
+    /** Charges while its band or a higher one is fed to it; a full cell asks only a trickle, and only when the band is over its own (gassing). */
     @Override
     public float wantedAmps() {
         if (supplying || !ready())
             return 0f;
-        float chargeAmps = effectiveCapacity() / (rectified ? ElectricMachineTuning.RECTIFIER_CHARGE_TICKS : ElectricMachineTuning.BATTERY_CHARGE_TICKS);
-        float headroom = seenPotential() - terminalVolts();
-        if (headroom <= 0f)
+        float chargeAmps = amps(rectified ? ElectricMachineTuning.RECTIFIER_CHARGE_TICKS : ElectricMachineTuning.BATTERY_CHARGE_TICKS);
+        if (!ElectricRules.accepts(getBand(), getPacketEu(), caseBand))
             return 0f;
         if (!full())
-            return Math.min(chargeAmps, askAmps);
-        return gassing && seenPotential() > cells * voltsFull * ElectricMachineTuning.BATTERY_GASSING_FACTOR ? chargeAmps * ElectricMachineTuning.BATTERY_TRICKLE_SHARE : 0f;
+            return chargeAmps;
+        return gassing && getBand().compareTo(caseBand) > 0 ? chargeAmps * ElectricMachineTuning.BATTERY_TRICKLE_SHARE : 0f;
     }
 
     @Override
@@ -214,20 +220,12 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         super.onResolved(band, eu, amps, wanted, blocked);
         if (level == null)
             return;
-        float volts = seenPotential();
         boolean dirty = false;
         float heat = 0f;
-        if (!supplying) {
-            // The ask follows the headroom the line left at the last draw, a tenth of the way a tick: asked all at once, a weak line
-            // sags under the terminal, the ask drops to nothing, the line recovers, and it flips every tick.
-            float chargeAmps = effectiveCapacity() / (rectified ? ElectricMachineTuning.RECTIFIER_CHARGE_TICKS : ElectricMachineTuning.BATTERY_CHARGE_TICKS);
-            float target = chargeAmps * Mth.clamp((volts - terminalVolts()) / (cells * ElectricMachineTuning.BATTERY_TAPER_VOLTS_PER_CELL), 0.02f, 1f);
-            askAmps += ElectricMachineTuning.BATTERY_ASK_SMOOTHING * (target - askAmps);
-        }
         if (supplying) {
             if (amps > 0f) {
-                charge = Math.max(0f, charge - amps);
-                float limit = effectiveCapacity() / ElectricMachineTuning.BATTERY_DISCHARGE_TICKS;
+                charge = Math.max(0f, charge - amps * eu);
+                float limit = amps(ElectricMachineTuning.BATTERY_DISCHARGE_TICKS);
                 float over = limit <= 0f ? 0f : amps / limit - 1f;
                 if (over > 0f) {
                     condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition - ElectricMachineTuning.BATTERY_OVERDRAW_WEAR * over);
@@ -241,16 +239,15 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
             if (wasFull && gassing)
                 ventAmps = amps;
             else {
-                charge = Math.min(effectiveCapacity(), charge + amps * chargeEfficiency);
-                heat += amps * volts * (1f - chargeEfficiency);
-                float gassingVolts = cells * voltsFull * ElectricMachineTuning.BATTERY_GASSING_FACTOR;
-                if (gassing && volts > gassingVolts)
-                    ventAmps = amps * Math.min(1f, volts / gassingVolts - 1f);
+                charge = Math.min(effectiveCapacity(), charge + amps * eu * chargeEfficiency);
+                heat += amps * eu * (1f - chargeEfficiency);
+                if (gassing)
+                    ventAmps = amps * Math.min(1f, ElectricRules.overBand(band, caseBand));
             }
             if (ventAmps > 0f) {
-                float vented = Math.min(water, ventAmps * ElectricMachineTuning.BATTERY_VENT_WATER_PER_AMP_TICK);
+                float vented = Math.min(water, ventAmps * ElectricMachineTuning.BATTERY_VENT_WATER_PER_PACKET);
                 water -= vented;
-                gas += ventAmps * ElectricMachineTuning.BATTERY_VENT_GAS_PER_AMP_TICK;
+                gas += ventAmps * ElectricMachineTuning.BATTERY_VENT_GAS_PER_PACKET;
                 venting = true;
             }
             dirty = true;
@@ -293,10 +290,9 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
                 found |= level.getBlockEntity(worldPosition.relative(d)) instanceof io.github.soundgoodizerfan.feedback.machine.rectifier.RectifierBlockEntity r && r.isPowered();
             rectified = found;
         }
-        float held = terminalVolts();
         boolean flip = supplying
                 ? charge <= 0f || !ready() || isBlocked()
-                : ready() && charge > 0f && seenPotential() <= held;
+                : ready() && charge > 0f && !ElectricRules.accepts(getBand(), getPacketEu(), caseBand);
         if (flip) {
             supplying = !supplying;
             setChanged();
@@ -460,9 +456,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     private CompoundTag writeState(CompoundTag tag) {
         tag.putInt("Cells", cells);
         tag.putFloat("Capacity", capacity);
-        tag.putFloat("VoltsFull", voltsFull);
-        tag.putFloat("VoltsLow", voltsLow);
-        tag.putFloat("VoltsEmpty", voltsEmpty);
+        tag.putFloat("EmptyShare", emptyShare);
         tag.putFloat("ColdFactor", coldFactor);
         tag.putString("CaseBand", caseBand.getSerializedName());
         tag.putFloat("ChargeEfficiency", chargeEfficiency);
@@ -483,9 +477,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     private void readState(CompoundTag tag) {
         cells = Math.max(1, tag.getInt("Cells"));
         capacity = tag.contains("Capacity") ? tag.getFloat("Capacity") : capacity;
-        voltsFull = tag.contains("VoltsFull") ? tag.getFloat("VoltsFull") : voltsFull;
-        voltsLow = tag.contains("VoltsLow") ? tag.getFloat("VoltsLow") : voltsLow;
-        voltsEmpty = tag.contains("VoltsEmpty") ? tag.getFloat("VoltsEmpty") : voltsEmpty;
+        emptyShare = tag.contains("EmptyShare") ? tag.getFloat("EmptyShare") : emptyShare;
         coldFactor = tag.contains("ColdFactor") ? tag.getFloat("ColdFactor") : coldFactor;
         chargeEfficiency = tag.contains("ChargeEfficiency") ? tag.getFloat("ChargeEfficiency") : FTuning.BATTERY_CHARGE_EFFICIENCY;
         gassing = !tag.contains("Gassing") || tag.getBoolean("Gassing");

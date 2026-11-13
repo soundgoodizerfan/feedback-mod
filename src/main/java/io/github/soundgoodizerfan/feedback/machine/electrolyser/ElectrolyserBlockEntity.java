@@ -194,7 +194,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
         var found = ThermalProcessTable.get().electrolysisOf(feed.getFluid());
         if (found.isPresent() && amps > 0f) {
             Electrolysis row = found.get();
-            Heat.warm(this, ElectricRules.seenPotential(band, eu) * amps);
+            Heat.warm(this, eu * amps * ElectricMachineTuning.ELECTROLYSER_HEAT_PER_EU);
             if (eu > 0f && band.compareTo(row.band()) >= 0 && temperature >= row.minTemperature())
                 electrolyse(row, amps);
         }
@@ -209,7 +209,7 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
     }
 
     private void electrolyse(Electrolysis row, float amps) {
-        owed = Math.min(4f, owed + amps * ElectricMachineTuning.ELECTROLYSER_MB_PER_AMP_TICK * condition);
+        owed = Math.min(4f, owed + amps * ElectricMachineTuning.ELECTROLYSER_MB_PER_PACKET * condition);
         int units = Math.min((int) owed, roomFor(row));
         if (row.item().isPresent()) {
             while (unitsLeft < units && row.takes(solute.getStackInSlot(0))) {

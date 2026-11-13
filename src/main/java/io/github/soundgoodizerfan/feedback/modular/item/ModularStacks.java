@@ -195,7 +195,7 @@ public final class ModularStacks {
     private static void machineState(ItemStack stack, ModularBake.MachineSpec m) {
         net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.DYNAMOTOR.get(), new net.minecraft.nbt.CompoundTag()).copy();
         tag.putFloat("FrameSu", m.frameSu());
-        tag.putFloat("VoltsPerRpm", m.voltsPerRpm());
+        tag.putFloat("RatedRpm", m.ratedRpm());
         tag.putFloat("RatedAmps", m.ratedAmps());
         tag.putString("Band", m.band().getSerializedName());
         tag.putFloat("Mass", m.mass());
@@ -214,9 +214,7 @@ public final class ModularStacks {
         net.minecraft.nbt.CompoundTag tag = stack.getOrDefault(FDataComponents.BATTERY.get(), new net.minecraft.nbt.CompoundTag()).copy();
         tag.putInt("Cells", c.cells());
         tag.putFloat("Capacity", c.capacity());
-        tag.putFloat("VoltsFull", c.plates().voltsFull());
-        tag.putFloat("VoltsLow", c.plates().voltsLow());
-        tag.putFloat("VoltsEmpty", c.plates().voltsEmpty());
+        tag.putFloat("EmptyShare", c.plates().emptyShare());
         tag.putFloat("ColdFactor", c.plates().coldFactor());
         tag.putFloat("ChargeEfficiency", c.plates().chargeEfficiency());
         tag.putBoolean("Gassing", c.plates().gassing());

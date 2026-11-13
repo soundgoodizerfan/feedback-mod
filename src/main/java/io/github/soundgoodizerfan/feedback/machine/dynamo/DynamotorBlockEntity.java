@@ -7,6 +7,8 @@ import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.core.rotation.Rotatable;
 import io.github.soundgoodizerfan.feedback.core.rotation.RotationNode;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
@@ -48,26 +50,26 @@ import org.jetbrains.annotations.Nullable;
  * housing ({@code ModularBake#machine}); the figures are copied into the block at build and ride the item and the block alike
  * ({@link FDataComponents#DYNAMOTOR}).
  *
- * <h2>One winding figure, used twice</h2>
- * A generator's voltage rises with the speed it is turned at, and the torque it takes rises with the current drawn from it, by
- * the <em>same</em> constant -- the winding's (in a real machine {@code k_e = k_t}). So {@code voltsPerRpm} sets the voltage
- * from the shaft's live RPM, and the same number times the current delivered is the Su it charges back to that shaft run. That
- * is conservation stated once, not an exchange rate: a dynamo that is not drawn from costs the shaft nothing. Run as a motor
- * the figure is read backwards: the potential its band and packet carry sets the speed it drives toward, and the current it is delivered sets the
- * torque. A generator feeding a motor, or a motor turning a generator, passes power through unchanged apart from the shaft's
- * friction and the machines' own heat -- which is what makes the pair a voltage converter (the motor-generator set).
+ * <h2>A band set by the winding, Eu from the shaft</h2>
+ * The winding picks the band the machine puts on a line and the speed it is built for (a discrete choice made at the Tool Table).
+ * As a generator it offers that band whenever the shaft turns, and the Eu a tick it can give is the shaft's power: its torque
+ * ceiling times its RPM times {@link ElectricTuning#EU_PER_SU_RPM}, so a slow shaft offers fewer packets a tick and never a smaller
+ * packet. What the line draws loads the shaft the other way, {@code Eu/t / (EU_PER_SU_RPM x RPM)} Su: a dynamo that is not drawn from
+ * costs the shaft nothing, and power passes through a generator and a motor unchanged apart from the shaft's friction and the machines'
+ * own heat -- which is what makes the pair a band converter (the motor-generator set). Run as a motor, the packet it is
+ * delivered sets the speed it drives toward and the current it is delivered sets the torque.
  *
  * <h2>The torque-speed line</h2>
  * A real DC motor's back-EMF rises with speed until it cancels the supply, so the current it draws falls linearly from stall to
- * nothing at its no-load speed, {@code volts / voltsPerRpm}. The rated amps stand in for the stall current. An idle motor draws
- * next to nothing, a loaded one slows until the current it pulls carries the load, an under-voltage motor runs slow rather than
- * not at all, and an over-voltage one runs fast.
+ * nothing at its no-load speed, its rated speed times the share of its rated packet the line delivers. The rated amps stand in for
+ * the stall current. An idle motor draws next to nothing, a loaded one slows until the current it pulls carries the load, a lower band
+ * or a long cable runs it slow rather than not at all, and a higher band runs it fast.
  *
  * <h2>Heat and wear</h2>
  * The core's loss (a share of the power through it) and the winding's (amps squared times the conductor's drop over its
  * length) both go into the body as heat; the housing sheds it to air at its conductivity over the frame's wall area, and a
  * jacket with water in it, while the body is above ambient, sheds at {@link ElectricMachineTuning#JACKET_SHED_MULTIPLE} times that and
- * spends a millibucket every {@link ElectricMachineTuning#JACKET_TICKS_PER_MB} ticks. A draw over the rated current (a generator) or volts
+ * spends a millibucket every {@link ElectricMachineTuning#JACKET_TICKS_PER_MB} ticks. A draw over the rated current (a generator) or a band
  * past the rated band (a motor) are force that cannot go into the work, so they go into the body as more heat and as lost
  * condition, and so does running past the housing's service temperature. Condition stops at
  * {@link ElectricMachineTuning#MACHINE_CONDITION_FLOOR}; it never refuses a line and is never destroyed.
@@ -83,9 +85,9 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
 
     // Figures baked at the Tool Table; the defaults are the smallest, coarsest machine, for a block placed with none.
     private float frameSu = FTuning.FRAME_SU_SMALL;
-    private float voltsPerRpm = FTuning.WINDING_VOLTS_PER_RPM_COARSE;
-    private float ratedAmps = Math.min(FTuning.FRAME_SU_SMALL / FTuning.WINDING_VOLTS_PER_RPM_COARSE, FTuning.WINDING_AMPS_PER_AMPACITY);
-    private VoltageBand band = VoltageBand.HV;
+    private float ratedRpm = ModularTuning.WINDING_RATED_RPM[0];
+    private float ratedAmps = Math.min(FTuning.FRAME_SU_SMALL / suPerAmp(ModularTuning.WINDING_BAND[0], ModularTuning.WINDING_RATED_RPM[0]), FTuning.WINDING_AMPS_PER_AMPACITY);
+    private VoltageBand band = ModularTuning.WINDING_BAND[0];
     private float mass = FTuning.FRAME_MASS_SMALL.workPerTu();
     private float leak = 0.04f;
     private float serviceTu = FTuning.MACHINE_SERVICE_TU;
@@ -117,8 +119,18 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
         return frameSu;
     }
 
-    public float getVoltsPerRpm() {
-        return voltsPerRpm;
+    /** The speed the winding is built for, RPM. */
+    public float getRatedRpm() {
+        return ratedRpm;
+    }
+
+    /** The Su each amp costs the shaft at the rated speed (a motor's torque per amp, or a generator's load at that speed). */
+    public float getSuPerAmp() {
+        return suPerAmp(band, ratedRpm);
+    }
+
+    private static float suPerAmp(VoltageBand band, float rpm) {
+        return ElectricRules.packetEu(band) / (ElectricTuning.EU_PER_SU_RPM * rpm);
     }
 
     /** The current it carries before it is overdrawn, A. */
@@ -158,18 +170,18 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
 
     @Override
     public VoltageBand sourceBand() {
-        // The winding's EMF at this speed falls in a band; the line carries the band, not the EMF.
-        return shaftRpm > 0 ? ElectricRules.bandOfPotential(shaftRpm * voltsPerRpm) : null;
+        return shaftRpm > 0 ? band : null;
     }
 
     @Override
     public float sourceAmps() {
-        return shaftRpm > 0 ? ratedAmps * condition : 0;
+        // A slow shaft has less power to give: the packets a tick fall with the speed under the rated one.
+        return shaftRpm > 0 ? ratedAmps * condition * Math.min(1f, shaftRpm / ratedRpm) : 0;
     }
 
-    /** The speed the voltage it sees would carry a motor to with no load at all. */
+    /** The speed the packet it sees would carry a motor to with no load at all: the rated speed at the rated packet, more for a bigger one. */
     public float noLoadRpm() {
-        return seenPotential() / voltsPerRpm;
+        return ratedRpm * getPacketEu() / ElectricRules.packetEu(band);
     }
 
     @Override
@@ -187,7 +199,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
         super.onResolved(band, eu, amps, wanted, blocked);
         if (level == null)
             return;
-        float power = seenPotential() * amps;
+        float power = eu * amps;
         float excess = generator() ? (ratedAmps > 0f ? Math.max(0f, amps / ratedAmps - 1f) : 0f) : ElectricRules.overVoltage(band, eu, this.band);
         if (power > 0f)
             Heat.warm(this, power * coreLoss + amps * amps * windingDrop + ElectricMachineTuning.MACHINE_HEAT_PER_EXCESS * power * excess);
@@ -210,14 +222,14 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
 
     // --- the shaft ------------------------------------------------------------------------------
 
-    /** The torque the current drawn last tick costs the shaft as a generator, in Su. */
+    /** The torque the Eu a tick drawn last tick costs the shaft as a generator, in Su: those Eu over what a shaft turning at this speed carries per Su. */
     public Su getShaftLoad() {
-        return new Su(getAmps() * voltsPerRpm);
+        return shaftRpm > 0 ? new Su(getAmps() * getPacketEu() / (ElectricTuning.EU_PER_SU_RPM * shaftRpm)) : new Su(0);
     }
 
     /** The torque the current delivered last tick puts on the shaft as a motor, in Su, as much as the winding's condition lets through. */
     public Su getShaftTorque() {
-        return new Su(getAmps() * voltsPerRpm * condition);
+        return new Su(getAmps() * getSuPerAmp() * condition);
     }
 
     public void tickServer() {
@@ -350,7 +362,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
     /** The figures and the state, as the item carries them ({@code FDataComponents.DYNAMOTOR}) and the block saves them. */
     private CompoundTag writeState(CompoundTag tag) {
         tag.putFloat("FrameSu", frameSu);
-        tag.putFloat("VoltsPerRpm", voltsPerRpm);
+        tag.putFloat("RatedRpm", ratedRpm);
         tag.putFloat("RatedAmps", ratedAmps);
         tag.putString("Band", band.getSerializedName());
         tag.putFloat("Mass", mass);
@@ -369,10 +381,10 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
 
     private void readState(CompoundTag tag) {
         frameSu = tag.contains("FrameSu") ? tag.getFloat("FrameSu") : frameSu;
-        voltsPerRpm = tag.contains("VoltsPerRpm") ? Math.max(1e-3f, tag.getFloat("VoltsPerRpm")) : voltsPerRpm;
+        ratedRpm = tag.contains("RatedRpm") ? Math.max(1e-3f, tag.getFloat("RatedRpm")) : ratedRpm;
         ratedAmps = tag.contains("RatedAmps") ? tag.getFloat("RatedAmps") : ratedAmps;
         if (tag.contains("Band"))
-            band = VoltageBand.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(tag.getString("Band"))).result().orElse(VoltageBand.HV);
+            band = VoltageBand.CODEC.parse(NbtOps.INSTANCE, StringTag.valueOf(tag.getString("Band"))).result().orElse(ModularTuning.WINDING_BAND[0]);
         mass = tag.contains("Mass") ? tag.getFloat("Mass") : mass;
         leak = tag.contains("Leak") ? tag.getFloat("Leak") : leak;
         serviceTu = tag.contains("ServiceTu") ? tag.getFloat("ServiceTu") : serviceTu;

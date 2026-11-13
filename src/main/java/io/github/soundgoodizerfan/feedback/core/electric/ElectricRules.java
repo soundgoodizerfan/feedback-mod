@@ -34,44 +34,20 @@ public final class ElectricRules {
         return packetEu(band) * amps;
     }
 
-    /** Reference electrochemical potential of a band, for devices that compare a cell or electrode with what a line offers. Placeholder anchors, [OPEN] (6.3). */
-    public static float bandPotential(VoltageBand band) {
-        return switch (band) {
-            case LV -> ElectricTuning.BAND_POTENTIAL_LV;
-            case MV -> ElectricTuning.BAND_POTENTIAL_MV;
-            case HV -> ElectricTuning.BAND_POTENTIAL_HV;
-            case UHV -> ElectricTuning.BAND_POTENTIAL_UHV;
-            case EHV -> ElectricTuning.BAND_POTENTIAL_EHV;
-            case TRUNK -> ElectricTuning.BAND_POTENTIAL_TRUNK;
-        };
+    /**
+     * Whether a store (battery, jar, charger) takes charge from a line: a packet arrives and its band is at or above the store's
+     * rating. A band under the rating never charges it; a band over it charges it at the cost of {@link #overVoltage}.
+     */
+    public static boolean accepts(VoltageBand fed, float packetEu, VoltageBand rated) {
+        return packetEu > 0f && fed.compareTo(rated) >= 0;
     }
 
     /**
-     * What an electrochemical device (battery, jar, charger) sees on a line, as a potential: the band's
-     * reference, less in proportion to the packet that survived the cable loss. Never shown to a player.
+     * The over-rating of a band met by a carrier that is not on a run (a battery in a hand, a gun's cell, a wearer's pack): the same
+     * scale as {@link #overVoltage}, each band over a factor of four.
      */
-    public static float seenPotential(VoltageBand band, float packetEu) {
-        return packetEu <= 0f ? 0f : bandPotential(band) * Math.min(1f, packetEu / packetEu(band));
-    }
-
-    /**
-     * The band a potential belongs to: the highest whose reference it reaches within {@link ElectricTuning#BAND_REACH}, LV below all.
-     * A cell at 1.1 V is LV; a 2 V battery cell is LV, a 12 V stack MV, 24 V HV (ruled 2026-11-03 for the battery).
-     */
-    public static VoltageBand bandOfPotential(float potential) {
-        VoltageBand found = VoltageBand.LV;
-        for (VoltageBand band : VoltageBand.values())
-            if (potential >= bandPotential(band) * ElectricTuning.BAND_REACH)
-                found = band;
-        return found;
-    }
-
-    /**
-     * The over-rating of a potential an electrochemical device or a held charge meets, against the reference of a rated band: the same
-     * scale as {@link #overVoltage}, for a carrier of a charge that is not on a run (a battery in a hand, a gun's cell).
-     */
-    public static float overPotential(float potential, VoltageBand rated) {
-        return Math.max(0f, potential / bandPotential(rated) - 1f);
+    public static float overBand(VoltageBand fed, VoltageBand rated) {
+        return Math.max(0f, packetEu(fed) / packetEu(rated) - 1f);
     }
 
     /**

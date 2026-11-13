@@ -41,7 +41,7 @@ import java.util.List;
  * item: pair a better grip or a better metal and the limit moves.
  *
  * <p>They do nothing against a bare wire. Holding a piece away from the hand is not insulating
- * the hand from a conductor, and {@link Insulator#shockProofVolts} stays at its default zero.
+ * the hand from a conductor, and {@link Insulator#shockProofBand} stays at its default null.
  *
  * <p>They never wear: the three accepted exceptions are not a list that grows.
  */

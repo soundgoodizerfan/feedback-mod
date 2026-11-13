@@ -38,7 +38,10 @@ public class ModularBlockItem extends BlockItem implements Modular {
         CompoundTag figs = stack.get(FDataComponents.BLOCK_FIGURES.get());
         if (figs != null)
             for (String key : figs.getAllKeys())
-                tooltip.add(Component.translatable("figure.feedback.block." + key, String.format(Locale.ROOT, "%.3g", figs.getFloat(key))));
+                tooltip.add(key.equals("Band")
+                        ? Component.translatable("figure.feedback.block.Band", Component.translatable(
+                                io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.values()[(int) figs.getFloat(key)].key()))
+                        : Component.translatable("figure.feedback.block." + key, String.format(Locale.ROOT, "%.3g", figs.getFloat(key))));
     }
 
     @Override

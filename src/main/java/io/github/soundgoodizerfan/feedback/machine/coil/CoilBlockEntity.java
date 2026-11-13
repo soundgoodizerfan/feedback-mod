@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * A firebox's fire has no mass (see {@link HeatSource}); an element does, and a small one. So the
  * element is a {@link ThermalBody}: each tick the current puts {@code volts x amps x}
  * {@link ElectricMachineTuning#COIL_WORK_PER_EU} into it (Joule's law in this mod's units, the one
- * physical constant, as {@code QU_PER_AMP_TICK} is Faraday's), and it gives heat to the body above
+ * physical constant, as {@code QU_PER_PACKET} is Faraday's), and it gives heat to the body above
  * by the same {@code FIRE_CONDUCTANCE x difference} the body takes from it in {@code Heat.tick} --
  * so what the vessel gains the element loses, and the element settles a little above its load. A
  * fire's temperature is what it burns at; an element's is what its power and its load leave it at.

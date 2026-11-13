@@ -23,15 +23,10 @@ public final class ElectricTuning {
             PACKET_UHV_EU = 2048f, PACKET_EHV_EU = 8192f, PACKET_TRUNK_EU = 32768f;
 
     /**
-     * Placeholder. Reference electrochemical potential of each band, a factor of four apart. Only electrochemistry
-     * and static discharge (cells, jars, shocks, windings) speak in potentials; they map to a band through
-     * {@code ElectricRules.bandOfPotential}, and no source, sink, wire or run carries one.
+     * Placeholder. Eu a shaft turning at 1 RPM under 1 Su carries into a generator (and a motor takes back out): the one exchange
+     * between rotation load and electricity. A generator drawn {@code E} Eu/t loads its shaft {@code E / (this x RPM)} Su.
      */
-    public static final float BAND_POTENTIAL_LV = 1.5f, BAND_POTENTIAL_MV = 6f,
-            BAND_POTENTIAL_HV = 24f, BAND_POTENTIAL_UHV = 96f, BAND_POTENTIAL_EHV = 384f, BAND_POTENTIAL_TRUNK = 1536f;
-
-    /** Placeholder. Share of a band's reference potential a potential must reach to be in that band. */
-    public static final float BAND_REACH = 0.9f;
+    public static final float EU_PER_SU_RPM = 20f;
 
     /**
      * Placeholder. Air gap, in blocks, a bare conductor arcs across to another bare

@@ -132,11 +132,18 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.COMPOUND_TAG)
                     .build());
 
-    /** Volts a jar baton holds, drawn from a Leyden jar and spent whole on one hit. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BATON_VOLTS =
-            COMPONENTS.register("baton_volts", () -> DataComponentType.<Float>builder()
+    /** Eu a jar baton holds, drawn from a Leyden jar and spent whole on one hit. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> BATON_EU =
+            COMPONENTS.register("baton_eu", () -> DataComponentType.<Float>builder()
                     .persistent(Codec.FLOAT)
                     .networkSynchronized(ByteBufCodecs.FLOAT)
+                    .build());
+
+    /** The band of the jar the baton's charge came from. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.core.unit.VoltageBand>> BATON_BAND =
+            COMPONENTS.register("baton_band", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.core.unit.VoltageBand>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.STREAM_CODEC)
                     .build());
 
     /**

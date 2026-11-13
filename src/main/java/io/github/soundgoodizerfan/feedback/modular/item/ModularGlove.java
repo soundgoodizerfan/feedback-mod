@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import org.jetbrains.annotations.Nullable;
 
 import top.theillusivec4.curios.api.event.CurioAttributeModifierEvent;
@@ -126,15 +127,26 @@ public class ModularGlove extends ModularItem implements Insulator {
         return Math.max(alone, Grip.safeUpTo(level, lining, FTuning.GLOVE_EXPOSURE * ModularTuning.GLOVE_LINING_SHARE));
     }
 
-    /** Either layer stops a wire: the lining between the hand and the body counts as much as a cloth body. */
+    /**
+     * The band a layer's material is rated to: its {@code electrical.insulation} when it states one, else the bottom band for a
+     * material that keeps heat off the hand (dry cloth or leather stops the smallest packet and no more); null for a layer that
+     * insulates nothing.
+     */
+    @Nullable
+    private static VoltageBand layerBand(ItemStack stack, Level level, ResourceLocation id) {
+        if (id == null)
+            return null;
+        return Grip.material(level, id).filter(Grip::insulates)
+                .map(m -> m.electrical().insulation().orElse(VoltageBand.LV)).orElse(null);
+    }
+
+    /** Either layer stops a wire, and the glove is rated to the better of the body and the lining, by their materials' own insulation. */
     @Override
-    public float shockProofVolts(ItemStack stack, Level level) {
-        ResourceLocation body = material(stack, BODY);
-        if (body == null || ModularStacks.broken(stack))
-            return 0f;
-        ResourceLocation lining = material(stack, "L");
-        boolean insulates = Grip.material(level, body).filter(Grip::insulates).isPresent()
-                || lining != null && Grip.material(level, lining).filter(Grip::insulates).isPresent();
-        return insulates ? ModularTuning.GLOVE_SHOCK_PROOF_VOLTS : 0f;
+    @Nullable
+    public VoltageBand shockProofBand(ItemStack stack, Level level) {
+        if (material(stack, BODY) == null || ModularStacks.broken(stack))
+            return null;
+        VoltageBand body = layerBand(stack, level, material(stack, BODY)), lining = layerBand(stack, level, material(stack, "L"));
+        return body == null ? lining : lining == null || body.compareTo(lining) > 0 ? body : lining;
     }
 }

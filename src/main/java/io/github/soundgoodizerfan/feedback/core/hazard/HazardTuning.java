@@ -48,6 +48,9 @@ public final class HazardTuning {
      */
     public static final float SHOCK_MV_DAMAGE = 2f, SHOCK_HV_DAMAGE = 5f, SHOCK_UHV_DAMAGE = 10f, SHOCK_EHV_DAMAGE = 20f, SHOCK_TRUNK_DAMAGE = 40f;
 
+    /** Invented. A discharge counts for at least this many packets' worth of Eu in a shock's damage, and at most this many. */
+    public static final float SHOCK_MIN_PACKETS = 0.25f, SHOCK_MAX_PACKETS = 4f;
+
     /** Invented. Ceiling of {@code Exposure}'s multiplier on a shock. */
     public static final float FENCE_EXPOSURE_MAX = 2f;
 

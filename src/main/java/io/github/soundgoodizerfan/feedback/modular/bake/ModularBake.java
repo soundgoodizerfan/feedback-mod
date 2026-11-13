@@ -13,6 +13,7 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.Part;
 import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.combat.gear.GearTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
@@ -251,13 +252,13 @@ public final class ModularBake {
         };
     }
 
-    /** What a battery design is: its cell count, one cell's capacity in amp-ticks, the plates' volts and the case's band. */
+    /** What a battery design is: its cell count, one cell's capacity in Eu, the plates' figures and the band the case rates the battery. */
     public record CellSpec(int cells, float capacity, Material.SecondaryCell plates, VoltageBand caseBand) {
     }
 
     /**
      * The battery a design makes: the plate part's cells of stock (two plates to a cell, {@link FTuning#BATTERY_INGOTS_PER_CELL}, unless its variant's {@code ingots_per_cell} param says 1 or 4)
-     * give the cell count, each plate its material's {@code amp_ticks_per_ingot}, and the case material's {@code insulation} is the
+     * give the cell count, each plate its material's {@code eu_per_ingot}, and the case material's {@code insulation} is the
      * highest voltage it holds off. Empty if the plates state no {@code secondary_cell} or the case does not insulate.
      */
     public static Optional<CellSpec> cell(ModularDesign design, ModularType type, Map<ResourceLocation, Material> materials) {
@@ -272,7 +273,7 @@ public final class ModularBake {
         int perCell = Math.max(1, Math.round(role.axis(plates, "cell_size")));
         int cells = Math.max(1, Math.round(role.axis(plates, "cell_count")));
         Material.SecondaryCell sc = pm.electrical().secondaryCell().get();
-        return Optional.of(new CellSpec(cells, sc.ampTicksPerIngot() * perCell, sc, cm.electrical().insulation().get()));
+        return Optional.of(new CellSpec(cells, sc.euPerIngot() * perCell, sc, cm.electrical().insulation().get()));
     }
 
     /**
@@ -467,9 +468,9 @@ public final class ModularBake {
      * What a dynamotor design is, read by the placed block.
      *
      * @param frameSu    the frame's torque ceiling, Su.
-     * @param voltsPerRpm the winding's, which is also the Su each amp costs the shaft.
+     * @param ratedRpm   the speed the winding is built for, with its band: the Su each amp costs the shaft there is {@code packet / (EU_PER_SU_RPM x ratedRpm)}.
      * @param ratedAmps  the current it carries: the frame's ceiling over the winding's figure, or the winding conductor's, whichever is less.
-     * @param band       the band it is built for: its volts per RPM at {@link ModularTuning#MACHINE_REFERENCE_RPM}.
+     * @param band       the band the winding puts on a line and is built for (a discrete choice of the winding).
      * @param mass       thermal mass of the frame, Work per Tu.
      * @param leak       the housing's shed to air, Work per tick per Tu (a finned one).
      * @param serviceTu  the hottest the housing runs before the machine wears.
@@ -477,7 +478,7 @@ public final class ModularBake {
      * @param coreLoss   the share of throughput the core loses as heat.
      * @param jacketed   whether the housing is a water jacket.
      */
-    public record MachineSpec(float frameSu, float voltsPerRpm, float ratedAmps, VoltageBand band, float mass, float leak,
+    public record MachineSpec(float frameSu, float ratedRpm, float ratedAmps, VoltageBand band, float mass, float leak,
                               float serviceTu, float windingDrop, float coreLoss, boolean jacketed) {
     }
 
@@ -628,6 +629,15 @@ public final class ModularBake {
         return Math.max(1, Math.round(role.cells(part) * role.volumeScale(part)));
     }
 
+    /** The index of the reference size in {@code xs} nearest {@code x}: a discrete choice, never a blend. */
+    private static int nearest(float x, float[] xs) {
+        int best = 0;
+        for (int i = 1; i < xs.length; i++)
+            if (Math.abs(xs[i] - x) < Math.abs(xs[best] - x))
+                best = i;
+        return best;
+    }
+
     /** {@code x} on the piecewise-linear curve through ({@code xs}, {@code ys}), held flat past either end. */
     public static float interp(float x, float[] xs, float[] ys) {
         if (x <= xs[0])
@@ -644,8 +654,8 @@ public final class ModularBake {
     }
 
     /**
-     * The machine a design makes. The frame sets the torque ceiling, the thermal mass and the wall area; the winding sets volts
-     * per RPM (its shape) and the current its conductor carries (the {@code ampacity} times its cells of wire); the core's
+     * The machine a design makes. The frame sets the torque ceiling, the thermal mass and the wall area; the winding sets its band
+     * and rated speed (its shape) and the current its conductor carries (the {@code ampacity} times its cells of wire); the core's
      * {@code electrical.core_loss} and the winding's {@code drop} are heat; the housing's {@code thermal.conductivity} over the
      * frame's area is the shed to air, and a jacketed housing carries water. Empty if the winding does not conduct or the housing
      * states no conductivity.
@@ -662,7 +672,12 @@ public final class ModularBake {
         float su = interp(size, ModularTuning.FRAME_CELLS, ModularTuning.FRAME_SU);
         float mass = interp(size, ModularTuning.FRAME_CELLS, ModularTuning.FRAME_MASS);
         float area = interp(size, ModularTuning.FRAME_CELLS, ModularTuning.FRAME_AREA);
-        float vpr = interp(stockCells(type.roles().get(MACHINE_WINDING), winding), ModularTuning.WINDING_CELLS, ModularTuning.WINDING_VPR);
+        // The winding's cells of wire pick its band and the speed it is built for: a discrete choice, the nearest reference winding.
+        int windingStep = nearest(stockCells(type.roles().get(MACHINE_WINDING), winding), ModularTuning.WINDING_CELLS);
+        VoltageBand windingBand = ModularTuning.WINDING_BAND[windingStep];
+        float ratedRpm = ModularTuning.WINDING_RATED_RPM[windingStep];
+        // Su each amp costs the shaft at the rated speed (what the old volts per RPM was).
+        float suPerAmp = ElectricRules.packetEu(windingBand) / (ElectricTuning.EU_PER_SU_RPM * ratedRpm);
         // An optional bearing sets how much torque the rotor carries and how much friction heat it makes (a sleeve is cheap and warm,
         // a ball bearing runs cool, a roller bearing carries the most).
         Part bearing = design.part(MACHINE_BEARING);
@@ -674,7 +689,7 @@ public final class ModularBake {
         if (balls != null)
             friction *= balls.mechanical().friction().orElse(ModularTuning.BEARING_REF_FRICTION) / ModularTuning.BEARING_REF_FRICTION;
         int wireCells = stockCells(type.roles().get(MACHINE_WINDING), winding);
-        float amps = Math.min(su / vpr, wm.ampacity().get() * wireCells * FTuning.WINDING_AMPS_PER_AMPACITY);
+        float amps = Math.min(su / suPerAmp, wm.ampacity().get() * wireCells * FTuning.WINDING_AMPS_PER_AMPACITY);
         float drop = wm.electrical().drop().orElse(0f) * wireCells * ModularTuning.WINDING_BLOCKS_PER_CELL;
         float leak = hm.thermal().conductivity().get().workPerTickPerTu() * area * ModularTuning.MACHINE_SHED_PER_CONDUCTIVITY;
         // A cooling addon (plate fins, or pipe for a water jacket) sheds more: its material's conductivity over its volume.
@@ -684,7 +699,7 @@ public final class ModularBake {
             leak += km.thermal().conductivity().get().workPerTickPerTu() * type.roles().get(MACHINE_COOLING).volume(cooling)
                     * ModularTuning.COOLING_SHED_PER_LS;
         float service = hm.thermal().serviceTemperature().map(Tu::value).orElse(FTuning.MACHINE_SERVICE_TU);
-        return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOfPotential(vpr * ModularTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
+        return Optional.of(new MachineSpec(su, ratedRpm, amps, windingBand, mass, leak, service, drop,
                 cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, cooling != null && cooling.form().equals("pipe")));
     }
 

@@ -33,7 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>It eats its anode</h2>
  * A real cell consumes its anode (user ruling, 2026-10-23). The current it supplies spends
- * {@link ElectricMachineTuning#GALVANIC_ANODE_AMP_TICKS} amp-ticks of a full anode, and a spent cell holds no
+ * {@link ElectricMachineTuning#GALVANIC_ANODE_EU} Eu of a full anode, and a spent cell holds no
  * voltage. An ingot of the anode metal used on the block restores part of it, so the running cost is
  * a real item. The remaining anode travels with the mined block.
  */
@@ -71,14 +71,20 @@ public class GalvanicCellBlockEntity extends ElectricNode {
             }
         }
         // The cell's chemistry gives a potential; the line sees only the band it falls in.
-        return anode > 0f && volts > 0f ? ElectricRules.bandOfPotential(volts) : null;
+        if (anode <= 0f || volts <= 0f)
+            return null;
+        VoltageBand found = VoltageBand.LV;
+        for (VoltageBand b : VoltageBand.values())
+            if (volts >= ElectricMachineTuning.GALVANIC_BAND_FLOOR[b.ordinal()])
+                found = b;
+        return found;
     }
 
     @Override
     public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
         super.onResolved(band, eu, amps, wanted, blocked);
         if (amps > 0f && anode > 0f) {
-            anode = Math.max(0f, anode - amps / figures.get("AnodeTicks", ElectricMachineTuning.GALVANIC_ANODE_AMP_TICKS));
+            anode = Math.max(0f, anode - amps * eu / figures.get("AnodeEu", ElectricMachineTuning.GALVANIC_ANODE_EU));
             setChanged();
         }
     }

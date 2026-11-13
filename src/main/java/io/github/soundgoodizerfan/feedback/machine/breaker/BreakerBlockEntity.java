@@ -113,7 +113,7 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
         for (var victim : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
                 new net.minecraft.world.phys.AABB(worldPosition).inflate(ElectricMachineTuning.BREAKER_FLASH_RADIUS))) {
             if (victim instanceof net.minecraft.world.entity.player.Player player
-                    && io.github.soundgoodizerfan.feedback.core.hazard.Protection.shockProofVolts(player) >= io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.bandPotential(getBand()))
+                    && io.github.soundgoodizerfan.feedback.core.hazard.Protection.shockProof(player, getBand()))
                 continue;
             if (victim.hurt(io.github.soundgoodizerfan.feedback.core.hazard.Hazards.source(level,
                     io.github.soundgoodizerfan.feedback.core.hazard.Hazards.HOT_CONTACT), damage))

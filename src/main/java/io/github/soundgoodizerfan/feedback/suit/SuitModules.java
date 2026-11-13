@@ -29,7 +29,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  * sink and the coolant loop). Each reads {@code mod[id]}, its power, or 0 when not fitted; the array is null when none is.
  *
  * <p>Attribute modules are transient modifiers set when the fit or power changes; per-tick ones run in {@link #tick}; damage and landing
- * ones are events here. Whatever they cost is amp-ticks added to the battery's pending draw.
+ * ones are events here. Whatever they cost is Eu added to the battery's pending draw.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class SuitModules {
@@ -169,7 +169,7 @@ public final class SuitModules {
 
     // --- per tick -----------------------------------------------------------------------------------------------
 
-    /** Runs the modules that act each tick. Returns amp-ticks to draw this tick. */
+    /** Runs the modules that act each tick. Returns Eu to draw this tick. */
     static float tick(ServerPlayer pl, float[] m) {
         if (m == null)
             return 0f;

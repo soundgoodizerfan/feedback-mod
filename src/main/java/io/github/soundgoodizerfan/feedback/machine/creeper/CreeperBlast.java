@@ -38,7 +38,8 @@ public final class CreeperBlast {
         if (charged) {
             double r = power * 2;
             for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(at.x - r, at.y - r, at.z - r, at.x + r, at.y + r, at.z + r)))
-                Shock.apply(e, PetrochemTuning.CREEPER_DISCHARGE_VOLTS);
+                Shock.apply(e, PetrochemTuning.CREEPER_DISCHARGE_BAND, PetrochemTuning.CREEPER_DISCHARGE_PACKETS
+                        * io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.packetEu(PetrochemTuning.CREEPER_DISCHARGE_BAND));
         }
     }
 

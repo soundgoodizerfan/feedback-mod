@@ -233,11 +233,11 @@ public class ModularElectricGun extends GunItem {
     }
 
     /** Chambers a cylinder has charged now (a fraction while one fills), at most {@link ModularTuning#EGUN_CHAMBERS}. */
-    public static float chambers(ItemStack gun, long now, ElectricGunSpec spec, float volts, int cells) {
+    public static float chambers(ItemStack gun, long now, ElectricGunSpec spec, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, int cells) {
         CompoundTag tag = tag(gun);
         float held = tag.contains(CHAMBERS) ? tag.getFloat(CHAMBERS) : ModularTuning.EGUN_CHAMBERS;
         float seconds = Math.max(0L, now - tag.getLong(CHAMBERS_AT)) / 20f;
-        return Math.min(ModularTuning.EGUN_CHAMBERS, held + seconds * spec.refillPerSecond(volts, cells));
+        return Math.min(ModularTuning.EGUN_CHAMBERS, held + seconds * spec.refillPerSecond(band, cells));
     }
 
     public static void setChambers(ItemStack gun, float chambers, long now) {
@@ -260,7 +260,7 @@ public class ModularElectricGun extends GunItem {
         if (spec == null || spec.seat() != ElectricGunSpec.Seat.CYLINDER)
             return 0f;
         CompoundTag state = cell.isEmpty() ? null : BatteryStack.state(cell);
-        return chambers(gun, now, spec, state == null ? ModularTuning.EGUN_REF_VOLTS : BatteryStack.terminalVolts(state),
+        return chambers(gun, now, spec, state == null ? ModularTuning.EGUN_REF_BAND : BatteryStack.caseBand(state),
                 state == null ? 2 : Math.max(1, state.getInt("Cells")));
     }
 
@@ -428,16 +428,16 @@ public class ModularElectricGun extends GunItem {
     // --- what a mistake costs ----------------------------------------------------------------------
 
     /** What a mistake costs, by steps: nothing from correct use. */
-    public static void mistakes(ServerPlayer player, ItemStack gun, ElectricGunSpec spec, float volts, InteractionHand hand) {
+    public static void mistakes(ServerPlayer player, ItemStack gun, ElectricGunSpec spec, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, InteractionHand hand) {
         EquipmentSlot slot = LivingEntity.getSlotForHand(hand);
         // A cell over the receiver's band shocks the wielder and wears the receiver.
-        float excess = ElectricRules.overPotential(volts, spec.band());
+        float excess = ElectricRules.overBand(band, spec.band());
         if (excess > 0f) {
             player.hurt(player.damageSources().lightningBolt(), ModularTuning.EGUN_SHOCK_PER_EXCESS * excess);
             gun.hurtAndBreak(ModularStacks.cap(gun, 1 + (int) excess), player, slot);
         }
         // Wet, the arc finds the wielder; only insulation stops it.
-        if (player.isInWaterOrRain() && !PulseShot.insulated(player, volts))
+        if (player.isInWaterOrRain() && !PulseShot.insulated(player, band))
             player.hurt(player.damageSources().lightningBolt(), ModularTuning.EGUN_SHOCK);
     }
 

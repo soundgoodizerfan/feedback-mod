@@ -298,9 +298,9 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                 * (1f - (zoom ? ModularTuning.EGUN_ZOOM_TIGHT * zoomShare : 0f)));
     }
 
-    /** Chambers a second a cylinder refills at, from the seated battery's cells and volts, the chamber's conductor and the tier. */
-    public float refillPerSecond(float volts, int cells) {
-        float battery = Math.max(0.25f, cells / 2f) * Math.min(1.5f, volts / ModularTuning.EGUN_REF_VOLTS);
+    /** Chambers a second a cylinder refills at, from the seated battery's cells and band, the chamber's conductor and the tier. */
+    public float refillPerSecond(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand band, int cells) {
+        float battery = Math.max(0.25f, cells / 2f) * Math.min(1.5f, io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.packetEu(band) / io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.packetEu(ModularTuning.EGUN_REF_BAND));
         return ModularTuning.EGUN_CYL_REFILL_PER_S * Mth.clamp(seatAmp, 0.3f, 2f) * battery * (ModularTuning.EGUN_TIER_FRACTION[1] / tierFraction());
     }
 
