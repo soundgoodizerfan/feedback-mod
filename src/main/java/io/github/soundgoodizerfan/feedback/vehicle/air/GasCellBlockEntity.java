@@ -280,7 +280,7 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
         for (Direction d : Direction.values()) {
             BlockPos n = worldPosition.relative(d);
             BlockState s = server.getBlockState(n);
-            if (s.is(BlockTags.FIRE) || s.getFluidState().is(FluidTags.LAVA) || s.is(Blocks.MAGMA_BLOCK))
+            if (s.is(BlockTags.FIRE) || s.getFluidState().is(FluidTags.LAVA) || s.is(io.github.soundgoodizerfan.feedback.registry.FTags.HOT_SURFACE))
                 return true;
             if (server.getBlockEntity(n) instanceof ThrusterBlockEntity t && t.power() > 0f)
                 return true;

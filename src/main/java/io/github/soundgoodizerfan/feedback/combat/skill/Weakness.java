@@ -267,7 +267,7 @@ public final class Weakness {
         for (int k = 1; k <= 2; k++) {
             BlockPos at = BlockPos.containing(t.getX() + away.x * k, t.getY(), t.getZ() + away.z * k);
             BlockState s = l.getBlockState(at);
-            if (s.is(Blocks.CACTUS) || s.is(Blocks.FIRE) || s.is(Blocks.SOUL_FIRE) || s.is(Blocks.MAGMA_BLOCK) || l.getFluidState(at).is(FluidTags.LAVA))
+            if (s.is(io.github.soundgoodizerfan.feedback.registry.FTags.HURTS_ON_CONTACT) || s.is(net.minecraft.tags.BlockTags.FIRE) || s.is(io.github.soundgoodizerfan.feedback.registry.FTags.HOT_SURFACE) || l.getFluidState(at).is(FluidTags.LAVA))
                 return true;
             if (!s.getCollisionShape(l, at).isEmpty())
                 continue;

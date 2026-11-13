@@ -34,6 +34,10 @@ public final class FTags {
     public static final TagKey<Item> SPOON = TagKey.create(Registries.ITEM, Feedback.id("spoon"));
     /** Blocks whose item inventory a heat source never warms (they take heat through {@code HeatSource.at} themselves). */
     public static final TagKey<Block> NO_HEAT_PUSH = TagKey.create(Registries.BLOCK, Feedback.id("no_heat_push"));
+    /** Blocks that hurt whatever stands in or against them (a cactus's spines). Fire and lava are found by their own tags. */
+    public static final TagKey<Block> HURTS_ON_CONTACT = TagKey.create(Registries.BLOCK, Feedback.id("hurts_on_contact"));
+    /** Solid blocks hot enough to burn and to light a gas (magma). */
+    public static final TagKey<Block> HOT_SURFACE = TagKey.create(Registries.BLOCK, Feedback.id("hot_surface"));
     /** Blocks that insulate a vessel they touch. */
     public static final TagKey<Block> INSULATION = TagKey.create(Registries.BLOCK, Feedback.id("insulation"));
     /** Blocks an edge can be ground at: shift-use with an edged modular tool in hand. */

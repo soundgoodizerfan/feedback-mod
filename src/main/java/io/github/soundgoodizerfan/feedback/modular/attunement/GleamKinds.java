@@ -82,7 +82,7 @@ public final class GleamKinds {
             return;
         ServerLevel level = p.serverLevel();
         BlockState there = level.getBlockState(at);
-        boolean water = there.getFluidState().isSourceOfType(Fluids.WATER) && there.is(Blocks.WATER);
+        boolean water = there.getFluidState().isSource() && there.getFluidState().is(net.minecraft.tags.FluidTags.WATER) && there.getBlock() instanceof net.minecraft.world.level.block.LiquidBlock;
         if (!there.isAir() && !water)
             return;
         level.setBlock(at, Blocks.LIGHT.defaultBlockState()
