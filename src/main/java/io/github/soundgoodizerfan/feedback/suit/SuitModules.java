@@ -37,18 +37,20 @@ public final class SuitModules {
     private SuitModules() {
     }
 
-    public static final int REBREATHER = 1, RANGEFINDER = 2, RESPIRATOR = 3, GLARE_FILTER = 4, LONG_LENS = 5, CRASH_LINER = 6, REFLEX_LINK = 7,
+    public static final int REBREATHER = 1, RESPIRATOR = 3, CRASH_LINER = 6, REFLEX_LINK = 7,
             HEAT_SINK = 8, COOLANT_LOOP = 9, EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
             THERMAL_LINING = 15, MAGNET_PICKUP = 16, FIRE_CURTAIN = 17, STRIDER_PISTONS = 18, STEP_ASSIST = 19, SWIM_FINS = 20,
             SHOCK_ABSORBERS = 21, GRIP_PADS = 22, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, HEAT_SHIELD = 26, JUMP_COIL = 27,
             LANDING_GEAR = 28, ROCKET_SPUR = 29, STOMP_ACTUATOR = 30,
             // modules that give the wheel a segment of its own (see ability)
-            CLOAK_FIELD = 31, JET_PACK = 32, SHOCK_RAM = 33, SCAN_PING = 34, EMP_COIL = 35;
+            CLOAK_FIELD = 31, JET_PACK = 32, SHOCK_RAM = 33, EMP_COIL = 35;
+    // mechanism classes: a part of one kind of mechanism, tuned by its axis, whatever the figures make of it
+    public static final int OPTIC = 36;
     /** The variant name of each id, which is also its lang key suffix; index 0 is none. */
-    private static final String[] KEYS = {"", "rebreather", "rangefinder", "respirator", "glare_filter", "long_lens", "crash_liner", "reflex_link", "heat_sink",
+    private static final String[] KEYS = {"", "rebreather", "", "respirator", "", "", "crash_liner", "reflex_link", "heat_sink",
             "coolant_loop", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "thermal_lining", "magnet_pickup", "fire_curtain",
             "strider_pistons", "step_assist", "swim_fins", "shock_absorbers", "grip_pads", "load_frame", "stabiliser", "mag_anchor", "heat_shield", "jump_coil",
-            "landing_gear", "rocket_spur", "stomp_actuator", "cloak_field", "jet_pack", "shock_ram", "scan_ping", "emp_coil"};
+            "landing_gear", "rocket_spur", "stomp_actuator", "cloak_field", "jet_pack", "shock_ram", "", "emp_coil", "optic"};
 
     /** The name key of upgrade {@code id} (translate {@code modular.feedback.variant.<key>}), or empty for none. */
     public static String key(int id) {
@@ -56,7 +58,7 @@ public final class SuitModules {
     }
 
     /** Ids are 1-based; a module array holds each id's power at {@code [id]} and its tuned-axis share at {@code [COUNT + id]}. */
-    public static final int COUNT = 36;
+    public static final int COUNT = 37;
 
     /** A module array's length: powers, then tuned-axis shares. */
     static final int SLOTS = 2 * COUNT;
@@ -72,18 +74,23 @@ public final class SuitModules {
      */
     public static String argAxis(int id) {
         return switch (id) {
+            case OPTIC -> "focal_length";
             default -> "";
         };
     }
 
     /** Bits of the wheel segments module {@code id} gives when it holds the supports {@code sup} ({@code Fig.SUP_*}): what a part can do is what it gets a segment for. */
     static int gives(int id, int sup) {
+        if (id == OPTIC)
+            return Ability.LENS.bit() | ((sup & io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SUP_CONTROLLER) != 0 ? Ability.SCAN.bit() : 0);
         Ability a = ability(id);
         return a == null ? 0 : a.bit();
     }
 
     /** The switch segment that must be on for module {@code id} to work, 0 for one that is passive or only pulses. */
     static int gates(int id) {
+        if (id == OPTIC)
+            return Ability.LENS.bit();
         Ability a = ability(id);
         return a == null || a.pulse() || a.builtIn() ? 0 : a.bit();
     }
@@ -99,7 +106,10 @@ public final class SuitModules {
     /** How strongly {@code a} works in {@code m}, 0 when no fitted module gives it. */
     static float power(float[] m, Ability a) {
         int id = moduleOf(a);
-        return id > 0 && m != null ? m[id] : 0f;
+        if (id == 0 || m == null)
+            return 0f;
+        // a scan's flash reaches as far as the lens is long-focus
+        return a == Ability.SCAN ? m[id] * (SCAN_SHORT + SCAN_LONG * arg(m, id)) : m[id];
     }
 
     /** {@code m} with every module that needs the suit's power zeroed: the springs and plates that are mechanical work unpowered. Null when none is left. */
@@ -113,13 +123,10 @@ public final class SuitModules {
             case CLOAK_FIELD -> Ability.CLOAK;
             case JET_PACK -> Ability.JET;
             case SHOCK_RAM -> Ability.SHOCK;
-            case SCAN_PING -> Ability.SCAN;
             case EMP_COIL -> Ability.EMP;
             case MAGNET_PICKUP -> Ability.MAGNET;
             case STRIDER_PISTONS -> Ability.STRIDE;
             case STEP_ASSIST -> Ability.STEP;
-            case RANGEFINDER -> Ability.RANGE;
-            case LONG_LENS -> Ability.LENS;
             case AUTODOC -> Ability.HEAL;
             case COOLANT_LOOP -> Ability.VENT;
             case ROCKET_SPUR -> Ability.BURST;
@@ -129,7 +136,7 @@ public final class SuitModules {
     }
 
     // --- placeholder figures, tuned in play (the suit's own file is SuitTuning; these are per-module and live beside their code) ---
-    private static final float OXYGEN = 3f, BLOCK_REACH = 1.5f, ENTITY_REACH = 1f, ATTACK_SPEED = 0.2f, KB_PLATING = 0.6f, KB_ANCHOR = 0.5f,
+    private static final float OXYGEN = 3f, ATTACK_SPEED = 0.2f, KB_PLATING = 0.6f, KB_ANCHOR = 0.5f,
             KB_STABILISER = 0.2f, STRIDE = 0.12f, STEP = 1f, WATER = 0.6f, FALL_CUT = 0.5f, EFFICIENCY = 0.7f, SNEAK = 0.5f, JUMP = 0.12f,
             SAFE_FALL = 5f, LOAD = 1f;
     private static final float BLAST_CUT = 0.4f, FIRE_CUT = 0.5f, SHOT_CUT = 0.3f, BUS_SAVING = 0.3f, SINK_GAIN = 3f, LOOP_TU = 25f, LENS_GAIN = 0.5f,
@@ -137,6 +144,8 @@ public final class SuitModules {
     private static final float STRIDE_AMPS = 0.3f, SHIELD_AMPS = 0.8f, MAGNET_AMPS = 0.2f, FILTER_COST = 15f, LINING_COST = 5f, HEAL_COST = 80f,
             THORN_COST = 40f, STOMP_COST = 50f, THORN_DAMAGE = 2f, STOMP_PER_BLOCK = 0.5f, STOMP_MAX = 12f, MAGNET_BASE = 3f, MAGNET_PER = 3f;
     private static final int HEAL_TICKS = 40;
+    /** A lens: the reach (blocks) a short-focus lens adds; the share of thermal range a long-focus lens adds; the share of its light a glass must turn back to keep glare out; a scan flash's reach at the short and long end of the focal length. */
+    private static final float LENS_REACH_BLOCK = 1.5f, LENS_REACH_ENTITY = 1f, GLARE_MIN = 0.35f, SCAN_SHORT = 0.6f, SCAN_LONG = 0.8f;
 
     private static ResourceLocation id(String name) {
         return Feedback.id("suit_mod_" + name);
@@ -168,7 +177,7 @@ public final class SuitModules {
 
     /** Multiplier on thermal sight's reach. */
     static float lens(float[] m) {
-        return 1f + LENS_GAIN * p(m, LONG_LENS);
+        return 1f + LENS_GAIN * p(m, OPTIC) * arg(m, OPTIC);
     }
 
     /** Added to the pack's carry factor. */
@@ -189,8 +198,9 @@ public final class SuitModules {
     /** Sets (or, for null, takes off) every attribute modifier the modules give. Called when the fit or the power changes. */
     static void attributes(ServerPlayer pl, float[] m) {
         add(pl, Attributes.OXYGEN_BONUS, OXY, OXYGEN * p(m, REBREATHER), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.BLOCK_INTERACTION_RANGE, BR, BLOCK_REACH * p(m, RANGEFINDER), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.ENTITY_INTERACTION_RANGE, ER, ENTITY_REACH * p(m, RANGEFINDER), AttributeModifier.Operation.ADD_VALUE);
+        float near = p(m, OPTIC) * (1f - arg(m, OPTIC));
+        add(pl, Attributes.BLOCK_INTERACTION_RANGE, BR, LENS_REACH_BLOCK * near, AttributeModifier.Operation.ADD_VALUE);
+        add(pl, Attributes.ENTITY_INTERACTION_RANGE, ER, LENS_REACH_ENTITY * near, AttributeModifier.Operation.ADD_VALUE);
         add(pl, Attributes.ATTACK_SPEED, AS, ATTACK_SPEED * p(m, REFLEX_LINK), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
         add(pl, Attributes.KNOCKBACK_RESISTANCE, KB, Math.min(1f, KB_PLATING * p(m, REACTIVE_PLATING) + KB_ANCHOR * p(m, MAG_ANCHOR)
                 + KB_STABILISER * p(m, STABILISER)), AttributeModifier.Operation.ADD_VALUE);
@@ -225,7 +235,8 @@ public final class SuitModules {
         if (t % 10 == 0) {
             if (p(m, RESPIRATOR) > 0f)
                 draw += clear(pl, MobEffects.POISON, MobEffects.CONFUSION, MobEffects.HUNGER);
-            if (p(m, GLARE_FILTER) > 0f)
+            // a glass that turns light back keeps glare out: the less it passes, the more it rejects
+            if (p(m, OPTIC) > 0f && 1f - p(m, OPTIC) >= GLARE_MIN)
                 draw += clear(pl, MobEffects.BLINDNESS, MobEffects.DARKNESS);
             if (p(m, THERMAL_LINING) > 0f && pl.getTicksFrozen() > 0) {
                 pl.setTicksFrozen(0);

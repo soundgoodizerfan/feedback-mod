@@ -1,6 +1,9 @@
 {
   "family": "suit_module",
-  "required": ["H", "W"],
+  "required": [
+    "H",
+    "W"
+  ],
   "slot": "mainhand",
   "wear_litres": 0.05,
   "wear_role": "H",
@@ -60,34 +63,6 @@
           "plate",
           "rod"
         ],
-        "variants": [
-          {
-            "name": "lens_optic",
-            "cells": 3,
-            "params": {
-              "module": 2.0,
-              "module_long": 5.0,
-              "optic": 0.6
-            }
-          },
-          {
-            "name": "glare_filter",
-            "cells": 2,
-            "params": {
-              "module": 4.0,
-              "optic": 0.6
-            }
-          },
-          {
-            "name": "scan_ping",
-            "cells": 4,
-            "params": {
-              "module": 34.0,
-              "optic": 0.5,
-              "needs_controller": 1.0
-            }
-          }
-        ],
         "slots": [
           {
             "name": "body",
@@ -113,9 +88,6 @@
           "unit": "cm",
           "default": 20,
           "step": 5,
-          "variants": [
-            "lens_optic"
-          ],
           "bands": [
             {
               "name": "short_focus",
@@ -126,6 +98,10 @@
             }
           ]
         }
+      },
+      "params": {
+        "module": 36.0,
+        "optic": 1.0
       }
     },
     "F": {

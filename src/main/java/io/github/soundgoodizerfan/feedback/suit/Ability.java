@@ -11,7 +11,7 @@ package io.github.soundgoodizerfan.feedback.suit;
 public enum Ability {
     STRENGTH, JUMP_DASH, PLATING, NIGHT, THERMAL, CLOAK, JET, SHOCK, SCAN, EMP,
     // the segments of modules that are otherwise passive: switches (the module works only while on) and pulses
-    MAGNET, STRIDE, STEP, RANGE, LENS, HEAL, VENT, BURST, THORNS;
+    MAGNET, STRIDE, STEP, LENS, HEAL, VENT, BURST, THORNS;
 
     public int bit() {
         return 1 << ordinal();
