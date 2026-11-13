@@ -263,6 +263,7 @@ final class ThermalCard {
         }
         if (p.phase().isPresent()) {
             rows.add(new Row(t("feedback.jei.phase_change.boil"), Readout.number(p.minTemperature().value()) + " Tu", VALUE_COLOUR));
+            reach(rows);
             rows.add(new Row(t("feedback.jei.phase_change.condense"), fluidName(p.phase().get().liquidFluid()), VALUE_COLOUR));
             return rows;
         }
@@ -277,6 +278,7 @@ final class ThermalCard {
         rows.add(new Row(t("feedback.jei.reaction.temperature"), max < Float.MAX_VALUE
                 ? Readout.number(p.minTemperature().value()) + "-" + Readout.number(max) + " Tu"
                 : Readout.number(p.minTemperature().value()) + "+ Tu", VALUE_COLOUR));
+        reach(rows);
         rows.add(new Row(t("feedback.jei.optimal"), Readout.number(p.optimalTemperature().value()) + " Tu", VALUE_COLOUR));
         // Time to complete held exactly at the optimum (ThermalProcess#requiredTpu); a pooled recipe has no hold and prints none.
         // A form-agnostic row reads the form on display: the slot cycles through them and the hold follows.
@@ -303,6 +305,23 @@ final class ThermalCard {
         p.atmosphere().ifPresent(a -> rows.add(new Row(t("feedback.jei.atmosphere"),
                 new FluidStack(BuiltInRegistries.FLUID.get(a.fluid()), a.mb()).getHoverName().getString() + " " + a.mb() + " mB", VALUE_COLOUR)));
         return rows;
+    }
+
+    /**
+     * The linked machine's reach set beside a temperature requirement (philosophy 6): what it can run to and
+     * how finely the player's best instrument reads it, in words when none is carried. Never a verdict.
+     */
+    private static void reach(List<Row> rows) {
+        var machine = io.github.soundgoodizerfan.feedback.client.LinkedMachine.current();
+        if (machine == null || machine.ceilingTu() >= Float.MAX_VALUE)
+            return;
+        rows.add(new Row(machine.name().getString(), t("feedback.jei.reach.tu", Readout.number(machine.ceilingTu())), VALUE_COLOUR));
+        var instrument = io.github.soundgoodizerfan.feedback.instrument.Instruments.reading(Minecraft.getInstance().player,
+                io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE);
+        rows.add(new Row(t("feedback.jei.reach.reading"), instrument == null ? t("feedback.jei.reach.by_eye")
+                : instrument.resolution(io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE) <= 0f ? t("feedback.jei.reach.exact", instrument.label().getString())
+                : t("feedback.jei.reach.step", Readout.number(instrument.resolution(io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE)), instrument.label().getString()),
+                VALUE_COLOUR));
     }
 
     private static String dipBand(Dip d) {

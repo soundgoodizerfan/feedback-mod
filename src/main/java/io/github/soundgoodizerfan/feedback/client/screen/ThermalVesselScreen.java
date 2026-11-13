@@ -61,6 +61,7 @@ public class ThermalVesselScreen extends SkinnedScreen<ThermalVesselMenu> {
 
     public ThermalVesselScreen(ThermalVesselMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, skinOf(menu));
+        io.github.soundgoodizerfan.feedback.client.LinkedMachine.link(title, menu.getKind().ceilingTu());
         titleLabelX = 12;
         titleLabelY = 6;
         imageWidth = 176;
