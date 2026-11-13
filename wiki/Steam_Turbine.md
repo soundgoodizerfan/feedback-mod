@@ -35,4 +35,4 @@ An [Overspeed Trip](Overspeed_Trip.md) opens above 48 RPM, so one on a turbine's
 
 ## Driving a generator
 
-A large [Dynamotor](Dynamotor.md) on a 4-turn winding turns 240 RPM into the EHV band, enough for an [Arc Furnace](Arc_Furnace.md#power).
+A large [Dynamotor](Dynamotor.md) on a heavy-dense (8-turn) winding turns 240 RPM into the EHV band, enough for an [Arc Furnace](Arc_Furnace.md#power).

@@ -23,4 +23,4 @@ Its **arm length** is a stepper from 4 to 8 on the drawing: a longer arm gives m
 
 **12 Su** at **32 RPM** with the straight arm. A hand crank is **too weak to drive a [Mechanical Hammer](Mechanical_Hammer.md)** (80 Su), or any of the other workshop machines (30 Su and up). Hook one up and the network just strains and won't turn. Gearing doesn't help: it changes how hard each turn pushes, not how much load the crank can carry.
 
-It's useful for small loads, like a [Controller](Controller.md) (2 Su) or a [Pump](Pump.md) (8 Su), and for learning how shafts behave. It's also the fastest source early on, so it's the way to spin a [Dynamotor](Dynamotor.md) up to a high band. For real work you want a [Water Wheel](Water_Wheel.md).
+It's useful for small loads, like a [Controller](Controller.md) (2 Su) or a [Pump](Pump.md) (8 Su), and for learning how shafts behave. It's also the fastest source early on, so it's the way to spin a [Dynamotor](Dynamotor.md) up to its rated speed. For real work you want a [Water Wheel](Water_Wheel.md).

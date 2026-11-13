@@ -13,7 +13,7 @@ Electricity has two numbers, and they're not interchangeable:
 
 The band is named, never a number. There are six: **LV**, **MV**, **HV**, **UHV**, **EHV** and **Trunk**. A packet of LV holds **32 Eu** of energy, and every band up holds four times the band below: MV 128, HV 512, UHV 2,048, EHV 8,192, Trunk 32,768 Eu. The power a supply delivers each tick is **packet × amps**, in Eu per tick, so a 1 A cell on LV gives 32 Eu per tick and a 0.5 A pulse on HV gives 256: that is how to compare two supplies.
 
-Each source makes one band (a [Dynamotor](Dynamotor.md) makes the band its shaft speed and winding reach). The [Arc Furnace](Arc_Furnace.md) runs on EHV. Only PTFE insulates Trunk.
+Each source makes one band (a [Dynamotor](Dynamotor.md) makes the band its winding sets). The [Arc Furnace](Arc_Furnace.md) runs on EHV. Only PTFE insulates Trunk.
 
 Bands don't lock anything. A machine is *rated* for a band; feed it a higher band and it wears and warms, feed it less and it runs slow.
 
@@ -24,8 +24,8 @@ Bands don't lock anything. A machine is *rated* for a band; feed it a higher ban
 | **Sources** | |
 | [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1 A in the LV band. |
 | [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 0.5 A in the HV band. |
-| [Dynamotor](Dynamotor.md) | Shaft in, electricity out, as a generator. The band is set by shaft speed and the winding's turns; 4 turns reaches EHV and 8 turns Trunk on a turbine. |
-| [Battery](Battery.md) | Lead-acid or nickel-iron cells that charge from a higher line and supply when it drops. |
+| [Dynamotor](Dynamotor.md) | Shaft in, electricity out, as a generator. The winding sets the band; coarse and fine windings make LV and MV at a steam engine's speed, dense and heavy-dense make UHV and EHV at a turbine's. |
+| [Battery](Battery.md) | Lead-acid or nickel-iron cells, rated a band: they charge from a line in that band or higher and supply their own band when the line is lower. |
 | [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
 | **Carrying and stopping** | |
 | [Copper Cable](Copper_Cable.md) | Carries 1, 4, 16 or 64 A, by gauge. |
@@ -98,6 +98,6 @@ For actual numbers you need an instrument somewhere in your inventory: an [Elect
 ## Things that will hurt you
 
 - **Overloaded cable** gets hot. Push it far enough and the insulation burns off, and then **bare cable carrying current shocks anyone touching it**. Keep pushing and the cable burns out completely. See [Copper Cable](Copper_Cable.md#overloading).
-- A **[Leyden Jar](Leyden_Jar.md)** charged to MV or more shocks you.
+- A **[Leyden Jar](Leyden_Jar.md)** rated MV or more and holding charge shocks you.
 
-Armor doesn't stop a shock; insulating gloves do, up to HV. See [Hazards](Hazards.md#shock).
+Armor doesn't stop a shock; insulating gloves do, up to the band their materials are rated for. See [Hazards](Hazards.md#shock).

@@ -44,7 +44,7 @@ L is Leather. Wear them in the **hands** slot (from Curios).
 
 A glove sits against your palm, so you feel a **quarter** of how much hotter a piece is than the room. Wool stands 100 Tu, so in wool gloves you can hold things up to **about 340 Tu**, warm work but nothing glowing. Over that, the gloves aren't protecting you.
 
-Wool gloves also stop electric **shocks up to HV**. See [Shock](#shock).
+A glove is rated to a band by its body and lining materials, the better of the two: dry wool and leather stop **LV** shocks only, while a rubber body or lining stops up to **HV**. See [Shock](#shock).
 
 Gloves don't wear out. A glove in the hands slot is also what lets you [grab](Combat.md#grab) something, and a [blaze rod](Material_Perks.md) weapon burns a bare hand like any hot piece.
 
@@ -89,7 +89,7 @@ Steam gets in under a glove. Only **Fire Resistance** helps.
 Two things are live to the touch:
 
 - **Bare cable** carrying current. Cable becomes bare when its insulation burns off from overloading. See [Copper Cable](Copper_Cable.md#overloading).
-- A **[Leyden Jar](Leyden_Jar.md)** charged to the MV band or more.
+- A **[Leyden Jar](Leyden_Jar.md)** rated MV or more and holding charge, and a charged [Battery](Battery.md) with a case rated MV or more.
 
 Walking into one shocks you twice a second; right-clicking one shocks you once. Damage goes by the band of the line:
 
@@ -102,9 +102,11 @@ Walking into one shocks you twice a second; right-clicking one shocks you once. 
 | EHV | 10 hearts |
 | Trunk | 20 hearts |
 
+A shock that comes as a discharge (a jar's burst, a creeper's blast, an arc) also scales with the Eu in it: a small discharge does less than a whole packet of its band, a big one up to four times as much. Discharges carry a band too: a creeper's blast shocks at EHV, the arc of an overcharged weapon at UHV, and the arc of piezo armor steps up from LV with the force of the hit it answers.
+
 A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while it lasts, and warms any metal held in your hands.
 
-**Armor doesn't help**; a chestplate isn't insulation. Insulating gloves stop shocks up to HV. They also stop the arc of an [electric gun](Electric_Gun.md#misuse-and-hazards) fired in water or rain, as long as the gun's battery is within what they stop.
+**Armor doesn't help**; a chestplate isn't insulation. A glove stops every shock up to the band it is rated for. They also stop the arc of an [electric gun](Electric_Gun.md#misuse-and-hazards) fired in water or rain, as long as the gun's battery is within what they stop.
 
 Right-clicking a bare live wire with a [Galvanometer](Instruments.md#galvanometer) or [Electroscope](Instruments.md#electroscope) is still a hand on the wire, and it still shocks you.
 

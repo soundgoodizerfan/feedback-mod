@@ -89,7 +89,7 @@ Holding the gun shows a card with the battery's charge in percent, what the seat
 
 ## Misuse and hazards
 
-Nothing wears from correct use. A battery whose band is over the receiver's band shocks you and wears the receiver. Firing in water or rain arcs to you unless you are insulated (insulating gloves stop it; see [Hazards](Hazards.md#shock)); an arc fork fired in water shocks everything wet within reach, you included. A shot at the heat limit with no governor burns you and wears the barrel. The steam of a forced vent scalds you as it does anyone else.
+Nothing wears from correct use. A battery whose case band is over the receiver's band shocks you and wears the receiver. Firing in water or rain arcs to you unless you are insulated (insulating gloves stop it; see [Hazards](Hazards.md#shock)); an arc fork fired in water shocks everything wet within reach, you included. A shot at the heat limit with no governor burns you and wears the barrel. The steam of a forced vent scalds you as it does anyone else.
 
 ## Wither skeletons
 

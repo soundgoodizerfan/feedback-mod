@@ -45,3 +45,14 @@ A station with up to three sort stages. Each stage is a separate reader (a magne
 Crafting: Tube Station + [Electromagnet](Electromagnet.md) + [Glowstone Lamp](Lamp.md) + Sort Gauge.
 
 The readers share the weaknesses of the [belt sorters](Belt_Modules.md#sorting).
+
+## Sorting by kind
+
+The gauge's **Kind** property sorts units as metallic, stony, granular, organic, polymer or other. A station does it by a **spark and flame test**, which is a guess made from a sample and is noisy even on a plain case. Some stock fools it:
+
+- an **alloy** gives muddy sparks;
+- a **soft metal** gives no sparks at all;
+- a **polymer**, or an organic that does not char, reads like the wrong kind, as does a **mineral that burns** (coal, say);
+- a **plated** stack hides what is under the plating.
+
+A station with more than one stage reads kind more cleanly. JEI's **Separation** card shows a **Spark and flame test** row for each material: *Reads true*, *Muddy (an alloy)* or *Fooled (soft metal, look-alike)*.

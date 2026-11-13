@@ -14,7 +14,7 @@ W is [Copper Wire](Wire_Drawer.md), P is a Steel Plate and C is a [Charger](Char
 
 ## Using it
 
-Connect it to a line like any electrical block. Stand in the frame; only its floor plate is solid. While the line is in a band above the battery's own, the battery in the worn suit's chestplate bay takes charge as a placed battery does. Nothing is drawn when you are not wearing a suit or the bay is empty.
+Connect it to a line like any electrical block. Stand in the frame; only its floor plate is solid. While the line is in the battery's band or a higher one, the battery in the worn suit's chestplate bay takes charge as a placed battery does. Nothing is drawn when you are not wearing a suit or the bay is empty.
 
 ## Misuse and hazards
 

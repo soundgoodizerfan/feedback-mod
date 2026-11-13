@@ -11,18 +11,18 @@ Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Leyden Jar* in the t
 | **Jar type** | Flat plate, lined or rolled. See [Jar types](#jar-types). |
 | **Plate area** | From 20 to 100 percent, in steps of 5; the default is 50. More area stores more charge and bursts at more amps. |
 | **Glass wall** | From 2 to 10 mm; the default is 4. Thinner glass stores more but leaks as the square: half the thickness leaks four times as fast. |
-| **Glass** | The material of the wall. It must insulate. |
+| **Glass** | The material of the wall. It must insulate, and how well it insulates is the band the jar is rated. |
 
-Shape the glass from a glass ingot at the [Stonecutter](Stonecutter.md), then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Leyden Jar Blueprint in the blueprint slot judges the fit against your drawing. The Leyden Jar comes out with the design of the glass, and the blueprint is kept. Its tooltip shows what it stores, how fast it leaks and the amps it bursts at. Breaking the block gives the same jar back.
+Shape the glass from a glass ingot at the [Stonecutter](Stonecutter.md), then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Leyden Jar Blueprint in the blueprint slot judges the fit against your drawing. The Leyden Jar comes out with the design of the glass, and the blueprint is kept. Its tooltip shows the band it is rated, what it stores in Eu, how fast it leaks and the amps it bursts at. Breaking the block gives the same jar back.
 
 ## How it works
 
 Put it on a line with a source. It switches between two jobs on its own:
 
-- **Charging.** While the line is in a band above the charge the jar holds, the jar draws **1 A** and fills up.
-- **Discharging.** When the supply goes (the pulse ends, the cell is cut off), the jar becomes a source itself and gives back up to its burst amps (**8 A** at the default area) in whatever band its charge falls in.
+- **Charging.** While the line is in the jar's band or a higher one, the jar draws **1 A** and fills up. A higher band simply fills it; a lower band never charges it.
+- **Discharging.** When the supply goes (the pulse ends, the cell is cut off), the jar becomes a source itself and gives back packets of its own band, up to its burst amps (**8 A** at the default area), until its Eu run out.
 
-The jar's charge is counted in amp-ticks. One [Electrostatic Generator](Electrostatic_Generator.md) pulse (about 1 A for 20 ticks) fills a jar at the default area and wall into the LV band.
+The jar's charge is counted in Eu: how many packets of its band it holds, set by plate area over wall thickness. An [Electrostatic Generator](Electrostatic_Generator.md) pulse is a higher band than an LV jar's, so it fills such a jar; a jar rated for the pulse's band takes it too.
 
 ## Jar types
 
@@ -45,12 +45,12 @@ An addon is an optional extra part made from raw stock, added when you assemble 
 
 ## A burst, not a battery
 
-Its band **falls as it empties**, so anything running off it slows down as it goes: a strong start that tails off. It also **leaks** charge every tick, whether or not anything is connected: at the default wall about 0.2% a tick, which halves it in roughly 17 seconds.
+It always gives its own band, and its last packet tapers as the Eu run out: a strong start that ends in a short tail. It also **leaks** charge every tick, whether or not anything is connected: at the default wall about 0.2% a tick, which halves it in roughly 17 seconds.
 
 A jar smooths a pulse and carries you over a gap. For power that lasts, use a [Battery](Battery.md).
 
 ## Careful
 
-A jar charged into the **MV** band or more shocks whoever touches it, walking into it or right-clicking it. See [Hazards](Hazards.md#shock). One charged from a Galvanic Cell or an Electrostatic Generator is never that high.
+A jar rated **MV** or more and holding charge shocks whoever touches it, walking into it or right-clicking it. See [Hazards](Hazards.md#shock).
 
 See also: [Jar Baton](Jar_Baton.md), which draws a jar's charge and spends it on a melee hit.

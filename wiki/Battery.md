@@ -1,6 +1,6 @@
 # Battery
 
-A rechargeable battery, lead-acid or nickel-iron: cells in series that charge from any line in a band above their own and give the charge back when the line drops. It stores real power, holding its band nearly flat until almost empty.
+A rechargeable battery, lead-acid or nickel-iron: cells in series, rated a band, that store charge in Eu. It charges from a line in its band or a higher one and gives its own band back when the line is lower, at full current until almost empty.
 
 ## Crafting
 
@@ -8,14 +8,14 @@ Shape the parts at a bench and put them together in a crafting grid, as for any 
 
 - **Battery Plates**, shaped from plates of a metal that takes a charge: lead or [nickel-iron](Materials.md#nickel-iron). Two steppers set the size: **cell size** (1 to 4), how much each cell holds, and **cell count** (1 to 12), how many cells sit in series.
 
-- **A case**: a pane, shard or sheet of an insulating material such as glass, ceramic or a polymer. The highest band the case holds off is the highest band the battery takes without wearing.
+- **A case**: a pane, shard or sheet of an insulating material such as glass, ceramic or a polymer. The highest band the case holds off is the band the battery is **rated**: it charges from a line of that band or higher, and a line above it wears the battery.
 
-The plate metal sets the strength of a cell, how much charge a plate holds, how it fares in the cold, how much of the charge comes back and which liquid fills it. Cells in series add their strength, not their capacity, and the stack's band is the band that total reaches when full. A lead stack of 1 or 2 cells is LV, of 3 to 10 cells MV and of 11 or 12 cells HV. A nickel-iron stack of up to 4 cells is LV and of 5 or more MV.
+The plate metal sets how much charge a plate holds, how it fares in the cold, how much of the charge comes back and which liquid fills it. Capacity is in Eu: the cells in series add up what the battery holds, but not the current it can give, which is one cell's. The blueprint sheet shows the rated band and the capacity.
 
-| Plate metal | Strength per cell | Charge per plate | Charge returned | Cold | Gassing | Fill with |
-| --- | --- | --- | --- | --- | --- | --- |
-| Lead | higher | standard | about 85% | half the capacity at 0 Tu | yes | sulfuric acid |
-| Nickel-iron | lower | half | about 65% | most of it kept at 0 Tu | none | lye |
+| Plate metal | Charge per plate | Charge returned | Cold | Gassing | Fill with |
+| --- | --- | --- | --- | --- | --- |
+| Lead | standard | about 85% | half the capacity at 0 Tu | yes | sulfuric acid |
+| Nickel-iron | half | about 65% | most of it kept at 0 Tu | none | lye |
 
 ## Setting up
 
@@ -30,11 +30,11 @@ Wire it to a line like any other electrical block; see [Electricity](Electricity
 
 The battery switches between three states on its own, shown in Jade:
 
-- **Charging**: the line is in a band above the battery's own. It draws current and fills, from empty to full in about 2.5 minutes at its limit, or about 1 minute beside a powered [Rectifier](Rectifier.md).
-- **Supplying**: the line has dropped below it. It becomes a source, and a full battery can run flat in about 5 minutes at its limit.
-- **Holding**: the line is in the battery's own band; it neither takes nor gives.
+- **Charging**: the line is in the battery's band or a higher one. It draws current and fills, from empty to full in about 2.5 minutes at its limit, or about 1 minute beside a powered [Rectifier](Rectifier.md).
+- **Supplying**: the line is in a lower band. It becomes a source of its own band, and a full battery can run flat in about 5 minutes at its limit.
+- **Holding**: it neither takes nor gives.
 
-The band stays flat while charge lasts and falls off a cliff near empty. The share of the energy put in that comes back is in the table above; the rest heats the case. A battery loses about 1% of its charge a day when idle.
+A line in a lower band never charges it. The current it gives stays full while charge lasts and falls away below 10% charge. The share of the energy put in that comes back is in the table above; the rest heats the case. A battery loses about 1% of its charge a day when idle.
 
 ### Reading the charge
 
@@ -50,5 +50,7 @@ See [Hazards](Hazards.md) for the general rules.
 - **Heat.** A case over 50 Tu costs condition. See [Heat](Heat.md).
 - **Too high a band.** A line above the case's insulation band costs condition.
 - **Cold.** Capacity falls as the body cools below 20 Tu, to half at 0 Tu for lead and much less for nickel-iron, as in an [Ice Box](Ice_Box.md).
+
+A charged battery with a case rated MV or more shocks whoever touches it; see [Hazards](Hazards.md#shock).
 
 An [Arc Welder](Arc_Welder.md) draws its charge from a Battery in your inventory. A [Charger](Charger.md) takes one Battery item, and the chestplate of an [Exosuit](Exosuit.md) holds the Battery that runs the suit; a [Charging Gantry](Charging_Gantry.md) charges it while worn.
