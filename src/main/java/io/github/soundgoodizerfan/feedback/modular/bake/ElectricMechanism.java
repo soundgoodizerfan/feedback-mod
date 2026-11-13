@@ -65,6 +65,11 @@ public final class ElectricMechanism implements GunMechanism {
      * The next shot of {@code gun} for {@code shooter} at game tick {@code now}, or null if it cannot fire: no spec, no battery or a flat
      * one, a seat with nothing charged, a governor holding it back. Changes nothing.
      */
+    /** The heat a pulse of {@code power} leaves in this gun: its figure, times what a fitted {@code vent_hot} part does to a shot's heat (a powder gun's too). */
+    private static float shotHeat(ElectricGunSpec spec, ItemStack gun, float power) {
+        return spec.heatPerShot(power) * io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.gunShotHeat(gun);
+    }
+
     private static Prepared prepare(LivingEntity shooter, ItemStack gun, long now, FireMode mode) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
         if (spec == null)
@@ -111,7 +116,7 @@ public final class ElectricMechanism implements GunMechanism {
             }
         }
         // What the governor says.
-        float gain = spec.heatPerShot(power) + ModularTuning.EGUN_PUMP_HEAT * pumps;
+        float gain = shotHeat(spec, gun, power) + ModularTuning.EGUN_PUMP_HEAT * pumps;
         switch (spec.governor()) {
             case VENT -> {
                 if (now < ModularElectricGun.lockUntil(gun))
@@ -163,7 +168,7 @@ public final class ElectricMechanism implements GunMechanism {
             ElectricGunSpec spec = ModularElectricGun.specOf(gun);
             // A dead-man cutoff that stopped the fire holds until the barrel has cooled.
             if (spec != null && spec.governor() == Governor.CUTOFF
-                    && ModularElectricGun.heat(gun, level) + spec.heatPerShot(1f) > 1f)
+                    && ModularElectricGun.heat(gun, level) + shotHeat(spec, gun, 1f) > 1f)
                 ModularElectricGun.setTripped(gun, true);
             return false;
         }
@@ -225,7 +230,7 @@ public final class ElectricMechanism implements GunMechanism {
                 muzzle.x, muzzle.y, muzzle.z, 1 + Math.round(p.heatAfter() * 6f), 0.04, 0.04, 0.04, 0.01);
 
         // Heat, the pumps' share of it, and what the governor does with it.
-        float heat = ModularElectricGun.heat(gun, level) + spec.heatPerShot(p.power()) + ModularTuning.EGUN_PUMP_HEAT * (spec.pump() ? ModularElectricGun.pumps(gun) : 0);
+        float heat = ModularElectricGun.heat(gun, level) + shotHeat(spec, gun, p.power()) + ModularTuning.EGUN_PUMP_HEAT * (spec.pump() ? ModularElectricGun.pumps(gun) : 0);
         if (spec.pump())
             ModularElectricGun.setPumps(gun, 0);
         if (spec.seat() == Seat.CORE_BREECH)
@@ -234,7 +239,7 @@ public final class ElectricMechanism implements GunMechanism {
             case THROTTLE -> heat = Math.min(heat, 0.95f);
             case VENT -> {
                 if (heat >= 1f) {
-                    float over = Mth.clamp((heat - 1f) / Math.max(1e-3f, spec.heatPerShot(p.power())), 0f, 1f);
+                    float over = Mth.clamp((heat - 1f) / Math.max(1e-3f, shotHeat(spec, gun, p.power())), 0f, 1f);
                     ModularElectricGun.setLock(gun, now + Math.round(Mth.lerp(over, ModularTuning.EGUN_VENT_LOCK_MIN_TICKS, ModularTuning.EGUN_VENT_LOCK_MAX_TICKS)));
                     level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_HEAT_TICK.get(), SoundSource.PLAYERS, 0.8f, 0.7f);
                     SteamCloud.vent(level, shooter, pitch, yaw);
