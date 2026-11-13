@@ -77,7 +77,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
 
     /** What a part's material looks like on the surface, which picks its tile: grain only on wood, brushing only on metal. */
     public enum Surface {
-        METAL, WOOD, POLYMER, OTHER;
+        METAL, WOOD, POLYMER, GLASS, OTHER;
 
         public static Surface of(Material m) {
             if (m == null)
@@ -87,6 +87,8 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 return METAL;
             if (kind == Material.Kind.ORGANIC && m.traits().contains(Material.Trait.FIBROUS))
                 return WOOD;
+            if (kind == Material.Kind.GLASS)
+                return GLASS;
             return kind == Material.Kind.POLYMER ? POLYMER : OTHER;
         }
     }
@@ -148,6 +150,13 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             gripPart.measures().slot("wrap").ifPresent(sl -> {
                 colours.put("Gw", 0xFF000000 | MaterialColors.of(sl.material()));
                 surfaces.put("Gw", Surface.of(materials.get(sl.material())));
+            });
+        // A beam lens's lens is a slot of the fitting, drawn as the lens layer in the lens's own material (glass is see-through).
+        ModularDesign.Part lensPart = design.part("l");
+        if (lensPart != null)
+            lensPart.measures().slot("lens").ifPresent(sl -> {
+                colours.put("lens", 0xFF000000 | MaterialColors.of(sl.material()));
+                surfaces.put("lens", Surface.of(materials.get(sl.material())));
             });
         GunLayout.Type kind = GunLayout.Type.of(variants.getOrDefault("R", ""));
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun) {

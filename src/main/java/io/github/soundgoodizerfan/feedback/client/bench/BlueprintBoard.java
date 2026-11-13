@@ -903,6 +903,12 @@ public final class BlueprintBoard {
     private float gateValue(String role, PartBenchShaping.Option o, String name) {
         if (o != null && o.variant().params().containsKey(name))
             return o.variant().params().get(name);
+        // The standard shape is the base variant: it has the base's params (a beam lens's splitter) though it is listed without a name.
+        if (o != null && o.variant().name().isEmpty()) {
+            Float baseParam = o.shaping().variant(o.shaping().base()).map(v -> v.params().get(name)).orElse(null);
+            if (baseParam != null)
+                return baseParam;
+        }
         ModularType.Axis a = current().roles().get(role).axesFor(o == null ? "" : o.variant().name()).get(name);
         Optional<Material.Located> c = choice(role);
         return a == null || c.isEmpty() ? 0f : axisValue(role, name, ToolDesigns.part(role, c.get(), o, 1));

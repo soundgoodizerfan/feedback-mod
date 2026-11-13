@@ -416,7 +416,14 @@ final class GunDraw {
                 m.colour(0xFF9FD8FF).glow(-r - 0.75f, -0.25f, end - 1.125f, -r - 0.25f, 0.25f, end - 1f, Tile.LAMP);
                 m.colour(0xFF9FD8FF).glow(r + 0.25f, -0.25f, end - 1.125f, r + 0.75f, 0.25f, end - 1f, Tile.LAMP);
             } else {
-                m.rod(0, 0, r + 0.5f, end - 0.75f, end, Tile.METAL);
+                m.rod(0, 0, r + 0.5f, end - 0.75f, end - 0.4f, Tile.METAL);
+                // The lens in front of the facets: its own material, see-through when it is glass.
+                if (v.has("lens")) {
+                    m.part(v, "lens");
+                    m.box(-r - 0.5f, -r - 0.5f, end - 0.4f, r + 0.5f, r + 0.5f, end, Tile.METAL);
+                    m.part(v, "l");
+                } else
+                    m.rod(0, 0, r + 0.5f, end - 0.4f, end, Tile.METAL);
                 for (int i = 0; i < 3; i++) {
                     float a = (float) Math.toRadians(120 * i + 90);
                     m.colour(0xFF9FD8FF).glow((float) Math.cos(a) * (r + 0.25f) - 0.125f, (float) Math.sin(a) * (r + 0.25f) - 0.125f, end - 0.875f,

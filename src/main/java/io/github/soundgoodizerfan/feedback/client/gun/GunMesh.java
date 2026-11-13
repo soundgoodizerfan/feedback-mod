@@ -64,6 +64,8 @@ public final class GunMesh {
     /** Stands in for a texture: what follows goes to the translucent buffer. Never loaded. */
     static final net.minecraft.resources.ResourceLocation GLASS = Feedback.id("gun_glass");
     private boolean glassNow;
+    /** How much of a glass part shows: mostly clear, the tile's texture still on it. */
+    private static final int GLASS_ALPHA = 0x90000000;
     /** First person, aimed: the scope's lens and eyepiece plate are drawn. */
     boolean sighted;
     /**
@@ -193,6 +195,7 @@ public final class GunMesh {
                 case END_GRAIN -> Tile.METAL;
                 default -> t;
             };
+            case GLASS -> t;
             case OTHER -> switch (t) {
                 case GRAIN, BRUSHED, END_GRAIN -> Tile.METAL;
                 default -> t;
@@ -303,8 +306,12 @@ public final class GunMesh {
 
     private void box(float x0, float y0, float z0, float x1, float y1, float z1, Tile t, int lit) {
         t = surfaced(t);
+        // A part of glass is see-through: the translucent buffer, the glass tile, the material's colour at a part's opacity.
+        boolean glassPart = surface == GunView.Surface.GLASS && t != Tile.LAMP;
+        if (glassPart)
+            t = Tile.GLASS;
         // Wood drawn with its own bark keeps the shape's special tiles (checkering, end grain, a pad) on the sheet.
-        net.minecraft.resources.ResourceLocation want = glassNow ? GLASS : image != null && t == Tile.GRAIN ? image : null;
+        net.minecraft.resources.ResourceLocation want = glassNow || glassPart ? GLASS : image != null && t == Tile.GRAIN ? image : null;
         if (!anyBound || want != bound) {
             out = buffers.apply(want);
             bound = want;
@@ -313,6 +320,8 @@ public final class GunMesh {
         int argb = t.tinted && bound == null ? colour : 0xFFFFFFFF;
         if (t == Tile.LAMP)
             argb = colour;
+        if (glassPart)
+            argb = (colour & 0xFFFFFF) | GLASS_ALPHA;
         seed = seed * 31 + 7;
         level = layered ? layer * PER_LAYER + Math.min(drawn.merge(layerKey, 1, Integer::sum) - 1, PER_LAYER - 1) : 0;
         PoseStack.Pose p = pose.last();
