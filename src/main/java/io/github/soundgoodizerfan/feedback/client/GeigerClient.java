@@ -21,7 +21,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 /**
- * The Geiger counter's voice (mechanics 9.8). While one is held, each tick draws a Poisson number
+ * The Geiger counter's voice. While one is held, each tick draws a Poisson number
  * of clicks at {@code background + Ru x clicks-per-Ru} a second; the true rate is worked out five
  * times a second by the same {@link Radiation#rate} the server doses with. The figure it prints is
  * not the true rate but what the clicks of the last few seconds say it is -- so it jitters the way a

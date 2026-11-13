@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
 /**
- * A substrate with traces laid on it (mechanics 6.20). Everything about it is the {@link Board}
+ * A substrate with traces laid on it. Everything about it is the {@link Board}
  * component; the item only says what the component records. A board with no component (one from a
  * creative tab) reads as unfinished. It is the Basic Electronic Circuit's raw input in phase 4.
  */

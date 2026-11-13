@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * The capital route to a good joint (mechanics 6.20): a chamber on a fire holding a batch of
+ * The capital route to a good joint: a chamber on a fire holding a batch of
  * pasted boards.
  *
  * <h2>A batch is thermal mass</h2>

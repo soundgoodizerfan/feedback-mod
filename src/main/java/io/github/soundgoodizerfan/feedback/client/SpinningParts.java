@@ -42,7 +42,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
 
 /**
- * Blocks whose shafts turn while the block itself stands still ({@code docs/specs/feedback_micro_spec.md},
+ * Blocks whose shafts turn while the block itself stands still ({@code docs/dev/vehicle.md},
  * <em>Playtest fixes</em>): the gearbox, whose stub on each face turns by the node's angle about its
  * own outward direction (so by {@code sign(face) x angle} about the axis, the gearbox's own sign
  * rule, and opposite stubs turn against each other), and the Rotation Adapter, whose big stub and

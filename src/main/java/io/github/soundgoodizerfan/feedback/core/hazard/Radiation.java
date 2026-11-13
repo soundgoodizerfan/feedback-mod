@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
 /**
- * What a body takes from the stuff around it (mechanics 9.8). The dose rate at a player is every
+ * What a body takes from the stuff around it. The dose rate at a player is every
  * radioactive thing's figure ({@code radioactivity} in its material file, for one ingot's volume)
  * added up: what the player carries counts in full, a block or a dropped item within
  * {@link FTuning#RAD_REACH_BLOCKS} counts for {@code 1 / (1 + d^2)}. Armour then shields by how

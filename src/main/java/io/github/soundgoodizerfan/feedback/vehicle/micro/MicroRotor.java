@@ -34,8 +34,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * One rotation voxel in a micro cell ({@code docs/specs/feedback_micro_spec.md}, <em>Micro rotation
- * nodes</em>): a member of a rotation network that is not a block entity. Held by its
+ * One rotation voxel in a micro cell ({@code docs/dev/vehicle.md}): a member of a rotation network that is not a block entity. Held by its
  * {@link MicroCellBlockEntity}, one per voxel whose block is a {@link MicroRotation}; it generates
  * and demands nothing, and drags and weighs its full-size part scaled by
  * {@link FTuning#MICRO_ROTATION_DRAG_SCALE} and {@link FTuning#MICRO_ROTATION_INERTIA_SCALE}.

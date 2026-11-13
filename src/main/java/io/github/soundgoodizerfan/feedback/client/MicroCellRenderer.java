@@ -50,7 +50,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 import java.util.List;
 
 /**
- * Draws a micro cell ({@code docs/specs/feedback_micro_spec.md}): every filled voxel is its block's real
+ * Draws a micro cell ({@code docs/dev/vehicle.md}): every filled voxel is its block's real
  * model, at a quarter of the scale, in the cell's own space -- so Sable's pose for the cell's body
  * carries the drawing exactly as it carries the collision, and the two cannot drift apart.
  *

@@ -36,7 +36,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * overloaded.
  *
  * <h2>Every node is a {@link DataNode}</h2>
- * Mechanics 6.2 and 6.7: a failure of supply must show on the thing that failed, so every wire and
+ * A failure of supply must show on the thing that failed, so every wire and
  * sink carries a reading the data link and the instruments can reach. The reading is held here as
  * three floats and is not synced to clients -- an instrument composes its figure on the server,
  * where it is true, and a client copy would be stale by construction.

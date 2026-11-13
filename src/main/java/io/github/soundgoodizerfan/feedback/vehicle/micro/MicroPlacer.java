@@ -46,7 +46,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Placing and removing micro-blocks ({@code docs/specs/feedback_micro_spec.md}, <em>Placing</em>): hold
+ * Placing and removing micro-blocks ({@code docs/dev/vehicle.md}): hold
  * a block and use it on a micro cell, and the voxel in front of the face you hit becomes that
  * block; sneak, and the voxel you hit goes, and its block comes back to the hand. A face on the
  * edge of the cell puts the voxel in the next cell, which is made if the block there is air.

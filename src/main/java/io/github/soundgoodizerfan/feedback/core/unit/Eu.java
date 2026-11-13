@@ -12,7 +12,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * Electricity: a voltage and a current (mechanics 6; philosophy 21). The one non-scalar unit.
+ * Electricity: a voltage and a current (philosophy 21). The one non-scalar unit.
  *
  * <p>Two {@code Eu} with the same product are not interchangeable, so there is no single number
  * that stands for one and no arithmetic on the type. {@code voltage} is a {@link VoltageBand},

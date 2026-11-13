@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A resistive element: the Work the current does in it is its heat, and it is the fire for
- * whatever stands on it (mechanics 6.16).
+ * whatever stands on it.
  *
  * <h2>Its own body, not a flame temperature</h2>
  * A firebox's fire has no mass (see {@link HeatSource}); an element does, and a small one. So the

@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A full-size Rotary Bearing or Ring Gear on the network, and its hold on the body it turns
- * ({@link Joint}; {@code docs/specs/feedback_micro_spec.md}, <em>Bearings and ring gears</em>).
+ * ({@link Joint}; {@code docs/dev/vehicle.md}).
  * Assembles whole blocks as the Lift does; puts them back home, unturned.
  */
 public class RotaryBearingBlockEntity extends RotationNode {

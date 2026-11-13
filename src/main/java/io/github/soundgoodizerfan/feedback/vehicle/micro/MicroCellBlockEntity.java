@@ -62,7 +62,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * The micro-blocks inside one {@link MicroCellBlock} ({@code docs/specs/feedback_micro_spec.md}): up to
+ * The micro-blocks inside one {@link MicroCellBlock} ({@code docs/dev/vehicle.md}): up to
  * 64 block states, one per quarter-block voxel, four to a side. A voxel is a bare block state, so
  * only blocks with no block entity of their own can be one.
  *

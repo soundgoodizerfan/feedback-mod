@@ -50,7 +50,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * one rotation voxel in a micro cell. Neighbours are found on the quarter grid between rotors, and
  * across a cell face between a Rotation Adapter's micro face and the central rotors of that face --
  * the only full-size block that links to a cell -- see
- * {@code docs/specs/feedback_micro_spec.md}, <em>Micro rotation nodes</em>. A rod links full-size nodes only.
+ * {@code docs/dev/vehicle.md}. A rod links full-size nodes only.
  * <p>
  * Design derived from Create's {@code RotationPropagator} (MIT) -- see THIRD-PARTY-LICENSES.md.
  */

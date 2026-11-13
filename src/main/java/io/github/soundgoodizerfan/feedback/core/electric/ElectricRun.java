@@ -14,8 +14,8 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
  * {@link ElectricPropagator} floods the world once when the topology changes and hands this class
  * a member list and an adjacency list. This class then builds a <em>routing tree</em> -- every
  * reachable member's parent on its shortest path back to the supply -- and caches it. Each tick
- * after that is arithmetic over arrays: no search, no allocation, no world access (mechanics 6.2,
- * "per-packet routing evaluated per tick per wire block per sink would be the expensive way").
+ * after that is arithmetic over arrays: no search, no allocation, no world access
+ * ("per-packet routing evaluated per tick per wire block per sink would be the expensive way").
  * It is the {@code RotationPropagator} pattern: rebuild a whole run, never patch one.
  *
  * <h2>What a tick does</h2>

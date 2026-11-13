@@ -13,7 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * A voltage rating (mechanics 6.3): a closed, ordered list of named bands, geometrically spaced,
+ * A voltage rating: a closed, ordered list of named bands, geometrically spaced,
  * never a free scalar. Voltage belongs to the source, and a band gates nothing by itself -- a
  * mismatch is a consequence (6.5), not a lock.
  *

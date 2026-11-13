@@ -28,7 +28,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The whitelist of rotation parts that may be a micro-block voxel ({@code docs/specs/feedback_micro_spec.md},
+ * The whitelist of rotation parts that may be a micro-block voxel ({@code docs/dev/vehicle.md},
  * <em>Micro rotation nodes</em>): pure transmission -- shafts, bearings, flywheels, cogs, gearboxes.
  * A machine, a source or anything with an inventory never implements this. Its full-size drag and
  * inertia are stated here because a voxel has no block entity to ask; the voxel scales them.

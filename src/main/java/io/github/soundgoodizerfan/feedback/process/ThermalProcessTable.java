@@ -128,7 +128,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     }
 
     /**
-     * An ore smelts into the metal it bears (mechanics 9.7): every item the bearer is, a melt at
+     * An ore smelts into the metal it bears: every item the bearer is, a melt at
      * its own melting point if its file gives one, else the metal's, yielding the metal's molten
      * fluid by the largest share of {@code bears}. A bearer whose metal has no molten fluid yet
      * melts into nothing, and is logged once.

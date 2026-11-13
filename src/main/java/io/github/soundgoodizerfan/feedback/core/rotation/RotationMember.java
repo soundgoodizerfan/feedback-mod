@@ -32,8 +32,7 @@ import net.minecraft.world.level.Level;
 /**
  * Anything {@link RotationNetwork} counts: what a member supplies, demands and weighs, and the two
  * callbacks the network makes. A {@link RotationNode} is one (a block entity); a micro rotor, one
- * rotation voxel inside a micro cell ({@code docs/specs/feedback_micro_spec.md}, <em>Micro rotation
- * nodes</em>), is the other, and is not a block entity -- the network never needed one.
+ * rotation voxel inside a micro cell ({@code docs/dev/vehicle.md}), is the other, and is not a block entity -- the network never needed one.
  */
 public interface RotationMember {
 

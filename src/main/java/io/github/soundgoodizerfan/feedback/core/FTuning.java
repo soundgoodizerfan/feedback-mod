@@ -134,13 +134,13 @@ public final class FTuning {
     /** Placeholder. Fraction of the way a differential's share moves toward what the loads ask, per tick: smooth, so a wheel losing grip hands over its speed over a few ticks. */
     public static final float DIFFERENTIAL_SHARE_RATE = 0.2f;
     /**
-     * Placeholder. The Rotation Adapter ({@code docs/specs/feedback_micro_spec.md}, micro rotation): a
+     * Placeholder. The Rotation Adapter ({@code docs/dev/vehicle.md}, micro rotation): a
      * small housing of bevels from one full-size shaft to four quarter ones, so a gearbox's figures.
      */
     public static final Drag ROTATION_ADAPTER_DRAG_SU_PER_RPM = new Drag(0.2f);
     public static final Inertia ROTATION_ADAPTER_INERTIA = new Inertia(4f);
     /**
-     * Placeholders. The Rotary Bearing and Ring Gear ({@code docs/specs/feedback_micro_spec.md}, bearings):
+     * Placeholders. The Rotary Bearing and Ring Gear ({@code docs/dev/vehicle.md}, bearings):
      * a gearbox's drag and mass for the housing; the biggest body one turns (Lift's figure is 4096,
      * a bearing's load is an arm, not a car); and the turned body's moment of inertia (kpg x block^2)
      * counted on the run as a flywheel would be.
@@ -838,7 +838,7 @@ public final class FTuning {
      *       explode into. It now has a pressure ({@link #BOILER_STEAM_MB_PER_PU},
      *       {@link #BOILER_PU_PER_TU_OVER}): a shut line under a real fire is the only way there,
      *       a weeping, scalding boiler gives warning first, and the ladder is the Pressure
-     *       Vessel's own (`PressureBurst`). See `feedback_mechanics.md` §7.3.</li>
+     *       Vessel's own (`PressureBurst`).</li>
      * </ul>
      */
     public static final Tu BOILER_WORKING_TU = new Tu(120f);
@@ -888,7 +888,7 @@ public final class FTuning {
      */
     public static final float BOILER_WORK_PER_MB_STEAM = 20f;
     /**
-     * Fluid temperature (mechanics 5.9). Invented. The share of the gap to its surroundings a tank's
+     * Fluid temperature. Invented. The share of the gap to its surroundings a tank's
      * contents close each tick (a tank, not a pipe: lines add no loss). A steam engine runs only on
      * steam at least {@code STEAM_ENGINE_MIN_TU} hot and sends it out {@code STEAM_ENGINE_EXHAUST_DROP_TU}
      * cooler (not below ambient), so a second engine can take the first's exhaust while it is still
@@ -2139,7 +2139,7 @@ public final class FTuning {
     public static final Conductance MIXER_LEAK = new Conductance(0.04f);
     /** The drum's fluid and item inputs: mB of fluid that count as one part beside an item, and the input slots. Placeholders. */
     public static final int MIXER_MB_PER_PART = 144, MIXER_INPUT_SLOTS = 3;
-    /** The survey meter (mechanics 9.5): reach in blocks, the step its ore count reads to, and the wait between uses. Placeholders. */
+    /** The survey meter: reach in blocks, the step its ore count reads to, and the wait between uses. Placeholders. */
     public static final int SURVEY_RADIUS = 16, SURVEY_COOLDOWN_TICKS = 40;
     public static final float SURVEY_RESOLUTION = 8f;
     /** Invented. Oil reads as a block count would: this many per block that the nearest basin's circle reaches into the survey radius. */
@@ -2401,7 +2401,7 @@ public final class FTuning {
     /** Muzzle energy that reads as full power for sound pitch and volume. */
     public static final float GUN_SOUND_REFERENCE_WORK = 1000f;
 
-    // --- electricity (feedback_mechanics.md section 6) ----------------------------------------
+    // --- electricity (electricity) ----------------------------------------
     //
     // Every figure here is a PLACEHOLDER. The band anchors are [OPEN] (6.3): the
     // reference volts below only give the four named bands an order of magnitude to be compared
@@ -2508,14 +2508,14 @@ public final class FTuning {
     /**
      * Placeholder. What each electrical instrument can resolve (philosophy 10: tiers buy
      * significant figures, never access). The electroscope is coarse on purpose -- it says a wire
-     * is live and roughly how hard, not how much is flowing (mechanics 6.7).
+     * is live and roughly how hard, not how much is flowing.
      */
     public static final float GALVANOMETER_RESOLUTION_AMPS = 0.25f;
     public static final float CURRENT_SENSOR_RESOLUTION_AMPS = 0.5f;
     public static final float ELECTROSCOPE_RESOLUTION_VOLTS = 0.5f;
 
     /**
-     * Placeholder. The electromagnet (mechanics 6.5). It wants one cell's worth of current, rated
+     * Placeholder. The electromagnet. It wants one cell's worth of current, rated
      * LV. Condition falls by {@code WEAR_PER_EXCESS} per tick for every whole rating of voltage it
      * is over (so 3 over loses 0.0015 a tick), to a floor above zero; the same excess puts
      * {@code HEAT_PER_EXCESS} Work a tick into its body. **[OPEN]** the scale (6.5).
@@ -2564,7 +2564,7 @@ public final class FTuning {
     public static final Qu QU_PER_INGOT = new Qu(9f);
 
     /**
-     * Placeholder. The electrolytic cell (mechanics 6.14). Current is the rate, so this is the one
+     * Placeholder. The electrolytic cell. Current is the rate, so this is the one
      * figure that turns amps into metal: Qu moved per amp per tick (Faraday's constant, in this
      * mod's units; no type, as {@code Work} has none). At {@link #ELECTROLYTIC_CELL_AMPS} an ingot
      * takes 600 t (30 s); a galvanic cell's single amp takes 4800 t (4 min). Was 1/480 when an
@@ -2592,12 +2592,12 @@ public final class FTuning {
 
     /**
      * Placeholder. The share of the dominant metal a cathode needs to come off as ingots; below
-     * it the whole deposit is that metal's scrap. Spoil only for now (mechanics 6.14).
+     * it the whole deposit is that metal's scrap. Spoil only for now.
      */
     public static final float ELECTROLYTIC_PURE_FRACTION = 0.95f;
 
     /**
-     * Placeholder. Electroplating (mechanics 6.15): the window for a coat, in Qu on one piece. Under
+     * Placeholder. Electroplating: the window for a coat, in Qu on one piece. Under
      * the first it has not closed (porous); over the second it is too thick to hold and flakes off
      * as it comes out of the water. At a cell's single amp the window is about 12 s to 48 s; at a
      * fine dynamo's two, a quarter of that sooner and narrower. (0.5 and 2 before the nugget
@@ -2619,7 +2619,7 @@ public final class FTuning {
     public static final float HOT_DIP_SCRAP_WORK = 3f;
 
     /**
-     * Placeholder. The mass probe (mechanics 6.17): per cut of crystal plate, the most coat it reads
+     * Placeholder. The mass probe: per cut of crystal plate, the most coat it reads
      * (the range, in Qu) and the smallest step it tells apart. A thin cut is fine and short, a thick
      * one reaches far and reads coarse. Every range sits under {@link #PLATING_SPALLS_ABOVE_QU}, so
      * a probe is pegged before the coat on it spalls, which is the trap.
@@ -2649,7 +2649,7 @@ public final class FTuning {
     public static final float PLATING_BURNT_SHARE = 0.1f;
 
     /**
-     * Placeholder. The heating coil (mechanics 6.16). The current it asks for, and Joule's law in
+     * Placeholder. The heating coil. The current it asks for, and Joule's law in
      * this mod's units: Work per volt-amp per tick (no type, as Faraday's {@link #QU_PER_AMP_TICK}
      * has none). Chosen so a fine dynamo at a steam engine's speed (6 V at 2 A) holds a small
      * vessel near 290 Tu -- just under a copper element's limit -- and a hand-cranked one near
@@ -2667,7 +2667,7 @@ public final class FTuning {
     public static final float COIL_CONDITION_FLOOR = 0.5f;
 
     /**
-     * Placeholder. The breaker (mechanics 6.4): it trips above a copper cable's rating, the thing
+     * Placeholder. The breaker: it trips above a copper cable's rating, the thing
      * it protects; each opening under load costs condition per amp broken (the arc); and its
      * contacts lose this many volts per amp, divided by condition, so a pitted breaker sags the
      * line. Never broken: it keeps switching at its floor.
@@ -2717,8 +2717,8 @@ public final class FTuning {
     public static final float MACHINE_SHED_PER_CONDUCTIVITY = 42f;
 
     /**
-     * Placeholder. The four windings' volts per RPM, which is also the Su each amp costs the shaft (the dynamo's old rule,
-     * mechanics 6.8), four times each: coarse and fine are what the old fixed windings were (a steam engine's
+     * Placeholder. The four windings' volts per RPM, which is also the Su each amp costs the shaft (the dynamo's old rule),
+     * four times each: coarse and fine are what the old fixed windings were (a steam engine's
      * {@link #STEAM_ENGINE_RPM} makes {@link #ELECTRIC_LV_VOLTS} on coarse and {@link #ELECTRIC_MV_VOLTS} on fine); dense is
      * 360 V (EHV) at a gas turbine's 240 RPM, heavy-dense 1,440 V (Trunk).
      */
@@ -2755,7 +2755,7 @@ public final class FTuning {
     public static final int JACKET_TICKS_PER_MB = 20;
 
     /**
-     * Placeholder. The Leyden jar (mechanics 6.6). Capacitance in amp-ticks per volt: one
+     * Placeholder. The Leyden jar. Capacitance in amp-ticks per volt: one
      * electrostatic pulse (1 A for 20 ticks) puts 20 amp-ticks in, which fills it to its source's
      * 1.5 V with a little to spare. It charges at a cell's current, so a generator or cell is not
      * overdrawn by filling it, and gives back up to {@code BURST_AMPS}. It loses
@@ -3293,7 +3293,7 @@ public final class FTuning {
     public static final float TRANSMISSION_CLUTCH_PRESSED = 0.5f;
 
     /**
-     * Placeholder (basic electronics phase 2, mechanics 6.18). Sparks: a break of at least this
+     * Placeholder (basic electronics phase 2). Sparks: a break of at least this
      * many amps makes one; it carries this far (a game event's radius is fixed per type).
      */
     public static final float SPARK_MIN_AMPS = 1f;
@@ -3322,7 +3322,7 @@ public final class FTuning {
     public static final float HOT_IGNITE_TU = 300f;
     public static final int HOT_IGNITE_INTERVAL_TICKS = 10;
 
-    // --- basic electronics phase 3 (mechanics 6.20): every figure below is a placeholder ------------
+    // --- basic electronics phase 3: every figure below is a placeholder ------------
 
     /** Placeholder. Solder: a joint's good window above liquidus is this over the alloy's molten viscosity (a thinner melt wets better); ticks above liquidus a joint needs. */
     public static final float SOLDER_WINDOW_NUMERATOR_TU = 120f;
@@ -3338,7 +3338,7 @@ public final class FTuning {
     public static final float IRON_JOINT_DRAW_TU = 0.6f;
     public static final float IRON_MAX_TU = 450f;
 
-    /** Placeholder (user's numbers). Hand soldering by drag (mechanics 6.22): pad pitch on screen (px), fraction of the gap a pad closes on the iron each contact tick, ticks on a pad it needs to count as worked, lateral offset (in pitches) past which solder bridges, ticks a pad may be worked per sample, samples the server accepts, ticks leaving the screen with the button held counts as lingering, and noise a cold or bridged pad adds to a circuit. */
+    /** Placeholder (user's numbers). Hand soldering by drag: pad pitch on screen (px), fraction of the gap a pad closes on the iron each contact tick, ticks on a pad it needs to count as worked, lateral offset (in pitches) past which solder bridges, ticks a pad may be worked per sample, samples the server accepts, ticks leaving the screen with the button held counts as lingering, and noise a cold or bridged pad adds to a circuit. */
     public static final int SOLDER_PAD_PITCH_PX = 26;
     public static final float SOLDER_PAD_HEAT_FRACTION = 0.08f;
     public static final int SOLDER_PAD_MIN_DWELL_TICKS = 4;
@@ -3398,7 +3398,7 @@ public final class FTuning {
     public static final int SCOPE_HISTORY = 16;
     public static final float SCOPE_FULL_SCALE_AMPS = 4f;
     public static final float SCOPE_RESOLUTION_AMPS = 0.25f;
-    // --- basic electronics phase 4 (mechanics 6.21): every figure below is a placeholder ------------
+    // --- basic electronics phase 4: every figure below is a placeholder ------------
 
     /** Placeholder. Circuit: parts one board carries; a piezo plate rings as a clock only at or above this coupling. */
     public static final int CIRCUIT_MAX_PARTS = 4;
@@ -3434,7 +3434,7 @@ public final class FTuning {
     public static final float WHISKER_STAGE_SNAP = 0.5f;
     public static final float WHISKER_BAND_SPREAD = 0.2f;
 
-    // --- radiation (mechanics 9.8): every figure below is a placeholder ----------------------------
+    // --- radiation: every figure below is a placeholder ----------------------------
 
     /** Placeholder. How far a block or a dropped item still counts toward a body's dose rate; a source gives 1 / (1 + d^2) of its figure. */
     public static final int RAD_REACH_BLOCKS = 5;
@@ -3950,13 +3950,13 @@ public final class FTuning {
     /** Real-world derived. Water over air by density, for a screw in water. */
     public static final float WATER_OVER_AIR_DENSITY = 816f;
     /**
-     * Placeholder (micro-blocks, {@code docs/specs/feedback_micro_spec.md}). The density a voxel weighs at
+     * Placeholder (micro-blocks, {@code docs/dev/vehicle.md}). The density a voxel weighs at
      * when no material file claims its block, roughly rock's: a voxel is 1/64 of a block's 1000 mB
      * times its block's material density, and a block nobody has weighed still has to weigh something.
      */
     public static final Density MICRO_FALLBACK_DENSITY = new Density(2.5f);
     /**
-     * Placeholder (micro rotation, {@code docs/specs/feedback_micro_spec.md}). A quarter-size rotation
+     * Placeholder (micro rotation, {@code docs/dev/vehicle.md}). A quarter-size rotation
      * voxel's inertia over its full-size part's: mass times radius squared, mass by volume (1/64,
      * as a voxel's mass already is) and radius by size (1/4), so (1/4)^5.
      */

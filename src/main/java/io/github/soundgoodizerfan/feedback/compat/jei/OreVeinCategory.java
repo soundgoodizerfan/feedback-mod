@@ -25,7 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
- * An ore vein card (mechanics 9.2): the ores a deposit holds, laid out core, cap, rim and scatter,
+ * An ore vein card: the ores a deposit holds, laid out core, cap, rim and scatter,
  * and where and how often it occurs. Output slots, so looking up an ore shows where it is found.
  */
 public class OreVeinCategory implements IRecipeCategory<OreVein> {

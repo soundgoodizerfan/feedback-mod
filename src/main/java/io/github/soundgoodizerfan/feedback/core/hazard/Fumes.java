@@ -13,7 +13,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * What a hot toxic material gives off (mechanics 6.20): working leaded solder poisons whoever is
+ * What a hot toxic material gives off: working leaded solder poisons whoever is
  * within reach of it while it is hot. Read off the material's {@code toxic} perk, so lead-free
  * solder and any modded clean alloy give off nothing and a modded toxic one does. Poison never
  * kills. This sits beside {@link Exposure}, which is the shock multiplier and has no toxin path.

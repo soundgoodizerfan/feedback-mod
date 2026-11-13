@@ -16,7 +16,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Holds charge at a voltage and gives it back in a burst, and leaks (mechanics 6.6). The storage
+ * Holds charge at a voltage and gives it back in a burst, and leaks. The storage
  * that makes a pulse usable: an electrostatic machine's twenty ticks go into the jar, and come out
  * as long as something draws on it.
  *

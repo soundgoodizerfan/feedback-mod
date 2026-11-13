@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * {@code Eu} to Thermal: a heating coil, set under a vessel like a firebox (mechanics 6.16). One
+ * {@code Eu} to Thermal: a heating coil, set under a vessel like a firebox. One
  * class, one block per element metal: the element is the physical part that decides how hot it
  * may run, so a better element is a different coil you could point at, never a setting.
  */

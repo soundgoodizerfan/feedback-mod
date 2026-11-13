@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 /**
  * The one joint between the full-size rotation world and the micro one
- * ({@code docs/specs/feedback_micro_spec.md}, <em>Micro rotation nodes</em>). Its back, the big face,
+ * ({@code docs/dev/vehicle.md}). Its back, the big face,
  * couples to full-size rotation blocks as a shaft end does; its {@link #FACING}, the micro face,
  * reaches only the four voxels around the centre of the micro cell's face in front of it -- the
  * grid is four on a side, so no voxel is dead centre -- not through the propagator but by feeding each of

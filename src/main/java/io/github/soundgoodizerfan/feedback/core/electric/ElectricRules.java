@@ -7,7 +7,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 
 /**
  * The electrical rulings that are still open, each in one method so changing one is a one-line
- * edit and not a search (mechanics 6.2, 6.5).
+ * edit and not a search.
  *
  * <p>Everything here is a decision the user has not closed, or a placeholder behind one. The
  * resolver ({@link ElectricRun}) and the sinks call these and hold no opinion of their own, which

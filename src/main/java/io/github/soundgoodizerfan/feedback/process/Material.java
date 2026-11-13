@@ -98,7 +98,7 @@ import net.minecraft.world.item.Item;
  *
  * <h2>Most of these figures have no reader yet</h2>
  * Everything from {@code kind} down was entered ahead of any system that reads it, so the table is
- * ready when one arrives (see {@code feedback_mechanics.md} §5.6). Absent means nobody has measured
+ * ready when one arrives. Absent means nobody has measured
  * it, never zero. The numbers are placeholders (§19): real-world values where the real world has
  * one, rounded, with Tu read as degrees Celsius -- tin, lead and zinc already melt at their real
  * figures -- except where an existing table already said otherwise, which wins.
@@ -467,7 +467,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
 
     /**
      * What burning it does: one set of figures for every fire it is in, open or confined
-     * ({@code feedback_mechanics.md} 5.7). A firebox reads the open half through {@link Fuel}, a
+     * A firebox reads the open half through {@link Fuel}, a
      * gun's chamber the confined half through {@link #propellant}. Its ignition point is not here:
      * the material already states it as {@code thermal.oxidation_temperature}, above which, held
      * in air, it burns. Absent means it does not burn.
@@ -523,7 +523,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     }
 
     /**
-     * How it carries and makes electricity (mechanics 6.4). A conductor's current rating is the
+     * How it carries and makes electricity. A conductor's current rating is the
      * top-level {@code ampacity}; this holds the other figures. Resistance is not modelled, so
      * {@code drop} is stated directly as the thing it would have been derived to be.
      *

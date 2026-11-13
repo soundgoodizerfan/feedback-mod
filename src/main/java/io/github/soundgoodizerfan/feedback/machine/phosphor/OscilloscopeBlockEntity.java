@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * An oscilloscope (mechanics 6.20): a block that watches the current in a cable beside it and shows
+ * An oscilloscope: a block that watches the current in a cable beside it and shows
  * it on a phosphor screen beside it. It is an {@link Instrument} for {@link Quantity#CURRENT} at
  * {@link FTuning#SCOPE_RESOLUTION_AMPS}. It is not an {@code ElectricMember}, so it joins no run;
  * it only reads the node it touches, as a galvanometer does.

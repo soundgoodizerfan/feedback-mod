@@ -9,7 +9,7 @@ import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import net.neoforged.neoforge.fluids.FluidStack;
 
 /**
- * A fluid's temperature, carried on the stack ({@code feedback_mechanics.md} 5.9). The fluid id says
+ * A fluid's temperature, carried on the stack. The fluid id says
  * only what phase it is (water, steam); how hot it is rides with it through any handler, so a line
  * of steam is as hot as the boiler made it and a tank cools its own contents.
  *

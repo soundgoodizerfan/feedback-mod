@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * The Basic Electronic Circuit (mechanics 6.21): a part that carries properties, not a tier. It is
+ * The Basic Electronic Circuit: a part that carries properties, not a tier. It is
  * the data component on the circuit item, read off a soldered {@link Board} when its joints are
  * graded, and it is what later machines eat as a quality input.
  *
@@ -127,7 +127,7 @@ public record Circuit(int elements, float speed, float noise, Board.Joint joint,
         return assemble(board, joint, materials, 0);
     }
 
-    /** As above, with {@code defects} cold or bridged pads each adding {@link FTuning#CIRCUIT_DEFECT_NOISE} (mechanics 6.22). */
+    /** As above, with {@code defects} cold or bridged pads each adding {@link FTuning#CIRCUIT_DEFECT_NOISE}. */
     public static Circuit assemble(Board board, Board.Joint joint, Map<ResourceLocation, Material> materials, int defects) {
         int elements = 0;
         float speed = 0f, noise = 0f, steady = 0f;

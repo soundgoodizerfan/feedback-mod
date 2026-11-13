@@ -28,7 +28,7 @@ import net.minecraft.resources.ResourceLocation;
  * <h2>Senses give adjectives</h2>
  * With nothing carried a line is <em>live</em> or <em>dead</em> and a sink is <em>starved</em> or
  * not -- what the needle and the machine's own slowness already say, free, so a failure shows on
- * the thing that failed (mechanics 6.2). A figure needs the instrument for that quantity:
+ * the thing that failed. A figure needs the instrument for that quantity:
  * an electroscope for volts, a galvanometer for amps, each at its own resolution.
  */
 public class ElectricComponent implements IBlockComponentProvider {

@@ -13,7 +13,7 @@ import net.minecraft.util.StringRepresentable;
  * A number a material's file states that a recipe may ask about: "any wire whose {@code ampacity}
  * is at least 0.5". Named, never an id (philosophy 12), and a closed list on purpose -- each is a
  * figure the table already carries, read through the same accessor the machines use. Absent means
- * unmeasured, never zero (mechanics 5.6), so a material without the figure matches no range.
+ * unmeasured, never zero, so a material without the figure matches no range.
  */
 public enum MaterialProperty implements StringRepresentable {
     AMPACITY("ampacity", "ampacity", m -> m.ampacity()),

@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 import net.minecraft.network.chat.Component;
 
 /**
- * A placed part that can say how it responds to a component tester (mechanics 6.20). The part
+ * A placed part that can say how it responds to a component tester. The part
  * writes its lines with {@link Testable#response} and {@link Testable#condition}, which quantise to
  * the tester it is handed; it never learns who is asking and the tester never learns what part
  * this is, so a new part opts in with one method and no tester change.

@@ -43,7 +43,7 @@ public class FDataComponents {
                     .build());
 
     /**
-     * A fluid stack's temperature in Tu (mechanics 5.9): the stamp a tank, pipe or handler carries
+     * A fluid stack's temperature in Tu: the stamp a tank, pipe or handler carries
      * with the fluid, so steam arrives as hot as it left. Absent reads as ambient. Not an energy
      * and not a quantity of heat: a state, like an item's.
      */

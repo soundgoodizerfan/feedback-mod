@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * A galvanic cell: two different metals and something between them, and a potential between the
  * metals. The block is given the two electrodes it is built from and nothing else; the voltage is
  * read from their material files ({@code electrical.electrode_potential}), so no cell names a
- * figure and a different pair is one more registration line (mechanics 6.8: chemical to
+ * figure and a different pair is one more registration line (chemical to
  * {@code Eu} at one block you can point at).
  */
 public class GalvanicCellBlock extends Block implements EntityBlock {

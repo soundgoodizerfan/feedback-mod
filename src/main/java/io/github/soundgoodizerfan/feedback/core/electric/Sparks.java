@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 /**
  * An electrical spark as a game event: an arc where a line was broken under load. Nothing
  * routes it; anything with a game-event listener within {@link FTuning#SPARK_RANGE_BLOCKS} may
- * hear it -- the coherer and the cat's whisker (mechanics 6.18), which is what makes them
+ * hear it -- the coherer and the cat's whisker, which is what makes them
  * wireless. Quiet arcs (under {@link FTuning#SPARK_MIN_AMPS}) make none.
  */
 public final class Sparks {

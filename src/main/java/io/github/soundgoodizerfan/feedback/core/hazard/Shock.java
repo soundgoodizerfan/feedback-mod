@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
  *
  * <h2>Bands again</h2>
  * Damage follows the voltage's {@link VoltageBand}, never the volts: a band is a rating a player
- * can read off a source (mechanics 6.3) and it is the vocabulary electrical hazards share with
+ * can read off a source and it is the vocabulary electrical hazards share with
  * everything else. The bottom band keeps the figure the bare wire always had, so this widens that
  * rule instead of adding a second one.
  *

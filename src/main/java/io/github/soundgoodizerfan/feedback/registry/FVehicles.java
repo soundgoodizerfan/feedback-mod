@@ -68,7 +68,7 @@ public class FVehicles {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LiftBlockEntity>> LIFT_ENTITY =
             BLOCK_ENTITIES.register("lift", () -> BlockEntityType.Builder.of(LiftBlockEntity::new, LIFT.get()).build(null));
 
-    // --- Micro-blocks (docs/specs/feedback_micro_spec.md) ---------------------------------------------
+    // --- Micro-blocks (docs/dev/vehicle.md) ---------------------------------------------
 
     /**
      * A full-size block holding up to 64 quarter-block voxels. Broken by hand, it gives them back

@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Two leaves that stand apart when something is charged: the first electrical instrument, and a
- * deliberately poor one (mechanics 6.7).
+ * deliberately poor one.
  *
  * <h2>Potential, coarsely, and never current</h2>
  * It reads potential at the block it is touched to, to {@link

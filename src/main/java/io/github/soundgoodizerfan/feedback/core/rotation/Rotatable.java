@@ -68,8 +68,7 @@ public interface Rotatable {
     /**
      * Gear ratio, neighbour's speed over this block's, when this block's teeth mesh with
      * {@code other} at the edge-diagonal {@code offset}, or 0 when they do not. Speeds are turns
-     * about each block's positive axis direction; see {@code docs/specs/feedback_micro_spec.md}, <em>Cog
-     * meshing</em>.
+     * about each block's positive axis direction; see {@code docs/dev/vehicle.md}.
      */
     default float meshRatioAt(BlockState state, Vec3i offset, BlockState other) {
         return 0;

@@ -52,7 +52,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * Micro cells ({@code docs/specs/feedback_micro_spec.md}, phase 1): the voxels are the shape, the state
+ * Micro cells ({@code docs/dev/vehicle.md}, phase 1): the voxels are the shape, the state
  * Sable reads names the same voxels at half-block resolution, a save keeps them, the cell weighs
  * what they weigh, and a held block places and removes them.
  */

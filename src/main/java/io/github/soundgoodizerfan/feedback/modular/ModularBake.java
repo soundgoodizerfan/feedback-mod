@@ -42,7 +42,7 @@ import net.minecraft.resources.ResourceLocation;
  *
  * <p>Two things from the spec are not here yet. Parts come out of the forge at their target size,
  * so there is no as-built geometry to read; and heat
- * treatment is the material (hardened steel is its own file, mechanics 5.3), so there is no
+ * treatment is the material (hardened steel is its own file), so there is no
  * treatment state either.
  */
 public final class ModularBake {

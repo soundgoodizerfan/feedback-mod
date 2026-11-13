@@ -14,7 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 /**
- * The Basic Electronic Circuit (mechanics 6.21). Everything about it is the {@link Circuit}
+ * The Basic Electronic Circuit. Everything about it is the {@link Circuit}
  * component; the item only carries it and shows it. The tooltip says only how many elements it
  * has; reading its quality takes a component tester, as for any part. A carried
  * circuit that gets hotter than its traces take lifts them (dead part).

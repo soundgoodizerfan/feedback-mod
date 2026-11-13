@@ -14,7 +14,7 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * How far a crystal plate has been ground (mechanics 6.17): a data component on the plate, carried
+ * How far a crystal plate has been ground: a data component on the plate, carried
  * onto a mass probe made from it. A plate with no component is the first cut, coarse. Grinding a
  * cut plate moves it one cut finer ({@code finer} form step); the finest has nowhere further to go.
  * A thin cut reads fine and not far, a thick one far and coarse.

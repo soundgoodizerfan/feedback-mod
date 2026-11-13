@@ -15,7 +15,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
 
 /**
- * A fluid changing phase, authored as the {@code phase} block of a {@code thermal_process} row ({@code feedback_mechanics.md} 5.9): the liquid boils to the gas above its
+ * A fluid changing phase, authored as the {@code phase} block of a {@code thermal_process} row: the liquid boils to the gas above its
  * boiling point, spending {@code latent} Work per mB, and the gas condenses back below it, giving
  * the same Work back. The fluid ids say only the phase; the heat rides on the stack. Boiler and
  * condenser read this and name neither water nor steam.

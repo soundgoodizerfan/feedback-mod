@@ -14,7 +14,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * What a mass probe hung in an electrolytic cell shows (mechanics 6.17). The reading is taken here
+ * What a mass probe hung in an electrolytic cell shows. The reading is taken here
  * on the server, where the coat is true, through the probe's own range, step and noise; the client
  * only prints it.
  */

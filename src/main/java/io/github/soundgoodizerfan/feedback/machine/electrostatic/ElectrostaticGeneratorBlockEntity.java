@@ -18,20 +18,20 @@ import net.minecraft.world.level.block.state.BlockState;
  * then nothing.
  *
  * <h2>Why a pulse and not a store</h2>
- * Smoothing is a block the player places, not a buffer hidden in a machine (mechanics 6.6), so
+ * Smoothing is a block the player places, not a buffer hidden in a machine, so
  * this holds no charge: it is live or it is idle. Being idle is a real state the resolver sees, not
  * a zero it happens to compute -- an idle source is not part of the supply, and a lower-voltage
  * cell on the same line is blocked only while this one is pulsing.
  *
  * <h2>Not a conversion</h2>
  * The player turns it, which is not a mechanical network feeding electricity: nothing in the
- * block network drives it, and nothing converts to or from {@code Eu} here (mechanics 6.8's
+ * block network drives it, and nothing converts to or from {@code Eu} here
  * mechanical boundary is the dynamo, {@code machine/dynamo/}). A Leyden jar on the line is what
  * turns its twenty ticks into something a sink can use.
  *
  * <h2>HV, and nearly no current</h2>
  * An electrostatic machine is high voltage and nearly nothing by current, which is the reason {@code Eu}
- * has two components (mechanics 6.3). Ruled HV on 2026-10-23, so its pulse burns a low-band wire's insulation.
+ * has two components. Ruled HV on 2026-10-23, so its pulse burns a low-band wire's insulation.
  */
 public class ElectrostaticGeneratorBlockEntity extends ElectricNode {
 

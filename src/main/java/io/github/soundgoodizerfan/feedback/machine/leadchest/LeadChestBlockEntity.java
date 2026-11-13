@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.HolderLookup;
 
-/** The lead chest's 27 slots (mechanics 9.8): a plain chest that keeps what it holds from radiating, by its lead lining. */
+/** The lead chest's 27 slots: a plain chest that keeps what it holds from radiating, by its lead lining. */
 public class LeadChestBlockEntity extends RandomizableContainerBlockEntity implements Shielded {
 
     private NonNullList<ItemStack> items = NonNullList.withSize(27, ItemStack.EMPTY);

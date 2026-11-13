@@ -15,7 +15,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import java.util.function.Predicate;
 
 /**
- * A tank whose contents have a temperature ({@code feedback_mechanics.md} 5.9). The stack inside is
+ * A tank whose contents have a temperature. The stack inside is
  * kept bare and the temperature is a float beside it, so cooling every tick never makes the stack
  * unequal to itself. What goes in is merged by {@link FluidHeat#merge}; what comes out is stamped.
  * An empty tank has no temperature. Pipes and valves add no loss (user ruling 2026-10-23): only a

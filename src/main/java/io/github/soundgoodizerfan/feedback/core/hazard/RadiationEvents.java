@@ -15,7 +15,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * A player's running dose (mechanics 9.8): each {@link FTuning#RAD_INTERVAL_TICKS} the rate they
+ * A player's running dose: each {@link FTuning#RAD_INTERVAL_TICKS} the rate they
  * stand in, through their armour, is added; {@link FTuning#RAD_CLEARANCE} a second is cleared. A
  * body complains in three steps -- hunger, then weakness and mining fatigue, then the wither --
  * and every step is a consequence, never a lock. Dose is kept across logging out, lost on death.

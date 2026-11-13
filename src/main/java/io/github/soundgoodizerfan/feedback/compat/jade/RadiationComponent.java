@@ -18,7 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * What a block gives off, in Ru at point blank (mechanics 9.8) -- a figure only with a Geiger
+ * What a block gives off, in Ru at point blank -- a figure only with a Geiger
  * counter carried, because a block that glows in the HUD for free would be the survey meter again.
  * A lined container says so, plainly: the lining is a spec printed on it, not a reading.
  */

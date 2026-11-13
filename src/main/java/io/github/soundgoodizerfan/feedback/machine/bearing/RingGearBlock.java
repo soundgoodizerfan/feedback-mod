@@ -28,8 +28,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * A hollow gear on a block's face ({@code docs/specs/feedback_micro_spec.md}, <em>Bearings and ring
- * gears</em>): a {@link RotaryBearingBlock} whose input is its rim, not its back. The back couples
+ * A hollow gear on a block's face ({@code docs/dev/vehicle.md}): a {@link RotaryBearingBlock} whose input is its rim, not its back. The back couples
  * to nothing -- a shaft or gearbox face behind turns inside the ring -- and the rim meshes with cogs
  * by the cog rules as a small cog would, so the assembled body is driven from the side by a cog.
  */

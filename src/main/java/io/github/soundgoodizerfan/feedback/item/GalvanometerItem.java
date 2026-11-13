@@ -18,7 +18,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 /**
- * A needle that moves when current goes through it: the carried galvanometer (mechanics 6.7).
+ * A needle that moves when current goes through it: the carried galvanometer.
  *
  * <h2>What it reads, and what it cannot do</h2>
  * Current at the block it is put to, finely enough to tell a loaded line from an idle one and

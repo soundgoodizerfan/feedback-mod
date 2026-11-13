@@ -33,7 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * Starts a build ({@code docs/specs/feedback_micro_spec.md}): used on a block, it puts a micro cell where
+ * Starts a build ({@code docs/dev/vehicle.md}): used on a block, it puts a micro cell where
  * a block would go, with one voxel of stone in it where you pointed. Every voxel after that is
  * placed by holding a block against the build ({@link MicroPlacer}).
  */

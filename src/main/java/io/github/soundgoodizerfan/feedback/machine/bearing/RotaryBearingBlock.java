@@ -52,7 +52,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * A bearing as a face add-on ({@code docs/specs/feedback_micro_spec.md}, <em>Bearings and ring gears</em>):
+ * A bearing as a face add-on ({@code docs/dev/vehicle.md}):
  * placed against a rotation block's face, its back couples to that block as a shaft end does, and
  * its {@link #FACING} is the turning face. Right-click with an empty hand assembles what is in front
  * into a Sable body hinged here and turned by the run ({@link RotaryBearingBlockEntity}); again puts

@@ -36,8 +36,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 /**
- * The first consumer, and the first thing to show what a sink does with whatever it is given
- * (mechanics 6.5).
+ * The first consumer, and the first thing to show what a sink does with whatever it is given.
  *
  * <h2>It runs on what arrives, and never refuses a line</h2>
  * Its field strength is {@link ElectricRules#rate}: the fraction of its rated voltage it sees

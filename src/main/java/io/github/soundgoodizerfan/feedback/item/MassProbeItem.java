@@ -15,7 +15,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * A crystal plate on a metal backing: a quartz-crystal microbalance (mechanics 6.17). Hung on the
+ * A crystal plate on a metal backing: a quartz-crystal microbalance. Hung on the
  * side of an electrolytic cell like any plated piece, it takes the coat the cell is laying down,
  * and the coat loads the crystal and lowers its ring -- so the shift is the deposited Qu.
  *

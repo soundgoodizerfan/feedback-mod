@@ -10,7 +10,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Joint quality, graded from Tu against an alloy's liquidus (mechanics 6.20). Pure: the hand iron
+ * Joint quality, graded from Tu against an alloy's liquidus. Pure: the hand iron
  * and the reflow oven both reduce a joint to a peak Tu and a time above liquidus and ask here, so
  * there is one rule and the two routes differ only in what it costs to reach it.
  *
@@ -65,7 +65,7 @@ public final class Soldering {
         return build(stack, board, grade(peakTu, dwellTicks, alloy.get(), limit(board, materials)), 0, materials);
     }
 
-    /** The hand route (mechanics 6.22): a board comes out of a drag {@link Pass} as its worst pad says, its cold and bridged pads counted. */
+    /** The hand route: a board comes out of a drag {@link Pass} as its worst pad says, its cold and bridged pads counted. */
     public static net.minecraft.world.item.ItemStack finish(net.minecraft.world.item.ItemStack stack,
             Map<ResourceLocation, Material> materials, Pass pass) {
         Board board = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.BOARD.get());
@@ -132,7 +132,7 @@ public final class Soldering {
     }
 
     /**
-     * One drag along the pad row (mechanics 6.22), the single rule the screen draws and the server
+     * One drag along the pad row, the single rule the screen draws and the server
      * judges. Each tick the tip sits on a pad the pad closes {@link FTuning#SOLDER_PAD_HEAT_FRACTION}
      * of its gap to the iron and the iron gives up {@link FTuning#IRON_JOINT_DRAW_TU}, so a pace that
      * was right at the first pad is too fast at the last. Pure: resistance and instruments never enter.

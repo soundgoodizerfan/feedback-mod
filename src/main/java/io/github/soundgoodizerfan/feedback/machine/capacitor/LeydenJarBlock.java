@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import org.jetbrains.annotations.Nullable;
 
-/** A glass jar foiled inside and out: the capacitor of mechanics 6.6. See {@link LeydenJarBlockEntity}. */
+/** A glass jar foiled inside and out: the capacitor. See {@link LeydenJarBlockEntity}. */
 public class LeydenJarBlock extends Block implements EntityBlock {
 
     public LeydenJarBlock(Properties properties) {

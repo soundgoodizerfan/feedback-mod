@@ -25,7 +25,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 
 /**
- * The three things done to a board by hand (mechanics 6.20), told apart by what is in the grid and
+ * The three things done to a board by hand, told apart by what is in the grid and
  * never by name:
  * <ul>
  * <li>a substrate and two fine wires of one metal: an <b>etched</b> board;</li>

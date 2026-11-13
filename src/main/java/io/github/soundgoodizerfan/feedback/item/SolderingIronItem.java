@@ -33,7 +33,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 /**
- * The hand route to a good joint (mechanics 6.20, 6.22): attention where the reflow oven is capital.
+ * The hand route to a good joint: attention where the reflow oven is capital.
  *
  * <h2>How it works</h2>
  * Click a fire (any {@link HeatSource}) to heat it; the iron holds the heat by {@link ItemHeat} and

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 /**
- * A body hot enough to glow gives off light ({@code docs/spec_incandescence.md}). The bands are the free-sense bands
+ * A body hot enough to glow gives off light ({@code docs/specs/feedback_incandescence_spec.md}). The bands are the free-sense bands
  * ({@link FTuning#HEAT_BAND_TOPS}); light starts at the third (faint red) and each band gives a real block light level, so
  * the game treats the glow as real: vanilla melts ice and snow and keeps hostile mobs from spawning in it. A block that
  * glows carries {@link #GLOW}, a block state property its light emission reads, and moves it only when the band changes.

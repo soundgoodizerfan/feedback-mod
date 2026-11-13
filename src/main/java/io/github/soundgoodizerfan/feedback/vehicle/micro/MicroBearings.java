@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Micro bearings ({@code docs/specs/feedback_micro_spec.md}, <em>Micro bearings and ring gears</em>): a
+ * Micro bearings ({@code docs/dev/vehicle.md}): a
  * Rotary Bearing or Ring Gear voxel turns the voxels connected to its front face as a Sable body.
  *
  * <p>The voxel-level split, on the stock {@code assembleBlocks}: every cell holding a moving voxel

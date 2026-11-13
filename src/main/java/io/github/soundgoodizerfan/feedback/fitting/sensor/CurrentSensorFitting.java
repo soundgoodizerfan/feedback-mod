@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
- * The galvanometer as a fitting: a sided, read-only sensor on a wire (mechanics 6.7), following
+ * The galvanometer as a fitting: a sided, read-only sensor on a wire, following
  * {@link TemperatureSensorFitting} exactly. It reads the current at the block it sits on and
  * nothing else, so it can be linked to a controller through the data connector like any other
  * sensor, and a program can act on a wire's current without the player standing next to it.

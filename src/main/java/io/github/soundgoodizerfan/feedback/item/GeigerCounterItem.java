@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 
 /**
- * The Geiger counter (mechanics 9.8): reads the dose rate in Ru, and says so out loud. It does
+ * The Geiger counter: reads the dose rate in Ru, and says so out loud. It does
  * nothing in the hand but listen -- the clicks and the figure both come from {@code client/GeigerClient},
  * counted from the same random clicks, so the number is as steady as the clicks sound. It reads the
  * field at the player, before their armour: it tells you why to put lead on, not how much got through.

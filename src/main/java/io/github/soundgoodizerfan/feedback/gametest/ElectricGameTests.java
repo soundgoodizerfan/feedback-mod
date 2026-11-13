@@ -54,7 +54,7 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * The electrical resolver and the wire's thermal body (mechanics 6, slice 4).
+ * The electrical resolver and the wire's thermal body.
  *
  * <p>The resolver is pure arithmetic over a graph, so most of these build a run out of plain
  * {@link Fake} members and tick it -- no blocks, no world, and the figures are checked exactly. The
@@ -457,7 +457,7 @@ public class ElectricGameTests {
     public static void currentSensorFittingReadsTheWiresCurrentAtItsResolution(GameTestHelper helper) {
         BlockPos at = new BlockPos(1, 2, 1);
         CableBlockEntity wire = placeCable(helper, at);
-        helper.assertTrue(wire instanceof DataNode, "every wire is a data node (mechanics 6.7)");
+        helper.assertTrue(wire instanceof DataNode, "every wire is a data node");
 
         CurrentSensorFitting sensor = new CurrentSensorFitting(wire, Direction.UP);
         wire.setSidedFitting(Direction.UP, sensor);
@@ -673,7 +673,7 @@ public class ElectricGameTests {
         });
     }
 
-    // --- the dynamo (mechanics 6.8) -----------------------------------------------------------
+    // --- the dynamo -----------------------------------------------------------
 
     /**
      * A crank turning a shaft into a dynamotor run as a generator (the default figures: small frame, coarse winding),
@@ -736,7 +736,7 @@ public class ElectricGameTests {
         });
     }
 
-    // --- the Leyden jar (mechanics 6.6) -------------------------------------------------------
+    // --- the Leyden jar -------------------------------------------------------
 
     /**
      * One turn of an electrostatic generator charges a jar through a cable; when the pulse ends
@@ -776,7 +776,7 @@ public class ElectricGameTests {
         });
     }
 
-    // --- the electrolytic cell (mechanics 6.14) ----------------------------------------------
+    // --- the electrolytic cell ----------------------------------------------
 
     private static final ResourceLocation COPPER = Feedback.id("copper"), ZINC = Feedback.id("zinc");
 
@@ -845,7 +845,7 @@ public class ElectricGameTests {
         helper.succeed();
     }
 
-    // --- electroplating (mechanics 6.15) ------------------------------------------------------
+    // --- electroplating ------------------------------------------------------
 
     /**
      * Copper onto an iron ingot, three ways: a cell's single amp for 1 Qu comes out sound; a coarse
@@ -887,7 +887,7 @@ public class ElectricGameTests {
         return cell.takeWork();
     }
 
-    // --- the heating coil (mechanics 6.16) ----------------------------------------------------
+    // --- the heating coil ----------------------------------------------------
 
     /**
      * Two coils at 9 V and their own two amps, each under a small crucible. Both heat their crucible
@@ -923,7 +923,7 @@ public class ElectricGameTests {
         });
     }
 
-    // --- the breaker and the fuse (mechanics 6.4) ---------------------------------------------
+    // --- the breaker and the fuse ---------------------------------------------
 
     /**
      * Cell, breaker, magnet in a column. Closed, the magnet is fed; opened under load, the line is

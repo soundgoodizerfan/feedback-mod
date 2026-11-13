@@ -17,7 +17,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
  * <h2>Three roles, and a node has exactly one</h2>
  * A wire conducts. A source offers a voltage and a current. A sink wants a current at a rated
  * band. Nothing is two of these at once, so there is no node that is secretly a battery and a
- * load -- storage is a block of its own and arrives with the capacitor (mechanics 6.6).
+ * load -- storage is a block of its own and arrives with the capacitor.
  *
  * <h2>Plain floats, not {@link Eu}</h2>
  * What a sink sees is a continuous figure after path drop, which no band can name and which an
@@ -94,7 +94,7 @@ public interface ElectricMember {
      * @param amps    WIRE: current through this block. SINK: current delivered. SOURCE: current drawn.
      * @param wanted  SINK: current it asked for. Delivered below this is a starved sink.
      * @param blocked SOURCE only: it was active but on a run with a higher voltage, so it supplies
-     *                nothing (mechanics 6.2, mixed-voltage runs).
+     *                nothing (mixed-voltage runs).
      */
     void onResolved(float volts, float amps, float wanted, boolean blocked);
 

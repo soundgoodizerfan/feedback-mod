@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
  * was an identity lookup wearing a datapack, and it stated a second time what the material table
  * already knew: coal is coal whether it is in a firebox or a chamber. The figures now live in the
  * material's {@link Material.Combustion} block, and an item burns because its material does
- * ({@code feedback_mechanics.md} 5.7). A pack that wants coke to burn hotter still writes one
+ * A pack that wants coke to burn hotter still writes one
  * line of JSON, now in coke's material file.
  *
  * <h2>Nothing burns unless its material says so</h2>

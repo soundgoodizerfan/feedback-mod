@@ -16,7 +16,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * A hand-soldering drag, once, at its end (mechanics 6.22): for each pad the tip touched, its index,
+ * A hand-soldering drag, once, at its end: for each pad the tip touched, its index,
  * the ticks it sat there and the furthest it strayed off the trace in hundredths of a pad pitch,
  * and whether the button was still down as the screen closed. Carries no grade: the server replays
  * the samples through {@code Soldering.Pass} against the iron's real heat and refuses any whose

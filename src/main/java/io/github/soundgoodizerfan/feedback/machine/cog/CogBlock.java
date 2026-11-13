@@ -47,7 +47,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * small against the large one's rim; and two large cogs at right angles, diagonally, as a bevel
  * pair. The large cog is drawn wider than its block (its model reaches into the neighbours) so the
  * rule can be seen; it still occupies one block. Positions and signs: {@code
- * docs/specs/feedback_micro_spec.md}, <em>Cog meshing</em>. This replaced a face-to-face-only rule that
+ * docs/dev/vehicle.md}. This replaced a face-to-face-only rule that
  * suited placeholder cubes and stopped once the large cog was drawn at its size.
  * <p>
  * The two sizes and their ratios are Create's, taken deliberately. Their code is MIT and the

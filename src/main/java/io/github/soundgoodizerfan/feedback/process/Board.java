@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * A substrate with traces laid on it (mechanics 6.20): the data component on a trace board. It
+ * A substrate with traces laid on it: the data component on a trace board. It
  * records what was done to the board and nothing derived: the trace route, the metal or dust the
  * traces are, the substrate, the solder once pasted, and how the joints came out. Ratings, limits
  * and windows are read from the materials when asked, so a retuned material retunes its boards.

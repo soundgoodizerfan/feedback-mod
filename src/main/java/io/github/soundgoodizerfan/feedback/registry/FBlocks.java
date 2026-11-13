@@ -660,7 +660,7 @@ public class FBlocks {
         return new net.minecraft.world.level.block.RedStoneOreBlock(properties);
     }
 
-    // Tin, zinc and lead (mechanics 9.6): stone-tool ores, vanilla-copper strength, raw_<metal> drops.
+    // Tin, zinc and lead: stone-tool ores, vanilla-copper strength, raw_<metal> drops.
     public static final DeferredBlock<Block> TIN_ORE = ore("tin_ore", false, false);
     public static final DeferredBlock<Block> DEEPSLATE_TIN_ORE = ore("deepslate_tin_ore", true, false);
     public static final DeferredBlock<Block> ZINC_ORE = ore("zinc_ore", false, false);
@@ -668,7 +668,7 @@ public class FBlocks {
     public static final DeferredBlock<Block> LEAD_ORE = ore("lead_ore", false, false);
     public static final DeferredBlock<Block> DEEPSLATE_LEAD_ORE = ore("deepslate_lead_ore", true, false);
 
-    // Crystal and clay deposits (mechanics 9): one block each, stone host only. Galena and pyrite
+    // Crystal and clay deposits: one block each, stone host only. Galena and pyrite
     // are the cat's whisker's crystals; kaolinite is the firebrick clay, soft enough to dig by hand.
     public static final DeferredBlock<Block> GALENA_ORE = ore("galena_ore", false, false);
     public static final DeferredBlock<Block> PYRITE_ORE = ore("pyrite_ore", false, false);
@@ -685,7 +685,7 @@ public class FBlocks {
                     .strength(0.5f)
                     .sound(SoundType.SAND)));
 
-    // Surface signs of a vein beneath (mechanics 9.5): plants that tolerate the metal, and ground its salts stain.
+    // Surface signs of a vein beneath: plants that tolerate the metal, and ground its salts stain.
     // Placed by OreVeinFeature; a flower is a small flower, a stain sits in the feedback:ore_stains tag.
     public static final DeferredBlock<Block> COPPER_FLOWER = indicatorFlower("copper_flower");
     public static final DeferredBlock<Block> ZINC_VIOLET = indicatorFlower("zinc_violet");
@@ -710,7 +710,7 @@ public class FBlocks {
                 .mapColor(colour).strength(0.5f).sound(SoundType.GRAVEL)));
     }
 
-    /** A chest lined with lead: it holds radiation in (mechanics 9.8). */
+    /** A chest lined with lead: it holds radiation in. */
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlock> LEAD_CHEST =
             BLOCKS.register("lead_chest", () -> new io.github.soundgoodizerfan.feedback.machine.leadchest.LeadChestBlock(
                     BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.5f, 6f).sound(SoundType.METAL)));
@@ -739,7 +739,7 @@ public class FBlocks {
     }
 
     /**
-     * The conductor, of any metal (mechanics 6, slice 4): one block, the material in its block
+     * The conductor, of any metal: one block, the material in its block
      * entity. Its figures come from that material's file.
      */
     public static final DeferredBlock<CableBlock> CABLE = BLOCKS.register("cable",
@@ -758,7 +758,7 @@ public class FBlocks {
                     .sound(SoundType.COPPER)
                     .noOcclusion()));
 
-    /** Zinc against copper: the first chemical-to-electrical boundary (mechanics 6.8). Voltage is read from the electrodes' materials. */
+    /** Zinc against copper: the first chemical-to-electrical boundary. Voltage is read from the electrodes' materials. */
     public static final DeferredBlock<GalvanicCellBlock> GALVANIC_CELL = BLOCKS.register("galvanic_cell",
             () -> new GalvanicCellBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE)

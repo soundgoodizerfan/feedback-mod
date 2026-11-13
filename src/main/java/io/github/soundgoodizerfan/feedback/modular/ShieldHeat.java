@@ -38,7 +38,7 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
  * Blocked damage is the blow's Fu; {@code FTuning.SHIELD_WORK_PER_DAMAGE} turns a point of it into
  * Work and {@code SHIELD_HEAT_FRACTION} is the share that stays in the face. Over the thermal mass
  * (baked mass x {@code SHIELD_THERMAL_MASS_PER_MU}; no material file has a specific heat, and
- * adding one was declined in mechanics 5.6) that is the rise, added to the present figure, so
+ * adding one was declined) that is the rise, added to the present figure, so
  * blows stack and the gap between them matters. A blow from a fire (a damage-type tag in
  * {@link ShieldSources}) also pulls the face towards that source's temperature by the difference
  * law: it approaches the flame and never passes it.

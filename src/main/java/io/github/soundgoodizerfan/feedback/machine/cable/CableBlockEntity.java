@@ -47,7 +47,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A wire's physics: a {@link ThermalBody} that warms only when it carries more than it is rated
- * for, and fails in three readable stages (mechanics 6.4).
+ * for, and fails in three readable stages.
  *
  * <h2>Inside its rating, nothing happens</h2>
  * A wire carrying at or below its rating is given no heat at all, so it sits at ambient forever.
@@ -69,7 +69,7 @@ import org.jetbrains.annotations.Nullable;
  *   <li>Above the material's service temperature the conductor degrades: condition falls,
  *       its rating shrinks and its drop grows.</li>
  *   <li>Condition reaching zero destroys the wire. This is the single place destruction exists
- *       (mechanics 6.4): it is the end of a path the player was visibly walking, reached only by
+ *      : it is the end of a path the player was visibly walking, reached only by
  *       leaving degradation unfixed. A wire is replaced; <b>[OPEN]</b> whether it can be mended.</li>
  * </ol>
  */
@@ -121,7 +121,7 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         Material material = MaterialTable.get().materials().get(this.material);
         if (material == null)
             return;
-        // Absent means unmeasured, never zero (mechanics 5.6): an unmeasured material is a wire
+        // Absent means unmeasured, never zero: an unmeasured material is a wire
         // that carries nothing, which is a pack error that shows on the first current.
         float area = gauge().area();
         baseRating = material.ampacity().orElse(0f) * FTuning.WIRE_AMPS_PER_AMPACITY * area;

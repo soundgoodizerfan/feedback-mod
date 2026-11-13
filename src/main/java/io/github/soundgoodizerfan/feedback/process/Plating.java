@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * A coat of metal electroplated onto an item (mechanics 6.15). The metal is the coat's dominant
+ * A coat of metal electroplated onto an item. The metal is the coat's dominant
  * one, the thickness is how much of it there is in Qu (internal, no type, as the cell's own ledger
  * holds it), the quality is what went right or wrong while it grew, and {@code intact} is the share
  * of the coat still on the piece (0 to 1): a brittle coat (fired enamel) loses it to hard hits, a

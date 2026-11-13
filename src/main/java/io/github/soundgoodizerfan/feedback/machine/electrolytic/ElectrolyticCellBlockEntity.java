@@ -47,11 +47,11 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 
 /**
  * Electrorefining: a metal anode dissolves into the water, and the current plates metal back out
- * onto a cathode (mechanics 6.14, roadmap slice 5). The first thing in the mod that turns
+ * onto a cathode (roadmap slice 5). The first thing in the mod that turns
  * electricity into chemistry, and the first reader of {@link Qu}.
  *
  * <h2>Voltage is a threshold, current is the rate</h2>
- * Mechanics 6.1: a process asks for "at least this voltage; this much current is how fast it
+ * A process asks for "at least this voltage; this much current is how fast it
  * goes", never a bare Eu cost. So this sink does not run on {@link ElectricRules#rate}. Every amp
  * delivered moves {@link FTuning#QU_PER_AMP_TICK} of metal a tick, and the voltage it sees decides
  * only <em>which</em> metal: below a metal's deposition potential no amount of current plates it,
@@ -81,7 +81,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * behind, and the next anode put in that water inherits it. Draining the tank takes the dissolved
  * metal with it, in proportion.
  *
- * <h2>Electroplating (mechanics 6.15)</h2>
+ * <h2>Electroplating</h2>
  * A metal piece hung as the cathode takes the plating instead of the cell's own deposit, by the
  * same chemistry: voltage picks the metal, current is the rate. What is new is only what the piece
  * can take -- a coat that is too thin, burnt by too much current for its size, or so thick it
@@ -110,7 +110,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     private final Map<ResourceLocation, Float> deposit = new LinkedHashMap<>();
 
     /**
-     * A piece hung as the cathode to be plated (mechanics 6.15), its coat so far, and how much of
+     * A piece hung as the cathode to be plated, its coat so far, and how much of
      * that coat grew at a current its surface could not take. While a piece hangs, metal plates
      * onto it rather than onto the cathode's own deposit.
      */
@@ -162,7 +162,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
             condition = Math.max(FTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR,
                     condition - FTuning.ELECTROLYTIC_CELL_WEAR_PER_EXCESS * excess);
             Heat.warm(this, FTuning.ELECTROLYTIC_CELL_HEAT_PER_EXCESS * excess);
-            // Over-drive cracks a hung probe's crystal too: condition lost, never refusal (mechanics 6.17).
+            // Over-drive cracks a hung probe's crystal too: condition lost, never refusal.
             if (work.getItem() instanceof MassProbeItem)
                 work.set(FDataComponents.PROBE_CONDITION.get(), Math.max(FTuning.MASS_PROBE_CONDITION_FLOOR,
                         MassProbeItem.condition(work) - FTuning.MASS_PROBE_WEAR_PER_EXCESS * excess));
@@ -318,7 +318,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         map.values().removeIf(qu -> qu <= EPS);
     }
 
-    // --- electroplating (mechanics 6.15) -------------------------------------------------------
+    // --- electroplating -------------------------------------------------------
 
     /**
      * The current a piece takes before its coat burns: current density, with a piece's surface

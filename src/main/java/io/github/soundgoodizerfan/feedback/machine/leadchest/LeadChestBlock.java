@@ -20,7 +20,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-/** A chest lined with lead (mechanics 9.8): shut, it does not open or close like a vanilla one, and keeps radiation in. */
+/** A chest lined with lead: shut, it does not open or close like a vanilla one, and keeps radiation in. */
 public class LeadChestBlock extends Block implements EntityBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;

@@ -23,7 +23,7 @@ import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
- * Hand soldering by drag (mechanics 6.22): the board's pad row, one pad per joint with a trace
+ * Hand soldering by drag: the board's pad row, one pad per joint with a trace
  * between. Hold the button and drag the tip along it; pace is the skill. Each pad is drawn from the
  * same {@link Soldering.Pass} the server replays: untouched copper, dull (cold), shiny (wet, in the
  * window) or scorched (over). No bar, no target line: read the pad, and a thermometer on the iron

@@ -33,14 +33,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * <h2>Made of a material, not of a name</h2>
  * One block serves every metal: the material rides on the item ({@code MadeOf}) and lives in the
  * block entity, and every figure that matters -- how many amps it carries, what it loses per amp,
- * how hot it may get -- is read from that material's file (mechanics 6.4). A new conductor is a
+ * how hot it may get -- is read from that material's file. A new conductor is a
  * material file and nothing else. Registered as {@code cable}, not {@code wire}: wire is a form
  * (the stuff a cable is made from) and the two must not be told apart by anything but their id.
  *
  * <h2>The shape is a core, and you can walk through it</h2>
  * A wire run along a floor is not an obstacle. It is also not a full block, because a cube that
  * looks like a block and carries current is a trap that teaches nothing. A bare conductor shocks
- * (mechanics 6.4 stage 1) -- {@link #entityInside} -- which is why it has to be passable: standing
+ * (stage 1) -- {@link #entityInside} -- which is why it has to be passable: standing
  * in one is how you find out. A bare one also arcs to a bare one an air block away, which
  * {@link #neighborChanged} keeps honest when the gap fills or empties.
  */

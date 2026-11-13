@@ -28,11 +28,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A fuse: a holder for one fine wire, sacrificed to protect what it guards -- the third accepted
- * wear-with-correct-use exception (mechanics 6.4), because a fuse is a consumable by nature. The
+ * wear-with-correct-use exception, because a fuse is a consumable by nature. The
  * holder never wears; the wire is spent.
  *
  * <h2>Both its figures are its wire's metal</h2>
- * It is a cable's physics with a thin wire (mechanics 6.4): over its rating the wire warms, and
+ * It is a cable's physics with a thin wire: over its rating the wire warms, and
  * when it passes its metal's melting point it is gone and the holder conducts nothing. The rating
  * is the metal's {@code ampacity} times {@link FTuning#FUSE_AMPS_PER_AMPACITY}; how long an
  * overload is tolerated is how far its melting point sits above the room. Tin melts at 232 Tu and

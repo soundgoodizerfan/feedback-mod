@@ -59,7 +59,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A full-size block that holds up to 64 micro-blocks ({@code docs/specs/feedback_micro_spec.md}): the
+ * A full-size block that holds up to 64 micro-blocks ({@code docs/dev/vehicle.md}): the
  * cell Sable already understands, so a build of cells lifts into a body like any other build.
  * The voxels are in its {@link MicroCellBlockEntity}.
  *

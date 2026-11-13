@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * A crystal plate that rings (some {@code piezo_coupling}) and a metal plate for backing, in any
- * arrangement, make a mass probe carrying the plate's cut (mechanics 6.17). Nothing is named: the
+ * arrangement, make a mass probe carrying the plate's cut. Nothing is named: the
  * plate is a {@code crystal_plate} form and the backing a {@code plate} form of some material, and
  * only metals have a plate form, which is also why only metal conducts.
  */

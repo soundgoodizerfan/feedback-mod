@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * A vacuum-glass envelope coated inside with a luminous phosphor, which glows where a signal lands
- * (mechanics 6.20; compendium 3.1). The coating is glowstone dust, which the material system
+ * (compendium 3.1). The coating is glowstone dust, which the material system
  * already calls {@code luminous}; the glass is the {@code glass} material, whose service
  * temperature is the envelope's.
  *

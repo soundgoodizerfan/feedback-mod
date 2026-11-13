@@ -12,7 +12,7 @@ package io.github.soundgoodizerfan.feedback.core.unit;
  * -- a copper ingot and a zinc ingot are the same 9 Qu -- while their masses differ, mass per Qu
  * being a property of the substance (molar mass). Nothing here counts atoms or implies any.
  *
- * <p>First made live by the electrolytic cell (mechanics 6.14): what current moves is an amount
+ * <p>First made live by the electrolytic cell: what current moves is an amount
  * of metal, and counting it in ingots would make an ingot a unit. An ingot is
  * {@code FTuning.QU_PER_INGOT}.
  */

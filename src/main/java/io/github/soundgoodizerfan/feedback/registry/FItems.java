@@ -191,7 +191,7 @@ public class FItems {
     /** A drum, crank and frame: the grapple's winch fitting (a faster reel). */
     public static final DeferredItem<Item> GRAPPLE_WINCH = ITEMS.registerSimpleItem("grapple_winch");
 
-    /** Crystal plate on a metal backing, hung in the electrolytic cell to read the deposit (mechanics 6.17). */
+    /** Crystal plate on a metal backing, hung in the electrolytic cell to read the deposit. */
     public static final DeferredItem<Item> MASS_PROBE = ITEMS.register("mass_probe",
             () -> new io.github.soundgoodizerfan.feedback.item.MassProbeItem(new Item.Properties().stacksTo(1)));
 
@@ -378,7 +378,7 @@ public class FItems {
             io.github.soundgoodizerfan.feedback.item.ComponentTesterItem::new, new Item.Properties().stacksTo(1));
     public static final DeferredItem<BlockItem> WHISKER = ITEMS.registerSimpleBlockItem(FBlocks.WHISKER);
     public static final DeferredItem<BlockItem> RELAY = ITEMS.registerSimpleBlockItem(FBlocks.RELAY);
-    /** Rectifying crystals (mechanics 6.18); no deposit yet, creative tab only. */
+    /** Rectifying crystals; no deposit yet, creative tab only. */
     public static final DeferredItem<Item> GALENA = ITEMS.registerSimpleItem("galena");
     public static final DeferredItem<Item> PYRITE = ITEMS.registerSimpleItem("pyrite");
     public static final DeferredItem<BlockItem> ELECTROLYTIC_CELL =
@@ -704,7 +704,7 @@ public class FItems {
     public static final DeferredItem<Item> TEMPERATURE_SENSOR =
             ITEMS.register("temperature_sensor", () -> new TemperatureSensorItem(new Item.Properties().stacksTo(1)));
 
-    /** Slice 4's instruments (mechanics 6.7): carried, and a fitting on a wire. */
+    /** Slice 4's instruments: carried, and a fitting on a wire. */
     public static final DeferredItem<Item> GALVANOMETER =
             ITEMS.register("galvanometer", () -> new GalvanometerItem(new Item.Properties().stacksTo(1)));
     /** A Leyden jar on a handle: draws a jar's charge, spends it on one hit. See {@code JarBatonItem}. */

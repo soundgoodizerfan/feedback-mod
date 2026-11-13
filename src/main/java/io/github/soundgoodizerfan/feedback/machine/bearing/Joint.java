@@ -62,8 +62,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 /**
- * One bearing's hold on the body it turns ({@code docs/specs/feedback_micro_spec.md}, <em>Bearings and
- * ring gears</em>), shared by the full-size {@link RotaryBearingBlockEntity} and a micro bearing
+ * One bearing's hold on the body it turns ({@code docs/dev/vehicle.md}), shared by the full-size {@link RotaryBearingBlockEntity} and a micro bearing
  * voxel (held by its cell). The joint is a Sable rotary constraint between the bearing's parent --
  * the body its block is in, or the world -- and the body it turns, at the centre of the bearing's
  * front face, about its axis, with no motor of its own. A bearing on a car, and a bearing on what

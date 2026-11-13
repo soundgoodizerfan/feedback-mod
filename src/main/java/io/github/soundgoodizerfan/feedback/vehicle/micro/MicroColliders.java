@@ -37,7 +37,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * A micro cell's physics collider at voxel resolution ({@code docs/specs/feedback_micro_spec.md},
+ * A micro cell's physics collider at voxel resolution ({@code docs/dev/vehicle.md},
  * <em>Voxel colliders</em>). Sable bakes a collider per block state, so a cell's state can only say
  * which half-block octants it fills; that put two bodies whose voxels never touch into contact
  * whenever they shared an octant, and froze a micro bearing (playtest 2026-11-02). Here each cell

@@ -20,7 +20,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 /**
- * A carried tester for parts (mechanics 6.20): point it at a placed {@link Testable} to be told how
+ * A carried tester for parts: point it at a placed {@link Testable} to be told how
  * it responds, or use it with a board in the other hand. Condition and response are read at
  * {@link FTuning#TESTER_RESOLUTION}, and the debug helmet reads the same at the truth tier.
  *
