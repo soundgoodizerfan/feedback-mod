@@ -250,6 +250,7 @@ public final class HaftedLayers {
         // Parts at the butt stay; parts at the socket ride up the haft.
         part(out, sprites, plan, "Y", "lanyard", 0);
         part(out, sprites, plan, "R", "spring", 0);
+        part(out, sprites, plan, "W", "ratchet", 0);
         part(out, sprites, plan, "P", "pommel", 0);
         // A blade is drawn along the haft, so its base lies where the guard crosses: the guard goes over it. Across-haft heads sit over the guard.
         boolean guardOver = ALONG.contains(plan.frontKind());

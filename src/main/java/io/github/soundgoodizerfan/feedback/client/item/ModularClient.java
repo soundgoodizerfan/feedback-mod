@@ -64,6 +64,9 @@ public final class ModularClient {
         event.enqueueWork(() -> {
             FModular.items().forEach(item -> net.minecraft.client.renderer.item.ItemProperties.register(
                     item, Feedback.id("variant"), (stack, level, entity, seed) -> variant(stack)));
+            // A shaped part's icon follows its variant too (the bedroll and the flat mattress, the bedstead and the cot).
+            FModular.PARTS.forEach(part -> net.minecraft.client.renderer.item.ItemProperties.register(
+                    part.get(), Feedback.id("variant"), (stack, level, entity, seed) -> partVariant(stack)));
             // The hafted tool is drawn as its front face's tool: 1 plus the place of the face's head kind in ModularFaces.KINDS.
             net.minecraft.client.renderer.item.ItemProperties.register(FModular.HAFTED_TOOL.get(), Feedback.id("face"),
                     (stack, level, entity, seed) -> face(stack));
@@ -79,6 +82,24 @@ public final class ModularClient {
             if (!io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.spent(part))
                 return 1 + io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.KINDS.indexOf(
                         io.github.soundgoodizerfan.feedback.modular.type.ModularHeads.kindOf(part, type.roles().get(part.role())));
+        return 0;
+    }
+
+    /** One plus the place of a part stack's variant among the variants of the role whose part item it is; 0 for the base or none. */
+    private static float partVariant(ItemStack stack) {
+        var made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
+        if (made == null || made.variant().isEmpty())
+            return 0;
+        var id = net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(stack.getItem());
+        for (ModularType type : ModularTypes.known().values())
+            for (ModularType.Role role : type.roles().values()) {
+                var shaping = role.part().orElse(null);
+                if (shaping == null || !shaping.item().equals(id))
+                    continue;
+                for (int i = 0; i < shaping.variants().size(); i++)
+                    if (shaping.variants().get(i).name().equals(made.variant()))
+                        return i + 1;
+            }
         return 0;
     }
 

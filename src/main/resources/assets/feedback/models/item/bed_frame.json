@@ -2,5 +2,13 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "feedback:item/modular/grey/bed_frame"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "feedback:variant": 2
+      },
+      "model": "feedback:item/bed_frame_cot"
+    }
+  ]
 }
