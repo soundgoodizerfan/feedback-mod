@@ -184,17 +184,18 @@ public final class GunFx {
             Feedback.id("textures/misc/bullet_hole_crack.png"), Feedback.id("textures/misc/bullet_hole_dent.png"), Feedback.id("textures/misc/bullet_hole_dent.png")};
     private static final int DECAL_LIFE_TICKS = 600, DECAL_FADE_TICKS = 120, DECAL_MAX = 96;
 
-    private record Decal(Vec3 pos, Vec3 normal, int kind, float angle, long born) {
+    private record Decal(Vec3 pos, Vec3 normal, int kind, float angle, long born, float size) {
     }
 
     private static final List<Decal> DECALS = new ArrayList<>();
 
-    private static void addDecal(Level level, Vec3 at, Vec3 normal, int kind) {
+    /** A hole is a small fraction of its sprite for a weak shot and the whole sprite for the hardest: size follows the shot's power. */
+    private static void addDecal(Level level, Vec3 at, Vec3 normal, int kind, float power) {
         if (kind < 0 || kind >= DECAL_TEX.length)
             return;
         if (DECALS.size() >= DECAL_MAX)
             DECALS.remove(0);
-        DECALS.add(new Decal(at, normal, kind, level.random.nextFloat() * Mth.TWO_PI, level.getGameTime()));
+        DECALS.add(new Decal(at, normal, kind, level.random.nextFloat() * Mth.TWO_PI, level.getGameTime(), 0.12f + 0.88f * Mth.clamp(power, 0f, 1f)));
     }
 
     // ---------------------------------------------------------------- impacts
@@ -241,7 +242,7 @@ public final class GunFx {
                         dir.x * 0.03, dir.y * 0.03 + 0.01, dir.z * 0.03);
                 if (power > 0.2f)
                     level.addParticle(ParticleTypes.SMOKE, at.x, at.y, at.z, dir.x * 0.01, 0.025, dir.z * 0.01);
-                addDecal(level, at.add(dir.scale(0.004)), dir, p.decal());
+                addDecal(level, at.add(dir.scale(0.004)), dir, p.decal(), power);
             }
 
             case GunImpactPayload.RICOCHET -> sparks(level, at, dir, 9, 0.5, r);
@@ -294,7 +295,7 @@ public final class GunFx {
             }
         }
         if (block)
-            addDecalIf(level, at, dir, style);
+            addDecalIf(level, at, dir, style, power);
     }
 
     private static Vec3 randomUnit(RandomSource r) {
@@ -382,10 +383,10 @@ public final class GunFx {
             BEAMS.add(b);
     }
 
-    private static void addDecalIf(Level level, Vec3 at, Vec3 normal, byte style) {
+    private static void addDecalIf(Level level, Vec3 at, Vec3 normal, byte style, float power) {
         // Only a laser and a blob leave a mark; a discharge or a bolt does not.
         if (style == EnergyStyle.LASER || style == EnergyStyle.PLASMA)
-            addDecal(level, at.add(normal.scale(0.004)), normal, DECAL_SCORCH);
+            addDecal(level, at.add(normal.scale(0.004)), normal, DECAL_SCORCH, power);
     }
 
     private static void drawBeams(Matrix4f m, MultiBufferSource.BufferSource buffers) {
@@ -617,7 +618,7 @@ public final class GunFx {
                 Vec3 v = n.cross(u);
                 double c = Math.cos(d.angle), s = Math.sin(d.angle);
                 Vec3 ru = u.scale(c).add(v.scale(s)), rv = v.scale(c).subtract(u.scale(s));
-                double h = DECAL_PX[kind] / 32.0;
+                double h = DECAL_PX[kind] / 32.0 * d.size;
                 int light = LevelRenderer.getLightColor(mc.level, BlockPos.containing(d.pos.add(n.scale(0.1))));
                 vertex(vc, p, d.pos.subtract(ru.scale(h)).subtract(rv.scale(h)), 0, 1, alpha, light, n, kind == DECAL_SCORCH ? 0.2f : 1f);
                 vertex(vc, p, d.pos.add(ru.scale(h)).subtract(rv.scale(h)), 1, 1, alpha, light, n, kind == DECAL_SCORCH ? 0.2f : 1f);
