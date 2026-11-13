@@ -85,7 +85,6 @@ public final class GunClient {
 
     /** Swap magazines. Registered by {@code FClientSetup}. */
     public static final KeyMapping RELOAD = new KeyMapping("key.feedback.reload", InputConstants.KEY_R, "key.categories.feedback");
-    public static final KeyMapping PUMP = new KeyMapping("key.feedback.pump", InputConstants.KEY_PERIOD, "key.categories.feedback");
     public static final KeyMapping FIRE_MODE = new KeyMapping("key.feedback.fire_mode", InputConstants.KEY_V, "key.categories.feedback");
     public static final KeyMapping UNLOAD = new KeyMapping("key.feedback.unload", InputConstants.KEY_U, "key.categories.feedback");
 
@@ -266,26 +265,18 @@ public final class GunClient {
             PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.AimPayload(wantsAim));
         }
 
-        // The pump key works a pump charge's handle.
-        while (PUMP.consumeClick()) {
-            if (canAct) {
-                if (((GunItem) held.getItem()).mechanism().canPump(held))
-                    io.github.soundgoodizerfan.feedback.client.gun.GunMotion.pump();
-                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.GunPumpPayload());
-            }
-        }
         // R is held, not tapped: the server reloads while it is down and stops when it comes up, both guns if there are two.
         while (RELOAD.consumeClick()) {
         }
         boolean offGunHeld = offBuilt;
         boolean reloadDown = (canAct || (offGunHeld && ready)) && RELOAD.isDown();
-        // A core breech is vented with the reload key; there is nothing to reload.
+        // A pulse gun's R works its fittings (a pump charge's handle; a hold charge is held on it and fires on release); there is nothing to reload.
         boolean pumping = canAct && ((GunItem) held.getItem()).mechanism().reloadKeyWorks(held);
         if (pumping) {
             if (reloadDown && !reloadWasDown) {
-                PacketDistributor.sendToServer(new GunReloadPayload(true));
                 if (((GunItem) held.getItem()).mechanism().reloadKeyReady(held))
-                    io.github.soundgoodizerfan.feedback.client.gun.GunMotion.vent();
+                    io.github.soundgoodizerfan.feedback.client.gun.GunMotion.pump();
+                PacketDistributor.sendToServer(new GunReloadPayload(true));
             }
         } else if (reloadDown && !reloadWasDown) {
             // The estimate is every held gun's own reload, back to back: the server runs the emptiest first.
@@ -334,7 +325,9 @@ public final class GunClient {
         // A revolver fanned (crouched, hammer and cylinder): the hand slaps the hammer for as long as the button is down.
         boolean fanning = design != null && design.has("fan") && io.github.soundgoodizerfan.feedback.modular.trait.GunFan.fanning(player);
         boolean offFanning = offDesign != null && offDesign.has("fan") && io.github.soundgoodizerfan.feedback.modular.trait.GunFan.fanning(player);
-        pull(mc, player, held, figures, MAIN, canAct, canAct && mc.options.keyAttack.isDown(), fanning, false, now);
+        // A hold charge is held on the reload key and fires when it is let go; every other gun fires on the attack button.
+        boolean holdOnR = built && ((GunItem) held.getItem()).mechanism().fireOnRelease(held);
+        pull(mc, player, held, figures, MAIN, canAct, canAct && (holdOnR ? RELOAD.isDown() : mc.options.keyAttack.isDown()), fanning, false, now);
         pull(mc, player, offItem, offFigures, OFF, offCanAct, offCanAct && mc.options.keyUse.isDown(), offFanning, true, now);
         applyKicks(player, now);
     }
@@ -477,6 +470,10 @@ public final class GunClient {
             mc.level.addParticle(ParticleTypes.LARGE_SMOKE, muzzle.x, muzzle.y, muzzle.z,
                     (player.getRandom().nextFloat() - 0.5) * 0.02, 0.03, (player.getRandom().nextFloat() - 0.5) * 0.02);
 
+        // A core breech vents itself after the shot (the server runs the same stroke).
+        var pulse = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.specOf(gun);
+        if (pulse != null && pulse.seat() == io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Seat.CORE_BREECH)
+            io.github.soundgoodizerfan.feedback.client.gun.GunMotion.vent();
         kick(player, f.kickDeg(), f.cycleMs(), now);
     }
 

@@ -590,7 +590,6 @@
   "form.feedback.bullet": "%s Bullet",
   "form.feedback.case": "%s Case",
   "key.feedback.reload": "Reload gun",
-  "key.feedback.pump": "Pump charge",
   "key.categories.feedback": "Feedback",
   "cartridge.feedback.settings": "%1$s mm, %2$s case, %3$s bullet",
   "cartridge.feedback.charge": "Charge %1$s: %2$s Pu against case %3$s Pu",

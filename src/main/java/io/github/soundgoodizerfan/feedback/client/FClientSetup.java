@@ -188,7 +188,6 @@ public class FClientSetup {
     @SubscribeEvent
     public static void registerKeys(net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent event) {
         event.register(GunClient.RELOAD);
-        event.register(GunClient.PUMP);
         event.register(GunClient.FIRE_MODE);
         event.register(GunClient.UNLOAD);
         event.register(OffhandStrikeClient.KEY);

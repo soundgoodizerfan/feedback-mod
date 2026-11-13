@@ -233,8 +233,11 @@ public final class ElectricMechanism implements GunMechanism {
         float heat = ModularElectricGun.heat(gun, level) + shotHeat(spec, gun, p.power()) + ModularTuning.EGUN_PUMP_HEAT * (spec.pump() ? ModularElectricGun.pumps(gun) : 0);
         if (spec.pump())
             ModularElectricGun.setPumps(gun, 0);
-        if (spec.seat() == Seat.CORE_BREECH)
+        if (spec.seat() == Seat.CORE_BREECH) {
             ModularElectricGun.setHot(gun, true);
+            if (shooter instanceof Player wielder)
+                vent(level, wielder, gun);
+        }
         switch (spec.governor()) {
             case THROTTLE -> heat = Math.min(heat, 0.95f);
             case VENT -> {
@@ -339,7 +342,7 @@ public final class ElectricMechanism implements GunMechanism {
     @Override
     public boolean reloadKeyWorks(ItemStack gun) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
-        return spec != null && spec.seat() == Seat.CORE_BREECH;
+        return spec != null && (spec.pump() || spec.holdCharge());
     }
 
     /** Players whose core breech is mid-vent: the stroke takes {@link #VENT_TICKS}, and a second press during it does nothing. */
@@ -350,16 +353,20 @@ public final class ElectricMechanism implements GunMechanism {
 
     @Override
     public boolean reloadKeyReady(ItemStack gun) {
-        ElectricGunSpec spec = ModularElectricGun.specOf(gun);
-        return spec != null && spec.seat() == Seat.CORE_BREECH && ModularElectricGun.hot(gun);
+        return canPump(gun);
+    }
+
+    /** The reload key works a pump charge's handle. */
+    @Override
+    public void reloadKey(ServerLevel level, Player player, ItemStack gun) {
+        pumpKey(level, player, gun);
     }
 
     /**
-     * The reload key breaks a core breech open: the hand slams the barrels down, the cores vent in a puff of steam, the hand
+     * A core breech breaks itself open after a shot: the hand slams the barrels down, the cores vent in a puff of steam, the hand
      * throws them shut. The gun stays hot, and cannot fire, until the whole stroke is done.
      */
-    @Override
-    public void reloadKey(ServerLevel level, Player player, ItemStack gun) {
+    private static void vent(ServerLevel level, Player player, ItemStack gun) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
         if (spec == null || spec.seat() != Seat.CORE_BREECH || !ModularElectricGun.hot(gun) || !VENTING.add(player.getUUID()))
             return;
