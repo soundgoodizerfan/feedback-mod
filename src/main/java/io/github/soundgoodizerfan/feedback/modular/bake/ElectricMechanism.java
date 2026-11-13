@@ -201,7 +201,7 @@ public final class ElectricMechanism implements GunMechanism {
             figures = figures.withSpread(GunStance.of(player, aimed) * MomentumKinds.braceSpread(player, gun));
         int pumps = spec.pump() ? ModularElectricGun.pumps(gun) : 0;
         if (pumps >= ModularTuning.EGUN_PUMP_MAX)
-            pumpBlast(level, shooter);
+            pumpBlast(level, shooter, ModularTuning.EGUN_PUMP_BLAST_MULT * spec.damage(spec.delivered(p.joules())));
         else if (spec.seat() == Seat.CORE_BREECH) {
             // The one seat whose shot is a slow gout of heat, not a beam: pellets with a splitter, else one big one.
             float widen = 1f + ModularTuning.EGUN_PUMP_SPREAD * pumps;
@@ -398,13 +398,16 @@ public final class ElectricMechanism implements GunMechanism {
                 armed ? 1f : 0.9f, 0.96f + level.random.nextFloat() * 0.08f));
     }
 
-    /** The armed shot: no pulse, a blast on the wielder that hurts everything near, the wielder too. */
-    private static void pumpBlast(ServerLevel level, LivingEntity shooter) {
+    /**
+     * The armed shot: no pulse, a blast on the wielder that hurts everything near, the wielder too. {@code damage} is 1.5 times what the
+     * three-pump shot would have done in all (a splitter's beams added up); the wielder takes the same, up to three quarters of their health.
+     */
+    private static void pumpBlast(ServerLevel level, LivingEntity shooter, float damage) {
         float r = ModularTuning.EGUN_PUMP_BLAST_RADIUS;
         for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, shooter.getBoundingBox().inflate(r),
                 e -> e != shooter && e.isAlive() && e.distanceToSqr(shooter) <= r * r))
-            e.hurt(level.damageSources().explosion(shooter, shooter), ModularTuning.EGUN_PUMP_BLAST_DAMAGE);
-        shooter.hurt(level.damageSources().explosion(shooter, shooter), ModularTuning.EGUN_PUMP_BLAST_SELF);
+            e.hurt(level.damageSources().explosion(shooter, shooter), damage);
+        shooter.hurt(level.damageSources().explosion(shooter, shooter), Math.min(damage, shooter.getMaxHealth() * ModularTuning.EGUN_PUMP_BLAST_SELF_CAP));
         level.sendParticles(ParticleTypes.EXPLOSION, shooter.getX(), shooter.getY(0.5), shooter.getZ(), 1, 0, 0, 0, 0);
         level.playSound(null, shooter.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1f, 1.2f);
     }

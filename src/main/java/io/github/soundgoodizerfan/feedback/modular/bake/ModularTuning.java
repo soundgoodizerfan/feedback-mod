@@ -233,7 +233,7 @@ public final class ModularTuning {
     /** Ticks from the pump key to its click: the forend's throw (client {@code GunMotion.jerk}, 0.55 of the stroke) lands about then. */
     public static final int EGUN_PUMP_SOUND_TICKS = 4;
     public static final float EGUN_PUMP_POWER = 0.25f, EGUN_PUMP_HEAT = 0.1f, EGUN_PUMP_SPREAD = 0.5f, EGUN_PUMP_BEAMS = 0.6f,
-            EGUN_PUMP_BLAST_RADIUS = 4f, EGUN_PUMP_BLAST_DAMAGE = 10f, EGUN_PUMP_BLAST_SELF = 10f;
+            EGUN_PUMP_BLAST_RADIUS = 4f, EGUN_PUMP_BLAST_MULT = 1.5f, EGUN_PUMP_BLAST_SELF_CAP = 0.75f;
     /** Beam splitter: the energy of all the beams together against one pulse, and the cone's degrees per beam. */
     public static final float EGUN_SPLIT_TOTAL = 1.5f, EGUN_SPLIT_DEG_PER_BEAM = 1.2f;
     /** Arc fork: the reach of an arc from one target to the next, and the share of the pulse an arc carries. */
