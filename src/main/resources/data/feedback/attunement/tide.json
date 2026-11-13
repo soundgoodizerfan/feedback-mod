@@ -26,6 +26,12 @@
     },
     "container": {
       "kind": "douse"
+    },
+    "vial": {
+      "kind": "douse"
+    },
+    "casing": {
+      "kind": "douse"
     }
   },
   "mirror": {
@@ -70,6 +76,14 @@
     },
     "container": {
       "kind": "seal",
+      "flaw": 1
+    },
+    "vial": {
+      "kind": "affinity",
+      "flaw": 1
+    },
+    "casing": {
+      "kind": "affinity",
       "flaw": 1
     }
   },

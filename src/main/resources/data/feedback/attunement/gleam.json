@@ -43,6 +43,12 @@
     },
     "container": {
       "kind": "glow"
+    },
+    "vial": {
+      "kind": "glow"
+    },
+    "casing": {
+      "kind": "glow"
     }
   },
   "mirror": {
@@ -86,6 +92,12 @@
       "kind": "worn_dim"
     },
     "container": {
+      "kind": "dim"
+    },
+    "vial": {
+      "kind": "dim"
+    },
+    "casing": {
       "kind": "dim"
     }
   }

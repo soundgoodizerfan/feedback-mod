@@ -55,6 +55,12 @@
     },
     "container": {
       "kind": "lure"
+    },
+    "vial": {
+      "kind": "lure"
+    },
+    "casing": {
+      "kind": "lure"
     }
   },
   "mirror": {
@@ -110,6 +116,12 @@
       "kind": "worn_scare"
     },
     "container": {
+      "kind": "scare"
+    },
+    "vial": {
+      "kind": "scare"
+    },
+    "casing": {
       "kind": "scare"
     }
   },

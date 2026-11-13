@@ -64,6 +64,12 @@
     },
     "container": {
       "kind": "reserve"
+    },
+    "vial": {
+      "kind": "reserve"
+    },
+    "casing": {
+      "kind": "reserve"
     }
   },
   "books": [

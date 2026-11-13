@@ -65,6 +65,12 @@
     },
     "container": {
       "kind": "burn_wielder"
+    },
+    "vial": {
+      "kind": "burn_wielder"
+    },
+    "casing": {
+      "kind": "burn_wielder"
     }
   },
   "mirror": {
