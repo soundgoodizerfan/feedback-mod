@@ -148,7 +148,7 @@ public class MechanicalHammerBlockEntity extends BlockEntity implements Reciproc
     @Override
     public St getStrength(Throw installed) {
         float share = installed == Throw.SHORT ? MachineTuning.HAMMER_THROW_SHARE_SHORT : MachineTuning.HAMMER_THROW_SHARE_LONG;
-        return new St(head.ceiling().value() * share);
+        return new St(head.stroke(level == null ? net.minecraft.util.RandomSource.create() : level.random).value() * share);
     }
 
     @Override

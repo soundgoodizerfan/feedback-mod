@@ -37,6 +37,13 @@ public final class WagerKinds {
         });
     }
 
+    /** A machine head's coin: double the stroke, or a stroke that does nothing; 1 with no {@code gamble}. */
+    public static float strokeCoin(net.minecraft.world.item.ItemStack head, net.minecraft.util.RandomSource random) {
+        if (TideKinds.level(head, "gamble") == 0)
+            return 1f;
+        return random.nextFloat() < WIN_BLOW ? DOUBLE : 0f;
+    }
+
     @SubscribeEvent
     public static void onHit(LivingIncomingDamageEvent event) {
         LivingEntity wearer = event.getEntity();

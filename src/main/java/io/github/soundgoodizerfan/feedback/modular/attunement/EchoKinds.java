@@ -68,6 +68,11 @@ public final class EchoKinds {
         }
     }
 
+    /** The St share a machine head's stroke carries with its echo: the stroke and its repeat, {@code 1 + share} for {@code echo_blow}. */
+    public static float strokeShare(net.minecraft.world.item.ItemStack head) {
+        return 1f + Math.min(ECHO_SHARE_CAP, TideKinds.level(head, "echo_blow") * ECHO_SHARE_PER_LEVEL);
+    }
+
     public static void register() {
         AttunementKinds.onStrike("echo_blow", (event, a) -> {
             if (replaying)

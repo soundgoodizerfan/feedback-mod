@@ -4,7 +4,9 @@ package io.github.soundgoodizerfan.feedback.machine;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.modular.attunement.EchoKinds;
 import io.github.soundgoodizerfan.feedback.modular.attunement.EdgeKinds;
+import io.github.soundgoodizerfan.feedback.modular.attunement.WagerKinds;
 import io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
@@ -55,6 +57,18 @@ public final class HeadSlot {
     /** The most St a blow can carry now: the head's baked ceiling, less what wear has cost. Zero with no head. */
     public St ceiling() {
         return new St(ModularHandTool.blow(head) * EdgeKinds.headBlow(head) * condition());
+    }
+
+    /**
+     * The St of one stroke: the ceiling, as a coin flip if the head carries {@code gamble} (double or a stroke that does nothing) and
+     * repeated a beat later at a share if it carries {@code echo_blow}. Used where a machine strikes once per stroke.
+     */
+    public St stroke(net.minecraft.util.RandomSource random) {
+        float st = ceiling().value();
+        if (st <= 0f)
+            return ceiling();
+        st *= EchoKinds.strokeShare(head) * WagerKinds.strokeCoin(head, random);
+        return new St(st);
     }
 
     /**
