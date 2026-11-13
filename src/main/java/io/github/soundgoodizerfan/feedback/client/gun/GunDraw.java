@@ -364,15 +364,17 @@ final class GunDraw {
     private static void instruments(GunMesh m, GunView v) {
         var pulse = v.pulse() == null ? GunView.Pulse.REST : v.pulse();
         float hw = v.halfWidth(), ga = gaugeZ(v)[0], gb = gaugeZ(v)[1], ymid = (recvY(v)[0] + recvY(v)[1]) / 2f, yg = ymid - 0.5f;
+        // The governor and the hold lever share the right flank (the gauge's dial has the left): the lever forward, the governor behind it.
+        float gs = ga + 0.75f;
         if (v.has("g")) {
             m.part(v, "g");
             switch (v.variant("g")) {
                 case "forced_vent" -> {
                     for (int i = 0; i < 3; i++)
-                        m.box(-hw - 0.75f, yg + 0.125f + 0.25f * i, ga + 0.25f, -hw - 0.0625f, yg + 0.25f + 0.25f * i, Math.min(ga + 1.5f, gb - 0.125f), Tile.BORE);
+                        m.box(hw + 0.0625f, yg + 0.125f + 0.25f * i, gs, hw + 0.75f, yg + 0.25f + 0.25f * i, Math.min(gs + 0.75f, gb - 0.125f), Tile.BORE);
                 }
-                case "dead_man_cutoff" -> m.colour(0xFFFF4030).glow(-hw - 0.75f, yg + 0.125f, ga + 0.25f, -hw - 0.0625f, yg + 0.625f, ga + 1f, Tile.LAMP);
-                default -> m.rod(-hw - 0.375f, yg + 0.5f, 0.375f, ga + 0.25f, ga + 1f, Tile.KNURL);
+                case "dead_man_cutoff" -> m.colour(0xFFFF4030).glow(hw + 0.0625f, yg + 0.125f, gs, hw + 0.75f, yg + 0.625f, gs + 0.5f, Tile.LAMP);
+                default -> m.rod(hw + 0.375f, yg + 0.5f, 0.375f, gs, Math.min(gs + 0.5f, gb), Tile.KNURL);
             }
         }
         if (v.has("u")) {
@@ -390,8 +392,7 @@ final class GunDraw {
         }
         if (v.has("h")) {
             m.part(v, "h");
-            float zm = (ga + gb) / 2f;
-            m.box(hw, ymid - 0.5f, zm - 0.5f, hw + 0.5f, ymid + 0.5f, zm + 0.5f, Tile.KNURL);
+            m.box(hw, ymid - 0.5f, ga, hw + 0.5f, ymid + 0.5f, ga + 0.5f, Tile.KNURL);
         }
         if (v.has("z")) {
             m.part(v, "z");
