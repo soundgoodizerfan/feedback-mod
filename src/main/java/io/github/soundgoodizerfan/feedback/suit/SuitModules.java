@@ -39,18 +39,16 @@ public final class SuitModules {
 
     public static final int REBREATHER = 1, RESPIRATOR = 3, CRASH_LINER = 6, REFLEX_LINK = 7,
             HEAT_SINK = 8, COOLANT_LOOP = 9, EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
-            THERMAL_LINING = 15, MAGNET_PICKUP = 16, FIRE_CURTAIN = 17, STRIDER_PISTONS = 18, STEP_ASSIST = 19, SWIM_FINS = 20,
-            SHOCK_ABSORBERS = 21, GRIP_PADS = 22, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, HEAT_SHIELD = 26, JUMP_COIL = 27,
-            LANDING_GEAR = 28, ROCKET_SPUR = 29, STOMP_ACTUATOR = 30,
+            THERMAL_LINING = 15, MAGNET_PICKUP = 16, FIRE_CURTAIN = 17, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25, HEAT_SHIELD = 26, ROCKET_SPUR = 29,
             // modules that give the wheel a segment of its own (see ability)
-            CLOAK_FIELD = 31, JET_PACK = 32, SHOCK_RAM = 33, EMP_COIL = 35;
+            CLOAK_FIELD = 31, JET_PACK = 32, EMP_COIL = 35;
     // mechanism classes: a part of one kind of mechanism, tuned by its axis, whatever the figures make of it
-    public static final int OPTIC = 36;
+    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39;
     /** The variant name of each id, which is also its lang key suffix; index 0 is none. */
     private static final String[] KEYS = {"", "rebreather", "", "respirator", "", "", "crash_liner", "reflex_link", "heat_sink",
             "coolant_loop", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "thermal_lining", "magnet_pickup", "fire_curtain",
-            "strider_pistons", "step_assist", "swim_fins", "shock_absorbers", "grip_pads", "load_frame", "stabiliser", "mag_anchor", "heat_shield", "jump_coil",
-            "landing_gear", "rocket_spur", "stomp_actuator", "cloak_field", "jet_pack", "shock_ram", "", "emp_coil", "optic"};
+            "", "", "", "", "", "load_frame", "stabiliser", "mag_anchor", "heat_shield", "",
+            "", "rocket_spur", "", "cloak_field", "jet_pack", "", "", "emp_coil", "optic", "spring", "actuator", "tread"};
 
     /** The name key of upgrade {@code id} (translate {@code modular.feedback.variant.<key>}), or empty for none. */
     public static String key(int id) {
@@ -58,7 +56,7 @@ public final class SuitModules {
     }
 
     /** Ids are 1-based; a module array holds each id's power at {@code [id]} and its tuned-axis share at {@code [COUNT + id]}. */
-    public static final int COUNT = 37;
+    public static final int COUNT = 40;
 
     /** A module array's length: powers, then tuned-axis shares. */
     static final int SLOTS = 2 * COUNT;
@@ -75,12 +73,16 @@ public final class SuitModules {
     public static String argAxis(int id) {
         return switch (id) {
             case OPTIC -> "focal_length";
+            case SPRING, ACTUATOR -> "stroke";
+            case TREAD -> "span";
             default -> "";
         };
     }
 
     /** Bits of the wheel segments module {@code id} gives when it holds the supports {@code sup} ({@code Fig.SUP_*}): what a part can do is what it gets a segment for. */
     static int gives(int id, int sup) {
+        if (id == ACTUATOR)
+            return Ability.STRIDE.bit() | Ability.SHOCK.bit();
         if (id == OPTIC)
             return Ability.LENS.bit() | ((sup & io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SUP_CONTROLLER) != 0 ? Ability.SCAN.bit() : 0);
         Ability a = ability(id);
@@ -91,6 +93,8 @@ public final class SuitModules {
     static int gates(int id) {
         if (id == OPTIC)
             return Ability.LENS.bit();
+        if (id == ACTUATOR)
+            return Ability.STRIDE.bit();
         Ability a = ability(id);
         return a == null || a.pulse() || a.builtIn() ? 0 : a.bit();
     }
@@ -114,7 +118,14 @@ public final class SuitModules {
 
     /** {@code m} with every module that needs the suit's power zeroed: the springs and plates that are mechanical work unpowered. Null when none is left. */
     static float[] passive(float[] m) {
-        return null;
+        if (m == null || m[SPRING] <= 0f && m[TREAD] <= 0f)
+            return null;
+        float[] live = new float[SLOTS];
+        for (int id : new int[] {SPRING, TREAD}) {
+            live[id] = m[id];
+            live[COUNT + id] = m[COUNT + id];
+        }
+        return live;
     }
 
     /** The wheel segment of legacy module {@code id}, or null for one with none. A switch module works only while its segment is on; a pulse module's segment fires it; the heat sink-like ones stay passive. */
@@ -122,11 +133,8 @@ public final class SuitModules {
         return switch (id) {
             case CLOAK_FIELD -> Ability.CLOAK;
             case JET_PACK -> Ability.JET;
-            case SHOCK_RAM -> Ability.SHOCK;
             case EMP_COIL -> Ability.EMP;
             case MAGNET_PICKUP -> Ability.MAGNET;
-            case STRIDER_PISTONS -> Ability.STRIDE;
-            case STEP_ASSIST -> Ability.STEP;
             case AUTODOC -> Ability.HEAL;
             case COOLANT_LOOP -> Ability.VENT;
             case ROCKET_SPUR -> Ability.BURST;
@@ -204,14 +212,20 @@ public final class SuitModules {
         add(pl, Attributes.ATTACK_SPEED, AS, ATTACK_SPEED * p(m, REFLEX_LINK), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
         add(pl, Attributes.KNOCKBACK_RESISTANCE, KB, Math.min(1f, KB_PLATING * p(m, REACTIVE_PLATING) + KB_ANCHOR * p(m, MAG_ANCHOR)
                 + KB_STABILISER * p(m, STABILISER)), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.MOVEMENT_SPEED, MS, STRIDE * p(m, STRIDER_PISTONS), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
-        add(pl, Attributes.STEP_HEIGHT, SH, STEP * p(m, STEP_ASSIST), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.WATER_MOVEMENT_EFFICIENCY, WE, WATER * p(m, SWIM_FINS), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.FALL_DAMAGE_MULTIPLIER, FM, -FALL_CUT * p(m, SHOCK_ABSORBERS), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.MOVEMENT_EFFICIENCY, ME, EFFICIENCY * p(m, GRIP_PADS), AttributeModifier.Operation.ADD_VALUE);
+        // An actuator's stroke trades cadence against reach: a short one strides fast, a long one lifts the foot over a step.
+        float act = p(m, ACTUATOR), reach = arg(m, ACTUATOR);
+        add(pl, Attributes.MOVEMENT_SPEED, MS, STRIDE * act * (1f - reach), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+        add(pl, Attributes.STEP_HEIGHT, SH, STEP * act * reach, AttributeModifier.Operation.ADD_VALUE);
+        // A tread's span trades grip against paddle: a narrow pad bites the ground, a wide one pushes water.
+        float tread = p(m, TREAD), span = arg(m, TREAD);
+        add(pl, Attributes.WATER_MOVEMENT_EFFICIENCY, WE, WATER * tread * span, AttributeModifier.Operation.ADD_VALUE);
+        add(pl, Attributes.MOVEMENT_EFFICIENCY, ME, EFFICIENCY * tread * (1f - span), AttributeModifier.Operation.ADD_VALUE);
+        // A spring's stroke trades kick against cushion: a stiff short one throws the jump, a soft long one takes the landing.
+        float spring = p(m, SPRING), travel = arg(m, SPRING);
+        add(pl, Attributes.FALL_DAMAGE_MULTIPLIER, FM, -FALL_CUT * spring * travel, AttributeModifier.Operation.ADD_VALUE);
         add(pl, Attributes.SNEAKING_SPEED, SN, SNEAK * p(m, STABILISER), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.JUMP_STRENGTH, JS, JUMP * p(m, JUMP_COIL), AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.SAFE_FALL_DISTANCE, SF, SAFE_FALL * p(m, LANDING_GEAR), AttributeModifier.Operation.ADD_VALUE);
+        add(pl, Attributes.JUMP_STRENGTH, JS, JUMP * spring * (1f - travel), AttributeModifier.Operation.ADD_VALUE);
+        add(pl, Attributes.SAFE_FALL_DISTANCE, SF, SAFE_FALL * spring * travel, AttributeModifier.Operation.ADD_VALUE);
     }
 
     private static void add(ServerPlayer pl, Holder<Attribute> attribute, ResourceLocation id, float value, AttributeModifier.Operation op) {
@@ -226,7 +240,7 @@ public final class SuitModules {
             return 0f;
         float draw = 0f;
         int t = pl.tickCount;
-        float stride = p(m, STRIDER_PISTONS);
+        float stride = p(m, ACTUATOR);
         if (stride > 0f && pl.onGround() && !pl.isShiftKeyDown()) {
             Vec3 v = pl.getDeltaMovement();
             if (v.x * v.x + v.z * v.z > 0.0025)
@@ -304,16 +318,13 @@ public final class SuitModules {
         if (!(event.getEntity() instanceof ServerPlayer pl))
             return;
         float[] m = SuitServer.mods(pl);
-        if (m == null || m[STOMP_ACTUATOR] <= 0f || event.getDistance() < 3f)
+        // the energy a spring takes up on a hard landing is the energy it gives back to the ground around it
+        float rebound = m == null ? 0f : m[SPRING] * arg(m, SPRING);
+        if (rebound <= 0f || event.getDistance() < 3f)
             return;
-        float dmg = Math.min(STOMP_MAX, STOMP_PER_BLOCK * m[STOMP_ACTUATOR] * event.getDistance());
+        float dmg = Math.min(STOMP_MAX, STOMP_PER_BLOCK * rebound * event.getDistance());
         AABB box = pl.getBoundingBox().inflate(3, 1, 3);
-        boolean hit = false;
-        for (LivingEntity e : pl.level().getEntitiesOfClass(LivingEntity.class, box, x -> x != pl && x.isAlive())) {
+        for (LivingEntity e : pl.level().getEntitiesOfClass(LivingEntity.class, box, x -> x != pl && x.isAlive()))
             e.hurt(pl.damageSources().playerAttack(pl), dmg);
-            hit = true;
-        }
-        if (hit)
-            SuitServer.charge(pl, STOMP_COST);
     }
 }

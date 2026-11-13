@@ -297,94 +297,6 @@
           "ingot",
           "plate",
           "rod"
-        ],
-        "variants": [
-          {
-            "name": "strider_pistons",
-            "cells": 4,
-            "params": {
-              "module": 18.0,
-              "electric": 0.6,
-              "needs_motor": 1.0,
-              "bore_target": 14.0
-            }
-          },
-          {
-            "name": "step_assist",
-            "cells": 3,
-            "params": {
-              "module": 19.0,
-              "competence": 4.0,
-              "needs_motor": 1.0,
-              "bore_target": 18.0
-            }
-          },
-          {
-            "name": "jump_coil",
-            "cells": 3,
-            "params": {
-              "module": 27.0,
-              "electric": 0.6,
-              "needs_cell": 1.0,
-              "bore_target": 12.0
-            }
-          },
-          {
-            "name": "landing_gear",
-            "cells": 4,
-            "params": {
-              "module": 28.0,
-              "competence": 4.0,
-              "bore_target": 20.0
-            }
-          },
-          {
-            "name": "shock_absorbers",
-            "cells": 4,
-            "params": {
-              "module": 21.0,
-              "competence": 4.0,
-              "bore_target": 16.0
-            }
-          },
-          {
-            "name": "stomp_actuator",
-            "cells": 6,
-            "params": {
-              "module": 30.0,
-              "competence": 4.0,
-              "needs_motor": 1.0,
-              "bore_target": 24.0
-            }
-          },
-          {
-            "name": "grip_pads",
-            "cells": 3,
-            "params": {
-              "module": 22.0,
-              "competence": 4.0,
-              "bore_target": 10.0
-            }
-          },
-          {
-            "name": "swim_fins",
-            "cells": 3,
-            "params": {
-              "module": 20.0,
-              "competence": 4.0,
-              "bore_target": 10.0
-            }
-          },
-          {
-            "name": "shock_ram",
-            "cells": 6,
-            "params": {
-              "module": 33.0,
-              "competence": 4.0,
-              "needs_motor": 1.0,
-              "bore_target": 22.0
-            }
-          }
         ]
       },
       "axes": {
@@ -394,7 +306,29 @@
           "unit": "mm",
           "default": 0,
           "step": 1
+        },
+        "stroke": {
+          "min": 2,
+          "max": 20,
+          "unit": "cm",
+          "default": 8,
+          "step": 2,
+          "bands": [
+            {
+              "name": "short_stroke",
+              "max": 8
+            },
+            {
+              "name": "long_stroke"
+            }
+          ]
         }
+      },
+      "params": {
+        "module": 38.0,
+        "electric": 0.6,
+        "needs_motor": 1.0,
+        "bore_target": 16.0
       }
     },
     "R": {
@@ -509,6 +443,84 @@
             }
           }
         ]
+      }
+    },
+    "S": {
+      "name": "module_spring",
+      "forms": [
+        "module_spring"
+      ],
+      "litres": 0.03,
+      "layer": 9,
+      "part": {
+        "item": "feedback:module_spring",
+        "cells": 1,
+        "stock": [
+          "rod",
+          "wire",
+          "ingot"
+        ]
+      },
+      "params": {
+        "module": 37.0,
+        "stiff": 5.0
+      },
+      "axes": {
+        "stroke": {
+          "min": 2,
+          "max": 20,
+          "unit": "cm",
+          "default": 8,
+          "step": 2,
+          "bands": [
+            {
+              "name": "short_stroke",
+              "max": 8
+            },
+            {
+              "name": "long_stroke"
+            }
+          ]
+        }
+      }
+    },
+    "G": {
+      "name": "module_tread",
+      "forms": [
+        "module_tread"
+      ],
+      "litres": 0.03,
+      "layer": 10,
+      "part": {
+        "item": "feedback:module_tread",
+        "cells": 1,
+        "stock": [
+          "plate",
+          "leather",
+          "ingot"
+        ]
+      },
+      "params": {
+        "module": 39.0,
+        "grip": 1.0
+      },
+      "axes": {
+        "span": {
+          "min": 2,
+          "max": 20,
+          "unit": "cm",
+          "default": 6,
+          "step": 2,
+          "bands": [
+            {
+              "name": "narrow",
+              "max": 8
+            },
+            {
+              "name": "wide"
+            }
+          ]
+        }
       }
     },
     "K": {

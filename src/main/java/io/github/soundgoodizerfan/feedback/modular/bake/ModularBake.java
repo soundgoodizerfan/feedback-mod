@@ -237,7 +237,12 @@ public final class ModularBake {
                     && (!roleKey.equals(ENGINE_PLUG) || material.thermal().meltingPoint().isPresent());
             case GEARBOX -> engineMetal(material);
             // a module's wiring must conduct; its casing and core take any material their shapes accept
-            case SUIT_MODULE -> !roleKey.equals("W") || material.ampacity().isPresent();
+            case SUIT_MODULE -> switch (type.roles().get(roleKey).name()) {
+                case "wiring" -> material.ampacity().isPresent();
+                // a spring is rated by what it stores: a material that states no yield strength cannot be one
+                case "module_spring" -> material.mechanical().yieldStrength().isPresent();
+                default -> true;
+            };
             // a shell holds pressure by its yield strength: a metal that states none cannot be rated
             case BLOCK -> BlockFigures.suits(type, roleKey, material);
             case PRESSURE -> engineMetal(material) && material.mechanical().yieldStrength().isPresent();
@@ -593,7 +598,10 @@ public final class ModularBake {
                 // A bed of loose, open media: the lighter it packs, the more surface the air crosses.
                 Material media = slotMaterial(role, p, "media", materials);
                 power = k.get("porous") / Math.max(1e-3f, (media == null ? m : media).density().muPerMb());
-            } else if (k.containsKey("grip"))
+            } else if (k.containsKey("stiff"))
+                // a spring stores what its stock's stiffness lets it, the same strength a weapon's spring reads (SpringPart)
+                power = strength(m) / k.get("stiff");
+            else if (k.containsKey("grip"))
                 power = m.mechanical().friction().orElse(0.5f) / k.get("grip");
             // A bored part (a cylinder, a nozzle) works as well as its bore is cut to the size the upgrade wants: uncut or overbored, it still
             // works, only worse. The cut comes off the part (a drill, per Fu), never a gate.
