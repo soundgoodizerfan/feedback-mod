@@ -400,6 +400,12 @@ public final class GunMotion {
         }
 
         boolean holding = GunLike.is(player.getMainHandItem().getItem()) || GunLike.is(player.getOffhandItem().getItem());
+        // Down the sights the view does not bob: the bob moves the world a little off the line the shot takes, so the sight picture would lie.
+        if (holding && aimPos > 0f) {
+            float keep = 1f - ease(Mth.clamp(aimPos, 0f, 1f));
+            player.bob *= keep;
+            player.oBob *= keep;
+        }
         // Taking up a gun again (picked up after being knocked away) starts its motion from rest.
         if (holding && !hadGun) {
             aimPos = aimVel = sprint = 0;
