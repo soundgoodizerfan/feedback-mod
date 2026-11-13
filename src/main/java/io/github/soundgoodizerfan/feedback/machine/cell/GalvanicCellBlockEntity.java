@@ -23,12 +23,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * The continuous source of slice 4: a fixed potential from its electrode pair and a small
+ * The continuous source of slice 4: a band from its electrode pair and a small
  * current, and it is a curiosity rather than a supply (roadmap, slice 4).
  *
- * <h2>Voltage is the difference of two properties</h2>
- * Each electrode's {@code electrode_potential} is read from its material file and the cell holds
- * the magnitude of the difference. A cell whose electrodes lack the figure, or are the same
+ * <h2>The band is the pairing, in steps</h2>
+ * Each electrode's {@code electrode_potential} is read from its material file and only the
+ * magnitude of the gap matters: a close pair is LV, a wide pair MV, and cells in series (a pack) raise it
+ * a band per {@link ElectricMachineTuning#GALVANIC_CELLS_PER_BAND}, like a voltaic pile. No potential is held or shown. A cell whose electrodes lack the figure, or are the same
  * metal, holds nothing: an unmeasured material is a cell that does nothing, not one that guesses.
  *
  * <h2>It eats its anode</h2>
@@ -40,7 +41,8 @@ import net.minecraft.world.level.block.state.BlockState;
 public class GalvanicCellBlockEntity extends ElectricNode {
 
     private int figuresGeneration = -1;
-    private float volts;
+    private boolean paired;
+    private VoltageBand pairBand = VoltageBand.LV;
     private float anode = 1f;
 
     private final FigureStore figures = new FigureStore();
@@ -58,26 +60,24 @@ public class GalvanicCellBlockEntity extends ElectricNode {
     public VoltageBand sourceBand() {
         if (figuresGeneration != MaterialTable.generation()) {
             figuresGeneration = MaterialTable.generation();
-            volts = 0f;
+            paired = false;
             if (getBlockState().getBlock() instanceof GalvanicCellBlock block) {
                 var materials = MaterialTable.get().materials();
                 Material anode = materials.get(block.anode());
                 Material cathode = materials.get(block.cathode());
                 if (anode != null && cathode != null
                         && anode.electrical().electrodePotential().isPresent()
-                        && cathode.electrical().electrodePotential().isPresent())
-                    volts = block.series() * Math.abs(cathode.electrical().electrodePotential().get()
-                            - anode.electrical().electrodePotential().get());
+                        && cathode.electrical().electrodePotential().isPresent()) {
+                    // The nobility gap is read as a step: close pair LV, wide pair MV; each cells-per-band in series raises one more.
+                    float gap = Math.abs(cathode.electrical().electrodePotential().get() - anode.electrical().electrodePotential().get());
+                    paired = gap > 0f;
+                    int step = (gap >= ElectricMachineTuning.GALVANIC_WIDE_GAP ? 1 : 0)
+                            + (block.series() - 1) / ElectricMachineTuning.GALVANIC_CELLS_PER_BAND;
+                    pairBand = VoltageBand.values()[Math.min(VoltageBand.values().length - 1, step + VoltageBand.LV.ordinal())];
+                }
             }
         }
-        // The cell's chemistry gives a potential; the line sees only the band it falls in.
-        if (anode <= 0f || volts <= 0f)
-            return null;
-        VoltageBand found = VoltageBand.LV;
-        for (VoltageBand b : VoltageBand.values())
-            if (volts >= ElectricMachineTuning.GALVANIC_BAND_FLOOR[b.ordinal()])
-                found = b;
-        return found;
+        return anode <= 0f || !paired ? null : pairBand;
     }
 
     @Override

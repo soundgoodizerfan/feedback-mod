@@ -770,7 +770,7 @@ public class FBlocks {
 
     /**
      * Cells in series come as a pre-built pack per band, never as a stack of any size (user ruling, 2026-10-23): this
-     * one is {@link MachineTuning#GALVANIC_PACK_CELLS} zinc-copper cells, 5.5 V, an MV source.
+     * one is {@link MachineTuning#GALVANIC_PACK_CELLS} zinc-copper cells in series, an MV source.
      */
     public static final DeferredBlock<GalvanicCellBlock> GALVANIC_CELL_PACK = BLOCKS.register("galvanic_cell_pack",
             () -> new GalvanicCellBlock(BlockBehaviour.Properties.of()

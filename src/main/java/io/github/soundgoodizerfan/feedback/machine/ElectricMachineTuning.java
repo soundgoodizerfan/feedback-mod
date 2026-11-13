@@ -95,10 +95,11 @@ public final class ElectricMachineTuning {
     public static final float GALVANIC_ANODE_EU = 768000f, GALVANIC_ANODE_PER_INGOT = 0.5f;
 
     /**
-     * Placeholder. The cell's chemistry (its electrode pair, in series) gives a potential that is never shown or carried: the line sees
-     * only the band it falls in, the highest band whose floor, in the electrode figures' own volts, it reaches. LV below all.
+     * Placeholder. The cell's band is a step, never a figure carried: a pair whose nobility gap (the electrode figures' own units) is under
+     * {@code GALVANIC_WIDE_GAP} is LV, a wider pair MV; each {@code GALVANIC_CELLS_PER_BAND} cells in series past the first raise it one band, like a voltaic pile.
      */
-    public static final float[] GALVANIC_BAND_FLOOR = {0f, 5.4f, 21.6f, 86.4f, 345.6f, 1382.4f};
+    public static final float GALVANIC_WIDE_GAP = 1.5f;
+    public static final int GALVANIC_CELLS_PER_BAND = 4;
 
     /** Placeholder. Work an electrolyser's body warms per Eu it takes in. */
     public static final float ELECTROLYSER_HEAT_PER_EU = 0.05f;
