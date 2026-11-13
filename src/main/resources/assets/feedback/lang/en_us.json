@@ -1271,8 +1271,6 @@
   "feedback.jei.kind.dough.tip": "Flour worked into a mass, then baked or boiled. Kneaded, rolled and cut.",
   "feedback.jei.kind.dish": "Dish",
   "feedback.jei.kind.dish.tip": "Cooked and combined foods, served from a pot or bowl.",
-  "feedback.jei.kind.sculk": "Sculk",
-  "feedback.jei.kind.sculk.tip": "A living-looking mass that can be rolled into plates.",
   "feedback.jei.kind.fluid": "Fluid",
   "feedback.jei.kind.fluid.tip": "Poured and piped, never cut. It is stored in tanks and moved by pumps.",
   "feedback.jei.kind.polymer": "Polymer",

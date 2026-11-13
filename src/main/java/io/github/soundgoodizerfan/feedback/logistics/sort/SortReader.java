@@ -89,7 +89,7 @@ public final class SortReader {
             case MINERAL, CRYSTAL, CERAMIC, GLASS -> Band.STONY;
             case GRANULAR -> Band.GRANULAR;
             case POLYMER -> Band.POLYMER;
-            case ORGANIC, SCULK, GRAIN, VEGETABLE, FRUIT, FUNGUS, ANIMAL, SEAFOOD, DOUGH, DISH, FLOWER, HERB -> Band.ORGANIC;
+            case ORGANIC, GRAIN, VEGETABLE, FRUIT, FUNGUS, ANIMAL, SEAFOOD, DOUGH, DISH, FLOWER, HERB -> Band.ORGANIC;
             default -> Band.OTHER;
         };
     }

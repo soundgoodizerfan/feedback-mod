@@ -210,8 +210,6 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         METAL, MINERAL, CRYSTAL, CERAMIC, GLASS, GRANULAR, ORGANIC,
         /** Silicon: an element that is neither metal nor salt, shaped and cast like a metal but brittle and a poor conductor. */
         METALLOID,
-        /** Sculk alone: a living-looking mass that rolls into plates (gun sculk jacket) without every organic gaining them. */
-        SCULK,
         /** Petroleum and its cuts (petrochemistry spec 4.1): a fluid whose properties ride on its material, keyed by the fluid's id. */
         FLUID,
         /** Plastics and rubbers (spec 11): shaped by the form, mould and casting systems like a metal. */
@@ -231,6 +229,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
 
     /** A yes/no a person could tell by handling it. Never a stand-in for identity (§11). */
     public enum Trait implements StringRepresentable {
+        /** Rolls into plate whatever its kind (sculk: a gun's sculk jacket); a {@link FormType}'s {@code traits} list names the forms such a trait opens. */
+        ROLLABLE,
         ALLOY, FLAMMABLE, FIREPROOF, TRANSPARENT, LUMINOUS,
         /** Gives off light when hot enough to glow (every metal does; other materials opt in). */
         INCANDESCENT, FIBROUS, POROUS, STICKY,

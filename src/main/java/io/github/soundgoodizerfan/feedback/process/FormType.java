@@ -16,6 +16,7 @@ import io.github.soundgoodizerfan.feedback.registry.FormItems;
  *
  * @param kinds which {@link Material.Kind}s get this form generated. A plate is a metal thing; a
  *              stone plate would need its own form type, not a wider one.
+ * @param traits traits that also get this form generated, whatever the material's kind (sculk's {@code rollable} opens the plate without opening it to every organic).
  * @param block whether the form is a placed block (a storage block) rather than an item.
  * @param mb    volume of one item of this form in millibuckets (an ingot is 144, a nugget 16, a block 1296).
  *              Stock is counted by volume, so nine ingots and one block fill the same shape. Forms that
@@ -34,13 +35,14 @@ import io.github.soundgoodizerfan.feedback.registry.FormItems;
  * @param part  whether the form is a shaped part ({@link io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem}):
  *              one shared item, the material on the stack ({@link MadeOf}), instead of an item per material.
  */
-public record FormType(List<Material.Kind> kinds, boolean block, boolean part, int mb, boolean bearing, boolean ored, boolean pressed, float grain, boolean roasted) {
+public record FormType(List<Material.Kind> kinds, List<Material.Trait> traits, boolean block, boolean part, int mb, boolean bearing, boolean ored, boolean pressed, float grain, boolean roasted) {
 
     /** Volume of an item whose form names none: one ingot of stock, a cell of a shaped part. */
     public static final int DEFAULT_MB = 144;
 
     public static final Codec<FormType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Material.Kind.CODEC.listOf().fieldOf("kinds").forGetter(FormType::kinds),
+            Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(FormType::traits),
             Codec.BOOL.optionalFieldOf("block", false).forGetter(FormType::block),
             Codec.BOOL.optionalFieldOf("part", false).forGetter(FormType::part),
             Codec.INT.optionalFieldOf("mb", DEFAULT_MB).forGetter(FormType::mb),
@@ -103,6 +105,6 @@ public record FormType(List<Material.Kind> kinds, boolean block, boolean part, i
                     && material.kind().map(k -> k != Material.Kind.METAL).orElse(false);
         if (bearing)
             return !material.bears().isEmpty() || ored && material.forms().containsKey("ore");
-        return material.kind().map(kinds::contains).orElse(false);
+        return material.kind().map(kinds::contains).orElse(false) || traits.stream().anyMatch(material.traits()::contains);
     }
 }

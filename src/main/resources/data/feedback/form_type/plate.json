@@ -1,8 +1,10 @@
 {
   "kinds": [
     "metal",
-    "sculk",
     "metalloid",
     "glass"
+  ],
+  "traits": [
+    "rollable"
   ]
 }

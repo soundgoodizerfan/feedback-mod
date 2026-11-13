@@ -5,7 +5,10 @@
     "conductance": 3,
     "leak": 0.05
   },
-  "kind": "sculk",
+  "kind": "fungus",
+  "traits": [
+    "rollable"
+  ],
   "hardness": 0.5,
   "density": 1,
   "thermal": {
