@@ -8,7 +8,17 @@ import io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntit
 import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
+import java.util.function.Supplier;
+
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -35,6 +45,58 @@ public final class ReservoirKinds {
     private static final float DEFAULT_TOP_LEVEL = 20f;
     /** Points one sneak-use in the air moves between the holder and the part. [OPEN] until played */
     private static final int TRANSFER = 20;
+
+    private static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Feedback.MOD_ID);
+    /** The experience points a placed machine's reserve holds; kept on the block entity. */
+    private static final Supplier<AttachmentType<Integer>> MACHINE_POINTS = ATTACHMENTS.register("machine_xp",
+            () -> AttachmentType.builder(() -> 0).serialize(com.mojang.serialization.Codec.INT).build());
+
+    public static void registerAttachments(IEventBus bus) {
+        ATTACHMENTS.register(bus);
+    }
+
+    /** Experience points a placed machine holds in its reserve housing. */
+    public static int machineStored(BlockEntity be) {
+        return MachineAura.levelsOf(be).getOrDefault("reserve", 0) > 0 ? be.getData(MACHINE_POINTS.get()) : 0;
+    }
+
+    /** Puts up to {@code points} into the machine's reserve (a ceiling of {@link #POINTS_PER_LEVEL} per level); the points that went. */
+    public static int machineAdd(BlockEntity be, int points) {
+        int room = MachineAura.levelsOf(be).getOrDefault("reserve", 0) * POINTS_PER_LEVEL - be.getData(MACHINE_POINTS.get());
+        int taken = Math.max(0, Math.min(points, room));
+        if (taken > 0) {
+            be.setData(MACHINE_POINTS.get(), be.getData(MACHINE_POINTS.get()) + taken);
+            be.setChanged();
+        }
+        return taken;
+    }
+
+    /** Takes up to {@code points} out of the machine's reserve; the points that came. */
+    public static int machineTake(BlockEntity be, int points) {
+        int taken = Math.min(points, machineStored(be));
+        if (taken > 0) {
+            be.setData(MACHINE_POINTS.get(), be.getData(MACHINE_POINTS.get()) - taken);
+            be.setChanged();
+        }
+        return taken;
+    }
+
+    /** A reserve housing draws the experience orbs that drift to it, each aura read, up to what it holds. */
+    static void absorb(ServerLevel level, BlockEntity be) {
+        if (MachineAura.levelsOf(be).getOrDefault("reserve", 0) == 0)
+            return;
+        for (ExperienceOrb orb : level.getEntitiesOfClass(ExperienceOrb.class, new AABB(be.getBlockPos()).inflate(ORB_REACH))) {
+            int value = orb.getValue(), took = machineAdd(be, value);
+            if (took == 0)
+                continue;
+            orb.discard();
+            if (took < value)
+                ExperienceOrb.award(level, orb.position(), value - took);
+        }
+    }
+
+    /** Blocks around a reserve housing whose orbs it draws in. [OPEN] until played */
+    private static final double ORB_REACH = 2.5;
 
     private ReservoirKinds() {
     }

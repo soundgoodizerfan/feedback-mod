@@ -235,9 +235,13 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
             if (!misfire && ignition < design.compression().knockBelow) {
                 condition = Math.max(VehicleTuning.ENGINE_CONDITION_FLOOR, condition - VehicleTuning.ENGINE_KNOCK_WEAR_PER_TICK * opening() * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(build));
                 setChanged();
-                if (level.getGameTime() % 10 == 0)
+                if (level.getGameTime() % 10 == 0) {
                     level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ANVIL_HIT,
                             net.minecraft.sounds.SoundSource.BLOCKS, 0.4f, 1.6f);
+                    // The pistons under knock are a working face under strain: a piezo part charges a jar beside the engine, a sensing one says how hard.
+                    io.github.soundgoodizerfan.feedback.modular.attunement.PiezoKinds.strain(level, pos,
+                            io.github.soundgoodizerfan.feedback.modular.attunement.MachineAura.levelsOf(this), opening(), 1f);
+                }
             }
         }
         // Starting or stopping burning changes the target speed, not only the curve.

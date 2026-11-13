@@ -104,6 +104,14 @@ public final class MachineKinds {
         return out;
     }
 
+    /** The levels of every kind on a seated head (a modular tool or a cutting head), summed. */
+    public static Map<String, Integer> levels(ItemStack head) {
+        Map<String, Integer> out = new HashMap<>();
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(head))
+            out.merge(a.kind(), a.level(), Integer::sum);
+        return out;
+    }
+
     public static int level(ModularDesign design, String kind) {
         return levels(design).getOrDefault(kind, 0);
     }
@@ -168,6 +176,10 @@ public final class MachineKinds {
 
     /** Takes the experience one mend costs from the nearest player within reach; false when none has any. */
     public static boolean payMend(ServerLevel server, BlockPos pos) {
+        // A reserve housing on the machine pays before anyone standing near does.
+        var be = server.getBlockEntity(pos);
+        if (be != null && ReservoirKinds.machineTake(be, MEND_XP) >= MEND_XP)
+            return true;
         Player payer = server.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MEND_REACH,
                 p -> p instanceof Player pl && pl.totalExperience > 0 && !pl.isSpectator());
         if (payer == null)
@@ -203,6 +215,9 @@ public final class MachineKinds {
             int whole = (int) xp;
             if (server.random.nextFloat() < xp - whole)
                 whole++;
+            var be = server.getBlockEntity(pos);
+            if (be != null)
+                whole -= ReservoirKinds.machineAdd(be, whole);
             if (whole > 0)
                 ExperienceOrb.award(server, Vec3.atCenterOf(pos), whole);
         }

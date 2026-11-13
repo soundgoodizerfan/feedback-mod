@@ -42,6 +42,32 @@ public final class HungerKinds {
     private static final int FAMINE_WEAKNESS_TICKS_PER_LEVEL = 60;
     private static final String RESERVE_LEVEL = "feedback_reserve", LAST_EXHAUSTION = "feedback_reserve_last";
 
+    /** Blocks around a working machine whose crew its feed or drain reaches, and what a read does per level: saturation fed (never past a full belly), exhaustion drained. [OPEN] until played */
+    private static final double AURA_REACH = 4.0;
+    private static final float AURA_FEED_SATURATION = 0.5f, AURA_DRAIN_EXHAUSTION = 1.0f;
+
+    /**
+     * What a working machine's head does to the crew within reach, each aura read: {@code feed} fills their saturation (up to what their food
+     * level holds), {@code drain} wears them toward hunger and weakens hostile mobs in reach. {@code kinds} are the head's kinds.
+     */
+    static void aura(net.minecraft.server.level.ServerLevel level, net.minecraft.core.BlockPos pos, java.util.Map<String, Integer> kinds) {
+        int feed = kinds.getOrDefault("feed", 0), drain = kinds.getOrDefault("drain", 0);
+        if (feed + drain == 0)
+            return;
+        var box = new net.minecraft.world.phys.AABB(pos).inflate(AURA_REACH);
+        for (Player p : level.getEntitiesOfClass(Player.class, box, x -> !x.isSpectator())) {
+            if (feed > 0) {
+                var food = p.getFoodData();
+                food.setSaturation(Math.min(food.getFoodLevel(), food.getSaturationLevel() + AURA_FEED_SATURATION * feed));
+            }
+            if (drain > 0)
+                p.causeFoodExhaustion(AURA_DRAIN_EXHAUSTION * drain);
+        }
+        if (drain > 0)
+            for (net.minecraft.world.entity.monster.Monster m : level.getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, box))
+                m.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WEAKNESS, DRAIN_WEAKNESS_TICKS_PER_LEVEL * drain));
+    }
+
     private HungerKinds() {
     }
 

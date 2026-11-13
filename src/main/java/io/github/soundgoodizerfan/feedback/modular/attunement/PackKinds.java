@@ -56,6 +56,37 @@ public final class PackKinds {
         });
     }
 
+    /** Other attuned machines near a placed machine, as of its last aura read. */
+    private static final java.util.Map<net.minecraft.world.level.block.entity.BlockEntity, Integer> FELLOWS = new java.util.WeakHashMap<>();
+
+    /** Blocks around a machine another attuned machine counts from. [OPEN] until played. */
+    public static final double MACHINE_RADIUS = 6.0;
+
+    /** Records how many other attuned machines stand near {@code machine} (run by the aura read). */
+    static void fellows(net.minecraft.world.level.block.entity.BlockEntity machine, int n) {
+        if (n > 0)
+            FELLOWS.put(machine, Math.min(ALLY_CAP, n));
+        else
+            FELLOWS.remove(machine);
+    }
+
+    /**
+     * What a seated head's stroke carries with its pack and lone: other attuned machines within a few blocks are its pack ({@code pack}: each adds a
+     * share, as it does to a blow; {@code lone}: a head with none beside it hits harder). The count is the last aura read's.
+     */
+    public static float strokeShare(ItemStack head, net.minecraft.world.level.block.entity.BlockEntity machine) {
+        int pack = TideKinds.level(head, "pack"), lone = TideKinds.level(head, "lone");
+        if (pack + lone == 0)
+            return 1f;
+        int n = FELLOWS.getOrDefault(machine, 0);
+        float share = 1f;
+        if (n > 0)
+            share += Math.min(PACK_DAMAGE_CAP, n * PACK_DAMAGE_PER_ALLY * pack);
+        else
+            share += Math.min(LONE_DAMAGE_CAP, LONE_DAMAGE_PER_LEVEL * lone);
+        return share;
+    }
+
     private static LivingEntity source(LivingIncomingDamageEvent event) {
         return (LivingEntity) event.getSource().getEntity();
     }

@@ -96,7 +96,7 @@ public class MechanicalPressBlockEntity extends ShopMachineBlockEntity implement
             return;
         boolean changed = false;
         for (int due = strokesDue(); due > 0 && !workpiece.isEmpty(); due--) {
-            St strength = head.stroke(level.random);
+            St strength = head.stroke(level.random, this);
             Deforming.Blow blow = Deforming.apply(workpiece, strength, level, OPERATION);
             if (!blow.landed()) {
                 wear(strength.value());

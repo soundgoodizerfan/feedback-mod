@@ -22,6 +22,27 @@
     },
     "stock": {
       "kind": "reserve"
+    },
+    "housing": {
+      "kind": "reserve"
+    },
+    "case": {
+      "kind": "reserve"
+    },
+    "volute": {
+      "kind": "reserve"
+    },
+    "engine_block": {
+      "kind": "reserve"
+    },
+    "vessel_shell": {
+      "kind": "reserve"
+    },
+    "boiler_shell": {
+      "kind": "reserve"
+    },
+    "tank_shell": {
+      "kind": "reserve"
     }
   },
   "books": [

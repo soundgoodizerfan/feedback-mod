@@ -71,6 +71,32 @@ public final class HeadSlot {
         return new St(st);
     }
 
+    /** The stroke the lagging head holds back, and the game time it was struck. Not kept across a reload. */
+    private float lagBank;
+    private long lagAt;
+
+    /**
+     * One stroke of a placed machine's head: {@link #stroke(RandomSource)} times what its pack and lone make of the machines beside it. A head with
+     * {@code lag_blow} lands each stroke one stroke late (the first lands nothing, one held longer than a few seconds is lost); a head with
+     * {@code pulse} charges a jar or battery beside the machine, one with {@code sense} says how hard the stroke was.
+     */
+    public St stroke(net.minecraft.util.RandomSource random, net.minecraft.world.level.block.entity.BlockEntity at) {
+        float st = stroke(random).value();
+        if (st <= 0f || at == null || at.getLevel() == null)
+            return new St(st);
+        net.minecraft.world.level.Level level = at.getLevel();
+        st *= io.github.soundgoodizerfan.feedback.modular.attunement.PackKinds.strokeShare(head, at);
+        if (io.github.soundgoodizerfan.feedback.modular.attunement.EchoKinds.lagLevel(head) > 0) {
+            long now = level.getGameTime();
+            float held = now - lagAt <= io.github.soundgoodizerfan.feedback.modular.attunement.EchoKinds.LAG_WINDOW ? lagBank : 0f;
+            lagBank = st;
+            lagAt = now;
+            st = held;
+        }
+        io.github.soundgoodizerfan.feedback.modular.attunement.PiezoKinds.strain(level, at.getBlockPos(), MachineKinds.levels(head), st, ceiling().value());
+        return new St(st);
+    }
+
     /**
      * The head absorbs {@code stAbsorbed}: condition falls toward {@code floor} and never past it.
      *

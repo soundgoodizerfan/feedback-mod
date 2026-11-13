@@ -10,6 +10,7 @@ import java.util.WeakHashMap;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.machine.Headed;
+import io.github.soundgoodizerfan.feedback.machine.Wearing;
 import io.github.soundgoodizerfan.feedback.machine.Weldable;
 import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
@@ -68,8 +69,11 @@ public final class MachineAura {
     private static final int CROP_MAX = 2;
 
     private static final Map<BlockEntity, Map<String, Integer>> LEVELS = new WeakHashMap<>();
-    /** Where a hushing machine stood at the last read, by level and position, with the tick it was read. */
-    private static final List<Object[]> HUSH = new ArrayList<>();
+    /**
+     * Where hushing machines stood at the last read: per level, the positions of the hushing machines filed under every chunk their reach touches,
+     * rebuilt each read. A game event looks up its own chunk (nothing in most) and only then measures.
+     */
+    private static final Map<net.minecraft.world.level.Level, Map<Long, List<BlockPos>>> HUSH = new java.util.IdentityHashMap<>();
 
     private MachineAura() {
     }
@@ -91,7 +95,7 @@ public final class MachineAura {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             long now = level.getGameTime();
             long period = now / PERIOD;
-            HUSH.removeIf(h -> h[0] == level && (long) h[2] < now - PERIOD * 2);
+            Map<Long, List<BlockPos>> hush = new HashMap<>();
             Map<BlockPos, BlockEntity> seen = new HashMap<>();
             for (ServerPlayer p : level.players()) {
                 ChunkPos c = p.chunkPosition();
@@ -105,13 +109,34 @@ public final class MachineAura {
             for (BlockEntity be : seen.values()) {
                 Map<String, Integer> levels = levelsOf(be);
                 if (!levels.isEmpty() || be instanceof Headed)
-                    act(level, be, levels, period);
+                    act(level, be, levels, period, hush, seen.values());
             }
+            if (hush.isEmpty())
+                HUSH.remove(level);
+            else
+                HUSH.put(level, hush);
         }
     }
 
-    private static void act(ServerLevel level, BlockEntity be, Map<String, Integer> levels, long period) {
+    /**
+     * Whether a machine is working now, where it can say: a machine that reports {@link Wearing#isRunning} stops its aura effects when it stops
+     * (mend alone goes on); one that cannot say is always counted as working.
+     */
+    private static boolean running(BlockEntity be) {
+        return !(be instanceof Wearing w) || w.isRunning();
+    }
+
+    private static void act(ServerLevel level, BlockEntity be, Map<String, Integer> levels, long period, Map<Long, List<BlockPos>> hush,
+            java.util.Collection<BlockEntity> all) {
         BlockPos pos = be.getBlockPos();
+        int mend = levels.getOrDefault("mend", 0);
+        if (mend > 0)
+            mend(level, be, mend);
+        if (be instanceof Headed headed && !headed.getHead().isEmpty())
+            mendHead(level, pos, headed.getHead().get());
+        ReservoirKinds.absorb(level, be);
+        if (!running(be))
+            return;
         int lure = levels.getOrDefault("lure", 0), scare = levels.getOrDefault("scare", 0);
         if (lure + scare > 0)
             draw(level, pos, lure, scare);
@@ -126,18 +151,24 @@ public final class MachineAura {
                 mob.getNavigation().moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 1.0);
         }
         if (levels.getOrDefault("hush", 0) > 0)
-            HUSH.add(new Object[] { level, pos, level.getGameTime() });
-        int mend = levels.getOrDefault("mend", 0);
-        if (mend > 0)
-            mend(level, be, mend);
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++)
+                    hush.computeIfAbsent(ChunkPos.asLong((pos.getX() >> 4) + dx, (pos.getZ() >> 4) + dz), k -> new ArrayList<>()).add(pos);
         creatures(level, pos, levels);
         if (be instanceof Headed headed && !headed.getHead().isEmpty()) {
-            mendHead(level, pos, headed.getHead().get());
             // A seated head's own kinds are read every time: it can be swapped without the machine being rebuilt.
-            Map<String, Integer> head = new HashMap<>();
-            for (MaterialPerks.Attunement a : MaterialPerks.attunements(headed.getHead().get()))
-                head.merge(a.kind(), a.level(), Integer::sum);
+            Map<String, Integer> head = MachineKinds.levels(headed.getHead().get());
             creatures(level, pos, head);
+            HungerKinds.aura(level, pos, head);
+            if (head.containsKey("pack") || head.containsKey("lone")) {
+                int n = 0;
+                for (BlockEntity other : all)
+                    if (other != be && other.getBlockPos().distSqr(pos) <= PackKinds.MACHINE_RADIUS * PackKinds.MACHINE_RADIUS
+                            && (!levelsOf(other).isEmpty() || other instanceof Headed h && !h.getHead().isEmpty()
+                                    && !MachineKinds.levels(h.getHead().get()).isEmpty()))
+                        n++;
+                PackKinds.fellows(be, n);
+            }
         }
     }
 
@@ -222,8 +253,16 @@ public final class MachineAura {
 
     /** Whether a hushing machine stood within reach of {@code at} at its last read. */
     public static boolean hushed(net.minecraft.world.level.Level level, Vec3 at) {
-        for (Object[] h : HUSH)
-            if (h[0] == level && Vec3.atCenterOf((BlockPos) h[1]).distanceToSqr(at) <= HUSH_REACH * HUSH_REACH)
+        if (HUSH.isEmpty())
+            return false;
+        Map<Long, List<BlockPos>> near = HUSH.get(level);
+        if (near == null)
+            return false;
+        List<BlockPos> here = near.get(ChunkPos.asLong(Mth.floor(at.x) >> 4, Mth.floor(at.z) >> 4));
+        if (here == null)
+            return false;
+        for (BlockPos p : here)
+            if (Vec3.atCenterOf(p).distanceToSqr(at) <= HUSH_REACH * HUSH_REACH)
                 return true;
         return false;
     }

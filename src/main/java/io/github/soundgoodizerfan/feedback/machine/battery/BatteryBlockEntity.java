@@ -130,6 +130,12 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         return cellCapacity() / ticks / ElectricRules.packetEu(caseBand);
     }
 
+    /** A pulse put in by a piezo part under strain: {@code eu} of charge, never past {@code capShare} of what the cells hold now. */
+    public void inject(float eu, float capShare) {
+        charge = Math.max(charge, Math.min(charge + eu, capShare * effectiveCapacity()));
+        setChanged();
+    }
+
     /** State of charge, 0 to 1 of what it can hold now. */
     public float stateOfCharge() {
         float eff = effectiveCapacity();

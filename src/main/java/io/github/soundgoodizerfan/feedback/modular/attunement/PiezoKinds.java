@@ -7,6 +7,8 @@ import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntit
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
 import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
 import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import java.util.Map;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -69,6 +71,35 @@ public final class PiezoKinds {
                     e, instrument.resolution(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE)) + ")"), true);
         }
     }
+
+    /**
+     * A working face under strain at a machine ({@code pos}): a stroke of a hammer or press, or a knock of an engine. {@code pulse} charges
+     * a Leyden jar or battery beside it a little per stroke, never past the share a hand reaches; {@code sense} (the mirror) says in words
+     * how hard the stroke was to whoever stands near, and controls nothing. {@code levels} are the kinds of the part under strain.
+     */
+    public static void strain(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos, Map<String, Integer> levels, float strength, float ceiling) {
+        int pulse = levels.getOrDefault("pulse", 0), sense = levels.getOrDefault("sense", 0);
+        if ((pulse | sense) == 0 || level.isClientSide)
+            return;
+        if (pulse > 0)
+            for (net.minecraft.core.Direction d : net.minecraft.core.Direction.values()) {
+                var next = level.getBlockEntity(pos.relative(d));
+                if (next instanceof LeydenJarBlockEntity jar)
+                    jar.inject(PULSE_SHARE_PER_LEVEL * pulse * jar.capacity(), JAR_CAP_SHARE);
+                else if (next instanceof io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity battery)
+                    battery.inject(PULSE_SHARE_PER_LEVEL * pulse * battery.effectiveCapacity(), JAR_CAP_SHARE);
+            }
+        if (sense > 0 && level instanceof net.minecraft.server.level.ServerLevel server && ceiling > 0f) {
+            // Share of what the part can carry: a stroke at the ceiling is heavy, a weak one glances.
+            float share = strength / ceiling;
+            var near = server.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, SENSE_REACH, false);
+            if (near != null)
+                near.displayClientMessage(Component.translatable(share < 0.35f ? "feedback.piezo.glancing" : share < 0.8f ? "feedback.piezo.solid" : "feedback.piezo.heavy"), true);
+        }
+    }
+
+    /** Blocks within which a sensing part says its stroke. [OPEN] until played */
+    private static final double SENSE_REACH = 5.0;
 
     public static void register() {
         AttunementKinds.onStrike("sense", (event, a) -> {

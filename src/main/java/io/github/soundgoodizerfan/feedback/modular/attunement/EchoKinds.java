@@ -73,6 +73,14 @@ public final class EchoKinds {
         return 1f + Math.min(ECHO_SHARE_CAP, TideKinds.level(head, "echo_blow") * ECHO_SHARE_PER_LEVEL);
     }
 
+    /** Ticks a lagging head holds a stroke before it must land, or it is lost. */
+    public static final int LAG_WINDOW = LAG_SWING_DELAY;
+
+    /** Levels of {@code lag_blow} on a machine head. */
+    public static int lagLevel(net.minecraft.world.item.ItemStack head) {
+        return TideKinds.level(head, "lag_blow");
+    }
+
     public static void register() {
         AttunementKinds.onStrike("echo_blow", (event, a) -> {
             if (replaying)

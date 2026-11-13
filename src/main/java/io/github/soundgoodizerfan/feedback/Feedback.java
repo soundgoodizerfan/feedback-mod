@@ -76,6 +76,7 @@ public class Feedback {
         FDataComponents.register(modBus);
         io.github.soundgoodizerfan.feedback.potion.PotionAttachments.register(modBus);
         io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKnowledge.register(modBus);
+        io.github.soundgoodizerfan.feedback.modular.attunement.ReservoirKinds.registerAttachments(modBus);
         FCapabilities.register(modBus);
         FRecipes.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FEngineering.register(modBus);

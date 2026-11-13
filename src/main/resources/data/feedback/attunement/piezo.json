@@ -13,6 +13,9 @@
     },
     "plate": {
       "kind": "arc"
+    },
+    "pistons": {
+      "kind": "pulse"
     }
   },
   "mirror": {
@@ -33,6 +36,9 @@
     },
     "slide": {
       "kind": "cycle_gauge"
+    },
+    "pistons": {
+      "kind": "sense"
     }
   }
 }
