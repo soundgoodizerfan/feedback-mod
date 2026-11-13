@@ -19,6 +19,16 @@
           "brick",
           "ball",
           "shard"
+        ],
+        "variants": [
+          {
+            "name": "crock",
+            "adjective": true,
+            "params": {
+              "holds": 1.4,
+              "seal": 1
+            }
+          }
         ]
       }
     },

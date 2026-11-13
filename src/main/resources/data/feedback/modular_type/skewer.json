@@ -17,6 +17,23 @@
         "stock": [
           "stick",
           "rod"
+        ],
+        "base": "shish_skewer",
+        "variants": [
+          {
+            "name": "shish_skewer",
+            "params": {
+              "holds": 1.0
+            }
+          },
+          {
+            "name": "satay_stick",
+            "cells": 0.6,
+            "adjective": true,
+            "params": {
+              "holds": 0.5
+            }
+          }
         ]
       }
     },

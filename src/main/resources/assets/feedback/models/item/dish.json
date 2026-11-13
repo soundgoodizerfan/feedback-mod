@@ -4,7 +4,23 @@
     "layer0": "minecraft:item/bowl"
   },
   "overrides": [
-    { "predicate": { "custom_model_data": 1 }, "model": "feedback:item/mashed_potatoes" },
-    { "predicate": { "custom_model_data": 2 }, "model": "feedback:item/salsa" }
+    {
+      "predicate": {
+        "feedback:variant": 1
+      },
+      "model": "feedback:item/dish_crock"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 1
+      },
+      "model": "feedback:item/mashed_potatoes"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 2
+      },
+      "model": "feedback:item/salsa"
+    }
   ]
 }
