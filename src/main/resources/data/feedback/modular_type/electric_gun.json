@@ -569,7 +569,8 @@
             "cells": 2
           },
           {
-            "name": "dead_man_cutoff"
+            "name": "dead_man_cutoff",
+            "cells": 3
           }
         ],
         "base": "fire_rate_throttle",

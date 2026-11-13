@@ -205,7 +205,8 @@ public final class ElectricMechanism implements GunMechanism {
         if (shooter instanceof Player player)
             figures = figures.withSpread(GunStance.of(player, aimed) * MomentumKinds.braceSpread(player, gun));
         int pumps = spec.pump() ? ModularElectricGun.pumps(gun) : 0;
-        if (pumps >= ModularTuning.EGUN_PUMP_MAX)
+        boolean blasted = pumps >= ModularTuning.EGUN_PUMP_MAX;
+        if (blasted)
             pumpBlast(level, shooter, ModularTuning.EGUN_PUMP_BLAST_MULT * spec.damage(spec.delivered(p.joules())));
         else if (spec.seat() == Seat.CORE_BREECH) {
             // The one seat whose shot is a slow gout of heat, not a beam: pellets with a splitter, else one big one.
@@ -238,6 +239,10 @@ public final class ElectricMechanism implements GunMechanism {
             if (shooter instanceof Player wielder)
                 vent(level, wielder, gun);
         }
+        // The armed blast is the discharge: the barrel is spent by it, and the governor adds no steam or burn on top of what the blast did.
+        if (blasted)
+            heat = Math.min(heat, ModularTuning.EGUN_VENT_RESET_HEAT);
+        else
         switch (spec.governor()) {
             case THROTTLE -> heat = Math.min(heat, 0.95f);
             case VENT -> {
