@@ -87,7 +87,8 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 return METAL;
             if (kind == Material.Kind.ORGANIC && m.traits().contains(Material.Trait.FIBROUS))
                 return WOOD;
-            if (kind == Material.Kind.GLASS)
+            // Anything a lens can be made of (glass, a transparent crystal) is see-through wherever it is on a gun.
+            if (kind == Material.Kind.GLASS || kind == Material.Kind.CRYSTAL && m.traits().contains(Material.Trait.TRANSPARENT))
                 return GLASS;
             return kind == Material.Kind.POLYMER ? POLYMER : OTHER;
         }
