@@ -9,7 +9,7 @@ import java.util.UUID;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
-import io.github.soundgoodizerfan.feedback.modular.Modular;
+import io.github.soundgoodizerfan.feedback.modular.type.Modular;
 import io.github.soundgoodizerfan.feedback.net.SuitPayload;
 import io.github.soundgoodizerfan.feedback.net.SuitSyncPayload;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;

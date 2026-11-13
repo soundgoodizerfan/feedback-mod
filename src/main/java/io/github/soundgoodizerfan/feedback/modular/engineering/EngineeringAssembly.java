@@ -9,13 +9,13 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFit;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
-import io.github.soundgoodizerfan.feedback.modular.Treatises;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularFit;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bench.ModularAssembly;
+import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FEngineering;
@@ -196,9 +196,9 @@ public final class EngineeringAssembly {
         ResourceLocation id = found.get().type();
         ModularType type = types.get(id);
         // Knowledge makes the maker better at using it: good notes of the volume that gates the build add start levels (never a gate).
-        String gate = type.family() == ModularType.Family.HAFTED ? io.github.soundgoodizerfan.feedback.modular.ModularFaces.school(ModularStacks.design(found.get().tool()), type) : type.school();
-        io.github.soundgoodizerfan.feedback.modular.School gated = io.github.soundgoodizerfan.feedback.modular.School.of(gate);
-        int notesLevels = gated == null ? 0 : Math.round(input.notes().getOrDefault(Treatises.key(gated, io.github.soundgoodizerfan.feedback.modular.School.volumeOf(gate)), 0f) * ModularTuning.NOTES_MAX_LEVELS);
+        String gate = type.family() == ModularType.Family.HAFTED ? io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.school(ModularStacks.design(found.get().tool()), type) : type.school();
+        io.github.soundgoodizerfan.feedback.modular.treatise.School gated = io.github.soundgoodizerfan.feedback.modular.treatise.School.of(gate);
+        int notesLevels = gated == null ? 0 : Math.round(input.notes().getOrDefault(Treatises.key(gated, io.github.soundgoodizerfan.feedback.modular.treatise.School.volumeOf(gate)), 0f) * ModularTuning.NOTES_MAX_LEVELS);
         Fasteners.Supply supply = Fasteners.supply(input.fasteners(), type.fasteners());
         if (!supply.complete())
             return new Plan(NO_FASTENERS, ItemStack.EMPTY, Plan.NONE.take());

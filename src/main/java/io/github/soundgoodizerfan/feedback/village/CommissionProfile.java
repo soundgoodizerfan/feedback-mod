@@ -9,7 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 
 import net.minecraft.resources.ResourceLocation;
 

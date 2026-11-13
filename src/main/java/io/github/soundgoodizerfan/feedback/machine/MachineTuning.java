@@ -15,7 +15,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 
 /**
  * Tuning constants for the machine code.

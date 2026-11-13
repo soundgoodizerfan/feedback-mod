@@ -11,8 +11,8 @@ import java.util.UUID;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.skill.Rearms;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;

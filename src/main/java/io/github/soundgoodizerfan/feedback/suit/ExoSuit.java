@@ -5,9 +5,9 @@ package io.github.soundgoodizerfan.feedback.suit;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.component.DataComponents;
@@ -86,7 +86,7 @@ public final class ExoSuit {
 
     private static float loss(ItemStack stack) {
         float l = fig(stack, Fig.SUIT_LOSS);
-        return l > 0f ? l : io.github.soundgoodizerfan.feedback.modular.ModularTuning.SUIT_LOSS_FLOOR;
+        return l > 0f ? l : io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.SUIT_LOSS_FLOOR;
     }
 
     /** Whether the stack has a battery bay: the one cheap test that a chestplate is part of a suit. */

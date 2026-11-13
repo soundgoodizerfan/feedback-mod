@@ -11,8 +11,8 @@ import java.util.Optional;
 import java.util.Random;
 
 import io.github.soundgoodizerfan.feedback.item.RecordedCut;
-import io.github.soundgoodizerfan.feedback.modular.Station;
-import io.github.soundgoodizerfan.feedback.modular.WoodCuts;
+import io.github.soundgoodizerfan.feedback.modular.bench.Station;
+import io.github.soundgoodizerfan.feedback.modular.bench.WoodCuts;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;

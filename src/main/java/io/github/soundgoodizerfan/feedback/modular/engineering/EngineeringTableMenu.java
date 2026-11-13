@@ -6,16 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import io.github.soundgoodizerfan.feedback.modular.BlueprintBookItem;
-import io.github.soundgoodizerfan.feedback.modular.MenuTabs;
-import io.github.soundgoodizerfan.feedback.modular.ModularRework;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.School;
-import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
-import io.github.soundgoodizerfan.feedback.modular.TreatiseBinderItem;
-import io.github.soundgoodizerfan.feedback.modular.TreatiseItem;
-import io.github.soundgoodizerfan.feedback.modular.Treatises;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintBookItem;
+import io.github.soundgoodizerfan.feedback.modular.bench.MenuTabs;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularRework;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.treatise.School;
+import io.github.soundgoodizerfan.feedback.modular.bench.ModularAssembly;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.treatise.TreatiseBinderItem;
+import io.github.soundgoodizerfan.feedback.modular.treatise.TreatiseItem;
+import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 import io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FEngineering;
@@ -277,8 +277,8 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
             var found = ModularAssembly.infer(in.grid(), table.getItem(EngineeringTableBlockEntity.BLUEPRINT), ClientMaterials.on(level), types);
             if (found.isPresent() && types.get(found.get().type()) != null) {
                 var t = types.get(found.get().type());
-                field = t.family() == io.github.soundgoodizerfan.feedback.modular.ModularType.Family.HAFTED
-                        ? io.github.soundgoodizerfan.feedback.modular.ModularFaces.school(ModularStacks.design(found.get().tool()), t) : t.school();
+                field = t.family() == io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.HAFTED
+                        ? io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.school(ModularStacks.design(found.get().tool()), t) : t.school();
             }
         }
         School s = School.of(field);

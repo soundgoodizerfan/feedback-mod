@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Locale;
 
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 
 import net.minecraft.ChatFormatting;

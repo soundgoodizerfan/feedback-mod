@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.combat.cast;
 
 import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.feel.CombatCues;
 import io.github.soundgoodizerfan.feedback.combat.feel.FeelTuning;

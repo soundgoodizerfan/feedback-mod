@@ -3,10 +3,10 @@
 package io.github.soundgoodizerfan.feedback.combat.hit;
 
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 

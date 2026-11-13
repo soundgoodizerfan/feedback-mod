@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.modular.attunement;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.machine.creative.CreativeXpBlockEntity;
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import net.minecraft.network.chat.Component;

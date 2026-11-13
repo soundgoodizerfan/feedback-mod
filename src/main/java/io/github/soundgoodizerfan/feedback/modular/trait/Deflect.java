@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.RangedDispatch;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.combat.RangedDispatch;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;

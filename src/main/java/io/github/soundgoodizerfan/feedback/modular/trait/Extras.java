@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;

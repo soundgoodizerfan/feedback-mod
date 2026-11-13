@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.engineering;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 
 /**
  * The rivet minigame's pure model, shared by the screen (which draws it) and any test. A hot rivet sits in the hole and the player holds

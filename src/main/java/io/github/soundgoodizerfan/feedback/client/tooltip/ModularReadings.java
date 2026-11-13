@@ -10,15 +10,15 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.modular.ModularCause;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTooltip;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularCause;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularModifiers;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTooltip;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 
 import net.minecraft.ChatFormatting;
@@ -94,8 +94,8 @@ public final class ModularReadings {
         }
         if (Readout.instrumented(Quantity.MASS)) {
             // A figure no instrument stamped on the item is a range, as wide as the fit left it uncertain; a stamp is exact.
-            float mass = f.mass().value(), spread = io.github.soundgoodizerfan.feedback.modular.ModularFit.spread(stack);
-            String shown = io.github.soundgoodizerfan.feedback.modular.Measured.has(stack, "mass") ? Readout.figure(Quantity.MASS, mass)
+            float mass = f.mass().value(), spread = io.github.soundgoodizerfan.feedback.modular.type.ModularFit.spread(stack);
+            String shown = io.github.soundgoodizerfan.feedback.modular.bench.Measured.has(stack, "mass") ? Readout.figure(Quantity.MASS, mass)
                     : Readout.figure(Quantity.MASS, mass * (1f - spread)) + "\u2013" + Readout.figure(Quantity.MASS, mass * (1f + spread));
             out.add(caused(Readout.reading(Quantity.MASS, "feedback.readout.mass", shown), stack, ModularFigures.Fig.MASS));
         }
@@ -108,7 +108,7 @@ public final class ModularReadings {
                 out.add(gloss("feedback.gloss.scratch_files", files()));
         }
         // What an instrument stamped on it, exact, as it was read.
-        io.github.soundgoodizerfan.feedback.modular.Measured.of(stack).entrySet().stream().sorted(java.util.Map.Entry.comparingByKey()).forEach(e -> {
+        io.github.soundgoodizerfan.feedback.modular.bench.Measured.of(stack).entrySet().stream().sorted(java.util.Map.Entry.comparingByKey()).forEach(e -> {
             String key = e.getKey();
             Component name = key.startsWith("axis.") ? Component.translatable("modular.feedback.axis." + key.substring(key.lastIndexOf('.') + 1))
                     : Component.translatableWithFallback("modular.feedback.fig." + key, key);
@@ -149,16 +149,16 @@ public final class ModularReadings {
     /** A shield's face temperature and the capacity it holds at that heat, at the truth tier. */
     private static void shieldHeat(ItemStack stack, ModularFigures f, List<Component> out) {
         net.minecraft.world.level.Level level = Minecraft.getInstance().level;
-        if (level == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularShield))
+        if (level == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularShield))
             return;
         out.add(Readout.reading(Quantity.FIGURE, "feedback.readout.shield_face", Readout.figure(Quantity.FIGURE,
                 io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat.get(stack, level).value())));
         Component hold = Readout.reading(Quantity.FIGURE, "feedback.readout.shield_hold", Readout.figure(Quantity.FIGURE,
-                f.get(ModularFigures.Fig.CAPACITY) * io.github.soundgoodizerfan.feedback.modular.ShieldHeat.hold(level, stack)));
-        var stands = io.github.soundgoodizerfan.feedback.modular.ShieldHeat.stands(level, stack);
+                f.get(ModularFigures.Fig.CAPACITY) * io.github.soundgoodizerfan.feedback.modular.combat.ShieldHeat.hold(level, stack)));
+        var stands = io.github.soundgoodizerfan.feedback.modular.combat.ShieldHeat.stands(level, stack);
         out.add(stands.isEmpty() ? hold : Readout.gloss(hold, "feedback.gloss.shield_soften",
-                Readout.number(io.github.soundgoodizerfan.feedback.modular.ModularTuning.SHIELD_SOFTEN_ONSET * 100),
-                Readout.number(stands.get()), Readout.number(io.github.soundgoodizerfan.feedback.modular.ModularTuning.SHIELD_SOFTEN_FLOOR * 100)));
+                Readout.number(io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.SHIELD_SOFTEN_ONSET * 100),
+                Readout.number(stands.get()), Readout.number(io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.SHIELD_SOFTEN_FLOOR * 100)));
     }
 
     /** What each modifier on this item means; a hint to hold Shift when there are any. */

@@ -23,7 +23,7 @@ import net.minecraft.resources.ResourceLocation;
  * @param stock    the form that went in (ingot, gem, chain): what a role weighs by, and what mends
  *                 it.
  * @param cells    how many of that stock went in, which is its size.
- * @param variant  which of the part's shapes it was made in ({@link io.github.soundgoodizerfan.feedback.modular.ModularType.Variant});
+ * @param variant  which of the part's shapes it was made in ({@link io.github.soundgoodizerfan.feedback.modular.type.ModularType.Variant});
  *                 empty for the standard one.
  * @param flaw     how badly it was forged, 0 (clean) to 3: each step costs the edge toughness
  *                 ({@code ForgeRhythm}). A flawed part is never refused, only weaker.

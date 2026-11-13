@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.process.Material;

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.bench;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
 

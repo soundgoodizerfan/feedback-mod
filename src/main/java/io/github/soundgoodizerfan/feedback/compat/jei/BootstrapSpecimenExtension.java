@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.compat.jei;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe;
+import io.github.soundgoodizerfan.feedback.modular.treatise.BootstrapSpecimenRecipe;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;

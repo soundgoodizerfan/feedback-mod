@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.engineering;
 
-import io.github.soundgoodizerfan.feedback.modular.School;
-import io.github.soundgoodizerfan.feedback.modular.Treatises;
+import io.github.soundgoodizerfan.feedback.modular.treatise.School;
+import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;

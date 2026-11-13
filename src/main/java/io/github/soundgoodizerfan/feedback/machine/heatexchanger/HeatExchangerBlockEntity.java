@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.machine.heatexchanger;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.Conductance;
-import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.modular.bake.FigureStore;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.core.thermal.Heat;

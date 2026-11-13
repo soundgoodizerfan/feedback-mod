@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
 import io.github.soundgoodizerfan.feedback.vehicle.air.PropBlock;
 import io.github.soundgoodizerfan.feedback.vehicle.air.PropBlockEntity;
 import io.github.soundgoodizerfan.feedback.vehicle.air.PropDesign;

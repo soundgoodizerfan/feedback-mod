@@ -3,14 +3,14 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularItem;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.world.item.ItemStack;
 
 /**
  * A gun in hand: a modular item of the gun type like a pick or a sword, so its name, parts, adjectives, traits and the Shift glosses are the core's. It carries a
- * {@link io.github.soundgoodizerfan.feedback.modular.ModularDesign} and the figures baked from it
+ * {@link io.github.soundgoodizerfan.feedback.modular.type.ModularDesign} and the figures baked from it
  * ({@link GunFigures#of} is the shot logic's view of them); firing is driven from the client (prediction,
  * guns spec 7) and resolved on the server ({@link GunShots}), so the item itself does nothing on use.
  *
@@ -57,7 +57,7 @@ public abstract class GunItem extends ModularItem implements io.github.soundgood
         if (!(stack.getItem() instanceof GunItem))
             return false;
         // A handgun's receiver says so; any other gun is one-handed if its baked mass and recoil allow it.
-        GunFigures f = GunFigures.of(io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(stack));
+        GunFigures f = GunFigures.of(io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.figures(stack));
         return GunSpec.of(stack).map(g -> g.has("off_hand")).orElse(false) || f != null && f.oneHandable();
     }
 

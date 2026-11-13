@@ -5,8 +5,7 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;

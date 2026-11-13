@@ -5,10 +5,10 @@ package io.github.soundgoodizerfan.feedback.combat.skill;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.combat.hit.WeaponProfile;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -205,7 +205,7 @@ public final class SkillEarning {
 
     /** The baked family of a modular stack, or null for anything else. */
     public static ModularType.Family family(ItemStack stack) {
-        return io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack);
+        return io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack);
     }
 
     /** The attacker's uuid, or the damage type's name when nothing struck. */

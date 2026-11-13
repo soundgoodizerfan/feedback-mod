@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;

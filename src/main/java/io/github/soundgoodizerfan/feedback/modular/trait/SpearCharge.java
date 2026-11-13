@@ -10,15 +10,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.net.SpearStagePayload;
 
 import net.minecraft.util.Mth;
@@ -125,7 +123,7 @@ public final class SpearCharge implements ModularTrait {
                 e -> e != attacker && e != target && e.isAlive() && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand)
                         && !attacker.isAlliedTo(e) && closest(e.getBoundingBox(), eye).distanceTo(eye) <= reach
                         && e.getBoundingBox().getCenter().subtract(eye).normalize().dot(look) > cone(tines));
-        var source = io.github.soundgoodizerfan.feedback.modular.StrikeSource.of(
+        var source = io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource.of(
                 attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
         tining = true;
         try {
@@ -144,7 +142,7 @@ public final class SpearCharge implements ModularTrait {
         ModularDesign design = ModularStacks.design(weapon);
         if (design == null)
             return null;
-        for (ModularDesign.Part face : io.github.soundgoodizerfan.feedback.modular.ModularFaces.faces(design))
+        for (ModularDesign.Part face : io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.faces(design))
             if (face.kind().equals("spear_head"))
                 return face;
         return null;
@@ -164,7 +162,7 @@ public final class SpearCharge implements ModularTrait {
 
     /** Whether the build is thrown on release rather than charged: a spring on it, or balanced toward the middle of the haft. */
     public static boolean thrower(ItemStack weapon) {
-        if (io.github.soundgoodizerfan.feedback.modular.SpringPart.of(weapon).isPresent())
+        if (io.github.soundgoodizerfan.feedback.modular.bake.SpringPart.of(weapon).isPresent())
             return true;
         ModularFigures figures = ModularStacks.figures(weapon);
         return figures != null && figures.get(Fig.BALANCE) < ModularTuning.SPEAR_THROW_BALANCE;

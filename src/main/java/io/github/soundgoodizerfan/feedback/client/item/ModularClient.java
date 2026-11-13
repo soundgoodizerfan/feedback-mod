@@ -5,11 +5,11 @@ package io.github.soundgoodizerfan.feedback.client.item;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.client.combat.SpearClient;
 
@@ -75,15 +75,15 @@ public final class ModularClient {
         ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null || type.family() != ModularType.Family.HAFTED)
             return 0;
-        for (ModularDesign.Part part : io.github.soundgoodizerfan.feedback.modular.ModularFaces.faces(design))
-            if (!io.github.soundgoodizerfan.feedback.modular.ModularFaces.spent(part))
-                return 1 + io.github.soundgoodizerfan.feedback.modular.ModularFaces.KINDS.indexOf(
-                        io.github.soundgoodizerfan.feedback.modular.ModularHeads.kindOf(part, type.roles().get(part.role())));
+        for (ModularDesign.Part part : io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.faces(design))
+            if (!io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.spent(part))
+                return 1 + io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.KINDS.indexOf(
+                        io.github.soundgoodizerfan.feedback.modular.type.ModularHeads.kindOf(part, type.roles().get(part.role())));
         return 0;
     }
 
     private static float variant(ItemStack stack) {
-        ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
+        ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.type.Modular
                 ? ModularStacks.design(stack) : null;
         ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)
@@ -93,7 +93,7 @@ public final class ModularClient {
         if (part == null || part.variant().isEmpty())
             return 0;
         List<ModularType.Variant> variants = type.family() == ModularType.Family.HAFTED
-                ? io.github.soundgoodizerfan.feedback.modular.ModularHeads.of(io.github.soundgoodizerfan.feedback.modular.ModularHeads.kindOf(part, type.roles().get(role)))
+                ? io.github.soundgoodizerfan.feedback.modular.type.ModularHeads.of(io.github.soundgoodizerfan.feedback.modular.type.ModularHeads.kindOf(part, type.roles().get(role)))
                         .map(h -> h.shaping().variants()).orElse(List.of())
                 : type.roles().get(role).part().map(ModularType.Shaping::variants).orElse(List.of());
         for (int i = 0; i < variants.size(); i++)
@@ -103,7 +103,7 @@ public final class ModularClient {
     }
 
     private static int tint(ItemStack stack, int layer) {
-        ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.Modular
+        ModularDesign design = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.type.Modular
                 ? ModularStacks.design(stack) : null; // a blueprint carries a design and is paper, not parts
         ModularType type = design == null ? null : ModularTypes.known(design.type());
         if (type == null)

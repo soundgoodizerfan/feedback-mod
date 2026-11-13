@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import java.util.UUID;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;

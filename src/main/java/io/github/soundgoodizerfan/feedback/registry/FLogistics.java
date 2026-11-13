@@ -14,10 +14,10 @@ import io.github.soundgoodizerfan.feedback.logistics.belt.BeltHeadBlock;
 import io.github.soundgoodizerfan.feedback.logistics.belt.BeltHeadBlockEntity;
 import io.github.soundgoodizerfan.feedback.logistics.belt.BeltModule;
 import io.github.soundgoodizerfan.feedback.logistics.belt.BeltModuleItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

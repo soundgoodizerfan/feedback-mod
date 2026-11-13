@@ -11,12 +11,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFit;
-import io.github.soundgoodizerfan.feedback.modular.ModularHandTool;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.School;
-import io.github.soundgoodizerfan.feedback.modular.Treatises;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularFit;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.treatise.School;
+import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 import io.github.soundgoodizerfan.feedback.registry.FEngineering;
 
 import net.minecraft.core.HolderLookup;

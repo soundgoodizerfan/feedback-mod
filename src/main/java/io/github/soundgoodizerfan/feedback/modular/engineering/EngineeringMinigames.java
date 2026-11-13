@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.modular.engineering;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -40,7 +40,7 @@ public final class EngineeringMinigames {
      * The game a modular assembly plays: the type's own {@code minigame} when it names a known one, else torque when the assembly spends
      * fasteners, else none (empty).
      */
-    public static String forType(io.github.soundgoodizerfan.feedback.modular.ModularType type, int fasteners) {
+    public static String forType(io.github.soundgoodizerfan.feedback.modular.type.ModularType type, int fasteners) {
         if (known(type.minigame()))
             return type.minigame();
         if (fasteners <= 0)

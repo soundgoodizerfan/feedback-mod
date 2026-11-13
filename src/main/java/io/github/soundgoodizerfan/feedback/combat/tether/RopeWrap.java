@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.combat.tether;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;

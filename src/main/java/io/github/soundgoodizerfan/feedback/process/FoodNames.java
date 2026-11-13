@@ -15,13 +15,13 @@ import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.DishBake;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularType.Designation;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.PrepWork;
+import io.github.soundgoodizerfan.feedback.modular.prep.DishBake;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType.Designation;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.prep.PrepWork;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.component.DataComponents;

@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.School;
-import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
-import io.github.soundgoodizerfan.feedback.modular.Treatises;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.treatise.School;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns;
+import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringMinigames;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringRecipe;
 import io.github.soundgoodizerfan.feedback.modular.engineering.Fasteners;

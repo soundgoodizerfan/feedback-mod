@@ -61,7 +61,7 @@ public class CalipersItem extends Item implements Instrument {
     /** Held against a made item in the other hand: stamps its axes and fit on it, exact. */
     @Override
     public net.minecraft.world.InteractionResultHolder<ItemStack> use(Level level, Player player, net.minecraft.world.InteractionHand hand) {
-        return io.github.soundgoodizerfan.feedback.modular.Measured.apply(io.github.soundgoodizerfan.feedback.modular.Measured.Kind.CALIPERS, level, player, hand);
+        return io.github.soundgoodizerfan.feedback.modular.bench.Measured.apply(io.github.soundgoodizerfan.feedback.modular.bench.Measured.Kind.CALIPERS, level, player, hand);
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.Attunements;
+import io.github.soundgoodizerfan.feedback.modular.attunement.Attunements;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

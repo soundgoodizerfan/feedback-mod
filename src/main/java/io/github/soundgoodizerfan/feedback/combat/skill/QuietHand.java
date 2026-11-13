@@ -56,8 +56,8 @@ public final class QuietHand {
         if (HUSHED_BLOW.getOrDefault(player.getUUID(), -1L) == player.level().getGameTime())
             return 1f;
         if (Skills.unlocked(player, "dull_edge")) {
-            var f = io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(player.getMainHandItem());
-            if (f != null && f.get(io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig.HARDNESS) < DULL_HARDNESS)
+            var f = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.figures(player.getMainHandItem());
+            if (f != null && f.get(io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.HARDNESS) < DULL_HARDNESS)
                 return DULL_HUSH;
         }
         return 0f;

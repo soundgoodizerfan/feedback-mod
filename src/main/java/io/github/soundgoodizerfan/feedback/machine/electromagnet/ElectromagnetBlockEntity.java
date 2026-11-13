@@ -22,7 +22,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.process.OreLadder;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
-import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.modular.bake.FigureStore;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
@@ -222,7 +222,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
                 if (entry.getValue().separation().magnetic())
                     // Tailings are the gangue left over: the same material, but not what the magnet takes.
                     entry.getValue().items(entry.getKey()).entrySet().stream().filter(e -> !e.getKey().equals("tailings")).map(Map.Entry::getValue)
-                            .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)).forEach(found::add);
+                            .filter(i -> !(i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)).forEach(found::add);
             magneticItems = found;
         }
         return magneticItems.contains(item);

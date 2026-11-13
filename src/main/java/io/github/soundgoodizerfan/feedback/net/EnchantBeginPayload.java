@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.EnchantMenu;
+import io.github.soundgoodizerfan.feedback.modular.enchant.EnchantMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

@@ -15,7 +15,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.machine.MachineTuning;
 import io.github.soundgoodizerfan.feedback.machine.vessel.VesselTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.vehicle.VehicleTuning;
 import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 

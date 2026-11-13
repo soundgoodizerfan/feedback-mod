@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.modular.DishProfile;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.prep.DishProfile;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 

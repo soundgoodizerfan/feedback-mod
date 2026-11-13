@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.DishProfile;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.prep.DishProfile;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.net.VillagerStatePayload;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -133,8 +133,8 @@ public final class VillageEconomy {
     /** A blueprint of the named design: a gun pool entry, else the starter design of a modular type; empty if neither exists. */
     static ItemStack blueprint(ResourceLocation id) {
         return io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get().design(id)
-                .or(() -> io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(id,
-                        io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(), MaterialTable.get().materials()))
+                .or(() -> io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.starter(id,
+                        io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known(), MaterialTable.get().materials()))
                 .map(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool::blueprint).orElse(ItemStack.EMPTY);
     }
 
@@ -201,7 +201,7 @@ public final class VillageEconomy {
         RandomSource rnd = RandomSource.create(m.getUUID().getLeastSignificantBits() ^ (day * 31L + idx));
         Optional<HolderSet.Named<Enchantment>> tag = m.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getTag(EnchantmentTags.TRADEABLE);
         // The book is sold for what it teaches, so the pick is among the enchantments some attunement names; any tradeable one if none is.
-        List<Holder<Enchantment>> teaching = tag.map(t -> t.stream().filter(h -> h.unwrapKey().map(k -> io.github.soundgoodizerfan.feedback.modular.Attunements.get()
+        List<Holder<Enchantment>> teaching = tag.map(t -> t.stream().filter(h -> h.unwrapKey().map(k -> io.github.soundgoodizerfan.feedback.modular.attunement.Attunements.get()
                 .effects().values().stream().anyMatch(e -> e.books().contains(k.location()))).orElse(false)).toList()).orElse(List.of());
         Optional<Holder<Enchantment>> pick = !teaching.isEmpty() ? Optional.of(teaching.get(rnd.nextInt(teaching.size())))
                 : tag.flatMap(t -> t.getRandomElement(rnd));
@@ -245,7 +245,7 @@ public final class VillageEconomy {
         ItemStack item = menu.delivered();
         ModularDesign design = ModularStacks.design(item);
         ModularFigures figures = DishProfile.read(item, v.level());
-        design = io.github.soundgoodizerfan.feedback.modular.ModularFaces.forOrder(design, order.type());
+        design = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.forOrder(design, order.type());
         if (design == null || figures == null) {
             send(p, menu, view(p, v).withResult(VillagerView.WRONG, -1, false, 0));
             return;
@@ -349,7 +349,7 @@ public final class VillageEconomy {
             boolean asked = false;
             for (int i = 0; i < orders.size(); i++) {
                 Order order = orders.get(i);
-                ModularDesign ordered = io.github.soundgoodizerfan.feedback.modular.ModularFaces.forOrder(design, order.type());
+                ModularDesign ordered = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.forOrder(design, order.type());
                 if (ledger.done(i) || ordered == null)
                     continue;
                 asked = true;

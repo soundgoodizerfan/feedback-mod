@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Screws, bolts and rivets: forms of any metal ({@code form_type/screw|rivet|machine_bolt}), whose quality is one coarse figure read
  * from the material ({@code fastener}, 1 to 5; absent means the stuff makes no fastener). The Engineering Table spends them per
- * assembly; their quality above or below a recipe's floor moves the start condition ({@link io.github.soundgoodizerfan.feedback.modular.ModularFit.Start}).
+ * assembly; their quality above or below a recipe's floor moves the start condition ({@link io.github.soundgoodizerfan.feedback.modular.type.ModularFit.Start}).
  * The gun's {@code bolt} part is another form and not a fastener, so the fastener bolt is named {@code machine_bolt}.
  */
 public final class Fasteners {

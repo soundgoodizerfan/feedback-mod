@@ -8,7 +8,7 @@ import com.mojang.serialization.MapCodec;
 import io.github.soundgoodizerfan.feedback.core.hazard.HotContact;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.item.TongsItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.process.Cooking;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FTags;
@@ -89,7 +89,7 @@ public class SkilletBlock extends BaseEntityBlock {
     /** The named figure of the spatula blade's shape, else {@code fallback}. */
     private static float bladeParam(ItemStack spatula, String name, float fallback) {
         var design = ModularStacks.design(spatula);
-        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(design.type());
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known(design.type());
         var blade = type == null ? null : design.part(type.primary());
         return blade == null ? fallback : type.roles().get(type.primary()).variant(blade)
                 .map(v -> v.params().getOrDefault(name, fallback)).orElse(fallback);

@@ -4,8 +4,7 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -40,7 +39,7 @@ public final class Overhead implements ModularTrait {
                         && e.distanceToSqr(target) <= radius * radius);
         if (others.isEmpty())
             return;
-        DamageSource source = io.github.soundgoodizerfan.feedback.modular.StrikeSource.of(attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
+        DamageSource source = io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource.of(attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
         float amount = event.getAmount() * params.get("sweep_mult", 0.6f);
         sweeping = true;
         try {
@@ -51,6 +50,6 @@ public final class Overhead implements ModularTrait {
         } finally {
             sweeping = false;
         }
-        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 2f))), attacker, io.github.soundgoodizerfan.feedback.modular.StrikeSource.slot(attacker, weapon));
+        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 2f))), attacker, io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource.slot(attacker, weapon));
     }
 }

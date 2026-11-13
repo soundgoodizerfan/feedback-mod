@@ -61,7 +61,7 @@ public final class HudReadouts {
             return;
         // GunHud's card spans y-6..y+64 with y = height - 80: the stack's bottom is its top edge when a gun is held.
         boolean gun = mc.player.getMainHandItem().getItem() instanceof GunItem
-                && io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(mc.player.getMainHandItem()) != null;
+                && io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(mc.player.getMainHandItem()) != null;
         int right = g.guiWidth() - 12;
         int bottom = g.guiHeight() - (gun ? 86 + GAP : 16);
         for (int i = LIVE.size() - 1; i >= 0; i--) {

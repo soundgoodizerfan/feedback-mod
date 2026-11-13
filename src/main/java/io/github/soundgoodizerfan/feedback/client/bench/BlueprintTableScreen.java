@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.client.bench;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintTableMenu;
 import io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
@@ -53,7 +53,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
         titleBox = new net.minecraft.client.gui.components.EditBox(font, leftPos + BlueprintTableMenu.TITLE_X + 3, topPos + BlueprintTableMenu.TITLE_Y + 3,
                 BlueprintTableMenu.TITLE_W - 6, 9, Component.translatable("gui.feedback.blueprint_table.title"));
         titleBox.setBordered(false);
-        titleBox.setMaxLength(io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.MAX_TITLE);
+        titleBox.setMaxLength(io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintCredit.MAX_TITLE);
         titleBox.setTextColor(skin.ink());
         titleBox.setHint(Component.translatable("gui.feedback.blueprint_table.title").withColor(skin.dim()));
         titleBox.setValue(title);
@@ -102,7 +102,7 @@ public class BlueprintTableScreen extends SkinnedScreen<BlueprintTableMenu> impl
         // a blueprint put in brings its title into the field to be edited
         if (!ItemStack.isSameItemSameComponents(paper, titledPaper)) {
             titledPaper = paper.copy();
-            var credit = io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.of(paper);
+            var credit = io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintCredit.of(paper);
             if (credit != null && titleBox != null)
                 titleBox.setValue(credit.title());
         }

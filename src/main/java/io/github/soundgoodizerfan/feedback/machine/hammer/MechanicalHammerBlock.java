@@ -49,7 +49,7 @@ public class MechanicalHammerBlock extends Block implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof MechanicalHammerBlockEntity hammer))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-        if (io.github.soundgoodizerfan.feedback.modular.ModularFaces.has(stack, "head_blank")) {
+        if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.has(stack, "head_blank")) {
             if (!level.isClientSide)
                 give(player, hammer.seatHead(stack));
             return ItemInteractionResult.sidedSuccess(level.isClientSide);

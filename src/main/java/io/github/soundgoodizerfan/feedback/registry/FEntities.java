@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.registry;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ThrownWeapon;
+import io.github.soundgoodizerfan.feedback.modular.combat.ThrownWeapon;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;

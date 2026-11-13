@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.item;
 
 import io.github.soundgoodizerfan.feedback.combat.tether.GrappleHook;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import java.util.List;
 import net.minecraft.ChatFormatting;

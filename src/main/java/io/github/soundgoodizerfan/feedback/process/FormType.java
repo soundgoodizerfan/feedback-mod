@@ -31,7 +31,7 @@ import io.github.soundgoodizerfan.feedback.registry.FormItems;
  *              was made. Absent means 1, behaving as before. Invented placeholders, retunable in the files.
  * @param roasted whether the form is a roasted ore (calcine): generated for a non-metal bearer that states an oxidation temperature, a sulfide that burns in air
  *              ({@code bearing} and {@code kinds} are then ignored).
- * @param part  whether the form is a shaped part ({@link io.github.soundgoodizerfan.feedback.modular.ModularPartItem}):
+ * @param part  whether the form is a shaped part ({@link io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem}):
  *              one shared item, the material on the stack ({@link MadeOf}), instead of an item per material.
  */
 public record FormType(List<Material.Kind> kinds, boolean block, boolean part, int mb, boolean bearing, boolean ored, boolean pressed, float grain, boolean roasted) {

@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.modular.Measured;
+import io.github.soundgoodizerfan.feedback.modular.bench.Measured;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;

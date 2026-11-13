@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import io.github.soundgoodizerfan.feedback.core.Haste;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 import io.github.soundgoodizerfan.feedback.process.Material;
 
 /**

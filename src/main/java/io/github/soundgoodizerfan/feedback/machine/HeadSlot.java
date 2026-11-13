@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.machine;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
-import io.github.soundgoodizerfan.feedback.modular.ModularHandTool;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.HolderLookup;

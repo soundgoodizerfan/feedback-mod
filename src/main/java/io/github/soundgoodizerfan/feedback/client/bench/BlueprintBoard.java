@@ -13,22 +13,22 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import io.github.soundgoodizerfan.feedback.modular.BoardTree;
-import io.github.soundgoodizerfan.feedback.modular.BuildNames;
-import io.github.soundgoodizerfan.feedback.modular.Edge;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.ModularBake;
-import io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.BoardTree;
+import io.github.soundgoodizerfan.feedback.modular.type.BuildNames;
+import io.github.soundgoodizerfan.feedback.modular.bench.Edge;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularBake;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ModularBlueprintItem;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularModifiers;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
@@ -96,7 +96,7 @@ public final class BlueprintBoard {
         /** The schools whose treatise the player holds here, one bit each; the board offers only types it can draw. */
         default int schools() {
             net.minecraft.client.player.LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
-            return player == null ? 0 : io.github.soundgoodizerfan.feedback.modular.Treatises.mask(player);
+            return player == null ? 0 : io.github.soundgoodizerfan.feedback.modular.treatise.Treatises.mask(player);
         }
     }
 
@@ -300,7 +300,7 @@ public final class BlueprintBoard {
         schoolsSeen = host.schools();
         shapeLists.clear();
         types = (host.foodOnly() ? ToolDesigns.drawableDishes(ModularTypes.known()) : ToolDesigns.drawable(ModularTypes.known())).stream()
-                .filter(id -> io.github.soundgoodizerfan.feedback.modular.Treatises.draws(schoolsSeen, ModularTypes.known(id))).toList();
+                .filter(id -> io.github.soundgoodizerfan.feedback.modular.treatise.Treatises.draws(schoolsSeen, ModularTypes.known(id))).toList();
         typeIcons.clear();
         for (ResourceLocation id : types)
             typeIcons.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));
@@ -520,16 +520,16 @@ public final class BlueprintBoard {
 
     /** Whether the volume {@code gate} names ({@code robotics:1}) is held; an empty gate is always met. */
     private boolean schoolHeld(String gate) {
-        io.github.soundgoodizerfan.feedback.modular.School school = io.github.soundgoodizerfan.feedback.modular.School.of(gate);
-        return school == null || (schoolsSeen & (1 << school.bit(io.github.soundgoodizerfan.feedback.modular.School.volumeOf(gate)))) != 0;
+        io.github.soundgoodizerfan.feedback.modular.treatise.School school = io.github.soundgoodizerfan.feedback.modular.treatise.School.of(gate);
+        return school == null || (schoolsSeen & (1 << school.bit(io.github.soundgoodizerfan.feedback.modular.treatise.School.volumeOf(gate)))) != 0;
     }
 
     /** Whether the treatise volume a role asks for ({@link ModularType.Role#school}) is held; a role with none is always offered. */
     private boolean roleHeld(String role) {
         ModularType t = current();
         ModularType.Role r = t == null ? null : t.roles().get(role);
-        io.github.soundgoodizerfan.feedback.modular.School school = r == null ? null : io.github.soundgoodizerfan.feedback.modular.School.of(r.school());
-        return school == null || (schoolsSeen & (1 << school.bit(io.github.soundgoodizerfan.feedback.modular.School.volumeOf(r.school())))) != 0;
+        io.github.soundgoodizerfan.feedback.modular.treatise.School school = r == null ? null : io.github.soundgoodizerfan.feedback.modular.treatise.School.of(r.school());
+        return school == null || (schoolsSeen & (1 << school.bit(io.github.soundgoodizerfan.feedback.modular.treatise.School.volumeOf(r.school())))) != 0;
     }
 
     /** The parts that can be added now. */
@@ -994,7 +994,7 @@ public final class BlueprintBoard {
         }
         if (t.family() == ModularType.Family.ELECTRIC_GUN) {
             // A big seat on a handgun frame, or a hold or pump charge on a seat that fires more than one shot a pull.
-            String why = io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.fault(design.get(), t);
+            String why = io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.fault(design.get(), t);
             if (why != null) {
                 List<String> parts = new ArrayList<>(List.of("s"));
                 parts.add(why.equals("pulse_seat_frame") ? "R" : "h");
@@ -2450,7 +2450,7 @@ public final class BlueprintBoard {
      * (cx, cy), as the tool draws it; false when the kind has no layer files, so the caller falls back to the cell thumbnail.
      */
     private boolean headIcon(GuiGraphics g, net.minecraft.resources.ResourceLocation kind, String variant, int cx, int cy, int rgb) {
-        Optional<String> file = io.github.soundgoodizerfan.feedback.modular.HaftedLayers.kindFile(kind.getPath());
+        Optional<String> file = io.github.soundgoodizerfan.feedback.modular.type.HaftedLayers.kindFile(kind.getPath());
         if (file.isEmpty())
             return false;
         var atlas = net.minecraft.client.Minecraft.getInstance().getModelManager().getAtlas(net.minecraft.client.renderer.texture.TextureAtlas.LOCATION_BLOCKS);
@@ -2625,7 +2625,7 @@ public final class BlueprintBoard {
         return switch (t.family()) {
             case CELL -> ModularBake.cell(d, t, ClientMaterials.get()).map(BlueprintBoard::cellLines).orElse(List.of());
             case MACHINE -> ModularBake.machine(d, t, ClientMaterials.get()).map(BlueprintBoard::machineLines).orElse(List.of());
-            case BLOCK -> io.github.soundgoodizerfan.feedback.modular.BlockFigures.of(d, t, ClientMaterials.get()).<List<Component>>map(tag -> tag.getAllKeys().stream()
+            case BLOCK -> io.github.soundgoodizerfan.feedback.modular.bake.BlockFigures.of(d, t, ClientMaterials.get()).<List<Component>>map(tag -> tag.getAllKeys().stream()
                     .<Component>map(k -> Component.translatable("figure.feedback.block." + k, String.format(java.util.Locale.ROOT, "%.3g", tag.getFloat(k))))
                     .toList()).orElse(List.of());
             case PRESSURE -> ModularBake.tank(d, t, ClientMaterials.get()).<List<Component>>map(v -> List.of(

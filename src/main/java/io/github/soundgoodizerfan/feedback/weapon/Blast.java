@@ -43,7 +43,7 @@ public final class Blast {
     public static final String FUSE_ROLE = "W", PRIMER_ROLE = "R", PAYLOAD_ROLE = "P";
 
     /** Whether {@code role} of a charge holds propellant filler (not the casing, fuse, primer or payload). */
-    public static boolean isFiller(io.github.soundgoodizerfan.feedback.modular.ModularType type, String role) {
+    public static boolean isFiller(io.github.soundgoodizerfan.feedback.modular.type.ModularType type, String role) {
         return !role.equals(type.wearRole()) && !role.equals(FUSE_ROLE) && !role.equals(PRIMER_ROLE) && !role.equals(PAYLOAD_ROLE);
     }
 
@@ -57,8 +57,8 @@ public final class Blast {
 
     /** A charge item read as the placed block reads its contents. Empty for an item that is not a charge. */
     public static java.util.Optional<Packed> packed(net.minecraft.world.item.ItemStack made) {
-        var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(made);
-        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(design.type());
+        var design = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(made);
+        var type = design == null ? null : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known(design.type());
         if (type == null)
             return java.util.Optional.empty();
         return read(design, type, io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials());
@@ -69,8 +69,8 @@ public final class Blast {
      * Options are variants of the casing ({@code confine}, {@code frag}), the fuse ({@code ticks}, {@code impact}) and
      * the primer ({@code burn_add}, {@code fire}); the payload is raw stock counted by item.
      */
-    public static java.util.Optional<Packed> read(io.github.soundgoodizerfan.feedback.modular.ModularDesign design,
-                                                  io.github.soundgoodizerfan.feedback.modular.ModularType type,
+    public static java.util.Optional<Packed> read(io.github.soundgoodizerfan.feedback.modular.type.ModularDesign design,
+                                                  io.github.soundgoodizerfan.feedback.modular.type.ModularType type,
                                                   java.util.Map<net.minecraft.resources.ResourceLocation, Material> materials) {
         java.util.List<Cartridge.Charge> filler = new java.util.ArrayList<>();
         Material casing = null;
@@ -79,7 +79,7 @@ public final class Blast {
         float confine = 1f, frag = 1f, burnAdd = 0f, payloadFrag = 0f;
         for (var part : design.parts()) {
             var role = type.roles().get(part.role());
-            var v = role == null ? java.util.Optional.<io.github.soundgoodizerfan.feedback.modular.ModularType.Variant>empty() : role.variant(part);
+            var v = role == null ? java.util.Optional.<io.github.soundgoodizerfan.feedback.modular.type.ModularType.Variant>empty() : role.variant(part);
             Material m = materials.get(part.material());
             if (part.role().equals(type.wearRole())) {
                 casing = m;

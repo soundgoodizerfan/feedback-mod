@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotBlockEntity;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

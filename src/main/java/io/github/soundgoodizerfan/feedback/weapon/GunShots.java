@@ -6,7 +6,7 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
@@ -144,7 +144,7 @@ public final class GunShots {
      * @param glance how readily it glances off a block (the turning angle is multiplied by this).
      * @param traits what the payload material is (sticky glues, fibrous tethers); {@code seed} is a seed it plants on farmland.
      * @param vial   a potion the round carries, let go where it lands, or null.
-     * @param perks  what the payload does to a living thing struck ({@link io.github.soundgoodizerfan.feedback.modular.MaterialPerks#affect}).
+     * @param perks  what the payload does to a living thing struck ({@link io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks#affect}).
      */
     public record Flight(float drag, float damage, float ease, float glance, java.util.Map<io.github.soundgoodizerfan.feedback.process.Material.Perk, Integer> perks,
                          io.github.soundgoodizerfan.feedback.potion.PotionState vial,
@@ -380,7 +380,7 @@ public final class GunShots {
             if (cookOff || !together && !clientShot && !cameraTurned)
                 io.github.soundgoodizerfan.feedback.net.GunKickPayload.send(server, hand == InteractionHand.OFF_HAND, figures);
             String designation = GunSpec.of(gun).flatMap(spec -> GunDesignation.of(gun, spec)).orElse("");
-            var built = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(gun);
+            var built = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(gun);
             var grip = built == null ? null : built.part("G");
             if (GunSpec.of(gun).map(spec -> spec.layout().type().getSerializedName()).orElse("").equals("flintlock"))
                 io.github.soundgoodizerfan.feedback.core.Awards.give(server, "combat/remember_remember");
@@ -684,7 +684,7 @@ public final class GunShots {
     }
 
     private static void rebakeGun(ItemStack gun) {
-        io.github.soundgoodizerfan.feedback.modular.ModularStacks.rebake(gun);
+        io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.rebake(gun);
     }
 
     @SubscribeEvent
@@ -915,8 +915,8 @@ public final class GunShots {
             if (piece.isEmpty())
                 continue;
             // A modular piece is rated by its plate, which is on the stack; no item names a material.
-            io.github.soundgoodizerfan.feedback.modular.ModularFigures modular = io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(piece);
-            float h = modular != null ? modular.get(io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig.HARDNESS)
+            io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures modular = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.figures(piece);
+            float h = modular != null ? modular.get(io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.HARDNESS)
                     : ARMOUR.computeIfAbsent(piece.getItem(), GunShots::hardnessOf);
             hardest = Math.max(hardest, Float.isNaN(h) ? Float.MAX_VALUE : h);
         }
@@ -1094,7 +1094,7 @@ public final class GunShots {
         }
         if (!(target instanceof LivingEntity struck))
             return;
-        io.github.soundgoodizerfan.feedback.modular.MaterialPerks.affect(perks, struck);
+        io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.affect(perks, struck);
         Integer hop = perks.get(io.github.soundgoodizerfan.feedback.process.Material.Perk.BLINK);
         if (hop != null)
             for (int i = 0; i < 8; i++) {
@@ -1106,7 +1106,7 @@ public final class GunShots {
         Integer siphon = perks.get(io.github.soundgoodizerfan.feedback.process.Material.Perk.SIPHON);
         if (siphon != null && !struck.isAlive())
             net.minecraft.world.entity.ExperienceOrb.award(level, struck.position(),
-                    siphon * io.github.soundgoodizerfan.feedback.modular.ModularTuning.PERK_SIPHON_XP_PER_LEVEL);
+                    siphon * io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.PERK_SIPHON_XP_PER_LEVEL);
     }
 
     /**
@@ -1198,7 +1198,7 @@ public final class GunShots {
             float damage = s.energy() * GunTuning.GUN_DAMAGE_PER_WORK * s.flight.damage();
             // A payload that is hard on the undead or the sea's things hits them harder.
             if (target instanceof LivingEntity victim && !s.flight.perks().isEmpty())
-                damage += io.github.soundgoodizerfan.feedback.modular.MaterialPerks.bonus(s.flight.perks(), victim);
+                damage += io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.bonus(s.flight.perks(), victim);
             // A Feedbacker in its parry window punches the round back instead of taking it.
             if (target instanceof LivingEntity catcher
                     && Parrying.catchBullet(level, s.shooter, catcher, s.massMu, (float) s.velocity.length(), damage))

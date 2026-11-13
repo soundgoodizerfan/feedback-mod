@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;
 

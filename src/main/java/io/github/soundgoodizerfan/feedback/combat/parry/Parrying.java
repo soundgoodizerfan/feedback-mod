@@ -14,8 +14,8 @@ import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.skill.Rearms;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Rearm;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 

@@ -185,7 +185,7 @@ public class FItems {
     /** A hook on a string line: the second tether source, reels the lighter body. */
     public static final DeferredItem<Item> GRAPPLE =
             ITEMS.registerItem("grapple", io.github.soundgoodizerfan.feedback.item.GrappleItem::new,
-                    new Item.Properties().stacksTo(1).durability(io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRAPPLE_DURABILITY));
+                    new Item.Properties().stacksTo(1).durability(io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.GRAPPLE_DURABILITY));
 
     /** A drum, crank and frame: the grapple's winch fitting (a faster reel). */
     public static final DeferredItem<Item> GRAPPLE_WINCH = ITEMS.registerSimpleItem("grapple_winch");

@@ -13,7 +13,7 @@ import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageTypes;

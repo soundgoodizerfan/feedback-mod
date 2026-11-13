@@ -4,8 +4,7 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -42,14 +41,14 @@ public final class LineCut implements ModularTrait {
         if (behind.isEmpty())
             return;
         LivingEntity next = behind.stream().min((a, b) -> Double.compare(a.distanceToSqr(target), b.distanceToSqr(target))).get();
-        DamageSource source = io.github.soundgoodizerfan.feedback.modular.StrikeSource.of(attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
+        DamageSource source = io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource.of(attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
         cutting = true;
         try {
             next.hurt(source, event.getAmount() * params.get("line_mult", 0.7f));
         } finally {
             cutting = false;
         }
-        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 1f))), attacker, io.github.soundgoodizerfan.feedback.modular.StrikeSource.slot(attacker, weapon));
+        weapon.hurtAndBreak(ModularStacks.cap(weapon, Math.round(params.get("wear", 1f))), attacker, io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource.slot(attacker, weapon));
     }
 
     /** True if {@code e} stands beyond the target along the look line, no more than {@code length} past it and about a block off the line. */

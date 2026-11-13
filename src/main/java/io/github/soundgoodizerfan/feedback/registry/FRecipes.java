@@ -71,9 +71,9 @@ public class FRecipes {
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.item.TongsRecipe::new));
 
     /** Wooden and stone pickaxe, axe, shovel -> the canonical modular tool (the bootstrap exception). */
-    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe>>
+    public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.item.BootstrapToolRecipe>>
             BOOTSTRAP_TOOL = SERIALIZERS.register("bootstrap_tool",
-                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe::new));
+                    () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.item.BootstrapToolRecipe::new));
 
     /** The plain crafting table's assembly of every simple modular type from its parts. */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe>>
@@ -81,9 +81,9 @@ public class FRecipes {
                     () -> new SimpleCraftingRecipeSerializer<>(io.github.soundgoodizerfan.feedback.modular.engineering.ModularCraftingRecipe::new));
 
     /** A grid -> one prebaked specimen of a treatise-gated modular type, so taking it apart can write the treatise. */
-    public static final DeferredHolder<RecipeSerializer<?>, io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.Serializer>
+    public static final DeferredHolder<RecipeSerializer<?>, io.github.soundgoodizerfan.feedback.modular.treatise.BootstrapSpecimenRecipe.Serializer>
             BOOTSTRAP_SPECIMEN = SERIALIZERS.register("bootstrap_specimen",
-                    io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.Serializer::new);
+                    io.github.soundgoodizerfan.feedback.modular.treatise.BootstrapSpecimenRecipe.Serializer::new);
 
     /** Plates and straps -> a bracer, sash or back piece baked from them (combat gear). */
     public static final DeferredHolder<RecipeSerializer<?>, SimpleCraftingRecipeSerializer<io.github.soundgoodizerfan.feedback.combat.gear.GearRecipe>>

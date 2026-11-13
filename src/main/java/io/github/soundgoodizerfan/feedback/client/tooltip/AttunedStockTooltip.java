@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.client.tooltip;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularPartItem;
+import io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 

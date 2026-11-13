@@ -4,11 +4,11 @@ package io.github.soundgoodizerfan.feedback.client.bench;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.BlueprintChecklist;
-import io.github.soundgoodizerfan.feedback.modular.BlueprintCredit;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintChecklist;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintCredit;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;

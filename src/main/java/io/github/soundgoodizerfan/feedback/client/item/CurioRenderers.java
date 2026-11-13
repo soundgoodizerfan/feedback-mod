@@ -11,7 +11,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.gear.GearStats;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 
@@ -293,19 +293,19 @@ public final class CurioRenderers {
                 float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
             if (!(parent.getModel() instanceof HumanoidModel<?> m))
                 return;
-            var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(stack);
-            var figures = io.github.soundgoodizerfan.feedback.modular.ModularStacks.figures(stack);
-            float slots = figures == null ? 18f : figures.get(io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig.SLOTS);
+            var design = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(stack);
+            var figures = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.figures(stack);
+            float slots = figures == null ? 18f : figures.get(io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig.SLOTS);
             int mask = 0;
             boolean roll = false;
             if (design != null) {
                 for (int i = 0; i < Packs.ROLES.length(); i++)
                     if (design.part(String.valueOf(Packs.ROLES.charAt(i))) != null)
                         mask |= 1 << i;
-                roll = design.part(io.github.soundgoodizerfan.feedback.modular.ModularBackpack.LASHING) != null
+                roll = design.part(io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack.LASHING) != null
                         && stack.getOrDefault(net.minecraft.core.component.DataComponents.CONTAINER,
                                 net.minecraft.world.item.component.ItemContainerContents.EMPTY).stream()
-                                .anyMatch(s -> s.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularBedroll);
+                                .anyMatch(s -> s.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularBedroll);
             }
             int key = (slots <= 9 ? 0 : slots >= 27 ? 2 : 1) | mask << 2 | (roll ? 1 << 14 : 0);
             final int fm = mask;
@@ -313,7 +313,7 @@ public final class CurioRenderers {
             var pieces = cache.computeIfAbsent(key, k -> build((int) slots, fm, fr));
             for (Piece p : pieces) {
                 var part = design == null ? null : design.part(p.role());
-                int rgb = part == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.MaterialColors.of(part.material());
+                int rgb = part == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.type.MaterialColors.of(part.material());
                 if (p.role().equals("R"))
                     rgb = 0xB9A58A;
                 else if (p.role().equals("K") && p.shade() > 1.5f)
@@ -342,11 +342,11 @@ public final class CurioRenderers {
                 right = box(-3.3f, 7f, -2.3f, 4.6f, 3.3f, 4.6f);
                 left = box(-1.3f, 7f, -2.3f, 4.6f, 3.3f, 4.6f);
             }
-            var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(stack);
-            var plate = design == null ? null : design.part(io.github.soundgoodizerfan.feedback.modular.ModularGlove.PLATE);
+            var design = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(stack);
+            var plate = design == null ? null : design.part(io.github.soundgoodizerfan.feedback.modular.item.ModularGlove.PLATE);
             if (plate == null && design != null)
                 plate = design.part("B");
-            int rgb = plate == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.MaterialColors.of(plate.material());
+            int rgb = plate == null ? LEATHER : io.github.soundgoodizerfan.feedback.modular.type.MaterialColors.of(plate.material());
             draw(right, m.rightArm, pose, buffer, light, rgb);
             draw(left, m.leftArm, pose, buffer, light, rgb);
         }

@@ -11,7 +11,7 @@ import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.machine.cable.CableBlockEntity;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;

@@ -42,9 +42,9 @@ public class FMenus {
                     () -> IMenuTypeExtension.create((id, inv, buf) -> new ProgrammerMenu(id, inv, buf.readBlockPos())));
 
     /** Extended: as the Tool Table's. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.PrepTableMenu>> PREP_TABLE =
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.prep.PrepTableMenu>> PREP_TABLE =
             MENUS.register("prep_table",
-                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.PrepTableMenu::new));
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.prep.PrepTableMenu::new));
 
     /** Extended: the table's position rides in the open packet; what it holds is synced as slots. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu>> ENGINEERING_TABLE =
@@ -52,9 +52,9 @@ public class FMenus {
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu::new));
 
     /** Extended: as the Tool Table's; the block at the position says which bench it is. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.StationMenu>> STATION =
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.bench.StationMenu>> STATION =
             MENUS.register("station",
-                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.StationMenu::new));
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.bench.StationMenu::new));
 
     /** Extended: the stand's position and its current design ride in the open packet. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.weapon.ReloadingPressMenu>> RELOADING_PRESS =
@@ -72,14 +72,14 @@ public class FMenus {
                     () -> new MenuType<>(io.github.soundgoodizerfan.feedback.item.MaterialProbeMenu::new, FeatureFlags.VANILLA_SET));
 
     /** Plain: the table keeps nothing, so the client needs nothing to open it. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu>> BLUEPRINT_TABLE =
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintTableMenu>> BLUEPRINT_TABLE =
             MENUS.register("blueprint_table",
-                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu::new, FeatureFlags.VANILLA_SET));
+                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintTableMenu::new, FeatureFlags.VANILLA_SET));
 
     /** Plain: the pad slot is synced as a slot, so the client needs nothing to open it. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.EnchantMenu>> ENCHANT =
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.enchant.EnchantMenu>> ENCHANT =
             MENUS.register("enchanting",
-                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.EnchantMenu::new, FeatureFlags.VANILLA_SET));
+                    () -> new MenuType<>(io.github.soundgoodizerfan.feedback.modular.enchant.EnchantMenu::new, FeatureFlags.VANILLA_SET));
 
     /** Plain: the basin's slots and pool are synced as slots and data. */
     public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.machine.basin.CastingBasinMenu>> CASTING_BASIN =
@@ -92,9 +92,9 @@ public class FMenus {
                     () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.machine.mixer.MixerMenu::new));
 
     /** Extended: the worn pack's rows and the kind of each slot ride in the open packet; what it holds is synced as slots. */
-    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.PackMenu>> PACK =
+    public static final DeferredHolder<MenuType<?>, MenuType<io.github.soundgoodizerfan.feedback.modular.part.PackMenu>> PACK =
             MENUS.register("pack",
-                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.PackMenu::client));
+                    () -> IMenuTypeExtension.create(io.github.soundgoodizerfan.feedback.modular.part.PackMenu::client));
 
     private FMenus() {
     }

@@ -3,8 +3,8 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.BlueprintTableMenu;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintTableMenu;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -23,7 +23,7 @@ public record ModularBlueprintPayload(ModularDesign design, java.util.List<Modul
     public static final StreamCodec<RegistryFriendlyByteBuf, ModularBlueprintPayload> STREAM_CODEC =
             StreamCodec.composite(ModularDesign.STREAM_CODEC, ModularBlueprintPayload::design,
                     ModularDesign.STREAM_CODEC.apply(net.minecraft.network.codec.ByteBufCodecs.list(BlueprintTableMenu.MAX_VARIANTS)), ModularBlueprintPayload::variants,
-                    net.minecraft.network.codec.ByteBufCodecs.stringUtf8(io.github.soundgoodizerfan.feedback.modular.BlueprintCredit.MAX_TITLE * 4), ModularBlueprintPayload::title,
+                    net.minecraft.network.codec.ByteBufCodecs.stringUtf8(io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintCredit.MAX_TITLE * 4), ModularBlueprintPayload::title,
                     ModularBlueprintPayload::new);
 
     @Override
@@ -35,7 +35,7 @@ public record ModularBlueprintPayload(ModularDesign design, java.util.List<Modul
         context.enqueueWork(() -> {
             if (context.player().containerMenu instanceof BlueprintTableMenu menu)
                 menu.print(payload.design(), payload.variants(), payload.title(), context.player());
-            else if (context.player().containerMenu instanceof io.github.soundgoodizerfan.feedback.modular.PartBenchMenu bench)
+            else if (context.player().containerMenu instanceof io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu bench)
                 bench.printBlueprint(payload.design(), payload.variants(), payload.title(), context.player());
         });
     }

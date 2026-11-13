@@ -219,7 +219,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
                         melt.get(), melt.get(), new Tu(Float.MAX_VALUE), meltHold("ingot"), new TuRate(Float.MAX_VALUE), ItemStack.EMPTY,
                         new Tu(Float.MAX_VALUE), ItemStack.EMPTY,
                         new net.neoforged.neoforge.fluids.FluidStack(fluid.get(), Math.round(FormType.DEFAULT_MB
-                                * (1f - io.github.soundgoodizerfan.feedback.modular.ModularTuning.PART_REMELT_LOSS))),
+                                * (1f - io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.PART_REMELT_LOSS))),
                         false));
         });
         return out;
@@ -228,7 +228,7 @@ public class ThermalProcessTable extends SimpleJsonResourceReloadListener {
     /** The mB one item of {@code form} pours when melted: its volume, less the share swarf loses to oxide. */
     private static int melted(String form) {
         int mb = io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form);
-        return form.equals("swarf") ? Math.round(mb * (1f - io.github.soundgoodizerfan.feedback.modular.ModularTuning.SWARF_REMELT_LOSS)) : mb;
+        return form.equals("swarf") ? Math.round(mb * (1f - io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.SWARF_REMELT_LOSS)) : mb;
     }
 
     /**

@@ -467,11 +467,11 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             float burnt = io.github.soundgoodizerfan.feedback.process.DustHazard.burnOff(first, temperature, airlessRun());
             int poured = process.resultFluid().getAmount();
             // A whole made part pours the volume it holds (its cells of stock scaled by its axes), less what a remelt loses.
-            if (first.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
+            if (first.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem
                     && first.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get()))
-                poured = Math.round(io.github.soundgoodizerfan.feedback.modular.Filing.volumeMb(first, level == null
-                        ? java.util.Map.of() : io.github.soundgoodizerfan.feedback.modular.ModularTypes.on(level))
-                        * (1f - io.github.soundgoodizerfan.feedback.modular.ModularTuning.PART_REMELT_LOSS));
+                poured = Math.round(io.github.soundgoodizerfan.feedback.modular.bench.Filing.volumeMb(first, level == null
+                        ? java.util.Map.of() : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.on(level))
+                        * (1f - io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.PART_REMELT_LOSS));
             FluidStack result = process.resultFluid().copyWithAmount(Math.round(poured * (1f - burnt)));
             int overflow = alloy.amount() + result.getAmount() - tank.getCapacity();
             if (overflow > 0 && alloy.resolve().isEmpty())
@@ -481,7 +481,7 @@ public abstract class ThermalVesselCore extends io.github.soundgoodizerfan.feedb
             // A melt may also leave a solid behind (the slag of smelting an ore): its item result is that byproduct.
             placeHot(process.result().copy());
         } else if (process.fire().isPresent())
-            placeHot(io.github.soundgoodizerfan.feedback.modular.ModularStacks.fired(first, process.fire().get()));
+            placeHot(io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.fired(first, process.fire().get()));
         else
             placeHot(process.result().copy());
 

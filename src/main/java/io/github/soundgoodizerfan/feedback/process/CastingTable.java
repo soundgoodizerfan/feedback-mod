@@ -95,7 +95,7 @@ public class CastingTable extends SimpleJsonResourceReloadListener {
                         result = new net.minecraft.world.item.ItemStack(form, shape.count());
                     else if (items.containsKey("ingot") && material.kind().filter(k -> k == Material.Kind.METAL).isPresent())
                         result = net.minecraft.core.registries.BuiltInRegistries.ITEM.getOptional(Feedback.id(shape.form()))
-                                .filter(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+                                .filter(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)
                                 .map(part -> {
                                     var stack = new net.minecraft.world.item.ItemStack(part, shape.count());
                                     stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new MadeOf(id, "ingot", 1));

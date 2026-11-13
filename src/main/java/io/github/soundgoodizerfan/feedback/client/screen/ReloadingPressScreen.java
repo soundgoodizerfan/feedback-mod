@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.client.screen;
 
 import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
 import io.github.soundgoodizerfan.feedback.net.PressPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;

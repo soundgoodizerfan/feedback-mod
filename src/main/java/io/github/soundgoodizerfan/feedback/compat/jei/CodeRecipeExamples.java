@@ -184,8 +184,8 @@ final class CodeRecipeExamples {
             out.add(holder("torch", List.of(fuels, List.of(new ItemStack(Items.STICK))), 1, 2, List.of(new ItemStack(Items.TORCH, 4))));
 
         // Bootstrap tools: vanilla's layouts, a leather binding, a modular tool out.
-        for (var layout : io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.tools()) {
-            ItemStack made = io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.tool(layout);
+        for (var layout : io.github.soundgoodizerfan.feedback.modular.item.BootstrapToolRecipe.tools()) {
+            ItemStack made = io.github.soundgoodizerfan.feedback.modular.item.BootstrapToolRecipe.tool(layout);
             if (made.isEmpty() || made.is(layout.getResultItem(null).getItem()))
                 continue;
             List<List<ItemStack>> in = layout.getIngredients().stream()
@@ -203,11 +203,11 @@ final class CodeRecipeExamples {
      * the type's default build. A type whose items would not fit the grid is left to its Tools card.
      */
     private static void modular(Map<ResourceLocation, Material> materials, List<RecipeHolder<CraftingRecipe>> out) {
-        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
+        var types = io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known();
         types.forEach((id, type) -> {
-            if (type.face() || type.blueprint() || type.family() == io.github.soundgoodizerfan.feedback.modular.ModularType.Family.DISH || type.patterns().isEmpty())
+            if (type.face() || type.blueprint() || type.family() == io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.DISH || type.patterns().isEmpty())
                 return;
-            var counts = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.counts(type, 0, java.util.Set.of());
+            var counts = io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.counts(type, 0, java.util.Set.of());
             List<List<ItemStack>> in = new ArrayList<>();
             for (Map.Entry<String, Integer> r : counts.entrySet()) {
                 List<ItemStack> choices = PartBenchToolCategory.stacks(type.roles().get(r.getKey()), 1, materials);
@@ -218,8 +218,8 @@ final class CodeRecipeExamples {
             }
             if (in.isEmpty() || in.size() > 9)
                 return;
-            io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(id, types, materials)
-                    .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(d, types, materials))
+            io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.starter(id, types, materials)
+                    .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.build(d, types, materials))
                     .ifPresent(made -> out.add(holder("modular_" + id.getPath(), in, Math.min(3, in.size()), (in.size() + 2) / 3, List.of(made))));
         });
     }

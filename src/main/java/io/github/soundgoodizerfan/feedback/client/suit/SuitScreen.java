@@ -3,9 +3,9 @@
 package io.github.soundgoodizerfan.feedback.client.suit;
 
 import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.net.SuitPayload;
 import io.github.soundgoodizerfan.feedback.net.SuitSyncPayload;
 import io.github.soundgoodizerfan.feedback.suit.Ability;

@@ -35,8 +35,8 @@ public class FoodTooltip {
                 io.github.soundgoodizerfan.feedback.process.ClientMaterials.get(), event.getItemStack().getItem());
         if (located.isPresent()) {
             java.util.Set<String> roles = new java.util.LinkedHashSet<>();
-            for (var type : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().values())
-                if (type.family() == io.github.soundgoodizerfan.feedback.modular.ModularType.Family.DISH)
+            for (var type : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known().values())
+                if (type.family() == io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.DISH)
                     for (var role : type.roles().values())
                         if (!role.name().equals("container") && role.accepts(located.get()))
                             roles.add(role.name());
@@ -57,7 +57,7 @@ public class FoodTooltip {
                                 "perk.feedback." + c.substring(5) + ".gloss")));
             var cut = event.getItemStack().get(FDataComponents.FOOD_CUT.get());
             if (cut != null)
-                event.getToolTip().add(io.github.soundgoodizerfan.feedback.modular.PartBenchMenu.cutName(cut)
+                event.getToolTip().add(io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu.cutName(cut)
                         .withStyle(cut.ragged() ? ChatFormatting.GOLD : ChatFormatting.GRAY));
             var knead = event.getItemStack().get(FDataComponents.FOOD_KNEAD.get());
             if (knead != null)

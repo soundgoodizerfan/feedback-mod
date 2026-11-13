@@ -3,8 +3,8 @@
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
-import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStrike;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
+import static io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds.onStrike;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;

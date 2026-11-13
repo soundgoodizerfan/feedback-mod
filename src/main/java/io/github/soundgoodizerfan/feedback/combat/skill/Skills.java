@@ -48,8 +48,8 @@ public final class Skills {
     /** Whether the node that unlocks {@code move} asks for a trait ({@code needs_trait}) and {@code who} has it, held or worn. */
     public static boolean gearAllows(LivingEntity who, String move) {
         var need = needsTrait(move);
-        return need.isEmpty() || io.github.soundgoodizerfan.feedback.modular.ModularTraits.has(who.getMainHandItem(), need.get())
-                || io.github.soundgoodizerfan.feedback.modular.ModularTraits.worn(who).stream().anyMatch(w -> w.id().equals(need.get()));
+        return need.isEmpty() || io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits.has(who.getMainHandItem(), need.get())
+                || io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits.worn(who).stream().anyMatch(w -> w.id().equals(need.get()));
     }
 
     /** The trait the node unlocking {@code move} needs, if any. */

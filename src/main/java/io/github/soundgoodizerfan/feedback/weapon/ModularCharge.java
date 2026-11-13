@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.weapon;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularItem;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularItem;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 
 import net.minecraft.core.BlockPos;

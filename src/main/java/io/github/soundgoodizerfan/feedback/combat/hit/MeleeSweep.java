@@ -5,8 +5,8 @@ package io.github.soundgoodizerfan.feedback.combat.hit;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -85,7 +85,7 @@ public final class MeleeSweep {
     /** A swing the client's pick missed everything on. */
     public static void miss(ServerPlayer player) {
         restoreFall(player);
-        io.github.soundgoodizerfan.feedback.modular.TestRigBlock.swing(player);
+        io.github.soundgoodizerfan.feedback.modular.bench.TestRigBlock.swing(player);
         SweptVolume.halfWidth(player).ifPresent(w -> {
             List<LivingEntity> targets = SweptVolume.targets(player, w);
             if (!targets.isEmpty()) {

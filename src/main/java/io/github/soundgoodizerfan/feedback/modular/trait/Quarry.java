@@ -5,7 +5,6 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

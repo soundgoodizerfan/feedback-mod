@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.compat.jei;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe;
+import io.github.soundgoodizerfan.feedback.modular.item.BootstrapToolRecipe;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;

@@ -11,8 +11,8 @@ import io.github.soundgoodizerfan.feedback.core.hazard.PressureBurst;
 import io.github.soundgoodizerfan.feedback.core.unit.Mb;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.machine.bellows.Blown;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 

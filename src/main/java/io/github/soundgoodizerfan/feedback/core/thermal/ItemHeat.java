@@ -75,7 +75,7 @@ public final class ItemHeat {
         }
         stack.set(FDataComponents.TEMPERATURE.get(), tu.value());
         stack.set(FDataComponents.HEATED_AT.get(), level.getGameTime());
-        io.github.soundgoodizerfan.feedback.modular.Attunements.eraseIfOverheated(stack, tu, level);
+        io.github.soundgoodizerfan.feedback.modular.attunement.Attunements.eraseIfOverheated(stack, tu, level);
         io.github.soundgoodizerfan.feedback.process.WorkHardening.annealIfHot(stack, tu, level);
     }
 
@@ -105,7 +105,7 @@ public final class ItemHeat {
      */
     public static Tu felt(ItemStack stack, Level level) {
         Tu real = get(stack, level);
-        Tu edge = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularItem
+        Tu edge = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularItem
                 ? io.github.soundgoodizerfan.feedback.modular.attunement.HeatKinds.edgeTu(stack) : null;
         return edge != null && edge.value() > real.value() ? edge : real;
     }

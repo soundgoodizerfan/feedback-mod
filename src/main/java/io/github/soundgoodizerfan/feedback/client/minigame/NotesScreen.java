@@ -5,10 +5,10 @@ package io.github.soundgoodizerfan.feedback.client.minigame;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.ModularRework;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularRework;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableBlockEntity;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu;
 import io.github.soundgoodizerfan.feedback.net.MinigameOpenPayload;
@@ -67,7 +67,7 @@ final class NotesScreen extends Screen {
         ItemStack specimen = menu.getSlot(EngineeringTableMenu.slot(EngineeringTableBlockEntity.SPECIMEN)).getItem();
         var level = Minecraft.getInstance().level;
         if (level != null && ModularStacks.design(specimen) != null)
-            parts.addAll(ModularRework.dismantle(specimen, ClientMaterials.on(level), io.github.soundgoodizerfan.feedback.modular.ModularTypes.on(level), 0f));
+            parts.addAll(ModularRework.dismantle(specimen, ClientMaterials.on(level), io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.on(level), 0f));
         this.rounds = Math.max(1, Math.min(Math.min(ModularTuning.NOTES_MAX_PARTS, Math.max(1, parts.size())), session.rounds()));
         this.scores = new float[rounds];
         this.spans = new float[rounds];

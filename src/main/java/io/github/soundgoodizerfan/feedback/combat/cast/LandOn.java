@@ -6,7 +6,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.SubscribeEvent;

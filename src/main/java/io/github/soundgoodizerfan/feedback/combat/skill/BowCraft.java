@@ -111,7 +111,7 @@ public final class BowCraft {
             return;
         var using = p.getUseItem();
         if (!p.isUsingItem() || !(using.getItem() instanceof ProjectileWeaponItem)
-                || p.getTicksUsingItem() < io.github.soundgoodizerfan.feedback.modular.ModularStacks.drawTicks(using)) {
+                || p.getTicksUsingItem() < io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.drawTicks(using)) {
             if (!p.isUsingItem())
                 HELD.remove(p.getUUID());
             return;

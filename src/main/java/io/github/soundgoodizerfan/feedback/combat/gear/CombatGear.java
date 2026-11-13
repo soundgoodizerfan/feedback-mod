@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.resources.ResourceLocation;

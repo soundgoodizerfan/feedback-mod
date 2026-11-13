@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.client.tooltip;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.client.gun.GunPreview;
-import io.github.soundgoodizerfan.feedback.modular.ModularBlueprintItem;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ModularBlueprintItem;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;

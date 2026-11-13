@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.machine.capacitor.LeydenJarBlockEntity;
 import io.github.soundgoodizerfan.feedback.core.hazard.Shock;
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.entity.EquipmentSlot;

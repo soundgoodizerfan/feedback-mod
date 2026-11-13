@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
 import net.minecraft.core.registries.Registries;

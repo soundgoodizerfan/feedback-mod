@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.LivingEntity;
@@ -28,8 +27,8 @@ public final class Mail implements ModularTrait {
             Billhook.open(wearer, params.get("pierce_bleed_seconds", 4f), params.get("pierce_bleed_damage", 1f));
         if (!(event.getSource().getDirectEntity() instanceof LivingEntity attacker))
             return;
-        ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.StrikeSource.weapon(attacker, event.getSource());
-        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(weapon);
+        ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource.weapon(attacker, event.getSource());
+        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(weapon);
         if (family == ModularType.Family.SPEAR)
             Billhook.open(wearer, params.get("pierce_bleed_seconds", 4f), params.get("pierce_bleed_damage", 1f));
         if (family == ModularType.Family.MACE || (family == null && weapon.is(ItemTags.MACE_ENCHANTABLE)))

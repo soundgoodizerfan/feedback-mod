@@ -5,10 +5,10 @@ package io.github.soundgoodizerfan.feedback.combat.skill;
 import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
 import io.github.soundgoodizerfan.feedback.combat.hit.BareMode;
 import io.github.soundgoodizerfan.feedback.core.hazard.Hazards;
-import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
 
 import net.minecraft.tags.DamageTypeTags;

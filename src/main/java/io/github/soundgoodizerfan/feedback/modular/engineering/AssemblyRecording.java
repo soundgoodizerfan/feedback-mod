@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.item.DataStickItem;
 import io.github.soundgoodizerfan.feedback.item.RecordedAssembly;
-import io.github.soundgoodizerfan.feedback.modular.Treatises;
+import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 

@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.combat.hit;
 
 import io.github.soundgoodizerfan.feedback.combat.cast.Disorder;
 import io.github.soundgoodizerfan.feedback.combat.skill.Weakness;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -15,8 +15,8 @@ import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
-import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import io.github.soundgoodizerfan.feedback.modular.trait.Billhook;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 

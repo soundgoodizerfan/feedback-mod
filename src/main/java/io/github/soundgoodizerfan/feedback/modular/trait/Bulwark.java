@@ -4,9 +4,8 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.RangedDispatch;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.combat.RangedDispatch;
 
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;

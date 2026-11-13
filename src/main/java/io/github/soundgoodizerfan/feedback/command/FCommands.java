@@ -14,15 +14,15 @@ import com.mojang.logging.LogUtils;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularHeads;
-import io.github.soundgoodizerfan.feedback.modular.ModularPartItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.Station;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularHeads;
+import io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bench.Station;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import net.minecraft.core.registries.BuiltInRegistries;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
@@ -124,7 +124,7 @@ public final class FCommands {
         ServerPlayer player = c.getSource().getPlayerOrException();
         ItemStack held = player.getMainHandItem();
         boolean gun = !BatteryStack.is(held);
-        ItemStack battery = gun ? io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.cell(held) : held;
+        ItemStack battery = gun ? io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.cell(held) : held;
         net.minecraft.nbt.CompoundTag state = BatteryStack.state(battery);
         if (state == null)
             throw NO_BATTERY.create();
@@ -132,7 +132,7 @@ public final class FCommands {
         next.putFloat("Charge", BatteryStack.effectiveCapacity(next));
         battery.set(FDataComponents.BATTERY.get(), next);
         if (gun)
-            io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.setCell(held, battery);
+            io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.setCell(held, battery);
         c.getSource().sendSuccess(() -> Component.translatable("commands.feedback.charged"), true);
         return 1;
     }
@@ -229,7 +229,7 @@ public final class FCommands {
             throw NO_MODULAR.create();
         ItemStack out = new ItemStack(io.github.soundgoodizerfan.feedback.registry.FModular.BLUEPRINT.get());
         out.set(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get(), design);
-        var figures = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
+        var figures = io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.predict(design, ModularTypes.get().types(), MaterialTable.get().materials());
         figures.ifPresent(f -> out.set(io.github.soundgoodizerfan.feedback.registry.FModular.FIGURES.get(), f));
         var named = held.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);
         if (named != null)
@@ -244,7 +244,7 @@ public final class FCommands {
         ModularDesign design = ModularStacks.design(blueprint);
         // The item the Tool Table makes from this design's parts: the blueprint and the table cannot disagree.
         ItemStack out = design == null ? ItemStack.EMPTY
-                : io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(design, ModularTypes.get().types(), MaterialTable.get().materials()).orElse(ItemStack.EMPTY);
+                : io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.build(design, ModularTypes.get().types(), MaterialTable.get().materials()).orElse(ItemStack.EMPTY);
         if (out.isEmpty())
             throw NO_BLUEPRINT.create();
         var named = blueprint.get(net.minecraft.core.component.DataComponents.CUSTOM_NAME);

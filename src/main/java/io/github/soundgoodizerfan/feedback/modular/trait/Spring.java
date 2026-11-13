@@ -2,12 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.SpringPart;
-import io.github.soundgoodizerfan.feedback.modular.SpringSet;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.SpringPart;
+import io.github.soundgoodizerfan.feedback.modular.bake.SpringSet;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
@@ -27,7 +26,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
  * it go and adds the damage the spring stores (its volume times its stiffness), then it has to be reset for {@code reset} ticks before
  * it can be cocked again. A sword's release also lunges the wielder forward. The spring takes the reaction of what it hits, more against
  * armour, and the mount rates it by the weapon's toughness: past that rating it takes a set and stores less each time, far past it it
- * snaps ({@link SpringSet}). On a thrown weapon the spring adds to the throw instead ({@link io.github.soundgoodizerfan.feedback.modular.Throwing}).
+ * snaps ({@link SpringSet}). On a thrown weapon the spring adds to the throw instead ({@link io.github.soundgoodizerfan.feedback.modular.combat.Throwing}).
  */
 public final class Spring implements ModularTrait {
 

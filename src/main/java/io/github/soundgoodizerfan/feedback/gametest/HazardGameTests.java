@@ -148,12 +148,12 @@ public class HazardGameTests {
         helper.assertTrue(wood > HazardTuning.CONTACT_BURN_TU.value(), "even wooden tongs hold what a bare hand cannot: " + wood);
         helper.assertTrue(copper <= 1000f, "copper arms give out at copper's melt: " + copper);
 
-        var wool = io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(new io.github.soundgoodizerfan.feedback.modular.ModularDesign(
+        var wool = io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.build(new io.github.soundgoodizerfan.feedback.modular.type.ModularDesign(
                 io.github.soundgoodizerfan.feedback.Feedback.id("glove"), java.util.List.of(
-                        new io.github.soundgoodizerfan.feedback.modular.ModularDesign.Part("B", io.github.soundgoodizerfan.feedback.Feedback.id("wool"), "white_carpet", 4)),
-                io.github.soundgoodizerfan.feedback.modular.Edge.STANDARD),
-                io.github.soundgoodizerfan.feedback.modular.ModularTypes.known(), io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()).orElseThrow();
-        var gauntlet = (io.github.soundgoodizerfan.feedback.modular.ModularGlove) wool.getItem();
+                        new io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.Part("B", io.github.soundgoodizerfan.feedback.Feedback.id("wool"), "white_carpet", 4)),
+                io.github.soundgoodizerfan.feedback.modular.bench.Edge.STANDARD),
+                io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known(), io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials()).orElseThrow();
+        var gauntlet = (io.github.soundgoodizerfan.feedback.modular.item.ModularGlove) wool.getItem();
         float glove = gauntlet.handlesUpToTu(wool, level);
         helper.assertTrue(glove > wood,
                 "wool-lined gloves hold a lit furnace: " + glove);

@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.List;
 
 /** An Engine block in hand: a modular build (the {@code engine} type) carrying the design it bakes (spec section 6). */
-public class EngineItem extends BlockItem implements io.github.soundgoodizerfan.feedback.modular.Modular {
+public class EngineItem extends BlockItem implements io.github.soundgoodizerfan.feedback.modular.type.Modular {
 
     public EngineItem(Block block, Properties properties) {
         super(block, properties);
@@ -19,12 +19,12 @@ public class EngineItem extends BlockItem implements io.github.soundgoodizerfan.
 
     @Override
     public Component getName(ItemStack stack) {
-        return io.github.soundgoodizerfan.feedback.modular.ModularStacks.name(stack, super.getName(stack));
+        return io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.name(stack, super.getName(stack));
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        io.github.soundgoodizerfan.feedback.modular.ModularTooltip.add(stack, tooltip);
+        io.github.soundgoodizerfan.feedback.modular.bake.ModularTooltip.add(stack, tooltip);
         EngineTooltip.add(stack, context, tooltip);
     }
 }

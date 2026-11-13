@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.client.gun;
 
 import io.github.soundgoodizerfan.feedback.core.FTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.soundgoodizerfan.feedback.Feedback;
@@ -21,7 +21,7 @@ import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
 import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunSpec;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunHazard;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
@@ -386,7 +386,7 @@ public final class GunClient {
         boolean onRelease = mech != null && active && mech.fireOnRelease(gun);
         if (mech != null && mech.tracksTrigger(gun) && (pressed || released)) {
             PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload(down, off));
-            io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.setHeld(gun, down, mc.level.getGameTime());
+            io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.setHeld(gun, down, mc.level.getGameTime());
         }
         t.wasDown = down;
         if (pressed && mode == FireMode.BURST && figures != null && !onRelease)

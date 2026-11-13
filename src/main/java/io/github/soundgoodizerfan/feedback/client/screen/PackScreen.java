@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.screen;
 
-import io.github.soundgoodizerfan.feedback.modular.PackMenu;
+import io.github.soundgoodizerfan.feedback.modular.part.PackMenu;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ContainerScreen;

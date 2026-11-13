@@ -11,7 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 
 /**
  * How a food was cut at the Prep Table: absent means whole.
- * Both fields are classes, never a measurement: {@link io.github.soundgoodizerfan.feedback.modular.PrepWork} grades them.
+ * Both fields are classes, never a measurement: {@link io.github.soundgoodizerfan.feedback.modular.prep.PrepWork} grades them.
  *
  * @param level 1 sliced, 2 minced (0 is whole and is stored as no component)
  * @param grade 0 even, 1 mixed, 2 ragged: how alike the pieces came out

@@ -3,8 +3,7 @@
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;

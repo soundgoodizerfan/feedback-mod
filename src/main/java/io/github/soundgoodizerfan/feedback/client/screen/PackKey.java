@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.client.screen;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.PackPayload;
+import io.github.soundgoodizerfan.feedback.modular.part.PackPayload;
 
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;

@@ -5,9 +5,9 @@ package io.github.soundgoodizerfan.feedback.client.bench;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularModifiers;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularModifiers;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.client.tooltip.Readout;
 

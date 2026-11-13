@@ -28,7 +28,7 @@ public final class ToolScroll {
         Player player = Minecraft.getInstance().player;
         if (player == null || Minecraft.getInstance().screen != null || !player.isShiftKeyDown()
                 || !(player.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.item.DataConnectorItem
-                        || io.github.soundgoodizerfan.feedback.modular.ModularHandTool.strikes(player.getMainHandItem()))
+                        || io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool.strikes(player.getMainHandItem()))
                 || event.getScrollDeltaY() == 0)
             return;
         event.setCanceled(true);

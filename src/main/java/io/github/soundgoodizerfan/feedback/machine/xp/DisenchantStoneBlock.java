@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.github.soundgoodizerfan.feedback.core.xp.XpNode;
-import io.github.soundgoodizerfan.feedback.modular.Attunements;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.attunement.Attunements;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 

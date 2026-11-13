@@ -11,9 +11,9 @@ import io.github.soundgoodizerfan.feedback.combat.hit.OffhandStrike;
 import io.github.soundgoodizerfan.feedback.combat.hit.Wielding;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.net.OffhandStrikePayload;
 import io.github.soundgoodizerfan.feedback.net.SwingPlayPayload;
 import io.github.soundgoodizerfan.feedback.net.SwingStartPayload;
@@ -242,7 +242,7 @@ public final class UpswingSwing {
                 mc.gameMode.attack(player, hit.getEntity());
             else {
                 if (mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult b
-                        && mc.level.getBlockState(b.getBlockPos()).getBlock() instanceof io.github.soundgoodizerfan.feedback.modular.TestRigBlock)
+                        && mc.level.getBlockState(b.getBlockPos()).getBlock() instanceof io.github.soundgoodizerfan.feedback.modular.bench.TestRigBlock)
                     PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.MeleeSweepPayload());
                 else
                     MeleeSweepClient.sweepIfExpected(player);
@@ -284,8 +284,8 @@ public final class UpswingSwing {
         String side = right ? "right" : "left";
         // An axe is a dig-family tool but swings as a blade (it is the first weapon, before any Tool Table).
         // An axe face is a dig-family face that swings as a blade (it is the first weapon, before any bench).
-        var family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(held);
-        if (family == ModularType.Family.DIG && io.github.soundgoodizerfan.feedback.modular.ModularFaces.actions(held).contains("strip"))
+        var family = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(held);
+        if (family == ModularType.Family.DIG && io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.actions(held).contains("strip"))
             family = ModularType.Family.BLADE;
         return switch (family) {
             case BLADE -> two

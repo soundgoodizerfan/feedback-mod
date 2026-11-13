@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import io.github.soundgoodizerfan.feedback.weapon.GunTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;

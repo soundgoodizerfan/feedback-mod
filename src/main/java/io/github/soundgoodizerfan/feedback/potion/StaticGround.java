@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.potion;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
-import io.github.soundgoodizerfan.feedback.modular.Attunements;
+import io.github.soundgoodizerfan.feedback.modular.attunement.Attunements;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;

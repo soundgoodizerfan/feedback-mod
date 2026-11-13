@@ -22,9 +22,9 @@ import io.github.soundgoodizerfan.feedback.combat.parry.ParryStats;
 import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.registry.FCombat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -153,7 +153,7 @@ public final class SwingClips {
         var design = ModularStacks.design(stack);
         if (design == null || ModularStacks.broken(stack))
             return false;
-        return io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack) == ModularType.Family.SPEAR;
+        return io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack) == ModularType.Family.SPEAR;
     }
 
     private static Paced layer(AbstractClientPlayer player) {

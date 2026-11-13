@@ -9,14 +9,14 @@ import java.util.TreeMap;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.modular.Attunements;
-import io.github.soundgoodizerfan.feedback.modular.EnchantGame;
-import io.github.soundgoodizerfan.feedback.modular.EnchantMenu;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.SgaGlyphs;
-import io.github.soundgoodizerfan.feedback.modular.Sigil;
+import io.github.soundgoodizerfan.feedback.modular.attunement.Attunements;
+import io.github.soundgoodizerfan.feedback.modular.enchant.EnchantGame;
+import io.github.soundgoodizerfan.feedback.modular.enchant.EnchantMenu;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.enchant.SgaGlyphs;
+import io.github.soundgoodizerfan.feedback.modular.enchant.Sigil;
 import io.github.soundgoodizerfan.feedback.net.EnchantBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.EnchantFinishPayload;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
@@ -130,7 +130,7 @@ public class EnchantScreen extends SkinnedScreen<EnchantMenu> {
 
     /** Whether the player may attempt this effect with its guide: a starter, or one learned. */
     private boolean known(Attunements.Effect e) {
-        return minecraft != null && minecraft.player != null && io.github.soundgoodizerfan.feedback.modular.AttunementKnowledge.knows(minecraft.player, e);
+        return minecraft != null && minecraft.player != null && io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKnowledge.knows(minecraft.player, e);
     }
 
     /** What the list and the pad call an effect: its name, or a blank until the player knows it. */

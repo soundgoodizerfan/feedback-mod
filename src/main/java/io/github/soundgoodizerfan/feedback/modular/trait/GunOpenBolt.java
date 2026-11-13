@@ -4,7 +4,6 @@ package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree.Figure;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 
@@ -13,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Open bolt (spec 8.4): the gun fires from an open bolt, so there is no round in the hot chamber to cook off
- * ({@link io.github.soundgoodizerfan.feedback.modular.ModularTraits#cooksOff}) and the air cools it, paid in a
+ * ({@link io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits#cooksOff}) and the air cools it, paid in a
  * poorer first shot: after {@code idle_ms} without firing the bolt has to slam forward and the first shot's
  * spread is {@code first_shot_spread} times wider; once it is running, {@link Figure#RUNNING_BOLT} steadies it.
  * (Server-resolved: the client does not know when you last fired.)

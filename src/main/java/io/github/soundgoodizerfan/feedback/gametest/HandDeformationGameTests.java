@@ -116,11 +116,11 @@ public class HandDeformationGameTests {
 
     /** The starter hand hammer: a hafted tool whose one face is a hammer head. */
     private static ItemStack hammer(Level level) {
-        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.on(level);
+        var types = io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.on(level);
         var materials = io.github.soundgoodizerfan.feedback.process.ClientMaterials.on(level);
-        return io.github.soundgoodizerfan.feedback.modular.ToolDesigns.starter(io.github.soundgoodizerfan.feedback.Feedback.id("hand_hammer"), types, materials)
-                .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.ModularStacks.blank(d.type())
-                        .filter(st -> io.github.soundgoodizerfan.feedback.modular.ModularStacks.assemble(st, d, materials, types)))
+        return io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.starter(io.github.soundgoodizerfan.feedback.Feedback.id("hand_hammer"), types, materials)
+                .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.blank(d.type())
+                        .filter(st -> io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.assemble(st, d, materials, types)))
                 .orElse(ItemStack.EMPTY);
     }
 }

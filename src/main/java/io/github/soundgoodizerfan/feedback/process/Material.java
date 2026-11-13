@@ -758,11 +758,11 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     public Attuning attuning() {
         return attunement.orElseGet(() -> {
             float top = minTemperature.value() > 0 ? minTemperature.value()
-                    : io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_COLD_POINT_TU;
-            return new Attuning(new Tu(top), new Tu(top - io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_WINDOW_TU),
-                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_COERCIVE,
-                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_LOOP_WIDTH,
-                    io.github.soundgoodizerfan.feedback.modular.ModularTuning.ENCHANT_LAG_TICKS,
+                    : io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.ENCHANT_COLD_POINT_TU;
+            return new Attuning(new Tu(top), new Tu(top - io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.ENCHANT_WINDOW_TU),
+                    io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.ENCHANT_COERCIVE,
+                    io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.ENCHANT_LOOP_WIDTH,
+                    io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.ENCHANT_LAG_TICKS,
                     kind.orElse(null) != Kind.METAL);
         });
     }
@@ -806,7 +806,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         for (Map.Entry<ResourceLocation, Material> e : materials.entrySet())
             for (Map.Entry<String, Item> form : e.getValue().items(e.getKey()).entrySet())
                 // A shaped part is one item for every material: it is told by its MadeOf, not its item.
-                if (form.getValue() == item && !(item instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem))
+                if (form.getValue() == item && !(item instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem))
                     return Optional.of(new Located(e.getKey(), e.getValue(), form.getKey()));
         return Optional.empty();
     }
@@ -819,13 +819,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         // A finished modular item that can be held in another (a suit module) is found by its nest form and wearing material.
         if (stack.has(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get())
                 || stack.has(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CIRCUIT.get())) {
-            Optional<Located> held = io.github.soundgoodizerfan.feedback.modular.ModularNest.locate(materials, stack);
+            Optional<Located> held = io.github.soundgoodizerfan.feedback.modular.type.ModularNest.locate(materials, stack);
             if (held.isPresent())
                 return held;
         }
         MadeOf made = stack.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
         // Raw stock the enchanting table stamped (a rod, a grip) is still found by its item: the stamp only carries the attunement.
-        if (made == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem))
+        if (made == null || !(stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem))
             return find(materials, stack.getItem());
         Material m = materials.get(made.material());
         return m == null ? Optional.empty()
@@ -853,7 +853,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
     public java.util.Optional<net.minecraft.world.item.ItemStack> stack(ResourceLocation id, String form) {
         return item(id, form).map(i -> {
             net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(i);
-            if (i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+            if (i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)
                 stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new MadeOf(id, PART_STOCK, 1));
             return stack;
         });
@@ -861,7 +861,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
 
     /** What a form step takes: the item, and for a shaped part also its material, so copper's cylinder is not steel's. */
     public java.util.Optional<net.minecraft.world.item.crafting.Ingredient> ingredient(ResourceLocation id, String form) {
-        return item(id, form).map(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
+        return item(id, form).map(i -> i instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem
                 ? net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
                 io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(), new MadeOf(id, PART_STOCK, 1), i)
                 : net.minecraft.world.item.crafting.Ingredient.of(i));

@@ -51,7 +51,7 @@ public class MechanicalPressBlock extends Block implements EntityBlock, Rotatabl
         if (!(level.getBlockEntity(pos) instanceof MechanicalPressBlockEntity press))
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-        if (io.github.soundgoodizerfan.feedback.modular.ModularFaces.has(stack, "head_blank")) {
+        if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.has(stack, "head_blank")) {
             if (!level.isClientSide)
                 give(player, press.seatHead(stack));
             return ItemInteractionResult.sidedSuccess(level.isClientSide);

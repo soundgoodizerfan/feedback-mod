@@ -29,7 +29,7 @@ import io.github.soundgoodizerfan.feedback.fitting.SidedFitting;
 import io.github.soundgoodizerfan.feedback.fitting.UpgradeFitting;
 import io.github.soundgoodizerfan.feedback.fitting.upgrade.ReliefValveFitting;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
-import io.github.soundgoodizerfan.feedback.modular.FigureStore;
+import io.github.soundgoodizerfan.feedback.modular.bake.FigureStore;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 

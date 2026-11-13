@@ -8,7 +8,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
-import io.github.soundgoodizerfan.feedback.modular.ThrownWeapon;
+import io.github.soundgoodizerfan.feedback.modular.combat.ThrownWeapon;
 import io.github.soundgoodizerfan.feedback.client.combat.TetherRopes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;

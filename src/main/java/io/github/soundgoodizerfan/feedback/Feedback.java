@@ -75,7 +75,7 @@ public class Feedback {
         FCreativeTabs.register(modBus);
         FDataComponents.register(modBus);
         io.github.soundgoodizerfan.feedback.potion.PotionAttachments.register(modBus);
-        io.github.soundgoodizerfan.feedback.modular.AttunementKnowledge.register(modBus);
+        io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKnowledge.register(modBus);
         FCapabilities.register(modBus);
         FRecipes.register(modBus);
         io.github.soundgoodizerfan.feedback.registry.FEngineering.register(modBus);
@@ -95,11 +95,11 @@ public class Feedback {
         NeoForge.EVENT_BUS.addListener(Feedback::onAddReloadListeners);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.machine.piston.PneumaticPistons::onPistonPre);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.process.CropClimate::onGrow);
-        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onPlayerTick);
-        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onEntityJoin);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.item.ModularEvents::onPlayerTick);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.item.ModularEvents::onEntityJoin);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.combat.tether.Tethers::onIncomingDamage);
-        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onShieldBlock);
-        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.ModularEvents::onGrindstone);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.item.ModularEvents::onShieldBlock);
+        NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.modular.item.ModularEvents::onGrindstone);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.VillageEvents::onInteract);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.MarketDay::onLevelTick);
         NeoForge.EVENT_BUS.addListener(io.github.soundgoodizerfan.feedback.village.Freight::onLevelTick);
@@ -134,7 +134,7 @@ public class Feedback {
     private static void onAddReloadListeners(AddReloadListenerEvent event) {
         event.addListener(AmbientTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.vehicle.AirDensityTable.get());
-        event.addListener(io.github.soundgoodizerfan.feedback.modular.ShieldSources.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.modular.combat.ShieldSources.get());
         event.addListener(io.github.soundgoodizerfan.feedback.suit.MobHeat.get());
         event.addListener(MaterialTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.CompoundTable.get());
@@ -152,9 +152,9 @@ public class Feedback {
         event.addListener(io.github.soundgoodizerfan.feedback.village.BuysTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.geology.BasinTable.get());
-        event.addListener(io.github.soundgoodizerfan.feedback.modular.ModularTypes.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunOptions.get());
-        event.addListener(io.github.soundgoodizerfan.feedback.modular.Attunements.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.modular.attunement.Attunements.get());
         event.addListener(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get());
         event.addListener(io.github.soundgoodizerfan.feedback.combat.skill.SkillTrees.get());
     }
@@ -379,9 +379,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.SuitSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SuitSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SuitSyncPayload::handle)
-                .playToServer(io.github.soundgoodizerfan.feedback.modular.PackPayload.TYPE,
-                        io.github.soundgoodizerfan.feedback.modular.PackPayload.STREAM_CODEC,
-                        io.github.soundgoodizerfan.feedback.modular.PackPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.modular.part.PackPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.modular.part.PackPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.modular.part.PackPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.combat.parry.ParryPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.combat.parry.ParryPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.combat.parry.ParryPayload::handle)
@@ -431,9 +431,9 @@ public class Feedback {
         send(event, new io.github.soundgoodizerfan.feedback.net.CompoundSyncPayload(
                 io.github.soundgoodizerfan.feedback.process.CompoundTable.get().all()));
         send(event, new io.github.soundgoodizerfan.feedback.net.AttunementSyncPayload(
-                io.github.soundgoodizerfan.feedback.modular.Attunements.get().effects()));
+                io.github.soundgoodizerfan.feedback.modular.attunement.Attunements.get().effects()));
         send(event, new io.github.soundgoodizerfan.feedback.net.ModularTypeSyncPayload(
-                io.github.soundgoodizerfan.feedback.modular.ModularTypes.get().types()));
+                io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.get().types()));
         send(event, new io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload(io.github.soundgoodizerfan.feedback.process.MixtureTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get().listings()));

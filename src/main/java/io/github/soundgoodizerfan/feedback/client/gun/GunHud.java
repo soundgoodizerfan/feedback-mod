@@ -68,7 +68,7 @@ public final class GunHud {
         int slide = slider.offset(gun.getItem(), 140) * (left ? -1 : 1);
         if (!(gun.getItem() instanceof GunItem))
             return;
-        if (gun.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularElectricGun) {
+        if (gun.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun) {
             electricCard(g, mc, gun, left, slide);
             return;
         }
@@ -133,13 +133,13 @@ public final class GunHud {
      */
     private static void electricCard(GuiGraphics g, Minecraft mc, ItemStack gun, boolean left, int slide) {
         Font font = mc.font;
-        var spec = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.specOf(gun);
+        var spec = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.specOf(gun);
         long game = mc.level.getGameTime();
         int edge = left ? 12 : g.guiWidth() - 12, y = g.guiHeight() - 80;
-        boolean tether = spec != null && spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.BACKPACK_TETHER;
-        float charge = tether ? tetherCharge(mc, spec) : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chargeFraction(gun);
+        boolean tether = spec != null && spec.seat() == io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Seat.BACKPACK_TETHER;
+        float charge = tether ? tetherCharge(mc, spec) : io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.chargeFraction(gun);
         Component count = Component.literal(charge < 0f ? "--" : Math.round(charge * 100f) + "%");
-        float heat = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.heatFraction(gun, game);
+        float heat = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.heatFraction(gun, game);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + GunItem.mode(gun).getSerializedName());
         String state = charge < 0f ? (tether ? "no_tether" : "no_cell") : charge <= 0f ? "flat" : null;
         int w = CARD_W, x0 = left ? edge : edge - w;
@@ -177,30 +177,30 @@ public final class GunHud {
     }
 
     /** The colour of a lit lamp: its own, or the hold or pump charge's state (green, yellow, red, blinking red) when one is fitted. */
-    private static int lamp(io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec spec, ItemStack gun, long game, int plain) {
+    private static int lamp(io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec spec, ItemStack gun, long game, int plain) {
         float c = -1f;
         if (spec.holdCharge())
-            c = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.holdShare(gun, game);
+            c = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.holdShare(gun, game);
         if (spec.pump())
-            c = Math.max(c, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.pumps(gun)
-                    / (float) io.github.soundgoodizerfan.feedback.modular.ModularTuning.EGUN_PUMP_MAX);
+            c = Math.max(c, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.pumps(gun)
+                    / (float) io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.EGUN_PUMP_MAX);
         return io.github.soundgoodizerfan.feedback.client.gun.ChargeColour.of(c, plain);
     }
 
     /** A tethered gun's source: a suit's bay battery, else the pack's fitting, as the share charged; -1 with none. */
-    private static float tetherCharge(Minecraft mc, io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec spec) {
-        var src = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.source(mc.player, mc.player.getMainHandItem(), spec);
+    private static float tetherCharge(Minecraft mc, io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec spec) {
+        var src = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.source(mc.player, mc.player.getMainHandItem(), spec);
         return src.battery().isEmpty() ? -1f
                 : io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.stateOfCharge(io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.state(src.battery()));
     }
 
     /** What the seat holds: a glass vial for each chamber of a cylinder, a capacitor cell for each of six steps of a bank's charge or a flywheel's spin. */
-    private static void seatReadout(GuiGraphics g, io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec spec, ItemStack gun, long game,
+    private static void seatReadout(GuiGraphics g, io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec spec, ItemStack gun, long game,
                                     int x, int y, int span) {
         switch (spec.seat()) {
             case CYLINDER -> {
-                float held = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chambersShown(gun, game);
-                int n = io.github.soundgoodizerfan.feedback.modular.ModularTuning.EGUN_CHAMBERS, full = lamp(spec, gun, game, 0xFF40FF60);
+                float held = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.chambersShown(gun, game);
+                int n = io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.EGUN_CHAMBERS, full = lamp(spec, gun, game, 0xFF40FF60);
                 for (int i = 0; i < n; i++) {
                     int vx = x + Math.round(i * (span - 7) / 5f);
                     float fill = Mth.clamp(held - i, 0f, 1f);
@@ -212,10 +212,10 @@ public final class GunHud {
                 }
             }
             case CAPACITOR_BANK, BURST_BANK, CORE_BREECH, FLYWHEEL -> {
-                float share = spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.FLYWHEEL
-                        ? io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.spinShown(gun, game)
-                        : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.bankShown(gun, game);
-                int lit = lamp(spec, gun, game, spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.FLYWHEEL ? 0xFFE0E0E8 : 0xFF40C8FF);
+                float share = spec.seat() == io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Seat.FLYWHEEL
+                        ? io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.spinShown(gun, game)
+                        : io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.bankShown(gun, game);
+                int lit = lamp(spec, gun, game, spec.seat() == io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Seat.FLYWHEEL ? 0xFFE0E0E8 : 0xFF40C8FF);
                 for (int i = 0; i < 6; i++) {
                     int cx = x + Math.round(i * (span - 9) / 5f);
                     float fill = Mth.clamp(share * 6f - i, 0f, 1f);

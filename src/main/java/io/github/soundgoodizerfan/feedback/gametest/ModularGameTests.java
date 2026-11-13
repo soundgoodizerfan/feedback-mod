@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularRework;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularRework;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bench.ModularAssembly;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.registry.FModular;
 
@@ -100,8 +100,8 @@ public class ModularGameTests {
             float[] seed = new float[n];
             for (int i = 0; i < n; i++)
                 seed[i] = i;
-            float gap = io.github.soundgoodizerfan.feedback.modular.BoardTree.minSeparation(
-                    io.github.soundgoodizerfan.feedback.modular.BoardTree.place(n, edges, hint, seed, seed));
+            float gap = io.github.soundgoodizerfan.feedback.modular.blueprint.BoardTree.minSeparation(
+                    io.github.soundgoodizerfan.feedback.modular.blueprint.BoardTree.place(n, edges, hint, seed, seed));
             helper.assertTrue(n < 2 || gap >= 0.999f, id + " board nodes overlap, separation " + gap);
         });
         helper.succeed();
@@ -115,7 +115,7 @@ public class ModularGameTests {
                 .filter(o -> o.shaping().item().getPath().equals("pickaxe_head") && o.variant().name().isEmpty()).findFirst().orElseThrow();
         ItemStack head = PartBenchShaping.make(option, List.of(i, i, i), ClientMaterials.on(helper.getLevel()), helper.getLevel());
         var made = head.get(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get());
-        helper.assertTrue(head.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
+        helper.assertTrue(head.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem
                 && made != null && made.cells() == 3, "the part should be a three-cell head, got " + head);
         helper.succeed();
     }
@@ -161,7 +161,7 @@ public class ModularGameTests {
     public static void mendingAndBreaking(GameTestHelper helper) {
         ItemStack pick = pickaxe(helper, Items.IRON_INGOT);
         // A hafted tool is broken when every face is spent: wear the one face right out.
-        io.github.soundgoodizerfan.feedback.modular.ModularFaces.wear(pick, pick.getMaxDamage() * 2);
+        io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.wear(pick, pick.getMaxDamage() * 2);
         helper.assertTrue(ModularStacks.broken(pick), "one point from the limit is broken");
         helper.assertTrue(ModularStacks.cap(pick, 5) == 0, "a broken item takes no further damage");
         ItemStack ingot = new ItemStack(Items.IRON_INGOT);

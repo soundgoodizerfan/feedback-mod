@@ -145,7 +145,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         } else if (stack.getItem() instanceof PivotTipItem) {
             back = tip;
             tip = one;
-        } else if (io.github.soundgoodizerfan.feedback.modular.ModularFaces.has(stack, "head_blank")) {
+        } else if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.has(stack, "head_blank")) {
             back = head.swap(stack.copy());
             if (!player.getAbilities().instabuild)
                 stack.shrink(1);

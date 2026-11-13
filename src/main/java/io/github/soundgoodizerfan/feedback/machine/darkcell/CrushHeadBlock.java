@@ -41,7 +41,7 @@ public class CrushHeadBlock extends Block implements EntityBlock, Rotatable, Kil
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                               InteractionHand hand, BlockHitResult hit) {
-        if (io.github.soundgoodizerfan.feedback.modular.ModularFaces.has(stack, "head_blank") && level.getBlockEntity(pos) instanceof CrushHeadBlockEntity be) {
+        if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.has(stack, "head_blank") && level.getBlockEntity(pos) instanceof CrushHeadBlockEntity be) {
             if (!level.isClientSide) {
                 ItemStack back = be.getHead().swap(stack.copy());
                 if (!player.getAbilities().instabuild)

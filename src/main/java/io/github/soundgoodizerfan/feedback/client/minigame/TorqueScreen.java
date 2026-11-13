@@ -4,8 +4,8 @@ package io.github.soundgoodizerfan.feedback.client.minigame;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableBlockEntity;
 import io.github.soundgoodizerfan.feedback.modular.engineering.EngineeringTableMenu;
 import io.github.soundgoodizerfan.feedback.modular.engineering.Torque;

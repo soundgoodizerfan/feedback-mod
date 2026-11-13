@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
-import io.github.soundgoodizerfan.feedback.modular.ModularBow;
-import io.github.soundgoodizerfan.feedback.modular.ModularCrossbow;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularBow;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularCrossbow;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;

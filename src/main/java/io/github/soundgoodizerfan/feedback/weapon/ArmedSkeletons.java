@@ -3,8 +3,8 @@
 package io.github.soundgoodizerfan.feedback.weapon;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -80,7 +80,7 @@ public final class ArmedSkeletons {
         }
         if (GunSpec.of(skeleton.getMainHandItem()).isPresent())
             skeleton.goalSelector.addGoal(3, new RangedGunGoal(skeleton));
-        else if (skeleton.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularElectricGun)
+        else if (skeleton.getMainHandItem().getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun)
             skeleton.goalSelector.addGoal(3, new PulseGunGoal(skeleton));
     }
 

@@ -12,7 +12,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
-import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
+import io.github.soundgoodizerfan.feedback.modular.bench.ForgeRhythm;
 import io.github.soundgoodizerfan.feedback.process.Dip;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.process.MadeOf;
@@ -166,9 +166,9 @@ public class Dipping {
         Plating.Quality q = total > MachineTuning.PLATING_SPALLS_ABOVE_QU ? Plating.Quality.BURNT
                 : total < FTuning.PLATING_POROUS_BELOW_QU ? Plating.Quality.POROUS : Plating.Quality.SOUND;
         piece.set(FDataComponents.PLATING.get(), new Plating(coat.metal(), total, q));
-        io.github.soundgoodizerfan.feedback.modular.ModularStacks.rebake(piece);
+        io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.rebake(piece);
         // A dwell past what holds also eats the part: flaws first, then its mass, until it is scrap.
-        return io.github.soundgoodizerfan.feedback.modular.ModularStacks.overrun(piece, total - MachineTuning.PLATING_SPALLS_ABOVE_QU);
+        return io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.overrun(piece, total - MachineTuning.PLATING_SPALLS_ABOVE_QU);
     }
 
     private static void dipInVessel(MoltenVessel vessel, ItemStack held,
@@ -183,7 +183,7 @@ public class Dipping {
         if (maybe.isEmpty())
             return;
         Dip dip = maybe.get();
-        if (dip.coat().isPresent() && !io.github.soundgoodizerfan.feedback.modular.ModularStacks.platable(held))
+        if (dip.coat().isPresent() && !io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.platable(held))
             return;
 
         FluidStack drawn = tank.drain(dip.fluid().amount(), IFluidHandler.FluidAction.EXECUTE);

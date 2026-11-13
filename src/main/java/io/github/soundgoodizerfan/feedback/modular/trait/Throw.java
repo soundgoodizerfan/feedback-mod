@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.Throwing;
+import io.github.soundgoodizerfan.feedback.modular.combat.Throwing;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,7 +13,7 @@ import net.minecraft.world.level.Level;
 
 /**
  * Throwing a held weapon (spec 5.4): hold use to wind up, release to throw. The flight is
- * {@link Throwing}'s and {@link io.github.soundgoodizerfan.feedback.modular.ThrownWeapon}'s; this
+ * {@link Throwing}'s and {@link io.github.soundgoodizerfan.feedback.modular.combat.ThrownWeapon}'s; this
  * trait only says that the item is held out and thrown on release, and what that costs. Params:
  * {@code min_charge_ticks}, {@code full_charge_ticks}, {@code damage_per_block} and {@code max_mult}
  * (the blow grows with the distance flown, to a cap), {@code wear} per throw, {@code tumble} (end over

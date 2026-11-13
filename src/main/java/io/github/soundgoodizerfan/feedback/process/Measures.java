@@ -20,7 +20,7 @@ import net.minecraft.resources.ResourceLocation;
  * grab-bag map ({@code dims}), kept apart because each has its own reader and its own rule.
  *
  * @param axes     as-built measures of the part, by the names its role declares
- *                 ({@link io.github.soundgoodizerfan.feedback.modular.ModularType.Axis}): a barrel's bore, outside and
+ *                 ({@link io.github.soundgoodizerfan.feedback.modular.type.ModularType.Axis}): a barrel's bore, outside and
  *                 length. The item stores the as-built value only; the aim lives in a blueprint's drawn design.
  *                 Empty for a part whose role declares none, and a name left out reads the axis's default.
  * @param work     the work its forging delivered over the work the pattern asked
@@ -30,7 +30,7 @@ import net.minecraft.resources.ResourceLocation;
  * @param state    live state of a food or workpiece part (a dish part's doneness, ingredient shares, cut; a bloom's scale
  *                 loss), by the names the system that wrote it defines. Not a measure of the part's geometry.
  * @param slots    the materials of a composed part beyond its first slot (which is {@code MadeOf.material}), by slot name
- *                 ({@link io.github.soundgoodizerfan.feedback.modular.ModularType.PartSlot}): a scope's lens, a blade's edge. A slot left out is
+ *                 ({@link io.github.soundgoodizerfan.feedback.modular.type.ModularType.PartSlot}): a scope's lens, a blade's edge. A slot left out is
  *                 made of the main material.
  */
 public record Measures(Map<String, Float> axes, float work, Map<String, Float> attuned, Map<String, Float> state, Map<String, Slot> slots) {

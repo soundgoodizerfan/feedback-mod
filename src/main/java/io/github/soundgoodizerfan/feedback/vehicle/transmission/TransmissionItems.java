@@ -30,19 +30,19 @@ public final class TransmissionItems {
     }
 
     /** A Transmission block in hand: a modular build (the {@code transmission} type) carrying the design it bakes. */
-    public static class Carried extends BlockItem implements io.github.soundgoodizerfan.feedback.modular.Modular {
+    public static class Carried extends BlockItem implements io.github.soundgoodizerfan.feedback.modular.type.Modular {
         public Carried(Block block, Properties properties) {
             super(block, properties);
         }
 
         @Override
         public Component getName(ItemStack stack) {
-            return io.github.soundgoodizerfan.feedback.modular.ModularStacks.name(stack, super.getName(stack));
+            return io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.name(stack, super.getName(stack));
         }
 
         @Override
         public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-            io.github.soundgoodizerfan.feedback.modular.ModularTooltip.add(stack, tooltip);
+            io.github.soundgoodizerfan.feedback.modular.bake.ModularTooltip.add(stack, tooltip);
             tooltip(stack, context, tooltip);
         }
     }

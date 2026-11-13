@@ -4,8 +4,8 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import io.github.soundgoodizerfan.feedback.instrument.Instruments;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.modular.DishProfile;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.prep.DishProfile;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;

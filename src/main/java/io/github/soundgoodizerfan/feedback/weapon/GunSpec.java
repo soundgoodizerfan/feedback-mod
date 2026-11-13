@@ -6,11 +6,11 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.unit.Mu;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import net.minecraft.resources.ResourceLocation;
@@ -229,9 +229,9 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
     private static float wrapGrip(ModularType type, ModularDesign.Part grip, Map<ResourceLocation, Material> materials) {
         if (grip.measures().slot("wrap").isEmpty())
             return 1f;
-        Material wrap = io.github.soundgoodizerfan.feedback.modular.ModularBake.slotMaterial(type.roles().get(GRIP), grip, "wrap", materials);
-        return wrap == null ? 1f : wrap.mechanical().friction().orElse(io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRIP_REF_FRICTION)
-                / io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRIP_REF_FRICTION;
+        Material wrap = io.github.soundgoodizerfan.feedback.modular.bake.ModularBake.slotMaterial(type.roles().get(GRIP), grip, "wrap", materials);
+        return wrap == null ? 1f : wrap.mechanical().friction().orElse(io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.GRIP_REF_FRICTION)
+                / io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.GRIP_REF_FRICTION;
     }
 
     /** The sight a sight part is: a reflex, or a scope whose zoom axis and lens give its field. */
@@ -239,8 +239,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         ModularType.Role role = type.roles().get(SIGHT);
         if (!"scope".equals(role.variant(part).map(ModularType.Variant::name).orElse("")))
             return Sight.REFLEX;
-        Material lens = io.github.soundgoodizerfan.feedback.modular.ModularBake.slotMaterial(role, part, "lens", materials);
-        float loss = lens == null ? 0f : lens.separation().reflectivity().orElse(io.github.soundgoodizerfan.feedback.modular.ModularTuning.LENS_DEFAULT_LOSS);
+        Material lens = io.github.soundgoodizerfan.feedback.modular.bake.ModularBake.slotMaterial(role, part, "lens", materials);
+        float loss = lens == null ? 0f : lens.separation().reflectivity().orElse(io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.LENS_DEFAULT_LOSS);
         return Sight.scope(role.axis(part, "zoom"), 1f - loss);
     }
 

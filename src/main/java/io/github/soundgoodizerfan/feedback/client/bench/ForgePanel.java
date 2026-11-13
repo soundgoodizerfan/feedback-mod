@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.modular.ForgeRhythm;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.modular.bench.ForgeRhythm;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.net.ForgeBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.ForgeFinishPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
@@ -165,7 +165,7 @@ final class ForgePanel implements WorkPanel {
             for (int wave = 0; wave < 4; wave++)
                 burst(px, py, 40, 2f + wave * 1.3f, 40, 0xFFD84A, 0xFFFFFF, 0xFFA030, 0xFFF0A0);
         }
-        else if (result.flaw() >= io.github.soundgoodizerfan.feedback.modular.ForgeRhythm.MAX_FLAW)
+        else if (result.flaw() >= io.github.soundgoodizerfan.feedback.modular.bench.ForgeRhythm.MAX_FLAW)
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(FSounds.FORGE_FAILURE.get(), 1f));
         PacketDistributor.sendToServer(new ForgeFinishPayload(host.menu().containerId, chosenIndex,
                 hits.stream().map(ForgeRhythm.Hit::tick).toList(), hits.stream().map(ForgeRhythm.Hit::heavy).toList()));

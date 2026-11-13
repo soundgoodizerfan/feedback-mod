@@ -10,17 +10,17 @@ import java.util.Optional;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning;
 import io.github.soundgoodizerfan.feedback.combat.skill.SkillTree;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
-import io.github.soundgoodizerfan.feedback.modular.ModularBlueprints;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularNest;
-import io.github.soundgoodizerfan.feedback.modular.ModularPartItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularRework;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.School;
-import io.github.soundgoodizerfan.feedback.modular.ToolDesigns;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
-import io.github.soundgoodizerfan.feedback.modular.Treatises;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ModularBlueprints;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularNest;
+import io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularRework;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.treatise.School;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.treatise.Treatises;
 import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -89,7 +89,7 @@ public final class EngineeringRework {
         ModularType type = design == null ? null : EngineeringAssembly.types(level).get(design.type());
         // A hafted build holding a gated face is gated by that face's school.
         if (type != null && type.family() == ModularType.Family.HAFTED) {
-            String school = io.github.soundgoodizerfan.feedback.modular.ModularFaces.school(design, type);
+            String school = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.school(design, type);
             return school.isEmpty() ? type : type.withGate(school);
         }
         return type;
@@ -274,7 +274,7 @@ public final class EngineeringRework {
         int tool = hammer(table);
         if (tool != 0)
             return -tool;
-        return Math.min(io.github.soundgoodizerfan.feedback.modular.ModularTuning.NOTES_MAX_PARTS, Math.max(1, ModularStacks.design(specimen).parts().size()));
+        return Math.min(io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.NOTES_MAX_PARTS, Math.max(1, ModularStacks.design(specimen).parts().size()));
     }
 
     /** Learns the specimen's volume with notes of {@code quality}; {@code played} says the learning game ran (it needs no further check). */

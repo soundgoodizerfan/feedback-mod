@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.village;
 
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 
 import net.minecraft.resources.ResourceLocation;
 

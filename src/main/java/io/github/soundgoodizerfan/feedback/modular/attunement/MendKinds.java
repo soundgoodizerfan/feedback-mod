@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.Feedback;

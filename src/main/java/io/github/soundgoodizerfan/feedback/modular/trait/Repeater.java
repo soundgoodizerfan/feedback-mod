@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularCrossbow;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularCrossbow;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -20,8 +19,8 @@ public final class Repeater implements ModularTrait {
     @Override
     public void onLoaded(ServerPlayer player, ItemStack weapon, Params params) {
         // The magazine's volume sets how many bolts it holds; a role that states its own count ("bolts") overrides.
-        float bolts = params.get("bolts", io.github.soundgoodizerfan.feedback.modular.ModularTraits.addonVolume(weapon, "repeater")
-                / io.github.soundgoodizerfan.feedback.modular.ModularTuning.MAGAZINE_LITRES_PER_BOLT);
+        float bolts = params.get("bolts", io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits.addonVolume(weapon, "repeater")
+                / io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.MAGAZINE_LITRES_PER_BOLT);
         ModularCrossbow.chamber(weapon, player, Math.max(0, Math.round(bolts) - 1));
     }
 

@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.modular.BlueprintCredit;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintCredit;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.net.ModularBlueprintPayload;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;

@@ -6,11 +6,11 @@ import io.github.soundgoodizerfan.feedback.combat.parry.ParryTuning;
 import io.github.soundgoodizerfan.feedback.combat.skill.Rearms;
 import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import io.github.soundgoodizerfan.feedback.modular.trait.WielderState;
 
 import net.minecraft.core.Holder;
@@ -60,7 +60,7 @@ public final class OffhandStrike {
         var design = ModularStacks.design(stack);
         if (design == null || ModularStacks.broken(stack))
             return false;
-        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack);
+        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack);
         return family == ModularType.Family.BLADE || family == ModularType.Family.MACE || family == ModularType.Family.SPEAR;
     }
 

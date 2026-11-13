@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.potion;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import io.github.soundgoodizerfan.feedback.process.Dip;
 import io.github.soundgoodizerfan.feedback.process.ThermalProcessTable;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;

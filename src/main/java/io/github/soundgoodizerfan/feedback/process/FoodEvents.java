@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.process;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.net.HudReadoutPayload;
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
-import io.github.soundgoodizerfan.feedback.modular.DishBake;
+import io.github.soundgoodizerfan.feedback.modular.prep.DishBake;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 
 import net.minecraft.core.component.DataComponents;

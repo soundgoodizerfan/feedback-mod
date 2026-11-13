@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.item;
 
 import io.github.soundgoodizerfan.feedback.instrument.Instrument;
 import io.github.soundgoodizerfan.feedback.instrument.Quantity;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -35,7 +35,7 @@ public class BalanceScaleItem extends Item implements Instrument {
     @Override
     public net.minecraft.world.InteractionResultHolder<net.minecraft.world.item.ItemStack> use(net.minecraft.world.level.Level level,
             net.minecraft.world.entity.player.Player player, net.minecraft.world.InteractionHand hand) {
-        return io.github.soundgoodizerfan.feedback.modular.Measured.apply(io.github.soundgoodizerfan.feedback.modular.Measured.Kind.BALANCE, level, player, hand);
+        return io.github.soundgoodizerfan.feedback.modular.bench.Measured.apply(io.github.soundgoodizerfan.feedback.modular.bench.Measured.Kind.BALANCE, level, player, hand);
     }
 
     @Override

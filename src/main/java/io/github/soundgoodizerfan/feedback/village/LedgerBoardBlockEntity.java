@@ -13,10 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.DataResult;
 
-import io.github.soundgoodizerfan.feedback.modular.DishProfile;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.prep.DishProfile;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 import io.github.soundgoodizerfan.feedback.registry.FAutomation;
 import io.github.soundgoodizerfan.feedback.village.Contracts.Contract;
@@ -101,7 +101,7 @@ public class LedgerBoardBlockEntity extends BlockEntity {
         int worst = -1;
         for (Contract c : Contracts.open(worldPosition, today, tier)) {
             int[] st = state(c.id());
-            ModularDesign ordered = io.github.soundgoodizerfan.feedback.modular.ModularFaces.forOrder(design, c.order().type());
+            ModularDesign ordered = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.forOrder(design, c.order().type());
             if (st[0] >= c.count() || ordered == null)
                 continue;
             asked = true;

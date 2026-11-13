@@ -59,7 +59,7 @@ public final class GunAmmo {
 
     /** How long swapping a magazine takes this gun, in ms: the reload, and a belt makes it longer. */
     public static long reloadMs(ItemStack gun) {
-        return Math.round(GunTuning.GUN_RELOAD_MS * io.github.soundgoodizerfan.feedback.modular.ModularTraits.gunReloadMult(gun));
+        return Math.round(GunTuning.GUN_RELOAD_MS * io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits.gunReloadMult(gun));
     }
 
     /** Ms to put one round into {@code design}'s own feed: a break action's barrels are fed together, anything else a round at a time. */

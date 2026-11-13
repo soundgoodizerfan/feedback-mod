@@ -14,7 +14,7 @@ import net.minecraft.world.item.crafting.RecipeInput;
  * 3x3 grid, up to {@value #TOOLS} tool stacks, up to {@value #FASTENERS} fastener stacks and the binder slot's stack. The stacks are the
  * live ones (a craft wears the tools and spends the fasteners in place); nothing here copies them.
  *
- * @param known the school-volume mask ({@link io.github.soundgoodizerfan.feedback.modular.Treatises#mask(net.minecraft.world.entity.player.Player, net.minecraft.world.inventory.ContainerLevelAccess)})
+ * @param known the school-volume mask ({@link io.github.soundgoodizerfan.feedback.modular.treatise.Treatises#mask(net.minecraft.world.entity.player.Player, net.minecraft.world.inventory.ContainerLevelAccess)})
  *              the maker already holds elsewhere (inventory, a shelf beside the table); the binder is added to it by the recipe.
  */
 public record EngineeringInput(List<ItemStack> grid, List<ItemStack> tools, List<ItemStack> fasteners, ItemStack binder, int known,

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStrike;
+import static io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds.onStrike;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -42,7 +42,7 @@ public final class ClingKinds {
     private ClingKinds() {
     }
 
-    private static float friction(io.github.soundgoodizerfan.feedback.modular.MaterialPerks.Attunement a) {
+    private static float friction(io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.Attunement a) {
         return a.material().mechanical().friction().orElse(DEFAULT_FRICTION);
     }
 
@@ -66,7 +66,7 @@ public final class ClingKinds {
         boolean pushing = p.zza != 0 || p.xxa != 0;
         var d = p.getDeltaMovement();
         double speed = d.horizontalDistance();
-        for (var a : io.github.soundgoodizerfan.feedback.modular.MaterialPerks.attunements(p.getItemBySlot(EquipmentSlot.FEET))) {
+        for (var a : io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.attunements(p.getItemBySlot(EquipmentSlot.FEET))) {
             double k = 1;
             if (a.kind().equals("worn_grip") && !pushing && speed > 0.02
                     && p.level().getBlockState(p.getBlockPosBelowThatAffectsMyMovement()).getFriction(p.level(), p.getBlockPosBelowThatAffectsMyMovement(), p) > SLIPPERY)

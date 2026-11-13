@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.village;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

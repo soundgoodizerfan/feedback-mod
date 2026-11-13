@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;

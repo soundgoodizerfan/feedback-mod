@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Entity;

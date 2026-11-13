@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
-import io.github.soundgoodizerfan.feedback.modular.Throwing;
-import io.github.soundgoodizerfan.feedback.modular.ThrownWeapon;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.combat.Throwing;
+import io.github.soundgoodizerfan.feedback.modular.combat.ThrownWeapon;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -117,7 +117,7 @@ public final class RecallKinds {
 
     public static void register() {
         // A planted round holds the target: the same slowness a thrown anchor gives.
-        io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStrike("anchor_round", (event, a) ->
+        io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds.onStrike("anchor_round", (event, a) ->
                 event.getEntity().addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ANCHOR_TICKS * a.level(), ANCHOR_SLOW, false, false)));
     }
 

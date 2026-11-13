@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.trait.SpearCharge;
 import io.github.soundgoodizerfan.feedback.net.SpearChargePayload;
 
@@ -160,7 +160,7 @@ public final class SpearClient {
     public static final class Extension implements IClientItemExtensions {
         @Override
         public HumanoidModel.ArmPose getArmPose(LivingEntity entity, InteractionHand hand, ItemStack stack) {
-            if (io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack) != io.github.soundgoodizerfan.feedback.modular.ModularType.Family.SPEAR)
+            if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack) != io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.SPEAR)
                 return null;
             return hand == InteractionHand.MAIN_HAND && stage(entity) > 0 ? HumanoidModel.ArmPose.valueOf("FEEDBACK_SPEAR") : null;
         }
@@ -169,7 +169,7 @@ public final class SpearClient {
         public boolean applyForgeHandTransform(PoseStack pose, LocalPlayer player, HumanoidArm arm, ItemStack stack,
                                                float partialTick, float equip, float swing) {
             // Only a spear's face stabs and braces; the one hafted item is every other tool too.
-            if (io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack) != io.github.soundgoodizerfan.feedback.modular.ModularType.Family.SPEAR)
+            if (io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack) != io.github.soundgoodizerfan.feedback.modular.type.ModularType.Family.SPEAR)
                 return false;
             int s = stage(player);
             int side = arm == HumanoidArm.RIGHT ? 1 : -1;

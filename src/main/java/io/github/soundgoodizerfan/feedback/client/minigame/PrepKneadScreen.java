@@ -2,14 +2,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.minigame;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.modular.Kneading;
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.prep.Kneading;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu;
 import io.github.soundgoodizerfan.feedback.net.PrepareBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.PrepareFinishPayload;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;

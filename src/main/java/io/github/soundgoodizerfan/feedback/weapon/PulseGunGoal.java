@@ -4,7 +4,7 @@ package io.github.soundgoodizerfan.feedback.weapon;
 
 import java.util.EnumSet;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularElectricGun;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;

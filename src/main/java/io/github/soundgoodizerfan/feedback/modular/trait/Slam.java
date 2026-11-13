@@ -3,9 +3,8 @@
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import io.github.soundgoodizerfan.feedback.modular.attunement.ConductKinds;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.Smash;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.combat.Smash;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.EquipmentSlot;

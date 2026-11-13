@@ -6,11 +6,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -47,7 +47,7 @@ public final class SweptVolume {
         var figures = ModularStacks.figures(weapon);
         if (design == null || figures == null || ModularStacks.broken(weapon))
             return Optional.empty();
-        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(weapon);
+        ModularType.Family family = io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(weapon);
         if (family != ModularType.Family.BLADE && family != ModularType.Family.MACE && family != ModularType.Family.SPEAR)
             return Optional.empty();
         return Optional.of(ModularTuning.SWEEP_HALF_WIDTH_MIN

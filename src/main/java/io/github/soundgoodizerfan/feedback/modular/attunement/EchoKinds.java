@@ -3,8 +3,7 @@
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.server.MinecraftServer;

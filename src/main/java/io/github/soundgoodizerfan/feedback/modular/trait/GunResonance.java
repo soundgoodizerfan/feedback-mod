@@ -3,7 +3,6 @@
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 

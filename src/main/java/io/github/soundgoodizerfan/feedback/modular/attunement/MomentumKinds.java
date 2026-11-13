@@ -7,8 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
-import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStrike;
+import static io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds.onStrike;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

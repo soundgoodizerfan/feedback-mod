@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.net;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularElectricGun;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

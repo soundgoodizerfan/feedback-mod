@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.LivingEntity;
@@ -46,7 +44,7 @@ public final class Butcher implements ModularTrait {
             if (!(event.getEntity() instanceof Animal animal) || animal.level().isClientSide
                     || !(event.getSource().getEntity() instanceof LivingEntity killer))
                 return;
-            ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.StrikeSource.weapon(killer, event.getSource());
+            ItemStack weapon = io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource.weapon(killer, event.getSource());
             var active = ModularTraits.of(weapon).filter(a -> a.trait() instanceof Butcher);
             if (active.isEmpty())
                 return;

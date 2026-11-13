@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularFit;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.ModularAssembly;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularFit;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bench.ModularAssembly;
 import io.github.soundgoodizerfan.feedback.process.MaterialIngredient;
 import io.github.soundgoodizerfan.feedback.registry.FRecipes;
 

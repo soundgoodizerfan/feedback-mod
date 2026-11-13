@@ -91,7 +91,7 @@ public final class GunBludgeon {
 
     /** Bayonet Drill's blow: the bayonet part's own material hardness sets it, within bounds. */
     private static float bayonetDamage(ItemStack gun, GunFigures f) {
-        var design = io.github.soundgoodizerfan.feedback.modular.ModularStacks.design(gun);
+        var design = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(gun);
         var part = design == null ? null : design.part("a");
         var mat = part == null ? null : io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(part.material());
         float hard = mat == null ? 1f : mat.hardness().value();

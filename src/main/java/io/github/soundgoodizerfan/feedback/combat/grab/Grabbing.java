@@ -14,7 +14,7 @@ import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
 import io.github.soundgoodizerfan.feedback.combat.tether.BodyMass;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tether;
 import io.github.soundgoodizerfan.feedback.combat.tether.Tethers;
-import io.github.soundgoodizerfan.feedback.modular.ModularGlove;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 
 import net.minecraft.server.MinecraftServer;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.net.VillagerActionPayload;
 import io.github.soundgoodizerfan.feedback.village.Order;
 import io.github.soundgoodizerfan.feedback.village.CommissionJudge;
@@ -16,7 +16,7 @@ import io.github.soundgoodizerfan.feedback.village.VillagerView;
 import io.github.soundgoodizerfan.feedback.village.VillagerView.GoodView;
 import io.github.soundgoodizerfan.feedback.village.VillagerView.OrderView;
 import io.github.soundgoodizerfan.feedback.village.VillagerView.TermView;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.client.gui.FolderTabs;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiStyle;

@@ -8,7 +8,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;

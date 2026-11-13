@@ -5,11 +5,11 @@ package io.github.soundgoodizerfan.feedback.combat.parry;
 import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.combat.gear.CombatGear;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -44,7 +44,7 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
 
     /** A bare hand in a plated glove turns a melee blow aside and nothing else: no projectile, no bullet. */
     public boolean bare() {
-        return stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularGlove;
+        return stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularGlove;
     }
 
     private static Optional<ParryStats> bare(LivingEntity who) {
@@ -90,8 +90,8 @@ public record ParryStats(int window, int recovery, float coneHalfDeg, float mass
             return Optional.empty();
         // An axe face is dig-family but parries as a blade.
         ModularType.Family family = type.family() == ModularType.Family.HAFTED
-                ? io.github.soundgoodizerfan.feedback.modular.ModularFaces.combat(stack) : type.family();
-        if (family == ModularType.Family.DIG && io.github.soundgoodizerfan.feedback.modular.ModularFaces.actions(stack).contains("strip"))
+                ? io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.combat(stack) : type.family();
+        if (family == ModularType.Family.DIG && io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.actions(stack).contains("strip"))
             family = ModularType.Family.BLADE;
         if (family != ModularType.Family.BLADE && family != ModularType.Family.MACE
                 && family != ModularType.Family.SPEAR && family != ModularType.Family.SHIELD)

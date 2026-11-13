@@ -8,7 +8,7 @@ import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.combat.tether.GrappleHook;
 import io.github.soundgoodizerfan.feedback.combat.tether.RopeWrap;
 import io.github.soundgoodizerfan.feedback.item.GrappleItem;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.net.GrappleReleasePayload;
 
 import net.minecraft.client.KeyMapping;

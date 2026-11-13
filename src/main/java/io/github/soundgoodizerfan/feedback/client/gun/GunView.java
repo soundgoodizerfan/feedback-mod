@@ -5,11 +5,11 @@ package io.github.soundgoodizerfan.feedback.client.gun;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.soundgoodizerfan.feedback.modular.MaterialColors;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.type.MaterialColors;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 import io.github.soundgoodizerfan.feedback.registry.FWeapons;
 import io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry;
 import io.github.soundgoodizerfan.feedback.weapon.GunAmmo;
@@ -143,7 +143,7 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 surfaces.put("J", Surface.of(materials.get(sl.material())));
             });
         GunLayout.Type kind = GunLayout.Type.of(variants.getOrDefault("R", ""));
-        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularElectricGun) {
+        if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun) {
             // A pulse gun has no action and no slide: a frame, a cell bay, a seat, and a pulse barrel.
             ModularType.Role role = type.roles().get("B");
             ModularDesign.Part barrelPart = design.part("B");
@@ -154,24 +154,24 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 eb[1] = snap(Math.max(0.75f, Math.min(0.5f + boreMm * 0.04f, 1.5f)), 0.125f);
                 eb[2] = snap(Math.max(0.125f, Math.min(boreMm * 0.04f, eb[1] - 0.125f)), 0.125f);
             }
-            net.minecraft.world.item.ItemStack battery = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.cell(stack);
+            net.minecraft.world.item.ItemStack battery = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.cell(stack);
             var state = battery.isEmpty() ? null : io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.state(battery);
             float soc = state == null ? -1f : io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.stateOfCharge(state);
             long game = level == null ? 0L : level.getGameTime();
-            float spin = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.spinShown(stack, game);
+            float spin = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.spinShown(stack, game);
             float angle = variants.getOrDefault("s", "").equals("flywheel") ? (System.currentTimeMillis() % 100_000L) * 0.36f * spin * 3f
-                    : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chamberIndex(stack) * 60f;
+                    : io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.chamberIndex(stack) * 60f;
             float lit = variants.getOrDefault("s", "").equals("cylinder")
-                    ? io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chambersShown(stack, game)
-                    : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.bankShown(stack, game) * 6f;
+                    ? io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.chambersShown(stack, game)
+                    : io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.bankShown(stack, game) * 6f;
             float charge = -1f;
             if (variants.containsKey("h"))
-                charge = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.holdShare(stack, game);
+                charge = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.holdShare(stack, game);
             if (variants.containsKey("p"))
-                charge = Math.max(charge, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.pumps(stack)
-                        / (float) io.github.soundgoodizerfan.feedback.modular.ModularTuning.EGUN_PUMP_MAX);
-            Pulse pulse = new Pulse(angle % 360f, lit, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.heatFraction(stack, game),
-                    design.colour(), charge, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.hot(stack));
+                charge = Math.max(charge, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.pumps(stack)
+                        / (float) io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.EGUN_PUMP_MAX);
+            Pulse pulse = new Pulse(angle % 360f, lit, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.heatFraction(stack, game),
+                    design.colour(), charge, io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.hot(stack));
             return new GunView(kind, "none", false, eb[0], eb[1], eb[2], 0, 0, colours, variants, surfaces, woods, 0, null, 0, true, pulse, soc);
         }
         boolean slide = colours.containsKey("A");

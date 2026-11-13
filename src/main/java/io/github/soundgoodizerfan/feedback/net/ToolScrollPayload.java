@@ -34,13 +34,13 @@ public record ToolScrollPayload(int direction) implements CustomPacketPayload {
         context.enqueueWork(() -> {
             Player player = context.player();
             ItemStack stack = player.getItemInHand(InteractionHand.MAIN_HAND);
-            if (io.github.soundgoodizerfan.feedback.modular.ModularHandTool.strikes(stack)) {
-                var swing = io.github.soundgoodizerfan.feedback.modular.ModularHandTool.swing(stack)
+            if (io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool.strikes(stack)) {
+                var swing = io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool.swing(stack)
                         .step(Integer.signum(payload.direction()), player);
                 stack.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.HAND_SWING, swing);
                 AimPayloads.modes(player, stack.getHoverName(), AimPayloads.keys("tooltip.feedback.hand_swing.", "tap", "blow", "heavy", "mighty"),
                         swing.ordinal(), Component.translatable("message.feedback.hand_swing.figure",
-                                io.github.soundgoodizerfan.feedback.core.unit.Units.figure(io.github.soundgoodizerfan.feedback.modular.ModularHandTool.of(stack, swing))));
+                                io.github.soundgoodizerfan.feedback.core.unit.Units.figure(io.github.soundgoodizerfan.feedback.modular.item.ModularHandTool.of(stack, swing))));
                 return;
             }
             if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.item.DataConnectorItem) {

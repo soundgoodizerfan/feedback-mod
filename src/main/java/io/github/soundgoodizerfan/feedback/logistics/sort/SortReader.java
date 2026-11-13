@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularBackpack;
+import io.github.soundgoodizerfan.feedback.modular.part.ModularBackpack;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 
@@ -47,7 +47,7 @@ public final class SortReader {
             generation = MaterialTable.generation();
         }
         // A shaped part is told by its MadeOf, not its item, so it is never cached.
-        Fixed f = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem
+        Fixed f = stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem
                 ? fixed(stack) : CACHE.computeIfAbsent(stack.getItem(), i -> fixed(new ItemStack(i)));
         float temp = ItemHeat.get(stack, level).value();
         return new Reading(f.unknown, f.magnetic, f.curie, f.reflectivity, f.density, f.hardness, f.friction, f.kind, temp,

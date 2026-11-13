@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.client.bench;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.soundgoodizerfan.feedback.modular.Shingling;
+import io.github.soundgoodizerfan.feedback.modular.bench.Shingling;
 import io.github.soundgoodizerfan.feedback.net.ShingleBeginPayload;
 import io.github.soundgoodizerfan.feedback.net.ShingleFinishPayload;
 import io.github.soundgoodizerfan.feedback.client.gui.GuiSkin;

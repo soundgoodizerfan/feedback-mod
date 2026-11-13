@@ -32,11 +32,11 @@ import net.neoforged.neoforge.common.Tags;
 
 import io.github.soundgoodizerfan.feedback.core.hazard.Hazards;
 import io.github.soundgoodizerfan.feedback.core.hazard.Protection;
-import io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec;
-import io.github.soundgoodizerfan.feedback.modular.ModularDesign;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularDesign;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
 

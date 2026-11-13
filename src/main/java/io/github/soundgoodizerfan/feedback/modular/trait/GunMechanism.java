@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.trait;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
 
 /**
  * A mechanism a gun has whose effect is already in its figures or its fire loop, named so a tooltip can say it

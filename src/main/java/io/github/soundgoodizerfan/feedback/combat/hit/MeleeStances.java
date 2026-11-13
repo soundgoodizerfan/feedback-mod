@@ -10,11 +10,11 @@ import io.github.soundgoodizerfan.feedback.combat.skill.Skills;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatPhase;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatState;
 import io.github.soundgoodizerfan.feedback.combat.state.CombatTicker;
-import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
-import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.ModularType;
-import io.github.soundgoodizerfan.feedback.modular.StrikeSource;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures.Fig;
+import io.github.soundgoodizerfan.feedback.modular.item.ModularStacks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
+import io.github.soundgoodizerfan.feedback.modular.combat.StrikeSource;
 import io.github.soundgoodizerfan.feedback.registry.FSounds;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 
@@ -111,7 +111,7 @@ public final class MeleeStances {
             HELD.put(p.getUUID(), new Held(now.copy(), io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.family(now)));
     }
 
-    private static io.github.soundgoodizerfan.feedback.modular.ModularFigures figures(LivingEntity who) {
+    private static io.github.soundgoodizerfan.feedback.modular.bake.ModularFigures figures(LivingEntity who) {
         return ModularStacks.figures(who.getMainHandItem());
     }
 

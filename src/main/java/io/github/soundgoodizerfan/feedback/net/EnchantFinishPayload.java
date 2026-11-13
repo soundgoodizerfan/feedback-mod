@@ -5,8 +5,8 @@ package io.github.soundgoodizerfan.feedback.net;
 import java.util.List;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
-import io.github.soundgoodizerfan.feedback.modular.EnchantMenu;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.enchant.EnchantMenu;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -17,7 +17,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 /**
- * The pen the player held, one packed sample per tick ({@link io.github.soundgoodizerfan.feedback.modular.Sigil#pack}: pad x,
+ * The pen the player held, one packed sample per tick ({@link io.github.soundgoodizerfan.feedback.modular.enchant.Sigil#pack}: pad x,
  * pad y 0..255, pen-down bit), for the Enchanting Table they have open. The menu replays it through
  * {@code Sigil.run} from the start state it noted at Begin and judges that; the client's own result is never sent, so a
  * fabricated result is only ever a fabricated pen path ({@link EnchantMenu#finish}). It does

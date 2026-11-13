@@ -131,9 +131,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.machine.stockpot.StockpotRecipe.class, new StockpotCraftingExtension());
         registration.getCraftingCategory().addExtension(
-                io.github.soundgoodizerfan.feedback.modular.BootstrapToolRecipe.class, new BootstrapGloveExtension());
+                io.github.soundgoodizerfan.feedback.modular.item.BootstrapToolRecipe.class, new BootstrapGloveExtension());
         registration.getCraftingCategory().addExtension(
-                io.github.soundgoodizerfan.feedback.modular.BootstrapSpecimenRecipe.class, new BootstrapSpecimenExtension());
+                io.github.soundgoodizerfan.feedback.modular.treatise.BootstrapSpecimenRecipe.class, new BootstrapSpecimenExtension());
         registration.getCraftingCategory().addExtension(
                 io.github.soundgoodizerfan.feedback.item.GrappleUpgradeRecipe.class, new GrappleUpgradeCraftingExtension());
         registration.getCraftingCategory().addExtension(
@@ -603,7 +603,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
             publishPress();
             publishModular();
         });
-        io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(() -> {
+        io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.onChanged(() -> {
             showTemplateTools(io.github.soundgoodizerfan.feedback.process.ClientMaterials.get());
             publishExamples();
             publishModular();
@@ -628,7 +628,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
     private static void showTemplateTools(Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
         if (runtime == null || toolsListed)
             return;
-        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
+        var types = io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known();
         if (types.isEmpty())
             return;
         ResourceLocation iron = ResourceLocation.fromNamespaceAndPath("feedback", "wrought_iron");
@@ -636,9 +636,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         types.forEach((id, type) -> {
             if (!type.face())
                 return;
-            io.github.soundgoodizerfan.feedback.modular.ToolDesigns.specimen(id, iron, types, materials)
-                    .map(d -> io.github.soundgoodizerfan.feedback.modular.ModularFaces.toPlan(d, type))
-                    .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(d, types, materials))
+            io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.specimen(id, iron, types, materials)
+                    .map(d -> io.github.soundgoodizerfan.feedback.modular.type.ModularFaces.toPlan(d, type))
+                    .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns.build(d, types, materials))
                     .ifPresent(tools::add);
         });
         if (tools.isEmpty())
@@ -678,14 +678,14 @@ public class FeedbackJeiPlugin implements IModPlugin {
     private static List<ItemStack> slotParts(net.minecraft.resources.ResourceLocation main) {
         List<ItemStack> out = new java.util.ArrayList<>();
         java.util.Set<String> seen = new java.util.HashSet<>();
-        for (io.github.soundgoodizerfan.feedback.modular.ModularType t : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().values())
-            for (io.github.soundgoodizerfan.feedback.modular.ModularType.Role r : t.roles().values()) {
+        for (io.github.soundgoodizerfan.feedback.modular.type.ModularType t : io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known().values())
+            for (io.github.soundgoodizerfan.feedback.modular.type.ModularType.Role r : t.roles().values()) {
                 if (r.part().isEmpty() || r.part().get().choices().isEmpty() || !seen.add(r.part().get().item().toString()))
                     continue;
-                io.github.soundgoodizerfan.feedback.modular.ModularType.Shaping sh = r.part().get();
+                io.github.soundgoodizerfan.feedback.modular.type.ModularType.Shaping sh = r.part().get();
                 net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(sh.item());
-                for (io.github.soundgoodizerfan.feedback.modular.ModularType.PartSlot slot : sh.choices())
-                    for (io.github.soundgoodizerfan.feedback.process.Material.Located l : io.github.soundgoodizerfan.feedback.modular.ToolDesigns
+                for (io.github.soundgoodizerfan.feedback.modular.type.ModularType.PartSlot slot : sh.choices())
+                    for (io.github.soundgoodizerfan.feedback.process.Material.Located l : io.github.soundgoodizerfan.feedback.modular.blueprint.ToolDesigns
                             .slotMaterials(slot, sh, io.github.soundgoodizerfan.feedback.process.ClientMaterials.get())) {
                         ItemStack s = new ItemStack(item);
                         s.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
@@ -819,7 +819,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
     private static void publishModular() {
         if (runtime == null)
             return;
-        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
+        var types = io.github.soundgoodizerfan.feedback.modular.type.ModularTypes.known();
         List<PartBenchToolCategory.Card> tools = new ArrayList<>();
         types.forEach((id, type) -> {
             if (type.face())
@@ -829,7 +829,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         });
         show(PartBenchToolCategory.TYPE, tools);
         show(EngineeringCategory.TYPE, EngineeringCategory.generated(types));
-        show(PartBenchPartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.PartBenchShaping.options(types));
+        show(PartBenchPartCategory.TYPE, io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping.options(types));
     }
 
     private static void publishThermal() {

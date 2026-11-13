@@ -2,9 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular.attunement;
 
-import io.github.soundgoodizerfan.feedback.modular.AttunementKinds;
-import io.github.soundgoodizerfan.feedback.modular.MaterialPerks;
-import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
+import io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks;
+import io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -15,9 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onFlame;
-import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStrike;
-import static io.github.soundgoodizerfan.feedback.modular.AttunementKinds.onStruck;
+import static io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds.onFlame;
+import static io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds.onStrike;
+import static io.github.soundgoodizerfan.feedback.modular.attunement.AttunementKinds.onStruck;
 
 /**
  * The runtime kinds of the Heat effect. Registers its handlers with

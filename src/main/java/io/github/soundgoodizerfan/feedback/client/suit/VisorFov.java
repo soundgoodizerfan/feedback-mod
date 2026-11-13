@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.client.suit;
 
 import io.github.soundgoodizerfan.feedback.Feedback;
-import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
+import io.github.soundgoodizerfan.feedback.modular.trait.ModularTraits;
 import io.github.soundgoodizerfan.feedback.modular.trait.ClosedVisor;
 
 import net.neoforged.api.distmarker.Dist;
@@ -23,7 +23,7 @@ public final class VisorFov {
 
     @SubscribeEvent
     public static void onFov(ComputeFovModifierEvent event) {
-        if (!(event.getPlayer().getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularArmor))
+        if (!(event.getPlayer().getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularArmor))
             return;
         for (ModularTraits.Worn w : ModularTraits.worn(event.getPlayer()))
             if (w.trait() instanceof ClosedVisor)

@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
-import io.github.soundgoodizerfan.feedback.modular.Station;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchMenu;
-import io.github.soundgoodizerfan.feedback.modular.PartBenchShaping;
+import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
+import io.github.soundgoodizerfan.feedback.modular.bench.Station;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchMenu;
+import io.github.soundgoodizerfan.feedback.modular.bench.PartBenchShaping;
 import io.github.soundgoodizerfan.feedback.process.ClientMaterials;
 import io.github.soundgoodizerfan.feedback.process.Material;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
@@ -161,7 +161,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
     private Slot centreSlot() {
         if (centre == null)
             for (Slot s : menu.slots)
-                if (s.getContainerSlot() == io.github.soundgoodizerfan.feedback.modular.PartBenchBlockEntity.TOOL) {
+                if (s.getContainerSlot() == io.github.soundgoodizerfan.feedback.modular.bench.PartBenchBlockEntity.TOOL) {
                     centre = s;
                     break;
                 }
@@ -251,7 +251,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
     /** The centre slot rides the fan's middle as it is panned and zoomed (kept inside the canvas so it stays reachable). */
     private void followFan() {
         for (net.minecraft.world.inventory.Slot s : menu.slots) {
-            if (s.getContainerSlot() != io.github.soundgoodizerfan.feedback.modular.PartBenchBlockEntity.TOOL)
+            if (s.getContainerSlot() != io.github.soundgoodizerfan.feedback.modular.bench.PartBenchBlockEntity.TOOL)
                 continue;
             s.x = Mth.clamp(fan.originX(cx()) - leftPos - 8, VX, VX + VW - 16);
             s.y = Mth.clamp(fan.originY(cy()) - topPos - 8, VY, VY + VH - 16);
@@ -334,7 +334,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
     /** The shape's icon, drawn as the stock in the centre would make it: the part item carries what it is made of, so it is tinted. */
     private static ItemStack partIcon(PartBenchShaping.Option o, Material.Located stuff) {
         ItemStack icon = new ItemStack(BuiltInRegistries.ITEM.get(o.shaping().item()));
-        if (icon.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularPartItem)
+        if (icon.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularPartItem)
             icon.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
                     new io.github.soundgoodizerfan.feedback.process.MadeOf(stuff.id(), stuff.form(), o.cells()));
         return icon;
@@ -429,7 +429,7 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         ItemStack part = menu.centreStack().copyWithCount(1);
         for (int i = 0; i < axes.size(); i++) {
             var a = axes.get(i);
-            float value = io.github.soundgoodizerfan.feedback.modular.Filing.value(menu.centreStack(), a);
+            float value = io.github.soundgoodizerfan.feedback.modular.bench.Filing.value(menu.centreStack(), a);
             Component label = Component.translatable("gui.feedback.bench.file.axis", Component.translatable("modular.feedback.axis." + a.getKey()),
                     String.format("%.1f %s", value, a.getValue().unit()));
             BenchFan.Node n = new BenchFan.Node(BenchFan.Kind.FILE, part, label, "", PartBenchMenu.BTN_FILE + i, 0, i);
