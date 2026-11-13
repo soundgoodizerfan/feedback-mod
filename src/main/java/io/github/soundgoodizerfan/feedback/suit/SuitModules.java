@@ -38,18 +38,18 @@ public final class SuitModules {
     private SuitModules() {
     }
 
-    public static final int CRASH_LINER = 6, REFLEX_LINK = 7,
-            EFFICIENCY_BUS = 10, AUTODOC = 11, REACTIVE_PLATING = 12, BLAST_SHELL = 13, THORN_ARRAY = 14,
-            MAGNET_PICKUP = 16, LOAD_FRAME = 23, STABILISER = 24, MAG_ANCHOR = 25,
+    public static final int REFLEX_LINK = 7,
+            EFFICIENCY_BUS = 10, AUTODOC = 11,
+            MAGNET_PICKUP = 16,
             // modules that give the wheel a segment of its own (see ability)
             EMP_COIL = 35;
     // mechanism classes: a part of one kind of mechanism, tuned by its axis, whatever the figures make of it
-    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39, FILTER = 40, THERMAL = 41, THRUSTER = 42;
+    public static final int OPTIC = 36, SPRING = 37, ACTUATOR = 38, TREAD = 39, FILTER = 40, THERMAL = 41, THRUSTER = 42, PLATE = 43;
     /** The variant name of each id, which is also its lang key suffix; index 0 is none. */
-    private static final String[] KEYS = {"", "", "", "", "", "", "crash_liner", "reflex_link", "",
-            "", "efficiency_bus", "autodoc", "reactive_plating", "blast_shell", "thorn_array", "", "magnet_pickup", "",
-            "", "", "", "", "", "load_frame", "stabiliser", "mag_anchor", "", "",
-            "", "", "", "", "", "", "", "emp_coil", "optic", "spring", "actuator", "tread", "filter", "thermal", "thruster"};
+    private static final String[] KEYS = {"", "", "", "", "", "", "", "reflex_link", "",
+            "", "efficiency_bus", "autodoc", "", "", "", "", "magnet_pickup", "",
+            "", "", "", "", "", "", "", "", "", "",
+            "", "", "", "", "", "", "", "emp_coil", "optic", "spring", "actuator", "tread", "filter", "thermal", "thruster", "plate"};
 
     /** The name key of upgrade {@code id} (translate {@code modular.feedback.variant.<key>}), or empty for none. */
     public static String key(int id) {
@@ -57,7 +57,7 @@ public final class SuitModules {
     }
 
     /** Ids are 1-based; a module array holds each id's power at {@code [id]} and its tuned-axis share at {@code [COUNT + id]}. */
-    public static final int COUNT = 43;
+    public static final int COUNT = 44;
 
     /** A module array's length: powers, then tuned-axis shares. */
     static final int SLOTS = 2 * COUNT;
@@ -79,6 +79,7 @@ public final class SuitModules {
             case FILTER -> "bed";
             case THERMAL -> "thickness";
             case THRUSTER -> "bore";
+            case PLATE -> "thickness";
             default -> "";
         };
     }
@@ -137,7 +138,7 @@ public final class SuitModules {
         if (m == null)
             return null;
         float[] live = null;
-        for (int id : new int[] {SPRING, TREAD, FILTER, THERMAL}) {
+        for (int id : new int[] {SPRING, TREAD, FILTER, THERMAL, PLATE}) {
             if (m[id] <= 0f)
                 continue;
             if (live == null)
@@ -154,20 +155,19 @@ public final class SuitModules {
             case EMP_COIL -> Ability.EMP;
             case MAGNET_PICKUP -> Ability.MAGNET;
             case AUTODOC -> Ability.HEAL;
-            case THORN_ARRAY -> Ability.THORNS;
             default -> null;
         };
     }
 
     // --- placeholder figures, tuned in play (the suit's own file is SuitTuning; these are per-module and live beside their code) ---
-    private static final float OXYGEN = 3f, ATTACK_SPEED = 0.2f, KB_PLATING = 0.6f, KB_ANCHOR = 0.5f,
-            KB_STABILISER = 0.2f, STRIDE = 0.12f, STEP = 1f, WATER = 0.6f, FALL_CUT = 0.5f, EFFICIENCY = 0.7f, SNEAK = 0.5f, JUMP = 0.12f,
-            SAFE_FALL = 5f, LOAD = 1f;
+    private static final float OXYGEN = 3f, ATTACK_SPEED = 0.2f, KB_PLATING = 0.6f,
+            STRIDE = 0.12f, STEP = 1f, WATER = 0.6f, FALL_CUT = 0.5f, EFFICIENCY = 0.7f, JUMP = 0.12f,
+            SAFE_FALL = 5f, LOAD = 0.5f;
     private static final float BLAST_CUT = 0.4f, FIRE_CUT = 0.5f, LINING_MIN = 0.3f, SHOT_CUT = 0.3f, BUS_SAVING = 0.3f, SINK_GAIN = 3f, LENS_GAIN = 0.5f;
     /** Throat width against its widest, at the narrowest bore and at the middle one. */
     private static final float THROAT_MIN = 0.4f, THROAT_MID = 0.7f;
     private static final float STRIDE_AMPS = 0.3f, MAGNET_AMPS = 0.2f, FILTER_COST = 15f, LINING_COST = 5f, HEAL_COST = 80f,
-            THORN_COST = 40f, STOMP_COST = 50f, THORN_DAMAGE = 2f, STOMP_PER_BLOCK = 0.5f, STOMP_MAX = 12f, MAGNET_BASE = 3f, MAGNET_PER = 3f;
+            STOMP_COST = 50f, STOMP_PER_BLOCK = 0.5f, STOMP_MAX = 12f, MAGNET_BASE = 3f, MAGNET_PER = 3f;
     private static final int HEAL_TICKS = 40;
     /** A lens: the reach (blocks) a short-focus lens adds; the share of thermal range a long-focus lens adds; the share of its light a glass must turn back to keep glare out; a scan flash's reach at the short and long end of the focal length. */
     private static final float LENS_REACH_BLOCK = 1.5f, LENS_REACH_ENTITY = 1f, GLARE_MIN = 0.35f, FILTER_MIN = 0.3f, SCAN_SHORT = 0.6f, SCAN_LONG = 0.8f;
@@ -177,7 +177,7 @@ public final class SuitModules {
     }
 
     private static final ResourceLocation OXY = id("oxygen"), BR = id("block_reach"), ER = id("entity_reach"), AS = id("attack_speed"), KB = id("knockback"),
-            MS = id("speed"), SH = id("step"), WE = id("water"), FM = id("fall_mult"), ME = id("efficiency"), SN = id("sneak"), JS = id("jump"), SF = id("safe_fall");
+            MS = id("speed"), SH = id("step"), WE = id("water"), FM = id("fall_mult"), ME = id("efficiency"), JS = id("jump"), SF = id("safe_fall");
 
     private static float p(float[] m, int id) {
         return m == null ? 0f : m[id];
@@ -202,7 +202,8 @@ public final class SuitModules {
 
     /** Added to the pack's carry factor. */
     static float carry(float[] m) {
-        return LOAD * p(m, LOAD_FRAME);
+        // a thick plate down the leg is a frame: it takes the weight of a pack to the ground
+        return LOAD * p(m, PLATE) * arg(m, PLATE);
     }
 
     /** A nozzle's push and the fuel it burns both go with its throat area, against the mid-range throat (as the thruster block's nozzle does). */
@@ -221,8 +222,8 @@ public final class SuitModules {
         add(pl, Attributes.BLOCK_INTERACTION_RANGE, BR, LENS_REACH_BLOCK * near, AttributeModifier.Operation.ADD_VALUE);
         add(pl, Attributes.ENTITY_INTERACTION_RANGE, ER, LENS_REACH_ENTITY * near, AttributeModifier.Operation.ADD_VALUE);
         add(pl, Attributes.ATTACK_SPEED, AS, ATTACK_SPEED * p(m, REFLEX_LINK), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
-        add(pl, Attributes.KNOCKBACK_RESISTANCE, KB, Math.min(1f, KB_PLATING * p(m, REACTIVE_PLATING) + KB_ANCHOR * p(m, MAG_ANCHOR)
-                + KB_STABILISER * p(m, STABILISER)), AttributeModifier.Operation.ADD_VALUE);
+        // a thick plate has the mass to take a blow without moving
+        add(pl, Attributes.KNOCKBACK_RESISTANCE, KB, Math.min(1f, KB_PLATING * p(m, PLATE) * arg(m, PLATE)), AttributeModifier.Operation.ADD_VALUE);
         // An actuator's stroke trades cadence against reach: a short one strides fast, a long one lifts the foot over a step.
         float act = p(m, ACTUATOR), reach = arg(m, ACTUATOR);
         add(pl, Attributes.MOVEMENT_SPEED, MS, STRIDE * act * (1f - reach), AttributeModifier.Operation.ADD_MULTIPLIED_BASE);
@@ -234,7 +235,6 @@ public final class SuitModules {
         // A spring's stroke trades kick against cushion: a stiff short one throws the jump, a soft long one takes the landing.
         float spring = p(m, SPRING), travel = arg(m, SPRING);
         add(pl, Attributes.FALL_DAMAGE_MULTIPLIER, FM, -FALL_CUT * spring * travel, AttributeModifier.Operation.ADD_VALUE);
-        add(pl, Attributes.SNEAKING_SPEED, SN, SNEAK * p(m, STABILISER), AttributeModifier.Operation.ADD_VALUE);
         add(pl, Attributes.JUMP_STRENGTH, JS, JUMP * spring * (1f - travel), AttributeModifier.Operation.ADD_VALUE);
         add(pl, Attributes.SAFE_FALL_DISTANCE, SF, SAFE_FALL * spring * travel, AttributeModifier.Operation.ADD_VALUE);
     }
@@ -309,12 +309,13 @@ public final class SuitModules {
             return;
         var src = event.getSource();
         float k = 1f;
+        // plate reads its material's hardness and toughness: a thin one turns a shot, a thick one soaks a blast
         if (src.is(DamageTypeTags.IS_EXPLOSION))
-            k -= BLAST_CUT * m[BLAST_SHELL];
+            k -= BLAST_CUT * m[PLATE] * arg(m, PLATE);
         if (src.is(DamageTypeTags.IS_FIRE))
             k -= FIRE_CUT * m[THERMAL] * arg(m, THERMAL);
         if (src.is(DamageTypeTags.IS_PROJECTILE))
-            k -= SHOT_CUT * m[CRASH_LINER];
+            k -= SHOT_CUT * m[PLATE] * (1f - arg(m, PLATE));
         if (k < 1f)
             event.setAmount(event.getAmount() * Math.max(0.1f, k));
     }

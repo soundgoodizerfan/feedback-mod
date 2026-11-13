@@ -11,15 +11,15 @@ package io.github.soundgoodizerfan.feedback.suit;
 public enum Ability {
     STRENGTH, JUMP_DASH, PLATING, NIGHT, THERMAL, CLOAK, JET, SHOCK, SCAN, EMP,
     // the segments of modules that are otherwise passive: switches (the module works only while on) and pulses
-    MAGNET, STRIDE, LENS, HEAL, VENT, BURST, THORNS;
+    MAGNET, STRIDE, LENS, HEAL, VENT, BURST;
 
     public int bit() {
         return 1 << ordinal();
     }
 
-    /** Chosen on the wheel it fires once and the switch does not stay on: the shockwave, scan ping, EMP, heal, vent, burst and thorns. */
+    /** Chosen on the wheel it fires once and the switch does not stay on: the shockwave, scan ping, EMP, heal, vent and burst. */
     public boolean pulse() {
-        return this == SHOCK || this == SCAN || this == EMP || this == HEAL || this == VENT || this == BURST || this == THORNS;
+        return this == SHOCK || this == SCAN || this == EMP || this == HEAL || this == VENT || this == BURST;
     }
 
     /** The first five: the ones the armour's own fittings give, always drawn on the wheel. */

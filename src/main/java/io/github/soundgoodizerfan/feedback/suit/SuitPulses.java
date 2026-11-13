@@ -34,7 +34,6 @@ final class SuitPulses {
             case HEAL -> SuitTuning.HEAL_COOLDOWN;
             case VENT -> SuitTuning.VENT_COOLDOWN;
             case BURST -> SuitTuning.BURST_COOLDOWN;
-            case THORNS -> SuitTuning.THORNS_COOLDOWN;
             default -> SuitTuning.EMP_COOLDOWN;
         };
     }
@@ -47,7 +46,6 @@ final class SuitPulses {
             case HEAL -> SuitTuning.HEAL_COST;
             case VENT -> SuitTuning.VENT_COST;
             case BURST -> SuitTuning.BURST_COST;
-            case THORNS -> SuitTuning.THORNS_COST;
             default -> SuitTuning.EMP_COST;
         };
     }
@@ -90,12 +88,6 @@ final class SuitPulses {
                 p.hurtMarked = true;
                 level.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME, p.getX(), p.getY() + 0.5, p.getZ(), 15, 0.2, 0.2, 0.2, 0.05);
                 level.playSound(null, p.blockPosition(), SoundEvents.FIRECHARGE_USE, SoundSource.PLAYERS, 0.8f, 1f);
-            }
-            case THORNS -> {
-                for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, p.getBoundingBox().inflate(SuitTuning.THORNS_RADIUS), x -> target(p, x)))
-                    e.hurt(p.damageSources().thorns(p), SuitTuning.THORNS_DAMAGE * power);
-                level.sendParticles(net.minecraft.core.particles.ParticleTypes.CRIT, p.getX(), p.getY() + 1, p.getZ(), 30, 1, 0.5, 1, 0.2);
-                level.playSound(null, p.blockPosition(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.PLAYERS, 0.8f, 0.8f);
             }
             default -> {
                 double r = SuitTuning.EMP_RADIUS * (0.6 + 0.4 * power);

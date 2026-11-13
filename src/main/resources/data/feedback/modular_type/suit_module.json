@@ -213,65 +213,29 @@
           "ingot",
           "plate",
           "rod"
-        ],
-        "variants": [
-          {
-            "name": "reactive_plating",
-            "cells": 4,
-            "params": {
-              "module": 12.0,
-              "competence": 4.0
-            }
-          },
-          {
-            "name": "blast_shell",
-            "cells": 6,
-            "params": {
-              "module": 13.0,
-              "competence": 4.0
-            }
-          },
-          {
-            "name": "crash_liner",
-            "cells": 4,
-            "params": {
-              "module": 6.0,
-              "competence": 4.0
-            }
-          },
-          {
-            "name": "thorn_array",
-            "cells": 5,
-            "params": {
-              "module": 14.0,
-              "electric": 0.6
-            }
-          },
-          {
-            "name": "mag_anchor",
-            "cells": 4,
-            "params": {
-              "module": 25.0,
-              "competence": 4.0
-            }
-          },
-          {
-            "name": "stabiliser",
-            "cells": 3,
-            "params": {
-              "module": 24.0,
-              "competence": 4.0
-            }
-          },
-          {
-            "name": "load_frame",
-            "cells": 5,
-            "params": {
-              "module": 23.0,
-              "competence": 4.0
-            }
-          }
         ]
+      },
+      "params": {
+        "module": 43.0,
+        "competence": 4.0
+      },
+      "axes": {
+        "thickness": {
+          "min": 1,
+          "max": 10,
+          "unit": "mm",
+          "default": 3,
+          "step": 1,
+          "bands": [
+            {
+              "name": "thin",
+              "max": 3
+            },
+            {
+              "name": "thick"
+            }
+          ]
+        }
       }
     },
     "A": {
