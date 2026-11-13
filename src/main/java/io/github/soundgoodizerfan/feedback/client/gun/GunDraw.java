@@ -1130,8 +1130,6 @@ final class GunDraw {
     /** Devices on the muzzle, front to front: a brake, then a can; the bore's mouth on the last. */
     private static void muzzle(GunMesh m, GunView v) {
         float z = front(v), r = v.r();
-        // A brake or suppressor seated in front of a beam lens is mostly see-through, so the lens shows.
-        m.ghost(v.has("l") ? 0x80 : 0);
         if (v.has("N")) {
             m.part(v, "N");
             m.rod(0, 0, r + 0.125f, z, z - 1.5f, Tile.METAL);
@@ -1146,7 +1144,6 @@ final class GunDraw {
             m.rod(0, 0, rr + 0.0625f, z - 4f, z - 4.5f, Tile.KNURL);
             z -= 4.5f;
         }
-        m.ghost(0);
         float b = v.bore();
         m.box(-b, -b, z - 0.0625f, b, b, z, Tile.BORE);
     }
