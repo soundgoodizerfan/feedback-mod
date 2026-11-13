@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>A safety cutoff, not regulation</h2>
  * It does not hold a speed and does not slow anything -- it is the bimetallic strip's bang-bang
- * shape one energy type up (philosophy 13; {@code TODO.md} 5a). Steady-state speed control stays
+ * shape one energy type up (philosophy 14; {@code TODO.md} 5a). Steady-state speed control stays
  * the player's loop. The only thing it adds to a clutch is the sensor and the trigger in one
  * part, with no logic anywhere, and the speed is the fitted spring's: three springs, swapped by hand (sneak and right-click), never a dial.
  *

@@ -20,7 +20,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
  * Says what a workpiece needs, and describes how far along it is.
  *
  * <h2>The two halves are not the same kind of fact</h2>
- * Philosophy 8, <em>what you need is free, what you have is a cost</em>, cuts straight through the
+ * Philosophy 10, <em>what you need is free, what you have is a cost</em>, cuts straight through the
  * middle of this tooltip. {@code Needs 14 Fu} is published data -- a handbook figure, true before
  * the player owns anything, and stating it gates nothing. {@code Has 9 Fu} is the state of the
  * object in your hand, and that is what calipers are for.
@@ -61,7 +61,7 @@ public class WorkpieceTooltip {
         return made != null && made.measures().axes().containsKey(io.github.soundgoodizerfan.feedback.weapon.BarrelGeometry.BORE);
     }
 
-    /** A machined barrel's shape as a figure, or null when it is no barrel or no instrument reads length (the calipers' to give, philosophy 8). Shared with {@link ItemInfoHud}. */
+    /** A machined barrel's shape as a figure, or null when it is no barrel or no instrument reads length (the calipers' to give, philosophy 10). Shared with {@link ItemInfoHud}. */
     static Component barrel(ItemStack stack) {
         if (!isBarrel(stack) || !Readout.instrumented(Quantity.LENGTH))
             return null;

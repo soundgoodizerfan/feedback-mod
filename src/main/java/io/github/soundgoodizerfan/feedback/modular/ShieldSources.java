@@ -28,7 +28,7 @@ import net.minecraft.world.damagesource.DamageType;
  * ({@code data/<ns>/shield_source/*.json}: {@code {"tag": "minecraft:is_fire", "tu": 760}}).
  * A shield's face is heated towards the hottest source a blow matches, and never past it (the
  * difference law, {@link ShieldHeat}). Keyed by tag so a modded fire is a line of JSON and nothing
- * names a mob (philosophy 11). Server only: only the server heats a face.
+ * names a mob (philosophy 12). Server only: only the server heats a face.
  */
 public class ShieldSources extends SimpleJsonResourceReloadListener {
 

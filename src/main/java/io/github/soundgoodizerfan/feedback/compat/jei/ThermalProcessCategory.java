@@ -31,7 +31,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  *
  * <h2>Publishing the window is not giving the game away</h2>
  * It is tempting to hide "1420 to 1480 Tu" on the grounds that discovering it is the beat. It is
- * not, and philosophy 8 is explicit about why: a requirement is published data. The player may
+ * not, and philosophy 10 is explicit about why: a requirement is published data. The player may
  * read the window on their first day, own nothing, and still burn six stacks of iron -- because
  * knowing the target and knowing <em>where you are</em> are different problems, and only the second
  * is for sale. A hidden number would make the beat about a wiki lookup instead.

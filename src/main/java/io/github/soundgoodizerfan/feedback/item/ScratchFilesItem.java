@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
  * A set of files, each harder than the last. Drawn across an edge, the first that bites is the
  * first harder than it, so the reading is a ladder -- "between file 10 and file 20" -- and never a
  * figure finer than the files themselves (an instrument may not claim more than it can stand
- * behind, philosophy 8). Carried, like the calipers; the files' hardnesses are
+ * behind, philosophy 10). Carried, like the calipers; the files' hardnesses are
  * {@code ModularTuning.SCRATCH_FILES}.
  */
 public class ScratchFilesItem extends Item implements Instrument {

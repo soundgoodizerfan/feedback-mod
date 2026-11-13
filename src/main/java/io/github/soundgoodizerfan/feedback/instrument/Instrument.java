@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
  * instrument touches no tooltip, no HUD and no compat code.
  *
  * <h2>Resolution is here from the start on purpose</h2>
- * Philosophy 8 says each tier of instrument buys <em>significant figures</em>, not access: a
+ * Philosophy 10 says each tier of instrument buys <em>significant figures</em>, not access: a
  * crude thermometer reads to 25 Tu and a good one to 0.1, and both are reading the same world.
  * Putting resolution in the interface before any instrument needs it means a tier is one number,
  * rather than a reason to reopen every display.
@@ -29,7 +29,7 @@ public interface Instrument {
      * {@link Quantity} has it, whether or not any instrument a player can make reaches it, and
      * every display must be able to print it -- so the debug helmet, which answers at this tier
      * for everything, shows the truth rather than whatever the weakest instrument's display was
-     * written for (philosophy 8, <em>Every quantity has a truth tier</em>).
+     * written for (philosophy 10, <em>Every quantity has a truth tier</em>).
      */
     float TRUTH = 0f;
 

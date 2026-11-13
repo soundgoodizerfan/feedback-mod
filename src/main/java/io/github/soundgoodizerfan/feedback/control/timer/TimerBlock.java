@@ -25,7 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * <h2>What it automates, and what it does not</h2>
  * It does not run a process. It <em>ends</em> one — and only because the player guessed how long
  * the process takes. No part of this device can tell whether the job is done, which is precisely
- * philosophy 8's point that timing is a crude form of control.
+ * philosophy 10's point that timing is a crude form of control.
  * <p>
  * So it is a bet, and a losing one some of the time. A water wheel's speed wanders with how much
  * water is against it, the shaft run's friction rises with speed, and the same wind of the timer

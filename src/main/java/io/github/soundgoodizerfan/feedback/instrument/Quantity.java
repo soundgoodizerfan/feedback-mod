@@ -56,7 +56,7 @@ public enum Quantity implements StringRepresentable {
     /**
      * Whether a switch is on: an actuator's own state, read back. The one boolean here, and the
      * one no instrument reads -- it exists so a controller can see what it last switched, which a
-     * deadband needs (philosophy 13). A program reads it as a boolean, never a number.
+     * deadband needs (philosophy 14). A program reads it as a boolean, never a number.
      */
     STATE("state"),
     /**

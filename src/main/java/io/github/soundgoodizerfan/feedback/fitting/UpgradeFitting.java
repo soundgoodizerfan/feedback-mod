@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.fitting;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 
 /**
- * A fitting that doesn't occupy a face -- philosophy §4's upgrade, made attachable rather than
+ * A fitting that doesn't occupy a face -- philosophy §5's upgrade, made attachable rather than
  * baked into a block's stats. A larger vessel is a different block; a flywheel or a finer
  * screen is one of these.
  * <p>

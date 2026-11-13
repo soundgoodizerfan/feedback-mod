@@ -28,7 +28,7 @@ import net.minecraft.world.level.Level;
  * Nothing needs it: the whisker's hunt, the coherer's tap and the relay's late release all work
  * without. It buys knowing which spot to keep and when a part is worn. It acts on nothing; it
  * senses, and has no stop because it holds nothing to stop. It does not enter the joint grade or
- * any part's behaviour (philosophy 8).
+ * any part's behaviour (philosophy 10).
  */
 public class ComponentTesterItem extends Item implements Instrument {
 

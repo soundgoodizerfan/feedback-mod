@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 /**
- * Perfect instrumentation, which is the one thing philosophy 8 says a player may never buy.
+ * Perfect instrumentation, which is the one thing philosophy 10 says a player may never buy.
  *
  * <h2>What it is for</h2>
  * Every readout in the mod is an adjective until an instrument says otherwise. That is the design,

@@ -75,7 +75,7 @@ public class FireboxBlock extends Block implements EntityBlock {
     /**
      * Smoke and flame while lit.
      * <p>
-     * Free under philosophy 8 -- it is an adjective, not a figure. It says "this is alight" and
+     * Free under philosophy 10 -- it is an adjective, not a figure. It says "this is alight" and
      * nothing about how hot, which is precisely the distinction the thermometer is sold on.
      */
     @Override

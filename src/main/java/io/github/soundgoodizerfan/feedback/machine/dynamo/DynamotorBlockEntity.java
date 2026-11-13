@@ -265,7 +265,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
         setChanged();
     }
 
-    /** A machine on a shaft is working and cannot be measured, like any machine (philosophy 8). */
+    /** A machine on a shaft is working and cannot be measured, like any machine (philosophy 10). */
     @Override
     public boolean isRunning() {
         return getAmps() > 0f;

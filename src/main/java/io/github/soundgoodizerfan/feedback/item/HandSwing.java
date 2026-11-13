@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
  * How hard a player swings a hand tool: a few named swings, never a slider (philosophy 3). Chosen by
  * sneak-scroll and kept on the stack, so the crafting grid's preview shows the blow that will land.
  *
- * <p>The swings make the hand hammer the crank's lesson in miniature (philosophy 17): a tap is
+ * <p>The swings make the hand hammer the crank's lesson in miniature (philosophy 21): a tap is
  * precision, a heavy blow is power, and on a soft metal the heavy blow overshoots. Lead wants a
  * tap; bronze wants a heavy blow and refuses anything less.
  *

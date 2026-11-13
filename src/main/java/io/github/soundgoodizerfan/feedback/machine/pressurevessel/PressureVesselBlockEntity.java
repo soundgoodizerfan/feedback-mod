@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * A Bellows aimed at this finds it the same way it finds a Firebox or a self-fired vessel: by
  * scanning its six neighbours for anything that implements {@link Blown} and handing over air.
  * Nothing here knows it is being fed by a Bellows specifically, and nothing about the Bellows knows
- * it is feeding a Pressure Vessel rather than a fire -- philosophy 11 applied to an actuator
+ * it is feeding a Pressure Vessel rather than a fire -- philosophy 12 applied to an actuator
  * instead of a sorter.
  *
  * <h2>Canning</h2>
@@ -111,7 +111,7 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
 
         // Read from PneumaticCraft: Repressurized's MachineAirHandler#addAir (GPL-3.0) -- risk
         // climbs linearly across the danger-to-critical band, and critical itself is certain
-        // rather than merely likely. This is philosophy 6's Hazard tier, and philosophy 14's named
+        // rather than merely likely. This is philosophy 7's Hazard tier, and philosophy 15's named
         // GregTech-boiler precedent, both landing on Feedback's own equipment rather than staying
         // an open item -- see FTuning#PRESSURE_VESSEL_DANGER_PU. The ladder itself is shared with
         // the boiler: see PressureBurst.

@@ -15,8 +15,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * drag for carrying it, and nothing else -- the Bearing's precedent, one class, its figures
  * stamped on it. What it does is the rotation network's, unwritten: a run with more inertia
  * changes speed more slowly, so it rides through a hammer's blows and a pulsing source, and it
- * coasts longer when the drive goes -- which is also why it is slower to stop (philosophy 10, a
- * mechanical stop coasts). Smoothing with mass, not a smarter controller (philosophy 13).
+ * coasts longer when the drive goes -- which is also why it is slower to stop (philosophy 11, a
+ * mechanical stop coasts). Smoothing with mass, not a smarter controller (philosophy 14).
  */
 public class FlywheelBlock extends ShaftBlock {
 

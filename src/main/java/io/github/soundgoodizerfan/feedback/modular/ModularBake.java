@@ -118,7 +118,7 @@ public final class ModularBake {
      * How much of its competence a piece made whole keeps against cracking: a material tougher than
      * a fifth of its hardness keeps all of it, a brittle one (diamond, quartz) keeps the square of
      * what it has. A whole-diamond blade is therefore possible, bites well and shatters in use --
-     * bad, never forbidden (philosophy 7); a diamond set in tougher metal ({@link #zone}) is not
+     * bad, never forbidden (philosophy 8); a diamond set in tougher metal ({@link #zone}) is not
      * whole, so does not pay it.
      */
     static float fracture(Material m) {

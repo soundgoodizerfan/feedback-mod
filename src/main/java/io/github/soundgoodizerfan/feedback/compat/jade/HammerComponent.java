@@ -22,7 +22,7 @@ import net.minecraft.resources.ResourceLocation;
  * <h2>Why the specs are exact and the progress is not</h2>
  * {@code 12 / 3 St} and {@code 80 Su} are stamped on the machine (§17): a spec sheet is a thing you
  * read off the casting, not a measurement, and nothing is discovered by hiding it. What the
- * workpiece has absorbed is the other half of philosophy 8's sentence -- it is the state of an
+ * workpiece has absorbed is the other half of philosophy 10's sentence -- it is the state of an
  * object, it changes while you watch, and reading it is what calipers will be sold for.
  * <p>
  * The figures are asked of the block entity rather than read from {@code FTuning}, because a

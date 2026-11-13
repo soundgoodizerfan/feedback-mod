@@ -26,7 +26,7 @@ import net.minecraft.core.Direction;
  * Draws a rotation node as its own block model, turning.
  *
  * <h2>Why this is not decoration</h2>
- * Philosophy 8 says the player's own senses are free and sufficient — that you should be able to
+ * Philosophy 10 says the player's own senses are free and sufficient — that you should be able to
  * walk into a factory and read its state without buying an instrument. Until a shaft visibly
  * turns, that is a claim the mod cannot back: a running network and a dead one look identical,
  * and every question about speed has to be answered by a HUD. Motion is the first readout, and

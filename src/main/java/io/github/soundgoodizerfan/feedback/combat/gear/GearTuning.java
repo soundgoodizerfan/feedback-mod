@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.combat.gear;
 
 /**
- * Every figure of combat gear (implementation plan 2.8). Philosophy 14: difficulty stays flat, so gear
+ * Every figure of combat gear (implementation plan 2.8). Philosophy 15: difficulty stays flat, so gear
  * narrows the ratio of window to enemy speed and never makes a parry free -- hence a cap on each sum
  * ({@code MAX_*}), whatever is worn and however good the material. All placeholder until played.
  *

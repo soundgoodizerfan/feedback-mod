@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
  * Vanilla's recipe machinery brings a recipe book, a crafting-grid shaped matching API and
  * automatic client sync, none of which apply: there is no grid and nothing is ever "crafted". The
  * list is sent to the client by a payload of its own ({@code DeformationSyncPayload}) purely so
- * JEI can print what a material needs -- philosophy 8 gives requirements away -- under a category
+ * JEI can print what a material needs -- philosophy 10 gives requirements away -- under a category
  * whose catalysts are the machines that apply the operation, never a recipe list any of them owns.
  *
  * <h2>Nothing is authored here any more</h2>

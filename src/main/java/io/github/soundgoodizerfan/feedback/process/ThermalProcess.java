@@ -45,7 +45,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * faster, which a flat tick count could never express.
  *
  * <h2>Four numbers, four different kinds of failure</h2>
- * Philosophy 6 wants overrun to have a character rather than to be a timer running out, and the
+ * Philosophy 7 wants overrun to have a character rather than to be a timer running out, and the
  * shape of that is in these fields:
  * <ul>
  *   <li><b>Below {@code minTemperature}</b> -- no TPu accumulates, and what has already been
@@ -67,7 +67,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
  * </ul>
  *
  * <h2>Tempering: a hold that only counts on the way down</h2>
- * {@code requireCooling} is the one thing tempering needed that carburizing did not. Philosophy 13
+ * {@code requireCooling} is the one thing tempering needed that carburizing did not. Philosophy 14
  * says an actuator is a switch, never a dial, so there is no rate to store here -- the only lever
  * a Damper gives the player is on/off, timed by hand or by a controller, exactly like the Bellows/
  * Bimetallic-Strip thermostat. So the process asks for a direction instead of a rate: while this is
@@ -316,7 +316,7 @@ public record ThermalProcess(List<Ingredient> inputs,
     ).apply(instance, ThermalProcess::new));
 
     /**
-     * For printing on the client. Philosophy 8: a requirement is published data and costs nothing.
+     * For printing on the client. Philosophy 10: a requirement is published data and costs nothing.
      * <p>
      * Written out rather than composed, because {@code StreamCodec.composite} stops at six fields
      * and this record has eleven. Splitting the record to fit a helper would be letting the wire
@@ -379,7 +379,7 @@ public record ThermalProcess(List<Ingredient> inputs,
     /**
      * How fast TPu accumulates at {@code tu}, as a fraction of the rate at {@link
      * #optimalTemperature} -- 0 outside the band, ramping up to 1.0 at the optimum and back down
-     * to 0 at the far edge. Philosophy 8's "quality should fall off gracefully, not switch off":
+     * to 0 at the far edge. Philosophy 10's "quality should fall off gracefully, not switch off":
      * a triangular shape, kept to three
      * points (min/optimal/max) rather than an illustrative six -- the exact curve is
      * a tuning decision, and three points is the minimum that has a peak at all.

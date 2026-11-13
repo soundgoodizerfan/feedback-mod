@@ -38,7 +38,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
  *
  * <h2>What it teaches</h2>
  * The same ingot at the same final temperature is a different item depending on how it got there.
- * Nothing about the end state distinguishes the two. That is philosophy 7's history-sensitivity
+ * Nothing about the end state distinguishes the two. That is philosophy 8's history-sensitivity
  * and the first requirement in the slice that cannot be satisfied by getting a number right --
  * and it is real metallurgy, which is the point of §2: the mod did not invent this rule, it
  * noticed it.

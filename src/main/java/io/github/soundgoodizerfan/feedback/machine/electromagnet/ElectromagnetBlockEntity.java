@@ -235,7 +235,7 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
         return condition;
     }
 
-    /** A magnet that is pulling is working and cannot be measured, like any machine (philosophy 8). */
+    /** A magnet that is pulling is working and cannot be measured, like any machine (philosophy 10). */
     @Override
     public boolean isRunning() {
         return field > 0f;

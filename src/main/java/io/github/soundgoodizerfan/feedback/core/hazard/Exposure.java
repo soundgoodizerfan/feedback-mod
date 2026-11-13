@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * How much of a shock a victim takes: one multiplier on {@link Shock#damage}, read off the world.
  *
  * <h2>Not a body's resistance</h2>
- * Resistance is still not modelled (the {@link Shock} javadoc, philosophy 17). This is the
+ * Resistance is still not modelled (the {@link Shock} javadoc, philosophy 21). This is the
  * shock-side twin of {@link Protection}: three things anyone can see and change about a victim --
  * whether it is wet, what its armour is made of, and what it stands on -- each a property of a
  * material's file or of the weather, never of what the victim is. A dry, bare thing on stone

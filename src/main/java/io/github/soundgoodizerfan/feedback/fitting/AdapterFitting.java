@@ -10,7 +10,7 @@ package io.github.soundgoodizerfan.feedback.fitting;
  * Sided like a {@link SensorFitting} (it occupies a face, physically), addon-shaped like an
  * {@code Upgrade} (it doesn't read anything, it changes what the holder can do). Empty for now
  * on purpose: what an adapter actually converts to what is a different pairing for every energy
- * combination (electrical→mechanical, electrical→thermal, and philosophy §10's "local
+ * combination (electrical→mechanical, electrical→thermal, and philosophy §11's "local
  * conversion covers" lists more), and generalizing that before a second concrete adapter exists
  * to compare against would be guessing at a shape instead of finding one.
  */

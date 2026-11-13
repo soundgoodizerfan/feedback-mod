@@ -64,7 +64,7 @@ import java.util.Optional;
  * was unloaded for; the pan itself is caught up ({@link Catchup}).
  * <p>
  * The Tool Table does not ask the pan anything: the pan reaches into the table's cells, so the
- * table, which is a bench and not a machine, has no thermal code. This is philosophy 4's shape
+ * table, which is a bench and not a machine, has no thermal code. This is philosophy 5's shape
  * again -- a source publishes how hot it is; whoever sits beside it uses that.
  */
 public class HearthBlockEntity extends BlockEntity implements ThermalBody, HeatSource {

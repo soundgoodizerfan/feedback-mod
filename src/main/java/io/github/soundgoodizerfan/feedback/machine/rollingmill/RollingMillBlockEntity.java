@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <p>
  * Exists alongside the Hammer for a real reason, not a cosmetic one: a mill geared correctly runs
  * unattended off the network, where the Hammer needs either a Clutch or a hand on the crank --
- * capital against attention (philosophy §5), not a second way to make the same plate.
+ * capital against attention (philosophy §6), not a second way to make the same plate.
  * <p>
  * <b>Roll cladding.</b> A plate laid in the second slot is a skin; the next stroke on a plate
  * workpiece bonds it on as a {@link Plating} coat of the skin's metal. Both must be past their anneal

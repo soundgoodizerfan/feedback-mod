@@ -109,7 +109,7 @@ public class CrankLinkageBlockEntity extends RotationNode {
      * A gear train trades speed for force and keeps the product: turn at half the speed and you
      * turn with twice the torque. The linkage already runs at its own geared speed, so blows fall
      * half as often on their own -- work per second is unchanged, and what changes is whether any
-     * one blow clears the material's hardness floor at all. That is philosophy §5's second answer
+     * one blow clears the material's hardness floor at all. That is philosophy §6's second answer
      * to the force problem: the short throw spends precision, a gear train spends capital and
      * space.
      *

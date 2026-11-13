@@ -34,7 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * Gearing down multiplies the force behind each blow and divides how often blows fall, so work
  * per second is unchanged -- what changes is whether a single blow clears a material's hardness
  * floor at all, which is the difference between working the material and doing nothing to it.
- * That makes a gear train the <em>second</em> answer to the force problem philosophy §5 asks for:
+ * That makes a gear train the <em>second</em> answer to the force problem philosophy §6 asks for:
  * a short crank throw is free but spends precision, since the same hard blow that reaches the
  * threshold also overshoots the state you wanted, while a gear train keeps the gentle blow's
  * control and spends capital and space instead.

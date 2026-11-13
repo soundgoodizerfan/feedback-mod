@@ -189,7 +189,7 @@ public class FDataComponents {
      * {@code Wearing}'s condition figure, but living on the bit item itself rather than on a
      * machine block. The Lathe's tool bit is the second thing in the mod that wears (the Hammer's
      * head is the first, and lives as a plain field since a Hammer is not a swappable component);
-     * the bit is a physical, replaceable part per philosophy 4, so its condition has to travel
+     * the bit is a physical, replaceable part per philosophy 5, so its condition has to travel
      * with the item, not with whichever Lathe it happens to be mounted in.
      */
     // Also carried by a mined machine block (hammer, pulley, shop machines), so its wear survives

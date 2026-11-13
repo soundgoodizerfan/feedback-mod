@@ -26,7 +26,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * its own stamp ({@link ItemHeat}, nothing ticked per item), and a block is hot if it is a
  * {@link ThermalBody} at a temperature -- not if it is a crucible. A mod's own heated block that
  * implements the interface is covered with no change here, which is the point of asking the
- * interface instead of the identity (philosophy 11).
+ * interface instead of the identity (philosophy 12).
  *
  * <h2>A consequence, never a lock</h2>
  * Touching is not cancelled. The use goes through and the hand pays; the player who must reach

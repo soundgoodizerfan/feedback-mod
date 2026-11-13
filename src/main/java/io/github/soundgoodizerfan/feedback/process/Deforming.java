@@ -115,7 +115,7 @@ public final class Deforming {
             return new Blow(workpiece, Outcome.WRONG_TEMPERATURE);
 
         // How much a blow accomplishes is the material's business, not the machine's. Below the
-        // hardness threshold nothing lands at all -- philosophy 7's hard gate, a genuine
+        // hardness threshold nothing lands at all -- philosophy 8's hard gate, a genuine
         // impossibility rather than a slower version of the process. It is also what keeps a hand
         // hammer out of steel without anyone writing a rule about hand hammers: 3 St against
         // hardness 15 is not a long afternoon, it is nothing at all.

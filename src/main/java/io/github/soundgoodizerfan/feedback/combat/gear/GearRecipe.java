@@ -27,10 +27,10 @@ import org.jetbrains.annotations.Nullable;
  * Plates of one material and straps of one material, in any arrangement, make a piece of combat
  * gear baked from exactly those (the {@code TongsRecipe} pattern). Plate stock is whatever the material
  * table says is a {@code plate} form, a strap is a {@code leather} form -- no item is named
- * (philosophy 11), and sheet stock is plate, not ingot. The counts in {@link GearKind} pick the piece:
+ * (philosophy 12), and sheet stock is plate, not ingot. The counts in {@link GearKind} pick the piece:
  * 2 plates and a strap a bracer, a plate and 2 straps a sash, 3 plates and a strap a back piece.
  *
- * <p>This is also the craft route for every relic of these slots (philosophy 14): a relic is a piece
+ * <p>This is also the craft route for every relic of these slots (philosophy 15): a relic is a piece
  * with a perk or a {@code grants} list, and none exists that this table cannot make later.
  */
 public class GearRecipe extends CustomRecipe {

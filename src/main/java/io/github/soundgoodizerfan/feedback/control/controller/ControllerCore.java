@@ -328,7 +328,7 @@ public class ControllerCore implements Container, Fittable {
     /**
      * A Boolean switches a {@link Switchable}; a Float sets an {@link Analog} part's channel. A
      * number reaching a plain switch moves nothing -- a factory controller is a switch, never a
-     * dial (philosophy 13) -- and a Boolean reaching a part that is only analog sets it full or off.
+     * dial (philosophy 14) -- and a Boolean reaching a part that is only analog sets it full or off.
      */
     private void writeActuator(@Nullable DataNodeRef ref, int channel, Object value) {
         if (level() == null || ref == null)

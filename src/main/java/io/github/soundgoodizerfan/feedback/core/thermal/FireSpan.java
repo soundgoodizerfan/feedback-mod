@@ -10,7 +10,7 @@ package io.github.soundgoodizerfan.feedback.core.thermal;
  * out -- lit first, dark after, never the other way round -- so a figure for the lit part and the
  * length of it is the whole shape. The temperature is the time-weighted mean of the pieces that
  * burned, which is exact for one piece and a fair statement of many; the noise floor
- * (philosophy 8) is not worth simulating for a stretch the player was not watching.
+ * (philosophy 10) is not worth simulating for a stretch the player was not watching.
  *
  * @param litTicks ticks of the gap the fire was alight, from its start.
  * @param tu       its mean flame temperature over those ticks; meaningless when {@code litTicks} is 0.

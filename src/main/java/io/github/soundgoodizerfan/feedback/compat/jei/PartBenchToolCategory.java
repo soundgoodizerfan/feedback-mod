@@ -41,7 +41,7 @@ import net.minecraft.world.item.ItemStack;
  * grindstone, and plating.
  * <p>
  * Built from the client's copy of the {@link ModularType}s and the material table, so a pack's own
- * type or material shows with no edit, and no item is named (philosophy 11).
+ * type or material shows with no edit, and no item is named (philosophy 12).
  */
 public class PartBenchToolCategory implements IRecipeCategory<PartBenchToolCategory.Card> {
 

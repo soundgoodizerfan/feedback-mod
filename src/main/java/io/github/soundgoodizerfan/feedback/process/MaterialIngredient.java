@@ -26,7 +26,7 @@ import net.neoforged.neoforge.common.crafting.IngredientType;
 
 /**
  * "Any item of some form, whose material's figure is in range": the recipe system's way to ask a
- * question about stuff (philosophy 11) instead of naming it. A cable recipe says wire with an
+ * question about stuff (philosophy 12) instead of naming it. A cable recipe says wire with an
  * {@code ampacity} of at least so much and every metal that qualifies is accepted, including one a
  * pack adds tomorrow.
  *

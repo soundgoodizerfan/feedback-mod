@@ -5,7 +5,7 @@ package io.github.soundgoodizerfan.feedback.fitting;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * A physical addon installed on a machine -- philosophy §4's "upgrades are physical components
+ * A physical addon installed on a machine -- philosophy §5's "upgrades are physical components
  * you could point at," widened to cover the other two shapes that rule turned out to imply.
  *
  * <h2>Not GregTech's cover, on purpose</h2>

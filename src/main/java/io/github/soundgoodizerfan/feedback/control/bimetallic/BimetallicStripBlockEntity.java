@@ -42,7 +42,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>The bug it ships with is the lesson</h2>
  * The loop overshoots, and it is meant to. A small crucible climbs at roughly 8 Tu/t under air, so
  * by the time this has snapped over and the clutch has let go, the vessel has sailed past the
- * window. Good enough information, and still unable to hold the condition -- philosophy 8's second
+ * window. Good enough information, and still unable to hold the condition -- philosophy 10's second
  * half delivered as a bug the player fixes rather than a paragraph they read. Every available fix
  * is physical (§4): a bigger vessel, more insulation, a shorter throw on the bellows, or a gear
  * train that strokes it less often.

@@ -43,7 +43,7 @@ import net.minecraft.world.level.Level;
  *       promptly; an unloaded flywheel coasts for a long time.</li>
  * </ul>
  * Two things fall out of that without being designed. Cutting power makes a network wind down
- * rather than stop, which is the coasting behaviour philosophy 13 asks of a mechanical cutoff.
+ * rather than stop, which is the coasting behaviour philosophy 14 asks of a mechanical cutoff.
  * And a heavy network is slow to change but hard to disturb, while a light one is responsive and
  * twitchy -- the same trade the philosophy already describes for thermal mass, arriving in a
  * different energy type without being installed there.
@@ -406,7 +406,7 @@ public class RotationNetwork {
      * just did not work, with nothing to look at and nowhere to start. That is the same failure
      * as a linkage facing the wrong way: no error, it just quietly does nothing.
      * <p>
-     * Philosophy 8 permits this for free because it is an <em>adjective</em>. Smoke and a creak
+     * Philosophy 10 permits this for free because it is an <em>adjective</em>. Smoke and a creak
      * say "this one, and it is struggling" without handing over the Su figures an instrument is
      * supposed to sell. A player learns where to look; they still cannot read the ledger.
      */

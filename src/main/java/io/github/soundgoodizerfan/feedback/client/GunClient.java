@@ -492,7 +492,7 @@ public final class GunClient {
         lastShotMs = now;
         float climb = 1 + FTuning.GUN_KICK_CLIMB_PER_SHOT * streak;
         float aimed = Mth.lerp(aim, 1f, FTuning.GUN_ADS_KICK);
-        // The kick has a noise floor (philosophy 8): the amplitude is the gun's, the instance is not.
+        // The kick has a noise floor (philosophy 10): the amplitude is the gun's, the instance is not.
         float noise = 0.75f + player.getRandom().nextFloat() * 0.5f;
         float yawNoise = (player.getRandom().nextFloat() - 0.5f) * 0.6f;
         float steady = io.github.soundgoodizerfan.feedback.potion.SteadyHand.factor(player);

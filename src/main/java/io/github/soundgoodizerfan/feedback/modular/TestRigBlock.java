@@ -22,7 +22,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * edge's toughness (and an armour piece's) as the rig can read it; the Strike Post takes a swing at it and reports what the
  * blow carried (joules) and the damage it dealt. Neither marks the specimen: precision is the apparatus's, quantised to its own
  * step ({@link ModularTuning#PENDULUM_STEP}, {@link ModularTuning#POST_JOULE_STEP}, {@link ModularTuning#POST_DAMAGE_STEP}),
- * never finer than a rig of that kind can stand behind (philosophy 8).
+ * never finer than a rig of that kind can stand behind (philosophy 10).
  */
 public class TestRigBlock extends Block {
 

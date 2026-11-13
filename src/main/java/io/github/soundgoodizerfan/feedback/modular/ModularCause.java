@@ -13,7 +13,7 @@ import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Which parts a figure comes from, for the tooltip's "why" (philosophy 8: a figure shown with its
+ * Which parts a figure comes from, for the tooltip's "why" (philosophy 10: a figure shown with its
  * cause). It mirrors {@link ModularBake}, which stays the one place the arithmetic lives: where the
  * bake reads the wearing edge, this names it; where the bake sums every part's mass, this names the
  * heaviest. Silent Gear's tooltip shows a stat with its reason the same way (idea only, spec 9).

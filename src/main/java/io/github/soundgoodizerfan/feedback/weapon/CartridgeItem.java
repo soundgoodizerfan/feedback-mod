@@ -39,7 +39,7 @@ public class CartridgeItem extends Item {
             tooltip.add(Component.translatable("gun.feedback.unknown_material").withStyle(ChatFormatting.RED));
             return;
         }
-        // The round's spec against its own case: free and exact (philosophy 8), red when it asks too much.
+        // The round's spec against its own case: free and exact (philosophy 10), red when it asks too much.
         var charge = Component.empty();
         for (int k = 0; k < round.charges().size(); k++) {
             var c = round.charges().get(k);

@@ -40,7 +40,7 @@ import java.util.Optional;
  * Blowing does not make the fire last longer or burn more coal; it makes the same fire
  * <em>hotter</em>, which is what air actually does and what the slice needs it to do. A charcoal
  * fire tops out at 1220 Tu, which is below steel's window, so no amount of patience substitutes
- * for air -- philosophy 7's hard gate again, and the reason the bellows is the beat's one verb.
+ * for air -- philosophy 8's hard gate again, and the reason the bellows is the beat's one verb.
  *
  * <h2>The noise floor lives here</h2>
  * Each piece of fuel is rolled once for quality when it is lit, and burns at that quality for its

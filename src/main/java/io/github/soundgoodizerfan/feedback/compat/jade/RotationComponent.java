@@ -22,7 +22,7 @@ import net.minecraft.resources.ResourceLocation;
  * Describes a rotating block on the HUD, in words.
  *
  * <h2>Two kinds of line, and the difference is the whole rule</h2>
- * Philosophy 8 splits this card down the middle. An <em>equipment spec</em> -- the throw a linkage
+ * Philosophy 10 splits this card down the middle. An <em>equipment spec</em> -- the throw a linkage
  * has installed -- is printed on the block (§17), so it is free and exact. <em>State</em> -- how
  * fast this thing is actually going, how loaded the network actually is -- is what instruments are
  * for, and gets an adjective.

@@ -50,7 +50,7 @@ import net.minecraft.world.item.crafting.Ingredient;
  * @param hardness  how stubborn the material is, in St -- the same unit a blow is delivered in,
  *                  since a blow lands or fails by direct comparison against this figure and what
  *                  it delivers is that comparison's quotient (see {@link #workFrom}). Both the
- *                  minimum force that does anything -- philosophy 7's hard gate, a real
+ *                  minimum force that does anything -- philosophy 8's hard gate, a real
  *                  impossibility rather than a slow version -- and how little of a bigger blow
  *                  actually lands.
  * @param result    what it becomes.
@@ -87,7 +87,7 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
      * For sending the table to the client, which needs it only to <em>print</em> it.
      *
      * <h3>Why the client is told at all</h3>
-     * Philosophy 8: what a process requires is published data and costs nothing. The recipe
+     * Philosophy 10: what a process requires is published data and costs nothing. The recipe
      * browser is allowed to state {@code 14 Fu} exactly, on day one, with no instrument owned --
      * so the figures have to get across. Nothing on the client ever computes with them.
      */
@@ -121,7 +121,7 @@ public record Deformation(Ingredient input, int work, St hardness, ItemStack res
      * Whether a workpiece at this temperature can be worked at all.
      *
      * <h3>Why hot working is a window and not a bonus</h3>
-     * Philosophy 7 is strict that a hard gate must be a genuine physical impossibility rather than
+     * Philosophy 8 is strict that a hard gate must be a genuine physical impossibility rather than
      * a slow version of the process, and this is the second one in the mod after hardness. Steel
      * below 900 Tu does not deform more slowly; it does not deform. The consequence is the whole
      * of the slice's convergence: the workpiece carries its own heat, the heat is running out, and

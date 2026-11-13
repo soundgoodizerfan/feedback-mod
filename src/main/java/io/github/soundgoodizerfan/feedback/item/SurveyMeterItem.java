@@ -28,7 +28,7 @@ import java.util.Map;
  * powered by nothing, and no key: it unlocks no ore, it only saves digging blind.
  *
  * <p>It reads the count of ore blocks to a resolution of {@link FTuning#SURVEY_RESOLUTION}, with a
- * wobble of up to half a step on each reading (the noise floor, philosophy 8): a lean vein under one
+ * wobble of up to half a step on each reading (the noise floor, philosophy 10): a lean vein under one
  * step reads as nothing some of the time, a fat one never reads the same twice. A finer meter would
  * only narrow both.
  */

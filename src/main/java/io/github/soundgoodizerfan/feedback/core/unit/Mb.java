@@ -3,7 +3,7 @@
 package io.github.soundgoodizerfan.feedback.core.unit;
 
 /**
- * Volume, in millibuckets -- exactly a litre (philosophy 17).
+ * Volume, in millibuckets -- exactly a litre (philosophy 21).
  *
  * <p>First made live by air, not by fluids. The bellows, firebox, self-fired vessels and the
  * Pressure Vessel all trade in a volume of air, and before this they did it in bare floats, with

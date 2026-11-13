@@ -123,7 +123,7 @@ public final class EnchantGame {
      * Judge a written sigil against the effect. The accuracy (0..1) becomes a distance from the perfect word, scaled
      * to the effect's band: inside half a band is the full level; at the band one lower; outside it but not past twice
      * the band, two lower with one or two flaws; a pen that never marked is nothing (the part is never destroyed,
-     * philosophy 7). A word written reversed signs the level negative, the effect's mirror; an effect with no mirror
+     * philosophy 8). A word written reversed signs the level negative, the effect's mirror; an effect with no mirror
      * takes nothing there.
      */
     public static Verdict judge(Attunements.Effect effect, int top, float accuracy, boolean negative, boolean reached) {

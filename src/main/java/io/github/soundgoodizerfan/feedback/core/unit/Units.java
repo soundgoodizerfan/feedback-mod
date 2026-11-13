@@ -47,7 +47,7 @@ import net.minecraft.network.codec.StreamCodec;
  * No arithmetic, no conversion, no dimensional algebra. See the package javadoc: the types guard
  * the plumbing, and the physics is written in plain floats unwrapped at the point of use. A
  * conversion table would also be actively wrong for this mod -- {@code Su} does not convert to
- * {@code Eu}, on purpose, and philosophy 4 makes that a design rule rather than an omission.
+ * {@code Eu}, on purpose, and philosophy 5 makes that a design rule rather than an omission.
  */
 public final class Units {
 

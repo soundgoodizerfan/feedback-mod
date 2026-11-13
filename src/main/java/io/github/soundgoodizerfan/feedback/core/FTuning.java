@@ -85,7 +85,7 @@ public final class FTuning {
     /**
      * Invented. A bearing is a bushed, greased Shaft variant -- `TODO.md`'s own "obvious first
      * physical upgrade" and nothing more than that: same block shape and role as a Shaft, lower
-     * drag. Philosophy 4: point at the bearing, not a percentage -- so this is a second block and
+     * drag. Philosophy 5: point at the bearing, not a percentage -- so this is a second block and
      * a second constant, not a shaft-wide multiplier that would apply everywhere at once and
      * remove the reason to place one over the other.
      * <p>
@@ -257,7 +257,7 @@ public final class FTuning {
      * ever getting bored, which is the whole of what beat 1 has to say.
      *
      * <p>Steel stays out of reach by hand with no rule about hands anywhere: its hardness is 15, over
-     * every swing below, so nothing lands -- philosophy 7's hard gate, a genuine impossibility.
+     * every swing below, so nothing lands -- philosophy 8's hard gate, a genuine impossibility.
      */
     public static final St HAND_SWING_BLOW_ST = new St(3f);
 
@@ -343,7 +343,7 @@ public final class FTuning {
      * The worst condition a hammer can reach. It never breaks and never stops.
      *
      * <h3>Why it degrades instead of failing</h3>
-     * Philosophy 7: a hard gate is a physical impossibility, and a machine refusing to run is one
+     * Philosophy 8: a hard gate is a physical impossibility, and a machine refusing to run is one
      * bolted on where none exists. A battered head still hits, it just delivers less of the blow
      * into the work -- so the failure is soft, gradual, and material-dependent. Copper carries on
      * yielding to a spent hammer; steel stops clearing its hardness floor and the line quietly
@@ -463,7 +463,7 @@ public final class FTuning {
 
     /**
      * Invented. Chance that a landed removal cut also drops one of its entry's swarf into
-     * the world -- philosophy §7's "failed batches must consume their inputs," read the other way
+     * the world -- philosophy §8's "failed batches must consume their inputs," read the other way
      * round: the removed mass is real material, not deleted, so a cut is allowed to pay some of
      * itself back. Deliberately probabilistic rather than "one swarf per Fu removed": the exact
      * accounting is a tuning question the spec explicitly defers, and this is the cheapest honest
@@ -737,7 +737,7 @@ public final class FTuning {
      * how many are counted.
      *
      * <h3>Why this is a block and not an upgrade slot</h3>
-     * Philosophy 4: an upgrade is a physical component you could point at. Insulation is the most
+     * Philosophy 5: an upgrade is a physical component you could point at. Insulation is the most
      * literal case in the mod -- you build it around the thing, and how well it works depends on
      * how much of the thing you covered. Six faces, of which one is the fire and one the lid, so
      * four is the practical maximum and the cap is where the geometry already put it.
@@ -777,7 +777,7 @@ public final class FTuning {
     // --- the boiler (thermal -> steam) -------------------------------------------------------
 
     /**
-     * Invented. First bridge between two energy types (philosophy §10, §14): fire in, Steam out
+     * Invented. First bridge between two energy types (philosophy §11, §14): fire in, Steam out
      * -- and nothing else, deliberately, because the whole point of the split below is that this
      * block has no idea rotation exists.
      *
@@ -785,7 +785,7 @@ public final class FTuning {
      * The first draft of this was one block, boiler and turbine in the same body, on the theory
      * that {@code ThermalVesselBlockEntity} already makes exactly that simplification over the
      * crucible-plus-firebox pair. That is wrong here in a way it is not there: a furnace is
-     * always its own fire, but "what makes the heat" is precisely the axis philosophy §10 says
+     * always its own fire, but "what makes the heat" is precisely the axis philosophy §11 says
      * must stay open. A single fused block can only ever be fired by whatever the class author
      * imagined, and this system exists so the *player* answers that question -- a firebox, a
      * geothermal vent, a resistive coil wired to a generator that is itself downstream of this
@@ -832,7 +832,7 @@ public final class FTuning {
      *       {@link Rpm} on a plain {@code RotationNode}, full stop -- a flywheel and a belt, not
      *       a generator. Nothing stops a later Electrical-to-Thermal adapter feeding this same
      *       boiler, which is exactly the loop-back the class doc above names.</li>
-     *   <li><b>Taken, later (2026-10-14): the exploding boiler.</b> `feedback_philosophy.md` §14
+     *   <li><b>Taken, later (2026-10-14): the exploding boiler.</b> `feedback_philosophy.md` §15
      *       names it as good precedent for a genuine hard-gate consequence. It was left out first
      *       because the boiler could not be over-restricted -- there was no failure state to
      *       explode into. It now has a pressure ({@link #BOILER_STEAM_MB_PER_PU},
@@ -944,7 +944,7 @@ public final class FTuning {
      * visits every node once, which is only affordable because it does not happen constantly). A
      * genuinely continuous throttle is real future work -- GTCEu's turbine does exactly that --
      * but it wants the rotor-as-upgrade-item this section's other doc explicitly defers. Starved
-     * of Steam: philosophy §7's genuine hard gate, not enough pressure, and not a precision
+     * of Steam: philosophy §8's genuine hard gate, not enough pressure, and not a precision
      * problem at all.
      */
     public static final Su STEAM_ENGINE_CAPACITY_SU = new Su(64f);
@@ -1729,7 +1729,7 @@ public final class FTuning {
      * <h3>This factor is beat 2's difficulty</h3>
      * Charcoal burns at 1220 Tu (see the {@code fuel} table), which is glowing, obviously fierce,
      * and <b>below steel's 1420 Tu window</b>. So the fire alone cannot make steel and no amount
-     * of patience changes that -- philosophy 7's hard gate, a genuine impossibility rather than a
+     * of patience changes that -- philosophy 8's hard gate, a genuine impossibility rather than a
      * slow version. Air is the only way across, and air is the only thing the bellows sells.
      * <p>
      * Fully blown, charcoal reaches about 1830 Tu, which is well past the 1540 Tu at which iron
@@ -1855,7 +1855,7 @@ public final class FTuning {
      * <h3>The number is chosen to be not quite enough</h3>
      * Steel's window is 60 Tu wide, so this splits it into two and a bit -- the player can tell
      * they are roughly in it and never exactly where. That is the point. An instrument that made
-     * the window trivial would end the beat on purchase, and philosophy 8 is explicit that better
+     * the window trivial would end the beat on purchase, and philosophy 10 is explicit that better
      * equipment narrows the distribution and never collapses it. A later thermometer buys
      * significant figures here and nothing else; it is one number.
      */
@@ -1916,7 +1916,7 @@ public final class FTuning {
      * Above this, the eye stops distinguishing anything, in Tu.
      *
      * <h3>A free sense has a range, like any other instrument</h3>
-     * Philosophy 8 gives instruments six properties and range is the first of them, so it would be
+     * Philosophy 10 gives instruments six properties and range is the first of them, so it would be
      * strange for the one apparatus every player owns to have none. Past brilliant white, hotter
      * simply looks the same -- which matters in beat 2, because iron's spoil point at 1540 Tu is
      * <em>above</em> this. The player cannot see themselves crossing the line that ruins the
@@ -1975,7 +1975,7 @@ public final class FTuning {
 
     // --- readouts -------------------------------------------------------------------------
 
-    // Where the free, qualitative speed bands fall. Philosophy 8 says a player standing next to
+    // Where the free, qualitative speed bands fall. Philosophy 10 says a player standing next to
     // a shaft can see roughly how fast it is going and nothing more precise than that, so these
     // are the only speed figures the game exposes without an instrument -- as words.
     //
@@ -2034,7 +2034,7 @@ public final class FTuning {
     public static final int VARIABLE_NAME_MAX = 12;
 
     // --- Engine design (docs/specs/feedback_vehicles_spec.md section 6, Engine Stand v1) --------------------
-    // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
+    // Every figure here is a placeholder. Material figures are not here: they are
     // the material's own (material/*.json), per the spec's standing rule.
 
     /** Peak torque per litre of displacement. A 1.6 L engine makes about 160 Su. */
@@ -2052,7 +2052,7 @@ public final class FTuning {
     public static final int ENGINE_INGOTS_PER_CYLINDER = 1;
 
     // --- Gun design (docs/specs/feedback_guns_spec.md sections 2 and 3, step 1) ----------------------------
-    // Every figure here is a placeholder (philosophy 19). Material figures are not here: they are
+    // Every figure here is a placeholder. Material figures are not here: they are
     // the material's own (material/*.json). Pressure is Pu and shares a scale with a material's
     // yield strength, which is what lets a chamber's rating be read straight off the metal.
 
@@ -2112,7 +2112,7 @@ public final class FTuning {
      * rating times this, summed, and the gun is spent at 1: copper's 1.1 is about fifty shots,
      * lead's 9 is the first. The shooter is hurt only past the onset ratio, a band read off the
      * spec sheet, by this many hp per unit over it, never more than the cap. Each event is
-     * multiplied by 1 plus or minus the noise (the floor philosophy 8 keeps inside any band).
+     * multiplied by 1 plus or minus the noise (the floor philosophy 10 keeps inside any band).
      */
     public static final float GUN_OVERPRESSURE_DAMAGE_PER_RATIO = 0.15f;
     public static final float GUN_HAZARD_SHOOTER_ONSET = 1.5f, GUN_HAZARD_SHOOTER_HP_PER_RATIO = 6f,
@@ -2184,7 +2184,7 @@ public final class FTuning {
     public static final float GUN_BLOOM_AT_IGNITION = 1.5f;
     /** Bore erosion per Work delivered, times (1 + how hot the barrel is as a fraction of ignition). */
     public static final float GUN_WEAR_PER_WORK = 4.5e-7f;
-    /** A worn gun bottoms out here (philosophy 8: a worse gun, never an empty one). */
+    /** A worn gun bottoms out here (philosophy 10: a worse gun, never an empty one). */
     public static final float GUN_CONDITION_FLOOR = 0.4f;
     /** At the floor a gun delivers this much less energy; spread opens by 1 / condition. */
     public static final float GUN_WEAR_ENERGY_LOSS = 0.3f;
@@ -2329,7 +2329,7 @@ public final class FTuning {
      * action's rate is mostly its own mechanism; impulse only slows it a little.
      */
     public static final float GUN_CYCLE_MS_PER_IMPULSE = 6f;
-    /** Spread at a 0.2 m barrel, in degrees, scaling inversely with length down to a floor that is never zero (philosophy 8). */
+    /** Spread at a 0.2 m barrel, in degrees, scaling inversely with length down to a floor that is never zero (philosophy 10). */
     public static final float GUN_SPREAD_AT_MEDIUM_DEG = 2f, GUN_SPREAD_FLOOR_DEG = 0.25f;
     /** Camera kick per unit of impulse, in degrees, and how long it takes to land. */
     public static final float GUN_KICK_DEG_PER_IMPULSE = 1.6f;
@@ -2403,7 +2403,7 @@ public final class FTuning {
 
     // --- electricity (feedback_mechanics.md section 6) ----------------------------------------
     //
-    // Every figure here is a PLACEHOLDER (philosophy 19). The band anchors are [OPEN] (6.3): the
+    // Every figure here is a PLACEHOLDER. The band anchors are [OPEN] (6.3): the
     // reference volts below only give the four named bands an order of magnitude to be compared
     // against, a factor of four apart, and carry no claim about what a band is physically.
     // Voltages are plain volts in floats: a band is a rating (VoltageBand) and what a sink sees
@@ -2506,7 +2506,7 @@ public final class FTuning {
     public static final int ELECTROSTATIC_PULSE_TICKS = 20;
 
     /**
-     * Placeholder. What each electrical instrument can resolve (philosophy 8: tiers buy
+     * Placeholder. What each electrical instrument can resolve (philosophy 10: tiers buy
      * significant figures, never access). The electroscope is coarse on purpose -- it says a wire
      * is live and roughly how hard, not how much is flowing (mechanics 6.7).
      */
@@ -2630,7 +2630,7 @@ public final class FTuning {
     public static final float MASS_PROBE_STEP_COARSE_QU = 0.09f;
     public static final float MASS_PROBE_STEP_STANDARD_QU = 0.045f;
     public static final float MASS_PROBE_STEP_FINE_QU = 0.009f;
-    /** Placeholder. Noise floor, in steps: even a sound probe reads a little off (philosophy 8). */
+    /** Placeholder. Noise floor, in steps: even a sound probe reads a little off (philosophy 10). */
     public static final float MASS_PROBE_NOISE_STEPS = 0.4f;
     /** Placeholder. Extra noise, in steps, for a probe cracked to its floor. */
     public static final float MASS_PROBE_CRACKED_NOISE_STEPS = 6f;
@@ -3426,7 +3426,7 @@ public final class FTuning {
      * Placeholder. How much of an instrument's step a fitted circuit can take off: the step is
      * multiplied by {@code 1 - gain * (1 - noise)}. A quiet circuit (noise near the floor) roughly
      * halves it, a noisy one barely changes it, a dead one nothing. Under 1, so a circuit narrows the
-     * step and never reaches the truth tier (philosophy 8).
+     * step and never reaches the truth tier (philosophy 10).
      */
     public static final float CIRCUIT_INSTRUMENT_GAIN = 0.6f;
     /** Placeholder. Whisker stage, one constant each in order: extra reach per circuit element (STAGE_GAIN), share of the hold a full-speed circuit cuts (STAGE_SNAP), base spread of the hunt band (BAND_SPREAD). */

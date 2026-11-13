@@ -21,7 +21,7 @@ import net.minecraft.network.chat.Component;
  * The only place the mod turns a simulated figure into something a player is allowed to read.
  *
  * <h2>Why this is one class</h2>
- * Philosophy 8's rule -- senses give adjectives, numbers cost an instrument -- is a rule about
+ * Philosophy 10's rule -- senses give adjectives, numbers cost an instrument -- is a rule about
  * <em>wording</em>, and wording duplicated across a tooltip, a HUD and whatever comes next drifts
  * apart until one of them quietly starts printing a figure. Keeping the vocabulary in one place
  * makes the rule enforceable by reading a single file.
@@ -96,7 +96,7 @@ public final class Readout {
      * An adjective with what it means appended while Shift is held: {@code head-heavy -- balance
      * over 0.85}. The thresholds are passed in from the constants that decide them, so the gloss
      * cannot drift from the rule. Saying what a word means is not a reading: it hands over no
-     * state, only the definition of a free sense's bands (philosophy 8).
+     * state, only the definition of a free sense's bands (philosophy 10).
      */
     public static Component gloss(Component word, String key, Object... args) {
         if (!net.minecraft.client.gui.screens.Screen.hasShiftDown())
@@ -223,7 +223,7 @@ public final class Readout {
 
     /**
      * Condition as a word, or as the figure at the truth tier. Calipers read it too, but only by
-     * the act of measuring a stopped machine (philosophy 8), so a passive display gives the figure
+     * the act of measuring a stopped machine (philosophy 10), so a passive display gives the figure
      * at the truth tier alone.
      */
     @Nullable

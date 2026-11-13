@@ -485,7 +485,7 @@ public class ElectricGameTests {
         helper.assertTrue(galvanometer.canRead(Quantity.CURRENT) && !galvanometer.canRead(Quantity.VOLTAGE),
                 "the galvanometer reads current");
         helper.assertTrue(electroscope.resolution(Quantity.VOLTAGE) > 0 && galvanometer.resolution(Quantity.CURRENT) > 0,
-                "and neither is exact (philosophy 8)");
+                "and neither is exact (philosophy 10)");
         helper.succeed();
     }
 

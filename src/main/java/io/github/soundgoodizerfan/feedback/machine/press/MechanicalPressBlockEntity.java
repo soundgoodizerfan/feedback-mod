@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * as it is turned, and a stroke that lands nothing wears the press like a wasted hammer blow.
  * <p>
  * Exists for the same reason the Rolling Mill does: unattended, network-driven throughput against
- * the Hammer's hands-on crank (philosophy §5).
+ * the Hammer's hands-on crank (philosophy §6).
  *
  * <h2>The head is the press</h2>
  * Each stroke lands the seated head's full St ceiling (a press has no crank setting to pick within it), and a

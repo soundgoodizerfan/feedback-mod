@@ -36,7 +36,7 @@ import net.minecraft.world.level.Level;
  * from its mass and competence ({@code FTuning.HAND_ST_PER_MU_COMPETENCE}), and the wear bar from the head's
  * material, so a stone hammer is the first one, an iron one lasts longer and a soft or light head lands less.
  *
- * <p>A hand tool is a consumable by nature (philosophy 6's accepted exception), but a modular one is worn
+ * <p>A hand tool is a consumable by nature (philosophy 7's accepted exception), but a modular one is worn
  * to <em>broken</em>, as every modular item is, and not destroyed: it lands nothing and can be reworked at
  * the table. A type whose {@code strike} is 0 (the knife) bakes no blow and lands nothing in a grid.
  */
@@ -84,7 +84,7 @@ public class ModularHandTool extends HandToolItem implements Modular {
     /**
      * What {@code swing} lands with this stack's head. The arm sets the blow and the head only has to carry it, so the
      * head's figure is a share of an ordinary blow, capped at all of it: a better head never beats the swing, a
-     * weaker or worn one lands less of it. (Else an iron hammer would hand-forge steel, which philosophy 7's gate forbids.)
+     * weaker or worn one lands less of it. (Else an iron hammer would hand-forge steel, which philosophy 8's gate forbids.)
      */
     public static St of(ItemStack stack, HandSwing swing) {
         return new St(Math.min(1f, blow(stack) / FTuning.HAND_SWING_BLOW_ST.value()) * swing.strength().value());
@@ -121,7 +121,7 @@ public class ModularHandTool extends HandToolItem implements Modular {
             stack.set(FDataComponents.HAND_SWING, swing(stack).within(player));
     }
 
-    /** How hard it is swung is the player's own choice, so it is printed, St and all (philosophy 8). */
+    /** How hard it is swung is the player's own choice, so it is printed, St and all (philosophy 10). */
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         ModularTooltip.add(stack, tooltip);

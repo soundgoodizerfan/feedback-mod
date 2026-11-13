@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
  *
  * <h2>What subclasses actually decide</h2>
  * Almost nothing, deliberately. {@link #getStrength} is the whole of what makes one tool
- * different from another, because philosophy 17 says what an application accomplishes is
+ * different from another, because philosophy 21 says what an application accomplishes is
  * {@code St / material hardness} -- a property of the material, never a tool stat. A tool declares
  * how hard it hits and the material decides what that means.
  *
@@ -59,7 +59,7 @@ public abstract class HandToolItem extends Item implements HandTool {
      *
      * <p>Divided by the material's hardness to find what one application accomplishes (§17), which
      * is why the same 3 St is a copper plate in five swings and is nothing whatsoever against
-     * steel's hardness of 15. That is philosophy 7's hard gate arriving as arithmetic, with no rule
+     * steel's hardness of 15. That is philosophy 8's hard gate arriving as arithmetic, with no rule
      * about hands written anywhere.
      *
      * @param stack the tool, which may carry how hard it is being swung ({@link HandSwing})

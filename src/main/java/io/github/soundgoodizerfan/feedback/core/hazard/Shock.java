@@ -24,7 +24,7 @@ import net.minecraft.world.entity.player.Player;
  * <h2>Resistance is still not modelled</h2>
  * The wire's current does not enter. A shock is a property of a conductor being <em>exposed</em>
  * at a voltage, which is what a player can see and fix; how much current would flow through a
- * particular hand is exactly the variable philosophy 17 declines. What does scale a shock is
+ * particular hand is exactly the variable philosophy 21 declines. What does scale a shock is
  * {@link Exposure}: a multiplier read off the victim's surroundings (wet, armour, footing), not
  * a model of its body.
  */

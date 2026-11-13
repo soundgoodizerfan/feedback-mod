@@ -33,7 +33,7 @@ import net.minecraft.world.item.ItemStack;
 /**
  * Soldering is an operation, not a recipe, so this card is the rule written out per solder alloy:
  * a pasted board in, the same board graded out, and the figures {@link Soldering#grade} compares
- * a joint against. Exact, because they are requirements (philosophy 8). The iron and the oven are
+ * a joint against. Exact, because they are requirements (philosophy 10). The iron and the oven are
  * the catalysts: they differ in what reaching the window costs, not in the window.
  */
 public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card> {

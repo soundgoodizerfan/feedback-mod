@@ -18,7 +18,7 @@ import net.minecraft.world.item.crafting.SmokingRecipe;
 import net.minecraft.world.level.Level;
 
 /**
- * Philosophy 15's compatibility shim: any vanilla or modded cooking recipe becomes a one-input thermal row ({@link #rowsFor}), so reworking
+ * Philosophy 19's compatibility shim: any vanilla or modded cooking recipe becomes a one-input thermal row ({@link #rowsFor}), so reworking
  * the furnaces cannot make a single existing recipe uncraftable.
  *
  * <p>Vanilla keeps three recipe types, {@code smelting}, {@code blasting} and {@code smoking}, as a stand-in for "which appliance this

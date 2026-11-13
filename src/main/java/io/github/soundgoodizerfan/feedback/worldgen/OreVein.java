@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.Block;
  * One deposit: where an ore occurs and what a vein of it looks like (mechanics §9.2). Loaded from
  * {@code data/<ns>/ore_vein/*.json} by {@link OreVeinTable}; placed by {@link OreVeinFeature}.
  *
- * <p>Every number in a deposit file is Invented (placeholder, philosophy §19), though the vanilla
+ * <p>Every number in a deposit file is Invented (placeholder), though the vanilla
  * deposits' files start from vanilla's own height window and a weight that keeps vanilla's relative abundance.
  *
  * <p>This table is the single source of truth for where and how often: the one placed feature

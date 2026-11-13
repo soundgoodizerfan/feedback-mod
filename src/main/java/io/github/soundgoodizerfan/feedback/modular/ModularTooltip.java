@@ -12,7 +12,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * What the hand can tell about a modular item: modifiers, never figures (philosophy 8, spec 6).
+ * What the hand can tell about a modular item: modifiers, never figures (philosophy 10, spec 6).
  * "Head-heavy", "keen", "brittle", the trait and the shape, all from {@link ModularModifiers}. Exact mass and hardness need a balance
  * scale and a scratch file set, because what you have costs an instrument; what you made is on the
  * item for anyone to see. Silent Gear's tooltip shows each stat with the reason behind it; the

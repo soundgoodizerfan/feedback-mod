@@ -20,7 +20,7 @@ import net.minecraft.world.phys.AABB;
  * holds a pressure: the air tank and the boiler.
  *
  * <h2>A ladder, not a cliff</h2>
- * Philosophy 6's top rung is a hazard, and GregTech's boiler is the precedent it names. Below the
+ * Philosophy 7's top rung is a hazard, and GregTech's boiler is the precedent it names. Below the
  * danger line nothing happens however long it sits there. Between danger and critical the chance
  * of letting go climbs linearly each tick, so a vessel near the line survives a while and a
  * vessel past it does not; at critical it is certain. The shape is read from PneumaticCraft:

@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Block;
  * A block of packed insulation. Build it against a vessel and the vessel leaks less.
  *
  * <h2>The most literal "upgrades are physical components" in the mod</h2>
- * Philosophy 4 says an upgrade is something you could point at, and this is a block you stack
+ * Philosophy 5 says an upgrade is something you could point at, and this is a block you stack
  * around a thing. How well it works depends on how much of the thing you covered, which is not a
  * rule anybody wrote -- the crucible counts its neighbours. There is no upgrade slot, no tier and
  * no percentage.

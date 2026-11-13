@@ -23,7 +23,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
  * A bag that holds instruments, and reads for the player what they would read loose in the pack.
  *
  * <h2>Why this is not a new kind of instrument</h2>
- * Philosophy 8 already says reading is passive: <em>what you can perceive is a property of your
+ * Philosophy 10 already says reading is passive: <em>what you can perceive is a property of your
  * kit</em>. The bag changes where the kit is kept, not what it can do, so the bag is no
  * {@link Instrument} and has no figures of its own; {@code Instruments.best} looks inside it as it
  * looks along the hotbar. It exists because a pack that owns eight instruments has eight slots

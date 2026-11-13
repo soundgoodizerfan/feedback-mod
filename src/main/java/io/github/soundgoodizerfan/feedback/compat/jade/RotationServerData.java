@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
  * A {@link RotationNode} already syncs enough for rendering, but not enough to be honest with. The
  * Su ledger it carries is a snapshot from the last time the network was recalculated, and target
  * speed and inertia are network-wide and never sent at all. Adjectives could be derived from the
- * stale figures and would usually be right; the debug helmet could not, and philosophy 8 is
+ * stale figures and would usually be right; the debug helmet could not, and philosophy 10 is
  * explicit that an instrument may become wrong but may never overstate its certainty.
  * <p>
  * So the numbers are fetched live, on demand, for the one block the player is looking at -- which

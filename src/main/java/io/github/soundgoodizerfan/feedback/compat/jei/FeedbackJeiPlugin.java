@@ -229,7 +229,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
 
     /**
      * Info pages for what happens in the world with no table behind it. Verbs only, never values
-     * or solutions (philosophy 8, "documentation is a free sense"): what to do with the thing, not
+     * or solutions (philosophy 10, "documentation is a free sense"): what to do with the thing, not
      * what figure to aim for.
      */
     /** The display-only crafting cards; the bootstrap tools need the modular types as well as the materials, so both tables' arrival publishes them. */

@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>It has no target and no thermometer</h2>
  * Given strokes it moves air; given none it stops. It cannot be told a temperature, it cannot read
  * one, and it is not {@link io.github.soundgoodizerfan.feedback.control.Switchable} -- stopping it means
- * stopping the shaft that drives it, which is what the clutch is for. That is philosophy 10 taken
+ * stopping the shaft that drives it, which is what the clutch is for. That is philosophy 11 taken
  * literally: measurement, control and actuation are three separate systems, and the player is the
  * one who wires them together.
  * <p>

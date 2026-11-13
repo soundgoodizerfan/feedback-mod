@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 /**
- * The units of philosophy 17, as types the compiler can tell apart.
+ * The units of philosophy 21, as types the compiler can tell apart.
  *
  * <h2>What this package is for</h2>
  * Every physical figure in the mod was a {@code float}, and once both the rotation and thermal
@@ -103,7 +103,7 @@
  *       one of them: it is typed {@link St}, because it is the floor a blow's force must clear, so
  *       {@code Fu per blow = St / hardness} is St over St -- a dimensionless count of Fu, which is
  *       exactly what a whole-number {@link Fu} is.</li>
- *   <li><b>{@code Qu}</b> -- named in philosophy 17
+ *   <li><b>{@code Qu}</b> -- named in philosophy 21
  *       and not yet in any code. They arrive with the systems that need them; the standing rule is
  *       to create a thing when there is something to put in it, and {@link Units} exists so that
  *       arriving is cheap.</li>

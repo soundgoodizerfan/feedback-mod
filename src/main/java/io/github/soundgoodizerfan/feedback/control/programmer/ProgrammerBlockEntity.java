@@ -245,7 +245,7 @@ public class ProgrammerBlockEntity extends BlockEntity implements Container, Men
             return null;
         Optional<DataNode> resolved = DataNode.resolve(level, look);
         if (node instanceof SensorNode sensor) {
-            // An actuator reads back as its own on/off state -- what a deadband needs (philosophy 13).
+            // An actuator reads back as its own on/off state -- what a deadband needs (philosophy 14).
             if (resolved.orElse(null) instanceof ChannelSource source && source.offersChannels())
                 return new SensorNode(sensor.id(), ref, Quantity.CONTROL,
                         sensor.target() != null && sensor.target().equals(ref) ? sensor.channel() : source.defaultChannel());

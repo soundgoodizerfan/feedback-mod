@@ -26,7 +26,7 @@ import net.minecraft.world.item.ItemStack;
  * <h2>Overrun</h2>
  * A coat past the range damps the crystal and the reading sits at the ceiling, exact and wrong,
  * while the coat keeps growing under it. The cell's spall rule is unchanged, so a probe trusted
- * past its range comes out bare. The reading never feeds back into plating (philosophy 8).
+ * past its range comes out bare. The reading never feeds back into plating (philosophy 10).
  */
 public class MassProbeItem extends Item implements Instrument {
 

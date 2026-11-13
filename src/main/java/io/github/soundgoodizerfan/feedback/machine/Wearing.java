@@ -7,7 +7,7 @@ package io.github.soundgoodizerfan.feedback.machine;
  *
  * <h2>Two methods, and the second is the surprising one</h2>
  * Reading condition needs the figure, obviously. It also needs to know whether the machine is
- * <em>running</em>, because philosophy 8's rule is that a reading is passive when taking it is
+ * <em>running</em>, because philosophy 10's rule is that a reading is passive when taking it is
  * free and an action when it costs something -- and what this reading costs is a stopped line.
  * Without the second method the price is unenforceable and the instrument becomes a keystroke
  * with no decision in it, which is the thing 3 cuts.

@@ -8,7 +8,7 @@ import java.util.List;
  * The client's copy of the deformation table, kept only so a recipe browser can print it.
  *
  * <h2>Why a copy exists at all</h2>
- * {@link DeformationTable} is datapack data and therefore server-side; philosophy 8 nonetheless
+ * {@link DeformationTable} is datapack data and therefore server-side; philosophy 10 nonetheless
  * says a <em>requirement</em> is free and exact, which means the figures have to reach the browser
  * somehow. So the server ships the table on datapack sync and this holds it.
  * <p>

@@ -48,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
  * finished. Use toggles it; a controller does the same through {@link Switchable}. Off means no
  * capacity at all, and the run coasts down under its own load like any cut-off network. Its
  * throttle ({@link Analog}) takes a number from a controller wherever the engine sits, on a
- * stand as in a car (philosophy 13).
+ * stand as in a car (philosophy 14).
  *
  * <h2>Its weight rides on a box</h2>
  * Sable weighs a block by its state alone, so every Engine block would weigh the same. The block

@@ -28,9 +28,9 @@ import net.minecraft.world.entity.player.Player;
  *       so the window is a tick either side, as a redstone repeater's delay is quantised.</li>
  *   <li><b>Heat is the clock.</b> The part cools on the item curve ({@code ItemHeat}); a note
  *       struck while it is under its hot-working window, or still over it, is dead.</li>
- *   <li><b>A miss never fails the part</b> (philosophy 7): sloppiness is flaws, and flaws cost
+ *   <li><b>A miss never fails the part</b> (philosophy 8): sloppiness is flaws, and flaws cost
  *       toughness ({@link ModularTuning#FLAW_TOUGHNESS_LOSS}).</li>
- *   <li><b>There is a noise floor</b> (philosophy 8): a clean hit is sometimes only loose, whatever
+ *   <li><b>There is a noise floor</b> (philosophy 10): a clean hit is sometimes only loose, whatever
  *       the player does.</li>
  *   <li><b>Work done against work required moves the as-built geometry</b> ({@link #work}): every
  *       blow that lands puts {@code St / hardness} Fu into the part ({@link Deformation#landed}, the
@@ -167,7 +167,7 @@ public final class ForgeRhythm {
 
     /**
      * Whether any note of {@code rhythm} lands on {@code material} with these blows: the hard gate. A
-     * pattern none of whose blows reach the material's hardness cannot be played at all (philosophy 7:
+     * pattern none of whose blows reach the material's hardness cannot be played at all (philosophy 8:
      * a genuine impossibility, not a slow version); one that merely has some blows too light is
      * playable and comes out short.
      */

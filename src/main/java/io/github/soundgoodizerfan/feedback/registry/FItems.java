@@ -77,7 +77,7 @@ public class FItems {
 
     public static final DeferredItem<BlockItem> LATHE = ITEMS.registerSimpleBlockItem(FBlocks.LATHE);
 
-    /** A physical, wearable component -- philosophy 4's "upgrades are physical components," and
+    /** A physical, wearable component -- philosophy 5's "upgrades are physical components," and
      * the Lathe's {@code Wearing} condition lives on it. See {@code FDataComponents#TOOL_CONDITION}. */
     public static final DeferredItem<Item> LATHE_TOOL_BIT = ITEMS.registerSimpleItem("lathe_tool_bit");
 

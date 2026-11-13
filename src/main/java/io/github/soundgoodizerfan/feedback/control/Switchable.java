@@ -6,7 +6,7 @@ package io.github.soundgoodizerfan.feedback.control;
  * Something a control device can start and stop.
  *
  * <h2>Why this interface exists at all</h2>
- * Philosophy 13: the controller is a switch, never a dial. Its only output is starting or
+ * Philosophy 14: the controller is a switch, never a dial. Its only output is starting or
  * stopping a supply, so everything that can be controlled presents exactly this — one boolean,
  * no target, no setpoint, no proportional anything.
  * <p>

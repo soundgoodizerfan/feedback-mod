@@ -59,7 +59,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * No table, no recipe -- water snaps a held item to the dimension's ambient ({@link AmbientTable#at}), lava to {@link
  * FTuning#FIRE_TU_LAVA}, the same instant-on-contact model {@code Quenching} already uses for a
  * dropped ingot in water. This is deliberately the first crude, hands-on way to *add* heat to
- * something without any machine at all -- philosophy 7's manual route, arriving somewhere it was
+ * something without any machine at all -- philosophy 8's manual route, arriving somewhere it was
  * never installed (§5's own test): unreliable (no rate control, no holding at a temperature) and
  * a little dangerous, exactly what "possible but not economical" should feel like.
  *

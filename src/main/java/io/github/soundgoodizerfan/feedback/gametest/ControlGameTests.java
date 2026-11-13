@@ -25,7 +25,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * Punch Cards: blank ones stack (author, 2026-10-11), and the recipe that makes four loads. And
- * the deadband philosophy 13 said could not be expressed until an actuator's state was readable.
+ * the deadband philosophy 14 said could not be expressed until an actuator's state was readable.
  */
 @GameTestHolder(Feedback.MOD_ID)
 @PrefixGameTestTemplate(false)

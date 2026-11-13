@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * so what the vessel gains the element loses, and the element settles a little above its load. A
  * fire's temperature is what it burns at; an element's is what its power and its load leave it at.
  * <p>
- * That small mass is electrical heat's character (philosophy 10): cut the supply and the element
+ * That small mass is electrical heat's character (philosophy 11): cut the supply and the element
  * has almost nothing to coast on. The thermal mass that stays is the vessel's.
  *
  * <h2>The element's limit is its metal's</h2>

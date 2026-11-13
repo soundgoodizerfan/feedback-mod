@@ -25,7 +25,7 @@ import net.minecraft.world.level.Level;
  * FTuning#ELECTROSCOPE_RESOLUTION_VOLTS}. It can say that a line is live and roughly how hard; it
  * cannot say how much is flowing, because a charged leaf does not draw current. That is the whole
  * reason the galvanometer is a separate purchase: the electroscope is the instrument that
- * reveals ({@code philosophy 8}), the galvanometer the one that makes the reading useful.
+ * reveals ({@code philosophy 10}), the galvanometer the one that makes the reading useful.
  *
  * <p>It is what makes static electricity observable long before it is a power network, which is
  * the point of slice 4: a pulse from the electrostatic machine is visible on a leaf before

@@ -163,7 +163,7 @@ public record EngineDesign(int cylinders, int boreMm, int strokeMm, ResourceLoca
 
     /**
      * Tooltip and screen lines: what was chosen, then what it makes. These are an engine's spec
-     * sheet -- philosophy 8 gives equipment specs away free and exact.
+     * sheet -- philosophy 10 gives equipment specs away free and exact.
      */
     public java.util.List<net.minecraft.network.chat.Component> describe(@org.jetbrains.annotations.Nullable Material m) {
         var out = new java.util.ArrayList<net.minecraft.network.chat.Component>();

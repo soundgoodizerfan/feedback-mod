@@ -21,7 +21,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * the Bellows only ever pushes air in, one-way (see its own class doc), and the Damper only ever
  * lets heat out. Where the Bellows is a {@code Reciprocating} linkage part driven by a crank, the
  * Damper needs no force input at all -- a vent flap is binary, open or shut, so it is a plain
- * {@code Switchable}, exactly philosophy 13's actuator vocabulary.
+ * {@code Switchable}, exactly philosophy 14's actuator vocabulary.
  * <p>
  * Crucible-only, same scope as {@code InsulationBlock} -- the Furnace/Smoker/Blast Furnace family
  * never grew a neighbour-scan for insulation either, and this follows that existing line rather

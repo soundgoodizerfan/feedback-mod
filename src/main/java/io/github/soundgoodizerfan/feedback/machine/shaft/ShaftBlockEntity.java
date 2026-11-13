@@ -87,7 +87,7 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
         return condition;
     }
 
-    /** A turning flywheel is working and cannot be measured, like any machine (philosophy 8). */
+    /** A turning flywheel is working and cannot be measured, like any machine (philosophy 10). */
     @Override
     public boolean isRunning() {
         return Math.abs(getRpm().value()) > FTuning.STOPPED_RPM_THRESHOLD.value();

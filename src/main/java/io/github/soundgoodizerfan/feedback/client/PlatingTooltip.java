@@ -23,7 +23,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 /**
  * A coat's metal and how it came out, in words. A coat is visible -- anybody can see a piece is
  * copper-plated and whether the copper is bright, patchy or burnt -- so this is a free sense
- * (philosophy 8). Its thickness is a figure no instrument reads yet, so only the truth tier shows it.
+ * (philosophy 10). Its thickness is a figure no instrument reads yet, so only the truth tier shows it.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public class PlatingTooltip {

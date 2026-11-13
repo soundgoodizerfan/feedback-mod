@@ -22,7 +22,7 @@ import net.minecraft.util.StringRepresentable;
  * <p>
  * The item is still whatever it was. Plating changes no identity -- {@code Material.find} still
  * calls a plated iron ingot iron -- which is what will make a gold-plated one fool an optical
- * sorter on purpose (philosophy 11) once one exists.
+ * sorter on purpose (philosophy 12) once one exists.
  */
 public record Plating(ResourceLocation metal, float thickness, Quality quality, float intact) {
 
@@ -36,7 +36,7 @@ public record Plating(ResourceLocation metal, float thickness, Quality quality, 
         return new Plating(metal, thickness, quality, Math.max(0f, Math.min(1f, share)));
     }
 
-    /** The severity ladder (philosophy 6), as a coat reaches it. */
+    /** The severity ladder (philosophy 7), as a coat reaches it. */
     public enum Quality implements StringRepresentable {
         /** In the window: thick enough to close, thin enough to hold. */
         SOUND,

@@ -20,14 +20,14 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Electricity's stop (philosophy 10): it cuts nearly instantly, and the contacts arc and wear
+ * Electricity's stop (philosophy 11): it cuts nearly instantly, and the contacts arc and wear
  * when they open under load. A wire in the run while closed; open, it joins nothing, and the line
  * through it is two runs.
  *
  * <h2>Wear from one act</h2>
  * Opening while current flows draws an arc, and the arc pits the contacts: condition falls by the
  * current broken, never by time closed. Pitted contacts lose more volts per amp, so a breaker
- * flapped under load by a controller with no deadband (philosophy 13) shows it as a sag on the
+ * flapped under load by a controller with no deadband (philosophy 14) shows it as a sag on the
  * far side -- sloppy logic destroying downstream hardware, by a gradient. Never broken; it keeps
  * switching at its floor.
  *

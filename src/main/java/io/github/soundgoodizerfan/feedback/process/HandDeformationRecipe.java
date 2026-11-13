@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
  * <h2>Why this is a vanilla RecipeType when nothing else in the mod is</h2>
  * The mod's eight process tables (deformation, removal, thermal_process, quench, fuel, casting,
  * alloy, dip) are deliberately not
- * {@code RecipeType}s, because philosophy 4 says a machine defines a physical operation and never a
+ * {@code RecipeType}s, because philosophy 5 says a machine defines a physical operation and never a
  * recipe -- a Mechanical Hammer that owned a recipe list would know when it was finished, and
  * knowing when to stop is the one thing this mod's machines must never do.
  *
@@ -33,7 +33,7 @@ import net.minecraft.world.level.Level;
  *
  * <h2>What the player sees, and why that is not a leak</h2>
  * The result slot previews the next blow, so a player can watch an ingot go 3, 6, 9, 12 Fu and
- * then become a plate. That is the player gaining information, which philosophy 7 is entirely in
+ * then become a plate. That is the player gaining information, which philosophy 8 is entirely in
  * favour of. The machine still cannot tell -- put the same ingot on an anvil and the hammer will
  * beat it into foil without noticing.
  *

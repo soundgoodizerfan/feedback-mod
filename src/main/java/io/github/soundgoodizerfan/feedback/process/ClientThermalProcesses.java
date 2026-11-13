@@ -8,7 +8,7 @@ import java.util.List;
  * The client's copy of the thermal process table, kept only so a recipe browser can print it.
  *
  * <h2>Why the figures are given away</h2>
- * Philosophy 8: what a process <em>requires</em> is published data and costs nothing. Steel's
+ * Philosophy 10: what a process <em>requires</em> is published data and costs nothing. Steel's
  * window is exactly 1420 to 1480 Tu and stating so on day one, with nothing owned, gates nothing
  * -- the player still cannot tell what temperature they are at. That is the gap instruments are
  * sold into, and it is a much better gap than one made by hiding a number.

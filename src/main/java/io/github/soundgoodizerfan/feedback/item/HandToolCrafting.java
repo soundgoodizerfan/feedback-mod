@@ -23,7 +23,7 @@ import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
  * Hand work makes a noise.
  *
  * <h2>Why this is worth a class</h2>
- * Philosophy 8: the player's own senses are free, and the mod leans on that everywhere else -- a
+ * Philosophy 10: the player's own senses are free, and the mod leans on that everywhere else -- a
  * labouring rotation network smokes and creaks at its sources, a quench hisses, a hammer clangs on
  * the anvil. Hand work was the one operation in the mod that happened in total silence, which made
  * a crafting grid feel like a menu rather than like the same blow the machine lands. It is the same

@@ -22,7 +22,7 @@ import net.minecraft.world.item.ItemStack;
  * A process card: what mechanical deformation does to one material, stated in exact units.
  *
  * <h2>A spec sheet, not a recipe</h2>
- * Every figure here is a <em>requirement</em>, and philosophy 8 says requirements are free and
+ * Every figure here is a <em>requirement</em>, and philosophy 10 says requirements are free and
  * exact. A player may read that copper wants 14 Fu on their first day, own nothing, and still fail
  * repeatedly -- knowing the target and knowing where you are are different problems, and only the
  * second is for sale. So the card prints figures without apology.

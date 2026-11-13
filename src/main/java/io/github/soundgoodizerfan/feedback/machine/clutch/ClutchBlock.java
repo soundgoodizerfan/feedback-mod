@@ -30,7 +30,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * A shaft coupling that can be let go.
  *
  * <h2>Stopping is its own problem</h2>
- * Philosophy 13 separates sensing from stopping, and gives each energy type its own stopping
+ * Philosophy 14 separates sensing from stopping, and gives each energy type its own stopping
  * hardware with its own failure character. For rotation that hardware is a clutch, and its
  * character is that <strong>it does not stop anything</strong> — it stops <em>driving</em>.
  * Whatever was downstream keeps turning on its own momentum until friction takes it, which with

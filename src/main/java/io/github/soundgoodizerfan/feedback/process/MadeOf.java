@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
  * material and part ({@code iron_pickaxe_head}, {@code copper_pickaxe_head}, ...). The form system
  * mints an item per pair because a plate is a stock form a dozen systems read by item; a part is
  * read by nothing but what it is made of, so the pair belongs in data. {@link Material#find} reads
- * this before the item, so a part is found by its material exactly as an ingot is (philosophy 11).
+ * this before the item, so a part is found by its material exactly as an ingot is (philosophy 12).
  *
  * @param material the material it was shaped from.
  * @param stock    the form that went in (ingot, gem, chain): what a role weighs by, and what mends

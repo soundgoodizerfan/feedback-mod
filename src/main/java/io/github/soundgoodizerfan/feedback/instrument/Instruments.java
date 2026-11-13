@@ -218,7 +218,7 @@ public final class Instruments {
     }
 
     /**
-     * A figure as finely as {@code resolution} stands behind and no finer (philosophy 8:
+     * A figure as finely as {@code resolution} stands behind and no finer (philosophy 10:
      * instruments never lie): quantised, with as many decimal places as the step has. At the
      * truth tier it is the held float, exactly.
      */
@@ -233,7 +233,7 @@ public final class Instruments {
      * A figure with the instrument that took it on the front: {@code Calipers: 9 / 14 Fu}.
      *
      * <h3>Why the wording lives here and not in the readout</h3>
-     * Philosophy 8 promises instruments never lie, not that they are accurate, so every figure the
+     * Philosophy 10 promises instruments never lie, not that they are accurate, so every figure the
      * mod shows is attributed -- and that is one rule, which means one place. It sits in the
      * common package rather than the client one because a reading taken by right-clicking a
      * machine is composed on the server, where the true figure is: condition syncs only when the

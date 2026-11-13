@@ -474,13 +474,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      *
      * @param flameTemperature how hot an open fire of it burns. A hard ceiling on anything it
      *                         heats -- a vessel approaches its fire and never passes it, so a fuel
-     *                         too cool for a process is a real impossibility (philosophy 7). With
+     *                         too cool for a process is a real impossibility (philosophy 8). With
      *                         {@code burnTicks}, it makes the stuff a fuel.
      * @param burnTicks        how long one piece of it burns; other forms by how much stuff they
      *                         are ({@link Fuel#pieces}). Independent of the temperature on purpose:
      *                         charcoal hot and brief, wood cool and brief, coal hot and long.
      * @param spread           how much the flame varies, as a fraction, rolled once per piece and
-     *                         held for its burn: philosophy 8's noise floor, entering as something
+     *                         held for its burn: philosophy 10's noise floor, entering as something
      *                         true (charcoal is not all the same).
      * @param oxygenBalance    oxygen it brings beyond what its own fuel needs, per item: positive
      *                         an oxidizer (gunpowder's nitrate), negative a fuel that needs one

@@ -63,7 +63,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * <p>
  * So the crucible is <b>not an upgrade</b>. It is slower and clumsier than the thing it does not
  * replace, and it is the only one of the two that can ever be part of a loop. What the player
- * buys with it is the option to walk away, which is philosophy 7's possible/reliable/economical
+ * buys with it is the option to walk away, which is philosophy 8's possible/reliable/economical
  * distinction arriving as something they feel rather than read.
  *
  * <h2>It knows nothing about steel</h2>

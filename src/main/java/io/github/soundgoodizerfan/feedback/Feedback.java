@@ -417,7 +417,7 @@ public class Feedback {
      * Hand the client the deformation, removal and thermal-process tables whenever the server's
      * copy could have changed.
      * <p>
-     * The client needs it only to display requirements, which philosophy 8 gives away for free.
+     * The client needs it only to display requirements, which philosophy 10 gives away for free.
      * A null player means this was a {@code /reload} rather than a login, so everybody gets it.
      */
     private static void onDatapackSync(OnDatapackSyncEvent event) {

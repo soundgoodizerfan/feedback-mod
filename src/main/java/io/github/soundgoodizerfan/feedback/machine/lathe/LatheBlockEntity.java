@@ -48,7 +48,7 @@ import net.minecraft.world.level.block.state.BlockState;
  *
  * <h2>The tool bit wears; the machine does not</h2>
  * {@link #getCondition} is the mounted bit's, which lives on the {@link ItemStack} (see
- * {@code FDataComponents#TOOL_CONDITION}), because philosophy 4 calls the bit itself the physical
+ * {@code FDataComponents#TOOL_CONDITION}), because philosophy 5 calls the bit itself the physical
  * component you point at -- a machine-wide condition figure was explicitly the wrong shape here.
  * A worn bit cuts less of each pass; it never stops clearing what its rating clears.
  */
@@ -103,7 +103,7 @@ public class LatheBlockEntity extends ShopMachineBlockEntity implements SensorFi
     }
 
     /**
-     * The lathe's condition is its bit's -- the component you point at (philosophy 4) -- and an
+     * The lathe's condition is its bit's -- the component you point at (philosophy 5) -- and an
      * absent bit reads as brand new, so nothing to cut with never shows up as a worn tool.
      */
     @Override

@@ -28,7 +28,7 @@ import java.util.Map;
  * arrangement, make a pair of tongs made of exactly those.
  *
  * <p>No item is named: a rod is whatever the material table says is the {@code rod} form of some
- * metal, a grip is whatever it says is a {@code grip} form (philosophy 11). That is also what lets
+ * metal, a grip is whatever it says is a {@code grip} form (philosophy 12). That is also what lets
  * the component carry the two materials, so the tongs' limit is read from files and not from the
  * recipe.
  */

@@ -179,7 +179,7 @@ public final class Parrying {
     }
 
     /**
-     * Impulse against the gauntlet's joint rating (philosophy 6): force that cannot go into the punch goes
+     * Impulse against the gauntlet's joint rating (philosophy 7): force that cannot go into the punch goes
      * into the gauntlet. Over the rating it is still punched, and the gauntlet pays for it, down to its last
      * point and never past it. Also fires the feel.
      */
@@ -384,7 +384,7 @@ public final class Parrying {
             }
         }
 
-        // Force beyond what the weapon was built to take goes into the weapon (philosophy 6): a blow
+        // Force beyond what the weapon was built to take goes into the weapon (philosophy 7): a blow
         // within its rating is a clean parry and costs a point, one far over it costs a lot.
         float over = impact / rating;
         int cost = ParryTuning.WEAR_CLEAN + (over > 1 && !flat ? (int) Math.ceil((over - 1) * ParryTuning.WEAR_PER_OVER) : 0);

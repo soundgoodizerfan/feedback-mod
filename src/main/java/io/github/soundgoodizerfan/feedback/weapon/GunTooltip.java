@@ -72,7 +72,7 @@ public final class GunTooltip {
     }
 
     /**
-     * A gun's spec sheet -- philosophy 8 gives equipment specs away free and exact: what the metal
+     * A gun's spec sheet -- philosophy 10 gives equipment specs away free and exact: what the metal
      * holds and what the charge asks of it, in red when it asks too much.
      */
     public static List<Component> figures(GunFigures f) {

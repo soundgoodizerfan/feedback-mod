@@ -11,7 +11,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 /**
  * Every constant the modular bake and its wear read.
  * Kept beside the bake rather than in {@code FTuning} so the figure and the reason it is that
- * figure sit together. All are placeholders (philosophy 19), calibrated so that the canonical
+ * figure sit together. All are placeholders, calibrated so that the canonical
  * vanilla designs come out near vanilla: an iron pickaxe digs near 6 and lasts near 250, a
  * diamond one near 8 and 1560. Nothing here is per material; a material's own figures do the
  * rest.

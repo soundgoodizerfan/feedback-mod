@@ -12,11 +12,11 @@ import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * 2 number in, 1 number out: philosophy 13's {@code + - * /}, with min and max beside them.
+ * 2 number in, 1 number out: philosophy 14's {@code + - * /}, with min and max beside them.
  * Shaped like {@link ComparatorNode} -- {@code rightInput} unwired reads {@code literalDefault} --
  * so a steering ratio is a seat key times a printed number.
  * <p>
- * A number reaching an actuator is a dial, and a factory controller is a switch (philosophy 13):
+ * A number reaching an actuator is a dial, and a factory controller is a switch (philosophy 14):
  * a numeric output only moves an {@link io.github.soundgoodizerfan.feedback.control.Analog}
  * target, and only vehicle parts are analog ({@code docs/specs/feedback_vehicles_spec.md} section 5,
  * <em>Controls</em>). Arithmetic itself is not the exception -- it was always on the list.

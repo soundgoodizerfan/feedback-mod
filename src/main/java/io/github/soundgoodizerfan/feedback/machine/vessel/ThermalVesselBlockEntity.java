@@ -252,7 +252,7 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
 
         Heat.tick(this, fireTu, AmbientTable.at(level), lit);
         // A clamp, not a leak, on purpose: the smoker's low ceiling is the vessel's material limit
-        // (philosophy §15, "built as one wall"), and heat past it is lost through a box that
+        // (philosophy §19, "built as one wall"), and heat past it is lost through a box that
         // cannot hold more. See FTuning.SMOKER_CEILING_TU.
         if (temperature > kind.ceilingTu())
             temperature = kind.ceilingTu();

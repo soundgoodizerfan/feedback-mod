@@ -9,7 +9,7 @@ package io.github.soundgoodizerfan.feedback.core.unit;
  * The distinction from {@link Fu} is the one §17 spends the most words on. {@code St} is how hard
  * one blow lands; {@code Fu} is how much has landed in total. A hammer that strikes twice as
  * often delivers twice the Fu at the same St, and a material with a hardness floor above that St
- * takes <em>nothing</em> however long it is hit -- which is philosophy 7's hard gate, and the
+ * takes <em>nothing</em> however long it is hit -- which is philosophy 8's hard gate, and the
  * reason the two are separate units rather than one energy figure.
  *
  * <h2>Where the force goes when it cannot go into the work</h2>
