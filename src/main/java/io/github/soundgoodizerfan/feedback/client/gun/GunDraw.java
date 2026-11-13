@@ -416,11 +416,15 @@ final class GunDraw {
                 m.colour(0xFF9FD8FF).glow(-r - 0.75f, -0.25f, end - 1.125f, -r - 0.25f, 0.25f, end - 1f, Tile.LAMP);
                 m.colour(0xFF9FD8FF).glow(r + 0.25f, -0.25f, end - 1.125f, r + 0.75f, 0.25f, end - 1f, Tile.LAMP);
             } else {
-                // A steel housing ring, and the lens (the part's own material: glass is see-through) in front of the facets.
+                // A steel frame round the lens (nothing behind it, so a clear lens shows the barrel and the facets), the lens in it.
+                float rr = r + 0.5f, t = 0.25f;
                 m.part(v, "lh");
-                m.rod(0, 0, r + 0.5f, end - 0.75f, end - 0.4f, Tile.METAL);
+                m.box(-rr, rr - t, end - 0.4f, rr, rr, end, Tile.METAL);
+                m.box(-rr, -rr, end - 0.4f, rr, -rr + t, end, Tile.METAL);
+                m.box(-rr, -rr + t, end - 0.4f, -rr + t, rr - t, end, Tile.METAL);
+                m.box(rr - t, -rr + t, end - 0.4f, rr, rr - t, end, Tile.METAL);
                 m.part(v, "l");
-                m.box(-r - 0.5f, -r - 0.5f, end - 0.4f, r + 0.5f, r + 0.5f, end, Tile.METAL);
+                m.box(-rr + t, -rr + t, end - 0.35f, rr - t, rr - t, end - 0.05f, Tile.METAL);
                 for (int i = 0; i < 3; i++) {
                     float a = (float) Math.toRadians(120 * i + 90);
                     m.colour(0xFF9FD8FF).glow((float) Math.cos(a) * (r + 0.25f) - 0.125f, (float) Math.sin(a) * (r + 0.25f) - 0.125f, end - 0.875f,
@@ -1126,6 +1130,8 @@ final class GunDraw {
     /** Devices on the muzzle, front to front: a brake, then a can; the bore's mouth on the last. */
     private static void muzzle(GunMesh m, GunView v) {
         float z = front(v), r = v.r();
+        // A brake or suppressor seated in front of a beam lens is mostly see-through, so the lens shows.
+        m.ghost(v.has("l") ? 0x80 : 0);
         if (v.has("N")) {
             m.part(v, "N");
             m.rod(0, 0, r + 0.125f, z, z - 1.5f, Tile.METAL);
@@ -1140,6 +1146,7 @@ final class GunDraw {
             m.rod(0, 0, rr + 0.0625f, z - 4f, z - 4.5f, Tile.KNURL);
             z -= 4.5f;
         }
+        m.ghost(0);
         float b = v.bore();
         m.box(-b, -b, z - 0.0625f, b, b, z, Tile.BORE);
     }
