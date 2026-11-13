@@ -57,7 +57,7 @@ public final class Filing {
         MadeOf made = part.get(FDataComponents.MADE_OF.get());
         if (made == null || made.measures().axes().isEmpty())
             return List.of();
-        return roleOf(part, types).map(ModularType.Role::sortedAxes).orElse(List.of());
+        return roleOf(part, types).map(r -> r.sortedAxes(made.variant())).orElse(List.of());
     }
 
     /** The as-built value of an axis of {@code part}. */
@@ -71,7 +71,7 @@ public final class Filing {
         MadeOf made = part.get(FDataComponents.MADE_OF.get());
         if (made == null)
             return 0f;
-        float scale = roleOf(part, types).map(r -> r.volumeScaleOf(made.measures().axes())).orElse(1f);
+        float scale = roleOf(part, types).map(r -> r.volumeScaleOf(made.measures().axes(), made.variant())).orElse(1f);
         return made.cells() * ModularTuning.CELL_MB * scale;
     }
 
@@ -93,7 +93,7 @@ public final class Filing {
         Map<String, Float> was = new HashMap<>(made.measures().axes());
         Map<String, Float> to = new HashMap<>(was);
         to.put(axis.getKey(), next);
-        float removed = made.cells() * ModularTuning.CELL_MB * Math.max(0f, role.volumeScaleOf(was) - role.volumeScaleOf(to));
+        float removed = made.cells() * ModularTuning.CELL_MB * Math.max(0f, role.volumeScaleOf(was, made.variant()) - role.volumeScaleOf(to, made.variant()));
         Optional<net.minecraft.world.item.Item> swarf = made.cells() > 0 ? materials.get(made.material()) == null ? Optional.empty()
                 : materials.get(made.material()).item(made.material(), "swarf") : Optional.empty();
         float held = made.measures().state(FILED_MB, 0f) + (swarf.isPresent() ? removed : 0f);

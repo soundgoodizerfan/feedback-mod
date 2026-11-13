@@ -33,21 +33,16 @@
         "cells": 1,
         "stock": [
           "wire"
-        ],
-        "base": "coarse",
-        "variants": [
-          {
-            "name": "coarse"
-          },
-          {
-            "name": "fine",
-            "cells": 2
-          },
-          {
-            "name": "dense",
-            "cells": 4
-          }
         ]
+      },
+      "axes": {
+        "turns": {
+          "min": 1,
+          "max": 4,
+          "default": 1,
+          "step": 1,
+          "scales": true
+        }
       }
     },
     "O": {
@@ -67,18 +62,11 @@
         ],
         "variants": [
           {
-            "name": "rangefinder",
-            "cells": 2,
-            "params": {
-              "module": 2.0,
-              "optic": 0.6
-            }
-          },
-          {
-            "name": "long_lens",
+            "name": "lens_optic",
             "cells": 3,
             "params": {
-              "module": 5.0,
+              "module": 2.0,
+              "module_long": 5.0,
               "optic": 0.6
             }
           },
@@ -99,7 +87,45 @@
               "needs_controller": 1.0
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "body",
+            "share": 3
+          },
+          {
+            "name": "lens",
+            "forms": [
+              "lens",
+              "plate"
+            ],
+            "traits": [
+              "transparent"
+            ],
+            "share": 1
+          }
         ]
+      },
+      "axes": {
+        "focal_length": {
+          "min": 5,
+          "max": 40,
+          "unit": "cm",
+          "default": 20,
+          "step": 5,
+          "variants": [
+            "lens_optic"
+          ],
+          "bands": [
+            {
+              "name": "short_focus",
+              "max": 20
+            },
+            {
+              "name": "long_focus"
+            }
+          ]
+        }
       }
     },
     "F": {

@@ -208,6 +208,10 @@ public class ReloadingPressBlockEntity extends BlockEntity implements Container,
         slots.get(PAYLOAD).shrink(1);
         slots.set(OUTPUT, round);
         setChanged();
+        if (level != null) {
+            level.playSound(null, worldPosition, io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PRESS_POUR.get(), net.minecraft.sounds.SoundSource.BLOCKS, 0.7f, 1f);
+            level.playSound(null, worldPosition, io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PRESS_SEAT.get(), net.minecraft.sounds.SoundSource.BLOCKS, 0.9f, 0.6f);
+        }
         io.github.soundgoodizerfan.feedback.net.AimPayloads.screen(player, Component.translatable("message.feedback.press.seated"));
     }
 

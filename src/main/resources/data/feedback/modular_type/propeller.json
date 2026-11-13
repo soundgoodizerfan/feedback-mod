@@ -20,32 +20,26 @@
         "stock": [
           "ingot"
         ],
-        "base": "three_blade",
-        "variants": [
+        "slots": [
           {
-            "name": "two_blade",
-            "cells": 1,
-            "params": {
-              "blades": 2,
-              "mass": 0.8
-            }
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "three_blade",
-            "params": {
-              "blades": 3,
-              "mass": 1.0
-            }
-          },
-          {
-            "name": "four_blade",
-            "cells": 3,
-            "params": {
-              "blades": 4,
-              "mass": 1.2
-            }
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
+      },
+      "axes": {
+        "blades": {
+          "min": 2,
+          "max": 4,
+          "default": 3,
+          "step": 1,
+          "scales": true
+        }
       }
     },
     "B": {
@@ -62,6 +56,12 @@
           "unit": "cm",
           "default": 200,
           "step": 10
+        },
+        "pitch": {
+          "min": 0,
+          "max": 2,
+          "default": 1,
+          "step": 1
         }
       },
       "part": {
@@ -70,25 +70,15 @@
         "stock": [
           "plate"
         ],
-        "base": "medium_pitch",
-        "variants": [
+        "slots": [
           {
-            "name": "fine_pitch",
-            "params": {
-              "pitch": 0
-            }
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "medium_pitch",
-            "params": {
-              "pitch": 1
-            }
-          },
-          {
-            "name": "coarse_pitch",
-            "params": {
-              "pitch": 2
-            }
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
       }

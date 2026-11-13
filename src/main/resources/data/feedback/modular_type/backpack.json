@@ -1,9 +1,6 @@
 {
   "family": "backpack",
-  "required": [
-    "S",
-    "T"
-  ],
+  "required": ["S", "T"],
   "wear_litres": 2.0,
   "wear_role": "T",
   "primary": "S",
@@ -22,25 +19,16 @@
           "leather",
           "*_carpet",
           "plate"
-        ],
-        "variants": [
-          {
-            "name": "pouch",
-            "cells": 1,
-            "params": {
-              "slots": 9,
-              "points": 1
-            }
-          },
-          {
-            "name": "pack",
-            "cells": 9,
-            "params": {
-              "slots": 27,
-              "points": 4
-            }
-          }
         ]
+      },
+      "axes": {
+        "capacity": {
+          "min": 1,
+          "max": 9,
+          "default": 3,
+          "step": 1,
+          "scales": true
+        }
       }
     },
     "T": {

@@ -29,6 +29,9 @@ A **band** is a range an axis sits in. Armor and weapon parts have axes you aim 
 |  | Head size | small up to 10.5 cm, normal up to 17.5 cm, large over 17.5 cm |
 | Spear head | Edge length | short up to 15 cm, normal up to 25 cm, long over 25 cm |
 |  | Head size | small up to 9 cm, normal up to 15 cm, large over 15 cm |
+|  | Tines | single 1, forked 2, trident 3, pitchfork 4 to 5 |
+|  | Barb | unbarbed 0, barbed 1 to 2, hooked 3 |
+| Knife blade | Length | short up to 14 cm, normal up to 26 cm, long over 26 cm |
 | Maul head | Edge length | short up to 7.5 cm, normal up to 12.5 cm, long over 12.5 cm |
 |  | Head size | small up to 10.5 cm, normal up to 17.5 cm, large over 17.5 cm |
 | Pick head | Edge length | short up to 10.5 cm, normal up to 17.5 cm, long over 17.5 cm |
@@ -122,14 +125,13 @@ A piece is named from its plate shape, the bands of its axes and the fittings on
 |  | **Kite Shield** | the kite shield shape |
 |  | **Buckler** | face size small |
 |  | **Heater Shield** | the heater shape, face size normal |
-| Bow | **Warbow** | limb length long, a laminate fitted |
+| Bow | **Warbow** | limb length long, a back fitted |
 |  | **Horse Bow** | the recurve shape, limb length short |
-|  | **Yumi** | the recurve shape, limb length long, a laminate fitted |
+|  | **Yumi** | the recurve shape, limb length long, a back fitted |
 |  | **Olympic Bow** | a stabiliser fitted, an arrow rest fitted |
 |  | **Shortbow** | limb length short |
 |  | **Longbow** | limb length long |
 |  | **Composite Bow** | the recurve shape, limb length normal or long |
-|  | **Hunting Bow** | the hunting shape, limb length normal |
 
 ## Swords, axes and other hafted tools
 
@@ -163,6 +165,9 @@ The head or blade names the tool. Rows for a head are read top to bottom; a tool
 |  | **Sabre** | the curved shape, length normal or long, width normal or wide |
 |  | **Longsword** | length long, width normal |
 |  | **Arming Sword** | length normal, width normal, a guard fitted |
+| Knife blade | **Boning Knife** | length short |
+|  | **Chef's Knife** | length normal |
+|  | **Slicing Knife** | length long |
 | Axe head | **Battle Axe** | head size normal, a guard fitted |
 |  | **Tomahawk** | head size small, edge length short, a binding fitted |
 |  | **Broadaxe** | head size large, edge length normal |
@@ -184,9 +189,9 @@ The head or blade names the tool. Rows for a head are read top to bottom; a tool
 |  | **Boar Spear** | head size normal, a guard fitted |
 |  | **Jousting Lance** | edge length long, a guard fitted |
 |  | **Spring Lance** | a spring fitted |
-|  | **Trident** | the trident shape |
-|  | **Harpoon** | the harpoon shape |
-|  | **Pitchfork** | the pitchfork shape |
+|  | **Trident** | three tines |
+|  | **Harpoon** | barb at 3 |
+|  | **Pitchfork** | four or five tines |
 |  | **Pike** | head size large |
 |  | **Javelin** | head size small |
 | Pick head | **Dwarven Pick** | the miner's pick shape, head size large |

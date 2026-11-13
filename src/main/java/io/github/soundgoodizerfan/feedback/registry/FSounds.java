@@ -15,9 +15,105 @@ public class FSounds {
     public static final DeferredRegister<SoundEvent> SOUNDS =
             DeferredRegister.create(Registries.SOUND_EVENT, Feedback.MOD_ID);
 
-    /** A 9 mm pistol shot, recorded by the author. The blast layer of every shot (spec 7), re-pitched by power. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_SHOT_9MM = SOUNDS.register("gun.shot_9mm",
-            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.shot_9mm")));
+    /** A light report (pistol class), three recordings picked at random. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_SHOT_LIGHT = SOUNDS.register("gun.shot_light",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.shot_light")));
+
+    /** A mid report, including the author's own 9 mm recording. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_SHOT_MEDIUM = SOUNDS.register("gun.shot_medium",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.shot_medium")));
+
+    /** A heavy rifle-class report. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_SHOT_HEAVY = SOUNDS.register("gun.shot_heavy",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.shot_heavy")));
+
+    /** A slide drawn: reload begun. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_RELOAD_START = SOUNDS.register("gun.reload_start",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.reload_start")));
+
+    /** One round pressed in. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_RELOAD_ROUND = SOUNDS.register("gun.reload_round",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.reload_round")));
+
+    /** A magazine seated and the action racked. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_RELOAD_MAGAZINE = SOUNDS.register("gun.reload_magazine",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.reload_magazine")));
+
+    /** Trigger on an empty or wrong-bore chamber. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_DRY_CLICK = SOUNDS.register("gun.dry_click",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.dry_click")));
+
+    /** A pulse gun discharge. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_PULSE_SHOT = SOUNDS.register("gun.pulse_shot",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.pulse_shot")));
+
+    /** A pulse gun pump stroke. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_PULSE_PUMP = SOUNDS.register("gun.pulse_pump",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.pulse_pump")));
+
+    /** A pulse gun pumped to full: a blast armed. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_PULSE_ARMED = SOUNDS.register("gun.pulse_armed",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.pulse_armed")));
+
+    /** A suppressed report. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_SHOT_SUPPRESSED = SOUNDS.register("gun.shot_suppressed",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.shot_suppressed")));
+
+    /** Steam or pressure let out of a hot gun. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_VENT = SOUNDS.register("gun.vent",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.vent")));
+
+    /** A chamber over its rating letting go. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_BURST = SOUNDS.register("gun.burst",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.burst")));
+
+    /** A round going off by itself in a hot barrel. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_COOK_OFF = SOUNDS.register("gun.cook_off",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.cook_off")));
+
+    /** A bullet passing close. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_WHIZ = SOUNDS.register("gun.whiz",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.whiz")));
+
+    /** A bullet glancing off a block. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_RICOCHET = SOUNDS.register("gun.ricochet",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.ricochet")));
+
+    /** Fire thrown from a barrel. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_FLAME = SOUNDS.register("gun.flame",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.flame")));
+
+    /** Priming flashing in a flintlock pan. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_PAN_FLASH = SOUNDS.register("gun.pan_flash",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.pan_flash")));
+
+    /** A gun drawn or holstered. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_DRAW = SOUNDS.register("gun.draw",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.draw")));
+
+    /** A heat governor tripping. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_HEAT_TICK = SOUNDS.register("gun.heat_tick",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.heat_tick")));
+
+    /** The fire-mode selector. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_MODE_CLICK = SOUNDS.register("gun.mode_click",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.mode_click")));
+
+    /** A gun swung as a club. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_BUTT = SOUNDS.register("gun.butt",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.butt")));
+
+    /** Powder poured into a case at the Reloading Press. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_PRESS_POUR = SOUNDS.register("gun.press_pour",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.press_pour")));
+
+    /** A round seated at the Reloading Press. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_PRESS_SEAT = SOUNDS.register("gun.press_seat",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.press_seat")));
+
+    /** A spent case hitting the floor. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_CASING = SOUNDS.register("gun.casing",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.casing")));
 
     /**
      * Engine loops, four per family, recorded at {@link #ENGINE_LAYER_RPMS} (SummerCraft's, which
@@ -120,4 +216,20 @@ public class FSounds {
     public static void register(IEventBus modBus) {
         SOUNDS.register(modBus);
     }
+
+    /** A bullet landing in a living body. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_HIT_FLESH = SOUNDS.register("gun.hit_flesh",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.hit_flesh")));
+
+    /** A bullet meeting armour or a metal body. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_HIT_ARMOUR = SOUNDS.register("gun.hit_armour",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.hit_armour")));
+
+    /** The shooter's confirmed-hit tick. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_HIT_MARKER = SOUNDS.register("gun.hit_marker",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.hit_marker")));
+
+    /** The shooter's kill tick. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_HIT_KILL = SOUNDS.register("gun.hit_kill",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.hit_kill")));
 }

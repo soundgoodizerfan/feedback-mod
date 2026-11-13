@@ -66,27 +66,17 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         return fittings.containsKey(f);
     }
 
-    /** What the player looks through: how far in aiming zooms, and how long it takes to come up. */
-    public enum Sight {
-        IRON(FTuning.GUN_SIGHT_FOV_IRON, FTuning.GUN_SIGHT_MS_IRON),
-        REFLEX(FTuning.GUN_SIGHT_FOV_REFLEX, FTuning.GUN_SIGHT_MS_REFLEX),
-        SCOPE(FTuning.GUN_SIGHT_FOV_SCOPE, FTuning.GUN_SIGHT_MS_SCOPE);
+    /**
+     * What the player looks through: how far in aiming zooms, and how long it takes to come up. A scope's is its {@code zoom} axis
+     * through its lens: the view closes to {@code 1 / (zoom * transmission)} of the field.
+     */
+    public record Sight(String name, float fov, int raiseMs) {
+        public static final Sight IRON = new Sight("IRON", FTuning.GUN_SIGHT_FOV_IRON, FTuning.GUN_SIGHT_MS_IRON);
+        public static final Sight REFLEX = new Sight("REFLEX", FTuning.GUN_SIGHT_FOV_REFLEX, FTuning.GUN_SIGHT_MS_REFLEX);
 
-        private final float fov;
-        private final int raiseMs;
-
-        Sight(float fov, int raiseMs) {
-            this.fov = fov;
-            this.raiseMs = raiseMs;
-        }
-
-        /** FOV multiplier when fully aimed. */
-        public float fov() {
-            return fov;
-        }
-
-        public int raiseMs() {
-            return raiseMs;
+        /** A scope at {@code zoom} times, its lens passing {@code transmission} (0 to 1) of the light. */
+        public static Sight scope(float zoom, float transmission) {
+            return new Sight("SCOPE", 1f / Math.max(1f, zoom * transmission), FTuning.GUN_SIGHT_MS_SCOPE);
         }
     }
 
@@ -211,8 +201,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             other = Optional.of(new Second(second.material(), geometry(type, SECOND, second)));
         }
         ModularDesign.Part sightPart = design.part(SIGHT);
-        Sight sight = sightPart == null ? Sight.IRON
-                : "scope".equals(type.roles().get(SIGHT).variant(sightPart).map(ModularType.Variant::name).orElse("")) ? Sight.SCOPE : Sight.REFLEX;
+        Sight sight = sightPart == null ? Sight.IRON : sight(type, sightPart, materials);
         Map<ResourceLocation, ResourceLocation> fittings = new HashMap<>();
         for (String letter : FITTED) {
             ModularDesign.Part p = design.part(letter);
@@ -230,9 +219,29 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         }
         Parts parts = new Parts(action.material(), trigger.material(), grip.material(), receiver.material(),
                 Optional.ofNullable(feedPart).map(ModularDesign.Part::material), other,
-                type.roles().get(GRIP).variant(grip).map(v -> v.params().getOrDefault("friction_mult", 1f)).orElse(1f), design.part(SLIDE) != null);
+                type.roles().get(GRIP).variant(grip).map(v -> v.params().getOrDefault("friction_mult", 1f)).orElse(1f) * wrapGrip(type, grip, materials),
+                design.part(SLIDE) != null);
         return Optional.of(new GunSpec(barrel.material(), geometry(type, BARREL, barrel), sight, parts,
                 new GunLayout(kind, act, feed), fittings, ModularTraits.allOf(design, type)));
+    }
+
+    /** What a grip's wrap does to the hold: its material's sliding friction against the reference (a leather wrap grips as a standard one). */
+    private static float wrapGrip(ModularType type, ModularDesign.Part grip, Map<ResourceLocation, Material> materials) {
+        if (grip.measures().slot("wrap").isEmpty())
+            return 1f;
+        Material wrap = io.github.soundgoodizerfan.feedback.modular.ModularBake.slotMaterial(type.roles().get(GRIP), grip, "wrap", materials);
+        return wrap == null ? 1f : wrap.mechanical().friction().orElse(io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRIP_REF_FRICTION)
+                / io.github.soundgoodizerfan.feedback.modular.ModularTuning.GRIP_REF_FRICTION;
+    }
+
+    /** The sight a sight part is: a reflex, or a scope whose zoom axis and lens give its field. */
+    private static Sight sight(ModularType type, ModularDesign.Part part, Map<ResourceLocation, Material> materials) {
+        ModularType.Role role = type.roles().get(SIGHT);
+        if (!"scope".equals(role.variant(part).map(ModularType.Variant::name).orElse("")))
+            return Sight.REFLEX;
+        Material lens = io.github.soundgoodizerfan.feedback.modular.ModularBake.slotMaterial(role, part, "lens", materials);
+        float loss = lens == null ? 0f : lens.separation().reflectivity().orElse(io.github.soundgoodizerfan.feedback.modular.ModularTuning.LENS_DEFAULT_LOSS);
+        return Sight.scope(role.axis(part, "zoom"), 1f - loss);
     }
 
     /**
@@ -268,6 +277,9 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         if (rec != null && GunLayout.Type.of(type.roles().get(RECEIVER).variant(rec).map(ModularType.Variant::name).orElse("")) != GunLayout.Type.HANDGUN
                 && design.part(STOCK) == null)
             out.add(new Fault(List.of(RECEIVER), "stock"));
+        if (design.part("W") != null && rec != null
+                && GunLayout.Type.of(type.roles().get(RECEIVER).variant(rec).map(ModularType.Variant::name).orElse("")) == GunLayout.Type.HANDGUN)
+            out.add(new Fault(List.of("W"), "foregrip"));
         if (!feed.fits(act))
             out.add(new Fault(List.of(actionRole, feeds.isEmpty() ? BARREL : feeds.get(0)), "feed"));
         if (second && (act != GunLayout.Action.BREAK || feed != GunLayout.Feed.BARRELS))

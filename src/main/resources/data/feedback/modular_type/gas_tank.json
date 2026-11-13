@@ -60,6 +60,17 @@
               "fill": 0.7
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "shell",
+            "share": 3
+          },
+          {
+            "name": "lining",
+            "share": 1,
+            "standard": "feedback:ceramic"
+          }
         ]
       }
     },

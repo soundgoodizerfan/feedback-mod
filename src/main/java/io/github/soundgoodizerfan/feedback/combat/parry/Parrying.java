@@ -75,6 +75,7 @@ public final class Parrying {
             recovery = ParryTuning.FEEDBACKER_RECOVERY;
             hand = net.minecraft.world.InteractionHand.MAIN_HAND;
             io.github.soundgoodizerfan.feedback.weapon.CoinShot.punch(player); // the punch can send a coin back up
+            io.github.soundgoodizerfan.feedback.weapon.HeatPellets.punch(player); // or the wielder's own slow heat pellets
         } else
             return;
         CombatState.set(player, new CombatState(CombatPhase.PARRY_ACTIVE, window + pad, recovery, s.iFrames()));
@@ -161,6 +162,20 @@ public final class Parrying {
                 (level.random.nextDouble() - 0.5) * off);
         GunShots.strike(level, defender, defender.getEyePosition(), target, damage);
         return true;
+    }
+
+    /**
+     * A Feedbacker punching the wielder's own slow shot back: the same parry as catching a bullet (the window is spent, the
+     * skills and rearm hear it, the gauntlet wears and the feel fires), with no shooter to aim at.
+     */
+    public static void punchedOwn(ServerLevel level, LivingEntity defender, float massMu, float speed) {
+        ItemStack gauntlet = CombatGear.granting(defender, ParryTuning.PUNCH_PROJECTILES);
+        if (gauntlet.isEmpty())
+            return;
+        CombatState.set(defender, new CombatState(CombatPhase.IDLE, 0, 0, CombatState.of(defender).iFrames()));
+        io.github.soundgoodizerfan.feedback.combat.skill.SkillEarning.parried(defender, GunShots.attack(level, defender));
+        Rearms.on(defender, Rearm.PARRY);
+        wear(defender, gauntlet, massMu, speed);
     }
 
     /**

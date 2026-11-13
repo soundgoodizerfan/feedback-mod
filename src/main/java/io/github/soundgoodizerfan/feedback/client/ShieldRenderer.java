@@ -98,7 +98,7 @@ public final class ShieldRenderer extends BlockEntityWithoutLevelRenderer {
         int gripColour = grip == null ? faceColour : 0xFF000000 | MaterialColors.of(grip.material());
         float[] size = size(design, face);
         float w = 12 * size[0], h = 22 * size[1];
-        float t = rim != null && "flanged".equals(rim.variant()) ? 1.5f : 1f;
+        float t = rim == null ? 1f : 1f + 0.25f * (rim.axis("rim_width", 1f) - 1f);
 
         pose.pushPose();
         pose.scale(1f, -1f, -1f);

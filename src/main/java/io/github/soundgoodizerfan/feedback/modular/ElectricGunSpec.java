@@ -47,11 +47,12 @@ import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
  * @param zoom       whether a scope zoom charge is fitted.
  * @param gauge      whether a heat gauge is fitted.
  * @param sight      whether a sight is fitted.
+ * @param sightFov   the field a scope closes the view to when aimed (its zoom axis through its lens); 1 for any other sight.
  */
 public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, float barrelLoss, float seatAmp, float seatDensity,
                               int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
                               float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
-                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight) {
+                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov) {
 
     /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
     public enum Seat {
@@ -59,6 +60,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         FLUX_CYCLER("flux_cycler", false, false, FireMode.AUTO, FireMode.SEMI),
         CAPACITOR_BANK("capacitor_bank", true, true, FireMode.SEMI),
         BURST_BANK("burst_bank", true, true, FireMode.BURST, FireMode.SEMI),
+        CORE_BREECH("core_breech", true, true, FireMode.SEMI),
         FLYWHEEL("flywheel", false, true, FireMode.AUTO, FireMode.SEMI),
         RECOIL_DYNAMO("recoil_dynamo", false, false, FireMode.AUTO, FireMode.SEMI, FireMode.BURST),
         BACKPACK_TETHER("backpack_tether", false, false, FireMode.AUTO, FireMode.SEMI, FireMode.BURST);
@@ -112,6 +114,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         float heatMult = 1f, report = 1f, heatGain = 1f, shed = 1f, spreadMult = 1f, darkAt = 0f, darkCut = 0f;
         Governor governor = Governor.NONE;
         boolean hold = false, pump = false, fork = false, zoom = false, gauge = false, sight = false;
+        float sightFov = 1f;
         for (ModularDesign.Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             Material m = materials.get(p.material());
@@ -158,6 +161,11 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                 case "heat_gauge" -> gauge = true;
                 case "sight" -> {
                     sight = true;
+                    if ("scope".equals(role.variant(p).map(ModularType.Variant::name).orElse(""))) {
+                        Material lens = ModularBake.slotMaterial(role, p, "lens", materials);
+                        float lensLoss = lens == null ? 0f : lens.separation().reflectivity().orElse(ModularTuning.LENS_DEFAULT_LOSS);
+                        sightFov = io.github.soundgoodizerfan.feedback.weapon.GunSpec.Sight.scope(role.axis(p, "zoom"), 1f - lensLoss).fov();
+                    }
                     spreadMult *= role.variant(p).map(x -> x.params().getOrDefault("spread_mult", 1f)).orElse(1f);
                 }
                 default -> {
@@ -184,7 +192,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
         ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
-                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight);
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov);
         return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 
@@ -237,6 +245,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         return switch (seat) {
             case CAPACITOR_BANK -> ModularTuning.EGUN_BANK_MULT * (1f + ModularTuning.EGUN_BANK_DIELECTRIC_STEP * dielectric);
             case BURST_BANK -> ModularTuning.EGUN_BANK_MULT * (1f + ModularTuning.EGUN_BANK_DIELECTRIC_STEP * dielectric) / FTuning.GUN_BURST_ROUNDS;
+            case CORE_BREECH -> ModularTuning.EGUN_CORE_MULT;
             case FLYWHEEL -> Mth.clamp(0.6f + 0.4f * seatDensity / ModularTuning.EGUN_FLY_REF_DENSITY, 0.6f, 1.6f);
             default -> 1f;
         };
@@ -308,6 +317,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         return switch (seat) {
             case CYLINDER -> ModularTuning.EGUN_COOLDOWN;
             case CAPACITOR_BANK -> ModularTuning.EGUN_BANK_CYCLE;
+            case CORE_BREECH -> ModularTuning.EGUN_CORE_CYCLE;
             case BURST_BANK -> burst ? ModularTuning.EGUN_BURST_GAP_TICKS : ModularTuning.EGUN_BANK_CYCLE / 2;
             case FLYWHEEL -> ModularTuning.EGUN_FLY_CYCLE;
             default -> ModularTuning.EGUN_FLUX_CYCLE;

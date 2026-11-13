@@ -36,30 +36,15 @@
         "stock": [
           "*_planks"
         ],
-        "base": "wheel_slatted",
-        "variants": [
+        "slots": [
           {
-            "name": "wheel_paddle",
-            "cells": 4,
-            "params": {
-              "power": 0.7,
-              "rpm": 1.4
-            }
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "wheel_slatted",
-            "params": {
-              "power": 1.0,
-              "rpm": 1.0
-            }
-          },
-          {
-            "name": "wheel_bucket",
-            "cells": 8,
-            "params": {
-              "power": 1.5,
-              "rpm": 0.7
-            }
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
       }

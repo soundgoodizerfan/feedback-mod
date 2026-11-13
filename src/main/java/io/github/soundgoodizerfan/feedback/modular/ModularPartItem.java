@@ -46,6 +46,11 @@ public class ModularPartItem extends Item {
             tooltip.add(Component.translatable("tooltip.feedback.part.flaw", made.flaw(), ForgeRhythm.MAX_FLAW)
                     .withStyle(net.minecraft.ChatFormatting.GRAY));
         if (made != null)
+            made.measures().slots().forEach((name, slot) -> tooltip.add(Component.translatable("tooltip.feedback.part.slot",
+                    Component.translatable("modular.feedback.slot." + name),
+                    Component.translatable("material." + slot.material().getNamespace() + "." + slot.material().getPath()))
+                    .withStyle(net.minecraft.ChatFormatting.GRAY)));
+        if (made != null)
             attuned(made, tooltip);
         if (made != null && made.measures().work() != 1f
                 && io.github.soundgoodizerfan.feedback.client.Readout.exact(io.github.soundgoodizerfan.feedback.instrument.Quantity.FIGURE))

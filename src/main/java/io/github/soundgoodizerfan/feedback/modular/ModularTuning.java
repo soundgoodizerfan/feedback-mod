@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.modular;
 
+import io.github.soundgoodizerfan.feedback.core.FTuning;
+
 import io.github.soundgoodizerfan.feedback.core.unit.XPu;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -72,6 +74,41 @@ public final class ModularTuning {
 
     /** Share of a tipped zone's toughness and wear that is the tip's; the rest is the body it is set in. */
     public static final float TIP_SHARE = 0.3f;
+    /** A knife blade's reference lengths in cm (boning, chef, slicer) and the cut feel each gives: pull toward the grain and slide on fat. */
+    public static final float[] KNIFE_LENGTH_CM = {12f, 20f, 30f}, KNIFE_GRAIN = {1.3f, 1f, 0.4f}, KNIFE_SLIDE = {0.2f, 1f, 1.6f};
+    /** The sliding friction a bearing's balls are read against (a bearing's drag scales by its balls' friction over this), and a grip's wrap likewise. */
+    public static final float BEARING_REF_FRICTION = 0.4f, GRIP_REF_FRICTION = 0.6f;
+    /** A tip thinner than the first draws as a needle, thicker than the second as a cap (the hafted sprites). */
+    public static final float TIP_ART_NEEDLE_BELOW = 0.9f, TIP_ART_CAPPED_ABOVE = 1.15f;
+    /** A flywheel disc's rim-mass axis (0 spoked, 1 solid, 2 rimmed) and the mass and rim strength it gives, read between these points. */
+    public static final float[] FLYWHEEL_RIM_MASS_AT = {0f, 1f, 2f}, FLYWHEEL_MASS = {0.6f, 1f, 1.3f}, FLYWHEEL_RIM = {0.8f, 1f, 0.9f};
+    /** What each unit of a shield rim's width beyond the first adds to the shield's capacity multiple (1.15 banded, 1.3 flanged). */
+    public static final float RIM_CAPACITY_PER_WIDTH = 0.15f;
+    /** A servo's drive at a fully rated motor (what a heavy-dense copper winding gave of old), and the loss a motor short of full rating adds. */
+    public static final float SUIT_DRIVE_PER_MOTOR_GRADE = 88f, SUIT_LOSS_PER_GRADE_SHORT = 0.3f;
+    /** What each wrap beyond the first adds to a binding's joint multiple (1.3 at two wraps, 1.6 at three). */
+    public static final float BINDING_JOINT_PER_WRAP = 0.3f;
+    /** A pommel's weight axis moves the part's centre of mass this many metres per unit beyond the default (a ball -0.03, a counterweight -0.07 of old). */
+    public static final float AXIS_WEIGHT_CENTRE_PER_UNIT = -0.035f;
+    /** A pack shell's reference sizes in cells (pouch, standard, pack) and the store slots and mounting points each gives. */
+    public static final float[] PACK_REF_CELLS = {1f, 3f, 9f}, PACK_REF_SLOTS = {9f, 18f, 27f}, PACK_REF_POINTS = {1f, 2f, 4f};
+    /** A dynamotor frame's reference sizes in cells of stock (small, medium, large) and what each gives: torque ceiling, thermal mass, wall area. */
+    public static final float[] FRAME_CELLS = {2f, 4f, 8f},
+            FRAME_SU = {FTuning.FRAME_SU_SMALL, FTuning.FRAME_SU_MEDIUM, FTuning.FRAME_SU_LARGE},
+            FRAME_MASS = {FTuning.FRAME_MASS_SMALL.workPerTu(), FTuning.FRAME_MASS_MEDIUM.workPerTu(), FTuning.FRAME_MASS_LARGE.workPerTu()},
+            FRAME_AREA = {FTuning.FRAME_AREA_SMALL, FTuning.FRAME_AREA_MEDIUM, FTuning.FRAME_AREA_LARGE};
+    /** A winding's reference sizes in cells of wire (coarse, fine, dense, heavy dense) and the volts per RPM each gives. */
+    public static final float[] WINDING_CELLS = {1f, 2f, 4f, 8f},
+            WINDING_VPR = {FTuning.WINDING_VOLTS_PER_RPM_COARSE, FTuning.WINDING_VOLTS_PER_RPM_FINE, FTuning.WINDING_VOLTS_PER_RPM_DENSE,
+                    FTuning.WINDING_VOLTS_PER_RPM_HEAVY_DENSE};
+    /** An engine head's torque at the lowest compression, and what each step of compression adds (0.95 low, 1.08 high). */
+    public static final float ENGINE_HEAD_TORQUE_LOW = 0.95f, ENGINE_HEAD_TORQUE_PER_COMPRESSION = 0.065f;
+    /** A propeller hub weighs this much more per blade beyond the reference count. */
+    public static final float PROP_HUB_MASS_PER_BLADE = 0.2f, PROP_HUB_MASS_REF_BLADES = 3f;
+    /** Share of an inlaid edge slot's hardness that the edge zone takes on (a katana's hard edge on a soft spine: it bites like the edge, rests on the body's strength). */
+    public static final float EDGE_SLOT_HARDNESS_SHARE = 0.8f;
+    /** Light a scope's lens loses when its material states no reflectivity. */
+    public static final float LENS_DEFAULT_LOSS = 0.1f;
     /** Share of a piece of plate each set stud covers, and the most they cover. */
     public static final float STUD_SHARE = 0.1f;
     public static final float STUD_MAX = 0.5f;
@@ -144,7 +181,8 @@ public final class ModularTuning {
     public static final float EGUN_CYL_REFILL_PER_S = 0.6f;
     /** Capacitor bank: seconds to recharge at Light, Standard and Heavy with a two-cell battery (more cells take longer); the shot is this many times a tier's pulse; each dielectric band adds this share to what it holds. */
     public static final float[] EGUN_BANK_RECHARGE_S = {8f, 12f, 16f};
-    public static final float EGUN_BANK_MULT = 3f, EGUN_BANK_DIELECTRIC_STEP = 0.15f;
+    public static final float EGUN_CORE_MULT = 3f, EGUN_CORE_RANGE = 0.35f, EGUN_CORE_SPEED = 1.6f, EGUN_CORE_VENT_KEEP = 0.25f, EGUN_CORE_PARRY_RANGE = 3.5f,
+            EGUN_CORE_PELLET_MU = 0.02f, EGUN_BANK_MULT = 3f, EGUN_BANK_DIELECTRIC_STEP = 0.15f;
     /** Burst bank: ticks between the three shots of a burst. */
     public static final int EGUN_BURST_GAP_TICKS = 2;
     /** Flywheel: ticks of a held trigger to full spin (at the reference density), ticks to spin down, and the spin the first shot waits for. */
@@ -156,7 +194,7 @@ public final class ModularTuning {
     public static final float EGUN_DYNAMO_RETURN = 0.10f;
 
     /** Ticks between shots: a cylinder's floor, a flux cycler, dynamo or tether, a flywheel at full spin, a capacitor bank. */
-    public static final int EGUN_COOLDOWN = 8, EGUN_FLUX_CYCLE = 4, EGUN_FLY_CYCLE = 3, EGUN_BANK_CYCLE = 10;
+    public static final int EGUN_COOLDOWN = 8, EGUN_FLUX_CYCLE = 4, EGUN_FLY_CYCLE = 3, EGUN_BANK_CYCLE = 10, EGUN_CORE_CYCLE = 10;
 
     /** Heat a Standard pulse leaves, falls by this share each second; the fraction of normal rate a throttle never goes below. */
     public static final float EGUN_HEAT_PER_SHOT = 0.08f, EGUN_HEAT_COOLING_PER_S = 0.15f, EGUN_THROTTLE_FLOOR = 0.4f;
@@ -174,9 +212,12 @@ public final class ModularTuning {
     /** Hold charge: ticks to full, the extra power and the extra mobs pierced at full. */
     public static final int EGUN_HOLD_MAX_TICKS = 10, EGUN_HOLD_PIERCE = 2;
     public static final float EGUN_HOLD_POWER = 0.5f;
-    /** Pump charge: pumps that are safe, the extra power and heat of each, and the damage to the wielder of one too many. */
+    /** Pump charge: pumps to arm the blast, the extra power, heat, spread and (with a splitter) beams of each, and the blast's reach and damage to others and to the wielder. */
     public static final int EGUN_PUMP_MAX = 3;
-    public static final float EGUN_PUMP_POWER = 0.25f, EGUN_PUMP_HEAT = 0.1f, EGUN_PUMP_BURST_DAMAGE = 6f;
+    /** Ticks from the pump key to its click: the forend's throw (client {@code GunMotion.jerk}, 0.55 of the stroke) lands about then. */
+    public static final int EGUN_PUMP_SOUND_TICKS = 4;
+    public static final float EGUN_PUMP_POWER = 0.25f, EGUN_PUMP_HEAT = 0.1f, EGUN_PUMP_SPREAD = 0.5f, EGUN_PUMP_BEAMS = 0.6f,
+            EGUN_PUMP_BLAST_RADIUS = 4f, EGUN_PUMP_BLAST_DAMAGE = 10f, EGUN_PUMP_BLAST_SELF = 10f;
     /** Beam splitter: the energy of all the beams together against one pulse, and the cone's degrees per beam. */
     public static final float EGUN_SPLIT_TOTAL = 1.5f, EGUN_SPLIT_DEG_PER_BEAM = 1.2f;
     /** Arc fork: the reach of an arc from one target to the next, and the share of the pulse an arc carries. */
@@ -431,6 +472,25 @@ public final class ModularTuning {
      * times as hard, from any source, while the barb stays (a blow worries the wound; it is not a curse).
      */
     public static final float HELD_WOUND_MULT = 1.25f;
+
+    /** The most a spear head's {@code barb} axis reads: a target held by a barbed head at this barb takes the full {@link #HELD_WOUND_MULT}. */
+    public static final float BARB_MAX = 3f;
+    /** Placeholder. Share of a blow a barb tears out of the target, per point of barb: a pulled target is a wounded one. */
+    public static final float BARB_TEAR_PER_BARB = 0.1f;
+    /** Placeholder. Blocks a second of pull a barbed hit puts on the target toward the wielder, per point of barb. */
+    public static final float BARB_PULL_PER_BARB = 0.25f;
+    /** Placeholder. Ticks the weapon is held up working a barb out of the target, per point of barb. */
+    public static final int BARB_WITHDRAW_TICKS = 8;
+    /** Placeholder. A spear build whose baked {@code BALANCE} (share of swing moment in the head) is below this is balanced for the hand and thrown on release; at or above it is head-heavy and charges. */
+    public static final float SPEAR_THROW_BALANCE = 0.45f;
+    /** Placeholder. Each tine past the first costs this share of the thrust: every target takes {@code 1 / (1 + drag x (tines - 1))} of the blow. */
+    public static final float TINE_DRAG = 0.1f;
+    /** Placeholder. The look-line match a one-tine spear needs to land a blow (1 is dead centre). */
+    public static final float TINE_CONE_NARROW = 0.9f;
+    /** Placeholder. The same match at five tines: a fork covers a wider cone. */
+    public static final float TINE_CONE_WIDE = 0.6f;
+    /** Placeholder. Armour value at which a tine's thinner section has lost half of its bite: the blow is cut by {@code (1 - 1 / sqrt(tines))} times armour over (armour + this). */
+    public static final float TINE_ARMOUR_HALF = 10f;
 
 
     // --- material perks (MaterialPerks): vanilla's own per-level figures, applied free -------------

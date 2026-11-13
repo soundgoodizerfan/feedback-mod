@@ -105,6 +105,12 @@ public final class GunLens {
         GlStateManager._glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, main.frameBufferId);
         GlStateManager._glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, target.frameBufferId);
         GlStateManager._glBlitFrameBuffer(x0, y0, x0 + side, y0 + side, 0, 0, SIZE, SIZE, GL11.GL_COLOR_BUFFER_BIT, GL11.GL_LINEAR);
+        // Fog clears the main target with alpha 0, so sky pixels came through see-through; force the image opaque.
+        target.bindWrite(false);
+        GL11.glColorMask(false, false, false, true);
+        GL11.glClearColor(0f, 0f, 0f, 1f);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+        GL11.glColorMask(true, true, true, true);
         main.bindWrite(true);
         mc.levelRenderer.needsUpdate();
         fresh = true;

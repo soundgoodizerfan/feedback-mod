@@ -86,7 +86,7 @@ public final class Blast {
                 confine = v.map(x -> x.params().getOrDefault("confine", 1f)).orElse(1f);
                 frag = v.map(x -> x.params().getOrDefault("frag", 1f)).orElse(1f);
             } else if (part.role().equals(FUSE_ROLE)) {
-                ticks = v.map(x -> Math.round(x.params().getOrDefault("ticks", (float) FTuning.DEMO_FUSE_TICKS))).orElse(ticks);
+                ticks = role == null ? ticks : Math.round(role.paramOf(part, "ticks", (float) FTuning.DEMO_FUSE_TICKS));
                 impact = v.map(x -> x.params().getOrDefault("impact", 0f) > 0f).orElse(false);
             } else if (part.role().equals(PRIMER_ROLE)) {
                 burnAdd = v.map(x -> x.params().getOrDefault("burn_add", 0f)).orElse(0f);

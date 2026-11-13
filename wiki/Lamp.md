@@ -4,15 +4,9 @@ A panel of glowstone that lights by how well a power line feeds it. It replaces 
 
 ## Building it
 
-Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Glowstone Lamp* in the type row); the gauge is set there, along with the filament shape and addon. It needs no treatise. Shape a **Lamp Filament** from wire at a bench, then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Glowstone Lamp Blueprint in the blueprint slot judges the fit against your drawing. The lamp comes out with the design of the filament, and the blueprint is kept. The wire's metal must conduct.
+Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Glowstone Lamp* in the type row); the gauge is set there, along with the addon. It needs no treatise. Shape a **Lamp Filament** from wire at a bench, then assemble it at the [Engineering Table](Engineering_Table.md) with two [fasteners](Fasteners.md); the Glowstone Lamp Blueprint in the blueprint slot judges the fit against your drawing. The lamp comes out with the design of the filament, and the blueprint is kept. The wire's metal must conduct.
 
-The filament has one measure, its **gauge**, from 20 to 100 percent (50 by default). The draw rises with the square of the gauge, and a thicker filament lasts longer under overvoltage. Its **shape** trades draw against toughness:
-
-| Filament | Draw | Toughness |
-| --- | --- | --- |
-| Coil | standard | standard |
-| Carbon | 1.4 times | 1.3 times |
-| Fine | 0.6 times | 0.8 times |
+The filament has one measure, its **gauge**, from 20 to 100 percent (50 by default). The draw rises with the square of the gauge, and a thicker filament lasts longer under overvoltage. The filament has a fixed standard surface that is never picked.
 
 **Addon.** A **ballast** (nugget) is an optional piece that adds 20% to the overvoltage the filament survives.
 

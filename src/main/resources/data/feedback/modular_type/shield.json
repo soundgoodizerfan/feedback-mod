@@ -1,9 +1,6 @@
 {
   "family": "shield",
-  "required": [
-    "F",
-    "R"
-  ],
+  "required": ["F", "R"],
   "minigame": "feedback:fitting",
   "wear_litres": 2.9,
   "wear_role": "F",
@@ -48,6 +45,17 @@
               "capacity_mult": 1.2
             },
             "adjective": true
+          }
+        ],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "facing",
+            "share": 1,
+            "standard": "feedback:leather"
           }
         ]
       },
@@ -115,26 +123,30 @@
           "wire",
           "nugget"
         ],
-        "variants": [
+        "slots": [
           {
-            "name": "banded",
-            "cells": 2,
-            "params": {
-              "capacity_mult": 1.15
-            }
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "flanged",
-            "cells": 3,
-            "params": {
-              "capacity_mult": 1.3
-            }
+            "name": "edging",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
       },
       "offers": [
         "rim"
-      ]
+      ],
+      "axes": {
+        "rim_width": {
+          "min": 1,
+          "max": 3,
+          "default": 1,
+          "step": 1,
+          "scales": true
+        }
+      }
     },
     "G": {
       "name": "grip",
@@ -217,6 +229,13 @@
         }
       },
       {
+        "name": "heater_shield",
+        "is": {
+          "variant": "heater",
+          "face_size": "normal"
+        }
+      },
+      {
         "name": "knights_shield",
         "is": {
           "variant": "heater",
@@ -255,13 +274,6 @@
         "name": "buckler",
         "is": {
           "face_size": "small"
-        }
-      },
-      {
-        "name": "heater_shield",
-        "is": {
-          "variant": "heater",
-          "face_size": "normal"
         }
       }
     ]

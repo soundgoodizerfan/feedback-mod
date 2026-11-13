@@ -58,12 +58,13 @@ public final class PulseShot {
      * @param pierce   mobs beyond the first (a large number for every mob in line).
      * @param colour   the beam's colour, an RGB the blueprint chose.
      * @param beams    beams of a splitter (0 for one plain beam).
+     * @param widen    what a pump charge multiplies the splitter cone by (1 for none; a plain beam's spread arrives already widened).
      * @param fork     whether an arc fork carries the shock on.
      * @param cylinder whether a coin redirect adds to the pulse.
      * @param volts    the cell's volts: what the wielder's insulation is tested against.
      * @param spreadDeg the cone one beam leaves in.
      */
-    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, float volts, float spreadDeg) {
+    public record Plan(float joules, float cutoff, int pierce, int colour, int beams, boolean fork, boolean cylinder, float volts, float spreadDeg, float widen) {
     }
 
     private PulseShot() {
@@ -73,7 +74,7 @@ public final class PulseShot {
     public static void fire(ServerLevel level, LivingEntity shooter, ItemStack gun, Plan plan, float yaw, float pitch) {
         int beams = Math.max(1, plan.beams());
         float each = beams > 1 ? plan.joules() * ModularTuning.EGUN_SPLIT_TOTAL / beams : plan.joules();
-        float cone = beams > 1 ? ModularTuning.EGUN_SPLIT_DEG_PER_BEAM * beams : plan.spreadDeg();
+        float cone = beams > 1 ? ModularTuning.EGUN_SPLIT_DEG_PER_BEAM * beams * plan.widen() : plan.spreadDeg();
         Vec3 origin = shooter.getEyePosition();
         Set<Integer> seen = new HashSet<>();
         for (int k = 0; k < beams; k++) {

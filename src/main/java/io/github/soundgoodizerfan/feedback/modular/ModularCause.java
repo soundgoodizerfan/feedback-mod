@@ -72,7 +72,7 @@ public final class ModularCause {
                 case SUIT_ATT_1, SUIT_ATT_2, SUIT_ATT_3, SUIT_ATT_4, SUIT_POW_1, SUIT_POW_2, SUIT_POW_3, SUIT_POW_4 ->
                         role.name().equals("upgrade") || role.name().startsWith("module_");
                 case SUIT_WIRING -> role.name().equals("wiring") || role.name().equals("upgrade");
-                case COMFORT -> p.role().equals(ModularBedroll.FILL) || p.role().equals(ModularBedroll.SHEET);
+                case COMFORT -> p.role().equals(ModularBedroll.SHEET);
                 case FIST, SWING_DRAG -> p.role().equals(ModularGlove.PLATE);
                 // a dish's: the foods make the meal and carry its hazards, the container sets how much it holds
                 case HUNGER, SATURATION, PATHOGEN, TOXIN, CHARRED, FAT, FIBRE -> !p.role().equals(type.primary()) || p.kind().isEmpty();

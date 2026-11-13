@@ -418,7 +418,7 @@ public class FBlockEntities {
      * is not the same block as {@link #STEAM_ENGINE}. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoilerBlockEntity>> BOILER =
             BLOCK_ENTITIES.register("boiler", () -> BlockEntityType.Builder
-                    .of(BoilerBlockEntity::new, FBlocks.BOILER.get(), FBlocks.LARGE_BOILER.get())
+                    .of(BoilerBlockEntity::new, FBlocks.BOILER.get())
                     .build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CondenserBlockEntity>> CONDENSER =

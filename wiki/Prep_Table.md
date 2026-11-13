@@ -17,7 +17,7 @@ S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is a modular tool
 
 1. Put a **hand knife** in the knife slot. Every container and every dish you take costs it a point.
 2. **Containers**: put stock in the center, click a container in the fan (Ceramic Bowl, Ceramic Plate, Wooden Skewer). There is no rhythm to play: it comes out at once. The container decides which dish you get (see *The dishes*). The same list shapes foods from [dough](Dough.md): **Flatbread Dough** (one dough, rolled thin; the wrap's container once baked) and **Noodles** (three dough in a row, three noodles: a starchy base, drier than dough, so it keeps longer and cooks quicker). The dough's state and knead carry over: rolling dough thin does not make it fresh.
-3. **Dish**: put the **container** in the center and pick the dish type with the arrows at the top of the bench (Bowl Dish, Plate Dish, Skewer). The fan shows the foods you carry that fit; click one to fit it, one item to a slot. A food fills the role its kind says, never its name:
+3. **Dish**: put the **container** in the center and pick the dish type with the arrows at the top of the bench (Bowl Dish, Skewer). A Ceramic Plate as the container makes a plate dish. The fan shows the foods you carry that fit; click one to fit it, one item to a slot. A food fills the role its kind says, never its name:
    - **base**: a starchy food (potato, bread)
    - **main**: a protein (meat, fish). Every dish needs one
    - **side**: a plant (carrot, apple, berries, kelp)
@@ -30,7 +30,7 @@ Cooked and raw foods both go in; a food goes in as it is, with whatever you have
 | Dish | Container | Made from | Holds | Eating time | Foods |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Bowl Dish** | Ceramic Bowl | 3 bricks or clay balls | 0.6 L (up to 12 hunger) | 2.4 s | base, main, side |
-| **Plate Dish** | Ceramic Plate | 2 bricks or clay balls | 0.9 L (up to 18 hunger) | 3.3 s | base, main, side |
+| **Bowl Dish** with a Ceramic Plate (a plate dish) | Ceramic Plate | 2 bricks or clay balls | 0.9 L (up to 18 hunger) | 3.3 s | base, main, side |
 | **Skewer** | Wooden Skewer | 1 stick | 0.2 L (up to 4 hunger) | 1.2 s | main, side (no base) |
 | **Wrap** | a baked Flatbread | [dough](Dough.md) | 0.5 L (up to 10 hunger) | 2.1 s | main, side (no base) |
 
@@ -60,7 +60,7 @@ Put **one food** (to cut), **one dough** (to knead) or a **finished dish** (to f
 
 **What it does.** A cut food (sliced, more so minced) rots faster, cooks and dries faster (on a rack too), and gives up its compounds sooner. A ragged cut also leaves the thick middle underdone: heat does not clear the last of what was live in it. A heavy pour multiplies the finish's compounds in the dish; a light one thins them.
 
-**How the material changes the game.** The food itself changes how the minigames play, not only what they give. Fiber drags the knife toward the food's grain, so tough food is hard to cut evenly and soft food cuts exactly where you aim. Fat lets the blade slide on past where you aimed. Water makes it squirt and squish (a wetter food sounds lower). The knife's blade shape changes both: a **Chef's Blade** is an all-rounder, a **Boning Blade** (narrow) does not skid on fat but is pulled harder by tough fibre, and a **Slicer** (long and thin) follows your stroke across tough fibre but skids on fat. Viscosity sets the pour: honey runs slow and thick, in a fat ribbon, easy to stop on the line; a thin liquid floods in a fine, fast stream and is hard to stop.
+**How the material changes the game.** The food itself changes how the minigames play, not only what they give. Fiber drags the knife toward the food's grain, so tough food is hard to cut evenly and soft food cuts exactly where you aim. Fat lets the blade slide on past where you aimed. Water makes it squirt and squish (a wetter food sounds lower). The knife's blade changes both. It is one blade with a **length** and a **width** axis, and its length names it: a **Chef's Knife** is an all-rounder, a short **Boning Knife** does not skid on fat but is pulled harder by tough fibre, and a long **Slicing Knife** follows your stroke across tough fibre but skids on fat. Viscosity sets the pour: honey runs slow and thick, in a fat ribbon, easy to stop on the line; a thin liquid floods in a fine, fast stream and is hard to stop.
 
 **Dishes spoil.** A finished dish is as good as its worst part: it rots on the same clock as any food (warmer and wetter rots faster, nothing is ticked, so a chest or a pocket counts), the tooltip reads *Going off* then *Rotten*, a rotten dish feeds less and can make you sick, and the [Ice Box](Ice_Box.md), a [Refrigeration Unit](Refrigeration_Unit.md) and a [Drying Rack](Drying_Rack.md) keep or dry it like any food. The clock starts when you first carry it or drop it. A dish's tooltip also says how its finish was poured (clean, shaky, heavy or light), when it has one. A dish cannot be cooked again.
 

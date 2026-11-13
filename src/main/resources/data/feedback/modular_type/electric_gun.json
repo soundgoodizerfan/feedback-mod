@@ -1,12 +1,6 @@
 {
   "family": "electric_gun",
-  "required": [
-    "R",
-    "B",
-    "T",
-    "G",
-    "s"
-  ],
+  "required": ["R", "B", "T", "G", "s"],
   "blueprint": true,
   "wear_litres": 0.4,
   "wear_role": "B",
@@ -185,6 +179,16 @@
               "friction_mult": 1.4
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "wrap",
+            "share": 1
+          }
         ]
       }
     },
@@ -230,6 +234,17 @@
               "spread_mult": 0.85
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "pad",
+            "share": 1,
+            "standard": "feedback:leather"
+          }
         ]
       },
       "mount": "receiver"
@@ -256,9 +271,38 @@
             "name": "scope",
             "cells": 2
           }
+        ],
+        "slots": [
+          {
+            "name": "frame",
+            "share": 3
+          },
+          {
+            "name": "lens",
+            "forms": [
+              "lens",
+              "plate"
+            ],
+            "traits": [
+              "transparent"
+            ],
+            "share": 1
+          }
         ]
       },
-      "mount": "rail"
+      "mount": "rail",
+      "axes": {
+        "zoom": {
+          "min": 1.5,
+          "max": 6,
+          "unit": "x",
+          "default": 2.5,
+          "step": 0.5,
+          "variants": [
+            "scope"
+          ]
+        }
+      }
     },
     "e": {
       "name": "lit_reticle",
@@ -567,7 +611,25 @@
             }
           }
         ],
-        "base": "beam_splitter"
+        "base": "beam_splitter",
+        "slots": [
+          {
+            "name": "housing",
+            "share": 3
+          },
+          {
+            "name": "lens",
+            "share": 1,
+            "forms": [
+              "lens",
+              "plate"
+            ],
+            "traits": [
+              "transparent"
+            ],
+            "standard": "feedback:glass"
+          }
+        ]
       },
       "axes": {
         "beams": {
@@ -575,22 +637,9 @@
           "max": 7,
           "unit": "",
           "default": 3,
-          "step": 2,
+          "step": 1,
           "when": "splitter",
-          "at_least": 1,
-          "bands": [
-            {
-              "name": "triple",
-              "max": 3
-            },
-            {
-              "name": "quintuple",
-              "max": 5
-            },
-            {
-              "name": "septuple"
-            }
-          ]
+          "at_least": 1
         }
       },
       "mount": "muzzle"
@@ -609,7 +658,18 @@
           "wire",
           "rod"
         ],
-        "variants": []
+        "variants": [],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
+          }
+        ]
       },
       "mount": "rail"
     },
@@ -658,6 +718,14 @@
               "bank": 1,
               "big": 1,
               "burst": 1
+            }
+          },
+          {
+            "name": "core_breech",
+            "cells": 4,
+            "params": {
+              "core": 1,
+              "big": 1
             }
           },
           {
@@ -721,7 +789,18 @@
         "stock": [
           "plate"
         ],
-        "variants": []
+        "variants": [],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
+          }
+        ]
       },
       "mount": "receiver"
     }
@@ -751,6 +830,12 @@
         "name": "railcannon",
         "is": {
           "seat": "capacitor_bank"
+        }
+      },
+      {
+        "name": "core_breech",
+        "is": {
+          "seat": "core_breech"
         }
       },
       {

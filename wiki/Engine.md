@@ -9,9 +9,9 @@ Draw the engine at the [Blueprint Table](Blueprint_Table.md) (pick *Engine* in t
 | Part | Choices | What it sets |
 | --- | --- | --- |
 | **Engine Block** | inline, V, boxer | Inline is the plain layout. A V is a short, light block (15% lighter) that revs 7% lower. A boxer cancels its own shake and revs 8% higher, but weighs 10% more and makes 3% less torque. |
-| **Pistons** | 1, 2, 4, 6 or 8 cylinders | The number of cylinders (more mean more torque and more weight, and more metal). Their **bore** is the cylinder width: wider means more torque. Their metal sets the redline. |
-| **Crankshaft** | cast, forged | The **stroke**: longer adds torque but the engine **revs lower**; short-stroke engines rev high. A forged crank revs 20% higher than a cast one, for more metal. |
-| **Cylinder Head** | low, medium, high compression | Which fuels it can burn. See [Compression, fuel and knock](#compression-fuel-and-knock). A high head also makes 8% more torque, a low one 5% less. |
+| **Pistons** | **cylinders** axis, 1 to 8 | The number of cylinders (more mean more torque and more weight, and more metal). Their **bore** is the cylinder width: wider means more torque. Their metal sets the redline. |
+| **Crankshaft** | one shape | The **stroke**: longer adds torque but the engine **revs lower**; short-stroke engines rev high. |
+| **Cylinder Head** | **compression** axis: low, medium, high | Which fuels it can burn. See [Compression, fuel and knock](#compression-fuel-and-knock). A high head also makes 8% more torque, a low one 5% less. |
 
 ### The spec sheet
 
@@ -28,7 +28,7 @@ The pistons' metal decides how fast the engine can rev. **Light, strong metals r
 
 ## Building it
 
-Make the four parts (a block, a piston set, a crankshaft and a cylinder head, each from ingots or plate of the metal you chose) at the [Smithing Table](Smithing_Table.md), then assemble them at the [Engineering Table](Engineering_Table.md): the four parts in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the **Engine Blueprint** in the blueprint slot to judge the fit against your drawing. The Engine comes out with the bore and stroke of its parts, and the blueprint is kept.
+Make the four parts (a block, a piston set, a crankshaft and a cylinder head, each from ingots or plate of the metal you chose, each with a fixed standard lining, valve or ring material that is never picked) at the [Smithing Table](Smithing_Table.md), then assemble them at the [Engineering Table](Engineering_Table.md): the four parts in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the **Engine Blueprint** in the blueprint slot to judge the fit against your drawing. The Engine comes out with the bore and stroke of its parts, and the blueprint is kept.
 
 ## Fuel
 
@@ -40,7 +40,7 @@ An engine runs on fuel in its own tank, 2000 mB. Fill it with a bucket or a [Pip
 
 ### Compression, fuel and knock
 
-Compression is a **part of the design**, set by the cylinder head you build with. It decides which fuels the engine can burn, judged by the blend's **ignition point** ([Fuels](Fuels.md)):
+Compression is a **part of the design**, set by the compression axis of the cylinder head you build with. It decides which fuels the engine can burn, judged by the blend's **ignition point** ([Fuels](Fuels.md)):
 
 | Compression | Misfires on a fuel igniting above | Knocks on a fuel igniting below |
 | --- | --- | --- |

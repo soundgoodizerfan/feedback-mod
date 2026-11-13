@@ -68,6 +68,13 @@
           "step": 0.05,
           "when": "gears",
           "at_least": 6
+        },
+        "gears": {
+          "min": 2,
+          "max": 6,
+          "default": 4,
+          "step": 1,
+          "scales": true
         }
       },
       "part": {
@@ -76,41 +83,15 @@
         "stock": [
           "ingot"
         ],
-        "base": "four_speed",
-        "variants": [
+        "slots": [
           {
-            "name": "two_speed",
-            "cells": 2,
-            "params": {
-              "gears": 2
-            }
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "three_speed",
-            "cells": 3,
-            "params": {
-              "gears": 3
-            }
-          },
-          {
-            "name": "four_speed",
-            "params": {
-              "gears": 4
-            }
-          },
-          {
-            "name": "five_speed",
-            "cells": 5,
-            "params": {
-              "gears": 5
-            }
-          },
-          {
-            "name": "six_speed",
-            "cells": 6,
-            "params": {
-              "gears": 6
-            }
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
       }
@@ -144,6 +125,17 @@
               "wear": 0.6,
               "mass": 1.1
             }
+          }
+        ],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
       }
@@ -185,6 +177,17 @@
               "wear": 0.5,
               "mass": 1.2
             }
+          }
+        ],
+        "slots": [
+          {
+            "name": "shell",
+            "share": 3
+          },
+          {
+            "name": "lining",
+            "share": 1,
+            "standard": "feedback:ceramic"
           }
         ]
       }

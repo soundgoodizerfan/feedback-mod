@@ -21,6 +21,13 @@
           "unit": "cm",
           "default": 5,
           "step": 1
+        },
+        "scale": {
+          "min": 1,
+          "max": 10,
+          "default": 1,
+          "step": 1,
+          "scales": true
         }
       },
       "part": {
@@ -52,6 +59,17 @@
               "rating": 1.4,
               "fill": 0.7
             }
+          }
+        ],
+        "slots": [
+          {
+            "name": "shell",
+            "share": 3
+          },
+          {
+            "name": "lining",
+            "share": 1,
+            "standard": "feedback:ceramic"
           }
         ]
       }

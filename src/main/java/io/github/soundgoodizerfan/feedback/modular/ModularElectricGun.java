@@ -51,7 +51,7 @@ public class ModularElectricGun extends GunItem {
 
     static final String HEAT = "EgunHeat", HEAT_AT = "EgunHeatAt", CHAMBERS = "PulseChambers", CHAMBERS_AT = "PulseChambersAt",
             INDEX = "PulseIndex", PIPS = "PulsePips", PIPS_AT = "PulsePipsAt", SPIN = "PulseSpin", SPIN_AT = "PulseSpinAt",
-            HELD = "PulseHeld", HELD_AT = "PulseHeldAt", HELD_TICKS = "PulseHeldTicks", PUMPS = "PulsePumps", LOCK = "PulseLock",
+            HELD = "PulseHeld", HELD_AT = "PulseHeldAt", HELD_TICKS = "PulseHeldTicks", PUMPS = "PulsePumps", HOT = "PulseHot", LOCK = "PulseLock",
             CUT = "PulseCut", AIM = "PulseAim";
 
     public ModularElectricGun(Properties properties) {
@@ -277,6 +277,8 @@ public class ModularElectricGun extends GunItem {
     /** What the HUD shows of a bank: shots held over shots it holds full, or the recharge so far while empty. */
     public static float bankShown(ItemStack gun, long now) {
         ElectricGunSpec spec = specOf(gun);
+        if (spec != null && spec.seat() == ElectricGunSpec.Seat.CORE_BREECH)
+            return hot(gun) ? 0f : 1f;
         if (spec == null || spec.seat() != ElectricGunSpec.Seat.CAPACITOR_BANK && spec.seat() != ElectricGunSpec.Seat.BURST_BANK)
             return 0f;
         int full = spec.seat() == ElectricGunSpec.Seat.BURST_BANK ? io.github.soundgoodizerfan.feedback.core.FTuning.GUN_BURST_ROUNDS : 1;
@@ -328,7 +330,7 @@ public class ModularElectricGun extends GunItem {
     }
 
     /** The hold charge, 0 to 1: the time the trigger has been down (or was, before it came up), over the most it builds. */
-    static float holdShare(ItemStack gun, long now) {
+    public static float holdShare(ItemStack gun, long now) {
         CompoundTag tag = tag(gun);
         float ticks = tag.getBoolean(HELD) ? Math.max(0L, now - tag.getLong(HELD_AT)) : tag.getLong(HELD_TICKS);
         return Mth.clamp(ticks / ModularTuning.EGUN_HOLD_MAX_TICKS, 0f, 1f);
@@ -343,7 +345,16 @@ public class ModularElectricGun extends GunItem {
         });
     }
 
-    static int pumps(ItemStack gun) {
+    /** Whether a core breech's cores are hot from the last shot: the gun is locked until it is broken open and vented. */
+    public static boolean hot(ItemStack gun) {
+        return tag(gun).getBoolean(HOT);
+    }
+
+    static void setHot(ItemStack gun, boolean hot) {
+        edit(gun, tag -> tag.putBoolean(HOT, hot));
+    }
+
+    public static int pumps(ItemStack gun) {
         return tag(gun).getInt(PUMPS);
     }
 
@@ -426,6 +437,6 @@ public class ModularElectricGun extends GunItem {
     static void overheated(LivingEntity wielder, ItemStack gun, InteractionHand hand) {
         wielder.hurt(wielder.damageSources().onFire(), ModularTuning.EGUN_OVERHEAT_BURN);
         gun.hurtAndBreak(ModularStacks.cap(gun, 2), wielder, LivingEntity.getSlotForHand(hand));
-        wielder.level().playSound(null, wielder.blockPosition(), SoundEvents.LAVA_EXTINGUISH, SoundSource.PLAYERS, 0.6f, 1.6f);
+        wielder.level().playSound(null, wielder.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_VENT.get(), SoundSource.PLAYERS, 0.7f, 1.2f);
     }
 }

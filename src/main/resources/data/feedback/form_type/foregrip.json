@@ -1,0 +1,8 @@
+{
+  "kinds": [
+    "metal",
+    "organic",
+    "polymer"
+  ],
+  "part": true
+}

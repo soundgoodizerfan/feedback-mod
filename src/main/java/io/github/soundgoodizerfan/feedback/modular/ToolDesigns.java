@@ -155,6 +155,23 @@ public final class ToolDesigns {
         return out;
     }
 
+    /** The materials a part's {@code slot} can be drawn in: the smallest piece of each that the slot's forms and traits take, and that the slot's share of the part uses whole. */
+    public static List<Material.Located> slotMaterials(ModularType.PartSlot slot, ModularType.Shaping shaping, Map<ResourceLocation, Material> materials) {
+        List<Material.Located> out = new ArrayList<>();
+        materials.forEach((id, m) -> {
+            Material.Located best = null;
+            for (String form : m.items(id).keySet()) {
+                Material.Located l = new Material.Located(id, m, form);
+                if (slot.accepts(l, shaping.stock()) && (best == null || io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)
+                        < io.github.soundgoodizerfan.feedback.registry.FormItems.volume(best.form())))
+                    best = l;
+            }
+            if (best != null)
+                out.add(best);
+        });
+        return out;
+    }
+
     /** As {@link #materials(ModularType.Role, PartBenchShaping.Option, Map)}, keeping only materials the type can bake with in role {@code roleKey} ({@link ModularBake#suits}). */
     public static List<Material.Located> materials(ModularType type, String roleKey, PartBenchShaping.Option shape, Map<ResourceLocation, Material> materials) {
         return materials(type.roles().get(roleKey), shape, materials).stream().filter(l -> ModularBake.suits(type, roleKey, l.material())).toList();

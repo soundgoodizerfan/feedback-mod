@@ -74,7 +74,7 @@ public final class GunHazard {
             io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(shooter instanceof net.minecraft.world.entity.player.Player pl ? pl : null, "combat/overrun");
         float loudness = Mth.clamp(outcome.ratio() / 4f, 0.3f, 1.5f);
         level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(),
-                SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, loudness, 1.6f);
+                io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_BURST.get(), SoundSource.PLAYERS, loudness, 0.9f + level.random.nextFloat() * 0.2f);
         level.sendParticles(ParticleTypes.EXPLOSION, shooter.getX(), shooter.getEyeY(), shooter.getZ(),
                 1, 0, 0, 0, 0);
         level.sendParticles(ParticleTypes.SMOKE, shooter.getX(), shooter.getEyeY(), shooter.getZ(),

@@ -13,9 +13,9 @@ P is a Steel Plate, B is a [Bearing](Bearing.md) and S is a [Shaft](Shaft.md). C
 
 ## Using it
 
-Place it **touching a [Boiler](Boiler.md)** or a [Large Boiler](Boiler.md#large-boiler), or feed it steam from a [Pipe](Pipe.md). It pulls steam in by itself. A shaft connects at either end of its axle.
+Place it **touching a [Boiler](Boiler.md)** or a boiler at a high [scale](Boiler.md#scale), or feed it steam from a [Pipe](Pipe.md). It pulls steam in by itself. A shaft connects at either end of its axle.
 
-When it has steam it runs at a flat **240 RPM** with up to **64 Su** to give, about 15 kW, drawing **100 mB of steam a tick**. That is ten boilers' output, or one Large Boiler. Its store is 1000 mB.
+When it has steam it runs at a flat **240 RPM** with up to **64 Su** to give, about 15 kW, drawing **100 mB of steam a tick**. That is ten boilers' output, or one boiler at scale 10. Its store is 1000 mB.
 
 ### Steam heat sets the output
 
@@ -35,4 +35,4 @@ An [Overspeed Trip](Overspeed_Trip.md) opens above 48 RPM, so one on a turbine's
 
 ## Driving a generator
 
-A large [Dynamotor](Dynamotor.md) on a dense winding turns 240 RPM into 360 V, enough for an [Arc Furnace](Arc_Furnace.md#power).
+A large [Dynamotor](Dynamotor.md) on a 4-turn winding turns 240 RPM into 360 V, enough for an [Arc Furnace](Arc_Furnace.md#power).

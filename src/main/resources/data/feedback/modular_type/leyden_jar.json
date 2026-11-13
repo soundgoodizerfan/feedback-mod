@@ -61,6 +61,17 @@
               "leak": 1.5
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "glass",
+            "share": 3
+          },
+          {
+            "name": "lining",
+            "share": 1,
+            "standard": "feedback:ceramic"
+          }
         ]
       }
     },

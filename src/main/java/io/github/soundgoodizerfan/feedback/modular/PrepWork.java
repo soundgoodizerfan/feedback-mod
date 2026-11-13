@@ -64,8 +64,15 @@ public final class PrepWork {
             var design = ModularStacks.design(knife);
             var type = design == null ? null : ModularTypes.known(design.type());
             var blade = type == null ? null : design.part(type.primary());
-            return blade == null ? PLAIN : type.roles().get(type.primary()).variant(blade)
-                    .map(v -> new Edge(v.params().getOrDefault("grain", 1f), v.params().getOrDefault("slide", 1f))).orElse(PLAIN);
+            if (blade == null)
+                return PLAIN;
+            // The blade's length is what decides it: a short boning blade pulls to the grain and skids little on fat, a long slicer the reverse.
+            var role = type.roles().get(type.primary());
+            if (!role.axesFor(blade).containsKey("length"))
+                return PLAIN;
+            float length = role.axis(blade, "length");
+            return new Edge(ModularBake.interp(length, ModularTuning.KNIFE_LENGTH_CM, ModularTuning.KNIFE_GRAIN),
+                    ModularBake.interp(length, ModularTuning.KNIFE_LENGTH_CM, ModularTuning.KNIFE_SLIDE));
         }
     }
 

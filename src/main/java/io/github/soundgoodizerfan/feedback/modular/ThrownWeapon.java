@@ -76,10 +76,11 @@ public class ThrownWeapon extends AbstractArrow {
      * @param pull     reel speed in blocks per tick, for a weapon with a rope
      * @param waterMult how much harder the reel pulls in water
      * @param tumble   turns end over end rather than flying true
+     * @param barb     the head's barb axis, 0 for none: a barbed head that holds a target on a line wounds it ({@link ModularTuning#HELD_WOUND_MULT}); a line alone does not
      */
     public record Flight(float damage, float perBlock, float maxMult, float returns, float rope, float pull,
-                         float waterMult, boolean tumble) {
-        static final Flight NONE = new Flight(0f, 0f, 1f, 0f, 0f, 0f, 1f, false);
+                         float waterMult, boolean tumble, float barb) {
+        static final Flight NONE = new Flight(0f, 0f, 1f, 0f, 0f, 0f, 1f, false, 0f);
     }
 
     private static final EntityDataAccessor<ItemStack> DATA_STACK = SynchedEntityData.defineId(ThrownWeapon.class, EntityDataSerializers.ITEM_STACK);
@@ -424,7 +425,8 @@ public class ThrownWeapon extends AbstractArrow {
         if (flight.rope() > 0f && flight.pull() > 0f && target instanceof LivingEntity living && living.isAlive()) {
             entityData.set(DATA_HOST, target.getId());
             Tether.Anchor anchor = owner != null ? new Tether.Anchor.OnEntity(owner.getId()) : new Tether.Anchor.AtPoint(position());
-            Tethers.add(living, new Tether(getUUID(), anchor, flight.rope(), flight.pull(), ModularTuning.HELD_WOUND_MULT,
+            Tethers.add(living, new Tether(getUUID(), anchor, flight.rope(), flight.pull(),
+                    1f + (ModularTuning.HELD_WOUND_MULT - 1f) * Mth.clamp(flight.barb() / ModularTuning.BARB_MAX, 0f, 1f),
                     new Tether.Release(ModularTuning.REEL_STOP_DISTANCE, ModularTuning.REEL_MAX_TICKS)));
             reelTicks = 0;
             setNoPhysics(true);
@@ -485,6 +487,7 @@ public class ThrownWeapon extends AbstractArrow {
         tag.putFloat("pull", flight.pull());
         tag.putFloat("water_mult", flight.waterMult());
         tag.putBoolean("tumble", flight.tumble());
+        tag.putFloat("barb", flight.barb());
         tag.putBoolean("spent", spent);
         tag.putBoolean("returning", isReturning());
         tag.putFloat("spin", entityData.get(DATA_SPIN));
@@ -500,7 +503,7 @@ public class ThrownWeapon extends AbstractArrow {
         super.readAdditionalSaveData(tag);
         flight = new Flight(tag.getFloat("damage_f"), tag.getFloat("per_block"), tag.getFloat("max_mult"),
                 tag.getFloat("returns"), tag.getFloat("rope"), tag.getFloat("pull"), tag.getFloat("water_mult"),
-                tag.getBoolean("tumble"));
+                tag.getBoolean("tumble"), tag.getFloat("barb"));
         spent = tag.getBoolean("spent");
         entityData.set(DATA_RETURNING, tag.getBoolean("returning"));
         entityData.set(DATA_SPIN, tag.getFloat("spin"));

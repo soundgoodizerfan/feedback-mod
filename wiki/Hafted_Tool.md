@@ -4,7 +4,7 @@ Every tool you hold by a haft is one item, the **hafted tool**: a pick, an axe, 
 
 ## Faces and the haft
 
-A face is a head, a blade or a point made at a bench like any part ([Tools and Weapons](Tools_and_Weapons.md#making-the-parts)): a pickaxe head, an axe head, a shovel head, a hoe head, a maul head, a sickle head, a cleaver head, a sword blade, a pike head, a hammer head, a knife blade, a file head or a screwdriver bit. The haft is one to four sticks, rods or bones (a sword's grip is leather or a bound grip). Lay them in the 3 by 3 grid of the [Crafting Table](Crafting_Table.md) or the [Engineering Table](Engineering_Table.md), one item to a slot, any positions:
+A face is a head, a blade or a point made at a bench like any part ([Tools and Weapons](Tools_and_Weapons.md#making-the-parts)): a pickaxe head, an axe head, a shovel head, a hoe head, a maul head, a sickle head, a cleaver head, a sword blade, a spear head, a hammer head, a knife blade, a file head or a screwdriver bit. The haft is one to four sticks, rods or bones (a sword's grip is leather or a bound grip). Lay them in the 3 by 3 grid of the [Crafting Table](Crafting_Table.md) or the [Engineering Table](Engineering_Table.md), one item to a slot, any positions:
 
 - **One face** and a haft make an ordinary tool. A short haft with a long blade is a sword; a face on a long haft is a spear or a pick.
 - **Two or three faces** make a tool nobody wrote down. The first face in reading order (top row first, left to right) is the **front**, the one the swing lands with; the next is the **back**, the third the **top**.
@@ -25,7 +25,7 @@ The tool does what its faces do, together:
 | Maul head | wood, and stone at half speed | a heavy head smashes on a fall |
 | Sickle head | plants | reaps its neighbours too |
 | Sword blade | cobweb | sweeps |
-| Pike head | | thrusts and charges, or is thrown |
+| Spear head | | thrusts and charges, or is thrown by its balance |
 | Hammer head | | lands the hand's blow: a grid craft, a machine's head |
 | Knife blade, file head, screwdriver bit | | the knife, the file and the driver the benches ask for |
 

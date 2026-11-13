@@ -912,6 +912,7 @@ public final class FTuning {
     public static final int BOILER_WATER_TANK_MB = 4000;
     public static final int BOILER_STEAM_TANK_MB = 4000;
     /** Invented. The Large Boiler is ten Boilers in one: ten times the mass, steam a tick and tanks, standing on ten times the fire. */
+    /** The most plain boilers one boiler block can be (the boiler shell's {@code scale} axis). */
     public static final int BOILER_LARGE_SCALE = 10;
 
     // --- the steam engine (steam -> rotation) ------------------------------------------------
@@ -2153,8 +2154,8 @@ public final class FTuning {
     public static final int GUN_RELOAD_MS = 1400;
     /** Wall-clock ms to put one round into a gun's own feed, and a reload is that per round. */
     public static final int GUN_RELOAD_ROUND_MS = 450;
-    /** Wall-clock ms per round into a break action's barrels: they dump and are fed together, so a round costs less than thumbing one into a tube. Placeholder. */
-    public static final int GUN_RELOAD_BARREL_ROUND_MS = 200;
+    /** Wall-clock ms per round into a break action's barrels: the barrels tip open, a shell goes into each and they are shut again. Placeholder. */
+    public static final int GUN_RELOAD_BARREL_ROUND_MS = 500;
     /** Work rate per level of Haste (vanilla's mining-speed step), and the same less per level of Mining Fatigue; the rate never falls below the floor. */
     public static final float HASTE_RATE_PER_LEVEL = 0.2f, HASTE_RATE_FLOOR = 0.2f;
     /**
@@ -2320,7 +2321,9 @@ public final class FTuning {
     public static final int GUN_CYCLE_MANUAL_MS_FLINTLOCK = 2200;
     public static final float GUN_FLINT_MISFIRE = 0.12f;
     public static final int GUN_CYCLE_MANUAL_MS_BREAK = 150, GUN_CYCLE_MANUAL_MS_LEVER = 450,
-            GUN_CYCLE_MANUAL_MS_PUMP = 550, GUN_CYCLE_MANUAL_MS_BOLT = 800;
+            GUN_CYCLE_MANUAL_MS_PUMP = 550, GUN_CYCLE_MANUAL_MS_BOLT = 800,
+            /** A single-action revolver's thumb cocks the hammer between shots; a double-action one is cocked by the trigger. */
+            GUN_CYCLE_MANUAL_MS_SINGLE_ACTION = 350;
     /**
      * Was 30, which made a big-bore automatic cycle at about 450 ms (130 rounds a minute). An
      * action's rate is mostly its own mechanism; impulse only slows it a little.
@@ -2329,7 +2332,7 @@ public final class FTuning {
     /** Spread at a 0.2 m barrel, in degrees, scaling inversely with length down to a floor that is never zero (philosophy 8). */
     public static final float GUN_SPREAD_AT_MEDIUM_DEG = 2f, GUN_SPREAD_FLOOR_DEG = 0.25f;
     /** Camera kick per unit of impulse, in degrees, and how long it takes to land. */
-    public static final float GUN_KICK_DEG_PER_IMPULSE = 1.1f;
+    public static final float GUN_KICK_DEG_PER_IMPULSE = 1.6f;
     /**
      * Kick is read against a reference gun: {@link #GUN_KICK_DEG_PER_IMPULSE} is what a gun this
      * heavy with a grip this grippy kicks per impulse (a steel 9 mm, medium barrel, standard wall

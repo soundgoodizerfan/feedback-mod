@@ -4,13 +4,14 @@ A [shaft](Shaft.md) with a heavy disc, built from a blueprint. It stores momentu
 
 ## Designing and building
 
-A flywheel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Flywheel* in the type row) and print it on paper; drawing it takes Mechanical Treatise I ([Treatise](Treatise.md)). It has one part, the **Flywheel Disc**, with four choices:
+A flywheel is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Flywheel* in the type row) and print it on paper; drawing it takes Mechanical Treatise I ([Treatise](Treatise.md)). It has one part, the **Flywheel Disc**, with five choices:
 
 | Choice | What it sets |
 | --- | --- |
 | **Shape** | Spoked, solid or rimmed. See [Shapes](#shapes). |
 | **Radius** | 30 to 100 cm. Momentum rises with the fourth power of the radius, but a bigger disc strains at fewer RPM. |
 | **Thickness** | 5 to 30 cm. A thicker disc holds more momentum. |
+| **Rim mass** | 0 to 2, in steps of a quarter. More mass in the rim holds more momentum. |
 | **Metal** | Plate or ingot of a metal with a measured weight and yield strength. A dense metal gives more momentum; a strong, light metal lets the disc spin faster. |
 
 Shape the disc from plate or ingot of the metal you chose at the [Smithing Table](Smithing_Table.md), then assemble it at the [Engineering Table](Engineering_Table.md): the disc in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the Flywheel Blueprint in the blueprint slot to judge the fit against your drawing. The Flywheel comes out with the design of the disc, and the blueprint is kept.

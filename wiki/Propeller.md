@@ -8,8 +8,8 @@ Draw the propeller at the [Blueprint Table](Blueprint_Table.md) (pick *Propeller
 
 | Part | Choices | What it sets |
 | --- | --- | --- |
-| **Prop Hub** | two, three or four blades | The number of blades. More blades pull harder for the same diameter and weigh more. Made from ingots. |
-| **Prop Blades** | fine, medium or coarse pitch | The blade angle. Made from plate. |
+| **Prop Hub** | **blades** axis, 2 to 4 | The number of blades. More blades pull harder for the same diameter and weigh more. Made from ingots. |
+| **Prop Blades** | **pitch** axis: fine, medium or coarse | The blade angle. Made from plate. |
 
 The **diameter** is set on the blades, from 80 to 600 cm. The blades' metal needs a measured yield strength: it sets the tip speed the blades survive.
 

@@ -4,7 +4,7 @@ The hand tools are the ones you carry and use yourself: a hammer for shaping met
 
 - [Hammer](Hammer.md): shapes plates and stock by hand, and is the tool the others are hammered with. Made in a crafting grid from cobblestone and a stick, or a better head shaped at a bench and put on a haft. The hammer, the knife, the file and the screwdriver are all [hafted tools](Hafted_Tool.md): a haft with a face of that kind.
 - [File](#file) and [Screwdriver](#screwdriver): the tools of the Engineering Table's file and driver work. Each is a head on a handle.
-- [Hand Knife](Prep_Table.md): cuts food and dough on the Prep Table. Made by shaping its blade hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), then putting it together with a handle in a crafting grid.
+- [Hand Knife](Prep_Table.md): cuts food and dough on the Prep Table. Its blade is one piece with a length and a width; a harder edge can be set in its edge slot. Made by shaping its blade hot at the [Smithing Table](Smithing_Table.md) or [Anvil](Anvil.md), then putting it together with a handle in a crafting grid.
 - [Mortar](Mortar.md): an ingredient of the [Brewing Stand](Brewing_Stand.md), whose bowl crushes plants. Made from a stick and stone in a crafting grid.
 - [Sawblade](Sawblade.md): goes in the Stonecutter's saw slot to cut stone and wood. Made by casting a saw blade in a [Saw Blade Mold](Casting.md#tool-part-molds), then putting it together in a crafting grid.
 - [Spatula](Spatula.md): flips food in a [Skillet](Skillet.md). Made from a spatula blade shaped from plate, planks or bone (metal is shaped hot), put with a handle.

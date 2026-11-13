@@ -266,8 +266,6 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         FAT,
         /** A pot serving (broth, stew) a soup is poured from: what a soup's base role takes. */
         BROTH,
-        /** Sculk: what a gun's sculk jacket role takes. */
-        SCULK,
         /** A tunnelling-active fluid not yet damped (ender spec 2): loose or over its boiling point it undergoes premature spatial transitions that hop whatever stands near (core/hazard/SpatialHop). */
         SPATIAL,
         /** A made assembly (a clad fuel rod), not bulk stock: no modular part is built from it. */
@@ -381,9 +379,22 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      */
     public record Mechanical(Optional<St> toughness, Optional<Integer> ductility, Optional<St> workHardening,
                              Optional<St> yieldStrength, Optional<Float> friction, Optional<Float> abrasiveness,
-                             boolean hardenable) {
+                             boolean hardenable, Optional<Damping> damping) {
+        /**
+         * How a material stores a barrel's vibration when shrunk on as its jacket: cold, the group tightens to {@code coldSpread}; once the barrel
+         * has heated past {@code spoilAt} (a share of the way from the room to the round's ignition) the stored vibration goes bad and the group
+         * opens to {@code spoiledSpread}.
+         */
+        public record Damping(float coldSpread, float spoilAt, float spoiledSpread) {
+            static final Codec<Damping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                    Codec.FLOAT.fieldOf("cold_spread").forGetter(Damping::coldSpread),
+                    Codec.floatRange(0f, 1f).fieldOf("spoil_at").forGetter(Damping::spoilAt),
+                    Codec.FLOAT.fieldOf("spoiled_spread").forGetter(Damping::spoiledSpread)
+            ).apply(instance, Damping::new));
+        }
+
         static final Mechanical NONE = new Mechanical(Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), false);
+                Optional.empty(), Optional.empty(), Optional.empty(), false, Optional.empty());
 
         static final Codec<Mechanical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(St::new).optionalFieldOf("toughness").forGetter(Mechanical::toughness),
@@ -392,7 +403,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Units.codec(St::new).optionalFieldOf("yield_strength").forGetter(Mechanical::yieldStrength),
                 Codec.FLOAT.optionalFieldOf("friction").forGetter(Mechanical::friction),
                 Codec.FLOAT.optionalFieldOf("abrasiveness").forGetter(Mechanical::abrasiveness),
-                Codec.BOOL.optionalFieldOf("hardenable", false).forGetter(Mechanical::hardenable)
+                Codec.BOOL.optionalFieldOf("hardenable", false).forGetter(Mechanical::hardenable),
+                Damping.CODEC.optionalFieldOf("damping").forGetter(Mechanical::damping)
         ).apply(instance, Mechanical::new));
     }
 

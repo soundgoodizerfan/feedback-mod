@@ -276,10 +276,7 @@ public final class ModularModifiers {
             case "pierce" -> new Object[]{n(p(v, "share", 0.5f) * 100), n(p(v, "dent_seconds", 4))};
             case "butcher" -> new Object[]{n(p(v, "animal_mult", 1.5f)), n(p(v, "extra_chance", 0.5f) * 100), n(p(v, "monster_mult", 0.85f))};
             case "line_cut" -> new Object[]{n(p(v, "length", 3)), n(p(v, "line_mult", 0.7f) * 100), n(p(v, "main_mult", 0.9f) * 100), n(p(v, "wear", 1))};
-            case "lunge" -> new Object[]{n(p(v, "sprint_mult", 1.4f)), n(p(v, "still_mult", 0.85f))};
             case "spring" -> new Object[]{n(p(v, "reset", 30f) / 20), n(p(v, "rating", 12f)), n(p(v, "throw_rating", 6f))};
-            case "harpoon" -> new Object[]{n(p(v, "rope", 14)), n(p(v, "pull", 0.5f) * 20), n(p(v, "water_mult", 1.8f))};
-            case "fork" -> new Object[]{n(p(v, "extra", 2)), n(p(v, "reach", 3.5f)), n(p(v, "side_mult", 0.7f) * 100), n(p(v, "main_mult", 0.7f) * 100), n(p(v, "wear", 1))};
             case "snap_shot" -> new Object[]{n(p(v, "draw_mult", 0.6f) * 100), n(p(v, "velocity_mult", 0.8f) * 100)};
             case "heavy_draw" -> new Object[]{n(p(v, "draw_mult", 1.5f) * 100), n(p(v, "velocity_mult", 1.3f) * 100), n(p(v, "slow", 0.3f) * 100)};
             case "heavy_bolt" -> new Object[]{n(p(v, "draw_mult", 2.2f) * 100), n(p(v, "damage_mult", 1.6f) * 100), n(p(v, "pierce", 2)),
@@ -319,7 +316,7 @@ public final class ModularModifiers {
             case "lockup" -> new Object[]{n(p(v, "rating_mult", 1f) * 100), n((1 - p(v, "spread_mult", 1f)) * 100)};
             case "gas_operated" -> new Object[]{n((1 - p(v, "cycle_mult", 0.9f)) * 100), n((p(v, "heat_mult", 1.15f) - 1) * 100), n(p(v, "mass", 0.15f))};
             case "gun_rifling" -> new Object[]{n(p(v, "spread_mult", 0.6f) * 100)};
-            case "gun_braced" -> new Object[]{n((1 - p(v, "kick_mult", 0.7f)) * 100), n((1 - p(v, "spread_mult", 0.6f)) * 100)};
+            case "gun_braced", "gun_foregrip" -> new Object[]{n((1 - p(v, "kick_mult", 0.7f)) * 100), n((1 - p(v, "spread_mult", 0.6f)) * 100)};
             case "open_bolt" -> new Object[]{n(p(v, "idle_ms", 1500) / 1000), n(p(v, "first_shot_spread", 2f))};
             case "belt_fed" -> new Object[]{n(p(v, "reload_mult", 2f))};
             case "trample" -> new Object[]{n(p(v, "min_fall", 3)), n(p(v, "radius", 1.5f)), n(p(v, "weight", 40)),

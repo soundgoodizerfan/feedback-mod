@@ -86,7 +86,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
      * {@code AXIS + 2a} lowers axis a by its grain, {@code AXIS + 2a + 1} raises it; {@code AXIS_SET + 1000a + n} sets it to
      * its minimum plus n grains (a drag). Clamped to the axis's range on the server.
      */
-    public static final int MAX_AIM = 4;
+    public static final int MAX_AIM = 8;
 
     /** The bench: wide, a fan above and the inventory below; the tool slots in a column on the right. */
     public static final int W = 360, H = 272, INV_X = 99, INV_Y = 180;
@@ -96,6 +96,14 @@ public class PartBenchMenu extends AbstractContainerMenu {
             OUT_X = 326, OUT_Y = 152, TRIM_X = 108, TRIM_GAP = 44;
     /** The Blueprint tab's paper slot and the height its board gets: the board fills the bench above the hotbar's row. */
     public static final int PAPER_X = 294, PAPER_Y = INV_Y + 72, BOARD_H = INV_Y + 68;
+
+    /** Most stock slots a composed part takes beside the centre's (a bedroll's three layers want two). */
+    public static final int MAX_EXTRA_SLOTS = 2;
+
+    /** Whether the stock slot for slot {@code i + 1} of the picked part is on show: not on the other tabs, and only while the picked shape has that many slots. */
+    private java.util.function.BooleanSupplier extraShown(int i) {
+        return () -> !trim() && !cutTab() && !blueprintTab() && extraSlots(player.level()) > i;
+    }
 
     private final Container table;
     private final SimpleContainer output = new SimpleContainer(1);
@@ -172,7 +180,9 @@ public class PartBenchMenu extends AbstractContainerMenu {
         for (int i = 0; i < ModularAssembly.DISH_SLOTS; i++)
             addSlot(new TableSlot(PartBenchBlockEntity.ASSEMBLY + i, -1000, -1000, () -> false, 1, s -> true));
         for (int i = 0; i < PartBenchBlockEntity.STOCK_SLOTS; i++)
-            addSlot(new TableSlot(PartBenchBlockEntity.STOCK + i, i == 0 ? STOCK_X : -1000, STOCK_Y, i == 0 ? () -> !trim() && !cutTab() && !blueprintTab() : () -> false, 64, s -> true));
+            addSlot(new TableSlot(PartBenchBlockEntity.STOCK + i, i < MAX_EXTRA_SLOTS ? STOCK_X : -1000, STOCK_Y + i * (STOCK1_Y - STOCK_Y),
+                    i == 0 && dish ? () -> !trim() && !cutTab() && !blueprintTab()
+                            : i < MAX_EXTRA_SLOTS && !dish ? extraShown(i) : () -> false, 64, s -> true));
         // The centre: stock, a part, a tool, or at the Prep Table a food or a dish.
         addSlot(new TableSlot(PartBenchBlockEntity.TOOL, CENTRE_X, CENTRE_Y, () -> !trim() && !blueprintTab(), 64, s -> true));
         // The seasoning slot, at the Prep Table only: what a finish pours onto the dish.
@@ -534,6 +544,27 @@ public class PartBenchMenu extends AbstractContainerMenu {
         return List.of(centreStack());
     }
 
+    /** The piles of the picked shape's slots after the first (a lens, an edge), one stock slot each: containers {@code STOCK + 0..}, empty for a part of one material. */
+    public List<ItemStack> extras() {
+        return extras(player.level());
+    }
+
+    private List<ItemStack> extras(Level level) {
+        if (dish)
+            return List.of();
+        return range(PartBenchBlockEntity.STOCK, extraSlots(level));
+    }
+
+    /** The name of the slot the {@code i}th extra stock slot fills, or empty when it is not on show. */
+    public String extraSlotName(Level level, int i) {
+        return extraSlots(level) > i ? option(level).map(o -> o.shaping().choices().get(i).name()).orElse("") : "";
+    }
+
+    /** How many stock slots, besides the centre's, the picked shape's part takes (its slots less the first). */
+    public int extraSlots(Level level) {
+        return dish || mode.get() != MODE_PART ? 0 : option(level).map(o -> Math.min(PartBenchBlockEntity.STOCK_SLOTS, o.shaping().choices().size())).orElse(0);
+    }
+
     /** The stock slot beside the centre: what a part is shaped from to be fitted to a dish container. */
     public List<ItemStack> side() {
         return range(PartBenchBlockEntity.STOCK, 1);
@@ -583,7 +614,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
 
     /** What the aimed axes make of {@code option}'s stock: the volume scale. */
     public float aimScale(PartBenchShaping.Option option) {
-        return PartBenchShaping.roleOf(option).map(r -> r.volumeScaleOf(aimed(option))).orElse(1f);
+        return PartBenchShaping.roleOf(option).map(r -> r.volumeScaleOf(aimed(option), option.variant().name())).orElse(1f);
     }
 
     /** A new pick starts every axis at its default (server). */
@@ -591,6 +622,13 @@ public class PartBenchMenu extends AbstractContainerMenu {
         if (level.isClientSide || aimFor == picked())
             return;
         aimFor = picked();
+        // Stock left in a slot the new shape does not have goes back to the player, not stranded out of sight.
+        if (!dish && player instanceof ServerPlayer sp)
+            for (int i = extraSlots(level); i < MAX_EXTRA_SLOTS; i++) {
+                ItemStack left = table.removeItemNoUpdate(PartBenchBlockEntity.STOCK + i);
+                if (!left.isEmpty())
+                    sp.getInventory().placeItemBackInInventory(left);
+            }
         List<Map.Entry<String, ModularType.Axis>> axes = option(level).map(PartBenchShaping::aimable).orElse(List.of());
         for (int i = 0; i < MAX_AIM; i++)
             aim[i].set(i < axes.size() ? Math.round(axes.get(i).getValue().def() * 10f) : 0);
@@ -660,6 +698,13 @@ public class PartBenchMenu extends AbstractContainerMenu {
      * shape does not need coming back as smaller items ({@link PartBenchShaping#change}) to the player.
      */
     private void spend(int slot, PartBenchShaping.Stock stock, ServerPlayer server) {
+        for (PartBenchShaping.Stock.Extra e : stock.more())
+            spendFrom(PartBenchBlockEntity.STOCK + e.index(), e.what(), e.spent(), e.coldest(), server);
+        spendFrom(slot, stock.what(), stock.spent(), stock.coldest(), server);
+    }
+
+    private void spendFrom(int slot, Material.Located what, int spent, float coldest, ServerPlayer server) {
+        PartBenchShaping.Stock stock = new PartBenchShaping.Stock(what, 0, spent, coldest, 0);
         ItemStack s = table.getItem(slot);
         int volume = FormItems.volume(stock.what().form());
         int n = Math.min(s.getCount(), (stock.spent() + volume - 1) / volume);
@@ -699,7 +744,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
         if (materials.isEmpty() || types.isEmpty())
             return ItemStack.EMPTY;
         return switch (c) {
-            case STOCK -> option(level).map(o -> PartBenchShaping.make(station, o, stock(), materials, level, aimScale(o), built(level, o, 1f, 0))).orElse(ItemStack.EMPTY);
+            case STOCK -> option(level).map(o -> PartBenchShaping.make(station, o, stock(), extras(level), materials, level, aimScale(o), built(level, o, 1f, 0))).orElse(ItemStack.EMPTY);
             default -> ItemStack.EMPTY;
         };
     }
@@ -773,7 +818,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
             case MODE_PART -> {
                 Map<ResourceLocation, Material> materials = ClientMaterials.on(level);
                 Optional<PartBenchShaping.Option> option = option(level);
-                Optional<PartBenchShaping.Stock> stock = option.flatMap(o -> PartBenchShaping.check(station, o, stock(), materials, level, aimScale(o)));
+                Optional<PartBenchShaping.Stock> stock = option.flatMap(o -> PartBenchShaping.check(station, o, stock(), extras(level), materials, level, aimScale(o)));
                 if (stock.isPresent() && !option.get().forged() && BuiltInRegistries.ITEM.get(option.get().shaping().item()) instanceof ModularPartItem)
                     spend(PartBenchBlockEntity.TOOL, stock.get(), server);
                 else if (option.isPresent())
@@ -1485,7 +1530,7 @@ public class PartBenchMenu extends AbstractContainerMenu {
         List<PartBenchShaping.Option> options = PartBenchShaping.options(shapes(level));
         if (mode.get() != MODE_PART || !hasHammer() || index < 0 || index >= options.size() || !options.get(index).forged())
             return Optional.empty();
-        return PartBenchShaping.check(station, options.get(index), stock(), ClientMaterials.on(level), level, index == picked() ? aimScale(options.get(index)) : 1f);
+        return PartBenchShaping.check(station, options.get(index), stock(), index == picked() ? extras(level) : List.of(), ClientMaterials.on(level), level, index == picked() ? aimScale(options.get(index)) : 1f);
     }
 
     /**

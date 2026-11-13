@@ -14,7 +14,7 @@ Shaped and assembled like a [gun](Gun_Parts.md), out of the same receiver, trigg
 | **Trigger group** | as a gun's | Required. |
 | **Grip** | as a gun's | The same four shapes. |
 | **Stock** | as a gun's | Fixed, skeleton or folding: steadier aim. |
-| **Sight** | as a gun's | A reflex sight or a scope, and a lit reticle that cuts spread in the dark. |
+| **Sight** | as a gun's | A reflex sight or a scope (a frame and a lens you choose, with a zoom axis from 1.5 to 6), and a lit reticle that cuts spread in the dark. |
 
 ### Power tier
 
@@ -29,12 +29,13 @@ The seat's shape is how the gun fires and cools. The **V** key cycles the fire m
 | **Cylinder** | Six small capacitors in a drum, each trickle-charging from the battery. A shot spends one and the drum turns a place; the wait for the next shot is a capacitor filling, faster with a stronger battery and a better conductor in the seat, slower at higher tiers. | semi |
 | **Flux Cycler** | Every shot draws from the battery with no capacitor to wait for, and the heat goes into the barrel, which limits how long you can hold fire. | auto, semi |
 | **Capacitor Bank** | Every cell discharges at once into one very large pulse that goes through **every** body in line, then recharges for a long time (about 8, 12 or 16 seconds by tier with a two-cell battery, longer with more cells). The insulation of the plates sets how much the bank holds. | semi |
+| **Core Breech** | One very large shot of slow heat: pellets that fly a few blocks (one big pellet, or a cone of them with a beam splitter), light what they hit and fall away at close range. The cores are then too hot to fire: press the reload key and your support hand slams the barrels open, the cores vent in a puff of steam, and the hand throws them shut. The gun is ready again once the whole 0.9 s motion has finished. A Feedbacker punch sends your own pellets back fast and hard. | semi |
 | **Burst Bank** | A bank spent as three shots, then recharged. | burst, semi |
 | **Flywheel** | A wheel that spins up while you hold the trigger, so the first shot waits, and spins down quickly after you let go. A denser wheel holds more and spins up slower. The wheel turns on the gun and the report rises in pitch with its spin. | auto, semi |
 | **Recoil Dynamo** | A coil that returns a tenth of each shot's energy to the battery. | auto, semi, burst |
 | **Tether Seat** | The gun holds no battery and draws from a battery in a [backpack](Backpack.md#fittings)'s battery fitting, or from the battery bay of a worn [exosuit](Exosuit.md). | auto, semi, burst |
 
-The capacitor bank, burst bank and flywheel need a **long gun or machine gun** frame; the table refuses them on a handgun frame.
+The capacitor bank, burst bank, core breech and flywheel need a **long gun or machine gun** frame; the table refuses them on a handgun frame.
 
 ### Heat governor
 
@@ -48,9 +49,9 @@ Barrel heat warms and cools as a [gun's](Guns.md) does. With no governor fitted,
 
 The same fittings as a gun's, where they make sense: a **suppressor** (a quieter report, more heat), a **muzzle brake** (louder), a **bayonet**, a **bipod** (steadier), a **counterweight**, a **shroud** and a **thermal sleeve** (the gun sheds heat faster, so it recovers faster), and a **resonance weight**. The pulse gun's own:
 
-- **Hold-Charge Trigger** (seats that fire one shot a pull: cylinder, capacitor bank, burst bank): hold the attack button to build a stronger shot that goes through more bodies, then release; releasing early gives an ordinary shot.
-- **Pump Charge** (the same seats): press the reload key to pump. Up to three pumps raise the next shot's power and heat; a fourth bursts the capacitor and hurts you.
-- **Beam Lens:** a **beam splitter** turns one pulse into three, five or seven weaker beams in a spread, hardest up close; you choose the beam count on the table. An **arc fork** carries the shock of a hit on to the nearest conductive body within reach, then to any body. The splitter and the fork share the muzzle, so a gun has one.
+- **Hold-Charge Trigger** (seats that fire one shot a pull: cylinder, capacitor bank, burst bank, core breech): hold the attack button to build a stronger shot that goes through more bodies, then release; releasing early gives an ordinary shot.
+- **Pump Charge** (the same seats): press the pump key (default period) to pump: on a long gun the forend slides back and runs home (your support hand rides it), and the click sounds as it arrives; a hot core breech cannot be pumped until it is vented. Each of the first two pumps widens the spread and raises the power and heat of the next shot; with a beam splitter fitted each also adds beams, as buckshot adds pellets. The third pump sounds a tone: the next pull fires no pulse but a blast around the gun that deals 10 damage to everything within 4 blocks, and 10 to you. Further pumps do nothing, and any shot resets the pumps.
+- **Beam Lens:** a **beam splitter** turns one pulse into three to seven weaker beams in a spread, hardest up close; you choose the beam count, in steps of one, on the table. An **arc fork** carries the shock of a hit on to the nearest conductive body within reach, then to any body. The splitter and the fork share the muzzle, so a gun has one.
 - **Zoom Charge:** zoom builds while you aim and tightens the shot and lengthens its reach; it starts over after each shot.
 - **Heat Gauge:** a dial on the gun whose needle swings with the barrel's heat, and a finer heat bar with a scale on the HUD.
 
@@ -58,7 +59,7 @@ The gun is drawn from its parts like a powder gun: the frame by receiver type, a
 
 ### Naming
 
-A built gun is named after its seat and frame. A seat word replaces the class on any frame: a cylinder is a **Rotary Slinger**, a capacitor bank a **Railcannon**, a burst bank a **Triplet**, a flywheel a **Spinner**, a flux cycler a **Flux Cycler**. A recoil dynamo or tether gun is a **Pulse** plus its class by frame and size: Pulse Pistol, Pulse Hand Cannon, Pulse Carbine, Pulse Rifle, Pulse Marksman Rifle, Pulse Sniper Rifle, Pulse Cannon, Pulse Machine Gun. A **Light** or **Heavy** tier adds that word before the name; Standard adds none. A name gives no bonus. What gives each is under [Electric guns](Designations.md#electric-guns).
+A built gun is named after its seat and frame. A seat word replaces the class on any frame: a cylinder is a **Rotary Slinger**, a capacitor bank a **Railcannon**, a burst bank a **Triplet**, a core breech a **Core Breech**, a flywheel a **Spinner**, a flux cycler a **Flux Cycler**. A recoil dynamo or tether gun is a **Pulse** plus its class by frame and size: Pulse Pistol, Pulse Hand Cannon, Pulse Carbine, Pulse Rifle, Pulse Marksman Rifle, Pulse Sniper Rifle, Pulse Cannon, Pulse Machine Gun. A **Light** or **Heavy** tier adds that word before the name; Standard adds none. A name gives no bonus. What gives each is under [Electric guns](Designations.md#electric-guns).
 
 ## Beam color
 

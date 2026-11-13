@@ -37,7 +37,7 @@ public final class GunFaceCheck {
     }
 
     /** Optional roles a gun may fit (the receiver R is always there). */
-    private static final String[] OPTIONAL = {"A", "K", "G", "T", "i", "S", "e", "F", "D", "H", "Z", "J", "Q", "P", "V",
+    private static final String[] OPTIONAL = {"A", "K", "G", "T", "i", "W", "S", "e", "F", "D", "H", "Z", "J", "Q", "P", "V",
             "N", "M", "E", "C", "I", "a", "L", "d", "b", "Y", "s", "g", "h", "p", "l", "z", "u"};
 
     private record Base(String name, GunLayout.Type type, String action, boolean slide, boolean electric) {
@@ -60,9 +60,10 @@ public final class GunFaceCheck {
     private static final Map<String, String[]> VARIANTS = Map.of(
             "G", new String[]{"pistol_grip", "straight", "finger_groove", "palm_swell"},
             "i", new String[]{"fixed", "skeleton", "folding"},
+            "W", new String[]{"vertical_grip", "angled_grip", "hand_stop", "folding_grip"},
             "S", new String[]{"reflex", "scope"},
             "P", new String[]{"thread_breech", "thread_middle", "thread_muzzle"},
-            "s", new String[]{"cylinder", "flux_cycler", "capacitor_bank", "burst_bank", "flywheel", "recoil_dynamo", "backpack_tether"});
+            "s", new String[]{"cylinder", "flux_cycler", "capacitor_bank", "burst_bank", "core_breech", "flywheel", "recoil_dynamo", "backpack_tether"});
 
     private static final float[][] BARRELS = {{2f, 0.5f, 0.25f}, {6f, 0.75f, 0.375f}, {14f, 1.25f, 0.5f}};
 

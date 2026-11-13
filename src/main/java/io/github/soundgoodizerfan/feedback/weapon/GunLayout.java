@@ -52,6 +52,10 @@ public record GunLayout(Type type, Action action, Feed feed) {
         LEVER("lever", true, FTuning.GUN_CYCLE_MANUAL_MS_LEVER, List.of(FireMode.SEMI)),
         BOLT("bolt", false, FTuning.GUN_CYCLE_MANUAL_MS_BOLT, List.of(FireMode.SEMI)),
         PUMP("pump", true, FTuning.GUN_CYCLE_MANUAL_MS_PUMP, List.of(FireMode.SEMI)),
+        /** A hammer cocked by thumb between shots (a revolver's). */
+        SINGLE_ACTION("single_action", true, FTuning.GUN_CYCLE_MANUAL_MS_SINGLE_ACTION, List.of(FireMode.SEMI)),
+        /** A hammer cocked by the trigger pull (a revolver's): nothing to work between shots. */
+        DOUBLE_ACTION("double_action", true, 0, List.of(FireMode.SEMI)),
         SELF_LOADING("self_loading", false, 0, List.of(FireMode.SEMI)),
         AUTOMATIC("automatic", false, 0, List.of(FireMode.AUTO, FireMode.BURST, FireMode.SEMI));
 
@@ -142,7 +146,7 @@ public record GunLayout(Type type, Action action, Feed feed) {
                 case CYLINDER -> action.hammer();
                 case TUBE -> action == Action.LEVER || action == Action.PUMP || action == Action.SELF_LOADING;
                 case SINGLE -> action == Action.BOLT || action == Action.LEVER || action == Action.FLINTLOCK;
-                case BOX -> action != Action.BREAK;
+                case BOX -> action != Action.BREAK && action != Action.SINGLE_ACTION && action != Action.DOUBLE_ACTION;
                 case BELT -> action == Action.AUTOMATIC;
             };
         }

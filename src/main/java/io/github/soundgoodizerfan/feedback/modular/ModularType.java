@@ -427,7 +427,23 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
          * kind it is ({@link ModularHeads#axesOf}), so a big pickaxe head stays big in a twin tool.
          */
         public Map<String, Axis> axesFor(ModularDesign.Part made) {
-            return striker() ? ModularHeads.axesOf(ModularHeads.kindOf(made, this)) : axes;
+            Map<String, Axis> all = striker() ? ModularHeads.axesOf(ModularHeads.kindOf(made, this)) : axes;
+            return forVariant(all, variantOf(made).map(Variant::name).orElse(""));
+        }
+
+        /** The axes a part shaped in {@code variant} (empty for the standard shape) is measured by: this role's, less those that name other variants. */
+        public Map<String, Axis> axesFor(String variant) {
+            return forVariant(axes, variant.isEmpty() ? part.map(Shaping::base).orElse("") : variant);
+        }
+
+        private static Map<String, Axis> forVariant(Map<String, Axis> all, String variant) {
+            for (Axis a : all.values())
+                if (!a.variants().isEmpty()) {
+                    Map<String, Axis> out = new java.util.LinkedHashMap<>(all);
+                    out.values().removeIf(x -> !x.applies(variant));
+                    return out;
+                }
+            return all;
         }
 
         /** {@code value / default} of the axis called {@code name} on {@code made}, clamped to the axis; 1 when the role declares no such axis. */
@@ -462,7 +478,25 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
 
         /** Metres the shape of {@code made} moves its centre of mass from the hand; an axis named {@code length} moves it by a share of what it moves the tip. */
         public float centre(ModularDesign.Part made) {
-            return variantOf(made).map(Variant::centre).orElse(0f) + lengthOver(made) * ModularTuning.AXIS_LENGTH_CENTRE_SHARE;
+            Axis weight = axesFor(made).get("weight");
+            float heavier = weight == null ? 0f : weight.clamp(made.axis("weight", weight.def())) - weight.def();
+            return variantOf(made).map(Variant::centre).orElse(0f) + lengthOver(made) * ModularTuning.AXIS_LENGTH_CENTRE_SHARE
+                    + heavier * ModularTuning.AXIS_WEIGHT_CENTRE_PER_UNIT;
+        }
+
+        /**
+         * A figure the shape of {@code made} gives the bake, by name: the part's axis of that name if the role declares one (a count or a
+         * size is an axis), else its variant's param, else {@code fallback}. One reader, so a ladder of variants can become an axis in data alone.
+         */
+        public float paramOf(ModularDesign.Part made, String name, float fallback) {
+            if (axesFor(made).containsKey(name))
+                return axis(made, name);
+            return variantOf(made).map(v -> v.params().getOrDefault(name, fallback)).orElse(fallback);
+        }
+
+        /** The shaping of the part item {@code made} is: this role's, or for a hafted face the head kind's; empty for raw stock. */
+        public Optional<Shaping> shapingOf(ModularDesign.Part made) {
+            return striker() ? ModularHeads.of(ModularHeads.kindOf(made, this)).map(ModularHeads::shaping) : part;
         }
 
         /** The variant {@code made} was shaped in, if it has one. */
@@ -498,15 +532,15 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             return scale;
         }
 
-        /** The axes in a fixed order (by name): the order a bench's axis buttons and synced targets index them. */
-        public List<Map.Entry<String, Axis>> sortedAxes() {
-            return axes.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList();
+        /** The axes of a part shaped in {@code variant}, in a fixed order (by name): the order a bench's axis buttons and synced targets index them. */
+        public List<Map.Entry<String, Axis>> sortedAxes(String variant) {
+            return axesFor(variant).entrySet().stream().sorted(Map.Entry.comparingByKey()).toList();
         }
 
         /** As {@link #volumeScale}, for bare axis values by name (a bench's aim, before any part exists); a name left out reads the default. */
-        public float volumeScaleOf(Map<String, Float> values) {
+        public float volumeScaleOf(Map<String, Float> values, String variant) {
             float scale = 1f;
-            for (Map.Entry<String, Axis> a : axes.entrySet())
+            for (Map.Entry<String, Axis> a : axesFor(variant).entrySet())
                 if (a.getValue().scales() && a.getValue().def() > 0f)
                     scale *= a.getValue().clamp(values.getOrDefault(a.getKey(), a.getValue().def())) / a.getValue().def();
             return scale;
@@ -622,11 +656,13 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      * @param step the grain the Blueprint Table moves it in; 0 for a fifth-of-the-range default.
      * @param when for a figure that exists only on some shapes: the shape param ({@code gears}) that must reach {@code atLeast}.
      * @param scales whether the part's volume (and so its stock, mass and cost) follows this axis in proportion to {@code value / default}.
+     * @param variants the shapes of the part this axis belongs to (empty: every shape); one resolver, {@link Role#axesFor}, feeds the board, the bench and the bake.
      * @param bands  named ranges of the value, ascending by {@code max} (the last may leave it out to run to the axis's end). A band is a label
      *               for a range, never a switch the player picks: it feeds names and tooltips, and may carry a trait and params where physics
      *               has no model ({@link Band}).
      */
-    public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast, boolean scales, List<Band> bands) {
+    public record Axis(float min, float max, String unit, float def, float step, String when, float atLeast, boolean scales, List<Band> bands,
+                       List<String> variants) {
         static final Codec<Axis> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.FLOAT.fieldOf("min").forGetter(Axis::min),
                 Codec.FLOAT.fieldOf("max").forGetter(Axis::max),
@@ -636,8 +672,14 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Codec.STRING.optionalFieldOf("when", "").forGetter(Axis::when),
                 Codec.FLOAT.optionalFieldOf("at_least", 0f).forGetter(Axis::atLeast),
                 Codec.BOOL.optionalFieldOf("scales", false).forGetter(Axis::scales),
-                Band.CODEC.listOf().optionalFieldOf("bands", List.of()).forGetter(Axis::bands)
+                Band.CODEC.listOf().optionalFieldOf("bands", List.of()).forGetter(Axis::bands),
+                Codec.STRING.listOf().optionalFieldOf("variants", List.of()).forGetter(Axis::variants)
         ).apply(instance, Axis::new));
+
+        /** Whether the axis belongs to a part shaped in {@code variant}. */
+        public boolean applies(String variant) {
+            return variants.isEmpty() || variants.contains(variant);
+        }
 
         /** The band {@code value} falls in, or null for an axis with none. */
         public Band band(float value) {
@@ -695,23 +737,52 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *              {@code handgun}; a barrel's, the medium calibre): a part made in it records no variant, and
      *              the variant of that name in {@code variants} (which has no shape of its own) holds its
      *              traits and numbers. Empty when the standard shape is only the plain part.
+     * @param slots the materials the part is composed of, in order; the first is the part's main material ({@code MadeOf.material}).
+     *              Empty for a part of one material. Slots add no choice of shape: every variant has the same ones.
      */
     public record Shaping(ResourceLocation item, float cells, List<String> stock, List<Variant> variants, String base,
-                          List<Material.Trait> traits) {
+                          List<Material.Trait> traits, List<PartSlot> slots) {
         static final Codec<Shaping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(Shaping::item),
                 Codec.FLOAT.fieldOf("cells").forGetter(Shaping::cells),
                 Codec.STRING.listOf().fieldOf("stock").forGetter(Shaping::stock),
                 Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(Shaping::variants),
                 Codec.STRING.optionalFieldOf("base", "").forGetter(Shaping::base),
-                Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Shaping::traits)
+                Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Shaping::traits),
+                PartSlot.CODEC.listOf().optionalFieldOf("slots", List.of()).forGetter(Shaping::slots)
         ).apply(instance, Shaping::new));
+
+        /** The slot called {@code name}, if the part has one. */
+        public Optional<PartSlot> slot(String name) {
+            return slots.stream().filter(s -> s.name().equals(name)).findFirst();
+        }
+
+        /** The slots after the first that the player picks the material of, in order: one bench stock slot and one board stepper each. */
+        public List<PartSlot> choices() {
+            return slots.stream().skip(1).filter(PartSlot::chosen).toList();
+        }
+
+        /** The name of the main (first) slot, or empty for a part of one material. */
+        public String mainSlot() {
+            return slots.isEmpty() ? "" : slots.get(0).name();
+        }
+
+        /** The share of the part's cells slot {@code i} takes: its own, else an even split. */
+        public float shareOf(int i) {
+            float total = 0f;
+            for (PartSlot s : slots)
+                total += s.share() > 0f ? s.share() : 1f;
+            PartSlot s = slots.get(i);
+            return (s.share() > 0f ? s.share() : 1f) / total;
+        }
 
         /** Every shape the part is made in from stock of its own size: the standard one first, then the variants that have a size. */
         public List<Variant> laid() {
             List<Variant> out = new ArrayList<>();
-            out.add(new Variant("", cells, 0f, 1f, "", 1f, 0f, 1f, "", Map.of(), false, ""));
-            variants.stream().filter(v -> v.cells() > 0f).forEach(out::add);
+            // The base variant is the standard shape: it sets the standard's size, and is not listed again.
+            float standard = variant(base).filter(v -> v.cells() > 0f).map(Variant::cells).orElse(cells);
+            out.add(new Variant("", standard, 0f, 1f, "", 1f, 0f, 1f, "", Map.of(), false, ""));
+            variants.stream().filter(v -> v.cells() > 0f && !v.name().equals(base)).forEach(out::add);
             return out;
         }
 
@@ -725,6 +796,37 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
             return variants.stream().filter(v -> v.name().equals(name)).findFirst();
         }
 
+    }
+
+    /**
+     * One material a part is composed of (a scope's frame and lens, a blade's body and edge): fixed on the part kind, never a choice
+     * of shape. It carries no trait and no variant; the bake reads it by name.
+     *
+     * @param name   what the bake calls it ({@code lens}, {@code edge}); lang {@code modular.feedback.slot.<name>}.
+     * @param forms  the stock forms it takes; empty for the part's own {@link Shaping#stock}.
+     * @param traits traits its material must show; empty for none.
+     * @param share  its share of the part's cells, relative to the other slots; 0 for an even split.
+     * @param standard for a slot that does not matter as a choice: the material every part is made with there. The part still requires the stock (its share
+     *               of the cells is in the cost), but the player picks nothing for it.
+     */
+    public record PartSlot(String name, List<String> forms, List<Material.Trait> traits, float share, Optional<ResourceLocation> standard) {
+        static final Codec<PartSlot> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.STRING.fieldOf("name").forGetter(PartSlot::name),
+                Codec.STRING.listOf().optionalFieldOf("forms", List.of()).forGetter(PartSlot::forms),
+                Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(PartSlot::traits),
+                Codec.FLOAT.optionalFieldOf("share", 0f).forGetter(PartSlot::share),
+                ResourceLocation.CODEC.optionalFieldOf("standard").forGetter(PartSlot::standard)
+        ).apply(instance, PartSlot::new));
+
+        /** Whether the player picks this slot's material: a slot with a {@code standard} material is fixed in data, with no picker, no bench slot and no board stepper. */
+        public boolean chosen() {
+            return standard.isEmpty();
+        }
+
+        /** Whether {@code l} is stock this slot takes, given the part's own stock forms {@code partForms}. */
+        public boolean accepts(Material.Located l, List<String> partForms) {
+            return fits(forms.isEmpty() ? partForms : forms, l.form()) && l.material().traits().containsAll(traits);
+        }
     }
 
     /**

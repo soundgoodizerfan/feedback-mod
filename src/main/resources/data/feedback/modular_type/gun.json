@@ -99,6 +99,19 @@
             "cells": 2,
             "trait": "gun_rifling"
           }
+        ],
+        "slots": [
+          {
+            "name": "liner",
+            "share": 3
+          },
+          {
+            "name": "jacket",
+            "forms": [
+              "plate"
+            ],
+            "share": 1
+          }
         ]
       },
       "offers": [
@@ -242,6 +255,24 @@
             "trait": "hammer,manual_cycle,closed_bolt"
           },
           {
+            "name": "single_action",
+            "cells": 2,
+            "trait": "lockup,hammer,manual_cycle",
+            "params": {
+              "rating_mult": 1.0,
+              "spread_mult": 0.85
+            }
+          },
+          {
+            "name": "double_action",
+            "cells": 3,
+            "trait": "lockup,hammer",
+            "params": {
+              "rating_mult": 0.9,
+              "spread_mult": 1.2
+            }
+          },
+          {
             "name": "break",
             "cells": 3,
             "trait": "lockup,hammer,manual_cycle",
@@ -319,6 +350,16 @@
             "params": {
               "friction_mult": 1.4
             }
+          }
+        ],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "wrap",
+            "share": 1
           }
         ]
       }
@@ -430,9 +471,41 @@
             "name": "scope",
             "cells": 2
           }
+        ],
+        "slots": [
+          {
+            "name": "frame",
+            "share": 3
+          },
+          {
+            "name": "lens",
+            "forms": [
+              "lens",
+              "plate"
+            ],
+            "traits": [
+              "transparent"
+            ],
+            "share": 1
+          }
         ]
       },
-      "mount": "rail"
+      "mount": "rail",
+      "axes": {
+        "zoom": {
+          "min": 1.5,
+          "max": 6,
+          "unit": "x",
+          "default": 2.5,
+          "step": 0.5,
+          "variants": [
+            "scope"
+          ]
+        }
+      },
+      "offers": [
+        "scope_mount"
+      ]
     },
     "M": {
       "name": "suppressor",
@@ -569,29 +642,6 @@
         "variants": []
       },
       "mount": "receiver"
-    },
-    "J": {
-      "name": "sculk_jacket",
-      "forms": [
-        "sculk_jacket"
-      ],
-      "traits": [
-        "sculk"
-      ],
-      "litres": 0.05,
-      "layer": 12,
-      "part": {
-        "item": "feedback:sculk_jacket",
-        "traits": [
-          "sculk"
-        ],
-        "cells": 1,
-        "stock": [
-          "plate"
-        ],
-        "variants": []
-      },
-      "mount": "barrel"
     },
     "P": {
       "name": "resonance",
@@ -858,9 +908,84 @@
               "spread_mult": 0.85
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "pad",
+            "share": 1,
+            "standard": "feedback:leather"
+          }
         ]
       },
       "mount": "receiver"
+    },
+    "W": {
+      "name": "foregrip",
+      "forms": [
+        "foregrip"
+      ],
+      "litres": 0.1,
+      "layer": 12,
+      "part": {
+        "item": "feedback:foregrip",
+        "cells": 1,
+        "stock": [
+          "grip"
+        ],
+        "base": "vertical_grip",
+        "variants": [
+          {
+            "name": "vertical_grip",
+            "cells": 1,
+            "trait": "gun_foregrip",
+            "params": {
+              "kick_mult": 0.85,
+              "spread_mult": 0.8
+            }
+          },
+          {
+            "name": "angled_grip",
+            "cells": 2,
+            "trait": "gun_foregrip",
+            "params": {
+              "kick_mult": 0.9,
+              "spread_mult": 0.75
+            }
+          },
+          {
+            "name": "hand_stop",
+            "cells": 1,
+            "trait": "gun_foregrip",
+            "params": {
+              "kick_mult": 0.95,
+              "spread_mult": 0.9
+            }
+          },
+          {
+            "name": "folding_grip",
+            "cells": 2,
+            "trait": "gun_foregrip",
+            "params": {
+              "kick_mult": 0.9,
+              "spread_mult": 0.88
+            }
+          }
+        ]
+      },
+      "mount": "barrel"
+    },
+    "g": {
+      "name": "thermal_fitting",
+      "forms": [
+        "circuit"
+      ],
+      "litres": 0.02,
+      "layer": 7,
+      "mount": "scope_mount"
     }
   },
   "patterns": [
@@ -1331,6 +1456,10 @@
       "i": [
         5,
         1
+      ],
+      "W": [
+        5,
+        2
       ]
     },
     "joins": [
@@ -1433,6 +1562,10 @@
       [
         "i",
         "R"
+      ],
+      [
+        "W",
+        "B"
       ]
     ]
   },

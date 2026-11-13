@@ -30,7 +30,7 @@ public final class BlockFigures {
         if (!roleKey.equals(ROLE))
             return switch (idOf(type) + "/" + roleKey) {
                 case "heat_exchanger/F" -> material.thermal().conductivity().isPresent();
-                case "water_wheel/R", "pump/V", "compressor/I", "burner/F", "thruster/J", "hand_crank/G", "electromagnet/Y", "boiler/B", "large_boiler/B", "flywheel/B", "flywheel/G", "galvanic_cell/C", "lamp/B" -> material.density().muPerMb() > 0;
+                case "water_wheel/R", "pump/V", "compressor/I", "burner/F", "thruster/J", "hand_crank/G", "electromagnet/Y", "boiler/B", "flywheel/B", "flywheel/G", "galvanic_cell/C", "lamp/B" -> material.density().muPerMb() > 0;
                 case "thermal_store/I" -> true;
                 case "thermal_store/F" -> material.density().muPerMb() > 0;
                 case "leyden_jar/F" -> material.ampacity().isPresent();
@@ -40,7 +40,7 @@ public final class BlockFigures {
         return switch (idOf(type)) {
             case "heat_exchanger" -> material.thermal().conductivity().isPresent();
             case "flywheel" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0 && material.mechanical().yieldStrength().isPresent();
-            case "gas_tank", "boiler", "large_boiler" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0
+            case "gas_tank", "boiler" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0
                     && material.mechanical().yieldStrength().isPresent();
             case "thruster" -> material.kind().orElse(null) == Material.Kind.METAL && material.density().muPerMb() > 0
                     && material.mechanical().yieldStrength().isPresent();
@@ -175,8 +175,10 @@ float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK 
             }
             // Crank: a longer arm is more lever and a slower hand; a flywheel (an addon) carries it through the dead spot.
             case "hand_crank" -> {
-                out.putFloat("Power", 12f * ModularBake.param(type, part, "lever", 1f));
-                out.putFloat("Rpm", 32f * ModularBake.param(type, part, "rpm", 1f));
+                // The arm's length is the lever and the inverse of the hand's speed, against the standard arm.
+                float arm = role.axesFor(part).containsKey("arm_length") ? role.axis(part, "arm_length") / role.axesFor(part).get("arm_length").def() : 1f;
+                out.putFloat("Power", 12f * ModularBake.param(type, part, "lever", 1f) * arm);
+                out.putFloat("Rpm", 32f * ModularBake.param(type, part, "rpm", 1f) / arm);
                 out.putFloat("Inertia", design.part("G") == null ? 4f : 12f);
             }
             // Core: turns raise the pull and the current together; the shape trades pull against reach; a yoke (an addon) closes the magnetic path.
@@ -199,7 +201,9 @@ float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK 
                 out.putFloat("Burnout", 1.5f * ModularBake.param(type, part, "tough", 1f) * (0.6f + 0.4f * g) * (design.part("B") == null ? 1f : 1.2f));
             }
             // A boiler is a shell like the vessel's: the shell sets the pressure it risks and gives way at, and the pressure its seams weep and its valve opens at follow it.
-            case "boiler", "large_boiler" -> {
+            case "boiler" -> {
+                // The size is read from the design, not a second block: a boiler of scale n is n plain boilers in one.
+                out.putFloat("Scale", role.axis(part, "scale"));
                 Optional<ModularBake.TankSpec> t = ModularBake.tank(design, type, materials);
                 if (t.isEmpty())
                     return Optional.empty();
@@ -210,11 +214,12 @@ float leak = ModularBake.param(type, part, "leak", 1f) * ModularTuning.JAR_LEAK 
             // and rises with the metal's strength over density; the variant trades mass against rim strength. Bands (an addon) hold the rim; a bearing (an addon) cuts the drag.
             case "flywheel" -> {
                 float r = role.axis(part, "radius") / 50f, th = role.axis(part, "thickness") / 10f;
-                float inertia = 400f * r * r * r * r * th * ModularBake.param(type, part, "mass", 1f) * (float) m.density().muPerMb() / 7.2f;
+                float massAt = ModularBake.interp(role.axis(part, "rim_mass"), ModularTuning.FLYWHEEL_RIM_MASS_AT, ModularTuning.FLYWHEEL_MASS);
+                float inertia = 400f * r * r * r * r * th * massAt * (float) m.density().muPerMb() / 7.2f;
                 float yield = m.mechanical().yieldStrength().get().value();
                 Part bands = design.part("B");
                 Material bm = bands == null ? null : materials.get(bands.material());
-                float rim = 44f * (float) Math.sqrt(yield / m.density().muPerMb()) / r * ModularBake.param(type, part, "rim", 1f);
+                float rim = 44f * (float) Math.sqrt(yield / m.density().muPerMb()) / r * ModularBake.interp(role.axis(part, "rim_mass"), ModularTuning.FLYWHEEL_RIM_MASS_AT, ModularTuning.FLYWHEEL_RIM);
                 if (bm != null && bm.mechanical().yieldStrength().isPresent())
                     rim *= 1f + 0.25f * bm.mechanical().yieldStrength().get().value() / (bm.mechanical().yieldStrength().get().value() + yield);
                 out.putFloat("Inertia", inertia);

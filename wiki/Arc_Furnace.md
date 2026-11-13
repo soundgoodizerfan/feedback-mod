@@ -53,10 +53,10 @@ The hearth has a fluid face that takes **nitrogen** or **argon** and holds it un
 
 ## Power
 
-The arc needs EHV. A large [Dynamotor](Dynamotor.md) on a dense or heavy-dense winding, as a generator on a [Gas Turbine](Gas_Turbine.md) or a [Steam Turbine](Steam_Turbine.md), supplies it in survival:
+The arc needs EHV. A large [Dynamotor](Dynamotor.md) (frame size 8) on a winding of 4 or 8 turns, as a generator on a [Gas Turbine](Gas_Turbine.md) or a [Steam Turbine](Steam_Turbine.md), supplies it in survival:
 
-- **Dense** (1.5 V per RPM) at 240 RPM gives 360 V, in the EHV band, at up to about 42 A.
-- **Heavy-dense** (6 V per RPM) at 240 RPM gives 1,440 V, in the Trunk band, at about 10 A, which the frame's torque limits.
+- **4 turns** (1.5 V per RPM) at 240 RPM gives 360 V, in the EHV band, at up to about 42 A.
+- **8 turns** (6 V per RPM) at 240 RPM gives 1,440 V, in the Trunk band, at about 10 A, which the frame's torque limits.
 
 The cable must be insulated to the band: quartz holds EHV, and PTFE holds Trunk ([Copper Cable](Copper_Cable.md)).
 

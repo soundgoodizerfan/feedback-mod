@@ -21,32 +21,7 @@
           "rod",
           "stick"
         ],
-        "base": "crank_straight",
         "variants": [
-          {
-            "name": "crank_short",
-            "cells": 4,
-            "params": {
-              "lever": 0.7,
-              "rpm": 1.4
-            }
-          },
-          {
-            "name": "crank_straight",
-            "cells": 6,
-            "params": {
-              "lever": 1.0,
-              "rpm": 1.0
-            }
-          },
-          {
-            "name": "crank_long",
-            "cells": 8,
-            "params": {
-              "lever": 1.4,
-              "rpm": 0.75
-            }
-          },
           {
             "name": "crank_offset",
             "cells": 8,
@@ -56,6 +31,15 @@
             }
           }
         ]
+      },
+      "axes": {
+        "arm_length": {
+          "min": 4,
+          "max": 8,
+          "default": 6,
+          "step": 1,
+          "scales": true
+        }
       }
     },
     "G": {

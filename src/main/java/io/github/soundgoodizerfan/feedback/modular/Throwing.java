@@ -84,7 +84,8 @@ public final class Throwing {
                 params.get("damage_per_block", defaultPerBlock) * effort, params.get("max_mult", defaultMaxMult), returns,
                 Math.max(params.get("rope", 0f), lanyard == null ? 0f : lanyard.params().get("rope", 10f)),
                 Math.max(params.get("pull", 0f), lanyard == null ? 0f : lanyard.params().get("pull", 0.3f)),
-                params.get("water_mult", 1f), params.get("tumble", 0f) > 0f);
+                params.get("water_mult", 1f), params.get("tumble", 0f) > 0f,
+                io.github.soundgoodizerfan.feedback.modular.trait.SpearCharge.barb(weapon));
 
         weapon.hurtAndBreak(ModularStacks.cap(weapon, (int) params.get("wear", defaultWear)), player,
                 LivingEntity.getSlotForHand(player.getUsedItemHand()));

@@ -80,12 +80,8 @@ public final class ModularTraits {
         register("pierce", new io.github.soundgoodizerfan.feedback.modular.trait.Pierce());
         register("butcher", new io.github.soundgoodizerfan.feedback.modular.trait.Butcher());
         register("line_cut", new io.github.soundgoodizerfan.feedback.modular.trait.LineCut());
-        register("lunge", new io.github.soundgoodizerfan.feedback.modular.trait.Lunge());
-        register("trident", new io.github.soundgoodizerfan.feedback.modular.trait.TridentThrow());
         register("smash", new io.github.soundgoodizerfan.feedback.modular.trait.SmashAttack());
         register("spring", new io.github.soundgoodizerfan.feedback.modular.trait.Spring());
-        register("harpoon", new io.github.soundgoodizerfan.feedback.modular.trait.Harpoon());
-        register("fork", new io.github.soundgoodizerfan.feedback.modular.trait.Fork());
         register("snap_shot", new io.github.soundgoodizerfan.feedback.modular.trait.Handling());
         register("heavy_draw", new io.github.soundgoodizerfan.feedback.modular.trait.Handling());
         register("heavy_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.Handling());
@@ -102,7 +98,7 @@ public final class ModularTraits {
             register(id, new io.github.soundgoodizerfan.feedback.modular.trait.GunMechanism());
         register("thermal_fit", new io.github.soundgoodizerfan.feedback.modular.trait.GunThermalFit());
         register("counterweight", new io.github.soundgoodizerfan.feedback.modular.trait.GunCounterweight());
-        register("sculk_jacket", new io.github.soundgoodizerfan.feedback.modular.trait.GunSculkJacket());
+        register("jacket_damping", new io.github.soundgoodizerfan.feedback.modular.trait.GunJacket());
         register("resonance", new io.github.soundgoodizerfan.feedback.modular.trait.GunResonance());
         register("blowback", new io.github.soundgoodizerfan.feedback.modular.trait.GunBlowback());
         register("lockup", new io.github.soundgoodizerfan.feedback.modular.trait.GunLockup());
@@ -113,6 +109,7 @@ public final class ModularTraits {
         register("gun_reticle", new io.github.soundgoodizerfan.feedback.modular.trait.GunReticle());
         register("gun_sear", new io.github.soundgoodizerfan.feedback.modular.trait.GunSear());
         register("gun_braced", new io.github.soundgoodizerfan.feedback.modular.trait.GunBraced());
+        register("gun_foregrip", new io.github.soundgoodizerfan.feedback.modular.trait.GunForegrip());
         register("open_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.GunOpenBolt());
         register("fan", new io.github.soundgoodizerfan.feedback.modular.trait.GunFan());
         register("belt_fed", new io.github.soundgoodizerfan.feedback.modular.trait.GunBeltFed());
@@ -129,7 +126,6 @@ public final class ModularTraits {
         register("steady", new io.github.soundgoodizerfan.feedback.modular.trait.Steady());
         register("stabiliser", new io.github.soundgoodizerfan.feedback.modular.trait.Stabiliser());
         register("lanyard", new io.github.soundgoodizerfan.feedback.modular.trait.Lanyard());
-        register("laminate", new io.github.soundgoodizerfan.feedback.modular.trait.Laminate());
         register("boss", new io.github.soundgoodizerfan.feedback.modular.trait.Boss());
     }
 
@@ -300,6 +296,9 @@ public final class ModularTraits {
             role.variant(part).ifPresent(v -> add(out, v.trait(), v.params()));
             if (type.family() == ModularType.Family.GUN)
                 io.github.soundgoodizerfan.feedback.weapon.GunOptions.ofForm(part.kind()).ifPresent(o -> add(out, o.trait(), o.params()));
+            // A barrel with its jacket slot filled stores the barrel's vibration (the jacket material's damping).
+            if (part.measures().slots().containsKey("jacket"))
+                add(out, "jacket_damping", Map.of());
         }
         add(out, type.trait(), type.traitParams());
         return List.copyOf(out.values());

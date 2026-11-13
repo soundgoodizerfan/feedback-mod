@@ -8,13 +8,13 @@ Make the pieces as described on [Armor](Armor.md), then add parts on the [Fit ta
 
 | Fitting | Made from | Goes on | What it does |
 | --- | --- | --- | --- |
-| **Servo** | a winding shaped from wire | any piece | Drives the abilities. The wire sets how hard it pulls and how much of the power it wastes as heat. |
+| **Servo** | a finished motor ([Dynamotor](Dynamotor.md)) held whole | any piece | Drives the abilities. The motor's rated amps set how hard it pulls and how much of the power it wastes as heat. |
 | **Gauge** | a lens | any piece | Without any gauge the suit reports in words; with one it reports in figures, finer with clearer glass. |
 | **Sensor head** | fibre, 2 cells | helmet | Night sight and thermal view. |
 | **Battery bay** | plates, 2 cells | chestplate | Holds the battery the whole suit runs on. |
 | **Suit Module** | a finished module built from casing, wiring and attachments | any piece | One upgrade for that piece; see [Upgrade modules](#upgrade-modules). |
 
-A servo's drive is the conductor's current rating times the wire cells in the winding times 11 A. A thicker winding drives harder. The waste share is 12% at the least, plus what the conductor loses to its resistance.
+A servo's drive and waste come from its motor's rated amps: a motor rated higher drives harder, and a motor short of its full rating wastes more of the power as heat.
 
 ## The battery
 
@@ -46,14 +46,14 @@ Charge the battery by taking the suit's battery out and seating it in a [Charger
 | **Magnet** | Magnet Pickup module | A switch: draws loose items to you while on. |
 | **Stride** | Strider Pistons module | A switch: faster walking while on. |
 | **Step** | Step Assist module | A switch: steps up a full block while on. |
-| **Range** | Rangefinder module | A switch: longer reach for blocks and attacks while on. |
-| **Lens** | Long Lens module | A switch: thermal view reaches farther while on. |
+| **Range** | Lens Optic module, short focus (Rangefinder) | A switch: longer reach for blocks and attacks while on. |
+| **Lens** | Lens Optic module, long focus (Long Lens) | A switch: thermal view reaches farther while on. |
 | **Heal** | Autodoc module | A pulse: heals you at once. Long cooldown. |
 | **Vent** | Coolant Loop module | A pulse: vents most of the suit's heat at once, which can end a heat cut-out. |
 | **Burst** | Rocket Spur module | A pulse: a single burst of thrust along the direction you look. |
 | **Thorns** | Thorn Array module | A pulse: hurts everything within arm's reach. |
 
-A stronger servo gives a larger effect and draws harder for it.
+A stronger servo gives a larger effect and draws harder for it. A Lens Optic's lens is a stock slot of its own that you choose ([Composed Parts](Composed_Parts.md)).
 
 A segment whose fitting is missing shows hatched and does nothing. A pulse fires once when you release over it, then needs cooling before it fires again. A switch module works only while its segment is on.
 
@@ -94,8 +94,8 @@ Upgrades work whenever the suit is powered. The Heat Sink always works. Some upg
 
 | Attachment | Upgrade | Needs | What it does |
 | --- | --- | --- | --- |
-| Optic | Rangefinder | none | Longer reach for blocks and attacks while switched on. |
-| Optic | Long Lens | none | Thermal view reaches farther while switched on. |
+| Optic | Lens Optic, focal length 20 cm or less (Rangefinder) | none | Longer reach for blocks and attacks while switched on. |
+| Optic | Lens Optic, longer focal length (Long Lens) | none | Thermal view reaches farther while switched on. |
 | Optic | Glare Filter | none | Clears blindness and darkness. |
 | Optic | Scan Ping | controller | Pulse that makes nearby living things glow. |
 | Filter | Rebreather | none | Breath lasts longer underwater. |

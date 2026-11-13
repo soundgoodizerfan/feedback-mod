@@ -45,8 +45,10 @@ final class GunDraw {
         breakTurn(m, v, p);
         m.glowAt(v.glow()); // a hot barrel lights itself; its colour is already drawn toward the glow (GunView)
         barrels(m, v);
-        if (v.electric())
+        if (v.electric()) {
             electricBarrel(m, v);
+            barrelFittings(m, v);
+        }
         muzzle(m, v);
         m.glowAt(0);
         underBarrel(m, v);
@@ -83,54 +85,102 @@ final class GunDraw {
     /** An electric pistol: a plain frame the barrel screws into, a grip, a guard and a trigger; no slide, no hammer, no magazine. */
     private static void electricHandgun(GunMesh m, GunView v, GunMotion.Parts p) {
         m.part(v, "R");
-        m.box(-0.75f, -1.75f, -3.5f, 0.75f, 1.0f, 1.25f, Tile.PANEL);
-        m.box(-0.5f, 1.0f, -3.0f, 0.5f, 1.25f, 0.75f, Tile.BRUSHED); // top rail
+        body(m, v, 0.75f, -1.75f, 1.0f, -3.5f, 1.25f);
+        if (!(v.has("s") && v.variant("s").equals("flywheel")))
+            m.box(-0.5f, 1.0f, -3.0f, 0.5f, 1.25f, 0.75f, Tile.BRUSHED); // top rail
         grip(m, v, p, -1.75f, 1.25f, 3.25f, -28f, 1.75f, false);
         trigger(m, v, -1.75f, -2.75f, -0.25f);
         stock(m, v, 1.5f, -1f, 1f);
     }
 
-    /** Where the cell bay sits along the receiver, front and back (z), and its half height. */
-    private static float[] bayZ(GunView v) {
+    /** The receiver's bottom and top (y) on an electric gun: the extent its seat is built into. */
+    private static float[] recvY(GunView v) {
         return switch (v.type()) {
-            case HANDGUN -> new float[]{-2.5f, 0.75f};
-            case LONG_GUN -> new float[]{0.5f, 4.5f};
-            case MACHINE_GUN -> new float[]{1.5f, 7f};
+            case HANDGUN -> new float[]{-1.75f, 1.0f};
+            case LONG_GUN -> new float[]{-1f, 1f};
+            case MACHINE_GUN -> new float[]{-1.25f, 1.5f};
+        };
+    }
+
+    /** Where the seat sits along the receiver (z, front and back); the receiver is built round it. */
+    private static float[] seatZ(GunView v) {
+        return switch (v.type()) {
+            case HANDGUN -> new float[]{-3f, -0.5f};
+            case LONG_GUN -> new float[]{0.25f, 3.25f};
+            case MACHINE_GUN -> new float[]{1f, 5.5f};
+        };
+    }
+
+    /** Where the dials and fittings sit on the receiver's flank (z), behind the seat. */
+    private static float[] gaugeZ(GunView v) {
+        return switch (v.type()) {
+            case HANDGUN -> new float[]{-0.25f, 1.25f};
+            case LONG_GUN -> new float[]{3.5f, 5.5f};
+            case MACHINE_GUN -> new float[]{6f, 9f};
+        };
+    }
+
+    /** The rear face of an electric receiver (z). */
+    private static float recvBack(GunView v) {
+        return v.type() == GunLayout.Type.HANDGUN ? 1.25f : v.back();
+    }
+
+    /** Whether the seat is cut through the receiver as a window the part sits in (rather than built on or into it another way). */
+    private static boolean windowed(GunView v) {
+        if (!v.electric() || !v.has("s"))
+            return false;
+        return switch (v.variant("s")) {
+            case "flux_cycler", "burst_bank", "backpack_tether", "flywheel" -> false;
+            default -> true;
+        };
+    }
+
+    /** The window a seat cuts through the receiver: z front and back, y bottom and top. */
+    private static float[] seatWindow(GunView v) {
+        float[] z = seatZ(v), y = recvY(v);
+        return new float[]{z[0], z[1], y[0] + 0.25f, y[1] - 0.25f};
+    }
+
+    /** The battery's well: z front and back, and its depth below the receiver. A magazine well is where a magazine would go. */
+    private static float[] wellBox(GunView v) {
+        return switch (v.type()) {
+            case HANDGUN -> new float[]{-3.5f, -2.75f, 1.5f};
+            case LONG_GUN -> new float[]{0.25f, 2f, 1.5f};
+            case MACHINE_GUN -> new float[]{1f, 3f, 2f};
         };
     }
 
     /**
-     * The battery's bay, on the gun's left side where a powder gun has no port: a housing in the receiver's material and, if a battery is
-     * loaded, a pack behind a glass window with a row of lamps that fill with its charge.
+     * The battery's well, a magazine well under the receiver: a housing in the receiver's material, and a slot in each side where the
+     * pack shows behind glass with a column of lamps that fill with its charge (an empty well is a dark slot).
      */
     private static void cellBay(GunMesh m, GunView v) {
-        float hw = v.halfWidth(), z0 = bayZ(v)[0], z1 = bayZ(v)[1];
-        float y0 = v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.75f, y1 = y0 + (v.type() == GunLayout.Type.MACHINE_GUN ? 2f : 1.75f);
+        float[] w = wellBox(v);
+        float wx = v.halfWidth() - 0.125f, y1 = recvY(v)[0], y0 = y1 - w[2], z0 = w[0], z1 = w[1];
         m.part(v, "R");
-        m.box(-hw - 1.0f, y0, z0, -hw, y1, z1, Tile.PANEL);
-        if (v.cell() < 0f) {
-            m.box(-hw - 1.0625f, y0 + 0.25f, z0 + 0.25f, -hw - 1.0f, y1 - 0.25f, z1 - 0.25f, Tile.BORE); // an empty bay is a dark slot
-            return;
+        m.box(-wx, y0, z0, wx, y1, z1, Tile.PANEL);
+        float margin = z1 - z0 > 1.2f ? 0.25f : 0.125f, sy0 = y0 + 0.25f, sy1 = y1 - 0.25f;
+        for (int side = -1; side <= 1; side += 2) {
+            float x = side * wx, o = side * 0.0625f;
+            float xa = Math.min(x, x + o), xb = Math.max(x, x + o);
+            if (v.cell() < 0f) {
+                m.box(xa, sy0, z0 + margin, xb, sy1, z1 - margin, Tile.BORE);
+                continue;
+            }
+            m.colour(0xFF3A4048).box(xa, sy0, z0 + margin, xb, sy1, z1 - margin, Tile.GLASS);
+            // A lamp for each quarter of the charge, from the bottom: green while it is well filled, amber then red as it runs down.
+            int lit = Math.round(v.cell() * 4f);
+            int colour = v.cell() > 0.5f ? 0xFF40FF60 : v.cell() > 0.2f ? 0xFFFFB030 : 0xFFFF4030;
+            float step = (sy1 - sy0) / 4f, zm = (z0 + z1) / 2f, half = (z1 - z0) / 2f - margin - 0.0625f;
+            float la = Math.min(x, x + 2 * o), lb = Math.max(x, x + 2 * o);
+            for (int i = 0; i < 4; i++) {
+                float ya = sy0 + i * step + 0.0625f, yb = sy0 + (i + 1) * step - 0.0625f;
+                if (i < lit)
+                    m.colour(colour).glow(la, ya, zm - half, lb, yb, zm + half, Tile.LAMP);
+                else
+                    m.colour(0xFF202428).box(la, ya, zm - half, lb, yb, zm + half, Tile.LAMP);
+            }
         }
-        m.colour(0xFF3A4048).box(-hw - 1.0625f, y0 + 0.25f, z0 + 0.25f, -hw - 1.0f, y1 - 0.25f, z1 - 0.25f, Tile.GLASS);
-        // A lamp for each quarter of the charge: green while it is well filled, amber then red as it runs down.
-        int lit = Math.round(v.cell() * 4f);
-        int colour = v.cell() > 0.5f ? 0xFF40FF60 : v.cell() > 0.2f ? 0xFFFFB030 : 0xFFFF4030;
-        float step = (z1 - z0 - 0.5f) / 4f;
-        for (int i = 0; i < 4; i++) {
-            float a = z0 + 0.25f + i * step;
-            if (i < lit)
-                m.colour(colour).glow(-hw - 1.125f, y1 - 0.75f, a, -hw - 1.0625f, y1 - 0.375f, a + step - 0.125f, Tile.LAMP);
-            else
-                m.colour(0xFF202428).box(-hw - 1.125f, y1 - 0.75f, a, -hw - 1.0625f, y1 - 0.375f, a + step - 0.125f, Tile.LAMP);
-        }
-    }
-
-    /** Where the seat sits on the right of the receiver: front and back (z), the centre height and the half height. */
-    private static float[] seatBox(GunView v) {
-        float[] z = bayZ(v);
-        float y0 = v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.75f, hy = v.type() == GunLayout.Type.MACHINE_GUN ? 1f : 0.875f;
-        return new float[]{z[0], z[1], y0 + hy, hy};
     }
 
     /** A colour from the beam's toward a hot orange as the barrel heats. */
@@ -150,94 +200,160 @@ final class GunDraw {
     }
 
     /**
-     * The seat on the receiver's right, each variant with its own look: a cylinder's drum of six chambers (lit where charged, turning one
-     * place a shot), a flux cycler's fins, a bank's plates with a charge scale, a burst bank's three tubes, a flywheel's disc turning with
-     * its spin, a dynamo's coil, a tether's socket and cable.
+     * The seat, built into the receiver (see {@link #body}), each variant with its own look: a cylinder's drum of six chambers (lit where
+     * charged, turning one place a shot) in a window; a flux cycler's two tubes hung down the side into the barrel; a capacitor bank's rod
+     * in a long window with a strip of charge lamps; a burst bank's three tubes through the receiver, its charge along the top; a flywheel's
+     * disc turning in a slot through the top; a dynamo's coil in a window; a tether's socket in the rear face and a cable out the back.
      */
     private static void seat(GunMesh m, GunView v) {
         if (!v.has("s"))
             return;
         var pulse = v.pulse() == null ? GunView.Pulse.REST : v.pulse();
-        float[] b = seatBox(v);
-        float hw = v.halfWidth(), sx = hw + 1.25f, zc = (b[0] + b[1]) / 2f, yc = b[2], span = b[1] - b[0];
+        float hw = v.halfWidth();
+        float[] sz = seatZ(v), ry = recvY(v);
+        float z0 = sz[0], z1 = sz[1], zc = (z0 + z1) / 2f, span = z1 - z0;
+        float wy0 = ry[0] + 0.25f, wy1 = ry[1] - 0.25f, yc = (wy0 + wy1) / 2f, hh = (wy1 - wy0) / 2f;
         switch (v.variant("s")) {
             case "flywheel" -> {
+                // A disc standing in a slot cut through the receiver's top, turning along the bore, its upper arc clear of the frame.
                 m.part(v, "s");
+                float r = Math.min(1.75f, span / 2f - 0.125f), cy = ry[1] + r * 0.4f;
                 m.push();
-                m.turnY(90f, sx, zc);
-                float r = Math.min(1.75f, span / 2f - 0.25f);
-                m.rod(sx, yc, r, zc - 0.25f, zc + 0.25f, Tile.BRUSHED);
-                m.rod(sx, yc, 0.375f, zc - 0.5f, zc + 0.5f, Tile.METAL);
+                m.turnY(90f, 0, zc);
+                m.rod(0, cy, r, zc - 0.25f, zc + 0.25f, Tile.BRUSHED);
+                m.rod(0, cy, 0.375f, zc - 0.375f, zc + 0.375f, Tile.METAL);
                 m.push();
-                m.turnZ(pulse.angle(), sx, yc);
+                m.turnZ(pulse.angle(), 0, cy);
                 for (int i = 0; i < 4; i++) {
                     float a = (float) Math.toRadians(90 * i);
-                    float lx = sx + (r - 0.5f) * (float) Math.cos(a), ly = yc + (r - 0.5f) * (float) Math.sin(a);
-                    m.colour(0xFFE0E0E8).glow(lx - 0.25f, ly - 0.25f, zc + 0.25f, lx + 0.25f, ly + 0.25f, zc + 0.375f, Tile.LAMP);
+                    float lx = (r - 0.5f) * (float) Math.cos(a), ly = cy + (r - 0.5f) * (float) Math.sin(a);
+                    m.colour(0xFFE0E0E8);
+                    m.glow(lx - 0.25f, ly - 0.25f, zc + 0.25f, lx + 0.25f, ly + 0.25f, zc + 0.3125f, Tile.LAMP);
+                    m.glow(lx - 0.25f, ly - 0.25f, zc - 0.3125f, lx + 0.25f, ly + 0.25f, zc - 0.25f, Tile.LAMP);
                 }
                 m.pop();
                 m.pop();
             }
             case "flux_cycler" -> {
+                // Two tubes leave the receiver's right side, hang down like wires, run forward and plug into the bare barrel.
                 m.part(v, "s");
-                int fins = Math.max(3, (int) (span / 0.75f));
-                for (int i = 0; i < fins; i++) {
-                    float z = b[0] + 0.25f + i * (span - 0.5f) / fins;
-                    m.box(hw, yc - 0.75f, z, hw + 1.75f, yc + 0.75f, z + 0.25f, Tile.BRUSHED);
+                float r = v.r(), out = Math.max(hw, r) + 0.5f, ymid = (ry[0] + ry[1]) / 2f;
+                float bare = v.type() == GunLayout.Type.HANDGUN ? -3.5f : -exposed(v);
+                for (int i = 0; i < 2; i++) {
+                    float zA = z0 + 0.5f + i, zB = Math.max(bare - 0.5f - 0.75f * i, front(v) + 0.5f), yL = -r - 0.75f - 0.5f * i;
+                    float t = 0.125f;
+                    m.box(hw - 0.0625f, ymid - t, zA - t, out + t, ymid + t, zA + t, Tile.KNURL);
+                    m.box(out - t, yL - t, zA - t, out + t, ymid + t, zA + t, Tile.METAL);
+                    m.box(out - t, yL - t, zB - t, out + t, yL + t, zA + t, Tile.METAL);
+                    m.box(out - t, yL - t, zB - t, out + t, t, zB + t, Tile.METAL);
+                    m.box(r - 0.0625f, -t, zB - t, out + t, t, zB + t, Tile.KNURL);
                 }
-                m.box(hw, yc - 0.75f, b[0], hw + 0.5f, yc + 0.75f, b[1], Tile.PANEL);
             }
-            case "capacitor_bank", "burst_bank" -> {
-                boolean three = v.variant("s").equals("burst_bank");
+            case "core_breech" -> {
+                // Two heat cores stacked in the receiver's window, ringed; cool they carry a lamp strip, hot they glow red end to end.
                 m.part(v, "s");
-                m.box(hw, yc - 0.875f, b[0] + 0.25f, hw + 1.5f, yc + 0.875f, b[1] - 0.25f, Tile.PANEL);
-                if (three)
-                    for (int i = 0; i < 3; i++)
-                        m.rod(hw + 1.75f, yc - 0.5f + 0.5f * i, 0.25f, b[0] + 0.5f, b[1] - 0.5f, Tile.METAL);
-                else
-                    m.rod(hw + 1.75f, yc, 0.625f, b[0] + 0.5f, b[1] - 0.5f, Tile.METAL);
-                // The charge, a lamp for each of six steps along the bank.
+                float r = Math.min(0.34f, hh / 2f - 0.04f);
+                for (int i = 0; i < 2; i++) {
+                    float y = yc + (i == 0 ? 1 : -1) * (r + 0.04f);
+                    if (pulse.hot())
+                        m.colour(0xFFFF4A20).glow(-r, y - r, z0, r, y + r, z1, Tile.LAMP);
+                    else {
+                        m.rod(0, y, r, z0, z1, Tile.METAL);
+                        m.colour(pulse.lit() >= 1f ? chargeColour(pulse, 0xFFFFA040) : 0xFF202428).glow(-0.125f, y + r - 0.0625f, z0 + 0.25f, 0.125f, y + r + 0.0625f, z1 - 0.25f, Tile.LAMP);
+                    }
+                    m.rings(0, y, r + 0.0625f, z0 + 0.5f, z1 - 0.5f, 2, 0.25f, Tile.BRUSHED);
+                }
+            }
+            case "capacitor_bank" -> {
+                // A rod in the receiver's long window, ringed, with a strip of six charge lamps below it.
+                m.part(v, "s");
+                float rr = Math.min(hh - 0.375f, 0.625f), yr = wy1 - rr - 0.0625f;
+                m.rod(0, yr, rr, z0, z1, Tile.METAL);
+                m.rings(0, yr, rr + 0.0625f, z0 + 0.5f, z1 - 0.5f, 3, 0.25f, Tile.BRUSHED);
                 float step = (span - 1f) / 6f;
                 for (int i = 0; i < 6; i++) {
-                    float z = b[0] + 0.5f + i * step;
+                    float z = z0 + 0.5f + i * step;
                     if (i < Math.round(pulse.lit()))
-                        m.colour(0xFF40C8FF).glow(hw + 1.5f, yc + 0.5f, z, hw + 1.625f, yc + 0.8f, z + step - 0.125f, Tile.LAMP);
+                        m.colour(chargeColour(pulse, 0xFF40C8FF)).glow(-0.125f, wy0 + 0.0625f, z, 0.125f, wy0 + 0.3125f, z + step - 0.125f, Tile.LAMP);
                     else
-                        m.colour(0xFF202428).box(hw + 1.5f, yc + 0.5f, z, hw + 1.625f, yc + 0.8f, z + step - 0.125f, Tile.LAMP);
+                        m.colour(0xFF202428).box(-0.125f, wy0 + 0.0625f, z, 0.125f, wy0 + 0.3125f, z + step - 0.125f, Tile.LAMP);
+                }
+            }
+            case "burst_bank" -> {
+                // Three tubes through the receiver, their ends showing flush on both sides; the charge in six lamps along the top.
+                float yt = ry[1] - 0.625f, rt = 0.3125f, pitch = span / 3f;
+                for (int i = 0; i < 3; i++) {
+                    float zt = z0 + pitch * (i + 0.5f);
+                    m.part(v, "s");
+                    m.push();
+                    m.turnY(90f, 0, zt);
+                    m.rod(0, yt, rt, zt - hw - 0.0625f, zt + hw + 0.0625f, Tile.METAL);
+                    m.pop();
+                    m.colour(0xFF202428);
+                    m.box(hw + 0.0625f, yt - 0.1875f, zt - 0.1875f, hw + 0.09375f, yt + 0.1875f, zt + 0.1875f, Tile.BORE);
+                    m.box(-hw - 0.09375f, yt - 0.1875f, zt - 0.1875f, -hw - 0.0625f, yt + 0.1875f, zt + 0.1875f, Tile.BORE);
+                }
+                float top = v.type() == GunLayout.Type.HANDGUN ? 1.25f : v.top(), step = (span - 1f) / 6f;
+                for (int i = 0; i < 6; i++) {
+                    float z = z0 + 0.5f + i * step;
+                    if (i < Math.round(pulse.lit()))
+                        m.colour(chargeColour(pulse, 0xFF40C8FF)).glow(-0.125f, top, z, 0.125f, top + 0.0625f, z + step - 0.125f, Tile.LAMP);
+                    else
+                        m.colour(0xFF202428).box(-0.125f, top, z, 0.125f, top + 0.0625f, z + step - 0.125f, Tile.LAMP);
                 }
             }
             case "recoil_dynamo" -> {
+                // A coil of rings on its rod, in the receiver's long window.
                 m.part(v, "s");
-                m.box(hw, yc - 0.75f, b[0] + 0.25f, hw + 0.5f, yc + 0.75f, b[1] - 0.25f, Tile.PANEL);
-                m.rod(hw + 1.25f, yc, 0.75f, b[0] + 0.5f, b[1] - 0.5f, Tile.METAL);
-                m.rings(hw + 1.25f, yc, 0.875f, b[0] + 0.5f, b[1] - 0.5f, 4, 0.25f, Tile.COIL);
+                float rr = Math.min(hh * 0.4f, 0.5f);
+                m.rod(0, yc, rr, z0, z1, Tile.METAL);
+                m.rings(0, yc, rr + 0.125f, z0 + 0.25f, z1 - 0.25f, Math.max(4, (int) (span / 0.75f)), 0.25f, Tile.COIL);
             }
             case "backpack_tether" -> {
+                // A socket let into the rear face and a cable that leaves backward and hangs.
                 m.part(v, "s");
-                m.box(hw, yc - 0.5f, b[1] - 1.5f, hw + 1f, yc + 0.5f, b[1] - 0.25f, Tile.PANEL);
-                m.rod(hw + 0.5f, yc, 0.25f, b[1] - 0.25f, b[1] + 2.5f, Tile.KNURL);
+                float rb = recvBack(v), y = (ry[0] + ry[1]) / 2f;
+                m.box(-0.375f, y - 0.375f, rb, 0.375f, y + 0.375f, rb + 0.375f, Tile.PANEL);
+                m.rod(0, y, 0.25f, rb + 0.375f, rb + 3f, Tile.KNURL);
+                m.box(-0.25f, y - 2f, rb + 2.5f, 0.25f, y + 0.25f, rb + 3f, Tile.KNURL);
             }
             default -> {
-                // Cylinder: a drum of six chambers turned about a sideways axis, the charged ones lit.
+                // Cylinder: a drum of six chambers in the receiver's window, turned about a sideways axis, the charged ones lit on both faces.
                 m.part(v, "s");
+                float r = Math.min(hh - 0.125f, span / 2f - 0.125f), half = hw - 0.125f, ring = r * 0.6f, l = 0.1875f;
                 m.push();
-                m.turnY(90f, sx, zc);
-                float r = Math.min(1.5f, span / 2f - 0.25f);
-                m.rod(sx, yc, r, zc - 0.5f, zc + 0.5f, Tile.BRUSHED);
+                m.turnY(90f, 0, zc);
+                m.rod(0, yc, r, zc - half, zc + half, Tile.BRUSHED);
                 m.push();
-                m.turnZ(pulse.angle(), sx, yc);
+                m.turnZ(pulse.angle(), 0, yc);
                 for (int i = 0; i < 6; i++) {
                     float a = (float) Math.toRadians(60 * i);
-                    float lx = sx + (r - 0.5f) * (float) Math.cos(a), ly = yc + (r - 0.5f) * (float) Math.sin(a);
-                    if (i < Math.round(pulse.lit()))
-                        m.colour(0xFF40FF60).glow(lx - 0.25f, ly - 0.25f, zc + 0.5f, lx + 0.25f, ly + 0.25f, zc + 0.625f, Tile.LAMP);
-                    else
-                        m.colour(0xFF202428).box(lx - 0.25f, ly - 0.25f, zc + 0.5f, lx + 0.25f, ly + 0.25f, zc + 0.625f, Tile.LAMP);
+                    float lx = ring * (float) Math.cos(a), ly = yc + ring * (float) Math.sin(a);
+                    boolean on = i < Math.round(pulse.lit());
+                    for (int side = -1; side <= 1; side += 2) {
+                        float za = side > 0 ? zc + half : zc - half - 0.0625f;
+                        if (on)
+                            m.colour(chargeColour(pulse, 0xFF40FF60)).glow(lx - l, ly - l, za, lx + l, ly + l, za + 0.0625f, Tile.LAMP);
+                        else
+                            m.colour(0xFF202428).box(lx - l, ly - l, za, lx + l, ly + l, za + 0.0625f, Tile.LAMP);
+                    }
                 }
                 m.pop();
                 m.pop();
             }
         }
+    }
+
+    /** The colour of a seat's lit lamps: its own, or the hold or pump charge's state when one is fitted ({@link ChargeColour}). */
+    private static int chargeColour(GunView.Pulse pulse, int plain) {
+        return ChargeColour.of(pulse.charge(), plain);
+    }
+
+    /** How far in front of z = 0 the forend or handguard reaches (a long or machine gun): the barrel is bare beyond it. */
+    private static float exposed(GunView v) {
+        float len = v.len();
+        return v.type() == GunLayout.Type.MACHINE_GUN ? GunView.snap(Math.min(Math.max(len * 0.5f, 3f), 9f), 0.25f)
+                : GunView.snap(Math.min(Math.max(len * 0.55f + 1f, 3f), 10f), 0.25f);
     }
 
     /**
@@ -247,35 +363,44 @@ final class GunDraw {
      */
     private static void instruments(GunMesh m, GunView v) {
         var pulse = v.pulse() == null ? GunView.Pulse.REST : v.pulse();
-        float hw = v.halfWidth(), z0 = bayZ(v)[0], z1 = bayZ(v)[1];
-        float y1 = (v.type() == GunLayout.Type.HANDGUN ? -1.25f : -0.75f) + (v.type() == GunLayout.Type.MACHINE_GUN ? 2f : 1.75f);
+        float hw = v.halfWidth(), ga = gaugeZ(v)[0], gb = gaugeZ(v)[1], ymid = (recvY(v)[0] + recvY(v)[1]) / 2f, yg = ymid - 0.5f;
         if (v.has("g")) {
             m.part(v, "g");
             switch (v.variant("g")) {
                 case "forced_vent" -> {
                     for (int i = 0; i < 3; i++)
-                        m.box(-hw - 0.75f, y1 + 0.125f + 0.25f * i, z0 + 0.25f, -hw - 0.0625f, y1 + 0.25f + 0.25f * i, z0 + 1.5f, Tile.BORE);
+                        m.box(-hw - 0.75f, yg + 0.125f + 0.25f * i, ga + 0.25f, -hw - 0.0625f, yg + 0.25f + 0.25f * i, Math.min(ga + 1.5f, gb - 0.125f), Tile.BORE);
                 }
-                case "dead_man_cutoff" -> m.colour(0xFFFF4030).glow(-hw - 0.75f, y1 + 0.125f, z0 + 0.25f, -hw - 0.0625f, y1 + 0.625f, z0 + 1f, Tile.LAMP);
-                default -> m.rod(-hw - 0.5f, y1 + 0.5f, 0.375f, z0 + 0.25f, z0 + 1f, Tile.KNURL);
+                case "dead_man_cutoff" -> m.colour(0xFFFF4030).glow(-hw - 0.75f, yg + 0.125f, ga + 0.25f, -hw - 0.0625f, yg + 0.625f, ga + 1f, Tile.LAMP);
+                default -> m.rod(-hw - 0.375f, yg + 0.5f, 0.375f, ga + 0.25f, ga + 1f, Tile.KNURL);
             }
         }
         if (v.has("u")) {
+            // The heat gauge: a dial on the left flank, its needle swinging with the barrel's heat.
             m.part(v, "u");
-            float zc = z1 - 1.25f, yc = y1 + 0.875f;
+            float zc = (ga + gb) / 2f, dr = Math.min(0.875f, (gb - ga) / 2f - 0.0625f), px = -hw - 0.125f;
             m.push();
-            m.turnY(-90f, -hw - 0.5f, zc);
-            m.rod(-hw - 0.5f, yc, 0.875f, zc - 0.25f, zc + 0.125f, Tile.PANEL);
+            m.turnY(-90f, px, zc);
+            m.rod(px, ymid, dr, zc - 0.25f, zc + 0.125f, Tile.PANEL);
             m.push();
-            m.turnZ(-120f + 240f * Math.min(1f, pulse.heat()), -hw - 0.5f, yc);
-            m.colour(0xFFFF4030).glow(-hw - 0.5f - 0.0625f, yc, zc + 0.125f, -hw - 0.5f + 0.0625f, yc + 0.75f, zc + 0.25f, Tile.LAMP);
+            m.turnZ(-120f + 240f * Math.min(1f, pulse.heat()), px, ymid);
+            m.colour(0xFFFF4030).glow(px - 0.0625f, ymid, zc + 0.125f, px + 0.0625f, ymid + dr - 0.125f, zc + 0.25f, Tile.LAMP);
             m.pop();
             m.pop();
         }
         if (v.has("h")) {
             m.part(v, "h");
-            m.box(hw, y1 - 0.5f, z1 - 1.5f, hw + 0.5f, y1 + 0.5f, z1 - 0.5f, Tile.KNURL);
+            float zm = (ga + gb) / 2f;
+            m.box(hw, ymid - 0.5f, zm - 0.5f, hw + 0.5f, ymid + 0.5f, zm + 0.5f, Tile.KNURL);
         }
+        if (v.has("z")) {
+            m.part(v, "z");
+            m.rod(0, v.top() + 0.375f, 0.375f, ga, Math.min(ga + 1.5f, gb), Tile.COIL);
+        }
+    }
+
+    /** The fittings on the barrel itself (the pump's slider, the beam lens): drawn inside the group a break action tips. */
+    private static void barrelFittings(GunMesh m, GunView v) {
         float end = front(v);
         if (v.has("p")) {
             m.part(v, "p");
@@ -297,10 +422,6 @@ final class GunDraw {
                             (float) Math.cos(a) * (r + 0.25f) + 0.125f, (float) Math.sin(a) * (r + 0.25f) + 0.125f, end - 0.75f, Tile.LAMP);
                 }
             }
-        }
-        if (v.has("z")) {
-            m.part(v, "z");
-            m.rod(0, v.top() + 0.75f, 0.375f, z0 + 1f, z0 + 2.5f, Tile.COIL);
         }
     }
 
@@ -345,6 +466,12 @@ final class GunDraw {
             m.box(-0.125f, 1.0f, -1.25f, 0.125f, 1.0625f, -0.25f, Tile.BORE); // sight groove
             m.pop();
             cylinder(m, v, p, -0.5f, -3.0f, -0.25f, 1.0f, 0.6f);
+            float[] carry = handgunSupport(v, p);
+            // The rounds still in the hand: the handful taken from the pouch, one fewer once each has gone in.
+            int inHand = p.grab() >= 0.5f && p.grab() < 1.5f || p.feed() >= 0f ? Math.round(p.feedOf() - p.fed() - (p.feed() > 0.5f ? 1 : 0)) : 0;
+            for (int i = 0; carry != null && i < Math.min(inHand, 4); i++)
+                m.colour(0xFFD9A441).box(carry[1] - 0.2f + 0.45f * i, carry[2] - 0.2f + (i == 0 ? 0f : 0.25f), carry[3] - 0.375f,
+                        carry[1] + 0.2f + 0.45f * i, carry[2] + 0.2f + (i == 0 ? 0f : 0.25f), carry[3] + 0.375f, Tile.BRUSHED);
             m.part(v, "R").box(-0.25f, -0.875f, -3.5f - Math.min(v.len(), 3f), 0.25f, -0.375f, -3.5f, Tile.METAL); // ejector rod
         } else {
             m.box(-0.75f, -1.75f, -3.5f, 0.75f, 1.0f, 1.25f, Tile.PANEL);
@@ -441,6 +568,9 @@ final class GunDraw {
             m.push();
             m.turnZ(i * 60f, 0, y);
             m.box(-0.125f, y + r * mouth - 0.125f, z0 - 0.0625f, 0.125f, y + r * mouth + 0.125f, z0, Tile.BORE);
+            // A round standing in the chamber, seen from the open side: the ones already in, and the one just pushed home.
+            if ((p.cylinderOut() > 0 || p.breakOpen() > 0) && p.feedOf() > 0 && i < v.rounds() + p.fed() + (p.feed() > 0.5f ? 1 : 0))
+                m.colour(0xFFD9A441).box(-0.2f, y + r * mouth - 0.2f, z1, 0.2f, y + r * mouth + 0.2f, z1 + 0.375f, Tile.BRUSHED);
             m.pop();
         }
         m.pop();
@@ -448,12 +578,31 @@ final class GunDraw {
 
     /** The receiver block; with a cylinder it is a frame round the cylinder's open window, so the cylinder sits in a cut-out. */
     private static void body(GunMesh m, GunView v, float hw, float lo, float hi, float z0, float back) {
+        if (windowed(v)) {
+            float[] w = seatWindow(v);
+            framed(m, hw, lo, hi, z0, back, w[0], w[1], w[2], w[3]);
+            return;
+        }
+        if (v.electric() && v.has("s") && v.variant("s").equals("flywheel")) {
+            // A slot through the top for the disc: the receiver in two halves along the seat, the disc turning between them.
+            float[] z = seatZ(v);
+            m.box(-hw, lo, z0, hw, hi, z[0], Tile.PANEL);
+            m.box(-hw, lo, z[1], hw, hi, back, Tile.PANEL);
+            m.box(-hw, lo, z[0], -0.4375f, hi, z[1], Tile.PANEL);
+            m.box(0.4375f, lo, z[0], hw, hi, z[1], Tile.PANEL);
+            return;
+        }
         if (!v.has("F")) {
             m.box(-hw, lo, z0, hw, hi, back, Tile.PANEL);
             return;
         }
         // A margin keeps the frame's faces off the cylinder's, which would z-fight.
-        float g = 0.125f, wy0 = CYL_Y - CYL_R - g, wy1 = CYL_Y + CYL_R + g, wz0 = CYL_Z0 - g, wz1 = CYL_Z1 + g;
+        float g = 0.125f;
+        framed(m, hw, lo, hi, z0, back, CYL_Z0 - g, CYL_Z1 + g, CYL_Y - CYL_R - g, CYL_Y + CYL_R + g);
+    }
+
+    /** A receiver block with a window cut through its width (z wz0 to wz1, y wy0 to wy1): a frame of four boxes. */
+    private static void framed(GunMesh m, float hw, float lo, float hi, float z0, float back, float wz0, float wz1, float wy0, float wy1) {
         if (wz0 > z0)
             m.box(-hw, lo, z0, hw, hi, wz0, Tile.PANEL);
         if (back > wz1)
@@ -471,7 +620,7 @@ final class GunDraw {
         int receiver = v.colour("R");
         m.part(v, "R");
         body(m, v, hw, lo, hi, -0.5f, back);
-        if (!v.has("F"))
+        if (!v.has("F") && !v.electric())
             m.box(hw, -0.25f, 0.75f, hw + 0.0625f, 0.5f, 2.75f, Tile.BORE); // ejection port
 
         // Furniture: the forend under the barrel is in the stock's material.
@@ -480,7 +629,7 @@ final class GunDraw {
         float fe = GunView.snap(Math.min(Math.max(v.len() * 0.55f + 1f, 3f), 10f), 0.25f);
         if (v.action().equals("pump")) {
             m.push();
-            m.move(0, 0, p.pump() * 2.5f);
+            m.move(0, 0, p.pump() * FOREND_TRAVEL);
             m.part(v, "K");
             m.box(-0.875f, under - 1.25f, -fe, 0.875f, under + 0.25f, -fe * 0.4f, Tile.RIBBED);
             m.pop();
@@ -489,15 +638,49 @@ final class GunDraw {
             // The forend hangs on the barrels, so it tips with them on a break action.
             m.push();
             breakTurn(m, v, p);
+            // A pulse gun's pump charge works the forend back and forth.
+            m.move(0, 0, v.electric() ? p.pump() * FOREND_TRAVEL : 0f);
             m.part(v, furniture).box(-0.875f, under - 1f, -fe, 0.875f, under + 0.25f, -0.5f, Tile.GRAIN);
             m.pop();
         }
 
         stock(m, v, back, lo, hi);
+        foregrip(m, v, under - 0.75f, -fe * 0.75f);
 
         action(m, v, p, hw, hi, back);
+        grip(m, v, p, lo, back - 0.75f, 3.25f, -15f, 1.75f, false);
         trigger(m, v, lo, back * 0.45f, back * 0.45f + 2.25f);
         feed(m, v, p, lo, 0.25f, 2f);
+    }
+
+    /** The foregrip, if the gun has one: hung from the forend's underside at {@code y}, at {@code z}, by its variant. */
+    private static void foregrip(GunMesh m, GunView v, float y, float z) {
+        if (!v.has("W") || !v.longGun())
+            return;
+        m.part(v, "W");
+        switch (v.variant("W")) {
+            case "angled_grip" -> {
+                m.push();
+                m.turnX(28f, y, z); // the post leans forward
+                m.box(-0.5f, y - 3.25f, z - 0.5f, 0.5f, y + 0.25f, z + 0.5f, Tile.PANEL);
+                m.pop();
+            }
+            case "hand_stop" -> {
+                m.box(-0.5f, y - 0.25f, z - 1f, 0.5f, y + 0.25f, z + 1f, Tile.PANEL); // the plate on the forend
+                m.box(-0.625f, y - 1.5f, z - 1.25f, 0.625f, y, z - 0.5f, Tile.PANEL); // the ledge the hand stops against
+            }
+            case "folding_grip" -> {
+                m.box(-0.5f, y - 0.5f, z - 0.75f, 0.5f, y + 0.25f, z + 0.75f, Tile.METAL); // the hinge block
+                m.push();
+                m.turnX(70f, y - 0.5f, z); // swung forward, nearly flat
+                m.box(-0.375f, y - 3.25f, z - 0.375f, 0.375f, y - 0.5f, z + 0.375f, Tile.PANEL);
+                m.pop();
+            }
+            default -> {
+                m.box(-0.5f, y - 3f, z - 0.5f, 0.5f, y + 0.25f, z + 0.5f, Tile.PANEL); // vertical post
+                m.box(-0.5625f, y - 3f, z - 0.5625f, 0.5625f, y - 2.5f, z + 0.5625f, Tile.RUBBER);
+            }
+        }
     }
 
     /** The stock part, if the gun has one: fixed (furniture), skeleton (bare rods) or folding (a hinged tube), from {@code back} behind the receiver. */
@@ -526,15 +709,19 @@ final class GunDraw {
             }
             default -> {
                 // Wrist down and back, comb, a butt deepening toward the shoulder, a pad.
-                m.push();
-                m.turnX(-12f, lo, back);
-                m.box(-0.625f, lo - 1.25f, back, 0.625f, hi - 0.5f, back + 2.75f, Tile.GRAIN);
-                m.pop();
+                // A raked grip is the wrist (the stock starts right behind it); a straight grip leaves the stock its own.
+                boolean gripIsWrist = v.longGun() && v.has("G") && !v.variant("G").equals("straight");
+                if (!gripIsWrist) {
+                    m.push();
+                    m.turnX(-12f, lo, back);
+                    m.box(-0.625f, lo - 1.25f, back, 0.625f, hi - 0.5f, back + 2.75f, Tile.GRAIN);
+                    m.pop();
+                }
                 float butt = back + 9.5f;
-                m.box(-0.75f, -0.75f, back + 2.25f, 0.75f, 0.5f, butt, Tile.GRAIN);
+                m.box(-0.75f, -0.75f, gripIsWrist ? back - 0.75f : back + 2.25f, 0.75f, 0.5f, butt, Tile.GRAIN);
                 m.push();
                 m.turnX(6f, -0.75f, butt);
-                m.box(-0.6875f, -3.25f, back + 3f, 0.6875f, -0.75f, butt, Tile.GRAIN);
+                m.box(-0.6875f, -3.25f, gripIsWrist ? back : back + 3f, 0.6875f, -0.75f, butt, Tile.GRAIN);
                 m.pop();
                 m.colour(darken(colour)).box(-0.8125f, -3.25f, butt, 0.8125f, 0.5f, butt + 0.5f, Tile.RUBBER);
             }
@@ -546,7 +733,7 @@ final class GunDraw {
         float hw = v.halfWidth(), back = v.back();
         m.part(v, "R");
         body(m, v, hw, -1.25f, 1.5f, -1f, back);
-        if (!v.has("F"))
+        if (!v.has("F") && !v.electric())
             m.box(hw, -0.5f, 0.5f, hw + 0.0625f, 0.5f, 3.5f, Tile.BORE);
         // Top cover, hinged at the back; it lifts to lay a belt.
         m.push();
@@ -558,6 +745,7 @@ final class GunDraw {
         float under = barrelsBottom(v);
         float fe = GunView.snap(Math.min(Math.max(v.len() * 0.5f, 3f), 9f), 0.25f);
         m.part(v, v.has("G") ? "G" : "R").box(-0.875f, under - 0.75f, -fe, 0.875f, 0.875f, -1f, Tile.VENT);
+        foregrip(m, v, under - 0.5f, -fe * 0.75f);
 
         action(m, v, p, hw, 1.5f, back);
         grip(m, v, p, -1.25f, back - 0.75f, 3.25f, -15f, 1.75f, false);
@@ -660,6 +848,214 @@ final class GunDraw {
     }
 
     /** Lowest point of the barrel or barrels. */
+    /** How far a pumped forend slides back, pixels. */
+    static final float FOREND_TRAVEL = 3f;
+
+    // --- where the hands go ----------------------------------------------------------------------------
+
+    /** 0 to 1, smoothed: how far a hand has reached for a part that has moved by {@code x} of its travel. */
+    private static float reach(float x) {
+        float t = Math.max(0f, Math.min(1f, x * 3f));
+        return t * t * (3 - 2 * t);
+    }
+
+    /** A point (y, z) turned {@code deg} about X around (py, pz), as {@link GunMesh#turnX} turns the parts. */
+    private static float[] turned(float y, float z, float py, float pz, float deg) {
+        double a = Math.toRadians(deg), c = Math.cos(a), s = Math.sin(a);
+        float dy = y - py, dz = z - pz;
+        return new float[]{(float) (py + dy * c - dz * s), (float) (pz + dy * s + dz * c)};
+    }
+
+    private static float smooth(float x) {
+        float t = Math.max(0f, Math.min(1f, x));
+        return t * t * (3 - 2 * t);
+    }
+
+    private static float[] lerp3(float[] a, float[] b, float w) {
+        return new float[]{a[0] + (b[0] - a[0]) * w, a[1] + (b[1] - a[1]) * w, a[2] + (b[2] - a[2]) * w};
+    }
+
+    private static float[] between(float[] from, float w, float x, float y, float z) {
+        return new float[]{from[0] + (x - from[0]) * w, from[1] + (y - from[1]) * w, from[2] + (z - from[2]) * w};
+    }
+
+    /**
+     * Where the shooting hand leaves the grip to work the action, in gun space: weight 0 to 1, then x, y, z; null when it stays on the grip.
+     * A bolt rifle's hand follows the bolt knob up and back, a lever gun's the lever loop.
+     */
+    static float[] shootTarget(GunView v, GunMotion.Parts p) {
+        if (!v.longGun())
+            return null;
+        switch (v.action()) {
+            case "bolt" -> {
+                float w = reach(Math.max(p.boltLift(), p.boltBack()));
+                if (w <= 0f)
+                    return null;
+                double a = Math.toRadians(-65f * p.boltLift());
+                float r = v.halfWidth() + 1f;
+                return new float[]{w, (float) (r * Math.cos(a)), (float) (r * Math.sin(a)), v.back() - 1.4f + p.boltBack() * 2.5f};
+            }
+            case "lever" -> {
+                float w = reach(p.lever());
+                if (w <= 0f)
+                    return null;
+                float z0 = v.back() * 0.45f;
+                float[] at = turned(-2.4f, z0 + 1.5f, -1f, z0, 45f * p.lever());
+                return new float[]{w, 0f, at[0], at[1]};
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * How the support arm is turned from its usual pose, degrees (yaw, pitch, roll; pitch positive brings the forearm up from below,
+     * negative down from above): a core breech vent swings it up over the barrels, down onto them, away, round to underneath, and up with the forend.
+     */
+    static float[] supportTurn(GunView v, GunMotion.Parts p) {
+        float t = p.vent();
+        if (t < 0f || v.type() != GunLayout.Type.LONG_GUN)
+            return new float[3];
+        float pitch, roll = 0f;
+        if (t < 0.14f)
+            pitch = -75f * smooth(t / 0.14f);
+        else if (t < 0.19f)
+            pitch = -75f + 55f * ((t - 0.14f) / 0.05f) * ((t - 0.14f) / 0.05f);
+        else if (t < 0.26f)
+            pitch = -20f;
+        else if (t < 0.4f)
+            pitch = -20f - 55f * smooth((t - 0.26f) / 0.14f);
+        else if (t < 0.55f) {
+            float k = smooth((t - 0.4f) / 0.15f);
+            pitch = -75f + 100f * k;
+            roll = 35f * k;
+        } else if (t < 0.72f) {
+            float k = (t - 0.55f) / 0.17f;
+            pitch = 25f + 20f * k;
+            roll = 35f;
+        } else {
+            float k = smooth((t - 0.72f) / 0.23f);
+            pitch = 45f * (1 - k);
+            roll = 35f * (1 - k);
+        }
+        return new float[]{0f, pitch, roll};
+    }
+
+    /** Where the free hand waits, off the gun, before it comes in to work a handgun's reload (gun space). */
+    static final float[] HAND_WAITS_AT = {-40f, -16f, 0f};
+
+    /**
+     * The free hand on a one-handed gun, in gun space: weight 0 to 1 for how far it has come in from {@link #HAND_WAITS_AT}, then x, y, z.
+     * Null when nothing is being worked. A revolver's hand takes the cylinder out to the left or pushes a top-break's barrel down; a pistol's
+     * takes the magazine from the grip's foot and seats the fresh one.
+     */
+    static float[] handgunSupport(GunView v, GunMotion.Parts p) {
+        if (v.type() != GunLayout.Type.HANDGUN)
+            return null;
+        float w = 0f;
+        float[] at = null;
+        if (p.fan() >= 0f) {
+            // Fanning: the hand comes down on the hammer and lifts off again every cycle, and leaves when the shooting stops.
+            float f = p.fan(), c = f % 1f;
+            float[] hit = {0f, 1.8f, 0.2f}, up = {-5f, 5.5f, -0.6f};
+            // Held up, wound up a touch, then struck in a frame or two (the in-betweens skipped), held on the hammer a beat, and lifted off.
+            float[] wind = {up[0] - 1f, up[1] + 1.5f, up[2] + 0.5f};
+            float[] now = c < 0.25f ? lerp3(up, wind, smooth(c / 0.25f)) : c < 0.3f ? lerp3(wind, hit, (c - 0.25f) / 0.05f)
+                    : c < 0.5f ? new float[]{hit[0], hit[1] - 0.3f * smooth((c - 0.3f) / 0.05f), hit[2] - 0.3f * smooth((c - 0.3f) / 0.05f)}
+                    : lerp3(hit, up, smooth((c - 0.5f) / 0.5f));
+            return new float[]{f < 1f ? 1f : 1f - smooth((f - 1f) / 2f), now[0], now[1], now[2]};
+        }
+        // A top-break's barrel is pushed down by this hand (at the start, and again to shut it).
+        float[] tip = null;
+        if (v.openFrame() && p.breakOpen() > 0) {
+            float[] h = breakHinge(v);
+            float[] t = turned(0.8f, -3.5f - Math.min(v.len(), 3f), h[0], h[1], -30f * p.breakOpen());
+            tip = new float[]{0f, t[0], t[1]};
+        }
+        if (v.openFrame() && v.has("F") && (p.cylinderOut() > 0 || tip != null)) {
+            // The cylinder is out: the hand waits (on the barrel if it is a top-break, else at its pouch), then a round at a time takes one
+            // from the pouch to the open chamber, pushes it in from behind, and goes back; the first round starts and the last ends on the barrel.
+            float[] pouch = {-12f, -6f, 1.5f};
+            w = reach(Math.max(p.cylinderOut(), p.breakOpen()));
+            at = tip != null ? tip : pouch;
+            if (p.grab() >= 0f || p.feed() >= 0f) {
+                float cx = -1.25f * p.cylinderOut() - 0.3f;
+                // The handful is held just clear of the cylinder (above a top-break's open frame, behind a swing-out's rear face), and each round is
+                // pushed in from there.
+                float[] hold = tip != null ? new float[]{cx, 5f, -1.6f} : new float[]{cx, 1.6f, 3.2f};
+                float[] seat = tip != null ? new float[]{cx, 0.9f, -1.6f} : new float[]{cx, 0.1f, -0.2f};
+                if (p.grab() >= 0f && p.grab() < 1f) {
+                    // Over to the pouch (from the barrel it has just pushed open), a beat to take up every round, back to the cylinder.
+                    float g = p.grab();
+                    at = g < 0.4f ? lerp3(at, pouch, smooth(g / 0.4f)) : g < 0.6f ? pouch : lerp3(pouch, hold, smooth((g - 0.6f) / 0.4f));
+                } else if (p.feed() >= 0f) {
+                    float f = p.feed();
+                    // Pushed in hard, held a beat, drawn back; the next round is already in the hand.
+                    at = f < 0.45f ? lerp3(hold, seat, (f / 0.45f) * (f / 0.45f)) : f < 0.6f ? seat : lerp3(seat, hold, smooth((f - 0.6f) / 0.4f));
+                } else if (p.grab() >= 1f) {
+                    at = lerp3(hold, tip != null ? tip : pouch, smooth(p.grab() - 1f));
+                }
+                w = 1f;
+            }
+        } else if (tip != null) {
+            at = tip;
+            w = reach(p.breakOpen());
+        }
+        if (!v.openFrame() && p.magDrop() > 0) {
+            w = reach(p.magDrop());
+            at = new float[]{0f, -5.5f - p.magDrop() * 4.5f, 0.2f};
+        }
+        return at == null || w <= 0.01f ? null : new float[]{w, at[0], at[1], at[2]};
+    }
+
+    /**
+     * Where the support hand is on a long gun, in gun space (x, y, z): on the forend, riding it back on a pump and down on a break action,
+     * or off at the cylinder, the belt cover or the magazine while those work.
+     */
+    static float[] supportTarget(GunView v, GunMotion.Parts p) {
+        float[] f = forend(v);
+        float y = f[0], z = f[1];
+        if (v.type() == GunLayout.Type.LONG_GUN)
+            z += p.pump() * FOREND_TRAVEL;
+        if (p.breakOpen() > 0 && v.type() == GunLayout.Type.LONG_GUN) { // a break action, or a core breech venting
+            float[] h = breakHinge(v);
+            float[] at = turned(y, z, h[0], h[1], -(v.openFrame() ? 30f : 38f) * p.breakOpen());
+            y = at[0];
+            z = at[1];
+        }
+        float[] out = {0f, y, z};
+        if (p.vent() >= 0f && v.type() == GunLayout.Type.LONG_GUN) {
+            // A core breech vent: up over the barrels, down on them, off again, under to the forend, and up with it.
+            float[] h = breakHinge(v);
+            float zm = -v.len() * 0.5f, top = v.r() + 0.25f, ang = -38f * p.breakOpen();
+            float[] on = turned(top, zm, h[0], h[1], ang);
+            float[] closedFore = forend(v);
+            float t = p.vent();
+            float[] above = {0f, top + 3f, zm};
+            if (t < 0.14f)
+                out = lerp3(new float[]{0f, closedFore[0], closedFore[1]}, above, smooth(t / 0.14f));
+            else if (t < 0.19f) {
+                float w = (t - 0.14f) / 0.05f;
+                out = lerp3(above, new float[]{0f, top, zm}, w * w);
+            } else if (t < 0.26f)
+                out = new float[]{0f, on[0], on[1]};
+            else if (t < 0.4f)
+                out = lerp3(new float[]{0f, on[0], on[1]}, above, smooth((t - 0.26f) / 0.14f));
+            else if (t < 0.55f)
+                out = lerp3(above, new float[]{0f, y, z}, smooth((t - 0.4f) / 0.15f));
+        } else if (v.has("F") && p.cylinderOut() > 0)
+            out = between(out, reach(p.cylinderOut()), -1.25f * p.cylinderOut() - 0.5f, CYL_Y, (CYL_Z0 + CYL_Z1) / 2f);
+        if (v.type() == GunLayout.Type.MACHINE_GUN && p.cover() > 0) {
+            float[] at = turned(1.75f, 0.5f, 1.5f, 6f, -55f * p.cover());
+            out = between(out, reach(p.cover()), 0f, at[0] + 1f, at[1]);
+        }
+        if (p.magDrop() > 0 && !v.has("F") && !v.has("Y") && !v.has("b") && v.mag() != MagazineSize.BELT)
+            out = between(out, reach(p.magDrop()), 0f, recvY(v)[0] - v.magLength() * 0.5f - p.magDrop() * 5f,
+                    v.type() == GunLayout.Type.MACHINE_GUN ? 2f : 1.125f);
+        return out;
+    }
+
     /** Where the support hand takes a long gun: under the barrels, midway along the forend (y, z). */
     static float[] forend(GunView v) {
         float fe = GunView.snap(Math.min(Math.max(v.len() * 0.55f + 1f, 3f), 10f), 0.25f);

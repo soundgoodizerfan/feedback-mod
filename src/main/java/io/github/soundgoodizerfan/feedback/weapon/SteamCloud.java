@@ -42,7 +42,7 @@ public class SteamCloud extends Entity {
         Vec3 at = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(1.6)).add(0, -0.4, 0);
         cloud.setPos(at.x, at.y, at.z);
         level.addFreshEntity(cloud);
-        level.playSound(null, at.x, at.y, at.z, SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.9f, 0.7f);
+        level.playSound(null, at.x, at.y, at.z, io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_VENT.get(), SoundSource.PLAYERS, 0.9f, 0.9f);
     }
 
     @Override

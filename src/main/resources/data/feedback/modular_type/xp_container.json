@@ -21,17 +21,16 @@
           "shard",
           "sheet",
           "vein"
-        ],
-        "variants": [
-          {
-            "name": "flask",
-            "cells": 3
-          },
-          {
-            "name": "carboy",
-            "cells": 9
-          }
         ]
+      },
+      "axes": {
+        "volume": {
+          "min": 1,
+          "max": 9,
+          "default": 1,
+          "step": 1,
+          "scales": true
+        }
       }
     }
   },

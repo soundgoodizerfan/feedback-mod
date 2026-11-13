@@ -48,14 +48,6 @@
       }
     ]
   },
-  "gun.shot_9mm": {
-    "subtitle": "feedback.subtitle.gun_shot",
-    "sounds": [
-      {
-        "name": "feedback:gun/shot_9mm"
-      }
-    ]
-  },
   "combat.feel_light": {
     "subtitle": "feedback.subtitle.combat_feel_light",
     "sounds": [
@@ -77,25 +69,60 @@
   },
   "combat.feedbacker_parry": {
     "subtitle": "feedback.subtitle.combat_feedbacker_parry",
-    "sounds": [{ "name": "feedback:combat/feedbacker_parry", "stream": false }]
+    "sounds": [
+      {
+        "name": "feedback:combat/feedbacker_parry",
+        "stream": false
+      }
+    ]
   },
   "combat.parry_raise": {
     "subtitle": "feedback.subtitle.combat_parry_raise",
-    "sounds": [{ "name": "minecraft:item.trident.throw", "type": "event", "pitch": 1.8 }]
+    "sounds": [
+      {
+        "name": "minecraft:item.trident.throw",
+        "type": "event",
+        "pitch": 1.8
+      }
+    ]
   },
   "combat.parry_whiff": {
     "subtitle": "feedback.subtitle.combat_parry_whiff",
-    "sounds": [{ "name": "minecraft:entity.player.attack.nodamage", "type": "event", "pitch": 0.7 }]
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.nodamage",
+        "type": "event",
+        "pitch": 0.7
+      }
+    ]
   },
   "combat.press_denied": {
-    "sounds": [{ "name": "minecraft:block.note_block.bass", "type": "event", "pitch": 1.2 }]
+    "sounds": [
+      {
+        "name": "minecraft:block.note_block.bass",
+        "type": "event",
+        "pitch": 1.2
+      }
+    ]
   },
   "combat.ready_tick": {
-    "sounds": [{ "name": "minecraft:block.note_block.hat", "type": "event", "pitch": 1.6 }]
+    "sounds": [
+      {
+        "name": "minecraft:block.note_block.hat",
+        "type": "event",
+        "pitch": 1.6
+      }
+    ]
   },
   "combat.roll_whoosh": {
     "subtitle": "feedback.subtitle.combat_roll_whoosh",
-    "sounds": [{ "name": "minecraft:entity.player.attack.sweep", "type": "event", "pitch": 0.6 }]
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ]
   },
   "ui.punch": {
     "sounds": [
@@ -353,6 +380,298 @@
         "type": "event",
         "pitch": 1.9,
         "volume": 0.3
+      }
+    ]
+  },
+  "gun.shot_light": {
+    "subtitle": "feedback.subtitle.gun_shot",
+    "sounds": [
+      {
+        "name": "feedback:gun/shot_light_0",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "feedback:gun/shot_light_1",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "feedback:gun/shot_light_2",
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "gun.shot_medium": {
+    "subtitle": "feedback.subtitle.gun_shot",
+    "sounds": [
+      {
+        "name": "feedback:gun/shot_medium_0",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "feedback:gun/shot_medium_1",
+        "attenuation_distance": 128
+      },
+      {
+        "name": "feedback:gun/shot_medium_2",
+        "attenuation_distance": 128
+      }
+    ]
+  },
+  "gun.shot_heavy": {
+    "subtitle": "feedback.subtitle.gun_shot",
+    "sounds": [
+      {
+        "name": "feedback:gun/shot_heavy_0",
+        "attenuation_distance": 192
+      },
+      {
+        "name": "feedback:gun/shot_heavy_1",
+        "attenuation_distance": 192
+      },
+      {
+        "name": "feedback:gun/shot_heavy_2",
+        "attenuation_distance": 192
+      }
+    ]
+  },
+  "gun.reload_start": {
+    "subtitle": "feedback.subtitle.gun_reload",
+    "sounds": [
+      {
+        "name": "feedback:gun/reload_slide"
+      }
+    ]
+  },
+  "gun.reload_round": {
+    "subtitle": "feedback.subtitle.gun_reload",
+    "sounds": [
+      {
+        "name": "feedback:gun/reload_chamber"
+      },
+      {
+        "name": "feedback:gun/reload_clip"
+      }
+    ]
+  },
+  "gun.reload_magazine": {
+    "subtitle": "feedback.subtitle.gun_reload",
+    "sounds": [
+      {
+        "name": "feedback:gun/reload_cock_short"
+      },
+      {
+        "name": "feedback:gun/reload_cock_quick"
+      }
+    ]
+  },
+  "gun.dry_click": {
+    "subtitle": "feedback.subtitle.gun_dry",
+    "sounds": [
+      {
+        "name": "feedback:gun/dry_click"
+      }
+    ]
+  },
+  "gun.pulse_shot": {
+    "subtitle": "feedback.subtitle.gun_pulse",
+    "sounds": [
+      {
+        "name": "feedback:gun/pulse_shot_0",
+        "attenuation_distance": 96
+      },
+      {
+        "name": "feedback:gun/pulse_shot_1",
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "gun.pulse_pump": {
+    "subtitle": "feedback.subtitle.gun_pump",
+    "sounds": [
+      {
+        "name": "feedback:gun/pump_quick"
+      }
+    ]
+  },
+  "gun.pulse_armed": {
+    "subtitle": "feedback.subtitle.gun_pump",
+    "sounds": [
+      {
+        "name": "feedback:gun/pump_heavy_0"
+      },
+      {
+        "name": "feedback:gun/pump_heavy_1"
+      }
+    ]
+  },
+  "gun.shot_suppressed": {
+    "subtitle": "feedback.subtitle.gun_shot_quiet",
+    "sounds": [
+      {
+        "name": "feedback:gun/shot_suppressed",
+        "attenuation_distance": 48
+      }
+    ]
+  },
+  "gun.vent": {
+    "subtitle": "feedback.subtitle.gun_vent",
+    "sounds": [
+      {
+        "name": "feedback:gun/vent_0"
+      },
+      {
+        "name": "feedback:gun/vent_1"
+      }
+    ]
+  },
+  "gun.burst": {
+    "subtitle": "feedback.subtitle.gun_burst",
+    "sounds": [
+      {
+        "name": "feedback:gun/burst",
+        "attenuation_distance": 160
+      }
+    ]
+  },
+  "gun.cook_off": {
+    "subtitle": "feedback.subtitle.gun_burst",
+    "sounds": [
+      {
+        "name": "feedback:gun/cook_off",
+        "attenuation_distance": 96
+      }
+    ]
+  },
+  "gun.whiz": {
+    "subtitle": "feedback.subtitle.gun_whiz",
+    "sounds": [
+      {
+        "name": "feedback:gun/whiz"
+      }
+    ]
+  },
+  "gun.ricochet": {
+    "subtitle": "feedback.subtitle.gun_ricochet",
+    "sounds": [
+      {
+        "name": "feedback:gun/ricochet"
+      }
+    ]
+  },
+  "gun.flame": {
+    "subtitle": "feedback.subtitle.gun_flame",
+    "sounds": [
+      {
+        "name": "feedback:gun/flame"
+      }
+    ]
+  },
+  "gun.pan_flash": {
+    "subtitle": "feedback.subtitle.gun_handling",
+    "sounds": [
+      {
+        "name": "feedback:gun/pan_flash"
+      }
+    ]
+  },
+  "gun.draw": {
+    "subtitle": "feedback.subtitle.gun_handling",
+    "sounds": [
+      {
+        "name": "feedback:gun/draw"
+      }
+    ]
+  },
+  "gun.heat_tick": {
+    "subtitle": "feedback.subtitle.gun_handling",
+    "sounds": [
+      {
+        "name": "feedback:gun/latch"
+      }
+    ]
+  },
+  "gun.mode_click": {
+    "subtitle": "feedback.subtitle.gun_handling",
+    "sounds": [
+      {
+        "name": "feedback:gun/mode_click"
+      }
+    ]
+  },
+  "gun.butt": {
+    "subtitle": "feedback.subtitle.gun_butt",
+    "sounds": [
+      {
+        "name": "feedback:gun/butt"
+      }
+    ]
+  },
+  "gun.press_pour": {
+    "subtitle": "feedback.subtitle.gun_press",
+    "sounds": [
+      {
+        "name": "feedback:gun/press_pour"
+      }
+    ]
+  },
+  "gun.press_seat": {
+    "subtitle": "feedback.subtitle.gun_press",
+    "sounds": [
+      {
+        "name": "feedback:gun/latch"
+      }
+    ]
+  },
+  "gun.casing": {
+    "subtitle": "feedback.subtitle.gun_casing",
+    "sounds": [
+      {
+        "name": "feedback:gun/casing_0"
+      },
+      {
+        "name": "feedback:gun/casing_1"
+      }
+    ]
+  },
+  "gun.hit_flesh": {
+    "subtitle": "feedback.subtitle.gun_hit_flesh",
+    "sounds": [
+      {
+        "name": "feedback:gun/hit_flesh_1"
+      },
+      {
+        "name": "feedback:gun/hit_flesh_2"
+      },
+      {
+        "name": "feedback:gun/hit_flesh_3"
+      }
+    ]
+  },
+  "gun.hit_armour": {
+    "subtitle": "feedback.subtitle.gun_hit_armour",
+    "sounds": [
+      {
+        "name": "feedback:gun/hit_armour_1"
+      },
+      {
+        "name": "feedback:gun/hit_armour_2"
+      },
+      {
+        "name": "feedback:gun/hit_armour_3"
+      }
+    ]
+  },
+  "gun.hit_marker": {
+    "sounds": [
+      {
+        "name": "feedback:gun/hit_marker"
+      }
+    ]
+  },
+  "gun.hit_kill": {
+    "sounds": [
+      {
+        "name": "feedback:gun/hit_kill"
       }
     ]
   }

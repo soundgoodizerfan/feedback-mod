@@ -138,7 +138,7 @@ Weapon skills that read how a blow landed, never what the weapon is called (see 
 
 ## Tethers
 
-A **tether** is a line that holds a living thing. A [harpoon](Tools_and_Weapons.md#other-tools-other-shapes) barb, a [grapple](Grapple.md) hook and a grab are all tethers. A tethered creature takes extra damage while held, but the extra is the **largest** of its tethers, not the sum: two harpoons in one mob wound it no more than one, and one letting go leaves the other's bonus standing.
+A **tether** is a line that holds a living thing. A [barbed](Tools_and_Weapons.md#how-each-one-fights) spear head, a [grapple](Grapple.md) hook and a grab are all tethers. A tethered creature takes extra damage while held, but the extra is the **largest** of its tethers, not the sum: two barbs in one mob wound it no more than one, and one letting go leaves the other's bonus standing.
 
 ## How a hit feels
 

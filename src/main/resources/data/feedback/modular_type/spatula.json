@@ -29,13 +29,6 @@
             "name": "turner"
           },
           {
-            "name": "wide_turner",
-            "cells": 2,
-            "params": {
-              "flips": 2.0
-            }
-          },
-          {
             "name": "slotted_turner",
             "cells": 2,
             "params": {

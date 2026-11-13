@@ -36,6 +36,7 @@ import io.github.soundgoodizerfan.feedback.weapon.GunMechanism;
 import io.github.soundgoodizerfan.feedback.weapon.GunShots;
 import io.github.soundgoodizerfan.feedback.weapon.GunSound;
 import io.github.soundgoodizerfan.feedback.weapon.GunStance;
+import io.github.soundgoodizerfan.feedback.weapon.HeatPellets;
 import io.github.soundgoodizerfan.feedback.weapon.PulseShot;
 import io.github.soundgoodizerfan.feedback.weapon.SteamCloud;
 
@@ -92,6 +93,10 @@ public final class ElectricMechanism implements GunMechanism {
             }
             case BURST_BANK -> {
                 if (ModularElectricGun.pips(gun, now, FTuning.GUN_BURST_ROUNDS) < 1)
+                    return null;
+            }
+            case CORE_BREECH -> {
+                if (ModularElectricGun.hot(gun))
                     return null;
             }
             case FLYWHEEL -> {
@@ -191,8 +196,22 @@ public final class ElectricMechanism implements GunMechanism {
         GunFigures figures = p.figures();
         if (shooter instanceof Player player)
             figures = figures.withSpread(GunStance.of(player, aimed) * MomentumKinds.braceSpread(player, gun));
-        PulseShot.fire(level, shooter, gun, new PulseShot.Plan(spec.delivered(p.joules()), spec.cutoff(p.zoomShare()), spec.pierce(p.holdShare()),
-                ModularElectricGun.colourOf(gun), spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, volts, figures.spreadDeg()), yaw, pitch);
+        int pumps = spec.pump() ? ModularElectricGun.pumps(gun) : 0;
+        if (pumps >= ModularTuning.EGUN_PUMP_MAX)
+            pumpBlast(level, shooter);
+        else if (spec.seat() == Seat.CORE_BREECH) {
+            // The one seat whose shot is a slow gout of heat, not a beam: pellets with a splitter, else one big one.
+            float widen = 1f + ModularTuning.EGUN_PUMP_SPREAD * pumps;
+            int beams = spec.beams() > 0 ? spec.beams() + Math.round(spec.beams() * ModularTuning.EGUN_PUMP_BEAMS * pumps) : 1;
+            float cone = beams > 1 ? ModularTuning.EGUN_SPLIT_DEG_PER_BEAM * beams * widen : figures.spreadDeg() * widen;
+            HeatPellets.launch(level, shooter, spec.delivered(p.joules()), spec.cutoff(p.zoomShare()) * ModularTuning.EGUN_CORE_RANGE, beams, cone, yaw, pitch);
+        } else {
+            // Each pump widens the spread; a splitter also throws more beams, the way buckshot throws more pellets.
+            float widen = 1f + ModularTuning.EGUN_PUMP_SPREAD * pumps;
+            int beams = spec.beams() > 0 ? spec.beams() + Math.round(spec.beams() * ModularTuning.EGUN_PUMP_BEAMS * pumps) : 0;
+            PulseShot.fire(level, shooter, gun, new PulseShot.Plan(spec.delivered(p.joules()), spec.cutoff(p.zoomShare()), spec.pierce(p.holdShare()),
+                    ModularElectricGun.colourOf(gun), beams, spec.fork(), spec.seat() == Seat.CYLINDER, volts, figures.spreadDeg() * widen, widen), yaw, pitch);
+        }
         Vec3 muzzle = shooter.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4));
         GunShots.report(level, shooter, figures, gun, muzzle);
         // The muzzle glows brighter with the barrel's heat.
@@ -202,12 +221,15 @@ public final class ElectricMechanism implements GunMechanism {
         float heat = ModularElectricGun.heat(gun, now, spec.shed()) + spec.heatPerShot(p.power()) + ModularTuning.EGUN_PUMP_HEAT * (spec.pump() ? ModularElectricGun.pumps(gun) : 0);
         if (spec.pump())
             ModularElectricGun.setPumps(gun, 0);
+        if (spec.seat() == Seat.CORE_BREECH)
+            ModularElectricGun.setHot(gun, true);
         switch (spec.governor()) {
             case THROTTLE -> heat = Math.min(heat, 0.95f);
             case VENT -> {
                 if (heat >= 1f) {
                     float over = Mth.clamp((heat - 1f) / Math.max(1e-3f, spec.heatPerShot(p.power())), 0f, 1f);
                     ModularElectricGun.setLock(gun, now + Math.round(Mth.lerp(over, ModularTuning.EGUN_VENT_LOCK_MIN_TICKS, ModularTuning.EGUN_VENT_LOCK_MAX_TICKS)));
+                    level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_HEAT_TICK.get(), SoundSource.PLAYERS, 0.8f, 0.7f);
                     SteamCloud.vent(level, shooter, pitch, yaw);
                     heat = ModularTuning.EGUN_VENT_RESET_HEAT;
                 }
@@ -238,7 +260,7 @@ public final class ElectricMechanism implements GunMechanism {
         float joules = spec.pulseJ() * spec.seatMult();
         GunFigures figures = spec.figures(joules, spec.barrelMass(), spec.cycleTicks(false), 0f, 1f);
         PulseShot.fire(level, mob, gun, new PulseShot.Plan(spec.delivered(joules), spec.cutoff(0f), spec.pierce(0f), ModularElectricGun.colourOf(gun),
-                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_VOLTS, figures.spreadDeg()), yaw, pitch);
+                spec.beams(), spec.fork(), spec.seat() == Seat.CYLINDER, ModularTuning.EGUN_REF_VOLTS, figures.spreadDeg(), 1f), yaw, pitch);
         GunShots.report(level, mob, figures, gun, mob.getEyePosition().add(Vec3.directionFromRotation(pitch, yaw).scale(0.4)));
         return true;
     }
@@ -255,7 +277,9 @@ public final class ElectricMechanism implements GunMechanism {
     @Override
     public float sightZoom(ItemStack gun) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
-        return spec != null && spec.zoom() ? 1f / (1f + ModularTuning.EGUN_ZOOM_RANGE * ModularElectricGun.zoomShare(gun, lastNow)) : 1f;
+        if (spec == null)
+            return 1f;
+        return (spec.zoom() ? 1f / (1f + ModularTuning.EGUN_ZOOM_RANGE * ModularElectricGun.zoomShare(gun, lastNow)) : 1f) * spec.sightFov();
     }
 
     @Override
@@ -303,27 +327,81 @@ public final class ElectricMechanism implements GunMechanism {
     @Override
     public boolean reloadKeyWorks(ItemStack gun) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
-        return spec != null && spec.pump();
+        return spec != null && spec.seat() == Seat.CORE_BREECH;
     }
 
-    /** A pump: three raise the next shot's power and heat; the fourth bursts the capacitor and hurts the wielder. */
+    /** Players whose core breech is mid-vent: the stroke takes {@link #VENT_TICKS}, and a second press during it does nothing. */
+    private static final java.util.Set<java.util.UUID> VENTING = new java.util.HashSet<>();
+
+    /** The client's vent stroke ({@code GunMotion.VENT_MS}, 900 ms) in ticks; its beats are the sounds below. */
+    private static final int VENT_TICKS = 18;
+
+    @Override
+    public boolean reloadKeyReady(ItemStack gun) {
+        ElectricGunSpec spec = ModularElectricGun.specOf(gun);
+        return spec != null && spec.seat() == Seat.CORE_BREECH && ModularElectricGun.hot(gun);
+    }
+
+    /**
+     * The reload key breaks a core breech open: the hand slams the barrels down, the cores vent in a puff of steam, the hand
+     * throws them shut. The gun stays hot, and cannot fire, until the whole stroke is done.
+     */
     @Override
     public void reloadKey(ServerLevel level, Player player, ItemStack gun) {
         ElectricGunSpec spec = ModularElectricGun.specOf(gun);
-        if (spec == null || !spec.pump())
+        if (spec == null || spec.seat() != Seat.CORE_BREECH || !ModularElectricGun.hot(gun) || !VENTING.add(player.getUUID()))
+            return;
+        // The slap on the barrels, the steam, the forend taken from below, the slam shut and its latch.
+        io.github.soundgoodizerfan.feedback.core.Later.in(3, () -> level.playSound(null, player.blockPosition(),
+                io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_BUTT.get(), SoundSource.PLAYERS, 0.9f, 0.8f));
+        io.github.soundgoodizerfan.feedback.core.Later.in(5, () -> {
+            level.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getEyeY() - 0.2, player.getZ(), 14, 0.2, 0.1, 0.2, 0.06);
+            level.playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_VENT.get(), SoundSource.PLAYERS, 0.7f, 1.1f);
+        });
+        io.github.soundgoodizerfan.feedback.core.Later.in(9, () -> level.playSound(null, player.blockPosition(),
+                io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_HEAT_TICK.get(), SoundSource.PLAYERS, 0.7f, 0.9f));
+        io.github.soundgoodizerfan.feedback.core.Later.in(13, () -> {
+            level.playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_ARMED.get(), SoundSource.PLAYERS, 0.9f, 1f);
+            level.playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_HEAT_TICK.get(), SoundSource.PLAYERS, 0.8f, 1.2f);
+        });
+        io.github.soundgoodizerfan.feedback.core.Later.in(VENT_TICKS, () -> {
+            VENTING.remove(player.getUUID());
+            long now = level.getGameTime();
+            ModularElectricGun.setHot(gun, false);
+            ModularElectricGun.setHeat(gun, ModularElectricGun.heat(gun, now, spec.shed()) * ModularTuning.EGUN_CORE_VENT_KEEP, now);
+        });
+    }
+
+    @Override
+    public boolean canPump(ItemStack gun) {
+        ElectricGunSpec spec = ModularElectricGun.specOf(gun);
+        return spec != null && spec.pump() && !(spec.seat() == Seat.CORE_BREECH && ModularElectricGun.hot(gun))
+                && ModularElectricGun.pumps(gun) < ModularTuning.EGUN_PUMP_MAX;
+    }
+
+    /** A pump: two widen and strengthen the next shot, the third arms a blast for it; more do nothing. */
+    @Override
+    public void pumpKey(ServerLevel level, Player player, ItemStack gun) {
+        if (!canPump(gun))
             return;
         int pumps = ModularElectricGun.pumps(gun);
-        long now = level.getGameTime();
-        if (pumps >= ModularTuning.EGUN_PUMP_MAX) {
-            ModularElectricGun.setPumps(gun, 0);
-            player.hurt(player.damageSources().lightningBolt(), ModularTuning.EGUN_PUMP_BURST_DAMAGE);
-            ModularElectricGun.setHeat(gun, Math.min(1f, ModularElectricGun.heat(gun, now, spec.shed()) + 0.3f), now);
-            level.sendParticles(ParticleTypes.ELECTRIC_SPARK, player.getX(), player.getEyeY(), player.getZ(), 20, 0.3, 0.3, 0.3, 0.4);
-            level.playSound(null, player.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 0.5f, 1.8f);
-            return;
-        }
         ModularElectricGun.setPumps(gun, pumps + 1);
-        level.playSound(null, player.blockPosition(), SoundEvents.PISTON_EXTEND, SoundSource.PLAYERS, 0.5f, 1.2f + 0.2f * pumps);
+        boolean armed = pumps + 1 >= ModularTuning.EGUN_PUMP_MAX;
+        // The click lands as the slider runs home, which is where the client's stroke ends.
+        var at = player.blockPosition();
+        io.github.soundgoodizerfan.feedback.core.Later.in(ModularTuning.EGUN_PUMP_SOUND_TICKS, () -> level.playSound(null, at, armed ? io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_ARMED.get() : io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_PUMP.get(), SoundSource.PLAYERS,
+                armed ? 1f : 0.9f, 0.96f + level.random.nextFloat() * 0.08f));
+    }
+
+    /** The armed shot: no pulse, a blast on the wielder that hurts everything near, the wielder too. */
+    private static void pumpBlast(ServerLevel level, LivingEntity shooter) {
+        float r = ModularTuning.EGUN_PUMP_BLAST_RADIUS;
+        for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, shooter.getBoundingBox().inflate(r),
+                e -> e != shooter && e.isAlive() && e.distanceToSqr(shooter) <= r * r))
+            e.hurt(level.damageSources().explosion(shooter, shooter), ModularTuning.EGUN_PUMP_BLAST_DAMAGE);
+        shooter.hurt(level.damageSources().explosion(shooter, shooter), ModularTuning.EGUN_PUMP_BLAST_SELF);
+        level.sendParticles(ParticleTypes.EXPLOSION, shooter.getX(), shooter.getY(0.5), shooter.getZ(), 1, 0, 0, 0, 0);
+        level.playSound(null, shooter.blockPosition(), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.PLAYERS, 1f, 1.2f);
     }
 
     @Override
@@ -338,9 +416,9 @@ public final class ElectricMechanism implements GunMechanism {
         float jitter = 0.95f + random.nextFloat() * 0.1f;
         float volume = ModularTuning.EGUN_VOLUME * figures.report() * 2f;
         if (spec == null)
-            return List.of(new GunSound.Layer(SoundEvents.FIREWORK_ROCKET_BLAST, volume, jitter));
-        SoundEvent crack = SoundEvents.FIREWORK_ROCKET_BLAST;
-        float pitch = 1.5f - 0.1f * spec.tier();
+            return List.of(new GunSound.Layer(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_SHOT.get(), volume, jitter));
+        SoundEvent crack = io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_SHOT.get();
+        float pitch = 1.1f - 0.06f * spec.tier();
         return switch (spec.seat()) {
             case CAPACITOR_BANK -> List.of(new GunSound.Layer(SoundEvents.LIGHTNING_BOLT_IMPACT, volume * 0.8f, 1.6f * jitter),
                     new GunSound.Layer(crack, volume, 0.7f * jitter));

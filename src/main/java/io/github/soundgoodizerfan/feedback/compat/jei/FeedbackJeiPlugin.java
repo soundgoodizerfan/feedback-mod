@@ -180,6 +180,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         io.github.soundgoodizerfan.feedback.registry.FormItems.all().stream()
                 .filter(g -> g.form().equals("crystal_plate") && g.block() == null)
                 .forEach(g -> registration.registerSubtypeInterpreter(g.item().get(), cut));
+        registration.registerSubtypeInterpreter(FModular.HAFTED_TOOL.get(), component(FModular.DESIGN.get()));
         registration.registerSubtypeInterpreter(FItems.TRACE_BOARD.get(), component(io.github.soundgoodizerfan.feedback.registry.FDataComponents.BOARD.get()));
         registration.registerSubtypeInterpreter(FItems.CIRCUIT.get(), component(io.github.soundgoodizerfan.feedback.registry.FDataComponents.CIRCUIT.get()));
     }
@@ -312,7 +313,6 @@ public class FeedbackJeiPlugin implements IModPlugin {
         registration.addIngredientInfo(FItems.SAW_HEAD.get(), Component.translatable("feedback.jei.info.saw_head"));
         registration.addIngredientInfo(FItems.PLASMA_HEAD.get(), Component.translatable("feedback.jei.info.plasma_head"));
         registration.addIngredientInfo(FItems.DATA_STICK.get(), Component.translatable("feedback.jei.info.data_stick"));
-        registration.addIngredientInfo(FModular.LARGE_BOILER.get(), Component.translatable("feedback.jei.info.large_boiler"));
         registration.addIngredientInfo(FItems.ARC_ELECTRODE.get(), Component.translatable("feedback.jei.info.arc_electrode"));
         registration.addIngredientInfo(FItems.ELECTROLYTIC_CELL.get(), Component.translatable("feedback.jei.info.electrolytic_cell"));
         registration.addIngredientInfo(FModular.HAFTED_TOOL.get(), Component.translatable("feedback.jei.info.hafted_tool"));
@@ -547,7 +547,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         // A dip is drawn from any vessel's tank (MoltenVessel); a mix is kept only by a crucible.
         registration.addRecipeCatalysts(MixtureCategory.TYPE, io.github.soundgoodizerfan.feedback.registry.FWeapons.MIXER_ITEM.get(), io.github.soundgoodizerfan.feedback.registry.FWeapons.RELOADING_PRESS_ITEM.get(),
                 FItems.SMALL_CRUCIBLE.get(), FItems.LARGE_CRUCIBLE.get(), FItems.ARC_HEARTH.get());
-        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FModular.BOILER.get(), FModular.LARGE_BOILER.get(), FItems.CONDENSER.get(), FItems.REBOILER.get());
+        registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FModular.BOILER.get(), FItems.CONDENSER.get(), FItems.REBOILER.get());
         registration.addRecipeCatalysts(ThermalProcessCategory.TYPE, FItems.ELECTROLYSER.get());
         registration.addRecipeCatalysts(CircuitChainCategory.TYPE, FItems.CIRCUIT.get());
         registration.addRecipeCatalysts(SolderingCategory.TYPE, FItems.SOLDERING_IRON.get(), FItems.REFLOW_OVEN.get());
@@ -563,6 +563,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         publishedRemoval = null;
         publishedThermal = null;
         partsListed = false;
+        toolsListed = false;
         // Our vessels are the only things left that can run these; vanilla's own built-in
         // categories now describe blocks that are permanently inert (§4f).
         IRecipeManager recipes = jeiRuntime.getRecipeManager();
@@ -597,11 +598,13 @@ public class FeedbackJeiPlugin implements IModPlugin {
             show(FuelCategory.TYPE, FuelCategory.cards(materials));
             show(PotionShapeCategory.TYPE, PotionShapeCategory.cards(materials));
             showPartIngredients(materials);
+            showTemplateTools(materials);
             publishExamples();
             publishPress();
             publishModular();
         });
         io.github.soundgoodizerfan.feedback.modular.ModularTypes.onChanged(() -> {
+            showTemplateTools(io.github.soundgoodizerfan.feedback.process.ClientMaterials.get());
             publishExamples();
             publishModular();
         });
@@ -615,6 +618,34 @@ public class FeedbackJeiPlugin implements IModPlugin {
     }
 
     private static boolean partsListed;
+    private static boolean toolsListed;
+
+    /**
+     * One wrought iron tool per single-headed face (pickaxe, axe, shovel...), at the face's default haft (its own rod count), added to the
+     * ingredient list so the browser shows what a plain hafted tool is; a lookup lands on the Tools card. Parts a face cannot take in wrought
+     * iron fall back to the type's default material.
+     */
+    private static void showTemplateTools(Map<ResourceLocation, io.github.soundgoodizerfan.feedback.process.Material> materials) {
+        if (runtime == null || toolsListed)
+            return;
+        var types = io.github.soundgoodizerfan.feedback.modular.ModularTypes.known();
+        if (types.isEmpty())
+            return;
+        ResourceLocation iron = ResourceLocation.fromNamespaceAndPath("feedback", "wrought_iron");
+        List<ItemStack> tools = new ArrayList<>();
+        types.forEach((id, type) -> {
+            if (!type.face())
+                return;
+            io.github.soundgoodizerfan.feedback.modular.ToolDesigns.specimen(id, iron, types, materials)
+                    .map(d -> io.github.soundgoodizerfan.feedback.modular.ModularFaces.toPlan(d, type))
+                    .flatMap(d -> io.github.soundgoodizerfan.feedback.modular.ToolDesigns.build(d, types, materials))
+                    .ifPresent(tools::add);
+        });
+        if (tools.isEmpty())
+            return;
+        toolsListed = true;
+        runtime.getIngredientManager().addIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK, tools);
+    }
 
     /**
      * The shaped parts (receiver, barrel, heads...) are in no creative tab -- they mean nothing without
@@ -640,6 +671,31 @@ public class FeedbackJeiPlugin implements IModPlugin {
             return s;
         }).toList();
         runtime.getIngredientManager().addIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK, parts);
+        runtime.getIngredientManager().addIngredientsAtRuntime(mezz.jei.api.constants.VanillaTypes.ITEM_STACK, slotParts(stock.get().getKey()));
+    }
+
+    /** A composed part once per material of each slot after its first, so every slot material is findable in the ingredient list. */
+    private static List<ItemStack> slotParts(net.minecraft.resources.ResourceLocation main) {
+        List<ItemStack> out = new java.util.ArrayList<>();
+        java.util.Set<String> seen = new java.util.HashSet<>();
+        for (io.github.soundgoodizerfan.feedback.modular.ModularType t : io.github.soundgoodizerfan.feedback.modular.ModularTypes.known().values())
+            for (io.github.soundgoodizerfan.feedback.modular.ModularType.Role r : t.roles().values()) {
+                if (r.part().isEmpty() || r.part().get().choices().isEmpty() || !seen.add(r.part().get().item().toString()))
+                    continue;
+                io.github.soundgoodizerfan.feedback.modular.ModularType.Shaping sh = r.part().get();
+                net.minecraft.world.item.Item item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(sh.item());
+                for (io.github.soundgoodizerfan.feedback.modular.ModularType.PartSlot slot : sh.choices())
+                    for (io.github.soundgoodizerfan.feedback.process.Material.Located l : io.github.soundgoodizerfan.feedback.modular.ToolDesigns
+                            .slotMaterials(slot, sh, io.github.soundgoodizerfan.feedback.process.ClientMaterials.get())) {
+                        ItemStack s = new ItemStack(item);
+                        s.set(io.github.soundgoodizerfan.feedback.registry.FDataComponents.MADE_OF.get(),
+                                new io.github.soundgoodizerfan.feedback.process.MadeOf(main, "ingot", (int) Math.ceil(sh.cells()))
+                                        .withMeasures(io.github.soundgoodizerfan.feedback.process.Measures.NONE.withSlots(java.util.Map.of(slot.name(),
+                                                new io.github.soundgoodizerfan.feedback.process.Measures.Slot(l.id(), l.form())))));
+                        out.add(s);
+                    }
+            }
+        return out;
     }
 
     /** What each category last showed, so a fresh table replaces it rather than doubling it. */
@@ -675,6 +731,7 @@ public class FeedbackJeiPlugin implements IModPlugin {
         publishedPress = null;
         shown.clear();
         partsListed = false;
+        toolsListed = false;
     }
 
     private static void publish() {

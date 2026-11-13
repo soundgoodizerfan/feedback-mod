@@ -59,7 +59,7 @@ With a second hook fitted, using the grapple while a line is out throws the seco
 
 The line also lets go if it parts, if it has been out for ten seconds, or if either end is gone.
 
-A [Tether](Combat.md#tethers) holds the body on the line, and a creature held that way takes extra damage as with a harpoon.
+A [Tether](Combat.md#tethers) holds the body on the line, and a creature held that way takes extra damage as with a barbed spear.
 
 ## What the hook bites into
 

@@ -57,6 +57,8 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Feedback.MOD_ID)
 public final class GunShots {
 
+    private static int NEXT_ID = 1;
+
     private static final class Shot {
         final LivingEntity shooter;
         Vec3 pos;
@@ -66,6 +68,8 @@ public final class GunShots {
         int age;
         /** Entities this shot has already gone through, so it is not counted on one twice. */
         final java.util.Set<Integer> pierced = new java.util.HashSet<>();
+        /** Players who have already heard this bullet go by. */
+        final java.util.Set<java.util.UUID> whizzed = new java.util.HashSet<>();
         /** A luminous payload: the path is drawn bright. */
         boolean tracer;
         /** A flammable payload: what it hits is set alight. */
@@ -91,6 +95,12 @@ public final class GunShots {
         /** Barrel attunements read at fire time: signed bend toward (+) or away (-) from heavy armour (Lode); keeps speed in water (Tide). */
         int bend;
         boolean keepsSpeedWet;
+        /** The streak the clients fly for this shot ({@code GunTracerPayload}). */
+        final int id = NEXT_ID++;
+        int argb;
+        float dragMult = 1f;
+        /** Where the shot ended, for the streak to stop on. */
+        Vec3 stopAt;
 
         Shot(LivingEntity shooter, Vec3 pos, Vec3 velocity, GunFigures figures) {
             this.shooter = shooter;
@@ -280,6 +290,8 @@ public final class GunShots {
         GunSpec design = GunSpec.of(gun).orElse(null);
         if (design == null || GunHazard.isSpent(gun))
             return false;
+        if (inStroke(shooter, gun, nowMs))
+            return false;
         reloadStop(shooter); // a pull ends a reload where it is
         var next = GunAmmo.next(gun);
         if (next.isEmpty())
@@ -438,7 +450,7 @@ public final class GunShots {
             if (shooter instanceof Player player)
                 io.github.soundgoodizerfan.feedback.net.AimPayloads.cue(player, io.github.soundgoodizerfan.feedback.net.AimPayloads.GUN, net.minecraft.network.chat.Component.translatable("message.feedback.gun.chain_fire"), 50);
             level.playSound(null, shooter.getX(), shooter.getEyeY(), shooter.getZ(),
-                    net.minecraft.sounds.SoundEvents.GENERIC_EXPLODE.value(), net.minecraft.sounds.SoundSource.PLAYERS, 0.4f, 1.8f);
+                    io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_COOK_OFF.get(), net.minecraft.sounds.SoundSource.PLAYERS, 0.8f, 0.9f + level.random.nextFloat() * 0.2f);
             shooter.hurt(level.damageSources().explosion(null, null), GunHazard.cookOffHp(ahead.charge(), noise));
             return;
         }
@@ -472,10 +484,28 @@ public final class GunShots {
     }
 
     /** A reload in progress: which gun, in which slot, and when its next beat is due. */
-    private record Reload(ItemStack gun, InteractionHand hand, int slot, boolean byRound, long dueMs) {
+    private record Reload(ItemStack gun, InteractionHand hand, int slot, boolean byRound, long dueMs, long stepMs) {
     }
 
     private static final Map<UUID, Reload> RELOADS = new HashMap<>();
+
+    /** A cylinder's loading stroke: the gun cannot fire until it ends, however many rounds are already in. */
+    private record Stroke(ItemStack gun, long untilMs) {
+    }
+
+    private static final Map<UUID, Stroke> STROKES = new HashMap<>();
+
+    /** Whether {@code gun} is mid loading stroke in {@code player}'s hands (a revolver with its cylinder open and the free hand at work). */
+    private static boolean inStroke(Player player, ItemStack gun, long nowMs) {
+        Stroke s = STROKES.get(player.getUUID());
+        if (s == null)
+            return false;
+        if (nowMs >= s.untilMs()) {
+            STROKES.remove(player.getUUID());
+            return false;
+        }
+        return s.gun() == gun;
+    }
 
     /**
      * R went down on the held gun: a reload starts, and it lasts only while R is held (the
@@ -525,11 +555,9 @@ public final class GunShots {
         return pick;
     }
 
-    /** How long one beat of {@code gun}'s reload takes now: a round, or a magazine swap, scaled for two guns. */
-    private static long beatMs(Player player, ItemStack gun) {
-        GunSpec spec = GunSpec.of(gun).orElse(null);
-        long base = spec == null ? FTuning.GUN_RELOAD_ROUND_MS : spec.internalCapacity().isPresent() ? GunAmmo.roundMs(spec) : GunAmmo.reloadMs(gun);
-        long ms = io.github.soundgoodizerfan.feedback.core.Haste.time(Math.round(base * reloadScale(player)), player);
+    /** {@code baseMs} of reload as this player does it: scaled by their skills and Haste, and cut to what a roll has left (Spent-Case Draw). */
+    private static long scaled(Player player, long baseMs) {
+        long ms = io.github.soundgoodizerfan.feedback.core.Haste.time(Math.round(baseMs * reloadScale(player)), player);
         // Spent-Case Draw: reloading mid-roll, the roll's own remaining time is the beat if that is shorter.
         var phase = io.github.soundgoodizerfan.feedback.combat.state.CombatState.of(player);
         if ((phase.phase() == io.github.soundgoodizerfan.feedback.combat.state.CombatPhase.ROLL
@@ -537,6 +565,37 @@ public final class GunShots {
                 && io.github.soundgoodizerfan.feedback.combat.skill.Skills.unlocked(player, "gun_fu_spent_case_draw"))
             ms = Math.min(ms, (phase.ticksLeft() + (phase.phase() == io.github.soundgoodizerfan.feedback.combat.state.CombatPhase.ROLL ? phase.then() : 0)) * 50L);
         return ms;
+    }
+
+    /** Whether {@code gun}'s rounds go in one at a time, each as the free hand seats it (a tube, a cylinder). */
+    private static boolean oneAtATime(GunSpec spec) {
+        return spec != null && (spec.layout().feed() == GunLayout.Feed.TUBE || spec.layout().feed() == GunLayout.Feed.CYLINDER);
+    }
+
+    /**
+     * A cylinder is loaded in the stroke the client draws: the cylinder opens, the hand takes every round, and each goes in at the middle of its
+     * slot of the loading window (0.22 to 0.8 of the reload, the first fifth of it spent fetching, the last tenth leaving).
+     * Returns {first round's delay, gap between rounds, the whole stroke}; null for a gun that does not load this way.
+     */
+    private static long[] cylinderBeats(Player player, ItemStack gun) {
+        GunSpec spec = GunSpec.of(gun).orElse(null);
+        if (spec == null || spec.layout().feed() != GunLayout.Feed.CYLINDER)
+            return null;
+        int n = GunAmmo.loadable(player.getInventory(), gun, spec).size();
+        if (n <= 0)
+            return null;
+        long total = scaled(player, GunAmmo.roundMs(spec) * n);
+        return new long[]{Math.round(total * (0.22 + 0.58 * (0.2 + 0.7 * 0.5 / n))), Math.max(1, Math.round(total * 0.58 * 0.7 / n)), total};
+    }
+
+    /** How long one beat of {@code gun}'s reload takes now: a round, a magazine swap, or (barrels, a single chamber) the whole stroke. */
+    private static long beatMs(Player player, ItemStack gun) {
+        GunSpec spec = GunSpec.of(gun).orElse(null);
+        // A tube is thumbed a round a beat; barrels or a single chamber are loaded and shut in one stroke.
+        long base = spec == null ? FTuning.GUN_RELOAD_ROUND_MS : spec.internalCapacity().isPresent()
+                ? GunAmmo.roundMs(spec) * (spec.layout().feed() == GunLayout.Feed.TUBE ? 1 : Math.max(1, GunAmmo.loadable(player.getInventory(), gun, spec).size()))
+                : GunAmmo.reloadMs(gun);
+        return scaled(player, base);
     }
 
     /** Start a reload of whichever held gun needs it most; it carries on to the other while R is held. */
@@ -550,14 +609,19 @@ public final class GunShots {
         boolean byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
         // A gun still cycling from its last shot cannot be reloaded until it could fire again.
         long ready = Math.max(nowMs, NEXT_OK.getOrDefault(new HandKey(player.getUUID(), hand == InteractionHand.OFF_HAND), 0L));
-        RELOADS.put(player.getUUID(), new Reload(gun, hand, player.getInventory().selected, byRound, ready + beatMs(player, gun)));
+        long[] cyl = cylinderBeats(player, gun);
+        if (cyl != null)
+            STROKES.put(player.getUUID(), new Stroke(gun, nowMs + cyl[2]));
+        RELOADS.put(player.getUUID(), new Reload(gun, hand, player.getInventory().selected, byRound, ready + (cyl != null ? cyl[0] : beatMs(player, gun)),
+                cyl != null ? cyl[1] : 0L));
         player.level().playSound(player, player.getX(), player.getEyeY(), player.getZ(),
-                net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.6f, 1.4f);
+                io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_RELOAD_START.get(), SoundSource.PLAYERS, 0.6f, 1f);
     }
 
     /** R let go: a round-by-round reload stops with what is in, a magazine swap does not happen. */
     public static void reloadStop(Player player) {
         RELOADS.remove(player.getUUID());
+        STROKES.remove(player.getUUID());
     }
 
     /** Whether {@code player} is reloading now. */
@@ -573,24 +637,27 @@ public final class GunShots {
         // Put away, or another thing in hand: the reload ends where it is.
         if (player.getInventory().selected != r.slot() || player.getItemInHand(r.hand()) != r.gun()) {
             RELOADS.remove(player.getUUID());
+            STROKES.remove(player.getUUID());
             return;
         }
         long due = r.dueMs();
         ItemStack gun = r.gun();
         InteractionHand hand = r.hand();
         boolean byRound = r.byRound();
+        long step = r.stepMs();
         while (nowMs >= due) {
             GunSpec design = GunSpec.of(gun).orElse(null);
             if (design == null)
                 break;
             if (!byRound) {
                 swapMagazine(player, gun, design);
-            } else if (GunAmmo.loadLoose(player.getInventory(), gun, design, 1) == 0) {
+            } else if (GunAmmo.loadLoose(player.getInventory(), gun, design, oneAtATime(design) ? 1 : Integer.MAX_VALUE) == 0) {
                 RELOADS.remove(player.getUUID());
+                STROKES.remove(player.getUUID());
                 return;
             } else {
                 player.level().playSound(null, player.getX(), player.getEyeY(), player.getZ(),
-                        net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_CHAIN.value(), SoundSource.PLAYERS, 0.5f, 1.6f);
+                        io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_RELOAD_ROUND.get(), SoundSource.PLAYERS, 0.6f, 0.95f + player.getRandom().nextFloat() * 0.1f);
             }
             ModularTraits.gunReloaded(player, gun);
             // Whichever gun is now emptiest gets the next beat; nothing left to fill ends the reload.
@@ -601,9 +668,11 @@ public final class GunShots {
             }
             gun = player.getItemInHand(hand);
             byRound = GunSpec.of(gun).map(d -> d.internalCapacity().isPresent()).orElse(true);
-            due += beatMs(player, gun);
+            long[] cyl = cylinderBeats(player, gun);
+            step = cyl != null ? cyl[1] : 0L;
+            due += cyl != null ? cyl[1] : beatMs(player, gun);
         }
-        RELOADS.put(player.getUUID(), new Reload(gun, hand, r.slot(), byRound, due));
+        RELOADS.put(player.getUUID(), new Reload(gun, hand, r.slot(), byRound, due, step));
     }
 
     /** A gun knocked or dropped from a hand is baked afresh as it is picked up, so it never comes back stale or unseen. */
@@ -666,7 +735,7 @@ public final class GunShots {
         GunAmmo.feed(gun); // a magazine put in under an empty chamber chambers its top round
         inventory.setItem(best, outgoing);
         player.level().playSound(null, player.getX(), player.getEyeY(), player.getZ(),
-                net.minecraft.sounds.SoundEvents.IRON_TRAPDOOR_CLOSE, SoundSource.PLAYERS, 0.6f, 1.4f);
+                io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_RELOAD_MAGAZINE.get(), SoundSource.PLAYERS, 0.7f, 1f);
     }
 
     /**
@@ -741,6 +810,9 @@ public final class GunShots {
             shot.flight = flight;
             shot.bend = bend;
             shot.keepsSpeedWet = wet;
+            shot.argb = incendiary ? 0xFFFF8A2A : tracer ? 0xFFFFD27A : 0x70FFF0C8;
+            shot.dragMult = flight.drag();
+            io.github.soundgoodizerfan.feedback.net.GunTracerPayload.send(level, shot.id, false, shot.pos, shot.velocity, shot.argb, shot.dragMult);
             LIVE.computeIfAbsent(level, l -> new ArrayList<>()).add(shot);
         }
 
@@ -758,6 +830,16 @@ public final class GunShots {
         // The burning gas shows as smoke at the muzzle.
         level.sendParticles(mechanism != null ? mechanism.muzzleParticle(gun, f) : f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z,
                 3, 0.02, 0.02, 0.02, 0.01);
+        if (mechanism instanceof FirearmMechanism)
+            GunImpacts.muzzle(level, muzzle, shooter.getLookAngle(), Math.min(1f, f.report()), ejectsCase(gun));
+    }
+
+    /** A gun that works its action by the shot throws its case out: not a break action or a flintlock. */
+    private static boolean ejectsCase(ItemStack gun) {
+        return GunSpec.of(gun).map(g -> {
+            GunLayout.Action a = g.layout().action();
+            return a != GunLayout.Action.BREAK && a != GunLayout.Action.FLINTLOCK;
+        }).orElse(false);
     }
 
     @SubscribeEvent
@@ -768,8 +850,11 @@ public final class GunShots {
         if (shots == null)
             return;
         for (Iterator<Shot> it = shots.iterator(); it.hasNext(); ) {
-            if (!step(level, it.next()))
+            Shot s = it.next();
+            if (!step(level, s)) {
+                io.github.soundgoodizerfan.feedback.net.GunTracerPayload.send(level, s.id, true, s.stopAt != null ? s.stopAt : s.pos, s.velocity, s.argb, s.dragMult);
                 it.remove();
+            }
         }
         if (shots.isEmpty())
             LIVE.remove(level);
@@ -781,6 +866,7 @@ public final class GunShots {
         NEXT_OK.clear();
         LAST_SHOT.clear();
         RELOADS.clear();
+        STROKES.clear();
     }
 
     private static final Map<net.minecraft.world.level.block.Block, Float> TOUGHNESS = new HashMap<>();
@@ -1149,6 +1235,9 @@ public final class GunShots {
                 creeper.ignite();
             GunFu.bulletHit(level, s.shooter, target, s.impulse);
             landed(level, s, target, hit.getLocation());
+            s.stopAt = hit.getLocation();
+            GunImpacts.body(level, s.shooter, target, hit.getLocation(), s.velocity, damage,
+                    target instanceof LivingEntity dead && dead.isDeadOrDying());
             if (detonate(level, s, hit.getLocation()))
                 return false;
             if (damage <= health || !s.spend(health / (FTuning.GUN_DAMAGE_PER_WORK * s.flight.damage())))
@@ -1179,11 +1268,15 @@ public final class GunShots {
                 s.velocity = s.velocity.subtract(normal.scale(2 * s.velocity.dot(normal)));
                 s.pos = p.add(normal.scale(0.05));
                 s.bounces++;
-                level.sendParticles(ParticleTypes.CRIT, p.x, p.y, p.z, 4, 0.05, 0.05, 0.05, 0.2);
+                level.playSound(null, p.x, p.y, p.z, io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_RICOCHET.get(), SoundSource.PLAYERS, 0.8f, 0.85f + level.random.nextFloat() * 0.3f);
+                GunImpacts.ricochet(level, p, s.velocity);
+                io.github.soundgoodizerfan.feedback.net.GunTracerPayload.send(level, s.id, false, s.pos, s.velocity, s.argb, s.dragMult);
                 return true;
             }
-            level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(at)),
-                    p.x, p.y, p.z, 6, 0.05, 0.05, 0.05, 0.1);
+            s.stopAt = p;
+            GunImpacts.block(level, at, block.getDirection(), p, (float) Math.sqrt(Math.min(1f, s.energy() / s.muzzleEnergy)));
+            // The surface answers in its own voice: stone, wood, glass, dirt.
+            level.playSound(null, p.x, p.y, p.z, level.getBlockState(at).getSoundType().getHitSound(), SoundSource.BLOCKS, 0.7f, 0.7f);
             landed(level, s, null, p);
             payloadHit(level, s, p, null, at, block.getDirection());
             if (s.incendiary)
@@ -1201,20 +1294,31 @@ public final class GunShots {
             return false;
         }
 
-        // A tracer: a few points along the tick's travel, so a bullet can be seen going.
-        // An ordinary round leaves a faint glint; a luminous payload draws a bright line.
-        Vec3 d = to.subtract(from);
-        int samples = s.tracer ? 10 : 4;
-        for (int k = 1; k <= samples; k++) {
-            Vec3 q = from.add(d.scale(k / (double) samples));
-            level.sendParticles(s.tracer ? ParticleTypes.END_ROD : ParticleTypes.CRIT, q.x, q.y, q.z, 1, 0, 0, 0, 0);
-        }
-
+        // The streak is drawn by the clients from the shot's tracer message; no particles here.
         // Still flying: drag in the medium it ends the tick in, then gravity.
         boolean inFluid = !level.getFluidState(BlockPos.containing(to)).isEmpty();
         float drag = inFluid && !s.keepsSpeedWet ? FTuning.GUN_FLUID_DRAG_PER_TICK : FTuning.GUN_DRAG_PER_TICK * s.flight.drag();
         s.velocity = s.velocity.scale(1 - drag).add(0, -FTuning.GUN_GRAVITY_PER_TICK, 0);
+        whiz(level, s, from, to);
         s.pos = to;
         return true;
+    }
+
+    /** A bullet passing within a few blocks of a player who did not fire it is heard once, as it goes by. */
+    private static void whiz(ServerLevel level, Shot s, Vec3 from, Vec3 to) {
+        Vec3 seg = to.subtract(from);
+        double len2 = seg.lengthSqr();
+        if (len2 < 1e-6)
+            return;
+        for (Player pl : level.players()) {
+            if (pl == s.shooter || s.whizzed.contains(pl.getUUID()))
+                continue;
+            double t = Mth.clamp(pl.getEyePosition().subtract(from).dot(seg) / len2, 0, 1);
+            Vec3 near = from.add(seg.scale(t));
+            if (near.distanceToSqr(pl.getEyePosition()) > 9)
+                continue;
+            s.whizzed.add(pl.getUUID());
+            level.playSound(null, near.x, near.y, near.z, io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_WHIZ.get(), SoundSource.PLAYERS, 1f, 0.9f + level.random.nextFloat() * 0.3f);
+        }
     }
 }

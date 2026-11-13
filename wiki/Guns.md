@@ -6,7 +6,7 @@ A gun burns powder in a chamber and throws a projectile with the gas. The barrel
 
 ## What it looks like
 
-A gun is drawn from its parts, each in its own metal's or wood's color. The barrel shows at the length and thickness it was drilled to, the stock and forend take the grip's material, and every fitting appears where it mounts: a suppressor or brake on the muzzle, a tube under the barrel, a scope or reflex sight on top, a bipod, a bayonet. Wooden parts are drawn in the bark of their wood, softened, metal parts are brushed or plated, and plastic ones are smooth. A hot barrel glows, dull red through orange to yellow as it heats, and lights itself in the dark. A long gun or machine gun is held in both hands. In first person your own arms are drawn on the gun: the grip hand always, the support hand when the other hand is empty. The client setting **gunArms** (in the mod's client config) switches the arms off. A scope is an open tube: you see straight down it, with no lens in the way.
+A gun is drawn from its parts, each in its own metal's or wood's color. The barrel shows at the length and thickness it was drilled to, the stock and forend take the grip's material, and every fitting appears where it mounts: a suppressor or brake on the muzzle, a tube under the barrel, a scope or reflex sight on top, a bipod, a bayonet. Wooden parts are drawn in the bark of their wood, softened, metal parts are brushed or plated, and plastic ones are smooth. A hot barrel glows, dull red through orange to yellow as it heats, and lights itself in the dark. A long gun or machine gun shows its grip behind the trigger. A fixed stock starts right behind a pistol, finger-groove or palm-swell grip, which serves as its wrist, and keeps its own wrist behind a straight grip. A long gun or machine gun is held in both hands. In first person your own arms are drawn on the gun: the grip hand always, the support hand when the other hand is empty. The hands work the gun: the grip hand leaves the grip to run a bolt or lever, and the support hand rides a pumped forend, pushes a break action's barrels down, swings out a cylinder, lifts a machine gun's belt cover and pulls and seats magazines. Handguns take their second hand too, if it is empty: it comes in to load a revolver a round at a time (the cylinder turns to each empty chamber and the rounds show standing in it), push a top-break's barrel down, change a pistol's magazine, or slap a fanned revolver's hammer on every shot. The client setting **gunArms** (in the mod's client config) switches the arms off. A scope is an open tube: you see straight down it, with no lens in the way.
 
 In your hands it moves: it kicks back and up on each shot (barely at all when aimed), the slide or bolt carrier snaps back and returns, and a bolt, lever or pump is worked between shots. An empty self-loading gun stays open, for you and for anyone looking at it. Reloading tips the gun over: a magazine drops out and a fresh one goes in, a revolver's cylinder swings out, a break action hinges open, a tube is thumbed full round by round. The gun lags a little behind fast turns, dips when you land, and lowers while you sprint.
 
@@ -32,6 +32,8 @@ A gun has one **variant**, told by the **receiver**: its frame, which is only a 
 | **Machine gun** | 3 | A heavy frame and an open bolt, built for sustained fire. |
 
 A **stock** is its own part, on any frame, and changes what a gun is like to hold. A **fixed** stock (two cells) kicks 30% less and groups 40% tighter when braced, a **skeleton** one (one cell) 20% and 25%, a **folding** one (one cell) 15% each. A gun with none has no braced bonus and, being a long gun, is a long handgun: hard on your hands (see Strain under Recoil). A stock is cut from a plate or from planks.
+
+A **foregrip** is a hold for the off hand under the forend of a long gun or machine gun, shaped from a turned grip in any metal, wood or polymer. It works standing or crouched and stacks with a stock. A **vertical** post (one cell) kicks 15% less and groups 20% tighter, an **angled** one (two cells) 10% and 25%, a **folding** one (two cells) 10% and 12%, a **hand stop** (one cell) 5% and 10%. A handgun frame takes none.
 
 What the gun is called (rifle or shotgun, pistol or revolver) follows from the other parts, see [Names](#names).
 
@@ -61,7 +63,7 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 | Double barrel | a second barrel | crouched, a pull fires both barrels at once for one recoil |
 | Select fire | an automatic action | semi, burst or full auto, switched in hand |
 | Manual cycle | bolt, lever, pump, break, flintlock | the shooter brings the next round up: the action's time between shots |
-| Lockup | bolt, lever, break | how firmly the breech is held shut: a bolt rates the chamber 25% above the barrel's own strength and groups tighter, a lever 25% below, a break action 40% below. Pump and self-loading actions hold the barrel's own rating |
+| Lockup | bolt, lever, break, single action, double action | how firmly the breech is held shut: a bolt rates the chamber 25% above the barrel's own strength and groups tighter, a lever 25% below, a break action 40% below, a single action holds the barrel's own rating and groups 15% tighter, a double action 10% below and 20% looser. Pump and self-loading actions hold the barrel's own rating |
 | Blowback | a slide | only the bolt's mass holds the breech: a round above 3.6 Pu kicks harder and wears the bore faster |
 | Gas operated | a bolt-type self-loading or automatic action | a quicker cycle that pressure does not hurt, paid in heat and mass |
 | Tube chain-fire | a lever with a tube | rounds in the tube lie nose to primer, and the recoil of each shot drives a bullet onto the primer ahead of it: behind a **pointed** bullet, the round in front goes off inside the tube, hurting you and the gun. Round, flat-nosed and hollow-point bullets never do it |
@@ -69,6 +71,7 @@ Everything else is a **trait**, read from the parts, and a gun has as many as it
 | Open bolt | a machine gun frame | nothing in the chamber to cook off; the first shot after a pause sprays wider |
 | Belt fed | a belt feed | a long reload |
 | Braced | a stock | crouched and still, less kick and tighter spread |
+| Foregrip | a foregrip | less kick and tighter spread, standing or crouched |
 
 
 ### Names
@@ -92,7 +95,7 @@ All of these keys can be rebound under the *Feedback* category in Controls.
 
 - A **magazine** gun swaps in the fullest magazine of the right size from your inventory once R has been held for the whole **1.4 s**. Let go early and nothing changes.
 - A gun cannot be reloaded until it could fire again: a reload held down during the cycle waits for the cycle to finish.
-- A gun with its **own feed** (cylinder, tube, barrels) loads one loose round every **0.45 s** while R is down (a break action's barrels take a round every **0.2 s**, being fed together), and keeps whatever is in when you let go.
+- A gun with a **tube** loads one loose round every **0.45 s** while R is down, and keeps whatever is in when you let go. A **cylinder** is loaded a round at a time, each counting the moment your free hand seats it (0.45 s a round), and keeps whatever is in when you let go. A revolver cannot be fired while its loading stroke runs, however many rounds are already in; letting go of R ends the stroke at once. A break action's **barrels** are loaded in one stroke: every missing round goes in when the whole motion has finished (**0.5 s** a round), and nothing goes in if you let go early.
 
 Firing or putting the gun away stops a reload.
 
@@ -186,7 +189,15 @@ This is **gun-fu**, and the moves are learned in the [Brute skill tree](Skills.m
 - Bullets travel **much** slower in water.
 - A bullet that kills something **keeps going** with whatever energy it has left, and can hit whatever is behind.
 - Every shot is a **sound sculk and wardens can hear**, and how far depends on how loud the gun really is: a bare supersonic shot carries furthest (64 blocks), a muffled one less (32), and a suppressed subsonic one only a short way (8). The crack of a supersonic round is the bullet's own speed, so a suppressor alone does not hide it; pair it with a slow load. Skeletons holding guns are heard the same way.
-- Ordinary rounds leave a faint glint along their path. **Tracers** draw a bright line, and **incendiary** rounds set targets alight for 5 s and light the ground (see [Ammunition](Ammunition.md#payloads)).
+- Every bullet leaves a glowing streak behind it. **Tracers** draw it brighter and warmer, and **incendiary** rounds draw it orange and set targets alight for 5 s and light the ground (see [Ammunition](Ammunition.md#payloads)).
+
+### Hits and effects
+
+- **Living targets:** flesh sprays blood, red for most mobs, green for slimes, purple for endermen. Skeletons throw bone dust. Metal-armored bodies and iron golems throw sparks and ring with a clang.
+- **The shooter hears a tick** on every hit on a living thing and a deeper tick on a kill.
+- **Blocks:** a bullet that strikes a block throws chips, dust and smoke, plus sparks on hard stone and metal. It leaves a **bullet hole** that fades after about 30 s on solid faces; its look follows the surface: a chip in stone or metal, a splinter in wood, a crack in glass, a dent in soft earth. Leaves and non-solid faces take none. A ricochet trails sparks.
+- **Muzzle:** every firearm shows a muzzle flash and smoke. A gun that works an action (bolt, lever, pump, self-loading, automatic) also ejects its spent case; break actions and flintlocks do not.
+- The client setting **bloodEffects** (in the mod's client config) turns off blood and bone dust; sparks and sounds stay.
 
 ### Hardness: glass, glancing, armor
 

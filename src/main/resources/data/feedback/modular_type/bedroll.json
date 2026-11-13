@@ -1,8 +1,8 @@
 {
   "family": "bedroll",
-  "required": ["C", "F", "S"],
+  "required": ["C"],
   "wear_litres": 0.5,
-  "wear_role": "S",
+  "wear_role": "C",
   "primary": "C",
   "roles": {
     "C": {
@@ -18,41 +18,38 @@
         "stock": [
           "leather",
           "*_carpet"
+        ],
+        "slots": [
+          {
+            "name": "sheet",
+            "share": 2
+          },
+          {
+            "name": "fill",
+            "forms": [
+              "*"
+            ],
+            "traits": [
+              "fibrous"
+            ],
+            "share": 3
+          },
+          {
+            "name": "shell",
+            "share": 1,
+            "standard": "feedback:leather"
+          }
         ]
       }
-    },
-    "F": {
-      "name": "fill",
-      "forms": [
-        "*"
-      ],
-      "traits": [
-        "fibrous"
-      ],
-      "litres": 0.1,
-      "layer": 1,
-      "bulk": 2
-    },
-    "S": {
-      "name": "shell",
-      "forms": [
-        "leather"
-      ],
-      "litres": 0.03,
-      "layer": 2
     }
   },
   "patterns": [
     [
-      "C",
-      "F",
-      "S"
+      "C"
     ]
   ],
   "defaults": {
-    "C": "feedback:wool",
-    "F": "feedback:wool",
-    "S": "feedback:leather"
+    "C": "feedback:wool"
   },
   "vanilla": {}
 }

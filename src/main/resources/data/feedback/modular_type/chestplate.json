@@ -1,8 +1,6 @@
 {
   "family": "armour",
-  "required": [
-    "P"
-  ],
+  "required": ["P"],
   "minigame": "feedback:fitting",
   "fit_order": [
     "L",
@@ -177,35 +175,10 @@
       "name": "servo",
       "school": "robotics:1",
       "forms": [
-        "machine_winding"
+        "motor"
       ],
       "litres": 0.02,
       "layer": 5,
-      "part": {
-        "item": "feedback:machine_winding",
-        "cells": 1,
-        "stock": [
-          "wire"
-        ],
-        "base": "coarse",
-        "variants": [
-          {
-            "name": "coarse"
-          },
-          {
-            "name": "fine",
-            "cells": 2
-          },
-          {
-            "name": "dense",
-            "cells": 4
-          },
-          {
-            "name": "heavy_dense",
-            "cells": 8
-          }
-        ]
-      },
       "mount": "plate"
     },
     "G": {

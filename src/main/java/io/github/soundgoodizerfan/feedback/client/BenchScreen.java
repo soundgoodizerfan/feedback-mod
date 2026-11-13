@@ -818,7 +818,12 @@ public class BenchScreen extends SkinnedScreen<PartBenchMenu> {
         g.drawString(font, title, titleLabelX, titleLabelY, skin.ink(), false);
         g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, skin.dim(), false);
         caption(g, Component.translatable(st.toolLabel()), PartBenchMenu.HAMMER_X, PartBenchMenu.HAMMER_Y, menu.getSlot(PartBenchMenu.HAMMER).isActive());
-        caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.stock" : "gui.feedback.tool_table.stock"), PartBenchMenu.STOCK_X, PartBenchMenu.STOCK_Y, menu.getSlot(PartBenchMenu.STOCK).isActive());
+        if (st.dishes())
+            caption(g, Component.translatable("gui.feedback.prep_table.stock"), PartBenchMenu.STOCK_X, PartBenchMenu.STOCK_Y, menu.getSlot(PartBenchMenu.STOCK).isActive());
+        // A composed part takes one stock per slot after the first (the centre's), each named for what it becomes.
+        for (int i = 0; i < PartBenchMenu.MAX_EXTRA_SLOTS && !st.dishes(); i++)
+            caption(g, Component.translatable("modular.feedback.slot." + menu.extraSlotName(minecraft.level, i)), PartBenchMenu.STOCK_X,
+                    PartBenchMenu.STOCK_Y + i * (PartBenchMenu.STOCK1_Y - PartBenchMenu.STOCK_Y), menu.getSlot(PartBenchMenu.STOCK + i).isActive());
         caption(g, Component.translatable(st.dishes() ? "gui.feedback.prep_table.seasoning" : "gui.feedback.tool_table.plan"), PartBenchMenu.PLAN_X, PartBenchMenu.PLAN_Y,
                 menu.getSlot(PartBenchMenu.PLAN).isActive());
         if (menu.trim()) {

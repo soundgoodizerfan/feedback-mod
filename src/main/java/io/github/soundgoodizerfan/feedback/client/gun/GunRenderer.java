@@ -60,11 +60,20 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
                            MultiBufferSource buffers, int light) {
         long now = System.currentTimeMillis();
         float[] grip = firstPersonGrip(view), at = view.hand();
+        var parts = GunMotion.parts(view, hand, now);
         pose.pushPose();
-        // The arms, from the hand pivot: the support hand only when nothing else is held in the other hand.
+        // The arms, from the hand pivot: the support hand only when nothing else is held in the other hand. A gun-space point reaches
+        // the pivot's frame through the gun's own transform (its scale, kick and reload tilt), so the hands follow what the gun does.
         var player = Minecraft.getInstance().player;
-        if (player != null && io.github.soundgoodizerfan.feedback.client.ClientSettings.gunArms())
-            GunArms.draw(pose, buffers, light, view, side, player.getOffhandItem().isEmpty() && player.getMainHandItem() == stack);
+        if (player != null && io.github.soundgoodizerfan.feedback.client.ClientSettings.gunArms()) {
+            var gunFrame = new PoseStack();
+            gunFrame.translate(grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
+            float gk = firstPersonScale(view);
+            gunFrame.scale(gk, gk, gk);
+            gunFrame.translate(-at[0], -at[1], -at[2]);
+            GunMotion.item(gunFrame, view, hand, now);
+            GunArms.draw(pose, buffers, light, view, side, player.getOffhandItem().isEmpty() && hand == GunMotion.hand(false), parts, gunFrame);
+        }
         pose.translate(grip[0] * side / 16f, grip[1] / 16f, grip[2] / 16f);
         float k = firstPersonScale(view);
         pose.scale(k, k, k);
@@ -72,7 +81,9 @@ public final class GunRenderer extends BlockEntityWithoutLevelRenderer {
         GunMotion.item(pose, view, hand, now);
         var mesh = new GunMesh(pose, outputs(buffers, stack), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY);
         mesh.sighted = hand == GunMotion.hand(false) && io.github.soundgoodizerfan.feedback.client.GunClient.aim() > 0.5f;
-        GunDraw.draw(mesh, view, GunMotion.parts(view, hand, now));
+        GunDraw.draw(mesh, view, parts);
+        if (io.github.soundgoodizerfan.feedback.weapon.GunItem.mechanismOf(stack) instanceof io.github.soundgoodizerfan.feedback.weapon.FirearmMechanism)
+            GunFlash.draw(pose, buffers, view, hand, now);
         pose.popPose();
     }
 

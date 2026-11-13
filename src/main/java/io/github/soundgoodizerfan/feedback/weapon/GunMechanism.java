@@ -82,8 +82,22 @@ public interface GunMechanism {
         return false;
     }
 
+    /** Whether the reload key would do anything now on a gun that {@link #reloadKeyWorks} (the client plays its stroke only then). */
+    default boolean reloadKeyReady(ItemStack gun) {
+        return true;
+    }
+
     /** The reload key pressed on a gun that {@link #reloadKeyWorks}. */
     default void reloadKey(ServerLevel level, Player player, ItemStack gun) {
+    }
+
+    /** Whether a pump key press would work the gun's pump charge now (the client plays the stroke only then). */
+    default boolean canPump(ItemStack gun) {
+        return false;
+    }
+
+    /** The pump key pressed with the gun in hand (a pump charge's stroke). */
+    default void pumpKey(ServerLevel level, Player player, ItemStack gun) {
     }
 
     /** The sight went up or came down on the gun (a scope zoom charge builds while it is up). */

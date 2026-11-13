@@ -6,16 +6,7 @@ A rechargeable battery, lead-acid or nickel-iron: cells in series that charge fr
 
 Shape the parts at a bench and put them together in a crafting grid, as for any [modular tool](Tools_and_Weapons.md). It has two parts:
 
-- **Battery Plates**, shaped from plates of a metal that takes a charge: lead or [nickel-iron](Materials.md#nickel-iron). The shape sets the cell count and how much each cell holds:
-
-| Plates | Cells | Each cell holds |
-| --- | --- | --- |
-| 1 | 1 | half the standard |
-| 2 | 1 | standard |
-| 4 (heavy) | 1 | twice the standard |
-| 6 | 3 | standard |
-| 12 | 6 | standard |
-| 24 | 12 | standard |
+- **Battery Plates**, shaped from plates of a metal that takes a charge: lead or [nickel-iron](Materials.md#nickel-iron). Two steppers set the size: **cell size** (1 to 4), how much each cell holds, and **cell count** (1 to 12), how many cells sit in series.
 
 - **A case**: a pane, shard or sheet of an insulating material such as glass, ceramic or a polymer. The highest voltage the case holds off is the highest voltage the battery takes without wearing.
 

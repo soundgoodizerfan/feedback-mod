@@ -62,9 +62,12 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
      * @param lit   chambers of a cylinder lit, or a bank's charge in chambers (0 to 6)
      * @param heat  the barrel's heat, 0 to 1
      * @param beam  the beam colour the drawing was given, an RGB
+     * @param hot    a core breech's cores are hot from the last shot (they glow red until it is vented)
+     * @param charge a hold charge's or pump charge's build, 0 to 1 (a pump's count over its most), or -1 with neither fitted: it sets the
+     *              colour of the seat's lit lamps (green, yellow, red, blinking red)
      */
-    record Pulse(float angle, float lit, float heat, int beam) {
-        static final Pulse REST = new Pulse(0f, 6f, 0f, 0x3F7FFF);
+    record Pulse(float angle, float lit, float heat, int beam, float charge, boolean hot) {
+        static final Pulse REST = new Pulse(0f, 6f, 0f, 0x3F7FFF, -1f, false);
     }
 
     /** This view with the seat shown as {@code p}: a preview animates the drum and the wheel this way. */
@@ -111,12 +114,14 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
         var level = Minecraft.getInstance().level;
         float tu = level == null ? 0f : GunCondition.temperature(stack, level).value();
         int glow = Incandescence.light(tu);
+        // A part cut from a generic form (a grip) names no tree: it takes the species of the gun's planks (the stock).
+        String species = design.parts().stream().map(ModularDesign.Part::form).filter(f -> f.endsWith("_planks")).findFirst().orElse(null);
         for (ModularDesign.Part p : design.parts()) {
             Material material = materials.get(p.material());
             Surface surface = Surface.of(material);
             surfaces.put(p.role(), surface);
             if (surface == Surface.WOOD) {
-                ResourceLocation bark = GunWood.texture(material, p.form());
+                ResourceLocation bark = GunWood.texture(material, species != null && !p.form().endsWith("_planks") ? species : p.form());
                 if (bark != null)
                     woods.put(p.role(), bark);
             }
@@ -130,6 +135,13 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 variant = role.part().map(s -> s.base()).orElse("");
             variants.put(p.role(), variant);
         }
+        // A barrel's jacket is a slot of the barrel, drawn as the jacket layer (letter J) in the jacket's own material.
+        ModularDesign.Part jacketed = design.part("B");
+        if (jacketed != null)
+            jacketed.measures().slot("jacket").ifPresent(sl -> {
+                colours.put("J", 0xFF000000 | MaterialColors.of(sl.material()));
+                surfaces.put("J", Surface.of(materials.get(sl.material())));
+            });
         GunLayout.Type kind = GunLayout.Type.of(variants.getOrDefault("R", ""));
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.ModularElectricGun) {
             // A pulse gun has no action and no slide: a frame, a cell bay, a seat, and a pulse barrel.
@@ -152,8 +164,14 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
             float lit = variants.getOrDefault("s", "").equals("cylinder")
                     ? io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chambersShown(stack, game)
                     : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.bankShown(stack, game) * 6f;
+            float charge = -1f;
+            if (variants.containsKey("h"))
+                charge = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.holdShare(stack, game);
+            if (variants.containsKey("p"))
+                charge = Math.max(charge, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.pumps(stack)
+                        / (float) io.github.soundgoodizerfan.feedback.modular.ModularTuning.EGUN_PUMP_MAX);
             Pulse pulse = new Pulse(angle % 360f, lit, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.heatFraction(stack, game),
-                    design.colour());
+                    design.colour(), charge, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.hot(stack));
             return new GunView(kind, "none", false, eb[0], eb[1], eb[2], 0, 0, colours, variants, surfaces, woods, 0, null, 0, true, pulse, soc);
         }
         boolean slide = colours.containsKey("A");

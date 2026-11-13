@@ -47,8 +47,9 @@ public final class GunMotion {
 
     /** Where the moving parts are, all 0 at rest. Fractions of their travel unless named otherwise. */
     record Parts(float slide, float boltLift, float boltBack, float lever, float pump, float breakOpen,
-                 float cylinderOut, float cylinderTurn, float magDrop, boolean magOut, float cover, float hammer) {
-        static final Parts REST = new Parts(0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0);
+                 float cylinderOut, float cylinderTurn, float magDrop, boolean magOut, float cover, float hammer, float vent,
+                 float feed, float fed, float fan, float feedOf, float grab) {
+        static final Parts REST = new Parts(0, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0, -1, -1, 0, -1, 0, -1);
     }
 
     /** One hand's recent history: its last shot and its reload. */
@@ -58,6 +59,14 @@ public final class GunMotion {
         float kickDeg;
         int shots;
         long reloadStart, reloadEnd;
+        /** Rounds the reload under way puts in (a gun with its own feed), for the hand that loads them one at a time. */
+        int reloadRounds;
+        /** Whether the last shot was fanned: the free hand slapped the hammer for it. */
+        boolean fanned;
+        /** When a core breech was last broken open to vent. */
+        long ventMs = -1_000_000;
+        /** When a pulse gun's pump slider was last worked. */
+        long pumpMs = -1_000_000;
         /** A small random twist chosen per shot. */
         float twist;
     }
@@ -85,6 +94,11 @@ public final class GunMotion {
     private GunMotion() {
     }
 
+    /** The next shot of {@code off}'s gun is (or is not) fanned. */
+    public static void fanning(boolean off, boolean on) {
+        (off ? OFF : MAIN).fanned = on;
+    }
+
     /** The client fired {@code off}'s gun: kick and cycle from now. */
     public static void shot(boolean off, int cycleMs, float kickDeg) {
         Hand h = off ? OFF : MAIN;
@@ -96,12 +110,59 @@ public final class GunMotion {
     }
 
     /** A reload began and should end at {@code untilMs}. Both hands: the server runs them back to back. */
-    public static void reload(long untilMs) {
+    public static void reload(long untilMs, int rounds) {
         long now = System.currentTimeMillis();
         for (Hand h : new Hand[]{MAIN, OFF}) {
             h.reloadStart = now;
             h.reloadEnd = untilMs;
+            h.reloadRounds = rounds;
         }
+    }
+
+    /** How long a core breech vent takes, ms: the server keeps the gun hot, and times its sounds, by the same beats ({@code ElectricMechanism.reloadKey}). */
+    private static final int VENT_MS = 900;
+
+    /** The reload key broke a core breech open to vent: the barrels tip down and come back. */
+    public static void vent() {
+        long now = System.currentTimeMillis();
+        if (ventPhase(MAIN, now) >= 0f)
+            return;
+        MAIN.ventMs = now;
+        OFF.ventMs = now;
+    }
+
+    /** How long a pulse gun's pump stroke takes, ms. */
+    private static final int PUMP_MS = 380;
+
+    /**
+     * A forend slammed back and thrown forward, 0 to 1 over a stroke: a hard yank (decelerating into the stop), a held beat,
+     * a throw that speeds up to the stop, and a small rebound past rest. The click lands where the throw ends (t = 0.55).
+     */
+    private static float jerk(float t) {
+        if (t < 0.15f) {
+            float x = 1f - t / 0.15f;
+            return 1f - x * x * x;
+        }
+        if (t < 0.4f)
+            return 1f;
+        if (t < 0.55f) {
+            float x = (t - 0.4f) / 0.15f;
+            return 1f - x * x;
+        }
+        if (t < 0.75f)
+            return -0.1f * Mth.sin((t - 0.55f) / 0.2f * Mth.PI);
+        return 0f;
+    }
+
+    /** The pump key worked a pulse gun's slider: it draws back and runs home. */
+    public static void pump() {
+        MAIN.pumpMs = System.currentTimeMillis();
+    }
+
+    /** 0 to 1 through a vent, or -1 when none is under way. */
+    private static float ventPhase(Hand h, long now) {
+        float t = (now - h.ventMs) / (float) VENT_MS;
+        return t < 0f || t >= 1f ? -1f : t;
     }
 
     public static void reloadStop() {
@@ -116,6 +177,48 @@ public final class GunMotion {
     private static float ramp(float t, float a, float b) {
         float x = Mth.clamp((t - a) / (b - a), 0f, 1f);
         return x * x * (3 - 2 * x);
+    }
+
+    private static float lin(float t, float a, float b) {
+        return Mth.clamp((t - a) / (b - a), 0f, 1f);
+    }
+
+    /** 0 to 1 over [a, b], all its speed at the start: a part hit hard, then coasting to a stop. */
+    private static float snapOut(float t, float a, float b) {
+        float x = 1f - lin(t, a, b);
+        return 1f - x * x * x;
+    }
+
+    /** 0 to 1 over [a, b], all its speed at the end: a part thrown home and stopped dead. */
+    private static float slamIn(float t, float a, float b) {
+        float x = lin(t, a, b);
+        return x * x;
+    }
+
+    /** Snapped out over [a, b], held, slammed back over [c, d]: the rough version of {@link #hold}. */
+    private static float jolt(float t, float a, float b, float c, float d) {
+        return snapOut(t, a, b) * (1f - slamIn(t, c, d));
+    }
+
+    /**
+     * A core breech vented, 0 at rest and 1 down: the support hand comes over the top and slams down on the barrels (they give at
+     * 0.18 to 0.26, a little past the stop), they shake while the steam goes, the hand takes the forend from below and throws them
+     * shut at 0.6 to 0.72, and they bounce once on the latch.
+     */
+    private static float ventBreak(float t) {
+        if (t < 0.18f)
+            return 0f;
+        if (t < 0.26f)
+            return 1.12f * snapOut(t, 0.18f, 0.26f);
+        if (t < 0.6f) {
+            float k = (t - 0.26f) / 0.34f;
+            return 1f + 0.05f * Mth.sin(t * 90f) * (1f - k);
+        }
+        if (t < 0.72f)
+            return 1f - slamIn(t, 0.6f, 0.72f);
+        if (t < 0.86f)
+            return -0.07f * Mth.sin((t - 0.72f) / 0.14f * Mth.PI);
+        return 0f;
     }
 
     /** Up over [a, b], held, down over [c, d]. */
@@ -136,7 +239,7 @@ public final class GunMotion {
     static Parts parts(GunView view, Hand h, long now) {
         boolean lockOpen = view.selfLoading() && view.rounds() == 0;
         if (h == null)
-            return lockOpen ? new Parts(1, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0) : Parts.REST;
+            return lockOpen ? new Parts(1, 0, 0, 0, 0, 0, 0, 0, 0, false, 0, 0, -1, -1, 0, -1, 0, -1) : Parts.REST;
         float s = (now - h.shotMs) / 1000f;
         float cycle = h.cycleMs / 1000f;
         float slide = 0, boltLift = 0, boltBack = 0, lever = 0, pump = 0, hammer = 0;
@@ -157,48 +260,83 @@ public final class GunMotion {
             if (t < 1.05f) {
                 switch (view.action()) {
                     case "bolt" -> {
-                        boltLift = hold(t, 0.05f, 0.22f, 0.8f, 0.97f);
-                        boltBack = hold(t, 0.25f, 0.45f, 0.55f, 0.77f);
+                        boltLift = jolt(t, 0.05f, 0.22f, 0.8f, 0.97f);
+                        boltBack = jolt(t, 0.25f, 0.45f, 0.55f, 0.77f);
                     }
-                    case "lever" -> lever = hold(t, 0.05f, 0.4f, 0.55f, 0.95f);
-                    case "pump" -> pump = hold(t, 0.05f, 0.4f, 0.5f, 0.9f);
+                    case "lever" -> lever = jolt(t, 0.05f, 0.4f, 0.55f, 0.95f);
+                    case "pump" -> pump = jolt(t, 0.05f, 0.4f, 0.5f, 0.9f);
                     default -> {
                     }
                 }
                 hammer = 1 - ramp(t, 0.6f, 0.9f);
             }
         }
+        if (view.electric() && view.has("p")) {
+            float t = (now - h.pumpMs) / (float) PUMP_MS;
+            if (t >= 0f && t < 1f)
+                pump = jerk(t);
+        }
         if (action.hammer() && view.has("F"))
             hammer = Math.max(hammer, 1 - ramp(s, 0f, 0.05f));
+        float fan = -1, n0 = 0, grab = -1;
+        // A fanned gun is slapped on its hammer by the free hand once a cycle, and for two cycles after the last shot.
+        if (h.fanned && view.type() == GunLayout.Type.HANDGUN && s / cycle < 3f)
+            fan = s / cycle;
         // A revolver turns a chamber per shot, at once.
         float turn = (h.shots - 1 + ramp(s, 0f, 0.07f)) * 60f;
 
-        float magDrop = 0, cover = 0, breakOpen = 0, out = 0;
+        float magDrop = 0, cover = 0, breakOpen = 0, out = 0, vent = -1, feed = -1, fed = 0;
         boolean magOut = false;
         float p = reloadPhase(h, now);
         if (p >= 0) {
             if (view.boxMagazine() || (view.mag() == null && !view.has("F") && !view.has("E") && !view.has("b")
                     && !view.has("Y") && !view.action().equals("break") && view.selfLoading())) {
                 // Out, gone, a fresh one up and seated.
-                float drop = ramp(p, 0.12f, 0.32f);
-                float rise = 1 - ramp(p, 0.48f, 0.72f);
+                float drop = snapOut(p, 0.12f, 0.32f);
+                float rise = 1 - slamIn(p, 0.48f, 0.72f);
                 magDrop = p < 0.4f ? drop : rise;
                 magOut = p > 0.3f && p < 0.5f;
             }
-            if (view.has("F"))
-                out = hold(p, 0.08f, 0.22f, 0.8f, 0.92f);
+            if (view.has("F")) {
+                // A top-break keeps its cylinder in the frame (the frame tips instead); any other revolver swings it out.
+                out = view.action().equals("break") ? 0f : jolt(p, 0.08f, 0.22f, 0.8f, 0.92f);
+                // The cylinder is open from 0.22 to 0.8 of the reload; the free hand puts a round in each chamber in turn.
+                int n = h.reloadRounds;
+                n0 = n;
+                if (n > 0) {
+                    // Fetch every round in one go (0 to 0.2 of the window), put them in one at a time, then take the hand away (0.9 to 1).
+                    float win = (p - 0.22f) / 0.58f;
+                    if (win >= 0f && win < 0.2f)
+                        grab = win / 0.2f;
+                    else if (win >= 0.2f && win < 0.9f) {
+                        float u = (win - 0.2f) / 0.7f * n;
+                        fed = Mth.clamp((float) Math.floor(u), 0f, n - 1f);
+                        feed = u - fed;
+                    } else if (win >= 0.9f) {
+                        fed = n;
+                        grab = 1f + Mth.clamp((win - 0.9f) / 0.1f, 0f, 1f);
+                    }
+                }
+            }
             if (view.action().equals("break"))
-                breakOpen = hold(p, 0.06f, 0.2f, 0.84f, 0.96f);
+                breakOpen = jolt(p, 0.04f, 0.2f, 0.8f, 0.94f);
             if (view.has("Y") || view.mag() == MagazineSize.BELT)
-                cover = hold(p, 0.1f, 0.25f, 0.8f, 0.92f);
+                cover = jolt(p, 0.1f, 0.25f, 0.8f, 0.92f);
             if (!view.selfLoading() && view.action().equals("bolt") && !view.has("E") && !view.boxMagazine()) {
-                boltLift = Math.max(boltLift, hold(p, 0.02f, 0.12f, 0.88f, 0.97f));
-                boltBack = Math.max(boltBack, hold(p, 0.12f, 0.24f, 0.8f, 0.9f));
+                boltLift = Math.max(boltLift, jolt(p, 0.02f, 0.12f, 0.88f, 0.97f));
+                boltBack = Math.max(boltBack, jolt(p, 0.12f, 0.24f, 0.8f, 0.9f));
             }
         }
-        if (out > 0)
-            turn += (now % 100_000) / 1000f * 360f * out;
-        return new Parts(slide, boltLift, boltBack, lever, pump, breakOpen, out, turn, magDrop, magOut, cover, hammer);
+        if (view.electric() && view.has("s") && view.variant("s").equals("core_breech")) {
+            float vp = ventPhase(h, now);
+            if (vp >= 0f) {
+                breakOpen = ventBreak(vp);
+                vent = vp;
+            }
+        }
+        if ((out > 0 || breakOpen > 0) && view.has("F") && h.reloadRounds > 0) // the next empty chamber comes round to the top before each round goes in
+            turn = -60f * (view.rounds() - 1 + (feed < 0f ? fed : fed + ramp(feed, 0f, 0.2f)));
+        return new Parts(slide, boltLift, boltBack, lever, pump, breakOpen, out, turn, magDrop, magOut, cover, hammer, vent, feed, fed, fan, n0, grab);
     }
 
     /** The shot kick and the reload tilt, turned about the hand ({@code hand} in model pixels, before the scale). */
@@ -226,6 +364,11 @@ public final class GunMotion {
             float within = ((now - h.reloadStart) % beat) / (float) beat;
             lift += tilt * 4f * Mth.sin(within * Mth.PI);
         }
+
+        // Breaking a core breech open lifts the gun a little, the way a shotgun is tipped to clear it.
+        float vp = ventPhase(h, now);
+        if (vp >= 0f)
+            lift += ventBreak(vp) * 8f * calm;
 
         pose.translate(at[0], at[1], at[2]);
         pose.translate(0, -tilt * 0.75f, back);

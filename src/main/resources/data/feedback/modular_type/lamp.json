@@ -29,31 +29,15 @@
         "stock": [
           "wire"
         ],
-        "base": "filament_coil",
-        "variants": [
+        "slots": [
           {
-            "name": "filament_coil",
-            "cells": 6,
-            "params": {
-              "amps": 1.0,
-              "tough": 1.0
-            }
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "filament_carbon",
-            "cells": 8,
-            "params": {
-              "amps": 1.4,
-              "tough": 1.3
-            }
-          },
-          {
-            "name": "filament_fine",
-            "cells": 4,
-            "params": {
-              "amps": 0.6,
-              "tough": 0.8
-            }
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
       }

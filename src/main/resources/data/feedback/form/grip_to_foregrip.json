@@ -1,0 +1,7 @@
+{
+  "from": "grip",
+  "to": "foregrip",
+  "operation": "grind",
+  "base": 2,
+  "slope": 1
+}

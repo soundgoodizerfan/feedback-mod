@@ -295,6 +295,9 @@ public class Feedback {
                 .playToServer(io.github.soundgoodizerfan.feedback.net.GunReloadPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunReloadPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunReloadPayload::handle)
+                .playToServer(io.github.soundgoodizerfan.feedback.net.GunPumpPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunPumpPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunPumpPayload::handle)
                 .playToServer(io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.PulseTriggerPayload::handle)
@@ -310,6 +313,15 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.SizeUpPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.SizeUpPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.SizeUpPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.GunImpactPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunImpactPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunImpactPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.GunTracerPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunTracerPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunTracerPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.GunHitMarkPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.GunHitMarkPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.GunHitMarkPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunKickPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunKickPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunKickPayload::handle)

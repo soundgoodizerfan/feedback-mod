@@ -67,6 +67,22 @@ public final class HaftedLayers {
     public static final int SPLIT = 15;
 
     /**
+     * The sprite variant of a fitting: its shape if it has one, else the step its axis is at (a binding's wraps, a pommel's weight, a tip's
+     * thickness), so the same sprites draw it as when each was a variant.
+     */
+    private static String artVariant(String role, Part p) {
+        if (!p.variant().isEmpty())
+            return p.variant();
+        return switch (role) {
+            case "B" -> switch (Math.round(p.axis("wraps", 1f))) { case 2 -> "wrapped"; case 3 -> "double"; default -> ""; };
+            case "P" -> switch (Math.round(p.axis("weight", 1f))) { case 2 -> "ball"; case 3 -> "counterweight"; default -> ""; };
+            case "T" -> p.axis("thickness", 1f) < ModularTuning.TIP_ART_NEEDLE_BELOW ? "needle"
+                    : p.axis("thickness", 1f) > ModularTuning.TIP_ART_CAPPED_ABOVE ? "capped" : "";
+            default -> "";
+        };
+    }
+
+    /**
      * The tip's placement file stem: {@code tip} or {@code tip_<variant>}. The tip has no shape of its own; the renderer re-tints the front
      * head's own texels farthest from the socket (how deep by variant), so it always lands on the head's point, spike or bit whatever the
      * kind, variant or edge length. A sprite of that name, if there is one, is an overlay texture sampled at canvas position over those texels.
@@ -145,7 +161,7 @@ public final class HaftedLayers {
         for (String r : List.of("Z", "Y", "R", "P", "G", "B", "T")) {
             Part p = design.part(r);
             if (p != null)
-                parts.put(r, p.variant());
+                parts.put(r, artVariant(r, p));
         }
         return new Plan(haft.form().isEmpty() ? "stick" : haft.form(), Math.max(1, Math.min(4, haft.count())), List.copyOf(faces), Map.copyOf(parts), front);
     }

@@ -17,7 +17,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.particles.DustParticleOptions;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -27,22 +26,20 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import org.joml.Vector3f;
 
 /**
- * How a skill point gain shows: a small tree-coloured bar above the hotbar that the points fill on each gain and that fades a
- * few seconds after the last one, nothing in the world per hit. The gain is read off the synced {@link SkillPools}, so no
+ * How a skill point gain shows: a faint tree-coloured glow around the crosshair that swells with the points and flares on a gain, fading a few seconds after the last one, nothing in the world per hit. The gain is read off the synced {@link SkillPools}, so no
  * packet is needed for it. A kill that paid sends one wisp ({@code SkillWispPayload}) that drifts from the fallen to the
  * player; {@link ClientSettings#gainWisp()} turns it off live.
  */
 @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
 public final class SkillGainHud {
 
-    private static final GuiSkin SKIN = GuiSkin.VANILLA;
-    private static final int SHOW_TICKS = 70, WISP_TICKS = 14, BAR_W = 80, BAR_H = 5;
+    private static final int SHOW_TICKS = 70, WISP_TICKS = 14, FADE_TICKS = 20, PULSE_TICKS = 6, GLOW_R = 8;
 
     /** The last points seen per tree, to tell a gain from a purchase (points falling). */
     private static final Map<String, Integer> SEEN = new HashMap<>();
-    /** The tree on show, its gain stacked since the bar came up, and the tick it last grew. */
+    /** The tree on show, and the ticks left on show. */
     private static String tree;
-    private static int stacked, shownTicks;
+    private static int shownTicks;
     private static float shownFill;
 
     private record Wisp(Vec3 from, int rgb, int[] age) {
@@ -77,10 +74,7 @@ public final class SkillGainHud {
             int before = SEEN.getOrDefault(e.getKey(), e.getValue()), now = e.getValue();
             SEEN.put(e.getKey(), now);
             if (now > before) {
-                if (!e.getKey().equals(tree))
-                    stacked = 0;
                 tree = e.getKey();
-                stacked += now - before;
                 shownTicks = SHOW_TICKS;
             }
         }
@@ -122,17 +116,23 @@ public final class SkillGainHud {
         Minecraft mc = Minecraft.getInstance();
         if (tree == null || mc.player == null || mc.options.hideGui || mc.screen != null)
             return;
-        SkillPools pools = SkillPools.of(mc.player);
-        float target = progress(pools, tree);
-        shownFill += (target - shownFill) * 0.2f; // the bar glides up to its value
-        final int rgb = TreeHue.of(tree);
-        var font = mc.font;
-        Component name = Component.translatableWithFallback("skill.feedback.tree." + tree, tree);
-        String gain = "+" + stacked + "  " + pools.points(tree);
-        int w = BAR_W + 12, x0 = g.guiWidth() / 2 - w / 2, y1 = g.guiHeight() - 64, y0 = y1 - 28;
-        GuiStyle.hudCard(g, x0, y0, x0 + w, y1);
-        g.drawString(font, name, x0 + 6, y0 + 6, 0xFF000000 | rgb, false);
-        g.drawString(font, gain, x0 + w - 6 - font.width(gain), y0 + 6, SKIN.ink(), false);
-        Gauge.of(() -> shownFill).lead(() -> 0xFF000000 | rgb).render(g, SKIN, x0 + 6, y1 - 6 - BAR_H, BAR_W, BAR_H);
+        float target = progress(SkillPools.of(mc.player), tree);
+        shownFill += (target - shownFill) * 0.2f; // the arc glides up to its value
+        float fade = Math.min(1f, shownTicks / (float) FADE_TICKS);
+        float pulse = ClientSettings.reduceMotion() ? 0f : Math.max(0, shownTicks - (SHOW_TICKS - PULSE_TICKS)) / (float) PULSE_TICKS;
+        int rgb = TreeHue.of(tree), cx = g.guiWidth() / 2, cy = g.guiHeight() / 2;
+        // soft disc of 2 px cells: it swells with the points and flares on a gain, faint at rest
+        double r = GLOW_R + 6 * shownFill + 3 * pulse;
+        float peak = fade * (0.12f + 0.12f * shownFill + 0.14f * pulse);
+        int n = (int) Math.ceil(r / 2);
+        for (int j = -n; j <= n; j++)
+            for (int i = -n; i <= n; i++) {
+                double d = Math.sqrt(i * i + j * j) * 2 / r;
+                if (d >= 1)
+                    continue;
+                int alpha = (int) (255 * peak * (1 - d) * (1 - d));
+                if (alpha > 0)
+                    g.fill(cx + i * 2 - 1, cy + j * 2 - 1, cx + i * 2 + 1, cy + j * 2 + 1, alpha << 24 | rgb);
+            }
     }
 }

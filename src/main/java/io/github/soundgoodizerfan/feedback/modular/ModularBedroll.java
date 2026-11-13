@@ -23,7 +23,7 @@ import net.minecraft.world.phys.AABB;
 public class ModularBedroll extends ModularItem {
 
     /** The sheet (shaped part), the fill and the shell roles' letters in the type file. */
-    public static final String SHEET = "C", FILL = "F", SHELL = "S";
+    public static final String SHEET = "C";
 
     public ModularBedroll(Properties properties) {
         super(properties);

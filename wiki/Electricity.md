@@ -33,7 +33,7 @@ Bands don't lock anything. A machine is *rated* for a band; feed it more and it 
 | **Sources** | |
 | [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1.1 V, 1 A. |
 | [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 1.5 V, 1 A. |
-| [Dynamotor](Dynamotor.md) | Shaft in, electricity out, as a generator. Volts set by shaft speed and winding; the dense winding reaches EHV and the heavy-dense winding Trunk on a turbine. |
+| [Dynamotor](Dynamotor.md) | Shaft in, electricity out, as a generator. Volts set by shaft speed and the winding's turns; 4 turns reaches EHV and 8 turns Trunk on a turbine. |
 | [Battery](Battery.md) | Lead-acid or nickel-iron cells that charge from a higher line and supply when it drops. |
 | [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
 | **Carrying and stopping** | |
@@ -86,8 +86,8 @@ Everything that touches is connected. Put a source, some cable and a magnet next
 
 There's no transformer: Feedback's electricity is DC, and transformers need AC. Voltage changes with a **motor-generator set**: an [Dynamotor](Dynamotor.md) run as a motor, turning a shaft that turns another run as a generator with the **other** winding.
 
-- **Fine motor → coarse generator:** fewer volts, more amps. Send power a long way at MV, then step it down next to an LV machine.
-- **Coarse motor → fine generator:** more volts, fewer amps.
+- **Many-turn motor → few-turn generator:** fewer volts, more amps. Send power a long way at MV, then step it down next to an LV machine.
+- **Few-turn motor → many-turn generator:** more volts, fewer amps.
 
 The only loss is the friction of the shaft between them.
 

@@ -60,7 +60,7 @@ public final class PartBenchShaping {
 
         /** Its size in cells of stock at default axes: its own if made at its own size, the standard shape's if forged. */
         public float size() {
-            return forged() || variant.name().isEmpty() ? shaping.cells() : variant.cells();
+            return forged() ? shaping.cells() : variant.cells();
         }
 
         /** Whole cells of stock it takes at default axes, rounded up: what a part item records and a tooltip counts. */
@@ -133,8 +133,22 @@ public final class PartBenchShaping {
         return type == null || type.family() != ModularType.Family.VESSEL || what.material().xpStore().isPresent();
     }
 
-    /** What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. */
-    public record Stock(Material.Located what, int cells, int spent, float coldest, int mb) {
+    /**
+     * What a valid pile of stock is: the stuff, how many pieces, and the coldest piece's heat. {@code what} is the part's main slot;
+     * {@code more} are the other slots filled from stock of their own (a lens, an edge), each spending its own pile.
+     */
+    public record Stock(Material.Located what, int cells, int spent, float coldest, int mb, List<Extra> more) {
+
+        public Stock(Material.Located what, int cells, int spent, float coldest, int mb) {
+            this(what, cells, spent, coldest, mb, List.of());
+        }
+
+        /** One extra slot's pile: the slot's name and its stock slot beside the centre (0 for the first), its stuff, what the shape spends of it and its coldest piece's heat. */
+        public record Extra(String slot, int index, Material.Located what, int spent, float coldest, int mb) {
+            public int left() {
+                return mb - spent;
+            }
+        }
 
         /** Millibuckets of the pile the shape leaves. */
         public int left() {
@@ -173,7 +187,7 @@ public final class PartBenchShaping {
 
     /** The axes the bench lets the player aim for {@code option}'s part, in the order the menu indexes them; empty for a part that declares none. */
     public static List<Map.Entry<String, ModularType.Axis>> aimable(Option option) {
-        return roleOf(option).map(ModularType.Role::sortedAxes).orElse(List.of());
+        return roleOf(option).map(r -> r.sortedAxes(option.variant().name())).orElse(List.of());
     }
 
     /**
@@ -209,6 +223,55 @@ public final class PartBenchShaping {
     /** As above; {@code exact} refuses a pile bigger than the shape (a food shape reshapes the whole pile). */
     private static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
                                          boolean exact, float scale) {
+        return check(station, option, contents, List.of(), materials, level, exact, scale);
+    }
+
+    /**
+     * As above for a part of several slots: {@code extras} are the piles for the slots after the first, in order. A slot left empty is made of
+     * the first slot's material, drawn from its pile; a filled one takes its share of the stock from its own pile, of one material and one form
+     * the slot accepts ({@link ModularType.PartSlot#accepts}), inside its hot-working window.
+     */
+    public static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, List<ItemStack> extras,
+                                        Map<ResourceLocation, Material> materials, Level level, float scale) {
+        return check(station, option, contents, extras, materials, level, false, scale);
+    }
+
+    private static Optional<Stock> check(Station station, Option option, List<ItemStack> contents, List<ItemStack> extras,
+                                         Map<ResourceLocation, Material> materials, Level level, boolean exact, float scale) {
+        if (option.forged() && !station.forges())
+            return Optional.empty();
+        List<ModularType.PartSlot> slots = option.shaping().slots();
+        List<Stock.Extra> more = new ArrayList<>();
+        int need = option.stockMb(scale);
+        int mainNeed = need;
+        List<ModularType.PartSlot> choices = option.shaping().choices();
+        for (int j = 0; j < choices.size() && j < extras.size(); j++) {
+            int i = slots.indexOf(choices.get(j));
+            ItemStack s = extras.get(j);
+            if (s.isEmpty())
+                continue;
+            if (s.has(FDataComponents.MADE_OF.get()))
+                return Optional.empty();
+            Optional<Material.Located> l = Material.find(materials, s.getItem());
+            int share = Math.max(1, (int) Math.ceil(need * option.shaping().shareOf(i) / ModularTuning.NUGGET_MB - 1e-3f)) * ModularTuning.NUGGET_MB;
+            int mb = s.getCount() * (l.isEmpty() ? 0 : FormItems.volume(l.get().form()));
+            if (l.isEmpty() || !station.accepts(l.get().material()) || !slots.get(i).accepts(l.get(), option.shaping().stock()) || mb < share)
+                return Optional.empty();
+            float heat = ItemHeat.get(s, level).value();
+            Material em = l.get().material();
+            if (em.minTemperature().value() > 0 && (heat < em.minTemperature().value() || heat > em.maxTemperature().value()))
+                return Optional.empty();
+            more.add(new Stock.Extra(slots.get(i).name(), j, l.get(), share, heat, mb));
+            mainNeed -= share;
+        }
+        if (mainNeed < ModularTuning.NUGGET_MB)
+            return Optional.empty();
+        Optional<Stock> main = checkMain(station, option, contents, materials, level, exact, mainNeed);
+        return main.map(m -> more.isEmpty() ? m : new Stock(m.what(), m.cells(), m.spent(), m.coldest(), m.mb(), more));
+    }
+
+    private static Optional<Stock> checkMain(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
+                                             boolean exact, int need) {
         if (option.forged() && !station.forges())
             return Optional.empty();
         Material.Located what = null;
@@ -226,11 +289,13 @@ public final class PartBenchShaping {
             mb += s.getCount() * FormItems.volume(l.get().form());
             coldest = Math.min(coldest, ItemHeat.get(s, level).value());
         }
-        int need = option.stockMb(scale);
         if (what == null || !takes(station, option, what) || (exact ? mb != need : mb < need))
             return Optional.empty();
         Material m = what.material();
         if (m.minTemperature().value() > 0 && (coldest < m.minTemperature().value() || coldest > m.maxTemperature().value()))
+            return Optional.empty();
+        if (!option.shaping().slots().isEmpty() && !option.shaping().slots().get(0).traits().isEmpty()
+                && !what.material().traits().containsAll(option.shaping().slots().get(0).traits()))
             return Optional.empty();
         return Optional.of(new Stock(what, option.cells(), need, coldest, mb));
     }
@@ -258,6 +323,13 @@ public final class PartBenchShaping {
                 made = made.withMeasures(made.measures().withWork(work));
             if (!axes.isEmpty())
                 made = made.withMeasures(made.measures().withAxes(axes));
+            if (!stock.more().isEmpty()) {
+                Map<String, io.github.soundgoodizerfan.feedback.process.Measures.Slot> slots = new java.util.HashMap<>();
+                for (Stock.Extra e : stock.more())
+                    if (!e.what().id().equals(stock.what().id()))
+                        slots.put(e.slot(), new io.github.soundgoodizerfan.feedback.process.Measures.Slot(e.what().id(), e.what().form()));
+                made = made.withMeasures(made.measures().withSlots(slots));
+            }
             out.set(FDataComponents.MADE_OF.get(), made);
             if (stock.coldest() > 0 && stock.what().material().minTemperature().value() > 0)
                 ItemHeat.set(out, new Tu(stock.coldest()), level);
@@ -297,11 +369,17 @@ public final class PartBenchShaping {
     /** As above, for a part aimed at axes: stock for {@code scale}, the part carrying the as-built {@code axes}. */
     public static ItemStack make(Station station, Option option, List<ItemStack> contents, Map<ResourceLocation, Material> materials, Level level,
                                  float scale, Map<String, Float> axes) {
+        return make(station, option, contents, List.of(), materials, level, scale, axes);
+    }
+
+    /** As above for a part of several slots: {@code extras} are the piles of the slots after the first ({@link #check}). */
+    public static ItemStack make(Station station, Option option, List<ItemStack> contents, List<ItemStack> extras, Map<ResourceLocation, Material> materials,
+                                 Level level, float scale, Map<String, Float> axes) {
         if (option.forged())
             return ItemStack.EMPTY;
         if (!(BuiltInRegistries.ITEM.get(option.shaping().item()) instanceof ModularPartItem))
             return food(option, contents, materials, level);
-        return check(station, option, contents, materials, level, scale).flatMap(s -> part(option, s, 0, 1f, axes, level).map(p -> {
+        return check(station, option, contents, extras, materials, level, scale).flatMap(s -> part(option, s, 0, 1f, axes, level).map(p -> {
                     // A coat rolled onto the plate (roll cladding) rides onto the part.
                     contents.stream().map(c -> c.get(FDataComponents.PLATING.get())).filter(java.util.Objects::nonNull).findFirst()
                             .ifPresent(c -> p.set(FDataComponents.PLATING.get(), c));

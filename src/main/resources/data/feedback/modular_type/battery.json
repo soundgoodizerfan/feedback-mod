@@ -18,35 +18,23 @@
         "cells": 2,
         "stock": [
           "plate"
-        ],
-        "variants": [
-          {
-            "name": "light_cell",
-            "cells": 1,
-            "params": {
-              "ingots_per_cell": 1
-            }
-          },
-          {
-            "name": "heavy_cell",
-            "cells": 4,
-            "params": {
-              "ingots_per_cell": 4
-            }
-          },
-          {
-            "name": "three_cell",
-            "cells": 6
-          },
-          {
-            "name": "six_cell",
-            "cells": 12
-          },
-          {
-            "name": "twelve_cell",
-            "cells": 24
-          }
         ]
+      },
+      "axes": {
+        "cell_size": {
+          "min": 1,
+          "max": 4,
+          "default": 2,
+          "step": 1,
+          "scales": true
+        },
+        "cell_count": {
+          "min": 1,
+          "max": 12,
+          "default": 1,
+          "step": 1,
+          "scales": true
+        }
       }
     },
     "C": {

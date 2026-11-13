@@ -51,6 +51,8 @@ public final class BuildNames {
                     facts.put(a.getKey(), band.name());
             }
             facts.put("variant", plate.variant());
+            // A slot filled with another material than the part's own reads as a fitted layer (a bone back on a limb).
+            plate.measures().slots().keySet().forEach(n -> facts.put(n, FITTED));
             if (role.striker())
                 facts.put("face", ModularHeads.kindOf(plate, role));
         }

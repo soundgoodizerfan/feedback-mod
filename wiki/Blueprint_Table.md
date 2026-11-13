@@ -67,7 +67,7 @@ Some **parts** and **shapes** belong to a school too (the servos of a powered su
 | Aerospace I | propeller |
 | Aerospace II | thruster |
 | Robotics I | suit module |
-| Chemical I | pressure vessel, boiler, large boiler, gas tank |
+| Chemical I | pressure vessel, boiler, gas tank |
 | Chemical II | heat exchanger, gas compressor |
 | Chemical III | demolition charge |
 | Materials I | none |
@@ -81,7 +81,7 @@ A blueprint is a **drawn fit**: a specification that the [Engineering Table](Eng
 - Put it in the Engineering Table's blueprint slot (a [Blueprint Book](Blueprint_Book.md) works too) with the parts in the grid. A part whose material lies inside the properties the drawing names (strength, hardness, conductivity, insulation, density) fits clean. Another material still builds, and the item is marked **off the drawing**.
 - Each axis (a bore, a wall, a length) has a target. Parts built to a blueprint may be off by 5% of the axis range; past that the item takes a **fit flaw** (looser joints, and for a gun a wider spread). Without a blueprint the parts are judged against each other at 20%.
 - A blueprint skips the hand-work game and counts as a small bonus to the start. See [Fit and head start](Engineering_Table.md#fit-and-head-start).
-- The dimension of a machine (diameter, bore, turns, size, gauge, wall, area, buckets) is set here on the drawing. The [Water Wheel](Water_Wheel.md), [Thermal Store](Thermal_Store.md), [Leyden Jar](Leyden_Jar.md), [Pump](Pump.md), [Fluid Burner](Fluid_Burner.md), [Electromagnet](Electromagnet.md), [Galvanic Cell](Galvanic_Cell.md), [Glowstone Lamp](Lamp.md), [Boiler](Boiler.md) and Large Boiler, [Flywheel](Flywheel.md), [Pressure Vessel](Pressure_Vessel.md), [Heat Exchanger](Heat_Exchanger.md), [Gas Tank](Gas_Tank.md), [Gas Compressor](Gas_Compressor.md), [Thruster](Thruster.md), [engine](Engine.md), [transmission](Transmission.md), [propeller](Propeller.md), [suit module](Exosuit.md#learning-a-module) and [crossbow](Tools_and_Weapons.md#crossbow) are complex types: only the Engineering Table assembles them. Some need a treatise to draw and to assemble. The [Hand Crank](Hand_Crank.md) needs neither.
+- The dimension of a machine (diameter, bore, turns, size, gauge, wall, area, buckets) is set here on the drawing. The [Water Wheel](Water_Wheel.md), [Thermal Store](Thermal_Store.md), [Leyden Jar](Leyden_Jar.md), [Pump](Pump.md), [Fluid Burner](Fluid_Burner.md), [Electromagnet](Electromagnet.md), [Galvanic Cell](Galvanic_Cell.md), [Glowstone Lamp](Lamp.md), [Boiler](Boiler.md), [Flywheel](Flywheel.md), [Pressure Vessel](Pressure_Vessel.md), [Heat Exchanger](Heat_Exchanger.md), [Gas Tank](Gas_Tank.md), [Gas Compressor](Gas_Compressor.md), [Thruster](Thruster.md), [engine](Engine.md), [transmission](Transmission.md), [propeller](Propeller.md), [suit module](Exosuit.md#learning-a-module) and [crossbow](Tools_and_Weapons.md#crossbow) are complex types: only the Engineering Table assembles them. Some need a treatise to draw and to assemble. The [Hand Crank](Hand_Crank.md) needs neither.
 
 A blueprint comes from the Print button, a copy, a villager or a chest, or from taking a complex item apart on the Treatise tab of the Engineering Table with blank paper in the blank slot, which writes a blueprint of its design.
 
@@ -93,7 +93,7 @@ The table has a **title** field: what you type goes on the printed blueprint, wi
 
 A blueprint is never required and gates nothing; it gives the credit and a **recipe card**. Right-click a blueprint to open the card (it grows with the window, lists the parts in columns and scrolls when there are many) listing its parts, materials, shapes and axis values. It lists a missing material and never refuses to work without it.
 
-A part with **axes** (a chestplate's width, a sword blade's length) shows steppers on the drawing for the target value of each.
+A part with **axes** (a chestplate's width, a sword blade's length) shows steppers on the drawing for the target value of each. A part that is made of several materials (a blade with a harder edge, a scope's lens) also shows a **material stepper** for each slot you choose; the drawing pins those materials. See [Composed Parts](Composed_Parts.md).
 
 An [electric gun](Electric_Gun.md) drawing also has a **beam color**: a swatch and a hex entry (`#RRGGBB`) at the top right of the canvas. The color is saved on the printed blueprint and carried onto a gun built to it. A drawing that cannot be built, such as a capacitor bank on a handgun frame, shows the reason beside the parts at fault.
 

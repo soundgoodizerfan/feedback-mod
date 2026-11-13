@@ -55,6 +55,17 @@
               "range": 0.5
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "core",
+            "share": 3
+          },
+          {
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
+          }
         ]
       }
     },

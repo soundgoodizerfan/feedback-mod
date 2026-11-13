@@ -58,6 +58,17 @@
               "fin": 2.0
             }
           }
+        ],
+        "slots": [
+          {
+            "name": "shell",
+            "share": 3
+          },
+          {
+            "name": "lining",
+            "share": 1,
+            "standard": "feedback:ceramic"
+          }
         ]
       }
     },

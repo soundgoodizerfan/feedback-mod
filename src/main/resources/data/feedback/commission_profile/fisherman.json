@@ -2,7 +2,7 @@
   "profession": "minecraft:fisherman",
   "orders": [
     {
-      "type": "feedback:plate",
+      "type": "feedback:dish",
       "level": 1,
       "pay": 2,
       "axes": [

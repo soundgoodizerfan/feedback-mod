@@ -4,7 +4,7 @@ Experience is a stored, transferable quantity with two numbers: the **level** it
 
 ## Containers
 
-An **XP Container** is a vial of crystal, mineral or paper, made at the Stonecutter (crystal, mineral) or the Woodworking Table (paper). Three sizes: a vial, a flask and a carboy, holding one, three and nine times the points of a vial. The **material** sets the top level and how many points a vial holds; the size sets only how many vials' worth. Paper tops out at a low level, quartz and amethyst in the middle, lapis a little higher, sculk higher still (a vein makes a vial), echo shard highest and roomiest. The bench offers a vial body only in materials that can hold XP; diamond, for one, is not offered.
+An **XP Container** is a vial of crystal, mineral or paper, made at the Stonecutter (crystal, mineral) or the Woodworking Table (paper). The **volume** axis (1 to 9) is the size: one, three and nine are a vial, a flask and a carboy, holding that many times the points of a vial. The **material** sets the top level and how many points a vial holds; the size sets only how many vials' worth. Paper tops out at a low level, quartz and amethyst in the middle, lapis a little higher, sculk higher still (a vein makes a vial), echo shard highest and roomiest. The bench offers a vial body only in materials that can hold XP; diamond, for one, is not offered.
 
 Use a container (right-click) with points in it to pour all of them into yourself and empty it; your levels follow the vanilla curve.
 

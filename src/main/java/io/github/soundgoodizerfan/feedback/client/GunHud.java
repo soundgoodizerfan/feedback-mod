@@ -119,45 +119,70 @@ public final class GunHud {
         draw(g, font, left, slide, edge, y, count, colour, reserve, state, barrel, heat, modeText);
     }
 
+    private static final int CARD_W = 76, DARK = 0xFF202428;
+    private static final net.minecraft.resources.ResourceLocation VIAL = Feedback.id("textures/gui/hud/vial.png"),
+            CELL = Feedback.id("textures/gui/hud/cell.png"), THERMO = Feedback.id("textures/gui/hud/thermo.png"),
+            BATTERY = Feedback.id("textures/gui/hud/battery.png");
+
     /**
-     * A pulse gun's card: the battery's level where a firearm shows its rounds, the seat's charge (six pips for a cylinder, a bar for a bank
-     * or a flywheel's spin), the barrel's heat as a bar (finer, with a scale, under a heat gauge) and the mode.
+     * A pulse gun's card, one instrument cluster: a battery icon and its charge, the seat's readout under it (a glass vial for each
+     * chamber of a cylinder, a capacitor cell for each step of a bank or a flywheel's spin), a thermometer for the barrel's heat down the
+     * right (with a percentage under a heat gauge), and the state and mode below with a lamp.
      */
     private static void electricCard(GuiGraphics g, Minecraft mc, ItemStack gun, boolean left, int slide) {
         Font font = mc.font;
         var spec = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.specOf(gun);
         long game = mc.level.getGameTime();
         int edge = left ? 12 : g.guiWidth() - 12, y = g.guiHeight() - 80;
-        float charge = spec != null && spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.BACKPACK_TETHER
-                ? tetherCharge(mc, spec) : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chargeFraction(gun);
+        boolean tether = spec != null && spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.BACKPACK_TETHER;
+        float charge = tether ? tetherCharge(mc, spec) : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chargeFraction(gun);
         Component count = Component.literal(charge < 0f ? "--" : Math.round(charge * 100f) + "%");
-        int colour = charge <= 0f ? SKIN.warn() : SKIN.ink();
         float heat = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.heatFraction(gun, game);
         Component modeText = Component.translatable("hud.feedback.gun.mode." + GunItem.mode(gun).getSerializedName());
-        String state = charge < 0f ? (spec != null && spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.BACKPACK_TETHER
-                ? "no_tether" : "no_cell") : charge <= 0f ? "flat" : null;
-        int w = Math.max(70, Math.max(2 * font.width(count), font.width(modeText)));
+        String state = charge < 0f ? (tether ? "no_tether" : "no_cell") : charge <= 0f ? "flat" : null;
+        int w = CARD_W, x0 = left ? edge : edge - w;
         g.pose().pushPose();
         g.pose().translate(slide, 0, 0);
-        if (left)
-            GuiStyle.hudCard(g, edge - 6, y - 6, edge + w + 10, y + 64);
-        else
-            GuiStyle.hudCard(g, edge - w - 10, y - 6, edge + 6, y + 64);
-        int x0 = left ? edge : edge - w;
-        g.pose().pushPose();
-        g.pose().translate(edge, y, 0);
-        g.pose().scale(2f, 2f, 1f);
-        g.drawString(font, count, left ? 0 : -font.width(count), 0, colour, false);
-        g.pose().popPose();
-        if (spec != null)
-            seatReadout(g, spec, gun, game, x0, y + 20, w);
+        GuiStyle.hudCard(g, x0 - 8, y - 7, x0 + w + 8, y + 54);
+        // The battery and its charge: a cell filled to the charge, green while it is well filled, amber then red as it runs down.
+        int cellColour = charge > 0.5f ? 0xFF40FF60 : charge > 0.2f ? 0xFFFFB030 : 0xFFFF4030;
+        g.fill(x0 + 2, y + 3, x0 + 10, y + 7, DARK);
+        if (charge > 0f)
+            g.fill(x0 + 2, y + 3, x0 + 2 + Math.max(1, Math.round(8 * Mth.clamp(charge, 0f, 1f))), y + 7, cellColour);
+        g.blit(BATTERY, x0, y + 1, 0, 0, 14, 8, 14, 8);
         if (state != null) {
+            // With no charge to read, the state word takes the figure's place.
             Component c = Component.translatable("hud.feedback.gun." + state);
-            g.drawString(font, c, x(edge, font.width(c), left), y + 31, SKIN.accent(), false);
+            g.drawString(font, c, x0 + 18, y + 1, SKIN.accent(), false);
+        } else {
+            g.pose().pushPose();
+            g.pose().translate(x0 + 18, y, 0);
+            g.pose().scale(2f, 2f, 1f);
+            g.drawString(font, count, 0, 0, SKIN.ink(), false);
+            g.pose().popPose();
         }
-        heatBar(g, font, heat, spec != null && spec.gauge(), x0, y + 42, w);
-        g.drawString(font, modeText, x(edge, font.width(modeText), left), y + 53, SKIN.dim(), false);
+        if (spec != null)
+            seatReadout(g, spec, gun, game, x0, y + 20, w - 14);
+        thermometer(g, heat, x0 + w - 9, y);
+        // The mode, with a lamp: lit while the gun can fire, red when it cannot; a heat gauge's figure at the other end.
+        g.fill(x0, y + 40, x0 + 4, y + 44, state != null ? 0xFFFF4030 : 0xFF40FF60);
+        g.drawString(font, modeText, x0 + 8, y + 39, SKIN.dim(), false);
+        if (spec != null && spec.gauge()) {
+            String pct = Math.round(heat * 100f) + "%";
+            g.drawString(font, pct, x0 + w - 12 - font.width(pct), y + 39, heat >= 0.9f ? SKIN.warn() : SKIN.dim(), false);
+        }
         g.pose().popPose();
+    }
+
+    /** The colour of a lit lamp: its own, or the hold or pump charge's state (green, yellow, red, blinking red) when one is fitted. */
+    private static int lamp(io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec spec, ItemStack gun, long game, int plain) {
+        float c = -1f;
+        if (spec.holdCharge())
+            c = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.holdShare(gun, game);
+        if (spec.pump())
+            c = Math.max(c, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.pumps(gun)
+                    / (float) io.github.soundgoodizerfan.feedback.modular.ModularTuning.EGUN_PUMP_MAX);
+        return io.github.soundgoodizerfan.feedback.client.gun.ChargeColour.of(c, plain);
     }
 
     /** A tethered gun's source: a suit's bay battery, else the pack's fitting, as the share charged; -1 with none. */
@@ -167,42 +192,53 @@ public final class GunHud {
                 : io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.stateOfCharge(io.github.soundgoodizerfan.feedback.machine.battery.BatteryStack.state(src.battery()));
     }
 
-    /** What the seat holds: six pips for a cylinder, a bar for a bank (its charge) or a flywheel (its spin). */
+    /** What the seat holds: a glass vial for each chamber of a cylinder, a capacitor cell for each of six steps of a bank's charge or a flywheel's spin. */
     private static void seatReadout(GuiGraphics g, io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec spec, ItemStack gun, long game,
-                                    int x, int y, int w) {
+                                    int x, int y, int span) {
         switch (spec.seat()) {
             case CYLINDER -> {
                 float held = io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.chambersShown(gun, game);
-                int n = io.github.soundgoodizerfan.feedback.modular.ModularTuning.EGUN_CHAMBERS, pw = (w - 2 * (n - 1)) / n;
+                int n = io.github.soundgoodizerfan.feedback.modular.ModularTuning.EGUN_CHAMBERS, full = lamp(spec, gun, game, 0xFF40FF60);
                 for (int i = 0; i < n; i++) {
-                    int px = x + i * (pw + 2);
-                    g.fill(px, y, px + pw, y + 8, 0xFF202428);
+                    int vx = x + Math.round(i * (span - 7) / 5f);
                     float fill = Mth.clamp(held - i, 0f, 1f);
-                    if (fill > 0f)
-                        g.fill(px, y + 8 - Math.round(8 * fill), px + pw, y + 8, fill >= 1f ? 0xFF40FF60 : 0xFFFFB030);
+                    g.fill(vx + 2, y + 3, vx + 5, y + 11, DARK);
+                    int rows = Math.round(8 * fill);
+                    if (rows > 0)
+                        g.fill(vx + 2, y + 11 - rows, vx + 5, y + 11, fill >= 1f ? full : 0xFFFFB030);
+                    g.blit(VIAL, vx, y, 0, 0, 7, 14, 7, 14);
                 }
             }
-            case CAPACITOR_BANK, BURST_BANK -> bar(g, x, y, w, 8, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.bankShown(gun, game), 0xFF40C8FF);
-            case FLYWHEEL -> bar(g, x, y, w, 8, io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.spinShown(gun, game), 0xFFE0E0E8);
+            case CAPACITOR_BANK, BURST_BANK, CORE_BREECH, FLYWHEEL -> {
+                float share = spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.FLYWHEEL
+                        ? io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.spinShown(gun, game)
+                        : io.github.soundgoodizerfan.feedback.modular.ModularElectricGun.bankShown(gun, game);
+                int lit = lamp(spec, gun, game, spec.seat() == io.github.soundgoodizerfan.feedback.modular.ElectricGunSpec.Seat.FLYWHEEL ? 0xFFE0E0E8 : 0xFF40C8FF);
+                for (int i = 0; i < 6; i++) {
+                    int cx = x + Math.round(i * (span - 9) / 5f);
+                    float fill = Mth.clamp(share * 6f - i, 0f, 1f);
+                    g.fill(cx + 2, y + 3, cx + 7, y + 9, DARK);
+                    int rows = Math.round(6 * fill);
+                    if (rows > 0)
+                        g.fill(cx + 2, y + 9 - rows, cx + 7, y + 9, fill >= 1f ? lit : 0xFF2A6C90);
+                    g.blit(CELL, cx, y, 0, 0, 9, 12, 9, 12);
+                }
+            }
             default -> {
             }
         }
     }
 
-    private static void bar(GuiGraphics g, int x, int y, int w, int h, float fill, int colour) {
-        g.fill(x, y, x + w, y + h, 0xFF202428);
-        g.fill(x, y, x + Math.round(w * Mth.clamp(fill, 0f, 1f)), y + h, colour);
-    }
-
-    /** The barrel's heat as a bar that goes from cool to red; with a heat gauge it carries a scale and the figure. */
-    private static void heatBar(GuiGraphics g, Font font, float heat, boolean gauge, int x, int y, int w) {
-        int colour = heat >= 0.9f ? 0xFFFF4030 : heat >= 0.6f ? 0xFFFF8A3C : 0xFF40C8FF;
-        bar(g, x, y, w, gauge ? 8 : 5, heat, colour);
-        if (gauge) {
-            for (int i = 1; i < 10; i++)
-                g.fill(x + w * i / 10, y, x + w * i / 10 + 1, y + (i == 5 ? 8 : 4), 0xAA000000);
-            g.drawString(font, Math.round(heat * 100f) + "%", x + w + 3, y, SKIN.dim(), false);
-        }
+    /** The barrel's heat as a thermometer: the bulb always full, the column rising and going from cool to red, shimmering near overheat. */
+    private static void thermometer(GuiGraphics g, float heat, int x, int y) {
+        int colour = heat >= 0.9f ? (System.currentTimeMillis() / 200L % 2L == 0L ? 0xFFFF4030 : 0xFFFF8A6C) : heat >= 0.6f ? 0xFFFF8A3C : 0xFF40C8FF;
+        g.fill(x + 3, y + 2, x + 6, y + 40, DARK);
+        g.fill(x + 2, y + 40, x + 7, y + 45, DARK);
+        int rows = Math.round(38 * Mth.clamp(heat, 0f, 1f));
+        g.fill(x + 2, y + 40, x + 7, y + 45, colour);
+        if (rows > 0)
+            g.fill(x + 3, y + 40 - rows, x + 6, y + 40, colour);
+        g.blit(THERMO, x, y, 0, 0, 9, 47, 9, 47);
     }
 
     private static void draw(GuiGraphics g, Font font, boolean left, int slide, int edge, int y, Component count, int colour,

@@ -20,14 +20,7 @@ An optional **primer** changes how the filler burns. A **Booster** burns the fil
 
 ## Fuse
 
-A charge may carry a **fuse** part, shaped from a bit of raw stock, leather or a nugget. Its shape is the choice:
-
-| Fuse | Effect |
-| --- | --- |
-| **Short Wick** | Burns about 1.5 seconds from lighting to blast. |
-| **Wick** | The standard fuse, about 3 seconds. A charge with no fuse part burns this one. |
-| **Long Wick** | Burns about 6 seconds. |
-| **Striker** | A thrown charge goes off on the first thing it hits. A placed charge is lit by hand on the standard wick. |
+A charge may carry a **fuse** part, shaped from a bit of raw stock, leather or a nugget. Its **delay** is a stepper on the drawing, from about 1.5 to 6 seconds from lighting to blast. A charge with no fuse part burns the standard wick, about 3 seconds. The **Striker** is a fuse of its own kind: a thrown charge goes off on the first thing it hits, and a placed charge is lit by hand on the standard wick.
 
 ## Placing
 

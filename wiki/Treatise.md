@@ -16,7 +16,7 @@ Each school has one item per volume. Every volume is a subject of its own: holdi
 | Aerospace Treatise I: Propellers | propeller |
 | Aerospace Treatise II: Thrusters | thruster |
 | Robotics Treatise I: Suit Modules | suit module, and the servo, gauge, sensor head, battery bay and upgrade fittings of armor ([Exosuit](Exosuit.md)) |
-| Chemical Treatise I: Pressure Vessels | pressure vessel, boiler, large boiler, gas tank |
+| Chemical Treatise I: Pressure Vessels | pressure vessel, boiler, gas tank |
 | Chemical Treatise II: Heat and Compression | heat exchanger, gas compressor |
 | Chemical Treatise III: Explosives | demolition charge |
 | Materials Treatise I: Machine-Shop Consumables | no types |
@@ -74,13 +74,12 @@ Suit module: C copper ingot, R redstone, I iron ingot, D diamond
 Pressure vessel: I iron ingot, B bucket, G iron nugget
 Gas tank: I iron ingot, G glass pane
 
-Boiler (iron)              Large boiler (iron)       Heat exchanger (copper)
-I I I                      I C I                     C C C
-I C I                      I C I                     I B I
-I B I                      I C I                     C C C
+Boiler (iron)              Heat exchanger (copper)
+I I I                      C C C
+I C I                      I B I
+I B I                      C C C
 
 Boiler: I iron ingot, C cauldron, B bucket
-Large boiler: I iron ingot, C cauldron
 Heat exchanger: C copper ingot, I iron bars, B copper block
 
 Gas compressor (iron)

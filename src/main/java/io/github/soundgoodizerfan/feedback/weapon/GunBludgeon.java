@@ -143,6 +143,7 @@ public final class GunBludgeon {
                         e -> e != player && e.isAlive() && !e.isSpectator() && !player.isAlliedTo(e))
                 : SweptVolume.targets(player, FTuning.GUN_BLUDGEON_HALF_WIDTH).stream().limit(1).toList();
         var sound = SoundEvents.PLAYER_ATTACK_NODAMAGE;
+        float pitch = 1f;
         for (LivingEntity target : targets) {
             if (!target.hurt(player.damageSources().playerAttack(player), dmg))
                 continue;
@@ -153,9 +154,10 @@ public final class GunBludgeon {
             double dx = spin ? target.getX() - player.getX() : Mth.sin(yaw), dz = spin ? target.getZ() - player.getZ() : -Mth.cos(yaw);
             target.knockback((FTuning.GUN_BLUDGEON_KNOCKBACK_BASE + FTuning.GUN_BLUDGEON_KNOCKBACK_PER_MU * f.gunMass().value())
                     * (Skills.unlocked(player, "gun_fu_heavy_butt") ? GunFuTuning.HEAVY_BUTT_KNOCK : 1f), dx, dz);
-            sound = f.gunMass().value() >= FTuning.GUN_BLUDGEON_HEAVY_MU ? SoundEvents.PLAYER_ATTACK_STRONG : SoundEvents.PLAYER_ATTACK_WEAK;
+            sound = io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_BUTT.get();
+            pitch = f.gunMass().value() >= FTuning.GUN_BLUDGEON_HEAVY_MU ? 0.7f : 1.1f;
             freeShot(player, hand, gun, target, dmg);
         }
-        player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, 1f);
+        player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), sound, player.getSoundSource(), 1f, pitch);
     }
 }

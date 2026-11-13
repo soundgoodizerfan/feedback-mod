@@ -6,13 +6,11 @@ The simplest source of [rotation](Rotation.md): it turns as long as you keep tur
 
 Shape a **Crank Arm** from a rod or a stick at a bench, then put the arm in a crafting grid; the crank comes out with that arm. It needs no blueprint and no treatise.
 
-The crank has no dimension to set. Its **lever** is a choice of shape that trades Su against speed:
+Its **arm length** is a stepper from 4 to 8 on the drawing: a longer arm gives more Su and less speed, a shorter one the reverse. The offset arm is a shape of its own. The straight arm is the reference:
 
 | Arm | Su | Speed |
 | --- | --- | --- |
-| Short crank | 0.7 times | 1.4 times |
-| Straight | standard | standard |
-| Long crank | 1.4 times | 0.75 times |
+| Straight, arm length 6 | standard | standard |
 | Offset | 1.3 times | 0.9 times |
 
 **Addon.** A **flywheel** (plate) is an optional disc that triples the crank's inertia: it carries the turn through the dead spot and is slower to start.

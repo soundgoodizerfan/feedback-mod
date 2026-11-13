@@ -82,6 +82,7 @@ public final class GunClient {
 
     /** Swap magazines. Registered by {@code FClientSetup}. */
     public static final KeyMapping RELOAD = new KeyMapping("key.feedback.reload", InputConstants.KEY_R, "key.categories.feedback");
+    public static final KeyMapping PUMP = new KeyMapping("key.feedback.pump", InputConstants.KEY_PERIOD, "key.categories.feedback");
     public static final KeyMapping FIRE_MODE = new KeyMapping("key.feedback.fire_mode", InputConstants.KEY_V, "key.categories.feedback");
     public static final KeyMapping UNLOAD = new KeyMapping("key.feedback.unload", InputConstants.KEY_U, "key.categories.feedback");
 
@@ -94,6 +95,11 @@ public final class GunClient {
     /** 0 hip, 1 fully aimed: eased toward the use key over the sight's raise time. */
     private static float aim;
     private static long lastFrameMs;
+    private static long casingAtMs;
+    /** When the forend of a pump gun just fired hits the back of its stroke, and when it slams home; 0 for none. */
+    private static long pumpBackAtMs, pumpHomeAtMs;
+    private static int drawSlot = -1;
+    private static boolean drawHolding;
     private static long lastShotMs;
     private static int streak;
     private static boolean reloadWasDown;
@@ -188,10 +194,34 @@ public final class GunClient {
         long now = System.currentTimeMillis();
         long dt = lastFrameMs == 0 ? 0 : Math.min(now - lastFrameMs, 100);
         lastFrameMs = now;
+        // A pump gun's forend: yanked back, then thrown home (the same beats GunMotion draws).
+        if (pumpBackAtMs != 0 && now >= pumpBackAtMs) {
+            pumpBackAtMs = 0;
+            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_PUMP.get(),
+                    SoundSource.PLAYERS, 0.8f, 0.85f, false);
+        }
+        if (pumpHomeAtMs != 0 && now >= pumpHomeAtMs) {
+            pumpHomeAtMs = 0;
+            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_ARMED.get(),
+                    SoundSource.PLAYERS, 0.7f, 1.1f, false);
+        }
+        // A casing hits the floor a moment after a shot that ejected one.
+        if (casingAtMs != 0 && now >= casingAtMs) {
+            casingAtMs = 0;
+            mc.level.playLocalSound(player.getX(), player.getY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_CASING.get(), SoundSource.PLAYERS,
+                    0.4f, 0.9f + player.getRandom().nextFloat() * 0.3f, false);
+        }
 
         var held = player.getMainHandItem();
         var offItem = player.getOffhandItem();
         boolean holding = held.getItem() instanceof GunItem;
+        // Drawing a gun, and putting it away: the same leather, higher and lower.
+        int slot = player.getInventory().selected;
+        if (drawSlot != -1 && (holding != drawHolding || holding && slot != drawSlot))
+            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_DRAW.get(), SoundSource.PLAYERS,
+                    holding ? 0.6f : 0.4f, holding ? 1f : 0.8f, false);
+        drawSlot = slot;
+        drawHolding = holding;
         // The firearm's design (reload, fan, sight read it); an electric gun has none, and is built if its own mechanism says so.
         GunSpec design = holding ? GunSpec.of(held).orElse(null) : null;
         GunSpec offDesign = offItem.getItem() instanceof GunItem ? GunSpec.of(offItem).orElse(null) : null;
@@ -233,16 +263,27 @@ public final class GunClient {
             PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.AimPayload(wantsAim));
         }
 
+        // The pump key works a pump charge's handle.
+        while (PUMP.consumeClick()) {
+            if (canAct) {
+                if (((GunItem) held.getItem()).mechanism().canPump(held))
+                    io.github.soundgoodizerfan.feedback.client.gun.GunMotion.pump();
+                PacketDistributor.sendToServer(new io.github.soundgoodizerfan.feedback.net.GunPumpPayload());
+            }
+        }
         // R is held, not tapped: the server reloads while it is down and stops when it comes up, both guns if there are two.
         while (RELOAD.consumeClick()) {
         }
         boolean offGunHeld = offBuilt;
         boolean reloadDown = (canAct || (offGunHeld && ready)) && RELOAD.isDown();
-        // A pump charge works the gun with the reload key; there is nothing to reload.
+        // A core breech is vented with the reload key; there is nothing to reload.
         boolean pumping = canAct && ((GunItem) held.getItem()).mechanism().reloadKeyWorks(held);
         if (pumping) {
-            if (reloadDown && !reloadWasDown)
+            if (reloadDown && !reloadWasDown) {
                 PacketDistributor.sendToServer(new GunReloadPayload(true));
+                if (((GunItem) held.getItem()).mechanism().reloadKeyReady(held))
+                    io.github.soundgoodizerfan.feedback.client.gun.GunMotion.vent();
+            }
         } else if (reloadDown && !reloadWasDown) {
             // The estimate is every held gun's own reload, back to back: the server runs the emptiest first.
             long took = 0;
@@ -257,10 +298,11 @@ public final class GunClient {
             took = io.github.soundgoodizerfan.feedback.core.Haste.time(Math.round(took * GunShots.reloadScale(player)), player);
             if (took > 0) {
                 reloadUntilMs = now + took;
-                io.github.soundgoodizerfan.feedback.client.gun.GunMotion.reload(reloadUntilMs);
+                io.github.soundgoodizerfan.feedback.client.gun.GunMotion.reload(reloadUntilMs, design != null && design.internalCapacity().isPresent()
+                        ? GunAmmo.loadable(player.getInventory(), held, design).size() : 0);
                 PacketDistributor.sendToServer(new GunReloadPayload(true));
-                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN,
-                        SoundSource.PLAYERS, 0.6f, 1.4f, false);
+                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_RELOAD_START.get(),
+                        SoundSource.PLAYERS, 0.6f, 1f, false);
                 MAIN.burstLeft = 0;
                 OFF.burstLeft = 0;
             }
@@ -275,8 +317,8 @@ public final class GunClient {
         while (FIRE_MODE.consumeClick()) {
             if (canAct || (offGunHeld && ready)) {
                 PacketDistributor.sendToServer(new GunModePayload(keyOff));
-                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.UI_BUTTON_CLICK.value(),
-                        SoundSource.PLAYERS, 0.4f, 1.8f, false);
+                mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_MODE_CLICK.get(),
+                        SoundSource.PLAYERS, 0.6f, 1f, false);
                 MAIN.burstLeft = 0;
                 OFF.burstLeft = 0;
             }
@@ -328,6 +370,11 @@ public final class GunClient {
     /** The fire loop of one gun: its button, its mode, its figures. */
     private static void pull(Minecraft mc, LocalPlayer player, net.minecraft.world.item.ItemStack gun, GunFigures figures,
                              Trigger t, boolean active, boolean down, boolean fanning, boolean off, long now) {
+        // A cylinder cannot be fired while its loading stroke runs: the hand is at work in it.
+        if (reloading() && GunSpec.of(gun).map(g -> g.layout().feed() == io.github.soundgoodizerfan.feedback.weapon.GunLayout.Feed.CYLINDER).orElse(false)) {
+            active = false;
+            down = false;
+        }
         FireMode mode = GunItem.mode(gun);
         boolean pressed = down && !t.wasDown;
         boolean released = !down && t.wasDown;
@@ -361,8 +408,8 @@ public final class GunClient {
             // Empty, or the wrong bore: a click, not a shot, and not a click every frame.
             if (pressed || released && onRelease || mode == FireMode.AUTO) {
                 if (now >= t.nextShotMs) {
-                    mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.DISPENSER_FAIL,
-                            SoundSource.PLAYERS, 0.5f, 1.6f, false);
+                    mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_DRY_CLICK.get(),
+                            SoundSource.PLAYERS, 0.6f, 0.95f + player.getRandom().nextFloat() * 0.1f, false);
                     t.nextShotMs = now + 300;
                 }
             }
@@ -373,6 +420,7 @@ public final class GunClient {
         if (now - t.nextShotMs > figures.cycleMs())
             t.nextShotMs = now;
         if (now >= t.nextShotMs) {
+            io.github.soundgoodizerfan.feedback.client.gun.GunMotion.fanning(off, fanning);
             shoot(mc, player, gun, figures, off, now);
             t.spent = true;
             if (mode == FireMode.BURST)
@@ -393,7 +441,7 @@ public final class GunClient {
         // A flintlock's priming sometimes flashes in the pan: a click and a puff, the charge stays loaded, and the pull still costs its cycle.
         if (GunSpec.of(gun).map(g -> g.layout().action() == io.github.soundgoodizerfan.feedback.weapon.GunLayout.Action.FLINTLOCK).orElse(false)
                 && player.getRandom().nextFloat() < FTuning.GUN_FLINT_MISFIRE) {
-            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 0.8f, 1.2f, false);
+            mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PAN_FLASH.get(), SoundSource.PLAYERS, 0.8f, 1f, false);
             Vec3 pan = player.getEyePosition().add(player.getLookAngle().scale(0.5));
             mc.level.addParticle(ParticleTypes.SMOKE, pan.x, pan.y, pan.z, 0, 0.02, 0);
             GunHud.cue(net.minecraft.network.chat.Component.translatable("message.feedback.gun.flash_pan"), 40);
@@ -409,6 +457,15 @@ public final class GunClient {
         for (GunSound.Layer layer : mechanism != null ? mechanism.sound(gun, f, player.getRandom()) : GunSound.layers(f, player.getRandom()))
             mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), layer.event(),
                     SoundSource.PLAYERS, layer.volume(), layer.pitch(), false);
+        if (mechanism instanceof io.github.soundgoodizerfan.feedback.weapon.FirearmMechanism
+                && GunSpec.of(gun).map(g -> g.layout().action() != io.github.soundgoodizerfan.feedback.weapon.GunLayout.Action.FLINTLOCK).orElse(false))
+            casingAtMs = now + 250 + player.getRandom().nextInt(250);
+        var pumpAction = GunSpec.of(gun).map(g -> g.layout().action()).filter(a -> a == io.github.soundgoodizerfan.feedback.weapon.GunLayout.Action.PUMP);
+        if (pumpAction.isPresent()) {
+            int stroke = pumpAction.get().manualMs();
+            pumpBackAtMs = now + Math.round(stroke * 0.4f);
+            pumpHomeAtMs = now + Math.round(stroke * 0.9f);
+        }
         Vec3 muzzle = player.getEyePosition().add(player.getLookAngle().scale(0.6));
         mc.level.addParticle(mechanism != null ? mechanism.muzzleParticle(gun, f) : f.muzzleParticle(), muzzle.x, muzzle.y, muzzle.z, 0, 0.01, 0);
         // A hot barrel smokes between shots as well as at them: the thing a hand and an eye can see.

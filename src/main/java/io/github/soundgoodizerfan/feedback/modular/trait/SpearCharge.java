@@ -15,6 +15,7 @@ import io.github.soundgoodizerfan.feedback.modular.ModularFigures;
 import io.github.soundgoodizerfan.feedback.modular.ModularFigures.Fig;
 import io.github.soundgoodizerfan.feedback.modular.ModularStacks;
 import io.github.soundgoodizerfan.feedback.modular.ModularTrait;
+import io.github.soundgoodizerfan.feedback.modular.ModularTuning;
 import io.github.soundgoodizerfan.feedback.modular.ModularTraits;
 import io.github.soundgoodizerfan.feedback.modular.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.ModularTypes;
@@ -65,6 +66,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
  * <p><b>Cost</b>: a spear held out hits only at speed, a hit costs {@code 1 + relative speed /
  * wear_speed} points of wear, and the charge ends by itself. The jab loses its close range.
  *
+ * <p><b>Tines and barb</b> (axes of the spear head): more tines spread the thrust, so every blow, jab or charge, is cut by
+ * {@link #tineFactor} (a thinner section pierces armour less, and each tine past the first costs a share of the thrust) and
+ * lands in a wider cone, on up to {@code tines} things at once. A barb tears the wound (a pulled target takes more), pulls the
+ * target toward the wielder and holds the weapon up while it is worked free; a thrown barbed head on a lanyard wounds what it
+ * reels ({@link ModularTuning#HELD_WOUND_MULT}), a line alone does not. A build balanced for the hand (baked {@code BALANCE}
+ * below {@link ModularTuning#SPEAR_THROW_BALANCE}) is thrown on release and neither charges nor loses its jab's close range.
+ *
  * <p>Animation: client-only ({@code client/SpearClient}): the arm held out in front while charging,
  * lowered when disengaged; other players are told the stage by {@code SpearStagePayload}.
  * <b>[OPEN]</b>: hitbox inflation and attacking through non-solid blocks (both need client-side
@@ -90,13 +98,106 @@ public final class SpearCharge implements ModularTrait {
     /** True while the charge itself is hurting something, so the jab's close-range rule does not cancel it. */
     private static boolean charging;
 
+    /** True while the jab's other tines are hurting their targets, so they do not fork in turn. */
+    private static boolean tining;
+
     @Override
     public void onAttack(LivingIncomingDamageEvent event, LivingEntity attacker, ItemStack weapon, Params params) {
-        if (charging)
+        if (charging || tining)
             return;
+        LivingEntity target = event.getEntity();
         Vec3 eye = attacker.getEyePosition();
-        if (closest(event.getEntity().getBoundingBox(), eye).distanceTo(eye) < params.get("min_range", 2f))
+        if (!thrower(weapon) && closest(target.getBoundingBox(), eye).distanceTo(eye) < params.get("min_range", 2f)) {
             event.setCanceled(true);
+            return;
+        }
+        float tines = tines(weapon);
+        float barb = barb(weapon);
+        float blow = event.getAmount();
+        event.setAmount(blow * tineFactor(tines, target) * (1f + ModularTuning.BARB_TEAR_PER_BARB * barb));
+        barbed(attacker, weapon, target, barb);
+        int extra = Math.round(tines) - 1;
+        if (extra <= 0)
+            return;
+        Vec3 look = attacker.getLookAngle();
+        float reach = params.get("charge_reach", 4.5f);
+        List<LivingEntity> caught = attacker.level().getEntitiesOfClass(LivingEntity.class, attacker.getBoundingBox().inflate(reach),
+                e -> e != attacker && e != target && e.isAlive() && !(e instanceof net.minecraft.world.entity.decoration.ArmorStand)
+                        && !attacker.isAlliedTo(e) && closest(e.getBoundingBox(), eye).distanceTo(eye) <= reach
+                        && e.getBoundingBox().getCenter().subtract(eye).normalize().dot(look) > cone(tines));
+        var source = io.github.soundgoodizerfan.feedback.modular.StrikeSource.of(
+                attacker instanceof Player p ? attacker.damageSources().playerAttack(p) : attacker.damageSources().mobAttack(attacker), attacker, weapon);
+        tining = true;
+        try {
+            caught.stream().sorted(java.util.Comparator.comparingDouble(e -> e.distanceToSqr(attacker))).limit(extra)
+                    .forEach(e -> {
+                        e.hurt(source, blow * tineFactor(tines, e) * (1f + ModularTuning.BARB_TEAR_PER_BARB * barb));
+                        barbed(attacker, weapon, e, barb);
+                    });
+        } finally {
+            tining = false;
+        }
+    }
+
+    /** The spear head part of {@code weapon}, the front face of it that is one. */
+    private static ModularDesign.Part head(ItemStack weapon) {
+        ModularDesign design = ModularStacks.design(weapon);
+        if (design == null)
+            return null;
+        for (ModularDesign.Part face : io.github.soundgoodizerfan.feedback.modular.ModularFaces.faces(design))
+            if (face.kind().equals("spear_head"))
+                return face;
+        return null;
+    }
+
+    /** The head's tine count (1 for a plain spear). */
+    public static float tines(ItemStack weapon) {
+        ModularDesign.Part head = head(weapon);
+        return head == null ? 1f : Math.max(1f, head.axis("tines", 1f));
+    }
+
+    /** The head's barb, 0 for none. */
+    public static float barb(ItemStack weapon) {
+        ModularDesign.Part head = head(weapon);
+        return head == null ? 0f : Math.max(0f, head.axis("barb", 0f));
+    }
+
+    /** Whether the build is thrown on release rather than charged: a spring on it, or balanced toward the middle of the haft. */
+    public static boolean thrower(ItemStack weapon) {
+        if (io.github.soundgoodizerfan.feedback.modular.SpringPart.of(weapon).isPresent())
+            return true;
+        ModularFigures figures = ModularStacks.figures(weapon);
+        return figures != null && figures.get(Fig.BALANCE) < ModularTuning.SPEAR_THROW_BALANCE;
+    }
+
+    /**
+     * The share of a blow one target takes from a head of {@code tines}: every tine past the first costs a share of the thrust, and
+     * the thinner section pierces armour less, by {@code 1 - 1 / sqrt(tines)} of what the target's armour would have stopped.
+     */
+    public static float tineFactor(float tines, LivingEntity target) {
+        float drag = 1f / (1f + ModularTuning.TINE_DRAG * (tines - 1f));
+        double armour = target.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.ARMOR);
+        float stopped = (float) (armour / (armour + ModularTuning.TINE_ARMOUR_HALF));
+        return drag * (1f - (1f - 1f / (float) Math.sqrt(tines)) * stopped);
+    }
+
+    /** The look-line match a blow needs to land: dead-on for one tine, wider as tines spread. */
+    public static float cone(float tines) {
+        return Mth.lerp(Mth.clamp((tines - 1f) / 4f, 0f, 1f), ModularTuning.TINE_CONE_NARROW, ModularTuning.TINE_CONE_WIDE);
+    }
+
+    /** A barbed hit pulls the target toward the wielder and holds the weapon up while the barb is worked out. */
+    private static void barbed(LivingEntity attacker, ItemStack weapon, LivingEntity target, float barb) {
+        if (barb <= 0f)
+            return;
+        Vec3 toward = attacker.position().subtract(target.position());
+        if (toward.lengthSqr() > 1.0E-4) {
+            toward = toward.normalize().scale(ModularTuning.BARB_PULL_PER_BARB * barb);
+            target.push(toward.x, 0.05, toward.z);
+            target.hurtMarked = true;
+        }
+        if (attacker instanceof Player player)
+            player.getCooldowns().addCooldown(weapon.getItem(), Math.round(ModularTuning.BARB_WITHDRAW_TICKS * barb));
     }
 
     /** Ticks a charge may go without a heartbeat from the client before the server ends it. */
@@ -114,7 +215,7 @@ public final class SpearCharge implements ModularTrait {
 
     /** The spear trait's numbers if {@code stack} is a spear, for the client's key handling. */
     public static java.util.Optional<Params> of(ItemStack stack) {
-        return ModularTraits.of(stack).filter(a -> a.trait() instanceof SpearCharge).map(ModularTraits.Active::params);
+        return ModularTraits.of(stack).filter(a -> a.trait() instanceof SpearCharge && !thrower(stack)).map(ModularTraits.Active::params);
     }
 
     /** The client holds (or lets go of) the use key. Starts, refreshes or ends the sender's charge. */
@@ -187,7 +288,7 @@ public final class SpearCharge implements ModularTrait {
                 continue;
             Vec3 point = closest(target.getBoundingBox(), eye);
             double distance = point.distanceTo(eye);
-            if (distance < minRange || distance > reach || point.subtract(eye).normalize().dot(look) < 0.9)
+            if (distance < minRange || distance > reach || point.subtract(eye).normalize().dot(look) < cone(tines(weapon)))
                 continue;
             // blocks a second the two close along the look line; per-tick deltas are x20
             double speed = wielderVelocity.subtract(target.position().subtract(before)).dot(look) * 20;
@@ -202,7 +303,9 @@ public final class SpearCharge implements ModularTrait {
 
     private static void strike(LivingEntity user, ItemStack weapon, LivingEntity target, float speed,
                                boolean dismounts, boolean knocks, Params params) {
-        float damage = damage(weapon, speed, params);
+        float tines = tines(weapon);
+        float barb = barb(weapon);
+        float damage = damage(weapon, speed, params) * tineFactor(tines, target) * (1f + ModularTuning.BARB_TEAR_PER_BARB * barb);
         var source = user instanceof Player p ? user.damageSources().playerAttack(p) : user.damageSources().mobAttack(user);
         charging = true;
         try {
@@ -215,6 +318,7 @@ public final class SpearCharge implements ModularTrait {
             target.knockback(0.4 + 0.05 * speed, Mth.sin(user.getYRot() * Mth.DEG_TO_RAD), -Mth.cos(user.getYRot() * Mth.DEG_TO_RAD));
         if (dismounts && target.isPassenger())
             target.stopRiding();
+        barbed(user, weapon, target, barb);
         weapon.hurtAndBreak(ModularStacks.cap(weapon, 1 + (int) (speed / params.get("wear_speed", 6f))), user, EquipmentSlot.MAINHAND);
     }
 

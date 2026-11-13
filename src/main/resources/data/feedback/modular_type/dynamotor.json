@@ -20,20 +20,26 @@
         "stock": [
           "plate"
         ],
-        "base": "small",
-        "variants": [
+        "slots": [
           {
-            "name": "small"
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "medium",
-            "cells": 4
-          },
-          {
-            "name": "large",
-            "cells": 8
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
+      },
+      "axes": {
+        "size": {
+          "min": 2,
+          "max": 8,
+          "default": 2,
+          "step": 1,
+          "scales": true
+        }
       }
     },
     "W": {
@@ -49,24 +55,26 @@
         "stock": [
           "wire"
         ],
-        "base": "coarse",
-        "variants": [
+        "slots": [
           {
-            "name": "coarse"
+            "name": "core",
+            "share": 3
           },
           {
-            "name": "fine",
-            "cells": 2
-          },
-          {
-            "name": "dense",
-            "cells": 4
-          },
-          {
-            "name": "heavy_dense",
-            "cells": 8
+            "name": "surface",
+            "share": 1,
+            "standard": "feedback:iron"
           }
         ]
+      },
+      "axes": {
+        "turns": {
+          "min": 1,
+          "max": 8,
+          "default": 1,
+          "step": 1,
+          "scales": true
+        }
       }
     },
     "C": {
@@ -130,6 +138,16 @@
               "su_mult": 1.45,
               "friction": 0.02
             }
+          }
+        ],
+        "slots": [
+          {
+            "name": "race",
+            "share": 3
+          },
+          {
+            "name": "balls",
+            "share": 1
           }
         ]
       }

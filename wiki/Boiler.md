@@ -1,6 +1,6 @@
 # Boiler
 
-Turns heat into **steam**. Sits over a fire like a [Crucible](Crucible.md) does. Its steam drives a [Steam Engine](Steam_Engine.md) or, from a Large Boiler, a [Steam Turbine](Steam_Turbine.md).
+Turns heat into **steam**. Sits over a fire like a [Crucible](Crucible.md) does. Its steam drives a [Steam Engine](Steam_Engine.md) or, at a high scale, a [Steam Turbine](Steam_Turbine.md).
 
 **A boiler with nowhere to send its steam builds pressure, and can explode.** Read [Pressure](#pressure) before you put a valve on one.
 
@@ -8,13 +8,16 @@ A boiler can take its heat from a [Fission Reactor](Fission_Reactor.md) through 
 
 ## Designing and building
 
-A boiler is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Boiler*, or *Large Boiler*, in the type row) and print it on paper; drawing it takes Chemical Treatise I ([Treatise](Treatise.md)). It has one part, the **Boiler Shell** (the **Large Boiler Shell** for the large one), with three choices:
+A boiler is a modular build. Draw it at the [Blueprint Table](Blueprint_Table.md) (pick *Boiler* in the type row) and print it on paper; drawing it takes Chemical Treatise I ([Treatise](Treatise.md)). It has one part, the **Boiler Shell**, with four choices:
 
 | Choice | What it sets |
 | --- | --- |
 | **Shape** | Flat, fire tube or water tube. See [Shapes](#shapes). |
 | **Wall** | Thickness from 1 to 20 cm. A thicker wall holds more pressure. |
 | **Metal** | The plate it is made from. A stronger metal holds more. It must be a metal with a measured yield strength. |
+| **Scale** | From 1 to 10 plain boilers in one block. See [Scale](#scale). |
+
+The shell has a ceramic lining as well; it is fixed, costs stock like the rest of the shell and is never picked (see [Composed Parts](Composed_Parts.md)).
 
 Shape the shell from plate of the metal you chose at the [Smithing Table](Smithing_Table.md), then assemble it at the [Engineering Table](Engineering_Table.md): the shell in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the blueprint in the blueprint slot to judge the fit against your drawing. Assembling it takes Chemical Treatise I. The boiler comes out with the shape, wall and metal of the shell, and the blueprint is kept.
 
@@ -35,7 +38,7 @@ The shell sets the pressure the boiler **risks letting go at** (its danger line)
 ## Using it
 
 1. Put it on top of a [Firebox](Firebox.md), over lava, or on a [Heating Coil](Heating_Coil.md).
-2. **Fill it with water**: right-click it with a Water Bucket, or feed it with a [Pump](Pump.md). It holds 4000 mB of water and 4000 mB of steam.
+2. **Fill it with water**: right-click it with a Water Bucket, or feed it with a [Pump](Pump.md). At scale 1 it holds 4000 mB of water and 4000 mB of steam.
 3. Once it reaches **120 Tu**, it starts turning water into steam.
 
 Water that is already hot, such as condensate returned from a [Condenser](Condenser.md), needs less heat to boil than cold water: cold feed costs about a sixth more over its climb to 100 Tu.
@@ -44,7 +47,7 @@ A boiler needs far less heat than metalwork. It starts boiling well below a red 
 
 ## How much steam
 
-At full output it makes **10 mB of steam a tick**, using 10 mB of water. That keeps **one Steam Engine** running.
+At scale 1 and full output it makes **10 mB of steam a tick**, using 10 mB of water. That keeps **one Steam Engine** running.
 
 Making steam **uses up the boiler's heat**: 20 Work for every mB. A weak fire holds the boiler just at boiling and makes a trickle. Full output needs a fire about **330 Tu hotter** than the boiler, so roughly **450 Tu** or more. Logs (760 Tu) are plenty. If your engine is starving, the fire is too weak, not the boiler too small.
 
@@ -78,11 +81,9 @@ Weeping lets a little pressure off, and a boiler only slightly over the line may
 
 A boiler that's merely full and idle sits at 4 Pu and weeps a little. That's harmless; it's the fire under a shut boiler that kills it.
 
-## Large Boiler
+## Scale
 
-A **Large Boiler** is ten Boilers in one block: ten times the mass, tanks of 40000 mB of water and 40000 mB of steam, and **100 mB of steam a tick** at full output, enough for a [Steam Turbine](Steam_Turbine.md). It stands on ten times the fire, so it wants a hotter, bigger fire than one Boiler. It builds pressure and bursts like a Boiler if its line is shut under a real fire.
-
-It is built the same way, from a Large Boiler Shell and its own blueprint, and assembling it takes the same treatise.
+The **scale** axis (1 to 10) says how many plain boilers the one block is. Mass, tanks, steam a tick and the fire it stands on all multiply by the scale: at scale 10 it holds 40000 mB of water and 40000 mB of steam and makes **100 mB of steam a tick** at full output, enough for a [Steam Turbine](Steam_Turbine.md). A big boiler wants a hotter, bigger fire than a small one. It builds pressure and bursts like any boiler if its line is shut under a real fire.
 
 ## Notes
 

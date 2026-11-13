@@ -6,7 +6,7 @@ A pack worn in the Curios **back** slot. It holds 9, 18 or 27 items, and the str
 
 Made at the [Woodworking Table](Woodworking_Table.md) (or the [Smithing Table](Smithing_Table.md) for plate parts) from two parts, as for any [modular tool](Tools_and_Weapons.md):
 
-- **Shell** (Backpack Shell): the body, shaped from leather, carpet or plate stock. Its shape fixes the slots: a **pouch** (one cell) holds 9, a **satchel** (three cells, the standard shape) holds 18, a **pack** (nine cells) holds 27. The shell's material only decides how heavy it is.
+- **Shell** (Backpack Shell): the body, shaped from leather, carpet or plate stock. Its **capacity** stepper (1 to 9 cells) fixes the slots: one cell holds 9, three cells (the standard) 18, nine cells 27, and the steps between fall between. The shell's material only decides how heavy it is.
 - **Strap**: leather, string or wire. It sets the carry rating, and it is the part that wears.
 
 The [Blueprint Table](Blueprint_Table.md) shows the slots, the carry rating, the mounting points left and the store slots of a drawing before you make it.

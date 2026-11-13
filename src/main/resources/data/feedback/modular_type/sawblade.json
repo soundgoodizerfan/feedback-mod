@@ -40,18 +40,26 @@
           "shard",
           "nugget"
         ],
-        "variants": [
+        "slots": [
           {
-            "name": "needle",
-            "cells": 2,
-            "section": 0.75
+            "name": "metal",
+            "share": 3
           },
           {
-            "name": "capped",
-            "cells": 3,
-            "section": 1.35
+            "name": "wrap",
+            "share": 1,
+            "standard": "feedback:leather"
           }
         ]
+      },
+      "axes": {
+        "thickness": {
+          "min": 0.75,
+          "max": 1.35,
+          "default": 1.0,
+          "step": 0.05,
+          "scales": true
+        }
       }
     }
   },

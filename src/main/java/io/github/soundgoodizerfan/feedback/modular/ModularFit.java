@@ -118,10 +118,17 @@ public final class ModularFit {
                 if (dm == null || mm == null || !Spec.of(dm).admits(mm))
                     off = true;
             }
+            // A drawing pins each slot's material as it pins the part's: the slot made of another that the drawing's does not admit is off-drawing.
+            for (Map.Entry<String, io.github.soundgoodizerfan.feedback.process.Measures.Slot> sl : want.measures().slots().entrySet()) {
+                net.minecraft.resources.ResourceLocation have = got.measures().slot(sl.getKey()).map(io.github.soundgoodizerfan.feedback.process.Measures.Slot::material).orElse(got.material());
+                Material dm = materials.get(sl.getValue().material()), mm = materials.get(have);
+                if (!have.equals(sl.getValue().material()) && (dm == null || mm == null || !Spec.of(dm).admits(mm)))
+                    off = true;
+            }
             ModularType.Role role = type.roles().get(want.role());
             if (role == null)
                 continue;
-            for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
+            for (Map.Entry<String, ModularType.Axis> a : role.axesFor(want).entrySet()) {
                 float range = a.getValue().max() - a.getValue().min();
                 if (range <= 0f)
                     continue;
@@ -154,7 +161,7 @@ public final class ModularFit {
             ModularType.Role role = type.roles().get(p.role());
             if (role == null || !p.sub().isEmpty())
                 continue;
-            for (Map.Entry<String, ModularType.Axis> a : role.axes().entrySet()) {
+            for (Map.Entry<String, ModularType.Axis> a : role.axesFor(p).entrySet()) {
                 shared.computeIfAbsent(a.getKey(), k -> new ArrayList<>()).add(role.axis(p, a.getKey()));
                 ranges.putIfAbsent(a.getKey(), a.getValue().max() - a.getValue().min());
             }

@@ -252,10 +252,10 @@ public class ModularHafted extends MaceItem implements Modular, HandTool {
 
     // --- use: charge, throw, and the traits' own ------------------------------------------------
 
-    /** Whether the front face is a spear's and is thrown rather than charged: any head but the standard's, or one with a spring. */
+    /** Whether the front face is a spear's and is thrown rather than charged: a spring on it, or a build balanced for the hand ({@link SpearCharge#thrower}). */
     private static boolean thrown(ItemStack stack) {
         return ModularFaces.combat(stack) == ModularType.Family.SPEAR
-                && (SpringPart.of(stack).isPresent() || ModularTraits.of(stack).map(a -> !(a.trait() instanceof SpearCharge)).orElse(true));
+                && (SpearCharge.thrower(stack) || ModularTraits.of(stack).map(a -> !(a.trait() instanceof SpearCharge)).orElse(true));
     }
 
     @Override

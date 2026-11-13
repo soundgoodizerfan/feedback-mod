@@ -105,6 +105,10 @@ public class PartBenchPartCategory implements IRecipeCategory<PartBenchShaping.O
         graphics.fill(1, 11, WIDTH - 1, 12, 0x40000000);
         graphics.drawString(font, Component.translatable("feedback.jei.tool_table_part.stock", option.cells()), 24, 19, VALUE_COLOUR, false);
         graphics.drawString(font, Component.translatable("feedback.jei.tool_table_part.hammer"), 24, 39, VALUE_COLOUR, false);
+        if (!option.shaping().choices().isEmpty())
+            graphics.drawString(font, Component.translatable("feedback.jei.tool_table_part.slots", java.util.stream.Stream.concat(java.util.stream.Stream.of(option.shaping().slots().get(0)), option.shaping().choices().stream())
+                    .map(sl -> Component.translatable("modular.feedback.slot." + sl.name()).getString()).collect(java.util.stream.Collectors.joining(", "))),
+                    1, 48, LABEL_COLOUR, false);
         if (option.forged()) {
             graphics.drawWordWrap(font, Component.translatable("feedback.jei.tool_table_part.forged"), 1, 56, WIDTH - 50, LABEL_COLOUR);
             return;

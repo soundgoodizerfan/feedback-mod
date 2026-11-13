@@ -27,6 +27,10 @@ public final class ClientSettings {
             .comment("A killing blow that earns skill points sends one small wisp in the tree's colour from the fallen creature to you. Applies at once, no restart.")
             .define("gainWisp", true);
 
+    private static final ModConfigSpec.BooleanValue BLOOD = B
+            .comment("Bullet hits on living things throw blood (flesh), dust (bone) or sparks (metal). Off keeps only the sparks and sounds.")
+            .define("bloodEffects", true);
+
     /** How big the crosshair HUD ({@link AimHud}) draws: its dial, needle, mode strip and link chip. */
     public enum AimSize {
         SMALL(1f), MEDIUM(1.5f), LARGE(2f);
@@ -51,6 +55,10 @@ public final class ClientSettings {
     /** True when the player asked for less motion. False before the config has loaded. */
     public static boolean reduceMotion() {
         return SPEC.isLoaded() && REDUCE_MOTION.get();
+    }
+
+    public static boolean blood() {
+        return !SPEC.isLoaded() || BLOOD.get();
     }
 
     public static boolean gainWisp() {

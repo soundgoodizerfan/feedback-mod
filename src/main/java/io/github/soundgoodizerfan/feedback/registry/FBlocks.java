@@ -449,12 +449,6 @@ public class FBlocks {
 
     /** Thermal -> Steam. See {@link FTuning}'s {@code --- the boiler ---} section for why this
      * is a separate block from {@link #STEAM_ENGINE} rather than one fused machine. */
-    /** Ten boilers in one block: the steam a turbine wants. See {@code BoilerBlock}. */
-    public static final DeferredBlock<BoilerBlock> LARGE_BOILER = BLOCKS.register("large_boiler",
-            () -> new BoilerBlock(BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.METAL)
-                    .strength(5.0f)
-                    .sound(SoundType.METAL), FTuning.BOILER_LARGE_SCALE));
     public static final DeferredBlock<BoilerBlock> BOILER = BLOCKS.register("boiler",
             () -> new BoilerBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)

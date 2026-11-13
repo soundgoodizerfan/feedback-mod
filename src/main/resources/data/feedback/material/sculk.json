@@ -1,7 +1,11 @@
 {
-  "xp_store": {"top_level": 20, "capacitance": 250, "conductance": 3, "leak": 0.05},
+  "xp_store": {
+    "top_level": 20,
+    "capacitance": 250,
+    "conductance": 3,
+    "leak": 0.05
+  },
   "kind": "sculk",
-  "traits": ["sculk"],
   "hardness": 0.5,
   "density": 1,
   "thermal": {
@@ -11,7 +15,12 @@
   },
   "mechanical": {
     "friction": 0.6,
-    "abrasiveness": 0
+    "abrasiveness": 0,
+    "damping": {
+      "cold_spread": 0.65,
+      "spoil_at": 0.35,
+      "spoiled_spread": 1.4
+    }
   },
   "separation": {
     "reflectivity": 0.05

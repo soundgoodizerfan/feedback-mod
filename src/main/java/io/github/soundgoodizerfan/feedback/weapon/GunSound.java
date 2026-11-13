@@ -15,8 +15,8 @@ import net.minecraft.util.RandomSource;
  * <p>Create Big Cannons' shape, taken as a design: one sound re-pitched by power, the pitch
  * falling as power rises (spec 3.6). The jitter is TacZ's (0.9 to 1.025). The sound itself is a
  * vanilla placeholder until there is an asset to layer; the spec's layered shot, tail and
- * mechanism is the next step, not this one. The blast layer is now the author's own 9 mm
- * recording; the thump and clack are still vanilla.
+ * mechanism is the next step, not this one. The blast is one of three recording classes (light, medium, heavy) by
+ * power, each several takes picked at random; the thump and clack are still vanilla.
  */
 public final class GunSound {
 
@@ -25,7 +25,7 @@ public final class GunSound {
      * it plays at its own pitch there and falls from it as the charge grows (spec 3.6: pitch
      * drops with power).
      */
-    private static final float PITCH_SEMITONES_AT_ZERO = 3.5f;
+    private static final float PITCH_SEMITONES_AT_ZERO = 1.5f;
 
     private GunSound() {
     }
@@ -36,7 +36,7 @@ public final class GunSound {
     }
 
     public static float pitch(GunFigures f, RandomSource random) {
-        float semitones = PITCH_SEMITONES_AT_ZERO - 8f * power(f);
+        float semitones = PITCH_SEMITONES_AT_ZERO - 3f * power(f);
         return (float) Math.pow(2, semitones / 12f) * (0.9f + random.nextFloat() * 0.125f);
     }
 
@@ -59,14 +59,18 @@ public final class GunSound {
         float jitter = 0.9f + random.nextFloat() * 0.125f;
         float p = power(f);
         var out = new java.util.ArrayList<Layer>(3);
-        out.add(new Layer(event(), volume(f), (float) Math.pow(2, (PITCH_SEMITONES_AT_ZERO - 8f * p) / 12f) * jitter));
+        // A suppressor quiets the report: its own recording, softer and duller, whatever the power.
+        out.add(new Layer(f.report() < 0.6f ? io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_SHOT_SUPPRESSED.get() : event(p), volume(f), (float) Math.pow(2, (PITCH_SEMITONES_AT_ZERO - 3f * p) / 12f) * jitter));
         if (p > 0.25f)
             out.add(new Layer(SoundEvents.GENERIC_EXPLODE.value(), 0.5f * p * f.report(), 1.7f - 0.7f * p));
         out.add(new Layer(SoundEvents.IRON_DOOR_CLOSE, 0.35f, (1.6f - 0.5f * p) * jitter));
         return out;
     }
 
-    public static SoundEvent event() {
-        return io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_SHOT_9MM.get();
+    /** The recording class for a power: the class carries most of the weight, the pitch only trims within it. */
+    public static SoundEvent event(float power) {
+        return (power < 0.33f ? io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_SHOT_LIGHT
+                : power < 0.66f ? io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_SHOT_MEDIUM
+                : io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_SHOT_HEAVY).get();
     }
 }

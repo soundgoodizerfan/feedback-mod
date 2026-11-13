@@ -7,7 +7,8 @@
     "C": {
       "name": "container",
       "forms": [
-        "ceramic_bowl"
+        "ceramic_bowl",
+        "ceramic_plate"
       ],
       "litres": 0.2,
       "layer": 0,
@@ -99,6 +100,15 @@
       ],
       "traits": [
         "kneadable"
+      ]
+    },
+    {
+      "item": "feedback:ceramic_plate",
+      "cells": 4,
+      "stock": [
+        "brick",
+        "ball",
+        "shard"
       ]
     }
   ]

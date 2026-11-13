@@ -64,7 +64,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     /** Away-time bookkeeping: see {@link Catchup}. */
     private final Catchup offline = new Catchup();
 
-    private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB * scaleOf(getBlockState()),
+    private final HeatedTank steamTank = new HeatedTank(FTuning.BOILER_STEAM_TANK_MB,
             stack -> stack.is(FTags.STEAM), this::setChanged);
 
     private final FigureStore figures = new FigureStore();
@@ -73,6 +73,13 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
         figures.set(input.get(FDataComponents.BLOCK_FIGURES.get()), input.get(FModular.DESIGN.get()), input.get(FModular.FIGURES.get()));
+        resize();
+    }
+
+    /** The tanks are as big as the design's scale says, once the design is known (placing, loading). */
+    private void resize() {
+        tank.setCapacity(FTuning.BOILER_WATER_TANK_MB * scale());
+        steamTank.setCapacity(FTuning.BOILER_STEAM_TANK_MB * scale());
     }
 
     @Override
@@ -94,12 +101,9 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
         super(FBlockEntities.BOILER.get(), pos, state);
     }
 
-    private static int scaleOf(BlockState state) {
-        return state.getBlock() instanceof BoilerBlock boiler ? boiler.scale() : 1;
-    }
-
+    /** How many plain boilers this one is, read off the stored design: mass, steam a tick, tanks and the fire it stands on all scale with it. */
     private int scale() {
-        return scaleOf(getBlockState());
+        return Math.max(1, Math.round(figures.get("Scale", 1f)));
     }
 
     /** A boiler holds no workpieces: it is a closed vessel whose contents are the water and the steam. */
@@ -169,7 +173,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
 
     @Override
     protected int tankCapacity() {
-        return FTuning.BOILER_WATER_TANK_MB * scaleOf(getBlockState());
+        return FTuning.BOILER_WATER_TANK_MB;
     }
 
     @Override
@@ -319,6 +323,7 @@ public class BoilerBlockEntity extends io.github.soundgoodizerfan.feedback.machi
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         figures.load(tag, registries);
+        resize();
         temperature = tag.contains("Temperature") ? tag.getFloat("Temperature") : FTuning.AMBIENT_TU.value();
         if (tag.contains("WaterTank"))
             tank.readFromNBT(registries, tag.getCompound("WaterTank"));

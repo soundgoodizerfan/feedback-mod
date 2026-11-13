@@ -18,16 +18,15 @@ A pickaxe is a **head** on a **handle**, and the head is a part of its own. Shap
 | **Pickaxe head, heavy** | `XXX / _X_` | four ingots: a heavier head that mines a three-by-three |
 | **Axe head, bearded** | `XXX / X__` | four ingots: a heavier head that hits a little harder |
 | **Cleaver head** | `XX / XX` |
-| **Pike head** | `X / X / X` |
+| **Spear head** | `X / X / X` | one head with two axes: tines and barb |
 | **Maul head** | `XXX / XXX` |
 | **Sickle head** | `XX_ / __X` |
-| **Trident tines** | `_X_ / X_X` |
 | **Tip** | one cell: a gem, shard or nugget |
 | **Binding** | one cell: leather, string or wire. Polymer strings (Polypropylene, Polyethylene, PVC, PTFE, Synthetic Rubber, Bitumen and Soul Resin String) bind too |
 | **Sword guard**, **shield rim** | one cell each |
 | **Crossbow prod** | two cells: sticks, rods or bone |
 
-Every piece must be the same stock. **Stock** is ingots, gems, planks, cobblestone or bone (tines take ingots, gems or shards). Anything of a material that fits works, so a head can be iron, bronze, gold, diamond, stone, a plank or a bone.
+Every piece must be the same stock. **Stock** is ingots, gems, planks, cobblestone or bone. Anything of a material that fits works, so a head can be iron, bronze, gold, diamond, stone, a plank or a bone.
 
 **Steel and other hot-worked metals have to be hot to shape**, exactly as under a [hammer](Hammer.md); the part comes out as hot as the stock was. Metals without a hot-working window (iron, wood, stone) shape cold.
 
@@ -39,7 +38,7 @@ The Crafting Table assembles the tools below except the crossbow. The Engineerin
 
 | Item | Parts |
 | --- | --- |
-| **Hafted tool** (pickaxe, axe, shovel, hoe, sword, mace, trident, cleaver, pike, maul, sickle, hammer, knife, file, screwdriver) | one to three faces on a haft of one to four sticks: see [Hafted Tool](Hafted_Tool.md). A cleaver, maul or spear face needs Weapons Treatise I ([Treatise](Treatise.md)) |
+| **Hafted tool** (pickaxe, axe, shovel, hoe, sword, mace, cleaver, spear, maul, sickle, hammer, knife, file, screwdriver) | one to three faces on a haft of one to four sticks: see [Hafted Tool](Hafted_Tool.md). A cleaver, maul or spear face needs Weapons Treatise I ([Treatise](Treatise.md)) |
 | **Bow** | three limbs, three lengths of string |
 | **Crossbow** | a prod (two cells), string, three stock, a lock: a mechanism, put together at the Engineering Table only (below) |
 | **Shield** | six faces, a rim part (a grip makes it five faces) |
@@ -47,7 +46,7 @@ The Crafting Table assembles the tools below except the crossbow. The Engineerin
 
 You can add:
 
-- A hafted tool may add a **binding** (leather, string or wire) where head meets haft for a stronger joint, a **guard**, a **pommel**, a weight behind the hand: the knob is light, the ball and the wheel heavier and the counterweight heaviest. A heavier pommel behind the hand brings the head round faster.
+- A hafted tool may add a **binding** (leather, string or wire) where head meets haft for a stronger joint (its **wraps** axis, 1 to 3, sets how many turns), a **guard**, a **pommel**, a weight behind the hand (its **weight** axis, 1 to 3: the light knob up to the heavy counterweight). A heavier pommel behind the hand brings the head round faster. A **tip**'s **thickness** is an axis too. The wrap on each of these is a fixed standard leather that is never picked ([Composed Parts](Composed_Parts.md)).
 - A **tip** part, below.
 - Armor and shields can take a **grip** or **lining**.
 
@@ -55,7 +54,7 @@ A tip, binding, guard, pommel, rim and crossbow prod are shaped at a bench first
 
 ### Tips
 
-A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, pike or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then fit it to the finished tool on the Fit tab and the tool is tipped. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one at any time on the Fit tab; swapping in a different gem replaces it.
+A pickaxe, axe, shovel, hoe, twin-headed tool, cleaver, sickle, spear or sword can have a **tip**: shape one gem, shard or nugget into a **Tip** at a bench, then fit it to the finished tool on the Fit tab and the tool is tipped. **The tip decides hardness**, so what the edge can dig is the tip's. It bites like the two together, and the body keeps the toughness and most of the wear. A steel pick with a diamond tip digs what diamond digs, chips like steel, and lasts about 1.6× as long as plain steel. A tip no harder than its body does nothing (a gold tip on iron is a pad). **Maces, mauls, tridents, bows, crossbows, shields and shears take no tip.** A tool made without a tip can be given one at any time on the Fit tab; swapping in a different gem replaces it.
 
 ### Brittle heads
 
@@ -85,7 +84,7 @@ A tool wears with use, like any hand tool, but misuse costs extra and tells you 
 
 ## Edge
 
-An edged tool has an edge: **keen**, **standard** or **blunt**. Keen bites harder and chips sooner. Blunt is tougher.
+A blade, axe, hoe, maul, pickaxe, shovel, sickle, spear, cleaver or knife can carry a second material along its **edge slot**: a harder edge on a softer body (see [Composed Parts](Composed_Parts.md)). A tool also has an edge setting: **keen**, **standard** or **blunt**. Keen bites harder and chips sooner. Blunt is tougher.
 
 A tool comes with the standard edge unless a [Blueprint](Blueprint_Table.md) says otherwise. **Regrind** it at a **grindstone**: sneak and right-click the grindstone with the tool in hand to step to the next edge. Each grind costs **2 points of durability** (never the last), so an edge is a choice, not a toggle.
 
@@ -99,7 +98,7 @@ A tool doesn't vanish when it's spent. It stops with one point left and acts lik
 
 ## Old vanilla tools
 
-Vanilla tools, weapons and armor that turn up (in chests, on mobs, or in your pockets) are converted on the spot into the modular item they would have been, with the same name, enchantments and wear. An iron pickaxe is an iron head on a wooden handle with a leather binding.
+Vanilla tools, weapons and armor that turn up (in chests, on mobs, or in your pockets) are converted on the spot into the modular item they would have been, with the same name, enchantments and wear. An iron pickaxe is an iron head on a wooden handle with a leather binding. A vanilla trident becomes a spear head with one tine.
 
 **Diamond is the exception.** A diamond tool becomes a **steel** one with a **diamond tip** ("Diamond-tipped Steel Pickaxe"); diamond armor becomes steel with four diamond **studs**. A whole diamond head would be brittle and poor. The converted pick lasts about half as long as vanilla's diamond did and, as in vanilla, netherite remains the best tool in the game.
 
@@ -125,7 +124,9 @@ A finished tool or weapon is named by rule from its blade, head, face or limb: i
 
 ### How each one fights
 
-- **Pike.** Left click is a jab: long reach, but it cannot hit anything closer than 2 blocks. Hold right click to lower it into a charge: you keep sprinting while it is held out, and it tires and lowers as the charge runs out. While you and a target close at 4.6 blocks a second or faster, each thing in front of you at 2 to 4.5 blocks is struck once for damage that grows with your closing speed, the pike's strike and the weight of its head. From 5.1 blocks a second it knocks them back, and early in the charge it pulls riders off their mounts. The charge tires in three stages (full, then no dismount, then damage only), and a weakly bound pike tires sooner. A fast hit wears the pike more. A pike cannot crit, and Strength and Weakness do not change a charge.
+- **Spear.** Left click is a jab: long reach, but it cannot hit anything closer than 2 blocks. Hold right click to lower it into a charge: you keep sprinting while it is held out, and it tires and lowers as the charge runs out. While you and a target close at 4.6 blocks a second or faster, each thing in front of you at 2 to 4.5 blocks is struck once for damage that grows with your closing speed, the pike's strike and the weight of its head. From 5.1 blocks a second it knocks them back, and early in the charge it pulls riders off their mounts. The charge tires in three stages (full, then no dismount, then damage only), and a weakly bound pike tires sooner. A fast hit wears the spear more. A charge cannot crit, and Strength and Weakness do not change it.
+- **Tines and barb.** A spear head has two axes. **Tines** (1 to 5) spread the thrust into a wider cone that catches several targets at once, up to the tine count; each tine is thinner, so it pierces armor less, and every blow is a little weaker. One tine is a spear, three a trident, four or five a pitchfork. **Barb** (0 to 3): a barbed hit pulls the target toward you and tears the wound, so a pulled target takes more damage, and the weapon is held up briefly while you work it free. A thrown barbed head on a lanyard wounds the target you reel in; a lanyard alone only pulls and wounds nothing. A head with the barb at 3 is a harpoon, a small head a javelin, a large one a pike.
+- **Charge or throw.** A spear's balance (set by head mass, haft length and pommel weight) decides its use. A head-heavy build charges with the held right click, as above; a balanced build is thrown on release. A spear with a spring fitted is always thrown.
 - **Tapered blade.** Keep hitting the same target without pause and each hit hurts more; getting hit or switching target resets it.
 - **Curved blade.** Wait before the first cut to land a heavy bleeding strike.
 - **Serrated blade.** Great against the unarmored and for clearing brush, poor against armor.
@@ -165,11 +166,11 @@ Every shaped part comes in several shapes, laid in a different layout or forged 
 
 - **Pickaxes.** A heavy pick mines a three-by-three square of the face you strike, at a point of extra wear for each extra block. Sneak to mine one.
 - **Shovels, hoes and sickles.** A scoop shovel digs a row three wide and a trench shovel digs a block deeper, both at extra wear. A kama tills a row of three, with a short wait afterwards. A rake pulls a harvest's drops to your feet. A scythe cuts a five-by-five of crops and leaves but hits mobs weakly. A billhook leaves a bleed on whatever it hits but its own blow is weaker. A reaping hook replants what it cuts from the seeds it drops, one plant at a time. Sneak to use any of them as the ordinary tool.
-- **Heavy and thrust weapons.** A sledge maul smashes the ground and shoves everything around its target when fully charged, but a half-swing is weak. A war hammer is small but hits through armor and dents it, slowing the wearer. A butcher's cleaver hits animals hard and often gives a second helping of meat. A bardiche cuts through the first target into the one behind. A spear lunges hard at a sprint but is weak standing still. A harpoon, thrown, drags what it hits back toward you, and harder in water. A spring hammer (a maul head shaped 4x2 like the sledge, from any maul-head stock) is cocked with a right-click; the next blow adds **6 damage**, then the head needs **1.5 seconds** to reset. A spring blade (a single-piece spear head) is thrown from a spring at **160%** speed with almost no wind-up, and does not return. A pitchfork hits a small crowd for less each. A spring takes the reaction of what it hits, more against armored targets, and is rated by the head's edge toughness. Worked past its rating it takes a permanent set and stores less each time (a spring blade with a set throws less hard); far past it, it snaps, ruining a quarter of the tool's durability and hurting your hand for 2. A heavy spring blade head overloads its spring the same way. The mace has only one shape.
+- **Heavy and thrust weapons.** A sledge maul smashes the ground and shoves everything around its target when fully charged, but a half-swing is weak. A war hammer is small but hits through armor and dents it, slowing the wearer. A butcher's cleaver hits animals hard and often gives a second helping of meat. A bardiche cuts through the first target into the one behind. A spear charges hard at a sprint but is weak standing still. A barbed head drags what it hits back toward you. A spring hammer (a maul head shaped 4x2 like the sledge, from any maul-head stock) is cocked with a right-click; the next blow adds **6 damage**, then the head needs **1.5 seconds** to reset. A spring blade (a single-piece spear head) is thrown from a spring at **160%** speed with almost no wind-up, and does not return. A spring takes the reaction of what it hits, more against armored targets, and is rated by the head's edge toughness. Worked past its rating it takes a permanent set and stores less each time (a spring blade with a set throws less hard); far past it, it snaps, ruining a quarter of the tool's durability and hurting your hand for 2. A heavy spring blade head overloads its spring the same way. The mace has only one shape.
 - **Armor.** Light shells use fewer ingots, weigh less and cover less; heavy ones use more, weigh more and slow you. Helmets: an open helm leaves you open to arrows, a great helm blunts them but makes mobs notice you from further away, a sallet softens blows from behind. Chestplates: a brigandine bites back in proportion to its studs, a breastplate takes the edge off falls and blasts, a hauberk stops blades but not maces. Leggings: greaves tear you through cobweb, powder snow and berry bushes (a share of the slow, by your mass), cuisses plant you against knockback at the cost of slower swimming. Boots: sabatons land on everything around your feet with their weight added to yours, by mass ratio, and make soft landings free, riding boots give a speed burst when you start to run. Only one piece of any given effect counts however many you wear. In the inventory, a piece of armor is drawn as the vanilla iron armor sprite, tinted by its plate material.
-- **Bows, crossbows and shields.** A shortbow draws fast and shoots light. A longbow shoots hard and fast but takes longer to draw and slows you while drawn. A recurve is forged: a full draw hits harder and passes through a mob, a part draw does not. A hunting bow is forged and silent, and an arrow to an animal's head hits much harder. An arbalest hits hard, pierces two mobs, loads slowly and slows you while loading. A pistol crossbow loads very fast but is short-range and weak. A repeater loads three bolts at once and fires them scattered. A buckler is small and, on the [parry key](Combat.md#shields), turns a melee blow whole and throws the attacker back, but guards a narrow arc. A kite shield returns arrows and bolts the way you look when you press the parry key and is weaker against melee. A tower shield guards every angle and holds a lot, but slows you, wears fast, and using it while sprinting bashes mobs away.
+- **Bows, crossbows and shields.** A shortbow draws fast and shoots light. A longbow shoots hard and fast but takes longer to draw and slows you while drawn. A recurve is forged: a full draw hits harder and passes through a mob, a part draw does not. An arbalest hits hard, pierces two mobs, loads slowly and slows you while loading. A pistol crossbow loads very fast but is short-range and weak. A repeater loads three bolts at once and fires them scattered. A buckler is small and, on the [parry key](Combat.md#shields), turns a melee blow whole and throws the attacker back, but guards a narrow arc. A kite shield returns arrows and bolts the way you look when you press the parry key and is weaker against melee. A tower shield guards every angle and holds a lot, but slows you, wears fast, and using it while sprinting bashes mobs away.
 
-A shield is drawn as a vanilla-style shield sized by its face: a buckler is small, a kite shield tall, a tower shield large. The face and grip are tinted by their materials, and a frame in the rim's material runs round the face, thicker for a flanged rim. Raising it shows the vanilla guard pose.
+A shield is drawn as a vanilla-style shield sized by its face: a buckler is small, a kite shield tall, a tower shield large. The face and grip are tinted by their materials, and a frame in the rim's material runs round the face, thicker for a wider rim (the rim's **rim width** axis, 1 to 3). Raising it shows the vanilla guard pose.
 
 **Shields get hot.** Every blow a shield stops leaves heat in its face, more for a light face than a heavy one, and the heat stacks until the shield has rested (it cools by itself, even in a chest). Fire and lava warm the face towards their own temperature and no further. A hot face is felt: a shield too hot to hold hurts the hand, unless its grip or its face is wood, leather or another thing that does not carry heat, or you wear gloves. Near the temperature its material softens at, the shield holds less of each blow, and past it every blow wears it twice as hard. It never breaks all at once. A metal face takes heat slowly and softens late; a wooden one warms fast but burns its holder less. Shift on the shield's tooltip says where the line is.
 
@@ -188,6 +189,5 @@ Beyond the parts of the pattern, a finished tool takes optional **fittings**, pu
 | magazine | crossbow | A box of plate or plank: its volume sets how many bolts a load takes, scattered, slower to load. |
 | rest | bow, crossbow | A padded rest: steadier aim. |
 | stabiliser | bow, crossbow | A counter-mass slug: steadier, slower to raise. |
-| laminate | bow | Horn on the limbs: more energy for the length, weaker in rain or water. |
 | boss | shield | A plate dome: a turned blow bashes and shoves the attacker, at a cost in mass and a weak spot. |
 | strap | shield | String or wire carrying the weight: the face holds a little more. |

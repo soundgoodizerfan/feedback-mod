@@ -217,7 +217,8 @@ public final class GunPreview {
                 boolean wheel = view.variant("s").equals("flywheel");
                 float step = (float) (t * 1.6), eased = (int) step + (float) Math.min(1.0, (step - (int) step) * 4.0);
                 view = view.with(new GunView.Pulse(wheel ? (float) (t * 540.0 % 360.0) : eased * 60f % 360f,
-                        wheel ? 6f : (float) (3.0 + 3.0 * Math.sin(t * 1.6)), 0.5f + 0.5f * (float) Math.sin(t), view.pulse().beam()));
+                        wheel ? 6f : (float) (3.0 + 3.0 * Math.sin(t * 1.6)), 0.5f + 0.5f * (float) Math.sin(t), view.pulse().beam(),
+                        view.pulse().charge() < 0f ? -1f : (float) (t * 0.5 % 1.0), t % 4.0 < 2.0));
             }
             float front = -(view.muzzle() + view.muzzleReach()), back = view.rear();
             float top = view.top() + (view.has("S") ? 1.75f : 0.5f), bottom = view.bottom();

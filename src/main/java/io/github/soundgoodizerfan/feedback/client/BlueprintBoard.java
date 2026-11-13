@@ -173,6 +173,37 @@ final class BlueprintBoard {
     /** Per role letter, which of its shapes is drawn and which material (by id; absent is the type's default). */
     private final Map<String, Integer> shape = new HashMap<>();
     private final Map<String, ResourceLocation> matId = new HashMap<>();
+    /** Per part, which of its slots the swatches paint (0 is the part's main material). A later slot's material is kept in {@link #matId} under {@code role#slot}. */
+    private final Map<String, Integer> slotSel = new HashMap<>();
+
+    /** The key a slot of {@code role} is drawn under, in the material maps and the swatch lists. */
+    private static String slotKey(String role, String slot) {
+        return role + "#" + slot;
+    }
+
+    /** The role a material key is of: a slot key's role, else the key itself. */
+    private static String baseOf(String key) {
+        int i = key.indexOf('#');
+        return i < 0 ? key : key.substring(0, i);
+    }
+
+    /** The slots of the part drawn for {@code role}, none when it is of one material. */
+    private List<ModularType.PartSlot> slotsOf(String role) {
+        PartBenchShaping.Option o = role == null ? null : shapeOf(role);
+        if (o == null || o.shaping().choices().isEmpty())
+            return List.of();
+        List<ModularType.PartSlot> out = new ArrayList<>();
+        out.add(o.shaping().slots().get(0));
+        out.addAll(o.shaping().choices());
+        return out;
+    }
+
+    /** The key the swatches act on for the selected part: the part's own, or its chosen slot's. */
+    private String matKey(String role) {
+        List<ModularType.PartSlot> slots = slotsOf(role);
+        int i = Math.min(slotSel.getOrDefault(role, 0), slots.size() - 1);
+        return i <= 0 ? role : slotKey(role, slots.get(i).name());
+    }
     /** The scalar the drawing sets on a part, keyed {@code role:name} (an engine's bore, a gear's ratio); absent is the role's default. */
     private final Map<String, Float> axisVals = new HashMap<>();
     /** What the sample slot held when last read, so a sample sets its material once. */
@@ -579,6 +610,7 @@ final class BlueprintBoard {
         sizes.clear();
         shape.clear();
         matId.clear();
+        slotSel.clear();
         axisVals.clear();
         colour = ModularDesign.DEFAULT_COLOUR;
         clearLists();
@@ -606,6 +638,7 @@ final class BlueprintBoard {
                         && (p.kind().isEmpty() || options.get(i).shaping().item().getPath().equals(p.kind())))
                     shape.put(p.role(), i);
             matId.put(p.role(), p.material());
+            p.measures().slots().forEach((n, sl) -> matId.put(slotKey(p.role(), n), sl.material()));
             p.measures().axes().forEach((k, v) -> axisVals.put(p.role() + ":" + k, v));
         });        dirty();
     }
@@ -615,13 +648,13 @@ final class BlueprintBoard {
 
     private List<PartBenchShaping.Option> shapes(String role) {
         ModularType t = current();
-        return t == null ? List.of() : shapeLists.computeIfAbsent(role, r -> ToolDesigns.shapes(t.roles().get(r), ModularTypes.known()).stream()
+        return t == null ? List.of() : shapeLists.computeIfAbsent(baseOf(role), r -> ToolDesigns.shapes(t.roles().get(r), ModularTypes.known()).stream()
                 .filter(o -> schoolHeld(o.variant().school())).toList());
     }
 
     private int shapeIndex(String role) {
         int n = shapes(role).size();
-        return n == 0 ? 0 : Math.floorMod(shape.getOrDefault(role, 0), n);
+        return n == 0 ? 0 : Math.floorMod(shape.getOrDefault(baseOf(role), 0), n);
     }
 
     private PartBenchShaping.Option shapeAt(String role, int index) {
@@ -681,7 +714,12 @@ final class BlueprintBoard {
             listedFor = all;
         }
         return materialLists.computeIfAbsent(role + "|" + shapeIdx, k -> {
-            List<Material.Located> out = new ArrayList<>(ToolDesigns.materials(t, role, shapeAt(role, shapeIdx), all));
+            String base = baseOf(role);
+            PartBenchShaping.Option at = shapeAt(base, shapeIdx);
+            // A slot after the first is drawn in what its own stock forms and traits take, not the part's role.
+            List<Material.Located> slotted = base.equals(role) || at == null ? null
+                    : at.shaping().slot(role.substring(base.length() + 1)).filter(ModularType.PartSlot::chosen).map(sl -> ToolDesigns.slotMaterials(sl, at.shaping(), all)).orElse(List.of());
+            List<Material.Located> out = new ArrayList<>(slotted != null ? slotted : ToolDesigns.materials(t, role, at, all));
             out.sort(java.util.Comparator.<Material.Located>comparingInt(l -> l.material().kind().map(Enum::ordinal).orElse(99))
                     .thenComparing(l -> l.id().toString()));
             return List.copyOf(out);
@@ -737,8 +775,11 @@ final class BlueprintBoard {
     /** The material drawn for {@code role} with shape {@code shapeIdx}: the one chosen if it still fits, else the type's default, else the first. */
     private Optional<Material.Located> choice(String role, int shapeIdx) {
         List<Material.Located> c = materials(role, shapeIdx);
-        ResourceLocation wanted = matId.getOrDefault(role, current().defaults().get(role));
-        return c.stream().filter(l -> l.id().equals(wanted)).findFirst().or(() -> c.stream().findFirst());
+        ResourceLocation wanted = matId.get(role);
+        if (wanted == null)
+            wanted = role.contains("#") ? choice(baseOf(role)).map(Material.Located::id).orElse(null) : current().defaults().get(role);
+        ResourceLocation w = wanted;
+        return c.stream().filter(l -> l.id().equals(w)).findFirst().or(() -> c.stream().findFirst());
     }
 
     private Optional<Material.Located> choice(String role) {
@@ -821,7 +862,17 @@ final class BlueprintBoard {
             Map<String, Float> axes = new HashMap<>();
             for (String name : t.roles().get(role).axesFor(made).keySet())
                 axes.put(name, axisValue(role, name, made));
-            parts.add(axes.isEmpty() ? made : made.withMeasures(made.measures().withAxes(axes)));
+            ModularDesign.Part full = axes.isEmpty() ? made : made.withMeasures(made.measures().withAxes(axes));
+            // A drawing pins every slot's material: the ones after the first that differ from the part's own ride on the part.
+            Map<String, io.github.soundgoodizerfan.feedback.process.Measures.Slot> slots = new HashMap<>();
+            List<ModularType.PartSlot> picks = shapeAt(role, si) == null ? List.of() : shapeAt(role, si).shaping().choices();
+            for (int i = 0; i < picks.size(); i++) {
+                String name = picks.get(i).name();
+                String sk = slotKey(role, name);
+                choice(sk, si).filter(l -> !l.id().equals(c.get().id()))
+                        .ifPresent(l -> slots.put(name, new io.github.soundgoodizerfan.feedback.process.Measures.Slot(l.id(), l.form())));
+            }
+            parts.add(slots.isEmpty() ? full : full.withMeasures(full.measures().withSlots(slots)));
         }
         return Optional.of(new ModularDesign(types.get(type), parts, edged() ? edge : Edge.STANDARD, colour));
     }
@@ -834,12 +885,20 @@ final class BlueprintBoard {
         ModularType.Role r = t.roles().get(role);
         PartBenchShaping.Option o = shapeOf(role);
         // A hafted face carries the axes of the head kind drawn (edge length, head size), not the plan role's own.
-        Map<String, ModularType.Axis> axes = o == null ? r.axes()
+        Map<String, ModularType.Axis> axes = o == null ? r.axesFor("")
                 : r.axesFor(new ModularDesign.Part(role, null, "", 1, o.shaping().item().getPath(), o.variant().name(), 0));
         return axes.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .filter(e -> e.getValue().when().isEmpty()
-                        || (o != null && o.variant().params().getOrDefault(e.getValue().when(), 0f) >= e.getValue().atLeast()))
+                .filter(e -> e.getValue().when().isEmpty() || gateValue(role, o, e.getValue().when()) >= e.getValue().atLeast())
                 .toList();
+    }
+
+    /** What an axis's {@code when} reads: the shape's param of that name, else the role's own axis of that name (a count that gates the rows after it). */
+    private float gateValue(String role, PartBenchShaping.Option o, String name) {
+        if (o != null && o.variant().params().containsKey(name))
+            return o.variant().params().get(name);
+        ModularType.Axis a = current().roles().get(role).axesFor(o == null ? "" : o.variant().name()).get(name);
+        Optional<Material.Located> c = choice(role);
+        return a == null || c.isEmpty() ? 0f : axisValue(role, name, ToolDesigns.part(role, c.get(), o, 1));
     }
 
     /** What the drawing has {@code name} of {@code role} at: the sheet's own setting, else the shape's nominal, else the role's default. */
@@ -1340,7 +1399,7 @@ final class BlueprintBoard {
         ModularType t = current();
         String key = keyOf(role);
         int rows = t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0;
-        return rows + (edged() && role.equals(t.wearRole()) ? 1 : 0) + Math.min(MAX_AXIS_ROWS, axesOf(role).size());
+        return rows + (slotsOf(role).size() > 1 ? 1 : 0) + (edged() && role.equals(t.wearRole()) ? 1 : 0) + Math.min(MAX_AXIS_ROWS, axesOf(role).size());
     }
 
     /** A scalar's row: its name and figure, in its unit. */
@@ -1361,7 +1420,7 @@ final class BlueprintBoard {
     private int rowsAboveAxes(String role) {
         ModularType t = current();
         String key = keyOf(role);
-        return (t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0)
+        return (t.ranged(role) || (key != null && (swaps(key).size() > 1 || removable(key))) ? 1 : 0) + (slotsOf(role).size() > 1 ? 1 : 0)
                 + (edged() && role.equals(t.wearRole()) ? 1 : 0);
     }
 
@@ -1463,6 +1522,17 @@ final class BlueprintBoard {
             }), x + call.w() - 8 - 14, y, 14, 14));
         if (rem || t.ranged(role) || (key != null && swaps(key).size() > 1))
             y += 15;
+        List<ModularType.PartSlot> slots = slotsOf(role);
+        if (slots.size() > 1) {
+            // One picker per slot: the stepper picks which slot the swatches below paint.
+            widgetAdd(GuiStyle.stepper(skin, x, y, call.w() - 8, 14, "<", ">",
+                    () -> I18n.get("modular.feedback.slot." + slots.get(Math.min(slotSel.getOrDefault(role, 0), slots.size() - 1)).name()),
+                    dir -> change(() -> {
+                        slotSel.put(role, Math.floorMod(slotSel.getOrDefault(role, 0) + dir, slots.size()));
+                        swatchScroll = 0;
+                    }), false, null));
+            y += 15;
+        }
         if (edged() && role.equals(t.wearRole())) {
             widgetAdd(GuiStyle.stepper(skin, x, y, call.w() - 8, 14, "<", ">",
                     () -> Component.translatable("tooltip.feedback.modular.edge." + edge.getSerializedName()).getString(),
@@ -1488,7 +1558,7 @@ final class BlueprintBoard {
         searchBox.setTextColor(skin.ink());
         searchBox.setHint(Component.translatable("gui.feedback.popup.search").withColor(skin.dim()));
         searchBox.setValue(query);
-        searchBox.visible = !onlyOne(role);
+        searchBox.visible = !onlyOne(matKey(role));
         searchBox.setResponder(v -> {
             query = v;
             swatchLists.clear();
@@ -1549,10 +1619,10 @@ final class BlueprintBoard {
             return;
         change(() -> {
             matId.put(role, located.id());
-            selected = role;
+            selected = baseOf(role);
         });
         skin.cue(GuiSkin.Cue.SEAT, located.material().kind().orElse(null), 1f);
-        flashes.put(role, System.currentTimeMillis());
+        flashes.put(baseOf(role), System.currentTimeMillis());
     }
 
     // --- input ------------------------------------------------------------------------------------
@@ -1607,10 +1677,10 @@ final class BlueprintBoard {
             }
             String role = sel();
             if (button == 0 && hoverSwatch >= 0 && role != null) {
-                List<Material.Located> mats = swatches(role);
+                List<Material.Located> mats = swatches(matKey(role));
                 if (hoverSwatch < mats.size()) {
-                    if (usable(role, mats.get(hoverSwatch)))
-                        paint(role, mats.get(hoverSwatch));
+                    if (usable(matKey(role), mats.get(hoverSwatch)))
+                        paint(matKey(role), mats.get(hoverSwatch));
                     else
                         skin.cue(GuiSkin.Cue.REJECT);
                     return true;
@@ -1760,7 +1830,7 @@ final class BlueprintBoard {
             return true;
         }
         if (role != null && in(mx, my, ox + call.x(), swatchTop(role), call.w(), swatchRows(role) * SWATCH_PITCH)) {
-            int rows = (swatches(role).size() + swatchCols() - 1) / swatchCols();
+            int rows = (swatches(matKey(role)).size() + swatchCols() - 1) / swatchCols();
             swatchScroll = Mth.clamp(swatchScroll + dir, 0, Math.max(0, rows - swatchRows(role)));
             return true;
         }
@@ -1988,7 +2058,7 @@ final class BlueprintBoard {
         }
         String role = sel();
         if (role != null) {
-            List<Material.Located> mats = swatches(role);
+            List<Material.Located> mats = swatches(matKey(role));
             int sx = ox + call.x() + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
             if (in(mx, my, sx, sy, cols * SWATCH_PITCH, rows * SWATCH_PITCH)) {
                 int i = (swatchScroll + (my - sy) / SWATCH_PITCH) * cols + (mx - sx) / SWATCH_PITCH;
@@ -2021,7 +2091,7 @@ final class BlueprintBoard {
         String gr = null;
         ResourceLocation gm = null;
         int gs = -1;
-        if (hoverSwatch >= 0 && role != null && hoverSwatch < swatches(role).size() && usable(role, swatches(role).get(hoverSwatch))) {
+        if (hoverSwatch >= 0 && role != null && matKey(role).equals(role) && hoverSwatch < swatches(role).size() && usable(role, swatches(role).get(hoverSwatch))) {
             gr = role;
             gm = swatches(role).get(hoverSwatch).id();
             gs = shapeIndex(role);
@@ -2292,15 +2362,16 @@ final class BlueprintBoard {
             return;
         }
         ModularType t = current();
-        List<Material.Located> mats = swatches(role);
-        Optional<Material.Located> now = choice(role);
-        boolean single = onlyOne(role);
+        String mk = matKey(role);
+        List<Material.Located> mats = swatches(mk);
+        Optional<Material.Located> now = choice(mk);
+        boolean single = onlyOne(mk);
         if (!single)
             skin.inset(g, x + 4, swatchTop(role) - SEARCH_H + 1, call.w() - 8, SEARCH_H - 3);
         if (axesOf(role).size() > MAX_AXIS_ROWS)
             skin.scrollbar(g, x + call.w() - 4, y + 15 + 15 * rowsAboveAxes(role), 15 * MAX_AXIS_ROWS, axesOf(role).size(), MAX_AXIS_ROWS, axisScroll);
         g.drawString(font, roleName(role), x + 5, y + 4, skin.ink(), false);
-        String name = materialName(role);
+        String name = materialName(mk);
         int nw = Math.min(font.width(name), 110);
         fit(g, name, x + call.w() - 5 - nw, y + 4, 110, skin.dim());
         int sx = x + 4, sy = swatchTop(role), cols = swatchCols(), rows = swatchRows(role);
@@ -2313,7 +2384,7 @@ final class BlueprintBoard {
                     break;
                 int px = sx + c * SWATCH_PITCH, py = sy + r * SWATCH_PITCH;
                 Material.Located l = mats.get(i);
-                boolean fits = usable(role, l);
+                boolean fits = usable(mk, l);
                 g.fill(px, py, px + SWATCH, py + SWATCH, 0xFF000000 | MaterialColors.of(l.id()));
                 if (!fits) {
                     g.fill(px, py, px + SWATCH, py + SWATCH, 0xB0202020);
@@ -2644,8 +2715,8 @@ final class BlueprintBoard {
         }
         if (hoverSwatch >= 0 && sel() != null)
         {
-            Material.Located l = swatches(sel()).get(hoverSwatch);
-            return usable(sel(), l) ? List.of(materialLabel(l))
+            Material.Located l = swatches(matKey(sel())).get(hoverSwatch);
+            return usable(matKey(sel()), l) ? List.of(materialLabel(l))
                     : List.of(materialLabel(l), Component.translatable("gui.feedback.blueprint_table.unfit").withStyle(net.minecraft.ChatFormatting.RED));
         }
         if (hoverKind >= 0 && sel() != null) {
