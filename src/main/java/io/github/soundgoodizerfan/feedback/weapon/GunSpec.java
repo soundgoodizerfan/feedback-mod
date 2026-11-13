@@ -148,6 +148,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         synchronized (CACHE) {
             if (cachedFor != generation || CACHE.size() > 64) {
                 CACHE.clear();
+                FittingHeat.clearCache();
                 cachedFor = generation;
             }
             return CACHE.computeIfAbsent(design, d -> of(d, ModularTypes.known(d.type()), MaterialTable.get().materials()));
@@ -209,7 +210,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 continue;
             Material fm = materials.get(p.material());
             Optional<GunOption> option = GunOptions.ofForm(p.kind());
-            if (fm == null || !buildable(fm) || option.isEmpty())
+            if (fm == null || option.isEmpty() || !FittingPhysics.suits(option.get(), fm))
                 return Optional.empty();
             // One device to a slot: a suppressor and a brake cannot both be on the muzzle.
             String slot = option.get().slot();
@@ -302,7 +303,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
                 continue;
             Material fm = materials.get(p.material());
             Optional<GunOption> option = GunOptions.ofForm(p.kind());
-            if (fm == null || !buildable(fm) || option.isEmpty()) {
+            if (fm == null || option.isEmpty() || !FittingPhysics.suits(option.get(), fm)) {
                 out.add(new Fault(List.of(letter), "material"));
                 continue;
             }
@@ -421,16 +422,7 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
      * The parts off the barrel: what they weigh, how well the grip holds the hand, and how hard the
      * fitted sleeves drag a bullet that couples to them ({@link #eddyOf}, summed).
      */
-    private record Frame(float mu, float gripFriction, float eddy, float receiverRating) {
-    }
-
-    /**
-     * A sleeve's drag: the option's own figure times how well its metal carries current
-     * ({@code ampacity}, copper = 1), so a copper sleeve drags and a steel one barely does. Read by
-     * property; nothing asks which metal it is.
-     */
-    private static float eddyOf(ResourceLocation option, Material metal) {
-        return GunOptions.find(option).map(GunOption::eddy).orElse(0f) * metal.ampacity().orElse(0f);
+    private record Frame(float mu, float gripFriction, float eddy, float receiverRating, java.util.List<FittingPhysics> fits) {
     }
 
     /** A grip's friction; one never measured holds like the reference. */
@@ -466,29 +458,29 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         if (doubled())
             mu += tubeMu(parts.second().get().built(), other);
         float eddy = 0;
+        java.util.List<FittingPhysics> fits = new java.util.ArrayList<>();
         for (var fitted : fittings.entrySet()) {
             Material fm = materials.get(fitted.getValue());
-            if (fm == null || !buildable(fm))
+            var option = GunOptions.find(fitted.getKey());
+            if (fm == null || option.isEmpty() || !FittingPhysics.suits(option.get(), fm))
                 return Optional.empty();
-            eddy += eddyOf(fitted.getKey(), fm);
-            mu += GunOptions.find(fitted.getKey()).map(GunOption::metalMb).orElse(0f) * fm.density().muPerMb();
+            FittingPhysics fp = FittingPhysics.of(option.get(), fm);
+            fits.add(fp);
+            eddy += fp.eddy();
+            mu += option.get().metalMb() * fm.density().muPerMb();
         }
         return Optional.of(new Frame(mu, gripFriction(grip) * parts.hold(), eddy,
-                parts.slid() ? Float.MAX_VALUE : receiver.mechanical().yieldStrength().map(y -> y.value() * GunTuning.GUN_RECEIVER_RATING_PER_ST).orElse(Float.MAX_VALUE)));
+                parts.slid() ? Float.MAX_VALUE : receiver.mechanical().yieldStrength().map(y -> y.value() * GunTuning.GUN_RECEIVER_RATING_PER_ST).orElse(Float.MAX_VALUE), fits));
     }
 
     /** What the fitted options do to the bake, folded: every figure the gun owns and an option reaches. */
     private record Effects(float reliefAt, float bleed, float gasCut, float blast, float heat, float shed) {
     }
 
-    private Effects effects() {
+    private static Effects effects(java.util.List<FittingPhysics> fits, float barrelYield) {
         float relief = Float.MAX_VALUE, keep = 1, gasKeep = 1, blast = 1, heat = 1, shed = 1;
-        for (ResourceLocation id : fittings.keySet()) {
-            var o = GunOptions.find(id);
-            if (o.isEmpty())
-                continue;
-            GunOption f = o.get();
-            relief = Math.min(relief, f.reliefAt().orElse(Float.MAX_VALUE));
+        for (FittingPhysics f : fits) {
+            relief = Math.min(relief, f.reliefAt(barrelYield));
             keep *= 1 - f.bleed();
             gasKeep *= 1 - f.gasCut();
             blast *= f.blast();
@@ -496,6 +488,35 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
             shed *= f.shed();
         }
         return new Effects(relief, 1 - keep, 1 - gasKeep, blast, heat, shed);
+    }
+
+    /**
+     * The wear a shot adds to this gun from its fittings: a brake's ports cut by the gas, and a vent's seat when the chamber
+     * pushed it open ({@code ventOpened}). A soft metal against a hard gas is the case; a matched one barely ages.
+     */
+    public float fittingWear(Map<ResourceLocation, Material> materials, boolean ventOpened) {
+        float wear = 0f;
+        for (var fitted : fittings.entrySet()) {
+            Material fm = materials.get(fitted.getValue());
+            var option = GunOptions.find(fitted.getKey());
+            if (fm == null || option.isEmpty())
+                continue;
+            FittingPhysics fp = FittingPhysics.of(option.get(), fm);
+            wear += fp.erosion() + (ventOpened ? fp.ventErosion() : 0f);
+        }
+        return wear;
+    }
+
+    /** The fittings and the physics of each, by option id: what the heat rule and the Blueprint Table read. */
+    public Map<ResourceLocation, FittingPhysics> fitted(Map<ResourceLocation, Material> materials) {
+        Map<ResourceLocation, FittingPhysics> out = new java.util.TreeMap<>();
+        for (var fitted : fittings.entrySet()) {
+            Material fm = materials.get(fitted.getValue());
+            var option = GunOptions.find(fitted.getKey());
+            if (fm != null && option.isPresent())
+                out.put(fitted.getKey(), FittingPhysics.of(option.get(), fm));
+        }
+        return out;
     }
 
     /**
@@ -550,7 +571,8 @@ public record GunSpec(ResourceLocation material, BarrelGeometry barrel, Sight si
         float peak = load.peakPressure() * (1 + Math.max(0, -loose) * GunTuning.GUN_BORE_SQUEEZE_PER_MM);
         // A relief vent opens short of the rating: what the chamber sees never passes it, and the
         // charge's surplus goes out of the port and not into the gun or the hand.
-        Effects fx = effects();
+        float barrelYield = m.mechanical().yieldStrength().map(y -> y.value()).orElse(1f);
+        Effects fx = effects(frame.fits(), barrelYield);
         if (fx.reliefAt() < Float.MAX_VALUE)
             peak = Math.min(peak, rating * fx.reliefAt());
         double leak = Math.max(GunTuning.GUN_BORE_LEAK_FLOOR, 1 - Math.max(0, loose) * GunTuning.GUN_BORE_LEAK_PER_MM);

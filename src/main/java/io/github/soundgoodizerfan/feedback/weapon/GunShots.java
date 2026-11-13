@@ -356,6 +356,14 @@ public final class GunShots {
         }
         if (!together && !accept(shooter, figures, nowMs, hand))
             return false;
+        // A box or belt feed whose lip is bent by the recoil jams: the pull is spent and nothing fires.
+        if (!cookOff && (design.layout().feed() == GunLayout.Feed.BOX || design.layout().feed() == GunLayout.Feed.BELT)
+                && level.random.nextFloat() < HandlingPhysics.jamChance(
+                        design.parts().feed().map(materials::get).orElse(null), figures.impulse())) {
+            if (shooter instanceof Player jammed)
+                jammed.displayClientMessage(net.minecraft.network.chat.Component.translatable("gun.feedback.jam"), true);
+            return false;
+        }
         LAST_SHOT.put(shooter.getUUID(), System.currentTimeMillis());
         GunAmmo.spend(gun);
         // A flintlock's case is not rated: the barrel holds the pressure.
@@ -365,6 +373,11 @@ public final class GunShots {
         GunHazard.apply(level, shooter, gun, GunHazard.assess(figures.peakPressure().value(),
                 figures.chamberRating().value(), caseRating, noise));
         GunCondition.afterShot(gun, figures, level, heat, round.boreWear(materials));
+        // A fitting the barrel's heat has taken past its metal's melting point runs off the gun.
+        for (GunOption lostFitting : FittingHeat.melt(gun, level))
+            if (shooter instanceof Player holder)
+                holder.displayClientMessage(net.minecraft.network.chat.Component.translatable("gun.feedback.fitting_melted",
+                        net.minecraft.network.chat.Component.translatable(lostFitting.langKey())), true);
         if (shooter instanceof Player attuned)
             io.github.soundgoodizerfan.feedback.modular.attunement.PiezoKinds.fired(attuned, gun, figures);
         io.github.soundgoodizerfan.feedback.modular.attunement.RecallKinds.refund(gun, level, round);

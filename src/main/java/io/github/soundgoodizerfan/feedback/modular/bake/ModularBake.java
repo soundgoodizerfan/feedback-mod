@@ -224,6 +224,14 @@ public final class ModularBake {
         if (material.traits().contains(Material.Trait.ASSEMBLY))
             return false;
         boolean wear = roleKey.equals(type.wearRole());
+        // A gun fitting must state what its physics reads: a suppressor's baffles a conductivity, a sleeve a conductor.
+        if (type.family() == ModularType.Family.GUN || type.family() == ModularType.Family.ELECTRIC_GUN) {
+            var shaping = type.roles().get(roleKey).part();
+            var option = shaping.isEmpty() ? java.util.Optional.<io.github.soundgoodizerfan.feedback.weapon.GunOption>empty()
+                    : io.github.soundgoodizerfan.feedback.weapon.GunOptions.ofForm(shaping.get().item().getPath());
+            if (option.isPresent() && !io.github.soundgoodizerfan.feedback.weapon.FittingPhysics.suits(option.get(), material))
+                return false;
+        }
         return switch (type.family()) {
             case CELL -> wear ? material.electrical().secondaryCell().isPresent() : material.electrical().insulation().isPresent();
             case MACHINE -> switch (roleKey) {
@@ -896,6 +904,22 @@ public final class ModularBake {
                 // The shared gun figures at an ordinary pulse: what the gun pipeline reads (cycle, kick, sound, the HUD).
                 f.putAll(egun.figures(egun.pulseJ() * egun.seatMult(), total, egun.cycleTicks(false), 0f, 1f).figs());
                 f.put(Fig.MASS, total);
+                // What the fittings can take: the weakest one's service temperature and the wear a shot gives through the brake.
+                float limit = Float.MAX_VALUE, wear = 0f;
+                for (Part p : design.parts()) {
+                    var option = p.kind().isEmpty() ? Optional.<io.github.soundgoodizerfan.feedback.weapon.GunOption>empty()
+                            : io.github.soundgoodizerfan.feedback.weapon.GunOptions.ofForm(p.kind());
+                    Material pm = by.get(p.role());
+                    if (option.isEmpty() || pm == null || !io.github.soundgoodizerfan.feedback.weapon.FittingPhysics.suits(option.get(), pm))
+                        continue;
+                    var fp = io.github.soundgoodizerfan.feedback.weapon.FittingPhysics.of(option.get(), pm);
+                    limit = Math.min(limit, fp.serviceTu());
+                    wear += fp.erosion();
+                }
+                if (limit < Float.MAX_VALUE) {
+                    f.put(Fig.FITTING_LIMIT, limit);
+                    f.put(Fig.FITTING_WEAR, wear);
+                }
             }
             case ARMOUR -> {
                 Part plate = wearPart;
@@ -1109,11 +1133,17 @@ public final class ModularBake {
      */
     private static Optional<ModularFigures> gun(ModularDesign design, ModularType type, Map<String, Material> by,
                                                 Map<ResourceLocation, Material> materials, int step) {
-        Optional<GunFigures> baked = GunSpec.of(design, type, materials).flatMap(spec -> spec.bake(materials));
+        Optional<GunSpec> gun = GunSpec.of(design, type, materials);
+        Optional<GunFigures> baked = gun.flatMap(spec -> spec.bake(materials));
         if (baked.isEmpty())
             return Optional.empty();
         Map<Fig, Float> f = new EnumMap<>(Fig.class);
         f.putAll(baked.get().figs());
+        var fitted = gun.get().fitted(materials).values();
+        if (!fitted.isEmpty()) {
+            f.put(Fig.FITTING_WEAR, gun.get().fittingWear(materials, false));
+            f.put(Fig.FITTING_LIMIT, fitted.stream().map(fp -> fp.serviceTu()).min(Float::compare).orElse(0f));
+        }
         f.put(Fig.ENCHANTABILITY, (float) enchantability(by.get(type.primary())));
         return Optional.of(ModularFigures.of(f, step));
     }

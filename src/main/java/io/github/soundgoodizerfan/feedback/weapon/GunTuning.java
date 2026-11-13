@@ -318,6 +318,38 @@ public final class GunTuning {
      */
     public static final float GUN_EDDY_NONMAGNETIC_COUPLING = 0.1f, GUN_EDDY_MAX_DRAIN = 0.75f, GUN_EDDY_HEAT = 1.5f;
 
+    /**
+     * Fitting physics ({@link FittingPhysics}). A baffle or fin pulls heat out of the gas as fast as its metal conducts, so
+     * {@code K_HALF} is the conductivity (copper 0.1) at which a fitting does half of what its shape allows, and {@code MU_HALF}
+     * the mass (kg) it holds half the heat it could: both saturate. The suppressor's best cut of the report, the heat it keeps
+     * per unit cut, the shroud's best extra shedding, the brake's best cut of the gas recoil and how loud it makes the report.
+     */
+    public static final float FIT_K_HALF = 0.015f, FIT_MU_HALF = 0.3f,
+            SUPP_MAX_CUT = 0.95f, SUPP_HEAT_PER_CUT = 2.0f, SHROUD_MAX_GAIN = 2.5f, BRAKE_MAX_CUT = 0.8f, BRAKE_LOUD = 0.9f;
+
+    /**
+     * A fitting is worked past what its metal can take: a port or seat of hardness under {@code FIT_HARD_MATCH} is cut by the gas
+     * (mismatch 0 at that hardness, 1 at none). The worst mismatch wears the gun by {@code FIT_WEAR_WORST} a shot (spent in about
+     * 300 shots); a matched fitting still ages by {@code FIT_WEAR_FLOOR}. A vent opens at {@code VENT_OPEN_AT_EQUAL} of the chamber's
+     * rating when it is as strong as the barrel (stronger is capped at {@code VENT_OPEN_MAX}, weaker opens sooner, never under
+     * {@code VENT_OPEN_MIN}), and leaks {@code VENT_LEAK} of a shot, less the harder its seat.
+     */
+    public static final float FIT_HARD_MATCH = 8f, FIT_WEAR_WORST = 1f / 180f, FIT_WEAR_FLOOR = 2e-6f,
+            VENT_OPEN_AT_EQUAL = 0.9f, VENT_OPEN_MAX = 0.98f, VENT_OPEN_MIN = 0.3f, VENT_LEAK = 0.1f, VENT_SEAT_HARD_HALF = 6f;
+
+    /**
+     * Handling fittings ({@link HandlingPhysics}). A stiff part holds what it is set against: {@code HAND_YIELD_HALF} is the yield
+     * strength at which a leg, a stock's core or a grip's frame is half as rigid as it could be (steel 15, lead 0.5). A pad
+     * cushions by being soft and tough ({@code HAND_PAD_SOFT_HALF} hardness, {@code HAND_PAD_TOUGH_HALF} toughness). A hand's grip
+     * is its friction over {@code HAND_FRICTION_HALF}. The best cut of kick and spread a bipod, stock and foregrip give at full
+     * stiffness and length, then the counterweight's recoil gain per share of the gun's mass it adds, and how much it slows the cycle.
+     */
+    public static final float HAND_YIELD_HALF = 8f, HAND_PAD_SOFT_HALF = 2f, HAND_PAD_TOUGH_HALF = 15f, HAND_FRICTION_HALF = 0.5f,
+            BIPOD_MAX_KICK_CUT = 0.6f, BIPOD_MAX_SPREAD_CUT = 0.7f, STOCK_MAX_KICK_CUT = 0.45f, STOCK_MAX_SPREAD_CUT = 0.5f,
+            FOREGRIP_MAX_KICK_CUT = 0.3f, FOREGRIP_MAX_SPREAD_CUT = 0.35f,
+            CW_KICK_GAIN = 0.4f, CW_CYCLE_GAIN = 0.5f, CW_BRITTLE_TOUGH_HALF = 40f, CW_SLAP_BRITTLE = 0.5f,
+            FEED_REF_FRICTION = 0.6f, FEED_JAM_MAX = 0.2f, FEED_JAM_TOUGH_HALF = 30f, FEED_JAM_IMPULSE_HALF = 6f;
+
     /** A report below this is a quiet vibration, heard by sculk at a short range. */
     public static final float GUN_QUIET_REPORT = 0.5f;
 

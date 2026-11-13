@@ -164,6 +164,11 @@ public interface ModularTrait {
     }
 
     /** How much longer or shorter a reload takes with this trait: a belt is a long reload. */
+    /** As {@link #gunReloadMult(Params)} for a trait that reads the gun's own parts (a feed way's metal). */
+    default float gunReloadMult(net.minecraft.world.item.ItemStack gun, Params params) {
+        return gunReloadMult(params);
+    }
+
     default float gunReloadMult(Params params) {
         return 1f;
     }

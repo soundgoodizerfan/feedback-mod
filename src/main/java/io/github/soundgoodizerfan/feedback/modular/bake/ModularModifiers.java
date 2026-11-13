@@ -27,6 +27,7 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
 import io.github.soundgoodizerfan.feedback.modular.type.ModularTypes;
 
 import net.minecraft.ChatFormatting;
+import io.github.soundgoodizerfan.feedback.process.Material;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.ItemStack;
@@ -141,7 +142,7 @@ public final class ModularModifiers {
         // A gun has a trait for every mechanism its parts show (spec 8.4), not one signature: all of them, each once.
         if (type.family() == ModularType.Family.GUN) {
             for (ModularTraits.Active a : ModularTraits.allOf(design, type))
-                trait(a.id(), a.params().values()).ifPresent(out::add);
+                trait(a.id(), a.params().values(), gunArgs(a.id(), a.params().values(), design, type)).ifPresent(out::add);
             return out;
         }
         Optional<ModularType.Variant> variant = ModularTraits.traitVariant(design, type);
@@ -283,9 +284,62 @@ public final class ModularModifiers {
 
     /** A trait by id with the numbers its data gives; empty for none. Defaults are the trait classes' own. */
     private static Optional<Modifier> trait(String id, Map<String, Float> v) {
+        return trait(id, v, null);
+    }
+
+    /**
+     * The figures a gun trait gives with the metals this design makes it of (a stock's pad and core, a bipod's leg, a foregrip's frame, a
+     * counterweight's mass, a belt's feed way), so the Blueprint Table shows what the build will do, not a fixed number; null for a
+     * trait that states its own.
+     */
+    private static @Nullable Object[] gunArgs(String id, Map<String, Float> v, ModularDesign design, ModularType type) {
+        var materials = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+        java.util.function.BiFunction<String, String, Material> slot = (form, name) -> {
+            for (ModularDesign.Part p : design.parts())
+                if (p.kind().equals(form)) {
+                    var role = type.roles().get(p.role());
+                    Material m = role == null ? null : ModularBake.slotMaterial(role, p, name, materials);
+                    return m != null ? m : materials.get(p.material());
+                }
+            return null;
+        };
+        switch (id) {
+            case "gun_braced" -> {
+                var b = io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.stock(p(v, "length", 1f), slot.apply("gun_stock", "core"), slot.apply("gun_stock", "pad"));
+                return new Object[]{n((1 - b.kick()) * 100), n((1 - b.spread()) * 100)};
+            }
+            case "gun_foregrip" -> {
+                var b = io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.foregrip(p(v, "leverage", 1f), slot.apply("foregrip", "main"));
+                return new Object[]{n((1 - b.kick()) * 100), n((1 - b.spread()) * 100)};
+            }
+            case "gun_bipod" -> {
+                var b = io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.bipod(slot.apply("bipod", "main"));
+                return new Object[]{n((1 - b.kick()) * 100), n((1 - b.spread()) * 100)};
+            }
+            case "counterweight" -> {
+                Material m = slot.apply("counterweight", "main");
+                var option = io.github.soundgoodizerfan.feedback.weapon.GunOptions.ofForm("counterweight");
+                if (m == null || option.isEmpty())
+                    return null;
+                float share = io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.share(m, option.get(),
+                        io.github.soundgoodizerfan.feedback.weapon.GunSpec.of(design, type, materials).flatMap(g -> g.bake(materials)).map(g -> g.gunMass().value()).orElse(3f));
+                return new Object[]{n((1 - io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.counterKick(share)) * 100),
+                        n((io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.counterCycle(share) - 1) * 100)};
+            }
+            case "belt_fed" -> {
+                Material m = slot.apply("belt_feed", "main");
+                return m == null ? null : new Object[]{n(io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.beltReload(m))};
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    private static Optional<Modifier> trait(String id, Map<String, Float> v, @Nullable Object[] derived) {
         if (id.isEmpty())
             return Optional.empty();
-        Object[] args = switch (id) {
+        Object[] args = derived != null ? derived : switch (id) {
             case "flurry" -> new Object[]{n(p(v, "window", 25) / 20), n(p(v, "bonus", 0.12f) * 100), n(p(v, "max_stacks", 5))};
             case "dash" -> new Object[]{n(p(v, "distance", 6)), n(p(v, "dash_mult", 1.2f)), n(p(v, "width", 1)),
                     n(p(v, "cooldown_ticks", 80) / 20)};

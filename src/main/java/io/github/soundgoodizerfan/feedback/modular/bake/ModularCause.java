@@ -59,6 +59,7 @@ public final class ModularCause {
                 case KICK -> p.role().equals("G") || p.role().equals("R");
                 case CYCLE -> p.role().equals("A") || p.role().equals("K");
                 case REPORT, HEAT_FACTOR, SHED_FACTOR -> "MNQVH".contains(p.role());
+                case FITTING_WEAR, FITTING_LIMIT -> "MNQVHZ".contains(p.role());
                 case PEAK_PRESSURE, BULLET_MASS, IMPULSE, OVERPRESSURE -> false;
                 // a charge's: the filler's blend sets the burn, the casing holds it in
                 case BLAST -> p.role().equals(type.wearRole()) || "FG".contains(p.role());

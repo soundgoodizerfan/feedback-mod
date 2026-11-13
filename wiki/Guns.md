@@ -31,9 +31,11 @@ A gun has one **variant**, told by the **receiver**: its frame, which is only a 
 | **Long gun** | 2 | A longer receiver for a long barrel to steady the bullet. It has no shoulder of its own: add a stock (see below). |
 | **Machine gun** | 3 | A heavy frame and an open bolt, built for sustained fire. |
 
-A **stock** is its own part, on any frame, and changes what a gun is like to hold. A **fixed** stock (two cells) kicks 30% less and groups 40% tighter when braced, a **skeleton** one (one cell) 20% and 25%, a **folding** one (one cell) 15% each. A gun with none has no braced bonus and, being a long gun, is a long handgun: hard on your hands (see Strain under Recoil). A stock is cut from a plate or from planks.
+A **stock** is its own part, on any frame, and changes what a gun is like to hold. A **fixed** stock (two cells) is the longest, a **skeleton** one (one cell) shorter, a **folding** one (one cell) the shortest; a longer stock cuts more kick and tightens the group more when braced. How much comes from its materials: a stiff core and a soft, tough pad (see [the stock](Gun_Parts.md#the-stock)). A gun with none has no braced bonus and, being a long gun, is a long handgun: hard on your hands (see Strain under Recoil). A stock is cut from a plate or from planks.
 
-A **foregrip** is a hold for the off hand under the forend of a long gun or machine gun, shaped from a turned grip in any metal, wood or polymer. It works standing or crouched and stacks with a stock. A **vertical** post (one cell) kicks 15% less and groups 20% tighter, an **angled** one (two cells) 10% and 25%, a **folding** one (two cells) 10% and 12%, a **hand stop** (one cell) 5% and 10%. A handgun frame takes none.
+A **foregrip** is a hold for the off hand under the forend of a long gun or machine gun, shaped from a turned grip in any metal, wood or polymer. It works standing or crouched and stacks with a stock. It holds by its material's friction and a stiff frame, and its shape sets the leverage: a **vertical** post (one cell), an **angled** one (two cells), a **folding** one (two cells) or a **hand stop** (one cell). A handgun frame takes none.
+
+A **bipod** holds the gun by how stiff its legs are. A **counterweight** cancels kick by its share of the gun's mass and slows the cycle; when the bore is worn, a brittle metal slaps worse. A **belt feed** reloads slower on a rougher feed way.
 
 What the gun is called (rifle or shotgun, pistol or revolver) follows from the other parts, see [Names](#names).
 
@@ -222,11 +224,11 @@ As it heats up:
 | Gunpowder | 300 Tu |
 | Blaze Powder (or any blend with it) | 220 Tu |
 
-A gun cools down wherever it is: in your hand, in your hotbar, in a chest. A [Barrel Shroud](Gun_Parts.md#fittings) makes it cool faster; a suppressor makes it heat faster.
+A gun cools down wherever it is: in your hand, in your hotbar, in a chest. A [Barrel Shroud](Gun_Parts.md#fittings) makes it cool faster; a suppressor makes it heat faster. Fittings take the barrel's heat too, and one that runs hotter than its metal allows softens and then [runs off the gun](Gun_Parts.md#fitting-heat).
 
 ## Wear
 
-The bore wears a little with every shot, faster when the barrel is hot. The tooltip shows it as **Bore wear**. A worn gun hits less hard and spreads wider, down to a floor: at its worst it delivers **30% less** energy, but it never stops working from wear alone. An [Arc Welder](Arc_Welder.md) repairs a worn gun, at the cost of a lower best condition each time.
+The bore wears a little with every shot, faster when the barrel is hot. The tooltip shows it as **Bore wear**. A worn gun hits less hard and spreads wider, down to a floor: at its worst it delivers **30% less** energy, but it never stops working from wear alone. Fittings wear the gun too: a muzzle brake's ports are cut by the gas, and a relief vent's seat wears each time it opens, more in a soft metal. A **box feed** or **belt feed** can **jam** by chance (*"The feed jams."*): tough feed lips jam less, and a harder-kicking gun jams more. An [Arc Welder](Arc_Welder.md) repairs a worn gun, at the cost of a lower best condition each time.
 
 ## Overpressure
 

@@ -61,7 +61,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                               int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
                               float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
                               boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank, float limitTu, float serviceTu,
-                              float sense, float zoomGain) {
+                              float sense, float zoomGain, float pumpGain, float pumpLever, float holdGain, float gaugeRes) {
 
     /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
     public enum Seat {
@@ -125,7 +125,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         boolean hold = false, pump = false, fork = false, zoom = false, gauge = false, sight = false;
         float sightFov = 1f;
         int bank = 0;
-        float sense = 1f, zoomGain = 1f;
+        float sense = 1f, zoomGain = 1f, pumpGain = 1f, pumpLever = 1f, holdGain = 1f, gaugeRes = 1f;
         float limitTu = ModularTuning.EGUN_LIMIT_TU, serviceTu = ModularTuning.EGUN_LIMIT_TU;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
             if (a.kind().equals("pulse_bank"))
@@ -171,9 +171,28 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     Material el = ModularBake.slotMaterial(role, p, "element", materials);
                     float k = el == null ? 0f : el.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f);
                     sense = Mth.clamp(GearTuning.saturate(k, ModularTuning.EGUN_SENSE_HALF_K), ModularTuning.EGUN_SENSE_MIN, 1f);
+                    // The housing carries the barrel's heat to the element: a poor conductor reads late too.
+                    Material hs = ModularBake.slotMaterial(role, p, "housing", materials);
+                    float hk = hs == null ? 0f : hs.thermal().conductivity().map(c -> c.workPerTickPerTu()).orElse(0f);
+                    sense *= ModularTuning.EGUN_HOUSING_FLOOR + (1f - ModularTuning.EGUN_HOUSING_FLOOR) * GearTuning.saturate(hk, io.github.soundgoodizerfan.feedback.weapon.GunTuning.FIT_K_HALF);
                 }
-                case "hold_charge" -> hold = true;
-                case "pump_charge" -> pump = true;
+                case "hold_charge" -> {
+                    hold = true;
+                    // The spring stores the charge: a stiffer metal holds more of it; a flexing lever lets the release wander.
+                    Material sp = ModularBake.slotMaterial(role, p, "spring", materials);
+                    holdGain = Mth.clamp((ModularTuning.EGUN_HOLD_SPRING_FLOOR + (1f - ModularTuning.EGUN_HOLD_SPRING_FLOOR) * io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.rigidity(sp))
+                            / (ModularTuning.EGUN_HOLD_SPRING_FLOOR + (1f - ModularTuning.EGUN_HOLD_SPRING_FLOOR) * ModularTuning.EGUN_HOLD_SPRING_REF), 0.5f, 1.4f);
+                    spreadMult *= 1f + ModularTuning.EGUN_LEVER_FLEX_SPREAD * (1f - io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.rigidity(ModularBake.slotMaterial(role, p, "lever", materials)));
+                }
+                case "pump_charge" -> {
+                    pump = true;
+                    // The magneto winding sets the energy of a pump; the lever's metal sets how hard it can be driven before it bends.
+                    Material wd = ModularBake.slotMaterial(role, p, "winding", materials);
+                    float wamp = wd == null ? 0f : wd.ampacity().orElse(0f);
+                    pumpGain = Mth.clamp(GearTuning.saturate(wamp, ModularTuning.EGUN_ZOOM_AMP_HALF) / GearTuning.saturate(1f, ModularTuning.EGUN_ZOOM_AMP_HALF),
+                            ModularTuning.EGUN_ZOOM_GAIN_MIN, ModularTuning.EGUN_ZOOM_GAIN_MAX);
+                    pumpLever = io.github.soundgoodizerfan.feedback.weapon.HandlingPhysics.rigidity(ModularBake.slotMaterial(role, p, "lever", materials));
+                }
                 case "beam_lens" -> {
                     String v = role.variant(p).map(ModularType.Variant::name).orElse("beam_splitter");
                     if (v.equals("arc_fork"))
@@ -186,10 +205,17 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     // The winding's conductor sets the field a turn builds.
                     Material w = ModularBake.slotMaterial(role, p, "winding", materials);
                     float amp = w == null ? 0f : w.ampacity().orElse(0f);
-                    zoomGain = Mth.clamp(GearTuning.saturate(amp, ModularTuning.EGUN_ZOOM_AMP_HALF) / GearTuning.saturate(1f, ModularTuning.EGUN_ZOOM_AMP_HALF),
+                    Material zc = ModularBake.slotMaterial(role, p, "core", materials);
+                    float coreGain = zc != null && zc.separation().magnetic() ? 1f : ModularTuning.EGUN_ZOOM_NONMAGNETIC_CORE;
+                    zoomGain = coreGain * Mth.clamp(GearTuning.saturate(amp, ModularTuning.EGUN_ZOOM_AMP_HALF) / GearTuning.saturate(1f, ModularTuning.EGUN_ZOOM_AMP_HALF),
                             ModularTuning.EGUN_ZOOM_GAIN_MIN, ModularTuning.EGUN_ZOOM_GAIN_MAX);
                 }
-                case "heat_gauge" -> gauge = true;
+                case "heat_gauge" -> {
+                    gauge = true;
+                    // The coil's conductor sets how finely the needle can be read.
+                    Material gc = ModularBake.slotMaterial(role, p, "coil", materials);
+                    gaugeRes = gc == null ? 0.5f : Mth.clamp(GearTuning.saturate(gc.ampacity().orElse(0f), ModularTuning.EGUN_ZOOM_AMP_HALF) / GearTuning.saturate(1f, ModularTuning.EGUN_ZOOM_AMP_HALF), 0.2f, 1f);
+                }
                 case "sight" -> {
                     sight = true;
                     if ("scope".equals(role.variant(p).map(ModularType.Variant::name).orElse(""))) {
@@ -213,17 +239,16 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
             var option = p.kind().isEmpty() ? java.util.Optional.<io.github.soundgoodizerfan.feedback.weapon.GunOption>empty()
                     : io.github.soundgoodizerfan.feedback.weapon.GunOptions.ofForm(p.kind());
             if (option.isPresent()) {
-                var o = option.get();
-                report *= o.blast();
-                heatGain *= o.heat();
-                shed *= o.shed();
-                spreadMult *= o.params().getOrDefault("spread_mult", 1f);
+                var fp = io.github.soundgoodizerfan.feedback.weapon.FittingPhysics.of(option.get(), m);
+                report *= fp.blast();
+                heatGain *= fp.heat();
+                shed *= fp.shed();
             }
         }
         if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
         ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
-                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu, serviceTu, sense, zoomGain);
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank, limitTu, serviceTu, sense, zoomGain, pumpGain, pumpLever, holdGain, gaugeRes);
         return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 

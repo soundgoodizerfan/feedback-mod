@@ -232,6 +232,9 @@ public final class ModularTuning {
     public static final int EGUN_HOLD_MAX_TICKS = 10, EGUN_HOLD_PIERCE = 2;
     public static final float EGUN_HOLD_POWER = 0.5f;
     /** Pump charge: pumps to arm the blast, the extra power, heat, spread and (with a splitter) beams of each, and the blast's reach and damage to others and to the wielder. */
+    /** The housing's share of the governor's reading even in a poor conductor; a spring's floor and the reference yield (steel) for hold power; how far a flexing lever wanders the release; a non-magnetic zoom core's share of the field. */
+    public static final float EGUN_HOUSING_FLOOR = 0.6f, EGUN_HOLD_SPRING_FLOOR = 0.4f, EGUN_HOLD_SPRING_REF = 0.65f,
+            EGUN_LEVER_FLEX_SPREAD = 0.3f, EGUN_ZOOM_NONMAGNETIC_CORE = 0.6f, EGUN_PUMP_LEVER_WEAR = 0.04f;
     public static final int EGUN_PUMP_MAX = 3;
     /** Ticks from the pump key to its click: the forend's throw (client {@code GunMotion.jerk}, 0.55 of the stroke) lands about then. */
     public static final int EGUN_PUMP_SOUND_TICKS = 4;

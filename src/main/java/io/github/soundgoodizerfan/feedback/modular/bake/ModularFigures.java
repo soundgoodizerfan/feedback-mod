@@ -107,6 +107,10 @@ public record ModularFigures(List<Float> values, int step) {
         SHED_FACTOR,
         /** Peak pressure over the chamber's rating; above 1 the force goes into the gun. */
         OVERPRESSURE,
+        /** Share of the gun's life a shot wears off through its fittings (a brake's ports cut by the gas, a vent's seat). */
+        FITTING_WEAR,
+        /** {@code Tu}: the hottest a barrel can run before the weakest fitting softens (its metal's service temperature). */
+        FITTING_LIMIT,
         // --- a charge's (family CHARGE) ---
         /** Explosion power: the blend's burned potential and the casing's confinement. */
         BLAST,

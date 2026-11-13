@@ -92,7 +92,7 @@ public final class ElectricMechanism implements GunMechanism {
         float holdShare = spec.holdCharge() ? ModularElectricGun.holdShare(gun, now) : 0f;
         int pumps = spec.pump() ? ModularElectricGun.pumps(gun) : 0;
         float zoomShare = spec.zoom() ? ModularElectricGun.zoomShare(gun, now) : 0f;
-        float power = 1f + (spec.holdCharge() ? ModularTuning.EGUN_HOLD_POWER * holdShare : 0f) + ModularTuning.EGUN_PUMP_POWER * pumps;
+        float power = 1f + (spec.holdCharge() ? ModularTuning.EGUN_HOLD_POWER * holdShare * spec.holdGain() : 0f) + ModularTuning.EGUN_PUMP_POWER * spec.pumpGain() * pumps;
         // What the seat needs before it can fire.
         float spin = 1f;
         switch (spec.seat()) {
@@ -211,6 +211,9 @@ public final class ElectricMechanism implements GunMechanism {
             figures = figures.withSpread(GunStance.of(player, aimed) * MomentumKinds.braceSpread(player, gun));
         int pumps = spec.pump() ? ModularElectricGun.pumps(gun) : 0;
         boolean blasted = pumps >= ModularTuning.EGUN_PUMP_MAX;
+        // The third pump drives the lever hardest: a weak lever bends, which wears the gun.
+        if (blasted && spec.pumpLever() < 1f)
+            GunCondition.misuse(gun, ModularTuning.EGUN_PUMP_LEVER_WEAR * (1f - spec.pumpLever()));
         if (blasted)
             pumpBlast(level, shooter, ModularTuning.EGUN_PUMP_BLAST_MULT * spec.damage(spec.delivered(p.joules())));
         else if (spec.seat() == Seat.CORE_BREECH) {

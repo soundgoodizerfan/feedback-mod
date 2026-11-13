@@ -72,6 +72,15 @@ public final class GunCondition {
             var rm = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(spec.get().parts().receiver());
             float service = rm == null ? Float.MAX_VALUE : rm.thermal().serviceTemperature().map(v -> v.value()).orElse(Float.MAX_VALUE);
             soft = Math.max(0f, t - service) * GunTuning.GUN_RECEIVER_SOFT_WEAR_PER_TU;
+            // The fittings are worked too: a brake's ports are cut by the gas, a vent's seat by what it lets out.
+            var mats = io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials();
+            var barrel = mats.get(spec.get().material());
+            float barrelYield = barrel == null ? 1f : barrel.mechanical().yieldStrength().map(y -> y.value()).orElse(1f);
+            boolean vented = spec.get().fitted(mats).values().stream().anyMatch(fp -> {
+                float at = fp.reliefAt(barrelYield);
+                return at < Float.MAX_VALUE && f.peakPressure().value() >= f.chamberRating().value() * at * 0.999f;
+            });
+            soft += spec.get().fittingWear(mats, vented);
         }
         float worn = soft + f.muzzleEnergy() * GunTuning.GUN_WEAR_PER_WORK * boreWear * (1 + Math.max(0f, heat));
         // An attuned Ward part turns wear away as it does on a tool: n levels leave 1/(n+1) of it.

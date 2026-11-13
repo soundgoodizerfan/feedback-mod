@@ -222,8 +222,7 @@
             "name": "fixed",
             "trait": "gun_braced",
             "params": {
-              "kick_mult": 0.7,
-              "spread_mult": 0.6
+              "length": 1.0
             }
           },
           {
@@ -231,8 +230,7 @@
             "cells": 1,
             "trait": "gun_braced",
             "params": {
-              "kick_mult": 0.8,
-              "spread_mult": 0.75
+              "length": 0.6
             }
           },
           {
@@ -240,8 +238,7 @@
             "cells": 1,
             "trait": "gun_braced",
             "params": {
-              "kick_mult": 0.85,
-              "spread_mult": 0.85
+              "length": 0.45
             }
           }
         ],
@@ -252,8 +249,7 @@
           },
           {
             "name": "pad",
-            "share": 1,
-            "standard": "feedback:leather"
+            "share": 1
           }
         ]
       },
@@ -622,7 +618,6 @@
           {
             "name": "spring",
             "share": 1,
-            "standard": "feedback:steel",
             "forms": [
               "plate"
             ]
@@ -653,7 +648,6 @@
           {
             "name": "winding",
             "share": 1,
-            "standard": "feedback:copper",
             "forms": [
               "wire"
             ]
@@ -752,7 +746,6 @@
           {
             "name": "core",
             "share": 1,
-            "standard": "feedback:iron",
             "forms": [
               "rod"
             ]
@@ -897,7 +890,6 @@
           {
             "name": "coil",
             "share": 1,
-            "standard": "feedback:copper",
             "forms": [
               "wire"
             ]

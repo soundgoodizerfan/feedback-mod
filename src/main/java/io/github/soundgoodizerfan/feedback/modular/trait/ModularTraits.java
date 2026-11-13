@@ -116,6 +116,7 @@ public final class ModularTraits {
         register("gun_buffer", new io.github.soundgoodizerfan.feedback.modular.trait.GunBuffer());
         register("gun_reticle", new io.github.soundgoodizerfan.feedback.modular.trait.GunReticle());
         register("gun_sear", new io.github.soundgoodizerfan.feedback.modular.trait.GunSear());
+        register("gun_bipod", new io.github.soundgoodizerfan.feedback.modular.trait.GunBipod());
         register("gun_braced", new io.github.soundgoodizerfan.feedback.modular.trait.GunBraced());
         register("gun_foregrip", new io.github.soundgoodizerfan.feedback.modular.trait.GunForegrip());
         register("open_bolt", new io.github.soundgoodizerfan.feedback.modular.trait.GunOpenBolt());
@@ -325,7 +326,8 @@ public final class ModularTraits {
                                                                                   io.github.soundgoodizerfan.feedback.weapon.GunFigures f) {
         for (Active a : allOf(gun))
             f = a.trait().gunAimed(shooter, gun, f, a.params());
-        return io.github.soundgoodizerfan.feedback.weapon.GunBalance.apply(shooter, gun, f);
+        return io.github.soundgoodizerfan.feedback.weapon.GunBalance.apply(shooter, gun,
+                io.github.soundgoodizerfan.feedback.weapon.FittingHeat.soften(shooter, gun, f));
     }
 
     /** As {@link #gunAimed(Player, ItemStack, io.github.soundgoodizerfan.feedback.weapon.GunFigures)} with the gun's traits already listed ({@link #allOf(ItemStack)}). */
@@ -333,7 +335,8 @@ public final class ModularTraits {
                                                                                   io.github.soundgoodizerfan.feedback.weapon.GunFigures f, List<Active> traits) {
         for (Active a : traits)
             f = a.trait().gunAimed(shooter, gun, f, a.params());
-        return io.github.soundgoodizerfan.feedback.weapon.GunBalance.apply(shooter, gun, f);
+        return io.github.soundgoodizerfan.feedback.weapon.GunBalance.apply(shooter, gun,
+                io.github.soundgoodizerfan.feedback.weapon.FittingHeat.soften(shooter, gun, f));
     }
 
     public static void gunFired(net.minecraft.server.level.ServerPlayer shooter, ItemStack gun,
@@ -356,7 +359,7 @@ public final class ModularTraits {
     public static float gunReloadMult(ItemStack gun) {
         float m = 1f;
         for (Active a : allOf(gun))
-            m *= a.trait().gunReloadMult(a.params());
+            m *= a.trait().gunReloadMult(gun, a.params());
         return m;
     }
 

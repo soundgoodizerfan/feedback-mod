@@ -91,6 +91,17 @@ public record GunFigures(Pu peakPressure, Pu chamberRating, float muzzleSpeed, f
                 cycleMs, spreadDeg, kickDeg * multiplier, report, heatFactor, leakFactor);
     }
 
+    /** These figures with the report or the heat the gun sheds scaled: what a fitting going soft gives back. */
+    public GunFigures withReport(float multiplier) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
+                cycleMs, spreadDeg, kickDeg, report * multiplier, heatFactor, leakFactor);
+    }
+
+    public GunFigures withLeak(float multiplier) {
+        return new GunFigures(peakPressure, chamberRating, muzzleSpeed, muzzleEnergy, projectileMass, gunMass, impulse,
+                cycleMs, spreadDeg, kickDeg, report, heatFactor, leakFactor * multiplier);
+    }
+
     public GunFigures withRating(float multiplier) {
         return new GunFigures(peakPressure, new Pu(chamberRating.value() * multiplier), muzzleSpeed, muzzleEnergy, projectileMass,
                 gunMass, impulse, cycleMs, spreadDeg, kickDeg, report, heatFactor, leakFactor);

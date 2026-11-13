@@ -908,8 +908,7 @@
             "name": "fixed",
             "trait": "gun_braced",
             "params": {
-              "kick_mult": 0.7,
-              "spread_mult": 0.6
+              "length": 1.0
             }
           },
           {
@@ -917,8 +916,7 @@
             "cells": 1,
             "trait": "gun_braced",
             "params": {
-              "kick_mult": 0.8,
-              "spread_mult": 0.75
+              "length": 0.6
             }
           },
           {
@@ -926,8 +924,7 @@
             "cells": 1,
             "trait": "gun_braced",
             "params": {
-              "kick_mult": 0.85,
-              "spread_mult": 0.85
+              "length": 0.45
             }
           }
         ],
@@ -938,8 +935,7 @@
           },
           {
             "name": "pad",
-            "share": 1,
-            "standard": "feedback:leather"
+            "share": 1
           }
         ]
       },
@@ -966,8 +962,7 @@
             "cells": 1,
             "trait": "gun_foregrip",
             "params": {
-              "kick_mult": 0.85,
-              "spread_mult": 0.8
+              "leverage": 1.0
             }
           },
           {
@@ -975,8 +970,7 @@
             "cells": 2,
             "trait": "gun_foregrip",
             "params": {
-              "kick_mult": 0.9,
-              "spread_mult": 0.75
+              "leverage": 1.15
             }
           },
           {
@@ -984,8 +978,7 @@
             "cells": 1,
             "trait": "gun_foregrip",
             "params": {
-              "kick_mult": 0.95,
-              "spread_mult": 0.9
+              "leverage": 0.5
             }
           },
           {
@@ -993,8 +986,7 @@
             "cells": 2,
             "trait": "gun_foregrip",
             "params": {
-              "kick_mult": 0.9,
-              "spread_mult": 0.88
+              "leverage": 0.8
             }
           }
         ]

@@ -23,7 +23,6 @@ Every metal has these part forms. Each is made by one step on a machine, like an
 | **Magazine Tube** | Rod | Drill Press | 6 + 1.5 × hardness | 28.5 |
 | **Suppressor** | Cylinder | Lathe | 4 + hardness | 19 |
 | **Muzzle Brake** | Magazine Tube | Drill Press | 4 + hardness | 19 |
-| **Eddy Sleeve** | A conducting tube round the muzzle drags the bullet once it has left the barrel, and the lost energy heats the sleeve. Drains **50%** of a **magnetic** bullet's energy at copper's conductivity (steel barely drags; a non-magnetic bullet only a tenth as much). Recoil is unchanged, so what it buys is a slower, quieter bullet: slow it under the speed of sound and the crack goes. Costs muzzle energy and **1.5×** the drained share in extra heat. |
 | **Relief Vent** | Nugget | Drill Press | 4 + hardness | 19 |
 | **Barrel Shroud** | Drilled Plate | [Rolling Mill](Rolling_Mill.md) | 4 + hardness | 19 |
 
@@ -53,6 +52,8 @@ The turned grip is a blank. A gun takes it as a **Gun Grip**, shaped at a bench 
 ## The stock
 
 A stock is made at a bench from a plate (any metal, polymer or organic material that comes as one) or from planks, in one of three shapes: **fixed**, **skeleton** or **folding**. It takes the kick into your shoulder while you are crouched and still, so the gun kicks less and groups tighter ([Guns](Guns.md#frames)). It is optional, and fits any frame.
+
+A stock has a **core** and a **pad**, each a choice of material. The core holds by its yield strength: a stiffer core carries more of the kick. The pad cushions by being soft and tough. The shape sets the stock's length, and a longer stock cuts more.
 
 ## The barrel
 
@@ -115,14 +116,21 @@ Kick scales with 0.6 ÷ friction, so a bronze grip kicks twice as hard as a stee
 
 Optional parts change what a gun does. They are tip-like parts, machined like any other and added to a finished gun on the Engineering Table's [Fit tab](Engineering_Table.md#fit-tab). Each weighs what its metal weighs. A fitting may only change figures, only add a trait, or both.
 
+The metal a fitting is machined in decides what it does. A fitting takes only a metal that states what it needs: a suppressor or shroud needs a heat conductivity, an eddy sleeve an electrical conductor, and every fitting needs a service temperature and a melting point.
+
 | Fitting | Effect |
 | --- | --- |
-| **Suppressor** | Report down to 35%, and sculk only hears it close by. Traps the gas's heat: the gun heats **1.6×** as fast per shot. |
-| **Muzzle Brake** | Cancels 70% of the gas's share of recoil (the gas adds a quarter on top of the bullet's). **1.6×** louder. |
-| **Relief Vent** | Opens at **90%** of the chamber's rating, so the chamber never sees more than that: no overpressure damage, no blast in your face. Leaks **10%** of every shot's energy. |
-| **Barrel Shroud** | Fins: the barrel sheds heat **1.8×** as fast. |
+| **Suppressor** | Baffles pull heat from the gas. The metal's heat conductivity sets how much it quiets the report, and its mass how much heat it holds; the heat it keeps in the gun rises with its cut. Copper quiets best; lead and other soft metals soften first. Sculk only hears a suppressed shot close by. |
+| **Muzzle Brake** | Cancels part of the gas's share of recoil, as much as its ports let out, and makes the report louder. The gas cuts the ports, so a soft metal wears the gun with every shot (a lead brake spends a gun in a few hundred shots) and steel barely ages it. |
+| **Relief Vent** | Opens at a share of the chamber's rating set by its metal's yield strength against the barrel's: a weaker vent opens sooner. While it holds, the chamber sees no more than that, so no overpressure damage and no blast in your face. It leaks part of every shot's energy, less the harder its seat; a soft seat wears the gun each time it opens. |
+| **Barrel Shroud** | Fins: the barrel sheds heat by the metal's conductivity over its mass, so copper sheds far more than steel. |
+| **Eddy Sleeve** | A conducting tube round the muzzle drags the bullet once it has left the barrel, and the lost energy heats the sleeve. Drains **50%** of a **magnetic** bullet's energy at copper's conductivity (steel barely drags; a non-magnetic bullet only a tenth as much). Recoil is unchanged, so what it buys is a slower, quieter bullet: slow it under the speed of sound and the crack goes. Costs muzzle energy and **1.5×** the drained share in extra heat. |
 
 A suppressor, a brake and an eddy sleeve all go on the muzzle, so a gun has one of them.
+
+### Fitting heat
+
+A fitting takes the barrel's heat. Past its metal's service temperature it softens and what it did fades toward a bare barrel's. At its melting point it **runs off the gun** (*"The X runs off the gun."*) and has to be refitted. The Blueprint Table shows **Fitting wear** (the share of the gun's life a shot wears away through its fittings) and **Fitting limit** (the hottest barrel the weakest fitting survives).
 
 ### Fittings made of the stuff itself
 

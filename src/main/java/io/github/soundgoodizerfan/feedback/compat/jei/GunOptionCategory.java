@@ -73,13 +73,7 @@ public class GunOptionCategory implements IRecipeCategory<GunOption> {
         lines.add(Component.translatable("feedback.jei.gun_option.slot", o.slot()));
         lines.add(Component.translatable("feedback.jei.gun_option.part", o.part()));
         lines.add(Component.translatable("feedback.jei.gun_option.metal", fmt(o.metalMb())));
-        o.reliefAt().ifPresent(r -> lines.add(Component.translatable("feedback.jei.gun_option.relief", pct(r))));
-        if (o.bleed() != 0) lines.add(Component.translatable("feedback.jei.gun_option.bleed", pct(o.bleed())));
-        if (o.gasCut() != 0) lines.add(Component.translatable("feedback.jei.gun_option.gas_cut", pct(o.gasCut())));
-        if (o.blast() != 1) lines.add(Component.translatable("feedback.jei.gun_option.blast", fmt(o.blast())));
-        if (o.heat() != 1) lines.add(Component.translatable("feedback.jei.gun_option.heat", fmt(o.heat())));
-        if (o.shed() != 1) lines.add(Component.translatable("feedback.jei.gun_option.shed", fmt(o.shed())));
-        if (o.eddy() != 0) lines.add(Component.translatable("feedback.jei.gun_option.eddy", pct(o.eddy())));
+        lines.add(Component.translatable("feedback.jei.gun_option.reads." + o.form()));
         if (!o.trait().isEmpty()) lines.add(Component.translatable("feedback.jei.gun_option.trait", o.trait().replace('_', ' ')));
         for (int i = 0; i < lines.size(); i++)
             graphics.drawString(font, lines.get(i), 1 + (i / 6) * 84, 14 + (i % 6) * 11, VALUE_COLOUR, false);

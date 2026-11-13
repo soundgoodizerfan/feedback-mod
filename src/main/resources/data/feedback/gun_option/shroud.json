@@ -1,1 +1,1 @@
-{"form":"barrel_shroud","slot":"shroud","part":"receiver","metal_mb":0.06,"shed":1.8}
+{"form":"barrel_shroud","slot":"shroud","part":"receiver","metal_mb":0.06,"params":{"fin_area":1.0}}

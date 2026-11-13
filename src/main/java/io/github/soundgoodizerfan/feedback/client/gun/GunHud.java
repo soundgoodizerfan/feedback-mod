@@ -170,7 +170,9 @@ public final class GunHud {
         g.fill(x0, y + 40, x0 + 4, y + 44, state != null ? 0xFFFF4030 : 0xFF40FF60);
         g.drawString(font, modeText, x0 + 8, y + 39, SKIN.dim(), false);
         if (spec != null && spec.gauge()) {
-            String pct = Math.round(heat * 100f) + "%";
+            // The needle reads only as finely as its coil resolves: a poor conductor steps the dial in coarse bands.
+            float step = Math.max(1f, Math.round(20f * (1f - spec.gaugeRes()) + 1f));
+            String pct = Math.round(Math.round(heat * 100f / step) * step) + "%";
             g.drawString(font, pct, x0 + w - 12 - font.width(pct), y + 39, heat >= 0.9f ? SKIN.warn() : SKIN.dim(), false);
         }
         g.pose().popPose();
