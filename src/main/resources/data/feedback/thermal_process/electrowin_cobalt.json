@@ -7,7 +7,7 @@
     "feed": {
       "fluid": "feedback:cobalt_sulfate"
     },
-    "volts": 2.5,
+    "band": "mv",
     "products": [
       {
         "fluid": "feedback:oxygen",

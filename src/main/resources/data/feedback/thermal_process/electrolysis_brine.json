@@ -7,7 +7,7 @@
     "feed": {
       "fluid": "feedback:brine"
     },
-    "volts": 2.2,
+    "band": "mv",
     "products": [
       {
         "fluid": "feedback:hydrogen",

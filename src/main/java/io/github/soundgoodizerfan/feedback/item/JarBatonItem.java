@@ -84,8 +84,8 @@ public class JarBatonItem extends Item {
         float v = volts(stack);
         if (v <= 0f)
             lines.add(Component.translatable("tooltip.feedback.jar_baton.empty"));
-        else if (io.github.soundgoodizerfan.feedback.client.tooltip.Readout.instrumented(io.github.soundgoodizerfan.feedback.instrument.Quantity.VOLTAGE))
-            lines.add(Component.translatable("tooltip.feedback.jar_baton.charge", io.github.soundgoodizerfan.feedback.client.tooltip.Readout.figure(
-                    io.github.soundgoodizerfan.feedback.instrument.Quantity.VOLTAGE, v)));
+        else if (io.github.soundgoodizerfan.feedback.client.tooltip.Readout.instrumented(io.github.soundgoodizerfan.feedback.instrument.Quantity.BAND))
+            lines.add(Component.translatable("tooltip.feedback.jar_baton.charge",
+                    Component.translatable(io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.bandOfPotential(v).key())));
     }
 }

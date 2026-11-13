@@ -7,7 +7,7 @@
     "feed": {
       "tag": "minecraft:water"
     },
-    "volts": 1.23,
+    "band": "lv",
     "products": [
       {
         "fluid": "feedback:hydrogen",

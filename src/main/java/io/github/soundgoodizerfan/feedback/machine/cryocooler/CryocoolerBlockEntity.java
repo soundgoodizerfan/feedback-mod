@@ -76,9 +76,9 @@ public class CryocoolerBlockEntity extends ElectricNode implements HeatSource {
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        running = ElectricRules.rate(volts, amps, wanted, ratedBand()) > 0f;
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        running = ElectricRules.rate(eu, amps, wanted, ratedBand()) > 0f;
     }
 
     @Override

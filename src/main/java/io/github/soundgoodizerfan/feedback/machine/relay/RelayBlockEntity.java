@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.relay;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
@@ -88,8 +90,8 @@ public class RelayBlockEntity extends ElectricNode implements Wearing, io.github
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (closed && amps > ElectricMachineTuning.RELAY_CONTACT_AMPS)
             condition = Math.max(ElectricMachineTuning.RELAY_CONDITION_FLOOR,
                     condition - ElectricMachineTuning.RELAY_OVERLOAD_WEAR_PER_AMP * (amps - ElectricMachineTuning.RELAY_CONTACT_AMPS));

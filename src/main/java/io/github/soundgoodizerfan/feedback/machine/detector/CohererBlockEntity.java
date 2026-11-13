@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.detector;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
@@ -71,8 +73,8 @@ public class CohererBlockEntity extends SparkDetectorBlockEntity implements Swit
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (welded && amps > ElectricMachineTuning.COHERER_RATING_AMPS)
             condition = Math.max(ElectricMachineTuning.COHERER_CONDITION_FLOOR,
                     condition - ElectricMachineTuning.COHERER_SINTER_PER_AMP * (amps - ElectricMachineTuning.COHERER_RATING_AMPS));

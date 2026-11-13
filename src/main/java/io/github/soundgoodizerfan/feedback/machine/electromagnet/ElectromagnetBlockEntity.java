@@ -107,11 +107,11 @@ public class ElectromagnetBlockEntity extends ElectricNode implements ThermalBod
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        field = ElectricRules.rate(volts, amps, wanted, ratedBand()) * condition;
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        field = ElectricRules.rate(eu, amps, wanted, ratedBand()) * condition;
 
-        float excess = ElectricRules.overVoltage(volts, ratedBand());
+        float excess = ElectricRules.overVoltage(band, eu, ratedBand());
         if (excess > 0f) {
             condition = Math.max(ElectricMachineTuning.ELECTROMAGNET_CONDITION_FLOOR,
                     condition - ElectricMachineTuning.ELECTROMAGNET_WEAR_PER_EXCESS * excess);

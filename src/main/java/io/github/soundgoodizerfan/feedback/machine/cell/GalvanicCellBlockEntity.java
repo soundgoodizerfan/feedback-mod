@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.cell;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.process.Material;
@@ -51,7 +55,7 @@ public class GalvanicCellBlockEntity extends ElectricNode {
     }
 
     @Override
-    public float sourceVolts() {
+    public VoltageBand sourceBand() {
         if (figuresGeneration != MaterialTable.generation()) {
             figuresGeneration = MaterialTable.generation();
             volts = 0f;
@@ -66,12 +70,13 @@ public class GalvanicCellBlockEntity extends ElectricNode {
                             - anode.electrical().electrodePotential().get());
             }
         }
-        return anode > 0f ? volts : 0f;
+        // The cell's chemistry gives a potential; the line sees only the band it falls in.
+        return anode > 0f && volts > 0f ? ElectricRules.bandOfPotential(volts) : null;
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (amps > 0f && anode > 0f) {
             anode = Math.max(0f, anode - amps / figures.get("AnodeTicks", ElectricMachineTuning.GALVANIC_ANODE_AMP_TICKS));
             setChanged();

@@ -114,9 +114,9 @@ public class PreheatCoilBlockEntity extends ElectricNode {
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        power = volts > 0f && amps > 0f ? Math.min(1f, volts * amps / (ElectricTuning.ELECTRIC_MV_VOLTS * ElectricMachineTuning.PREHEAT_AMPS)) : 0f;
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        power = eu > 0f && amps > 0f ? Math.min(1f, eu * amps / (ElectricTuning.PACKET_MV_EU * ElectricMachineTuning.PREHEAT_AMPS)) : 0f;
     }
 
     public void tickServer() {

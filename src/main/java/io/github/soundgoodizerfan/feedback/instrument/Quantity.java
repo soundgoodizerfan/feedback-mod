@@ -45,10 +45,10 @@ public enum Quantity implements StringRepresentable {
      */
     CONDITION("condition"),
     /**
-     * Electrical potential, in volts. Appended, never inserted: the wire form is the ordinal.
-     * Volts rather than a band, because what a sink sees is a continuous figure after drop.
+     * Which voltage band a line is in: a word (LV, MV...), never a number. The wire form is the ordinal;
+     * the resolution is a whole number of bands.
      */
-    VOLTAGE("voltage"),
+    BAND("band"),
     /** Current, in amps. */
     CURRENT("current"),
     /** A part's dimensions, in mm: a machined barrel's bore and wall (spec 12). */

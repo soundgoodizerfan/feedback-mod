@@ -53,7 +53,7 @@ import org.jetbrains.annotations.Nullable;
  * the <em>same</em> constant -- the winding's (in a real machine {@code k_e = k_t}). So {@code voltsPerRpm} sets the voltage
  * from the shaft's live RPM, and the same number times the current delivered is the Su it charges back to that shaft run. That
  * is conservation stated once, not an exchange rate: a dynamo that is not drawn from costs the shaft nothing. Run as a motor
- * the figure is read backwards: the voltage it sees sets the speed it drives toward, and the current it is delivered sets the
+ * the figure is read backwards: the potential its band and packet carry sets the speed it drives toward, and the current it is delivered sets the
  * torque. A generator feeding a motor, or a motor turning a generator, passes power through unchanged apart from the shaft's
  * friction and the machines' own heat -- which is what makes the pair a voltage converter (the motor-generator set).
  *
@@ -157,8 +157,9 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
     }
 
     @Override
-    public float sourceVolts() {
-        return shaftRpm * voltsPerRpm;
+    public VoltageBand sourceBand() {
+        // The winding's EMF at this speed falls in a band; the line carries the band, not the EMF.
+        return shaftRpm > 0 ? ElectricRules.bandOfPotential(shaftRpm * voltsPerRpm) : null;
     }
 
     @Override
@@ -168,7 +169,7 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
 
     /** The speed the voltage it sees would carry a motor to with no load at all. */
     public float noLoadRpm() {
-        return getVolts() / voltsPerRpm;
+        return seenPotential() / voltsPerRpm;
     }
 
     @Override
@@ -182,12 +183,12 @@ public class DynamotorBlockEntity extends ElectricNode implements ThermalBody, W
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (level == null)
             return;
-        float power = volts * amps;
-        float excess = generator() ? (ratedAmps > 0f ? Math.max(0f, amps / ratedAmps - 1f) : 0f) : ElectricRules.overVoltage(volts, band);
+        float power = seenPotential() * amps;
+        float excess = generator() ? (ratedAmps > 0f ? Math.max(0f, amps / ratedAmps - 1f) : 0f) : ElectricRules.overVoltage(band, eu, this.band);
         if (power > 0f)
             Heat.warm(this, power * coreLoss + amps * amps * windingDrop + ElectricMachineTuning.MACHINE_HEAT_PER_EXCESS * power * excess);
         float lost = ElectricMachineTuning.MACHINE_WEAR_PER_EXCESS * excess;

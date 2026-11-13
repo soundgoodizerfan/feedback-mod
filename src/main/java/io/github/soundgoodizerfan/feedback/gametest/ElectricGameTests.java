@@ -108,7 +108,7 @@ public class ElectricGameTests {
         @Override public VoltageBand ratedBand() { return VoltageBand.LV; }
 
         @Override
-        public void onResolved(float volts, float amps, float wanted, boolean blocked) {
+        public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
             seenVolts = volts;
             seenAmps = amps;
             seenWanted = wanted;
@@ -623,7 +623,7 @@ public class ElectricGameTests {
         BlockPos at = new BlockPos(1, 2, 1);
         ElectromagnetBlockEntity magnet = placeMagnet(helper, at);
         float ambient = AmbientTable.at(helper.getLevel()).value();
-        float excess = 6f / ElectricTuning.ELECTRIC_LV_VOLTS - 1f;   // fed an MV-reference voltage
+        float excess = 6f / ElectricTuning.BAND_POTENTIAL_LV - 1f;   // fed an MV-reference voltage
         float ceiling = ambient + ElectricMachineTuning.ELECTROMAGNET_HEAT_PER_EXCESS * excess / ElectricMachineTuning.ELECTROMAGNET_LEAK.workPerTickPerTu();
         float peak = 0;
         for (int i = 0; i < 4000; i++) {
@@ -1030,7 +1030,7 @@ public class ElectricGameTests {
     /** A line at the nominal band voltage (LV 1.5 V) sits under one cell's 2.1 V: it must not charge it, and says what happens. */
     @GameTest(template = "empty", timeoutTicks = 600)
     public static void batteryOnALowVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 1, 0.5f, ElectricTuning.ELECTRIC_LV_VOLTS);
+        var battery = chargingBattery(helper, 1, 0.5f, ElectricTuning.BAND_POTENTIAL_LV);
         helper.runAtTickTime(300, () -> {
             helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
                     + ", terminal " + battery.terminalVolts() + " V");
@@ -1042,7 +1042,7 @@ public class ElectricGameTests {
     /** Three cells (6.3 V full) on a nominal MV line (6 V). */
     @GameTest(template = "empty", timeoutTicks = 600)
     public static void batteryOnAMediumVoltageLineBelowItsTerminalDoesNotCharge(GameTestHelper helper) {
-        var battery = chargingBattery(helper, 3, 0.5f, ElectricTuning.ELECTRIC_MV_VOLTS);
+        var battery = chargingBattery(helper, 3, 0.5f, ElectricTuning.BAND_POTENTIAL_MV);
         helper.runAtTickTime(300, () -> {
             helper.assertTrue(battery.stateOfCharge() < 0.5001f, "a line under the terminal adds no charge; soc " + battery.stateOfCharge()
                     + ", terminal " + battery.terminalVolts() + " V");

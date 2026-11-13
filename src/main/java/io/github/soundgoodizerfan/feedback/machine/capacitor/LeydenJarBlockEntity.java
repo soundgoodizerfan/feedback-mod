@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.capacitor;
 
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
+
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricPropagator;
@@ -91,9 +95,9 @@ public class LeydenJarBlockEntity extends ElectricNode {
 
     /** A charged jar's terminals are bare: once it holds MV or more, touching it is a shock. */
     @Override
-    public float touchVolts() {
+    public VoltageBand touchBand() {
         float held = getStoredVolts();
-        return held >= ElectricMachineTuning.SHOCK_MIN_VOLTS ? held : 0f;
+        return held >= ElectricMachineTuning.SHOCK_MIN_VOLTS ? ElectricRules.bandOfPotential(held) : null;
     }
 
     public boolean isSupplying() {
@@ -106,8 +110,8 @@ public class LeydenJarBlockEntity extends ElectricNode {
     }
 
     @Override
-    public float sourceVolts() {
-        return supplying ? getStoredVolts() : 0;
+    public VoltageBand sourceBand() {
+        return supplying ? ElectricRules.bandOfPotential(getStoredVolts()) : null;
     }
 
     @Override
@@ -118,7 +122,7 @@ public class LeydenJarBlockEntity extends ElectricNode {
     /** Charges only while what it sees is above what it holds; a full jar asks for nothing. */
     @Override
     public float wantedAmps() {
-        return !supplying && getVolts() > getStoredVolts() + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS
+        return !supplying && seenPotential() > getStoredVolts() + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS
                 ? ElectricMachineTuning.LEYDEN_JAR_CHARGE_AMPS : 0;
     }
 
@@ -129,8 +133,8 @@ public class LeydenJarBlockEntity extends ElectricNode {
         float before = charge;
         charge += supplying ? -getAmps() : getAmps();
         // Only while a source is on the line: a pulse that has ended must not read as a line at 0 V and empty the jar before it takes over.
-        if (!supplying && getVolts() > 0f)
-            charge = Math.min(charge, getVolts() * capacitance());
+        if (!supplying && seenPotential() > 0f)
+            charge = Math.min(charge, seenPotential() * capacitance());
         charge = Math.max(0, charge * (1 - figures.get("Leak", ElectricMachineTuning.LEYDEN_JAR_LEAK_PER_TICK)));
         if (charge != before)
             setChanged();
@@ -138,7 +142,7 @@ public class LeydenJarBlockEntity extends ElectricNode {
         float held = getStoredVolts();
         boolean flip = supplying
                 ? held <= ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS || isBlocked()
-                : held > ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS && getVolts() <= held + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS;
+                : held > ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS && seenPotential() <= held + ElectricMachineTuning.LEYDEN_JAR_SWITCH_VOLTS;
         if (flip) {
             supplying = !supplying;
             setChanged();

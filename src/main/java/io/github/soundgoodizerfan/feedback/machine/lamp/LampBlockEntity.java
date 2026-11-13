@@ -27,8 +27,8 @@ import net.minecraft.world.level.block.state.BlockState;
  * only when the step changes. Each threshold has a gap each way ({@link ElectricMachineTuning#LAMP_HYSTERESIS}) so a
  * line near a boundary does not flicker the light.
  *
- * <p>Mild overvoltage costs condition (and so brightness, for good, to a floor). Volts at or above
- * {@link ElectricMachineTuning#LAMP_BURNOUT_VOLT_FACTOR} times rated burn the panel out at once: the block turns
+ * <p>Mild overvoltage costs condition (and so brightness, for good, to a floor). A packet at or above
+ * {@link ElectricMachineTuning#LAMP_BURNOUT_PACKET_FACTOR} times the rated one burns the panel out at once: the block turns
  * {@link LampBlock.Glow#BURNT}, dark, wanting nothing. A cheap panel may pop (digest, 2026-11-03). Breaking
  * a burnt lamp drops the lamp item like any other; there is no repair.
  */
@@ -70,8 +70,8 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (level == null || level.isClientSide)
             return;
         BlockState state = getBlockState();
@@ -79,16 +79,16 @@ public class LampBlockEntity extends ElectricNode implements Wearing {
         if (now == LampBlock.Glow.BURNT)
             return;
 
-        if (volts >= ElectricMachineTuning.LAMP_RATED_VOLTS * figures.get("Burnout", ElectricMachineTuning.LAMP_BURNOUT_VOLT_FACTOR)) {
+        float excess = ElectricRules.overVoltage(band, eu, ratedBand());
+        if (excess + 1f >= figures.get("Burnout", ElectricMachineTuning.LAMP_BURNOUT_PACKET_FACTOR)) {
             setGlow(state, LampBlock.Glow.BURNT);
             return;
         }
-        float excess = ElectricRules.overVoltage(volts, ratedBand());
         if (excess > 0f) {
             condition = Math.max(ElectricMachineTuning.LAMP_CONDITION_FLOOR, condition - ElectricMachineTuning.LAMP_CONDITION_LOSS_PER_EXCESS * excess);
             setChanged();
         }
-        float fraction = ElectricRules.rate(volts, amps, wanted, ratedBand()) * condition;
+        float fraction = ElectricRules.rate(eu, amps, wanted, ratedBand()) * condition;
         LampBlock.Glow next = step(now.ordinal(), fraction);
         if (next != now)
             setGlow(state, next);

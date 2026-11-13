@@ -277,11 +277,11 @@ public final class FTuning {
     /**
      * Placeholder. The four windings' volts per RPM, which is also the Su each amp costs the shaft (the dynamo's old rule),
      * four times each: coarse and fine are what the old fixed windings were (a steam engine's
-     * {@link VesselTuning#STEAM_ENGINE_RPM} makes {@link ElectricTuning#ELECTRIC_LV_VOLTS} on coarse and {@link ElectricTuning#ELECTRIC_MV_VOLTS} on fine); dense is
+     * {@link VesselTuning#STEAM_ENGINE_RPM} makes {@link ElectricTuning#BAND_POTENTIAL_LV} on coarse and {@link ElectricTuning#BAND_POTENTIAL_MV} on fine); dense is
      * 360 V (EHV) at a gas turbine's 240 RPM, heavy-dense 1,440 V (Trunk).
      */
-    public static final float WINDING_VOLTS_PER_RPM_COARSE = ElectricTuning.ELECTRIC_LV_VOLTS / 16f,
-            WINDING_VOLTS_PER_RPM_FINE = ElectricTuning.ELECTRIC_MV_VOLTS / 16f, WINDING_VOLTS_PER_RPM_DENSE = 1.5f,
+    public static final float WINDING_VOLTS_PER_RPM_COARSE = ElectricTuning.BAND_POTENTIAL_LV / 16f,
+            WINDING_VOLTS_PER_RPM_FINE = ElectricTuning.BAND_POTENTIAL_MV / 16f, WINDING_VOLTS_PER_RPM_DENSE = 1.5f,
             WINDING_VOLTS_PER_RPM_HEAVY_DENSE = 6f;
 
     /**

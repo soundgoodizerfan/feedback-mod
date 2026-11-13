@@ -19,9 +19,9 @@ import net.minecraft.world.level.Level;
  * Two leaves that stand apart when something is charged: the first electrical instrument, and a
  * deliberately poor one.
  *
- * <h2>Potential, coarsely, and never current</h2>
- * It reads potential at the block it is touched to, to {@link
- * ItemTuning#ELECTROSCOPE_RESOLUTION_VOLTS}. It can say that a line is live and roughly how hard; it
+ * <h2>The band, and never current</h2>
+ * It reads the band at the block it is touched to, to a whole band ({@link
+ * ItemTuning#ELECTROSCOPE_RESOLUTION_BANDS}). It can say that a line is live and in which band; it
  * cannot say how much is flowing, because a charged leaf does not draw current. That is the whole
  * reason the galvanometer is a separate purchase: the electroscope is the instrument that
  * reveals ({@code philosophy 10}), the galvanometer the one that makes the reading useful.
@@ -38,12 +38,12 @@ public class ElectroscopeItem extends Item implements Instrument {
 
     @Override
     public boolean canRead(Quantity quantity) {
-        return quantity == Quantity.VOLTAGE;
+        return quantity == Quantity.BAND;
     }
 
     @Override
     public float resolution(Quantity quantity) {
-        return ItemTuning.ELECTROSCOPE_RESOLUTION_VOLTS;
+        return ItemTuning.ELECTROSCOPE_RESOLUTION_BANDS;
     }
 
     @Override
@@ -60,9 +60,13 @@ public class ElectroscopeItem extends Item implements Instrument {
 
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
-            float shown = Instruments.quantise(node.getVolts(), self.resolution(Quantity.VOLTAGE));
-            io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, Component.translatable("feedback.readout.volts",
-                    String.format(java.util.Locale.ROOT, "%.2f", shown)), Quantity.VOLTAGE, shown);
+            if (node.isLive()) {
+                float shown = Instruments.quantise(node.getBand().ordinal(), self.resolution(Quantity.BAND));
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self,
+                        Component.translatable("feedback.readout.band", Component.translatable(node.getBand().key())), Quantity.BAND, shown);
+            } else
+                io.github.soundgoodizerfan.feedback.net.AimPayloads.read(player, context.getClickedPos(), self,
+                        Component.translatable("feedback.readout.band.none"));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }

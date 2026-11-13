@@ -3,6 +3,8 @@
 package io.github.soundgoodizerfan.feedback.core.electric;
 
 import io.github.soundgoodizerfan.feedback.core.unit.Eu;
+import org.jetbrains.annotations.Nullable;
+
 import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 
 /**
@@ -15,15 +17,16 @@ import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
  * {@link ElectricNode} is the block-entity implementation.
  *
  * <h2>Three roles, and a node has exactly one</h2>
- * A wire conducts. A source offers a voltage and a current. A sink wants a current at a rated
+ * A wire conducts. A source offers a band and a current. A sink wants a current at a rated
  * band. Nothing is two of these at once, so there is no node that is secretly a battery and a
  * load -- storage is a block of its own and arrives with the capacitor.
  *
- * <h2>Plain floats, not {@link Eu}</h2>
- * What a sink sees is a continuous figure after path drop, which no band can name and which an
- * {@code Eu} (a band and whole amps) cannot hold. The typed seam is {@link #offered} and
- * {@link #rated}, for display and for anything that crosses to another system; the resolver
- * unwraps inline, per the house rule that the physics reads like the equation.
+ * <h2>Bands, not volts</h2>
+ * A band is a packet size in Eu and amps are packets per tick, so {@code Eu/t = packet x amps}. A
+ * wire loses a fixed Eu slice of each packet ({@link #lossPerPacket}); the band is unchanged and the
+ * sink receives a smaller packet, which is why the resolver hands down a float Eu next to the band.
+ * The typed seam is {@link #offered} and {@link #rated}, for display and anything that crosses to
+ * another system.
  */
 public interface ElectricMember {
 
@@ -31,9 +34,10 @@ public interface ElectricMember {
 
     Role role();
 
-    /** SOURCE: volts it puts on the line right now. Zero when idle. Nominal, before any sag. */
-    default float sourceVolts() {
-        return 0;
+    /** SOURCE: the band it puts on the line right now; null when idle. */
+    @Nullable
+    default VoltageBand sourceBand() {
+        return null;
     }
 
     /** SOURCE: amps it holds its voltage up to. Zero when idle. */
@@ -49,7 +53,7 @@ public interface ElectricMember {
         return 0;
     }
 
-    /** SINK: the band it is built for. Its rated volts are {@link ElectricRules#bandVolts}. */
+    /** SINK: the band it is built for; its rated packet is {@link ElectricRules#packetEu}. */
     default VoltageBand ratedBand() {
         return VoltageBand.LV;
     }
@@ -80,8 +84,8 @@ public interface ElectricMember {
         return false;
     }
 
-    /** WIRE: volts lost across this block per amp through it. Rises as the conductor degrades. */
-    default float dropPerAmp() {
+    /** WIRE: Eu lost from each packet crossing this block, whatever the amps. Rises as the conductor degrades. */
+    default float lossPerPacket() {
         return 0;
     }
 
@@ -89,18 +93,20 @@ public interface ElectricMember {
      * The resolver's answer, once per tick, for every member of the run (zeros included, so a run
      * that lost its source reads zero rather than keeping its last figure).
      *
-     * @param volts   WIRE: the potential at this block. SINK: the voltage it sees. SOURCE: the
-     *                voltage it is actually holding, after sag.
-     * @param amps    WIRE: current through this block. SINK: current delivered. SOURCE: current drawn.
+     * @param band    the run's band; it arrives unchanged along a wire. LV when nothing supplies.
+     * @param eu      WIRE: Eu in a packet at this block. SINK: Eu in the packet it receives, after cable
+     *                loss. SOURCE: Eu in the packet it sends. Zero when nothing arrives.
+     * @param amps    WIRE: packets per tick through this block. SINK: delivered. SOURCE: drawn.
      * @param wanted  SINK: current it asked for. Delivered below this is a starved sink.
-     * @param blocked SOURCE only: it was active but on a run with a higher voltage, so it supplies
-     *                nothing (mixed-voltage runs).
+     * @param blocked SOURCE only: it was active but on a run with a higher band, so it supplies
+     *                nothing (mixed-band runs).
      */
-    void onResolved(float volts, float amps, float wanted, boolean blocked);
+    void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked);
 
     /** The typed form of what a source offers: its band and whole amps. For display and seams. */
     default Eu offered() {
-        return new Eu(ElectricRules.bandOf(sourceVolts()), Math.round(sourceAmps()));
+        VoltageBand band = sourceBand();
+        return new Eu(band == null ? VoltageBand.LV : band, Math.round(sourceAmps()));
     }
 
     /** The typed form of what a sink is built for: its band and the whole amps it wants. */

@@ -48,14 +48,15 @@ public class ElectricComponent implements IBlockComponentProvider {
             return;   // no Jade on the server: say nothing rather than guess
 
         ElectricMember.Role role = ElectricMember.Role.values()[data.getInt(ElectricServerData.ROLE)];
-        float volts = data.getFloat(ElectricServerData.VOLTS);
+        float packet = data.getFloat(ElectricServerData.PACKET);
+        VoltageBand band = VoltageBand.values()[data.getByte(ElectricServerData.BAND)];
         float amps = data.getFloat(ElectricServerData.AMPS);
         float wanted = data.getFloat(ElectricServerData.WANTED);
 
         if (data.getBoolean(ElectricServerData.BLOCKED))
             tooltip.add(Readout.gloss(adjective("feedback.readout.electric.blocked").copy().withStyle(ChatFormatting.GOLD),
                     "feedback.gloss.electric.blocked"));
-        else if (volts < NONE)
+        else if (packet < NONE)
             tooltip.add(Readout.gloss(adjective("feedback.readout.electric.dead"), "feedback.gloss.electric.dead"));
         else if (role == ElectricMember.Role.SINK && wanted > NONE && amps < wanted - NONE)
             tooltip.add(Readout.gloss(adjective("feedback.readout.electric.starved").copy().withStyle(ChatFormatting.GOLD),
@@ -84,9 +85,9 @@ public class ElectricComponent implements IBlockComponentProvider {
             tooltip.add(Readout.gloss(adjective(jar == 2 ? "feedback.readout.jar.discharging"
                     : jar == 1 ? "feedback.readout.jar.charging" : "feedback.readout.jar.holding"),
                     jar == 2 ? "feedback.gloss.jar.discharging" : jar == 1 ? "feedback.gloss.jar.charging" : "feedback.gloss.jar.holding"));
-            if (Readout.instrumented(Quantity.VOLTAGE))
-                tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.jar.stored",
-                        Readout.figure(Quantity.VOLTAGE, data.getFloat(ElectricServerData.JAR_VOLTS))));
+            if (Readout.instrumented(Quantity.BAND))
+                tooltip.add(Readout.reading(Quantity.BAND, "feedback.readout.jar.stored",
+                        Component.translatable(VoltageBand.values()[data.getByte(ElectricServerData.JAR_BAND)].key())));
         }
         if (data.contains(ElectricServerData.BAT)) {
             byte bat = data.getByte(ElectricServerData.BAT);
@@ -106,14 +107,14 @@ public class ElectricComponent implements IBlockComponentProvider {
             }
             if (data.getBoolean(ElectricServerData.BAT_UNDER))
                 tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.under").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.under",
-                        Readout.instrumented(Quantity.VOLTAGE) ? Readout.figure(Quantity.VOLTAGE, data.getFloat(ElectricServerData.BAT_NEED)) : "?"));
+                        Readout.instrumented(Quantity.BAND) ? Component.translatable(VoltageBand.values()[data.getByte(ElectricServerData.BAT_NEED)].key()).getString() : "?"));
             if (data.getBoolean(ElectricServerData.BAT_VENT))
                 tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.weeping").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.weeping"));
             else if (data.getFloat(ElectricServerData.BAT_WATER) < ElectricMachineTuning.BATTERY_WATER_LOW_SHARE)
                 tooltip.add(Readout.gloss(Component.translatable("feedback.readout.battery.low_water").withStyle(ChatFormatting.GOLD), "feedback.gloss.battery.low_water"));
         }
-        if (Readout.instrumented(Quantity.VOLTAGE))
-            tooltip.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.volts", Readout.figure(Quantity.VOLTAGE, volts)));
+        if (Readout.instrumented(Quantity.BAND) && packet >= NONE)
+            tooltip.add(Readout.reading(Quantity.BAND, "feedback.readout.band", Component.translatable(band.key())));
         if (Readout.instrumented(Quantity.CURRENT)) {
             if (role == ElectricMember.Role.SINK)
                 tooltip.add(Readout.reading(Quantity.CURRENT, "feedback.readout.amps.of",

@@ -1049,7 +1049,7 @@ public final class ModularTuning {
      * Invented. An insulating glove stops a shock up to this many volts and no further: HV's
      * reference. Past it the glove is a thing that holds a charge, not one that stops it.
      */
-    public static final float GLOVE_SHOCK_PROOF_VOLTS = ElectricTuning.ELECTRIC_HV_VOLTS;
+    public static final float GLOVE_SHOCK_PROOF_VOLTS = ElectricTuning.BAND_POTENTIAL_HV;
 
     /** Placeholder. Wither ticks a radiant strike gives per level, and glow ticks. */
     public static final int RADIANT_WITHER_TICKS_PER_LEVEL = 60, RADIANT_GLOW_TICKS = 100;

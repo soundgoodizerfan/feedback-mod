@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.converter;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricMember;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
 import io.github.soundgoodizerfan.feedback.registry.FBlockEntities;
@@ -16,15 +18,15 @@ import net.minecraft.world.level.block.state.BlockState;
  */
 public class ConverterTapBlockEntity extends ElectricNode {
 
-    private float offerVolts;
+    private VoltageBand offerBand;
     private float offerAmps;
 
     public ConverterTapBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CONVERTER_TAP.get(), pos, state);
     }
 
-    void offer(float volts, float amps) {
-        offerVolts = volts;
+    void offer(VoltageBand band, float amps) {
+        offerBand = band;
         offerAmps = amps;
     }
 
@@ -34,8 +36,8 @@ public class ConverterTapBlockEntity extends ElectricNode {
     }
 
     @Override
-    public float sourceVolts() {
-        return offerVolts;
+    public VoltageBand sourceBand() {
+        return offerBand;
     }
 
     @Override

@@ -77,8 +77,7 @@ public final class HazardEvents {
         // A hot block is not a hazard to open; the hot piece taken out burns via onPlayerTick.
         BlockEntity be = event.getLevel().getBlockEntity(event.getPos());
         if (be instanceof ElectricNode node) {
-            float volts = node.touchVolts();
-            if (volts > 0f && Shock.apply(player, volts))
+            if (Shock.apply(player, node.touchBand()))
                 warn(player, "hazard.feedback.shock");
         }
     }

@@ -61,20 +61,18 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * only <em>which</em> metal: below a metal's deposition potential no amount of current plates it,
  * which is one of 6.5's genuine physical thresholds and so a hard gate in the §7 sense.
  *
- * <h2>The voltage selects the metal</h2>
- * The noblest metal in solution (highest {@code electrode_potential}) plates at
- * {@link ElectricMachineTuning#ELECTROLYSIS_OVERPOTENTIAL_VOLTS}; a less noble one needs that plus the gap. Brass
- * dissolves as copper and zinc (its {@code composition}); zinc sits 1.1 V behind copper, so a
- * zinc-copper galvanic cell at 1.1 V plates copper out of brass and leaves the zinc in the water,
- * while a coarse dynamo at 1.5 V plates both. Which source refines is a property of the source,
- * the wire and the shaft speed -- a slower shaft, a longer run, or a weaker cell -- and nothing
- * here names a metal. A zinc-copper cell refines brass and not bronze (tin is 0.48 V behind
- * copper); a lead-copper cell at 0.47 V refines both. The cell's electrode pair is a choice.
+ * <h2>The chemistry selects the metal</h2>
+ * The noblest metal in solution (highest {@code electrode_potential}) always plates; a less noble one plates only if it sits
+ * within the electrolyte's window behind it ({@link ElectricMachineTuning#ELECTROLYSIS_WATER_WINDOW} for water,
+ * {@link ElectricMachineTuning#ELECTROLYSIS_ACID_WINDOW} for an acid or a base). The band only has to be enough to run the
+ * cell: it never picks a metal. Brass dissolves as copper and zinc (its {@code composition}); zinc sits 1.1 behind copper, so
+ * in water the cell plates copper out of brass and leaves the zinc in solution, while an acid bath plates both. Bronze's tin
+ * (0.48 behind) stays in water too. The electrolyte and the anode's material are the choice; nothing here names a metal.
  *
  * <h2>Overrun: the finished deposit is what gets spoiled</h2>
  * While the anode lasts it keeps the noble metal coming. Once it is gone the anode can only split
- * water, which needs {@link ElectricMachineTuning#ELECTROLYSIS_WATER_VOLTS}: below that the cell simply stops,
- * and a low-voltage refinery is safe to forget. Above it the current strips what is left in the
+ * water, which needs {@link ElectricMachineTuning#ELECTROLYSIS_WATER_BAND}: below that the cell simply stops,
+ * and a low-band refinery is safe to forget. At it or above the current strips what is left in the
  * water -- the noble metal first, then whatever was waiting behind it, which plates onto the
  * cathode the player has not yet taken. Purity is judged on the whole deposit when it comes off
  * ({@link ElectricMachineTuning#ELECTROLYTIC_PURE_FRACTION}), so a few minutes too long turns a cathode of copper
@@ -87,12 +85,12 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  *
  * <h2>Electroplating</h2>
  * A metal piece hung as the cathode takes the plating instead of the cell's own deposit, by the
- * same chemistry: voltage picks the metal, current is the rate. What is new is only what the piece
+ * same chemistry: the electrolyte picks the metal, current is the rate. What is new is only what the piece
  * can take -- a coat that is too thin, burnt by too much current for its size, or so thick it
  * flakes off -- see {@link #takeWork} and {@link #burnAmps}.
  *
  * <h2>Over-voltage goes into the cell</h2>
- * The electromagnet's rule: volts over its LV rating are condition lost and heat into its own
+ * The electromagnet's rule: a band over its LV rating is condition lost and heat into its own
  * body, never a refusal and never destruction. Condition multiplies the metal moved per amp.
  */
 public class ElectrolyticCellBlockEntity extends ElectricNode implements ThermalBody, Wearing {
@@ -156,12 +154,12 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         burning = !work.isEmpty() && amps > burnAmps(work);
-        working = amps > 0f && conducts() && electrolyse(volts, amps * ElectricMachineTuning.QU_PER_AMP_TICK * condition);
+        working = amps > 0f && conducts() && electrolyse(eu > 0f && band.compareTo(ElectricMachineTuning.ELECTROLYSIS_WATER_BAND) >= 0, amps * ElectricMachineTuning.QU_PER_AMP_TICK * condition);
 
-        float excess = ElectricRules.overVoltage(volts, ratedBand());
+        float excess = ElectricRules.overVoltage(band, eu, ratedBand());
         if (excess > 0f) {
             condition = Math.max(ElectricMachineTuning.ELECTROLYTIC_CELL_CONDITION_FLOOR,
                     condition - ElectricMachineTuning.ELECTROLYTIC_CELL_WEAR_PER_EXCESS * excess);
@@ -210,22 +208,23 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
     // --- the chemistry ------------------------------------------------------------------------
 
     /**
-     * One tick of {@code charge} Qu through the cell at {@code volts}. Returns whether anything
-     * happened. Package-visible arithmetic, so a test can drive it with any voltage.
+     * One tick of {@code charge} Qu through the cell, fed a band that {@code splitsWater} or not. Returns whether anything
+     * happened. Package-visible arithmetic, so a test can drive it with any band.
      */
-    boolean electrolyse(float volts, float charge) {
-        if (volts < ElectricMachineTuning.ELECTROLYSIS_OVERPOTENTIAL_VOLTS || charge <= 0f)
+    boolean electrolyse(boolean splitsWater, float charge) {
+        if (charge <= 0f)
             return false;
+        float window = leaching() ? ElectricMachineTuning.ELECTROLYSIS_ACID_WINDOW : ElectricMachineTuning.ELECTROLYSIS_WATER_WINDOW;
         Map<ResourceLocation, Material> materials = MaterialTable.get().materials();
 
         // The anode: dissolve metal, else split water, else nothing can carry the charge.
         float carried = dissolve(materials, charge);
-        if (volts >= ElectricMachineTuning.ELECTROLYSIS_WATER_VOLTS)
+        if (splitsWater)
             carried = charge;
         if (carried <= EPS)
             return false;
 
-        // The cathode: noblest first, each only if the voltage reaches it.
+        // The cathode: noblest first, each only if it sits within the electrolyte's window behind the noblest.
         List<Map.Entry<ResourceLocation, Float>> present = new ArrayList<>();
         float noblest = -Float.MAX_VALUE;
         for (Map.Entry<ResourceLocation, Float> e : solution.entrySet()) {
@@ -238,7 +237,7 @@ public class ElectrolyticCellBlockEntity extends ElectricNode implements Thermal
         present.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
         for (Map.Entry<ResourceLocation, Float> s : present) {
             if (carried <= EPS
-                    || volts < ElectricMachineTuning.ELECTROLYSIS_OVERPOTENTIAL_VOLTS + (noblest - s.getValue()))
+                    || noblest - s.getValue() > window)
                 break;
             float plated = Math.min(carried, solution.get(s.getKey()));
             move(solution, work.isEmpty() ? deposit : coat, s.getKey(), plated);

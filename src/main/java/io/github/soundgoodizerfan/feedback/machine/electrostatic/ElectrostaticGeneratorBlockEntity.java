@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.electrostatic;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
@@ -67,8 +69,8 @@ public class ElectrostaticGeneratorBlockEntity extends ElectricNode {
     }
 
     @Override
-    public float sourceVolts() {
-        return pulseTicks > 0 ? ElectricMachineTuning.ELECTROSTATIC_VOLTS : 0f;
+    public VoltageBand sourceBand() {
+        return pulseTicks > 0 ? ElectricMachineTuning.ELECTROSTATIC_BAND : null;
     }
 
     @Override

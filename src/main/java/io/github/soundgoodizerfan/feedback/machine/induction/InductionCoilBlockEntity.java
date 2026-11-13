@@ -63,10 +63,10 @@ public class InductionCoilBlockEntity extends ElectricNode implements HeatSource
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        float full = ElectricTuning.ELECTRIC_MV_VOLTS * ElectricMachineTuning.INDUCTION_COIL_AMPS;
-        power = volts > 0f && amps > 0f ? Math.min(1f, volts * amps / full) : 0f;
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        float full = ElectricTuning.PACKET_MV_EU * ElectricMachineTuning.INDUCTION_COIL_AMPS;
+        power = eu > 0f && amps > 0f ? Math.min(1f, eu * amps / full) : 0f;
     }
 
     // --- the charge ---------------------------------------------------------------------------

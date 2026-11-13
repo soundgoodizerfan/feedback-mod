@@ -17,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -29,7 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * Base block entity for anything on an electrical run: wires, sources, sinks.
  *
  * <h2>What a node knows</h2>
- * Its role and, once per tick, what the run decided for it: the voltage it sees and the current it
+ * Its role and, once per tick, what the run decided for it: the band and packet it sees and the current it
  * is delivered against the current it asked for. It does not know where the supply is, who else
  * is on the line or why it is starved -- that is a whole-run question, answered by {@link
  * ElectricRun} and pushed down, exactly as a rotation node cannot tell on its own that it is
@@ -48,7 +50,8 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
     @Nullable
     private ElectricRun run;
 
-    private float seenVolts;
+    private VoltageBand band = VoltageBand.LV;
+    private float seenEu;
     private float amps;
     private float wanted;
     private boolean blocked;
@@ -64,19 +67,38 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
 
     // --- the reading --------------------------------------------------------------------------
 
-    /** The voltage at this node: the potential on a wire, what a sink sees, what a source holds. */
-    public float getVolts() {
-        return seenVolts;
+    /** The run's band at this node; LV when nothing arrives (read with {@link #getPacketEu}). */
+    public VoltageBand getBand() {
+        return band;
+    }
+
+    /** Eu in the packet at this node: on a wire, what is left after the loss behind it; at a sink, what it receives; at a source, what it sends. */
+    public float getPacketEu() {
+        return seenEu;
+    }
+
+    /** Whether any packet reaches this node. */
+    public boolean isLive() {
+        return seenEu > 0f;
     }
 
     /**
-     * The volts a bare hand would meet on this block: {@code 0} where a casing or insulation
-     * covers it, which is almost everywhere. A conductor whose insulation has gone, and a vessel
+     * What an electrochemical device (battery, jar, charger) sees here as a potential; see {@link ElectricRules#seenPotential}.
+     * Never shown to a player.
+     */
+    public float seenPotential() {
+        return ElectricRules.seenPotential(band, seenEu);
+    }
+
+    /**
+     * The band a bare hand would meet on this block, or null where a casing or insulation covers it,
+     * which is almost everywhere. A conductor whose insulation has gone, and a vessel
      * whose terminals are exposed, say what they hold. {@code Shock} turns it into a hurt, and a
      * glove or its absence decides who pays.
      */
-    public float touchVolts() {
-        return 0f;
+    @Nullable
+    public VoltageBand touchBand() {
+        return null;
     }
 
     /** Current through a wire, delivered to a sink, or drawn from a source. */
@@ -95,7 +117,7 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
         // The first resolve after a load: if this node holds a temperature, it was not ticked while
         // its chunk was away, and nothing was driving it either -- so it has been cooling. Every
         // subclass calls this first, so its own step starts from the temperature it should have.
@@ -104,7 +126,8 @@ public abstract class ElectricNode extends BlockEntity implements ElectricMember
             if (gap > 0)
                 Catchup.settle(body, FireSpan.NONE, AmbientTable.at(level), gap);
         }
-        this.seenVolts = volts;
+        this.band = band;
+        this.seenEu = eu;
         this.amps = amps;
         this.wanted = wanted;
         this.blocked = blocked;

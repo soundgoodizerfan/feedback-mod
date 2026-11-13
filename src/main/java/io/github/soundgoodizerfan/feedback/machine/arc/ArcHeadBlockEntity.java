@@ -126,12 +126,12 @@ public class ArcHeadBlockEntity extends ElectricNode implements HeatSource, Wear
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         int n = fitted();
-        powered = n > 0 && volts > 0f && amps > 0f;
-        float full = ElectricMachineTuning.ARC_FULL_WATTS * n / MachineTuning.ARC_ELECTRODE_SLOTS;
-        power = powered && full > 0f ? Math.min(1f, volts * amps / full) : 0f;
+        powered = n > 0 && eu > 0f && amps > 0f;
+        float full = ElectricMachineTuning.ARC_FULL_EU_PER_TICK * n / MachineTuning.ARC_ELECTRODE_SLOTS;
+        power = powered && full > 0f ? Math.min(1f, eu * amps / full) : 0f;
     }
 
     // --- the tick -------------------------------------------------------------------------------

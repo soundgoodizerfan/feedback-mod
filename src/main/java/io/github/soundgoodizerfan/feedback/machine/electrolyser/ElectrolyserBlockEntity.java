@@ -189,16 +189,16 @@ public class ElectrolyserBlockEntity extends ElectricNode implements ThermalBody
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         var found = ThermalProcessTable.get().electrolysisOf(feed.getFluid());
         if (found.isPresent() && amps > 0f) {
             Electrolysis row = found.get();
-            Heat.warm(this, volts * amps);
-            if (volts >= row.volts() && temperature >= row.minTemperature())
+            Heat.warm(this, ElectricRules.seenPotential(band, eu) * amps);
+            if (eu > 0f && band.compareTo(row.band()) >= 0 && temperature >= row.minTemperature())
                 electrolyse(row, amps);
         }
-        float excess = ElectricRules.overVoltage(volts, ratedBand());
+        float excess = ElectricRules.overVoltage(band, eu, ratedBand());
         if (excess > 0f)
             wear(ElectricMachineTuning.ELECTROLYSER_WEAR_PER_EXCESS * excess);
     }

@@ -240,7 +240,7 @@ final class ThermalCard {
         }
         if (p.electrolysis().isPresent()) {
             var e = p.electrolysis().get();
-            rows.add(new Row(t("feedback.jei.electrolysis.volts"), Readout.number(e.volts()) + " V", VALUE_COLOUR));
+            rows.add(new Row(t("feedback.jei.electrolysis.band"), net.minecraft.network.chat.Component.translatable(e.band().key()).getString(), VALUE_COLOUR));
             if (e.minTemperature() > 0f)
                 rows.add(new Row(t("feedback.jei.electrolysis.hot", Readout.number(e.minTemperature())), "", VALUE_COLOUR));
             for (var side : io.github.soundgoodizerfan.feedback.process.Electrolysis.Electrode.values()) {

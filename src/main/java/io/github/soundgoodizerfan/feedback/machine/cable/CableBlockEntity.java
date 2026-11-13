@@ -127,8 +127,8 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
         // that carries nothing, which is a pack error that shows on the first current.
         float area = gauge().area();
         baseRating = material.ampacity().orElse(0f) * ElectricMachineTuning.WIRE_AMPS_PER_AMPACITY * area;
-        baseDrop = material.electrical().drop().orElse(0f) / area;
-        quenchDrop = material.electrical().quenchDrop().map(d -> d / area).orElse(-1f);
+        baseDrop = material.electrical().drop().orElse(0f) * ElectricMachineTuning.CABLE_LOSS_EU_PER_DROP / area;
+        quenchDrop = material.electrical().quenchDrop().map(d -> d * ElectricMachineTuning.CABLE_LOSS_EU_PER_DROP / area).orElse(-1f);
         material.thermal().serviceTemperature().ifPresent(tu -> serviceTu = tu.value());
     }
 
@@ -180,9 +180,9 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     }
 
     @Override
-    public float dropPerAmp() {
+    public float lossPerPacket() {
         figures();
-        // A degraded conductor loses more per amp. Bounded so a nearly-gone one is bad, not infinite.
+        // A degraded conductor loses more per packet. Bounded so a nearly-gone one is bad, not infinite.
         if (quenched && quenchDrop >= 0f)
             return quenchDrop / Math.max(0.1f, condition);
         return baseDrop / Math.max(0.1f, condition);
@@ -219,15 +219,15 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     }
 
     /**
-     * What a hand meets on it: nothing while insulated or idle; bare and carrying, the potential
-     * on it, but never less than LV's reference -- a conductor carrying at all is a live one.
+     * What a hand meets on it: nothing while insulated or idle; bare and carrying, the band
+     * on it -- a conductor carrying at all is a live one.
      */
     @Override
-    public float touchVolts() {
+    public VoltageBand touchBand() {
         if (isFence())
-            // A fence is bare by design and live whenever it holds a potential, load or none.
-            return getVolts() > 0f ? Math.max(getVolts(), ElectricTuning.ELECTRIC_LV_VOLTS) : 0f;
-        return isShocking() ? Math.max(getVolts(), ElectricTuning.ELECTRIC_LV_VOLTS) : 0f;
+            // A fence is bare by design and live whenever a packet reaches it, load or none.
+            return isLive() ? getBand() : null;
+        return isShocking() ? getBand() : null;
     }
 
     private boolean isFence() {
@@ -255,14 +255,14 @@ public class CableBlockEntity extends ElectricNode implements ThermalBody, Fitta
     // --- the resolver's answer ----------------------------------------------------------------
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         // A fence taking hits is correct use and gains no wear: the hit's own draw is not overload.
         float hit = hitAmps;
         hitAmps = 0f;
         step(Math.max(0f, amps - hit));
         // Over its band the coat goes first: one mistake (a wire on a line above its rating), one result.
-        if (insulation != null && ElectricRules.bandOf(volts).compareTo(insulation) > 0)
+        if (insulation != null && eu > 0f && band.compareTo(insulation) > 0)
             burnOffInsulation();
         if (bare() && amps > 0f && level instanceof ServerLevel server
                 && server.getGameTime() % ElectricMachineTuning.ARC_SPARK_INTERVAL_TICKS == 0)

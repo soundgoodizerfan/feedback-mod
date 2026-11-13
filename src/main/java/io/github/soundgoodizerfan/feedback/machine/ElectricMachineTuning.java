@@ -9,6 +9,7 @@ import io.github.soundgoodizerfan.feedback.core.unit.Inertia;
 import io.github.soundgoodizerfan.feedback.core.unit.Pu;
 import io.github.soundgoodizerfan.feedback.core.unit.Qu;
 import io.github.soundgoodizerfan.feedback.core.unit.St;
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
 import io.github.soundgoodizerfan.feedback.core.unit.Su;
 import io.github.soundgoodizerfan.feedback.core.unit.ThermalMass;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -39,10 +40,10 @@ public final class ElectricMachineTuning {
     /**
      * Placeholder. The CABLE_GAUGE table: cross-section area of each cable gauge against the
      * standard one (user ruling 2026-11-03, four times the copper per step). A cable's rating is
-     * its material's base rating times this; its volts lost per amp per block is the material's
-     * {@code drop} divided by it. Copper: thin 1 A and 0.2 V, standard 4 A and 0.05, heavy 16 A and
-     * 0.0125, bus bar 64 A and 0.003125. A breaker of a gauge trips at {@link #BREAKER_TRIP_AMPS}
-     * times this, and its contacts lose {@link #BREAKER_DROP_PER_AMP} divided by it.
+     * its material's base rating times this; its Eu lost from each packet per block is the material's
+     * {@code drop} times {@link #CABLE_LOSS_EU_PER_DROP} divided by it. Copper: thin 1 A, standard 4 A, heavy 16 A, bus bar 64 A, each
+     * losing a quarter of the one before. A breaker of a gauge trips at {@link #BREAKER_TRIP_AMPS}
+     * times this, and its contacts lose {@link #BREAKER_LOSS_PER_PACKET} divided by it.
      */
     public static final float CABLE_GAUGE_THIN_AREA = 0.25f, CABLE_GAUGE_STANDARD_AREA = 1f,
             CABLE_GAUGE_HEAVY_AREA = 4f, CABLE_GAUGE_BUS_AREA = 16f;
@@ -94,10 +95,10 @@ public final class ElectricMachineTuning {
     public static final float GALVANIC_ANODE_AMP_TICKS = 24000f, GALVANIC_ANODE_PER_INGOT = 0.5f;
 
     /**
-     * Placeholder. An electrostatic machine's pulse: volts, amps and how many ticks one turn of
-     * the handle lasts. HV (ruled 2026-10-23): high volts, tiny amps.
+     * Placeholder. An electrostatic machine's pulse: band, amps and how many ticks one turn of
+     * the handle lasts. HV (ruled 2026-10-23): a big packet, tiny amps.
      */
-    public static final float ELECTROSTATIC_VOLTS = ElectricTuning.ELECTRIC_HV_VOLTS;
+    public static final VoltageBand ELECTROSTATIC_BAND = VoltageBand.HV;
 
     public static final float ELECTROSTATIC_AMPS = 0.5f;
 
@@ -133,16 +134,16 @@ public final class ElectricMachineTuning {
 
     /**
      * Placeholders. The glowstone lamp (E3): an electroluminescent panel that wants {@code RATED_AMPS} at
-     * {@code RATED_VOLTS} (MV, 6 V, 0.5 A, about 3 W). Its brightness step comes from the sink's rate
+     * {@code RATED_BAND} (MV, 0.5 A). Its brightness step comes from the sink's rate
      * fraction ({@code ElectricRules.rate}) times condition: {@code STEP_THRESHOLDS} are the fractions at
      * which it goes dim, bright and full, and {@code HYSTERESIS} is the gap each way around each so a line
      * near a boundary never flickers. {@code FULL_LIGHT} is the block light of the full step (dim and bright
      * are a third and two thirds of it); the phosphor material's {@code luminance} is the same figure for a
-     * later phosphor. Volts at or above {@code BURNOUT_VOLT_FACTOR} times rated burn the panel out at once
-     * (a cheap part, the digest's accepted exception); below that, each whole rating of excess volts costs
+     * later phosphor. A packet at or above {@code BURNOUT_PACKET_FACTOR} times the rated one burns the panel out at once
+     * (a cheap part, the digest's accepted exception); below that, each whole rating of excess packet costs
      * {@code CONDITION_LOSS_PER_EXCESS} condition a tick, to {@code CONDITION_FLOOR}.
      */
-    public static final float LAMP_RATED_VOLTS = ElectricTuning.ELECTRIC_MV_VOLTS;
+    public static final VoltageBand LAMP_RATED_BAND = VoltageBand.MV;
 
     public static final float LAMP_RATED_AMPS = 0.5f;
 
@@ -150,7 +151,7 @@ public final class ElectricMachineTuning {
 
     public static final float LAMP_HYSTERESIS = 0.04f;
 
-    public static final float LAMP_BURNOUT_VOLT_FACTOR = 2f;
+    public static final float LAMP_BURNOUT_PACKET_FACTOR = 2f;
 
     public static final float LAMP_CONDITION_LOSS_PER_EXCESS = 0.001f;
 
@@ -170,17 +171,17 @@ public final class ElectricMachineTuning {
     public static final float ELECTROLYTIC_CELL_AMPS = 8f;
 
     /**
-     * Placeholder. Volts a cathode needs over and above the gap in electrode potential: the noblest
-     * metal in solution plates at this, a less noble one at this plus the gap (zinc behind copper:
-     * 0.1 + 1.1 = 1.2 V). Real overpotential, rounded.
+     * Placeholder. How far behind the noblest metal in solution (in electrode potential, a material figure never shown as
+     * volts) a metal can sit and still plate, by the cell's electrolyte: water holds a narrow window, an acid or a base a
+     * wide one. Zinc sits 1.1 behind copper and tin 0.48, so water refines brass and bronze to copper and an acid plates both.
      */
-    public static final float ELECTROLYSIS_OVERPOTENTIAL_VOLTS = 0.1f;
+    public static final float ELECTROLYSIS_WATER_WINDOW = 0.4f, ELECTROLYSIS_ACID_WINDOW = 1.5f;
 
     /**
-     * Water's decomposition potential, real (1.23 V). With no anode left to dissolve, the only
-     * thing the anode can do is split water, so below this an empty cell carries nothing.
+     * Placeholder. The least band that splits water. With no anode left to dissolve, the only thing the anode can do is
+     * split water, so below this band an empty cell carries nothing and above it the cell strips the water of what is left.
      */
-    public static final float ELECTROLYSIS_WATER_VOLTS = 1.23f;
+    public static final VoltageBand ELECTROLYSIS_WATER_BAND = VoltageBand.MV;
 
     /** Placeholder. The cell's water tank, and the least water that still conducts. */
     public static final int ELECTROLYTIC_CELL_TANK_MB = 1000;
@@ -216,7 +217,7 @@ public final class ElectricMachineTuning {
      */
     public static final float COIL_AMPS = 2f;
 
-    public static final float COIL_WORK_PER_WATT_TICK = 1.5f;
+    public static final float COIL_WORK_PER_EU = 0.05f;
 
     /** Placeholder. An element is a little wire: small mass, so it follows its power fast. */
     public static final ThermalMass COIL_MASS = new ThermalMass(5f);
@@ -240,7 +241,10 @@ public final class ElectricMachineTuning {
 
     public static final float BREAKER_CONDITION_FLOOR = 0.25f;
 
-    public static final float BREAKER_DROP_PER_AMP = 0.02f;
+    public static final float BREAKER_LOSS_PER_PACKET = 0.02f;
+
+    /** Placeholder. Eu lost per packet per block for each unit of a material's {@code drop} at the standard gauge (copper's 0.05 loses 0.4 Eu of a 32 Eu LV packet). */
+    public static final float CABLE_LOSS_EU_PER_DROP = 8f;
 
     /**
      * Placeholder. A fuse's fine wire carries its metal's ampacity times this before it warms
@@ -418,28 +422,30 @@ public final class ElectricMachineTuning {
     public static final float PIVOT_HEAD_FLOOR = 0.15f;
 
     /** Invented. Volts at or above which a bare touch is a shock to be reckoned with: MV. */
-    public static final float SHOCK_MIN_VOLTS = ElectricTuning.ELECTRIC_MV_VOLTS;
+    public static final float SHOCK_MIN_VOLTS = ElectricTuning.BAND_POTENTIAL_MV;
 
     /**
-     * Invented, grid spec 4.1. Arc flash: a Breaker opening under load at {@link #BREAKER_FLASH_MIN_BAND_VOLTS} or more burns whatever
+     * Invented, grid spec 4.1. Arc flash: a Breaker opening under load at {@link #BREAKER_FLASH_MIN_BAND} or more burns whatever
      * unprotected stands within {@link #BREAKER_FLASH_RADIUS} blocks, for {@link #BREAKER_FLASH_DAMAGE_PER_AMP} per amp broken (capped) and
      * {@link #BREAKER_FLASH_FIRE_TICKS} ticks of fire. Past {@link #BREAKER_FLASH_WARN_LOAD} of its trip current, the same breaker hums and
      * sparks every {@link #BREAKER_FLASH_WARN_TICKS} ticks, so a correct setup is never a surprise.
      */
-    public static final float BREAKER_FLASH_MIN_BAND_VOLTS = ElectricTuning.ELECTRIC_EHV_VOLTS * 0.9f, BREAKER_FLASH_RADIUS = 3f,
+    public static final VoltageBand BREAKER_FLASH_MIN_BAND = VoltageBand.EHV;
+
+    public static final float BREAKER_FLASH_RADIUS = 3f,
             BREAKER_FLASH_DAMAGE_PER_AMP = 0.25f, BREAKER_FLASH_DAMAGE_CAP = 30f, BREAKER_FLASH_WARN_LOAD = 0.8f;
 
     public static final int BREAKER_FLASH_FIRE_TICKS = 100, BREAKER_FLASH_WARN_TICKS = 20;
 
     /**
      * Invented, grid spec 5. Solid-state DC converter: {@code CONVERTER_EFFICIENCY} of the power in comes out (about 95 percent);
-     * {@code CONVERTER_RATED_WATTS} (volts times amps) is the most it passes; the loss becomes heat in the block at
+     * {@code CONVERTER_RATED_EU_PER_TICK} (packet times amps) is the most it passes; the loss becomes heat in the block at
      * {@code CONVERTER_HEAT_SCALE} work per unit lost, shed at {@code CONVERTER_LEAK}, multiplied by
      * {@code CONVERTER_HEATSINK_LEAK_MULTIPLE} for each adjacent heatsink (at most {@code CONVERTER_MAX_HEATSINKS}); past
      * {@code CONVERTER_SERVICE_TU} it loses condition down to {@code CONVERTER_CONDITION_FLOOR}.
      */
-    public static final float CONVERTER_EFFICIENCY = 0.95f, CONVERTER_RATED_WATTS = 3840f, CONVERTER_STANDING_AMPS = 0.02f,
-            CONVERTER_HEAT_SCALE = 0.04f, CONVERTER_HEATSINK_LEAK_MULTIPLE = 2f, CONVERTER_SERVICE_TU = 250f,
+    public static final float CONVERTER_EFFICIENCY = 0.95f, CONVERTER_RATED_EU_PER_TICK = 16384f, CONVERTER_STANDING_AMPS = 0.02f,
+            CONVERTER_HEAT_SCALE = 0.002f, CONVERTER_HEATSINK_LEAK_MULTIPLE = 2f, CONVERTER_SERVICE_TU = 250f,
             CONVERTER_CONDITION_FLOOR = 0.4f;
 
     public static final int CONVERTER_MAX_HEATSINKS = 4, CONVERTER_SCAN_TICKS = 20;
@@ -561,8 +567,8 @@ public final class ElectricMachineTuning {
     /** Placeholder. The arc furnace's draw: 42 A at EHV is about 16 kW. */
     public static final float ARC_AMPS = 42f;
 
-    /** Placeholder. Full arc power in watts; the share of it the line delivers sets how far the plasma climbs. */
-    public static final float ARC_FULL_WATTS = ElectricTuning.ELECTRIC_EHV_VOLTS * ARC_AMPS;
+    /** Placeholder. Full arc power in Eu per tick; the share of it the line delivers sets how far the plasma climbs. */
+    public static final float ARC_FULL_EU_PER_TICK = ElectricTuning.PACKET_EHV_EU * ARC_AMPS;
 
     /** The hottest the plasma burns whatever the electrode: about 3,500 Tu. */
     public static final Tu ARC_MAX_TU = new Tu(3500f);

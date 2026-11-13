@@ -431,7 +431,7 @@ public class ModularElectricGun extends GunItem {
     public static void mistakes(ServerPlayer player, ItemStack gun, ElectricGunSpec spec, float volts, InteractionHand hand) {
         EquipmentSlot slot = LivingEntity.getSlotForHand(hand);
         // A cell over the receiver's band shocks the wielder and wears the receiver.
-        float excess = ElectricRules.overVoltage(volts, spec.band());
+        float excess = ElectricRules.overPotential(volts, spec.band());
         if (excess > 0f) {
             player.hurt(player.damageSources().lightningBolt(), ModularTuning.EGUN_SHOCK_PER_EXCESS * excess);
             gun.hurtAndBreak(ModularStacks.cap(gun, 1 + (int) excess), player, slot);

@@ -17,62 +17,83 @@ public final class ElectricRules {
     private ElectricRules() {
     }
 
-    /** Reference volts of a band. Placeholder anchors, [OPEN] (6.3). */
-    public static float bandVolts(VoltageBand band) {
+    /** Eu in one packet of a band (GregTech's voltage tier): {@code Eu/t = packetEu x amps}. */
+    public static float packetEu(VoltageBand band) {
         return switch (band) {
-            case LV -> ElectricTuning.ELECTRIC_LV_VOLTS;
-            case MV -> ElectricTuning.ELECTRIC_MV_VOLTS;
-            case HV -> ElectricTuning.ELECTRIC_HV_VOLTS;
-            case UHV -> ElectricTuning.ELECTRIC_UHV_VOLTS;
-            case EHV -> ElectricTuning.ELECTRIC_EHV_VOLTS;
-            case TRUNK -> ElectricTuning.ELECTRIC_TRUNK_VOLTS;
+            case LV -> ElectricTuning.PACKET_LV_EU;
+            case MV -> ElectricTuning.PACKET_MV_EU;
+            case HV -> ElectricTuning.PACKET_HV_EU;
+            case UHV -> ElectricTuning.PACKET_UHV_EU;
+            case EHV -> ElectricTuning.PACKET_EHV_EU;
+            case TRUNK -> ElectricTuning.PACKET_TRUNK_EU;
+        };
+    }
+
+    /** Bookkeeping: the Eu per tick of {@code amps} packets of a band. */
+    public static float euPerTick(VoltageBand band, float amps) {
+        return packetEu(band) * amps;
+    }
+
+    /** Reference electrochemical potential of a band, for devices that compare a cell or electrode with what a line offers. Placeholder anchors, [OPEN] (6.3). */
+    public static float bandPotential(VoltageBand band) {
+        return switch (band) {
+            case LV -> ElectricTuning.BAND_POTENTIAL_LV;
+            case MV -> ElectricTuning.BAND_POTENTIAL_MV;
+            case HV -> ElectricTuning.BAND_POTENTIAL_HV;
+            case UHV -> ElectricTuning.BAND_POTENTIAL_UHV;
+            case EHV -> ElectricTuning.BAND_POTENTIAL_EHV;
+            case TRUNK -> ElectricTuning.BAND_POTENTIAL_TRUNK;
         };
     }
 
     /**
-     * The band a potential belongs to: the highest whose reference it reaches within {@link ElectricTuning#BAND_REACH} (a little sag keeps a source in its band), LV below all. A cell at 1.1 V is LV; a
-     * 2 V battery cell is LV, a 12 V stack MV, 24 V HV (ruled 2026-11-03 for the battery).
+     * What an electrochemical device (battery, jar, charger) sees on a line, as a potential: the band's
+     * reference, less in proportion to the packet that survived the cable loss. Never shown to a player.
      */
-    public static VoltageBand bandOf(float volts) {
+    public static float seenPotential(VoltageBand band, float packetEu) {
+        return packetEu <= 0f ? 0f : bandPotential(band) * Math.min(1f, packetEu / packetEu(band));
+    }
+
+    /**
+     * The band a potential belongs to: the highest whose reference it reaches within {@link ElectricTuning#BAND_REACH}, LV below all.
+     * A cell at 1.1 V is LV; a 2 V battery cell is LV, a 12 V stack MV, 24 V HV (ruled 2026-11-03 for the battery).
+     */
+    public static VoltageBand bandOfPotential(float potential) {
         VoltageBand found = VoltageBand.LV;
         for (VoltageBand band : VoltageBand.values())
-            if (volts >= bandVolts(band) * ElectricTuning.BAND_REACH)
+            if (potential >= bandPotential(band) * ElectricTuning.BAND_REACH)
                 found = band;
         return found;
     }
 
     /**
-     * Fraction of its voltage a source holds when drawn at {@code loadRatio} times its rated
-     * current. Full up to the rating, then a straight line down to
-     * {@link ElectricTuning#SOURCE_SAG_FLOOR} at {@link ElectricTuning#SOURCE_OVERDRAW_LIMIT}, never below.
-     * <b>[OPEN]</b> the curve (6.2): a source is never destroyed and never goes to zero volts.
+     * The over-rating of a potential an electrochemical device or a held charge meets, against the reference of a rated band: the same
+     * scale as {@link #overVoltage}, for a carrier of a charge that is not on a run (a battery in a hand, a gun's cell).
      */
-    public static float sagFactor(float loadRatio) {
-        if (loadRatio <= 1f)
-            return 1f;
-        float over = Math.min(loadRatio, ElectricTuning.SOURCE_OVERDRAW_LIMIT) - 1f;
-        return 1f - (1f - ElectricTuning.SOURCE_SAG_FLOOR) * over / (ElectricTuning.SOURCE_OVERDRAW_LIMIT - 1f);
+    public static float overPotential(float potential, VoltageBand rated) {
+        return Math.max(0f, potential / bandPotential(rated) - 1f);
     }
 
     /**
-     * How fast a sink runs, 0 to 1: the product of the fraction of its rated voltage it sees and
-     * the fraction of its wanted current it gets, each capped at 1. Zero floor, never a refusal
-     * (6.5). <b>[OPEN]</b> whether the slow-down is in voltage, in current or in their product;
-     * the product is what makes both visible failures (a long run, a weak source) slow the
-     * machine, and it is chosen here only so that one method holds the choice.
+     * How fast a sink runs, 0 to 1: the product of the fraction of its rated packet it receives
+     * (cable loss and a lower band both cut it, a higher band does not raise it) and the fraction
+     * of its wanted current it gets. Zero floor, never a refusal (6.5). <b>[OPEN]</b> whether the
+     * slow-down is in packet, in current or in their product.
      */
-    public static float rate(float voltsSeen, float ampsDelivered, float ampsWanted, VoltageBand rated) {
-        float volts = Math.min(1f, Math.max(0f, voltsSeen) / bandVolts(rated));
+    public static float rate(float packetEu, float ampsDelivered, float ampsWanted, VoltageBand rated) {
+        float eu = Math.min(1f, Math.max(0f, packetEu) / packetEu(rated));
         float amps = ampsWanted <= 0f ? 1f : Math.min(1f, ampsDelivered / ampsWanted);
-        return volts * amps;
+        return eu * amps;
     }
 
     /**
-     * Fraction by which the voltage a sink sees is over its rating, 0 when it is not. This is the
-     * force that cannot go into the work (6.5): the caller turns it into condition loss and heat
-     * in its own body. <b>[OPEN]</b> the per-unit scale.
+     * Fraction by which the band a sink is fed is over its rating, 0 when it is not (or nothing arrives):
+     * the packet ratio less one, so each band over is a factor of four. This is the force that cannot go into
+     * the work (6.5): the caller turns it into condition loss and heat in its own body. <b>[OPEN]</b> the per-unit scale.
      */
-    public static float overVoltage(float voltsSeen, VoltageBand rated) {
-        return Math.max(0f, voltsSeen / bandVolts(rated) - 1f);
+    public static float overVoltage(VoltageBand fed, float packetEu, VoltageBand rated) {
+        if (packetEu <= 0f)
+            return 0f;
+        return Math.max(0f, packetEu(fed) / packetEu(rated) - 1f);
     }
 }

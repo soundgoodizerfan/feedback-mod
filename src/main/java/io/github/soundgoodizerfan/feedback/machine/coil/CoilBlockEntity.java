@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>Its own body, not a flame temperature</h2>
  * A firebox's fire has no mass (see {@link HeatSource}); an element does, and a small one. So the
  * element is a {@link ThermalBody}: each tick the current puts {@code volts x amps x}
- * {@link ElectricMachineTuning#COIL_WORK_PER_WATT_TICK} into it (Joule's law in this mod's units, the one
+ * {@link ElectricMachineTuning#COIL_WORK_PER_EU} into it (Joule's law in this mod's units, the one
  * physical constant, as {@code QU_PER_AMP_TICK} is Faraday's), and it gives heat to the body above
  * by the same {@code FIRE_CONDUCTANCE x difference} the body takes from it in {@code Heat.tick} --
  * so what the vessel gains the element loses, and the element settles a little above its load. A
@@ -74,11 +74,11 @@ public class CoilBlockEntity extends ElectricNode implements ThermalBody, HeatSo
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        powered = volts > 0f && amps > 0f;
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        powered = eu > 0f && amps > 0f;
         if (powered)
-            Heat.warm(this, volts * amps * ElectricMachineTuning.COIL_WORK_PER_WATT_TICK * condition);
+            Heat.warm(this, eu * amps * ElectricMachineTuning.COIL_WORK_PER_EU * condition);
     }
 
     /** The hottest the element runs without wearing: its metal's service temperature. */

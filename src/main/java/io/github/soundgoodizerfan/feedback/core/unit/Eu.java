@@ -12,18 +12,18 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * Electricity: a voltage and a current (philosophy 21). The one non-scalar unit.
- *
- * <p>Two {@code Eu} with the same product are not interchangeable, so there is no single number
- * that stands for one and no arithmetic on the type. {@code voltage} is a {@link VoltageBand},
- * {@code current} is a whole count of amps (like {@link Fu}). DC only, no frequency, resistance
- * not modelled; if AC arrives, frequency is a third component. Nothing outside this record should
- * assume exactly two.
+ * Electricity's bookkeeping unit (philosophy 21): energy per tick, or the energy in one packet. A
+ * {@link VoltageBand} is a packet size in {@code Eu}, a current is a whole count of packets per tick
+ * (amps, like {@link Fu}), and {@code Eu/t = packet x amps}, so any two supplies compare by converting
+ * both to {@code Eu/t} ({@code ElectricRules.euPerTick}). This record is a supply or a load as the
+ * pair a player meets it as, band and amps; the field is named {@code voltage} for the band only.
+ * DC only, no frequency, resistance not modelled; if AC arrives, frequency is a third component.
+ * Nothing outside this record should assume exactly two.
  *
  * <h2>{@link #raw()} is the current</h2>
  * {@link Unit#raw()} has to answer with one float, and an {@code Eu} has two components. It
  * answers with the current, because that is the figure a load is rated and starved in; it says
- * nothing about voltage, so it must never be used to compare two {@code Eu}. Read
+ * nothing about voltage, so it must never be used to compare two {@code Eu}; compare their {@code Eu/t}. Read
  * {@link #voltage()} and {@link #current()}. Display goes through {@link #figure()}, not
  * {@link Units#figure}, for the same reason.
  *

@@ -8,6 +8,8 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,7 +17,7 @@ import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
 
 /**
- * What passing current through a liquid does to it: the voltage at which it comes apart, and the fluids that leave
+ * What passing current through a liquid does to it: the band at which it comes apart, and the fluids that leave
  * at each electrode per millibucket of the liquid. The electrolyser knows only "run current through whatever liquid
  * has a row here"; the row, matched by fluid tag or id, says what it makes.
  *
@@ -26,7 +28,7 @@ import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
  * {@code residue} in the cell (lye behind a splitting brine) per unit of work, or per several units.
  *
  * @param feed         the liquid that is split (or the bath, for a solvent row), by tag or id.
- * @param volts        the voltage the liquid decomposes at.
+ * @param band         the least band the liquid decomposes at.
  * @param products     the fluids made, each per unit of work, and the electrode each collects at.
  * @param item         the solute that is consumed, if the row has one.
  * @param unitsPerItem units of work one item provides.
@@ -36,7 +38,7 @@ import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
  * @param deposit      the solid that plates out on the cathode, if any: winning a metal from its liquor grows metal on the
  *                     plate, it does not run off it as a melt.
  */
-public record Electrolysis(FluidIngredient feed, float volts, List<Product> products, Optional<Ingredient> item,
+public record Electrolysis(FluidIngredient feed, VoltageBand band, List<Product> products, Optional<Ingredient> item,
                            int unitsPerItem, boolean solvent, float minTemperature, Optional<Residue> residue,
                            Optional<Deposit> deposit) {
 
@@ -89,7 +91,7 @@ public record Electrolysis(FluidIngredient feed, float volts, List<Product> prod
 
     public static final Codec<Electrolysis> CODEC = RecordCodecBuilder.create(i -> i.group(
             FluidIngredient.CODEC.fieldOf("feed").forGetter(Electrolysis::feed),
-            Codec.floatRange(0f, 1000f).fieldOf("volts").forGetter(Electrolysis::volts),
+            VoltageBand.CODEC.fieldOf("band").forGetter(Electrolysis::band),
             Product.CODEC.listOf().optionalFieldOf("products", List.of()).forGetter(Electrolysis::products),
             Ingredient.CODEC_NONEMPTY.optionalFieldOf("item").forGetter(Electrolysis::item),
             Codec.intRange(1, 100000).optionalFieldOf("units_per_item", 1).forGetter(Electrolysis::unitsPerItem),

@@ -57,7 +57,8 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
     private String notes = "";
     private int snakeBest, minesBest;
     /** The cable's figures at the last push, for the Power app. */
-    private float voltsSeen, ampsSeen, wantedSeen;
+    private float packetSeen, ampsSeen, wantedSeen;
+    private VoltageBand bandSeen = VoltageBand.LV;
     private boolean lastPowered;
 
     /** One console line: the time of day it happened, a message key and its argument. */
@@ -134,8 +135,14 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
     }
 
-    public float voltsSeen() {
-        return voltsSeen;
+    /** Eu in the packet the machine received at the last sync, after cable loss. */
+    public float packetSeen() {
+        return packetSeen;
+    }
+
+    /** The band the machine was fed at the last sync. */
+    public VoltageBand bandSeen() {
+        return bandSeen;
     }
 
     public float ampsSeen() {
@@ -238,7 +245,7 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
     }
 
     public boolean powered() {
-        return ElectricRules.rate(getVolts(), getAmps(), getWantedAmps(), ratedBand()) >= 0.5f;
+        return ElectricRules.rate(getPacketEu(), getAmps(), getWantedAmps(), ratedBand()) >= 0.5f;
     }
 
     /** How many desktops are open on this Computer. */
@@ -263,7 +270,8 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
         if (watchers > 0 && level != null && level.getGameTime() % 5 == 0) {
             readings = core.readings();
             poweredSeen = powered();
-            voltsSeen = getVolts();
+            packetSeen = getPacketEu();
+            bandSeen = getBand();
             ampsSeen = getAmps();
             wantedSeen = getWantedAmps();
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
@@ -402,7 +410,8 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
         tag.putString("Notes", notes);
         tag.putInt("SnakeBest", snakeBest);
         tag.putInt("MinesBest", minesBest);
-        tag.putFloat("Volts", voltsSeen);
+        tag.putFloat("Packet", packetSeen);
+        tag.putInt("Band", bandSeen.ordinal());
         tag.putFloat("Amps", ampsSeen);
         tag.putFloat("Wanted", wantedSeen);
         net.minecraft.nbt.ListTag lines = new net.minecraft.nbt.ListTag();
@@ -435,7 +444,8 @@ public class ComputerBlockEntity extends ElectricNode implements ControllerHost,
         notes = tag.getString("Notes");
         snakeBest = tag.getInt("SnakeBest");
         minesBest = tag.getInt("MinesBest");
-        voltsSeen = tag.getFloat("Volts");
+        packetSeen = tag.getFloat("Packet");
+        bandSeen = VoltageBand.values()[Math.max(0, Math.min(VoltageBand.values().length - 1, tag.getInt("Band")))];
         ampsSeen = tag.getFloat("Amps");
         wantedSeen = tag.getFloat("Wanted");
         log.clear();

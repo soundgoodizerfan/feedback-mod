@@ -115,10 +115,10 @@ public class AutoEngineerBlockEntity extends ElectricNode implements Wearing {
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        rate = working() ? ElectricRules.rate(volts, amps, wanted, VoltageBand.EHV) : 0f;
-        over = ElectricRules.overVoltage(volts, VoltageBand.EHV);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        rate = working() ? ElectricRules.rate(eu, amps, wanted, VoltageBand.EHV) : 0f;
+        over = ElectricRules.overVoltage(band, eu, VoltageBand.EHV);
     }
 
     private boolean working() {

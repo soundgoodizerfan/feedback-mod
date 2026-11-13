@@ -67,11 +67,11 @@ public class FenceBlock extends CableBlock {
         long now = level.getGameTime();
         if (now - entity.getPersistentData().getLong(LAST_SHOCK) < ElectricMachineTuning.FENCE_SHOCK_COOLDOWN_TICKS)
             return;
-        float volts = fence.touchVolts();
-        if (volts <= 0f)
+        var band = fence.touchBand();
+        if (band == null)
             return;
         entity.getPersistentData().putLong(LAST_SHOCK, now);
-        if (!Shock.apply(entity, volts))
+        if (!Shock.apply(entity, band))
             return;
         fence.draw(ElectricMachineTuning.FENCE_HIT_AMPS);
         if (entity instanceof LivingEntity living) {

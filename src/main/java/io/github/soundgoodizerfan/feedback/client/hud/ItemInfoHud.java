@@ -38,6 +38,7 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import io.github.soundgoodizerfan.feedback.core.electric.ElectricRules;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -130,8 +131,8 @@ public final class ItemInfoHud {
             list.add(Readout.reading(Quantity.DOSE, "feedback.readout.dose", Readout.figure(Quantity.DOSE,
                     player.getData(io.github.soundgoodizerfan.feedback.registry.FCombat.RADIATION_DOSE))));
         float baton = stack.getOrDefault(FDataComponents.BATON_VOLTS.get(), 0f);
-        if (baton > 0f && Readout.instrumented(Quantity.VOLTAGE))
-            list.add(Readout.reading(Quantity.VOLTAGE, "feedback.readout.volts", Readout.figure(Quantity.VOLTAGE, baton)));
+        if (baton > 0f && Readout.instrumented(Quantity.BAND))
+            list.add(Readout.reading(Quantity.BAND, "feedback.readout.band", Component.translatable(ElectricRules.bandOfPotential(baton).key())));
         // Wear on a head, bit or probe crystal: a figure only at the truth tier (calipers read machines, not stock).
         Float wear = stack.has(FDataComponents.PROBE_CONDITION.get()) ? Float.valueOf(MassProbeItem.condition(stack))
                 : stack.get(FDataComponents.TOOL_CONDITION.get());

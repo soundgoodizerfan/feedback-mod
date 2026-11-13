@@ -163,7 +163,7 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
 
     @Override
     public boolean live() {
-        return module == null || !module.powered || ElectricRules.rate(getVolts(), getAmps(), getWantedAmps(), ratedBand()) >= 0.5f;
+        return module == null || !module.powered || ElectricRules.rate(getPacketEu(), getAmps(), getWantedAmps(), ratedBand()) >= 0.5f;
     }
 
     /** The highest gas pressure (Pu) in a pipe run touching this cell; a puff draws a mB from it. */

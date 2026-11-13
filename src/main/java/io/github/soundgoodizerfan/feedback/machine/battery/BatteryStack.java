@@ -116,7 +116,7 @@ public final class BatteryStack {
             return 0f;
         float eff = t.contains("ChargeEfficiency") ? t.getFloat("ChargeEfficiency") : FTuning.BATTERY_CHARGE_EFFICIENCY;
         t.putFloat("Charge", Math.min(effectiveCapacity(t), charge(t) + amps * eff));
-        float excess = ElectricRules.overVoltage(lineVolts, caseBand(t));
+        float excess = ElectricRules.overPotential(lineVolts, caseBand(t));
         if (excess > 0f)
             t.putFloat("Condition", Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition(t) - ElectricMachineTuning.BATTERY_OVERVOLT_WEAR * excess * ticks));
         return amps * lineVolts * (1f - eff);

@@ -38,7 +38,7 @@ public class ElectricControllerBlockEntity extends ElectricNode implements Contr
     }
 
     protected boolean powered() {
-        return ElectricRules.rate(getVolts(), getAmps(), getWantedAmps(), ratedBand()) >= 0.5f;
+        return ElectricRules.rate(getPacketEu(), getAmps(), getWantedAmps(), ratedBand()) >= 0.5f;
     }
 
     @Override

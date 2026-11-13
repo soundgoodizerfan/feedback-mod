@@ -52,10 +52,10 @@ public class ConverterBlockEntity extends ElectricNode implements ThermalBody, W
         return !(other instanceof ConverterTapBlockEntity);
     }
 
-    /** The band of the line it sees: a converter takes any, and is limited by the power it can pass, not by a rated voltage. */
+    /** The band of the line it sees: a converter takes any, and is limited by the power it can pass, not by a rated band. */
     @Override
     public VoltageBand ratedBand() {
-        return ElectricRules.bandOf(getVolts());
+        return getBand();
     }
 
     public Ratio ratio() {
@@ -71,8 +71,10 @@ public class ConverterBlockEntity extends ElectricNode implements ThermalBody, W
     public float wantedAmps() {
         ConverterTapBlockEntity tap = tap();
         float out = tap == null ? 0f : tap.getAmps();
-        // Input current = output current times the voltage ratio, over efficiency: the same power in as out plus the loss.
-        return ElectricMachineTuning.CONVERTER_STANDING_AMPS + out * ratio().factor() / efficiency();
+        // Input current = output current times the packet ratio, over efficiency: the same Eu in as out plus the loss.
+        VoltageBand outBand = ratio().out(getBand());
+        float step = outBand == null ? 0f : ElectricRules.packetEu(outBand) / ElectricRules.packetEu(getBand());
+        return ElectricMachineTuning.CONVERTER_STANDING_AMPS + out * step / efficiency();
     }
 
     private ConverterTapBlockEntity tap() {
@@ -90,18 +92,18 @@ public class ConverterBlockEntity extends ElectricNode implements ThermalBody, W
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (level == null || level.isClientSide)
             return;
         ConverterTapBlockEntity tap = tap();
-        float out = volts * ratio().factor();
+        VoltageBand outBand = eu > 0f ? ratio().out(band) : null;
         if (tap != null) {
-            // What the tap offers is what this block is fed, stepped, never more power than the converter's rating passes. A starved
+            // What the tap offers is this block's band, stepped, never more Eu/t than the converter's rating passes. A starved
             // input line (delivered below wanted) lowers the offer in proportion, so the output sags rather than stopping.
             float fed = wanted > 0f ? Math.min(1f, amps / wanted) : 0f;
-            tap.offer(out * (volts > 0f ? 1f : 0f), out > 0f ? ElectricMachineTuning.CONVERTER_RATED_WATTS / out * fed : 0f);
-            float power = tap.getVolts() * tap.getAmps();
+            tap.offer(outBand, outBand != null ? ElectricMachineTuning.CONVERTER_RATED_EU_PER_TICK / ElectricRules.packetEu(outBand) * fed : 0f);
+            float power = tap.getPacketEu() * tap.getAmps();
             if (power > 0f)
                 Heat.warm(this, power * (1f / efficiency() - 1f) * ElectricMachineTuning.CONVERTER_HEAT_SCALE);
         }

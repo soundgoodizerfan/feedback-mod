@@ -7,7 +7,7 @@
     "feed": {
       "fluid": "feedback:enriched_water"
     },
-    "volts": 1.8,
+    "band": "mv",
     "products": [
       {
         "fluid": "feedback:hydrogen",

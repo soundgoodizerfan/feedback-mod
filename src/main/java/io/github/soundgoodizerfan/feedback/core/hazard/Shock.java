@@ -33,7 +33,10 @@ public final class Shock {
     }
 
     public static float damage(float volts) {
-        VoltageBand band = ElectricRules.bandOf(volts);
+        return damage(ElectricRules.bandOfPotential(volts));
+    }
+
+    public static float damage(VoltageBand band) {
         return switch (band) {
             case LV -> HazardTuning.BARE_WIRE_SHOCK_DAMAGE;
             case MV -> HazardTuning.SHOCK_MV_DAMAGE;
@@ -44,7 +47,12 @@ public final class Shock {
         };
     }
 
-    /** Shock {@code victim} as {@code volts} would. Returns whether it hurt. */
+    /** Shock {@code victim} as a live conductor of {@code band} would; null is no shock. Returns whether it hurt. */
+    public static boolean apply(Entity victim, @org.jetbrains.annotations.Nullable VoltageBand band) {
+        return band != null && apply(victim, ElectricRules.bandPotential(band));
+    }
+
+    /** Shock {@code victim} as a discharge of {@code volts} (an electrochemical or static potential, never shown) would. Returns whether it hurt. */
     public static boolean apply(Entity victim, float volts) {
         if (victim.level().isClientSide || volts <= 0f)
             return false;

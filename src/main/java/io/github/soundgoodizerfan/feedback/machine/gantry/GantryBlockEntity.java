@@ -61,7 +61,7 @@ public class GantryBlockEntity extends ElectricNode {
             float before = wanted;
             Player p = occupant();
             CompoundTag t = p == null ? null : BatteryStack.state(ExoSuit.battery(p.getItemBySlot(EquipmentSlot.CHEST)));
-            wanted = t == null ? 0f : BatteryStack.wantedAmps(t, getVolts());
+            wanted = t == null ? 0f : BatteryStack.wantedAmps(t, seenPotential());
             if (wanted != before)
                 setChanged();
         }
@@ -75,7 +75,7 @@ public class GantryBlockEntity extends ElectricNode {
                 CompoundTag t = BatteryStack.state(bat);
                 if (t != null) {
                     CompoundTag next = t.copy();
-                    BatteryStack.charge(next, owed, getVolts(), WRITE_TICKS);
+                    BatteryStack.charge(next, owed, seenPotential(), WRITE_TICKS);
                     ItemStack copy = bat.copy();
                     copy.set(FDataComponents.BATTERY.get(), next);
                     ExoSuit.setBattery(chest, copy);

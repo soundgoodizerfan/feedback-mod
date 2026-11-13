@@ -7,7 +7,7 @@
     "feed": {
       "fluid": "feedback:copper_sulfate"
     },
-    "volts": 2.0,
+    "band": "mv",
     "products": [
       {
         "fluid": "feedback:oxygen",

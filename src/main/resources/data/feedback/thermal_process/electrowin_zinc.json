@@ -7,7 +7,7 @@
     "feed": {
       "fluid": "feedback:zinc_sulfate"
     },
-    "volts": 3.0,
+    "band": "mv",
     "products": [
       {
         "fluid": "feedback:oxygen",

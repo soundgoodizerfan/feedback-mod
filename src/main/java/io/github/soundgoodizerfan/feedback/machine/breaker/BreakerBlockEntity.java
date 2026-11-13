@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.breaker;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.control.Switchable;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
@@ -79,17 +81,17 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
     }
 
     @Override
-    public float dropPerAmp() {
-        return ElectricMachineTuning.BREAKER_DROP_PER_AMP / gauge.area() / condition;
+    public float lossPerPacket() {
+        return ElectricMachineTuning.BREAKER_LOSS_PER_PACKET / gauge.area() / condition;
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         float trip = ElectricMachineTuning.BREAKER_TRIP_AMPS * gauge.area();
         if (closed && amps > trip)
             setEngaged(false);
-        else if (closed && level != null && !level.isClientSide && volts >= ElectricMachineTuning.BREAKER_FLASH_MIN_BAND_VOLTS
+        else if (closed && level != null && !level.isClientSide && eu > 0f && band.compareTo(ElectricMachineTuning.BREAKER_FLASH_MIN_BAND) >= 0
                 && amps > trip * ElectricMachineTuning.BREAKER_FLASH_WARN_LOAD && level.getGameTime() % ElectricMachineTuning.BREAKER_FLASH_WARN_TICKS == 0)
             warn();
     }
@@ -103,7 +105,7 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
     }
 
     /** Opening under heavy current at line voltage throws an arc: it burns what stands close and is not insulated from it. */
-    private void flash(float volts, float amps) {
+    private void flash(float amps) {
         float damage = Math.min(ElectricMachineTuning.BREAKER_FLASH_DAMAGE_CAP, amps * ElectricMachineTuning.BREAKER_FLASH_DAMAGE_PER_AMP);
         level.playSound(null, worldPosition, net.minecraft.sounds.SoundEvents.LIGHTNING_BOLT_IMPACT, net.minecraft.sounds.SoundSource.BLOCKS, 0.8f, 1.6f);
         ((net.minecraft.server.level.ServerLevel) level).sendParticles(net.minecraft.core.particles.ParticleTypes.FLASH,
@@ -111,7 +113,7 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
         for (var victim : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
                 new net.minecraft.world.phys.AABB(worldPosition).inflate(ElectricMachineTuning.BREAKER_FLASH_RADIUS))) {
             if (victim instanceof net.minecraft.world.entity.player.Player player
-                    && io.github.soundgoodizerfan.feedback.core.hazard.Protection.shockProofVolts(player) >= volts)
+                    && io.github.soundgoodizerfan.feedback.core.hazard.Protection.shockProofVolts(player) >= io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.bandPotential(getBand()))
                 continue;
             if (victim.hurt(io.github.soundgoodizerfan.feedback.core.hazard.Hazards.source(level,
                     io.github.soundgoodizerfan.feedback.core.hazard.Hazards.HOT_CONTACT), damage))
@@ -125,8 +127,8 @@ public class BreakerBlockEntity extends ElectricNode implements Switchable, Weld
             return;
         if (!engaged && getAmps() > 0f)
             io.github.soundgoodizerfan.feedback.core.electric.Sparks.emit(level, worldPosition, getAmps());
-        if (!engaged && getAmps() > 0f && getVolts() >= ElectricMachineTuning.BREAKER_FLASH_MIN_BAND_VOLTS)
-            flash(getVolts(), getAmps());
+        if (!engaged && getAmps() > 0f && getBand().compareTo(ElectricMachineTuning.BREAKER_FLASH_MIN_BAND) >= 0 && isLive())
+            flash(getAmps());
         if (!engaged && getAmps() > 0f)
             condition = Math.max(ElectricMachineTuning.BREAKER_CONDITION_FLOOR, condition - ElectricMachineTuning.BREAKER_ARC_WEAR_PER_AMP * getAmps());
         closed = engaged;

@@ -44,8 +44,8 @@ public class LinearMotorBlockEntity extends ElectricNode {
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        powered = ElectricRules.rate(volts, amps, wanted, ratedBand()) >= 0.5f;
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        powered = ElectricRules.rate(eu, amps, wanted, ratedBand()) >= 0.5f;
     }
 }

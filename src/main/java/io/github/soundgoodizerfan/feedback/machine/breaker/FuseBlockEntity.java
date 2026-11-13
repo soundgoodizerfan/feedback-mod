@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.breaker;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import java.util.Optional;
@@ -74,14 +76,14 @@ public class FuseBlockEntity extends ElectricNode implements ThermalBody {
     }
 
     @Override
-    public float dropPerAmp() {
+    public float lossPerPacket() {
         Material m = material();
-        return m == null ? 0f : m.electrical().drop().orElse(0f);
+        return m == null ? 0f : m.electrical().drop().orElse(0f) * ElectricMachineTuning.CABLE_LOSS_EU_PER_DROP;
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         Tu ambient = AmbientTable.at(level);
         float over = amps - getRatingAmps();
         if (wire != null && over > 0f)

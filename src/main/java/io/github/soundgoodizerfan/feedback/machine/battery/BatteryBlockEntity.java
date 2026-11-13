@@ -180,14 +180,14 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
     }
 
     @Override
-    public float touchVolts() {
+    public VoltageBand touchBand() {
         float held = terminalVolts();
-        return held >= ElectricMachineTuning.SHOCK_MIN_VOLTS && charge > 0f ? held : 0f;
+        return held >= ElectricMachineTuning.SHOCK_MIN_VOLTS && charge > 0f ? ElectricRules.bandOfPotential(held) : null;
     }
 
     @Override
-    public float sourceVolts() {
-        return supplying && ready() && charge > 0f ? terminalVolts() : 0f;
+    public VoltageBand sourceBand() {
+        return supplying && ready() && charge > 0f ? ElectricRules.bandOfPotential(terminalVolts()) : null;
     }
 
     @Override
@@ -201,19 +201,20 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         if (supplying || !ready())
             return 0f;
         float chargeAmps = effectiveCapacity() / (rectified ? ElectricMachineTuning.RECTIFIER_CHARGE_TICKS : ElectricMachineTuning.BATTERY_CHARGE_TICKS);
-        float headroom = getVolts() - terminalVolts();
+        float headroom = seenPotential() - terminalVolts();
         if (headroom <= 0f)
             return 0f;
         if (!full())
             return Math.min(chargeAmps, askAmps);
-        return gassing && getVolts() > cells * voltsFull * ElectricMachineTuning.BATTERY_GASSING_FACTOR ? chargeAmps * ElectricMachineTuning.BATTERY_TRICKLE_SHARE : 0f;
+        return gassing && seenPotential() > cells * voltsFull * ElectricMachineTuning.BATTERY_GASSING_FACTOR ? chargeAmps * ElectricMachineTuning.BATTERY_TRICKLE_SHARE : 0f;
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (level == null)
             return;
+        float volts = seenPotential();
         boolean dirty = false;
         float heat = 0f;
         if (!supplying) {
@@ -254,7 +255,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
             }
             dirty = true;
         }
-        float excess = ElectricRules.overVoltage(volts, caseBand);
+        float excess = ElectricRules.overVoltage(band, eu, caseBand);
         if (excess > 0f && !supplying && amps > 0f) {
             condition = Math.max(ElectricMachineTuning.BATTERY_CONDITION_FLOOR, condition - ElectricMachineTuning.BATTERY_OVERVOLT_WEAR * excess);
             dirty = true;
@@ -295,7 +296,7 @@ public class BatteryBlockEntity extends ElectricNode implements ThermalBody, Wel
         float held = terminalVolts();
         boolean flip = supplying
                 ? charge <= 0f || !ready() || isBlocked()
-                : ready() && charge > 0f && getVolts() <= held;
+                : ready() && charge > 0f && seenPotential() <= held;
         if (flip) {
             supplying = !supplying;
             setChanged();

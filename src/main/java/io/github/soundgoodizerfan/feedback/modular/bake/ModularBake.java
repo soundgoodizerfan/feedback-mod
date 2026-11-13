@@ -684,7 +684,7 @@ public final class ModularBake {
             leak += km.thermal().conductivity().get().workPerTickPerTu() * type.roles().get(MACHINE_COOLING).volume(cooling)
                     * ModularTuning.COOLING_SHED_PER_LS;
         float service = hm.thermal().serviceTemperature().map(Tu::value).orElse(FTuning.MACHINE_SERVICE_TU);
-        return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOf(vpr * ModularTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
+        return Optional.of(new MachineSpec(su, vpr, amps, ElectricRules.bandOfPotential(vpr * ModularTuning.MACHINE_REFERENCE_RPM), mass, leak, service, drop,
                 cm.electrical().coreLoss().orElse(FTuning.CORE_LOSS_DEFAULT) + friction, cooling != null && cooling.form().equals("pipe")));
     }
 

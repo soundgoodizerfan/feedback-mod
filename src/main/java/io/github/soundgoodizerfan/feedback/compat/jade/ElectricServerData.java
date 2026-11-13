@@ -26,12 +26,12 @@ public class ElectricServerData implements IServerDataProvider<BlockAccessor> {
     public static final ElectricServerData INSTANCE = new ElectricServerData();
 
     static final String ROLE = "ElectricRole";
-    static final String VOLTS = "ElectricVolts";
+    static final String PACKET = "ElectricPacket", BAND = "ElectricBand";
     static final String AMPS = "ElectricAmps";
     static final String WANTED = "ElectricWanted";
     static final String BLOCKED = "ElectricBlocked";
     static final String INSULATION = "WireInsulation";
-    static final String JAR = "JarState", JAR_VOLTS = "JarVolts";
+    static final String JAR = "JarState", JAR_BAND = "JarBand";
     static final String BAT = "BatteryState", BAT_SOC = "BatterySoc", BAT_WATER = "BatteryWater", BAT_VENT = "BatteryVent", BAT_COND = "BatteryCondition", BAT_READY = "BatteryReady", BAT_UNDER = "BatteryUnder", BAT_NEED = "BatteryNeed";
 
     @Override
@@ -39,14 +39,15 @@ public class ElectricServerData implements IServerDataProvider<BlockAccessor> {
         if (!(accessor.getBlockEntity() instanceof ElectricNode node))
             return;
         data.putInt(ROLE, node.role().ordinal());
-        data.putFloat(VOLTS, node.getVolts());
+        data.putFloat(PACKET, node.getPacketEu());
+        data.putByte(BAND, (byte) node.getBand().ordinal());
         data.putFloat(AMPS, node.getAmps());
         data.putFloat(WANTED, node.getWantedAmps());
         data.putBoolean(BLOCKED, node.isBlocked());
         if (node instanceof CableBlockEntity wire && wire.getInsulation() != null)
             data.putByte(INSULATION, (byte) wire.getInsulation().ordinal());
         if (node instanceof LeydenJarBlockEntity jar) {
-            data.putFloat(JAR_VOLTS, jar.getStoredVolts());
+            data.putByte(JAR_BAND, (byte) io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.bandOfPotential(jar.getStoredVolts()).ordinal());
             data.putByte(JAR, (byte) (jar.isSupplying() ? 2 : jar.getAmps() > 0f ? 1 : 0));
         }
         if (node instanceof io.github.soundgoodizerfan.feedback.machine.battery.BatteryBlockEntity battery) {
@@ -56,8 +57,8 @@ public class ElectricServerData implements IServerDataProvider<BlockAccessor> {
             data.putBoolean(BAT_VENT, battery.isVenting() || battery.gas() >= io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning.BATTERY_GAS_WEEP_MB);
             data.putFloat(BAT_COND, battery.getCondition());
             data.putBoolean(BAT_READY, battery.ready());
-            data.putBoolean(BAT_UNDER, !battery.isSupplying() && battery.getVolts() > 0f && battery.getVolts() <= battery.terminalVolts() + io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning.BATTERY_SWITCH_VOLTS);
-            data.putFloat(BAT_NEED, battery.terminalVolts());
+            data.putBoolean(BAT_UNDER, !battery.isSupplying() && battery.seenPotential() > 0f && battery.seenPotential() <= battery.terminalVolts() + io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning.BATTERY_SWITCH_VOLTS);
+            data.putByte(BAT_NEED, (byte) io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.bandOfPotential(battery.terminalVolts()).ordinal());
         }
     }
 

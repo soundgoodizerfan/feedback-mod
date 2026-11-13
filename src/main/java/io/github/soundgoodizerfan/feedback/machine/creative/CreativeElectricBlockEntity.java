@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package io.github.soundgoodizerfan.feedback.machine.creative;
 
+import io.github.soundgoodizerfan.feedback.core.unit.VoltageBand;
+
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricTuning;
 import java.util.List;
 
@@ -18,11 +20,11 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** A supply at any voltage and current. Volts are a free number here; the run still bands them. */
+/** A supply at any band and current: the band is picked by index (0 LV up to 5 Trunk), the amps are a free number. */
 public class CreativeElectricBlockEntity extends ElectricNode implements CreativeSource {
 
     private boolean on = true;
-    private float volts = ElectricTuning.ELECTRIC_LV_VOLTS, amps = 4f;
+    private float band = VoltageBand.LV.ordinal(), amps = 4f;
 
     public CreativeElectricBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.CREATIVE_ELECTRIC.get(), pos, state);
@@ -34,8 +36,8 @@ public class CreativeElectricBlockEntity extends ElectricNode implements Creativ
     }
 
     @Override
-    public float sourceVolts() {
-        return on ? volts : 0f;
+    public VoltageBand sourceBand() {
+        return on ? VoltageBand.values()[Math.round(band)] : null;
     }
 
     @Override
@@ -51,7 +53,7 @@ public class CreativeElectricBlockEntity extends ElectricNode implements Creativ
     @Override
     public List<Param> params() {
         return List.of(
-                new Param("volts", volts, ElectricTuning.ELECTRIC_LV_VOLTS, 0f, 1000f),
+                new Param("band", band, 1f, 0f, VoltageBand.values().length - 1),
                 new Param("amps", amps, 1f, 0f, 10000f));
     }
 
@@ -59,7 +61,7 @@ public class CreativeElectricBlockEntity extends ElectricNode implements Creativ
     public void configure(boolean on, float[] values) {
         List<Param> p = params();
         this.on = on;
-        this.volts = CreativeSource.clamp(p.get(0), values[0]);
+        this.band = CreativeSource.clamp(p.get(0), values[0]);
         this.amps = CreativeSource.clamp(p.get(1), values[1]);
         setChanged();
         if (level != null)
@@ -70,7 +72,7 @@ public class CreativeElectricBlockEntity extends ElectricNode implements Creativ
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         tag.putBoolean("On", on);
-        tag.putFloat("SetVolts", volts);
+        tag.putFloat("SetBand", band);
         tag.putFloat("SetAmps", amps);
     }
 
@@ -78,7 +80,7 @@ public class CreativeElectricBlockEntity extends ElectricNode implements Creativ
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         on = tag.getBoolean("On");
-        volts = tag.getFloat("SetVolts");
+        band = tag.getFloat("SetBand");
         amps = tag.getFloat("SetAmps");
     }
 

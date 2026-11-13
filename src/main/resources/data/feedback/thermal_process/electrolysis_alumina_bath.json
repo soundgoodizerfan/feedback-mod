@@ -7,7 +7,7 @@
     "feed": {
       "fluid": "feedback:cryolite_bath"
     },
-    "volts": 4.0,
+    "band": "mv",
     "solvent": true,
     "min_temperature": 950,
     "item": {

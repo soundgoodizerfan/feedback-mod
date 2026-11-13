@@ -101,7 +101,7 @@ public final class ItemTuning {
      */
     public static final float GALVANOMETER_RESOLUTION_AMPS = 0.25f;
 
-    public static final float ELECTROSCOPE_RESOLUTION_VOLTS = 0.5f;
+    public static final float ELECTROSCOPE_RESOLUTION_BANDS = 1f;
 
     /** Placeholder. Noise floor, in steps: even a sound probe reads a little off (philosophy 10). */
     public static final float MASS_PROBE_NOISE_STEPS = 0.4f;
@@ -116,7 +116,7 @@ public final class ItemTuning {
     // --- the jar baton (wiki/Jar_Baton.md) -------------------------------------------------------
 
     /** Placeholder. Volts a baton's jar is rated for; charge above this, or a wet holder, shocks the holder. */
-    public static final float BATON_RATING_VOLTS = ElectricTuning.ELECTRIC_HV_VOLTS;
+    public static final float BATON_RATING_VOLTS = ElectricTuning.BAND_POTENTIAL_HV;
 
     /** Placeholder. Stagger ticks per volt discharged, capped at {@link #BATON_STAGGER_MAX_TICKS}. */
     public static final float BATON_STAGGER_TICKS_PER_VOLT = 2f;

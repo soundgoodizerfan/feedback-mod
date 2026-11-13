@@ -128,7 +128,7 @@ public class CableBlock extends Block implements EntityBlock {
         if (level.isClientSide || entity.tickCount % 10 != 0)
             return;
         if (level.getBlockEntity(pos) instanceof CableBlockEntity wire)
-            Shock.apply(entity, wire.touchVolts());
+            Shock.apply(entity, wire.touchBand());
     }
 
     /**

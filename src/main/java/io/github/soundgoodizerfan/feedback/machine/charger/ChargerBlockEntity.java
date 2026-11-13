@@ -45,7 +45,7 @@ public class ChargerBlockEntity extends ElectricNode {
     public float wantedAmps() {
         CompoundTag battery = BatteryStack.state(rounds);
         if (battery != null)
-            return BatteryStack.wantedAmps(battery, getVolts());
+            return BatteryStack.wantedAmps(battery, seenPotential());
         return 0;
     }
 
@@ -55,7 +55,7 @@ public class ChargerBlockEntity extends ElectricNode {
         CompoundTag battery = BatteryStack.state(rounds);
         if (battery != null) {
             CompoundTag next = battery.copy();
-            BatteryStack.charge(next, getAmps(), getVolts());
+            BatteryStack.charge(next, getAmps(), seenPotential());
             rounds.set(FDataComponents.BATTERY.get(), next);
             setChanged();
             return;

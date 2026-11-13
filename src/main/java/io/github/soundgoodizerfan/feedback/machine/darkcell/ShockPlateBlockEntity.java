@@ -14,8 +14,8 @@ public class ShockPlateBlockEntity extends ElectricNode implements KillMethod {
 
     /** Invented. Amps it asks for. */
     private static final float AMPS = 4f;
-    /** Invented. Watts per point of harm. */
-    private static final float WATTS_PER_DAMAGE = 25f;
+    /** Invented. Eu per tick for each point of harm. */
+    private static final float WATTS_PER_DAMAGE = 530f;
 
     private float watts;
 
@@ -39,9 +39,9 @@ public class ShockPlateBlockEntity extends ElectricNode implements KillMethod {
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
-        watts = volts * amps;
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
+        watts = eu * amps;
     }
 
     @Override

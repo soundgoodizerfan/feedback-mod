@@ -69,11 +69,11 @@ public class RefrigerationUnitBlockEntity extends ElectricNode implements Therma
     }
 
     @Override
-    public void onResolved(float volts, float amps, float wanted, boolean blocked) {
-        super.onResolved(volts, amps, wanted, blocked);
+    public void onResolved(VoltageBand band, float eu, float amps, float wanted, boolean blocked) {
+        super.onResolved(band, eu, amps, wanted, blocked);
         if (level == null)
             return;
-        running = ElectricRules.rate(volts, amps, wanted, ratedBand()) > 0f;
+        running = ElectricRules.rate(eu, amps, wanted, ratedBand()) > 0f;
         Tu ambient = AmbientTable.at(level);
         Heat.tick(this, running ? PetrochemTuning.REFRIGERATION_HOT_TU : ambient, ambient, running);
         setChanged();

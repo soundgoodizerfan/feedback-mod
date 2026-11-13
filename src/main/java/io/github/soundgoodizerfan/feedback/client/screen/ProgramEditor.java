@@ -1751,7 +1751,7 @@ public final class ProgramEditor {
             case SPEED -> 0xFF55CCFF;
             case WORK -> 0xFFFFDD55;
             case CONDITION -> 0xFFAAAAAA;
-            case VOLTAGE -> 0xFFFFEE66;
+            case BAND -> 0xFFFFEE66;
             case CURRENT -> 0xFF66FFAA;
             case LENGTH -> 0xFFCCCCCC;
             case STATE -> COLOR_BOOLEAN;
