@@ -1,0 +1,4 @@
+{
+  "materials": ["feedback:copper", "feedback:tin", "feedback:bronze", "feedback:brass", "feedback:lead", "feedback:zinc", "feedback:gold", "feedback:silver"],
+  "volumes": ["aerospace:1"]
+}

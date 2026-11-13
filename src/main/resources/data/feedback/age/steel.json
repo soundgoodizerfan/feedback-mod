@@ -1,0 +1,4 @@
+{
+  "materials": ["feedback:steel", "feedback:tempered_steel", "feedback:hardened_steel", "feedback:manganese_steel"],
+  "volumes": ["mechanical:2", "aerospace:2", "chemical:2", "chemical:3"]
+}

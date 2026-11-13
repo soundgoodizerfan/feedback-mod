@@ -14,7 +14,7 @@
     "announce_to_chat": true,
     "hidden": false
   },
-  "parent": "feedback:progress/heat/hard_part",
+  "parent": "feedback:progress/age/iron",
   "criteria": {
     "got": {
       "trigger": "minecraft:inventory_changed",

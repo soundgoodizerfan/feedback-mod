@@ -14,7 +14,7 @@
     "announce_to_chat": true,
     "hidden": false
   },
-  "parent": "feedback:progress/deepdark/enchant",
+  "parent": "feedback:progress/age/steel",
   "criteria": {
     "got": {
       "trigger": "minecraft:inventory_changed",

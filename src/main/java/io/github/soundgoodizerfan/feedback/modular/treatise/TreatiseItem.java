@@ -40,6 +40,10 @@ public class TreatiseItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.feedback.treatise").withStyle(ChatFormatting.GRAY));
+        // The age whose specimen yields it (display only; reading is never gated on an age).
+        io.github.soundgoodizerfan.feedback.process.Ages.get().ofVolume(school.id(), volume).ifPresent(a ->
+                tooltip.add(Component.translatable("tooltip.feedback.treatise_age", Component.translatable("age." + a.id().getNamespace() + "." + a.id().getPath()))
+                        .withStyle(ChatFormatting.GRAY)));
         // How well its specimen was read: good notes help whoever assembles with the volume held (never a gate).
         Float notes = stack.get(io.github.soundgoodizerfan.feedback.registry.FModular.NOTES.get());
         if (notes != null)

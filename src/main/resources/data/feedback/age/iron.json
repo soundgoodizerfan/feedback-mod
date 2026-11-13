@@ -1,0 +1,4 @@
+{
+  "materials": ["feedback:iron", "feedback:wrought_iron", "feedback:cast_iron", "feedback:iron_bloom"],
+  "volumes": ["weapons:2", "mechanical:1", "chemical:1"]
+}

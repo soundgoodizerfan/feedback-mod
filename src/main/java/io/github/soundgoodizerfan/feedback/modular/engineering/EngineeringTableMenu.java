@@ -133,6 +133,7 @@ public class EngineeringTableMenu extends AbstractContainerMenu {
 
             @Override
             public void onTake(Player p, ItemStack stack) {
+                io.github.soundgoodizerfan.feedback.process.Ages.made(p, stack);
                 taken();
             }
         });

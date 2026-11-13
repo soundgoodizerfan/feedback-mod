@@ -14,7 +14,7 @@
     "announce_to_chat": false,
     "hidden": false
   },
-  "parent": "feedback:progress/chem/oil",
+  "parent": "feedback:progress/age/machine",
   "criteria": {
     "got": {
       "trigger": "minecraft:inventory_changed",

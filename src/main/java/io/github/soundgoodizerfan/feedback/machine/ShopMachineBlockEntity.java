@@ -132,6 +132,9 @@ public abstract class ShopMachineBlockEntity extends RotationNode implements Wel
 
     /** A landed cut throws off a chip of its own material, some of the time. */
     protected void maybeDropSwarf(Removing.Cut cut) {
+        // Every landed cut calls this: metal taken off to a measured size is the machine age, whoever stands near.
+        if (level != null)
+            io.github.soundgoodizerfan.feedback.core.Awards.near(level, worldPosition, io.github.soundgoodizerfan.feedback.process.Ages.MACHINE);
         if (level != null && !cut.swarf().isEmpty() && cut.delivered() > 0
                 && level.random.nextFloat() < MachineTuning.SWARF_DROP_CHANCE * cut.delivered())
             Block.popResource(level, worldPosition.above(), cut.swarf().copy());

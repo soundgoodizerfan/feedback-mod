@@ -14,7 +14,7 @@
     "announce_to_chat": true,
     "hidden": false
   },
-  "parent": "feedback:progress/radiation/geiger",
+  "parent": "feedback:progress/age/alloy",
   "criteria": {
     "got": {
       "trigger": "minecraft:inventory_changed",

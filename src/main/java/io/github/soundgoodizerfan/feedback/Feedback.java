@@ -137,6 +137,7 @@ public class Feedback {
         event.addListener(io.github.soundgoodizerfan.feedback.modular.combat.ShieldSources.get());
         event.addListener(io.github.soundgoodizerfan.feedback.suit.MobHeat.get());
         event.addListener(MaterialTable.get());
+        event.addListener(io.github.soundgoodizerfan.feedback.process.Ages.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.CompoundTable.get());
         event.addListener(io.github.soundgoodizerfan.feedback.potion.PotionMap.get());
         event.addListener(io.github.soundgoodizerfan.feedback.process.FoodPerk.get());
@@ -185,6 +186,9 @@ public class Feedback {
                 .playToClient(io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload::handle)
+                .playToClient(io.github.soundgoodizerfan.feedback.net.AgeSyncPayload.TYPE,
+                        io.github.soundgoodizerfan.feedback.net.AgeSyncPayload.STREAM_CODEC,
+                        io.github.soundgoodizerfan.feedback.net.AgeSyncPayload::handle)
                 .playToClient(io.github.soundgoodizerfan.feedback.net.BuysSyncPayload.TYPE,
                         io.github.soundgoodizerfan.feedback.net.BuysSyncPayload.STREAM_CODEC,
                         io.github.soundgoodizerfan.feedback.net.BuysSyncPayload::handle)
@@ -437,6 +441,7 @@ public class Feedback {
         send(event, new io.github.soundgoodizerfan.feedback.net.MixtureSyncPayload(io.github.soundgoodizerfan.feedback.process.MixtureTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GoodsSyncPayload(io.github.soundgoodizerfan.feedback.village.GoodsTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.GunBlueprintPoolSyncPayload(io.github.soundgoodizerfan.feedback.weapon.GunBlueprintPool.get().listings()));
+        send(event, new io.github.soundgoodizerfan.feedback.net.AgeSyncPayload(io.github.soundgoodizerfan.feedback.process.Ages.get().all()));
         send(event, new io.github.soundgoodizerfan.feedback.net.BuysSyncPayload(io.github.soundgoodizerfan.feedback.village.BuysTable.get().entries()));
         send(event, new io.github.soundgoodizerfan.feedback.net.WorldgenSyncPayload(
                 io.github.soundgoodizerfan.feedback.worldgen.OreVeinTable.get().entries(),
