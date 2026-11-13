@@ -87,6 +87,9 @@
     "wiring": {
       "kind": "reflect",
       "flaw": 1
+    },
+    "container": {
+      "kind": "meal_shove"
     }
   },
   "mirror": {
@@ -173,6 +176,15 @@
     "wiring": {
       "kind": "damp",
       "flaw": 0
+    },
+    "mattress": {
+      "kind": "bed_damp"
+    },
+    "bed_frame": {
+      "kind": "bed_pull"
+    },
+    "container": {
+      "kind": "meal_pull"
     }
   },
   "books": [

@@ -287,6 +287,39 @@
     },
     "wiring": {
       "kind": "soak"
+    },
+    "beam_lens": {
+      "kind": "soak"
+    },
+    "foregrip": {
+      "kind": "soak"
+    },
+    "heat_gauge": {
+      "kind": "soak"
+    },
+    "heat_governor": {
+      "kind": "soak"
+    },
+    "hold_charge": {
+      "kind": "soak"
+    },
+    "mainspring": {
+      "kind": "soak"
+    },
+    "piston": {
+      "kind": "soak"
+    },
+    "pump_charge": {
+      "kind": "soak"
+    },
+    "seat": {
+      "kind": "soak"
+    },
+    "thermal_fitting": {
+      "kind": "soak"
+    },
+    "zoom_charge": {
+      "kind": "soak"
     }
   },
   "starter": true,

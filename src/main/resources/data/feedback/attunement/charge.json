@@ -84,6 +84,17 @@
     "wiring": {
       "kind": "capacitor",
       "flaw": 1
+    },
+    "barrel": {
+      "kind": "build",
+      "flaw": 1
+    },
+    "second_barrel": {
+      "kind": "build",
+      "flaw": 1
+    },
+    "mattress": {
+      "kind": "bed_charge"
     }
   },
   "mirror": {
@@ -92,6 +103,9 @@
     },
     "grip": {
       "kind": "bleed"
+    },
+    "mattress": {
+      "kind": "bed_ground"
     }
   },
   "books": [

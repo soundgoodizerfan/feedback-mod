@@ -34,6 +34,9 @@
     },
     "container": {
       "kind": "meal_edge"
+    },
+    "bed_frame": {
+      "kind": "bed_keen"
     }
   },
   "mirror": {

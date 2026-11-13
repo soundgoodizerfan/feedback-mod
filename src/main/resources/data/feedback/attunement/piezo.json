@@ -49,6 +49,12 @@
     },
     "wiring": {
       "kind": "arc"
+    },
+    "stock": {
+      "kind": "pulse"
+    },
+    "bayonet": {
+      "kind": "pulse"
     }
   },
   "mirror": {
@@ -99,6 +105,12 @@
     },
     "wiring": {
       "kind": "soak"
+    },
+    "barrel": {
+      "kind": "sense"
+    },
+    "container": {
+      "kind": "meal_sense"
     }
   }
 }

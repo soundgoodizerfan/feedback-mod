@@ -61,6 +61,9 @@
     },
     "wiring": {
       "kind": "worn_point_dense"
+    },
+    "stock": {
+      "kind": "point_dense"
     }
   },
   "mirror": {
@@ -123,6 +126,9 @@
     },
     "wiring": {
       "kind": "worn_away_dense"
+    },
+    "stock": {
+      "kind": "away_dense"
     }
   }
 }

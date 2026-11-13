@@ -28,6 +28,12 @@
     },
     "container": {
       "kind": "meal_stick"
+    },
+    "mattress": {
+      "kind": "bed_stick"
+    },
+    "bed_frame": {
+      "kind": "bed_stick"
     }
   },
   "mirror": {
@@ -57,6 +63,12 @@
     },
     "container": {
       "kind": "meal_slick"
+    },
+    "mattress": {
+      "kind": "bed_slick"
+    },
+    "bed_frame": {
+      "kind": "bed_slick"
     }
   }
 }

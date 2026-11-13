@@ -62,8 +62,12 @@ public final class GleamKinds {
         return TideKinds.level(p.getMainHandItem(), "glow") + BaitKinds.worn(p, "worn_glow");
     }
 
+    /** Set on a sleeper by a dim mattress: the game time until which the night's hush holds. */
+    public static final String DIM_UNTIL = "feedback_dim_until";
+
     private static int dim(LivingEntity p) {
-        return TideKinds.level(p.getMainHandItem(), "dim") + BaitKinds.worn(p, "worn_dim");
+        return TideKinds.level(p.getMainHandItem(), "dim") + BaitKinds.worn(p, "worn_dim")
+                + (p.getPersistentData().getLong(DIM_UNTIL) > p.level().getGameTime() ? 1 : 0);
     }
 
     @SubscribeEvent

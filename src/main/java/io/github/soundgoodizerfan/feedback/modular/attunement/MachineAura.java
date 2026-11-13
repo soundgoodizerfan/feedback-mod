@@ -65,6 +65,9 @@ public final class MachineAura {
     /** Blocks around a machine whose creatures an aura reaches; damage a level of bane does each read. Placeholder. */
     private static final double CREATURE_REACH = 3.0;
     private static final float BANE_DAMAGE_PER_LEVEL = 1.5f;
+    /** Ticks a sticky bed holds a hostile creature slowed; knockback per level of a slick or pulling bed. Placeholder. */
+    private static final int BED_HOLD_TICKS = 100;
+    private static final float BED_SHOVE_PER_LEVEL = 0.4f;
     /** Crop radius cap. */
     private static final int CROP_MAX = 2;
 
@@ -186,7 +189,9 @@ public final class MachineAura {
      */
     private static void creatures(ServerLevel level, BlockPos pos, Map<String, Integer> levels) {
         int bane = levels.getOrDefault("bane", 0), calm = levels.getOrDefault("kin_calm", 0), mark = levels.getOrDefault("mark", 0);
-        if (bane + calm + mark == 0)
+        int stick = levels.getOrDefault("bed_stick", 0), slick = levels.getOrDefault("bed_slick", 0), keen = levels.getOrDefault("bed_keen", 0),
+                pull = levels.getOrDefault("bed_pull", 0);
+        if (bane + calm + mark + stick + slick + keen + pull == 0)
             return;
         var box = new net.minecraft.world.phys.AABB(pos).inflate(CREATURE_REACH);
         for (net.minecraft.world.entity.LivingEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class, box, x -> x instanceof Enemy)) {
@@ -197,6 +202,15 @@ public final class MachineAura {
                 m.setTarget(null);
             if (mark > 0)
                 MarkKinds.mark(e, mark);
+            // A placed bed's frame and mattress: sticky sheets hold a hostile creature at its side, slick ones throw it off, a keen frame cuts it, a pulling one reels it in.
+            if (stick > 0)
+                e.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, BED_HOLD_TICKS, 1));
+            if (slick > 0)
+                e.knockback(BED_SHOVE_PER_LEVEL * slick, pos.getX() + 0.5 - e.getX(), pos.getZ() + 0.5 - e.getZ());
+            if (pull > 0)
+                e.knockback(BED_SHOVE_PER_LEVEL * pull, e.getX() - pos.getX() - 0.5, e.getZ() - pos.getZ() - 0.5);
+            if (keen > 0)
+                e.hurt(level.damageSources().generic(), BANE_DAMAGE_PER_LEVEL * keen);
         }
     }
 

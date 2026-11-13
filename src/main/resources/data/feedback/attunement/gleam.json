@@ -61,6 +61,18 @@
     },
     "wiring": {
       "kind": "worn_glow"
+    },
+    "sight": {
+      "kind": "glow"
+    },
+    "lit_reticle": {
+      "kind": "glow"
+    },
+    "muzzle_brake": {
+      "kind": "glow"
+    },
+    "barrel": {
+      "kind": "glow"
     }
   },
   "mirror": {
@@ -120,6 +132,21 @@
     },
     "wiring": {
       "kind": "worn_dim"
+    },
+    "sight": {
+      "kind": "dim"
+    },
+    "lit_reticle": {
+      "kind": "dim"
+    },
+    "muzzle_brake": {
+      "kind": "dim"
+    },
+    "barrel": {
+      "kind": "dim"
+    },
+    "mattress": {
+      "kind": "bed_dim"
     }
   }
 }

@@ -283,6 +283,39 @@
     },
     "wiring": {
       "kind": "mend"
+    },
+    "beam_lens": {
+      "kind": "mend"
+    },
+    "foregrip": {
+      "kind": "mend"
+    },
+    "heat_gauge": {
+      "kind": "mend"
+    },
+    "heat_governor": {
+      "kind": "mend"
+    },
+    "hold_charge": {
+      "kind": "mend"
+    },
+    "mainspring": {
+      "kind": "mend"
+    },
+    "piston": {
+      "kind": "mend"
+    },
+    "pump_charge": {
+      "kind": "mend"
+    },
+    "seat": {
+      "kind": "mend"
+    },
+    "thermal_fitting": {
+      "kind": "mend"
+    },
+    "zoom_charge": {
+      "kind": "mend"
     }
   },
   "mirror": {
@@ -470,6 +503,39 @@
       "kind": "tithe"
     },
     "wiring": {
+      "kind": "tithe"
+    },
+    "beam_lens": {
+      "kind": "tithe"
+    },
+    "foregrip": {
+      "kind": "tithe"
+    },
+    "heat_gauge": {
+      "kind": "tithe"
+    },
+    "heat_governor": {
+      "kind": "tithe"
+    },
+    "hold_charge": {
+      "kind": "tithe"
+    },
+    "mainspring": {
+      "kind": "tithe"
+    },
+    "piston": {
+      "kind": "tithe"
+    },
+    "pump_charge": {
+      "kind": "tithe"
+    },
+    "seat": {
+      "kind": "tithe"
+    },
+    "thermal_fitting": {
+      "kind": "tithe"
+    },
+    "zoom_charge": {
       "kind": "tithe"
     }
   },

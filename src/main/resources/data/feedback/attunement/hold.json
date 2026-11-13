@@ -41,6 +41,17 @@
     },
     "bed_frame": {
       "kind": "bed_snug"
+    },
+    "stock": {
+      "kind": "clamp",
+      "flaw": 1
+    },
+    "foregrip": {
+      "kind": "clamp",
+      "flaw": 1
+    },
+    "container": {
+      "kind": "meal_hold"
     }
   },
   "mirror": {
@@ -81,6 +92,17 @@
     },
     "bed_frame": {
       "kind": "bed_slip"
+    },
+    "stock": {
+      "kind": "slip",
+      "flaw": -1
+    },
+    "foregrip": {
+      "kind": "slip",
+      "flaw": -1
+    },
+    "container": {
+      "kind": "meal_slip"
     }
   },
   "starter": true,

@@ -61,6 +61,9 @@
     },
     "wiring": {
       "kind": "worn_point_flammable"
+    },
+    "stock": {
+      "kind": "point_flammable"
     }
   },
   "mirror": {
@@ -123,6 +126,9 @@
     },
     "wiring": {
       "kind": "worn_away_flammable"
+    },
+    "stock": {
+      "kind": "away_flammable"
     }
   }
 }

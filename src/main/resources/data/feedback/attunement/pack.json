@@ -74,6 +74,9 @@
     "wiring": {
       "kind": "pack_guard",
       "flaw": 0
+    },
+    "mattress": {
+      "kind": "bed_pack"
     }
   },
   "mirror": {
@@ -149,6 +152,9 @@
     "wiring": {
       "kind": "lone_guard",
       "flaw": 0
+    },
+    "mattress": {
+      "kind": "bed_lone"
     }
   }
 }

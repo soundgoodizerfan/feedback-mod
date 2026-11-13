@@ -75,10 +75,13 @@ public final class PackKinds {
      * share, as it does to a blow; {@code lone}: a head with none beside it hits harder). The count is the last aura read's.
      */
     public static float strokeShare(ItemStack head, net.minecraft.world.level.block.entity.BlockEntity machine) {
-        int pack = TideKinds.level(head, "pack"), lone = TideKinds.level(head, "lone");
+        return share(FELLOWS.getOrDefault(machine, 0), TideKinds.level(head, "pack"), TideKinds.level(head, "lone"));
+    }
+
+    /** The multiplier {@code n} allies give a part with {@code pack} and {@code lone} levels (a stroke, a night's rest): each ally adds a share, none at all lets lone add its own. */
+    public static float share(int n, int pack, int lone) {
         if (pack + lone == 0)
             return 1f;
-        int n = FELLOWS.getOrDefault(machine, 0);
         float share = 1f;
         if (n > 0)
             share += Math.min(PACK_DAMAGE_CAP, n * PACK_DAMAGE_PER_ALLY * pack);

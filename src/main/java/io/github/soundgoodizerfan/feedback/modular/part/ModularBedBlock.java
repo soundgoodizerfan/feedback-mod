@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.SleepFinishedTimeEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,7 +78,38 @@ public class ModularBedBlock extends BedBlock {
         if (state.getValue(PART) != BedPart.HEAD || !(params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof ModularBedBlockEntity be)
                 || be.bed().isEmpty())
             return List.of();
+        // Recall: a magnetic frame comes back to the hand that broke it, as a loyal weapon does.
+        if (params.getOptionalParameter(LootContextParams.THIS_ENTITY) instanceof Player breaker
+                && io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.recalls(be.bed())) {
+            breaker.getInventory().placeItemBackInInventory(be.bed().copy());
+            return List.of();
+        }
         return List.of(be.bed().copy());
+    }
+
+    /** Damp: a mattress takes a share off a fall onto the bed (on top of a bed's own half). */
+    @Override
+    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+        float damp = level.getBlockEntity(pos) instanceof ModularBedBlockEntity be
+                ? io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.dampShare(be.bed()) : 0f;
+        super.fallOn(level, state, pos, entity, fallDistance * (1f - damp));
+    }
+
+    /** How much slower each level of anchor makes the planted bed to break. */
+    private static final float ANCHOR_SLOW_PER_LEVEL = 1.5f;
+
+    /** Anchor: a planted bed is slow to pull up. */
+    @SubscribeEvent
+    public static void breakSpeed(PlayerEvent.BreakSpeed event) {
+        if (!(event.getState().getBlock() instanceof ModularBedBlock))
+            return;
+        event.getPosition().ifPresent(pos -> {
+            if (event.getEntity().level().getBlockEntity(pos) instanceof ModularBedBlockEntity be) {
+                int anchor = io.github.soundgoodizerfan.feedback.modular.attunement.TideKinds.level(be.bed(), "bed_anchor");
+                if (anchor > 0)
+                    event.setNewSpeed(event.getNewSpeed() / (1f + ANCHOR_SLOW_PER_LEVEL * anchor));
+            }
+        });
     }
 
     @Override

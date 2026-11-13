@@ -76,6 +76,17 @@ public final class EchoKinds {
     /** Ticks a lagging head holds a stroke before it must land, or it is lost. */
     public static final int LAG_WINDOW = LAG_SWING_DELAY;
 
+    /** A lagging night's rest: the share of {@code amount} a level of lag holds back, then given in parts a second apart. */
+    public static float healLater(LivingEntity who, float amount, int lag) {
+        float held = amount * Math.min(LAG_SHARE_CAP, lag * LAG_SHARE_PER_LEVEL);
+        for (int i = 1; i <= LAG_PARTS; i++)
+            later(who, i * LAG_PART_GAP, () -> {
+                if (who.isAlive())
+                    who.heal(held / LAG_PARTS);
+            });
+        return amount - held;
+    }
+
     /** Levels of {@code lag_blow} on a machine head. */
     public static int lagLevel(net.minecraft.world.item.ItemStack head) {
         return TideKinds.level(head, "lag_blow");

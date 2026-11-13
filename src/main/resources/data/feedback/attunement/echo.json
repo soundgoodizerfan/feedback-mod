@@ -108,6 +108,9 @@
     },
     "wiring": {
       "kind": "lag_hit"
+    },
+    "mattress": {
+      "kind": "bed_lag"
     }
   }
 }

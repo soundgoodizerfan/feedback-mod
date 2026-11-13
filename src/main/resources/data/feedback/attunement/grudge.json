@@ -89,6 +89,18 @@
     "wiring": {
       "kind": "grudge",
       "flaw": 1
+    },
+    "receiver": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "stock": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "bayonet": {
+      "kind": "grudge",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -165,6 +177,15 @@
       "kind": "calm"
     },
     "wiring": {
+      "kind": "calm"
+    },
+    "receiver": {
+      "kind": "calm"
+    },
+    "stock": {
+      "kind": "calm"
+    },
+    "bayonet": {
       "kind": "calm"
     }
   },

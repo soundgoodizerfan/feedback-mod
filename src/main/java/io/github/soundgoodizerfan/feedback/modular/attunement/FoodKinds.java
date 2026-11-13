@@ -41,6 +41,12 @@ public final class FoodKinds {
     private static final float SATURATION_PER_LEVEL = 1f, ECHO_PER_LEVEL = 0.25f, FORTUNE_PER_LEVEL = 0.3f;
     private static final double DRAW_REACH = 4.0, MARK_REACH = 16, SHARE_REACH = 8, RING_PER_LEVEL = 6, LAUNCH_PER_LEVEL = 0.45;
 
+    /** Chance a level of intact leaves the dish uneaten, and its ceiling; blocks a belch of shove or pull reaches, and the knock per level. Placeholder. */
+    private static final float INTACT_PER_LEVEL = 0.15f, INTACT_CAP = 0.6f, SHOVE_PER_LEVEL = 0.4f;
+    private static final double SHOVE_REACH = 6;
+    /** Food points at which a meal reads as light or heavy on a piezo gauge. */
+    private static final int LIGHT_MEAL = 4, HEAVY_MEAL = 8;
+
     private FoodKinds() {
     }
 
@@ -59,8 +65,8 @@ public final class FoodKinds {
         int slow = 0, quick = 0, insulate = 0;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(dish))
             switch (a.kind()) {
-                case "seal", "pest_ward", "cure", "glow", "insulate" -> slow += a.level();
-                case "pest_lure", "burn_wielder" -> quick += a.level();
+                case "seal", "pest_ward", "cure", "glow", "insulate", "meal_hold" -> slow += a.level();
+                case "pest_lure", "burn_wielder", "meal_slip" -> quick += a.level();
                 default -> {
                 }
             }
@@ -87,6 +93,10 @@ public final class FoodKinds {
         if (tithe > 0)
             ExperienceOrb.award((ServerLevel) player.level(), player.position(), tithe * TITHE_XP_PER_LEVEL);
         meal((ServerLevel) player.level(), player, dish);
+        // Intact: the meal is left whole, the dish stays in the hand (a share of eatings, never always).
+        int intact = level(dish, "meal_intact");
+        if (intact > 0 && player.getRandom().nextFloat() < Math.min(INTACT_CAP, INTACT_PER_LEVEL * intact))
+            event.setResultStack(dish.copy());
     }
 
     /** The rest of what an eaten container does: effects on the eater, items drawn, creatures marked, a call, a coin. */
@@ -126,6 +136,15 @@ public final class FoodKinds {
             if (others.isEmpty() && alone > 0)
                 p.getFoodData().eat(alone * FOOD_PER_LEVEL * 2, 0.3f);
         }
+        int sense = level(dish, "meal_sense");
+        var food = dish.getFoodProperties(p);
+        if (sense > 0 && food != null)
+            p.displayClientMessage(net.minecraft.network.chat.Component.translatable(food.nutrition() < LIGHT_MEAL ? "feedback.piezo.meal_light"
+                    : food.nutrition() < HEAVY_MEAL ? "feedback.piezo.meal_fair" : "feedback.piezo.meal_heavy"), true);
+        int shove = level(dish, "meal_shove") - level(dish, "meal_pull");
+        if (shove != 0)
+            for (Mob m : level.getEntitiesOfClass(Mob.class, p.getBoundingBox().inflate(SHOVE_REACH), m -> m instanceof Enemy))
+                m.knockback(SHOVE_PER_LEVEL * Math.abs(shove), (shove > 0 ? 1 : -1) * (p.getX() - m.getX()), (shove > 0 ? 1 : -1) * (p.getZ() - m.getZ()));
         int pulse = level(dish, "meal_pulse");
         if (pulse > 0)
             PiezoKinds.strain(level, p.blockPosition(), java.util.Map.of("pulse", pulse), 1f, 0f);

@@ -61,6 +61,9 @@
     },
     "wiring": {
       "kind": "worn_point_magnetic"
+    },
+    "stock": {
+      "kind": "point_magnetic"
     }
   },
   "mirror": {
@@ -123,6 +126,9 @@
     },
     "wiring": {
       "kind": "worn_away_magnetic"
+    },
+    "stock": {
+      "kind": "away_magnetic"
     }
   }
 }

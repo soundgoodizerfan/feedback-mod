@@ -112,7 +112,8 @@ public class ModularBed extends ModularItem {
         float comfort = f == null ? 0f : f.get(Fig.COMFORT) * (cold ? f.get(Fig.WARMTH) : 1f);
         comfort = Math.max(0f, comfort + io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.comfort(bed));
         float warmth = (f == null ? 0f : f.get(Fig.WARMTH)) + io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.warmth(bed);
-        player.heal(player.getMaxHealth() * ModularTuning.BED_HEAL * comfort * io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.heal(bed, player));
+        io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.restore(bed, player,
+                player.getMaxHealth() * ModularTuning.BED_HEAL * comfort * io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.heal(bed, player));
         if (f != null && warmth >= ModularTuning.BED_THAWS_AT)
             player.setTicksFrozen(0);
         player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
