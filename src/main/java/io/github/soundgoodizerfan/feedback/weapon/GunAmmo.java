@@ -34,8 +34,17 @@ public final class GunAmmo {
         return m.isEmpty() ? Optional.empty() : Optional.of(m.top());
     }
 
-    /** Rounds the gun holds, chamber and magazine together. */
+    /**
+     * Rounds the gun holds, chamber and magazine together. A pulse gun holds none: it counts the shots its cell's charge is good for, out of
+     * its chambers' worth (a tether holds a full one's), so the skills that need a shot ready read it as they read a round.
+     */
     public static int count(ItemStack gun) {
+        if (gun.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun) {
+            var spec = io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.specOf(gun);
+            float charge = spec != null && spec.seat() == io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Seat.BACKPACK_TETHER
+                    ? 1f : io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun.chargeFraction(gun);
+            return charge <= 0f ? 0 : Math.max(1, Math.round(charge * io.github.soundgoodizerfan.feedback.modular.bake.ModularTuning.EGUN_CHAMBERS));
+        }
         return magazine(gun).rounds().size() + (gun.has(FWeapons.CHAMBER.get()) ? 1 : 0);
     }
 
