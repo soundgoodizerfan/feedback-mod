@@ -10,6 +10,24 @@
     },
     "lining": {
       "kind": "worn_point_conductive"
+    },
+    "frame": {
+      "kind": "point_conductive"
+    },
+    "bearing": {
+      "kind": "point_conductive"
+    },
+    "crankshaft": {
+      "kind": "point_conductive"
+    },
+    "flywheel_bearing": {
+      "kind": "point_conductive"
+    },
+    "crank_arm": {
+      "kind": "point_conductive"
+    },
+    "rim_ring": {
+      "kind": "point_conductive"
     }
   },
   "mirror": {
@@ -21,6 +39,24 @@
     },
     "lining": {
       "kind": "worn_away_conductive"
+    },
+    "frame": {
+      "kind": "away_conductive"
+    },
+    "bearing": {
+      "kind": "away_conductive"
+    },
+    "crankshaft": {
+      "kind": "away_conductive"
+    },
+    "flywheel_bearing": {
+      "kind": "away_conductive"
+    },
+    "crank_arm": {
+      "kind": "away_conductive"
+    },
+    "rim_ring": {
+      "kind": "away_conductive"
     }
   }
 }

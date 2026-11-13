@@ -60,7 +60,7 @@ public final class DowseKinds {
     }
 
     /** The property of a needle kind, or null: {@code point_magnetic} and {@code worn_point_magnetic} are {@code magnetic}. */
-    private static String property(String kind) {
+    public static String property(String kind) {
         if (kind.startsWith(WORN))
             kind = kind.substring(WORN.length());
         for (String prefix : new String[]{"point_", "away_"})
@@ -127,8 +127,12 @@ public final class DowseKinds {
     }
 
     private static BlockPos nearest(Player player, String property) {
-        Level level = player.level();
-        BlockPos centre = player.blockPosition(), best = null;
+        return nearest(player.level(), player.blockPosition(), property);
+    }
+
+    /** The nearest block with {@code property} within reach of {@code centre}, or null. A machine's needle reads it the same way a held one does. */
+    public static BlockPos nearest(Level level, BlockPos centre, String property) {
+        BlockPos best = null;
         double bestDist = Double.MAX_VALUE;
         for (BlockPos pos : BlockPos.betweenClosed(centre.offset(-RANGE, -RANGE, -RANGE), centre.offset(RANGE, RANGE, RANGE))) {
             double d = pos.distSqr(centre);

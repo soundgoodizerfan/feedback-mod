@@ -10,6 +10,24 @@
     },
     "lining": {
       "kind": "worn_point_dense"
+    },
+    "frame": {
+      "kind": "point_dense"
+    },
+    "bearing": {
+      "kind": "point_dense"
+    },
+    "crankshaft": {
+      "kind": "point_dense"
+    },
+    "flywheel_bearing": {
+      "kind": "point_dense"
+    },
+    "crank_arm": {
+      "kind": "point_dense"
+    },
+    "rim_ring": {
+      "kind": "point_dense"
     }
   },
   "mirror": {
@@ -21,6 +39,24 @@
     },
     "lining": {
       "kind": "worn_away_dense"
+    },
+    "frame": {
+      "kind": "away_dense"
+    },
+    "bearing": {
+      "kind": "away_dense"
+    },
+    "crankshaft": {
+      "kind": "away_dense"
+    },
+    "flywheel_bearing": {
+      "kind": "away_dense"
+    },
+    "crank_arm": {
+      "kind": "away_dense"
+    },
+    "rim_ring": {
+      "kind": "away_dense"
     }
   }
 }

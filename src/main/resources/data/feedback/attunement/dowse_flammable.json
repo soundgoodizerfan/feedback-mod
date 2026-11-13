@@ -10,6 +10,24 @@
     },
     "lining": {
       "kind": "worn_point_flammable"
+    },
+    "frame": {
+      "kind": "point_flammable"
+    },
+    "bearing": {
+      "kind": "point_flammable"
+    },
+    "crankshaft": {
+      "kind": "point_flammable"
+    },
+    "flywheel_bearing": {
+      "kind": "point_flammable"
+    },
+    "crank_arm": {
+      "kind": "point_flammable"
+    },
+    "rim_ring": {
+      "kind": "point_flammable"
     }
   },
   "mirror": {
@@ -21,6 +39,24 @@
     },
     "lining": {
       "kind": "worn_away_flammable"
+    },
+    "frame": {
+      "kind": "away_flammable"
+    },
+    "bearing": {
+      "kind": "away_flammable"
+    },
+    "crankshaft": {
+      "kind": "away_flammable"
+    },
+    "flywheel_bearing": {
+      "kind": "away_flammable"
+    },
+    "crank_arm": {
+      "kind": "away_flammable"
+    },
+    "rim_ring": {
+      "kind": "away_flammable"
     }
   }
 }

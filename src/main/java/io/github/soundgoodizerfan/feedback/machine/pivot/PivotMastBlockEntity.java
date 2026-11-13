@@ -309,7 +309,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         if (!state.isAir() && state.is(BlockTags.SWORD_EFFICIENT) && sl.getBlockEntity(c) == null) {
             float need = Math.max(0f, state.getDestroySpeed(sl, c)) * ElectricMachineTuning.PIVOT_BREAK_ST_PER_HARDNESS;
             if (ceiling >= need) {
-                sl.destroyBlock(c, true);
+                io.github.soundgoodizerfan.feedback.modular.attunement.YieldKinds.destroy(sl, c, head.get());
                 wear(need * 0.1f + 0.1f);
             }
         }
@@ -335,7 +335,7 @@ public class PivotMastBlockEntity extends RotationNode implements Switchable, Da
         float need = hardness * ElectricMachineTuning.PIVOT_BREAK_ST_PER_HARDNESS;
         float ceiling = head.ceiling().value();
         if (ceiling >= need) {
-            sl.destroyBlock(c, true);
+            io.github.soundgoodizerfan.feedback.modular.attunement.YieldKinds.destroy(sl, c, head.get());
             wear(need * 0.1f + 0.1f);
         } else {
             // Force that cannot go into the work goes into the machine.

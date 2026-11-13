@@ -75,6 +75,31 @@ public final class YieldKinds {
         return out;
     }
 
+    /**
+     * A machine head breaks the block at {@code c}: the loot is rolled as a hand tool's is, so a head with fortune doubles what an ore or
+     * crop gives and one with intact leaves the block whole. A head with neither breaks it plainly.
+     */
+    public static void destroy(net.minecraft.server.level.ServerLevel level, net.minecraft.core.BlockPos c, ItemStack head) {
+        int fortune = level(head, "fortune"), intact = level(head, "intact");
+        net.minecraft.world.level.block.state.BlockState state = level.getBlockState(c);
+        if (fortune + intact == 0 || state.isAir()) {
+            level.destroyBlock(c, true);
+            return;
+        }
+        List<ItemStack> drops = new ArrayList<>(net.minecraft.world.level.block.Block.getDrops(state, level, c, null));
+        net.minecraft.world.item.Item own = state.getBlock().asItem();
+        boolean selfDrop = drops.stream().anyMatch(d -> d.is(own));
+        if (intact > 0 && !selfDrop && own != net.minecraft.world.item.Items.AIR) {
+            drops.clear();
+            drops.add(new ItemStack(own));
+        } else if (fortune > 0 && !selfDrop)
+            for (ItemStack d : new ArrayList<>(drops))
+                if (level.random.nextFloat() < fortune * CHANCE_PER_LEVEL)
+                    drops.add(d.copy());
+        level.destroyBlock(c, false);
+        drops.forEach(d -> net.minecraft.world.level.block.Block.popResource(level, c, d));
+    }
+
     @SubscribeEvent
     public static void onBlockDrops(BlockDropsEvent event) {
         ItemStack tool = event.getTool();

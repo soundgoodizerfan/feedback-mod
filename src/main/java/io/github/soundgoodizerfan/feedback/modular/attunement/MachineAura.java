@@ -74,7 +74,8 @@ public final class MachineAura {
     private MachineAura() {
     }
 
-    private static Map<String, Integer> levelsOf(BlockEntity be) {
+    /** The kinds a placed machine's parts carry, summed (cached; empty for a block entity that is not ours). */
+    public static Map<String, Integer> levelsOf(BlockEntity be) {
         return LEVELS.computeIfAbsent(be, b -> {
             if (!BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(b.getType()).getNamespace().equals(Feedback.MOD_ID))
                 return Map.of();

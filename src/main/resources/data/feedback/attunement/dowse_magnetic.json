@@ -10,6 +10,24 @@
     },
     "lining": {
       "kind": "worn_point_magnetic"
+    },
+    "frame": {
+      "kind": "point_magnetic"
+    },
+    "bearing": {
+      "kind": "point_magnetic"
+    },
+    "crankshaft": {
+      "kind": "point_magnetic"
+    },
+    "flywheel_bearing": {
+      "kind": "point_magnetic"
+    },
+    "crank_arm": {
+      "kind": "point_magnetic"
+    },
+    "rim_ring": {
+      "kind": "point_magnetic"
     }
   },
   "mirror": {
@@ -21,6 +39,24 @@
     },
     "lining": {
       "kind": "worn_away_magnetic"
+    },
+    "frame": {
+      "kind": "away_magnetic"
+    },
+    "bearing": {
+      "kind": "away_magnetic"
+    },
+    "crankshaft": {
+      "kind": "away_magnetic"
+    },
+    "flywheel_bearing": {
+      "kind": "away_magnetic"
+    },
+    "crank_arm": {
+      "kind": "away_magnetic"
+    },
+    "rim_ring": {
+      "kind": "away_magnetic"
     }
   }
 }
