@@ -37,7 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * strains and its condition falls, to a floor and never to a burst. A strained rim carries less inertia, read the
  * next time the run is rebuilt.
  */
-public class ShaftBlockEntity extends RotationNode implements Wearing {
+public class ShaftBlockEntity extends RotationNode implements Wearing, io.github.soundgoodizerfan.feedback.machine.Reachable {
 
     private float condition = 1f;
     /** A flywheel built from a disc design carries its baked inertia, drag and rim speed; a plain shaft, bearing or creative copy has none and runs on the block's figures. */
@@ -69,14 +69,23 @@ public class ShaftBlockEntity extends RotationNode implements Wearing {
         return FTuning.FLYWHEEL_RIM_RPM_PER_ROOT * (float) Math.sqrt(yield / metal.density().muPerMb());
     }
 
-    public void tickServer() {
+    @Override
+    public Reach reach() {
+        return Reach.speed(rim());
+    }
+
+    /** The rim speed this flywheel holds without strain: its stamped figure, else cast iron's. */
+    private float rim() {
         float rim = figures.get("RimRpm", 0f);
         if (rim <= 0f) {
             Material metal = MaterialTable.get().materials().get(Feedback.id("cast_iron"));
-            if (metal == null)
-                return;
-            rim = rimLimitRpm(metal);
+            return metal == null ? Reach.UNSTATED : rimLimitRpm(metal);
         }
+        return rim;
+    }
+
+    public void tickServer() {
+        float rim = rim();
         float over = Math.abs(getRpm().value()) / rim - 1f;
         if (over > 0f && condition > FTuning.FLYWHEEL_CONDITION_FLOOR) {
             condition = Math.max(FTuning.FLYWHEEL_CONDITION_FLOOR, condition - FTuning.FLYWHEEL_WEAR_PER_OVER * over * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(figures.design()));

@@ -51,7 +51,7 @@ public class InstrumentBagItem extends Item {
         return out;
     }
 
-    private static void store(ItemStack bag, List<ItemStack> items) {
+    public static void store(ItemStack bag, List<ItemStack> items) {
         bag.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(items));
     }
 

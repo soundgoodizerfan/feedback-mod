@@ -400,6 +400,8 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, FItems.THERMOMETER.get(), "thermometer");
         info(registration, FItems.PYROMETER.get(), "pyrometer");
         info(registration, FItems.PRESSURE_GAUGE.get(), "pressure_gauge");
+        info(registration, FItems.LIGHT_METER.get(), "light_meter");
+        info(registration, FItems.REACH_PROBE.get(), "reach_probe");
         info(registration, FModular.GEIGER_COUNTER.get(), "geiger_counter");
         info(registration, FModular.DOSIMETER.get(), "dosimeter");
         info(registration, FItems.TEMPERATURE_SENSOR.get(), "temperature_sensor");

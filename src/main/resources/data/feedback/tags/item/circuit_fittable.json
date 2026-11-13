@@ -3,6 +3,7 @@
     "feedback:thermometer",
     "feedback:pressure_gauge",
     "feedback:galvanometer",
+    "feedback:light_meter",
     "feedback:electroscope"
   ]
 }

@@ -106,7 +106,9 @@ public enum Quantity implements StringRepresentable {
     /** A secondary cell's state of charge, 0 to 1 of its capacity: a fraction like condition. A hydrometer reads it. Appended, never inserted. */
     CHARGE("charge"),
     /** A reactor core's neutron flux, as a fraction of full power. A flux meter reads it. Appended, never inserted. */
-    FLUX("flux");
+    FLUX("flux"),
+    /** Light at a block face, in levels 0 to 15 (block and sky read as one figure and one offset): a light meter reads it. Appended, never inserted. */
+    LIGHT("light");
 
     private final String key;
 

@@ -113,6 +113,21 @@ public final class ItemTuning {
      */
     public static final float GALVANOMETER_RESOLUTION_AMPS = 0.25f;
 
+    /** A light meter's step, in light levels: a photocell tells a lit room from a lamp, not level 7 from level 8. Invented. */
+    public static final float LIGHT_METER_RESOLUTION = 2f;
+
+    /** The brightest a light meter reads without saturating, in levels: read at a face lit past it (a lamp beside it) and the cell drifts. Invented. */
+    public static final float LIGHT_METER_LIMIT = 13f;
+
+    /** A galvanometer's band, in amps: a line carrying more than this swings the needle past its stop and it drifts. Invented. */
+    public static final float GALVANOMETER_LIMIT_AMPS = 20f;
+
+    /** The temperature, in Tu, past which a carried instrument soaks in the heat and drifts (the glass and fill it is made of give). Invented. */
+    public static final float HEAT_SOAK_TU = 600f;
+
+    /** Ticks between checks of the heat a carried instrument stands in. */
+    public static final int HEAT_SOAK_INTERVAL = 40;
+
     public static final float ELECTROSCOPE_RESOLUTION_BANDS = 1f;
 
     /** Placeholder. Noise floor, in steps: even a sound probe reads a little off (philosophy 10). */

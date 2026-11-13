@@ -505,6 +505,15 @@ public class FItems {
             ITEMS.registerItem("hydrometer", io.github.soundgoodizerfan.feedback.item.HydrometerItem::new,
                     new Item.Properties().stacksTo(1));
 
+    /** Links a machine so the recipe browser sets its reach beside what a recipe asks for. See {@code ReachProbeItem}. */
+    public static final DeferredItem<Item> REACH_PROBE =
+            ITEMS.registerItem("reach_probe", io.github.soundgoodizerfan.feedback.item.ReachProbeItem::new,
+                    new Item.Properties().stacksTo(1));
+
+    public static final DeferredItem<Item> LIGHT_METER =
+            ITEMS.registerItem("light_meter", io.github.soundgoodizerfan.feedback.item.LightMeterItem::new,
+                    new Item.Properties().stacksTo(1));
+
     public static final DeferredItem<Item> PRESSURE_GAUGE =
             ITEMS.registerItem("pressure_gauge", io.github.soundgoodizerfan.feedback.item.PressureGaugeItem::new,
                     new Item.Properties().stacksTo(1));

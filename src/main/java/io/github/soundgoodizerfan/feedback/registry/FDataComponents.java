@@ -43,7 +43,13 @@ public class FDataComponents {
                     .networkSynchronized(ByteBufCodecs.BOOL)
                     .build());
 
-    /**
+        /** The machine a reach probe is linked to and the reach it stated. Absent: not linked. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<io.github.soundgoodizerfan.feedback.item.ReachProbeItem.Link>> REACH =
+            COMPONENTS.register("reach", () -> DataComponentType.<io.github.soundgoodizerfan.feedback.item.ReachProbeItem.Link>builder()
+                    .persistent(io.github.soundgoodizerfan.feedback.item.ReachProbeItem.Link.CODEC)
+                    .networkSynchronized(io.github.soundgoodizerfan.feedback.item.ReachProbeItem.Link.STREAM).build());
+
+/**
      * How far an instrument has been knocked off true, per quantity it reads, in that quantity's own
      * units: set only by misuse (pushed past its range, dropped), cleared by recalibrating against a
      * known reference. Absent means true. Instruments do not stack, so history costs nothing.

@@ -263,7 +263,7 @@ final class ThermalCard {
         }
         if (p.phase().isPresent()) {
             rows.add(new Row(t("feedback.jei.phase_change.boil"), Readout.number(p.minTemperature().value()) + " Tu", VALUE_COLOUR));
-            reach(rows);
+            reach(rows, io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE);
             rows.add(new Row(t("feedback.jei.phase_change.condense"), fluidName(p.phase().get().liquidFluid()), VALUE_COLOUR));
             return rows;
         }
@@ -278,7 +278,7 @@ final class ThermalCard {
         rows.add(new Row(t("feedback.jei.reaction.temperature"), max < Float.MAX_VALUE
                 ? Readout.number(p.minTemperature().value()) + "-" + Readout.number(max) + " Tu"
                 : Readout.number(p.minTemperature().value()) + "+ Tu", VALUE_COLOUR));
-        reach(rows);
+        reach(rows, io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE);
         rows.add(new Row(t("feedback.jei.optimal"), Readout.number(p.optimalTemperature().value()) + " Tu", VALUE_COLOUR));
         // Time to complete held exactly at the optimum (ThermalProcess#requiredTpu); a pooled recipe has no hold and prints none.
         // A form-agnostic row reads the form on display: the slot cycles through them and the hold follows.
@@ -293,13 +293,18 @@ final class ThermalCard {
         if (r.isPresent() && r.get().minPu().isPresent())
             rows.add(new Row(t("feedback.jei.reaction.pressure"), Readout.number(r.get().minPu().get().value())
                     + (r.get().optimalPu().isPresent() ? " (best " + Readout.number(r.get().optimalPu().get().value()) + ")" : "") + " Pu", VALUE_COLOUR));
+        if (r.isPresent() && r.get().minPu().isPresent())
+            reach(rows, io.github.soundgoodizerfan.feedback.instrument.Quantity.PRESSURE);
         if (r.isPresent() && r.get().catalyst().isPresent())
             rows.add(new Row(t("feedback.jei.reaction.catalyst"), t("feedback.jei.reaction.bed"), VALUE_COLOUR));
         if (r.isPresent() && r.get().heat().isPresent())
             rows.add(new Row(t("feedback.jei.reaction.heat"), Readout.number(r.get().heat().get()) + " Tu/t", VALUE_COLOUR));
         if (p.spoilTemperature().value() < Float.MAX_VALUE)
             rows.add(new Row(t("feedback.jei.spoils"), "> " + Readout.number(p.spoilTemperature().value()) + " Tu", SPOIL_COLOUR));
-        p.rabble().ifPresent(b -> rows.add(new Row(t("feedback.jei.rabble"), Readout.number(b.minRpm()) + " to " + Readout.number(b.maxRpm()) + " RPM", VALUE_COLOUR)));
+        p.rabble().ifPresent(b -> {
+            rows.add(new Row(t("feedback.jei.rabble"), Readout.number(b.minRpm()) + " to " + Readout.number(b.maxRpm()) + " RPM", VALUE_COLOUR));
+            reach(rows, io.github.soundgoodizerfan.feedback.instrument.Quantity.SPEED);
+        });
         if (p.airless())
             rows.add(new Row(t("feedback.jei.airless"), "Sealed: no air", VALUE_COLOUR));
         p.atmosphere().ifPresent(a -> rows.add(new Row(t("feedback.jei.atmosphere"),
@@ -308,19 +313,23 @@ final class ThermalCard {
     }
 
     /**
-     * The linked machine's reach set beside a temperature requirement (philosophy 6): what it can run to and
-     * how finely the player's best instrument reads it, in words when none is carried. Never a verdict.
+     * The linked machine's reach set beside a requirement of that quantity (philosophy 6): what it reaches, printed exactly (an equipment
+     * spec), and how finely the player's best instrument reads the requirement, in words when none is carried. Never a verdict.
      */
-    private static void reach(List<Row> rows) {
+    private static void reach(List<Row> rows, io.github.soundgoodizerfan.feedback.instrument.Quantity quantity) {
         var machine = io.github.soundgoodizerfan.feedback.client.LinkedMachine.current();
-        if (machine == null || machine.ceilingTu() >= Float.MAX_VALUE)
+        if (machine == null || machine.of(quantity) >= Float.MAX_VALUE)
             return;
-        rows.add(new Row(machine.name().getString(), t("feedback.jei.reach.tu", Readout.number(machine.ceilingTu())), VALUE_COLOUR));
-        var instrument = io.github.soundgoodizerfan.feedback.instrument.Instruments.reading(Minecraft.getInstance().player,
-                io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE);
+        String unit = switch (quantity) {
+            case PRESSURE -> "Pu";
+            case SPEED -> "RPM";
+            default -> "Tu";
+        };
+        rows.add(new Row(machine.name().getString(), t("feedback.jei.reach." + unit.toLowerCase(Locale.ROOT), Readout.number(machine.of(quantity))), VALUE_COLOUR));
+        var instrument = io.github.soundgoodizerfan.feedback.instrument.Instruments.reading(Minecraft.getInstance().player, quantity);
         rows.add(new Row(t("feedback.jei.reach.reading"), instrument == null ? t("feedback.jei.reach.by_eye")
-                : instrument.resolution(io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE) <= 0f ? t("feedback.jei.reach.exact", instrument.label().getString())
-                : t("feedback.jei.reach.step", Readout.number(instrument.resolution(io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE)), instrument.label().getString()),
+                : instrument.resolution(quantity) <= 0f ? t("feedback.jei.reach.exact", instrument.label().getString())
+                : t("feedback.jei.reach.step", Readout.number(instrument.resolution(quantity)), unit, instrument.label().getString()),
                 VALUE_COLOUR));
     }
 

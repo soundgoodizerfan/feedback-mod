@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "N": {
+      "item": "minecraft:iron_nugget"
+    },
+    "W": {
+      "item": "feedback:copper_wire"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "N",
+    "W",
+    "S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "feedback:reach_probe"
+  }
+}

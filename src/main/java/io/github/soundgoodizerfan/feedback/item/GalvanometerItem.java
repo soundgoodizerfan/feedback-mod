@@ -48,6 +48,11 @@ public class GalvanometerItem extends Item implements Instrument {
     }
 
     @Override
+    public float limit(Quantity quantity) {
+        return ItemTuning.GALVANOMETER_LIMIT_AMPS;
+    }
+
+    @Override
     public Component label() {
         return Component.translatable("feedback.instrument.galvanometer");
     }
@@ -61,16 +66,22 @@ public class GalvanometerItem extends Item implements Instrument {
 
         if (!level.isClientSide) {
             Instrument self = Instruments.fitted(stack, this);
+            // A dead line carries nothing: set against it the needle is back on zero. Past its band the needle is slammed and sits off.
+            if (node.getAmps() == 0f && node.getWantedAmps() == 0f) {
+                Instruments.recalibrate(stack, Quantity.CURRENT);
+                self = Instruments.fitted(stack, this);
+            }
             io.github.soundgoodizerfan.feedback.net.AimPayloads.dial(player, context.getClickedPos(), self, read(self, node), Quantity.CURRENT,
-                    Instruments.quantise(node.getAmps(), self.resolution(Quantity.CURRENT)));
+                    self.shown(Quantity.CURRENT, node.getAmps()));
+            Instruments.strain(stack, this, Quantity.CURRENT, node.getAmps());
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     private static Component read(Instrument self, ElectricNode node) {
-        float delivered = Instruments.quantise(node.getAmps(), self.resolution(Quantity.CURRENT));
+        float delivered = self.shown(Quantity.CURRENT, node.getAmps());
         if (node.role() == ElectricMember.Role.SINK) {
-            float wanted = Instruments.quantise(node.getWantedAmps(), self.resolution(Quantity.CURRENT));
+            float wanted = self.shown(Quantity.CURRENT, node.getWantedAmps());
             return Component.translatable("feedback.readout.amps.of", format(delivered), format(wanted));
         }
         return Component.translatable("feedback.readout.amps", format(delivered));

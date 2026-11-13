@@ -61,7 +61,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * {@code CANNING_STERILE_TU} the jars seal; kept hot after that they go to mush (food spec 8). The
  * jars change nothing about the pressure ladder below.
  */
-public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder {
+public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.github.soundgoodizerfan.feedback.core.hazard.PressureHolder, io.github.soundgoodizerfan.feedback.machine.Reachable {
 
     private static final String AMOUNT = "Amount";
 
@@ -96,6 +96,11 @@ public class PressureVesselBlockEntity extends BlockEntity implements Blown, io.
     @Override
     public Pu getPressure() {
         return new Pu(amount / volume);
+    }
+
+    @Override
+    public Reach reach() {
+        return Reach.pressure(danger * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.lines(condition));
     }
 
     public void tickServer() {

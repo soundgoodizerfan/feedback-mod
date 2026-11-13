@@ -375,6 +375,8 @@ public class FCreativeTabs {
                         output.accept(FItems.THERMOMETER.get());
                         output.accept(FItems.PYROMETER.get());
                         output.accept(FItems.PRESSURE_GAUGE.get());
+                        output.accept(FItems.LIGHT_METER.get());
+                        output.accept(FItems.REACH_PROBE.get());
                         output.accept(FItems.XP_METER.get());
                         output.accept(FItems.STEEL_INGOT.get());
                         output.accept(FItems.BURNT_IRON.get());

@@ -91,7 +91,7 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
  * vessel actually is, physically.
  */
 public class ThermalVesselBlockEntity extends ThermalVesselCore
-        implements Container, MenuProvider, HeatSource, Blown {
+        implements Container, MenuProvider, HeatSource, Blown, io.github.soundgoodizerfan.feedback.machine.Reachable {
 
     public static final int SLOTS = 9;
     public static final int SLOT_FUEL = SLOTS;
@@ -125,6 +125,11 @@ public class ThermalVesselBlockEntity extends ThermalVesselCore
     public ThermalVesselBlockEntity(BlockPos pos, BlockState state, VesselKind kind) {
         super(FBlockEntities.THERMAL_VESSEL.get(), pos, state);
         this.kind = kind;
+    }
+
+    @Override
+    public Reach reach() {
+        return Reach.temperature(kind.ceilingTu());
     }
 
     public VesselKind getKind() {

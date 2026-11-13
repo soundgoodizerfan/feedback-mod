@@ -195,11 +195,16 @@ public final class Instruments {
     /**
      * A figure the world holds known, for the player to set an instrument against, or null. Temperature:
      * a block whose material melts at or below ambient is melting where it stands, so it sits at that
-     * material's melting point (ice at 0 Tu). Pressure: a face open to the air is at atmosphere, 0 Pu.
+     * material's melting point (ice at 0 Tu). Pressure: a face open to the air is at atmosphere, 0 Pu. Light: a block that itself gives light shines at its emission.
      */
     @Nullable
     public static Float reference(net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos,
             net.minecraft.core.Direction face, Quantity quantity) {
+        if (quantity == Quantity.LIGHT) {
+            // A block that gives light is a known lamp: its own emission, by what it does and not by what it is.
+            int emission = level.getBlockState(pos).getLightEmission(level, pos);
+            return emission > 0 ? (float) emission : null;
+        }
         if (quantity == Quantity.PRESSURE)
             return level.getBlockState(pos.relative(face)).isAir() ? 0f : null;
         if (quantity != Quantity.TEMPERATURE)
