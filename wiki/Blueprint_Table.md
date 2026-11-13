@@ -1,6 +1,6 @@
 # Blueprint Table
 
-A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bedroll](Bedroll.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, and so are machines and their parts (engines, gearboxes, propellers, thrusters, flywheels, pressure vessels, boilers, heat exchangers, gas tanks, gas compressors, water wheels, thermal stores, Leyden jars, pumps, fluid burners, electromagnets, galvanic cells, lamps, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
+A drafting board for drawing a tool, weapon, shield, bow, piece of armor, [backpack](Backpack.md), [bed](Bed.md) or gun on paper and **reading its numbers before you make it**. Guns are drawn here too, and so are machines and their parts (engines, gearboxes, propellers, thrusters, flywheels, pressure vessels, boilers, heat exchangers, gas tanks, gas compressors, water wheels, thermal stores, Leyden jars, pumps, fluid burners, electromagnets, galvanic cells, lamps, motors, cells, belts and suit modules). Some types can be drawn only by someone who holds the right [treatise](Treatise.md); see [Schools](#schools).
 
 ## Crafting
 
@@ -33,10 +33,10 @@ A gun's name (pistol, rifle, shotgun...), read from its parts, is shown beside t
 
 ### Figures
 
-The sheet shows the design's figures as **bars** (for a battery: cells, the band it is rated and its capacity in Eu; for a backpack: slots, carry rating, mounting points left and store slots; for a [bedroll](Bedroll.md): comfort; for a belt: its grip on cargo and the hottest cargo it carries). Qualities and adjectives the design earns sit along the bottom edge.
+The sheet shows the design's figures as **bars** (for a battery: cells, the band it is rated and its capacity in Eu; for a backpack: slots, carry rating, mounting points left and store slots; for a [bed](Bed.md): comfort and warmth; for a belt: its grip on cargo and the hottest cargo it carries). Qualities and adjectives the design earns sit along the bottom edge.
 
 - A mark on each bar shows where the **first drawing** stood. An arrow shows which way the bar has moved since.
-- **Hold Shift** to read the exact figure. Hover the **mass** bar for what it counts: the tooltip is written for the kind of thing drawn (a gun, a belt, a backpack, a bedroll, a shield, a battery cell, a charge, a vessel, a machine part).
+- **Hold Shift** to read the exact figure. Hover the **mass** bar for what it counts: the tooltip is written for the kind of thing drawn (a gun, a belt, a backpack, a bed, a shield, a battery cell, a charge, a vessel, a machine part).
 - **Hover a swatch, a shape, or a part while carrying a material** to preview how the bars would change.
 - **Hover a bar** to light the parts that moved it.
 - **Pin** keeps a draft: each pinned draft puts its own colored mark on every bar to compare against, up to three. Click a pinned draft to open it, Shift-click to drop it.
@@ -72,7 +72,7 @@ Some **parts** and **shapes** belong to a school too (the servos of a powered su
 | Chemical III | demolition charge |
 | Materials I | none |
 
-Every other type (tools, armor, backpack, bedroll, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) needs no treatise.
+Every other type (tools, armor, backpack, bed, water wheel, thermal store, Leyden jar, pump, fluid burner, electromagnet, galvanic cell, lamp, dynamotor, battery, belt and the rest) needs no treatise.
 
 ## What a blueprint is for
 

@@ -27,7 +27,7 @@ The tool does what its faces do, together:
 | Sword blade | cobweb | sweeps |
 | Spear head | | thrusts and charges, or is thrown by its balance |
 | Hammer head | | lands the hand's blow: a grid craft, a machine's head |
-| Knife blade, file head, screwdriver bit | | the knife, the file and the driver the benches ask for |
+| Knife blade, file head, screwdriver bit | | the knife, the file and the driver the benches ask for; a file head is cut bastard, second or smooth, a screwdriver bit flat, cross or hex ([Hand Tools](Hand_Tools.md#file)) |
 
 A pick face and an axe face on one haft dig both, and an axe face with a hoe face strips and tills. What a head's shape adds (a prospector's pick, a billhook, a bearded axe) rides with that face.
 

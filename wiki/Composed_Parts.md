@@ -14,7 +14,7 @@ When a part has a slot you choose, the part bench shows **one more stock slot** 
 | **Back** | bow limbs, crossbow prod | A backing on the limb: its stiffness joins the core's by share, so a stiffer back draws harder and shoots faster. |
 | **Balls** | bearings (in the [Dynamotor](Dynamotor.md)) | The friction of the balls scales the bearing's drag. |
 | **Wrap** | gun grip | The wrap sets the hold. |
-| **Fill** | bedroll | The fill sets the [comfort](Bedroll.md). |
+| **Padding** | bed mattress | The padding sets the [comfort and warmth](Bed.md). |
 
 A slot you choose only counts when something is in it. Mass uses the main material across the whole part.
 

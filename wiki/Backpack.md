@@ -41,7 +41,7 @@ A finished pack takes **fittings**: fit them on the [Fit tab](Engineering_Table.
 | Side holster | 2 hides | 1 | One store slot for a tool or weapon, drawn without opening the pack. |
 | Bottle loops | 1 leather bundle | 1 | Three store slots for potions, flasks and fluid containers. |
 | Bandolier | 2 leather bundles | 1 | Three store slots for rounds and arrows. |
-| Bedroll lashing | 2 sticks | 1 | One store slot that takes only a [Bedroll](Bedroll.md). |
+| Bedroll lashing | 2 sticks | 1 | One store slot that takes only a [bed](Bed.md) built with no frame (a bedroll). |
 | Lamp bracket | 1 rod | 1 | One store slot that takes only a lantern; a lantern in it lights the area around you. |
 | Battery fitting | 2 plates | 1 | One store slot that takes only a [battery](Battery.md). A tethered [electric gun](Electric_Gun.md) draws from it. |
 | Crafting pad | 2 planks | 2 | Press **N** on firm ground to open a 3x3 crafting grid. Heavy. |

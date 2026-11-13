@@ -16,7 +16,7 @@ S is Smooth Stone Slab and W is any Planks. The **Hand Knife** is a modular tool
 ## Making a dish
 
 1. Put a **hand knife** in the knife slot. Every container and every dish you take costs it a point.
-2. **Containers**: put stock in the center, click a container in the fan (Ceramic Bowl, Ceramic Plate, Wooden Skewer). There is no rhythm to play: it comes out at once. The container decides which dish you get (see *The dishes*). The same list shapes foods from [dough](Dough.md): **Flatbread Dough** (one dough, rolled thin; the wrap's container once baked) and **Noodles** (three dough in a row, three noodles: a starchy base, drier than dough, so it keeps longer and cooks quicker). The dough's state and knead carry over: rolling dough thin does not make it fresh.
+2. **Containers**: put stock in the center, click a container in the fan (Ceramic Bowl, Ceramic Plate, Wooden Skewer). A bowl can be shaped as a **crock** and a skewer as a **satay stick** (see *The dishes*). There is no rhythm to play: it comes out at once. The container decides which dish you get (see *The dishes*). The same list shapes foods from [dough](Dough.md): **Flatbread Dough** (one dough, rolled thin; the wrap's container once baked) and **Noodles** (three dough in a row, three noodles: a starchy base, drier than dough, so it keeps longer and cooks quicker). The dough's state and knead carry over: rolling dough thin does not make it fresh.
 3. **Dish**: put the **container** in the center and pick the dish type with the arrows at the top of the bench (Bowl Dish, Skewer). A Ceramic Plate as the container makes a plate dish. The fan shows the foods you carry that fit; click one to fit it, one item to a slot. A food fills the role its kind says, never its name:
    - **base**: a starchy food (potato, bread)
    - **main**: a protein (meat, fish). Every dish needs one
@@ -33,6 +33,8 @@ Cooked and raw foods both go in; a food goes in as it is, with whatever you have
 | **Bowl Dish** with a Ceramic Plate (a plate dish) | Ceramic Plate | 2 bricks or clay balls | 0.9 L (up to 18 hunger) | 3.3 s | base, main, side |
 | **Skewer** | Wooden Skewer | 1 stick | 0.2 L (up to 4 hunger) | 1.2 s | main, side (no base) |
 | **Wrap** | a baked Flatbread | [dough](Dough.md) | 0.5 L (up to 10 hunger) | 2.1 s | main, side (no base) |
+
+A **crock** is a deep lidded pot of clay: a bowl dish made in one holds 1.4 times as much and its lid keeps the soup in, so a stew stays moist and does not slop. A **shish skewer** is the ordinary long skewer. A **satay stick** is a short thin stick that holds half as much: a bite or two of meat, quick to cook.
 
 The table names the dish ("Making: ...") for the type you picked; a container of another type makes nothing. A wrap's container is a food, not a shaped part: put a baked **Flatbread** in a slot (it counts as food for the dish, so a raw flatbread dough feeds almost nothing). A plate is the big meal you cannot eat in a hurry; a skewer is a bite you can eat mid-fight. Every dish needs a main food. It is named from what is in it: *Beef and Potato Bowl with Honey*, *Beef and Carrot Plate*, *Beef Skewer*.
 

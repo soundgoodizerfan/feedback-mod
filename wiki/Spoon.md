@@ -15,7 +15,12 @@ Aim at a stockpot with the spoon in hand.
 
 Skim before you stir: stirring while scum is on top folds it into the pot for good. [Stockpot](Stockpot.md#stirring-and-skimming) has what stirring and scum do to the food.
 
-A bigger bowl stirs harder and skims more per stroke.
+A bigger bowl stirs harder and skims more per stroke. The bowl comes in two shapes:
+
+- **Short spoon**: an ordinary bowl that stirs and skims as well as each other.
+- **Ladle**: stirs less and scoops more, and its long reach keeps your hand off a hotter pot, so it stands a hotter pot than a short spoon before the handle burns you.
+
+The **depth** axis trades the two: a deep bowl skims more and a shallow one stirs better. A deeper bowl takes more stock.
 
 ## Wear and hazards
 

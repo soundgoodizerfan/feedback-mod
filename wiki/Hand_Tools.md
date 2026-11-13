@@ -18,10 +18,14 @@ The hand tools are the ones you carry and use yourself: a hammer for shaping met
 
 A **File** is a toothed bar on a handle. Shape a **File Head** from a plate or an ingot at a bench (the [Smithing Table](Smithing_Table.md) for metal), then put it with a haft (a stick, a rod or bone) in a crafting grid; it is a [hafted tool](Hafted_Tool.md) whose face is a file head. The head alone is a file too. The head's material sets how long the file lasts.
 
+The head comes in three **cuts**. A **bastard cut** takes two grains a stroke, a **second cut** one, a **smooth cut** half a grain. Coarse strokes leave tool marks on the part; a part left with enough marks reads one flaw worse. Each stroke of a smooth file burnishes the marks of a coarser one away. A longer head takes more per stroke and wanders more (its **length** axis).
+
 A file also works parts at a bench: carried in your inventory, it takes a grain off an axis of a made part at the [Smithing Table](Smithing_Table.md#filing) and every other part bench. Put a file in a tool slot of the [Engineering Table](Engineering_Table.md). Recipes that ask for a file (the [Calipers](Instruments.md#calipers), a [Lathe Tool Bit](Lathe.md), a [Saw Head](Power_Cutter.md)) wear it a point.
 
 ## Screwdriver
 
 A **Screwdriver** is a hardened bit on a handle. Shape a **Driver Bit** from a rod or an ingot at a bench, then put it with a handle (a stick, a rod or bone) in a crafting grid. The bit alone is a screwdriver too. The bit's material sets how long the screwdriver lasts.
 
-Put a screwdriver in a tool slot of the Engineering Table. Most machine recipes ask for one and wear it a point.
+The tip comes in three shapes, each better or worse on each form of fastener ([Fasteners](Fasteners.md)). A **cross tip** suits screws and rounds a machine bolt's head. A **hex tip** grips a machine bolt and slips in a screw. A **flat tip** is middling on screws and slips a little on bolts. Rivets are the same for all three. A good fit starts the fastener at a better quality; a poor one starts it worse. A longer **shank** reaches the seat square and starts the fastener better, but twists and wears the tool faster; a short one is stiff and lasts.
+
+Put a screwdriver in a tool slot of the Engineering Table. Most machine recipes ask for one and wear it a point. The tip's fit moves the fasteners' quality, which sets the width of the green band in the [torque game](Engineering_Table.md#hand-work).

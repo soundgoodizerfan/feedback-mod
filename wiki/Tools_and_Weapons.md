@@ -42,7 +42,7 @@ The Crafting Table assembles the tools below except the crossbow. The Engineerin
 | **Bow** | three limbs, three lengths of string |
 | **Crossbow** | a prod (two cells), string, three stock, a lock: a mechanism, put together at the Engineering Table only (below) |
 | **Shield** | six faces, a rim part (a grip makes it five faces) |
-| **Shears** | two blades (a pivot is optional) |
+| **Shears** | a shears blade (shaped as a part), with a pivot under it if the blade is a pivot scissor |
 
 You can add:
 
@@ -159,6 +159,12 @@ Every gun, bow, crossbow, melee weapon and plated glove carries an aqua line on 
 - **Quiet**: a gun's low report and light weight, a light blade with a dull edge, or a light plate.
 
 Hold Shift to read each word with its percentage.
+
+### Shears
+
+A **Shears Blade** comes in two shapes. A **pivot scissor** is two blades crossed on a pin. Its durability scales with how strong the pin is against the blade, so a weak pin limits it, and with no pin through it the shears keep only 0.4 of their life. A **spring bow** is one bent bar: it clips 1.5 times as fast but has half the durability and needs no pin.
+
+The blade's **length** axis sets what it is good at. Coarse clipping (wool, leaves) goes faster the longer the blade, a bigger bite per snap; fine clipping (cobweb, vines) goes slower the longer it is, for lack of control. A longer blade also reaches further. The Blueprint Table shows both as **clip speed** and **fine clip speed**.
 
 ### Other tools, other shapes
 

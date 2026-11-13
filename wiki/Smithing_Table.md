@@ -20,7 +20,7 @@ B is a Bronze Plate and P is any plank.
 
 ## Filing
 
-A made part with dimensions (a gun barrel's bore, a head's size) can be filed down at any part bench: put the part in the middle slot, carry a [file](Hand_Tools.md#file), and click a dimension. Each stroke takes one grain off that dimension and sheds the metal that came off as **swarf** of the same metal, into your inventory; the file wears a point every fifth stroke. A part cannot be filed up: a part below its smallest size is melted down instead. Swarf melts back in a vessel at nine tenths of its volume and a whole part at nineteen twentieths.
+A made part with dimensions (a gun barrel's bore, a head's size) can be filed down at any part bench: put the part in the middle slot, carry a [file](Hand_Tools.md#file), and click a dimension. Each stroke takes one grain off that dimension (a bastard-cut [file](Hand_Tools.md#file) takes two, a smooth cut half a grain) and sheds the metal that came off as **swarf** of the same metal, into your inventory; the file wears a point every fifth stroke. A part cannot be filed up: a part below its smallest size is melted down instead. Swarf melts back in a vessel at nine tenths of its volume and a whole part at nineteen twentieths.
 
 ## What Feedback does
 
