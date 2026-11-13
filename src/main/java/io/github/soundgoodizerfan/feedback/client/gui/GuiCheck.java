@@ -5,27 +5,16 @@ package io.github.soundgoodizerfan.feedback.client.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.brigadier.Command;
-
-import io.github.soundgoodizerfan.feedback.Feedback;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 
 /**
- * A loop for checking a screen without squinting: {@code /feedback_gui_check} re-renders the screen that is open through a graphics object that
- * records every string drawn (its box, after the pose's translate and scale), reports each pair of strings whose boxes overlap, and saves a
- * screenshot of the frame beside the game's own screenshots. It needs the game running with the screen open; it is not headless. The overlaps
- * are written to the chat and the log, one line each, with the strings and where they sit relative to the screen's top-left.
+ * A screen check for {@link GuiShot}: re-renders the screen that is open through a graphics object that
+ * records every string drawn (its box, after the pose's translate and scale), reports each pair of strings whose boxes overlap, and
+ * lists each string with where it sits relative to the screen's top-left. It needs the game running with the screen open; it is not headless.
  */
 public final class GuiCheck {
 
@@ -102,37 +91,5 @@ public final class GuiCheck {
         for (Box b : g.boxes)
             out.add(String.format(java.util.Locale.ROOT, "string: \"%s\" (%.0f,%.0f)-(%.0f,%.0f)", b.text(), b.x0(), b.y0(), b.x1(), b.y1()));
         return out;
-    }
-
-    static int run() {
-        Minecraft mc = Minecraft.getInstance();
-        Screen screen = mc.screen;
-        if (screen == null) {
-            mc.gui.getChat().addMessage(Component.literal("Open a screen first, then run the command."));
-            return 0;
-        }
-        double scale = mc.getWindow().getGuiScale();
-        int mx = (int) (mc.mouseHandler.xpos() / scale), my = (int) (mc.mouseHandler.ypos() / scale);
-        List<String> lines = report(mc, screen, mx, my);
-        var chat = mc.gui.getChat();
-        for (String line : lines) {
-            if (line.startsWith("string:"))
-                continue;
-            Feedback.LOGGER.info("gui check: {}", line);
-            chat.addMessage(Component.literal(line));
-        }
-        net.minecraft.client.Screenshot.grab(mc.gameDirectory, mc.getMainRenderTarget(), chat::addMessage);
-        return lines.size();
-    }
-
-    @EventBusSubscriber(modid = Feedback.MOD_ID, value = Dist.CLIENT)
-    public static final class Register {
-        @SubscribeEvent
-        public static void register(RegisterClientCommandsEvent e) {
-            e.getDispatcher().register(Commands.literal("feedback_gui_check").executes(c -> {
-                Minecraft.getInstance().tell(GuiCheck::run);
-                return Command.SINGLE_SUCCESS;
-            }));
-        }
     }
 }
