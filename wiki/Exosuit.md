@@ -26,7 +26,7 @@ Charge the battery by taking the suit's battery out and seating it in a [Charger
 
 - `V` (hold): the ability wheel, a ring of the five built-in segments plus one for each ability a fitted module gives. Release over a segment to switch that ability on or off, or to fire it if it is a pulse.
 - `B` (hold): dash thrust.
-- `G` (hold): jet thrust, once the Jet Pack is switched on.
+- `G` (hold): jet thrust, once Thrust is switched on.
 - `J`: the Suit diagnostic screen.
 
 ## Abilities
@@ -38,18 +38,17 @@ Charge the battery by taking the suit's battery out and seating it in a [Charger
 | **Plating** | servo in the chestplate | Raises armor and toughness while on. Each hit it absorbs costs charge. |
 | **Night sight** | sensor head | Night vision with a phosphor look. |
 | **Thermal** | sensor head | A false-color view of true temperatures. |
-| **Cloak** | Cloak Field module | A switch you leave on: hides the wearer, and draws charge all the while. |
-| **Jet** | Jet Pack module | Switch it on, then hold `G` to lift. Thin air (the End) gives less lift. Burns charge fast. |
-| **Ram** | Module Actuator on a motor | A pulse: a shockwave that knocks back and hurts everything near. |
+| **Thermal mask** | Module Thermal with a controller | A switch you leave on: other wearers' thermal view does not show you. Draws charge all the while. |
+| **Thrust** | Module Thruster | Switch it on, then hold `G` to lift on burning fuel from the pack. Thin air (the End) gives less lift. |
+| **Burst** | Module Thruster | A pulse: a single burst of thrust along the direction you look. |
+| **Ram** | Module Actuator | A pulse: a shockwave that knocks back and hurts everything near. |
 | **Scan** | Module Optic with a controller | A pulse: every living thing in a wide ring glows for a while. |
-| **EMP** | EMP Coil module | A pulse: nearby creatures are slowed, weakened and blinded. |
-| **Magnet** | Magnet Pickup module | A switch: draws loose items to you while on. |
-| **Stride** | Module Actuator on a motor | A switch: a short stroke walks faster, a long stroke steps up higher, while on. |
+| **EMP** | Module Coil with a cell | A pulse: nearby creatures are slowed, weakened and blinded. |
+| **Electromagnet** | Module Coil | A switch: pulls loose magnetic items to you while on. |
+| **Stride** | Module Actuator | A switch: a short stroke walks faster, a long stroke steps up higher, while on. |
 | **Optic** | Module Optic | A switch: a short focal length gives longer reach for blocks and attacks, a long one extends the thermal view, while on. |
-| **Heal** | Autodoc module | A pulse: heals you at once. Long cooldown. |
-| **Vent** | Coolant Loop module | A pulse: vents most of the suit's heat at once, which can end a heat cut-out. |
-| **Burst** | Rocket Spur module | A pulse: a single burst of thrust along the direction you look. |
-| **Thorns** | Thorn Array module | A pulse: hurts everything within arm's reach. |
+| **Dose** | Module Dispenser | A pulse: drinks the first potion bottle in your pack for you. |
+| **Vent** | Module Thermal with a motor | A pulse: vents most of the suit's heat at once, which can end a heat cut-out. |
 
 A stronger servo gives a larger effect and draws harder for it. A Module Optic's lens is a stock slot of its own that you choose ([Composed Parts](Composed_Parts.md)).
 
@@ -67,49 +66,27 @@ Each of the four pieces takes one **Suit Module**, a finished item built from a 
 
 - **Module Casing**: plate, 2 cells. Its material sets the module's weight.
 - **Module Wiring**: wire, 1, 2 or 4 cells. The conductor sets how much of what the module draws is wasted as heat, and how many attachments it can feed. Heavier wiring feeds more attachments, up to four, and wastes less.
-- **Attachments**: one to four, each is a part of one of nine kinds (Module Optic, Module Filter, Module Thermal, Module Plating, Module Actuator, Module Spring, Module Tread, Module Thruster, Module Coil), cut from an ingot, plate or rod. Optic, Filter, Actuator, Spring and Tread are tuned by one setting (focal length, bed depth, stroke, span) rather than cut in a shape; the others give a different upgrade for each shape they are cut in. The material sets how strongly the upgrade works. Heat upgrades follow the material's thermal conductivity, electric ones its wire current rating, sturdy ones its hardness and strength, and optic ones its reflectivity.
+- **Attachments**: one to four, each is a part of one of ten kinds (Module Optic, Module Filter, Module Thermal, Module Plating, Module Actuator, Module Spring, Module Tread, Module Thruster, Module Coil, Module Dispenser), cut from an ingot, plate or rod and tuned by one setting (focal length, bed depth, thickness, stroke, span, bore, core length or dose) rather than cut in a shape. The material sets how strongly the upgrade works. Heat upgrades follow the material's thermal conductivity, sturdy ones its hardness and strength, optic ones its reflectivity, thruster ones its melting point, coils whether it is magnetic and dispensers its corrosion resistance.
 - **Support parts**: some upgrades need a **controller** (a circuit), a **power cell** (a [Battery](Battery.md)) or a **motor** (a [Dynamotor](Dynamotor.md)) set beside the attachments, as the table below lists. A better circuit, a higher-capacity battery or a motor rated for more current makes the upgrade stronger. An upgrade whose support part is missing does not work.
 
 A module fits any armor piece. To fit it, put the armor piece in the item slot of the Engineering Table's Fit tab and the module in an attachment slot; it goes into the piece's upgrade place, one per piece. Taking the piece apart on the Repair tab gives the module back whole. The Suit diagnostic screen (`J`) shows the upgrade each piece carries.
 
-A Thruster attachment, and a Module Actuator, has a **Bore** (in mm, up to 40) that you set on the drawing and cut with a drill. Each upgrade wants a bore of about its own size:
+A Module Actuator has a **Bore** (in mm, up to 40) that you set on the drawing and cut with a drill. It wants a bore of about 16 mm: the closer the cut is to that size, the stronger the upgrade; far off, it works at about half strength. A part left uncut still works.
 
-| Upgrade | Bore (mm) |
-| --- | --- |
-| Rocket Spur | 8 |
-| Jet Pack, Module Actuator | 16 |
+Upgrades work whenever the suit is powered. Some upgrades draw charge as they act, as noted. Wheel segments appear only when a fitted part can act: a Module Optic (Optic, and Scan with a controller), Module Actuator (Stride and Ram), Module Thermal (Vent with a motor, Thermal mask with a controller), Module Thruster (Thrust and Burst), Module Coil (Electromagnet, and EMP with a cell) and Module Dispenser (Dose) each give theirs (see [Abilities](#abilities)). Their effects work only through the wheel. Springs, treads, filter breath, heat plates and armored inserts work without charge.
 
-The closer the cut is to that size, the stronger the upgrade; far off, it works at about half strength. A part left uncut still works.
-
-Upgrades work whenever the suit is powered. The Heat Sink always works. Some upgrades draw charge as they act, as noted. Wheel segments appear only when a fitted part can act: the Cloak Field, Jet Pack, EMP Coil, Magnet Pickup, Autodoc, Coolant Loop, Rocket Spur and Thorn Array, a Module Actuator (Stride and Ram) and a Module Optic (Optic, and Scan with a controller) each give one (see [Abilities](#abilities)). Their effects work only through the wheel, except the Coolant Loop and Rocket Spur, which also work without it. Springs, treads and filter breath work without charge.
-
-| Attachment | Upgrade | Needs | What it does |
-| --- | --- | --- | --- |
-| Optic | Module Optic | controller for the Scan pulse | One tuned part: a focal length of 20 cm or less gives longer reach for blocks and attacks, a longer one extends the thermal view, while switched on. Glass clarity sets the power; reflective glass clears blindness and darkness. With a live controller held, Scan is a pulse that makes nearby living things glow. |
-| Filter | Module Filter | none | A cartridge with a porous media slot (charcoal or brick) and a bed depth. A thin bed (3 cm or less) lengthens breath; a deep bed clears poison, nausea and hunger, only while the suit is powered. |
-| Thermal | Heat Sink | none | The suit sheds heat faster. |
-| Thermal | Coolant Loop | motor | The servos cut out at a higher temperature. Pulse: vents most of the suit's heat. |
-| Thermal | Thermal Lining | none | Immune to freezing. |
-| Thermal | Heat Shield | none | Fire and lava do not burn you while the battery lasts; heavy draw. |
-| Thermal | Fire Curtain | none | Less fire damage. |
-| Thermal | Cloak Field | controller | Hides the wearer while switched on; draws constantly. |
-| Plating | Reactive Plating | none | Less knockback. |
-| Plating | Blast Shell | none | Less explosion damage. |
-| Plating | Crash Liner | none | Less damage from projectiles. |
-| Plating | Thorn Array | none | Pulse: hurts everything in arm's reach. |
-| Plating | Magnetic Anchor | none | Far less knockback. |
-| Plating | Stabiliser | none | Faster sneaking and a little less knockback. |
-| Plating | Load Frame | none | A [Backpack](Backpack.md) carries more before it slows you. |
-| Actuator | Module Actuator | motor | Stroke and bore are tuned. A short stroke (8 cm or less) speeds walking while switched on and draws charge while you move; a long one lifts you over steps. Ram is a pulse: a shockwave that knocks back and hurts everything near. |
-| Spring | Module Spring | none | Stroke is tuned; the stock must have yield strength. A short stroke kicks the jump higher; a long one adds safe fall and a landing rebound that hurts nearby mobs after a fall of 3 or more blocks. |
-| Tread | Module Tread | none | Span is tuned. Narrow grips soft ground and webs; wide swims better. |
-| Thruster | Rocket Spur | none | A harder, faster dash. Pulse: a single burst of thrust along your look. |
-| Thruster | Jet Pack | cell and motor | Lifts you while `G` is held; burns charge fast. |
-| Coil | Efficiency Bus | controller | Everything the suit does draws less charge. |
-| Coil | Autodoc | controller and cell | Pulse: heals you at once; heavy draw. |
-| Coil | Reflex Link | controller | Faster attack speed. |
-| Coil | Magnet Pickup | motor | Draws loose items to you while switched on. |
-| Coil | EMP Coil | cell and controller | Pulse that slows, weakens and blinds nearby creatures. |
+| Attachment | Needs | What it does |
+| --- | --- | --- |
+| Module Optic | controller for the Scan pulse | One tuned part: a focal length of 20 cm or less gives longer reach for blocks and attacks, a longer one extends the thermal view, while switched on. Glass clarity sets the power; reflective glass clears blindness and darkness. With a live controller held, Scan is a pulse that makes nearby living things glow. |
+| Module Filter | none | A cartridge with a porous media slot (charcoal or brick) and a bed depth. A thin bed (3 cm or less) lengthens breath; a deep bed clears poison, nausea and hunger, only while the suit is powered. |
+| Module Thermal | none; motor for Vent; controller for Thermal mask | A heat exchanger plate, tuned by thickness. A thin plate (3 mm or less) sheds the suit's heat faster; a thick one cuts fire damage and, while the suit is powered, keeps frost off. The better the metal conducts heat, the harder it works. Held motor: Vent is a pulse that vents most of the suit's heat at once. Held controller: Thermal mask is a switch that hides the wearer from other wearers' thermal view, at a steady draw. |
+| Module Plating | none | An armored insert, tuned by thickness. A thin plate (3 mm or less) cuts projectile damage; a thick one cuts blast damage, resists knockback and lets a [Backpack](Backpack.md) carry more before it slows you. A harder, tougher metal works better. |
+| Module Actuator | motor | Stroke and bore are tuned. A short stroke (8 cm or less) speeds walking while switched on and draws charge while you move; a long one lifts you over steps. Ram is a pulse: a shockwave that knocks back and hurts everything near. |
+| Module Spring | none | Stroke is tuned; the stock must have yield strength. A short stroke kicks the jump higher; a long one adds safe fall and a landing rebound that hurts nearby mobs after a fall of 3 or more blocks. |
+| Module Tread | none | Span is tuned. Narrow grips soft ground and webs; wide swims better. |
+| Module Thruster | none | A nozzle tuned by bore (8 to 40 mm). It burns fuel drawn from the first fluid container in your pack whose fluid burns, such as a bucket of fuel; the hotter the flame, the harder it pushes. A wide bore pushes harder and burns faster; a nozzle metal with a higher melting point works better. It needs air or a fuel that carries its own oxygen, and with no fuel in the pack nothing fires. Thrust lifts you while `G` is held; Burst is a pulse: a single lump of fuel fired along your look. |
+| Module Coil | cell for EMP | An electromagnet tuned by core length. Electromagnet is a switch that pulls only magnetic loose items (iron, steel and the like) to you; an iron-like core carries the field best. A long core (over 8 cm) reaches farther, a short one pulls harder. With a power cell held, EMP is a pulse that slows, weakens and blinds nearby creatures. |
+| Module Dispenser | none | A dosing pump tuned by dose (50 to 500 mB). Dose is a pulse that drinks the first potion bottle in your pack for you and returns the empty bottle; a larger dose lasts longer. A metal that resists corrosion works better. It draws a little charge. |
 
 ### Learning a module
 
