@@ -1,0 +1,41 @@
+{
+  "color": "#b59a7a",
+  "kind": "animal",
+  "traits": [
+    "flammable",
+    "fibrous"
+  ],
+  "hardness": 0.2,
+  "density": 0.7,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 1.2e-05,
+    "oxidation_temperature": 200,
+    "service_temperature": 100
+  },
+  "mechanical": {
+    "toughness": 40,
+    "yield_strength": 3,
+    "friction": 0.5,
+    "abrasiveness": 0
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "combustion": {
+    "flame_temperature": 600,
+    "burn_ticks": 100,
+    "spread": 0.1
+  },
+  "forms": {
+    "hide": "minecraft:rabbit_hide"
+  },
+  "exclude": [
+    "grip",
+    "paper_case"
+  ],
+  "enchantability": 10,
+  "electrical": {
+    "insulation": "lv"
+  }
+}
