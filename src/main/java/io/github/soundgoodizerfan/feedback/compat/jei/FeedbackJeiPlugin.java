@@ -381,6 +381,9 @@ public class FeedbackJeiPlugin implements IModPlugin {
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_CLOTH_ITEM.get(), "gas_cell");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_RUBBER_ITEM.get(), "gas_cell");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_PLATE_ITEM.get(), "gas_cell");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_BLADDER_ITEM.get(), "gas_cell");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.GAS_CELL_MEMBRANE_ITEM.get(), "gas_cell");
+        info(registration, io.github.soundgoodizerfan.feedback.registry.FBlocks.CULTURE_DISH.get().asItem(), "culture_dish");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.VENT_VALVE_ITEM.get(), "vent_valve");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.BALLAST_TANK_ITEM.get(), "ballast_tank");
         info(registration, io.github.soundgoodizerfan.feedback.registry.FVehicles.TRANSMISSION_ITEM.get(), "transmission");

@@ -378,10 +378,12 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * @param friction      sliding coefficient, for brakes, clutches, bearings and tires.
      * @param abrasiveness  0 to 1: how fast cutting it spends a grinding wheel's grit.
      * @param hardenable    whether a quench hardens it rather than merely cooling it.
+     * @param permeability  mB of gas a full 1000 mB cell wrapped in a skin of this passes each tick at rest, within its
+     *                      stretch (absent or 0 is gas-tight). Read by {@code vehicle/air/Skin}.
      */
     public record Mechanical(Optional<St> toughness, Optional<Integer> ductility, Optional<St> workHardening,
                              Optional<St> yieldStrength, Optional<Float> friction, Optional<Float> abrasiveness,
-                             boolean hardenable, Optional<Damping> damping) {
+                             boolean hardenable, Optional<Damping> damping, Optional<Float> permeability) {
         /**
          * How a material stores a barrel's vibration when shrunk on as its jacket: cold, the group tightens to {@code coldSpread}; once the barrel
          * has heated past {@code spoilAt} (a share of the way from the room to the round's ignition) the stored vibration goes bad and the group
@@ -396,7 +398,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         }
 
         static final Mechanical NONE = new Mechanical(Optional.empty(), Optional.empty(), Optional.empty(),
-                Optional.empty(), Optional.empty(), Optional.empty(), false, Optional.empty());
+                Optional.empty(), Optional.empty(), Optional.empty(), false, Optional.empty(), Optional.empty());
 
         static final Codec<Mechanical> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Units.codec(St::new).optionalFieldOf("toughness").forGetter(Mechanical::toughness),
@@ -406,7 +408,8 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
                 Codec.FLOAT.optionalFieldOf("friction").forGetter(Mechanical::friction),
                 Codec.FLOAT.optionalFieldOf("abrasiveness").forGetter(Mechanical::abrasiveness),
                 Codec.BOOL.optionalFieldOf("hardenable", false).forGetter(Mechanical::hardenable),
-                Damping.CODEC.optionalFieldOf("damping").forGetter(Mechanical::damping)
+                Damping.CODEC.optionalFieldOf("damping").forGetter(Mechanical::damping),
+                Codec.FLOAT.optionalFieldOf("permeability").forGetter(Mechanical::permeability)
         ).apply(instance, Mechanical::new));
     }
 

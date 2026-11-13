@@ -37,6 +37,8 @@ public final class Culture {
     private int hungry;
     private int airless;
     private int ripe;
+    /** Ticks a ripe culture has spent differentiating an organ under the right conditions. */
+    private int organ;
     private float upkeepOwed;
     private float growthOwed;
     private float leakOwed;
@@ -62,6 +64,7 @@ public final class Culture {
         hungry = 0;
         airless = 0;
         ripe = 0;
+        organ = 0;
         upkeepOwed = 0;
         growthOwed = 0;
         leakOwed = 0;
@@ -152,6 +155,45 @@ public final class Culture {
         return eaten;
     }
 
+    /**
+     * A ripe culture in the dark, warm enough and fed grows a relay organ in itself: {@code ok} is whether the dish
+     * found those conditions, {@code available} the points in the store. Returns the points the organ ate. Short of
+     * the conditions an unformed organ regresses at half speed; a formed one holds. Left past its window the organ
+     * overgrows and is spent: only a harvest clears it.
+     */
+    public int differentiate(int dt, boolean ok, int available) {
+        if (!isRipe()) {
+            organ = 0;
+            return 0;
+        }
+        if (organ > XpTuning.CULTURE_ORGAN_READY_TICKS + XpTuning.CULTURE_ORGAN_WINDOW_TICKS)
+            return 0;
+        int want = Math.round(XpTuning.CULTURE_ORGAN_POINTS_PER_TICK * dt);
+        if (ok && available >= want) {
+            organ += dt;
+            return want;
+        }
+        if (organ < XpTuning.CULTURE_ORGAN_READY_TICKS)
+            organ = Math.max(0, organ - dt / 2);
+        else if (ok)
+            organ += dt; // a formed organ goes on growing, unfed, towards overgrowth
+        return 0;
+    }
+
+    /** 0 none, 1 forming, 2 ready to cut, 3 overgrown. */
+    public int organState() {
+        if (organ <= 0)
+            return 0;
+        if (organ < XpTuning.CULTURE_ORGAN_READY_TICKS)
+            return 1;
+        return organ <= XpTuning.CULTURE_ORGAN_READY_TICKS + XpTuning.CULTURE_ORGAN_WINDOW_TICKS ? 2 : 3;
+    }
+
+    /** Whether a harvest now cuts a sound relay organ. */
+    public boolean organReady() {
+        return organState() == 2;
+    }
+
     /** Whether a harvest now may bud a spare seed: a culture neglected in no way, not yet overripe. */
     public boolean canBud() {
         return hungry == 0 && airless == 0 && ripe < XpTuning.CULTURE_OVERRIPE_TICKS;
@@ -160,6 +202,7 @@ public final class Culture {
     /** A harvest: the mass falls back to the harvest size and the ripe clock restarts. */
     public void harvested() {
         mass = XpTuning.CULTURE_HARVEST_MASS;
+        organ = 0;
         shrieked = false;
         ripe = 0;
         leakOwed = 0;
@@ -188,6 +231,7 @@ public final class Culture {
         tag.putInt("Hungry", hungry);
         tag.putInt("Airless", airless);
         tag.putInt("Ripe", ripe);
+        tag.putInt("Organ", organ);
         tag.putFloat("Upkeep", upkeepOwed);
         tag.putFloat("Growth", growthOwed);
         tag.putFloat("Leak", leakOwed);
@@ -200,6 +244,7 @@ public final class Culture {
         hungry = tag.getInt("Hungry");
         airless = tag.getInt("Airless");
         ripe = tag.getInt("Ripe");
+        organ = tag.getInt("Organ");
         upkeepOwed = tag.getFloat("Upkeep");
         growthOwed = tag.getFloat("Growth");
         leakOwed = tag.getFloat("Leak");

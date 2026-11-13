@@ -34,6 +34,11 @@ public final class XpTuning {
 
     public static final float CULTURE_LEAK_PER_TICK = 0.0001f;
 
+    /** Invented. A ripe culture growing a relay organ: ticks it takes under the right conditions (5 min), the window it can be cut in before it overgrows (3 min; inside the overripe clot at 10 min), and the points a tick it eats on top of upkeep (2 a second). */
+    public static final int CULTURE_ORGAN_READY_TICKS = 6000, CULTURE_ORGAN_WINDOW_TICKS = 3600;
+
+    public static final float CULTURE_ORGAN_POINTS_PER_TICK = 0.1f;
+
     /** Invented. Blocks around an Orb Absorber from which it pulls loose orbs into its run, once a second. */
     public static final double ABSORBER_RADIUS = 4.0;
 

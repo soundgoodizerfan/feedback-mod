@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:gas_cell_membrane",
+  "properties": {
+    "sable:mass": 0.002
+  }
+}

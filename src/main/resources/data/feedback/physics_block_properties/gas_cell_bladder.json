@@ -1,0 +1,6 @@
+{
+  "selector": "feedback:gas_cell_bladder",
+  "properties": {
+    "sable:mass": 0.0006
+  }
+}

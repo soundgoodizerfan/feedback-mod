@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": { "B": { "item": "feedback:ghast_bladder" }, "S": { "item": "minecraft:string" } },
+  "pattern": ["BSB","SBS","BSB"],
+  "result": { "count": 2, "id": "feedback:gas_cell_bladder" }
+}

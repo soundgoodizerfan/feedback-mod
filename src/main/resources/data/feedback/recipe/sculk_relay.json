@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "feedback:relay_organ"
+      "tag": "feedback:relay_organs"
     },
     {
       "item": "minecraft:sculk_vein"

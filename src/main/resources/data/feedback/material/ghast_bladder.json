@@ -1,0 +1,29 @@
+{
+  "kind": "animal",
+  "traits": [
+    "flammable"
+  ],
+  "hardness": 0.1,
+  "density": 0.25,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 1e-05,
+    "oxidation_temperature": 250
+  },
+  "mechanical": {
+    "yield_strength": 2,
+    "friction": 0.3,
+    "abrasiveness": 0,
+    "permeability": 0
+  },
+  "separation": {
+    "reflectivity": 0.3
+  },
+  "forms": {
+    "raw": "feedback:ghast_bladder"
+  },
+  "exclude": [
+    "block",
+    "rod"
+  ]
+}

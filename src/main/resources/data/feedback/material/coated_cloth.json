@@ -1,0 +1,30 @@
+{
+  "color": "#d9d2c0",
+  "kind": "organic",
+  "traits": [
+    "flammable",
+    "fibrous",
+    "sticky"
+  ],
+  "hardness": 0.05,
+  "density": 1.4,
+  "thermal": {
+    "cooling_rate": 1,
+    "conductivity": 1e-05,
+    "oxidation_temperature": 300
+  },
+  "mechanical": {
+    "yield_strength": 3,
+    "friction": 0.8,
+    "abrasiveness": 0,
+    "permeability": 0.03
+  },
+  "separation": {
+    "reflectivity": 0.5
+  },
+  "forms": {},
+  "exclude": [
+    "grip",
+    "paper_case"
+  ]
+}

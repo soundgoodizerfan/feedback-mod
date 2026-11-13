@@ -75,7 +75,10 @@ public class CultureDishBlock extends Block implements EntityBlock {
         }
         if (stack.is(ItemTags.HOES) && dish.culture().isRipe()) {
             if (!level.isClientSide) {
+                boolean organ = dish.culture().organReady();
                 boolean bud = dish.harvest();
+                if (organ)
+                    Block.popResource(level, pos.above(), new ItemStack(FItems.RELAY_ORGAN.get()));
                 Block.popResource(level, pos.above(), new ItemStack(Items.SCULK, ElectricMachineTuning.CULTURE_HARVEST_BLOCKS));
                 Block.popResource(level, pos.above(), new ItemStack(Items.SCULK_VEIN, ElectricMachineTuning.CULTURE_HARVEST_VEINS));
                 Block.popResource(level, pos.above(), new ItemStack(Items.ECHO_SHARD, ElectricMachineTuning.CULTURE_HARVEST_SHARDS));

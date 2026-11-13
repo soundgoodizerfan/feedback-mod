@@ -159,12 +159,20 @@ public class FVehicles {
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock> GAS_CELL_PLATE = BLOCKS.register("gas_cell_plate",
             () -> new io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock(cellProps(MapColor.METAL, SoundType.METAL, 2.0f),
                     io.github.soundgoodizerfan.feedback.vehicle.air.Skin.PLATE));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock> GAS_CELL_BLADDER = BLOCKS.register("gas_cell_bladder",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock(cellProps(MapColor.COLOR_LIGHT_GRAY, SoundType.WOOL, 0.3f),
+                    io.github.soundgoodizerfan.feedback.vehicle.air.Skin.BLADDER));
+    public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock> GAS_CELL_MEMBRANE = BLOCKS.register("gas_cell_membrane",
+            () -> new io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlock(cellProps(MapColor.TERRACOTTA_WHITE, SoundType.WOOL, 0.5f),
+                    io.github.soundgoodizerfan.feedback.vehicle.air.Skin.MEMBRANE));
+    public static final DeferredItem<BlockItem> GAS_CELL_BLADDER_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_BLADDER);
+    public static final DeferredItem<BlockItem> GAS_CELL_MEMBRANE_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_MEMBRANE);
     public static final DeferredItem<BlockItem> GAS_CELL_CLOTH_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_CLOTH);
     public static final DeferredItem<BlockItem> GAS_CELL_RUBBER_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_RUBBER);
     public static final DeferredItem<BlockItem> GAS_CELL_PLATE_ITEM = ITEMS.registerSimpleBlockItem(GAS_CELL_PLATE);
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlockEntity>> GAS_CELL_ENTITY =
             BLOCK_ENTITIES.register("gas_cell", () -> BlockEntityType.Builder.of(io.github.soundgoodizerfan.feedback.vehicle.air.GasCellBlockEntity::new,
-                    GAS_CELL_CLOTH.get(), GAS_CELL_RUBBER.get(), GAS_CELL_PLATE.get()).build(null));
+                    GAS_CELL_CLOTH.get(), GAS_CELL_RUBBER.get(), GAS_CELL_PLATE.get(), GAS_CELL_BLADDER.get(), GAS_CELL_MEMBRANE.get()).build(null));
 
     public static final DeferredBlock<io.github.soundgoodizerfan.feedback.vehicle.air.VentValveBlock> VENT_VALVE = BLOCKS.register("vent_valve",
             () -> new io.github.soundgoodizerfan.feedback.vehicle.air.VentValveBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(2.0f).sound(SoundType.METAL)));

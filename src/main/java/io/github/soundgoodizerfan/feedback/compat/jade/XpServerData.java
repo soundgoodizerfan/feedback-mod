@@ -27,6 +27,7 @@ public class XpServerData implements IServerDataProvider<BlockAccessor> {
     static final String FLOW = "XpFlow";
     static final String LEAK = "XpLeak";
     static final String STAGE = "CultureStage";
+    static final String ORGAN = "CultureOrgan";
     static final String MASS = "CultureMass";
     static final String AIR = "CultureAir";
 
@@ -44,6 +45,7 @@ public class XpServerData implements IServerDataProvider<BlockAccessor> {
         if (accessor.getBlockEntity() instanceof io.github.soundgoodizerfan.feedback.machine.sculk.CultureDishBlockEntity dish) {
             data.putInt(STAGE, dish.culture().stage().ordinal());
             data.putFloat(MASS, dish.culture().mass());
+            data.putInt(ORGAN, dish.culture().organState());
             data.putInt(AIR, dish.airMb());
         }
         XpNetwork net = node.network();

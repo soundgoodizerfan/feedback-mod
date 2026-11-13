@@ -66,6 +66,7 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
         }
     };
     private float hole;
+    private float seepOwed;
     private boolean burning;
     private boolean dirty = true;
     /** Lowest-positioned cell of this group; null when this cell is it. */
@@ -223,9 +224,13 @@ public class GasCellBlockEntity extends BlockEntity implements BlockEntitySubLev
             float stretch = (float) (c.tank.getFluidAmount() / (VehicleTuning.GAS_CELL_MB * d));
             float over = Math.max(0f, stretch - c.skin().maxStretch);
             float lost = (c.hole + over * VehicleTuning.GAS_LEAK_PER_STRETCH) * SLOW;
-            if (lost <= 0f)
+            // The skin's own seep is a fraction of a mB a pass: carried until it makes a whole one.
+            c.seepOwed += c.skin().seep() * c.tank.getFluidAmount() / VehicleTuning.GAS_CELL_MB * SLOW;
+            int seeped = (int) c.seepOwed;
+            c.seepOwed -= seeped;
+            if (lost <= 0f && seeped <= 0)
                 continue;
-            c.tank.drain(Math.max(1, Math.round(lost)), net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
+            c.tank.drain((lost > 0f ? Math.max(1, Math.round(lost)) : 0) + seeped, net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction.EXECUTE);
             Vec3 w = c.worldCentre();
             server.sendParticles(ParticleTypes.CLOUD, w.x, w.y + 0.5, w.z, 1, 0.2, 0.1, 0.2, 0.01);
         }

@@ -563,6 +563,11 @@ public final class ElectricMachineTuning {
 
     public static final float CULTURE_SEED_CHANCE = 1f / 3f;
 
+    /** Invented. A relay organ differentiates only in the dark (light level at the dish at most this) and between these ambient temperatures (Tu). */
+    public static final int CULTURE_ORGAN_MAX_LIGHT = 3;
+
+    public static final float CULTURE_ORGAN_MIN_TU = 10f, CULTURE_ORGAN_MAX_TU = 30f;
+
     /** Invented. Blocks around a Catalyst Tap within which a death's XP is taken into the run, and blocks within which sculk relays join runs. */
     public static final double TAP_RADIUS = 8.0, RELAY_RANGE = 24.0;
 

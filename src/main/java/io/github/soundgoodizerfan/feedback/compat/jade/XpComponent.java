@@ -35,6 +35,9 @@ public class XpComponent implements IBlockComponentProvider {
             var stage = io.github.soundgoodizerfan.feedback.core.xp.Culture.Stage.values()[data.getInt(XpServerData.STAGE)];
             tooltip.add(Component.translatable("feedback.culture.stage." + stage.name().toLowerCase(java.util.Locale.ROOT))
                     .withStyle(ChatFormatting.GRAY));
+            int organ = data.getInt(XpServerData.ORGAN);
+            if (organ > 0)
+                tooltip.add(Component.translatable("feedback.culture.organ." + organ).withStyle(ChatFormatting.GRAY));
             if (figures && stage != io.github.soundgoodizerfan.feedback.core.xp.Culture.Stage.EMPTY) {
                 tooltip.add(Component.translatable("feedback.culture.mass", Readout.figure(Quantity.FIGURE, Math.round(data.getFloat(XpServerData.MASS) * 100)))
                         .withStyle(ChatFormatting.GRAY));

@@ -4,6 +4,7 @@ package io.github.soundgoodizerfan.feedback.machine.sculk;
 
 import io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning;
 import io.github.soundgoodizerfan.feedback.Feedback;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.xp.Culture;
 import io.github.soundgoodizerfan.feedback.core.xp.XpStore;
 import io.github.soundgoodizerfan.feedback.process.MaterialTable;
@@ -142,6 +143,7 @@ public class CultureDishBlockEntity extends SculkNodeBlockEntity {
         int before = store == null ? 0 : store.points();
         int eaten = culture.step(STEP, before, breathing);
         float massBefore = culture.mass();
+        eaten += culture.differentiate(STEP, breathing && organConditions(), Math.max(0, before - eaten));
         int points = Math.max(0, before - eaten);
         int leaked = Math.min(points, culture.takeLeaked());
         points -= leaked;
@@ -157,6 +159,13 @@ public class CultureDishBlockEntity extends SculkNodeBlockEntity {
             changed();
         shown = culture.stage();
         setChanged();
+    }
+
+    /** The physical conditions a relay organ needs: dark, and an ambient temperature in its band. */
+    private boolean organConditions() {
+        float tu = AmbientTable.at(level).value();
+        return level.getMaxLocalRawBrightness(worldPosition) <= ElectricMachineTuning.CULTURE_ORGAN_MAX_LIGHT
+                && tu >= ElectricMachineTuning.CULTURE_ORGAN_MIN_TU && tu <= ElectricMachineTuning.CULTURE_ORGAN_MAX_TU;
     }
 
     /** A faint pulse the first time a bad or ripe stage is reached, a loud one every half minute once it clots. */

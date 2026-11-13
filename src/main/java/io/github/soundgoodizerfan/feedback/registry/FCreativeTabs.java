@@ -63,6 +63,8 @@ public class FCreativeTabs {
                         output.accept(FVehicles.GAS_CELL_CLOTH_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_RUBBER_ITEM.get());
                         output.accept(FVehicles.GAS_CELL_PLATE_ITEM.get());
+                        output.accept(FVehicles.GAS_CELL_BLADDER_ITEM.get());
+                        output.accept(FVehicles.GAS_CELL_MEMBRANE_ITEM.get());
                         output.accept(FVehicles.VENT_VALVE_ITEM.get());
                         output.accept(FVehicles.BALLAST_TANK_ITEM.get());
                         output.accept(FVehicles.FLIGHT_SENSOR_ITEM.get());

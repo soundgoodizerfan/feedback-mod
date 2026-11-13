@@ -271,7 +271,7 @@ public final class VehicleTuning {
     /** Placeholder [OPEN]. Gas cells (flight A1): mB one cell block holds (a block is 1000 mB), the most cells one connected group counts, and how far past its rest volume each skin stretches before it weeps (cloth, rubberised, plate). */
     public static final int GAS_CELL_MB = 1000, GAS_GROUP_MAX_CELLS = 4096;
 
-    public static final float GAS_STRETCH_CLOTH = 1.15f, GAS_STRETCH_RUBBER = 1.5f, GAS_STRETCH_PLATE = 3f;
+    public static final float GAS_STRETCH_CLOTH = 1.15f, GAS_STRETCH_RUBBER = 1.5f, GAS_STRETCH_PLATE = 3f, GAS_STRETCH_BLADDER = 2f, GAS_STRETCH_MEMBRANE = 1.3f;
 
     /** Placeholder [OPEN]. A stretched skin leaks this many mB a tick per unit of stretch past its limit; an arrow or bullet hole leaks this many mB a tick until patched; a patch seals this share of leaks at once (1 = all). */
     public static final float GAS_LEAK_PER_STRETCH = 4f, GAS_HOLE_LEAK_MB_PER_TICK = 3f;
