@@ -1,4 +1,4 @@
-// 1.21.1	2026-11-11T13:33:00.518063221	Item Models: feedback
+// 1.21.1	2026-11-13T12:59:52.588218901	Item Models: feedback
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/alumina_dust.json
 4f96027194ff062abb5eae2aa87a9780c1e9891d assets/feedback/models/item/alumina_lump.json
 da800778ab131933745e289bc479c74f7bf48bfb assets/feedback/models/item/alumina_shard.json
@@ -352,6 +352,7 @@ ecea29d296fea14e23e84fd85988b769c9a17560 assets/feedback/models/item/enriched_fu
 9b5244acc274311ebf603b3f503ed81ec30cc79b assets/feedback/models/item/enriched_fuel_rod_round_ball.json
 73b4f7f3cf725c01eb98bccf08e086450a2a19e4 assets/feedback/models/item/enriched_fuel_rod_screw.json
 9665ea8d8921a9521e2341f7fd1655eedb1a802f assets/feedback/models/item/enriched_fuel_rod_swarf.json
+cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/feather_down_rod.json
 94405843f6403f879bec90012bcb581772bbbf76 assets/feedback/models/item/fertiliser_dust.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/fuel_rod_birdshot.json
 49daa5676c97ca3e81e097077fcde704793d52a1 assets/feedback/models/item/fuel_rod_bullet.json
@@ -773,6 +774,7 @@ b39e2f19bb62a516f16192ae7d7767baa3f016a4 assets/feedback/models/item/pvc_string.
 dd0505a7090dbf85025d701d9d03b97d2655ec26 assets/feedback/models/item/quartz_glass_lens.json
 261c86b92d63c259f06949eaf52e371f2deab1cf assets/feedback/models/item/quartz_glass_plate.json
 4efeac2a5464fa428fcc18427e93ef85cefda870 assets/feedback/models/item/quartz_glass_rod.json
+cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/rabbit_hide_rod.json
 cb609a2e9db394377824ac848138172c5bccbe29 assets/feedback/models/item/rabbit_rod.json
 73e726da459876a2f12985c5cd3247f952c6eb88 assets/feedback/models/item/rare_earth_magnet_birdshot.json
 40d154a390144f0b116c1a8eb15624ab2fd9bdfa assets/feedback/models/item/rare_earth_magnet_flat_nose_bullet.json
