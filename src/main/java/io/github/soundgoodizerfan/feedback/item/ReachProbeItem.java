@@ -39,7 +39,7 @@ public class ReachProbeItem extends Item {
         if (!level.isClientSide) {
             var reach = machine.reach();
             stack.set(FDataComponents.REACH.get(), new Link(level.getBlockState(context.getClickedPos()).getBlock().getDescriptionId(),
-                    reach.tempTu(), reach.pressurePu(), reach.rpm()));
+                    reach.tempTu(), reach.pressurePu(), reach.rpm(), reach.flowMbPerRpm(), reach.gearLow(), reach.gearHigh()));
             player.displayClientMessage(Component.translatable("feedback.reach_probe.linked",
                     Component.translatable(level.getBlockState(context.getClickedPos()).getBlock().getDescriptionId())), true);
         }
@@ -72,20 +72,28 @@ public class ReachProbeItem extends Item {
             tooltip.add(Component.translatable("feedback.jei.reach.pu", io.github.soundgoodizerfan.feedback.instrument.Instruments.sig(link.pressurePu(), 6)).withStyle(net.minecraft.ChatFormatting.GRAY));
         if (link.rpm() < Reachable.Reach.UNSTATED)
             tooltip.add(Component.translatable("feedback.jei.reach.rpm", io.github.soundgoodizerfan.feedback.instrument.Instruments.sig(link.rpm(), 6)).withStyle(net.minecraft.ChatFormatting.GRAY));
+        if (link.flowMbPerRpm() < Reachable.Reach.UNSTATED)
+            tooltip.add(Component.translatable("feedback.jei.reach.flow", io.github.soundgoodizerfan.feedback.instrument.Instruments.sig(link.flowMbPerRpm(), 6)).withStyle(net.minecraft.ChatFormatting.GRAY));
+        if (link.gearLow() < Reachable.Reach.UNSTATED)
+            tooltip.add(Component.translatable("feedback.jei.reach.gears", io.github.soundgoodizerfan.feedback.instrument.Instruments.sig(link.gearLow(), 4),
+                    io.github.soundgoodizerfan.feedback.instrument.Instruments.sig(link.gearHigh(), 4)).withStyle(net.minecraft.ChatFormatting.GRAY));
     }
 
     /** What the probe keeps of a machine: its block's name key and the reach it stated. Stored on the stack, so no client class is needed to read it. */
-    public record Link(String nameKey, float tempTu, float pressurePu, float rpm) {
+    public record Link(String nameKey, float tempTu, float pressurePu, float rpm, float flowMbPerRpm, float gearLow, float gearHigh) {
 
         public static final com.mojang.serialization.Codec<Link> CODEC = com.mojang.serialization.codecs.RecordCodecBuilder.create(i -> i.group(
                 com.mojang.serialization.Codec.STRING.fieldOf("name").forGetter(Link::nameKey),
                 com.mojang.serialization.Codec.FLOAT.fieldOf("temp").forGetter(Link::tempTu),
                 com.mojang.serialization.Codec.FLOAT.fieldOf("pressure").forGetter(Link::pressurePu),
-                com.mojang.serialization.Codec.FLOAT.fieldOf("rpm").forGetter(Link::rpm)).apply(i, Link::new));
+                com.mojang.serialization.Codec.FLOAT.fieldOf("rpm").forGetter(Link::rpm),
+                com.mojang.serialization.Codec.FLOAT.fieldOf("flow").forGetter(Link::flowMbPerRpm),
+                com.mojang.serialization.Codec.FLOAT.fieldOf("gear_low").forGetter(Link::gearLow),
+                com.mojang.serialization.Codec.FLOAT.fieldOf("gear_high").forGetter(Link::gearHigh)).apply(i, Link::new));
         public static final net.minecraft.network.codec.StreamCodec<io.netty.buffer.ByteBuf, Link> STREAM = net.minecraft.network.codec.StreamCodec.composite(
                 net.minecraft.network.codec.ByteBufCodecs.STRING_UTF8, Link::nameKey,
-                net.minecraft.network.codec.ByteBufCodecs.FLOAT, Link::tempTu,
-                net.minecraft.network.codec.ByteBufCodecs.FLOAT, Link::pressurePu,
-                net.minecraft.network.codec.ByteBufCodecs.FLOAT, Link::rpm, Link::new);
+                net.minecraft.network.codec.ByteBufCodecs.FLOAT.apply(net.minecraft.network.codec.ByteBufCodecs.list()),
+                l -> java.util.List.of(l.tempTu, l.pressurePu, l.rpm, l.flowMbPerRpm, l.gearLow, l.gearHigh),
+                (name, f) -> new Link(name, f.get(0), f.get(1), f.get(2), f.get(3), f.get(4), f.get(5)));
     }
 }

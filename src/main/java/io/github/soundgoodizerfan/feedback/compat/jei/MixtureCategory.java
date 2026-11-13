@@ -26,7 +26,7 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
 
     static final RecipeType<Mixture> TYPE = RecipeType.create("feedback", "mixture", Mixture.class);
 
-    private static final int WIDTH = 168, HEIGHT = 94;
+    private static final int WIDTH = 168, HEIGHT = 94 + ReachCard.HEIGHT;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -92,6 +92,7 @@ public class MixtureCategory implements IRecipeCategory<Mixture> {
         }
         graphics.drawString(font, recipe.stray() > 0 ? Component.translatable("feedback.jei.mixture.stray", Math.round(recipe.stray() * 100)) : Component.translatable("feedback.jei.mixture.pure"), 1, 49, LABEL_COLOUR, false);
         graphics.drawString(font, band(recipe), 1, 60, LABEL_COLOUR, false);
+        ReachCard.draw(graphics, WIDTH, 94, io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE, LABEL_COLOUR, VALUE_COLOUR);
     }
 
     private static String band(Mixture recipe) {

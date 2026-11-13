@@ -44,7 +44,7 @@ public class FuelCategory implements IRecipeCategory<FuelCategory.Card> {
 
     static final RecipeType<Card> TYPE = RecipeType.create("feedback", "fuel", Card.class);
 
-    private static final int WIDTH = 168, HEIGHT = 70, ROW = 11;
+    private static final int WIDTH = 168, HEIGHT = 70 + ReachCard.HEIGHT, ROW = 11;
 
     private final IDrawable icon;
 
@@ -124,5 +124,6 @@ public class FuelCategory implements IRecipeCategory<FuelCategory.Card> {
             y += ROW;
         }
         row(graphics, font, y, "feedback.jei.fuel.spread", Readout.number(c.spread()));
+        ReachCard.draw(graphics, WIDTH, 70, io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE, 0xFF7A7A7A, 0xFF262626);
     }
 }

@@ -44,7 +44,7 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
     public record Card(ItemStack solder, ItemStack pasted, ItemStack joined, ItemStack circuit, float liquidus, float window,
                        float lowestSubstrateTu) {}
 
-    private static final int WIDTH = 168, HEIGHT = 104;
+    private static final int WIDTH = 168, HEIGHT = 104 + ReachCard.HEIGHT;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -133,7 +133,8 @@ public class SolderingCategory implements IRecipeCategory<SolderingCategory.Card
         row(graphics, font, 50, "feedback.jei.soldering.lift_printed", tu(ProcessTuning.PRINTED_TRACE_LIMIT_TU));
         if (card.lowestSubstrateTu() < Float.MAX_VALUE)
             row(graphics, font, 62, "feedback.jei.soldering.lift_substrate", tu(card.lowestSubstrateTu()));
-        graphics.drawString(font, Component.translatable("feedback.jei.soldering.note"), 1, HEIGHT - 10, LABEL_COLOUR, false);
+        graphics.drawString(font, Component.translatable("feedback.jei.soldering.note"), 1, 94, LABEL_COLOUR, false);
+        ReachCard.draw(graphics, WIDTH, 104, io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE, LABEL_COLOUR, VALUE_COLOUR);
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String key, String value) {

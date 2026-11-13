@@ -48,7 +48,7 @@ import java.util.Set;
  * parts the link, so the input coasts free of the output, and a shift made then does not grind: the
  * clutch is how a gear is changed at speed without misuse. Dropped, it couples again at once.
  */
-public class TransmissionBlockEntity extends BlockEntity implements Analog, DataNode, Wearing, io.github.soundgoodizerfan.feedback.machine.Mendable, io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
+public class TransmissionBlockEntity extends BlockEntity implements Analog, DataNode, Wearing, io.github.soundgoodizerfan.feedback.machine.Mendable, io.github.soundgoodizerfan.feedback.fitting.StoredFittable, io.github.soundgoodizerfan.feedback.machine.Reachable {
 
     private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
 
@@ -77,6 +77,11 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
     @Nullable
     public TransmissionDesign design() {
         return design;
+    }
+
+    public Reach reach() {
+        return design == null ? new Reach(Reach.UNSTATED, Reach.UNSTATED, Reach.UNSTATED, Reach.UNSTATED, Reach.UNSTATED, Reach.UNSTATED)
+                : Reach.gears(design.ratio(1), design.ratio(design.gears()));
     }
 
     public int position() {

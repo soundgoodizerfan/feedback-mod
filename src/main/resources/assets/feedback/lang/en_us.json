@@ -6096,6 +6096,8 @@
   "feedback.jei.reach.tu": "reaches %s Tu",
   "feedback.jei.reach.pu": "holds to %s Pu",
   "feedback.jei.reach.rpm": "turns to %s RPM",
+  "feedback.jei.reach.flow": "moves %s mB per tick for each RPM",
+  "feedback.jei.reach.gears": "gears %s to %s input turns per output turn, torque multiplied by the same",
   "feedback.jei.reach.reading": "Your reading",
   "feedback.jei.reach.by_eye": "by eye: words only",
   "feedback.jei.reach.step": "to %s %s (%s)",

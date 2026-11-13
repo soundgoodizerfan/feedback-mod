@@ -42,7 +42,7 @@ public class PressCategory implements IRecipeCategory<PressCategory.Card> {
                        float peakPressure, float burnRate) {
     }
 
-    private static final int WIDTH = 168, HEIGHT = 78;
+    private static final int WIDTH = 168, HEIGHT = 78 + ReachCard.HEIGHT;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -100,6 +100,7 @@ public class PressCategory implements IRecipeCategory<PressCategory.Card> {
         row(graphics, font, 42, "feedback.jei.press.charge", GunTuning.GUN_CHARGE_NOMINAL + " nominal, " + GunTuning.GUN_CHARGE_MAX + " most");
         graphics.drawString(font, "at " + Math.round(GunTuning.GUN_CHARGE_REF_BORE_MM) + " mm (more in a wider case)", 24, 51, LABEL_COLOUR, false);
         graphics.drawString(font, Component.translatable("feedback.jei.press.note"), 24, 62, LABEL_COLOUR, false);
+        ReachCard.draw(graphics, WIDTH, 78, io.github.soundgoodizerfan.feedback.instrument.Quantity.PRESSURE, LABEL_COLOUR, VALUE_COLOUR);
     }
 
     private static void row(GuiGraphics graphics, Font font, int y, String key, String value) {

@@ -75,7 +75,7 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
 
     @Override
     public int getHeight() {
-        return WorkCard.HEIGHT;
+        return WorkCard.HEIGHT + ReachCard.HEIGHT;
     }
 
     @Override
@@ -94,5 +94,7 @@ public class DeformationCategory implements IRecipeCategory<Deformation> {
         WorkCard.draw(graphics, recipe.operation(), recipe.input(), recipe.work(),
                 "feedback.jei.hardness", recipe.hardness(), recipe.result(),
                 window == null ? null : "feedback.jei.worked_at", window);
+        if (window != null)
+            ReachCard.draw(graphics, WorkCard.WIDTH, WorkCard.HEIGHT, io.github.soundgoodizerfan.feedback.instrument.Quantity.TEMPERATURE, 0xFF7A7A7A, 0xFF262626);
     }
 }

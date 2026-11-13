@@ -32,7 +32,7 @@ public class BasinCategory implements IRecipeCategory<Basin> {
 
     static final RecipeType<Basin> TYPE = RecipeType.create("feedback", "basin", Basin.class);
 
-    private static final int WIDTH = 168, HEIGHT = 108;
+    private static final int WIDTH = 168, HEIGHT = 108 + ReachCard.HEIGHT;
     private static final int TITLE_COLOUR = 0xFF3F3F3F, LABEL_COLOUR = 0xFF7A7A7A, VALUE_COLOUR = 0xFF262626;
 
     private final IDrawable icon;
@@ -97,6 +97,7 @@ public class BasinCategory implements IRecipeCategory<Basin> {
         y += 10;
         row(graphics, font, y, "feedback.jei.basin.dimension", String.join(", ",
                 basin.dimensions().stream().map(ResourceLocation::getPath).toList()));
+        ReachCard.draw(graphics, WIDTH, 108, io.github.soundgoodizerfan.feedback.instrument.Quantity.PRESSURE, LABEL_COLOUR, VALUE_COLOUR);
         if (basin.indicator().isPresent()) {
             Component seep = Component.translatable("feedback.jei.basin.seep");
             graphics.drawString(font, seep, WIDTH - 23 - font.width(seep), 19, LABEL_COLOUR, false);

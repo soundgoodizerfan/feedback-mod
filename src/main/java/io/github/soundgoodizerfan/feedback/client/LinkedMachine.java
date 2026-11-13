@@ -23,7 +23,7 @@ public final class LinkedMachine {
     private static final long LINK_TICKS = 1200;
 
     /** A machine's name and its reach: an equipment spec, free like every spec. */
-    public record Reach(Component name, float tempTu, float pressurePu, float rpm) {
+    public record Reach(Component name, float tempTu, float pressurePu, float rpm, float flowMbPerRpm, float gearLow, float gearHigh) {
 
         /** The figure for a requirement's unit, or {@link Reachable.Reach#UNSTATED}. */
         public float of(io.github.soundgoodizerfan.feedback.instrument.Quantity quantity) {
@@ -47,7 +47,7 @@ public final class LinkedMachine {
         var level = Minecraft.getInstance().level;
         if (level == null)
             return;
-        screen = new Reach(name, ceilingTu, Reachable.Reach.UNSTATED, Reachable.Reach.UNSTATED);
+        screen = new Reach(name, ceilingTu, Reachable.Reach.UNSTATED, Reachable.Reach.UNSTATED, Reachable.Reach.UNSTATED, Reachable.Reach.UNSTATED, Reachable.Reach.UNSTATED);
         seen = level.getGameTime();
     }
 
@@ -72,6 +72,6 @@ public final class LinkedMachine {
         if (!(stack.getItem() instanceof ReachProbeItem))
             return null;
         var link = stack.get(FDataComponents.REACH.get());
-        return link == null ? null : new Reach(Component.translatable(link.nameKey()), link.tempTu(), link.pressurePu(), link.rpm());
+        return link == null ? null : new Reach(Component.translatable(link.nameKey()), link.tempTu(), link.pressurePu(), link.rpm(), link.flowMbPerRpm(), link.gearLow(), link.gearHigh());
     }
 }
