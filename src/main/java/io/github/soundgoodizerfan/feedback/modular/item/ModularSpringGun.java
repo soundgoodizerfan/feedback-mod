@@ -230,13 +230,17 @@ public class ModularSpringGun extends Item implements Modular {
         }
         Material m = materials.get(metal);
         SpringGunSpec.Shot shot = spec.shot(m.density().muPerMb(), SpringSet.set(gun));
-        float speed = RangedDispatch.launch(gun, shot.speed());
+        // A worn bore loses energy and sprays wider, by the same curve as a powder gun's (GunFigures.aged).
+        float condition = GunCondition.condition(gun);
+        float energyShare = 1f - io.github.soundgoodizerfan.feedback.weapon.GunTuning.GUN_WEAR_ENERGY_LOSS * (1f - condition)
+                / (1f - io.github.soundgoodizerfan.feedback.weapon.GunTuning.GUN_CONDITION_FLOOR);
+        float speed = RangedDispatch.launch(gun, shot.speed() * (float) Math.sqrt(energyShare));
         Arrow pellet = new Arrow(level, player, m.item(metal, "nugget").map(ItemStack::new).orElse(new ItemStack(net.minecraft.world.item.Items.IRON_NUGGET)), gun.copy());
         pellet.pickup = AbstractArrow.Pickup.DISALLOWED;
-        pellet.setBaseDamage(shot.damage() / Math.max(0.1f, shot.speed()));
+        pellet.setBaseDamage(shot.damage() * energyShare / Math.max(0.1f, shot.speed() * (float) Math.sqrt(energyShare)));
         pellet.setCritArrow(false);
         float spread = ModularTuning.AIR_SPREAD * ModularTuning.AIR_LENGTH_HALF / Math.max(0.05f, spec.lengthM());
-        pellet.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, speed, RangedDispatch.spread(gun, spread));
+        pellet.shootFromRotation(player, player.getXRot(), player.getYRot(), 0f, speed, RangedDispatch.spread(gun, spread / condition));
         RangedDispatch.arrow(pellet, gun);
         level.addFreshEntity(pellet);
         level.playSound(null, player.blockPosition(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, AIR_VOLUME, 1.8f);

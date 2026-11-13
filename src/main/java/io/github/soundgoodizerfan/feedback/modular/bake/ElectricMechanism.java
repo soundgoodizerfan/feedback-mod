@@ -28,6 +28,7 @@ import io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Governor
 import io.github.soundgoodizerfan.feedback.modular.bake.ElectricGunSpec.Seat;
 import io.github.soundgoodizerfan.feedback.modular.attunement.MomentumKinds;
 import io.github.soundgoodizerfan.feedback.process.Material;
+import io.github.soundgoodizerfan.feedback.weapon.GunCondition;
 import io.github.soundgoodizerfan.feedback.weapon.FireMode;
 import io.github.soundgoodizerfan.feedback.weapon.GunFigures;
 import io.github.soundgoodizerfan.feedback.weapon.GunItem;
@@ -136,7 +137,8 @@ public final class ElectricMechanism implements GunMechanism {
         // A lit reticle helps where it is dark.
         float spreadMult = spec.darkAt() > 0f && shooter.level().getMaxLocalRawBrightness(shooter.blockPosition()) <= spec.darkAt()
                 ? 1f - spec.darkCut() : 1f;
-        GunFigures figures = spec.figures(joules, gunKg, ticks, zoomShare, spreadMult);
+        // A worn receiver delivers less and sprays wider, as a worn bore does.
+        GunFigures figures = spec.figures(joules, gunKg, ticks, zoomShare, spreadMult).aged(GunCondition.condition(gun), 0f);
         if (shooter instanceof Player player) {
             figures = ModularTraits.gunAimed(player, gun, figures);
             if (GunItem.dualWielding(player))
