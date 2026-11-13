@@ -151,13 +151,11 @@ record GunView(GunLayout.Type type, String action, boolean slide, float len, flo
                 colours.put("Gw", 0xFF000000 | MaterialColors.of(sl.material()));
                 surfaces.put("Gw", Surface.of(materials.get(sl.material())));
             });
-        // A beam lens's lens is a slot of the fitting, drawn as the lens layer in the lens's own material (glass is see-through).
-        ModularDesign.Part lensPart = design.part("l");
-        if (lensPart != null)
-            lensPart.measures().slot("lens").ifPresent(sl -> {
-                colours.put("lens", 0xFF000000 | MaterialColors.of(sl.material()));
-                surfaces.put("lens", Surface.of(materials.get(sl.material())));
-            });
+        // A beam lens is its lens material (glass or a crystal, see-through) in a standard steel housing (letter lh).
+        if (design.part("l") != null) {
+            colours.put("lh", design.part("l").measures().slot("housing").map(sl -> 0xFF000000 | MaterialColors.of(sl.material())).orElse(0xFF8A8F96));
+            surfaces.put("lh", Surface.METAL);
+        }
         GunLayout.Type kind = GunLayout.Type.of(variants.getOrDefault("R", ""));
         if (stack.getItem() instanceof io.github.soundgoodizerfan.feedback.modular.item.ModularElectricGun) {
             // A pulse gun has no action and no slide: a frame, a cell bay, a seat, and a pulse barrel.

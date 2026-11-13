@@ -120,6 +120,7 @@ public final class PartBenchShaping {
         return (!option.forged() || station.forges()) && station.accepts(what.material())
                 && ModularType.fits(option.shaping().stock(), what.form())
                 && what.material().traits().containsAll(option.shaping().traits())
+                && (option.shaping().kinds().isEmpty() || what.material().kind().filter(option.shaping().kinds()::contains).isPresent())
                 && holdsExperience(option, what);
     }
 

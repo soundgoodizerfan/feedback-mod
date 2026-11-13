@@ -673,7 +673,11 @@
         "item": "feedback:beam_lens",
         "cells": 1,
         "stock": [
+          "lens",
           "plate",
+          "pane",
+          "gem",
+          "ingot",
           "rod"
         ],
         "variants": [
@@ -695,21 +699,21 @@
         "base": "beam_splitter",
         "slots": [
           {
-            "name": "housing",
+            "name": "lens",
             "share": 3
           },
           {
-            "name": "lens",
+            "name": "housing",
             "share": 1,
+            "standard": "feedback:steel",
             "forms": [
-              "lens",
               "plate"
-            ],
-            "traits": [
-              "transparent"
-            ],
-            "standard": "feedback:glass"
+            ]
           }
+        ],
+        "kinds": [
+          "glass",
+          "crystal"
         ]
       },
       "axes": {

@@ -765,11 +765,12 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
      *              {@code handgun}; a barrel's, the medium calibre): a part made in it records no variant, and
      *              the variant of that name in {@code variants} (which has no shape of its own) holds its
      *              traits and numbers. Empty when the standard shape is only the plain part.
+     * @param kinds the kinds of material the part's main material may be (a beam lens: glass and crystals); empty for any.
      * @param slots the materials the part is composed of, in order; the first is the part's main material ({@code MadeOf.material}).
      *              Empty for a part of one material. Slots add no choice of shape: every variant has the same ones.
      */
     public record Shaping(ResourceLocation item, float cells, List<String> stock, List<Variant> variants, String base,
-                          List<Material.Trait> traits, List<PartSlot> slots) {
+                          List<Material.Trait> traits, List<PartSlot> slots, List<Material.Kind> kinds) {
         static final Codec<Shaping> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("item").forGetter(Shaping::item),
                 Codec.FLOAT.fieldOf("cells").forGetter(Shaping::cells),
@@ -777,7 +778,8 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
                 Variant.CODEC.listOf().optionalFieldOf("variants", List.of()).forGetter(Shaping::variants),
                 Codec.STRING.optionalFieldOf("base", "").forGetter(Shaping::base),
                 Material.Trait.CODEC.listOf().optionalFieldOf("traits", List.of()).forGetter(Shaping::traits),
-                PartSlot.CODEC.listOf().optionalFieldOf("slots", List.of()).forGetter(Shaping::slots)
+                PartSlot.CODEC.listOf().optionalFieldOf("slots", List.of()).forGetter(Shaping::slots),
+                Material.Kind.CODEC.listOf().optionalFieldOf("kinds", List.of()).forGetter(Shaping::kinds)
         ).apply(instance, Shaping::new));
 
         /** The slot called {@code name}, if the part has one. */

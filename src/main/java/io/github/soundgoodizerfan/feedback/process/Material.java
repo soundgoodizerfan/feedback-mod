@@ -219,7 +219,7 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
         /** Plants that carry a path for the brewing stand (potions spec 15): a flower, and a herb or fern. */
         FLOWER, HERB;
 
-        static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
+        public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
         @Override
         public String getSerializedName() {

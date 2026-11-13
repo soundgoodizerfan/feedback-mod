@@ -154,6 +154,7 @@ public final class ToolDesigns {
                 Material.Located l = new Material.Located(id, m, form);
                 boolean fits = shape != null
                         ? ModularType.fits(shape.shaping().stock(), form) && role.traits().stream().allMatch(m.traits()::contains)
+                                && (shape.shaping().kinds().isEmpty() || m.kind().filter(shape.shaping().kinds()::contains).isPresent())
                                 && shape.stockMb(1f) % io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form) == 0
                         : role.accepts(l);
                 if (fits && (best == null || io.github.soundgoodizerfan.feedback.registry.FormItems.volume(form)
