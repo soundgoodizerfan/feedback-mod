@@ -68,6 +68,27 @@
     "buckle": {
       "kind": "grudge",
       "flaw": 1
+    },
+    "mattress": {
+      "kind": "grudge"
+    },
+    "bed_frame": {
+      "kind": "grudge"
+    },
+    "container": {
+      "kind": "meal_grudge"
+    },
+    "module_casing": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "module_plating": {
+      "kind": "grudge",
+      "flaw": 1
+    },
+    "wiring": {
+      "kind": "grudge",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -126,6 +147,24 @@
       "kind": "calm"
     },
     "buckle": {
+      "kind": "calm"
+    },
+    "mattress": {
+      "kind": "calm"
+    },
+    "bed_frame": {
+      "kind": "calm"
+    },
+    "container": {
+      "kind": "meal_calm"
+    },
+    "module_casing": {
+      "kind": "calm"
+    },
+    "module_plating": {
+      "kind": "calm"
+    },
+    "wiring": {
       "kind": "calm"
     }
   },

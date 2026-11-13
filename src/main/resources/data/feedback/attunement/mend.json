@@ -271,6 +271,18 @@
     },
     "container": {
       "kind": "restore"
+    },
+    "mattress": {
+      "kind": "bed_mend"
+    },
+    "module_casing": {
+      "kind": "mend"
+    },
+    "module_plating": {
+      "kind": "mend"
+    },
+    "wiring": {
+      "kind": "mend"
     }
   },
   "mirror": {
@@ -447,6 +459,18 @@
     },
     "container": {
       "kind": "tithe_meal"
+    },
+    "mattress": {
+      "kind": "bed_tithe"
+    },
+    "module_casing": {
+      "kind": "tithe"
+    },
+    "module_plating": {
+      "kind": "tithe"
+    },
+    "wiring": {
+      "kind": "tithe"
     }
   },
   "starter": true,

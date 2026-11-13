@@ -75,6 +75,21 @@
     "buckle": {
       "kind": "shed",
       "flaw": -1
+    },
+    "bed_frame": {
+      "kind": "shed"
+    },
+    "module_casing": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "module_plating": {
+      "kind": "shed",
+      "flaw": -1
+    },
+    "wiring": {
+      "kind": "shed",
+      "flaw": -1
     }
   },
   "books": [

@@ -110,7 +110,7 @@
       "layer": 2
     },
     "W": {
-      "name": "spring",
+      "name": "mainspring",
       "forms": [
         "wire",
         "rod"

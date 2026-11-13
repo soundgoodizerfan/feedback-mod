@@ -55,6 +55,21 @@
     },
     "buckle": {
       "kind": "worn_ring"
+    },
+    "bed_frame": {
+      "kind": "ring"
+    },
+    "container": {
+      "kind": "meal_ring"
+    },
+    "module_casing": {
+      "kind": "worn_ring"
+    },
+    "module_plating": {
+      "kind": "worn_ring"
+    },
+    "wiring": {
+      "kind": "worn_ring"
     }
   },
   "mirror": {
@@ -110,6 +125,18 @@
       "kind": "worn_hush"
     },
     "buckle": {
+      "kind": "worn_hush"
+    },
+    "bed_frame": {
+      "kind": "hush"
+    },
+    "module_casing": {
+      "kind": "worn_hush"
+    },
+    "module_plating": {
+      "kind": "worn_hush"
+    },
+    "wiring": {
       "kind": "worn_hush"
     }
   }

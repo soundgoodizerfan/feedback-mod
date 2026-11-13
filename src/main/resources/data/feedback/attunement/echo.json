@@ -40,6 +40,21 @@
     },
     "buckle": {
       "kind": "echo_wear"
+    },
+    "mattress": {
+      "kind": "bed_echo"
+    },
+    "container": {
+      "kind": "meal_echo"
+    },
+    "module_casing": {
+      "kind": "echo_wear"
+    },
+    "module_plating": {
+      "kind": "echo_wear"
+    },
+    "wiring": {
+      "kind": "echo_wear"
     }
   },
   "mirror": {
@@ -80,6 +95,18 @@
       "kind": "lag_hit"
     },
     "buckle": {
+      "kind": "lag_hit"
+    },
+    "container": {
+      "kind": "meal_lag"
+    },
+    "module_casing": {
+      "kind": "lag_hit"
+    },
+    "module_plating": {
+      "kind": "lag_hit"
+    },
+    "wiring": {
       "kind": "lag_hit"
     }
   }

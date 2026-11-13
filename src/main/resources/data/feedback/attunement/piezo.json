@@ -34,6 +34,21 @@
     },
     "buckle": {
       "kind": "arc"
+    },
+    "bed_frame": {
+      "kind": "bed_pulse"
+    },
+    "container": {
+      "kind": "meal_pulse"
+    },
+    "module_casing": {
+      "kind": "arc"
+    },
+    "module_plating": {
+      "kind": "arc"
+    },
+    "wiring": {
+      "kind": "arc"
     }
   },
   "mirror": {
@@ -74,6 +89,15 @@
       "kind": "soak"
     },
     "buckle": {
+      "kind": "soak"
+    },
+    "module_casing": {
+      "kind": "soak"
+    },
+    "module_plating": {
+      "kind": "soak"
+    },
+    "wiring": {
       "kind": "soak"
     }
   }

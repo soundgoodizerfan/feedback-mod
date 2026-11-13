@@ -71,6 +71,18 @@
     },
     "casing": {
       "kind": "burn_wielder"
+    },
+    "mattress": {
+      "kind": "bed_warm"
+    },
+    "module_casing": {
+      "kind": "ignite_attacker"
+    },
+    "module_plating": {
+      "kind": "ignite_attacker"
+    },
+    "wiring": {
+      "kind": "ignite_attacker"
     }
   },
   "mirror": {
@@ -132,6 +144,15 @@
       "kind": "insulate"
     },
     "container": {
+      "kind": "insulate"
+    },
+    "mattress": {
+      "kind": "bed_cool"
+    },
+    "module_plating": {
+      "kind": "insulate"
+    },
+    "wiring": {
       "kind": "insulate"
     }
   },

@@ -32,6 +32,12 @@
     },
     "casing": {
       "kind": "douse"
+    },
+    "mattress": {
+      "kind": "bed_douse"
+    },
+    "module_casing": {
+      "kind": "douse"
     }
   },
   "mirror": {
@@ -84,6 +90,14 @@
     },
     "casing": {
       "kind": "affinity",
+      "flaw": 1
+    },
+    "module_casing": {
+      "kind": "seal",
+      "flaw": 1
+    },
+    "module_plating": {
+      "kind": "seal",
       "flaw": 1
     }
   },

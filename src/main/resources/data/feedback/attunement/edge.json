@@ -28,6 +28,12 @@
     },
     "cutter_head": {
       "kind": "extra_damage"
+    },
+    "bayonet": {
+      "kind": "bayonet_edge"
+    },
+    "container": {
+      "kind": "meal_edge"
     }
   },
   "mirror": {
@@ -87,6 +93,27 @@
       "flaw": 1
     },
     "buckle": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "bayonet": {
+      "kind": "bayonet_pad"
+    },
+    "mattress": {
+      "kind": "bed_pad"
+    },
+    "container": {
+      "kind": "meal_pad"
+    },
+    "module_casing": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "module_plating": {
+      "kind": "deflect",
+      "flaw": 1
+    },
+    "wiring": {
       "kind": "deflect",
       "flaw": 1
     }

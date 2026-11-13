@@ -23,10 +23,14 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
  * @param boreMm     the bore, millimetres.
  * @param lengthM    the barrel's length, metres.
  * @param rating     joules the receiver holds before the spring takes a set.
+ * @param cock       multiple of the cocking time (a mainspring attuned to release lets go sooner).
  */
-public record SpringGunSpec(float energy, float pistonMass, float boreMm, float lengthM, float rating) {
+public record SpringGunSpec(float energy, float pistonMass, float boreMm, float lengthM, float rating, float cock) {
 
-    public static final String SPRING = "spring", PISTON = "piston", BARREL = "barrel", RECEIVER = "receiver";
+    /** Share of the stored energy a level of store adds to the mainspring; share of the cocking time a level of release cuts, and the least left. [OPEN] until played */
+    private static final float STORE_PER_LEVEL = 0.12f, RELEASE_PER_LEVEL = 0.12f, COCK_FLOOR = 0.4f;
+
+    public static final String SPRING = "mainspring", PISTON = "piston", BARREL = "barrel", RECEIVER = "receiver";
 
     /**
      * What one shot is.
@@ -69,8 +73,17 @@ public record SpringGunSpec(float energy, float pistonMass, float boreMm, float 
                 default -> { }
             }
         }
+        // The mainspring's attunements: store packs more energy into the same spring, release lets go sooner.
+        int store = 0, release = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
+            if (a.kind().equals("store"))
+                store += a.level();
+            else if (a.kind().equals("release"))
+                release += a.level();
+        energy *= 1f + STORE_PER_LEVEL * store;
+        float cock = Math.max(COCK_FLOOR, 1f - RELEASE_PER_LEVEL * release);
         return spring && pist && barrel && receiver && bore > 0 && length > 0
-                ? Optional.of(new SpringGunSpec(energy, piston, bore, length, rating)) : Optional.empty();
+                ? Optional.of(new SpringGunSpec(energy, piston, bore, length, rating, cock)) : Optional.empty();
     }
 
     /** Share of the spring's energy that reaches the pellet and piston: a longer barrel keeps the push, a wider bore wastes it. */
@@ -103,7 +116,7 @@ public record SpringGunSpec(float energy, float pistonMass, float boreMm, float 
 
     /** Ticks a wielder of strength 1 takes to cock the spring. */
     public float cockTicks() {
-        return Math.min(ModularTuning.AIR_COCK_MAX_TICKS, Math.max(ModularTuning.AIR_COCK_MIN_TICKS,
+        return cock * Math.min(ModularTuning.AIR_COCK_MAX_TICKS, Math.max(ModularTuning.AIR_COCK_MIN_TICKS,
                 energy / ModularTuning.AIR_COCK_J_PER_TICK));
     }
 

@@ -101,6 +101,9 @@ public final class ReservoirKinds {
     private ReservoirKinds() {
     }
 
+    /** Share of its ceiling a level of xp_bank adds to a reserve. [OPEN] until played */
+    private static final float BANK_PER_LEVEL = 0.2f;
+
     public static void register() {
     }
 
@@ -109,17 +112,19 @@ public final class ReservoirKinds {
      * reserve parts' {@code xp_store}. Null when the tool has no Reservoir. Held points are clamped to the ceiling.
      */
     public static XpStore store(ItemStack stack) {
-        int levels = 0;
+        int levels = 0, bank = 0;
         float top = 0;
         for (MaterialPerks.Attunement a : MaterialPerks.attunements(stack))
             if (a.kind().equals("reserve")) {
                 levels += a.level();
                 top += a.level() * a.material().xpStore().map(Material.XpCapacity::topLevel).orElse(DEFAULT_TOP_LEVEL);
-            }
+            } else if (a.kind().equals("xp_bank"))
+                bank += a.level();
         if (levels == 0)
             return null;
         XpStore held = stack.get(FDataComponents.XP_STORE.get());
-        return XpStore.empty(levels * POINTS_PER_LEVEL, top / levels).with(held == null ? 0 : held.points());
+        // A charged vial holds more: a capacitor's plates around the same store.
+        return XpStore.empty(Math.round(levels * POINTS_PER_LEVEL * (1f + BANK_PER_LEVEL * bank)), top / levels).with(held == null ? 0 : held.points());
     }
 
     /** How full a Reservoir tool is, 0..1; negative when it holds none at all. For the HUD bar. */

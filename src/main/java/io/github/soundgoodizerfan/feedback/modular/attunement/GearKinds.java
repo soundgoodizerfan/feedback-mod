@@ -33,6 +33,12 @@ public final class GearKinds {
         return out;
     }
 
+    /** Levels of {@code kind} on the pack a player wears (0 with none). */
+    public static int packLevel(Player p, String kind) {
+        ItemStack pack = ModularBackpack.wornStack(p);
+        return pack.isEmpty() ? 0 : TideKinds.level(pack, kind);
+    }
+
     /** Share of a pack's carry rating its strap parts leave: clamp holds more, slip lets the load ride and carries less. */
     private static final float CARRY_PER_LEVEL = 0.08f;
     /** Share of misuse wear one level of slip turns into slipping instead. */

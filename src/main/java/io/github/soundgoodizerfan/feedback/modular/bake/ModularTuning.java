@@ -193,7 +193,7 @@ public final class ModularTuning {
     /** Capacitor bank: seconds to recharge at Light, Standard and Heavy with a two-cell battery (more cells take longer); the shot is this many times a tier's pulse; each dielectric band adds this share to what it holds. */
     public static final float[] EGUN_BANK_RECHARGE_S = {8f, 12f, 16f};
     public static final float EGUN_CORE_MULT = 3f, EGUN_CORE_RANGE = 0.35f, EGUN_CORE_SPEED = 1.6f, EGUN_CORE_VENT_KEEP = 0.25f, EGUN_CORE_PARRY_RANGE = 3.5f,
-            EGUN_CORE_PELLET_MU = 0.02f, EGUN_BANK_MULT = 3f, EGUN_BANK_DIELECTRIC_STEP = 0.15f;
+            EGUN_CORE_PELLET_MU = 0.02f, EGUN_BANK_MULT = 3f, EGUN_BANK_PER_LEVEL = 0.1f, EGUN_BANK_DIELECTRIC_STEP = 0.15f;
     /** Burst bank: ticks between the three shots of a burst. */
     public static final int EGUN_BURST_GAP_TICKS = 2;
     /** Flywheel: ticks of a held trigger to full spin (at the reference density), ticks to spin down, and the spin the first shot waits for. */

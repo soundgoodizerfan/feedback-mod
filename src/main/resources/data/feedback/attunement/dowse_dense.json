@@ -46,6 +46,21 @@
     },
     "buckle": {
       "kind": "worn_point_dense"
+    },
+    "bed_frame": {
+      "kind": "point_dense"
+    },
+    "container": {
+      "kind": "point_dense"
+    },
+    "module_casing": {
+      "kind": "worn_point_dense"
+    },
+    "module_plating": {
+      "kind": "worn_point_dense"
+    },
+    "wiring": {
+      "kind": "worn_point_dense"
     }
   },
   "mirror": {
@@ -92,6 +107,21 @@
       "kind": "worn_away_dense"
     },
     "buckle": {
+      "kind": "worn_away_dense"
+    },
+    "bed_frame": {
+      "kind": "away_dense"
+    },
+    "container": {
+      "kind": "away_dense"
+    },
+    "module_casing": {
+      "kind": "worn_away_dense"
+    },
+    "module_plating": {
+      "kind": "worn_away_dense"
+    },
+    "wiring": {
       "kind": "worn_away_dense"
     }
   }

@@ -25,6 +25,27 @@
     },
     "wheel_rim": {
       "kind": "grow"
+    },
+    "shell": {
+      "kind": "worn_grow"
+    },
+    "hard_liner": {
+      "kind": "worn_grow"
+    },
+    "mattress": {
+      "kind": "grow"
+    },
+    "bed_frame": {
+      "kind": "grow"
+    },
+    "container": {
+      "kind": "meal_grow"
+    },
+    "module_casing": {
+      "kind": "worn_grow"
+    },
+    "module_plating": {
+      "kind": "worn_grow"
     }
   },
   "mirror": {
@@ -51,6 +72,27 @@
     },
     "wheel_rim": {
       "kind": "reap"
+    },
+    "shell": {
+      "kind": "worn_reap"
+    },
+    "hard_liner": {
+      "kind": "worn_reap"
+    },
+    "mattress": {
+      "kind": "reap"
+    },
+    "bed_frame": {
+      "kind": "reap"
+    },
+    "container": {
+      "kind": "meal_reap"
+    },
+    "module_casing": {
+      "kind": "worn_reap"
+    },
+    "module_plating": {
+      "kind": "worn_reap"
     }
   }
 }

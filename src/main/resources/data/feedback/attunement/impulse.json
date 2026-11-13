@@ -69,6 +69,24 @@
     "buckle": {
       "kind": "reflect",
       "flaw": 1
+    },
+    "casing": {
+      "kind": "blast_shove"
+    },
+    "bed_frame": {
+      "kind": "bed_launch"
+    },
+    "module_casing": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "module_plating": {
+      "kind": "reflect",
+      "flaw": 1
+    },
+    "wiring": {
+      "kind": "reflect",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -138,6 +156,21 @@
       "flaw": 0
     },
     "buckle": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "casing": {
+      "kind": "blast_pull"
+    },
+    "module_casing": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "module_plating": {
+      "kind": "damp",
+      "flaw": 0
+    },
+    "wiring": {
       "kind": "damp",
       "flaw": 0
     }

@@ -59,6 +59,21 @@
     "buckle": {
       "kind": "pack_guard",
       "flaw": 0
+    },
+    "container": {
+      "kind": "meal_share"
+    },
+    "module_casing": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "module_plating": {
+      "kind": "pack_guard",
+      "flaw": 0
+    },
+    "wiring": {
+      "kind": "pack_guard",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -117,6 +132,21 @@
       "flaw": 0
     },
     "buckle": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "container": {
+      "kind": "meal_alone"
+    },
+    "module_casing": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "module_plating": {
+      "kind": "lone_guard",
+      "flaw": 0
+    },
+    "wiring": {
       "kind": "lone_guard",
       "flaw": 0
     }

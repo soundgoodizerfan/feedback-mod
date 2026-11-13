@@ -46,6 +46,21 @@
     },
     "buckle": {
       "kind": "worn_point_conductive"
+    },
+    "bed_frame": {
+      "kind": "point_conductive"
+    },
+    "container": {
+      "kind": "point_conductive"
+    },
+    "module_casing": {
+      "kind": "worn_point_conductive"
+    },
+    "module_plating": {
+      "kind": "worn_point_conductive"
+    },
+    "wiring": {
+      "kind": "worn_point_conductive"
     }
   },
   "mirror": {
@@ -92,6 +107,21 @@
       "kind": "worn_away_conductive"
     },
     "buckle": {
+      "kind": "worn_away_conductive"
+    },
+    "bed_frame": {
+      "kind": "away_conductive"
+    },
+    "container": {
+      "kind": "away_conductive"
+    },
+    "module_casing": {
+      "kind": "worn_away_conductive"
+    },
+    "module_plating": {
+      "kind": "worn_away_conductive"
+    },
+    "wiring": {
       "kind": "worn_away_conductive"
     }
   }

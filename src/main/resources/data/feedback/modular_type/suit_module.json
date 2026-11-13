@@ -10,7 +10,7 @@
   "primary": "H",
   "roles": {
     "H": {
-      "name": "casing",
+      "name": "module_casing",
       "class": "housing",
       "forms": [
         "module_casing"

@@ -274,6 +274,10 @@ public final class GunTuning {
     /** Thrown charge (placeholders): launch speed, fragment damage per point of casing hardness, its cap, and reach per unit of blast power. */
     public static final float GRENADE_THROW_SPEED = 1.0f, GRENADE_FRAG_DAMAGE_PER_HARDNESS = 0.8f, GRENADE_FRAG_DAMAGE_MAX = 14f,
             GRENADE_FRAG_REACH_PER_POWER = 3f,
+            /** Speed (blocks per tick) a level of blast_shove adds to what a charge's blast reaches, nearest first. */
+            BLAST_SHOVE_PER_LEVEL = 0.35f,
+            /** Share of a charge's power a level of blast_hold (the casing held tight) adds. */
+            BLAST_HOLD_PER_LEVEL = 0.08f,
             GRENADE_PAYLOAD_FRAG = 0.12f, GRENADE_FLASH_REACH = 6f;
 
     public static final int GRENADE_FLASH_TICKS = 100;

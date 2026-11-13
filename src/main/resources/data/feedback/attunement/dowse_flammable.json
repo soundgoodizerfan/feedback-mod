@@ -46,6 +46,21 @@
     },
     "buckle": {
       "kind": "worn_point_flammable"
+    },
+    "bed_frame": {
+      "kind": "point_flammable"
+    },
+    "container": {
+      "kind": "point_flammable"
+    },
+    "module_casing": {
+      "kind": "worn_point_flammable"
+    },
+    "module_plating": {
+      "kind": "worn_point_flammable"
+    },
+    "wiring": {
+      "kind": "worn_point_flammable"
     }
   },
   "mirror": {
@@ -92,6 +107,21 @@
       "kind": "worn_away_flammable"
     },
     "buckle": {
+      "kind": "worn_away_flammable"
+    },
+    "bed_frame": {
+      "kind": "away_flammable"
+    },
+    "container": {
+      "kind": "away_flammable"
+    },
+    "module_casing": {
+      "kind": "worn_away_flammable"
+    },
+    "module_plating": {
+      "kind": "worn_away_flammable"
+    },
+    "wiring": {
       "kind": "worn_away_flammable"
     }
   }

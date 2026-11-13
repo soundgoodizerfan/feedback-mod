@@ -46,6 +46,21 @@
     },
     "buckle": {
       "kind": "worn_point_magnetic"
+    },
+    "bed_frame": {
+      "kind": "point_magnetic"
+    },
+    "container": {
+      "kind": "point_magnetic"
+    },
+    "module_casing": {
+      "kind": "worn_point_magnetic"
+    },
+    "module_plating": {
+      "kind": "worn_point_magnetic"
+    },
+    "wiring": {
+      "kind": "worn_point_magnetic"
     }
   },
   "mirror": {
@@ -92,6 +107,21 @@
       "kind": "worn_away_magnetic"
     },
     "buckle": {
+      "kind": "worn_away_magnetic"
+    },
+    "bed_frame": {
+      "kind": "away_magnetic"
+    },
+    "container": {
+      "kind": "away_magnetic"
+    },
+    "module_casing": {
+      "kind": "worn_away_magnetic"
+    },
+    "module_plating": {
+      "kind": "worn_away_magnetic"
+    },
+    "wiring": {
       "kind": "worn_away_magnetic"
     }
   }

@@ -271,6 +271,22 @@
     },
     "buckle": {
       "kind": "soak"
+    },
+    "mattress": {
+      "kind": "soak"
+    },
+    "bed_frame": {
+      "kind": "soak"
+    },
+    "module_casing": {
+      "kind": "fracture",
+      "flaw": -1
+    },
+    "module_plating": {
+      "kind": "soak"
+    },
+    "wiring": {
+      "kind": "soak"
     }
   },
   "starter": true,

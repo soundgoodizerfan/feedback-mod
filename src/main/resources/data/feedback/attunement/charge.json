@@ -63,6 +63,27 @@
     "buckle": {
       "kind": "capacitor",
       "flaw": 1
+    },
+    "seat": {
+      "kind": "pulse_bank"
+    },
+    "casing": {
+      "kind": "blast_arc"
+    },
+    "vial": {
+      "kind": "xp_bank"
+    },
+    "module_casing": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "module_plating": {
+      "kind": "capacitor",
+      "flaw": 1
+    },
+    "wiring": {
+      "kind": "capacitor",
+      "flaw": 1
     }
   },
   "mirror": {

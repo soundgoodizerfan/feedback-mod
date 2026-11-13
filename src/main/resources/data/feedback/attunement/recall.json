@@ -49,6 +49,18 @@
     "buckle": {
       "kind": "rewind",
       "flaw": 1
+    },
+    "module_casing": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "module_plating": {
+      "kind": "rewind",
+      "flaw": 1
+    },
+    "wiring": {
+      "kind": "rewind",
+      "flaw": 1
     }
   },
   "mirror": {

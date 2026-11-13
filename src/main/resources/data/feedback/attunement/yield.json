@@ -55,6 +55,24 @@
     "buckle": {
       "kind": "scavenge",
       "flaw": 0
+    },
+    "mattress": {
+      "kind": "bed_fortune"
+    },
+    "container": {
+      "kind": "meal_fortune"
+    },
+    "module_casing": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "module_plating": {
+      "kind": "scavenge",
+      "flaw": 0
+    },
+    "wiring": {
+      "kind": "scavenge",
+      "flaw": 0
     }
   },
   "mirror": {

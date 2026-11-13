@@ -46,6 +46,18 @@
     },
     "container": {
       "kind": "nourish"
+    },
+    "mattress": {
+      "kind": "bed_feed"
+    },
+    "module_casing": {
+      "kind": "worn_reserve"
+    },
+    "module_plating": {
+      "kind": "worn_reserve"
+    },
+    "wiring": {
+      "kind": "worn_reserve"
     }
   },
   "mirror": {
@@ -93,6 +105,18 @@
     },
     "container": {
       "kind": "thin"
+    },
+    "mattress": {
+      "kind": "bed_drain"
+    },
+    "module_casing": {
+      "kind": "worn_famine"
+    },
+    "module_plating": {
+      "kind": "worn_famine"
+    },
+    "wiring": {
+      "kind": "worn_famine"
     }
   }
 }

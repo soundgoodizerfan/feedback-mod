@@ -95,7 +95,10 @@ public final class GunBludgeon {
         var part = design == null ? null : design.part("a");
         var mat = part == null ? null : io.github.soundgoodizerfan.feedback.process.MaterialTable.get().materials().get(part.material());
         float hard = mat == null ? 1f : mat.hardness().value();
-        return Mth.clamp(hard * GunFuTuning.BAYONET_DAMAGE_PER_HARDNESS, GunFuTuning.BAYONET_DAMAGE_MIN, GunFuTuning.BAYONET_DAMAGE_MAX);
+        // Edge on the bayonet: a keener point cuts deeper, a padded one (the mirror) does less.
+        float keen = 1f + GunFuTuning.BAYONET_EDGE_PER_LEVEL * (io.github.soundgoodizerfan.feedback.modular.attunement.TideKinds.level(gun, "bayonet_edge")
+                - io.github.soundgoodizerfan.feedback.modular.attunement.TideKinds.level(gun, "bayonet_pad"));
+        return Mth.clamp(hard * GunFuTuning.BAYONET_DAMAGE_PER_HARDNESS, GunFuTuning.BAYONET_DAMAGE_MIN, GunFuTuning.BAYONET_DAMAGE_MAX) * Math.max(0.2f, keen);
     }
 
     /** Brand: a whip with the barrel above the burn line sears the target by that temperature, and the barrel gives the heat up. */

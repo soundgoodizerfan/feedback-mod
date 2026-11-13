@@ -35,6 +35,15 @@
     },
     "wheel_rim": {
       "kind": "mark"
+    },
+    "mattress": {
+      "kind": "mark"
+    },
+    "bed_frame": {
+      "kind": "mark"
+    },
+    "container": {
+      "kind": "meal_mark"
     }
   },
   "mirror": {
@@ -71,6 +80,21 @@
       "flaw": 2
     },
     "buckle": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "container": {
+      "kind": "meal_taunt"
+    },
+    "module_casing": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "module_plating": {
+      "kind": "taunt",
+      "flaw": 2
+    },
+    "wiring": {
       "kind": "taunt",
       "flaw": 2
     }

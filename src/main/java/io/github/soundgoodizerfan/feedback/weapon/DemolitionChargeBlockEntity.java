@@ -251,6 +251,8 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             tag.putBoolean("MadeFire", made.fire());
             tag.putFloat("MadeFrag", made.fragDamage());
             tag.putBoolean("MadeFlash", made.flash());
+            tag.putFloat("MadeShove", made.shove());
+            tag.putInt("MadeArc", made.arc());
         }
         tag.putFloat("Tamp", tamp);
         if (lighter != null)
@@ -269,7 +271,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
         fuse = tag.contains("Fuse") ? tag.getInt("Fuse") : -1;
         fuseLength = tag.contains("FuseLength") ? tag.getInt("FuseLength") : GunTuning.DEMO_FUSE_TICKS;
         made = tag.contains("MadePower") ? new Blast.Packed(tag.getFloat("MadePower"), tag.getBoolean("MadeFire"), null, fuseLength, false,
-                tag.getFloat("MadeFrag"), tag.getBoolean("MadeFlash")) : null;
+                tag.getFloat("MadeFrag"), tag.getBoolean("MadeFlash"), tag.getFloat("MadeShove"), tag.getInt("MadeArc")) : null;
         tamp = tag.getFloat("Tamp");
         lighter = tag.hasUUID("Lighter") ? tag.getUUID("Lighter") : null;
     }

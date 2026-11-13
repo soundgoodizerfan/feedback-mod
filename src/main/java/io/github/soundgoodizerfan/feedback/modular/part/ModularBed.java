@@ -110,11 +110,16 @@ public class ModularBed extends ModularItem {
         // Cold country takes back what the padding does not keep in.
         boolean cold = server.getBiome(player.blockPosition()).value().coldEnoughToSnow(player.blockPosition());
         float comfort = f == null ? 0f : f.get(Fig.COMFORT) * (cold ? f.get(Fig.WARMTH) : 1f);
-        player.heal(player.getMaxHealth() * ModularTuning.BED_HEAL * comfort);
-        if (f != null && f.get(Fig.WARMTH) >= ModularTuning.BED_THAWS_AT)
+        comfort = Math.max(0f, comfort + io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.comfort(bed));
+        float warmth = (f == null ? 0f : f.get(Fig.WARMTH)) + io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.warmth(bed);
+        player.heal(player.getMaxHealth() * ModularTuning.BED_HEAL * comfort * io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.heal(bed, player));
+        if (f != null && warmth >= ModularTuning.BED_THAWS_AT)
             player.setTicksFrozen(0);
         player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
-        bed.setDamageValue(Math.min(bed.getMaxDamage() - 1, bed.getDamageValue() + ModularTuning.BED_WEAR));
+        io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.wake(player, server, bed);
+        if (!io.github.soundgoodizerfan.feedback.modular.attunement.RestKinds.unworn(bed, player))
+            bed.setDamageValue(Math.min(bed.getMaxDamage() - 1, bed.getDamageValue()
+                    + io.github.soundgoodizerfan.feedback.modular.attunement.WardKinds.soak(bed, ModularTuning.BED_WEAR)));
         ModularStacks.refresh(bed);
     }
 }

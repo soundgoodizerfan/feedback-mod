@@ -35,6 +35,12 @@
     "buckle": {
       "kind": "clamp",
       "flaw": 1
+    },
+    "casing": {
+      "kind": "blast_hold"
+    },
+    "bed_frame": {
+      "kind": "bed_snug"
     }
   },
   "mirror": {
@@ -72,6 +78,9 @@
     "buckle": {
       "kind": "slip",
       "flaw": -1
+    },
+    "bed_frame": {
+      "kind": "bed_slip"
     }
   },
   "starter": true,

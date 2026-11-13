@@ -56,6 +56,27 @@
     "buckle": {
       "kind": "coil",
       "flaw": 1
+    },
+    "mainspring": {
+      "kind": "store"
+    },
+    "mattress": {
+      "kind": "coil"
+    },
+    "container": {
+      "kind": "meal_spring"
+    },
+    "module_casing": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "module_plating": {
+      "kind": "coil",
+      "flaw": 1
+    },
+    "wiring": {
+      "kind": "coil",
+      "flaw": 1
     }
   },
   "mirror": {
@@ -65,6 +86,12 @@
     },
     "store_core": {
       "kind": "release"
+    },
+    "mainspring": {
+      "kind": "release"
+    },
+    "container": {
+      "kind": "meal_release"
     }
   }
 }

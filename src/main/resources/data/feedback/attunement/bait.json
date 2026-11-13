@@ -61,6 +61,21 @@
     },
     "casing": {
       "kind": "lure"
+    },
+    "mattress": {
+      "kind": "lure"
+    },
+    "bed_frame": {
+      "kind": "lure"
+    },
+    "module_casing": {
+      "kind": "worn_lure"
+    },
+    "module_plating": {
+      "kind": "worn_lure"
+    },
+    "wiring": {
+      "kind": "worn_lure"
     }
   },
   "mirror": {
@@ -123,6 +138,21 @@
     },
     "casing": {
       "kind": "scare"
+    },
+    "mattress": {
+      "kind": "scare"
+    },
+    "bed_frame": {
+      "kind": "scare"
+    },
+    "module_casing": {
+      "kind": "worn_scare"
+    },
+    "module_plating": {
+      "kind": "worn_scare"
+    },
+    "wiring": {
+      "kind": "worn_scare"
     }
   },
   "books": [

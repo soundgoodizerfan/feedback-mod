@@ -109,6 +109,14 @@ public final class MaterialPerks {
         if (type == null)
             return out;
         for (ModularDesign.Part part : design.parts()) {
+            // A suit module fitted in an armour piece acts as a part of that piece: its parts read like worn armour parts.
+            if (!part.sub().isEmpty()) {
+                ModularDesign held = ModularStacks.design(part.sub());
+                ModularType heldType = held == null ? null : ModularTypes.known(held.type());
+                if (heldType != null && heldType.family() == ModularType.Family.SUIT_MODULE)
+                    out.addAll(attunements(held));
+                continue;
+            }
             ModularType.Role role = type.roles().get(part.role());
             Material m = MaterialTable.get().materials().get(part.material());
             if (role == null || m == null)

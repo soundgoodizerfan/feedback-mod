@@ -38,6 +38,12 @@
     },
     "wheel_rim": {
       "kind": "momentum"
+    },
+    "mattress": {
+      "kind": "bed_swift"
+    },
+    "container": {
+      "kind": "meal_swift"
     }
   },
   "mirror": {
@@ -88,6 +94,21 @@
       "kind": "worn_stance"
     },
     "buckle": {
+      "kind": "worn_stance"
+    },
+    "mattress": {
+      "kind": "bed_brace"
+    },
+    "container": {
+      "kind": "meal_brace"
+    },
+    "module_casing": {
+      "kind": "worn_stance"
+    },
+    "module_plating": {
+      "kind": "worn_stance"
+    },
+    "wiring": {
       "kind": "worn_stance"
     }
   },

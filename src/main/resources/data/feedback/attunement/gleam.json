@@ -49,6 +49,18 @@
     },
     "casing": {
       "kind": "glow"
+    },
+    "mattress": {
+      "kind": "bed_glow"
+    },
+    "module_casing": {
+      "kind": "worn_glow"
+    },
+    "module_plating": {
+      "kind": "worn_glow"
+    },
+    "wiring": {
+      "kind": "worn_glow"
     }
   },
   "mirror": {
@@ -99,6 +111,15 @@
     },
     "casing": {
       "kind": "dim"
+    },
+    "module_casing": {
+      "kind": "worn_dim"
+    },
+    "module_plating": {
+      "kind": "worn_dim"
+    },
+    "wiring": {
+      "kind": "worn_dim"
     }
   }
 }

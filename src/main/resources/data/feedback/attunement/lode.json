@@ -43,6 +43,21 @@
     },
     "buckle": {
       "kind": "worn_draw"
+    },
+    "bed_frame": {
+      "kind": "bed_draw"
+    },
+    "container": {
+      "kind": "meal_draw"
+    },
+    "module_casing": {
+      "kind": "worn_draw"
+    },
+    "module_plating": {
+      "kind": "worn_draw"
+    },
+    "wiring": {
+      "kind": "worn_draw"
     }
   },
   "mirror": {
@@ -86,6 +101,21 @@
       "kind": "worn_fling"
     },
     "buckle": {
+      "kind": "worn_fling"
+    },
+    "bed_frame": {
+      "kind": "bed_fling"
+    },
+    "container": {
+      "kind": "meal_fling"
+    },
+    "module_casing": {
+      "kind": "worn_fling"
+    },
+    "module_plating": {
+      "kind": "worn_fling"
+    },
+    "wiring": {
       "kind": "worn_fling"
     }
   },

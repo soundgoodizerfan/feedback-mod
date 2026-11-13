@@ -80,7 +80,9 @@ public final class BloomKinds {
         Player player = event.getEntity();
         if (player.level().isClientSide || player.tickCount % 10 != 0 || !player.onGround())
             return;
-        int grow = BaitKinds.wornAt(player, EquipmentSlot.FEET, "worn_grow"), reap = BaitKinds.wornAt(player, EquipmentSlot.FEET, "worn_reap");
+        // Boots, and a pack on the back: seed and sickle spill from it as the wearer walks.
+        int grow = BaitKinds.wornAt(player, EquipmentSlot.FEET, "worn_grow") + GearKinds.packLevel(player, "worn_grow"),
+                reap = BaitKinds.wornAt(player, EquipmentSlot.FEET, "worn_reap") + GearKinds.packLevel(player, "worn_reap");
         if (grow + reap == 0)
             return;
         var data = player.getPersistentData();

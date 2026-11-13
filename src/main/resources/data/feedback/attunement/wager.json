@@ -37,6 +37,21 @@
     },
     "buckle": {
       "kind": "gamble_ward"
+    },
+    "mattress": {
+      "kind": "bed_gamble"
+    },
+    "container": {
+      "kind": "meal_gamble"
+    },
+    "module_casing": {
+      "kind": "gamble_ward"
+    },
+    "module_plating": {
+      "kind": "gamble_ward"
+    },
+    "wiring": {
+      "kind": "gamble_ward"
     }
   },
   "mirror": {}

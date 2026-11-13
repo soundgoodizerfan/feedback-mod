@@ -50,11 +50,12 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
  * @param gauge      whether a heat gauge is fitted.
  * @param sight      whether a sight is fitted.
  * @param sightFov   the field a scope closes the view to when aimed (its zoom axis through its lens); 1 for any other sight.
+ * @param bank       levels of charge attuned on the seat: a seat that holds more charge sends a bigger pulse.
  */
 public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, float barrelLoss, float seatAmp, float seatDensity,
                               int dielectric, VoltageBand band, float barrelMass, int maxCells, float heatMult, float report,
                               float heatGain, float shed, float spreadMult, float darkAt, float darkCut, Governor governor,
-                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov) {
+                              boolean holdCharge, boolean pump, int beams, boolean fork, boolean zoom, boolean gauge, boolean sight, float sightFov, int bank) {
 
     /** The heat cycle: what a seat does between shots, and the fire modes it allows. */
     public enum Seat {
@@ -117,6 +118,10 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         Governor governor = Governor.NONE;
         boolean hold = false, pump = false, fork = false, zoom = false, gauge = false, sight = false;
         float sightFov = 1f;
+        int bank = 0;
+        for (MaterialPerks.Attunement a : MaterialPerks.attunements(design))
+            if (a.kind().equals("pulse_bank"))
+                bank += a.level();
         for (ModularDesign.Part p : design.parts()) {
             ModularType.Role role = type.roles().get(p.role());
             Material m = materials.get(p.material());
@@ -194,7 +199,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
         if (!barrel || !receiver || !trigger || seat == null || bore <= 0 || length <= 0 || seatAmp <= 0)
             return Optional.empty();
         ElectricGunSpec spec = new ElectricGunSpec(seat, tier, bore, length, loss, seatAmp, seatDensity, dielectric, band, mass, maxCells,
-                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov);
+                heatMult, report, heatGain, shed, spreadMult, darkAt, darkCut, governor, hold, pump, beams, fork, zoom, gauge, sight, sightFov, bank);
         return fault(design, type) == null ? Optional.of(spec) : Optional.empty();
     }
 
@@ -229,7 +234,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
 
     /** The hard ceiling on the joules one pulse holds: the seat's conductor. */
     public float ceilJ() {
-        return ModularTuning.EGUN_SEAT_CEIL_J * Mth.clamp(seatAmp, 0.1f, 3f);
+        return ModularTuning.EGUN_SEAT_CEIL_J * Mth.clamp(seatAmp, 0.1f, 3f) * (1f + ModularTuning.EGUN_BANK_PER_LEVEL * bank);
     }
 
     /** The share of the ceiling this tier takes. */

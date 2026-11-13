@@ -21,6 +21,8 @@ public final class GunFuTuning {
     /** Bayonet Drill: damage per point of the bayonet material's hardness, within the bounds, and ticks per ms of the gun's own cycle. */
     public static final float BAYONET_DAMAGE_PER_HARDNESS = 0.5f, BAYONET_DAMAGE_MIN = 3f, BAYONET_DAMAGE_MAX = 12f;
     public static final int BAYONET_MIN_TICKS = 6;
+    /** Share of the bayonet's damage a level of edge adds (a level of its mirror takes). */
+    public static final float BAYONET_EDGE_PER_LEVEL = 0.12f;
 
     /** Recoil Vault: blocks per tick of push per (kg m/s of impulse per Mu of the shooter and gun). STAND-IN gain, real recoil is far too small to feel. */
     public static final float VAULT_GAIN = 3f;

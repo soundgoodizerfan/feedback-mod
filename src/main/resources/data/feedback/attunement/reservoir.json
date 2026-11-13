@@ -70,6 +70,18 @@
     },
     "casing": {
       "kind": "reserve"
+    },
+    "mattress": {
+      "kind": "reserve"
+    },
+    "module_casing": {
+      "kind": "reserve"
+    },
+    "module_plating": {
+      "kind": "reserve"
+    },
+    "wiring": {
+      "kind": "reserve"
     }
   },
   "books": [

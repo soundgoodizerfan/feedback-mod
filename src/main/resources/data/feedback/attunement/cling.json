@@ -25,6 +25,9 @@
     },
     "cleat": {
       "kind": "stick"
+    },
+    "container": {
+      "kind": "meal_stick"
     }
   },
   "mirror": {
@@ -51,6 +54,9 @@
     },
     "flywheel_disc": {
       "kind": "slick"
+    },
+    "container": {
+      "kind": "meal_slick"
     }
   }
 }

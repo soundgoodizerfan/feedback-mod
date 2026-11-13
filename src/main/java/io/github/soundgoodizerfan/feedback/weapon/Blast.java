@@ -50,9 +50,10 @@ public final class Blast {
     /**
      * What a charge will do when it goes up: its power, whether it throws fire, the casing (null if bare), the fuse, the
      * damage its fragments do (casing hardness times the casing's {@code frag}, plus the payload's), and whether its
-     * payload is luminous and blinds (a flash).
+     * payload is luminous and blinds (a flash), and how hard the casing's attunement flings what it reaches ({@code shove}: positive
+     * away from the blast, negative inward) and how many packets of a discharge the casing's charge throws through it ({@code arc}).
      */
-    public record Packed(float power, boolean fire, Material casing, int fuseTicks, boolean impact, float fragDamage, boolean flash) {
+    public record Packed(float power, boolean fire, Material casing, int fuseTicks, boolean impact, float fragDamage, boolean flash, float shove, int arc) {
     }
 
     /** A charge item read as the placed block reads its contents. Empty for an item that is not a charge. */
@@ -73,6 +74,16 @@ public final class Blast {
                                                   io.github.soundgoodizerfan.feedback.modular.type.ModularType type,
                                                   java.util.Map<net.minecraft.resources.ResourceLocation, Material> materials) {
         java.util.List<Cartridge.Charge> filler = new java.util.ArrayList<>();
+        float shoved = 0f;
+        int arcs = 0, holds = 0;
+        for (var a : io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.attunements(design))
+            if (a.kind().equals("blast_arc"))
+                arcs += a.level();
+            else if (a.kind().equals("blast_hold"))
+                holds += a.level();
+        for (var a : io.github.soundgoodizerfan.feedback.modular.bake.MaterialPerks.attunements(design))
+            shoved += (a.kind().equals("blast_shove") ? 1 : a.kind().equals("blast_pull") ? -1 : 0) * a.level();
+        float shove = shoved * GunTuning.BLAST_SHOVE_PER_LEVEL;
         Material casing = null;
         int ticks = GunTuning.DEMO_FUSE_TICKS;
         boolean impact = false, forceFire = false, flash = false;
@@ -100,6 +111,8 @@ public final class Blast {
                 filler.add(new Cartridge.Charge(part.material(), part.count()));
         }
         Material cased = casing;
+        int arc = arcs;
+        float held = 1f + GunTuning.BLAST_HOLD_PER_LEVEL * holds;
         float c = confine, f = frag, add = burnAdd, pf = payloadFrag;
         boolean fireAlways = forceFire, flashed = flash, hit = impact;
         int fuse = ticks;
@@ -108,8 +121,8 @@ public final class Blast {
             float damage = Math.min(GunTuning.GRENADE_FRAG_DAMAGE_MAX, (cased == null ? 0f
                     : cased.hardness().value() * GunTuning.GRENADE_FRAG_DAMAGE_PER_HARDNESS * f) + pf);
             float power = Math.min(FTuning.DEMO_POWER_MAX, FTuning.DEMO_POWER_PER_SQRT
-                    * (float) Math.sqrt(primed.potential() * primed.burned()) * confinement(cased, c));
-            return new Packed(power, fireAlways || fire(primed), cased, fuse, hit, damage, flashed);
+                    * (float) Math.sqrt(primed.potential() * primed.burned()) * confinement(cased, c) * held);
+            return new Packed(power, fireAlways || fire(primed), cased, fuse, hit, damage, flashed, shove, arc);
         });
     }
 
@@ -120,7 +133,7 @@ public final class Blast {
     public static void scatter(net.minecraft.server.level.ServerLevel level, net.minecraft.world.entity.Entity source,
                                @org.jetbrains.annotations.Nullable net.minecraft.world.entity.Entity owner,
                                net.minecraft.world.phys.Vec3 at, float power, Packed p) {
-        if (p.fragDamage() <= 0f && !p.flash())
+        if (p.fragDamage() <= 0f && !p.flash() && p.shove() == 0f && p.arc() == 0)
             return;
         float reach = Math.max(power * GunTuning.GRENADE_FRAG_REACH_PER_POWER, p.flash() ? GunTuning.GRENADE_FLASH_REACH : 0f);
         for (var body : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
@@ -130,6 +143,16 @@ public final class Blast {
                 continue;
             if (p.fragDamage() > 0f)
                 body.hurt(level.damageSources().explosion(source, owner), p.fragDamage() * near);
+            if (p.shove() != 0f) {
+                // Away from the blast (or toward it, mirrored), more the nearer, a little up so it lifts clear of the floor.
+                var off = body.position().subtract(at);
+                var dir = off.lengthSqr() < 1e-4 ? new net.minecraft.world.phys.Vec3(0, 1, 0) : off.normalize();
+                body.setDeltaMovement(body.getDeltaMovement().add(dir.x * p.shove() * near, Math.abs(p.shove()) * 0.3f * near, dir.z * p.shove() * near));
+                body.hurtMarked = true;
+            }
+            if (p.arc() > 0)
+                io.github.soundgoodizerfan.feedback.core.hazard.Shock.apply(body, io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.MV,
+                        p.arc() * near * io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.packetEu(io.github.soundgoodizerfan.feedback.core.unit.VoltageBand.MV));
             if (p.flash())
                 body.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.BLINDNESS,
                         Math.round(GunTuning.GRENADE_FLASH_TICKS * near)));

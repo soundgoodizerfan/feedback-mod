@@ -83,9 +83,16 @@ public final class MachineAura {
         return LEVELS.computeIfAbsent(be, b -> {
             if (!BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(b.getType()).getNamespace().equals(Feedback.MOD_ID))
                 return Map.of();
-            var design = b.collectComponents().get(FModular.DESIGN.get());
+            // A placed bed keeps its stack, not a design component.
+            var design = b instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularBedBlockEntity bed
+                    ? io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(bed.bed()) : b.collectComponents().get(FModular.DESIGN.get());
             return design == null ? Map.of() : MachineKinds.levels(design);
         });
+    }
+
+    /** Drops a block entity's cached kinds (a bed whose stack was just set). */
+    public static void forget(BlockEntity be) {
+        LEVELS.remove(be);
     }
 
     @SubscribeEvent

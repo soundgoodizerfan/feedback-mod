@@ -32,6 +32,7 @@ public class ModularBedBlockEntity extends BlockEntity {
 
     public void setBed(ItemStack stack) {
         bed = stack.copyWithCount(1);
+        io.github.soundgoodizerfan.feedback.modular.attunement.MachineAura.forget(this);
         changed();
     }
 

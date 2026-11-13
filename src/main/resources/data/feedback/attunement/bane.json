@@ -70,6 +70,24 @@
     },
     "container": {
       "kind": "pest_ward"
+    },
+    "mattress": {
+      "kind": "bane"
+    },
+    "bed_frame": {
+      "kind": "bane"
+    },
+    "module_casing": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "module_plating": {
+      "kind": "bane_ward",
+      "flaw": 0
+    },
+    "wiring": {
+      "kind": "bane_ward",
+      "flaw": 0
     }
   },
   "mirror": {
@@ -141,6 +159,24 @@
     },
     "container": {
       "kind": "pest_lure"
+    },
+    "mattress": {
+      "kind": "kin_calm"
+    },
+    "bed_frame": {
+      "kind": "kin_calm"
+    },
+    "module_casing": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "module_plating": {
+      "kind": "kin_hide",
+      "flaw": 0
+    },
+    "wiring": {
+      "kind": "kin_hide",
+      "flaw": 0
     }
   },
   "books": [
