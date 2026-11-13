@@ -48,7 +48,7 @@ import java.util.Set;
  * parts the link, so the input coasts free of the output, and a shift made then does not grind: the
  * clutch is how a gear is changed at speed without misuse. Dropped, it couples again at once.
  */
-public class TransmissionBlockEntity extends BlockEntity implements Analog, DataNode, Wearing, io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
+public class TransmissionBlockEntity extends BlockEntity implements Analog, DataNode, Wearing, io.github.soundgoodizerfan.feedback.machine.Mendable, io.github.soundgoodizerfan.feedback.fitting.StoredFittable {
 
     private final io.github.soundgoodizerfan.feedback.fitting.FittingStore fittings = new io.github.soundgoodizerfan.feedback.fitting.FittingStore();
 
@@ -57,6 +57,9 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         return fittings;
     }
 
+    /** The modular build this was made from, kept so its parts' attunements act while it is placed and it can be reworked after it is picked up. */
+    @Nullable
+    private io.github.soundgoodizerfan.feedback.modular.type.ModularDesign build;
     @Nullable
     private TransmissionDesign design;
     private int position;
@@ -85,6 +88,17 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         if (design == null || position <= 0)
             return Component.literal("N");
         return Component.literal(position > design.gears() ? "R" : String.valueOf(position));
+    }
+
+    @Override
+    public float mendableCondition() {
+        return condition;
+    }
+
+    @Override
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
     }
 
     @Override
@@ -117,7 +131,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         if (rpm > VehicleTuning.TRANSMISSION_FREE_SHIFT_RPM && position != 0 && next != 0 && !clutchPressed()) {
             var material = MaterialTable.get().materials().get(design.material());
             if (material != null)
-                condition = Math.max(VehicleTuning.TRANSMISSION_CONDITION_FLOOR, condition - rpm * design.wearPerRpm(material));
+                condition = Math.max(VehicleTuning.TRANSMISSION_CONDITION_FLOOR, condition - rpm * design.wearPerRpm(material) * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(this));
             if (level != null)
                 level.playSound(null, worldPosition, SoundEvents.ANVIL_PLACE, SoundSource.BLOCKS, 0.3f, 0.5f);
         }
@@ -231,6 +245,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
         design = input.get(FVehicles.TRANSMISSION_DESIGN.get());
+        build = input.get(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get());
         condition = input.getOrDefault(FDataComponents.TOOL_CONDITION.get(), 1f);
     }
 
@@ -239,6 +254,8 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         super.collectImplicitComponents(components);
         if (design != null)
             components.set(FVehicles.TRANSMISSION_DESIGN.get(), design);
+        if (build != null)
+            components.set(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get(), build);
         if (condition < 1f)
             components.set(FDataComponents.TOOL_CONDITION.get(), condition);
     }
@@ -247,6 +264,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
     public void removeComponentsFromTag(CompoundTag tag) {
         super.removeComponentsFromTag(tag);
         tag.remove("Design");
+        tag.remove("Build");
         tag.remove("Condition");
     }
 
@@ -255,6 +273,8 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
         super.saveAdditional(tag, registries);
         if (design != null)
             TransmissionDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
+        if (build != null)
+            io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.encodeStart(NbtOps.INSTANCE, build).ifSuccess(t -> tag.put("Build", t));
         tag.putInt("Position", position);
         fittings.save(tag);
         tag.putFloat("Condition", condition);
@@ -264,6 +284,7 @@ public class TransmissionBlockEntity extends BlockEntity implements Analog, Data
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? TransmissionDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
+        build = tag.contains("Build") ? io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Build")).result().orElse(null) : null;
         position = tag.getInt("Position");
         fittings.load(tag, this);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;

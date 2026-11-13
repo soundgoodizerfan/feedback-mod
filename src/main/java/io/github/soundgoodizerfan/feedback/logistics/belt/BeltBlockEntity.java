@@ -43,10 +43,13 @@ import net.neoforged.neoforge.items.IItemHandler;
  * only so a reload can hand it back. It is an {@link ElectricNode} so a powered module takes {@code Eu}
  * from the wire beside it, and {@link Switchable} so a controller can engage or release a module.
  */
-public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable, CargoSave.Holder, ModuleHost, io.github.soundgoodizerfan.feedback.control.ChannelSource {
+public class BeltBlockEntity extends ElectricNode implements Wearing, io.github.soundgoodizerfan.feedback.machine.Mendable, Switchable, CargoSave.Holder, ModuleHost, io.github.soundgoodizerfan.feedback.control.ChannelSource {
 
     private BeltSpec spec = BeltSpec.PLAIN;
     private float condition = 1f;
+    /** The modular build this cell was made from, kept so its parts' attunements act while it is placed. */
+    @org.jetbrains.annotations.Nullable
+    private io.github.soundgoodizerfan.feedback.modular.type.ModularDesign build;
     private BeltModule module;
     private Direction face = Direction.NORTH;
     private Band band = Band.BRIGHT;
@@ -216,8 +219,19 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         return level != null && BeltRuns.of(level).speedAt(worldPosition) != 0f;
     }
 
+    @Override
+    public float mendableCondition() {
+        return condition;
+    }
+
+    @Override
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
+    }
+
     void wear(float amount) {
-        float next = Math.max(LogisticsTuning.BELT_CONDITION_FLOOR, condition - amount);
+        float next = Math.max(LogisticsTuning.BELT_CONDITION_FLOOR, condition - amount * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(this));
         if (next != condition) {
             condition = next;
             setChanged();
@@ -436,6 +450,8 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         writeState(tag);
+        if (build != null)
+            io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.encodeStart(net.minecraft.nbt.NbtOps.INSTANCE, build).ifSuccess(t -> tag.put("Build", t));
         List<Object[]> over = level == null || level.isClientSide ? pending : BeltRuns.of(level).savedOver(worldPosition);
         if (over.isEmpty())
             over = pending;
@@ -448,6 +464,8 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         super.loadAdditional(tag, registries);
         spec = BeltSpec.read(tag);
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
+        if (tag.contains("Build"))
+            build = io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.parse(net.minecraft.nbt.NbtOps.INSTANCE, tag.get("Build")).result().orElse(null);
         module = tag.contains("Module") ? BeltModule.byOrdinal(tag.getInt("Module")) : null;
         face = Direction.from3DDataValue(tag.getInt("Face"));
         band = Band.byOrdinal(tag.getInt("Band"));
@@ -474,6 +492,7 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
     @Override
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
+        build = input.get(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get());
         CompoundTag tag = input.get(FDataComponents.BELT.get());
         if (tag != null) {
             spec = BeltSpec.read(tag);
@@ -488,12 +507,14 @@ public class BeltBlockEntity extends ElectricNode implements Wearing, Switchable
         spec.write(tag);
         tag.putFloat("Condition", condition);
         components.set(FDataComponents.BELT.get(), tag);
+        if (build != null)
+            components.set(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get(), build);
     }
 
     @Override
     public void removeComponentsFromTag(CompoundTag tag) {
         super.removeComponentsFromTag(tag);
-        for (String k : new String[]{"Material", "Friction", "MaxTu", "Cleat", "Condition"})
+        for (String k : new String[]{"Material", "Friction", "MaxTu", "Cleat", "Condition", "Build"})
             tag.remove(k);
     }
 }

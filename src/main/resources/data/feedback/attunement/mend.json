@@ -229,6 +229,27 @@
     },
     "lamp_filament": {
       "kind": "mend"
+    },
+    "gear_set": {
+      "kind": "mend"
+    },
+    "synchro": {
+      "kind": "mend"
+    },
+    "gearbox_case": {
+      "kind": "mend"
+    },
+    "prop_hub": {
+      "kind": "mend"
+    },
+    "prop_blades": {
+      "kind": "mend"
+    },
+    "band": {
+      "kind": "mend"
+    },
+    "cleat": {
+      "kind": "mend"
     }
   },
   "mirror": {

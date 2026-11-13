@@ -45,8 +45,11 @@ import net.minecraft.world.phys.Vec3;
  * <p>Cost: no work unless the shaft turns. The server tick reads one speed and one density; the
  * physics step is one impulse and one torque with nothing allocated.
  */
-public class PropBlockEntity extends RotationNode implements BlockEntitySubLevelActor {
+public class PropBlockEntity extends RotationNode implements BlockEntitySubLevelActor, io.github.soundgoodizerfan.feedback.machine.Mendable {
 
+    /** The modular build this was made from, kept so its parts' attunements act while it is placed and it can be reworked after it is picked up. */
+    @Nullable
+    private io.github.soundgoodizerfan.feedback.modular.type.ModularDesign build;
     @Nullable
     private volatile PropDesign design;
     private volatile float condition = 1f;
@@ -79,6 +82,18 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
     public float condition() {
         return condition;
     }
+
+    @Override
+    public float mendableCondition() {
+        return condition;
+    }
+
+    @Override
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
+    }
+
 
     @Nullable
     private Material material() {
@@ -132,7 +147,7 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
         float n = Math.abs(turn) / 60f;
         float tip = (float) (Math.PI * d.diameter() * n);
         if (tip > limit && condition > VehicleTuning.PROP_CONDITION_FLOOR) {
-            condition = Math.max(VehicleTuning.PROP_CONDITION_FLOOR, condition - VehicleTuning.PROP_WEAR_PER_TICK * (tip / limit - 1f));
+            condition = Math.max(VehicleTuning.PROP_CONDITION_FLOOR, condition - VehicleTuning.PROP_WEAR_PER_TICK * (tip / limit - 1f) * io.github.soundgoodizerfan.feedback.modular.attunement.MachineKinds.wearShare(this));
             setChanged();
         }
         float drag = Math.abs(turn) < 1f ? 0f : torqueNm(d, n, rho) / Math.abs(turn);
@@ -187,6 +202,7 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
     protected void applyImplicitComponents(DataComponentInput input) {
         super.applyImplicitComponents(input);
         design = input.get(FVehicles.PROP_DESIGN.get());
+        build = input.get(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get());
     }
 
     @Override
@@ -194,6 +210,8 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
         super.collectImplicitComponents(components);
         if (design != null)
             components.set(FVehicles.PROP_DESIGN.get(), design);
+        if (build != null)
+            components.set(io.github.soundgoodizerfan.feedback.registry.FModular.DESIGN.get(), build);
     }
 
     @Override
@@ -201,6 +219,8 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
         super.saveAdditional(tag, registries);
         if (design != null)
             PropDesign.CODEC.encodeStart(NbtOps.INSTANCE, design).ifSuccess(t -> tag.put("Design", t));
+        if (build != null)
+            io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.encodeStart(NbtOps.INSTANCE, build).ifSuccess(t -> tag.put("Build", t));
         tag.putFloat("Condition", condition);
     }
 
@@ -208,6 +228,7 @@ public class PropBlockEntity extends RotationNode implements BlockEntitySubLevel
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         design = tag.contains("Design") ? PropDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Design")).result().orElse(null) : null;
+        build = tag.contains("Build") ? io.github.soundgoodizerfan.feedback.modular.type.ModularDesign.CODEC.parse(NbtOps.INSTANCE, tag.get("Build")).result().orElse(null) : null;
         condition = tag.contains("Condition") ? tag.getFloat("Condition") : 1f;
     }
 }

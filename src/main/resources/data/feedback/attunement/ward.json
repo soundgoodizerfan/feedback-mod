@@ -231,6 +231,27 @@
     },
     "lamp_filament": {
       "kind": "soak"
+    },
+    "gear_set": {
+      "kind": "soak"
+    },
+    "synchro": {
+      "kind": "soak"
+    },
+    "gearbox_case": {
+      "kind": "soak"
+    },
+    "prop_hub": {
+      "kind": "soak"
+    },
+    "prop_blades": {
+      "kind": "soak"
+    },
+    "band": {
+      "kind": "soak"
+    },
+    "cleat": {
+      "kind": "soak"
     }
   },
   "starter": true,
