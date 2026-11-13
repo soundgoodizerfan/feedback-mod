@@ -39,6 +39,8 @@ It connects along one axis: the two faces at either end of the direction you pla
 
 It works with anything that has a temperature: [crucibles](Crucible.md), [furnaces](Furnaces.md), a [Boiler](Boiler.md), even overloaded [cable](Copper_Cable.md). It is how a [Fission Reactor](Fission_Reactor.md) core hands its heat to a boiler.
 
+**Thermal shock** is misuse. When its two sides stand more than **600 Tu** apart, the wall cracks, a little more the wider the gap, down to half condition and no further. A cracked wall passes less heat. [Ward](Enchanting_Table.md#on-a-machine) slows the cracking.
+
 There's no power, no switch and no direction to set. Heat always runs downhill. The decisions are **where you put it** and what you build it from.
 
 ## Ideas
@@ -50,4 +52,4 @@ There's no power, no switch and no direction to set. Heat always runs downhill. 
 
 ## Attunements
 
-A heat exchanger whose two sides stand far apart in temperature cracks its wall: thermal shock wears the core and fins. **Ward** on either slows it and **Mend** closes it, paid in experience from the nearest player within 6 blocks. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.
+Thermal shock wears the core and fins. **Ward** on either slows it and **Mend** closes it, paid in experience from the nearest player within 6 blocks. See the [Enchanting Table](Enchanting_Table.md#on-a-machine) page.

@@ -135,6 +135,7 @@ A machine's parts are attuned at the table like a tool's, and a built machine's 
 | **Momentum** | A flywheel or water wheel carries more momentum | Flywheel Disc, Crank Flywheel, Wheel Rim |
 | **Stance** | A flywheel's rim holds to a higher speed before it lets go | Flywheel Disc |
 | **Hold** | A flywheel bearing holds its rim to a higher speed; a frame carries more torque | Flywheel Bearing, Frame |
+| **Cling** | A belt's cleat grips cargo harder | Cleat |
 | **Glaze** | A flywheel drags less in the air and on its bearings | Flywheel Disc |
 | **Tide** | A compressor rotor runs cooler | Compressor Rotor |
 | **Slip** | A pump drives through liquid with less load; a jar leaks less charge | Pump Impeller; Jar Glass, Outer Sleeve |
