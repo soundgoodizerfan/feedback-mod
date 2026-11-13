@@ -4,6 +4,7 @@ package io.github.soundgoodizerfan.feedback.core.hazard;
 
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalTuning;
 import io.github.soundgoodizerfan.feedback.core.electric.ElectricNode;
+import io.github.soundgoodizerfan.feedback.core.thermal.AmbientTable;
 import io.github.soundgoodizerfan.feedback.core.thermal.ItemHeat;
 import io.github.soundgoodizerfan.feedback.core.thermal.ThermalBody;
 import io.github.soundgoodizerfan.feedback.core.unit.Tu;
@@ -59,8 +60,11 @@ public final class HazardEvents {
                 return;
             Tu tu = ItemHeat.get(held, player.level());
             float limit = held.getItem() instanceof Handled h ? Math.max(safe, h.holdsUpToTu(held, player.level())) : safe;
-            if (tu.value() > limit && HotContact.burn(player, tu))
+            if (tu.value() > limit && HotContact.burn(player, tu)) {
                 warn(player, "hazard.feedback.hot_hand");
+                // The hand takes the heat the piece gives up.
+                ItemHeat.drain(held, player.level(), (tu.value() - AmbientTable.at(player.level()).value()) * HazardTuning.CONTACT_HEAT_TAKEN);
+            }
             else if (tu.value() > ThermalTuning.CONTACT_PAIN_TU.value() && tu.value() <= limit && Protection.insulatedFrom(player, tu.value()))
                 io.github.soundgoodizerfan.feedback.core.EventTrigger.fire(player, "progress/heat/tongs");
         }

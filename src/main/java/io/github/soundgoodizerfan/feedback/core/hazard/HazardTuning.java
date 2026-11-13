@@ -34,6 +34,8 @@ public final class HazardTuning {
 
     /** Invented. Twice a second, as the bare wire's shock already is: a hazard and not a death trap. */
     public static final int CONTACT_INTERVAL_TICKS = 10;
+    /** The share of a held piece's heat above ambient the hand takes with each burn. */
+    public static final float CONTACT_HEAT_TAKEN = 0.15f;
 
     /**
      * Invented. A grip insulates when it conducts heat worse than this, on the same scale as a

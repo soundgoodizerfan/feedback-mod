@@ -52,7 +52,7 @@ import io.github.soundgoodizerfan.feedback.modular.type.ModularType;
  * @param sight      whether a sight is fitted.
  * @param sightFov   the field a scope closes the view to when aimed (its zoom axis through its lens); 1 for any other sight.
  * @param bank       levels of charge attuned on the seat: a seat that holds more charge sends a bigger pulse.
- * @param limitTu    the barrel temperature (Tu) the gun's heat reads 1: the barrel material's service temperature, a constant for one that states none.
+ * @param limitTu    the barrel temperature (Tu) the gun's heat reads 1: the barrel material's service temperature (a constant for one that states none), no higher than where a hand is burned, so a light shot leaves a warm gun and the limit is a gun too hot to hold.
  * @param sense      share of the barrel's true heat the governor's element passes on (its thermal conductivity); 1 for none fitted.
  * @param zoomGain   how strongly the zoom coil's field builds, from its winding's conductor; 1 for none fitted.
  */
@@ -140,7 +140,7 @@ public record ElectricGunSpec(Seat seat, int tier, float boreMm, float lengthM, 
                     length = role.axis(p, "barrel_length");
                     loss = Mth.clamp(m.ampacity().orElse(0f) * ModularTuning.EGUN_BARREL_LOSS_PER_AMPACITY, 0f, ModularTuning.EGUN_BARREL_LOSS_MAX);
                     mass = ModularBake.mass(role, p, m);
-                    limitTu = m.thermal().serviceTemperature().map(v -> v.value()).orElse(ModularTuning.EGUN_LIMIT_TU);
+                    limitTu = Math.min(m.thermal().serviceTemperature().map(v -> v.value()).orElse(ModularTuning.EGUN_LIMIT_TU), io.github.soundgoodizerfan.feedback.core.hazard.HazardTuning.CONTACT_BURN_TU.value());
                     barrel = true;
                 }
                 case RECEIVER -> {
