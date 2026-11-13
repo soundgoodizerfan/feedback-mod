@@ -529,11 +529,13 @@ public record Material(St hardness, Tu minTemperature, Tu maxTemperature,
      * top-level {@code ampacity}; this holds the other figures. Resistance is not modelled, so
      * {@code drop} is stated directly as the thing it would have been derived to be.
      *
-     * @param drop               volts lost per block of a wire of it, per amp carried (6.4). A
-     *                           path's drop is the sum over its blocks of {@code drop x current}.
-     * @param electrodePotential volts of a cell electrode of it against a common reference. A
-     *                           galvanic cell's voltage is the difference between its two
-     *                           electrodes' figures, so no cell names a voltage.
+     * @param drop               Eu lost from each packet per block of a wire of it, before the
+     *                           gauge and {@code ElectricMachineTuning#CABLE_LOSS_EU_PER_DROP} (6.4). A
+     *                           path loses the sum over its blocks, whatever the current.
+     * @param electrodePotential how noble a cell electrode of it is against a common reference (never
+     *                           shown as volts). A galvanic cell's band follows the difference between
+     *                           its two electrodes' figures, and an electrolytic bath plates the noblest
+     *                           first, so no cell names a voltage.
      * @param conductivity       how well a body of it passes current, copper 1. Read by {@code Exposure}
      *                           (what a worn plate or a floor does to a shock); absent, the kind decides
      *                           there: a metal conducts, an organic insulates.

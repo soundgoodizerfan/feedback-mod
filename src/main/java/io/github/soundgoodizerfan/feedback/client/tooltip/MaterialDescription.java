@@ -73,8 +73,8 @@ public final class MaterialDescription {
         s.reflectivity().ifPresent(v -> row(out, 4, "reflectivity", percent(v)));
 
         m.ampacity().ifPresent(v -> row(out, 5, "ampacity", num(v) + "x copper"));
-        m.electrical().drop().ifPresent(v -> row(out, 5, "drop", num(v) + " V"));
-        m.electrical().electrodePotential().ifPresent(v -> row(out, 5, "electrode", num(v) + " V"));
+        m.electrical().drop().ifPresent(v -> row(out, 5, "drop", num(v * io.github.soundgoodizerfan.feedback.machine.ElectricMachineTuning.CABLE_LOSS_EU_PER_DROP) + " Eu"));
+        m.electrical().electrodePotential().ifPresent(v -> row(out, 5, "electrode", Component.translatable(v > 0f ? "screen.feedback.probe.noble" : "screen.feedback.probe.base").getString()));
         m.electrical().insulation().ifPresent(b -> row(out, 5, "insulation", b.name()));
         m.corrosionResistance().ifPresent(v -> row(out, 5, "corrosion", percent(v)));
         m.propellant().ifPresent(p -> {

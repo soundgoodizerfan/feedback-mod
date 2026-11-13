@@ -35,7 +35,8 @@ public class DynamotorItem extends BlockItem implements Modular {
         ModularTooltip.add(stack, tooltip);
         CompoundTag state = stack.get(FDataComponents.DYNAMOTOR.get());
         if (state != null) {
-            tooltip.add(Component.translatable("tooltip.feedback.dynamotor.volts", String.format(java.util.Locale.ROOT, "%.3g", state.getFloat("VoltsPerRpm"))));
+            tooltip.add(Component.translatable("tooltip.feedback.dynamotor.band",
+                    Component.translatable("feedback.unit.eu.band." + state.getString("Band"))));
             tooltip.add(Component.translatable("tooltip.feedback.dynamotor.amps", Math.round(state.getFloat("RatedAmps"))));
             if (state.getBoolean("Jacketed"))
                 tooltip.add(Component.translatable("tooltip.feedback.dynamotor.jacket"));

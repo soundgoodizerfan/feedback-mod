@@ -2652,14 +2652,14 @@ public final class BlueprintBoard {
 
     private static List<Component> machineLines(ModularBake.MachineSpec m) {
         return List.of(Component.translatable("gui.feedback.blueprint_table.machine.frame", Math.round(m.frameSu())),
-                Component.translatable("gui.feedback.blueprint_table.machine.volts", String.format(java.util.Locale.ROOT, "%.3g", m.voltsPerRpm())),
                 Component.translatable("gui.feedback.blueprint_table.machine.amps", Math.round(m.ratedAmps())),
                 Component.translatable("gui.feedback.blueprint_table.machine.band", Component.translatable(m.band().key())));
     }
 
     private static List<Component> cellLines(ModularBake.CellSpec c) {
         return List.of(Component.translatable("gui.feedback.blueprint_table.cell.cells", c.cells()),
-                Component.translatable("gui.feedback.blueprint_table.cell.volts", String.format(java.util.Locale.ROOT, "%.1f", c.cells() * c.plates().voltsFull())),
+                Component.translatable("gui.feedback.blueprint_table.cell.band", Component.translatable(
+                        io.github.soundgoodizerfan.feedback.core.electric.ElectricRules.bandOfPotential(c.cells() * c.plates().voltsFull()).key())),
                 Component.translatable("gui.feedback.blueprint_table.cell.capacity", Math.round(c.capacity())),
                 Component.translatable("gui.feedback.blueprint_table.cell.case", Component.translatable(c.caseBand().key())));
     }
