@@ -6,8 +6,6 @@ import io.github.soundgoodizerfan.feedback.core.FTuning;
 import io.github.soundgoodizerfan.feedback.logistics.LogisticsTuning;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -25,11 +23,6 @@ import net.minecraft.world.level.Level;
 public final class Sorter {
 
     private Sorter() {
-    }
-
-    /** Tag test (a datapack-friendly route; modded equivalents work for free). Exact, no noise. */
-    public static boolean hasTag(ItemStack stack, TagKey<Item> tag) {
-        return stack.is(tag);
     }
 
     public static Verdict decide(Band band, ItemStack stack, Level level, Detector d, boolean dirty, long seed) {
