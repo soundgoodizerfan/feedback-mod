@@ -619,6 +619,12 @@ public final class MachineTuning {
     /** Placeholder. A worn cutter head bottoms out here: it cuts at a quarter of its rate and never stops. */
     public static final float CUTTER_CONDITION_FLOOR = 0.25f;
 
+    /** Placeholder. Relative odds, per cut of input the stick does not cover: the seeded cut, a jam, blade wear, scrap of the material. Bad end of the mix for an early machine. */
+    public static final float CUTTER_SEEDED_ODDS = 4f, CUTTER_JAM_ODDS = 2f, CUTTER_BLADE_WEAR_ODDS = 2f, CUTTER_SCRAP_ODDS = 2f;
+
+    /** Placeholder. Units of misuse a blade-wearing bad cut costs (stock too hard for the head costs its hardness ratio, about 1 to 3). */
+    public static final float CUTTER_BLADE_WEAR_UNITS = 3f;
+
     /** Placeholder. Hardness assumed for a cutter head that carries no material. */
     public static final float CUTTER_DEFAULT_HEAD_HARDNESS = 30f;
 

@@ -33,7 +33,9 @@ import net.minecraft.world.level.block.state.BlockState;
  * <h2>The stick is the knowledge</h2>
  * A recipe data stick in its slot says which cut to make on stock of the class it was recorded on. Anything else gets a
  * seeded pseudo-random legal cut ({@link CutterCuts#seeded}), and an input the head cannot cut at all is voided: consumed, nothing out.
- * Voiding only: the cutter never jams on junk (an [OPEN] ruling the spec left; this is its default).
+ * Beside the seeded cut, input the stick does not cover can go wrong (philosophy 5, early machines sit toward the bad end): it jams
+ * the output (the cutter stalls until a hand clears it), wears the head as misuse, or comes out as scrap of its material. The mix is
+ * {@code CUTTER_SEEDED_ODDS} / {@code CUTTER_JAM_ODDS} / {@code CUTTER_BLADE_WEAR_ODDS} / {@code CUTTER_SCRAP_ODDS}, rolled per cut.
  *
  * <h2>The head wears only from misuse</h2>
  * Stock harder than the head's material, running with the output full, or a supply past its EHV rating each cost the head condition;
@@ -49,6 +51,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
     private float progress;
     private float rate;
     private float over;
+    private boolean jammed;
 
     public PowerCutterBlockEntity(BlockPos pos, BlockState state) {
         super(FBlockEntities.POWER_CUTTER.get(), pos, state);
@@ -79,7 +82,20 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
     }
 
     private boolean working() {
-        return !head.isEmpty() && !input.isEmpty();
+        return !head.isEmpty() && !input.isEmpty() && !jammed;
+    }
+
+    public boolean isJammed() {
+        return jammed;
+    }
+
+    /** A hand frees the jam; true if there was one. */
+    public boolean clearJam() {
+        if (!jammed)
+            return false;
+        jammed = false;
+        sync();
+        return true;
     }
 
     // --- the tick -----------------------------------------------------------------------------
@@ -118,8 +134,32 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
             consume(1);
             return;
         }
-        CutterCuts.Cut chosen = CutterCuts.recorded(server, legal, what, stick.get(FDataComponents.RECORDED_CUT.get()))
-                .orElseGet(() -> CutterCuts.seeded(server, legal, what, headItem.type()));
+        Optional<CutterCuts.Cut> told = CutterCuts.recorded(server, legal, what, stick.get(FDataComponents.RECORDED_CUT.get()));
+        boolean covered = told.isPresent();
+        CutterCuts.Cut chosen = told.orElseGet(() -> CutterCuts.seeded(server, legal, what, headItem.type()));
+        if (!covered) {
+            float roll = server.getRandom().nextFloat() * (MachineTuning.CUTTER_SEEDED_ODDS + MachineTuning.CUTTER_JAM_ODDS
+                    + MachineTuning.CUTTER_BLADE_WEAR_ODDS + MachineTuning.CUTTER_SCRAP_ODDS);
+            if ((roll -= MachineTuning.CUTTER_SEEDED_ODDS) >= 0f) {
+                if ((roll -= MachineTuning.CUTTER_JAM_ODDS) < 0f) {
+                    jammed = true;
+                    sync();
+                    return;
+                }
+                if ((roll -= MachineTuning.CUTTER_BLADE_WEAR_ODDS) < 0f) {
+                    wear(MachineTuning.CUTTER_BLADE_WEAR_UNITS);
+                    consume(1);
+                    return;
+                }
+                Optional<net.minecraft.world.item.Item> scrap = what.material().item(what.id(), "scrap");
+                if (scrap.isPresent() && fitsOutput(new ItemStack(scrap.get()))) {
+                    consume(1);
+                    addOutput(new ItemStack(scrap.get()));
+                    sync();
+                    return;
+                }
+            }
+        }
         if (input.getCount() < chosen.inputs())
             return; // waits for more stock: a log's cut needs a whole log
         if (!fitsOutput(chosen.result())) {
@@ -265,6 +305,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
         tag.put("Input", input.saveOptional(registries));
         tag.put("Output", output.saveOptional(registries));
         tag.putFloat("Progress", progress);
+        tag.putBoolean("Jammed", jammed);
     }
 
     @Override
@@ -275,6 +316,7 @@ public class PowerCutterBlockEntity extends ElectricNode implements Headed, Wear
         input = ItemStack.parseOptional(registries, tag.getCompound("Input"));
         output = ItemStack.parseOptional(registries, tag.getCompound("Output"));
         progress = tag.getFloat("Progress");
+        jammed = tag.getBoolean("Jammed");
     }
 
     @Override

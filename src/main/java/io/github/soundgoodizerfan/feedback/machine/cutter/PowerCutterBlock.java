@@ -25,7 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * The Power Cutter. Right click with a cutter head or a data stick to seat it (the one it replaces comes back); empty-handed takes the
- * stick back, sneaking takes the head. Any other item is fed in by hand like a hopper would, and the output is taken with an empty
+ * stick back, sneaking takes the head. Any other item is fed in by hand like a hopper would, and an empty hand first clears a jam, then takes the output with an empty
  * hand once the stick and head are out.
  */
 public class PowerCutterBlock extends Block implements EntityBlock {
@@ -59,6 +59,8 @@ public class PowerCutterBlock extends Block implements EntityBlock {
         if (!(level.getBlockEntity(pos) instanceof PowerCutterBlockEntity cutter))
             return InteractionResult.PASS;
         if (!level.isClientSide) {
+            if (cutter.clearJam())
+                return InteractionResult.sidedSuccess(false);
             ItemStack out = cutter.takeOutput(64, false);
             give(player, !out.isEmpty() ? out : player.isShiftKeyDown() ? cutter.removeHead() : cutter.removeStick());
         }
