@@ -17,7 +17,7 @@ import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategor
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
-/** Each fitting's grid: a bare grapple and the fitting's part, the output cycling through the fittings. */
+/** Each fitting's grid: a bare grapple and the fitting's part, the output cycling through the fittings and the items that qualify. */
 public class GrappleUpgradeCraftingExtension implements ICraftingCategoryExtension<GrappleUpgradeRecipe> {
 
     @Override
@@ -27,12 +27,15 @@ public class GrappleUpgradeCraftingExtension implements ICraftingCategoryExtensi
         for (int i = 0; i < 5; i++)
             slots.add(new ArrayList<>());
         for (var f : GrappleUpgradeRecipe.FITTINGS) {
-            slots.get(0).add(new ItemStack(FItems.GRAPPLE.get()));
-            for (int i = 1; i < 5; i++)
-                slots.get(i).add(i <= f.count() ? new ItemStack(f.part().get()) : ItemStack.EMPTY);
-            ItemStack out = new ItemStack(FItems.GRAPPLE.get());
-            out.set(FDataComponents.GRAPPLE_FITTINGS.get(), f.bit());
-            outputs.add(out);
+            // One frame per qualifying item, every slot in step, so a grid always holds one item of the form.
+            for (ItemStack part : f.shown().get()) {
+                slots.get(0).add(new ItemStack(FItems.GRAPPLE.get()));
+                for (int i = 1; i < 5; i++)
+                    slots.get(i).add(i <= f.count() ? part : ItemStack.EMPTY);
+                ItemStack out = new ItemStack(FItems.GRAPPLE.get());
+                out.set(FDataComponents.GRAPPLE_FITTINGS.get(), f.bit());
+                outputs.add(out);
+            }
         }
         // Re-lining: four wires of a metal (iron's shown) give the grapple that metal for a line.
         slots.get(0).add(new ItemStack(FItems.GRAPPLE.get()));
