@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "minecraft:item/sugar_cane"
+    "layer0": "feedback:item/dough_roll"
   }
 }

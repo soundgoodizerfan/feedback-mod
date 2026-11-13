@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "feedback:item/modular/grey/vanilla_copper_ingot"
+    "layer0": "feedback:item/modular/grey/part_cannister"
   }
 }
