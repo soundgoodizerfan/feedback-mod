@@ -65,6 +65,7 @@
     },
     "F": {
       "name": "bed_frame",
+      "class": "mount",
       "forms": [
         "bed_frame"
       ],

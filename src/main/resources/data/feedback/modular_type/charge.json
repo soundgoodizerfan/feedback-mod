@@ -1,13 +1,17 @@
 {
   "school": "chemical:3",
   "family": "charge",
-  "required": ["C", "F"],
+  "required": [
+    "C",
+    "F"
+  ],
   "slot": "mainhand",
   "wear_role": "C",
   "primary": "C",
   "roles": {
     "C": {
       "name": "casing",
+      "class": "housing",
       "forms": [
         "charge_casing"
       ],
@@ -145,6 +149,7 @@
     },
     "P": {
       "name": "payload",
+      "class": "working_face",
       "forms": [
         "nugget",
         "flint",

@@ -1,6 +1,11 @@
 {
   "family": "gun",
-  "required": ["R", "B", "T", "G"],
+  "required": [
+    "R",
+    "B",
+    "T",
+    "G"
+  ],
   "blueprint": true,
   "slot": "mainhand",
   "wear_role": "B",
@@ -8,6 +13,7 @@
   "roles": {
     "R": {
       "name": "receiver",
+      "class": "housing",
       "forms": [
         "receiver"
       ],
@@ -46,6 +52,7 @@
     },
     "B": {
       "name": "barrel",
+      "class": "working_face",
       "forms": [
         "gun_barrel"
       ],
@@ -122,6 +129,7 @@
     },
     "D": {
       "name": "second_barrel",
+      "class": "working_face",
       "forms": [
         "gun_barrel"
       ],
@@ -187,6 +195,7 @@
     },
     "A": {
       "name": "slide",
+      "class": "working_face",
       "forms": [
         "slide"
       ],
@@ -220,6 +229,7 @@
     },
     "K": {
       "name": "bolt",
+      "class": "working_face",
       "forms": [
         "bolt"
       ],
@@ -311,6 +321,7 @@
     },
     "G": {
       "name": "grip",
+      "class": "mount",
       "forms": [
         "gun_grip"
       ],
@@ -366,6 +377,7 @@
     },
     "F": {
       "name": "cylinder",
+      "class": "housing",
       "forms": [
         "cylinder"
       ],
@@ -394,6 +406,7 @@
     },
     "E": {
       "name": "tube",
+      "class": "housing",
       "forms": [
         "magazine_tube"
       ],
@@ -410,6 +423,7 @@
     },
     "Y": {
       "name": "belt",
+      "class": "housing",
       "forms": [
         "belt_feed"
       ],
@@ -435,6 +449,7 @@
     },
     "b": {
       "name": "box_feed",
+      "class": "housing",
       "forms": [
         "box_feed"
       ],
@@ -451,6 +466,7 @@
     },
     "S": {
       "name": "sight",
+      "class": "mount",
       "forms": [
         "sight"
       ],
@@ -509,6 +525,7 @@
     },
     "M": {
       "name": "suppressor",
+      "class": "housing",
       "forms": [
         "suppressor"
       ],
@@ -543,6 +560,7 @@
     },
     "Q": {
       "name": "eddy_sleeve",
+      "class": "housing",
       "forms": [
         "eddy_sleeve"
       ],
@@ -560,6 +578,7 @@
     },
     "Z": {
       "name": "thermal_sleeve",
+      "class": "housing",
       "forms": [
         "thermal_sleeve"
       ],
@@ -594,6 +613,7 @@
     },
     "I": {
       "name": "bipod",
+      "class": "mount",
       "forms": [
         "bipod"
       ],
@@ -704,6 +724,7 @@
     },
     "H": {
       "name": "shroud",
+      "class": "housing",
       "forms": [
         "barrel_shroud"
       ],
@@ -868,6 +889,7 @@
     },
     "i": {
       "name": "stock",
+      "class": "mount",
       "forms": [
         "gun_stock"
       ],
@@ -925,6 +947,7 @@
     },
     "W": {
       "name": "foregrip",
+      "class": "mount",
       "forms": [
         "foregrip"
       ],

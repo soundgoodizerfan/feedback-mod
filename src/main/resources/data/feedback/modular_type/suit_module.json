@@ -11,6 +11,7 @@
   "roles": {
     "H": {
       "name": "casing",
+      "class": "housing",
       "forms": [
         "module_casing"
       ],
@@ -240,6 +241,7 @@
     },
     "A": {
       "name": "module_actuator",
+      "class": "working_face",
       "forms": [
         "module_actuator"
       ],
@@ -288,6 +290,7 @@
     },
     "R": {
       "name": "module_thruster",
+      "class": "working_face",
       "forms": [
         "module_thruster"
       ],
@@ -327,6 +330,7 @@
     },
     "C": {
       "name": "module_coil",
+      "class": "working_face",
       "forms": [
         "module_coil"
       ],
@@ -405,6 +409,7 @@
     },
     "G": {
       "name": "module_tread",
+      "class": "working_face",
       "forms": [
         "module_tread"
       ],
@@ -499,6 +504,7 @@
     },
     "N": {
       "name": "motor",
+      "class": "working_face",
       "forms": [
         "motor"
       ],

@@ -7,6 +7,7 @@
   "roles": {
     "C": {
       "name": "container",
+      "class": "housing",
       "forms": [
         "raw",
         "cooked"

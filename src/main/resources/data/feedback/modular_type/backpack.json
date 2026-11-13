@@ -1,12 +1,16 @@
 {
   "family": "backpack",
-  "required": ["S", "T"],
+  "required": [
+    "S",
+    "T"
+  ],
   "wear_litres": 2.0,
   "wear_role": "T",
   "primary": "S",
   "roles": {
     "S": {
       "name": "shell",
+      "class": "housing",
       "forms": [
         "backpack_shell"
       ],
@@ -33,6 +37,7 @@
     },
     "T": {
       "name": "strap",
+      "class": "mount",
       "forms": [
         "leather",
         "string",
@@ -43,6 +48,7 @@
     },
     "F": {
       "name": "pack_frame",
+      "class": "mount",
       "forms": [
         "rod",
         "stick",
@@ -81,6 +87,7 @@
     },
     "W": {
       "name": "hip_belt",
+      "class": "mount",
       "forms": [
         "hide"
       ],
@@ -117,6 +124,7 @@
     },
     "L": {
       "name": "hard_liner",
+      "class": "housing",
       "forms": [
         "plate"
       ],
@@ -153,6 +161,7 @@
     },
     "Q": {
       "name": "buckle",
+      "class": "mount",
       "forms": [
         "nugget"
       ],

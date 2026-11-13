@@ -1,6 +1,11 @@
 {
   "family": "air_gun",
-  "required": ["B", "S", "P", "W"],
+  "required": [
+    "B",
+    "S",
+    "P",
+    "W"
+  ],
   "blueprint": true,
   "wear_litres": 0.4,
   "wear_role": "B",
@@ -8,6 +13,7 @@
   "roles": {
     "B": {
       "name": "barrel",
+      "class": "working_face",
       "forms": [
         "spring_gun_barrel"
       ],
@@ -72,6 +78,7 @@
     },
     "S": {
       "name": "receiver",
+      "class": "housing",
       "forms": [
         "spring_gun_receiver"
       ],
@@ -94,6 +101,7 @@
     },
     "P": {
       "name": "piston",
+      "class": "working_face",
       "forms": [
         "rod",
         "ingot"

@@ -1,6 +1,8 @@
 {
   "family": "vessel",
-  "required": ["V"],
+  "required": [
+    "V"
+  ],
   "slot": "mainhand",
   "wear_litres": 0.125,
   "wear_role": "V",
@@ -8,6 +10,7 @@
   "roles": {
     "V": {
       "name": "vial",
+      "class": "housing",
       "forms": [
         "vial_body"
       ],

@@ -6,6 +6,7 @@
   "roles": {
     "C": {
       "name": "container",
+      "class": "housing",
       "forms": [
         "ceramic_bowl",
         "ceramic_plate"

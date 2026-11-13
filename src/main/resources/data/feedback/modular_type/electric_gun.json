@@ -1,6 +1,12 @@
 {
   "family": "electric_gun",
-  "required": ["R", "B", "T", "G", "s"],
+  "required": [
+    "R",
+    "B",
+    "T",
+    "G",
+    "s"
+  ],
   "blueprint": true,
   "wear_litres": 0.4,
   "wear_role": "B",
@@ -8,6 +14,7 @@
   "roles": {
     "R": {
       "name": "receiver",
+      "class": "housing",
       "forms": [
         "receiver"
       ],
@@ -56,6 +63,7 @@
     },
     "B": {
       "name": "barrel",
+      "class": "working_face",
       "forms": [
         "electric_gun_barrel"
       ],
@@ -139,6 +147,7 @@
     },
     "G": {
       "name": "grip",
+      "class": "mount",
       "forms": [
         "gun_grip"
       ],
@@ -194,6 +203,7 @@
     },
     "i": {
       "name": "stock",
+      "class": "mount",
       "forms": [
         "gun_stock"
       ],
@@ -251,6 +261,7 @@
     },
     "S": {
       "name": "sight",
+      "class": "mount",
       "forms": [
         "sight"
       ],
@@ -358,6 +369,7 @@
     },
     "M": {
       "name": "suppressor",
+      "class": "housing",
       "forms": [
         "suppressor"
       ],
@@ -392,6 +404,7 @@
     },
     "Z": {
       "name": "thermal_sleeve",
+      "class": "housing",
       "forms": [
         "thermal_sleeve"
       ],
@@ -426,6 +439,7 @@
     },
     "I": {
       "name": "bipod",
+      "class": "mount",
       "forms": [
         "bipod"
       ],
@@ -460,6 +474,7 @@
     },
     "H": {
       "name": "shroud",
+      "class": "housing",
       "forms": [
         "barrel_shroud"
       ],
@@ -675,6 +690,7 @@
     },
     "s": {
       "name": "seat",
+      "class": "housing",
       "forms": [
         "pulse_seat"
       ],
