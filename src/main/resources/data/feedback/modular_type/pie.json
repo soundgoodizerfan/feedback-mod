@@ -92,5 +92,35 @@
   "defaults": {
     "C": "feedback:pastry",
     "M": "feedback:pumpkin"
-  }
+  },
+  "shapes": [
+    {
+      "item": "feedback:pastry_dough",
+      "cells": 1,
+      "stock": [
+        "raw"
+      ],
+      "traits": [
+        "pastry"
+      ],
+      "base": "closed",
+      "variants": [
+        {
+          "name": "closed",
+          "params": {
+            "seal": 2,
+            "holds": 1.0
+          }
+        },
+        {
+          "name": "lattice",
+          "cells": 1,
+          "params": {
+            "seal": 0,
+            "holds": 1.0
+          }
+        }
+      ]
+    }
+  ]
 }

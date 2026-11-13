@@ -155,8 +155,10 @@ public final class DishBake {
             return Optional.empty();
         ModularType.Role containerRole = type.roles().get(type.primary());
         // The container's form moves what it holds (a crock holds more, a satay stick fewer pieces) and how well it covers (a crock has a lid).
-        float litres = containerRole.litres() * container.count() * containerRole.paramOf(container, "holds", 1f);
-        int seal = Math.max(containerRole.seal(), Math.round(containerRole.paramOf(container, "seal", 0f)));
+        // A hand-laid dough's crust does the same: a rolled one holds more filling, a flat or lattice one lets the heat and steam through.
+        float litres = containerRole.litres() * container.count()
+                * containerRole.paramOf(container, "holds", type.shapeParam(container, "holds", 1f));
+        int seal = Math.round(containerRole.paramOf(container, "seal", type.shapeParam(container, "seal", containerRole.seal())));
         // Moisture migration: each food part's water in laying order, and where it ends up for its doneness and soaking.
         java.util.IdentityHashMap<Part, Integer> slot = new java.util.IdentityHashMap<>();
         float[] water = new float[design.parts().size()];

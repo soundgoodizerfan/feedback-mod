@@ -2,5 +2,19 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "minecraft:item/clay_ball"
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "custom_model_data": 2
+      },
+      "model": "feedback:item/dough_flat"
+    },
+    {
+      "predicate": {
+        "custom_model_data": 3
+      },
+      "model": "feedback:item/dough_roll"
+    }
+  ]
 }

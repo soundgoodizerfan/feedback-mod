@@ -74,12 +74,27 @@
       "base": "loaf",
       "variants": [
         {
+          "name": "loaf",
+          "params": {
+            "seal": 1,
+            "holds": 1.0
+          }
+        },
+        {
           "name": "flat",
-          "cells": 1
+          "cells": 1,
+          "params": {
+            "seal": 0,
+            "holds": 0.7
+          }
         },
         {
           "name": "roll",
-          "cells": 1
+          "cells": 1,
+          "params": {
+            "seal": 1,
+            "holds": 1.4
+          }
         }
       ]
     }

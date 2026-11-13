@@ -735,6 +735,22 @@ public record ModularType(Family family, Slot slot, List<Mine> mines, float stri
     }
 
     /**
+     * A figure the hand-laid shape of {@code made} (a dough's crust, {@link #shapes}) gives the bake, by name: its variant's param
+     * (the base variant when none is recorded), else {@code fallback}. The shape-list twin of {@link Role#paramOf}.
+     */
+    public float shapeParam(ModularDesign.Part made, String name, float fallback) {
+        for (Shaping shaping : shapes) {
+            String wanted = made.variant().isEmpty() ? shaping.base() : made.variant();
+            if (wanted.isEmpty())
+                continue;
+            Optional<Variant> v = shaping.variant(wanted);
+            if (v.isPresent() && v.get().params().containsKey(name))
+                return v.get().params().get(name);
+        }
+        return fallback;
+    }
+
+    /**
      * How a part is shaped from stock (step 1 of the parts pass): the stock laid in {@code shape}
      * at the Tool Table with a hand hammer ({@link PartBenchShaping}). One registered item
      * per part, the material on the stack ({@link io.github.soundgoodizerfan.feedback.process.MadeOf}).

@@ -362,6 +362,12 @@ public final class PartBenchShaping {
             out.remove(FDataComponents.FOOD_SHAPE.get());
         else
             out.set(FDataComponents.FOOD_SHAPE.get(), shape);
+        // Each laid shape draws its own model: the item's custom_model_data is the variant's place in the shaping (0, the standard, has none).
+        int model = option.shaping().variants().indexOf(option.variant()) + 1;
+        if (model > 0 && !option.variant().name().isEmpty() && !option.variant().name().equals(option.shaping().base()))
+            out.set(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA, new net.minecraft.world.item.component.CustomModelData(model));
+        else
+            out.remove(net.minecraft.core.component.DataComponents.CUSTOM_MODEL_DATA);
         return out;
     }
 
