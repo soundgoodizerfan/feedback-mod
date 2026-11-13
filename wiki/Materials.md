@@ -65,6 +65,8 @@ Not everything is metal. A few others matter for parts and protection:
 | Leather | 0.3 | | 100 Tu | gloves |
 | Diamond | 100 | | | armor: nothing pierces it; can be [grown](#synthetic-diamond) |
 | Heavy Core | 9 | | | dense as osmium, sintered from osmium powder: see [Heavy Core](Heavy_Core.md) |
+| Feather Down | | | | animal, fibrous; a very light, warm [bed](Bed.md) padding: see [below](#feather-down-and-rabbit-hide) |
+| Rabbit Hide | 0.2 | | 100 Tu | animal, fibrous; a warm, tough [bed](Bed.md) padding |
 | Ghast Bladder | 0.1 | | | animal; the skin of a bladder [gas cell](Gas_Cell.md) |
 | Coated Cloth | 0.05 | | | cloth coated in slime; the skin of a coated cloth [gas cell](Gas_Cell.md) |
 | Silicon, glasses, graphite, polymers | | | | sections below |
@@ -74,6 +76,10 @@ Every material also decides how well it **takes an enchantment** when it's the m
 A material can carry a **permeability**: how fast a gas cell skinned in it lets gas through. A material without one is gas-tight. Ghast bladder has none; coated cloth seeps slowly.
 
 "Stands" is the temperature a grip or glove can bear against your hand. See [Hazards](Hazards.md).
+
+## Feather down and rabbit hide
+
+**Feather Down** (from a feather) and **Rabbit Hide** (from a rabbit hide) are animal materials, both fibrous, so both work as the padding of a [bed](Bed.md) and as an armor lining. Feather down is the lightest and warmest padding and weak in every other way; rabbit hide is warm and tough. Both burn.
 
 ## Nickel-iron
 

@@ -1,6 +1,6 @@
 # Bed
 
-A bed you build from a mattress and, if you want one, a frame. Lie down in it on firm ground at night, or in a storm, and the time skips to dawn wherever you are. Built with no frame it is a **bedroll**, light enough to lash on a pack.
+A bed you build from a mattress and, if you want one, a frame. Built with a frame it is placed in the world as a two-block bed that sets your respawn point; built with no frame it is a **bedroll**, used from the hand on firm ground at night, or in a storm, and light enough to lash on a pack.
 
 ## Crafting
 
@@ -14,7 +14,7 @@ The **Bed Mattress** is the part you lie on. It comes in two shapes:
 Its stock is leather or carpet, the **cover**. It has three materials:
 
 - **Cover**: the leather or carpet you lie on. It is the part's main stock.
-- **Padding**: stuffing chosen in its own stock slot. The softer it is, the better the sleep.
+- **Padding**: stuffing chosen in its own stock slot, any fibrous material: wool, leather, rabbit hide or feather down. The softer it is, the better the sleep. [Feather down](Materials.md#feather-down-and-rabbit-hide) is the lightest and warmest; rabbit hide is warm and tough.
 - **Shell**: a leather case, fixed; it takes a share of the same stock.
 
 The **Bed Frame** lifts the mattress off the cold ground. Its stock is planks, rods or ingots. It comes in two shapes:
@@ -26,13 +26,15 @@ A frame adds comfort and warmth, and weight. The [Blueprint Table](Blueprint_Tab
 
 ## Using it
 
-Use it from your hand on firm ground at night or in a storm. It needs no hostile creature within 8 blocks; otherwise it refuses. A night's sleep:
+**With a frame**, right-click a block to place the bed: it takes two blocks, head and foot, like a vanilla bed. Right-click it at night to sleep, or any time to set your respawn point. It skips the night as a vanilla bed does. You wake healed by the bed's comfort (softer padding and cover, a thicker mattress and a lifted frame give more), scaled by its warmth in cold places. Each night slept wears it a little, and a worn-through bed refuses to be slept in until you take it up and rework it. Breaking either half returns the whole bed as one item, with its parts and materials as they were.
+
+**With no frame**, a bedroll cannot be placed. Use it from your hand on firm ground at night or in a storm. It needs no hostile creature within 8 blocks; otherwise it refuses. A night's sleep:
 
 - skips to dawn,
-- gives back a share of your health equal to the bed's comfort (softer padding and cover, a thicker mattress and a lifted frame give more),
+- gives back a share of your health equal to the bed's comfort,
 - resets the insomnia count that brings phantoms.
 
-A bed **never sets your spawn point**. Each use wears it a little.
+A bedroll never sets your spawn point. Each use wears it a little.
 
 Messages tell you why it will not work: only on firm ground at night or in a storm, or monsters nearby.
 

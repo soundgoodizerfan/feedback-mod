@@ -30,4 +30,4 @@ Dough nobody kneaded bakes into a loaf a little under good (the unskilled floor)
 
 ## Flatbread
 
-One dough in the crafting grid makes one **Flatbread Dough**. Baked like any food it becomes **Flatbread**, a sheet you can wrap a dish in: it is the container of the **Wrap** at the Prep Table. An unbaked flatbread dough still goes in as a container, but a raw one feeds almost nothing.
+One dough in the crafting grid makes one **Flatbread Dough**. Baked like any food it becomes **Flatbread**, a sheet you can wrap a dish in: it is the container of the **Wrap** at the Prep Table. An unbaked flatbread dough still goes in as a container, but a raw one feeds almost nothing. Shaped by hand in the Prep Table's Parts tab, a flatbread dough is **Roll** (holds more, covered) or **Flat** (holds less, open).
