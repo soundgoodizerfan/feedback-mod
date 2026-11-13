@@ -213,11 +213,13 @@ A dish, soup, pie, bread, skewer or wrap takes an attunement on its container. I
 | **Mark** | eaten, hostile creatures near glow | **Decoy**: hostile creatures near turn on you |
 | **Momentum** | eaten, you run faster for a while | **Stance**: you take less from blows for a while |
 | **Pack** | eaten, players near you are fed too | **Lone**: eaten with no other player near, it fills more food points |
-| **Piezo** | eaten, a battery or Leyden jar beside you is charged | none |
+| **Piezo** | eaten, a battery or Leyden jar beside you is charged | **Gauge**: eaten, it tells you in words how heavy the meal was (a light, fair or heavy meal) |
 | **Ring** | eaten, it rings out and wandering hostiles come to see | none |
 | **Spring** | eaten, you jump higher for a while | **Snap**: eaten, it throws you up |
 | **Wager** | eaten, it fills more food points half the time | none |
-| **Yield** | eaten, it sometimes fills more food points | none |
+| **Yield** | eaten, it sometimes fills more food points | **Intact**: eaten, the dish sometimes stays in your hand uneaten |
+| **Hold** | the food in it rots slower | **Free**: the food in it rots faster |
+| **Impulse** | eaten, hostile creatures near you are thrown back | **Pull**: eaten, hostile creatures near you are drawn in |
 
 ## On a vial or charge casing
 
@@ -232,15 +234,18 @@ Every bullet that hits carries the attunements of the gun's parts, in the part's
 
 | Part | Effects |
 |---|---|
-| **Barrel**, second barrel | **Edge** (harder hits; mirror **Spread**), **Bane** (mirror **Kin**), **Heat** (sets the target alight; mirror **Cold**), **Impulse** (knocks the target back; mirror **Pull**), **Yield** (mirror **Intact**), **Hunger** (mirror **Famine**), **Cling** (mirror **Glaze**), **Echo** (mirror **Lag**) |
-| **Sight**, lit reticle | **Mark** (the next hit on the target does more), **Pack** (mirror **Lone**) |
+| **Barrel**, second barrel | **Edge** (harder hits; mirror **Spread**), **Bane** (mirror **Kin**), **Heat** (sets the target alight; mirror **Cold**), **Impulse** (knocks the target back; mirror **Pull**), **Yield** (mirror **Intact**), **Hunger** (mirror **Famine**), **Cling** (mirror **Glaze**), **Echo** (mirror **Lag**), **Charge** (each hit that lands fills the gun's charge bar; aiming while sneaking spends it), **Gleam** (held, carries a light; mirror **Murk**), **Gauge** (the mirror of **Piezo**: tells you in words how hard each hit landed) |
+| **Sight**, lit reticle | **Mark** (the next hit on the target does more), **Pack** (mirror **Lone**), **Gleam** (held, carries a light; mirror **Murk**) |
 | **Trigger** | **Wager**: each shot is double damage or heals the target |
-| **Muzzle brake**, suppressor | **Ring** (the shot is heard; mirror **Hush**) |
+| **Muzzle brake**, suppressor | **Ring** (the shot is heard; mirror **Hush**). The brake also takes **Gleam** (mirror **Murk**) |
+| **Receiver** | **Grudge**: damage you take fills the gun's charge bar; mirror **Calm**: it drains the bar |
 | **Grip**, stock | the handle effects above (**Impulse**, **Hold**, **Reservoir**, **Heat** burning you) |
-| **Bayonet** | **Edge**: the thrust cuts deeper; mirror **Spread**: it does less damage. **Ward**, **Mend** and **Tithe** as on any part |
+| **Stock** | **Grudge** and **Calm** as on the receiver. **Piezo**: butt-striking a Leyden jar with the gun charges it a little. **Dowse** (mirror **Shun**): a needle toward (or away from) the nearest magnetic, dense, conductive or flammable block, one effect per kind. **Hold**: the gun clamps to your hand and cannot be knocked away; mirror **Free**: the gun may slip from your hand when it is struck, and the stock gives under force |
+| **Foregrip** | **Hold** and **Free** as on the stock |
+| **Bayonet** | **Edge**: the thrust cuts deeper; mirror **Spread**: it does less damage. **Grudge** and **Calm** as on the receiver; **Piezo** as on the stock. **Ward**, **Mend** and **Tithe** as on any part |
 | **Mainspring** of a [Spring Gun](Spring_Gun.md) | **Spring**: the spring stores more energy for the same size; mirror **Snap**: it is cocked in less time |
 | **Seat** of an [Electric Gun](Electric_Gun.md) | **Charge**: the seat holds a bigger pulse |
-| **Any part** | **Ward** turns away part of the bore's wear (each level leaves one share in levels + 1); **Mend** drinks experience to close the bore's wear; its mirror **Tithe** pays experience per kill and wears the bore |
+| **Any part** | **Ward** turns away part of the gun's wear (each level leaves one share in levels + 1); **Mend** drinks experience to close the gun's wear; its mirror **Tithe** pays experience per kill and wears the gun |
 
 ## On a bed
 
@@ -249,21 +254,25 @@ A [Bed](Bed.md) takes effects on its **mattress** and its **frame**. A placed be
 | Effect | Mattress or frame | Mirror |
 | --- | --- | --- |
 | **Heat** | mattress: the bed keeps more heat in, for more warmth in cold country and frost that thaws sooner | **Cold**: less warmth, but waking puts out fire on you and leaves you fire resistant a while |
-| **Edge** | none | **Spread**: mattress is softer, so a night's rest heals more |
+| **Edge** | frame: a placed bed cuts the hostile creatures beside it, and the sleeper has less comfort | **Spread**: mattress is softer, so a night's rest heals more |
 | **Hold** | frame holds you snug, so a night's rest heals more | **Free**: the frame lets you slide about, so it heals less |
-| **Echo** | mattress: a night's rest heals more | none |
+| **Echo** | mattress: a night's rest heals more | **Lag**: mattress: a night's rest heals in parts, a second apart, instead of at once |
 | **Wager** | mattress: a night's rest heals double or nothing | none |
 | **Yield** | mattress: a night sometimes leaves the bed unworn | none |
 | **Hunger** | mattress: you wake with more food points | **Famine**: with fewer |
 | **Mend** | mattress: what you wear is repaired while you sleep | **Tithe**: waking drops experience for the wear the night took |
-| **Gleam** | mattress: you wake with night vision | none |
+| **Gleam** | mattress: you wake with night vision | **Murk**: mattress: after waking, distant hostile mobs do not target you in low light for a while |
 | **Momentum** | mattress: you wake quicker on your feet for a while | **Stance**: you wake with resistance to blows for a while |
 | **Tide** | mattress: waking puts out fire on you and leaves you fire resistant a while | none |
 | **Piezo** | frame: your weight charges a battery or Leyden jar beside the bed when you wake | none |
 | **Lode** | frame: items lying near are drawn to you as you wake | **Scatter**: they are flung away |
-| **Impulse** | frame: waking throws you up off the bed | none |
+| **Impulse** | frame: waking throws you up off the bed | **Pull**: frame: a placed bed draws the hostile creatures beside it in; mattress: it takes a share off the fall of whatever lands on it |
 | **Spring** | mattress: whoever lands on the bed takes no fall damage and is thrown back up | none |
 | **Ward** | turns away some of the night's wear | none |
+| **Charge** | mattress: waking leaves static in the bed, and every Charge tool you carry takes some charge | **Drain**: mattress: waking earths you, and every Charge tool you carry bleeds some charge |
+| **Cling** | mattress or frame: a placed bed slows the hostile creatures beside it | **Glaze**: a placed bed throws them off |
+| **Pack** | mattress: a night's rest heals more for each ally near the bed (team, tamed by you, or a village guardian) | **Lone**: it heals more when no ally is near |
+| **Recall** | frame: a placed bed goes to your inventory when you break it, instead of dropping | **Anchor**: frame: a placed bed is slow to break |
 
 The frame also acts on its surroundings like a machine's frame: **Bait** and **Spook**, **Bane** and **Kin**, **Mark**, **Ring** and **Hush**, **Bloom** and **Reap**, **Grudge** and **Calm**, **Ground** and **Dowse** (see [Around the machine](#around-the-machine)). Bait, Bane, Mark, Bloom and Grudge also work from the mattress.
 

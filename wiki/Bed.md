@@ -47,7 +47,7 @@ Warmth is how little heat the padding lets through, thicker and lifted off the g
 
 ## Attunements
 
-The mattress and the frame take [attunements](Enchanting_Table.md#on-a-bed). A night's rest can heal more or less, feed or starve you, repair what you wear, give night vision, speed or resistance on waking, put out fire on you, or charge a battery beside the bed; a placed bed's frame can also act on animals, monsters and crops around it.
+The mattress and the frame take [attunements](Enchanting_Table.md#on-a-bed). A night's rest can heal more or less, feed or starve you, repair what you wear, give night vision, speed or resistance on waking, put out fire on you, charge or drain the Charge tools you carry, or charge a battery beside the bed; a placed bed's frame can also act on animals, monsters and crops around it, and on a placed bed the frame and mattress can slow, repel, draw in or cut the hostile creatures beside it, soften a fall onto the bed, make rest depend on the allies near, spread healing out over a few seconds, hide you in the dark after waking, or return the bed to your inventory when you break it (or hold it fast against breaking).
 
 ## On a pack
 
