@@ -43,6 +43,90 @@ public class FSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_DRY_CLICK = SOUNDS.register("gun.dry_click",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.dry_click")));
 
+    /** A hold-charge trigger winding up. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_CHARGE = SOUNDS.register("gun.egun_charge",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_charge")));
+
+    /** A flywheel seat's hum, looped; pitch follows the spin. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_SPIN = SOUNDS.register("gun.egun_spin",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_spin")));
+
+    /** A cell seated in an electric gun. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_CELL_IN = SOUNDS.register("gun.egun_cell_in",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_cell_in")));
+
+    /** A cell drawn from an electric gun. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_CELL_OUT = SOUNDS.register("gun.egun_cell_out",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_cell_out")));
+
+    /** A pull with nothing to give: a weak fizz. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_FLAT = SOUNDS.register("gun.egun_flat",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_flat")));
+
+    /** A seat gained a charge. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_REFILL = SOUNDS.register("gun.egun_refill",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_refill")));
+
+    /** Report layer of a burst bank. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_BANK = SOUNDS.register("gun.egun_bank",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_bank")));
+
+    /** Report layer of a recoil dynamo. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_DYNAMO = SOUNDS.register("gun.egun_dynamo",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_dynamo")));
+
+    /** Report layer of a backpack tether. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_TETHER = SOUNDS.register("gun.egun_tether",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_tether")));
+
+    /** Report layer of a beam splitter. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_SPLIT = SOUNDS.register("gun.egun_split",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_split")));
+
+    /** Report layer of an arc fork. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_FORK = SOUNDS.register("gun.egun_fork",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_fork")));
+
+    /** A beam lands on a body. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_HIT_BODY = SOUNDS.register("gun.egun_hit_body",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_hit_body")));
+
+    /** A beam lands on a block. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_HIT_BLOCK = SOUNDS.register("gun.egun_hit_block",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_hit_block")));
+
+    /** A core breech lets a pellet go. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_PELLET = SOUNDS.register("gun.egun_pellet",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_pellet")));
+
+    /** A pellet lands. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_PELLET_HIT = SOUNDS.register("gun.egun_pellet_hit",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_pellet_hit")));
+
+    /** A dead-man cutoff opens. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_CUTOFF = SOUNDS.register("gun.egun_cutoff",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_cutoff")));
+
+    /** A core breech locks hot. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_HOT_LOCK = SOUNDS.register("gun.egun_hot_lock",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_hot_lock")));
+
+    /** The barrel sizzles near its limit. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_OVERHEAT = SOUNDS.register("gun.egun_overheat",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_overheat")));
+
+    /** The wielder is shocked. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_SHOCK = SOUNDS.register("gun.egun_shock",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_shock")));
+
+    /** A scope zoom coil comes up. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_ZOOM = SOUNDS.register("gun.egun_zoom",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_zoom")));
+
+    /** A heat gauge or lit reticle comes on. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> GUN_EGUN_BLIP = SOUNDS.register("gun.egun_blip",
+            () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.egun_blip")));
+
     /** A pulse gun discharge. */
     public static final DeferredHolder<SoundEvent, SoundEvent> GUN_PULSE_SHOT = SOUNDS.register("gun.pulse_shot",
             () -> SoundEvent.createVariableRangeEvent(Feedback.id("gun.pulse_shot")));

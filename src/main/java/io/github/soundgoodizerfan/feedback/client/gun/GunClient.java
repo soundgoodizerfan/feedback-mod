@@ -224,6 +224,7 @@ public final class GunClient {
                     holding ? 0.6f : 0.4f, holding ? 1f : 0.8f, false);
         drawSlot = slot;
         drawHolding = holding;
+        EGunSounds.tick(mc, player, holding ? held : net.minecraft.world.item.ItemStack.EMPTY, aim > 0.5f);
         // The firearm's design (reload, fan, sight read it); an electric gun has none, and is built if its own mechanism says so.
         GunSpec design = holding ? GunSpec.of(held).orElse(null) : null;
         GunSpec offDesign = offItem.getItem() instanceof GunItem ? GunSpec.of(offItem).orElse(null) : null;
@@ -404,7 +405,7 @@ public final class GunClient {
             // Empty, or the wrong bore: a click, not a shot, and not a click every frame.
             if (pressed || released && onRelease || mode == FireMode.AUTO) {
                 if (now >= t.nextShotMs) {
-                    mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_DRY_CLICK.get(),
+                    mc.level.playLocalSound(player.getX(), player.getEyeY(), player.getZ(), mech != null ? mech.dryClick() : io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_DRY_CLICK.get(),
                             SoundSource.PLAYERS, 0.6f, 0.95f + player.getRandom().nextFloat() * 0.1f, false);
                     t.nextShotMs = now + 300;
                 }

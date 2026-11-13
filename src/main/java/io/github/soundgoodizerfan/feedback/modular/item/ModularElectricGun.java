@@ -14,7 +14,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -145,7 +144,7 @@ public class ModularElectricGun extends GunItem {
                 return false;
             setCell(gun, ItemStack.EMPTY);
             access.set(held);
-            player.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8f, 1f);
+            player.playSound(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_CELL_OUT.get(), 0.8f, 1f);
             return true;
         }
         if (!BatteryStack.is(other))
@@ -155,7 +154,7 @@ public class ModularElectricGun extends GunItem {
         ItemStack old = cell(gun);
         setCell(gun, other);
         access.set(old);
-        player.playSound(SoundEvents.BUNDLE_INSERT, 0.8f, 1f);
+        player.playSound(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_CELL_IN.get(), 0.8f, 1f);
         return true;
     }
 
@@ -186,7 +185,7 @@ public class ModularElectricGun extends GunItem {
                 return false;
             setCell(gun, ItemStack.EMPTY);
             slot.safeInsert(held);
-            player.playSound(SoundEvents.BUNDLE_REMOVE_ONE, 0.8f, 1f);
+            player.playSound(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_CELL_OUT.get(), 0.8f, 1f);
             return true;
         }
         if (!BatteryStack.is(other))
@@ -196,7 +195,7 @@ public class ModularElectricGun extends GunItem {
         ItemStack old = cell(gun);
         setCell(gun, other);
         slot.set(old);
-        player.playSound(SoundEvents.BUNDLE_INSERT, 0.8f, 1f);
+        player.playSound(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_CELL_IN.get(), 0.8f, 1f);
         return true;
     }
 
@@ -455,13 +454,16 @@ public class ModularElectricGun extends GunItem {
         // A cell over the receiver's band shocks the wielder and wears the receiver.
         float excess = ElectricRules.overBand(band, spec.band());
         if (excess > 0f) {
+            player.level().playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_SHOCK.get(), SoundSource.PLAYERS, 0.9f, 1f);
             player.hurt(player.damageSources().lightningBolt(), ModularTuning.EGUN_SHOCK_PER_EXCESS * excess);
             gun.hurtAndBreak(ModularStacks.cap(gun, 1 + (int) excess), player, slot);
             GunCondition.misuse(gun, ModularTuning.GUN_WEAR_OVER_BAND * excess);
         }
         // Wet, the arc finds the wielder; only insulation stops it.
-        if (player.isInWaterOrRain() && !PulseShot.insulated(player, band))
+        if (player.isInWaterOrRain() && !PulseShot.insulated(player, band)) {
+            player.level().playSound(null, player.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_SHOCK.get(), SoundSource.PLAYERS, 0.9f, 1.2f);
             player.hurt(player.damageSources().lightningBolt(), ModularTuning.EGUN_SHOCK);
+        }
     }
 
     /** A shot fired at the heat limit with nothing to govern it: it burns the wielder and wears the barrel. */
@@ -469,6 +471,7 @@ public class ModularElectricGun extends GunItem {
         wielder.hurt(wielder.damageSources().onFire(), ModularTuning.EGUN_OVERHEAT_BURN);
         gun.hurtAndBreak(ModularStacks.cap(gun, 2), wielder, LivingEntity.getSlotForHand(hand));
         GunCondition.misuse(gun, ModularTuning.GUN_WEAR_OVERHEAT);
+        wielder.level().playSound(null, wielder.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_OVERHEAT.get(), SoundSource.PLAYERS, 0.9f, 0.8f);
         wielder.level().playSound(null, wielder.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_VENT.get(), SoundSource.PLAYERS, 0.7f, 1.2f);
     }
 }

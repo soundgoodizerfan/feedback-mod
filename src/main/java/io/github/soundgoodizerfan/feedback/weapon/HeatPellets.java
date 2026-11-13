@@ -85,6 +85,7 @@ public final class HeatPellets {
             fly(s, false);
         }
         level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_FLAME.get(), SoundSource.PLAYERS, 1f, 0.9f + level.random.nextFloat() * 0.2f);
+        level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_PELLET.get(), SoundSource.PLAYERS, 0.9f, 0.9f + level.random.nextFloat() * 0.2f);
     }
 
     /**

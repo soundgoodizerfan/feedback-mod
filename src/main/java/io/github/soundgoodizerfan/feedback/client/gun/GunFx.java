@@ -278,6 +278,9 @@ public final class GunFx {
 
     /** Where an energy shot lands: a laser sparks and scorches, a blob splashes, a discharge crackles, a bolt forks short arcs. */
     private static void energyImpact(Level level, Vec3 at, Vec3 dir, float power, int rgb, byte style, boolean block, RandomSource r) {
+        // What a beam or blob lands on is what it sounds like: a blob splashes, anything else zaps.
+        level.playLocalSound(at.x, at.y, at.z, (style == EnergyStyle.PLASMA ? FSounds.GUN_EGUN_PELLET_HIT : block ? FSounds.GUN_EGUN_HIT_BLOCK : FSounds.GUN_EGUN_HIT_BODY).get(),
+                net.minecraft.sounds.SoundSource.PLAYERS, 0.4f + 0.5f * Math.min(1f, power), 0.9f + 0.2f * r.nextFloat(), false);
         switch (style) {
             case EnergyStyle.PLASMA -> {
                 for (int i = 0; i < 10 + (int) (power * 8); i++)

@@ -173,8 +173,11 @@ public final class ElectricMechanism implements GunMechanism {
             ElectricGunSpec spec = ModularElectricGun.specOf(gun);
             // A dead-man cutoff that stopped the fire holds until the barrel has cooled.
             if (spec != null && spec.governor() == Governor.CUTOFF
-                    && ModularElectricGun.heat(gun, level) + shotHeat(spec, gun, 1f, level) > 1f)
+                    && ModularElectricGun.heat(gun, level) + shotHeat(spec, gun, 1f, level) > 1f) {
+                if (!ModularElectricGun.tripped(gun))
+                    level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_CUTOFF.get(), SoundSource.PLAYERS, 0.8f, 1f);
                 ModularElectricGun.setTripped(gun, true);
+            }
             return false;
         }
         if (!GunShots.accept(shooter, p.figures(), nowMs, hand))
@@ -244,6 +247,7 @@ public final class ElectricMechanism implements GunMechanism {
             ModularElectricGun.setPumps(gun, 0);
         if (spec.seat() == Seat.CORE_BREECH) {
             ModularElectricGun.setHot(gun, true);
+            level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_HOT_LOCK.get(), SoundSource.PLAYERS, 0.7f, 1f);
             if (shooter instanceof Player wielder)
                 vent(level, wielder, gun);
         }
@@ -258,6 +262,7 @@ public final class ElectricMechanism implements GunMechanism {
                     float over = Mth.clamp((heat - 1f) / Math.max(1e-3f, shotHeat(spec, gun, p.power(), level)), 0f, 1f);
                     ModularElectricGun.setLock(gun, now + Math.round(Mth.lerp(over, ModularTuning.EGUN_VENT_LOCK_MIN_TICKS, ModularTuning.EGUN_VENT_LOCK_MAX_TICKS)));
                     level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_HEAT_TICK.get(), SoundSource.PLAYERS, 0.8f, 0.7f);
+                    level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_VENT.get(), SoundSource.PLAYERS, 0.9f, 1f);
                     SteamCloud.vent(level, shooter, pitch, yaw);
                     heat = ModularTuning.EGUN_VENT_RESET_HEAT;
                 }
@@ -273,6 +278,11 @@ public final class ElectricMechanism implements GunMechanism {
                     ModularElectricGun.overheated(shooter, gun, hand);
             }
         }
+        // The barrel talks as it nears its limit: a throttle ticks as it pinches the rate, any gun sizzles close to the limit.
+        if (spec.governor() == Governor.THROTTLE && heat * spec.sense() > 0.5f)
+            level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_HEAT_TICK.get(), SoundSource.PLAYERS, 0.5f, 1.3f - 0.5f * Math.min(1f, heat));
+        if (heat > 0.8f && heat < 1.2f && spec.governor() != Governor.VENT)
+            level.playSound(null, shooter.blockPosition(), io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_OVERHEAT.get(), SoundSource.PLAYERS, 0.4f + 0.4f * Math.min(1f, heat), 0.9f + 0.2f * Math.min(1f, heat));
         ModularElectricGun.setHeat(gun, heat, level);
         GunShots.bookShot(level, shooter, gun, figures, Math.min(1f, heat), hand, aimed);
     }
@@ -449,6 +459,12 @@ public final class ElectricMechanism implements GunMechanism {
         ModularElectricGun.setAim(gun, aiming, gameTime);
     }
 
+    /** A pull with nothing to give is a weak fizz, not a hammer on an empty chamber. */
+    @Override
+    public SoundEvent dryClick() {
+        return io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_FLAT.get();
+    }
+
     /** The report: a crack of the pulse, a flywheel's pitch rising with its spin, a bank's low thump under it. */
     @Override
     public List<GunSound.Layer> sound(ItemStack gun, GunFigures figures, RandomSource random) {
@@ -459,12 +475,21 @@ public final class ElectricMechanism implements GunMechanism {
             return List.of(new GunSound.Layer(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_SHOT.get(), volume, jitter));
         SoundEvent crack = io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_PULSE_SHOT.get();
         float pitch = 1.1f - 0.06f * spec.tier();
-        return switch (spec.seat()) {
+        List<GunSound.Layer> seat = switch (spec.seat()) {
             case CAPACITOR_BANK -> List.of(new GunSound.Layer(SoundEvents.LIGHTNING_BOLT_IMPACT, volume * 0.8f, 1.6f * jitter),
                     new GunSound.Layer(crack, volume, 0.7f * jitter));
             case FLYWHEEL -> List.of(new GunSound.Layer(crack, volume, (0.8f + 1.0f * spinNow(gun, spec)) * jitter));
+            case BURST_BANK -> List.of(new GunSound.Layer(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_BANK.get(), volume * 0.8f, jitter), new GunSound.Layer(crack, volume, pitch * jitter));
+            case RECOIL_DYNAMO -> List.of(new GunSound.Layer(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_DYNAMO.get(), volume * 0.7f, jitter), new GunSound.Layer(crack, volume, pitch * jitter));
+            case BACKPACK_TETHER -> List.of(new GunSound.Layer(io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_TETHER.get(), volume * 0.7f, jitter), new GunSound.Layer(crack, volume, pitch * jitter));
             default -> List.of(new GunSound.Layer(crack, volume, pitch * jitter));
         };
+        // A beam lens adds its own voice over the seat's: a splitter fans out, a fork branches.
+        if (spec.beams() <= 0 && !spec.fork())
+            return seat;
+        List<GunSound.Layer> out = new java.util.ArrayList<>(seat);
+        out.add(new GunSound.Layer(spec.beams() > 0 ? io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_SPLIT.get() : io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_EGUN_FORK.get(), volume * 0.6f, jitter));
+        return out;
     }
 
     /** The game tick of the last shot prepared on either side: a sound reads the spin and the zoom at it. */

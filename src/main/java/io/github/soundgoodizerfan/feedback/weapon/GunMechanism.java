@@ -103,4 +103,9 @@ public interface GunMechanism {
     /** The sight went up or came down on the gun (a scope zoom charge builds while it is up). */
     default void aimChanged(ItemStack gun, boolean aiming, long gameTime) {
     }
+
+    /** The sound of a pull that cannot fire. */
+    default net.minecraft.sounds.SoundEvent dryClick() {
+        return io.github.soundgoodizerfan.feedback.registry.FSounds.GUN_DRY_CLICK.get();
+    }
 }
