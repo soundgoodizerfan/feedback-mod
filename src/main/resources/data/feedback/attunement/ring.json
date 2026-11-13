@@ -25,6 +25,18 @@
     },
     "suppressor": {
       "kind": "ring"
+    },
+    "flywheel_disc": {
+      "kind": "ring"
+    },
+    "pistons": {
+      "kind": "ring"
+    },
+    "pump_impeller": {
+      "kind": "ring"
+    },
+    "compressor_rotor": {
+      "kind": "ring"
     }
   },
   "mirror": {
@@ -50,6 +62,18 @@
       "kind": "hush"
     },
     "suppressor": {
+      "kind": "hush"
+    },
+    "flywheel_disc": {
+      "kind": "hush"
+    },
+    "pistons": {
+      "kind": "hush"
+    },
+    "pump_impeller": {
+      "kind": "hush"
+    },
+    "compressor_rotor": {
       "kind": "hush"
     }
   }

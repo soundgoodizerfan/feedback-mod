@@ -80,8 +80,15 @@ public final class RingKinds {
 
     @SubscribeEvent
     public static void onGameEvent(VanillaGameEvent event) {
+        if (event.getLevel().isClientSide)
+            return;
+        // A machine with a hushing part silences the vibrations made near it, but not a machine's own ring.
+        if (!event.getVanillaEvent().is(GameEvent.EXPLODE.key()) && MachineAura.hushed((net.minecraft.world.level.Level) event.getLevel(), event.getEventPosition())) {
+            event.setCanceled(true);
+            return;
+        }
         Entity cause = event.getCause();
-        if (cause == null || event.getLevel().isClientSide)
+        if (cause == null)
             return;
         // A marked entity is silent for the tick of the blow or hit; a hushed wearer is silent in step too.
         if (cause.getPersistentData().getLong(HUSH) == event.getLevel().getGameTime()

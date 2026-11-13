@@ -123,6 +123,12 @@ public class EngineBlockEntity extends RotationNode implements Switchable, Analo
         return condition;
     }
 
+    /** Closes {@code by} of the engine's wear (an attuned part's mend, {@code MachineAura}). */
+    public void mend(float by) {
+        condition = Math.min(1f, condition + by);
+        setChanged();
+    }
+
     /** The spark plug's condition, 1 new falling with running time in a vehicle. */
     public float plugCondition() {
         return 1f - plugWear;

@@ -154,6 +154,21 @@ public final class MachineKinds {
         return LINE_AT_FLOOR + (1f - LINE_AT_FLOOR) * Math.max(0f, Math.min(1f, (condition - SHELL_FLOOR) / (1f - SHELL_FLOOR)));
     }
 
+    /** Takes the experience one mend costs from the nearest player within reach; false when none has any. */
+    public static boolean payMend(ServerLevel server, BlockPos pos) {
+        Player payer = server.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MEND_REACH,
+                p -> p instanceof Player pl && pl.totalExperience > 0 && !pl.isSpectator());
+        if (payer == null)
+            return false;
+        payer.giveExperiencePoints(-MEND_XP);
+        return true;
+    }
+
+    /** Condition one level of mend closes per mend. */
+    public static float mendPerLevel() {
+        return MEND_PER_LEVEL;
+    }
+
     /**
      * One tick of a pressure shell's wear and its upkeep; returns the new condition (1 as built). Above its danger line the shell wears
      * (never from sitting under it), more the nearer the critical line, slowed by soak and slip; a worn shell gives way at a lower
@@ -181,12 +196,8 @@ public final class MachineKinds {
         }
         int mend = levels.getOrDefault("mend", 0);
         if (mend > 0 && condition < 1f && level.getGameTime() % MEND_INTERVAL == 0) {
-            Player payer = server.getNearestPlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, MEND_REACH,
-                    p -> p instanceof Player pl && pl.totalExperience > 0 && !pl.isSpectator());
-            if (payer != null) {
-                payer.giveExperiencePoints(-MEND_XP);
+            if (payMend(server, pos))
                 condition = Math.min(1f, condition + mend * MEND_PER_LEVEL);
-            }
         }
         return condition;
     }

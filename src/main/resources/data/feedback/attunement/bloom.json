@@ -19,6 +19,12 @@
     "second_barrel": {
       "kind": "field_round",
       "flaw": 1
+    },
+    "pump_impeller": {
+      "kind": "grow"
+    },
+    "wheel_rim": {
+      "kind": "grow"
     }
   },
   "mirror": {
@@ -39,6 +45,12 @@
     "second_barrel": {
       "kind": "reap_round",
       "flaw": 1
+    },
+    "pump_impeller": {
+      "kind": "reap"
+    },
+    "wheel_rim": {
+      "kind": "reap"
     }
   }
 }

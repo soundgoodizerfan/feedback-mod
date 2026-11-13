@@ -154,6 +154,39 @@
     },
     "reinforcing_bands": {
       "kind": "mend"
+    },
+    "frame": {
+      "kind": "mend"
+    },
+    "machine_winding": {
+      "kind": "mend"
+    },
+    "core": {
+      "kind": "mend"
+    },
+    "housing": {
+      "kind": "mend"
+    },
+    "bearing": {
+      "kind": "mend"
+    },
+    "plates": {
+      "kind": "mend"
+    },
+    "case": {
+      "kind": "mend"
+    },
+    "engine_block": {
+      "kind": "mend"
+    },
+    "pistons": {
+      "kind": "mend"
+    },
+    "crankshaft": {
+      "kind": "mend"
+    },
+    "cylinder_head": {
+      "kind": "mend"
     }
   },
   "mirror": {

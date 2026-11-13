@@ -16,6 +16,24 @@
     },
     "studs": {
       "kind": "worn_lure"
+    },
+    "frame": {
+      "kind": "lure"
+    },
+    "bearing": {
+      "kind": "lure"
+    },
+    "crankshaft": {
+      "kind": "lure"
+    },
+    "flywheel_bearing": {
+      "kind": "lure"
+    },
+    "crank_arm": {
+      "kind": "lure"
+    },
+    "rim_ring": {
+      "kind": "lure"
     }
   },
   "mirror": {
@@ -33,6 +51,24 @@
     },
     "studs": {
       "kind": "worn_scare"
+    },
+    "frame": {
+      "kind": "scare"
+    },
+    "bearing": {
+      "kind": "scare"
+    },
+    "crankshaft": {
+      "kind": "scare"
+    },
+    "flywheel_bearing": {
+      "kind": "scare"
+    },
+    "crank_arm": {
+      "kind": "scare"
+    },
+    "rim_ring": {
+      "kind": "scare"
     }
   },
   "books": [
