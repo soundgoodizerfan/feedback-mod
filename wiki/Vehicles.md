@@ -80,6 +80,7 @@ A [Rotary Bearing](Rotary_Bearing.md) with role 0 whose turned body contains **t
 - **Radius.** The wheel's radius is the distance from the axle to the farthest tire voxel.
 - **Springing.** The tire is a spring and a damper: the body squats on it and rebounds.
 - **Grip.** The tire pushes the vehicle as hard as the tire's friction against the ground's allows. A wheel pushed past its grip slips.
+- **Tire wear.** A tire wears by distance rolled on the ground, and faster while it skids past its grip. A softer tire material wears faster. Grip falls with the wear, to a floor of 30% of a new tire's. Sneak and right-click the wheel's hinge to read the tire's condition, with the joint and brake pad. Right-click the hinge with a block of tire stock (black wool, [Tire Rubber](Tire_Rubber.md)) to fit a new tire; it uses one block whatever the wheel's size.
 - **Brake and rolling resistance.** A card brakes the wheel through the bearing's **Brake** channel. Rolling costs speed: a soft tire and loose or sinking ground roll harder, and ice wastes none.
 - **Drive.** The road's torque on the wheel loads the shaft, or helps it turn when the vehicle rolls downhill. All driven wheels on one shaft run at the same speed; a [Differential](Differential.md) lets two wheels turn at different speeds.
 - **Walls.** Rays around the rim keep the wheel out of walls, steps and other vehicles.

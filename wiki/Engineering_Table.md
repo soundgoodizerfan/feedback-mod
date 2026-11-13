@@ -83,6 +83,8 @@ Put a modular item in the **Item** slot and stock in the **Part stock** slots. A
 - **Swap part** replaces a part with stock of a different material or shape. The old part comes back to you, the wearing part short by its wear. The replacement wearing part is fresh.
 - **Take apart** returns every part. A worn wearing part comes back short by its wear (the Salvage skill lessens it, see [Skills](Skills.md)); a held item comes back whole.
 
+On an [Engine](Engine.md), a swapped **spark plug** is a fresh one and clears the plug's wear; reworking any other part leaves the plug's wear as it is.
+
 Repairing and a like-for-like swap need no treatise. A dish is not taken apart.
 
 ## Treatise tab

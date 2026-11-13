@@ -30,11 +30,15 @@ Wire it to a line like any other electrical block; see [Electricity](Electricity
 
 The battery switches between three states on its own, shown in Jade:
 
-- **Charging**: the line is in the battery's band or a higher one. It draws current and fills, from empty to full in about 2.5 minutes at its limit, or about 1 minute beside a powered [Rectifier](Rectifier.md).
-- **Supplying**: the line is in a lower band. It becomes a source of its own band, and a full battery can run flat in about 5 minutes at its limit.
-- **Holding**: it neither takes nor gives.
+- **Charging**: the line is in a band above the battery's, or the battery is empty on a line in its own band. It draws current and fills, from empty to full in about 2.5 minutes at its limit, or about 1 minute beside a powered [Rectifier](Rectifier.md).
+- **Supplying**: the battery holds charge and the line is in its own band or a lower one. It is a source of its own band, and a full battery can run flat in about 5 minutes at its limit.
+- **Holding**: nothing flows, for example a full battery on a line above its band, or a battery on no line.
 
-A line in a lower band never charges it. The current it gives stays full while charge lasts and falls away below 10% charge. The share of the energy put in that comes back is in the table above; the rest heats the case. A battery loses about 1% of its charge a day when idle.
+A line in a lower band never charges it.
+
+### As a reserve
+
+A battery on a line with a generator of the same band, such as a [Dynamotor](Dynamotor.md), is a **reserve**. The generator carries the load first. The battery supplies only the shortfall when the load is more than the generator can give, and charges from any surplus when it is less. With no generator of its band on the line, the battery supplies as any source does. Jade shows *Supplying* for a charged battery in either case. The current it gives stays full while charge lasts and falls away below 10% charge. The share of the energy put in that comes back is in the table above; the rest heats the case. A battery loses about 1% of its charge a day when idle.
 
 ### Reading the charge
 

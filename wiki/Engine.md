@@ -11,6 +11,7 @@ Draw the engine at the [Blueprint Table](Blueprint_Table.md) (pick *Engine* in t
 | **Engine Block** | inline, V, boxer | Inline is the plain layout. A V is a short, light block (15% lighter) that revs 7% lower. A boxer cancels its own shake and revs 8% higher, but weighs 10% more and makes 3% less torque. |
 | **Pistons** | **cylinders** axis, 1 to 8 | The number of cylinders (more mean more torque and more weight, and more metal). Their **bore** is the cylinder width: wider means more torque. Their metal sets the redline. |
 | **Crankshaft** | one shape | The **stroke**: longer adds torque but the engine **revs lower**; short-stroke engines rev high. |
+| **Spark Plug** | metal of the electrode | The plug's life and how readily it fouls. See [The spark plug](#the-spark-plug). |
 | **Cylinder Head** | **compression** axis: low, medium, high | Which fuels it can burn. See [Compression, fuel and knock](#compression-fuel-and-knock). A high head also makes 8% more torque, a low one 5% less. |
 
 ### The spec sheet
@@ -28,7 +29,18 @@ The pistons' metal decides how fast the engine can rev. **Light, strong metals r
 
 ## Building it
 
-Make the four parts (a block, a piston set, a crankshaft and a cylinder head, each from ingots or plate of the metal you chose, each with a fixed standard lining, valve or ring material that is never picked) at the [Smithing Table](Smithing_Table.md), then assemble them at the [Engineering Table](Engineering_Table.md): the four parts in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the **Engine Blueprint** in the blueprint slot to judge the fit against your drawing. The Engine comes out with the bore and stroke of its parts, and the blueprint is kept.
+Make the five parts (a block, a piston set, a crankshaft, a cylinder head and a spark plug, each from ingots or plate of the metal you chose, each with a fixed standard lining, valve, ring or insulator material that is never picked) at the [Smithing Table](Smithing_Table.md), then assemble them at the [Engineering Table](Engineering_Table.md): the five parts in the grid, two [fasteners](Fasteners.md) in the fastener slots, and the **Engine Blueprint** in the blueprint slot to judge the fit against your drawing. The Engine comes out with the bore and stroke of its parts, and the blueprint is kept.
+
+## The spark plug
+
+Every engine needs a spark plug: a metal electrode with a ceramic insulator, made at the Smithing Table like the other parts. The electrode's metal needs a melting point. It sets two things:
+
+- **Life.** A metal that melts hotter erodes slower, so the plug lasts longer.
+- **Fouling.** A metal that carries heat away runs cold and fouls sooner as it wears.
+
+The plug wears **only while the engine runs in a vehicle**. On a stand it does not wear. As it wears, the engine **stumbles**: at times its torque drops out for a moment, more often the more worn and fouled the plug is. A stumble never stops the engine. Jade shows *Spark plug:* with the plug's condition.
+
+A picked-up engine keeps its plug's wear. Swap the plug at the [Engineering Table](Engineering_Table.md#repair-tab) for a fresh one.
 
 ## Fuel
 
@@ -66,7 +78,7 @@ An engine is **weak at low speed** and strongest around its peak. When you start
 
 When switched off, the line coasts down on its own momentum.
 
-Breaking an engine keeps its design (compression included). Place it again and it's the same engine.
+Breaking an engine keeps its design (compression included) and the wear of its spark plug. Place it again and it's the same engine.
 
 ## Tips
 

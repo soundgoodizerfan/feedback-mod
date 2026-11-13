@@ -104,6 +104,8 @@ Walking into one shocks you twice a second; right-clicking one shocks you once. 
 
 A shock that comes as a discharge (a jar's burst, a creeper's blast, an arc) also scales with the Eu in it: a small discharge does less than a whole packet of its band, a big one up to four times as much. Discharges carry a band too: a creeper's blast shocks at EHV, the arc of an overcharged weapon at UHV, and the arc of piezo armor steps up from LV with the force of the hit it answers.
 
+A [Leyden Jar](Leyden_Jar.md#careful) fed a band above its rating cracks: it shatters and shocks every living thing within 3 blocks at its own band, so stand back from a line you have not checked. Gloves rated for that band stop it.
+
 A [Static ground](Brewing_Stand.md) potion cuts shock damage to two fifths while it lasts, and warms any metal held in your hands.
 
 **Armor doesn't help**; a chestplate isn't insulation. A glove stops every shock up to the band it is rated for. They also stop the arc of an [electric gun](Electric_Gun.md#misuse-and-hazards) fired in water or rain, as long as the gun's battery is within what they stop.

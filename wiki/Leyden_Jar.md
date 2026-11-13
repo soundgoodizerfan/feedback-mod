@@ -22,6 +22,8 @@ Put it on a line with a source. It switches between two jobs on its own:
 - **Charging.** While the line is in the jar's band or a higher one, the jar draws **1 A** and fills up. A higher band simply fills it; a lower band never charges it.
 - **Discharging.** When the supply goes (the pulse ends, the cell is cut off), the jar becomes a source itself and gives back packets of its own band, up to its burst amps (**8 A** at the default area), until its Eu run out.
 
+**Beside a generator.** On a line with a generator of the jar's own band, the jar is a **reserve**: the generator carries the load, the jar supplies only what the generator cannot, and it charges from any surplus.
+
 The jar's charge is counted in Eu: how many packets of its band it holds, set by plate area over wall thickness. An [Electrostatic Generator](Electrostatic_Generator.md) pulse is a higher band than an LV jar's, so it fills such a jar; a jar rated for the pulse's band takes it too.
 
 ## Jar types
@@ -50,6 +52,8 @@ It always gives its own band, and its last packet tapers as the Eu run out: a st
 A jar smooths a pulse and carries you over a gap. For power that lasts, use a [Battery](Battery.md).
 
 ## Careful
+
+**A band above its rating cracks the jar.** Fed a band higher than the glass is rated for, the jar shatters and drops nothing. It discharges at once as a shock at its own band to every living thing within 3 blocks, whatever the charge it held. [Gloves](Hazards.md#shock) rated for that band protect.
 
 A jar rated **MV** or more and holding charge shocks whoever touches it, walking into it or right-clicking it. See [Hazards](Hazards.md#shock).
 

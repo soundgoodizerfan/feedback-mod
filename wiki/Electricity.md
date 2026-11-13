@@ -22,11 +22,11 @@ Bands don't lock anything. A machine is *rated* for a band; feed it a higher ban
 | Block / item | What it does |
 | --- | --- |
 | **Sources** | |
-| [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply forever: 1 A in the LV band. |
+| [Galvanic Cell](Galvanic_Cell.md) | A small, steady supply of 1 A while its anode lasts: LV for a close pair of electrode metals, MV for a wide pair, one band more for a pack of cells. |
 | [Electrostatic Generator](Electrostatic_Generator.md) | A one-second burst each time you turn it: 0.5 A in the HV band. |
 | [Dynamotor](Dynamotor.md) | Shaft in, electricity out, as a generator. The winding sets the band; coarse and fine windings make LV and MV at a steam engine's speed, dense and heavy-dense make UHV and EHV at a turbine's. |
-| [Battery](Battery.md) | Lead-acid or nickel-iron cells, rated a band: they charge from a line in that band or higher and supply their own band when the line is lower. |
-| [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. |
+| [Battery](Battery.md) | Lead-acid or nickel-iron cells, rated a band: they charge from a line in that band or higher and supply their own band when the line is lower. Beside a generator of the same band they are reserve: the generator carries the load, they cover the shortfall and charge from the surplus. |
+| [Leyden Jar](Leyden_Jar.md) | Stores a charge and gives it back as a burst. Fed a band above its rating, it cracks and shocks. |
 | **Carrying and stopping** | |
 | [Copper Cable](Copper_Cable.md) | Carries 1, 4, 16 or 64 A, by gauge. |
 | [Breaker](Breaker.md) | A switch. Trips itself above the rating of its gauge. |
