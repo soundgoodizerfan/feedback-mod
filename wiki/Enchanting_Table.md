@@ -77,8 +77,8 @@ Each effect does something different on a different **role** (the part's place i
 | Effect | + side | Mirror |
 | --- | --- | --- |
 | **Heat** | head or blade: sets what it strikes alight. Handle: burns *you*, as hot as the material burns. Plate: sets whoever hits you alight | **Cold**: head or blade stacks freezing on the target; lining turns fire damage away |
-| **Edge** | head or blade: cuts deeper (brittle) | **Spread**: head or blade turns damage into stagger; plate deflects projectiles |
-| **Ward** | plate resists fracture; elsewhere turns away some of each use's wear | none |
+| **Edge** | head or blade: cuts deeper (brittle). On the head of a [Mechanical Hammer](Mechanical_Hammer.md) or [Mechanical Press](Mechanical_Press.md): a harder blow | **Spread**: head or blade turns damage into stagger; plate deflects projectiles |
+| **Ward** | plate resists fracture; elsewhere, and on any part of a machine, turns away some of each use's wear | none |
 | **Bane** | cuts deeper into undead and arthropods; on armor blunts their blows | **Kin**: undead struck lose interest, but hit harder; armor hides you from them |
 | **Hold** | handle clamps to the hand, so it can't be dropped | **Free**: lining makes crouching less slow; handle may slip but gives under force |
 | **Impulse** | head throws targets back; handle recoils on you; plate returns part of each blow | **Pull**: head draws targets in; plate soaks explosions and falls |
@@ -107,6 +107,13 @@ Each effect does something different on a different **role** (the part's place i
 | **Dowse** | a needle orbits the crosshair and points toward the nearest magnetic, dense, conductive or flammable block (four separate effects), in eighths relative to where you face; *"Right over it"* when you stand directly over or under it | **Shun**: it leans away |
 
 Some effects need the material to be right: **Heat** on a handle is only as hot as the material burns, **Lode** and the magnetic **Dowse** die when the part is heated past its Curie point, and **Impulse** on a crossbow's stock recoils the shooter. **Impulse** on a gun's grip locks it in the hand against hard recoil and throws the shooter back instead (see [Guns](Guns.md#recoil)).
+
+## On a machine
+
+Every part of a machine has a place in it: a **working face** (what does the work, such as a hammer head), a **housing** or a **mount**. An effect that names one of these acts on every part in that place, so a machine's parts are attuned at the table like a tool's, and a built machine's tooltip lists them.
+
+- **Ward** on any part of a machine slows the wear that misuse causes: a [Mechanical Hammer](Mechanical_Hammer.md) or [Mechanical Press](Mechanical_Press.md) head, a [Dynamotor](Dynamotor.md), a [Battery](Battery.md) and an [Engine](Engine.md) that knocks. About 1 in (levels + 1) of the wear gets through: one level halves it, two levels leave a third.
+- **Edge** on the head of a Mechanical Hammer or Mechanical Press raises the blow by 25% for each level.
 
 ## On a gun
 

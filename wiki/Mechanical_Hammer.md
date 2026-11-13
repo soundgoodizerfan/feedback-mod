@@ -91,7 +91,7 @@ The hammer wears **only** when a blow can't go into the metal:
 
 The wear falls on the **head**. A worn head hits softer and takes less before it's over its ceiling. It bottoms out at half condition and never breaks or stops entirely. Pounding an **empty** anvil does no harm.
 
-Replacing a spent head resets it; the hammer itself never wears. [Calipers](Instruments.md#calipers) give you an exact condition reading of the head, but only while the hammer is **stopped**.
+A head attuned with **Ward** takes only part of that wear, and one with **Edge** hits 25% harder for each level; see [Enchanting Table](Enchanting_Table.md#on-a-machine). Replacing a spent head resets it; the hammer itself never wears. [Calipers](Instruments.md#calipers) give you an exact condition reading of the head, but only while the hammer is **stopped**.
 
 ## Tips
 

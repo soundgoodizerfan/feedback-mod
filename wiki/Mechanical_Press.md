@@ -25,7 +25,7 @@ It sits **directly on a shaft line**; connect it from any side. It presses once 
 - Every stroke is the seated hammer's **full ceiling**, the St on its tooltip, with no throw to pick a share. That also means it **overshoots soft metals easily**: a heavy stroke on copper goes from ingot to foil in one.
 - It doesn't stop when the plate is done. Plates become foil, foil becomes scrap. See [Metalworking](Metalworking.md).
 - Steel still has to be hot.
-- A stroke that achieves nothing (metal too cold, scrap already) wears the **head** (not the press); replace a spent head to reset it.
+- A stroke that achieves nothing (metal too cold, scrap already) wears the **head** (not the press); replace a spent head to reset it. **Ward** on the head slows that wear and **Edge** raises the stroke by 25% a level ([Enchanting Table](Enchanting_Table.md#on-a-machine)).
 - It's a **90 Su** load, one of the heaviest you can put on a shaft network.
 
 ## Pressing powder
