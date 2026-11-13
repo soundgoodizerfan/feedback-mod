@@ -226,6 +226,14 @@ public final class FModular {
 
     public static final net.neoforged.neoforge.registries.DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Feedback.MOD_ID);
 
+    /** A framed bed set down in the world: a vanilla bed that keeps the stack it was placed from. */
+    public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.part.ModularBedBlock> PLACED_BED =
+            BLOCKS.register("placed_bed", () -> new io.github.soundgoodizerfan.feedback.modular.part.ModularBedBlock(
+                    net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
+                            .mapColor(net.minecraft.world.level.material.MapColor.WOOL).strength(0.2f)
+                            .sound(net.minecraft.world.level.block.SoundType.WOOD).noOcclusion().ignitedByLava()
+                            .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
+
     /** Where a modular item is drawn and its figures read before it is made (spec 6). */
     public static final net.neoforged.neoforge.registries.DeferredBlock<io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintTableBlock> BLUEPRINT_TABLE =
             BLOCKS.register("blueprint_table", () -> new io.github.soundgoodizerfan.feedback.modular.blueprint.BlueprintTableBlock(
@@ -302,6 +310,10 @@ public final class FModular {
 
     public static final DeferredRegister<net.minecraft.world.level.block.entity.BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(net.minecraft.core.registries.BuiltInRegistries.BLOCK_ENTITY_TYPE, Feedback.MOD_ID);
+    public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
+            net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.part.ModularBedBlockEntity>> BED_ENTITY =
+            BLOCK_ENTITIES.register("placed_bed", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder
+                    .of(io.github.soundgoodizerfan.feedback.modular.part.ModularBedBlockEntity::new, PLACED_BED.get()).build(null));
     public static final DeferredHolder<net.minecraft.world.level.block.entity.BlockEntityType<?>,
             net.minecraft.world.level.block.entity.BlockEntityType<io.github.soundgoodizerfan.feedback.modular.treatise.TreatiseShelfBlockEntity>> TREATISE_SHELF_ENTITY =
             BLOCK_ENTITIES.register("treatise_shelf", () -> net.minecraft.world.level.block.entity.BlockEntityType.Builder

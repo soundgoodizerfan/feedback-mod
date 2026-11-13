@@ -17,6 +17,7 @@ import io.github.soundgoodizerfan.feedback.registry.FBlocks;
 import io.github.soundgoodizerfan.feedback.registry.FDataComponents;
 import io.github.soundgoodizerfan.feedback.registry.FItems;
 import io.github.soundgoodizerfan.feedback.registry.FVehicles;
+import io.github.soundgoodizerfan.feedback.registry.FModular;
 import io.github.soundgoodizerfan.feedback.registry.FormItems;
 import io.github.soundgoodizerfan.feedback.client.render.GlowColours;
 
@@ -165,6 +166,15 @@ public final class FormTint {
         event.register((state, level, pos, tintIndex) -> level != null && pos != null
                 && level.getBlockEntity(pos) instanceof CableBlockEntity cable && cable.material() != null
                 ? 0xFF000000 | MaterialColors.of(cable.material()) : 0xFFFFFFFF, FBlocks.CABLE.get(), FBlocks.FENCE.get());
+        // A placed bed: cover (tint 0) and frame (tint 1) take their materials' colours from the design it was built as.
+        event.register((state, level, pos, tintIndex) -> {
+            if (level == null || pos == null || !(level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.modular.part.ModularBedBlockEntity bed))
+                return 0xFFFFFFFF;
+            var design = io.github.soundgoodizerfan.feedback.modular.item.ModularStacks.design(bed.bed());
+            var part = design == null ? null : design.part(tintIndex == 0
+                    ? io.github.soundgoodizerfan.feedback.modular.part.ModularBed.MATTRESS : io.github.soundgoodizerfan.feedback.modular.part.ModularBed.FRAME);
+            return part == null ? 0xFFFFFFFF : 0xFF000000 | MaterialColors.of(part.material());
+        }, FModular.PLACED_BED.get());
         event.register((state, level, pos, tintIndex) -> level != null && pos != null
                 && level.getBlockEntity(pos) instanceof io.github.soundgoodizerfan.feedback.machine.xp.XpWireBlockEntity wire
                 && wire.material() != null ? 0xFF000000 | MaterialColors.of(wire.material()) : 0xFFFFFFFF, FBlocks.XP_WIRE.get());

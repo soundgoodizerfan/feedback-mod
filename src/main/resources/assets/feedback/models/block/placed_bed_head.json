@@ -1,0 +1,31 @@
+{
+  "textures": {
+    "cover": "minecraft:block/white_wool",
+    "frame": "minecraft:block/white_concrete",
+    "particle": "minecraft:block/white_wool"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0], "to": [16, 3, 16],
+      "faces": {
+        "down":  { "texture": "#frame", "tintindex": 1 },
+        "up":    { "texture": "#frame", "tintindex": 1 },
+        "north": { "texture": "#frame", "tintindex": 1 },
+        "south": { "texture": "#frame", "tintindex": 1 },
+        "west":  { "texture": "#frame", "tintindex": 1 },
+        "east":  { "texture": "#frame", "tintindex": 1 }
+      }
+    },
+    {
+      "from": [0, 3, 0], "to": [16, 9, 16],
+      "faces": {
+        "down":  { "texture": "#cover", "tintindex": 0 },
+        "up":    { "texture": "#cover", "tintindex": 0 },
+        "north": { "texture": "#cover", "tintindex": 0 },
+        "south": { "texture": "#cover", "tintindex": 0 },
+        "west":  { "texture": "#cover", "tintindex": 0 },
+        "east":  { "texture": "#cover", "tintindex": 0 }
+      }
+    }
+  ]
+}
