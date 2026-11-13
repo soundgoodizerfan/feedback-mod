@@ -223,7 +223,7 @@ public class DemolitionChargeBlockEntity extends BlockEntity {
             server.playSound(null, at, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1f, 0.8f);
             return;
         }
-        server.explode(null, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, power, fire, Level.ExplosionInteraction.BLOCK);
+        server.explode(null, at.getX() + 0.5, at.getY() + 0.5, at.getZ() + 0.5, power, fire, Level.ExplosionInteraction.TNT);
         if (shrapnel != null)
             Blast.scatter(server, null, lighter == null ? null : server.getServer().getPlayerList().getPlayer(lighter),
                     net.minecraft.world.phys.Vec3.atCenterOf(at), power, shrapnel);

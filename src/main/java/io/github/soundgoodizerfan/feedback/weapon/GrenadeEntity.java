@@ -88,7 +88,7 @@ public class GrenadeEntity extends ThrowableItemProjectile {
             return;
         }
         var p = packed.get();
-        server.explode(this, getX(), getY(), getZ(), p.power(), p.fire(), Level.ExplosionInteraction.BLOCK);
+        server.explode(this, getX(), getY(), getZ(), p.power(), p.fire(), Level.ExplosionInteraction.TNT);
         Blast.scatter(server, this, getOwner(), position(), p.power(), p);
     }
 

@@ -34,7 +34,7 @@ public final class CreeperBlast {
             level.sendParticles(net.minecraft.core.particles.ParticleTypes.LARGE_SMOKE, at.x, at.y, at.z, 12, 0.3, 0.3, 0.3, 0.02);
             return;
         }
-        level.explode(null, at.x, at.y, at.z, power, false, Level.ExplosionInteraction.BLOCK);
+        level.explode(null, at.x, at.y, at.z, power, false, Level.ExplosionInteraction.MOB);
         if (charged) {
             double r = power * 2;
             for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(at.x - r, at.y - r, at.z - r, at.x + r, at.y + r, at.z + r)))
