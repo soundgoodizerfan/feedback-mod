@@ -126,12 +126,13 @@
   "patterns": [
     [
       "B",
-      "S"
+      "SN"
     ]
   ],
   "defaults": {
     "B": "feedback:wrought_iron",
-    "S": "feedback:wood"
+    "S": "feedback:wood",
+    "N": "feedback:leather"
   },
   "vanilla": {}
 }

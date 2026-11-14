@@ -89,20 +89,56 @@
       "litres": 0.05,
       "length": 0.3,
       "layer": 1
+    },
+    "B": {
+      "name": "binding",
+      "class": "mount",
+      "forms": [
+        "tool_binding"
+      ],
+      "litres": 0.01,
+      "at": 0.3,
+      "part": {
+        "item": "feedback:tool_binding",
+        "cells": 1,
+        "stock": [
+          "leather",
+          "wire",
+          "string"
+        ],
+        "slots": [
+          {
+            "name": "metal",
+            "share": 3
+          },
+          {
+            "name": "wrap",
+            "share": 1,
+            "standard": "feedback:leather"
+          }
+        ]
+      },
+      "axes": {
+        "wraps": {
+          "min": 1,
+          "max": 3,
+          "default": 1,
+          "step": 1,
+          "scales": true
+        }
+      }
     }
   },
   "patterns": [
     [
       "H",
-      "S"
-    ],
-    [
-      "H"
+      "SB"
     ]
   ],
   "defaults": {
     "H": "feedback:wrought_iron",
-    "S": "feedback:wood"
+    "S": "feedback:wood",
+    "B": "feedback:leather"
   },
   "vanilla": {}
 }

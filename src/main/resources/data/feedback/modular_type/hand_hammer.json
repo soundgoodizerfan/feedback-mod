@@ -134,15 +134,13 @@
   "patterns": [
     [
       "H",
-      "S"
-    ],
-    [
-      "H"
+      "SB"
     ]
   ],
   "defaults": {
     "H": "feedback:stone",
-    "S": "feedback:wood"
+    "S": "feedback:wood",
+    "B": "feedback:leather"
   },
   "vanilla": {}
 }

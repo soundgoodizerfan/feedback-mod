@@ -424,12 +424,12 @@
     [
       "B",
       "G",
-      "S"
+      "SN"
     ],
     [
       "B ",
       "G ",
-      "SP"
+      "SPN"
     ]
   ],
   "defaults": {
@@ -438,7 +438,8 @@
     "G": "feedback:wrought_iron",
     "P": "feedback:wrought_iron",
     "sword:G": "feedback:same",
-    "sword:P": "feedback:same"
+    "sword:P": "feedback:same",
+    "N": "feedback:leather"
   },
   "vanilla": {
     "sword": "ingot"
